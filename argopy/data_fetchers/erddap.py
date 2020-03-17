@@ -556,7 +556,6 @@ class ErddapArgoDataFetcher(ABC):
         else:
             return this_mask
 
-@check_requirements
 class ArgoDataFetcher_wmo(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: a list of WMOs
 
@@ -617,7 +616,6 @@ class ArgoDataFetcher_wmo(ErddapArgoDataFetcher):
         listname = self.dataset_id + "_" + listname
         return listname
 
-@check_requirements
 class ArgoDataFetcher_box(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: an ocean rectangle
 
@@ -676,7 +674,6 @@ class ArgoDataFetcher_box(ErddapArgoDataFetcher):
         boxname = self.dataset_id + "_" + boxname
         return boxname
 
-@check_requirements
 class ArgoDataFetcher_box_deployments(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: an ocean rectangle and 1st cycles only
 
