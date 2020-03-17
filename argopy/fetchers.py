@@ -44,7 +44,8 @@ try:
     from .data_fetchers import erddap as Erddap_Fetcher
     available_backends.append('erddap')
 except:
-    warnings.warn("An error occured while loading the ERDDAP data fetcher, it will not be available")
+    e = sys.exc_info()[0]
+    warnings.warn("An error occured while loading the ERDDAP data fetcher, it will not be available !\n%s" % e)
     pass
 
 def backends_check(Cls):
