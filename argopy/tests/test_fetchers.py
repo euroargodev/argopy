@@ -16,6 +16,7 @@ from argopy import DataFetcher as ArgoDataFetcher
 # List available backends:
 backends = list()
 try:
+    from erddapy import ERDDAP
     from argopy.data_fetchers import erddap as Erddap_Fetcher
     backends.append('erddap')
 except ModuleNotFoundError:
