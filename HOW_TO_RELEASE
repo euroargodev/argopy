@@ -1,0 +1,6 @@
+1. On the master branch, commit the release in git:
+
+      ```git commit -a -m 'Release v0.X.Y'```
+1. Tag the release:
+
+      ```git tag -a v0.X.Y -m 'v0.X.Y'```
