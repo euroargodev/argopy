@@ -46,17 +46,28 @@ API usage:
     argo_loader.float([6902746, 6902747, 6902757, 6902766], CYC=1).to_xarray()
 ```
 
-We aim to provide high level helper methods to load Argo data from:
-[ ] Ifremer erddap
-[ ] local copy of the GDAC ftp folder (help wanted)
-[ ] the argovis dataset (help wanted)
+**Devlopment roadmap**:
 
-At this point data are fetched in memory as [xarray.DataSet](http://xarray.pydata.org/en/stable/data-structures.html#dataset). From there, it is easy to convert it to other formats like:
-[ ] pandas dataframe (help wanted)
+We aim to provide high level helper methods to load Argo data from:
+- [x] Ifremer erddap
+- [ ] local copy of the GDAC ftp folder (help wanted)
+- [ ] the argovis dataset (help wanted)
+- [ ] any other usefull access point to Argo data ?
+
+At this point data are fetched in memory as [xarray.DataSet](http://xarray.pydata.org/en/stable/data-structures.html#dataset). 
+From there, it is easy to convert it to other formats like a [Pandas dataframe](https://pandas.pydata.org/pandas-docs/stable/getting_started/dsintro.html#dataframe):
+```python
+ds = argo_loader.profile(6902746, 34).to_xarray()
+df = ds.to_dataframe()
+```
 
 and to export it to files:
-[ ] netcdf (help wanted)
-[ ] csv (help wanted)
+```python
+ds = argo_loader.region([-85,-45,10.,20.,0,1000.]).to_xarray()
+ds.to_netcdf('my_selection.nc')
+# or by profiles:
+ds.argo.point2profile().to_netcdf('my_selection.nc')
+```
 
 ### Argo data manipulation with xarray
 
