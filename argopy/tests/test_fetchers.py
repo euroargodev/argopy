@@ -20,7 +20,8 @@ try:
     backends.append('erddap')
 except ModuleNotFoundError:
     pass
-
+except ImportError:
+    pass
 
 class EntryPoints(TestCase):
     """ Test main API facade for all available fetching backends and default dataset """
