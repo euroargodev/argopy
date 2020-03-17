@@ -36,11 +36,23 @@ import glob
 import pandas as pd
 import xarray as xr
 import numpy as np
+import warnings
 
-# Import data data_fetchers:
-from .data_fetchers import erddap as Erddap_Fetcher
+# Import data fetchers:
+available_backends = list()
+try:
+    from .data_fetchers import erddap as Erddap_Fetcher
+    available_backends.append('erddap')
+except:
+    warnings.warn("An error occured while loading the ERDDAP data fetcher, it will not be available")
+    pass
+
+def backends_check(Cls):
+    # warnings.warn( "Fetchers available: %s" % available_backends )
+    return Cls
 
 # Highest level API / Facade:
+@backends_check
 class ArgoDataFetcher(object):
     """ Fetch and process Argo data.
 
@@ -56,6 +68,7 @@ class ArgoDataFetcher(object):
         Specify here all options to data_fetchers
 
     """
+    #todo use dynamic loading of all available data fetcher and there access points
 
     def __init__(self, mode='standard', backend='erddap', ds='phy', **fetcher_kwargs):
 
@@ -75,9 +88,11 @@ class ArgoDataFetcher(object):
             raise ValueError("Invalid backend, only 'erddap' available at this point")
 
         # Load backend access points:
-        if backend == 'erddap':
+        if backend == 'erddap' and 'erddap' in available_backends:
             self.Fetcher_wmo = Erddap_Fetcher.ArgoDataFetcher_wmo
             self.Fetcher_box = Erddap_Fetcher.ArgoDataFetcher_box
+        else:
+            raise ValueError("The erddap data fetcher is not available")
 
     def __repr__(self):
         if self.fetcher:

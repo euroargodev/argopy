@@ -7,25 +7,27 @@
 #
 # Created by gmaze on 09/03/2020
 
+access_points = ['box', 'wmo']
+exit_formats = ['xarray']
+dataset_ids = ['phy', 'ref', 'bgc']
+
 import os
 import sys
 import pandas as pd
 import xarray as xr
 import numpy as np
-
-from argopy.utilities import urlopen
-
-from erddapy import ERDDAP
 import copy
-from erddapy.utilities import parse_dates, quote_string_constraints
 
 from abc import ABC, abstractmethod
 from pathlib import Path
 import getpass
+import warnings
 
-access_points = ['box', 'wmo']
-exit_formats = ['xarray']
-dataset_ids = ['phy', 'ref', 'bgc']
+from argopy.utilities import urlopen
+
+from erddapy import ERDDAP
+from erddapy.utilities import parse_dates, quote_string_constraints
+# import dummy
 
 class ErddapArgoDataFetcher(ABC):
     """ Manage access to Argo data through Ifremer ERDDAP
@@ -61,7 +63,7 @@ class ErddapArgoDataFetcher(ABC):
 
             Parameters
             ----------
-            db: 'phy' or 'ref'
+            db: 'phy' or 'ref' or 'bgc'
             cache : False
             cachedir : None
         """
@@ -554,6 +556,7 @@ class ErddapArgoDataFetcher(ABC):
         else:
             return this_mask
 
+@check_requirements
 class ArgoDataFetcher_wmo(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: a list of WMOs
 
@@ -614,6 +617,7 @@ class ArgoDataFetcher_wmo(ErddapArgoDataFetcher):
         listname = self.dataset_id + "_" + listname
         return listname
 
+@check_requirements
 class ArgoDataFetcher_box(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: an ocean rectangle
 
@@ -672,6 +676,7 @@ class ArgoDataFetcher_box(ErddapArgoDataFetcher):
         boxname = self.dataset_id + "_" + boxname
         return boxname
 
+@check_requirements
 class ArgoDataFetcher_box_deployments(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: an ocean rectangle and 1st cycles only
 
