@@ -50,6 +50,99 @@ class ArgoAccessor:
         """ Make sure variables are of the appropriate types
 
             This is hard coded, but should be retrieved from an API somewhere
+            Should be able to handle all possible variables encountered in the Argo dataset
+        """
+        ds = self._obj
+
+        def cast_this(da, type):
+            #         print("\n")
+            try:
+                da.values = da.values.astype(type)
+                da.attrs['casted'] = True
+            except:
+                print("Oops!", sys.exc_info()[0], "occured.")
+                print("Fail to cast: ", da.dtype, "into:", type, "for: ", da.name)
+                print("Encountered values:", np.unique(da))
+            return da
+
+        list_str = ['PLATFORM_NUMBER', 'DATA_MODE', 'DIRECTION', 'DATA_CENTRE', 'DATA_TYPE', 'FORMAT_VERSION',
+                    'HANDBOOK_VERSION',
+                    'PROJECT_NAME', 'PI_NAME', 'STATION_PARAMETERS', 'DATA_CENTER', 'DC_REFERENCE',
+                    'DATA_STATE_INDICATOR',
+                    'PLATFORM_TYPE', 'FIRMWARE_VERSION', 'POSITIONING_SYSTEM', 'PROFILE_PRES_QC', 'PROFILE_PSAL_QC',
+                    'PROFILE_TEMP_QC',
+                    'PARAMETER', 'SCIENTIFIC_CALIB_EQUATION', 'SCIENTIFIC_CALIB_COEFFICIENT',
+                    'SCIENTIFIC_CALIB_COMMENT',
+                    'HISTORY_INSTITUTION', 'HISTORY_STEP', 'HISTORY_SOFTWARE', 'HISTORY_SOFTWARE_RELEASE',
+                    'HISTORY_REFERENCE',
+                    'HISTORY_ACTION', 'HISTORY_PARAMETER', 'VERTICAL_SAMPLING_SCHEME']
+        list_int = ['PLATFORM_NUMBER', 'FLOAT_SERIAL_NO', 'WMO_INST_TYPE', 'WMO_INST_TYPE']
+        list_datetime = ['REFERENCE_DATE_TIME', 'DATE_CREATION', 'DATE_UPDATE',
+                         'JULD', 'JULD_LOCATION', 'SCIENTIFIC_CALIB_DATE', 'HISTORY_DATE']
+
+        for v in ds.data_vars:
+            ds[v].attrs['casted'] = False
+            if v in list_str and ds[v].dtype == 'O':  # Object
+                ds[v] = cast_this(ds[v], str)
+
+            if v in list_int:  # and ds[v].dtype == 'O':  # Object
+                ds[v] = cast_this(ds[v], int)
+
+            if v in list_datetime and ds[v].dtype == 'O':  # Object
+                if 'conventions' in ds[v].attrs and ds[v].attrs['conventions'] == 'YYYYMMDDHHMISS':
+                    if ds[v].size != 0:
+                        if len(ds[v].dims) <= 2:
+                            val = ds[v].astype(str).values.astype('U14')
+                            ds[v].values = pd.to_datetime(val, format='%Y%m%d%H%M%S')
+                        else:
+                            s = ds[v].stack(dummy_index=ds[v].dims)
+                            s.values = pd.to_datetime(s.values, format='%Y%m%d%H%M%S')
+                            ds[v].values = s.unstack('dummy_index')
+                        ds[v] = cast_this(ds[v], np.datetime64)
+                    else:
+                        ds[v] = cast_this(ds[v], np.datetime64)
+
+                elif v == 'SCIENTIFIC_CALIB_DATE':
+                    ds[v] = cast_this(ds[v], str)
+                    s = ds[v].stack(dummy_index=ds[v].dims)
+                    s.values = pd.to_datetime(s.values, format='%Y%m%d%H%M%S')
+                    ds[v].values = (s.unstack('dummy_index')).values
+                    ds[v] = cast_this(ds[v], np.datetime64)
+
+            if "QC" in v and "PROFILE" not in v:
+                if ds[v].dtype == 'O':  # convert object to string
+                    ds[v] = cast_this(ds[v], str)
+
+                # Address weird string values:
+                # (replace missing or nan values by a '0' that will be cast as a integer later
+
+                if ds[v].dtype == '<U3':  # string, len 3 because of a 'nan' somewhere
+                    ii = ds[v] == '   '  # This should not happen, but still ! That's real world data
+                    ds[v] = xr.where(ii, '0', ds[v])
+
+                    ii = ds[v] == 'nan'  # This should not happen, but still ! That's real world data
+                    ds[v] = xr.where(ii, '0', ds[v])
+
+                    ds[v] = cast_this(ds[v], np.dtype('U1'))  # Get back to regular U1 string
+
+                if ds[v].dtype == '<U1':  # string
+                    ii = ds[v] == ' '  # This should not happen, but still ! That's real world data
+                    ds[v] = xr.where(ii, '0', ds[v])
+
+                    ii = ds[v] == 'n'  # This should not happen, but still ! That's real world data
+                    ds[v] = xr.where(ii, '0', ds[v])
+
+                # finally convert QC strings to integers:
+                ds[v] = cast_this(ds[v], int)
+
+            if ds[v].dtype != 'O':
+                ds[v].attrs['casted'] = True
+        return ds
+
+    def cast_types_deprec(self):
+        """ Make sure variables are of the appropriate types
+
+            This is hard coded, but should be retrieved from an API somewhere
         """
         if self._type != 'point':
             raise InvalidDatasetStructure("Method only available for a collection of points")
@@ -73,16 +166,16 @@ class ArgoAccessor:
 
                 if ds[v].dtype == '<U3': # string, len 3 because of a 'nan' somewhere
                     ii = ds[v] == '   ' # This should not happen, but still ! That's real world data
-                    ds[v].loc[dict(index=ii)] = '0'
+                    ds[v] = xr.where(ii, '0', ds[v])
 
                     ii = ds[v] == 'nan' # This should not happen, but still ! That's real world data
-                    ds[v].loc[dict(index=ii)] = '0'
+                    ds[v] = xr.where(ii, '0', ds[v])
 
                     ds[v] = cast_this(ds[v], np.dtype('U1')) # Get back to regular U1 string
 
                 if ds[v].dtype == '<U1': # string
                     ii = ds[v] == ' ' # This should not happen, but still ! That's real world data
-                    ds[v].loc[dict(index=ii)] = '0'
+                    ds[v] = xr.where(ii, '0', ds[v])
 
                 # finally convert QC strings to integers:
                 ds[v] = cast_this(ds[v], int)
