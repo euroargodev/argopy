@@ -162,8 +162,10 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
 
         # instantiate the data loader:
         argo_loader = ArgoMultiProfLocalLoader(self.local_ftp_path)
+        # Open the file:
+        ds = argo_loader.load_from_inst(dac_name, wmo_id)
+        # Possibly squeeze to correct cycle number:
 
-        return argo_loader.load_from_inst(dac_name, wmo_id)
 
     def to_xarray(self, client=None, n=None):
         """ Load Argo data and return a xarray.DataSet

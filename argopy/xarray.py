@@ -52,7 +52,7 @@ class ArgoAccessor:
             This is hard coded, but should be retrieved from an API somewhere
         """
         if self._type != 'point':
-            raise InvalidDatasetStructure("Method only available to a collection of points")
+            raise InvalidDatasetStructure("Method only available for a collection of points")
         ds = self._obj
 
         def cast_this(da, type):
@@ -60,7 +60,7 @@ class ArgoAccessor:
                 da.values = da.values.astype(type)
             except ValueError:
                 print("Fail to cast: ", da.dtype, "into:", type)
-                print("Possible values:", np.unique(da))
+                print("Encountered values:", np.unique(da))
             return da
 
         for v in ds.data_vars:
@@ -78,7 +78,7 @@ class ArgoAccessor:
                     ii = ds[v] == 'nan' # This should not happen, but still ! That's real world data
                     ds[v].loc[dict(index=ii)] = '0'
 
-                    ds[v] = cast_ds(ds[v], np.dtype('U1')) # Get back to regular U1 string
+                    ds[v] = cast_this(ds[v], np.dtype('U1')) # Get back to regular U1 string
 
                 if ds[v].dtype == '<U1': # string
                     ii = ds[v] == ' ' # This should not happen, but still ! That's real world data
@@ -197,7 +197,7 @@ class ArgoAccessor:
     def profile2point(self):
         """ Convert a collection of profiles to a collection of points """
         if self._type != 'profile':
-            raise InvalidDatasetStructure("Method only available to a collection of profiles")
+            raise InvalidDatasetStructure("Method only available for a collection of profiles (N_PROF dimemsion)")
         ds = self._obj
         return None
 
