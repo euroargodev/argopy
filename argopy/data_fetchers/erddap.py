@@ -54,7 +54,7 @@ class ErddapArgoDataFetcher(ABC):
         pass
 
     ###
-    # Methods that must not changed
+    # Methods that must not change
     ###
     def __init__(self, ds='phy', cache=False, cachedir=None, **kwargs):
         """ Instantiate an ERDDAP Argo data loader
@@ -77,10 +77,7 @@ class ErddapArgoDataFetcher(ABC):
         self._init_erddapy()
 
     def __repr__(self):
-        if hasattr(self, '_definition'):
-            summary = [ "<datafetcher '%s'>" % self.definition ]
-        else:
-            summary = [ "<datafetcher '%s'>" % 'Ifremer erddap Argo data fetcher' ]
+        summary = [ "<datafetcher '%s'>" % self.definition ]
         summary.append( "Domain: %s" % self.cname(cache=0) )
         return '\n'.join(summary)
 
@@ -269,7 +266,6 @@ class ErddapArgoDataFetcher(ABC):
             [vlist.append(p) for p in plist]
 
         return vlist
-
 
     @property
     def cachepath(self):
@@ -569,7 +565,6 @@ class ArgoDataFetcher_wmo(ErddapArgoDataFetcher):
 
         __author__: gmaze@ifremer.fr
     """
-
     def init(self, WMO=[], CYC=None):
         """ Create Argo data loader for WMOs
 

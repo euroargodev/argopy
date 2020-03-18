@@ -137,7 +137,7 @@ class ArgoDataFetcher(object):
         """ Load data from a float, given one or more WMOs """
         self.fetcher = self.Fetcher_wmo(WMO=wmo, **self.fetcher_options)
 
-        if self.mode == 'standard' and (self.dataset_id == 'phy' or self.dataset_id == 'bgc'):
+        if self.mode == 'standard' and self.dataset_id != 'ref':
             def postprocessing(xds):
                 xds = self.fetcher.filter_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
@@ -150,7 +150,7 @@ class ArgoDataFetcher(object):
         """ Load data from a profile, given one or more WMOs and CYCLE_NUMBER """
         self.fetcher = self.Fetcher_wmo(WMO=wmo, CYC=cyc, **self.fetcher_options)
 
-        if self.mode == 'standard' and (self.dataset_id == 'phy' or self.dataset_id == 'bgc'):
+        if self.mode == 'standard' and self.dataset_id != 'ref':
             def postprocessing(xds):
                 xds = self.fetcher.filter_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
@@ -164,7 +164,7 @@ class ArgoDataFetcher(object):
         """ Load data from a rectangular region, given latitude, longitude, pressure and possibly time bounds """
         self.fetcher = self.Fetcher_box(box=box, **self.fetcher_options)
 
-        if self.mode == 'standard' and (self.dataset_id == 'phy' or self.dataset_id == 'bgc'):
+        if self.mode == 'standard' and self.dataset_id != 'ref':
             def postprocessing(xds):
                 xds = self.fetcher.filter_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
@@ -178,7 +178,7 @@ class ArgoDataFetcher(object):
         """ Retrieve deployment locations in a specific space/time region """
         self.fetcher = ErddapArgoDataFetcher_box_deployments(box=box, **self.fetcher_options)
 
-        if self.mode == 'standard' and (self.dataset_id == 'phy' or self.dataset_id == 'bgc'):
+        if self.mode == 'standard' and self.dataset_id != 'ref':
             def postprocessing(xds):
                 xds = self.fetcher.filter_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
