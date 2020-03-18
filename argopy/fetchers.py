@@ -38,7 +38,6 @@ or
     argo_loader.region([-85,-45,10.,20.,0,1000.]).to_xarray()
     argo_loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2014-12']).to_xarray()
 
-Created by gmaze on 20/12/2019
 """
 
 import os
