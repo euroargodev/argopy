@@ -27,35 +27,41 @@ The primary data model used to manipulate Argo data is [xarray](https://github.c
 
 ### Argo Data Fetcher
 
-API usage:
+API usage: Init the fetcher:
 ```python
     from argopy import DataFetcher as ArgoDataFetcher
 
     argo_loader = ArgoDataFetcher()
     argo_loader = ArgoDataFetcher(backend='erddap')
     argo_loader = ArgoDataFetcher(cachedir='tmp')
-
+```
+and then, request data for a domain:
+```python
     argo_loader.region([-85,-45,10.,20.,0,1000.]).to_xarray()
     argo_loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2014-12']).to_xarray()
-
+```
+for profiles of a given float: 
+```python
     argo_loader.profile(6902746, 34).to_xarray()
     argo_loader.profile(6902746, np.arange(12,45)).to_xarray()
     argo_loader.profile(6902746, [1,12]).to_xarray()
-
+```
+or for a collection of floats:
+```python
     argo_loader.float(6902746).to_xarray()
     argo_loader.float([6902746, 6902747, 6902757, 6902766]).to_xarray()
     argo_loader.float([6902746, 6902747, 6902757, 6902766], CYC=1).to_xarray()
 ```
 
-**Devlopment roadmap**:
+**Development roadmap**:
 
 We aim to provide high level helper methods to load Argo data from:
 - [x] Ifremer erddap
-- [ ] local copy of the GDAC ftp folder (help wanted)
-- [ ] the argovis dataset (help wanted)
+- [ ] local copy of the GDAC ftp folder (ongoing)[https://github.com/euroargodev/argopy/issues/1]
+- [ ] the argovis dataset (help wanted)[https://github.com/euroargodev/argopy/issues/2]
 - [ ] any other usefull access point to Argo data ?
 
-At this point data are fetched in memory as [xarray.DataSet](http://xarray.pydata.org/en/stable/data-structures.html#dataset). 
+At this point data are fetched and returned in memory as [xarray.DataSet](http://xarray.pydata.org/en/stable/data-structures.html#dataset). 
 From there, it is easy to convert it to other formats like a [Pandas dataframe](https://pandas.pydata.org/pandas-docs/stable/getting_started/dsintro.html#dataframe):
 ```python
 ds = argo_loader.profile(6902746, 34).to_xarray()

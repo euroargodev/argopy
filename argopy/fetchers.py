@@ -89,11 +89,11 @@ class ArgoDataFetcher(object):
             raise ValueError("Invalid backend, only 'erddap' available at this point")
 
         # Load backend access points:
-        if backend == 'erddap' and 'erddap' in available_backends:
+        if backend == 'erddap' and backend in available_backends:
             self.Fetcher_wmo = Erddap_Fetcher.ArgoDataFetcher_wmo
             self.Fetcher_box = Erddap_Fetcher.ArgoDataFetcher_box
         else:
-            raise ValueError("The erddap data fetcher is not available")
+            raise ValueError("The %s data fetcher is not available" % backend)
 
     def __repr__(self):
         if self.fetcher:
