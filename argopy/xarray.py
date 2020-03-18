@@ -52,7 +52,7 @@ class ArgoAccessor:
                     ii = ds[v] == 'nan' # This should not happen, but still ! That's real world data
                     ds[v].loc[dict(index=ii)] = '0'
 
-                    ds[v] = cast_ds(ds[v], np.dtype('U1')) # Get back to regular U1 string
+                    ds[v] = cast_this(ds[v], np.dtype('U1')) # Get back to regular U1 string
 
                 if ds[v].dtype == '<U1': # string
                     ii = ds[v] == ' ' # This should not happen, but still ! That's real world data
