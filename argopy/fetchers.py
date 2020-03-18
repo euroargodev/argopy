@@ -106,21 +106,18 @@ class ArgoDataFetcher(object):
         self.mode = mode # User mode determining the level of post-processing required
         self.dataset_id = ds # Database to use
         self.backend = backend # data_fetchers to use
-        if self.backend != 'erddap':
-            raise ValueError("Invalid backend, only 'erddap' available at this point")
 
         # Load backend access points:
+        if backend not in available_backends:
+            raise ValueError("The %s data fetcher is not available" % backend)
+
         if backend == 'erddap' and backend in available_backends:
             self.Fetcher_wmo = Erddap_Fetcher.ArgoDataFetcher_wmo
             self.Fetcher_box = Erddap_Fetcher.ArgoDataFetcher_box
-        else:
-            raise ValueError("The %s data fetcher is not available" % backend)
 
         if backend == 'localftp' and backend in available_backends:
             self.Fetcher_wmo = LocalFTP_Fetcher.ArgoDataFetcher_wmo
             # self.Fetcher_box = Erddap_Fetcher.ArgoDataFetcher_box
-        else:
-            raise ValueError("The %s data fetcher is not available" % backend)
 
     def __repr__(self):
         if self.fetcher:
@@ -136,16 +133,6 @@ class ArgoDataFetcher(object):
         """ Do nothing to a dataset """
         return xds
 
-    def __drop_vars(self, xds):
-        """ Drop Jargon variables for standard users """
-        drop_list = ['DATA_MODE', 'DIRECTION']
-        xds = xds.drop_vars(drop_list)
-        # Also drop all QC variables:
-        for v in xds.data_vars:
-            if "QC" in v:
-                xds = xds.drop_vars(v)
-        return xds
-
     def float(self, wmo):
         """ Load data from a float, given one or more WMOs """
         self.fetcher = self.Fetcher_wmo(WMO=wmo, **self.fetcher_options)
@@ -154,34 +141,34 @@ class ArgoDataFetcher(object):
             def postprocessing(xds):
                 xds = self.fetcher.filter_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
-                xds = self.__drop_vars(xds)
+                xds = self.fetcher.filter_variables(xds, self.mode)
                 return xds
             self.postproccessor = postprocessing
         return self
 
     def profile(self, wmo, cyc):
-        """ Load data from a profile, given one ormore WMOs and CYCLE_NUMBER """
+        """ Load data from a profile, given one or more WMOs and CYCLE_NUMBER """
         self.fetcher = self.Fetcher_wmo(WMO=wmo, CYC=cyc, **self.fetcher_options)
 
         if self.mode == 'standard' and (self.dataset_id == 'phy' or self.dataset_id == 'bgc'):
             def postprocessing(xds):
                 xds = self.fetcher.filter_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
-                xds = self.__drop_vars(xds)
+                xds = self.fetcher.filter_variables(xds, self.mode)
                 return xds
             self.postproccessor = postprocessing
 
         return self
 
     def region(self, box):
-        """ Load data for a rectangular region, given latitude, longitude, pressure and possibly time bounds """
+        """ Load data from a rectangular region, given latitude, longitude, pressure and possibly time bounds """
         self.fetcher = self.Fetcher_box(box=box, **self.fetcher_options)
 
         if self.mode == 'standard' and (self.dataset_id == 'phy' or self.dataset_id == 'bgc'):
             def postprocessing(xds):
                 xds = self.fetcher.filter_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
-                xds = self.__drop_vars(xds)
+                xds = self.fetcher.filter_variables(xds, self.mode)
                 return xds
             self.postproccessor = postprocessing
 
@@ -195,7 +182,7 @@ class ArgoDataFetcher(object):
             def postprocessing(xds):
                 xds = self.fetcher.filter_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
-                xds = self.__drop_vars(xds)
+                xds = self.fetcher.filter_variables(xds, self.mode)
                 return xds
             self.postproccessor = postprocessing
 

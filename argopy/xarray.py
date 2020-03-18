@@ -7,13 +7,31 @@ import sys
 import numpy as np
 import xarray as xr
 
-from argopy.errors import NetCDF4FileNotFoundError
+from argopy.errors import NetCDF4FileNotFoundError, InvalidDatasetStructure
 
 @xr.register_dataset_accessor('argo')
 class ArgoAccessor:
     """
 
-        Class registered under scope ``argo`` to access :class:`xarray.Dataset` objects.
+        Class registered under scope ``argo`` to access a :class:`xarray.Dataset` object.
+
+        # Ensure all variables are of the Argo required dtype
+        ds.argo.cast_types()
+
+        # Convert a collection of points into a collection of profiles
+        ds.argo.point2profile()
+
+        #todo
+
+        # Convert a collection of profiles to a collection of points
+        ds.argo.profile2point()
+
+        # Make sure that the dataset complies with Argo vocabulary
+        # Should be done at init with a private function ???
+        # This could be usefull if a netcdf file is open directly
+        ds.argo.check()
+
+
 
      """
     def __init__(self, xarray_obj):
@@ -21,11 +39,20 @@ class ArgoAccessor:
         self._added = list() # Will record all new variables added by argo
         self._dims = list(xarray_obj.dims.keys()) # Store the initial list of dimensions
 
+        if 'N_PROF' in self._dims:
+            self._type = 'profile'
+        elif 'index' in self._dims:
+            self._type = 'point'
+        else:
+            raise InvalidDatasetStructure("Argo dataset structure not recognised")
+
     def cast_types(self):
         """ Make sure variables are of the appropriate types
 
             This is hard coded, but should be retrieved from an API somewhere
         """
+        if self._type != 'point':
+            raise InvalidDatasetStructure("Method only available to a collection of points")
         ds = self._obj
 
         def cast_this(da, type):
@@ -73,6 +100,8 @@ class ArgoAccessor:
         """ Transform a collection of points into a collection of profiles
 
         """
+        if self._type != 'point':
+            raise InvalidDatasetStructure("Method only available to a collection of points")
         ds = self._obj
 
         def fillvalue(da):
@@ -161,8 +190,16 @@ class ArgoAccessor:
         new_ds = new_ds[np.sort(new_ds.data_vars)]
         new_ds.attrs = ds.attrs
         new_ds.attrs['sparsiness'] = np.round(len(ds['index']) * 100 / (N_PROF * N_LEVELS),2)
+
+        self._type = 'profile'
         return new_ds
 
+    def profile2point(self):
+        """ Convert a collection of profiles to a collection of points """
+        if self._type != 'profile':
+            raise InvalidDatasetStructure("Method only available to a collection of profiles")
+        ds = self._obj
+        return None
 
 class LocalLoader(object):
     """
@@ -193,7 +230,6 @@ class LocalLoader(object):
             return xr.open_dataset(file_path, decode_times=False)
         else:
             raise NetCDF4FileNotFoundError(path=file_path, verbose=verbose)
-
 
 class ArgoMultiProfLocalLoader(LocalLoader):
     """

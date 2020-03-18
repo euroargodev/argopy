@@ -5,7 +5,7 @@
 #
 # This is not intended to be used directly, only by the facade at fetchers.py
 #
-# Since the GDAC ftp ir organised by DAC/WMO folders, we start by implementing the 'float' and 'profile' entry points.
+# Since the GDAC ftp is organised by DAC/WMO folders, we start by implementing the 'float' and 'profile' entry points.
 #
 # Created by gmaze on 18/03/2020
 # Building on earlier work from S. Tokunaga (as part of the MOCCA and EARISE H2020 projects)
@@ -16,57 +16,38 @@ dataset_ids = ['phy', 'bgc']
 
 import os
 import sys
-import glob
+from glob import glob
 import numpy as np
 import pandas as pd
 import xarray as xr
 from abc import ABC, abstractmethod
+import warnings
+
+from argopy.xarray import ArgoMultiProfLocalLoader
 
 class LocalFTPArgoDataFetcher(ABC):
     """ Manage access to Argo data from a local copy of GDAC ftp
 
     """
-    def __init__(self, argo_root, sdl=None):
-        self.argo_root_path = argo_root
-        self.sdl_axis = sdl
+    def __init__(self, ftp_root):
+        """ Init fetcher
 
-        # List netcdf files available for processing:
-        self.argo_files = sorted(glob(self.argo_root_path + "/*/*/*_prof.nc"))
+            Parameters
+            ----------
+            ftp_root : str
+                Path to the directory with the 'dac' folder and index file
+        """
+        self.local_ftp_path = ftp_root
+        self.definition = 'Local ftp Argo data fetcher'
+
+        # List available netcdf files to process:
+        self.argo_files = sorted(glob(self.local_ftp_path + "/*/*/*_prof.nc"))
         if self.argo_files is None:
-            raise ValueError("Argo root path doesn't contain any netcdf profiles (under */*/*_prof.nc)")
+            raise ValueError("Argo root path doesn't contain any netcdf profile files (under */*/*_prof.nc)")
         self.argo_wmos = [int(os.path.basename(x).split("_")[0]) for x in self.argo_files]
         self.argo_dacs = [x.split("/")[-3] for x in self.argo_files]
 
-    def _to_sdl(self, sdl, var, var_prs, mask, lat=45., name='var'):
-        """ Interpolate a 2D variable onto standard depth levels, from pressure levels """
-
-        def VI(zi, z, c):
-            zi, z = np.abs(zi), np.abs(z)  # abs ensure depths are sorted for the interpolation to work
-            if c.shape[0] > 0:
-                ci = np.interp(zi, z, c, left=c[0], right=9999.)
-                if np.any(ci >= 9999.):
-                    return np.array(())
-                else:
-                    return ci
-            else:
-                return np.array(())
-
-        var_sdl = []
-        ip = []
-        for i in range(0, var.shape[0]):
-            c = var[i, mask[i, :] == True]
-            p = var_prs[i, mask[i, :] == True]
-            z = gsw.z_from_p(p, lat[i])
-            ci = VI(sdl, z, c)
-            if ci.shape[0] > 0:
-                var_sdl.append(ci)
-                ip.append(i)
-        if len(var_sdl) > 0:
-            return xr.DataArray(var_sdl, dims=['samples', 'depth'], coords={'depth': sdl, 'samples': ip}, name=name)
-        else:
-            return None
-
-    def _add_dsattributes(self, ds, argo_xarr, title='Argo float data'):
+    def _add_attributes(self, ds, argo_xarr):
         ds.attrs['title'] = title
         ds.attrs['Conventions'] = 'CF-1.6'
         ds.attrs['CreationDate'] = pd.to_datetime('now').strftime("%Y/%m/%d")
@@ -152,13 +133,13 @@ class LocalFTPArgoDataFetcher(ABC):
 
         return ds
 
-    def _xload_multiprof(self, dac_wmo):
+    def _xload_multiprof_legacy(self, dac_wmo):
         """Load an Argo multi-profile file as a collection of points or sdl profiles"""
         dac_name, wmo_id = dac_wmo
         wmo_id = int(wmo_id)
 
         # instantiate the data loader:
-        argo_loader = ArgoMultiProfLocalLoader(argo_root_path=self.argo_root_path)
+        argo_loader = ArgoMultiProfLocalLoader(local_ftp_path=self.local_ftp_path)
 
         with argo_loader.load_from_inst(dac_name, wmo_id) as argo_xarr:
             try:
@@ -251,7 +232,7 @@ class LocalFTPArgoDataFetcher(ABC):
                             return None
 
                         # Preserve Argo attributes:
-                        ds = self._add_dsattributes(ds, argo_xarr,
+                        ds = self._add_attributes(ds, argo_xarr,
                                                     title='Argo float profiles interpolated onto Standard Depth Levels')
                         ds.attrs['DAC'] = dac_name
                         ds.attrs['WMO'] = wmo_id
@@ -286,7 +267,7 @@ class LocalFTPArgoDataFetcher(ABC):
                         xr.DataArray(temp_pts, name='to', dims='samples'),
                         xr.DataArray(psal_pts, name='so', dims='samples')))
                     # Preserve Argo attributes:
-                    ds = self._add_dsattributes(ds, argo_xarr, title='Argo float profiles ravelled data')
+                    ds = self._add_attributes(ds, argo_xarr, title='Argo float profiles ravelled data')
                     ds.attrs['DAC'] = dac_name
                     ds.attrs['WMO'] = wmo_id
                     ds['samples'].attrs = {'long_name': "Measurement samples"}
@@ -294,13 +275,57 @@ class LocalFTPArgoDataFetcher(ABC):
             else:
                 return None
 
+    def _ravel(self, this):
+        """ Ravel variables from a single multiprofile xarray.Dataset """
+        pres_pts = pres[good]
+        temp_pts = temps[good]
+        psal_pts = psals[good]
+
+        repeat_n = [np.sum(x) for x in good]
+        lons = np.concatenate([np.repeat(x, repeat_n[i]) for i, x in enumerate(argo.lon[good_profiles])])
+        lats = np.concatenate([np.repeat(x, repeat_n[i]) for i, x in enumerate(argo.lat[good_profiles])])
+        dts = np.concatenate(
+            [np.repeat(x, repeat_n[i]) for i, x in enumerate(argo.datetime[good_profiles])])
+        profile_id_pp = np.concatenate([np.repeat(x, repeat_n[i]) for i, x in enumerate(profile_id)])
+        profile_numid = np.concatenate([np.repeat(x, repeat_n[i]) for i, x in enumerate(
+            1000 * argo.wmo[good_profiles] + argo.cycle[good_profiles])])
+
+        ds = xr.merge((
+            xr.DataArray(lons, name='longitude', dims='samples'),
+            xr.DataArray(lats, name='latitude', dims='samples'),
+            xr.DataArray(pres_pts, name='pressure', dims='samples'),
+            xr.DataArray(gsw.z_from_p(pres_pts, lats, geo_strf_dyn_height=0), name='depth', dims='samples'),
+            xr.DataArray(dts, name='time', dims='samples'),
+            xr.DataArray(profile_numid, name='id', dims='samples'),
+            xr.DataArray(temp_pts, name='to', dims='samples'),
+            xr.DataArray(psal_pts, name='so', dims='samples')))
+        # Preserve Argo attributes:
+        ds = self._add_attributes(ds, argo_xarr, title='Argo float profiles ravelled data')
+        ds.attrs['DAC'] = dac_name
+        ds.attrs['WMO'] = wmo_id
+        ds['samples'].attrs = {'long_name': "Measurement samples"}
+        return ds
+
+    def _xload_multiprof(self, dac_wmo):
+        """Load an Argo multi-profile file as a collection of points"""
+        dac_name, wmo_id = dac_wmo
+        wmo_id = int(wmo_id)
+
+        # instantiate the data loader:
+        argo_loader = ArgoMultiProfLocalLoader(self.local_ftp_path)
+
+        return argo_loader.load_from_inst(dac_name, wmo_id)
+
     def to_xarray(self, client=None, n=None):
-        """Fetch data using a dask distributed client"""
+        """ Load Argo data and return a xarray.DataSet
+
+            Possibly use a dask distributed client for performance
+        """
 
         dac_wmo_files = list(zip(*[self.argo_dacs, self.argo_wmos]))
         if n is not None:  # Sub-sample for test purposes
             dac_wmo_files = list(np.array(dac_wmo_files)[np.random.choice(range(0, len(dac_wmo_files) - 1), n)])
-        print("NB OF FLOATS TO FETCH:", len(dac_wmo_files))
+        warnings.warn("NB OF FLOATS TO FETCH: %i" % len(dac_wmo_files))
 
         if client is not None:
             futures = client.map(self._xload_multiprof, dac_wmo_files)
@@ -312,12 +337,12 @@ class LocalFTPArgoDataFetcher(ABC):
 
         results = [r for r in results if r is not None]  # Only keep none empty results
         if len(results) > 0:
-            ds = xr.concat(results, dim='samples', data_vars='all', compat='equals')
+            ds = xr.concat(results, dim='index', data_vars='all', compat='equals')
             ds.attrs.pop('DAC')
             ds.attrs.pop('WMO')
             ds = ds.sortby('time')
-            ds['samples'].values = np.arange(0, len(ds['samples']))
+            ds['index'].values = np.arange(0, len(ds['index']))
             return ds
         else:
-            print("CAN'T FETCH ANY DATA !")
+            warnings.warn("CAN'T FETCH ANY DATA !")
             return None

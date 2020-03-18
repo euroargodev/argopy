@@ -1,4 +1,4 @@
-__author__ = 'sean.tokunaga@ifremer.fr'
+# Legacy author (2019) sean.tokunaga@ifremer.fr
 
 """
 A bunch of custom errors used in argopy.
@@ -33,3 +33,9 @@ class UnrecognisedProfileDirection(ValueError):
     def __init__(self, institute=None, wmo=None):
         self.institute = institute
         self.wmo = wmo
+
+class InvalidDatasetStructure(ValueError):
+    """ 
+    This is to be used when the in-memory xarray dataset is not structured as expected
+    """
+    pass

@@ -21,7 +21,6 @@ import copy
 from abc import ABC, abstractmethod
 from pathlib import Path
 import getpass
-import warnings
 
 from argopy.utilities import urlopen
 
@@ -34,7 +33,6 @@ class ErddapArgoDataFetcher(ABC):
 
         ERDDAP transaction are managed with the erddapy library
 
-        __author__: gmaze@ifremer.fr
     """
 
     ###
@@ -556,13 +554,23 @@ class ErddapArgoDataFetcher(ABC):
         else:
             return this_mask
 
+    def filter_variables(self, this, mode):
+        """ Removing variables according to a user mode """
+        drop_list = ['DATA_MODE', 'DIRECTION'] # This depends on self._minimal_vlist()
+        this = this.drop_vars(drop_list)
+        # Also drop all QC variables:
+        for v in this.data_vars:
+            if "QC" in v:
+                this = this.drop_vars(v)
+        return this
+
 class ArgoDataFetcher_wmo(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: a list of WMOs
 
         __author__: gmaze@ifremer.fr
     """
 
-    def init(self, WMO=[6902746, 6902757, 6902766], CYC=None):
+    def init(self, WMO=[], CYC=None):
         """ Create Argo data loader for WMOs
 
             Parameters
