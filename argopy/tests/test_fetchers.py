@@ -15,6 +15,7 @@ from argopy import DataFetcher as ArgoDataFetcher
 
 # List available backends:
 backends = list()
+
 try:
     from erddapy import ERDDAP
     from argopy.data_fetchers import erddap as Erddap_Fetcher
@@ -23,6 +24,15 @@ except ModuleNotFoundError:
     pass
 except ImportError:
     pass
+
+try:
+    from argopy.data_fetchers import localftp as LocalFTP_Fetcher
+    backends.append('localftp')
+except ModuleNotFoundError:
+    pass
+except ImportError:
+    pass
+
 
 class EntryPoints(TestCase):
     """ Test main API facade for all available fetching backends and default dataset """
@@ -37,8 +47,8 @@ class EntryPoints(TestCase):
                               [1901393, 6902746]]
         self.args['profile'] = [[6902746, 34],
                                 [6902746, np.arange(12, 16)], [6902746, [1, 12]]]
-        self.args['region'] = [[-75, -65, 30., 40., 0, 10.],
-                               [-75, -65, 30., 40., 0, 10., '2012-01-01', '2012-12-31']]
+        self.args['region'] = [[-70, -65, 30., 35., 0, 10.],
+                               [-70, -65, 30., 35., 0, 10., '2012-01-01', '2012-06-30']]
 
     def __test_float(self, bk):
         """ Test float for a given backend """
@@ -69,14 +79,18 @@ class EntryPoints(TestCase):
     @unittest.skipUnless('erddap' in backends, "requires erddap data fetcher")
     def test_region_erddap(self):
         self.__test_region('erddap')
-
+    
+    @unittest.skipUnless('localftp' in backends, "requires localftp data fetcher")
+    def test_float_localftp(self):
+        self.__test_float('localftp')
+        
     @unittest.skipUnless('argovis' in backends, "requires argovis data fetcher")
     def test_float_argovis(self):
         self.__test_float('argovis')
 
 @unittest.skipUnless('erddap' in backends, "requires erddap data fetcher")
 class Erddap_DataSets(TestCase):
-    """ Test main API facade for all available dataset of Erddap fetching backend """
+    """ Test main API facade for all available dataset of the ERDDAP fetching backend """
 
     def __testthis(self, dataset):
         for access_point in self.args:
@@ -125,8 +139,8 @@ class Erddap_DataSets(TestCase):
 
     def test_phy_region(self):
         self.args = {}
-        self.args['region'] = [[-75, -65, 30., 40., 0, 10.],
-                               [-75, -65, 30., 40., 0, 10., '2012-01', '2013-12']]
+        self.args['region'] = [[-70, -65, 35., 40., 0, 10.],
+                               [-70, -65, 35., 40., 0, 10., '2012-01', '2013-12']]
         self.__testthis('phy')
 
     def test_bgc_float(self):
@@ -143,14 +157,14 @@ class Erddap_DataSets(TestCase):
 
     def test_bgc_region(self):
         self.args = {}
-        self.args['region'] = [[-75, -65, 30., 40., 0, 10.],
-                               [-75, -65, 30., 40., 0, 10., '2012-01-1', '2012-12-31']]
+        self.args['region'] = [[-70, -65, 35., 40., 0, 10.],
+                               [-70, -65, 35., 40., 0, 10., '2012-01-1', '2012-12-31']]
         self.__testthis('bgc')
 
     def test_ref_region(self):
         self.args = {}
-        self.args['region'] = [[-75, -65, 30., 40., 0, 10.],
-                               [-75, -65, 30., 40., 0, 10., '2012-01-01', '2012-12-31']]
+        self.args['region'] = [[-70, -65, 35., 40., 0, 10.],
+                               [-70, -65, 35., 40., 0, 10., '2012-01-01', '2012-12-31']]
         self.__testthis('ref')
 
 if __name__ == '__main__':

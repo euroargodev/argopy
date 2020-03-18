@@ -2,28 +2,39 @@
 # -*coding: UTF-8 -*-
 """
 
-High level helper methods to load Argo data from any source (but only Ifremer erddap server at this point).
-The facade should be able to work with another data access point,
-like another webAPI or a local copy of the ftp.
+High level helper methods to load Argo data from any source
+The facade should be able to work with all available data access point,
 
-Usage:
+Usage for LOCALFTP:
 
     from argopy import DataFetcher as ArgoDataFetcher
 
-    argo_loader = ArgoDataFetcher()
+    argo_loader = ArgoDataFetcher(backend='localftp', ds='phy')
 or
-    argo_loader = ArgoDataFetcher(cachedir='tmp', cache=True)
+    argo_loader = ArgoDataFetcher(backend='localftp', ds='bgc')
+
+    argo_loader.float(6902746).to_xarray()
+    argo_loader.float([6902746, 6902747, 6902757, 6902766]).to_xarray()
+
+
+Usage for ERDDAP (default backend):
+
+    from argopy import DataFetcher as ArgoDataFetcher
+
+    argo_loader = ArgoDataFetcher(backend='erddap')
 or
-    argo_loader = ArgoDataFetcher(ds='ref')
+    argo_loader = ArgoDataFetcher(backend='erddap', cachedir='tmp', cache=True)
+or
+    argo_loader = ArgoDataFetcher(backend='erddap', ds='ref')
 
     argo_loader.profile(6902746, 34).to_xarray()
     argo_loader.profile(6902746, np.arange(12,45)).to_xarray()
     argo_loader.profile(6902746, [1,12]).to_xarray()
-
+or
     argo_loader.float(6902746).to_xarray()
     argo_loader.float([6902746, 6902747, 6902757, 6902766]).to_xarray()
     argo_loader.float([6902746, 6902747, 6902757, 6902766], CYC=1).to_xarray()
-
+or
     argo_loader.region([-85,-45,10.,20.,0,1000.]).to_xarray()
     argo_loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2014-12']).to_xarray()
 
@@ -47,6 +58,17 @@ except:
     e = sys.exc_info()[0]
     warnings.warn("An error occured while loading the ERDDAP data fetcher, it will not be available !\n%s" % e)
     pass
+
+try:
+    from .data_fetchers import localftp as LocalFTP_Fetcher
+    available_backends.append('localftp')
+except:
+    e = sys.exc_info()[0]
+    warnings.warn("An error occured while loading the local FTP data fetcher, it will not be available !\n%s" % e)
+    pass
+
+
+
 
 def backends_check(Cls):
     # warnings.warn( "Fetchers available: %s" % available_backends )
@@ -92,6 +114,12 @@ class ArgoDataFetcher(object):
         if backend == 'erddap' and backend in available_backends:
             self.Fetcher_wmo = Erddap_Fetcher.ArgoDataFetcher_wmo
             self.Fetcher_box = Erddap_Fetcher.ArgoDataFetcher_box
+        else:
+            raise ValueError("The %s data fetcher is not available" % backend)
+
+        if backend == 'localftp' and backend in available_backends:
+            self.Fetcher_wmo = LocalFTP_Fetcher.ArgoDataFetcher_wmo
+            # self.Fetcher_box = Erddap_Fetcher.ArgoDataFetcher_box
         else:
             raise ValueError("The %s data fetcher is not available" % backend)
 
