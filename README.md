@@ -33,6 +33,7 @@ Init the fetcher:
 
     argo_loader = ArgoDataFetcher()
     argo_loader = ArgoDataFetcher(backend='erddap')
+    argo_loader = ArgoDataFetcher(backend='local-ftp')
     argo_loader = ArgoDataFetcher(cachedir='tmp')
 ```
 and then, request data for a domain:
