@@ -55,9 +55,9 @@ or for a collection of floats:
 
 **Development roadmap**:
 
-We aim to provide high level helper methods to load Argo data from:
+We aim to provide high level helper methods [(see this milestone)](https://github.com/euroargodev/argopy/milestone/1) to load Argo data from:
 - [x] Ifremer erddap
-- [ ] local copy of the GDAC ftp folder [(ongoing)](https://github.com/euroargodev/argopy/issues/1)
+- [ ] local copy of the GDAC ftp folder [(ongoing work)](https://github.com/euroargodev/argopy/pull/5)
 - [ ] the argovis dataset [(help wanted)](https://github.com/euroargodev/argopy/issues/2)
 - [ ] any other usefull access point to Argo data ?
 
