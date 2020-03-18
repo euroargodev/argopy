@@ -3,14 +3,14 @@
 
 ``argopy`` is a python library that aims to ease Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators.
 
-Several python packages exist: we are currently in the process of merging and structuring these libraries to have a single powerfull tool.
+Several python packages exist: we are currently in the process of analysing how to merge these libraries toward a single powerfull tool. [List your tool here !](https://github.com/euroargodev/argopy/issues/3)
 
 ## Install
 
 Since this is a library in active development, use direct install from this repo to benefit from the last version:
 
 ```bash
-pip install git+http://github.com/euroargodev/argopy.git
+pip install git+http://github.com/euroargodev/argopy.git@master
 ```
 
 ## Examples
@@ -27,7 +27,7 @@ The primary data model used to manipulate Argo data is [xarray](https://github.c
 
 ### Argo Data Fetcher
 
-API usage: Init the fetcher:
+Init the fetcher:
 ```python
     from argopy import DataFetcher as ArgoDataFetcher
 
@@ -57,8 +57,8 @@ or for a collection of floats:
 
 We aim to provide high level helper methods to load Argo data from:
 - [x] Ifremer erddap
-- [ ] local copy of the GDAC ftp folder (ongoing)[https://github.com/euroargodev/argopy/issues/1]
-- [ ] the argovis dataset (help wanted)[https://github.com/euroargodev/argopy/issues/2]
+- [ ] local copy of the GDAC ftp folder [ongoing](https://github.com/euroargodev/argopy/issues/1)
+- [ ] the argovis dataset [help wanted](https://github.com/euroargodev/argopy/issues/2)
 - [ ] any other usefull access point to Argo data ?
 
 At this point data are fetched and returned in memory as [xarray.DataSet](http://xarray.pydata.org/en/stable/data-structures.html#dataset). 
