@@ -337,11 +337,10 @@ class ErddapArgoDataFetcher(ABC):
         # Post-process the xarray.DataSet:
 
         # Set coordinates:
-        coords = ('latitude', 'longitude', 'time')
+        coords = ('LATITUDE', 'LONGITUDE', 'TIME')
         # Convert all coordinate variable names to upper case
         for v in ds.data_vars:
-            if v not in coords:
-                ds = ds.rename({v: v.upper()})
+            ds = ds.rename({v: v.upper()})
         ds = ds.set_coords(coords)
 
         # Cast data types and add variable attributes (not available in the csv download):

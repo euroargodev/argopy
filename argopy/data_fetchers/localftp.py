@@ -88,7 +88,7 @@ class LocalFTPArgoDataFetcher(ABC):
 
     def __repr__(self):
         summary = [ "<datafetcher '%s'>" % self.definition ]
-        # summary.append( "Domain: %s" % self.cname(cache=0) )
+        summary.append( "Domain: %s" % self.cname(cache=0) )
         return '\n'.join(summary)
 
     def _init_localftp(self):
@@ -155,27 +155,54 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
         listname = self.dataset_id + "_" + listname
         return listname
 
-    def _xload_multiprof(self, dac_wmo):
+    def _xload_multiprof(self, dac_wmo_file):
         """Load an Argo multi-profile file as a collection of points"""
-        dac_name, wmo_id = dac_wmo
+        dac_name, wmo_id = dac_wmo_file
         wmo_id = int(wmo_id)
 
-        # instantiate the data loader:
-        argo_loader = ArgoMultiProfLocalLoader(self.local_ftp_path)
-        # Open the file:
-        ds = argo_loader.load_from_inst(dac_name, wmo_id)
-        # Possibly squeeze to correct cycle number:
+        # Open file:
+        ncfile = os.path.sep.join([self.local_ftp_path, dac_name, str(wmo_id), ("%i_prof.nc" % wmo_id)])
+        if not os.path.isfile(ncfile):
+            raise NetCDF4FileNotFoundError(ncfile)
 
+        ds = xr.open_dataset(ncfile, decode_cf=1, use_cftime=0)
+        ds = ds.argo.cast_types()
+
+        # Remove variables without dimensions:
+        # We should be able to find a way to keep them
+        for v in ds.data_vars:
+            if len(list(ds[v].dims)) == 0:
+                ds = ds.drop(v)
+
+        # Also remove variables with dimensions other than N_PROF or N_LEVELS
+        # This is not satisfactory for operators or experts, but that get us started
+        for v in ds.data_vars:
+            for d in ds[v].dims:
+                if d not in ['N_PROF', 'N_LEVELS']:
+                    ds = ds.drop(v)
+                    break
+
+        ds = ds.argo.profile2point()
+
+        # instantiate the data loader:
+        # argo_loader = ArgoMultiProfLocalLoader(self.local_ftp_path)
+        # Open the file:
+        # ds = argo_loader.load_from_inst(dac_name, wmo_id)
+        # Possibly squeeze to correct cycle number:
+        return ds
 
     def to_xarray(self, client=None, n=None):
         """ Load Argo data and return a xarray.DataSet
 
             Possibly use a dask distributed client for performance
         """
-        # Check if requested WMO are available:
         for wmo in self.WMO:
             if wmo not in self.argo_wmos:
-                raise NetCDF4FileNotFoundError("Float %i not found" % wmo)
+                raise ValueError("This float is not available locally at: %s" % self.local_ftp_path)
+
+        if len(self.WMO) == 1:
+            self.argo_dacs[self.argo_wmos.index(self.WMO[0])]
+            return self._xload_multiprof([self.argo_dacs[self.argo_wmos.index(self.WMO[0])], self.WMO[0]])
 
         dac_wmo_files = list(zip(*[self.argo_dacs, self.argo_wmos]))
         if n is not None:  # Sub-sample for test purposes (usefull when fetching the entire dataset)

@@ -5,6 +5,7 @@
 import os
 import sys
 import numpy as np
+import pandas as pd
 import xarray as xr
 
 from argopy.errors import NetCDF4FileNotFoundError, InvalidDatasetStructure
@@ -75,8 +76,8 @@ class ArgoAccessor:
                     'SCIENTIFIC_CALIB_COMMENT',
                     'HISTORY_INSTITUTION', 'HISTORY_STEP', 'HISTORY_SOFTWARE', 'HISTORY_SOFTWARE_RELEASE',
                     'HISTORY_REFERENCE',
-                    'HISTORY_ACTION', 'HISTORY_PARAMETER', 'VERTICAL_SAMPLING_SCHEME']
-        list_int = ['PLATFORM_NUMBER', 'FLOAT_SERIAL_NO', 'WMO_INST_TYPE', 'WMO_INST_TYPE']
+                    'HISTORY_ACTION', 'HISTORY_PARAMETER', 'VERTICAL_SAMPLING_SCHEME', 'FLOAT_SERIAL_NO']
+        list_int = ['PLATFORM_NUMBER', 'WMO_INST_TYPE', 'WMO_INST_TYPE']
         list_datetime = ['REFERENCE_DATE_TIME', 'DATE_CREATION', 'DATE_UPDATE',
                          'JULD', 'JULD_LOCATION', 'SCIENTIFIC_CALIB_DATE', 'HISTORY_DATE']
 
@@ -93,10 +94,13 @@ class ArgoAccessor:
                     if ds[v].size != 0:
                         if len(ds[v].dims) <= 2:
                             val = ds[v].astype(str).values.astype('U14')
+                            val[val == '              '] = 'nan'  # This should not happen, but still ! That's real world data
                             ds[v].values = pd.to_datetime(val, format='%Y%m%d%H%M%S')
                         else:
                             s = ds[v].stack(dummy_index=ds[v].dims)
-                            s.values = pd.to_datetime(s.values, format='%Y%m%d%H%M%S')
+                            val = s.astype(str).values.astype('U14')
+                            val[val == '              '] = 'nan'  # This should not happen, but still ! That's real world data
+                            s.values = pd.to_datetime(val, format='%Y%m%d%H%M%S')
                             ds[v].values = s.unstack('dummy_index')
                         ds[v] = cast_this(ds[v], np.datetime64)
                     else:
@@ -260,14 +264,15 @@ class ArgoAccessor:
         for vname in vlist:
             new_ds[vname] = new_ds[vname].isel(N_LEVELS=0).drop('N_LEVELS')
         # Fill in other coordinates
-        vlist = ['latitude', 'longitude', 'time']
+        vlist = ['LATITUDE', 'LONGITUDE', 'TIME', 'JULD']
         for i_prof, dummy_argo_uid in enumerate(np.unique(ds['dummy_argo_uid'])):
             wmo, cyc = uid(dummy_argo_uid)
             new_ds['PLATFORM_NUMBER'].loc[dict(N_PROF=i_prof)] = wmo
             new_ds['CYCLE_NUMBER'].loc[dict(N_PROF=i_prof)] = cyc
             that = ds.where(ds['PLATFORM_NUMBER'] == wmo, drop=1).where(ds['CYCLE_NUMBER'] == cyc, drop=1)
             for vname in vlist:
-                new_ds[vname].loc[dict(N_PROF=i_prof)] = np.unique(that[vname].values)[0]
+                if vname in new_ds.data_vars:
+                    new_ds[vname].loc[dict(N_PROF=i_prof)] = np.unique(that[vname].values)[0]
 
         # Fill other variables with appropriate measurements:
         for i_prof in new_ds['N_PROF']:
@@ -292,7 +297,16 @@ class ArgoAccessor:
         if self._type != 'profile':
             raise InvalidDatasetStructure("Method only available for a collection of profiles (N_PROF dimemsion)")
         ds = self._obj
-        return None
+        ds, = xr.broadcast(ds)
+        ds = ds.stack(index=list(ds.dims))
+        ds = ds.reset_index('index').drop(['N_PROF', 'N_LEVELS'])
+        ds['index'] = np.arange(0, len(ds['index']))
+        possible_coords = ['LATITUDE', 'LONGITUDE', 'TIME', 'JULD']
+        for c in possible_coords:
+            if c in ds.data_vars:
+                ds = ds.set_coords(c)
+        ds = ds[np.sort(ds.data_vars)]
+        return ds
 
 class LocalLoader(object):
     """
