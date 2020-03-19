@@ -40,6 +40,8 @@ import warnings
 
 from argopy.xarray import ArgoMultiProfLocalLoader
 from argopy.errors import NetCDF4FileNotFoundError
+from argopy.utilities import list_multiprofile_file_variables, list_standard_variables
+
 
 class LocalFTPArgoDataFetcher(ABC):
     """ Manage access to Argo data from a local copy of GDAC ftp
@@ -107,7 +109,11 @@ class LocalFTPArgoDataFetcher(ABC):
         return ds
 
     def filter_variables(self, ds, mode='standard'):
-        return ds
+        if mode == 'standard':
+            to_remove = sorted(list(set(list(ds.data_vars)) - set(list_standard_variables())))
+            return ds.drop_vars(to_remove)
+        else:
+            return ds
 
 class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
     """ Manage access to local ftp Argo data for: a list of WMOs
@@ -166,6 +172,12 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
             raise NetCDF4FileNotFoundError(ncfile)
 
         ds = xr.open_dataset(ncfile, decode_cf=1, use_cftime=0)
+
+        # Replace JULD and JULD_QC by TIME and TIME_QC
+        ds = ds.rename({'JULD':'TIME', 'JULD_QC':'TIME_QC'})
+        ds['TIME'].attrs = {'long_name': 'Datetime (UTC) of the station',
+                            'standard_name':  'time'}
+        # Cast data types:
         ds = ds.argo.cast_types()
 
         # Remove variables without dimensions:
