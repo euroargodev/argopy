@@ -127,6 +127,7 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
             CYC = np.array(CYC, dtype='int') # Make sure we deal with an array of integers
         self.WMO = WMO
         self.CYC = CYC
+        self.argo_files = []
         return self
 
     def cname(self, cache=False):
@@ -152,7 +153,18 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
         return listname
 
     def _xload_multiprof(self, ncfile):
-        """Load an Argo multi-profile file as a collection of points"""
+        """Load an Argo multi-profile file as a collection of points
+
+        Parameters
+        ----------
+        ncfile: str
+            Absolute path to a netcdf file to load
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+
+        """
         ds = xr.open_dataset(ncfile, decode_cf=1, use_cftime=0, mask_and_scale=1)
 
         # Replace JULD and JULD_QC by TIME and TIME_QC
@@ -162,32 +174,18 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
         # Cast data types:
         ds = ds.argo.cast_types()
 
+        # Enforce real pressure resolution: 0.1 db
+        for vname in ds.data_vars:
+            if 'PRES' in vname and 'QC' not in vname:
+                ds[vname].values = np.round(ds[vname].values,1)
+
         # Remove variables without dimensions:
         # We should be able to find a way to keep them somewhere in the data structure
         for v in ds.data_vars:
             if len(list(ds[v].dims)) == 0:
                 ds = ds.drop_vars(v)
 
-        # Also remove variables with dimensions other than N_PROF or N_LEVELS
-        # This is not satisfactory for operators or experts, but that get us started
-        # for v in ds.data_vars:
-        #     keep = False
-        #     for d in ds[v].dims:
-        #         # if d in ['N_CALIB']:
-        #         #     ds = ds.drop_vars(v)
-        #         #     break
-        #         if d in ['N_PROF', 'N_LEVELS']:
-        #             keep = True
-        #             break
-        #     if not keep:
-        #         ds = ds.drop_vars(v)
-        #         # if d not in ['N_PROF', 'N_LEVELS']:
-        #         #     ds = ds.drop_vars(v)
-        #         #     break
-
-        # print("\n Before:\n", ds)
         ds = ds.argo.profile2point() # Default output is a collection of points
-        # print("\n After:\n", ds)
 
         # Remove netcdf file attributes and replace them with argopy ones:
         ds.attrs = {}
@@ -251,7 +249,7 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
             return l[0]
 
     def to_xarray(self, errors='raise'):
-        """ Load Argo data and return a xarray.DataSet
+        """ Load Argo data and return a xarray.Dataset
 
         Parameters
         ----------
@@ -261,10 +259,9 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
 
         Returns
         -------
-        :class:`xarray.DataArray`
+        :class:`xarray.Dataset`
         """
         # Build the list of files to load:
-        self.argo_files = []
         for wmo in self.WMO:
             if self.CYC is None:
                 self.argo_files.append(self.absfilepath(wmo))
@@ -273,10 +270,28 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
                     self.argo_files.append(self.absfilepath(wmo, cyc))
 
         if len(self.argo_files) == 1:
-            return self._xload_multiprof(self.argo_files[0])
+            ds = self._xload_multiprof(self.argo_files[0])
         else:
-            warnings.warn("CAN'T FETCH ANY DATA !")
-            return None
+            results = []
+            for f in self.argo_files:
+                results.append(self._xload_multiprof(f))
+            ds = xr.concat(results, dim='index', data_vars='all', compat='equals')
+            ds = ds.sortby('TIME')
+            ds['index'].values = np.arange(0, len(ds['index']))
+
+        # Remove netcdf file attributes and replace them with argopy ones:
+        ds.attrs = {}
+        if self.dataset_id == 'phy':
+            ds.attrs['DATA_ID'] = 'ARGO'
+        if self.dataset_id == 'bgc':
+            ds.attrs['DATA_ID'] = 'ARGO-BGC'
+        ds.attrs['DOI'] = 'http://doi.org/10.17882/42182'
+        ds.attrs['Fetched_from'] = self.local_ftp_path
+        ds.attrs['Fetched_by'] = getpass.getuser()
+        ds.attrs['Fetched_date'] = pd.to_datetime('now').strftime('%Y/%m/%d')
+        ds.attrs['Fetched_constraints'] = self.cname()
+        # ds.attrs['Fetched_url'] = ds.encoding['source']
+        return ds
 
 class ArgoDataFetcher_box(LocalFTPArgoDataFetcher):
     """ Manage access to local ftp Argo data for: a list of WMOs
