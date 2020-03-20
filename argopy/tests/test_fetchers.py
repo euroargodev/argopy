@@ -41,19 +41,22 @@ class EntryPoints(TestCase):
         #todo Determine the list of output format to test
         # what else beyond .to_xarray() ?
 
+        self.fetcher_opts = {}
+
         # Define API entry point options to tests:
         self.args = {}
-        self.args['float'] = [[1901393],
-                              [1901393, 6902746]]
-        self.args['profile'] = [[6902746, 34],
-                                [6902746, np.arange(12, 16)], [6902746, [1, 12]]]
+        self.args['float'] = [[5906072],
+                              [5906072, 5905275]]
+        self.args['profile'] = [[5905275, 34],
+                                [5905275, np.arange(12, 16)], [5906072, [1, 12]]]
         self.args['region'] = [[-70, -65, 30., 35., 0, 10.],
                                [-70, -65, 30., 35., 0, 10., '2012-01-01', '2012-06-30']]
 
-    def __test_float(self, bk):
+    def __test_float(self, bk, **ftc_opts):
         """ Test float for a given backend """
         for arg in self.args['float']:
-            ds = ArgoDataFetcher(backend=bk).float(arg).to_xarray()
+            options = {**self.fetcher_opts, **ftc_opts}
+            ds = ArgoDataFetcher(backend=bk, **options).float(arg).to_xarray()
             assert isinstance(ds, xr.Dataset) == True
 
     def __test_profile(self, bk):
@@ -82,7 +85,7 @@ class EntryPoints(TestCase):
     
     @unittest.skipUnless('localftp' in backends, "requires localftp data fetcher")
     def test_float_localftp(self):
-        self.__test_float('localftp')
+        self.__test_float('localftp', local_path='/Volumes/Data/ARGO')
         
     @unittest.skipUnless('argovis' in backends, "requires argovis data fetcher")
     def test_float_argovis(self):

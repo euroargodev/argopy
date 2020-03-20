@@ -9,11 +9,11 @@ class NetCDF4FileNotFoundError(FileNotFoundError):
     Most common error. Basically just a file not found.
     I made a custom one to make it easier to catch.
     """
-    def __init__(self, path, verbose=True):
-        if verbose:
-            print("Error: Couldn't find NetCDF4 file:")
-            print(path)
+    def __init__(self, path):
+        self.value = "Couldn't find NetCDF4 file: %s" % path
         self.path = path
+    def __str__(self):
+        return (repr(self.value))
 
 
 class UnrecognisedDataSelectionMode(ValueError):

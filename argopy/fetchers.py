@@ -92,15 +92,10 @@ class ArgoDataFetcher(object):
     """
     #todo use dynamic loading of all available data fetcher and there access points
 
-    def __init__(self, mode='standard', backend='erddap', ds='phy', **fetcher_kwargs):
+    def __init__(self, mode='standard', backend='erddap', ds=None, **fetcher_kwargs):
 
         if mode not in ['standard', 'expert']:
             raise ValueError("Mode must be 'standard' or 'expert'")
-
-        # Init sub-methods:
-        self.fetcher = None
-        self.fetcher_options = {**{'ds':ds}, **fetcher_kwargs}
-        self.postproccessor = self.__empty_processor
 
         # Facade options:
         self.mode = mode # User mode determining the level of post-processing required
@@ -112,20 +107,38 @@ class ArgoDataFetcher(object):
             raise ValueError("The %s data fetcher is not available" % backend)
 
         if backend == 'erddap' and backend in available_backends:
-            self.Fetcher_wmo = Erddap_Fetcher.ArgoDataFetcher_wmo
-            self.Fetcher_box = Erddap_Fetcher.ArgoDataFetcher_box
+            self.Fetchers = Erddap_Fetcher
 
         if backend == 'localftp' and backend in available_backends:
-            self.Fetcher_wmo = LocalFTP_Fetcher.ArgoDataFetcher_wmo
-            # self.Fetcher_box = Erddap_Fetcher.ArgoDataFetcher_box
+            self.Fetchers = LocalFTP_Fetcher
+
+        # Auto-discovery of access points for this fetcher:
+        self.access_points = []
+        for p in self.Fetchers.access_points:
+            if p == 'wmo':  # Required for 'profile' and 'float'
+                self.Fetcher_wmo = self.Fetchers.ArgoDataFetcher_wmo
+                self.access_points.append('profile')
+                self.access_points.append('float')
+            if p == 'box':  # Required for 'region'
+                self.Fetcher_box = self.Fetchers.ArgoDataFetcher_box
+                self.access_points.append('region')
+
+        # Init sub-methods:
+        self.fetcher = None
+        if ds is None:
+            ds = self.Fetchers.dataset_ids[0]
+        self.fetcher_options = {**{'ds':ds}, **fetcher_kwargs}
+        self.postproccessor = self.__empty_processor
 
     def __repr__(self):
         if self.fetcher:
             summary = [self.fetcher.__repr__()]
+            summary.append("Backend: %s" % self.backend)
             summary.append("User mode: %s" % self.mode)
         else:
             summary = ["<datafetcher 'Not initialised'>"]
-            summary.append("Fetchers: 'profile', 'float' or 'region'")
+            summary.append("Backend: %s" % self.backend)
+            summary.append("Fetchers: %s" % ", ".join(self.access_points))
             summary.append("User mode: %s" % self.mode)
         return "\n".join(summary)
 
