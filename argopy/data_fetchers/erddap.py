@@ -26,6 +26,7 @@ from argopy.utilities import urlopen
 
 from erddapy import ERDDAP
 from erddapy.utilities import parse_dates, quote_string_constraints
+from argopy.utilities import list_multiprofile_file_variables, list_standard_variables
 
 
 # import dummy
@@ -330,6 +331,9 @@ class ErddapArgoDataFetcher(ABC):
         return ds
 
     def filter_data_mode(self, ds, keep_error=True):
+        return ds.argo.filter_data_mode(keep_error=keep_error)
+
+    def filter_data_mode_deprec(self, ds, keep_error=True):
         """ Filter variables according to their data mode
 
             For data mode 'R' and 'A': keep <PARAM> (eg: 'PRES', 'TEMP' and 'PSAL')
@@ -640,16 +644,12 @@ class ErddapArgoDataFetcher(ABC):
         else:
             return this_mask
 
-    def filter_variables(self, this, mode):
-        """ Remove variables according to a user mode """
-        drop_list = ['DATA_MODE', 'DIRECTION']  # This depends on self._minimal_vlist()
-        this = this.drop_vars(drop_list, errors='ignore')
-        # Also drop all QC variables:
-        for v in this.data_vars:
-            if "QC" in v:
-                this = this.drop_vars(v, errors='ignore')
-        return this
-
+    def filter_variables(self, ds, mode='standard'):
+        if mode == 'standard':
+            to_remove = sorted(list(set(list(ds.data_vars)) - set(list_standard_variables())))
+            return ds.drop_vars(to_remove)
+        else:
+            return ds
 
 class ArgoDataFetcher_wmo(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: a list of WMOs

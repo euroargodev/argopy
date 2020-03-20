@@ -92,11 +92,11 @@ class LocalFTPArgoDataFetcher(ABC):
         summary.append( "Domain: %s" % self.cname(cache=0) )
         return '\n'.join(summary)
 
-    def filter_data_mode(self, ds, keep_error=True):
-        return ds
+    def filter_data_mode(self, ds, **kwargs):
+        return ds.argo.filter_data_mode(**kwargs)
 
-    def filter_qc(self, ds, QC_list=[1, 2], drop=True, mode='all', mask=False):
-        return ds
+    def filter_qc(self, ds, **kwargs):
+        return ds.argo.filter_qc(**kwargs)
 
     def filter_variables(self, ds, mode='standard'):
         if mode == 'standard':
@@ -276,8 +276,9 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
             for f in self.argo_files:
                 results.append(self._xload_multiprof(f))
             ds = xr.concat(results, dim='index', data_vars='all', compat='equals')
+            ds['index'] = np.arange(0, len(ds['index'])) # Re-index to avoid duplicate values
+            ds = ds.set_coords('index')
             ds = ds.sortby('TIME')
-            ds['index'].values = np.arange(0, len(ds['index']))
 
         # Remove netcdf file attributes and replace them with argopy ones:
         ds.attrs = {}

@@ -159,6 +159,8 @@ class ArgoAccessor:
 
             This applies to <PARAM> and <PARAM_QC>
         """
+        if self._type != 'point':
+            raise InvalidDatasetStructure("Method only available to a collection of points")
 
         #########
         # Sub-functions
@@ -281,6 +283,53 @@ class ArgoAccessor:
         final = final.argo.cast_types()
 
         return final
+
+    def filter_qc(self, QC_list=[1, 2], drop=True, mode='all', mask=False):
+        """ Filter data set according to QC values
+
+            Mask the dataset for points where 'all' or 'any' of the QC fields has a value in the list of
+            integer QC flags.
+
+            This method can return the filtered dataset or the filter mask.
+        """
+        if self._type != 'point':
+            raise InvalidDatasetStructure("Method only available to a collection of points")
+
+        if mode not in ['all', 'any']:
+            raise ValueError("Mode must 'all' or 'any'")
+
+        this = self._obj
+
+        # Extract QC fields:
+        QC_fields = []
+        for v in this.data_vars:
+            if "QC" in v and "PROFILE" not in v:
+                QC_fields.append(v)
+        QC_fields = this[QC_fields]
+        for v in QC_fields.data_vars:
+            QC_fields[v] = QC_fields[v].astype(int)
+
+        # Now apply filter
+        this_mask = xr.DataArray(np.zeros_like(QC_fields['index']), dims=['index'],
+                                 coords={'index': QC_fields['index']})
+        for v in QC_fields.data_vars:
+            for qc in QC_list:
+                this_mask += QC_fields[v] == qc
+        if mode == 'all':
+            this_mask = this_mask == len(QC_fields)  # all
+        else:
+            this_mask = this_mask >= 1  # any
+
+        if not mask:
+            this = this.where(this_mask, drop=drop)
+            for v in this.data_vars:
+                if "QC" in v and "PROFILE" not in v:
+                    this[v] = this[v].astype(int)
+            this.argo._add_history('Variables selected according to QC')
+            this = this.argo.cast_types()
+            return this
+        else:
+            return this_mask
 
     def uid(self, wmo_or_uid, cyc=None, direction=None):
         """ UID encoder/decoder
@@ -443,8 +492,7 @@ class ArgoAccessor:
                 if len(ds[d]) == 0:
                     dim_list.append(d)
                     break
-        dim_list = np.unique(dim_list)
-        ds = ds.drop_dims(dim_list)  # Drop dimensions and associated variables from this dataset
+        ds = ds.drop_dims(np.unique(dim_list))  # Drop dimensions and associated variables from this dataset
 
         # Remove any variable that is not with dimensions (N_PROF,) or (N_PROF, N_LEVELS)
         for v in ds:
@@ -456,12 +504,12 @@ class ArgoAccessor:
         ds, = xr.broadcast(ds)
         ds = ds.stack({'index':list(ds.dims)})
         ds = ds.reset_index('index').drop(['N_PROF', 'N_LEVELS'])
-        ds['index'] = np.arange(0, len(ds['index']))
-        possible_coords = ['LATITUDE', 'LONGITUDE', 'TIME', 'JULD']
+        possible_coords = ['LATITUDE', 'LONGITUDE', 'TIME', 'JULD', 'index']
         for c in [c for c in possible_coords if c in ds.data_vars]:
             ds = ds.set_coords(c)
 
         ds = ds.where(~np.isnan(ds['PRES']), drop=1) # Remove index without data (useless points)
+        ds['index'] = np.arange(0, len(ds['index']))
         ds = ds.sortby('TIME')
         ds = ds.argo.cast_types()
         ds = ds[np.sort(ds.data_vars)]
