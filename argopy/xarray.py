@@ -21,11 +21,10 @@ class ArgoAccessor:
 
         # Convert a collection of points into a collection of profiles
         ds.argo.point2profile()
-
-        #todo
-
         # Convert a collection of profiles to a collection of points
         ds.argo.profile2point()
+
+        #todo Implement new features in ArgoAccessor:
 
         # Make sure that the dataset complies with Argo vocabulary
         # Should be done at init with a private function ???
@@ -33,12 +32,13 @@ class ArgoAccessor:
         ds.argo.check()
 
 
-
      """
     def __init__(self, xarray_obj):
         self._obj = xarray_obj
         self._added = list() # Will record all new variables added by argo
         self._dims = list(xarray_obj.dims.keys()) # Store the initial list of dimensions
+        self.encoding = xarray_obj.encoding
+        self.attrs = xarray_obj.attrs
 
         if 'N_PROF' in self._dims:
             self._type = 'profile'
@@ -62,7 +62,6 @@ class ArgoAccessor:
         ds = self._obj
 
         def cast_this(da, type):
-            #         print("\n")
             try:
                 da.values = da.values.astype(type)
                 da.attrs['casted'] = True
@@ -147,6 +146,7 @@ class ArgoAccessor:
 
             if ds[v].dtype != 'O':
                 ds[v].attrs['casted'] = True
+
         return ds
 
     def cast_types_deprec(self):
@@ -330,7 +330,21 @@ class ArgoAccessor:
 
         return final
 
-    def point2profile(self):
+
+    def uid(self, wmo_or_uid, *cyc):
+        """ UID encoder/decoder
+
+            unique_float_profile_id = uid(690024,34) # Encode
+            wmo, cyc = uid(unique_float_profile_id) # Decode
+        """
+        offset = 1e5
+        if cyc:
+            return np.vectorize(int)(offset * wmo_or_uid + cyc).ravel()
+        else:
+            return np.vectorize(int)(wmo_or_uid / offset), \
+                   -np.vectorize(int)(offset * np.vectorize(int)(wmo_or_uid / offset) - wmo_or_uid)
+
+    def point2profile_deprec(self):
         """ Transform a collection of points into a collection of profiles
 
         """
@@ -351,23 +365,14 @@ class ArgoAccessor:
                 fillvalue = np.nan
             return fillvalue
 
-        def uid(wmo_or_uid, *cyc):
-            """ UID encoder/decoder
-
-                unique_float_profile_id = uid(690024,34) # Encode
-                wmo, cyc = uid(unique_float_profile_id) # Decode
-            """
-            if cyc:
-                return np.vectorize(int)(1e4 * wmo_or_uid + cyc).ravel()
-            else:
-                return np.vectorize(int)(wmo_or_uid / 1e4), -np.vectorize(int)(
-                    1e4 * np.vectorize(int)(wmo_or_uid / 1e4) - wmo_or_uid)
 
         # Find the maximum nb of points for a single profile:
-        ds['dummy_argo_counter'] = xr.DataArray(np.ones_like(ds['index'].values), dims='index',
+        ds['dummy_argo_counter'] = xr.DataArray(np.ones_like(ds['index'].values),
+                                                dims='index',
                                                 coords={'index': ds['index']})
-        ds['dummy_argo_uid'] = xr.DataArray(uid(ds['PLATFORM_NUMBER'].values, ds['CYCLE_NUMBER'].values),
-                                            dims='index', coords={'index': ds['index']})
+        ds['dummy_argo_uid'] = xr.DataArray(self.uid(ds['PLATFORM_NUMBER'].values, ds['CYCLE_NUMBER'].values),
+                                            dims='index',
+                                            coords={'index': ds['index']})
         that = ds.groupby('dummy_argo_uid').sum()['dummy_argo_counter']
         N_LEVELS = int(that.max().values)
         N_PROF = len(np.unique(ds['dummy_argo_uid']))
@@ -400,16 +405,18 @@ class ArgoAccessor:
         vlist = ['PLATFORM_NUMBER', 'CYCLE_NUMBER']
         for vname in vlist:
             new_ds[vname] = new_ds[vname].isel(N_LEVELS=0).drop('N_LEVELS')
+
         # Fill in other coordinates
         vlist = ['LATITUDE', 'LONGITUDE', 'TIME', 'JULD']
         for i_prof, dummy_argo_uid in enumerate(np.unique(ds['dummy_argo_uid'])):
-            wmo, cyc = uid(dummy_argo_uid)
+            wmo, cyc = self.uid(dummy_argo_uid)
             new_ds['PLATFORM_NUMBER'].loc[dict(N_PROF=i_prof)] = wmo
             new_ds['CYCLE_NUMBER'].loc[dict(N_PROF=i_prof)] = cyc
             that = ds.where(ds['PLATFORM_NUMBER'] == wmo, drop=1).where(ds['CYCLE_NUMBER'] == cyc, drop=1)
             for vname in vlist:
                 if vname in new_ds.data_vars:
-                    new_ds[vname].loc[dict(N_PROF=i_prof)] = np.unique(that[vname].values)[0]
+                    vvalues = np.unique(that[vname].values)
+                    new_ds[vname].loc[dict(N_PROF=i_prof)] = vvalues[0]
 
         # Fill other variables with appropriate measurements:
         for i_prof in new_ds['N_PROF']:
@@ -429,20 +436,132 @@ class ArgoAccessor:
         self._type = 'profile'
         return new_ds
 
+    def point2profile(self):
+        """ Transform a collection of points into a collection of profiles
+
+        """
+        if self._type != 'point':
+            raise InvalidDatasetStructure("Method only available to a collection of points")
+        this = self._obj # Should not be modified
+
+        def fillvalue(da):
+            """ Return fillvalue for a dataarray """
+            # https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.kind.html#numpy.dtype.kind
+            if da.dtype.kind in ['U']:
+                fillvalue = ' '
+            elif da.dtype.kind == 'i':
+                fillvalue = 99999
+            elif da.dtype.kind == 'M':
+                fillvalue = np.datetime64("NaT")
+            else:
+                fillvalue = np.nan
+            return fillvalue
+
+        # Find the number of profiles (N_PROF) and vertical levels (N_LEVELS):
+        dummy_argo_uid = xr.DataArray(self.uid(this['PLATFORM_NUMBER'].values, this['CYCLE_NUMBER'].values),
+                                      dims='index',
+                                      coords={'index': this['index']},
+                                      name='dummy_argo_uid')
+        N_PROF = len(np.unique(dummy_argo_uid))
+        that = this.groupby(dummy_argo_uid)
+
+        N_LEVELS = int(xr.DataArray(np.ones_like(this['index'].values),
+                                    dims='index',
+                                    coords={'index': this['index']})
+                       .groupby(dummy_argo_uid).sum().max().values)
+        assert N_PROF * N_LEVELS >= len(this['index'])
+
+        # Store the initial set of coordinates:
+        coords_list = list(this.coords)
+        this = this.reset_coords()
+
+        # For each variables, determine if it has unique value by profile,
+        # if yes: the transformed variable should be [N_PROF]
+        # if no: the transformed variable should be [N_PROF, N_LEVELS]
+        count = np.zeros((N_PROF, len(this.data_vars)), 'int')
+        for i_prof, grp in enumerate(this.groupby(dummy_argo_uid)):
+            i_uid, prof = grp
+            for iv, vname in enumerate(this.data_vars):
+                count[i_prof, iv] = len(np.unique(prof[vname]))
+        # Variables with a unique value for each profiles:
+        list_1d = list(np.array(this.data_vars)[count.sum(axis=0) == count.shape[0]])
+        # Variables with more than 1 value for each profiles:
+        list_2d = list(np.array(this.data_vars)[count.sum(axis=0) != count.shape[0]])
+
+        # Create new empty dataset:
+        new_ds = []
+        for vname in list_2d:
+            new_ds.append(xr.DataArray(np.full((N_PROF, N_LEVELS), fillvalue(this[vname]), dtype=this[vname].dtype),
+                                       dims=['N_PROF', 'N_LEVELS'],
+                                       coords={'N_PROF': np.arange(N_PROF),
+                                               'N_LEVELS': np.arange(N_LEVELS)},
+                                       name=vname))
+        for vname in list_1d:
+            new_ds.append(xr.DataArray(np.full((N_PROF,), fillvalue(this[vname]), dtype=this[vname].dtype),
+                                       dims=['N_PROF'],
+                                       coords={'N_PROF': np.arange(N_PROF)},
+                                       name=vname))
+        new_ds = xr.merge(new_ds)
+
+        # Now fill in each profile values:
+        for i_prof, grp in enumerate(this.groupby(dummy_argo_uid)):
+            i_uid, prof = grp
+            for iv, vname in enumerate(this.data_vars):
+                if len(new_ds[vname].dims) == 2:  # ['N_PROF', 'N_LEVELS'] array:
+                    y = new_ds[vname].values
+                    x = prof[vname].values
+                    try:
+                        y[i_prof, 0:len(x)] = x
+                    except:
+                        print(vname, 'input', x.shape, 'output', y[i_prof, :].shape)
+                        raise
+                    new_ds[vname].values = y
+                else:  # ['N_PROF', ] array:
+                    y = new_ds[vname].values
+                    x = prof[vname].values
+                    y[i_prof] = np.unique(x)[0]
+
+        # Restore coordinate variables:
+        new_ds = new_ds.set_coords([c for c in coords_list if c in new_ds])
+        # self._obj = this.drop_vars(['dummy_argo_counter'])
+        # new_ds = new_ds.drop_vars(['dummy_argo_counter'])
+        new_ds = new_ds[np.sort(new_ds.data_vars)]
+        new_ds.attrs = this.attrs
+        # new_ds.attrs['sparsiness'] = np.round(len(this['index']) * 100 / (N_PROF * N_LEVELS), 2)
+        new_ds.argo._add_history('Transformed with point2profile')
+        new_ds.argo._type = 'profile'
+        return new_ds
+
     def profile2point(self):
         """ Convert a collection of profiles to a collection of points """
         if self._type != 'profile':
             raise InvalidDatasetStructure("Method only available for a collection of profiles (N_PROF dimemsion)")
         ds = self._obj
+
+        # Remove all variables for which a dimension is length=0 (eg: N_HISTORY)
+        dim_list = []
+        for v in ds.data_vars:
+            dims = ds[v].dims
+            for d in dims:
+                if len(ds[d]) == 0:
+                    dim_list.append(d)
+                    break
+        dim_list = np.unique(dim_list)
+        ds = ds.drop_dims(dim_list)  # Drop dimensions and associated variables from this dataset
+
         ds, = xr.broadcast(ds)
-        ds = ds.stack(index=list(ds.dims))
+        ds = ds.stack({'index':list(ds.dims)})
         ds = ds.reset_index('index').drop(['N_PROF', 'N_LEVELS'])
         ds['index'] = np.arange(0, len(ds['index']))
         possible_coords = ['LATITUDE', 'LONGITUDE', 'TIME', 'JULD']
-        for c in possible_coords:
-            if c in ds.data_vars:
-                ds = ds.set_coords(c)
+        for c in [c for c in possible_coords if c in ds.data_vars]:
+            ds = ds.set_coords(c)
+        #todo Remove index without data (useless points)
         ds = ds[np.sort(ds.data_vars)]
+        ds.encoding = self.encoding # Preserve low-level encoding information
+        ds.attrs = self.attrs # Preserve original attributes
+        ds.argo._add_history('Transformed with profile2point')
+        ds.argo._type = 'point'
         return ds
 
 class LocalLoader(object):

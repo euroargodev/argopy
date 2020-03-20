@@ -153,7 +153,7 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
 
     def _xload_multiprof(self, ncfile):
         """Load an Argo multi-profile file as a collection of points"""
-        ds = xr.open_dataset(ncfile, decode_cf=1, use_cftime=0)
+        ds = xr.open_dataset(ncfile, decode_cf=1, use_cftime=0, mask_and_scale=1)
 
         # Replace JULD and JULD_QC by TIME and TIME_QC
         ds = ds.rename({'JULD':'TIME', 'JULD_QC':'TIME_QC'})
@@ -185,7 +185,9 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
         #         #     ds = ds.drop_vars(v)
         #         #     break
 
-        # ds = ds.argo.profile2point() # Default output is a collection of points
+        # print("\n Before:\n", ds)
+        ds = ds.argo.profile2point() # Default output is a collection of points
+        # print("\n After:\n", ds)
 
         # Remove netcdf file attributes and replace them with argopy ones:
         ds.attrs = {}
@@ -198,6 +200,7 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
         ds.attrs['Fetched_by'] = getpass.getuser()
         ds.attrs['Fetched_date'] = pd.to_datetime('now').strftime('%Y/%m/%d')
         ds.attrs['Fetched_constraints'] = self.cname()
+        ds.attrs['Fetched_url'] = ds.encoding['source']
         ds = ds[np.sort(ds.data_vars)]
 
         return ds

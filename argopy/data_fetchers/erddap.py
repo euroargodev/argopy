@@ -104,53 +104,6 @@ class ErddapArgoDataFetcher(ABC):
             this.attrs['history'] = txt
         return this
 
-    def _cast_types_deprec(self, this):
-        """ Make sure variables are of the appropriate types
-
-            This is hard coded, but should be retrieved from an API somewhere
-            #todo move this to the xarray argo accessor
-        """
-
-        def cast_this(da, type):
-            try:
-                da.values = da.values.astype(type)
-            except ValueError:
-                print("Fail to cast: ", da.dtype, "into:", type)
-                print("Possible values:", np.unique(da))
-            return da
-
-        for v in this.data_vars:
-            if "QC" in v:
-                if this[v].dtype == 'O':  # convert object to string
-                    this[v] = cast_this(this[v], str)
-
-                # Address weird string values:
-
-                if this[v].dtype == '<U3':  # string, len 3 because of a 'nan' somewhere
-                    ii = this[v] == '   '  # This should not happen, but still ! That's real world data
-                    this[v].loc[dict(index=ii)] = '0'
-
-                    ii = this[v] == 'nan'  # This should not happen, but still ! That's real world data
-                    this[v].loc[dict(index=ii)] = '0'
-
-                    this[v] = cast_this(this[v], np.dtype('U1'))  # Get back to regular U1 string
-
-                if this[v].dtype == '<U1':  # string
-                    ii = this[v] == ' '  # This should not happen, but still ! That's real world data
-                    this[v].loc[dict(index=ii)] = '0'
-
-                # finally convert strings to integers:
-                this[v] = cast_this(this[v], int)
-
-            if v == 'PLATFORM_NUMBER' and this['PLATFORM_NUMBER'].dtype == 'float64':  # Object
-                this['PLATFORM_NUMBER'] = cast_this(this['PLATFORM_NUMBER'], int)
-
-            if v == 'DATA_MODE' and this['DATA_MODE'].dtype == 'O':  # Object
-                this['DATA_MODE'] = cast_this(this['DATA_MODE'], str)
-            if v == 'DIRECTION' and this['DIRECTION'].dtype == 'O':  # Object
-                this['DIRECTION'] = cast_this(this['DIRECTION'], str)
-        return this
-
     def _add_attributes(self, this):
         """ Add variables attributes not return by erddap requests (csv)
 
@@ -364,8 +317,8 @@ class ErddapArgoDataFetcher(ABC):
         ds.attrs['Fetched_from'] = self.erddap.server
         ds.attrs['Fetched_by'] = getpass.getuser()
         ds.attrs['Fetched_date'] = pd.to_datetime('now').strftime('%Y/%m/%d')
-        ds.attrs['Fetched_url'] = self.url
         ds.attrs['Fetched_constraints'] = self.cname()
+        ds.attrs['Fetched_url'] = self.url
         ds = ds[np.sort(ds.data_vars)]
 
         # Possibly save in cache for later re-use
