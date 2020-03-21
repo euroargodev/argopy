@@ -601,7 +601,7 @@ class ErddapArgoDataFetcher(ABC):
 
         return final
 
-    def filter_qc(self, this, QC_list=[1, 2], drop=True, mode='all', mask=False):
+    def filter_qc_deprec(self, this, QC_list=[1, 2], drop=True, mode='all', mask=False):
         """ Filter data set according to QC values
 
             Mask the dataset for points where 'all' or 'any' of the QC fields has a value in the list of
@@ -643,6 +643,9 @@ class ErddapArgoDataFetcher(ABC):
             return this
         else:
             return this_mask
+
+    def filter_qc(self, ds, **kwargs):
+        return ds.argo.filter_qc(**kwargs)
 
     def filter_variables(self, ds, mode='standard'):
         if mode == 'standard':

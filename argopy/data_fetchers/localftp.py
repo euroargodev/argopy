@@ -39,6 +39,9 @@ from abc import ABC, abstractmethod
 import warnings
 import getpass
 
+import multiprocessing as mp
+import distributed
+
 from argopy.xarray import ArgoMultiProfLocalLoader
 from argopy.errors import NetCDF4FileNotFoundError
 from argopy.utilities import list_multiprofile_file_variables, list_standard_variables
@@ -165,7 +168,7 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
         :class:`xarray.Dataset`
 
         """
-        ds = xr.open_dataset(ncfile, decode_cf=1, use_cftime=0, mask_and_scale=1)
+        ds = xr.open_dataset(ncfile, decode_cf=1, use_cftime=0, mask_and_scale=1, engine='netcdf4')
 
         # Replace JULD and JULD_QC by TIME and TIME_QC
         ds = ds.rename({'JULD':'TIME', 'JULD_QC':'TIME_QC'})
@@ -208,7 +211,10 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
         if cyc is None:
             # Multi-profile file:
             # <FloatWmoID>_prof.nc
-            return os.path.sep.join([self.local_ftp_path, "*", str(wmo), "%i_prof.nc" % wmo])
+            if self.dataset_id == 'phy':
+                return os.path.sep.join([self.local_ftp_path, "*", str(wmo), "%i_prof.nc" % wmo])
+            elif self.dataset_id == 'bgc':
+                return os.path.sep.join([self.local_ftp_path, "*", str(wmo), "%i_Sprof.nc" % wmo])
         else:
             # Single profile file:
             # <R/D><FloatWmoID>_<XXX><D>.nc
@@ -248,7 +254,7 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
             warnings.warn("More than one file to load for a single float cycle ! Return the 1st one by default.")
             return l[0]
 
-    def to_xarray(self, errors='raise'):
+    def to_xarray(self, errors='raise', client=None):
         """ Load Argo data and return a xarray.Dataset
 
         Parameters
@@ -264,21 +270,37 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
         # Build the list of files to load:
         for wmo in self.WMO:
             if self.CYC is None:
-                self.argo_files.append(self.absfilepath(wmo))
+                self.argo_files.append(self.absfilepath(wmo, errors=errors))
             else:
                 for cyc in self.CYC:
-                    self.argo_files.append(self.absfilepath(wmo, cyc))
+                    self.argo_files.append(self.absfilepath(wmo, cyc, errors=errors))
 
         if len(self.argo_files) == 1:
             ds = self._xload_multiprof(self.argo_files[0])
         else:
-            results = []
-            for f in self.argo_files:
-                results.append(self._xload_multiprof(f))
-            ds = xr.concat(results, dim='index', data_vars='all', compat='equals')
-            ds['index'] = np.arange(0, len(ds['index'])) # Re-index to avoid duplicate values
-            ds = ds.set_coords('index')
-            ds = ds.sortby('TIME')
+            if client is not None:
+                if type(client) == distributed.client.Client:
+                    # Use dask client:
+                    futures = client.map(self._xload_multiprof, self.argo_files)
+                    results = client.gather(futures)
+                    results = [r for r in results if r is not None]  # Only keep none empty results
+                else:
+                    # Using multiprocessing
+                    pool = mp.Pool()
+                    results = pool.map(self._xload_multiprof, self.argo_files)
+                    results = [r for r in results if r is not None]  # Only keep none empty results
+
+            else:
+                results = []
+                for f in self.argo_files:
+                    results.append(self._xload_multiprof(f))
+            if len(results) > 0:
+                ds = xr.concat(results, dim='index', data_vars='all', compat='equals')
+                ds['index'] = np.arange(0, len(ds['index'])) # Re-index to avoid duplicate values
+                ds = ds.set_coords('index')
+                ds = ds.sortby('TIME')
+            else:
+                raise ValueError("CAN'T FETCH ANY DATA !")
 
         # Remove netcdf file attributes and replace them with argopy ones:
         ds.attrs = {}

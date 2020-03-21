@@ -235,9 +235,14 @@ class ArgoAccessor:
         # filter
         #########
         ds = self._obj
+        if 'DATA_MODE' not in ds:
+            raise InvalidDatasetStructure("Method only available for dataset with 'DATA_MODE' variable ")
 
         # Define variables to filter:
-        possible_list = ['PRES', 'TEMP', 'PSAL', 'DOXY']
+        possible_list = ['PRES', 'TEMP', 'PSAL',
+                         'DOXY', 'CHLA',
+                         'BBP532', 'BBP700',
+                         'DOWNWELLING_PAR', 'DOWN_IRRADIANCE380', 'DOWN_IRRADIANCE412', 'DOWN_IRRADIANCE490']
         plist = [p for p in possible_list if p in ds.data_vars]
 
         # Create one dataset for each of the data_mode:
@@ -257,17 +262,10 @@ class ArgoAccessor:
                 argo_d = argo_d.drop_vars(vname)
 
         # Create new arrays with the appropriate variables:
-        PRES = new_arrays(argo_r, argo_a, argo_d, 'PRES')
-        TEMP = new_arrays(argo_r, argo_a, argo_d, 'TEMP')
-        PSAL = new_arrays(argo_r, argo_a, argo_d, 'PSAL')
-        if 'doxy' in plist:
-            DOXY = new_arrays(argo_r, argo_a, argo_d, 'DOXY')
+        vlist = [new_arrays(argo_r, argo_a, argo_d, v) for v in plist]
 
         # Create final dataset by merging all available variables
-        if 'doxy' in plist:
-            final = xr.merge((TEMP, PSAL, PRES, DOXY))
-        else:
-            final = xr.merge((TEMP, PSAL, PRES))
+        final = xr.merge(vlist)
 
         # Merge with all other variables:
         other_variables = list(set([v for v in list(ds.data_vars) if 'ADJUSTED' not in v]) - set(list(final.data_vars)))
