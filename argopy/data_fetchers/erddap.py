@@ -23,13 +23,12 @@ from pathlib import Path
 import getpass
 
 from argopy.utilities import urlopen
+from argopy.options import OPTIONS
 
 from erddapy import ERDDAP
 from erddapy.utilities import parse_dates, quote_string_constraints
 from argopy.utilities import list_multiprofile_file_variables, list_standard_variables
 
-
-# import dummy
 
 class ErddapArgoDataFetcher(ABC):
     """ Manage access to Argo data through Ifremer ERDDAP
@@ -59,16 +58,20 @@ class ErddapArgoDataFetcher(ABC):
     ###
     # Methods that must not change
     ###
-    def __init__(self, ds='phy', cache=False, cachedir=None, **kwargs):
+    def __init__(self,
+                 ds=OPTIONS['dataset'],
+                 cache=False,
+                 cachedir=OPTIONS['cachedir'],
+                 **kwargs):
         """ Instantiate an ERDDAP Argo data loader
 
             Parameters
             ----------
-            db: 'phy' or 'ref' or 'bgc'
+            ds: 'phy' or 'ref' or 'bgc'
             cache : False
             cachedir : None
         """
-        self.cache = cache or not not cachedir  # Yes, this is not not
+        self.cache = cache
         self.cachedir = cachedir
         if self.cache:
             # todo check if cachedir is a valid path
@@ -267,7 +270,7 @@ class ErddapArgoDataFetcher(ABC):
 
     @property
     def cachepath(self):
-        """ Return path to cache file for this request """
+        """ Return a specific file path for this request """
         src = self.cachedir
         file = ("ERargo_%s.nc") % (self.cname(cache=True))
         fcache = os.path.join(src, file)
@@ -693,6 +696,7 @@ class ErddapArgoDataFetcher(ABC):
             return ds.drop_vars(to_remove)
         else:
             return ds
+
 
 class ArgoDataFetcher_wmo(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: a list of WMOs

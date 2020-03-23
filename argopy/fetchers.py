@@ -48,6 +48,8 @@ import xarray as xr
 import numpy as np
 import warnings
 
+from argopy.options import OPTIONS
+
 # Import data fetchers:
 available_backends = list()
 try:
@@ -65,8 +67,6 @@ except:
     e = sys.exc_info()[0]
     warnings.warn("An error occured while loading the local FTP data fetcher, it will not be available !\n%s" % e)
     pass
-
-
 
 
 def backends_check(Cls):
@@ -90,9 +90,13 @@ class ArgoDataFetcher(object):
         Specify here all options to data_fetchers
 
     """
-    #todo use dynamic loading of all available data fetcher and there access points
+    #todo use dynamic loading of all available data fetcher and their access points
 
-    def __init__(self, mode='standard', backend='erddap', ds=None, **fetcher_kwargs):
+    def __init__(self,
+                 mode='standard',
+                 backend=OPTIONS['data_src'],
+                 ds=OPTIONS['dataset'],
+                 **fetcher_kwargs):
 
         if mode not in ['standard', 'expert']:
             raise ValueError("Mode must be 'standard' or 'expert'")

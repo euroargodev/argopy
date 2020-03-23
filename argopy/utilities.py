@@ -5,10 +5,12 @@
 #
 # Created by gmaze on 12/03/2020
 
-
+import os
+import sys
 import requests
 import io
 from IPython.core.display import display, HTML
+# import errno
 
 def urlopen(url):
     """ Load content from url or raise alarm on status with explicit information on the error
@@ -119,3 +121,4 @@ def list_multiprofile_file_variables():
      'TEMP_QC',
      'VERTICAL_SAMPLING_SCHEME',
      'WMO_INST_TYPE']
+

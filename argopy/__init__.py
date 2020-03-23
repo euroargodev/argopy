@@ -12,3 +12,18 @@ from .xarray import ArgoAccessor
 
 # Other Import
 from . import utilities
+from .options import set_options
+
+#
+__all__ = (
+    # Classes:
+    "DataFetcher",
+    "ArgoAccessor",
+    # Top-level functions:
+    "set_options",
+    # Sub-packages,
+    "utilities",
+    "errors",
+    # Constants
+    "__version__"
+)

@@ -45,6 +45,7 @@ import distributed
 from argopy.xarray import ArgoMultiProfLocalLoader
 from argopy.errors import NetCDF4FileNotFoundError
 from argopy.utilities import list_multiprofile_file_variables, list_standard_variables
+from argopy.options import OPTIONS
 
 class LocalFTPArgoDataFetcher(ABC):
     """ Manage access to Argo data from a local copy of GDAC ftp
@@ -71,7 +72,12 @@ class LocalFTPArgoDataFetcher(ABC):
     ###
     # Methods that must not change
     ###
-    def __init__(self, local_path='.', ds='phy', cache=False, cachedir=None, **kwargs):
+    def __init__(self,
+                 local_path=OPTIONS['local_ftp'],
+                 ds=OPTIONS['dataset'],
+                 cache=False,
+                 cachedir=None,
+                 **kwargs):
         """ Init fetcher
 
             Parameters
