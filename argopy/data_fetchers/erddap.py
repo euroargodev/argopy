@@ -322,6 +322,11 @@ class ErddapArgoDataFetcher(ABC):
         # return _check_url_response(url, **self.requests_kwargs)
         return url
 
+    @property
+    def dtype(self):
+        """ Return a dictionnary of data types for each variable requested to erddap """
+        return dict()
+
     def to_xarray(self):
         """ Load Argo data and return a xarray.DataSet """
 
@@ -333,7 +338,7 @@ class ErddapArgoDataFetcher(ABC):
         # No cache found or requested, so we compute:
 
         # Download data: get a csv, open it as pandas dataframe, convert it to xarray dataset
-        df = pd.read_csv(urlopen(self.url), parse_dates=True, skiprows=[1])
+        df = pd.read_csv(urlopen(self.url), parse_dates=True, skiprows=[1], dtype=self.dtype)
         ds = xr.Dataset.from_dataframe(df)
         df['time'] = pd.to_datetime(df['time'])
         ds['time'].values = ds['time'].astype(np.datetime64)
