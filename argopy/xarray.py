@@ -501,7 +501,7 @@ class ArgoAccessor:
 
         ds, = xr.broadcast(ds)
         ds = ds.stack({'index':list(ds.dims)})
-        ds = ds.reset_index('index').drop(['N_PROF', 'N_LEVELS'])
+        ds = ds.reset_index('index').drop_vars(['N_PROF', 'N_LEVELS'])
         possible_coords = ['LATITUDE', 'LONGITUDE', 'TIME', 'JULD', 'index']
         for c in [c for c in possible_coords if c in ds.data_vars]:
             ds = ds.set_coords(c)

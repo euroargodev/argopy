@@ -85,7 +85,7 @@ class EntryPoints(TestCase):
     
     @unittest.skipUnless('localftp' in backends, "requires localftp data fetcher")
     def test_float_localftp(self):
-        self.__test_float('localftp', local_path='/Volumes/Data/ARGO')
+        self.__test_float('localftp', local_path='/Volumes/Data/ARGO') #todo need to find something else for setting the local path !
         
     @unittest.skipUnless('argovis' in backends, "requires argovis data fetcher")
     def test_float_argovis(self):
