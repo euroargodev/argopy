@@ -180,3 +180,5 @@ class ArgoDataFetcher(object):
         xds = self.postproccessor(xds)
         return xds
 
+class ArgoIndexFetcher(object):
+    #TO BE DISCUSSED
