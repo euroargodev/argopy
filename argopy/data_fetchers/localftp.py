@@ -155,6 +155,54 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
         listname = self.dataset_id + "_" + listname
         return listname
 
+    def filepathpattern(self, wmo, cyc=None):
+        """ Return netcdf file path pattern to load """
+        if cyc is None:
+            # Multi-profile file:
+            # <FloatWmoID>_prof.nc
+            if self.dataset_id == 'phy':
+                return os.path.sep.join([self.local_ftp_path, "*", str(wmo), "%i_prof.nc" % wmo])
+            elif self.dataset_id == 'bgc':
+                return os.path.sep.join([self.local_ftp_path, "*", str(wmo), "%i_Sprof.nc" % wmo])
+        else:
+            # Single profile file:
+            # <R/D><FloatWmoID>_<XXX><D>.nc
+            if cyc < 1000:
+                return os.path.sep.join([self.local_ftp_path, "*", str(wmo), "profiles", "*%i_%0.3d*.nc" % (wmo, cyc)])
+            else:
+                return os.path.sep.join([self.local_ftp_path, "*", str(wmo), "profiles", "*%i_%0.4d*.nc" % (wmo, cyc)])
+
+    def absfilepath(self, wmo: int, cyc: int = None, errors: str = 'raise') -> str:
+        """ Return absolute netcdf file path to load
+
+        Parameters
+        ----------
+        wmo: int
+            WMO float code
+        cyc: int, optional
+            Cycle number (None by default)
+        errors: {'raise','ignore'}, optional
+            If 'raise' (default), raises a NetCDF4FileNotFoundError error if the requested
+            file cannot be found. If 'ignore', return None silently.
+
+        Returns
+        -------
+        netcdf_file_path : str
+        """
+        p = self.filepathpattern(wmo, cyc)
+        l = sorted(glob(p))
+        if len(l) == 1:
+            return l[0]
+        elif len(l) == 0:
+            if errors == 'raise':
+                raise NetCDF4FileNotFoundError(p)
+            else:
+                # Otherwise remain silent/ignore
+                return None
+        else:
+            warnings.warn("More than one file to load for a single float cycle ! Return the 1st one by default.")
+            return l[0]
+
     def _xload_multiprof(self, ncfile):
         """Load an Argo multi-profile file as a collection of points
 
@@ -206,54 +254,6 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
 
         return ds
 
-    def filepathpattern(self, wmo, cyc=None):
-        """ Return netcdf file path pattern to load """
-        if cyc is None:
-            # Multi-profile file:
-            # <FloatWmoID>_prof.nc
-            if self.dataset_id == 'phy':
-                return os.path.sep.join([self.local_ftp_path, "*", str(wmo), "%i_prof.nc" % wmo])
-            elif self.dataset_id == 'bgc':
-                return os.path.sep.join([self.local_ftp_path, "*", str(wmo), "%i_Sprof.nc" % wmo])
-        else:
-            # Single profile file:
-            # <R/D><FloatWmoID>_<XXX><D>.nc
-            if cyc < 1000:
-                return os.path.sep.join([self.local_ftp_path, "*", str(wmo), "profiles", "*%i_%0.3d*.nc" % (wmo, cyc)])
-            else:
-                return os.path.sep.join([self.local_ftp_path, "*", str(wmo), "profiles", "*%i_%0.4d*.nc" % (wmo, cyc)])
-
-    def absfilepath(self, wmo: int, cyc: int = None, errors: str = 'raise') -> str:
-        """ Return absolute netcdf file path to load
-
-        Parameters
-        ----------
-        wmo: int
-            WMO float code
-        cyc: int, optional
-            Cycle number (None by default)
-        errors: {'raise','ignore'}, optional
-            If 'raise' (default), raises a NetCDF4FileNotFoundError error if the requested
-            file cannot be found. If 'ignore', return None silently.
-
-        Returns
-        -------
-        netcdf_file_path : str
-        """
-        p = self.filepathpattern(wmo, cyc)
-        l = sorted(glob(p))
-        if len(l) == 1:
-            return l[0]
-        elif len(l) == 0:
-            if errors == 'raise':
-                raise NetCDF4FileNotFoundError(p)
-            else:
-                # Otherwise remain silent/ignore
-                return None
-        else:
-            warnings.warn("More than one file to load for a single float cycle ! Return the 1st one by default.")
-            return l[0]
-
     def to_xarray(self, errors='raise', client=None):
         """ Load Argo data and return a xarray.Dataset
 
@@ -262,6 +262,8 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
         errors: {'raise','ignore'}, optional
             If 'raise' (default), raises a NetCDF4FileNotFoundError error if any of the requested
             files cannot be found. If 'ignore', ignore this file in fetching data.
+
+        client: None, dask.client or mp
 
         Returns
         -------
@@ -285,7 +287,7 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
                     results = client.gather(futures)
                     results = [r for r in results if r is not None]  # Only keep none empty results
                 else:
-                    # Using multiprocessing
+                    # Using multiprocessing Pool
                     pool = mp.Pool()
                     results = pool.map(self._xload_multiprof, self.argo_files)
                     results = [r for r in results if r is not None]  # Only keep none empty results
