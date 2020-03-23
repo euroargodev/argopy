@@ -46,7 +46,7 @@ class EntryPoints(TestCase):
         self.args['profile'] = [[6902746, 34],
                                 [6902746, np.arange(12, 16)], [6902746, [1, 12]]]
         self.args['region'] = [[-75, -65, 30., 35., 0, 10.],
-                               [-75, -65, 30., 35., 0, 10., '2012-01-01', '2012-06-31']]
+                               [-75, -65, 30., 35., 0, 10., '2012-01-01', '2012-06-30']]
 
     def __test_float(self, bk):
         """ Test float for a given backend """
@@ -160,13 +160,13 @@ class Erddap_DataSets(TestCase):
     def test_bgc_region(self):
         to_test = {}
         to_test['region'] = [[-75, -65, 30., 35., 0, 10.],
-                               [-75, -65, 30., 35., 0, 10., '2012-01-1', '2012-06-31']]
+                               [-75, -65, 30., 35., 0, 10., '2012-01-1', '2012-06-30']]
         self.__testthis('bgc', to_test)
 
     def test_ref_region(self):
         to_test = {}
         to_test['region'] = [[-75, -65, 30., 35., 0, 10.],
-                               [-75, -65, 30., 35., 0, 10., '2012-01-01', '2012-06-31']]
+                               [-75, -65, 30., 35., 0, 10., '2012-01-01', '2012-06-30']]
         self.__testthis('ref', to_test)
 
 if __name__ == '__main__':
