@@ -5,7 +5,6 @@
 #
 # This is not intended to be used directly, only by the facade at fetchers.py
 #
-# Created by gmaze on 09/03/2020
 
 access_points = ['box', 'wmo']
 exit_formats = ['xarray']
@@ -34,7 +33,6 @@ class ErddapArgoDataFetcher(ABC):
 
         ERDDAP transaction are managed with the erddapy library
 
-        __author__: gmaze@ifremer.fr
     """
 
     ###
@@ -334,7 +332,7 @@ class ErddapArgoDataFetcher(ABC):
             return ds
         # No cache found or requested, so we compute:
 
-        # Download data: get a csv, open it as pandas dataframe, convert it to xarrat dataset
+        # Download data: get a csv, open it as pandas dataframe, convert it to xarray dataset
         df = pd.read_csv(urlopen(self.url), parse_dates=True, skiprows=[1])
         ds = xr.Dataset.from_dataframe(df)
         df['time'] = pd.to_datetime(df['time'])
