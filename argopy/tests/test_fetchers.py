@@ -69,28 +69,27 @@ class EntryPoints(TestCase):
             assert isinstance(ds, xr.Dataset) == True
 
     @unittest.skipUnless('erddap' in backends, "requires erddap data fetcher")
-    @pytest.mark.filterwarnings("ignore:DtypeWarning")
     def test_float_erddap(self):
         self.__test_float('erddap')
 
     @unittest.skipUnless('erddap' in backends, "requires erddap data fetcher")
-    def otest_profile_erddap(self):
+    def test_profile_erddap(self):
         self.__test_profile('erddap')
 
     @unittest.skipUnless('erddap' in backends, "requires erddap data fetcher")
-    def otest_region_erddap(self):
+    def test_region_erddap(self):
         self.__test_region('erddap')
 
     @unittest.skipUnless('localftp' in backends, "requires localftp data fetcher")
-    def otest_float_localftp(self):
+    def test_float_localftp(self):
         self.__test_float('localftp')
 
     @unittest.skipUnless('argovis' in backends, "requires argovis data fetcher")
-    def otest_float_argovis(self):
+    def test_float_argovis(self):
         self.__test_float('argovis')
 
 @unittest.skipUnless('erddap' in backends, "requires erddap data fetcher")
-class Erddap_DataSets():
+class Erddap_DataSets(TestCase):
     """ Test main API facade for all available dataset of Erddap fetching backend """
 
     def __testthis(self, dataset, to_test):
