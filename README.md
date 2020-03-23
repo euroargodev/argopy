@@ -38,8 +38,8 @@ Init the fetcher:
 ```
 and then, request data for a domain:
 ```python
-    argo_loader.region([-85,-45,10.,20.,0,1000.]).to_xarray()
-    argo_loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2014-12']).to_xarray()
+    argo_loader.region([-85,-45,10.,20.,0,100.]).to_xarray()
+    argo_loader.region([-85,-45,10.,20.,0,100.,'2012-01','2014-12']).to_xarray()
 ```
 for profiles of a given float: 
 ```python
@@ -71,7 +71,7 @@ df = ds.to_dataframe()
 
 and to export it to files:
 ```python
-ds = argo_loader.region([-85,-45,10.,20.,0,1000.]).to_xarray()
+ds = argo_loader.region([-85,-45,10.,20.,0,100.]).to_xarray()
 ds.to_netcdf('my_selection.nc')
 # or by profiles:
 ds.argo.point2profile().to_netcdf('my_selection.nc')
