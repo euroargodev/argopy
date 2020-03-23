@@ -24,6 +24,14 @@ except ModuleNotFoundError:
 except ImportError:
     pass
 
+try:
+    from argopy.data_fetchers import localftp as LocalFTP_Fetcher
+    backends.append('localftp')
+except ModuleNotFoundError:
+    pass
+except ImportError:
+    pass
+
 class EntryPoints(TestCase):
     """ Test main API facade for all available fetching backends and default dataset """
 

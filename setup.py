@@ -20,6 +20,6 @@ setuptools.setup(
         "Operating System :: OS Independent",
         "Development Status :: 3 - Alpha"
     ],
-    install_requires=["xarray>=0.11.3", "numpy>=1.16.2", "scipy>=1.2.1", "gsw>=3.3",
-                      "pandas>=0.24", "dask>=0.16.0", "erddapy>=0.5"]
+    install_requires=["xarray>=0.14", "numpy>=1.16.2", "scipy>=1.2.1", "gsw>=3.3",
+                      "pandas>=0.24", "dask>=2.0", "erddapy>=0.5"]
 )
