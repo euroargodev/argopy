@@ -48,13 +48,13 @@ class set_options:
     - ``local_ftp``: Absolute path to local GDAC ftp copy.
       Default: ``???``.
 
-    You can use ``set`` either as a context manager:
+    You can use ``set_options`` either as a context manager:
     >>> import argopy
-    >>> with argopy.set(data_fetcher='localftp'):
+    >>> with argopy.set_options(data_fetcher='localftp'):
     ...     ds = argopy.DataFetcher().float(3901530).to_xarray()
 
     Or to set global options:
-    >>> argopy.set(data_fetcher='localftp')
+    >>> argopy.set_options(data_fetcher='localftp')
     """
 
     def __init__(self, **kwargs):
