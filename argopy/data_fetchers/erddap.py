@@ -243,6 +243,7 @@ class ErddapArgoDataFetcher(ABC):
             raise ValueError("Invalid database short name for Ifremer erddap (use: 'phy', 'bgc' or 'ref')")
         return self
 
+    @property
     def _minimal_vlist(self):
         """ Return the minimal list of variables to retrieve measurements for """
         vlist = list()
@@ -270,6 +271,45 @@ class ErddapArgoDataFetcher(ABC):
 
         return vlist
 
+    @property
+    def _dtype(self):
+        """ Return a dictionnary of data types for each variable requested to erddap in the minimal vlist """
+        dref = {
+            'data_mode': object,
+            'latitude': np.float64,
+            'longitude': np.float64,
+            'position_qc': np.int64,
+            'time': object,
+            'time_qc': np.int64,
+            'direction': object,
+            'platform_number': np.int64,
+            'cycle_number': np.int64,
+            'pres': np.float64,
+            'temp': np.float64,
+            'psal': np.float64,
+            'doxy': np.float64,
+            'pres_qc': np.int64,
+            'temp_qc': object,
+            'psal_qc': object,
+            'doxy_qc': object,
+            'pres_adjusted': np.float64,
+            'temp_adjusted': np.float64,
+            'psal_adjusted': np.float64,
+            'doxy_adjusted': np.float64,
+            'pres_adjusted_qc': object,
+            'temp_adjusted_qc': object,
+            'psal_adjusted_qc': object,
+            'doxy_adjusted_qc': object,
+            'pres_adjusted_error': np.float64,
+            'temp_adjusted_error': np.float64,
+            'psal_adjusted_error': np.float64,
+            'doxy_adjusted_error': np.float64,
+            'ptmp': np.float64}
+        plist = self._minimal_vlist
+        response = {}
+        for p in plist:
+            response[p] = dref[p]
+        return response
 
     @property
     def cachepath(self):
@@ -292,7 +332,7 @@ class ErddapArgoDataFetcher(ABC):
         self.define_constraints()  # This will affect self.erddap.constraints
 
         # Define the list of variables to retrieve
-        self.erddap.variables = self._minimal_vlist()
+        self.erddap.variables = self._minimal_vlist
 
         #
         dataset_id = self.erddap.dataset_id
@@ -333,10 +373,9 @@ class ErddapArgoDataFetcher(ABC):
         # No cache found or requested, so we compute:
 
         # Download data: get a csv, open it as pandas dataframe, convert it to xarray dataset
-        df = pd.read_csv(urlopen(self.url), parse_dates=True, skiprows=[1])
+        df = pd.read_csv(urlopen(self.url), parse_dates=['time'], skiprows=[1], dtype=self._dtype)
+        df['time'] = df['time'].dt.tz_localize(None) # Remove time zone information, we are in UTC, done.
         ds = xr.Dataset.from_dataframe(df)
-        df['time'] = pd.to_datetime(df['time'])
-        ds['time'].values = ds['time'].astype(np.datetime64)
 
         # Post-process the xarray.DataSet:
 
