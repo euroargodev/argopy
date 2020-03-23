@@ -37,12 +37,13 @@ class EntryPoints(TestCase):
                               [1901393, 6902746]]
         self.args['profile'] = [[6902746, 34],
                                 [6902746, np.arange(12, 16)], [6902746, [1, 12]]]
-        self.args['region'] = [[-75, -65, 30., 40., 0, 10.],
-                               [-75, -65, 30., 40., 0, 10., '2012-01-01', '2012-12-31']]
+        self.args['region'] = [[-75, -65, 30., 35., 0, 10.],
+                               [-75, -65, 30., 35., 0, 10., '2012-01-01', '2012-06-31']]
 
     def __test_float(self, bk):
         """ Test float for a given backend """
         for arg in self.args['float']:
+            print("\nTesting:", arg)
             ds = ArgoDataFetcher(backend=bk).float(arg).to_xarray()
             assert isinstance(ds, xr.Dataset) == True
 
@@ -70,6 +71,10 @@ class EntryPoints(TestCase):
     def test_region_erddap(self):
         self.__test_region('erddap')
 
+    @unittest.skipUnless('localftp' in backends, "requires localftp data fetcher")
+    def test_float_localftp(self):
+        self.__test_float('localftp')
+
     @unittest.skipUnless('argovis' in backends, "requires argovis data fetcher")
     def test_float_argovis(self):
         self.__test_float('argovis')
@@ -78,11 +83,12 @@ class EntryPoints(TestCase):
 class Erddap_DataSets(TestCase):
     """ Test main API facade for all available dataset of Erddap fetching backend """
 
-    def __testthis(self, dataset):
-        for access_point in self.args:
+    def __testthis(self, dataset, to_test):
+        for access_point in to_test:
 
             if access_point == 'profile':
-                for arg in self.args['profile']:
+                for arg in to_test['profile']:
+                    print("\nTesting:", arg)
                     try:
                         ds = ArgoDataFetcher(backend='erddap', ds=dataset).profile(*arg).to_xarray()
                         assert isinstance(ds, xr.Dataset) == True
@@ -92,7 +98,8 @@ class Erddap_DataSets(TestCase):
                         pass
 
             if access_point == 'float':
-                for arg in self.args['float']:
+                for arg in to_test['float']:
+                    print("\nTesting:", arg)
                     try:
                         ds = ArgoDataFetcher(backend='erddap', ds=dataset).float(arg).to_xarray()
                         assert isinstance(ds, xr.Dataset) == True
@@ -102,7 +109,8 @@ class Erddap_DataSets(TestCase):
                         pass
 
             if access_point == 'region':
-                for arg in self.args['region']:
+                for arg in to_test['region']:
+                    print("\nTesting:", arg)
                     try:
                         ds = ArgoDataFetcher(backend='erddap', ds=dataset).region(arg).to_xarray()
                         assert isinstance(ds, xr.Dataset) == True
@@ -112,46 +120,46 @@ class Erddap_DataSets(TestCase):
                         pass
 
     def test_phy_float(self):
-        self.args = {}
-        self.args['float'] = [[1901393],
+        to_test = {}
+        to_test['float'] = [[1901393],
                               [1901393, 6902746]]
-        self.__testthis('phy')
+        self.__testthis('phy', to_test)
 
     def test_phy_profile(self):
-        self.args = {}
-        self.args['profile'] = [[6902746, 34],
+        to_test = {}
+        to_test['profile'] = [[6902746, 34],
                                 [6902746, np.arange(12, 16)], [6902746, [1, 12]]]
-        self.__testthis('phy')
+        self.__testthis('phy', to_test)
 
     def test_phy_region(self):
-        self.args = {}
-        self.args['region'] = [[-75, -65, 30., 40., 0, 10.],
+        to_test = {}
+        to_test['region'] = [[-75, -65, 30., 40., 0, 10.],
                                [-75, -65, 30., 40., 0, 10., '2012-01', '2013-12']]
-        self.__testthis('phy')
+        self.__testthis('phy', to_test)
 
     def test_bgc_float(self):
-        self.args = {}
-        self.args['float'] = [[5903248],
+        to_test = {}
+        to_test['float'] = [[5903248],
                               [7900596, 2902264]]
-        self.__testthis('bgc')
+        self.__testthis('bgc', to_test)
 
     def test_bgc_profile(self):
-        self.args = {}
-        self.args['profile'] = [[5903248, 34],
+        to_test = {}
+        to_test['profile'] = [[5903248, 34],
                                 [5903248, np.arange(12, 16)], [5903248, [1, 12]]]
-        self.__testthis('bgc')
+        self.__testthis('bgc', to_test)
 
     def test_bgc_region(self):
-        self.args = {}
-        self.args['region'] = [[-75, -65, 30., 40., 0, 10.],
-                               [-75, -65, 30., 40., 0, 10., '2012-01-1', '2012-12-31']]
-        self.__testthis('bgc')
+        to_test = {}
+        to_test['region'] = [[-75, -65, 30., 35., 0, 10.],
+                               [-75, -65, 30., 35., 0, 10., '2012-01-1', '2012-06-31']]
+        self.__testthis('bgc', to_test)
 
     def test_ref_region(self):
-        self.args = {}
-        self.args['region'] = [[-75, -65, 30., 40., 0, 10.],
-                               [-75, -65, 30., 40., 0, 10., '2012-01-01', '2012-12-31']]
-        self.__testthis('ref')
+        to_test = {}
+        to_test['region'] = [[-75, -65, 30., 35., 0, 10.],
+                               [-75, -65, 30., 35., 0, 10., '2012-01-01', '2012-06-31']]
+        self.__testthis('ref', to_test)
 
 if __name__ == '__main__':
     unittest.main()
