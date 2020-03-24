@@ -22,15 +22,17 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 import getpass
 
+from .proto import ArgoDataFetcherProto
 from argopy.utilities import urlopen
 from argopy.options import OPTIONS
+import argopy
 
 from erddapy import ERDDAP
 from erddapy.utilities import parse_dates, quote_string_constraints
 from argopy.utilities import list_multiprofile_file_variables, list_standard_variables
 
 
-class ErddapArgoDataFetcher(ABC):
+class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     """ Manage access to Argo data through Ifremer ERDDAP
 
         ERDDAP transaction are managed with the erddapy library
@@ -59,9 +61,9 @@ class ErddapArgoDataFetcher(ABC):
     # Methods that must not change
     ###
     def __init__(self,
-                 ds=OPTIONS['dataset'],
-                 cache=False,
-                 cachedir=OPTIONS['cachedir'],
+                 ds: str = "",
+                 cache: bool = False,
+                 cachedir: str = "",
                  **kwargs):
         """ Instantiate an ERDDAP Argo data loader
 
@@ -72,13 +74,13 @@ class ErddapArgoDataFetcher(ABC):
             cachedir : None
         """
         self.cache = cache
-        self.cachedir = cachedir
+        self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
         if self.cache:
-            # todo check if cachedir is a valid path
+            #todo check if cachedir is a valid path
             Path(self.cachedir).mkdir(parents=True, exist_ok=True)
 
         self.definition = 'Ifremer erddap Argo data fetcher'
-        self.dataset_id = ds
+        self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
         self.init(**kwargs)
         self._init_erddapy()
 
@@ -373,319 +375,8 @@ class ErddapArgoDataFetcher(ABC):
         #
         return ds
 
-    def filter_data_mode(self, ds, keep_error=True):
-        return ds.argo.filter_data_mode(keep_error=keep_error)
-
-    def filter_data_mode_deprec(self, ds, keep_error=True):
-        """ Filter variables according to their data mode
-
-            For data mode 'R' and 'A': keep <PARAM> (eg: 'PRES', 'TEMP' and 'PSAL')
-            For data mode 'D': keep <PARAM_ADJUSTED> (eg: 'PRES_ADJUSTED', 'TEMP_ADJUSTED' and 'PSAL_ADJUSTED')
-
-            This applies to <PARAM> and <PARAM_QC>
-        """
-
-        #########
-        # Sub-functions
-        #########
-        def ds_split_datamode(xds):
-            """ Create one dataset for each of the data_mode
-
-                Split full dataset into 3 datasets
-            """
-            # Real-time:
-            argo_r = ds.where(ds['DATA_MODE'] == 'R', drop=True)
-            for v in plist:
-                vname = v.upper() + '_ADJUSTED'
-                if vname in argo_r:
-                    argo_r = argo_r.drop_vars(vname)
-                vname = v.upper() + '_ADJUSTED_QC'
-                if vname in argo_r:
-                    argo_r = argo_r.drop_vars(vname)
-                vname = v.upper() + '_ADJUSTED_ERROR'
-                if vname in argo_r:
-                    argo_r = argo_r.drop_vars(vname)
-            # Real-time adjusted:
-            argo_a = ds.where(ds['DATA_MODE'] == 'A', drop=True)
-            for v in plist:
-                vname = v.upper()
-                if vname in argo_a:
-                    argo_a = argo_a.drop_vars(vname)
-                vname = v.upper() + '_QC'
-                if vname in argo_a:
-                    argo_a = argo_a.drop_vars(vname)
-            # Delayed mode:
-            argo_d = ds.where(ds['DATA_MODE'] == 'D', drop=True)
-            return argo_r, argo_a, argo_d
-
-        def fill_adjusted_nan(ds, vname):
-            """Fill in the adjusted field with the non-adjusted wherever it is NaN
-
-               Ensure to have values even for bad QC data in delayed mode
-            """
-            ii = ds.where(np.isnan(ds[vname + '_ADJUSTED']), drop=1)['index']
-            ds[vname + '_ADJUSTED'].loc[dict(index=ii)] = ds[vname].loc[dict(index=ii)]
-            return ds
-
-        def new_arrays(argo_r, argo_a, argo_d, vname):
-            """ Merge the 3 datasets into a single ine with the appropriate fields
-
-                Homogeneise variable names.
-                Based on xarray merge function with ’no_conflicts’: only values
-                which are not null in both datasets must be equal. The returned
-                dataset then contains the combination of all non-null values.
-
-                Return a xarray.DataArray
-            """
-            DS = xr.merge(
-                (argo_r[vname],
-                 argo_a[vname + '_ADJUSTED'].rename(vname),
-                 argo_d[vname + '_ADJUSTED'].rename(vname)))
-            DS_QC = xr.merge((
-                argo_r[vname + '_QC'],
-                argo_a[vname + '_ADJUSTED_QC'].rename(vname + '_QC'),
-                argo_d[vname + '_ADJUSTED_QC'].rename(vname + '_QC')))
-            if keep_error:
-                DS_ERROR = xr.merge((
-                    argo_a[vname + '_ADJUSTED_ERROR'].rename(vname + '_ERROR'),
-                    argo_d[vname + '_ADJUSTED_ERROR'].rename(vname + '_ERROR')))
-                DS = xr.merge((DS, DS_QC, DS_ERROR))
-            else:
-                DS = xr.merge((DS, DS_QC))
-            return DS
-
-        #########
-        # filter
-        #########
-
-        # Define variables to filter:
-        if self.dataset_id == 'phy':
-            plist = ['pres', 'temp', 'psal']
-        elif self.dataset_id == 'bgc':
-            plist = ['pres', 'temp', 'psal', 'doxy']
-        else:
-            raise ValueError('Data mode filtering not necessary for Reference dataset')
-
-        # Create one dataset for each of the data_mode:
-        argo_r, argo_a, argo_d = ds_split_datamode(ds)
-
-        # Fill in the adjusted field with the non-adjusted wherever it is NaN
-        for v in plist:
-            argo_d = fill_adjusted_nan(argo_d, v.upper())
-
-        # Drop QC fields in delayed mode dataset:
-        for v in plist:
-            vname = v.upper()
-            if vname in argo_d:
-                argo_d = argo_d.drop_vars(vname)
-            vname = v.upper() + '_QC'
-            if vname in argo_d:
-                argo_d = argo_d.drop_vars(vname)
-
-        # Create new arrays with the appropriate variables:
-        PRES = new_arrays(argo_r, argo_a, argo_d, 'PRES')
-        TEMP = new_arrays(argo_r, argo_a, argo_d, 'TEMP')
-        PSAL = new_arrays(argo_r, argo_a, argo_d, 'PSAL')
-        if 'doxy' in plist:
-            DOXY = new_arrays(argo_r, argo_a, argo_d, 'DOXY')
-
-        # Create final dataset by merging all available variables
-        if 'doxy' in plist:
-            final = xr.merge((TEMP, PSAL, PRES, DOXY))
-        else:
-            final = xr.merge((TEMP, PSAL, PRES))
-
-        # Merge with all other variables:
-        other_variables = list(set([v for v in list(ds.data_vars) if 'ADJUSTED' not in v]) - set(list(final.data_vars)))
-        # other_variables.remove('DATA_MODE')  # Not necessary anymore
-        for p in other_variables:
-            final = xr.merge((final, ds[p]))
-
-        final.attrs = ds.attrs
-        final = self._add_history(final, 'Variables selected according to DATA_MODE')
-        final = final[np.sort(final.data_vars)]
-
-        # Cast data types and add attributes:
-        final = final.argo.cast_types()
-        final = self._add_attributes(final)
-
-        return final
-
-    def filter_data_mode_deprec(self, ds, keep_error=True):
-        """ Filter variables according to their data mode
-
-            For data mode 'R' and 'A': keep <PARAM> (eg: 'PRES', 'TEMP' and 'PSAL')
-            For data mode 'D': keep <PARAM_ADJUSTED> (eg: 'PRES_ADJUSTED', 'TEMP_ADJUSTED' and 'PSAL_ADJUSTED')
-
-            This applies to <PARAM> and <PARAM_QC>
-        """
-
-        # Define variables to filter:
-        if self.dataset_id == 'phy':
-            plist = ['pres', 'temp', 'psal']
-        elif self.dataset_id == 'bgc':
-            plist = ['pres', 'temp', 'psal', 'doxy']
-        else:
-            raise ValueError('Data mode filtering not necessary for Reference dataset')
-
-        def ds_split_datamode(xds):
-            """ Create one dataset for each of the data_mode
-
-                Split full dataset into 3 datasets
-            """
-            # Real-time:
-            argo_r = ds.where(ds['DATA_MODE'] == 'R', drop=True)
-            for v in plist:
-                vname = v.upper() + '_ADJUSTED'
-                if vname in argo_r:
-                    argo_r = argo_r.drop_vars(vname)
-                vname = v.upper() + '_ADJUSTED_QC'
-                if vname in argo_r:
-                    argo_r = argo_r.drop_vars(vname)
-                vname = v.upper() + '_ADJUSTED_ERROR'
-                if vname in argo_r:
-                    argo_r = argo_r.drop_vars(vname)
-            # Real-time adjusted:
-            argo_a = ds.where(ds['DATA_MODE'] == 'A', drop=True)
-            for v in plist:
-                vname = v.upper()
-                if vname in argo_a:
-                    argo_a = argo_a.drop_vars(vname)
-                vname = v.upper() + '_QC'
-                if vname in argo_a:
-                    argo_a = argo_a.drop_vars(vname)
-            # Delayed mode:
-            argo_d = ds.where(ds['DATA_MODE'] == 'D', drop=True)
-            return argo_r, argo_a, argo_d
-
-        argo_r, argo_a, argo_d = ds_split_datamode(ds)
-
-        def fill_adjusted_nan(ds, vname):
-            """Fill in the adjusted field with the non-adjusted wherever it is NaN
-
-               Ensure to have values even for bad QC data in delayed mode
-            """
-            ii = ds.where(np.isnan(ds[vname + '_ADJUSTED']), drop=1)['index']
-            ds[vname + '_ADJUSTED'].loc[dict(index=ii)] = ds[vname].loc[dict(index=ii)]
-            return ds
-
-        argo_d = fill_adjusted_nan(argo_d, 'PRES')
-        argo_d = fill_adjusted_nan(argo_d, 'TEMP')
-        argo_d = fill_adjusted_nan(argo_d, 'PSAL')
-        if 'doxy' in plist:
-            argo_d = fill_adjusted_nan(argo_d, 'DOXY')
-
-        # Drop QC fields in delayed mode dataset:
-        for v in plist:
-            vname = v.upper()
-            if vname in argo_d:
-                argo_d = argo_d.drop_vars(vname)
-            vname = v.upper() + '_QC'
-            if vname in argo_d:
-                argo_d = argo_d.drop_vars(vname)
-
-        # Then create new arrays with the appropriate variables:
-        def new_arrays(argo_r, argo_a, argo_d, vname):
-            """ Merge the 3 datasets into a single ine with the appropriate fields
-
-                Homogeneise variable names.
-                Based on xarray merge function with ’no_conflicts’: only values
-                which are not null in both datasets must be equal. The returned
-                dataset then contains the combination of all non-null values.
-
-                Return a xarray.DataArray
-            """
-            DS = xr.merge(
-                (argo_r[vname],
-                 argo_a[vname + '_ADJUSTED'].rename(vname),
-                 argo_d[vname + '_ADJUSTED'].rename(vname)))
-            DS_QC = xr.merge((
-                argo_r[vname + '_QC'],
-                argo_a[vname + '_ADJUSTED_QC'].rename(vname + '_QC'),
-                argo_d[vname + '_ADJUSTED_QC'].rename(vname + '_QC')))
-            if keep_error:
-                DS_ERROR = xr.merge((
-                    argo_a[vname + '_ADJUSTED_ERROR'].rename(vname + '_ERROR'),
-                    argo_d[vname + '_ADJUSTED_ERROR'].rename(vname + '_ERROR')))
-                DS = xr.merge((DS, DS_QC, DS_ERROR))
-            else:
-                DS = xr.merge((DS, DS_QC))
-            return DS
-
-        PRES = new_arrays(argo_r, argo_a, argo_d, 'PRES')
-        TEMP = new_arrays(argo_r, argo_a, argo_d, 'TEMP')
-        PSAL = new_arrays(argo_r, argo_a, argo_d, 'PSAL')
-        if 'doxy' in plist:
-            DOXY = new_arrays(argo_r, argo_a, argo_d, 'DOXY')
-
-        # Create final dataset by merging all available variables
-        if 'doxy' in plist:
-            final = xr.merge((TEMP, PSAL, PRES, DOXY))
-        else:
-            final = xr.merge((TEMP, PSAL, PRES))
-
-        # Merge with additional content:
-        plist = ['position_qc', 'time', 'time_qc', 'data_mode',
-                 'direction', 'platform_number', 'cycle_number']
-        for p in plist:
-            vname = p.upper()
-            if vname in ds:
-                final = xr.merge((final, ds[vname]))
-        for v in final.data_vars:
-            if "QC" in v:
-                final[v] = final[v].astype(int)
-        final.attrs = ds.attrs
-        final = self._add_history(final, 'Variables selected according to DATA_MODE')
-        final = final[np.sort(final.data_vars)]
-
-        # Cast data types and add attributes:
-        final = final.argo.cast_types()
-        final = self._add_attributes(final)
-
-        return final
-
-    def filter_qc_deprec(self, this, QC_list=[1, 2], drop=True, mode='all', mask=False):
-        """ Filter data set according to QC values
-
-            Mask the dataset for points where 'all' or 'any' of the QC fields has a value in the list of
-            integer QC flags.
-
-            This method can return the filtered dataset or the filter mask.
-        """
-        if mode not in ['all', 'any']:
-            raise ValueError("Mode must 'all' or 'any'")
-
-        # Extract QC fields:
-        QC_fields = []
-        for v in this.data_vars:
-            if "QC" in v:
-                QC_fields.append(v)
-        QC_fields = this[QC_fields]
-        for v in QC_fields.data_vars:
-            QC_fields[v] = QC_fields[v].astype(int)
-
-        # Now apply filter
-        this_mask = xr.DataArray(np.zeros_like(QC_fields['index']), dims=['index'],
-                                 coords={'index': QC_fields['index']})
-        for v in QC_fields.data_vars:
-            for qc in QC_list:
-                this_mask += QC_fields[v] == qc
-        if mode == 'all':
-            this_mask = this_mask == len(QC_fields)  # all
-        else:
-            this_mask = this_mask >= 1  # any
-
-        if not mask:
-            this = this.where(this_mask, drop=drop)
-            for v in this.data_vars:
-                if "QC" in v:
-                    this[v] = this[v].astype(int)
-            this = self._add_history(this, 'Variables selected according to QC')
-            this = this.argo.cast_types()
-            this = self._add_attributes(this)
-            return this
-        else:
-            return this_mask
+    def filter_data_mode(self, ds, **kwargs):
+        return ds.argo.filter_data_mode(errors='ignore', **kwargs)
 
     def filter_qc(self, ds, **kwargs):
         return ds.argo.filter_qc(**kwargs)

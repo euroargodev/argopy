@@ -23,6 +23,14 @@ def test_dataset():
     with argopy.set_options(dataset="ref"):
         assert OPTIONS["dataset"]
 
+def test_usermode():
+    with pytest.raises(ValueError):
+        argopy.set_options(mode="invalid_mode")
+    with argopy.set_options(mode="standard"):
+        assert OPTIONS["mode"]
+    with argopy.set_options(mode="expert"):
+        assert OPTIONS["expert"]
+
 def test_local_ftp():
     with pytest.raises(ValueError):
         argopy.set_options(local_ftp="invalid_path")

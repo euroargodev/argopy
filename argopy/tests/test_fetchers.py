@@ -12,6 +12,7 @@ import xarray as xr
 import unittest
 from unittest import TestCase
 from argopy import DataFetcher as ArgoDataFetcher
+import argopy
 
 # List available backends:
 backends = list()
@@ -85,7 +86,9 @@ class EntryPoints(TestCase):
     
     @unittest.skipUnless('localftp' in backends, "requires localftp data fetcher")
     def test_float_localftp(self):
-        self.__test_float('localftp', local_path='/Volumes/Data/ARGO') #todo need to find something else for setting the local path !
+        with argopy.set_options(local_ftp='/Volumes/Data/ARGO'):
+            #todo need to find something else for setting the local path !
+            self.__test_float('localftp')
         
     @unittest.skipUnless('argovis' in backends, "requires argovis data fetcher")
     def test_float_argovis(self):

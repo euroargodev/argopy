@@ -151,13 +151,26 @@ class ArgoAccessor:
 
         return ds
 
-    def filter_data_mode(self, keep_error=True):
+    def filter_data_mode(self, keep_error: bool = True, errors: str = 'raise'):
         """ Filter variables according to their data mode
+
+            This applies to <PARAM> and <PARAM_QC>
 
             For data mode 'R' and 'A': keep <PARAM> (eg: 'PRES', 'TEMP' and 'PSAL')
             For data mode 'D': keep <PARAM_ADJUSTED> (eg: 'PRES_ADJUSTED', 'TEMP_ADJUSTED' and 'PSAL_ADJUSTED')
 
-            This applies to <PARAM> and <PARAM_QC>
+        Parameters
+        ----------
+        keep_error: bool, optional
+            If true (default) keep the measurements error fields or not.
+
+        errors: {'raise','ignore'}, optional
+            If 'raise' (default), raises a InvalidDatasetStructure error if any of the expected dataset variables is
+            not found. If 'ignore', fails silently and return unmodified dataset.
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
         """
         if self._type != 'point':
             raise InvalidDatasetStructure("Method only available to a collection of points")
@@ -236,7 +249,11 @@ class ArgoAccessor:
         #########
         ds = self._obj
         if 'DATA_MODE' not in ds:
-            raise InvalidDatasetStructure("Method only available for dataset with 'DATA_MODE' variable ")
+            if errors:
+                raise InvalidDatasetStructure("Method only available for dataset with 'DATA_MODE' variable ")
+            else:
+                #todo should raise a warning instead ?
+                return ds
 
         # Define variables to filter:
         possible_list = ['PRES', 'TEMP', 'PSAL',

@@ -94,8 +94,8 @@ class ArgoDataFetcher(object):
 
     def __init__(self,
                  mode='standard',
-                 backend=OPTIONS['data_src'],
-                 ds=OPTIONS['dataset'],
+                 backend : str = "",
+                 ds: str = "",
                  **fetcher_kwargs):
 
         if mode not in ['standard', 'expert']:
@@ -103,8 +103,8 @@ class ArgoDataFetcher(object):
 
         # Facade options:
         self.mode = mode # User mode determining the level of post-processing required
-        self.dataset_id = ds # Database to use
-        self.backend = backend # data_fetchers to use
+        self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
+        self.backend = OPTIONS['DATA_FETCHER'] if backend == '' else backend
 
         # Load backend access points:
         if backend not in available_backends:
