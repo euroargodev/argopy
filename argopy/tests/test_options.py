@@ -29,7 +29,7 @@ def test_usermode():
     with argopy.set_options(mode="standard"):
         assert OPTIONS["mode"]
     with argopy.set_options(mode="expert"):
-        assert OPTIONS["expert"]
+        assert OPTIONS["mode"]
 
 def test_local_ftp():
     with pytest.raises(ValueError):
