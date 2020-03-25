@@ -181,4 +181,31 @@ class ArgoDataFetcher(object):
         return xds
 
 class ArgoIndexFetcher(object):
-    #TO BE DISCUSSED
+    pass
+    '''
+    Specs discussion :
+    https://github.com/euroargodev/argopy/issues/8 
+    https://github.com/euroargodev/argopy/pull/6)
+    
+    Usage : 
+
+    from argopy import ArgoIndexFetcher
+    idx = ArgoIndexFetcher.region([-75, -65, 10, 20])
+    idx.plot.trajectories()
+    idx.to_dataframe()
+    idx.to_csv()
+
+    Fetch and process Argo index.
+
+    Can return metadata from index of :
+        - one or more float(s), defined by WMOs
+        - one or more profile(s), defined for one WMO and one or more CYCLE NUMBER
+        - a space/time rectangular domain, defined by lat/lon/pres/time range
+
+    idx object can also be used as an input :
+     argo_loader = ArgoDataFetcher(index=idx)
+    
+    Specify here all options to data_fetchers
+
+    """
+
