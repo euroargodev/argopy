@@ -39,3 +39,9 @@ class InvalidDatasetStructure(ValueError):
     This is to be used when the in-memory xarray dataset is not structured as expected
     """
     pass
+
+class InvalidFetcherAccessPoint(ValueError):
+    """
+    Raise for requestion a fetcher access point not available
+    """
+    pass

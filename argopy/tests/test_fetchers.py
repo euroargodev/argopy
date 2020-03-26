@@ -9,10 +9,14 @@ import os
 import sys
 import numpy as np
 import xarray as xr
+
+import pytest
 import unittest
 from unittest import TestCase
-from argopy import DataFetcher as ArgoDataFetcher
+
 import argopy
+from argopy import DataFetcher as ArgoDataFetcher
+from argopy.errors import InvalidFetcherAccessPoint
 
 # List available backends:
 backends = list()
@@ -34,6 +38,14 @@ except ModuleNotFoundError:
 except ImportError:
     pass
 
+# List tests:
+def test_invalid_accesspoint():
+    with pytest.raises(InvalidFetcherAccessPoint):
+        ArgoDataFetcher().invalid_accesspoint.to_xarray()
+
+def test_unavailable_accesspoint():
+    with pytest.raises(InvalidFetcherAccessPoint):
+        ArgoDataFetcher(backend='localftp').region([-85,-45,10.,20.,0,100.]).to_xarray()
 
 class EntryPoints(TestCase):
     """ Test main API facade for all available fetching backends and default dataset """

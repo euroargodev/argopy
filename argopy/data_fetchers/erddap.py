@@ -7,7 +7,7 @@
 #
 # Created by gmaze on 09/03/2020
 
-access_points = ['box', 'wmo']
+access_points = ['wmo', 'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy', 'ref', 'bgc']  # First is default
 
@@ -389,7 +389,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             return ds
 
 
-class ArgoDataFetcher_wmo(ErddapArgoDataFetcher):
+class Fetch_wmo(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: a list of WMOs
 
         __author__: gmaze@ifremer.fr
@@ -450,7 +450,7 @@ class ArgoDataFetcher_wmo(ErddapArgoDataFetcher):
         return listname
 
 
-class ArgoDataFetcher_box(ErddapArgoDataFetcher):
+class Fetch_box(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: an ocean rectangle
 
         __author__: gmaze@ifremer.fr
@@ -509,7 +509,7 @@ class ArgoDataFetcher_box(ErddapArgoDataFetcher):
         return boxname
 
 
-class ArgoDataFetcher_box_deployments(ErddapArgoDataFetcher):
+class Fetch_box_deployments(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: an ocean rectangle and 1st cycles only
 
         __author__: gmaze@ifremer.fr

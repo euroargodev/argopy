@@ -49,20 +49,21 @@ import numpy as np
 import warnings
 
 from argopy.options import OPTIONS
+from .errors import InvalidFetcherAccessPoint
 
 # Import data fetchers:
-available_backends = list()
+AVAILABLE_BACKENDS = list()
 try:
-    from .data_fetchers import erddap as Erddap_Fetcher
-    available_backends.append('erddap')
+    from .data_fetchers import erddap as Erddap_Fetchers
+    AVAILABLE_BACKENDS.append('erddap')
 except:
     e = sys.exc_info()[0]
     warnings.warn("An error occured while loading the ERDDAP data fetcher, it will not be available !\n%s" % e)
     pass
 
 try:
-    from .data_fetchers import localftp as LocalFTP_Fetcher
-    available_backends.append('localftp')
+    from .data_fetchers import localftp as LocalFTP_Fetchers
+    AVAILABLE_BACKENDS.append('localftp')
 except:
     e = sys.exc_info()[0]
     warnings.warn("An error occured while loading the local FTP data fetcher, it will not be available !\n%s" % e)
@@ -90,7 +91,6 @@ class ArgoDataFetcher(object):
         Specify here all options to data_fetchers
 
     """
-    #todo use dynamic loading of all available data fetcher and their access points
 
     def __init__(self,
                  mode='standard',
@@ -102,76 +102,90 @@ class ArgoDataFetcher(object):
             raise ValueError("Mode must be 'standard' or 'expert'")
 
         # Facade options:
-        self.mode = mode # User mode determining the level of post-processing required
-        self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
-        self.backend = OPTIONS['DATA_FETCHER'] if backend == '' else backend
+        self._mode = mode # User mode determining the level of post-processing required
+        self._dataset_id = OPTIONS['dataset'] if ds == '' else ds
+        self._backend = OPTIONS['data_src'] if backend == '' else backend
 
         # Load backend access points:
-        if backend not in available_backends:
-            raise ValueError("The %s data fetcher is not available" % backend)
+        if self._backend not in AVAILABLE_BACKENDS:
+            raise ValueError("Data fetcher '%s' not available" % backend)
 
-        if backend == 'erddap' and backend in available_backends:
-            self.Fetchers = Erddap_Fetcher
+        if self._backend == 'erddap' and self._backend in AVAILABLE_BACKENDS:
+            Fetchers = Erddap_Fetchers
 
-        if backend == 'localftp' and backend in available_backends:
-            self.Fetchers = LocalFTP_Fetcher
+        if self._backend == 'localftp' and self._backend in AVAILABLE_BACKENDS:
+            Fetchers = LocalFTP_Fetchers
 
         # Auto-discovery of access points for this fetcher:
-        self.access_points = []
-        for p in self.Fetchers.access_points:
+        # rq: Access point names for the facade are not the same as the access point of fetchers
+        self.valid_access_points = ['profile', 'float', 'region']
+        self.Fetchers = {}
+        for p in Fetchers.access_points:
             if p == 'wmo':  # Required for 'profile' and 'float'
-                self.Fetcher_wmo = self.Fetchers.ArgoDataFetcher_wmo
-                self.access_points.append('profile')
-                self.access_points.append('float')
+                self.Fetchers['profile'] = Fetchers.Fetch_wmo
+                self.Fetchers['float'] = Fetchers.Fetch_wmo
             if p == 'box':  # Required for 'region'
-                self.Fetcher_box = self.Fetchers.ArgoDataFetcher_box
-                self.access_points.append('region')
+                self.Fetchers['region'] = Fetchers.Fetch_box
 
         # Init sub-methods:
         self.fetcher = None
         if ds is None:
-            ds = self.Fetchers.dataset_ids[0]
+            ds = Fetchers.dataset_ids[0]
         self.fetcher_options = {**{'ds':ds}, **fetcher_kwargs}
         self.postproccessor = self.__empty_processor
 
     def __repr__(self):
         if self.fetcher:
             summary = [self.fetcher.__repr__()]
-            summary.append("Backend: %s" % self.backend)
-            summary.append("User mode: %s" % self.mode)
+            summary.append("Backend: %s" % self._backend)
+            summary.append("User mode: %s" % self._mode)
         else:
             summary = ["<datafetcher 'Not initialised'>"]
-            summary.append("Backend: %s" % self.backend)
-            summary.append("Fetchers: %s" % ", ".join(self.access_points))
-            summary.append("User mode: %s" % self.mode)
+            summary.append("Backend: %s" % self._backend)
+            summary.append("Fetchers: %s" % ", ".join(self.Fetchers.keys()))
+            summary.append("User mode: %s" % self._mode)
         return "\n".join(summary)
 
     def __empty_processor(self, xds):
         """ Do nothing to a dataset """
         return xds
 
+    def __getattr__(self, key):
+        """ Validate access points """
+        # print("key", key)
+        valid_attrs = ['Fetchers', 'fetcher', 'fetcher_options', 'postproccessor']
+        if key not in self.valid_access_points and key not in valid_attrs:
+            raise InvalidFetcherAccessPoint("'%s' is not a valid access point" % key)
+        pass
+
     def float(self, wmo):
         """ Load data from a float, given one or more WMOs """
-        self.fetcher = self.Fetcher_wmo(WMO=wmo, **self.fetcher_options)
+        if 'float' in self.Fetchers:
+            self.fetcher = self.Fetchers['float'](WMO=wmo, **self.fetcher_options)
+        else:
+            raise InvalidFetcherAccessPoint("'float' not available with '%s' backend" % self._backend)
 
-        if self.mode == 'standard' and self.dataset_id != 'ref':
+        if self._mode == 'standard' and self._dataset_id != 'ref':
             def postprocessing(xds):
                 xds = self.fetcher.filter_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
-                xds = self.fetcher.filter_variables(xds, self.mode)
+                xds = self.fetcher.filter_variables(xds, self._mode)
                 return xds
             self.postproccessor = postprocessing
         return self
 
     def profile(self, wmo, cyc):
         """ Load data from a profile, given one or more WMOs and CYCLE_NUMBER """
-        self.fetcher = self.Fetcher_wmo(WMO=wmo, CYC=cyc, **self.fetcher_options)
+        if 'profile' in self.Fetchers:
+            self.fetcher = self.Fetchers['profile'](WMO=wmo, CYC=cyc, **self.fetcher_options)
+        else:
+            raise InvalidFetcherAccessPoint("'profile' not available with '%s' backend" % self._backend)
 
-        if self.mode == 'standard' and self.dataset_id != 'ref':
+        if self._mode == 'standard' and self._dataset_id != 'ref':
             def postprocessing(xds):
                 xds = self.fetcher.filter_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
-                xds = self.fetcher.filter_variables(xds, self.mode)
+                xds = self.fetcher.filter_variables(xds, self._mode)
                 return xds
             self.postproccessor = postprocessing
 
@@ -179,13 +193,16 @@ class ArgoDataFetcher(object):
 
     def region(self, box):
         """ Load data from a rectangular region, given latitude, longitude, pressure and possibly time bounds """
-        self.fetcher = self.Fetcher_box(box=box, **self.fetcher_options)
+        if 'region' in self.Fetchers:
+            self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)
+        else:
+            raise InvalidFetcherAccessPoint("'region' not available with '%s' backend" % self._backend)
 
-        if self.mode == 'standard' and self.dataset_id != 'ref':
+        if self._mode == 'standard' and self._dataset_id != 'ref':
             def postprocessing(xds):
                 xds = self.fetcher.filter_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
-                xds = self.fetcher.filter_variables(xds, self.mode)
+                xds = self.fetcher.filter_variables(xds, self._mode)
                 return xds
             self.postproccessor = postprocessing
 
@@ -195,11 +212,11 @@ class ArgoDataFetcher(object):
         """ Retrieve deployment locations in a specific space/time region """
         self.fetcher = ErddapArgoDataFetcher_box_deployments(box=box, **self.fetcher_options)
 
-        if self.mode == 'standard' and self.dataset_id != 'ref':
+        if self._mode == 'standard' and self._dataset_id != 'ref':
             def postprocessing(xds):
                 xds = self.fetcher.filter_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
-                xds = self.fetcher.filter_variables(xds, self.mode)
+                xds = self.fetcher.filter_variables(xds, self._mode)
                 return xds
             self.postproccessor = postprocessing
 

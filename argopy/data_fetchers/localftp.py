@@ -116,7 +116,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         else:
             return ds
 
-class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
+class Fetch_wmo(LocalFTPArgoDataFetcher):
     """ Manage access to local ftp Argo data for: a list of WMOs
 
     """
@@ -284,19 +284,19 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
                     # Use dask client:
                     futures = client.map(self._xload_multiprof, self.argo_files)
                     results = client.gather(futures)
-                    results = [r for r in results if r is not None]  # Only keep none empty results
                 else:
-                    # Using multiprocessing Pool
-                    pool = mp.Pool()
-                    results = pool.map(self._xload_multiprof, self.argo_files)
-                    results = [r for r in results if r is not None]  # Only keep none empty results
+                    # Use multiprocessing Pool
+                    with mp.Pool() as pool:
+                        results = pool.map(self._xload_multiprof, self.argo_files)
             else:
                 results = []
                 for f in self.argo_files:
                     results.append(self._xload_multiprof(f))
 
+        results = [r for r in results if r is not None]  # Only keep non-empty results
         if len(results) > 0:
-            ds = xr.concat(results, dim='index', data_vars='all', compat='equals')
+            # ds = xr.concat(results, dim='index', data_vars='all', coords='all', compat='equals')
+            ds = xr.concat(results, dim='index', data_vars='all', coords='all', compat='override')
             ds['index'] = np.arange(0, len(ds['index'])) # Re-index to avoid duplicate values
             ds = ds.set_coords('index')
             ds = ds.sortby('TIME')
@@ -344,7 +344,7 @@ class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher):
         # ds.attrs['Fetched_url'] = ds.encoding['source']
         return ds
 
-class ArgoDataFetcher_box(LocalFTPArgoDataFetcher):
+class Fetch_box(LocalFTPArgoDataFetcher):
     """ Manage access to local ftp Argo data for: a list of WMOs
 
     """
