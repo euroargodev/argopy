@@ -72,19 +72,19 @@ class ArgoDataFetcher(object):
     """
 
     def __init__(self,
-                 mode='standard',
+                 mode: str = "",
                  backend : str = "",
                  ds: str = "",
                  **fetcher_kwargs):
 
-        _VALIDATORS['mode'](mode)
-        _VALIDATORS['data_src'](backend)
-        _VALIDATORS['dataset'](ds)
-
         # Facade options:
-        self._mode = mode # User mode determining the level of post-processing required
+        self._mode = OPTIONS['mode'] if mode == '' else mode
         self._dataset_id = OPTIONS['dataset'] if ds == '' else ds
-        self._backend = OPTIONS['data_src'] if backend == '' else backend
+        self._backend = OPTIONS['datasrc'] if backend == '' else backend
+
+        _VALIDATORS['mode'](self._mode)
+        _VALIDATORS['datasrc'](self._backend)
+        _VALIDATORS['dataset'](self._dataset_id)
 
         # Load backend access points:
         if self._backend not in AVAILABLE_BACKENDS:
@@ -109,6 +109,12 @@ class ArgoDataFetcher(object):
             ds = Fetchers.dataset_ids[0]
         self.fetcher_options = {**{'ds':ds}, **fetcher_kwargs}
         self.postproccessor = self.__empty_processor
+
+        # Dev warnings
+        #Todo Clean-up before each release
+        if self._dataset_id == 'bgc' and self._mode == 'standard':
+            warnings.warn(" 'BGC' dataset fetching in 'standard' user mode is not reliable. "
+                          "Try to switch to 'expert' mode if you encounter errors.")
 
     def __repr__(self):
         if self.fetcher:

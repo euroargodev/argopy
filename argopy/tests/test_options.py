@@ -9,9 +9,9 @@ def test_invalid_option():
 
 def test_data_src():
     with pytest.raises(ValueError):
-        argopy.set_options(data_src="invalid_src")
-    with argopy.set_options(data_src="erddap"):
-        assert OPTIONS["data_src"]
+        argopy.set_options(datasrc="invalid_src")
+    with argopy.set_options(datasrc="erddap"):
+        assert OPTIONS["datasrc"]
 
 def test_dataset():
     with pytest.raises(ValueError):

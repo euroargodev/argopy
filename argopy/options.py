@@ -10,7 +10,7 @@
 import os
 
 # Define option names as seen by users:
-DATA_FETCHER = 'data_src'
+DATA_FETCHER = 'datasrc'
 LOCAL_FTP = 'local_ftp'
 DATASET = 'dataset'
 DATA_CACHE = 'cachedir'

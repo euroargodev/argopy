@@ -53,16 +53,16 @@ def list_available_data_backends():
         from .data_fetchers import erddap as Erddap_Fetchers
         AVAILABLE_BACKENDS['erddap'] = Erddap_Fetchers
     except:
-        e = sys.exc_info()[0]
-        warnings.warn("An error occured while loading the ERDDAP data fetcher, it will not be available !\n%s" % e)
+        warnings.warn("An error occured while loading the ERDDAP data fetcher, "
+                      "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
         pass
 
     try:
         from .data_fetchers import localftp as LocalFTP_Fetchers
         AVAILABLE_BACKENDS['localftp'] = LocalFTP_Fetchers
     except:
-        e = sys.exc_info()[0]
-        warnings.warn("An error occured while loading the local FTP data fetcher, it will not be available !\n%s" % e)
+        warnings.warn("An error occured while loading the local FTP data fetcher, "
+                      "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
         pass
 
     return AVAILABLE_BACKENDS
