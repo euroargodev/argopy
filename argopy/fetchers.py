@@ -134,8 +134,12 @@ class ArgoDataFetcher(object):
             raise InvalidFetcherAccessPoint("'%s' is not a valid access point" % key)
         pass
 
-    def float(self, wmo):
+    def float(self, wmo, **kw):
         """ Load data from a float, given one or more WMOs """
+        if "CYC" in kw or "cyc" in kw:
+            raise TypeError("float() got an unexpected keyword argument 'cyc'. Use 'profile' access "
+                            "point to fetch specific profile data.")
+
         if 'float' in self.Fetchers:
             self.fetcher = self.Fetchers['float'](WMO=wmo, **self.fetcher_options)
         else:

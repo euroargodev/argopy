@@ -30,7 +30,7 @@ def test_unavailable_accesspoint():
     with pytest.raises(InvalidFetcherAccessPoint):
         ArgoDataFetcher(backend='localftp').region([-85,-45,10.,20.,0,100.]).to_xarray()
 
-class EntryPoints(TestCase):
+class EntryPoints_AllBackends(TestCase):
     """ Test main API facade for all available fetching backends and default dataset """
 
     def setUp(self):
@@ -78,13 +78,19 @@ class EntryPoints(TestCase):
     @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
     def test_region_erddap(self):
         self.__test_region('erddap')
-    
+
     @unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
     def test_float_localftp(self):
         with argopy.set_options(local_ftp='/Volumes/Data/ARGO'):
             #todo need to find something else for setting the local path !
             self.__test_float('localftp')
-        
+    
+    @unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
+    def test_profile_localftp(self):
+        with argopy.set_options(local_ftp='/Volumes/Data/ARGO'):
+            #todo need to find something else for setting the local path !
+            self.__test_profile('localftp')
+
     @unittest.skipUnless('argovis' in AVAILABLE_BACKENDS, "requires argovis data fetcher")
     def test_float_argovis(self):
         self.__test_float('argovis')

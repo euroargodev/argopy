@@ -63,16 +63,6 @@ class ArgoAccessor:
         """
         ds = self._obj
 
-        def cast_this(da, type):
-            try:
-                da.values = da.values.astype(type)
-                da.attrs['casted'] = True
-            except:
-                print("Oops!", sys.exc_info()[0], "occured.")
-                print("Fail to cast: ", da.dtype, "into:", type, "for: ", da.name)
-                print("Encountered values:", np.unique(da))
-            return da
-
         list_str = ['PLATFORM_NUMBER', 'DATA_MODE', 'DIRECTION', 'DATA_CENTRE', 'DATA_TYPE', 'FORMAT_VERSION',
                     'HANDBOOK_VERSION',
                     'PROJECT_NAME', 'PI_NAME', 'STATION_PARAMETERS', 'DATA_CENTER', 'DC_REFERENCE',
@@ -82,72 +72,95 @@ class ArgoAccessor:
                     'PARAMETER', 'SCIENTIFIC_CALIB_EQUATION', 'SCIENTIFIC_CALIB_COEFFICIENT',
                     'SCIENTIFIC_CALIB_COMMENT',
                     'HISTORY_INSTITUTION', 'HISTORY_STEP', 'HISTORY_SOFTWARE', 'HISTORY_SOFTWARE_RELEASE',
-                    'HISTORY_REFERENCE',
+                    'HISTORY_REFERENCE', 'HISTORY_QCTEST',
                     'HISTORY_ACTION', 'HISTORY_PARAMETER', 'VERTICAL_SAMPLING_SCHEME', 'FLOAT_SERIAL_NO']
         list_int = ['PLATFORM_NUMBER', 'WMO_INST_TYPE', 'WMO_INST_TYPE', 'CYCLE_NUMBER', 'CONFIG_MISSION_NUMBER']
         list_datetime = ['REFERENCE_DATE_TIME', 'DATE_CREATION', 'DATE_UPDATE',
                          'JULD', 'JULD_LOCATION', 'SCIENTIFIC_CALIB_DATE', 'HISTORY_DATE']
 
-        for v in ds.data_vars:
-            ds[v].attrs['casted'] = False
-            if v in list_str and ds[v].dtype == 'O':  # Object
-                ds[v] = cast_this(ds[v], str)
+        def cast_this(da, type):
+            """ Low-level casting of DataArray values """
+            try:
+                da.values = da.values.astype(type)
+                da.attrs['casted'] = True
+            except:
+                print("Oops!", sys.exc_info()[0], "occured.")
+                print("Fail to cast: ", da.dtype, "into:", type, "for: ", da.name)
+                print("Encountered unique values:", np.unique(da))
+            return da
 
-            if v in list_int:  # and ds[v].dtype == 'O':  # Object
-                ds[v] = cast_this(ds[v], int)
+        def cast_this_da(da):
+            """ Cast any DataArray """
+            da.attrs['casted'] = False
+            if v in list_str and da.dtype == 'O':  # Object
+                da = cast_this(da, str)
 
-            if v in list_datetime and ds[v].dtype == 'O':  # Object
-                if 'conventions' in ds[v].attrs and ds[v].attrs['conventions'] == 'YYYYMMDDHHMISS':
-                    if ds[v].size != 0:
-                        if len(ds[v].dims) <= 2:
-                            val = ds[v].astype(str).values.astype('U14')
+            if v in list_int:  # and da.dtype == 'O':  # Object
+                da = cast_this(da, int)
+
+            if v in list_datetime and da.dtype == 'O':  # Object
+                if 'conventions' in da.attrs and da.attrs['conventions'] == 'YYYYMMDDHHMISS':
+                    if da.size != 0:
+                        if len(da.dims) <= 1:
+                            val = da.astype(str).values.astype('U14')
                             val[val == '              '] = 'nan'  # This should not happen, but still ! That's real world data
-                            ds[v].values = pd.to_datetime(val, format='%Y%m%d%H%M%S')
+                            da.values = pd.to_datetime(val, format='%Y%m%d%H%M%S')
                         else:
-                            s = ds[v].stack(dummy_index=ds[v].dims)
+                            s = da.stack(dummy_index=da.dims)
                             val = s.astype(str).values.astype('U14')
                             val[val == '              '] = 'nan'  # This should not happen, but still ! That's real world data
                             s.values = pd.to_datetime(val, format='%Y%m%d%H%M%S')
-                            ds[v].values = s.unstack('dummy_index')
-                        ds[v] = cast_this(ds[v], np.datetime64)
+                            da.values = s.unstack('dummy_index')
+                        da = cast_this(da, np.datetime64)
                     else:
-                        ds[v] = cast_this(ds[v], np.datetime64)
+                        da = cast_this(da, np.datetime64)
 
                 elif v == 'SCIENTIFIC_CALIB_DATE':
-                    ds[v] = cast_this(ds[v], str)
-                    s = ds[v].stack(dummy_index=ds[v].dims)
+                    da = cast_this(da, str)
+                    s = da.stack(dummy_index=da.dims)
                     s.values = pd.to_datetime(s.values, format='%Y%m%d%H%M%S')
-                    ds[v].values = (s.unstack('dummy_index')).values
-                    ds[v] = cast_this(ds[v], np.datetime64)
+                    da.values = (s.unstack('dummy_index')).values
+                    da = cast_this(da, np.datetime64)
 
-            if "QC" in v and "PROFILE" not in v:
-                if ds[v].dtype == 'O':  # convert object to string
-                    ds[v] = cast_this(ds[v], str)
+            if "QC" in v and "PROFILE" not in v and "QCTEST" not in v:
+                if da.dtype == 'O':  # convert object to string
+                    da = cast_this(da, str)
 
                 # Address weird string values:
                 # (replace missing or nan values by a '0' that will be cast as a integer later
 
-                if ds[v].dtype == '<U3':  # string, len 3 because of a 'nan' somewhere
-                    ii = ds[v] == '   '  # This should not happen, but still ! That's real world data
-                    ds[v] = xr.where(ii, '0', ds[v])
+                if da.dtype == '<U3':  # string, len 3 because of a 'nan' somewhere
+                    ii = da == '   '  # This should not happen, but still ! That's real world data
+                    da = xr.where(ii, '0', da)
 
-                    ii = ds[v] == 'nan'  # This should not happen, but still ! That's real world data
-                    ds[v] = xr.where(ii, '0', ds[v])
+                    ii = da == 'nan'  # This should not happen, but still ! That's real world data
+                    da = xr.where(ii, '0', da)
 
-                    ds[v] = cast_this(ds[v], np.dtype('U1'))  # Get back to regular U1 string
+                    da = cast_this(da, np.dtype('U1'))  # Get back to regular U1 string
 
-                if ds[v].dtype == '<U1':  # string
-                    ii = ds[v] == ' '  # This should not happen, but still ! That's real world data
-                    ds[v] = xr.where(ii, '0', ds[v])
+                if da.dtype == '<U1':  # string
+                    ii = da == ' '  # This should not happen, but still ! That's real world data
+                    da = xr.where(ii, '0', da)
 
-                    ii = ds[v] == 'n'  # This should not happen, but still ! That's real world data
-                    ds[v] = xr.where(ii, '0', ds[v])
+                    ii = da == 'n'  # This should not happen, but still ! That's real world data
+                    da = xr.where(ii, '0', da)
 
                 # finally convert QC strings to integers:
-                ds[v] = cast_this(ds[v], int)
+                da = cast_this(da, int)
 
-            if ds[v].dtype != 'O':
-                ds[v].attrs['casted'] = True
+            if da.dtype != 'O':
+                da.attrs['casted'] = True
+
+            return da
+
+        for v in ds.data_vars:
+            try:
+                ds[v] = cast_this_da(ds[v])
+            except:
+                print("Oops!", sys.exc_info()[0], "occured.")
+                print("Fail to cast: %s " % v)
+                print("Encountered unique values:", np.unique(ds[v]))
+                raise
 
         return ds
 
@@ -218,7 +231,7 @@ class ArgoAccessor:
             return ds
 
         def new_arrays(argo_r, argo_a, argo_d, vname):
-            """ Merge the 3 datasets into a single ine with the appropriate fields
+            """ Merge the 3 datasets into a single one with the appropriate fields
 
                 Homogeneise variable names.
                 Based on xarray merge function with ’no_conflicts’: only values
@@ -250,7 +263,7 @@ class ArgoAccessor:
         ds = self._obj
         if 'DATA_MODE' not in ds:
             if errors:
-                raise InvalidDatasetStructure("Method only available for dataset with 'DATA_MODE' variable ")
+                raise InvalidDatasetStructure("Method only available for dataset with a 'DATA_MODE' variable ")
             else:
                 #todo should raise a warning instead ?
                 return ds

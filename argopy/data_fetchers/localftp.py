@@ -41,7 +41,7 @@ import multiprocessing as mp
 import distributed
 
 from .proto import ArgoDataFetcherProto
-from argopy.xarray import ArgoMultiProfLocalLoader
+# from argopy.xarray import ArgoMultiProfLocalLoader
 from argopy.errors import NetCDF4FileNotFoundError
 from argopy.utilities import list_multiprofile_file_variables, list_standard_variables
 from argopy.options import OPTIONS
@@ -165,7 +165,7 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
         return listname
 
     def _filepathpattern(self, wmo, cyc=None):
-        """ Set netcdf file path pattern to load """
+        """ Set netcdf file path pattern to load for a given wmo/cyc pair """
         if cyc is None:
             # Multi-profile file:
             # <FloatWmoID>_prof.nc
@@ -175,14 +175,14 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
                 return os.path.sep.join([self.path_ftp, "*", str(wmo), "%i_Sprof.nc" % wmo])
         else:
             # Single profile file:
-            # <R/D><FloatWmoID>_<XXX><D>.nc
+            # <B/M/S><R/D><FloatWmoID>_<XXX><D>.nc
             if cyc < 1000:
                 return os.path.sep.join([self.path_ftp, "*", str(wmo), "profiles", "*%i_%0.3d*.nc" % (wmo, cyc)])
             else:
                 return os.path.sep.join([self.path_ftp, "*", str(wmo), "profiles", "*%i_%0.4d*.nc" % (wmo, cyc)])
 
     def _absfilepath(self, wmo: int, cyc: int = None, errors: str = 'raise') -> str:
-        """ Set absolute netcdf file path to load
+        """ Set absolute netcdf file path to load for a given wmo/cyc pair
 
         Parameters
         ----------
@@ -211,6 +211,17 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
                 return None
         else:
             warnings.warn("More than one file to load for a single float cycle ! Return the 1st one by default.")
+            # The choice of the file to load depends on the user mode and dataset requested.
+            #todo define a robust choice
+            if self.dataset_id == 'phy':
+                # Use the synthetic profile:
+                l = [file for file in l if
+                      [file for file in [os.path.split(w)[-1] for w in l] if file[0] == 'S'][0] in file]
+                # print('phy', l[0])
+            elif self.dataset_id == 'bgc':
+                l = [file for file in l if
+                     [file for file in [os.path.split(w)[-1] for w in l] if file[0] == 'M'][0] in file]
+                # print('bgc:', l)
             return l[0]
 
     def _list_argo_files(self, errors: str = 'raise'):
@@ -357,5 +368,6 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
         ds.attrs['Fetched_by'] = getpass.getuser()
         ds.attrs['Fetched_date'] = pd.to_datetime('now').strftime('%Y/%m/%d')
         ds.attrs['Fetched_constraints'] = self.cname()
-        # ds.attrs['Fetched_url'] = ds.encoding['source']
+        if len(self.files) == 1:
+            ds.attrs['Fetched_url'] = ds.encoding['source']
         return ds
