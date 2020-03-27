@@ -3,7 +3,6 @@
 #
 # Test data data_fetchers
 #
-# Created by gmaze on 09/03/2020
 
 import os
 import sys
@@ -18,31 +17,15 @@ import argopy
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import InvalidFetcherAccessPoint
 
-# List available backends:
-backends = list()
-
-try:
-    from erddapy import ERDDAP
-    from argopy.data_fetchers import erddap as Erddap_Fetcher
-    backends.append('erddap')
-except ModuleNotFoundError:
-    pass
-except ImportError:
-    pass
-
-try:
-    from argopy.data_fetchers import localftp as LocalFTP_Fetcher
-    backends.append('localftp')
-except ModuleNotFoundError:
-    pass
-except ImportError:
-    pass
+from argopy.utilities import list_available_data_backends
+AVAILABLE_BACKENDS = list_available_data_backends()
 
 # List tests:
 def test_invalid_accesspoint():
     with pytest.raises(InvalidFetcherAccessPoint):
         ArgoDataFetcher().invalid_accesspoint.to_xarray()
 
+@unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
 def test_unavailable_accesspoint():
     with pytest.raises(InvalidFetcherAccessPoint):
         ArgoDataFetcher(backend='localftp').region([-85,-45,10.,20.,0,100.]).to_xarray()
@@ -84,19 +67,19 @@ class EntryPoints(TestCase):
             ds = ArgoDataFetcher(backend=bk).region(arg).to_xarray()
             assert isinstance(ds, xr.Dataset) == True
 
-    @unittest.skipUnless('erddap' in backends, "requires erddap data fetcher")
+    @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
     def test_float_erddap(self):
         self.__test_float('erddap')
 
-    @unittest.skipUnless('erddap' in backends, "requires erddap data fetcher")
+    @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
     def test_profile_erddap(self):
         self.__test_profile('erddap')
 
-    @unittest.skipUnless('erddap' in backends, "requires erddap data fetcher")
+    @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
     def test_region_erddap(self):
         self.__test_region('erddap')
     
-    @unittest.skipUnless('localftp' in backends, "requires localftp data fetcher")
+    @unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
     def test_float_localftp(self):
         with argopy.set_options(local_ftp='/Volumes/Data/ARGO'):
             #todo need to find something else for setting the local path !
@@ -106,7 +89,7 @@ class EntryPoints(TestCase):
     def test_float_argovis(self):
         self.__test_float('argovis')
 
-@unittest.skipUnless('erddap' in backends, "requires erddap data fetcher")
+@unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
 class Erddap_DataSets(TestCase):
     """ Test main API facade for all available dataset of the ERDDAP fetching backend """
 

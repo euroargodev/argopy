@@ -47,6 +47,7 @@ def urlopen(url):
         r.raise_for_status()
 
 def list_available_data_backends():
+    """ List all available data fetchers """
     AVAILABLE_BACKENDS = {}
     try:
         from .data_fetchers import erddap as Erddap_Fetchers
