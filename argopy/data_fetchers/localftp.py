@@ -120,7 +120,7 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
     """ Manage access to local ftp Argo data for: a list of WMOs
 
     """
-    def init(self, WMO=[], CYC=None, **kwargs):
+    def init(self, WMO: list = [], CYC=None, **kwargs):
         """ Create Argo data loader for WMOs
 
             Parameters
@@ -138,7 +138,8 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
             CYC = np.array(CYC, dtype='int') # Make sure we deal with an array of integers
         self.WMO = WMO
         self.CYC = CYC
-        self.argo_files = []
+        # Build the internal list of files to load:
+        # self.argo_files = [] # We do it in a lazy mode, ie only if data are requested with .to_xarray()
         return self
 
     def cname(self, cache=False):
@@ -165,8 +166,8 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
                 listname = self.dataset_id + "_" + listname
         return listname
 
-    def filepathpattern(self, wmo, cyc=None):
-        """ Return netcdf file path pattern to load """
+    def _filepathpattern(self, wmo, cyc=None):
+        """ Set netcdf file path pattern to load """
         if cyc is None:
             # Multi-profile file:
             # <FloatWmoID>_prof.nc
@@ -182,8 +183,8 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
             else:
                 return os.path.sep.join([self.path_ftp, "*", str(wmo), "profiles", "*%i_%0.4d*.nc" % (wmo, cyc)])
 
-    def absfilepath(self, wmo: int, cyc: int = None, errors: str = 'raise') -> str:
-        """ Return absolute netcdf file path to load
+    def _absfilepath(self, wmo: int, cyc: int = None, errors: str = 'raise') -> str:
+        """ Set absolute netcdf file path to load
 
         Parameters
         ----------
@@ -199,7 +200,7 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
         -------
         netcdf_file_path : str
         """
-        p = self.filepathpattern(wmo, cyc)
+        p = self._filepathpattern(wmo, cyc)
         l = sorted(glob(p))
         if len(l) == 1:
             return l[0]
@@ -213,6 +214,25 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
         else:
             warnings.warn("More than one file to load for a single float cycle ! Return the 1st one by default.")
             return l[0]
+
+    def _list_argo_files(self, errors: str = 'raise'):
+        """ Set the internal list of files to load """
+        if not hasattr(self, '_list_of_argo_files'):
+            self._list_of_argo_files = []
+            for wmo in self.WMO:
+                if self.CYC is None:
+                    self._list_of_argo_files.append(self._absfilepath(wmo, errors=errors))
+                else:
+                    for cyc in self.CYC:
+                        self._list_of_argo_files.append(self._absfilepath(wmo, cyc, errors=errors))
+        return self
+
+    @property
+    def files(self):
+        """ Return files to load """
+        if not hasattr(self, '_list_of_argo_files'):
+            self._list_argo_files()
+        return self._list_of_argo_files
 
     def _xload_multiprof(self, ncfile: str):
         """Load an Argo multi-profile file as a collection of points
@@ -275,22 +295,25 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
         """
         client = None if 'client' not in kwargs else kwargs['client']
 
-        if len(self.argo_files) == 1:
-            return self._xload_multiprof(self.argo_files[0])
+        if len(self.files) == 1:
+            return self._xload_multiprof(self.files[0])
 
         else:
+            warnings.warn("Fetching more than one float in a single request is not yet fully reliable. "
+                          "If you encounter an error, try to load each float separately.")
+
             if client is not None:
                 if type(client) == distributed.client.Client:
                     # Use dask client:
-                    futures = client.map(self._xload_multiprof, self.argo_files)
+                    futures = client.map(self._xload_multiprof, self.files)
                     results = client.gather(futures)
                 else:
                     # Use multiprocessing Pool
                     with mp.Pool() as pool:
-                        results = pool.map(self._xload_multiprof, self.argo_files)
+                        results = pool.map(self._xload_multiprof, self.files)
             else:
                 results = []
-                for f in self.argo_files:
+                for f in self.files:
                     results.append(self._xload_multiprof(f))
 
         results = [r for r in results if r is not None]  # Only keep non-empty results
@@ -313,21 +336,16 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
             If 'raise' (default), raises a NetCDF4FileNotFoundError error if any of the requested
             files cannot be found. If 'ignore', ignore this file in fetching data.
 
-        client: None, dask.client or mp
+        client: None, dask.client or 'mp'
 
         Returns
         -------
         :class:`xarray.Dataset`
         """
-        # Build the internal list of files to load
-        for wmo in self.WMO:
-            if self.CYC is None:
-                self.argo_files.append(self.absfilepath(wmo, errors=errors))
-            else:
-                for cyc in self.CYC:
-                    self.argo_files.append(self.absfilepath(wmo, cyc, errors=errors))
+        # Set internal list of files to load:
+        self._list_argo_files(errors=errors)
 
-        # Load data (raise error in no data found):
+        # Load data (will raise an error if no data found):
         ds = self._best_loader(client=client)
 
         # Remove netcdf file attributes and replace them with argopy ones:
@@ -343,162 +361,3 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
         ds.attrs['Fetched_constraints'] = self.cname()
         # ds.attrs['Fetched_url'] = ds.encoding['source']
         return ds
-
-class Fetch_box(LocalFTPArgoDataFetcher):
-    """ Manage access to local ftp Argo data for: a list of WMOs
-
-    """
-    def _init_localftp(self):
-        """ Internal list of available netcdf files to be processed """
-        pattern = os.path.sep.join(["*","*","*_prof.nc"])
-        self.argo_files = sorted(glob(os.path.sep.join([self.local_ftp_path, pattern])))
-        if self.argo_files is None:
-            raise ValueError("Argo root path doesn't contain any netcdf profile files (under %s)" % pattern)
-        self.argo_wmos = [int(os.path.basename(x).split("_")[0]) for x in self.argo_files]
-        self.argo_dacs = [x.split(os.path.sep)[-3] for x in self.argo_files]
-        print("Found %i files in local ftp" % len(self.argo_files)) #todo Put this into a proper logger
-
-    def init(self, WMO=[], CYC=None):
-        """ Create Argo data loader for WMOs
-
-            Parameters
-            ----------
-            WMO : list(int)
-                The list of WMOs to load all Argo data for.
-            CYC : int, np.array(int), list(int)
-                The cycle numbers to load.
-        """
-        if isinstance(WMO, int):
-            WMO = [WMO] # Make sure we deal with a list
-        if isinstance(CYC, int):
-            CYC = np.array((CYC,), dtype='int') # Make sure we deal with an array of integers
-        if isinstance(CYC, list):
-            CYC = np.array(CYC, dtype='int') # Make sure we deal with an array of integers
-        self.WMO = WMO
-        self.CYC = CYC
-        self._init_localftp()
-        return self
-
-    def cname(self, cache=False):
-        """ Return a unique string defining the request """
-        if len(self.WMO) > 1:
-            if cache:
-                listname = ["WMO%i" % i for i in self.WMO]
-                if isinstance(self.CYC, (np.ndarray)):
-                    [listname.append("CYC%0.4d" % i) for i in self.CYC]
-                listname = "_".join(listname)
-            else:
-                listname = ["WMO%i" % i for i in self.WMO]
-                if isinstance(self.CYC, (np.ndarray)):
-                    [listname.append("CYC%0.4d" % i) for i in self.CYC]
-                listname = ";".join(listname)
-        else:
-            listname = "WMO%i" % self.WMO[0]
-            if isinstance(self.CYC, (np.ndarray)):
-                listname = [listname]
-                [listname.append("CYC%0.4d" % i) for i in self.CYC]
-                listname = "_".join(listname)
-        listname = self.dataset_id + "_" + listname
-        return listname
-
-    def _xload_multiprof(self, dac_wmo_file):
-        """Load an Argo multi-profile file as a collection of points"""
-        dac_name, wmo_id = dac_wmo_file
-        wmo_id = int(wmo_id)
-
-        # Open file:
-        ncfile = os.path.sep.join([self.local_ftp_path, dac_name, str(wmo_id), ("%i_prof.nc" % wmo_id)])
-        if not os.path.isfile(ncfile):
-            raise NetCDF4FileNotFoundError(ncfile)
-
-        ds = xr.open_dataset(ncfile, decode_cf=1, use_cftime=0)
-
-        # Replace JULD and JULD_QC by TIME and TIME_QC
-        ds = ds.rename({'JULD':'TIME', 'JULD_QC':'TIME_QC'})
-        ds['TIME'].attrs = {'long_name': 'Datetime (UTC) of the station',
-                            'standard_name':  'time'}
-        # Cast data types:
-        ds = ds.argo.cast_types()
-
-        # Remove variables without dimensions:
-        # We should be able to find a way to keep them
-        for v in ds.data_vars:
-            if len(list(ds[v].dims)) == 0:
-                ds = ds.drop_vars(v)
-
-        # Also remove variables with dimensions other than N_PROF or N_LEVELS
-        # This is not satisfactory for operators or experts, but that get us started
-        for v in ds.data_vars:
-            keep = False
-            for d in ds[v].dims:
-                # if d in ['N_CALIB']:
-                #     ds = ds.drop_vars(v)
-                #     break
-                if d in ['N_PROF', 'N_LEVELS']:
-                    keep = True
-                    break
-            if not keep:
-                ds = ds.drop_vars(v)
-                # if d not in ['N_PROF', 'N_LEVELS']:
-                #     ds = ds.drop_vars(v)
-                #     break
-
-        ds = ds.argo.profile2point()
-
-        # Remove netcdf file attributes and replace them with argopy ones:
-        ds.attrs = {}
-        if self.dataset_id == 'phy':
-            ds.attrs['DATA_ID'] = 'ARGO'
-        if self.dataset_id == 'bgc':
-            ds.attrs['DATA_ID'] = 'ARGO-BGC'
-        ds.attrs['DOI'] = 'http://doi.org/10.17882/42182'
-        ds.attrs['Fetched_from'] = self.local_ftp_path
-        ds.attrs['Fetched_by'] = getpass.getuser()
-        ds.attrs['Fetched_date'] = pd.to_datetime('now').strftime('%Y/%m/%d')
-        ds.attrs['Fetched_constraints'] = self.cname()
-        ds = ds[np.sort(ds.data_vars)]
-
-        # instantiate the data loader:
-        # argo_loader = ArgoMultiProfLocalLoader(self.local_ftp_path)
-        # Open the file:
-        # ds = argo_loader.load_from_inst(dac_name, wmo_id)
-        # Possibly squeeze to correct cycle number:
-        return ds
-
-    def to_xarray(self, client=None, n=None):
-        """ Load Argo data and return a xarray.DataSet
-
-            Possibly use a dask distributed client for performance
-        """
-        for wmo in self.WMO:
-            if wmo not in self.argo_wmos:
-                raise ValueError("This float ('%s') is not available at: %s" % (wmo, self.local_ftp_path))
-
-        if len(self.WMO) == 1:
-            self.argo_dacs[self.argo_wmos.index(self.WMO[0])]
-            return self._xload_multiprof([self.argo_dacs[self.argo_wmos.index(self.WMO[0])], self.WMO[0]])
-
-        dac_wmo_files = list(zip(*[self.argo_dacs, self.argo_wmos]))
-        if n is not None:  # Sub-sample for test purposes (usefull when fetching the entire dataset)
-            dac_wmo_files = list(np.array(dac_wmo_files)[np.random.choice(range(0, len(dac_wmo_files) - 1), n)])
-        warnings.warn("NB OF FLOATS TO FETCH: %i" % len(dac_wmo_files)) #todo Move this to a proper logger
-
-        if client is not None:
-            futures = client.map(self._xload_multiprof, dac_wmo_files)
-            results = client.gather(futures, errors='raise')
-        else:
-            results = []
-            for wmo in dac_wmo_files:
-                results.append(self._xload_multiprof(wmo))
-
-        results = [r for r in results if r is not None]  # Only keep none empty results
-        if len(results) > 0:
-            ds = xr.concat(results, dim='index', data_vars='all', compat='equals')
-            ds.attrs.pop('DAC')
-            ds.attrs.pop('WMO')
-            ds = ds.sortby('time')
-            ds['index'].values = np.arange(0, len(ds['index']))
-            return ds
-        else:
-            warnings.warn("CAN'T FETCH ANY DATA !")
-            return None

@@ -8,5 +8,11 @@
       1. ``.filter_data_mode``
       1. ``.filter_qc``
       1. ``.filter_variables``
+  - They must inherit from proto.ArgoDataFetcherProto class
+  - They must provide parameters:
+      1. access_points, eg: ['wmo', 'box']
+      1. exit_formats, eg: ['xarray']
+      1. dataset_ids, eg: ['phy', 'ref', 'bgc']  # First is default
 
-It is the responsability of the higher level end-user API (``argopy.fetchers.ArgoDataFetcher``) to run filters according to user level or requests
+It is the responsability of the higher level end-user API (``argopy.fetchers.ArgoDataFetcher``) to run 
+filters according to user level or requests.
