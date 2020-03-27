@@ -5,7 +5,6 @@
 #
 # This is not intended to be used directly, only by the facade at fetchers.py
 #
-# Created by gmaze on 09/03/2020
 
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']

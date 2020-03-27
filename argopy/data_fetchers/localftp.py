@@ -22,8 +22,6 @@
 #   cname(self, cache=False)
 #   to_xarray(self)
 #
-# Created by gmaze on 18/03/2020
-# Building on earlier work from S. Tokunaga (as part of the MOCCA and EARISE H2020 projects)
 
 access_points = ['wmo']
 exit_formats = ['xarray']
