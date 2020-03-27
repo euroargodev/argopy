@@ -48,34 +48,13 @@ import xarray as xr
 import numpy as np
 import warnings
 
-from argopy.options import OPTIONS
+from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint
+from .utilities import list_available_data_backends
 
-# Import data fetchers:
-AVAILABLE_BACKENDS = list()
-try:
-    from .data_fetchers import erddap as Erddap_Fetchers
-    AVAILABLE_BACKENDS.append('erddap')
-except:
-    e = sys.exc_info()[0]
-    warnings.warn("An error occured while loading the ERDDAP data fetcher, it will not be available !\n%s" % e)
-    pass
-
-try:
-    from .data_fetchers import localftp as LocalFTP_Fetchers
-    AVAILABLE_BACKENDS.append('localftp')
-except:
-    e = sys.exc_info()[0]
-    warnings.warn("An error occured while loading the local FTP data fetcher, it will not be available !\n%s" % e)
-    pass
-
-
-def backends_check(Cls):
-    # warnings.warn( "Fetchers available: %s" % available_backends )
-    return Cls
+AVAILABLE_BACKENDS = list_available_data_backends()
 
 # Highest level API / Facade:
-@backends_check
 class ArgoDataFetcher(object):
     """ Fetch and process Argo data.
 
@@ -98,8 +77,9 @@ class ArgoDataFetcher(object):
                  ds: str = "",
                  **fetcher_kwargs):
 
-        if mode not in ['standard', 'expert']:
-            raise ValueError("Mode must be 'standard' or 'expert'")
+        _VALIDATORS['mode'](mode)
+        _VALIDATORS['data_src'](backend)
+        _VALIDATORS['dataset'](ds)
 
         # Facade options:
         self._mode = mode # User mode determining the level of post-processing required
@@ -108,13 +88,9 @@ class ArgoDataFetcher(object):
 
         # Load backend access points:
         if self._backend not in AVAILABLE_BACKENDS:
-            raise ValueError("Data fetcher '%s' not available" % backend)
-
-        if self._backend == 'erddap' and self._backend in AVAILABLE_BACKENDS:
-            Fetchers = Erddap_Fetchers
-
-        if self._backend == 'localftp' and self._backend in AVAILABLE_BACKENDS:
-            Fetchers = LocalFTP_Fetchers
+            raise ValueError("Data fetcher '%s' not available" % self._backend)
+        else:
+            Fetchers = AVAILABLE_BACKENDS[self._backend]
 
         # Auto-discovery of access points for this fetcher:
         # rq: Access point names for the facade are not the same as the access point of fetchers

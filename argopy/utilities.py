@@ -45,6 +45,26 @@ def urlopen(url):
         print("\n".join(error))
         r.raise_for_status()
 
+def list_available_data_backends():
+    AVAILABLE_BACKENDS = {}
+    try:
+        from .data_fetchers import erddap as Erddap_Fetchers
+        AVAILABLE_BACKENDS['erddap'] = Erddap_Fetchers
+    except:
+        e = sys.exc_info()[0]
+        warnings.warn("An error occured while loading the ERDDAP data fetcher, it will not be available !\n%s" % e)
+        pass
+
+    try:
+        from .data_fetchers import localftp as LocalFTP_Fetchers
+        AVAILABLE_BACKENDS['localftp'] = LocalFTP_Fetchers
+    except:
+        e = sys.exc_info()[0]
+        warnings.warn("An error occured while loading the local FTP data fetcher, it will not be available !\n%s" % e)
+        pass
+
+    return AVAILABLE_BACKENDS
+
 def list_standard_variables():
     """ Return the list of variables for standard users
     """
