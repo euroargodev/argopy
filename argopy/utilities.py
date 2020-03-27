@@ -7,6 +7,7 @@
 
 import os
 import sys
+import warnings
 import requests
 import io
 from IPython.core.display import display, HTML
