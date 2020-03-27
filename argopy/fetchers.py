@@ -181,8 +181,7 @@ class ArgoDataFetcher(object):
         return xds
 
 class ArgoIndexFetcher(object):
-    pass
-    '''
+    """    
     Specs discussion :
     https://github.com/euroargodev/argopy/issues/8 
     https://github.com/euroargodev/argopy/pull/6)
@@ -192,8 +191,7 @@ class ArgoIndexFetcher(object):
     from argopy import ArgoIndexFetcher
     idx = ArgoIndexFetcher.region([-75, -65, 10, 20])
     idx.plot.trajectories()
-    idx.to_dataframe()
-    idx.to_csv()
+    idx.to_dataframe()    
 
     Fetch and process Argo index.
 
@@ -207,5 +205,57 @@ class ArgoIndexFetcher(object):
     
     Specify here all options to data_fetchers
 
+    __author__: kevin.balem@ifremer.fr
     """
+     
+    def __init__(self, mode='standard', backend='erddap', **fetcher_kwargs):
 
+        if mode not in ['standard', 'expert']:
+            raise ValueError("Mode must be 'standard' or 'expert'")
+
+        # Init sub-methods:
+        self.fetcher = None
+        self.fetcher_options = {**fetcher_kwargs}
+        self.postproccessor = self.__empty_processor
+
+        # Facade options:
+        self.mode = mode # User mode determining the level of post-processing required        
+        self.backend = backend # data_fetchers to use
+        if self.backend != 'erddap':
+            raise ValueError("Invalid backend, only 'erddap' available at this point, local ftp will be available later")
+
+        # Load backend access points:
+        if backend == 'erddap' and backend in available_backends:
+            #self.Fetcher_wmo = Erddap_Fetcher.ArgoIndexFetcher_wmo
+            self.Fetcher_box = Erddap_Fetcher.ArgoIndexFetcher_box
+        else:
+            raise ValueError("The %s data fetcher is not available" % backend)
+
+    def __repr__(self):
+        if self.fetcher:
+            summary = [self.fetcher.__repr__()]
+            summary.append("User mode: %s" % self.mode)
+        else:
+            summary = ["<datafetcher 'Not initialised'>"]
+            summary.append("Fetchers: 'profile', 'float' or 'region'")
+            summary.append("User mode: %s" % self.mode)
+        return "\n".join(summary)
+
+    def __empty_processor(self, xds):
+        """ Do nothing to a dataset """
+        return xds
+
+    # def float(self, wmo):   #NEED TO SET CONSTRAIN ON FILENAME FOR THAT ...
+    #     """ Load index for one or more WMOs """
+    #     self.fetcher = self.Fetcher_wmo(WMO=wmo, **self.fetcher_options)                
+    #     return self    
+
+    def region(self, box):
+        """ Load index for a rectangular region, given latitude, longitude, and possibly time bounds """
+        self.fetcher = self.Fetcher_box(box=box, **self.fetcher_options)        
+        return self        
+
+    def to_dataframe(self, **kwargs):
+        """ Fetch and post-process data, return pandas.Dataframe """
+        pddf = self.fetcher.to_dataframe(**kwargs)        
+        return pddf        
