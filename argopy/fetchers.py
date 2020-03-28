@@ -226,7 +226,7 @@ class ArgoIndexFetcher(object):
 
         # Load backend access points:
         if backend == 'erddap' and backend in available_backends:
-            #self.Fetcher_wmo = Erddap_Fetcher.ArgoIndexFetcher_wmo
+            self.Fetcher_wmo = Erddap_Fetcher.ArgoIndexFetcher_wmo
             self.Fetcher_box = Erddap_Fetcher.ArgoIndexFetcher_box
         else:
             raise ValueError("The %s data fetcher is not available" % backend)
@@ -245,10 +245,10 @@ class ArgoIndexFetcher(object):
         """ Do nothing to a dataset """
         return xds
 
-    # def float(self, wmo):   #NEED TO SET CONSTRAIN ON FILENAME FOR THAT ...
-    #     """ Load index for one or more WMOs """
-    #     self.fetcher = self.Fetcher_wmo(WMO=wmo, **self.fetcher_options)                
-    #     return self    
+    def float(self, wmo):
+        """ Load index for one or more WMOs """
+        self.fetcher = self.Fetcher_wmo(WMO=wmo, **self.fetcher_options)                
+        return self    
 
     def region(self, box):
         """ Load index for a rectangular region, given latitude, longitude, and possibly time bounds """

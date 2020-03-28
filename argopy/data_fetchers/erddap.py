@@ -852,6 +852,42 @@ class ErddapArgoIndexFetcher(ABC):
                         #
         return df
 
+class ArgoIndexFetcher_wmo(ErddapArgoIndexFetcher):
+    """ Manage access to Argo Index through Ifremer ERDDAP for: a list of WMOs
+
+        __author__: kevin.balem@ifremer.fr
+    """
+
+    def init(self, WMO=[6902746, 6902757, 6902766]):
+        """ Create Argo data loader for WMOs
+
+            Parameters
+            ----------
+            WMO : list(int)
+                The list of WMOs to load all Argo data for.            
+        """
+        if isinstance(WMO, int):
+            WMO = [WMO] # Make sure we deal with a list        
+        self.WMO = WMO        
+        self.definition = 'Ifremer erddap Argo Index fetcher for floats'
+        return self
+
+    def define_constraints(self):
+        """ Define erddap constraints """
+        #  'file=~': "(.*)(R|D)(6902746_|6902747_)(.*)" 
+        self.erddap.constraints = {'file=~': "(.*)(R|D)("+"|".join(["%i"%i for i in self.WMO])+")(_.*)"}        
+        return self
+
+    def cname(self, cache=False):
+        """ Return a unique string defining the constraints """
+        if len(self.WMO) > 1:
+            listname = ["WMO%i" % i for i in self.WMO]
+            listname = ";".join(listname)
+        else:
+            listname = "WMO%i" % self.WMO[0]            
+        listname = self.dataset_id + "_" + listname
+        return listname
+
 class ArgoIndexFetcher_box(ErddapArgoIndexFetcher):
     """ Manage access to Argo Index through Ifremer ERDDAP for: an ocean rectangle
 
