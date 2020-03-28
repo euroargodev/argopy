@@ -53,6 +53,27 @@ or for a collection of floats:
     argo_loader.float([6902746, 6902747, 6902757, 6902766], CYC=1).to_xarray()
 ```
 
+### Argo Index Fetcher
+Index object is returned as a pandas dataframe.
+
+Init the fetcher:
+```python
+    from argopy import DataFetcher as ArgoIndexFetcher
+
+    index_loader = ArgoIndexFetcher()
+    index_loader = ArgoIndexFetcher(backend='erddap')    
+```
+and then, request index for a domain:
+```python
+    index_loader.region([-85,-45,10.,20.,0,1000.]).to_dataframe()
+    index_loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2014-12']).to_dataframe()
+```
+or for a collection of floats:
+```python
+    index_loader.float(6902746).to_dataframe()
+    index_loader.float([6902746, 6902747, 6902757, 6902766]).to_dataframe()    
+```
+
 **Development roadmap**:
 
 We aim to provide high level helper methods [(see this milestone)](https://github.com/euroargodev/argopy/milestone/1) to load Argo data from:

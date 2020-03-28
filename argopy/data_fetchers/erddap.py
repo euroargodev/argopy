@@ -907,7 +907,7 @@ class ArgoIndexFetcher_box(ErddapArgoIndexFetcher):
             # Use all time line:
             box.append('1900-01-01')
             box.append('2100-12-31')
-        elif len(box) != 8:
+        elif len(box) != 6:
             raise ValueError('Box must have 4 or 6 elements : [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max] ')
         self.BOX = box              
         self.definition = 'Ifremer erddap Argo Index fetcher for a space/time region'       
