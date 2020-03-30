@@ -763,7 +763,8 @@ class ErddapArgoIndexFetcher(ABC):
     # Methods that must not changed
     ###
     def __init__(self, **kwargs):
-        """ Instantiate an ERDDAP Argo index loader """        
+        """ Instantiate an ERDDAP Argo index loader """    
+        self.dataset_id = 'index'    
         self.init(**kwargs)
         self._init_erddapy()
 

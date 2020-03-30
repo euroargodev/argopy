@@ -52,6 +52,9 @@ def backends_check(Cls):
     # warnings.warn( "Fetchers available: %s" % available_backends )
     return Cls
 
+# Import plotters :
+from .plotters import *
+
 # Highest level API / Facade:
 @backends_check
 class ArgoDataFetcher(object):
@@ -259,3 +262,8 @@ class ArgoIndexFetcher(object):
         """ Fetch and post-process data, return pandas.Dataframe """
         pddf = self.fetcher.to_dataframe(**kwargs)        
         return pddf        
+
+    def plot(self, type='trajectory'):
+        """ Custom plots """
+        idx=self.to_dataframe()
+        plot_trajectory(idx.sort_values(['file']))
