@@ -65,13 +65,18 @@ Init the fetcher:
 ```
 and then, request index for a domain:
 ```python
-    index_loader.region([-85,-45,10.,20.,0,1000.]).to_dataframe()
-    index_loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2014-12']).to_dataframe()
+    index_loader.region([-85,-45,10.,20.]).to_dataframe()
+    index_loader.region([-85,-45,10.,20.,'2012-01','2014-12']).to_dataframe()
 ```
 or for a collection of floats:
 ```python
     index_loader.float(6902746).to_dataframe()
     index_loader.float([6902746, 6902747, 6902757, 6902766]).to_dataframe()    
+```
+For plotting the map of your query :
+```python    
+    index_loader.float([6902746, 6902747, 6902757, 6902766]).plot()
+    index_loader.region([-85,-45,10.,20.]).plot()
 ```
 
 **Development roadmap**:
