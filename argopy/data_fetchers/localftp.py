@@ -308,7 +308,7 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
             return self._xload_multiprof(self.files[0])
 
         else:
-            warnings.warn("Fetching more than one float in a single request is not yet fully reliable. "
+            warnings.warn("Fetching more than one file in a single request is not yet fully reliable. "
                           "If you encounter an error, try to load each float separately.")
 
             if client is not None:
