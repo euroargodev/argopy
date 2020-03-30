@@ -32,13 +32,16 @@ The primary data model used to manipulate Argo data is [xarray](https://github.c
 
 ### Argo Data Fetcher
 
-Init the fetcher:
+Init a data fetcher like:
 ```python
     from argopy import DataFetcher as ArgoDataFetcher
 
     argo_loader = ArgoDataFetcher()
+    # or
     argo_loader = ArgoDataFetcher(backend='erddap')
-    argo_loader = ArgoDataFetcher(backend='localftp')
+    # or
+    argo_loader = ArgoDataFetcher(backend='localftp', path_ftp='/data/Argo/ftp_copy')
+    # or
     argo_loader = ArgoDataFetcher(cachedir='tmp')
 ```
 and then, request data for a domain:
@@ -56,7 +59,6 @@ or for a collection of floats:
 ```python
     argo_loader.float(6902746).to_xarray()
     argo_loader.float([6902746, 6902747, 6902757, 6902766]).to_xarray()
-    argo_loader.float([6902746, 6902747, 6902757, 6902766], CYC=1).to_xarray()
 ```
 
 **Development roadmap**:

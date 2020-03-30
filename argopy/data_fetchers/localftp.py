@@ -181,6 +181,7 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
             else:
                 return os.path.sep.join([self.path_ftp, "*", str(wmo), "profiles", "*%i_%0.4d*.nc" % (wmo, cyc)])
 
+
     def _absfilepath(self, wmo: int, cyc: int = None, errors: str = 'raise') -> str:
         """ Set absolute netcdf file path to load for a given wmo/cyc pair
 
