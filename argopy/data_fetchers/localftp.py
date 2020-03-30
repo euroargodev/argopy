@@ -36,12 +36,12 @@ import xarray as xr
 from abc import ABC, abstractmethod
 import warnings
 import getpass
+from pathlib import Path
 
 import multiprocessing as mp
 import distributed
 
 from .proto import ArgoDataFetcherProto
-# from argopy.xarray import ArgoMultiProfLocalLoader
 from argopy.errors import NetCDF4FileNotFoundError
 from argopy.utilities import list_multiprofile_file_variables, list_standard_variables
 from argopy.options import OPTIONS

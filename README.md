@@ -46,7 +46,7 @@ Init a data fetcher like:
 ```
 and then, request data for a domain:
 ```python
-    argo_loader.region([-85,-45,10.,20.,0,1000.]).to_xarray()
+    argo_loader.region([-85,-45,10.,20.,0,10.]).to_xarray()
     argo_loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2014-12']).to_xarray()
 ```
 for profiles of a given float: 
