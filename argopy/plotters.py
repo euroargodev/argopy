@@ -23,4 +23,4 @@ def plot_trajectory(idx):
     sns.scatterplot(x="longitude",y="latitude",hue='wmo',data=idx,palette=mypal)    
     plt.legend(loc='upper right', bbox_to_anchor=(1.2,1))
     if(nfloat>15):
-        ax.get_legend().remove()
+        ax.get_legend().remove()    

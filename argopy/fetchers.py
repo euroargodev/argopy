@@ -250,19 +250,27 @@ class ArgoIndexFetcher(object):
 
     def float(self, wmo):
         """ Load index for one or more WMOs """
-        self.fetcher = self.Fetcher_wmo(WMO=wmo, **self.fetcher_options)                
+        self.fetcher = self.Fetcher_wmo(WMO=wmo, **self.fetcher_options)       
+        print("Float index initialised")         
         return self    
 
     def region(self, box):
         """ Load index for a rectangular region, given latitude, longitude, and possibly time bounds """
         self.fetcher = self.Fetcher_box(box=box, **self.fetcher_options)        
+        print("Box index initialised")
         return self        
 
     def to_dataframe(self, **kwargs):
-        """ Fetch and post-process data, return pandas.Dataframe """
+        """ Fetch index and return pandas.Dataframe """
         pddf = self.fetcher.to_dataframe(**kwargs)        
         return pddf        
 
+    def to_csv(self,file='output_file.csv'):
+        """ Fetch index and return csv """
+        idx=self.to_dataframe()
+        idx.to_csv(file)   
+        print('file saved to : '+file)             
+    
     def plot(self, type='trajectory'):
         """ Custom plots """
         idx=self.to_dataframe()
