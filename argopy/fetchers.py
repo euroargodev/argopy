@@ -196,17 +196,8 @@ class ArgoDataFetcher(object):
 
     def deployments(self, box):
         """ Retrieve deployment locations in a specific space/time region """
-        self.fetcher = ErddapArgoDataFetcher_box_deployments(box=box, **self.fetcher_options)
-
-        if self._mode == 'standard' and self._dataset_id != 'ref':
-            def postprocessing(xds):
-                xds = self.fetcher.filter_data_mode(xds)
-                xds = self.fetcher.filter_qc(xds)
-                xds = self.fetcher.filter_variables(xds, self._mode)
-                return xds
-            self.postproccessor = postprocessing
-
-        return self
+        warnings.warn("This access point is to be used with an index fetcher")
+        pass
 
     def to_xarray(self, **kwargs):
         """ Fetch and post-process data, return xarray.DataSet """
