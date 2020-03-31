@@ -75,9 +75,15 @@ or for a collection of floats:
 ```
 For plotting the map of your query :
 ```python    
-    index_loader.float([6902746, 6902747, 6902757, 6902766]).plot()
-    index_loader.region([-85,-45,10.,20.]).plot()
+    index_loader.float([6902745,6902746]).plot('trajectory)    
 ```
+![index_traj](https://user-images.githubusercontent.com/17851004/78023937-d0c2d580-7357-11ea-9974-70a2aaf30590.png)
+
+For plotting the DAC distribution of the indexed profiles :
+```python    
+    index_loader.region([-40,-20,50,60,'2014-01','2015-01']).plot('dac')    
+```
+![dac](https://user-images.githubusercontent.com/17851004/78024137-26977d80-7358-11ea-8557-ef39a88028b2.png)
 
 **Development roadmap**:
 
