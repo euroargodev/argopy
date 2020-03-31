@@ -3,6 +3,11 @@
 #
 # Test data data_fetchers
 #
+# How to test the localftp backend ?
+#   from argopy import tutorial
+#   p = tutorial.ftpsample.download() # data goes to: p=os.path.expanduser(os.path.sep.join(["~",".argopy_tutorial_data"]))
+#   with argopy.set_options(local_ftp=p):
+#     self.__test_float('localftp')
 
 import os
 import sys
