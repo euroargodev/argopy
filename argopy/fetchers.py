@@ -92,6 +92,7 @@ class ArgoDataFetcher(object):
         if backend == 'erddap' and backend in available_backends:
             self.Fetcher_wmo = Erddap_Fetcher.ArgoDataFetcher_wmo
             self.Fetcher_box = Erddap_Fetcher.ArgoDataFetcher_box
+            self.Fetcher_deployments = Erddap_Fetcher.ArgoDataFetcher_box_deployments
         else:
             raise ValueError("The %s data fetcher is not available" % backend)
 
@@ -162,7 +163,7 @@ class ArgoDataFetcher(object):
 
     def deployments(self, box):
         """ Retrieve deployment locations in a specific space/time region """
-        self.fetcher = ErddapArgoDataFetcher_box_deployments(box=box, **self.fetcher_options)
+        self.fetcher = self.Fetcher_deployments(box=box, **self.fetcher_options)
 
         if self.mode == 'standard' and (self.dataset_id == 'phy' or self.dataset_id == 'bgc'):
             def postprocessing(xds):
