@@ -225,7 +225,7 @@ class ArgoIndexFetcher(object):
         self.mode = mode # User mode determining the level of post-processing required        
         self.backend = backend # data_fetchers to use
         if self.backend != 'erddap':
-            raise ValueError("Invalid backend, only 'erddap' available at this point, local ftp will be available later")
+            raise ValueError("Invalid backend, only 'erddap' available at this point, local ftp indexing will be available later")
 
         # Load backend access points:
         if backend == 'erddap' and backend in available_backends:

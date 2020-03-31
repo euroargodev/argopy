@@ -762,9 +762,18 @@ class ErddapArgoIndexFetcher(ABC):
     ###
     # Methods that must not changed
     ###
-    def __init__(self, **kwargs):
+    def __init__(self, cache=False, cachedir=None, **kwargs):
         """ Instantiate an ERDDAP Argo index loader """    
+
+        self.definition = 'Ifremer erddap Argo index fetcher'
         self.dataset_id = 'index'    
+
+        self.cache = cache or not not cachedir # Yes, this is not not
+        self.cachedir = cachedir
+        if self.cache:
+            #todo check if cachedir is a valid path
+            Path(self.cachedir).mkdir(parents=True, exist_ok=True)
+
         self.init(**kwargs)
         self._init_erddapy()
 
@@ -799,6 +808,14 @@ class ErddapArgoIndexFetcher(ABC):
         self.erddap.response = 'csv'        
         self.erddap.dataset_id = 'ArgoFloats-index'                    
         return self
+
+    @property
+    def cachepath(self):
+        """ Return path to cache file for this request """
+        src = self.cachedir
+        file = ("ERindex_%s.csv") % (self.cname(cache=True))
+        fcache = os.path.join(src, file)
+        return fcache
 
     @property
     def url(self, response=None):
@@ -846,11 +863,21 @@ class ErddapArgoIndexFetcher(ABC):
     def to_dataframe(self):
         """ Load Argo index and return a pandas dataframe """        
 
+        # Try to load cached file if requested:
+        if self.cache and os.path.exists(self.cachepath):
+            ds = pd.read_csv(self.cachepath)            
+            return ds
+        # No cache found or requested, so we compute:
+
         # Download data: get a csv, open it as pandas dataframe, create wmo field
         df = pd.read_csv(urlopen(self.url), parse_dates=True, skiprows=[1])        
         df['date'] = pd.to_datetime(df['date'])
         df['wmo'] = df.file.apply(lambda x: int(x.split('/')[1]))
-                        #
+        #
+        # Possibly save in cache for later re-use
+        if self.cache:
+            df.to_csv(self.cachepath)
+
         return df
 
 class ArgoIndexFetcher_wmo(ErddapArgoIndexFetcher):
@@ -882,8 +909,12 @@ class ArgoIndexFetcher_wmo(ErddapArgoIndexFetcher):
     def cname(self, cache=False):
         """ Return a unique string defining the constraints """
         if len(self.WMO) > 1:
-            listname = ["WMO%i" % i for i in self.WMO]
-            listname = ";".join(listname)
+            if cache:
+                listname = ["WMO%i" % i for i in self.WMO]                
+                listname = "_".join(listname)
+            else:
+                listname = ["WMO%i" % i for i in self.WMO]                
+                listname = ";".join(listname)
         else:
             listname = "WMO%i" % self.WMO[0]            
         listname = self.dataset_id + "_" + listname
@@ -925,11 +956,16 @@ class ArgoIndexFetcher_box(ErddapArgoIndexFetcher):
         self.erddap.constraints.update({'date<=': self.BOX[5]})
         return None
 
-    def cname(self):
+    def cname(self, cache=False):
         """ Return a unique string defining the constraints """
-        BOX = self.BOX                
-        boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; t=%s/%s]") % \
-                  (BOX[0],BOX[1],BOX[2],BOX[3],self._format(BOX[4], 'tim'), self._format(BOX[5], 'tim'))
+        BOX = self.BOX
+        if cache:
+            boxname = ("%s_%s_%s_%s_%s_%s") % (self._format(BOX[0], 'lon'), self._format(BOX[1], 'lon'),
+                                               self._format(BOX[2], 'lat'), self._format(BOX[3], 'lat'),                                                     
+                                               self._format(BOX[4], 'tim'), self._format(BOX[5], 'tim'))
+        else:
+            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; t=%s/%s]") % \
+                      (BOX[0],BOX[1],BOX[2],BOX[3],self._format(BOX[4], 'tim'), self._format(BOX[5], 'tim'))
 
         boxname = self.dataset_id + "_" + boxname
         return boxname
