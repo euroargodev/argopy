@@ -3,7 +3,11 @@
 
     Useful for documentation, to play with and to test argopy
 
-    Data files hosted on companion repository: http://www.github.com/euroargodev/argopy-data
+    Data files are hosted on companion repository: http://www.github.com/euroargodev/argopy-data
+
+    import argopy
+
+    argopy.tutorial.sample_ftp().create() # Create a sample collection of GDAC ftp files
 
 """
 
@@ -19,7 +23,7 @@ from urllib.request import urlretrieve
 
 _default_cache_dir = os.sep.join(("~", ".argopy_tutorial_data"))
 
-class ftpsample():
+class sample_ftp():
     def __init__(self):
         self.localpath = os.path.expanduser(os.path.sep.join(["~",".argopy_tutorial_data"]))
         pass
