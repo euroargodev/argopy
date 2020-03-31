@@ -271,7 +271,12 @@ class ArgoIndexFetcher(object):
         idx.to_csv(file)   
         print('file saved to : '+file)             
     
-    def plot(self, type='trajectory'):
+    def plot(self, ptype='trajectory'):
         """ Custom plots """
         idx=self.to_dataframe()
-        plot_trajectory(idx.sort_values(['file']))
+        if ptype=='dac':
+            plot_dac(idx)
+        else:
+            plot_trajectory(idx.sort_values(['file']))
+
+    
