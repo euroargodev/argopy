@@ -12,15 +12,16 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8]
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@master
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@master
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -28,7 +29,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install distributed
-        pip install Bottleneck codecov pytest-cov
+        pip install Bottleneck
     - name: Lint with flake8
       run: |
         pip install flake8
@@ -38,15 +39,14 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pip install pytest codecov pytest-cov
-        pytest --cov=argopy --cov-config=.coveragerc --cov-report term-missing
+        pip install pytest pytest-cov
+        pytest --cov=./ --cov-config=.coveragerc --cov-report term-missing
     - name: Code coverage
       run: |
         export CODECOV_TOKEN="${{ secrets.CODECOV_TOKEN }}"
         bash <(curl -s https://codecov.io/bash)
 
-    - name: Github Code coverage
-    - uses: actions/checkout@master
+    - name: Upload coverage to Codecov
     - uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
