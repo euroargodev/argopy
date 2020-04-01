@@ -9,6 +9,7 @@ except Exception:
 # Import facades:
 from .fetchers import ArgoDataFetcher as DataFetcher
 from .xarray import ArgoAccessor
+from . import tutorial
 
 # Other Import
 from . import utilities

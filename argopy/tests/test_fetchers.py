@@ -1,13 +1,8 @@
 #!/bin/env python
 # -*coding: UTF-8 -*-
 #
-# Test data data_fetchers
+# Test data fetchers
 #
-# How to test the localftp backend ?
-#   from argopy import tutorial
-#   p = tutorial.ftpsample.download() # data goes to: p=os.path.expanduser(os.path.sep.join(["~",".argopy_tutorial_data"]))
-#   with argopy.set_options(local_ftp=p):
-#     self.__test_float('localftp')
 
 import os
 import sys
@@ -24,6 +19,15 @@ from argopy.errors import InvalidFetcherAccessPoint
 
 from argopy.utilities import list_available_data_backends
 AVAILABLE_BACKENDS = list_available_data_backends()
+
+import urllib.request
+def connected(host='http://www.ifremer.fr'):
+    try:
+        urllib.request.urlopen(host) #Python 3.x
+        return True
+    except:
+        return False
+CONNECTED = connected()
 
 # List tests:
 def test_invalid_accesspoint():
@@ -46,10 +50,10 @@ class EntryPoints_AllBackends(TestCase):
 
         # Define API entry point options to tests:
         self.args = {}
-        self.args['float'] = [[5906072],
-                              [5906072, 5905275]]
-        self.args['profile'] = [[5905275, 34],
-                                [5905275, np.arange(12, 16)], [5906072, [1, 6]]]
+        self.args['float'] = [[5900446],
+                              [6901929, 3902131]]
+        self.args['profile'] = [[2902696, 12],
+                                [2902269, np.arange(12, 14)], [2901746, [1, 6]]]
         self.args['region'] = [[-70, -65, 30., 35., 0, 10.],
                                [-70, -65, 30., 35., 0, 10., '2012-01-01', '2012-06-30']]
 
@@ -73,34 +77,39 @@ class EntryPoints_AllBackends(TestCase):
             assert isinstance(ds, xr.Dataset) == True
 
     @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
+    @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     def test_float_erddap(self):
         self.__test_float('erddap')
 
     @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
+    @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     def test_profile_erddap(self):
         self.__test_profile('erddap')
 
     @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
+    @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     def test_region_erddap(self):
         self.__test_region('erddap')
 
     @unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
     def test_float_localftp(self):
-        with argopy.set_options(local_ftp='/Volumes/Data/ARGO'):
-            #todo need to find something else for setting the local path !
-            self.__test_float('localftp')
+        ftproot, flist = argopy.tutorial.open_dataset('localftp')
+        with argopy.set_options(local_ftp=os.path.join(ftproot,'dac')):
+            self.__test_float('localftp', )
     
     @unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
     def test_profile_localftp(self):
-        with argopy.set_options(local_ftp='/Volumes/Data/ARGO'):
-            #todo need to find something else for setting the local path !
+        ftproot, flist = argopy.tutorial.open_dataset('localftp')
+        with argopy.set_options(local_ftp=os.path.join(ftproot,'dac')):
             self.__test_profile('localftp')
 
     @unittest.skipUnless('argovis' in AVAILABLE_BACKENDS, "requires argovis data fetcher")
+    @unittest.skipUnless(CONNECTED, "argovis requires an internet connection")
     def test_float_argovis(self):
         self.__test_float('argovis')
 
 @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
+@unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
 class Erddap_DataSets(TestCase):
     """ Test main API facade for all available dataset of the ERDDAP fetching backend """
 
@@ -146,7 +155,7 @@ class Erddap_DataSets(TestCase):
     def test_phy_profile(self):
         self.args = {}
         self.args['profile'] = [[6902746, 34],
-                                [6902746, np.arange(12, 16)], [6902746, [1, 12]]]
+                                [6902746, np.arange(12, 13)], [6902746, [1, 12]]]
         self.__testthis('phy')
 
     def test_phy_region(self):
@@ -164,7 +173,7 @@ class Erddap_DataSets(TestCase):
     def test_bgc_profile(self):
         self.args = {}
         self.args['profile'] = [[5903248, 34],
-                                [5903248, np.arange(12, 16)], [5903248, [1, 12]]]
+                                [5903248, np.arange(12, 14)], [5903248, [1, 12]]]
         self.__testthis('bgc')
 
     def test_bgc_region(self):
@@ -178,6 +187,51 @@ class Erddap_DataSets(TestCase):
         self.args['region'] = [[-70, -65, 35., 40., 0, 10.],
                                [-70, -65, 35., 40., 0, 10., '2012-01-01', '2012-12-31']]
         self.__testthis('ref')
+
+@unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
+class LocalFTP_DataSets(TestCase):
+    """ Test main API facade for all available dataset of the localftp fetching backend """
+
+    def __testthis(self, dataset):
+        ftproot, flist = argopy.tutorial.open_dataset('localftp')
+        self.local_ftp = os.path.join(ftproot, 'dac')
+        for access_point in self.args:
+
+            if access_point == 'profile':
+                for arg in self.args['profile']:
+                    with argopy.set_options(local_ftp=self.local_ftp):
+                        try:
+                            ds = ArgoDataFetcher(backend='localftp', ds=dataset).profile(*arg).to_xarray()
+                            assert isinstance(ds, xr.Dataset) == True
+                        except:
+                            print("LOCALFTP request:\n",
+                                  ArgoDataFetcher(backend='localftp', ds=dataset).profile(*arg).fetcher.files)
+                            pass
+
+            if access_point == 'float':
+                for arg in self.args['float']:
+                    with argopy.set_options(local_ftp=self.local_ftp):
+                        try:
+                            ds = ArgoDataFetcher(backend='localftp', ds=dataset).float(arg).to_xarray()
+                            assert isinstance(ds, xr.Dataset) == True
+                        except:
+                            print("LOCALFTP request:\n",
+                                  ArgoDataFetcher(backend='localftp', ds=dataset).float(arg).fetcher.files)
+                            pass
+
+    def test_phy_float(self):
+        self.args = {}
+        self.args['float'] = [[5900446],
+                              [6901929, 3902131]]
+        self.__testthis('phy')
+
+    def test_phy_profile(self):
+        self.args = {}
+        self.args['profile'] = [[2902696, 12],
+                                [2902269, np.arange(12, 14)],
+                                [2901746, [1, 6]]]
+        self.__testthis('phy')
+
 
 if __name__ == '__main__':
     unittest.main()
