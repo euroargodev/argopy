@@ -9,6 +9,7 @@
 import requests
 import io
 from IPython.core.display import display, HTML
+import pickle
 
 def urlopen(url):
     """ Load content from url or raise alarm on status with explicit information on the error
@@ -42,3 +43,21 @@ def urlopen(url):
         error.append("%s" % url)
         print("\n".join(error))
         r.raise_for_status()
+
+def load_dict(ptype):
+    if ptype=='profilers':
+        pickle_in = open("dict_profilers.pickle","rb")
+        loaded_dict = pickle.load(pickle_in)
+        return loaded_dict
+    elif ptype=='institutions':
+        pickle_in = open("dict_institutions.pickle","rb")
+        loaded_dict = pickle.load(pickle_in)
+        return loaded_dict      
+    else:
+        raise ValueError("Invalid dictionnary pickle file")
+
+def mapp_dict(Adictionnary,Avalue):
+    try:        
+        return Adictionnary[Avalue] 
+    except KeyError:
+        return "Unknown"        

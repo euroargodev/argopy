@@ -63,27 +63,36 @@ Init the fetcher:
     index_loader = ArgoIndexFetcher()
     index_loader = ArgoIndexFetcher(backend='erddap')    
 ```
-and then, request index for a domain:
+and then, set the index request index for a domain:
 ```python
-    index_loader.region([-85,-45,10.,20.]).to_dataframe()
-    index_loader.region([-85,-45,10.,20.,'2012-01','2014-12']).to_dataframe()
+    idx=index_loader.region([-85,-45,10.,20.])
+    idx=index_loader.region([-85,-45,10.,20.,'2012-01','2014-12'])
 ```
 or for a collection of floats:
 ```python
-    index_loader.float(6902746).to_dataframe()
-    index_loader.float([6902746, 6902747, 6902757, 6902766]).to_dataframe()    
+    idx=index_loader.float(6902746)
+    idx=index_loader.float([6902746, 6902747, 6902757, 6902766])   
 ```
+then you can see you index as a pandas dataframe or a xarray dataset :
+```python
+    idx.to_dataframe()
+    idx.to_xarray()
+```
+
 For plotting the map of your query :
 ```python    
-    index_loader.float([6902745,6902746]).plot('trajectory)    
+    idx.plot('trajectory)    
 ```
 ![index_traj](https://user-images.githubusercontent.com/17851004/78023937-d0c2d580-7357-11ea-9974-70a2aaf30590.png)
 
-For plotting the DAC distribution of the indexed profiles :
+For plotting the distribution of DAC or profiler type of the indexed profiles :
 ```python    
-    index_loader.region([-40,-20,50,60,'2014-01','2015-01']).plot('dac')    
+    idx.plot('dac')    
+    idx.plot('profiler')
 ```
 ![dac](https://user-images.githubusercontent.com/17851004/78024137-26977d80-7358-11ea-8557-ef39a88028b2.png)
+
+
 
 **Development roadmap**:
 

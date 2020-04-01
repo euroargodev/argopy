@@ -265,6 +265,12 @@ class ArgoIndexFetcher(object):
         pddf = self.fetcher.to_dataframe(**kwargs)        
         return pddf        
 
+    def to_xarray(self, **kwargs):
+        """ Fetch index and return xr.dataset """
+        pddf = self.fetcher.to_dataframe(**kwargs) 
+        ds = pddf.to_xarray()       
+        return ds            
+
     def to_csv(self,file='output_file.csv'):
         """ Fetch index and return csv """
         idx=self.to_dataframe()
@@ -276,6 +282,8 @@ class ArgoIndexFetcher(object):
         idx=self.to_dataframe()
         if ptype=='dac':
             plot_dac(idx)
+        elif ptype=='profiler':
+            plot_profilerType(idx)               
         else:
             plot_trajectory(idx.sort_values(['file']))
 

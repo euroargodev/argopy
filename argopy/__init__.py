@@ -12,3 +12,6 @@ from .xarray import ArgoAccessor
 
 # Other Import
 from . import utilities
+
+# Import assets
+pkg_resources.resource_filename('argopy', 'assets/')

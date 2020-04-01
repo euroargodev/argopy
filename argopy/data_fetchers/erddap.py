@@ -23,7 +23,7 @@ from pathlib import Path
 import getpass
 import warnings
 
-from argopy.utilities import urlopen
+from argopy.utilities import urlopen, load_dict, mapp_dict
 
 from erddapy import ERDDAP
 from erddapy.utilities import parse_dates, quote_string_constraints
@@ -874,9 +874,18 @@ class ErddapArgoIndexFetcher(ABC):
         df['date'] = pd.to_datetime(df['date'])
         df['wmo'] = df.file.apply(lambda x: int(x.split('/')[1]))
         #
+        # institution & profiler mapping
+        institution_dictionnary=load_dict('institutions')
+        df['tmp1'] = df.institution.apply(lambda x: mapp_dict(institution_dictionnary,x))
+        profiler_dictionnary=load_dict('profilers')
+        df['tmp2'] = df.profiler_type.apply(lambda x: mapp_dict(profiler_dictionnary,x))        
+
+        df=df.drop(columns=['institution','profiler_type'])
+        df=df.rename(columns={"tmp1":"institution","tmp2":"profiler_type"})        
+        
         # Possibly save in cache for later re-use
         if self.cache:
-            df.to_csv(self.cachepath)
+            df.to_csv(self.cachepath,index=False)
 
         return df
 

@@ -8,11 +8,18 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
+from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 import seaborn as sns
 sns.set_style("dark")
 land_feature=cfeature.NaturalEarthFeature(category='physical',name='land',scale='50m',facecolor=[0.4,0.6,0.7])
+
+
+# THIS TAKES A DATAFRAME AS INPUT. WE SHOULD SET SOME PLOT FUNCTIONS FOR INDEX AND DATA AT THE SAME TIME
+# TRAJECTORY PLOT IS A GOOD EXAMPLE.
+# SNS.LINEPLOT AND SNS.SCATTERPLOT SHOULD WORKS FINE WITH A DS.DATASET
 
 def plot_trajectory(idx):
     fig=plt.figure(figsize=(10,10))
@@ -27,7 +34,14 @@ def plot_trajectory(idx):
     extent = (idx['longitude'].min()-width/4, 
               idx['longitude'].max()+width/4, 
               idx['latitude'].min()-height/4, 
-              idx['latitude'].max()+height/4)
+              idx['latitude'].max()+height/4)    
+
+    gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='gray', alpha=0.7, linestyle=':')
+    gl.xlabels_top = False
+    gl.ylabels_left = False    
+    gl.xformatter = LONGITUDE_FORMATTER
+    gl.yformatter = LATITUDE_FORMATTER
+
     ax.set_extent(extent)     
     plt.legend(loc='upper right', bbox_to_anchor=(1.2,1))
     if(nfloat>15):
@@ -38,3 +52,10 @@ def plot_dac(idx):
     mind=idx.groupby('institution').size().sort_values(ascending=False).index
     sns.countplot(x='institution',data=idx,order=mind)
     plt.ylabel('number of profiles')            
+
+def plot_profilerType(idx):
+    fig=plt.figure(figsize=(10,5))
+    mind=idx.groupby('profiler_type').size().sort_values(ascending=False).index
+    sns.countplot(y='profiler_type',data=idx,order=mind)
+    plt.xlabel('number of profiles')      
+    plt.ylabel('') 
