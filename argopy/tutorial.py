@@ -76,10 +76,10 @@ class repodata():
             if overwrite:
                 shutil.rmtree(self.localpath)
             else:
-                warnings.warn("Data already downloaded !")
+                # warnings.warn("Data already downloaded !")
                 return self.rootpath
-        else:
-            warnings.warn("Downloading repo data ...")
+        # else:
+            # warnings.warn("Downloading repo data ...")
 
         zipurl = "https://github.com/euroargodev/%s/archive/%s.zip" % (repo, branch)
         localzipfile = self.localpath + ".zip"
