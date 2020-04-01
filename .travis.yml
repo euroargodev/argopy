@@ -10,7 +10,7 @@ install:
 
 # command to run tests
 script:
-  - pytest --cov=argopy --cov-report
+  - pytest --cov=argopy --cov-report term-missing
 
 after_success:
   - codecov
