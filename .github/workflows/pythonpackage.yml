@@ -41,5 +41,6 @@ jobs:
         pip install pytest codecov pytest-cov
         pytest --cov=argopy --cov-config=.coveragerc --cov-report term-missing
     - name: Code coverage
+      run: |
         export CODECOV_TOKEN="5523ae46-e705-4b73-88c5-070cd4d091c0"
         bash <(curl -s https://codecov.io/bash)
