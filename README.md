@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.com/euroargodev/argopy.svg?branch=master)](https://travis-ci.com/euroargodev/argopy)
 [![codecov](https://codecov.io/gh/euroargodev/argopy/branch/feature-fetch-local-ftp/graph/badge.svg)](https://codecov.io/gh/euroargodev/argopy)
+[![Requirements Status](https://requires.io/github/euroargodev/argopy/requirements.svg?branch=feature-fetch-local-ftp)](https://requires.io/github/euroargodev/argopy/requirements/?branch=feature-fetch-local-ftp)
 
 ``argopy`` is a python library that aims to ease Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators.
 
