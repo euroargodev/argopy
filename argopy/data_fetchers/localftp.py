@@ -7,21 +7,6 @@
 #
 # Since the GDAC ftp is organised by DAC/WMO folders, we start by implementing the 'float' and 'profile' entry points.
 #
-# class LocalFTPArgoDataFetcher(ABC)
-#   @abstractmethod init(self)
-#   @abstractmethod cname(self)
-#   @abstractmethod to_xarray(self)
-#   __init__
-#   __repr__
-#   filter_data_mode(self, ds, keep_error=True)
-#   filter_qc(self, this, QC_list=[1, 2], drop=True, mode='all', mask=False)
-#   filter_variables(self, this, mode='standard')
-#
-# class ArgoDataFetcher_wmo(LocalFTPArgoDataFetcher)
-#   init(self, WMO=[], CYC=None)
-#   cname(self, cache=False)
-#   to_xarray(self)
-#
 
 access_points = ['wmo']
 exit_formats = ['xarray']
