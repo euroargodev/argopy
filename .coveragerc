@@ -1,4 +1,4 @@
 [run]
 omit =
     argopy/tests/*
-    __init__.py
+    *__init__*
