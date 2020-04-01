@@ -7,12 +7,10 @@ import sys
 import numpy as np
 import pandas as pd
 import xarray as xr
-import pytest
 
 from argopy.errors import NetCDF4FileNotFoundError, InvalidDatasetStructure
 from sklearn import preprocessing
 
-@pytest.mark.no_cover
 @xr.register_dataset_accessor('argo')
 class ArgoAccessor:
     """
