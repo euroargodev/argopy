@@ -1,7 +1,7 @@
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Argopy packaging for misc. python versions
+name: build
 
 on:
   push:
@@ -42,5 +42,15 @@ jobs:
         pytest --cov=argopy --cov-config=.coveragerc --cov-report term-missing
     - name: Code coverage
       run: |
-        export CODECOV_TOKEN="5523ae46-e705-4b73-88c5-070cd4d091c0"
+        export CODECOV_TOKEN="${{ secrets.CODECOV_TOKEN }}"
         bash <(curl -s https://codecov.io/bash)
+
+    - name: Github Code coverage
+    - uses: actions/checkout@master
+    - uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+        file: ./coverage.xml # optional
+        flags: unittests # optional
+        name: codecov-github # optional
+        fail_ci_if_error: true # optional (default = false)
