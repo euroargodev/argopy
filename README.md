@@ -44,8 +44,6 @@ Init a data fetcher like:
     argo_loader = ArgoDataFetcher(backend='erddap')
     # or
     argo_loader = ArgoDataFetcher(backend='localftp', path_ftp='/data/Argo/ftp_copy')
-    # or
-    argo_loader = ArgoDataFetcher(cachedir='tmp')
 ```
 and then, request data for a domain:
 ```python

@@ -330,7 +330,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             return ds
         # No cache found or requested, so we compute:
 
-        # Download data: get a csv, open it as pandas dataframe, convert it to xarrat dataset
+        # Download data: get a csv, open it as pandas dataframe, convert it to xarray dataset
         df = pd.read_csv(urlopen(self.url), parse_dates=['time'], skiprows=[1], dtype=self._dtype)
         df['time'] = df['time'].dt.tz_localize(None) # Remove time zone information, we are in UTC, done.
         ds = xr.Dataset.from_dataframe(df)
