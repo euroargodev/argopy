@@ -44,8 +44,6 @@ Init a data fetcher like:
     argo_loader = ArgoDataFetcher(backend='erddap')
     # or
     argo_loader = ArgoDataFetcher(backend='localftp', path_ftp='/data/Argo/ftp_copy')
-    # or
-    argo_loader = ArgoDataFetcher(cachedir='tmp')
 ```
 and then, request data for a domain:
 ```python
@@ -68,7 +66,7 @@ or for a collection of floats:
 
 We aim to provide high level helper methods to load Argo data from:
 - [x] Ifremer erddap
-- [ ] local copy of the GDAC ftp folder [(ongoing work)](https://github.com/euroargodev/argopy/pull/5)
+- [x] local copy of the GDAC ftp folder [(ongoing work)](https://github.com/euroargodev/argopy/pull/5)
 - [ ] the argovis dataset [(help wanted)](https://github.com/euroargodev/argopy/issues/2)
 - [ ] any other usefull access point to Argo data ?
 
