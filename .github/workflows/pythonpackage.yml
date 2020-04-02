@@ -5,9 +5,9 @@ name: build
 
 on:
   push:
-    branches: [ feature-fetch-local-ftp ]
+    branches: [ master, feature-fetch-local-ftp ]
   pull_request:
-    branches: [ feature-fetch-local-ftp ]
+    branches: [ master, feature-fetch-local-ftp ]
 
 jobs:
   build:
