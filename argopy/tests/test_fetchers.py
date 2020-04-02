@@ -8,6 +8,7 @@ import os
 import sys
 import numpy as np
 import xarray as xr
+import shutil
 
 import pytest
 import unittest
@@ -110,8 +111,17 @@ class EntryPoints_AllBackends(TestCase):
 
 @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
-class Erddap_DataSets(TestCase):
+class Erddap_backend(TestCase):
     """ Test main API facade for all available dataset of the ERDDAP fetching backend """
+
+    def test_cachepath(self):
+        assert isinstance(ArgoDataFetcher(backend='erddap').profile(6902746, 34).fetcher.cachepath, str) == True
+
+    def test_caching(self):
+        cachedir = '.test_tmp'
+        ds = ArgoDataFetcher(backend='erddap', cachedir=cachedir).profile(6902746, 34).to_xarray()
+        assert isinstance(ds, xr.Dataset) == True
+        shutil.rmtree(cachedir)
 
     def __testthis(self, dataset):
         for access_point in self.args:
