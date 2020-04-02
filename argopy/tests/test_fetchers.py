@@ -118,8 +118,8 @@ class Erddap_backend(TestCase):
         assert isinstance(ArgoDataFetcher(backend='erddap').profile(6902746, 34).fetcher.cachepath, str) == True
 
     def test_caching(self):
-        cachedir = '.test_tmp'
-        ds = ArgoDataFetcher(backend='erddap', cachedir=cachedir).profile(6902746, 34).to_xarray()
+        cachedir = os.path.expanduser(os.path.join("~",".argopytest_tmp"))
+        ds = ArgoDataFetcher(backend='erddap', cache=True, cachedir=cachedir).profile(6902746, 34).to_xarray()
         assert isinstance(ds, xr.Dataset) == True
         shutil.rmtree(cachedir)
 
