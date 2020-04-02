@@ -1,7 +1,7 @@
 # ![argopy logo](https://avatars1.githubusercontent.com/t/3711886?s=90&v=4) Argo data python library
 
 [![Build Status](https://travis-ci.com/euroargodev/argopy.svg?branch=master)](https://travis-ci.com/euroargodev/argopy)
-![.github/workflows/pythonpackage.yml](https://github.com/euroargodev/argopy/workflows/.github/workflows/pythonpackage.yml/badge.svg?branch=feature-fetch-local-ftp)
+![build](https://github.com/euroargodev/argopy/workflows/build/badge.svg?branch=feature-fetch-local-ftp)
 [![codecov](https://codecov.io/gh/euroargodev/argopy/branch/feature-fetch-local-ftp/graph/badge.svg)](https://codecov.io/gh/euroargodev/argopy)
 [![Requirements Status](https://requires.io/github/euroargodev/argopy/requirements.svg?branch=feature-fetch-local-ftp)](https://requires.io/github/euroargodev/argopy/requirements/?branch=feature-fetch-local-ftp)
 
