@@ -31,7 +31,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install distributed
-        pip install Bottleneck
 
     - name: Lint with flake8
       run: |
@@ -44,13 +43,13 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest pytest-cov
-        pytest --verbosity=3 --cov=./ --cov-config=.coveragerc --cov-report term-missing
+        pytest --verbosity=3 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-        file: ./coverage.xml # optional
+        file: ./cov.xml # optional
         flags: unittests # optional
         name: codecov-github # optional
         fail_ci_if_error: true # optional (default = false)
