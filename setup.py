@@ -15,11 +15,13 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Topic :: Scientific/Engineering",
         "Intended Audience :: Science/Research",
         "Operating System :: OS Independent",
         "Development Status :: 3 - Alpha"
     ],
     install_requires=["xarray>=0.14", "numpy>=1.16.2", "scipy>=1.2.1", "gsw>=3.3",
-                      "pandas>=0.24", "dask>=2.0", "erddapy>=0.5"]
+                        "pandas>=0.24", "dask>=2.0", "erddapy>=0.5"]
 )
