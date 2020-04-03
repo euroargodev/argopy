@@ -32,3 +32,4 @@ dependencies:
     - erddapy
     - cmocean
     - git+http://github.com/euroargodev/argopy.git@master
+    - netCDF4

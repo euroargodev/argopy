@@ -34,7 +34,7 @@ argo_loader = ArgoDataFetcher()
 and then, request data for a **specific space/time domain**:
 ```python
 ds = argo_loader.region([-85,-45,10.,20.,0,10.]).to_xarray()
-ds = argo_loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2014-12']).to_xarray()
+ds = argo_loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2012-12']).to_xarray()
 ```
 for **profiles of a given float**: 
 ```python
