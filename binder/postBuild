@@ -1,0 +1,12 @@
+#!/bin/bash
+jupyter serverextension enable --py nbserverproxy --sys-prefix
+jupyter labextension install @jupyter-widgets/jupyterlab-manager \
+                             @jupyterlab/hub-extension@0.12 \
+                             @pyviz/jupyterlab_pyviz \
+                             jupyter-leaflet \
+                             dask-labextension
+
+jupyter serverextension enable --sys-prefix dask_labextension
+jupyter lab workspaces import binder/jupyterlab-workspace.json
+
+#EOF

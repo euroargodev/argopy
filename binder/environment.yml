@@ -1,0 +1,34 @@
+name: pangeo
+channels:
+  - conda-forge
+dependencies:
+  - python=3.6
+  - xarray
+  - dask
+  - distributed
+  - dask-kubernetes
+  - gcsfs
+  - zarr
+  - matplotlib
+  - numcodecs
+  - python-blosc
+  - lz4
+  - nomkl
+  - nbserverproxy
+  - jupyter
+  - jupyterlab=0.35
+  - jupyterlab_launcher
+  - jupyter_client
+  - jupyter_server
+  - ipywidgets
+  - graphviz
+  - nodejs
+  - scikit-image
+  - scikit-learn
+  - pip
+  - pip:
+    - graphviz
+    - jupyter-server-proxy
+    - erddapy
+    - cmocean
+    - git+http://github.com/euroargodev/argopy.git@master

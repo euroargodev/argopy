@@ -81,7 +81,7 @@ class ArgoAccessor:
             """ Low-level casting of DataArray values """
             try:
                 da.values = da.values.astype(type)
-                da.attrs['casted'] = True
+                da.attrs['casted'] = 1
             except:
                 print("Oops!", sys.exc_info()[0], "occured.")
                 print("Fail to cast: ", da.dtype, "into:", type, "for: ", da.name)
@@ -90,7 +90,7 @@ class ArgoAccessor:
 
         def cast_this_da(da):
             """ Cast any DataArray """
-            da.attrs['casted'] = False
+            da.attrs['casted'] = 0
             if v in list_str and da.dtype == 'O':  # Object
                 da = cast_this(da, str)
 
@@ -148,7 +148,7 @@ class ArgoAccessor:
                 da = cast_this(da, int)
 
             if da.dtype != 'O':
-                da.attrs['casted'] = True
+                da.attrs['casted'] = 1
 
             return da
 
