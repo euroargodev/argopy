@@ -194,7 +194,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         if self.dataset_id == 'phy':
             self.erddap.dataset_id = 'ArgoFloats'
         elif self.dataset_id == 'ref':
-            self.erddap.dataset_id = 'argo_reference'
+            self.erddap.dataset_id = 'ArgoFloats-ref'
         elif self.dataset_id == 'bgc':
             self.erddap.dataset_id = 'ArgoFloats-bio'
         else:
