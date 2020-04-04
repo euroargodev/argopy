@@ -16,6 +16,14 @@ from IPython.core.display import display, HTML
 def urlopen(url):
     """ Load content from url or raise alarm on status with explicit information on the error
 
+    Parameters
+    ----------
+    url: str
+
+    Returns
+    -------
+    io.BytesIO
+
     """
     # https://github.com/ioos/erddapy/blob/3828a4f479e7f7653fb5fd78cbce8f3b51bd0661/erddapy/utilities.py#L37
     r = requests.get(url)
