@@ -43,7 +43,7 @@ class ArgoAccessor:
 
         if 'N_PROF' in self._dims:
             self._type = 'profile'
-        elif 'index' in self._dims:
+        elif 'N_POINTS' in self._dims:
             self._type = 'point'
         else:
             raise InvalidDatasetStructure("Argo dataset structure not recognised")
@@ -225,8 +225,8 @@ class ArgoAccessor:
 
                Ensure to have values even for bad QC data in delayed mode
             """
-            ii = ds.where(np.isnan(ds[vname + '_ADJUSTED']), drop=1)['index']
-            ds[vname + '_ADJUSTED'].loc[dict(index=ii)] = ds[vname].loc[dict(index=ii)]
+            ii = ds.where(np.isnan(ds[vname + '_ADJUSTED']), drop=1)['N_POINTS']
+            ds[vname + '_ADJUSTED'].loc[dict(N_POINTS=ii)] = ds[vname].loc[dict(N_POINTS=ii)]
             return ds
 
         def new_arrays(argo_r, argo_a, argo_d, vname):
@@ -342,8 +342,8 @@ class ArgoAccessor:
             QC_fields[v] = QC_fields[v].astype(int)
 
         # Now apply filter
-        this_mask = xr.DataArray(np.zeros_like(QC_fields['index']), dims=['index'],
-                                 coords={'index': QC_fields['index']})
+        this_mask = xr.DataArray(np.zeros_like(QC_fields['N_POINTS']), dims=['N_POINTS'],
+                                 coords={'N_POINTS': QC_fields['N_POINTS']})
         for v in QC_fields.data_vars:
             for qc in QC_list:
                 this_mask += QC_fields[v] == qc
@@ -435,17 +435,17 @@ class ArgoAccessor:
         dummy_argo_uid = xr.DataArray(self.uid(this['PLATFORM_NUMBER'].values,
                                                this['CYCLE_NUMBER'].values,
                                                this['DIRECTION'].values),
-                                      dims='index',
-                                      coords={'index': this['index']},
+                                      dims='N_POINTS',
+                                      coords={'N_POINTS': this['N_POINTS']},
                                       name='dummy_argo_uid')
         N_PROF = len(np.unique(dummy_argo_uid))
         that = this.groupby(dummy_argo_uid)
 
-        N_LEVELS = int(xr.DataArray(np.ones_like(this['index'].values),
-                                    dims='index',
-                                    coords={'index': this['index']})
+        N_LEVELS = int(xr.DataArray(np.ones_like(this['N_POINTS'].values),
+                                    dims='N_POINTS',
+                                    coords={'N_POINTS': this['N_POINTS']})
                        .groupby(dummy_argo_uid).sum().max().values)
-        assert N_PROF * N_LEVELS >= len(this['index'])
+        assert N_PROF * N_LEVELS >= len(this['N_POINTS'])
 
         # Store the initial set of coordinates:
         coords_list = list(this.coords)
@@ -534,14 +534,14 @@ class ArgoAccessor:
                 ds = ds.drop_vars(v)
 
         ds, = xr.broadcast(ds)
-        ds = ds.stack({'index':list(ds.dims)})
-        ds = ds.reset_index('index').drop_vars(['N_PROF', 'N_LEVELS'])
-        possible_coords = ['LATITUDE', 'LONGITUDE', 'TIME', 'JULD', 'index']
+        ds = ds.stack({'N_POINTS':list(ds.dims)})
+        ds = ds.reset_index('N_POINTS').drop_vars(['N_PROF', 'N_LEVELS'])
+        possible_coords = ['LATITUDE', 'LONGITUDE', 'TIME', 'JULD', 'N_POINTS']
         for c in [c for c in possible_coords if c in ds.data_vars]:
             ds = ds.set_coords(c)
 
         ds = ds.where(~np.isnan(ds['PRES']), drop=1) # Remove index without data (useless points)
-        ds['index'] = np.arange(0, len(ds['index']))
+        ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS']))
         ds = ds.sortby('TIME')
         ds = ds.argo.cast_types()
         ds = ds[np.sort(ds.data_vars)]

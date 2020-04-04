@@ -194,7 +194,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         if self.dataset_id == 'phy':
             self.erddap.dataset_id = 'ArgoFloats'
         elif self.dataset_id == 'ref':
-            self.erddap.dataset_id = 'argo_reference'
+            self.erddap.dataset_id = 'ArgoFloats-ref'
         elif self.dataset_id == 'bgc':
             self.erddap.dataset_id = 'ArgoFloats-bio'
         else:
@@ -320,6 +320,15 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         # return _check_url_response(url, **self.requests_kwargs)
         return url
 
+    @property
+    def N_POINTS(self):
+        try:
+            ncHeader = urlopen(self.url.replace('.csv', '.ncHeader')).read().decode("utf-8")
+            l = [line for line in ncHeader.splitlines() if 'row = ' in line][0]
+            return int(l.split('=')[1].split(';')[0])
+        except:
+            pass
+
     def to_xarray(self):
         """ Load Argo data and return a xarray.DataSet """
 
@@ -334,6 +343,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         df = pd.read_csv(urlopen(self.url), parse_dates=['time'], skiprows=[1], dtype=self._dtype)
         df['time'] = df['time'].dt.tz_localize(None) # Remove time zone information, we are in UTC, done.
         ds = xr.Dataset.from_dataframe(df)
+        ds = ds.rename({'index':'N_POINTS'})
+
+        # ds = xr.open_dataset(urlopen(self.url.replace('.csv','.nc')))
+        # ds = ds.rename({'row':'index'})
 
         # Post-process the xarray.DataSet:
 

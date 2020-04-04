@@ -119,12 +119,16 @@ class Erddap_backend(TestCase):
 
     def test_caching(self):
         cachedir = os.path.expanduser(os.path.join("~",".argopytest_tmp"))
-        # 1st call to load from erddap and save to cachedir:
-        ds = ArgoDataFetcher(backend='erddap', cache=True, cachedir=cachedir).profile(6902746, 34).to_xarray()
-        # 2nd call to load from cached file
-        ds = ArgoDataFetcher(backend='erddap', cache=True, cachedir=cachedir).profile(6902746, 34).to_xarray()
-        assert isinstance(ds, xr.Dataset) == True
-        shutil.rmtree(cachedir)
+        try:
+            # 1st call to load from erddap and save to cachedir:
+            ds = ArgoDataFetcher(backend='erddap', cache=True, cachedir=cachedir).profile(6902746, 34).to_xarray()
+            # 2nd call to load from cached file
+            ds = ArgoDataFetcher(backend='erddap', cache=True, cachedir=cachedir).profile(6902746, 34).to_xarray()
+            assert isinstance(ds, xr.Dataset) == True
+            shutil.rmtree(cachedir)
+        except:
+            shutil.rmtree(cachedir)
+            raise
 
     def __testthis(self, dataset):
         for access_point in self.args:

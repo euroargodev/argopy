@@ -313,10 +313,10 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
 
         results = [r for r in results if r is not None]  # Only keep non-empty results
         if len(results) > 0:
-            # ds = xr.concat(results, dim='index', data_vars='all', coords='all', compat='equals')
-            ds = xr.concat(results, dim='index', data_vars='all', coords='all', compat='override')
-            ds['index'] = np.arange(0, len(ds['index'])) # Re-index to avoid duplicate values
-            ds = ds.set_coords('index')
+            # ds = xr.concat(results, dim='N_POINTS', data_vars='all', coords='all', compat='equals')
+            ds = xr.concat(results, dim='N_POINTS', data_vars='all', coords='all', compat='override')
+            ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS'])) # Re-index to avoid duplicate values
+            ds = ds.set_coords('N_POINTS')
             ds = ds.sortby('TIME')
             return ds
         else:
