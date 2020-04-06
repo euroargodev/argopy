@@ -609,14 +609,17 @@ class ErddapArgoIndexFetcher(ABC):
     ###
     # Methods that must not changed
     ###
-    def __init__(self, cache=False, cachedir=None, **kwargs):
+    def __init__(self,                 
+                 cache: bool = False,
+                 cachedir: str = "",
+                 **kwargs):
         """ Instantiate an ERDDAP Argo index loader """    
 
         self.definition = 'Ifremer erddap Argo index fetcher'
         self.dataset_id = 'index'    
 
-        self.cache = cache or not not cachedir # Yes, this is not not
-        self.cachedir = cachedir
+        self.cache = cache
+        self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
         if self.cache:
             #todo check if cachedir is a valid path
             Path(self.cachedir).mkdir(parents=True, exist_ok=True)

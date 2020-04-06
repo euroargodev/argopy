@@ -236,28 +236,38 @@ class ArgoIndexFetcher(object):
     __author__: kevin.balem@ifremer.fr
     """
      
-    def __init__(self, mode='standard', backend='erddap', **fetcher_kwargs):
+    def __init__(self,
+                 mode: str = "",
+                 backend : str = "",                 
+                 **fetcher_kwargs):
 
-        if mode not in ['standard', 'expert']:
-            raise ValueError("Mode must be 'standard' or 'expert'")
+        # Facade options:
+        self._mode = OPTIONS['mode'] if mode == '' else mode        
+        self._backend = OPTIONS['datasrc'] if backend == '' else backend
+
+        _VALIDATORS['mode'](self._mode)
+        _VALIDATORS['datasrc'](self._backend)        
+
+        # Load backend access points:
+        if self._backend not in AVAILABLE_BACKENDS:
+            raise ValueError("Data fetcher '%s' not available" % self._backend)
+        else:
+            Fetchers = AVAILABLE_BACKENDS[self._backend]
+
+        # Auto-discovery of access points for this fetcher:
+        # rq: Access point names for the facade are not the same as the access point of fetchers
+        self.valid_access_points = ['float', 'region']
+        self.Fetchers = {}
+        for p in Fetchers.access_points:
+            if p == 'wmo':  # Required for 'profile' and 'float'                
+                self.Fetchers['float'] = Fetchers.ArgoIndexFetcher_wmo
+            if p == 'box':  # Required for 'region'
+                self.Fetchers['region'] = Fetchers.ArgoIndexFetcher_box
 
         # Init sub-methods:
         self.fetcher = None
         self.fetcher_options = {**fetcher_kwargs}
-        self.postproccessor = self.__empty_processor
-
-        # Facade options:
-        self.mode = mode # User mode determining the level of post-processing required        
-        self.backend = backend # data_fetchers to use
-        if self.backend != 'erddap':
-            raise ValueError("Invalid backend, only 'erddap' available at this point, local ftp indexing will be available later")
-
-        # Load backend access points:
-        if backend == 'erddap' and backend in available_backends:
-            self.Fetcher_wmo = Erddap_Fetcher.ArgoIndexFetcher_wmo
-            self.Fetcher_box = Erddap_Fetcher.ArgoIndexFetcher_box
-        else:
-            raise ValueError("The %s data fetcher is not available" % backend)
+        self.postproccessor = self.__empty_processor                
 
     def __repr__(self):
         if self.fetcher:
@@ -265,8 +275,8 @@ class ArgoIndexFetcher(object):
             summary.append("User mode: %s" % self.mode)
         else:
             summary = ["<datafetcher 'Not initialised'>"]
-            summary.append("Fetchers: 'profile', 'float' or 'region'")
-            summary.append("User mode: %s" % self.mode)
+            summary.append("Fetchers: 'float' or 'region'")
+            summary.append("User mode: %s" % self._mode)
         return "\n".join(summary)
 
     def __empty_processor(self, xds):
@@ -275,13 +285,13 @@ class ArgoIndexFetcher(object):
 
     def float(self, wmo):
         """ Load index for one or more WMOs """
-        self.fetcher = self.Fetcher_wmo(WMO=wmo, **self.fetcher_options)       
+        self.fetcher = self.Fetchers['float'](WMO=wmo, **self.fetcher_options)       
         print("Float index initialised")         
         return self    
 
     def region(self, box):
         """ Load index for a rectangular region, given latitude, longitude, and possibly time bounds """
-        self.fetcher = self.Fetcher_box(box=box, **self.fetcher_options)        
+        self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)        
         print("Box index initialised")
         return self        
 
