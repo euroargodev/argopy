@@ -1,0 +1,6 @@
+[run]
+omit =
+    argopy/tests/*
+    *__init__*
+[report]
+exclude_lines = def __repr__

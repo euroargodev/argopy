@@ -9,9 +9,26 @@ except Exception:
 # Import facades:
 from .fetchers import ArgoDataFetcher as DataFetcher
 from .xarray import ArgoAccessor
+from . import tutorial
 
 # Other Import
 from . import utilities
 
 # Import assets
 pkg_resources.resource_filename('argopy', 'assets/')
+
+from .options import set_options
+
+#
+__all__ = (
+    # Classes:
+    "DataFetcher",
+    "ArgoAccessor",
+    # Top-level functions:
+    "set_options",
+    # Sub-packages,
+    "utilities",
+    "errors",
+    # Constants
+    "__version__"
+)

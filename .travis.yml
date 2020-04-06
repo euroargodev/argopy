@@ -2,12 +2,17 @@ language: python
 
 python:
   - "3.6"
+  - "3.7"
+  - "3.8"
 
 # command to install dependencies
 install:
   - pip install -r requirements.txt
-  - pip install Bottleneck
+  - pip install distributed Bottleneck codecov pytest-cov
 
 # command to run tests
 script:
-  - pytest
+  - pytest --cov=argopy --cov-config=.coveragerc --cov-report term-missing
+
+after_success:
+  - codecov
