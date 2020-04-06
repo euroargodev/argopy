@@ -610,10 +610,10 @@ class ErddapArgoIndexFetcher(ABC):
     # Methods that must not changed
     ###
     def __init__(self,                 
-                 cache: bool = False,
+                 cache: bool = True,
                  cachedir: str = "",
                  **kwargs):
-        """ Instantiate an ERDDAP Argo index loader """    
+        """ Instantiate an ERDDAP Argo index loader with force caching """    
 
         self.definition = 'Ifremer erddap Argo index fetcher'
         self.dataset_id = 'index'    
@@ -739,7 +739,7 @@ class ErddapArgoIndexFetcher(ABC):
 
         return df
 
-class ArgoIndexFetcher_wmo(ErddapArgoIndexFetcher):
+class IndexFetcher_wmo(ErddapArgoIndexFetcher):
     """ Manage access to Argo Index through Ifremer ERDDAP for: a list of WMOs
 
         __author__: kevin.balem@ifremer.fr
@@ -779,7 +779,7 @@ class ArgoIndexFetcher_wmo(ErddapArgoIndexFetcher):
         listname = self.dataset_id + "_" + listname
         return listname
 
-class ArgoIndexFetcher_box(ErddapArgoIndexFetcher):
+class IndexFetcher_box(ErddapArgoIndexFetcher):
     """ Manage access to Argo Index through Ifremer ERDDAP for: an ocean rectangle
 
         __author__: kevin.balem@ifremer.fr
