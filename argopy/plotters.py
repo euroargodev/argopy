@@ -21,7 +21,7 @@ land_feature=cfeature.NaturalEarthFeature(category='physical',name='land',scale=
 # TRAJECTORY PLOT IS A GOOD EXAMPLE.
 # SNS.LINEPLOT AND SNS.SCATTERPLOT SHOULD WORKS FINE WITH A DS.DATASET
 
-def plot_trajectory(idx):
+def plot_trajectory(idx):    
     fig=plt.figure(figsize=(10,10))
     ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
     ax.add_feature(land_feature, edgecolor='black')    

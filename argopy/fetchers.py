@@ -285,14 +285,20 @@ class ArgoIndexFetcher(object):
 
     def float(self, wmo):
         """ Load index for one or more WMOs """
-        self.fetcher = self.Fetchers['float'](WMO=wmo, **self.fetcher_options)       
-        print("Float index initialised")         
+        if 'float' in self.Fetchers:
+            self.fetcher = self.Fetchers['float'](WMO=wmo, **self.fetcher_options)
+            print("Float index initialised")
+        else:
+            raise InvalidFetcherAccessPoint("'float' not available with '%s' backend" % self._backend)        
         return self    
 
     def region(self, box):
         """ Load index for a rectangular region, given latitude, longitude, and possibly time bounds """
-        self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)        
-        print("Box index initialised")
+        if 'region' in self.Fetchers:
+            self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)
+            print("Box index initialised")
+        else:
+            raise InvalidFetcherAccessPoint("'region' not available with '%s' backend" % self._backend)                     
         return self        
 
     def to_dataframe(self, **kwargs):
@@ -314,12 +320,12 @@ class ArgoIndexFetcher(object):
     
     def plot(self, ptype='trajectory'):
         """ Custom plots """
-        idx=self.to_dataframe()
+        idx=self.to_dataframe()        
         if ptype=='dac':
             plot_dac(idx)
         elif ptype=='profiler':
             plot_profilerType(idx)               
-        else:
+        else:           
             plot_trajectory(idx.sort_values(['file']))
 
     

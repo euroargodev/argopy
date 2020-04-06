@@ -720,8 +720,10 @@ class ErddapArgoIndexFetcher(ABC):
         # No cache found or requested, so we compute:
 
         # Download data: get a csv, open it as pandas dataframe, create wmo field
-        df = pd.read_csv(urlopen(self.url), parse_dates=True, skiprows=[1])        
-        df['date'] = pd.to_datetime(df['date'])
+        df = pd.read_csv(urlopen(self.url), parse_dates=True, skiprows=[1])  
+        # erddap date format : 2019-03-21T00:00:35Z      
+        df['date'] = pd.to_datetime(df['date'], format="%Y-%m-%dT%H:%M:%SZ")
+        df['date_update'] = pd.to_datetime(df['date_update'], format="%Y-%m-%dT%H:%M:%SZ")
         df['wmo'] = df.file.apply(lambda x: int(x.split('/')[1]))
         #
         # institution & profiler mapping
@@ -775,8 +777,7 @@ class IndexFetcher_wmo(ErddapArgoIndexFetcher):
                 listname = ["WMO%i" % i for i in self.WMO]                
                 listname = ";".join(listname)
         else:
-            listname = "WMO%i" % self.WMO[0]            
-        listname = self.dataset_id + "_" + listname
+            listname = "WMO%i" % self.WMO[0]                    
         return listname
 
 class IndexFetcher_box(ErddapArgoIndexFetcher):
@@ -824,7 +825,5 @@ class IndexFetcher_box(ErddapArgoIndexFetcher):
                                                self._format(BOX[4], 'tim'), self._format(BOX[5], 'tim'))
         else:
             boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; t=%s/%s]") % \
-                      (BOX[0],BOX[1],BOX[2],BOX[3],self._format(BOX[4], 'tim'), self._format(BOX[5], 'tim'))
-
-        boxname = self.dataset_id + "_" + boxname
+                      (BOX[0],BOX[1],BOX[2],BOX[3],self._format(BOX[4], 'tim'), self._format(BOX[5], 'tim'))        
         return boxname
