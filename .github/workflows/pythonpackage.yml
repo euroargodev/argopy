@@ -43,9 +43,9 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest pytest-cov
-        pip install matplotlib
-        pip install cartopy
+        pip install matplotlib        
         pip install seaborn
+        conda install cartopy
         pytest --verbosity=3 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
 
     - name: Upload coverage to Codecov
