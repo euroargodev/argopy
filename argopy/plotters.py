@@ -1,7 +1,7 @@
 #!/bin/env python
 # -*coding: UTF-8 -*-
 #
-# OUR CUSTOM ARGOPY PLOTS
+# CUSTOM ARGOPY PLOTS
 #
 # Created by kbalem on 30/03/2020
 
@@ -31,10 +31,10 @@ def plot_trajectory(idx):
     sns.scatterplot(x="longitude",y="latitude",hue='wmo',data=idx,palette=mypal)   
     width=np.abs(idx['longitude'].max()-idx['longitude'].min())
     height=np.abs(idx['latitude'].max()-idx['latitude'].min())
-    extent = (idx['longitude'].min()-width/4, 
-              idx['longitude'].max()+width/4, 
-              idx['latitude'].min()-height/4, 
-              idx['latitude'].max()+height/4)    
+    #extent = (idx['longitude'].min()-width/4, 
+    #          idx['longitude'].max()+width/4, 
+    #          idx['latitude'].min()-height/4, 
+    #          idx['latitude'].max()+height/4)    
 
     gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='gray', alpha=0.7, linestyle=':')
     gl.xlabels_top = False
@@ -42,8 +42,8 @@ def plot_trajectory(idx):
     gl.xformatter = LONGITUDE_FORMATTER
     gl.yformatter = LATITUDE_FORMATTER
 
-    ax.set_extent(extent)     
-    plt.legend(loc='upper right', bbox_to_anchor=(1.2,1))
+    #ax.set_extent(extent)     
+    plt.legend(loc='upper right', bbox_to_anchor=(1.25,1))
     if(nfloat>15):
         ax.get_legend().remove()
 
