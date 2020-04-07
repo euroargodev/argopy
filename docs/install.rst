@@ -8,7 +8,7 @@ Required dependencies
 - Xarray 0.14
 - Erddapy 0.5
 
-Note that Erddapy_ is required because [erddap](https://coastwatch.pfeg.noaa.gov/erddap/information.html) is the default data fetching backend.
+Note that Erddapy_ is required because `erddap <https://coastwatch.pfeg.noaa.gov/erddap/information.html>`_ is the default data fetching backend.
 
 For full plotting functionality the following packages are required:
 
