@@ -16,6 +16,7 @@ from unittest import TestCase
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
+from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher
 
 from argopy.utilities import list_available_data_backends
@@ -61,6 +62,7 @@ class EntryPoints_AllBackends(TestCase):
                                 [2902269, np.arange(12, 14)], [2901746, [1, 6]]]
         self.args['region'] = [[-70, -65, 30., 35., 0, 10.],
                                [-70, -65, 30., 35., 0, 10., '2012-01-01', '2012-06-30']]
+        self.args['index_region'] = [[-70, -65, 30., 35.],[-70, -65, 30., 35.,'2012-01-01', '2012-06-30']]
 
     def __test_float(self, bk, **ftc_opts):
         """ Test float for a given backend """
@@ -81,10 +83,24 @@ class EntryPoints_AllBackends(TestCase):
             ds = ArgoDataFetcher(backend=bk).region(arg).to_xarray()
             assert isinstance(ds, xr.Dataset) == True
 
+    def __test_float_index(self, bk, **ftc_opts):
+        """ Test float index fetching for a given backend """
+        for arg in self.args['float']:
+            options = {**self.fetcher_opts, **ftc_opts}
+            ds = ArgoIndexFetcher(backend=bk, **options).float(arg).to_xarray()
+            assert isinstance(ds, xr.Dataset) == True    
+
+    def __test_region_index(self, bk):
+        """ Test float index fetching for a given backend """
+        for arg in self.args['index_region']:
+            ds = ArgoIndexFetcher(backend=bk).region(arg).to_xarray()
+            assert isinstance(ds, xr.Dataset) == True                
+
     @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     def test_float_erddap(self):
         self.__test_float('erddap')
+        self.__test_float_index('erddap')
 
     @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
@@ -95,12 +111,16 @@ class EntryPoints_AllBackends(TestCase):
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     def test_region_erddap(self):
         self.__test_region('erddap')
+        self.__test_region_index('erddap')
 
     @unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
     def test_float_localftp(self):
         ftproot, flist = argopy.tutorial.open_dataset('localftp')
         with argopy.set_options(local_ftp=os.path.join(ftproot,'dac')):
             self.__test_float('localftp', )
+        #ftproot, findex = argopy.tutorial.open_dataset('global_index_prof')
+        with argopy.set_options(local_ftp=os.path.join(ftproot,'dac')):
+            self.__test_float_index('localftp', index_file='ar_index_global_prof.txt')                    
     
     @unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
     def test_profile_localftp(self):
@@ -120,6 +140,7 @@ class Erddap_backend(TestCase):
 
     def test_cachepath(self):
         assert isinstance(ArgoDataFetcher(backend='erddap').profile(6902746, 34).fetcher.cachepath, str) == True
+        assert isinstance(ArgoIndexFetcher(backend='erddap').float(6902746).fetcher.cachepath, str) == True
 
     def test_caching(self):
         cachedir = os.path.expanduser(os.path.join("~",".argopytest_tmp"))
