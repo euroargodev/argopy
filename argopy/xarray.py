@@ -17,24 +17,21 @@ class ArgoAccessor:
 
         Class registered under scope ``argo`` to access a :class:`xarray.Dataset` object.
 
-        # Ensure all variables are of the Argo required dtype
-        ds.argo.cast_types()
+        - Ensure all variables are of the Argo required dtype with:
 
-        # Convert a collection of points into a collection of profiles
-        ds.argo.point2profile()
-        # Convert a collection of profiles to a collection of points
-        ds.argo.profile2point()
+            ds.argo.cast_types()
 
-        #todo Implement new features in ArgoAccessor:
+        - Convert a collection of points into a collection of profiles:
 
-        # Make sure that the dataset complies with Argo vocabulary
-        # Should be done at init with a private function ???
-        # This could be usefull if a netcdf file is open directly
-        ds.argo.check()
+            ds.argo.point2profile()
 
+        - Convert a collection of profiles to a collection of points:
+
+            ds.argo.profile2point()
 
      """
     def __init__(self, xarray_obj):
+        """ Init """
         self._obj = xarray_obj
         self._added = list() # Will record all new variables added by argo
         self._dims = list(xarray_obj.dims.keys()) # Store the initial list of dimensions

@@ -1,5 +1,6 @@
 # ![argopy logo](https://avatars1.githubusercontent.com/t/3711886?s=90&v=4) Argo data python library
 
+[![Documentation Status](https://readthedocs.org/projects/argopy/badge/?version=latest)](https://argopy.readthedocs.io/en/latest/?badge=latest)
 ![build](https://github.com/euroargodev/argopy/workflows/build/badge.svg?branch=master)
 [![codecov](https://codecov.io/gh/euroargodev/argopy/branch/master/graph/badge.svg)](https://codecov.io/gh/euroargodev/argopy)
 [![Requirements Status](https://requires.io/github/euroargodev/argopy/requirements.svg?branch=master)](https://requires.io/github/euroargodev/argopy/requirements/?branch=master)

@@ -1,0 +1,82 @@
+.. currentmodule:: argopy
+
+What's New
+==========
+
+
+v0.1.1 (21 Feb. 2020)
+---------------------
+
+**Features and front-end API**
+
+- Added new data fetcher backend ``localftp`` in ArgoDataFetcher (:commit:`c5f7cb6f59d1f64a35dad28f386c9b1166883b81`):
+
+.. code-block:: python
+
+    from argopy import DataFetcher as ArgoDataFetcher
+    argo_loader = ArgoDataFetcher(backend='localftp', path_ftp='/data/Argo/ftp_copy')
+    argo_loader.float(6902746).to_xarray()
+
+- Introduced global ``OPTIONS`` to set values for: cache folder, dataset (eg:`phy` or `bgc`), local ftp path, data fetcher (`erddap` or `localftp`) and user level (`standard` or `expert`). Can be used in context `with` (:commit:`83ccfb5110aa6abc6e972b92ba787a3e1228e33b`):
+
+.. code-block:: python
+
+    with argopy.set_options(mode='expert', datasrc='erddap'):
+        ds = argopy.DataFetcher().float(3901530).to_xarray()
+
+- Added a ``argopy.tutorial`` module to be able to load sample data for documentation and unit testing (:commit:`4af09b55a019a57fc3f1909a70e463f26f8863a1`):
+
+.. code-block:: python
+
+    ftproot, flist = argopy.tutorial.open_dataset('localftp')
+    txtfile = argopy.tutorial.open_dataset('weekly_index_prof')
+
+- Improved xarray *argo* accessor. Added methods for casting data types, to filter variables according to data mode, to filter variables according to quality flags. Useful methods to transform collection of points into collection of profiles, and vice versa (:commit:`14cda55f437f53cb19274324dce3e81f64bbb08f`):
+
+.. code-block:: python
+
+    ds = argopy.DataFetcher().float(3901530).to_xarray() # get a collection of points
+    dsprof = ds.argo.point2profile() # transform to profiles
+    ds = dsprof.argo.profile2point() # transform to points
+
+- Changed License from MIT to Apache (:commit:`25f90c9cf6eab15c249c233c1677faaf5dc403c4`)
+
+**Internal machinery**
+
+- Add ``__all__`` to control ``from argopy import *`` (:commit:`83ccfb5110aa6abc6e972b92ba787a3e1228e33b`)
+
+- All data fetchers inherit from class ``ArgoDataFetcherProto`` in ``proto.py`` (:commit:`44f45a5657f0ef7d06583df7142db61f82d1482e`)
+
+- Data fetchers use default options from global OPTIONS
+
+- In Erddap fetcher: methods to cast data type, to filter by data mode and by QC flags are now delegated to the xarray argo accessor methods.
+
+- Data fetchers methods to filter variables according to user mode are using variable lists defined in utilities.
+
+- ``argopy.utilities`` augmented with listing functions of: backends, standard variables and multiprofile files variables.
+
+- Introduce custom errors in errors.py (:commit:`2563c9f0328121279a9b43220d197a622d1db12f`)
+
+- Front-end API ArgoDataFetcher uses a more general way of auto-discovering fetcher backend and their access points. Turned of the ``deployments`` access point, waiting for the index fetcher to do that.
+
+- Improved xarray *argo* accessor. More reliable ``point2profile`` and data type casting with ``cast_type``
+
+**Code management**
+
+- Add CI with github actions (:commit:`ecbf9bacded7747f27c698e90377e5ee40fc8999`)
+
+- Contribution guideline for data fetchers (:commit:`b332495fce7f1650ae5bb8ec3148ade4c4f72702`)
+
+- Improve unit testing (all along commits)
+
+- Introduce code coverage (:commit:`b490ab56581d1ce0f58b44df532e35e87ecf04ff`)
+
+- Added explicit support for python 3.6 , 3.7 and 3.8 (:commit:`58f60fe88a3aa85357754cafab8d89a4d948f35a`)
+
+
+v0.1.0 (17 Mar. 2020)
+---------------------
+
+- Initial release.
+
+- Erddap data fetcher

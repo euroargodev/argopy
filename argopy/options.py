@@ -47,6 +47,7 @@ class set_options:
     """Set options for argopy.
 
     Lis of options:
+
     - ``dataset``: Dataset. This can be ``phy``, ``bgc`` or ``ref``.
       Default: ``phy``
 
@@ -63,12 +64,14 @@ class set_options:
       Default: ``standard``
 
     You can use ``set_options`` either as a context manager:
-    >>> import argopy
-    >>> with argopy.set_options(data_fetcher='localftp'):
-    ...     ds = argopy.DataFetcher().float(3901530).to_xarray()
+    ```python
+        >>> import argopy
+        >>> with argopy.set_options(data_fetcher='localftp'):
+        ...     ds = argopy.DataFetcher().float(3901530).to_xarray()
 
-    Or to set global options:
-    >>> argopy.set_options(data_fetcher='localftp')
+        Or to set global options:
+        >>> argopy.set_options(data_fetcher='localftp')
+    ```
     """
 
     def __init__(self, **kwargs):

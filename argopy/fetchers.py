@@ -59,15 +59,18 @@ class ArgoDataFetcher(object):
     """ Fetch and process Argo data.
 
         Can return data selected from:
+
         - one or more float(s), defined by WMOs
+
         - one or more profile(s), defined for one WMO and one or more CYCLE NUMBER
+
         - a space/time rectangular domain, defined by lat/lon/pres/time range
 
         Can return data from the regular Argo dataset ('phy': temperature, salinity) and the Argo referenced
         dataset used in DMQC ('ref': temperature, salinity).
 
         This is the main API facade.
-        Specify here all options to data_fetchers
+        Specify here all options to data_fetchers.
 
     """
 
