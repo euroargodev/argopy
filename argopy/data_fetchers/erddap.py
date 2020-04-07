@@ -610,7 +610,7 @@ class ErddapArgoIndexFetcher(ABC):
     # Methods that must not changed
     ###
     def __init__(self,                 
-                 cache: bool = True,
+                 cache: bool = False,
                  cachedir: str = "",
                  **kwargs):
         """ Instantiate an ERDDAP Argo index loader with force caching """    
@@ -663,7 +663,7 @@ class ErddapArgoIndexFetcher(ABC):
     def cachepath(self):
         """ Return path to cache file for this request """
         src = self.cachedir
-        file = ("ERindex_%s.csv") % (self.cname(cache=True))
+        file = ("index_%s.csv") % (self.cname(cache=True))
         fcache = os.path.join(src, file)
         return fcache
 
@@ -747,7 +747,7 @@ class IndexFetcher_wmo(ErddapArgoIndexFetcher):
         __author__: kevin.balem@ifremer.fr
     """
 
-    def init(self, WMO=[6902746, 6902757, 6902766]):
+    def init(self, WMO=[]):
         """ Create Argo data loader for WMOs
 
             Parameters
@@ -786,7 +786,7 @@ class IndexFetcher_box(ErddapArgoIndexFetcher):
         __author__: kevin.balem@ifremer.fr
     """
 
-    def init(self, box=[-65,-55,37,38,'1900-01-01','2100-12-31']):
+    def init(self, box=[]):
         """ Create Argo Index loader
 
             Parameters

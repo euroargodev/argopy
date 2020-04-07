@@ -12,6 +12,9 @@ import requests
 import io
 from IPython.core.display import display, HTML
 import pickle
+import pkg_resources
+path2pkl = pkg_resources.resource_filename('argopy', 'assets/')
+
 # import errno
 
 def urlopen(url):
@@ -56,13 +59,13 @@ def urlopen(url):
         r.raise_for_status()
 
 def load_dict(ptype):
-    if ptype=='profilers':
-        pickle_in = open("dict_profilers.pickle","rb")
-        loaded_dict = pickle.load(pickle_in)
+    if ptype=='profilers':        
+        with open(os.path.join(path2pkl, 'dict_profilers.pickle'), 'rb') as f:
+            loaded_dict = pickle.load(f)
         return loaded_dict
     elif ptype=='institutions':
-        pickle_in = open("dict_institutions.pickle","rb")
-        loaded_dict = pickle.load(pickle_in)
+        with open(os.path.join(path2pkl, 'dict_institutions.pickle'), 'rb') as f:
+            loaded_dict = pickle.load(f)
         return loaded_dict      
     else:
         raise ValueError("Invalid dictionnary pickle file")

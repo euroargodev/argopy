@@ -55,7 +55,7 @@ from .utilities import list_available_data_backends
 AVAILABLE_BACKENDS = list_available_data_backends()
 
 # Import plotters :
-from .plotters import *
+from .plotters import plot_trajectory, plot_dac, plot_profilerType
 
 # Highest level API / Facade:
 class ArgoDataFetcher(object):
@@ -250,7 +250,7 @@ class ArgoIndexFetcher(object):
 
         # Load backend access points:
         if self._backend not in AVAILABLE_BACKENDS:
-            raise ValueError("Data fetcher '%s' not available" % self._backend)
+            raise ValueError("Fetcher '%s' not available" % self._backend)
         else:
             Fetchers = AVAILABLE_BACKENDS[self._backend]
 
@@ -274,7 +274,7 @@ class ArgoIndexFetcher(object):
             summary = [self.fetcher.__repr__()]
             summary.append("User mode: %s" % self._mode)
         else:
-            summary = ["<datafetcher 'Not initialised'>"]
+            summary = ["<indexfetcher 'Not initialised'>"]
             summary.append("Fetchers: 'float' or 'region'")
             summary.append("User mode: %s" % self._mode)
         return "\n".join(summary)
@@ -286,8 +286,7 @@ class ArgoIndexFetcher(object):
     def float(self, wmo):
         """ Load index for one or more WMOs """
         if 'float' in self.Fetchers:
-            self.fetcher = self.Fetchers['float'](WMO=wmo, **self.fetcher_options)
-            print("Float index initialised")
+            self.fetcher = self.Fetchers['float'](WMO=wmo, **self.fetcher_options)            
         else:
             raise InvalidFetcherAccessPoint("'float' not available with '%s' backend" % self._backend)        
         return self    
@@ -295,8 +294,7 @@ class ArgoIndexFetcher(object):
     def region(self, box):
         """ Load index for a rectangular region, given latitude, longitude, and possibly time bounds """
         if 'region' in self.Fetchers:
-            self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)
-            print("Box index initialised")
+            self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)            
         else:
             raise InvalidFetcherAccessPoint("'region' not available with '%s' backend" % self._backend)                     
         return self        
@@ -314,9 +312,8 @@ class ArgoIndexFetcher(object):
 
     def to_csv(self,file='output_file.csv'):
         """ Fetch index and return csv """
-        idx=self.to_dataframe()
-        idx.to_csv(file)   
-        print('file saved to : '+file)             
+        idx=self.to_dataframe()        
+        return idx.to_csv(file)           
     
     def plot(self, ptype='trajectory'):
         """ Custom plots """
@@ -328,4 +325,4 @@ class ArgoIndexFetcher(object):
         elif ptype=='trajectory':           
             plot_trajectory(idx.sort_values(['file']))
         else:
-            raise ValueError("Type of plot unavailable")
+            raise ValueError("Type of plot unavailable. Use: 'dac', 'profiler' or 'trajectory' (default)")

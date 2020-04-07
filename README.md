@@ -68,7 +68,7 @@ Index object is returned as a pandas dataframe.
 
 Init the fetcher:
 ```python
-    from argopy import DataFetcher as ArgoIndexFetcher
+    from argopy import IndexFetcher as ArgoIndexFetcher
 
     index_loader = ArgoIndexFetcher()
     index_loader = ArgoIndexFetcher(backend='erddap')    
@@ -90,7 +90,7 @@ then you can see you index as a pandas dataframe or a xarray dataset :
     idx.to_dataframe()
     idx.to_xarray()
 ```
-
+For plottings methods, you'll need `matplotlib`, `cartopy` and `seaborn` installed (they're not in requirements).  
 For plotting the map of your query :
 ```python    
     idx.plot('trajectory)    

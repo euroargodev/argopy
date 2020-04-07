@@ -18,6 +18,14 @@ import argopy
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import InvalidFetcherAccessPoint
 
+## INSTALL GRAPH DEPENDANCIES FOR TESTING ONLY
+import subprocess
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+install('matplotlib')
+install('seaborn')
+install('cartopy')    
+
 from argopy.utilities import list_available_data_backends
 AVAILABLE_BACKENDS = list_available_data_backends()
 

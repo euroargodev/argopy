@@ -12,8 +12,15 @@ import matplotlib.ticker as mticker
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-import seaborn as sns
-sns.set_style("dark")
+
+try:
+    import seaborn as sns
+    sns.set_style("dark")
+    with_seaborn = True
+except ModuleNotFoundError:
+    warnings.warn("argopy requires seaborn installed for full plotting functionality")
+    with_seaborn = False
+
 land_feature=cfeature.NaturalEarthFeature(category='physical',name='land',scale='50m',facecolor=[0.4,0.6,0.7])
 
 
@@ -50,7 +57,7 @@ def plot_trajectory(idx):
 def plot_dac(idx):
     fig=plt.figure(figsize=(10,5))
     mind=idx.groupby('institution').size().sort_values(ascending=False).index
-    sns.countplot(x='institution',data=idx,order=mind)
+    sns.countplot(y='institution',data=idx,order=mind)
     plt.ylabel('number of profiles')            
 
 def plot_profilerType(idx):

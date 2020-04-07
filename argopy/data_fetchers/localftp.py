@@ -383,7 +383,7 @@ class LocalFTPArgoIndexFetcher(ABC):
     def __init__(self,
                  path_ftp: str = "",    
                  index_file: str="ar_index_global_prof.txt",             
-                 cache: bool = True,
+                 cache: bool = False,
                  cachedir: str = "",
                  **kwargs):
         """ Init fetcher
@@ -414,7 +414,7 @@ class LocalFTPArgoIndexFetcher(ABC):
     def cachepath(self):
         """ Return path to cache file for this request """
         src = self.cachedir
-        file = ("LOCindex_%s.csv") % (self.cname(cache=True))
+        file = ("index_%s.csv") % (self.cname(cache=True))
         fcache = os.path.join(src, file)
         return fcache
 
@@ -483,9 +483,9 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
         return listname
 
     def filter_index(self):
-        #input file reader
-        inputFileName=self.path_ftp+'/'+self.index_file
-        outputFileName=self.cachedir+'/'+'tmp_'+self.cname()+'.csv'
+        #input file reader        
+        inputFileName = os.path.join(self.path_ftp, self.index_file)        
+        outputFileName = os.path.join(self.cachedir, 'tmp_'+self.cname(cache=True)+'.csv')
         self.filtered_index = outputFileName
 
         infile = open(inputFileName, "r")
