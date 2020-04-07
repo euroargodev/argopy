@@ -272,7 +272,7 @@ class ArgoIndexFetcher(object):
     def __repr__(self):
         if self.fetcher:
             summary = [self.fetcher.__repr__()]
-            summary.append("User mode: %s" % self.mode)
+            summary.append("User mode: %s" % self._mode)
         else:
             summary = ["<datafetcher 'Not initialised'>"]
             summary.append("Fetchers: 'float' or 'region'")
@@ -325,7 +325,7 @@ class ArgoIndexFetcher(object):
             plot_dac(idx)
         elif ptype=='profiler':
             plot_profilerType(idx)               
-        else:           
+        elif ptype=='trajectory':           
             plot_trajectory(idx.sort_values(['file']))
-
-    
+        else:
+            raise ValueError("Type of plot unavailable")

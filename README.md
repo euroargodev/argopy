@@ -72,6 +72,8 @@ Init the fetcher:
 
     index_loader = ArgoIndexFetcher()
     index_loader = ArgoIndexFetcher(backend='erddap')    
+    #Local ftp backend 
+    #index_loader = ArgoIndexFetcher(backend='localftp',path_ftp='/path/to/your/argo/ftp/',index_file='ar_index_global_prof.txt')
 ```
 and then, set the index request index for a domain:
 ```python
