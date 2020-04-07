@@ -13,6 +13,7 @@ from . import tutorial
 
 # Other Import
 from . import utilities
+from .utilities import show_versions
 from .options import set_options
 
 #
@@ -22,6 +23,7 @@ __all__ = (
     "ArgoAccessor",
     # Top-level functions:
     "set_options",
+    "show_versions",
     # Sub-packages,
     "utilities",
     "errors",
