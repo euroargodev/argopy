@@ -49,7 +49,7 @@ import numpy as np
 import warnings
 
 from argopy.options import OPTIONS, _VALIDATORS
-from .errors import InvalidFetcherAccessPoint
+from .errors import InvalidFetcherAccessPoint, InvalidFetcher
 from .utilities import list_available_data_backends
 
 AVAILABLE_BACKENDS = list_available_data_backends()
@@ -201,6 +201,9 @@ class ArgoDataFetcher(object):
 
     def to_xarray(self, **kwargs):
         """ Fetch and post-process data, return xarray.DataSet """
+        if not self.fetcher:
+            raise InvalidFetcher(" Initialize an access point (%s) first." %
+                                 ",".join(self.Fetchers.keys()))
         xds = self.fetcher.to_xarray(**kwargs)
         xds = self.postproccessor(xds)
         return xds
