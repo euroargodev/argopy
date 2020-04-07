@@ -42,6 +42,12 @@ class InvalidDatasetStructure(ValueError):
 
 class InvalidFetcherAccessPoint(ValueError):
     """
-    Raise for requestion a fetcher access point not available
+    Raise when requesting a fetcher access point not available
+    """
+    pass
+
+class InvalidFetcher(ValueError):
+    """
+    Raise when trying to do something with a fetcher not ready
     """
     pass

@@ -16,7 +16,7 @@ from unittest import TestCase
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
-from argopy.errors import InvalidFetcherAccessPoint  
+from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher
 
 from argopy.utilities import list_available_data_backends
 AVAILABLE_BACKENDS = list_available_data_backends()
@@ -34,6 +34,10 @@ CONNECTED = connected()
 def test_invalid_accesspoint():
     with pytest.raises(InvalidFetcherAccessPoint):
         ArgoDataFetcher().invalid_accesspoint.to_xarray()
+
+def test_invalid_fetcher():
+    with pytest.raises(InvalidFetcher):
+        ArgoDataFetcher().to_xarray() # Can't get data if access point not defined first
 
 @unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
 def test_unavailable_accesspoint():
