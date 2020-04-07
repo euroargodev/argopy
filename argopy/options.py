@@ -48,28 +48,29 @@ class set_options:
 
     Lis of options:
 
-    - ``dataset``: Dataset. This can be ``phy``, ``bgc`` or ``ref``.
-      Default: ``phy``
+    - `dataset`: Dataset. This can be `phy`, `bgc` or `ref`.
+      Default: `phy`
 
-    - ``data_fetcher``: Backend for fetching data.
-      Default: ``erddap``
+    - `data_fetcher`: Backend for fetching data.
+      Default: `erddap`
 
-    - ``local_ftp``: Absolute path to local GDAC ftp copy.
-      Default: ``???``
+    - `local_ftp`: Absolute path to local GDAC ftp copy.
+      Default: `???`
 
-    - ``cachedir``: Absolute path to local cache directory.
-      Default: ``~/.cache/argopy``
+    - `cachedir`: Absolute path to local cache directory.
+      Default: `~/.cache/argopy`
 
-    - ``mode``: User mode. This can be ``standard`` or ``expert``.
-      Default: ``standard``
+    - `mode`: User mode. This can be `standard` or `expert`.
+      Default: `standard`
 
-    You can use ``set_options`` either as a context manager:
-    ```python
+    You can use `set_options` either as a context manager:
+    ```
         >>> import argopy
         >>> with argopy.set_options(data_fetcher='localftp'):
         ...     ds = argopy.DataFetcher().float(3901530).to_xarray()
-
-        Or to set global options:
+    ```
+    Or to set global options:
+    ```
         >>> argopy.set_options(data_fetcher='localftp')
     ```
     """

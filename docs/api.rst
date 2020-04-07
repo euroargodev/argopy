@@ -11,10 +11,12 @@ This page provides an auto-generated summary of argopy's API. For more details a
 
    argopy.DataFetcher
    argopy.DataFetcher.region
-   argopy.tutorial
+   argopy.DataFetcher.float
+   argopy.DataFetcher.profile
+   argopy.tutorial.open_dataset
    argopy.set_options
 
-Xarray *argopy* name space
+Xarray *argo* name space
 ==========================
 
 .. automodule:: argopy.xarray

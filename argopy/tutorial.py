@@ -5,13 +5,14 @@
 
     Data files are hosted on companion repository: http://www.github.com/euroargodev/argopy-data
 
+    ```
     import argopy
     ftproot, flist = argopy.tutorial.open_dataset('localftp')
     txtfile = argopy.tutorial.open_dataset('weekly_index_prof')
 
     # To force a new download of the data repo:
     argopy.tutorial.repodata().download(overwrite=True)
-
+    ```
 """
 
 import os
