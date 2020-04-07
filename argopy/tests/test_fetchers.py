@@ -83,6 +83,7 @@ class EntryPoints_AllBackends(TestCase):
             ds = ArgoDataFetcher(backend=bk).region(arg).to_xarray()
             assert isinstance(ds, xr.Dataset) == True
 
+    # TEST FOR INDEX FETCHING
     def __test_float_index(self, bk, **ftc_opts):
         """ Test float index fetching for a given backend """
         for arg in self.args['float']:
@@ -140,6 +141,7 @@ class Erddap_backend(TestCase):
 
     def test_cachepath(self):
         assert isinstance(ArgoDataFetcher(backend='erddap').profile(6902746, 34).fetcher.cachepath, str) == True
+        #TEST CACHEPATH FOR INDEX
         assert isinstance(ArgoIndexFetcher(backend='erddap').float(6902746).fetcher.cachepath, str) == True
 
     def test_caching(self):
@@ -150,6 +152,14 @@ class Erddap_backend(TestCase):
             # 2nd call to load from cached file
             ds = ArgoDataFetcher(backend='erddap', cache=True, cachedir=cachedir).profile(6902746, 34).to_xarray()
             assert isinstance(ds, xr.Dataset) == True
+
+            #TEST CACHING FOR INDEX
+            # 1st call to load index from erddap and save to cachedir:
+            ds = ArgoIndexFetcher(backend='erddap', cache=True, cachedir=cachedir).float(6902746).to_xarray()
+            # 2nd call to load from cached file
+            ds = ArgoIndexFetcher(backend='erddap', cache=True, cachedir=cachedir).float(6902746).to_xarray()
+            assert isinstance(ds, xr.Dataset) == True
+
             shutil.rmtree(cachedir)
         except:
             shutil.rmtree(cachedir)
