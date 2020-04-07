@@ -16,3 +16,7 @@ def test_localftp_dataset():
 def test_weekly_index_dataset():
     txtfile = argopy.tutorial.open_dataset('weekly_index_prof')
     assert isinstance(txtfile, str) == True
+
+def test_weekly_index_dataset():
+    txtfile = argopy.tutorial.open_dataset('global_index_prof')
+    assert isinstance(txtfile, str) == True

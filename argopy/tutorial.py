@@ -8,6 +8,7 @@
     import argopy
     ftproot, flist = argopy.tutorial.open_dataset('localftp')
     txtfile = argopy.tutorial.open_dataset('weekly_index_prof')
+    txtfile = argopy.tutorial.open_dataset('global_index_prof')
 
     # To force a new download of the data repo:
     argopy.tutorial.repodata().download(overwrite=True)
@@ -48,6 +49,12 @@ def open_dataset(name):
         gdacftp.download(overwrite=False)
         flist = gdacftp.ls()
         ifile = [f for f in flist if 'ar_index_this_week_prof.txt' in f][0]
+
+    elif name == 'global_index_prof':
+        gdacftp = sample_ftp()
+        gdacftp.download(overwrite=False)
+        flist = gdacftp.ls()
+        ifile = [f for f in flist if 'ar_index_global_prof.txt' in f][0]
         return ifile
     else:
         raise ValueError("Unknown tutorial dataset ('%s')" % name)
