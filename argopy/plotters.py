@@ -30,7 +30,7 @@ land_feature = cfeature.NaturalEarthFeature(category='physical',
 def plot_trajectory(idx):
     """ Plot trajectories for an index dataframe """
     if not with_seaborn:
-        raise BaseError("This function requires seaborn")
+        raise BaseException("This function requires seaborn")
 
     fig = plt.figure(figsize=(10,10))
     ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
@@ -61,7 +61,7 @@ def plot_trajectory(idx):
 def plot_dac(idx):
     """ Histogram of DAC for an index dataframe """
     if not with_seaborn:
-        raise BaseError("This function requires seaborn")
+        raise BaseException("This function requires seaborn")
     fig=plt.figure(figsize=(10,5))
     mind=idx.groupby('institution').size().sort_values(ascending=False).index
     sns.countplot(y='institution',data=idx,order=mind)
@@ -70,7 +70,7 @@ def plot_dac(idx):
 def plot_profilerType(idx):
     """ Histogram of profile types for an index dataframe """
     if not with_seaborn:
-        raise BaseError("This function requires seaborn")
+        raise BaseException("This function requires seaborn")
     fig=plt.figure(figsize=(10,5))
     mind=idx.groupby('profiler_type').size().sort_values(ascending=False).index
     sns.countplot(y='profiler_type',data=idx,order=mind)
