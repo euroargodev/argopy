@@ -285,6 +285,13 @@ class ArgoIndexFetcher(object):
         """ Do nothing to a dataset """
         return xds
 
+    def __getattr__(self, key):
+        """ Validate access points """
+        valid_attrs = ['Fetchers', 'fetcher', 'fetcher_options', 'postproccessor']
+        if key not in self.valid_access_points and key not in valid_attrs:
+            raise InvalidFetcherAccessPoint("'%s' is not a valid access point" % key)
+        pass
+
     def float(self, wmo):
         """ Load index for one or more WMOs """
         if 'float' in self.Fetchers:
@@ -303,19 +310,24 @@ class ArgoIndexFetcher(object):
 
     def to_dataframe(self, **kwargs):
         """ Fetch index and return pandas.Dataframe """
-        pddf = self.fetcher.to_dataframe(**kwargs)        
-        return pddf        
+        if not self.fetcher:
+            raise InvalidFetcher(" Initialize an access point (%s) first." %
+                                 ",".join(self.Fetchers.keys()))
+        return self.fetcher.to_dataframe(**kwargs)
 
     def to_xarray(self, **kwargs):
         """ Fetch index and return xr.dataset """
-        pddf = self.fetcher.to_dataframe(**kwargs) 
-        ds = pddf.to_xarray()       
-        return ds            
+        if not self.fetcher:
+            raise InvalidFetcher(" Initialize an access point (%s) first." %
+                                 ",".join(self.Fetchers.keys()))
+        return self.fetcher.to_xarray(**kwargs)
 
-    def to_csv(self,file='output_file.csv'):
+    def to_csv(self, file: str='output_file.csv'):
         """ Fetch index and return csv """
-        idx=self.to_dataframe()        
-        return idx.to_csv(file)           
+        if not self.fetcher:
+            raise InvalidFetcher(" Initialize an access point (%s) first." %
+                                 ",".join(self.Fetchers.keys()))
+        return self.to_dataframe().to_csv(file)
     
     def plot(self, ptype='trajectory'):
         """ Custom plots """

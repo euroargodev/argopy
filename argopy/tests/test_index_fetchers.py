@@ -45,7 +45,7 @@ def test_unavailable_accesspoint():
         ArgoIndexFetcher(backend='localftp').region([-85,-45,10.,20.,0,100.]).to_xarray()
 
 class EntryPoints_AllBackends(TestCase):
-    """ Test main API facade for all available fetching backends """
+    """ Test main API facade for all available index fetching backends """
 
     def setUp(self):
         # todo Determine the list of output format to test
@@ -60,14 +60,14 @@ class EntryPoints_AllBackends(TestCase):
         self.args['region'] = [[-70, -65, 30., 35.],
                                [-70, -65, 30., 35., '2012-01-01', '2012-06-30']]
 
-    def __test_float_index(self, bk, **ftc_opts):
+    def __test_float(self, bk, **ftc_opts):
         """ Test float index fetching for a given backend """
         for arg in self.args['float']:
             options = {**self.fetcher_opts, **ftc_opts}
             ds = ArgoIndexFetcher(backend=bk, **options).float(arg).to_xarray()
             assert isinstance(ds, xr.Dataset) == True
 
-    def __test_region_index(self, bk):
+    def __test_region(self, bk):
         """ Test float index fetching for a given backend """
         for arg in self.args['region']:
             ds = ArgoIndexFetcher(backend=bk).region(arg).to_xarray()
@@ -92,7 +92,7 @@ class EntryPoints_AllBackends(TestCase):
 @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
 class Erddap_backend(TestCase):
-    """ Test main API facade for all available dataset of the ERDDAP fetching backend """
+    """ Test main API facade for all available dataset of the ERDDAP index fetching backend """
 
     def test_cachepath_index(self):
         assert isinstance(ArgoIndexFetcher(backend='erddap').float(6902746).fetcher.cachepath, str) == True
