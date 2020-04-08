@@ -493,7 +493,7 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
         self.filtered_index = outputFileName
 
         infile = open(inputFileName, "r")
-        read = csv.reader(islice(infile, 8,None))  
+        read = csv.reader(islice(infile, 8, None))
         headers = next(read) # header
 
         #output file writer
