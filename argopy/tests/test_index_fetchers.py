@@ -30,7 +30,6 @@ def connected(host='http://www.ifremer.fr'):
         return False
 CONNECTED = connected()
 
-# List tests:
 def test_invalid_accesspoint():
     with pytest.raises(InvalidFetcherAccessPoint):
         ArgoIndexFetcher().invalid_accesspoint.to_xarray()
