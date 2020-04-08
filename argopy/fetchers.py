@@ -236,7 +236,6 @@ class ArgoIndexFetcher(object):
     
     Specify here all options to data_fetchers
 
-    __author__: kevin.balem@ifremer.fr
     """
      
     def __init__(self,
