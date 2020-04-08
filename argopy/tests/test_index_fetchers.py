@@ -85,6 +85,7 @@ class EntryPoints_AllBackends(TestCase):
         self.__test_region('erddap')
 
     @unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
+    @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
     def test_float_index_localftp(self):
         ftproot, findex = argopy.tutorial.open_dataset('global_index_prof')
         with argopy.set_options(local_ftp=ftproot):
