@@ -101,6 +101,10 @@ class EntryPoints_AllBackends(TestCase):
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     def test_float_erddap(self):
         self.__test_float('erddap')
+
+    @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
+    @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
+    def test_float_index_erddap(self):        
         self.__test_float_index('erddap')
 
     @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
@@ -112,6 +116,10 @@ class EntryPoints_AllBackends(TestCase):
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     def test_region_erddap(self):
         self.__test_region('erddap')
+
+    @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
+    @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
+    def test_region_index_erddap(self):        
         self.__test_region_index('erddap')
 
     @unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
@@ -119,7 +127,10 @@ class EntryPoints_AllBackends(TestCase):
         ftproot, flist = argopy.tutorial.open_dataset('localftp')
         with argopy.set_options(local_ftp=os.path.join(ftproot,'dac')):
             self.__test_float('localftp', )
-        #ftproot, findex = argopy.tutorial.open_dataset('global_index_prof')
+
+    @unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
+    def test_float_index_localftp(self):        
+        ftproot, findex = argopy.tutorial.open_dataset('global_index_prof')
         with argopy.set_options(local_ftp=os.path.join(ftproot,'dac')):
             self.__test_float_index('localftp', index_file='ar_index_global_prof.txt')                    
     
@@ -141,7 +152,8 @@ class Erddap_backend(TestCase):
 
     def test_cachepath(self):
         assert isinstance(ArgoDataFetcher(backend='erddap').profile(6902746, 34).fetcher.cachepath, str) == True
-        #TEST CACHEPATH FOR INDEX
+
+    def test_cachepath_index(self):            
         assert isinstance(ArgoIndexFetcher(backend='erddap').float(6902746).fetcher.cachepath, str) == True
 
     def test_caching(self):
@@ -151,20 +163,25 @@ class Erddap_backend(TestCase):
             ds = ArgoDataFetcher(backend='erddap', cache=True, cachedir=cachedir).profile(6902746, 34).to_xarray()
             # 2nd call to load from cached file
             ds = ArgoDataFetcher(backend='erddap', cache=True, cachedir=cachedir).profile(6902746, 34).to_xarray()
-            assert isinstance(ds, xr.Dataset) == True
-
-            #TEST CACHING FOR INDEX
-            # 1st call to load index from erddap and save to cachedir:
-            ds = ArgoIndexFetcher(backend='erddap', cache=True, cachedir=cachedir).float(6902746).to_xarray()
-            # 2nd call to load from cached file
-            ds = ArgoIndexFetcher(backend='erddap', cache=True, cachedir=cachedir).float(6902746).to_xarray()
-            assert isinstance(ds, xr.Dataset) == True
-
+            assert isinstance(ds, xr.Dataset) == True            
             shutil.rmtree(cachedir)
         except:
             shutil.rmtree(cachedir)
             raise
 
+    def test_caching_index(self):        
+        cachedir = os.path.expanduser(os.path.join("~",".argopytest_tmp"))
+        try:            
+            # 1st call to load index from erddap and save to cachedir:
+            ds = ArgoIndexFetcher(backend='erddap', cache=True, cachedir=cachedir).float(6902746).to_xarray()
+            # 2nd call to load from cached file
+            ds = ArgoIndexFetcher(backend='erddap', cache=True, cachedir=cachedir).float(6902746).to_xarray()
+            assert isinstance(ds, xr.Dataset) == True
+            shutil.rmtree(cachedir)
+        except:
+            shutil.rmtree(cachedir)
+            raise
+            
     def __testthis(self, dataset):
         for access_point in self.args:
 
