@@ -92,6 +92,7 @@ class EntryPoints_AllBackends(TestCase):
 
 @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
+@unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
 class Erddap_backend(TestCase):
     """ Test main API facade for all available dataset of the ERDDAP index fetching backend """
 
