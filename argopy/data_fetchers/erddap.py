@@ -52,7 +52,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         pass
 
     @abstractmethod
-    def cname(self):
+    def cname(self, cache=False):
         """ Return a unique string defining the request """
         pass
 
@@ -85,7 +85,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     def __repr__(self):
         summary = ["<datafetcher '%s'>" % self.definition]
-        summary.append("Domain: %s" % self.cname(cache=0))
+        summary.append("Domain: %s" % self.cname(cache=False))
         return '\n'.join(summary)
 
     def _format(self, x, typ):
@@ -162,7 +162,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         for v in this.data_vars:
             if '_QC' in v:
                 attrs = {'long_name': "Global quality flag of %s profile" % v,
-                         'convention': "Argo reference table 2a"};
+                         'convention': "Argo reference table 2a"}
                 this[v].attrs = attrs
 
         if 'CYCLE_NUMBER' in this.data_vars:
@@ -602,7 +602,7 @@ class ErddapArgoIndexFetcher(ABC):
         pass
 
     @abstractmethod
-    def cname(self):
+    def cname(self, cache=False):
         """ Return a unique string defining the request """
         pass
 

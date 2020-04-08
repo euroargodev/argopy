@@ -55,7 +55,7 @@ from .utilities import list_available_data_backends
 AVAILABLE_BACKENDS = list_available_data_backends()
 
 # Import plotters :
-#from .plotters import plot_trajectory, plot_dac, plot_profilerType
+from .plotters import plot_trajectory, plot_dac, plot_profilerType
 
 # Highest level API / Facade:
 class ArgoDataFetcher(object):
@@ -318,14 +318,14 @@ class ArgoIndexFetcher(object):
         idx=self.to_dataframe()        
         return idx.to_csv(file)           
     
-    # def plot(self, ptype='trajectory'):
-    #     """ Custom plots """
-    #     idx=self.to_dataframe()        
-    #     if ptype=='dac':
-    #         plot_dac(idx)
-    #     elif ptype=='profiler':
-    #         plot_profilerType(idx)               
-    #     elif ptype=='trajectory':           
-    #         plot_trajectory(idx.sort_values(['file']))
-    #     else:
-    #         raise ValueError("Type of plot unavailable. Use: 'dac', 'profiler' or 'trajectory' (default)")
+    def plot(self, ptype='trajectory'):
+        """ Custom plots """
+        idx=self.to_dataframe()        
+        if ptype=='dac':
+            plot_dac(idx)
+        elif ptype=='profiler':
+            plot_profilerType(idx)               
+        elif ptype=='trajectory':           
+            plot_trajectory(idx.sort_values(['file']))
+        else:
+            raise ValueError("Type of plot unavailable. Use: 'dac', 'profiler' or 'trajectory' (default)")
