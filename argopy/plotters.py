@@ -39,14 +39,18 @@ if with_cartopy:
 # TRAJECTORY PLOT IS A GOOD EXAMPLE.
 # SNS.LINEPLOT AND SNS.SCATTERPLOT SHOULD WORKS FINE WITH A DS.DATASET
 
-def skipUnless(method, ok, txt):
+def warnUnless(ok, txt):
+    def inner(fct):
+        def wrapper(*args, **kwargs):
+            warnings.warn("%s %s" % (fct.__name__, txt))
+            return fct(*args, **kwargs)
+        return wrapper
     if not ok:
-        warnings.warn("%s %s" % (method.__name__, txt))
-        return None
+        return inner
     else:
-        return method
+        return lambda f: f
 
-@skipUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn")
+@warnUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn installed")
 def plot_trajectory(idx):
     """ Plot trajectories for an index dataframe """
     if not with_seaborn:
@@ -78,7 +82,7 @@ def plot_trajectory(idx):
     if(nfloat>15):
         ax.get_legend().remove()
 
-@skipUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn")
+@warnUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn installed")
 def plot_dac(idx):
     """ Histogram of DAC for an index dataframe """
     if not with_seaborn:
@@ -88,7 +92,7 @@ def plot_dac(idx):
     sns.countplot(y='institution',data=idx,order=mind)
     plt.ylabel('number of profiles')            
 
-@skipUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn")
+@warnUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn installed")
 def plot_profilerType(idx):
     """ Histogram of profile types for an index dataframe """
     if not with_seaborn:
