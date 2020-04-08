@@ -75,11 +75,13 @@ class EntryPoints_AllBackends(TestCase):
 
     @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
+    @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
     def test_float_index_erddap(self):
         self.__test_float('erddap')
 
     @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
+    @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
     def test_region_index_erddap(self):
         self.__test_region('erddap')
 
