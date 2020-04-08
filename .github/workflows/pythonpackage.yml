@@ -30,7 +30,9 @@ jobs:
       uses: goanpeca/setup-miniconda@v1
       with:
         auto-update-conda: true
-        python-version: ${{ matrix.python-version }
+        python-version: ${{ matrix.python-version }}
+      run:
+        conda install cartopy
 
     - name: Install dependencies
       run: |
