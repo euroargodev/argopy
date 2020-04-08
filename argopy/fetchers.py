@@ -180,8 +180,22 @@ class ArgoDataFetcher(object):
 
         return self
 
-    def region(self, box):
-        """ Load data from a rectangular region, given latitude, longitude, pressure and possibly time bounds """
+    def region(self, box: list):
+        """ Load data for a rectangular space/time region
+
+        Parameters
+        ----------
+        box: list(lon_min: float, lon_max: float, lat_min: float, lat_max: float, pres_min: float, pres_max: float,
+        date_min: str, date_max: str)
+            Define the domain to load all Argo data for. Longitude, latitude and pressure bounds are required, while
+            the two bounding dates [date_min and date_max] are optional. If not specificied, the entire time series
+            is requested.
+
+        Returns
+        -------
+        :class:`argopy.DataFetcher` with an access point initialized.
+
+        """
         if 'region' in self.Fetchers:
             self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)
         else:
