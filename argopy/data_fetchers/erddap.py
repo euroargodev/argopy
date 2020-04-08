@@ -744,7 +744,6 @@ class ErddapArgoIndexFetcher(ABC):
 class IndexFetcher_wmo(ErddapArgoIndexFetcher):
     """ Manage access to Argo Index through Ifremer ERDDAP for: a list of WMOs
 
-        __author__: kevin.balem@ifremer.fr
     """
 
     def init(self, WMO=[]):
