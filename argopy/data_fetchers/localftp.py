@@ -22,13 +22,15 @@ from abc import ABC, abstractmethod
 import warnings
 import getpass
 from pathlib import Path
+import csv
+from itertools import islice
 
 import multiprocessing as mp
 import distributed
 
 from .proto import ArgoDataFetcherProto
 from argopy.errors import NetCDF4FileNotFoundError
-from argopy.utilities import list_multiprofile_file_variables, list_standard_variables
+from argopy.utilities import list_multiprofile_file_variables, list_standard_variables, load_dict, mapp_dict
 from argopy.options import OPTIONS
 
 class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
@@ -36,7 +38,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
 
     """
     ###
-    # Methods to be customised for a specific erddap request
+    # Methods to be customised for a specific request
     ###
     @abstractmethod
     def init(self):
@@ -357,3 +359,150 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
         if len(self.files) == 1:
             ds.attrs['Fetched_url'] = ds.encoding['source']
         return ds
+
+class LocalFTPArgoIndexFetcher(ABC):
+    """ Manage access to Argo index from a local copy of GDAC ftp
+
+    """
+    ###
+    # Methods to be customised for a specific request
+    ###
+    @abstractmethod
+    def init(self):
+        """ Initialisation for a specific fetcher """
+        pass
+
+    @abstractmethod
+    def cname(self):
+        """ Return a unique string defining the request """
+        pass
+        
+    ###
+    # Methods that must not change
+    ###
+    def __init__(self,
+                 path_ftp: str = "",    
+                 index_file: str="ar_index_global_prof.txt",             
+                 cache: bool = False,
+                 cachedir: str = "",
+                 **kwargs):
+        """ Init fetcher
+
+            Parameters
+            ----------
+            local_path : str
+                Path to the directory with the 'dac' folder and index file
+        """
+        self.cache = cache
+        self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
+        if self.cache:
+            #todo check if cachedir is a valid path
+            Path(self.cachedir).mkdir(parents=True, exist_ok=True)
+
+        self.definition = 'Local ftp Argo index fetcher'        
+        self.path_ftp = OPTIONS['local_ftp'] if path_ftp == '' else path_ftp
+        self.index_file = index_file 
+        self.init(**kwargs)
+
+    def __repr__(self):
+        summary = [ "<indexfetcher '%s'>" % self.definition ]
+        summary.append( "FTP: %s" % self.path_ftp )
+        summary.append( "Domain: %s" % self.cname(cache=0) )
+        return '\n'.join(summary)
+
+    @property
+    def cachepath(self):
+        """ Return path to cache file for this request """
+        src = self.cachedir
+        file = ("index_%s.csv") % (self.cname(cache=True))
+        fcache = os.path.join(src, file)
+        return fcache
+
+    def to_dataframe(self):
+        """ filter local index file and return a pandas dataframe """      
+        #  
+        # Try to load cached file if requested:
+        if self.cache and os.path.exists(self.cachepath):
+            df = pd.read_csv(self.cachepath)            
+            return df
+        # No cache found or requested, so we compute:        
+        self.filter_index()
+        #
+        df=pd.read_csv(self.filtered_index)
+        #create datetime & wmo field
+        #local ftp date format 20160513065300
+        df['date'] = pd.to_datetime(df['date'], format="%Y%m%d%H%M%S")
+        df['date_update'] = pd.to_datetime(df['date_update'], format="%Y%m%d%H%M%S")
+
+        df['wmo'] = df.file.apply(lambda x: int(x.split('/')[1]))
+        #
+        # institution & profiler mapping
+        institution_dictionnary=load_dict('institutions')
+        df['tmp1'] = df.institution.apply(lambda x: mapp_dict(institution_dictionnary,x))
+        profiler_dictionnary=load_dict('profilers')
+        df['tmp2'] = df.profiler_type.apply(lambda x: mapp_dict(profiler_dictionnary,x))        
+
+        df=df.drop(columns=['institution','profiler_type'])
+        df=df.rename(columns={"tmp1":"institution","tmp2":"profiler_type"})        
+        
+        # Possibly save in cache for later re-use
+        if self.cache:
+            df.to_csv(self.cachepath,index=False)
+
+        return df
+
+class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
+    """ Manage access to local ftp Argo data for: a list of WMOs
+
+    """
+    def init(self, WMO: list = [], **kwargs):
+        """ Create Argo data loader for WMOs
+
+            Parameters
+            ----------
+            WMO : list(int)
+                The list of WMOs to load all Argo data for.            
+        """
+        if isinstance(WMO, int):
+            WMO = [WMO] # Make sure we deal with a list        
+        self.WMO = WMO        
+        
+        return self
+
+    def cname(self, cache=False):
+        """ Return a unique string defining the request """
+        if len(self.WMO) > 1:
+            if cache:
+                listname = ["WMO%i" % i for i in self.WMO]                
+                listname = "_".join(listname)                
+            else:
+                listname = ["WMO%i" % i for i in self.WMO]                
+                listname = ";".join(listname)                
+        else:
+            listname = "WMO%i" % self.WMO[0]            
+        return listname
+
+    def filter_index(self):
+        #input file reader        
+        inputFileName = os.path.join(self.path_ftp, self.index_file)        
+        outputFileName = os.path.join(self.cachedir, 'tmp_'+self.cname(cache=True)+'.csv')
+        self.filtered_index = outputFileName
+
+        infile = open(inputFileName, "r")
+        read = csv.reader(islice(infile, 8,None))  
+        headers = next(read) # header
+
+        #output file writer
+        outfile = open(outputFileName, "w")
+        write = csv.writer(outfile)
+
+        write.writerow(headers) # write headers   
+
+        #for each row
+        swmo=np.array(self.WMO,dtype='str')
+        for row in read:
+            wmor=row[0].split("/")[1]
+            if (wmor in swmo):
+                write.writerow(row) 
+
+

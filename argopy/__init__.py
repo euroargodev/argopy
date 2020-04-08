@@ -8,6 +8,8 @@ except Exception:
 
 # Import facades:
 from .fetchers import ArgoDataFetcher as DataFetcher
+from .fetchers import ArgoIndexFetcher as IndexFetcher
+
 from .xarray import ArgoAccessor
 from . import tutorial
 
@@ -19,12 +21,14 @@ from .options import set_options
 __all__ = (
     # Classes:
     "DataFetcher",
+    "IndexFetcher",
     "ArgoAccessor",
     # Top-level functions:
     "set_options",
     # Sub-packages,
     "utilities",
     "errors",
+    "plotters"
     # Constants
     "__version__"
 )

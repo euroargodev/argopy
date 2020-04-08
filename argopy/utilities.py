@@ -11,6 +11,10 @@ import warnings
 import requests
 import io
 from IPython.core.display import display, HTML
+import pickle
+import pkg_resources
+path2pkl = pkg_resources.resource_filename('argopy', 'assets/')
+
 # import errno
 
 def urlopen(url):
@@ -53,6 +57,24 @@ def urlopen(url):
         error.append("%s" % url)
         print("\n".join(error))
         r.raise_for_status()
+
+def load_dict(ptype):
+    if ptype=='profilers':        
+        with open(os.path.join(path2pkl, 'dict_profilers.pickle'), 'rb') as f:
+            loaded_dict = pickle.load(f)
+        return loaded_dict
+    elif ptype=='institutions':
+        with open(os.path.join(path2pkl, 'dict_institutions.pickle'), 'rb') as f:
+            loaded_dict = pickle.load(f)
+        return loaded_dict      
+    else:
+        raise ValueError("Invalid dictionnary pickle file")
+
+def mapp_dict(Adictionnary,Avalue):
+    try:        
+        return Adictionnary[Avalue] 
+    except KeyError:
+        return "Unknown"        
 
 def list_available_data_backends():
     """ List all available data fetchers """
@@ -152,4 +174,3 @@ def list_multiprofile_file_variables():
      'TEMP_QC',
      'VERTICAL_SAMPLING_SCHEME',
      'WMO_INST_TYPE']
-

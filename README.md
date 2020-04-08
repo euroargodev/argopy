@@ -47,28 +47,6 @@ or for **one or a collection of floats**:
 ds = argo_loader.float(6902746).to_xarray()
 ds = argo_loader.float([6902746, 6902747, 6902757, 6902766]).to_xarray()
 ```
-
-Two Argo data fetchers are available.
-1. The Ifremer erddap (recommended, but requires internet connection):
-    ```python
-    argo_loader = ArgoDataFetcher(backend='erddap')
-    ds = argo_loader.profile(6902746, 34).to_xarray()
-    ```
-1. your own local copy of the GDAC ftp (offline access possible, but more limited than the erddap).
-    ```python
-    argo_loader = ArgoDataFetcher(backend='localftp', path_ftp='/path/to/your/copy/of/Argo/ftp/dac')
-    ds = argo_loader.float(6902746).to_xarray()
-    ```
-
-### Data manipulation
-Data are returned as a collection of measurements. 
-If you want to convert them into a collection of profiles, you can use the xarray accessor named ``argo``:
-```python
-from argopy import DataFetcher as ArgoDataFetcher
-ds = ArgoDataFetcher().float(5903248).to_xarray() # Dimensions: (N_POINTS: 25656)
-ds = ds.argo.point2profile() # Dimensions: (N_LEVELS: 71, N_PROF: 368)
-```
-
 By default fetched data are returned in memory as [xarray.DataSet](http://xarray.pydata.org/en/stable/data-structures.html#dataset). 
 From there, it is easy to convert it to other formats like a [Pandas dataframe](https://pandas.pydata.org/pandas-docs/stable/getting_started/dsintro.html#dataframe):
 ```python
@@ -83,6 +61,49 @@ ds.to_netcdf('my_selection.nc')
 # or by profiles:
 ds.argo.point2profile().to_netcdf('my_selection.nc')
 ```
+
+
+### Argo Index Fetcher
+Index object is returned as a pandas dataframe.
+
+Init the fetcher:
+```python
+    from argopy import IndexFetcher as ArgoIndexFetcher
+
+    index_loader = ArgoIndexFetcher()
+    index_loader = ArgoIndexFetcher(backend='erddap')    
+    #Local ftp backend 
+    #index_loader = ArgoIndexFetcher(backend='localftp',path_ftp='/path/to/your/argo/ftp/',index_file='ar_index_global_prof.txt')
+```
+and then, set the index request index for a domain:
+```python
+    idx=index_loader.region([-85,-45,10.,20.])
+    idx=index_loader.region([-85,-45,10.,20.,'2012-01','2014-12'])
+```
+or for a collection of floats:
+```python
+    idx=index_loader.float(6902746)
+    idx=index_loader.float([6902746, 6902747, 6902757, 6902766])   
+```
+then you can see you index as a pandas dataframe or a xarray dataset :
+```python
+    idx.to_dataframe()
+    idx.to_xarray()
+```
+For plottings methods, you'll need `matplotlib`, `cartopy` and `seaborn` installed (they're not in requirements).  
+For plotting the map of your query :
+```python    
+    idx.plot('trajectory)    
+```
+![index_traj](https://user-images.githubusercontent.com/17851004/78023937-d0c2d580-7357-11ea-9974-70a2aaf30590.png)
+
+For plotting the distribution of DAC or profiler type of the indexed profiles :
+```python    
+    idx.plot('dac')    
+    idx.plot('profiler')
+```
+![dac](https://user-images.githubusercontent.com/17851004/78024137-26977d80-7358-11ea-8557-ef39a88028b2.png)
+
 
 ## Development roadmap
 

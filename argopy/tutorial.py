@@ -49,13 +49,14 @@ def open_dataset(name):
         gdacftp.download(overwrite=False)
         flist = gdacftp.ls()
         ifile = [f for f in flist if 'ar_index_this_week_prof.txt' in f][0]
+        return gdacftp.rootpath, ifile
 
     elif name == 'global_index_prof':
         gdacftp = sample_ftp()
         gdacftp.download(overwrite=False)
         flist = gdacftp.ls()
         ifile = [f for f in flist if 'ar_index_global_prof.txt' in f][0]
-        return ifile
+        return gdacftp.rootpath, ifile
     else:
         raise ValueError("Unknown tutorial dataset ('%s')" % name)
 

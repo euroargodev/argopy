@@ -54,6 +54,9 @@ from .utilities import list_available_data_backends
 
 AVAILABLE_BACKENDS = list_available_data_backends()
 
+# Import plotters :
+from .plotters import plot_trajectory, plot_dac, plot_profilerType
+
 # Highest level API / Facade:
 class ArgoDataFetcher(object):
     """ Fetch and process Argo data.
@@ -208,3 +211,121 @@ class ArgoDataFetcher(object):
         xds = self.postproccessor(xds)
         return xds
 
+class ArgoIndexFetcher(object):
+    """    
+    Specs discussion :
+    https://github.com/euroargodev/argopy/issues/8 
+    https://github.com/euroargodev/argopy/pull/6)
+    
+    Usage : 
+
+    from argopy import ArgoIndexFetcher
+    idx = ArgoIndexFetcher.region([-75, -65, 10, 20])
+    idx.plot.trajectories()
+    idx.to_dataframe()    
+
+    Fetch and process Argo index.
+
+    Can return metadata from index of :
+        - one or more float(s), defined by WMOs
+        - one or more profile(s), defined for one WMO and one or more CYCLE NUMBER
+        - a space/time rectangular domain, defined by lat/lon/pres/time range
+
+    idx object can also be used as an input :
+     argo_loader = ArgoDataFetcher(index=idx)
+    
+    Specify here all options to data_fetchers
+
+    __author__: kevin.balem@ifremer.fr
+    """
+     
+    def __init__(self,
+                 mode: str = "",
+                 backend : str = "",                 
+                 **fetcher_kwargs):
+
+        # Facade options:
+        self._mode = OPTIONS['mode'] if mode == '' else mode        
+        self._backend = OPTIONS['datasrc'] if backend == '' else backend
+
+        _VALIDATORS['mode'](self._mode)
+        _VALIDATORS['datasrc'](self._backend)        
+
+        # Load backend access points:
+        if self._backend not in AVAILABLE_BACKENDS:
+            raise ValueError("Fetcher '%s' not available" % self._backend)
+        else:
+            Fetchers = AVAILABLE_BACKENDS[self._backend]
+
+        # Auto-discovery of access points for this fetcher:
+        # rq: Access point names for the facade are not the same as the access point of fetchers
+        self.valid_access_points = ['float', 'region']
+        self.Fetchers = {}
+        for p in Fetchers.access_points:
+            if p == 'wmo':  # Required for 'profile' and 'float'                
+                self.Fetchers['float'] = Fetchers.IndexFetcher_wmo
+            if p == 'box':  # Required for 'region'
+                self.Fetchers['region'] = Fetchers.IndexFetcher_box
+
+        # Init sub-methods:
+        self.fetcher = None
+        self.fetcher_options = {**fetcher_kwargs}
+        self.postproccessor = self.__empty_processor                
+
+    def __repr__(self):
+        if self.fetcher:
+            summary = [self.fetcher.__repr__()]
+            summary.append("User mode: %s" % self._mode)
+        else:
+            summary = ["<indexfetcher 'Not initialised'>"]
+            summary.append("Fetchers: 'float' or 'region'")
+            summary.append("User mode: %s" % self._mode)
+        return "\n".join(summary)
+
+    def __empty_processor(self, xds):
+        """ Do nothing to a dataset """
+        return xds
+
+    def float(self, wmo):
+        """ Load index for one or more WMOs """
+        if 'float' in self.Fetchers:
+            self.fetcher = self.Fetchers['float'](WMO=wmo, **self.fetcher_options)            
+        else:
+            raise InvalidFetcherAccessPoint("'float' not available with '%s' backend" % self._backend)        
+        return self    
+
+    def region(self, box):
+        """ Load index for a rectangular region, given latitude, longitude, and possibly time bounds """
+        if 'region' in self.Fetchers:
+            self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)            
+        else:
+            raise InvalidFetcherAccessPoint("'region' not available with '%s' backend" % self._backend)                     
+        return self        
+
+    def to_dataframe(self, **kwargs):
+        """ Fetch index and return pandas.Dataframe """
+        pddf = self.fetcher.to_dataframe(**kwargs)        
+        return pddf        
+
+    def to_xarray(self, **kwargs):
+        """ Fetch index and return xr.dataset """
+        pddf = self.fetcher.to_dataframe(**kwargs) 
+        ds = pddf.to_xarray()       
+        return ds            
+
+    def to_csv(self,file='output_file.csv'):
+        """ Fetch index and return csv """
+        idx=self.to_dataframe()        
+        return idx.to_csv(file)           
+    
+    def plot(self, ptype='trajectory'):
+        """ Custom plots """
+        idx=self.to_dataframe()        
+        if ptype=='dac':
+            plot_dac(idx)
+        elif ptype=='profiler':
+            plot_profilerType(idx)               
+        elif ptype=='trajectory':           
+            plot_trajectory(idx.sort_values(['file']))
+        else:
+            raise ValueError("Type of plot unavailable. Use: 'dac', 'profiler' or 'trajectory' (default)")
