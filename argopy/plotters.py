@@ -3,11 +3,23 @@
 
 import numpy as np
 import warnings
-import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
-import cartopy.crs as ccrs
-import cartopy.feature as cfeature
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+
+try:
+    import matplotlib.pyplot as plt
+    import matplotlib.ticker as mticker
+    with_matplotlib = True
+except ModuleNotFoundError:
+    warnings.warn("argopy requires matplotlib installed for any plotting functionality")
+    with_matplotlib = False
+
+try:
+    import cartopy.crs as ccrs
+    import cartopy.feature as cfeature
+    from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+    with_cartopy = True
+except ModuleNotFoundError:
+    warnings.warn("argopy requires cartopy installed for full plotting functionality")
+    with_cartopy = False
 
 try:
     import seaborn as sns
@@ -17,15 +29,24 @@ except ModuleNotFoundError:
     warnings.warn("argopy requires seaborn installed for full plotting functionality")
     with_seaborn = False
 
-land_feature = cfeature.NaturalEarthFeature(category='physical',
-                                           name='land',
-                                           scale='50m',
-                                           facecolor=[0.4,0.6,0.7])
+if with_cartopy:
+    land_feature = cfeature.NaturalEarthFeature(category='physical',
+                                               name='land',
+                                               scale='50m',
+                                               facecolor=[0.4,0.6,0.7])
 
 # THIS TAKES A DATAFRAME AS INPUT. WE SHOULD SET SOME PLOT FUNCTIONS FOR INDEX AND DATA AT THE SAME TIME
 # TRAJECTORY PLOT IS A GOOD EXAMPLE.
 # SNS.LINEPLOT AND SNS.SCATTERPLOT SHOULD WORKS FINE WITH A DS.DATASET
 
+def skipUnless(method, ok, txt):
+    if not ok:
+        warnings.warn("%s %s" % (method.__name__, txt))
+        return None
+    else:
+        return method
+
+@skipUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn")
 def plot_trajectory(idx):
     """ Plot trajectories for an index dataframe """
     if not with_seaborn:
@@ -57,6 +78,7 @@ def plot_trajectory(idx):
     if(nfloat>15):
         ax.get_legend().remove()
 
+@skipUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn")
 def plot_dac(idx):
     """ Histogram of DAC for an index dataframe """
     if not with_seaborn:
@@ -66,6 +88,7 @@ def plot_dac(idx):
     sns.countplot(y='institution',data=idx,order=mind)
     plt.ylabel('number of profiles')            
 
+@skipUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn")
 def plot_profilerType(idx):
     """ Histogram of profile types for an index dataframe """
     if not with_seaborn:

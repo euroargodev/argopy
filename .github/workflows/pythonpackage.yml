@@ -26,12 +26,12 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Set up Conda for py-${{ matrix.python-version }}
-      uses: goanpeca/setup-miniconda@v1
-      with:
-        auto-update-conda: true
-        python-version: ${{ matrix.python-version }}
-        auto-activate-base: false
+#    - name: Set up Conda for py-${{ matrix.python-version }}
+#      uses: goanpeca/setup-miniconda@v1
+#      with:
+#        auto-update-conda: true
+#        python-version: ${{ matrix.python-version }}
+#        auto-activate-base: false
 
     - name: Install dependencies with pip
       run: |
@@ -39,11 +39,11 @@ jobs:
         pip install -r requirements.txt
         pip install distributed
 
-    - name: Install dependencies with conda
-      shell: bash -l {0}
-      run: |
-        conda info
-        conda install matplotlib seaborn cartopy
+#    - name: Install dependencies with conda
+#      shell: bash -l {0}
+#      run: |
+#        conda info
+#        conda install matplotlib seaborn cartopy
 
     - name: Lint with flake8
       run: |
