@@ -54,7 +54,7 @@ class EntryPoints_AllBackends(TestCase):
 
         # Define API entry point options to tests:
         self.args = {}
-        self.args['float'] = [[5900446],
+        self.args['float'] = [[1900033],
                               [6901929, 3902131]]
         self.args['region'] = [[-70, -65, 30., 35.],
                                [-70, -65, 30., 35., '2012-01-01', '2012-06-30']]
@@ -85,7 +85,6 @@ class EntryPoints_AllBackends(TestCase):
         self.__test_region('erddap')
 
     @unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
-    @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
     def test_float_index_localftp(self):
         ftproot, findex = argopy.tutorial.open_dataset('global_index_prof')
         with argopy.set_options(local_ftp=ftproot):

@@ -487,7 +487,9 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
         return listname
 
     def filter_index(self):
-        #input file reader        
+        #input file reader
+        Path(self.cachedir).mkdir(parents=True, exist_ok=True)
+
         inputFileName = os.path.join(self.path_ftp, self.index_file)        
         outputFileName = os.path.join(self.cachedir, 'tmp_'+self.cname(cache=True)+'.csv')
         self.filtered_index = outputFileName
