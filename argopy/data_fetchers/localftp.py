@@ -451,6 +451,10 @@ class LocalFTPArgoIndexFetcher(ABC):
 
         return df
 
+    def to_xarray(self):
+        """ Load Argo index and return a xarray Dataset """
+        return self.to_dataframe().to_xarray()
+
 class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
     """ Manage access to local ftp Argo data for: a list of WMOs
 

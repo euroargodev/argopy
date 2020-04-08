@@ -76,18 +76,18 @@ class EntryPoints_AllBackends(TestCase):
     @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     def test_float_index_erddap(self):
-        self.__test_float_index('erddap')
+        self.__test_float('erddap')
 
     @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     def test_region_index_erddap(self):
-        self.__test_region_index('erddap')
+        self.__test_region('erddap')
 
     @unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
     def test_float_index_localftp(self):
         ftproot, findex = argopy.tutorial.open_dataset('global_index_prof')
         with argopy.set_options(local_ftp=ftproot):
-            self.__test_float_index('localftp', index_file='ar_index_global_prof.txt')
+            self.__test_float('localftp', index_file='ar_index_global_prof.txt')
 
 @unittest.skipUnless('erddap' in AVAILABLE_BACKENDS, "requires erddap data fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
