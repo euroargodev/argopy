@@ -1,5 +1,11 @@
 #!/bin/env python
 # -*coding: UTF-8 -*-
+#
+# We try to import depedencies and catch missing nodule errors in order to avoid to load argopy just because
+# Matplotlib is not installed.
+#
+# Decorator warnUnless is mandatory
+#
 
 import numpy as np
 import warnings
