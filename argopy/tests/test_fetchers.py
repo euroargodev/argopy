@@ -131,7 +131,7 @@ class EntryPoints_AllBackends(TestCase):
     @unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
     def test_float_index_localftp(self):        
         ftproot, findex = argopy.tutorial.open_dataset('global_index_prof')
-        with argopy.set_options(local_ftp=os.path.join(ftproot,'dac')):
+        with argopy.set_options(local_ftp=ftproot):
             self.__test_float_index('localftp', index_file='ar_index_global_prof.txt')                    
     
     @unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
