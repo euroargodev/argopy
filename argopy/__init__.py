@@ -28,7 +28,7 @@ __all__ = (
     # Sub-packages,
     "utilities",
     "errors",
-    "plotters"
+    "plotters",
     # Constants
     "__version__"
 )
