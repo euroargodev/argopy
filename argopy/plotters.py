@@ -1,18 +1,31 @@
 #!/bin/env python
 # -*coding: UTF-8 -*-
 #
-# CUSTOM ARGOPY PLOTS
+# We try to import depedencies and catch missing nodule errors in order to avoid to load argopy just because
+# Matplotlib is not installed.
 #
-# Created by kbalem on 30/03/2020
+# Decorator warnUnless is mandatory
+#
 
-import pandas as pd
 import numpy as np
 import warnings
-import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
-import cartopy.crs as ccrs
-import cartopy.feature as cfeature
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+
+try:
+    import matplotlib.pyplot as plt
+    import matplotlib.ticker as mticker
+    with_matplotlib = True
+except ModuleNotFoundError:
+    warnings.warn("argopy requires matplotlib installed for any plotting functionality")
+    with_matplotlib = False
+
+try:
+    import cartopy.crs as ccrs
+    import cartopy.feature as cfeature
+    from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+    with_cartopy = True
+except ModuleNotFoundError:
+    warnings.warn("argopy requires cartopy installed for full plotting functionality")
+    with_cartopy = False
 
 try:
     import seaborn as sns
@@ -22,19 +35,39 @@ except ModuleNotFoundError:
     warnings.warn("argopy requires seaborn installed for full plotting functionality")
     with_seaborn = False
 
-land_feature=cfeature.NaturalEarthFeature(category='physical',name='land',scale='50m',facecolor=[0.4,0.6,0.7])
-
+if with_cartopy:
+    land_feature = cfeature.NaturalEarthFeature(category='physical',
+                                               name='land',
+                                               scale='50m',
+                                               facecolor=[0.4,0.6,0.7])
 
 # THIS TAKES A DATAFRAME AS INPUT. WE SHOULD SET SOME PLOT FUNCTIONS FOR INDEX AND DATA AT THE SAME TIME
 # TRAJECTORY PLOT IS A GOOD EXAMPLE.
 # SNS.LINEPLOT AND SNS.SCATTERPLOT SHOULD WORKS FINE WITH A DS.DATASET
 
-def plot_trajectory(idx):    
-    fig=plt.figure(figsize=(10,10))
+def warnUnless(ok, txt):
+    def inner(fct):
+        def wrapper(*args, **kwargs):
+            warnings.warn("%s %s" % (fct.__name__, txt))
+            return fct(*args, **kwargs)
+        return wrapper
+    if not ok:
+        return inner
+    else:
+        return lambda f: f
+
+@warnUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn installed")
+def plot_trajectory(idx):
+    """ Plot trajectories for an index dataframe """
+    if not with_seaborn:
+        raise BaseException("This function requires seaborn")
+
+    fig = plt.figure(figsize=(10,10))
     ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
     ax.add_feature(land_feature, edgecolor='black')    
-    nfloat=len(idx.groupby('wmo').first())
-    mypal=sns.color_palette("bright", nfloat)
+    nfloat = len(idx.groupby('wmo').first())
+    mypal = sns.color_palette("bright", nfloat)
+
     sns.lineplot(x="longitude",y="latitude",hue="wmo",data=idx,sort=False,palette=mypal,legend=False)
     sns.scatterplot(x="longitude",y="latitude",hue='wmo',data=idx,palette=mypal)   
     width=np.abs(idx['longitude'].max()-idx['longitude'].min())
@@ -55,13 +88,21 @@ def plot_trajectory(idx):
     if(nfloat>15):
         ax.get_legend().remove()
 
+@warnUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn installed")
 def plot_dac(idx):
+    """ Histogram of DAC for an index dataframe """
+    if not with_seaborn:
+        raise BaseException("This function requires seaborn")
     fig=plt.figure(figsize=(10,5))
     mind=idx.groupby('institution').size().sort_values(ascending=False).index
     sns.countplot(y='institution',data=idx,order=mind)
     plt.ylabel('number of profiles')            
 
+@warnUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn installed")
 def plot_profilerType(idx):
+    """ Histogram of profile types for an index dataframe """
+    if not with_seaborn:
+        raise BaseException("This function requires seaborn")
     fig=plt.figure(figsize=(10,5))
     mind=idx.groupby('profiler_type').size().sort_values(ascending=False).index
     sns.countplot(y='profiler_type',data=idx,order=mind)

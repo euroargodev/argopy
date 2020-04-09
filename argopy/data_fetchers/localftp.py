@@ -455,6 +455,10 @@ class LocalFTPArgoIndexFetcher(ABC):
 
         return df
 
+    def to_xarray(self):
+        """ Load Argo index and return a xarray Dataset """
+        return self.to_dataframe().to_xarray()
+
 class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
     """ Manage access to local ftp Argo data for: a list of WMOs
 
@@ -487,13 +491,15 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
         return listname
 
     def filter_index(self):
-        #input file reader        
+        #input file reader
+        Path(self.cachedir).mkdir(parents=True, exist_ok=True)
+
         inputFileName = os.path.join(self.path_ftp, self.index_file)        
         outputFileName = os.path.join(self.cachedir, 'tmp_'+self.cname(cache=True)+'.csv')
         self.filtered_index = outputFileName
 
         infile = open(inputFileName, "r")
-        read = csv.reader(islice(infile, 8,None))  
+        read = csv.reader(islice(infile, 8, None))
         headers = next(read) # header
 
         #output file writer

@@ -110,8 +110,7 @@ For plotting the distribution of DAC or profiler type of the indexed profiles :
 We aim to provide high level helper methods to load Argo data and meta-data from:
 - [x] Ifremer erddap
 - [x] local copy of the GDAC ftp folder
-- [ ] Index files [(ongoing work here)](https://github.com/euroargodev/argopy/pull/7)
-- [ ] the argovis dataset [(help wanted here)](https://github.com/euroargodev/argopy/issues/2)
+- [x] Index files
 - [ ] any other usefull access point to Argo data ?
 
 We also aim to provide high level helper methods to visualise and plot Argo data and meta-data:

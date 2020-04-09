@@ -743,10 +743,13 @@ class ErddapArgoIndexFetcher(ABC):
 
         return df
 
+    def to_xarray(self):
+        """ Load Argo index and return a xarray Dataset """
+        return self.to_dataframe().to_xarray()
+
 class IndexFetcher_wmo(ErddapArgoIndexFetcher):
     """ Manage access to Argo Index through Ifremer ERDDAP for: a list of WMOs
 
-        __author__: kevin.balem@ifremer.fr
     """
 
     def init(self, WMO=[]):
