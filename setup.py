@@ -18,6 +18,8 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/euroargodev/argopy",
     packages=setuptools.find_packages(),
+    package_dir={'argopy': 'argopy'},
+    package_data={'argopy': ['assets/*.pickle']},
     install_requires=requirements,
     classifiers=[
         "Programming Language :: Python :: 3.6",
