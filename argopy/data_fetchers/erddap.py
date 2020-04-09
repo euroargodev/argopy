@@ -727,14 +727,16 @@ class ErddapArgoIndexFetcher(ABC):
         df['wmo'] = df.file.apply(lambda x: int(x.split('/')[1]))
         #
         # institution & profiler mapping
-        institution_dictionnary=load_dict('institutions')
-        df['tmp1'] = df.institution.apply(lambda x: mapp_dict(institution_dictionnary,x))
-        profiler_dictionnary=load_dict('profilers')
-        df['tmp2'] = df.profiler_type.apply(lambda x: mapp_dict(profiler_dictionnary,x))        
+        try:
+            institution_dictionnary=load_dict('institutions')
+            df['tmp1'] = df.institution.apply(lambda x: mapp_dict(institution_dictionnary,x))
+            profiler_dictionnary=load_dict('profilers')
+            df['tmp2'] = df.profiler_type.apply(lambda x: mapp_dict(profiler_dictionnary,x))        
 
-        df=df.drop(columns=['institution','profiler_type'])
-        df=df.rename(columns={"tmp1":"institution","tmp2":"profiler_type"})        
-        
+            df=df.drop(columns=['institution','profiler_type'])
+            df=df.rename(columns={"tmp1":"institution","tmp2":"profiler_type"})        
+        except:
+            pass
         # Possibly save in cache for later re-use
         if self.cache:
             df.to_csv(self.cachepath,index=False)

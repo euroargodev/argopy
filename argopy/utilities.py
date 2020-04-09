@@ -48,7 +48,7 @@ def urlopen(url):
         if "text/html" in r.headers.get('content-type'):
             display(HTML(data.read().decode("utf-8")))
         error = ["Error %i " % r.status_code]
-        error.append(data.decode("utf-8"))
+        error.append(data.read().decode("utf-8"))
         error.append("%s" % url)
         raise requests.HTTPError("\n".join(error))
     else:
