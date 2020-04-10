@@ -19,6 +19,10 @@ import platform
 import struct
 import subprocess
 
+import pickle
+import pkg_resources
+path2pkl = pkg_resources.resource_filename('argopy', 'assets/')
+
 def urlopen(url):
     """ Load content from url or raise alarm on status with explicit information on the error
 
@@ -50,7 +54,7 @@ def urlopen(url):
         if "text/html" in r.headers.get('content-type'):
             display(HTML(data.read().decode("utf-8")))
         error = ["Error %i " % r.status_code]
-        error.append(data.decode("utf-8"))
+        error.append(data.read().decode("utf-8"))
         error.append("%s" % url)
         raise requests.HTTPError("\n".join(error))
     else:
@@ -59,6 +63,24 @@ def urlopen(url):
         error.append("%s" % url)
         print("\n".join(error))
         r.raise_for_status()
+
+def load_dict(ptype):
+    if ptype=='profilers':        
+        with open(os.path.join(path2pkl, 'dict_profilers.pickle'), 'rb') as f:
+            loaded_dict = pickle.load(f)
+        return loaded_dict
+    elif ptype=='institutions':
+        with open(os.path.join(path2pkl, 'dict_institutions.pickle'), 'rb') as f:
+            loaded_dict = pickle.load(f)
+        return loaded_dict      
+    else:
+        raise ValueError("Invalid dictionnary pickle file")
+
+def mapp_dict(Adictionnary,Avalue):
+    try:        
+        return Adictionnary[Avalue] 
+    except KeyError:
+        return "Unknown"        
 
 def list_available_data_backends():
     """ List all available data fetchers """
@@ -94,70 +116,70 @@ def list_multiprofile_file_variables():
 
         This is for files created by GDAC under <DAC>/<WMO>/<WMO>_prof.nc
     """
-    return ['CONFIG_MISSION_NUMBER',
-     'CYCLE_NUMBER',
-     'DATA_CENTRE',
-     'DATA_MODE',
-     'DATA_STATE_INDICATOR',
-     'DATA_TYPE',
-     'DATE_CREATION',
-     'DATE_UPDATE',
-     'DC_REFERENCE',
-     'DIRECTION',
-     'FIRMWARE_VERSION',
-     'FLOAT_SERIAL_NO',
-     'FORMAT_VERSION',
-     'HANDBOOK_VERSION',
-     'HISTORY_ACTION',
-     'HISTORY_DATE',
-     'HISTORY_INSTITUTION',
-     'HISTORY_PARAMETER',
-     'HISTORY_PREVIOUS_VALUE',
-     'HISTORY_QCTEST',
-     'HISTORY_REFERENCE',
-     'HISTORY_SOFTWARE',
-     'HISTORY_SOFTWARE_RELEASE',
-     'HISTORY_START_PRES',
-     'HISTORY_STEP',
-     'HISTORY_STOP_PRES',
-     'JULD',
-     'JULD_LOCATION',
-     'JULD_QC',
-     'LATITUDE',
-     'LONGITUDE',
-     'PARAMETER',
-     'PI_NAME',
-     'PLATFORM_NUMBER',
-     'PLATFORM_TYPE',
-     'POSITIONING_SYSTEM',
-     'POSITION_QC',
-     'PRES',
-     'PRES_ADJUSTED',
-     'PRES_ADJUSTED_ERROR',
-     'PRES_ADJUSTED_QC',
-     'PRES_QC',
-     'PROFILE_PRES_QC',
-     'PROFILE_PSAL_QC',
-     'PROFILE_TEMP_QC',
-     'PROJECT_NAME',
-     'PSAL',
-     'PSAL_ADJUSTED',
-     'PSAL_ADJUSTED_ERROR',
-     'PSAL_ADJUSTED_QC',
-     'PSAL_QC',
-     'REFERENCE_DATE_TIME',
-     'SCIENTIFIC_CALIB_COEFFICIENT',
-     'SCIENTIFIC_CALIB_COMMENT',
-     'SCIENTIFIC_CALIB_DATE',
-     'SCIENTIFIC_CALIB_EQUATION',
-     'STATION_PARAMETERS',
-     'TEMP',
-     'TEMP_ADJUSTED',
-     'TEMP_ADJUSTED_ERROR',
-     'TEMP_ADJUSTED_QC',
-     'TEMP_QC',
-     'VERTICAL_SAMPLING_SCHEME',
-     'WMO_INST_TYPE']
+    return [ 'CONFIG_MISSION_NUMBER',
+             'CYCLE_NUMBER',
+             'DATA_CENTRE',
+             'DATA_MODE',
+             'DATA_STATE_INDICATOR',
+             'DATA_TYPE',
+             'DATE_CREATION',
+             'DATE_UPDATE',
+             'DC_REFERENCE',
+             'DIRECTION',
+             'FIRMWARE_VERSION',
+             'FLOAT_SERIAL_NO',
+             'FORMAT_VERSION',
+             'HANDBOOK_VERSION',
+             'HISTORY_ACTION',
+             'HISTORY_DATE',
+             'HISTORY_INSTITUTION',
+             'HISTORY_PARAMETER',
+             'HISTORY_PREVIOUS_VALUE',
+             'HISTORY_QCTEST',
+             'HISTORY_REFERENCE',
+             'HISTORY_SOFTWARE',
+             'HISTORY_SOFTWARE_RELEASE',
+             'HISTORY_START_PRES',
+             'HISTORY_STEP',
+             'HISTORY_STOP_PRES',
+             'JULD',
+             'JULD_LOCATION',
+             'JULD_QC',
+             'LATITUDE',
+             'LONGITUDE',
+             'PARAMETER',
+             'PI_NAME',
+             'PLATFORM_NUMBER',
+             'PLATFORM_TYPE',
+             'POSITIONING_SYSTEM',
+             'POSITION_QC',
+             'PRES',
+             'PRES_ADJUSTED',
+             'PRES_ADJUSTED_ERROR',
+             'PRES_ADJUSTED_QC',
+             'PRES_QC',
+             'PROFILE_PRES_QC',
+             'PROFILE_PSAL_QC',
+             'PROFILE_TEMP_QC',
+             'PROJECT_NAME',
+             'PSAL',
+             'PSAL_ADJUSTED',
+             'PSAL_ADJUSTED_ERROR',
+             'PSAL_ADJUSTED_QC',
+             'PSAL_QC',
+             'REFERENCE_DATE_TIME',
+             'SCIENTIFIC_CALIB_COEFFICIENT',
+             'SCIENTIFIC_CALIB_COMMENT',
+             'SCIENTIFIC_CALIB_DATE',
+             'SCIENTIFIC_CALIB_EQUATION',
+             'STATION_PARAMETERS',
+             'TEMP',
+             'TEMP_ADJUSTED',
+             'TEMP_ADJUSTED_ERROR',
+             'TEMP_ADJUSTED_QC',
+             'TEMP_QC',
+             'VERTICAL_SAMPLING_SCHEME',
+             'WMO_INST_TYPE']
 
 def get_sys_info():
     "Returns system information as a dict"

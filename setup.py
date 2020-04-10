@@ -1,7 +1,12 @@
+# -*coding: UTF-8 -*-
+
 import setuptools
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
+
+with open('requirements.txt') as f:
+    requirements = f.read().splitlines()
 
 setuptools.setup(
     name='argopy',
@@ -13,6 +18,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/euroargodev/argopy",
     packages=setuptools.find_packages(),
+    package_dir={'argopy': 'argopy'},
+    package_data={'argopy': ['assets/*.pickle']},
+    install_requires=requirements,
     classifiers=[
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
@@ -21,7 +29,5 @@ setuptools.setup(
         "Intended Audience :: Science/Research",
         "Operating System :: OS Independent",
         "Development Status :: 3 - Alpha"
-    ],
-    install_requires=["xarray>=0.14", "numpy>=1.16.2", "scipy>=1.2.1", "gsw>=3.3",
-                        "pandas>=0.24", "dask>=2.0", "erddapy>=0.5"]
+    ]
 )

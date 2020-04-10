@@ -3,6 +3,12 @@
 #
 # Test data fetchers
 #
+# This is not designed as it should
+# We need to have:
+# - one class to test the facade API
+# - one class to test specific methods of each backends
+#
+# At this point, we are testing real data fetching both through facade and through direct call to backends
 
 import os
 import sys
@@ -16,7 +22,7 @@ from unittest import TestCase
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
-from argopy.errors import InvalidFetcherAccessPoint
+from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher
 
 from argopy.utilities import list_available_data_backends
 AVAILABLE_BACKENDS = list_available_data_backends()
@@ -34,6 +40,10 @@ CONNECTED = connected()
 def test_invalid_accesspoint():
     with pytest.raises(InvalidFetcherAccessPoint):
         ArgoDataFetcher().invalid_accesspoint.to_xarray()
+
+def test_invalid_fetcher():
+    with pytest.raises(InvalidFetcher):
+        ArgoDataFetcher().to_xarray() # Can't get data if access point not defined first
 
 @unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
 def test_unavailable_accesspoint():
@@ -97,7 +107,7 @@ class EntryPoints_AllBackends(TestCase):
         ftproot, flist = argopy.tutorial.open_dataset('localftp')
         with argopy.set_options(local_ftp=os.path.join(ftproot,'dac')):
             self.__test_float('localftp', )
-    
+
     @unittest.skipUnless('localftp' in AVAILABLE_BACKENDS, "requires localftp data fetcher")
     def test_profile_localftp(self):
         ftproot, flist = argopy.tutorial.open_dataset('localftp')
@@ -124,7 +134,7 @@ class Erddap_backend(TestCase):
             ds = ArgoDataFetcher(backend='erddap', cache=True, cachedir=cachedir).profile(6902746, 34).to_xarray()
             # 2nd call to load from cached file
             ds = ArgoDataFetcher(backend='erddap', cache=True, cachedir=cachedir).profile(6902746, 34).to_xarray()
-            assert isinstance(ds, xr.Dataset) == True
+            assert isinstance(ds, xr.Dataset) == True            
             shutil.rmtree(cachedir)
         except:
             shutil.rmtree(cachedir)

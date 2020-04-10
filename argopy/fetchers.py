@@ -49,10 +49,13 @@ import numpy as np
 import warnings
 
 from argopy.options import OPTIONS, _VALIDATORS
-from .errors import InvalidFetcherAccessPoint
+from .errors import InvalidFetcherAccessPoint, InvalidFetcher
 from .utilities import list_available_data_backends
 
 AVAILABLE_BACKENDS = list_available_data_backends()
+
+# Import plotters :
+from .plotters import plot_trajectory, plot_dac, plot_profilerType
 
 # Highest level API / Facade:
 class ArgoDataFetcher(object):
@@ -218,7 +221,139 @@ class ArgoDataFetcher(object):
 
     def to_xarray(self, **kwargs):
         """ Fetch and post-process data, return xarray.DataSet """
+        if not self.fetcher:
+            raise InvalidFetcher(" Initialize an access point (%s) first." %
+                                 ",".join(self.Fetchers.keys()))
         xds = self.fetcher.to_xarray(**kwargs)
         xds = self.postproccessor(xds)
         return xds
 
+class ArgoIndexFetcher(object):
+    """    
+    Specs discussion :
+    https://github.com/euroargodev/argopy/issues/8 
+    https://github.com/euroargodev/argopy/pull/6)
+    
+    Usage : 
+
+    from argopy import ArgoIndexFetcher
+    idx = ArgoIndexFetcher.region([-75, -65, 10, 20])
+    idx.plot.trajectories()
+    idx.to_dataframe()    
+
+    Fetch and process Argo index.
+
+    Can return metadata from index of :
+        - one or more float(s), defined by WMOs
+        - one or more profile(s), defined for one WMO and one or more CYCLE NUMBER
+        - a space/time rectangular domain, defined by lat/lon/pres/time range
+
+    idx object can also be used as an input :
+     argo_loader = ArgoDataFetcher(index=idx)
+    
+    Specify here all options to data_fetchers
+
+    """
+     
+    def __init__(self,
+                 mode: str = "",
+                 backend : str = "",                 
+                 **fetcher_kwargs):
+
+        # Facade options:
+        self._mode = OPTIONS['mode'] if mode == '' else mode        
+        self._backend = OPTIONS['datasrc'] if backend == '' else backend
+
+        _VALIDATORS['mode'](self._mode)
+        _VALIDATORS['datasrc'](self._backend)        
+
+        # Load backend access points:
+        if self._backend not in AVAILABLE_BACKENDS:
+            raise ValueError("Fetcher '%s' not available" % self._backend)
+        else:
+            Fetchers = AVAILABLE_BACKENDS[self._backend]
+
+        # Auto-discovery of access points for this fetcher:
+        # rq: Access point names for the facade are not the same as the access point of fetchers
+        self.valid_access_points = ['float', 'region']
+        self.Fetchers = {}
+        for p in Fetchers.access_points:
+            if p == 'wmo':  # Required for 'profile' and 'float'                
+                self.Fetchers['float'] = Fetchers.IndexFetcher_wmo
+            if p == 'box':  # Required for 'region'
+                self.Fetchers['region'] = Fetchers.IndexFetcher_box
+
+        # Init sub-methods:
+        self.fetcher = None
+        self.fetcher_options = {**fetcher_kwargs}
+        self.postproccessor = self.__empty_processor                
+
+    def __repr__(self):
+        if self.fetcher:
+            summary = [self.fetcher.__repr__()]
+            summary.append("User mode: %s" % self._mode)
+        else:
+            summary = ["<indexfetcher 'Not initialised'>"]
+            summary.append("Fetchers: 'float' or 'region'")
+            summary.append("User mode: %s" % self._mode)
+        return "\n".join(summary)
+
+    def __empty_processor(self, xds):
+        """ Do nothing to a dataset """
+        return xds
+
+    def __getattr__(self, key):
+        """ Validate access points """
+        valid_attrs = ['Fetchers', 'fetcher', 'fetcher_options', 'postproccessor']
+        if key not in self.valid_access_points and key not in valid_attrs:
+            raise InvalidFetcherAccessPoint("'%s' is not a valid access point" % key)
+        pass
+
+    def float(self, wmo):
+        """ Load index for one or more WMOs """
+        if 'float' in self.Fetchers:
+            self.fetcher = self.Fetchers['float'](WMO=wmo, **self.fetcher_options)            
+        else:
+            raise InvalidFetcherAccessPoint("'float' not available with '%s' backend" % self._backend)        
+        return self    
+
+    def region(self, box):
+        """ Load index for a rectangular region, given latitude, longitude, and possibly time bounds """
+        if 'region' in self.Fetchers:
+            self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)            
+        else:
+            raise InvalidFetcherAccessPoint("'region' not available with '%s' backend" % self._backend)                     
+        return self        
+
+    def to_dataframe(self, **kwargs):
+        """ Fetch index and return pandas.Dataframe """
+        if not self.fetcher:
+            raise InvalidFetcher(" Initialize an access point (%s) first." %
+                                 ",".join(self.Fetchers.keys()))
+        return self.fetcher.to_dataframe(**kwargs)
+
+    def to_xarray(self, **kwargs):
+        """ Fetch index and return xr.dataset """
+        if not self.fetcher:
+            raise InvalidFetcher(" Initialize an access point (%s) first." %
+                                 ",".join(self.Fetchers.keys()))
+        return self.fetcher.to_xarray(**kwargs)
+
+    def to_csv(self, file: str='output_file.csv'):
+        """ Fetch index and return csv """
+        if not self.fetcher:
+            raise InvalidFetcher(" Initialize an access point (%s) first." %
+                                 ",".join(self.Fetchers.keys()))
+        return self.to_dataframe().to_csv(file)
+    
+    def plot(self, ptype='trajectory'):
+        """ Custom plots """
+        idx=self.to_dataframe()        
+        if ptype=='dac':
+            plot_dac(idx)
+        elif ptype=='profiler':
+            plot_profilerType(idx)               
+        elif ptype=='trajectory':           
+            plot_trajectory(idx.sort_values(['file']))
+        else:
+            raise ValueError("Type of plot unavailable. Use: 'dac', 'profiler' or 'trajectory' (default)")
