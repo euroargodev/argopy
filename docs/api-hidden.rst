@@ -8,9 +8,19 @@
     :toctree: generated/
 
     argopy.fetchers.ArgoDataFetcher
-    argopy.fetchers.ArgoDataFetcher
     argopy.fetchers.ArgoDataFetcher.region
     argopy.fetchers.ArgoDataFetcher.float
     argopy.fetchers.ArgoDataFetcher.profile
+    argopy.fetchers.ArgoDataFetcher.to_xarray
 
+    argopy.fetchers.ArgoIndexFetcher
+    argopy.fetchers.ArgoIndexFetcher.region
+    argopy.fetchers.ArgoIndexFetcher.float
+    argopy.fetchers.ArgoIndexFetcher.to_xarray
+    argopy.fetchers.ArgoIndexFetcher.to_dataframe
+    argopy.fetchers.ArgoIndexFetcher.to_csv
+    argopy.fetchers.ArgoIndexFetcher.plot
+
+    argopy.options.set_options
     argopy.tutorial.open_dataset
+    argopy.utilities.show_versions

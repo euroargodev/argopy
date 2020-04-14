@@ -147,7 +147,7 @@ class ArgoDataFetcher(object):
         pass
 
     def float(self, wmo, **kw):
-        """ Load data from a float, given one or more WMOs """
+        """ Fetch data from a float """
         if "CYC" in kw or "cyc" in kw:
             raise TypeError("float() got an unexpected keyword argument 'cyc'. Use 'profile' access "
                             "point to fetch specific profile data.")
@@ -167,7 +167,10 @@ class ArgoDataFetcher(object):
         return self
 
     def profile(self, wmo, cyc):
-        """ Load data from a profile, given one or more WMOs and CYCLE_NUMBER """
+        """ Fetch data for a profile
+
+            given one or more WMOs and CYCLE_NUMBER
+        """
         if 'profile' in self.Fetchers:
             self.fetcher = self.Fetchers['profile'](WMO=wmo, CYC=cyc, **self.fetcher_options)
         else:
@@ -184,7 +187,7 @@ class ArgoDataFetcher(object):
         return self
 
     def region(self, box: list):
-        """ Load data for a rectangular space/time region
+        """ Fetch data in space/time
 
         Parameters
         ----------
@@ -220,7 +223,7 @@ class ArgoDataFetcher(object):
         pass
 
     def to_xarray(self, **kwargs):
-        """ Fetch and post-process data, return xarray.DataSet """
+        """ Return fetch data as xarray.DataSet """
         if not self.fetcher:
             raise InvalidFetcher(" Initialize an access point (%s) first." %
                                  ",".join(self.Fetchers.keys()))

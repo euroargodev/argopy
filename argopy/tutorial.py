@@ -32,12 +32,27 @@ def open_dataset(name):
 
         If a local copy is found then always use that to avoid network traffic.
 
+        Refresh dataset with:
+        ```python
+            argopy.tutorial.repodata().download(overwrite=True)
+        ```
+
         Parameters
         ----------
-        name : str
-            Name of the dataset to load or get information for:
+        name: str
+            Name of the dataset to load or get information for. It can be: ``localftp``, ``weekly_index_prof`` or ``global_index_prof``.
 
-                - `localftp`, return the absolute path and list of files in the sample of local ftp files.
+                - ``localftp``, return the absolute path and list of files in the sample local ftp files.
+                - ``weekly_index_prof``, return path and to weekly profile index file
+
+                - ``global_index_prof``, return path and to global profile index file
+
+        Returns
+        -------
+        path: str
+            Root path to files
+        files: list(str) or str
+            List of files with the requested dataset
 
     """
     if name == 'localftp':

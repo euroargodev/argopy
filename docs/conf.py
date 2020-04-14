@@ -162,7 +162,9 @@ html_theme = 'sphinx_rtd_theme'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = "_static/argopy_80.png"
+# html_logo = "_static/argopy_80.png"
+# html_logo = "_static/argopy_600.jpeg"
+html_logo = "_static/argopy_220.jpeg"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -172,12 +174,12 @@ html_static_path = ['_static']
 html_theme_options = {
     # 'canonical_url': '',
     'analytics_id': 'UA-73130866-2',  #  Provided by Google in your dashboard
-    'logo_only': False,
+    'logo_only': True,
     'display_version': False,
     # 'prev_next_buttons_location': 'bottom',
     # 'style_external_links': False,
     # 'vcs_pageview_mode': '',
-    'style_nav_header_background': 'gray',
+    'style_nav_header_background': 'white',
     # # Toc options
     # 'collapse_navigation': True,
     # 'sticky_navigation': True,

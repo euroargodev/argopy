@@ -251,7 +251,7 @@ def netcdf_and_hdf5_versions():
 
 
 def show_versions(file=sys.stdout):
-    """ print the versions of xarray and its dependencies
+    """ Print the versions of argopy and its dependencies
 
     Parameters
     ----------
