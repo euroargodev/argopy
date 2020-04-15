@@ -9,23 +9,23 @@ Usage for LOCALFTP:
 
     from argopy import DataFetcher as ArgoDataFetcher
 
-    argo_loader = ArgoDataFetcher(backend='localftp', ds='phy')
+    argo_loader = ArgoDataFetcher(src='localftp', ds='phy')
 or
-    argo_loader = ArgoDataFetcher(backend='localftp', ds='bgc')
+    argo_loader = ArgoDataFetcher(src='localftp', ds='bgc')
 
     argo_loader.float(6902746).to_xarray()
     argo_loader.float([6902746, 6902747, 6902757, 6902766]).to_xarray()
 
 
-Usage for ERDDAP (default backend):
+Usage for ERDDAP (default src):
 
     from argopy import DataFetcher as ArgoDataFetcher
 
-    argo_loader = ArgoDataFetcher(backend='erddap')
+    argo_loader = ArgoDataFetcher(src='erddap')
 or
-    argo_loader = ArgoDataFetcher(backend='erddap', cachedir='tmp', cache=True)
+    argo_loader = ArgoDataFetcher(src='erddap', cachedir='tmp', cache=True)
 or
-    argo_loader = ArgoDataFetcher(backend='erddap', ds='ref')
+    argo_loader = ArgoDataFetcher(src='erddap', ds='ref')
 
     argo_loader.profile(6902746, 34).to_xarray()
     argo_loader.profile(6902746, np.arange(12,45)).to_xarray()
@@ -50,9 +50,9 @@ import warnings
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher
-from .utilities import list_available_data_backends
 
-AVAILABLE_BACKENDS = list_available_data_backends()
+from .utilities import list_available_data_src
+AVAILABLE_SOURCES = list_available_data_src()
 
 # Import plotters :
 from .plotters import plot_trajectory, plot_dac, plot_profilerType
@@ -79,24 +79,24 @@ class ArgoDataFetcher(object):
 
     def __init__(self,
                  mode: str = "",
-                 backend : str = "",
+                 src : str = "",
                  ds: str = "",
                  **fetcher_kwargs):
 
         # Facade options:
         self._mode = OPTIONS['mode'] if mode == '' else mode
         self._dataset_id = OPTIONS['dataset'] if ds == '' else ds
-        self._backend = OPTIONS['datasrc'] if backend == '' else backend
+        self._src = OPTIONS['src'] if src == '' else src
 
         _VALIDATORS['mode'](self._mode)
-        _VALIDATORS['datasrc'](self._backend)
+        _VALIDATORS['src'](self._src)
         _VALIDATORS['dataset'](self._dataset_id)
 
-        # Load backend access points:
-        if self._backend not in AVAILABLE_BACKENDS:
-            raise ValueError("Data fetcher '%s' not available" % self._backend)
+        # Load src access points:
+        if self._src not in AVAILABLE_SOURCES:
+            raise ValueError("Data fetcher '%s' not available" % self._src)
         else:
-            Fetchers = AVAILABLE_BACKENDS[self._backend]
+            Fetchers = AVAILABLE_SOURCES[self._src]
 
         # Auto-discovery of access points for this fetcher:
         # rq: Access point names for the facade are not the same as the access point of fetchers
@@ -113,7 +113,7 @@ class ArgoDataFetcher(object):
         self.fetcher = None
         if ds is None:
             ds = Fetchers.dataset_ids[0]
-        self.fetcher_options = {**{'ds':ds}, **fetcher_kwargs}
+        self.fetcher_options = {**{'ds': ds}, **fetcher_kwargs}
         self.postproccessor = self.__empty_processor
 
         # Dev warnings
@@ -125,11 +125,11 @@ class ArgoDataFetcher(object):
     def __repr__(self):
         if self.fetcher:
             summary = [self.fetcher.__repr__()]
-            summary.append("Backend: %s" % self._backend)
+            summary.append("Backend: %s" % self._src)
             summary.append("User mode: %s" % self._mode)
         else:
             summary = ["<datafetcher 'Not initialised'>"]
-            summary.append("Backend: %s" % self._backend)
+            summary.append("Backend: %s" % self._src)
             summary.append("Fetchers: %s" % ", ".join(self.Fetchers.keys()))
             summary.append("User mode: %s" % self._mode)
         return "\n".join(summary)
@@ -155,7 +155,7 @@ class ArgoDataFetcher(object):
         if 'float' in self.Fetchers:
             self.fetcher = self.Fetchers['float'](WMO=wmo, **self.fetcher_options)
         else:
-            raise InvalidFetcherAccessPoint("'float' not available with '%s' backend" % self._backend)
+            raise InvalidFetcherAccessPoint("'float' not available with '%s' src" % self._src)
 
         if self._mode == 'standard' and self._dataset_id != 'ref':
             def postprocessing(xds):
@@ -174,7 +174,7 @@ class ArgoDataFetcher(object):
         if 'profile' in self.Fetchers:
             self.fetcher = self.Fetchers['profile'](WMO=wmo, CYC=cyc, **self.fetcher_options)
         else:
-            raise InvalidFetcherAccessPoint("'profile' not available with '%s' backend" % self._backend)
+            raise InvalidFetcherAccessPoint("'profile' not available with '%s' src" % self._src)
 
         if self._mode == 'standard' and self._dataset_id != 'ref':
             def postprocessing(xds):
@@ -205,7 +205,7 @@ class ArgoDataFetcher(object):
         if 'region' in self.Fetchers:
             self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)
         else:
-            raise InvalidFetcherAccessPoint("'region' not available with '%s' backend" % self._backend)
+            raise InvalidFetcherAccessPoint("'region' not available with '%s' src" % self._src)
 
         if self._mode == 'standard' and self._dataset_id != 'ref':
             def postprocessing(xds):
@@ -260,21 +260,21 @@ class ArgoIndexFetcher(object):
      
     def __init__(self,
                  mode: str = "",
-                 backend : str = "",                 
+                 src : str = "",
                  **fetcher_kwargs):
 
         # Facade options:
         self._mode = OPTIONS['mode'] if mode == '' else mode        
-        self._backend = OPTIONS['datasrc'] if backend == '' else backend
+        self._src = OPTIONS['src'] if src == '' else src
 
         _VALIDATORS['mode'](self._mode)
-        _VALIDATORS['datasrc'](self._backend)        
+        _VALIDATORS['src'](self._src)
 
-        # Load backend access points:
-        if self._backend not in AVAILABLE_BACKENDS:
-            raise ValueError("Fetcher '%s' not available" % self._backend)
+        # Load src access points:
+        if self._src not in AVAILABLE_SOURCES:
+            raise ValueError("Fetcher '%s' not available" % self._src)
         else:
-            Fetchers = AVAILABLE_BACKENDS[self._backend]
+            Fetchers = AVAILABLE_SOURCES[self._src]
 
         # Auto-discovery of access points for this fetcher:
         # rq: Access point names for the facade are not the same as the access point of fetchers
@@ -317,7 +317,7 @@ class ArgoIndexFetcher(object):
         if 'float' in self.Fetchers:
             self.fetcher = self.Fetchers['float'](WMO=wmo, **self.fetcher_options)            
         else:
-            raise InvalidFetcherAccessPoint("'float' not available with '%s' backend" % self._backend)        
+            raise InvalidFetcherAccessPoint("'float' not available with '%s' src" % self._src)
         return self    
 
     def region(self, box):
@@ -325,7 +325,7 @@ class ArgoIndexFetcher(object):
         if 'region' in self.Fetchers:
             self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)            
         else:
-            raise InvalidFetcherAccessPoint("'region' not available with '%s' backend" % self._backend)                     
+            raise InvalidFetcherAccessPoint("'region' not available with '%s' src" % self._src)
         return self        
 
     def to_dataframe(self, **kwargs):

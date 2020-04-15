@@ -3,6 +3,23 @@
 What's New
 ==========
 
+v0.1.2 (XX Apr. 2020)
+---------------------
+
+**Breaking changes with previous versions**
+
+- The ``backend`` option in data fetchers and the global option ``datasrc`` have been renamed to ``src``. This makes the code more coherent (:commit:``).
+
+**Features and front-end API**
+
+- New ``index`` fetcher to explore and work with meta-data (:pull:`6`). By `Kevin Balem <http://www.github.com/quai20>`_
+
+.. code-block:: python
+
+    from argopy import IndexFetcher as ArgoIndexFetcher
+    idx = ArgoIndexFetcher().float(6902746)
+    idx.to_dataframe()
+    idx.plot('trajectory')
 
 v0.1.1 (21 Feb. 2020)
 ---------------------

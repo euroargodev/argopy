@@ -169,6 +169,12 @@ numpydoc_show_class_members = False
 # unit titles (such as .. function::).
 add_module_names = False
 
+extlinks = {
+    'issue': ('https://github.com/euroargodev/argopy/issues/%s', 'GH#'),
+    'commit': ('https://github.com/euroargodev/argopy/commit/%s', '@'),
+    'pr': ('https://github.com/euroargodev/argopy/pull/%s', 'PR#'),
+}
+
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for

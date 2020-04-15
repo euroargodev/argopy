@@ -82,12 +82,12 @@ def mapp_dict(Adictionnary,Avalue):
     except KeyError:
         return "Unknown"        
 
-def list_available_data_backends():
-    """ List all available data fetchers """
-    AVAILABLE_BACKENDS = {}
+def list_available_data_src():
+    """ List all available data sources """
+    AVAILABLE_SOURCES = {}
     try:
         from .data_fetchers import erddap as Erddap_Fetchers
-        AVAILABLE_BACKENDS['erddap'] = Erddap_Fetchers
+        AVAILABLE_SOURCES['erddap'] = Erddap_Fetchers
     except:
         warnings.warn("An error occured while loading the ERDDAP data fetcher, "
                       "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
@@ -95,13 +95,13 @@ def list_available_data_backends():
 
     try:
         from .data_fetchers import localftp as LocalFTP_Fetchers
-        AVAILABLE_BACKENDS['localftp'] = LocalFTP_Fetchers
+        AVAILABLE_SOURCES['localftp'] = LocalFTP_Fetchers
     except:
         warnings.warn("An error occured while loading the local FTP data fetcher, "
                       "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
         pass
 
-    return AVAILABLE_BACKENDS
+    return AVAILABLE_SOURCES
 
 def list_standard_variables():
     """ Return the list of variables for standard users
@@ -188,7 +188,7 @@ def get_sys_info():
 
     # get full commit hash
     commit = None
-    if os.path.isdir(".git") and os.path.isdir("xarray"):
+    if os.path.isdir(".git") and os.path.isdir("argopy"):
         try:
             pipe = subprocess.Popen(
                 'git log --format="%H" -n 1'.split(" "),
@@ -217,7 +217,6 @@ def get_sys_info():
                 ("python-bits", struct.calcsize("P") * 8),
                 ("OS", "%s" % (sysname)),
                 ("OS-release", "%s" % (release)),
-                # ("Version", "%s" % (version)),
                 ("machine", "%s" % (machine)),
                 ("processor", "%s" % (processor)),
                 ("byteorder", "%s" % sys.byteorder),
@@ -230,7 +229,6 @@ def get_sys_info():
         pass
 
     return blob
-
 
 def netcdf_and_hdf5_versions():
     libhdf5_version = None
@@ -248,7 +246,6 @@ def netcdf_and_hdf5_versions():
         except ImportError:
             pass
     return [("libhdf5", libhdf5_version), ("libnetcdf", libnetcdf_version)]
-
 
 def show_versions(file=sys.stdout):
     """ Print the versions of argopy and its dependencies
@@ -272,7 +269,7 @@ def show_versions(file=sys.stdout):
         ("pandas", lambda mod: mod.__version__),
         ("numpy", lambda mod: mod.__version__),
         ("scipy", lambda mod: mod.__version__),
-        # xarray optionals
+        # argopy optionals
         ("netCDF4", lambda mod: mod.__version__),
         ("pydap", lambda mod: mod.__version__),
         ("h5netcdf", lambda mod: mod.__version__),
@@ -292,7 +289,7 @@ def show_versions(file=sys.stdout):
         ("cartopy", lambda mod: mod.__version__),
         ("seaborn", lambda mod: mod.__version__),
         ("numbagg", lambda mod: mod.__version__),
-        # xarray setup/test
+        # argopy setup/test
         ("setuptools", lambda mod: mod.__version__),
         ("pip", lambda mod: mod.__version__),
         ("conda", lambda mod: mod.__version__),
