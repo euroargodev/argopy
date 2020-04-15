@@ -372,12 +372,12 @@ class ArgoAccessor:
         direction: str, optional
             Direction of the profile, must be 'A' (Ascending) or 'D' (Descending)
 
-        Return
-        ------
+        Returns
+        -------
         int or tuple of int
 
-        Example
-        -------
+        Examples
+        --------
         unique_float_profile_id = uid(690024,13,'A') # Encode
         wmo, cyc, drc = uid(unique_float_profile_id) # Decode
         """

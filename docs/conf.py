@@ -132,12 +132,31 @@ release = argopy.__version__
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store',
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '_templates',
                     '.ipynb_checkpoints', '_ext', 'tempo_out', '_src',
                     'offline']
 
+# Give *lots* of time for cell execution!
+# Note nbsphinx compiles *all* notebooks in docs unless excluded
+nbsphinx_timeout = 300
+
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = 'none'
+
+# Create local pygments copies
+# Previously used: https://github.com/richleland/pygments-css
+# But do not want to depend on some random repository
+from pygments.formatters import HtmlFormatter  # noqa: E402
+from pygments.styles import get_all_styles  # noqa: E402
+path = os.path.join('_static', 'pygments')
+if not os.path.isdir(path):
+    os.mkdir(path)
+for style in get_all_styles():
+    path = os.path.join('_static', 'pygments', style + '.css')
+    if os.path.isfile(path):
+        continue
+    with open(path, 'w') as f:
+        f.write(HtmlFormatter(style=style).get_style_defs('.highlight'))
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
@@ -145,6 +164,10 @@ todo_include_todos = True
 autosummary_generate = True
 numpydoc_class_members_toctree = True
 numpydoc_show_class_members = False
+
+# If true, the current module name will be prepended to all description
+# unit titles (such as .. function::).
+add_module_names = False
 
 # -- Options for HTML output ----------------------------------------------
 
@@ -162,9 +185,8 @@ html_theme = 'sphinx_rtd_theme'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-# html_logo = "_static/argopy_80.png"
-# html_logo = "_static/argopy_600.jpeg"
-html_logo = "_static/argopy_220.jpeg"
+html_logo = "_static/argopy_logo_long.png"
+html_favicon = '_static/argopy.ico'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -176,14 +198,14 @@ html_theme_options = {
     'analytics_id': 'UA-73130866-2',  #  Provided by Google in your dashboard
     'logo_only': True,
     'display_version': False,
-    # 'prev_next_buttons_location': 'bottom',
+    'prev_next_buttons_location': 'bottom',
     # 'style_external_links': False,
     # 'vcs_pageview_mode': '',
-    'style_nav_header_background': 'white',
+    # 'style_nav_header_background': 'white',
     # # Toc options
-    # 'collapse_navigation': True,
+    'collapse_navigation': True,
     # 'sticky_navigation': True,
-    # 'navigation_depth': 4,
+    'navigation_depth': 4,
     # 'includehidden': True,
     # 'titles_only': False
 }
@@ -250,7 +272,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'argopy', u'argopy Documentation',
-     "argopy Developers", 'argopy', 'One line description of project.',
+     "argopy Developers", 'argopy', 'A python library for Argo data beginners and experts',
      'Miscellaneous'),
 ]
 

@@ -101,7 +101,7 @@ For plotting the map of your query :
 For plotting the distribution of DAC or profiler type of the indexed profiles :
 ```python    
     idx.plot('dac')    
-    idx.plot('profiler')
+    idx.plot('profiler')`
 ```
 ![dac](https://user-images.githubusercontent.com/17851004/78024137-26977d80-7358-11ea-8557-ef39a88028b2.png)
 
