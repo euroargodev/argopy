@@ -14,7 +14,7 @@ Documentation
 * :doc:`examples`
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
     :hidden:
     :caption: Getting Started
 
@@ -51,7 +51,7 @@ Documentation
 * :doc:`api`
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
     :hidden:
     :caption: Help & reference
 
