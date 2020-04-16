@@ -11,7 +11,6 @@ Documentation
 * :doc:`install`
 * :doc:`why`
 * :doc:`overview`
-* :doc:`examples`
 
 .. toctree::
     :maxdepth: 2
@@ -21,7 +20,6 @@ Documentation
     install
     why
     overview
-    examples
 
 **User Guide**
 
