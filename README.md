@@ -16,7 +16,12 @@ Click here to [![badge](https://img.shields.io/badge/launch-Pangeo%20binder-579A
 
 ## Install
 
-Since this is a library in active development, use direct install from this repo to benefit from the last version:
+Install the last release with pip:
+```bash
+pip install argopy
+```
+
+But since this is a young library in active development, use direct install from this repo to benefit from the lastest version:
 
 ```bash
 pip install git+http://github.com/euroargodev/argopy.git@master
