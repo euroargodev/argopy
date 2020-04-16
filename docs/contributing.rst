@@ -101,6 +101,7 @@ If you want to add your own data fetcher from a new service, then, keep in mind 
             *  :func:`filter_qc`
             *  :func:`filter_variables`
 
+
 It is the responsability of the facade API (:class:`argopy.fetchers.ArgoDataFetcher`) to run
 filters according to user level or requests, not the data fetcher.
 
