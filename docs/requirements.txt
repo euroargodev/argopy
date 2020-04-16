@@ -8,3 +8,4 @@ nbsphinx>=0.4
 #cartopy
 sphinx-issues>=1.2
 distributed
+cmocean
