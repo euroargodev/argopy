@@ -8,7 +8,7 @@ v0.1.2 (XX Apr. 2020)
 
 **Features and front-end API**
 
-- New ``index`` fetcher to explore and work with meta-data (:pull:`6`). By `K. Balem <http://www.github.com/quai20>`_.
+- New ``index`` fetcher to explore and work with meta-data (:pr:`6`). By `K. Balem <http://www.github.com/quai20>`_.
 
 .. code-block:: python
 
@@ -17,7 +17,7 @@ v0.1.2 (XX Apr. 2020)
     idx.to_dataframe()
     idx.plot('trajectory')
 
-- Real documentation in place (:pull:`13`). By `G. Maze <http://www.github.com/gmaze>`_.
+- Real documentation in place (:pr:`13`). By `G. Maze <http://www.github.com/gmaze>`_.
 
 **Breaking changes with previous versions**
 

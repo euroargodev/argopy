@@ -134,11 +134,19 @@ release = argopy.__version__
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '_templates',
                     '.ipynb_checkpoints', '_ext', 'tempo_out', '_src',
-                    'offline']
+                    'offline', 'examples/.ipynb_checkpoints']
 
 # Give *lots* of time for cell execution!
 # Note nbsphinx compiles *all* notebooks in docs unless excluded
 nbsphinx_timeout = 300
+nbsphinx_execute = "always"
+# nbsphinx_prolog = """
+# {% set docname = env.doc2path(env.docname, base=None) %}
+# You can run this notebook in a `live session <https://mybinder.org/v2/gh/euroargodev/argopy/docs/examples/master?urlpath=lab/tree/docs/{{ docname }}>`_ |Binder| or view it `on Github <https://github.com/euroargodev/argopy/blob/master-doc/docs/{{ docname }}>`_.
+# .. |Binder| image:: https://mybinder.org/badge.svg
+#    :target: https://mybinder.org/v2/gh/euroargodev/argopy/master-doc?urlpath=lab/tree/docs/{{ docname }}
+# """
+
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'none'
