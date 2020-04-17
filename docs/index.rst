@@ -11,6 +11,7 @@ Documentation
 * :doc:`install`
 * :doc:`why`
 * :doc:`overview`
+* :doc:`what_is_argo`
 
 .. toctree::
     :maxdepth: 2
@@ -20,6 +21,7 @@ Documentation
     install
     why
     overview
+    what_is_argo
 
 **User Guide**
 
