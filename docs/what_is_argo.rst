@@ -1,11 +1,13 @@
 What is Argo ?
 ##############
 
+**Argo is a real-time global ocean in situ observing system**.
+
 The ocean is a key component of the Earth climate system. It thus needs a continuous real-time monitoring to help scientists
 better understand its dynamic and predict its evolution. All around the world, oceanographers have managed to join their
 efforts and set up a `Global Ocean Observing System <https://www.goosocean.org>`_ among which *Argo* is a key component.
 
-**Argo is a real-time global ocean *in situ* observing system**. It is a global network of nearly 4000 autonomous probes measuring
+*Argo* is a global network of nearly 4000 autonomous probes measuring
 pressure, temperature and salinity from the surface to 2000m depth every 10 days. The localisation of these probes is
 nearly random between the 60th parallels (`see live coverage here <http://map.argo-france.fr>`_).
 All probes data are collected by satellite in real-time, processed by several data centers and finally merged in a single
@@ -30,7 +32,7 @@ depth of about 1000m, a typical Argo float dives down to 2000m and then shoals b
 temperature and salinity. Once it reaches the surface, the float sends by satellite its measurements to a data center
 where they are processed in real time and made freely available on the web in less than 24h00.
 
-.. image:: _static/argofloats_cycle.png
-   (options)
+*Typical 10 days program, cycle, of an Argo float*:
 
-Typical 10 days program, cycle, of an Argo float.
+.. image:: _static/argofloats_cycle.png
+

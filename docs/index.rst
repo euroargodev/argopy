@@ -9,8 +9,8 @@ Documentation
 **Getting Started**
 
 * :doc:`install`
+* :doc:`usage`
 * :doc:`why`
-* :doc:`overview`
 * :doc:`what_is_argo`
 
 .. toctree::
@@ -19,8 +19,8 @@ Documentation
     :caption: Getting Started
 
     install
+    usage
     why
-    overview
     what_is_argo
 
 **User Guide**
