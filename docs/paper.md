@@ -28,7 +28,7 @@ efforts and set up a [Global Ocean Observing System](https://www.goosocean.org/)
 
 Argo is a real-time global ocean *in situ* observing system. It is a global network of nearly 4000 autonomous probes measuring 
 pressure, temperature and salinity from the surface to 2000m depth every 10 days. The localisation of these probes is 
-nearly random between the $60^o$ parallels ([see live coverage here](www.jcommops.org/ftp/Argo/Maps/countries.png)).
+nearly random between the $60^o$ parallels ([see live coverage here](http://map.argo-france.fr)).
 All probes data are collected by satellite in real-time, processed by several data centers and finally merged in a single
 dataset (collecting more than 2 millions of vertical profiles data) made freely available to anyone through 
 a [ftp server](ftp://ftp.ifremer.fr/ifremer/argo) or [monthly zip snapshots](http://dx.doi.org/10.17882/42182).
@@ -46,18 +46,18 @@ For non-experts of the Argo dataset, it is rather complicated to get access to A
 made freely available on the web, the Argo dataset is made of: thousands of files organised using jargon, uses 
 thousands of different variables, tens of reference tables and has an exhaustive [user manual](http://dx.doi.org/10.13155/29825) more than 100 pages long.
 
-This complexity arises from the facts that Argo operates many different models of floats and sensors, quality control of *in situ* measurements from autonomous platforms 
-requires a lot of complementary information (meta-data), and the Argo data management workflow is distributed 
-between more than 10 Data Assembly Centers all around the world.
+This complexity arises from the facts that Argo operates many different models of floats and sensors, quality control 
+of *in situ* measurements from autonomous platforms requires a lot of complementary information (meta-data), and the 
+Argo data management workflow is distributed between more than 10 Data Assembly Centers all around the world. The Argo 
+data management is a model for other ocean observing systems and constantly ensures the highest quality of scientific 
+measurements for the community [@wong-2020].
 
-The counter part to its tremendous success in data management and in developping good practices and well calibrated 
-procedures ([see all the Argo Data Management Team documentation here](http://www.argodatamgt.org/Documentation)) is a 
-very complex Argo dataset: with thousands of different variables, tens of reference tables and 
-a [user manual](http://dx.doi.org/10.13155/29825) more than 100 pages long: the **argopy** software aims to help users
-navigate this complex realm.
+The counter part to this tremendous success in data management and in developping good practices and well calibrated 
+procedures ([see all the Argo Data Management Team documentation here](http://www.argodatamgt.org/Documentation)) is thus 
+a very complex Argo dataset: the **argopy** software aims to help users navigate this complex realm.
 
-Moreover, the Argo community, focusing on delivering a curated dataset of the best scientific quality, never provided 
-its user base with a Python software to easily access and manipulate Argo measurements: the **argopy** software aims to fill this gap.
+Moreover, the Argo community, focusing on delivering a curated dataset, never provided its user base with a Python 
+software to easily access and manipulate Argo measurements: the **argopy** software aims to fill this gap.
 
 
 # More on Argo
@@ -85,6 +85,7 @@ where they are processed in real time and made freely available on the web in le
 
 # Acknowledgements
 
-This software project was created with support from the EARISE project, a European Union’s Horizon 2020 research and 
+We acknowledge support from the [Euro-Argo ERIC community](https://www.euro-argo.eu/) during the genesis of this project.
+This software was created with support from the EARISE project, a European Union’s Horizon 2020 research and 
 innovation programme under grant agreement no 824131. Call INFRADEV-03-2018-2019: Individual support to ESFRI and other 
 world-class research infrastructures.
