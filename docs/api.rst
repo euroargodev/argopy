@@ -10,9 +10,10 @@ Data Fetchers
 =============
 
 .. autosummary::
-   :toctree: generated/
+    :toctree: generated/
 
-   argopy.DataFetcher
+    argopy.DataFetcher
+    argopy.xarray.ArgoAccessor.point2profile
 
 Search entries
 --------------

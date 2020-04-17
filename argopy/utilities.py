@@ -78,10 +78,10 @@ def load_dict(ptype):
         raise ValueError("Invalid dictionnary pickle file")
 
 def mapp_dict(Adictionnary,Avalue):
-    try:        
-        return Adictionnary[Avalue] 
-    except KeyError:
-        return "Unknown"        
+    if Avalue not in Adictionnary:
+        return "Unknown"
+    else:
+        return Adictionnary[Avalue]
 
 def list_available_data_src():
     """ List all available data sources """

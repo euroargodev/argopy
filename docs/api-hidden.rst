@@ -24,3 +24,5 @@
     argopy.options.set_options
     argopy.tutorial.open_dataset
     argopy.utilities.show_versions
+
+    argopy.xarray.ArgoAccessor.point2profile
