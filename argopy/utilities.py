@@ -10,6 +10,7 @@ import os
 import sys
 import warnings
 import requests
+import urllib.request
 import io
 from IPython.core.display import display, HTML
 
@@ -324,3 +325,10 @@ def show_versions(file=sys.stdout):
     print("", file=file)
     for k, stat in deps_blob:
         print(f"{k}: {stat}", file=file)
+
+def isconnected(host='http://www.ifremer.fr'):
+    try:
+        urllib.request.urlopen(host)  # Python 3.x
+        return True
+    except:
+        return False

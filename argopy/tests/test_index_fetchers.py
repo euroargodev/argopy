@@ -18,17 +18,9 @@ import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher
 
-from argopy.utilities import list_available_data_src
+from argopy.utilities import list_available_data_src, isconnected
 AVAILABLE_SOURCES = list_available_data_src()
-
-import urllib.request
-def connected(host='http://www.ifremer.fr'):
-    try:
-        urllib.request.urlopen(host)  # Python 3.x
-        return True
-    except:
-        return False
-CONNECTED = connected()
+CONNECTED = isconnected()
 
 def test_invalid_accesspoint():
     with pytest.raises(InvalidFetcherAccessPoint):

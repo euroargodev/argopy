@@ -538,8 +538,8 @@ class ArgoAccessor:
             ds = ds.set_coords(c)
 
         ds = ds.where(~np.isnan(ds['PRES']), drop=1) # Remove index without data (useless points)
-        ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS']))
         ds = ds.sortby('TIME')
+        ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS']))
         ds = ds.argo.cast_types()
         ds = ds[np.sort(ds.data_vars)]
         ds.encoding = self.encoding # Preserve low-level encoding information
