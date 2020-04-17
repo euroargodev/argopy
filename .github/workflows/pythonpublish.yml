@@ -6,6 +6,8 @@ name: publish-test
 on:
   release:
     types: [created]
+  push:
+    branches: [ master-doc ]
 
 jobs:
   deploy:
@@ -28,4 +30,4 @@ jobs:
         TWINE_PASSWORD: ${{ secrets.PYPITEST_PASSWORD }}
       run: |
         python setup.py sdist bdist_wheel bdist_egg
-        twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+        twine upload --skip-existing --repository-url https://test.pypi.org/legacy/ dist/*
