@@ -223,13 +223,18 @@ class ArgoDataFetcher(object):
         pass
 
     def to_xarray(self, **kwargs):
-        """ Return fetch data as xarray.DataSet """
+        """ Fetch and return data as xarray.DataSet """
         if not self.fetcher:
             raise InvalidFetcher(" Initialize an access point (%s) first." %
                                  ",".join(self.Fetchers.keys()))
         xds = self.fetcher.to_xarray(**kwargs)
         xds = self.postproccessor(xds)
         return xds
+
+    def to_dataframe(self, **kwargs):
+        """  Fetch and return data as pandas.Dataframe """
+        xds = self.to_xarray(**kwargs)
+        return xds.to_dataframe()
 
 class ArgoIndexFetcher(object):
     """    

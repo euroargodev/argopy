@@ -10,7 +10,10 @@ Required dependencies
 
 Note that Erddapy_ is required because `erddap <https://coastwatch.pfeg.noaa.gov/erddap/information.html>`_ is the default data fetching backend.
 
-The :mod:`argopy` library should work under all OS (Linux, Mac and Windows) and with python versions 3.6, 3.7 and 3.8.
+The **argopy** software is continuously tested with sucess under all OS (Linux, Mac and Windows) and with python versions 3.6, 3.7 and 3.8.
+
+Optional dependencies
+^^^^^^^^^^^^^^^^^^^^^
 
 For full plotting functionality the following packages are required:
 
@@ -21,7 +24,13 @@ For full plotting functionality the following packages are required:
 Instructions
 ^^^^^^^^^^^^
 
-For the latest version:
+Install the last release with pip:
+
+.. code-block:: text
+
+    pip install argopy
+
+or the latest version:
 
 .. code-block:: text
 
