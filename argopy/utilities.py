@@ -12,6 +12,7 @@ import warnings
 import requests
 import urllib.request
 import io
+import xarray as xr
 from IPython.core.display import display, HTML
 
 import importlib
@@ -327,8 +328,43 @@ def show_versions(file=sys.stdout):
         print(f"{k}: {stat}", file=file)
 
 def isconnected(host='http://www.ifremer.fr'):
+    """ Determine if we have a live internet connection
+
+        Parameters
+        ----------
+        host: str
+            URL to use, 'http://www.ifremer.fr' by default
+
+        Returns
+        -------
+        bool
+    """
     try:
         urllib.request.urlopen(host)  # Python 3.x
         return True
     except:
         return False
+
+def open_etopo1(box):
+    """ Download ETOPO for a box
+
+        Parameters
+        ----------
+        box: [xmin, xmax, ymin, ymax]
+
+        Returns
+        -------
+        xarray.Dataset
+    """
+    uri = ("https://gis.ngdc.noaa.gov/mapviewer-support/wcs-proxy/wcs.groovy?filename=etopo1.nc"
+           "&request=getcoverage&version=1.0.0&service=wcs&coverage=etopo1&CRS=EPSG:4326&format=netcdf"
+           "&resx=0.016&resy=0.016"
+           "&bbox={}").format
+    thisurl = uri(",".join([str(b) for b in [box[0], box[2], box[1], box[3]]]))
+    ds = xr.open_dataset(urlopen(thisurl).read())
+    da = ds['Band1'].rename("topo")
+    for a in ds.attrs:
+        da.attrs[a] = ds.attrs[a]
+    da.attrs['Data source'] = 'https://maps.ngdc.noaa.gov/viewers/wcs-client/'
+    da.attrs['URI'] = thisurl
+    return da
