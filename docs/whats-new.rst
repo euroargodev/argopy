@@ -3,7 +3,7 @@
 What's New
 ==========
 
-v0.1.2 (XX Apr. 2020)
+v0.1.2 (XX XXX. 2020)
 ---------------------
 
 **Features and front-end API**
