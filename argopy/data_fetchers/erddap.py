@@ -30,7 +30,6 @@ from erddapy import ERDDAP
 from erddapy.utilities import parse_dates, quote_string_constraints
 from argopy.utilities import list_multiprofile_file_variables, list_standard_variables
 
-
 class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     """ Manage access to Argo data through Ifremer ERDDAP
 

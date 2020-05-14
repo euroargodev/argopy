@@ -12,6 +12,7 @@ import warnings
 import requests
 import urllib.request
 import io
+import json
 import xarray as xr
 from IPython.core.display import display, HTML
 
@@ -24,6 +25,8 @@ import subprocess
 import pickle
 import pkg_resources
 path2pkl = pkg_resources.resource_filename('argopy', 'assets/')
+
+from argopy.errors import ErddapServerError
 
 def urlopen(url):
     """ Load content from url or raise alarm on status with explicit information on the error
@@ -49,7 +52,11 @@ def urlopen(url):
         error = ["Error %i " % r.status_code]
         error.append(data.read().decode("utf-8").replace("Error", ""))
         error.append("%s" % url)
-        raise requests.HTTPError("\n".join(error))
+        msg = "\n".join(error)
+        if "Currently unknown datasetID" in msg:
+            raise ErddapServerError("Dataset not found in the Erddap, try again later.")
+        else:
+            raise requests.HTTPError(msg)
 
     # 5XX server error response
     elif r.status_code == 500:  # 500 Internal Server Error
@@ -59,6 +66,7 @@ def urlopen(url):
         error.append(data.read().decode("utf-8"))
         error.append("%s" % url)
         raise requests.HTTPError("\n".join(error))
+
     else:
         error = ["Error %i " % r.status_code]
         error.append(data.read().decode("utf-8"))
@@ -344,6 +352,13 @@ def isconnected(host='http://www.ifremer.fr'):
         return True
     except:
         return False
+
+def erddap_ds_exists(ds="ArgoFloats"):
+    """ Given erddap fetcher, check if a Dataset exists, return a bool"""
+    # e = ArgoDataFetcher(src='erddap').float(wmo=0).fetcher
+    # erddap_index = json.load(urlopen(e.erddap.server + "/info/index.json"))
+    erddap_index = json.load(urlopen("http://www.ifremer.fr/erddap/info/index.json"))
+    return ds in [row[-1] for row in erddap_index['table']['rows']]
 
 def open_etopo1(box):
     """ Download ETOPO for a box

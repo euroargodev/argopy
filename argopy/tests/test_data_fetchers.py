@@ -22,11 +22,19 @@ from unittest import TestCase
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
-from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher
+from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, ErddapServerError
 
-from argopy.utilities import list_available_data_src, isconnected
+from argopy.utilities import list_available_data_src, isconnected, erddap_ds_exists
 AVAILABLE_SOURCES = list_available_data_src()
 CONNECTED = isconnected()
+if CONNECTED:
+    DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
+    DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-bio")
+    DSEXISTS_ref = erddap_ds_exists(ds="ArgoFloats-ref")
+else:
+    DSEXISTS = False
+    DSEXISTS_bgc = False
+    DSEXISTS_ref = False
 
 # List tests:
 def test_invalid_accesspoint():
@@ -64,8 +72,11 @@ class EntryPoints_AllBackends(TestCase):
         """ Test float for a given backend """
         for arg in self.args['float']:
             options = {**self.fetcher_opts, **ftc_opts}
-            ds = ArgoDataFetcher(src=bk, **options).float(arg).to_xarray()
-            assert isinstance(ds, xr.Dataset) == True
+            try:
+                ds = ArgoDataFetcher(src=bk, **options).float(arg).to_xarray()
+                assert isinstance(ds, xr.Dataset) == True
+            except ErddapServerError:
+                pass
 
     def __test_profile(self, bk):
         """ Test float for a given backend """
@@ -81,16 +92,19 @@ class EntryPoints_AllBackends(TestCase):
 
     @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
+    @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
     def test_float_erddap(self):
         self.__test_float('erddap')
 
     @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
+    @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
     def test_profile_erddap(self):
         self.__test_profile('erddap')
 
     @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
+    @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
     def test_region_erddap(self):
         self.__test_region('erddap')
 
@@ -165,42 +179,49 @@ class Erddap_backend(TestCase):
                               ArgoDataFetcher(src='erddap', ds=dataset).region(arg).fetcher.url)
                         pass
 
+    @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
     def test_phy_float(self):
         self.args = {}
         self.args['float'] = [[1901393],
                               [1901393, 6902746]]
         self.__testthis('phy')
 
+    @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
     def test_phy_profile(self):
         self.args = {}
         self.args['profile'] = [[6902746, 34],
                                 [6902746, np.arange(12, 13)], [6902746, [1, 12]]]
         self.__testthis('phy')
 
+    @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
     def test_phy_region(self):
         self.args = {}
         self.args['region'] = [[-70, -65, 35., 40., 0, 10.],
                                [-70, -65, 35., 40., 0, 10., '2012-01', '2013-12']]
         self.__testthis('phy')
 
+    @unittest.skipUnless(DSEXISTS_bgc, "erddap requires a valid BGC Argo dataset from Ifremer server")
     def test_bgc_float(self):
         self.args = {}
         self.args['float'] = [[5903248],
                               [7900596, 2902264]]
         self.__testthis('bgc')
 
+    @unittest.skipUnless(DSEXISTS_bgc, "erddap requires a valid BGC Argo dataset from Ifremer server")
     def test_bgc_profile(self):
         self.args = {}
         self.args['profile'] = [[5903248, 34],
                                 [5903248, np.arange(12, 14)], [5903248, [1, 12]]]
         self.__testthis('bgc')
 
+    @unittest.skipUnless(DSEXISTS_bgc, "erddap requires a valid BGC Argo dataset from Ifremer server")
     def test_bgc_region(self):
         self.args = {}
         self.args['region'] = [[-70, -65, 35., 40., 0, 10.],
                                [-70, -65, 35., 40., 0, 10., '2012-01-1', '2012-12-31']]
         self.__testthis('bgc')
 
+    @unittest.skipUnless(DSEXISTS_ref, "erddap requires a valid Reference Argo dataset from Ifremer server")
     def test_ref_region(self):
         self.args = {}
         self.args['region'] = [[-70, -65, 35., 40., 0, 10.],
@@ -250,7 +271,6 @@ class LocalFTP_DataSets(TestCase):
                                 [2902269, np.arange(12, 14)],
                                 [2901746, [1, 6]]]
         self.__testthis('phy')
-
 
 if __name__ == '__main__':
     unittest.main()

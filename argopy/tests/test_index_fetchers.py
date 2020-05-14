@@ -18,9 +18,13 @@ import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher
 
-from argopy.utilities import list_available_data_src, isconnected
+from argopy.utilities import list_available_data_src, isconnected, erddap_ds_exists
 AVAILABLE_SOURCES = list_available_data_src()
 CONNECTED = isconnected()
+if CONNECTED:
+    DSEXISTS = erddap_ds_exists(ds="ArgoFloats-index")
+else:
+    DSEXISTS = False
 
 def test_invalid_accesspoint():
     with pytest.raises(InvalidFetcherAccessPoint):
@@ -66,12 +70,14 @@ class EntryPoints_AllBackends(TestCase):
 
     @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
+    @unittest.skipUnless(DSEXISTS, "erddap requires a valid core index Argo dataset from Ifremer server")
     @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
     def test_float_index_erddap(self):
         self.__test_float('erddap')
 
     @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
+    @unittest.skipUnless(DSEXISTS, "erddap requires a valid core index Argo dataset from Ifremer server")
     @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
     def test_region_index_erddap(self):
         self.__test_region('erddap')
@@ -84,6 +90,7 @@ class EntryPoints_AllBackends(TestCase):
 
 @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
+@unittest.skipUnless(DSEXISTS, "erddap requires a valid core index Argo dataset from Ifremer server")
 @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
 class Erddap_backend(TestCase):
     """ Test main API facade for all available dataset of the ERDDAP index fetching backend """
