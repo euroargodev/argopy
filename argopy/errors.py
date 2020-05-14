@@ -51,3 +51,9 @@ class InvalidFetcher(ValueError):
     Raise when trying to do something with a fetcher not ready
     """
     pass
+
+class ErddapServerError(ValueError):
+    """
+    Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery
+    """
+    pass

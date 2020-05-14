@@ -30,7 +30,6 @@ from erddapy import ERDDAP
 from erddapy.utilities import parse_dates, quote_string_constraints
 from argopy.utilities import list_multiprofile_file_variables, list_standard_variables
 
-
 class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     """ Manage access to Argo data through Ifremer ERDDAP
 
@@ -388,10 +387,16 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         return ds
 
     def filter_data_mode(self, ds, **kwargs):
-        return ds.argo.filter_data_mode(errors='ignore', **kwargs)
+        ds = ds.argo.filter_data_mode(errors='ignore', **kwargs)
+        if ds.argo._type == 'point':
+            ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS']))
+        return ds
 
     def filter_qc(self, ds, **kwargs):
-        return ds.argo.filter_qc(**kwargs)
+        ds = ds.argo.filter_qc(**kwargs)
+        if ds.argo._type == 'point':
+            ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS']))
+        return ds
 
     def filter_variables(self, ds, mode='standard'):
         if mode == 'standard':

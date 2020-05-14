@@ -1,5 +1,6 @@
-# ![argopy logo](https://avatars1.githubusercontent.com/t/3711886?s=90&v=4) Argo data python library
+# ![argopy logo](https://github.com/euroargodev/argopy/master-doc/docs/_static/argopy_logo_long.png) Argo data python library
 
+[![Documentation Status](https://readthedocs.org/projects/argopy/badge/?version=latest)](https://argopy.readthedocs.io/en/latest/?badge=latest)
 ![build](https://github.com/euroargodev/argopy/workflows/build/badge.svg?branch=master)
 [![codecov](https://codecov.io/gh/euroargodev/argopy/branch/master/graph/badge.svg)](https://codecov.io/gh/euroargodev/argopy)
 [![Requirements Status](https://requires.io/github/euroargodev/argopy/requirements.svg?branch=master)](https://requires.io/github/euroargodev/argopy/requirements/?branch=master)
@@ -14,7 +15,12 @@ Click here to [![badge](https://img.shields.io/badge/launch-Pangeo%20binder-579A
 
 ## Install
 
-Since this is a library in active development, use direct install from this repo to benefit from the last version:
+Install the last release with pip:
+```bash
+pip install argopy
+```
+
+But since this is a young library in active development, use direct install from this repo to benefit from the lastest version:
 
 ```bash
 pip install git+http://github.com/euroargodev/argopy.git@master
@@ -100,7 +106,7 @@ For plotting the map of your query :
 For plotting the distribution of DAC or profiler type of the indexed profiles :
 ```python    
     idx.plot('dac')    
-    idx.plot('profiler')
+    idx.plot('profiler')`
 ```
 ![dac](https://user-images.githubusercontent.com/17851004/78024137-26977d80-7358-11ea-8557-ef39a88028b2.png)
 

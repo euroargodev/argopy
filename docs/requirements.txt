@@ -1,0 +1,11 @@
+pkgconfig
+ipykernel>=5.1
+seaborn>=0.9.0
+geos>=0.2
+nbsphinx>=0.4
+#pyproj>=2.4
+#geos>=0.2
+#cartopy
+sphinx-issues>=1.2
+distributed
+cmocean

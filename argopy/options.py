@@ -10,14 +10,14 @@
 import os
 
 # Define option names as seen by users:
-DATA_FETCHER = 'datasrc'
+DATA_SOURCE = 'src'
 LOCAL_FTP = 'local_ftp'
 DATASET = 'dataset'
 DATA_CACHE = 'cachedir'
 USER_LEVEL = 'mode'
 
 # Define the list of available options and default values:
-OPTIONS = {DATA_FETCHER: 'erddap',
+OPTIONS = {DATA_SOURCE: 'erddap',
            LOCAL_FTP: '.',
            DATASET: 'phy',
            DATA_CACHE: os.path.expanduser(os.path.sep.join(["~",".cache","argopy"])),
@@ -25,7 +25,7 @@ OPTIONS = {DATA_FETCHER: 'erddap',
 }
 
 # Define the list of possible values
-_DATA_FETCHER_LIST = frozenset(["erddap", "localftp"])
+_DATA_SOURCE_LIST = frozenset(["erddap", "localftp"])
 _DATASET_LIST = frozenset(["phy", "bgc", "ref"])
 _USER_LEVEL_LIST = frozenset(["standard", "expert"])
 
@@ -36,7 +36,7 @@ def _positive_integer(value):
 import os
 
 _VALIDATORS = {
-    DATA_FETCHER: _DATA_FETCHER_LIST.__contains__,
+    DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
     LOCAL_FTP: os.path.exists,
     DATASET: _DATASET_LIST.__contains__,
     USER_LEVEL: _USER_LEVEL_LIST.__contains__
@@ -47,28 +47,32 @@ class set_options:
     """Set options for argopy.
 
     Lis of options:
-    - ``dataset``: Dataset. This can be ``phy``, ``bgc`` or ``ref``.
-      Default: ``phy``
 
-    - ``data_fetcher``: Backend for fetching data.
-      Default: ``erddap``
+    - `dataset`: Dataset. This can be `phy`, `bgc` or `ref`.
+      Default: `phy`
 
-    - ``local_ftp``: Absolute path to local GDAC ftp copy.
-      Default: ``???``
+    - `data_src`: Source of fetched data.
+      Default: `erddap`
 
-    - ``cachedir``: Absolute path to local cache directory.
-      Default: ``~/.cache/argopy``
+    - `local_ftp`: Absolute path to local GDAC ftp copy.
+      Default: `???`
 
-    - ``mode``: User mode. This can be ``standard`` or ``expert``.
-      Default: ``standard``
+    - `cachedir`: Absolute path to local cache directory.
+      Default: `~/.cache/argopy`
 
-    You can use ``set_options`` either as a context manager:
-    >>> import argopy
-    >>> with argopy.set_options(data_fetcher='localftp'):
-    ...     ds = argopy.DataFetcher().float(3901530).to_xarray()
+    - `mode`: User mode. This can be `standard` or `expert`.
+      Default: `standard`
 
+    You can use `set_options` either as a context manager:
+    ```
+        >>> import argopy
+        >>> with argopy.set_options(src='localftp'):
+        ...     ds = argopy.DataFetcher().float(3901530).to_xarray()
+    ```
     Or to set global options:
-    >>> argopy.set_options(data_fetcher='localftp')
+    ```
+        >>> argopy.set_options(src='localftp')
+    ```
     """
 
     def __init__(self, **kwargs):
