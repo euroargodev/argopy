@@ -68,7 +68,8 @@ def urlopen(url):
         error.append("%s" % url)
         msg = "\n".join(error)
         if "No space left on device" in msg:
-            raise ErddapServerError("An error occured on the Ifremer erddap server side. \n%s" % msg)
+            raise ErddapServerError("An error occured on the Erddap server side. "
+                                    "Please contact assistance@ifremer.fr to ask a reboot of the erddap server. \n%s" % msg)
         else:
             raise requests.HTTPError()
 
