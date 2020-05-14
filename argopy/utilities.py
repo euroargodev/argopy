@@ -71,7 +71,7 @@ def urlopen(url):
             raise ErddapServerError("An error occured on the Erddap server side. "
                                     "Please contact assistance@ifremer.fr to ask a reboot of the erddap server. \n%s" % msg)
         else:
-            raise requests.HTTPError()
+            raise requests.HTTPError(msg)
 
     else:
         error = ["Error %i " % r.status_code]

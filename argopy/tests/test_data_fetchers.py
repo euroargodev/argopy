@@ -146,8 +146,11 @@ class Erddap_backend(TestCase):
             ds = ArgoDataFetcher(src='erddap', cache=True, cachedir=cachedir).profile(6902746, 34).to_xarray()
             # 2nd call to load from cached file
             ds = ArgoDataFetcher(src='erddap', cache=True, cachedir=cachedir).profile(6902746, 34).to_xarray()
-            assert isinstance(ds, xr.Dataset) == True            
+            assert isinstance(ds, xr.Dataset) == True
             shutil.rmtree(cachedir)
+        except ErddapServerError: # Test is passed when something goes wrong because of the erddap server, not our fault !
+            shutil.rmtree(cachedir)
+            pass
         except:
             shutil.rmtree(cachedir)
             raise
@@ -160,6 +163,8 @@ class Erddap_backend(TestCase):
                     try:
                         ds = ArgoDataFetcher(src='erddap', ds=dataset).profile(*arg).to_xarray()
                         assert isinstance(ds, xr.Dataset) == True
+                    except ErddapServerError: # Test is passed when something goes wrong because of the erddap server, not our fault !
+                        pass
                     except:
                         print("ERDDAP request:\n",
                               ArgoDataFetcher(src='erddap', ds=dataset).profile(*arg).fetcher.url)
@@ -170,6 +175,8 @@ class Erddap_backend(TestCase):
                     try:
                         ds = ArgoDataFetcher(src='erddap', ds=dataset).float(arg).to_xarray()
                         assert isinstance(ds, xr.Dataset) == True
+                    except ErddapServerError: # Test is passed when something goes wrong because of the erddap server, not our fault !
+                        pass
                     except:
                         print("ERDDAP request:\n",
                               ArgoDataFetcher(src='erddap', ds=dataset).float(arg).fetcher.url)
@@ -180,6 +187,8 @@ class Erddap_backend(TestCase):
                     try:
                         ds = ArgoDataFetcher(src='erddap', ds=dataset).region(arg).to_xarray()
                         assert isinstance(ds, xr.Dataset) == True
+                    except ErddapServerError: # Test is passed when something goes wrong because of the erddap server, not our fault !
+                        pass
                     except:
                         print("ERDDAP request:\n",
                               ArgoDataFetcher(src='erddap', ds=dataset).region(arg).fetcher.url)
