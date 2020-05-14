@@ -3,7 +3,7 @@
 What's New
 ==========
 
-v0.1.2 (XX XXX. 2020)
+v0.1.2 (14 May 2020)
 ---------------------
 
 **Features and front-end API**
@@ -17,14 +17,24 @@ v0.1.2 (XX XXX. 2020)
     idx.to_dataframe()
     idx.plot('trajectory')
 
+  The ``index`` fetcher can manage cache and works with both Erddap and localftp data sources. It is basically the same
+  as the data fetcher, but do not load measurements, only meta-data. This can be very usefull when looking for regional
+  sampling or trajectories.
+
 - Real documentation in place (:pr:`13`). By `G. Maze <http://www.github.com/gmaze>`_.
 
 **Breaking changes with previous versions**
 
-- The ``backend`` option in data fetchers and the global option ``datasrc`` have been renamed to ``src``. This makes the code more coherent (:commit:`ec6b32e94b78b2510985cfda49025c10ba97ecab`).
+- The ``backend`` option in data fetchers and the global option ``datasrc`` have been renamed to ``src``.
+This makes the code more coherent (:commit:`ec6b32e94b78b2510985cfda49025c10ba97ecab`).
 
+**Code management**
 
-v0.1.1 (21 Feb. 2020)
+- Add Pypi automatic release publishing with github actions (:commit:`c4307885622709881e34909fd42e43f16a6a7cf4`)
+
+- Remove Travis CI, fully adopt Github actions.
+
+v0.1.1 (3 Apr. 2020)
 ---------------------
 
 **Features and front-end API**
