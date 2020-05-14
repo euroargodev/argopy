@@ -35,5 +35,5 @@ def test_isconnected():
     assert isconnected(host="http://dummyhost") == False
 
 def test_erddap_ds_exists():
-    assert isinstance(erddap_ds_exists(ds='ArgoFloats'), bool
+    assert isinstance(erddap_ds_exists(ds='ArgoFloats'), bool)
     assert erddap_ds_exists(ds='DummyDS') == False

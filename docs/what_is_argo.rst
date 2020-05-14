@@ -1,4 +1,4 @@
-.. _Argo:
+.. _What_is_Argo:
 
 What is Argo ?
 ##############
