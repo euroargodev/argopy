@@ -75,7 +75,7 @@ class EntryPoints_AllBackends(TestCase):
             try:
                 ds = ArgoDataFetcher(src=bk, **options).float(arg).to_xarray()
                 assert isinstance(ds, xr.Dataset) == True
-            except ErddapServerError:
+            except ErddapServerError: # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
 
     def __test_profile(self, bk):

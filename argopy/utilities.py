@@ -54,7 +54,8 @@ def urlopen(url):
         error.append("%s" % url)
         msg = "\n".join(error)
         if "Currently unknown datasetID" in msg:
-            raise ErddapServerError("Dataset not found in the Erddap, try again later.")
+            raise ErddapServerError("Dataset not found in the Erddap, try again later. "
+                                    "The server is probably rebooting. \n%s" % msg)
         else:
             raise requests.HTTPError(msg)
 
@@ -65,7 +66,11 @@ def urlopen(url):
         error = ["Error %i " % r.status_code]
         error.append(data.read().decode("utf-8"))
         error.append("%s" % url)
-        raise requests.HTTPError("\n".join(error))
+        msg = "\n".join(error)
+        if "No space left on device" in msg:
+            raise ErddapServerError("An error occured on the Ifremer erddap server side. \n%s" % msg)
+        else:
+            raise requests.HTTPError()
 
     else:
         error = ["Error %i " % r.status_code]
