@@ -1,7 +1,8 @@
 Argo data python library
 ========================
 
-**argopy** is a python library that aims to ease Argo data access, manipulation and visualisation for standard users as well as Argo experts and operators.
+**argopy** is a python library that aims to ease :ref:`Argo` data access, manipulation and visualisation
+for standard users as well as Argo experts and operators.
 
 Documentation
 -------------

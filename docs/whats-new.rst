@@ -23,6 +23,10 @@ v0.1.2 (14 May 2020)
 
 - Real documentation in place (:pr:`13`). By `G. Maze <http://www.github.com/gmaze>`_.
 
+- ``Datafetcher`` has a ``to_dataframe()`` function to return a :class:`pandas.DataFrame`.
+
+- Started a draft for `JOSS <https://joss.theoj.org/>`_ (:commit:`1e37df44073261df2af486a2da014be8f59bc4cd`).
+
 **Breaking changes with previous versions**
 
 - The ``backend`` option in data fetchers and the global option ``datasrc`` have been renamed to ``src``.
@@ -32,14 +36,16 @@ This makes the code more coherent (:commit:`ec6b32e94b78b2510985cfda49025c10ba97
 
 - Add Pypi automatic release publishing with github actions (:commit:`c4307885622709881e34909fd42e43f16a6a7cf4`)
 
-- Remove Travis CI, fully adopt Github actions.
+- Remove Travis CI, fully adopt Github actions (:commit:`c4557425718f700b4aee760292b20b0642181dc6`)
+
+- Improved unit testing (:commit:`e9555d1e6e90d3d1e75183cec0c4e14f7f19c17c`, :commit:`4b60ede844e37df86b32e4e2a2008335472a8cc1`)
 
 v0.1.1 (3 Apr. 2020)
 ---------------------
 
 **Features and front-end API**
 
-- Added new data fetcher backend ``localftp`` in ArgoDataFetcher (:commit:`c5f7cb6f59d1f64a35dad28f386c9b1166883b81`):
+- Added new data fetcher backend ``localftp`` in DataFetcher (:commit:`c5f7cb6f59d1f64a35dad28f386c9b1166883b81`):
 
 .. code-block:: python
 
