@@ -12,6 +12,6 @@
     
     This will trigger the publish Github action that will push the release on Pypi.     
 
-1. Create a branch with this release code:
+1. Create a branch with this release code for legacy.
     
       ```git checkout tags/v0.X.Y -b v0.X.Y-branch```
