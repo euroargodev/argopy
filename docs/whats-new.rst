@@ -3,7 +3,7 @@
 What's New
 ==========
 
-v0.1.2 (15 May 2020)
+v0.1.3 (15 May 2020)
 --------------------
 
 **Features and front-end API**
@@ -48,6 +48,11 @@ The ``index`` fetcher comes with basic plotting functionalities with the :func:`
 - Remove Travis CI, fully adopt Github actions (:commit:`c4557425718f700b4aee760292b20b0642181dc6`)
 
 - Improved unit testing (:commit:`e9555d1e6e90d3d1e75183cec0c4e14f7f19c17c`, :commit:`4b60ede844e37df86b32e4e2a2008335472a8cc1`, :commit:`34abf4913cb8bec027f88301c5504ebe594b3eae`)
+
+v0.1.2 (15 May 2020)
+--------------------
+
+We didn't like this one this morning, so we move one to the next one !
 
 v0.1.1 (3 Apr. 2020)
 ---------------------
