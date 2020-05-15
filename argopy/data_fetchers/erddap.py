@@ -525,66 +525,6 @@ class Fetch_box(ErddapArgoDataFetcher):
         boxname = self.dataset_id + "_" + boxname
         return boxname
 
-
-class Fetch_box_deployments(ErddapArgoDataFetcher):
-    """ Manage access to Argo data through Ifremer ERDDAP for: an ocean rectangle and 1st cycles only
-
-        __author__: gmaze@ifremer.fr
-    """
-
-    def init(self, box=[-180, 180, -90, 90, 0, 50, '2020-01-01', '2020-01-31']):
-        """ Create Argo data loader
-
-            Parameters
-            ----------
-            box : list(float, float, float, float, float, float, str, str)
-                The box domain to load all Argo data for:
-                box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
-        """
-        if len(box) == 6:
-            # todo Use last current month
-            box.append('2020-01-01')
-            box.append('2020-01-31')
-        elif len(box) != 8:
-            raise ValueError('Box must 6 or 8 length')
-        self.BOX = box
-
-        if self.dataset_id == 'phy':
-            self.definition = 'Ifremer erddap Argo data fetcher for deployments in a space/time region'
-        elif self.dataset_id == 'ref':
-            self.definition = 'Ifremer erddap Argo REFERENCE data fetcher for deployments in a space/time region'
-
-        return self
-
-    def define_constraints(self):
-        """ Define request constraints """
-        self.erddap.constraints = {'longitude>=': self.BOX[0]}
-        self.erddap.constraints.update({'longitude<=': self.BOX[1]})
-        self.erddap.constraints.update({'latitude>=': self.BOX[2]})
-        self.erddap.constraints.update({'latitude<=': self.BOX[3]})
-        self.erddap.constraints.update({'pres>=': self.BOX[4]})
-        self.erddap.constraints.update({'pres<=': self.BOX[5]})
-        self.erddap.constraints.update({'time>=': self.BOX[6]})
-        self.erddap.constraints.update({'time<=': self.BOX[7]})
-        self.erddap.constraints.update({'cycle_number=~': "1"})
-        return None
-
-    def cname(self, cache=False):
-        """ Return a unique string defining the constraints """
-        BOX = self.BOX
-        if cache:
-            boxname = ("%s_%s_%s_%s_%s_%s_%s_%s_cyc001") % (self._format(BOX[0], 'lon'), self._format(BOX[1], 'lon'),
-                                                            self._format(BOX[2], 'lat'), self._format(BOX[3], 'lat'),
-                                                            self._format(BOX[4], 'prs'), self._format(BOX[5], 'prs'),
-                                                            self._format(BOX[6], 'tim'), self._format(BOX[7], 'tim'))
-        else:
-            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; z=%0.1f/%0.1f; t=%s/%s]; CYC=1") % \
-                      (BOX[0], BOX[1], BOX[2], BOX[3], BOX[4], BOX[5],
-                       self._format(BOX[6], 'tim'), self._format(BOX[7], 'tim'))
-
-        boxname = self.dataset_id + "_" + boxname
-        return boxname
-
 class ErddapArgoIndexFetcher(ABC):
     """ Manage access to Argo index through Ifremer ERDDAP
 
