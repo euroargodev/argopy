@@ -13,7 +13,6 @@ Data Fetchers
     :toctree: generated/
 
     argopy.DataFetcher
-    argopy.xarray.ArgoAccessor.point2profile
 
 Search entries
 --------------
@@ -34,8 +33,8 @@ Data formats
    argopy.DataFetcher.to_xarray
    argopy.DataFetcher.to_dataframe
 
-Index fetchers
-==============
+Index/meta-data fetchers
+========================
 
 .. autosummary::
    :toctree: generated/
