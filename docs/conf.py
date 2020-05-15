@@ -12,6 +12,7 @@
 #
 
 import os
+import pathlib
 import subprocess
 import sys
 import xarray
@@ -39,12 +40,13 @@ try:
 except ImportError:
     autodoc_mock_imports.append('cartopy')
 
-# import pkg_resources
-# __version__ = pkg_resources.get_distribution("argopy").version
+# argopy_src = os.path.abspath('..')
+# print("argopy loaded:", os.path.abspath('..'))
+# sys.path.insert(0, os.path.abspath('..'))
+root = pathlib.Path(__file__).absolute().parent.parent
+os.environ["PYTHONPATH"] = str(root)
+sys.path.insert(0, str(root))
 
-argopy_src = os.path.abspath('..')
-print("argopy loaded:", os.path.abspath('..'))
-sys.path.insert(0, os.path.abspath('..'))
 import argopy
 print("argopy: %s, %s" % (argopy.__version__, argopy.__file__))
 
