@@ -5,11 +5,15 @@
 
 import io
 import pytest
+import unittest
 import argopy
+import xarray as xr
+from argopy.utilities import isconnected
+CONNECTED = isconnected()
 
 # Import functions to test:
 from argopy.utilities import load_dict, mapp_dict, list_multiprofile_file_variables, \
-    show_versions, isconnected, erddap_ds_exists
+    show_versions, isconnected, erddap_ds_exists, open_etopo1
 
 def is_list_of_strings(lst):
     return isinstance(lst, list) and all(isinstance(elem, str) for elem in lst)
@@ -37,3 +41,8 @@ def test_isconnected():
 def test_erddap_ds_exists():
     assert isinstance(erddap_ds_exists(ds='ArgoFloats'), bool)
     assert erddap_ds_exists(ds='DummyDS') == False
+
+@unittest.skipUnless(CONNECTED, "open_etopo1 requires an internet connection")
+def test_open_etopo1():
+    ds = open_etopo1([-80, -79, 20, 21], res='l')
+    assert isinstance(ds, xr.DataArray) == True

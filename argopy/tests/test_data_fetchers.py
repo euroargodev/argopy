@@ -136,10 +136,29 @@ class EntryPoints_AllBackends(TestCase):
 class Erddap_backend(TestCase):
     """ Test main API facade for all available dataset of the ERDDAP fetching backend """
 
+    @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
     def test_cachepath(self):
         assert isinstance(ArgoDataFetcher(src='erddap').profile(6902746, 34).fetcher.cachepath, str) == True
 
-    def test_caching(self):
+    @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
+    def test_caching_float(self):
+        cachedir = os.path.expanduser(os.path.join("~",".argopytest_tmp"))
+        try:
+            # 1st call to load from erddap and save to cachedir:
+            ds = ArgoDataFetcher(src='erddap', cache=True, cachedir=cachedir).float([1901393, 6902746]).to_xarray()
+            # 2nd call to load from cached file
+            ds = ArgoDataFetcher(src='erddap', cache=True, cachedir=cachedir).float([1901393, 6902746]).to_xarray()
+            assert isinstance(ds, xr.Dataset) == True
+            shutil.rmtree(cachedir)
+        except ErddapServerError: # Test is passed when something goes wrong because of the erddap server, not our fault !
+            shutil.rmtree(cachedir)
+            pass
+        except:
+            shutil.rmtree(cachedir)
+            raise
+
+    @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
+    def test_caching_profile(self):
         cachedir = os.path.expanduser(os.path.join("~",".argopytest_tmp"))
         try:
             # 1st call to load from erddap and save to cachedir:
@@ -154,6 +173,10 @@ class Erddap_backend(TestCase):
         except:
             shutil.rmtree(cachedir)
             raise
+
+    def test_N_POINTS(self):
+        n = ArgoDataFetcher(src='erddap').region([-70, -65, 35., 40., 0, 10., '2012-01', '2013-12']).fetcher.N_POINTS
+        assert isinstance(n, int) == True
 
     def __testthis(self, dataset):
         for access_point in self.args:
