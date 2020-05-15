@@ -32,6 +32,7 @@ Data formats
    :toctree: generated/
 
    argopy.DataFetcher.to_xarray
+   argopy.DataFetcher.to_dataframe
 
 Index fetchers
 ==============
@@ -72,11 +73,14 @@ Low-level functions
 ===================
 
 .. autosummary::
-   :toctree: generated/
+    :toctree: generated/
 
-   argopy.tutorial.open_dataset
-   argopy.set_options
-   argopy.show_versions
+    argopy.tutorial.open_dataset
+    argopy.set_options
+    argopy.show_versions
+    argopy.utilities.open_etopo1
+    argopy.utilities.urlopen
+    argopy.utilities.list_available_data_src
 
 Xarray *argo* name space
 ==========================

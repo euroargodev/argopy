@@ -167,7 +167,7 @@ class ArgoDataFetcher(object):
         return self
 
     def profile(self, wmo, cyc):
-        """ Fetch data for a profile
+        """ Fetch data from a profile
 
             given one or more WMOs and CYCLE_NUMBER
         """
@@ -187,7 +187,7 @@ class ArgoDataFetcher(object):
         return self
 
     def region(self, box: list):
-        """ Fetch data in space/time
+        """ Fetch data from a space/time domain
 
         Parameters
         ----------
@@ -216,11 +216,6 @@ class ArgoDataFetcher(object):
             self.postproccessor = postprocessing
 
         return self
-
-    def deployments(self, box):
-        """ Retrieve deployment locations in a specific space/time region """
-        warnings.warn("This access point is to be used with an index fetcher")
-        pass
 
     def to_xarray(self, **kwargs):
         """ Fetch and return data as xarray.DataSet """
@@ -326,7 +321,7 @@ class ArgoIndexFetcher(object):
         return self    
 
     def region(self, box):
-        """ Load index for a rectangular region, given latitude, longitude, and possibly time bounds """
+        """ Load index for a rectangular space/time domain region """
         if 'region' in self.Fetchers:
             self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)            
         else:
@@ -355,13 +350,24 @@ class ArgoIndexFetcher(object):
         return self.to_dataframe().to_csv(file)
     
     def plot(self, ptype='trajectory'):
-        """ Custom plots """
+        """ Create custom plots from index
+
+            Parameters
+            ----------
+            ptype: str
+                Type of plot to generate. This can be: 'trajectory',' profiler', 'dac'.
+
+            Returns
+            -------
+            fig : :class:`matplotlib.pyplot.figure.Figure`
+                Figure instance
+        """
         idx=self.to_dataframe()        
         if ptype=='dac':
-            plot_dac(idx)
+            return plot_dac(idx)
         elif ptype=='profiler':
-            plot_profilerType(idx)               
+            return plot_profilerType(idx)
         elif ptype=='trajectory':           
-            plot_trajectory(idx.sort_values(['file']))
+            return plot_trajectory(idx.sort_values(['file']))
         else:
             raise ValueError("Type of plot unavailable. Use: 'dac', 'profiler' or 'trajectory' (default)")

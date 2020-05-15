@@ -3,7 +3,7 @@
 What's New
 ==========
 
-v0.1.2 (14 May 2020)
+v0.1.2 (XX May 2020)
 ---------------------
 
 **Features and front-end API**
@@ -17,20 +17,29 @@ v0.1.2 (14 May 2020)
     idx.to_dataframe()
     idx.plot('trajectory')
 
-  The ``index`` fetcher can manage cache and works with both Erddap and localftp data sources. It is basically the same
-  as the data fetcher, but do not load measurements, only meta-data. This can be very usefull when looking for regional
-  sampling or trajectories.
+The ``index`` fetcher can manage caching and works with both Erddap and localftp data sources. It is basically the same as the data fetcher, but do not load measurements, only meta-data. This can be very usefull when looking for regional sampling or trajectories.
 
-- Real documentation in place (:pr:`13`). By `G. Maze <http://www.github.com/gmaze>`_.
+.. tip::
 
-- ``Datafetcher`` has a ``to_dataframe()`` function to return a :class:`pandas.DataFrame`.
+  **Performance**: we recommand to use the ``localftp`` data source when working this ``index`` fetcher because the ``erddap`` data source currently suffers from poor performances. This is linked to :issue:`16` and is being addressed by Ifremer.
+
+The ``index`` fetcher comes with basic plotting functionalities with the :func:`argopy.IndexFetcher.plot` method to rapidly visualise measurement distributions by DAC, latitude/longitude and floats type.
+
+.. warning::
+
+  The design of plotting and visualisation features in ``argopy`` is constantly evolving, so this may change in future releases.
+
+- Real documentation written and published (:pr:`13`). By `G. Maze <http://www.github.com/gmaze>`_.
+
+- The :class:`argopy.DataFetcher` now has a :func:`argopy.DataFetcher.to_dataframe` method to return a :class:`pandas.DataFrame`.
 
 - Started a draft for `JOSS <https://joss.theoj.org/>`_ (:commit:`1e37df44073261df2af486a2da014be8f59bc4cd`).
 
+- New utilities function: :func:`argopy.utilities.open_etopo1`, :func:`argopy.show_versions`.
+
 **Breaking changes with previous versions**
 
-- The ``backend`` option in data fetchers and the global option ``datasrc`` have been renamed to ``src``.
-This makes the code more coherent (:commit:`ec6b32e94b78b2510985cfda49025c10ba97ecab`).
+- The ``backend`` option in data fetchers and the global option ``datasrc`` have been renamed to ``src``. This makes the code more coherent (:commit:`ec6b32e94b78b2510985cfda49025c10ba97ecab`).
 
 **Code management**
 
@@ -38,8 +47,7 @@ This makes the code more coherent (:commit:`ec6b32e94b78b2510985cfda49025c10ba97
 
 - Remove Travis CI, fully adopt Github actions (:commit:`c4557425718f700b4aee760292b20b0642181dc6`)
 
-- Improved unit testing (:commit:`e9555d1e6e90d3d1e75183cec0c4e14f7f19c17c`,
-:commit:`4b60ede844e37df86b32e4e2a2008335472a8cc1`, :commit:`34abf4913cb8bec027f88301c5504ebe594b3eae`)
+- Improved unit testing (:commit:`e9555d1e6e90d3d1e75183cec0c4e14f7f19c17c`, :commit:`4b60ede844e37df86b32e4e2a2008335472a8cc1`, :commit:`34abf4913cb8bec027f88301c5504ebe594b3eae`)
 
 v0.1.1 (3 Apr. 2020)
 ---------------------

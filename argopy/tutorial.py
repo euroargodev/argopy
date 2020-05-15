@@ -126,7 +126,7 @@ class repodata():
         return self.rootpath
 
 class sample_ftp(repodata):
-    """ Helper class for the dummy local GDAC ftp folder """
+    """ Helper class for the local_work local GDAC ftp folder """
 
     @property
     def rootpath(self):
@@ -137,7 +137,7 @@ class sample_ftp(repodata):
                                     "Try a: 'argopy.tutorial.repodata().download()' first." % self.localpath)
 
     def ls(self):
-        """ Return the list of files in the dummy local GDAC ftp sample """
+        """ Return the list of files in the local_work local GDAC ftp sample """
         listOfFiles = list()
         for (dirpath, dirnames, filenames) in os.walk(self.rootpath):
             listOfFiles += [os.path.join(dirpath, file) for file in filenames]

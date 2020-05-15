@@ -51,7 +51,7 @@ class set_options:
     - `dataset`: Dataset. This can be `phy`, `bgc` or `ref`.
       Default: `phy`
 
-    - `data_src`: Source of fetched data.
+    - `src`: Source of fetched data.
       Default: `erddap`
 
     - `local_ftp`: Absolute path to local GDAC ftp copy.

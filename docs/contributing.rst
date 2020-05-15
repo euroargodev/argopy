@@ -38,13 +38,13 @@ report will allow others to reproduce the bug and provide insight into fixing. S
 `this stackoverflow article <https://stackoverflow.com/help/mcve>`_ for tips on
 writing a good bug report.
 
-Trying the bug*producing code out on the *master* branch is often a worthwhile exercise
+Trying the bug producing code out on the *master* branch is often a worthwhile exercise
 to confirm the bug still exists. It is also worth searching existing bug reports and
 pull requests to see if the issue has already been reported and/or fixed.
 
 Bug reports must:
 
-#. Include a short, self*contained Python snippet reproducing the problem.
+#. Include a short, self contained Python snippet reproducing the problem.
    You can format the code nicely by using `GitHub Flavored Markdown
    <http://github.github.com/github*flavored*markdown/>`_::
 
@@ -57,14 +57,15 @@ Bug reports must:
 #. Include the full version string of *argopy* and its dependencies. You can use the
    built in function::
 
-      >>> import argopy as ar
-      >>> ar.show_versions()
+      >>> import argopy
+      >>> argopy.show_versions()
 
 #. Explain why the current behavior is wrong/not desired and what you expect instead.
 
 The issue will then show up to the :mod:`argopy` community and be open to comments/ideas
 from others.
 
+`Click here to open an issue with the specific bug reporting template <https://github.com/euroargodev/argopy/issues/new?template=bug_report.md>`_
 
 .. _contributing.code:
 

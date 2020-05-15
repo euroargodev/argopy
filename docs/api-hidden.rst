@@ -12,6 +12,7 @@
     argopy.fetchers.ArgoDataFetcher.float
     argopy.fetchers.ArgoDataFetcher.profile
     argopy.fetchers.ArgoDataFetcher.to_xarray
+    argopy.fetchers.ArgoDataFetcher.to_dataframe
 
     argopy.fetchers.ArgoIndexFetcher
     argopy.fetchers.ArgoIndexFetcher.region
@@ -22,7 +23,12 @@
     argopy.fetchers.ArgoIndexFetcher.plot
 
     argopy.options.set_options
+
     argopy.tutorial.open_dataset
+
     argopy.utilities.show_versions
+    argopy.utilities.open_etopo1
+    argopy.utilities.urlopen
+    argopy.utilities.list_available_data_src
 
     argopy.xarray.ArgoAccessor.point2profile

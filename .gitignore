@@ -77,7 +77,7 @@ target/
 cache
 *.nc
 .idea
-*dummy*
+local_work
 
 # pyenv
 .python-version

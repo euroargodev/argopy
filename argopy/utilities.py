@@ -3,7 +3,7 @@
 #
 # Disclaimer:
 # Functions get_sys_info, netcdf_and_hdf5_versions and show_versions are from:
-# xarray/util/print_versions.py
+#   xarray/util/print_versions.py
 #
 
 import os
@@ -51,7 +51,7 @@ def urlopen(url):
     elif r.status_code == 404:  # Empty response
         error = ["Error %i " % r.status_code]
         error.append(data.read().decode("utf-8").replace("Error", ""))
-        error.append("%s" % url)
+        error.append("The URL triggering this error was: \n%s" % url)
         msg = "\n".join(error)
         if "Currently unknown datasetID" in msg:
             raise ErddapServerError("Dataset not found in the Erddap, try again later. "
@@ -65,7 +65,7 @@ def urlopen(url):
             display(HTML(data.read().decode("utf-8")))
         error = ["Error %i " % r.status_code]
         error.append(data.read().decode("utf-8"))
-        error.append("%s" % url)
+        error.append("The URL triggering this error was: \n%s" % url)
         msg = "\n".join(error)
         if "No space left on device" in msg:
             raise ErddapServerError("An error occured on the Erddap server side. "
@@ -79,7 +79,7 @@ def urlopen(url):
     else:
         error = ["Error %i " % r.status_code]
         error.append(data.read().decode("utf-8"))
-        error.append("%s" % url)
+        error.append("The URL triggering this error was: \n%s" % url)
         print("\n".join(error))
         r.raise_for_status()
 
@@ -369,7 +369,7 @@ def erddap_ds_exists(ds="ArgoFloats"):
     erddap_index = json.load(urlopen("http://www.ifremer.fr/erddap/info/index.json"))
     return ds in [row[-1] for row in erddap_index['table']['rows']]
 
-def open_etopo1(box):
+def open_etopo1(box, res='l'):
     """ Download ETOPO for a box
 
         Parameters
@@ -380,11 +380,17 @@ def open_etopo1(box):
         -------
         xarray.Dataset
     """
+    # This function is in utilities to anticipate usage outside of plotting, eg interpolation, grounding detection
+    resx, resy = 0.1, 0.1
+    if res == 'h':
+        resx, resy = 0.016, 0.016
+
     uri = ("https://gis.ngdc.noaa.gov/mapviewer-support/wcs-proxy/wcs.groovy?filename=etopo1.nc"
            "&request=getcoverage&version=1.0.0&service=wcs&coverage=etopo1&CRS=EPSG:4326&format=netcdf"
-           "&resx=0.016&resy=0.016"
+           "&resx={}&resy={}"
            "&bbox={}").format
-    thisurl = uri(",".join([str(b) for b in [box[0], box[2], box[1], box[3]]]))
+    thisurl = uri(resx, resy, ",".join([str(b) for b in [box[0], box[2], box[1], box[3]]]))
+    #     print(thisurl)
     ds = xr.open_dataset(urlopen(thisurl).read())
     da = ds['Band1'].rename("topo")
     for a in ds.attrs:
