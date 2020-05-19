@@ -3,6 +3,18 @@
 What's New
 ==========
 
+v0.1.4 (XX June 2020)
+---------------------
+
+**Features and front-end API**
+
+**Breaking changes with previous versions**
+
+**Internals**
+
+- Now uses `fsspec <https://filesystem-spec.readthedocs.io>`_ as file system for caching local files (:pr:``) By `G. Maze <http://www.github.com/gmaze>`_. This closes issues :issue:`12`, :issue:`15` and :issue:`17`.
+
+
 v0.1.3 (15 May 2020)
 --------------------
 
