@@ -60,6 +60,6 @@ class ErddapServerError(ValueError):
 
 class InvalidDashboard(ValueError):
     """
-    Raise this when trying to work with a 2rd party online service to display float information
+    Raise this when trying to work with a 3rd party online service to display float information
     """
     pass
