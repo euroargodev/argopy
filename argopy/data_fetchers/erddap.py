@@ -73,9 +73,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             cache : False
             cachedir : None
         """
+
+        # Manage File System:
         self.cache = cache
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-
         if not self.cache:
             self.fs = fsspec.filesystem("http")
         else:
@@ -84,7 +85,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                                 target_options={'simple_links': True},
                                 cache_storage=self.cachedir,
                                 expiry_time=86400, cache_check=10)
+            # We use a refresh rate for cache of 1 day,
+            # since this is the update frequency of the Ifremer erddap
 
+        # More
         self.definition = 'Ifremer erddap Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
         self.init(**kwargs)
@@ -196,7 +200,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             server='http://www.ifremer.fr/erddap',
             protocol='tabledap'
         )
-        self.erddap.response = 'nc'
+        self.erddap.response = 'nc' # This is a major change, we used to work with csv files
 
         if self.dataset_id == 'phy':
             self.erddap.dataset_id = 'ArgoFloats'
@@ -276,14 +280,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             response[p] = dref[p]
         return response
 
-    # @property
-    # def cachepath(self):
-    #     """ Return a specific file path for this request """
-    #     src = self.cachedir
-    #     file = ("ERargo_%s.nc") % (self.cname(cache=True))
-    #     fcache = os.path.join(src, file)
-    #     return fcache
-
     @property
     def url(self, response=None):
         """ Return the URL used to download data
@@ -330,7 +326,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     @property
     def N_POINTS(self):
         try:
-            ncHeader = urlopen(self.url.replace('.'+self.erddap.response, '.ncHeader')).read().decode("utf-8")
+            with self.fs.open(self.url.replace('.' + self.erddap.response, '.ncHeader')) as of:
+                ncHeader = of.read().decode("utf-8")
             l = [line for line in ncHeader.splitlines() if 'row = ' in line][0]
             return int(l.split('=')[1].split(';')[0])
         except:
