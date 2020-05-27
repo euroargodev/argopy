@@ -47,11 +47,12 @@ if with_cartopy:
                                                facecolor=[0.4,0.6,0.7])
 
 def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type='ea'):
-    """ Insert in a notebook the Euro-Argo dashboard page for a float or a profile
+    """ Insert in a notebook the Euro-Argo dashboard page
 
         Parameters
         ----------
-        wmo : int
+        wmo: int
+            The float WMO to display. By default, this is set to None and will insert the general dashboard.
 
         Returns
         -------
@@ -63,7 +64,10 @@ def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type
     from IPython.display import IFrame
     if url is None:
         if type=='ea': # Open Euro-Argo dashboard
-            url = "https://fleetmonitoring.euro-argo.eu/float/{}".format(str(wmo))
+            if wmo is None:
+                url = "https://fleetmonitoring.euro-argo.eu"
+            else:
+                url = "https://fleetmonitoring.euro-argo.eu/float/{}".format(str(wmo))
 
         ## argovis doesn't allow X-Frame insertion !
         # elif type == 'argovis':
