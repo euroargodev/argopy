@@ -17,6 +17,7 @@ from . import tutorial
 from . import utilities
 from .utilities import show_versions
 from .options import set_options
+from .plotters import open_dashboard as dashboard
 
 #
 __all__ = (
@@ -27,6 +28,7 @@ __all__ = (
     # Top-level functions:
     "set_options",
     "show_versions",
+    "dashboard",
     # Sub-packages,
     "utilities",
     "errors",
