@@ -228,7 +228,12 @@ class ArgoDataFetcher(object):
         return self
 
     def to_xarray(self, **kwargs):
-        """ Fetch and return data as xarray.DataSet """
+        """ Fetch and return data as xarray.DataSet
+
+            Returns
+            -------
+            :class:`xarray.DataArray`
+        """
         # if not self.fetcher:
         #     raise InvalidFetcher(" Initialize an access point (%s) first." %
         #                          ",".join(self.Fetchers.keys()))

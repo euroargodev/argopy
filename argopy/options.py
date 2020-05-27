@@ -1,12 +1,14 @@
-#!/bin/env python
-# -*coding: UTF-8 -*-
-#
-# Manage options of the package
-#
+# -*- coding: utf-8 -*-
+
+"""
+argopy.options
+~~~~~~~~~~~~~~
+
+This module manage options of the package
 
 # Like always, largely inspired by xarray code:
 # https://github.com/pydata/xarray/blob/cafab46aac8f7a073a32ec5aa47e213a9810ed54/xarray/core/options.py
-
+"""
 import os
 
 # Define option names as seen by users:

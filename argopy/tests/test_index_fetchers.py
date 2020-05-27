@@ -74,7 +74,7 @@ class EntryPoints_AllBackends(TestCase):
     @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core index Argo dataset from Ifremer server")
-    @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
+    # @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
     def test_float_index_erddap(self):
         self.__test_float('erddap')
 

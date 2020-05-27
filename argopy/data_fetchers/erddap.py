@@ -1,10 +1,15 @@
-#!/bin/env python
-# -*coding: UTF-8 -*-
-#
-# Argo data fetcher for Ifremer ERDDAP.
-#
-# This is not intended to be used directly, only by the facade at fetchers.py
-#
+# -*- coding: utf-8 -*-
+
+"""
+argopy.data_fetchers.erddap
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This module contains Argo data fetcher for Ifremer ERDDAP.
+
+This is not intended to be used directly, only by the facade at fetchers.py
+
+"""
+
 
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']
@@ -22,7 +27,7 @@ from pathlib import Path
 import getpass
 
 from .proto import ArgoDataFetcherProto
-from argopy.utilities import urlopen, load_dict, mapp_dict
+from argopy.utilities import load_dict, mapp_dict, onlinestore
 from argopy.options import OPTIONS
 import argopy
 
@@ -74,21 +79,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             cachedir : None
         """
 
-        # Manage File System:
-        self.cache = cache
-        self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        if not self.cache:
-            self.fs = fsspec.filesystem("http")
-        else:
-            self.fs = fsspec.filesystem("filecache",
-                                target_protocol='http',
-                                target_options={'simple_links': True},
-                                cache_storage=self.cachedir,
-                                expiry_time=86400, cache_check=10)
-            # We use a refresh rate for cache of 1 day,
-            # since this is the update frequency of the Ifremer erddap
-
-        # More
+        self.fs = onlinestore(cache=cache, cachedir=cachedir)
         self.definition = 'Ifremer erddap Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
         self.init(**kwargs)
@@ -208,6 +199,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             self.erddap.dataset_id = 'ArgoFloats-ref'
         elif self.dataset_id == 'bgc':
             self.erddap.dataset_id = 'ArgoFloats-bio'
+        elif self.dataset_id == 'fail':
+            self.erddap.dataset_id = 'invalid_db'
         else:
             raise ValueError("Invalid database short name for Ifremer erddap (use: 'phy', 'bgc' or 'ref')")
         return self
@@ -336,9 +329,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     def to_xarray(self):
         """ Load Argo data and return a xarray.DataSet """
 
-        # Download data: get a csv, open it as pandas dataframe, convert it to xarray dataset
-        with self.fs.open(self.url) as of:
-            ds = xr.open_dataset(of)
+        # Download data
+        ds = self.fs.open_dataset(self.url)
         ds = ds.rename({'row':'N_POINTS'})
 
         # Post-process the xarray.DataSet:
@@ -400,8 +392,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
 class Fetch_wmo(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: a list of WMOs
-
-        __author__: gmaze@ifremer.fr
     """
 
     def init(self, WMO=[], CYC=None):
@@ -423,6 +413,7 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         self.WMO = WMO
         self.CYC = CYC
 
+        self.definition = "?"
         if self.dataset_id == 'phy':
             self.definition = 'Ifremer erddap Argo data fetcher for floats'
         elif self.dataset_id == 'ref':
@@ -461,8 +452,6 @@ class Fetch_wmo(ErddapArgoDataFetcher):
 
 class Fetch_box(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: an ocean rectangle
-
-        __author__: gmaze@ifremer.fr
     """
 
     def init(self, box=[-65, -55, 37, 38, 0, 300, '1900-01-01', '2100-12-31']):
@@ -552,15 +541,9 @@ class ErddapArgoIndexFetcher(ABC):
                  **kwargs):
         """ Instantiate an ERDDAP Argo index loader with force caching """    
 
+        self.fs = onlinestore(cache=cache, cachedir=cachedir)
         self.definition = 'Ifremer erddap Argo index fetcher'
-        self.dataset_id = 'index'    
-
-        self.cache = cache
-        self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        if self.cache:
-            #todo check if cachedir is a valid path
-            Path(self.cachedir).mkdir(parents=True, exist_ok=True)
-
+        self.dataset_id = 'index'
         self.init(**kwargs)
         self._init_erddapy()
 
@@ -596,13 +579,13 @@ class ErddapArgoIndexFetcher(ABC):
         self.erddap.dataset_id = 'ArgoFloats-index'                    
         return self
 
-    @property
-    def cachepath(self):
-        """ Return path to cache file for this request """
-        src = self.cachedir
-        file = ("index_%s.csv") % (self.cname(cache=True))
-        fcache = os.path.join(src, file)
-        return fcache
+    # @property
+    # def cachepath(self):
+    #     """ Return path to cache file for this request """
+    #     src = self.cachedir
+    #     file = ("index_%s.csv") % (self.cname(cache=True))
+    #     fcache = os.path.join(src, file)
+    #     return fcache
 
     @property
     def url(self, response=None):
@@ -648,35 +631,28 @@ class ErddapArgoIndexFetcher(ABC):
         return url
         
     def to_dataframe(self):
-        """ Load Argo index and return a pandas dataframe """        
-
-        # Try to load cached file if requested:
-        if self.cache and os.path.exists(self.cachepath):
-            ds = pd.read_csv(self.cachepath)            
-            return ds
-        # No cache found or requested, so we compute:
+        """ Load Argo index and return a pandas dataframe """
+        import time
 
         # Download data: get a csv, open it as pandas dataframe, create wmo field
-        df = pd.read_csv(urlopen(self.url), parse_dates=True, skiprows=[1])  
-        # erddap date format : 2019-03-21T00:00:35Z      
+        df = self.fs.open_dataframe(self.url, parse_dates=True, skiprows=[1])
+
+        # erddap date format : 2019-03-21T00:00:35Z
         df['date'] = pd.to_datetime(df['date'], format="%Y-%m-%dT%H:%M:%SZ")
         df['date_update'] = pd.to_datetime(df['date_update'], format="%Y-%m-%dT%H:%M:%SZ")
         df['wmo'] = df.file.apply(lambda x: int(x.split('/')[1]))
-        #
+
         # institution & profiler mapping
         try:
-            institution_dictionnary=load_dict('institutions')
-            df['tmp1'] = df.institution.apply(lambda x: mapp_dict(institution_dictionnary,x))
-            profiler_dictionnary=load_dict('profilers')
-            df['tmp2'] = df.profiler_type.apply(lambda x: mapp_dict(profiler_dictionnary,x))        
+            institution_dictionnary = load_dict('institutions')
+            df['tmp1'] = df.institution.apply(lambda x: mapp_dict(institution_dictionnary, x))
+            profiler_dictionnary = load_dict('profilers')
+            df['tmp2'] = df.profiler_type.apply(lambda x: mapp_dict(profiler_dictionnary, x))
 
-            df=df.drop(columns=['institution','profiler_type'])
-            df=df.rename(columns={"tmp1":"institution","tmp2":"profiler_type"})        
+            df = df.drop(columns=['institution','profiler_type'])
+            df = df.rename(columns={"tmp1":"institution", "tmp2":"profiler_type"})
         except:
             pass
-        # Possibly save in cache for later re-use
-        if self.cache:
-            df.to_csv(self.cachepath,index=False)
 
         return df
 
