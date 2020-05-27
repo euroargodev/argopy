@@ -8,13 +8,20 @@ v0.1.4 (XX June 2020)
 
 **Features and front-end API**
 
-**Breaking changes with previous versions**
+- Insert in a Jupyter notebook cell the `Euro-Argo fleet monitoring <https://fleetmonitoring.euro-argo.eu>`_ dashboard page, possibly for a specific float (:pr:`20`).
 
+.. code-block:: python
+
+    import argopy
+    argopy.dashboard()
+    # or
+    argopy.dashboard(wmo=6902746)
+    
+**Breaking changes with previous versions**
 
 **Internals**
 
 - Now uses `fsspec <https://filesystem-spec.readthedocs.io>`_ as file system for caching local files (:pr:`19`). This closes issues :issue:`12`, :issue:`15` and :issue:`17`. By `G. Maze <http://www.github.com/gmaze>`_.
-
 
 v0.1.3 (15 May 2020)
 --------------------
