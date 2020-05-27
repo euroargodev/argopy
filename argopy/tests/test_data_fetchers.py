@@ -139,9 +139,9 @@ class EntryPoints_AllBackends(TestCase):
 class Erddap_backend(TestCase):
     """ Test main API facade for all available dataset of the ERDDAP fetching backend """
 
-    @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
-    def test_cachepath(self):
-        assert isinstance(ArgoDataFetcher(src='erddap').profile(6902746, 34).fetcher.cachepath, str) == True
+    # @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
+    # def test_cachepath(self):
+    #     assert isinstance(ArgoDataFetcher(src='erddap').profile(6902746, 34).fetcher.cachepath, str) == True
 
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
     def test_caching_float(self):

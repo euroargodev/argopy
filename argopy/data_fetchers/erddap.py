@@ -330,69 +330,11 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     @property
     def N_POINTS(self):
         try:
-            ncHeader = urlopen(self.url.replace('.csv', '.ncHeader')).read().decode("utf-8")
+            ncHeader = urlopen(self.url.replace('.'+self.erddap.response, '.ncHeader')).read().decode("utf-8")
             l = [line for line in ncHeader.splitlines() if 'row = ' in line][0]
             return int(l.split('=')[1].split(';')[0])
         except:
             pass
-
-    def to_xarray_deprec(self):
-        """ Load Argo data and return a xarray.DataSet """
-
-        # Try to load cached file if requested:
-        if self.cache and os.path.exists(self.cachepath):
-            ds = xr.open_dataset(self.cachepath)
-            ds = ds.argo.cast_types()  # Cast data types
-            return ds
-        # No cache found or requested, so we compute:
-
-        # Download data: get a csv, open it as pandas dataframe, convert it to xarray dataset
-        df = pd.read_csv(urlopen(self.url), parse_dates=['time'], skiprows=[1], dtype=self._dtype)
-        df['time'] = df['time'].dt.tz_localize(None) # Remove time zone information, we are in UTC, done.
-        ds = xr.Dataset.from_dataframe(df)
-        ds = ds.rename({'index':'N_POINTS'})
-
-        # ds = xr.open_dataset(urlopen(self.url.replace('.csv','.nc')))
-        # ds = ds.rename({'row':'index'})
-
-        # Post-process the xarray.DataSet:
-
-        # Set coordinates:
-        coords = ('LATITUDE', 'LONGITUDE', 'TIME')
-        # Convert all coordinate variable names to upper case
-        for v in ds.data_vars:
-            ds = ds.rename({v: v.upper()})
-        ds = ds.set_coords(coords)
-
-        # Cast data types and add variable attributes (not available in the csv download):
-        ds = ds.argo.cast_types()
-        ds = self._add_attributes(ds)
-
-        # More convention:
-        #         ds = ds.rename({'pres': 'pressure'})
-
-        # Add useful attributes to the dataset:
-        if self.dataset_id == 'phy':
-            ds.attrs['DATA_ID'] = 'ARGO'
-        elif self.dataset_id == 'ref':
-            ds.attrs['DATA_ID'] = 'ARGO_Reference'
-        elif self.dataset_id == 'bgc':
-            ds.attrs['DATA_ID'] = 'ARGO-BGC'
-        ds.attrs['DOI'] = 'http://doi.org/10.17882/42182'
-        ds.attrs['Fetched_from'] = self.erddap.server
-        ds.attrs['Fetched_by'] = getpass.getuser()
-        ds.attrs['Fetched_date'] = pd.to_datetime('now').strftime('%Y/%m/%d')
-        ds.attrs['Fetched_constraints'] = self.cname()
-        ds.attrs['Fetched_url'] = self.url
-        ds = ds[np.sort(ds.data_vars)]
-
-        # Possibly save in cache for later re-use
-        if self.cache:
-            ds.attrs['cache'] = self.cachepath
-            ds.to_netcdf(self.cachepath)
-
-        #
-        return ds
 
     def to_xarray(self):
         """ Load Argo data and return a xarray.DataSet """
