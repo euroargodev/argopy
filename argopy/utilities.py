@@ -34,10 +34,18 @@ from argopy.options import OPTIONS
 class onlinestore():
     """Wrapper around fsspec http file store
 
-        This wrapper intend to make argopy safer to failures from erddap
+        This wrapper intend to make argopy safer to failures from http requests
     """
 
     def __init__(self, cache: bool = False, cachedir: str = ""):
+        """ Create a file storage system for http requests
+
+            Parameters
+            ----------
+            cache : bool (False)
+            cachedir : str (from OPTIONS)
+
+        """
         # Manage File System:
         self.cache = cache
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
@@ -53,9 +61,10 @@ class onlinestore():
             # since this is the update frequency of the Ifremer erddap
 
     def _verbose_exceptions(self, e):
-        r = e.response
+        r = e.response # https://requests.readthedocs.io/en/master/api/#requests.Response
         status_code = r.status_code
         data = io.BytesIO(r.content)
+        url = r.url
 
         # 4XX client error response
         if r.status_code == 404:  # Empty response
