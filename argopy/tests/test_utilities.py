@@ -10,6 +10,7 @@ import argopy
 import xarray as xr
 from argopy.utilities import isconnected
 CONNECTED = isconnected()
+import requests
 
 # Import functions to test:
 from argopy.utilities import load_dict, mapp_dict, list_multiprofile_file_variables, \
@@ -44,5 +45,8 @@ def test_erddap_ds_exists():
 
 @unittest.skipUnless(CONNECTED, "open_etopo1 requires an internet connection")
 def test_open_etopo1():
-    ds = open_etopo1([-80, -79, 20, 21], res='l')
-    assert isinstance(ds, xr.DataArray) == True
+    try:
+        ds = open_etopo1([-80, -79, 20, 21], res='l')
+        assert isinstance(ds, xr.DataArray) == True
+    except requests.HTTPError: # not our fault
+        pass

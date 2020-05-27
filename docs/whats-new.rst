@@ -10,9 +10,10 @@ v0.1.4 (XX June 2020)
 
 **Breaking changes with previous versions**
 
+
 **Internals**
 
-- Now uses `fsspec <https://filesystem-spec.readthedocs.io>`_ as file system for caching local files (:pr:``) By `G. Maze <http://www.github.com/gmaze>`_. This closes issues :issue:`12`, :issue:`15` and :issue:`17`.
+- Now uses `fsspec <https://filesystem-spec.readthedocs.io>`_ as file system for caching local files (:pr:`19`). This closes issues :issue:`12`, :issue:`15` and :issue:`17`. By `G. Maze <http://www.github.com/gmaze>`_.
 
 
 v0.1.3 (15 May 2020)

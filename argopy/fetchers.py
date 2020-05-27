@@ -75,6 +75,12 @@ class ArgoDataFetcher(object):
         This is the main API facade.
         Specify here all options to data_fetchers.
 
+        Parameters
+        ----------
+        mode : str
+        src : str
+        ds : str
+
     """
 
     def __init__(self,
@@ -92,9 +98,9 @@ class ArgoDataFetcher(object):
         _VALIDATORS['src'](self._src)
         _VALIDATORS['dataset'](self._dataset_id)
 
-        # Load src access points:
+        # Load data source access points:
         if self._src not in AVAILABLE_SOURCES:
-            raise ValueError("Data fetcher '%s' not available" % self._src)
+            raise InvalidFetcher("Requested data fetcher '%s' not available ! Please try again with any of: %s" % (self._src, "\n".join(AVAILABLE_SOURCES)))
         else:
             Fetchers = AVAILABLE_SOURCES[self._src]
 
@@ -115,6 +121,7 @@ class ArgoDataFetcher(object):
             ds = Fetchers.dataset_ids[0]
         self.fetcher_options = {**{'ds': ds}, **fetcher_kwargs}
         self.postproccessor = self.__empty_processor
+        self._AccessPoint = None
 
         # Dev warnings
         #Todo Clean-up before each release
@@ -154,6 +161,7 @@ class ArgoDataFetcher(object):
 
         if 'float' in self.Fetchers:
             self.fetcher = self.Fetchers['float'](WMO=wmo, **self.fetcher_options)
+            self._AccessPoint = 'float' # Register the requested access point
         else:
             raise InvalidFetcherAccessPoint("'float' not available with '%s' src" % self._src)
 
@@ -173,6 +181,7 @@ class ArgoDataFetcher(object):
         """
         if 'profile' in self.Fetchers:
             self.fetcher = self.Fetchers['profile'](WMO=wmo, CYC=cyc, **self.fetcher_options)
+            self._AccessPoint = 'profile' # Register the requested access point
         else:
             raise InvalidFetcherAccessPoint("'profile' not available with '%s' src" % self._src)
 
@@ -204,6 +213,7 @@ class ArgoDataFetcher(object):
         """
         if 'region' in self.Fetchers:
             self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)
+            self._AccessPoint = 'region' # Register the requested access point
         else:
             raise InvalidFetcherAccessPoint("'region' not available with '%s' src" % self._src)
 
@@ -219,15 +229,22 @@ class ArgoDataFetcher(object):
 
     def to_xarray(self, **kwargs):
         """ Fetch and return data as xarray.DataSet """
-        if not self.fetcher:
-            raise InvalidFetcher(" Initialize an access point (%s) first." %
+        # if not self.fetcher:
+        #     raise InvalidFetcher(" Initialize an access point (%s) first." %
+        #                          ",".join(self.Fetchers.keys()))
+        if self._AccessPoint not in self.valid_access_points:
+            raise InvalidFetcherAccessPoint(" Initialize an access point (%s) first." %
                                  ",".join(self.Fetchers.keys()))
+
         xds = self.fetcher.to_xarray(**kwargs)
         xds = self.postproccessor(xds)
         return xds
 
     def to_dataframe(self, **kwargs):
         """  Fetch and return data as pandas.Dataframe """
+        if self._AccessPoint not in self.valid_access_points:
+            raise InvalidFetcherAccessPoint(" Initialize an access point (%s) first." %
+                                 ",".join(self.Fetchers.keys()))
         xds = self.to_xarray(**kwargs)
         return xds.to_dataframe()
 
@@ -270,9 +287,9 @@ class ArgoIndexFetcher(object):
         _VALIDATORS['mode'](self._mode)
         _VALIDATORS['src'](self._src)
 
-        # Load src access points:
+        # Load data source access points:
         if self._src not in AVAILABLE_SOURCES:
-            raise ValueError("Fetcher '%s' not available" % self._src)
+            raise InvalidFetcher("Requested index fetcher '%s' not available ! Please try again with any of: %s" % (self._src, "\n".join(AVAILABLE_SOURCES)))
         else:
             Fetchers = AVAILABLE_SOURCES[self._src]
 
@@ -289,7 +306,8 @@ class ArgoIndexFetcher(object):
         # Init sub-methods:
         self.fetcher = None
         self.fetcher_options = {**fetcher_kwargs}
-        self.postproccessor = self.__empty_processor                
+        self.postproccessor = self.__empty_processor
+        self._AccessPoint = None
 
     def __repr__(self):
         if self.fetcher:
@@ -315,7 +333,8 @@ class ArgoIndexFetcher(object):
     def float(self, wmo):
         """ Load index for one or more WMOs """
         if 'float' in self.Fetchers:
-            self.fetcher = self.Fetchers['float'](WMO=wmo, **self.fetcher_options)            
+            self.fetcher = self.Fetchers['float'](WMO=wmo, **self.fetcher_options)
+            self._AccessPoint = 'float' # Register the requested access point
         else:
             raise InvalidFetcherAccessPoint("'float' not available with '%s' src" % self._src)
         return self    
@@ -323,7 +342,8 @@ class ArgoIndexFetcher(object):
     def region(self, box):
         """ Load index for a rectangular space/time domain region """
         if 'region' in self.Fetchers:
-            self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)            
+            self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)
+            self._AccessPoint = 'region' # Register the requested access point
         else:
             raise InvalidFetcherAccessPoint("'region' not available with '%s' src" % self._src)
         return self        
@@ -337,15 +357,15 @@ class ArgoIndexFetcher(object):
 
     def to_xarray(self, **kwargs):
         """ Fetch index and return xr.dataset """
-        if not self.fetcher:
-            raise InvalidFetcher(" Initialize an access point (%s) first." %
+        if self._AccessPoint not in self.valid_access_points:
+            raise InvalidFetcherAccessPoint(" Initialize an access point (%s) first." %
                                  ",".join(self.Fetchers.keys()))
         return self.fetcher.to_xarray(**kwargs)
 
     def to_csv(self, file: str='output_file.csv'):
         """ Fetch index and return csv """
-        if not self.fetcher:
-            raise InvalidFetcher(" Initialize an access point (%s) first." %
+        if self._AccessPoint not in self.valid_access_points:
+            raise InvalidFetcherAccessPoint(" Initialize an access point (%s) first." %
                                  ",".join(self.Fetchers.keys()))
         return self.to_dataframe().to_csv(file)
     

@@ -27,12 +27,15 @@ else:
     DSEXISTS = False
 
 def test_invalid_accesspoint():
+    src = list(AVAILABLE_SOURCES.keys())[0] # Use the first valid data source
     with pytest.raises(InvalidFetcherAccessPoint):
-        ArgoIndexFetcher().invalid_accesspoint.to_xarray()
+        ArgoIndexFetcher(src=src).invalid_accesspoint.to_xarray() # Can't get data if access point not defined first
+    with pytest.raises(InvalidFetcherAccessPoint):
+        ArgoIndexFetcher(src=src).to_xarray() # Can't get data if access point not defined first
 
 def test_invalid_fetcher():
     with pytest.raises(InvalidFetcher):
-        ArgoIndexFetcher().to_xarray() # Can't get data if access point not defined first
+        ArgoIndexFetcher(src='invalid_fetcher').to_xarray()
 
 @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
 def test_unavailable_accesspoint():

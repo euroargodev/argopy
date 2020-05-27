@@ -30,6 +30,8 @@ from erddapy import ERDDAP
 from erddapy.utilities import parse_dates, quote_string_constraints
 from argopy.utilities import list_multiprofile_file_variables, list_standard_variables
 
+import fsspec
+
 class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     """ Manage access to Argo data through Ifremer ERDDAP
 
@@ -73,9 +75,15 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         """
         self.cache = cache
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        if self.cache:
-            #todo check if cachedir is a valid path
-            Path(self.cachedir).mkdir(parents=True, exist_ok=True)
+
+        if not self.cache:
+            self.fs = fsspec.filesystem("http")
+        else:
+            self.fs = fsspec.filesystem("filecache",
+                                target_protocol='http',
+                                target_options={'simple_links': True},
+                                cache_storage=self.cachedir,
+                                expiry_time=86400, cache_check=10)
 
         self.definition = 'Ifremer erddap Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
@@ -188,7 +196,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             server='http://www.ifremer.fr/erddap',
             protocol='tabledap'
         )
-        self.erddap.response = 'csv'
+        self.erddap.response = 'nc'
 
         if self.dataset_id == 'phy':
             self.erddap.dataset_id = 'ArgoFloats'
@@ -268,13 +276,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             response[p] = dref[p]
         return response
 
-    @property
-    def cachepath(self):
-        """ Return a specific file path for this request """
-        src = self.cachedir
-        file = ("ERargo_%s.nc") % (self.cname(cache=True))
-        fcache = os.path.join(src, file)
-        return fcache
+    # @property
+    # def cachepath(self):
+    #     """ Return a specific file path for this request """
+    #     src = self.cachedir
+    #     file = ("ERargo_%s.nc") % (self.cname(cache=True))
+    #     fcache = os.path.join(src, file)
+    #     return fcache
 
     @property
     def url(self, response=None):
@@ -328,7 +336,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         except:
             pass
 
-    def to_xarray(self):
+    def to_xarray_deprec(self):
         """ Load Argo data and return a xarray.DataSet """
 
         # Try to load cached file if requested:
@@ -385,6 +393,51 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         #
         return ds
+
+    def to_xarray(self):
+        """ Load Argo data and return a xarray.DataSet """
+
+        # Download data: get a csv, open it as pandas dataframe, convert it to xarray dataset
+        with self.fs.open(self.url) as of:
+            ds = xr.open_dataset(of)
+        ds = ds.rename({'row':'N_POINTS'})
+
+        # Post-process the xarray.DataSet:
+
+        # Set coordinates:
+        coords = ('LATITUDE', 'LONGITUDE', 'TIME', 'N_POINTS')
+        ds = ds.reset_coords()
+        ds['N_POINTS'] = ds['N_POINTS']
+        # Convert all coordinate variable names to upper case
+        for v in ds.data_vars:
+            ds = ds.rename({v: v.upper()})
+        ds = ds.set_coords(coords)
+
+        # Cast data types and add variable attributes (not available in the csv download):
+        ds = ds.argo.cast_types()
+        ds = self._add_attributes(ds)
+
+        # More convention:
+        #         ds = ds.rename({'pres': 'pressure'})
+
+        # Add useful attributes to the dataset:
+        if self.dataset_id == 'phy':
+            ds.attrs['DATA_ID'] = 'ARGO'
+        elif self.dataset_id == 'ref':
+            ds.attrs['DATA_ID'] = 'ARGO_Reference'
+        elif self.dataset_id == 'bgc':
+            ds.attrs['DATA_ID'] = 'ARGO-BGC'
+        ds.attrs['DOI'] = 'http://doi.org/10.17882/42182'
+        ds.attrs['Fetched_from'] = self.erddap.server
+        ds.attrs['Fetched_by'] = getpass.getuser()
+        ds.attrs['Fetched_date'] = pd.to_datetime('now').strftime('%Y/%m/%d')
+        ds.attrs['Fetched_constraints'] = self.cname()
+        ds.attrs['Fetched_url'] = self.url
+        ds = ds[np.sort(ds.data_vars)]
+
+        #
+        return ds
+
 
     def filter_data_mode(self, ds, **kwargs):
         ds = ds.argo.filter_data_mode(errors='ignore', **kwargs)
