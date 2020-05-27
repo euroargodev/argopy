@@ -9,6 +9,7 @@
 
 import numpy as np
 import warnings
+from argopy.errors import InvalidDashboard
 
 try:
     import matplotlib as mpl
@@ -44,6 +45,34 @@ if with_cartopy:
                                                name='land',
                                                scale='50m',
                                                facecolor=[0.4,0.6,0.7])
+
+def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type='ea'):
+    """ Insert in a notebook the Euro-Argo dashboard page for a float or a profile
+
+        Parameters
+        ----------
+        wmo : int
+
+        Returns
+        -------
+        IFrame: IPython.lib.display.IFrame
+    """
+    if type not in ['ea']:
+        raise InvalidDashboard("Invalid dashboard type")
+
+    from IPython.display import IFrame
+    if url is None:
+        if type=='ea': # Open Euro-Argo dashboard
+            url = "https://fleetmonitoring.euro-argo.eu/float/{}".format(str(wmo))
+
+        ## argovis doesn't allow X-Frame insertion !
+        # elif type == 'argovis':
+        #     if cyc is None:
+        #         url = "https://argovis.colorado.edu/catalog/platforms/{}/page".format(str(wmo))
+        #     else:
+        #         url = "https://argovis.colorado.edu/catalog/profiles/{}_{}/page".format(str(wmo),str(cyc))
+
+    return IFrame(url, width=width, height=height)
 
 class discrete_coloring():
     """ Handy class to manage discrete coloring and the associated colorbar

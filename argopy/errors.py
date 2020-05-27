@@ -57,3 +57,9 @@ class ErddapServerError(ValueError):
     Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery
     """
     pass
+
+class InvalidDashboard(ValueError):
+    """
+    Raise this when trying to work with a 2rd party online service to display float information
+    """
+    pass

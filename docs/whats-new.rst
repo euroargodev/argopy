@@ -3,6 +3,22 @@
 What's New
 ==========
 
+v0.1.4 (XX June 2020)
+---------------------
+
+**Features and front-end API**
+
+- Insert in a Jupyter notebook a dashboard page for a specific float (:pr:`20`).
+
+.. code-block:: python
+
+    import argopy
+    argopy.dashboard(wmo=6902746)
+
+**Breaking changes with previous versions**
+
+**Internals**
+
 v0.1.3 (15 May 2020)
 --------------------
 
