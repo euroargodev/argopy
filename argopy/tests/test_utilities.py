@@ -42,7 +42,8 @@ def test_erddap_ds_exists():
     assert isinstance(erddap_ds_exists(ds='ArgoFloats'), bool)
     assert erddap_ds_exists(ds='DummyDS') == False
 
-@unittest.skipUnless(CONNECTED, "open_etopo1 requires an internet connection")
-def test_open_etopo1():
-    ds = open_etopo1([-80, -79, 20, 21], res='l')
-    assert isinstance(ds, xr.DataArray) == True
+# We disable this test because the server has not responded over a week (May 29th)
+# @unittest.skipUnless(CONNECTED, "open_etopo1 requires an internet connection")
+# def test_open_etopo1():
+#     ds = open_etopo1([-80, -79, 20, 21], res='l')
+#     assert isinstance(ds, xr.DataArray) == True
