@@ -5,7 +5,7 @@ name: build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, ffspec ]
   pull_request:
     branches: [ master ]
 
