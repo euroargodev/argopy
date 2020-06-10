@@ -58,13 +58,18 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         pass
 
     @abstractmethod
-    def cname(self, cache=False):
-        """ Return a unique string defining the request """
+    def cname(self):
+        """ Return a unique string defining the request
+
+            Provide this string to populate meta data and titles
+        """
         pass
+
 
     ###
     # Methods that must not change
     ###
+
     def __init__(self,
                  ds: str = "",
                  cache: bool = False,
@@ -87,7 +92,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     def __repr__(self):
         summary = ["<datafetcher '%s'>" % self.definition]
-        summary.append("Domain: %s" % self.cname(cache=False))
+        summary.append("Domain: %s" % self.cname())
         return '\n'.join(summary)
 
     def _format(self, x, typ):
@@ -191,7 +196,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             server='http://www.ifremer.fr/erddap',
             protocol='tabledap'
         )
-        self.erddap.response = 'nc' # This is a major change, we used to work with csv files
+        self.erddap.response = 'nc' # This is a major change in v0.4, we used to work with csv files
 
         if self.dataset_id == 'phy':
             self.erddap.dataset_id = 'ArgoFloats'
@@ -272,6 +277,11 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         for p in plist:
             response[p] = dref[p]
         return response
+
+    @property
+    def cachepath(self):
+        """ Return path to cache file for this request """
+        return self.fs.cachepath(self.url)
 
     @property
     def url(self, response=None):
@@ -427,19 +437,13 @@ class Fetch_wmo(ErddapArgoDataFetcher):
             self.erddap.constraints.update({'cycle_number=~': "|".join(["%i" % i for i in self.CYC])})
         return self
 
-    def cname(self, cache=False):
+    def cname(self):
         """ Return a unique string defining the constraints """
         if len(self.WMO) > 1:
-            if cache:
-                listname = ["WMO%i" % i for i in self.WMO]
-                if isinstance(self.CYC, (np.ndarray)):
-                    [listname.append("CYC%0.4d" % i) for i in self.CYC]
-                listname = "_".join(listname)
-            else:
-                listname = ["WMO%i" % i for i in self.WMO]
-                if isinstance(self.CYC, (np.ndarray)):
-                    [listname.append("CYC%0.4d" % i) for i in self.CYC]
-                listname = ";".join(listname)
+            listname = ["WMO%i" % i for i in self.WMO]
+            if isinstance(self.CYC, (np.ndarray)):
+                [listname.append("CYC%0.4d" % i) for i in self.CYC]
+            listname = ";".join(listname)
         else:
             listname = "WMO%i" % self.WMO[0]
             if isinstance(self.CYC, (np.ndarray)):
@@ -490,19 +494,12 @@ class Fetch_box(ErddapArgoDataFetcher):
         self.erddap.constraints.update({'time<=': self.BOX[7]})
         return None
 
-    def cname(self, cache=False):
+    def cname(self):
         """ Return a unique string defining the constraints """
         BOX = self.BOX
-        if cache:
-            boxname = ("%s_%s_%s_%s_%s_%s_%s_%s") % (self._format(BOX[0], 'lon'), self._format(BOX[1], 'lon'),
-                                                     self._format(BOX[2], 'lat'), self._format(BOX[3], 'lat'),
-                                                     self._format(BOX[4], 'prs'), self._format(BOX[5], 'prs'),
-                                                     self._format(BOX[6], 'tim'), self._format(BOX[7], 'tim'))
-        else:
-            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; z=%0.1f/%0.1f; t=%s/%s]") % \
-                      (BOX[0], BOX[1], BOX[2], BOX[3], BOX[4], BOX[5],
-                       self._format(BOX[6], 'tim'), self._format(BOX[7], 'tim'))
-
+        boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; z=%0.1f/%0.1f; t=%s/%s]") % \
+                  (BOX[0], BOX[1], BOX[2], BOX[3], BOX[4], BOX[5],
+                   self._format(BOX[6], 'tim'), self._format(BOX[7], 'tim'))
         boxname = self.dataset_id + "_" + boxname
         return boxname
 
@@ -528,7 +525,7 @@ class ErddapArgoIndexFetcher(ABC):
         pass
 
     @abstractmethod
-    def cname(self, cache=False):
+    def cname(self):
         """ Return a unique string defining the request """
         pass
 
@@ -579,13 +576,10 @@ class ErddapArgoIndexFetcher(ABC):
         self.erddap.dataset_id = 'ArgoFloats-index'                    
         return self
 
-    # @property
-    # def cachepath(self):
-    #     """ Return path to cache file for this request """
-    #     src = self.cachedir
-    #     file = ("index_%s.csv") % (self.cname(cache=True))
-    #     fcache = os.path.join(src, file)
-    #     return fcache
+    @property
+    def cachepath(self):
+        """ Return path to cache file for this request """
+        return self.fs.cachepath(self.url)
 
     @property
     def url(self, response=None):
@@ -685,15 +679,11 @@ class IndexFetcher_wmo(ErddapArgoIndexFetcher):
         self.erddap.constraints = {'file=~': "(.*)(R|D)("+"|".join(["%i"%i for i in self.WMO])+")(_.*)"}        
         return self
 
-    def cname(self, cache=False):
+    def cname(self):
         """ Return a unique string defining the constraints """
         if len(self.WMO) > 1:
-            if cache:
-                listname = ["WMO%i" % i for i in self.WMO]                
-                listname = "_".join(listname)
-            else:
-                listname = ["WMO%i" % i for i in self.WMO]                
-                listname = ";".join(listname)
+            listname = ["WMO%i" % i for i in self.WMO]
+            listname = ";".join(listname)
         else:
             listname = "WMO%i" % self.WMO[0]                    
         return listname
@@ -734,14 +724,9 @@ class IndexFetcher_box(ErddapArgoIndexFetcher):
         self.erddap.constraints.update({'date<=': self.BOX[5]})
         return None
 
-    def cname(self, cache=False):
+    def cname(self):
         """ Return a unique string defining the constraints """
         BOX = self.BOX
-        if cache:
-            boxname = ("%s_%s_%s_%s_%s_%s") % (self._format(BOX[0], 'lon'), self._format(BOX[1], 'lon'),
-                                               self._format(BOX[2], 'lat'), self._format(BOX[3], 'lat'),                                                     
-                                               self._format(BOX[4], 'tim'), self._format(BOX[5], 'tim'))
-        else:
-            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; t=%s/%s]") % \
-                      (BOX[0],BOX[1],BOX[2],BOX[3],self._format(BOX[4], 'tim'), self._format(BOX[5], 'tim'))        
+        boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; t=%s/%s]") % \
+                  (BOX[0],BOX[1],BOX[2],BOX[3],self._format(BOX[4], 'tim'), self._format(BOX[5], 'tim'))
         return boxname

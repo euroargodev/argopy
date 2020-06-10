@@ -28,13 +28,14 @@ import pickle
 import pkg_resources
 path2pkl = pkg_resources.resource_filename('argopy', 'assets/')
 
-from argopy.errors import ErddapServerError
+from argopy.errors import ErddapServerError, FileSystemHasNoCache, CacheFileNotFound
 from argopy.options import OPTIONS
 
 class onlinestore():
     """Wrapper around fsspec http file store
 
         This wrapper intend to make argopy safer to failures from http requests
+        This wrapper is primarily used by the Erddap data fetcher
     """
 
     def __init__(self, cache: bool = False, cachedir: str = ""):
@@ -46,7 +47,6 @@ class onlinestore():
             cachedir : str (from OPTIONS)
 
         """
-        # Manage File System:
         self.cache = cache
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
         if not self.cache:
@@ -59,6 +59,18 @@ class onlinestore():
                                         expiry_time=86400, cache_check=10)
             # We use a refresh rate for cache of 1 day,
             # since this is the update frequency of the Ifremer erddap
+
+    def cachepath(self, uri : str, errors: str = 'raise'):
+        """ Return path to cached file for a given URI """
+        if not self.cache:
+            if errors == 'raise':
+                raise FileSystemHasNoCache("%s has no cache system" % type(self.fs) )
+        else:
+            self.fs.load_cache()
+            if uri in self.fs.cached_files[-1]:
+                return os.path.sep.join([self.fs.storage[-1], self.fs.cached_files[-1][uri]['fn']])
+            elif errors == 'raise':
+                raise CacheFileNotFound("No cached file found in %s for: \n%s" % (self.fs.storage[-1], uri))
 
     def _verbose_exceptions(self, e):
         r = e.response # https://requests.readthedocs.io/en/master/api/#requests.Response
@@ -84,7 +96,7 @@ class onlinestore():
             error.append("The URL triggering this error was: \n%s" % url)
             msg = "\n".join(error)
             if "Payload Too Large" in msg:
-                raise ErddapServerError("Your query produced too much data.  "
+                raise ErddapServerError("Your query produced too much data. "
                                         "Try to request less data.\n%s" % msg)
             else:
                 raise requests.HTTPError(msg)

@@ -15,6 +15,13 @@ class NetCDF4FileNotFoundError(FileNotFoundError):
     def __str__(self):
         return (repr(self.value))
 
+class CacheFileNotFound(FileNotFoundError):
+    """ Raise when a file is not found in cache """
+    pass
+
+class FileSystemHasNoCache(ValueError):
+    """ Raise when trying to access a cache system not implemented """
+    pass
 
 class UnrecognisedDataSelectionMode(ValueError):
     """

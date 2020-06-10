@@ -1,6 +1,8 @@
 
 import pytest
 from argopy.errors import NetCDF4FileNotFoundError, \
+    CacheFileNotFound, \
+    FileSystemHasNoCache, \
     UnrecognisedDataSelectionMode, \
     UnrecognisedProfileDirection, \
     InvalidDatasetStructure, \
@@ -11,6 +13,18 @@ def test_NetCDF4FileNotFoundError():
     def foobar():
         raise NetCDF4FileNotFoundError("invalid_path")
     with pytest.raises(NetCDF4FileNotFoundError):
+        foobar()
+
+def test_CacheFileNotFound():
+    def foobar():
+        raise CacheFileNotFound()
+    with pytest.raises(CacheFileNotFound):
+        foobar()
+
+def test_FileSystemHasNoCache():
+    def foobar():
+        raise FileSystemHasNoCache()
+    with pytest.raises(FileSystemHasNoCache):
         foobar()
 
 def test_UnrecognisedDataSelectionMode():
