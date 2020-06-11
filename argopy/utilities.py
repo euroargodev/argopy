@@ -262,7 +262,7 @@ class httpstore():
         This wrapper is primarily used by the Erddap data/index fetchers
     """
 
-    def __init__(self, cache: bool = False, cachedir: str = ""):
+    def __init__(self, cache: bool = False, cachedir: str = "", **kw):
         """ Create a file storage system for http requests
 
             Parameters
@@ -274,13 +274,13 @@ class httpstore():
         self.cache = cache
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
         if not self.cache:
-            self.fs = fsspec.filesystem("http")
+            self.fs = fsspec.filesystem("http", **kw)
         else:
             self.fs = fsspec.filesystem("filecache",
                                         target_protocol='http',
                                         target_options={'simple_links': True},
                                         cache_storage=self.cachedir,
-                                        expiry_time=86400, cache_check=10)
+                                        expiry_time=86400, cache_check=10, **kw)
             # We use a refresh rate for cache of 1 day,
             # since this is the update frequency of the Ifremer erddap
 
@@ -738,7 +738,7 @@ def erddap_ds_exists(ds="ArgoFloats"):
     # e = ArgoDataFetcher(src='erddap').float(wmo=0).fetcher
     # erddap_index = json.load(urlopen(e.erddap.server + "/info/index.json"))
     # erddap_index = json.load(urlopen("http://www.ifremer.fr/erddap/info/index.json"))
-    with httpstore().open("http://www.ifremer.fr/erddap/info/index.json") as of:
+    with httpstore(timeout=120).open("http://www.ifremer.fr/erddap/info/index.json") as of:
         erddap_index = json.load(of)
     return ds in [row[-1] for row in erddap_index['table']['rows']]
 
