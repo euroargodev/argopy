@@ -288,8 +288,10 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
 
         return ds
 
-    def _best_loader(self, **kwargs):
+    def _load(self, **kwargs):
         """ Load data as efficiently as possible
+
+        This allows to manage parallel retrieval of multiple files with a Dask client or a Multiprocessing pool.
 
         Returns
         -------
@@ -323,7 +325,7 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
         if len(results) > 0:
             # ds = xr.concat(results, dim='N_POINTS', data_vars='all', coords='all', compat='equals')
             ds = xr.concat(results, dim='N_POINTS', data_vars='all', coords='all', compat='override')
-            ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS'])) # Re-index to avoid duplicate values
+            ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS']))  # Re-index to avoid duplicate values
             ds = ds.set_coords('N_POINTS')
             ds = ds.sortby('TIME')
             return ds
@@ -337,7 +339,7 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
         ----------
         errors: {'raise','ignore'}, optional
             If 'raise' (default), raises a NetCDF4FileNotFoundError error if any of the requested
-            files cannot be found. If 'ignore', ignore this file in fetching data.
+            files cannot be found. If 'ignore', file not found is skipped when fetching data.
 
         client: None, dask.client or 'mp'
 
@@ -349,7 +351,7 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
         self._list_argo_files(errors=errors)
 
         # Load data (will raise an error if no data found):
-        ds = self._best_loader(client=client)
+        ds = self._load(client=client)
 
         # Remove netcdf file attributes and replace them with argopy ones:
         ds.attrs = {}

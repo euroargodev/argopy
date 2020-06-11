@@ -27,7 +27,7 @@ from pathlib import Path
 import getpass
 
 from .proto import ArgoDataFetcherProto
-from argopy.utilities import load_dict, mapp_dict, onlinestore
+from argopy.utilities import load_dict, mapp_dict, httpstore
 from argopy.options import OPTIONS
 import argopy
 
@@ -84,7 +84,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             cachedir : None
         """
 
-        self.fs = onlinestore(cache=cache, cachedir=cachedir)
+        self.fs = httpstore(cache=cache, cachedir=cachedir)
         self.definition = 'Ifremer erddap Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
         self.init(**kwargs)
@@ -538,7 +538,7 @@ class ErddapArgoIndexFetcher(ABC):
                  **kwargs):
         """ Instantiate an ERDDAP Argo index loader with force caching """    
 
-        self.fs = onlinestore(cache=cache, cachedir=cachedir)
+        self.fs = httpstore(cache=cache, cachedir=cachedir)
         self.definition = 'Ifremer erddap Argo index fetcher'
         self.dataset_id = 'index'
         self.init(**kwargs)

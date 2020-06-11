@@ -31,11 +31,232 @@ path2pkl = pkg_resources.resource_filename('argopy', 'assets/')
 from argopy.errors import ErddapServerError, FileSystemHasNoCache, CacheFileNotFound
 from argopy.options import OPTIONS
 
-class onlinestore():
+
+class filestore():
+    """Wrapper around fsspec file stores
+
+        https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.local.LocalFileSystem
+
+        This wrapper is primarily used by the localftp data/index fetchers
+
+    """
+
+    def __init__(self, cache: bool = False, cachedir: str = ""):
+        """ Create a file storage system for local file requests
+
+            Parameters
+            ----------
+            cache : bool (False)
+            cachedir : str (from OPTIONS)
+
+        """
+        self.cache = cache
+        self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
+        if not self.cache:
+            self.fs = fsspec.filesystem("file")
+        else:
+            self.fs = fsspec.filesystem("filecache",
+                                        target_protocol='file',
+                                        cache_storage=self.cachedir,
+                                        expiry_time=86400, cache_check=10)
+            # We use a refresh rate for cache of 1 day,
+            # since this is the update frequency of the Ifremer erddap
+
+    def cachepath(self, uri : str, errors: str = 'raise'):
+        """ Return path to cached file for a given URI """
+        if not self.cache:
+            if errors == 'raise':
+                raise FileSystemHasNoCache("%s has no cache system" % type(self.fs) )
+        else:
+            self.fs.load_cache()
+            if uri in self.fs.cached_files[-1]:
+                return os.path.sep.join([self.fs.storage[-1], self.fs.cached_files[-1][uri]['fn']])
+            elif errors == 'raise':
+                raise CacheFileNotFound("No cached file found in %s for: \n%s" % (self.fs.storage[-1], uri))
+
+    def open(self, url, **kwargs):
+        return self.fs.open(url, **kwargs)
+
+    def open_dataset(self, url, **kwargs):
+        """ Return a xarray.dataset from an url, or verbose errors
+
+            Parameters
+            ----------
+            url: str
+
+            Returns
+            -------
+            :class:`xarray.DataArray`
+
+        """
+        try:
+            with self.fs.open(url) as of:
+                ds = xr.open_dataset(of, **kwargs)
+            return ds
+        except:
+            raise
+
+    def open_dataframe(self, url, **kwargs):
+        """ Return a pandas.dataframe from an url with csv response, or verbose errors
+
+            Parameters
+            ----------
+            url: str
+
+            Returns
+            -------
+            :class:`pandas.DataFrame`
+
+        """
+        try:
+            with self.fs.open(url) as of:
+                df = pd.read_csv(of, **kwargs)
+            return df
+        except:
+            raise
+
+
+class ftpstore():
+    """Wrapper around fsspec ftp file store
+
+        https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.local.LocalFileSystem
+        https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.ftp.FTPFileSystem
+        https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.sftp.SFTPFileSystem
+
+        This wrapper is primarily used by the localftp data/index fetchers
+    """
+
+    def __init__(self, cache: bool = False, cachedir: str = ""):
+        """ Create a file storage system for ftp requests
+
+            Parameters
+            ----------
+            cache : bool (False)
+            cachedir : str (from OPTIONS)
+
+        """
+        self.cache = cache
+        self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
+        if not self.cache:
+            self.fs = fsspec.filesystem("ftp")
+        else:
+            self.fs = fsspec.filesystem("filecache",
+                                        target_protocol='ftp',
+                                        target_options={'simple_links': True},
+                                        cache_storage=self.cachedir,
+                                        expiry_time=86400, cache_check=10)
+            # We use a refresh rate for cache of 1 day,
+            # since this is the update frequency of the Ifremer erddap
+
+    def cachepath(self, uri : str, errors: str = 'raise'):
+        """ Return path to cached file for a given URI """
+        if not self.cache:
+            if errors == 'raise':
+                raise FileSystemHasNoCache("%s has no cache system" % type(self.fs) )
+        else:
+            self.fs.load_cache()
+            if uri in self.fs.cached_files[-1]:
+                return os.path.sep.join([self.fs.storage[-1], self.fs.cached_files[-1][uri]['fn']])
+            elif errors == 'raise':
+                raise CacheFileNotFound("No cached file found in %s for: \n%s" % (self.fs.storage[-1], uri))
+
+    def _verbose_exceptions(self, e):
+        r = e.response # https://requests.readthedocs.io/en/master/api/#requests.Response
+        status_code = r.status_code
+        data = io.BytesIO(r.content)
+        url = r.url
+
+        # 4XX client error response
+        if r.status_code == 404:  # Empty response
+            error = ["Error %i " % r.status_code]
+            error.append(data.read().decode("utf-8").replace("Error", ""))
+            error.append("The URL triggering this error was: \n%s" % url)
+            msg = "\n".join(error)
+            if "Currently unknown datasetID" in msg:
+                raise ErddapServerError("Dataset not found in the Erddap, try again later. "
+                                        "The server may be rebooting. \n%s" % msg)
+            else:
+                raise requests.HTTPError(msg)
+
+        elif r.status_code == 413:  # Too large request
+            error = ["Error %i " % r.status_code]
+            error.append(data.read().decode("utf-8").replace("Error", ""))
+            error.append("The URL triggering this error was: \n%s" % url)
+            msg = "\n".join(error)
+            if "Payload Too Large" in msg:
+                raise ErddapServerError("Your query produced too much data. "
+                                        "Try to request less data.\n%s" % msg)
+            else:
+                raise requests.HTTPError(msg)
+
+        # 5XX server error response
+        elif r.status_code == 500:  # 500 Internal Server Error
+            if "text/html" in r.headers.get('content-type'):
+                display(HTML(data.read().decode("utf-8")))
+            error = ["Error %i " % r.status_code]
+            error.append(data.read().decode("utf-8"))
+            error.append("The URL triggering this error was: \n%s" % url)
+            msg = "\n".join(error)
+            if "No space left on device" in msg or "java.io.EOFException" in msg:
+                raise ErddapServerError("An error occured on the Erddap server side. "
+                                        "Please contact assistance@ifremer.fr to ask a reboot of the erddap server. \n%s" % msg)
+            else:
+                raise requests.HTTPError(msg)
+
+        else:
+            error = ["Error %i " % r.status_code]
+            error.append(data.read().decode("utf-8"))
+            error.append("The URL triggering this error was: \n%s" % url)
+            print("\n".join(error))
+            r.raise_for_status()
+
+    def open(self, url, **kwargs):
+        return self.fs.open(url, **kwargs)
+
+    def open_dataset(self, url, **kwargs):
+        """ Return a xarray.dataset from an url, or verbose errors
+
+            Parameters
+            ----------
+            url: str
+
+            Returns
+            -------
+            :class:`xarray.DataArray`
+
+        """
+        try:
+            with self.fs.open(url) as of:
+                ds = xr.open_dataset(of, **kwargs)
+            return ds
+        except requests.HTTPError as e:
+            self._verbose_exceptions(e)
+
+    def open_dataframe(self, url, **kwargs):
+        """ Return a pandas.dataframe from an url with csv response, or verbose errors
+
+            Parameters
+            ----------
+            url: str
+
+            Returns
+            -------
+            :class:`pandas.DataFrame`
+
+        """
+        try:
+            with self.fs.open(url) as of:
+                df = pd.read_csv(of, **kwargs)
+            return df
+        except requests.HTTPError as e:
+            self._verbose_exceptions(e)
+
+
+class httpstore():
     """Wrapper around fsspec http file store
 
         This wrapper intend to make argopy safer to failures from http requests
-        This wrapper is primarily used by the Erddap data fetcher
+        This wrapper is primarily used by the Erddap data/index fetchers
     """
 
     def __init__(self, cache: bool = False, cachedir: str = ""):
@@ -514,7 +735,7 @@ def erddap_ds_exists(ds="ArgoFloats"):
     # e = ArgoDataFetcher(src='erddap').float(wmo=0).fetcher
     # erddap_index = json.load(urlopen(e.erddap.server + "/info/index.json"))
     # erddap_index = json.load(urlopen("http://www.ifremer.fr/erddap/info/index.json"))
-    with onlinestore().open("http://www.ifremer.fr/erddap/info/index.json") as of:
+    with httpstore().open("http://www.ifremer.fr/erddap/info/index.json") as of:
         erddap_index = json.load(of)
     return ds in [row[-1] for row in erddap_index['table']['rows']]
 
@@ -541,7 +762,7 @@ def open_etopo1(box, res='l'):
     thisurl = uri(resx, resy, ",".join([str(b) for b in [box[0], box[2], box[1], box[3]]]))
     #     print(thisurl)
     # ds = xr.open_dataset(urlopen(thisurl).read())
-    ds = onlinestore(cache=True).open_dataset(thisurl)
+    ds = httpstore(cache=True).open_dataset(thisurl)
     da = ds['Band1'].rename("topo")
     for a in ds.attrs:
         da.attrs[a] = ds.attrs[a]

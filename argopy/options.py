@@ -57,7 +57,7 @@ class set_options:
       Default: `erddap`
 
     - `local_ftp`: Absolute path to local GDAC ftp copy.
-      Default: `???`
+      Default: `.`
 
     - `cachedir`: Absolute path to local cache directory.
       Default: `~/.cache/argopy`
