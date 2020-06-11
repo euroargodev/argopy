@@ -64,13 +64,13 @@ class EntryPoints_AllBackends(TestCase):
         for arg in self.args['float']:
             options = {**self.fetcher_opts, **ftc_opts}
             ds = ArgoIndexFetcher(src=bk, **options).float(arg).to_xarray()
-            assert isinstance(ds, xr.Dataset) == True
+            assert isinstance(ds, xr.Dataset)
 
     def __test_region(self, bk):
         """ Test float index fetching for a given backend """
         for arg in self.args['region']:
             ds = ArgoIndexFetcher(src=bk).region(arg).to_xarray()
-            assert isinstance(ds, xr.Dataset) == True
+            assert isinstance(ds, xr.Dataset)
 
     @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
@@ -100,7 +100,7 @@ class Erddap_backend(TestCase):
     """ Test main API facade for all available dataset of the ERDDAP index fetching backend """
 
     def test_cachepath_notfound(self):
-        testcachedir = os.path.expanduser(os.path.join("~",".argopytest_tmp"))
+        testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
         with argopy.set_options(cachedir=testcachedir):
             loader = ArgoIndexFetcher(src='erddap', cache=True).float(6902746)
             with pytest.raises(CacheFileNotFound):
@@ -108,7 +108,7 @@ class Erddap_backend(TestCase):
         shutil.rmtree(testcachedir) # Make sure the cache is empty
 
     def test_nocache(self):
-        testcachedir = os.path.expanduser(os.path.join("~",".argopytest_tmp"))
+        testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
         with argopy.set_options(cachedir=testcachedir):
             loader = ArgoIndexFetcher(src='erddap', cache=False).float(6902746)
             ds = loader.to_xarray()
@@ -117,7 +117,7 @@ class Erddap_backend(TestCase):
         shutil.rmtree(testcachedir) # Make sure the cache is empty
 
     def test_caching_index(self):
-        testcachedir = os.path.expanduser(os.path.join("~",".argopytest_tmp"))
+        testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
         with argopy.set_options(cachedir=testcachedir):
             try:
                 loader = ArgoIndexFetcher(src='erddap', cache=True).float(6902746)
@@ -125,8 +125,8 @@ class Erddap_backend(TestCase):
                 ds = loader.to_xarray()
                 # 2nd call to load from cached file:
                 ds = loader.to_xarray()
-                assert isinstance(ds, xr.Dataset) == True
-                assert isinstance(loader.fetcher.cachepath, str) == True
+                assert isinstance(ds, xr.Dataset)
+                assert isinstance(loader.fetcher.cachepath, str)
                 shutil.rmtree(testcachedir)
             except ErddapServerError: # Test is passed when something goes wrong because of the erddap server, not our fault !
                 shutil.rmtree(testcachedir)
