@@ -5,39 +5,6 @@
 High level helper methods to load Argo data from any source
 The facade should be able to work with all available data access point,
 
-Usage for LOCALFTP:
-
-    from argopy import DataFetcher as ArgoDataFetcher
-
-    argo_loader = ArgoDataFetcher(src='localftp', ds='phy')
-or
-    argo_loader = ArgoDataFetcher(src='localftp', ds='bgc')
-
-    argo_loader.float(6902746).to_xarray()
-    argo_loader.float([6902746, 6902747, 6902757, 6902766]).to_xarray()
-
-
-Usage for ERDDAP (default src):
-
-    from argopy import DataFetcher as ArgoDataFetcher
-
-    argo_loader = ArgoDataFetcher(src='erddap')
-or
-    argo_loader = ArgoDataFetcher(src='erddap', cachedir='tmp', cache=True)
-or
-    argo_loader = ArgoDataFetcher(src='erddap', ds='ref')
-
-    argo_loader.profile(6902746, 34).to_xarray()
-    argo_loader.profile(6902746, np.arange(12,45)).to_xarray()
-    argo_loader.profile(6902746, [1,12]).to_xarray()
-or
-    argo_loader.float(6902746).to_xarray()
-    argo_loader.float([6902746, 6902747, 6902757, 6902766]).to_xarray()
-    argo_loader.float([6902746, 6902747, 6902757, 6902766], CYC=1).to_xarray()
-or
-    argo_loader.region([-85,-45,10.,20.,0,1000.]).to_xarray()
-    argo_loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2014-12']).to_xarray()
-
 """
 
 import os
@@ -89,6 +56,20 @@ class ArgoDataFetcher(object):
                  ds: str = "",
                  **fetcher_kwargs):
 
+        """
+            Parameters
+            ----------
+            mode : str
+                User mode. Set to OPTIONS['mode'] by default.
+            ds : str
+                Name of the dataset to load. Use the global OPTIONS['dataset'] by default.
+            src : str
+                Source of the data to use. Use the global OPTIONS['src'] by default.
+
+            **fetcher_kwargs
+                Used to pass arguments specific to a data source.
+        """
+
         # Facade options:
         self._mode = OPTIONS['mode'] if mode == '' else mode
         self._dataset_id = OPTIONS['dataset'] if ds == '' else ds
@@ -100,7 +81,8 @@ class ArgoDataFetcher(object):
 
         # Load data source access points:
         if self._src not in AVAILABLE_SOURCES:
-            raise InvalidFetcher("Requested data fetcher '%s' not available ! Please try again with any of: %s" % (self._src, "\n".join(AVAILABLE_SOURCES)))
+            raise InvalidFetcher("Requested data fetcher '%s' not available ! Please try again with any of: %s"
+                                 % (self._src, "\n".join(AVAILABLE_SOURCES)))
         else:
             Fetchers = AVAILABLE_SOURCES[self._src]
 

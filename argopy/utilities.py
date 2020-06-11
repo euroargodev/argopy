@@ -41,7 +41,7 @@ class filestore():
 
     """
 
-    def __init__(self, cache: bool = False, cachedir: str = ""):
+    def __init__(self, cache: bool = False, cachedir: str = "", **kw):
         """ Create a file storage system for local file requests
 
             Parameters
@@ -53,12 +53,12 @@ class filestore():
         self.cache = cache
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
         if not self.cache:
-            self.fs = fsspec.filesystem("file")
+            self.fs = fsspec.filesystem("file", **kw)
         else:
             self.fs = fsspec.filesystem("filecache",
                                         target_protocol='file',
                                         cache_storage=self.cachedir,
-                                        expiry_time=86400, cache_check=10)
+                                        expiry_time=86400, cache_check=10, **kw)
             # We use a refresh rate for cache of 1 day,
             # since this is the update frequency of the Ifremer erddap
 
@@ -74,11 +74,14 @@ class filestore():
             elif errors == 'raise':
                 raise CacheFileNotFound("No cached file found in %s for: \n%s" % (self.fs.storage[-1], uri))
 
+    def glob(self, path, **kwargs):
+        return self.fs.glob(path, **kwargs)
+
     def open(self, url, **kwargs):
         return self.fs.open(url, **kwargs)
 
     def open_dataset(self, url, **kwargs):
-        """ Return a xarray.dataset from an url, or verbose errors
+        """ Return a xarray.dataset from an url
 
             Parameters
             ----------
@@ -97,7 +100,7 @@ class filestore():
             raise
 
     def open_dataframe(self, url, **kwargs):
-        """ Return a pandas.dataframe from an url with csv response, or verbose errors
+        """ Return a pandas.dataframe from an url with csv response
 
             Parameters
             ----------
@@ -760,8 +763,6 @@ def open_etopo1(box, res='l'):
            "&resx={}&resy={}"
            "&bbox={}").format
     thisurl = uri(resx, resy, ",".join([str(b) for b in [box[0], box[2], box[1], box[3]]]))
-    #     print(thisurl)
-    # ds = xr.open_dataset(urlopen(thisurl).read())
     ds = httpstore(cache=True).open_dataset(thisurl)
     da = ds['Band1'].rename("topo")
     for a in ds.attrs:
