@@ -10,32 +10,25 @@ This is not intended to be used directly, only by the facade at fetchers.py
 
 """
 
-
-access_points = ['wmo', 'box']
-exit_formats = ['xarray']
-dataset_ids = ['phy', 'ref', 'bgc']  # First is default
-
-import os
-import sys
 import pandas as pd
-import xarray as xr
 import numpy as np
 import copy
 
 from abc import ABC, abstractmethod
-from pathlib import Path
 import getpass
 
 from .proto import ArgoDataFetcherProto
 from argopy.utilities import load_dict, mapp_dict, httpstore
 from argopy.options import OPTIONS
-import argopy
 
 from erddapy import ERDDAP
 from erddapy.utilities import parse_dates, quote_string_constraints
-from argopy.utilities import list_multiprofile_file_variables, list_standard_variables
+from argopy.utilities import list_standard_variables
 
-import fsspec
+access_points = ['wmo', 'box']
+exit_formats = ['xarray']
+dataset_ids = ['phy', 'ref', 'bgc']  # First is default
+
 
 class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     """ Manage access to Argo data through Ifremer ERDDAP
@@ -65,7 +58,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         """
         pass
 
-
     ###
     # Methods that must not change
     ###
@@ -84,7 +76,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             cachedir : None
         """
 
-        self.fs = httpstore(cache=cache, cachedir=cachedir)
+        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
         self.definition = 'Ifremer erddap Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
         self.init(**kwargs)
@@ -538,7 +530,7 @@ class ErddapArgoIndexFetcher(ABC):
                  **kwargs):
         """ Instantiate an ERDDAP Argo index loader with force caching """    
 
-        self.fs = httpstore(cache=cache, cachedir=cachedir)
+        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
         self.definition = 'Ifremer erddap Argo index fetcher'
         self.dataset_id = 'index'
         self.init(**kwargs)
@@ -546,10 +538,10 @@ class ErddapArgoIndexFetcher(ABC):
 
     def __repr__(self):
         if hasattr(self, '_definition'):
-            summary = [ "<indexfetcher '%s'>" % self.definition ]
+            summary = ["<indexfetcher '%s'>" % self.definition]
         else:
-            summary = [ "<indexfetcher '%s'>" % 'Ifremer erddap Argo Index fetcher' ]
-        summary.append( "Domain: %s" % self.cname() )
+            summary = ["<indexfetcher '%s'>" % 'Ifremer erddap Argo Index fetcher']
+        summary.append("Domain: %s" % self.cname())
         return '\n'.join(summary)
 
     def _format(self, x, typ):

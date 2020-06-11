@@ -66,7 +66,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
     # Methods that must not change
     ###
     def __init__(self,
-                 path_ftp: str = "",
+                 local_ftp: str = "",
                  ds: str = "",
                  cache: bool = False,
                  cachedir: str = "",
@@ -76,7 +76,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
 
             Parameters
             ----------
-            path_ftp : str
+            local_ftp : str
                 Path to the local directory where the 'dac' folder is located.
             ds : str
                 Name of the dataset to load. Use the global OPTIONS['dataset'] by default.
@@ -93,12 +93,12 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         self.fs = filestore(cache=cache, cachedir=cachedir, use_listings_cache=True)
         self.definition = 'Local ftp Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
-        self.path_ftp = OPTIONS['local_ftp'] if path_ftp == '' else path_ftp
+        self.local_ftp = OPTIONS['local_ftp'] if local_ftp == '' else local_ftp
         self.init(**kwargs)
 
     def __repr__(self):
         summary = ["<datafetcher '%s'>" % self.definition]
-        summary.append("FTP: %s" % self.path_ftp)
+        summary.append("FTP: %s" % self.local_ftp)
         summary.append("Domain: %s" % self.cname())
         return '\n'.join(summary)
 
@@ -143,16 +143,16 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
                 # Multi-profile file:
                 # <FloatWmoID>_prof.nc
                 if self.dataset_id == 'phy':
-                    return os.path.sep.join([self.path_ftp, "dac", "*", str(wmo), "%i_prof.nc" % wmo])
+                    return os.path.sep.join([self.local_ftp, "dac", "*", str(wmo), "%i_prof.nc" % wmo])
                 elif self.dataset_id == 'bgc':
-                    return os.path.sep.join([self.path_ftp, "dac", "*", str(wmo), "%i_Sprof.nc" % wmo])
+                    return os.path.sep.join([self.local_ftp, "dac", "*", str(wmo), "%i_Sprof.nc" % wmo])
             else:
                 # Single profile file:
                 # <B/M/S><R/D><FloatWmoID>_<XXX><D>.nc
                 if cyc < 1000:
-                    return os.path.sep.join([self.path_ftp, "dac", "*", str(wmo), "profiles", "*%i_%0.3d*.nc" % (wmo, cyc)])
+                    return os.path.sep.join([self.local_ftp, "dac", "*", str(wmo), "profiles", "*%i_%0.3d*.nc" % (wmo, cyc)])
                 else:
-                    return os.path.sep.join([self.path_ftp, "dac", "*", str(wmo), "profiles", "*%i_%0.4d*.nc" % (wmo, cyc)])
+                    return os.path.sep.join([self.local_ftp, "dac", "*", str(wmo), "profiles", "*%i_%0.4d*.nc" % (wmo, cyc)])
 
         pattern = _filepathpattern(wmo, cyc)
         lst = sorted(glob(pattern))
@@ -235,7 +235,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         if self.dataset_id == 'bgc':
             ds.attrs['DATA_ID'] = 'ARGO-BGC'
         ds.attrs['DOI'] = 'http://doi.org/10.17882/42182'
-        ds.attrs['Fetched_from'] = self.path_ftp
+        ds.attrs['Fetched_from'] = self.local_ftp
         ds.attrs['Fetched_by'] = getpass.getuser()
         ds.attrs['Fetched_date'] = pd.to_datetime('now').strftime('%Y/%m/%d')
         ds.attrs['Fetched_constraints'] = self.cname()
@@ -315,7 +315,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         if self.dataset_id == 'bgc':
             ds.attrs['DATA_ID'] = 'ARGO-BGC'
         ds.attrs['DOI'] = 'http://doi.org/10.17882/42182'
-        ds.attrs['Fetched_from'] = self.path_ftp
+        ds.attrs['Fetched_from'] = self.local_ftp
         ds.attrs['Fetched_by'] = getpass.getuser()
         ds.attrs['Fetched_date'] = pd.to_datetime('now').strftime('%Y/%m/%d')
         ds.attrs['Fetched_constraints'] = self.cname()
@@ -425,7 +425,7 @@ class LocalFTPArgoIndexFetcher(ABC):
     # Methods that must not change
     ###
     def __init__(self,
-                 path_ftp: str = "",
+                 local_ftp: str = "",
                  index_file: str = "ar_index_global_prof.txt",
                  cache: bool = False,
                  cachedir: str = "",
@@ -444,13 +444,13 @@ class LocalFTPArgoIndexFetcher(ABC):
             Path(self.cachedir).mkdir(parents=True, exist_ok=True)
 
         self.definition = 'Local ftp Argo index fetcher'
-        self.path_ftp = OPTIONS['local_ftp'] if path_ftp == '' else path_ftp
+        self.local_ftp = OPTIONS['local_ftp'] if local_ftp == '' else local_ftp
         self.index_file = index_file
         self.init(**kwargs)
 
     def __repr__(self):
         summary = ["<indexfetcher '%s'>" % self.definition]
-        summary.append("FTP: %s" % self.path_ftp)
+        summary.append("FTP: %s" % self.local_ftp)
         summary.append("Domain: %s" % self.cname())
         return '\n'.join(summary)
 
@@ -537,7 +537,7 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
         # input file reader
         Path(self.cachedir).mkdir(parents=True, exist_ok=True)
 
-        inputFileName = os.path.join(self.path_ftp, self.index_file)
+        inputFileName = os.path.join(self.local_ftp, self.index_file)
         outputFileName = os.path.join(self.cachedir, 'tmp_'+self.cname(cache=True)+'.csv')
         self.filtered_index = outputFileName
 
