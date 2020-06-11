@@ -77,7 +77,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
             Parameters
             ----------
             path_ftp : str
-                Path to the local directory with the 'dac' folder and index file.
+                Path to the local directory where the 'dac' folder is located.
             ds : str
                 Name of the dataset to load. Use the global OPTIONS['dataset'] by default.
             cache : bool
@@ -85,8 +85,8 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
             cachedir : str
                 Absolute path to the cache directory
             dimension : str
-                Main dimension of the output dataset. This can "profile" (default) to retrieve a collection of
-                profiles, or "points" to have data as a collection of measurements.
+                Main dimension of the output dataset. This can be "profile" to retrieve a collection of
+                profiles, or "point" (default) to have data as a collection of measurements.
                 This can be used to optimise performances
 
         """
@@ -143,16 +143,16 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
                 # Multi-profile file:
                 # <FloatWmoID>_prof.nc
                 if self.dataset_id == 'phy':
-                    return os.path.sep.join([self.path_ftp, "*", str(wmo), "%i_prof.nc" % wmo])
+                    return os.path.sep.join([self.path_ftp, "dac", "*", str(wmo), "%i_prof.nc" % wmo])
                 elif self.dataset_id == 'bgc':
-                    return os.path.sep.join([self.path_ftp, "*", str(wmo), "%i_Sprof.nc" % wmo])
+                    return os.path.sep.join([self.path_ftp, "dac", "*", str(wmo), "%i_Sprof.nc" % wmo])
             else:
                 # Single profile file:
                 # <B/M/S><R/D><FloatWmoID>_<XXX><D>.nc
                 if cyc < 1000:
-                    return os.path.sep.join([self.path_ftp, "*", str(wmo), "profiles", "*%i_%0.3d*.nc" % (wmo, cyc)])
+                    return os.path.sep.join([self.path_ftp, "dac", "*", str(wmo), "profiles", "*%i_%0.3d*.nc" % (wmo, cyc)])
                 else:
-                    return os.path.sep.join([self.path_ftp, "*", str(wmo), "profiles", "*%i_%0.4d*.nc" % (wmo, cyc)])
+                    return os.path.sep.join([self.path_ftp, "dac", "*", str(wmo), "profiles", "*%i_%0.4d*.nc" % (wmo, cyc)])
 
         pattern = _filepathpattern(wmo, cyc)
         lst = sorted(glob(pattern))
@@ -226,7 +226,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
             if len(list(ds[v].dims)) == 0:
                 ds = ds.drop_vars(v)
 
-        # ds = ds.argo.profile2point()  # Default output is a collection of points
+        ds = ds.argo.profile2point()  # Default output is a collection of points
 
         # Remove netcdf file attributes and replace them with argopy ones:
         ds.attrs = {}

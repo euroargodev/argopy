@@ -123,13 +123,13 @@ class EntryPoints_AllBackends(TestCase):
     @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
     def test_float_localftp(self):
         ftproot, flist = argopy.tutorial.open_dataset('localftp')
-        with argopy.set_options(local_ftp=os.path.join(ftproot, 'dac')):
+        with argopy.set_options(local_ftp=ftproot):
             self.__test_float('localftp', )
 
     @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
     def test_profile_localftp(self):
         ftproot, flist = argopy.tutorial.open_dataset('localftp')
-        with argopy.set_options(local_ftp=os.path.join(ftproot, 'dac')):
+        with argopy.set_options(local_ftp=ftproot):
             self.__test_profile('localftp')
 
     @unittest.skipUnless('argovis' in AVAILABLE_SOURCES, "requires argovis data fetcher")
@@ -313,7 +313,7 @@ class LocalFTP_DataSets(TestCase):
 
     def __testthis(self, dataset):
         ftproot, flist = argopy.tutorial.open_dataset('localftp')
-        self.local_ftp = os.path.join(ftproot, 'dac')
+        self.local_ftp = ftproot
         for access_point in self.args:
 
             if access_point == 'profile':
@@ -323,7 +323,7 @@ class LocalFTP_DataSets(TestCase):
                             ds = ArgoDataFetcher(src='localftp', ds=dataset).profile(*arg).to_xarray()
                             assert isinstance(ds, xr.Dataset)
                         except:
-                            print("LOCALFTP request:\n",
+                            print("ERROR LOCALFTP request:\n",
                                   ArgoDataFetcher(src='localftp', ds=dataset).profile(*arg).fetcher.files)
                             pass
 
@@ -334,7 +334,7 @@ class LocalFTP_DataSets(TestCase):
                             ds = ArgoDataFetcher(src='localftp', ds=dataset).float(arg).to_xarray()
                             assert isinstance(ds, xr.Dataset)
                         except:
-                            print("LOCALFTP request:\n",
+                            print("ERROR LOCALFTP request:\n",
                                   ArgoDataFetcher(src='localftp', ds=dataset).float(arg).fetcher.files)
                             pass
 
