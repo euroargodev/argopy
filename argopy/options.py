@@ -22,7 +22,7 @@ USER_LEVEL = 'mode'
 OPTIONS = {DATA_SOURCE: 'erddap',
            LOCAL_FTP: '.',
            DATASET: 'phy',
-           DATA_CACHE: os.path.expanduser(os.path.sep.join(["~",".cache","argopy"])),
+           DATA_CACHE: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
            USER_LEVEL: 'standard'
 }
 

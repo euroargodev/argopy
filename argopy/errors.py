@@ -32,7 +32,6 @@ class UnrecognisedDataSelectionMode(ValueError):
         self.institute = institute
         self.wmo = wmo
 
-
 class UnrecognisedProfileDirection(ValueError):
     """
     Not "A" or "D". Argopy should have recognized those.

@@ -16,7 +16,8 @@ from unittest import TestCase
 
 import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
-from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, FileSystemHasNoCache, CacheFileNotFound
+from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, \
+    FileSystemHasNoCache, CacheFileNotFound, ErddapServerError
 
 from argopy.utilities import list_available_data_src, isconnected, erddap_ds_exists
 AVAILABLE_SOURCES = list_available_data_src()
