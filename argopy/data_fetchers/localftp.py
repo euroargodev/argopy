@@ -651,7 +651,8 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
             il_read, il_loaded, il_this = 0, 0, 0
             for line in index:
                 il_this = il_loaded
-                if re.search("/%i/" % wmo, line.split(',')[0]):
+                # if re.search("/%i/" % wmo, line.split(',')[0]):
+                if "/%i/" % wmo in line:  # much faster than re
                     # Search for the wmo at the beginning of the file name under: /<dac>/<wmo>/profiles/
                     results += line
                     il_loaded += 1
@@ -682,7 +683,8 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
             il_read, il_loaded, il_this, moveon = 0, 0, 0, True
             for line in index_file:
                 il_this = il_loaded
-                if re.search("/%i/" % wmo, line.split(',')[0]):
+                # if re.search("/%i/" % wmo, line.split(',')[0]):
+                if "/%i/" % wmo in line:  # much faster than re
                     results += line
                     il_loaded += 1
                 if il_this == il_loaded and il_this > 0:
@@ -692,10 +694,12 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
             # Then look for the profile:
             if results:
                 def search_this(this_line):
-                    return np.any([re.search("%0.3d.nc" % c, this_line.split(',')[0]) for c in cyc])
+                    # return np.any([re.search("%0.3d.nc" % c, this_line.split(',')[0]) for c in cyc])
+                    return np.any(["%0.3d.nc" % c in this_line for c in cyc])
                 if np.all(cyc >= 1000):
                     def search_this(this_line):
-                        return np.any([re.search("%0.4d.nc" % c, this_line.split(',')[0]) for c in cyc])
+                        # return np.any([re.search("%0.4d.nc" % c, this_line.split(',')[0]) for c in cyc])
+                        return np.any(["%0.4d.nc" % c in this_line for c in cyc])
                 il_loaded, cyc_results = 0, ""
                 for line in results.split():
                     if search_this(line):
