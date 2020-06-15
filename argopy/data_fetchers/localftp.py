@@ -494,9 +494,14 @@ class LocalFTPArgoIndexFetcher(ABC):
     @property
     def cachepath(self):
         """ Return path to cache file for this request """
-        src = self.cachedir
-        file = ("index_%s.csv") % (self.cname(cache=True))
-        fcache = os.path.join(src, file)
+        path = self.cname(cache=True)
+        if not path.startswith(self.fs['search'].target_protocol):
+            store_path = self.fs['search'].target_protocol + "://" + path
+        else:
+            store_path = path
+        self.fs['search'].load_cache()
+        return os.path.sep.join([self.fs['search'].storage[0], self.fs['search'].cached_files[-1][store_path]['fn']])
+
         return fcache
 
     def in_cache(self, fs, uri):
@@ -517,7 +522,7 @@ class LocalFTPArgoIndexFetcher(ABC):
 
         def res2dataframe(results):
             """ Convert a csv like string into a DataFrame """
-            return pd.DataFrame([x.split(',') for x in results.split('\n')],
+            return pd.DataFrame([x.split(',') for x in results.split('\n') if ",," not in x],
                                 columns=['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type',
                                          'institution', 'date_update']) \
                        .astype({'file': np.str,
@@ -529,8 +534,9 @@ class LocalFTPArgoIndexFetcher(ABC):
                                 'institution': np.str,
                                 'date_update': np.datetime64})[:-1]
 
-        in_mem_path = "virtual_folder_for_index_search"
-        absuri = os.path.abspath(os.path.sep.join([in_mem_path, self.cname(cache=True)]))
+        # in_mem_path = "virtual_folder_for_index_search"
+        # absuri = os.path.abspath(os.path.sep.join([in_mem_path, self.cname(cache=True)]))
+        absuri = self.cname(cache=True)
 
         with self.fs['index'].open(os.path.sep.join([self.local_ftp, self.index_file]), "r") as f:
             if self.cache and (self.in_cache(self.fs['search'], absuri) or self.in_memory(self.fs['search'], absuri)):
