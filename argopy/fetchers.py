@@ -282,10 +282,11 @@ class ArgoIndexFetcher(object):
 
         # Auto-discovery of access points for this fetcher:
         # rq: Access point names for the facade are not the same as the access point of fetchers
-        self.valid_access_points = ['float', 'region']
+        self.valid_access_points = ['profile', 'float', 'region']
         self.Fetchers = {}
         for p in Fetchers.access_points:
             if p == 'wmo':  # Required for 'profile' and 'float'                
+                self.Fetchers['profile'] = Fetchers.IndexFetcher_wmo
                 self.Fetchers['float'] = Fetchers.IndexFetcher_wmo
             if p == 'box':  # Required for 'region'
                 self.Fetchers['region'] = Fetchers.IndexFetcher_box
@@ -302,7 +303,7 @@ class ArgoIndexFetcher(object):
             summary.append("User mode: %s" % self._mode)
         else:
             summary = ["<indexfetcher 'Not initialised'>"]
-            summary.append("Fetchers: 'float' or 'region'")
+            summary.append("Fetchers: %s" % ", ".join(self.Fetchers.keys()))
             summary.append("User mode: %s" % self._mode)
         return "\n".join(summary)
 
@@ -316,6 +317,18 @@ class ArgoIndexFetcher(object):
         if key not in self.valid_access_points and key not in valid_attrs:
             raise InvalidFetcherAccessPoint("'%s' is not a valid access point" % key)
         pass
+
+    def profile(self, wmo, cyc):
+        """ Fetch index for a profile
+
+            given one or more WMOs and CYCLE_NUMBER
+        """
+        if 'profile' in self.Fetchers:
+            self.fetcher = self.Fetchers['profile'](WMO=wmo, CYC=cyc, **self.fetcher_options)
+            self._AccessPoint = 'profile' # Register the requested access point
+        else:
+            raise InvalidFetcherAccessPoint("'profile' not available with '%s' src" % self._src)
+        return self
 
     def float(self, wmo):
         """ Load index for one or more WMOs """

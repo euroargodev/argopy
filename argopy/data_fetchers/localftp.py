@@ -391,16 +391,16 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
     def cname(self):
         """ Return a unique string defining the request """
         if len(self.WMO) > 1:
-            listname = ["WMO%i" % i for i in self.WMO]
+            listname = ["WMO%i" % i for i in sorted(self.WMO)]
             if isinstance(self.CYC, (np.ndarray)):
-                [listname.append("CYC%0.4d" % i) for i in self.CYC]
+                [listname.append("CYC%0.4d" % i) for i in sorted(self.CYC)]
             listname = ";".join(listname)
             listname = self.dataset_id + ";" + listname
         else:
             listname = "WMO%i" % self.WMO[0]
             if isinstance(self.CYC, (np.ndarray)):
                 listname = [listname]
-                [listname.append("CYC%0.4d" % i) for i in self.CYC]
+                [listname.append("CYC%0.4d" % i) for i in sorted(self.CYC)]
                 listname = "_".join(listname)
                 listname = self.dataset_id + "_" + listname
         return listname
@@ -440,6 +440,20 @@ class LocalFTPArgoIndexFetcher(ABC):
     @abstractmethod
     def cname(self):
         """ Return a unique string defining the request """
+        pass
+
+    @abstractmethod
+    def filter_the_index(self, index_file):
+        """ Custom search in the argo index file
+
+        Parameters
+        ----------
+        index_file: _io.TextIOWrapper
+
+        Returns
+        -------
+        csv rows matching the request, as a string. Or None.
+        """
         pass
 
     ###
@@ -529,17 +543,15 @@ class LocalFTPArgoIndexFetcher(ABC):
                                 'institution': np.str,
                                 'date_update': np.datetime64})[:-1]
 
-        # in_mem_path = "virtual_folder_for_index_search"
-        # absuri = os.path.abspath(os.path.sep.join([in_mem_path, self.cname(cache=True)]))
         absuri = self.cname(cache=True)
 
         with self.fs['index'].open(os.path.sep.join([self.local_ftp, self.index_file]), "r") as f:
             if self.cache and (self.in_cache(self.fs['search'], absuri) or self.in_memory(self.fs['search'], absuri)):
-                print('search already in memory:', absuri)
+                # print('search already in memory:', absuri)
                 with self.fs['search'].open(absuri, "r") as of:
                     df = res2dataframe(of.read())
             else:
-                print('run search from scratch:')
+                # print('run search from scratch:')
                 # Run search:
                 results = self.filter_the_index(f)
                 # and save results for caching:
@@ -549,15 +561,10 @@ class LocalFTPArgoIndexFetcher(ABC):
                 df = res2dataframe(results)
 
         # Post-processing of the filtered (raw format) index:
-
-        # create datetime & wmo field
-        # local ftp date format 20160513065300
-        # df['date'] = pd.to_datetime(df['date'], format="%Y%m%d%H%M%S")
-        # df['date_update'] = pd.to_datetime(df['date_update'], format="%Y%m%d%H%M%S")
-
         df['wmo'] = df['file'].apply(lambda x: int(x.split('/')[1]))
 
-        # institution & profiler mapping for standard or expert users
+        # institution & profiler mapping for all users
+        # todo: may be we need to separate this for standard and expert users
         institution_dictionnary = load_dict('institutions')
         df['tmp1'] = df.institution.apply(lambda x: mapp_dict(institution_dictionnary, x))
         df = df.rename(columns={"institution": "institution_code", "tmp1": "institution"})
@@ -577,29 +584,43 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
     """ Manage access to local ftp Argo data for: a list of WMOs
 
     """
-    def init(self, WMO: list = [], **kwargs):
+    def init(self, WMO: list = [], CYC = None, **kwargs):
         """ Create Argo data loader for WMOs
 
             Parameters
             ----------
             WMO : list(int)
                 The list of WMOs to load all Argo data for.
+            CYC : int, np.array(int), list(int)
+                The cycle numbers to load.
         """
         if isinstance(WMO, int):
             WMO = [WMO]  # Make sure we deal with a list
+        if isinstance(CYC, int):
+            CYC = np.array((CYC,), dtype='int')  # Make sure we deal with an array of integers
+        if isinstance(CYC, list):
+            CYC = np.array(CYC, dtype='int')  # Make sure we deal with an array of integers
         self.WMO = WMO
-
-        return self
+        self.CYC = CYC
 
     def cname(self, cache=False):
         """ Return a unique string defining the request """
         if len(self.WMO) > 1:
             listname = ["WMO%i" % i for i in sorted(self.WMO)]
+            if isinstance(self.CYC, (np.ndarray)):
+                [listname.append("CYC%0.4d" % i) for i in sorted(self.CYC)]
             listname = ";".join(listname)
+            # listname = self.dataset_id + ";" + listname
             if cache:
                 listname = hashlib.sha256(listname.encode()).hexdigest()
         else:
             listname = "WMO%i" % self.WMO[0]
+            if isinstance(self.CYC, (np.ndarray)):
+                listname = [listname]
+                [listname.append("CYC%0.4d" % i) for i in sorted(self.CYC)]
+                listname = "_".join(listname)
+                # listname = self.dataset_id + "_" + listname
+
         return listname
 
     def filter_the_index(self, index_file):
@@ -611,15 +632,26 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
 
         Returns
         -------
-        csv rwos matching the request, as a string. Or None.
+        csv rows matching the request, as a string. Or None.
         """
         def search_one_wmo(index, wmo):
+            """ Search for a WMO in the argo index file
+
+            Parameters
+            ----------
+            index_file: _io.TextIOWrapper
+            wmo: int
+
+            Returns
+            -------
+            csv chunk matchin the request, as a string. Or None
+            """
             index.seek(0)
             results = ""
             il_read, il_loaded, il_this = 0, 0, 0
             for line in index:
                 il_this = il_loaded
-                if re.search("/%i/" % wmo, line):
+                if re.search("/%i/" % wmo, line.split(',')[0]):
                     # Search for the wmo at the beginning of the file name under: /<dac>/<wmo>/profiles/
                     results += line
                     il_loaded += 1
@@ -631,7 +663,56 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
             else:
                 return None
 
+        def search_one_wmo_cyc(index_file, wmo, cyc):
+            """ Search for a WMO and CYC in the argo index file
+
+            Parameters
+            ----------
+            index_file: _io.TextIOWrapper
+            wmo: int
+            cyc: array of integers
+
+            Returns
+            -------
+            csv chunk matchin the request, as a string. Or None
+            """
+            results = ""
+
+            # Look for the float:
+            il_read, il_loaded, il_this, moveon = 0, 0, 0, True
+            for line in index_file:
+                il_this = il_loaded
+                if re.search("/%i/" % wmo, line.split(',')[0]):
+                    results += line
+                    il_loaded += 1
+                if il_this == il_loaded and il_this > 0:
+                    break  # Since the index is sorted, once we found the float, we can stop reading the index !
+                il_read += 1
+
+            # Then look for the profile:
+            if results:
+                def search_this(this_line):
+                    return np.any([re.search("%0.3d.nc" % c, this_line.split(',')[0]) for c in cyc])
+                if np.all(cyc >= 1000):
+                    def search_this(this_line):
+                        return np.any([re.search("%0.4d.nc" % c, this_line.split(',')[0]) for c in cyc])
+                il_loaded, cyc_results = 0, ""
+                for line in results.split():
+                    if search_this(line):
+                        il_loaded += 1
+                        cyc_results += line + "\n"
+            if il_loaded > 0:
+                return cyc_results
+            else:
+                return None
+
         if len(self.WMO) > 1:
-            return "".join([r for r in [search_one_wmo(index_file, w) for w in self.WMO] if r])
+            if isinstance(self.CYC, (np.ndarray)):
+                return "".join([r for r in [search_one_wmo_cyc(index_file, w, self.CYC) for w in self.WMO] if r])
+            else:
+                return "".join([r for r in [search_one_wmo(index_file, w) for w in self.WMO] if r])
         else:
-            return search_one_wmo(index_file, self.WMO[0])
+            if isinstance(self.CYC, (np.ndarray)):
+                return search_one_wmo_cyc(index_file, self.WMO[0], self.CYC)
+            else:
+                return search_one_wmo(index_file, self.WMO[0])
