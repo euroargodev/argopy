@@ -37,9 +37,6 @@ import xarray as xr
 from abc import ABC, abstractmethod
 import warnings
 import getpass
-from pathlib import Path
-import csv
-from itertools import islice
 
 import multiprocessing as mp
 import distributed
@@ -502,8 +499,6 @@ class LocalFTPArgoIndexFetcher(ABC):
         self.fs['search'].load_cache()
         return os.path.sep.join([self.fs['search'].storage[0], self.fs['search'].cached_files[-1][store_path]['fn']])
 
-        return fcache
-
     def in_cache(self, fs, uri):
         """ Return true if uri is cached """
         if not uri.startswith(fs.target_protocol):
@@ -563,16 +558,13 @@ class LocalFTPArgoIndexFetcher(ABC):
         df['wmo'] = df['file'].apply(lambda x: int(x.split('/')[1]))
 
         # institution & profiler mapping for standard or expert users
-        try:
-            institution_dictionnary = load_dict('institutions')
-            df['tmp1'] = df.institution.apply(lambda x: mapp_dict(institution_dictionnary, x))
-            profiler_dictionnary = load_dict('profilers')
-            df['tmp2'] = df.profiler_type.apply(lambda x: mapp_dict(profiler_dictionnary, int(x)))
+        institution_dictionnary = load_dict('institutions')
+        df['tmp1'] = df.institution.apply(lambda x: mapp_dict(institution_dictionnary, x))
+        df = df.rename(columns={"institution": "institution_code", "tmp1": "institution"})
 
-            df = df.rename(columns={"institution": "institution_code", "profiler_type": "profiler_code"})
-            df = df.rename(columns={"tmp1": "institution", "tmp2": "profiler"})
-        except:
-            pass
+        profiler_dictionnary = load_dict('profilers')
+        df['profiler'] = df.profiler_type.apply(lambda x: mapp_dict(profiler_dictionnary, int(x)))
+        df = df.rename(columns={"profiler_type": "profiler_code"})
 
         return df
 
@@ -601,7 +593,6 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
 
     def cname(self, cache=False):
         """ Return a unique string defining the request """
-
         if len(self.WMO) > 1:
             listname = ["WMO%i" % i for i in sorted(self.WMO)]
             listname = ";".join(listname)
@@ -610,31 +601,6 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
         else:
             listname = "WMO%i" % self.WMO[0]
         return listname
-
-    def filter_index_deprec(self):
-        # input file reader
-        Path(self.cachedir).mkdir(parents=True, exist_ok=True)
-
-        inputFileName = os.path.join(self.local_ftp, self.index_file)
-        outputFileName = os.path.join(self.cachedir, 'tmp_'+self.cname(cache=True)+'.csv')
-        self.filtered_index = outputFileName
-
-        infile = open(inputFileName, "r")
-        read = csv.reader(islice(infile, 8, None))
-        headers = next(read)  # header
-
-        # output file writer
-        outfile = open(outputFileName, "w")
-        write = csv.writer(outfile)
-
-        write.writerow(headers)  # write headers
-
-        # for each row
-        swmo = np.array(self.WMO, dtype='str')
-        for row in read:
-            wmor = row[0].split("/")[1]
-            if (wmor in swmo):
-                write.writerow(row)
 
     def filter_the_index(self, index_file):
         """ Search for one or more WMO in the argo index file
@@ -645,7 +611,7 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
 
         Returns
         -------
-        csv chunk matching the request, as a string. Or None
+        csv rwos matching the request, as a string. Or None.
         """
         def search_one_wmo(index, wmo):
             index.seek(0)

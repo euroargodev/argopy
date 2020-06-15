@@ -188,7 +188,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             server='http://www.ifremer.fr/erddap',
             protocol='tabledap'
         )
-        self.erddap.response = 'nc' # This is a major change in v0.4, we used to work with csv files
+        self.erddap.response = 'nc'  # This is a major change in v0.4, we used to work with csv files
 
         if self.dataset_id == 'phy':
             self.erddap.dataset_id = 'ArgoFloats'
@@ -323,8 +323,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         try:
             with self.fs.open(self.url.replace('.' + self.erddap.response, '.ncHeader')) as of:
                 ncHeader = of.read().decode("utf-8")
-            l = [line for line in ncHeader.splitlines() if 'row = ' in line][0]
-            return int(l.split('=')[1].split(';')[0])
+            lines = [line for line in ncHeader.splitlines() if 'row = ' in line][0]
+            return int(lines.split('=')[1].split(';')[0])
         except:
             pass
 
@@ -333,7 +333,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         # Download data
         ds = self.fs.open_dataset(self.url)
-        ds = ds.rename({'row':'N_POINTS'})
+        ds = ds.rename({'row': 'N_POINTS'})
 
         # Post-process the xarray.DataSet:
 
@@ -370,7 +370,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         #
         return ds
-
 
     def filter_data_mode(self, ds, **kwargs):
         ds = ds.argo.filter_data_mode(errors='ignore', **kwargs)
@@ -495,6 +494,7 @@ class Fetch_box(ErddapArgoDataFetcher):
         boxname = self.dataset_id + "_" + boxname
         return boxname
 
+
 class ErddapArgoIndexFetcher(ABC):
     """ Manage access to Argo index through Ifremer ERDDAP
 
@@ -524,11 +524,11 @@ class ErddapArgoIndexFetcher(ABC):
     ###
     # Methods that must not changed
     ###
-    def __init__(self,                 
+    def __init__(self,
                  cache: bool = False,
                  cachedir: str = "",
                  **kwargs):
-        """ Instantiate an ERDDAP Argo index loader with force caching """    
+        """ Instantiate an ERDDAP Argo index loader with force caching """
 
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
         self.definition = 'Ifremer erddap Argo index fetcher'
@@ -546,15 +546,15 @@ class ErddapArgoIndexFetcher(ABC):
 
     def _format(self, x, typ):
         """ string formating helper """
-        if typ=='lon':
+        if typ == 'lon':
             if x < 0:
                 x = 360. + x
             return ("%05d") % (x * 100.)
-        if typ=='lat':
+        if typ == 'lat':
             return ("%05d") % (x * 100.)
-        if typ=='prs':
+        if typ == 'prs':
             return ("%05d") % (np.abs(x)*10.)
-        if typ=='tim':
+        if typ == 'tim':
             return pd.to_datetime(x).strftime('%Y%m%d')
         return str(x)
 
@@ -564,8 +564,8 @@ class ErddapArgoIndexFetcher(ABC):
             server='http://www.ifremer.fr/erddap',
             protocol='tabledap'
         )
-        self.erddap.response = 'csv'        
-        self.erddap.dataset_id = 'ArgoFloats-index'                    
+        self.erddap.response = 'csv'
+        self.erddap.dataset_id = 'ArgoFloats-index'
         return self
 
     @property
@@ -586,7 +586,8 @@ class ErddapArgoIndexFetcher(ABC):
         self.define_constraints()  # This will affect self.erddap.constraints
 
         # Define the list of variables to retrieve - all for the index
-        self.erddap.variables = ['file','date','longitude','latitude','ocean','profiler_type','institution','date_update']
+        self.erddap.variables = ['file', 'date', 'longitude', 'latitude',
+                                 'ocean', 'profiler_type', 'institution', 'date_update']
 
         #
         dataset_id = self.erddap.dataset_id
@@ -615,10 +616,9 @@ class ErddapArgoIndexFetcher(ABC):
         # url = _distinct(url, **kwargs)
         # return _check_url_response(url, **self.requests_kwargs)
         return url
-        
+
     def to_dataframe(self):
         """ Load Argo index and return a pandas dataframe """
-        import time
 
         # Download data: get a csv, open it as pandas dataframe, create wmo field
         df = self.fs.open_dataframe(self.url, parse_dates=True, skiprows=[1])
@@ -629,22 +629,20 @@ class ErddapArgoIndexFetcher(ABC):
         df['wmo'] = df.file.apply(lambda x: int(x.split('/')[1]))
 
         # institution & profiler mapping
-        try:
-            institution_dictionnary = load_dict('institutions')
-            df['tmp1'] = df.institution.apply(lambda x: mapp_dict(institution_dictionnary, x))
-            profiler_dictionnary = load_dict('profilers')
-            df['tmp2'] = df.profiler_type.apply(lambda x: mapp_dict(profiler_dictionnary, x))
+        institution_dictionnary = load_dict('institutions')
+        df['tmp1'] = df.institution.apply(lambda x: mapp_dict(institution_dictionnary, x))
+        df = df.rename(columns={"institution": "institution_code", "tmp1": "institution"})
 
-            df = df.drop(columns=['institution','profiler_type'])
-            df = df.rename(columns={"tmp1":"institution", "tmp2":"profiler_type"})
-        except:
-            pass
+        profiler_dictionnary = load_dict('profilers')
+        df['profiler'] = df.profiler_type.apply(lambda x: mapp_dict(profiler_dictionnary, int(x)))
+        df = df.rename(columns={"profiler_type": "profiler_code"})
 
         return df
 
     def to_xarray(self):
         """ Load Argo index and return a xarray Dataset """
         return self.to_dataframe().to_xarray()
+
 
 class IndexFetcher_wmo(ErddapArgoIndexFetcher):
     """ Manage access to Argo Index through Ifremer ERDDAP for: a list of WMOs
@@ -657,18 +655,18 @@ class IndexFetcher_wmo(ErddapArgoIndexFetcher):
             Parameters
             ----------
             WMO : list(int)
-                The list of WMOs to load all Argo data for.            
+                The list of WMOs to load all Argo data for.
         """
         if isinstance(WMO, int):
-            WMO = [WMO] # Make sure we deal with a list        
-        self.WMO = WMO        
+            WMO = [WMO]  # Make sure we deal with a list
+        self.WMO = WMO
         self.definition = 'Ifremer erddap Argo Index fetcher for floats'
         return self
 
     def define_constraints(self):
         """ Define erddap constraints """
-        #  'file=~': "(.*)(R|D)(6902746_|6902747_)(.*)" 
-        self.erddap.constraints = {'file=~': "(.*)(R|D)("+"|".join(["%i"%i for i in self.WMO])+")(_.*)"}        
+        #  'file=~': "(.*)(R|D)(6902746_|6902747_)(.*)"
+        self.erddap.constraints = {'file=~': "(.*)(R|D)("+"|".join(["%i" % i for i in self.WMO])+")(_.*)"}
         return self
 
     def cname(self):
@@ -677,8 +675,9 @@ class IndexFetcher_wmo(ErddapArgoIndexFetcher):
             listname = ["WMO%i" % i for i in self.WMO]
             listname = ";".join(listname)
         else:
-            listname = "WMO%i" % self.WMO[0]                    
+            listname = "WMO%i" % self.WMO[0]
         return listname
+
 
 class IndexFetcher_box(ErddapArgoIndexFetcher):
     """ Manage access to Argo Index through Ifremer ERDDAP for: an ocean rectangle
@@ -701,8 +700,8 @@ class IndexFetcher_box(ErddapArgoIndexFetcher):
             box.append('2100-12-31')
         elif len(box) != 6:
             raise ValueError('Box must have 4 or 6 elements : [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max] ')
-        self.BOX = box              
-        self.definition = 'Ifremer erddap Argo Index fetcher for a space/time region'       
+        self.BOX = box
+        self.definition = 'Ifremer erddap Argo Index fetcher for a space/time region'
 
         return self
 
@@ -720,5 +719,5 @@ class IndexFetcher_box(ErddapArgoIndexFetcher):
         """ Return a unique string defining the constraints """
         BOX = self.BOX
         boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; t=%s/%s]") % \
-                  (BOX[0],BOX[1],BOX[2],BOX[3],self._format(BOX[4], 'tim'), self._format(BOX[5], 'tim'))
+                  (BOX[0], BOX[1], BOX[2], BOX[3], self._format(BOX[4], 'tim'), self._format(BOX[5], 'tim'))
         return boxname
