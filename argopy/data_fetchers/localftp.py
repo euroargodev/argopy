@@ -1,12 +1,33 @@
 #!/bin/env python
 # -*coding: UTF-8 -*-
-#
-# Argo data fetcher for a local copy of GDAC ftp.
-#
-# This is not intended to be used directly, only by the facade at fetchers.py
-#
-# Since the GDAC ftp is organised by DAC/WMO folders, we start by implementing the 'float' and 'profile' entry points.
-#
+"""
+Argo data fetcher for a local copy of GDAC ftp.
+
+This is not intended to be used directly, only by the facade at fetchers.py
+
+Since the GDAC ftp is organised by DAC/WMO folders, we start by implementing the 'float' and 'profile' entry points.
+
+
+
+About the index local ftp fetcher:
+
+We have a large index csv file "ar_index_global_prof.txt", that is about ~200Mb
+For a given request, we need to load/read it
+and then to apply a filter to select lines matching the request
+With the current version, a dataframe of the full index is cached
+and then another cached file is created for the result of the filter.
+
+df_full = pd.read_csv("index.txt")
+df_small = filter(df_full)
+write_on_file(df_small)
+
+I think we can avoid this with a virtual file system
+When a request is done, we
+
+
+
+"""
+
 
 import os
 from glob import glob
@@ -22,6 +43,9 @@ from itertools import islice
 
 import multiprocessing as mp
 import distributed
+import fsspec
+import re
+import hashlib
 
 from .proto import ArgoDataFetcherProto
 from argopy.errors import NetCDF4FileNotFoundError
@@ -90,7 +114,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
                 This can be used to optimise performances
 
         """
-        self.fs = filestore(cache=cache, cachedir=cachedir, use_listings_cache=True)
+        self.fs = filestore(cache=cache, cachedir=cachedir)
         self.definition = 'Local ftp Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
         self.local_ftp = OPTIONS['local_ftp'] if local_ftp == '' else local_ftp
@@ -438,10 +462,23 @@ class LocalFTPArgoIndexFetcher(ABC):
                 Path to the directory with the 'dac' folder and index file
         """
         self.cache = cache
-        self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        if self.cache:
-            # todo check if cachedir is a valid path
-            Path(self.cachedir).mkdir(parents=True, exist_ok=True)
+        self.fs = {}
+        if cache:
+            self.fs['index'] = fsspec.filesystem("filecache",
+                                                 target_protocol='file',
+                                                 cache_storage=OPTIONS['cachedir'] if cachedir == '' else cachedir,
+                                                 expiry_time=86400,
+                                                 cache_check=10)
+            self.fs['search'] = fsspec.filesystem("filecache",
+                                                 target_protocol='memory',
+                                                 cache_storage=OPTIONS['cachedir'] if cachedir == '' else cachedir,
+                                                 expiry_time=86400,
+                                                 cache_check=10)
+            self.fs['index'].load_cache()
+            self.fs['search'].load_cache()
+        else:
+            self.fs['index'] = fsspec.filesystem("file")
+            self.fs['search'] = fsspec.filesystem("memory")
 
         self.definition = 'Local ftp Argo index fetcher'
         self.local_ftp = OPTIONS['local_ftp'] if local_ftp == '' else local_ftp
@@ -462,38 +499,74 @@ class LocalFTPArgoIndexFetcher(ABC):
         fcache = os.path.join(src, file)
         return fcache
 
+    def in_cache(self, fs, uri):
+        """ Return true if uri is cached """
+        if not uri.startswith(fs.target_protocol):
+            store_path = fs.target_protocol + "://" + uri
+        else:
+            store_path = uri
+        fs.load_cache()
+        return store_path in fs.cached_files[-1]
+
+    def in_memory(self, fs, uri):
+        """ Return true if uri in memory store """
+        return uri in fs.store
+
     def to_dataframe(self):
         """ filter local index file and return a pandas dataframe """
-        # Try to load cached file if requested:
-        if self.cache and os.path.exists(self.cachepath):
-            df = pd.read_csv(self.cachepath)
-            return df
-        # No cache found or requested, so we compute:
-        self.filter_index()
-        #
-        df = pd.read_csv(self.filtered_index)
+
+        def res2dataframe(results):
+            """ Convert a csv like string into a DataFrame """
+            return pd.DataFrame([x.split(',') for x in results.split('\n')],
+                                columns=['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type',
+                                         'institution', 'date_update']) \
+                       .astype({'file': np.str,
+                                'date': np.datetime64,
+                                'latitude': np.float32,
+                                'longitude': np.float32,
+                                'ocean': np.str,
+                                'profiler_type': np.str,
+                                'institution': np.str,
+                                'date_update': np.datetime64})[:-1]
+
+        in_mem_path = "virtual_folder_for_index_search"
+        absuri = os.path.abspath(os.path.sep.join([in_mem_path, self.cname(cache=True)]))
+
+        with self.fs['index'].open(os.path.sep.join([self.local_ftp, self.index_file]), "r") as f:
+            if self.cache and (self.in_cache(self.fs['search'], absuri) or self.in_memory(self.fs['search'], absuri)):
+                print('search already in memory:', absuri)
+                with self.fs['search'].open(absuri, "r") as of:
+                    df = res2dataframe(of.read())
+            else:
+                print('run search from scratch:')
+                # Run search:
+                results = self.filter_the_index(f)
+                # and save results for caching:
+                if self.cache:
+                    with self.fs['search'].open(absuri, "w") as of:
+                        of.write(results)  # This happens in memory
+                df = res2dataframe(results)
+
+        # Post-processing of the filtered (raw format) index:
+
         # create datetime & wmo field
         # local ftp date format 20160513065300
-        df['date'] = pd.to_datetime(df['date'], format="%Y%m%d%H%M%S")
-        df['date_update'] = pd.to_datetime(df['date_update'], format="%Y%m%d%H%M%S")
+        # df['date'] = pd.to_datetime(df['date'], format="%Y%m%d%H%M%S")
+        # df['date_update'] = pd.to_datetime(df['date_update'], format="%Y%m%d%H%M%S")
 
-        df['wmo'] = df.file.apply(lambda x: int(x.split('/')[1]))
-        #
-        # institution & profiler mapping
+        df['wmo'] = df['file'].apply(lambda x: int(x.split('/')[1]))
+
+        # institution & profiler mapping for standard or expert users
         try:
             institution_dictionnary = load_dict('institutions')
             df['tmp1'] = df.institution.apply(lambda x: mapp_dict(institution_dictionnary, x))
             profiler_dictionnary = load_dict('profilers')
-            df['tmp2'] = df.profiler_type.apply(lambda x: mapp_dict(profiler_dictionnary, x))
+            df['tmp2'] = df.profiler_type.apply(lambda x: mapp_dict(profiler_dictionnary, int(x)))
 
-            df = df.drop(columns=['institution', 'profiler_type'])
-            df = df.rename(columns={"tmp1": "institution", "tmp2": "profiler_type"})
+            df = df.rename(columns={"institution": "institution_code", "profiler_type": "profiler_code"})
+            df = df.rename(columns={"tmp1": "institution", "tmp2": "profiler"})
         except:
             pass
-
-        # Possibly save in cache for later re-use
-        if self.cache:
-            df.to_csv(self.cachepath, index=False)
 
         return df
 
@@ -522,18 +595,17 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
 
     def cname(self, cache=False):
         """ Return a unique string defining the request """
+
         if len(self.WMO) > 1:
+            listname = ["WMO%i" % i for i in sorted(self.WMO)]
+            listname = ";".join(listname)
             if cache:
-                listname = ["WMO%i" % i for i in self.WMO]
-                listname = "_".join(listname)
-            else:
-                listname = ["WMO%i" % i for i in self.WMO]
-                listname = ";".join(listname)
+                listname = hashlib.sha256(listname.encode()).hexdigest()
         else:
             listname = "WMO%i" % self.WMO[0]
         return listname
 
-    def filter_index(self):
+    def filter_index_deprec(self):
         # input file reader
         Path(self.cachedir).mkdir(parents=True, exist_ok=True)
 
@@ -557,3 +629,37 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
             wmor = row[0].split("/")[1]
             if (wmor in swmo):
                 write.writerow(row)
+
+    def filter_the_index(self, index_file):
+        """ Search for one or more WMO in the argo index file
+
+        Parameters
+        ----------
+        index_file: _io.TextIOWrapper
+
+        Returns
+        -------
+        csv chunk matching the request, as a string. Or None
+        """
+        def search_one_wmo(index, wmo):
+            index.seek(0)
+            results = ""
+            il_read, il_loaded, il_this = 0, 0, 0
+            for line in index:
+                il_this = il_loaded
+                if re.search("/%i/" % wmo, line):
+                    # Search for the wmo at the beginning of the file name under: /<dac>/<wmo>/profiles/
+                    results += line
+                    il_loaded += 1
+                if il_this == il_loaded and il_this > 0:
+                    break  # Since the index is sorted, once we found the float, we can stop reading the index !
+                il_read += 1
+            if il_loaded > 0:
+                return results
+            else:
+                return None
+
+        if len(self.WMO) > 1:
+            return "".join([r for r in [search_one_wmo(index_file, w) for w in self.WMO] if r])
+        else:
+            return search_one_wmo(index_file, self.WMO[0])

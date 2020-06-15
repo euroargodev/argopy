@@ -100,7 +100,7 @@ class filestore():
             raise
 
     def open_dataframe(self, url, **kwargs):
-        """ Return a pandas.dataframe from an url with csv response
+        """ Return a pandas.dataframe from an url that is a csv ressource
 
             Parameters
             ----------
