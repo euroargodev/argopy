@@ -27,6 +27,7 @@ if CONNECTED:
 else:
     DSEXISTS = False
 
+
 def test_invalid_accesspoint():
     src = list(AVAILABLE_SOURCES.keys())[0] # Use the first valid data source
     with pytest.raises(InvalidFetcherAccessPoint):
@@ -34,14 +35,17 @@ def test_invalid_accesspoint():
     with pytest.raises(InvalidFetcherAccessPoint):
         ArgoIndexFetcher(src=src).to_xarray() # Can't get data if access point not defined first
 
+
 def test_invalid_fetcher():
     with pytest.raises(InvalidFetcher):
         ArgoIndexFetcher(src='invalid_fetcher').to_xarray()
+
 
 @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
 def test_unavailable_accesspoint():
     with pytest.raises(InvalidFetcherAccessPoint):
         ArgoIndexFetcher(src='localftp').region([-85,-45,10.,20.,0,100.]).to_xarray()
+
 
 class EntryPoints_AllBackends(TestCase):
     """ Test main API facade for all available index fetching backends """
@@ -92,6 +96,7 @@ class EntryPoints_AllBackends(TestCase):
         with argopy.set_options(local_ftp=ftproot):
             self.__test_float('localftp', index_file='ar_index_global_prof.txt')
 
+
 @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
 @unittest.skipUnless(DSEXISTS, "erddap requires a valid core index Argo dataset from Ifremer server")
@@ -134,6 +139,51 @@ class Erddap_backend(TestCase):
             except:
                 shutil.rmtree(testcachedir)
                 raise
+
+
+@unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
+class LocalFTP_DataSets(TestCase):
+    """ Test main API facade for all available dataset of the localftp fetching backend """
+
+    def __testthis(self, dataset):
+        ftproot, flist = argopy.tutorial.open_dataset('localftp')
+        self.local_ftp = ftproot
+        for access_point in self.args:
+
+            if access_point == 'profile':
+                for arg in self.args['profile']:
+                    with argopy.set_options(local_ftp=self.local_ftp):
+                        try:
+                            ds = ArgoIndexFetcher(src='localftp', ds=dataset).profile(*arg).to_xarray()
+                            assert isinstance(ds, xr.Dataset)
+                        except:
+                            print("ERROR LOCALFTP request:\n",
+                                  ArgoIndexFetcher(src='localftp', ds=dataset).profile(*arg).fetcher.files)
+                            pass
+
+            if access_point == 'float':
+                for arg in self.args['float']:
+                    with argopy.set_options(local_ftp=self.local_ftp):
+                        try:
+                            ds = ArgoIndexFetcher(src='localftp', ds=dataset).float(arg).to_xarray()
+                            assert isinstance(ds, xr.Dataset)
+                        except:
+                            print("ERROR LOCALFTP request:\n",
+                                  ArgoIndexFetcher(src='localftp', ds=dataset).float(arg).fetcher.files)
+                            pass
+
+    def test_phy_float(self):
+        self.args = {}
+        self.args['float'] = [[1900204],
+                              [1900243, 1900444]]
+        self.__testthis('phy')
+
+    def test_phy_profile(self):
+        self.args = {}
+        self.args['profile'] = [[1900204, 36],
+                                [1900243, [5, 45]]]
+        self.__testthis('phy')
+
 
 if __name__ == '__main__':
     unittest.main()
