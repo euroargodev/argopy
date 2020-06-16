@@ -443,7 +443,7 @@ class LocalFTPArgoIndexFetcher(ABC):
         pass
 
     @abstractmethod
-    def filter_the_index(self, index_file):
+    def filter_index(self, index_file):
         """ Custom search in the argo index file
 
         Parameters
@@ -549,7 +549,7 @@ class LocalFTPArgoIndexFetcher(ABC):
             else:
                 # print('run search from scratch:')
                 # Run search:
-                results = self.filter_the_index(f)
+                results = self.filter_index(f)
                 # and save results for caching:
                 if self.cache:
                     with self.fs['search'].open(uri, "w") as of:
@@ -627,7 +627,7 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
 
         return listname
 
-    def filter_the_index(self, index_file):
+    def filter_index(self, index_file):
         """ Search for one or more WMO in the argo index file
 
         Parameters
