@@ -5,8 +5,6 @@
 #
 
 import os
-import sys
-import numpy as np
 import xarray as xr
 import shutil
 
@@ -29,11 +27,11 @@ else:
 
 
 def test_invalid_accesspoint():
-    src = list(AVAILABLE_SOURCES.keys())[0] # Use the first valid data source
+    src = list(AVAILABLE_SOURCES.keys())[0]  # Use the first valid data source
     with pytest.raises(InvalidFetcherAccessPoint):
-        ArgoIndexFetcher(src=src).invalid_accesspoint.to_xarray() # Can't get data if access point not defined first
+        ArgoIndexFetcher(src=src).invalid_accesspoint.to_xarray()  # Can't get data if access point not defined first
     with pytest.raises(InvalidFetcherAccessPoint):
-        ArgoIndexFetcher(src=src).to_xarray() # Can't get data if access point not defined first
+        ArgoIndexFetcher(src=src).to_xarray()  # Can't get data if access point not defined first
 
 
 def test_invalid_fetcher():
@@ -44,7 +42,7 @@ def test_invalid_fetcher():
 @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
 def test_unavailable_accesspoint():
     with pytest.raises(InvalidFetcherAccessPoint):
-        ArgoIndexFetcher(src='localftp').region([-85,-45,10.,20.,0,100.]).to_xarray()
+        ArgoIndexFetcher(src='localftp').region([-85., -45., 10., 20., 0., 100.]).to_xarray()
 
 
 class EntryPoints_AllBackends(TestCase):
@@ -110,16 +108,16 @@ class Erddap_backend(TestCase):
             loader = ArgoIndexFetcher(src='erddap', cache=True).float(6902746)
             with pytest.raises(CacheFileNotFound):
                 loader.fetcher.cachepath
-        shutil.rmtree(testcachedir) # Make sure the cache is empty
+        shutil.rmtree(testcachedir)  # Make sure the cache is empty
 
     def test_nocache(self):
         testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
         with argopy.set_options(cachedir=testcachedir):
             loader = ArgoIndexFetcher(src='erddap', cache=False).float(6902746)
-            ds = loader.to_xarray()
+            loader.to_xarray()
             with pytest.raises(FileSystemHasNoCache):
                 loader.fetcher.cachepath
-        shutil.rmtree(testcachedir) # Make sure the cache is empty
+        shutil.rmtree(testcachedir)  # Make sure the cache is empty
 
     def test_caching_index(self):
         testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
@@ -133,10 +131,10 @@ class Erddap_backend(TestCase):
                 assert isinstance(ds, xr.Dataset)
                 assert isinstance(loader.fetcher.cachepath, str)
                 shutil.rmtree(testcachedir)
-            except ErddapServerError: # Test is passed when something goes wrong because of the erddap server, not our fault !
+            except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
                 shutil.rmtree(testcachedir)
                 pass
-            except:
+            except Exception:
                 shutil.rmtree(testcachedir)
                 raise
 
@@ -156,9 +154,9 @@ class LocalFTP_DataSets(TestCase):
                         try:
                             ds = ArgoIndexFetcher(src='localftp', ds=dataset).profile(*arg).to_xarray()
                             assert isinstance(ds, xr.Dataset)
-                        except:
+                        except Exception:
                             print("ERROR LOCALFTP request:\n",
-                                  ArgoIndexFetcher(src='localftp', ds=dataset).profile(*arg).fetcher.files)
+                                  ArgoIndexFetcher(src='localftp', ds=dataset).profile(*arg).fetcher.cname())
                             pass
 
             if access_point == 'float':
@@ -167,9 +165,9 @@ class LocalFTP_DataSets(TestCase):
                         try:
                             ds = ArgoIndexFetcher(src='localftp', ds=dataset).float(arg).to_xarray()
                             assert isinstance(ds, xr.Dataset)
-                        except:
+                        except Exception:
                             print("ERROR LOCALFTP request:\n",
-                                  ArgoIndexFetcher(src='localftp', ds=dataset).float(arg).fetcher.files)
+                                  ArgoIndexFetcher(src='localftp', ds=dataset).float(arg).fetcher.cname())
                             pass
 
     def test_phy_float(self):

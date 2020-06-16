@@ -177,7 +177,7 @@ class Erddap_backend(TestCase):
             except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
                 shutil.rmtree(testcachedir)
                 pass
-            except:
+            except Exception:
                 shutil.rmtree(testcachedir)
                 raise
 
@@ -197,7 +197,7 @@ class Erddap_backend(TestCase):
             except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
                 shutil.rmtree(testcachedir)
                 pass
-            except:
+            except Exception:
                 shutil.rmtree(testcachedir)
                 raise
 
@@ -214,7 +214,7 @@ class Erddap_backend(TestCase):
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
-            except:
+            except Exception:
                 print("ERDDAP request:\n",
                       ArgoDataFetcher(src='erddap', ds=dataset).profile(*arg).fetcher.url)
                 pass
@@ -227,7 +227,7 @@ class Erddap_backend(TestCase):
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
-            except:
+            except Exception:
                 print("ERDDAP request:\n",
                       ArgoDataFetcher(src='erddap', ds=dataset).float(arg).fetcher.url)
                 pass
@@ -240,7 +240,7 @@ class Erddap_backend(TestCase):
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
-            except:
+            except Exception:
                 print("ERDDAP request:\n",
                       ArgoDataFetcher(src='erddap', ds=dataset).region(arg).fetcher.url)
                 pass
@@ -322,7 +322,7 @@ class LocalFTP_DataSets(TestCase):
                         try:
                             ds = ArgoDataFetcher(src='localftp', ds=dataset).profile(*arg).to_xarray()
                             assert isinstance(ds, xr.Dataset)
-                        except:
+                        except Exception:
                             print("ERROR LOCALFTP request:\n",
                                   ArgoDataFetcher(src='localftp', ds=dataset).profile(*arg).fetcher.files)
                             pass
@@ -333,7 +333,7 @@ class LocalFTP_DataSets(TestCase):
                         try:
                             ds = ArgoDataFetcher(src='localftp', ds=dataset).float(arg).to_xarray()
                             assert isinstance(ds, xr.Dataset)
-                        except:
+                        except Exception:
                             print("ERROR LOCALFTP request:\n",
                                   ArgoDataFetcher(src='localftp', ds=dataset).float(arg).fetcher.files)
                             pass

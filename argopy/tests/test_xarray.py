@@ -1,7 +1,5 @@
-import os, sys
 import pytest
 import unittest
-import xarray as xr
 
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import InvalidDatasetStructure, ErddapServerError
@@ -13,6 +11,7 @@ if CONNECTED:
     DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
 else:
     DSEXISTS = False
+
 
 @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
@@ -26,6 +25,7 @@ def test_point2profile():
     except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
         pass
 
+
 @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
 @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
@@ -38,6 +38,7 @@ def test_profile2point():
             ds.argo.profile2point()
     except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
         pass
+
 
 @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")

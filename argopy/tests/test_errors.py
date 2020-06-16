@@ -1,4 +1,3 @@
-
 import pytest
 from argopy.errors import NetCDF4FileNotFoundError, \
     CacheFileNotFound, \
@@ -9,11 +8,13 @@ from argopy.errors import NetCDF4FileNotFoundError, \
     InvalidFetcherAccessPoint, \
     InvalidFetcher
 
+
 def test_NetCDF4FileNotFoundError():
     def foobar():
         raise NetCDF4FileNotFoundError("invalid_path")
     with pytest.raises(NetCDF4FileNotFoundError):
         foobar()
+
 
 def test_CacheFileNotFound():
     def foobar():
@@ -21,11 +22,13 @@ def test_CacheFileNotFound():
     with pytest.raises(CacheFileNotFound):
         foobar()
 
+
 def test_FileSystemHasNoCache():
     def foobar():
         raise FileSystemHasNoCache()
     with pytest.raises(FileSystemHasNoCache):
         foobar()
+
 
 def test_UnrecognisedDataSelectionMode():
     def foobar():
@@ -33,11 +36,13 @@ def test_UnrecognisedDataSelectionMode():
     with pytest.raises(UnrecognisedDataSelectionMode):
         foobar()
 
+
 def test_UnrecognisedProfileDirection():
     def foobar():
         raise UnrecognisedProfileDirection()
     with pytest.raises(UnrecognisedProfileDirection):
         foobar()
+
 
 def test_InvalidDatasetStructure():
     def foobar():
@@ -45,15 +50,16 @@ def test_InvalidDatasetStructure():
     with pytest.raises(InvalidDatasetStructure):
         foobar()
 
+
 def test_InvalidFetcherAccessPoint():
     def foobar():
         raise InvalidFetcherAccessPoint()
     with pytest.raises(InvalidFetcherAccessPoint):
         foobar()
 
+
 def test_InvalidFetcher():
     def foobar():
         raise InvalidFetcher()
     with pytest.raises(InvalidFetcher):
         foobar()
-
