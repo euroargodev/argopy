@@ -44,9 +44,15 @@ class filestore():
             if errors == 'raise':
                 raise FileSystemHasNoCache("%s has no cache system" % type(self.fs))
         else:
+            if not uri.startswith(self.fs.target_protocol):
+                store_path = self.fs.target_protocol + "://" + uri
+            else:
+                store_path = uri
+            # return store_path in fs.cached_files[-1]
             self.fs.load_cache()
-            if uri in self.fs.cached_files[-1]:
-                return os.path.sep.join([self.fs.storage[-1], self.fs.cached_files[-1][uri]['fn']])
+            if store_path in self.fs.cached_files[-1]:
+                # return self.fs.cached_files[-1]
+                return os.path.sep.join([self.cachedir, self.fs.cached_files[-1][store_path]['fn']])
             elif errors == 'raise':
                 raise CacheFileNotFound("No cached file found in %s for: \n%s" % (self.fs.storage[-1], uri))
 
