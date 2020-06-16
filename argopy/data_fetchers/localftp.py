@@ -27,8 +27,6 @@ When a request is done, we
 
 
 """
-
-
 import os
 from glob import glob
 import numpy as np
@@ -43,8 +41,9 @@ import distributed
 
 from .proto import ArgoDataFetcherProto
 from argopy.errors import NetCDF4FileNotFoundError
-from argopy.utilities import list_standard_variables, load_dict, mapp_dict, filestore, indexstore, index_filter_wmo
+from argopy.utilities import list_standard_variables, load_dict, mapp_dict
 from argopy.options import OPTIONS
+from argopy.stores import filestore, indexstore, index_filter_wmo
 
 access_points = ['wmo']
 exit_formats = ['xarray']

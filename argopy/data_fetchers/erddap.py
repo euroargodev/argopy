@@ -18,12 +18,14 @@ from abc import ABC, abstractmethod
 import getpass
 
 from .proto import ArgoDataFetcherProto
-from argopy.utilities import load_dict, mapp_dict, httpstore
+from argopy.utilities import load_dict, mapp_dict
 from argopy.options import OPTIONS
+from argopy.utilities import list_standard_variables
+from argopy.stores import httpstore
 
 from erddapy import ERDDAP
 from erddapy.utilities import parse_dates, quote_string_constraints
-from argopy.utilities import list_standard_variables
+
 
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']

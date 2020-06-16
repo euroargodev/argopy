@@ -13,9 +13,6 @@ import requests
 import urllib.request
 import io
 import json
-import numpy as np
-import xarray as xr
-import pandas as pd
 from IPython.core.display import display, HTML
 
 import importlib
@@ -23,684 +20,14 @@ import locale
 import platform
 import struct
 import subprocess
-import fsspec
 
 import pickle
 import pkg_resources
+
+from argopy.errors import ErddapServerError
+from argopy.stores import httpstore
+
 path2pkl = pkg_resources.resource_filename('argopy', 'assets/')
-
-from argopy.errors import ErddapServerError, FileSystemHasNoCache, CacheFileNotFound
-from argopy.options import OPTIONS
-
-from abc import ABC, abstractmethod
-import hashlib
-
-
-class index_filter_proto(ABC):
-    def __init__(self):
-        pass
-
-    @abstractmethod
-    def run(self):
-        """ Take a _io.TextIOWrapper and return filter results as string
-
-        Parameters
-        ----------
-        index_file: _io.TextIOWrapper
-
-        Returns
-        -------
-        csv rows matching the request, as a in-memory string. Or None.
-        """
-        pass
-
-    @abstractmethod
-    def uri(self):
-        """ Return a name for one specific filter run """
-        pass
-
-    @property
-    def sha(self):
-        return hashlib.sha256(self.uri().encode()).hexdigest()
-
-
-class index_filter_wmo(index_filter_proto):
-    def __init__(self, WMO: list = [], CYC=None, **kwargs):
-        """ Create Argo index filter for WMOs/CYCs
-
-            Parameters
-            ----------
-            WMO : list(int)
-                The list of WMOs to search
-            CYC : int, np.array(int), list(int)
-                The cycle numbers to search for each WMO
-        """
-        if isinstance(WMO, int):
-            WMO = [WMO]  # Make sure we deal with a list
-        if isinstance(CYC, int):
-            CYC = np.array((CYC,), dtype='int')  # Make sure we deal with an array of integers
-        if isinstance(CYC, list):
-            CYC = np.array(CYC, dtype='int')  # Make sure we deal with an array of integers
-        self.WMO = sorted(WMO)
-        self.CYC = CYC
-
-    def uri(self):
-        if len(self.WMO) > 1:
-            listname = ["WMO%i" % i for i in sorted(self.WMO)]
-            if isinstance(self.CYC, (np.ndarray)):
-                [listname.append("CYC%0.4d" % i) for i in sorted(self.CYC)]
-            listname = "_".join(listname)
-        elif len(self.WMO) == 0:
-            if isinstance(self.CYC, (np.ndarray)):
-                listname = ["AllWMOs"]
-                [listname.append("CYC%0.4d" % i) for i in sorted(self.CYC)]
-            else:
-                listname = ["FULL"]
-            listname = "_".join(listname)
-        else:
-            listname = "WMO%i" % self.WMO[0]
-            if isinstance(self.CYC, (np.ndarray)):
-                listname = [listname]
-                [listname.append("CYC%0.4d" % i) for i in sorted(self.CYC)]
-                listname = "_".join(listname)
-        if len(listname) > 256:
-            listname = hashlib.sha256(listname.encode()).hexdigest()
-        return listname
-
-    def run(self, index_file):
-        """ Run search on an Argo index file
-
-        Parameters
-        ----------
-        index_file: _io.TextIOWrapper
-
-        Returns
-        -------
-        csv rows matching the request, as a in-memory string. Or None.
-        """
-
-        def search_one_wmo(index, wmo):
-            """ Search for a WMO in the argo index file
-
-            Parameters
-            ----------
-            index_file: _io.TextIOWrapper
-            wmo: int
-
-            Returns
-            -------
-            csv chunk matching the request, as a string. Or None
-            """
-            index.seek(0)
-            results = ""
-            il_read, il_loaded, il_this = 0, 0, 0
-            for line in index:
-                il_this = il_loaded
-                # if re.search("/%i/" % wmo, line.split(',')[0]):
-                if "/%i/" % wmo in line:  # much faster than re
-                    # Search for the wmo at the beginning of the file name under: /<dac>/<wmo>/profiles/
-                    results += line
-                    il_loaded += 1
-                if il_this == il_loaded and il_this > 0:
-                    break  # Since the index is sorted, once we found the float, we can stop reading the index !
-                il_read += 1
-            if il_loaded > 0:
-                return results
-            else:
-                return None
-
-        def search_any_wmo_cyc(index, cyc):
-            """ Search for a WMO in the argo index file
-
-            Parameters
-            ----------
-            index_file: _io.TextIOWrapper
-            cyc: array of integers
-
-            Returns
-            -------
-            csv chunk matching the request, as a string. Or None
-            """
-
-            def search_this(this_line):
-                # return np.any([re.search("%0.3d.nc" % c, this_line.split(',')[0]) for c in cyc])
-                return np.any(["%0.3d.nc" % c in this_line for c in cyc])
-                if np.all(cyc >= 1000):
-                    def search_this(this_line):
-                        # return np.any([re.search("%0.4d.nc" % c, this_line.split(',')[0]) for c in cyc])
-                        return np.any(["%0.4d.nc" % c in this_line for c in cyc])
-
-            index.seek(0)
-            results = ""
-            il_read, il_loaded, il_this = 0, 0, 0
-            for line in index:
-                il_this = il_loaded
-                if search_this(line):
-                    results += line
-                    il_loaded += 1
-                il_read += 1
-            if il_loaded > 0:
-                return results
-            else:
-                return None
-
-        def search_one_wmo_cyc(index, wmo, cyc):
-            """ Search for a WMO and CYC in the argo index file
-
-            Parameters
-            ----------
-            index: _io.TextIOWrapper
-            wmo: int
-            cyc: array of integers
-
-            Returns
-            -------
-            csv chunk matching the request, as a string. Or None
-            """
-            index.seek(0)
-            results = ""
-
-            # Look for the float:
-            il_read, il_loaded, il_this = 0, 0, 0
-            for line in index:
-                il_this = il_loaded
-                # if re.search("/%i/" % wmo, line.split(',')[0]):
-                if "/%i/" % wmo in line:  # much faster than re
-                    results += line
-                    il_loaded += 1
-                if il_this == il_loaded and il_this > 0:
-                    break  # Since the index is sorted, once we found the float, we can stop reading the index !
-                il_read += 1
-
-            # Then look for the profile:
-            if results:
-                def search_this(this_line):
-                    # return np.any([re.search("%0.3d.nc" % c, this_line.split(',')[0]) for c in cyc])
-                    return np.any(["%0.3d.nc" % c in this_line for c in cyc])
-                if np.all(cyc >= 1000):
-                    def search_this(this_line):
-                        # return np.any([re.search("%0.4d.nc" % c, this_line.split(',')[0]) for c in cyc])
-                        return np.any(["%0.4d.nc" % c in this_line for c in cyc])
-                il_loaded, cyc_results = 0, ""
-                for line in results.split():
-                    if search_this(line):
-                        il_loaded += 1
-                        cyc_results += line + "\n"
-            if il_loaded > 0:
-                return cyc_results
-            else:
-                return None
-
-        def full_load(index):
-            """ Return the full argo index file (without header)
-
-            Parameters
-            ----------
-            index: _io.TextIOWrapper
-
-            Returns
-            -------
-            csv index, as a string
-            """
-            index.seek(0)
-            results = ""
-            for line in index:
-                if line[0] != '#':
-                    break
-            return index.read()
-
-        if len(self.WMO) > 1:
-            if isinstance(self.CYC, (np.ndarray)):
-                return "".join([r for r in [search_one_wmo_cyc(index_file, w, self.CYC) for w in self.WMO] if r])
-            else:
-                return "".join([r for r in [search_one_wmo(index_file, w) for w in self.WMO] if r])
-        elif len(self.WMO) == 0:  # Search for cycle numbers only
-            if isinstance(self.CYC, (np.ndarray)):
-                return search_any_wmo_cyc(index_file, self.CYC)
-            else:
-                # No wmo, No cyc, return the full index:
-                return full_load(index_file)
-        else:
-            if isinstance(self.CYC, (np.ndarray)):
-                return search_one_wmo_cyc(index_file, self.WMO[0], self.CYC)
-            else:
-                return search_one_wmo(index_file, self.WMO[0])
-
-
-class indexstore():
-    """" Use to manage access to a local Argo index and searches """
-    def __init__(self,
-                 cache: bool = False,
-                 cachedir: str = "",
-                 index_file: str = "ar_index_global_prof.txt",
-                 **kw):
-        """ Create a file storage system for local file requests
-
-            Parameters
-            ----------
-            cache : bool (False)
-            cachedir : str (from OPTIONS)
-
-        """
-        self.index_file = index_file
-        self.cache = cache
-        self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        self.fs = {}
-        self.fs['index'] = filestore(cache, cachedir)
-        if not cache:
-            self.fs['search'] = fsspec.filesystem("memory")
-        else:
-            self.fs['search'] = fsspec.filesystem("filecache",
-                                                 target_protocol='memory',
-                                                 cache_storage=OPTIONS['cachedir'] if cachedir == '' else cachedir,
-                                                 expiry_time=86400,
-                                                 cache_check=10)
-            self.fs['search'].load_cache()
-
-    def in_cache(self, fs, uri):
-        """ Return true if uri is cached """
-        if not uri.startswith(fs.target_protocol):
-            store_path = fs.target_protocol + "://" + uri
-        else:
-            store_path = uri
-        fs.load_cache()
-        return store_path in fs.cached_files[-1]
-
-    def in_memory(self, fs, uri):
-        """ Return true if uri is in the memory store """
-        return uri in fs.store
-
-    def open_index(self):
-        return self.fs['index'].open(self.index_file, "r")
-
-    def res2dataframe(self, results):
-        """ Convert a csv like string into a DataFrame
-
-            If one columns has a missing value, the row is skipped
-        """
-        return pd.DataFrame([x.split(',') for x in results.split('\n') if ",," not in x],
-                            columns=['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type',
-                                     'institution', 'date_update']) \
-                   .astype({'file': np.str,
-                            'date': np.datetime64,
-                            'latitude': np.float32,
-                            'longitude': np.float32,
-                            'ocean': np.str,
-                            'profiler_type': np.str,
-                            'institution': np.str,
-                            'date_update': np.datetime64})[:-1]
-
-    def open_dataframe(self, search_cls):
-        uri = search_cls.uri()
-        with self.open_index() as f:
-            if self.cache and (self.in_cache(self.fs['search'], uri) or self.in_memory(self.fs['search'], uri)):
-                # print('Search already in memory, loading:', uri)
-                with self.fs['search'].open(uri, "r") as of:
-                    df = self.res2dataframe(of.read())
-            else:
-                # print('Running search from scratch ...')
-                # Run search:
-                results = search_cls.run(f)
-                # and save results for caching:
-                if self.cache:
-                    with self.fs['search'].open(uri, "w") as of:
-                        of.write(results)  # This happens in memory
-                df = self.res2dataframe(results)
-        return df
-
-
-class filestore():
-    """Wrapper around fsspec file stores
-
-        https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.local.LocalFileSystem
-
-    """
-
-    def __init__(self, cache: bool = False, cachedir: str = "", **kw):
-        """ Create a file storage system for local file requests
-
-            Parameters
-            ----------
-            cache : bool (False)
-            cachedir : str (from OPTIONS)
-
-        """
-        self.cache = cache
-        self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        if not self.cache:
-            self.fs = fsspec.filesystem("file", **kw)
-        else:
-            self.fs = fsspec.filesystem("filecache",
-                                        target_protocol='file',
-                                        cache_storage=self.cachedir,
-                                        expiry_time=86400, cache_check=10, **kw)
-            # We use a refresh rate for cache of 1 day,
-            # since this is the update frequency of the Ifremer erddap
-
-    def cachepath(self, uri : str, errors: str = 'raise'):
-        """ Return path to cached file for a given URI """
-        if not self.cache:
-            if errors == 'raise':
-                raise FileSystemHasNoCache("%s has no cache system" % type(self.fs) )
-        else:
-            self.fs.load_cache()
-            if uri in self.fs.cached_files[-1]:
-                return os.path.sep.join([self.fs.storage[-1], self.fs.cached_files[-1][uri]['fn']])
-            elif errors == 'raise':
-                raise CacheFileNotFound("No cached file found in %s for: \n%s" % (self.fs.storage[-1], uri))
-
-    def glob(self, path, **kwargs):
-        return self.fs.glob(path, **kwargs)
-
-    def open(self, url, *args, **kwargs):
-        return self.fs.open(url, *args, **kwargs)
-
-    def open_dataset(self, url, **kwargs):
-        """ Return a xarray.dataset from an url
-
-            Parameters
-            ----------
-            url: str
-
-            Returns
-            -------
-            :class:`xarray.DataArray`
-
-        """
-        try:
-            with self.fs.open(url) as of:
-                ds = xr.open_dataset(of, **kwargs)
-            return ds
-        except:
-            raise
-
-    def open_dataframe(self, url, **kwargs):
-        """ Return a pandas.dataframe from an url that is a csv ressource
-
-            Parameters
-            ----------
-            url: str
-
-            Returns
-            -------
-            :class:`pandas.DataFrame`
-
-        """
-        try:
-            with self.fs.open(url) as of:
-                df = pd.read_csv(of, **kwargs)
-            return df
-        except:
-            raise
-
-
-class ftpstore():
-    """Wrapper around fsspec ftp file store
-
-        https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.local.LocalFileSystem
-        https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.ftp.FTPFileSystem
-        https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.sftp.SFTPFileSystem
-
-        This wrapper is primarily used by the localftp data/index fetchers
-    """
-
-    def __init__(self, cache: bool = False, cachedir: str = ""):
-        """ Create a file storage system for ftp requests
-
-            Parameters
-            ----------
-            cache : bool (False)
-            cachedir : str (from OPTIONS)
-
-        """
-        self.cache = cache
-        self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        if not self.cache:
-            self.fs = fsspec.filesystem("ftp")
-        else:
-            self.fs = fsspec.filesystem("filecache",
-                                        target_protocol='ftp',
-                                        target_options={'simple_links': True},
-                                        cache_storage=self.cachedir,
-                                        expiry_time=86400, cache_check=10)
-            # We use a refresh rate for cache of 1 day,
-            # since this is the update frequency of the Ifremer erddap
-
-    def cachepath(self, uri : str, errors: str = 'raise'):
-        """ Return path to cached file for a given URI """
-        if not self.cache:
-            if errors == 'raise':
-                raise FileSystemHasNoCache("%s has no cache system" % type(self.fs) )
-        else:
-            self.fs.load_cache()
-            if uri in self.fs.cached_files[-1]:
-                return os.path.sep.join([self.fs.storage[-1], self.fs.cached_files[-1][uri]['fn']])
-            elif errors == 'raise':
-                raise CacheFileNotFound("No cached file found in %s for: \n%s" % (self.fs.storage[-1], uri))
-
-    def _verbose_exceptions(self, e):
-        r = e.response # https://requests.readthedocs.io/en/master/api/#requests.Response
-        status_code = r.status_code
-        data = io.BytesIO(r.content)
-        url = r.url
-
-        # 4XX client error response
-        if r.status_code == 404:  # Empty response
-            error = ["Error %i " % r.status_code]
-            error.append(data.read().decode("utf-8").replace("Error", ""))
-            error.append("The URL triggering this error was: \n%s" % url)
-            msg = "\n".join(error)
-            if "Currently unknown datasetID" in msg:
-                raise ErddapServerError("Dataset not found in the Erddap, try again later. "
-                                        "The server may be rebooting. \n%s" % msg)
-            else:
-                raise requests.HTTPError(msg)
-
-        elif r.status_code == 413:  # Too large request
-            error = ["Error %i " % r.status_code]
-            error.append(data.read().decode("utf-8").replace("Error", ""))
-            error.append("The URL triggering this error was: \n%s" % url)
-            msg = "\n".join(error)
-            if "Payload Too Large" in msg:
-                raise ErddapServerError("Your query produced too much data. "
-                                        "Try to request less data.\n%s" % msg)
-            else:
-                raise requests.HTTPError(msg)
-
-        # 5XX server error response
-        elif r.status_code == 500:  # 500 Internal Server Error
-            if "text/html" in r.headers.get('content-type'):
-                display(HTML(data.read().decode("utf-8")))
-            error = ["Error %i " % r.status_code]
-            error.append(data.read().decode("utf-8"))
-            error.append("The URL triggering this error was: \n%s" % url)
-            msg = "\n".join(error)
-            if "No space left on device" in msg or "java.io.EOFException" in msg:
-                raise ErddapServerError("An error occured on the Erddap server side. "
-                                        "Please contact assistance@ifremer.fr to ask a reboot of the erddap server. \n%s" % msg)
-            else:
-                raise requests.HTTPError(msg)
-
-        else:
-            error = ["Error %i " % r.status_code]
-            error.append(data.read().decode("utf-8"))
-            error.append("The URL triggering this error was: \n%s" % url)
-            print("\n".join(error))
-            r.raise_for_status()
-
-    def open(self, url, **kwargs):
-        return self.fs.open(url, **kwargs)
-
-    def open_dataset(self, url, **kwargs):
-        """ Return a xarray.dataset from an url, or verbose errors
-
-            Parameters
-            ----------
-            url: str
-
-            Returns
-            -------
-            :class:`xarray.DataArray`
-
-        """
-        try:
-            with self.fs.open(url) as of:
-                ds = xr.open_dataset(of, **kwargs)
-            return ds
-        except requests.HTTPError as e:
-            self._verbose_exceptions(e)
-
-    def open_dataframe(self, url, **kwargs):
-        """ Return a pandas.dataframe from an url with csv response, or verbose errors
-
-            Parameters
-            ----------
-            url: str
-
-            Returns
-            -------
-            :class:`pandas.DataFrame`
-
-        """
-        try:
-            with self.fs.open(url) as of:
-                df = pd.read_csv(of, **kwargs)
-            return df
-        except requests.HTTPError as e:
-            self._verbose_exceptions(e)
-
-
-class httpstore():
-    """Wrapper around fsspec http file store
-
-        This wrapper intend to make argopy safer to failures from http requests
-        This wrapper is primarily used by the Erddap data/index fetchers
-    """
-
-    def __init__(self, cache: bool = False, cachedir: str = "", **kw):
-        """ Create a file storage system for http requests
-
-            Parameters
-            ----------
-            cache : bool (False)
-            cachedir : str (from OPTIONS)
-
-        """
-        self.cache = cache
-        self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        if not self.cache:
-            self.fs = fsspec.filesystem("http", **kw)
-        else:
-            self.fs = fsspec.filesystem("filecache",
-                                        target_protocol='http',
-                                        target_options={'simple_links': True},
-                                        cache_storage=self.cachedir,
-                                        expiry_time=86400, cache_check=10, **kw)
-            # We use a refresh rate for cache of 1 day,
-            # since this is the update frequency of the Ifremer erddap
-
-    def cachepath(self, uri : str, errors: str = 'raise'):
-        """ Return path to cached file for a given URI """
-        if not self.cache:
-            if errors == 'raise':
-                raise FileSystemHasNoCache("%s has no cache system" % type(self.fs) )
-        else:
-            self.fs.load_cache()
-            if uri in self.fs.cached_files[-1]:
-                return os.path.sep.join([self.fs.storage[-1], self.fs.cached_files[-1][uri]['fn']])
-            elif errors == 'raise':
-                raise CacheFileNotFound("No cached file found in %s for: \n%s" % (self.fs.storage[-1], uri))
-
-    def _verbose_exceptions(self, e):
-        r = e.response # https://requests.readthedocs.io/en/master/api/#requests.Response
-        status_code = r.status_code
-        data = io.BytesIO(r.content)
-        url = r.url
-
-        # 4XX client error response
-        if r.status_code == 404:  # Empty response
-            error = ["Error %i " % r.status_code]
-            error.append(data.read().decode("utf-8").replace("Error", ""))
-            error.append("The URL triggering this error was: \n%s" % url)
-            msg = "\n".join(error)
-            if "Currently unknown datasetID" in msg:
-                raise ErddapServerError("Dataset not found in the Erddap, try again later. "
-                                        "The server may be rebooting. \n%s" % msg)
-            else:
-                raise requests.HTTPError(msg)
-
-        elif r.status_code == 413:  # Too large request
-            error = ["Error %i " % r.status_code]
-            error.append(data.read().decode("utf-8").replace("Error", ""))
-            error.append("The URL triggering this error was: \n%s" % url)
-            msg = "\n".join(error)
-            if "Payload Too Large" in msg:
-                raise ErddapServerError("Your query produced too much data. "
-                                        "Try to request less data.\n%s" % msg)
-            else:
-                raise requests.HTTPError(msg)
-
-        # 5XX server error response
-        elif r.status_code == 500:  # 500 Internal Server Error
-            if "text/html" in r.headers.get('content-type'):
-                display(HTML(data.read().decode("utf-8")))
-            error = ["Error %i " % r.status_code]
-            error.append(data.read().decode("utf-8"))
-            error.append("The URL triggering this error was: \n%s" % url)
-            msg = "\n".join(error)
-            if "No space left on device" in msg or "java.io.EOFException" in msg:
-                raise ErddapServerError("An error occured on the Erddap server side. "
-                                        "Please contact assistance@ifremer.fr to ask a reboot of the erddap server. \n%s" % msg)
-            else:
-                raise requests.HTTPError(msg)
-
-        else:
-            error = ["Error %i " % r.status_code]
-            error.append(data.read().decode("utf-8"))
-            error.append("The URL triggering this error was: \n%s" % url)
-            print("\n".join(error))
-            r.raise_for_status()
-
-    def open(self, url, **kwargs):
-        return self.fs.open(url, **kwargs)
-
-    def open_dataset(self, url, **kwargs):
-        """ Return a xarray.dataset from an url, or verbose errors
-
-            Parameters
-            ----------
-            url: str
-
-            Returns
-            -------
-            :class:`xarray.DataArray`
-
-        """
-        try:
-            with self.fs.open(url) as of:
-                ds = xr.open_dataset(of, **kwargs)
-            return ds
-        except requests.HTTPError as e:
-            self._verbose_exceptions(e)
-
-    def open_dataframe(self, url, **kwargs):
-        """ Return a pandas.dataframe from an url with csv response, or verbose errors
-
-            Parameters
-            ----------
-            url: str
-
-            Returns
-            -------
-            :class:`pandas.DataFrame`
-
-        """
-        try:
-            with self.fs.open(url) as of:
-                df = pd.read_csv(of, **kwargs)
-            return df
-        except requests.HTTPError as e:
-            self._verbose_exceptions(e)
 
 
 def urlopen(url):
@@ -734,7 +61,7 @@ def urlopen(url):
         else:
             raise requests.HTTPError(msg)
 
-    elif r.status_code == 413: # Too large request
+    elif r.status_code == 413:  # Too large request
         error = ["Error %i " % r.status_code]
         error.append(data.read().decode("utf-8").replace("Error", ""))
         error.append("The URL triggering this error was: \n%s" % url)
@@ -769,23 +96,26 @@ def urlopen(url):
         print("\n".join(error))
         r.raise_for_status()
 
+
 def load_dict(ptype):
-    if ptype=='profilers':        
+    if ptype == 'profilers':
         with open(os.path.join(path2pkl, 'dict_profilers.pickle'), 'rb') as f:
             loaded_dict = pickle.load(f)
         return loaded_dict
-    elif ptype=='institutions':
+    elif ptype == 'institutions':
         with open(os.path.join(path2pkl, 'dict_institutions.pickle'), 'rb') as f:
             loaded_dict = pickle.load(f)
-        return loaded_dict      
+        return loaded_dict
     else:
         raise ValueError("Invalid dictionnary pickle file")
+
 
 def mapp_dict(Adictionnary, Avalue):
     if Avalue not in Adictionnary:
         return "Unknown"
     else:
         return Adictionnary[Avalue]
+
 
 def list_available_data_src():
     """ List all available data sources """
@@ -808,20 +138,21 @@ def list_available_data_src():
 
     return AVAILABLE_SOURCES
 
+
 def list_standard_variables():
-    """ Return the list of variables for standard users
-    """
+    """ Return the list of variables for standard users """
     return ['DATA_MODE', 'LATITUDE', 'LONGITUDE', 'POSITION_QC', 'DIRECTION', 'PLATFORM_NUMBER', 'CYCLE_NUMBER', 'PRES',
      'TEMP', 'PSAL', 'PRES_QC', 'TEMP_QC', 'PSAL_QC', 'PRES_ADJUSTED', 'TEMP_ADJUSTED', 'PSAL_ADJUSTED',
      'PRES_ADJUSTED_QC', 'TEMP_ADJUSTED_QC', 'PSAL_ADJUSTED_QC', 'PRES_ADJUSTED_ERROR', 'TEMP_ADJUSTED_ERROR',
      'PSAL_ADJUSTED_ERROR', 'JULD', 'JULD_QC', 'TIME', 'TIME_QC']
+
 
 def list_multiprofile_file_variables():
     """ Return the list of variables in a netcdf multiprofile file.
 
         This is for files created by GDAC under <DAC>/<WMO>/<WMO>_prof.nc
     """
-    return [ 'CONFIG_MISSION_NUMBER',
+    return ['CONFIG_MISSION_NUMBER',
              'CYCLE_NUMBER',
              'DATA_CENTRE',
              'DATA_MODE',
@@ -886,6 +217,7 @@ def list_multiprofile_file_variables():
              'VERTICAL_SAMPLING_SCHEME',
              'WMO_INST_TYPE']
 
+
 def get_sys_info():
     "Returns system information as a dict"
 
@@ -935,6 +267,7 @@ def get_sys_info():
 
     return blob
 
+
 def netcdf_and_hdf5_versions():
     libhdf5_version = None
     libnetcdf_version = None
@@ -951,6 +284,7 @@ def netcdf_and_hdf5_versions():
         except ImportError:
             pass
     return [("libhdf5", libhdf5_version), ("libnetcdf", libnetcdf_version)]
+
 
 def show_versions(file=sys.stdout):
     """ Print the versions of argopy and its dependencies
@@ -1030,6 +364,7 @@ def show_versions(file=sys.stdout):
     for k, stat in deps_blob:
         print(f"{k}: {stat}", file=file)
 
+
 def isconnected(host='http://www.ifremer.fr'):
     """ Determine if we have a live internet connection
 
@@ -1048,6 +383,7 @@ def isconnected(host='http://www.ifremer.fr'):
     except:
         return False
 
+
 def erddap_ds_exists(ds="ArgoFloats"):
     """ Given erddap fetcher, check if a Dataset exists, return a bool"""
     # e = ArgoDataFetcher(src='erddap').float(wmo=0).fetcher
@@ -1056,6 +392,7 @@ def erddap_ds_exists(ds="ArgoFloats"):
     with httpstore(timeout=120).open("http://www.ifremer.fr/erddap/info/index.json") as of:
         erddap_index = json.load(of)
     return ds in [row[-1] for row in erddap_index['table']['rows']]
+
 
 def open_etopo1(box, res='l'):
     """ Download ETOPO for a box
