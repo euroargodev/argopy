@@ -4,6 +4,7 @@
 A bunch of custom errors used in argopy.
 """
 
+
 class NetCDF4FileNotFoundError(FileNotFoundError):
     """
     Most common error. Basically just a file not found.
@@ -12,16 +13,20 @@ class NetCDF4FileNotFoundError(FileNotFoundError):
     def __init__(self, path):
         self.value = "Couldn't find NetCDF4 file: %s" % path
         self.path = path
+
     def __str__(self):
         return (repr(self.value))
+
 
 class CacheFileNotFound(FileNotFoundError):
     """ Raise when a file is not found in cache """
     pass
 
+
 class FileSystemHasNoCache(ValueError):
     """ Raise when trying to access a cache system not implemented """
     pass
+
 
 class UnrecognisedDataSelectionMode(ValueError):
     """
@@ -32,6 +37,7 @@ class UnrecognisedDataSelectionMode(ValueError):
         self.institute = institute
         self.wmo = wmo
 
+
 class UnrecognisedProfileDirection(ValueError):
     """
     Not "A" or "D". Argopy should have recognized those.
@@ -40,11 +46,13 @@ class UnrecognisedProfileDirection(ValueError):
         self.institute = institute
         self.wmo = wmo
 
+
 class InvalidDatasetStructure(ValueError):
-    """ 
+    """
     This is to be used when the in-memory xarray dataset is not structured as expected
     """
     pass
+
 
 class InvalidFetcherAccessPoint(ValueError):
     """
@@ -52,17 +60,20 @@ class InvalidFetcherAccessPoint(ValueError):
     """
     pass
 
+
 class InvalidFetcher(ValueError):
     """
     Raise when trying to do something with a fetcher not ready
     """
     pass
 
+
 class ErddapServerError(ValueError):
     """
     Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery
     """
     pass
+
 
 class InvalidDashboard(ValueError):
     """

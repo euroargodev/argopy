@@ -327,7 +327,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 ncHeader = of.read().decode("utf-8")
             lines = [line for line in ncHeader.splitlines() if 'row = ' in line][0]
             return int(lines.split('=')[1].split(';')[0])
-        except:
+        except Exception:
             pass
 
     def to_xarray(self):

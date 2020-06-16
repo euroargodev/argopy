@@ -35,6 +35,7 @@ __all__ = (
     "errors",
     "plotters",
     "stores",
+    "tutorial",
     # Constants
     "__version__"
 )

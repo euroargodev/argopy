@@ -123,7 +123,7 @@ def list_available_data_src():
     try:
         from .data_fetchers import erddap as Erddap_Fetchers
         AVAILABLE_SOURCES['erddap'] = Erddap_Fetchers
-    except:
+    except Exception:
         warnings.warn("An error occured while loading the ERDDAP data fetcher, "
                       "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
         pass
@@ -131,7 +131,7 @@ def list_available_data_src():
     try:
         from .data_fetchers import localftp as LocalFTP_Fetchers
         AVAILABLE_SOURCES['localftp'] = LocalFTP_Fetchers
-    except:
+    except Exception:
         warnings.warn("An error occured while loading the local FTP data fetcher, "
                       "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
         pass
@@ -380,7 +380,7 @@ def isconnected(host='http://www.ifremer.fr'):
     try:
         urllib.request.urlopen(host)  # Python 3.x
         return True
-    except:
+    except Exception:
         return False
 
 
