@@ -40,13 +40,10 @@ import getpass
 
 import multiprocessing as mp
 import distributed
-import fsspec
-import re
-import hashlib
 
 from .proto import ArgoDataFetcherProto
 from argopy.errors import NetCDF4FileNotFoundError
-from argopy.utilities import list_standard_variables, load_dict, mapp_dict, filestore
+from argopy.utilities import list_standard_variables, load_dict, mapp_dict, filestore, indexstore, index_filter_wmo
 from argopy.options import OPTIONS
 
 access_points = ['wmo']
@@ -443,16 +440,12 @@ class LocalFTPArgoIndexFetcher(ABC):
         pass
 
     @abstractmethod
-    def filter_index(self, index_file):
+    def filter_index(self):
         """ Custom search in the argo index file
-
-        Parameters
-        ----------
-        index_file: _io.TextIOWrapper
 
         Returns
         -------
-        csv rows matching the request, as a string. Or None.
+        Instance of index_filter_proto
         """
         pass
 
@@ -473,21 +466,10 @@ class LocalFTPArgoIndexFetcher(ABC):
                 Path to the directory with the 'dac' folder and index file
         """
         self.cache = cache
-        self.fs = {}
-        self.fs['index'] = filestore(cache, cachedir)
-        if cache:
-            self.fs['search'] = fsspec.filesystem("filecache",
-                                                 target_protocol='memory',
-                                                 cache_storage=OPTIONS['cachedir'] if cachedir == '' else cachedir,
-                                                 expiry_time=86400,
-                                                 cache_check=10)
-            self.fs['search'].load_cache()
-        else:
-            self.fs['search'] = fsspec.filesystem("memory")
-
         self.definition = 'Local ftp Argo index fetcher'
         self.local_ftp = OPTIONS['local_ftp'] if local_ftp == '' else local_ftp
         self.index_file = index_file
+        self.fs = indexstore(cache, cachedir, os.path.sep.join([self.local_ftp, self.index_file]))
         self.init(**kwargs)
 
     def __repr__(self):
@@ -496,72 +478,11 @@ class LocalFTPArgoIndexFetcher(ABC):
         summary.append("Domain: %s" % self.cname())
         return '\n'.join(summary)
 
-    @property
-    def cachepath(self):
-        """ Return path to cache file for this request """
-        uri = self.cname(cache=True)
-        if not uri.startswith(self.fs['search'].target_protocol):
-            store_path = self.fs['search'].target_protocol + "://" + uri
-        else:
-            store_path = uri
-        self.fs['search'].load_cache()
-        return os.path.sep.join([self.fs['search'].storage[0], self.fs['search'].cached_files[-1][store_path]['fn']])
-
-    def in_cache(self, fs, uri):
-        """ Return true if uri is cached """
-        if not uri.startswith(fs.target_protocol):
-            store_path = fs.target_protocol + "://" + uri
-        else:
-            store_path = uri
-        fs.load_cache()
-        return store_path in fs.cached_files[-1]
-
-    def in_memory(self, fs, uri):
-        """ Return true if uri is in the memory store """
-        return uri in fs.store
-
     def to_dataframe(self):
         """ filter local index file and return a pandas dataframe """
+        df = self.fs.open_dataframe(self.filter_index())
 
-        def res2dataframe(results):
-            """ Convert a csv like string into a DataFrame
-
-                If one columns has a missing value, the row is skipped
-            """
-            return pd.DataFrame([x.split(',') for x in results.split('\n') if ",," not in x],
-                                columns=['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type',
-                                         'institution', 'date_update']) \
-                       .astype({'file': np.str,
-                                'date': np.datetime64,
-                                'latitude': np.float32,
-                                'longitude': np.float32,
-                                'ocean': np.str,
-                                'profiler_type': np.str,
-                                'institution': np.str,
-                                'date_update': np.datetime64})[:-1]
-
-        uri = self.cname(cache=True)
-        with self.fs['index'].open(os.path.sep.join([self.local_ftp, self.index_file]), "r") as f:
-            if self.cache and (self.in_cache(self.fs['search'], uri) or self.in_memory(self.fs['search'], uri)):
-                # print('search already in memory:', uri)
-                with self.fs['search'].open(uri, "r") as of:
-                    df = res2dataframe(of.read())
-            else:
-                # print('run search from scratch:')
-                # Run search:
-                results = self.filter_index(f)
-                # and save results for caching:
-                if self.cache:
-                    with self.fs['search'].open(uri, "w") as of:
-                        of.write(results)  # This happens in memory
-                df = res2dataframe(results)
-
-        # I'd like something like this:
-        # with self.fs.open(uri) as f:
-        #     df = res2dataframe(f.read())
-        # but this implies a file system that actually goes on top of 2 fs for the index and the search
-
-        # Post-processing of the filtered (raw format) index:
+        # Post-processing of the filtered index:
         df['wmo'] = df['file'].apply(lambda x: int(x.split('/')[1]))
 
         # institution & profiler mapping for all users
@@ -585,7 +506,7 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
     """ Manage access to local ftp Argo data for: a list of WMOs
 
     """
-    def init(self, WMO: list = [], CYC = None, **kwargs):
+    def init(self, WMO: list = [], CYC=None, **kwargs):
         """ Create Argo data loader for WMOs
 
             Parameters
@@ -603,31 +524,15 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
             CYC = np.array(CYC, dtype='int')  # Make sure we deal with an array of integers
         self.WMO = WMO
         self.CYC = CYC
+        self.fcls = index_filter_wmo(self.WMO, self.CYC)
 
-    def cname(self, cache=False):
+    def cname(self):
         """ Return a unique string defining the request
 
-            For more than 1 WMO, the cache name is hashed.
         """
-        if len(self.WMO) > 1:
-            listname = ["WMO%i" % i for i in sorted(self.WMO)]
-            if isinstance(self.CYC, (np.ndarray)):
-                [listname.append("CYC%0.4d" % i) for i in sorted(self.CYC)]
-            listname = ";".join(listname)
-            # listname = self.dataset_id + ";" + listname
-            if cache:
-                listname = hashlib.sha256(listname.encode()).hexdigest()
-        else:
-            listname = "WMO%i" % self.WMO[0]
-            if isinstance(self.CYC, (np.ndarray)):
-                listname = [listname]
-                [listname.append("CYC%0.4d" % i) for i in sorted(self.CYC)]
-                listname = "_".join(listname)
-                # listname = self.dataset_id + "_" + listname
+        return self.fcls.uri()
 
-        return listname
-
-    def filter_index(self, index_file):
+    def filter_index(self):
         """ Search for one or more WMO in the argo index file
 
         Parameters
@@ -638,89 +543,4 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
         -------
         csv rows matching the request, as a in-memory string. Or None.
         """
-        def search_one_wmo(index, wmo):
-            """ Search for a WMO in the argo index file
-
-            Parameters
-            ----------
-            index_file: _io.TextIOWrapper
-            wmo: int
-
-            Returns
-            -------
-            csv chunk matchin the request, as a string. Or None
-            """
-            index.seek(0)
-            results = ""
-            il_read, il_loaded, il_this = 0, 0, 0
-            for line in index:
-                il_this = il_loaded
-                # if re.search("/%i/" % wmo, line.split(',')[0]):
-                if "/%i/" % wmo in line:  # much faster than re
-                    # Search for the wmo at the beginning of the file name under: /<dac>/<wmo>/profiles/
-                    results += line
-                    il_loaded += 1
-                if il_this == il_loaded and il_this > 0:
-                    break  # Since the index is sorted, once we found the float, we can stop reading the index !
-                il_read += 1
-            if il_loaded > 0:
-                return results
-            else:
-                return None
-
-        def search_one_wmo_cyc(index_file, wmo, cyc):
-            """ Search for a WMO and CYC in the argo index file
-
-            Parameters
-            ----------
-            index_file: _io.TextIOWrapper
-            wmo: int
-            cyc: array of integers
-
-            Returns
-            -------
-            csv chunk matchin the request, as a string. Or None
-            """
-            results = ""
-
-            # Look for the float:
-            il_read, il_loaded, il_this, moveon = 0, 0, 0, True
-            for line in index_file:
-                il_this = il_loaded
-                # if re.search("/%i/" % wmo, line.split(',')[0]):
-                if "/%i/" % wmo in line:  # much faster than re
-                    results += line
-                    il_loaded += 1
-                if il_this == il_loaded and il_this > 0:
-                    break  # Since the index is sorted, once we found the float, we can stop reading the index !
-                il_read += 1
-
-            # Then look for the profile:
-            if results:
-                def search_this(this_line):
-                    # return np.any([re.search("%0.3d.nc" % c, this_line.split(',')[0]) for c in cyc])
-                    return np.any(["%0.3d.nc" % c in this_line for c in cyc])
-                if np.all(cyc >= 1000):
-                    def search_this(this_line):
-                        # return np.any([re.search("%0.4d.nc" % c, this_line.split(',')[0]) for c in cyc])
-                        return np.any(["%0.4d.nc" % c in this_line for c in cyc])
-                il_loaded, cyc_results = 0, ""
-                for line in results.split():
-                    if search_this(line):
-                        il_loaded += 1
-                        cyc_results += line + "\n"
-            if il_loaded > 0:
-                return cyc_results
-            else:
-                return None
-
-        if len(self.WMO) > 1:
-            if isinstance(self.CYC, (np.ndarray)):
-                return "".join([r for r in [search_one_wmo_cyc(index_file, w, self.CYC) for w in self.WMO] if r])
-            else:
-                return "".join([r for r in [search_one_wmo(index_file, w) for w in self.WMO] if r])
-        else:
-            if isinstance(self.CYC, (np.ndarray)):
-                return search_one_wmo_cyc(index_file, self.WMO[0], self.CYC)
-            else:
-                return search_one_wmo(index_file, self.WMO[0])
+        return self.fcls
