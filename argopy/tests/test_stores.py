@@ -8,7 +8,7 @@ import xarray as xr
 import pandas as pd
 import fsspec
 import argopy
-from argopy.stores import filestore, httpstore
+from argopy.stores import filestore, httpstore, indexfilter_wmo
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound
 from argopy.fetchers import ArgoDataFetcher
 from argopy.utilities import isconnected
@@ -103,3 +103,42 @@ class HttpStore(TestCase):
         except Exception:
             shutil.rmtree(testcachedir)
             raise
+
+
+class IndexFilter_WMO(TestCase):
+    kwargs = [{'WMO': 1900204},
+              {'WMO': [1900204, 1900243]},
+              {'CYC': 1},
+              {'CYC': [1, 6]},
+              {'WMO': 1900204, 'CYC': 36},
+              {'WMO': 1900243, 'CYC': [5, 45]},
+              {'WMO': [1900482, 2900738], 'CYC': 2},
+              {'WMO': [1900482, 2900738], 'CYC': [2, 6]},
+              {}]
+
+    def test_creation(self):
+        for kw in self.kwargs:
+            filt = indexfilter_wmo(**kw)
+            assert isinstance(filt, argopy.stores.argo_index.indexfilter_wmo)
+
+    def test_filters_uri(self):
+        for kw in self.kwargs:
+            filt = indexfilter_wmo(**kw)
+            assert isinstance(filt.uri(), str)
+
+    def test_filters_sha(self):
+        for kw in self.kwargs:
+            filt = indexfilter_wmo(**kw)
+            assert isinstance(filt.sha, str) and len(filt.sha) == 64
+
+    def test_filters_run(self):
+        ftproot, flist = argopy.tutorial.open_dataset('localftp')
+        index_file = os.path.sep.join([ftproot, "ar_index_global_prof.txt"])
+        for kw in self.kwargs:
+            filt = indexfilter_wmo(**kw)
+            with open(index_file, "r") as f:
+                results = filt.run(f)
+                if results:
+                    assert isinstance(results, str)
+                else:
+                    assert results is None

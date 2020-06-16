@@ -8,7 +8,7 @@ from argopy.options import OPTIONS
 from .fsspec_wrappers import filestore
 
 
-class index_filter_proto(ABC):
+class indexfilter_proto(ABC):
     """ Class prototype for an Argo index filter
 
     Such classes requires a ``run`` and ``uri`` methods.
@@ -43,7 +43,7 @@ class index_filter_proto(ABC):
         return hashlib.sha256(self.uri().encode()).hexdigest()
 
 
-class index_filter_wmo(index_filter_proto):
+class indexfilter_wmo(indexfilter_proto):
     """ Index filter based on WMO and/or CYCLE_NUMER
 
     This is intended to be used by instances of an indexstore

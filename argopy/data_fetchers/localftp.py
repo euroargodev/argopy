@@ -43,7 +43,7 @@ from .proto import ArgoDataFetcherProto
 from argopy.errors import NetCDF4FileNotFoundError
 from argopy.utilities import list_standard_variables, load_dict, mapp_dict
 from argopy.options import OPTIONS
-from argopy.stores import filestore, indexstore, index_filter_wmo
+from argopy.stores import filestore, indexstore, indexfilter_wmo
 
 access_points = ['wmo']
 exit_formats = ['xarray']
@@ -523,7 +523,7 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
             CYC = np.array(CYC, dtype='int')  # Make sure we deal with an array of integers
         self.WMO = WMO
         self.CYC = CYC
-        self.fcls = index_filter_wmo(self.WMO, self.CYC)
+        self.fcls = indexfilter_wmo(self.WMO, self.CYC)
 
     def cname(self):
         """ Return a unique string defining the request
