@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pandas as pd
 from abc import ABC, abstractmethod
@@ -354,7 +355,7 @@ class indexstore():
 
         Parameters
         ----------
-        scls: Class instance of type index_filter_proto
+        search_cls: Class instance inhereting from index_filter_proto
 
         Returns
         -------
@@ -363,16 +364,17 @@ class indexstore():
         uri = search_cls.uri()
         with self.open_index() as f:
             if self.cache and (self.in_cache(self.fs['search'], uri) or self.in_memory(self.fs['search'], uri)):
-                # print('Search already in memory, loading:', uri)
+                print('Search already in memory, loading:', uri)
                 with self.fs['search'].open(uri, "r") as of:
                     df = self.res2dataframe(of.read())
             else:
-                # print('Running search from scratch ...')
+                print('Running search from scratch ...')
                 # Run search:
                 results = search_cls.run(f)
                 # and save results for caching:
                 if self.cache:
                     with self.fs['search'].open(uri, "w") as of:
                         of.write(results)  # This happens in memory
+                    self.fs['search'].save_cache()
                 df = self.res2dataframe(results)
         return df

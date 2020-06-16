@@ -161,6 +161,22 @@ class LocalFTP_DataSets(TestCase):
             with pytest.raises(FileSystemHasNoCache):
                 loader.fetcher.cachepath
 
+    def test_caching_float(self):
+        testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
+        with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
+            try:
+                loader = ArgoIndexFetcher(src='localftp', cache=True).float(6902746)
+                # 1st call to load from erddap and save to cachedir:
+                ds = loader.to_xarray()
+                # 2nd call to load from cached file:
+                ds = loader.to_xarray()
+                assert isinstance(ds, xr.Dataset)
+                assert isinstance(loader.fetcher.cachepath, str)
+                shutil.rmtree(testcachedir)
+            except Exception:
+                shutil.rmtree(testcachedir)
+                raise
+
     def __testthis(self, dataset):
         for access_point in self.args:
 
