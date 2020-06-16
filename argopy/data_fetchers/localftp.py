@@ -439,6 +439,10 @@ class LocalFTPArgoIndexFetcher(ABC):
         pass
 
     @abstractmethod
+    def cachepath(self):
+        pass
+
+    @abstractmethod
     def filter_index(self):
         """ Custom search in the argo index file
 
@@ -500,7 +504,6 @@ class LocalFTPArgoIndexFetcher(ABC):
         """ Load Argo index and return a xarray Dataset """
         return self.to_dataframe().to_xarray()
 
-
 class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
     """ Manage access to local ftp Argo data for: a list of WMOs
 
@@ -524,6 +527,10 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
         self.WMO = WMO
         self.CYC = CYC
         self.fcls = indexfilter_wmo(self.WMO, self.CYC)
+
+    @property
+    def cachepath(self):
+        return self.fs.cachepath(self.fcls.uri())
 
     def cname(self):
         """ Return a unique string defining the request

@@ -141,11 +141,27 @@ class Erddap_backend(TestCase):
 
 @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
 class LocalFTP_DataSets(TestCase):
-    """ Test main API facade for all available dataset of the localftp fetching backend """
+    """ Test main API facade for all available dataset of the localftp fetching backend of index """
+
+    ftproot, flist = argopy.tutorial.open_dataset('localftp')
+    local_ftp = ftproot
+
+    def test_cachepath_notfound(self):
+        testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
+        with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
+            loader = ArgoIndexFetcher(src='localftp', cache=True).profile(6902746, 61)
+            with pytest.raises(CacheFileNotFound):
+                loader.fetcher.cachepath
+        shutil.rmtree(testcachedir)  # Make sure the cache folder is cleaned
+
+    def test_nocache(self):
+        with argopy.set_options(cachedir="dummy", local_ftp=self.local_ftp):
+            loader = ArgoIndexFetcher(src='localftp', cache=False).profile(6902746, 61)
+            loader.to_xarray()
+            with pytest.raises(FileSystemHasNoCache):
+                loader.fetcher.cachepath
 
     def __testthis(self, dataset):
-        ftproot, flist = argopy.tutorial.open_dataset('localftp')
-        self.local_ftp = ftproot
         for access_point in self.args:
 
             if access_point == 'profile':

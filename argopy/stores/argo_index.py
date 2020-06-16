@@ -5,6 +5,7 @@ import hashlib
 import fsspec
 
 from argopy.options import OPTIONS
+from argopy.errors import FileSystemHasNoCache, CacheFileNotFound
 from .fsspec_wrappers import filestore
 
 
@@ -303,6 +304,23 @@ class indexstore():
                                                   cache_storage=OPTIONS['cachedir'] if cachedir == '' else cachedir,
                                                   expiry_time=86400, cache_check=10)
             self.fs['search'].load_cache()
+
+    def cachepath(self, uri: str, errors: str = 'raise'):
+        """ Return path to cached file for a given URI """
+        if not self.cache:
+            if errors == 'raise':
+                raise FileSystemHasNoCache("%s has no cache system" % type(self.fs['search']))
+        else:
+            if not uri.startswith(self.fs['search'].target_protocol):
+                store_path = self.fs['search'].target_protocol + "://" + uri
+            else:
+                store_path = uri
+            self.fs['search'].load_cache()
+            if store_path in self.fs['search'].cached_files[-1]:
+                # return self.fs.cached_files[-1]
+                return os.path.sep.join([self.cachedir, self.fs['search'].cached_files[-1][store_path]['fn']])
+            elif errors == 'raise':
+                raise CacheFileNotFound("No cached file found in %s for: \n%s" % (self.fs['search'].storage[-1], uri))
 
     def in_cache(self, fs, uri):
         """ Return true if uri is cached """

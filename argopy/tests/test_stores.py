@@ -8,8 +8,8 @@ import xarray as xr
 import pandas as pd
 import fsspec
 import argopy
-from argopy.stores import filestore, httpstore, indexfilter_wmo
-from argopy.errors import FileSystemHasNoCache, CacheFileNotFound
+from argopy.stores import filestore, httpstore, indexfilter_wmo, indexstore
+from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, ErddapServerError
 from argopy.fetchers import ArgoDataFetcher
 from argopy.utilities import isconnected
 CONNECTED = isconnected()
@@ -85,11 +85,21 @@ class HttpStore(TestCase):
         fs = httpstore()
         assert isinstance(fs.open_dataset(uri), xr.Dataset)
 
+        # uri = 'https://github.com/dummy.nc'
+        # fs = httpstore()
+        # with pytest.raises(ErddapServerError):
+        #     fs.open_dataset(uri)
+
     @unittest.skipUnless(CONNECTED, "httpstore requires an internet connection to open online resources")
     def test_open_dataframe(self):
         uri = 'https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt'
         fs = httpstore()
         assert isinstance(fs.open_dataframe(uri, skiprows=8, header=0), pd.core.frame.DataFrame)
+
+        # uri = 'https://github.com/dummy.txt'
+        # fs = httpstore()
+        # with pytest.raises(ErddapServerError):
+        #     fs.open_dataframe(uri)
 
     @unittest.skipUnless(CONNECTED, "httpstore requires an internet connection to open online resources")
     def test_cachefile(self):
@@ -142,3 +152,29 @@ class IndexFilter_WMO(TestCase):
                     assert isinstance(results, str)
                 else:
                     assert results is None
+
+
+class IndexStore(TestCase):
+    ftproot, flist = argopy.tutorial.open_dataset('localftp')
+    index_file = os.path.sep.join([ftproot, "ar_index_global_prof.txt"])
+
+    kwargs_wmo = [{'WMO': 1900204},
+              {'WMO': [1900204, 1900243]},
+              {'CYC': 1},
+              {'CYC': [1, 6]},
+              {'WMO': 1900204, 'CYC': 36},
+              {'WMO': 1900243, 'CYC': [5, 45]},
+              {'WMO': [1900482, 2900738], 'CYC': 2},
+              {'WMO': [1900482, 2900738], 'CYC': [2, 6]},
+              {}]
+
+    def test_creation(self):
+        assert isinstance(indexstore(), argopy.stores.argo_index.indexstore)
+        assert isinstance(indexstore(cache=1), argopy.stores.argo_index.indexstore)
+        assert isinstance(indexstore(cache=1, cachedir="."), argopy.stores.argo_index.indexstore)
+        assert isinstance(indexstore(index_file="toto.txt"), argopy.stores.argo_index.indexstore)
+
+    def test_search_wmo(self):
+        for kw in self.kwargs_wmo:
+            df = indexstore(cache=0, index_file=self.index_file).open_dataframe(indexfilter_wmo(**kw))
+            assert isinstance(df, pd.core.frame.DataFrame)

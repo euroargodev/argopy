@@ -154,8 +154,7 @@ class Erddap_backend(TestCase):
 
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
     def test_nocache(self):
-        testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
-        with argopy.set_options(cachedir=testcachedir):
+        with argopy.set_options(cachedir="dummy"):
             loader = ArgoDataFetcher(src='erddap', cache=False).profile(6902746, 34)
             loader.to_xarray()
             with pytest.raises(FileSystemHasNoCache):
