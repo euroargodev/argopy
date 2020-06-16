@@ -474,21 +474,15 @@ class LocalFTPArgoIndexFetcher(ABC):
         """
         self.cache = cache
         self.fs = {}
+        self.fs['index'] = filestore(cache, cachedir)
         if cache:
-            self.fs['index'] = fsspec.filesystem("filecache",
-                                                 target_protocol='file',
-                                                 cache_storage=OPTIONS['cachedir'] if cachedir == '' else cachedir,
-                                                 expiry_time=86400,
-                                                 cache_check=10)
             self.fs['search'] = fsspec.filesystem("filecache",
                                                  target_protocol='memory',
                                                  cache_storage=OPTIONS['cachedir'] if cachedir == '' else cachedir,
                                                  expiry_time=86400,
                                                  cache_check=10)
-            self.fs['index'].load_cache()
             self.fs['search'].load_cache()
         else:
-            self.fs['index'] = fsspec.filesystem("file")
             self.fs['search'] = fsspec.filesystem("memory")
 
         self.definition = 'Local ftp Argo index fetcher'
@@ -505,11 +499,11 @@ class LocalFTPArgoIndexFetcher(ABC):
     @property
     def cachepath(self):
         """ Return path to cache file for this request """
-        path = self.cname(cache=True)
-        if not path.startswith(self.fs['search'].target_protocol):
-            store_path = self.fs['search'].target_protocol + "://" + path
+        uri = self.cname(cache=True)
+        if not uri.startswith(self.fs['search'].target_protocol):
+            store_path = self.fs['search'].target_protocol + "://" + uri
         else:
-            store_path = path
+            store_path = uri
         self.fs['search'].load_cache()
         return os.path.sep.join([self.fs['search'].storage[0], self.fs['search'].cached_files[-1][store_path]['fn']])
 
@@ -523,14 +517,17 @@ class LocalFTPArgoIndexFetcher(ABC):
         return store_path in fs.cached_files[-1]
 
     def in_memory(self, fs, uri):
-        """ Return true if uri in memory store """
+        """ Return true if uri is in the memory store """
         return uri in fs.store
 
     def to_dataframe(self):
         """ filter local index file and return a pandas dataframe """
 
         def res2dataframe(results):
-            """ Convert a csv like string into a DataFrame """
+            """ Convert a csv like string into a DataFrame
+
+                If one columns has a missing value, the row is skipped
+            """
             return pd.DataFrame([x.split(',') for x in results.split('\n') if ",," not in x],
                                 columns=['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type',
                                          'institution', 'date_update']) \
@@ -543,12 +540,11 @@ class LocalFTPArgoIndexFetcher(ABC):
                                 'institution': np.str,
                                 'date_update': np.datetime64})[:-1]
 
-        absuri = self.cname(cache=True)
-
+        uri = self.cname(cache=True)
         with self.fs['index'].open(os.path.sep.join([self.local_ftp, self.index_file]), "r") as f:
-            if self.cache and (self.in_cache(self.fs['search'], absuri) or self.in_memory(self.fs['search'], absuri)):
-                # print('search already in memory:', absuri)
-                with self.fs['search'].open(absuri, "r") as of:
+            if self.cache and (self.in_cache(self.fs['search'], uri) or self.in_memory(self.fs['search'], uri)):
+                # print('search already in memory:', uri)
+                with self.fs['search'].open(uri, "r") as of:
                     df = res2dataframe(of.read())
             else:
                 # print('run search from scratch:')
@@ -556,9 +552,14 @@ class LocalFTPArgoIndexFetcher(ABC):
                 results = self.filter_the_index(f)
                 # and save results for caching:
                 if self.cache:
-                    with self.fs['search'].open(absuri, "w") as of:
+                    with self.fs['search'].open(uri, "w") as of:
                         of.write(results)  # This happens in memory
                 df = res2dataframe(results)
+
+        # I'd like something like this:
+        # with self.fs.open(uri) as f:
+        #     df = res2dataframe(f.read())
+        # but this implies a file system that actually goes on top of 2 fs for the index and the search
 
         # Post-processing of the filtered (raw format) index:
         df['wmo'] = df['file'].apply(lambda x: int(x.split('/')[1]))
@@ -604,7 +605,10 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
         self.CYC = CYC
 
     def cname(self, cache=False):
-        """ Return a unique string defining the request """
+        """ Return a unique string defining the request
+
+            For more than 1 WMO, the cache name is hashed.
+        """
         if len(self.WMO) > 1:
             listname = ["WMO%i" % i for i in sorted(self.WMO)]
             if isinstance(self.CYC, (np.ndarray)):
@@ -632,7 +636,7 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
 
         Returns
         -------
-        csv rows matching the request, as a string. Or None.
+        csv rows matching the request, as a in-memory string. Or None.
         """
         def search_one_wmo(index, wmo):
             """ Search for a WMO in the argo index file

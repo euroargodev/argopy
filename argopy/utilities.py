@@ -77,8 +77,8 @@ class filestore():
     def glob(self, path, **kwargs):
         return self.fs.glob(path, **kwargs)
 
-    def open(self, url, **kwargs):
-        return self.fs.open(url, **kwargs)
+    def open(self, url, *args, **kwargs):
+        return self.fs.open(url, *args, **kwargs)
 
     def open_dataset(self, url, **kwargs):
         """ Return a xarray.dataset from an url
