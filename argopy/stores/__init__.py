@@ -1,5 +1,5 @@
 from .argo_index import indexstore, indexfilter_wmo
-from .fsspec_wrappers import filestore, httpstore
+from .fsspec_wrappers import filestore, httpstore, memorystore
 
 #
 __all__ = (
@@ -7,5 +7,6 @@ __all__ = (
     "indexstore",
     "indexfilter_wmo",
     "filestore",
-    "httpstore"
+    "httpstore",
+    "memorystore"
 )

@@ -7,7 +7,7 @@ import fsspec
 
 from argopy.options import OPTIONS
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound
-from .fsspec_wrappers import filestore
+from .fsspec_wrappers import filestore, memorystore
 
 
 class indexfilter_proto(ABC):
@@ -159,6 +159,17 @@ class indexfilter_wmo(indexfilter_proto):
             else:
                 return None
 
+        def define_search_this(cyc):
+            if np.all(cyc >= 1000):
+                def search_this(this_line):
+                    # return np.any([re.search("%0.4d.nc" % c, this_line.split(',')[0]) for c in cyc])
+                    return np.any(["%0.4d.nc" % c in this_line for c in cyc])
+            else:
+                def search_this(this_line):
+                    # return np.any([re.search("%0.3d.nc" % c, this_line.split(',')[0]) for c in cyc])
+                    return np.any(["%0.3d.nc" % c in this_line for c in cyc])
+            return search_this
+
         def search_any_wmo_cyc(index, cyc):
             """ Search for a WMO in the argo index file
 
@@ -171,15 +182,7 @@ class indexfilter_wmo(indexfilter_proto):
             -------
             csv chunk matching the request, as a string. Or None
             """
-
-            def search_this(this_line):
-                # return np.any([re.search("%0.3d.nc" % c, this_line.split(',')[0]) for c in cyc])
-                return np.any(["%0.3d.nc" % c in this_line for c in cyc])
-                if np.all(cyc >= 1000):
-                    def search_this(this_line):
-                        # return np.any([re.search("%0.4d.nc" % c, this_line.split(',')[0]) for c in cyc])
-                        return np.any(["%0.4d.nc" % c in this_line for c in cyc])
-
+            search_this = define_search_this(cyc)
             index.seek(0)
             results = ""
             il_read, il_loaded = 0, 0
@@ -223,13 +226,7 @@ class indexfilter_wmo(indexfilter_proto):
 
             # Then look for the profile:
             if results:
-                def search_this(this_line):
-                    # return np.any([re.search("%0.3d.nc" % c, this_line.split(',')[0]) for c in cyc])
-                    return np.any(["%0.3d.nc" % c in this_line for c in cyc])
-                if np.all(cyc >= 1000):
-                    def search_this(this_line):
-                        # return np.any([re.search("%0.4d.nc" % c, this_line.split(',')[0]) for c in cyc])
-                        return np.any(["%0.4d.nc" % c in this_line for c in cyc])
+                search_this = define_search_this(cyc)
                 il_loaded, cyc_results = 0, ""
                 for line in results.split():
                     if search_this(line):
@@ -278,6 +275,7 @@ class indexfilter_wmo(indexfilter_proto):
 
 class indexstore():
     """" Use to manage access to a local Argo index and searches """
+
     def __init__(self,
                  cache: bool = False,
                  cachedir: str = "",
@@ -297,31 +295,15 @@ class indexstore():
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
         self.fs = {}
         self.fs['index'] = filestore(cache, cachedir)
-        if not cache:
-            self.fs['search'] = fsspec.filesystem("memory")
-        else:
-            self.fs['search'] = fsspec.filesystem("filecache",
-                                                  target_protocol='memory',
-                                                  cache_storage=OPTIONS['cachedir'] if cachedir == '' else cachedir,
-                                                  expiry_time=86400, cache_check=10)
-            self.fs['search'].load_cache()
+        self.fs['search'] = memorystore(cache, cachedir)
 
     def cachepath(self, uri: str, errors: str = 'raise'):
         """ Return path to cached file for a given URI """
-        if not self.cache:
-            if errors == 'raise':
-                raise FileSystemHasNoCache("%s has no cache system" % type(self.fs['search']))
-        else:
-            if not uri.startswith(self.fs['search'].target_protocol):
-                store_path = self.fs['search'].target_protocol + "://" + uri
-            else:
-                store_path = uri
-            self.fs['search'].load_cache()
-            if store_path in self.fs['search'].cached_files[-1]:
-                # return self.fs.cached_files[-1]
-                return os.path.sep.join([self.cachedir, self.fs['search'].cached_files[-1][store_path]['fn']])
-            elif errors == 'raise':
-                raise CacheFileNotFound("No cached file found in %s for: \n%s" % (self.fs['search'].storage[-1], uri))
+        return self.fs['search'].cachepath(uri, errors)
+
+    def clear_cache(self):
+        self.fs['index'].clear_cache()
+        self.fs['search'].clear_cache()
 
     def in_cache(self, fs, uri):
         """ Return true if uri is cached """
@@ -363,18 +345,18 @@ class indexstore():
         """
         uri = search_cls.uri()
         with self.open_index() as f:
-            if self.cache and (self.in_cache(self.fs['search'], uri) or self.in_memory(self.fs['search'], uri)):
-                print('Search already in memory, loading:', uri)
+            if self.cache and (self.in_cache(self.fs['search'].fs, uri) or self.in_memory(self.fs['search'].fs, uri)):
+                # print('Search already in memory, loading:', uri)
                 with self.fs['search'].open(uri, "r") as of:
                     df = self.res2dataframe(of.read())
             else:
-                print('Running search from scratch ...')
+                # print('Running search from scratch ...')
                 # Run search:
                 results = search_cls.run(f)
                 # and save results for caching:
                 if self.cache:
                     with self.fs['search'].open(uri, "w") as of:
                         of.write(results)  # This happens in memory
-                    self.fs['search'].save_cache()
+                    self.fs['search'].fs.save_cache()
                 df = self.res2dataframe(results)
         return df

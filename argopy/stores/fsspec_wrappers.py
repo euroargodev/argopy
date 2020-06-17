@@ -4,6 +4,8 @@ import xarray as xr
 import pandas as pd
 import requests
 import fsspec
+import pickle
+import tempfile
 from IPython.core.display import display, HTML
 
 from argopy.options import OPTIONS
@@ -35,12 +37,26 @@ class argo_store_proto(ABC):
                                         expiry_time=86400, cache_check=10, **kw)
             # We use a refresh rate for cache of 1 day,
             # since this is the update frequency of the Ifremer erddap
+            self.cache_registry = [] # Will hold uri cached by this store instance
 
     def open(self, url, *args, **kwargs):
+        self.register(url)
         return self.fs.open(url, *args, **kwargs)
 
     def glob(self, path, **kwargs):
         return self.fs.glob(path, **kwargs)
+
+    def store_path(self, uri):
+        if not uri.startswith(self.fs.target_protocol):
+            path = self.fs.target_protocol + "://" + uri
+        else:
+            path = uri
+        return path
+
+    def register(self, uri):
+        """ Keep track of files open with this instance """
+        if self.cache:
+            self.cache_registry.append(self.store_path(uri))
 
     def cachepath(self, uri: str, errors: str = 'raise'):
         """ Return path to cached file for a given URI """
@@ -48,17 +64,40 @@ class argo_store_proto(ABC):
             if errors == 'raise':
                 raise FileSystemHasNoCache("%s has no cache system" % type(self.fs))
         else:
-            if not uri.startswith(self.fs.target_protocol):
-                store_path = self.fs.target_protocol + "://" + uri
-            else:
-                store_path = uri
-            # return store_path in fs.cached_files[-1]
+            store_path = self.store_path(uri)
             self.fs.load_cache()
             if store_path in self.fs.cached_files[-1]:
-                # return self.fs.cached_files[-1]
                 return os.path.sep.join([self.cachedir, self.fs.cached_files[-1][store_path]['fn']])
             elif errors == 'raise':
                 raise CacheFileNotFound("No cached file found in %s for: \n%s" % (self.fs.storage[-1], uri))
+
+    def _clear_cache_item(self, uri):
+        """ Open fsspec cache registry (pickle file) and remove entry for an uri """
+        # See the "save_cache()" method in:
+        # https://filesystem-spec.readthedocs.io/en/latest/_modules/fsspec/implementations/cached.html#WholeFileCacheFileSystem
+        fn = os.path.join(self.fs.storage[-1], "cache")
+        cache = self.fs.cached_files[-1]
+        if os.path.exists(fn):
+            with open(fn, "rb") as f:
+                cached_files = pickle.load(f)
+        else:
+            cached_files = cache
+        cache = {}
+        for k, v in cached_files.items():
+            if k != uri:
+                cache[k] = v.copy()
+            else:
+                os.remove(os.path.join(self.fs.storage[-1], v['fn']))
+        fn2 = tempfile.mktemp()
+        with open(fn2, "wb") as f:
+            pickle.dump(cache, f)
+        os.replace(fn2, fn)
+
+    def clear_cache(self):
+        """ Remove cache files and entry from uri open with this store instance """
+        if self.cache:
+            for uri in self.cache_registry:
+                self._clear_cache_item(uri)
 
     @abstractmethod
     def open_dataset(self):
@@ -91,6 +130,7 @@ class filestore(argo_store_proto):
         """
         with self.fs.open(url) as of:
             ds = xr.open_dataset(of, **kwargs)
+        self.register(url)
         return ds
 
     def open_dataframe(self, url, **kwargs):
@@ -107,6 +147,7 @@ class filestore(argo_store_proto):
         """
         with self.fs.open(url) as of:
             df = pd.read_csv(of, **kwargs)
+        self.register(url)
         return df
 
 
@@ -183,6 +224,7 @@ class httpstore(argo_store_proto):
         try:
             with self.fs.open(url) as of:
                 ds = xr.open_dataset(of, **kwargs)
+            self.register(url)
             return ds
         except requests.HTTPError as e:
             self._verbose_exceptions(e)
@@ -202,6 +244,13 @@ class httpstore(argo_store_proto):
         try:
             with self.fs.open(url) as of:
                 df = pd.read_csv(of, **kwargs)
+            self.register(url)
             return df
         except requests.HTTPError as e:
             self._verbose_exceptions(e)
+
+
+class memorystore(filestore):
+    # Note that this inherits from filestore, not argo_store_proto
+    protocol = 'memory'
+

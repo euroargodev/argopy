@@ -23,11 +23,18 @@ import subprocess
 
 import pickle
 import pkg_resources
+import shutil
 
+from argopy.options import OPTIONS
 from argopy.errors import ErddapServerError
 from argopy.stores import httpstore
 
 path2pkl = pkg_resources.resource_filename('argopy', 'assets/')
+
+
+def clear_cache():
+    """ Delete argopy cache folder """
+    shutil.rmtree(OPTIONS['cachedir'])
 
 
 def load_dict(ptype):

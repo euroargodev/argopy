@@ -60,12 +60,21 @@ class EntryPoints_AllBackends(TestCase):
                               [6901929, 3902131]]
         self.args['region'] = [[-70, -65, 30., 35.],
                                [-70, -65, 30., 35., '2012-01-01', '2012-06-30']]
+        self.args['profile'] = [[1900204, 36],
+                                [1900243, [5, 45]]]
 
     def __test_float(self, bk, **ftc_opts):
         """ Test float index fetching for a given backend """
         for arg in self.args['float']:
             options = {**self.fetcher_opts, **ftc_opts}
             ds = ArgoIndexFetcher(src=bk, **options).float(arg).to_xarray()
+            assert isinstance(ds, xr.Dataset)
+
+    def __test_profile(self, bk, **ftc_opts):
+        """ Test profile index fetching for a given backend """
+        for arg in self.args['profile']:
+            options = {**self.fetcher_opts, **ftc_opts}
+            ds = ArgoIndexFetcher(src=bk, **options).profile(*arg).to_xarray()
             assert isinstance(ds, xr.Dataset)
 
     def __test_region(self, bk):
@@ -93,6 +102,12 @@ class EntryPoints_AllBackends(TestCase):
         ftproot, findex = argopy.tutorial.open_dataset('global_index_prof')
         with argopy.set_options(local_ftp=ftproot):
             self.__test_float('localftp', index_file='ar_index_global_prof.txt')
+
+    @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
+    def test_profile_index_localftp(self):
+        ftproot, findex = argopy.tutorial.open_dataset('global_index_prof')
+        with argopy.set_options(local_ftp=ftproot):
+            self.__test_profile('localftp', index_file='ar_index_global_prof.txt')
 
 
 @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")

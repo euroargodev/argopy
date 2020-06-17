@@ -1,12 +1,16 @@
+import os
 import io
 import pytest
 import unittest
 import argopy
 import xarray as xr
 import requests
+import shutil
 from argopy.utilities import load_dict, mapp_dict, list_multiprofile_file_variables, \
-    isconnected, erddap_ds_exists, open_etopo1
+    isconnected, erddap_ds_exists, open_etopo1, list_available_data_src
+from argopy import DataFetcher as ArgoDataFetcher
 
+AVAILABLE_SOURCES = list_available_data_src()
 CONNECTED = isconnected()
 
 
@@ -43,6 +47,17 @@ def test_erddap_ds_exists():
     assert isinstance(erddap_ds_exists(ds='ArgoFloats'), bool)
     assert erddap_ds_exists(ds='DummyDS') is False
 
+
+@unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
+def test_clear_cache():
+    # Fetch data to cache:
+    ftproot, flist = argopy.tutorial.open_dataset('localftp')
+    testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
+    with argopy.set_options(cachedir=testcachedir, local_ftp=ftproot):
+        ArgoDataFetcher(src='localftp').profile(2902696, 12).to_xarray()
+    # Then clean it:
+    argopy.clear_cache()
+    assert os.path.isdir(testcachedir) is False
 
 # We disable this test because the server has not responded over a week (May 29th)
 # @unittest.skipUnless(CONNECTED, "open_etopo1 requires an internet connection")
