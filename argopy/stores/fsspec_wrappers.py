@@ -15,10 +15,17 @@ from abc import ABC, abstractmethod
 
 
 class argo_store_proto(ABC):
+    """ Provide fsspec like file systems
+
+        Simply use a ``cache`` option to implement a filecache file system
+        Only a few methods from fsspec are provided like "open" or "glob"
+        All open URI are registered to implement a clear cache method not available from fsspec
+    """
+
     protocol = ''  # One in fsspec.registry.known_implementations
 
     def __init__(self, cache: bool = False, cachedir: str = "", **kw):
-        """ Create a file storage system for http requests
+        """ Create a file storage system
 
             Parameters
             ----------
@@ -110,7 +117,7 @@ class argo_store_proto(ABC):
 
 
 class filestore(argo_store_proto):
-    """Wrapper around fsspec file stores
+    """ Wrapper around fsspec file stores
 
         https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.local.LocalFileSystem
 
@@ -153,10 +160,12 @@ class filestore(argo_store_proto):
 
 
 class httpstore(argo_store_proto):
-    """Wrapper around fsspec http file store
+    """ Wrapper around fsspec http file store
 
-        This wrapper intend to make argopy safer to failures from http requests
-        This wrapper is primarily used by the Erddap data/index fetchers
+        This wrapper:
+         - intend to make argopy safer to failures from http requests
+         - is primarily used by the Erddap data/index fetchers
+         - provide more verbose errors from http requests
     """
     protocol = "http"
 
