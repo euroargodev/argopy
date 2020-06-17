@@ -136,7 +136,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
             WMO float code
         cyc: int, optional
             Cycle number (None by default)
-        errors: {'raise','ignore'}, optional
+        errors: {'raise', 'ignore'}, optional
             If 'raise' (default), raises a NetCDF4FileNotFoundError error if the requested
             file cannot be found. If set to 'ignore', return None silently.
 
@@ -227,7 +227,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         :class:`xarray.Dataset`
 
         """
-        ds = self.fs.open_dataset(ncfile, decode_cf=1, use_cftime=0, mask_and_scale=1)
+        ds = self.fs.open_dataset(ncfile, decode_cf=1, use_cftime=0, mask_and_scale=1, engine='h5netcdf')
 
         # Replace JULD and JULD_QC by TIME and TIME_QC
         ds = ds.rename({'JULD': 'TIME', 'JULD_QC': 'TIME_QC'})
