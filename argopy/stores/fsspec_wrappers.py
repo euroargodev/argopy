@@ -6,6 +6,7 @@ import requests
 import fsspec
 import pickle
 import tempfile
+import shutil
 from IPython.core.display import display, HTML
 
 from argopy.options import OPTIONS
@@ -91,7 +92,7 @@ class argo_store_proto(ABC):
         fn2 = tempfile.mktemp()
         with open(fn2, "wb") as f:
             pickle.dump(cache, f)
-        os.replace(fn2, fn)
+        shutil.move(fn2, fn)
 
     def clear_cache(self):
         """ Remove cache files and entry from uri open with this store instance """
