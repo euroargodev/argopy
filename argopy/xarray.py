@@ -2,14 +2,14 @@
 # -*coding: UTF-8 -*-
 #
 
-import os
 import sys
 import numpy as np
 import pandas as pd
 import xarray as xr
 
-from argopy.errors import NetCDF4FileNotFoundError, InvalidDatasetStructure
+from argopy.errors import InvalidDatasetStructure
 from sklearn import preprocessing
+
 
 @xr.register_dataset_accessor('argo')
 class ArgoAccessor:
@@ -33,8 +33,8 @@ class ArgoAccessor:
     def __init__(self, xarray_obj):
         """ Init """
         self._obj = xarray_obj
-        self._added = list() # Will record all new variables added by argo
-        self._dims = list(xarray_obj.dims.keys()) # Store the initial list of dimensions
+        self._added = list()  # Will record all new variables added by argo
+        self._dims = list(xarray_obj.dims.keys())  # Store the initial list of dimensions
         self.encoding = xarray_obj.encoding
         self.attrs = xarray_obj.attrs
 
@@ -79,7 +79,7 @@ class ArgoAccessor:
             try:
                 da.values = da.values.astype(type)
                 da.attrs['casted'] = 1
-            except:
+            except Exception:
                 print("Oops!", sys.exc_info()[0], "occured.")
                 print("Fail to cast: ", da.dtype, "into:", type, "for: ", da.name)
                 print("Encountered unique values:", np.unique(da))
@@ -152,7 +152,7 @@ class ArgoAccessor:
         for v in ds.data_vars:
             try:
                 ds[v] = cast_this_da(ds[v])
-            except:
+            except Exception:
                 print("Oops!", sys.exc_info()[0], "occured.")
                 print("Fail to cast: %s " % v)
                 print("Encountered unique values:", np.unique(ds[v]))
@@ -261,7 +261,7 @@ class ArgoAccessor:
             if errors:
                 raise InvalidDatasetStructure("Method only available for dataset with a 'DATA_MODE' variable ")
             else:
-                #todo should raise a warning instead ?
+                # todo should raise a warning instead ?
                 return ds
 
         # Define variables to filter:
@@ -413,7 +413,7 @@ class ArgoAccessor:
         """
         if self._type != 'point':
             raise InvalidDatasetStructure("Method only available to a collection of points")
-        this = self._obj # Should not be modified
+        this = self._obj  # Should not be modified
 
         def fillvalue(da):
             """ Return fillvalue for a dataarray """
@@ -436,7 +436,7 @@ class ArgoAccessor:
                                       coords={'N_POINTS': this['N_POINTS']},
                                       name='dummy_argo_uid')
         N_PROF = len(np.unique(dummy_argo_uid))
-        that = this.groupby(dummy_argo_uid)
+        # that = this.groupby(dummy_argo_uid)
 
         N_LEVELS = int(xr.DataArray(np.ones_like(this['N_POINTS'].values),
                                     dims='N_POINTS',
@@ -485,7 +485,7 @@ class ArgoAccessor:
                     x = prof[vname].values
                     try:
                         y[i_prof, 0:len(x)] = x
-                    except:
+                    except Exception:
                         print(vname, 'input', x.shape, 'output', y[i_prof, :].shape)
                         raise
                     new_ds[vname].values = y
@@ -501,8 +501,8 @@ class ArgoAccessor:
         new_ds = new_ds.sortby('TIME')
         new_ds = new_ds.argo.cast_types()
         new_ds = new_ds[np.sort(new_ds.data_vars)]
-        new_ds.encoding = self.encoding # Preserve low-level encoding information
-        new_ds.attrs = self.attrs # Preserve original attributes
+        new_ds.encoding = self.encoding  # Preserve low-level encoding information
+        new_ds.attrs = self.attrs  # Preserve original attributes
         new_ds.argo._add_history('Transformed with point2profile')
         new_ds.argo._type = 'profile'
         return new_ds
@@ -531,19 +531,19 @@ class ArgoAccessor:
                 ds = ds.drop_vars(v)
 
         ds, = xr.broadcast(ds)
-        ds = ds.stack({'N_POINTS':list(ds.dims)})
+        ds = ds.stack({'N_POINTS': list(ds.dims)})
         ds = ds.reset_index('N_POINTS').drop_vars(['N_PROF', 'N_LEVELS'])
         possible_coords = ['LATITUDE', 'LONGITUDE', 'TIME', 'JULD', 'N_POINTS']
         for c in [c for c in possible_coords if c in ds.data_vars]:
             ds = ds.set_coords(c)
 
-        ds = ds.where(~np.isnan(ds['PRES']), drop=1) # Remove index without data (useless points)
+        ds = ds.where(~np.isnan(ds['PRES']), drop=1)  # Remove index without data (useless points)
         ds = ds.sortby('TIME')
         ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS']))
         ds = ds.argo.cast_types()
         ds = ds[np.sort(ds.data_vars)]
-        ds.encoding = self.encoding # Preserve low-level encoding information
-        ds.attrs = self.attrs # Preserve original attributes
+        ds.encoding = self.encoding  # Preserve low-level encoding information
+        ds.attrs = self.attrs  # Preserve original attributes
         ds.argo._add_history('Transformed with profile2point')
         ds.argo._type = 'point'
         return ds

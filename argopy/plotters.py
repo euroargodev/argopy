@@ -11,6 +11,7 @@ import numpy as np
 import warnings
 from argopy.errors import InvalidDashboard
 
+
 try:
     import matplotlib as mpl
     import matplotlib.pyplot as plt
@@ -41,10 +42,9 @@ except ModuleNotFoundError:
     with_seaborn = False
 
 if with_cartopy:
-    land_feature = cfeature.NaturalEarthFeature(category='physical',
-                                               name='land',
-                                               scale='50m',
-                                               facecolor=[0.4,0.6,0.7])
+    land_feature = cfeature.NaturalEarthFeature(category='physical', name='land',
+                                                scale='50m', facecolor=[0.4, 0.6, 0.7])
+
 
 def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type='ea'):
     """ Insert in a notebook the Euro-Argo dashboard page
@@ -63,13 +63,13 @@ def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type
 
     from IPython.display import IFrame
     if url is None:
-        if type=='ea': # Open Euro-Argo dashboard
+        if type == 'ea':  # Open Euro-Argo dashboard
             if wmo is None:
                 url = "https://fleetmonitoring.euro-argo.eu"
             else:
                 url = "https://fleetmonitoring.euro-argo.eu/float/{}".format(str(wmo))
 
-        ## argovis doesn't allow X-Frame insertion !
+        # # Note that argovis doesn't allow X-Frame insertion !
         # elif type == 'argovis':
         #     if cyc is None:
         #         url = "https://argovis.colorado.edu/catalog/platforms/{}/page".format(str(wmo))
@@ -78,13 +78,15 @@ def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type
 
     return IFrame(url, width=width, height=height)
 
+
 class discrete_coloring():
     """ Handy class to manage discrete coloring and the associated colorbar
 
     Example:
         year_range = np.arange(2002,2010)
         dc = discrete_coloring(name='Spectral', N=len(year_range) )
-        plt.scatter(this['LONGITUDE'], this['LATITUDE'], c=this['TIME.year'], cmap=dc.cmap, vmin=year_range[0], vmax=year_range[-1])
+        plt.scatter(this['LONGITUDE'], this['LATITUDE'], c=this['TIME.year'],
+                    cmap=dc.cmap, vmin=year_range[0], vmax=year_range[-1])
         dc.cbar(ticklabels=yr_range, fraction=0.03, label='Years')
 
     """
@@ -168,27 +170,23 @@ class discrete_coloring():
         scalarMap = cm.ScalarMappable(norm=norm, cmap=self.cmap)
         return scalarMap.to_rgba(value)
 
+
 def latlongrid(ax, dx=5., dy=5., fontsize=6, **kwargs):
     """ Add latitude/longitude grid line and labels to a cartopy geoaxes """
     if not isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot):
         raise ValueError("Please provide a cartopy.mpl.geoaxes.GeoAxesSubplot instance")
-    defaults = {'linewidth':.5, 'color':'gray', 'alpha':0.5, 'linestyle':'--'}
-    gl=ax.gridlines(crs=ax.projection, draw_labels=True, **{**defaults, **kwargs})
+    defaults = {'linewidth': .5, 'color': 'gray', 'alpha': 0.5, 'linestyle': '--'}
+    gl = ax.gridlines(crs=ax.projection, draw_labels=True, **{**defaults, **kwargs})
     gl.xlocator = mticker.FixedLocator(np.arange(-180, 180+1, dx))
     gl.ylocator = mticker.FixedLocator(np.arange(-90, 90+1, dy))
     gl.xformatter = LONGITUDE_FORMATTER
     gl.yformatter = LATITUDE_FORMATTER
     gl.xlabels_top = False
-    gl.xlabel_style = {'fontsize':fontsize}
+    gl.xlabel_style = {'fontsize': fontsize}
     gl.ylabels_right = False
-    gl.ylabel_style = {'fontsize':fontsize}
+    gl.ylabel_style = {'fontsize': fontsize}
     return gl
 
-
-
-# THIS TAKES A DATAFRAME AS INPUT. WE SHOULD SET SOME PLOT FUNCTIONS FOR INDEX AND DATA AT THE SAME TIME
-# TRAJECTORY PLOT IS A GOOD EXAMPLE.
-# SNS.LINEPLOT AND SNS.SCATTERPLOT SHOULD WORKS FINE WITH A DS.DATASET
 
 def warnUnless(ok, txt):
     def inner(fct):
@@ -201,58 +199,61 @@ def warnUnless(ok, txt):
     else:
         return lambda f: f
 
+
 @warnUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn installed")
 def plot_trajectory(idx):
     """ Plot trajectories for an index dataframe """
     if not with_seaborn:
         raise BaseException("This function requires seaborn")
 
-    fig = plt.figure(figsize=(10,10))
+    fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
-    ax.add_feature(land_feature, edgecolor='black')    
+    ax.add_feature(land_feature, edgecolor='black')
     nfloat = len(idx.groupby('wmo').first())
     mypal = sns.color_palette("bright", nfloat)
 
-    sns.lineplot(x="longitude",y="latitude",hue="wmo",data=idx,sort=False,palette=mypal,legend=False)
-    sns.scatterplot(x="longitude",y="latitude",hue='wmo',data=idx,palette=mypal)   
-    width=np.abs(idx['longitude'].max()-idx['longitude'].min())
-    height=np.abs(idx['latitude'].max()-idx['latitude'].min())
-    #extent = (idx['longitude'].min()-width/4, 
-    #          idx['longitude'].max()+width/4, 
-    #          idx['latitude'].min()-height/4, 
-    #          idx['latitude'].max()+height/4)    
+    sns.lineplot(x="longitude", y="latitude", hue="wmo", data=idx, sort=False, palette=mypal, legend=False)
+    sns.scatterplot(x="longitude", y="latitude", hue='wmo', data=idx, palette=mypal)
+    # width = np.abs(idx['longitude'].max()-idx['longitude'].min())
+    # height = np.abs(idx['latitude'].max()-idx['latitude'].min())
+    # extent = (idx['longitude'].min()-width/4,
+    #          idx['longitude'].max()+width/4,
+    #          idx['latitude'].min()-height/4,
+    #          idx['latitude'].max()+height/4)
 
     gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='gray', alpha=0.7, linestyle=':')
     gl.xlabels_top = False
-    gl.ylabels_left = False    
+    gl.ylabels_left = False
     gl.xformatter = LONGITUDE_FORMATTER
     gl.yformatter = LATITUDE_FORMATTER
 
-    #ax.set_extent(extent)     
-    plt.legend(loc='upper right', bbox_to_anchor=(1.25,1))
-    if(nfloat>15):
+    # ax.set_extent(extent)
+    plt.legend(loc='upper right', bbox_to_anchor=(1.25, 1))
+    if (nfloat > 15):
         ax.get_legend().remove()
     return fig, ax
+
 
 @warnUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn installed")
 def plot_dac(idx):
     """ Histogram of DAC for an index dataframe """
     if not with_seaborn:
         raise BaseException("This function requires seaborn")
-    fig=plt.figure(figsize=(10,5))
-    mind=idx.groupby('institution').size().sort_values(ascending=False).index
-    sns.countplot(y='institution',data=idx,order=mind)
+    fig = plt.figure(figsize=(10, 5))
+    mind = idx.groupby('institution').size().sort_values(ascending=False).index
+    sns.countplot(y='institution', data=idx, order=mind)
     plt.ylabel('number of profiles')
     return fig
+
 
 @warnUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn installed")
 def plot_profilerType(idx):
     """ Histogram of profile types for an index dataframe """
     if not with_seaborn:
         raise BaseException("This function requires seaborn")
-    fig=plt.figure(figsize=(10,5))
-    mind=idx.groupby('profiler_type').size().sort_values(ascending=False).index
-    sns.countplot(y='profiler_type',data=idx,order=mind)
-    plt.xlabel('number of profiles')      
+    fig = plt.figure(figsize=(10, 5))
+    mind = idx.groupby('profiler_type').size().sort_values(ascending=False).index
+    sns.countplot(y='profiler_type', data=idx, order=mind)
+    plt.xlabel('number of profiles')
     plt.ylabel('')
     return fig

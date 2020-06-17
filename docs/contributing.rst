@@ -98,6 +98,7 @@ If you want to add your own data fetcher from a new service, then, keep in mind 
     * provides the facade API (:class:`argopy.fetchers.ArgoDataFetcher`) methods to filter data
     according to user level or requests. These must includes:
 
+
             *  :func:`filter_data_mode`
             *  :func:`filter_qc`
             *  :func:`filter_variables`

@@ -17,9 +17,15 @@ v0.1.4 (XX June 2020)
     # or
     argopy.dashboard(wmo=6902746)
 
+- The ``localftp`` index fetcher has now a ``profile`` access point.
+
 **Breaking changes with previous versions**
 
 **Internals**
+
+- Now uses `fsspec <https://filesystem-spec.readthedocs.io>`_ as file system for caching as well as accessing local and remote files (:pr:`19`). This closes issues :issue:`12`, :issue:`15` and :issue:`17`. **argopy** fetchers must now use (or implement if necessary) one of the internal file systems available in the new module ``argopy.stores``. By `G. Maze <http://www.github.com/gmaze>`_.
+
+- Erddap fetcher now uses netcdf format to retrieve data (:pr:`19`).
 
 v0.1.3 (15 May 2020)
 --------------------

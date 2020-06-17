@@ -13,7 +13,6 @@ import requests
 import urllib.request
 import io
 import json
-import xarray as xr
 from IPython.core.display import display, HTML
 
 import importlib
@@ -24,82 +23,39 @@ import subprocess
 
 import pickle
 import pkg_resources
+import shutil
+
+from argopy.options import OPTIONS
+from argopy.errors import ErddapServerError
+from argopy.stores import httpstore
+
 path2pkl = pkg_resources.resource_filename('argopy', 'assets/')
 
-from argopy.errors import ErddapServerError
 
-def urlopen(url):
-    """ Load content from url or raise alarm on status with explicit information on the error
+def clear_cache():
+    """ Delete argopy cache folder """
+    shutil.rmtree(OPTIONS['cachedir'])
 
-    Parameters
-    ----------
-    url: str
-
-    Returns
-    -------
-    io.BytesIO
-
-    """
-    # https://github.com/ioos/erddapy/blob/3828a4f479e7f7653fb5fd78cbce8f3b51bd0661/erddapy/utilities.py#L37
-    r = requests.get(url)
-    data = io.BytesIO(r.content)
-
-    if r.status_code == 200:  # OK
-        return data
-
-    # 4XX client error response
-    elif r.status_code == 404:  # Empty response
-        error = ["Error %i " % r.status_code]
-        error.append(data.read().decode("utf-8").replace("Error", ""))
-        error.append("The URL triggering this error was: \n%s" % url)
-        msg = "\n".join(error)
-        if "Currently unknown datasetID" in msg:
-            raise ErddapServerError("Dataset not found in the Erddap, try again later. "
-                                    "The server is probably rebooting. \n%s" % msg)
-        else:
-            raise requests.HTTPError(msg)
-
-    # 5XX server error response
-    elif r.status_code == 500:  # 500 Internal Server Error
-        if "text/html" in r.headers.get('content-type'):
-            display(HTML(data.read().decode("utf-8")))
-        error = ["Error %i " % r.status_code]
-        error.append(data.read().decode("utf-8"))
-        error.append("The URL triggering this error was: \n%s" % url)
-        msg = "\n".join(error)
-        if "No space left on device" in msg:
-            raise ErddapServerError("An error occured on the Erddap server side. "
-                                    "Please contact assistance@ifremer.fr to ask a reboot of the erddap server. \n%s" % msg)
-        elif "java.io.EOFException" in msg:
-            raise ErddapServerError("An error occured on the Erddap server side. "
-                                    "Please contact assistance@ifremer.fr to ask a reboot of the erddap server. \n%s" % msg)
-        else:
-            raise requests.HTTPError(msg)
-
-    else:
-        error = ["Error %i " % r.status_code]
-        error.append(data.read().decode("utf-8"))
-        error.append("The URL triggering this error was: \n%s" % url)
-        print("\n".join(error))
-        r.raise_for_status()
 
 def load_dict(ptype):
-    if ptype=='profilers':        
+    if ptype == 'profilers':
         with open(os.path.join(path2pkl, 'dict_profilers.pickle'), 'rb') as f:
             loaded_dict = pickle.load(f)
         return loaded_dict
-    elif ptype=='institutions':
+    elif ptype == 'institutions':
         with open(os.path.join(path2pkl, 'dict_institutions.pickle'), 'rb') as f:
             loaded_dict = pickle.load(f)
-        return loaded_dict      
+        return loaded_dict
     else:
         raise ValueError("Invalid dictionnary pickle file")
 
-def mapp_dict(Adictionnary,Avalue):
+
+def mapp_dict(Adictionnary, Avalue):
     if Avalue not in Adictionnary:
         return "Unknown"
     else:
         return Adictionnary[Avalue]
+
 
 def list_available_data_src():
     """ List all available data sources """
@@ -107,7 +63,7 @@ def list_available_data_src():
     try:
         from .data_fetchers import erddap as Erddap_Fetchers
         AVAILABLE_SOURCES['erddap'] = Erddap_Fetchers
-    except:
+    except Exception:
         warnings.warn("An error occured while loading the ERDDAP data fetcher, "
                       "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
         pass
@@ -115,27 +71,28 @@ def list_available_data_src():
     try:
         from .data_fetchers import localftp as LocalFTP_Fetchers
         AVAILABLE_SOURCES['localftp'] = LocalFTP_Fetchers
-    except:
+    except Exception:
         warnings.warn("An error occured while loading the local FTP data fetcher, "
                       "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
         pass
 
     return AVAILABLE_SOURCES
 
+
 def list_standard_variables():
-    """ Return the list of variables for standard users
-    """
+    """ Return the list of variables for standard users """
     return ['DATA_MODE', 'LATITUDE', 'LONGITUDE', 'POSITION_QC', 'DIRECTION', 'PLATFORM_NUMBER', 'CYCLE_NUMBER', 'PRES',
      'TEMP', 'PSAL', 'PRES_QC', 'TEMP_QC', 'PSAL_QC', 'PRES_ADJUSTED', 'TEMP_ADJUSTED', 'PSAL_ADJUSTED',
      'PRES_ADJUSTED_QC', 'TEMP_ADJUSTED_QC', 'PSAL_ADJUSTED_QC', 'PRES_ADJUSTED_ERROR', 'TEMP_ADJUSTED_ERROR',
      'PSAL_ADJUSTED_ERROR', 'JULD', 'JULD_QC', 'TIME', 'TIME_QC']
+
 
 def list_multiprofile_file_variables():
     """ Return the list of variables in a netcdf multiprofile file.
 
         This is for files created by GDAC under <DAC>/<WMO>/<WMO>_prof.nc
     """
-    return [ 'CONFIG_MISSION_NUMBER',
+    return ['CONFIG_MISSION_NUMBER',
              'CYCLE_NUMBER',
              'DATA_CENTRE',
              'DATA_MODE',
@@ -200,6 +157,7 @@ def list_multiprofile_file_variables():
              'VERTICAL_SAMPLING_SCHEME',
              'WMO_INST_TYPE']
 
+
 def get_sys_info():
     "Returns system information as a dict"
 
@@ -249,6 +207,7 @@ def get_sys_info():
 
     return blob
 
+
 def netcdf_and_hdf5_versions():
     libhdf5_version = None
     libnetcdf_version = None
@@ -265,6 +224,7 @@ def netcdf_and_hdf5_versions():
         except ImportError:
             pass
     return [("libhdf5", libhdf5_version), ("libnetcdf", libnetcdf_version)]
+
 
 def show_versions(file=sys.stdout):
     """ Print the versions of argopy and its dependencies
@@ -344,6 +304,7 @@ def show_versions(file=sys.stdout):
     for k, stat in deps_blob:
         print(f"{k}: {stat}", file=file)
 
+
 def isconnected(host='http://www.ifremer.fr'):
     """ Determine if we have a live internet connection
 
@@ -359,15 +320,19 @@ def isconnected(host='http://www.ifremer.fr'):
     try:
         urllib.request.urlopen(host)  # Python 3.x
         return True
-    except:
+    except Exception:
         return False
+
 
 def erddap_ds_exists(ds="ArgoFloats"):
     """ Given erddap fetcher, check if a Dataset exists, return a bool"""
     # e = ArgoDataFetcher(src='erddap').float(wmo=0).fetcher
     # erddap_index = json.load(urlopen(e.erddap.server + "/info/index.json"))
-    erddap_index = json.load(urlopen("http://www.ifremer.fr/erddap/info/index.json"))
+    # erddap_index = json.load(urlopen("http://www.ifremer.fr/erddap/info/index.json"))
+    with httpstore(timeout=120).open("http://www.ifremer.fr/erddap/info/index.json") as of:
+        erddap_index = json.load(of)
     return ds in [row[-1] for row in erddap_index['table']['rows']]
+
 
 def open_etopo1(box, res='l'):
     """ Download ETOPO for a box
@@ -390,8 +355,7 @@ def open_etopo1(box, res='l'):
            "&resx={}&resy={}"
            "&bbox={}").format
     thisurl = uri(resx, resy, ",".join([str(b) for b in [box[0], box[2], box[1], box[3]]]))
-    #     print(thisurl)
-    ds = xr.open_dataset(urlopen(thisurl).read())
+    ds = httpstore(cache=True).open_dataset(thisurl)
     da = ds['Band1'].rename("topo")
     for a in ds.attrs:
         da.attrs[a] = ds.attrs[a]

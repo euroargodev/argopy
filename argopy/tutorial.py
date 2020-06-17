@@ -17,15 +17,12 @@
 """
 
 import os
-import glob
-import numpy as np
-import xarray as xr
-import warnings
 from zipfile import ZipFile
 from urllib.request import urlretrieve
 import shutil
 
-_DEFAULT_CACHE_DIR = os.path.expanduser(os.path.sep.join(["~",".argopy_tutorial_data"]))
+_DEFAULT_CACHE_DIR = os.path.expanduser(os.path.sep.join(["~", ".argopy_tutorial_data"]))
+
 
 def open_dataset(name):
     """ Open a dataset from the argopy online data repository (requires internet).
@@ -40,7 +37,8 @@ def open_dataset(name):
         Parameters
         ----------
         name: str
-            Name of the dataset to load or get information for. It can be: ``localftp``, ``weekly_index_prof`` or ``global_index_prof``.
+            Name of the dataset to load or get information for. It can be: ``localftp``,
+            ``weekly_index_prof`` or ``global_index_prof``.
 
                 - ``localftp``, return the absolute path and list of files in the sample local ftp files.
                 - ``weekly_index_prof``, return path and to weekly profile index file
@@ -75,6 +73,7 @@ def open_dataset(name):
         return gdacftp.rootpath, ifile
     else:
         raise ValueError("Unknown tutorial dataset ('%s')" % name)
+
 
 class repodata():
     """ Helper class for the local copy of the repository data """
@@ -114,16 +113,17 @@ class repodata():
         # Expand zip file to a temporary location:
         _tempo_dir = self.localpath + "_master"
         with ZipFile(localzipfile, 'r') as zipObj:
-            zipObj.extractall(path=_tempo_dir) # Extract all the contents of zip file
+            zipObj.extractall(path=_tempo_dir)  # Extract all the contents of zip file
 
         # Move the repo dir to final destination:
-        shutil.move(os.path.join(_tempo_dir,"%s-%s" % (repo, branch)), self.localpath)
+        shutil.move(os.path.join(_tempo_dir, "%s-%s" % (repo, branch)), self.localpath)
 
         # Delete temporary location and zip file:
         os.rmdir(_tempo_dir)
         os.remove(localzipfile)
 
         return self.rootpath
+
 
 class sample_ftp(repodata):
     """ Helper class for the local_work local GDAC ftp folder """
