@@ -3,11 +3,8 @@ import io
 import pytest
 import unittest
 import argopy
-import xarray as xr
-import requests
-import shutil
 from argopy.utilities import load_dict, mapp_dict, list_multiprofile_file_variables, \
-    isconnected, erddap_ds_exists, open_etopo1, list_available_data_src
+    isconnected, erddap_ds_exists, list_available_data_src
 from argopy import DataFetcher as ArgoDataFetcher
 
 AVAILABLE_SOURCES = list_available_data_src()

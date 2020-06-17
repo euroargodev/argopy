@@ -9,11 +9,8 @@
 import os
 import sys
 import warnings
-import requests
 import urllib.request
-import io
 import json
-from IPython.core.display import display, HTML
 
 import importlib
 import locale
@@ -26,7 +23,6 @@ import pkg_resources
 import shutil
 
 from argopy.options import OPTIONS
-from argopy.errors import ErddapServerError
 from argopy.stores import httpstore
 
 path2pkl = pkg_resources.resource_filename('argopy', 'assets/')

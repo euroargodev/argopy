@@ -9,8 +9,7 @@ import pandas as pd
 import fsspec
 import argopy
 from argopy.stores import filestore, httpstore, indexfilter_wmo, indexstore
-from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, ErddapServerError
-from argopy.fetchers import ArgoDataFetcher
+from argopy.errors import FileSystemHasNoCache, CacheFileNotFound
 from argopy.utilities import isconnected
 CONNECTED = isconnected()
 
@@ -159,14 +158,14 @@ class IndexStore(TestCase):
     index_file = os.path.sep.join([ftproot, "ar_index_global_prof.txt"])
 
     kwargs_wmo = [{'WMO': 1900204},
-              {'WMO': [1900204, 1900243]},
-              {'CYC': 1},
-              {'CYC': [1, 6]},
-              {'WMO': 1900204, 'CYC': 36},
-              {'WMO': 1900243, 'CYC': [5, 45]},
-              {'WMO': [1900482, 2900738], 'CYC': 2},
-              {'WMO': [1900482, 2900738], 'CYC': [2, 6]},
-              {}]
+                  {'WMO': [1900204, 1900243]},
+                  {'CYC': 1},
+                  {'CYC': [1, 6]},
+                  {'WMO': 1900204, 'CYC': 36},
+                  {'WMO': 1900243, 'CYC': [5, 45]},
+                  {'WMO': [1900482, 2900738], 'CYC': 2},
+                  {'WMO': [1900482, 2900738], 'CYC': [2, 6]},
+                  {}]
 
     def test_creation(self):
         assert isinstance(indexstore(), argopy.stores.argo_index.indexstore)

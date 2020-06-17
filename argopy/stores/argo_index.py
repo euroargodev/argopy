@@ -1,12 +1,9 @@
-import os
 import numpy as np
 import pandas as pd
 from abc import ABC, abstractmethod
 import hashlib
-import fsspec
 
 from argopy.options import OPTIONS
-from argopy.errors import FileSystemHasNoCache, CacheFileNotFound
 from .fsspec_wrappers import filestore, memorystore
 
 

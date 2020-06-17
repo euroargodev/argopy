@@ -512,6 +512,7 @@ class LocalFTPArgoIndexFetcher(ABC):
         """ Remove cache files and entries from resources open with this fetcher """
         return self.fs.clear_cache()
 
+
 class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
     """ Manage access to local ftp Argo data for: a list of WMOs
 

@@ -227,6 +227,7 @@ class ArgoDataFetcher(object):
         """ Clear fetcher cached data """
         return self.fetcher.clear_cache()
 
+
 class ArgoIndexFetcher(object):
     """
     Specs discussion :

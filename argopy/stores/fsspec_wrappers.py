@@ -14,7 +14,7 @@ from abc import ABC, abstractmethod
 
 
 class argo_store_proto(ABC):
-    protocol = '' # One in fsspec.registry.known_implementations
+    protocol = ''  # One in fsspec.registry.known_implementations
 
     def __init__(self, cache: bool = False, cachedir: str = "", **kw):
         """ Create a file storage system for http requests
@@ -37,7 +37,7 @@ class argo_store_proto(ABC):
                                         expiry_time=86400, cache_check=10, **kw)
             # We use a refresh rate for cache of 1 day,
             # since this is the update frequency of the Ifremer erddap
-            self.cache_registry = [] # Will hold uri cached by this store instance
+            self.cache_registry = []  # Will hold uri cached by this store instance
 
     def open(self, url, *args, **kwargs):
         self.register(url)
@@ -253,4 +253,3 @@ class httpstore(argo_store_proto):
 class memorystore(filestore):
     # Note that this inherits from filestore, not argo_store_proto
     protocol = 'memory'
-
