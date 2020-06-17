@@ -2,7 +2,8 @@
 # -*coding: UTF-8 -*-
 #
 # Argo data fetcher for Argovis.
-#
+# Code borrows heavily from API gathered at https://github.com/earthcube2020/ec20_tucker_etal/blob/master/EC2020_argovis_python_api.ipynb
+# 
 # This is comprised of functions used to query Argovis api
 # query functions either return dictionary objects or error messages.
 #
