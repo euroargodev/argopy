@@ -50,10 +50,10 @@ def test_invalid_fetcher():
         ArgoDataFetcher(src='invalid_fetcher').to_xarray()
 
 
-@unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
-def test_unavailable_accesspoint():
-    with pytest.raises(InvalidFetcherAccessPoint):
-        ArgoDataFetcher(src='localftp').region([-85., -45., 10., 20., 0., 100.]).to_xarray()
+# @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
+# def test_unavailable_accesspoint():
+#     with pytest.raises(InvalidFetcherAccessPoint):
+#         ArgoDataFetcher(src='localftp').region([-85., -45., 10., 20., 0., 100.]).to_xarray()
 
 
 class EntryPoints_AllBackends(TestCase):

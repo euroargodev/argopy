@@ -15,10 +15,10 @@ from unittest import TestCase
 import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, \
-    FileSystemHasNoCache, CacheFileNotFound, ErddapServerError
+    FileSystemHasNoCache, CacheFileNotFound, ErddapServerError, DataNotFound
 
-from argopy.utilities import list_available_data_src, isconnected, erddap_ds_exists
-AVAILABLE_SOURCES = list_available_data_src()
+from argopy.utilities import list_available_index_src, isconnected, erddap_ds_exists
+AVAILABLE_INDEX_SOURCES = list_available_index_src()
 CONNECTED = isconnected()
 if CONNECTED:
     DSEXISTS = erddap_ds_exists(ds="ArgoFloats-index")
@@ -27,7 +27,7 @@ else:
 
 
 def test_invalid_accesspoint():
-    src = list(AVAILABLE_SOURCES.keys())[0]  # Use the first valid data source
+    src = list(AVAILABLE_INDEX_SOURCES.keys())[0]  # Use the first valid data source
     with pytest.raises(InvalidFetcherAccessPoint):
         ArgoIndexFetcher(src=src).invalid_accesspoint.to_xarray()  # Can't get data if access point not defined first
     with pytest.raises(InvalidFetcherAccessPoint):
@@ -39,10 +39,10 @@ def test_invalid_fetcher():
         ArgoIndexFetcher(src='invalid_fetcher').to_xarray()
 
 
-@unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
-def test_unavailable_accesspoint():
-    with pytest.raises(InvalidFetcherAccessPoint):
-        ArgoIndexFetcher(src='localftp').region([-85., -45., 10., 20., 0., 100.]).to_xarray()
+# @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
+# def test_unavailable_accesspoint():
+#     with pytest.raises(InvalidFetcherAccessPoint):
+#         ArgoIndexFetcher(src='localftp').region([-85., -45., 10., 20., 0., 100.]).to_xarray()
 
 
 class EntryPoints_AllBackends(TestCase):
@@ -59,7 +59,7 @@ class EntryPoints_AllBackends(TestCase):
         self.args['float'] = [[1900033],
                               [6901929, 3902131]]
         self.args['region'] = [[-70, -65, 30., 35.],
-                               [-70, -65, 30., 35., '2012-01-01', '2012-06-30']]
+                               [-70, -65, 30., 35., '2011-01-01', '2011-06-30']]
         self.args['profile'] = [[1900204, 36],
                                 [1900243, [5, 45]]]
 
@@ -77,40 +77,47 @@ class EntryPoints_AllBackends(TestCase):
             ds = ArgoIndexFetcher(src=bk, **options).profile(*arg).to_xarray()
             assert isinstance(ds, xr.Dataset)
 
-    def __test_region(self, bk):
+    def __test_region(self, bk, **ftc_opts):
         """ Test float index fetching for a given backend """
         for arg in self.args['region']:
-            ds = ArgoIndexFetcher(src=bk).region(arg).to_xarray()
+            options = {**self.fetcher_opts, **ftc_opts}
+            ds = ArgoIndexFetcher(src=bk, **options).region(arg).to_xarray()
             assert isinstance(ds, xr.Dataset)
 
-    @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
+    @unittest.skipUnless('erddap' in AVAILABLE_INDEX_SOURCES, "requires erddap index fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core index Argo dataset from Ifremer server")
     @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
     def test_float_index_erddap(self):
         self.__test_float('erddap')
 
-    @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
+    @unittest.skipUnless('erddap' in AVAILABLE_INDEX_SOURCES, "requires erddap index fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core index Argo dataset from Ifremer server")
     @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
     def test_region_index_erddap(self):
         self.__test_region('erddap')
 
-    @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
+    @unittest.skipUnless('localftp' in AVAILABLE_INDEX_SOURCES, "requires localftp index fetcher")
     def test_float_index_localftp(self):
         ftproot, findex = argopy.tutorial.open_dataset('global_index_prof')
         with argopy.set_options(local_ftp=ftproot):
             self.__test_float('localftp', index_file='ar_index_global_prof.txt')
 
-    @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
+    @unittest.skipUnless('localftp' in AVAILABLE_INDEX_SOURCES, "requires localftp index fetcher")
     def test_profile_index_localftp(self):
         ftproot, findex = argopy.tutorial.open_dataset('global_index_prof')
         with argopy.set_options(local_ftp=ftproot):
             self.__test_profile('localftp', index_file='ar_index_global_prof.txt')
 
+    @unittest.skipUnless('localftp' in AVAILABLE_INDEX_SOURCES, "requires localftp index fetcher")
+    def test_region_index_localftp(self):
+        ftproot, findex = argopy.tutorial.open_dataset('global_index_prof')
+        with argopy.set_options(local_ftp=ftproot):
+            self.__test_region('localftp', index_file='ar_index_global_prof.txt')
 
-@unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
+
+@unittest.skipUnless('erddap' in AVAILABLE_INDEX_SOURCES, "requires erddap index fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
 @unittest.skipUnless(DSEXISTS, "erddap requires a valid core index Argo dataset from Ifremer server")
 @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
@@ -154,7 +161,7 @@ class Erddap_backend(TestCase):
                 raise
 
 
-@unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
+@unittest.skipUnless('localftp' in AVAILABLE_INDEX_SOURCES, "requires localftp index fetcher")
 class LocalFTP_DataSets(TestCase):
     """ Test main API facade for all available dataset of the localftp fetching backend of index """
 
@@ -191,6 +198,11 @@ class LocalFTP_DataSets(TestCase):
             except Exception:
                 shutil.rmtree(testcachedir)
                 raise
+
+    def test_noresults(self):
+        with argopy.set_options(local_ftp=self.local_ftp):
+            with pytest.raises(DataNotFound):
+                ArgoIndexFetcher(src='localftp').region([-70, -65, 30., 35., '2030-01-01', '2030-06-30']).to_dataframe()
 
     def __testthis(self, dataset):
         for access_point in self.args:

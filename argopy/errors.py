@@ -4,6 +4,10 @@
 A bunch of custom errors used in argopy.
 """
 
+class DataNotFound(ValueError):
+    """ Raise when a data selection return nothing """
+    pass
+
 
 class NetCDF4FileNotFoundError(FileNotFoundError):
     """

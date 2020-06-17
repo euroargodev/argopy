@@ -3,6 +3,7 @@ import pandas as pd
 from abc import ABC, abstractmethod
 import hashlib
 
+from argopy.errors import DataNotFound
 from argopy.options import OPTIONS
 from .fsspec_wrappers import filestore, memorystore
 
@@ -270,6 +271,168 @@ class indexfilter_wmo(indexfilter_proto):
                 return search_one_wmo(index_file, self.WMO[0])
 
 
+class indexfilter_box(indexfilter_proto):
+    """ Index filter based on LATITUDE, LONGITUDE, DATE
+
+    This is intended to be used by instances of an indexstore
+
+    Examples
+    --------
+
+    # Create filters:
+    filt = index_filter_box(BOX=[-70, -65, 30., 35.])
+    filt = index_filter_box(BOX=[-70, -65, 30., 35., '2012-01-01', '2012-06-30'])
+
+    # Filter name:
+    print(filt.uri())
+
+    # Direct usage:
+        with open("/Volumes/Data/ARGO/ar_index_global_prof.txt", "r") as f:
+            results = filt.run(f)
+
+    # With the indexstore:
+        indexstore(cache=1, index_file="/Volumes/Data/ARGO/ar_index_global_prof.txt").open_dataframe(filt)
+
+    """
+
+    def __init__(self, BOX: list = [], **kwargs):
+        """ Create Argo index filter for LATITUDE, LONGITUDE, DATE
+
+            Parameters
+            ----------
+            box : list(float, float, float, float, str, str)
+                The box domain to load all Argo data for:
+                box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
+        """
+        if len(BOX) != 4 and len(BOX) != 6:
+            raise ValueError('Box must 4 or 6 length')
+        self.BOX = BOX
+
+    def _format(self, x, typ):
+        """ string formating helper """
+        if typ == 'lon':
+            if x < 0:
+                x = 360. + x
+            return ("%05d") % (x * 100.)
+        if typ == 'lat':
+            return ("%05d") % (x * 100.)
+        if typ == 'prs':
+            return ("%05d") % (np.abs(x) * 10.)
+        if typ == 'tim':
+            return pd.to_datetime(x).strftime('%Y%m%d')
+        return str(x)
+
+    def uri(self):
+        """ Return a unique name for this filter instance """
+        BOX = self.BOX
+        if len(BOX) == 4:
+            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f]") % (BOX[0], BOX[1], BOX[2], BOX[3])
+        else:
+            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; t=%s/%s]") % (BOX[0], BOX[1], BOX[2], BOX[3], BOX[4], BOX[5])
+        if len(boxname) > 256:
+            boxname = hashlib.sha256(boxname.encode()).hexdigest()
+        return boxname
+
+    def search_latlon(self, index, lon, lat):
+        """ Search
+
+        Parameters
+        ----------
+        index_file: _io.TextIOWrapper
+        lon: [float, float]
+        lat: [float, float]
+
+        Returns
+        -------
+        csv chunk matching the request, as a string. Or None
+        """
+        index.seek(0)
+        results = ""
+        iv_lat, iv_lon = 2, 3
+        il_loaded = 0
+        for ii in range(0, 9):
+            index.readline()
+        for line in index:
+            il_this = il_loaded
+            l = line.split(",")
+            if l[iv_lon] != "" and l[iv_lat] != "":
+                x = float(l[iv_lon])
+                y = float(l[iv_lat])
+                if x >= lon[0] and x <= lon[1] and y >= lat[0] and y <= lat[1]:
+                    results += line
+                    il_loaded += 1
+        if il_loaded > 0:
+            return results
+        else:
+            return None
+
+    def search_latlontim(self, index, lon, lat, tim):
+        """ Search
+
+        Parameters
+        ----------
+        index_file: _io.TextIOWrapper
+        lon: [float, float]
+        lat: [float, float]
+
+        Returns
+        -------
+        csv chunk matching the request, as a string. Or None
+        """
+
+        def search_tim(index, tim):
+            """ Search
+
+            Parameters
+            ----------
+            index_file: str csv like
+            tim: [pd.datetime, pd.datetime]
+
+            Returns
+            -------
+            csv chunk matching the request, as a string. Or None
+            """
+            results = ""
+            iv_tim = 1
+            il_loaded = 0
+            for line in index.split():
+                l = line.split(",")
+                if l[iv_tim] != "":
+                    t = pd.to_datetime(str(l[iv_tim]))
+                    if t >= tim[0] and t <= tim[1]:
+                        results += line + "\n"
+                        il_loaded += 1
+            if il_loaded > 0:
+                return results
+            else:
+                return None
+
+        # First search in space:
+        results = self.search_latlon(index, self.BOX[0:2], self.BOX[2:4])
+        # Then refine in time:
+        if results:
+            results = search_tim(results, pd.to_datetime(self.BOX[4:6]))
+        return results
+
+    def run(self, index_file):
+        """ Run search on an Argo index file
+
+        Parameters
+        ----------
+        index_file: _io.TextIOWrapper
+
+        Returns
+        -------
+        csv rows matching the request, as in-memory string. Or None.
+        """
+
+        # Run the filter:
+        if len(self.BOX) == 4:
+            return self.search_latlon(index_file, self.BOX[0:2], self.BOX[2:4])
+        else:
+            return self.search_latlontim(index_file, self.BOX[0:2], self.BOX[2:4], pd.to_datetime(self.BOX[4:6]))
+
+
 class indexstore():
     """" Use to manage access to a local Argo index and searches """
 
@@ -350,6 +513,8 @@ class indexstore():
                 # print('Running search from scratch ...')
                 # Run search:
                 results = search_cls.run(f)
+                if not results:
+                    raise DataNotFound("Your search did not provide any results !\nSearch URI: %s" % uri)
                 # and save results for caching:
                 if self.cache:
                     with self.fs['search'].open(uri, "w") as of:

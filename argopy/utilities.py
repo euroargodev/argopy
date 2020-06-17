@@ -57,7 +57,7 @@ def list_available_data_src():
     """ List all available data sources """
     AVAILABLE_SOURCES = {}
     try:
-        from .data_fetchers import erddap as Erddap_Fetchers
+        from .data_fetchers import erddap_data as Erddap_Fetchers
         AVAILABLE_SOURCES['erddap'] = Erddap_Fetchers
     except Exception:
         warnings.warn("An error occured while loading the ERDDAP data fetcher, "
@@ -65,10 +65,32 @@ def list_available_data_src():
         pass
 
     try:
-        from .data_fetchers import localftp as LocalFTP_Fetchers
+        from .data_fetchers import localftp_data as LocalFTP_Fetchers
         AVAILABLE_SOURCES['localftp'] = LocalFTP_Fetchers
     except Exception:
         warnings.warn("An error occured while loading the local FTP data fetcher, "
+                      "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        pass
+
+    return AVAILABLE_SOURCES
+
+
+def list_available_index_src():
+    """ List all available index sources """
+    AVAILABLE_SOURCES = {}
+    try:
+        from .data_fetchers import erddap_index as Erddap_Fetchers
+        AVAILABLE_SOURCES['erddap'] = Erddap_Fetchers
+    except Exception:
+        warnings.warn("An error occured while loading the ERDDAP index fetcher, "
+                      "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        pass
+
+    try:
+        from .data_fetchers import localftp_index as LocalFTP_Fetchers
+        AVAILABLE_SOURCES['localftp'] = LocalFTP_Fetchers
+    except Exception:
+        warnings.warn("An error occured while loading the local FTP index fetcher, "
                       "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
         pass
 

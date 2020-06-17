@@ -4,6 +4,7 @@ import xarray as xr
 import pandas as pd
 import requests
 import fsspec
+import shutil
 import pickle
 import tempfile
 from IPython.core.display import display, HTML
@@ -17,7 +18,7 @@ class argo_store_proto(ABC):
     protocol = ''  # One in fsspec.registry.known_implementations
 
     def __init__(self, cache: bool = False, cachedir: str = "", **kw):
-        """ Create a file storage system for http requests
+        """ Create a file storage system for Argo data
 
             Parameters
             ----------
@@ -91,7 +92,7 @@ class argo_store_proto(ABC):
         fn2 = tempfile.mktemp()
         with open(fn2, "wb") as f:
             pickle.dump(cache, f)
-        os.replace(fn2, fn)
+        shutil.move(fn2, fn)
 
     def clear_cache(self):
         """ Remove cache files and entry from uri open with this store instance """
