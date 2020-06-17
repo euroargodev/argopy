@@ -44,10 +44,11 @@ def test_erddap_ds_exists():
     assert erddap_ds_exists(ds='DummyDS') is False
 
 
-@unittest.skipUnless(CONNECTED, "open_etopo1 requires an internet connection")
-def test_open_etopo1():
-    try:
-        ds = open_etopo1([-80, -79, 20, 21], res='l')
-        assert isinstance(ds, xr.DataArray) is True
-    except requests.HTTPError:  # not our fault
-        pass
+# We disable this test because the server has not responded over a week (May 29th)
+# @unittest.skipUnless(CONNECTED, "open_etopo1 requires an internet connection")
+# def test_open_etopo1():
+#     try:
+#         ds = open_etopo1([-80, -79, 20, 21], res='l')
+#         assert isinstance(ds, xr.DataArray) is True
+#     except requests.HTTPError:  # not our fault
+#         pass
