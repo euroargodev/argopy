@@ -17,7 +17,7 @@ v0.1.4 (XX June 2020)
     # or
     argopy.dashboard(wmo=6902746)
 
-- The ``localftp`` index fetcher has now available the ``profile`` access point.
+- The ``localftp`` index fetcher has now a ``profile`` access point.
 
 **Breaking changes with previous versions**
 

@@ -223,6 +223,9 @@ class ArgoDataFetcher(object):
         xds = self.to_xarray(**kwargs)
         return xds.to_dataframe()
 
+    def clear_cache(self):
+        """ Clear fetcher cached data """
+        return self.fetcher.clear_cache()
 
 class ArgoIndexFetcher(object):
     """
@@ -378,3 +381,7 @@ class ArgoIndexFetcher(object):
             return plot_trajectory(idx.sort_values(['file']))
         else:
             raise ValueError("Type of plot unavailable. Use: 'dac', 'profiler' or 'trajectory' (default)")
+
+    def clear_cache(self):
+        """ Clear fetcher cached data """
+        return self.fetcher.clear_cache()

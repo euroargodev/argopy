@@ -392,6 +392,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         else:
             return ds
 
+    def clear_cache(self):
+        """ Remove cache files and entries from resources open with this fetcher """
+        return self.fs.clear_cache()
+
 
 class Fetch_wmo(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: a list of WMOs
@@ -644,6 +648,10 @@ class ErddapArgoIndexFetcher(ABC):
     def to_xarray(self):
         """ Load Argo index and return a xarray Dataset """
         return self.to_dataframe().to_xarray()
+
+    def clear_cache(self):
+        """ Remove cache files and entries from resources open with this fetcher """
+        return self.fs.clear_cache()
 
 
 class IndexFetcher_wmo(ErddapArgoIndexFetcher):

@@ -210,6 +210,10 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         """ Return path to cache file for this request """
         return [self.fs.cachepath(file) for file in self.files]
 
+    def clear_cache(self):
+        """ Remove cache files and entries from resources open with this fetcher """
+        return self.fs.clear_cache()
+
     def xload_multiprof(self, ncfile: str):
         """Load an Argo multi-profile file as a collection of points
 
@@ -503,6 +507,10 @@ class LocalFTPArgoIndexFetcher(ABC):
     def to_xarray(self):
         """ Load Argo index and return a xarray Dataset """
         return self.to_dataframe().to_xarray()
+
+    def clear_cache(self):
+        """ Remove cache files and entries from resources open with this fetcher """
+        return self.fs.clear_cache()
 
 class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
     """ Manage access to local ftp Argo data for: a list of WMOs
