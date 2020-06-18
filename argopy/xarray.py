@@ -590,8 +590,13 @@ class ArgoAccessor:
             raise InvalidDatasetStructure(
                 "Method only available to a collection of points")
 
-        if (np.any(sorted(std_lev)!=std_lev))|(np.any(std_lev<0)):
-            raise ValueError('Standard levels must be positive and sorted')
+        if (type(std_lev) is np.ndarray) | (type(std_lev) is list):
+            std_lev = np.array(std_lev)
+            if (np.any(sorted(std_lev) != std_lev)) | (np.any(std_lev < 0)):
+                raise ValueError(
+                    'Standard levels must a numpy array of positive and sorted values')
+        else:
+            raise ValueError('Standard levels must a numpy array or a list')
 
         ds = self._obj
 
@@ -600,12 +605,13 @@ class ArgoAccessor:
             ds = ds.argo.filter_data_mode()
             ds = ds.argo.filter_qc()
 
-        # work on profile
+        # work on profiles
         ds = ds.argo.point2profile()
 
         # Filtering on pressure levels to avoid extrapolation
         i1 = (ds['PRES'].min('N_LEVELS') <= std_lev[0]) & (
             ds['PRES'].max('N_LEVELS') >= std_lev[-1])
+
         ds_suited_for_interp = ds.where(i1, drop=True)
 
         # Initialise output structure
@@ -633,4 +639,5 @@ class ArgoAccessor:
             fpsal = interpolate.interp1d(
                 this['PRES'][notnans], this['PSAL'][notnans])
             dstd['PSAL'][i, :] = fpsal(std_lev)
+
         return dstd

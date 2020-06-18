@@ -51,3 +51,16 @@ def test_point2profile2point():
         assert ds_pts.argo.point2profile().argo.profile2point().equals(ds_pts)
     except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
         pass
+
+
+@unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
+@unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
+@unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
+def test_interp_std_levels():
+    try:
+        ds_pts = ArgoDataFetcher(src='erddap') \
+            .region([-75, -55, 30., 40., 0, 100., '2011-01-01', '2011-01-15']) \
+            .to_xarray()          
+        assert  'PRES' in ds_pts.argo.interp_std_levels([20,30,40,50]).dims
+    except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
+        pass
