@@ -6,7 +6,8 @@ import sys
 import numpy as np
 import pandas as pd
 import xarray as xr
-from scipy import interpolate
+
+from argopy.utilities import linear_interpolation_remap, _regular_interp
 
 from argopy.errors import InvalidDatasetStructure
 from sklearn import preprocessing
@@ -586,9 +587,13 @@ class ArgoAccessor:
     def interp_std_levels(self, std_lev):
         """ Returns a new dataset interpolated to new inputs levels """
 
-        if self._type != 'point':
+        if self._type != 'profile':
             raise InvalidDatasetStructure(
-                "Method only available to a collection of points")
+                "Method only available to a collection of profiles")
+
+        if(self._mode != 'standard'):
+            raise InvalidDatasetStructure(
+                "Method only available for the standard mode yet")                     
 
         if (type(std_lev) is np.ndarray) | (type(std_lev) is list):
             std_lev = np.array(std_lev)
@@ -598,46 +603,34 @@ class ArgoAccessor:
         else:
             raise ValueError('Standard levels must a numpy array or a list')
 
-        ds = self._obj
-
-        # Filtering
-        if(self._mode == 'expert'):
-            ds = ds.argo.filter_data_mode()
-            ds = ds.argo.filter_qc()
-
-        # work on profiles
-        ds = ds.argo.point2profile()
+        ds = self._obj                
 
         # Filtering on pressure levels to avoid extrapolation
         i1 = (ds['PRES'].min('N_LEVELS') <= std_lev[0]) & (
             ds['PRES'].max('N_LEVELS') >= std_lev[-1])
+        dsp = ds.where(i1, drop=True)
 
-        ds_suited_for_interp = ds.where(i1, drop=True)
+        # add new vertical dimensions
+        dsp['Z_LEVELS']=xr.DataArray(std_lev,dims={'Z_LEVELS':std_lev})
 
-        # Initialise output structure
-        dstd = xr.Dataset({'CYCLE_NUMBER': ('N_PROF',  ds_suited_for_interp['CYCLE_NUMBER'].values),
-                           'PLATFORM_NUMBER': ('N_PROF',  ds_suited_for_interp['PLATFORM_NUMBER'].values),
-                           'TEMP': (['N_PROF', 'PRES'], np.zeros([len(ds_suited_for_interp['N_PROF']), len(std_lev)])),
-                           'PSAL': (['N_PROF', 'PRES'], np.zeros([len(ds_suited_for_interp['N_PROF']), len(std_lev)]))},
-                          coords={'LONGITUDE': ('N_PROF', ds_suited_for_interp['LONGITUDE'].values),
-                                  'LATITUDE': ('N_PROF', ds_suited_for_interp['LATITUDE'].values),
-                                  'TIME': ('N_PROF', ds_suited_for_interp['TIME'].values),
-                                  'N_PROF': ('N_PROF', ds_suited_for_interp['N_PROF'].values),
-                                  'PRES': std_lev
-                                  })
-        dstd.attrs = self.attrs
-        dstd.argo._add_history('Interpolated on standard levels')
+        ds_out = xr.Dataset()
 
-        # Go througt each profile to interpolate TEMP & PSAL
-        for i in range(len(ds_suited_for_interp['N_PROF'].values)):
-            this = ds_suited_for_interp.isel(N_PROF=i)
-            notnant = (this['PRES'].notnull()) & (this['TEMP'].notnull())
-            notnans = (this['PRES'].notnull()) & (this['PSAL'].notnull())
-            ftemp = interpolate.interp1d(
-                this['PRES'][notnant], this['TEMP'][notnant])
-            dstd['TEMP'][i, :] = ftemp(std_lev)
-            fpsal = interpolate.interp1d(
-                this['PRES'][notnans], this['PSAL'][notnans])
-            dstd['PSAL'][i, :] = fpsal(std_lev)
+        # var to interpolate        
+        datavars = [dv for dv in list(dsp.variables) if set(['N_LEVELS', 'N_PROF']) == set(dsp[dv].dims) and 'QC' not in dv]
+        # others
+        coords = [dv for dv in list(dsp.variables) if not dv in datavars and 'QC' not in dv]
 
-        return dstd
+        for dv in datavars:    
+            ds_out[dv] = linear_interpolation_remap(dsp.PRES,dsp[dv],dsp['Z_LEVELS'],z_dim='N_LEVELS',z_regridded_dim='Z_LEVELS')
+        ds_out = ds_out.rename({'remapped': 'PRES_INTERPOLATED'})
+        for co in coords:
+            ds_out.coords[co] = dsp[co]
+    
+        ds_out = ds_out.drop(['N_LEVELS','Z_LEVELS'])
+        
+        ds_out.attrs = self.attrs
+        ds_out.argo._add_history('Interpolated on standard levels')
+
+        return ds_out
+
+

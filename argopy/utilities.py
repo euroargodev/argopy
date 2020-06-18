@@ -21,6 +21,10 @@ import platform
 import struct
 import subprocess
 
+import xarray as xr
+import numpy as np
+from scipy import interpolate
+
 import pickle
 import pkg_resources
 import shutil
@@ -362,3 +366,47 @@ def open_etopo1(box, res='l'):
     da.attrs['Data source'] = 'https://maps.ngdc.noaa.gov/viewers/wcs-client/'
     da.attrs['URI'] = thisurl
     return da
+
+##################
+#FROM XARRAYUTILS :
+def linear_interpolation_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped"):
+        # infer dim from input
+        if z_dim is None:
+            if len(z.dims) != 1:
+                raise RuntimeError("if z_dim is not specified,x must be a 1D array.")
+            dim = z.dims[0]
+        else:
+            dim = z_dim
+
+        # if dataset is passed drop all data_vars that dont contain dim
+        if isinstance(data, xr.Dataset):
+            raise ValueError("Dataset input is not supported yet")
+            # TODO: for a datset input just apply the function for each appropriate array
+
+        kwargs = dict(
+            input_core_dims=[[dim], [dim], [z_regridded_dim]],
+            output_core_dims=[[output_dim]],
+            vectorize=True,
+            dask="parallelized",
+            output_dtypes=[data.dtype],
+            output_sizes={output_dim: len(z_regridded[z_regridded_dim])},
+        )
+        remapped = xr.apply_ufunc(_regular_interp, z, data, z_regridded, **kwargs)
+
+        remapped.coords[output_dim] = z_regridded.rename(
+            {z_regridded_dim: output_dim}
+        ).coords[output_dim]
+        return remapped
+
+def _regular_interp(x, y, target_values):
+        # remove all nans from input
+        idx = np.logical_or(np.isnan(x), np.isnan(y))
+        x = x[~idx]
+        y = y[~idx]
+
+        # replace nans in target_values with out of bound Values
+        target_values = np.where(~np.isnan(target_values), target_values, np.nanmax(x) + 1)
+
+        interpolated = interpolate.interp1d(x, y, bounds_error=False)(target_values)
+        return interpolated
+####################        
