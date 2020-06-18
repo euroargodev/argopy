@@ -591,9 +591,9 @@ class ArgoAccessor:
             raise InvalidDatasetStructure(
                 "Method only available to a collection of profiles")
 
-        if(self._mode != 'standard'):
-            raise InvalidDatasetStructure(
-                "Method only available for the standard mode yet")                     
+        #if(self._mode != 'standard'):
+        #    raise InvalidDatasetStructure(
+        #        "Method only available for the standard mode yet")                     
 
         if (type(std_lev) is np.ndarray) | (type(std_lev) is list):
             std_lev = np.array(std_lev)
@@ -616,7 +616,8 @@ class ArgoAccessor:
         ds_out = xr.Dataset()
 
         # var to interpolate        
-        datavars = [dv for dv in list(dsp.variables) if set(['N_LEVELS', 'N_PROF']) == set(dsp[dv].dims) and 'QC' not in dv]
+        #datavars = [dv for dv in list(dsp.variables) if set(['N_LEVELS', 'N_PROF']) == set(dsp[dv].dims) and 'QC' not in dv]
+        datavars = ['PRES','TEMP','PSAL']
         # others
         coords = [dv for dv in list(dsp.variables) if not dv in datavars and 'QC' not in dv]
 

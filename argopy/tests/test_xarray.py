@@ -61,6 +61,6 @@ def test_interp_std_levels():
         ds_pts = ArgoDataFetcher(src='erddap') \
             .region([-75, -55, 30., 40., 0, 100., '2011-01-01', '2011-01-15']) \
             .to_xarray()          
-        assert  'PRES' in ds_pts.argo.interp_std_levels([20,30,40,50]).dims
+        assert  'PRES_INTERPOLATED' in ds_pts.argo.interp_std_levels([20,30,40,50]).dims
     except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
         pass
