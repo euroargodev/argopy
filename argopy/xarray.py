@@ -611,6 +611,11 @@ class ArgoAccessor:
         i1 = (ds['PRES'].max('N_LEVELS') >= std_lev[-1])
         dsp = ds.where(i1, drop=True)
 
+        # check if any profile is left
+        if (len(dsp['N_PROF']) == 0):
+            raise ValueError(
+                'Zero profiles left. Some levels may be to deep for selected profiles')
+
         # add new vertical dimensions, this has to be in the datasets to apply ufunc later
         dsp['Z_LEVELS'] = xr.DataArray(std_lev, dims={'Z_LEVELS': std_lev})
 
