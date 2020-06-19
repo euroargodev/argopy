@@ -593,7 +593,7 @@ class ArgoAccessor:
 
         if(self._mode != 'standard'):
             raise InvalidDatasetStructure(
-                "Method only available for the standard mode yet")                     
+                "Method only available for the standard mode yet")
 
         if (type(std_lev) is np.ndarray) | (type(std_lev) is list):
             std_lev = np.array(std_lev)
@@ -603,35 +603,36 @@ class ArgoAccessor:
         else:
             raise ValueError('Standard levels must a numpy array or a list')
 
-        ds = self._obj                
+        ds = self._obj
 
-        # Filtering on pressure levels to avoid extrapolation
+        # Filtering on pressure levels to avoid extrapolation, this is open to discussion... 
         i1 = (ds['PRES'].min('N_LEVELS') <= std_lev[0]) & (
             ds['PRES'].max('N_LEVELS') >= std_lev[-1])
         dsp = ds.where(i1, drop=True)
 
-        # add new vertical dimensions
-        dsp['Z_LEVELS']=xr.DataArray(std_lev,dims={'Z_LEVELS':std_lev})
+        # add new vertical dimensions, this has to be in the datasets to apply ufunc later
+        dsp['Z_LEVELS'] = xr.DataArray(std_lev, dims={'Z_LEVELS': std_lev})
 
+        # init 
         ds_out = xr.Dataset()
-
-        # var to interpolate        
-        datavars = [dv for dv in list(dsp.variables) if set(['N_LEVELS', 'N_PROF']) == set(dsp[dv].dims) and 'QC' not in dv]
+        # var to interpolate
+        datavars = [dv for dv in list(dsp.variables) if set(
+            ['N_LEVELS', 'N_PROF']) == set(dsp[dv].dims) and 'QC' not in dv]
         #datavars = ['PRES','TEMP','PSAL']
-        # others
-        coords = [dv for dv in list(dsp.variables) if not dv in datavars and 'QC' not in dv]
+        # others variables 
+        coords = [dv for dv in list(dsp.variables)
+                  if not dv in datavars and 'QC' not in dv]
 
-        for dv in datavars:    
-            ds_out[dv] = linear_interpolation_remap(dsp.PRES,dsp[dv],dsp['Z_LEVELS'],z_dim='N_LEVELS',z_regridded_dim='Z_LEVELS')
+        for dv in datavars:
+            ds_out[dv] = linear_interpolation_remap(
+                dsp.PRES, dsp[dv], dsp['Z_LEVELS'], z_dim='N_LEVELS', z_regridded_dim='Z_LEVELS')
         ds_out = ds_out.rename({'remapped': 'PRES_INTERPOLATED'})
         for co in coords:
             ds_out.coords[co] = dsp[co]
-    
-        ds_out = ds_out.drop(['N_LEVELS','Z_LEVELS'])
-        
+
+        ds_out = ds_out.drop(['N_LEVELS', 'Z_LEVELS'])
+
         ds_out.attrs = self.attrs
         ds_out.argo._add_history('Interpolated on standard levels')
 
         return ds_out
-
-
