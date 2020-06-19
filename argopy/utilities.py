@@ -407,6 +407,6 @@ def _regular_interp(x, y, target_values):
         # replace nans in target_values with out of bound Values
         target_values = np.where(~np.isnan(target_values), target_values, np.nanmax(x) + 1)
 
-        interpolated = interpolate.interp1d(x, y, bounds_error=False)(target_values)
+        interpolated = interpolate.interp1d(x, y, bounds_error=False, fill_value=(y[0],y[-1]))(target_values)
         return interpolated
 ####################        

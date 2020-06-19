@@ -606,8 +606,9 @@ class ArgoAccessor:
         ds = self._obj
 
         # Filtering on pressure levels to avoid extrapolation, this is open to discussion... 
-        i1 = (ds['PRES'].min('N_LEVELS') <= std_lev[0]) & (
-            ds['PRES'].max('N_LEVELS') >= std_lev[-1])
+        #i1 = (ds['PRES'].min('N_LEVELS') <= std_lev[0]) & (
+        #    ds['PRES'].max('N_LEVELS') >= std_lev[-1])
+        i1 = (ds['PRES'].max('N_LEVELS') >= std_lev[-1])
         dsp = ds.where(i1, drop=True)
 
         # add new vertical dimensions, this has to be in the datasets to apply ufunc later
@@ -616,9 +617,9 @@ class ArgoAccessor:
         # init 
         ds_out = xr.Dataset()
         # var to interpolate
-        datavars = [dv for dv in list(dsp.variables) if set(
-            ['N_LEVELS', 'N_PROF']) == set(dsp[dv].dims) and 'QC' not in dv]
-        #datavars = ['PRES','TEMP','PSAL']
+        #datavars = [dv for dv in list(dsp.variables) if set(
+        #    ['N_LEVELS', 'N_PROF']) == set(dsp[dv].dims) and 'QC' not in dv]
+        datavars = ['PRES','TEMP','PSAL']
         # others variables 
         coords = [dv for dv in list(dsp.variables)
                   if not dv in datavars and 'QC' not in dv]
