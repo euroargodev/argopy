@@ -28,7 +28,7 @@ from erddapy.utilities import parse_dates, quote_string_constraints
 
 
 access_points = ['wmo', 'box']
-exit_formats = ['xarray',' dataframe']
+exit_formats = ['xarray', 'dataframe']
 dataset_ids = ['phy', 'ref', 'bgc']  # First is default
 
 
