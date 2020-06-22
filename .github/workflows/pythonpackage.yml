@@ -5,7 +5,7 @@ name: build
 
 on:
   push:
-    branches: [ master, fsspec ]
+    branches: [ master, region-for-localftp ]
   pull_request:
     branches: [ master ]
 
