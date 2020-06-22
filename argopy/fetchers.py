@@ -280,10 +280,10 @@ class ArgoIndexFetcher(object):
         self.Fetchers = {}
         for p in Fetchers.access_points:
             if p == 'wmo':  # Required for 'profile' and 'float'
-                self.Fetchers['profile'] = Fetchers.IndexFetcher_wmo
-                self.Fetchers['float'] = Fetchers.IndexFetcher_wmo
+                self.Fetchers['profile'] = Fetchers.Fetcher_wmo
+                self.Fetchers['float'] = Fetchers.Fetcher_wmo
             if p == 'box':  # Required for 'region'
-                self.Fetchers['region'] = Fetchers.IndexFetcher_box
+                self.Fetchers['region'] = Fetchers.Fetcher_box
 
         # Init sub-methods:
         self.fetcher = None

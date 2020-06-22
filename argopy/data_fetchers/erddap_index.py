@@ -185,7 +185,7 @@ class ErddapArgoIndexFetcher(ABC):
         return self.fs.clear_cache()
 
 
-class IndexFetcher_wmo(ErddapArgoIndexFetcher):
+class Fetcher_wmo(ErddapArgoIndexFetcher):
     """ Manage access to Argo Index through Ifremer ERDDAP for: a list of WMOs
 
     """
@@ -220,7 +220,7 @@ class IndexFetcher_wmo(ErddapArgoIndexFetcher):
         return listname
 
 
-class IndexFetcher_box(ErddapArgoIndexFetcher):
+class Fetcher_box(ErddapArgoIndexFetcher):
     """ Manage access to Argo Index through Ifremer ERDDAP for: an ocean rectangle
 
         __author__: kevin.balem@ifremer.fr

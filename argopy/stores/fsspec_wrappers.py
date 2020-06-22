@@ -14,7 +14,7 @@ from argopy.errors import ErddapServerError, FileSystemHasNoCache, CacheFileNotF
 from abc import ABC, abstractmethod
 
 
-class argo_store_proto(ABC):
+class argo_store_proto(ABC):  # Should this class inherits from fsspec.spec.AbstractFileSystem ?
     protocol = ''  # One in fsspec.registry.known_implementations
 
     def __init__(self, cache: bool = False, cachedir: str = "", **kw):
@@ -40,12 +40,15 @@ class argo_store_proto(ABC):
             # since this is the update frequency of the Ifremer erddap
             self.cache_registry = []  # Will hold uri cached by this store instance
 
-    def open(self, url, *args, **kwargs):
-        self.register(url)
-        return self.fs.open(url, *args, **kwargs)
+    def open(self, path, *args, **kwargs):
+        self.register(path)
+        return self.fs.open(path, *args, **kwargs)
 
     def glob(self, path, **kwargs):
         return self.fs.glob(path, **kwargs)
+
+    def exists(self, path, *args):
+        return self.fs.exists(path, *args)
 
     def store_path(self, uri):
         if not uri.startswith(self.fs.target_protocol):

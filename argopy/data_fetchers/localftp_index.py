@@ -62,28 +62,29 @@ class LocalFTPArgoIndexFetcher(ABC):
         """ Initialisation for a specific fetcher """
         pass
 
-    @abstractmethod
-    def cname(self):
-        """ Return a unique string defining the request """
-        pass
-
-    @abstractmethod
+    @property
     def cachepath(self):
-        pass
+        return self.fs.cachepath(self.fcls.uri())
 
-    @abstractmethod
+    def cname(self):
+        """ Return a unique string defining the request
+
+        """
+        return self.fcls.uri()
+
     def filter_index(self):
-        """ Custom search in the argo index file
+        """ Search for profile in a box in the argo index file
+
+        Parameters
+        ----------
+        index_file: _io.TextIOWrapper
 
         Returns
         -------
-        Instance of index_filter_proto
+        csv rows matching the request, as a in-memory string. Or None.
         """
-        pass
+        return self.fcls
 
-    ###
-    # Methods that must not change
-    ###
     def __init__(self,
                  local_ftp: str = "",
                  index_file: str = "ar_index_global_prof.txt",
@@ -138,7 +139,7 @@ class LocalFTPArgoIndexFetcher(ABC):
         return self.fs.clear_cache()
 
 
-class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
+class Fetcher_wmo(LocalFTPArgoIndexFetcher):
     """ Manage access to local ftp Argo data for: a list of WMOs
 
     """
@@ -162,36 +163,13 @@ class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
         self.CYC = CYC
         self.fcls = indexfilter_wmo(self.WMO, self.CYC)
 
-    @property
-    def cachepath(self):
-        return self.fs.cachepath(self.fcls.uri())
 
-    def cname(self):
-        """ Return a unique string defining the request
-
-        """
-        return self.fcls.uri()
-
-    def filter_index(self):
-        """ Search for one or more WMO in the argo index file
-
-        Parameters
-        ----------
-        index_file: _io.TextIOWrapper
-
-        Returns
-        -------
-        csv rows matching the request, as a in-memory string. Or None.
-        """
-        return self.fcls
-
-
-class IndexFetcher_box(LocalFTPArgoIndexFetcher):
+class Fetcher_box(LocalFTPArgoIndexFetcher):
     """ Manage access to local ftp Argo data for: an ocean rectangle
 
     """
     def init(self, box: list = [-180, 180, -90, 90, '1900-01-01', '2100-12-31']):
-        """ Create Argo data loader
+        """ Create Argo index loader
 
             Parameters
             ----------
@@ -203,26 +181,3 @@ class IndexFetcher_box(LocalFTPArgoIndexFetcher):
             raise ValueError('Box must be 4 or 6 length')
         self.BOX = box
         self.fcls = indexfilter_box(self.BOX)
-
-    @property
-    def cachepath(self):
-        return self.fs.cachepath(self.fcls.uri())
-
-    def cname(self):
-        """ Return a unique string defining the request
-
-        """
-        return self.fcls.uri()
-
-    def filter_index(self):
-        """ Search for profile in a box in the argo index file
-
-        Parameters
-        ----------
-        index_file: _io.TextIOWrapper
-
-        Returns
-        -------
-        csv rows matching the request, as a in-memory string. Or None.
-        """
-        return self.fcls
