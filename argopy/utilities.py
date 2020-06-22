@@ -30,7 +30,8 @@ path2pkl = pkg_resources.resource_filename('argopy', 'assets/')
 
 def clear_cache():
     """ Delete argopy cache folder """
-    shutil.rmtree(OPTIONS['cachedir'])
+    if os.path.exists(OPTIONS['cachedir']):
+        shutil.rmtree(OPTIONS['cachedir'])
 
 
 def load_dict(ptype):

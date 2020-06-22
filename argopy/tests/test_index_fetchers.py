@@ -55,13 +55,14 @@ class EntryPoints_AllBackends(TestCase):
         self.fetcher_opts = {}
 
         # Define API entry point options to tests:
+        # These should be available online and with the argopy-data dummy gdac ftp
         self.args = {}
-        self.args['float'] = [[1900033],
-                              [6901929, 3902131]]
-        self.args['region'] = [[-70, -65, 30., 35.],
-                               [-70, -65, 30., 35., '2011-01-01', '2011-06-30']]
-        self.args['profile'] = [[1900204, 36],
-                                [1900243, [5, 45]]]
+        self.args['float'] = [[2901623],
+                              [6901929, 2901623]]
+        self.args['region'] = [[-60, -40, 40., 60.],
+                               [-60, -40, 40., 60., '2007-08-01', '2007-09-01']]
+        self.args['profile'] = [[2901623, 2],
+                                [6901929, [5, 45]]]
 
     def __test_float(self, bk, **ftc_opts):
         """ Test float index fetching for a given backend """
@@ -163,7 +164,7 @@ class Erddap_backend(TestCase):
 
 @unittest.skipUnless('localftp' in AVAILABLE_INDEX_SOURCES, "requires localftp index fetcher")
 class LocalFTP_DataSets(TestCase):
-    """ Test main API facade for all available dataset of the localftp fetching backend of index """
+    """ Test localftp index fetcher """
 
     ftproot, flist = argopy.tutorial.open_dataset('localftp')
     local_ftp = ftproot
@@ -171,14 +172,14 @@ class LocalFTP_DataSets(TestCase):
     def test_cachepath_notfound(self):
         testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
         with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
-            loader = ArgoIndexFetcher(src='localftp', cache=True).profile(6902746, 61)
+            loader = ArgoIndexFetcher(src='localftp', cache=True).profile(2901623, 2)
             with pytest.raises(CacheFileNotFound):
                 loader.fetcher.cachepath
         shutil.rmtree(testcachedir)  # Make sure the cache folder is cleaned
 
     def test_nocache(self):
         with argopy.set_options(cachedir="dummy", local_ftp=self.local_ftp):
-            loader = ArgoIndexFetcher(src='localftp', cache=False).profile(6902746, 61)
+            loader = ArgoIndexFetcher(src='localftp', cache=False).profile(2901623, 2)
             loader.to_xarray()
             with pytest.raises(FileSystemHasNoCache):
                 loader.fetcher.cachepath
@@ -187,7 +188,7 @@ class LocalFTP_DataSets(TestCase):
         testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
         with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
             try:
-                loader = ArgoIndexFetcher(src='localftp', cache=True).float(6902746)
+                loader = ArgoIndexFetcher(src='localftp', cache=True).float(6901929)
                 # 1st call to load from erddap and save to cachedir:
                 ds = loader.to_xarray()
                 # 2nd call to load from cached file:
@@ -231,14 +232,14 @@ class LocalFTP_DataSets(TestCase):
 
     def test_phy_float(self):
         self.args = {}
-        self.args['float'] = [[1900204],
-                              [1900243, 1900444]]
+        self.args['float'] = [[2901623],
+                              [2901623, 6901929]]
         self.__testthis('phy')
 
     def test_phy_profile(self):
         self.args = {}
-        self.args['profile'] = [[1900204, 36],
-                                [1900243, [5, 45]]]
+        self.args['profile'] = [[6901929, 36],
+                                [6901929, [5, 45]]]
         self.__testthis('phy')
 
 

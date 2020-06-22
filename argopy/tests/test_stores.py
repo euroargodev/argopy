@@ -8,7 +8,7 @@ import xarray as xr
 import pandas as pd
 import fsspec
 import argopy
-from argopy.stores import filestore, httpstore, indexfilter_wmo, indexstore
+from argopy.stores import filestore, httpstore, indexfilter_wmo, indexfilter_box, indexstore
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound
 from argopy.utilities import isconnected
 CONNECTED = isconnected()
@@ -115,15 +115,15 @@ class HttpStore(TestCase):
 
 
 class IndexFilter_WMO(TestCase):
-    kwargs = [{'WMO': 1900204},
-              {'WMO': [1900204, 1900243]},
-              {'CYC': 1},
-              {'CYC': [1, 6]},
-              {'WMO': 1900204, 'CYC': 36},
-              {'WMO': 1900243, 'CYC': [5, 45]},
-              {'WMO': [1900482, 2900738], 'CYC': 2},
-              {'WMO': [1900482, 2900738], 'CYC': [2, 6]},
-              {}]
+    kwargs = [{'WMO': 6901929},
+                  {'WMO': [6901929, 2901623]},
+                  {'CYC': 1},
+                  {'CYC': [1, 6]},
+                  {'WMO': 6901929, 'CYC': 36},
+                  {'WMO': 6901929, 'CYC': [5, 45]},
+                  {'WMO': [6901929, 2901623], 'CYC': 2},
+                  {'WMO': [6901929, 2901623], 'CYC': [2, 23]},
+                  {}]
 
     def test_creation(self):
         for kw in self.kwargs:
@@ -157,15 +157,18 @@ class IndexStore(TestCase):
     ftproot, flist = argopy.tutorial.open_dataset('localftp')
     index_file = os.path.sep.join([ftproot, "ar_index_global_prof.txt"])
 
-    kwargs_wmo = [{'WMO': 1900204},
-                  {'WMO': [1900204, 1900243]},
+    kwargs_wmo = [{'WMO': 6901929},
+                  {'WMO': [6901929, 2901623]},
                   {'CYC': 1},
                   {'CYC': [1, 6]},
-                  {'WMO': 1900204, 'CYC': 36},
-                  {'WMO': 1900243, 'CYC': [5, 45]},
-                  {'WMO': [1900482, 2900738], 'CYC': 2},
-                  {'WMO': [1900482, 2900738], 'CYC': [2, 6]},
+                  {'WMO': 6901929, 'CYC': 36},
+                  {'WMO': 6901929, 'CYC': [5, 45]},
+                  {'WMO': [6901929, 2901623], 'CYC': 2},
+                  {'WMO': [6901929, 2901623], 'CYC': [2, 23]},
                   {}]
+
+    kwargs_box = [{'BOX': [-60, -40, 40., 60.]},
+                  {'BOX': [-60, -40, 40., 60., '2007-08-01', '2007-09-01']}]
 
     def test_creation(self):
         assert isinstance(indexstore(), argopy.stores.argo_index.indexstore)
@@ -176,4 +179,9 @@ class IndexStore(TestCase):
     def test_search_wmo(self):
         for kw in self.kwargs_wmo:
             df = indexstore(cache=0, index_file=self.index_file).open_dataframe(indexfilter_wmo(**kw))
+            assert isinstance(df, pd.core.frame.DataFrame)
+
+    def test_search_box(self):
+        for kw in self.kwargs_box:
+            df = indexstore(cache=0, index_file=self.index_file).open_dataframe(indexfilter_box(**kw))
             assert isinstance(df, pd.core.frame.DataFrame)

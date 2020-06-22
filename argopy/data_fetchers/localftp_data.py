@@ -197,16 +197,21 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
                 raise NetCDF4FileNotFoundError(pattern)
             else:
                 # Otherwise remain silent/ignore
-                # todo should raise a warning instead ?
+                # todo: should raise a warning instead ?
                 return None
         else:
-            warnings.warn("More than one file to load for a single float cycle ! Return the 1st one by default.")
+            # warnings.warn("More than one file to load for a single float cycle ! Return the 1st one by default.")
             # The choice of the file to load depends on the user mode and dataset requested.
-            # todo define a robust choice
+            # todo: define a robust choice
             if self.dataset_id == 'phy':
-                # Use the synthetic profile:
-                lst = [file for file in lst if
-                       [file for file in [os.path.split(w)[-1] for w in lst] if file[0] == 'S'][0] in file]
+                if cyc is None:
+                    # Use the synthetic profile:
+                    lst = [file for file in lst if
+                           [file for file in [os.path.split(w)[-1] for w in lst] if file[0] == 'S'][0] in file]
+                else:
+                    # Use the ascent profile:
+                    lst = [file for file in lst if
+                           [file for file in [os.path.split(w)[-1] for w in lst] if file[-1] != 'D'][0] in file]
                 # print('phy', lst[0])
             elif self.dataset_id == 'bgc':
                 lst = [file for file in lst if
@@ -440,7 +445,7 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
 class Fetch_box(LocalFTPArgoDataFetcher):
     """ Manage access to local ftp Argo data for: a rectangular space/time domain  """
 
-    def init(self, box: list = [-180, 180, -90, 90, '1900-01-01', '2100-12-31']):
+    def init(self, box: list = [-180, 180, -90, 90, 0, 6000, '1900-01-01', '2100-12-31']):
         """ Create Argo data loader
 
             Parameters
@@ -449,18 +454,27 @@ class Fetch_box(LocalFTPArgoDataFetcher):
                 The box domain to load all Argo data for:
                 box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
-        if len(box) != 4 and len(box) !=6 :
-            raise ValueError('Box must be 4 or 6 length')
-        self.BOX = box
+        # We use a full domain definition (x, y, z, t) as argument for compatibility with the other fetchers
+        # but we work only with x, y and t.
+        if len(box) not in [6, 8]:
+            raise ValueError('Box must be 6 or 8 length')
+        if len(box) == 6:
+            self.BOX = [box[ii] for ii in [0, 1, 2, 3]]
+        elif len(box) == 8:
+            self.BOX = [box[ii] for ii in [0, 1, 2, 3, 6, 7]]
         self.fs_index = indexstore(self.cache, self.cachedir, os.path.sep.join([self.local_ftp, "ar_index_global_prof.txt"]))
         # todo we would need to check if the index file is there
 
     def cname(self):
         """ Return a unique string defining the constraints """
         BOX = self.BOX
-        boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; t=%s/%s]") % \
-                  (BOX[0], BOX[1], BOX[2], BOX[3],
-                   self._format(BOX[4], 'tim'), self._format(BOX[5], 'tim'))
+        if len(self.BOX) == 4:
+            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f]") % \
+                      (BOX[0], BOX[1], BOX[2], BOX[3])
+        elif len(self.BOX) == 6:
+            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; t=%s/%s]") % \
+                      (BOX[0], BOX[1], BOX[2], BOX[3],
+                       self._format(BOX[4], 'tim'), self._format(BOX[5], 'tim'))
         boxname = self.dataset_id + "_" + boxname
         return boxname
 
