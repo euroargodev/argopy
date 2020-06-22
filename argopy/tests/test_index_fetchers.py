@@ -140,7 +140,7 @@ class Erddap(TestCase):
             loader.to_xarray()
             with pytest.raises(FileSystemHasNoCache):
                 loader.fetcher.cachepath
-        shutil.rmtree(testcachedir)  # Make sure the cache is empty
+        shutil.rmtree(self.testcachedir)  # Make sure the cache is empty
 
     @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
     def test_caching_index(self):
@@ -153,12 +153,12 @@ class Erddap(TestCase):
                 ds = loader.to_xarray()
                 assert isinstance(ds, xr.Dataset)
                 assert isinstance(loader.fetcher.cachepath, str)
-                shutil.rmtree(testcachedir)
+                shutil.rmtree(self.testcachedir)
             except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
-                shutil.rmtree(testcachedir)
+                shutil.rmtree(self.testcachedir)
                 pass
             except Exception:
-                shutil.rmtree(testcachedir)
+                shutil.rmtree(self.testcachedir)
                 raise
 
     def test_url(self):

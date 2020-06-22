@@ -353,7 +353,7 @@ class indexfilter_box(indexfilter_proto):
         for ii in range(0, 9):
             index.readline()
         for line in index:
-            il_this = il_loaded
+            # il_this = il_loaded
             l = line.split(",")
             if l[iv_lon] != "" and l[iv_lat] != "":
                 x = float(l[iv_lon])
