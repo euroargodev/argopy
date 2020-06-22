@@ -155,7 +155,7 @@ class EntryPoints_AllBackends(TestCase):
 
 @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
-class Erddap_backend(TestCase):
+class Erddap(TestCase):
     """ Test main API facade for all available dataset and access points of the ERDDAP fetching backend """
     src = 'erddap'
     testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
@@ -318,7 +318,7 @@ class Erddap_backend(TestCase):
 
 
 @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
-class LocalFTP_DataSets(TestCase):
+class LocalFTP(TestCase):
     """ Test main API facade for all available dataset and access points of the localftp fetching backend """
     src = 'localftp'
     testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))

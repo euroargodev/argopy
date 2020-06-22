@@ -103,6 +103,7 @@ class LocalFTPArgoIndexFetcher(ABC):
         self.local_ftp = OPTIONS['local_ftp'] if local_ftp == '' else local_ftp
         self.index_file = index_file
         self.fs = indexstore(cache, cachedir, os.path.sep.join([self.local_ftp, self.index_file]))
+        self.dataset_id = 'index'
         self.init(**kwargs)
 
     def __repr__(self):

@@ -42,7 +42,7 @@ def test_invalid_fetcher():
 # @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
 # def test_unavailable_accesspoint():
 #     with pytest.raises(InvalidFetcherAccessPoint):
-#         ArgoIndexFetcher(src='localftp').region([-85., -45., 10., 20., 0., 100.]).to_xarray()
+#         ArgoIndexFetcher((src=self.src).region([-85., -45., 10., 20., 0., 100.]).to_xarray()
 
 
 class EntryPoints_AllBackends(TestCase):
@@ -121,30 +121,30 @@ class EntryPoints_AllBackends(TestCase):
 @unittest.skipUnless('erddap' in AVAILABLE_INDEX_SOURCES, "requires erddap index fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
 @unittest.skipUnless(DSEXISTS, "erddap requires a valid core index Argo dataset from Ifremer server")
-@unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
-class Erddap_backend(TestCase):
+# @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
+class Erddap(TestCase):
     """ Test main API facade for all available dataset of the ERDDAP index fetching backend """
+    testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
 
     def test_cachepath_notfound(self):
-        testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
-        with argopy.set_options(cachedir=testcachedir):
+        with argopy.set_options(cachedir=self.testcachedir):
             loader = ArgoIndexFetcher(src='erddap', cache=True).float(6902746)
             with pytest.raises(CacheFileNotFound):
                 loader.fetcher.cachepath
-        shutil.rmtree(testcachedir)  # Make sure the cache is empty
+        shutil.rmtree(self.testcachedir)  # Make sure the cache is empty
 
+    @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
     def test_nocache(self):
-        testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
-        with argopy.set_options(cachedir=testcachedir):
+        with argopy.set_options(cachedir=self.testcachedir):
             loader = ArgoIndexFetcher(src='erddap', cache=False).float(6902746)
             loader.to_xarray()
             with pytest.raises(FileSystemHasNoCache):
                 loader.fetcher.cachepath
         shutil.rmtree(testcachedir)  # Make sure the cache is empty
 
+    @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
     def test_caching_index(self):
-        testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
-        with argopy.set_options(cachedir=testcachedir):
+        with argopy.set_options(cachedir=self.testcachedir):
             try:
                 loader = ArgoIndexFetcher(src='erddap', cache=True).float(6902746)
                 # 1st call to load from erddap and save to cachedir:
@@ -161,25 +161,32 @@ class Erddap_backend(TestCase):
                 shutil.rmtree(testcachedir)
                 raise
 
+    def test_url(self):
+        loader = ArgoIndexFetcher(src='erddap', cache=True).float(2901623)
+        assert isinstance(loader.fetcher.url, str)
+        # loader = ArgoIndexFetcher(src='erddap', cache=True).profile(2901623, 12)
+        # assert isinstance(loader.fetcher.url, str)
+        loader = ArgoIndexFetcher(src='erddap', cache=True).region([-60, -40, 40., 60., '2007-08-01', '2007-09-01'])
+        assert isinstance(loader.fetcher.url, str)
 
 @unittest.skipUnless('localftp' in AVAILABLE_INDEX_SOURCES, "requires localftp index fetcher")
-class LocalFTP_DataSets(TestCase):
+class LocalFTP(TestCase):
     """ Test localftp index fetcher """
-
+    src = 'localftp'
     ftproot, flist = argopy.tutorial.open_dataset('localftp')
     local_ftp = ftproot
 
     def test_cachepath_notfound(self):
         testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
         with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
-            loader = ArgoIndexFetcher(src='localftp', cache=True).profile(2901623, 2)
+            loader = ArgoIndexFetcher(src=self.src, cache=True).profile(2901623, 2)
             with pytest.raises(CacheFileNotFound):
                 loader.fetcher.cachepath
         shutil.rmtree(testcachedir)  # Make sure the cache folder is cleaned
 
     def test_nocache(self):
         with argopy.set_options(cachedir="dummy", local_ftp=self.local_ftp):
-            loader = ArgoIndexFetcher(src='localftp', cache=False).profile(2901623, 2)
+            loader = ArgoIndexFetcher(src=self.src, cache=False).profile(2901623, 2)
             loader.to_xarray()
             with pytest.raises(FileSystemHasNoCache):
                 loader.fetcher.cachepath
@@ -188,7 +195,7 @@ class LocalFTP_DataSets(TestCase):
         testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
         with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
             try:
-                loader = ArgoIndexFetcher(src='localftp', cache=True).float(6901929)
+                loader = ArgoIndexFetcher(src=self.src, cache=True).float(6901929)
                 # 1st call to load from erddap and save to cachedir:
                 ds = loader.to_xarray()
                 # 2nd call to load from cached file:
@@ -203,7 +210,7 @@ class LocalFTP_DataSets(TestCase):
     def test_noresults(self):
         with argopy.set_options(local_ftp=self.local_ftp):
             with pytest.raises(DataNotFound):
-                ArgoIndexFetcher(src='localftp').region([-70, -65, 30., 35., '2030-01-01', '2030-06-30']).to_dataframe()
+                ArgoIndexFetcher(src=self.src).region([-70, -65, 30., 35., '2030-01-01', '2030-06-30']).to_dataframe()
 
     def __testthis(self, dataset):
         for access_point in self.args:
@@ -212,22 +219,33 @@ class LocalFTP_DataSets(TestCase):
                 for arg in self.args['profile']:
                     with argopy.set_options(local_ftp=self.local_ftp):
                         try:
-                            ds = ArgoIndexFetcher(src='localftp', ds=dataset).profile(*arg).to_xarray()
+                            ds = ArgoIndexFetcher(src=self.src).profile(*arg).to_xarray()
                             assert isinstance(ds, xr.Dataset)
                         except Exception:
                             print("ERROR LOCALFTP request:\n",
-                                  ArgoIndexFetcher(src='localftp', ds=dataset).profile(*arg).fetcher.cname())
+                                  ArgoIndexFetcher(src=self.src).profile(*arg).fetcher.cname())
                             pass
 
             if access_point == 'float':
                 for arg in self.args['float']:
                     with argopy.set_options(local_ftp=self.local_ftp):
                         try:
-                            ds = ArgoIndexFetcher(src='localftp', ds=dataset).float(arg).to_xarray()
+                            ds = ArgoIndexFetcher(src=self.src).float(arg).to_xarray()
                             assert isinstance(ds, xr.Dataset)
                         except Exception:
                             print("ERROR LOCALFTP request:\n",
-                                  ArgoIndexFetcher(src='localftp', ds=dataset).float(arg).fetcher.cname())
+                                  ArgoIndexFetcher(src=self.src).float(arg).fetcher.cname())
+                            pass
+
+            if access_point == 'region':
+                for arg in self.args['region']:
+                    with argopy.set_options(local_ftp=self.local_ftp):
+                        try:
+                            ds = ArgoIndexFetcher(src=self.src).region(arg).to_xarray()
+                            assert isinstance(ds, xr.Dataset)
+                        except Exception:
+                            print("ERROR LOCALFTP request:\n",
+                                  ArgoIndexFetcher(src=self.src).region(arg).fetcher.cname())
                             pass
 
     def test_phy_float(self):
@@ -240,6 +258,12 @@ class LocalFTP_DataSets(TestCase):
         self.args = {}
         self.args['profile'] = [[6901929, 36],
                                 [6901929, [5, 45]]]
+        self.__testthis('phy')
+
+    def test_phy_region(self):
+        self.args = {}
+        self.args['region'] = [[-60, -40, 40., 60.],
+                               [-60, -40, 40., 60., '2007-08-01', '2007-09-01']]
         self.__testthis('phy')
 
 
