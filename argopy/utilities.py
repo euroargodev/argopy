@@ -399,14 +399,15 @@ def linear_interpolation_remap(z, data, z_regridded, z_dim=None, z_regridded_dim
         return remapped
 
 def _regular_interp(x, y, target_values):
-        # remove all nans from input
+        # remove all nans from input x and y
         idx = np.logical_or(np.isnan(x), np.isnan(y))
         x = x[~idx]
         y = y[~idx]
 
-        # replace nans in target_values with out of bound Values
+        # replace nans in target_values with out of bound Values (just in case)
         target_values = np.where(~np.isnan(target_values), target_values, np.nanmax(x) + 1)
 
+        # Interpolate with fill value parameter to extend min pressure toward 0
         interpolated = interpolate.interp1d(x, y, bounds_error=False, fill_value=(y[0],y[-1]))(target_values)
         return interpolated
 ####################        

@@ -591,9 +591,9 @@ class ArgoAccessor:
             raise InvalidDatasetStructure(
                 "Method only available to a collection of profiles")
 
-        if(self._mode != 'standard'):
-            raise InvalidDatasetStructure(
-                "Method only available for the standard mode yet")
+        # if(self._mode != 'standard'):
+        #    raise InvalidDatasetStructure(
+        #        "Method only available for the standard mode yet")
 
         if (type(std_lev) is np.ndarray) | (type(std_lev) is list):
             std_lev = np.array(std_lev)
@@ -621,18 +621,24 @@ class ArgoAccessor:
 
         # init
         ds_out = xr.Dataset()
-        # var to interpolate
-        datavars = [dv for dv in list(dsp.variables) if set(
-            ['N_LEVELS', 'N_PROF']) == set(dsp[dv].dims) and 'QC' not in dv]
-        #datavars = ['PRES','TEMP','PSAL']
-        # others variables
-        coords = [dv for dv in list(dsp.variables)
-                  if not dv in datavars and 'QC' not in dv]
+
+        # vars to interpolate
+        datavars = [dv for dv in list(dsp.variables) if set(['N_LEVELS', 'N_PROF']) == set(
+            dsp[dv].dims) and 'QC' not in dv and 'ADJUSTED' not in dv]
+        # coords
+        coords = [dv for dv in list(dsp.coords)]
+        # vars depending on N_PROF only
+        solovars = [dv for dv in list(
+            dsp.variables) if not dv in datavars and not dv in coords and 'QC' not in dv and 'ADJUSTED' not in dv]
 
         for dv in datavars:
             ds_out[dv] = linear_interpolation_remap(
                 dsp.PRES, dsp[dv], dsp['Z_LEVELS'], z_dim='N_LEVELS', z_regridded_dim='Z_LEVELS')
         ds_out = ds_out.rename({'remapped': 'PRES_INTERPOLATED'})
+
+        for sv in solovars:
+            ds_out[sv] = dsp[sv]
+
         for co in coords:
             ds_out.coords[co] = dsp[co]
 
