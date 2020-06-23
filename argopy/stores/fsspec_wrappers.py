@@ -213,6 +213,26 @@ class httpstore(argo_store_proto):
             print("\n".join(error))
             r.raise_for_status()
 
+    def open_json(self, url, **kwargs):
+        """ Return a json from an url, or verbose errors
+
+            Parameters
+            ----------
+            url: str
+
+            Returns
+            -------
+            json
+
+        """
+        try:
+            with self.fs.open(url) as of:
+                js = json.load(of, **kwargs)
+            self.register(url)
+            return js
+        except requests.HTTPError as e:
+            self._verbose_exceptions(e)
+
     def open_dataset(self, url, **kwargs):
         """ Return a xarray.dataset from an url, or verbose errors
 
