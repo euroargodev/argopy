@@ -6,13 +6,14 @@ API reference
 
 This page provides an auto-generated summary of argopy's API. For more details and examples, refer to the relevant chapters in the main part of the documentation.
 
-Data Fetchers
-=============
+Top-levels functions
+====================
 
 .. autosummary::
     :toctree: generated/
 
     argopy.DataFetcher
+    argopy.IndexFetcher
 
 Search entries
 --------------
@@ -24,34 +25,20 @@ Search entries
    argopy.DataFetcher.float
    argopy.DataFetcher.profile
 
-Data formats
-------------
-
-.. autosummary::
-   :toctree: generated/
-
-   argopy.DataFetcher.to_xarray
-   argopy.DataFetcher.to_dataframe
-
-Index/meta-data fetchers
-========================
-
-.. autosummary::
-   :toctree: generated/
-
-   argopy.IndexFetcher
-
-Search entries
---------------
-
 .. autosummary::
    :toctree: generated/
 
    argopy.IndexFetcher.region
    argopy.IndexFetcher.float
 
-Data formats
-------------
+I/O and Data formats
+--------------------
+
+.. autosummary::
+   :toctree: generated/
+
+   argopy.DataFetcher.to_xarray
+   argopy.DataFetcher.to_dataframe
 
 .. autosummary::
    :toctree: generated/
@@ -60,13 +47,24 @@ Data formats
    argopy.IndexFetcher.to_dataframe
    argopy.IndexFetcher.to_csv
 
+Visualisation
+-------------
+
+.. autosummary::
+   :toctree: generated/
+
+   argopy.IndexFetcher.plot
+   argopy.dashboard
+
 Helpers
 -------
 
 .. autosummary::
    :toctree: generated/
 
-   argopy.IndexFetcher.plot
+   argopy.set_options
+   argopy.clear_cache
+   argopy.tutorial.open_dataset
 
 Low-level functions
 ===================
@@ -74,12 +72,25 @@ Low-level functions
 .. autosummary::
     :toctree: generated/
 
-    argopy.tutorial.open_dataset
-    argopy.set_options
     argopy.show_versions
     argopy.utilities.open_etopo1
-    argopy.utilities.urlopen
     argopy.utilities.list_available_data_src
+
+Internals
+=========
+
+File systems
+------------
+
+.. autosummary::
+    :toctree: generated/
+
+    argopy.stores.filestore
+    argopy.stores.httpstore
+    argopy.stores.memorystore
+    argopy.stores.indexstore
+    argopy.stores.indexfilter_wmo
+    argopy.stores.indexfilter_box
 
 Xarray *argo* name space
 ==========================

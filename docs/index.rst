@@ -31,6 +31,7 @@ Documentation
 * :doc:`data_manipulation`
 * :doc:`user_mode`
 * :doc:`metadata_fetching`
+* :doc:`visualisation`
 * :doc:`performances`
 
 .. toctree::
@@ -43,6 +44,7 @@ Documentation
     data_manipulation
     user_mode
     metadata_fetching
+    visualisation
     performances
 
 **Help & reference**

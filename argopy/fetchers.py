@@ -11,9 +11,10 @@ import warnings
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher
-from .utilities import list_available_data_src
+from .utilities import list_available_data_src, list_available_index_src
 from .plotters import plot_trajectory, plot_dac, plot_profilerType
-AVAILABLE_SOURCES = list_available_data_src()
+AVAILABLE_DATA_SOURCES = list_available_data_src()
+AVAILABLE_INDEX_SOURCES = list_available_index_src()
 
 
 class ArgoDataFetcher(object):
@@ -71,11 +72,11 @@ class ArgoDataFetcher(object):
         _VALIDATORS['dataset'](self._dataset_id)
 
         # Load data source access points:
-        if self._src not in AVAILABLE_SOURCES:
+        if self._src not in AVAILABLE_DATA_SOURCES:
             raise InvalidFetcher("Requested data fetcher '%s' not available ! Please try again with any of: %s"
-                                 % (self._src, "\n".join(AVAILABLE_SOURCES)))
+                                 % (self._src, "\n".join(AVAILABLE_DATA_SOURCES)))
         else:
-            Fetchers = AVAILABLE_SOURCES[self._src]
+            Fetchers = AVAILABLE_DATA_SOURCES[self._src]
 
         # Auto-discovery of access points for this fetcher:
         # rq: Access point names for the facade are not the same as the access point of fetchers
@@ -227,6 +228,7 @@ class ArgoDataFetcher(object):
         """ Clear fetcher cached data """
         return self.fetcher.clear_cache()
 
+
 class ArgoIndexFetcher(object):
     """
     Specs discussion :
@@ -266,11 +268,11 @@ class ArgoIndexFetcher(object):
         _VALIDATORS['src'](self._src)
 
         # Load data source access points:
-        if self._src not in AVAILABLE_SOURCES:
+        if self._src not in AVAILABLE_INDEX_SOURCES:
             raise InvalidFetcher("Requested index fetcher '%s' not available ! "
-                                 "Please try again with any of: %s" % (self._src, "\n".join(AVAILABLE_SOURCES)))
+                                 "Please try again with any of: %s" % (self._src, "\n".join(AVAILABLE_INDEX_SOURCES)))
         else:
-            Fetchers = AVAILABLE_SOURCES[self._src]
+            Fetchers = AVAILABLE_INDEX_SOURCES[self._src]
 
         # Auto-discovery of access points for this fetcher:
         # rq: Access point names for the facade are not the same as the access point of fetchers
@@ -278,10 +280,10 @@ class ArgoIndexFetcher(object):
         self.Fetchers = {}
         for p in Fetchers.access_points:
             if p == 'wmo':  # Required for 'profile' and 'float'
-                self.Fetchers['profile'] = Fetchers.IndexFetcher_wmo
-                self.Fetchers['float'] = Fetchers.IndexFetcher_wmo
+                self.Fetchers['profile'] = Fetchers.Fetcher_wmo
+                self.Fetchers['float'] = Fetchers.Fetcher_wmo
             if p == 'box':  # Required for 'region'
-                self.Fetchers['region'] = Fetchers.IndexFetcher_box
+                self.Fetchers['region'] = Fetchers.Fetcher_box
 
         # Init sub-methods:
         self.fetcher = None

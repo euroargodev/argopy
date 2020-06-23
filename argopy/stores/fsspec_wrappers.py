@@ -4,7 +4,9 @@ import xarray as xr
 import pandas as pd
 import requests
 import fsspec
+import shutil
 import pickle
+import json
 import tempfile
 from IPython.core.display import display, HTML
 
@@ -13,11 +15,11 @@ from argopy.errors import ErddapServerError, FileSystemHasNoCache, CacheFileNotF
 from abc import ABC, abstractmethod
 
 
-class argo_store_proto(ABC):
-    protocol = '' # One in fsspec.registry.known_implementations
+class argo_store_proto(ABC):  # Should this class inherits from fsspec.spec.AbstractFileSystem ?
+    protocol = ''  # One in fsspec.registry.known_implementations
 
     def __init__(self, cache: bool = False, cachedir: str = "", **kw):
-        """ Create a file storage system for http requests
+        """ Create a file storage system for Argo data
 
             Parameters
             ----------
@@ -37,14 +39,17 @@ class argo_store_proto(ABC):
                                         expiry_time=86400, cache_check=10, **kw)
             # We use a refresh rate for cache of 1 day,
             # since this is the update frequency of the Ifremer erddap
-            self.cache_registry = [] # Will hold uri cached by this store instance
+            self.cache_registry = []  # Will hold uri cached by this store instance
 
-    def open(self, url, *args, **kwargs):
-        self.register(url)
-        return self.fs.open(url, *args, **kwargs)
+    def open(self, path, *args, **kwargs):
+        self.register(path)
+        return self.fs.open(path, *args, **kwargs)
 
     def glob(self, path, **kwargs):
         return self.fs.glob(path, **kwargs)
+
+    def exists(self, path, *args):
+        return self.fs.exists(path, *args)
 
     def store_path(self, uri):
         if not uri.startswith(self.fs.target_protocol):
@@ -91,7 +96,7 @@ class argo_store_proto(ABC):
         fn2 = tempfile.mktemp()
         with open(fn2, "wb") as f:
             pickle.dump(cache, f)
-        os.replace(fn2, fn)
+        shutil.move(fn2, fn)
 
     def clear_cache(self):
         """ Remove cache files and entry from uri open with this store instance """
@@ -209,6 +214,26 @@ class httpstore(argo_store_proto):
             print("\n".join(error))
             r.raise_for_status()
 
+    def open_json(self, url, **kwargs):
+        """ Return a json from an url, or verbose errors
+
+            Parameters
+            ----------
+            url: str
+
+            Returns
+            -------
+            json
+
+        """
+        try:
+            with self.fs.open(url) as of:
+                js = json.load(of, **kwargs)
+            self.register(url)
+            return js
+        except requests.HTTPError as e:
+            self._verbose_exceptions(e)
+
     def open_dataset(self, url, **kwargs):
         """ Return a xarray.dataset from an url, or verbose errors
 
@@ -253,4 +278,3 @@ class httpstore(argo_store_proto):
 class memorystore(filestore):
     # Note that this inherits from filestore, not argo_store_proto
     protocol = 'memory'
-
