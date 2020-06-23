@@ -60,6 +60,11 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         """
         pass
 
+    @property
+    def urls(self, response=None):
+        """ Return a list of URLs used to download data in chunks """
+        pass
+
     ###
     # Methods that must not change
     ###
@@ -68,6 +73,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                  ds: str = "",
                  cache: bool = False,
                  cachedir: str = "",
+                 parallel: bool = False,
                  **kwargs):
         """ Instantiate an ERDDAP Argo data loader
 
@@ -76,11 +82,12 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             ds: 'phy' or 'ref' or 'bgc'
             cache : False
             cachedir : None
+            parallel : False
         """
-
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
         self.definition = 'Ifremer erddap Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
+        self.parallel = parallel
         self.init(**kwargs)
         self._init_erddapy()
 
@@ -279,9 +286,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def url(self, response=None):
-        """ Return the URL used to download data
-
-        """
+        """ Return the URL used to download data """
         # Replace erddapy get_download_url
         # We need to replace it to better handle http responses with by-passing the _check_url_response
         # https://github.com/ioos/erddapy/blob/fa1f2c15304938cd0aa132946c22b0427fd61c81/erddapy/erddapy.py#L247
@@ -334,7 +339,11 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         """ Load Argo data and return a xarray.DataSet """
 
         # Download data
-        ds = self.fs.open_dataset(self.url)
+        if not self.parallel:
+            ds = self.fs.open_dataset(self.url)
+        else:
+            ds = self.fs.open_mfdataset(self.urls)
+
         ds = ds.rename({'row': 'N_POINTS'})
 
         # Post-process the xarray.DataSet:
@@ -495,3 +504,58 @@ class Fetch_box(ErddapArgoDataFetcher):
                    self._format(BOX[6], 'tim'), self._format(BOX[7], 'tim'))
         boxname = self.dataset_id + "_" + boxname
         return boxname
+
+    @property
+    def urls(self, response=None):
+        """ Return a list of URLs used to download data in chunks """
+
+        def split_box(large_box, n=1, d='x'):
+            """ Split a box domain in one direction in n equal chunks """
+            if d == 'x':
+                i_left, i_right = 0, 1
+            if d == 'y':
+                i_left, i_right = 2, 3
+            if d == 'z':
+                i_left, i_right = 4, 5
+            if n == 1:
+                return large_box
+            else:
+                n = n + 1
+            boxes = []
+            bins = np.linspace(large_box[i_left], large_box[i_right], n)
+            for ii, left in enumerate(bins):
+                if ii < len(bins) - 1:
+                    right = bins[ii + 1]
+                    if d == 'x':
+                        boxes.append([left, right,
+                                      large_box[2], large_box[3],
+                                      large_box[4], large_box[5],
+                                      large_box[6], large_box[7]])
+                    elif d == 'y':
+                        boxes.append([large_box[0], large_box[1],
+                                      left, right,
+                                      large_box[4], large_box[5],
+                                      large_box[6], large_box[7]])
+                    elif d == 'z':
+                        boxes.append([large_box[0], large_box[1],
+                                      large_box[2], large_box[3],
+                                      left, right,
+                                      large_box[6], large_box[7]])
+            return boxes
+
+        def split_this_box(box, nx=1, ny=1, nz=1):
+            box_list = []
+            split_x = split_box(box, n=nx, d='x')
+            for bx in split_x:
+                split_y = split_box(bx, n=ny, d='y')
+                for bxy in split_y:
+                    split_z = split_box(bxy, n=nz, d='z')
+                    for bxyz in split_z:
+                        box_list.append(bxyz)
+            return box_list
+
+        boxes = split_this_box(self.BOX, nx=2, ny=2, nz=2)
+        urls = []
+        for box in boxes:
+            urls.append(Fetch_box(box=box, ds=self.dataset_id).url)
+        return urls

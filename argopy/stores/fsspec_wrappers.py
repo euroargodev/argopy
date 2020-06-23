@@ -244,7 +244,7 @@ class httpstore(argo_store_proto):
 
             Returns
             -------
-            :class:`xarray.DataArray`
+            :class:`xarray.Dataset`
 
         """
         try:
@@ -275,11 +275,28 @@ class httpstore(argo_store_proto):
         except requests.HTTPError as e:
             self._verbose_exceptions(e)
 
-    def open_mfdataset(self, paths, concat_dim='row', *args, **kwargs):
+    def open_mfdataset(self,
+                       urls,
+                       concat_dim='row',
+                       max_connections = 100,
+                       *args, **kwargs):
+        """ Return a xarray.dataset from merging of multiple urls, or verbose errors
+
+            Parameters
+            ----------
+            urls: list(str)
+            concat_dim: str
+                Name of the dimension to use to concat all datasets
+            max_connections: int
+                Maximum number of threads to send http requests
+
+            Returns
+            -------
+            :class:`xarray.Dataset`
+        """
         results = []
-        CONNECTIONS = 100
-        with concurrent.futures.ThreadPoolExecutor(max_workers=CONNECTIONS) as executor:
-            future_to_url = (executor.submit(self.open_dataset, url) for url in paths)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_connections) as executor:
+            future_to_url = (executor.submit(self.open_dataset, url) for url in urls)
             for future in concurrent.futures.as_completed(future_to_url):
                 try:
                     data = future.result()
