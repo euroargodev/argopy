@@ -65,3 +65,5 @@ def test_interp_std_levels():
         assert  'PRES_INTERPOLATED' in ds_pts.argo.interp_std_levels([20,30,40,50]).dims
     except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
         pass
+    except ValueError: # Catches value error for incorrect standard levels as inputs
+        pass

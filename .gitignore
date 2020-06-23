@@ -185,4 +185,4 @@ fabric.properties
 #pytest quai20
 .vscode/
 .pytest_cache
-dummy/
+knotebooks/

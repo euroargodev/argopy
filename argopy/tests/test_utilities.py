@@ -4,10 +4,11 @@ import pytest
 import unittest
 import argopy
 import xarray as xr
+import numpy as np
 import requests
 import shutil
 from argopy.utilities import load_dict, mapp_dict, list_multiprofile_file_variables, \
-    isconnected, erddap_ds_exists, open_etopo1, list_available_data_src
+    isconnected, erddap_ds_exists, open_etopo1, list_available_data_src, linear_interpolation_remap
 from argopy import DataFetcher as ArgoDataFetcher
 
 AVAILABLE_SOURCES = list_available_data_src()
@@ -67,3 +68,25 @@ def test_clear_cache():
 #         assert isinstance(ds, xr.DataArray) is True
 #     except requests.HTTPError:  # not our fault
 #         pass
+
+
+def test_linear_interpolation_remap():
+    try:
+        # create fake data to test interpolation:
+        temp = np.random.rand(200, 100)
+        pres = np.sort(np.floor(np.zeros(
+            [200, 100])+np.linspace(50, 950, 100)+np.random.randint(-5, 5, [200, 100])))
+        dsfake = xr.Dataset({'TEMP': (['N_PROF', 'N_LEVELS'], temp),
+                             'PRES': (['N_PROF', 'N_LEVELS'],  pres)},
+                            coords={'N_PROF': ('N_PROF', range(200)),
+                                    'N_LEVELS': ('N_LEVELS', range(100)),
+                                    'Z_LEVELS': ('Z_LEVELS', np.arange(100, 900, 20))})
+        # apply linear interp
+        dsi = linear_interpolation_remap(
+            dsfake.PRES, dsfake['TEMP'], dsfake['Z_LEVELS'], z_dim='N_LEVELS', z_regridded_dim='Z_LEVELS')
+        assert 'remapped' in dsi.dims
+    except RuntimeError: # catches error from _regular_interp linked to z_dim
+        pass
+    except ValueError: # catches error from linear_interpolation_remap linked to datatype
+        pass
+    

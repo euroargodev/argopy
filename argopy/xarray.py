@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-from argopy.utilities import linear_interpolation_remap, _regular_interp
+from argopy.utilities import linear_interpolation_remap
 
 from argopy.errors import InvalidDatasetStructure
 from sklearn import preprocessing
@@ -585,37 +585,46 @@ class ArgoAccessor:
         return ds
 
     def interp_std_levels(self, std_lev):
-        """ Returns a new dataset interpolated to new inputs levels """
+        """ Returns a new dataset interpolated to new inputs levels                 
+        
+        Parameters
+        ----------
+        list or np.array 
+            Standard levels used for interpolation
+
+        Returns
+        -------
+        :class:`xarray.Dataset`           
+        """        
 
         if self._type != 'profile':
             raise InvalidDatasetStructure(
-                "Method only available to a collection of profiles")
+                "Method only available for a collection of profiles")
 
-        # if(self._mode != 'standard'):
-        #    raise InvalidDatasetStructure(
-        #        "Method only available for the standard mode yet")
+        if(self._mode != 'standard'):
+           raise InvalidDatasetStructure(
+               "Method only available for the standard mode yet")
 
         if (type(std_lev) is np.ndarray) | (type(std_lev) is list):
             std_lev = np.array(std_lev)
             if (np.any(sorted(std_lev) != std_lev)) | (np.any(std_lev < 0)):
                 raise ValueError(
-                    'Standard levels must a numpy array of positive and sorted values')
+                    'Standard levels must be a list or a numpy array of positive and sorted values')
         else:
-            raise ValueError('Standard levels must a numpy array or a list')
+            raise ValueError('Standard levels must be a list or a numpy array of positive and sorted values')
 
         ds = self._obj
 
-        # Filtering on pressure levels to avoid extrapolation, this is open to discussion...
-        # i1 = (ds['PRES'].min('N_LEVELS') <= std_lev[0]) & (
-        #    ds['PRES'].max('N_LEVELS') >= std_lev[-1])
+        # Selecting profiles that have a max(pressure) > max(std_lev) to avoid extrapolation in that direction
+        # For levels < min(pressure), first level values of the profile are extended to surface.     
         i1 = (ds['PRES'].max('N_LEVELS') >= std_lev[-1])
         dsp = ds.where(i1, drop=True)
 
-        # check if any profile is left
+        # check if any profile is left, ie if any profile match the requested depth
         if (len(dsp['N_PROF']) == 0):
-            raise ValueError(
-                'Zero profiles left. Some levels may be to deep for selected profiles')
-
+            raise Warning('None of the profiles can be interpolated (not reaching the requested depth range).')
+            return None
+            
         # add new vertical dimensions, this has to be in the datasets to apply ufunc later
         dsp['Z_LEVELS'] = xr.DataArray(std_lev, dims={'Z_LEVELS': std_lev})
 
@@ -624,12 +633,12 @@ class ArgoAccessor:
 
         # vars to interpolate
         datavars = [dv for dv in list(dsp.variables) if set(['N_LEVELS', 'N_PROF']) == set(
-            dsp[dv].dims) and 'QC' not in dv and 'ADJUSTED' not in dv]
+            dsp[dv].dims) and 'QC' not in dv]
         # coords
         coords = [dv for dv in list(dsp.coords)]
         # vars depending on N_PROF only
         solovars = [dv for dv in list(
-            dsp.variables) if not dv in datavars and not dv in coords and 'QC' not in dv and 'ADJUSTED' not in dv]
+            dsp.variables) if dv not in datavars and dv not in coords and 'QC' not in dv]
 
         for dv in datavars:
             ds_out[dv] = linear_interpolation_remap(
@@ -643,8 +652,8 @@ class ArgoAccessor:
             ds_out.coords[co] = dsp[co]
 
         ds_out = ds_out.drop(['N_LEVELS', 'Z_LEVELS'])
-
-        ds_out.attrs = self.attrs
+        ds_out = ds_out[np.sort(ds_out.data_vars)]
+        ds_out.attrs = self.attrs # Preserve original attributes
         ds_out.argo._add_history('Interpolated on standard levels')
-
+        
         return ds_out
