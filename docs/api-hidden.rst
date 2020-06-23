@@ -27,8 +27,18 @@
     argopy.tutorial.open_dataset
 
     argopy.utilities.show_versions
+    argopy.utilities.clear_cache
     argopy.utilities.open_etopo1
-    argopy.utilities.urlopen
     argopy.utilities.list_available_data_src
+    argopy.utilities.list_available_index_src
 
     argopy.xarray.ArgoAccessor.point2profile
+
+    argopy.plotters.open_dashboard
+
+    argopy.stores.fsspec_wrappers.filestore
+    argopy.stores.fsspec_wrappers.httpstore
+    argopy.stores.fsspec_wrappers.memorystore
+    argopy.stores.argo_index.indexstore
+    argopy.stores.argo_index.indexfilter_wmo
+    argopy.stores.argo_index.indexfilter_box
