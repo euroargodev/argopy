@@ -50,14 +50,28 @@ def test_invalid_fetcher():
         ArgoDataFetcher(src='invalid_fetcher').to_xarray()
 
 
-@unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
-def test_unavailable_accesspoint():
-    with pytest.raises(InvalidFetcherAccessPoint):
-        ArgoDataFetcher(src='localftp').region([-85., -45., 10., 20., 0., 100.]).to_xarray()
+# @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
+# def test_unavailable_accesspoint():
+#     with pytest.raises(InvalidFetcherAccessPoint):
+#         ArgoDataFetcher(src='localftp').region([-85., -45., 10., 20., 0., 100.]).to_xarray()
 
 
 class EntryPoints_AllBackends(TestCase):
     """ Test main API facade for all available fetching backends and default dataset """
+
+    # kwargs_wmo = [{'WMO': 6901929},
+    #               {'WMO': [6901929, 2901623]},
+    #               {'CYC': 1},
+    #               {'CYC': [1, 6]},
+    #               {'WMO': 6901929, 'CYC': 36},
+    #               {'WMO': 6901929, 'CYC': [5, 45]},
+    #               {'WMO': [6901929, 2901623], 'CYC': 2},
+    #               {'WMO': [6901929, 2901623], 'CYC': [2, 23]},
+    #               {}]
+    #
+    # kwargs_box = [{'BOX': [-60, -40, 40., 60.]},
+    #               {'BOX': [-60, -40, 40., 60., '2007-08-01', '2007-09-01']}]
+
 
     def setUp(self):
         # todo Determine the list of output format to test
@@ -67,12 +81,12 @@ class EntryPoints_AllBackends(TestCase):
 
         # Define API entry point options to tests:
         self.args = {}
-        self.args['float'] = [[5900446],
-                              [6901929, 3902131]]
-        self.args['profile'] = [[2902696, 12],
-                                [2902269, np.arange(12, 14)], [2901746, [1, 6]]]
-        self.args['region'] = [[-70, -65, 30., 35., 0, 10.],
-                               [-70, -65, 30., 35., 0, 10., '2012-01-01', '2012-06-30']]
+        self.args['float'] = [[2901623],
+                              [2901623, 6901929]]
+        self.args['profile'] = [[2901623, 12],
+                                [2901623, np.arange(12, 14)], [6901929, [1, 6]]]
+        self.args['region'] = [[-60, -55, 40., 45., 0., 10.],
+                               [-60, -55, 40., 45., 0., 10., '2007-08-01', '2007-09-01']]
 
     def __test_float(self, bk, **ftc_opts):
         """ Test float for a given backend """
@@ -138,53 +152,53 @@ class EntryPoints_AllBackends(TestCase):
         self.__test_float('argovis')
 
 
+
 @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
-class Erddap_backend(TestCase):
-    """ Test main API facade for all available dataset of the ERDDAP fetching backend """
+class Erddap(TestCase):
+    """ Test main API facade for all available dataset and access points of the ERDDAP fetching backend """
+    src = 'erddap'
+    testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
 
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
     def test_cachepath_notfound(self):
-        testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
-        with argopy.set_options(cachedir=testcachedir):
-            loader = ArgoDataFetcher(src='erddap', cache=True).profile(6902746, 34)
+        with argopy.set_options(cachedir=self.testcachedir):
+            loader = ArgoDataFetcher(src=self.src, cache=True).profile(6902746, 34)
             with pytest.raises(CacheFileNotFound):
                 loader.fetcher.cachepath
-        shutil.rmtree(testcachedir)  # Make sure the cache is empty
+        shutil.rmtree(self.testcachedir)  # Make sure the cache is left empty
 
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
     def test_nocache(self):
         with argopy.set_options(cachedir="dummy"):
-            loader = ArgoDataFetcher(src='erddap', cache=False).profile(6902746, 34)
+            loader = ArgoDataFetcher(src=self.src, cache=False).profile(6902746, 34)
             loader.to_xarray()
             with pytest.raises(FileSystemHasNoCache):
                 loader.fetcher.cachepath
 
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
     def test_caching_float(self):
-        testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
-        with argopy.set_options(cachedir=testcachedir):
+        with argopy.set_options(cachedir=self.testcachedir):
             try:
-                loader = ArgoDataFetcher(src='erddap', cache=True).float([1901393, 6902746])
+                loader = ArgoDataFetcher(src=self.src, cache=True).float([1901393, 6902746])
                 # 1st call to load from erddap and save to cachedir:
                 ds = loader.to_xarray()
                 # 2nd call to load from cached file:
                 ds = loader.to_xarray()
                 assert isinstance(ds, xr.Dataset)
                 assert isinstance(loader.fetcher.cachepath, str)
-                shutil.rmtree(testcachedir)
+                shutil.rmtree(self.testcachedir)
             except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
-                shutil.rmtree(testcachedir)
+                shutil.rmtree(self.testcachedir)
                 pass
             except Exception:
-                shutil.rmtree(testcachedir)
+                shutil.rmtree(self.testcachedir)
                 raise
 
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
     def test_caching_profile(self):
-        testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
-        with argopy.set_options(cachedir=testcachedir):
-            loader = ArgoDataFetcher(src='erddap', cache=True).profile(6902746, 34)
+        with argopy.set_options(cachedir=self.testcachedir):
+            loader = ArgoDataFetcher(src=self.src, cache=True).profile(6902746, 34)
             try:
                 # 1st call to load from erddap and save to cachedir:
                 ds = loader.to_xarray()
@@ -192,67 +206,64 @@ class Erddap_backend(TestCase):
                 ds = loader.to_xarray()
                 assert isinstance(ds, xr.Dataset)
                 assert isinstance(loader.fetcher.cachepath, str)
-                shutil.rmtree(testcachedir)
+                shutil.rmtree(self.testcachedir)
             except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
-                shutil.rmtree(testcachedir)
+                shutil.rmtree(self.testcachedir)
                 pass
             except Exception:
-                shutil.rmtree(testcachedir)
+                shutil.rmtree(self.testcachedir)
                 raise
 
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
     def test_N_POINTS(self):
-        n = ArgoDataFetcher(src='erddap').region([-70, -65, 35., 40., 0, 10., '2012-01', '2013-12']).fetcher.N_POINTS
+        n = ArgoDataFetcher(src=self.src).region([-70, -65, 35., 40., 0, 10., '2012-01', '2013-12']).fetcher.N_POINTS
         assert isinstance(n, int)
 
     def __testthis_profile(self, dataset):
         for arg in self.args['profile']:
             try:
-                ds = ArgoDataFetcher(src='erddap', ds=dataset).profile(*arg).to_xarray()
+                ds = ArgoDataFetcher(src=self.src, ds=dataset).profile(*arg).to_xarray()
                 assert isinstance(ds, xr.Dataset)
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
             except Exception:
                 print("ERDDAP request:\n",
-                      ArgoDataFetcher(src='erddap', ds=dataset).profile(*arg).fetcher.url)
+                      ArgoDataFetcher(src=self.src, ds=dataset).profile(*arg).fetcher.url)
                 pass
 
     def __testthis_float(self, dataset):
         for arg in self.args['float']:
             try:
-                ds = ArgoDataFetcher(src='erddap', ds=dataset).float(arg).to_xarray()
+                ds = ArgoDataFetcher(src=self.src, ds=dataset).float(arg).to_xarray()
                 assert isinstance(ds, xr.Dataset)
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
             except Exception:
                 print("ERDDAP request:\n",
-                      ArgoDataFetcher(src='erddap', ds=dataset).float(arg).fetcher.url)
+                      ArgoDataFetcher(src=self.src, ds=dataset).float(arg).fetcher.url)
                 pass
 
     def __testthis_region(self, dataset):
         for arg in self.args['region']:
             try:
-                ds = ArgoDataFetcher(src='erddap', ds=dataset).region(arg).to_xarray()
+                ds = ArgoDataFetcher(src=self.src, ds=dataset).region(arg).to_xarray()
                 assert isinstance(ds, xr.Dataset)
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
             except Exception:
                 print("ERDDAP request:\n",
-                      ArgoDataFetcher(src='erddap', ds=dataset).region(arg).fetcher.url)
+                      ArgoDataFetcher(src=self.src, ds=dataset).region(arg).fetcher.url)
                 pass
 
     def __testthis(self, dataset):
         for access_point in self.args:
-
             if access_point == 'profile':
                 self.__testthis_profile(dataset)
-
             elif access_point == 'float':
                 self.__testthis_float(dataset)
-
             elif access_point == 'region':
                 self.__testthis_region(dataset)
 
@@ -307,47 +318,94 @@ class Erddap_backend(TestCase):
 
 
 @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
-class LocalFTP_DataSets(TestCase):
-    """ Test main API facade for all available dataset of the localftp fetching backend """
+class LocalFTP(TestCase):
+    """ Test main API facade for all available dataset and access points of the localftp fetching backend """
+    src = 'localftp'
+    testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
+    local_ftp = argopy.tutorial.open_dataset('localftp')[0]
+
+    def test_cachepath_notfound(self):
+        with argopy.set_options(cachedir=self.testcachedir, local_ftp=self.local_ftp):
+            loader = ArgoDataFetcher(src=self.src, cache=True).profile(2901623, 12)
+            with pytest.raises(CacheFileNotFound):
+                loader.fetcher.cachepath
+        shutil.rmtree(self.testcachedir)  # Make sure the cache is left empty
+
+    def test_nocache(self):
+        with argopy.set_options(cachedir="dummy", local_ftp=self.local_ftp):
+            loader = ArgoDataFetcher(src=self.src, cache=False).profile(2901623, 12)
+            loader.to_xarray()
+            with pytest.raises(FileSystemHasNoCache):
+                loader.fetcher.cachepath
+
+    def __testthis_profile(self, dataset):
+        with argopy.set_options(local_ftp=self.local_ftp):
+            for arg in self.args['profile']:
+                try:
+                    ds = ArgoDataFetcher(src=self.src, ds=dataset).profile(*arg).to_xarray()
+                    assert isinstance(ds, xr.Dataset)
+                except ErddapServerError:
+                    # Test is passed when something goes wrong because of the erddap server, not our fault !
+                    pass
+                except Exception:
+                    print("ERROR LOCALFTP request:\n",
+                          ArgoDataFetcher(src=self.src, ds=dataset).profile(*arg).fetcher.files)
+                    pass
+
+    def __testthis_float(self, dataset):
+        with argopy.set_options(local_ftp=self.local_ftp):
+            for arg in self.args['float']:
+                try:
+                    ds = ArgoDataFetcher(src=self.src, ds=dataset).float(arg).to_xarray()
+                    assert isinstance(ds, xr.Dataset)
+                except ErddapServerError:
+                    # Test is passed when something goes wrong because of the erddap server, not our fault !
+                    pass
+                except Exception:
+                    print("ERROR LOCALFTP request:\n",
+                          ArgoDataFetcher(src=self.src, ds=dataset).float(arg).fetcher.files)
+                    pass
+
+    def __testthis_region(self, dataset):
+        with argopy.set_options(local_ftp=self.local_ftp):
+            for arg in self.args['region']:
+                try:
+                    ds = ArgoDataFetcher(src=self.src, ds=dataset).region(arg).to_xarray()
+                    assert isinstance(ds, xr.Dataset)
+                except ErddapServerError:
+                    # Test is passed when something goes wrong because of the erddap server, not our fault !
+                    pass
+                except Exception:
+                    print("ERROR LOCALFTP request:\n",
+                          ArgoDataFetcher(src=self.src, ds=dataset).region(arg).fetcher.files)
+                    pass
 
     def __testthis(self, dataset):
-        ftproot, flist = argopy.tutorial.open_dataset('localftp')
-        self.local_ftp = ftproot
         for access_point in self.args:
-
             if access_point == 'profile':
-                for arg in self.args['profile']:
-                    with argopy.set_options(local_ftp=self.local_ftp):
-                        try:
-                            ds = ArgoDataFetcher(src='localftp', ds=dataset).profile(*arg).to_xarray()
-                            assert isinstance(ds, xr.Dataset)
-                        except Exception:
-                            print("ERROR LOCALFTP request:\n",
-                                  ArgoDataFetcher(src='localftp', ds=dataset).profile(*arg).fetcher.files)
-                            pass
-
-            if access_point == 'float':
-                for arg in self.args['float']:
-                    with argopy.set_options(local_ftp=self.local_ftp):
-                        try:
-                            ds = ArgoDataFetcher(src='localftp', ds=dataset).float(arg).to_xarray()
-                            assert isinstance(ds, xr.Dataset)
-                        except Exception:
-                            print("ERROR LOCALFTP request:\n",
-                                  ArgoDataFetcher(src='localftp', ds=dataset).float(arg).fetcher.files)
-                            pass
+                self.__testthis_profile(dataset)
+            elif access_point == 'float':
+                self.__testthis_float(dataset)
+            elif access_point == 'region':
+                self.__testthis_region(dataset)
 
     def test_phy_float(self):
         self.args = {}
-        self.args['float'] = [[5900446],
-                              [6901929, 3902131]]
+        self.args['float'] = [[2901623],
+                              [6901929, 2901623]]
         self.__testthis('phy')
 
     def test_phy_profile(self):
         self.args = {}
-        self.args['profile'] = [[2902696, 12],
-                                [2902269, np.arange(12, 14)],
-                                [2901746, [1, 6]]]
+        self.args['profile'] = [[2901623, 12],
+                                [2901623, np.arange(12, 14)],
+                                [2901623, [1, 6]]]
+        self.__testthis('phy')
+
+    def test_phy_region(self):
+        self.args = {}
+        self.args['region'] = [[-60, -40, 40., 60., 0., 100.],
+                               [-60, -40, 40., 60., 0., 100., '2007-08-01', '2007-09-01']]
         self.__testthis('phy')
 
 

@@ -8,13 +8,17 @@ import xarray as xr
 import pandas as pd
 import fsspec
 import argopy
-from argopy.stores import filestore, httpstore, indexfilter_wmo, indexstore
+from argopy.stores import filestore, httpstore, indexfilter_wmo, indexfilter_box, indexstore
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound
 from argopy.utilities import isconnected
 CONNECTED = isconnected()
 
 
 class FileStore(TestCase):
+    ftproot = argopy.tutorial.open_dataset('localftp')[0]
+    csvfile = os.path.sep.join([ftproot, "ar_index_global_prof.txt"])
+    testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
+
     def test_creation(self):
         fs = filestore(cache=0)
         assert isinstance(fs.fs, fsspec.implementations.local.LocalFileSystem)
@@ -34,30 +38,41 @@ class FileStore(TestCase):
             fs.cachepath("dummy_uri")
 
     def test_open_dataset(self):
-        ftproot, flist = argopy.tutorial.open_dataset('localftp')
-        ncfile = os.path.sep.join([ftproot, "dac/aoml/5900446/5900446_prof.nc"])
+        ncfile = os.path.sep.join([self.ftproot, "dac/aoml/5900446/5900446_prof.nc"])
         fs = filestore()
         assert isinstance(fs.open_dataset(ncfile), xr.Dataset)
 
     def test_open_dataframe(self):
-        ftproot, flist = argopy.tutorial.open_dataset('localftp')
-        csvfile = os.path.sep.join([ftproot, "ar_index_global_prof.txt"])
         fs = filestore()
-        assert isinstance(fs.open_dataframe(csvfile, skiprows=8, header=0), pd.core.frame.DataFrame)
+        assert isinstance(fs.open_dataframe(self.csvfile, skiprows=8, header=0), pd.core.frame.DataFrame)
 
     def test_cachefile(self):
-        ftproot, flist = argopy.tutorial.open_dataset('localftp')
-        csvfile = os.path.sep.join([ftproot, "ar_index_global_prof.txt"])
-        testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
         try:
-            fs = filestore(cache=1, cachedir=testcachedir)
-            fs.open_dataframe(csvfile, skiprows=8, header=0)
-            assert isinstance(fs.cachepath(csvfile), str)
-            shutil.rmtree(testcachedir)
+            fs = filestore(cache=1, cachedir=self.testcachedir)
+            fs.open_dataframe(self.csvfile, skiprows=8, header=0)
+            assert isinstance(fs.cachepath(self.csvfile), str)
+            shutil.rmtree(self.testcachedir)
         except Exception:
-            shutil.rmtree(testcachedir)
+            shutil.rmtree(self.testcachedir)
             raise
 
+    def test_clear_cache(self):
+        # Create dummy data to read and cache:
+        uri = os.path.abspath("dummy_fileA.txt")
+        with open(uri, "w") as fp:
+            fp.write('Hello world!')
+        # Create store:
+        fs = filestore(cache=1, cachedir=self.testcachedir)
+        # Then we read some dummy data from the dummy file to trigger caching
+        with fs.open(uri, "r") as fp:
+            txt = fp.read()
+        assert isinstance(fs.cachepath(uri), str)
+        # Now, we can clear the cache:
+        fs.clear_cache()
+        # And verify it does not exist anymore:
+        with pytest.raises(CacheFileNotFound):
+            fs.cachepath(uri)
+        os.remove(uri)
 
 class HttpStore(TestCase):
     def test_creation(self):
@@ -115,15 +130,15 @@ class HttpStore(TestCase):
 
 
 class IndexFilter_WMO(TestCase):
-    kwargs = [{'WMO': 1900204},
-              {'WMO': [1900204, 1900243]},
-              {'CYC': 1},
-              {'CYC': [1, 6]},
-              {'WMO': 1900204, 'CYC': 36},
-              {'WMO': 1900243, 'CYC': [5, 45]},
-              {'WMO': [1900482, 2900738], 'CYC': 2},
-              {'WMO': [1900482, 2900738], 'CYC': [2, 6]},
-              {}]
+    kwargs = [{'WMO': 6901929},
+                  {'WMO': [6901929, 2901623]},
+                  {'CYC': 1},
+                  {'CYC': [1, 6]},
+                  {'WMO': 6901929, 'CYC': 36},
+                  {'WMO': 6901929, 'CYC': [5, 45]},
+                  {'WMO': [6901929, 2901623], 'CYC': 2},
+                  {'WMO': [6901929, 2901623], 'CYC': [2, 23]},
+                  {}]
 
     def test_creation(self):
         for kw in self.kwargs:
@@ -156,16 +171,20 @@ class IndexFilter_WMO(TestCase):
 class IndexStore(TestCase):
     ftproot, flist = argopy.tutorial.open_dataset('localftp')
     index_file = os.path.sep.join([ftproot, "ar_index_global_prof.txt"])
+    testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
 
-    kwargs_wmo = [{'WMO': 1900204},
-                  {'WMO': [1900204, 1900243]},
+    kwargs_wmo = [{'WMO': 6901929},
+                  {'WMO': [6901929, 2901623]},
                   {'CYC': 1},
                   {'CYC': [1, 6]},
-                  {'WMO': 1900204, 'CYC': 36},
-                  {'WMO': 1900243, 'CYC': [5, 45]},
-                  {'WMO': [1900482, 2900738], 'CYC': 2},
-                  {'WMO': [1900482, 2900738], 'CYC': [2, 6]},
+                  {'WMO': 6901929, 'CYC': 36},
+                  {'WMO': 6901929, 'CYC': [5, 45]},
+                  {'WMO': [6901929, 2901623], 'CYC': 2},
+                  {'WMO': [6901929, 2901623], 'CYC': [2, 23]},
                   {}]
+
+    kwargs_box = [{'BOX': [-60, -40, 40., 60.]},
+                  {'BOX': [-60, -40, 40., 60., '2007-08-01', '2007-09-01']}]
 
     def test_creation(self):
         assert isinstance(indexstore(), argopy.stores.argo_index.indexstore)
@@ -176,4 +195,9 @@ class IndexStore(TestCase):
     def test_search_wmo(self):
         for kw in self.kwargs_wmo:
             df = indexstore(cache=0, index_file=self.index_file).open_dataframe(indexfilter_wmo(**kw))
+            assert isinstance(df, pd.core.frame.DataFrame)
+
+    def test_search_box(self):
+        for kw in self.kwargs_box:
+            df = indexstore(cache=0, index_file=self.index_file).open_dataframe(indexfilter_box(**kw))
             assert isinstance(df, pd.core.frame.DataFrame)
