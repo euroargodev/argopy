@@ -8,6 +8,14 @@ v0.1.4 (XX June 2020)
 
 **Features and front-end API**
 
+- Standard levels interpolation method available for **standard** datasets
+
+.. code-block:: python
+
+    ds = ArgoDataFetcher().region([-85,-45,10.,20.,0,1000.,'2012-01','2012-12']).to_xarray()
+    ds = ds.argo.point2profile()
+    ds_interp = ds.argo.interp_std_levels(np.arange(0,900,50))
+
 - Insert in a Jupyter notebook cell the `Euro-Argo fleet monitoring <https://fleetmonitoring.euro-argo.eu>`_ dashboard page, possibly for a specific float (:pr:`20`).
 
 .. code-block:: python
