@@ -651,7 +651,7 @@ class ArgoAccessor:
         for co in coords:
             ds_out.coords[co] = dsp[co]
 
-        ds_out = ds_out.drop(['N_LEVELS', 'Z_LEVELS'])
+        ds_out = ds_out.drop_vars(['N_LEVELS', 'Z_LEVELS'])
         ds_out = ds_out[np.sort(ds_out.data_vars)]
         ds_out.attrs = self.attrs # Preserve original attributes
         ds_out.argo._add_history('Interpolated on standard levels')

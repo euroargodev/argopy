@@ -56,14 +56,47 @@ def test_point2profile2point():
 @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
 @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
-def test_interp_std_levels():
-    try:
-        ds_pts = ArgoDataFetcher(src='erddap') \
-            .region([-75, -55, 30., 40., 0, 100., '2011-01-01', '2011-01-15']) \
-            .to_xarray()   
-        ds_pts = ds_pts.argo.point2profile()       
-        assert  'PRES_INTERPOLATED' in ds_pts.argo.interp_std_levels([20,30,40,50]).dims
-    except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
-        pass
-    except ValueError: # Catches value error for incorrect standard levels as inputs
-        pass
+class test_interp_std_levels(unittest.TestCase):
+
+    @pytest.fixture(autouse=True)
+    def init_data(self):
+        # Fetch real data to test interpolation
+        try:
+            self.ds_pts_standard = ArgoDataFetcher(src='erddap', mode='standard')\
+                .region([-75, -55, 30., 40., 0, 100., '2011-01-01', '2011-01-15'])\
+                .to_xarray()
+            self.ds_pts_expert = ArgoDataFetcher(src='erddap', mode='expert')\
+                .region([-75, -55, 30., 40., 0, 100., '2011-01-01', '2011-01-15'])\
+                .to_xarray()
+        except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
+            pass
+        except ValueError:  # Catches value error for incorrect standard levels as inputs
+            pass
+
+    def test_interpolation(self):
+        # Run with success:
+        ds = self.ds_pts_standard.argo.point2profile()
+        assert 'PRES_INTERPOLATED' in ds.argo.interp_std_levels(
+            [20, 30, 40, 50]).dims
+
+    def test_points_error(self):
+        # Try to interpolate points, not profiles
+        ds = self.ds_pts_standard
+        with pytest.raises(InvalidDatasetStructure):
+            ds.argo.interp_std_levels([20, 30, 40, 50])
+
+    def test_mode_error(self):
+        # Try to interpolate expert data
+        ds = self.ds_pts_expert.argo.point2profile()
+        with pytest.raises(InvalidDatasetStructure):
+            ds.argo.interp_std_levels([20, 30, 40, 50]).dims
+
+    def test_std_error(self):
+        # Try to interpolate on a wrong axis
+        ds = self.ds_pts_standard.argo.point2profile()
+        with pytest.raises(ValueError):
+            ds.argo.interp_std_levels([100, 20, 30, 40, 50])
+        with pytest.raises(ValueError):
+            ds.argo.interp_std_levels([-20, 20, 30, 40, 50])
+        with pytest.raises(ValueError):
+            ds.argo.interp_std_levels(12)
