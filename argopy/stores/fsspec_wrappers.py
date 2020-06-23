@@ -9,9 +9,10 @@ import pickle
 import json
 import tempfile
 from IPython.core.display import display, HTML
+import concurrent.futures
 
 from argopy.options import OPTIONS
-from argopy.errors import ErddapServerError, FileSystemHasNoCache, CacheFileNotFound
+from argopy.errors import ErddapServerError, FileSystemHasNoCache, CacheFileNotFound, DataNotFound
 from abc import ABC, abstractmethod
 
 
@@ -274,6 +275,24 @@ class httpstore(argo_store_proto):
         except requests.HTTPError as e:
             self._verbose_exceptions(e)
 
+    def open_mfdataset(self, paths, concat_dim='row', *args, **kwargs):
+        results = []
+        CONNECTIONS = 100
+        with concurrent.futures.ThreadPoolExecutor(max_workers=CONNECTIONS) as executor:
+            future_to_url = (executor.submit(self.open_dataset, url) for url in paths)
+            for future in concurrent.futures.as_completed(future_to_url):
+                try:
+                    data = future.result()
+                except Exception:
+                    pass
+                finally:
+                    results.append(data)
+        results = [r for r in results if r is not None]  # Only keep non-empty results
+        if len(results) > 0:
+            ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
+            return ds
+        else:
+            raise DataNotFound()
 
 class memorystore(filestore):
     # Note that this inherits from filestore, not argo_store_proto
