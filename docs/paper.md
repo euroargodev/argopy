@@ -1,5 +1,5 @@
 ---
-title: 'argopy: A Python package for ocean Argo data analysis'
+title: 'argopy: A Python library for Argo ocean data analysis'
 tags:
   - Python
   - ocean
@@ -15,7 +15,7 @@ authors:
 affiliations:
  - name: Ifremer, University of Brest, CNRS, IRD, Laboratoire d'Océanographie Physique et Spatiale, IUEM, 29280, Plouzané, France
    index: 1
-date: 14 May 2020
+date: 24 June 2020
 bibliography: paper.bib
 
 ---
@@ -30,7 +30,7 @@ Argo is a real-time global ocean *in situ* observing system. It is a global netw
 pressure, temperature and salinity from the surface to 2000m depth every 10 days. The localisation of these probes is 
 nearly random between the $60^o$ parallels ([see live coverage here](http://map.argo-france.fr)).
 All probes data are collected by satellite in real-time, processed by several data centers and finally merged in a single
-dataset (collecting more than 2 millions of vertical profiles data) made freely available to anyone through 
+dataset (collecting more than 2.3 millions of vertical profiles data as of June 2020) made freely available to anyone through 
 a [ftp server](ftp://ftp.ifremer.fr/ifremer/argo) or [monthly zip snapshots](http://dx.doi.org/10.17882/42182).
 
 The Argo community focuses on delivering a curated dataset of the best scientific quality, and never provided 
@@ -56,9 +56,17 @@ The counter part to this tremendous success in data management and in developpin
 procedures ([see all the Argo Data Management Team documentation here](http://www.argodatamgt.org/Documentation)) is thus 
 a very complex Argo dataset: the **argopy** software aims to help users navigate this complex realm.
 
-Moreover, the Argo community, focusing on delivering a curated dataset, never provided its user base with a Python 
-software to easily access and manipulate Argo measurements: the **argopy** software aims to fill this gap.
+Python is a free language that is widely used by the scientific community. However, to this point, no Python software 
+has been dedicated to the Argo dataset.  
 
+# **argopy** key features
+
+**argopy** is a python software that aims to ease Argo data access, manipulation and visualisation for standard users 
+as well as Argo experts. The two key features of **argopy** are (i) its trivial fetching API of Argo data and (ii) its 
+ability to provide data for both beginngers and experts of Argo.
+
+**argopy** provides a trivial fetching API of Argo data through a simple call to one of the 3 differents ways of 
+looking at Argo data: over a space/time domain (the ```)
 
 # More on Argo
 
