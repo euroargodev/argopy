@@ -39,7 +39,6 @@ to fill this gap. The **argopy** software can be used to fetch, manipulate and a
 It is dedicated to scientists without knowledge of the Argo data management system and can still accomodate experts 
 requirements.
 
-
 # Why **argopy** ?
 
 For non-experts of the Argo dataset, it is rather complicated to get access to Argo measurements. Even though data are
@@ -56,39 +55,59 @@ The counter part to this tremendous success in data management and in developpin
 procedures ([see all the Argo Data Management Team documentation here](http://www.argodatamgt.org/Documentation)) is thus 
 a very complex Argo dataset: the **argopy** software aims to help users navigate this complex realm.
 
-Python is a free language that is widely used by the scientific community. However, to this point, no Python software 
-has been dedicated to the Argo dataset.  
+Moreover, since the Argo community focuses on delivering a curated dataset for science, it does not provide open source softwares 
+for its user base. Softwares exist for Argo data operators so that they can decode and quality control the data [e.g. @scoop].
+But none is available for scientists who then have to develop their own machinary to download and manipulate the data.
 
-# **argopy** key features
+Python is becomming widely used by the scientific community and beyond: worldwide, Python is the most popular language that 
+grew the most in the last 5 years (20%, source: http://pypl.github.io/PYPL.html). It offers a modern, powerfull and open
+source framework to work with. However, up to this point, no Python based software has been dedicated to the Argo dataset.  
 
-**argopy** is a python software that aims to ease Argo data access and manipulation for standard users 
-as well as Argo experts. The two key features of **argopy** are (i) its trivial fetching API of Argo data and (ii) its 
-ability to provide data for both beginners and experts of Argo.
+# Key features
+
+**argopy** is a python software that aims to ease Argo data access and manipulation for standard users as well as Argo 
+experts. The two key features of **argopy** are thus (i) its trivial fetching API of Argo data and (ii) its 
+ability to provide data formatted for both beginners and experts of Argo.
+
+## Data fetching
 
 **argopy** provides a trivial fetching API of Argo data through a simple call to one of the 3 differents ways of 
 looking at Argo data: over a space/time domain (with *region* access point), for one or a list of specific floats (given 
 their unique [WMO number](https://www.wmo.int/pages/prog/amp/mmop/wmo-number-rules.html) with the *float* access point) 
-or for one or a list of float profiles (with the *profile* access point). Once the user has defined what it needs, **argopy**
-will fetch data online and manage internally all the complicated processing of formatting the web request and 
-creating a workable in memory data structure. By default, **argopy** uses the [xarray data model](http://xarray.pydata.org).
+or for one or a list of float profiles (with the *profile* access point). This is as simple as:
+```python
+from argopy import DataFetcher as ArgoDataFetcher
+ds = ArgoDataFetcher().region([-75, -45, 20, 30, 0, 100, '2011', '2012']).to_xarray()
+```
+Once the user has defined what it needs, **argopy** will fetch data online and manage internally all the complicated 
+processing of formatting the web request and creating a workable in memory data structure. By default, **argopy** uses 
+the [xarray data model](http://xarray.pydata.org).
+
+## Data formatting
 
 **argopy** aims to thrive in providing Argo data to non-experts. So one key feature of **argopy** is the option for selecting
 a *user mode* that is either ``standard`` or ``expert``. Standard users are those who want to focus on the measurements 
 for scientific analysis, those who do not know, or don't want to be bothered with all the Argo jargon and multitude of 
-variables and parameters. For standard users (the default mode), **argopy** will internally runs a series of filters that
+variables and parameters. 
+
+For standard users (the default mode), **argopy** will internally runs a series of processes that
 will curate raw data and provide a simplified and science focused dataset. For expert users, **argopy** will apply its 
 data model to raw fetched data and return Argo variables like experts users are already used to.
+
+## And more
 
 **argopy** has other features to manipulate Argo data. These includes the possibility to transform data from a 
 collection of measurements to a collection of vertical profiles, and vice-versa; and the possibility to interpolate 
 irregularly sampled measurements onto standard pressure levels. Another feature is the ability to cache fetched data, so
-that requests provide users with data much more rapidely, saving bandwith and time. Two last important features of 
-**argopy** to describe here are probably more targetting ``expert`` users: it is the possibility to fetch data locally, 
-from a user copy of the entire or subset of the Argo database, and the possibility to fetch only meta data, which allows
-to determine the regional Argo sampling for instance.
+that requests provide users with data much more rapidely, saving bandwith and time. 
+
+Two last important features of **argopy** to describe here are probably more targetting ``expert`` users: it is the 
+possibility to fetch data locally, from a user copy of the entire or subset of the Argo database, and the possibility 
+to fetch only meta data (organised in *index* lookup tables), which allows to determine the regional Argo sampling 
+for instance.
 
 
-# More on Argo
+# About Argo
 
 The Argo international observation array was initiated in 1999 and soon revolutionized our 
 perspective on the large scale structure and variability of the ocean by providing seasonally and regionally unbiased 
