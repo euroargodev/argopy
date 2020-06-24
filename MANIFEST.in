@@ -1,0 +1,11 @@
+include *.txt
+include README.md
+include LICENSE
+
+graft argopy
+
+prune binder
+prune docs
+prune *.egg-info
+
+exclude *.yml
