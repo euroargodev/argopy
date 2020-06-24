@@ -5,7 +5,7 @@ name: build
 
 on:
   push:
-    branches: [ master, region-for-localftp, interp_stdlev ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
