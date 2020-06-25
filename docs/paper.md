@@ -147,3 +147,5 @@ We acknowledge support from the [Euro-Argo ERIC community](https://www.euro-argo
 This software was created with support from the EARISE project, a European Union’s Horizon 2020 research and 
 innovation programme under grant agreement no 824131. Call INFRADEV-03-2018-2019: Individual support to ESFRI and other 
 world-class research infrastructures.
+
+# References
