@@ -70,7 +70,8 @@ where they are processed in real time and made freely available on the web in le
 
 For non-experts of the Argo dataset, it is rather complicated to get access to Argo measurements. Even though data are
 made freely available on the web, the Argo dataset is made of: thousands of files organised using jargon, uses 
-thousands of different variables, tens of reference tables and has an exhaustive [user manual](http://dx.doi.org/10.13155/29825) more than 100 pages long.
+tens of different variables and many reference tables. The exhaustive Argo [user manual](http://dx.doi.org/10.13155/29825) 
+has even more than 100 pages, which can be rather intimidating to go through for new users.
 
 This complexity arises from the facts that Argo operates many different models of floats and sensors, quality control 
 of *in situ* measurements from autonomous platforms requires a lot of complementary information (meta-data), and the 
