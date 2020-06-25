@@ -78,7 +78,7 @@ Argo data management workflow is distributed between more than 10 Data Assembly 
 data management is a model for other ocean observing systems and constantly ensures the highest quality of scientific 
 measurements for the community [@wong-2020].
 
-The counter part to this tremendous success in data managemen, in developing good practices and well calibrated 
+The counter part to this tremendous success in data management, in developing good practices and well calibrated 
 procedures ([see all the Argo Data Management Team documentation here](http://www.argodatamgt.org/Documentation)) is thus 
 a very complex Argo dataset: the **argopy** software aims to help users navigate this complex realm.
 
@@ -108,7 +108,7 @@ fetcher = ArgoDataFetcher().region([-75, -45, 20, 30, 0, 100, '2011', '2012'])
 ds = fetcher.to_xarray()
 ```
 Here we used **argopy** to fetch data between 75/45W, 20/30N, from 0 to 100db and for the entire year 2011.
-Once the user has defined what it needs (the ``fetcher`` class instance), **argopy** will fetch data online and manage 
+Once the user has defined what it needs (the ``fetcher`` class instance in the example above), **argopy** will fetch data online and manage 
 internally all the complicated processing of formatting the web request and creating a workable in memory data 
 structure (the ``to_xarray()`` call above). By default, **argopy** uses the [xarray data model](http://xarray.pydata.org).
 *xarray* is an open source Python package to easily work with labelled multi-dimensional arrays.
@@ -127,6 +127,7 @@ data model to raw fetched data and return Argo variables like experts users are 
 ## And more
 
 **argopy** has features to manipulate Argo data, for instance:
+
 - the possibility to transform data from a collection of measurements to a collection of vertical profiles, and vice-versa; 
 - the possibility to interpolate irregularly sampled measurements onto standard pressure levels.
  
@@ -134,6 +135,7 @@ Another feature is the ability to cache fetched data, so that requests provide u
 saving bandwidth and time. 
 
 Two last important features of **argopy** to describe here are: 
+
 - the possibility to fetch data locally, from a user copy of the entire or subset of the Argo database,
 - the possibility to fetch only meta data (organised in *index* lookup tables), which allows to determine the regional Argo sampling 
 for instance.
