@@ -134,12 +134,16 @@ data model to raw fetched data and return Argo variables like experts users are 
 Another feature is the ability to cache fetched data, so that requests provide users with data much more rapidly, 
 saving bandwidth and time. 
 
-Two last important features of **argopy** to describe here are: 
+Two last important features of **argopy** to mention here are: 
 
 - the possibility to fetch data locally, from a user copy of the entire or subset of the Argo database,
 - the possibility to fetch only meta data (organised in *index* lookup tables), which allows to determine the regional Argo sampling 
 for instance.
 These more advance features may be more of interest for ``expert`` users, since it more knowledge of the Argo dataset.
+
+# Conclusion
+
+**argopy** is filling a gap in the ocean science community, by providing an easy way to access a large and complex dataset that has proved to be very important in physical oceanographic studies. We didn't described here all the features available with **argopy** and the reader is referred to the complete software documentation at [https://argopy.readthedocs.io](https://argopy.readthedocs.io) for more information.
 
 # Acknowledgements
 
