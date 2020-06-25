@@ -58,6 +58,7 @@ def test_invalid_fetcher():
 
 class EntryPoints_AllBackends(TestCase):
     """ Test main API facade for all available fetching backends and default dataset """
+    ftproot = argopy.tutorial.open_dataset('localftp')[0]
 
     # kwargs_wmo = [{'WMO': 6901929},
     #               {'WMO': [6901929, 2901623]},
@@ -136,15 +137,18 @@ class EntryPoints_AllBackends(TestCase):
 
     @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
     def test_float_localftp(self):
-        ftproot, flist = argopy.tutorial.open_dataset('localftp')
-        with argopy.set_options(local_ftp=ftproot):
-            self.__test_float('localftp', )
+        with argopy.set_options(local_ftp=self.ftproot):
+            self.__test_float('localftp')
 
     @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
     def test_profile_localftp(self):
-        ftproot, flist = argopy.tutorial.open_dataset('localftp')
-        with argopy.set_options(local_ftp=ftproot):
+        with argopy.set_options(local_ftp=self.ftproot):
             self.__test_profile('localftp')
+
+    @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
+    def test_profile_localftp(self):
+        with argopy.set_options(local_ftp=self.ftproot):
+            self.__test_region('localftp')
 
     @unittest.skipUnless('argovis' in AVAILABLE_SOURCES, "requires argovis data fetcher")
     @unittest.skipUnless(CONNECTED, "argovis requires an internet connection")
@@ -155,6 +159,11 @@ class EntryPoints_AllBackends(TestCase):
     @unittest.skipUnless(CONNECTED, "argovis requires an internet connection")
     def test_profile_argovis(self):
         self.__test_profile('argovis')
+
+    @unittest.skipUnless('argovis' in AVAILABLE_SOURCES, "requires argovis data fetcher")
+    @unittest.skipUnless(CONNECTED, "argovis requires an internet connection")
+    def test_region_argovis(self):
+        self.__test_region('argovis')
 
 
 
