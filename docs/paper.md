@@ -23,13 +23,13 @@ bibliography: paper.bib
 # Summary
 
 Argo is a real-time global ocean *in situ* observing system. It provides highly accurate thousands of ocean measurements 
-every day. The Argo dataset has now accumulated more than X billions of measurements and accessing it for scientific 
+every day. The Argo dataset has now accumulated more than 2.3 millions of vertical ocean profiles data and accessing it for scientific 
 analysis remains a challenge.
 
-The Argo expert community focuses on delivering a curated dataset of the best scientific quality, and never provided 
+The Argo expert community, focused on delivering a curated dataset of the best scientific quality possible, has never provided 
 its user base with a Python software to easily access and manipulate Argo measurements: the **argopy** software aims 
 to fill this gap. The **argopy** software can be used to easily fetch and manipulate Argo floats measurements. 
-It is dedicated to scientists without knowledge of the Argo data management system and can still accommodate experts 
+It is dedicated to scientists without knowledge of the Argo data management system but is also designed to accommodate experts 
 requirements.
 
 # Introduction
