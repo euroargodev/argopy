@@ -137,6 +137,11 @@ class EntryPoints_AllBackends(TestCase):
     def test_float_argovis(self):
         self.__test_float('argovis')
 
+    @unittest.skipUnless('argovis' in AVAILABLE_SOURCES, "requires argovis data fetcher")
+    @unittest.skipUnless(CONNECTED, "argovis requires an internet connection")
+    def test_profile_argovis(self):
+        self.__test_profile('argovis')
+
 
 @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
