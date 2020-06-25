@@ -59,7 +59,6 @@ class EntryPoints_AllBackends(TestCase):
         self.args = {}
         self.args['float'] = [[2901623],
                               [6901929, 2901623]]
-        # self.args['region'] = [[-60, -40, 40., 60., '2007-08-01', '2007-09-01']]
         self.args['region'] = [[-60, -40, 40., 60.],
                                [-60, -40, 40., 60., '2007-08-01', '2007-09-01']]
         self.args['profile'] = [[2901623, 2],

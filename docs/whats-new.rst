@@ -3,6 +3,30 @@
 What's New
 ==========
 
+v0.1.5 (XX July 2020)
+---------------------
+
+**Features and front-end API**
+
+- A new data source with the **argovis** data fetcher, all access points available (:pr:`24`). By `T. Tucker <https://github.com/tylertucker202>`_ and `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy import DataFetcher as ArgoDataFetcher
+    loader = ArgoDataFetcher(src='argovis')
+    loader.float(6902746).to_xarray()
+    loader.profile(6902746).to_xarray()
+    loader.region(6902746).to_xarray()
+
+- **argopy** can now be installed with conda (:pr:`29`, :pr:`31`, :pr:`32`). By `F. Fernandes <https://github.com/ocefpaf>`_.
+
+**Breaking changes with previous versions**
+
+
+**Internals**
+
+
+
 v0.1.4 (24 June 2020)
 ---------------------
 
