@@ -179,13 +179,13 @@ class Fetch_wmo(ArgovisDataFetcher):
         urls = []
         if isinstance(self.CYC, (np.ndarray)) and self.CYC.nbytes > 0:
             profIds = [str(wmo) + '_' + str(cyc) for wmo in self.WMO for cyc in self.CYC.tolist()]
-            urls.append(self.server + '/catalog/mprofiles/?ids={}'.format(profIds).replace(' ', ''))
+            urls.append((self.server + '/catalog/mprofiles/?ids={}').format(profIds).replace(' ', ''))
         elif self.dataset_id == 'bgc' and isinstance(self.CYC, (np.ndarray)) and self.CYC.nbytes > 0:
             profIds = [str(wmo) + '_' + str(cyc) for wmo in self.WMO for cyc in self.CYC.tolist()]
-            urls.append(self.server + '/catalog/profiles/{}'.format(profile_number))
+            urls.append((self.server + '/catalog/profiles/{}').format(profile_number))
         else:
             for wmo in self.WMO:
-                urls.append(self.server + '/catalog/platforms/{}'.format(str(wmo)))
+                urls.append((self.server + '/catalog/platforms/{}').format(str(wmo)))
         return urls
 
     def to_dataframe(self, js):
