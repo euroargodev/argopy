@@ -9,3 +9,6 @@ prune docs
 prune *.egg-info
 
 exclude *.yml
+exclude .coveragerc
+exclude CODE_OF_CONDUCT.md
+exclude HOW_TO_RELEASE
