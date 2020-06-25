@@ -136,7 +136,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             df = self.json2dataframe(js)
             df = df.reset_index()
             df = df.rename(columns=self.key_map)
-            df = df[[value for value in self.key_map.values()]]
+            df = df[[value for value in self.key_map.values() if value in df.columns]]
             results.append(df)
 
         results = [r for r in results if r is not None]  # Only keep non-empty results

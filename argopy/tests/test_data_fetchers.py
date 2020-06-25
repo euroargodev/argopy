@@ -146,7 +146,7 @@ class EntryPoints_AllBackends(TestCase):
             self.__test_profile('localftp')
 
     @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
-    def test_profile_localftp(self):
+    def test_region_localftp(self):
         with argopy.set_options(local_ftp=self.ftproot):
             self.__test_region('localftp')
 
