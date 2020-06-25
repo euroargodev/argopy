@@ -22,22 +22,49 @@ bibliography: paper.bib
 
 # Summary
 
+Argo is a real-time global ocean *in situ* observing system. It provides highly accurate thousands of ocean measurements 
+every day. The Argo dataset has now accumulated more than X billions of measurements and accessing it for scientific 
+analysis remains a challenge.
+
+The Argo expert community focuses on delivering a curated dataset of the best scientific quality, and never provided 
+its user base with a Python software to easily access and manipulate Argo measurements: the **argopy** software aims 
+to fill this gap. The **argopy** software can be used to easily fetch and manipulate Argo floats measurements. 
+It is dedicated to scientists without knowledge of the Argo data management system and can still accommodate experts 
+requirements.
+
+# Introduction
+
 The ocean is a key component of the Earth climate system. It thus needs a continuous real-time monitoring to help scientists 
 better understand its dynamic and predict its evolution. All around the world, oceanographers have manage to join their
 efforts and set up a [Global Ocean Observing System](https://www.goosocean.org/) among which *Argo* is a key component. 
 
-Argo is a real-time global ocean *in situ* observing system. It is a global network of nearly 4000 autonomous probes measuring 
-pressure, temperature and salinity from the surface to 2000m depth every 10 days. The localisation of these probes is 
-nearly random between the $60^o$ parallels ([see live coverage here](http://map.argo-france.fr)).
-All probes data are collected by satellite in real-time, processed by several data centers and finally merged in a single
-dataset (collecting more than 2.3 millions of vertical profiles data as of June 2020) made freely available to anyone through 
-a [ftp server](ftp://ftp.ifremer.fr/ifremer/argo) or [monthly zip snapshots](http://dx.doi.org/10.17882/42182).
+Argo is a global network of nearly 4000 autonomous probes measuring pressure, temperature and salinity from the surface 
+to 2000m depth every 10 days. The localisation of these probes is nearly random between the $60^o$ parallels ([see live 
+coverage here](http://map.argo-france.fr)). All probes data are collected by satellite in real-time, processed by several 
+data centers and finally merged in a single dataset (collecting more than 2.3 millions of vertical profiles data as of 
+June 2020) made freely available to anyone through a [ftp server](ftp://ftp.ifremer.fr/ifremer/argo) or [monthly zip 
+snapshots](http://dx.doi.org/10.17882/42182).
 
-The Argo community focuses on delivering a curated dataset of the best scientific quality, and never provided 
-its user base with a Python software to easily access and manipulate Argo measurements: the **argopy** software aims 
-to fill this gap. The **argopy** software can be used to fetch, manipulate and analyse Argo floats measurements. 
-It is dedicated to scientists without knowledge of the Argo data management system and can still accomodate experts 
-requirements.
+The Argo international observation array was initiated in 1999 and soon revolutionised our 
+perspective on the large scale structure and variability of the ocean by providing seasonally and regionally unbiased 
+in situ temperature/salinity measurements of the ocean interior, key information that satellites can't provide [@riser-2016]. 
+The Argo array reached its full global coverage (of 1 profile per month and per 3x3 degree horizontal area) in 2007, and 
+pursues its evolution to fulfil new scientific requirements [@roemmich-2019]. Argo data have been used in more than 4000 scientific publications.
+
+This [online figure](http://map.argo-france.fr) shows the current coverage of the network. It now extents to higher latitudes than the 
+original $\pm60^o$ and some of the floats are able to profile down to 4000m and 6000m. New floats are also equipped 
+with biogeochemical sensors, measuring oxygen and chlorophyll for instance. All these evolutions of the network increase 
+the total number of floats to nearly 4000. Argo is thus providing a deluge of in situ data: more than 400 profiles per day.
+
+Each Argo probe is an autonomous, free drifting, profiling float, i.e. a probe that can't control its trajectory but 
+is able to control its buoyancy and thus to move up and down the water column as it wishes. Argo floats continuously 
+operate the same program, or cycle, illustrated \autoref{fig:argofloat}. After 9 to 10 days of free drift at a parking 
+depth of about 1000m, a typical Argo float dives down to 2000m and then shoals back to the surface while measuring pressure, 
+temperature and salinity. Once it reaches the surface, the float sends by satellite its measurements to a data center 
+where they are processed in real time and made freely available on the web in less than 24h00.
+
+![Typical 10 days program, cycle, of an Argo float.\label{fig:argofloat}](_static/argofloats_cycle.png)
+
 
 # Why **argopy** ?
 
@@ -51,19 +78,19 @@ Argo data management workflow is distributed between more than 10 Data Assembly 
 data management is a model for other ocean observing systems and constantly ensures the highest quality of scientific 
 measurements for the community [@wong-2020].
 
-The counter part to this tremendous success in data management and in developping good practices and well calibrated 
+The counter part to this tremendous success in data managemen, in developing good practices and well calibrated 
 procedures ([see all the Argo Data Management Team documentation here](http://www.argodatamgt.org/Documentation)) is thus 
 a very complex Argo dataset: the **argopy** software aims to help users navigate this complex realm.
 
 Moreover, since the Argo community focuses on delivering a curated dataset for science, it does not provide open source softwares 
 for its user base. Softwares exist for Argo data operators so that they can decode and quality control the data [e.g. @scoop].
-But none is available for scientists who then have to develop their own machinary to download and manipulate the data.
+But none is available for scientists who thus have to develop their own machinery to download and manipulate the data.
 
-Python is becomming widely used by the scientific community and beyond: worldwide, Python is the most popular language that 
-grew the most in the last 5 years (20%, source: http://pypl.github.io/PYPL.html). It offers a modern, powerfull and open
+Python is becoming widely used by the scientific community and beyond: worldwide, Python is the most popular language that 
+grew the most in the last 5 years (20%, source: http://pypl.github.io/PYPL.html). It offers a modern, powerful and open
 source framework to work with. However, up to this point, no Python based software has been dedicated to the Argo dataset.  
 
-# Key features
+# Key features of **argopy**
 
 **argopy** is a python software that aims to ease Argo data access and manipulation for standard users as well as Argo 
 experts. The two key features of **argopy** are thus (i) its trivial fetching API of Argo data and (ii) its 
@@ -71,17 +98,20 @@ ability to provide data formatted for both beginners and experts of Argo.
 
 ## Data fetching
 
-**argopy** provides a trivial fetching API of Argo data through a simple call to one of the 3 differents ways of 
-looking at Argo data: over a space/time domain (with *region* access point), for one or a list of specific floats (given 
+**argopy** provides a trivial fetching API of Argo data through a simple call to one of the 3 different ways of 
+looking at Argo data: over a space/time domain (with the *region* access point), for one or a list of specific floats (given 
 their unique [WMO number](https://www.wmo.int/pages/prog/amp/mmop/wmo-number-rules.html) with the *float* access point) 
 or for one or a list of float profiles (with the *profile* access point). This is as simple as:
 ```python
 from argopy import DataFetcher as ArgoDataFetcher
-ds = ArgoDataFetcher().region([-75, -45, 20, 30, 0, 100, '2011', '2012']).to_xarray()
+fetcher = ArgoDataFetcher().region([-75, -45, 20, 30, 0, 100, '2011', '2012'])
+ds = fetcher.to_xarray()
 ```
-Once the user has defined what it needs, **argopy** will fetch data online and manage internally all the complicated 
-processing of formatting the web request and creating a workable in memory data structure. By default, **argopy** uses 
-the [xarray data model](http://xarray.pydata.org).
+Here we used **argopy** to fetch data between 75/45W, 20/30N, from 0 to 100db and for the entire year 2011.
+Once the user has defined what it needs (the ``fetcher`` class instance), **argopy** will fetch data online and manage 
+internally all the complicated processing of formatting the web request and creating a workable in memory data 
+structure (the ``to_xarray()`` call above). By default, **argopy** uses the [xarray data model](http://xarray.pydata.org).
+*xarray* is an open source Python package to easily work with labelled multi-dimensional arrays.
 
 ## Data formatting
 
@@ -96,39 +126,18 @@ data model to raw fetched data and return Argo variables like experts users are 
 
 ## And more
 
-**argopy** has other features to manipulate Argo data. These includes the possibility to transform data from a 
-collection of measurements to a collection of vertical profiles, and vice-versa; and the possibility to interpolate 
-irregularly sampled measurements onto standard pressure levels. Another feature is the ability to cache fetched data, so
-that requests provide users with data much more rapidely, saving bandwith and time. 
+**argopy** has features to manipulate Argo data, for instance:
+- the possibility to transform data from a collection of measurements to a collection of vertical profiles, and vice-versa; 
+- the possibility to interpolate irregularly sampled measurements onto standard pressure levels.
+ 
+Another feature is the ability to cache fetched data, so that requests provide users with data much more rapidly, 
+saving bandwidth and time. 
 
-Two last important features of **argopy** to describe here are probably more targetting ``expert`` users: it is the 
-possibility to fetch data locally, from a user copy of the entire or subset of the Argo database, and the possibility 
-to fetch only meta data (organised in *index* lookup tables), which allows to determine the regional Argo sampling 
+Two last important features of **argopy** to describe here are: 
+- the possibility to fetch data locally, from a user copy of the entire or subset of the Argo database,
+- the possibility to fetch only meta data (organised in *index* lookup tables), which allows to determine the regional Argo sampling 
 for instance.
-
-
-# About Argo
-
-The Argo international observation array was initiated in 1999 and soon revolutionized our 
-perspective on the large scale structure and variability of the ocean by providing seasonally and regionally unbiased 
-in situ temperature/salinity measurements of the ocean interior, key information that satellites can't provide [@riser-2016]. 
-The Argo array reached its full global coverage (of 1 profile per month and per 3x3 degree horizontal area) in 2007, and 
-pursues its evolution to fullfill new scientific requirements [@roemmich-2019].
-
-\autoref{argo:fig:argo:A} shows the current coverage of the network. It now extents to higher latitudes than the 
-original $\pm60^o$ and some of the floats are able to profile down to 4000m and 6000m. New floats are also equipped 
-with biogeochemical sensors, measuring oxygen and chlorophyll for instance. All these evolutions of the network increase 
-the total number of floats to nearly 4000. Argo is thus providing a deluge of in situ data: more than 400 profiles per day.
-
-Each Argo probe is an autonomous, free drifting, profiling float, i.e. a probe that can't control its trajectory but 
-is able to control its buoyancy and thus to move up and down the water column as it wishes. Argo floats continuously 
-operate the same program, or cycle, illustrated \autoref{fig:argofloat}. After 9 to 10 days of free drift at a parking 
-depth of about 1000m, a typical Argo float dives down to 2000m and then shoals back to the surface while measuring pressure, 
-temperature and salinity. Once it reaches the surface, the float sends by satellite its measurements to a data center 
-where they are processed in real time and made freely available on the web in less than 24h00.
-
-![Typical 10 days program, cycle, of an Argo float.\label{fig:argofloat}](_static/argofloats_cycle.png)
-
+These more advance features may be more of interest for ``expert`` users, since it more knowledge of the Argo dataset.
 
 # Acknowledgements
 
