@@ -7,6 +7,7 @@ Required dependencies
 - Python 3.6
 - Xarray 0.14
 - Erddapy 0.5
+- Fsspec 0.7
 
 Note that Erddapy_ is required because `erddap <https://coastwatch.pfeg.noaa.gov/erddap/information.html>`_ is the default data fetching backend.
 

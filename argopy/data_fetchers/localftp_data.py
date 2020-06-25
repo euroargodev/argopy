@@ -43,9 +43,9 @@ from .proto import ArgoDataFetcherProto
 from argopy.errors import NetCDF4FileNotFoundError
 from argopy.utilities import list_standard_variables, load_dict, mapp_dict
 from argopy.options import OPTIONS
-from argopy.stores import filestore, indexstore, indexfilter_wmo
+from argopy.stores import filestore, indexstore, indexfilter_wmo, indexfilter_box
 
-access_points = ['wmo']
+access_points = ['wmo', 'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy', 'bgc']  # First is default
 
@@ -107,7 +107,9 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
                 This can be used to optimise performances
 
         """
-        self.fs = filestore(cache=cache, cachedir=cachedir)
+        self.cache = cache
+        self.cachedir = cachedir
+        self.fs = filestore(cache=self.cache, cachedir=self.cachedir)
         self.definition = 'Local ftp Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
         self.local_ftp = OPTIONS['local_ftp'] if local_ftp == '' else local_ftp
@@ -118,6 +120,20 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         summary.append("FTP: %s" % self.local_ftp)
         summary.append("Domain: %s" % self.cname())
         return '\n'.join(summary)
+
+    def _format(self, x, typ):
+        """ string formating helper """
+        if typ == 'lon':
+            if x < 0:
+                x = 360. + x
+            return ("%05d") % (x * 100.)
+        if typ == 'lat':
+            return ("%05d") % (x * 100.)
+        if typ == 'prs':
+            return ("%05d") % (np.abs(x) * 10.)
+        if typ == 'tim':
+            return pd.to_datetime(x).strftime('%Y%m%d')
+        return str(x)
 
     def _absfilepath(self, wmo: int, cyc: int = None, errors: str = 'raise') -> str:
         """ Return the absolute netcdf file path to load for a given wmo/cyc pair
@@ -136,7 +152,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
             WMO float code
         cyc: int, optional
             Cycle number (None by default)
-        errors: {'raise','ignore'}, optional
+        errors: {'raise', 'ignore'}, optional
             If 'raise' (default), raises a NetCDF4FileNotFoundError error if the requested
             file cannot be found. If set to 'ignore', return None silently.
 
@@ -181,16 +197,21 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
                 raise NetCDF4FileNotFoundError(pattern)
             else:
                 # Otherwise remain silent/ignore
-                # todo should raise a warning instead ?
+                # todo: should raise a warning instead ?
                 return None
         else:
-            warnings.warn("More than one file to load for a single float cycle ! Return the 1st one by default.")
+            # warnings.warn("More than one file to load for a single float cycle ! Return the 1st one by default.")
             # The choice of the file to load depends on the user mode and dataset requested.
-            # todo define a robust choice
+            # todo: define a robust choice
             if self.dataset_id == 'phy':
-                # Use the synthetic profile:
-                lst = [file for file in lst if
-                       [file for file in [os.path.split(w)[-1] for w in lst] if file[0] == 'S'][0] in file]
+                if cyc is None:
+                    # Use the synthetic profile:
+                    lst = [file for file in lst if
+                           [file for file in [os.path.split(w)[-1] for w in lst] if file[0] == 'S'][0] in file]
+                else:
+                    # Use the ascent profile:
+                    lst = [file for file in lst if
+                           [file for file in [os.path.split(w)[-1] for w in lst] if file[-1] != 'D'][0] in file]
                 # print('phy', lst[0])
             elif self.dataset_id == 'bgc':
                 lst = [file for file in lst if
@@ -210,12 +231,8 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         """ Return path to cache file for this request """
         return [self.fs.cachepath(file) for file in self.files]
 
-    def clear_cache(self):
-        """ Remove cache files and entries from resources open with this fetcher """
-        return self.fs.clear_cache()
-
     def xload_multiprof(self, ncfile: str):
-        """Load an Argo multi-profile file as a collection of points
+        """Load one Argo multi-profile file as a collection of points
 
         Parameters
         ----------
@@ -227,7 +244,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         :class:`xarray.Dataset`
 
         """
-        ds = self.fs.open_dataset(ncfile, decode_cf=1, use_cftime=0, mask_and_scale=1)
+        ds = self.fs.open_dataset(ncfile, decode_cf=1, use_cftime=0, mask_and_scale=1, engine='h5netcdf')
 
         # Replace JULD and JULD_QC by TIME and TIME_QC
         ds = ds.rename({'JULD': 'TIME', 'JULD_QC': 'TIME_QC'})
@@ -425,137 +442,68 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
         return self
 
 
-class LocalFTPArgoIndexFetcher(ABC):
-    """ Manage access to Argo index from a local copy of GDAC ftp
+class Fetch_box(LocalFTPArgoDataFetcher):
+    """ Manage access to local ftp Argo data for: a rectangular space/time domain  """
 
-    """
-    ###
-    # Methods to be customised for a specific request
-    ###
-    @abstractmethod
-    def init(self):
-        """ Initialisation for a specific fetcher """
-        pass
-
-    @abstractmethod
-    def cname(self):
-        """ Return a unique string defining the request """
-        pass
-
-    @abstractmethod
-    def cachepath(self):
-        pass
-
-    @abstractmethod
-    def filter_index(self):
-        """ Custom search in the argo index file
-
-        Returns
-        -------
-        Instance of index_filter_proto
-        """
-        pass
-
-    ###
-    # Methods that must not change
-    ###
-    def __init__(self,
-                 local_ftp: str = "",
-                 index_file: str = "ar_index_global_prof.txt",
-                 cache: bool = False,
-                 cachedir: str = "",
-                 **kwargs):
-        """ Init fetcher
+    def init(self, box: list = [-180, 180, -90, 90, 0, 6000, '1900-01-01', '2100-12-31']):
+        """ Create Argo data loader
 
             Parameters
             ----------
-            local_path : str
-                Path to the directory with the 'dac' folder and index file
+            box : list(float, float, float, float, float, float, str, str)
+                The box domain to load all Argo data for:
+                box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
-        self.cache = cache
-        self.definition = 'Local ftp Argo index fetcher'
-        self.local_ftp = OPTIONS['local_ftp'] if local_ftp == '' else local_ftp
-        self.index_file = index_file
-        self.fs = indexstore(cache, cachedir, os.path.sep.join([self.local_ftp, self.index_file]))
-        self.init(**kwargs)
-
-    def __repr__(self):
-        summary = ["<indexfetcher '%s'>" % self.definition]
-        summary.append("FTP: %s" % self.local_ftp)
-        summary.append("Domain: %s" % self.cname())
-        return '\n'.join(summary)
-
-    def to_dataframe(self):
-        """ filter local index file and return a pandas dataframe """
-        df = self.fs.open_dataframe(self.filter_index())
-
-        # Post-processing of the filtered index:
-        df['wmo'] = df['file'].apply(lambda x: int(x.split('/')[1]))
-
-        # institution & profiler mapping for all users
-        # todo: may be we need to separate this for standard and expert users
-        institution_dictionnary = load_dict('institutions')
-        df['tmp1'] = df.institution.apply(lambda x: mapp_dict(institution_dictionnary, x))
-        df = df.rename(columns={"institution": "institution_code", "tmp1": "institution"})
-
-        profiler_dictionnary = load_dict('profilers')
-        df['profiler'] = df.profiler_type.apply(lambda x: mapp_dict(profiler_dictionnary, int(x)))
-        df = df.rename(columns={"profiler_type": "profiler_code"})
-
-        return df
-
-    def to_xarray(self):
-        """ Load Argo index and return a xarray Dataset """
-        return self.to_dataframe().to_xarray()
-
-    def clear_cache(self):
-        """ Remove cache files and entries from resources open with this fetcher """
-        return self.fs.clear_cache()
-
-
-class IndexFetcher_wmo(LocalFTPArgoIndexFetcher):
-    """ Manage access to local ftp Argo data for: a list of WMOs
-
-    """
-    def init(self, WMO: list = [], CYC=None, **kwargs):
-        """ Create Argo data loader for WMOs
-
-            Parameters
-            ----------
-            WMO : list(int)
-                The list of WMOs to load all Argo data for.
-            CYC : int, np.array(int), list(int)
-                The cycle numbers to load.
-        """
-        if isinstance(WMO, int):
-            WMO = [WMO]  # Make sure we deal with a list
-        if isinstance(CYC, int):
-            CYC = np.array((CYC,), dtype='int')  # Make sure we deal with an array of integers
-        if isinstance(CYC, list):
-            CYC = np.array(CYC, dtype='int')  # Make sure we deal with an array of integers
-        self.WMO = WMO
-        self.CYC = CYC
-        self.fcls = indexfilter_wmo(self.WMO, self.CYC)
-
-    @property
-    def cachepath(self):
-        return self.fs.cachepath(self.fcls.uri())
+        # We use a full domain definition (x, y, z, t) as argument for compatibility with the other fetchers
+        # but we work only with x, y and t.
+        if len(box) not in [6, 8]:
+            raise ValueError('Box must be 6 or 8 length')
+        if len(box) == 6:
+            self.BOX = [box[ii] for ii in [0, 1, 2, 3]]
+        elif len(box) == 8:
+            self.BOX = [box[ii] for ii in [0, 1, 2, 3, 6, 7]]
+        self.fs_index = indexstore(self.cache, self.cachedir, os.path.sep.join([self.local_ftp, "ar_index_global_prof.txt"]))
+        # todo we would need to check if the index file is there
 
     def cname(self):
-        """ Return a unique string defining the request
+        """ Return a unique string defining the constraints """
+        BOX = self.BOX
+        if len(self.BOX) == 4:
+            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f]") % \
+                      (BOX[0], BOX[1], BOX[2], BOX[3])
+        elif len(self.BOX) == 6:
+            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; t=%s/%s]") % \
+                      (BOX[0], BOX[1], BOX[2], BOX[3],
+                       self._format(BOX[4], 'tim'), self._format(BOX[5], 'tim'))
+        boxname = self.dataset_id + "_" + boxname
+        return boxname
 
-        """
-        return self.fcls.uri()
-
-    def filter_index(self):
-        """ Search for one or more WMO in the argo index file
+    def list_argo_files(self, errors: str = 'raise'):
+        """ Set the internal list of files to load
 
         Parameters
         ----------
-        index_file: _io.TextIOWrapper
-
-        Returns
-        -------
-        csv rows matching the request, as a in-memory string. Or None.
+        errors: {'raise','ignore'}, optional
+            If 'raise' (default), raises a NetCDF4FileNotFoundError error if any of the requested
+            files cannot be found. If 'ignore', file not found is skipped when fetching data.
         """
-        return self.fcls
+        if not hasattr(self, '_list_of_argo_files'):
+            self._list_of_argo_files = []
+            # Fetch the index to retrieve the list of profiles to load:
+            filt = indexfilter_box(self.BOX)
+            df_index = self.fs_index.open_dataframe(filt)
+            if isinstance(df_index, pd.core.frame.DataFrame):
+                # Ok, we found profiles in the index file,
+                # so now we can make sure these files exist:
+                lst = list(df_index['file'])
+                for file in lst:
+                    abs_file = os.path.sep.join([self.local_ftp, "dac", file])
+                    if self.fs.exists(abs_file):
+                        self._list_of_argo_files.append(abs_file)
+                    elif errors == 'raise':
+                        raise NetCDF4FileNotFoundError(abs_file)
+                    else:
+                        # Otherwise remain silent/ignore
+                        # todo should raise a warning instead ?
+                        return None
+        return self

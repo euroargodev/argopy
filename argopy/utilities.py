@@ -18,6 +18,10 @@ import platform
 import struct
 import subprocess
 
+import xarray as xr
+import numpy as np
+from scipy import interpolate
+
 import pickle
 import pkg_resources
 import shutil
@@ -30,7 +34,8 @@ path2pkl = pkg_resources.resource_filename('argopy', 'assets/')
 
 def clear_cache():
     """ Delete argopy cache folder """
-    shutil.rmtree(OPTIONS['cachedir'])
+    if os.path.exists(OPTIONS['cachedir']):
+        shutil.rmtree(OPTIONS['cachedir'])
 
 
 def load_dict(ptype):
@@ -57,7 +62,7 @@ def list_available_data_src():
     """ List all available data sources """
     AVAILABLE_SOURCES = {}
     try:
-        from .data_fetchers import erddap as Erddap_Fetchers
+        from .data_fetchers import erddap_data as Erddap_Fetchers
         AVAILABLE_SOURCES['erddap'] = Erddap_Fetchers
     except Exception:
         warnings.warn("An error occured while loading the ERDDAP data fetcher, "
@@ -65,7 +70,7 @@ def list_available_data_src():
         pass
 
     try:
-        from .data_fetchers import localftp as LocalFTP_Fetchers
+        from .data_fetchers import localftp_data as LocalFTP_Fetchers
         AVAILABLE_SOURCES['localftp'] = LocalFTP_Fetchers
     except Exception:
         warnings.warn("An error occured while loading the local FTP data fetcher, "
@@ -77,6 +82,28 @@ def list_available_data_src():
         AVAILABLE_SOURCES['argovis'] = ArgoVis_Fetchers
     except Exception:
         warnings.warn("An error occured while loading the ArgoVis data fetcher, "
+                      "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        pass
+
+    return AVAILABLE_SOURCES
+
+
+def list_available_index_src():
+    """ List all available index sources """
+    AVAILABLE_SOURCES = {}
+    try:
+        from .data_fetchers import erddap_index as Erddap_Fetchers
+        AVAILABLE_SOURCES['erddap'] = Erddap_Fetchers
+    except Exception:
+        warnings.warn("An error occured while loading the ERDDAP index fetcher, "
+                      "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        pass
+
+    try:
+        from .data_fetchers import localftp_index as LocalFTP_Fetchers
+        AVAILABLE_SOURCES['localftp'] = LocalFTP_Fetchers
+    except Exception:
+        warnings.warn("An error occured while loading the local FTP index fetcher, "
                       "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
         pass
 
@@ -366,3 +393,57 @@ def open_etopo1(box, res='l'):
     da.attrs['Data source'] = 'https://maps.ngdc.noaa.gov/viewers/wcs-client/'
     da.attrs['URI'] = thisurl
     return da
+
+#
+# From xarrayutils : https://github.com/jbusecke/xarrayutils/blob/master/xarrayutils/vertical_coordinates.py
+# Direct integration of those 2 functions to minimize dependencies and possibility of tuning them to our needs
+#
+
+
+def linear_interpolation_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped"):
+
+    # interpolation called in xarray ufunc
+    def _regular_interp(x, y, target_values):
+        # remove all nans from input x and y
+        idx = np.logical_or(np.isnan(x), np.isnan(y))
+        x = x[~idx]
+        y = y[~idx]
+        # replace nans in target_values with out of bound Values (just in case)
+        target_values = np.where(
+            ~np.isnan(target_values), target_values, np.nanmax(x) + 1)
+        # Interpolate with fill value parameter to extend min pressure toward 0
+        interpolated = interpolate.interp1d(
+            x, y, bounds_error=False, fill_value=(y[0], y[-1]))(target_values)
+        return interpolated
+
+    # infer dim from input
+    if z_dim is None:
+        if len(z.dims) != 1:
+            raise RuntimeError(
+                "if z_dim is not specified,x must be a 1D array.")
+        dim = z.dims[0]
+    else:
+        dim = z_dim
+
+    # if dataset is passed drop all data_vars that dont contain dim
+    if isinstance(data, xr.Dataset):
+        raise ValueError("Dataset input is not supported yet")
+        # TODO: for a datset input just apply the function for each appropriate array
+
+    kwargs = dict(
+        input_core_dims=[[dim], [dim], [z_regridded_dim]],
+        output_core_dims=[[output_dim]],
+        vectorize=True,
+        dask="parallelized",
+        output_dtypes=[data.dtype],
+        output_sizes={output_dim: len(z_regridded[z_regridded_dim])},
+    )
+    remapped = xr.apply_ufunc(
+        _regular_interp, z, data, z_regridded, **kwargs)
+
+    remapped.coords[output_dim] = z_regridded.rename(
+        {z_regridded_dim: output_dim}
+    ).coords[output_dim]
+    return remapped
+
+####################

@@ -17,3 +17,7 @@ class ArgoDataFetcherProto(ABC):
     @abstractmethod
     def filter_variables(self):
         pass
+
+    def clear_cache(self):
+        """ Remove cache files and entries from resources open with this fetcher """
+        return self.fs.clear_cache()

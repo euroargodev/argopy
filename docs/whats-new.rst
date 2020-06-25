@@ -3,12 +3,20 @@
 What's New
 ==========
 
-v0.1.4 (XX June 2020)
+v0.1.4 (24 June 2020)
 ---------------------
 
 **Features and front-end API**
 
-- Insert in a Jupyter notebook cell the `Euro-Argo fleet monitoring <https://fleetmonitoring.euro-argo.eu>`_ dashboard page, possibly for a specific float (:pr:`20`).
+- Standard levels interpolation method available in **standard** user mode (:pr:`23`). By `K. Balem <http://www.github.com/quai20>`_.
+
+.. code-block:: python
+
+    ds = ArgoDataFetcher().region([-85,-45,10.,20.,0,1000.,'2012-01','2012-12']).to_xarray()
+    ds = ds.argo.point2profile()
+    ds_interp = ds.argo.interp_std_levels(np.arange(0,900,50))
+
+- Insert in a Jupyter notebook cell the `Euro-Argo fleet monitoring <https://fleetmonitoring.euro-argo.eu>`_ dashboard page, possibly for a specific float (:pr:`20`). By `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 
@@ -17,9 +25,11 @@ v0.1.4 (XX June 2020)
     # or
     argopy.dashboard(wmo=6902746)
 
-- The ``localftp`` index fetcher has now a ``profile`` access point.
+- The ``localftp`` index and data fetcher now have the ``region`` and ``profile`` access points available (:pr:`25`). By `G. Maze <http://www.github.com/gmaze>`_.
 
 **Breaking changes with previous versions**
+
+[None]
 
 **Internals**
 
