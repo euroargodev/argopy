@@ -2,8 +2,9 @@
 # -*coding: UTF-8 -*-
 #
 # Argo data fetcher for Argovis.
-# Code borrows heavily from API gathered at https://github.com/earthcube2020/ec20_tucker_etal/blob/master/EC2020_argovis_python_api.ipynb
-# 
+# Code borrows heavily from API gathered at:
+# https://github.com/earthcube2020/ec20_tucker_etal/blob/master/EC2020_argovis_python_api.ipynb
+#
 # This is comprised of functions used to query Argovis api
 # query functions either return dictionary objects or error messages.
 #
@@ -58,7 +59,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
 
             Parameters
             ----------
-            ds: 'phy' or 'bgc' # @tylertucker202: Do you provide BGC data as well ?? what is the way to select which data (core or bgc) to retrieve ?
+            ds: 'phy'
             cache : False
             cachedir : None
         """
@@ -67,19 +68,19 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
         self.server = 'https://argovis.colorado.edu'
         self.init(**kwargs)
-        self.key_map = { \
-            'date': 'TIME', \
-            'date_qc': 'TIME_QC', \
-            'lat': 'LATITUDE', \
-            'lon': 'LONGITUDE', \
-            'cycle_number': 'CYCLE_NUMBER', \
-            'DATA_MODE': 'DATA_MODE', \
-            'DIRECTION': 'DIRECTION', \
-            'platform_number': 'PLATFORM_NUMBER', \
-            'position_qc': 'POSITION_QC', \
-            'pres': 'PRES', \
-            'temp': 'TEMP', \
-            'psal': 'PSAL', \
+        self.key_map = {
+            'date': 'TIME',
+            'date_qc': 'TIME_QC',
+            'lat': 'LATITUDE',
+            'lon': 'LONGITUDE',
+            'cycle_number': 'CYCLE_NUMBER',
+            'DATA_MODE': 'DATA_MODE',
+            'DIRECTION': 'DIRECTION',
+            'platform_number': 'PLATFORM_NUMBER',
+            'position_qc': 'POSITION_QC',
+            'pres': 'PRES',
+            'temp': 'TEMP',
+            'psal': 'PSAL',
             'index': 'N_POINTS'
         }
 
@@ -87,10 +88,6 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         summary = ["<datafetcher '%s'>" % self.definition]
         summary.append("Domain: %s" % self.cname())
         return '\n'.join(summary)
-
-    # This one will be delegated to the httpstore later
-    def open_json(self, url):
-        return self.fs.open(url)
 
     def json2dataframe(self, profiles):
         """ convert json data to Pandas DataFrame """
@@ -102,7 +99,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         # Transform
         rows = []
         for profile in data:
-            keys = [x for x in profile.keys() if not x in ['measurements', 'bgcMeas']]
+            keys = [x for x in profile.keys() if x not in ['measurements', 'bgcMeas']]
             meta_row = dict((key, profile[key]) for key in keys)
             for row in profile['measurements']:
                 row.update(meta_row)
@@ -200,9 +197,7 @@ class Fetch_wmo(ArgovisDataFetcher):
         """ Download and return data as xarray Datasets """
         results = []
         for url in self.url:
-            with self.open_json(url) as of:
-                js = json.load(of)
-            #             js = self.open_json(url)
+            js = self.fs.open_json(url)
             if isinstance(js, str):
                 continue
             ds = self.to_dataframe(js).to_xarray()
@@ -211,7 +206,7 @@ class Fetch_wmo(ArgovisDataFetcher):
         if len(results) > 0:
             ds = xr.concat(results, dim='N_POINTS', data_vars='all', coords='all', compat='override')
             ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS']))  # Re-index to avoid duplicate values
-            ds = ds.sortby('TIME') # should already be sorted by date in decending order
+            ds = ds.sortby('TIME')  # should already be sorted by date in decending order
 
             # Set coordinates:
             # ds = ds.set_coords('N_POINTS')
