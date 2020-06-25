@@ -89,20 +89,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         summary.append("Domain: %s" % self.cname())
         return '\n'.join(summary)
 
-    def _format(self, x, typ):
-        """ string formating helper """
-        if typ == 'lon':
-            if x < 0:
-                x = 360. + x
-            return ("%05d") % (x * 100.)
-        if typ == 'lat':
-            return ("%05d") % (x * 100.)
-        if typ == 'prs':
-            return ("%05d") % (np.abs(x) * 10.)
-        if typ == 'tim':
-            return pd.to_datetime(x).strftime('%Y%m%d')
-        return str(x)
-
     def _add_history(self, this, txt):
         if 'history' in this.attrs:
             this.attrs['history'] += "; %s" % txt
@@ -451,7 +437,7 @@ class Fetch_box(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: an ocean rectangle
     """
 
-    def init(self, box: list = [-180, 180, -90, 90, 0, 6000, '1900-01-01', '2100-12-31']):
+    def init(self, box: list ):
         """ Create Argo data loader
 
             Parameters
@@ -460,11 +446,13 @@ class Fetch_box(ErddapArgoDataFetcher):
                 The box domain to load all Argo data for:
                 box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
-        if len(box) == 6:
-            # Use all time line:
-            box.append('1900-01-01')
-            box.append('2100-12-31')
-        elif len(box) != 8:
+        # if len(box) == 6:
+            # Select the last months of data:
+            # end = pd.to_datetime('now')
+            # start = end - pd.DateOffset(months=1)
+            # box.append(start.strftime('%Y-%m-%d'))
+            # box.append(end.strftime('%Y-%m-%d'))
+        if len(box) not in [6, 8]:
             raise ValueError('Box must 6 or 8 length')
         self.BOX = box
 
@@ -483,15 +471,20 @@ class Fetch_box(ErddapArgoDataFetcher):
         self.erddap.constraints.update({'latitude<=': self.BOX[3]})
         self.erddap.constraints.update({'pres>=': self.BOX[4]})
         self.erddap.constraints.update({'pres<=': self.BOX[5]})
-        self.erddap.constraints.update({'time>=': self.BOX[6]})
-        self.erddap.constraints.update({'time<=': self.BOX[7]})
+        if len(self.BOX) == 8:
+            self.erddap.constraints.update({'time>=': self.BOX[6]})
+            self.erddap.constraints.update({'time<=': self.BOX[7]})
         return None
 
     def cname(self):
         """ Return a unique string defining the constraints """
         BOX = self.BOX
-        boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; z=%0.1f/%0.1f; t=%s/%s]") % \
+        if len(BOX) == 8:
+            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; z=%0.1f/%0.1f; t=%s/%s]") % \
                   (BOX[0], BOX[1], BOX[2], BOX[3], BOX[4], BOX[5],
                    self._format(BOX[6], 'tim'), self._format(BOX[7], 'tim'))
+        else:
+            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; z=%0.1f/%0.1f]") % \
+                  (BOX[0], BOX[1], BOX[2], BOX[3], BOX[4], BOX[5])
         boxname = self.dataset_id + "_" + boxname
         return boxname

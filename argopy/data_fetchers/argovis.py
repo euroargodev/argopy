@@ -86,20 +86,6 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             'index': 'N_POINTS'
         }
 
-    def _format(self, x, typ):
-        """ string formating helper """
-        if typ == 'lon':
-            if x < 0:
-                x = 360. + x
-            return ("%05d") % (x * 100.)
-        if typ == 'lat':
-            return ("%05d") % (x * 100.)
-        if typ == 'prs':
-            return ("%05d") % (np.abs(x) * 10.)
-        if typ == 'tim':
-            return pd.to_datetime(x).strftime('%Y%m%d')
-        return str(x)
-
     def __repr__(self):
         summary = ["<datafetcher '%s'>" % self.definition]
         summary.append("Domain: %s" % self.cname())
@@ -268,7 +254,7 @@ class Fetch_wmo(ArgovisDataFetcher):
 
 class Fetch_box(ArgovisDataFetcher):
 
-    def init(self, box: list = [-180, 180, -90, 90, 0, 6000, '1900-01-01', '2100-12-31']):
+    def init(self, box: list):
         """ Create Argo data loader
 
             Parameters
@@ -278,9 +264,11 @@ class Fetch_box(ArgovisDataFetcher):
                 box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
         if len(box) == 6:
-            # Use all time line:
-            box.append('1900-01-01')
-            box.append('2100-12-31')
+            # Select the last months of data:
+            end = pd.to_datetime('now')
+            start = end - pd.DateOffset(months=1)
+            box.append(start.strftime('%Y-%m-%d'))
+            box.append(end.strftime('%Y-%m-%d'))
         elif len(box) != 8:
             raise ValueError('Box must 6 or 8 length')
         self.BOX = box
@@ -294,8 +282,8 @@ class Fetch_box(ArgovisDataFetcher):
         """ Return a unique string defining the constraints """
         BOX = self.BOX
         boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; z=%0.1f/%0.1f; t=%s/%s]") % \
-                  (BOX[0], BOX[1], BOX[2], BOX[3], BOX[4], BOX[5],
-                   self._format(BOX[6], 'tim'), self._format(BOX[7], 'tim'))
+                      (BOX[0], BOX[1], BOX[2], BOX[3], BOX[4], BOX[5],
+                       self._format(BOX[6], 'tim'), self._format(BOX[7], 'tim'))
         boxname = self.dataset_id + "_" + boxname
         return boxname
 
