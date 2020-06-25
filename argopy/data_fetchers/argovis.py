@@ -180,9 +180,9 @@ class Fetch_wmo(ArgovisDataFetcher):
         if isinstance(self.CYC, (np.ndarray)) and self.CYC.nbytes > 0:
             profIds = [str(wmo) + '_' + str(cyc) for wmo in self.WMO for cyc in self.CYC.tolist()]
             urls.append((self.server + '/catalog/mprofiles/?ids={}').format(profIds).replace(' ', ''))
-        elif self.dataset_id == 'bgc' and isinstance(self.CYC, (np.ndarray)) and self.CYC.nbytes > 0:
-            profIds = [str(wmo) + '_' + str(cyc) for wmo in self.WMO for cyc in self.CYC.tolist()]
-            urls.append((self.server + '/catalog/profiles/{}').format(profile_number))
+        # elif self.dataset_id == 'bgc' and isinstance(self.CYC, (np.ndarray)) and self.CYC.nbytes > 0:
+        #     profIds = [str(wmo) + '_' + str(cyc) for wmo in self.WMO for cyc in self.CYC.tolist()]
+        #     urls.append((self.server + '/catalog/profiles/{}').format(self.CYC))
         else:
             for wmo in self.WMO:
                 urls.append((self.server + '/catalog/platforms/{}').format(str(wmo)))
@@ -194,7 +194,6 @@ class Fetch_wmo(ArgovisDataFetcher):
         df = df.rename(columns=self.key_map)
         df = df[[value for value in self.key_map.values()]]
         df = df.set_index(['N_POINTS'])
-        #         df = df.set_index(['N_POINTS', 'TIME', 'LATITUDE', 'LONGITUDE'])
         return df
 
     def to_xarray(self):
@@ -207,7 +206,6 @@ class Fetch_wmo(ArgovisDataFetcher):
             if isinstance(js, str):
                 continue
             ds = self.to_dataframe(js).to_xarray()
-            # @tylertucker202: This is where we would rename variables, cast data types, etc to ensure upper level compatibility with argopy fetcher facade.
             results.append(ds)
         results = [r for r in results if r is not None]  # Only keep non-empty results
         if len(results) > 0:
