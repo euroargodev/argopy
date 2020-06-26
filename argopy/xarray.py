@@ -595,12 +595,7 @@ class ArgoAccessor:
         Returns
         -------
         :class:`xarray.Dataset`           
-        """        
-
-        if self._type != 'profile':
-            raise InvalidDatasetStructure(
-                "Method only available for a collection of profiles")
-
+        """
         if(self._mode != 'standard'):
            raise InvalidDatasetStructure(
                "Method only available for the standard mode yet")
@@ -613,7 +608,12 @@ class ArgoAccessor:
         else:
             raise ValueError('Standard levels must be a list or a numpy array of positive and sorted values')
 
-        ds = self._obj
+        if self._type == 'profile':
+            ds = self._obj.profile2point()
+            # raise InvalidDatasetStructure(
+            #     "Method only available for a collection of profiles")
+        else:
+            ds = self._obj
 
         # Selecting profiles that have a max(pressure) > max(std_lev) to avoid extrapolation in that direction
         # For levels < min(pressure), first level values of the profile are extended to surface.     
