@@ -13,6 +13,7 @@ This is not intended to be used directly, only by the facade at fetchers.py
 import pandas as pd
 import numpy as np
 import copy
+import warnings
 
 from abc import ABC, abstractmethod
 import getpass
@@ -22,6 +23,7 @@ from argopy.utilities import load_dict, mapp_dict
 from argopy.options import OPTIONS
 from argopy.utilities import list_standard_variables
 from argopy.stores import httpstore
+from argopy.plotters import open_dashboard
 
 from erddapy import ERDDAP
 from erddapy.utilities import parse_dates, quote_string_constraints
@@ -425,6 +427,12 @@ class Fetch_wmo(ErddapArgoDataFetcher):
                 listname = "_".join(listname)
         listname = self.dataset_id + "_" + listname
         return listname
+
+    def dashboard(self, **kw):
+        if len(self.WMO) == 1:
+            return open_dashboard(wmo=self.WMO[0], **kw)
+        else:
+            warnings.warn("Plot dashboard only available for one float frequest")
 
 
 class Fetch_box(ErddapArgoDataFetcher):

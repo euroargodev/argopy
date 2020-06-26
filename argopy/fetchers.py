@@ -127,6 +127,12 @@ class ArgoDataFetcher(object):
             raise InvalidFetcherAccessPoint("'%s' is not a valid access point" % key)
         pass
 
+    def dashboard(self, **kw):
+        try:
+            return self.fetcher.dashboard(**kw)
+        except Exception as e:
+            warnings.warn("dashboard not avaible for this fetcher access point (%s/%s)" % (self._src, self._AccessPoint))
+
     def float(self, wmo, **kw):
         """ Fetch data from a float """
         if "CYC" in kw or "cyc" in kw:

@@ -44,6 +44,7 @@ from argopy.errors import NetCDF4FileNotFoundError
 from argopy.utilities import list_standard_variables, load_dict, mapp_dict
 from argopy.options import OPTIONS
 from argopy.stores import filestore, indexstore, indexfilter_wmo, indexfilter_box
+from argopy.plotters import open_dashboard
 
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']
@@ -426,6 +427,12 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
                     for cyc in self.CYC:
                         self._list_of_argo_files.append(self._absfilepath(wmo, cyc, errors=errors))
         return self
+
+    def dashboard(self, **kw):
+        if len(self.WMO) == 1:
+            return open_dashboard(wmo=self.WMO[0], **kw)
+        else:
+            warnings.warn("Plot dashboard only available for one float frequest")
 
 
 class Fetch_box(LocalFTPArgoDataFetcher):

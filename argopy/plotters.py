@@ -69,6 +69,8 @@ def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type
             else:
                 url = "https://fleetmonitoring.euro-argo.eu/float/{}".format(str(wmo))
 
+        # return open_dashboard(url=("https://co-insitucharts.ifremer.fr/platform/{}/charts").format(str(self.WMO[0])), **kw)
+
         # # Note that argovis doesn't allow X-Frame insertion !
         # elif type == 'argovis':
         #     if cyc is None:
