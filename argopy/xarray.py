@@ -609,9 +609,9 @@ class ArgoAccessor:
             raise ValueError('Standard levels must be a list or a numpy array of positive and sorted values')
 
         if self._type == 'profile':
-            ds = self._obj.profile2point()
-            # raise InvalidDatasetStructure(
-            #     "Method only available for a collection of profiles")
+            # ds = self._obj.profile2point()
+            raise InvalidDatasetStructure(
+                "Method only available for a collection of profiles")
         else:
             ds = self._obj
 
