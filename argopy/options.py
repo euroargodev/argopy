@@ -26,7 +26,7 @@ OPTIONS = {DATA_SOURCE: 'erddap',
            USER_LEVEL: 'standard'}
 
 # Define the list of possible values
-_DATA_SOURCE_LIST = frozenset(["erddap", "localftp"])
+_DATA_SOURCE_LIST = frozenset(["erddap", "localftp", "argovis"])
 _DATASET_LIST = frozenset(["phy", "bgc", "ref"])
 _USER_LEVEL_LIST = frozenset(["standard", "expert"])
 

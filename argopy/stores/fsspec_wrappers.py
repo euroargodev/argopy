@@ -231,6 +231,8 @@ class httpstore(argo_store_proto):
                 js = json.load(of, **kwargs)
             self.register(url)
             return js
+        except json.JSONDecodeError as e:
+            raise
         except requests.HTTPError as e:
             self._verbose_exceptions(e)
 

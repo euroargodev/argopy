@@ -77,6 +77,14 @@ def list_available_data_src():
                       "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
         pass
 
+    try:
+        from .data_fetchers import argovis as ArgoVis_Fetchers
+        AVAILABLE_SOURCES['argovis'] = ArgoVis_Fetchers
+    except Exception:
+        warnings.warn("An error occured while loading the ArgoVis data fetcher, "
+                      "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        pass
+
     return AVAILABLE_SOURCES
 
 

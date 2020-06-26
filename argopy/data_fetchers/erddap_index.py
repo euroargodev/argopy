@@ -92,7 +92,7 @@ class ErddapArgoIndexFetcher(ABC):
         if typ == 'prs':
             return ("%05d") % (np.abs(x)*10.)
         if typ == 'tim':
-            return pd.to_datetime(x).strftime('%Y%m%d')
+            return pd.to_datetime(x).strftime('%Y-%m-%d')
         return str(x)
 
     def _init_erddapy(self):

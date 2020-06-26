@@ -221,8 +221,7 @@ class ArgoDataFetcher(object):
         """  Fetch and return data as pandas.Dataframe """
         if self._AccessPoint not in self.valid_access_points:
             raise InvalidFetcherAccessPoint(" Initialize an access point (%s) first." % ",".join(self.Fetchers.keys()))
-        xds = self.to_xarray(**kwargs)
-        return xds.to_dataframe()
+        return self.to_xarray(**kwargs).to_dataframe()
 
     def clear_cache(self):
         """ Clear fetcher cached data """
