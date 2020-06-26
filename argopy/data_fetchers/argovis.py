@@ -16,6 +16,7 @@ import json
 import getpass
 from .proto import ArgoDataFetcherProto
 from abc import abstractmethod
+import warnings
 
 from argopy.stores import httpstore
 from argopy.options import OPTIONS
