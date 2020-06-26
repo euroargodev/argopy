@@ -15,8 +15,8 @@ v0.1.5 (XX July 2020)
     from argopy import DataFetcher as ArgoDataFetcher
     loader = ArgoDataFetcher(src='argovis')
     loader.float(6902746).to_xarray()
-    loader.profile(6902746).to_xarray()
-    loader.region(6902746).to_xarray()
+    loader.profile(6902746, 12).to_xarray()
+    loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2012-02']).to_xarray()
 
 - **argopy** can now be installed with conda (:pr:`29`, :pr:`31`, :pr:`32`). By `F. Fernandes <https://github.com/ocefpaf>`_.
 
