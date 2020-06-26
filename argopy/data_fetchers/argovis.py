@@ -91,6 +91,13 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         summary.append("Domain: %s" % self.cname())
         return '\n'.join(summary)
 
+    def _add_history(self, this, txt):
+        if 'history' in this.attrs:
+            this.attrs['history'] += "; %s" % txt
+        else:
+            this.attrs['history'] = txt
+        return this
+
     def json2dataframe(self, profiles):
         """ convert json data to Pandas DataFrame """
         # Make sure we deal with a list
@@ -154,7 +161,8 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         # Cast data types and add variable attributes (not available in the csv download):
         ds = ds.argo.cast_types()
 
-        # Add useful attributes to the dataset:
+        # Remove argovis file attributes and replace them with argopy ones:
+        ds.attrs = {}
         if self.dataset_id == 'phy':
             ds.attrs['DATA_ID'] = 'ARGO'
         elif self.dataset_id == 'ref':

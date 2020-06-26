@@ -89,13 +89,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         summary.append("Domain: %s" % self.cname())
         return '\n'.join(summary)
 
-    def _add_history(self, this, txt):
-        if 'history' in this.attrs:
-            this.attrs['history'] += "; %s" % txt
-        else:
-            this.attrs['history'] = txt
-        return this
-
     def _add_attributes(self, this):
         """ Add variables attributes not return by erddap requests (csv)
 
@@ -341,7 +334,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         # More convention:
         #         ds = ds.rename({'pres': 'pressure'})
 
-        # Add useful attributes to the dataset:
+        # Remove erddap file attributes and replace them with argopy ones:
+        ds.attrs = {}
         if self.dataset_id == 'phy':
             ds.attrs['DATA_ID'] = 'ARGO'
         elif self.dataset_id == 'ref':
