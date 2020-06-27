@@ -257,8 +257,8 @@ def plot_profilerType(idx):
     if not with_seaborn:
         raise BaseException("This function requires seaborn")
     fig = plt.figure(figsize=(10, 5))
-    mind = idx.groupby('profiler_type').size().sort_values(ascending=False).index
-    sns.countplot(y='profiler_type', data=idx, order=mind)
+    mind = idx.groupby('profiler').size().sort_values(ascending=False).index
+    sns.countplot(y='profiler', data=idx, order=mind)
     plt.xlabel('number of profiles')
     plt.ylabel('')
     return fig
