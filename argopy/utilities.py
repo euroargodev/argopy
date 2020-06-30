@@ -28,6 +28,7 @@ import shutil
 
 from argopy.options import OPTIONS
 from argopy.stores import httpstore
+from argopy.errors import FtpPathError
 
 path2pkl = pkg_resources.resource_filename('argopy', 'assets/')
 
@@ -187,6 +188,63 @@ def list_multiprofile_file_variables():
              'TEMP_QC',
              'VERTICAL_SAMPLING_SCHEME',
              'WMO_INST_TYPE']
+
+
+def check_localftp(path, errors: str = "ignore"):
+    """ Check if the path has the expected GDAC ftp structure
+
+        Check if the path is structured like:
+        .
+        └── dac
+            ├── aoml
+            ├── ...
+            ├── coriolis
+            ├── ...
+            ├── meds
+            └── nmdis
+
+        Parameters
+        ----------
+        path: str
+            Path name to check
+        errors: str
+            "ignore" or "raise" (or "warn"
+
+        Returms
+        -------
+        checked: boolean
+            True if at least one DAC folder is found under path/dac/<dac_name>
+            False otherwise
+    """
+    dacs = ['aoml', 'bodc', 'coriolis', 'csio', 'csiro', 'incois', 'jma', 'kma', 'kordi', 'meds', 'nmdis']
+
+    # Case 1:
+    check1 = os.path.isdir(path) and os.path.isdir(os.path.join(path, "dac")) \
+             and np.any([os.path.isdir(os.path.join(path, "dac", dac)) for dac in dacs])
+
+    if check1:
+        return True
+    elif errors == 'raise':
+        # This was possible up to v0.1.3:
+        check2 = os.path.isdir(path) and np.any([os.path.isdir(os.path.join(path, dac)) for dac in dacs])
+        if check2:
+            raise FtpPathError("This path is no longer GDAC compliant for argopy.\n"
+                          "Please make sure you point toward a path with a 'dac' folder:\n%s" % path)
+        else:
+            raise FtpPathError("This path is not GDAC compliant:\n%s" % path)
+
+    elif errors == 'warn':
+        # This was possible up to v0.1.3:
+        check2 = os.path.isdir(path) and np.any([os.path.isdir(os.path.join(path, dac)) for dac in dacs])
+        if check2:
+            warnings.warn("This path is no longer GDAC compliant for argopy. This will raise an error in the future.\n"
+                          "Please make sure you point toward a path with a 'dac' folder:\n%s" % path)
+            return False
+        else:
+            warnings.warn("This path is not GDAC compliant:\n%s" % path)
+            return False
+    else:
+        return False
 
 
 def get_sys_info():
@@ -395,8 +453,8 @@ def open_etopo1(box, res='l'):
     return da
 
 #
-# From xarrayutils : https://github.com/jbusecke/xarrayutils/blob/master/xarrayutils/vertical_coordinates.py
-# Direct integration of those 2 functions to minimize dependencies and possibility of tuning them to our needs
+#  From xarrayutils : https://github.com/jbusecke/xarrayutils/blob/master/xarrayutils/vertical_coordinates.py
+#  Direct integration of those 2 functions to minimize dependencies and possibility of tuning them to our needs
 #
 
 

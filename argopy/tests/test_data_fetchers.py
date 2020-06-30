@@ -21,7 +21,8 @@ from unittest import TestCase
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
-from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, ErddapServerError, CacheFileNotFound, FileSystemHasNoCache
+from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, ErddapServerError, \
+    CacheFileNotFound, FileSystemHasNoCache, FtpPathError
 
 from argopy.utilities import list_available_data_src, isconnected, erddap_ds_exists
 AVAILABLE_SOURCES = list_available_data_src()
@@ -351,6 +352,15 @@ class LocalFTP(TestCase):
             loader.to_xarray()
             with pytest.raises(FileSystemHasNoCache):
                 loader.fetcher.cachepath
+
+    def test_invalidFTPpath(self):
+        with pytest.raises(ValueError):
+            with argopy.set_options(local_ftp="dummy"):
+                ArgoDataFetcher(src=self.src).profile(2901623, 12)
+
+        with pytest.raises(FtpPathError):
+            with argopy.set_options(local_ftp = os.path.sep.join([self.local_ftp, "dac"]) ):
+                ArgoDataFetcher(src=self.src).profile(2901623, 12)
 
     def __testthis_profile(self, dataset):
         with argopy.set_options(local_ftp=self.local_ftp):
