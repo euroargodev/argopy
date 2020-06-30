@@ -6,7 +6,7 @@
 
       ```git tag -a v0.X.Y -m 'v0.X.Y'```
 
-1. Psuh it online:
+1. Push it online:
 
       ``` git push origin v0.X.Y```
 
