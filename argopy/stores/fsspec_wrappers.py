@@ -35,7 +35,7 @@ class argo_store_proto(ABC):  # Should this class inherits from fsspec.spec.Abst
         else:
             self.fs = fsspec.filesystem("filecache",
                                         target_protocol=self.protocol,
-                                        target_options={'simple_links': True},
+                                        target_options={'simple_links': True, "block_size": 0},
                                         cache_storage=self.cachedir,
                                         expiry_time=86400, cache_check=10, **kw)
             # We use a refresh rate for cache of 1 day,
@@ -280,7 +280,7 @@ class httpstore(argo_store_proto):
                        concat_dim='row',
                        max_connections = 100,
                        *args, **kwargs):
-        """ Return a xarray.dataset from merging of multiple urls, or verbose errors
+        """ Return a xarray.dataset from concatenation of multiple urls
 
             Parameters
             ----------
@@ -310,6 +310,7 @@ class httpstore(argo_store_proto):
             return ds
         else:
             raise DataNotFound()
+
 
 class memorystore(filestore):
     # Note that this inherits from filestore, not argo_store_proto

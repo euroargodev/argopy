@@ -77,7 +77,10 @@ target/
 cache
 *.nc
 .idea
-local_work
+local_work/
+cache
+tmp*/
+dask-worker-space
 
 # pyenv
 .python-version

@@ -62,7 +62,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def urls(self, response=None):
-        """ Return a list of URLs used to download data in chunks """
+        """ Return a list of URLs to download data in chunks """
         pass
 
     ###
@@ -455,6 +455,12 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         listname = self.dataset_id + "_" + listname
         return listname
 
+    @property
+    def urls(self):
+        urls = []
+        for wmo in self.WMO:
+            urls.append(Fetch_wmo(WMO=wmo, CYC=self.CYC, ds=self.dataset_id).url)
+        return urls
 
 class Fetch_box(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: an ocean rectangle
