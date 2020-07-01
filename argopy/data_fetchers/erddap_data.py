@@ -80,6 +80,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                  parallel: bool = False,
                  chunks: str = 'auto',
                  box_maxsize: list = [10, 10, 100],
+                 parallel_method: str = 'thread',
                  **kwargs):
         """ Instantiate an ERDDAP Argo data loader
 
@@ -96,9 +97,12 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         self.definition = 'Ifremer erddap Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
         self.server = api_server
+
         self.parallel = parallel
+        self.parallel_method = parallel_method
         self.chunks = chunks
         self.box_maxsize = box_maxsize
+
         self.init(**kwargs)
         self._init_erddapy()
 
@@ -332,7 +336,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         if not self.parallel:
             ds = self.fs.open_dataset(self.url)
         else:
-            ds = self.fs.open_mfdataset(self.urls)
+            ds = self.fs.open_mfdataset(self.urls, method=self.parallel_method)
 
         ds = ds.rename({'row': 'N_POINTS'})
 

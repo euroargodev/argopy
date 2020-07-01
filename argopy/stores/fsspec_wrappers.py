@@ -9,7 +9,10 @@ import pickle
 import json
 import tempfile
 from IPython.core.display import display, HTML
+
 import concurrent.futures
+from tqdm import tqdm
+import distributed
 
 from argopy.options import OPTIONS
 from argopy.errors import ErddapServerError, FileSystemHasNoCache, CacheFileNotFound, DataNotFound
@@ -281,8 +284,11 @@ class httpstore(argo_store_proto):
                        urls,
                        concat_dim='row',
                        max_connections = 100,
+                       method: str = 'process',
                        *args, **kwargs):
         """ Return a xarray.dataset from concatenation of multiple urls
+
+            Use a Threads Pool
 
             Parameters
             ----------
@@ -297,16 +303,32 @@ class httpstore(argo_store_proto):
             :class:`xarray.Dataset`
         """
         results = []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=max_connections) as executor:
-            future_to_url = (executor.submit(self.open_dataset, url) for url in urls)
-            for future in concurrent.futures.as_completed(future_to_url):
-                data = None
-                try:
-                    data = future.result()
-                except Exception:
-                    pass
-                finally:
-                    results.append(data)
+        if method in ['thread', 'process']:
+            if method == 'thread':
+                ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_connections)
+            else:
+                ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor()
+
+            with ConcurrentExecutor as executor:
+                # future_to_url = {executor.submit(self.open_dataset, url): url for url in urls}
+                future_to_url = (executor.submit(self.open_dataset, url) for url in urls)
+                # future_to_url = list(tqdm(executor.map(self.open_dataset, urls), total=len(urls)))
+                for future in tqdm(concurrent.futures.as_completed(future_to_url), total=len(urls)):
+                    data = None
+                    # url = future_to_url[future]
+                    try:
+                        data = future.result()
+                    except Exception as e:
+                        pass
+                    finally:
+                        results.append(data)
+
+        elif type(method) == distributed.client.Client:
+            # Use dask client:
+            futures = method.map(self.open_dataset, urls)
+            results = method.gather(futures)
+
+        # Post-process results
         results = [r for r in results if r is not None]  # Only keep non-empty results
         if len(results) > 0:
             ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
