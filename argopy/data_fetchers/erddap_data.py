@@ -78,7 +78,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                  cache: bool = False,
                  cachedir: str = "",
                  parallel: bool = False,
-                 chunks: str = 'auto'
+                 chunks: str = 'auto',
                  **kwargs):
         """ Instantiate an ERDDAP Argo data loader
 
@@ -563,7 +563,12 @@ class Fetch_box(ErddapArgoDataFetcher):
                         box_list.append(bxyz)
             return box_list
 
-        boxes = split_this_box(self.BOX, nx=2, ny=2, nz=2)
+        default_chunks = {'x': 2, 'y': 2, 'z': 2}
+        if self.chunks == 'auto':
+            chunks = default_chunks
+        else:
+            chunks = {**default_chunks, **self.chunks}
+        boxes = split_this_box(self.BOX, nx=chunks['x'], ny=chunks['y'], nz=chunks['z'])
         urls = []
         for box in boxes:
             urls.append(Fetch_box(box=box, ds=self.dataset_id).url)
