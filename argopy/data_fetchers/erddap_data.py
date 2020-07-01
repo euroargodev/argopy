@@ -79,6 +79,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                  cachedir: str = "",
                  parallel: bool = False,
                  chunks: str = 'auto',
+                 box_maxsize: list = [10, 10, 100],
                  **kwargs):
         """ Instantiate an ERDDAP Argo data loader
 
@@ -97,6 +98,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         self.server = api_server
         self.parallel = parallel
         self.chunks = chunks
+        self.box_maxsize = box_maxsize
         self.init(**kwargs)
         self._init_erddapy()
 
@@ -462,7 +464,7 @@ class Fetch_box(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: an ocean rectangle
     """
 
-    def init(self, box: list ):
+    def init(self, box: list):
         """ Create Argo data loader
 
             Parameters
@@ -515,7 +517,7 @@ class Fetch_box(ErddapArgoDataFetcher):
         return boxname
 
     @property
-    def urls(self, response=None):
+    def urls(self):
         """ Return a list of URLs used to download data in chunks """
 
         def split_box(large_box, n=1, d='x'):
@@ -527,7 +529,7 @@ class Fetch_box(ErddapArgoDataFetcher):
             if d == 'z':
                 i_left, i_right = 4, 5
             if n == 1:
-                return large_box
+                return [large_box]
             else:
                 n = n + 1
             boxes = []
@@ -563,12 +565,22 @@ class Fetch_box(ErddapArgoDataFetcher):
                         box_list.append(bxyz)
             return box_list
 
-        default_chunks = {'x': 2, 'y': 2, 'z': 2}
+        default_chunks = {'lat': 1, 'lon': 1, 'dpt': 1}  # No real chunking !
         if self.chunks == 'auto':
             chunks = default_chunks
+            Lx = self.BOX[1] - self.BOX[0]
+            if Lx > self.box_maxsize[0]:  # Max box size in longitude
+                chunks['lon'] = int(np.floor_divide(Lx, self.box_maxsize[0]))
+            Ly = self.BOX[3] - self.BOX[2]
+            if Ly > self.box_maxsize[1]:  # Max box size in latitude
+                chunks['lat'] = int(np.floor_divide(Ly, self.box_maxsize[1]))
+            Lz = self.BOX[5] - self.BOX[4]
+            if Lz > self.box_maxsize[2]:  # Max box size in depth
+                chunks['dpt'] = int(np.floor_divide(Lz, self.box_maxsize[2]))
         else:
             chunks = {**default_chunks, **self.chunks}
-        boxes = split_this_box(self.BOX, nx=chunks['x'], ny=chunks['y'], nz=chunks['z'])
+        self.chunks = chunks
+        boxes = split_this_box(self.BOX, nx=self.chunks['lon'], ny=self.chunks['lat'], nz=self.chunks['dpt'])
         urls = []
         for box in boxes:
             urls.append(Fetch_box(box=box, ds=self.dataset_id).url)

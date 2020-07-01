@@ -300,6 +300,7 @@ class httpstore(argo_store_proto):
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_connections) as executor:
             future_to_url = (executor.submit(self.open_dataset, url) for url in urls)
             for future in concurrent.futures.as_completed(future_to_url):
+                data = None
                 try:
                     data = future.result()
                 except Exception:
