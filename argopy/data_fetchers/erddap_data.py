@@ -13,6 +13,7 @@ This is not intended to be used directly, only by the facade at fetchers.py
 import pandas as pd
 import numpy as np
 import copy
+import warnings
 
 from abc import ABC, abstractmethod
 import getpass
@@ -22,6 +23,7 @@ from argopy.utilities import load_dict, mapp_dict
 from argopy.options import OPTIONS
 from argopy.utilities import list_standard_variables
 from argopy.stores import httpstore
+from argopy.plotters import open_dashboard
 
 from erddapy import ERDDAP
 from erddapy.utilities import parse_dates, quote_string_constraints
@@ -30,6 +32,8 @@ from erddapy.utilities import parse_dates, quote_string_constraints
 access_points = ['wmo' ,'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy', 'ref', 'bgc']  # First is default
+api_server = 'https://www.ifremer.fr/erddap'  # API root url
+api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
 
 
 class ErddapArgoDataFetcher(ArgoDataFetcherProto):
@@ -88,6 +92,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         self.definition = 'Ifremer erddap Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
         self.parallel = parallel
+        self.server = api_server
         self.init(**kwargs)
         self._init_erddapy()
 
@@ -95,27 +100,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         summary = ["<datafetcher '%s'>" % self.definition]
         summary.append("Domain: %s" % self.cname())
         return '\n'.join(summary)
-
-    def _format(self, x, typ):
-        """ string formating helper """
-        if typ == 'lon':
-            if x < 0:
-                x = 360. + x
-            return ("%05d") % (x * 100.)
-        if typ == 'lat':
-            return ("%05d") % (x * 100.)
-        if typ == 'prs':
-            return ("%05d") % (np.abs(x) * 10.)
-        if typ == 'tim':
-            return pd.to_datetime(x).strftime('%Y%m%d')
-        return str(x)
-
-    def _add_history(self, this, txt):
-        if 'history' in this.attrs:
-            this.attrs['history'] += "; %s" % txt
-        else:
-            this.attrs['history'] = txt
-        return this
 
     def _add_attributes(self, this):
         """ Add variables attributes not return by erddap requests (csv)
@@ -194,7 +178,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     def _init_erddapy(self):
         # Init erddapy
         self.erddap = ERDDAP(
-            server='http://www.ifremer.fr/erddap',
+            server=self.server,
             protocol='tabledap'
         )
         self.erddap.response = 'nc'  # This is a major change in v0.4, we used to work with csv files
@@ -364,7 +348,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         # More convention:
         #         ds = ds.rename({'pres': 'pressure'})
 
-        # Add useful attributes to the dataset:
+        # Remove erddap file attributes and replace them with argopy ones:
+        ds.attrs = {}
         if self.dataset_id == 'phy':
             ds.attrs['DATA_ID'] = 'ARGO'
         elif self.dataset_id == 'ref':
@@ -462,11 +447,18 @@ class Fetch_wmo(ErddapArgoDataFetcher):
             urls.append(Fetch_wmo(WMO=wmo, CYC=self.CYC, ds=self.dataset_id).url)
         return urls
 
+    def dashboard(self, **kw):
+        if len(self.WMO) == 1:
+            return open_dashboard(wmo=self.WMO[0], **kw)
+        else:
+            warnings.warn("Plot dashboard only available for one float frequest")
+
+
 class Fetch_box(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: an ocean rectangle
     """
 
-    def init(self, box: list = [-180, 180, -90, 90, 0, 6000, '1900-01-01', '2100-12-31']):
+    def init(self, box: list ):
         """ Create Argo data loader
 
             Parameters
@@ -475,11 +467,13 @@ class Fetch_box(ErddapArgoDataFetcher):
                 The box domain to load all Argo data for:
                 box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
-        if len(box) == 6:
-            # Use all time line:
-            box.append('1900-01-01')
-            box.append('2100-12-31')
-        elif len(box) != 8:
+        # if len(box) == 6:
+            # Select the last months of data:
+            # end = pd.to_datetime('now')
+            # start = end - pd.DateOffset(months=1)
+            # box.append(start.strftime('%Y-%m-%d'))
+            # box.append(end.strftime('%Y-%m-%d'))
+        if len(box) not in [6, 8]:
             raise ValueError('Box must 6 or 8 length')
         self.BOX = box
 
@@ -498,16 +492,21 @@ class Fetch_box(ErddapArgoDataFetcher):
         self.erddap.constraints.update({'latitude<=': self.BOX[3]})
         self.erddap.constraints.update({'pres>=': self.BOX[4]})
         self.erddap.constraints.update({'pres<=': self.BOX[5]})
-        self.erddap.constraints.update({'time>=': self.BOX[6]})
-        self.erddap.constraints.update({'time<=': self.BOX[7]})
+        if len(self.BOX) == 8:
+            self.erddap.constraints.update({'time>=': self.BOX[6]})
+            self.erddap.constraints.update({'time<=': self.BOX[7]})
         return None
 
     def cname(self):
         """ Return a unique string defining the constraints """
         BOX = self.BOX
-        boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; z=%0.1f/%0.1f; t=%s/%s]") % \
+        if len(BOX) == 8:
+            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; z=%0.1f/%0.1f; t=%s/%s]") % \
                   (BOX[0], BOX[1], BOX[2], BOX[3], BOX[4], BOX[5],
                    self._format(BOX[6], 'tim'), self._format(BOX[7], 'tim'))
+        else:
+            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; z=%0.1f/%0.1f]") % \
+                  (BOX[0], BOX[1], BOX[2], BOX[3], BOX[4], BOX[5])
         boxname = self.dataset_id + "_" + boxname
         return boxname
 

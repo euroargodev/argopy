@@ -595,12 +595,7 @@ class ArgoAccessor:
         Returns
         -------
         :class:`xarray.Dataset`           
-        """        
-
-        if self._type != 'profile':
-            raise InvalidDatasetStructure(
-                "Method only available for a collection of profiles")
-
+        """
         if(self._mode != 'standard'):
            raise InvalidDatasetStructure(
                "Method only available for the standard mode yet")
@@ -612,6 +607,10 @@ class ArgoAccessor:
                     'Standard levels must be a list or a numpy array of positive and sorted values')
         else:
             raise ValueError('Standard levels must be a list or a numpy array of positive and sorted values')
+
+        if self._type != 'profile':
+            raise InvalidDatasetStructure(
+                "Method only available for a collection of profiles")
 
         ds = self._obj
 

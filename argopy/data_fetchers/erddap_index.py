@@ -30,6 +30,8 @@ from erddapy.utilities import parse_dates, quote_string_constraints
 access_points = ['wmo', 'box']
 exit_formats = ['xarray', 'dataframe']
 dataset_ids = ['phy', 'ref', 'bgc']  # First is default
+api_server = 'https://www.ifremer.fr/erddap'  # API root url
+api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
 
 
 class ErddapArgoIndexFetcher(ABC):
@@ -70,6 +72,7 @@ class ErddapArgoIndexFetcher(ABC):
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
         self.definition = 'Ifremer erddap Argo index fetcher'
         self.dataset_id = 'index'
+        self.server = api_server
         self.init(**kwargs)
         self._init_erddapy()
 
@@ -92,13 +95,13 @@ class ErddapArgoIndexFetcher(ABC):
         if typ == 'prs':
             return ("%05d") % (np.abs(x)*10.)
         if typ == 'tim':
-            return pd.to_datetime(x).strftime('%Y%m%d')
+            return pd.to_datetime(x).strftime('%Y-%m-%d')
         return str(x)
 
     def _init_erddapy(self):
         # Init erddapy
         self.erddap = ERDDAP(
-            server='http://www.ifremer.fr/erddap',
+            server=self.server,
             protocol='tabledap'
         )
         self.erddap.response = 'csv'

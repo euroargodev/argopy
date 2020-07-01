@@ -58,16 +58,21 @@ def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type
         -------
         IFrame: IPython.lib.display.IFrame
     """
-    if type not in ['ea']:
+    if type not in ['ea', 'eric', 'coriolis']:
         raise InvalidDashboard("Invalid dashboard type")
 
     from IPython.display import IFrame
     if url is None:
-        if type == 'ea':  # Open Euro-Argo dashboard
+        if type == 'ea' or type == 'eric':  # Open Euro-Argo dashboard
             if wmo is None:
                 url = "https://fleetmonitoring.euro-argo.eu"
             else:
                 url = "https://fleetmonitoring.euro-argo.eu/float/{}".format(str(wmo))
+        elif type == 'coriolis': # Open Coriolis dashboard
+            if wmo is not None:
+                url = ("https://co-insitucharts.ifremer.fr/platform/{}/charts").format(str(wmo))
+
+        # return open_dashboard(url=("https://co-insitucharts.ifremer.fr/platform/{}/charts").format(str(self.WMO[0])), **kw)
 
         # # Note that argovis doesn't allow X-Frame insertion !
         # elif type == 'argovis':
@@ -252,8 +257,8 @@ def plot_profilerType(idx):
     if not with_seaborn:
         raise BaseException("This function requires seaborn")
     fig = plt.figure(figsize=(10, 5))
-    mind = idx.groupby('profiler_type').size().sort_values(ascending=False).index
-    sns.countplot(y='profiler_type', data=idx, order=mind)
+    mind = idx.groupby('profiler').size().sort_values(ascending=False).index
+    sns.countplot(y='profiler', data=idx, order=mind)
     plt.xlabel('number of profiles')
     plt.ylabel('')
     return fig

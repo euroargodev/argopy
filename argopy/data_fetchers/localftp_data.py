@@ -41,9 +41,10 @@ import distributed
 
 from .proto import ArgoDataFetcherProto
 from argopy.errors import NetCDF4FileNotFoundError
-from argopy.utilities import list_standard_variables, load_dict, mapp_dict
+from argopy.utilities import list_standard_variables, load_dict, mapp_dict, check_localftp
 from argopy.options import OPTIONS
 from argopy.stores import filestore, indexstore, indexfilter_wmo, indexfilter_box
+from argopy.plotters import open_dashboard
 
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']
@@ -113,6 +114,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         self.definition = 'Local ftp Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
         self.local_ftp = OPTIONS['local_ftp'] if local_ftp == '' else local_ftp
+        check_localftp(self.local_ftp, errors='raise')  # Validate local_ftp
         self.init(**kwargs)
 
     def __repr__(self):
@@ -120,20 +122,6 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         summary.append("FTP: %s" % self.local_ftp)
         summary.append("Domain: %s" % self.cname())
         return '\n'.join(summary)
-
-    def _format(self, x, typ):
-        """ string formating helper """
-        if typ == 'lon':
-            if x < 0:
-                x = 360. + x
-            return ("%05d") % (x * 100.)
-        if typ == 'lat':
-            return ("%05d") % (x * 100.)
-        if typ == 'prs':
-            return ("%05d") % (np.abs(x) * 10.)
-        if typ == 'tim':
-            return pd.to_datetime(x).strftime('%Y%m%d')
-        return str(x)
 
     def _absfilepath(self, wmo: int, cyc: int = None, errors: str = 'raise') -> str:
         """ Return the absolute netcdf file path to load for a given wmo/cyc pair
@@ -441,11 +429,17 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
                         self._list_of_argo_files.append(self._absfilepath(wmo, cyc, errors=errors))
         return self
 
+    def dashboard(self, **kw):
+        if len(self.WMO) == 1:
+            return open_dashboard(wmo=self.WMO[0], **kw)
+        else:
+            warnings.warn("Plot dashboard only available for one float frequest")
+
 
 class Fetch_box(LocalFTPArgoDataFetcher):
     """ Manage access to local ftp Argo data for: a rectangular space/time domain  """
 
-    def init(self, box: list = [-180, 180, -90, 90, 0, 6000, '1900-01-01', '2100-12-31']):
+    def init(self, box: list ):
         """ Create Argo data loader
 
             Parameters
@@ -458,10 +452,19 @@ class Fetch_box(LocalFTPArgoDataFetcher):
         # but we work only with x, y and t.
         if len(box) not in [6, 8]:
             raise ValueError('Box must be 6 or 8 length')
+
         if len(box) == 6:
             self.BOX = [box[ii] for ii in [0, 1, 2, 3]]
         elif len(box) == 8:
             self.BOX = [box[ii] for ii in [0, 1, 2, 3, 6, 7]]
+
+        # if len(box) == 6:
+        #     # Select the last months of data:
+        #     end = pd.to_datetime('now')
+        #     start = end - pd.DateOffset(months=1)
+        #     self.BOX.append(start.strftime('%Y-%m-%d'))
+        #     self.BOX.append(end.strftime('%Y-%m-%d'))
+
         self.fs_index = indexstore(self.cache, self.cachedir, os.path.sep.join([self.local_ftp, "ar_index_global_prof.txt"]))
         # todo we would need to check if the index file is there
 

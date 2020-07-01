@@ -1,4 +1,4 @@
-name: pangeo
+name: euroargodev
 channels:
   - conda-forge
 dependencies:
@@ -33,4 +33,4 @@ dependencies:
     - erddapy
     - gitpython
     - cmocean
-    - argopy
+    - git+http://github.com/euroargodev/argopy.git@master
