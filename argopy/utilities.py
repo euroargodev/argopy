@@ -448,6 +448,23 @@ def erddap_ds_exists(ds="ArgoFloats"):
     return ds in [row[-1] for row in erddap_index['table']['rows']]
 
 
+def save_api_status():
+    colors = {'up': 'green', 'down': 'red'}
+    for api in ['erddap', 'argovis']:
+        label = "API status: %s" % api
+        status = 'down'
+        if isAPIconnected(src=api, data=1):
+            status = 'up'
+        color = colors[status]
+        message = status
+        data = {}
+        data['schemaVersion'] = 1
+        data['label'] = label
+        data['message'] = message
+        data['color'] = color
+        with open(os.path.join(path2pkl, 'argopy_api_status_%s.json' % api), 'w') as outfile:
+            json.dump(data, outfile)
+
 def open_etopo1(box, res='l'):
     """ Download ETOPO for a box
 

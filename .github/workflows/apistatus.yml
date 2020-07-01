@@ -1,0 +1,27 @@
+# This workflow determines the status of web API used by argopy
+
+name: api-status
+
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '*/3 * * * *'
+
+jobs:
+  check:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.8'
+    - name: Install argopy with pip
+      run: |
+        python -m pip install --upgrade pip
+        pip install argopy
+    - name: Check API status
+      run: |
+        python -c 'import argopy; argopy.utilities.save_api_status()'
