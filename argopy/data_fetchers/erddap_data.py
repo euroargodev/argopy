@@ -78,6 +78,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                  cache: bool = False,
                  cachedir: str = "",
                  parallel: bool = False,
+                 chunks: str = 'auto'
                  **kwargs):
         """ Instantiate an ERDDAP Argo data loader
 
@@ -86,13 +87,16 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             ds: 'phy' or 'ref' or 'bgc'
             cache : False
             cachedir : None
+
             parallel : False
+            chunks : 'auto'
         """
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
         self.definition = 'Ifremer erddap Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
-        self.parallel = parallel
         self.server = api_server
+        self.parallel = parallel
+        self.chunks = chunks
         self.init(**kwargs)
         self._init_erddapy()
 
