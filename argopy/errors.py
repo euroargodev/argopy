@@ -5,7 +5,11 @@ A bunch of custom errors used in argopy.
 """
 
 class DataNotFound(ValueError):
-    """ Raise when a data selection return nothing """
+    """ Raise when a data selection returns nothing """
+    pass
+
+class FtpPathError(ValueError):
+    """ Raise when the ftp path is not appropriate """
     pass
 
 

@@ -22,6 +22,7 @@ v0.1.5 (XX July 2020)
 
 **Breaking changes with previous versions**
 
+- The ``local_ftp`` option of the ``localftp`` data source must now points to the folder where the ``dac`` directory is found. This breaks compatibility with rsynced local FTP copy because rsync does not give a ``dac`` folder (e.g. :issue:`33`). A warning is raised to notify users if any of the DAC name is found at the n-1 path level. (:pr:`34`).
 
 **Internals**
 

@@ -1,4 +1,4 @@
-name: pangeo
+name: euroargodev
 channels:
   - conda-forge
 dependencies:

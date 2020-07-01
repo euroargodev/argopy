@@ -41,7 +41,7 @@ import distributed
 
 from .proto import ArgoDataFetcherProto
 from argopy.errors import NetCDF4FileNotFoundError
-from argopy.utilities import list_standard_variables, load_dict, mapp_dict
+from argopy.utilities import list_standard_variables, load_dict, mapp_dict, check_localftp
 from argopy.options import OPTIONS
 from argopy.stores import filestore, indexstore, indexfilter_wmo, indexfilter_box
 
@@ -101,6 +101,7 @@ class LocalFTPArgoIndexFetcher(ABC):
         self.cache = cache
         self.definition = 'Local ftp Argo index fetcher'
         self.local_ftp = OPTIONS['local_ftp'] if local_ftp == '' else local_ftp
+        check_localftp(self.local_ftp, errors='raise')  # Validate local_ftp
         self.index_file = index_file
         self.fs = indexstore(cache, cachedir, os.path.sep.join([self.local_ftp, self.index_file]))
         self.dataset_id = 'index'
