@@ -21,7 +21,7 @@ jobs:
     - name: Install argopy with pip
       run: |
         python -m pip install --upgrade pip
-        pip install argopy
+        pip install git+http://github.com/euroargodev/argopy.git@api-status
     - name: Check API status
       run: |
         python -c 'import argopy; argopy.utilities.save_api_status()'
