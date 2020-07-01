@@ -8,3 +8,4 @@ dask>=2.9
 toolz>=0.8.2
 erddapy>=0.5
 fsspec>=0.7.1
+tqdm>=4.46.0

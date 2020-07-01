@@ -312,7 +312,6 @@ class httpstore(argo_store_proto):
             with ConcurrentExecutor as executor:
                 # future_to_url = {executor.submit(self.open_dataset, url): url for url in urls}
                 future_to_url = (executor.submit(self.open_dataset, url) for url in urls)
-                # future_to_url = list(tqdm(executor.map(self.open_dataset, urls), total=len(urls)))
                 for future in tqdm(concurrent.futures.as_completed(future_to_url), total=len(urls)):
                     data = None
                     # url = future_to_url[future]
@@ -324,7 +323,7 @@ class httpstore(argo_store_proto):
                         results.append(data)
 
         elif type(method) == distributed.client.Client:
-            # Use dask client:
+            # Use a dask client:
             futures = method.map(self.open_dataset, urls)
             results = method.gather(futures)
 
