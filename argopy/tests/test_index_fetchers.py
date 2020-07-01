@@ -17,11 +17,18 @@ from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, \
     FileSystemHasNoCache, CacheFileNotFound, ErddapServerError, DataNotFound
 
-from argopy.utilities import list_available_index_src, isconnected, erddap_ds_exists
+from argopy.utilities import list_available_index_src, isconnected, isAPIconnected, erddap_ds_exists
 AVAILABLE_INDEX_SOURCES = list_available_index_src()
 CONNECTED = isconnected()
+CONNECTEDAPI = {src: False for src in AVAILABLE_INDEX_SOURCES.keys()}
 if CONNECTED:
     DSEXISTS = erddap_ds_exists(ds="ArgoFloats-index")
+
+    for src in AVAILABLE_INDEX_SOURCES.keys():
+        try:
+            CONNECTEDAPI[src] = isAPIconnected(src=src, data=False)
+        except InvalidFetcher:
+            pass
 else:
     DSEXISTS = False
 
@@ -88,6 +95,7 @@ class EntryPoints_AllBackends(TestCase):
     @unittest.skipUnless('erddap' in AVAILABLE_INDEX_SOURCES, "requires erddap index fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core index Argo dataset from Ifremer server")
+    @unittest.skipUnless(CONNECTEDAPI['erddap'], "erddap API is not alive")
     @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
     def test_float_index_erddap(self):
         self.__test_float('erddap')
@@ -95,6 +103,7 @@ class EntryPoints_AllBackends(TestCase):
     @unittest.skipUnless('erddap' in AVAILABLE_INDEX_SOURCES, "requires erddap index fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core index Argo dataset from Ifremer server")
+    @unittest.skipUnless(CONNECTEDAPI['erddap'], "erddap API is not alive")
     @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
     def test_region_index_erddap(self):
         self.__test_region('erddap')
@@ -122,6 +131,7 @@ class EntryPoints_AllBackends(TestCase):
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
 @unittest.skipUnless(DSEXISTS, "erddap requires a valid core index Argo dataset from Ifremer server")
 # @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
+@unittest.skipUnless(CONNECTEDAPI['erddap'], "erddap API is not alive")
 class Erddap(TestCase):
     """ Test main API facade for all available dataset of the ERDDAP index fetching backend """
     testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))

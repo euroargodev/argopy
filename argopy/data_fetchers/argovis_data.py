@@ -27,7 +27,8 @@ from argopy.plotters import open_dashboard
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy']  # First is default
-
+api_server = 'https://argovis.colorado.edu'  # API root url
+api_server_check = api_server + '/catalog'  # URL to check if the API is alive
 
 class ArgovisDataFetcher(ArgoDataFetcherProto):
     ###
@@ -70,7 +71,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
         self.definition = 'Argovis Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
-        self.server = 'https://argovis.colorado.edu'
+        self.server = api_server
         self.init(**kwargs)
         self.key_map = {
             'date': 'TIME',
@@ -309,7 +310,7 @@ class Fetch_box(ArgovisDataFetcher):
         shape = [[[self.BOX[0], self.BOX[2]], [self.BOX[0], self.BOX[3]], [self.BOX[1], self.BOX[3]],
                   [self.BOX[1], self.BOX[2]], [self.BOX[0], self.BOX[2]]]]
         strShape = str(shape).replace(' ', '')
-        url = 'https://argovis.colorado.edu/selection/profiles'
+        url = self.server + '/selection/profiles'
         url += '?startDate={}'.format(self.BOX[6])
         url += '&endDate={}'.format(self.BOX[7])
         url += '&shape={}'.format(strShape)

@@ -24,18 +24,25 @@ from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, ErddapServerError, \
     CacheFileNotFound, FileSystemHasNoCache, FtpPathError
 
-from argopy.utilities import list_available_data_src, isconnected, erddap_ds_exists
+from argopy.utilities import list_available_data_src, isconnected, isAPIconnected, erddap_ds_exists
 AVAILABLE_SOURCES = list_available_data_src()
 CONNECTED = isconnected()
+CONNECTEDAPI = {src: False for src in AVAILABLE_SOURCES.keys()}
 if CONNECTED:
     DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
     DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-bio")
     DSEXISTS_ref = erddap_ds_exists(ds="ArgoFloats-ref")
+
+    for src in AVAILABLE_SOURCES.keys():
+        try:
+            CONNECTEDAPI[src] = isAPIconnected(src=src, data=True)
+        except InvalidFetcher:
+            pass
+
 else:
     DSEXISTS = False
     DSEXISTS_bgc = False
     DSEXISTS_ref = False
-
 
 # List tests:
 def test_invalid_accesspoint():
@@ -121,18 +128,21 @@ class EntryPoints_AllBackends(TestCase):
     @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
+    @unittest.skipUnless(CONNECTEDAPI['erddap'], "erddap API is not alive")
     def test_float_erddap(self):
         self.__test_float('erddap')
 
     @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
+    @unittest.skipUnless(CONNECTEDAPI['erddap'], "erddap API is not alive")
     def test_profile_erddap(self):
         self.__test_profile('erddap')
 
     @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
+    @unittest.skipUnless(CONNECTEDAPI['erddap'], "erddap API is not alive")
     def test_region_erddap(self):
         self.__test_region('erddap')
 
@@ -152,17 +162,17 @@ class EntryPoints_AllBackends(TestCase):
             self.__test_region('localftp')
 
     @unittest.skipUnless('argovis' in AVAILABLE_SOURCES, "requires argovis data fetcher")
-    @unittest.skipUnless(CONNECTED, "argovis requires an internet connection")
+    @unittest.skipUnless(CONNECTEDAPI['argovis'], "argovis API is not alive")
     def test_float_argovis(self):
         self.__test_float('argovis')
 
     @unittest.skipUnless('argovis' in AVAILABLE_SOURCES, "requires argovis data fetcher")
-    @unittest.skipUnless(CONNECTED, "argovis requires an internet connection")
+    @unittest.skipUnless(CONNECTEDAPI['argovis'], "argovis API is not alive")
     def test_profile_argovis(self):
         self.__test_profile('argovis')
 
     @unittest.skipUnless('argovis' in AVAILABLE_SOURCES, "requires argovis data fetcher")
-    @unittest.skipUnless(CONNECTED, "argovis requires an internet connection")
+    @unittest.skipUnless(CONNECTEDAPI['argovis'], "argovis API is not alive")
     def test_region_argovis(self):
         self.__test_region('argovis')
 
@@ -170,6 +180,7 @@ class EntryPoints_AllBackends(TestCase):
 
 @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
+@unittest.skipUnless(CONNECTEDAPI['erddap'], "erddap API is not alive")
 class Erddap(TestCase):
     """ Test main API facade for all available dataset and access points of the ERDDAP fetching backend """
     src = 'erddap'

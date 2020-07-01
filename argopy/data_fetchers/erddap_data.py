@@ -32,6 +32,8 @@ from erddapy.utilities import parse_dates, quote_string_constraints
 access_points = ['wmo' ,'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy', 'ref', 'bgc']  # First is default
+api_server = 'https://www.ifremer.fr/erddap'  # API root url
+api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
 
 
 class ErddapArgoDataFetcher(ArgoDataFetcherProto):
@@ -83,6 +85,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
         self.definition = 'Ifremer erddap Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
+        self.server = api_server
         self.init(**kwargs)
         self._init_erddapy()
 
@@ -168,7 +171,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     def _init_erddapy(self):
         # Init erddapy
         self.erddap = ERDDAP(
-            server='http://www.ifremer.fr/erddap',
+            server=self.server,
             protocol='tabledap'
         )
         self.erddap.response = 'nc'  # This is a major change in v0.4, we used to work with csv files

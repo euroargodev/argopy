@@ -26,9 +26,9 @@ import pickle
 import pkg_resources
 import shutil
 
-from argopy.options import OPTIONS
+from argopy.options import OPTIONS, set_options
 from argopy.stores import httpstore
-from argopy.errors import FtpPathError
+from argopy.errors import FtpPathError, InvalidFetcher
 
 path2pkl = pkg_resources.resource_filename('argopy', 'assets/')
 
@@ -79,7 +79,7 @@ def list_available_data_src():
         pass
 
     try:
-        from .data_fetchers import argovis as ArgoVis_Fetchers
+        from .data_fetchers import argovis_data as ArgoVis_Fetchers
         AVAILABLE_SOURCES['argovis'] = ArgoVis_Fetchers
     except Exception:
         warnings.warn("An error occured while loading the ArgoVis data fetcher, "
@@ -395,7 +395,7 @@ def show_versions(file=sys.stdout):
 
 
 def isconnected(host='http://www.ifremer.fr'):
-    """ Determine if we have a live internet connection
+    """ check if we have a live internet connection
 
         Parameters
         ----------
@@ -407,10 +407,35 @@ def isconnected(host='http://www.ifremer.fr'):
         bool
     """
     try:
-        urllib.request.urlopen(host)  # Python 3.x
+        urllib.request.urlopen(host, timeout=2)  # Python 3.x
         return True
     except Exception:
         return False
+
+
+def isAPIconnected(src='erddap', data=True):
+    """ Check if a source web API is alive or not
+
+        Parameters
+        ----------
+        src: str
+            The data or index source name, 'erddap' default
+        data: bool
+            If True check the data fetcher (default), if False, check the index fetcher
+
+        Returns
+        -------
+        bool
+    """
+    if data:
+        AVAILABLE_SOURCES = list_available_data_src()
+    else:
+        AVAILABLE_SOURCES = list_available_index_src()
+    if src in AVAILABLE_SOURCES and getattr(AVAILABLE_SOURCES[src], "api_server_check", None):
+        with set_options(src=src):
+            return isconnected(AVAILABLE_SOURCES[src].api_server_check)
+    else:
+        raise InvalidFetcher
 
 
 def erddap_ds_exists(ds="ArgoFloats"):
