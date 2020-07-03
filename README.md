@@ -8,6 +8,8 @@
 
 ![Profile count](https://img.shields.io/endpoint?label=Available%20Argo%20profile%20count%3A&style=social&url=https%3A%2F%2Fmap.argo-france.fr%2Fdata%2FARGOFULL.json)
 
+[![status](https://joss.theoj.org/papers/9e31b212f63c2bacb4006b14bb8a743f/status.svg)](https://joss.theoj.org/papers/9e31b212f63c2bacb4006b14bb8a743f)
+
 ``argopy`` is a python library that aims to ease Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators.
 
 Several python packages exist: we are currently in the process of analysing how to merge these libraries toward a single powerfull tool.  
