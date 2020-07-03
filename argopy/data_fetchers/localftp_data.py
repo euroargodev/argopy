@@ -211,13 +211,16 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
     def files(self):
         """ Return the list of files to load """
         if not hasattr(self, '_list_of_argo_files'):
-            self.list_argo_files()
+            self.list_argo_files()  # Set the list
         return self._list_of_argo_files
 
     @property
     def cachepath(self):
         """ Return path to cache file for this request """
-        return [self.fs.cachepath(file) for file in self.files]
+        if len(self.files) == 1:
+            return self.fs.cachepath(self.files[0])
+        else:
+            return [self.fs.cachepath(url) for url in self.files]
 
     def xload_multiprof(self, ncfile: str):
         """Load one Argo multi-profile file as a collection of points
@@ -418,6 +421,11 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
         errors: {'raise','ignore'}, optional
             If 'raise' (default), raises a NetCDF4FileNotFoundError error if any of the requested
             files cannot be found. If 'ignore', file not found is skipped when fetching data.
+
+        Returns
+        -------
+        self
+
         """
         if not hasattr(self, '_list_of_argo_files'):
             self._list_of_argo_files = []

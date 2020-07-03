@@ -11,8 +11,6 @@
 
 import numpy as np
 import pandas as pd
-import xarray as xr
-import json
 import getpass
 from .proto import ArgoDataFetcherProto
 from abc import abstractmethod
@@ -29,6 +27,7 @@ exit_formats = ['xarray']
 dataset_ids = ['phy']  # First is default
 api_server = 'https://argovis.colorado.edu'  # API root url
 api_server_check = api_server + '/selection/overview'  # URL to check if the API is alive
+
 
 class ArgovisDataFetcher(ArgoDataFetcherProto):
     ###
@@ -52,6 +51,14 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         """ Return the URL used to download data """
         pass
 
+    @property
+    def cachepath(self):
+        """ Return path to cache file for this request """
+        if isinstance(self.url, list):
+            return [self.fs.cachepath(url) for url in self.url]
+        else:
+            return self.fs.cachepath(self.url)
+
     ###
     # Methods that must not change
     ###
@@ -59,6 +66,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
                  ds: str = "",
                  cache: bool = False,
                  cachedir: str = "",
+                 api_timeout: int = 0,
                  **kwargs):
         """ Instantiate an Argovis Argo data loader
 
@@ -68,7 +76,8 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             cache : False
             cachedir : None
         """
-        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
+        timeout = OPTIONS['api_timeout'] if api_timeout == 0 else api_timeout
+        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout)
         self.definition = 'Argovis Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
         self.server = api_server

@@ -5,7 +5,7 @@ import hashlib
 
 from argopy.errors import DataNotFound
 from argopy.options import OPTIONS
-from .fsspec_wrappers import filestore, memorystore
+from .filesystems import filestore, memorystore
 
 
 class indexfilter_proto(ABC):

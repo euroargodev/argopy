@@ -76,7 +76,21 @@ class InvalidFetcher(ValueError):
     pass
 
 
-class ErddapServerError(ValueError):
+class APIServerError(ValueError):
+    """
+    Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery
+    """
+    pass
+
+
+class ErddapServerError(APIServerError):
+    """
+    Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery
+    """
+    pass
+
+
+class ArgovisServerError(APIServerError):
     """
     Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery
     """

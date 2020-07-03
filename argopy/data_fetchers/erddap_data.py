@@ -15,11 +15,10 @@ import numpy as np
 import copy
 import warnings
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 import getpass
 
 from .proto import ArgoDataFetcherProto
-from argopy.utilities import load_dict, mapp_dict
 from argopy.options import OPTIONS
 from argopy.utilities import list_standard_variables
 from argopy.stores import httpstore
@@ -29,7 +28,7 @@ from erddapy import ERDDAP
 from erddapy.utilities import parse_dates, quote_string_constraints
 
 
-access_points = ['wmo' ,'box']
+access_points = ['wmo', 'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy', 'ref', 'bgc']  # First is default
 # api_server = 'https://www.ifremer.fr/erddap'  # API root url
@@ -80,8 +79,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                  cachedir: str = "",
                  parallel: bool = False,
                  chunks: str = 'auto',
-                 box_maxsize: list = [10, 10, 100],
+                 box_maxsize: list = [10, 10, 50],
                  parallel_method: str = 'thread',
+                 api_timeout: int = 0,
                  **kwargs):
         """ Instantiate an ERDDAP Argo data loader
 
@@ -94,7 +94,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             parallel : False
             chunks : 'auto'
         """
-        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
+        timeout = OPTIONS['api_timeout'] if api_timeout == 0 else api_timeout
+        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout)
         self.definition = 'Ifremer erddap Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
         self.server = api_server
@@ -277,7 +278,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     @property
     def cachepath(self):
         """ Return path to cache file for this request """
-        return self.fs.cachepath(self.url)
+        if self.parallel:
+            return [self.fs.cachepath(url) for url in self.urls]
+        else:
+            return self.fs.cachepath(self.url)
 
     @property
     def url(self, response=None):
@@ -479,11 +483,11 @@ class Fetch_box(ErddapArgoDataFetcher):
                 box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
         # if len(box) == 6:
-            # Select the last months of data:
-            # end = pd.to_datetime('now')
-            # start = end - pd.DateOffset(months=1)
-            # box.append(start.strftime('%Y-%m-%d'))
-            # box.append(end.strftime('%Y-%m-%d'))
+        # Select the last months of data:
+        # end = pd.to_datetime('now')
+        # start = end - pd.DateOffset(months=1)
+        # box.append(start.strftime('%Y-%m-%d'))
+        # box.append(end.strftime('%Y-%m-%d'))
         if len(box) not in [6, 8]:
             raise ValueError('Box must 6 or 8 length')
         self.BOX = box
