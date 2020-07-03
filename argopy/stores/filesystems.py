@@ -15,7 +15,7 @@ from tqdm import tqdm
 import distributed
 
 from argopy.options import OPTIONS
-from argopy.errors import ErddapServerError, FileSystemHasNoCache, CacheFileNotFound, DataNotFound
+from argopy.errors import ErddapServerError, FileSystemHasNoCache, CacheFileNotFound, DataNotFound, APIServerError
 from abc import ABC, abstractmethod
 
 
@@ -274,8 +274,7 @@ class httpstore(argo_store_proto):
             self.register(url)
             return ds
         except requests.exceptions.ConnectionError as e:
-            print("No response for %s" % url)
-            raise
+            raise APIServerError("No API response for %s" % url)
         except requests.HTTPError as e:
             self._verbose_exceptions(e)
 
@@ -348,7 +347,7 @@ class httpstore(argo_store_proto):
                         data = future.result()
                     except Exception as e:
                         print("Something went wrong with this url: %s" % url)
-                        print(e.message, e.args)
+                        print(e.args)
                         pass
                     finally:
                         results.append(data)
