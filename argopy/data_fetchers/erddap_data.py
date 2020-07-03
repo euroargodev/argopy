@@ -32,7 +32,8 @@ from erddapy.utilities import parse_dates, quote_string_constraints
 access_points = ['wmo' ,'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy', 'ref', 'bgc']  # First is default
-api_server = 'https://www.ifremer.fr/erddap'  # API root url
+# api_server = 'https://www.ifremer.fr/erddap'  # API root url
+api_server = 'https://erddap.ifremer.fr/erddap'  # API root url
 api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
 
 
@@ -281,7 +282,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     @property
     def url(self, response=None):
         """ Return the URL used to download data """
-        # Replace erddapy get_download_url
+        # Replace erddapy get_download_url()
         # We need to replace it to better handle http responses with by-passing the _check_url_response
         # https://github.com/ioos/erddapy/blob/fa1f2c15304938cd0aa132946c22b0427fd61c81/erddapy/erddapy.py#L247
 

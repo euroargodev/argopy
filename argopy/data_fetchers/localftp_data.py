@@ -494,7 +494,7 @@ class Fetch_box(LocalFTPArgoDataFetcher):
             self._list_of_argo_files = []
             # Fetch the index to retrieve the list of profiles to load:
             filt = indexfilter_box(self.BOX)
-            df_index = self.fs_index.open_dataframe(filt)
+            df_index = self.fs_index.read_csv(filt)
             if isinstance(df_index, pd.core.frame.DataFrame):
                 # Ok, we found profiles in the index file,
                 # so now we can make sure these files exist:

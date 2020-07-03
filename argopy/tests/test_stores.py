@@ -42,14 +42,14 @@ class FileStore(TestCase):
         fs = filestore()
         assert isinstance(fs.open_dataset(ncfile), xr.Dataset)
 
-    def test_open_dataframe(self):
+    def test_read_csv(self):
         fs = filestore()
-        assert isinstance(fs.open_dataframe(self.csvfile, skiprows=8, header=0), pd.core.frame.DataFrame)
+        assert isinstance(fs.read_csv(self.csvfile, skiprows=8, header=0), pd.core.frame.DataFrame)
 
     def test_cachefile(self):
         try:
             fs = filestore(cache=1, cachedir=self.testcachedir)
-            fs.open_dataframe(self.csvfile, skiprows=8, header=0)
+            fs.read_csv(self.csvfile, skiprows=8, header=0)
             assert isinstance(fs.cachepath(self.csvfile), str)
             shutil.rmtree(self.testcachedir)
         except Exception:
@@ -105,10 +105,10 @@ class HttpStore(TestCase):
         #     fs.open_dataset(uri)
 
     @unittest.skipUnless(CONNECTED, "httpstore requires an internet connection to open online resources")
-    def test_open_dataframe(self):
+    def test_read_csv(self):
         uri = 'https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt'
         fs = httpstore()
-        assert isinstance(fs.open_dataframe(uri, skiprows=8, header=0), pd.core.frame.DataFrame)
+        assert isinstance(fs.read_csv(uri, skiprows=8, header=0), pd.core.frame.DataFrame)
 
         # uri = 'https://github.com/dummy.txt'
         # fs = httpstore()
@@ -121,7 +121,7 @@ class HttpStore(TestCase):
         testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
         try:
             fs = httpstore(cache=1, cachedir=testcachedir)
-            fs.open_dataframe(uri, skiprows=8, header=0)
+            fs.read_csv(uri, skiprows=8, header=0)
             assert isinstance(fs.cachepath(uri), str)
             shutil.rmtree(testcachedir)
         except Exception:
@@ -194,10 +194,10 @@ class IndexStore(TestCase):
 
     def test_search_wmo(self):
         for kw in self.kwargs_wmo:
-            df = indexstore(cache=0, index_file=self.index_file).open_dataframe(indexfilter_wmo(**kw))
+            df = indexstore(cache=0, index_file=self.index_file).read_csv(indexfilter_wmo(**kw))
             assert isinstance(df, pd.core.frame.DataFrame)
 
     def test_search_box(self):
         for kw in self.kwargs_box:
-            df = indexstore(cache=0, index_file=self.index_file).open_dataframe(indexfilter_box(**kw))
+            df = indexstore(cache=0, index_file=self.index_file).read_csv(indexfilter_box(**kw))
             assert isinstance(df, pd.core.frame.DataFrame)

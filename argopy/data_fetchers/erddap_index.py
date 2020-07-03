@@ -161,7 +161,7 @@ class ErddapArgoIndexFetcher(ABC):
         """ Load Argo index and return a pandas dataframe """
 
         # Download data: get a csv, open it as pandas dataframe, create wmo field
-        df = self.fs.open_dataframe(self.url, parse_dates=True, skiprows=[1])
+        df = self.fs.read_csv(self.url, parse_dates=True, skiprows=[1])
 
         # erddap date format : 2019-03-21T00:00:35Z
         df['date'] = pd.to_datetime(df['date'], format="%Y-%m-%dT%H:%M:%SZ")

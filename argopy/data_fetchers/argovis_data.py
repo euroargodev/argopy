@@ -28,7 +28,7 @@ access_points = ['wmo', 'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy']  # First is default
 api_server = 'https://argovis.colorado.edu'  # API root url
-api_server_check = api_server + '/catalog'  # URL to check if the API is alive
+api_server_check = api_server + '/selection/overview'  # URL to check if the API is alive
 
 class ArgovisDataFetcher(ArgoDataFetcherProto):
     ###

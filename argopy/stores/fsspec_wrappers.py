@@ -19,16 +19,27 @@ from argopy.errors import ErddapServerError, FileSystemHasNoCache, CacheFileNotF
 from abc import ABC, abstractmethod
 
 
-class argo_store_proto(ABC):  # Should this class inherits from fsspec.spec.AbstractFileSystem ?
-    protocol = ''  # One in fsspec.registry.known_implementations
+class argo_store_proto(ABC):
+    """ Argo Abstract File System
 
-    def __init__(self, cache: bool = False, cachedir: str = "", **kw):
+        Provide a prototype for Argo file systems
+
+        Should this class inherits from fsspec.spec.AbstractFileSystem ?
+    """
+    protocol = ''  # File system name, one in fsspec.registry.known_implementations
+
+    def __init__(self,
+                 cache: bool = False,
+                 cachedir: str = "",
+                 **kw):
         """ Create a file storage system for Argo data
 
             Parameters
             ----------
             cache : bool (False)
             cachedir : str (from OPTIONS)
+            **kwargs:
+                Other keywords arguments are passed to :class:`fsspec.filesystem`
 
         """
         self.cache = cache
@@ -81,7 +92,7 @@ class argo_store_proto(ABC):  # Should this class inherits from fsspec.spec.Abst
                 raise CacheFileNotFound("No cached file found in %s for: \n%s" % (self.fs.storage[-1], uri))
 
     def _clear_cache_item(self, uri):
-        """ Open fsspec cache registry (pickle file) and remove entry for an uri """
+        """ Open fsspec cache registry (pickle file) and remove entry for uri """
         # See the "save_cache()" method in:
         # https://filesystem-spec.readthedocs.io/en/latest/_modules/fsspec/implementations/cached.html#WholeFileCacheFileSystem
         fn = os.path.join(self.fs.storage[-1], "cache")
@@ -113,15 +124,15 @@ class argo_store_proto(ABC):  # Should this class inherits from fsspec.spec.Abst
         pass
 
     @abstractmethod
-    def open_dataframe(self):
+    def read_csv(self):
         pass
 
 
 class filestore(argo_store_proto):
-    """Wrapper around fsspec file stores
+    """Argo local file system
 
-        https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.local.LocalFileSystem
-
+        Relies on:
+            https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.local.LocalFileSystem
     """
     protocol = 'file'
 
@@ -142,7 +153,7 @@ class filestore(argo_store_proto):
         self.register(url)
         return ds
 
-    def open_dataframe(self, url, **kwargs):
+    def read_csv(self, url, **kwargs):
         """ Return a pandas.dataframe from an url that is a csv ressource
 
             Parameters
@@ -161,10 +172,15 @@ class filestore(argo_store_proto):
 
 
 class httpstore(argo_store_proto):
-    """Wrapper around fsspec http file store
+    """Argo http file system
 
-        This wrapper intend to make argopy safer to failures from http requests
-        This wrapper is primarily used by the Erddap data/index fetchers
+        Relies on:
+            https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.http.HTTPFileSystem
+
+        This store intends to make argopy: safer to failures from http requests, provide more verbose message to users
+        if we can identify specific errors in http responses.
+
+        This store is primarily used by the Erddap/Argovis data/index fetchers
     """
     protocol = "http"
 
@@ -241,7 +257,7 @@ class httpstore(argo_store_proto):
             self._verbose_exceptions(e)
 
     def open_dataset(self, url, **kwargs):
-        """ Return a xarray.dataset from an url, or verbose errors
+        """ Open and decode a xarray dataset from an url
 
             Parameters
             ----------
@@ -260,12 +276,13 @@ class httpstore(argo_store_proto):
         except requests.HTTPError as e:
             self._verbose_exceptions(e)
 
-    def open_dataframe(self, url, **kwargs):
-        """ Return a pandas.dataframe from an url with csv response, or verbose errors
+    def read_csv(self, url, **kwargs):
+        """ Read a comma-separated values (csv) url into Pandas DataFrame.
 
             Parameters
             ----------
             url: str
+            **kwargs: Arguments passed to :class:`pandas.read_csv`
 
             Returns
             -------
@@ -283,10 +300,10 @@ class httpstore(argo_store_proto):
     def open_mfdataset(self,
                        urls,
                        concat_dim='row',
-                       max_connections = 100,
+                       max_workers = 100,
                        method: str = 'process',
                        *args, **kwargs):
-        """ Return a xarray.dataset from concatenation of multiple urls
+        """ Open multiple urls as a single xarray dataset.
 
             Use a Threads Pool
 
@@ -305,19 +322,21 @@ class httpstore(argo_store_proto):
         results = []
         if method in ['thread', 'process']:
             if method == 'thread':
-                ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_connections)
+                ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
             else:
-                ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor()
+                ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
 
             with ConcurrentExecutor as executor:
-                # future_to_url = {executor.submit(self.open_dataset, url): url for url in urls}
-                future_to_url = (executor.submit(self.open_dataset, url) for url in urls)
+                future_to_url = {executor.submit(self.open_dataset, url): url for url in urls}
+                # future_to_url = (executor.submit(self.open_dataset, url) for url in urls)
                 for future in tqdm(concurrent.futures.as_completed(future_to_url), total=len(urls)):
                     data = None
-                    # url = future_to_url[future]
+                    url = future_to_url[future]
                     try:
                         data = future.result()
                     except Exception as e:
+                        print("Something went wrong with this url: %s" % url)
+                        print(e.message, e.args)
                         pass
                     finally:
                         results.append(data)
@@ -337,5 +356,11 @@ class httpstore(argo_store_proto):
 
 
 class memorystore(filestore):
-    # Note that this inherits from filestore, not argo_store_proto
+    """ Argo in-memory file system
+
+        Note that this inherits from filestore, not argo_store_proto
+
+        Relies on:
+            https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.memory.MemoryFileSystem
+    """
     protocol = 'memory'

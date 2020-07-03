@@ -475,7 +475,7 @@ class indexstore():
         return store_path in fs.cached_files[-1]
 
     def in_memory(self, fs, uri):
-        """ Return true if uri is in the memory store """
+        """ Return True if uri is in the memory store """
         return uri in fs.store
 
     def open_index(self):
@@ -492,16 +492,17 @@ class indexstore():
         data = [x.split(',') for x in results.split('\n') if ",," not in x]
         return pd.DataFrame(data, columns=cols_name).astype(cols_type)[:-1]
 
-    def open_dataframe(self, search_cls):
-        """ Run a search on an Argo index file and return a Pandas dataframe with results
+    def read_csv(self, search_cls):
+        """ Run a search on an csv Argo index file and return a Pandas DataFrame with results
 
         Parameters
         ----------
-        search_cls: Class instance inhereting from index_filter_proto
+        search_cls: Class instance inheriting from index_filter_proto
 
         Returns
         -------
         :class:`pandas.DataFrame`
+
         """
         uri = search_cls.uri()
         with self.open_index() as f:

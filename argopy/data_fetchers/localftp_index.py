@@ -115,7 +115,7 @@ class LocalFTPArgoIndexFetcher(ABC):
 
     def to_dataframe(self):
         """ filter local index file and return a pandas dataframe """
-        df = self.fs.open_dataframe(self.filter_index())
+        df = self.fs.read_csv(self.filter_index())
 
         # Post-processing of the filtered index:
         df['wmo'] = df['file'].apply(lambda x: int(x.split('/')[1]))
