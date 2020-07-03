@@ -49,9 +49,9 @@ class argo_store_proto(ABC):
         else:
             self.fs = fsspec.filesystem("filecache",
                                         target_protocol=self.protocol,
-                                        target_options={'simple_links': True, "block_size": 0},
+                                        target_options= {**{'simple_links': True, "block_size": 0}, **kw},
                                         cache_storage=self.cachedir,
-                                        expiry_time=86400, cache_check=10, **kw)
+                                        expiry_time=86400, cache_check=10)
             # We use a refresh rate for cache of 1 day,
             # since this is the update frequency of the Ifremer erddap
             self.cache_registry = []  # Will hold uri cached by this store instance
