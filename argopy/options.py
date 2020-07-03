@@ -25,7 +25,7 @@ OPTIONS = {DATA_SOURCE: 'erddap',
            DATASET: 'phy',
            DATA_CACHE: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
            USER_LEVEL: 'standard',
-           API_TIMEOUT: 120}
+           API_TIMEOUT: 60}
 
 # Define the list of possible values
 _DATA_SOURCE_LIST = frozenset(["erddap", "localftp", "argovis"])

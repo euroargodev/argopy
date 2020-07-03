@@ -31,8 +31,8 @@ from erddapy.utilities import parse_dates, quote_string_constraints
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy', 'ref', 'bgc']  # First is default
-# api_server = 'https://www.ifremer.fr/erddap'  # API root url
-api_server = 'https://erddap.ifremer.fr/erddap'  # API root url
+api_server = 'https://www.ifremer.fr/erddap'  # API root url
+# api_server = 'https://erddap.ifremer.fr/erddap'  # API root url
 api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
 
 
