@@ -17,13 +17,15 @@ LOCAL_FTP = 'local_ftp'
 DATASET = 'dataset'
 DATA_CACHE = 'cachedir'
 USER_LEVEL = 'mode'
+API_TIMEOUT = 'api_timeout'
 
 # Define the list of available options and default values:
 OPTIONS = {DATA_SOURCE: 'erddap',
            LOCAL_FTP: '.',
            DATASET: 'phy',
            DATA_CACHE: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
-           USER_LEVEL: 'standard'}
+           USER_LEVEL: 'standard',
+           API_TIMEOUT: 120}
 
 # Define the list of possible values
 _DATA_SOURCE_LIST = frozenset(["erddap", "localftp", "argovis"])
@@ -40,30 +42,33 @@ _VALIDATORS = {
     DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
     LOCAL_FTP: os.path.exists,
     DATASET: _DATASET_LIST.__contains__,
-    USER_LEVEL: _USER_LEVEL_LIST.__contains__
+    USER_LEVEL: _USER_LEVEL_LIST.__contains__,
+    API_TIMEOUT: _positive_integer
 }
 
 
-# Implement the option setter:
 class set_options:
     """Set options for argopy.
 
     List of options:
 
-    - `dataset`: Dataset. This can be `phy`, `bgc` or `ref`.
-      Default: `phy`
+    - `dataset`: Define the Dataset to work with.
+        Default: `phy`. Possible values: `phy`, `bgc` or `ref`.
 
     - `src`: Source of fetched data.
-      Default: `erddap`
+        Default: `erddap`. Possible values: `erddap`, `localftp`, `argovis`
 
-    - `local_ftp`: Absolute path to local GDAC ftp copy.
-      Default: `.`
+    - `local_ftp`: Absolute path to a local GDAC ftp copy.
+        Default: `.`
 
-    - `cachedir`: Absolute path to local cache directory.
-      Default: `~/.cache/argopy`
+    - `cachedir`: Absolute path to a local cache directory.
+        Default: `~/.cache/argopy`
 
-    - `mode`: User mode. This can be `standard` or `expert`.
-      Default: `standard`
+    - `mode`: User mode.
+        Default: `standard`. Possible values: `standard` or `expert`.
+
+    - `api_timeout`: Define the time out of internet requests to web API, in seconds.
+        Default: 120
 
     You can use `set_options` either as a context manager:
     ```

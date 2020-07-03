@@ -281,7 +281,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def url(self, response=None):
-        """ Return the URL used to download data """
+        """ Return a URL to download the full data request """
         # Replace erddapy get_download_url()
         # We need to replace it to better handle http responses with by-passing the _check_url_response
         # https://github.com/ioos/erddapy/blob/fa1f2c15304938cd0aa132946c22b0427fd61c81/erddapy/erddapy.py#L247
@@ -523,7 +523,7 @@ class Fetch_box(ErddapArgoDataFetcher):
 
     @property
     def urls(self):
-        """ Return a list of URLs used to download data in chunks """
+        """ Return a list of URLs to download the full request in chunks """
 
         def split_box(large_box, n=1, d='x'):
             """ Split a box domain in one direction in n equal chunks """

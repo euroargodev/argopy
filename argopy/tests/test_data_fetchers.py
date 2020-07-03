@@ -8,7 +8,7 @@
 # - one class to test the facade API
 # - one class to test specific methods of each backends
 #
-# At this point, we are testing real data fetching both through facade and through direct call to backends
+# At this point, we are testing real data fetching both through facade and through direct call to backends.
 
 import os
 import numpy as np
@@ -23,8 +23,10 @@ import argopy
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, ErddapServerError, \
     CacheFileNotFound, FileSystemHasNoCache, FtpPathError
-
 from argopy.utilities import list_available_data_src, isconnected, isAPIconnected, erddap_ds_exists
+
+
+argopy.set_options(api_timeout=3*60)  # From Github actions, requests can take a while
 AVAILABLE_SOURCES = list_available_data_src()
 CONNECTED = isconnected()
 CONNECTEDAPI = {src: False for src in AVAILABLE_SOURCES.keys()}
@@ -44,7 +46,7 @@ else:
     DSEXISTS_bgc = False
     DSEXISTS_ref = False
 
-# List tests:
+
 def test_invalid_accesspoint():
     src = list(AVAILABLE_SOURCES.keys())[0]  # Use the first valid data source
     with pytest.raises(InvalidFetcherAccessPoint):
@@ -80,7 +82,6 @@ class EntryPoints_AllBackends(TestCase):
     #
     # kwargs_box = [{'BOX': [-60, -40, 40., 60.]},
     #               {'BOX': [-60, -40, 40., 60., '2007-08-01', '2007-09-01']}]
-
 
     def setUp(self):
         # todo Determine the list of output format to test
@@ -175,7 +176,6 @@ class EntryPoints_AllBackends(TestCase):
     @unittest.skipUnless(CONNECTEDAPI['argovis'], "argovis API is not alive")
     def test_region_argovis(self):
         self.__test_region('argovis')
-
 
 
 @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
@@ -370,7 +370,7 @@ class LocalFTP(TestCase):
                 ArgoDataFetcher(src=self.src).profile(2901623, 12)
 
         with pytest.raises(FtpPathError):
-            with argopy.set_options(local_ftp = os.path.sep.join([self.local_ftp, "dac"]) ):
+            with argopy.set_options(local_ftp=os.path.sep.join([self.local_ftp, "dac"])):
                 ArgoDataFetcher(src=self.src).profile(2901623, 12)
 
     def __testthis_profile(self, dataset):

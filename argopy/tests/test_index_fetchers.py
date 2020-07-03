@@ -16,14 +16,15 @@ import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, \
     FileSystemHasNoCache, CacheFileNotFound, ErddapServerError, DataNotFound
-
 from argopy.utilities import list_available_index_src, isconnected, isAPIconnected, erddap_ds_exists
+
+
+argopy.set_options(api_timeout=3*60)  # From Github actions, requests can take a while
 AVAILABLE_INDEX_SOURCES = list_available_index_src()
 CONNECTED = isconnected()
 CONNECTEDAPI = {src: False for src in AVAILABLE_INDEX_SOURCES.keys()}
 if CONNECTED:
     DSEXISTS = erddap_ds_exists(ds="ArgoFloats-index")
-
     for src in AVAILABLE_INDEX_SOURCES.keys():
         try:
             CONNECTEDAPI[src] = isAPIconnected(src=src, data=False)
@@ -178,6 +179,7 @@ class Erddap(TestCase):
         # assert isinstance(loader.fetcher.url, str)
         loader = ArgoIndexFetcher(src='erddap', cache=True).region([-60, -40, 40., 60., '2007-08-01', '2007-09-01'])
         assert isinstance(loader.fetcher.url, str)
+
 
 @unittest.skipUnless('localftp' in AVAILABLE_INDEX_SOURCES, "requires localftp index fetcher")
 class LocalFTP(TestCase):

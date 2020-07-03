@@ -302,6 +302,7 @@ class httpstore(argo_store_proto):
                        concat_dim='row',
                        max_workers = 100,
                        method: str = 'process',
+                       progress: bool = True,
                        *args, **kwargs):
         """ Open multiple urls as a single xarray dataset.
 
@@ -311,13 +312,21 @@ class httpstore(argo_store_proto):
             ----------
             urls: list(str)
             concat_dim: str
-                Name of the dimension to use to concat all datasets
-            max_connections: int
-                Maximum number of threads to send http requests
+                Name of the dimension to use to concatenate all datasets (passed to :class:`xarray.concat`)
+            max_workers: int
+                Maximum number of threads or processes to send http requests with.
+            method:
+                The parallelisation method to execute calls asynchronously:
+                    - 'thread' (Default): use a pool of at most ``max_workers`` threads
+                    - 'process': use a pool of at most ``max_workers`` processes
+                    - Dask client object: use a Dask distributed client object
+            progress: bool
+                Display a progress bar (True by default)
 
             Returns
             -------
             :class:`xarray.Dataset`
+
         """
         results = []
         if method in ['thread', 'process']:
