@@ -273,6 +273,9 @@ class httpstore(argo_store_proto):
                 ds = xr.open_dataset(of, **kwargs)
             self.register(url)
             return ds
+        except requests.exceptions.ConnectionError as e:
+            print("No response for %s" % url)
+            raise
         except requests.HTTPError as e:
             self._verbose_exceptions(e)
 
