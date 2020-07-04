@@ -127,6 +127,76 @@ class argo_store_proto(ABC):
     def read_csv(self):
         pass
 
+    def open_mfdataset(self,
+                       urls,
+                       concat_dim='row',
+                       max_workers = 100,
+                       method: str = 'process',
+                       progress: bool = True,
+                       *args, **kwargs):
+        """ Open multiple urls as a single xarray dataset.
+
+            This is a parallelised version of ``open_dataset``.
+            Use a Threads Pool by default for parallelisation.
+
+            Parameters
+            ----------
+            urls: list(str)
+            concat_dim: str
+                Name of the dimension to use to concatenate all datasets (passed to :class:`xarray.concat`)
+            max_workers: int
+                Maximum number of threads or processes.
+            method:
+                The parallelisation method to execute calls asynchronously:
+                    - 'thread' (Default): use a pool of at most ``max_workers`` threads
+                    - 'process': use a pool of at most ``max_workers`` processes
+                    - Dask client object: use a Dask distributed client object
+            progress: bool
+                Display a progress bar (True by default)
+
+            Returns
+            -------
+            :class:`xarray.Dataset`
+
+        """
+        results = []
+        if method in ['thread', 'process']:
+            if method == 'thread':
+                ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
+            else:
+                ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
+
+            with ConcurrentExecutor as executor:
+                future_to_url = {executor.submit(self.open_dataset, url): url for url in urls}
+                # future_to_url = (executor.submit(self.open_dataset, url) for url in urls)
+                futures = concurrent.futures.as_completed(future_to_url)
+                if progress:
+                    futures = tqdm(futures, total=len(urls))
+
+                for future in futures:
+                    data = None
+                    url = future_to_url[future]
+                    try:
+                        data = future.result()
+                    except Exception as e:
+                        print("Something went wrong with this url: %s" % url)
+                        print(e.args)
+                        pass
+                    finally:
+                        results.append(data)
+
+        elif type(method) == distributed.client.Client:
+            # Use a dask client:
+            futures = method.map(self.open_dataset, urls)
+            results = method.gather(futures)
+
+        # Post-process results
+        results = [r for r in results if r is not None]  # Only keep non-empty results
+        if len(results) > 0:
+            ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
+            return ds
+        else:
+            raise DataNotFound()
 
 class filestore(argo_store_proto):
     """Argo local file system
@@ -298,72 +368,6 @@ class httpstore(argo_store_proto):
             return df
         except requests.HTTPError as e:
             self._verbose_exceptions(e)
-
-    def open_mfdataset(self,
-                       urls,
-                       concat_dim='row',
-                       max_workers = 100,
-                       method: str = 'process',
-                       progress: bool = True,
-                       *args, **kwargs):
-        """ Open multiple urls as a single xarray dataset.
-
-            Use a Threads Pool
-
-            Parameters
-            ----------
-            urls: list(str)
-            concat_dim: str
-                Name of the dimension to use to concatenate all datasets (passed to :class:`xarray.concat`)
-            max_workers: int
-                Maximum number of threads or processes to send http requests with.
-            method:
-                The parallelisation method to execute calls asynchronously:
-                    - 'thread' (Default): use a pool of at most ``max_workers`` threads
-                    - 'process': use a pool of at most ``max_workers`` processes
-                    - Dask client object: use a Dask distributed client object
-            progress: bool
-                Display a progress bar (True by default)
-
-            Returns
-            -------
-            :class:`xarray.Dataset`
-
-        """
-        results = []
-        if method in ['thread', 'process']:
-            if method == 'thread':
-                ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
-            else:
-                ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
-
-            with ConcurrentExecutor as executor:
-                future_to_url = {executor.submit(self.open_dataset, url): url for url in urls}
-                # future_to_url = (executor.submit(self.open_dataset, url) for url in urls)
-                for future in tqdm(concurrent.futures.as_completed(future_to_url), total=len(urls)):
-                    data = None
-                    url = future_to_url[future]
-                    try:
-                        data = future.result()
-                    except Exception as e:
-                        print("Something went wrong with this url: %s" % url)
-                        print(e.args)
-                        pass
-                    finally:
-                        results.append(data)
-
-        elif type(method) == distributed.client.Client:
-            # Use a dask client:
-            futures = method.map(self.open_dataset, urls)
-            results = method.gather(futures)
-
-        # Post-process results
-        results = [r for r in results if r is not None]  # Only keep non-empty results
-        if len(results) > 0:
-            ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
-            return ds
-        else:
-            raise DataNotFound()
 
 
 class memorystore(filestore):

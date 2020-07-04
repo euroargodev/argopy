@@ -79,7 +79,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                  cachedir: str = "",
                  parallel: bool = False,
                  chunks: str = 'auto',
-                 box_maxsize: list = [10, 10, 50],
+                 chunks_maxsize: list = [],
                  parallel_method: str = 'thread',
                  api_timeout: int = 0,
                  **kwargs):
@@ -103,7 +103,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         self.parallel = parallel
         self.parallel_method = parallel_method
         self.chunks = chunks
-        self.box_maxsize = box_maxsize
+        self.chunks_maxsize = chunks_maxsize
 
         self.init(**kwargs)
         self._init_erddapy()
@@ -284,44 +284,37 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             return self.fs.cachepath(self.url)
 
     @property
-    def url(self, response=None):
+    def url(self):
         """ Return a URL to download the full data request """
         # Replace erddapy get_download_url()
         # We need to replace it to better handle http responses with by-passing the _check_url_response
         # https://github.com/ioos/erddapy/blob/fa1f2c15304938cd0aa132946c22b0427fd61c81/erddapy/erddapy.py#L247
 
-        # Define constraint to select this box of data:
-        self.define_constraints()  # This will affect self.erddap.constraints
-
-        # Define the list of variables to retrieve
-        self.erddap.variables = self._minimal_vlist
-
-        #
-        dataset_id = self.erddap.dataset_id
+        # First part of the URL:
         protocol = self.erddap.protocol
-        variables = self.erddap.variables
-        if not response:
-            response = self.erddap.response
-        constraints = self.erddap.constraints
+        dataset_id = self.erddap.dataset_id
+        response = self.erddap.response
         url = f"{self.erddap.server}/{protocol}/{dataset_id}.{response}?"
-        if variables:
-            variables = ",".join(variables)
-            url += f"{variables}"
 
-        if constraints:
-            _constraints = copy.copy(constraints)
-            for k, v in _constraints.items():
-                if k.startswith("time"):
-                    _constraints.update({k: parse_dates(v)})
-            _constraints = quote_string_constraints(_constraints)
-            _constraints = "".join([f"&{k}{v}" for k, v in _constraints.items()])
+        # Add variables to retrieve:
+        self.erddap.variables = self._minimal_vlist  # Define the list of variables to retrieve
+        variables = self.erddap.variables
+        variables = ",".join(variables)
+        url += f"{variables}"
 
-            url += f"{_constraints}"
+        # Add constraints:
+        self.define_constraints()  # Define constraint to select this box of data (affect self.erddap.constraints)
+        constraints = self.erddap.constraints
+        _constraints = copy.copy(constraints)
+        for k, v in _constraints.items():
+            if k.startswith("time"):
+                _constraints.update({k: parse_dates(v)})
+        _constraints = quote_string_constraints(_constraints)
+        _constraints = "".join([f"&{k}{v}" for k, v in _constraints.items()])
+        url += f"{_constraints}"
 
+        # Last part:
         url += '&distinct()&orderBy("time,pres")'
-        # In erddapy:
-        # url = _distinct(url, **kwargs)
-        # return _check_url_response(url, **self.requests_kwargs)
         return url
 
     @property
@@ -406,7 +399,7 @@ class Fetch_wmo(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: a list of WMOs
     """
 
-    def init(self, WMO=[], CYC=None):
+    def init(self, WMO=[], CYC=None, **kw):
         """ Create Argo data loader for WMOs
 
             Parameters
@@ -416,14 +409,22 @@ class Fetch_wmo(ErddapArgoDataFetcher):
             CYC : int, np.array(int), list(int)
                 The cycle numbers to load.
         """
-        if isinstance(WMO, int):
-            WMO = [WMO]  # Make sure we deal with a list
+        # Make sure we deal with a list of integers for WMOs:
+        if not isinstance(WMO, list):
+            WMO = [WMO]
+        if not all(isinstance(x, (int, np.int64)) for x in WMO):
+            raise ValueError("WMO must be a list of integers")
+
         if isinstance(CYC, int):
             CYC = np.array((CYC,), dtype='int')  # Make sure we deal with an array of integers
         if isinstance(CYC, list):
             CYC = np.array(CYC, dtype='int')  # Make sure we deal with an array of integers
+
         self.WMO = WMO
         self.CYC = CYC
+
+        if len(self.chunks_maxsize) == 0:
+            self.chunks_maxsize = [2]  # Default chunk size of floats
 
         self.definition = "?"
         if self.dataset_id == 'phy':
@@ -455,11 +456,31 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         listname = self.dataset_id + "_" + listname
         return listname
 
+    # @property
+    # def urls(self):
+    #     urls = []
+    #     for wmo in self.WMO:
+    #         urls.append(Fetch_wmo(WMO=wmo, CYC=self.CYC, ds=self.dataset_id).url)
+    #     return urls
+
     @property
     def urls(self):
+
+        def split(lst, n):
+            """Yield successive n-sized chunks from lst."""
+            for i in range(0, len(lst), n):
+                yield lst[i:i + n]
+
+        default_chunks = {'wmo': self.chunks_maxsize[0]}  # No real chunking !
+        if self.chunks['wmo'] == 'auto':
+            self.chunks['wmo'] = default_chunks['wmo']
+        else:
+            self.chunks['wmo'] = self.chunks['wmo']
+
+        wmos_chunks = split(self.WMO, self.chunks['wmo'])
         urls = []
-        for wmo in self.WMO:
-            urls.append(Fetch_wmo(WMO=wmo, CYC=self.CYC, ds=self.dataset_id).url)
+        for wmo in wmos_chunks:
+            urls.append(Fetch_wmo(WMO=wmo, CYC=self.CYC, ds=self.dataset_id, parallel=False).url)
         return urls
 
     def dashboard(self, **kw):
@@ -473,7 +494,7 @@ class Fetch_box(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: an ocean rectangle
     """
 
-    def init(self, box: list):
+    def init(self, box: list, **kw):
         """ Create Argo data loader
 
             Parameters
@@ -491,6 +512,9 @@ class Fetch_box(ErddapArgoDataFetcher):
         if len(box) not in [6, 8]:
             raise ValueError('Box must 6 or 8 length')
         self.BOX = box
+
+        if len(self.chunks_maxsize) == 0:
+            self.chunks_maxsize = [10, 10, 50]  # Default maximum chunks size in x, y, z
 
         if self.dataset_id == 'phy':
             self.definition = 'Ifremer erddap Argo data fetcher for a space/time region'
@@ -578,14 +602,14 @@ class Fetch_box(ErddapArgoDataFetcher):
         if self.chunks == 'auto':
             chunks = default_chunks
             Lx = self.BOX[1] - self.BOX[0]
-            if Lx > self.box_maxsize[0]:  # Max box size in longitude
-                chunks['lon'] = int(np.floor_divide(Lx, self.box_maxsize[0]))
+            if Lx > self.chunks_maxsize[0]:  # Max box size in longitude
+                chunks['lon'] = int(np.floor_divide(Lx, self.chunks_maxsize[0]))
             Ly = self.BOX[3] - self.BOX[2]
-            if Ly > self.box_maxsize[1]:  # Max box size in latitude
-                chunks['lat'] = int(np.floor_divide(Ly, self.box_maxsize[1]))
+            if Ly > self.chunks_maxsize[1]:  # Max box size in latitude
+                chunks['lat'] = int(np.floor_divide(Ly, self.chunks_maxsize[1]))
             Lz = self.BOX[5] - self.BOX[4]
-            if Lz > self.box_maxsize[2]:  # Max box size in depth
-                chunks['dpt'] = int(np.floor_divide(Lz, self.box_maxsize[2]))
+            if Lz > self.chunks_maxsize[2]:  # Max box size in depth
+                chunks['dpt'] = int(np.floor_divide(Lz, self.chunks_maxsize[2]))
         else:
             chunks = {**default_chunks, **self.chunks}
         self.chunks = chunks
