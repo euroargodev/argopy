@@ -17,7 +17,7 @@ AVAILABLE_DATA_SOURCES = list_available_data_src()
 AVAILABLE_INDEX_SOURCES = list_available_index_src()
 
 
-class ArgoDataFetcher(object):
+class ArgoDataFetcher():
     """ Fetch and process Argo data.
 
         Can return data selected from:
@@ -234,7 +234,7 @@ class ArgoDataFetcher(object):
         return self.fetcher.clear_cache()
 
 
-class ArgoIndexFetcher(object):
+class ArgoIndexFetcher():
     """
     Specs discussion :
     https://github.com/euroargodev/argopy/issues/8
