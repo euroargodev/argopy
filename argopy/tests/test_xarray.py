@@ -111,11 +111,17 @@ class test_teos10(unittest.TestCase):
     def init_data(self):
         # Fetch real data to test interpolation
         try:
+            # self.ds_pts_standard = ArgoDataFetcher(src='erddap', mode='standard')\
+            #     .region([-75, -55, 30., 40., 0, 100., '2011-01-01', '2011-01-15'])\
+            #     .to_xarray()
+            # self.ds_pts_expert = ArgoDataFetcher(src='erddap', mode='expert')\
+            #     .region([-75, -55, 30., 40., 0, 100., '2011-01-01', '2011-01-15'])\
+            #     .to_xarray()
             self.ds_pts_standard = ArgoDataFetcher(src='erddap', mode='standard')\
-                .region([-75, -55, 30., 40., 0, 100., '2011-01-01', '2011-01-15'])\
+                .float(2901623)\
                 .to_xarray()
             self.ds_pts_expert = ArgoDataFetcher(src='erddap', mode='expert')\
-                .region([-75, -55, 30., 40., 0, 100., '2011-01-01', '2011-01-15'])\
+                .float(2901623)\
                 .to_xarray()
         except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
             pass
@@ -142,3 +148,10 @@ class test_teos10(unittest.TestCase):
                     that = that.argo.point2profile()
                 that = that.argo.teos10(['PV'])
                 assert 'PV' in that.variables
+
+    def test_teos10_variables_inplace(self):
+        ds_list = [self.ds_pts_standard, self.ds_pts_expert]
+        for this in ds_list:
+            ds = this.argo.teos10(inplace=False)
+            assert 'SA' in ds.variables
+            assert 'SA' not in this.variables
