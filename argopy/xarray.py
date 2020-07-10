@@ -7,6 +7,13 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
+try:
+    import gsw
+    with_gsw = True
+except ModuleNotFoundError:
+    with_gsw = False
+
+
 from argopy.utilities import linear_interpolation_remap
 
 from argopy.errors import InvalidDatasetStructure
@@ -657,3 +664,137 @@ class ArgoAccessor:
         ds_out.argo._add_history('Interpolated on standard levels')
         
         return ds_out
+
+    def teos10(self, vlist: list = ['SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP'], inplace: bool = True):
+        """ Add TEOS10 variables to the dataset
+
+        By default, add: 'SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP'
+        Rely on the gsw library.
+
+        Parameters
+        ----------
+        vlist: list(str)
+            List with the name of variables to add.
+        inplace: boolean, True by default
+            If True, return the input :class:`xarray.Dataset` with new TEOS10 variables added as a new :class:`xarray.DataArray`
+            If False, return a :class:`xarray.Dataset` with new TEOS10 variables
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+        """
+        if not with_gsw:
+            raise ModuleNotFoundError("This functionality requires the gsw library")
+
+        this = self._obj
+
+        to_profile = False
+        if self._type == 'profile':
+            to_profile = True
+            this = this.argo.profile2point()
+
+        # Get base variables as numpy arrays:
+        psal = this['PSAL'].values
+        temp = this['TEMP'].values
+        pres = this['PRES'].values
+        lon = this['LONGITUDE'].values
+        lat = this['LATITUDE'].values
+        f = lat
+
+        # Coriolis
+        f = gsw.f(lat)
+
+        # Depth:
+        depth = gsw.z_from_p(pres, lat)
+
+        # Absolute salinity
+        sa = gsw.SA_from_SP(psal, pres, lon, lat)
+
+        # Conservative temperature
+        ct = gsw.CT_from_t(sa, temp, depth)
+
+        # Potential Temperature
+        if 'PTEMP' in vlist:
+            pt = gsw.pt_from_CT(sa, ct)
+
+        # Potential density referenced to surface
+        if 'SIG0' in vlist:
+            sig0 = gsw.sigma0(sa, ct)
+
+        # N2
+        if 'N2' in vlist or 'PV' in vlist:
+            n2_mid, p_mid = gsw.Nsquared(sa, ct, pres, lat)
+            # N2 on the CT grid:
+            ishallow = (slice(0, -1), Ellipsis)
+            ideep = (slice(1, None), Ellipsis)
+
+            def mid(x):
+                return 0.5 * (x[ideep] + x[ishallow])
+
+            n2 = np.zeros(ct.shape) * np.nan
+            n2[1:-1] = mid(n2_mid)
+
+        # PV:
+        if 'PV' in vlist:
+            pv = f * n2 / gsw.grav(lat, pres)
+
+        # Back to the dataset:    
+        that = []
+        if 'SA' in vlist:
+            SA = xr.DataArray(sa, coords=this['PSAL'].coords, name='SA')
+            SA.attrs['standard_name'] = 'Absolute Salinity'
+            SA.attrs['unit'] = 'g/kg'
+            that.append(SA)
+
+        if 'CT' in vlist:
+            CT = xr.DataArray(ct, coords=this['TEMP'].coords, name='CT')
+            CT.attrs['standard_name'] = 'Conservative Temperature'
+            CT.attrs['unit'] = 'degC'
+            that.append(CT)
+
+        if 'SIG0' in vlist:
+            SIG0 = xr.DataArray(sig0, coords=this['TEMP'].coords, name='SIG0')
+            SIG0.attrs['long_name'] = 'Potential density anomaly with reference pressure of 0 dbar'
+            SIG0.attrs['standard_name'] = 'Potential Density'
+            SIG0.attrs['unit'] = 'kg/m^3'
+            that.append(SIG0)
+
+        if 'N2' in vlist:
+            N2 = xr.DataArray(n2, coords=this['TEMP'].coords, name='N2')
+            N2.attrs['standard_name'] = 'Squared buoyancy frequency'
+            N2.attrs['unit'] = '1/s^2'
+            that.append(N2)
+
+        if 'PV' in vlist:
+            PV = xr.DataArray(pv, coords=this['TEMP'].coords, name='PV')
+            PV.attrs['standard_name'] = 'Planetary Potential Vorticity'
+            PV.attrs['unit'] = '1/m/s'
+            that.append(PV)
+
+        if 'PTEMP' in vlist:
+            PTEMP = xr.DataArray(pt, coords=this['TEMP'].coords, name='PTEMP')
+            PTEMP.attrs['standard_name'] = 'Potential Temperature'
+            PTEMP.attrs['unit'] = 'degC'
+            that.append(PTEMP)
+
+        # Create a dataset with all new variables:
+        that = xr.merge(that)
+        # Add to the dataset essential Argo variables (allows to keep using the argo accessor):
+        that = that.assign({k:this[k] for k in ['TIME', ' LATITUDE', 'LONGITUDE', 'PRES', 'PRES_ADJUSTED',
+                                                'PLATFORM_NUMBER', 'CYCLE_NUMBER', 'DIRECTION'] if k in this})
+        # Manage output:
+        if inplace:
+            # Merge previous with new variables
+            for v in that.variables:
+                this[v] = that[v]
+            if to_profile:
+                this = this.argo.point2profile()
+            for k in this:
+                if k not in self._obj:
+                    self._obj[k] = this[k]
+            return self._obj
+        else:
+            if to_profile:
+                return that.argo.point2profile()
+            else:
+                return that

@@ -3,7 +3,7 @@
 What's New
 ==========
 
-v0.1.5 (XX July 2020)
+v0.1.5 (10 July 2020)
 ---------------------
 
 **Features and front-end API**
@@ -18,7 +18,22 @@ v0.1.5 (XX July 2020)
     loader.profile(6902746, 12).to_xarray()
     loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2012-02']).to_xarray()
 
+- Easily compute `TEOS-10 <http://teos-10.org/>`_ variables with new argo accessor function **teos10**. This needs `gsw <https://github.com/TEOS-10/GSW-Python>`_ to be installed. (:pr:`37`) By `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy import DataFetcher as ArgoDataFetcher
+    ds = ArgoDataFetcher().region([-85,-45,10.,20.,0,1000.,'2012-01','2012-02']).to_xarray()
+    ds = ds.argo.teos10()
+    ds = ds.argo.teos10(['PV'])
+    ds_teos10 = ds.argo.teos10(['SA', 'CT'], inplace=False)
+
 - **argopy** can now be installed with conda (:pr:`29`, :pr:`31`, :pr:`32`). By `F. Fernandes <https://github.com/ocefpaf>`_.
+
+.. code-block:: text
+
+    conda install -c conda-forge argopy
+
 
 **Breaking changes with previous versions**
 
