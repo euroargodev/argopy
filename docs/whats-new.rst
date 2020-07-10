@@ -18,7 +18,7 @@ v0.1.5 (XX July 2020)
     loader.profile(6902746, 12).to_xarray()
     loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2012-02']).to_xarray()
 
-- Easily compute `TEOS-10 <http://teos-10.org/>`_ variables with new argo accessor function **teos10()** (:pr:`37`). This needs `gsw <https://github.com/TEOS-10/GSW-Python>`_ to be installed. By `G. Maze <http://www.github.com/gmaze>`_.
+- Easily compute `TEOS-10 <http://teos-10.org/>`_ variables with new argo accessor function **teos10**. This needs `gsw <https://github.com/TEOS-10/GSW-Python>`_ to be installed. (:pr:`37`) By `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 
