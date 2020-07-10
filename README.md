@@ -19,7 +19,12 @@ Click here to [![badge](https://img.shields.io/badge/launch-Pangeo%20binder-579A
 
 ## Install
 
-Install the last release with pip:
+Install the last release with conda:
+```bash
+conda install -c conda-forge argopy
+```
+
+or pip:
 ```bash
 pip install argopy
 ```
