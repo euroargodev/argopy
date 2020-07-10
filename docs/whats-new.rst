@@ -30,9 +30,10 @@ v0.1.5 (XX July 2020)
 
 - **argopy** can now be installed with conda (:pr:`29`, :pr:`31`, :pr:`32`). By `F. Fernandes <https://github.com/ocefpaf>`_.
 
-... code-block:: bash
+.. code-block:: text
 
     conda install -c conda-forge argopy
+
 
 **Breaking changes with previous versions**
 
