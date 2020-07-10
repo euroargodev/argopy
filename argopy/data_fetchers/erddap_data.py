@@ -214,7 +214,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         if self.dataset_id == 'phy' or self.dataset_id == 'bgc':
             plist = ['data_mode', 'latitude', 'longitude',
                      'position_qc', 'time', 'time_qc',
-                     'direction', 'platform_number', 'cycle_number']
+                     'direction', 'platform_number',
+                     'cycle_number', 'config_mission_number', 'vertical_sampling_scheme']
             [vlist.append(p) for p in plist]
 
             plist = ['pres', 'temp', 'psal']

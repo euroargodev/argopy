@@ -255,7 +255,10 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
             if len(list(ds[v].dims)) == 0:
                 ds = ds.drop_vars(v)
 
+        print("DIRECTION", np.unique(ds['DIRECTION']))
+        print("N_PROF", np.unique(ds['N_PROF']))
         ds = ds.argo.profile2point()  # Default output is a collection of points
+        print("DIRECTION", np.unique(ds['DIRECTION']))
 
         # Remove netcdf file attributes and replace them with argopy ones:
         ds.attrs = {}

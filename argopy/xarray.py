@@ -555,6 +555,7 @@ class ArgoAccessor:
                 if len(ds[d]) == 0:
                     dim_list.append(d)
                     break
+
         # Drop dimensions and associated variables from this dataset
         ds = ds.drop_dims(np.unique(dim_list))
 
