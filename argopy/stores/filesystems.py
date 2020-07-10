@@ -179,7 +179,7 @@ class argo_store_proto(ABC):
                     try:
                         data = future.result()
                     except Exception as e:
-                        print("Something went wrong with this url: %s" % url)
+                        # print("Something went wrong with this url: %s" % url)
                         print(e.args)
                         pass
                     finally:
