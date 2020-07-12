@@ -116,7 +116,7 @@ class Backend(TestCase):
                 pass
             except Exception:
                 print("ERDDAP request:\n",
-                      ArgoDataFetcher(src=self.src, ds=dataset).profile(*arg).fetcher.url)
+                      ArgoDataFetcher(src=self.src, ds=dataset).profile(*arg).fetcher.uri)
                 pass
 
     def __testthis_float(self, dataset):
@@ -129,7 +129,7 @@ class Backend(TestCase):
                 pass
             except Exception:
                 print("ERDDAP request:\n",
-                      ArgoDataFetcher(src=self.src, ds=dataset).float(arg).fetcher.url)
+                      ArgoDataFetcher(src=self.src, ds=dataset).float(arg).fetcher.uri)
                 pass
 
     def __testthis_region(self, dataset):
@@ -142,7 +142,7 @@ class Backend(TestCase):
                 pass
             except Exception:
                 print("ERDDAP request:\n",
-                      ArgoDataFetcher(src=self.src, ds=dataset).region(arg).fetcher.url)
+                      ArgoDataFetcher(src=self.src, ds=dataset).region(arg).fetcher.uri)
                 pass
 
     def __testthis(self, dataset):

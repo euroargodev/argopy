@@ -11,6 +11,7 @@ import sys
 import warnings
 import urllib.request
 import json
+import collections
 
 import importlib
 import locale
@@ -19,6 +20,7 @@ import struct
 import subprocess
 
 import xarray as xr
+import pandas as pd
 import numpy as np
 from scipy import interpolate
 
@@ -28,7 +30,7 @@ import shutil
 
 from argopy.options import OPTIONS, set_options
 from argopy.stores import httpstore
-from argopy.errors import FtpPathError, InvalidFetcher
+from argopy.errors import FtpPathError, InvalidFetcher, InvalidFetcherAccessPoint
 
 path2pkl = pkg_resources.resource_filename('argopy', 'assets/')
 
@@ -481,8 +483,6 @@ def open_etopo1(box, res='l'):
 #  From xarrayutils : https://github.com/jbusecke/xarrayutils/blob/master/xarrayutils/vertical_coordinates.py
 #  Direct integration of those 2 functions to minimize dependencies and possibility of tuning them to our needs
 #
-
-
 def linear_interpolation_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped"):
 
     # interpolation called in xarray ufunc
@@ -529,4 +529,257 @@ def linear_interpolation_remap(z, data, z_regridded, z_dim=None, z_regridded_dim
     ).coords[output_dim]
     return remapped
 
-####################
+
+class chunker():
+    # Default maximum chunks size for all possible request parameters
+    default_chunksize = {'box': {'lon': 20,  # degree
+                         'lat': 20,  # degree
+                         'dpt': 500,  # meters/db
+                         'time': 3 * 30},  # Days
+                         'wmo': {
+                         'wmo': 5,    # Nb of floats
+                         'cyc': 100}}  # Nb of cycles
+
+    def __init__(self,
+               request: dict,
+               chunks: str = 'auto',
+               chunksize: dict = {}):
+        """ Create a request chunker
+
+        Allow to easily split an access point request into chunks
+
+        Parameters
+        ----------
+        request: dict
+            Access point request to be chunked. One of the following:
+            {'box': [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]}
+            {'box': [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]}
+            {'wmo': [wmo1, wmo2, ...], 'cyc': [0,1, ...]}
+        chunks: 'auto' or dict
+            Dictionary with the number of chunks to create for each of request parameters.
+        chunksize: dict, optional
+            Dictionary of the maximum chunk size to allow in 'auto' chunking.
+
+        """
+        self.request = request
+
+        default = self.default_chunksize[[k for k in self.request.keys()][0]]
+        if len(chunksize) == 0:  # chunksize = {}
+            chunksize = default
+        else:  # merge with default:
+            chunksize = {**default, **chunksize}
+        self.chunksize = collections.OrderedDict(sorted(chunksize.items()))
+
+        if chunks == 'auto':  # auto for all
+            chunks = {k: 'auto' for k in self.chunksize.keys()}
+        elif len(chunks) == 0:  # chunks = {}, 1 for all
+            chunks = {k: 1 for k in self.request}
+        else:  # merge with default:
+            chunks = {**default, **chunks}
+        self.chunks = collections.OrderedDict(sorted(chunks.items()))
+
+        if 'box' in self.request:
+            if len(self.request['box']) == 8:
+                self.chunker = self._chunker_box3d
+            elif len(self.request['box']) == 6:
+                self.chunker = self._chunker_box2d
+            else:
+                raise ValueError('Box must 6 or 8 length')
+        elif 'wmo' in self.request:
+            self.chunker = self._chunker_wmo
+        else:
+            raise InvalidFetcherAccessPoint("'%s' not valid access point" % ",".join(self.request.keys()))
+
+    def _split(self, lst, n=1):
+        """Yield successive n-sized chunks from lst"""
+        for i in range(0, len(lst), n):
+            yield lst[i:i + n]
+
+    def _split_list(self, lst, n=1):
+        """Split list in n chunks"""
+        res = []
+        siz = int(np.floor_divide(len(lst), n))
+        for i in self._split(lst, siz):
+            res.append(i)
+        return res
+
+    def _split_box(self, large_box, n=1, d='x'):
+        """ Split a box domain in one direction in n equal chunks """
+        if d == 'x':
+            i_left, i_right = 0, 1
+        if d == 'y':
+            i_left, i_right = 2, 3
+        if d == 'z':
+            i_left, i_right = 4, 5
+        if d == 't3d':  # Time index position for 3d box
+            i_left, i_right = 6, 7
+        if d == 't2d':  # Time index position for 2d box
+            i_left, i_right = 4, 5
+        if n == 1:
+            return [large_box]
+        boxes = []
+        if d in ['x', 'y', 'z']:
+            n += 1  # Required because we split in linspace
+            bins = np.linspace(large_box[i_left], large_box[i_right], n)
+            for ii, left in enumerate(bins):
+                if ii < len(bins) - 1:
+                    right = bins[ii + 1]
+                    this_box = large_box.copy()
+                    this_box[i_left] = left
+                    this_box[i_right] = right
+                    boxes.append(this_box)
+        elif 't' in d:
+            dates = pd.to_datetime(large_box[i_left:i_right + 1])
+            date_bounds = [d.strftime("%Y%m%d%H%M%S") for d in
+                           pd.date_range(dates[0], dates[1], periods=n + 1)]
+            for i1, i2 in zip(np.arange(0, n), np.arange(1, n + 1)):
+                left, right = date_bounds[i1], date_bounds[i2]
+                this_box = large_box.copy()
+                this_box[i_left] = left
+                this_box[i_right] = right
+                boxes.append(this_box)
+        return boxes
+
+    def _split_this_3Dbox(self, box, nx=1, ny=1, nz=1, nt=1):
+        box_list = []
+        split_x = self._split_box(box, n=nx, d='x')
+        for bx in split_x:
+            split_y = self._split_box(bx, n=ny, d='y')
+            for bxy in split_y:
+                split_z = self._split_box(bxy, n=nz, d='z')
+                for bxyz in split_z:
+                    split_t = self._split_box(bxyz, n=nt, d='t3d')
+                    for bxyzt in split_t:
+                        box_list.append(bxyzt)
+        return box_list
+
+    def _split_this_2Dbox(self, box, nx=1, ny=1, nt=1):
+        box_list = []
+        split_x = self._split_box(box, n=nx, d='x')
+        for bx in split_x:
+            split_y = self._split_box(bx, n=ny, d='y')
+            for bxy in split_y:
+                split_t = self._split_box(bxy, n=nt, d='t2d')
+                for bxyt in split_t:
+                    box_list.append(bxyt)
+        return box_list
+
+    def _chunker_box3d(self, request, chunks, chunks_maxsize):
+        BOX = request['box']
+        # default_chunks = {'lat': 'auto',
+        #                   'lon': 'auto',
+        #                   'dpt': 'auto',
+        #                   'time': 'auto'}
+        # if chunks == 'auto':
+        #     n_chunks = default_chunks
+        # elif len(chunks) == 0:  # chunks={}
+        #     n_chunks = {k: 1 for k in default_chunks}
+        # else:
+        #     n_chunks = {**default_chunks, **chunks}
+        n_chunks = chunks
+
+        for axis, n in n_chunks.items():
+            if n == 'auto':
+                if axis == 'lon':
+                    Lx = BOX[1] - BOX[0]
+                    if Lx > chunks_maxsize['lon']:  # Max box size in longitude
+                        n_chunks['lon'] = int(np.floor_divide(Lx, chunks_maxsize['lon']))
+                    else:
+                        n_chunks['lon'] = 1
+                if axis == 'lat':
+                    Ly = BOX[3] - BOX[2]
+                    if Ly > chunks_maxsize['lat']:  # Max box size in latitude
+                        n_chunks['lat'] = int(np.floor_divide(Ly, chunks_maxsize['lat']))
+                    else:
+                        n_chunks['lat'] = 1
+                if axis == 'dpt':
+                    Lz = BOX[5] - BOX[4]
+                    if Lz > chunks_maxsize['dpt']:  # Max box size in depth
+                        n_chunks['dpt'] = int(np.floor_divide(Lz, chunks_maxsize['dpt']))
+                    else:
+                        n_chunks['dpt'] = 1
+                if axis == 'time':
+                    Lt = np.timedelta64(pd.to_datetime(BOX[7]) - pd.to_datetime(BOX[6]), 'D')
+                    MaxLen = np.timedelta64(chunks_maxsize['time'], 'D')
+                    if Lt > MaxLen:  # Max box size in time
+                        n_chunks['time'] = int(np.floor_divide(Lt, MaxLen))
+                    else:
+                        n_chunks['time'] = 1
+
+        boxes = self._split_this_3Dbox(BOX,
+                                 nx=n_chunks['lon'],
+                                 ny=n_chunks['lat'],
+                                 nz=n_chunks['dpt'],
+                                 nt=n_chunks['time'])
+        return {'chunks': sorted(n_chunks), 'values': boxes}
+
+    def _chunker_box2d(self, request, chunks, chunks_maxsize):
+        BOX = request['box']
+        # default_chunks = {'lat': 'auto',
+        #                   'lon': 'auto',
+        #                   'time': 'auto'}
+        # if chunks == 'auto':
+        #     n_chunks = default_chunks
+        # elif len(chunks) == 0:  # chunks={}
+        #     n_chunks = {k: 1 for k in default_chunks}
+        # else:
+        #     n_chunks = {**default_chunks, **chunks}
+        n_chunks = chunks
+
+        for axis, n in n_chunks.items():
+            if n == 'auto':
+                if axis == 'lon':
+                    Lx = BOX[1] - BOX[0]
+                    if Lx > chunks_maxsize['lon']:  # Max box size in longitude
+                        n_chunks['lon'] = int(np.floor_divide(Lx, chunks_maxsize['lon']))
+                    else:
+                        n_chunks['lon'] = 1
+                if axis == 'lat':
+                    Ly = BOX[3] - BOX[2]
+                    if Ly > chunks_maxsize['lat']:  # Max box size in latitude
+                        n_chunks['lat'] = int(np.floor_divide(Ly, chunks_maxsize['lat']))
+                    else:
+                        n_chunks['lat'] = 1
+                if axis == 'time':
+                    Lt = np.timedelta64(pd.to_datetime(BOX[5]) - pd.to_datetime(BOX[4]), 'D')
+                    MaxLen = np.timedelta64(chunks_maxsize['time'], 'D')
+                    if Lt > MaxLen:  # Max box size in time
+                        n_chunks['time'] = int(np.floor_divide(Lt, MaxLen))
+                    else:
+                        n_chunks['time'] = 1
+
+        boxes = self._split_this_2Dbox(BOX,
+                                 nx=n_chunks['lon'],
+                                 ny=n_chunks['lat'],
+                                 nt=n_chunks['time'])
+        return {'chunks': sorted(n_chunks), 'values': boxes}
+
+    def _chunker_wmo(self, request, chunks, chunks_maxsize):
+        WMO = request['wmo']
+        # default_chunks = {'wmo': 'auto', 'cyc': 'auto'}
+        # if chunks == 'auto':
+        #     n_chunks = default_chunks
+        # elif len(chunks) == 0:  # chunks={}
+        #     n_chunks = {k: 1 for k in default_chunks}
+        # else:
+        #     n_chunks = {**default_chunks, **chunks}
+        n_chunks = chunks
+        if n_chunks['wmo'] == 'auto':
+            Nwmo = len(WMO)
+            if Nwmo > chunks_maxsize['wmo']:
+                n_chunks['wmo'] = int(np.floor_divide(Nwmo, chunks_maxsize['wmo'])+1)
+            else:
+                n_chunks['wmo'] = 1
+        wmo_grps = self._split_list(WMO, n=n_chunks['wmo'])
+        return {'chunks': sorted(n_chunks), 'values': wmo_grps}
+
+    def fit(self):
+        """ Chunk a fetcher request
+
+        Returns
+        -------
+        list
+        """
+        results = self.chunker(self.request, self.chunks, self.chunksize)
+        self.chunks = results['chunks']
+        return results['values']

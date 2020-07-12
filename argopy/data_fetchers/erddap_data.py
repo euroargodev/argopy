@@ -14,13 +14,14 @@ import pandas as pd
 import numpy as np
 import copy
 import warnings
+import distributed
 
 from abc import abstractmethod
 import getpass
 
 from .proto import ArgoDataFetcherProto
 from argopy.options import OPTIONS
-from argopy.utilities import list_standard_variables
+from argopy.utilities import list_standard_variables, chunker
 from argopy.stores import httpstore
 from argopy.plotters import open_dashboard
 
@@ -79,20 +80,23 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                  cachedir: str = "",
                  parallel: bool = False,
                  chunks: str = 'auto',
-                 chunks_maxsize: list = [],
+                 chunks_maxsize: dict = {},
                  parallel_method: str = 'thread',
                  api_timeout: int = 0,
                  **kwargs):
         """ Instantiate an ERDDAP Argo data loader
 
-            Parameters
-            ----------
-            ds: 'phy' or 'ref' or 'bgc'
-            cache : False
-            cachedir : None
+        Parameters
+        ----------
+        ds: 'phy' or 'ref' or 'bgc'
+        cache : False
+        cachedir : None
 
-            parallel : False
-            chunks : 'auto'
+        parallel : False
+        chunks : str or dict of int, optional
+            Dictionary with keys given by dimension names and values given by chunk sizes.
+            ``chunks={}`` loads data using a single chunk for all requests
+
         """
         timeout = OPTIONS['api_timeout'] if api_timeout == 0 else api_timeout
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout)
@@ -100,6 +104,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
         self.server = api_server
 
+        if not isinstance(parallel, bool):
+            # The parallelisation method is passed through 'parallel':
+            if type(parallel) == distributed.client.Client or parallel == 'thread' or parallel == 'process':
+                parallel_method = parallel
         self.parallel = parallel
         self.parallel_method = parallel_method
         self.chunks = chunks
@@ -110,7 +118,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     def __repr__(self):
         summary = ["<datafetcher '%s'>" % self.definition]
-        summary.append("Domain: %s" % self.cname())
+        cname = self.cname()
+        if len(cname) > 40:
+            cname = "%s ... %s" % (cname[0:30], cname[-30:])
+        summary.append("Domain: %s" % cname)
         return '\n'.join(summary)
 
     def _add_attributes(self, this):
@@ -424,12 +435,6 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         self.WMO = WMO
         self.CYC = CYC
 
-        chunks_maxsize_default = {'wmo': 5}  # Default chunk size of floats
-        if len(self.chunks_maxsize) == 0:
-            self.chunks_maxsize = chunks_maxsize_default
-        else:
-            self.chunks_maxsize = {**chunks_maxsize_default, **self.chunks_maxsize}
-
         self.definition = "?"
         if self.dataset_id == 'phy':
             self.definition = 'Ifremer erddap Argo data fetcher for floats'
@@ -457,40 +462,16 @@ class Fetch_wmo(ErddapArgoDataFetcher):
                 listname = [listname]
                 [listname.append("CYC%0.4d" % i) for i in self.CYC]
                 listname = "_".join(listname)
-        listname = self.dataset_id + "_" + listname
+        listname = self.dataset_id + ";" + listname
         return listname
 
     @property
     def uri(self):
         """ Return a list of URLs to download the full request (possibly by chunks) """
         if self.parallel:
-            def split(lst, n=1):
-                """Yield successive n-sized chunks from lst."""
-                for i in range(0, len(lst), n):
-                    yield lst[i:i + n]
-
-            def split_list(lst, n=1): # Split list in n chunks
-                res = []
-                siz = int(np.floor_divide(len(lst), n))
-                for i in split(lst, siz):
-                    res.append(i)
-                return res
-
-            default_chunks = {'wmo': 'auto', 'cyc': 'auto'}
-            if self.chunks == 'auto':
-                n_chunks = default_chunks
-            else:
-                n_chunks = {**default_chunks, **self.chunks}
-
-            if n_chunks['wmo'] == 'auto':
-                Nwmo = len(self.WMO)
-                if Nwmo > self.chunks_maxsize['wmo']:
-                    n_chunks['wmo'] = int(np.floor_divide(Nwmo, self.chunks_maxsize['wmo']))
-                else:
-                    n_chunks['wmo'] = 1
-
-            self.chunks = n_chunks
-            wmo_grps = split_list(self.WMO, n=n_chunks['wmo'])
+            c = chunker({'wmo': self.WMO}, chunks=self.chunks, chunksize=self.chunks_maxsize)
+            wmo_grps = c.fit()
+            self.chunks = c.chunks
             urls = []
             for wmos in wmo_grps:
                 urls.append(Fetch_wmo(WMO=wmos, CYC=self.CYC, ds=self.dataset_id, parallel=False).get_url)
@@ -527,12 +508,6 @@ class Fetch_box(ErddapArgoDataFetcher):
         if len(box) not in [6, 8]:
             raise ValueError('Box must 6 or 8 length')
         self.BOX = box
-
-        chunks_maxsize_default = {'lon':20, 'lat':20, 'dpt': 100}  # Default maximum chunks size in x, y, z
-        if len(self.chunks_maxsize) == 0:
-            self.chunks_maxsize = chunks_maxsize_default
-        else:
-            self.chunks_maxsize = {**chunks_maxsize_default, **self.chunks_maxsize}
 
         if self.dataset_id == 'phy':
             self.definition = 'Ifremer erddap Argo data fetcher for a space/time region'
@@ -573,80 +548,9 @@ class Fetch_box(ErddapArgoDataFetcher):
         if not self.parallel:
             return self.get_url
         else:
-            def split_box(large_box, n=1, d='x'):
-                """ Split a box domain in one direction in n equal chunks """
-                if d == 'x':
-                    i_left, i_right = 0, 1
-                if d == 'y':
-                    i_left, i_right = 2, 3
-                if d == 'z':
-                    i_left, i_right = 4, 5
-                if n == 1:
-                    return [large_box]
-                else:
-                    n = n + 1
-                boxes = []
-                bins = np.linspace(large_box[i_left], large_box[i_right], n)
-                for ii, left in enumerate(bins):
-                    if ii < len(bins) - 1:
-                        right = bins[ii + 1]
-                        if d == 'x':
-                            boxes.append([left, right,
-                                          large_box[2], large_box[3],
-                                          large_box[4], large_box[5],
-                                          large_box[6], large_box[7]])
-                        elif d == 'y':
-                            boxes.append([large_box[0], large_box[1],
-                                          left, right,
-                                          large_box[4], large_box[5],
-                                          large_box[6], large_box[7]])
-                        elif d == 'z':
-                            boxes.append([large_box[0], large_box[1],
-                                          large_box[2], large_box[3],
-                                          left, right,
-                                          large_box[6], large_box[7]])
-                return boxes
-
-            def split_this_box(box, nx=1, ny=1, nz=1):
-                box_list = []
-                split_x = split_box(box, n=nx, d='x')
-                for bx in split_x:
-                    split_y = split_box(bx, n=ny, d='y')
-                    for bxy in split_y:
-                        split_z = split_box(bxy, n=nz, d='z')
-                        for bxyz in split_z:
-                            box_list.append(bxyz)
-                return box_list
-
-            default_chunks = {'lat': 'auto', 'lon': 'auto', 'dpt': 'auto'}
-            if self.chunks == 'auto':
-                n_chunks = default_chunks
-            else:
-                n_chunks = {**default_chunks, **self.chunks}
-
-            for axis, n in n_chunks.items():
-                if n == 'auto':
-                    if axis == 'lon':
-                        Lx = self.BOX[1] - self.BOX[0]
-                        if Lx > self.chunks_maxsize['lon']:  # Max box size in longitude
-                            n_chunks['lon'] = int(np.floor_divide(Lx, self.chunks_maxsize['lon']))
-                        else:
-                            n_chunks['lon'] = 1
-                    if axis == 'lat':
-                        Ly = self.BOX[3] - self.BOX[2]
-                        if Ly > self.chunks_maxsize['lat']:  # Max box size in latitude
-                            n_chunks['lat'] = int(np.floor_divide(Ly, self.chunks_maxsize['lat']))
-                        else:
-                            n_chunks['lat'] = 1
-                    if axis == 'dpt':
-                        Lz = self.BOX[5] - self.BOX[4]
-                        if Lz > self.chunks_maxsize['dpt']:  # Max box size in depth
-                            n_chunks['dpt'] = int(np.floor_divide(Lz, self.chunks_maxsize['dpt']))
-                        else:
-                            n_chunks['dpt'] = 1
-
-            self.chunks = n_chunks
-            boxes = split_this_box(self.BOX, nx=self.chunks['lon'], ny=self.chunks['lat'], nz=self.chunks['dpt'])
+            c = chunker({'box': self.BOX}, chunks=self.chunks, chunksize=self.chunks_maxsize)
+            boxes = c.fit()
+            self.chunks = c.chunks
             urls = []
             for box in boxes:
                 urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url)
