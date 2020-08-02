@@ -106,7 +106,7 @@ fetcher = ArgoDataFetcher().region([-75, -45, 20, 30, 0, 100, '2011', '2012'])
 ds = fetcher.to_xarray()
 ```
 Here we used **argopy** to fetch data between 75/45W, 20/30N, from 0 to 100db and for the entire year 2011.
-Once the user has defined what they needs (the ``fetcher`` class instance in the example above), **argopy** will fetch data online and manage 
+Once the user has defined what they need (the ``fetcher`` class instance in the example above), **argopy** will fetch data online and manage 
 internally all the complicated processing of formatting the web request and creating a workable in memory data 
 structure (the ``to_xarray()`` call above). By default, **argopy** uses the [xarray data model](http://xarray.pydata.org);
 *xarray* is an open source Python package to easily work with labelled multi-dimensional arrays.
