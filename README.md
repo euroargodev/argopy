@@ -10,7 +10,7 @@
 
 [![status](https://joss.theoj.org/papers/9e31b212f63c2bacb4006b14bb8a743f/status.svg)](https://joss.theoj.org/papers/9e31b212f63c2bacb4006b14bb8a743f)
 
-``argopy`` is a python library that aims to ease Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators.
+``argopy`` is a python library that aims to ease Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators. Documentation is at https://argopy.readthedocs.io/en/latest/
 
 Several python packages exist: we continuously try to build on these libraries to provide you with a single powerfull tool.  
 [List your tool here !](https://github.com/euroargodev/argopy/issues/3)
