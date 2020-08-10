@@ -10,6 +10,8 @@ Contributing to argopy
   Large parts of this document came from the `Pandas Contributing
   Guide <http://pandas.pydata.org/pandas*docs/stable/contributing.html>`_.
 
+If you seek **support** for your argopy usage: `visit the chat room at gitter <https://gitter.im/Argo-floats/argopy>`_.
+
 Where to start?
 ===============
 
@@ -18,7 +20,7 @@ enhancements, and ideas are welcome.
 
 We will complete this document for guidelines with regard to each of these contributions over time.
 
-If you are brand new to *argopy* or open*source development, we recommend going
+If you are brand new to *argopy* or open source development, we recommend going
 through the `GitHub "issues" tab <https://github.com/euroargodev/argopy/issues>`_
 to find issues that interest you. There are a number of issues listed under
 `Documentation <https://github.com/euroargodev/argopy/issues?q=is%3Aissue+is%3Aopen+label%3Adocumentation>`_
@@ -79,7 +81,9 @@ Contributing to the code base
 Data fetchers
 *************
 
-If you want to add your own data fetcher from a new service, then, keep in mind that:
+Introduction
+------------
+If you want to add your own data fetcher for a new service, then, keep in mind that:
 
 * Data fetchers are responsible for:
 
@@ -88,7 +92,7 @@ If you want to add your own data fetcher from a new service, then, keep in mind 
 
 * Data fetchers must:
 
-    * inherit from the `argopy.data_fetchers.proto.ArgoDataFetcherProto`
+    * inherit from the :class:`argopy.data_fetchers.proto.ArgoDataFetcherProto`
     * provide parameters:
 
             *  ``access_points``, eg: ['wmo', 'box']
@@ -106,6 +110,114 @@ If you want to add your own data fetcher from a new service, then, keep in mind 
 
 It is the responsability of the facade API (:class:`argopy.fetchers.ArgoDataFetcher`) to run
 filters according to user level or requests, not the data fetcher.
+
+Detailled guideline
+-------------------
+
+A new data fetcher must comply with:
+
+Inheritance
+~~~~~~~~~~~
+
+-  [ ] Inherit from the :class:`argopy.data_fetchers.proto.ArgoDataFetcherProto`. This enforces minimal internal design
+   compliance.
+
+Auto-discovery for the facade
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Fetcher properties
+^^^^^^^^^^^^^^^^^^
+
+-  [ ] The new fetcher must come with the ``access_points``,
+   ``exit_formats`` and ``dataset_ids`` properties at the top of the
+   file, e.g.:
+
+   ::
+
+       access_points = ['wmo' ,'box']
+       exit_formats = ['xarray']
+       dataset_ids = ['phy', 'bgc']  # First is default
+
+   Values depend on what the new access point can return and what you want to
+   implement. A good start is with the ``wmo`` access point and the
+   ``phy`` dataset ID. The ``xarray`` data format is the minimum
+   required. These variables are used by the facade
+   to auto-discover the fetcher capabilities. The ``dataset_ids``
+   property is used to determine which variables can be retrieved.
+
+Fetcher access points
+^^^^^^^^^^^^^^^^^^^^^
+
+-  [ ] The new fetcher must come at least with a ``Fetch_wmo`` or
+   ``Fetch_wmo`` class, basically one for each of the ``access_points``
+   listed as properties. More generaly we may have a main class that
+   provides the key functionalities to retrieve data from the source,
+   and then classes for each of the ``access_points`` of your fetcher.
+   This pattern could look like this:
+
+   ::
+
+       class NewDataFetcher(ArgoDataFetcherProto)
+       class Fetch_wmo(NewDataFetcher)
+       class Fetch_box(NewDataFetcher)
+
+   It could also be like:
+
+   ::
+
+       class Fetch_wmo(ArgoDataFetcherProto)
+       class Fetch_box(ArgoDataFetcherProto)
+
+   Note that the class names ``Fetch_wmo`` and ``Fetch_box`` must not
+   change, this is also used by the facade to auto-discover the fetcher
+   capabilities.
+
+**Fetch\_wmo** is used to retrieve platforms and eventually profiles
+data. It must take in the ``__init__()`` method a ``WMO`` and a ``CYC``
+as first and second options. ``WMO`` is always passed, ``CYC`` is
+optional. These are passed by the facade to implement the
+``fetcher.float`` and ``fetcher.profile`` methods. When a float is requested, the ``CYC`` option is
+not passed by the facade. Last, ``WMO`` and ``CYC`` are ether a single
+integer or a list of integers: this means that ``Fetch_wmo`` must be
+able to handle more than one float/platform retrieval.
+
+**Fetch\_box** is used to retrieve a rectangular domain in space and
+time. It must take in the ``__init__()`` method a ``BOX`` as first
+option that is passed a list(lon\_min: float, lon\_max: float, lat\_min:
+float, lat\_max: float, pres\_min: float, pres\_max: float, date\_min:
+str, date\_max: str) from the facade. The two bounding dates [date\_min
+and date\_max] should be optional (if not specified, the entire time
+series is requested by the user).
+
+File systems
+~~~~~~~~~~~~
+
+-  [ ] All http requests must go through the internal
+   ``httpstore``, an internal wrapper around fsspec that allows to
+   manage request caching very easily. You can simply use it this way
+   for json requests:
+
+   .. code:: python
+
+       from argopy.stores import httpstore
+       with httpstore(timeout=120).open("https://argovis.colorado.edu/catalog/profiles/5904797_12") as of:
+           profile = json.load(of)
+
+Output data format
+~~~~~~~~~~~~~~~~~~
+
+-  [ ] Last but not least, about the output data. In **argopy**, we want
+   to provide data for both expert and standard users. This is explained
+   and illustrated in the `documentation
+   here <https://argopy.readthedocs.io/en/latest/user_mode.html>`__.
+   This means for a new data fetcher that the data content
+   should be curated and clean of any internal/jargon variables that is
+   not part of the Argo ADMT vocabulary. For instance,
+   variables like: ``bgcMeasKeys`` or ``geoLocation`` are not allowed. This will ensure
+   that whatever the data source set by users, the output xarray or
+   dataframe will be formatted and contain the same variables. This will
+   also ensure that other argopy features can be used on the new fetcher
+   output, like plotting or xarray data manipulation.
 
 
 Code standards
