@@ -6,9 +6,9 @@
 
       ```git tag -a v0.X.Y -m 'v0.X.Y'```
 
-1. Psuh it online:
+1. Push it online:
 
-      ``` git push origin v0.X.Y```
+      ```git push origin v0.X.Y```
 
 1. Issue the release on GitHub. Click on "Draft a new release" at
     https://github.com/euroargodev/argopy/releases. Type in the version number, but

@@ -1,0 +1,33 @@
+language: minimal
+
+sudo: false
+
+matrix:
+  fast_finish: true
+  include:
+    - name: "tarball"
+      env: PY=3
+
+before_install:
+  - |
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+    bash miniconda.sh -b -p $HOME/miniconda
+    export PATH="$HOME/miniconda/bin:$PATH"
+    conda config --set always_yes yes --set changeps1 no --set show_channel_urls true
+    conda update --quiet conda
+    conda config --add channels conda-forge --force
+    conda config --set channel_priority strict
+    conda create --name TEST python=$PY --file requirements.txt --file requirements-dev.txt
+    source activate TEST
+    conda info --all
+
+install:
+  - pip install -e . --no-deps --force-reinstall
+
+script:
+  - |
+    if [[ $TRAVIS_JOB_NAME == 'tarball' ]]; then
+      python -m pep517.build --source --binary . --out-dir dist/
+      check-manifest --verbose
+      twine check dist/*
+    fi

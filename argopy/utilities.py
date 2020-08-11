@@ -26,8 +26,9 @@ import pickle
 import pkg_resources
 import shutil
 
-from argopy.options import OPTIONS
+from argopy.options import OPTIONS, set_options
 from argopy.stores import httpstore
+from argopy.errors import FtpPathError, InvalidFetcher
 
 path2pkl = pkg_resources.resource_filename('argopy', 'assets/')
 
@@ -74,6 +75,14 @@ def list_available_data_src():
         AVAILABLE_SOURCES['localftp'] = LocalFTP_Fetchers
     except Exception:
         warnings.warn("An error occured while loading the local FTP data fetcher, "
+                      "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        pass
+
+    try:
+        from .data_fetchers import argovis_data as ArgoVis_Fetchers
+        AVAILABLE_SOURCES['argovis'] = ArgoVis_Fetchers
+    except Exception:
+        warnings.warn("An error occured while loading the ArgoVis data fetcher, "
                       "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
         pass
 
@@ -179,6 +188,63 @@ def list_multiprofile_file_variables():
              'TEMP_QC',
              'VERTICAL_SAMPLING_SCHEME',
              'WMO_INST_TYPE']
+
+
+def check_localftp(path, errors: str = "ignore"):
+    """ Check if the path has the expected GDAC ftp structure
+
+        Check if the path is structured like:
+        .
+        └── dac
+            ├── aoml
+            ├── ...
+            ├── coriolis
+            ├── ...
+            ├── meds
+            └── nmdis
+
+        Parameters
+        ----------
+        path: str
+            Path name to check
+        errors: str
+            "ignore" or "raise" (or "warn"
+
+        Returms
+        -------
+        checked: boolean
+            True if at least one DAC folder is found under path/dac/<dac_name>
+            False otherwise
+    """
+    dacs = ['aoml', 'bodc', 'coriolis', 'csio', 'csiro', 'incois', 'jma', 'kma', 'kordi', 'meds', 'nmdis']
+
+    # Case 1:
+    check1 = os.path.isdir(path) and os.path.isdir(os.path.join(path, "dac")) \
+             and np.any([os.path.isdir(os.path.join(path, "dac", dac)) for dac in dacs])
+
+    if check1:
+        return True
+    elif errors == 'raise':
+        # This was possible up to v0.1.3:
+        check2 = os.path.isdir(path) and np.any([os.path.isdir(os.path.join(path, dac)) for dac in dacs])
+        if check2:
+            raise FtpPathError("This path is no longer GDAC compliant for argopy.\n"
+                          "Please make sure you point toward a path with a 'dac' folder:\n%s" % path)
+        else:
+            raise FtpPathError("This path is not GDAC compliant:\n%s" % path)
+
+    elif errors == 'warn':
+        # This was possible up to v0.1.3:
+        check2 = os.path.isdir(path) and np.any([os.path.isdir(os.path.join(path, dac)) for dac in dacs])
+        if check2:
+            warnings.warn("This path is no longer GDAC compliant for argopy. This will raise an error in the future.\n"
+                          "Please make sure you point toward a path with a 'dac' folder:\n%s" % path)
+            return False
+        else:
+            warnings.warn("This path is not GDAC compliant:\n%s" % path)
+            return False
+    else:
+        return False
 
 
 def get_sys_info():
@@ -329,7 +395,7 @@ def show_versions(file=sys.stdout):
 
 
 def isconnected(host='http://www.ifremer.fr'):
-    """ Determine if we have a live internet connection
+    """ check if we have a live internet connection
 
         Parameters
         ----------
@@ -341,10 +407,35 @@ def isconnected(host='http://www.ifremer.fr'):
         bool
     """
     try:
-        urllib.request.urlopen(host)  # Python 3.x
+        urllib.request.urlopen(host, timeout=2)  # Python 3.x
         return True
     except Exception:
         return False
+
+
+def isAPIconnected(src='erddap', data=True):
+    """ Check if a source web API is alive or not
+
+        Parameters
+        ----------
+        src: str
+            The data or index source name, 'erddap' default
+        data: bool
+            If True check the data fetcher (default), if False, check the index fetcher
+
+        Returns
+        -------
+        bool
+    """
+    if data:
+        AVAILABLE_SOURCES = list_available_data_src()
+    else:
+        AVAILABLE_SOURCES = list_available_index_src()
+    if src in AVAILABLE_SOURCES and getattr(AVAILABLE_SOURCES[src], "api_server_check", None):
+        with set_options(src=src):
+            return isconnected(AVAILABLE_SOURCES[src].api_server_check)
+    else:
+        raise InvalidFetcher
 
 
 def erddap_ds_exists(ds="ArgoFloats"):
@@ -387,8 +478,8 @@ def open_etopo1(box, res='l'):
     return da
 
 #
-# From xarrayutils : https://github.com/jbusecke/xarrayutils/blob/master/xarrayutils/vertical_coordinates.py
-# Direct integration of those 2 functions to minimize dependencies and possibility of tuning them to our needs
+#  From xarrayutils : https://github.com/jbusecke/xarrayutils/blob/master/xarrayutils/vertical_coordinates.py
+#  Direct integration of those 2 functions to minimize dependencies and possibility of tuning them to our needs
 #
 
 

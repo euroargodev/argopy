@@ -21,20 +21,28 @@ from unittest import TestCase
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
-from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, ErddapServerError, CacheFileNotFound, FileSystemHasNoCache
+from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, ErddapServerError, \
+    CacheFileNotFound, FileSystemHasNoCache, FtpPathError
 
-from argopy.utilities import list_available_data_src, isconnected, erddap_ds_exists
+from argopy.utilities import list_available_data_src, isconnected, isAPIconnected, erddap_ds_exists
 AVAILABLE_SOURCES = list_available_data_src()
 CONNECTED = isconnected()
+CONNECTEDAPI = {src: False for src in AVAILABLE_SOURCES.keys()}
 if CONNECTED:
     DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
     DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-bio")
     DSEXISTS_ref = erddap_ds_exists(ds="ArgoFloats-ref")
+
+    for src in AVAILABLE_SOURCES.keys():
+        try:
+            CONNECTEDAPI[src] = isAPIconnected(src=src, data=True)
+        except InvalidFetcher:
+            pass
+
 else:
     DSEXISTS = False
     DSEXISTS_bgc = False
     DSEXISTS_ref = False
-
 
 # List tests:
 def test_invalid_accesspoint():
@@ -58,6 +66,7 @@ def test_invalid_fetcher():
 
 class EntryPoints_AllBackends(TestCase):
     """ Test main API facade for all available fetching backends and default dataset """
+    ftproot = argopy.tutorial.open_dataset('localftp')[0]
 
     # kwargs_wmo = [{'WMO': 6901929},
     #               {'WMO': [6901929, 2901623]},
@@ -119,42 +128,59 @@ class EntryPoints_AllBackends(TestCase):
     @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
+    @unittest.skipUnless(CONNECTEDAPI['erddap'], "erddap API is not alive")
     def test_float_erddap(self):
         self.__test_float('erddap')
 
     @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
+    @unittest.skipUnless(CONNECTEDAPI['erddap'], "erddap API is not alive")
     def test_profile_erddap(self):
         self.__test_profile('erddap')
 
     @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
     @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
     @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
+    @unittest.skipUnless(CONNECTEDAPI['erddap'], "erddap API is not alive")
     def test_region_erddap(self):
         self.__test_region('erddap')
 
     @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
     def test_float_localftp(self):
-        ftproot, flist = argopy.tutorial.open_dataset('localftp')
-        with argopy.set_options(local_ftp=ftproot):
-            self.__test_float('localftp', )
+        with argopy.set_options(local_ftp=self.ftproot):
+            self.__test_float('localftp')
 
     @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
     def test_profile_localftp(self):
-        ftproot, flist = argopy.tutorial.open_dataset('localftp')
-        with argopy.set_options(local_ftp=ftproot):
+        with argopy.set_options(local_ftp=self.ftproot):
             self.__test_profile('localftp')
 
+    @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
+    def test_region_localftp(self):
+        with argopy.set_options(local_ftp=self.ftproot):
+            self.__test_region('localftp')
+
     @unittest.skipUnless('argovis' in AVAILABLE_SOURCES, "requires argovis data fetcher")
-    @unittest.skipUnless(CONNECTED, "argovis requires an internet connection")
+    @unittest.skipUnless(CONNECTEDAPI['argovis'], "argovis API is not alive")
     def test_float_argovis(self):
         self.__test_float('argovis')
+
+    @unittest.skipUnless('argovis' in AVAILABLE_SOURCES, "requires argovis data fetcher")
+    @unittest.skipUnless(CONNECTEDAPI['argovis'], "argovis API is not alive")
+    def test_profile_argovis(self):
+        self.__test_profile('argovis')
+
+    @unittest.skipUnless('argovis' in AVAILABLE_SOURCES, "requires argovis data fetcher")
+    @unittest.skipUnless(CONNECTEDAPI['argovis'], "argovis API is not alive")
+    def test_region_argovis(self):
+        self.__test_region('argovis')
 
 
 
 @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
+@unittest.skipUnless(CONNECTEDAPI['erddap'], "erddap API is not alive")
 class Erddap(TestCase):
     """ Test main API facade for all available dataset and access points of the ERDDAP fetching backend """
     src = 'erddap'
@@ -337,6 +363,15 @@ class LocalFTP(TestCase):
             loader.to_xarray()
             with pytest.raises(FileSystemHasNoCache):
                 loader.fetcher.cachepath
+
+    def test_invalidFTPpath(self):
+        with pytest.raises(ValueError):
+            with argopy.set_options(local_ftp="dummy"):
+                ArgoDataFetcher(src=self.src).profile(2901623, 12)
+
+        with pytest.raises(FtpPathError):
+            with argopy.set_options(local_ftp = os.path.sep.join([self.local_ftp, "dac"]) ):
+                ArgoDataFetcher(src=self.src).profile(2901623, 12)
 
     def __testthis_profile(self, dataset):
         with argopy.set_options(local_ftp=self.local_ftp):

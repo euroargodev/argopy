@@ -3,6 +3,47 @@
 What's New
 ==========
 
+v0.1.5 (10 July 2020)
+---------------------
+
+**Features and front-end API**
+
+- A new data source with the **argovis** data fetcher, all access points available (:pr:`24`). By `T. Tucker <https://github.com/tylertucker202>`_ and `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy import DataFetcher as ArgoDataFetcher
+    loader = ArgoDataFetcher(src='argovis')
+    loader.float(6902746).to_xarray()
+    loader.profile(6902746, 12).to_xarray()
+    loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2012-02']).to_xarray()
+
+- Easily compute `TEOS-10 <http://teos-10.org/>`_ variables with new argo accessor function **teos10**. This needs `gsw <https://github.com/TEOS-10/GSW-Python>`_ to be installed. (:pr:`37`) By `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy import DataFetcher as ArgoDataFetcher
+    ds = ArgoDataFetcher().region([-85,-45,10.,20.,0,1000.,'2012-01','2012-02']).to_xarray()
+    ds = ds.argo.teos10()
+    ds = ds.argo.teos10(['PV'])
+    ds_teos10 = ds.argo.teos10(['SA', 'CT'], inplace=False)
+
+- **argopy** can now be installed with conda (:pr:`29`, :pr:`31`, :pr:`32`). By `F. Fernandes <https://github.com/ocefpaf>`_.
+
+.. code-block:: text
+
+    conda install -c conda-forge argopy
+
+
+**Breaking changes with previous versions**
+
+- The ``local_ftp`` option of the ``localftp`` data source must now points to the folder where the ``dac`` directory is found. This breaks compatibility with rsynced local FTP copy because rsync does not give a ``dac`` folder (e.g. :issue:`33`). An instructive error message is raised to notify users if any of the DAC name is found at the n-1 path level. (:pr:`34`).
+
+**Internals**
+
+- Implement a webAPI availability check in unit testing. This allows for more robust ``erddap`` and ``argovis`` tests that are not only based on internet connectivity only. (:commit:`5a46a39a3368431c6652608ee7241888802f334f`).
+
+
 v0.1.4 (24 June 2020)
 ---------------------
 
