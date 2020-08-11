@@ -129,6 +129,8 @@ class test_teos10(unittest.TestCase):
             pass
 
     def test_teos10_variables_default(self):
+        if not hasattr(self, 'ds_pts_standard'):
+            self.init_data()
         ds_list = [self.ds_pts_standard, self.ds_pts_expert]
         for this in ds_list:
             for format in ['point', 'profile']:
