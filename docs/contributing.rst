@@ -73,6 +73,129 @@ from others.
 
 `Click here to open an issue with the specific bug reporting template <https://github.com/euroargodev/argopy/issues/new?template=bug_report.md>`_
 
+
+.. _working.code:
+
+Working with the code
+=====================
+
+
+Development workflow
+********************
+
+Anyone interested in helping to develop argopy needs to create their own fork
+of our `git repository`. (Follow the github `forking instructions`_. You
+will need a github account.)
+
+.. _git repository: https://github.com/euroargodev/argopy
+.. _forking instructions: https://help.github.com/articles/fork-a-repo/
+
+Clone your fork on your local machine.
+
+.. code-block:: bash
+
+    $ git clone git@github.com:USERNAME/argopy
+
+(In the above, replace USERNAME with your github user name.)
+
+Then set your fork to track the upstream argopy repo.
+
+.. code-block:: bash
+
+    $ cd argopy
+    $ git remote add upstream git://github.com/euroargodev/argopy.git
+
+You will want to periodically sync your master branch with the upstream master.
+
+.. code-block:: bash
+
+    $ git fetch upstream
+    $ git rebase upstream/master
+
+**Never make any commits on your local master branch**. Instead open a feature
+branch for every new development task.
+
+.. code-block:: bash
+
+    $ git checkout -b cool_new_feature
+
+(Replace `cool_new_feature` with an appropriate description of your feature.)
+At this point you work on your new feature, using `git add` to add your
+changes. When your feature is complete and well tested, commit your changes
+
+.. code-block:: bash
+
+    $ git commit -m 'did a bunch of great work'
+
+and push your branch to github.
+
+.. code-block:: bash
+
+    $ git push origin cool_new_feature
+
+At this point, you go find your fork on github.com and create a `pull
+request`_. Clearly describe what you have done in the comments. If your
+pull request fixes an issue or adds a useful new feature, the team will
+gladly merge it.
+
+.. _pull request: https://help.github.com/articles/using-pull-requests/
+
+After your pull request is merged, you can switch back to the master branch,
+rebase, and delete your feature branch. You will find your new feature
+incorporated into argopy.
+
+.. code-block:: bash
+
+    $ git checkout master
+    $ git fetch upstream
+    $ git rebase upstream/master
+    $ git branch -d cool_new_feature
+
+
+Virtual environment
+*******************
+
+This is how to create a virtual environment into which to test-install argopy,
+install it, check the version, and tear down the virtual environment.
+
+.. code-block:: bash
+
+    $ conda create --yes -n argopy-tests python=3.6 xarray dask numpy pytest future gsw
+    $ conda activate argopy-tests
+    $ pip install argopy
+    $ python -c 'import argopy; print(argopy.__version__);'
+    $ conda deactivate
+    $ conda env remove --yes -n argopy-tests
+
+
+Code standards
+**************
+
+Writing good code is not just about what you write. It is also about *how* you
+write it. During :ref:`Continuous Integration <contributing.ci>` testing, several
+tools will be run to check your code for stylistic errors.
+Generating any warnings will cause the test to fail.
+Thus, good style is a requirement for submitting code to *argopy*.
+
+
+Code Formatting
+~~~~~~~~~~~~~~~
+
+*argopy* uses several tools to ensure a consistent code format throughout the project:
+
+* `Flake8 <http://flake8.pycqa.org/en/latest/>`_ for general code quality
+
+``pip``::
+
+   pip install flake8
+
+and then run from the root of the argopy repository::
+
+   flake8
+
+to qualify your code.
+
+
 .. _contributing.code:
 
 Contributing to the code base
@@ -80,7 +203,6 @@ Contributing to the code base
 
 .. contents:: Code Base:
    :local:
-
 
 Data fetchers
 *************
@@ -223,30 +345,3 @@ Output data format
    also ensure that other argopy features can be used on the new fetcher
    output, like plotting or xarray data manipulation.
 
-
-Code standards
-**************
-
-Writing good code is not just about what you write. It is also about *how* you
-write it. During :ref:`Continuous Integration <contributing.ci>` testing, several
-tools will be run to check your code for stylistic errors.
-Generating any warnings will cause the test to fail.
-Thus, good style is a requirement for submitting code to *argopy*.
-
-
-Code Formatting
-~~~~~~~~~~~~~~~
-
-*argopy* uses several tools to ensure a consistent code format throughout the project:
-
-* `Flake8 <http://flake8.pycqa.org/en/latest/>`_ for general code quality
-
-``pip``::
-
-   pip install flake8
-
-and then run from the root of the argopy repository::
-
-   flake8
-
-to qualify your code.
