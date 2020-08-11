@@ -10,7 +10,10 @@ Contributing to argopy
   Large parts of this document came from the `Pandas Contributing
   Guide <http://pandas.pydata.org/pandas*docs/stable/contributing.html>`_.
 
-If you seek **support** for your argopy usage: `visit the chat room at gitter <https://gitter.im/Argo-floats/argopy>`_.
+:+1::tada: First off, thanks for taking the time to contribute!:tada::+1:
+
+If you seek **support** for your argopy usage or if you don't want to read
+this whole thing and just have a question: `visit the chat room at gitter <https://gitter.im/Argo-floats/argopy>`_.
 
 Where to start?
 ===============
@@ -29,6 +32,7 @@ and `good first issue
 where you could start out. Once you've found an interesting issue, you can
 return here to get your development environment setup.
 
+Please don't file an issue to ask a question, instead `visit the chat room at gitter <https://gitter.im/Argo-floats/argopy>`_.
 
 .. _contributing.bug_reports:
 
