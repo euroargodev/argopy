@@ -142,6 +142,8 @@ class test_teos10(unittest.TestCase):
                 assert 'CT' in that.variables
 
     def test_teos10_variables_single(self):
+        if not hasattr(self, 'ds_pts_standard'):
+            self.init_data()
         ds_list = [self.ds_pts_standard, self.ds_pts_expert]
         for this in ds_list:
             for format in ['point', 'profile']:
@@ -152,6 +154,8 @@ class test_teos10(unittest.TestCase):
                 assert 'PV' in that.variables
 
     def test_teos10_variables_inplace(self):
+        if not hasattr(self, 'ds_pts_standard'):
+            self.init_data()
         ds_list = [self.ds_pts_standard, self.ds_pts_expert]
         for this in ds_list:
             ds = this.argo.teos10(inplace=False)
