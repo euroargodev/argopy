@@ -1,5 +1,6 @@
 import os
 import io
+import types
 import xarray as xr
 import pandas as pd
 import requests
@@ -120,7 +121,7 @@ class argo_store_proto(ABC):
                 self._clear_cache_item(uri)
 
     @abstractmethod
-    def open_dataset(self):
+    def open_dataset(self, *args, **kwargs):
         pass
 
     @abstractmethod
@@ -131,8 +132,10 @@ class argo_store_proto(ABC):
                        urls,
                        concat_dim='row',
                        max_workers = 100,
-                       method: str = 'process',
+                       method: str = 'thread',
                        progress: bool = True,
+                       concat: bool = True,
+                       preprocess = None,
                        *args, **kwargs):
         """ Open multiple urls as a single xarray dataset.
 
@@ -151,14 +154,26 @@ class argo_store_proto(ABC):
                     - 'thread' (Default): use a pool of at most ``max_workers`` threads
                     - 'process': use a pool of at most ``max_workers`` processes
                     - Dask client object: use a Dask distributed client object
+                Use 'seq' to simply open data sequentially
             progress: bool
                 Display a progress bar (True by default)
+            preprocess: (callable, optional)
+                If provided, call this function on each dataset prior to concatenation.
 
             Returns
             -------
             :class:`xarray.Dataset`
 
         """
+        def __processor(u, *a, **kw):
+            return preprocess(self.open_dataset(u, *a, **kw))
+        def __noprocessor(u, *a, **kw):
+            return self.open_dataset(u, *a, **kw)
+        if not isinstance(preprocess, types.FunctionType):
+            process = __noprocessor
+        else:
+            process = __processor
+
         results = []
         if method in ['thread', 'process']:
             if method == 'thread':
@@ -167,7 +182,9 @@ class argo_store_proto(ABC):
                 ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
 
             with ConcurrentExecutor as executor:
-                future_to_url = {executor.submit(self.open_dataset, url): url for url in urls}
+                # future_to_url = {executor.submit(self.open_dataset, url): url for url in urls}
+                # future_to_url = {executor.submit(process, url): url for url in urls}
+                future_to_url = {executor.submit(process, url, *args, **kwargs): url for url in urls}
                 # future_to_url = (executor.submit(self.open_dataset, url) for url in urls)
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
@@ -178,6 +195,8 @@ class argo_store_proto(ABC):
                     url = future_to_url[future]
                     try:
                         data = future.result()
+                        # if isinstance(preprocess, types.FunctionType):
+                        #     data = preprocess(data)
                     except Exception as e:
                         # print("Something went wrong with this url: %s" % url)
                         print(e.args)
@@ -187,14 +206,28 @@ class argo_store_proto(ABC):
 
         elif type(method) == distributed.client.Client:
             # Use a dask client:
-            futures = method.map(self.open_dataset, urls)
+            futures = method.map(process, urls, *args, **kwargs)
             results = method.gather(futures)
+
+        elif method == 'sequential':
+            for url in tqdm(urls):
+                try:
+                    data = process(url, *args, **kwargs)
+                except Exception as e:
+                    # print("Something went wrong with this url: %s" % url)
+                    print(e.args)
+                    pass
+                finally:
+                    results.append(data)
 
         # Post-process results
         results = [r for r in results if r is not None]  # Only keep non-empty results
         if len(results) > 0:
-            ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
-            return ds
+            if concat:
+                ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
+                return ds
+            else:
+                return results
         else:
             raise DataNotFound()
 
@@ -206,7 +239,7 @@ class filestore(argo_store_proto):
     """
     protocol = 'file'
 
-    def open_dataset(self, url, **kwargs):
+    def open_dataset(self, url, *args, **kwargs):
         """ Return a xarray.dataset from an url
 
             Parameters
@@ -219,7 +252,7 @@ class filestore(argo_store_proto):
             :class:`xarray.DataSet`
         """
         with self.fs.open(url) as of:
-            ds = xr.open_dataset(of, **kwargs)
+            ds = xr.open_dataset(of, *args, **kwargs)
         self.register(url)
         return ds
 
@@ -326,7 +359,7 @@ class httpstore(argo_store_proto):
         except requests.HTTPError as e:
             self._verbose_exceptions(e)
 
-    def open_dataset(self, url, **kwargs):
+    def open_dataset(self, url, *args, **kwargs):
         """ Open and decode a xarray dataset from an url
 
             Parameters
@@ -340,7 +373,7 @@ class httpstore(argo_store_proto):
         """
         try:
             with self.fs.open(url) as of:
-                ds = xr.open_dataset(of, **kwargs)
+                ds = xr.open_dataset(of, *args, **kwargs)
             self.register(url)
             return ds
         except requests.exceptions.ConnectionError as e:

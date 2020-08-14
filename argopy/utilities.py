@@ -531,6 +531,8 @@ def linear_interpolation_remap(z, data, z_regridded, z_dim=None, z_regridded_dim
 
 
 class chunker():
+    """ To chunk fetcher requests """
+
     # Default maximum chunks size for all possible request parameters
     default_chunksize = {'box': {'lon': 20,  # degree
                          'lat': 20,  # degree
@@ -773,13 +775,13 @@ class chunker():
         wmo_grps = self._split_list(WMO, n=n_chunks['wmo'])
         return {'chunks': sorted(n_chunks), 'values': wmo_grps}
 
-    def fit(self):
+    def fit_transform(self):
         """ Chunk a fetcher request
 
         Returns
         -------
         list
         """
-        results = self.chunker(self.request, self.chunks, self.chunksize)
-        self.chunks = results['chunks']
-        return results['values']
+        self._results = self.chunker(self.request, self.chunks, self.chunksize)
+        self.chunks = self._results['chunks']
+        return self._results['values']

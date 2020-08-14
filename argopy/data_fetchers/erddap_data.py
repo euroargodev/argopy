@@ -67,7 +67,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def uri(self):
-        """ Return a list of Unique Ressource Identifier (URI) to download data """
+        """ Return the list of Unique Ressource Identifier (URI) to download data """
         pass
 
     ###
@@ -467,17 +467,22 @@ class Fetch_wmo(ErddapArgoDataFetcher):
 
     @property
     def uri(self):
-        """ Return a list of URLs to download the full request (possibly by chunks) """
-        if self.parallel:
-            c = chunker({'wmo': self.WMO}, chunks=self.chunks, chunksize=self.chunks_maxsize)
-            wmo_grps = c.fit()
-            self.chunks = c.chunks
+        """ Return the list of URLs to download the full request
+
+        Returns
+        -------
+        str or list(str)
+        """
+        if not self.parallel:
+            return self.get_url
+        else:
+            C = chunker({'wmo': self.WMO}, chunks=self.chunks, chunksize=self.chunks_maxsize)
+            wmo_grps = C.fit_transform()
+            self.chunks = C.chunks
             urls = []
             for wmos in wmo_grps:
                 urls.append(Fetch_wmo(WMO=wmos, CYC=self.CYC, ds=self.dataset_id, parallel=False).get_url)
             return urls
-        else:
-            return self.get_url
 
     def dashboard(self, **kw):
         if len(self.WMO) == 1:
@@ -548,9 +553,9 @@ class Fetch_box(ErddapArgoDataFetcher):
         if not self.parallel:
             return self.get_url
         else:
-            c = chunker({'box': self.BOX}, chunks=self.chunks, chunksize=self.chunks_maxsize)
-            boxes = c.fit()
-            self.chunks = c.chunks
+            C = chunker({'box': self.BOX}, chunks=self.chunks, chunksize=self.chunks_maxsize)
+            boxes = C.fit_transform()
+            self.chunks = C.chunks
             urls = []
             for box in boxes:
                 urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url)
