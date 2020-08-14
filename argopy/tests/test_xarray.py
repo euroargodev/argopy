@@ -74,24 +74,32 @@ class test_interp_std_levels(unittest.TestCase):
             pass
 
     def test_interpolation(self):
+        if not hasattr(self, 'ds_pts_standard'):
+            self.init_data()
         # Run with success:
         ds = self.ds_pts_standard.argo.point2profile()
         assert 'PRES_INTERPOLATED' in ds.argo.interp_std_levels(
             [20, 30, 40, 50]).dims
 
     def test_points_error(self):
+        if not hasattr(self, 'ds_pts_standard'):
+            self.init_data()
         # Try to interpolate points, not profiles
         ds = self.ds_pts_standard
         with pytest.raises(InvalidDatasetStructure):
             ds.argo.interp_std_levels([20, 30, 40, 50])
 
     def test_mode_error(self):
+        if not hasattr(self, 'ds_pts_standard'):
+            self.init_data()
         # Try to interpolate expert data
         ds = self.ds_pts_expert.argo.point2profile()
         with pytest.raises(InvalidDatasetStructure):
             ds.argo.interp_std_levels([20, 30, 40, 50]).dims
 
     def test_std_error(self):
+        if not hasattr(self, 'ds_pts_standard'):
+            self.init_data()
         # Try to interpolate on a wrong axis
         ds = self.ds_pts_standard.argo.point2profile()
         with pytest.raises(ValueError):
@@ -129,6 +137,8 @@ class test_teos10(unittest.TestCase):
             pass
 
     def test_teos10_variables_default(self):
+        if not hasattr(self, 'ds_pts_standard'):
+            self.init_data()
         ds_list = [self.ds_pts_standard, self.ds_pts_expert]
         for this in ds_list:
             for format in ['point', 'profile']:
@@ -140,6 +150,8 @@ class test_teos10(unittest.TestCase):
                 assert 'CT' in that.variables
 
     def test_teos10_variables_single(self):
+        if not hasattr(self, 'ds_pts_standard'):
+            self.init_data()
         ds_list = [self.ds_pts_standard, self.ds_pts_expert]
         for this in ds_list:
             for format in ['point', 'profile']:
@@ -150,6 +162,8 @@ class test_teos10(unittest.TestCase):
                 assert 'PV' in that.variables
 
     def test_teos10_variables_inplace(self):
+        if not hasattr(self, 'ds_pts_standard'):
+            self.init_data()
         ds_list = [self.ds_pts_standard, self.ds_pts_expert]
         for this in ds_list:
             ds = this.argo.teos10(inplace=False)
