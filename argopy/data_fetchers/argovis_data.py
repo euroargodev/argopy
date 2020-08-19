@@ -18,7 +18,7 @@ import warnings
 
 from argopy.stores import httpstore
 from argopy.options import OPTIONS
-from argopy.utilities import list_standard_variables
+from argopy.utilities import list_standard_variables, format_oneline
 from argopy.errors import DataNotFound
 from argopy.plotters import open_dashboard
 
@@ -99,8 +99,10 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         }
 
     def __repr__(self):
-        summary = ["<datafetcher '%s'>" % self.definition]
-        summary.append("Domain: %s" % self.cname())
+        summary = ["<datafetcher.argovis>"]
+        summary.append("Name: %s" % self.definition)
+        summary.append("API: %s" % api_server)
+        summary.append("Domain: %s" % format_oneline(self.cname()))
         return '\n'.join(summary)
 
     def _add_history(self, this, txt):

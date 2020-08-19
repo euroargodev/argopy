@@ -1,12 +1,7 @@
 #!/bin/env python
 # -*coding: UTF-8 -*-
 #
-# Test data fetchers
-#
-# This is not designed as it should
-# We need to have:
-# - one class to test the facade API
-# - one class to test specific methods of each backends
+# Test Erddap data fetchers
 #
 # At this point, we are testing real data fetching both through facade and through direct call to backends.
 

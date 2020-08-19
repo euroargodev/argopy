@@ -12,6 +12,7 @@ import warnings
 import urllib.request
 import json
 import collections
+from functools import reduce
 
 import importlib
 import locale
@@ -530,23 +531,22 @@ def linear_interpolation_remap(z, data, z_regridded, z_dim=None, z_regridded_dim
     return remapped
 
 
-class chunker():
+class Chunker():
     """ To chunk fetcher requests """
 
     # Default maximum chunks size for all possible request parameters
     default_chunksize = {'box': {'lon': 20,  # degree
-                         'lat': 20,  # degree
-                         'dpt': 500,  # meters/db
-                         'time': 3 * 30},  # Days
-                         'wmo': {
-                         'wmo': 5,    # Nb of floats
-                         'cyc': 100}}  # Nb of cycles
+                                 'lat': 20,  # degree
+                                 'dpt': 500, # meters/db
+                                 'time': 3 * 30},  # Days
+                         'wmo': {'wmo': 5,    # Nb of floats
+                                 'cyc': 100}} # Nb of cycles
 
     def __init__(self,
                request: dict,
                chunks: str = 'auto',
                chunksize: dict = {}):
-        """ Create a request chunker
+        """ Create a request Chunker
 
         Allow to easily split an access point request into chunks
 
@@ -558,9 +558,11 @@ class chunker():
             {'box': [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]}
             {'wmo': [wmo1, wmo2, ...], 'cyc': [0,1, ...]}
         chunks: 'auto' or dict
-            Dictionary with the number of chunks to create for each of request parameters.
+            Dictionary with request access point as keys and number of chunks to create as values.
+            Eg: {'wmo':10} will create a maximum of 10 chunks along WMOs.
         chunksize: dict, optional
-            Dictionary of the maximum chunk size to allow in 'auto' chunking.
+            Dictionary with request access point as keys and chunk size as values (used as maximum values in
+            'auto' chunking). Eg: {'wmo': 5} will create chunks with as many as 5 WMOs each.
 
         """
         self.request = request
@@ -572,23 +574,23 @@ class chunker():
             chunksize = {**default, **chunksize}
         self.chunksize = collections.OrderedDict(sorted(chunksize.items()))
 
+        default = {k: 'auto' for k in self.chunksize.keys()}
         if chunks == 'auto':  # auto for all
-            chunks = {k: 'auto' for k in self.chunksize.keys()}
-        elif len(chunks) == 0:  # chunks = {}, 1 for all
+            chunks = default
+        elif len(chunks) == 0:  # chunks = {}, i.e. chunk=1 for all
             chunks = {k: 1 for k in self.request}
-        else:  # merge with default:
-            chunks = {**default, **chunks}
+        chunks = {**default, **chunks}
         self.chunks = collections.OrderedDict(sorted(chunks.items()))
 
         if 'box' in self.request:
             if len(self.request['box']) == 8:
-                self.chunker = self._chunker_box3d
+                self.this_chunker = self._chunker_box3d
             elif len(self.request['box']) == 6:
-                self.chunker = self._chunker_box2d
+                self.this_chunker = self._chunker_box2d
             else:
                 raise ValueError('Box must 6 or 8 length')
         elif 'wmo' in self.request:
-            self.chunker = self._chunker_wmo
+            self.this_chunker = self._chunker_wmo
         else:
             raise InvalidFetcherAccessPoint("'%s' not valid access point" % ",".join(self.request.keys()))
 
@@ -597,16 +599,29 @@ class chunker():
         for i in range(0, len(lst), n):
             yield lst[i:i + n]
 
-    def _split_list(self, lst, n=1):
-        """Split list in n chunks"""
+    def _split_list_bychunknb(self, lst, n=1):
+        """Split list in n-imposed chunks of similar size
+            The last chunk may contain more or less element than the others, depending on the size of the list.
+        """
         res = []
         siz = int(np.floor_divide(len(lst), n))
         for i in self._split(lst, siz):
             res.append(i)
+        if len(res) > n:
+            res[n-1::] = [reduce(lambda i, j: i + j, res[n-1::])]
+        return res
+
+    def _split_list_bychunksize(self, lst, max_size=1):
+        """Split list in chunks of imposed size
+            The last chunk may contain more or less element than the others, depending on the size of the list.
+        """
+        res = []
+        for i in self._split(lst, max_size):
+            res.append(i)
         return res
 
     def _split_box(self, large_box, n=1, d='x'):
-        """ Split a box domain in one direction in n equal chunks """
+        """Split a box domain in one direction in n-imposed equal chunks """
         if d == 'x':
             i_left, i_right = 0, 1
         if d == 'y':
@@ -668,18 +683,7 @@ class chunker():
 
     def _chunker_box3d(self, request, chunks, chunks_maxsize):
         BOX = request['box']
-        # default_chunks = {'lat': 'auto',
-        #                   'lon': 'auto',
-        #                   'dpt': 'auto',
-        #                   'time': 'auto'}
-        # if chunks == 'auto':
-        #     n_chunks = default_chunks
-        # elif len(chunks) == 0:  # chunks={}
-        #     n_chunks = {k: 1 for k in default_chunks}
-        # else:
-        #     n_chunks = {**default_chunks, **chunks}
         n_chunks = chunks
-
         for axis, n in n_chunks.items():
             if n == 'auto':
                 if axis == 'lon':
@@ -717,17 +721,7 @@ class chunker():
 
     def _chunker_box2d(self, request, chunks, chunks_maxsize):
         BOX = request['box']
-        # default_chunks = {'lat': 'auto',
-        #                   'lon': 'auto',
-        #                   'time': 'auto'}
-        # if chunks == 'auto':
-        #     n_chunks = default_chunks
-        # elif len(chunks) == 0:  # chunks={}
-        #     n_chunks = {k: 1 for k in default_chunks}
-        # else:
-        #     n_chunks = {**default_chunks, **chunks}
         n_chunks = chunks
-
         for axis, n in n_chunks.items():
             if n == 'auto':
                 if axis == 'lon':
@@ -749,7 +743,6 @@ class chunker():
                         n_chunks['time'] = int(np.floor_divide(Lt, MaxLen))
                     else:
                         n_chunks['time'] = 1
-
         boxes = self._split_this_2Dbox(BOX,
                                  nx=n_chunks['lon'],
                                  ny=n_chunks['lat'],
@@ -758,21 +751,13 @@ class chunker():
 
     def _chunker_wmo(self, request, chunks, chunks_maxsize):
         WMO = request['wmo']
-        # default_chunks = {'wmo': 'auto', 'cyc': 'auto'}
-        # if chunks == 'auto':
-        #     n_chunks = default_chunks
-        # elif len(chunks) == 0:  # chunks={}
-        #     n_chunks = {k: 1 for k in default_chunks}
-        # else:
-        #     n_chunks = {**default_chunks, **chunks}
         n_chunks = chunks
         if n_chunks['wmo'] == 'auto':
-            Nwmo = len(WMO)
-            if Nwmo > chunks_maxsize['wmo']:
-                n_chunks['wmo'] = int(np.floor_divide(Nwmo, chunks_maxsize['wmo'])+1)
-            else:
-                n_chunks['wmo'] = 1
-        wmo_grps = self._split_list(WMO, n=n_chunks['wmo'])
+            wmo_grps = self._split_list_bychunksize(WMO, max_size=chunks_maxsize['wmo'])
+        else:
+            n = np.min([n_chunks['wmo'], len(WMO)])
+            wmo_grps = self._split_list_bychunknb(WMO, n=n)
+        n_chunks['wmo'] = len(wmo_grps)
         return {'chunks': sorted(n_chunks), 'values': wmo_grps}
 
     def fit_transform(self):
@@ -782,6 +767,16 @@ class chunker():
         -------
         list
         """
-        self._results = self.chunker(self.request, self.chunks, self.chunksize)
+        self._results = self.this_chunker(self.request, self.chunks, self.chunksize)
         self.chunks = self._results['chunks']
         return self._results['values']
+
+
+def format_oneline(s, max_width = 65):
+    """ Return a string formated for a line print """
+    if len(s) > max_width:
+        padding = " ... "
+        n = (max_width - len(padding)) // 2
+        return "".join([s[0:n], padding, s[-n:]])
+    else:
+        return s

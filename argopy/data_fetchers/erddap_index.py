@@ -18,7 +18,7 @@ from abc import ABC, abstractmethod
 import getpass
 
 from .proto import ArgoDataFetcherProto
-from argopy.utilities import load_dict, mapp_dict
+from argopy.utilities import load_dict, mapp_dict, format_oneline
 from argopy.options import OPTIONS
 from argopy.utilities import list_standard_variables
 from argopy.stores import httpstore
@@ -77,11 +77,10 @@ class ErddapArgoIndexFetcher(ABC):
         self._init_erddapy()
 
     def __repr__(self):
-        if hasattr(self, '_definition'):
-            summary = ["<indexfetcher '%s'>" % self.definition]
-        else:
-            summary = ["<indexfetcher '%s'>" % 'Ifremer erddap Argo Index fetcher']
-        summary.append("Domain: %s" % self.cname())
+        summary = ["<indexfetcher.erddap>"]
+        summary.append("Name: %s" % self.definition)
+        summary.append("API: %s" % api_server)
+        summary.append("Domain: %s" % format_oneline(self.cname()))
         return '\n'.join(summary)
 
     def _format(self, x, typ):

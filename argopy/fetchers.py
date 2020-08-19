@@ -109,9 +109,9 @@ class ArgoDataFetcher():
             summary.append("Backend: %s" % self._src)
             summary.append("User mode: %s" % self._mode)
         else:
-            summary = ["<datafetcher 'Not initialised'>"]
-            summary.append("Backend: %s" % self._src)
-            summary.append("Fetchers: %s" % ", ".join(self.Fetchers.keys()))
+            summary = ["<datafetcher> 'Not initialised'"]
+            summary.append("Current backend: %s" % self._src)
+            summary.append("Available fetchers: %s" % ", ".join(self.Fetchers.keys()))
             summary.append("User mode: %s" % self._mode)
         return "\n".join(summary)
 
@@ -300,8 +300,9 @@ class ArgoIndexFetcher():
             summary = [self.fetcher.__repr__()]
             summary.append("User mode: %s" % self._mode)
         else:
-            summary = ["<indexfetcher 'Not initialised'>"]
-            summary.append("Fetchers: %s" % ", ".join(self.Fetchers.keys()))
+            summary = ["<indexfetcher> 'Not initialised'"]
+            summary.append("Current backend: %s" % self._src)
+            summary.append("Available fetchers: %s" % ", ".join(self.Fetchers.keys()))
             summary.append("User mode: %s" % self._mode)
         return "\n".join(summary)
 

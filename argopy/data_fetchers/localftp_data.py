@@ -32,7 +32,7 @@ from glob import glob
 import numpy as np
 import pandas as pd
 import xarray as xr
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 import warnings
 import getpass
 
@@ -41,9 +41,9 @@ import distributed
 
 from .proto import ArgoDataFetcherProto
 from argopy.errors import NetCDF4FileNotFoundError
-from argopy.utilities import list_standard_variables, load_dict, mapp_dict, check_localftp, chunker
+from argopy.utilities import list_standard_variables, check_localftp, format_oneline
 from argopy.options import OPTIONS
-from argopy.stores import filestore, indexstore, indexfilter_wmo, indexfilter_box
+from argopy.stores import filestore, indexstore, indexfilter_box
 from argopy.plotters import open_dashboard
 
 access_points = ['wmo', 'box']
@@ -91,8 +91,8 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
                  dimension: str = 'point',
                  errors: str = 'raise',
                  parallel: bool = False,
-                 chunks: str = 'auto',
-                 chunks_maxsize: dict = {},
+                 # chunks: str = 'auto',
+                 # chunks_maxsize: dict = {},
                  parallel_method: str = 'thread',
                  **kwargs):
         """ Init fetcher
@@ -122,13 +122,13 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         self.errors = errors
 
         if not isinstance(parallel, bool):
-            # The parallelisation method is passed through 'parallel':
+            # The parallelisation method is passed through the argument 'parallel':
             if type(parallel) == distributed.client.Client or parallel == 'thread' or parallel == 'process':
                 parallel_method = parallel
         self.parallel = parallel
         self.parallel_method = parallel_method
-        self.chunks = chunks
-        self.chunks_maxsize = chunks_maxsize
+        # self.chunks = chunks
+        # self.chunks_maxsize = chunks_maxsize
 
         self.definition = 'Local ftp Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
@@ -139,13 +139,14 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         self.init(**kwargs)
 
     def __repr__(self):
-        summary = ["<datafetcher '%s'>" % self.definition]
+        summary = ["<datafetcher.localftp>"]
+        summary.append("Name: %s" % self.definition)
         summary.append("FTP: %s" % self.local_ftp)
-        summary.append("Domain: %s" % self.cname())
+        summary.append("Domain: %s" % format_oneline(self.cname()))
         return '\n'.join(summary)
 
     def get_path(self, wmo: int, cyc: int = None) -> str:
-        """ Return the absolute path toward netcdf file for a given wmo/cyc pair and dataset
+        """ Return the absolute path toward the netcdf source file of a given wmo/cyc pair and a dataset
 
         Based on the dataset, the wmo and the cycle requested, return the absolute path toward the file to load.
 
@@ -235,7 +236,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def cachepath(self):
-        """ Return path to cache file for this request
+        """ Return path to cache file(s) for this request
 
         Returns
         -------
@@ -356,8 +357,6 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         :class:`xarray.Dataset`
 
         """
-        # ds = self.fs.open_dataset(ncfile, decode_cf=1, use_cftime=0, mask_and_scale=1, engine='h5netcdf')
-
         # Replace JULD and JULD_QC by TIME and TIME_QC
         ds = ds.rename({'JULD': 'TIME', 'JULD_QC': 'TIME_QC', 'JULD_LOCATION': 'TIME_LOCATION'})
         ds['TIME'].attrs = {'long_name': 'Datetime (UTC) of the station',
@@ -371,14 +370,14 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
                 ds[vname].values = np.round(ds[vname].values, 1)
 
         # Remove variables without dimensions:
-        # We should be able to find a way to keep them somewhere in the data structure
+        # todo: We should be able to find a way to keep them somewhere in the data structure
         for v in ds.data_vars:
             if len(list(ds[v].dims)) == 0:
                 ds = ds.drop_vars(v)
 
-        print("DIRECTION", np.unique(ds['DIRECTION']))
+        # print("DIRECTION", np.unique(ds['DIRECTION']))
         # print("N_PROF", np.unique(ds['N_PROF']))
-        ds = ds.argo.profile2point()  # Default output is a collection of points
+        ds = ds.argo.profile2point()  # Default output is a collection of points along N_POINTS
         # print("DIRECTION", np.unique(ds['DIRECTION']))
 
         # Remove netcdf file attributes and replace them with argopy ones:
@@ -392,7 +391,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         ds.attrs['Fetched_by'] = getpass.getuser()
         ds.attrs['Fetched_date'] = pd.to_datetime('now').strftime('%Y/%m/%d')
         ds.attrs['Fetched_constraints'] = self.cname()
-        ds.attrs['Fetched_uri'] = ncfile
+        ds.attrs['Fetched_uri'] = ds.encoding['source']
         ds = ds[np.sort(ds.data_vars)]
 
         return ds
@@ -414,10 +413,10 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
                                     concat_dim='N_POINTS',
                                     concat=True,
                                     preprocess=self._preprocess_multiprof,
+                                    progress=False,
                                     decode_cf=1, use_cftime=0, mask_and_scale=1, engine='h5netcdf')
 
         # Data post-processing:
-        print(ds.attrs)
         ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS']))  # Re-index to avoid duplicate values
         ds = ds.set_coords('N_POINTS')
         ds = ds.sortby('TIME')
@@ -435,6 +434,9 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         ds.attrs['Fetched_constraints'] = self.cname()
         if len(self.uri) == 1:
             ds.attrs['Fetched_uri'] = self.uri[0]
+        else:
+            ds.attrs['Fetched_uri'] = ";".join(self.uri)
+
         return ds
 
     def filter_data_mode(self, ds, **kwargs):
@@ -459,6 +461,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
 
 class Fetch_wmo(LocalFTPArgoDataFetcher):
     """ Manage access to local ftp Argo data for: a list of WMOs  """
+
     def init(self, WMO: list = [], CYC=None, **kwargs):
         """ Create Argo data loader for WMOs
 
@@ -503,10 +506,9 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
 
         Returns
         -------
-        str or list(str) or list(list(str))
-
+        list(str)
         """
-        def list_bunch(wmos,cycs):
+        def list_bunch(wmos, cycs):
             this = []
             for wmo in wmos:
                 if cycs is None:
@@ -519,28 +521,28 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
         # Get list of files to load:
         if not hasattr(self, '_list_of_argo_files'):
             # if not self.parallel:
-            self._list_of_argo_files = list_bunch(self.WMO, self.CYC)
+            #     self._list_of_argo_files = list_bunch(self.WMO, self.CYC)
             # else:
-            #     C = chunker({'wmo': self.WMO}, chunks=self.chunks, chunksize=self.chunks_maxsize)
+            #     C = Chunker({'wmo': self.WMO}, chunks=self.chunks, chunksize=self.chunks_maxsize)
             #     wmo_grps = C.fit_transform()
-            #     self.chunks = C.chunks
             #     self._list_of_argo_files = []
             #     for wmos in wmo_grps:
             #         self._list_of_argo_files.append(list_bunch(wmos, self.CYC))
-        #
+            self._list_of_argo_files = list_bunch(self.WMO, self.CYC)
+
         return self._list_of_argo_files
 
     def dashboard(self, **kw):
         if len(self.WMO) == 1:
             return open_dashboard(wmo=self.WMO[0], **kw)
         else:
-            warnings.warn("Plot dashboard only available for one float frequest")
+            warnings.warn("Plot dashboard only available for a single float request")
 
 
 class Fetch_box(LocalFTPArgoDataFetcher):
     """ Manage access to local ftp Argo data for: a rectangular space/time domain  """
 
-    def init(self, box: list ):
+    def init(self, box: list):
         """ Create Argo data loader
 
             Parameters
@@ -590,7 +592,7 @@ class Fetch_box(LocalFTPArgoDataFetcher):
 
         Returns
         -------
-        str or list(str)
+        list(str)
         """
         if not hasattr(self, '_list_of_argo_files'):
             self._list_of_argo_files = []

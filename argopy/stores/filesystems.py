@@ -16,7 +16,8 @@ from tqdm import tqdm
 import distributed
 
 from argopy.options import OPTIONS
-from argopy.errors import ErddapServerError, FileSystemHasNoCache, CacheFileNotFound, DataNotFound, APIServerError
+from argopy.errors import ErddapServerError, FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
+    APIServerError, InvalidMethod
 from abc import ABC, abstractmethod
 
 
@@ -133,7 +134,7 @@ class argo_store_proto(ABC):
                        concat_dim='row',
                        max_workers = 100,
                        method: str = 'thread',
-                       progress: bool = True,
+                       progress: bool = False,
                        concat: bool = True,
                        preprocess = None,
                        *args, **kwargs):
@@ -169,10 +170,12 @@ class argo_store_proto(ABC):
             return preprocess(self.open_dataset(u, *a, **kw))
         def __noprocessor(u, *a, **kw):
             return self.open_dataset(u, *a, **kw)
-        if not isinstance(preprocess, types.FunctionType):
+        if not isinstance(preprocess, types.FunctionType) and not isinstance(preprocess, types.MethodType):
             process = __noprocessor
         else:
             process = __processor
+        if not isinstance(urls, list):
+            urls = [urls]
 
         results = []
         if method in ['thread', 'process']:
@@ -209,27 +212,34 @@ class argo_store_proto(ABC):
             futures = method.map(process, urls, *args, **kwargs)
             results = method.gather(futures)
 
-        elif method == 'sequential':
-            for url in tqdm(urls):
+        elif method in ['seq', 'sequential', 'serie']:
+            if progress:
+                urls = tqdm(urls, total=len(urls))
+
+            for url in urls:
                 try:
                     data = process(url, *args, **kwargs)
                 except Exception as e:
-                    # print("Something went wrong with this url: %s" % url)
-                    print(e.args)
+                    print("Something went wrong with this url: %s" % url)
+                    print("Error:", e.args)
                     pass
                 finally:
                     results.append(data)
+
+        else:
+            raise InvalidMethod(method)
 
         # Post-process results
         results = [r for r in results if r is not None]  # Only keep non-empty results
         if len(results) > 0:
             if concat:
-                ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
+                # ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
+                ds = xr.concat(results, dim=concat_dim, data_vars='minimal', coords='minimal', compat='override')
                 return ds
             else:
                 return results
         else:
-            raise DataNotFound()
+            raise DataNotFound(urls)
 
 class filestore(argo_store_proto):
     """Argo local file system
@@ -253,6 +263,9 @@ class filestore(argo_store_proto):
         """
         with self.fs.open(url) as of:
             ds = xr.open_dataset(of, *args, **kwargs)
+        if "source" not in ds.encoding:
+            if isinstance(url, str):
+                ds.encoding["source"] = url
         self.register(url)
         return ds
 
@@ -374,6 +387,9 @@ class httpstore(argo_store_proto):
         try:
             with self.fs.open(url) as of:
                 ds = xr.open_dataset(of, *args, **kwargs)
+            if "source" not in ds.encoding:
+                if isinstance(url, str):
+                    ds.encoding["source"] = url
             self.register(url)
             return ds
         except requests.exceptions.ConnectionError as e:

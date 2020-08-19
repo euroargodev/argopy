@@ -21,7 +21,7 @@ import getpass
 
 from .proto import ArgoDataFetcherProto
 from argopy.options import OPTIONS
-from argopy.utilities import list_standard_variables, chunker
+from argopy.utilities import list_standard_variables, Chunker, format_oneline
 from argopy.stores import httpstore
 from argopy.plotters import open_dashboard
 
@@ -117,11 +117,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         self._init_erddapy()
 
     def __repr__(self):
-        summary = ["<datafetcher '%s'>" % self.definition]
-        cname = self.cname()
-        if len(cname) > 40:
-            cname = "%s ... %s" % (cname[0:30], cname[-30:])
-        summary.append("Domain: %s" % cname)
+        summary = ["<datafetcher.erddap>"]
+        summary.append("Name: %s" % self.definition)
+        summary.append("API: %s" % api_server)
+        summary.append("Domain: %s" % format_oneline(self.cname()))
         return '\n'.join(summary)
 
     def _add_attributes(self, this):
@@ -476,9 +475,9 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         if not self.parallel:
             return self.get_url
         else:
-            C = chunker({'wmo': self.WMO}, chunks=self.chunks, chunksize=self.chunks_maxsize)
+            C = Chunker({'wmo': self.WMO}, chunks=self.chunks, chunksize=self.chunks_maxsize)
             wmo_grps = C.fit_transform()
-            self.chunks = C.chunks
+            # self.chunks = C.chunks
             urls = []
             for wmos in wmo_grps:
                 urls.append(Fetch_wmo(WMO=wmos, CYC=self.CYC, ds=self.dataset_id, parallel=False).get_url)
@@ -553,9 +552,9 @@ class Fetch_box(ErddapArgoDataFetcher):
         if not self.parallel:
             return self.get_url
         else:
-            C = chunker({'box': self.BOX}, chunks=self.chunks, chunksize=self.chunks_maxsize)
+            C = Chunker({'box': self.BOX}, chunks=self.chunks, chunksize=self.chunks_maxsize)
             boxes = C.fit_transform()
-            self.chunks = C.chunks
+            # self.chunks = C.chunks
             urls = []
             for box in boxes:
                 urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url)
