@@ -860,3 +860,11 @@ def is_box(box, errors='raise'):
         return False
     else:
         return True
+
+
+def is_list_of_strings(lst):
+    return isinstance(lst, list) and all(isinstance(elem, str) for elem in lst)
+
+
+def is_list_of_integers(lst):
+    return all(isinstance(x, int) for x in lst)

@@ -3,6 +3,29 @@
 What's New
 ==========
 
+v0.1.6 (XX XXX 2020)
+-----------------------
+
+**Features and front-end API**
+
+- Optimise data fetching with parallelisation. See documentation page here. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy import DataFetcher as ArgoDataFetcher
+    loader = ArgoDataFetcher(src='erddap', parallel=True)
+    loader.float([6902766, 6902772, 6902914, 6902746]).to_xarray()
+    loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2012-02']).to_xarray()
+
+
+**Breaking changes with previous versions**
+
+- The unique ressource identifier property is now named ``uri`` for all data fetchers.
+
+**Internals**
+
+- New ``open_mfdataset`` for parallel requests available in Argo stores
+
 v0.1.5 (10 July 2020)
 ---------------------
 

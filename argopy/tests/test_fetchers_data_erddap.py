@@ -1,10 +1,3 @@
-#!/bin/env python
-# -*coding: UTF-8 -*-
-#
-# Test Erddap data fetchers
-#
-# At this point, we are testing real data fetching both through facade and through direct call to backends.
-
 import os
 import numpy as np
 import xarray as xr
@@ -21,6 +14,8 @@ from argopy.utilities import (
     isconnected,
     isAPIconnected,
     erddap_ds_exists,
+    is_list_of_strings,
+    is_list_of_integers
 )
 
 
@@ -36,14 +31,6 @@ else:
     DSEXISTS = False
     DSEXISTS_bgc = False
     DSEXISTS_ref = False
-
-
-def is_list_of_strings(lst):
-    return isinstance(lst, list) and all(isinstance(elem, str) for elem in lst)
-
-
-def is_list_of_integers(lst):
-    return all(isinstance(x, int) for x in lst)
 
 
 @unittest.skipUnless("erddap" in AVAILABLE_SOURCES, "requires erddap data fetcher")
@@ -135,15 +122,14 @@ class Backend(unittest.TestCase):
         for arg in self.args["profile"]:
             try:
                 f = ArgoDataFetcher(src=self.src, ds=dataset).profile(*arg)
-                assert isinstance(f.uri, str)
+                assert isinstance(f.fetcher.uri, str)
                 assert isinstance(f.to_xarray(), xr.Dataset)
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
             except Exception:
                 print(
-                    "ERDDAP request:\n",
-                    ArgoDataFetcher(src=self.src, ds=dataset).profile(*arg).fetcher.uri,
+                    "ERDDAP request:\n", f.fetcher.uri,
                 )
                 pass
 
@@ -151,15 +137,14 @@ class Backend(unittest.TestCase):
         for arg in self.args["float"]:
             try:
                 f = ArgoDataFetcher(src=self.src, ds=dataset).float(arg)
-                assert isinstance(f.uri, str)
+                assert isinstance(f.fetcher.uri, str)
                 assert isinstance(f.to_xarray(), xr.Dataset)
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
             except Exception:
                 print(
-                    "ERDDAP request:\n",
-                    ArgoDataFetcher(src=self.src, ds=dataset).float(arg).fetcher.uri,
+                    "ERDDAP request:\n", f.fetcher.uri,
                 )
                 pass
 
@@ -167,15 +152,14 @@ class Backend(unittest.TestCase):
         for arg in self.args["region"]:
             try:
                 f = ArgoDataFetcher(src=self.src, ds=dataset).region(arg)
-                assert isinstance(f.uri, str)
+                assert isinstance(f.fetcher.uri, str)
                 assert isinstance(f.to_xarray(), xr.Dataset)
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
             except Exception:
                 print(
-                    "ERDDAP request:\n",
-                    ArgoDataFetcher(src=self.src, ds=dataset).region(arg).fetcher.uri,
+                    "ERDDAP request:\n", f.fetcher.uri,
                 )
                 pass
 
@@ -294,15 +278,14 @@ class BackendParallel(unittest.TestCase):
             fetcher_args = {"src": self.src, "parallel": True}
             try:
                 f = ArgoDataFetcher(**fetcher_args).region(access_arg)
-                assert is_list_of_strings(f.uri)
+                assert is_list_of_strings(f.fetcher.uri)
                 assert isinstance(f.to_xarray(), xr.Dataset)
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
             except Exception:
                 print(
-                    "ERDDAP request:\n",
-                    ArgoDataFetcher(**fetcher_args).region(access_arg).fetcher.uri,
+                    "ERDDAP request:\n", f.fetcher.uri,
                 )
                 pass
 
@@ -311,15 +294,14 @@ class BackendParallel(unittest.TestCase):
             fetcher_args = {"src": self.src, "parallel": True}
             try:
                 f = ArgoDataFetcher(**fetcher_args).float(access_arg)
-                assert is_list_of_strings(f.uri)
+                assert is_list_of_strings(f.fetcher.uri)
                 assert isinstance(f.to_xarray(), xr.Dataset)
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
             except Exception:
                 print(
-                    "ERDDAP request:\n",
-                    ArgoDataFetcher(**fetcher_args).float(access_arg).fetcher.uri,
+                    "ERDDAP request:\n", f.fetcher.uri,
                 )
                 pass
 

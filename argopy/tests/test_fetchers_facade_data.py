@@ -1,9 +1,3 @@
-#!/bin/env python
-# -*coding: UTF-8 -*-
-#
-# Test data fetcher facade
-#
-
 import numpy as np
 import xarray as xr
 

@@ -47,17 +47,17 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         pass
 
     @property
-    def url(self):
+    def uri(self):
         """ Return the URL used to download data """
         pass
 
     @property
     def cachepath(self):
         """ Return path to cache file for this request """
-        if isinstance(self.url, list):
-            return [self.fs.cachepath(url) for url in self.url]
+        if isinstance(self.uri, list):
+            return [self.fs.cachepath(url) for url in self.uri]
         else:
-            return self.fs.cachepath(self.url)
+            return self.fs.cachepath(self.uri)
 
     ###
     # Methods that must not change
@@ -133,7 +133,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
     def to_dataframe(self):
         """ """
         results = []
-        urls = self.url
+        urls = self.uri
         if isinstance(urls, str):
             urls = [urls]  # Make sure we deal with a list
         for url in urls:
@@ -188,7 +188,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         ds.attrs['Fetched_by'] = getpass.getuser()
         ds.attrs['Fetched_date'] = pd.to_datetime('now').strftime('%Y/%m/%d')
         ds.attrs['Fetched_constraints'] = self.cname()
-        ds.attrs['Fetched_uri'] = self.url
+        ds.attrs['Fetched_uri'] = self.uri
         ds = ds[np.sort(ds.data_vars)]
         return ds
 
@@ -256,7 +256,7 @@ class Fetch_wmo(ArgovisDataFetcher):
         return listname
 
     @property
-    def url(self):
+    def uri(self):
         """ Return the URL used to download data """
         urls = []
         if isinstance(self.CYC, (np.ndarray)) and self.CYC.nbytes > 0:
@@ -317,7 +317,7 @@ class Fetch_box(ArgovisDataFetcher):
         return boxname
 
     @property
-    def url(self):
+    def uri(self):
         """ Return the URL used to download data """
         shape = [[[self.BOX[0], self.BOX[2]], [self.BOX[0], self.BOX[3]], [self.BOX[1], self.BOX[3]],
                   [self.BOX[1], self.BOX[2]], [self.BOX[0], self.BOX[2]]]]

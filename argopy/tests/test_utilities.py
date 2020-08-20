@@ -16,20 +16,14 @@ from argopy.utilities import (
     linear_interpolation_remap,
     Chunker,
     is_box,
+    is_list_of_strings,
+    is_list_of_integers
 )
 from argopy.errors import InvalidFetcherAccessPoint
 from argopy import DataFetcher as ArgoDataFetcher
 
 AVAILABLE_SOURCES = list_available_data_src()
 CONNECTED = isconnected()
-
-
-def is_list_of_strings(lst):
-    return isinstance(lst, list) and all(isinstance(elem, str) for elem in lst)
-
-
-def is_list_of_integers(lst):
-    return all(isinstance(x, int) for x in lst)
 
 
 def test_invalid_dictionnary():

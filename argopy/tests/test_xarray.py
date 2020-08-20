@@ -58,8 +58,7 @@ def test_point2profile2point():
 @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
 class test_interp_std_levels(unittest.TestCase):
 
-    @pytest.fixture(autouse=True)
-    def init_data(self):
+    def setUp(self):
         # Fetch real data to test interpolation
         try:
             self.ds_pts_standard = ArgoDataFetcher(src='erddap', mode='standard')\
@@ -74,32 +73,24 @@ class test_interp_std_levels(unittest.TestCase):
             pass
 
     def test_interpolation(self):
-        if not hasattr(self, 'ds_pts_standard'):
-            self.init_data()
         # Run with success:
         ds = self.ds_pts_standard.argo.point2profile()
         assert 'PRES_INTERPOLATED' in ds.argo.interp_std_levels(
             [20, 30, 40, 50]).dims
 
     def test_points_error(self):
-        if not hasattr(self, 'ds_pts_standard'):
-            self.init_data()
         # Try to interpolate points, not profiles
         ds = self.ds_pts_standard
         with pytest.raises(InvalidDatasetStructure):
             ds.argo.interp_std_levels([20, 30, 40, 50])
 
     def test_mode_error(self):
-        if not hasattr(self, 'ds_pts_standard'):
-            self.init_data()
         # Try to interpolate expert data
         ds = self.ds_pts_expert.argo.point2profile()
         with pytest.raises(InvalidDatasetStructure):
             ds.argo.interp_std_levels([20, 30, 40, 50]).dims
 
     def test_std_error(self):
-        if not hasattr(self, 'ds_pts_standard'):
-            self.init_data()
         # Try to interpolate on a wrong axis
         ds = self.ds_pts_standard.argo.point2profile()
         with pytest.raises(ValueError):
@@ -118,12 +109,6 @@ class test_teos10(unittest.TestCase):
     def setUp(self):
         # Fetch real data to test interpolation
         try:
-            # self.ds_pts_standard = ArgoDataFetcher(src='erddap', mode='standard')\
-            #     .region([-75, -55, 30., 40., 0, 100., '2011-01-01', '2011-01-15'])\
-            #     .to_xarray()
-            # self.ds_pts_expert = ArgoDataFetcher(src='erddap', mode='expert')\
-            #     .region([-75, -55, 30., 40., 0, 100., '2011-01-01', '2011-01-15'])\
-            #     .to_xarray()
             self.ds_pts_standard = ArgoDataFetcher(src='erddap', mode='standard')\
                 .float(2901623)\
                 .to_xarray()

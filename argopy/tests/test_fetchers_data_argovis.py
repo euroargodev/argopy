@@ -1,15 +1,3 @@
-#!/bin/env python
-# -*coding: UTF-8 -*-
-#
-# Test data fetchers
-#
-# This is not designed as it should
-# We need to have:
-# - one class to test the facade API
-# - one class to test specific methods of each backends
-#
-# At this point, we are testing real data fetching both through facade and through direct call to backends.
-
 import os
 import numpy as np
 import xarray as xr
@@ -90,42 +78,45 @@ class Backend(TestCase):
                 raise
 
     def __testthis_profile(self, dataset):
+        fetcher_args = {"src": self.src, "ds": dataset}
         for arg in self.args['profile']:
             try:
-                ds = ArgoDataFetcher(src=self.src, ds=dataset).profile(*arg).to_xarray()
-                assert isinstance(ds, xr.Dataset)
+                f = ArgoDataFetcher(**fetcher_args).profile(*arg)
+                assert isinstance(f.fetcher.uri, str)
+                assert isinstance(f.to_xarray(), xr.Dataset)
             except ArgovisServerError:
                 # Test is passed when something goes wrong because of the argovis server, not our fault !
                 pass
             except Exception:
-                print("ARGOVIS request:\n",
-                      ArgoDataFetcher(src=self.src, ds=dataset).profile(*arg).fetcher.url)
+                print("ARGOVIS request:\n", f.fetcher.uri)
                 pass
 
     def __testthis_float(self, dataset):
+        fetcher_args = {"src": self.src, "ds": dataset}
         for arg in self.args['float']:
             try:
-                ds = ArgoDataFetcher(src=self.src, ds=dataset).float(arg).to_xarray()
-                assert isinstance(ds, xr.Dataset)
+                f = ArgoDataFetcher(**fetcher_args).float(arg)
+                assert isinstance(f.fetcher.uri, str)
+                assert isinstance(f.to_xarray(), xr.Dataset)
             except ArgovisServerError:
                 # Test is passed when something goes wrong because of the argovis server, not our fault !
                 pass
             except Exception:
-                print("ARGOVIS request:\n",
-                      ArgoDataFetcher(src=self.src, ds=dataset).float(arg).fetcher.url)
+                print("ARGOVIS request:\n", f.fetcher.uri)
                 pass
 
     def __testthis_region(self, dataset):
+        fetcher_args = {"src": self.src, "ds": dataset}
         for arg in self.args['region']:
             try:
-                ds = ArgoDataFetcher(src=self.src, ds=dataset).region(arg).to_xarray()
-                assert isinstance(ds, xr.Dataset)
+                f = ArgoDataFetcher(**fetcher_args).region(arg)
+                assert isinstance(f.fetcher.uri, str)
+                assert isinstance(f.to_xarray(), xr.Dataset)
             except ArgovisServerError:
                 # Test is passed when something goes wrong because of the argovis server, not our fault !
                 pass
             except Exception:
-                print("ARGOVIS request:\n",
-                      ArgoDataFetcher(src=self.src, ds=dataset).region(arg).fetcher.url)
+                print("ARGOVIS request:\n", f.fetcher.uri)
                 pass
 
     def __testthis(self, dataset):
