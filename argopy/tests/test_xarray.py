@@ -115,8 +115,7 @@ class test_interp_std_levels(unittest.TestCase):
 @unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
 class test_teos10(unittest.TestCase):
 
-    @pytest.fixture(autouse=True)
-    def init_data(self):
+    def setUp(self):
         # Fetch real data to test interpolation
         try:
             # self.ds_pts_standard = ArgoDataFetcher(src='erddap', mode='standard')\
@@ -137,8 +136,6 @@ class test_teos10(unittest.TestCase):
             pass
 
     def test_teos10_variables_default(self):
-        if not hasattr(self, 'ds_pts_standard'):
-            self.init_data()
         ds_list = [self.ds_pts_standard, self.ds_pts_expert]
         for this in ds_list:
             for format in ['point', 'profile']:
@@ -150,8 +147,6 @@ class test_teos10(unittest.TestCase):
                 assert 'CT' in that.variables
 
     def test_teos10_variables_single(self):
-        if not hasattr(self, 'ds_pts_standard'):
-            self.init_data()
         ds_list = [self.ds_pts_standard, self.ds_pts_expert]
         for this in ds_list:
             for format in ['point', 'profile']:
@@ -162,8 +157,6 @@ class test_teos10(unittest.TestCase):
                 assert 'PV' in that.variables
 
     def test_teos10_variables_inplace(self):
-        if not hasattr(self, 'ds_pts_standard'):
-            self.init_data()
         ds_list = [self.ds_pts_standard, self.ds_pts_expert]
         for this in ds_list:
             ds = this.argo.teos10(inplace=False)

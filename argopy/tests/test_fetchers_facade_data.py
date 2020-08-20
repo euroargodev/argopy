@@ -9,7 +9,6 @@ import xarray as xr
 
 import pytest
 import unittest
-from unittest import TestCase
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
@@ -56,7 +55,7 @@ def test_invalid_fetcher():
 #         ArgoDataFetcher(src='localftp').region([-85., -45., 10., 20., 0., 100.]).to_xarray()
 
 
-class AllBackends(TestCase):
+class AllBackends(unittest.TestCase):
     """ Test main API facade for all available fetching backends and default dataset """
     ftproot = argopy.tutorial.open_dataset('localftp')[0]
 
