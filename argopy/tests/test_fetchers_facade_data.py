@@ -1,14 +1,8 @@
 #!/bin/env python
 # -*coding: UTF-8 -*-
 #
-# Test data fetchers
+# Test data fetcher facade
 #
-# This is not designed as it should
-# We need to have:
-# - one class to test the facade API
-# - one class to test specific methods of each backends
-#
-# At this point, we are testing real data fetching both through facade and through direct call to backends.
 
 import numpy as np
 import xarray as xr

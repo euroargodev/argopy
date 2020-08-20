@@ -34,9 +34,18 @@ else:
     DSEXISTS_ref = False
 
 
+def is_list_of_strings(lst):
+    return isinstance(lst, list) and all(isinstance(elem, str) for elem in lst)
+
+
+def is_list_of_integers(lst):
+    return all(isinstance(x, int) for x in lst)
+
+
 @unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
 @unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
 @unittest.skipUnless(CONNECTEDAPI, "erddap API is not alive")
+# @unittest.skipUnless(False, "skip")
 class Backend(TestCase):
     """ Test main API facade for all available dataset and access points of the ERDDAP fetching backend """
     src = 'erddap'
@@ -104,8 +113,9 @@ class Backend(TestCase):
     def __testthis_profile(self, dataset):
         for arg in self.args['profile']:
             try:
-                ds = ArgoDataFetcher(src=self.src, ds=dataset).profile(*arg).to_xarray()
-                assert isinstance(ds, xr.Dataset)
+                f = ArgoDataFetcher(src=self.src, ds=dataset).profile(*arg)
+                assert isinstance(f.uri, str)
+                assert isinstance(f.to_xarray(), xr.Dataset)
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
@@ -117,8 +127,9 @@ class Backend(TestCase):
     def __testthis_float(self, dataset):
         for arg in self.args['float']:
             try:
-                ds = ArgoDataFetcher(src=self.src, ds=dataset).float(arg).to_xarray()
-                assert isinstance(ds, xr.Dataset)
+                f = ArgoDataFetcher(src=self.src, ds=dataset).float(arg)
+                assert isinstance(f.uri, str)
+                assert isinstance(f.to_xarray(), xr.Dataset)
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
@@ -130,8 +141,9 @@ class Backend(TestCase):
     def __testthis_region(self, dataset):
         for arg in self.args['region']:
             try:
-                ds = ArgoDataFetcher(src=self.src, ds=dataset).region(arg).to_xarray()
-                assert isinstance(ds, xr.Dataset)
+                f = ArgoDataFetcher(src=self.src, ds=dataset).region(arg)
+                assert isinstance(f.uri, str)
+                assert isinstance(f.to_xarray(), xr.Dataset)
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
@@ -197,6 +209,59 @@ class Backend(TestCase):
         self.args['region'] = [[-70, -65, 35., 40., 0, 10.],
                                [-70, -65, 35., 40., 0, 10., '2012-01-01', '2012-12-31']]
         self.__testthis('ref')
+
+
+@unittest.skipUnless('erddap' in AVAILABLE_SOURCES, "requires erddap data fetcher")
+@unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
+@unittest.skipUnless(CONNECTEDAPI, "erddap API is not alive")
+@unittest.skipUnless(DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server")
+class BackendParallel(TestCase):
+    """ This test backend for parallel requests """
+    src = 'erddap'
+    requests = {}
+    requests['region'] = [[-60, -55, 40., 45., 0., 10.],
+                          [-60, -55, 40., 45., 0., 10., '2007-08-01', '2007-09-01']]
+    requests['wmo'] = [
+        6902766,
+        6902772,
+        6902914,
+        6902746,
+        6902916,
+        6902915,
+        6902757,
+        6902771,
+    ]
+
+    def test_chunks_region(self):
+        for access_arg in self.requests['region']:
+            fetcher_args = {'src':self.src, 'parallel':True}
+            try:
+                f = ArgoDataFetcher(**fetcher_args).region(access_arg)
+                assert is_list_of_strings(f.uri)
+                assert isinstance(f.to_xarray(), xr.Dataset)
+            except ErddapServerError:
+                # Test is passed when something goes wrong because of the erddap server, not our fault !
+                pass
+            except Exception:
+                print("ERDDAP request:\n",
+                      ArgoDataFetcher(**fetcher_args).region(access_arg).fetcher.uri)
+                pass
+
+    def test_chunks_wmo(self):
+        for access_arg in self.requests['wmo']:
+            fetcher_args = {'src':self.src, 'parallel':True}
+            try:
+                f = ArgoDataFetcher(**fetcher_args).float(access_arg)
+                assert is_list_of_strings(f.uri)
+                assert isinstance(f.to_xarray(), xr.Dataset)
+            except ErddapServerError:
+                # Test is passed when something goes wrong because of the erddap server, not our fault !
+                pass
+            except Exception:
+                print("ERDDAP request:\n",
+                      ArgoDataFetcher(**fetcher_args).float(access_arg).fetcher.uri)
+                pass
+
 
 
 if __name__ == '__main__':
