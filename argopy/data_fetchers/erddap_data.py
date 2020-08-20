@@ -21,7 +21,7 @@ import getpass
 
 from .proto import ArgoDataFetcherProto
 from argopy.options import OPTIONS
-from argopy.utilities import list_standard_variables, Chunker, format_oneline
+from argopy.utilities import list_standard_variables, Chunker, format_oneline, is_box
 from argopy.stores import httpstore
 from argopy.plotters import open_dashboard
 
@@ -501,7 +501,9 @@ class Fetch_box(ErddapArgoDataFetcher):
             ----------
             box : list(float, float, float, float, float, float, str, str)
                 The box domain to load all Argo data for:
-                box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
+                    box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
+                    or:
+                    box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
         # if len(box) == 6:
         # Select the last months of data:
@@ -509,8 +511,7 @@ class Fetch_box(ErddapArgoDataFetcher):
         # start = end - pd.DateOffset(months=1)
         # box.append(start.strftime('%Y-%m-%d'))
         # box.append(end.strftime('%Y-%m-%d'))
-        if len(box) not in [6, 8]:
-            raise ValueError('Box must 6 or 8 length')
+        is_box(box, errors='raise')
         self.BOX = box
 
         if self.dataset_id == 'phy':

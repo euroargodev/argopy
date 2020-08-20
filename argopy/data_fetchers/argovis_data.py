@@ -18,7 +18,7 @@ import warnings
 
 from argopy.stores import httpstore
 from argopy.options import OPTIONS
-from argopy.utilities import list_standard_variables, format_oneline
+from argopy.utilities import list_standard_variables, format_oneline, is_box
 from argopy.errors import DataNotFound
 from argopy.plotters import open_dashboard
 
@@ -289,6 +289,8 @@ class Fetch_box(ArgovisDataFetcher):
             ----------
             box : list(float, float, float, float, float, float, str, str)
                 The box domain to load all Argo data for:
+                box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
+                or:
                 box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
         if len(box) == 6:
@@ -297,8 +299,7 @@ class Fetch_box(ArgovisDataFetcher):
             start = end - pd.DateOffset(months=1)
             box.append(start.strftime('%Y-%m-%d'))
             box.append(end.strftime('%Y-%m-%d'))
-        elif len(box) != 8:
-            raise ValueError('Box must 6 or 8 length')
+        is_box(box)
         self.BOX = box
 
         self.definition = '?'

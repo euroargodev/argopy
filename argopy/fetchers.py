@@ -11,7 +11,7 @@ import warnings
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher
-from .utilities import list_available_data_src, list_available_index_src
+from .utilities import list_available_data_src, list_available_index_src, is_box
 from .plotters import plot_trajectory, plot_dac, plot_profilerType
 AVAILABLE_DATA_SOURCES = list_available_data_src()
 AVAILABLE_INDEX_SOURCES = list_available_index_src()
@@ -133,7 +133,20 @@ class ArgoDataFetcher():
             warnings.warn("dashboard not avaible for this fetcher access point (%s/%s)" % (self._src, self._AccessPoint))
 
     def float(self, wmo, **kw):
-        """ Fetch data from a float """
+        """ Fetch data from a float
+
+        Parameters
+        ----------
+        wmo: list(lon_min: float, lon_max: float, lat_min: float, lat_max: float, pres_min: float, pres_max: float,
+        date_min: str, date_max: str)
+            Define the domain to load all Argo data for. Longitude, latitude and pressure bounds are required, while
+            the two bounding dates [date_min and date_max] are optional. If not specificied, the entire time series
+            is requested.
+
+        Returns
+        -------
+        :class:`argopy.DataFetcher` with the 'region' access point initialized.
+        """
         if "CYC" in kw or "cyc" in kw:
             raise TypeError("float() got an unexpected keyword argument 'cyc'. Use 'profile' access "
                             "point to fetch specific profile data.")
@@ -179,7 +192,7 @@ class ArgoDataFetcher():
 
         Parameters
         ----------
-        box: list(lon_min: float, lon_max: float, lat_min: float, lat_max: float, pres_min: float, pres_max: float,
+        box: list(lon_min: float, lon_max: float, lat_min: float, lat_max: float, dpt_min: float, dpt_max: float,
         date_min: str, date_max: str)
             Define the domain to load all Argo data for. Longitude, latitude and pressure bounds are required, while
             the two bounding dates [date_min and date_max] are optional. If not specificied, the entire time series
@@ -187,9 +200,10 @@ class ArgoDataFetcher():
 
         Returns
         -------
-        :class:`argopy.DataFetcher` with an access point initialized.
+        :class:`argopy.DataFetcher` with the 'region' access point initialized.
 
         """
+        is_box(box, errors='raise')  # Valide the box definition
         if 'region' in self.Fetchers:
             self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)
             self._AccessPoint = 'region'  # Register the requested access point

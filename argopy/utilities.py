@@ -480,6 +480,7 @@ def open_etopo1(box, res='l'):
     da.attrs['URI'] = thisurl
     return da
 
+
 #
 #  From xarrayutils : https://github.com/jbusecke/xarrayutils/blob/master/xarrayutils/vertical_coordinates.py
 #  Direct integration of those 2 functions to minimize dependencies and possibility of tuning them to our needs
@@ -535,12 +536,12 @@ class Chunker():
     """ To chunk fetcher requests """
 
     # Default maximum chunks size for all possible request parameters
-    default_chunksize = {'box': {'lon': 20,  # degree
-                                 'lat': 20,  # degree
-                                 'dpt': 500, # meters/db
+    default_chunksize = {'box': {'lon': 20,   # degree
+                                 'lat': 20,   # degree
+                                 'dpt': 500,  # meters/db
                                  'time': 3 * 30},  # Days
-                         'wmo': {'wmo': 5,    # Nb of floats
-                                 'cyc': 100}} # Nb of cycles
+                         'wmo': {'wmo': 5,     # Nb of floats
+                                 'cyc': 100}}  # Nb of cycles
 
     def __init__(self,
                request: dict,
@@ -554,8 +555,8 @@ class Chunker():
         ----------
         request: dict
             Access point request to be chunked. One of the following:
-            {'box': [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]}
-            {'box': [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]}
+            {'box': [lon_min, lon_max, lat_min, lat_max, dpt_min, dpt_max, time_min, time_max]}
+            {'box': [lon_min, lon_max, lat_min, lat_max, dpt_min, dpt_max]}
             {'wmo': [wmo1, wmo2, ...], 'cyc': [0,1, ...]}
         chunks: 'auto' or dict
             Dictionary with request access point as keys and number of chunks to create as values.
@@ -567,11 +568,25 @@ class Chunker():
         """
         self.request = request
 
+        if 'box' in self.request:
+            if len(self.request['box']) == 8:
+                self.this_chunker = self._chunker_box4d
+            elif len(self.request['box']) == 6:
+                self.this_chunker = self._chunker_box3d
+            else:
+                is_box(self.request['box'])
+        elif 'wmo' in self.request:
+            self.this_chunker = self._chunker_wmo
+        else:
+            raise InvalidFetcherAccessPoint("'%s' not valid access point" % ",".join(self.request.keys()))
+
         default = self.default_chunksize[[k for k in self.request.keys()][0]]
         if len(chunksize) == 0:  # chunksize = {}
             chunksize = default
         else:  # merge with default:
             chunksize = {**default, **chunksize}
+        if not isinstance(chunksize, collections.Mapping):
+            raise ValueError("chunksize must be mappable")
         self.chunksize = collections.OrderedDict(sorted(chunksize.items()))
 
         default = {k: 'auto' for k in self.chunksize.keys()}
@@ -579,20 +594,10 @@ class Chunker():
             chunks = default
         elif len(chunks) == 0:  # chunks = {}, i.e. chunk=1 for all
             chunks = {k: 1 for k in self.request}
+        if not isinstance(chunks, collections.Mapping):
+            raise ValueError("chunks must be 'auto' or mappable")
         chunks = {**default, **chunks}
         self.chunks = collections.OrderedDict(sorted(chunks.items()))
-
-        if 'box' in self.request:
-            if len(self.request['box']) == 8:
-                self.this_chunker = self._chunker_box3d
-            elif len(self.request['box']) == 6:
-                self.this_chunker = self._chunker_box2d
-            else:
-                raise ValueError('Box must 6 or 8 length')
-        elif 'wmo' in self.request:
-            self.this_chunker = self._chunker_wmo
-        else:
-            raise InvalidFetcherAccessPoint("'%s' not valid access point" % ",".join(self.request.keys()))
 
     def _split(self, lst, n=1):
         """Yield successive n-sized chunks from lst"""
@@ -628,10 +633,8 @@ class Chunker():
             i_left, i_right = 2, 3
         if d == 'z':
             i_left, i_right = 4, 5
-        if d == 't3d':  # Time index position for 3d box
+        if d == 't':
             i_left, i_right = 6, 7
-        if d == 't2d':  # Time index position for 2d box
-            i_left, i_right = 4, 5
         if n == 1:
             return [large_box]
         boxes = []
@@ -657,7 +660,7 @@ class Chunker():
                 boxes.append(this_box)
         return boxes
 
-    def _split_this_3Dbox(self, box, nx=1, ny=1, nz=1, nt=1):
+    def _split_this_4Dbox(self, box, nx=1, ny=1, nz=1, nt=1):
         box_list = []
         split_x = self._split_box(box, n=nx, d='x')
         for bx in split_x:
@@ -665,23 +668,23 @@ class Chunker():
             for bxy in split_y:
                 split_z = self._split_box(bxy, n=nz, d='z')
                 for bxyz in split_z:
-                    split_t = self._split_box(bxyz, n=nt, d='t3d')
+                    split_t = self._split_box(bxyz, n=nt, d='t')
                     for bxyzt in split_t:
                         box_list.append(bxyzt)
         return box_list
 
-    def _split_this_2Dbox(self, box, nx=1, ny=1, nt=1):
+    def _split_this_3Dbox(self, box, nx=1, ny=1, nz=1):
         box_list = []
         split_x = self._split_box(box, n=nx, d='x')
         for bx in split_x:
             split_y = self._split_box(bx, n=ny, d='y')
             for bxy in split_y:
-                split_t = self._split_box(bxy, n=nt, d='t2d')
-                for bxyt in split_t:
-                    box_list.append(bxyt)
+                split_z = self._split_box(bxy, n=nz, d='z')
+                for bxyz in split_z:
+                    box_list.append(bxyz)
         return box_list
 
-    def _chunker_box3d(self, request, chunks, chunks_maxsize):
+    def _chunker_box4d(self, request, chunks, chunks_maxsize):
         BOX = request['box']
         n_chunks = chunks
         for axis, n in n_chunks.items():
@@ -712,14 +715,14 @@ class Chunker():
                     else:
                         n_chunks['time'] = 1
 
-        boxes = self._split_this_3Dbox(BOX,
-                                 nx=n_chunks['lon'],
-                                 ny=n_chunks['lat'],
-                                 nz=n_chunks['dpt'],
-                                 nt=n_chunks['time'])
+        boxes = self._split_this_4Dbox(BOX,
+                                       nx=n_chunks['lon'],
+                                       ny=n_chunks['lat'],
+                                       nz=n_chunks['dpt'],
+                                       nt=n_chunks['time'])
         return {'chunks': sorted(n_chunks), 'values': boxes}
 
-    def _chunker_box2d(self, request, chunks, chunks_maxsize):
+    def _chunker_box3d(self, request, chunks, chunks_maxsize):
         BOX = request['box']
         n_chunks = chunks
         for axis, n in n_chunks.items():
@@ -736,17 +739,23 @@ class Chunker():
                         n_chunks['lat'] = int(np.floor_divide(Ly, chunks_maxsize['lat']))
                     else:
                         n_chunks['lat'] = 1
-                if axis == 'time':
-                    Lt = np.timedelta64(pd.to_datetime(BOX[5]) - pd.to_datetime(BOX[4]), 'D')
-                    MaxLen = np.timedelta64(chunks_maxsize['time'], 'D')
-                    if Lt > MaxLen:  # Max box size in time
-                        n_chunks['time'] = int(np.floor_divide(Lt, MaxLen))
+                if axis == 'dpt':
+                    Lz = BOX[5] - BOX[4]
+                    if Lz > chunks_maxsize['dpt']:  # Max box size in depth
+                        n_chunks['dpt'] = int(np.floor_divide(Lz, chunks_maxsize['dpt']))
                     else:
-                        n_chunks['time'] = 1
-        boxes = self._split_this_2Dbox(BOX,
-                                 nx=n_chunks['lon'],
-                                 ny=n_chunks['lat'],
-                                 nt=n_chunks['time'])
+                        n_chunks['dpt'] = 1
+                # if axis == 'time':
+                #     Lt = np.timedelta64(pd.to_datetime(BOX[5]) - pd.to_datetime(BOX[4]), 'D')
+                #     MaxLen = np.timedelta64(chunks_maxsize['time'], 'D')
+                #     if Lt > MaxLen:  # Max box size in time
+                #         n_chunks['time'] = int(np.floor_divide(Lt, MaxLen))
+                #     else:
+                #         n_chunks['time'] = 1
+        boxes = self._split_this_3Dbox(BOX,
+                                       nx=n_chunks['lon'],
+                                       ny=n_chunks['lat'],
+                                       nz=n_chunks['dpt'])
         return {'chunks': sorted(n_chunks), 'values': boxes}
 
     def _chunker_wmo(self, request, chunks, chunks_maxsize):
@@ -768,11 +777,11 @@ class Chunker():
         list
         """
         self._results = self.this_chunker(self.request, self.chunks, self.chunksize)
-        self.chunks = self._results['chunks']
+        # self.chunks = self._results['chunks']
         return self._results['values']
 
 
-def format_oneline(s, max_width = 65):
+def format_oneline(s, max_width=65):
     """ Return a string formated for a line print """
     if len(s) > max_width:
         padding = " ... "
@@ -780,3 +789,74 @@ def format_oneline(s, max_width = 65):
         return "".join([s[0:n], padding, s[-n:]])
     else:
         return s
+
+
+def is_box(box, errors='raise'):
+    """ Check if this array matches a 2d or 3d box definition
+
+        box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
+    or:
+        box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
+
+    Parameters
+    ----------
+    box: array
+    errors: 'raise'
+
+    Returns
+    -------
+    bool
+    """
+
+    def is_dateconvertible(d):
+        try:
+            pd.to_datetime(d)
+            isit = True
+        except Exception:
+            isit = False
+        return isit
+
+    tests = {}
+    #     print(box)
+    # Formats:
+    tests['box must be a list'] = lambda b: isinstance(b, list)
+    tests['box must be a list with 6 or 8 elements'] = lambda b: len(b) in [6, 8]
+
+    # Types:
+    tests['lon_min must be numeric'] = lambda b: (isinstance(b[0], int) or isinstance(b[0], float))
+    tests['lon_max must be numeric'] = lambda b: (isinstance(b[1], int) or isinstance(b[1], float))
+    tests['lat_min must be numeric'] = lambda b: (isinstance(b[2], int) or isinstance(b[2], float))
+    tests['lat_max must be numeric'] = lambda b: (isinstance(b[3], int) or isinstance(b[3], float))
+    tests['pres_min must be numeric'] = lambda b: (isinstance(b[4], int) or isinstance(b[4], float))
+    tests['pres_max must be numeric'] = lambda b: (isinstance(b[5], int) or isinstance(b[5], float))
+    if len(box) == 8:
+        tests['datetim_min must be a string convertible to a Pandas datetime'] = lambda b: isinstance(b[-2], str) and is_dateconvertible(b[-2])
+        tests['datetim_max must be a string convertible to a Pandas datetime'] = lambda b: isinstance(b[-1], str) and is_dateconvertible(b[-1])
+
+    # Ranges:
+    tests['lon_min must be in [-180;180] or [0;360]'] = lambda b: b[0] >= -180. and b[0] <= 360.
+    tests['lon_max must be in [-180;180] or [0;360]'] = lambda b: b[1] >= -180. and b[1] <= 360.
+    tests['lat_min must be in [-90;90]'] = lambda b: b[2] >= -90. and b[2] <= 90
+    tests['lat_max must be in [-90;90]'] = lambda b: b[3] >= -90. and b[3] <= 90.
+    tests['pres_min must be in [0;10000]'] = lambda b: b[4] >= 0 and b[4] <= 10000
+    tests['pres_max must be in [0;10000]'] = lambda b: b[5] >= 0 and b[5] <= 10000
+
+    # Orders:
+    tests['lon_max must be larger than lon_min'] = lambda b: b[0] < b[1]
+    tests['lat_max must be larger than lat_min'] = lambda b: b[2] < b[3]
+    tests['pres_max must be larger than pres_min'] = lambda b: b[4] < b[5]
+    if len(box) == 8:
+        tests['datetim_max must come after datetim_min'] = lambda b: pd.to_datetime(b[-2]) < pd.to_datetime(b[-1])
+
+    error = None
+    for msg, test in tests.items():
+        if not test(box):
+            error = msg
+            break
+
+    if error and errors == 'raise':
+        raise ValueError(error)
+    elif error:
+        return False
+    else:
+        return True

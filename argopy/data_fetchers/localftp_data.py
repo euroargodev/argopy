@@ -41,7 +41,7 @@ import distributed
 
 from .proto import ArgoDataFetcherProto
 from argopy.errors import NetCDF4FileNotFoundError
-from argopy.utilities import list_standard_variables, check_localftp, format_oneline
+from argopy.utilities import list_standard_variables, check_localftp, format_oneline, is_box
 from argopy.options import OPTIONS
 from argopy.stores import filestore, indexstore, indexfilter_box
 from argopy.plotters import open_dashboard
@@ -549,13 +549,13 @@ class Fetch_box(LocalFTPArgoDataFetcher):
             ----------
             box : list(float, float, float, float, float, float, str, str)
                 The box domain to load all Argo data for:
+                box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
+                or:
                 box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
         # We use a full domain definition (x, y, z, t) as argument for compatibility with the other fetchers
         # but at this point, we work only with x, y and t.
-        if len(box) not in [6, 8]:
-            raise ValueError('Box must be 6 or 8 length')
-
+        is_box(box)
         if len(box) == 6:
             self.BOX = [box[ii] for ii in [0, 1, 2, 3]]
         elif len(box) == 8:
