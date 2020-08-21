@@ -8,7 +8,7 @@ v0.1.6 (XX XXX 2020)
 
 **Features and front-end API**
 
-- Optimise data fetching with parallelisation. See documentation page here. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Optimise large data fetching with parallelisation. See documentation page here. Three parallel methods are available multi-threading, multi-processing and a dask client. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 

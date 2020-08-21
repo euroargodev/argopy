@@ -569,12 +569,11 @@ class Chunker():
         self.request = request
 
         if 'box' in self.request:
+            is_box(self.request['box'])
             if len(self.request['box']) == 8:
                 self.this_chunker = self._chunker_box4d
             elif len(self.request['box']) == 6:
                 self.this_chunker = self._chunker_box3d
-            else:
-                is_box(self.request['box'])
         elif 'wmo' in self.request:
             self.this_chunker = self._chunker_wmo
         else:
@@ -692,26 +691,26 @@ class Chunker():
                 if axis == 'lon':
                     Lx = BOX[1] - BOX[0]
                     if Lx > chunks_maxsize['lon']:  # Max box size in longitude
-                        n_chunks['lon'] = int(np.floor_divide(Lx, chunks_maxsize['lon']))
+                        n_chunks['lon'] = int(np.ceil(np.divide(Lx, chunks_maxsize['lon'])))
                     else:
                         n_chunks['lon'] = 1
                 if axis == 'lat':
                     Ly = BOX[3] - BOX[2]
                     if Ly > chunks_maxsize['lat']:  # Max box size in latitude
-                        n_chunks['lat'] = int(np.floor_divide(Ly, chunks_maxsize['lat']))
+                        n_chunks['lat'] = int(np.ceil(np.divide(Ly, chunks_maxsize['lat'])))
                     else:
                         n_chunks['lat'] = 1
                 if axis == 'dpt':
                     Lz = BOX[5] - BOX[4]
                     if Lz > chunks_maxsize['dpt']:  # Max box size in depth
-                        n_chunks['dpt'] = int(np.floor_divide(Lz, chunks_maxsize['dpt']))
+                        n_chunks['dpt'] = int(np.ceil(np.divide(Lz, chunks_maxsize['dpt'])))
                     else:
                         n_chunks['dpt'] = 1
                 if axis == 'time':
                     Lt = np.timedelta64(pd.to_datetime(BOX[7]) - pd.to_datetime(BOX[6]), 'D')
                     MaxLen = np.timedelta64(chunks_maxsize['time'], 'D')
                     if Lt > MaxLen:  # Max box size in time
-                        n_chunks['time'] = int(np.floor_divide(Lt, MaxLen))
+                        n_chunks['time'] = int(np.ceil(np.divide(Lt, MaxLen)))
                     else:
                         n_chunks['time'] = 1
 

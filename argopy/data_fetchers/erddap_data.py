@@ -466,7 +466,7 @@ class Fetch_wmo(ErddapArgoDataFetcher):
 
     @property
     def uri(self):
-        """ Return the list of URLs to download the full request
+        """ Return the list of URLs to download data
 
         Returns
         -------
