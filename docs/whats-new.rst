@@ -8,7 +8,7 @@ v0.1.6 (XX XXX 2020)
 
 **Features and front-end API**
 
-- Optimise large data fetching with parallelisation. See documentation page here. Three parallel methods are available multi-threading, multi-processing and a dask client. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Optimise large data fetching with parallelisation, for all data fetchers (erddap, localftp and argovis). See documentation page here. Three parallel methods are available: multi-threading, multi-processing and a dask client. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 
@@ -20,11 +20,11 @@ v0.1.6 (XX XXX 2020)
 
 **Breaking changes with previous versions**
 
-- The unique ressource identifier property is now named ``uri`` for all data fetchers.
+- The unique resource identifier property is now named ``uri`` for all data fetchers.
 
 **Internals**
 
-- New ``open_mfdataset`` for parallel requests available in Argo stores
+- New ``open_mfdataset`` and ``open_mfjson`` methods in Argo stores. These can be used to open, preprocess and concatenate a collection of paths both in sequential or parallel order. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 v0.1.5 (10 July 2020)
 ---------------------

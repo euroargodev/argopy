@@ -158,10 +158,12 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         # Download data:
         if not self.parallel:
             method = "sequential"
+            showprogress = False
         else:
             method = self.parallel_method
+            showprogress = True
         df_list = self.fs.open_mfjson(
-            self.uri, method=method, preprocess=self.json2dataframe, progress=1
+            self.uri, method=method, preprocess=self.json2dataframe, progress=showprogress
         )
 
         # Merge results (list of dataframe):
@@ -320,7 +322,7 @@ class Fetch_wmo(ArgovisDataFetcher):
         if len(self.WMO) == 1:
             return open_dashboard(wmo=self.WMO[0], **kw)
         else:
-            warnings.warn("Plot dashboard only available for one float frequest")
+            warnings.warn("Plot dashboard only available for request with a single float")
 
 
 class Fetch_box(ArgovisDataFetcher):

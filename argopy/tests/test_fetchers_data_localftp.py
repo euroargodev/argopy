@@ -39,7 +39,7 @@ class Backend(unittest.TestCase):
         with argopy.set_options(cachedir=self.testcachedir, local_ftp=self.local_ftp):
             try:
                 loader = ArgoDataFetcher(src=self.src, cache=True).float(2901623)
-                # 1st call to load data and init cachedir:
+                # 1st call to load and save to cachedir:
                 ds = loader.to_xarray()
                 # 2nd call to load from cached file:
                 ds = loader.to_xarray()
@@ -54,7 +54,22 @@ class Backend(unittest.TestCase):
         with argopy.set_options(cachedir=self.testcachedir, local_ftp=self.local_ftp):
             loader = ArgoDataFetcher(src=self.src, cache=True).profile(2901623, 1)
             try:
-                # 1st call to load from argovis and save to cachedir:
+                # 1st call to load and save to cachedir:
+                ds = loader.to_xarray()
+                # 2nd call to load from cached file
+                ds = loader.to_xarray()
+                assert isinstance(ds, xr.Dataset)
+                assert np.all([isinstance(path, str) for path in loader.fetcher.cachepath])
+                shutil.rmtree(self.testcachedir)
+            except Exception:
+                shutil.rmtree(self.testcachedir)
+                raise
+
+    def test_caching_region(self):
+        with argopy.set_options(cachedir=self.testcachedir, local_ftp=self.local_ftp):
+            loader = ArgoDataFetcher(src=self.src, cache=True).region([-60, -40, 40., 60., 0., 100., '2007-08-01', '2007-09-01'])
+            try:
+                # 1st call to load and save to cachedir:
                 ds = loader.to_xarray()
                 # 2nd call to load from cached file
                 ds = loader.to_xarray()

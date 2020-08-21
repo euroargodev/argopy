@@ -68,11 +68,9 @@ class Backend(unittest.TestCase):
     )
     def test_caching_float(self):
         with argopy.set_options(cachedir=self.testcachedir):
+            loader = ArgoDataFetcher(src=self.src, cache=True).float([1901393, 6902746])
             try:
-                loader = ArgoDataFetcher(src=self.src, cache=True).float(
-                    [1901393, 6902746]
-                )
-                # 1st call to load from erddap and save to cachedir:
+                # 1st call to load and save to cachedir:
                 ds = loader.to_xarray()
                 # 2nd call to load from cached file:
                 ds = loader.to_xarray()
@@ -93,7 +91,28 @@ class Backend(unittest.TestCase):
         with argopy.set_options(cachedir=self.testcachedir):
             loader = ArgoDataFetcher(src=self.src, cache=True).profile(6902746, 34)
             try:
-                # 1st call to load from erddap and save to cachedir:
+                # 1st call to load and save to cachedir:
+                ds = loader.to_xarray()
+                # 2nd call to load from cached file
+                ds = loader.to_xarray()
+                assert isinstance(ds, xr.Dataset)
+                assert isinstance(loader.fetcher.cachepath, str)
+                shutil.rmtree(self.testcachedir)
+            except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
+                shutil.rmtree(self.testcachedir)
+                pass
+            except Exception:
+                shutil.rmtree(self.testcachedir)
+                raise
+
+    @unittest.skipUnless(
+        DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
+    )
+    def test_caching_region(self):
+        with argopy.set_options(cachedir=self.testcachedir):
+            loader = ArgoDataFetcher(src=self.src, cache=True).region([-40, -30, 30, 40, 0, 100, '2011', '2012'])
+            try:
+                # 1st call to load and save to cachedir:
                 ds = loader.to_xarray()
                 # 2nd call to load from cached file
                 ds = loader.to_xarray()

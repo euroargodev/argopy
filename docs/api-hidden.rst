@@ -31,6 +31,7 @@
     argopy.utilities.open_etopo1
     argopy.utilities.list_available_data_src
     argopy.utilities.list_available_index_src
+    argopy.utilities.Chunker
 
     argopy.xarray.ArgoAccessor.point2profile
 
