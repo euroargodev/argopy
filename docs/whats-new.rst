@@ -26,6 +26,7 @@ v0.1.6 (XX XXX 2020)
 
 - New ``open_mfdataset`` and ``open_mfjson`` methods in Argo stores. These can be used to open, preprocess and concatenate a collection of paths both in sequential or parallel order. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
 
+
 v0.1.5 (10 July 2020)
 ---------------------
 
