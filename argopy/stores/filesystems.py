@@ -217,6 +217,7 @@ class argo_store_proto(ABC):
                 urls = tqdm(urls, total=len(urls))
 
             for url in urls:
+                data = None
                 try:
                     data = process(url, *args, **kwargs)
                 except Exception as e:
@@ -241,7 +242,6 @@ class argo_store_proto(ABC):
         else:
             raise DataNotFound(urls)
 
-
     def open_mfjson(self,
                     urls,
                     max_workers = 100,
@@ -251,8 +251,8 @@ class argo_store_proto(ABC):
                     *args, **kwargs):
         """ Open multiple json urls
 
-            This is a parallelised version of ``open_json``.
-            Use a Threads Pool by default for parallelisation.
+            This is a parallelized version of ``open_json``.
+            Use a Threads Pool by default for parallelization.
 
             Parameters
             ----------
@@ -266,14 +266,13 @@ class argo_store_proto(ABC):
                     - Dask client object: use a Dask distributed client object
                 Use 'seq' to simply open data sequentially
             progress: bool
-                Display a progress bar (True by default)
+                Display a progress bar (True by default, not for dask client method)
             preprocess: (callable, optional)
                 If provided, call this function on each json set
 
             Returns
             -------
             list()
-
         """
         def __processor(u, *a, **kw):
             return preprocess(self.open_json(u, *a, **kw))
@@ -320,6 +319,7 @@ class argo_store_proto(ABC):
                 urls = tqdm(urls, total=len(urls))
 
             for url in urls:
+                data = None
                 try:
                     data = process(url, *args, **kwargs)
                 except Exception as e:
