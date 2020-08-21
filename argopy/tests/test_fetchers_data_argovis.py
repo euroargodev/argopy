@@ -1,10 +1,9 @@
-import os
 import numpy as np
 import xarray as xr
-import shutil
 
 import pytest
 import unittest
+import tempfile
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
@@ -28,14 +27,13 @@ CONNECTEDAPI = isAPIconnected(src="argovis", data=True)
 @unittest.skipUnless(CONNECTEDAPI, "argovis API is not alive")
 class Backend(unittest.TestCase):
     src = "argovis"
-    testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
 
     def test_cachepath_notfound(self):
-        with argopy.set_options(cachedir=self.testcachedir):
-            loader = ArgoDataFetcher(src=self.src, cache=True).profile(6902746, 34)
-            with pytest.raises(CacheFileNotFound):
-                loader.fetcher.cachepath
-        shutil.rmtree(self.testcachedir)  # Make sure the cache is left empty
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                loader = ArgoDataFetcher(src=self.src, cache=True).profile(6902746, 34)
+                with pytest.raises(CacheFileNotFound):
+                    loader.fetcher.cachepath
 
     def test_nocache(self):
         with argopy.set_options(cachedir="dummy"):
@@ -45,63 +43,57 @@ class Backend(unittest.TestCase):
                 loader.fetcher.cachepath
 
     def test_caching_float(self):
-        with argopy.set_options(cachedir=self.testcachedir):
-            f = ArgoDataFetcher(src=self.src, cache=True).float(1901393)
-            try:
-                # 1st call to load and save to cachedir:
-                ds = f.to_xarray()
-                # 2nd call to load from cached file:
-                ds = f.to_xarray()
-                assert isinstance(ds, xr.Dataset)
-                assert is_list_of_strings(f.fetcher.uri)
-                assert is_list_of_strings(f.fetcher.cachepath)
-                shutil.rmtree(self.testcachedir)
-            except ArgovisServerError:  # Test is passed when something goes wrong because of the argovis server, not our fault !
-                shutil.rmtree(self.testcachedir)
-                pass
-            except Exception:
-                shutil.rmtree(self.testcachedir)
-                raise
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                f = ArgoDataFetcher(src=self.src, cache=True).float(1901393)
+                try:
+                    # 1st call to load and save to cachedir:
+                    ds = f.to_xarray()
+                    # 2nd call to load from cached file:
+                    ds = f.to_xarray()
+                    assert isinstance(ds, xr.Dataset)
+                    assert is_list_of_strings(f.fetcher.uri)
+                    assert is_list_of_strings(f.fetcher.cachepath)
+                except ArgovisServerError:  # Test is passed when something goes wrong because of the argovis server, not our fault !
+                    pass
+                except Exception:
+                    raise
 
     def test_caching_profile(self):
-        with argopy.set_options(cachedir=self.testcachedir):
-            f = ArgoDataFetcher(src=self.src, cache=True).profile(6902746, 34)
-            try:
-                # 1st call to load and save to cachedir:
-                ds = f.to_xarray()
-                # 2nd call to load from cached file
-                ds = f.to_xarray()
-                assert isinstance(ds, xr.Dataset)
-                assert is_list_of_strings(f.fetcher.uri)
-                assert is_list_of_strings(f.fetcher.cachepath)
-                shutil.rmtree(self.testcachedir)
-            except ArgovisServerError:  # Test is passed when something goes wrong because of the argovis server, not our fault !
-                shutil.rmtree(self.testcachedir)
-                pass
-            except Exception:
-                shutil.rmtree(self.testcachedir)
-                raise
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                f = ArgoDataFetcher(src=self.src, cache=True).profile(6902746, 34)
+                try:
+                    # 1st call to load and save to cachedir:
+                    ds = f.to_xarray()
+                    # 2nd call to load from cached file
+                    ds = f.to_xarray()
+                    assert isinstance(ds, xr.Dataset)
+                    assert is_list_of_strings(f.fetcher.uri)
+                    assert is_list_of_strings(f.fetcher.cachepath)
+                except ArgovisServerError:  # Test is passed when something goes wrong because of the argovis server, not our fault !
+                    pass
+                except Exception:
+                    raise
 
     def test_caching_region(self):
-        with argopy.set_options(cachedir=self.testcachedir):
-            loader = ArgoDataFetcher(src=self.src, cache=True).region(
-                [-40, -30, 30, 40, 0, 100, "2011", "2012"]
-            )
-            try:
-                # 1st call to load and save to cachedir:
-                ds = loader.to_xarray()
-                # 2nd call to load from cached file
-                ds = loader.to_xarray()
-                assert isinstance(ds, xr.Dataset)
-                assert is_list_of_strings(loader.fetcher.uri)
-                assert is_list_of_strings(loader.fetcher.cachepath)
-                shutil.rmtree(self.testcachedir)
-            except ArgovisServerError:  # Test is passed when something goes wrong because of the argovis server, not our fault !
-                shutil.rmtree(self.testcachedir)
-                pass
-            except Exception:
-                shutil.rmtree(self.testcachedir)
-                raise
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                loader = ArgoDataFetcher(src=self.src, cache=True).region(
+                    [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-03"]
+                )
+                try:
+                    # 1st call to load and save to cachedir:
+                    ds = loader.to_xarray()
+                    # 2nd call to load from cached file
+                    ds = loader.to_xarray()
+                    assert isinstance(ds, xr.Dataset)
+                    assert is_list_of_strings(loader.fetcher.uri)
+                    assert is_list_of_strings(loader.fetcher.cachepath)
+                except ArgovisServerError:  # Test is passed when something goes wrong because of the argovis server, not our fault !
+                    pass
+                except Exception:
+                    raise
 
     def __testthis_profile(self, dataset):
         fetcher_args = {"src": self.src, "ds": dataset}
@@ -172,7 +164,15 @@ class Backend(unittest.TestCase):
         self.args = {}
         self.args["region"] = [
             [-70, -65, 35.0, 40.0, 0, 10.0],
-            [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2013-12"],
+            [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-03"],
+        ]
+        self.__testthis("phy")
+
+    def test_phy_region_long(self):
+        """ Test if we handle properly the time range chunking when it exceeds the 3 months limit of argovis """
+        self.args = {}
+        self.args["region"] = [
+            [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-06"],
         ]
         self.__testthis("phy")
 
@@ -186,25 +186,23 @@ class BackendParallel(unittest.TestCase):
     src = "argovis"
     requests = {}
     requests["region"] = [
-        [-40, -30, 30, 40, 0, 100],
-        [-40, -30, 30, 40, 0, 100, "2011", "2012"],
+        [-60, -55, 40.0, 45.0, 0.0, 10.0],
+        [-60, -55, 40.0, 45.0, 0.0, 10.0, "2007-08-01", "2007-09-01"],
     ]
     requests["wmo"] = [
-        5900446,
-        5906072,
-        6901929,
-        1900857,
-        3902131,
-        2902696,
+        6902766,
+        6902772,
+        6902914
     ]
 
     def test_chunks_region(self):
         for access_arg in self.requests["region"]:
-            fetcher_args = {"src": self.src, "parallel": True}
+            fetcher_args = {"src": self.src, "parallel": True, 'chunks':{'lon': 1, 'lat': 2, 'dpt': 1, 'time': 2}}
             try:
                 f = ArgoDataFetcher(**fetcher_args).region(access_arg)
                 assert isinstance(f.to_xarray(), xr.Dataset)
                 assert is_list_of_strings(f.fetcher.uri)
+                assert len(f.fetcher.uri) == 4
             except ArgovisServerError:
                 # Test is passed when something goes wrong because of the argovis server, not our fault !
                 pass
@@ -214,11 +212,12 @@ class BackendParallel(unittest.TestCase):
 
     def test_chunks_wmo(self):
         for access_arg in self.requests["wmo"]:
-            fetcher_args = {"src": self.src, "parallel": True}
+            fetcher_args = {"src": self.src, "parallel": True, "chunks": {'wmo': 2}}
             try:
                 f = ArgoDataFetcher(**fetcher_args).float(access_arg)
                 assert isinstance(f.to_xarray(), xr.Dataset)
                 assert is_list_of_strings(f.fetcher.uri)
+                assert len(f.fetcher.uri) == 2
             except ArgovisServerError:
                 # Test is passed when something goes wrong because of the argovis server, not our fault !
                 pass

@@ -1,10 +1,10 @@
 import os
 import numpy as np
 import xarray as xr
-import shutil
 
 import pytest
 import unittest
+import tempfile
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
@@ -18,15 +18,14 @@ AVAILABLE_SOURCES = list_available_data_src()
 class Backend(unittest.TestCase):
     """ Test main API facade for all available dataset and access points of the localftp fetching backend """
     src = 'localftp'
-    testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
     local_ftp = argopy.tutorial.open_dataset('localftp')[0]
 
     def test_cachepath_notfound(self):
-        with argopy.set_options(cachedir=self.testcachedir, local_ftp=self.local_ftp):
-            loader = ArgoDataFetcher(src=self.src, cache=True).profile(2901623, 12)
-            with pytest.raises(CacheFileNotFound):
-                loader.fetcher.cachepath
-        shutil.rmtree(self.testcachedir)  # Make sure the cache is left empty
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
+                loader = ArgoDataFetcher(src=self.src, cache=True).profile(2901623, 12)
+                with pytest.raises(CacheFileNotFound):
+                    loader.fetcher.cachepath
 
     def test_nocache(self):
         with argopy.set_options(cachedir="dummy", local_ftp=self.local_ftp):
@@ -36,52 +35,49 @@ class Backend(unittest.TestCase):
                 loader.fetcher.cachepath
 
     def test_caching_float(self):
-        with argopy.set_options(cachedir=self.testcachedir, local_ftp=self.local_ftp):
-            try:
-                loader = ArgoDataFetcher(src=self.src, cache=True).float(2901623)
-                # 1st call to load and save to cachedir:
-                ds = loader.to_xarray()
-                # 2nd call to load from cached file:
-                ds = loader.to_xarray()
-                assert isinstance(ds, xr.Dataset)
-                assert is_list_of_strings(loader.fetcher.uri)
-                assert is_list_of_strings(loader.fetcher.cachepath)
-                shutil.rmtree(self.testcachedir)
-            except Exception:
-                shutil.rmtree(self.testcachedir)
-                raise
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
+                try:
+                    loader = ArgoDataFetcher(src=self.src, cache=True).float(2901623)
+                    # 1st call to load and save to cachedir:
+                    ds = loader.to_xarray()
+                    # 2nd call to load from cached file:
+                    ds = loader.to_xarray()
+                    assert isinstance(ds, xr.Dataset)
+                    assert is_list_of_strings(loader.fetcher.uri)
+                    assert is_list_of_strings(loader.fetcher.cachepath)
+                except Exception:
+                    raise
 
     def test_caching_profile(self):
-        with argopy.set_options(cachedir=self.testcachedir, local_ftp=self.local_ftp):
-            loader = ArgoDataFetcher(src=self.src, cache=True).profile(2901623, 1)
-            try:
-                # 1st call to load and save to cachedir:
-                ds = loader.to_xarray()
-                # 2nd call to load from cached file
-                ds = loader.to_xarray()
-                assert isinstance(ds, xr.Dataset)
-                assert is_list_of_strings(loader.fetcher.uri)
-                assert is_list_of_strings(loader.fetcher.cachepath)
-                shutil.rmtree(self.testcachedir)
-            except Exception:
-                shutil.rmtree(self.testcachedir)
-                raise
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
+                loader = ArgoDataFetcher(src=self.src, cache=True).profile(2901623, 1)
+                try:
+                    # 1st call to load and save to cachedir:
+                    ds = loader.to_xarray()
+                    # 2nd call to load from cached file
+                    ds = loader.to_xarray()
+                    assert isinstance(ds, xr.Dataset)
+                    assert is_list_of_strings(loader.fetcher.uri)
+                    assert is_list_of_strings(loader.fetcher.cachepath)
+                except Exception:
+                    raise
 
     def test_caching_region(self):
-        with argopy.set_options(cachedir=self.testcachedir, local_ftp=self.local_ftp):
-            loader = ArgoDataFetcher(src=self.src, cache=True).region([-60, -40, 40., 60., 0., 100., '2007-08-01', '2007-09-01'])
-            try:
-                # 1st call to load and save to cachedir:
-                ds = loader.to_xarray()
-                # 2nd call to load from cached file
-                ds = loader.to_xarray()
-                assert isinstance(ds, xr.Dataset)
-                assert is_list_of_strings(loader.fetcher.uri)
-                assert is_list_of_strings(loader.fetcher.cachepath)
-                shutil.rmtree(self.testcachedir)
-            except Exception:
-                shutil.rmtree(self.testcachedir)
-                raise
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
+                loader = ArgoDataFetcher(src=self.src, cache=True).region([-60, -40, 40., 60., 0., 100., '2007-08-01', '2007-09-01'])
+                try:
+                    # 1st call to load and save to cachedir:
+                    ds = loader.to_xarray()
+                    # 2nd call to load from cached file
+                    ds = loader.to_xarray()
+                    assert isinstance(ds, xr.Dataset)
+                    assert is_list_of_strings(loader.fetcher.uri)
+                    assert is_list_of_strings(loader.fetcher.cachepath)
+                except Exception:
+                    raise
 
     def test_invalidFTPpath(self):
         with pytest.raises(ValueError):
@@ -171,32 +167,29 @@ class BackendParallel(unittest.TestCase):
     requests["wmo"] = [
         5900446,
         5906072,
-        6901929,
-        1900857,
-        3902131,
-        2902696,
+        6901929
     ]
 
     def test_chunks_region(self):
         with argopy.set_options(local_ftp=self.local_ftp):
+            fetcher_args = {"src": self.src, "parallel": True, 'chunks':{'lon': 1, 'lat': 2, 'dpt': 1, 'time': 2}}
             for access_arg in self.requests["region"]:
-                fetcher_args = {"src": self.src, "parallel": True}
                 try:
                     f = ArgoDataFetcher(**fetcher_args).region(access_arg)
-                    assert is_list_of_strings(f.fetcher.uri)
                     assert isinstance(f.to_xarray(), xr.Dataset)
+                    assert is_list_of_strings(f.fetcher.uri)
                 except Exception:
                     print("ERROR LOCALFTP request:\n", f.fetcher.uri)
                     pass
 
     def test_chunks_wmo(self):
         with argopy.set_options(local_ftp=self.local_ftp):
+            fetcher_args = {"src": self.src, "parallel": True, "chunks": {'wmo': 2}}
             for access_arg in self.requests["wmo"]:
-                fetcher_args = {"src": self.src, "parallel": True}
                 try:
                     f = ArgoDataFetcher(**fetcher_args).float(access_arg)
-                    assert is_list_of_strings(f.fetcher.uri)
                     assert isinstance(f.to_xarray(), xr.Dataset)
+                    assert is_list_of_strings(f.fetcher.uri)
                 except Exception:
                     print("ERROR LOCALFTP request:\n", f.fetcher.uri)
                     pass

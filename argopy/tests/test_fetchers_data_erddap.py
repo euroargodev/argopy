@@ -1,10 +1,9 @@
-import os
 import numpy as np
 import xarray as xr
-import shutil
 
 import pytest
 import unittest
+import tempfile
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
@@ -41,17 +40,16 @@ class Backend(unittest.TestCase):
     """ Test main API facade for all available dataset and access points of the ERDDAP fetching backend """
 
     src = "erddap"
-    testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
 
     @unittest.skipUnless(
         DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
     )
     def test_cachepath_notfound(self):
-        with argopy.set_options(cachedir=self.testcachedir):
-            loader = ArgoDataFetcher(src=self.src, cache=True).profile(6902746, 34)
-            with pytest.raises(CacheFileNotFound):
-                loader.fetcher.cachepath
-        shutil.rmtree(self.testcachedir)  # Make sure the cache is left empty
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                loader = ArgoDataFetcher(src=self.src, cache=True).profile(6902746, 34)
+                with pytest.raises(CacheFileNotFound):
+                    loader.fetcher.cachepath
 
     @unittest.skipUnless(
         DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
@@ -67,67 +65,61 @@ class Backend(unittest.TestCase):
         DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
     )
     def test_caching_float(self):
-        with argopy.set_options(cachedir=self.testcachedir):
-            loader = ArgoDataFetcher(src=self.src, cache=True).float([1901393, 6902746])
-            try:
-                # 1st call to load and save to cachedir:
-                ds = loader.to_xarray()
-                # 2nd call to load from cached file:
-                ds = loader.to_xarray()
-                assert isinstance(ds, xr.Dataset)
-                assert is_list_of_strings(loader.fetcher.uri)
-                assert is_list_of_strings(loader.fetcher.cachepath)
-                shutil.rmtree(self.testcachedir)
-            except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
-                shutil.rmtree(self.testcachedir)
-                pass
-            except Exception:
-                shutil.rmtree(self.testcachedir)
-                raise
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                loader = ArgoDataFetcher(src=self.src, cache=True).float([1901393, 6902746])
+                try:
+                    # 1st call to load and save to cachedir:
+                    ds = loader.to_xarray()
+                    # 2nd call to load from cached file:
+                    ds = loader.to_xarray()
+                    assert isinstance(ds, xr.Dataset)
+                    assert is_list_of_strings(loader.fetcher.uri)
+                    assert is_list_of_strings(loader.fetcher.cachepath)
+                except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
+                    pass
+                except Exception:
+                    raise
 
     @unittest.skipUnless(
         DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
     )
     def test_caching_profile(self):
-        with argopy.set_options(cachedir=self.testcachedir):
-            loader = ArgoDataFetcher(src=self.src, cache=True).profile(6902746, 34)
-            try:
-                # 1st call to load and save to cachedir:
-                ds = loader.to_xarray()
-                # 2nd call to load from cached file
-                ds = loader.to_xarray()
-                assert isinstance(ds, xr.Dataset)
-                assert is_list_of_strings(loader.fetcher.uri)
-                assert is_list_of_strings(loader.fetcher.cachepath)
-                shutil.rmtree(self.testcachedir)
-            except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
-                shutil.rmtree(self.testcachedir)
-                pass
-            except Exception:
-                shutil.rmtree(self.testcachedir)
-                raise
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                loader = ArgoDataFetcher(src=self.src, cache=True).profile(6902746, 34)
+                try:
+                    # 1st call to load and save to cachedir:
+                    ds = loader.to_xarray()
+                    # 2nd call to load from cached file
+                    ds = loader.to_xarray()
+                    assert isinstance(ds, xr.Dataset)
+                    assert is_list_of_strings(loader.fetcher.uri)
+                    assert is_list_of_strings(loader.fetcher.cachepath)
+                except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
+                    pass
+                except Exception:
+                    raise
 
     @unittest.skipUnless(
         DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
     )
     def test_caching_region(self):
-        with argopy.set_options(cachedir=self.testcachedir):
-            loader = ArgoDataFetcher(src=self.src, cache=True).region([-40, -30, 30, 40, 0, 100, '2011', '2012'])
-            try:
-                # 1st call to load and save to cachedir:
-                ds = loader.to_xarray()
-                # 2nd call to load from cached file
-                ds = loader.to_xarray()
-                assert isinstance(ds, xr.Dataset)
-                assert is_list_of_strings(loader.fetcher.uri)
-                assert is_list_of_strings(loader.fetcher.cachepath)
-                shutil.rmtree(self.testcachedir)
-            except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
-                shutil.rmtree(self.testcachedir)
-                pass
-            except Exception:
-                shutil.rmtree(self.testcachedir)
-                raise
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                loader = ArgoDataFetcher(src=self.src, cache=True).region([-40, -30, 30, 40, 0, 100, '2011', '2012'])
+                try:
+                    # 1st call to load and save to cachedir:
+                    ds = loader.to_xarray()
+                    # 2nd call to load from cached file
+                    ds = loader.to_xarray()
+                    assert isinstance(ds, xr.Dataset)
+                    assert is_list_of_strings(loader.fetcher.uri)
+                    assert is_list_of_strings(loader.fetcher.cachepath)
+                except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
+                    pass
+                except Exception:
+                    raise
 
     @unittest.skipUnless(
         DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
@@ -287,21 +279,17 @@ class BackendParallel(unittest.TestCase):
     requests["wmo"] = [
         6902766,
         6902772,
-        6902914,
-        6902746,
-        6902916,
-        6902915,
-        6902757,
-        6902771,
+        6902914
     ]
 
     def test_chunks_region(self):
         for access_arg in self.requests["region"]:
-            fetcher_args = {"src": self.src, "parallel": True}
+            fetcher_args = {"src": self.src, "parallel": True, 'chunks':{'lon': 1, 'lat': 2, 'dpt': 1, 'time': 2}}
             try:
                 f = ArgoDataFetcher(**fetcher_args).region(access_arg)
                 assert isinstance(f.to_xarray(), xr.Dataset)
                 assert is_list_of_strings(f.fetcher.uri)
+                assert len(f.fetcher.uri) == 4
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
@@ -313,11 +301,12 @@ class BackendParallel(unittest.TestCase):
 
     def test_chunks_wmo(self):
         for access_arg in self.requests["wmo"]:
-            fetcher_args = {"src": self.src, "parallel": True}
+            fetcher_args = {"src": self.src, "parallel": True, "chunks": {'wmo': 2}}
             try:
                 f = ArgoDataFetcher(**fetcher_args).float(access_arg)
                 assert isinstance(f.to_xarray(), xr.Dataset)
                 assert is_list_of_strings(f.fetcher.uri)
+                assert len(f.fetcher.uri) == 2
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
