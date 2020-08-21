@@ -79,24 +79,37 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                  cache: bool = False,
                  cachedir: str = "",
                  parallel: bool = False,
+                 parallel_method: str = 'thread',
+                 progress: bool = False,
                  chunks: str = 'auto',
                  chunks_maxsize: dict = {},
-                 parallel_method: str = 'thread',
                  api_timeout: int = 0,
                  **kwargs):
-        """ Instantiate an ERDDAP Argo data loader
+        """ Instantiate an ERDDAP Argo data fetcher
 
         Parameters
         ----------
-        ds: 'phy' or 'ref' or 'bgc'
-        cache : False
-        cachedir : None
-
-        parallel : False
-        chunks : str or dict of int, optional
-            Dictionary with keys given by dimension names and values given by chunk sizes.
-            ``chunks={}`` loads data using a single chunk for all requests
-
+        ds: str (optional)
+            Dataset to load: 'phy' or 'ref' or 'bgc'
+        cache: bool (optional)
+            Cache data or not (default: False)
+        cachedir: str (optional)
+            Path to cache folder
+        parallel: bool (optional)
+            Chunk request to use parallel fetching (default: False)
+        parallel_method: str (optional)
+            Define the parallelization method: ``thread``, ``process`` or a :class:`dask.distributed.client.Client`.
+        progress: bool (optional)
+            Show a progress bar or not when ``parallel`` is set to True.
+        chunks: 'auto' or dict of integers (optional)
+            Dictionary with request access point as keys and number of chunks to create as values.
+            Eg: {'wmo': 10} will create a maximum of 10 chunks along WMOs when used with ``Fetch_wmo``.
+        chunks_maxsize: dict (optional)
+            Dictionary with request access point as keys and chunk size as values (used as maximum values in
+            'auto' chunking).
+            Eg: {'wmo': 5} will create chunks with as many as 5 WMOs each.
+        api_timeout: int (optional)
+            Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
         timeout = OPTIONS['api_timeout'] if api_timeout == 0 else api_timeout
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout)
@@ -110,6 +123,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 parallel_method = parallel
         self.parallel = parallel
         self.parallel_method = parallel_method
+        self.progress = progress
         self.chunks = chunks
         self.chunks_maxsize = chunks_maxsize
 
@@ -248,7 +262,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def _dtype(self):
-        """ Return a dictionnary of data types for each variable requested to erddap in the minimal vlist """
+        """ Return a dictionary of data types for each variable requested to erddap in the minimal vlist """
         dref = {
             'data_mode': object,
             'latitude': np.float64,
@@ -353,9 +367,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             if len(self.uri) == 1:
                 ds = self.fs.open_dataset(self.uri[0])
             else:
-                ds = self.fs.open_mfdataset(self.uri, method='sequential')
+                ds = self.fs.open_mfdataset(self.uri, method='sequential', progress=self.progress)
         else:
-            ds = self.fs.open_mfdataset(self.uri, method=self.parallel_method)
+            ds = self.fs.open_mfdataset(self.uri, method=self.parallel_method, progress=self.progress)
 
         ds = ds.rename({'row': 'N_POINTS'})
 
@@ -418,6 +432,11 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
 class Fetch_wmo(ErddapArgoDataFetcher):
     """ Manage access to Argo data through Ifremer ERDDAP for: a list of WMOs
+
+    This class is instantiated when a call is made to these facade access points:
+        - `ArgoDataFetcher(src='erddap').float(**)`
+        - `ArgoDataFetcher(src='erddap').profile(**)`
+
     """
 
     def init(self, WMO=[], CYC=None, **kw):
@@ -476,7 +495,7 @@ class Fetch_wmo(ErddapArgoDataFetcher):
 
     @property
     def uri(self):
-        """ Return the list of URLs to download data
+        """ List of URLs to load for a request
 
         Returns
         -------
@@ -559,7 +578,12 @@ class Fetch_box(ErddapArgoDataFetcher):
 
     @property
     def uri(self):
-        """ Return a list of URLs to download the full request (possibly by chunks) """
+        """ List of files to load for a request
+
+        Returns
+        -------
+        list(str)
+        """
         if not self.parallel:
             return [self.get_url()]
         else:

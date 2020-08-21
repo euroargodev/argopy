@@ -434,7 +434,7 @@ class indexfilter_box(indexfilter_proto):
 
 
 class indexstore():
-    """" Use to manage access to a local Argo index and searches """
+    """ Use to manage access to a local Argo index and searches """
 
     def __init__(self,
                  cache: bool = False,
@@ -443,12 +443,11 @@ class indexstore():
                  **kw):
         """ Create a file storage system for Argo index file requests
 
-            Parameters
-            ----------
-            cache : bool (False)
-            cachedir : str (used value in global OPTIONS)
-            index_file: str ("ar_index_global_prof.txt")
-
+        Parameters
+        ----------
+        cache : bool (False)
+        cachedir : str (used value in global OPTIONS)
+        index_file: str ("ar_index_global_prof.txt")
         """
         self.index_file = index_file
         self.cache = cache

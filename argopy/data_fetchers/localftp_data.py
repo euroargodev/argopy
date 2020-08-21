@@ -91,30 +91,46 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
                  dimension: str = 'point',
                  errors: str = 'raise',
                  parallel: bool = False,
+                 parallel_method: str = 'thread',
+                 progress: bool = False,
                  chunks: str = 'auto',
                  chunks_maxsize: dict = {},
-                 parallel_method: str = 'thread',
                  **kwargs):
         """ Init fetcher
 
         Parameters
         ----------
-        local_ftp : str
+        local_ftp: str (optional)
             Path to the local directory where the 'dac' folder is located.
-        ds : str
-            Name of the dataset to load. Use the global OPTIONS['dataset'] by default.
-        cache : bool
-            Determine if retrieved data should be cached locally or not, False by default.
-        cachedir : str
-            Absolute path to the cache directory
-        dimension : str
+        ds: str (optional)
+            Dataset to load: 'phy' or 'ref' or 'bgc'
+        errors: str (optional)
+            If set to 'raise' (default), will raise a NetCDF4FileNotFoundError error if any of the requested
+            files cannot be found. If set to 'ignore', the file not found is skipped when fetching data.
+        cache: bool (optional)
+            Cache data or not (default: False)
+        cachedir: str (optional)
+            Path to cache folder
+        dimension: str
             Main dimension of the output dataset. This can be "profile" to retrieve a collection of
             profiles, or "point" (default) to have data as a collection of measurements.
-            This can be used to optimise performances
-        errors: {'raise','ignore'}, optional
-            If 'raise' (default), raises a NetCDF4FileNotFoundError error if any of the requested
-            files cannot be found. If 'ignore', file not found is skipped when fetching data.
+            This can be used to optimise performances.
+        parallel: bool (optional)
+            Chunk request to use parallel fetching (default: False)
+        parallel_method: str (optional)
+            Define the parallelization method: ``thread``, ``process`` or a :class:`dask.distributed.client.Client`.
+        progress: bool (optional)
+            Show a progress bar or not when fetching data.
+        chunks: 'auto' or dict of integers (optional)
+            Dictionary with request access point as keys and number of chunks to create as values.
+            Eg:
+                - ``{'wmo': 10}`` will create a maximum of 10 chunks along WMOs when used with ``Fetch_wmo``.
+                - ``{'lon': 2}`` will create a maximum of 2 chunks along longitude when used with ``Fetch_box``.
 
+        chunks_maxsize: dict (optional)
+            Dictionary with request access point as keys and chunk size as values (used as maximum values in
+            'auto' chunking).
+            Eg: ``{'wmo': 5}`` will create chunks with as many as 5 WMOs each.
         """
         self.cache = cache
         self.cachedir = cachedir
@@ -122,11 +138,12 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         self.errors = errors
 
         if not isinstance(parallel, bool):
-            # The parallelisation method is passed through the argument 'parallel':
+            # The parallelization method is passed through the argument 'parallel':
             if type(parallel) == distributed.client.Client or parallel == 'thread' or parallel == 'process':
                 parallel_method = parallel
         self.parallel = parallel
         self.parallel_method = parallel_method
+        self.progress = progress
         self.chunks = chunks
         self.chunks_maxsize = chunks_maxsize
 
@@ -313,7 +330,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
                                     concat_dim='N_POINTS',
                                     concat=True,
                                     preprocess=self._preprocess_multiprof,
-                                    progress=False,
+                                    progress=self.progress,
                                     decode_cf=1, use_cftime=0, mask_and_scale=1, engine='h5netcdf')
 
         # Data post-processing:
@@ -365,12 +382,12 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
     def init(self, WMO: list = [], CYC=None, **kwargs):
         """ Create Argo data loader for WMOs
 
-            Parameters
-            ----------
-            WMO : list(int)
-                The list of WMOs to load all Argo data for.
-            CYC : int, np.array(int), list(int)
-                The cycle numbers to load.
+        Parameters
+        ----------
+        WMO : list(int)
+            The list of WMOs to load all Argo data for.
+        CYC : int, np.array(int), list(int)
+            The cycle numbers to load.
         """
         if isinstance(WMO, int):
             WMO = [WMO]  # Make sure we deal with a list
@@ -402,7 +419,7 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
 
     @property
     def uri(self):
-        """ Return the list of files to load
+        """ List of files to load for a request
 
         Returns
         -------
@@ -445,13 +462,13 @@ class Fetch_box(LocalFTPArgoDataFetcher):
     def init(self, box: list):
         """ Create Argo data loader
 
-            Parameters
-            ----------
-            box : list(float, float, float, float, float, float, str, str)
-                The box domain to load all Argo data for:
-                box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
-                or:
-                box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
+        Parameters
+        ----------
+        box : list(float, float, float, float, float, float, str, str)
+            The box domain to load all Argo data for:
+            box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
+            or:
+            box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
         # We use a full domain definition (x, y, z, t) as argument for compatibility with the other fetchers
         # but at this point, we work only with x, y and t.
@@ -488,7 +505,7 @@ class Fetch_box(LocalFTPArgoDataFetcher):
 
     @property
     def uri(self):
-        """ Return the list of files to load
+        """ List of files to load for a request
 
         Returns
         -------

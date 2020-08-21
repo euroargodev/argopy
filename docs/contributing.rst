@@ -86,6 +86,7 @@ If you want to add your own data fetcher from a new service, then, keep in mind 
     * loading all available data from a given source and providing at least a :func:`to_xarray()` method
     * making data compliant to Argo standards (data type, variable name, attributes, etc ...)
 
+
 * Data fetchers must:
 
     * inherit from the `argopy.data_fetchers.proto.ArgoDataFetcherProto`
@@ -102,6 +103,7 @@ If you want to add your own data fetcher from a new service, then, keep in mind 
             *  :func:`filter_data_mode`
             *  :func:`filter_qc`
             *  :func:`filter_variables`
+
 
 
 It is the responsability of the facade API (:class:`argopy.fetchers.ArgoDataFetcher`) to run

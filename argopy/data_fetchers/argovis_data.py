@@ -67,19 +67,38 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         cache: bool = False,
         cachedir: str = "",
         parallel: bool = False,
+        parallel_method: str = "thread",
+        progress: bool = False,
         chunks: str = "auto",
         chunks_maxsize: dict = {},
-        parallel_method: str = "thread",
         api_timeout: int = 0,
         **kwargs
     ):
         """ Instantiate an Argovis Argo data loader
 
-            Parameters
-            ----------
-            ds: 'phy'
-            cache : False
-            cachedir : None
+        Parameters
+        ----------
+        ds: str (optional)
+            Dataset to load: 'phy' or 'ref' or 'bgc'
+        cache: bool (optional)
+            Cache data or not (default: False)
+        cachedir: str (optional)
+            Path to cache folder
+        parallel: bool (optional)
+            Chunk request to use parallel fetching (default: False)
+        parallel_method: str (optional)
+            Define the parallelization method: ``thread``, ``process`` or a :class:`dask.distributed.client.Client`.
+        progress: bool (optional)
+            Show a progress bar or not when ``parallel`` is set to True.
+        chunks: 'auto' or dict of integers (optional)
+            Dictionary with request access point as keys and number of chunks to create as values.
+            Eg: {'wmo': 10} will create a maximum of 10 chunks along WMOs when used with ``Fetch_wmo``.
+        chunks_maxsize: dict (optional)
+            Dictionary with request access point as keys and chunk size as values (used as maximum values in
+            'auto' chunking).
+            Eg: {'wmo': 5} will create chunks with as many as 5 WMOs each.
+        api_timeout: int (optional)
+            Argovis API request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout)
@@ -97,6 +116,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
                 parallel_method = parallel
         self.parallel = parallel
         self.parallel_method = parallel_method
+        self.progress = progress
         self.chunks = chunks
         self.chunks_maxsize = chunks_maxsize
 
@@ -155,12 +175,10 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         # Download data:
         if not self.parallel:
             method = "sequential"
-            showprogress = False
         else:
             method = self.parallel_method
-            showprogress = True
         df_list = self.fs.open_mfjson(
-            self.uri, method=method, preprocess=self.json2dataframe, progress=showprogress
+            self.uri, method=method, preprocess=self.json2dataframe, progress=self.progress
         )
 
         # Merge results (list of dataframe):
@@ -297,7 +315,7 @@ class Fetch_wmo(ArgovisDataFetcher):
 
     @property
     def uri(self):
-        """ Return the list of URLs to download data
+        """ List of URLs to load for a request
 
         Returns
         -------
@@ -390,7 +408,7 @@ class Fetch_box(ArgovisDataFetcher):
 
     @property
     def uri(self):
-        """ Return the list of URLs to download data
+        """ List of URLs to load for a request
 
         Returns
         -------

@@ -38,10 +38,10 @@ class argo_store_proto(ABC):
 
             Parameters
             ----------
-            cache : bool (False)
-            cachedir : str (from OPTIONS)
-            **kwargs:
-                Other keywords arguments are passed to :class:`fsspec.filesystem`
+            cache: bool (False)
+            cachedir: str (from OPTIONS)
+            **kwargs: (optional)
+                Other arguments passed to :class:`fsspec.filesystem`
 
         """
         self.cache = cache
@@ -140,26 +140,30 @@ class argo_store_proto(ABC):
                        *args, **kwargs):
         """ Open multiple urls as a single xarray dataset.
 
-            This is a parallelised version of ``open_dataset``.
-            Use a Threads Pool by default for parallelisation.
+            This is a version of the ``open_dataset`` method that is able to handle a list of urls/paths
+            sequentially or in parallel.
+
+            Use a Threads Pool by default for parallelization.
 
             Parameters
             ----------
             urls: list(str)
+                List of url/path to open
             concat_dim: str
                 Name of the dimension to use to concatenate all datasets (passed to :class:`xarray.concat`)
             max_workers: int
-                Maximum number of threads or processes.
-            method:
-                The parallelisation method to execute calls asynchronously:
-                    - 'thread' (Default): use a pool of at most ``max_workers`` threads
-                    - 'process': use a pool of at most ``max_workers`` processes
-                    - Dask client object: use a Dask distributed client object
+                Maximum number of threads or processes
+            method: str
+                The parallelization method to execute calls asynchronously:
+                    - ``thread`` (Default): use a pool of at most ``max_workers`` threads
+                    - ``process``: use a pool of at most ``max_workers`` processes
+                    - a :class:`distributed.client.Client` object (:class:`distributed.client.Client`)
+
                 Use 'seq' to simply open data sequentially
             progress: bool
                 Display a progress bar (True by default)
-            preprocess: (callable, optional)
-                If provided, call this function on each dataset prior to concatenation.
+            preprocess: callable (optional)
+                If provided, call this function on each dataset prior to concatenation
 
             Returns
             -------
@@ -260,10 +264,11 @@ class argo_store_proto(ABC):
             max_workers: int
                 Maximum number of threads or processes.
             method:
-                The parallelisation method to execute calls asynchronously:
+                The parallelization method to execute calls asynchronously:
                     - 'thread' (Default): use a pool of at most ``max_workers`` threads
                     - 'process': use a pool of at most ``max_workers`` processes
                     - Dask client object: use a Dask distributed client object
+
                 Use 'seq' to simply open data sequentially
             progress: bool
                 Display a progress bar (True by default, not for dask client method)

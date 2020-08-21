@@ -1,19 +1,18 @@
-# -*coding: UTF-8 -*-
 """
 
-    Useful for documentation, to play with and to test argopy
+Useful for documentation, to play with and to test argopy
 
-    Data files are hosted on companion repository: http://www.github.com/euroargodev/argopy-data
+Data files are hosted on companion repository: http://www.github.com/euroargodev/argopy-data
 
-    ```
-    import argopy
-    ftproot, flist = argopy.tutorial.open_dataset('localftp')
-    txtfile = argopy.tutorial.open_dataset('weekly_index_prof')
-    txtfile = argopy.tutorial.open_dataset('global_index_prof')
+```
+import argopy
+ftproot, flist = argopy.tutorial.open_dataset('localftp')
+txtfile = argopy.tutorial.open_dataset('weekly_index_prof')
+txtfile = argopy.tutorial.open_dataset('global_index_prof')
 
-    # To force a new download of the data repo:
-    argopy.tutorial.repodata().download(overwrite=True)
-    ```
+# To force a new download of the data repo:
+argopy.tutorial.repodata().download(overwrite=True)
+```
 """
 
 import os
@@ -27,30 +26,30 @@ _DEFAULT_CACHE_DIR = os.path.expanduser(os.path.sep.join(["~", ".argopy_tutorial
 def open_dataset(name):
     """ Open a dataset from the argopy online data repository (requires internet).
 
-        If a local copy is found then always use that to avoid network traffic.
+    If a local copy is found then always use that to avoid network traffic.
 
-        Refresh dataset with:
-        ```python
-            argopy.tutorial.repodata().download(overwrite=True)
-        ```
+    Refresh dataset with:
+    ```
+    argopy.tutorial.repodata().download(overwrite=True)
+    ```
 
-        Parameters
-        ----------
-        name: str
-            Name of the dataset to load or get information for. It can be: ``localftp``,
-            ``weekly_index_prof`` or ``global_index_prof``.
+    Parameters
+    ----------
+    name: str
+        Name of the dataset to load or get information for. It can be: ``localftp``,
+        ``weekly_index_prof`` or ``global_index_prof``.
 
-                - ``localftp``, return the absolute path and list of files in the sample local ftp files.
-                - ``weekly_index_prof``, return path and to weekly profile index file
+            - ``localftp``, return the absolute path and list of files in the sample local ftp files.
+            - ``weekly_index_prof``, return path and to weekly profile index file
+            - ``global_index_prof``, return path and to global profile index file
 
-                - ``global_index_prof``, return path and to global profile index file
 
-        Returns
-        -------
-        path: str
-            Root path to files
-        files: list(str) or str
-            List of files with the requested dataset
+    Returns
+    -------
+    path: str
+        Root path to files
+    files: list(str) or str
+        List of files with the requested dataset
 
     """
     if name == 'localftp':

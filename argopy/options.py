@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-
 """
-argopy.options
-~~~~~~~~~~~~~~
-
 This module manage options of the package
 
 # Like always, largely inspired by xarray code:
@@ -12,20 +7,22 @@ This module manage options of the package
 import os
 
 # Define option names as seen by users:
-DATA_SOURCE = 'src'
-LOCAL_FTP = 'local_ftp'
-DATASET = 'dataset'
-DATA_CACHE = 'cachedir'
-USER_LEVEL = 'mode'
-API_TIMEOUT = 'api_timeout'
+DATA_SOURCE = "src"
+LOCAL_FTP = "local_ftp"
+DATASET = "dataset"
+DATA_CACHE = "cachedir"
+USER_LEVEL = "mode"
+API_TIMEOUT = "api_timeout"
 
 # Define the list of available options and default values:
-OPTIONS = {DATA_SOURCE: 'erddap',
-           LOCAL_FTP: '.',
-           DATASET: 'phy',
-           DATA_CACHE: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
-           USER_LEVEL: 'standard',
-           API_TIMEOUT: 60}
+OPTIONS = {
+    DATA_SOURCE: "erddap",
+    LOCAL_FTP: ".",
+    DATASET: "phy",
+    DATA_CACHE: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
+    USER_LEVEL: "standard",
+    API_TIMEOUT: 60,
+}
 
 # Define the list of possible values
 _DATA_SOURCE_LIST = frozenset(["erddap", "localftp", "argovis"])
@@ -43,7 +40,7 @@ _VALIDATORS = {
     LOCAL_FTP: os.path.exists,
     DATASET: _DATASET_LIST.__contains__,
     USER_LEVEL: _USER_LEVEL_LIST.__contains__,
-    API_TIMEOUT: _positive_integer
+    API_TIMEOUT: _positive_integer,
 }
 
 
@@ -52,41 +49,37 @@ class set_options:
 
     List of options:
 
-    - `dataset`: Define the Dataset to work with.
-        Default: `phy`. Possible values: `phy`, `bgc` or `ref`.
-
-    - `src`: Source of fetched data.
-        Default: `erddap`. Possible values: `erddap`, `localftp`, `argovis`
-
-    - `local_ftp`: Absolute path to a local GDAC ftp copy.
-        Default: `.`
-
-    - `cachedir`: Absolute path to a local cache directory.
-        Default: `~/.cache/argopy`
-
-    - `mode`: User mode.
-        Default: `standard`. Possible values: `standard` or `expert`.
-
-    - `api_timeout`: Define the time out of internet requests to web API, in seconds.
-        Default: 120
+        - `dataset`: Define the Dataset to work with.
+            Default: `phy`. Possible values: `phy`, `bgc` or `ref`.
+        - `src`: Source of fetched data.
+            Default: `erddap`. Possible values: `erddap`, `localftp`, `argovis`
+        - `local_ftp`: Absolute path to a local GDAC ftp copy.
+            Default: `.`
+        - `cachedir`: Absolute path to a local cache directory.
+            Default: `~/.cache/argopy`
+        - `mode`: User mode.
+            Default: `standard`. Possible values: `standard` or `expert`.
+        - `api_timeout`: Define the time out of internet requests to web API, in seconds.
+            Default: 120
 
     You can use `set_options` either as a context manager:
-    ```
-        >>> import argopy
-        >>> with argopy.set_options(src='localftp'):
-        ...     ds = argopy.DataFetcher().float(3901530).to_xarray()
-    ```
+    >>> import argopy
+    >>> with argopy.set_options(src='localftp'):
+    >>>    ds = argopy.DataFetcher().float(3901530).to_xarray()
+
     Or to set global options:
-    ```
-        >>> argopy.set_options(src='localftp')
-    ```
+    >>> argopy.set_options(src='localftp')
+
     """
 
     def __init__(self, **kwargs):
         self.old = {}
         for k, v in kwargs.items():
             if k not in OPTIONS:
-                raise ValueError("argument name %r is not in the set of valid options %r" % (k, set(OPTIONS)))
+                raise ValueError(
+                    "argument name %r is not in the set of valid options %r"
+                    % (k, set(OPTIONS))
+                )
 
             if k in _VALIDATORS and not _VALIDATORS[k](v):
                 raise ValueError(f"option {k!r} given an invalid value: {v!r}")

@@ -7,7 +7,7 @@ import unittest
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, ErddapServerError
-from argopy.utilities import list_available_data_src, isconnected, isAPIconnected, erddap_ds_exists
+from argopy.utilities import list_available_data_src, isconnected, isAPIconnected, erddap_ds_exists, is_list_of_strings
 
 
 argopy.set_options(api_timeout=3*60)  # From Github actions, requests can take a while
@@ -86,8 +86,9 @@ class AllBackends(unittest.TestCase):
         for arg in self.args['float']:
             options = {**self.fetcher_opts, **ftc_opts}
             try:
-                ds = ArgoDataFetcher(src=bk, **options).float(arg).to_xarray()
-                assert isinstance(ds, xr.Dataset)
+                f = ArgoDataFetcher(src=bk, **options).float(arg)
+                assert isinstance(f.to_xarray(), xr.Dataset)
+                assert is_list_of_strings(f.uri)
             except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
 
@@ -95,8 +96,9 @@ class AllBackends(unittest.TestCase):
         """ Test float for a given backend """
         for arg in self.args['profile']:
             try:
-                ds = ArgoDataFetcher(src=bk).profile(*arg).to_xarray()
-                assert isinstance(ds, xr.Dataset)
+                f = ArgoDataFetcher(src=bk).profile(*arg)
+                assert isinstance(f.to_xarray(), xr.Dataset)
+                assert is_list_of_strings(f.uri)
             except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
 
@@ -104,8 +106,9 @@ class AllBackends(unittest.TestCase):
         """ Test float for a given backend """
         for arg in self.args['region']:
             try:
-                ds = ArgoDataFetcher(src=bk).region(arg).to_xarray()
-                assert isinstance(ds, xr.Dataset)
+                f = ArgoDataFetcher(src=bk).region(arg)
+                assert isinstance(f.to_xarray(), xr.Dataset)
+                assert is_list_of_strings(f.uri)
             except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
 
