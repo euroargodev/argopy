@@ -75,7 +75,8 @@ class Backend(unittest.TestCase):
                 # 2nd call to load from cached file:
                 ds = loader.to_xarray()
                 assert isinstance(ds, xr.Dataset)
-                assert isinstance(loader.fetcher.cachepath, str)
+                assert is_list_of_strings(loader.fetcher.uri)
+                assert is_list_of_strings(loader.fetcher.cachepath)
                 shutil.rmtree(self.testcachedir)
             except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
                 shutil.rmtree(self.testcachedir)
@@ -96,7 +97,8 @@ class Backend(unittest.TestCase):
                 # 2nd call to load from cached file
                 ds = loader.to_xarray()
                 assert isinstance(ds, xr.Dataset)
-                assert isinstance(loader.fetcher.cachepath, str)
+                assert is_list_of_strings(loader.fetcher.uri)
+                assert is_list_of_strings(loader.fetcher.cachepath)
                 shutil.rmtree(self.testcachedir)
             except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
                 shutil.rmtree(self.testcachedir)
@@ -117,7 +119,8 @@ class Backend(unittest.TestCase):
                 # 2nd call to load from cached file
                 ds = loader.to_xarray()
                 assert isinstance(ds, xr.Dataset)
-                assert isinstance(loader.fetcher.cachepath, str)
+                assert is_list_of_strings(loader.fetcher.uri)
+                assert is_list_of_strings(loader.fetcher.cachepath)
                 shutil.rmtree(self.testcachedir)
             except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
                 shutil.rmtree(self.testcachedir)
@@ -141,8 +144,8 @@ class Backend(unittest.TestCase):
         for arg in self.args["profile"]:
             try:
                 f = ArgoDataFetcher(src=self.src, ds=dataset).profile(*arg)
-                assert isinstance(f.fetcher.uri, str)
                 assert isinstance(f.to_xarray(), xr.Dataset)
+                assert is_list_of_strings(f.fetcher.uri)
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
@@ -156,8 +159,8 @@ class Backend(unittest.TestCase):
         for arg in self.args["float"]:
             try:
                 f = ArgoDataFetcher(src=self.src, ds=dataset).float(arg)
-                assert isinstance(f.fetcher.uri, str)
                 assert isinstance(f.to_xarray(), xr.Dataset)
+                assert is_list_of_strings(f.fetcher.uri)
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
@@ -171,8 +174,8 @@ class Backend(unittest.TestCase):
         for arg in self.args["region"]:
             try:
                 f = ArgoDataFetcher(src=self.src, ds=dataset).region(arg)
-                assert isinstance(f.fetcher.uri, str)
                 assert isinstance(f.to_xarray(), xr.Dataset)
+                assert is_list_of_strings(f.fetcher.uri)
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
@@ -297,8 +300,8 @@ class BackendParallel(unittest.TestCase):
             fetcher_args = {"src": self.src, "parallel": True}
             try:
                 f = ArgoDataFetcher(**fetcher_args).region(access_arg)
-                assert is_list_of_strings(f.fetcher.uri)
                 assert isinstance(f.to_xarray(), xr.Dataset)
+                assert is_list_of_strings(f.fetcher.uri)
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass
@@ -313,8 +316,8 @@ class BackendParallel(unittest.TestCase):
             fetcher_args = {"src": self.src, "parallel": True}
             try:
                 f = ArgoDataFetcher(**fetcher_args).float(access_arg)
-                assert is_list_of_strings(f.fetcher.uri)
                 assert isinstance(f.to_xarray(), xr.Dataset)
+                assert is_list_of_strings(f.fetcher.uri)
             except ErddapServerError:
                 # Test is passed when something goes wrong because of the erddap server, not our fault !
                 pass

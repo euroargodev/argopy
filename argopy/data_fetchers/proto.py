@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 
 class ArgoDataFetcherProto(ABC):
+
     @abstractmethod
     def to_xarray(self):
         pass

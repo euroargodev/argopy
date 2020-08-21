@@ -46,15 +46,15 @@ class Backend(unittest.TestCase):
 
     def test_caching_float(self):
         with argopy.set_options(cachedir=self.testcachedir):
+            f = ArgoDataFetcher(src=self.src, cache=True).float(1901393)
             try:
-                loader = ArgoDataFetcher(src=self.src, cache=True).float(1901393)
                 # 1st call to load and save to cachedir:
-                ds = loader.to_xarray()
+                ds = f.to_xarray()
                 # 2nd call to load from cached file:
-                ds = loader.to_xarray()
-                print(loader.fetcher.cachepath)
+                ds = f.to_xarray()
                 assert isinstance(ds, xr.Dataset)
-                assert isinstance(loader.fetcher.cachepath, str)
+                assert is_list_of_strings(f.fetcher.uri)
+                assert is_list_of_strings(f.fetcher.cachepath)
                 shutil.rmtree(self.testcachedir)
             except ArgovisServerError:  # Test is passed when something goes wrong because of the argovis server, not our fault !
                 shutil.rmtree(self.testcachedir)
@@ -65,14 +65,15 @@ class Backend(unittest.TestCase):
 
     def test_caching_profile(self):
         with argopy.set_options(cachedir=self.testcachedir):
-            loader = ArgoDataFetcher(src=self.src, cache=True).profile(6902746, 34)
+            f = ArgoDataFetcher(src=self.src, cache=True).profile(6902746, 34)
             try:
                 # 1st call to load and save to cachedir:
-                ds = loader.to_xarray()
+                ds = f.to_xarray()
                 # 2nd call to load from cached file
-                ds = loader.to_xarray()
+                ds = f.to_xarray()
                 assert isinstance(ds, xr.Dataset)
-                assert isinstance(loader.fetcher.cachepath, str)
+                assert is_list_of_strings(f.fetcher.uri)
+                assert is_list_of_strings(f.fetcher.cachepath)
                 shutil.rmtree(self.testcachedir)
             except ArgovisServerError:  # Test is passed when something goes wrong because of the argovis server, not our fault !
                 shutil.rmtree(self.testcachedir)
@@ -92,7 +93,8 @@ class Backend(unittest.TestCase):
                 # 2nd call to load from cached file
                 ds = loader.to_xarray()
                 assert isinstance(ds, xr.Dataset)
-                assert isinstance(loader.fetcher.cachepath, str)
+                assert is_list_of_strings(loader.fetcher.uri)
+                assert is_list_of_strings(loader.fetcher.cachepath)
                 shutil.rmtree(self.testcachedir)
             except ArgovisServerError:  # Test is passed when something goes wrong because of the argovis server, not our fault !
                 shutil.rmtree(self.testcachedir)
@@ -106,8 +108,8 @@ class Backend(unittest.TestCase):
         for arg in self.args["profile"]:
             try:
                 f = ArgoDataFetcher(**fetcher_args).profile(*arg)
-                assert isinstance(f.fetcher.uri, str)
                 assert isinstance(f.to_xarray(), xr.Dataset)
+                assert is_list_of_strings(f.fetcher.uri)
             except ArgovisServerError:
                 # Test is passed when something goes wrong because of the argovis server, not our fault !
                 pass
@@ -120,8 +122,8 @@ class Backend(unittest.TestCase):
         for arg in self.args["float"]:
             try:
                 f = ArgoDataFetcher(**fetcher_args).float(arg)
-                assert isinstance(f.fetcher.uri, str)
                 assert isinstance(f.to_xarray(), xr.Dataset)
+                assert is_list_of_strings(f.fetcher.uri)
             except ArgovisServerError:
                 # Test is passed when something goes wrong because of the argovis server, not our fault !
                 pass
@@ -134,8 +136,8 @@ class Backend(unittest.TestCase):
         for arg in self.args["region"]:
             try:
                 f = ArgoDataFetcher(**fetcher_args).region(arg)
-                assert isinstance(f.fetcher.uri, str)
                 assert isinstance(f.to_xarray(), xr.Dataset)
+                assert is_list_of_strings(f.fetcher.uri)
             except ArgovisServerError:
                 # Test is passed when something goes wrong because of the argovis server, not our fault !
                 pass
@@ -201,8 +203,8 @@ class BackendParallel(unittest.TestCase):
             fetcher_args = {"src": self.src, "parallel": True}
             try:
                 f = ArgoDataFetcher(**fetcher_args).region(access_arg)
-                assert is_list_of_strings(f.fetcher.uri)
                 assert isinstance(f.to_xarray(), xr.Dataset)
+                assert is_list_of_strings(f.fetcher.uri)
             except ArgovisServerError:
                 # Test is passed when something goes wrong because of the argovis server, not our fault !
                 pass
@@ -215,8 +217,8 @@ class BackendParallel(unittest.TestCase):
             fetcher_args = {"src": self.src, "parallel": True}
             try:
                 f = ArgoDataFetcher(**fetcher_args).float(access_arg)
-                assert is_list_of_strings(f.fetcher.uri)
                 assert isinstance(f.to_xarray(), xr.Dataset)
+                assert is_list_of_strings(f.fetcher.uri)
             except ArgovisServerError:
                 # Test is passed when something goes wrong because of the argovis server, not our fault !
                 pass

@@ -91,8 +91,8 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
                  dimension: str = 'point',
                  errors: str = 'raise',
                  parallel: bool = False,
-                 # chunks: str = 'auto',
-                 # chunks_maxsize: dict = {},
+                 chunks: str = 'auto',
+                 chunks_maxsize: dict = {},
                  parallel_method: str = 'thread',
                  **kwargs):
         """ Init fetcher
@@ -127,8 +127,8 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
                 parallel_method = parallel
         self.parallel = parallel
         self.parallel_method = parallel_method
-        # self.chunks = chunks
-        # self.chunks_maxsize = chunks_maxsize
+        self.chunks = chunks
+        self.chunks_maxsize = chunks_maxsize
 
         self.definition = 'Local ftp Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
@@ -230,7 +230,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
 
         Returns
         -------
-        str or list(str)
+        list(str)
         """
         pass
 
@@ -240,109 +240,9 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
 
         Returns
         -------
-        str or list(str)
+        list(str)
         """
-        if len(self.uri) == 1:
-            return self.fs.cachepath(self.uri[0])
-        else:
-            return [self.fs.cachepath(url) for url in self.uri]
-
-    def _deprec_xload_multiprof(self, ncfile: str):
-        """Load one Argo multi-profile file as a collection of points
-
-        Parameters
-        ----------
-        ncfile: str
-            Absolute path to a netcdf file to load
-
-        Returns
-        -------
-        :class:`xarray.Dataset`
-
-        """
-        ds = self.fs.open_dataset(ncfile, decode_cf=1, use_cftime=0, mask_and_scale=1, engine='h5netcdf')
-
-        # Replace JULD and JULD_QC by TIME and TIME_QC
-        ds = ds.rename({'JULD': 'TIME', 'JULD_QC': 'TIME_QC'})
-        ds['TIME'].attrs = {'long_name': 'Datetime (UTC) of the station',
-                            'standard_name':  'time'}
-        # Cast data types:
-        ds = ds.argo.cast_types()
-
-        # Enforce real pressure resolution: 0.1 db
-        for vname in ds.data_vars:
-            if 'PRES' in vname and 'QC' not in vname:
-                ds[vname].values = np.round(ds[vname].values, 1)
-
-        # Remove variables without dimensions:
-        # We should be able to find a way to keep them somewhere in the data structure
-        for v in ds.data_vars:
-            if len(list(ds[v].dims)) == 0:
-                ds = ds.drop_vars(v)
-
-        print("DIRECTION", np.unique(ds['DIRECTION']))
-        print("N_PROF", np.unique(ds['N_PROF']))
-        ds = ds.argo.profile2point()  # Default output is a collection of points
-        print("DIRECTION", np.unique(ds['DIRECTION']))
-
-        # Remove netcdf file attributes and replace them with argopy ones:
-        ds.attrs = {}
-        if self.dataset_id == 'phy':
-            ds.attrs['DATA_ID'] = 'ARGO'
-        if self.dataset_id == 'bgc':
-            ds.attrs['DATA_ID'] = 'ARGO-BGC'
-        ds.attrs['DOI'] = 'http://doi.org/10.17882/42182'
-        ds.attrs['Fetched_from'] = self.local_ftp
-        ds.attrs['Fetched_by'] = getpass.getuser()
-        ds.attrs['Fetched_date'] = pd.to_datetime('now').strftime('%Y/%m/%d')
-        ds.attrs['Fetched_constraints'] = self.cname()
-        ds.attrs['Fetched_uri'] = ncfile
-        ds = ds[np.sort(ds.data_vars)]
-
-        return ds
-
-    def _deprec_open_mfdataset(self, **kwargs):
-        """ Load data as efficiently as possible
-
-        This allows to manage parallel retrieval of multiple files with a Dask client or a Multiprocessing pool.
-
-        Returns
-        -------
-        :class:`xarray.Dataset`
-        """
-        client = None if 'client' not in kwargs else kwargs['client']
-
-        if len(self.uri) == 1:
-            return self.xload_multiprof(self.uri[0])
-
-        else:
-            warnings.warn("Fetching more than one file in a single request is not yet fully reliable. "
-                          "If you encounter an error, try to load each float separately.")
-
-            if client is not None:
-                if type(client) == distributed.client.Client:
-                    # Use dask client:
-                    futures = client.map(self.xload_multiprof, self.uri)
-                    results = client.gather(futures)
-                else:
-                    # Use multiprocessing Pool
-                    with mp.Pool() as pool:
-                        results = pool.map(self.xload_multiprof, self.uri)
-            else:
-                results = []
-                for f in self.uri:
-                    results.append(self.xload_multiprof(f))
-
-        results = [r for r in results if r is not None]  # Only keep non-empty results
-        if len(results) > 0:
-            # ds = xr.concat(results, dim='N_POINTS', data_vars='all', coords='all', compat='equals')
-            ds = xr.concat(results, dim='N_POINTS', data_vars='all', coords='all', compat='override')
-            ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS']))  # Re-index to avoid duplicate values
-            ds = ds.set_coords('N_POINTS')
-            ds = ds.sortby('TIME')
-            return ds
-        else:
-            raise ValueError("CAN'T FETCH ANY DATA !")
+        return [self.fs.cachepath(url) for url in self.uri]
 
     def _preprocess_multiprof(self, ds):
         """ Pre-process one Argo multi-profile file as a collection of points

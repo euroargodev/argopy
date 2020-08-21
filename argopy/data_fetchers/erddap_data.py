@@ -288,15 +288,21 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def cachepath(self):
-        """ Return path to cache file for this request """
-        if self.parallel:
-            return [self.fs.cachepath(uri) for uri in self.uri]
-        else:
-            return self.fs.cachepath(self.uri)
+        """ Return path to cache file for this request
 
-    @property
+        Returns
+        -------
+        str or list(str)
+        """
+        return [self.fs.cachepath(uri) for uri in self.uri]
+
     def get_url(self):
-        """ Return a URL to download the full data request """
+        """ Return the URL to download data requested
+
+        Returns
+        -------
+        str
+        """
         # Replace erddapy get_download_url()
         # We need to replace it to better handle http responses with by-passing the _check_url_response
         # https://github.com/ioos/erddapy/blob/fa1f2c15304938cd0aa132946c22b0427fd61c81/erddapy/erddapy.py#L247
@@ -329,9 +335,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         return url
 
     @property
-    def N_POINTS(self):
+    def N_POINTS(self) -> int:
+        """ Number of measurements expected to be returned by a request """
         try:
-            with self.fs.open(self.get_url.replace('.' + self.erddap.response, '.ncHeader')) as of:
+            with self.fs.open(self.get_url().replace('.' + self.erddap.response, '.ncHeader')) as of:
                 ncHeader = of.read().decode("utf-8")
             lines = [line for line in ncHeader.splitlines() if 'row = ' in line][0]
             return int(lines.split('=')[1].split(';')[0])
@@ -343,7 +350,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         # Download data
         if not self.parallel:
-            ds = self.fs.open_dataset(self.uri)
+            if len(self.uri) == 1:
+                ds = self.fs.open_dataset(self.uri[0])
+            else:
+                ds = self.fs.open_mfdataset(self.uri, method='sequential')
         else:
             ds = self.fs.open_mfdataset(self.uri, method=self.parallel_method)
 
@@ -380,7 +390,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         ds.attrs['Fetched_by'] = getpass.getuser()
         ds.attrs['Fetched_date'] = pd.to_datetime('now').strftime('%Y/%m/%d')
         ds.attrs['Fetched_constraints'] = self.cname()
-        ds.attrs['Fetched_uri'] = self.get_url
+        ds.attrs['Fetched_uri'] = self.uri
         ds = ds[np.sort(ds.data_vars)]
 
         #
@@ -470,17 +480,17 @@ class Fetch_wmo(ErddapArgoDataFetcher):
 
         Returns
         -------
-        str or list(str)
+        list(str)
         """
         if not self.parallel:
-            return self.get_url
+            return [self.get_url()]
         else:
             C = Chunker({'wmo': self.WMO}, chunks=self.chunks, chunksize=self.chunks_maxsize)
             wmo_grps = C.fit_transform()
             # self.chunks = C.chunks
             urls = []
             for wmos in wmo_grps:
-                urls.append(Fetch_wmo(WMO=wmos, CYC=self.CYC, ds=self.dataset_id, parallel=False).get_url)
+                urls.append(Fetch_wmo(WMO=wmos, CYC=self.CYC, ds=self.dataset_id, parallel=False).get_url())
             return urls
 
     def dashboard(self, **kw):
@@ -551,12 +561,11 @@ class Fetch_box(ErddapArgoDataFetcher):
     def uri(self):
         """ Return a list of URLs to download the full request (possibly by chunks) """
         if not self.parallel:
-            return self.get_url
+            return [self.get_url()]
         else:
             C = Chunker({'box': self.BOX}, chunks=self.chunks, chunksize=self.chunks_maxsize)
             boxes = C.fit_transform()
-            # self.chunks = C.chunks
             urls = []
             for box in boxes:
-                urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url)
+                urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())
             return urls

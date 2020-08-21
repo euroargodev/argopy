@@ -56,10 +56,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
     @property
     def cachepath(self):
         """ Return path to cache file for this request """
-        if isinstance(self.uri, list):
-            return [self.fs.cachepath(url) for url in self.uri]
-        else:
-            return self.fs.cachepath(self.uri)
+        return [self.fs.cachepath(url) for url in self.uri]
 
     ###
     # Methods that must not change
@@ -287,7 +284,7 @@ class Fetch_wmo(ArgovisDataFetcher):
         return listname
 
     def get_url(self, wmo: int, cyc: int = None) -> str:
-        """ Return the path toward the source file of a given wmo/cyc pair """
+        """ Return path toward the source file of a given wmo/cyc pair """
         if cyc is None:
             return (self.server + "/catalog/platforms/{}").format(str(wmo))
         else:
@@ -304,9 +301,8 @@ class Fetch_wmo(ArgovisDataFetcher):
 
         Returns
         -------
-        str or list(str)
+        list(str)
         """
-
         def list_bunch(wmos, cycs):
             this = []
             for wmo in wmos:
@@ -398,19 +394,19 @@ class Fetch_box(ArgovisDataFetcher):
 
         Returns
         -------
-        str or list(str)
+        list(str)
         """
+        Lt = np.timedelta64(pd.to_datetime(self.BOX[7]) - pd.to_datetime(self.BOX[6]), "D")
+        MaxLenTime = 90
+        MaxLen = np.timedelta64(MaxLenTime, "D")
+
         if not self.parallel:
             # Check if the time range is not larger than allowed (90 days):
-            Lt = np.timedelta64(
-                pd.to_datetime(self.BOX[7]) - pd.to_datetime(self.BOX[6]), "D"
-            )
-            MaxLen = np.timedelta64(90, "D")
             if Lt > MaxLen:
                 C = Chunker(
                     {"box": self.BOX},
                     chunks={"lon": 1, "lat": 1, "dpt": 1, "time": "auto"},
-                    chunksize={"time": 90},
+                    chunksize={"time": MaxLenTime},
                 )
                 boxes = C.fit_transform()
                 urls = []
@@ -418,13 +414,19 @@ class Fetch_box(ArgovisDataFetcher):
                     urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())
                 return urls
             else:
-                return self.get_url()
+                return [self.get_url()]
         else:
             if 'time' not in self.chunks_maxsize:
-                self.chunks_maxsize['time'] = 90
-            elif self.chunks_maxsize['time'] > 90:
-                warnings.warn("argovis only allows requests of 90 days interval, modify chunks_maxsize['time'] to 90")
-                self.chunks_maxsize['time'] = 90
+                self.chunks_maxsize['time'] = MaxLenTime
+            elif self.chunks_maxsize['time'] > MaxLenTime:
+                warnings.warn(("argovis only allows requests of %i days interval, "
+                               "modify chunks_maxsize['time'] to %i" % (MaxLenTime, MaxLenTime)))
+                self.chunks_maxsize['time'] = MaxLenTime
+
+            # Ensure time chunks will never exceed what's allowed by argovis:
+            if Lt > MaxLen and 'time' in self.chunks and self.chunks['time'] not in ['auto']:
+                self.chunks['time'] = 'auto'
+
             C = Chunker(
                 {"box": self.BOX}, chunks=self.chunks, chunksize=self.chunks_maxsize
             )

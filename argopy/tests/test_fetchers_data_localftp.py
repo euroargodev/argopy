@@ -44,7 +44,8 @@ class Backend(unittest.TestCase):
                 # 2nd call to load from cached file:
                 ds = loader.to_xarray()
                 assert isinstance(ds, xr.Dataset)
-                assert np.all([isinstance(path, str) for path in loader.fetcher.cachepath])
+                assert is_list_of_strings(loader.fetcher.uri)
+                assert is_list_of_strings(loader.fetcher.cachepath)
                 shutil.rmtree(self.testcachedir)
             except Exception:
                 shutil.rmtree(self.testcachedir)
@@ -59,7 +60,8 @@ class Backend(unittest.TestCase):
                 # 2nd call to load from cached file
                 ds = loader.to_xarray()
                 assert isinstance(ds, xr.Dataset)
-                assert np.all([isinstance(path, str) for path in loader.fetcher.cachepath])
+                assert is_list_of_strings(loader.fetcher.uri)
+                assert is_list_of_strings(loader.fetcher.cachepath)
                 shutil.rmtree(self.testcachedir)
             except Exception:
                 shutil.rmtree(self.testcachedir)
@@ -74,7 +76,8 @@ class Backend(unittest.TestCase):
                 # 2nd call to load from cached file
                 ds = loader.to_xarray()
                 assert isinstance(ds, xr.Dataset)
-                assert np.all([isinstance(path, str) for path in loader.fetcher.cachepath])
+                assert is_list_of_strings(loader.fetcher.uri)
+                assert is_list_of_strings(loader.fetcher.cachepath)
                 shutil.rmtree(self.testcachedir)
             except Exception:
                 shutil.rmtree(self.testcachedir)
@@ -95,8 +98,8 @@ class Backend(unittest.TestCase):
             for arg in self.args['profile']:
                 try:
                     f = ArgoDataFetcher(**fetcher_args).profile(*arg)
-                    assert is_list_of_strings(f.fetcher.uri)
                     assert isinstance(f.to_xarray(), xr.Dataset)
+                    assert is_list_of_strings(f.fetcher.uri)
                 except Exception:
                     print("ERROR LOCALFTP request:\n", f.fetcher.uri)
                     pass
@@ -107,8 +110,8 @@ class Backend(unittest.TestCase):
             for arg in self.args['float']:
                 try:
                     f = ArgoDataFetcher(**fetcher_args).float(arg)
-                    assert is_list_of_strings(f.fetcher.uri)
                     assert isinstance(f.to_xarray(), xr.Dataset)
+                    assert is_list_of_strings(f.fetcher.uri)
                 except Exception:
                     print("ERROR LOCALFTP request:\n", f.fetcher.uri)
                     pass
@@ -119,8 +122,8 @@ class Backend(unittest.TestCase):
             for arg in self.args['region']:
                 try:
                     f = ArgoDataFetcher(**fetcher_args).region(arg)
-                    assert is_list_of_strings(f.fetcher.uri)
                     assert isinstance(f.to_xarray(), xr.Dataset)
+                    assert is_list_of_strings(f.fetcher.uri)
                 except Exception:
                     print("ERROR LOCALFTP request:\n", f.fetcher.uri)
                     pass

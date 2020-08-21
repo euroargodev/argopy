@@ -20,7 +20,7 @@ v0.1.6 (XX XXX 2020)
 
 **Breaking changes with previous versions**
 
-- The unique resource identifier property is now named ``uri`` for all data fetchers.
+- The unique resource identifier property is now named ``uri`` for all data fetchers, it is always a list of strings.
 
 **Internals**
 
