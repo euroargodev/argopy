@@ -15,10 +15,11 @@ import getpass
 from .proto import ArgoDataFetcherProto
 from abc import abstractmethod
 import warnings
+import distributed
 
 from argopy.stores import httpstore
 from argopy.options import OPTIONS
-from argopy.utilities import list_standard_variables, format_oneline, is_box
+from argopy.utilities import list_standard_variables, format_oneline, is_box, Chunker
 from argopy.errors import DataNotFound
 from argopy.plotters import open_dashboard
 
@@ -66,6 +67,10 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
                  ds: str = "",
                  cache: bool = False,
                  cachedir: str = "",
+                 parallel: bool = False,
+                 chunks: str = 'auto',
+                 chunks_maxsize: dict = {},
+                 parallel_method: str = 'thread',
                  api_timeout: int = 0,
                  **kwargs):
         """ Instantiate an Argovis Argo data loader
@@ -81,6 +86,16 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         self.definition = 'Argovis Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
         self.server = api_server
+
+        if not isinstance(parallel, bool):
+            # The parallelisation method is passed through 'parallel':
+            if type(parallel) == distributed.client.Client or parallel == 'thread' or parallel == 'process':
+                parallel_method = parallel
+        self.parallel = parallel
+        self.parallel_method = parallel_method
+        self.chunks = chunks
+        self.chunks_maxsize = chunks_maxsize
+
         self.init(**kwargs)
         self.key_map = {
             'date': 'TIME',
@@ -131,30 +146,28 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         return df
 
     def to_dataframe(self):
-        """ """
-        results = []
-        urls = self.uri
-        if isinstance(urls, str):
-            urls = [urls]  # Make sure we deal with a list
-        for url in urls:
-            js = self.fs.open_json(url)
-            if isinstance(js, str):
-                continue
-            df = self.json2dataframe(js)
+        """ Load Argo data and return a Pandas dataframe """
+
+        # Download data:
+        if not self.parallel:
+            method = 'sequential'
+        else:
+            method = self.parallel_method
+        df_list = self.fs.open_mfjson(self.uri,
+                                    method=method,
+                                    preprocess=self.json2dataframe,
+                                    progress=1)
+
+        # Merge results (list of dataframe):
+        for i, df in enumerate(df_list):
             df = df.reset_index()
             df = df.rename(columns=self.key_map)
             df = df[[value for value in self.key_map.values() if value in df.columns]]
-            results.append(df)
-
-        results = [r for r in results if r is not None]  # Only keep non-empty results
-        if len(results) > 0:
-            df = pd.concat(results, ignore_index=True)
-            df.sort_values(by=['TIME', 'PRES'], inplace=True)
-            df = df.set_index(['N_POINTS'])
-            # df['N_POINTS'] = np.arange(0, len(df['N_POINTS']))  # Re-index to avoid duplicate values
-            return df
-        else:
-            raise DataNotFound("CAN'T FETCH ANY DATA !")
+            df_list[i] = df
+        df = pd.concat(df_list, ignore_index=True)
+        df.sort_values(by=['TIME', 'PRES'], inplace=True)
+        df = df.set_index(['N_POINTS'])
+        return df
 
     def to_xarray(self):
         """ Download and return data as xarray Datasets """
@@ -257,21 +270,29 @@ class Fetch_wmo(ArgovisDataFetcher):
 
     @property
     def uri(self):
-        """ Return the URL used to download data """
-        urls = []
-        if isinstance(self.CYC, (np.ndarray)) and self.CYC.nbytes > 0:
-            profIds = [str(wmo) + '_' + str(cyc) for wmo in self.WMO for cyc in self.CYC.tolist()]
-            urls.append((self.server + '/catalog/mprofiles/?ids={}').format(profIds).replace(' ', ''))
-        # elif self.dataset_id == 'bgc' and isinstance(self.CYC, (np.ndarray)) and self.CYC.nbytes > 0:
-        #     profIds = [str(wmo) + '_' + str(cyc) for wmo in self.WMO for cyc in self.CYC.tolist()]
-        #     urls.append((self.server + '/catalog/profiles/{}').format(self.CYC))
+        """ Return the list of URLs to download data
+
+        Returns
+        -------
+        str or list(str)
+        """
+        def list_bunch(wmos, cycs):
+            this = []
+            for wmo in wmos:
+                if cycs is None:
+                    this.append(self.get_url(wmo))
+                else:
+                    this.append(self.get_url(wmo, cycs))
+            return this
+        return list_bunch(self.WMO, self.CYC)
+
+    def get_url(self, wmo: int, cyc: int = None) -> str:
+        """ Return the path toward the source file of a given wmo/cyc pair """
+        if cyc is None:
+            return (self.server + '/catalog/platforms/{}').format(str(wmo))
         else:
-            for wmo in self.WMO:
-                urls.append((self.server + '/catalog/platforms/{}').format(str(wmo)))
-        if len(urls) == 1:
-            return urls[0]
-        else:
-            return urls
+            profIds = [str(wmo) + '_' + str(c) for c in cyc.tolist()]
+            return (self.server + '/catalog/mprofiles/?ids={}').format(profIds).replace(' ', '')
 
     def dashboard(self, **kw):
         if len(self.WMO) == 1:
@@ -316,8 +337,7 @@ class Fetch_box(ArgovisDataFetcher):
         boxname = self.dataset_id + "_" + boxname
         return boxname
 
-    @property
-    def uri(self):
+    def get_url(self):
         """ Return the URL used to download data """
         shape = [[[self.BOX[0], self.BOX[2]], [self.BOX[0], self.BOX[3]], [self.BOX[1], self.BOX[3]],
                   [self.BOX[1], self.BOX[2]], [self.BOX[0], self.BOX[2]]]]
@@ -328,3 +348,34 @@ class Fetch_box(ArgovisDataFetcher):
         url += '&shape={}'.format(strShape)
         url += '&presRange=[{},{}]'.format(self.BOX[4], self.BOX[5])
         return url
+
+    @property
+    def uri(self):
+        """ Return the list of URLs to download data
+
+        Returns
+        -------
+        str or list(str)
+        """
+        if not self.parallel:
+            # Check if the time range is not larger than allowed (90 days):
+            Lt = np.timedelta64(pd.to_datetime(self.BOX[7]) - pd.to_datetime(self.BOX[6]), 'D')
+            MaxLen = np.timedelta64(90, 'D')
+            print(MaxLen, Lt)
+            if Lt > MaxLen:
+                C = Chunker({'box': self.BOX}, chunks={'lon': 1, 'lat': 1, 'dpt': 1, 'time': 'auto'},
+                            chunksize={'time': 90})
+                boxes = C.fit_transform()
+                urls = []
+                for box in boxes:
+                    urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())
+                return urls
+            else:
+                return self.get_url()
+        else:
+            C = Chunker({'box': self.BOX}, chunks=self.chunks, chunksize=self.chunks_maxsize)
+            boxes = C.fit_transform()
+            urls = []
+            for box in boxes:
+                urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())
+            return urls

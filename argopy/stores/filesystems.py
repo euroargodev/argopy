@@ -241,6 +241,105 @@ class argo_store_proto(ABC):
         else:
             raise DataNotFound(urls)
 
+
+    def open_mfjson(self,
+                    urls,
+                    max_workers = 100,
+                    method: str = 'thread',
+                    progress: bool = False,
+                    preprocess = None,
+                    *args, **kwargs):
+        """ Open multiple json urls
+
+            This is a parallelised version of ``open_json``.
+            Use a Threads Pool by default for parallelisation.
+
+            Parameters
+            ----------
+            urls: list(str)
+            max_workers: int
+                Maximum number of threads or processes.
+            method:
+                The parallelisation method to execute calls asynchronously:
+                    - 'thread' (Default): use a pool of at most ``max_workers`` threads
+                    - 'process': use a pool of at most ``max_workers`` processes
+                    - Dask client object: use a Dask distributed client object
+                Use 'seq' to simply open data sequentially
+            progress: bool
+                Display a progress bar (True by default)
+            preprocess: (callable, optional)
+                If provided, call this function on each json set
+
+            Returns
+            -------
+            list()
+
+        """
+        def __processor(u, *a, **kw):
+            return preprocess(self.open_json(u, *a, **kw))
+        def __noprocessor(u, *a, **kw):
+            return self.open_json(u, *a, **kw)
+        if not isinstance(preprocess, types.FunctionType) and not isinstance(preprocess, types.MethodType):
+            process = __noprocessor
+        else:
+            process = __processor
+        if not isinstance(urls, list):
+            urls = [urls]
+
+        results = []
+        if method in ['thread', 'process']:
+            if method == 'thread':
+                ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
+            else:
+                ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
+
+            with ConcurrentExecutor as executor:
+                future_to_url = {executor.submit(process, url, *args, **kwargs): url for url in urls}
+                futures = concurrent.futures.as_completed(future_to_url)
+                if progress:
+                    futures = tqdm(futures, total=len(urls))
+
+                for future in futures:
+                    data = None
+                    url = future_to_url[future]
+                    try:
+                        data = future.result()
+                    except Exception as e:
+                        print(e.args)
+                        pass
+                    finally:
+                        results.append(data)
+
+        elif type(method) == distributed.client.Client:
+            # Use a dask client:
+            futures = method.map(process, urls, *args, **kwargs)
+            results = method.gather(futures)
+
+        elif method in ['seq', 'sequential', 'serie']:
+            if progress:
+                urls = tqdm(urls, total=len(urls))
+
+            for url in urls:
+                try:
+                    data = process(url, *args, **kwargs)
+                except Exception as e:
+                    print("Something went wrong with this url: %s" % url)
+                    print("Error:", e.args)
+                    pass
+                finally:
+                    results.append(data)
+
+        else:
+            raise InvalidMethod(method)
+
+        # Post-process results
+        results = [r for r in results if r is not None]  # Only keep non-empty results
+        if len(results) > 0:
+            return results
+        else:
+            raise DataNotFound(urls)
+
+
 class filestore(argo_store_proto):
     """Argo local file system
 
