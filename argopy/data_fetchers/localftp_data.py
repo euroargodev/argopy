@@ -124,6 +124,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         chunks: 'auto' or dict of integers (optional)
             Dictionary with request access point as keys and number of chunks to create as values.
             Eg:
+
                 - ``{'wmo': 10}`` will create a maximum of 10 chunks along WMOs when used with ``Fetch_wmo``.
                 - ``{'lon': 2}`` will create a maximum of 2 chunks along longitude when used with ``Fetch_box``.
 
@@ -384,9 +385,9 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
 
         Parameters
         ----------
-        WMO : list(int)
+        WMO: list(int)
             The list of WMOs to load all Argo data for.
-        CYC : int, np.array(int), list(int)
+        CYC: int, np.array(int), list(int)
             The cycle numbers to load.
         """
         if isinstance(WMO, int):
@@ -464,11 +465,11 @@ class Fetch_box(LocalFTPArgoDataFetcher):
 
         Parameters
         ----------
-        box : list(float, float, float, float, float, float, str, str)
-            The box domain to load all Argo data for:
-            box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
-            or:
-            box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
+        box : list()
+            The box domain to load all Argo data for, with one of the following convention:
+
+                - box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
+                - box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
         # We use a full domain definition (x, y, z, t) as argument for compatibility with the other fetchers
         # but at this point, we work only with x, y and t.
