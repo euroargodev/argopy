@@ -14,9 +14,14 @@ from argopy.utilities import (
     isAPIconnected,
     erddap_ds_exists,
     is_list_of_strings,
-    is_list_of_integers
+    is_list_of_integers,
 )
-
+from . import (
+    requires_connected_erddap,
+    requires_connected_erddap_phy,
+    requires_connected_erddap_bgc,
+    requires_connected_erddap_ref,
+)
 
 argopy.set_options(api_timeout=3 * 60)  # From Github actions, requests can take a while
 AVAILABLE_SOURCES = list_available_data_src()
@@ -32,18 +37,13 @@ else:
     DSEXISTS_ref = False
 
 
-@unittest.skipUnless("erddap" in AVAILABLE_SOURCES, "requires erddap data fetcher")
-@unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
-@unittest.skipUnless(CONNECTEDAPI, "erddap API is not alive")
-# @unittest.skipUnless(False, "skip")
-class Backend(unittest.TestCase):
+@requires_connected_erddap
+class Test_Backend:
     """ Test main API facade for all available dataset and access points of the ERDDAP fetching backend """
 
     src = "erddap"
 
-    @unittest.skipUnless(
-        DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
-    )
+    @requires_connected_erddap_phy
     def test_cachepath_notfound(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
@@ -51,9 +51,7 @@ class Backend(unittest.TestCase):
                 with pytest.raises(CacheFileNotFound):
                     loader.fetcher.cachepath
 
-    @unittest.skipUnless(
-        DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
-    )
+    @requires_connected_erddap_phy
     def test_nocache(self):
         with argopy.set_options(cachedir="dummy"):
             loader = ArgoDataFetcher(src=self.src, cache=False).profile(6902746, 34)
@@ -61,13 +59,13 @@ class Backend(unittest.TestCase):
             with pytest.raises(FileSystemHasNoCache):
                 loader.fetcher.cachepath
 
-    @unittest.skipUnless(
-        DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
-    )
+    @requires_connected_erddap_phy
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoDataFetcher(src=self.src, cache=True).float([1901393, 6902746])
+                loader = ArgoDataFetcher(src=self.src, cache=True).float(
+                    [1901393, 6902746]
+                )
                 try:
                     loader.to_xarray()
                     loader.clear_cache()
@@ -78,14 +76,13 @@ class Backend(unittest.TestCase):
                 except Exception:
                     raise
 
-
-    @unittest.skipUnless(
-        DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
-    )
+    @requires_connected_erddap_phy
     def test_caching_float(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoDataFetcher(src=self.src, cache=True).float([1901393, 6902746])
+                loader = ArgoDataFetcher(src=self.src, cache=True).float(
+                    [1901393, 6902746]
+                )
                 try:
                     # 1st call to load and save to cachedir:
                     ds = loader.to_xarray()
@@ -99,9 +96,7 @@ class Backend(unittest.TestCase):
                 except Exception:
                     raise
 
-    @unittest.skipUnless(
-        DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
-    )
+    @requires_connected_erddap_phy
     def test_caching_profile(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
@@ -119,13 +114,13 @@ class Backend(unittest.TestCase):
                 except Exception:
                     raise
 
-    @unittest.skipUnless(
-        DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
-    )
+    @requires_connected_erddap_phy
     def test_caching_region(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoDataFetcher(src=self.src, cache=True).region([-40, -30, 30, 40, 0, 100, '2011', '2012'])
+                loader = ArgoDataFetcher(src=self.src, cache=True).region(
+                    [-40, -30, 30, 40, 0, 100, "2011", "2012"]
+                )
                 try:
                     # 1st call to load and save to cachedir:
                     ds = loader.to_xarray()
@@ -139,9 +134,7 @@ class Backend(unittest.TestCase):
                 except Exception:
                     raise
 
-    @unittest.skipUnless(
-        DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
-    )
+    @requires_connected_erddap_phy
     def test_N_POINTS(self):
         n = (
             ArgoDataFetcher(src=self.src)
@@ -204,17 +197,13 @@ class Backend(unittest.TestCase):
             elif access_point == "region":
                 self.__testthis_region(dataset)
 
-    @unittest.skipUnless(
-        DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
-    )
+    @requires_connected_erddap_phy
     def test_phy_float(self):
         self.args = {}
         self.args["float"] = [[1901393], [1901393, 6902746]]
         self.__testthis("phy")
 
-    @unittest.skipUnless(
-        DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
-    )
+    @requires_connected_erddap_phy
     def test_phy_profile(self):
         self.args = {}
         self.args["profile"] = [
@@ -224,9 +213,7 @@ class Backend(unittest.TestCase):
         ]
         self.__testthis("phy")
 
-    @unittest.skipUnless(
-        DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
-    )
+    @requires_connected_erddap_phy
     def test_phy_region(self):
         self.args = {}
         self.args["region"] = [
@@ -235,17 +222,13 @@ class Backend(unittest.TestCase):
         ]
         self.__testthis("phy")
 
-    @unittest.skipUnless(
-        DSEXISTS_bgc, "erddap requires a valid BGC Argo dataset from Ifremer server"
-    )
+    @requires_connected_erddap_bgc
     def test_bgc_float(self):
         self.args = {}
         self.args["float"] = [[5903248], [7900596, 2902264]]
         self.__testthis("bgc")
 
-    @unittest.skipUnless(
-        DSEXISTS_bgc, "erddap requires a valid BGC Argo dataset from Ifremer server"
-    )
+    @requires_connected_erddap_bgc
     def test_bgc_profile(self):
         self.args = {}
         self.args["profile"] = [
@@ -255,9 +238,7 @@ class Backend(unittest.TestCase):
         ]
         self.__testthis("bgc")
 
-    @unittest.skipUnless(
-        DSEXISTS_bgc, "erddap requires a valid BGC Argo dataset from Ifremer server"
-    )
+    @requires_connected_erddap_bgc
     def test_bgc_region(self):
         self.args = {}
         self.args["region"] = [
@@ -266,10 +247,7 @@ class Backend(unittest.TestCase):
         ]
         self.__testthis("bgc")
 
-    @unittest.skipUnless(
-        DSEXISTS_ref,
-        "erddap requires a valid Reference Argo dataset from Ifremer server",
-    )
+    @requires_connected_erddap_ref
     def test_ref_region(self):
         self.args = {}
         self.args["region"] = [
@@ -279,13 +257,8 @@ class Backend(unittest.TestCase):
         self.__testthis("ref")
 
 
-@unittest.skipUnless("erddap" in AVAILABLE_SOURCES, "requires erddap data fetcher")
-@unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
-@unittest.skipUnless(CONNECTEDAPI, "erddap API is not alive")
-@unittest.skipUnless(
-    DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
-)
-class BackendParallel(unittest.TestCase):
+@requires_connected_erddap_phy
+class Test_BackendParallel:
     """ This test backend for parallel requests """
 
     src = "erddap"
@@ -294,15 +267,15 @@ class BackendParallel(unittest.TestCase):
         [-60, -55, 40.0, 45.0, 0.0, 10.0],
         [-60, -55, 40.0, 45.0, 0.0, 10.0, "2007-08-01", "2007-09-01"],
     ]
-    requests["wmo"] = [
-        6902766,
-        6902772,
-        6902914
-    ]
+    requests["wmo"] = [6902766, 6902772, 6902914]
 
     def test_chunks_region(self):
         for access_arg in self.requests["region"]:
-            fetcher_args = {"src": self.src, "parallel": True, 'chunks':{'lon': 1, 'lat': 2, 'dpt': 1, 'time': 2}}
+            fetcher_args = {
+                "src": self.src,
+                "parallel": True,
+                "chunks": {"lon": 1, "lat": 2, "dpt": 1, "time": 2},
+            }
             try:
                 f = ArgoDataFetcher(**fetcher_args).region(access_arg)
                 assert isinstance(f.to_xarray(), xr.Dataset)
@@ -319,7 +292,7 @@ class BackendParallel(unittest.TestCase):
 
     def test_chunks_wmo(self):
         for access_arg in self.requests["wmo"]:
-            fetcher_args = {"src": self.src, "parallel": True, "chunks": {'wmo': 2}}
+            fetcher_args = {"src": self.src, "parallel": True, "chunks": {"wmo": 2}}
             try:
                 f = ArgoDataFetcher(**fetcher_args).float(access_arg)
                 assert isinstance(f.to_xarray(), xr.Dataset)

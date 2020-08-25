@@ -22,11 +22,13 @@ def ds_pts():
                 .region([-75, -55, 30.0, 40.0, 0, 100.0, "2011-01-01", "2011-01-15"])
                 .to_xarray()
             )
-    except Exception as e:  # Test is passed when something goes wrong because of the erddap server, not our fault !
+    except Exception as e:
         warnings.warn("Error when fetching tests data: %s" % str(e.args))
-    if "toto" not in data or "standard" not in data:
+        pass
+
+    if "expert" not in data or "standard" not in data:
         # We don't have what we need for testing, skip this test module:
-        pytest.xfail("failing configuration (but should work)")
+        pytest.skip("Tests data not available")
     else:
         return data
 
