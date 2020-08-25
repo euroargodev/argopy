@@ -64,6 +64,24 @@ class Backend(unittest.TestCase):
     @unittest.skipUnless(
         DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
     )
+    def test_clearcache(self):
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                loader = ArgoDataFetcher(src=self.src, cache=True).float([1901393, 6902746])
+                try:
+                    loader.to_xarray()
+                    loader.clear_cache()
+                    with pytest.raises(CacheFileNotFound):
+                        loader.fetcher.cachepath
+                except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
+                    pass
+                except Exception:
+                    raise
+
+
+    @unittest.skipUnless(
+        DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
+    )
     def test_caching_float(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):

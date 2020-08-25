@@ -302,11 +302,11 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def cachepath(self):
-        """ Return path to cache file for this request
+        """ Return path to cached file(s) for this request
 
         Returns
         -------
-        str or list(str)
+        list(str)
         """
         return [self.fs.cachepath(uri) for uri in self.uri]
 
