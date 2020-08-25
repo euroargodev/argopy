@@ -79,7 +79,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         Parameters
         ----------
         ds: str (optional)
-            Dataset to load: 'phy' or 'ref' or 'bgc'
+            Dataset to load: 'phy' or 'bgc'
         cache: bool (optional)
             Cache data or not (default: False)
         cachedir: str (optional)

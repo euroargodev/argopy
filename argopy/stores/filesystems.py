@@ -136,7 +136,7 @@ class argo_store_proto(ABC):
     def open_mfdataset(self,
                        urls,
                        concat_dim='row',
-                       max_workers = 100,
+                       max_workers = 12,
                        method: str = 'thread',
                        progress: bool = False,
                        concat: bool = True,
@@ -252,7 +252,7 @@ class argo_store_proto(ABC):
 
     def open_mfjson(self,
                     urls,
-                    max_workers = 100,
+                    max_workers = 12,
                     method: str = 'thread',
                     progress: bool = False,
                     preprocess = None,
