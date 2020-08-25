@@ -502,7 +502,15 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         list(str)
         """
         if not self.parallel:
-            return [self.get_url()]
+            if len(self.WMO) <= 5:
+                # Retrieve all WMOs in a single request
+                return [self.get_url()]
+            else:
+                # Retrieve one WMO by URL sequentially (same behaviour as localftp and argovis)
+                urls = []
+                for wmo in self.WMO:
+                    urls.append(Fetch_wmo(WMO=wmo, CYC=self.CYC, ds=self.dataset_id, parallel=False).get_url())
+                return urls
         else:
             C = Chunker({'wmo': self.WMO}, chunks=self.chunks, chunksize=self.chunks_maxsize)
             wmo_grps = C.fit_transform()
