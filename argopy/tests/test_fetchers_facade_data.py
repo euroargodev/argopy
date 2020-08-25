@@ -29,7 +29,6 @@ else:
     DSEXISTS_ref = False
 
 
-# List tests:
 def test_invalid_accesspoint():
     src = list(AVAILABLE_SOURCES.keys())[0]  # Use the first valid data source
     with pytest.raises(InvalidFetcherAccessPoint):
@@ -43,28 +42,9 @@ def test_invalid_fetcher():
         ArgoDataFetcher(src='invalid_fetcher').to_xarray()
 
 
-# @unittest.skipUnless('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
-# def test_unavailable_accesspoint():
-#     with pytest.raises(InvalidFetcherAccessPoint):
-#         ArgoDataFetcher(src='localftp').region([-85., -45., 10., 20., 0., 100.]).to_xarray()
-
-
 class AllBackends(unittest.TestCase):
     """ Test main API facade for all available fetching backends and default dataset """
     ftproot = argopy.tutorial.open_dataset('localftp')[0]
-
-    # kwargs_wmo = [{'WMO': 6901929},
-    #               {'WMO': [6901929, 2901623]},
-    #               {'CYC': 1},
-    #               {'CYC': [1, 6]},
-    #               {'WMO': 6901929, 'CYC': 36},
-    #               {'WMO': 6901929, 'CYC': [5, 45]},
-    #               {'WMO': [6901929, 2901623], 'CYC': 2},
-    #               {'WMO': [6901929, 2901623], 'CYC': [2, 23]},
-    #               {}]
-    #
-    # kwargs_box = [{'BOX': [-60, -40, 40., 60.]},
-    #               {'BOX': [-60, -40, 40., 60., '2007-08-01', '2007-09-01']}]
 
     def setUp(self):
         # todo Determine the list of output format to test
