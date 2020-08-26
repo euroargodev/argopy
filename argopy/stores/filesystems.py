@@ -9,6 +9,7 @@ import shutil
 import pickle
 import json
 import tempfile
+import warnings
 from IPython.core.display import display, HTML
 
 import concurrent.futures
@@ -136,7 +137,7 @@ class argo_store_proto(ABC):
     def open_mfdataset(self,
                        urls,
                        concat_dim='row',
-                       max_workers = 12,
+                       max_workers = 100,
                        method: str = 'thread',
                        progress: bool = False,
                        concat: bool = True,
@@ -193,24 +194,23 @@ class argo_store_proto(ABC):
                 ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
 
             with ConcurrentExecutor as executor:
-                # future_to_url = {executor.submit(self.open_dataset, url): url for url in urls}
-                # future_to_url = {executor.submit(process, url): url for url in urls}
                 future_to_url = {executor.submit(process, url, *args, **kwargs): url for url in urls}
-                # future_to_url = (executor.submit(self.open_dataset, url) for url in urls)
+                # future_to_url = {executor.submit(self.open_dataset, url, *args, **kwargs): url for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
                     futures = tqdm(futures, total=len(urls))
 
                 for future in futures:
                     data = None
-                    url = future_to_url[future]
+                    # url = future_to_url[future]
                     try:
                         data = future.result()
-                        # if isinstance(preprocess, types.FunctionType):
+                        # if isinstance(preprocess, types.FunctionType) or isinstance(preprocess,
+                        #                                                                      types.MethodType):
                         #     data = preprocess(data)
                     except Exception as e:
                         # print("Something went wrong with this url: %s" % url)
-                        print(e.args)
+                        warnings.warn(e.args)
                         pass
                     finally:
                         results.append(data)
@@ -229,8 +229,8 @@ class argo_store_proto(ABC):
                 try:
                     data = process(url, *args, **kwargs)
                 except Exception as e:
-                    print("Something went wrong with this url: %s" % url)
-                    print("Error:", e.args)
+                    warnings.warn("Something went wrong with this url: %s" % url)
+                    warnings.warn("Exception raised: %s" % str(e.args))
                     pass
                 finally:
                     results.append(data)
@@ -252,7 +252,7 @@ class argo_store_proto(ABC):
 
     def open_mfjson(self,
                     urls,
-                    max_workers = 12,
+                    max_workers = 100,
                     method: str = 'thread',
                     progress: bool = False,
                     preprocess = None,
