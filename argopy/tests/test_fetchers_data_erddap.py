@@ -267,7 +267,25 @@ class Test_BackendParallel:
         [-60, -55, 40.0, 45.0, 0.0, 10.0],
         [-60, -55, 40.0, 45.0, 0.0, 10.0, "2007-08-01", "2007-09-01"],
     ]
-    requests["wmo"] = [6902766, 6902772, 6902914]
+    requests["wmo"] = [[6902766, 6902772, 6902914]]
+
+    def test_methods(self):
+        args_list = [
+            {"src": self.src, "parallel": "thread"},
+            {"src": self.src, "parallel": True, "parallel_method": "thread"},
+        ]
+        for fetcher_args in args_list:
+            loader = ArgoDataFetcher(**fetcher_args).float(self.requests["wmo"][0])
+            assert isinstance(loader, argopy.fetchers.ArgoDataFetcher)
+
+        args_list = [
+            {"src": self.src, "parallel": True, "parallel_method": "toto"},
+            {"src": self.src, "parallel": "process"},
+            {"src": self.src, "parallel": True, "parallel_method": "process"},
+        ]
+        for fetcher_args in args_list:
+            with pytest.raises(ValueError):
+                ArgoDataFetcher(**fetcher_args).float(self.requests["wmo"][0])
 
     def test_chunks_region(self):
         for access_arg in self.requests["region"]:
@@ -294,7 +312,8 @@ class Test_BackendParallel:
         for access_arg in self.requests["wmo"]:
             fetcher_args = {"src": self.src, "parallel": True, "chunks": {"wmo": 2}}
             try:
-                f = ArgoDataFetcher(**fetcher_args).float(access_arg)
+                # f = ArgoDataFetcher(**fetcher_args).float(access_arg)
+                f = ArgoDataFetcher(**fetcher_args).profile(access_arg, 12)
                 assert isinstance(f.to_xarray(), xr.Dataset)
                 assert is_list_of_strings(f.fetcher.uri)
                 assert len(f.fetcher.uri) == 2

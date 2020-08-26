@@ -140,8 +140,11 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
 
         if not isinstance(parallel, bool):
             # The parallelization method is passed through the argument 'parallel':
-            if type(parallel) == distributed.client.Client or parallel == 'thread' or parallel == 'process':
-                parallel_method = parallel
+            parallel_method = parallel
+            if parallel in ['thread', 'process']:
+                parallel = True
+        if parallel_method not in ["thread", "process"]:
+            raise ValueError("localftp only support multi-threading and processing ('%s' unknown)" % parallel_method)
         self.parallel = parallel
         self.parallel_method = parallel_method
         self.progress = progress

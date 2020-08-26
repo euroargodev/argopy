@@ -164,11 +164,32 @@ class BackendParallel(unittest.TestCase):
         [-60, -40, 40., 60., 0., 100.],
         [-60, -40, 40., 60., 0., 100., "2007-08-01", "2007-09-01"],
     ]
-    requests["wmo"] = [
+    requests["wmo"] = [[
         5900446,
         5906072,
         6901929
-    ]
+    ]]
+
+    def test_methods(self):
+        args_list = [
+            {"src": self.src, "parallel": "thread"},
+            {"src": self.src, "parallel": True, "parallel_method": "thread"},
+            {"src": self.src, "parallel": "process"},
+            {"src": self.src, "parallel": True, "parallel_method": "process"},
+        ]
+        with argopy.set_options(local_ftp=self.local_ftp):
+            for fetcher_args in args_list:
+                loader = ArgoDataFetcher(**fetcher_args).float(self.requests["wmo"][0])
+                assert isinstance(loader, argopy.fetchers.ArgoDataFetcher)
+
+        args_list = [
+            {"src": self.src, "parallel": "toto"},
+            {"src": self.src, "parallel": True, "parallel_method": "toto"},
+        ]
+        with argopy.set_options(local_ftp=self.local_ftp):
+            for fetcher_args in args_list:
+                with pytest.raises(ValueError):
+                    ArgoDataFetcher(**fetcher_args).float(self.requests["wmo"][0])
 
     def test_chunks_region(self):
         with argopy.set_options(local_ftp=self.local_ftp):
@@ -187,7 +208,8 @@ class BackendParallel(unittest.TestCase):
             fetcher_args = {"src": self.src, "parallel": True, "chunks": {'wmo': 2}}
             for access_arg in self.requests["wmo"]:
                 try:
-                    f = ArgoDataFetcher(**fetcher_args).float(access_arg)
+                    # f = ArgoDataFetcher(**fetcher_args).float(access_arg)
+                    f = ArgoDataFetcher(**fetcher_args).profile(access_arg, 1)
                     assert isinstance(f.to_xarray(), xr.Dataset)
                     assert is_list_of_strings(f.fetcher.uri)
                 except Exception:

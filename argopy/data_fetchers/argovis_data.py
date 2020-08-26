@@ -107,13 +107,10 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         self.server = api_server
 
         if not isinstance(parallel, bool):
-            # The parallelisation method is passed through 'parallel':
-            if (
-                type(parallel) == distributed.client.Client
-                or parallel == "thread"
-                or parallel == "process"
-            ):
-                parallel_method = parallel
+            parallel_method = parallel
+            parallel = True
+        if parallel_method not in ["thread"]:
+            raise ValueError("argovis only support multi-threading, use 'thread' instead of '%s'" % parallel_method)
         self.parallel = parallel
         self.parallel_method = parallel_method
         self.progress = progress

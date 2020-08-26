@@ -1,6 +1,7 @@
 import os
 import io
 import types
+import numpy as np
 import xarray as xr
 import pandas as pd
 import requests
@@ -15,11 +16,41 @@ from IPython.core.display import display, HTML
 import concurrent.futures
 from tqdm import tqdm
 import distributed
+import multiprocessing
 
 from argopy.options import OPTIONS
 from argopy.errors import ErddapServerError, FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
     APIServerError, InvalidMethod
 from abc import ABC, abstractmethod
+
+
+def new_fs(protocol: str = '', cache: bool = False, cachedir: str = "", **kwargs):
+    """ Create a new fsspec file system
+
+    Parameters
+    ----------
+    protocol: str (optional)
+    cache: bool (optional)
+        Use a filecache system on top of the protocol. Default: False
+    cachedir: str
+        Define path to cache directory.
+    **kwargs: (optional)
+        Other arguments passed to :class:`fsspec.filesystem`
+
+    """
+    if not cache:
+        fs = fsspec.filesystem(protocol, **kwargs)
+        cache_registry = None
+    else:
+        fs = fsspec.filesystem("filecache",
+                               target_protocol=protocol,
+                               target_options={**{'simple_links': True, "block_size": 0}, **kwargs},
+                               cache_storage=cachedir,
+                               expiry_time=86400, cache_check=10)
+        # We use a refresh rate for cache of 1 day,
+        # since this is the update frequency of the Ifremer erddap
+        cache_registry = []  # Will hold uri cached by this store instance
+    return fs, cache_registry
 
 
 class argo_store_proto(ABC):
@@ -34,7 +65,7 @@ class argo_store_proto(ABC):
     def __init__(self,
                  cache: bool = False,
                  cachedir: str = "",
-                 **kw):
+                 **kwargs):
         """ Create a file storage system for Argo data
 
             Parameters
@@ -47,17 +78,11 @@ class argo_store_proto(ABC):
         """
         self.cache = cache
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        if not self.cache:
-            self.fs = fsspec.filesystem(self.protocol, **kw)
-        else:
-            self.fs = fsspec.filesystem("filecache",
-                                        target_protocol=self.protocol,
-                                        target_options= {**{'simple_links': True, "block_size": 0}, **kw},
-                                        cache_storage=self.cachedir,
-                                        expiry_time=86400, cache_check=10)
-            # We use a refresh rate for cache of 1 day,
-            # since this is the update frequency of the Ifremer erddap
-            self.cache_registry = []  # Will hold uri cached by this store instance
+        self._filesystem_kwargs = kwargs
+        self.fs, self.cache_registry = new_fs(self.protocol,
+                                              self.cache,
+                                              self.cachedir,
+                                              **self._filesystem_kwargs)
 
     def open(self, path, *args, **kwargs):
         self.register(path)
@@ -134,221 +159,6 @@ class argo_store_proto(ABC):
     def read_csv(self):
         pass
 
-    def open_mfdataset(self,
-                       urls,
-                       concat_dim='row',
-                       max_workers = 100,
-                       method: str = 'thread',
-                       progress: bool = False,
-                       concat: bool = True,
-                       preprocess = None,
-                       *args, **kwargs):
-        """ Open multiple urls as a single xarray dataset.
-
-            This is a version of the ``open_dataset`` method that is able to handle a list of urls/paths
-            sequentially or in parallel.
-
-            Use a Threads Pool by default for parallelization.
-
-            Parameters
-            ----------
-            urls: list(str)
-                List of url/path to open
-            concat_dim: str
-                Name of the dimension to use to concatenate all datasets (passed to :class:`xarray.concat`)
-            max_workers: int
-                Maximum number of threads or processes
-            method: str
-                The parallelization method to execute calls asynchronously:
-                    - ``thread`` (Default): use a pool of at most ``max_workers`` threads
-                    - ``process``: use a pool of at most ``max_workers`` processes
-                    - a :class:`distributed.client.Client` object (:class:`distributed.client.Client`)
-
-                Use 'seq' to simply open data sequentially
-            progress: bool
-                Display a progress bar (True by default)
-            preprocess: callable (optional)
-                If provided, call this function on each dataset prior to concatenation
-
-            Returns
-            -------
-            :class:`xarray.Dataset`
-
-        """
-        def __processor(u, *a, **kw):
-            return preprocess(self.open_dataset(u, *a, **kw))
-        def __noprocessor(u, *a, **kw):
-            return self.open_dataset(u, *a, **kw)
-        if not isinstance(preprocess, types.FunctionType) and not isinstance(preprocess, types.MethodType):
-            process = __noprocessor
-        else:
-            process = __processor
-        if not isinstance(urls, list):
-            urls = [urls]
-
-        results = []
-        if method in ['thread', 'process']:
-            if method == 'thread':
-                ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
-            else:
-                ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
-
-            with ConcurrentExecutor as executor:
-                future_to_url = {executor.submit(process, url, *args, **kwargs): url for url in urls}
-                # future_to_url = {executor.submit(self.open_dataset, url, *args, **kwargs): url for url in urls}
-                futures = concurrent.futures.as_completed(future_to_url)
-                if progress:
-                    futures = tqdm(futures, total=len(urls))
-
-                for future in futures:
-                    data = None
-                    # url = future_to_url[future]
-                    try:
-                        data = future.result()
-                        # if isinstance(preprocess, types.FunctionType) or isinstance(preprocess,
-                        #                                                                      types.MethodType):
-                        #     data = preprocess(data)
-                    except Exception as e:
-                        # print("Something went wrong with this url: %s" % url)
-                        warnings.warn(e.args)
-                        pass
-                    finally:
-                        results.append(data)
-
-        elif type(method) == distributed.client.Client:
-            # Use a dask client:
-            futures = method.map(process, urls, *args, **kwargs)
-            results = method.gather(futures)
-
-        elif method in ['seq', 'sequential', 'serie']:
-            if progress:
-                urls = tqdm(urls, total=len(urls))
-
-            for url in urls:
-                data = None
-                try:
-                    data = process(url, *args, **kwargs)
-                except Exception as e:
-                    warnings.warn("Something went wrong with this url: %s" % url)
-                    warnings.warn("Exception raised: %s" % str(e.args))
-                    pass
-                finally:
-                    results.append(data)
-
-        else:
-            raise InvalidMethod(method)
-
-        # Post-process results
-        results = [r for r in results if r is not None]  # Only keep non-empty results
-        if len(results) > 0:
-            if concat:
-                # ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
-                ds = xr.concat(results, dim=concat_dim, data_vars='minimal', coords='minimal', compat='override')
-                return ds
-            else:
-                return results
-        else:
-            raise DataNotFound(urls)
-
-    def open_mfjson(self,
-                    urls,
-                    max_workers = 100,
-                    method: str = 'thread',
-                    progress: bool = False,
-                    preprocess = None,
-                    *args, **kwargs):
-        """ Open multiple json urls
-
-            This is a parallelized version of ``open_json``.
-            Use a Threads Pool by default for parallelization.
-
-            Parameters
-            ----------
-            urls: list(str)
-            max_workers: int
-                Maximum number of threads or processes.
-            method:
-                The parallelization method to execute calls asynchronously:
-                    - 'thread' (Default): use a pool of at most ``max_workers`` threads
-                    - 'process': use a pool of at most ``max_workers`` processes
-                    - Dask client object: use a Dask distributed client object
-
-                Use 'seq' to simply open data sequentially
-            progress: bool
-                Display a progress bar (True by default, not for dask client method)
-            preprocess: (callable, optional)
-                If provided, call this function on each json set
-
-            Returns
-            -------
-            list()
-        """
-        def __processor(u, *a, **kw):
-            return preprocess(self.open_json(u, *a, **kw))
-        def __noprocessor(u, *a, **kw):
-            return self.open_json(u, *a, **kw)
-        if not isinstance(preprocess, types.FunctionType) and not isinstance(preprocess, types.MethodType):
-            process = __noprocessor
-        else:
-            process = __processor
-        if not isinstance(urls, list):
-            urls = [urls]
-
-        results = []
-        if method in ['thread', 'process']:
-            if method == 'thread':
-                ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
-            else:
-                ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
-
-            with ConcurrentExecutor as executor:
-                future_to_url = {executor.submit(process, url, *args, **kwargs): url for url in urls}
-                futures = concurrent.futures.as_completed(future_to_url)
-                if progress:
-                    futures = tqdm(futures, total=len(urls))
-
-                for future in futures:
-                    data = None
-                    url = future_to_url[future]
-                    try:
-                        data = future.result()
-                    except Exception as e:
-                        print(e.args)
-                        pass
-                    finally:
-                        results.append(data)
-
-        elif type(method) == distributed.client.Client:
-            # Use a dask client:
-            futures = method.map(process, urls, *args, **kwargs)
-            results = method.gather(futures)
-
-        elif method in ['seq', 'sequential', 'serie']:
-            if progress:
-                urls = tqdm(urls, total=len(urls))
-
-            for url in urls:
-                data = None
-                try:
-                    data = process(url, *args, **kwargs)
-                except Exception as e:
-                    print("Something went wrong with this url: %s" % url)
-                    print("Error:", e.args)
-                    pass
-                finally:
-                    results.append(data)
-
-        else:
-            raise InvalidMethod(method)
-
-        # Post-process results
-        results = [r for r in results if r is not None]  # Only keep non-empty results
-        if len(results) > 0:
-            return results
-        else:
-            raise DataNotFound(urls)
-
-
 class filestore(argo_store_proto):
     """Argo local file system
 
@@ -375,7 +185,120 @@ class filestore(argo_store_proto):
             if isinstance(url, str):
                 ds.encoding["source"] = url
         self.register(url)
+        return ds.load().copy()
+
+    def _mfprocessor(self, url, preprocess = None, *args, **kwargs):
+        # Load data
+        ds = self.open_dataset(url, *args, **kwargs)
+        # Pre-process
+        if isinstance(preprocess, types.FunctionType) or isinstance(preprocess, types.MethodType):
+            ds = preprocess(ds)
         return ds
+
+    def open_mfdataset(self,
+                       urls,
+                       concat_dim='row',
+                       max_workers: int = 112,
+                       method: str = 'thread',
+                       progress: bool = False,
+                       concat: bool = True,
+                       preprocess = None,
+                       *args, **kwargs):
+        """ Open multiple urls as a single xarray dataset.
+
+            This is a version of the ``open_dataset`` method that is able to handle a list of urls/paths
+            sequentially or in parallel.
+
+            Use a Threads Pool by default for parallelization.
+
+            Parameters
+            ----------
+            urls: list(str)
+                List of url/path to open
+            concat_dim: str
+                Name of the dimension to use to concatenate all datasets (passed to :class:`xarray.concat`)
+            max_workers: int
+                Maximum number of threads or processes
+            method: str
+                The parallelization method to execute calls asynchronously:
+                    - ``thread`` (Default): use a pool of at most ``max_workers`` threads
+                    - ``process``: use a pool of at most ``max_workers`` processes
+                    - (XFAIL) a :class:`distributed.client.Client` object (:class:`distributed.client.Client`)
+
+                Use 'seq' to simply open data sequentially
+            progress: bool
+                Display a progress bar (True by default)
+            preprocess: callable (optional)
+                If provided, call this function on each dataset prior to concatenation
+
+            Returns
+            -------
+            :class:`xarray.Dataset`
+
+        """
+        if not isinstance(urls, list):
+            urls = [urls]
+
+        results = []
+        if method in ['thread', 'process']:
+            if method == 'thread':
+                ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
+            else:
+                if max_workers == 112:
+                    max_workers = multiprocessing.cpu_count()
+                ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
+
+            with ConcurrentExecutor as executor:
+                future_to_url = {executor.submit(self._mfprocessor, url, preprocess=preprocess, *args, **kwargs): url for url in urls}
+                futures = concurrent.futures.as_completed(future_to_url)
+                if progress:
+                    futures = tqdm(futures, total=len(urls))
+
+                for future in futures:
+                    data = None
+                    # url = future_to_url[future]
+                    try:
+                        data = future.result()
+                    except Exception as e:
+                        warnings.warn(e.args)
+                        pass
+                    finally:
+                        results.append(data)
+
+        # elif type(method) == distributed.client.Client:
+        #     # Use a dask client:
+        #     futures = method.map(self._mfprocessor, urls, preprocess=preprocess, *args, **kwargs)
+        #     results = method.gather(futures)
+
+        elif method in ['seq', 'sequential', 'serie']:
+            if progress:
+                urls = tqdm(urls, total=len(urls))
+
+            for url in urls:
+                data = None
+                try:
+                    data = self._mfprocessor(url, preprocess=preprocess, *args, **kwargs)
+                except Exception as e:
+                    warnings.warn("Something went wrong with this url: %s" % url)
+                    warnings.warn("Exception raised: %s" % str(e.args))
+                    pass
+                finally:
+                    results.append(data)
+
+        else:
+            raise InvalidMethod(method)
+
+        # Post-process results
+        results = [r for r in results if r is not None]  # Only keep non-empty results
+        if len(results) > 0:
+            if concat:
+                # ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
+                ds = xr.concat(results, dim=concat_dim, data_vars='minimal', coords='minimal', compat='override')
+                return ds
+            else:
+                return results
+        else:
+            raise DataNotFound(urls)
 
     def read_csv(self, url, **kwargs):
         """ Return a pandas.dataframe from an url that is a csv ressource
@@ -458,28 +381,6 @@ class httpstore(argo_store_proto):
             print("\n".join(error))
             r.raise_for_status()
 
-    def open_json(self, url, **kwargs):
-        """ Return a json from an url, or verbose errors
-
-            Parameters
-            ----------
-            url: str
-
-            Returns
-            -------
-            json
-
-        """
-        try:
-            with self.fs.open(url) as of:
-                js = json.load(of, **kwargs)
-            self.register(url)
-            return js
-        except json.JSONDecodeError as e:
-            raise
-        except requests.HTTPError as e:
-            self._verbose_exceptions(e)
-
     def open_dataset(self, url, *args, **kwargs):
         """ Open and decode a xarray dataset from an url
 
@@ -505,6 +406,120 @@ class httpstore(argo_store_proto):
         except requests.HTTPError as e:
             self._verbose_exceptions(e)
 
+    def _mfprocessor_dataset(self, url, preprocess = None, *args, **kwargs):
+        # Load data
+        ds = self.open_dataset(url, *args, **kwargs)
+        # Pre-process
+        if isinstance(preprocess, types.FunctionType) or isinstance(preprocess, types.MethodType):
+            ds = preprocess(ds)
+        return ds
+
+    def open_mfdataset(self,
+                       urls,
+                       concat_dim='row',
+                       max_workers: int = 112,
+                       method: str = 'thread',
+                       progress: bool = False,
+                       concat: bool = True,
+                       preprocess = None,
+                       *args, **kwargs):
+        """ Open multiple urls as a single xarray dataset.
+
+            This is a version of the ``open_dataset`` method that is able to handle a list of urls/paths
+            sequentially or in parallel.
+
+            Use a Threads Pool by default for parallelization.
+
+            Parameters
+            ----------
+            urls: list(str)
+                List of url/path to open
+            concat_dim: str
+                Name of the dimension to use to concatenate all datasets (passed to :class:`xarray.concat`)
+            max_workers: int
+                Maximum number of threads or processes
+            method: str
+                The parallelization method to execute calls asynchronously:
+                    - ``thread`` (Default): use a pool of at most ``max_workers`` threads
+                    - ``process``: use a pool of at most ``max_workers`` processes
+                    - (XFAIL) a :class:`distributed.client.Client` object (:class:`distributed.client.Client`)
+
+                Use 'seq' to simply open data sequentially
+            progress: bool
+                Display a progress bar (True by default)
+            preprocess: callable (optional)
+                If provided, call this function on each dataset prior to concatenation
+
+            Returns
+            -------
+            :class:`xarray.Dataset`
+
+        """
+        if not isinstance(urls, list):
+            urls = [urls]
+
+        results = []
+        if method in ['thread', 'process']:
+            if method == 'thread':
+                ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
+            else:
+                if max_workers == 112:
+                    max_workers = multiprocessing.cpu_count()
+                ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
+
+            with ConcurrentExecutor as executor:
+                future_to_url = {executor.submit(self._mfprocessor_dataset, url, preprocess=preprocess, *args, **kwargs): url for url in urls}
+                futures = concurrent.futures.as_completed(future_to_url)
+                if progress:
+                    futures = tqdm(futures, total=len(urls))
+
+                for future in futures:
+                    data = None
+                    # url = future_to_url[future]
+                    try:
+                        data = future.result()
+                    except Exception as e:
+                        # warnings.warn(e.args)
+                        # pass
+                        raise
+                    finally:
+                        results.append(data)
+
+        # elif type(method) == distributed.client.Client:
+        #     # Use a dask client:
+        #     futures = method.map(self._mfprocessor_dataset, urls, preprocess=preprocess, *args, **kwargs)
+        #     results = method.gather(futures)
+
+        elif method in ['seq', 'sequential', 'serie']:
+            if progress:
+                urls = tqdm(urls, total=len(urls))
+
+            for url in urls:
+                data = None
+                try:
+                    data = self._mfprocessor_dataset(url, preprocess=preprocess, *args, **kwargs)
+                except Exception as e:
+                    warnings.warn("Something went wrong with this url: %s" % url)
+                    warnings.warn("Exception raised: %s" % str(e.args))
+                    pass
+                finally:
+                    results.append(data)
+
+        else:
+            raise InvalidMethod(method)
+
+        # Post-process results
+        results = [r for r in results if r is not None]  # Only keep non-empty results
+        if len(results) > 0:
+            if concat:
+                # ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
+                ds = xr.concat(results, dim=concat_dim, data_vars='minimal', coords='minimal', compat='override')
+                return ds
+            else:
+                return results
+        else:
+            raise DataNotFound(urls)
+
     def read_csv(self, url, **kwargs):
         """ Read a comma-separated values (csv) url into Pandas DataFrame.
 
@@ -525,6 +540,128 @@ class httpstore(argo_store_proto):
             return df
         except requests.HTTPError as e:
             self._verbose_exceptions(e)
+
+    def open_json(self, url, **kwargs):
+        """ Return a json from an url, or verbose errors
+
+            Parameters
+            ----------
+            url: str
+
+            Returns
+            -------
+            json
+
+        """
+        try:
+            with self.fs.open(url) as of:
+                js = json.load(of, **kwargs)
+            self.register(url)
+            return js
+        except json.JSONDecodeError as e:
+            raise
+        except requests.HTTPError as e:
+            self._verbose_exceptions(e)
+
+    def _mfprocessor_json(self, url, preprocess = None, *args, **kwargs):
+        # Load data
+        data = self.open_json(url, **kwargs)
+        # Pre-process
+        if isinstance(preprocess, types.FunctionType) or isinstance(preprocess, types.MethodType):
+            data = preprocess(data)
+        return data
+
+    def open_mfjson(self,
+                    urls,
+                    max_workers = 112,
+                    method: str = 'thread',
+                    progress: bool = False,
+                    preprocess = None,
+                    *args, **kwargs):
+        """ Open multiple json urls
+
+            This is a parallelized version of ``open_json``.
+            Use a Threads Pool by default for parallelization.
+
+            Parameters
+            ----------
+            urls: list(str)
+            max_workers: int
+                Maximum number of threads or processes.
+            method:
+                The parallelization method to execute calls asynchronously:
+                    - 'thread' (Default): use a pool of at most ``max_workers`` threads
+                    - 'process': use a pool of at most ``max_workers`` processes
+                    - (XFAIL) Dask client object: use a Dask distributed client object
+
+                Use 'seq' to simply open data sequentially
+            progress: bool
+                Display a progress bar (True by default, not for dask client method)
+            preprocess: (callable, optional)
+                If provided, call this function on each json set
+
+            Returns
+            -------
+            list()
+        """
+        if not isinstance(urls, list):
+            urls = [urls]
+
+        results = []
+        if method in ['thread', 'process']:
+            if method == 'thread':
+                ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
+            else:
+                if max_workers == 112:
+                    max_workers = multiprocessing.cpu_count()
+                ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
+
+            with ConcurrentExecutor as executor:
+                future_to_url = {executor.submit(self._mfprocessor_json, url, preprocess=preprocess, *args, **kwargs): url for url in urls}
+                futures = concurrent.futures.as_completed(future_to_url)
+                if progress:
+                    futures = tqdm(futures, total=len(urls))
+
+                for future in futures:
+                    data = None
+                    # url = future_to_url[future]
+                    try:
+                        data = future.result()
+                    except Exception as e:
+                        warnings.warn(e.args)
+                        pass
+                    finally:
+                        results.append(data)
+
+        # elif type(method) == distributed.client.Client:
+        #     # Use a dask client:
+        #     futures = method.map(self._mfprocessor_json, urls, preprocess=preprocess, *args, **kwargs)
+        #     results = method.gather(futures)
+
+        elif method in ['seq', 'sequential', 'serie']:
+            if progress:
+                urls = tqdm(urls, total=len(urls))
+
+            for url in urls:
+                data = None
+                try:
+                    data = self._mfprocessor_json(url, preprocess=preprocess, *args, **kwargs)
+                except Exception as e:
+                    warnings.warn("Something went wrong with this url: %s" % url)
+                    warnings.warn("Exception raised: %s" % str(e.args))
+                    pass
+                finally:
+                    results.append(data)
+
+        else:
+            raise InvalidMethod(method)
+
+        # Post-process results
+        results = [r for r in results if r is not None]  # Only keep non-empty results
+        if len(results) > 0:
+            return results
+        else:
+            raise DataNotFound(urls)
 
 
 class memorystore(filestore):
