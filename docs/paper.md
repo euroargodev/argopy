@@ -13,7 +13,7 @@ authors:
     orcid: 0000-0002-4956-8698
     affiliation: 1
 affiliations:
- - name: Ifremer, University of Brest, CNRS, IRD, Laboratoire d'Océanographie Physique et Spatiale, IUEM, 29280, Plouzané, France
+ - name: Univ Brest, Ifremer, CNRS, IRD, LOPS, F‐29280 Plouzané, France
    index: 1
 date: 24 June 2020
 bibliography: paper.bib
