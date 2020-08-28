@@ -25,7 +25,7 @@ CONNECTEDAPI = isAPIconnected(src="argovis", data=True)
 @unittest.skipUnless("argovis" in AVAILABLE_SOURCES, "requires argovis data fetcher")
 @unittest.skipUnless(CONNECTED, "argovis requires an internet connection")
 @unittest.skipUnless(CONNECTEDAPI, "argovis API is not alive")
-class Backend:
+class Backend(unittest.TestCase):
     src = "argovis"
 
     def test_cachepath_notfound(self):

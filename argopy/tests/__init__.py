@@ -14,6 +14,9 @@ import pytest
 print("xarray: %s, %s" % (xarray.__version__, xarray.__file__))
 print("pandas: %s, %s" % (pandas.__version__, pandas.__file__))
 
+import argopy
+argopy.set_options(api_timeout=3 * 60)  # From Github actions, requests can take a while
+
 def _importorskip(modname):
     try:
         mod = importlib.import_module(modname)

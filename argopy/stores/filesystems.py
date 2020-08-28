@@ -270,7 +270,7 @@ class filestore(argo_store_proto):
         #     futures = method.map(self._mfprocessor, urls, preprocess=preprocess, *args, **kwargs)
         #     results = method.gather(futures)
 
-        elif method in ['seq', 'sequential', 'serie']:
+        elif method in ['seq', 'sequential']:
             if progress:
                 urls = tqdm(urls, total=len(urls))
 
@@ -279,8 +279,7 @@ class filestore(argo_store_proto):
                 try:
                     data = self._mfprocessor(url, preprocess=preprocess, *args, **kwargs)
                 except Exception as e:
-                    warnings.warn("Something went wrong with this url: %s" % url)
-                    warnings.warn("Exception raised: %s" % str(e.args))
+                    warnings.warn("Something went wrong with this url: %s\nException raised: %s" % (url, str(e.args)))
                     pass
                 finally:
                     results.append(data)
@@ -459,6 +458,7 @@ class httpstore(argo_store_proto):
             urls = [urls]
 
         results = []
+        failed = []
         if method in ['thread', 'process']:
             if method == 'thread':
                 ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
@@ -475,11 +475,11 @@ class httpstore(argo_store_proto):
 
                 for future in futures:
                     data = None
-                    # url = future_to_url[future]
                     try:
                         data = future.result()
                     except Exception as e:
-                        # warnings.warn(e.args)
+                        failed.append(future_to_url[future])
+                        warnings.warn(str(e.args))
                         # pass
                         raise
                     finally:
@@ -490,7 +490,7 @@ class httpstore(argo_store_proto):
         #     futures = method.map(self._mfprocessor_dataset, urls, preprocess=preprocess, *args, **kwargs)
         #     results = method.gather(futures)
 
-        elif method in ['seq', 'sequential', 'serie']:
+        elif method in ['seq', 'sequential']:
             if progress:
                 urls = tqdm(urls, total=len(urls))
 
@@ -499,8 +499,8 @@ class httpstore(argo_store_proto):
                 try:
                     data = self._mfprocessor_dataset(url, preprocess=preprocess, *args, **kwargs)
                 except Exception as e:
-                    warnings.warn("Something went wrong with this url: %s" % url)
-                    warnings.warn("Exception raised: %s" % str(e.args))
+                    failed.append(url)
+                    warnings.warn("Something went wrong with this url: %s\nException raised: %s" % (url, str(e.args)))
                     pass
                 finally:
                     results.append(data)
@@ -608,6 +608,7 @@ class httpstore(argo_store_proto):
             urls = [urls]
 
         results = []
+        failed = []
         if method in ['thread', 'process']:
             if method == 'thread':
                 ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
@@ -624,11 +625,11 @@ class httpstore(argo_store_proto):
 
                 for future in futures:
                     data = None
-                    # url = future_to_url[future]
                     try:
                         data = future.result()
                     except Exception as e:
-                        warnings.warn(e.args)
+                        failed.append(future_to_url[future])
+                        warnings.warn(str(e.args))
                         pass
                     finally:
                         results.append(data)
@@ -638,7 +639,7 @@ class httpstore(argo_store_proto):
         #     futures = method.map(self._mfprocessor_json, urls, preprocess=preprocess, *args, **kwargs)
         #     results = method.gather(futures)
 
-        elif method in ['seq', 'sequential', 'serie']:
+        elif method in ['seq', 'sequential']:
             if progress:
                 urls = tqdm(urls, total=len(urls))
 
@@ -647,8 +648,8 @@ class httpstore(argo_store_proto):
                 try:
                     data = self._mfprocessor_json(url, preprocess=preprocess, *args, **kwargs)
                 except Exception as e:
-                    warnings.warn("Something went wrong with this url: %s" % url)
-                    warnings.warn("Exception raised: %s" % str(e.args))
+                    failed.append(url)
+                    warnings.warn("Something went wrong with this url: %s\nException raised: %s" % (url, str(e.args)))
                     pass
                 finally:
                     results.append(data)

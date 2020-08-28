@@ -148,6 +148,10 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             this.attrs["history"] = txt
         return this
 
+    def cname(self):
+        """ Return a unique string defining the constraints """
+        return self._cname()
+
     def json2dataframe(self, profiles):
         """ convert json data to Pandas DataFrame """
         # Make sure we deal with a list
@@ -194,7 +198,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         ds = self.to_dataframe().to_xarray()
         ds = ds.sortby(
             ["TIME", "PRES"]
-        )  # should already be sorted by date in decending order
+        )  # should already be sorted by date in descending order
         ds["N_POINTS"] = np.arange(
             0, len(ds["N_POINTS"])
         )  # Re-index to avoid duplicate values
@@ -227,6 +231,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         ds.attrs["Fetched_constraints"] = self.cname()
         ds.attrs["Fetched_uri"] = self.uri
         ds = ds[np.sort(ds.data_vars)]
+        ds = self.filter_domain(ds)  # https://github.com/euroargodev/argopy/issues/48
         return ds
 
     def filter_data_mode(self, ds, **kwargs):
@@ -249,6 +254,18 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
                 list(set(list(ds.data_vars)) - set(list_standard_variables()))
             )
             return ds.drop_vars(to_remove)
+        else:
+            return ds
+
+    def filter_domain(self, ds):
+        """ Enforce rectangular box shape
+
+        This is a temporary fix for https://github.com/euroargodev/argopy/issues/48
+        """
+        if hasattr(self, 'BOX'):
+            ds = ds.where(ds['LATITUDE'] >= self.BOX[2], drop=True)
+            ds = ds.where(ds['LATITUDE'] <= self.BOX[3], drop=True)
+            return ds
         else:
             return ds
 
@@ -281,22 +298,6 @@ class Fetch_wmo(ArgovisDataFetcher):
         if self.dataset_id == "phy":
             self.definition = "Argovis Argo data fetcher for floats"
         return self
-
-    def cname(self):
-        """ Return a unique string defining the constraints """
-        if len(self.WMO) > 1:
-            listname = ["WMO%i" % i for i in self.WMO]
-            if isinstance(self.CYC, (np.ndarray)):
-                [listname.append("CYC%0.4d" % i) for i in self.CYC]
-            listname = ";".join(listname)
-        else:
-            listname = "WMO%i" % self.WMO[0]
-            if isinstance(self.CYC, (np.ndarray)):
-                listname = [listname]
-                [listname.append("CYC%0.4d" % i) for i in self.CYC]
-                listname = "_".join(listname)
-        listname = self.dataset_id + "_" + listname
-        return listname
 
     def get_url(self, wmo: int, cyc: int = None) -> str:
         """ Return path toward the source file of a given wmo/cyc pair """
@@ -362,22 +363,6 @@ class Fetch_box(ArgovisDataFetcher):
             self.definition = "Argovis Argo data fetcher for a space/time region"
         return self
 
-    def cname(self):
-        """ Return a unique string defining the constraints """
-        BOX = self.BOX
-        boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; z=%0.1f/%0.1f; t=%s/%s]") % (
-            BOX[0],
-            BOX[1],
-            BOX[2],
-            BOX[3],
-            BOX[4],
-            BOX[5],
-            self._format(BOX[6], "tim"),
-            self._format(BOX[7], "tim"),
-        )
-        boxname = self.dataset_id + "_" + boxname
-        return boxname
-
     def get_url(self):
         """ Return the URL used to download data """
         shape = [
@@ -391,8 +376,6 @@ class Fetch_box(ArgovisDataFetcher):
         ]
         strShape = str(shape).replace(" ", "")
         url = self.server + "/selection/profiles"
-        # url += '?startDate={}'.format(self.BOX[6])
-        # url += '&endDate={}'.format(self.BOX[7])
         url += "?startDate={}".format(
             pd.to_datetime(self.BOX[6]).strftime("%Y-%m-%dT%H:%M:%SZ")
         )
@@ -418,12 +401,12 @@ class Fetch_box(ArgovisDataFetcher):
         if not self.parallel:
             # Check if the time range is not larger than allowed (90 days):
             if Lt > MaxLen:
-                C = Chunker(
+                self.Chunker = Chunker(
                     {"box": self.BOX},
                     chunks={"lon": 1, "lat": 1, "dpt": 1, "time": "auto"},
                     chunksize={"time": MaxLenTime},
                 )
-                boxes = C.fit_transform()
+                boxes = self.Chunker.fit_transform()
                 urls = []
                 for box in boxes:
                     urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())
@@ -442,10 +425,10 @@ class Fetch_box(ArgovisDataFetcher):
             if Lt > MaxLen and 'time' in self.chunks and self.chunks['time'] not in ['auto']:
                 self.chunks['time'] = 'auto'
 
-            C = Chunker(
+            self.Chunker = Chunker(
                 {"box": self.BOX}, chunks=self.chunks, chunksize=self.chunks_maxsize
             )
-            boxes = C.fit_transform()
+            boxes = self.Chunker.fit_transform()
             urls = []
             for box in boxes:
                 urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())

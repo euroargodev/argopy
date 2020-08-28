@@ -23,19 +23,6 @@ from . import (
     requires_connected_erddap_ref,
 )
 
-argopy.set_options(api_timeout=3 * 60)  # From Github actions, requests can take a while
-AVAILABLE_SOURCES = list_available_data_src()
-CONNECTED = isconnected()
-CONNECTEDAPI = isAPIconnected(src="erddap", data=True)
-if CONNECTEDAPI:
-    DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
-    DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-bio")
-    DSEXISTS_ref = erddap_ds_exists(ds="ArgoFloats-ref")
-else:
-    DSEXISTS = False
-    DSEXISTS_bgc = False
-    DSEXISTS_ref = False
-
 
 @requires_connected_erddap
 class Test_Backend:

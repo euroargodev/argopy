@@ -14,7 +14,6 @@ import pandas as pd
 import numpy as np
 import copy
 import warnings
-import distributed
 
 from abc import abstractmethod
 import getpass
@@ -29,12 +28,14 @@ from erddapy import ERDDAP
 from erddapy.utilities import parse_dates, quote_string_constraints
 
 
-access_points = ['wmo', 'box']
-exit_formats = ['xarray']
-dataset_ids = ['phy', 'ref', 'bgc']  # First is default
-api_server = 'https://www.ifremer.fr/erddap'  # API root url
+access_points = ["wmo", "box"]
+exit_formats = ["xarray"]
+dataset_ids = ["phy", "ref", "bgc"]  # First is default
+api_server = "https://www.ifremer.fr/erddap"  # API root url
 # api_server = 'https://erddap.ifremer.fr/erddap'  # API root url
-api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
+api_server_check = (
+    api_server + "/info/ArgoFloats/index.json"
+)  # URL to check if the API is alive
 
 
 class ErddapArgoDataFetcher(ArgoDataFetcherProto):
@@ -48,7 +49,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     # Methods to be customised for a specific erddap request
     ###
     @abstractmethod
-    def init(self):
+    def init(self, *args, **kwargs):
         """ Initialisation for a specific fetcher """
         pass
 
@@ -66,7 +67,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         pass
 
     @property
-    def uri(self):
+    def uri(self) -> list:
         """ Return the list of Unique Ressource Identifier (URI) to download data """
         pass
 
@@ -74,17 +75,19 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     # Methods that must not change
     ###
 
-    def __init__(self,
-                 ds: str = "",
-                 cache: bool = False,
-                 cachedir: str = "",
-                 parallel: bool = False,
-                 parallel_method: str = 'thread',
-                 progress: bool = False,
-                 chunks: str = 'auto',
-                 chunks_maxsize: dict = {},
-                 api_timeout: int = 0,
-                 **kwargs):
+    def __init__(
+        self,
+        ds: str = "",
+        cache: bool = False,
+        cachedir: str = "",
+        parallel: bool = False,
+        parallel_method: str = "thread",
+        progress: bool = False,
+        chunks: str = "auto",
+        chunks_maxsize: dict = {},
+        api_timeout: int = 0,
+        **kwargs,
+    ):
         """ Instantiate an ERDDAP Argo data fetcher
 
         Parameters
@@ -111,17 +114,20 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         api_timeout: int (optional)
             Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
-        timeout = OPTIONS['api_timeout'] if api_timeout == 0 else api_timeout
+        timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout)
-        self.definition = 'Ifremer erddap Argo data fetcher'
-        self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
+        self.definition = "Ifremer erddap Argo data fetcher"
+        self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
         self.server = api_server
 
         if not isinstance(parallel, bool):
             parallel_method = parallel
             parallel = True
         if parallel_method not in ["thread"]:
-            raise ValueError("erddap only support multi-threading, use 'thread' instead of '%s'" % parallel_method)
+            raise ValueError(
+                "erddap only support multi-threading, use 'thread' instead of '%s'"
+                % parallel_method
+            )
         self.parallel = parallel
         self.parallel_method = parallel_method
         self.progress = progress
@@ -136,7 +142,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         summary.append("Name: %s" % self.definition)
         summary.append("API: %s" % api_server)
         summary.append("Domain: %s" % format_oneline(self.cname()))
-        return '\n'.join(summary)
+        return "\n".join(summary)
 
     def _add_attributes(self, this):
         """ Add variables attributes not return by erddap requests (csv)
@@ -144,119 +150,154 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             This is hard coded, but should be retrieved from an API somewhere
         """
         for v in this.data_vars:
-            if 'TEMP' in v and '_QC' not in v:
-                this[v].attrs = {'long_name': 'SEA TEMPERATURE IN SITU ITS-90 SCALE',
-                                 'standard_name': 'sea_water_temperature',
-                                 'units': 'degree_Celsius',
-                                 'valid_min': -2.,
-                                 'valid_max': 40.,
-                                 'resolution': 0.001}
-                if 'ERROR' in v:
-                    this[v].attrs['long_name'] = 'ERROR IN %s' % this[v].attrs['long_name']
+            if "TEMP" in v and "_QC" not in v:
+                this[v].attrs = {
+                    "long_name": "SEA TEMPERATURE IN SITU ITS-90 SCALE",
+                    "standard_name": "sea_water_temperature",
+                    "units": "degree_Celsius",
+                    "valid_min": -2.0,
+                    "valid_max": 40.0,
+                    "resolution": 0.001,
+                }
+                if "ERROR" in v:
+                    this[v].attrs["long_name"] = (
+                        "ERROR IN %s" % this[v].attrs["long_name"]
+                    )
 
         for v in this.data_vars:
-            if 'PSAL' in v and '_QC' not in v:
-                this[v].attrs = {'long_name': 'PRACTICAL SALINITY',
-                                 'standard_name': 'sea_water_salinity',
-                                 'units': 'psu',
-                                 'valid_min': 0.,
-                                 'valid_max': 43.,
-                                 'resolution': 0.001}
-                if 'ERROR' in v:
-                    this[v].attrs['long_name'] = 'ERROR IN %s' % this[v].attrs['long_name']
+            if "PSAL" in v and "_QC" not in v:
+                this[v].attrs = {
+                    "long_name": "PRACTICAL SALINITY",
+                    "standard_name": "sea_water_salinity",
+                    "units": "psu",
+                    "valid_min": 0.0,
+                    "valid_max": 43.0,
+                    "resolution": 0.001,
+                }
+                if "ERROR" in v:
+                    this[v].attrs["long_name"] = (
+                        "ERROR IN %s" % this[v].attrs["long_name"]
+                    )
 
         for v in this.data_vars:
-            if 'PRES' in v and '_QC' not in v:
-                this[v].attrs = {'long_name': 'Sea Pressure',
-                                 'standard_name': 'sea_water_pressure',
-                                 'units': 'decibar',
-                                 'valid_min': 0.,
-                                 'valid_max': 12000.,
-                                 'resolution': 0.1,
-                                 'axis': 'Z'}
-                if 'ERROR' in v:
-                    this[v].attrs['long_name'] = 'ERROR IN %s' % this[v].attrs['long_name']
+            if "PRES" in v and "_QC" not in v:
+                this[v].attrs = {
+                    "long_name": "Sea Pressure",
+                    "standard_name": "sea_water_pressure",
+                    "units": "decibar",
+                    "valid_min": 0.0,
+                    "valid_max": 12000.0,
+                    "resolution": 0.1,
+                    "axis": "Z",
+                }
+                if "ERROR" in v:
+                    this[v].attrs["long_name"] = (
+                        "ERROR IN %s" % this[v].attrs["long_name"]
+                    )
 
         for v in this.data_vars:
-            if 'DOXY' in v and '_QC' not in v:
-                this[v].attrs = {'long_name': 'Dissolved oxygen',
-                                 'standard_name': 'moles_of_oxygen_per_unit_mass_in_sea_water',
-                                 'units': 'micromole/kg',
-                                 'valid_min': -5.,
-                                 'valid_max': 600.,
-                                 'resolution': 0.001}
-                if 'ERROR' in v:
-                    this[v].attrs['long_name'] = 'ERROR IN %s' % this[v].attrs['long_name']
+            if "DOXY" in v and "_QC" not in v:
+                this[v].attrs = {
+                    "long_name": "Dissolved oxygen",
+                    "standard_name": "moles_of_oxygen_per_unit_mass_in_sea_water",
+                    "units": "micromole/kg",
+                    "valid_min": -5.0,
+                    "valid_max": 600.0,
+                    "resolution": 0.001,
+                }
+                if "ERROR" in v:
+                    this[v].attrs["long_name"] = (
+                        "ERROR IN %s" % this[v].attrs["long_name"]
+                    )
 
         for v in this.data_vars:
-            if '_QC' in v:
-                attrs = {'long_name': "Global quality flag of %s profile" % v,
-                         'convention': "Argo reference table 2a"}
+            if "_QC" in v:
+                attrs = {
+                    "long_name": "Global quality flag of %s profile" % v,
+                    "convention": "Argo reference table 2a",
+                }
                 this[v].attrs = attrs
 
-        if 'CYCLE_NUMBER' in this.data_vars:
-            this['CYCLE_NUMBER'].attrs = {'long_name': 'Float cycle number',
-                                          'convention': '0..N, 0 : launch cycle (if exists), 1 : first complete cycle'}
+        if "CYCLE_NUMBER" in this.data_vars:
+            this["CYCLE_NUMBER"].attrs = {
+                "long_name": "Float cycle number",
+                "convention": "0..N, 0 : launch cycle (if exists), 1 : first complete cycle",
+            }
 
-        if 'DATA_MODE' in this.data_vars:
-            this['DATA_MODE'].attrs = {'long_name': 'Delayed mode or real time data',
-                                       'convention': 'R : real time; D : delayed mode; A : real time with adjustment'}
+        if "DATA_MODE" in this.data_vars:
+            this["DATA_MODE"].attrs = {
+                "long_name": "Delayed mode or real time data",
+                "convention": "R : real time; D : delayed mode; A : real time with adjustment",
+            }
 
-        if 'DIRECTION' in this.data_vars:
-            this['DIRECTION'].attrs = {'long_name': 'Direction of the station profiles',
-                                       'convention': 'A: ascending profiles, D: descending profiles'}
+        if "DIRECTION" in this.data_vars:
+            this["DIRECTION"].attrs = {
+                "long_name": "Direction of the station profiles",
+                "convention": "A: ascending profiles, D: descending profiles",
+            }
 
-        if 'PLATFORM_NUMBER' in this.data_vars:
-            this['PLATFORM_NUMBER'].attrs = {'long_name': 'Float unique identifier',
-                                             'convention': 'WMO float identifier : A9IIIII'}
+        if "PLATFORM_NUMBER" in this.data_vars:
+            this["PLATFORM_NUMBER"].attrs = {
+                "long_name": "Float unique identifier",
+                "convention": "WMO float identifier : A9IIIII",
+            }
 
         return this
 
     def _init_erddapy(self):
         # Init erddapy
-        self.erddap = ERDDAP(
-            server=self.server,
-            protocol='tabledap'
+        self.erddap = ERDDAP(server=self.server, protocol="tabledap")
+        self.erddap.response = (
+            "nc"  # This is a major change in v0.4, we used to work with csv files
         )
-        self.erddap.response = 'nc'  # This is a major change in v0.4, we used to work with csv files
 
-        if self.dataset_id == 'phy':
-            self.erddap.dataset_id = 'ArgoFloats'
-        elif self.dataset_id == 'ref':
-            self.erddap.dataset_id = 'ArgoFloats-ref'
-        elif self.dataset_id == 'bgc':
-            self.erddap.dataset_id = 'ArgoFloats-bio'
-        elif self.dataset_id == 'fail':
-            self.erddap.dataset_id = 'invalid_db'
+        if self.dataset_id == "phy":
+            self.erddap.dataset_id = "ArgoFloats"
+        elif self.dataset_id == "ref":
+            self.erddap.dataset_id = "ArgoFloats-ref"
+        elif self.dataset_id == "bgc":
+            self.erddap.dataset_id = "ArgoFloats-bio"
+        elif self.dataset_id == "fail":
+            self.erddap.dataset_id = "invalid_db"
         else:
-            raise ValueError("Invalid database short name for Ifremer erddap (use: 'phy', 'bgc' or 'ref')")
+            raise ValueError(
+                "Invalid database short name for Ifremer erddap (use: 'phy', 'bgc' or 'ref')"
+            )
         return self
 
     @property
     def _minimal_vlist(self):
         """ Return the minimal list of variables to retrieve measurements for """
         vlist = list()
-        if self.dataset_id == 'phy' or self.dataset_id == 'bgc':
-            plist = ['data_mode', 'latitude', 'longitude',
-                     'position_qc', 'time', 'time_qc',
-                     'direction', 'platform_number',
-                     'cycle_number', 'config_mission_number', 'vertical_sampling_scheme']
+        if self.dataset_id == "phy" or self.dataset_id == "bgc":
+            plist = [
+                "data_mode",
+                "latitude",
+                "longitude",
+                "position_qc",
+                "time",
+                "time_qc",
+                "direction",
+                "platform_number",
+                "cycle_number",
+                "config_mission_number",
+                "vertical_sampling_scheme",
+            ]
             [vlist.append(p) for p in plist]
 
-            plist = ['pres', 'temp', 'psal']
-            if self.dataset_id == 'bgc':
-                plist = ['pres', 'temp', 'psal', 'doxy']
+            plist = ["pres", "temp", "psal"]
+            if self.dataset_id == "bgc":
+                plist = ["pres", "temp", "psal", "doxy"]
             [vlist.append(p) for p in plist]
-            [vlist.append(p + '_qc') for p in plist]
-            [vlist.append(p + '_adjusted') for p in plist]
-            [vlist.append(p + '_adjusted_qc') for p in plist]
-            [vlist.append(p + '_adjusted_error') for p in plist]
+            [vlist.append(p + "_qc") for p in plist]
+            [vlist.append(p + "_adjusted") for p in plist]
+            [vlist.append(p + "_adjusted_qc") for p in plist]
+            [vlist.append(p + "_adjusted_error") for p in plist]
 
-        elif self.dataset_id == 'ref':
-            plist = ['latitude', 'longitude', 'time',
-                     'platform_number', 'cycle_number']
+        elif self.dataset_id == "ref":
+            plist = ["latitude", "longitude", "time", "platform_number", "cycle_number"]
             [vlist.append(p) for p in plist]
-            plist = ['pres', 'temp', 'psal', 'ptmp']
+            plist = ["pres", "temp", "psal", "ptmp"]
             [vlist.append(p) for p in plist]
 
         return vlist
@@ -265,41 +306,46 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     def _dtype(self):
         """ Return a dictionary of data types for each variable requested to erddap in the minimal vlist """
         dref = {
-            'data_mode': object,
-            'latitude': np.float64,
-            'longitude': np.float64,
-            'position_qc': np.int64,
-            'time': object,
-            'time_qc': np.int64,
-            'direction': object,
-            'platform_number': np.int64,
-            'cycle_number': np.int64,
-            'pres': np.float64,
-            'temp': np.float64,
-            'psal': np.float64,
-            'doxy': np.float64,
-            'pres_qc': np.int64,
-            'temp_qc': object,
-            'psal_qc': object,
-            'doxy_qc': object,
-            'pres_adjusted': np.float64,
-            'temp_adjusted': np.float64,
-            'psal_adjusted': np.float64,
-            'doxy_adjusted': np.float64,
-            'pres_adjusted_qc': object,
-            'temp_adjusted_qc': object,
-            'psal_adjusted_qc': object,
-            'doxy_adjusted_qc': object,
-            'pres_adjusted_error': np.float64,
-            'temp_adjusted_error': np.float64,
-            'psal_adjusted_error': np.float64,
-            'doxy_adjusted_error': np.float64,
-            'ptmp': np.float64}
+            "data_mode": object,
+            "latitude": np.float64,
+            "longitude": np.float64,
+            "position_qc": np.int64,
+            "time": object,
+            "time_qc": np.int64,
+            "direction": object,
+            "platform_number": np.int64,
+            "cycle_number": np.int64,
+            "pres": np.float64,
+            "temp": np.float64,
+            "psal": np.float64,
+            "doxy": np.float64,
+            "pres_qc": np.int64,
+            "temp_qc": object,
+            "psal_qc": object,
+            "doxy_qc": object,
+            "pres_adjusted": np.float64,
+            "temp_adjusted": np.float64,
+            "psal_adjusted": np.float64,
+            "doxy_adjusted": np.float64,
+            "pres_adjusted_qc": object,
+            "temp_adjusted_qc": object,
+            "psal_adjusted_qc": object,
+            "doxy_adjusted_qc": object,
+            "pres_adjusted_error": np.float64,
+            "temp_adjusted_error": np.float64,
+            "psal_adjusted_error": np.float64,
+            "doxy_adjusted_error": np.float64,
+            "ptmp": np.float64,
+        }
         plist = self._minimal_vlist
         response = {}
         for p in plist:
             response[p] = dref[p]
         return response
+
+    def cname(self):
+        """ Return a unique string defining the constraints """
+        return self._cname()
 
     @property
     def cachepath(self):
@@ -329,7 +375,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         url = f"{self.erddap.server}/{protocol}/{dataset_id}.{response}?"
 
         # Add variables to retrieve:
-        self.erddap.variables = self._minimal_vlist  # Define the list of variables to retrieve
+        self.erddap.variables = (
+            self._minimal_vlist
+        )  # Define the list of variables to retrieve
         variables = self.erddap.variables
         variables = ",".join(variables)
         url += f"{variables}"
@@ -353,10 +401,12 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     def N_POINTS(self) -> int:
         """ Number of measurements expected to be returned by a request """
         try:
-            with self.fs.open(self.get_url().replace('.' + self.erddap.response, '.ncHeader')) as of:
+            with self.fs.open(
+                self.get_url().replace("." + self.erddap.response, ".ncHeader")
+            ) as of:
                 ncHeader = of.read().decode("utf-8")
-            lines = [line for line in ncHeader.splitlines() if 'row = ' in line][0]
-            return int(lines.split('=')[1].split(';')[0])
+            lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
+            return int(lines.split("=")[1].split(";")[0])
         except Exception:
             pass
 
@@ -368,18 +418,22 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             if len(self.uri) == 1:
                 ds = self.fs.open_dataset(self.uri[0])
             else:
-                ds = self.fs.open_mfdataset(self.uri, method='sequential', progress=self.progress)
+                ds = self.fs.open_mfdataset(
+                    self.uri, method="sequential", progress=self.progress
+                )
         else:
-            ds = self.fs.open_mfdataset(self.uri, method=self.parallel_method, progress=self.progress)
+            ds = self.fs.open_mfdataset(
+                self.uri, method=self.parallel_method, progress=self.progress
+            )
 
-        ds = ds.rename({'row': 'N_POINTS'})
+        ds = ds.rename({"row": "N_POINTS"})
 
         # Post-process the xarray.DataSet:
 
         # Set coordinates:
-        coords = ('LATITUDE', 'LONGITUDE', 'TIME', 'N_POINTS')
+        coords = ("LATITUDE", "LONGITUDE", "TIME", "N_POINTS")
         ds = ds.reset_coords()
-        ds['N_POINTS'] = ds['N_POINTS']
+        ds["N_POINTS"] = ds["N_POINTS"]
         # Convert all coordinate variable names to upper case
         for v in ds.data_vars:
             ds = ds.rename({v: v.upper()})
@@ -394,38 +448,40 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         # Remove erddap file attributes and replace them with argopy ones:
         ds.attrs = {}
-        if self.dataset_id == 'phy':
-            ds.attrs['DATA_ID'] = 'ARGO'
-        elif self.dataset_id == 'ref':
-            ds.attrs['DATA_ID'] = 'ARGO_Reference'
-        elif self.dataset_id == 'bgc':
-            ds.attrs['DATA_ID'] = 'ARGO-BGC'
-        ds.attrs['DOI'] = 'http://doi.org/10.17882/42182'
-        ds.attrs['Fetched_from'] = self.erddap.server
-        ds.attrs['Fetched_by'] = getpass.getuser()
-        ds.attrs['Fetched_date'] = pd.to_datetime('now').strftime('%Y/%m/%d')
-        ds.attrs['Fetched_constraints'] = self.cname()
-        ds.attrs['Fetched_uri'] = self.uri
+        if self.dataset_id == "phy":
+            ds.attrs["DATA_ID"] = "ARGO"
+        elif self.dataset_id == "ref":
+            ds.attrs["DATA_ID"] = "ARGO_Reference"
+        elif self.dataset_id == "bgc":
+            ds.attrs["DATA_ID"] = "ARGO-BGC"
+        ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
+        ds.attrs["Fetched_from"] = self.erddap.server
+        ds.attrs["Fetched_by"] = getpass.getuser()
+        ds.attrs["Fetched_date"] = pd.to_datetime("now").strftime("%Y/%m/%d")
+        ds.attrs["Fetched_constraints"] = self.cname()
+        ds.attrs["Fetched_uri"] = self.uri
         ds = ds[np.sort(ds.data_vars)]
 
         #
         return ds
 
     def filter_data_mode(self, ds, **kwargs):
-        ds = ds.argo.filter_data_mode(errors='ignore', **kwargs)
-        if ds.argo._type == 'point':
-            ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS']))
+        ds = ds.argo.filter_data_mode(errors="ignore", **kwargs)
+        if ds.argo._type == "point":
+            ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
     def filter_qc(self, ds, **kwargs):
         ds = ds.argo.filter_qc(**kwargs)
-        if ds.argo._type == 'point':
-            ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS']))
+        if ds.argo._type == "point":
+            ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
-    def filter_variables(self, ds, mode='standard'):
-        if mode == 'standard':
-            to_remove = sorted(list(set(list(ds.data_vars)) - set(list_standard_variables())))
+    def filter_variables(self, ds, mode="standard"):
+        if mode == "standard":
+            to_remove = sorted(
+                list(set(list(ds.data_vars)) - set(list_standard_variables()))
+            )
             return ds.drop_vars(to_remove)
         else:
             return ds
@@ -457,42 +513,34 @@ class Fetch_wmo(ErddapArgoDataFetcher):
             raise ValueError("WMO must be a list of integers")
 
         if isinstance(CYC, int):
-            CYC = np.array((CYC,), dtype='int')  # Make sure we deal with an array of integers
+            CYC = np.array(
+                (CYC,), dtype="int"
+            )  # Make sure we deal with an array of integers
         if isinstance(CYC, list):
-            CYC = np.array(CYC, dtype='int')  # Make sure we deal with an array of integers
+            CYC = np.array(
+                CYC, dtype="int"
+            )  # Make sure we deal with an array of integers
 
         self.WMO = WMO
         self.CYC = CYC
 
         self.definition = "?"
-        if self.dataset_id == 'phy':
-            self.definition = 'Ifremer erddap Argo data fetcher for floats'
-        elif self.dataset_id == 'ref':
-            self.definition = 'Ifremer erddap Argo REFERENCE data fetcher for floats'
+        if self.dataset_id == "phy":
+            self.definition = "Ifremer erddap Argo data fetcher for floats"
+        elif self.dataset_id == "ref":
+            self.definition = "Ifremer erddap Argo REFERENCE data fetcher for floats"
         return self
 
     def define_constraints(self):
         """ Define erddap constraints """
-        self.erddap.constraints = {'platform_number=~': "|".join(["%i" % i for i in self.WMO])}
+        self.erddap.constraints = {
+            "platform_number=~": "|".join(["%i" % i for i in self.WMO])
+        }
         if isinstance(self.CYC, (np.ndarray)):
-            self.erddap.constraints.update({'cycle_number=~': "|".join(["%i" % i for i in self.CYC])})
+            self.erddap.constraints.update(
+                {"cycle_number=~": "|".join(["%i" % i for i in self.CYC])}
+            )
         return self
-
-    def cname(self):
-        """ Return a unique string defining the constraints """
-        if len(self.WMO) > 1:
-            listname = ["WMO%i" % i for i in self.WMO]
-            if isinstance(self.CYC, (np.ndarray)):
-                [listname.append("CYC%0.4d" % i) for i in self.CYC]
-            listname = ";".join(listname)
-        else:
-            listname = "WMO%i" % self.WMO[0]
-            if isinstance(self.CYC, (np.ndarray)):
-                listname = [listname]
-                [listname.append("CYC%0.4d" % i) for i in self.CYC]
-                listname = "_".join(listname)
-        listname = self.dataset_id + ";" + listname
-        return listname
 
     @property
     def uri(self):
@@ -503,29 +551,39 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         list(str)
         """
         if not self.parallel:
-            if len(self.WMO) <= 5:
+            if len(self.WMO) <= 5:  # todo: This max WMO number should be parameterized somewhere else
                 # Retrieve all WMOs in a single request
                 return [self.get_url()]
             else:
                 # Retrieve one WMO by URL sequentially (same behaviour as localftp and argovis)
                 urls = []
                 for wmo in self.WMO:
-                    urls.append(Fetch_wmo(WMO=wmo, CYC=self.CYC, ds=self.dataset_id, parallel=False).get_url())
+                    urls.append(
+                        Fetch_wmo(
+                            WMO=wmo, CYC=self.CYC, ds=self.dataset_id, parallel=False
+                        ).get_url()
+                    )
                 return urls
         else:
-            C = Chunker({'wmo': self.WMO}, chunks=self.chunks, chunksize=self.chunks_maxsize)
-            wmo_grps = C.fit_transform()
+            self.Chunker = Chunker(
+                {"wmo": self.WMO}, chunks=self.chunks, chunksize=self.chunks_maxsize
+            )
+            wmo_grps = self.Chunker.fit_transform()
             # self.chunks = C.chunks
             urls = []
             for wmos in wmo_grps:
-                urls.append(Fetch_wmo(WMO=wmos, CYC=self.CYC, ds=self.dataset_id, parallel=False).get_url())
+                urls.append(
+                    Fetch_wmo(
+                        WMO=wmos, CYC=self.CYC, ds=self.dataset_id, parallel=False
+                    ).get_url()
+                )
             return urls
 
     def dashboard(self, **kw):
         if len(self.WMO) == 1:
             return open_dashboard(wmo=self.WMO[0], **kw)
         else:
-            warnings.warn("Plot dashboard only available for one float frequest")
+            warnings.warn("Plot dashboard only available for one float request")
 
 
 class Fetch_box(ErddapArgoDataFetcher):
@@ -549,41 +607,30 @@ class Fetch_box(ErddapArgoDataFetcher):
         # start = end - pd.DateOffset(months=1)
         # box.append(start.strftime('%Y-%m-%d'))
         # box.append(end.strftime('%Y-%m-%d'))
-        is_box(box, errors='raise')
+        is_box(box, errors="raise")
         self.BOX = box
 
-        if self.dataset_id == 'phy':
-            self.definition = 'Ifremer erddap Argo data fetcher for a space/time region'
-        elif self.dataset_id == 'ref':
-            self.definition = 'Ifremer erddap Argo REFERENCE data fetcher for a space/time region'
+        if self.dataset_id == "phy":
+            self.definition = "Ifremer erddap Argo data fetcher for a space/time region"
+        elif self.dataset_id == "ref":
+            self.definition = (
+                "Ifremer erddap Argo REFERENCE data fetcher for a space/time region"
+            )
 
         return self
 
     def define_constraints(self):
         """ Define request constraints """
-        self.erddap.constraints = {'longitude>=': self.BOX[0]}
-        self.erddap.constraints.update({'longitude<=': self.BOX[1]})
-        self.erddap.constraints.update({'latitude>=': self.BOX[2]})
-        self.erddap.constraints.update({'latitude<=': self.BOX[3]})
-        self.erddap.constraints.update({'pres>=': self.BOX[4]})
-        self.erddap.constraints.update({'pres<=': self.BOX[5]})
+        self.erddap.constraints = {"longitude>=": self.BOX[0]}
+        self.erddap.constraints.update({"longitude<=": self.BOX[1]})
+        self.erddap.constraints.update({"latitude>=": self.BOX[2]})
+        self.erddap.constraints.update({"latitude<=": self.BOX[3]})
+        self.erddap.constraints.update({"pres>=": self.BOX[4]})
+        self.erddap.constraints.update({"pres<=": self.BOX[5]})
         if len(self.BOX) == 8:
-            self.erddap.constraints.update({'time>=': self.BOX[6]})
-            self.erddap.constraints.update({'time<=': self.BOX[7]})
+            self.erddap.constraints.update({"time>=": self.BOX[6]})
+            self.erddap.constraints.update({"time<=": self.BOX[7]})
         return None
-
-    def cname(self):
-        """ Return a unique string defining the constraints """
-        BOX = self.BOX
-        if len(BOX) == 8:
-            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; z=%0.1f/%0.1f; t=%s/%s]") % \
-                  (BOX[0], BOX[1], BOX[2], BOX[3], BOX[4], BOX[5],
-                   self._format(BOX[6], 'tim'), self._format(BOX[7], 'tim'))
-        else:
-            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; z=%0.1f/%0.1f]") % \
-                  (BOX[0], BOX[1], BOX[2], BOX[3], BOX[4], BOX[5])
-        boxname = self.dataset_id + "_" + boxname
-        return boxname
 
     @property
     def uri(self):
@@ -596,7 +643,9 @@ class Fetch_box(ErddapArgoDataFetcher):
         if not self.parallel:
             return [self.get_url()]
         else:
-            C = Chunker({'box': self.BOX}, chunks=self.chunks, chunksize=self.chunks_maxsize)
+            C = Chunker(
+                {"box": self.BOX}, chunks=self.chunks, chunksize=self.chunks_maxsize
+            )
             boxes = C.fit_transform()
             urls = []
             for box in boxes:

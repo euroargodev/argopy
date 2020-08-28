@@ -67,11 +67,10 @@ def list_available_data_src():
     AVAILABLE_SOURCES = {}
     try:
         from .data_fetchers import erddap_data as Erddap_Fetchers
-
         AVAILABLE_SOURCES["erddap"] = Erddap_Fetchers
     except Exception:
         warnings.warn(
-            "An error occured while loading the ERDDAP data fetcher, "
+            "An error occurred while loading the ERDDAP data fetcher, "
             "it will not be available !\n%s\n%s"
             % (sys.exc_info()[0], sys.exc_info()[1])
         )
@@ -79,11 +78,10 @@ def list_available_data_src():
 
     try:
         from .data_fetchers import localftp_data as LocalFTP_Fetchers
-
         AVAILABLE_SOURCES["localftp"] = LocalFTP_Fetchers
     except Exception:
         warnings.warn(
-            "An error occured while loading the local FTP data fetcher, "
+            "An error occurred while loading the local FTP data fetcher, "
             "it will not be available !\n%s\n%s"
             % (sys.exc_info()[0], sys.exc_info()[1])
         )
@@ -91,11 +89,10 @@ def list_available_data_src():
 
     try:
         from .data_fetchers import argovis_data as ArgoVis_Fetchers
-
         AVAILABLE_SOURCES["argovis"] = ArgoVis_Fetchers
     except Exception:
         warnings.warn(
-            "An error occured while loading the ArgoVis data fetcher, "
+            "An error occurred while loading the ArgoVis data fetcher, "
             "it will not be available !\n%s\n%s"
             % (sys.exc_info()[0], sys.exc_info()[1])
         )
@@ -113,7 +110,7 @@ def list_available_index_src():
         AVAILABLE_SOURCES["erddap"] = Erddap_Fetchers
     except Exception:
         warnings.warn(
-            "An error occured while loading the ERDDAP index fetcher, "
+            "An error occurred while loading the ERDDAP index fetcher, "
             "it will not be available !\n%s\n%s"
             % (sys.exc_info()[0], sys.exc_info()[1])
         )
@@ -125,7 +122,7 @@ def list_available_index_src():
         AVAILABLE_SOURCES["localftp"] = LocalFTP_Fetchers
     except Exception:
         warnings.warn(
-            "An error occured while loading the local FTP index fetcher, "
+            "An error occurred while loading the local FTP index fetcher, "
             "it will not be available !\n%s\n%s"
             % (sys.exc_info()[0], sys.exc_info()[1])
         )

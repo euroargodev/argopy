@@ -58,13 +58,8 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
     # Methods to be customised for a specific request
     ###
     @abstractmethod
-    def init(self):
+    def init(self, *args, **kwargs):
         """ Initialisation for a specific fetcher """
-        pass
-
-    @abstractmethod
-    def cname(self):
-        """ Return a unique string defining the request """
         pass
 
     # @abstractmethod
@@ -165,6 +160,10 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         summary.append("FTP: %s" % self.local_ftp)
         summary.append("Domain: %s" % format_oneline(self.cname()))
         return '\n'.join(summary)
+
+    def cname(self):
+        """ Return a unique string defining the constraints """
+        return self._cname()
 
     def get_path(self, wmo: int, cyc: int = None) -> str:
         """ Return the absolute path toward the netcdf source file of a given wmo/cyc pair and a dataset
@@ -404,23 +403,6 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
 
         return self
 
-    def cname(self):
-        """ Return a unique string defining the request """
-        if len(self.WMO) > 1:
-            listname = ["WMO%i" % i for i in sorted(self.WMO)]
-            if isinstance(self.CYC, (np.ndarray)):
-                [listname.append("CYC%0.4d" % i) for i in sorted(self.CYC)]
-            listname = ";".join(listname)
-            listname = self.dataset_id + ";" + listname
-        else:
-            listname = "WMO%i" % self.WMO[0]
-            if isinstance(self.CYC, (np.ndarray)):
-                listname = [listname]
-                [listname.append("CYC%0.4d" % i) for i in sorted(self.CYC)]
-                listname = "_".join(listname)
-                listname = self.dataset_id + "_" + listname
-        return listname
-
     @property
     def uri(self):
         """ List of files to load for a request
@@ -475,12 +457,12 @@ class Fetch_box(LocalFTPArgoDataFetcher):
                 - box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
         # We use a full domain definition (x, y, z, t) as argument for compatibility with the other fetchers
-        # but at this point, we work only with x, y and t.
+        # but at this point, we internally work only with x, y and t.
         is_box(box)
-        if len(box) == 6:
-            self.BOX = [box[ii] for ii in [0, 1, 2, 3]]
-        elif len(box) == 8:
-            self.BOX = [box[ii] for ii in [0, 1, 2, 3, 6, 7]]
+        self.BOX = box
+        self.indexBOX = [box[ii] for ii in [0, 1, 2, 3]]
+        if len(box) == 8:
+            self.indexBOX = [box[ii] for ii in [0, 1, 2, 3, 6, 7]]
 
         # if len(box) == 6:
         #     # Select the last months of data:
@@ -494,19 +476,6 @@ class Fetch_box(LocalFTPArgoDataFetcher):
                                    os.path.sep.join([self.local_ftp, "ar_index_global_prof.txt"]))
         # todo we would need to check if the index file is there !
 
-    def cname(self):
-        """ Return a unique string defining the constraints """
-        BOX = self.BOX
-        if len(self.BOX) == 4:
-            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f]") % \
-                      (BOX[0], BOX[1], BOX[2], BOX[3])
-        elif len(self.BOX) == 6:
-            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; t=%s/%s]") % \
-                      (BOX[0], BOX[1], BOX[2], BOX[3],
-                       self._format(BOX[4], 'tim'), self._format(BOX[5], 'tim'))
-        boxname = self.dataset_id + "_" + boxname
-        return boxname
-
     @property
     def uri(self):
         """ List of files to load for a request
@@ -518,7 +487,7 @@ class Fetch_box(LocalFTPArgoDataFetcher):
         if not hasattr(self, '_list_of_argo_files'):
             self._list_of_argo_files = []
             # Fetch the index to retrieve the list of profiles to load:
-            filt = indexfilter_box(self.BOX)
+            filt = indexfilter_box(self.indexBOX)
             df_index = self.fs_index.read_csv(filt)
             if isinstance(df_index, pd.core.frame.DataFrame):
                 # Ok, we found profiles in the index file,
