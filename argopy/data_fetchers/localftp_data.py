@@ -316,7 +316,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
 
         return ds
 
-    def to_xarray(self):
+    def to_xarray(self, errors: str = 'ignore'):
         """ Load Argo data and return a xarray.Dataset
 
         Returns
@@ -334,6 +334,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
                                     concat=True,
                                     preprocess=self._preprocess_multiprof,
                                     progress=self.progress,
+                                    errors=errors,
                                     decode_cf=1, use_cftime=0, mask_and_scale=1, engine='h5netcdf')
 
         # Data post-processing:

@@ -151,7 +151,7 @@ class ArgoAccessor:
                     da = cast_this(da, str)
 
                 # Address weird string values:
-                # (replace missing or nan values by a '0' that will be cast as a integer later
+                # (replace missing or nan values by a '0' that will be cast as an integer later
 
                 if da.dtype == '<U3':  # string, len 3 because of a 'nan' somewhere
                     ii = da == '   '  # This should not happen, but still ! That's real world data
@@ -164,6 +164,9 @@ class ArgoAccessor:
                     da = cast_this(da, np.dtype('U1'))
 
                 if da.dtype == '<U1':  # string
+                    ii = da == ''  # This should not happen, but still ! That's real world data
+                    da = xr.where(ii, '0', da)
+
                     ii = da == ' '  # This should not happen, but still ! That's real world data
                     da = xr.where(ii, '0', da)
 
@@ -182,7 +185,7 @@ class ArgoAccessor:
             try:
                 ds[v] = cast_this_da(ds[v])
             except Exception:
-                print("Oops!", sys.exc_info()[0], "occured.")
+                print("Oops!", sys.exc_info()[0], "occurred.")
                 print("Fail to cast: %s " % v)
                 print("Encountered unique values:", np.unique(ds[v]))
                 raise

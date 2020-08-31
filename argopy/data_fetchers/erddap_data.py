@@ -34,7 +34,7 @@ dataset_ids = ["phy", "ref", "bgc"]  # First is default
 api_server = "https://www.ifremer.fr/erddap"  # API root url
 # api_server = 'https://erddap.ifremer.fr/erddap'  # API root url
 api_server_check = (
-    api_server + "/info/ArgoFloats/index.json"
+    api_server + "/info/ArgoFloats/index.html"
 )  # URL to check if the API is alive
 
 
@@ -68,7 +68,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def uri(self) -> list:
-        """ Return the list of Unique Ressource Identifier (URI) to download data """
+        """ Return the list of Unique Resource Identifier (URI) to download data """
         pass
 
     ###
@@ -115,7 +115,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
-        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout)
+        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
         self.definition = "Ifremer erddap Argo data fetcher"
         self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
         self.server = api_server
@@ -410,7 +410,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         except Exception:
             pass
 
-    def to_xarray(self):
+    def to_xarray(self, errors: str = 'ignore'):
         """ Load Argo data and return a xarray.DataSet """
 
         # Download data
@@ -419,11 +419,11 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 ds = self.fs.open_dataset(self.uri[0])
             else:
                 ds = self.fs.open_mfdataset(
-                    self.uri, method="sequential", progress=self.progress
+                    self.uri, method="sequential", progress=self.progress, errors=errors
                 )
         else:
             ds = self.fs.open_mfdataset(
-                self.uri, method=self.parallel_method, progress=self.progress
+                self.uri, method=self.parallel_method, progress=self.progress, errors=errors
             )
 
         ds = ds.rename({"row": "N_POINTS"})

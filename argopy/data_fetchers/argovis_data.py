@@ -170,7 +170,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         df = pd.DataFrame(rows)
         return df
 
-    def to_dataframe(self):
+    def to_dataframe(self, errors: str = 'ignore'):
         """ Load Argo data and return a Pandas dataframe """
 
         # Download data:
@@ -179,7 +179,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         else:
             method = self.parallel_method
         df_list = self.fs.open_mfjson(
-            self.uri, method=method, preprocess=self.json2dataframe, progress=self.progress
+            self.uri, method=method, preprocess=self.json2dataframe, progress=self.progress, errors=errors
         )
 
         # Merge results (list of dataframe):
@@ -193,9 +193,9 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         df = df.set_index(["N_POINTS"])
         return df
 
-    def to_xarray(self):
+    def to_xarray(self, errors: str = 'ignore'):
         """ Download and return data as xarray Datasets """
-        ds = self.to_dataframe().to_xarray()
+        ds = self.to_dataframe(errors=errors).to_xarray()
         ds = ds.sortby(
             ["TIME", "PRES"]
         )  # should already be sorted by date in descending order

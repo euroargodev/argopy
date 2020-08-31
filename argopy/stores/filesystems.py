@@ -203,6 +203,7 @@ class filestore(argo_store_proto):
                        progress: bool = False,
                        concat: bool = True,
                        preprocess = None,
+                       errors: str = 'ignore',
                        *args, **kwargs):
         """ Open multiple urls as a single xarray dataset.
 
@@ -260,8 +261,12 @@ class filestore(argo_store_proto):
                     try:
                         data = future.result()
                     except Exception as e:
-                        warnings.warn(e.args)
-                        pass
+                        if errors == 'ignore':
+                            warnings.warn(
+                                "Something went wrong with this file: %s\nException raised: %s" % (future_to_url[future], str(e.args)))
+                            pass
+                        else:
+                            raise
                     finally:
                         results.append(data)
 
@@ -279,8 +284,12 @@ class filestore(argo_store_proto):
                 try:
                     data = self._mfprocessor(url, preprocess=preprocess, *args, **kwargs)
                 except Exception as e:
-                    warnings.warn("Something went wrong with this url: %s\nException raised: %s" % (url, str(e.args)))
-                    pass
+                    if errors == 'ignore':
+                        warnings.warn(
+                            "Something went wrong with this url: %s\nException raised: %s" % (url, str(e.args)))
+                        pass
+                    else:
+                        raise
                 finally:
                     results.append(data)
 
@@ -352,11 +361,11 @@ class httpstore(argo_store_proto):
             error.append(data.read().decode("utf-8").replace("Error", ""))
             error.append("The URL triggering this error was: \n%s" % url)
             msg = "\n".join(error)
-            if "Payload Too Large" in msg:
-                raise ErddapServerError("Your query produced too much data. "
-                                        "Try to request less data.\n%s" % msg)
-            else:
-                raise requests.HTTPError(msg)
+            # if "Payload Too Large" in msg:
+            raise ErddapServerError("Your query produced too much data. "
+                                    "Try to request less data or to use the 'parallel=True' option in your fetcher.\n%s" % msg)
+            # else:
+            #     raise requests.HTTPError(msg)
 
         # 5XX server error response
         elif r.status_code == 500:  # 500 Internal Server Error
@@ -421,6 +430,7 @@ class httpstore(argo_store_proto):
                        progress: bool = False,
                        concat: bool = True,
                        preprocess = None,
+                       errors: str = 'ignore',
                        *args, **kwargs):
         """ Open multiple urls as a single xarray dataset.
 
@@ -479,9 +489,12 @@ class httpstore(argo_store_proto):
                         data = future.result()
                     except Exception as e:
                         failed.append(future_to_url[future])
-                        warnings.warn(str(e.args))
-                        # pass
-                        raise
+                        if errors == 'ignore':
+                            warnings.warn(
+                                "Something went wrong with this url: %s\nException raised: %s" % (future_to_url[future], str(e.args)))
+                            pass
+                        else:
+                            raise
                     finally:
                         results.append(data)
 
@@ -500,8 +513,12 @@ class httpstore(argo_store_proto):
                     data = self._mfprocessor_dataset(url, preprocess=preprocess, *args, **kwargs)
                 except Exception as e:
                     failed.append(url)
-                    warnings.warn("Something went wrong with this url: %s\nException raised: %s" % (url, str(e.args)))
-                    pass
+                    if errors == 'ignore':
+                        warnings.warn(
+                            "Something went wrong with this url: %s\nException raised: %s" % (url, str(e.args)))
+                        pass
+                    else:
+                        raise
                 finally:
                     results.append(data)
 
@@ -577,6 +594,7 @@ class httpstore(argo_store_proto):
                     method: str = 'thread',
                     progress: bool = False,
                     preprocess = None,
+                    errors: str = 'ignore',
                     *args, **kwargs):
         """ Open multiple json urls
 
@@ -629,8 +647,12 @@ class httpstore(argo_store_proto):
                         data = future.result()
                     except Exception as e:
                         failed.append(future_to_url[future])
-                        warnings.warn(str(e.args))
-                        pass
+                        if errors == 'ignore':
+                            warnings.warn(
+                                "Something went wrong with this url: %s\nException raised: %s" % (future_to_url[future], str(e.args)))
+                            pass
+                        else:
+                            raise
                     finally:
                         results.append(data)
 
@@ -649,8 +671,12 @@ class httpstore(argo_store_proto):
                     data = self._mfprocessor_json(url, preprocess=preprocess, *args, **kwargs)
                 except Exception as e:
                     failed.append(url)
-                    warnings.warn("Something went wrong with this url: %s\nException raised: %s" % (url, str(e.args)))
-                    pass
+                    if errors == 'ignore':
+                        warnings.warn(
+                            "Something went wrong with this url: %s\nException raised: %s" % (url, str(e.args)))
+                        pass
+                    else:
+                        raise
                 finally:
                     results.append(data)
 
