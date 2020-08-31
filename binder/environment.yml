@@ -1,4 +1,4 @@
-name: pangeo
+name: euroargodev
 channels:
   - conda-forge
 dependencies:
@@ -29,7 +29,8 @@ dependencies:
   - pip:
     - graphviz
     - jupyter-server-proxy
+    - netCDF4
     - erddapy
+    - gitpython
     - cmocean
     - git+http://github.com/euroargodev/argopy.git@master
-    - netCDF4

@@ -9,12 +9,8 @@
 import os
 import sys
 import warnings
-import requests
 import urllib.request
-import io
 import json
-import xarray as xr
-from IPython.core.display import display, HTML
 
 import importlib
 import locale
@@ -22,120 +18,113 @@ import platform
 import struct
 import subprocess
 
+import xarray as xr
+import numpy as np
+from scipy import interpolate
+
 import pickle
 import pkg_resources
+import shutil
+
+from argopy.options import OPTIONS, set_options
+from argopy.stores import httpstore
+from argopy.errors import FtpPathError, InvalidFetcher
+
 path2pkl = pkg_resources.resource_filename('argopy', 'assets/')
 
-from argopy.errors import ErddapServerError
 
-def urlopen(url):
-    """ Load content from url or raise alarm on status with explicit information on the error
+def clear_cache():
+    """ Delete argopy cache folder """
+    if os.path.exists(OPTIONS['cachedir']):
+        shutil.rmtree(OPTIONS['cachedir'])
 
-    Parameters
-    ----------
-    url: str
-
-    Returns
-    -------
-    io.BytesIO
-
-    """
-    # https://github.com/ioos/erddapy/blob/3828a4f479e7f7653fb5fd78cbce8f3b51bd0661/erddapy/utilities.py#L37
-    r = requests.get(url)
-    data = io.BytesIO(r.content)
-
-    if r.status_code == 200:  # OK
-        return data
-
-    # 4XX client error response
-    elif r.status_code == 404:  # Empty response
-        error = ["Error %i " % r.status_code]
-        error.append(data.read().decode("utf-8").replace("Error", ""))
-        error.append("The URL triggering this error was: \n%s" % url)
-        msg = "\n".join(error)
-        if "Currently unknown datasetID" in msg:
-            raise ErddapServerError("Dataset not found in the Erddap, try again later. "
-                                    "The server is probably rebooting. \n%s" % msg)
-        else:
-            raise requests.HTTPError(msg)
-
-    # 5XX server error response
-    elif r.status_code == 500:  # 500 Internal Server Error
-        if "text/html" in r.headers.get('content-type'):
-            display(HTML(data.read().decode("utf-8")))
-        error = ["Error %i " % r.status_code]
-        error.append(data.read().decode("utf-8"))
-        error.append("The URL triggering this error was: \n%s" % url)
-        msg = "\n".join(error)
-        if "No space left on device" in msg:
-            raise ErddapServerError("An error occured on the Erddap server side. "
-                                    "Please contact assistance@ifremer.fr to ask a reboot of the erddap server. \n%s" % msg)
-        elif "java.io.EOFException" in msg:
-            raise ErddapServerError("An error occured on the Erddap server side. "
-                                    "Please contact assistance@ifremer.fr to ask a reboot of the erddap server. \n%s" % msg)
-        else:
-            raise requests.HTTPError(msg)
-
-    else:
-        error = ["Error %i " % r.status_code]
-        error.append(data.read().decode("utf-8"))
-        error.append("The URL triggering this error was: \n%s" % url)
-        print("\n".join(error))
-        r.raise_for_status()
 
 def load_dict(ptype):
-    if ptype=='profilers':        
+    if ptype == 'profilers':
         with open(os.path.join(path2pkl, 'dict_profilers.pickle'), 'rb') as f:
             loaded_dict = pickle.load(f)
         return loaded_dict
-    elif ptype=='institutions':
+    elif ptype == 'institutions':
         with open(os.path.join(path2pkl, 'dict_institutions.pickle'), 'rb') as f:
             loaded_dict = pickle.load(f)
-        return loaded_dict      
+        return loaded_dict
     else:
         raise ValueError("Invalid dictionnary pickle file")
 
-def mapp_dict(Adictionnary,Avalue):
+
+def mapp_dict(Adictionnary, Avalue):
     if Avalue not in Adictionnary:
         return "Unknown"
     else:
         return Adictionnary[Avalue]
 
+
 def list_available_data_src():
     """ List all available data sources """
     AVAILABLE_SOURCES = {}
     try:
-        from .data_fetchers import erddap as Erddap_Fetchers
+        from .data_fetchers import erddap_data as Erddap_Fetchers
         AVAILABLE_SOURCES['erddap'] = Erddap_Fetchers
-    except:
+    except Exception:
         warnings.warn("An error occured while loading the ERDDAP data fetcher, "
                       "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
         pass
 
     try:
-        from .data_fetchers import localftp as LocalFTP_Fetchers
+        from .data_fetchers import localftp_data as LocalFTP_Fetchers
         AVAILABLE_SOURCES['localftp'] = LocalFTP_Fetchers
-    except:
+    except Exception:
         warnings.warn("An error occured while loading the local FTP data fetcher, "
+                      "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        pass
+
+    try:
+        from .data_fetchers import argovis_data as ArgoVis_Fetchers
+        AVAILABLE_SOURCES['argovis'] = ArgoVis_Fetchers
+    except Exception:
+        warnings.warn("An error occured while loading the ArgoVis data fetcher, "
                       "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
         pass
 
     return AVAILABLE_SOURCES
 
+
+def list_available_index_src():
+    """ List all available index sources """
+    AVAILABLE_SOURCES = {}
+    try:
+        from .data_fetchers import erddap_index as Erddap_Fetchers
+        AVAILABLE_SOURCES['erddap'] = Erddap_Fetchers
+    except Exception:
+        warnings.warn("An error occured while loading the ERDDAP index fetcher, "
+                      "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        pass
+
+    try:
+        from .data_fetchers import localftp_index as LocalFTP_Fetchers
+        AVAILABLE_SOURCES['localftp'] = LocalFTP_Fetchers
+    except Exception:
+        warnings.warn("An error occured while loading the local FTP index fetcher, "
+                      "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        pass
+
+    return AVAILABLE_SOURCES
+
+
 def list_standard_variables():
-    """ Return the list of variables for standard users
-    """
+    """ Return the list of variables for standard users """
     return ['DATA_MODE', 'LATITUDE', 'LONGITUDE', 'POSITION_QC', 'DIRECTION', 'PLATFORM_NUMBER', 'CYCLE_NUMBER', 'PRES',
      'TEMP', 'PSAL', 'PRES_QC', 'TEMP_QC', 'PSAL_QC', 'PRES_ADJUSTED', 'TEMP_ADJUSTED', 'PSAL_ADJUSTED',
      'PRES_ADJUSTED_QC', 'TEMP_ADJUSTED_QC', 'PSAL_ADJUSTED_QC', 'PRES_ADJUSTED_ERROR', 'TEMP_ADJUSTED_ERROR',
      'PSAL_ADJUSTED_ERROR', 'JULD', 'JULD_QC', 'TIME', 'TIME_QC']
+
 
 def list_multiprofile_file_variables():
     """ Return the list of variables in a netcdf multiprofile file.
 
         This is for files created by GDAC under <DAC>/<WMO>/<WMO>_prof.nc
     """
-    return [ 'CONFIG_MISSION_NUMBER',
+    return ['CONFIG_MISSION_NUMBER',
              'CYCLE_NUMBER',
              'DATA_CENTRE',
              'DATA_MODE',
@@ -200,6 +189,64 @@ def list_multiprofile_file_variables():
              'VERTICAL_SAMPLING_SCHEME',
              'WMO_INST_TYPE']
 
+
+def check_localftp(path, errors: str = "ignore"):
+    """ Check if the path has the expected GDAC ftp structure
+
+        Check if the path is structured like:
+        .
+        └── dac
+            ├── aoml
+            ├── ...
+            ├── coriolis
+            ├── ...
+            ├── meds
+            └── nmdis
+
+        Parameters
+        ----------
+        path: str
+            Path name to check
+        errors: str
+            "ignore" or "raise" (or "warn"
+
+        Returms
+        -------
+        checked: boolean
+            True if at least one DAC folder is found under path/dac/<dac_name>
+            False otherwise
+    """
+    dacs = ['aoml', 'bodc', 'coriolis', 'csio', 'csiro', 'incois', 'jma', 'kma', 'kordi', 'meds', 'nmdis']
+
+    # Case 1:
+    check1 = os.path.isdir(path) and os.path.isdir(os.path.join(path, "dac")) \
+             and np.any([os.path.isdir(os.path.join(path, "dac", dac)) for dac in dacs])
+
+    if check1:
+        return True
+    elif errors == 'raise':
+        # This was possible up to v0.1.3:
+        check2 = os.path.isdir(path) and np.any([os.path.isdir(os.path.join(path, dac)) for dac in dacs])
+        if check2:
+            raise FtpPathError("This path is no longer GDAC compliant for argopy.\n"
+                          "Please make sure you point toward a path with a 'dac' folder:\n%s" % path)
+        else:
+            raise FtpPathError("This path is not GDAC compliant:\n%s" % path)
+
+    elif errors == 'warn':
+        # This was possible up to v0.1.3:
+        check2 = os.path.isdir(path) and np.any([os.path.isdir(os.path.join(path, dac)) for dac in dacs])
+        if check2:
+            warnings.warn("This path is no longer GDAC compliant for argopy. This will raise an error in the future.\n"
+                          "Please make sure you point toward a path with a 'dac' folder:\n%s" % path)
+            return False
+        else:
+            warnings.warn("This path is not GDAC compliant:\n%s" % path)
+            return False
+    else:
+        return False
+
+
 def get_sys_info():
     "Returns system information as a dict"
 
@@ -249,6 +296,7 @@ def get_sys_info():
 
     return blob
 
+
 def netcdf_and_hdf5_versions():
     libhdf5_version = None
     libnetcdf_version = None
@@ -265,6 +313,7 @@ def netcdf_and_hdf5_versions():
         except ImportError:
             pass
     return [("libhdf5", libhdf5_version), ("libnetcdf", libnetcdf_version)]
+
 
 def show_versions(file=sys.stdout):
     """ Print the versions of argopy and its dependencies
@@ -344,8 +393,9 @@ def show_versions(file=sys.stdout):
     for k, stat in deps_blob:
         print(f"{k}: {stat}", file=file)
 
+
 def isconnected(host='http://www.ifremer.fr'):
-    """ Determine if we have a live internet connection
+    """ check if we have a live internet connection
 
         Parameters
         ----------
@@ -357,17 +407,46 @@ def isconnected(host='http://www.ifremer.fr'):
         bool
     """
     try:
-        urllib.request.urlopen(host)  # Python 3.x
+        urllib.request.urlopen(host, timeout=2)  # Python 3.x
         return True
-    except:
+    except Exception:
         return False
+
+
+def isAPIconnected(src='erddap', data=True):
+    """ Check if a source web API is alive or not
+
+        Parameters
+        ----------
+        src: str
+            The data or index source name, 'erddap' default
+        data: bool
+            If True check the data fetcher (default), if False, check the index fetcher
+
+        Returns
+        -------
+        bool
+    """
+    if data:
+        AVAILABLE_SOURCES = list_available_data_src()
+    else:
+        AVAILABLE_SOURCES = list_available_index_src()
+    if src in AVAILABLE_SOURCES and getattr(AVAILABLE_SOURCES[src], "api_server_check", None):
+        with set_options(src=src):
+            return isconnected(AVAILABLE_SOURCES[src].api_server_check)
+    else:
+        raise InvalidFetcher
+
 
 def erddap_ds_exists(ds="ArgoFloats"):
     """ Given erddap fetcher, check if a Dataset exists, return a bool"""
     # e = ArgoDataFetcher(src='erddap').float(wmo=0).fetcher
     # erddap_index = json.load(urlopen(e.erddap.server + "/info/index.json"))
-    erddap_index = json.load(urlopen("http://www.ifremer.fr/erddap/info/index.json"))
+    # erddap_index = json.load(urlopen("http://www.ifremer.fr/erddap/info/index.json"))
+    with httpstore(timeout=120).open("http://www.ifremer.fr/erddap/info/index.json") as of:
+        erddap_index = json.load(of)
     return ds in [row[-1] for row in erddap_index['table']['rows']]
+
 
 def open_etopo1(box, res='l'):
     """ Download ETOPO for a box
@@ -390,11 +469,64 @@ def open_etopo1(box, res='l'):
            "&resx={}&resy={}"
            "&bbox={}").format
     thisurl = uri(resx, resy, ",".join([str(b) for b in [box[0], box[2], box[1], box[3]]]))
-    #     print(thisurl)
-    ds = xr.open_dataset(urlopen(thisurl).read())
+    ds = httpstore(cache=True).open_dataset(thisurl)
     da = ds['Band1'].rename("topo")
     for a in ds.attrs:
         da.attrs[a] = ds.attrs[a]
     da.attrs['Data source'] = 'https://maps.ngdc.noaa.gov/viewers/wcs-client/'
     da.attrs['URI'] = thisurl
     return da
+
+#
+#  From xarrayutils : https://github.com/jbusecke/xarrayutils/blob/master/xarrayutils/vertical_coordinates.py
+#  Direct integration of those 2 functions to minimize dependencies and possibility of tuning them to our needs
+#
+
+
+def linear_interpolation_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped"):
+
+    # interpolation called in xarray ufunc
+    def _regular_interp(x, y, target_values):
+        # remove all nans from input x and y
+        idx = np.logical_or(np.isnan(x), np.isnan(y))
+        x = x[~idx]
+        y = y[~idx]
+        # replace nans in target_values with out of bound Values (just in case)
+        target_values = np.where(
+            ~np.isnan(target_values), target_values, np.nanmax(x) + 1)
+        # Interpolate with fill value parameter to extend min pressure toward 0
+        interpolated = interpolate.interp1d(
+            x, y, bounds_error=False, fill_value=(y[0], y[-1]))(target_values)
+        return interpolated
+
+    # infer dim from input
+    if z_dim is None:
+        if len(z.dims) != 1:
+            raise RuntimeError(
+                "if z_dim is not specified,x must be a 1D array.")
+        dim = z.dims[0]
+    else:
+        dim = z_dim
+
+    # if dataset is passed drop all data_vars that dont contain dim
+    if isinstance(data, xr.Dataset):
+        raise ValueError("Dataset input is not supported yet")
+        # TODO: for a datset input just apply the function for each appropriate array
+
+    kwargs = dict(
+        input_core_dims=[[dim], [dim], [z_regridded_dim]],
+        output_core_dims=[[output_dim]],
+        vectorize=True,
+        dask="parallelized",
+        output_dtypes=[data.dtype],
+        output_sizes={output_dim: len(z_regridded[z_regridded_dim])},
+    )
+    remapped = xr.apply_ufunc(
+        _regular_interp, z, data, z_regridded, **kwargs)
+
+    remapped.coords[output_dim] = z_regridded.rename(
+        {z_regridded_dim: output_dim}
+    ).coords[output_dim]
+    return remapped
+
+####################

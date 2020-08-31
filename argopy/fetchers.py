@@ -5,59 +5,18 @@
 High level helper methods to load Argo data from any source
 The facade should be able to work with all available data access point,
 
-Usage for LOCALFTP:
-
-    from argopy import DataFetcher as ArgoDataFetcher
-
-    argo_loader = ArgoDataFetcher(src='localftp', ds='phy')
-or
-    argo_loader = ArgoDataFetcher(src='localftp', ds='bgc')
-
-    argo_loader.float(6902746).to_xarray()
-    argo_loader.float([6902746, 6902747, 6902757, 6902766]).to_xarray()
-
-
-Usage for ERDDAP (default src):
-
-    from argopy import DataFetcher as ArgoDataFetcher
-
-    argo_loader = ArgoDataFetcher(src='erddap')
-or
-    argo_loader = ArgoDataFetcher(src='erddap', cachedir='tmp', cache=True)
-or
-    argo_loader = ArgoDataFetcher(src='erddap', ds='ref')
-
-    argo_loader.profile(6902746, 34).to_xarray()
-    argo_loader.profile(6902746, np.arange(12,45)).to_xarray()
-    argo_loader.profile(6902746, [1,12]).to_xarray()
-or
-    argo_loader.float(6902746).to_xarray()
-    argo_loader.float([6902746, 6902747, 6902757, 6902766]).to_xarray()
-    argo_loader.float([6902746, 6902747, 6902757, 6902766], CYC=1).to_xarray()
-or
-    argo_loader.region([-85,-45,10.,20.,0,1000.]).to_xarray()
-    argo_loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2014-12']).to_xarray()
-
 """
 
-import os
-import sys
-import glob
-import pandas as pd
-import xarray as xr
-import numpy as np
 import warnings
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher
-
-from .utilities import list_available_data_src
-AVAILABLE_SOURCES = list_available_data_src()
-
-# Import plotters :
+from .utilities import list_available_data_src, list_available_index_src
 from .plotters import plot_trajectory, plot_dac, plot_profilerType
+AVAILABLE_DATA_SOURCES = list_available_data_src()
+AVAILABLE_INDEX_SOURCES = list_available_index_src()
 
-# Highest level API / Facade:
+
 class ArgoDataFetcher(object):
     """ Fetch and process Argo data.
 
@@ -75,13 +34,33 @@ class ArgoDataFetcher(object):
         This is the main API facade.
         Specify here all options to data_fetchers.
 
+        Parameters
+        ----------
+        mode : str
+        src : str
+        ds : str
+
     """
 
     def __init__(self,
                  mode: str = "",
-                 src : str = "",
+                 src: str = "",
                  ds: str = "",
                  **fetcher_kwargs):
+
+        """
+            Parameters
+            ----------
+            mode : str
+                User mode. Set to OPTIONS['mode'] by default.
+            ds : str
+                Name of the dataset to load. Use the global OPTIONS['dataset'] by default.
+            src : str
+                Source of the data to use. Use the global OPTIONS['src'] by default.
+
+            **fetcher_kwargs
+                Used to pass arguments specific to a data source.
+        """
 
         # Facade options:
         self._mode = OPTIONS['mode'] if mode == '' else mode
@@ -92,11 +71,12 @@ class ArgoDataFetcher(object):
         _VALIDATORS['src'](self._src)
         _VALIDATORS['dataset'](self._dataset_id)
 
-        # Load src access points:
-        if self._src not in AVAILABLE_SOURCES:
-            raise ValueError("Data fetcher '%s' not available" % self._src)
+        # Load data source access points:
+        if self._src not in AVAILABLE_DATA_SOURCES:
+            raise InvalidFetcher("Requested data fetcher '%s' not available ! Please try again with any of: %s"
+                                 % (self._src, "\n".join(AVAILABLE_DATA_SOURCES)))
         else:
-            Fetchers = AVAILABLE_SOURCES[self._src]
+            Fetchers = AVAILABLE_DATA_SOURCES[self._src]
 
         # Auto-discovery of access points for this fetcher:
         # rq: Access point names for the facade are not the same as the access point of fetchers
@@ -115,9 +95,10 @@ class ArgoDataFetcher(object):
             ds = Fetchers.dataset_ids[0]
         self.fetcher_options = {**{'ds': ds}, **fetcher_kwargs}
         self.postproccessor = self.__empty_processor
+        self._AccessPoint = None
 
         # Dev warnings
-        #Todo Clean-up before each release
+        # Todo Clean-up before each release
         if self._dataset_id == 'bgc' and self._mode == 'standard':
             warnings.warn(" 'BGC' dataset fetching in 'standard' user mode is not reliable. "
                           "Try to switch to 'expert' mode if you encounter errors.")
@@ -146,6 +127,12 @@ class ArgoDataFetcher(object):
             raise InvalidFetcherAccessPoint("'%s' is not a valid access point" % key)
         pass
 
+    def dashboard(self, **kw):
+        try:
+            return self.fetcher.dashboard(**kw)
+        except Exception as e:
+            warnings.warn("dashboard not avaible for this fetcher access point (%s/%s)" % (self._src, self._AccessPoint))
+
     def float(self, wmo, **kw):
         """ Fetch data from a float """
         if "CYC" in kw or "cyc" in kw:
@@ -154,6 +141,7 @@ class ArgoDataFetcher(object):
 
         if 'float' in self.Fetchers:
             self.fetcher = self.Fetchers['float'](WMO=wmo, **self.fetcher_options)
+            self._AccessPoint = 'float'  # Register the requested access point
         else:
             raise InvalidFetcherAccessPoint("'float' not available with '%s' src" % self._src)
 
@@ -173,6 +161,7 @@ class ArgoDataFetcher(object):
         """
         if 'profile' in self.Fetchers:
             self.fetcher = self.Fetchers['profile'](WMO=wmo, CYC=cyc, **self.fetcher_options)
+            self._AccessPoint = 'profile'  # Register the requested access point
         else:
             raise InvalidFetcherAccessPoint("'profile' not available with '%s' src" % self._src)
 
@@ -204,6 +193,7 @@ class ArgoDataFetcher(object):
         """
         if 'region' in self.Fetchers:
             self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)
+            self._AccessPoint = 'region'  # Register the requested access point
         else:
             raise InvalidFetcherAccessPoint("'region' not available with '%s' src" % self._src)
 
@@ -218,31 +208,44 @@ class ArgoDataFetcher(object):
         return self
 
     def to_xarray(self, **kwargs):
-        """ Fetch and return data as xarray.DataSet """
-        if not self.fetcher:
-            raise InvalidFetcher(" Initialize an access point (%s) first." %
-                                 ",".join(self.Fetchers.keys()))
+        """ Fetch and return data as xarray.DataSet
+
+            Returns
+            -------
+            :class:`xarray.DataArray`
+        """
+        # if not self.fetcher:
+        #     raise InvalidFetcher(" Initialize an access point (%s) first." %
+        #                          ",".join(self.Fetchers.keys()))
+        if self._AccessPoint not in self.valid_access_points:
+            raise InvalidFetcherAccessPoint(" Initialize an access point (%s) first." % ",".join(self.Fetchers.keys()))
         xds = self.fetcher.to_xarray(**kwargs)
         xds = self.postproccessor(xds)
         return xds
 
     def to_dataframe(self, **kwargs):
         """  Fetch and return data as pandas.Dataframe """
-        xds = self.to_xarray(**kwargs)
-        return xds.to_dataframe()
+        if self._AccessPoint not in self.valid_access_points:
+            raise InvalidFetcherAccessPoint(" Initialize an access point (%s) first." % ",".join(self.Fetchers.keys()))
+        return self.to_xarray(**kwargs).to_dataframe()
+
+    def clear_cache(self):
+        """ Clear fetcher cached data """
+        return self.fetcher.clear_cache()
+
 
 class ArgoIndexFetcher(object):
-    """    
+    """
     Specs discussion :
-    https://github.com/euroargodev/argopy/issues/8 
+    https://github.com/euroargodev/argopy/issues/8
     https://github.com/euroargodev/argopy/pull/6)
-    
-    Usage : 
+
+    Usage:
 
     from argopy import ArgoIndexFetcher
     idx = ArgoIndexFetcher.region([-75, -65, 10, 20])
     idx.plot.trajectories()
-    idx.to_dataframe()    
+    idx.to_dataframe()
 
     Fetch and process Argo index.
 
@@ -253,43 +256,45 @@ class ArgoIndexFetcher(object):
 
     idx object can also be used as an input :
      argo_loader = ArgoDataFetcher(index=idx)
-    
+
     Specify here all options to data_fetchers
 
     """
-     
     def __init__(self,
                  mode: str = "",
-                 src : str = "",
+                 src: str = "",
                  **fetcher_kwargs):
 
         # Facade options:
-        self._mode = OPTIONS['mode'] if mode == '' else mode        
+        self._mode = OPTIONS['mode'] if mode == '' else mode
         self._src = OPTIONS['src'] if src == '' else src
 
         _VALIDATORS['mode'](self._mode)
         _VALIDATORS['src'](self._src)
 
-        # Load src access points:
-        if self._src not in AVAILABLE_SOURCES:
-            raise ValueError("Fetcher '%s' not available" % self._src)
+        # Load data source access points:
+        if self._src not in AVAILABLE_INDEX_SOURCES:
+            raise InvalidFetcher("Requested index fetcher '%s' not available ! "
+                                 "Please try again with any of: %s" % (self._src, "\n".join(AVAILABLE_INDEX_SOURCES)))
         else:
-            Fetchers = AVAILABLE_SOURCES[self._src]
+            Fetchers = AVAILABLE_INDEX_SOURCES[self._src]
 
         # Auto-discovery of access points for this fetcher:
         # rq: Access point names for the facade are not the same as the access point of fetchers
-        self.valid_access_points = ['float', 'region']
+        self.valid_access_points = ['profile', 'float', 'region']
         self.Fetchers = {}
         for p in Fetchers.access_points:
-            if p == 'wmo':  # Required for 'profile' and 'float'                
-                self.Fetchers['float'] = Fetchers.IndexFetcher_wmo
+            if p == 'wmo':  # Required for 'profile' and 'float'
+                self.Fetchers['profile'] = Fetchers.Fetcher_wmo
+                self.Fetchers['float'] = Fetchers.Fetcher_wmo
             if p == 'box':  # Required for 'region'
-                self.Fetchers['region'] = Fetchers.IndexFetcher_box
+                self.Fetchers['region'] = Fetchers.Fetcher_box
 
         # Init sub-methods:
         self.fetcher = None
         self.fetcher_options = {**fetcher_kwargs}
-        self.postproccessor = self.__empty_processor                
+        self.postproccessor = self.__empty_processor
+        self._AccessPoint = None
 
     def __repr__(self):
         if self.fetcher:
@@ -297,7 +302,7 @@ class ArgoIndexFetcher(object):
             summary.append("User mode: %s" % self._mode)
         else:
             summary = ["<indexfetcher 'Not initialised'>"]
-            summary.append("Fetchers: 'float' or 'region'")
+            summary.append("Fetchers: %s" % ", ".join(self.Fetchers.keys()))
             summary.append("User mode: %s" % self._mode)
         return "\n".join(summary)
 
@@ -312,21 +317,35 @@ class ArgoIndexFetcher(object):
             raise InvalidFetcherAccessPoint("'%s' is not a valid access point" % key)
         pass
 
+    def profile(self, wmo, cyc):
+        """ Fetch index for a profile
+
+            given one or more WMOs and CYCLE_NUMBER
+        """
+        if 'profile' in self.Fetchers:
+            self.fetcher = self.Fetchers['profile'](WMO=wmo, CYC=cyc, **self.fetcher_options)
+            self._AccessPoint = 'profile'  # Register the requested access point
+        else:
+            raise InvalidFetcherAccessPoint("'profile' not available with '%s' src" % self._src)
+        return self
+
     def float(self, wmo):
         """ Load index for one or more WMOs """
         if 'float' in self.Fetchers:
-            self.fetcher = self.Fetchers['float'](WMO=wmo, **self.fetcher_options)            
+            self.fetcher = self.Fetchers['float'](WMO=wmo, **self.fetcher_options)
+            self._AccessPoint = 'float'  # Register the requested access point
         else:
             raise InvalidFetcherAccessPoint("'float' not available with '%s' src" % self._src)
-        return self    
+        return self
 
     def region(self, box):
         """ Load index for a rectangular space/time domain region """
         if 'region' in self.Fetchers:
-            self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)            
+            self.fetcher = self.Fetchers['region'](box=box, **self.fetcher_options)
+            self._AccessPoint = 'region'  # Register the requested access point
         else:
             raise InvalidFetcherAccessPoint("'region' not available with '%s' src" % self._src)
-        return self        
+        return self
 
     def to_dataframe(self, **kwargs):
         """ Fetch index and return pandas.Dataframe """
@@ -337,18 +356,16 @@ class ArgoIndexFetcher(object):
 
     def to_xarray(self, **kwargs):
         """ Fetch index and return xr.dataset """
-        if not self.fetcher:
-            raise InvalidFetcher(" Initialize an access point (%s) first." %
-                                 ",".join(self.Fetchers.keys()))
+        if self._AccessPoint not in self.valid_access_points:
+            raise InvalidFetcherAccessPoint(" Initialize an access point (%s) first." % ",".join(self.Fetchers.keys()))
         return self.fetcher.to_xarray(**kwargs)
 
-    def to_csv(self, file: str='output_file.csv'):
+    def to_csv(self, file: str = 'output_file.csv'):
         """ Fetch index and return csv """
-        if not self.fetcher:
-            raise InvalidFetcher(" Initialize an access point (%s) first." %
-                                 ",".join(self.Fetchers.keys()))
+        if self._AccessPoint not in self.valid_access_points:
+            raise InvalidFetcherAccessPoint(" Initialize an access point (%s) first." % ",".join(self.Fetchers.keys()))
         return self.to_dataframe().to_csv(file)
-    
+
     def plot(self, ptype='trajectory'):
         """ Create custom plots from index
 
@@ -362,12 +379,16 @@ class ArgoIndexFetcher(object):
             fig : :class:`matplotlib.pyplot.figure.Figure`
                 Figure instance
         """
-        idx=self.to_dataframe()        
-        if ptype=='dac':
+        idx = self.to_dataframe()
+        if ptype == 'dac':
             return plot_dac(idx)
-        elif ptype=='profiler':
+        elif ptype == 'profiler':
             return plot_profilerType(idx)
-        elif ptype=='trajectory':           
+        elif ptype == 'trajectory':
             return plot_trajectory(idx.sort_values(['file']))
         else:
             raise ValueError("Type of plot unavailable. Use: 'dac', 'profiler' or 'trajectory' (default)")
+
+    def clear_cache(self):
+        """ Clear fetcher cached data """
+        return self.fetcher.clear_cache()

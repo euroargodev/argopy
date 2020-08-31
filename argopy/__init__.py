@@ -15,8 +15,10 @@ from . import tutorial
 
 # Other Import
 from . import utilities
-from .utilities import show_versions
+from . import stores
+from .utilities import show_versions, clear_cache
 from .options import set_options
+from .plotters import open_dashboard as dashboard
 
 #
 __all__ = (
@@ -27,10 +29,14 @@ __all__ = (
     # Top-level functions:
     "set_options",
     "show_versions",
+    "dashboard",
+    "clear_cache",
     # Sub-packages,
     "utilities",
     "errors",
     "plotters",
+    "stores",
+    "tutorial",
     # Constants
     "__version__"
 )

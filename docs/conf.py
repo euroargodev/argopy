@@ -21,13 +21,6 @@ import datetime
 from contextlib import suppress
 allowed_failures = set()
 
-if 'conda' in sys.executable:
-    print('conda environment:')
-    subprocess.run(['conda', 'list'])
-else:
-    print('pip environment:')
-    subprocess.run(['pip', 'list'])
-
 print("xarray: %s, %s" % (xarray.__version__, xarray.__file__))
 
 with suppress(ImportError):

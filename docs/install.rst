@@ -7,6 +7,8 @@ Required dependencies
 - Python 3.6
 - Xarray 0.14
 - Erddapy 0.5
+- Fsspec 0.7
+- Gsw 3.3
 
 Note that Erddapy_ is required because `erddap <https://coastwatch.pfeg.noaa.gov/erddap/information.html>`_ is the default data fetching backend.
 
@@ -24,13 +26,19 @@ For full plotting functionality the following packages are required:
 Instructions
 ^^^^^^^^^^^^
 
-Install the last release with pip:
+Install the last release with conda:
+
+.. code-block:: text
+
+    conda install -c conda-forge argopy
+
+or pip:
 
 .. code-block:: text
 
     pip install argopy
 
-or the latest version:
+you can also work with the latest version:
 
 .. code-block:: text
 
