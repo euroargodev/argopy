@@ -3,7 +3,7 @@
 What's New
 ==========
 
-v0.1.6 (XX XXX 2020)
+v0.1.7 (XX Oct. 2020)
 -----------------------
 
 **Features and front-end API**
@@ -25,6 +25,14 @@ v0.1.6 (XX XXX 2020)
 **Internals**
 
 - New ``open_mfdataset`` and ``open_mfjson`` methods in Argo stores. These can be used to open, preprocess and concatenate a collection of paths both in sequential or parallel order. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+
+v0.1.6 (31 Aug. 2020)
+---------------------
+
+- **JOSS paper published**. You can now cite argopy with a clean reference. (:pr:`30`) by `G. Maze <http://www.github.com/gmaze>`_ and `K. Balem <http://www.github.com/quai20>`_.
+
+Maze G. and Balem K. (2020). argopy: A Python library for Argo ocean data analysis. *Journal of Open Source Software*, 5(52), 2425 doi: `10.21105/joss.02425 <http://dx.doi.org/10.21105/joss.02425>`_.
 
 
 v0.1.5 (10 July 2020)
