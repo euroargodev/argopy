@@ -643,10 +643,10 @@ class Fetch_box(ErddapArgoDataFetcher):
         if not self.parallel:
             return [self.get_url()]
         else:
-            C = Chunker(
+            self.Chunker = Chunker(
                 {"box": self.BOX}, chunks=self.chunks, chunksize=self.chunks_maxsize
             )
-            boxes = C.fit_transform()
+            boxes = self.Chunker.fit_transform()
             urls = []
             for box in boxes:
                 urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())

@@ -1,10 +1,10 @@
 import os
 import io
 import types
-import numpy as np
 import xarray as xr
 import pandas as pd
 import requests
+import aiohttp
 import fsspec
 import shutil
 import pickle
@@ -15,7 +15,6 @@ from IPython.core.display import display, HTML
 
 import concurrent.futures
 from tqdm import tqdm
-import distributed
 import multiprocessing
 
 from argopy.options import OPTIONS
@@ -339,7 +338,7 @@ class httpstore(argo_store_proto):
     """
     protocol = "http"
 
-    def _verbose_exceptions(self, e):
+    def _verbose_requests_exceptions(self, e: requests.HTTPError):
         r = e.response  # https://requests.readthedocs.io/en/master/api/#requests.Response
         data = io.BytesIO(r.content)
         url = r.url
@@ -389,6 +388,66 @@ class httpstore(argo_store_proto):
             print("\n".join(error))
             r.raise_for_status()
 
+    def _verbose_aiohttp_exceptions(self, e: aiohttp.ClientResponseError):
+        url = e.request_info.url
+        message = e.message
+
+        # 4XX client error response
+        if e.status == 404:  # Empty response
+            error = ["Error %i " % e.status]
+            error.append(message.replace("Error", ""))
+            error.append("The URL triggering this error was: \n%s" % url)
+            msg = "\n".join(error)
+            if "Currently unknown datasetID" in msg:
+                raise ErddapServerError("Dataset not found in the Erddap, try again later. "
+                                        "The server may be rebooting. \n%s" % msg)
+            else:
+                raise ErddapServerError(msg)
+
+        # aiohttp.ClientResponseError(
+        #     request_info: None,
+        # history: Tuple[NoneType, ...],
+        # *,
+        # code: Union[int, NoneType] = None,
+        #                              status:Union[int, NoneType] = None,
+        #                                                            message:str = '',
+        #                                                                          headers:Union[
+        #     multidict._multidict.CIMultiDict, NoneType] = None,
+        # ) -> None
+
+        elif e.status == 413:  # Too large request
+            error = ["Error %i " % e.status]
+            error.append(message.replace("Error", ""))
+            error.append("The URL triggering this error was: \n%s" % url)
+            msg = "\n".join(error)
+            # if "Payload Too Large" in msg:
+            raise ErddapServerError("Your query produced too much data. "
+                                    "Try to request less data or to use the 'parallel=True' option in your fetcher.\n%s" % msg)
+            # else:
+            #     raise requests.HTTPError(msg)
+
+        # 5XX server error response
+        elif e.status == 500:  # 500 Internal Server Error
+            if "text/html" in e.headers.get('content-type'):
+                display(HTML(message))
+            error = ["Error %i " % e.status]
+            error.append(message)
+            error.append("The URL triggering this error was: \n%s" % url)
+            msg = "\n".join(error)
+            if "No space left on device" in msg or "java.io.EOFException" in msg:
+                raise ErddapServerError("An error occurred on the Erddap server side. "
+                                        "Please contact assistance@ifremer.fr to ask a "
+                                        "reboot of the erddap server. \n%s" % msg)
+            else:
+                raise aiohttp.ClientResponseError(msg)
+
+        else:
+            error = ["Error %i " % e.status]
+            error.append(message)
+            error.append("The URL triggering this error was: \n%s" % url)
+            print("\n".join(error))
+            e.raise_for_status()
+
     def open_dataset(self, url, *args, **kwargs):
         """ Open and decode a xarray dataset from an url
 
@@ -401,18 +460,24 @@ class httpstore(argo_store_proto):
             :class:`xarray.Dataset`
 
         """
-        try:
-            with self.fs.open(url) as of:
-                ds = xr.open_dataset(of, *args, **kwargs)
-            if "source" not in ds.encoding:
-                if isinstance(url, str):
-                    ds.encoding["source"] = url
-            self.register(url)
-            return ds
-        except requests.exceptions.ConnectionError as e:
-            raise APIServerError("No API response for %s" % url)
-        except requests.HTTPError as e:
-            self._verbose_exceptions(e)
+        # try:
+        with self.fs.open(url) as of:
+            ds = xr.open_dataset(of, *args, **kwargs)
+        if "source" not in ds.encoding:
+            if isinstance(url, str):
+                ds.encoding["source"] = url
+        self.register(url)
+        return ds
+        # except Exception as e:
+        #     raise e
+        # except requests.exceptions.ConnectionError as e:
+        #     raise APIServerError("No API response for %s" % url)
+        # except requests.HTTPError as e:
+        #     self._verbose_requests_exceptions(e)
+        #     pass
+        # except aiohttp.ClientResponseError as e:
+        #     self._verbose_aiohttp_exceptions(e)
+        #     pass
 
     def _mfprocessor_dataset(self, url, preprocess = None, *args, **kwargs):
         # Load data
@@ -491,7 +556,7 @@ class httpstore(argo_store_proto):
                         failed.append(future_to_url[future])
                         if errors == 'ignore':
                             warnings.warn(
-                                "Something went wrong with this url: %s\nException raised: %s" % (future_to_url[future], str(e.args)))
+                                "Something went wrong with this url: %s\nException raised: %s" % (future_to_url[future].replace("https://", "").replace("http://", ""), str(e.args)))
                             pass
                         else:
                             raise
@@ -515,7 +580,7 @@ class httpstore(argo_store_proto):
                     failed.append(url)
                     if errors == 'ignore':
                         warnings.warn(
-                            "Something went wrong with this url: %s\nException raised: %s" % (url, str(e.args)))
+                            "Something went wrong with this url: %s\nException raised: %s" % (url.replace("https://", "").replace("http://", ""), str(e.args)))
                         pass
                     else:
                         raise
@@ -622,6 +687,8 @@ class httpstore(argo_store_proto):
             -------
             list()
         """
+        strUrl = lambda x: x.replace("https://","").replace("http://","")
+
         if not isinstance(urls, list):
             urls = [urls]
 
@@ -649,7 +716,7 @@ class httpstore(argo_store_proto):
                         failed.append(future_to_url[future])
                         if errors == 'ignore':
                             warnings.warn(
-                                "Something went wrong with this url: %s\nException raised: %s" % (future_to_url[future], str(e.args)))
+                                "Something went wrong with this url: %s\nException raised: %s" % (strUrl(future_to_url[future]), str(e.args)))
                             pass
                         else:
                             raise
@@ -673,7 +740,7 @@ class httpstore(argo_store_proto):
                     failed.append(url)
                     if errors == 'ignore':
                         warnings.warn(
-                            "Something went wrong with this url: %s\nException raised: %s" % (url, str(e.args)))
+                            "Something went wrong with this url: %s\nException raised: %s" % (strUrl(url), str(e.args)))
                         pass
                     else:
                         raise

@@ -363,15 +363,15 @@ class Fetch_box(ArgovisDataFetcher):
             self.definition = "Argovis Argo data fetcher for a space/time region"
         return self
 
-    def get_url(self):
+    def get_url_shape(self):
         """ Return the URL used to download data """
         shape = [
             [
-                [self.BOX[0], self.BOX[2]],
-                [self.BOX[0], self.BOX[3]],
-                [self.BOX[1], self.BOX[3]],
-                [self.BOX[1], self.BOX[2]],
-                [self.BOX[0], self.BOX[2]],
+                [self.BOX[0], self.BOX[2]],  # ll
+                [self.BOX[0], self.BOX[3]],  # ul
+                [self.BOX[1], self.BOX[3]],  # ur
+                [self.BOX[1], self.BOX[2]],  # lr
+                [self.BOX[0], self.BOX[2]],  # ll
             ]
         ]
         strShape = str(shape).replace(" ", "")
@@ -385,6 +385,22 @@ class Fetch_box(ArgovisDataFetcher):
         url += "&shape={}".format(strShape)
         url += "&presRange=[{},{}]".format(self.BOX[4], self.BOX[5])
         return url
+
+    def get_url_rect(self):
+        """ Return the URL used to download data """
+        strCorner = lambda b, i: str([b[i[0]],b[i[1]]]).replace(" ", "")
+        strDate = lambda b, i: pd.to_datetime(b[i]).strftime("%Y-%m-%dT%H:%M:%SZ")
+        url = self.server + "/selection/box/profiles"
+        url += "?startDate={}".format(strDate(self.BOX, 6))
+        url += "&endDate={}".format(strDate(self.BOX, 7))
+        url += "&presRange=[{},{}]".format(self.BOX[4], self.BOX[5])
+        url += "&llCorner={}".format(strCorner(self.BOX, [0, 2]))
+        url += "&urCorner={}".format(strCorner(self.BOX, [1, 3]))
+        return url
+
+    def get_url(self):
+        # return self.get_url_shape()
+        return self.get_url_rect()
 
     @property
     def uri(self):

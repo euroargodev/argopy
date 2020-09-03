@@ -410,6 +410,8 @@ def show_versions(file=sys.stdout):
         ("numpy", lambda mod: mod.__version__),
         ("scipy", lambda mod: mod.__version__),
         # argopy optionals
+        ("fsspec", lambda mod: mod.__version__),
+        ("erddapy", lambda mod: mod.__version__),
         ("netCDF4", lambda mod: mod.__version__),
         ("pydap", lambda mod: mod.__version__),
         ("h5netcdf", lambda mod: mod.__version__),
@@ -429,6 +431,7 @@ def show_versions(file=sys.stdout):
         ("cartopy", lambda mod: mod.__version__),
         ("seaborn", lambda mod: mod.__version__),
         ("numbagg", lambda mod: mod.__version__),
+        ("gsw", lambda mod: mod.__version__),
         # argopy setup/test
         ("setuptools", lambda mod: mod.__version__),
         ("pip", lambda mod: mod.__version__),
