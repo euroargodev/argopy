@@ -558,6 +558,8 @@ class httpstore(argo_store_proto):
                             warnings.warn(
                                 "Something went wrong with this url: %s\nException raised: %s" % (future_to_url[future].replace("https://", "").replace("http://", ""), str(e.args)))
                             pass
+                        elif errors == 'silent':
+                            pass
                         else:
                             raise
                     finally:
@@ -581,6 +583,8 @@ class httpstore(argo_store_proto):
                     if errors == 'ignore':
                         warnings.warn(
                             "Something went wrong with this url: %s\nException raised: %s" % (url.replace("https://", "").replace("http://", ""), str(e.args)))
+                        pass
+                    elif errors == 'silent':
                         pass
                     else:
                         raise
@@ -718,6 +722,8 @@ class httpstore(argo_store_proto):
                             warnings.warn(
                                 "Something went wrong with this url: %s\nException raised: %s" % (strUrl(future_to_url[future]), str(e.args)))
                             pass
+                        elif errors == 'silent':
+                            pass
                         else:
                             raise
                     finally:
@@ -741,6 +747,8 @@ class httpstore(argo_store_proto):
                     if errors == 'ignore':
                         warnings.warn(
                             "Something went wrong with this url: %s\nException raised: %s" % (strUrl(url), str(e.args)))
+                        pass
+                    elif errors == 'silent':
                         pass
                     else:
                         raise
