@@ -464,7 +464,7 @@ class httpstore(argo_store_proto):
         # with self.fs.open(url) as of:
         #     ds = xr.open_dataset(of, *args, **kwargs)
         data = self.fs.cat_file(url)
-        ds = xr.open_dataset(io.BytesIO(data), *args, **kwargs)
+        ds = xr.open_dataset(data, *args, **kwargs)
 
         if "source" not in ds.encoding:
             if isinstance(url, str):
@@ -512,7 +512,7 @@ class httpstore(argo_store_proto):
             urls: list(str)
                 List of url/path to open
             concat_dim: str
-                Name of the dimension to use to concatenate all dataset (passed to :class:`xarray.concat`)
+                Name of the dimension to use to concatenate all datasets (passed to :class:`xarray.concat`)
             max_workers: int
                 Maximum number of threads or processes
             method: str
