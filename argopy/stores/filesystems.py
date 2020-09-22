@@ -461,11 +461,8 @@ class httpstore(argo_store_proto):
 
         """
         # try:
-        # with self.fs.open(url) as of:
-        #     ds = xr.open_dataset(of, *args, **kwargs)
-        data = self.fs.cat_file(url)
-        ds = xr.open_dataset(data, *args, **kwargs)
-
+        with self.fs.open(url) as of:
+            ds = xr.open_dataset(of, *args, **kwargs)
         if "source" not in ds.encoding:
             if isinstance(url, str):
                 ds.encoding["source"] = url
@@ -623,10 +620,8 @@ class httpstore(argo_store_proto):
 
         """
         try:
-            # with self.fs.open(url) as of:
-            #     df = pd.read_csv(of, **kwargs)
-            data = self.fs.cat_file(url)
-            df = pd.read_csv(io.BytesIO(data), **kwargs)
+            with self.fs.open(url) as of:
+                df = pd.read_csv(of, **kwargs)
             self.register(url)
             return df
         except requests.HTTPError as e:
@@ -645,10 +640,8 @@ class httpstore(argo_store_proto):
 
         """
         try:
-            # with self.fs.open(url) as of:
-            #     js = json.load(of, **kwargs)
-            data = self.fs.cat_file(url)
-            js = json.load(io.BytesIO(data), **kwargs)
+            with self.fs.open(url) as of:
+                js = json.load(of, **kwargs)
             self.register(url)
             return js
         except json.JSONDecodeError as e:
