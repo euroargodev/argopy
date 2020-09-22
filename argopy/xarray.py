@@ -509,11 +509,13 @@ class ArgoAccessor:
                                        dims=['N_PROF', 'N_LEVELS'],
                                        coords={'N_PROF': np.arange(N_PROF),
                                                'N_LEVELS': np.arange(N_LEVELS)},
+                                       attrs=this[vname].attrs,
                                        name=vname))
         for vname in list_1d:
             new_ds.append(xr.DataArray(np.full((N_PROF,), fillvalue(this[vname]), dtype=this[vname].dtype),
                                        dims=['N_PROF'],
                                        coords={'N_PROF': np.arange(N_PROF)},
+                                       attrs=this[vname].attrs,
                                        name=vname))
         new_ds = xr.merge(new_ds)
 

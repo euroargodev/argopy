@@ -22,14 +22,13 @@ from argopy.options import OPTIONS
 from argopy.utilities import list_standard_variables, format_oneline, is_box, Chunker
 from argopy.plotters import open_dashboard
 
-access_points = ["wmo", "box"]
-exit_formats = ["xarray"]
-dataset_ids = ["phy"]  # First is default
-api_server = "https://argovis.colorado.edu"  # API root url
+access_points = ['wmo', 'box']
+exit_formats = ['xarray']
+dataset_ids = ['phy']  # First is default
+api_server = 'https://argovis.colorado.edu'  # API root url
 api_server_check = (
     api_server + "/selection/overview"
 )  # URL to check if the API is alive
-
 
 class ArgovisDataFetcher(ArgoDataFetcherProto):
     ###
@@ -338,6 +337,7 @@ class Fetch_wmo(ArgovisDataFetcher):
 
 
 class Fetch_box(ArgovisDataFetcher):
+	
     def init(self, box: list):
         """ Create Argo data loader
 
@@ -449,3 +449,8 @@ class Fetch_box(ArgovisDataFetcher):
             for box in boxes:
                 urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())
             return urls
+
+    @property
+    def url(self):
+        # return self.get_url_shape()
+        return self.get_url_rect()

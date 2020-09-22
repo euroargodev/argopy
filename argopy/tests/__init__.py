@@ -6,20 +6,13 @@ Test suite for argopy continuous integration
 """
 
 import importlib
-
-import xarray
-import pandas
 import pytest
-
-print("xarray: %s, %s" % (xarray.__version__, xarray.__file__))
-print("pandas: %s, %s" % (pandas.__version__, pandas.__file__))
-
 import argopy
 argopy.set_options(api_timeout=3 * 60)  # From Github actions, requests can take a while
 
 def _importorskip(modname):
     try:
-        mod = importlib.import_module(modname)
+        importlib.import_module(modname)
         has = True
     except ImportError:
         has = False
@@ -45,7 +38,6 @@ else:
     DSEXISTS = False
     DSEXISTS_bgc = False
     DSEXISTS_ref = False
-
 
 has_connection, requires_connection = _connectskip(CONNECTED, "requires an internet connection")
 
