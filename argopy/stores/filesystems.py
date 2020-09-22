@@ -461,8 +461,10 @@ class httpstore(argo_store_proto):
 
         """
         # try:
-        with self.fs.open(url) as of:
-            ds = xr.open_dataset(of, *args, **kwargs)
+        # with self.fs.open(url) as of:
+        #     ds = xr.open_dataset(of, *args, **kwargs)
+        data = self.fs.cat_file(url)
+        ds = xr.open_dataset(data, *args, **kwargs)
         if "source" not in ds.encoding:
             if isinstance(url, str):
                 ds.encoding["source"] = url
