@@ -8,6 +8,7 @@ Test suite for argopy continuous integration
 import importlib
 import pytest
 import argopy
+argopy.show_versions()
 
 def _importorskip(modname):
     try:

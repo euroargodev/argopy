@@ -338,6 +338,8 @@ def show_versions(file=sys.stdout):
         ("numpy", lambda mod: mod.__version__),
         ("scipy", lambda mod: mod.__version__),
         # argopy optionals
+        ("fsspec", lambda mod: mod.__version__),
+        ("erddapy", lambda mod: mod.__version__),
         ("netCDF4", lambda mod: mod.__version__),
         ("pydap", lambda mod: mod.__version__),
         ("h5netcdf", lambda mod: mod.__version__),
