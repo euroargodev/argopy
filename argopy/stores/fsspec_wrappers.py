@@ -249,8 +249,10 @@ class httpstore(argo_store_proto):
 
         """
         try:
-            with self.fs.open(url) as of:
-                ds = xr.open_dataset(of, **kwargs)
+            # with self.fs.open(url) as of:
+            #     ds = xr.open_dataset(of, **kwargs)
+            data = self.fs.cat_file(url)
+            ds = xr.open_dataset(data, **kwargs)
             self.register(url)
             return ds
         except requests.HTTPError as e:
