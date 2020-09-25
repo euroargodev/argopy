@@ -1,6 +1,6 @@
 # This workflow determines the status of web API used by argopy, every 3 minutes
 
-name: api-status
+name: status
 
 on:
   schedule:
