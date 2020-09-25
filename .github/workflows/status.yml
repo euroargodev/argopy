@@ -33,7 +33,11 @@ jobs:
         python -m pip install --upgrade pip
         pwd
         ls -l
+        pip install -r requirements.txt
+        pip install distributed aiohttp
         pip install argopy
 
     - name: Check and save API status
-      run: python -c "import argopy; argopy.utilities.save_api_status()"
+      run: |
+        python -c "import argopy; argopy.utilities.save_api_status()"
+        ls -rtl argopy/assets
