@@ -17,6 +17,9 @@ jobs:
       uses: actions/checkout@v2
       with:
         ref: 'api-satus'
+      env:
+        GIT_TRACE: 1
+        GIT_CURL_VERBOSE: 1
 
     - name: Set up Python 3.6
       uses: actions/setup-python@v1
