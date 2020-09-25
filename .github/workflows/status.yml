@@ -14,16 +14,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        - ref: 'api-satus'
 
-    - name: Set up Python 3.8
+    - name: Set up Python 3.6
       uses: actions/setup-python@v1
       with:
-        python-version: '3.8'
+        python-version: '3.6'
 
-    - name: Install argopy with pip
-      run: |
-        python -m pip install --upgrade pip
-        pip install git+http://github.com/euroargodev/argopy.git@api-status
+#    - name: Install argopy with pip
+#      run: |
+#        python -m pip install --upgrade pip
+#        pip install git+http://github.com/euroargodev/argopy.git@api-status
 
     - name: Check API status
       run: python -c "import argopy; argopy.utilities.save_api_status()"
