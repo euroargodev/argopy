@@ -1,5 +1,5 @@
 scipy>=1.1.0
-xarray>=0.14
+xarray==0.15.1
 scikit-learn>=0.21
 ipython>=5.0.0
 numpydoc>=0.6.0
@@ -8,3 +8,4 @@ dask>=2.9
 toolz>=0.8.2
 erddapy>=0.5
 fsspec>=0.7.1
+gsw>=3.3.1
