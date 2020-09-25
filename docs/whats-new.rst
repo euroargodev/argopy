@@ -8,12 +8,12 @@ v0.1.7 (XX Oct. 2020)
 
 **Features and front-end API**
 
-- Optimise large data fetching with parallelisation, for all data fetchers (erddap, localftp and argovis). See documentation page here. Three parallel methods are available: multi-threading, multi-processing and a dask client. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Optimise large data fetching with parallelisation, for all data fetchers (erddap, localftp and argovis). See documentation page on :ref:`parallel`. Two parallel methods are available: multi-threading or multi-processing. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 
     from argopy import DataFetcher as ArgoDataFetcher
-    loader = ArgoDataFetcher(src='erddap', parallel=True)
+    loader = ArgoDataFetcher(parallel=True)
     loader.float([6902766, 6902772, 6902914, 6902746]).to_xarray()
     loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2012-02']).to_xarray()
 
