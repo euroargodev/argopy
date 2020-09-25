@@ -28,5 +28,5 @@ jobs:
 #        python -m pip install --upgrade pip
 #        pip install git+http://github.com/euroargodev/argopy.git@api-status
 
-    - name: Check API status
+    - name: Check and save API status
       run: python -c "import argopy; argopy.utilities.save_api_status()"
