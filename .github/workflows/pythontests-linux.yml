@@ -38,6 +38,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install distributed aiohttp
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 #    - name: Install dependencies with conda
 #      shell: bash -l {0}
 #      run: |
@@ -55,7 +59,11 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest pytest-cov
+<<<<<<< HEAD
         pytest -s --verbosity=4 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
+=======
+        pytest -s --verbosity=3 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
+>>>>>>> master
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
