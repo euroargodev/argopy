@@ -609,9 +609,6 @@ class ArgoAccessor:
         -------
         :class:`xarray.Dataset`           
         """
-        if(self._mode != 'standard'):
-           raise InvalidDatasetStructure(
-               "Method only available for the standard mode yet")
 
         if (type(std_lev) is np.ndarray) | (type(std_lev) is list):
             std_lev = np.array(std_lev)
@@ -619,7 +616,8 @@ class ArgoAccessor:
                 raise ValueError(
                     'Standard levels must be a list or a numpy array of positive and sorted values')
         else:
-            raise ValueError('Standard levels must be a list or a numpy array of positive and sorted values')
+            raise ValueError(
+                'Standard levels must be a list or a numpy array of positive and sorted values')
 
         if self._type != 'profile':
             raise InvalidDatasetStructure(
@@ -628,15 +626,16 @@ class ArgoAccessor:
         ds = self._obj
 
         # Selecting profiles that have a max(pressure) > max(std_lev) to avoid extrapolation in that direction
-        # For levels < min(pressure), first level values of the profile are extended to surface.     
+        # For levels < min(pressure), first level values of the profile are extended to surface.
         i1 = (ds['PRES'].max('N_LEVELS') >= std_lev[-1])
         dsp = ds.where(i1, drop=True)
 
         # check if any profile is left, ie if any profile match the requested depth
         if (len(dsp['N_PROF']) == 0):
-            raise Warning('None of the profiles can be interpolated (not reaching the requested depth range).')
+            raise Warning(
+                'None of the profiles can be interpolated (not reaching the requested depth range).')
             return None
-            
+
         # add new vertical dimensions, this has to be in the datasets to apply ufunc later
         dsp['Z_LEVELS'] = xr.DataArray(std_lev, dims={'Z_LEVELS': std_lev})
 
@@ -645,12 +644,12 @@ class ArgoAccessor:
 
         # vars to interpolate
         datavars = [dv for dv in list(dsp.variables) if set(['N_LEVELS', 'N_PROF']) == set(
-            dsp[dv].dims) and 'QC' not in dv]
+            dsp[dv].dims) and 'QC' not in dv and 'ERROR' not in dv]
         # coords
         coords = [dv for dv in list(dsp.coords)]
         # vars depending on N_PROF only
         solovars = [dv for dv in list(
-            dsp.variables) if dv not in datavars and dv not in coords and 'QC' not in dv]
+            dsp.variables) if dv not in datavars and dv not in coords and 'QC' not in dv and 'ERROR' not in dv]
 
         for dv in datavars:
             ds_out[dv] = linear_interpolation_remap(
@@ -665,9 +664,9 @@ class ArgoAccessor:
 
         ds_out = ds_out.drop_vars(['N_LEVELS', 'Z_LEVELS'])
         ds_out = ds_out[np.sort(ds_out.data_vars)]
-        ds_out.attrs = self.attrs # Preserve original attributes
+        ds_out.attrs = self.attrs  # Preserve original attributes
         ds_out.argo._add_history('Interpolated on standard levels')
-        
+
         return ds_out
 
     def teos10(self, vlist: list = ['SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP'], inplace: bool = True):
@@ -689,7 +688,8 @@ class ArgoAccessor:
         :class:`xarray.Dataset`
         """
         if not with_gsw:
-            raise ModuleNotFoundError("This functionality requires the gsw library")
+            raise ModuleNotFoundError(
+                "This functionality requires the gsw library")
 
         this = self._obj
 
@@ -743,7 +743,7 @@ class ArgoAccessor:
         if 'PV' in vlist:
             pv = f * n2 / gsw.grav(lat, pres)
 
-        # Back to the dataset:    
+        # Back to the dataset:
         that = []
         if 'SA' in vlist:
             SA = xr.DataArray(sa, coords=this['PSAL'].coords, name='SA')
@@ -785,8 +785,8 @@ class ArgoAccessor:
         # Create a dataset with all new variables:
         that = xr.merge(that)
         # Add to the dataset essential Argo variables (allows to keep using the argo accessor):
-        that = that.assign({k:this[k] for k in ['TIME', ' LATITUDE', 'LONGITUDE', 'PRES', 'PRES_ADJUSTED',
-                                                'PLATFORM_NUMBER', 'CYCLE_NUMBER', 'DIRECTION'] if k in this})
+        that = that.assign({k: this[k] for k in ['TIME', ' LATITUDE', 'LONGITUDE', 'PRES', 'PRES_ADJUSTED',
+                                                 'PLATFORM_NUMBER', 'CYCLE_NUMBER', 'DIRECTION'] if k in this})
         # Manage output:
         if inplace:
             # Merge previous with new variables
