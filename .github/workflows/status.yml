@@ -13,7 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout argopy repository
+      uses: actions/checkout@v2
       with:
         ref: 'api-satus'
 
