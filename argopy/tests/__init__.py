@@ -9,6 +9,7 @@ import importlib
 import pytest
 import argopy
 argopy.set_options(api_timeout=3 * 60)  # From Github actions, requests can take a while
+argopy.show_versions()
 
 def _importorskip(modname):
     try:
