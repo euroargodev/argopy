@@ -7,6 +7,8 @@
 [![Gitter](https://badges.gitter.im/Argo-floats/argopy.svg)](https://gitter.im/Argo-floats/argopy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ![Profile count](https://img.shields.io/endpoint?label=Available%20Argo%20profile%20count%3A&style=social&url=https%3A%2F%2Fmap.argo-france.fr%2Fdata%2FARGOFULL.json)
+![Erddap status](https://img.shields.io/endpoint?label=erddap&url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_erddap.json)
+![Argovis status](https://img.shields.io/endpoint?label=argovis&url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_argovis.json)
 
 [![status](https://joss.theoj.org/papers/9e31b212f63c2bacb4006b14bb8a743f/status.svg)](https://joss.theoj.org/papers/9e31b212f63c2bacb4006b14bb8a743f)
 
@@ -14,6 +16,8 @@
 
 Several python packages exist: we continuously try to build on these libraries to provide you with a single powerfull tool.  
 [List your tool here !](https://github.com/euroargodev/argopy/issues/3)
+
+By default, ``argopy`` relies on online services to fetch data: [check services status here](https://argopy.statuspage.io).
 
 ## Install
 
