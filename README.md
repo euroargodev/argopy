@@ -1,4 +1,6 @@
-# <img src="https://raw.githubusercontent.com/euroargodev/argopy/master/docs/_static/argopy_logo_long.png" alt="argopy logo" width="200"/> Argo data python library
+<img src="https://raw.githubusercontent.com/euroargodev/argopy/master/docs/_static/argopy_logo_long.png" alt="argopy logo" width="200"/> 
+
+# Argo data python library
 
 [![Documentation Status](https://readthedocs.org/projects/argopy/badge/?version=latest)](https://argopy.readthedocs.io/en/latest/?badge=latest)
 ![Github Action Status](https://github.com/euroargodev/argopy/workflows/build/badge.svg?branch=master)
@@ -14,10 +16,9 @@
 
 ``argopy`` is a python library that aims to ease Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators. Documentation is at https://argopy.readthedocs.io/en/latest/
 
-Several python packages exist: we continuously try to build on these libraries to provide you with a single powerfull tool.  
-[List your tool here !](https://github.com/euroargodev/argopy/issues/3)
+Several python packages exist: we continuously try to build on these libraries to provide you with a single powerfull tool. [List your tool here !](https://github.com/euroargodev/argopy/issues/3)
 
-By default, ``argopy`` relies on online services to fetch data: [check services status here](https://argopy.statuspage.io).
+By default, ``argopy`` relies on online services to fetch data, you can [check web API services status here](https://argopy.statuspage.io).
 
 ## Install
 
