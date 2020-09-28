@@ -15,17 +15,21 @@ import numpy as np
 import copy
 import warnings
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 import getpass
 
 from .proto import ArgoDataFetcherProto
-from argopy.utilities import load_dict, mapp_dict
 from argopy.options import OPTIONS
 from argopy.utilities import list_standard_variables, isconnected
 from argopy.stores import httpstore
 from argopy.plotters import open_dashboard
 
-access_points = ['wmo' ,'box']
+# Dirty fix before https://github.com/ioos/erddapy/issues/140
+if isconnected():
+    from erddapy import ERDDAP
+    from erddapy.utilities import parse_dates, quote_string_constraints
+
+access_points = ['wmo', 'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy', 'ref', 'bgc']  # First is default
 api_server = 'https://www.ifremer.fr/erddap'  # API root url
@@ -77,10 +81,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             cache : False
             cachedir : None
         """
-        # Dirty fix before https://github.com/ioos/erddapy/issues/140
-        from erddapy import ERDDAP
-        from erddapy.utilities import parse_dates, quote_string_constraints
-
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
         self.definition = 'Ifremer erddap Argo data fetcher'
         self.dataset_id = OPTIONS['dataset'] if ds == '' else ds

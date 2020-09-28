@@ -15,14 +15,14 @@ import numpy as np
 import copy
 
 from abc import ABC, abstractmethod
-import getpass
 
-from .proto import ArgoDataFetcherProto
-from argopy.utilities import load_dict, mapp_dict
-from argopy.options import OPTIONS
-from argopy.utilities import list_standard_variables
+from argopy.utilities import load_dict, mapp_dict, isconnected
 from argopy.stores import httpstore
 
+# Dirty fix before https://github.com/ioos/erddapy/issues/140
+if isconnected():
+    from erddapy import ERDDAP
+    from erddapy.utilities import parse_dates, quote_string_constraints
 
 access_points = ['wmo', 'box']
 exit_formats = ['xarray', 'dataframe']
@@ -65,10 +65,6 @@ class ErddapArgoIndexFetcher(ABC):
                  cachedir: str = "",
                  **kwargs):
         """ Instantiate an ERDDAP Argo index loader with force caching """
-        # Dirty fix before https://github.com/ioos/erddapy/issues/140
-        from erddapy import ERDDAP
-        from erddapy.utilities import parse_dates, quote_string_constraints
-
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
         self.definition = 'Ifremer erddap Argo index fetcher'
         self.dataset_id = 'index'
