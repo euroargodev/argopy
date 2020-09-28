@@ -9,7 +9,7 @@
 import os
 import sys
 import warnings
-import urllib.request
+import urllib
 import json
 
 import importlib
@@ -448,6 +448,64 @@ def erddap_ds_exists(ds="ArgoFloats"):
     with httpstore(timeout=120).open("http://www.ifremer.fr/erddap/info/index.json") as of:
         erddap_index = json.load(of)
     return ds in [row[-1] for row in erddap_index['table']['rows']]
+
+
+def badge(label='label', message='message', color='green', insert=False):
+    """ Return or insert shield.io badge image
+
+        Use the shields.io service to create a badge image
+
+        https://img.shields.io/static/v1?label=<LABEL>&message=<MESSAGE>&color=<COLOR>
+
+    Parameters
+    ----------
+    label: str
+        Left side badge text
+    message: str
+        Right side badge text
+    color: str
+        Right side background color
+    insert: bool
+        Return url to badge image (False, default) or directly insert the image with HTML (True)
+
+    Returns
+    -------
+    str or IPython.display.Image
+    """
+    from IPython.display import Image
+    import urllib
+    url = ("https://img.shields.io/static/v1?style=flat-square&label={}&message={}&color={}").format
+    img = url(urllib.parse.quote(label), urllib.parse.quote(message), color)
+    if not insert:
+        return img
+    else:
+        return Image(url=img)
+
+
+def show_src_status():
+    """ Determine and report web API status """
+    results = {}
+    for api, mod in list_available_data_src().items():
+        if getattr(mod, "api_server_check", None):
+            status = isconnected(mod.api_server_check)
+            message = "up" if status else "down"
+            results[api] = {'value': status, 'message': message}
+
+    if 'IPython' in sys.modules:
+        from IPython.display import HTML, display
+        cols = []
+        for api in results.keys():
+            color = "brightgreen" if results[api]['value'] else "red"
+            # img = badge("src='%s'" % api, message=results[api]['message'], color=color, insert=False)
+            img = badge(label="argopy src", message="%s is %s" % (api, results[api]['message']), color=color, insert=False)
+            html = ("<td><img src=\"{}\"></td>").format(img)
+            cols.append(html)
+        return display(HTML(("<table><tr>{}</tr></table>").format("".join(cols))))
+    else:
+        rows = []
+        for api in results.keys():
+            rows.append("%s: %s" % (api, results[api]['message']))
+        print("\n".join(rows))
 
 
 def open_etopo1(box, res='l'):
