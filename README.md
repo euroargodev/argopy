@@ -18,9 +18,9 @@ Click here to [![badge](https://img.shields.io/badge/launch-Pangeo%20binder-579A
 
 ![Profile count](https://img.shields.io/endpoint?label=Number%20of%20Argo%20profiles%3A&style=social&url=https%3A%2F%2Fmap.argo-france.fr%2Fdata%2FARGOFULL.json)
 
-![Erddap status](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Feuroargodev%2Fargopy%2Fapi-status%2Fargopy%2Fassets%2Fargopy_api_status_erddap.json)
+![Erddap status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_erddap.json)
 
-![Argovis status](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Feuroargodev%2Fargopy%2Fapi-status%2Fargopy%2Fassets%2Fargopy_api_status_argovis.json)
+![Argovis status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_argovis.json)
 
 ## Install
 
