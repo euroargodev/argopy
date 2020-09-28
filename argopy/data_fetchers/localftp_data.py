@@ -49,6 +49,7 @@ from argopy.plotters import open_dashboard
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy', 'bgc']  # First is default
+api_server_check = OPTIONS['local_ftp']
 
 
 class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):

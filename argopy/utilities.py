@@ -26,6 +26,11 @@ import pickle
 import pkg_resources
 import shutil
 
+import threading
+from IPython.display import HTML, display
+import ipywidgets as widgets
+import time
+
 from argopy.options import OPTIONS, set_options
 from argopy.stores import httpstore
 from argopy.errors import FtpPathError, InvalidFetcher
@@ -408,11 +413,14 @@ def isconnected(host='http://www.ifremer.fr'):
         -------
         bool
     """
-    try:
-        urllib.request.urlopen(host, timeout=2)  # Python 3.x
-        return True
-    except Exception:
-        return False
+    if 'http' in host or 'ftp' in host:
+        try:
+            urllib.request.urlopen(host, timeout=1)  # Python 3.x
+            return True
+        except Exception:
+            return False
+    else:
+        return os.path.exists(host)
 
 
 def isAPIconnected(src='erddap', data=True):
@@ -433,6 +441,9 @@ def isAPIconnected(src='erddap', data=True):
         AVAILABLE_SOURCES = list_available_data_src()
     else:
         AVAILABLE_SOURCES = list_available_index_src()
+    # print(AVAILABLE_SOURCES)
+    # print(src)
+    # print(getattr(AVAILABLE_SOURCES[src], "api_server_check", None))
     if src in AVAILABLE_SOURCES and getattr(AVAILABLE_SOURCES[src], "api_server_check", None):
         with set_options(src=src):
             return isconnected(AVAILABLE_SOURCES[src].api_server_check)
@@ -482,30 +493,67 @@ def badge(label='label', message='message', color='green', insert=False):
         return Image(url=img)
 
 
-def show_src_status():
-    """ Determine and report web API status """
+def fetch_status(stdout='html', insert=True):
+    """ Fetch and report web API status """
     results = {}
     for api, mod in list_available_data_src().items():
         if getattr(mod, "api_server_check", None):
-            status = isconnected(mod.api_server_check)
+            # status = isconnected(mod.api_server_check)
+            status = isAPIconnected(api)
             message = "up" if status else "down"
+            message = "ok" if status else "offline"
             results[api] = {'value': status, 'message': message}
 
-    if 'IPython' in sys.modules and isconnected():
-        from IPython.display import HTML, display
+    if 'IPython' in sys.modules and stdout == 'html':
         cols = []
-        for api in results.keys():
-            color = "brightgreen" if results[api]['value'] else "red"
-            # img = badge("src='%s'" % api, message=results[api]['message'], color=color, insert=False)
-            img = badge(label="argopy src", message="%s is %s" % (api, results[api]['message']), color=color, insert=False)
-            html = ("<td><img src=\"{}\"></td>").format(img)
+        for api in sorted(results.keys()):
+            color = "green" if results[api]['value'] else "orange"
+            if isconnected():
+                # img = badge("src='%s'" % api, message=results[api]['message'], color=color, insert=False)
+                # img = badge(label="argopy src", message="%s is %s" % (api, results[api]['message']), color=color, insert=False)
+                img = badge(label="src %s is" % api, message="%s" % results[api]['message'], color=color, insert=False)
+                html = ("<td><img src=\"{}\"></td>").format(img)
+            else:
+                # html = "<th>src %s is:</th><td>%s</td>" % (api, results[api]['message'])
+                html = "<th><div>src %s is:</div></th><td><div style='color:%s;'>%s</div></td>" % (api, color, results[api]['message'])
             cols.append(html)
-        return display(HTML(("<table><tr>{}</tr></table>").format("".join(cols))))
+        this_HTML = ("<table><tr>{}</tr></table>").format("".join(cols))
+        if insert:
+            return display(HTML(this_HTML))
+        else:
+            return this_HTML
     else:
         rows = []
-        for api in results.keys():
-            rows.append("argopy src %s: %s" % (api, results[api]['message']))
-        print(" / ".join(rows))
+        for api in sorted(results.keys()):
+            # rows.append("argopy src %s: %s" % (api, results[api]['message']))
+            rows.append("src %s is: %s |" % (api, results[api]['message']))
+        txt = "\n".join(rows)
+        if insert:
+            print(txt)
+        else:
+            return txt
+
+
+class monitor_status():
+    """ Monitor data source status with a some refresh rate """
+    def __init__(self, refresh=1):
+        self.refresh_rate = refresh
+        self.text = widgets.HTML(
+            value = fetch_status(stdout='html', insert=0),
+            placeholder = '',
+            description = '',
+        )
+        self.start()
+
+    def work(self):
+        while True:
+            time.sleep(self.refresh_rate)
+            self.text.value = fetch_status(stdout='html', insert=0)
+
+    def start(self):
+        thread = threading.Thread(target=self.work)
+        display(self.text)
+        thread.start()
 
 
 def open_etopo1(box, res='l'):

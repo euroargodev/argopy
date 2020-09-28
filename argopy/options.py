@@ -20,7 +20,7 @@ USER_LEVEL = 'mode'
 
 # Define the list of available options and default values:
 OPTIONS = {DATA_SOURCE: 'erddap',
-           LOCAL_FTP: '/home/ref-argo/gdac',  # default Argo data set on Ifremer/Datarmor network
+           LOCAL_FTP: '.',
            DATASET: 'phy',
            DATA_CACHE: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
            USER_LEVEL: 'standard'}
