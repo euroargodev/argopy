@@ -491,7 +491,7 @@ def show_src_status():
             message = "up" if status else "down"
             results[api] = {'value': status, 'message': message}
 
-    if 'IPython' in sys.modules:
+    if 'IPython' in sys.modules and isconnected():
         from IPython.display import HTML, display
         cols = []
         for api in results.keys():
@@ -504,8 +504,8 @@ def show_src_status():
     else:
         rows = []
         for api in results.keys():
-            rows.append("%s: %s" % (api, results[api]['message']))
-        print("\n".join(rows))
+            rows.append("argopy src %s: %s" % (api, results[api]['message']))
+        print(" / ".join(rows))
 
 
 def open_etopo1(box, res='l'):
