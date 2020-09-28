@@ -21,13 +21,9 @@ import getpass
 from .proto import ArgoDataFetcherProto
 from argopy.utilities import load_dict, mapp_dict
 from argopy.options import OPTIONS
-from argopy.utilities import list_standard_variables
+from argopy.utilities import list_standard_variables, isconnected
 from argopy.stores import httpstore
 from argopy.plotters import open_dashboard
-
-from erddapy import ERDDAP
-from erddapy.utilities import parse_dates, quote_string_constraints
-
 
 access_points = ['wmo' ,'box']
 exit_formats = ['xarray']
@@ -81,6 +77,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             cache : False
             cachedir : None
         """
+        # Dirty fix before https://github.com/ioos/erddapy/issues/140
+        from erddapy import ERDDAP
+        from erddapy.utilities import parse_dates, quote_string_constraints
 
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
         self.definition = 'Ifremer erddap Argo data fetcher'
