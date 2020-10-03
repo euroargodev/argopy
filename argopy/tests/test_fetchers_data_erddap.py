@@ -2,20 +2,12 @@ import numpy as np
 import xarray as xr
 
 import pytest
-import unittest
 import tempfile
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import ErddapServerError, CacheFileNotFound, FileSystemHasNoCache
-from argopy.utilities import (
-    list_available_data_src,
-    isconnected,
-    isAPIconnected,
-    erddap_ds_exists,
-    is_list_of_strings,
-    is_list_of_integers,
-)
+from argopy.utilities import is_list_of_strings
 from . import (
     requires_connected_erddap,
     requires_connected_erddap_phy,
@@ -26,7 +18,7 @@ from . import (
 
 @requires_connected_erddap
 class Test_Backend:
-    """ Test main API facade for all available dataset and access points of the ERDDAP fetching backend """
+    """ Test main API facade for all available dataset and access points of the ERDDAP data fetching backend """
 
     src = "erddap"
 
@@ -50,15 +42,14 @@ class Test_Backend:
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoDataFetcher(src=self.src, cache=True).float(
-                    [1901393, 6902746]
-                )
+                loader = ArgoDataFetcher(src=self.src, cache=True).float(6902746)
                 try:
                     loader.to_xarray()
                     loader.clear_cache()
                     with pytest.raises(CacheFileNotFound):
                         loader.fetcher.cachepath
-                except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
+                except ErddapServerError:
+                    # Test is passed even if something goes wrong with the erddap server
                     pass
                 except Exception:
                     raise
@@ -67,18 +58,17 @@ class Test_Backend:
     def test_caching_float(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoDataFetcher(src=self.src, cache=True).float(
-                    [1901393, 6902746]
-                )
+                f = ArgoDataFetcher(src=self.src, cache=True).float(1901393).fetcher
                 try:
-                    # 1st call to load and save to cachedir:
-                    ds = loader.to_xarray()
+                    # 1st call to load and save to cache:
+                    f.to_xarray()
                     # 2nd call to load from cached file:
-                    ds = loader.to_xarray()
+                    ds = f.to_xarray()
                     assert isinstance(ds, xr.Dataset)
-                    assert is_list_of_strings(loader.fetcher.uri)
-                    assert is_list_of_strings(loader.fetcher.cachepath)
-                except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
+                    assert is_list_of_strings(f.uri)
+                    assert is_list_of_strings(f.cachepath)
+                except ErddapServerError:
+                    # Test is passed even if something goes wrong with the erddap server
                     pass
                 except Exception:
                     raise
@@ -87,16 +77,17 @@ class Test_Backend:
     def test_caching_profile(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoDataFetcher(src=self.src, cache=True).profile(6902746, 34)
+                f = ArgoDataFetcher(src=self.src, cache=True).profile(6902746, 34).fetcher
                 try:
-                    # 1st call to load and save to cachedir:
-                    ds = loader.to_xarray()
-                    # 2nd call to load from cached file
-                    ds = loader.to_xarray()
+                    # 1st call to load and save to cache:
+                    f.to_xarray()
+                    # 2nd call to load from cached file:
+                    ds = f.to_xarray()
                     assert isinstance(ds, xr.Dataset)
-                    assert is_list_of_strings(loader.fetcher.uri)
-                    assert is_list_of_strings(loader.fetcher.cachepath)
-                except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
+                    assert is_list_of_strings(f.uri)
+                    assert is_list_of_strings(f.cachepath)
+                except ErddapServerError:
+                    # Test is passed even if something goes wrong with the erddap server
                     pass
                 except Exception:
                     raise
@@ -105,18 +96,19 @@ class Test_Backend:
     def test_caching_region(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoDataFetcher(src=self.src, cache=True).region(
+                f = ArgoDataFetcher(src=self.src, cache=True).region(
                     [-40, -30, 30, 40, 0, 100, "2011", "2012"]
-                )
+                ).fetcher
                 try:
-                    # 1st call to load and save to cachedir:
-                    ds = loader.to_xarray()
-                    # 2nd call to load from cached file
-                    ds = loader.to_xarray()
+                    # 1st call to load and save to cache:
+                    f.to_xarray()
+                    # 2nd call to load from cached file:
+                    ds = f.to_xarray()
                     assert isinstance(ds, xr.Dataset)
-                    assert is_list_of_strings(loader.fetcher.uri)
-                    assert is_list_of_strings(loader.fetcher.cachepath)
-                except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
+                    assert is_list_of_strings(f.uri)
+                    assert is_list_of_strings(f.cachepath)
+                except ErddapServerError:
+                    # Test is passed even if something goes wrong with the erddap server
                     pass
                 except Exception:
                     raise
@@ -131,48 +123,45 @@ class Test_Backend:
         assert isinstance(n, int)
 
     def __testthis_profile(self, dataset):
+        fetcher_args = {"src": self.src, 'ds': dataset}
         for arg in self.args["profile"]:
             try:
-                f = ArgoDataFetcher(src=self.src, ds=dataset).profile(*arg)
+                f = ArgoDataFetcher(**fetcher_args).profile(*arg).fetcher
                 assert isinstance(f.to_xarray(), xr.Dataset)
-                assert is_list_of_strings(f.fetcher.uri)
+                assert is_list_of_strings(f.uri)
             except ErddapServerError:
-                # Test is passed when something goes wrong because of the erddap server, not our fault !
+                # Test is passed even if something goes wrong with the erddap server
                 pass
             except Exception:
-                print(
-                    "ERDDAP request:\n", f.fetcher.uri,
-                )
+                print("\nERROR with ERDDAP request:\n", "\n".join(f.uri))
                 pass
 
     def __testthis_float(self, dataset):
+        fetcher_args = {"src": self.src, 'ds': dataset}
         for arg in self.args["float"]:
             try:
-                f = ArgoDataFetcher(src=self.src, ds=dataset).float(arg)
+                f = ArgoDataFetcher(**fetcher_args).float(arg).fetcher
                 assert isinstance(f.to_xarray(), xr.Dataset)
-                assert is_list_of_strings(f.fetcher.uri)
+                assert is_list_of_strings(f.uri)
             except ErddapServerError:
-                # Test is passed when something goes wrong because of the erddap server, not our fault !
+                # Test is passed even if something goes wrong with the erddap server
                 pass
             except Exception:
-                print(
-                    "ERDDAP request:\n", f.fetcher.uri,
-                )
+                print("\nERROR with ERDDAP request:\n", "\n".join(f.uri))
                 pass
 
     def __testthis_region(self, dataset):
+        fetcher_args = {"src": self.src, 'ds': dataset}
         for arg in self.args["region"]:
             try:
-                f = ArgoDataFetcher(src=self.src, ds=dataset).region(arg)
+                f = ArgoDataFetcher(**fetcher_args).region(arg).fetcher
                 assert isinstance(f.to_xarray(), xr.Dataset)
-                assert is_list_of_strings(f.fetcher.uri)
+                assert is_list_of_strings(f.uri)
             except ErddapServerError:
-                # Test is passed when something goes wrong because of the erddap server, not our fault !
+                # Test is passed even if something goes wrong with the erddap server
                 pass
             except Exception:
-                print(
-                    "ERDDAP request:\n", f.fetcher.uri,
-                )
+                print("\nERROR with ERDDAP request:\n", "\n".join(f.uri))
                 pass
 
     def __testthis(self, dataset):
@@ -249,12 +238,10 @@ class Test_BackendParallel:
     """ This test backend for parallel requests """
 
     src = "erddap"
-    requests = {}
-    requests["region"] = [
-        [-60, -55, 40.0, 45.0, 0.0, 10.0],
-        [-60, -55, 40.0, 45.0, 0.0, 10.0, "2007-08-01", "2007-09-01"],
-    ]
-    requests["wmo"] = [[6902766, 6902772, 6902914]]
+    requests = {"region": [
+        [-60, -55, 40.0, 45.0, 0.0, 20.0],
+        [-60, -55, 40.0, 45.0, 0.0, 20.0, "2007-08-01", "2007-09-01"],
+    ], "wmo": [[6902766, 6902772, 6902914]]}
 
     def test_methods(self):
         args_list = [
@@ -279,40 +266,31 @@ class Test_BackendParallel:
             fetcher_args = {
                 "src": self.src,
                 "parallel": True,
-                "chunks": {"lon": 1, "lat": 2, "dpt": 1, "time": 2},
+                "chunks": {"lon": 1, "lat": 2, "dpt": 2, "time": 1},
             }
             try:
-                f = ArgoDataFetcher(**fetcher_args).region(access_arg)
+                f = ArgoDataFetcher(**fetcher_args).region(access_arg).fetcher
                 assert isinstance(f.to_xarray(), xr.Dataset)
-                assert is_list_of_strings(f.fetcher.uri)
-                assert len(f.fetcher.uri) == 4
+                assert is_list_of_strings(f.uri)
+                assert len(f.uri) == np.prod([v for k, v in fetcher_args['chunks'].items()])
             except ErddapServerError:
-                # Test is passed when something goes wrong because of the erddap server, not our fault !
+                # Test is passed even if something goes wrong with the erddap server
                 pass
             except Exception:
-                print(
-                    "ERDDAP request:\n", f.fetcher.uri,
-                )
+                print("\nERDDAP request:\n", "\n".join(f.uri))
                 pass
 
     def test_chunks_wmo(self):
         for access_arg in self.requests["wmo"]:
-            fetcher_args = {"src": self.src, "parallel": True, "chunks": {"wmo": 2}}
+            fetcher_args = {"src": self.src, "parallel": True, "chunks_maxsize": {"wmo": 1}}
             try:
-                # f = ArgoDataFetcher(**fetcher_args).float(access_arg)
-                f = ArgoDataFetcher(**fetcher_args).profile(access_arg, 12)
+                f = ArgoDataFetcher(**fetcher_args).profile(access_arg, 12).fetcher
                 assert isinstance(f.to_xarray(), xr.Dataset)
-                assert is_list_of_strings(f.fetcher.uri)
-                assert len(f.fetcher.uri) == 2
+                assert is_list_of_strings(f.uri)
+                assert len(f.uri) == len(access_arg)
             except ErddapServerError:
-                # Test is passed when something goes wrong because of the erddap server, not our fault !
+                # Test is passed even if something goes wrong with the erddap server
                 pass
-            except Exception:
-                print(
-                    "ERDDAP request:\n", f.fetcher.uri,
-                )
-                pass
-
-
-if __name__ == "__main__":
-    unittest.main()
+            except Exception as e:
+                print("\nERDDAP request:\n", "\n".join(f.uri))
+                raise

@@ -31,6 +31,12 @@ def _xfail(name, msg):
 from argopy.utilities import list_available_data_src, isconnected, erddap_ds_exists
 AVAILABLE_SOURCES = list_available_data_src()
 CONNECTED = isconnected()
+
+has_fetcher, requires_fetcher = _connectskip(len(AVAILABLE_SOURCES) > 0, "requires at least one data fetcher")
+
+##########
+# ERDDAP #
+##########
 if CONNECTED:
     DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
     DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-bio")
@@ -66,3 +72,18 @@ has_connected_erddap_ref = has_connection and has_erddap and has_erddap_ref
 requires_connected_erddap_ref = pytest.mark.skipif(
     not has_connected_erddap_ref, reason="requires a live and valid Reference Argo dataset from Ifremer erddap server"
 )
+
+###########
+# ARGOVIS #
+###########
+has_argovis, requires_argovis = _connectskip('argovis' in AVAILABLE_SOURCES, "requires argovis data fetcher")
+
+has_connected_argovis = has_connection and has_argovis
+requires_connected_argovis = pytest.mark.skipif(
+    not has_connected_argovis, reason="requires a live Argovis server"
+)
+
+############
+# LOCALFTP #
+############
+has_localftp, requires_localftp = _connectskip('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
