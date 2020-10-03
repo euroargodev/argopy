@@ -3,6 +3,24 @@
 What's New
 ==========
 
+v0.1.7 (XX Oct. 2020)
+-----------------------
+
+**Features and front-end API**
+
+- Live monitor for the status (availability) of data sources. (:pr:`36`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    import argopy
+    argopy.status()
+    # or
+    argopy.status(refresh=15)
+
+.. image:: _static/status_monitor.png
+  :width: 350
+
+
 v0.1.6 (31 Aug. 2020)
 ---------------------
 

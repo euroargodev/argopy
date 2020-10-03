@@ -27,30 +27,31 @@ import pkg_resources
 import shutil
 
 import threading
-from IPython.display import HTML, display
-import ipywidgets as widgets
+
+# from IPython.display import HTML, display
+# import ipywidgets as widgets
 import time
 
 from argopy.options import OPTIONS, set_options
 from argopy.stores import httpstore
-from argopy.errors import FtpPathError, InvalidFetcher
+from argopy.errors import FtpPathError, InvalidFetcher, OptionValueError
 
-path2pkl = pkg_resources.resource_filename('argopy', 'assets/')
+path2pkl = pkg_resources.resource_filename("argopy", "assets/")
 
 
 def clear_cache():
     """ Delete argopy cache folder """
-    if os.path.exists(OPTIONS['cachedir']):
-        shutil.rmtree(OPTIONS['cachedir'])
+    if os.path.exists(OPTIONS["cachedir"]):
+        shutil.rmtree(OPTIONS["cachedir"])
 
 
 def load_dict(ptype):
-    if ptype == 'profilers':
-        with open(os.path.join(path2pkl, 'dict_profilers.pickle'), 'rb') as f:
+    if ptype == "profilers":
+        with open(os.path.join(path2pkl, "dict_profilers.pickle"), "rb") as f:
             loaded_dict = pickle.load(f)
         return loaded_dict
-    elif ptype == 'institutions':
-        with open(os.path.join(path2pkl, 'dict_institutions.pickle'), 'rb') as f:
+    elif ptype == "institutions":
+        with open(os.path.join(path2pkl, "dict_institutions.pickle"), "rb") as f:
             loaded_dict = pickle.load(f)
         return loaded_dict
     else:
@@ -69,26 +70,38 @@ def list_available_data_src():
     AVAILABLE_SOURCES = {}
     try:
         from .data_fetchers import erddap_data as Erddap_Fetchers
-        AVAILABLE_SOURCES['erddap'] = Erddap_Fetchers
+
+        AVAILABLE_SOURCES["erddap"] = Erddap_Fetchers
     except Exception:
-        warnings.warn("An error occured while loading the ERDDAP data fetcher, "
-                      "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        warnings.warn(
+            "An error occured while loading the ERDDAP data fetcher, "
+            "it will not be available !\n%s\n%s"
+            % (sys.exc_info()[0], sys.exc_info()[1])
+        )
         pass
 
     try:
         from .data_fetchers import localftp_data as LocalFTP_Fetchers
-        AVAILABLE_SOURCES['localftp'] = LocalFTP_Fetchers
+
+        AVAILABLE_SOURCES["localftp"] = LocalFTP_Fetchers
     except Exception:
-        warnings.warn("An error occured while loading the local FTP data fetcher, "
-                      "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        warnings.warn(
+            "An error occured while loading the local FTP data fetcher, "
+            "it will not be available !\n%s\n%s"
+            % (sys.exc_info()[0], sys.exc_info()[1])
+        )
         pass
 
     try:
         from .data_fetchers import argovis_data as ArgoVis_Fetchers
-        AVAILABLE_SOURCES['argovis'] = ArgoVis_Fetchers
+
+        AVAILABLE_SOURCES["argovis"] = ArgoVis_Fetchers
     except Exception:
-        warnings.warn("An error occured while loading the ArgoVis data fetcher, "
-                      "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        warnings.warn(
+            "An error occured while loading the ArgoVis data fetcher, "
+            "it will not be available !\n%s\n%s"
+            % (sys.exc_info()[0], sys.exc_info()[1])
+        )
         pass
 
     return AVAILABLE_SOURCES
@@ -99,18 +112,26 @@ def list_available_index_src():
     AVAILABLE_SOURCES = {}
     try:
         from .data_fetchers import erddap_index as Erddap_Fetchers
-        AVAILABLE_SOURCES['erddap'] = Erddap_Fetchers
+
+        AVAILABLE_SOURCES["erddap"] = Erddap_Fetchers
     except Exception:
-        warnings.warn("An error occured while loading the ERDDAP index fetcher, "
-                      "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        warnings.warn(
+            "An error occured while loading the ERDDAP index fetcher, "
+            "it will not be available !\n%s\n%s"
+            % (sys.exc_info()[0], sys.exc_info()[1])
+        )
         pass
 
     try:
         from .data_fetchers import localftp_index as LocalFTP_Fetchers
-        AVAILABLE_SOURCES['localftp'] = LocalFTP_Fetchers
+
+        AVAILABLE_SOURCES["localftp"] = LocalFTP_Fetchers
     except Exception:
-        warnings.warn("An error occured while loading the local FTP index fetcher, "
-                      "it will not be available !\n%s\n%s" % (sys.exc_info()[0], sys.exc_info()[1]))
+        warnings.warn(
+            "An error occured while loading the local FTP index fetcher, "
+            "it will not be available !\n%s\n%s"
+            % (sys.exc_info()[0], sys.exc_info()[1])
+        )
         pass
 
     return AVAILABLE_SOURCES
@@ -118,10 +139,34 @@ def list_available_index_src():
 
 def list_standard_variables():
     """ Return the list of variables for standard users """
-    return ['DATA_MODE', 'LATITUDE', 'LONGITUDE', 'POSITION_QC', 'DIRECTION', 'PLATFORM_NUMBER', 'CYCLE_NUMBER', 'PRES',
-     'TEMP', 'PSAL', 'PRES_QC', 'TEMP_QC', 'PSAL_QC', 'PRES_ADJUSTED', 'TEMP_ADJUSTED', 'PSAL_ADJUSTED',
-     'PRES_ADJUSTED_QC', 'TEMP_ADJUSTED_QC', 'PSAL_ADJUSTED_QC', 'PRES_ADJUSTED_ERROR', 'TEMP_ADJUSTED_ERROR',
-     'PSAL_ADJUSTED_ERROR', 'JULD', 'JULD_QC', 'TIME', 'TIME_QC']
+    return [
+        "DATA_MODE",
+        "LATITUDE",
+        "LONGITUDE",
+        "POSITION_QC",
+        "DIRECTION",
+        "PLATFORM_NUMBER",
+        "CYCLE_NUMBER",
+        "PRES",
+        "TEMP",
+        "PSAL",
+        "PRES_QC",
+        "TEMP_QC",
+        "PSAL_QC",
+        "PRES_ADJUSTED",
+        "TEMP_ADJUSTED",
+        "PSAL_ADJUSTED",
+        "PRES_ADJUSTED_QC",
+        "TEMP_ADJUSTED_QC",
+        "PSAL_ADJUSTED_QC",
+        "PRES_ADJUSTED_ERROR",
+        "TEMP_ADJUSTED_ERROR",
+        "PSAL_ADJUSTED_ERROR",
+        "JULD",
+        "JULD_QC",
+        "TIME",
+        "TIME_QC",
+    ]
 
 
 def list_multiprofile_file_variables():
@@ -129,70 +174,72 @@ def list_multiprofile_file_variables():
 
         This is for files created by GDAC under <DAC>/<WMO>/<WMO>_prof.nc
     """
-    return ['CONFIG_MISSION_NUMBER',
-             'CYCLE_NUMBER',
-             'DATA_CENTRE',
-             'DATA_MODE',
-             'DATA_STATE_INDICATOR',
-             'DATA_TYPE',
-             'DATE_CREATION',
-             'DATE_UPDATE',
-             'DC_REFERENCE',
-             'DIRECTION',
-             'FIRMWARE_VERSION',
-             'FLOAT_SERIAL_NO',
-             'FORMAT_VERSION',
-             'HANDBOOK_VERSION',
-             'HISTORY_ACTION',
-             'HISTORY_DATE',
-             'HISTORY_INSTITUTION',
-             'HISTORY_PARAMETER',
-             'HISTORY_PREVIOUS_VALUE',
-             'HISTORY_QCTEST',
-             'HISTORY_REFERENCE',
-             'HISTORY_SOFTWARE',
-             'HISTORY_SOFTWARE_RELEASE',
-             'HISTORY_START_PRES',
-             'HISTORY_STEP',
-             'HISTORY_STOP_PRES',
-             'JULD',
-             'JULD_LOCATION',
-             'JULD_QC',
-             'LATITUDE',
-             'LONGITUDE',
-             'PARAMETER',
-             'PI_NAME',
-             'PLATFORM_NUMBER',
-             'PLATFORM_TYPE',
-             'POSITIONING_SYSTEM',
-             'POSITION_QC',
-             'PRES',
-             'PRES_ADJUSTED',
-             'PRES_ADJUSTED_ERROR',
-             'PRES_ADJUSTED_QC',
-             'PRES_QC',
-             'PROFILE_PRES_QC',
-             'PROFILE_PSAL_QC',
-             'PROFILE_TEMP_QC',
-             'PROJECT_NAME',
-             'PSAL',
-             'PSAL_ADJUSTED',
-             'PSAL_ADJUSTED_ERROR',
-             'PSAL_ADJUSTED_QC',
-             'PSAL_QC',
-             'REFERENCE_DATE_TIME',
-             'SCIENTIFIC_CALIB_COEFFICIENT',
-             'SCIENTIFIC_CALIB_COMMENT',
-             'SCIENTIFIC_CALIB_DATE',
-             'SCIENTIFIC_CALIB_EQUATION',
-             'STATION_PARAMETERS',
-             'TEMP',
-             'TEMP_ADJUSTED',
-             'TEMP_ADJUSTED_ERROR',
-             'TEMP_ADJUSTED_QC',
-             'TEMP_QC',
-             'VERTICAL_SAMPLING_SCHEME',
-             'WMO_INST_TYPE']
+    return [
+        "CONFIG_MISSION_NUMBER",
+        "CYCLE_NUMBER",
+        "DATA_CENTRE",
+        "DATA_MODE",
+        "DATA_STATE_INDICATOR",
+        "DATA_TYPE",
+        "DATE_CREATION",
+        "DATE_UPDATE",
+        "DC_REFERENCE",
+        "DIRECTION",
+        "FIRMWARE_VERSION",
+        "FLOAT_SERIAL_NO",
+        "FORMAT_VERSION",
+        "HANDBOOK_VERSION",
+        "HISTORY_ACTION",
+        "HISTORY_DATE",
+        "HISTORY_INSTITUTION",
+        "HISTORY_PARAMETER",
+        "HISTORY_PREVIOUS_VALUE",
+        "HISTORY_QCTEST",
+        "HISTORY_REFERENCE",
+        "HISTORY_SOFTWARE",
+        "HISTORY_SOFTWARE_RELEASE",
+        "HISTORY_START_PRES",
+        "HISTORY_STEP",
+        "HISTORY_STOP_PRES",
+        "JULD",
+        "JULD_LOCATION",
+        "JULD_QC",
+        "LATITUDE",
+        "LONGITUDE",
+        "PARAMETER",
+        "PI_NAME",
+        "PLATFORM_NUMBER",
+        "PLATFORM_TYPE",
+        "POSITIONING_SYSTEM",
+        "POSITION_QC",
+        "PRES",
+        "PRES_ADJUSTED",
+        "PRES_ADJUSTED_ERROR",
+        "PRES_ADJUSTED_QC",
+        "PRES_QC",
+        "PROFILE_PRES_QC",
+        "PROFILE_PSAL_QC",
+        "PROFILE_TEMP_QC",
+        "PROJECT_NAME",
+        "PSAL",
+        "PSAL_ADJUSTED",
+        "PSAL_ADJUSTED_ERROR",
+        "PSAL_ADJUSTED_QC",
+        "PSAL_QC",
+        "REFERENCE_DATE_TIME",
+        "SCIENTIFIC_CALIB_COEFFICIENT",
+        "SCIENTIFIC_CALIB_COMMENT",
+        "SCIENTIFIC_CALIB_DATE",
+        "SCIENTIFIC_CALIB_EQUATION",
+        "STATION_PARAMETERS",
+        "TEMP",
+        "TEMP_ADJUSTED",
+        "TEMP_ADJUSTED_ERROR",
+        "TEMP_ADJUSTED_QC",
+        "TEMP_QC",
+        "VERTICAL_SAMPLING_SCHEME",
+        "WMO_INST_TYPE",
+    ]
 
 
 def check_localftp(path, errors: str = "ignore"):
@@ -221,29 +268,54 @@ def check_localftp(path, errors: str = "ignore"):
             True if at least one DAC folder is found under path/dac/<dac_name>
             False otherwise
     """
-    dacs = ['aoml', 'bodc', 'coriolis', 'csio', 'csiro', 'incois', 'jma', 'kma', 'kordi', 'meds', 'nmdis']
+    dacs = [
+        "aoml",
+        "bodc",
+        "coriolis",
+        "csio",
+        "csiro",
+        "incois",
+        "jma",
+        "kma",
+        "kordi",
+        "meds",
+        "nmdis",
+    ]
 
     # Case 1:
-    check1 = os.path.isdir(path) and os.path.isdir(os.path.join(path, "dac")) \
-             and np.any([os.path.isdir(os.path.join(path, "dac", dac)) for dac in dacs])
+    check1 = (
+        os.path.isdir(path)
+        and os.path.isdir(os.path.join(path, "dac"))
+        and np.any([os.path.isdir(os.path.join(path, "dac", dac)) for dac in dacs])
+    )
 
     if check1:
         return True
-    elif errors == 'raise':
+    elif errors == "raise":
         # This was possible up to v0.1.3:
-        check2 = os.path.isdir(path) and np.any([os.path.isdir(os.path.join(path, dac)) for dac in dacs])
+        check2 = os.path.isdir(path) and np.any(
+            [os.path.isdir(os.path.join(path, dac)) for dac in dacs]
+        )
         if check2:
-            raise FtpPathError("This path is no longer GDAC compliant for argopy.\n"
-                          "Please make sure you point toward a path with a 'dac' folder:\n%s" % path)
+            raise FtpPathError(
+                "This path is no longer GDAC compliant for argopy.\n"
+                "Please make sure you point toward a path with a 'dac' folder:\n%s"
+                % path
+            )
         else:
             raise FtpPathError("This path is not GDAC compliant:\n%s" % path)
 
-    elif errors == 'warn':
+    elif errors == "warn":
         # This was possible up to v0.1.3:
-        check2 = os.path.isdir(path) and np.any([os.path.isdir(os.path.join(path, dac)) for dac in dacs])
+        check2 = os.path.isdir(path) and np.any(
+            [os.path.isdir(os.path.join(path, dac)) for dac in dacs]
+        )
         if check2:
-            warnings.warn("This path is no longer GDAC compliant for argopy. This will raise an error in the future.\n"
-                          "Please make sure you point toward a path with a 'dac' folder:\n%s" % path)
+            warnings.warn(
+                "This path is no longer GDAC compliant for argopy. This will raise an error in the future.\n"
+                "Please make sure you point toward a path with a 'dac' folder:\n%s"
+                % path
+            )
             return False
         else:
             warnings.warn("This path is not GDAC compliant:\n%s" % path)
@@ -401,7 +473,7 @@ def show_versions(file=sys.stdout):
         print(f"{k}: {stat}", file=file)
 
 
-def isconnected(host='http://www.ifremer.fr'):
+def isconnected(host="http://www.ifremer.fr"):
     """ check if we have a live internet connection
 
         Parameters
@@ -413,7 +485,7 @@ def isconnected(host='http://www.ifremer.fr'):
         -------
         bool
     """
-    if 'http' in host or 'ftp' in host:
+    if "http" in host or "ftp" in host:
         try:
             urllib.request.urlopen(host, timeout=1)  # Python 3.x
             return True
@@ -423,8 +495,10 @@ def isconnected(host='http://www.ifremer.fr'):
         return os.path.exists(host)
 
 
-def isAPIconnected(src='erddap', data=True):
-    """ Check if a source web API is alive or not
+def isAPIconnected(src="erddap", data=True):
+    """ Check if a source API is alive or not
+
+        The API is connected when it has a live URL or valid folder path.
 
         Parameters
         ----------
@@ -441,12 +515,22 @@ def isAPIconnected(src='erddap', data=True):
         AVAILABLE_SOURCES = list_available_data_src()
     else:
         AVAILABLE_SOURCES = list_available_index_src()
-    # print(AVAILABLE_SOURCES)
-    # print(src)
-    # print(getattr(AVAILABLE_SOURCES[src], "api_server_check", None))
-    if src in AVAILABLE_SOURCES and getattr(AVAILABLE_SOURCES[src], "api_server_check", None):
-        with set_options(src=src):
-            return isconnected(AVAILABLE_SOURCES[src].api_server_check)
+    if src in AVAILABLE_SOURCES and getattr(
+        AVAILABLE_SOURCES[src], "api_server_check", None
+    ):
+        if "localftp" in src:
+            # This is a special case because the source here is a local folder, and the folder validity is checked
+            # when setting the option value of 'local_ftp'
+            # So here, we just need to catch the appropriate error after a call to set_option
+            opts = {"src": src, "local_ftp": OPTIONS["local_ftp"]}
+            try:
+                set_options(**opts)
+                return True
+            except OptionValueError:
+                return False
+        else:
+            with set_options(src=src):
+                return isconnected(AVAILABLE_SOURCES[src].api_server_check)
     else:
         raise InvalidFetcher
 
@@ -456,12 +540,14 @@ def erddap_ds_exists(ds="ArgoFloats"):
     # e = ArgoDataFetcher(src='erddap').float(wmo=0).fetcher
     # erddap_index = json.load(urlopen(e.erddap.server + "/info/index.json"))
     # erddap_index = json.load(urlopen("http://www.ifremer.fr/erddap/info/index.json"))
-    with httpstore(timeout=120).open("http://www.ifremer.fr/erddap/info/index.json") as of:
+    with httpstore(timeout=120).open(
+        "http://www.ifremer.fr/erddap/info/index.json"
+    ) as of:
         erddap_index = json.load(of)
-    return ds in [row[-1] for row in erddap_index['table']['rows']]
+    return ds in [row[-1] for row in erddap_index["table"]["rows"]]
 
 
-def badge(label='label', message='message', color='green', insert=False):
+def badge(label="label", message="message", color="green", insert=False):
     """ Return or insert shield.io badge image
 
         Use the shields.io service to create a badge image
@@ -484,8 +570,10 @@ def badge(label='label', message='message', color='green', insert=False):
     str or IPython.display.Image
     """
     from IPython.display import Image
-    import urllib
-    url = ("https://img.shields.io/static/v1?style=flat-square&label={}&message={}&color={}").format
+
+    url = (
+        "https://img.shields.io/static/v1?style=flat-square&label={}&message={}&color={}"
+    ).format
     img = url(urllib.parse.quote(label), urllib.parse.quote(message), color)
     if not insert:
         return img
@@ -493,32 +581,43 @@ def badge(label='label', message='message', color='green', insert=False):
         return Image(url=img)
 
 
-def fetch_status(stdout='html', insert=True):
+def fetch_status(stdout="html", insert=True):
     """ Fetch and report web API status """
     results = {}
     for api, mod in list_available_data_src().items():
         if getattr(mod, "api_server_check", None):
             # status = isconnected(mod.api_server_check)
             status = isAPIconnected(api)
-            message = "up" if status else "down"
+            # message = "up" if status else "down"
             message = "ok" if status else "offline"
-            results[api] = {'value': status, 'message': message}
+            results[api] = {"value": status, "message": message}
 
-    if 'IPython' in sys.modules and stdout == 'html':
+    if "IPython" in sys.modules and stdout == "html":
         cols = []
         for api in sorted(results.keys()):
-            color = "green" if results[api]['value'] else "orange"
+            color = "green" if results[api]["value"] else "orange"
             if isconnected():
                 # img = badge("src='%s'" % api, message=results[api]['message'], color=color, insert=False)
-                # img = badge(label="argopy src", message="%s is %s" % (api, results[api]['message']), color=color, insert=False)
-                img = badge(label="src %s is" % api, message="%s" % results[api]['message'], color=color, insert=False)
-                html = ("<td><img src=\"{}\"></td>").format(img)
+                # img = badge(label="argopy src", message="%s is %s" %
+                # (api, results[api]['message']), color=color, insert=False)
+                img = badge(
+                    label="src %s is" % api,
+                    message="%s" % results[api]["message"],
+                    color=color,
+                    insert=False,
+                )
+                html = ('<td><img src="{}"></td>').format(img)
             else:
                 # html = "<th>src %s is:</th><td>%s</td>" % (api, results[api]['message'])
-                html = "<th><div>src %s is:</div></th><td><div style='color:%s;'>%s</div></td>" % (api, color, results[api]['message'])
+                html = (
+                    "<th><div>src %s is:</div></th><td><div style='color:%s;'>%s</div></td>"
+                    % (api, color, results[api]["message"])
+                )
             cols.append(html)
         this_HTML = ("<table><tr>{}</tr></table>").format("".join(cols))
         if insert:
+            from IPython.display import HTML, display
+
             return display(HTML(this_HTML))
         else:
             return this_HTML
@@ -526,7 +625,7 @@ def fetch_status(stdout='html', insert=True):
         rows = []
         for api in sorted(results.keys()):
             # rows.append("argopy src %s: %s" % (api, results[api]['message']))
-            rows.append("src %s is: %s |" % (api, results[api]['message']))
+            rows.append("src %s is: %s" % (api, results[api]["message"]))
         txt = "\n".join(rows)
         if insert:
             print(txt)
@@ -534,29 +633,32 @@ def fetch_status(stdout='html', insert=True):
             return txt
 
 
-class monitor_status():
-    """ Monitor data source status with a some refresh rate """
+class monitor_status:
+    """ Monitor data source status with a refresh rate """
+
     def __init__(self, refresh=1):
+        import ipywidgets as widgets
+
         self.refresh_rate = refresh
         self.text = widgets.HTML(
-            value = fetch_status(stdout='html', insert=0),
-            placeholder = '',
-            description = '',
+            value=fetch_status(stdout="html", insert=False), placeholder="", description="",
         )
         self.start()
 
     def work(self):
         while True:
             time.sleep(self.refresh_rate)
-            self.text.value = fetch_status(stdout='html', insert=0)
+            self.text.value = fetch_status(stdout="html", insert=False)
 
     def start(self):
+        from IPython.display import display
+
         thread = threading.Thread(target=self.work)
-        display(self.text)
+        display([self.text])
         thread.start()
 
 
-def open_etopo1(box, res='l'):
+def open_etopo1(box, res="l"):
     """ Download ETOPO for a box
 
         Parameters
@@ -569,21 +671,26 @@ def open_etopo1(box, res='l'):
     """
     # This function is in utilities to anticipate usage outside of plotting, eg interpolation, grounding detection
     resx, resy = 0.1, 0.1
-    if res == 'h':
+    if res == "h":
         resx, resy = 0.016, 0.016
 
-    uri = ("https://gis.ngdc.noaa.gov/mapviewer-support/wcs-proxy/wcs.groovy?filename=etopo1.nc"
-           "&request=getcoverage&version=1.0.0&service=wcs&coverage=etopo1&CRS=EPSG:4326&format=netcdf"
-           "&resx={}&resy={}"
-           "&bbox={}").format
-    thisurl = uri(resx, resy, ",".join([str(b) for b in [box[0], box[2], box[1], box[3]]]))
+    uri = (
+        "https://gis.ngdc.noaa.gov/mapviewer-support/wcs-proxy/wcs.groovy?filename=etopo1.nc"
+        "&request=getcoverage&version=1.0.0&service=wcs&coverage=etopo1&CRS=EPSG:4326&format=netcdf"
+        "&resx={}&resy={}"
+        "&bbox={}"
+    ).format
+    thisurl = uri(
+        resx, resy, ",".join([str(b) for b in [box[0], box[2], box[1], box[3]]])
+    )
     ds = httpstore(cache=True).open_dataset(thisurl)
-    da = ds['Band1'].rename("topo")
+    da = ds["Band1"].rename("topo")
     for a in ds.attrs:
         da.attrs[a] = ds.attrs[a]
-    da.attrs['Data source'] = 'https://maps.ngdc.noaa.gov/viewers/wcs-client/'
-    da.attrs['URI'] = thisurl
+    da.attrs["Data source"] = "https://maps.ngdc.noaa.gov/viewers/wcs-client/"
+    da.attrs["URI"] = thisurl
     return da
+
 
 #
 #  From xarrayutils : https://github.com/jbusecke/xarrayutils/blob/master/xarrayutils/vertical_coordinates.py
@@ -591,7 +698,9 @@ def open_etopo1(box, res='l'):
 #
 
 
-def linear_interpolation_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped"):
+def linear_interpolation_remap(
+    z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped"
+):
 
     # interpolation called in xarray ufunc
     def _regular_interp(x, y, target_values):
@@ -600,24 +709,25 @@ def linear_interpolation_remap(z, data, z_regridded, z_dim=None, z_regridded_dim
         x = x[~idx]
         y = y[~idx]
 
-        #Need at least 5 points in the profile to interpolate, otherwise, return NaNs
-        if(len(y)<5):
+        # Need at least 5 points in the profile to interpolate, otherwise, return NaNs
+        if len(y) < 5:
             interpolated = np.empty(len(target_values))
             interpolated[:] = np.nan
-        else :
+        else:
             # replace nans in target_values with out of bound Values (just in case)
             target_values = np.where(
-                ~np.isnan(target_values), target_values, np.nanmax(x) + 1)
-        # Interpolate with fill value parameter to extend min pressure toward 0
+                ~np.isnan(target_values), target_values, np.nanmax(x) + 1
+            )
+            # Interpolate with fill value parameter to extend min pressure toward 0
             interpolated = interpolate.interp1d(
-                x, y, bounds_error=False, fill_value=(y[0], y[-1]))(target_values)
+                x, y, bounds_error=False, fill_value=(y[0], y[-1])
+            )(target_values)
         return interpolated
 
     # infer dim from input
     if z_dim is None:
         if len(z.dims) != 1:
-            raise RuntimeError(
-                "if z_dim is not specified,x must be a 1D array.")
+            raise RuntimeError("if z_dim is not specified,x must be a 1D array.")
         dim = z.dims[0]
     else:
         dim = z_dim
@@ -635,12 +745,12 @@ def linear_interpolation_remap(z, data, z_regridded, z_dim=None, z_regridded_dim
         output_dtypes=[data.dtype],
         output_sizes={output_dim: len(z_regridded[z_regridded_dim])},
     )
-    remapped = xr.apply_ufunc(
-        _regular_interp, z, data, z_regridded, **kwargs)
+    remapped = xr.apply_ufunc(_regular_interp, z, data, z_regridded, **kwargs)
 
     remapped.coords[output_dim] = z_regridded.rename(
         {z_regridded_dim: output_dim}
     ).coords[output_dim]
     return remapped
+
 
 ####################

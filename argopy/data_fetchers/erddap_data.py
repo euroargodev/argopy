@@ -10,6 +10,7 @@ This is not intended to be used directly, only by the facade at fetchers.py
 
 """
 
+import sys
 import pandas as pd
 import numpy as np
 import copy
@@ -28,6 +29,9 @@ from argopy.plotters import open_dashboard
 if isconnected():
     from erddapy import ERDDAP
     from erddapy.utilities import parse_dates, quote_string_constraints
+else:
+    from unittest.mock import MagicMock
+    sys.modules['ERDDAP'] = MagicMock()
 
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']

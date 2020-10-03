@@ -10,6 +10,7 @@ This module manage options of the package
 # https://github.com/pydata/xarray/blob/cafab46aac8f7a073a32ec5aa47e213a9810ed54/xarray/core/options.py
 """
 import os
+from argopy.errors import InvalidOption, OptionValueError
 
 # Define option names as seen by users:
 DATA_SOURCE = 'src'
@@ -81,10 +82,10 @@ class set_options:
         self.old = {}
         for k, v in kwargs.items():
             if k not in OPTIONS:
-                raise ValueError("argument name %r is not in the set of valid options %r" % (k, set(OPTIONS)))
+                raise InvalidOption("argument name %r is not in the set of valid options %r" % (k, set(OPTIONS)))
 
             if k in _VALIDATORS and not _VALIDATORS[k](v):
-                raise ValueError(f"option {k!r} given an invalid value: {v!r}")
+                raise OptionValueError(f"option {k!r} given an invalid value: {v!r}")
             self.old[k] = OPTIONS[k]
         self._apply_update(kwargs)
 
