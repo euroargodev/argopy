@@ -1,4 +1,6 @@
-# <img src="https://raw.githubusercontent.com/euroargodev/argopy/master/docs/_static/argopy_logo_long.png" alt="argopy logo" width="200"/> Argo data python library
+<img src="https://raw.githubusercontent.com/euroargodev/argopy/master/docs/_static/argopy_logo_long.png" alt="argopy logo" width="200"/> 
+
+# Argo data python library
 
 [![Documentation Status](https://readthedocs.org/projects/argopy/badge/?version=latest)](https://argopy.readthedocs.io/en/latest/?badge=latest)
 ![Github Action Status](https://github.com/euroargodev/argopy/workflows/unit-testing-linux/badge.svg?branch=master)
@@ -6,14 +8,17 @@
 [![Requirements Status](https://requires.io/github/euroargodev/argopy/requirements.svg?branch=master)](https://requires.io/github/euroargodev/argopy/requirements/?branch=master)
 [![Gitter](https://badges.gitter.im/Argo-floats/argopy.svg)](https://gitter.im/Argo-floats/argopy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-![Profile count](https://img.shields.io/endpoint?label=Number%20of%20Argo%20profiles%3A&style=social&url=https%3A%2F%2Fmap.argo-france.fr%2Fdata%2FARGOFULL.json)
+![Profile count](https://img.shields.io/endpoint?label=Available%20Argo%20profile%20count%3A&style=social&url=https%3A%2F%2Fmap.argo-france.fr%2Fdata%2FARGOFULL.json)
+![Erddap status](https://img.shields.io/endpoint?label=erddap&url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_erddap.json)
+![Argovis status](https://img.shields.io/endpoint?label=argovis&url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_argovis.json)
 
 [![status](https://joss.theoj.org/papers/9e31b212f63c2bacb4006b14bb8a743f/status.svg)](https://joss.theoj.org/papers/9e31b212f63c2bacb4006b14bb8a743f)
 
 ``argopy`` is a python library that aims to ease Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators. Documentation is at https://argopy.readthedocs.io/en/latest/
 
-Several python packages exist: we continuously try to build on these libraries to provide you with a single powerfull tool.  
-[List your tool here !](https://github.com/euroargodev/argopy/issues/3)
+Several python packages exist: we continuously try to build on these libraries to provide you with a single powerfull tool. [List your tool here !](https://github.com/euroargodev/argopy/issues/3)
+
+By default, ``argopy`` relies on online services to fetch data, you can [check web API services status here](https://argopy.statuspage.io).
 
 ## Install
 
