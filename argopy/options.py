@@ -39,6 +39,7 @@ _VALIDATORS = {
     DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
     LOCAL_FTP: os.path.exists,
     DATASET: _DATASET_LIST.__contains__,
+    DATA_CACHE: os.path.exists,
     USER_LEVEL: _USER_LEVEL_LIST.__contains__,
     API_TIMEOUT: _positive_integer,
 }
