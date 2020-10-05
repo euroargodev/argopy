@@ -22,11 +22,11 @@ def safe_to_server_errors(test_func):
     def test_wrapper(fix):
         try:
             test_func(fix)
-        except ArgovisServerError:
+        except ArgovisServerError as e:
             # Test is passed when something goes wrong because of the argovis server
             warnings.warn("\nSomething happened on argovis that should not: %s" % str(e.args))
             pass
-        except DataNotFound:
+        except DataNotFound as e:
             # We make sure that data requested by tests are available from API, so this must be a server side error.
             warnings.warn("\nSomething happened on argovis that should not: %s" % str(e.args))
             pass
