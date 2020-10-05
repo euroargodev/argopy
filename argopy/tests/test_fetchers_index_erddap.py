@@ -1,90 +1,132 @@
-#!/bin/env python
-# -*coding: UTF-8 -*-
-#
-# Test data fetchers
-#
-
-import os
 import xarray as xr
-import shutil
 
 import pytest
-import unittest
-from unittest import TestCase
+import tempfile
 
 import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
-from argopy.errors import InvalidFetcher, FileSystemHasNoCache, CacheFileNotFound, ErddapServerError
-from argopy.utilities import list_available_index_src, isconnected, isAPIconnected, erddap_ds_exists
+from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, ErddapServerError
+from . import requires_connected_erddap_index
 
 
-argopy.set_options(api_timeout=3*60)  # From Github actions, requests can take a while
-AVAILABLE_INDEX_SOURCES = list_available_index_src()
-CONNECTED = isconnected()
-CONNECTEDAPI = {src: False for src in AVAILABLE_INDEX_SOURCES.keys()}
-if CONNECTED:
-    DSEXISTS = erddap_ds_exists(ds="ArgoFloats-index")
-    for src in AVAILABLE_INDEX_SOURCES.keys():
-        try:
-            CONNECTEDAPI[src] = isAPIconnected(src=src, data=False)
-        except InvalidFetcher:
-            pass
-else:
-    DSEXISTS = False
+@requires_connected_erddap_index
+class Test_Backend:
+    """ Test ERDDAP index fetching backend """
 
-
-@unittest.skipUnless('erddap' in AVAILABLE_INDEX_SOURCES, "requires erddap index fetcher")
-@unittest.skipUnless(CONNECTED, "erddap requires an internet connection")
-@unittest.skipUnless(DSEXISTS, "erddap requires a valid core index Argo dataset from Ifremer server")
-# @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
-@unittest.skipUnless(CONNECTEDAPI['erddap'], "erddap API is not alive")
-class Backend(TestCase):
-    """ Test main API facade for all available dataset of the ERDDAP index fetching backend """
-    testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
+    src = 'erddap'
 
     def test_cachepath_notfound(self):
-        with argopy.set_options(cachedir=self.testcachedir):
-            loader = ArgoIndexFetcher(src='erddap', cache=True).float(6902746)
-            with pytest.raises(CacheFileNotFound):
-                loader.fetcher.cachepath
-        shutil.rmtree(self.testcachedir)  # Make sure the cache is empty
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                loader = ArgoIndexFetcher(src=self.src, cache=True).float(2901623)
+                with pytest.raises(CacheFileNotFound):
+                    loader.fetcher.cachepath
 
-    @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
+    @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
     def test_nocache(self):
-        with argopy.set_options(cachedir=self.testcachedir):
-            loader = ArgoIndexFetcher(src='erddap', cache=False).float(6902746)
-            loader.to_xarray()
-            with pytest.raises(FileSystemHasNoCache):
-                loader.fetcher.cachepath
-        shutil.rmtree(self.testcachedir)  # Make sure the cache is empty
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                loader = ArgoIndexFetcher(src=self.src, cache=False).float(2901623)
+                loader.to_xarray()
+                with pytest.raises(FileSystemHasNoCache):
+                    loader.fetcher.cachepath
 
-    @unittest.skipUnless(False, "Waiting for https://github.com/euroargodev/argopy/issues/16")
-    def test_caching_index(self):
-        with argopy.set_options(cachedir=self.testcachedir):
-            try:
-                loader = ArgoIndexFetcher(src='erddap', cache=True).float(6902746)
-                # 1st call to load from erddap and save to cachedir:
-                ds = loader.to_xarray()
-                # 2nd call to load from cached file:
-                ds = loader.to_xarray()
-                assert isinstance(ds, xr.Dataset)
-                assert isinstance(loader.fetcher.cachepath, str)
-                shutil.rmtree(self.testcachedir)
-            except ErddapServerError:  # Test is passed when something goes wrong because of the erddap server, not our fault !
-                shutil.rmtree(self.testcachedir)
-                pass
-            except Exception:
-                shutil.rmtree(self.testcachedir)
-                raise
+    @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
+    def test_clearcache(self):
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                loader = ArgoIndexFetcher(src=self.src, cache=True).float(2901623)
+                try:
+                    loader.to_xarray()
+                    loader.clear_cache()
+                    with pytest.raises(CacheFileNotFound):
+                        loader.fetcher.cachepath
+                except ErddapServerError:
+                    # Test is passed even if something goes wrong with the erddap server
+                    pass
+                except Exception:
+                    raise
+
+    @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
+    def test_caching(self):
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                loader = ArgoIndexFetcher(src=self.src, cache=True).float(2901623)
+                try:
+                    # 1st call to load and save to cache:
+                    loader.to_xarray()
+                    # 2nd call to load from cached file:
+                    ds = loader.to_xarray()
+                    assert isinstance(ds, xr.Dataset)
+                    assert isinstance(loader.fetcher.cachepath, str)
+                except ErddapServerError:
+                    # Test is passed even if something goes wrong with the erddap server
+                    pass
+                except Exception:
+                    raise
 
     def test_url(self):
-        loader = ArgoIndexFetcher(src='erddap', cache=True).float(2901623)
+        loader = ArgoIndexFetcher(src=self.src, cache=True).float(2901623)
         assert isinstance(loader.fetcher.url, str)
-        # loader = ArgoIndexFetcher(src='erddap', cache=True).profile(2901623, 12)
+        # loader = ArgoIndexFetcher(src=self.src, cache=True).region([-60, -40, 40., 60., '2007-08-01', '2007-09-01'])
         # assert isinstance(loader.fetcher.url, str)
-        loader = ArgoIndexFetcher(src='erddap', cache=True).region([-60, -40, 40., 60., '2007-08-01', '2007-09-01'])
-        assert isinstance(loader.fetcher.url, str)
 
+    def __testthis(self):
+        for access_point in self.args:
 
-if __name__ == '__main__':
-    unittest.main()
+            # Acces point not implemented yet for erddap
+            # if access_point == 'profile':
+            #     for arg in self.args['profile']:
+            #         fetcher = ArgoIndexFetcher(src=self.src).profile(*arg).fetcher
+            #         try:
+            #             ds = fetcher.to_xarray()
+            #             assert isinstance(ds, xr.Dataset)
+            #         except ErddapServerError:
+            #             # Test is passed even if something goes wrong with the erddap server
+            #             pass
+            #         except Exception:
+            #             print("ERROR ERDDAP request:\n", fetcher.cname())
+            #             pass
+
+            if access_point == 'float':
+                for arg in self.args['float']:
+                    fetcher = ArgoIndexFetcher(src=self.src).float(arg)
+                    try:
+                        ds = fetcher.to_xarray()
+                        assert isinstance(ds, xr.Dataset)
+                    except ErddapServerError:
+                        # Test is passed even if something goes wrong with the erddap server
+                        pass
+                    except Exception:
+                        print("ERROR ERDDAP request:\n", fetcher.cname())
+                        pass
+
+            if access_point == 'region':
+                for arg in self.args['region']:
+                    fetcher = ArgoIndexFetcher(src=self.src).region(arg).fetcher
+                    try:
+                        ds = fetcher.to_xarray()
+                        assert isinstance(ds, xr.Dataset)
+                    except ErddapServerError:
+                        # Test is passed even if something goes wrong with the erddap server
+                        pass
+                    except Exception:
+                        print("ERROR ERDDAP request:\n", fetcher.cname())
+                        pass
+
+    def test_phy_float(self):
+        self.args = {'float': [[2901623],
+                               [2901623, 6901929]]}
+        self.__testthis()
+
+    # @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
+    # def test_phy_profile(self):
+    #     self.args = {'profile': [[6901929, 36],
+    #                              [6901929, [5, 45]]]}
+    #     self.__testthis()
+
+    @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
+    def test_phy_region(self):
+        self.args = {'region': [[-60, -40, 40., 60.],
+                                [-60, -40, 40., 60., '2007-08-01', '2007-09-01']]}
+        self.__testthis()
