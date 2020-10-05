@@ -18,7 +18,7 @@ class NetCDF4FileNotFoundError(FileNotFoundError):
     Most common error. Basically just a file not found.
     I made a custom one to make it easier to catch.
     """
-    def __init__(self, path):
+    def __init__(self, path: str = "?"):
         self.value = "Couldn't find NetCDF4 file: %s" % path
         self.path = path
 
