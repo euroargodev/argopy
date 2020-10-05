@@ -1000,3 +1000,19 @@ def is_list_of_strings(lst):
 
 def is_list_of_integers(lst):
     return all(isinstance(x, int) for x in lst)
+
+
+def is_list_of_dicts(lst):
+    return all(isinstance(x, dict) for x in lst)
+
+
+def is_list_of_datasets(lst):
+    return all(isinstance(x, xr.Dataset) for x in lst)
+
+
+def is_json(this):
+    try:
+        json.loads(this)
+        return True
+    except Exception:
+        return False

@@ -1,7 +1,7 @@
 import os
 import pytest
-from unittest import TestCase
 import tempfile
+import json
 
 import xarray as xr
 import pandas as pd
@@ -16,6 +16,8 @@ from argopy.stores import (
 )
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound
 from . import requires_connection
+from argopy.utilities import is_list_of_datasets, is_json, is_list_of_dicts
+from argopy.options import OPTIONS
 
 
 @requires_connection
@@ -41,10 +43,22 @@ class Test_FileStore():
         with pytest.raises(CacheFileNotFound):
             fs.cachepath("dummy_uri")
 
+    def test_glob(self):
+        fs = filestore()
+        assert isinstance(fs.glob(os.path.sep.join([self.ftproot, "dac/*"])), list)
+
     def test_open_dataset(self):
         ncfile = os.path.sep.join([self.ftproot, "dac/aoml/5900446/5900446_prof.nc"])
         fs = filestore()
         assert isinstance(fs.open_dataset(ncfile), xr.Dataset)
+
+    def test_open_mfdataset(self):
+        fs = filestore()
+        ncfiles = fs.glob(os.path.sep.join([self.ftproot, "dac/aoml/5900446/profiles/*_1*.nc"]))[0:2]
+        for method in ['seq', 'thread', 'process']:
+            for progress in [True, False]:
+                assert isinstance(fs.open_mfdataset(ncfiles, method=method, progress=progress), xr.Dataset)
+                assert is_list_of_datasets(fs.open_mfdataset(ncfiles, method=method, progress=progress, concat=False))
 
     def test_read_csv(self):
         fs = filestore()
@@ -103,10 +117,30 @@ class Test_HttpStore():
         fs = httpstore()
         assert isinstance(fs.open_dataset(uri), xr.Dataset)
 
-        # uri = 'https://github.com/dummy.nc'
-        # fs = httpstore()
-        # with pytest.raises(ErddapServerError):
-        #     fs.open_dataset(uri)
+    @requires_connection
+    def test_open_mfdataset(self):
+        fs = httpstore()
+        uri = ["https://github.com/euroargodev/argopy-data/raw/master/ftp/dac/csiro/5900865/profiles/D5900865_00%i.nc" % i for i in [1,2]]
+        for method in ['seq', 'thread']:
+            for progress in [True, False]:
+                assert isinstance(fs.open_mfdataset(uri, method=method, progress=progress), xr.Dataset)
+                assert is_list_of_datasets(
+                    fs.open_mfdataset(uri, method=method, progress=progress, concat=False))
+
+    @requires_connection
+    def test_open_json(self):
+        uri = "https://argovis.colorado.edu/catalog/mprofiles/?ids=['6902746_12']"
+        fs = httpstore()
+        assert is_list_of_dicts(fs.open_json(uri))
+
+    @requires_connection
+    def test_open_mfjson(self):
+        fs = httpstore()
+        uri = ["https://argovis.colorado.edu/catalog/mprofiles/?ids=['6902746_%i']" % i for i in [12,13]]
+        for method in ['seq', 'thread']:
+            for progress in [True, False]:
+                lst = fs.open_mfjson(uri, method=method, progress=progress)
+                assert all(is_list_of_dicts(x) for x in lst)
 
     @requires_connection
     def test_read_csv(self):
