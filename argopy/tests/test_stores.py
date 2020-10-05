@@ -99,6 +99,7 @@ class Test_FileStore:
             os.remove(uri)
 
 
+@requires_connection
 class Test_HttpStore:
     def test_creation(self):
         fs = httpstore(cache=False)
@@ -118,13 +119,11 @@ class Test_HttpStore:
         with pytest.raises(CacheFileNotFound):
             fs.cachepath("dummy_uri")
 
-    @requires_connection
     def test_open_dataset(self):
         uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/dac/csiro/5900865/5900865_prof.nc"
         fs = httpstore()
         assert isinstance(fs.open_dataset(uri), xr.Dataset)
 
-    @requires_connection
     def test_open_mfdataset(self):
         fs = httpstore()
         uri = [
@@ -143,13 +142,11 @@ class Test_HttpStore:
                     )
                 )
 
-    @requires_connection
     def test_open_json(self):
         uri = "https://argovis.colorado.edu/catalog/mprofiles/?ids=['6902746_12']"
         fs = httpstore()
         assert is_list_of_dicts(fs.open_json(uri))
 
-    @requires_connection
     def test_open_mfjson(self):
         fs = httpstore()
         uri = [
@@ -161,7 +158,6 @@ class Test_HttpStore:
                 lst = fs.open_mfjson(uri, method=method, progress=progress)
                 assert all(is_list_of_dicts(x) for x in lst)
 
-    @requires_connection
     def test_read_csv(self):
         uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt"
         fs = httpstore()
@@ -169,7 +165,6 @@ class Test_HttpStore:
             fs.read_csv(uri, skiprows=8, header=0), pd.core.frame.DataFrame
         )
 
-    @requires_connection
     def test_cachefile(self):
         uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt"
         with tempfile.TemporaryDirectory() as cachedir:

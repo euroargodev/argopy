@@ -13,6 +13,7 @@ from argopy.utilities import (
     mapp_dict,
     list_multiprofile_file_variables,
     isconnected,
+    isAPIconnected,
     erddap_ds_exists,
     linear_interpolation_remap,
     Chunker,
@@ -20,7 +21,7 @@ from argopy.utilities import (
     is_list_of_strings,
     format_oneline,
 )
-from argopy.errors import InvalidFetcherAccessPoint
+from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher
 from argopy import DataFetcher as ArgoDataFetcher
 from . import requires_connection, requires_localftp
 
@@ -49,6 +50,12 @@ def test_isconnected():
     assert isinstance(isconnected(), bool)
     assert isconnected(host="http://dummyhost") is False
 
+
+def test_isAPIconnected():
+    assert isinstance(isAPIconnected(src="erddap", data=True), bool)
+    assert isinstance(isAPIconnected(src="erddap", data=False), bool)
+    with pytest.raises(InvalidFetcher):
+        isAPIconnected(src="localftp")
 
 def test_erddap_ds_exists():
     assert isinstance(erddap_ds_exists(ds="ArgoFloats"), bool)
