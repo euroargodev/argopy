@@ -1,7 +1,6 @@
 import os
 import pytest
 import tempfile
-import json
 
 import xarray as xr
 import pandas as pd
@@ -16,12 +15,11 @@ from argopy.stores import (
 )
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound
 from . import requires_connection
-from argopy.utilities import is_list_of_datasets, is_json, is_list_of_dicts
-from argopy.options import OPTIONS
+from argopy.utilities import is_list_of_datasets, is_list_of_dicts
 
 
 @requires_connection
-class Test_FileStore():
+class Test_FileStore:
     ftproot = argopy.tutorial.open_dataset("localftp")[0]
     csvfile = os.path.sep.join([ftproot, "ar_index_global_prof.txt"])
 
@@ -54,11 +52,20 @@ class Test_FileStore():
 
     def test_open_mfdataset(self):
         fs = filestore()
-        ncfiles = fs.glob(os.path.sep.join([self.ftproot, "dac/aoml/5900446/profiles/*_1*.nc"]))[0:2]
-        for method in ['seq', 'thread', 'process']:
+        ncfiles = fs.glob(
+            os.path.sep.join([self.ftproot, "dac/aoml/5900446/profiles/*_1*.nc"])
+        )[0:2]
+        for method in ["seq", "thread", "process"]:
             for progress in [True, False]:
-                assert isinstance(fs.open_mfdataset(ncfiles, method=method, progress=progress), xr.Dataset)
-                assert is_list_of_datasets(fs.open_mfdataset(ncfiles, method=method, progress=progress, concat=False))
+                assert isinstance(
+                    fs.open_mfdataset(ncfiles, method=method, progress=progress),
+                    xr.Dataset,
+                )
+                assert is_list_of_datasets(
+                    fs.open_mfdataset(
+                        ncfiles, method=method, progress=progress, concat=False
+                    )
+                )
 
     def test_read_csv(self):
         fs = filestore()
@@ -92,7 +99,7 @@ class Test_FileStore():
             os.remove(uri)
 
 
-class Test_HttpStore():
+class Test_HttpStore:
     def test_creation(self):
         fs = httpstore(cache=False)
         assert isinstance(fs.fs, fsspec.implementations.http.HTTPFileSystem)
@@ -120,12 +127,21 @@ class Test_HttpStore():
     @requires_connection
     def test_open_mfdataset(self):
         fs = httpstore()
-        uri = ["https://github.com/euroargodev/argopy-data/raw/master/ftp/dac/csiro/5900865/profiles/D5900865_00%i.nc" % i for i in [1,2]]
-        for method in ['seq', 'thread']:
+        uri = [
+            "https://github.com/euroargodev/argopy-data/raw/master/ftp/dac/csiro/5900865/profiles/D5900865_00%i.nc"
+            % i
+            for i in [1, 2]
+        ]
+        for method in ["seq", "thread"]:
             for progress in [True, False]:
-                assert isinstance(fs.open_mfdataset(uri, method=method, progress=progress), xr.Dataset)
+                assert isinstance(
+                    fs.open_mfdataset(uri, method=method, progress=progress), xr.Dataset
+                )
                 assert is_list_of_datasets(
-                    fs.open_mfdataset(uri, method=method, progress=progress, concat=False))
+                    fs.open_mfdataset(
+                        uri, method=method, progress=progress, concat=False
+                    )
+                )
 
     @requires_connection
     def test_open_json(self):
@@ -136,8 +152,11 @@ class Test_HttpStore():
     @requires_connection
     def test_open_mfjson(self):
         fs = httpstore()
-        uri = ["https://argovis.colorado.edu/catalog/mprofiles/?ids=['6902746_%i']" % i for i in [12,13]]
-        for method in ['seq', 'thread']:
+        uri = [
+            "https://argovis.colorado.edu/catalog/mprofiles/?ids=['6902746_%i']" % i
+            for i in [12, 13]
+        ]
+        for method in ["seq", "thread"]:
             for progress in [True, False]:
                 lst = fs.open_mfjson(uri, method=method, progress=progress)
                 assert all(is_list_of_dicts(x) for x in lst)
@@ -150,11 +169,6 @@ class Test_HttpStore():
             fs.read_csv(uri, skiprows=8, header=0), pd.core.frame.DataFrame
         )
 
-        # uri = 'https://github.com/dummy.txt'
-        # fs = httpstore()
-        # with pytest.raises(ErddapServerError):
-        #     fs.open_dataframe(uri)
-
     @requires_connection
     def test_cachefile(self):
         uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt"
@@ -164,7 +178,7 @@ class Test_HttpStore():
             assert isinstance(fs.cachepath(uri), str)
 
 
-class Test_IndexFilter_WMO():
+class Test_IndexFilter_WMO:
     kwargs = [
         {"WMO": 6901929},
         {"WMO": [6901929, 2901623]},
@@ -207,7 +221,7 @@ class Test_IndexFilter_WMO():
 
 
 @requires_connection
-class Test_IndexStore():
+class Test_IndexStore:
     ftproot, flist = argopy.tutorial.open_dataset("localftp")
     index_file = os.path.sep.join([ftproot, "ar_index_global_prof.txt"])
 

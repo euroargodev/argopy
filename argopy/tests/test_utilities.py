@@ -3,6 +3,7 @@ import io
 import pytest
 import tempfile
 import xarray as xr
+import pandas as pd
 import numpy as np
 import types
 
@@ -13,18 +14,15 @@ from argopy.utilities import (
     list_multiprofile_file_variables,
     isconnected,
     erddap_ds_exists,
-    list_available_data_src,
     linear_interpolation_remap,
     Chunker,
     is_box,
-    is_list_of_strings
+    is_list_of_strings,
+    format_oneline,
 )
 from argopy.errors import InvalidFetcherAccessPoint
 from argopy import DataFetcher as ArgoDataFetcher
 from . import requires_connection, requires_localftp
-
-AVAILABLE_SOURCES = list_available_data_src()
-CONNECTED = isconnected()
 
 
 def test_invalid_dictionnary():
@@ -79,7 +77,7 @@ def test_clear_cache():
 #         pass
 
 
-class Test_linear_interpolation_remap():
+class Test_linear_interpolation_remap:
     @pytest.fixture(autouse=True)
     def create_data(self):
         # create fake data to test interpolation:
@@ -138,7 +136,7 @@ class Test_linear_interpolation_remap():
             )
 
 
-class Test_Chunker():
+class Test_Chunker:
     @pytest.fixture(autouse=True)
     def create_data(self):
         self.WMO = [
@@ -194,13 +192,34 @@ class Test_Chunker():
         assert all([is_box(chunk) for chunk in C.fit_transform()])
         assert len(C.fit_transform()) == 12
 
+        C = Chunker(
+            {"box": self.BOX3d}, chunks={"lat": 1, "dpt": 1}, chunksize={"lon": 10}
+        )
+        chunks = C.fit_transform()
+        assert all([is_box(chunk) for chunk in chunks])
+        assert chunks[0][1] - chunks[0][0] == 10
+
         C = Chunker({"box": self.BOX3d}, chunks={"lon": 1, "lat": 12, "dpt": 1})
         assert all([is_box(chunk) for chunk in C.fit_transform()])
         assert len(C.fit_transform()) == 12
 
+        C = Chunker(
+            {"box": self.BOX3d}, chunks={"lon": 1, "dpt": 1}, chunksize={"lat": 10}
+        )
+        chunks = C.fit_transform()
+        assert all([is_box(chunk) for chunk in chunks])
+        assert chunks[0][3] - chunks[0][2] == 10
+
         C = Chunker({"box": self.BOX3d}, chunks={"lon": 1, "lat": 1, "dpt": 12})
         assert all([is_box(chunk) for chunk in C.fit_transform()])
         assert len(C.fit_transform()) == 12
+
+        C = Chunker(
+            {"box": self.BOX3d}, chunks={"lon": 1, "lat": 1}, chunksize={"dpt": 10}
+        )
+        chunks = C.fit_transform()
+        assert all([is_box(chunk) for chunk in chunks])
+        assert chunks[0][5] - chunks[0][4] == 10
 
         C = Chunker({"box": self.BOX3d}, chunks={"lon": 4, "lat": 2, "dpt": 1})
         assert all([is_box(chunk) for chunk in C.fit_transform()])
@@ -232,10 +251,28 @@ class Test_Chunker():
         assert len(C.fit_transform()) == 2
 
         C = Chunker(
+            {"box": self.BOX4d},
+            chunks={"lat": 1, "dpt": 1, "time": 1},
+            chunksize={"lon": 10},
+        )
+        chunks = C.fit_transform()
+        assert all([is_box(chunk) for chunk in chunks])
+        assert chunks[0][1] - chunks[0][0] == 10
+
+        C = Chunker(
             {"box": self.BOX4d}, chunks={"lon": 1, "lat": 2, "dpt": 1, "time": 1}
         )
         assert all([is_box(chunk) for chunk in C.fit_transform()])
         assert len(C.fit_transform()) == 2
+
+        C = Chunker(
+            {"box": self.BOX4d},
+            chunks={"lon": 1, "dpt": 1, "time": 1},
+            chunksize={"lat": 10},
+        )
+        chunks = C.fit_transform()
+        assert all([is_box(chunk) for chunk in chunks])
+        assert chunks[0][3] - chunks[0][2] == 10
 
         C = Chunker(
             {"box": self.BOX4d}, chunks={"lon": 1, "lat": 1, "dpt": 2, "time": 1}
@@ -244,10 +281,30 @@ class Test_Chunker():
         assert len(C.fit_transform()) == 2
 
         C = Chunker(
+            {"box": self.BOX4d},
+            chunks={"lon": 1, "lat": 1, "time": 1},
+            chunksize={"dpt": 10},
+        )
+        chunks = C.fit_transform()
+        assert all([is_box(chunk) for chunk in chunks])
+        assert chunks[0][5] - chunks[0][4] == 10
+
+        C = Chunker(
             {"box": self.BOX4d}, chunks={"lon": 1, "lat": 1, "dpt": 1, "time": 2}
         )
         assert all([is_box(chunk) for chunk in C.fit_transform()])
         assert len(C.fit_transform()) == 2
+
+        C = Chunker(
+            {"box": self.BOX4d},
+            chunks={"lon": 1, "lat": 1, "dpt": 1},
+            chunksize={"time": 5},
+        )
+        chunks = C.fit_transform()
+        assert all([is_box(chunk) for chunk in chunks])
+        assert np.timedelta64(
+            pd.to_datetime(chunks[0][7]) - pd.to_datetime(chunks[0][6]), "D"
+        ) <= np.timedelta64(5, "D")
 
         with pytest.raises(ValueError):
             Chunker({"box": self.BOX4d}, chunks=["lon", 1])
@@ -258,7 +315,7 @@ class Test_Chunker():
         )
 
 
-class Test_is_box():
+class Test_is_box:
     @pytest.fixture(autouse=True)
     def create_data(self):
         self.BOX3d = [0, 20, 40, 60, 0, 1000]
@@ -305,3 +362,10 @@ class Test_is_box():
             with pytest.raises(ValueError):
                 is_box(box, errors="raise")
             assert not is_box(box, errors="ignore")
+
+
+def test_format_oneline():
+    s = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
+    assert isinstance(format_oneline(s), str)
+    s = format_oneline(s, max_width=12)
+    assert isinstance(s, str) and len(s) == 12

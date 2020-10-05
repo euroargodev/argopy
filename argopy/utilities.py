@@ -896,7 +896,11 @@ def format_oneline(s, max_width=65):
     if len(s) > max_width:
         padding = " ... "
         n = (max_width - len(padding)) // 2
-        return "".join([s[0:n], padding, s[-n:]])
+        q = (max_width - len(padding)) % 2
+        if q == 0:
+            return "".join([s[0:n], padding, s[-n:]])
+        else:
+            return "".join([s[0:n+1], padding, s[-n:]])
     else:
         return s
 
@@ -998,21 +1002,9 @@ def is_list_of_strings(lst):
     return isinstance(lst, list) and all(isinstance(elem, str) for elem in lst)
 
 
-def is_list_of_integers(lst):
-    return all(isinstance(x, int) for x in lst)
-
-
 def is_list_of_dicts(lst):
     return all(isinstance(x, dict) for x in lst)
 
 
 def is_list_of_datasets(lst):
     return all(isinstance(x, xr.Dataset) for x in lst)
-
-
-def is_json(this):
-    try:
-        json.loads(this)
-        return True
-    except Exception:
-        return False
