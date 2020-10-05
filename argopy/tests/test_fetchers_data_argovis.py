@@ -13,6 +13,7 @@ from argopy.errors import (
     FileSystemHasNoCache,
     DataNotFound,
 )
+from aiohttp.client_exceptions import ServerDisconnectedError
 from argopy.utilities import is_list_of_strings
 from . import requires_connected_argovis
 
@@ -29,6 +30,10 @@ def safe_to_server_errors(test_func):
         except DataNotFound as e:
             # We make sure that data requested by tests are available from API, so this must be a server side error.
             warnings.warn("\nSomething happened on argovis that should not: %s" % str(e.args))
+            pass
+        except ServerDisconnectedError as e:
+            # We make sure that data requested by tests are available from API, so this must be a server side error.
+            warnings.warn("\nWe were disconnected from server !\n%s" % str(e.args))
             pass
         except Exception:
             raise
