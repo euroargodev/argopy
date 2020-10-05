@@ -52,34 +52,45 @@ def safe_to_server_errors(test_func):
     return test_wrapper
 
 
+class Test_Facade:
 
-def test_invalid_fetcher():
-    with pytest.raises(InvalidFetcher):
-        ArgoDataFetcher(src="invalid_fetcher").to_xarray()
+    def test_invalid_fetcher(self):
+        with pytest.raises(InvalidFetcher):
+            ArgoDataFetcher(src="invalid_fetcher").to_xarray()
+
+    @requires_fetcher
+    def test_invalid_accesspoint(self):
+        src = list(AVAILABLE_SOURCES.keys())[0]  # Use the first valid data source
+        with pytest.raises(InvalidFetcherAccessPoint):
+            ArgoDataFetcher(
+                src=src
+            ).invalid_accesspoint.to_xarray()  # Can't get data if access point not defined first
+        with pytest.raises(InvalidFetcher):
+            ArgoDataFetcher(
+                src=src
+            ).to_xarray()  # Can't get data if access point not defined first
+
+    @requires_fetcher
+    def test_invalid_dataset(self):
+        src = list(AVAILABLE_SOURCES.keys())[0]  # Use the first valid data source
+        with pytest.raises(ValueError):
+            ArgoDataFetcher(src=src, ds='dummy_ds')
+
+    @requires_fetcher
+    def test_warnings(self):
+        with pytest.warns(UserWarning):
+            ArgoDataFetcher(src='erddap', ds='bgc', mode='standard')
+
+    @requires_fetcher
+    def test_no_uri(self):
+        src = list(AVAILABLE_SOURCES.keys())[0]  # Use the first valid data source
+        with pytest.raises(InvalidFetcherAccessPoint):
+            ArgoDataFetcher(src=src).uri
+
 
 
 @requires_fetcher
-def test_invalid_accesspoint():
-    src = list(AVAILABLE_SOURCES.keys())[0]  # Use the first valid data source
-    with pytest.raises(InvalidFetcherAccessPoint):
-        ArgoDataFetcher(
-            src=src
-        ).invalid_accesspoint.to_xarray()  # Can't get data if access point not defined first
-    with pytest.raises(InvalidFetcherAccessPoint):
-        ArgoDataFetcher(
-            src=src
-        ).to_xarray()  # Can't get data if access point not defined first
-
-
-@requires_fetcher
-def test_invalid_dataset():
-    src = list(AVAILABLE_SOURCES.keys())[0]  # Use the first valid data source
-    with pytest.raises(ValueError):
-        ArgoDataFetcher(src=src, ds='dummy_ds')
-
-
-@requires_fetcher
-class Test_AllBackends:
+class Test_DataFetching:
     """ Test main API facade for all available fetching backends and default dataset """
 
     local_ftp = argopy.tutorial.open_dataset("localftp")[0]
@@ -99,6 +110,10 @@ class Test_AllBackends:
         [-60, -55, 40.0, 45.0, 0.0, 10.0],
         [-60, -55, 40.0, 45.0, 0.0, 10.0, "2007-08-01", "2007-09-01"],
     ]
+
+    def test_profile_from_float(self):
+        with pytest.raises(TypeError):
+            ArgoDataFetcher(src='erddap').float(self.args["float"][0], CYC=12)
 
     def __test_float(self, bk, **ftc_opts):
         """ Test float for a given backend """

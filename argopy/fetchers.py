@@ -61,14 +61,17 @@ class ArgoDataFetcher:
 
         # Auto-discovery of access points for this fetcher:
         # rq: Access point names for the facade are not the same as the access point of fetchers
-        self.valid_access_points = ["profile", "float", "region"]
         self.Fetchers = {}
         for p in Fetchers.access_points:
+            self.valid_access_points = []
             if p == "wmo":  # Required for 'profile' and 'float'
                 self.Fetchers["profile"] = Fetchers.Fetch_wmo
+                self.valid_access_points.append("profile")
                 self.Fetchers["float"] = Fetchers.Fetch_wmo
+                self.valid_access_points.append("float")
             if p == "box":  # Required for 'region'
                 self.Fetchers["region"] = Fetchers.Fetch_box
+                self.valid_access_points.append("region")
 
         # Init sub-methods:
         self.fetcher = None
@@ -130,14 +133,14 @@ class ArgoDataFetcher:
                 % ",".join(self.Fetchers.keys())
             )
 
-    def dashboard(self, **kw):
-        try:
-            return self.fetcher.dashboard(**kw)
-        except Exception:
-            warnings.warn(
-                "dashboard not available for this fetcher access point (%s/%s)"
-                % (self._src, self._AccessPoint)
-            )
+    # def dashboard(self, **kw):
+    #     try:
+    #         return self.fetcher.dashboard(**kw)
+    #     except Exception:
+    #         warnings.warn(
+    #             "dashboard not available for this fetcher access point (%s/%s)"
+    #             % (self._src, self._AccessPoint)
+    #         )
 
     def float(self, wmo, **kw):
         """ Float data fetcher
@@ -263,29 +266,35 @@ class ArgoDataFetcher:
             -------
             :class:`xarray.DataArray`
         """
-        # if not self.fetcher:
-        #     raise InvalidFetcher(" Initialize an access point (%s) first." %
-        #                          ",".join(self.Fetchers.keys()))
-        if self._AccessPoint not in self.valid_access_points:
-            raise InvalidFetcherAccessPoint(
-                " Initialize an access point (%s) first."
-                % ",".join(self.Fetchers.keys())
-            )
+        if not self.fetcher:
+            raise InvalidFetcher(" Initialize an access point (%s) first." %
+                                 ",".join(self.Fetchers.keys()))
+        # if self._AccessPoint not in self.valid_access_points:
+        #     raise InvalidFetcherAccessPoint(
+        #         " Initialize an access point (%s) first."
+        #         % ",".join(self.Fetchers.keys())
+        #     )
         xds = self.fetcher.to_xarray(**kwargs)
         xds = self.postproccessor(xds)
         return xds
 
     def to_dataframe(self, **kwargs):
         """  Fetch and return data as pandas.Dataframe """
-        if self._AccessPoint not in self.valid_access_points:
-            raise InvalidFetcherAccessPoint(
-                " Initialize an access point (%s) first."
-                % ",".join(self.Fetchers.keys())
-            )
+        if not self.fetcher:
+            raise InvalidFetcher(" Initialize an access point (%s) first." %
+                                 ",".join(self.Fetchers.keys()))
+        # if self._AccessPoint not in self.valid_access_points:
+        #     raise InvalidFetcherAccessPoint(
+        #         " Initialize an access point (%s) first."
+        #         % ",".join(self.Fetchers.keys())
+        #     )
         return self.to_xarray(**kwargs).to_dataframe()
 
     def clear_cache(self):
         """ Clear data cached by fetcher """
+        if not self.fetcher:
+            raise InvalidFetcher(" Initialize an access point (%s) first." %
+                                 ",".join(self.Fetchers.keys()))
         return self.fetcher.clear_cache()
 
 
