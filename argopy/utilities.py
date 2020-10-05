@@ -533,38 +533,38 @@ def erddap_ds_exists(ds="ArgoFloats"):
     return ds in [row[-1] for row in erddap_index["table"]["rows"]]
 
 
-def open_etopo1(box, res="l"):
-    """ Download ETOPO for a box
-
-        Parameters
-        ----------
-        box: [xmin, xmax, ymin, ymax]
-
-        Returns
-        -------
-        xarray.Dataset
-    """
-    # This function is in utilities to anticipate usage outside of plotting, eg interpolation, grounding detection
-    resx, resy = 0.1, 0.1
-    if res == "h":
-        resx, resy = 0.016, 0.016
-
-    uri = (
-        "https://gis.ngdc.noaa.gov/mapviewer-support/wcs-proxy/wcs.groovy?filename=etopo1.nc"
-        "&request=getcoverage&version=1.0.0&service=wcs&coverage=etopo1&CRS=EPSG:4326&format=netcdf"
-        "&resx={}&resy={}"
-        "&bbox={}"
-    ).format
-    thisurl = uri(
-        resx, resy, ",".join([str(b) for b in [box[0], box[2], box[1], box[3]]])
-    )
-    ds = httpstore(cache=True).open_dataset(thisurl)
-    da = ds["Band1"].rename("topo")
-    for a in ds.attrs:
-        da.attrs[a] = ds.attrs[a]
-    da.attrs["Data source"] = "https://maps.ngdc.noaa.gov/viewers/wcs-client/"
-    da.attrs["URI"] = thisurl
-    return da
+# def open_etopo1(box, res="l"):
+#     """ Download ETOPO for a box
+#
+#         Parameters
+#         ----------
+#         box: [xmin, xmax, ymin, ymax]
+#
+#         Returns
+#         -------
+#         xarray.Dataset
+#     """
+#     # This function is in utilities to anticipate usage outside of plotting, eg interpolation, grounding detection
+#     resx, resy = 0.1, 0.1
+#     if res == "h":
+#         resx, resy = 0.016, 0.016
+#
+#     uri = (
+#         "https://gis.ngdc.noaa.gov/mapviewer-support/wcs-proxy/wcs.groovy?filename=etopo1.nc"
+#         "&request=getcoverage&version=1.0.0&service=wcs&coverage=etopo1&CRS=EPSG:4326&format=netcdf"
+#         "&resx={}&resy={}"
+#         "&bbox={}"
+#     ).format
+#     thisurl = uri(
+#         resx, resy, ",".join([str(b) for b in [box[0], box[2], box[1], box[3]]])
+#     )
+#     ds = httpstore(cache=True).open_dataset(thisurl)
+#     da = ds["Band1"].rename("topo")
+#     for a in ds.attrs:
+#         da.attrs[a] = ds.attrs[a]
+#     da.attrs["Data source"] = "https://maps.ngdc.noaa.gov/viewers/wcs-client/"
+#     da.attrs["URI"] = thisurl
+#     return da
 
 
 #
