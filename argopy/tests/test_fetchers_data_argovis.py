@@ -158,20 +158,17 @@ class Test_Backend:
 
     @safe_to_server_errors
     def test_phy_float(self):
-        self.args = {}
-        self.args["float"] = self.requests['float']
+        self.args = {"float": self.requests['float']}
         self.__testthis("phy")
 
     @safe_to_server_errors
     def test_phy_profile(self):
-        self.args = {}
-        self.args["profile"] = self.requests['profile']
+        self.args = {"profile": self.requests['profile']}
         self.__testthis("phy")
 
     @safe_to_server_errors
     def test_phy_region(self):
-        self.args = {}
-        self.args["region"] = self.requests['region']
+        self.args = {"region": self.requests['region']}
         self.__testthis("phy")
 
 
