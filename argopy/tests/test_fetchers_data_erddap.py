@@ -274,6 +274,7 @@ class Test_BackendParallel:
             with pytest.raises(ValueError):
                 ArgoDataFetcher(**fetcher_args).float(self.requests["wmo"][0])
 
+    @safe_to_server_errors
     def test_chunks_region(self):
         for access_arg in self.requests["region"]:
             fetcher_args = {
@@ -281,20 +282,14 @@ class Test_BackendParallel:
                 "parallel": True,
                 "chunks": {"lon": 1, "lat": 2, "dpt": 2, "time": 1},
             }
-            try:
-                f = ArgoDataFetcher(**fetcher_args).region(access_arg).fetcher
-                assert isinstance(f.to_xarray(), xr.Dataset)
-                assert is_list_of_strings(f.uri)
-                assert len(f.uri) == np.prod(
-                    [v for k, v in fetcher_args["chunks"].items()]
-                )
-            except ErddapServerError:
-                # Test is passed even if something goes wrong with the erddap server
-                pass
-            except Exception:
-                print("\nERDDAP request:\n", "\n".join(f.uri))
-                pass
+            f = ArgoDataFetcher(**fetcher_args).region(access_arg).fetcher
+            assert isinstance(f.to_xarray(), xr.Dataset)
+            assert is_list_of_strings(f.uri)
+            assert len(f.uri) == np.prod(
+                [v for k, v in fetcher_args["chunks"].items()]
+            )
 
+    @safe_to_server_errors
     def test_chunks_wmo(self):
         for access_arg in self.requests["wmo"]:
             fetcher_args = {
@@ -302,14 +297,7 @@ class Test_BackendParallel:
                 "parallel": True,
                 "chunks_maxsize": {"wmo": 1},
             }
-            try:
-                f = ArgoDataFetcher(**fetcher_args).profile(access_arg, 12).fetcher
-                assert isinstance(f.to_xarray(), xr.Dataset)
-                assert is_list_of_strings(f.uri)
-                assert len(f.uri) == len(access_arg)
-            except ErddapServerError:
-                # Test is passed even if something goes wrong with the erddap server
-                pass
-            except Exception as e:
-                print("\nERDDAP request:\n", "\n".join(f.uri))
-                raise
+            f = ArgoDataFetcher(**fetcher_args).profile(access_arg, 12).fetcher
+            assert isinstance(f.to_xarray(), xr.Dataset)
+            assert is_list_of_strings(f.uri)
+            assert len(f.uri) == len(access_arg)

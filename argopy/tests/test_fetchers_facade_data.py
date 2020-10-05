@@ -2,6 +2,7 @@ import numpy as np
 import xarray as xr
 
 import pytest
+import warnings
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
@@ -10,6 +11,7 @@ from argopy.errors import (
     InvalidFetcher,
     ErddapServerError,
     ArgovisServerError,
+    DataNotFound
 )
 from argopy.utilities import is_list_of_strings
 from . import (
@@ -19,6 +21,30 @@ from . import (
     requires_localftp,
     requires_connected_argovis,
 )
+
+
+def safe_to_server_errors(test_func):
+    """ Test fixture to make sure we don't fail because of an error from the server, not our Fault ! """
+
+    def test_wrapper(fix):
+        try:
+            test_func(fix)
+        except ErddapServerError as e:
+            # Test is passed when something goes wrong because of the erddap server
+            warnings.warn("\nSomething happened on erddap that should not: %s" % str(e.args))
+            pass
+        except ArgovisServerError as e:
+            # Test is passed when something goes wrong because of the argovis server
+            warnings.warn("\nSomething happened on argovis that should not: %s" % str(e.args))
+            pass
+        except DataNotFound as e:
+            # We make sure that data requested by tests are available from API, so this must be a server side error.
+            warnings.warn("\nSomething happened on server: %s" % str(e.args))
+            pass
+        except Exception:
+            raise
+
+    return test_wrapper
 
 
 @requires_fetcher
@@ -66,88 +92,70 @@ class Test_AllBackends:
         for arg in self.args["float"]:
             for mode in self.mode:
                 options = {**self.fetcher_opts, **ftc_opts}
-                try:
-                    f = ArgoDataFetcher(src=bk, mode=mode, **options).float(arg)
-                    assert isinstance(f.to_xarray(), xr.Dataset)
-                    assert is_list_of_strings(f.uri)
-                except ErddapServerError:
-                    # Test is passed even if something goes wrong with the erddap server
-                    pass
-                except ArgovisServerError:
-                    # Test is passed even if something goes wrong with the argovis server
-                    pass
-                except Exception:
-                    raise
+                f = ArgoDataFetcher(src=bk, mode=mode, **options).float(arg)
+                assert isinstance(f.to_xarray(), xr.Dataset)
+                assert is_list_of_strings(f.uri)
 
     def __test_profile(self, bk):
         """ Test float for a given backend """
         for arg in self.args["profile"]:
             for mode in self.mode:
-                try:
-                    f = ArgoDataFetcher(src=bk, mode=mode).profile(*arg)
-                    assert isinstance(f.to_xarray(), xr.Dataset)
-                    assert is_list_of_strings(f.uri)
-                except ErddapServerError:
-                    # Test is passed even if something goes wrong with the erddap server
-                    pass
-                except ArgovisServerError:
-                    # Test is passed even if something goes wrong with the argovis server
-                    pass
-                except Exception:
-                    raise
+                f = ArgoDataFetcher(src=bk, mode=mode).profile(*arg)
+                assert isinstance(f.to_xarray(), xr.Dataset)
+                assert is_list_of_strings(f.uri)
 
     def __test_region(self, bk):
         """ Test float for a given backend """
         for arg in self.args["region"]:
             for mode in self.mode:
-                try:
-                    f = ArgoDataFetcher(src=bk, mode=mode).region(arg)
-                    assert isinstance(f.to_xarray(), xr.Dataset)
-                    assert is_list_of_strings(f.uri)
-                except ErddapServerError:
-                    # Test is passed even if something goes wrong with the erddap server
-                    pass
-                except ArgovisServerError:
-                    # Test is passed even if something goes wrong with the argovis server
-                    pass
-                except Exception:
-                    raise
+                f = ArgoDataFetcher(src=bk, mode=mode).region(arg)
+                assert isinstance(f.to_xarray(), xr.Dataset)
+                assert is_list_of_strings(f.uri)
 
     @requires_connected_erddap_phy
+    @safe_to_server_errors
     def test_float_erddap(self):
         self.__test_float("erddap")
 
     @requires_localftp
+    @safe_to_server_errors
     def test_float_localftp(self):
         with argopy.set_options(local_ftp=self.local_ftp):
             self.__test_float("localftp")
 
     @requires_connected_argovis
+    @safe_to_server_errors
     def test_float_argovis(self):
         self.__test_float("argovis")
 
     @requires_connected_erddap_phy
+    @safe_to_server_errors
     def test_profile_erddap(self):
         self.__test_profile("erddap")
 
     @requires_localftp
+    @safe_to_server_errors
     def test_profile_localftp(self):
         with argopy.set_options(local_ftp=self.local_ftp):
             self.__test_profile("localftp")
 
     @requires_connected_argovis
+    @safe_to_server_errors
     def test_profile_argovis(self):
         self.__test_profile("argovis")
 
     @requires_connected_erddap_phy
+    @safe_to_server_errors
     def test_region_erddap(self):
         self.__test_region("erddap")
 
     @requires_localftp
+    @safe_to_server_errors
     def test_region_localftp(self):
         with argopy.set_options(local_ftp=self.local_ftp):
             self.__test_region("localftp")
 
     @requires_connected_argovis
+    @safe_to_server_errors
     def test_region_argovis(self):
         self.__test_region("argovis")

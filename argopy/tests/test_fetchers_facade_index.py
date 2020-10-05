@@ -1,9 +1,10 @@
 import xarray as xr
 import pytest
+import warnings
 
 import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
-from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, ErddapServerError
+from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, ErddapServerError, DataNotFound
 from . import (
     AVAILABLE_INDEX_SOURCES,
     requires_fetcher_index,
@@ -11,6 +12,26 @@ from . import (
     requires_localftp_index,
     requires_connection,
 )
+
+
+def safe_to_server_errors(test_func):
+    """ Test fixture to make sure we don't fail because of an error from the server, not our Fault ! """
+
+    def test_wrapper(fix):
+        try:
+            test_func(fix)
+        except ErddapServerError as e:
+            # Test is passed when something goes wrong because of the erddap server
+            warnings.warn("\nSomething happened on erddap that should not: %s" % str(e.args))
+            pass
+        except DataNotFound as e:
+            # We make sure that data requested by tests are available from API, so this must be a server side error.
+            warnings.warn("\nSomething happened on server: %s" % str(e.args))
+            pass
+        except Exception:
+            raise
+
+    return test_wrapper
 
 
 @requires_fetcher_index
@@ -56,44 +77,27 @@ class Test_AllBackends:
     def __test_float(self, bk, **ftc_opts):
         """ Test float index fetching for a given backend """
         for arg in self.args["float"]:
-            try:
-                options = {**self.fetcher_opts, **ftc_opts}
-                f = ArgoIndexFetcher(src=bk, **options).float(arg)
-                assert isinstance(f.to_xarray(), xr.Dataset)
-            except ErddapServerError:
-                # Test is passed even if something goes wrong with the erddap server
-                pass
-            except Exception:
-                raise
+            options = {**self.fetcher_opts, **ftc_opts}
+            f = ArgoIndexFetcher(src=bk, **options).float(arg)
+            assert isinstance(f.to_xarray(), xr.Dataset)
 
     def __test_profile(self, bk, **ftc_opts):
         """ Test profile index fetching for a given backend """
         for arg in self.args["profile"]:
-            try:
-                options = {**self.fetcher_opts, **ftc_opts}
-                f = ArgoIndexFetcher(src=bk, **options).profile(*arg)
-                assert isinstance(f.to_xarray(), xr.Dataset)
-            except ErddapServerError:
-                # Test is passed even if something goes wrong with the erddap server
-                pass
-            except Exception:
-                raise
+            options = {**self.fetcher_opts, **ftc_opts}
+            f = ArgoIndexFetcher(src=bk, **options).profile(*arg)
+            assert isinstance(f.to_xarray(), xr.Dataset)
 
     def __test_region(self, bk, **ftc_opts):
         """ Test float index fetching for a given backend """
         for arg in self.args["region"]:
-            try:
-                options = {**self.fetcher_opts, **ftc_opts}
-                f = ArgoIndexFetcher(src=bk, **options).region(arg)
-                assert isinstance(f.to_xarray(), xr.Dataset)
-            except ErddapServerError:
-                # Test is passed even if something goes wrong with the erddap server
-                pass
-            except Exception:
-                raise
+            options = {**self.fetcher_opts, **ftc_opts}
+            f = ArgoIndexFetcher(src=bk, **options).region(arg)
+            assert isinstance(f.to_xarray(), xr.Dataset)
 
     @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
     @requires_connected_erddap_index
+    @safe_to_server_errors
     def test_float_erddap(self):
         self.__test_float("erddap")
 
