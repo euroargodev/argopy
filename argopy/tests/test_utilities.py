@@ -401,5 +401,6 @@ class Test_is_box:
 def test_format_oneline():
     s = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
     assert isinstance(format_oneline(s), str)
+    assert isinstance(format_oneline(s[0:5]), str)
     s = format_oneline(s, max_width=12)
     assert isinstance(s, str) and len(s) == 12
