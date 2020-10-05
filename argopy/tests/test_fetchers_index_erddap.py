@@ -2,41 +2,14 @@ import xarray as xr
 
 import pytest
 import tempfile
-import warnings
 
 import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy.errors import (
     FileSystemHasNoCache,
-    CacheFileNotFound,
-    ErddapServerError,
-    DataNotFound,
+    CacheFileNotFound
 )
-from . import requires_connected_erddap_index
-
-
-def safe_to_server_errors(test_func):
-    """ Test wrapper to make sure we don't fail because of an error from the server, not our Fault ! """
-
-    def test_wrapper(fix):
-        try:
-            test_func(fix)
-        except ErddapServerError as e:
-            # Test is passed when something goes wrong because of the erddap server
-            warnings.warn(
-                "\nSomething happened on erddap that should not: %s" % str(e.args)
-            )
-            pass
-        except DataNotFound as e:
-            # We make sure that data requested by tests are available from API, so this must be a server side error.
-            warnings.warn(
-                "\nSomething happened on erddap that should not: %s" % str(e.args)
-            )
-            pass
-        except Exception:
-            raise
-
-    return test_wrapper
+from . import requires_connected_erddap_index, safe_to_server_errors
 
 
 @requires_connected_erddap_index

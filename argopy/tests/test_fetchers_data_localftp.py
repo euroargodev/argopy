@@ -4,27 +4,14 @@ import xarray as xr
 
 import pytest
 import tempfile
-import warnings
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import CacheFileNotFound, FileSystemHasNoCache, FtpPathError
 from argopy.utilities import list_available_data_src, is_list_of_strings
-from . import requires_localftp
+from . import requires_localftp, safe_to_server_errors
 
 AVAILABLE_SOURCES = list_available_data_src()
-
-
-def safe_to_server_errors(test_func):
-    """ Test wrapper to make sure we don't fail because of an error not our Fault ! """
-
-    def test_wrapper(fix):
-        try:
-            test_func(fix)
-        except Exception:
-            raise
-
-    return test_wrapper
 
 
 @requires_localftp
