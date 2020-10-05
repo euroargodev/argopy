@@ -37,9 +37,18 @@ path2pkl = pkg_resources.resource_filename("argopy", "assets/")
 
 
 def clear_cache():
-    """ Delete argopy cache folder """
+    """ Delete argopy cache folder content """
     if os.path.exists(OPTIONS["cachedir"]):
-        shutil.rmtree(OPTIONS["cachedir"])
+        # shutil.rmtree(OPTIONS["cachedir"])
+        for filename in os.listdir(OPTIONS["cachedir"]):
+            file_path = os.path.join(OPTIONS["cachedir"], filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 
 def load_dict(ptype):
@@ -892,7 +901,7 @@ def format_oneline(s, max_width=65):
         return s
 
 
-def is_box(box, errors="raise"):
+def is_box(box : list, errors="raise"):
     """ Check if this array matches a 2d or 3d box definition
 
         box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
@@ -901,7 +910,7 @@ def is_box(box, errors="raise"):
 
     Parameters
     ----------
-    box: array
+    box: list
     errors: 'raise'
 
     Returns

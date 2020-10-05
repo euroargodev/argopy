@@ -1,11 +1,12 @@
 import os
 import io
 import pytest
-import unittest
-import argopy
+import tempfile
 import xarray as xr
 import numpy as np
 import types
+
+import argopy
 from argopy.utilities import (
     load_dict,
     mapp_dict,
@@ -16,11 +17,11 @@ from argopy.utilities import (
     linear_interpolation_remap,
     Chunker,
     is_box,
-    is_list_of_strings,
-    is_list_of_integers
+    is_list_of_strings
 )
 from argopy.errors import InvalidFetcherAccessPoint
 from argopy import DataFetcher as ArgoDataFetcher
+from . import requires_connection, requires_localftp
 
 AVAILABLE_SOURCES = list_available_data_src()
 CONNECTED = isconnected()
@@ -56,14 +57,16 @@ def test_erddap_ds_exists():
     assert erddap_ds_exists(ds="DummyDS") is False
 
 
-@unittest.skipUnless("localftp" in AVAILABLE_SOURCES, "requires localftp data fetcher")
+@requires_connection
+@requires_localftp
 def test_clear_cache():
     ftproot, flist = argopy.tutorial.open_dataset("localftp")
-    testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
-    with argopy.set_options(cachedir=testcachedir, local_ftp=ftproot):
-        ArgoDataFetcher(src="localftp").profile(2902696, 12).to_xarray()
-        argopy.clear_cache()
-        assert os.path.isdir(testcachedir) is False
+    with tempfile.TemporaryDirectory() as cachedir:
+        with argopy.set_options(cachedir=cachedir, local_ftp=ftproot):
+            ArgoDataFetcher(src="localftp").profile(2902696, 12).to_xarray()
+            argopy.clear_cache()
+            assert os.path.exists(cachedir) is True
+            assert len(os.listdir(cachedir)) == 0
 
 
 # We disable this test because the server has not responded over a week (May 29th)
@@ -76,7 +79,7 @@ def test_clear_cache():
 #         pass
 
 
-class test_linear_interpolation_remap(unittest.TestCase):
+class Test_linear_interpolation_remap():
     @pytest.fixture(autouse=True)
     def create_data(self):
         # create fake data to test interpolation:
@@ -135,7 +138,7 @@ class test_linear_interpolation_remap(unittest.TestCase):
             )
 
 
-class test_Chunker(unittest.TestCase):
+class Test_Chunker():
     @pytest.fixture(autouse=True)
     def create_data(self):
         self.WMO = [
@@ -255,7 +258,7 @@ class test_Chunker(unittest.TestCase):
         )
 
 
-class test_is_box(unittest.TestCase):
+class Test_is_box():
     @pytest.fixture(autouse=True)
     def create_data(self):
         self.BOX3d = [0, 20, 40, 60, 0, 1000]
