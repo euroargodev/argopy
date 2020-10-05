@@ -156,6 +156,14 @@ class Test_Chunker:
         with pytest.raises(InvalidFetcherAccessPoint):
             Chunker({"invalid": self.WMO})
 
+    def test_invalid_chunks(self):
+        with pytest.raises(ValueError):
+            Chunker({"box": self.BOX3d}, chunks='toto')
+
+    def test_invalid_chunksize(self):
+        with pytest.raises(ValueError):
+            Chunker({"box": self.BOX3d}, chunksize='toto')
+
     def test_chunk_wmo(self):
         C = Chunker({"wmo": self.WMO})
         assert all(

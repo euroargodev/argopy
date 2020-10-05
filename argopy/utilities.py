@@ -676,10 +676,10 @@ class Chunker:
         default = self.default_chunksize[[k for k in self.request.keys()][0]]
         if len(chunksize) == 0:  # chunksize = {}
             chunksize = default
-        else:  # merge with default:
-            chunksize = {**default, **chunksize}
         if not isinstance(chunksize, collections.Mapping):
             raise ValueError("chunksize must be mappable")
+        else:  # merge with default:
+            chunksize = {**default, **chunksize}
         self.chunksize = collections.OrderedDict(sorted(chunksize.items()))
 
         default = {k: "auto" for k in self.chunksize.keys()}
