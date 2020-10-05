@@ -12,6 +12,7 @@ from argopy.utilities import (
     load_dict,
     mapp_dict,
     list_multiprofile_file_variables,
+    check_localftp,
     isconnected,
     isAPIconnected,
     erddap_ds_exists,
@@ -21,7 +22,7 @@ from argopy.utilities import (
     is_list_of_strings,
     format_oneline,
 )
-from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher
+from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
 from . import requires_connection, requires_localftp
 
@@ -38,6 +39,14 @@ def test_invalid_dictionnary_key():
 
 def test_list_multiprofile_file_variables():
     assert is_list_of_strings(list_multiprofile_file_variables())
+
+
+def test_check_localftp():
+    assert check_localftp("dummy_path", errors='ignore') is False
+    with pytest.raises(FtpPathError):
+        check_localftp("dummy_path", errors='raise')
+    with pytest.warns(UserWarning):
+        assert check_localftp("dummy_path", errors='warn') is False
 
 
 def test_show_versions():
