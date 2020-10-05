@@ -54,27 +54,27 @@ def safe_to_server_errors(test_func):
 
 class Test_Facade:
 
+    src = list(AVAILABLE_SOURCES.keys())[0]  # Use the first valid data source
+
     def test_invalid_fetcher(self):
         with pytest.raises(InvalidFetcher):
             ArgoDataFetcher(src="invalid_fetcher").to_xarray()
 
     @requires_fetcher
     def test_invalid_accesspoint(self):
-        src = list(AVAILABLE_SOURCES.keys())[0]  # Use the first valid data source
         with pytest.raises(InvalidFetcherAccessPoint):
             ArgoDataFetcher(
-                src=src
+                src=self.src
             ).invalid_accesspoint.to_xarray()  # Can't get data if access point not defined first
         with pytest.raises(InvalidFetcher):
             ArgoDataFetcher(
-                src=src
+                src=self.src
             ).to_xarray()  # Can't get data if access point not defined first
 
     @requires_fetcher
     def test_invalid_dataset(self):
-        src = list(AVAILABLE_SOURCES.keys())[0]  # Use the first valid data source
         with pytest.raises(ValueError):
-            ArgoDataFetcher(src=src, ds='dummy_ds')
+            ArgoDataFetcher(src=self.src, ds='dummy_ds')
 
     @requires_fetcher
     def test_warnings(self):
@@ -83,9 +83,8 @@ class Test_Facade:
 
     @requires_fetcher
     def test_no_uri(self):
-        src = list(AVAILABLE_SOURCES.keys())[0]  # Use the first valid data source
         with pytest.raises(InvalidFetcherAccessPoint):
-            ArgoDataFetcher(src=src).uri
+            ArgoDataFetcher(src=self.src).uri
 
 
 

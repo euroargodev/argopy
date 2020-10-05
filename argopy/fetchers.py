@@ -269,11 +269,6 @@ class ArgoDataFetcher:
         if not self.fetcher:
             raise InvalidFetcher(" Initialize an access point (%s) first." %
                                  ",".join(self.Fetchers.keys()))
-        # if self._AccessPoint not in self.valid_access_points:
-        #     raise InvalidFetcherAccessPoint(
-        #         " Initialize an access point (%s) first."
-        #         % ",".join(self.Fetchers.keys())
-        #     )
         xds = self.fetcher.to_xarray(**kwargs)
         xds = self.postproccessor(xds)
         return xds
@@ -283,11 +278,6 @@ class ArgoDataFetcher:
         if not self.fetcher:
             raise InvalidFetcher(" Initialize an access point (%s) first." %
                                  ",".join(self.Fetchers.keys()))
-        # if self._AccessPoint not in self.valid_access_points:
-        #     raise InvalidFetcherAccessPoint(
-        #         " Initialize an access point (%s) first."
-        #         % ",".join(self.Fetchers.keys())
-        #     )
         return self.to_xarray(**kwargs).to_dataframe()
 
     def clear_cache(self):
@@ -346,17 +336,22 @@ class ArgoIndexFetcher:
 
         # Auto-discovery of access points for this fetcher:
         # rq: Access point names for the facade are not the same as the access point of fetchers
-        self.valid_access_points = ["profile", "float", "region"]
         self.Fetchers = {}
         for p in Fetchers.access_points:
+            self.valid_access_points = []
             if p == "wmo":  # Required for 'profile' and 'float'
-                self.Fetchers["profile"] = Fetchers.Fetcher_wmo
-                self.Fetchers["float"] = Fetchers.Fetcher_wmo
+                self.Fetchers["profile"] = Fetchers.Fetch_wmo
+                self.valid_access_points.append("profile")
+                self.Fetchers["float"] = Fetchers.Fetch_wmo
+                self.valid_access_points.append("float")
             if p == "box":  # Required for 'region'
-                self.Fetchers["region"] = Fetchers.Fetcher_box
+                self.Fetchers["region"] = Fetchers.Fetch_box
+                self.valid_access_points.append("region")
 
         # Init sub-methods:
         self.fetcher = None
+        if self._dataset_id not in Fetchers.dataset_ids:
+            raise ValueError("%s dataset is not available for this index source (%s)" % (self._dataset_id, self._src))
         self.fetcher_options = {**fetcher_kwargs}
         self.postproccessor = self.__empty_processor
         self._AccessPoint = None
@@ -364,6 +359,7 @@ class ArgoIndexFetcher:
     def __repr__(self):
         if self.fetcher:
             summary = [self.fetcher.__repr__()]
+            summary.append("Backend: %s" % self._src)
             summary.append("User mode: %s" % self._mode)
         else:
             summary = ["<indexfetcher> 'Not initialised'"]

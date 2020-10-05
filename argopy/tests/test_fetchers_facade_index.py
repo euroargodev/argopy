@@ -34,22 +34,30 @@ def safe_to_server_errors(test_func):
     return test_wrapper
 
 
-@requires_fetcher_index
-def test_invalid_accesspoint():
-    src = list(AVAILABLE_INDEX_SOURCES.keys())[0]  # Use the first valid data source
-    with pytest.raises(InvalidFetcherAccessPoint):
-        ArgoIndexFetcher(
-            src=src
-        ).invalid_accesspoint.to_xarray()  # Can't get data if access point not defined first
-    with pytest.raises(InvalidFetcherAccessPoint):
-        ArgoIndexFetcher(
-            src=src
-        ).to_xarray()  # Can't get data if access point not defined first
+class Test_Facade:
 
+    src = list(AVAILABLE_INDEX_SOURCES.keys())[0]
 
-def test_invalid_fetcher():
-    with pytest.raises(InvalidFetcher):
-        ArgoIndexFetcher(src="invalid_fetcher").to_xarray()
+    def test_invalid_fetcher(self):
+        with pytest.raises(InvalidFetcher):
+            ArgoIndexFetcher(src="invalid_fetcher").to_xarray()
+
+    @requires_fetcher_index
+    def test_invalid_accesspoint(self):
+         # Use the first valid data source
+        with pytest.raises(InvalidFetcherAccessPoint):
+            ArgoIndexFetcher(
+                src=self.src
+            ).invalid_accesspoint.to_xarray()  # Can't get data if access point not defined first
+        with pytest.raises(InvalidFetcherAccessPoint):
+            ArgoIndexFetcher(
+                src=self.src
+            ).to_xarray()  # Can't get data if access point not defined first
+
+    @requires_fetcher_index
+    def test_invalid_dataset(self):
+        with pytest.raises(ValueError):
+            ArgoIndexFetcher(src=self.src, ds='dummy_ds')
 
 
 @requires_connection

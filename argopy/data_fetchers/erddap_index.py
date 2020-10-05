@@ -15,12 +15,8 @@ import numpy as np
 import copy
 
 from abc import ABC, abstractmethod
-import getpass
 
-from .proto import ArgoDataFetcherProto
 from argopy.utilities import load_dict, mapp_dict, format_oneline
-from argopy.options import OPTIONS
-from argopy.utilities import list_standard_variables
 from argopy.stores import httpstore
 
 from erddapy import ERDDAP
@@ -29,7 +25,7 @@ from erddapy.utilities import parse_dates, quote_string_constraints
 
 access_points = ['wmo', 'box']
 exit_formats = ['xarray', 'dataframe']
-dataset_ids = ['phy', 'ref', 'bgc']  # First is default
+dataset_ids = ['phy']  # First is default
 api_server = 'https://www.ifremer.fr/erddap'  # API root url
 api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
 
@@ -187,7 +183,7 @@ class ErddapArgoIndexFetcher(ABC):
         return self.fs.clear_cache()
 
 
-class Fetcher_wmo(ErddapArgoIndexFetcher):
+class Fetch_wmo(ErddapArgoIndexFetcher):
     """ Manage access to Argo Index through Ifremer ERDDAP for: a list of WMOs
 
     """
@@ -222,7 +218,7 @@ class Fetcher_wmo(ErddapArgoIndexFetcher):
         return listname
 
 
-class Fetcher_box(ErddapArgoIndexFetcher):
+class Fetch_box(ErddapArgoIndexFetcher):
     """ Manage access to Argo Index through Ifremer ERDDAP for: an ocean rectangle
 
         __author__: kevin.balem@ifremer.fr
