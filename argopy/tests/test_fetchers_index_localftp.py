@@ -2,24 +2,11 @@ import xarray as xr
 import tempfile
 
 import pytest
-import warnings
 
 import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound
-from . import requires_localftp_index, requires_connection
-
-
-def safe_to_server_errors(test_func):
-    """ Test wrapper to make sure we don't fail because of an error not our Fault ! """
-
-    def test_wrapper(fix):
-        try:
-            test_func(fix)
-        except Exception:
-            raise
-
-    return test_wrapper
+from . import requires_localftp_index, requires_connection, safe_to_server_errors
 
 
 @requires_localftp_index

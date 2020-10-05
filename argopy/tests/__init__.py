@@ -7,6 +7,15 @@ Test suite for argopy continuous integration
 
 import importlib
 import pytest
+
+import warnings
+from argopy.errors import (
+    ErddapServerError,
+    ArgovisServerError,
+    DataNotFound
+)
+from aiohttp.client_exceptions import ServerDisconnectedError, ClientResponseError
+
 import argopy
 argopy.set_options(api_timeout=3 * 60)  # From Github actions, requests can take a while
 argopy.show_versions()
@@ -98,3 +107,37 @@ requires_connected_argovis = pytest.mark.skipif(
 ############
 has_localftp, requires_localftp = _connectskip('localftp' in AVAILABLE_SOURCES, "requires localftp data fetcher")
 has_localftp_index, requires_localftp_index = _connectskip('localftp' in AVAILABLE_INDEX_SOURCES, "requires localftp index fetcher")
+
+
+############
+
+def safe_to_server_errors(test_func):
+    """ Test fixture to make sure we don't fail because of an error from the server, not our Fault ! """
+
+    def test_wrapper(fix):
+        try:
+            test_func(fix)
+        except ErddapServerError as e:
+            # Test is passed when something goes wrong because of the erddap server
+            warnings.warn("\nSomething happened on erddap that should not: %s" % str(e.args))
+            pass
+        except ArgovisServerError as e:
+            # Test is passed when something goes wrong because of the argovis server
+            warnings.warn("\nSomething happened on argovis that should not: %s" % str(e.args))
+            pass
+        except DataNotFound as e:
+            # We make sure that data requested by tests are available from API, so this must be a server side error.
+            warnings.warn("\nSomething happened on server: %s" % str(e.args))
+            pass
+        except ServerDisconnectedError as e:
+            # We can't do anything about this !
+            warnings.warn("\nWe were disconnected from server !\n%s" % str(e.args))
+            pass
+        except ClientResponseError as e:
+            # The server is sending back an error when creating the response
+            warnings.warn("\nAnother server side error:\n%s" % str(e.args))
+            pass
+        except Exception:
+            raise
+
+    return test_wrapper

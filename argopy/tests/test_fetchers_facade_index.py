@@ -11,27 +11,8 @@ from . import (
     requires_connected_erddap_index,
     requires_localftp_index,
     requires_connection,
+    safe_to_server_errors
 )
-
-
-def safe_to_server_errors(test_func):
-    """ Test fixture to make sure we don't fail because of an error from the server, not our Fault ! """
-
-    def test_wrapper(fix):
-        try:
-            test_func(fix)
-        except ErddapServerError as e:
-            # Test is passed when something goes wrong because of the erddap server
-            warnings.warn("\nSomething happened on erddap that should not: %s" % str(e.args))
-            pass
-        except DataNotFound as e:
-            # We make sure that data requested by tests are available from API, so this must be a server side error.
-            warnings.warn("\nSomething happened on server: %s" % str(e.args))
-            pass
-        except Exception:
-            raise
-
-    return test_wrapper
 
 
 class Test_Facade:
