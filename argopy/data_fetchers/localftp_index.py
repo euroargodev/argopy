@@ -142,7 +142,7 @@ class LocalFTPArgoIndexFetcher(ABC):
         return self.fs.clear_cache()
 
 
-class Fetcher_wmo(LocalFTPArgoIndexFetcher):
+class Fetch_wmo(LocalFTPArgoIndexFetcher):
     """ Manage access to local ftp Argo data for: a list of WMOs
 
     """
@@ -167,7 +167,7 @@ class Fetcher_wmo(LocalFTPArgoIndexFetcher):
         self.fcls = indexfilter_wmo(self.WMO, self.CYC)
 
 
-class Fetcher_box(LocalFTPArgoIndexFetcher):
+class Fetch_box(LocalFTPArgoIndexFetcher):
     """ Manage access to local ftp Argo data for: an ocean rectangle
 
     """
