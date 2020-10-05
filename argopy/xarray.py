@@ -1,11 +1,8 @@
-#!/bin/env python
-# -*coding: UTF-8 -*-
-#
-
 import sys
 import numpy as np
 import pandas as pd
 import xarray as xr
+from sklearn import preprocessing
 
 try:
     import gsw
@@ -13,11 +10,8 @@ try:
 except ModuleNotFoundError:
     with_gsw = False
 
-
 from argopy.utilities import linear_interpolation_remap
-
 from argopy.errors import InvalidDatasetStructure
-from sklearn import preprocessing
 
 
 @xr.register_dataset_accessor('argo')
