@@ -16,7 +16,7 @@ AVAILABLE_SOURCES = list_available_data_src()
 
 @requires_localftp
 class Test_Backend():
-    """ Test main API facade for all available dataset and access points of the localftp fetching backend """
+    """ Test LOCAL FTP data fetching backend """
 
     src = 'localftp'
     local_ftp = argopy.tutorial.open_dataset('localftp')[0]
@@ -29,11 +29,12 @@ class Test_Backend():
                     loader.fetcher.cachepath
 
     def test_nocache(self):
-        with argopy.set_options(cachedir="dummy", local_ftp=self.local_ftp):
-            loader = ArgoDataFetcher(src=self.src, cache=False).profile(2901623, 12)
-            loader.to_xarray()
-            with pytest.raises(FileSystemHasNoCache):
-                loader.fetcher.cachepath
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
+                loader = ArgoDataFetcher(src=self.src, cache=False).profile(2901623, 12)
+                loader.to_xarray()
+                with pytest.raises(FileSystemHasNoCache):
+                    loader.fetcher.cachepath
 
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:

@@ -25,11 +25,12 @@ class Test_Backend():
                     loader.fetcher.cachepath
 
     def test_nocache(self):
-        with argopy.set_options(cachedir="dummy"):
-            loader = ArgoDataFetcher(src=self.src, cache=False).profile(6902746, 34)
-            loader.to_xarray()
-            with pytest.raises(FileSystemHasNoCache):
-                loader.fetcher.cachepath
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                loader = ArgoDataFetcher(src=self.src, cache=False).profile(6902746, 34)
+                loader.to_xarray()
+                with pytest.raises(FileSystemHasNoCache):
+                    loader.fetcher.cachepath
 
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:

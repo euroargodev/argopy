@@ -18,7 +18,7 @@ from . import (
 
 @requires_connected_erddap
 class Test_Backend:
-    """ Test main API facade for all available dataset and access points of the ERDDAP data fetching backend """
+    """ Test ERDDAP data fetching backend """
 
     src = "erddap"
 
@@ -32,11 +32,12 @@ class Test_Backend:
 
     @requires_connected_erddap_phy
     def test_nocache(self):
-        with argopy.set_options(cachedir="dummy"):
-            loader = ArgoDataFetcher(src=self.src, cache=False).profile(6902746, 34)
-            loader.to_xarray()
-            with pytest.raises(FileSystemHasNoCache):
-                loader.fetcher.cachepath
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                loader = ArgoDataFetcher(src=self.src, cache=False).profile(6902746, 34)
+                loader.to_xarray()
+                with pytest.raises(FileSystemHasNoCache):
+                    loader.fetcher.cachepath
 
     @requires_connected_erddap_phy
     def test_clearcache(self):
