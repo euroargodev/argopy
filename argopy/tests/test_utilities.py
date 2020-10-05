@@ -104,10 +104,20 @@ class Test_linear_interpolation_remap:
     def test_interpolation(self):
         # Run it with success:
         dsi = linear_interpolation_remap(
-            self.dsfake.PRES,
+            self.dsfake["PRES"],
             self.dsfake["TEMP"],
             self.dsfake["Z_LEVELS"],
             z_dim="N_LEVELS",
+            z_regridded_dim="Z_LEVELS",
+        )
+        assert "remapped" in dsi.dims
+
+    def test_interpolation_1d(self):
+        # Run it with success:
+        dsi = linear_interpolation_remap(
+            self.dsfake["PRES"].isel(N_PROF=0),
+            self.dsfake["TEMP"].isel(N_PROF=0),
+            self.dsfake["Z_LEVELS"],
             z_regridded_dim="Z_LEVELS",
         )
         assert "remapped" in dsi.dims
@@ -117,7 +127,7 @@ class Test_linear_interpolation_remap:
         # catches error from _regular_interp linked to z_dim
         with pytest.raises(RuntimeError):
             linear_interpolation_remap(
-                self.dsfake.PRES,
+                self.dsfake["PRES"],
                 self.dsfake["TEMP"],
                 self.dsfake["Z_LEVELS"],
                 z_regridded_dim="Z_LEVELS",
@@ -128,7 +138,7 @@ class Test_linear_interpolation_remap:
         # catches error from linear_interpolation_remap linked to datatype
         with pytest.raises(ValueError):
             linear_interpolation_remap(
-                self.dsfake.PRES,
+                self.dsfake["PRES"],
                 self.dsfake,
                 self.dsfake["Z_LEVELS"],
                 z_dim="N_LEVELS",
