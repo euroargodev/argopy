@@ -1,7 +1,7 @@
 import os
-import shutil
 import pytest
 from unittest import TestCase
+import tempfile
 
 import xarray as xr
 import pandas as pd
@@ -19,10 +19,9 @@ from . import requires_connection
 
 
 @requires_connection
-class FileStore(TestCase):
+class Test_FileStore():
     ftproot = argopy.tutorial.open_dataset("localftp")[0]
     csvfile = os.path.sep.join([ftproot, "ar_index_global_prof.txt"])
-    testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
 
     def test_creation(self):
         fs = filestore(cache=False)
@@ -54,35 +53,32 @@ class FileStore(TestCase):
         )
 
     def test_cachefile(self):
-        try:
-            fs = filestore(cache=True, cachedir=self.testcachedir)
+        with tempfile.TemporaryDirectory() as cachedir:
+            fs = filestore(cache=True, cachedir=cachedir)
             fs.read_csv(self.csvfile, skiprows=8, header=0)
             assert isinstance(fs.cachepath(self.csvfile), str)
-            shutil.rmtree(self.testcachedir)
-        except Exception:
-            shutil.rmtree(self.testcachedir)
-            raise
 
     def test_clear_cache(self):
-        # Create dummy data to read and cache:
-        uri = os.path.abspath("dummy_fileA.txt")
-        with open(uri, "w") as fp:
-            fp.write("Hello world!")
-        # Create store:
-        fs = filestore(cache=True, cachedir=self.testcachedir)
-        # Then we read some dummy data from the dummy file to trigger caching
-        with fs.open(uri, "r") as fp:
-            fp.read()
-        assert isinstance(fs.cachepath(uri), str)
-        # Now, we can clear the cache:
-        fs.clear_cache()
-        # And verify it does not exist anymore:
-        with pytest.raises(CacheFileNotFound):
-            fs.cachepath(uri)
-        os.remove(uri)
+        with tempfile.TemporaryDirectory() as cachedir:
+            # Create dummy data to read and cache:
+            uri = os.path.abspath("dummy_fileA.txt")
+            with open(uri, "w") as fp:
+                fp.write("Hello world!")
+            # Create store:
+            fs = filestore(cache=True, cachedir=cachedir)
+            # Then we read some dummy data from the dummy file to trigger caching
+            with fs.open(uri, "r") as fp:
+                fp.read()
+            assert isinstance(fs.cachepath(uri), str)
+            # Now, we can clear the cache:
+            fs.clear_cache()
+            # And verify it does not exist anymore:
+            with pytest.raises(CacheFileNotFound):
+                fs.cachepath(uri)
+            os.remove(uri)
 
 
-class HttpStore(TestCase):
+class Test_HttpStore():
     def test_creation(self):
         fs = httpstore(cache=False)
         assert isinstance(fs.fs, fsspec.implementations.http.HTTPFileSystem)
@@ -128,18 +124,13 @@ class HttpStore(TestCase):
     @requires_connection
     def test_cachefile(self):
         uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt"
-        testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
-        try:
-            fs = httpstore(cache=True, cachedir=testcachedir)
+        with tempfile.TemporaryDirectory() as cachedir:
+            fs = httpstore(cache=True, cachedir=cachedir)
             fs.read_csv(uri, skiprows=8, header=0)
             assert isinstance(fs.cachepath(uri), str)
-            shutil.rmtree(testcachedir)
-        except Exception:
-            shutil.rmtree(testcachedir)
-            raise
 
 
-class IndexFilter_WMO(TestCase):
+class Test_IndexFilter_WMO():
     kwargs = [
         {"WMO": 6901929},
         {"WMO": [6901929, 2901623]},
@@ -182,10 +173,9 @@ class IndexFilter_WMO(TestCase):
 
 
 @requires_connection
-class IndexStore(TestCase):
+class Test_IndexStore():
     ftproot, flist = argopy.tutorial.open_dataset("localftp")
     index_file = os.path.sep.join([ftproot, "ar_index_global_prof.txt"])
-    testcachedir = os.path.expanduser(os.path.join("~", ".argopytest_tmp"))
 
     kwargs_wmo = [
         {"WMO": 6901929},
