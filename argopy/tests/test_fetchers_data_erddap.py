@@ -203,50 +203,43 @@ class Test_Backend:
     @requires_connected_erddap_phy
     @safe_to_server_errors
     def test_phy_float(self):
-        self.args = {}
-        self.args["float"] = self.requests["float"]
+        self.args = {"float": self.requests["float"]}
         self.__testthis("phy")
 
     @requires_connected_erddap_phy
     @safe_to_server_errors
     def test_phy_profile(self):
-        self.args = {}
-        self.args["profile"] = self.requests["profile"]
+        self.args = {"profile": self.requests["profile"]}
         self.__testthis("phy")
 
     @requires_connected_erddap_phy
     @safe_to_server_errors
     def test_phy_region(self):
-        self.args = {}
-        self.args["region"] = self.requests["region"]
+        self.args = {"region": self.requests["region"]}
         self.__testthis("phy")
 
     @requires_connected_erddap_bgc
     @safe_to_server_errors
     def test_bgc_float(self):
-        self.args = {}
-        self.args["float"] = self.requests_bgc["float"]
+        self.args = {"float": self.requests_bgc["float"]}
         self.__testthis("bgc")
 
     @requires_connected_erddap_bgc
     @safe_to_server_errors
     def test_bgc_profile(self):
-        self.args = {}
-        self.args["profile"] = self.requests_bgc["profile"]
+        self.args = {"profile": self.requests_bgc["profile"]}
         self.__testthis("bgc")
 
     @requires_connected_erddap_bgc
     @safe_to_server_errors
     def test_bgc_region(self):
-        self.args = {}
-        self.args["region"] = self.requests_bgc["region"]
+        self.args = {"region": self.requests_bgc["region"]}
         self.__testthis("bgc")
 
     @requires_connected_erddap_ref
     @safe_to_server_errors
     def test_ref_region(self):
-        self.args = {}
-        self.args["region"] = self.requests_ref["region"]
+        self.args = {"region": self.requests_ref["region"]}
         self.__testthis("ref")
 
 
