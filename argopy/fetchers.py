@@ -62,8 +62,8 @@ class ArgoDataFetcher:
         # Auto-discovery of access points for this fetcher:
         # rq: Access point names for the facade are not the same as the access point of fetchers
         self.Fetchers = {}
+        self.valid_access_points = []
         for p in Fetchers.access_points:
-            self.valid_access_points = []
             if p == "wmo":  # Required for 'profile' and 'float'
                 self.Fetchers["profile"] = Fetchers.Fetch_wmo
                 self.valid_access_points.append("profile")
@@ -315,10 +315,11 @@ class ArgoIndexFetcher:
 
     """
 
-    def __init__(self, mode: str = "", src: str = "", **fetcher_kwargs):
+    def __init__(self, mode: str = "", src: str = "", ds: str = "", **fetcher_kwargs):
 
         # Facade options:
         self._mode = OPTIONS["mode"] if mode == "" else mode
+        self._dataset_id = OPTIONS["dataset"] if ds == "" else ds
         self._src = OPTIONS["src"] if src == "" else src
 
         _VALIDATORS["mode"](self._mode)
@@ -337,8 +338,8 @@ class ArgoIndexFetcher:
         # Auto-discovery of access points for this fetcher:
         # rq: Access point names for the facade are not the same as the access point of fetchers
         self.Fetchers = {}
+        self.valid_access_points = []
         for p in Fetchers.access_points:
-            self.valid_access_points = []
             if p == "wmo":  # Required for 'profile' and 'float'
                 self.Fetchers["profile"] = Fetchers.Fetch_wmo
                 self.valid_access_points.append("profile")
