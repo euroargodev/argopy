@@ -13,6 +13,7 @@ from argopy.errors import (
     ArgovisServerError,
     DataNotFound
 )
+from aiohttp.client_exceptions import ServerDisconnectedError
 from argopy.utilities import is_list_of_strings
 from . import (
     AVAILABLE_SOURCES,
@@ -41,10 +42,20 @@ def safe_to_server_errors(test_func):
             # We make sure that data requested by tests are available from API, so this must be a server side error.
             warnings.warn("\nSomething happened on server: %s" % str(e.args))
             pass
+        except ServerDisconnectedError as e:
+            # We make sure that data requested by tests are available from API, so this must be a server side error.
+            warnings.warn("\nWe were disconnected from server !\n%s" % str(e.args))
+            pass
         except Exception:
             raise
 
     return test_wrapper
+
+
+
+def test_invalid_fetcher():
+    with pytest.raises(InvalidFetcher):
+        ArgoDataFetcher(src="invalid_fetcher").to_xarray()
 
 
 @requires_fetcher
@@ -60,9 +71,11 @@ def test_invalid_accesspoint():
         ).to_xarray()  # Can't get data if access point not defined first
 
 
-def test_invalid_fetcher():
-    with pytest.raises(InvalidFetcher):
-        ArgoDataFetcher(src="invalid_fetcher").to_xarray()
+@requires_fetcher
+def test_invalid_dataset():
+    src = list(AVAILABLE_SOURCES.keys())[0]  # Use the first valid data source
+    with pytest.raises(ValueError):
+        ArgoDataFetcher(src=src, ds='dummy_ds')
 
 
 @requires_fetcher

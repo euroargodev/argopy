@@ -72,9 +72,9 @@ class ArgoDataFetcher:
 
         # Init sub-methods:
         self.fetcher = None
-        if ds is None:
-            ds = Fetchers.dataset_ids[0]
-        self.fetcher_options = {**{"ds": ds}, **fetcher_kwargs}
+        if self._dataset_id not in Fetchers.dataset_ids:
+            raise ValueError("%s dataset is not available for this data source (%s)" % (self._dataset_id, self._src))
+        self.fetcher_options = {**{"ds": self._dataset_id}, **fetcher_kwargs}
         self.postproccessor = self.__empty_processor
         self._AccessPoint = None
 

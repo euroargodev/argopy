@@ -78,6 +78,7 @@ def test_clear_cache():
     with tempfile.TemporaryDirectory() as cachedir:
         with argopy.set_options(cachedir=cachedir, local_ftp=ftproot):
             ArgoDataFetcher(src="localftp").profile(2902696, 12).to_xarray()
+            ArgoDataFetcher(src="localftp").profile(2902696, 13).to_xarray()
             argopy.clear_cache()
             assert os.path.exists(cachedir) is True
             assert len(os.listdir(cachedir)) == 0
