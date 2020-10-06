@@ -60,13 +60,11 @@
     argopy.stores.filestore.cachepath
     argopy.stores.filestore.clear_cache
     argopy.stores.filestore.open_mfdataset
-    argopy.stores.filestore.open_mfjson
 
     argopy.stores.filesystems.httpstore
     argopy.stores.httpstore.open_json
     argopy.stores.httpstore.open_dataset
     argopy.stores.httpstore.read_csv
-
     argopy.stores.httpstore.open
     argopy.stores.httpstore.glob
     argopy.stores.httpstore.exists
@@ -87,7 +85,6 @@
     argopy.stores.memorystore.clear_cache
     argopy.stores.memorystore.open_dataset
     argopy.stores.memorystore.open_mfdataset
-    argopy.stores.memorystore.open_mfjson
     argopy.stores.memorystore.read_csv
 
     argopy.stores.argo_index.indexstore
