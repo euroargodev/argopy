@@ -2,17 +2,18 @@
 
 # Argo data python library
 
-[![Documentation Status](https://readthedocs.org/projects/argopy/badge/?version=latest)](https://argopy.readthedocs.io/en/latest/?badge=latest)
-![Github Action Status](https://github.com/euroargodev/argopy/workflows/unit-testing-linux/badge.svg?branch=master)
-[![codecov](https://codecov.io/gh/euroargodev/argopy/branch/region-for-localftp/graph/badge.svg)](https://codecov.io/gh/euroargodev/argopy)
+![Github Action Status](https://github.com/euroargodev/argopy/workflows/build/badge.svg?branch=master)
+[![codecov](https://codecov.io/gh/euroargodev/argopy/branch/master/graph/badge.svg)](https://codecov.io/gh/euroargodev/argopy)
 [![Requirements Status](https://requires.io/github/euroargodev/argopy/requirements.svg?branch=master)](https://requires.io/github/euroargodev/argopy/requirements/?branch=master)
-[![Gitter](https://badges.gitter.im/Argo-floats/argopy.svg)](https://gitter.im/Argo-floats/argopy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+![PyPI](https://img.shields.io/pypi/v/argopy)
 
-![Profile count](https://img.shields.io/endpoint?label=Available%20Argo%20profile%20count%3A&style=social&url=https%3A%2F%2Fmap.argo-france.fr%2Fdata%2FARGOFULL.json)
+[![Documentation Status](https://readthedocs.org/projects/argopy/badge/?version=latest)](https://argopy.readthedocs.io/en/latest/?badge=latest)
+[![Gitter](https://badges.gitter.im/Argo-floats/argopy.svg)](https://gitter.im/Argo-floats/argopy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![JOSS](https://img.shields.io/badge/How%20to%20cite%20%3F-10.21105%2Fjoss.02425-brightgreen)](//dx.doi.org/10.21105/joss.02425)
+
 ![Erddap status](https://img.shields.io/endpoint?label=erddap&url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_erddap.json)
 ![Argovis status](https://img.shields.io/endpoint?label=argovis&url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_argovis.json)
-
-[![status](https://joss.theoj.org/papers/9e31b212f63c2bacb4006b14bb8a743f/status.svg)](https://joss.theoj.org/papers/9e31b212f63c2bacb4006b14bb8a743f)
+![Profile count](https://img.shields.io/endpoint?label=Available%20Argo%20profile%20count%3A&style=social&url=https%3A%2F%2Fmap.argo-france.fr%2Fdata%2FARGOFULL.json)
 
 ``argopy`` is a python library that aims to ease Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators. Documentation is at https://argopy.readthedocs.io/en/latest/
 
