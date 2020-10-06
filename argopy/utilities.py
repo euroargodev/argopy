@@ -654,7 +654,7 @@ class monitor_status:
         from IPython.display import display
 
         thread = threading.Thread(target=self.work)
-        display([self.text])
+        display(self.text)
         thread.start()
 
 
