@@ -1,5 +1,7 @@
-Visualisation
-#############
+.. _data_viz:
+
+Data visualisation
+##################
 
 Although ``argopy`` focus is not on visualisation, it provides a few functions to get you started.
 A gallery of examples is in preparation for a future release.

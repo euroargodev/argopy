@@ -15,8 +15,8 @@ Top-levels functions
     argopy.DataFetcher
     argopy.IndexFetcher
 
-Search entries
---------------
+Fetching entries
+----------------
 
 .. autosummary::
    :toctree: generated/
@@ -56,6 +56,15 @@ Visualisation
    argopy.IndexFetcher.plot
    argopy.dashboard
 
+
+Fetcher properties
+------------------
+
+.. autosummary::
+   :toctree: generated/
+
+   argopy.DataFetcher.uri
+
 Helpers
 -------
 
@@ -75,6 +84,7 @@ Low-level functions
     argopy.show_versions
     argopy.utilities.open_etopo1
     argopy.utilities.list_available_data_src
+    argopy.utilities.list_available_index_src
 
 Internals
 =========
@@ -88,9 +98,46 @@ File systems
     argopy.stores.filestore
     argopy.stores.httpstore
     argopy.stores.memorystore
+
+.. autosummary::
+    :toctree: generated/
+
     argopy.stores.indexstore
     argopy.stores.indexfilter_wmo
     argopy.stores.indexfilter_box
+
+Fetchers
+--------
+
+ERDDAP
+^^^^^^
+
+.. autosummary::
+    :toctree: generated/
+
+    argopy.data_fetchers.erddap_data.ErddapArgoDataFetcher
+    argopy.data_fetchers.erddap_data.Fetch_wmo
+    argopy.data_fetchers.erddap_data.Fetch_box
+
+Local FTP
+^^^^^^^^^
+
+.. autosummary::
+    :toctree: generated/
+
+    argopy.data_fetchers.localftp_data.LocalFTPArgoDataFetcher
+    argopy.data_fetchers.localftp_data.Fetch_wmo
+    argopy.data_fetchers.localftp_data.Fetch_box
+
+Argovis
+^^^^^^^
+
+.. autosummary::
+    :toctree: generated/
+
+    argopy.data_fetchers.argovis_data.ArgovisDataFetcher
+    argopy.data_fetchers.argovis_data.Fetch_wmo
+    argopy.data_fetchers.argovis_data.Fetch_box
 
 Xarray *argo* name space
 ==========================

@@ -1,5 +1,5 @@
 from .argo_index import indexstore, indexfilter_wmo, indexfilter_box
-from .fsspec_wrappers import filestore, httpstore, memorystore
+from .filesystems import filestore, httpstore, memorystore
 
 #
 __all__ = (

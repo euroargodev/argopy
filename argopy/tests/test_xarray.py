@@ -2,14 +2,14 @@ import pytest
 import warnings
 
 from argopy import DataFetcher as ArgoDataFetcher
-from argopy.errors import InvalidDatasetStructure, ErddapServerError
+from argopy.errors import InvalidDatasetStructure
 from . import requires_connected_erddap_phy
 
 
 @pytest.fixture(scope="module")
 @requires_connected_erddap_phy
 def ds_pts():
-    """ Create a dictionary of datasets to be use by tests
+    """ Create a dictionary of datasets to be used by tests
 
         Note that these datasets can be modified by tests, which can affect the behaviour of other tests !
     """

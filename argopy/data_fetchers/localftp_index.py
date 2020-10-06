@@ -41,7 +41,7 @@ import distributed
 
 from .proto import ArgoDataFetcherProto
 from argopy.errors import NetCDF4FileNotFoundError
-from argopy.utilities import list_standard_variables, load_dict, mapp_dict, check_localftp
+from argopy.utilities import list_standard_variables, load_dict, mapp_dict, check_localftp, format_oneline
 from argopy.options import OPTIONS
 from argopy.stores import filestore, indexstore, indexfilter_wmo, indexfilter_box
 
@@ -108,14 +108,15 @@ class LocalFTPArgoIndexFetcher(ABC):
         self.init(**kwargs)
 
     def __repr__(self):
-        summary = ["<indexfetcher '%s'>" % self.definition]
+        summary = ["<indexfetcher.localftp>"]
+        summary.append("Name: %s" % self.definition)
         summary.append("FTP: %s" % self.local_ftp)
-        summary.append("Domain: %s" % self.cname())
+        summary.append("Domain: %s" % format_oneline(self.cname()))
         return '\n'.join(summary)
 
     def to_dataframe(self):
         """ filter local index file and return a pandas dataframe """
-        df = self.fs.open_dataframe(self.filter_index())
+        df = self.fs.read_csv(self.filter_index())
 
         # Post-processing of the filtered index:
         df['wmo'] = df['file'].apply(lambda x: int(x.split('/')[1]))
@@ -141,7 +142,7 @@ class LocalFTPArgoIndexFetcher(ABC):
         return self.fs.clear_cache()
 
 
-class Fetcher_wmo(LocalFTPArgoIndexFetcher):
+class Fetch_wmo(LocalFTPArgoIndexFetcher):
     """ Manage access to local ftp Argo data for: a list of WMOs
 
     """
@@ -166,7 +167,7 @@ class Fetcher_wmo(LocalFTPArgoIndexFetcher):
         self.fcls = indexfilter_wmo(self.WMO, self.CYC)
 
 
-class Fetcher_box(LocalFTPArgoIndexFetcher):
+class Fetch_box(LocalFTPArgoIndexFetcher):
     """ Manage access to local ftp Argo data for: an ocean rectangle
 
     """

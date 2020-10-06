@@ -1,65 +1,45 @@
 import pytest
-from argopy.errors import NetCDF4FileNotFoundError, \
-    CacheFileNotFound, \
-    FileSystemHasNoCache, \
-    UnrecognisedDataSelectionMode, \
-    UnrecognisedProfileDirection, \
-    InvalidDatasetStructure, \
-    InvalidFetcherAccessPoint, \
-    InvalidFetcher
+from argopy.errors import (
+    DataNotFound,
+    FtpPathError,
+    NetCDF4FileNotFoundError,
+    CacheFileNotFound,
+    FileSystemHasNoCache,
+    UnrecognisedDataSelectionMode,
+    UnrecognisedProfileDirection,
+    InvalidDatasetStructure,
+    InvalidFetcherAccessPoint,
+    InvalidFetcher,
+    InvalidMethod,
+    InvalidDashboard,
+    APIServerError,
+    ErddapServerError,
+    ArgovisServerError
+)
 
 
-def test_NetCDF4FileNotFoundError():
-    def foobar():
-        raise NetCDF4FileNotFoundError("invalid_path")
-    with pytest.raises(NetCDF4FileNotFoundError):
-        foobar()
+class Test_Errors:
+    def __test_one(self, ThisError):
+        with pytest.raises(ThisError):
+            raise ThisError()
 
-
-def test_CacheFileNotFound():
-    def foobar():
-        raise CacheFileNotFound()
-    with pytest.raises(CacheFileNotFound):
-        foobar()
-
-
-def test_FileSystemHasNoCache():
-    def foobar():
-        raise FileSystemHasNoCache()
-    with pytest.raises(FileSystemHasNoCache):
-        foobar()
-
-
-def test_UnrecognisedDataSelectionMode():
-    def foobar():
-        raise UnrecognisedDataSelectionMode()
-    with pytest.raises(UnrecognisedDataSelectionMode):
-        foobar()
-
-
-def test_UnrecognisedProfileDirection():
-    def foobar():
-        raise UnrecognisedProfileDirection()
-    with pytest.raises(UnrecognisedProfileDirection):
-        foobar()
-
-
-def test_InvalidDatasetStructure():
-    def foobar():
-        raise InvalidDatasetStructure()
-    with pytest.raises(InvalidDatasetStructure):
-        foobar()
-
-
-def test_InvalidFetcherAccessPoint():
-    def foobar():
-        raise InvalidFetcherAccessPoint()
-    with pytest.raises(InvalidFetcherAccessPoint):
-        foobar()
-
-
-def test_InvalidFetcher():
-    def foobar():
-        raise InvalidFetcher()
-    with pytest.raises(InvalidFetcher):
-        foobar()
+    def test_RaiseAll(self):
+        elist = [
+            DataNotFound,
+            FtpPathError,
+            NetCDF4FileNotFoundError,
+            CacheFileNotFound,
+            FileSystemHasNoCache,
+            UnrecognisedDataSelectionMode,
+            UnrecognisedProfileDirection,
+            InvalidDatasetStructure,
+            InvalidFetcherAccessPoint,
+            InvalidFetcher,
+            InvalidMethod,
+            InvalidDashboard,
+            APIServerError,
+            ErddapServerError,
+            ArgovisServerError
+        ]
+        for e in elist:
+            self.__test_one(e)

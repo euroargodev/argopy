@@ -2,6 +2,7 @@
 omit =
     argopy/tests/*
     argopy/plotters.py
+    setup.py
     *__init__*
 [report]
 exclude_lines = def __repr__
