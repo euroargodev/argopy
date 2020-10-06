@@ -82,7 +82,6 @@ Low-level functions
     :toctree: generated/
 
     argopy.show_versions
-    argopy.utilities.open_etopo1
     argopy.utilities.list_available_data_src
     argopy.utilities.list_available_index_src
 
