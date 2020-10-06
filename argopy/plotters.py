@@ -8,8 +8,10 @@
 #
 
 import numpy as np
+import pandas as pd
 import warnings
 from argopy.errors import InvalidDashboard
+from contextlib import contextmanager
 
 
 try:
@@ -18,6 +20,7 @@ try:
     import matplotlib.ticker as mticker
     import matplotlib.cm as cm
     import matplotlib.colors as mcolors
+
     with_matplotlib = True
 except ModuleNotFoundError:
     warnings.warn("argopy requires matplotlib installed for any plotting functionality")
@@ -28,25 +31,45 @@ try:
     import cartopy.crs as ccrs
     import cartopy.feature as cfeature
     from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+
     with_cartopy = True
 except ModuleNotFoundError:
-    warnings.warn("argopy requires cartopy installed for full map plotting functionality")
+    warnings.warn(
+        "argopy requires cartopy installed for full map plotting functionality"
+    )
     with_cartopy = False
 
+STYLE = {"axes": "white"}
 try:
     import seaborn as sns
-    sns.set_style("dark")
+    STYLE["axes"] = "dark"
     with_seaborn = True
 except ModuleNotFoundError:
     warnings.warn("argopy requires seaborn installed for full plotting functionality")
     with_seaborn = False
 
+
 if with_cartopy:
-    land_feature = cfeature.NaturalEarthFeature(category='physical', name='land',
-                                                scale='50m', facecolor=[0.4, 0.6, 0.7])
+    land_feature = cfeature.NaturalEarthFeature(
+        category="physical", name="land", scale="50m", facecolor=[0.4, 0.6, 0.7]
+    )
 
 
-def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type='ea'):
+@contextmanager
+def axes_style(style="white"):
+    """ Provide a context for plots
+
+        The point is to handle the availability of :mod:`seaborn` or not
+
+    """
+    if with_seaborn:  # Execute within a seaborn context:
+        with sns.axes_style(style):
+            yield
+    else:  # Otherwise do nothing
+        yield
+
+
+def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type="ea"):
     """ Insert in a notebook the Euro-Argo dashboard page
 
         Parameters
@@ -58,19 +81,22 @@ def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type
         -------
         IFrame: IPython.lib.display.IFrame
     """
-    if type not in ['ea', 'eric', 'coriolis']:
+    if type not in ["ea", "eric", "coriolis"]:
         raise InvalidDashboard("Invalid dashboard type")
 
     from IPython.display import IFrame
+
     if url is None:
-        if type == 'ea' or type == 'eric':  # Open Euro-Argo dashboard
+        if type == "ea" or type == "eric":  # Open Euro-Argo dashboard
             if wmo is None:
                 url = "https://fleetmonitoring.euro-argo.eu"
             else:
                 url = "https://fleetmonitoring.euro-argo.eu/float/{}".format(str(wmo))
-        elif type == 'coriolis': # Open Coriolis dashboard
+        elif type == "coriolis":  # Open Coriolis dashboard
             if wmo is not None:
-                url = ("https://co-insitucharts.ifremer.fr/platform/{}/charts").format(str(wmo))
+                url = ("https://co-insitucharts.ifremer.fr/platform/{}/charts").format(
+                    str(wmo)
+                )
 
         # return open_dashboard(url=("https://co-insitucharts.ifremer.fr/platform/{}/charts").format(str(self.WMO[0])), **kw)
 
@@ -84,7 +110,7 @@ def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type
     return IFrame(url, width=width, height=height)
 
 
-class discrete_coloring():
+class discrete_coloring:
     """ Handy class to manage discrete coloring and the associated colorbar
 
     Example:
@@ -95,7 +121,8 @@ class discrete_coloring():
         dc.cbar(ticklabels=yr_range, fraction=0.03, label='Years')
 
     """
-    def __init__(self, name='Set1', N=12):
+
+    def __init__(self, name="Set1", N=12):
         self.name = name
         self.Ncolors = N
 
@@ -108,13 +135,32 @@ class discrete_coloring():
         """
         name = self.name
         K = self.Ncolors
-        if name in ['Set1', 'Set2', 'Set3', 'Pastel1', 'Pastel2', 'Paired', 'Dark2', 'Accent']:
+        if name in [
+            "Set1",
+            "Set2",
+            "Set3",
+            "Pastel1",
+            "Pastel2",
+            "Paired",
+            "Dark2",
+            "Accent",
+        ]:
             # Segmented (or quantitative) colormap:
-            N_ref = {'Set1': 9, 'Set2': 8, 'Set3': 12, 'Pastel1': 9, 'Pastel2': 8, 'Paired': 12, 'Dark2': 8,
-                     'Accent': 8}
+            N_ref = {
+                "Set1": 9,
+                "Set2": 8,
+                "Set3": 12,
+                "Pastel1": 9,
+                "Pastel2": 8,
+                "Paired": 12,
+                "Dark2": 8,
+                "Accent": 8,
+            }
             N = N_ref[name]
             cmap = plt.get_cmap(name=name)
-            colors_i = np.concatenate((np.linspace(0, 1., N), (0., 0., 0., 0.)), axis=0)
+            colors_i = np.concatenate(
+                (np.linspace(0, 1.0, N), (0.0, 0.0, 0.0, 0.0)), axis=0
+            )
             cmap = cmap(colors_i)  # N x 4
             n = np.arange(0, N)
             new_n = n.copy()
@@ -124,33 +170,49 @@ class discrete_coloring():
                     new_n = np.concatenate((new_n, r), axis=0)
             new_cmap = cmap.copy()
             new_cmap = cmap[new_n, :]
-            new_cmap = mcolors.LinearSegmentedColormap.from_list(name + "_%d" % K, colors=new_cmap, N=K)
-        elif name == 'Month':
-            clist = ['darkslateblue', 'skyblue', 'powderblue',
-                     'honeydew', 'lemonchiffon', 'pink',
-                     'salmon', 'deeppink', 'gold',
-                     'chocolate', 'darkolivegreen', 'cadetblue']
-            cmap = mcolors.LinearSegmentedColormap.from_list('my_colormap', clist)
+            new_cmap = mcolors.LinearSegmentedColormap.from_list(
+                name + "_%d" % K, colors=new_cmap, N=K
+            )
+        elif name == "Month":
+            clist = [
+                "darkslateblue",
+                "skyblue",
+                "powderblue",
+                "honeydew",
+                "lemonchiffon",
+                "pink",
+                "salmon",
+                "deeppink",
+                "gold",
+                "chocolate",
+                "darkolivegreen",
+                "cadetblue",
+            ]
+            cmap = mcolors.LinearSegmentedColormap.from_list("my_colormap", clist)
             N = 12
-            colors_i = np.concatenate((np.linspace(0, 1., N), (0., 0., 0., 0.)))
+            colors_i = np.concatenate((np.linspace(0, 1.0, N), (0.0, 0.0, 0.0, 0.0)))
             colors_rgba = cmap(colors_i)
-            indices = np.linspace(0, 1., N + 1)
+            indices = np.linspace(0, 1.0, N + 1)
             cdict = {}
-            for ki, key in enumerate(('red', 'green', 'blue')):
-                cdict[key] = [(indices[i], colors_rgba[i - 1, ki], colors_rgba[i, ki])
-                              for i in np.arange(N + 1)]
+            for ki, key in enumerate(("red", "green", "blue")):
+                cdict[key] = [
+                    (indices[i], colors_rgba[i - 1, ki], colors_rgba[i, ki])
+                    for i in np.arange(N + 1)
+                ]
             new_cmap = mcolors.LinearSegmentedColormap("month_%d" % N, cdict, N)
         else:
             # Continuous colormap:
             N = K
             cmap = plt.get_cmap(name=name)
-            colors_i = np.concatenate((np.linspace(0, 1., N), (0., 0., 0., 0.)))
+            colors_i = np.concatenate((np.linspace(0, 1.0, N), (0.0, 0.0, 0.0, 0.0)))
             colors_rgba = cmap(colors_i)  # N x 4
-            indices = np.linspace(0, 1., N + 1)
+            indices = np.linspace(0, 1.0, N + 1)
             cdict = {}
-            for ki, key in enumerate(('red', 'green', 'blue')):
-                cdict[key] = [(indices[i], colors_rgba[i - 1, ki], colors_rgba[i, ki])
-                              for i in np.arange(N + 1)]
+            for ki, key in enumerate(("red", "green", "blue")):
+                cdict[key] = [
+                    (indices[i], colors_rgba[i - 1, ki], colors_rgba[i, ki])
+                    for i in np.arange(N + 1)
+                ]
             # Return colormap object.
             new_cmap = mcolors.LinearSegmentedColormap(cmap.name + "_%d" % N, cdict, N)
         self._colormap = new_cmap
@@ -176,20 +238,20 @@ class discrete_coloring():
         return scalarMap.to_rgba(value)
 
 
-def latlongrid(ax, dx=5., dy=5., fontsize=6, **kwargs):
+def latlongrid(ax, dx=5.0, dy=5.0, fontsize=6, **kwargs):
     """ Add latitude/longitude grid line and labels to a cartopy geoaxes """
     if not isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot):
         raise ValueError("Please provide a cartopy.mpl.geoaxes.GeoAxesSubplot instance")
-    defaults = {'linewidth': .5, 'color': 'gray', 'alpha': 0.5, 'linestyle': '--'}
+    defaults = {"linewidth": 0.5, "color": "gray", "alpha": 0.5, "linestyle": "--"}
     gl = ax.gridlines(crs=ax.projection, draw_labels=True, **{**defaults, **kwargs})
-    gl.xlocator = mticker.FixedLocator(np.arange(-180, 180+1, dx))
-    gl.ylocator = mticker.FixedLocator(np.arange(-90, 90+1, dy))
+    gl.xlocator = mticker.FixedLocator(np.arange(-180, 180 + 1, dx))
+    gl.ylocator = mticker.FixedLocator(np.arange(-90, 90 + 1, dy))
     gl.xformatter = LONGITUDE_FORMATTER
     gl.yformatter = LATITUDE_FORMATTER
     gl.xlabels_top = False
-    gl.xlabel_style = {'fontsize': fontsize}
+    gl.xlabel_style = {"fontsize": fontsize}
     gl.ylabels_right = False
-    gl.ylabel_style = {'fontsize': fontsize}
+    gl.ylabel_style = {"fontsize": fontsize}
     return gl
 
 
@@ -198,67 +260,119 @@ def warnUnless(ok, txt):
         def wrapper(*args, **kwargs):
             warnings.warn("%s %s" % (fct.__name__, txt))
             return fct(*args, **kwargs)
+
         return wrapper
+
     if not ok:
         return inner
     else:
         return lambda f: f
 
 
-@warnUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn installed")
-def plot_trajectory(idx):
+@warnUnless(with_matplotlib, "requires matplotlib installed")
+def plot_trajectory(
+    df: pd.core.frame.DataFrame,
+    style: str = STYLE["axes"],
+    with_cartopy=with_cartopy,
+    with_seaborn=with_seaborn,
+    **kwargs
+):
     """ Plot trajectories for an index dataframe """
-    if not with_seaborn:
-        raise BaseException("This function requires seaborn")
+    with axes_style(style):
+        # fig = plt.figure(figsize=(10, 10))
+        # subplot_kw = {'projection': proj, 'extent': np.array([-80, 25., 30, 85]) + np.array([-0.1, +0.1, -0.1, +0.1])}
+        # fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(15, 5), dpi=80, facecolor='w', edgecolor='k',
+        #                        subplot_kw=subplot_kw)
 
-    fig = plt.figure(figsize=(10, 10))
-    ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
-    ax.add_feature(land_feature, edgecolor='black')
-    nfloat = len(idx.groupby('wmo').first())
-    mypal = sns.color_palette("bright", nfloat)
+        defaults = {'figsize': (5, 3), 'dpi': 90}
+        if with_cartopy:
+            subplot_kw = {'projection': ccrs.PlateCarree()}
+            fig, ax = plt.subplots(**{**defaults, **kwargs}, subplot_kw=subplot_kw)
+            # ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
+            ax.add_feature(land_feature, edgecolor="black")
+        else:
+            # defaults = {'figsize': (5, 3), 'dpi': 90}
+            # ax = fig.add_subplot(1, 1, 1)
+            fig, ax = plt.subplots(**{**defaults, **kwargs})
 
-    sns.lineplot(x="longitude", y="latitude", hue="wmo", data=idx, sort=False, palette=mypal, legend=False)
-    sns.scatterplot(x="longitude", y="latitude", hue='wmo', data=idx, palette=mypal)
-    # width = np.abs(idx['longitude'].max()-idx['longitude'].min())
-    # height = np.abs(idx['latitude'].max()-idx['latitude'].min())
-    # extent = (idx['longitude'].min()-width/4,
-    #          idx['longitude'].max()+width/4,
-    #          idx['latitude'].min()-height/4,
-    #          idx['latitude'].max()+height/4)
+        nfloat = len(df.groupby("wmo").first())
+        if with_seaborn:
+            mypal = sns.color_palette("bright", nfloat)
+            sns.lineplot(
+                x="longitude",
+                y="latitude",
+                hue="wmo",
+                data=df,
+                sort=False,
+                palette=mypal,
+                legend=False,
+            )
+            sns.scatterplot(
+                x="longitude", y="latitude", hue="wmo", data=df, palette=mypal
+            )
+        else:
+            mypal = discrete_coloring("Set1", N=nfloat).cmap
+            for k, [name, group] in enumerate(df.groupby("wmo")):
+                group.plot.line(
+                    x="longitude",
+                    y="latitude",
+                    ax=ax,
+                    color=mypal(k),
+                    legend=False,
+                    label="_nolegend_",
+                )
+                group.plot.scatter(
+                    x="longitude", y="latitude", ax=ax, color=mypal(k), label=name
+                )
 
-    gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='gray', alpha=0.7, linestyle=':')
-    gl.xlabels_top = False
-    gl.ylabels_left = False
-    gl.xformatter = LONGITUDE_FORMATTER
-    gl.yformatter = LATITUDE_FORMATTER
+        if with_cartopy:
+            gl = ax.gridlines(
+                crs=ccrs.PlateCarree(),
+                draw_labels=True,
+                linewidth=1,
+                color="gray",
+                alpha=0.7,
+                linestyle=":",
+            )
+            gl.xlabels_top = False
+            gl.ylabels_right = False
+            gl.xformatter = LONGITUDE_FORMATTER
+            gl.yformatter = LATITUDE_FORMATTER
+        else:
+            ax.grid(b=True, linewidth=1, color="gray", alpha=0.7, linestyle=":")
 
-    # ax.set_extent(extent)
-    plt.legend(loc='upper right', bbox_to_anchor=(1.25, 1))
-    if (nfloat > 15):
-        ax.get_legend().remove()
+        plt.legend(loc="upper right", bbox_to_anchor=(1.25, 1))
+        if nfloat > 15:
+            ax.get_legend().remove()
     return fig, ax
 
 
-@warnUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn installed")
+@warnUnless(
+    with_matplotlib and with_cartopy and with_seaborn,
+    "requires matplotlib, cartopy and seaborn installed",
+)
 def plot_dac(idx):
     """ Histogram of DAC for an index dataframe """
     if not with_seaborn:
         raise BaseException("This function requires seaborn")
     fig = plt.figure(figsize=(10, 5))
-    mind = idx.groupby('institution').size().sort_values(ascending=False).index
-    sns.countplot(y='institution', data=idx, order=mind)
-    plt.ylabel('number of profiles')
+    mind = idx.groupby("institution").size().sort_values(ascending=False).index
+    sns.countplot(y="institution", data=idx, order=mind)
+    plt.ylabel("number of profiles")
     return fig
 
 
-@warnUnless(with_matplotlib and with_cartopy and with_seaborn, "requires matplotlib, cartopy and seaborn installed")
+@warnUnless(
+    with_matplotlib and with_cartopy and with_seaborn,
+    "requires matplotlib, cartopy and seaborn installed",
+)
 def plot_profilerType(idx):
     """ Histogram of profile types for an index dataframe """
     if not with_seaborn:
         raise BaseException("This function requires seaborn")
     fig = plt.figure(figsize=(10, 5))
-    mind = idx.groupby('profiler').size().sort_values(ascending=False).index
-    sns.countplot(y='profiler', data=idx, order=mind)
-    plt.xlabel('number of profiles')
-    plt.ylabel('')
+    mind = idx.groupby("profiler").size().sort_values(ascending=False).index
+    sns.countplot(y="profiler", data=idx, order=mind)
+    plt.xlabel("number of profiles")
+    plt.ylabel("")
     return fig

@@ -8,7 +8,7 @@ v0.1.7 (XX Oct. 2020)
 
 **Features and front-end API**
 
-- Improve plotting functions. All functions are now available for both the index and data fetchers. Reduced plotting dependencies to `Matplotlib <https://matplotlib.org/>`_ only. If `Seaborn <seaborn.pydata.org/>`_ or `Cartopy <https://scitools.org.uk/cartopy>`_ are available: use them to rendering.
+- Improve plotting functions. All functions are now available for both the index and data fetchers. Reduced plotting dependencies to `Matplotlib <https://matplotlib.org/>`_ only. If `Seaborn <seaborn.pydata.org/>`_ or `Cartopy <https://scitools.org.uk/cartopy>`_ are available: use them to rendering. (:pr:`56`).
 
 - Optimise large data fetching with parallelization, for all data fetchers (erddap, localftp and argovis). See documentation page on :ref:`parallel`. Two parallel methods are available: multi-threading or multi-processing. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
 

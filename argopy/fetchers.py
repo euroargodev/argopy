@@ -445,7 +445,7 @@ class ArgoIndexFetcher:
             )
         return self.to_dataframe().to_csv(file)
 
-    def plot(self, ptype="trajectory"):
+    def plot(self, ptype="trajectory", **kwargs):
         """ Create custom plots from index
 
             Parameters
@@ -464,7 +464,7 @@ class ArgoIndexFetcher:
         elif ptype == "profiler":
             return plot_profilerType(idx)
         elif ptype == "trajectory":
-            return plot_trajectory(idx.sort_values(["file"]))
+            return plot_trajectory(idx.sort_values(["file"]), **kwargs)
         else:
             raise ValueError(
                 "Type of plot unavailable. Use: 'dac', 'profiler' or 'trajectory' (default)"
