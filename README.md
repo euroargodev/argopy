@@ -128,9 +128,8 @@ For plotting the distribution of DAC or profiler type of the indexed profiles :
 
 ## Development roadmap
 
-Our next two big steps are:
-1. [ ] To consolidate fetching of large request as rapidely as possible [#28](https://github.com/euroargodev/argopy/pull/28)
-2. [ ] To provide Bio-geochemical variables
+Our next big steps:
+1. [ ] To provide Bio-geochemical variables
 
 We aim to provide high level helper methods to load Argo data and meta-data from:
 - [x] Ifremer erddap
@@ -138,7 +137,7 @@ We aim to provide high level helper methods to load Argo data and meta-data from
 - [x] Index files (local and online)
 - [x] Argovis
 - [ ] Online GDAC ftp
-- [ ] any other usefull access point to Argo data ?
+- [ ] any other useful access point to Argo data ?
 
 We also aim to provide tutorial and high level helper methods to visualise and plot Argo data and meta-data:
 - [x] Map with trajectories
