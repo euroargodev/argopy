@@ -39,10 +39,11 @@ except ModuleNotFoundError:
     )
     with_cartopy = False
 
-STYLE = {"axes": "white"}
+STYLE = {"axes": "white", "palette": "Set1"}
 try:
     import seaborn as sns
     STYLE["axes"] = "dark"
+    STYLE["palette"] = "bright"
     with_seaborn = True
 except ModuleNotFoundError:
     warnings.warn("argopy requires seaborn installed for full plotting functionality")
@@ -238,20 +239,23 @@ class discrete_coloring:
         return scalarMap.to_rgba(value)
 
 
-def latlongrid(ax, dx=5.0, dy=5.0, fontsize=6, **kwargs):
+def latlongrid(ax, dx='auto', dy='auto', fontsize='auto', **kwargs):
     """ Add latitude/longitude grid line and labels to a cartopy geoaxes """
     if not isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot):
         raise ValueError("Please provide a cartopy.mpl.geoaxes.GeoAxesSubplot instance")
-    defaults = {"linewidth": 0.5, "color": "gray", "alpha": 0.5, "linestyle": "--"}
+    defaults = {"linewidth": 0.5, "color": "gray", "alpha": 0.5, "linestyle": ":"}
     gl = ax.gridlines(crs=ax.projection, draw_labels=True, **{**defaults, **kwargs})
-    gl.xlocator = mticker.FixedLocator(np.arange(-180, 180 + 1, dx))
-    gl.ylocator = mticker.FixedLocator(np.arange(-90, 90 + 1, dy))
+    if dx != 'auto':
+        gl.xlocator = mticker.FixedLocator(np.arange(-180, 180 + 1, dx))
+    if dy != 'auto':
+        gl.ylocator = mticker.FixedLocator(np.arange(-90, 90 + 1, dy))
     gl.xformatter = LONGITUDE_FORMATTER
     gl.yformatter = LATITUDE_FORMATTER
     gl.xlabels_top = False
-    gl.xlabel_style = {"fontsize": fontsize}
     gl.ylabels_right = False
-    gl.ylabel_style = {"fontsize": fontsize}
+    if fontsize != 'auto':
+        gl.xlabel_style = {"fontsize": fontsize}
+        gl.ylabel_style = {"fontsize": fontsize}
     return gl
 
 
@@ -273,31 +277,29 @@ def warnUnless(ok, txt):
 def plot_trajectory(
     df: pd.core.frame.DataFrame,
     style: str = STYLE["axes"],
+    add_legend=True,
+    palette: str = STYLE["palette"],
     with_cartopy=with_cartopy,
     with_seaborn=with_seaborn,
     **kwargs
 ):
     """ Plot trajectories for an index dataframe """
     with axes_style(style):
-        # fig = plt.figure(figsize=(10, 10))
-        # subplot_kw = {'projection': proj, 'extent': np.array([-80, 25., 30, 85]) + np.array([-0.1, +0.1, -0.1, +0.1])}
-        # fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(15, 5), dpi=80, facecolor='w', edgecolor='k',
-        #                        subplot_kw=subplot_kw)
-
-        defaults = {'figsize': (5, 3), 'dpi': 90}
+        # Set-up the figure and axis:
+        defaults = {'figsize': (10, 6), 'dpi': 90}
         if with_cartopy:
             subplot_kw = {'projection': ccrs.PlateCarree()}
             fig, ax = plt.subplots(**{**defaults, **kwargs}, subplot_kw=subplot_kw)
-            # ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
             ax.add_feature(land_feature, edgecolor="black")
         else:
-            # defaults = {'figsize': (5, 3), 'dpi': 90}
-            # ax = fig.add_subplot(1, 1, 1)
             fig, ax = plt.subplots(**{**defaults, **kwargs})
 
+        # How many float in this dataset ?
         nfloat = len(df.groupby("wmo").first())
+
+        # Let's do the plot:
         if with_seaborn:
-            mypal = sns.color_palette("bright", nfloat)
+            mypal = sns.color_palette(palette, nfloat)
             sns.lineplot(
                 x="longitude",
                 y="latitude",
@@ -311,7 +313,7 @@ def plot_trajectory(
                 x="longitude", y="latitude", hue="wmo", data=df, palette=mypal
             )
         else:
-            mypal = discrete_coloring("Set1", N=nfloat).cmap
+            mypal = discrete_coloring('Set1', N=nfloat).cmap
             for k, [name, group] in enumerate(df.groupby("wmo")):
                 group.plot.line(
                     x="longitude",
@@ -326,24 +328,20 @@ def plot_trajectory(
                 )
 
         if with_cartopy:
-            gl = ax.gridlines(
-                crs=ccrs.PlateCarree(),
-                draw_labels=True,
-                linewidth=1,
-                color="gray",
-                alpha=0.7,
-                linestyle=":",
-            )
-            gl.xlabels_top = False
-            gl.ylabels_right = False
-            gl.xformatter = LONGITUDE_FORMATTER
-            gl.yformatter = LATITUDE_FORMATTER
+            latlongrid(ax, dx='auto', dy='auto', fontsize='auto')
+            if not with_seaborn:
+                ax.get_yaxis().set_visible(False)
         else:
             ax.grid(b=True, linewidth=1, color="gray", alpha=0.7, linestyle=":")
 
-        plt.legend(loc="upper right", bbox_to_anchor=(1.25, 1))
-        if nfloat > 15:
+        if add_legend and nfloat <= 15:
+            handles, labels = ax.get_legend_handles_labels()
+            if with_seaborn:
+                handles, labels = handles[1:], labels[1:]
+            plt.legend(handles, labels, loc="upper right", bbox_to_anchor=(1.25, 1), title='Floats WMO')
+        else:
             ax.get_legend().remove()
+
     return fig, ax
 
 
