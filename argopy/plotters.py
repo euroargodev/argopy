@@ -283,7 +283,17 @@ def plot_trajectory(
     with_seaborn=with_seaborn,
     **kwargs
 ):
-    """ Plot trajectories for an index dataframe """
+    """ Plot trajectories for an index dataframe
+
+
+    Parameters
+    ----------
+    df: Pandas DataFrame
+    style: str
+    add_legend: bool
+    palette: str
+
+    """
     with axes_style(style):
         # Set-up the figure and axis:
         defaults = {'figsize': (10, 6), 'dpi': 90}
@@ -313,7 +323,7 @@ def plot_trajectory(
                 x="longitude", y="latitude", hue="wmo", data=df, palette=mypal
             )
         else:
-            mypal = discrete_coloring('Set1', N=nfloat).cmap
+            mypal = discrete_coloring(palette, N=nfloat).cmap
             for k, [name, group] in enumerate(df.groupby("wmo")):
                 group.plot.line(
                     x="longitude",
