@@ -1008,3 +1008,14 @@ def is_list_of_dicts(lst):
 
 def is_list_of_datasets(lst):
     return all(isinstance(x, xr.Dataset) for x in lst)
+
+
+# def docstring(value):
+#     """Replace one function docstring
+#
+#         To be used as a decorator
+#     """
+#     def _doc(func):
+#         func.__doc__ = value
+#         return func
+#     return _doc

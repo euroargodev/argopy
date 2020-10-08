@@ -10,8 +10,9 @@
 import numpy as np
 import pandas as pd
 import warnings
-from argopy.errors import InvalidDashboard
 from contextlib import contextmanager
+from argopy.errors import InvalidDashboard
+# from argopy.utilities import docstring
 
 
 try:
@@ -289,6 +290,7 @@ def plot_trajectory(
     Parameters
     ----------
     df: Pandas DataFrame
+        Input data with columns: 'wmo','longitude','latitude'
     style: str
     add_legend: bool
     palette: str
