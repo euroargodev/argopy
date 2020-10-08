@@ -295,6 +295,10 @@ def plot_trajectory(
     add_legend: bool
     palette: str
 
+    Returns
+    -------
+    fig: :class:`matplotlib.pyplot.figure.Figure`
+    ax: :class:`matplotlib.axes.Axes`
     """
     with axes_style(style):
         # Set-up the figure and axis:
@@ -357,32 +361,48 @@ def plot_trajectory(
     return fig, ax
 
 
-@warnUnless(
-    with_matplotlib and with_cartopy and with_seaborn,
-    "requires matplotlib, cartopy and seaborn installed",
-)
 def plot_dac(idx):
     """ Histogram of DAC for an index dataframe """
-    if not with_seaborn:
-        raise BaseException("This function requires seaborn")
-    fig = plt.figure(figsize=(10, 5))
-    mind = idx.groupby("institution").size().sort_values(ascending=False).index
-    sns.countplot(y="institution", data=idx, order=mind)
-    plt.ylabel("number of profiles")
-    return fig
+    warnings.warn("plot_dac(idx) is deprecated; use bar_plot(idx, by='institution') instead.",
+                  category=DeprecationWarning, stacklevel=2)
 
 
-@warnUnless(
-    with_matplotlib and with_cartopy and with_seaborn,
-    "requires matplotlib, cartopy and seaborn installed",
-)
 def plot_profilerType(idx):
     """ Histogram of profile types for an index dataframe """
-    if not with_seaborn:
-        raise BaseException("This function requires seaborn")
-    fig = plt.figure(figsize=(10, 5))
-    mind = idx.groupby("profiler").size().sort_values(ascending=False).index
-    sns.countplot(y="profiler", data=idx, order=mind)
-    plt.xlabel("number of profiles")
-    plt.ylabel("")
-    return fig
+    warnings.warn("plot_profilerType(idx) is deprecated; use bar_plot(idx, by='profiler') instead.",
+                  category=DeprecationWarning, stacklevel=2)
+
+
+def bar_plot(
+        df: pd.core.frame.DataFrame,
+        by: str ='institution',
+        style: str = STYLE["axes"],
+        with_seaborn=with_seaborn,
+        **kwargs
+    ):
+    """ Create a bar plot for an index dataframe
+
+    Parameters
+    ----------
+    df: Pandas DataFrame
+    by: str
+        The profile property to plot. Default is 'institution'
+
+    Returns
+    -------
+    fig: :class:`matplotlib.pyplot.figure.Figure`
+    ax: :class:`matplotlib.axes.Axes`
+    """
+    if by not in ['institution', 'institution_code', 'profiler', 'profiler_code', 'ocean']:
+        raise ValueError("not a valid field")
+    with axes_style(style):
+        defaults = {'figsize': (10, 6), 'dpi': 90}
+        fig, ax = plt.subplots(**{**defaults, **kwargs})
+        if with_seaborn:
+            mind = df.groupby(by).size().sort_values(ascending=False).index
+            sns.countplot(y=by, data=df, order=mind)
+        else:
+            df.groupby('profiler').size().sort_values(ascending=True).plot.barh(ax)
+        ax.set_xlabel("Number of profiles")
+        ax.set_ylabel("")
+    return fig, ax
