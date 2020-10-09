@@ -103,6 +103,10 @@ class ArgoDataFetcher:
             else:
                 summary.append("Backend: %s" % self._src)
             summary.append("User mode: %s" % self._mode)
+            if self._loaded:
+                n = len(self.data['N_POINTS'])
+                t = 'point' if n == 1 else 'points'
+                summary.append("Number of %s: %s" % (t, n))
         else:
             summary = ["<datafetcher> 'Not initialised'"]
             summary.append("Current backend: %s" % self._src)
@@ -116,7 +120,17 @@ class ArgoDataFetcher:
 
     def __getattr__(self, key):
         """ Validate access points """
-        valid_attrs = ["Fetchers", "fetcher", "fetcher_options", "postproccessor", "data", "_loaded"]
+        valid_attrs = [
+            "Fetchers",
+            "fetcher",
+            "fetcher_options",
+            "postproccessor",
+            "data",
+            "_data",
+            "index",
+            "_index",
+            "_loaded",
+        ]
         if key not in self.valid_access_points and key not in valid_attrs:
             raise InvalidFetcherAccessPoint("'%s' is not a valid access point" % key)
         pass
@@ -265,6 +279,23 @@ class ArgoDataFetcher:
 
         return self
 
+    def load(self):
+        """ Load data in memory """
+        self.to_xarray()
+        return self
+
+    @property
+    def data(self):
+        if not self._loaded:
+            self.load()
+        return self._data
+
+    @property
+    def index(self):
+        if not self._loaded:
+            self.load()
+        return self.to_idx()
+
     def to_xarray(self, **kwargs):
         """ Fetch and return data as xarray.DataSet
 
@@ -280,7 +311,7 @@ class ArgoDataFetcher:
         if not self._loaded:
             xds = self.fetcher.to_xarray(**kwargs)
             xds = self.postproccessor(xds)
-            self.data, self._loaded = xds, True
+            self._data, self._loaded = xds, True
         return self.data
 
     def to_dataframe(self, **kwargs):
@@ -290,12 +321,7 @@ class ArgoDataFetcher:
                 " Initialize an access point (%s) first."
                 % ",".join(self.Fetchers.keys())
             )
-        if not self._loaded:
-            self.load()
         return self.data.to_dataframe()
-
-    def load(self):
-        self.to_xarray()
 
     def clear_cache(self):
         """ Clear data cached by fetcher """
@@ -307,8 +333,8 @@ class ArgoDataFetcher:
         return self.fetcher.clear_cache()
 
     def to_idx(self):
-        if not self._loaded:
-            self.load()
+        if hasattr(self, 'index'):
+            return self.index
         ds = self.data.argo.point2profile()
         df = (
             ds.drop_vars(set(ds.data_vars) - set(["PLATFORM_NUMBER"]))
@@ -327,8 +353,8 @@ class ArgoDataFetcher:
             )
             .drop(columns="N_PROF")
         )
-        df = df[['date', 'latitude', 'longitude', 'wmo']]
-        self.index = df
+        df = df[["date", "latitude", "longitude", "wmo"]]
+        self._index = df
         return df
 
 
@@ -409,6 +435,10 @@ class ArgoIndexFetcher:
             summary = [self.fetcher.__repr__()]
             summary.append("Backend: %s" % self._src)
             summary.append("User mode: %s" % self._mode)
+            if self._loaded:
+                n = len(self.index)
+                t = 'profile' if n == 1 else 'profiles'
+                summary.append("Number of %s: %s" % (t, n))
         else:
             summary = ["<indexfetcher> 'Not initialised'"]
             summary.append("Current backend: %s" % self._src)
@@ -427,7 +457,8 @@ class ArgoIndexFetcher:
             "fetcher",
             "fetcher_options",
             "postproccessor",
-            "data",
+            "index",
+            "_index",
             "_loaded",
         ]
         if key not in self.valid_access_points and key not in valid_attrs:
@@ -472,6 +503,16 @@ class ArgoIndexFetcher:
             )
         return self
 
+    def load(self):
+        self.to_dataframe()
+        return self
+
+    @property
+    def index(self):
+        if not self._loaded:
+            self.load()
+        return self._index
+
     def to_dataframe(self, **kwargs):
         """ Fetch index and return pandas.Dataframe """
         if not self.fetcher:
@@ -480,8 +521,8 @@ class ArgoIndexFetcher:
                 % ",".join(self.Fetchers.keys())
             )
         if not self._loaded:
-            self.data, self._loaded = self.fetcher.to_dataframe(), True
-        return self.data
+            self._index, self._loaded = self.fetcher.to_dataframe(), True
+        return self.index
 
     def to_xarray(self, **kwargs):
         """ Fetch index and return xr.dataset """
@@ -490,9 +531,7 @@ class ArgoIndexFetcher:
                 " Initialize an access point (%s) first."
                 % ",".join(self.Fetchers.keys())
             )
-        if not self._loaded:
-            self.load()
-        return self.data.to_xarray(**kwargs)
+        return self.index.to_xarray(**kwargs)
 
     def to_csv(self, file: str = "output_file.csv"):
         """ Fetch index and return csv """
@@ -501,12 +540,7 @@ class ArgoIndexFetcher:
                 " Initialize an access point (%s) first."
                 % ",".join(self.Fetchers.keys())
             )
-        if not self._loaded:
-            self.load()
-        return self.data.to_csv(file)
-
-    def load(self):
-        self.to_dataframe()
+        return self.index.to_csv(file)
 
     def plot(self, ptype="trajectory", **kwargs):
         """ Create custom plots from index
@@ -521,14 +555,12 @@ class ArgoIndexFetcher:
             fig: :class:`matplotlib.pyplot.figure.Figure`
             ax: :class:`matplotlib.axes.Axes`
         """
-        if not self._loaded:
-            self.load()
         if ptype in ["dac", "institution"]:
-            return bar_plot(self.data, by="institution", **kwargs)
+            return bar_plot(self.index, by="institution", **kwargs)
         elif ptype == "profiler":
-            return bar_plot(self.data, by="profiler", **kwargs)
+            return bar_plot(self.index, by="profiler", **kwargs)
         elif ptype == "trajectory":
-            return plot_trajectory(self.data.sort_values(["file"]), **kwargs)
+            return plot_trajectory(self.index.sort_values(["file"]), **kwargs)
         else:
             raise ValueError(
                 "Type of plot unavailable. Use: 'dac', 'profiler' or 'trajectory' (default)"
