@@ -110,7 +110,7 @@ class ArgoDataFetcher:
 
     def __getattr__(self, key):
         """ Validate access points """
-        valid_attrs = ["Fetchers", "fetcher", "fetcher_options", "postproccessor"]
+        valid_attrs = ["Fetchers", "fetcher", "fetcher_options", "postproccessor", "dashboard"]
         if key not in self.valid_access_points and key not in valid_attrs:
             raise InvalidFetcherAccessPoint("'%s' is not a valid access point" % key)
         pass
@@ -133,14 +133,14 @@ class ArgoDataFetcher:
                 % ",".join(self.Fetchers.keys())
             )
 
-    # def dashboard(self, **kw):
-    #     try:
-    #         return self.fetcher.dashboard(**kw)
-    #     except Exception:
-    #         warnings.warn(
-    #             "dashboard not available for this fetcher access point (%s/%s)"
-    #             % (self._src, self._AccessPoint)
-    #         )
+    def dashboard(self, **kw):
+        try:
+            return self.fetcher.dashboard(**kw)
+        except Exception:
+            warnings.warn(
+                "dashboard not available for this fetcher access point (%s/%s)"
+                % (self._src, self._AccessPoint)
+            )
 
     def float(self, wmo, **kw):
         """ Float data fetcher
