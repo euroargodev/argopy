@@ -1,6 +1,10 @@
 #./github/workflows/binder-badge-permissions.yaml
+
 name: Binder Badge
-on: [pull_request]
+
+on:
+  push:
+    branches: [ refactor-plotters ]
 
 jobs:
   binder:
