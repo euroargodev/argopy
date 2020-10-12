@@ -323,15 +323,6 @@ class ArgoDataFetcher:
             )
         return self.data.to_dataframe()
 
-    def clear_cache(self):
-        """ Clear data cached by fetcher """
-        if not self.fetcher:
-            raise InvalidFetcher(
-                " Initialize an access point (%s) first."
-                % ",".join(self.Fetchers.keys())
-            )
-        return self.fetcher.clear_cache()
-
     def to_idx(self):
         if hasattr(self, 'index'):
             return self.index
@@ -356,6 +347,15 @@ class ArgoDataFetcher:
         df = df[["date", "latitude", "longitude", "wmo"]]
         self._index = df
         return df
+
+    def clear_cache(self):
+        """ Clear data cached by fetcher """
+        if not self.fetcher:
+            raise InvalidFetcher(
+                " Initialize an access point (%s) first."
+                % ",".join(self.Fetchers.keys())
+            )
+        return self.fetcher.clear_cache()
 
 
 class ArgoIndexFetcher:
