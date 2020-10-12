@@ -43,7 +43,7 @@ The ``argopy`` library should work under all OS (Linux, Mac and Windows) and wit
 
 ## Usage
 
-[![badge](https://img.shields.io/static/v1.svg?logo=Jupyter&label=Pangeo+Binder&message=Click+here+to+try+argopy+online+!&color=blue&style=for-the-badge)](https://binder.pangeo.io/v2/gh/euroargodev/argopy/v0.1.6?urlpath=lab/tree/docs/tryit.ipynb)
+[![badge](https://img.shields.io/static/v1.svg?logo=Jupyter&label=Pangeo+Binder&message=Click+here+to+try+argopy+online+!&color=blue&style=for-the-badge)](https://binder.pangeo.io/v2/gh/euroargodev/argopy/v0.1.6-branch?urlpath=lab/tree/docs/tryit.ipynb)
 
 ### Fetching Argo Data
 
