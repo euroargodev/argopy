@@ -25,6 +25,7 @@ dependencies:
   - nodejs
   - scikit-image
   - scikit-learn
+  - seaborn
   - pip
   - pip:
     - graphviz
@@ -33,4 +34,4 @@ dependencies:
     - erddapy
     - gitpython
     - cmocean
-    - git+http://github.com/euroargodev/argopy.git@master
+    - git+http://github.com/euroargodev/argopy.git@v0.1.6-branch

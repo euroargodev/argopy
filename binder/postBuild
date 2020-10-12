@@ -1,12 +1,18 @@
 #!/bin/bash
+# A script that can contain arbitrary commands to be run
+# after the whole repository has been built.
+
 jupyter serverextension enable --py nbserverproxy --sys-prefix
 jupyter labextension install @jupyter-widgets/jupyterlab-manager \
                              @jupyterlab/hub-extension@0.12 \
                              @pyviz/jupyterlab_pyviz \
                              jupyter-leaflet \
+                             @jupyterlab/toc \
                              dask-labextension
 
 jupyter serverextension enable --sys-prefix dask_labextension
-jupyter lab workspaces import binder/jupyterlab-workspace.json
+
+# Setup a workspace
+jupyter lab workspaces import binder/simple_workspace.json
 
 #EOF
