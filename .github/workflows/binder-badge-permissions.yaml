@@ -2,9 +2,7 @@
 
 name: Binder Badge
 
-on:
-  push:
-    branches: [ refactor-plotters ]
+on: [pull_request]
 
 jobs:
   binder:
