@@ -122,7 +122,7 @@ class ArgoDataFetcher(object):
     def __getattr__(self, key):
         """ Validate access points """
         # print("key", key)
-        valid_attrs = ['Fetchers', 'fetcher', 'fetcher_options', 'postproccessor']
+        valid_attrs = ['Fetchers', 'fetcher', 'fetcher_options', 'postproccessor', 'dashboard']
         if key not in self.valid_access_points and key not in valid_attrs:
             raise InvalidFetcherAccessPoint("'%s' is not a valid access point" % key)
         pass
