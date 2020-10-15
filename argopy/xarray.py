@@ -220,7 +220,7 @@ class ArgoAccessor:
                 Split full dataset into 3 datasets
             """
             # Real-time:
-            argo_r = ds.where(ds['DATA_MODE'] == 'R', drop=True)
+            argo_r = xds.where(xds['DATA_MODE'] == 'R', drop=True)
             for v in plist:
                 vname = v.upper() + '_ADJUSTED'
                 if vname in argo_r:
@@ -232,7 +232,7 @@ class ArgoAccessor:
                 if vname in argo_r:
                     argo_r = argo_r.drop_vars(vname)
             # Real-time adjusted:
-            argo_a = ds.where(ds['DATA_MODE'] == 'A', drop=True)
+            argo_a = xds.where(xds['DATA_MODE'] == 'A', drop=True)
             for v in plist:
                 vname = v.upper()
                 if vname in argo_a:
@@ -241,7 +241,7 @@ class ArgoAccessor:
                 if vname in argo_a:
                     argo_a = argo_a.drop_vars(vname)
             # Delayed mode:
-            argo_d = ds.where(ds['DATA_MODE'] == 'D', drop=True)
+            argo_d = xds.where(xds['DATA_MODE'] == 'D', drop=True)
             return argo_r, argo_a, argo_d
 
         def fill_adjusted_nan(ds, vname):
