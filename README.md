@@ -11,15 +11,9 @@
 [![Gitter](https://badges.gitter.im/Argo-floats/argopy.svg)](https://gitter.im/Argo-floats/argopy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![JOSS](https://img.shields.io/badge/How%20to%20cite%20%3F-10.21105%2Fjoss.02425-brightgreen)](//dx.doi.org/10.21105/joss.02425)
 
-![Erddap status](https://img.shields.io/endpoint?label=erddap&url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_erddap.json)
-![Argovis status](https://img.shields.io/endpoint?label=argovis&url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_argovis.json)
-![Profile count](https://img.shields.io/endpoint?label=Available%20Argo%20profile%20count%3A&style=social&url=https%3A%2F%2Fmap.argo-france.fr%2Fdata%2FARGOFULL.json)
-
 ``argopy`` is a python library that aims to ease Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators. Documentation is at https://argopy.readthedocs.io/en/latest/
 
 Several python packages exist: we continuously try to build on these libraries to provide you with a single powerfull tool. [List your tool here !](https://github.com/euroargodev/argopy/issues/3)
-
-By default, ``argopy`` relies on online services to fetch data, you can [check web API services status here](https://argopy.statuspage.io).
 
 ### Data and access point status
 
@@ -28,6 +22,8 @@ By default, ``argopy`` relies on online services to fetch data, you can [check w
 ![Erddap status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_erddap.json)
 
 ![Argovis status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_argovis.json)
+
+By default, ``argopy`` relies on online services to fetch data, you can [check web API services status here](https://argopy.statuspage.io).
 
 ## Install
 
