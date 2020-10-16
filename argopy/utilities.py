@@ -37,7 +37,12 @@ import time
 
 from argopy.options import OPTIONS, set_options
 from argopy.stores import httpstore
-from argopy.errors import FtpPathError, InvalidFetcher, OptionValueError, InvalidFetcherAccessPoint
+from argopy.errors import (
+    FtpPathError,
+    InvalidFetcher,
+    OptionValueError,
+    InvalidFetcherAccessPoint,
+)
 
 path2pkl = pkg_resources.resource_filename("argopy", "assets/")
 
@@ -54,7 +59,7 @@ def clear_cache():
                 elif os.path.isdir(file_path):
                     shutil.rmtree(file_path)
             except Exception as e:
-                print('Failed to delete %s. Reason: %s' % (file_path, e))
+                print("Failed to delete %s. Reason: %s" % (file_path, e))
 
 
 def load_dict(ptype):
@@ -82,6 +87,7 @@ def list_available_data_src():
     AVAILABLE_SOURCES = {}
     try:
         from .data_fetchers import erddap_data as Erddap_Fetchers
+
         AVAILABLE_SOURCES["erddap"] = Erddap_Fetchers
     except Exception:
         warnings.warn(
@@ -93,6 +99,7 @@ def list_available_data_src():
 
     try:
         from .data_fetchers import localftp_data as LocalFTP_Fetchers
+
         AVAILABLE_SOURCES["localftp"] = LocalFTP_Fetchers
     except Exception:
         warnings.warn(
@@ -104,6 +111,7 @@ def list_available_data_src():
 
     try:
         from .data_fetchers import argovis_data as ArgoVis_Fetchers
+
         AVAILABLE_SOURCES["argovis"] = ArgoVis_Fetchers
     except Exception:
         warnings.warn(
@@ -121,6 +129,7 @@ def list_available_index_src():
     AVAILABLE_SOURCES = {}
     try:
         from .data_fetchers import erddap_index as Erddap_Fetchers
+
         AVAILABLE_SOURCES["erddap"] = Erddap_Fetchers
     except Exception:
         warnings.warn(
@@ -651,7 +660,9 @@ class monitor_status:
 
         self.refresh_rate = refresh
         self.text = widgets.HTML(
-            value=fetch_status(stdout="html", insert=False), placeholder="", description="",
+            value=fetch_status(stdout="html", insert=False),
+            placeholder="",
+            description="",
         )
         self.start()
 
@@ -706,6 +717,7 @@ class monitor_status:
 #  From xarrayutils : https://github.com/jbusecke/xarrayutils/blob/master/xarrayutils/vertical_coordinates.py
 #  Direct integration of those 2 functions to minimize dependencies and possibility of tuning them to our needs
 #
+
 
 def linear_interpolation_remap(
     z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped"
@@ -1038,12 +1050,12 @@ def format_oneline(s, max_width=65):
         if q == 0:
             return "".join([s[0:n], padding, s[-n:]])
         else:
-            return "".join([s[0:n+1], padding, s[-n:]])
+            return "".join([s[0 : n + 1], padding, s[-n:]])
     else:
         return s
 
 
-def is_box(box : list, errors="raise"):
+def is_box(box: list, errors="raise"):
     """ Check if this array matches a 2d or 3d box definition
 
         box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
