@@ -1,3 +1,5 @@
+.. _why:
+
 Why argopy ?
 ============
 
@@ -33,6 +35,6 @@ By default, all **argopy** data fetchers are set to work with a **standard** use
 
 In *standard* mode, fetched data are automatically filtered to account for their quality (only good are retained) and level of processing by the data centers (wether they looked at the data briefly or not).
 
-Selecting user mode is further explained in the dedicated documentation section :ref:`user-mode`.
+Selecting user mode is further explained in the dedicated documentation section: :ref:`user-mode`.
 
 .. [ADMT] See all the ADMT documentation here: http://www.argodatamgt.org/Documentation

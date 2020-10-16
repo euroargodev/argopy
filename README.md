@@ -2,17 +2,18 @@
 
 # Argo data python library
 
-[![Documentation Status](https://readthedocs.org/projects/argopy/badge/?version=latest)](https://argopy.readthedocs.io/en/latest/?badge=latest)
 ![Github Action Status](https://github.com/euroargodev/argopy/workflows/build/badge.svg?branch=master)
-[![codecov](https://codecov.io/gh/euroargodev/argopy/branch/region-for-localftp/graph/badge.svg)](https://codecov.io/gh/euroargodev/argopy)
+[![codecov](https://codecov.io/gh/euroargodev/argopy/branch/master/graph/badge.svg)](https://codecov.io/gh/euroargodev/argopy)
 [![Requirements Status](https://requires.io/github/euroargodev/argopy/requirements.svg?branch=master)](https://requires.io/github/euroargodev/argopy/requirements/?branch=master)
-[![Gitter](https://badges.gitter.im/Argo-floats/argopy.svg)](https://gitter.im/Argo-floats/argopy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+![PyPI](https://img.shields.io/pypi/v/argopy)
 
-![Profile count](https://img.shields.io/endpoint?label=Available%20Argo%20profile%20count%3A&style=social&url=https%3A%2F%2Fmap.argo-france.fr%2Fdata%2FARGOFULL.json)
+[![Documentation Status](https://readthedocs.org/projects/argopy/badge/?version=latest)](https://argopy.readthedocs.io/en/latest/?badge=latest)
+[![Gitter](https://badges.gitter.im/Argo-floats/argopy.svg)](https://gitter.im/Argo-floats/argopy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![JOSS](https://img.shields.io/badge/How%20to%20cite%20%3F-10.21105%2Fjoss.02425-brightgreen)](//dx.doi.org/10.21105/joss.02425)
+
 ![Erddap status](https://img.shields.io/endpoint?label=erddap&url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_erddap.json)
 ![Argovis status](https://img.shields.io/endpoint?label=argovis&url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_argovis.json)
-
-[![status](https://joss.theoj.org/papers/9e31b212f63c2bacb4006b14bb8a743f/status.svg)](https://joss.theoj.org/papers/9e31b212f63c2bacb4006b14bb8a743f)
+![Profile count](https://img.shields.io/endpoint?label=Available%20Argo%20profile%20count%3A&style=social&url=https%3A%2F%2Fmap.argo-france.fr%2Fdata%2FARGOFULL.json)
 
 ``argopy`` is a python library that aims to ease Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators. Documentation is at https://argopy.readthedocs.io/en/latest/
 
@@ -44,6 +45,8 @@ pip install git+http://github.com/euroargodev/argopy.git@master
 The ``argopy`` library should work under all OS (Linux, Mac and Windows) and with python versions 3.6, 3.7 and 3.8.
 
 ## Usage
+
+[![badge](https://img.shields.io/static/v1.svg?logo=Jupyter&label=Pangeo+Binder&message=Click+here+to+try+argopy+online+!&color=blue&style=for-the-badge)](https://binder.pangeo.io/v2/gh/euroargodev/argopy/v0.1.6-branch?urlpath=lab/tree/docs/tryit.ipynb)
 
 ### Fetching Argo Data
 
@@ -128,11 +131,16 @@ For plotting the distribution of DAC or profiler type of the indexed profiles :
 
 ## Development roadmap
 
+Our next big steps:
+- [ ] To provide Bio-geochemical variables
+
 We aim to provide high level helper methods to load Argo data and meta-data from:
 - [x] Ifremer erddap
 - [x] local copy of the GDAC ftp folder
-- [x] Index files
-- [ ] any other usefull access point to Argo data ?
+- [x] Index files (local and online)
+- [x] Argovis
+- [ ] Online GDAC ftp
+- [ ] any other useful access point to Argo data ?
 
 We also aim to provide high level helper methods to visualise and plot Argo data and meta-data:
 - [ ] Map with trajectories

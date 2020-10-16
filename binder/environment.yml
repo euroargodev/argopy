@@ -33,4 +33,5 @@ dependencies:
     - erddapy
     - gitpython
     - cmocean
+    - geopandas
     - git+http://github.com/euroargodev/argopy.git@master

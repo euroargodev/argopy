@@ -18,7 +18,7 @@ class NetCDF4FileNotFoundError(FileNotFoundError):
     Most common error. Basically just a file not found.
     I made a custom one to make it easier to catch.
     """
-    def __init__(self, path):
+    def __init__(self, path: str = "?"):
         self.value = "Couldn't find NetCDF4 file: %s" % path
         self.path = path
 
@@ -87,9 +87,9 @@ class OptionValueError(ValueError):
     """
     pass
 
-class ErddapServerError(ValueError):
+class InvalidMethod(ValueError):
     """
-    Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery
+    Raise when trying to do use an Method not available
     """
     pass
 
@@ -97,5 +97,26 @@ class ErddapServerError(ValueError):
 class InvalidDashboard(ValueError):
     """
     Raise this when trying to work with a 3rd party online service to display float information
+    """
+    pass
+
+
+class APIServerError(ValueError):
+    """
+    Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery
+    """
+    pass
+
+
+class ErddapServerError(APIServerError):
+    """
+    Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery
+    """
+    pass
+
+
+class ArgovisServerError(APIServerError):
+    """
+    Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery
     """
     pass

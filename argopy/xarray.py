@@ -1,11 +1,8 @@
-#!/bin/env python
-# -*coding: UTF-8 -*-
-#
-
 import sys
 import numpy as np
 import pandas as pd
 import xarray as xr
+from sklearn import preprocessing
 
 try:
     import gsw
@@ -13,11 +10,8 @@ try:
 except ModuleNotFoundError:
     with_gsw = False
 
-
 from argopy.utilities import linear_interpolation_remap
-
 from argopy.errors import InvalidDatasetStructure
-from sklearn import preprocessing
 
 
 @xr.register_dataset_accessor('argo')
@@ -151,7 +145,7 @@ class ArgoAccessor:
                     da = cast_this(da, str)
 
                 # Address weird string values:
-                # (replace missing or nan values by a '0' that will be cast as a integer later
+                # (replace missing or nan values by a '0' that will be cast as an integer later
 
                 if da.dtype == '<U3':  # string, len 3 because of a 'nan' somewhere
                     ii = da == '   '  # This should not happen, but still ! That's real world data
@@ -164,6 +158,9 @@ class ArgoAccessor:
                     da = cast_this(da, np.dtype('U1'))
 
                 if da.dtype == '<U1':  # string
+                    ii = da == ''  # This should not happen, but still ! That's real world data
+                    da = xr.where(ii, '0', da)
+
                     ii = da == ' '  # This should not happen, but still ! That's real world data
                     da = xr.where(ii, '0', da)
 
@@ -182,7 +179,7 @@ class ArgoAccessor:
             try:
                 ds[v] = cast_this_da(ds[v])
             except Exception:
-                print("Oops!", sys.exc_info()[0], "occured.")
+                print("Oops!", sys.exc_info()[0], "occurred.")
                 print("Fail to cast: %s " % v)
                 print("Encountered unique values:", np.unique(ds[v]))
                 raise
@@ -223,7 +220,7 @@ class ArgoAccessor:
                 Split full dataset into 3 datasets
             """
             # Real-time:
-            argo_r = ds.where(ds['DATA_MODE'] == 'R', drop=True)
+            argo_r = xds.where(xds['DATA_MODE'] == 'R', drop=True)
             for v in plist:
                 vname = v.upper() + '_ADJUSTED'
                 if vname in argo_r:
@@ -235,7 +232,7 @@ class ArgoAccessor:
                 if vname in argo_r:
                     argo_r = argo_r.drop_vars(vname)
             # Real-time adjusted:
-            argo_a = ds.where(ds['DATA_MODE'] == 'A', drop=True)
+            argo_a = xds.where(xds['DATA_MODE'] == 'A', drop=True)
             for v in plist:
                 vname = v.upper()
                 if vname in argo_a:
@@ -244,7 +241,7 @@ class ArgoAccessor:
                 if vname in argo_a:
                     argo_a = argo_a.drop_vars(vname)
             # Delayed mode:
-            argo_d = ds.where(ds['DATA_MODE'] == 'D', drop=True)
+            argo_d = xds.where(xds['DATA_MODE'] == 'D', drop=True)
             return argo_r, argo_a, argo_d
 
         def fill_adjusted_nan(ds, vname):
@@ -564,6 +561,7 @@ class ArgoAccessor:
                 if len(ds[d]) == 0:
                     dim_list.append(d)
                     break
+
         # Drop dimensions and associated variables from this dataset
         ds = ds.drop_dims(np.unique(dim_list))
 

@@ -5,7 +5,7 @@ import hashlib
 
 from argopy.errors import DataNotFound
 from argopy.options import OPTIONS
-from .fsspec_wrappers import filestore, memorystore
+from .filesystems import filestore, memorystore
 
 
 class indexfilter_proto(ABC):
@@ -434,7 +434,7 @@ class indexfilter_box(indexfilter_proto):
 
 
 class indexstore():
-    """" Use to manage access to a local Argo index and searches """
+    """ Use to manage access to a local Argo index and searches """
 
     def __init__(self,
                  cache: bool = False,
@@ -443,12 +443,11 @@ class indexstore():
                  **kw):
         """ Create a file storage system for Argo index file requests
 
-            Parameters
-            ----------
-            cache : bool (False)
-            cachedir : str (used value in global OPTIONS)
-            index_file: str ("ar_index_global_prof.txt")
-
+        Parameters
+        ----------
+        cache : bool (False)
+        cachedir : str (used value in global OPTIONS)
+        index_file: str ("ar_index_global_prof.txt")
         """
         self.index_file = index_file
         self.cache = cache
@@ -475,7 +474,7 @@ class indexstore():
         return store_path in fs.cached_files[-1]
 
     def in_memory(self, fs, uri):
-        """ Return true if uri is in the memory store """
+        """ Return True if uri is in the memory store """
         return uri in fs.store
 
     def open_index(self):
@@ -492,16 +491,17 @@ class indexstore():
         data = [x.split(',') for x in results.split('\n') if ",," not in x]
         return pd.DataFrame(data, columns=cols_name).astype(cols_type)[:-1]
 
-    def open_dataframe(self, search_cls):
-        """ Run a search on an Argo index file and return a Pandas dataframe with results
+    def read_csv(self, search_cls):
+        """ Run a search on an csv Argo index file and return a Pandas DataFrame with results
 
         Parameters
         ----------
-        search_cls: Class instance inhereting from index_filter_proto
+        search_cls: Class instance inheriting from index_filter_proto
 
         Returns
         -------
         :class:`pandas.DataFrame`
+
         """
         uri = search_cls.uri()
         with self.open_index() as f:

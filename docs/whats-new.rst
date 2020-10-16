@@ -20,6 +20,24 @@ v0.1.7 (XX Oct. 2020)
 .. image:: _static/status_monitor.png
   :width: 350
 
+- Optimise large data fetching with parallelization, for all data fetchers (erddap, localftp and argovis). See documentation page on :ref:`parallel`. Two parallel methods are available: multi-threading or multi-processing. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy import DataFetcher as ArgoDataFetcher
+    loader = ArgoDataFetcher(parallel=True)
+    loader.float([6902766, 6902772, 6902914, 6902746]).to_xarray()
+    loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2012-02']).to_xarray()
+
+
+**Breaking changes with previous versions**
+
+- The unique resource identifier property is now named ``uri`` for all data fetchers, it is always a list of strings.
+
+**Internals**
+
+- New ``open_mfdataset`` and ``open_mfjson`` methods in Argo stores. These can be used to open, preprocess and concatenate a collection of paths both in sequential or parallel order. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
+
 
 v0.1.6 (31 Aug. 2020)
 ---------------------
@@ -27,6 +45,7 @@ v0.1.6 (31 Aug. 2020)
 - **JOSS paper published**. You can now cite argopy with a clean reference. (:pr:`30`) by `G. Maze <http://www.github.com/gmaze>`_ and `K. Balem <http://www.github.com/quai20>`_.
 
 Maze G. and Balem K. (2020). argopy: A Python library for Argo ocean data analysis. *Journal of Open Source Software*, 5(52), 2425 doi: `10.21105/joss.02425 <http://dx.doi.org/10.21105/joss.02425>`_.
+
 
 v0.1.5 (10 July 2020)
 ---------------------

@@ -289,13 +289,15 @@ texinfo_documents = [
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
     'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
-    'iris': ('http://scitools.org.uk/iris/docs/latest/', None),
-    'numpy': ('https://docs.scipy.org/doc/numpy/', None),
-    'numba': ('https://numba.pydata.org/numba-doc/latest/', None),
+    'iris': ('https://scitools.org.uk/iris/docs/latest/', None),
+    'numpy': ('https://numpy.org/doc/stable/', None),
+    'numba': ('https://numba.readthedocs.io/en/stable/', None),
     'matplotlib': ('https://matplotlib.org/', None),
     'xarray': ('http://xarray.pydata.org/en/stable/', None),
-    'dask': ('https://docs.dask.org/en/latest/', None),
+    'dask': ('https://docs.dask.org/en/stable/', None),
+    'distributed': ('https://distributed.dask.org/en/stable/', None),
     'dask_ml': ('https://ml.dask.org/', None),
     'sklearn': ('https://scikit-learn.org/stable/', None),
     'seaborn': ('https://seaborn.pydata.org/', None),
+    'fsspec': ('https://filesystem-spec.readthedocs.io/en/stable/', None)
 }
