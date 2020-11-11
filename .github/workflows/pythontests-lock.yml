@@ -2,17 +2,20 @@ name: build_lock
 
 on: [push, pull_request]
 
+
 jobs:
   unit-testing:
     name: unit-test
 
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
       max-parallel: 12
       fail-fast: false
       matrix:
         python-version: [3.6, 3.7, 3.8]
         os: [ubuntu-latest, macos-latest]
+        experimental: [false]
 
     steps:
       - uses: actions/checkout@master
@@ -53,14 +56,15 @@ jobs:
 
   free_env:
     name: unit-test FREE env
-    experimental: true
 
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
       matrix:
         python-version: [3.7, 3.8]
         os: [ubuntu-latest, macos-latest]
+        experimental: [true]
 
     steps:
       - uses: actions/checkout@master
