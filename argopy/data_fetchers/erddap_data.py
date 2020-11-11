@@ -10,6 +10,7 @@ This is not intended to be used directly, only by the facade at fetchers.py
 
 """
 
+import sys
 import pandas as pd
 import numpy as np
 import copy
@@ -20,9 +21,10 @@ import getpass
 
 from .proto import ArgoDataFetcherProto
 from argopy.options import OPTIONS
-from argopy.utilities import list_standard_variables, Chunker, format_oneline, is_box
+from argopy.utilities import list_standard_variables, isconnected, Chunker, format_oneline, is_box
 from argopy.stores import httpstore
 from argopy.plotters import open_dashboard
+
 
 # Load erddapy according to available version (breaking changes in v0.8.0)
 try:
@@ -35,14 +37,11 @@ except:
     from erddapy.erddapy import parse_dates
 
 
-access_points = ["wmo", "box"]
-exit_formats = ["xarray"]
-dataset_ids = ["phy", "ref", "bgc"]  # First is default
-api_server = "https://www.ifremer.fr/erddap"  # API root url
-# api_server = 'https://erddap.ifremer.fr/erddap'  # API root url
-api_server_check = (
-    api_server + "/info/ArgoFloats/index.html"
-)  # URL to check if the API is alive
+access_points = ['wmo', 'box']
+exit_formats = ['xarray']
+dataset_ids = ['phy', 'ref', 'bgc']  # First is default
+api_server = 'https://www.ifremer.fr/erddap'  # API root url
+api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
 
 
 class ErddapArgoDataFetcher(ArgoDataFetcherProto):

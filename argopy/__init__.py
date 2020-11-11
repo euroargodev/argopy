@@ -17,6 +17,7 @@ from . import tutorial
 from . import utilities
 from . import stores
 from .utilities import show_versions, clear_cache
+from .utilities import monitor_status as status
 from .options import set_options
 from .plotters import open_dashboard as dashboard
 
@@ -30,6 +31,7 @@ __all__ = (
     "set_options",
     "show_versions",
     "dashboard",
+    "status",
     "clear_cache",
     # Sub-packages,
     "utilities",

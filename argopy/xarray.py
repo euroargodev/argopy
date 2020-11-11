@@ -263,6 +263,7 @@ class ArgoAccessor:
                     argo_a = argo_a.drop_vars(vname)
             # Delayed mode:
             argo_d = safe_where_eq(xds, 'DATA_MODE', 'D')
+
             return argo_r, argo_a, argo_d
 
         def fill_adjusted_nan(ds, vname):

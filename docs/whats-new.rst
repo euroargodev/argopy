@@ -8,6 +8,18 @@ v0.1.7 (XX Oct. 2020)
 
 **Features and front-end API**
 
+- Live monitor for the status (availability) of data sources. (:pr:`36`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    import argopy
+    argopy.status()
+    # or
+    argopy.status(refresh=15)
+
+.. image:: _static/status_monitor.png
+  :width: 350
+
 - Optimise large data fetching with parallelization, for all data fetchers (erddap, localftp and argovis). See documentation page on :ref:`parallel`. Two parallel methods are available: multi-threading or multi-processing. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python

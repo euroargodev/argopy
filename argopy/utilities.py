@@ -9,7 +9,7 @@
 import os
 import sys
 import warnings
-import urllib.request
+import urllib
 import json
 import collections
 from functools import reduce
@@ -29,9 +29,20 @@ import pickle
 import pkg_resources
 import shutil
 
+import threading
+
+# from IPython.display import HTML, display
+# import ipywidgets as widgets
+import time
+
 from argopy.options import OPTIONS, set_options
 from argopy.stores import httpstore
-from argopy.errors import FtpPathError, InvalidFetcher, InvalidFetcherAccessPoint
+from argopy.errors import (
+    FtpPathError,
+    InvalidFetcher,
+    OptionValueError,
+    InvalidFetcherAccessPoint,
+)
 
 path2pkl = pkg_resources.resource_filename("argopy", "assets/")
 
@@ -493,15 +504,20 @@ def isconnected(host="http://www.ifremer.fr"):
         -------
         bool
     """
-    try:
-        urllib.request.urlopen(host, timeout=2)  # Python 3.x
-        return True
-    except Exception:
-        return False
+    if "http" in host or "ftp" in host:
+        try:
+            urllib.request.urlopen(host, timeout=1)  # Python 3.x
+            return True
+        except Exception:
+            return False
+    else:
+        return os.path.exists(host)
 
 
 def isAPIconnected(src="erddap", data=True):
-    """ Check if a source web API is alive or not
+    """ Check if a source API is alive or not
+
+        The API is connected when it has a live URL or valid folder path.
 
         Parameters
         ----------
@@ -521,19 +537,146 @@ def isAPIconnected(src="erddap", data=True):
     if src in AVAILABLE_SOURCES and getattr(
         AVAILABLE_SOURCES[src], "api_server_check", None
     ):
-        with set_options(src=src):
-            return isconnected(AVAILABLE_SOURCES[src].api_server_check)
+        if "localftp" in src:
+            # This is a special case because the source here is a local folder, and the folder validity is checked
+            # when setting the option value of 'local_ftp'
+            # So here, we just need to catch the appropriate error after a call to set_option
+            opts = {"src": src, "local_ftp": OPTIONS["local_ftp"]}
+            try:
+                set_options(**opts)
+                return True
+            except OptionValueError:
+                return False
+        else:
+            with set_options(src=src):
+                return isconnected(AVAILABLE_SOURCES[src].api_server_check)
     else:
         raise InvalidFetcher
 
 
 def erddap_ds_exists(ds="ArgoFloats"):
     """ Given erddap fetcher, check if a Dataset exists, return a bool"""
+    # e = ArgoDataFetcher(src='erddap').float(wmo=0).fetcher
+    # erddap_index = json.load(urlopen(e.erddap.server + "/info/index.json"))
+    # erddap_index = json.load(urlopen("http://www.ifremer.fr/erddap/info/index.json"))
     with httpstore(timeout=120).open(
         "http://www.ifremer.fr/erddap/info/index.json"
     ) as of:
         erddap_index = json.load(of)
     return ds in [row[-1] for row in erddap_index["table"]["rows"]]
+
+
+def badge(label="label", message="message", color="green", insert=False):
+    """ Return or insert shield.io badge image
+
+        Use the shields.io service to create a badge image
+
+        https://img.shields.io/static/v1?label=<LABEL>&message=<MESSAGE>&color=<COLOR>
+
+    Parameters
+    ----------
+    label: str
+        Left side badge text
+    message: str
+        Right side badge text
+    color: str
+        Right side background color
+    insert: bool
+        Return url to badge image (False, default) or directly insert the image with HTML (True)
+
+    Returns
+    -------
+    str or IPython.display.Image
+    """
+    from IPython.display import Image
+
+    url = (
+        "https://img.shields.io/static/v1?style=flat-square&label={}&message={}&color={}"
+    ).format
+    img = url(urllib.parse.quote(label), urllib.parse.quote(message), color)
+    if not insert:
+        return img
+    else:
+        return Image(url=img)
+
+
+def fetch_status(stdout="html", insert=True):
+    """ Fetch and report web API status """
+    results = {}
+    for api, mod in list_available_data_src().items():
+        if getattr(mod, "api_server_check", None):
+            # status = isconnected(mod.api_server_check)
+            status = isAPIconnected(api)
+            # message = "up" if status else "down"
+            message = "ok" if status else "offline"
+            results[api] = {"value": status, "message": message}
+
+    if "IPython" in sys.modules and stdout == "html":
+        cols = []
+        for api in sorted(results.keys()):
+            color = "green" if results[api]["value"] else "orange"
+            if isconnected():
+                # img = badge("src='%s'" % api, message=results[api]['message'], color=color, insert=False)
+                # img = badge(label="argopy src", message="%s is %s" %
+                # (api, results[api]['message']), color=color, insert=False)
+                img = badge(
+                    label="src %s is" % api,
+                    message="%s" % results[api]["message"],
+                    color=color,
+                    insert=False,
+                )
+                html = ('<td><img src="{}"></td>').format(img)
+            else:
+                # html = "<th>src %s is:</th><td>%s</td>" % (api, results[api]['message'])
+                html = (
+                    "<th><div>src %s is:</div></th><td><div style='color:%s;'>%s</div></td>"
+                    % (api, color, results[api]["message"])
+                )
+            cols.append(html)
+        this_HTML = ("<table><tr>{}</tr></table>").format("".join(cols))
+        if insert:
+            from IPython.display import HTML, display
+
+            return display(HTML(this_HTML))
+        else:
+            return this_HTML
+    else:
+        rows = []
+        for api in sorted(results.keys()):
+            # rows.append("argopy src %s: %s" % (api, results[api]['message']))
+            rows.append("src %s is: %s" % (api, results[api]["message"]))
+        txt = "\n".join(rows)
+        if insert:
+            print(txt)
+        else:
+            return txt
+
+
+class monitor_status:
+    """ Monitor data source status with a refresh rate """
+
+    def __init__(self, refresh=1):
+        import ipywidgets as widgets
+
+        self.refresh_rate = refresh
+        self.text = widgets.HTML(
+            value=fetch_status(stdout="html", insert=False),
+            placeholder="",
+            description="",
+        )
+        self.start()
+
+    def work(self):
+        while True:
+            time.sleep(self.refresh_rate)
+            self.text.value = fetch_status(stdout="html", insert=False)
+
+    def start(self):
+        from IPython.display import display
+
+        thread = threading.Thread(target=self.work)
+        display(self.text)
+        thread.start()
 
 
 # def open_etopo1(box, res="l"):
@@ -574,6 +717,8 @@ def erddap_ds_exists(ds="ArgoFloats"):
 #  From xarrayutils : https://github.com/jbusecke/xarrayutils/blob/master/xarrayutils/vertical_coordinates.py
 #  Direct integration of those 2 functions to minimize dependencies and possibility of tuning them to our needs
 #
+
+
 def linear_interpolation_remap(
     z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped"
 ):

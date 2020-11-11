@@ -16,11 +16,10 @@ import copy
 
 from abc import ABC, abstractmethod
 
-from argopy.utilities import load_dict, mapp_dict, format_oneline
+from argopy.utilities import load_dict, mapp_dict, isconnected, format_oneline
 from argopy.stores import httpstore
 
-# from erddapy import ERDDAP
-# from erddapy.utilities import parse_dates, quote_string_constraints
+
 # Load erddapy according to available version (breaking changes in v0.8.0)
 try:
     from erddapy import ERDDAP
@@ -73,7 +72,6 @@ class ErddapArgoIndexFetcher(ABC):
                  cachedir: str = "",
                  **kwargs):
         """ Instantiate an ERDDAP Argo index loader with force caching """
-
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
         self.definition = 'Ifremer erddap Argo index fetcher'
         self.dataset_id = 'index'
