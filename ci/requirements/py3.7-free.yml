@@ -8,7 +8,6 @@ dependencies:
   - black
   - dask
   - distributed
-  - pandas
   - matplotlib
   - zarr
   - scikit-learn
