@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         python-version: [3.7]
-        os: [macos-latest]
+        os: [macos-18.7]
 
     steps:
       - uses: actions/checkout@master
