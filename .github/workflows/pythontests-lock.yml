@@ -1,13 +1,10 @@
 name: build_lock
 
-on:
-  push:
-    branches:
-      - xarray-016
+on: [push, pull_request]
 
 jobs:
   unit-testing:
-    name: unit-test Dev
+    name: unit-test
 
     runs-on: ${{ matrix.os }}
     strategy:
@@ -56,6 +53,7 @@ jobs:
 
   free_env:
     name: unit-test FREE env
+    experimental: true
 
     runs-on: ${{ matrix.os }}
     strategy:
