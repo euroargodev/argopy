@@ -29,3 +29,4 @@ dependencies:
   - tqdm
   - ipykernel
   - cartopy
+  - ipywidgets
