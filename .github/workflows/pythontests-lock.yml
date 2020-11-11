@@ -1,7 +1,6 @@
-name: build_lock
+name: build
 
 on: [push, pull_request]
-
 
 jobs:
   unit-testing:
