@@ -15,7 +15,7 @@ import getpass
 from .proto import ArgoDataFetcherProto
 from abc import abstractmethod
 import warnings
-\
+
 from argopy.stores import httpstore
 from argopy.options import OPTIONS
 from argopy.utilities import list_standard_variables, format_oneline, is_box, Chunker
