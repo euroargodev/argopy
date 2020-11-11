@@ -28,22 +28,12 @@ When a request is done, we
 
 """
 import os
-from glob import glob
 import numpy as np
-import pandas as pd
-import xarray as xr
 from abc import ABC, abstractmethod
-import warnings
-import getpass
 
-import multiprocessing as mp
-import distributed
-
-from .proto import ArgoDataFetcherProto
-from argopy.errors import NetCDF4FileNotFoundError
-from argopy.utilities import list_standard_variables, load_dict, mapp_dict, check_localftp, format_oneline
+from argopy.utilities import load_dict, mapp_dict, check_localftp, format_oneline
 from argopy.options import OPTIONS
-from argopy.stores import filestore, indexstore, indexfilter_wmo, indexfilter_box
+from argopy.stores import indexstore, indexfilter_wmo, indexfilter_box
 
 access_points = ['wmo', 'box']
 exit_formats = ['xarray', 'dataframe']
@@ -180,7 +170,7 @@ class Fetch_box(LocalFTPArgoIndexFetcher):
                 The box domain to load all Argo data for:
                 box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
-        if len(box) != 4 and len(box) !=6 :
+        if len(box) != 4 and len(box) != 6:
             raise ValueError('Box must be 4 or 6 length')
         self.BOX = box
         self.fcls = indexfilter_box(self.BOX)

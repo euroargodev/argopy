@@ -15,8 +15,7 @@ import getpass
 from .proto import ArgoDataFetcherProto
 from abc import abstractmethod
 import warnings
-import distributed
-
+\
 from argopy.stores import httpstore
 from argopy.options import OPTIONS
 from argopy.utilities import list_standard_variables, format_oneline, is_box, Chunker
@@ -29,6 +28,7 @@ api_server = 'https://argovis.colorado.edu'  # API root url
 api_server_check = (
     api_server + "/selection/overview"
 )  # URL to check if the API is alive
+
 
 class ArgovisDataFetcher(ArgoDataFetcherProto):
     ###
@@ -337,7 +337,7 @@ class Fetch_wmo(ArgovisDataFetcher):
 
 
 class Fetch_box(ArgovisDataFetcher):
-	
+
     def init(self, box: list):
         """ Create Argo data loader
 
@@ -388,8 +388,8 @@ class Fetch_box(ArgovisDataFetcher):
 
     def get_url_rect(self):
         """ Return the URL used to download data """
-        strCorner = lambda b, i: str([b[i[0]],b[i[1]]]).replace(" ", "")
-        strDate = lambda b, i: pd.to_datetime(b[i]).strftime("%Y-%m-%dT%H:%M:%SZ")
+        def strCorner(b, i): return str([b[i[0]], b[i[1]]]).replace(" ", "")
+        def strDate(b, i): return pd.to_datetime(b[i]).strftime("%Y-%m-%dT%H:%M:%SZ")
         url = self.server + "/selection/box/profiles"
         url += "?startDate={}".format(strDate(self.BOX, 6))
         url += "&endDate={}".format(strDate(self.BOX, 7))
