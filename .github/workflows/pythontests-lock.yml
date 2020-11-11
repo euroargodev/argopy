@@ -16,7 +16,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@master
-        with: $${{ github.ref }}
 
       - name: Set up Conda env for py-${{ matrix.python-version }}
         uses: conda-incubator/setup-miniconda@v1
