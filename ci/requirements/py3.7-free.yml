@@ -1,4 +1,4 @@
-name: argopy-tests-py37
+name: argopy-tests
 channels:
   - conda-forge
 dependencies:
