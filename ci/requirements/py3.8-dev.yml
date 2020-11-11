@@ -16,7 +16,7 @@ dependencies:
   - seaborn=0.11.0
   - flake8=3.8.4
   - erddapy=0.7.2
-  - fsspec=0.8.4
+  - fsspec=0.8.3
   - gsw=3.4.0
   - bottleneck=1.3.2
   - cftime=1.2.1
