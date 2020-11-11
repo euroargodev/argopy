@@ -2,7 +2,10 @@
 
 name: Binder Badge
 
-on: [pull_request]
+on:
+  push:
+    branches:
+      - xarray-016
 
 jobs:
   binder:
