@@ -48,7 +48,7 @@ def clear_cache():
                 elif os.path.isdir(file_path):
                     shutil.rmtree(file_path)
             except Exception as e:
-                print('Failed to delete %s. Reason: %s' % (file_path, e))
+                print("Failed to delete %s. Reason: %s" % (file_path, e))
 
 
 def load_dict(ptype):
@@ -76,6 +76,7 @@ def list_available_data_src():
     AVAILABLE_SOURCES = {}
     try:
         from .data_fetchers import erddap_data as Erddap_Fetchers
+
         AVAILABLE_SOURCES["erddap"] = Erddap_Fetchers
     except Exception:
         warnings.warn(
@@ -87,6 +88,7 @@ def list_available_data_src():
 
     try:
         from .data_fetchers import localftp_data as LocalFTP_Fetchers
+
         AVAILABLE_SOURCES["localftp"] = LocalFTP_Fetchers
     except Exception:
         warnings.warn(
@@ -98,6 +100,7 @@ def list_available_data_src():
 
     try:
         from .data_fetchers import argovis_data as ArgoVis_Fetchers
+
         AVAILABLE_SOURCES["argovis"] = ArgoVis_Fetchers
     except Exception:
         warnings.warn(
@@ -582,17 +585,19 @@ def linear_interpolation_remap(
         x = x[~idx]
         y = y[~idx]
 
-        #Need at least 5 points in the profile to interpolate, otherwise, return NaNs
-        if(len(y)<5):
+        # Need at least 5 points in the profile to interpolate, otherwise, return NaNs
+        if len(y) < 5:
             interpolated = np.empty(len(target_values))
             interpolated[:] = np.nan
-        else :
+        else:
             # replace nans in target_values with out of bound Values (just in case)
             target_values = np.where(
-                ~np.isnan(target_values), target_values, np.nanmax(x) + 1)
-        # Interpolate with fill value parameter to extend min pressure toward 0
+                ~np.isnan(target_values), target_values, np.nanmax(x) + 1
+            )
+            # Interpolate with fill value parameter to extend min pressure toward 0
             interpolated = interpolate.interp1d(
-                x, y, bounds_error=False, fill_value=(y[0], y[-1]))(target_values)
+                x, y, bounds_error=False, fill_value=(y[0], y[-1])
+            )(target_values)
         return interpolated
 
     # infer dim from input
@@ -900,12 +905,12 @@ def format_oneline(s, max_width=65):
         if q == 0:
             return "".join([s[0:n], padding, s[-n:]])
         else:
-            return "".join([s[0:n+1], padding, s[-n:]])
+            return "".join([s[0 : n + 1], padding, s[-n:]])
     else:
         return s
 
 
-def is_box(box : list, errors="raise"):
+def is_box(box: list, errors="raise"):
     """ Check if this array matches a 2d or 3d box definition
 
         box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
