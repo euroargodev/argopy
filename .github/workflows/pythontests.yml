@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@master
 
       - name: Set up environment with py-${{ matrix.python-version }}
-        uses: conda-incubator/setup-miniconda@v1
+        uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: argopy-tests
           environment-file: ci/requirements/py${{matrix.python-version}}-dev.yml
@@ -69,7 +69,7 @@ jobs:
       - uses: actions/checkout@master
 
       - name: Set up environment with py-${{ matrix.python-version }}
-        uses: conda-incubator/setup-miniconda@v1
+        uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: argopy-tests
           environment-file: ci/requirements/py${{matrix.python-version}}-free.yml
