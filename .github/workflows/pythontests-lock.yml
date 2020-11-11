@@ -22,7 +22,7 @@ jobs:
         uses: conda-incubator/setup-miniconda@v1
         with:
           activate-environment: argopy-tests
-          environment-file: ci/requirements/${{matrix.python-version}}-dev.yml
+          environment-file: ci/requirements/py${{matrix.python-version}}-dev.yml
           auto-update-conda: false
           python-version: ${{ matrix.python-version }}
           auto-activate-base: false
