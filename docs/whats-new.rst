@@ -3,12 +3,12 @@
 What's New
 ==========
 
-v0.1.7 (XX Oct. 2020)
+v0.1.7 (XX Nov. 2020)
 -----------------------
 
 **Features and front-end API**
 
-- Live monitor for the status (availability) of data sources. (:pr:`36`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Live monitor for the status (availability) of data sources. See documentation page on :ref:`api-status`. (:pr:`36`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 
@@ -37,6 +37,8 @@ v0.1.7 (XX Oct. 2020)
 **Internals**
 
 - New ``open_mfdataset`` and ``open_mfjson`` methods in Argo stores. These can be used to open, preprocess and concatenate a collection of paths both in sequential or parallel order. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Unit testing is now done on a controlled conda environment. This allows to more easily identify errors coming from development vs errors due to dependencies update. (:pr:`65`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 
 v0.1.6 (31 Aug. 2020)

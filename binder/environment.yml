@@ -25,6 +25,7 @@ dependencies:
   - nodejs
   - scikit-image
   - scikit-learn
+  - gsw
   - pip
   - pip:
     - graphviz
