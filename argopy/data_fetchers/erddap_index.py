@@ -16,12 +16,13 @@ import copy
 
 from abc import ABC, abstractmethod
 
-from argopy.utilities import load_dict, mapp_dict, format_oneline
+from argopy.utilities import load_dict, mapp_dict, isconnected, format_oneline
 from argopy.stores import httpstore
 
-from erddapy import ERDDAP
-from erddapy.utilities import parse_dates, quote_string_constraints
-
+# Dirty fix before https://github.com/ioos/erddapy/issues/140
+if isconnected():
+    from erddapy import ERDDAP
+    from erddapy.utilities import parse_dates, quote_string_constraints
 
 access_points = ['wmo', 'box']
 exit_formats = ['xarray', 'dataframe']
@@ -64,7 +65,6 @@ class ErddapArgoIndexFetcher(ABC):
                  cachedir: str = "",
                  **kwargs):
         """ Instantiate an ERDDAP Argo index loader with force caching """
-
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
         self.definition = 'Ifremer erddap Argo index fetcher'
         self.dataset_id = 'index'

@@ -10,6 +10,7 @@ This is not intended to be used directly, only by the facade at fetchers.py
 
 """
 
+import sys
 import pandas as pd
 import numpy as np
 import copy
@@ -20,22 +21,24 @@ import getpass
 
 from .proto import ArgoDataFetcherProto
 from argopy.options import OPTIONS
-from argopy.utilities import list_standard_variables, Chunker, format_oneline, is_box
+from argopy.utilities import list_standard_variables, isconnected, Chunker, format_oneline, is_box
 from argopy.stores import httpstore
 from argopy.plotters import open_dashboard
 
-from erddapy import ERDDAP
-from erddapy.utilities import parse_dates, quote_string_constraints
+# Dirty fix before https://github.com/ioos/erddapy/issues/140
+if isconnected():
+    from erddapy import ERDDAP
+    from erddapy.utilities import parse_dates, quote_string_constraints
+else:
+    from unittest.mock import MagicMock
+    sys.modules['ERDDAP'] = MagicMock()
 
 
-access_points = ["wmo", "box"]
-exit_formats = ["xarray"]
-dataset_ids = ["phy", "ref", "bgc"]  # First is default
-api_server = "https://www.ifremer.fr/erddap"  # API root url
-# api_server = 'https://erddap.ifremer.fr/erddap'  # API root url
-api_server_check = (
-    api_server + "/info/ArgoFloats/index.html"
-)  # URL to check if the API is alive
+access_points = ['wmo', 'box']
+exit_formats = ['xarray']
+dataset_ids = ['phy', 'ref', 'bgc']  # First is default
+api_server = 'https://www.ifremer.fr/erddap'  # API root url
+api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
 
 
 class ErddapArgoDataFetcher(ArgoDataFetcherProto):
