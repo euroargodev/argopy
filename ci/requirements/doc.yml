@@ -30,7 +30,7 @@ dependencies:
   - ipykernel=5.3.4
   - cartopy=0.18.0
   - ipywidgets=7.5.1
-  - sphynx=3.2.1
+  - sphinx=3.2.1
   - sphinx_rtd_theme=0.4.3
   - sphinx-autosummary-accessors=0.1.2
   - nbsphinx=0.7.1
