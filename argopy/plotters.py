@@ -1,18 +1,8 @@
-#!/bin/env python
-# -*coding: UTF-8 -*-
-#
-# We try to import depedencies and catch missing module errors in order to avoid to load argopy just because
-# Matplotlib is not installed.
-#
-# Decorator warnUnless is mandatory
-#
-
 import numpy as np
 import pandas as pd
 import warnings
 from contextlib import contextmanager
 from argopy.errors import InvalidDashboard
-# from argopy.utilities import docstring
 
 
 try:
@@ -278,10 +268,10 @@ def warnUnless(ok, txt):
 def plot_trajectory(
     df: pd.core.frame.DataFrame,
     style: str = STYLE["axes"],
-    add_legend=True,
+    add_legend: bool = True,
     palette: str = STYLE["palette"],
-    with_cartopy=with_cartopy,
-    with_seaborn=with_seaborn,
+    with_cartopy: bool = with_cartopy,
+    with_seaborn: bool = with_seaborn,
     **kwargs
 ):
     """ Plot trajectories for an index dataframe
@@ -373,11 +363,12 @@ def plot_profilerType(idx):
                   category=DeprecationWarning, stacklevel=2)
 
 
+@warnUnless(with_matplotlib, "requires matplotlib installed")
 def bar_plot(
         df: pd.core.frame.DataFrame,
-        by: str ='institution',
+        by: str = 'institution',
         style: str = STYLE["axes"],
-        with_seaborn=with_seaborn,
+        with_seaborn: bool = with_seaborn,
         **kwargs
     ):
     """ Create a bar plot for an index dataframe
