@@ -143,6 +143,9 @@ has_localftp_index, requires_localftp_index = _connectskip(
 
 
 ############
+has_mpl, requires_mpl = _importorskip("matplotlib")
+
+############
 
 
 def safe_to_server_errors(test_func):
