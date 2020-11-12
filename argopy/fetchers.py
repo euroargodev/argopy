@@ -81,7 +81,7 @@ class ArgoDataFetcher:
                 % (self._dataset_id, self._src)
             )
         self.fetcher_options = {**{"ds": self._dataset_id}, **fetcher_kwargs}
-        self.postproccessor = self.__empty_processor
+        self.postprocessor = self.__empty_processor
         self._AccessPoint = None
 
         # Dev warnings
@@ -124,7 +124,8 @@ class ArgoDataFetcher:
             "Fetchers",
             "fetcher",
             "fetcher_options",
-            "postproccessor",
+            "postprocessor",
+            "uri",
             "data",
             "_data",
             "index",
@@ -197,7 +198,7 @@ class ArgoDataFetcher:
                 xds = self.fetcher.filter_variables(xds, self._mode)
                 return xds
 
-            self.postproccessor = postprocessing
+            self.postprocessor = postprocessing
         return self
 
     def profile(self, wmo, cyc):
@@ -233,7 +234,7 @@ class ArgoDataFetcher:
                 xds = self.fetcher.filter_variables(xds, self._mode)
                 return xds
 
-            self.postproccessor = postprocessing
+            self.postprocessor = postprocessing
 
         return self
 
@@ -275,7 +276,7 @@ class ArgoDataFetcher:
                 xds = self.fetcher.filter_variables(xds, self._mode)
                 return xds
 
-            self.postproccessor = postprocessing
+            self.postprocessor = postprocessing
 
         return self
 
@@ -310,7 +311,7 @@ class ArgoDataFetcher:
             )
         if not self._loaded:
             xds = self.fetcher.to_xarray(**kwargs)
-            xds = self.postproccessor(xds)
+            xds = self.postprocessor(xds)
             self._data, self._loaded = xds, True
         return self.data
 
@@ -427,7 +428,7 @@ class ArgoIndexFetcher:
                 % (self._dataset_id, self._src)
             )
         self.fetcher_options = {**fetcher_kwargs}
-        self.postproccessor = self.__empty_processor
+        self.postprocessor = self.__empty_processor
         self._AccessPoint = None
 
     def __repr__(self):
@@ -456,7 +457,7 @@ class ArgoIndexFetcher:
             "Fetchers",
             "fetcher",
             "fetcher_options",
-            "postproccessor",
+            "postprocessor",
             "index",
             "_index",
             "_loaded",
