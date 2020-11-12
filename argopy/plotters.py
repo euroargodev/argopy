@@ -6,44 +6,38 @@ from argopy.errors import InvalidDashboard
 
 
 try:
+    with_matplotlib = True
     import matplotlib as mpl
     import matplotlib.pyplot as plt
     import matplotlib.ticker as mticker
     import matplotlib.cm as cm
     import matplotlib.colors as mcolors
 
-    with_matplotlib = True
 except ModuleNotFoundError:
     warnings.warn("argopy requires matplotlib installed for any plotting functionality")
     with_matplotlib = False
 
 try:
+    with_cartopy = True
     import cartopy
     import cartopy.crs as ccrs
     import cartopy.feature as cfeature
     from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 
-    with_cartopy = True
-except ModuleNotFoundError:
-    warnings.warn(
-        "argopy requires cartopy installed for full map plotting functionality"
+    land_feature = cfeature.NaturalEarthFeature(
+        category="physical", name="land", scale="50m", facecolor=[0.4, 0.6, 0.7]
     )
+except ModuleNotFoundError:
     with_cartopy = False
 
 STYLE = {"axes": "white", "palette": "Set1"}
 try:
     import seaborn as sns
+
     STYLE["axes"] = "dark"
     with_seaborn = True
 except ModuleNotFoundError:
-    warnings.warn("argopy requires seaborn installed for full plotting functionality")
     with_seaborn = False
-
-
-if with_cartopy:
-    land_feature = cfeature.NaturalEarthFeature(
-        category="physical", name="land", scale="50m", facecolor=[0.4, 0.6, 0.7]
-    )
 
 
 @contextmanager
@@ -229,21 +223,21 @@ class discrete_coloring:
         return scalarMap.to_rgba(value)
 
 
-def latlongrid(ax, dx='auto', dy='auto', fontsize='auto', **kwargs):
+def latlongrid(ax, dx="auto", dy="auto", fontsize="auto", **kwargs):
     """ Add latitude/longitude grid line and labels to a cartopy geoaxes """
     if not isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot):
         raise ValueError("Please provide a cartopy.mpl.geoaxes.GeoAxesSubplot instance")
     defaults = {"linewidth": 0.5, "color": "gray", "alpha": 0.5, "linestyle": ":"}
     gl = ax.gridlines(crs=ax.projection, draw_labels=True, **{**defaults, **kwargs})
-    if dx != 'auto':
+    if dx != "auto":
         gl.xlocator = mticker.FixedLocator(np.arange(-180, 180 + 1, dx))
-    if dy != 'auto':
+    if dy != "auto":
         gl.ylocator = mticker.FixedLocator(np.arange(-90, 90 + 1, dy))
     gl.xformatter = LONGITUDE_FORMATTER
     gl.yformatter = LATITUDE_FORMATTER
     gl.xlabels_top = False
     gl.ylabels_right = False
-    if fontsize != 'auto':
+    if fontsize != "auto":
         gl.xlabel_style = {"fontsize": fontsize}
         gl.ylabel_style = {"fontsize": fontsize}
     return gl
@@ -291,9 +285,9 @@ def plot_trajectory(
     """
     with axes_style(style):
         # Set-up the figure and axis:
-        defaults = {'figsize': (10, 6), 'dpi': 90}
+        defaults = {"figsize": (10, 6), "dpi": 90}
         if with_cartopy:
-            subplot_kw = {'projection': ccrs.PlateCarree()}
+            subplot_kw = {"projection": ccrs.PlateCarree()}
             fig, ax = plt.subplots(**{**defaults, **kwargs}, subplot_kw=subplot_kw)
             ax.add_feature(land_feature, edgecolor="black")
         else:
@@ -333,7 +327,7 @@ def plot_trajectory(
                 )
 
         if with_cartopy:
-            latlongrid(ax, dx='auto', dy='auto', fontsize='auto')
+            latlongrid(ax, dx="auto", dy="auto", fontsize="auto")
             if not with_seaborn:
                 ax.get_yaxis().set_visible(False)
         else:
@@ -342,8 +336,14 @@ def plot_trajectory(
         if add_legend and nfloat <= 15:
             handles, labels = ax.get_legend_handles_labels()
             # if with_seaborn:
-                # handles, labels = handles[1:], labels[1:]
-            plt.legend(handles, labels, loc="upper right", bbox_to_anchor=(1.25, 1), title='Floats WMO')
+            # handles, labels = handles[1:], labels[1:]
+            plt.legend(
+                handles,
+                labels,
+                loc="upper right",
+                bbox_to_anchor=(1.25, 1),
+                title="Floats WMO",
+            )
         else:
             ax.get_legend().remove()
 
@@ -352,24 +352,30 @@ def plot_trajectory(
 
 def plot_dac(idx):
     """ Histogram of DAC for an index dataframe """
-    warnings.warn("plot_dac(idx) is deprecated; use bar_plot(idx, by='institution') instead.",
-                  category=DeprecationWarning, stacklevel=2)
+    warnings.warn(
+        "plot_dac(idx) is deprecated; use bar_plot(idx, by='institution') instead.",
+        category=DeprecationWarning,
+        stacklevel=2,
+    )
 
 
 def plot_profilerType(idx):
     """ Histogram of profile types for an index dataframe """
-    warnings.warn("plot_profilerType(idx) is deprecated; use bar_plot(idx, by='profiler') instead.",
-                  category=DeprecationWarning, stacklevel=2)
+    warnings.warn(
+        "plot_profilerType(idx) is deprecated; use bar_plot(idx, by='profiler') instead.",
+        category=DeprecationWarning,
+        stacklevel=2,
+    )
 
 
 @warnUnless(with_matplotlib, "requires matplotlib installed")
 def bar_plot(
-        df: pd.core.frame.DataFrame,
-        by: str = 'institution',
-        style: str = STYLE["axes"],
-        with_seaborn: bool = with_seaborn,
-        **kwargs
-    ):
+    df: pd.core.frame.DataFrame,
+    by: str = "institution",
+    style: str = STYLE["axes"],
+    with_seaborn: bool = with_seaborn,
+    **kwargs
+):
     """ Create a bar plot for an index dataframe
 
     Parameters
@@ -383,16 +389,22 @@ def bar_plot(
     fig: :class:`matplotlib.pyplot.figure.Figure`
     ax: :class:`matplotlib.axes.Axes`
     """
-    if by not in ['institution', 'institution_code', 'profiler', 'profiler_code', 'ocean']:
+    if by not in [
+        "institution",
+        "institution_code",
+        "profiler",
+        "profiler_code",
+        "ocean",
+    ]:
         raise ValueError("not a valid field")
     with axes_style(style):
-        defaults = {'figsize': (10, 6), 'dpi': 90}
+        defaults = {"figsize": (10, 6), "dpi": 90}
         fig, ax = plt.subplots(**{**defaults, **kwargs})
         if with_seaborn:
             mind = df.groupby(by).size().sort_values(ascending=False).index
             sns.countplot(y=by, data=df, order=mind)
         else:
-            df.groupby('profiler').size().sort_values(ascending=True).plot.barh(ax)
+            df.groupby("profiler").size().sort_values(ascending=True).plot.barh(ax)
         ax.set_xlabel("Number of profiles")
         ax.set_ylabel("")
     return fig, ax
