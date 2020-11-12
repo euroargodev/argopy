@@ -34,7 +34,6 @@ STYLE = {"axes": "white", "palette": "Set1"}
 try:
     import seaborn as sns
     STYLE["axes"] = "dark"
-    STYLE["palette"] = "bright"
     with_seaborn = True
 except ModuleNotFoundError:
     warnings.warn("argopy requires seaborn installed for full plotting functionality")
@@ -342,8 +341,8 @@ def plot_trajectory(
 
         if add_legend and nfloat <= 15:
             handles, labels = ax.get_legend_handles_labels()
-            if with_seaborn:
-                handles, labels = handles[1:], labels[1:]
+            # if with_seaborn:
+                # handles, labels = handles[1:], labels[1:]
             plt.legend(handles, labels, loc="upper right", bbox_to_anchor=(1.25, 1), title='Floats WMO')
         else:
             ax.get_legend().remove()
