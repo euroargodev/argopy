@@ -1,5 +1,4 @@
 import pytest
-import warnings
 
 import argopy
 from argopy.errors import InvalidDashboard
@@ -14,11 +13,8 @@ from . import (
 from argopy.plotters import bar_plot, plot_trajectory
 from argopy import IndexFetcher as ArgoIndexFetcher
 
-# from matplotlib.testing.conftest import mpl_test_settings
-
 if has_matplotlib:
     import matplotlib as mpl
-    # import matplotlib.colors as mcolors
 
 if has_cartopy:
     import cartopy
@@ -33,7 +29,6 @@ def test_invalid_dashboard():
 @requires_connection
 def test_valid_dashboard():
     import IPython
-
     dsh = argopy.dashboard(wmo=5904797)
     assert isinstance(dsh, IPython.lib.display.IFrame)
 
@@ -56,10 +51,16 @@ class Test_index_plot:
         for ws in [False, has_seaborn]:
             for wc in [False, has_cartopy]:
                 for legend in [True, False]:
-                    fig, ax = plot_trajectory(df, with_seaborn=ws, with_cartopy=wc, add_legend=legend)
+                    fig, ax = plot_trajectory(
+                        df, with_seaborn=ws, with_cartopy=wc, add_legend=legend
+                    )
                     assert isinstance(fig, mpl.figure.Figure)
 
-                    expected_ax_type = cartopy.mpl.geoaxes.GeoAxesSubplot if has_cartopy and wc else mpl.axes.Axes
+                    expected_ax_type = (
+                        cartopy.mpl.geoaxes.GeoAxesSubplot
+                        if has_cartopy and wc
+                        else mpl.axes.Axes
+                    )
                     assert isinstance(ax, expected_ax_type)
 
                     expected_lg_type = mpl.legend.Legend if legend else type(None)
@@ -67,7 +68,13 @@ class Test_index_plot:
 
     def __test_bar_plot(self, df):
         for ws in [False, has_seaborn]:
-            for by in ['institution', 'institution_code', 'profiler', 'profiler_code', 'ocean']:
+            for by in [
+                "institution",
+                "institution_code",
+                "profiler",
+                "profiler_code",
+                "ocean",
+            ]:
                 fig, ax = bar_plot(df, by=by, with_seaborn=ws)
                 assert isinstance(fig, mpl.figure.Figure)
 
@@ -112,8 +119,3 @@ class Test_index_plot:
                 loader = ArgoIndexFetcher(src=self.src).profile(*arg)
                 df = loader.to_dataframe()
                 self.__test_bar_plot(df)
-
-# @requires_mpl
-# def test_discrete_coloring():
-#     dc = discrete_coloring()
-#     assert isinstance(dc.cmap, mcolors.LinearSegmentedColormap)
