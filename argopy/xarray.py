@@ -214,13 +214,34 @@ class ArgoAccessor:
         #########
         # Sub-functions
         #########
+        def safe_where_eq(xds, key, value):
+            # xds.where(xds[key] == value, drop=True) is not safe to empty time variables, cf issue #64
+            try:
+                return xds.where(xds[key] == value, drop=True)
+            except ValueError as v:
+                if v.args[0] == ("zero-size array to reduction operation "
+                                 "minimum which has no identity"):
+                    # A bug in xarray will cause a ValueError if trying to
+                    # decode the times in a NetCDF file with length 0.
+                    # See:
+                    # https://github.com/pydata/xarray/issues/1329
+                    # https://github.com/euroargodev/argopy/issues/64
+                    # Here, we just need to return an empty array
+                    TIME = xds['TIME']
+                    xds = xds.drop_vars('TIME')
+                    xds = xds.where(xds[key] == value, drop=True)
+                    xds['TIME'] = xr.DataArray(np.arange(len(xds['N_POINTS'])), dims='N_POINTS',
+                                               attrs=TIME.attrs).astype(np.datetime64)
+                    xds = xds.set_coords('TIME')
+                    return xds
+
         def ds_split_datamode(xds):
             """ Create one dataset for each of the data_mode
 
                 Split full dataset into 3 datasets
             """
             # Real-time:
-            argo_r = xds.where(xds['DATA_MODE'] == 'R', drop=True)
+            argo_r = safe_where_eq(xds, 'DATA_MODE', 'R')
             for v in plist:
                 vname = v.upper() + '_ADJUSTED'
                 if vname in argo_r:
@@ -232,7 +253,7 @@ class ArgoAccessor:
                 if vname in argo_r:
                     argo_r = argo_r.drop_vars(vname)
             # Real-time adjusted:
-            argo_a = xds.where(xds['DATA_MODE'] == 'A', drop=True)
+            argo_a = safe_where_eq(xds, 'DATA_MODE', 'A')
             for v in plist:
                 vname = v.upper()
                 if vname in argo_a:
@@ -241,7 +262,8 @@ class ArgoAccessor:
                 if vname in argo_a:
                     argo_a = argo_a.drop_vars(vname)
             # Delayed mode:
-            argo_d = xds.where(xds['DATA_MODE'] == 'D', drop=True)
+            argo_d = safe_where_eq(xds, 'DATA_MODE', 'D')
+
             return argo_r, argo_a, argo_d
 
         def fill_adjusted_nan(ds, vname):
@@ -295,7 +317,9 @@ class ArgoAccessor:
                 return ds
 
         # Define variables to filter:
-        possible_list = ['PRES', 'TEMP', 'PSAL',
+        possible_list = ['PRES',
+                         'TEMP',
+                         'PSAL',
                          'DOXY',
                          'CHLA',
                          'BBP532',

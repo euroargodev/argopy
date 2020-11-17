@@ -68,7 +68,7 @@ def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type
                 url = "https://fleetmonitoring.euro-argo.eu"
             else:
                 url = "https://fleetmonitoring.euro-argo.eu/float/{}".format(str(wmo))
-        elif type == 'coriolis': # Open Coriolis dashboard
+        elif type == 'coriolis':  # Open Coriolis dashboard
             if wmo is not None:
                 url = ("https://co-insitucharts.ifremer.fr/platform/{}/charts").format(str(wmo))
 

@@ -1,0 +1,32 @@
+name: argopy-tests
+channels:
+  - conda-forge
+dependencies:
+  - python=3.8
+  - xarray
+  - aiohttp
+  - black
+  - dask
+  - distributed
+  - matplotlib
+  - zarr
+  - scikit-learn
+  - ipython
+  - netcdf4
+  - seaborn
+  - flake8
+  - erddapy
+  - fsspec
+  - gsw
+  - bottleneck
+  - cftime
+  - cfgrib
+  - pytest
+  - pytest-cov
+  - pytest-env
+  - setuptools
+  - pip
+  - tqdm
+  - ipykernel
+  - cartopy
+  - ipywidgets
