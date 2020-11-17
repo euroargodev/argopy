@@ -1,4 +1,4 @@
-name: unit-tests
+name: build
 
 on: [push, pull_request]
 
