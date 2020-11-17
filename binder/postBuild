@@ -1,5 +1,6 @@
 #!/bin/bash
-jupyter serverextension enable --py nbserverproxy --sys-prefix
+jupyter labextension install @jupyterlab/server-proxy
+#jupyter serverextension enable --py nbserverproxy --sys-prefix
 
 jupyter nbextension enable --py widgetsnbextension --sys-prefix
 
