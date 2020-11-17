@@ -1,8 +1,7 @@
 #!/bin/bash
 jupyter serverextension enable --py nbserverproxy --sys-prefix
 
-jupyter contrib nbextension install --user
-jupyter nbextension enable --py widgetsnbextension
+jupyter nbextension enable --py widgetsnbextension --sys-prefix
 
 jupyter labextension install @jupyter-widgets/jupyterlab-manager \
                              @jupyterlab/hub-extension@0.12 \
