@@ -4,15 +4,15 @@ Installation
 Required dependencies
 ^^^^^^^^^^^^^^^^^^^^^
 
-- Python 3.6
-- Xarray 0.14
-- Erddapy 0.5
-- Fsspec 0.7
-- Gsw 3.3
+- Python
+- Xarray
+- Erddapy
+- Fsspec
+- Gsw
 
 Note that Erddapy_ is required because `erddap <https://coastwatch.pfeg.noaa.gov/erddap/information.html>`_ is the default data fetching backend.
 
-The **argopy** software is continuously tested with sucess under all OS (Linux, Mac and Windows) and with python versions 3.6, 3.7 and 3.8.
+The **argopy** software is continuously tested with success under latest OS (Linux and Mac OS) and with python versions 3.6, 3.7 and 3.8.
 
 Optional dependencies
 ^^^^^^^^^^^^^^^^^^^^^
