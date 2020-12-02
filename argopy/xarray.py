@@ -765,38 +765,41 @@ class ArgoAccessor:
         that = []
         if 'SA' in vlist:
             SA = xr.DataArray(sa, coords=this['PSAL'].coords, name='SA')
-            SA.attrs['standard_name'] = 'Absolute Salinity'
+            SA.attrs['long_name'] = 'Absolute Salinity'
+            SA.attrs['standard_name'] = 'sea_water_absolute_salinity'
             SA.attrs['unit'] = 'g/kg'
             that.append(SA)
 
         if 'CT' in vlist:
             CT = xr.DataArray(ct, coords=this['TEMP'].coords, name='CT')
-            CT.attrs['standard_name'] = 'Conservative Temperature'
+            CT.attrs['long_name'] = 'Conservative Temperature'
+            CT.attrs['standard_name'] = 'sea_water_conservative_temperature'
             CT.attrs['unit'] = 'degC'
             that.append(CT)
 
         if 'SIG0' in vlist:
             SIG0 = xr.DataArray(sig0, coords=this['TEMP'].coords, name='SIG0')
             SIG0.attrs['long_name'] = 'Potential density anomaly with reference pressure of 0 dbar'
-            SIG0.attrs['standard_name'] = 'Potential Density'
+            SIG0.attrs['standard_name'] = 'sea_water_sigma_theta'
             SIG0.attrs['unit'] = 'kg/m^3'
             that.append(SIG0)
 
         if 'N2' in vlist:
             N2 = xr.DataArray(n2, coords=this['TEMP'].coords, name='N2')
-            N2.attrs['standard_name'] = 'Squared buoyancy frequency'
+            N2.attrs['long_name'] = 'Squared buoyancy frequency'
             N2.attrs['unit'] = '1/s^2'
             that.append(N2)
 
         if 'PV' in vlist:
             PV = xr.DataArray(pv, coords=this['TEMP'].coords, name='PV')
-            PV.attrs['standard_name'] = 'Planetary Potential Vorticity'
+            PV.attrs['long_name'] = 'Planetary Potential Vorticity'
             PV.attrs['unit'] = '1/m/s'
             that.append(PV)
 
         if 'PTEMP' in vlist:
             PTEMP = xr.DataArray(pt, coords=this['TEMP'].coords, name='PTEMP')
-            PTEMP.attrs['standard_name'] = 'Potential Temperature'
+            PTEMP.attrs['long_name'] = 'Potential Temperature'
+            PTEMP.attrs['standard_name'] = 'sea_water_potential_temperature'
             PTEMP.attrs['unit'] = 'degC'
             that.append(PTEMP)
 
