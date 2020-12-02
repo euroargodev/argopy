@@ -727,14 +727,11 @@ class ArgoAccessor:
         # Coriolis
         f = gsw.f(lat)
 
-        # Depth:
-        depth = gsw.z_from_p(pres, lat)
-
         # Absolute salinity
         sa = gsw.SA_from_SP(psal, pres, lon, lat)
 
         # Conservative temperature
-        ct = gsw.CT_from_t(sa, temp, depth)
+        ct = gsw.CT_from_t(sa, temp, pres)
 
         # Potential Temperature
         if 'PTEMP' in vlist:
