@@ -2,7 +2,7 @@
 
 # Argo data python library
 
-![Github Action Status](https://github.com/euroargodev/argopy/workflows/build/badge.svg?branch=master)
+![Github Action Status](https://github.com/euroargodev/argopy/workflows/tests/badge.svg?branch=master)
 [![codecov](https://codecov.io/gh/euroargodev/argopy/branch/master/graph/badge.svg)](https://codecov.io/gh/euroargodev/argopy)
 [![Requirements Status](https://requires.io/github/euroargodev/argopy/requirements.svg?branch=master)](https://requires.io/github/euroargodev/argopy/requirements/?branch=master)
 ![PyPI](https://img.shields.io/pypi/v/argopy)
