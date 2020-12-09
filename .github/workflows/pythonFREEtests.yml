@@ -1,14 +1,14 @@
-on:
-  pull_request:
-    types: [ready_for_review]
+name: tests-FREE
+
+on: [push, pull_request]
 
 jobs:
-  free_env:
-    name: unit-test FREE env
+  unit-testing-free:
 
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
     strategy:
+      max-parallel: 12
       fail-fast: false
       matrix:
         python-version: [3.7, 3.8]
