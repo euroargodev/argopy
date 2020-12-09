@@ -32,6 +32,10 @@ v0.1.7 (XX Nov. 2020)
 
 **Breaking changes with previous versions**
 
+- In the teos10 xarray accessor, the ``standard_name`` attribute will now be populated using values from the `CF Standard Name table <https://cfconventions.org/Data/cf-standard-names/76/build/cf-standard-name-table.html>`_ if one exists.
+  The previous values of ``standard_name`` have been moved to the ``long_name`` attribute.
+  (:pr:`74`) by `A. Barna <https://github.com/docotak>`_.
+  
 - The unique resource identifier property is now named ``uri`` for all data fetchers, it is always a list of strings.
 
 **Internals**

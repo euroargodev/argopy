@@ -690,13 +690,33 @@ class ArgoAccessor:
     def teos10(self, vlist: list = ['SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP'], inplace: bool = True):
         """ Add TEOS10 variables to the dataset
 
-        By default, add: 'SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP'
-        Rely on the gsw library.
+        By default, adds: 'SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP'
+        Relies on the gsw library.
+
+        If one exists, the correct CF standard name will be added to the attrs.
 
         Parameters
         ----------
         vlist: list(str)
             List with the name of variables to add.
+            Must be a list containing one or more of the following string values:
+
+            * `"SA"`
+                Adds an absolute salinity variable
+            * `"CT"`
+                Adds a conservative temperature variable
+            * `"SIG0"`
+                Adds a potential density anomaly variable referenced to 0 dbar
+            * `"N2"`
+                Adds a buoyancy (Brunt-Vaisala) frequency squared variable.
+                This variable has been regridded to the original pressure levels in the Dataset using a linear interpolation.
+            * `"PV"`
+                Adds a planetary vorticity variable calculated from :math:`\\frac{f N^2}{\\text{gravity}}`.
+                This is not a TEOS-10 variable from the gsw toolbox, but is provided for convenience.
+                This variable has been regridded to the original pressure levels in the Dataset using a linear interpolation.
+            * `"PTEMP"`
+                Adds a potential temperature variable
+            
         inplace: boolean, True by default
             If True, return the input :class:`xarray.Dataset` with new TEOS10 variables added as a new :class:`xarray.DataArray`
             If False, return a :class:`xarray.Dataset` with new TEOS10 variables
