@@ -709,6 +709,10 @@ class ArgoAccessor:
             raise ModuleNotFoundError(
                 "This functionality requires the gsw library")
 
+        allowed = ['SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP']
+        if any(var not in allowed for var in vlist):
+            raise ValueError(f"vlist must be a subset of {allowed}, instead found {vlist}")
+
         this = self._obj
 
         to_profile = False
