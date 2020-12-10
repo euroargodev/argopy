@@ -13,6 +13,7 @@ dependencies:
   - scikit-learn
   - ipython
   - netcdf4
+  - h5netcdf
   - seaborn
   - flake8
   - erddapy
