@@ -122,7 +122,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         """
 
         # Temporary fix for issue discussed here: https://github.com/euroargodev/argopy/issues/63#issuecomment-742379699
-        if fsspec.__version__ == '0.8.4' and cache:
+        version_tup = tuple(int(x) for x in fsspec.__version__.split("."))
+        if cache and version_tup[0] == 0 and version_tup[1] == 8 and version_tup[-1] == 4:
             cache = False
             warnings.warn("Cache is impossible with fsspec version 0.8.4, please upgrade or downgrade to use cache.\n Moving to non cached file system")
 
