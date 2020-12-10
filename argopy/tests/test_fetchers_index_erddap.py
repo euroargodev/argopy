@@ -7,9 +7,9 @@ import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy.errors import (
     FileSystemHasNoCache,
-    CacheFileNotFound
+    CacheFileNotFound,
 )
-from . import requires_connected_erddap_index, safe_to_server_errors
+from . import requires_connected_erddap_index, safe_to_server_errors, safe_to_fsspec_version
 
 
 @requires_connected_erddap_index
