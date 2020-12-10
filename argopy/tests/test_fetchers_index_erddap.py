@@ -45,11 +45,11 @@ class Test_Backend:
                 with pytest.raises(FileSystemHasNoCache):
                     loader.fetcher.cachepath
 
+    @safe_to_fsspec_version
     @pytest.mark.skip(
         reason="Waiting for https://github.com/euroargodev/argopy/issues/16"
     )
     @safe_to_server_errors
-    @safe_to_fsspec_version
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
@@ -59,11 +59,11 @@ class Test_Backend:
                 with pytest.raises(CacheFileNotFound):
                     loader.fetcher.cachepath
 
+    @safe_to_fsspec_version
     @pytest.mark.skip(
         reason="Waiting for https://github.com/euroargodev/argopy/issues/16"
     )
     @safe_to_server_errors
-    @safe_to_fsspec_version
     def test_caching(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):

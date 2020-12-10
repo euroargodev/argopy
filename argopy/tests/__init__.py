@@ -145,8 +145,9 @@ has_localftp_index, requires_localftp_index = _connectskip(
 
 ############
 # Temporary fix for issue discussed here: https://github.com/euroargodev/argopy/issues/63#issuecomment-742379699
+version_tup = tuple(int(x) for x in fsspec.__version__.split("."))
 safe_to_fsspec_version = pytest.mark.skipif(
-    fsspec.__version__ == '0.8.4', reason="Cache will not be available with http and fsspec 0.8.4"
+    version_tup[0] == 0 and version_tup[1] == 8 and version_tup[-1] == 4, reason="Cache will not be available with http and fsspec 0.8.4"
 )
 
 ############

@@ -72,9 +72,9 @@ class Test_Backend:
                 with pytest.raises(FileSystemHasNoCache):
                     loader.fetcher.cachepath
 
-    @safe_to_server_errors
-    @requires_connected_erddap_phy
     @safe_to_fsspec_version
+    @requires_connected_erddap_phy
+    @safe_to_server_errors
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
@@ -86,9 +86,9 @@ class Test_Backend:
                 with pytest.raises(CacheFileNotFound):
                     loader.fetcher.cachepath
 
+    @safe_to_fsspec_version
     @safe_to_server_errors
     @requires_connected_erddap_phy
-    @safe_to_fsspec_version
     def test_caching_float(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
@@ -105,9 +105,9 @@ class Test_Backend:
                 assert is_list_of_strings(fetcher.uri)
                 assert is_list_of_strings(fetcher.cachepath)
 
+    @safe_to_fsspec_version
     @safe_to_server_errors
     @requires_connected_erddap_phy
-    @safe_to_fsspec_version
     def test_caching_profile(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
@@ -124,9 +124,9 @@ class Test_Backend:
                 assert is_list_of_strings(fetcher.uri)
                 assert is_list_of_strings(fetcher.cachepath)
 
+    @safe_to_fsspec_version
     @safe_to_server_errors
     @requires_connected_erddap_phy
-    @safe_to_fsspec_version
     def test_caching_region(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
