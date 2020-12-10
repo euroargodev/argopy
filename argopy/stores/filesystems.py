@@ -78,7 +78,8 @@ class argo_store_proto(ABC):
 
         # Temporarry fix for issue discussed here: https://github.com/euroargodev/argopy/issues/63#issuecomment-742379699
         if fsspec.__version__ == '0.8.4' and cache and self.protocol == 'http':
-            warnings.warn("Cache is impossible with fsspec version 0.8.4, please upgrade or downgrade to use cache")
+            cache = False
+            warnings.warn("Cache is impossible with fsspec version 0.8.4, please upgrade or downgrade to use cache.\n Moving to non cached file system")
 
         self.cache = cache
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
