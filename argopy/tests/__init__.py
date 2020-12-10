@@ -7,6 +7,7 @@ Test suite for argopy continuous integration
 
 import importlib
 import pytest
+import fsspec
 
 import warnings
 from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound
@@ -143,7 +144,12 @@ has_localftp_index, requires_localftp_index = _connectskip(
 
 
 ############
+# Temporary fix for issue discussed here: https://github.com/euroargodev/argopy/issues/63#issuecomment-742379699
+safe_to_fsspec_version = pytest.mark.skipif(
+    fsspec.__version__ == '0.8.4', reason="Cache will not be available with http and fsspec 0.8.4"
+)
 
+############
 
 def safe_to_server_errors(test_func):
     """ Test fixture to make sure we don't fail because of an error from the server, not our Fault ! """

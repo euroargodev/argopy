@@ -25,6 +25,7 @@ class Test_Backend:
         ],
     }
 
+    @safe_to_fsspec_version
     def test_cachepath_notfound(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
@@ -48,6 +49,7 @@ class Test_Backend:
         reason="Waiting for https://github.com/euroargodev/argopy/issues/16"
     )
     @safe_to_server_errors
+    @safe_to_fsspec_version
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
@@ -61,6 +63,7 @@ class Test_Backend:
         reason="Waiting for https://github.com/euroargodev/argopy/issues/16"
     )
     @safe_to_server_errors
+    @safe_to_fsspec_version
     def test_caching(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
@@ -72,6 +75,7 @@ class Test_Backend:
                 assert isinstance(ds, xr.Dataset)
                 assert isinstance(loader.fetcher.cachepath, str)
 
+    @safe_to_fsspec_version
     def test_url(self):
         loader = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0])
         assert isinstance(loader.fetcher.url, str)
