@@ -1,3 +1,7 @@
+1. Increase release version in ``setup.py`` file
+
+1. Update date and release version in https://github.com/euroargodev/argopy/blob/master/docs/whats-new.rst
+
 1. On the master branch, commit the release in git:
 
       ```git commit -a -m 'Release v0.X.Y'```

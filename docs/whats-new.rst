@@ -3,8 +3,10 @@
 What's New
 ==========
 
-v0.1.7 (XX Nov. 2020)
+v0.1.7 (4 Jan. 2021)
 -----------------------
+
+Long due release !
 
 **Features and front-end API**
 
@@ -40,7 +42,7 @@ v0.1.7 (XX Nov. 2020)
 
 **Internals**
 
-- New ``open_mfdataset`` and ``open_mfjson`` methods in Argo stores. These can be used to open, preprocess and concatenate a collection of paths both in sequential or parallel order. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
+- New ``open_mfdataset`` and ``open_mfjson`` methods in Argo stores. These can be used to open, pre-process and concatenate a collection of paths both in sequential or parallel order. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 - Unit testing is now done on a controlled conda environment. This allows to more easily identify errors coming from development vs errors due to dependencies update. (:pr:`65`) by `G. Maze <http://www.github.com/gmaze>`_.
 
