@@ -1,25 +1,26 @@
 import os
-import io
 import types
 import xarray as xr
 import pandas as pd
 import requests
-import aiohttp
 import fsspec
 import shutil
 import pickle
 import json
 import tempfile
 import warnings
-from IPython.core.display import display, HTML
 
 import concurrent.futures
-from tqdm import tqdm
 import multiprocessing
+try:
+    from tqdm import tqdm
+except ModuleNotFoundError:
+    warnings.warn("argopy needs tqdm installed to display progress bars")
+    tqdm = lambda fct, lst: fct
 
 from argopy.options import OPTIONS
-from argopy.errors import ErddapServerError, FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
-    APIServerError, InvalidMethod
+from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
+    InvalidMethod
 from abc import ABC, abstractmethod
 
 
