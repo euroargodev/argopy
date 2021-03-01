@@ -325,6 +325,14 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
             method = 'sequential'
         else:
             method = self.parallel_method
+        # ds = self.fs.open_mfdataset(self.uri,
+        #                             method=method,
+        #                             concat_dim='N_POINTS',
+        #                             concat=True,
+        #                             preprocess=self._preprocess_multiprof,
+        #                             progress=self.progress,
+        #                             errors=errors,
+        #                             decode_cf=1, use_cftime=0, mask_and_scale=1, engine='h5netcdf')
         ds = self.fs.open_mfdataset(self.uri,
                                     method=method,
                                     concat_dim='N_POINTS',
@@ -332,7 +340,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
                                     preprocess=self._preprocess_multiprof,
                                     progress=self.progress,
                                     errors=errors,
-                                    decode_cf=1, use_cftime=0, mask_and_scale=1, engine='h5netcdf')
+                                    decode_cf=1, use_cftime=0, mask_and_scale=1)                            
 
         # Data post-processing:
         ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS']))  # Re-index to avoid duplicate values
