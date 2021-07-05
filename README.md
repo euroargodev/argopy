@@ -27,6 +27,7 @@ By default, ``argopy`` relies on online services to fetch data, you can [check w
 
 ## Install
 
+
 Install the last release with pip:
 ```bash
 pip install argopy
