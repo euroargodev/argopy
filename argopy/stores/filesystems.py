@@ -309,7 +309,7 @@ class filestore(argo_store_proto):
             raise DataNotFound(urls)
 
     def read_csv(self, url, **kwargs):
-        """ Return a pandas.dataframe from an url that is a csv ressource
+        """ Return a pandas.dataframe from an url that is a csv resource
 
             Parameters
             ----------
@@ -376,7 +376,7 @@ class httpstore(argo_store_proto):
     #         error.append("The URL triggering this error was: \n%s" % url)
     #         msg = "\n".join(error)
     #         if "No space left on device" in msg or "java.io.EOFException" in msg:
-    #             raise ErddapServerError("An error occured on the Erddap server side. "
+    #             raise ErddapServerError("An error occurred on the Erddap server side. "
     #                                     "Please contact assistance@ifremer.fr to ask a "
     #                                     "reboot of the erddap server. \n%s" % msg)
     #         else:

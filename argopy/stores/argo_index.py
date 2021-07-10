@@ -309,7 +309,7 @@ class indexfilter_box(indexfilter_proto):
         self.BOX = BOX
 
     def _format(self, x, typ):
-        """ string formating helper """
+        """ string formatting helper """
         if typ == 'lon':
             if x < 0:
                 x = 360. + x

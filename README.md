@@ -13,7 +13,7 @@ Install the last release with pip:
 pip install argopy
 ```
 
-But since this is a young library in active development, use direct install from this repo to benefit from the lastest version:
+But since this is a young library in active development, use direct install from this repo to benefit from the latest version:
 
 ```bash
 pip install git+http://github.com/euroargodev/argopy.git@master

@@ -87,7 +87,7 @@ class ErddapArgoIndexFetcher(ABC):
         return '\n'.join(summary)
 
     def _format(self, x, typ):
-        """ string formating helper """
+        """ string formatting helper """
         if typ == 'lon':
             if x < 0:
                 x = 360. + x

@@ -81,7 +81,7 @@ class Test_Backend:
     def __testthis(self):
         for access_point in self.args:
 
-            # Acces point not implemented yet for erddap
+            # Access point not implemented yet for erddap
             # if access_point == 'profile':
             #     for arg in self.args['profile']:
             #         fetcher = ArgoIndexFetcher(src=self.src).profile(*arg).fetcher
