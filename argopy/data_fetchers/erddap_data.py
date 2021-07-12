@@ -10,7 +10,7 @@ This is not intended to be used directly, only by the facade at fetchers.py
 
 """
 
-import sys
+import fsspec
 import pandas as pd
 import numpy as np
 import copy
@@ -120,6 +120,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         api_timeout: int (optional)
             Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
+
+        # Temporary fix for issue discussed here: https://github.com/euroargodev/argopy/issues/63#issuecomment-742379699
+        version_tup = tuple(int(x) for x in fsspec.__version__.split("."))
+        if cache and version_tup[0] == 0 and version_tup[1] == 8 and version_tup[-1] == 4:
+            cache = False
+            warnings.warn("Cache is impossible with fsspec version 0.8.4, please upgrade or downgrade to use cache.\n Moving to non cached file system")
+
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
         self.definition = "Ifremer erddap Argo data fetcher"

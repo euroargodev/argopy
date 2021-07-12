@@ -8,6 +8,7 @@
 
 ## Install
 
+
 Install the last release with pip:
 ```bash
 pip install argopy
