@@ -60,12 +60,12 @@ class Test_interp_std_levels:
         """Run with success"""
         ds = ds_pts["expert"].argo.point2profile()
         assert "PRES_INTERPOLATED" in ds.argo.interp_std_levels([20, 30, 40, 50]).dims
-    
+
     def test_points_error(self, ds_pts):
         """Try to interpolate points, not profiles"""
         ds = ds_pts["standard"]
         with pytest.raises(InvalidDatasetStructure):
-            ds.argo.interp_std_levels([20, 30, 40, 50])    
+            ds.argo.interp_std_levels([20, 30, 40, 50])
 
     def test_std_error(self, ds_pts):
         """Try to interpolate on a wrong axis"""
@@ -101,9 +101,29 @@ class Test_teos10:
                 that = that.argo.teos10(["PV"])
                 assert "PV" in that.variables
 
+    def test_teos10_opt_variables_single(self, ds_pts):
+        """Add a single TEOS10 optional variables"""
+        for key, this in ds_pts.items():
+            for format in ["point", "profile"]:
+                that = this.copy()  # To avoid modifying the original dataset
+                if format == "profile":
+                    that = that.argo.point2profile()
+                that = that.argo.teos10(["CS"])
+                assert "CS" in that.variables
+
     def test_teos10_variables_inplace(self, ds_pts):
         """Compute all default variables to a new dataset"""
         for key, this in ds_pts.items():
             ds = this.argo.teos10(inplace=False)  # So "SA" must be in 'ds' but not in 'this'
             assert "SA" in ds.variables
             assert "SA" not in this.variables
+
+    def test_teos10_invalid_variable(self, ds_pts):
+        """Try to add an invalid variable"""
+        for key, this in ds_pts.items():
+            for format in ["point", "profile"]:
+                that = this.copy()  # To avoid modifying the original dataset
+                if format == "profile":
+                    that = that.argo.point2profile()
+                with pytest.raises(ValueError):
+                    that.argo.teos10(["InvalidVariable"])
