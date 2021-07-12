@@ -3,6 +3,13 @@
 What's New
 ==========
 
+v0.1.8 (X XXX. 2021)
+--------------------
+
+**Features and front-end API**
+
+- Add Speed of sound computation to xarray accessor teos10 method.
+
 v0.1.7 (4 Jan. 2021)
 -----------------------
 
