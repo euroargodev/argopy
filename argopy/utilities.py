@@ -72,7 +72,7 @@ def load_dict(ptype):
             loaded_dict = pickle.load(f)
         return loaded_dict
     else:
-        raise ValueError("Invalid dictionnary pickle file")
+        raise ValueError("Invalid dictionary pickle file")
 
 
 def mapp_dict(Adictionnary, Avalue):
@@ -280,7 +280,7 @@ def check_localftp(path, errors: str = "ignore"):
         errors: str
             "ignore" or "raise" (or "warn"
 
-        Returms
+        Returns
         -------
         checked: boolean
             True if at least one DAC folder is found under path/dac/<dac_name>
@@ -756,7 +756,7 @@ def linear_interpolation_remap(
     # if dataset is passed drop all data_vars that dont contain dim
     if isinstance(data, xr.Dataset):
         raise ValueError("Dataset input is not supported yet")
-        # TODO: for a datset input just apply the function for each appropriate array
+        # TODO: for a dataset input just apply the function for each appropriate array
 
     kwargs = dict(
         input_core_dims=[[dim], [dim], [z_regridded_dim]],
@@ -1042,7 +1042,7 @@ class Chunker:
 
 
 def format_oneline(s, max_width=65):
-    """ Return a string formated for a line print """
+    """ Return a string formatted for a line print """
     if len(s) > max_width:
         padding = " ... "
         n = (max_width - len(padding)) // 2
