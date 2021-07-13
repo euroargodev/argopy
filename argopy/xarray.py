@@ -717,7 +717,7 @@ class ArgoAccessor:
                 This variable has been regridded to the original pressure levels in the Dataset using a linear interpolation.
             * `"PTEMP"`
                 Adds a potential temperature variable
-            * `"CS"`
+            * `"SOUND_SPEED"`
                 Adds a sound speed variable
             
         inplace: boolean, True by default
@@ -732,7 +732,7 @@ class ArgoAccessor:
             raise ModuleNotFoundError(
                 "This functionality requires the gsw library")
 
-        allowed = ['SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP', 'CS']
+        allowed = ['SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP', 'SOUND_SPEED']
         if any(var not in allowed for var in vlist):
             raise ValueError(f"vlist must be a subset of {allowed}, instead found {vlist}")
 
@@ -785,7 +785,7 @@ class ArgoAccessor:
             pv = f * n2 / gsw.grav(lat, pres)
 
         # Sound Speed:
-        if 'CS' in vlist:
+        if 'SOUND_SPEED' in vlist:
             cs = gsw.sound_speed(sa, ct, pres)
 
         # Back to the dataset:
@@ -830,8 +830,8 @@ class ArgoAccessor:
             PTEMP.attrs['unit'] = 'degC'
             that.append(PTEMP)
 
-        if 'CS' in vlist:
-            CS = xr.DataArray(cs, coords=this['TEMP'].coords, name='CS')
+        if 'SOUND_SPEED' in vlist:
+            CS = xr.DataArray(cs, coords=this['TEMP'].coords, name='SOUND_SPEED')
             CS.attrs['long_name'] = 'Speed of sound'
             CS.attrs['standard_name'] = 'speed_of_sound_in_sea_water'
             CS.attrs['unit'] = 'm/s'
