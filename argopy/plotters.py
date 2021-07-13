@@ -44,8 +44,12 @@ except ModuleNotFoundError:
 def axes_style(style="white"):
     """ Provide a context for plots
 
-        The point is to handle the availability of :mod:`seaborn` or not
+        The point is to handle the availability of :mod:`seaborn` or not and to be able to use:
 
+            with axes_style(style):
+                fig, ax = plt.subplots()
+
+        in all situations.
     """
     if with_seaborn:  # Execute within a seaborn context:
         with sns.axes_style(style):
@@ -235,8 +239,12 @@ def latlongrid(ax, dx="auto", dy="auto", fontsize="auto", **kwargs):
         gl.ylocator = mticker.FixedLocator(np.arange(-90, 90 + 1, dy))
     gl.xformatter = LONGITUDE_FORMATTER
     gl.yformatter = LATITUDE_FORMATTER
-    gl.xlabels_top = False
-    gl.ylabels_right = False
+    # Cartopy <= 0.18
+    # gl.xlabels_top = False
+    # gl.ylabels_right = False
+    # Cartopy >= 0.18
+    gl.top_labels = False
+    gl.right_labels = False
     if fontsize != "auto":
         gl.xlabel_style = {"fontsize": fontsize}
         gl.ylabel_style = {"fontsize": fontsize}
