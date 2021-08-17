@@ -691,7 +691,7 @@ class ArgoAccessor:
         """ Add TEOS10 variables to the dataset
 
         By default, adds: 'SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP'
-        Other possible variables: 'CS'
+        Other possible variables: 'SOUND_SPEED'
         Relies on the gsw library.
 
         If one exists, the correct CF standard name will be added to the attrs.
