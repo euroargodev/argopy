@@ -66,6 +66,8 @@ class Test_index_plot:
                     expected_lg_type = mpl.legend.Legend if legend else type(None)
                     assert isinstance(ax.get_legend(), expected_lg_type)
 
+                    mpl.pyplot.close(fig)
+
     def __test_bar_plot(self, df):
         for ws in [False, has_seaborn]:
             for by in [
@@ -77,6 +79,7 @@ class Test_index_plot:
             ]:
                 fig, ax = bar_plot(df, by=by, with_seaborn=ws)
                 assert isinstance(fig, mpl.figure.Figure)
+                mpl.pyplot.close(fig)
 
     def test_traj_plot_region(self):
         with argopy.set_options(local_ftp=self.local_ftp):

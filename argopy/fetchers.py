@@ -8,6 +8,8 @@ The facade should be able to work with all available data access point,
 """
 
 import warnings
+import xarray as xr
+import pandas as pd
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher
@@ -84,6 +86,10 @@ class ArgoDataFetcher:
         self.postproccessor = self.__empty_processor
         self._AccessPoint = None
 
+        # Init data structure holders:
+        self._index = None
+        self._data = None
+
         # Dev warnings
         # Todo Clean-up before each release
         if self._dataset_id == "bgc" and self._mode == "standard":
@@ -124,6 +130,7 @@ class ArgoDataFetcher:
             "data",
             "index",
             "_loaded",
+            "_request"
         ]
         if key not in self.valid_access_points and key not in valid_attrs:
             raise InvalidFetcherAccessPoint("'%s' is not a valid access point" % key)
@@ -149,27 +156,28 @@ class ArgoDataFetcher:
 
     @property
     def data(self):
-        """ Data structure as returned by the load method
+        """ Data structure
 
             Returns
             --------
             :class:`xarray.DataArray`
-
         """
+        if not isinstance(self._data, xr.Dataset):
+            self.load()
         return self._data
-        pass
 
     @property
     def index(self):
-        """ Index structure as returned by the to_idx method
+        """ Index structure, as returned by the to_index method
 
             Returns
             --------
             :class:`pandas.Dataframe`
 
         """
+        if not isinstance(self._index, pd.core.frame.DataFrame):
+            self.load()
         return self._index
-        pass
 
     # def dashboard(self, **kw):
     #     try:
@@ -325,25 +333,15 @@ class ArgoDataFetcher:
                 " Initialize an access point (%s) first."
                 % ",".join(self.Fetchers.keys())
             )
-        return self.load().to_dataframe()
+        return self.load().data.to_dataframe(**kwargs)
 
-    def load(self):
-        if not self._loaded:
-            self._data = self.to_xarray()
-            self._loaded = True
-            self._index = self.to_idx()
-        return self
+    def to_index(self):
+        """ Convert fetched data to index
 
-    def clear_cache(self):
-        """ Clear data cached by fetcher """
-        if not self.fetcher:
-            raise InvalidFetcher(
-                " Initialize an access point (%s) first."
-                % ",".join(self.Fetchers.keys())
-            )
-        return self.fetcher.clear_cache()
-
-    def to_idx(self):
+            Returns
+            -------
+            :class:`pandas.Dataframe`
+        """
         self.load()
         ds = self.data.argo.point2profile()
         df = (
@@ -365,6 +363,47 @@ class ArgoDataFetcher:
         )
         df = df[["date", "latitude", "longitude", "wmo"]]
         return df
+
+    def load(self, force: bool = False, **kwargs):
+        """ Load data in memory
+
+            Apply the default to_xarray() and to_index() methods and store results in memory.
+            Access loaded measurements structure with the `data` and `index` properties:
+
+                ds = ArgoDataFetcher().profile(6902746, 34).load().data
+                df = ArgoDataFetcher().float(6902746).load().index
+
+            Parameters
+            ----------
+            force: bool
+                Force loading, default is False.
+
+            Returns
+            -------
+            self
+        """
+        # Force to load data if the fetcher definition has changed
+        if self._loaded and self._request != self.__repr__():
+            force = True
+
+        if not self._loaded or force:
+            # Fetch measurements:
+            self._data = self.to_xarray(**kwargs)
+            # Next 2 lines must come before ._index because to_index() calls back on .load() to read .data
+            self._request = self.__repr__()  # Save definition of loaded data
+            self._loaded = True
+            # Extract measurements index from data:
+            self._index = self.to_index()
+        return self
+
+    def clear_cache(self):
+        """ Clear data cached by fetcher """
+        if not self.fetcher:
+            raise InvalidFetcher(
+                " Initialize an access point (%s) first."
+                % ",".join(self.Fetchers.keys())
+            )
+        return self.fetcher.clear_cache()
 
     def plot(self, ptype="trajectory", **kwargs):
         """ Create custom plots from data
@@ -464,6 +503,9 @@ class ArgoIndexFetcher:
         self.postproccessor = self.__empty_processor
         self._AccessPoint = None
 
+        # Init data structure holders:
+        self._index = None
+
     def __repr__(self):
         if self.fetcher:
             summary = [self.fetcher.__repr__()]
@@ -502,8 +544,9 @@ class ArgoIndexFetcher:
             --------
             :class:`pandas.Dataframe`
         """
+        if not isinstance(self._index, pd.core.frame.DataFrame):
+            self.load()
         return self._index
-        pass
 
     def profile(self, wmo, cyc):
         """ Fetch index for a profile
@@ -555,7 +598,7 @@ class ArgoIndexFetcher:
                 " Initialize an access point (%s) first."
                 % ",".join(self.Fetchers.keys())
             )
-        return self.fetcher.to_dataframe()
+        return self.fetcher.to_dataframe(**kwargs)
 
     def to_xarray(self, **kwargs):
         """ Fetch and return index data as xarray.DataSet
@@ -585,9 +628,25 @@ class ArgoIndexFetcher:
             )
         return self.load().index.to_csv(file)
 
-    def load(self):
-        if not self._loaded:
+    def load(self, force: bool = False):
+        """ Load index in memory
+
+            Parameters
+            ----------
+            force: bool
+                Force loading, default is False.
+
+            Returns
+            -------
+            self
+        """
+        # Force to load data if the fetcher definition has changed
+        if self._loaded and self._request != self.__repr__():
+            force = True
+
+        if not self._loaded or force:
             self._index = self.to_dataframe()
+            self._request = self.__repr__()  # Save definition of loaded data
             self._loaded = True
         return self
 
