@@ -1,25 +1,26 @@
 import os
-import io
 import types
 import xarray as xr
 import pandas as pd
 import requests
-import aiohttp
 import fsspec
 import shutil
 import pickle
 import json
 import tempfile
 import warnings
-from IPython.core.display import display, HTML
 
 import concurrent.futures
-from tqdm import tqdm
 import multiprocessing
+try:
+    from tqdm import tqdm
+except ModuleNotFoundError:
+    warnings.warn("argopy needs tqdm installed to display progress bars")
+    tqdm = lambda fct, lst: fct
 
 from argopy.options import OPTIONS
-from argopy.errors import ErddapServerError, FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
-    APIServerError, InvalidMethod
+from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
+    InvalidMethod
 from abc import ABC, abstractmethod
 
 
@@ -308,7 +309,7 @@ class filestore(argo_store_proto):
             raise DataNotFound(urls)
 
     def read_csv(self, url, **kwargs):
-        """ Return a pandas.dataframe from an url that is a csv ressource
+        """ Return a pandas.dataframe from an url that is a csv resource
 
             Parameters
             ----------
@@ -375,7 +376,7 @@ class httpstore(argo_store_proto):
     #         error.append("The URL triggering this error was: \n%s" % url)
     #         msg = "\n".join(error)
     #         if "No space left on device" in msg or "java.io.EOFException" in msg:
-    #             raise ErddapServerError("An error occured on the Erddap server side. "
+    #             raise ErddapServerError("An error occurred on the Erddap server side. "
     #                                     "Please contact assistance@ifremer.fr to ask a "
     #                                     "reboot of the erddap server. \n%s" % msg)
     #         else:

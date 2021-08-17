@@ -189,3 +189,4 @@ fabric.properties
 .vscode/
 .pytest_cache
 knotebooks/
+argopy/tests/cov.xml

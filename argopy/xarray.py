@@ -135,8 +135,9 @@ class ArgoAccessor:
                 da.values = da.values.astype(type)
                 da.attrs["casted"] = 1
             except Exception:
-                print("Oops!", sys.exc_info()[0], "occured.")
-                print("Fail to cast: ", da.dtype, "into:", type, "for: ", da.name)
+                print("Oops!", sys.exc_info()[0], "occurred.")
+                print("Fail to cast: ", da.dtype,
+                      "into:", type, "for: ", da.name)
                 print("Encountered unique values:", np.unique(da))
             return da
 
@@ -263,13 +264,34 @@ class ArgoAccessor:
         #########
         # Sub-functions
         #########
+        def safe_where_eq(xds, key, value):
+            # xds.where(xds[key] == value, drop=True) is not safe to empty time variables, cf issue #64
+            try:
+                return xds.where(xds[key] == value, drop=True)
+            except ValueError as v:
+                if v.args[0] == ("zero-size array to reduction operation "
+                                 "minimum which has no identity"):
+                    # A bug in xarray will cause a ValueError if trying to
+                    # decode the times in a NetCDF file with length 0.
+                    # See:
+                    # https://github.com/pydata/xarray/issues/1329
+                    # https://github.com/euroargodev/argopy/issues/64
+                    # Here, we just need to return an empty array
+                    TIME = xds['TIME']
+                    xds = xds.drop_vars('TIME')
+                    xds = xds.where(xds[key] == value, drop=True)
+                    xds['TIME'] = xr.DataArray(np.arange(len(xds['N_POINTS'])), dims='N_POINTS',
+                                               attrs=TIME.attrs).astype(np.datetime64)
+                    xds = xds.set_coords('TIME')
+                    return xds
+
         def ds_split_datamode(xds):
             """ Create one dataset for each of the data_mode
 
                 Split full dataset into 3 datasets
             """
             # Real-time:
-            argo_r = ds.where(ds["DATA_MODE"] == "R", drop=True)
+            argo_r = safe_where_eq(xds, 'DATA_MODE', 'R')
             for v in plist:
                 vname = v.upper() + "_ADJUSTED"
                 if vname in argo_r:
@@ -281,7 +303,7 @@ class ArgoAccessor:
                 if vname in argo_r:
                     argo_r = argo_r.drop_vars(vname)
             # Real-time adjusted:
-            argo_a = ds.where(ds["DATA_MODE"] == "A", drop=True)
+            argo_a = safe_where_eq(xds, 'DATA_MODE', 'A')
             for v in plist:
                 vname = v.upper()
                 if vname in argo_a:
@@ -290,7 +312,8 @@ class ArgoAccessor:
                 if vname in argo_a:
                     argo_a = argo_a.drop_vars(vname)
             # Delayed mode:
-            argo_d = ds.where(ds["DATA_MODE"] == "D", drop=True)
+            argo_d = safe_where_eq(xds, 'DATA_MODE', 'D')
+
             return argo_r, argo_a, argo_d
 
         def fill_adjusted_nan(ds, vname):
@@ -786,13 +809,33 @@ class ArgoAccessor:
     ):
         """ Add TEOS10 variables to the dataset
 
-        By default, add: 'SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP'
-        Rely on the gsw library.
+        By default, adds: 'SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP'
+        Relies on the gsw library.
+
+        If one exists, the correct CF standard name will be added to the attrs.
 
         Parameters
         ----------
         vlist: list(str)
             List with the name of variables to add.
+            Must be a list containing one or more of the following string values:
+
+            * `"SA"`
+                Adds an absolute salinity variable
+            * `"CT"`
+                Adds a conservative temperature variable
+            * `"SIG0"`
+                Adds a potential density anomaly variable referenced to 0 dbar
+            * `"N2"`
+                Adds a buoyancy (Brunt-Vaisala) frequency squared variable.
+                This variable has been regridded to the original pressure levels in the Dataset using a linear interpolation.
+            * `"PV"`
+                Adds a planetary vorticity variable calculated from :math:`\\frac{f N^2}{\\text{gravity}}`.
+                This is not a TEOS-10 variable from the gsw toolbox, but is provided for convenience.
+                This variable has been regridded to the original pressure levels in the Dataset using a linear interpolation.
+            * `"PTEMP"`
+                Adds a potential temperature variable
+            
         inplace: boolean, True by default
             If True, return the input :class:`xarray.Dataset` with new TEOS10 variables added as a new :class:`xarray.DataArray`
             If False, return a :class:`xarray.Dataset` with new TEOS10 variables
@@ -803,6 +846,10 @@ class ArgoAccessor:
         """
         if not with_gsw:
             raise ModuleNotFoundError("This functionality requires the gsw library")
+
+        allowed = ['SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP']
+        if any(var not in allowed for var in vlist):
+            raise ValueError(f"vlist must be a subset of {allowed}, instead found {vlist}")
 
         this = self._obj
 
@@ -822,14 +869,11 @@ class ArgoAccessor:
         # Coriolis
         f = gsw.f(lat)
 
-        # Depth:
-        depth = gsw.z_from_p(pres, lat)
-
         # Absolute salinity
         sa = gsw.SA_from_SP(psal, pres, lon, lat)
 
         # Conservative temperature
-        ct = gsw.CT_from_t(sa, temp, depth)
+        ct = gsw.CT_from_t(sa, temp, pres)
 
         # Potential Temperature
         if "PTEMP" in vlist:
@@ -858,43 +902,44 @@ class ArgoAccessor:
 
         # Back to the dataset:
         that = []
-        if "SA" in vlist:
-            SA = xr.DataArray(sa, coords=this["PSAL"].coords, name="SA")
-            SA.attrs["standard_name"] = "Absolute Salinity"
-            SA.attrs["unit"] = "g/kg"
+        if 'SA' in vlist:
+            SA = xr.DataArray(sa, coords=this['PSAL'].coords, name='SA')
+            SA.attrs['long_name'] = 'Absolute Salinity'
+            SA.attrs['standard_name'] = 'sea_water_absolute_salinity'
+            SA.attrs['unit'] = 'g/kg'
             that.append(SA)
 
-        if "CT" in vlist:
-            CT = xr.DataArray(ct, coords=this["TEMP"].coords, name="CT")
-            CT.attrs["standard_name"] = "Conservative Temperature"
-            CT.attrs["unit"] = "degC"
+        if 'CT' in vlist:
+            CT = xr.DataArray(ct, coords=this['TEMP'].coords, name='CT')
+            CT.attrs['long_name'] = 'Conservative Temperature'
+            CT.attrs['standard_name'] = 'sea_water_conservative_temperature'
+            CT.attrs['unit'] = 'degC'
             that.append(CT)
 
-        if "SIG0" in vlist:
-            SIG0 = xr.DataArray(sig0, coords=this["TEMP"].coords, name="SIG0")
-            SIG0.attrs[
-                "long_name"
-            ] = "Potential density anomaly with reference pressure of 0 dbar"
-            SIG0.attrs["standard_name"] = "Potential Density"
-            SIG0.attrs["unit"] = "kg/m^3"
+        if 'SIG0' in vlist:
+            SIG0 = xr.DataArray(sig0, coords=this['TEMP'].coords, name='SIG0')
+            SIG0.attrs['long_name'] = 'Potential density anomaly with reference pressure of 0 dbar'
+            SIG0.attrs['standard_name'] = 'sea_water_sigma_theta'
+            SIG0.attrs['unit'] = 'kg/m^3'
             that.append(SIG0)
 
-        if "N2" in vlist:
-            N2 = xr.DataArray(n2, coords=this["TEMP"].coords, name="N2")
-            N2.attrs["standard_name"] = "Squared buoyancy frequency"
-            N2.attrs["unit"] = "1/s^2"
+        if 'N2' in vlist:
+            N2 = xr.DataArray(n2, coords=this['TEMP'].coords, name='N2')
+            N2.attrs['long_name'] = 'Squared buoyancy frequency'
+            N2.attrs['unit'] = '1/s^2'
             that.append(N2)
 
-        if "PV" in vlist:
-            PV = xr.DataArray(pv, coords=this["TEMP"].coords, name="PV")
-            PV.attrs["standard_name"] = "Planetary Potential Vorticity"
-            PV.attrs["unit"] = "1/m/s"
+        if 'PV' in vlist:
+            PV = xr.DataArray(pv, coords=this['TEMP'].coords, name='PV')
+            PV.attrs['long_name'] = 'Planetary Potential Vorticity'
+            PV.attrs['unit'] = '1/m/s'
             that.append(PV)
 
-        if "PTEMP" in vlist:
-            PTEMP = xr.DataArray(pt, coords=this["TEMP"].coords, name="PTEMP")
-            PTEMP.attrs["standard_name"] = "Potential Temperature"
-            PTEMP.attrs["unit"] = "degC"
+        if 'PTEMP' in vlist:
+            PTEMP = xr.DataArray(pt, coords=this['TEMP'].coords, name='PTEMP')
+            PTEMP.attrs['long_name'] = 'Potential Temperature'
+            PTEMP.attrs['standard_name'] = 'sea_water_potential_temperature'
+            PTEMP.attrs['unit'] = 'degC'
             that.append(PTEMP)
 
         # Create a dataset with all new variables:

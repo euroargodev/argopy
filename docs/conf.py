@@ -13,7 +13,6 @@
 
 import os
 import pathlib
-import subprocess
 import sys
 import xarray
 import datetime
@@ -137,7 +136,9 @@ nbsphinx_timeout = 300
 nbsphinx_execute = "always"
 # nbsphinx_prolog = """
 # {% set docname = env.doc2path(env.docname, base=None) %}
-# You can run this notebook in a `live session <https://mybinder.org/v2/gh/euroargodev/argopy/docs/examples/master?urlpath=lab/tree/docs/{{ docname }}>`_ |Binder| or view it `on Github <https://github.com/euroargodev/argopy/blob/master-doc/docs/{{ docname }}>`_.
+# You can run this notebook in a `live session:
+# <https://mybinder.org/v2/gh/euroargodev/argopy/docs/examples/master?urlpath=lab/tree/docs/{{ docname }}>`_ |Binder|
+# or view it `on Github <https://github.com/euroargodev/argopy/blob/master-doc/docs/{{ docname }}>`_.
 # .. |Binder| image:: https://mybinder.org/badge.svg
 #    :target: https://mybinder.org/v2/gh/euroargodev/argopy/master-doc?urlpath=lab/tree/docs/{{ docname }}
 # """
@@ -203,8 +204,8 @@ html_favicon = '_static/argopy.ico'
 html_static_path = ['_static']
 
 html_theme_options = {
-    # 'canonical_url': '',
-    'analytics_id': 'UA-73130866-2',  #  Provided by Google in your dashboard
+    #  'canonical_url': '',
+    'analytics_id': 'UA-73130866-2',  # Provided by Google in your dashboard
     'logo_only': True,
     'display_version': False,
     'prev_next_buttons_location': 'bottom',

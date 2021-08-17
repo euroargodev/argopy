@@ -1,4 +1,4 @@
-name: argopy-binder
+name: argopy-docs
 channels:
   - conda-forge
 dependencies:
@@ -30,13 +30,10 @@ dependencies:
   - ipykernel=5.3.4
   - cartopy=0.18.0
   - ipywidgets=7.5.1
-  - jupyter-server-proxy
-  - dask-labextension
-  - pip
+  - sphinx=3.2.1
+  - sphinx_rtd_theme=0.4.3
+  - sphinx-autosummary-accessors=0.1.2
+  - nbsphinx=0.7.1
+  - numpydoc=1.1.0
   - pip:
-    - graphviz
-    - jupyter-server-proxy
-    - gitpython
-    - cmocean
-    - geopandas
-    - git+http://github.com/euroargodev/argopy.git@refactor-plotters
+    - sphinx_issues==1.2.0

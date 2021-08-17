@@ -1,11 +1,9 @@
-name: tests
+name: tests-FREE
 
-name: build
-
-on: [push]
+on: [pull_request]
 
 jobs:
-  unit-testing:
+  unit-testing-free:
 
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
@@ -13,7 +11,7 @@ jobs:
       max-parallel: 12
       fail-fast: false
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.7, 3.8]
         os: [ubuntu-latest, macos-latest]
         experimental: [false]
 
@@ -24,7 +22,7 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: argopy-tests
-          environment-file: ci/requirements/py${{matrix.python-version}}-dev.yml
+          environment-file: ci/requirements/py${{matrix.python-version}}-free.yml
           auto-update-conda: false
           python-version: ${{ matrix.python-version }}
           auto-activate-base: false

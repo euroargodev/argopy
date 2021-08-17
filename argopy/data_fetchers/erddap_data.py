@@ -10,6 +10,7 @@ This is not intended to be used directly, only by the facade at fetchers.py
 
 """
 
+import fsspec
 import pandas as pd
 import numpy as np
 import copy
@@ -20,22 +21,27 @@ import getpass
 
 from .proto import ArgoDataFetcherProto
 from argopy.options import OPTIONS
-from argopy.utilities import list_standard_variables, Chunker, format_oneline, is_box
+from argopy.utilities import list_standard_variables, isconnected, Chunker, format_oneline, is_box
 from argopy.stores import httpstore
 from argopy.plotters import open_dashboard
 
-from erddapy import ERDDAP
-from erddapy.utilities import parse_dates, quote_string_constraints
+
+# Load erddapy according to available version (breaking changes in v0.8.0)
+try:
+    from erddapy import ERDDAP
+    from erddapy.utilities import parse_dates, quote_string_constraints
+except:
+    # >= v0.8.0
+    from erddapy.erddapy import ERDDAP
+    from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
+    from erddapy.erddapy import parse_dates
 
 
-access_points = ["wmo", "box"]
-exit_formats = ["xarray"]
-dataset_ids = ["phy", "ref", "bgc"]  # First is default
-api_server = "https://www.ifremer.fr/erddap"  # API root url
-# api_server = 'https://erddap.ifremer.fr/erddap'  # API root url
-api_server_check = (
-    api_server + "/info/ArgoFloats/index.html"
-)  # URL to check if the API is alive
+access_points = ['wmo', 'box']
+exit_formats = ['xarray']
+dataset_ids = ['phy', 'ref', 'bgc']  # First is default
+api_server = 'https://www.ifremer.fr/erddap'  # API root url
+api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
 
 
 class ErddapArgoDataFetcher(ArgoDataFetcherProto):
@@ -114,6 +120,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         api_timeout: int (optional)
             Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
+
+        # Temporary fix for issue discussed here: https://github.com/euroargodev/argopy/issues/63#issuecomment-742379699
+        version_tup = tuple(int(x) for x in fsspec.__version__.split("."))
+        if cache and version_tup[0] == 0 and version_tup[1] == 8 and version_tup[-1] == 4:
+            cache = False
+            warnings.warn("Cache is impossible with fsspec version 0.8.4, please upgrade or downgrade to use cache.\n Moving to non cached file system")
+
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
         self.definition = "Ifremer erddap Argo data fetcher"
@@ -583,7 +596,7 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         if len(self.WMO) == 1:
             return open_dashboard(wmo=self.WMO[0], **kw)
         else:
-            warnings.warn("Plot dashboard only available for one float request")
+            warnings.warn("Plot dashboard only available for a single float request")
 
 
 class Fetch_box(ErddapArgoDataFetcher):

@@ -45,6 +45,7 @@ from argopy.plotters import open_dashboard
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy', 'bgc']  # First is default
+api_server_check = OPTIONS['local_ftp']
 
 
 class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
@@ -168,7 +169,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
 
         The file is searched using its expected file name pattern (following GDAC conventions).
 
-        If more than one file are found to match the pattern, the first 1 (alphabeticaly) is returned.
+        If more than one file are found to match the pattern, the first 1 (alphabetically) is returned.
 
         If no files match the pattern, the function can raise an error or fail silently and return None.
 
@@ -324,6 +325,14 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
             method = 'sequential'
         else:
             method = self.parallel_method
+        # ds = self.fs.open_mfdataset(self.uri,
+        #                             method=method,
+        #                             concat_dim='N_POINTS',
+        #                             concat=True,
+        #                             preprocess=self._preprocess_multiprof,
+        #                             progress=self.progress,
+        #                             errors=errors,
+        #                             decode_cf=1, use_cftime=0, mask_and_scale=1, engine='h5netcdf')
         ds = self.fs.open_mfdataset(self.uri,
                                     method=method,
                                     concat_dim='N_POINTS',
@@ -331,7 +340,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
                                     preprocess=self._preprocess_multiprof,
                                     progress=self.progress,
                                     errors=errors,
-                                    decode_cf=1, use_cftime=0, mask_and_scale=1, engine='h5netcdf')
+                                    decode_cf=1, use_cftime=0, mask_and_scale=1)                            
 
         # Data post-processing:
         ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS']))  # Re-index to avoid duplicate values

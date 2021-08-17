@@ -151,7 +151,7 @@ How to build the *argopy* documentation
 ---------------------------------------
 
 Requirements
-~~~~~~~~~~~~
+^^^^^^^^^^^^
 Make sure to follow the instructions on :ref:`creating a development environment below <contributing.dev_env>`, but
 to build the docs you need to use the specific file ``docs/requirements.txt``:
 
@@ -163,7 +163,7 @@ to build the docs you need to use the specific file ``docs/requirements.txt``:
     $ pip install -r docs/requirements.txt
 
 Building the documentation
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Navigate to your local ``argopy/docs/`` directory in the console and run:
 
@@ -191,7 +191,7 @@ Working with the code
 =====================
 
 Development workflow
-********************
+--------------------
 
 Anyone interested in helping to develop argopy needs to create their own fork
 of our `git repository`. (Follow the github `forking instructions`_. You
@@ -264,7 +264,7 @@ incorporated into argopy.
 .. _contributing.dev_env:
 
 Virtual environment
-*******************
+-------------------
 
 This is how to create a virtual environment into which to test-install argopy,
 install it, check the version, and tear down the virtual environment.
@@ -280,7 +280,7 @@ install it, check the version, and tear down the virtual environment.
 
 
 Code standards
-**************
+--------------
 
 Writing good code is not just about what you write. It is also about *how* you
 write it. During Continuous Integration testing, several
@@ -289,7 +289,7 @@ Generating any warnings will cause the test to fail.
 Thus, good style is a requirement for submitting code to *argopy*.
 
 Code Formatting
-~~~~~~~~~~~~~~~
+---------------
 
 *argopy* uses several tools to ensure a consistent code format throughout the project:
 
@@ -318,7 +318,7 @@ Data fetchers
 -------------
 
 Introduction
-~~~~~~~~~~~~
+^^^^^^^^^^^^
 If you want to add your own data fetcher for a new service, then, keep in mind that:
 
 * Data fetchers are responsible for:
@@ -343,22 +343,22 @@ If you want to add your own data fetcher for a new service, then, keep in mind t
     *  :func:`filter_variables`
 
 
-It is the responsability of the facade API (:class:`argopy.fetchers.ArgoDataFetcher`) to run
+It is the responsibility of the facade API (:class:`argopy.fetchers.ArgoDataFetcher`) to run
 filters according to user level or requests, not the data fetcher.
 
-Detailled guideline
-~~~~~~~~~~~~~~~~~~~
+Detailed guideline
+^^^^^^^^^^^^^^^^^^
 
 A new data fetcher must comply with:
 
 Inheritance
-***********
+"""""""""""
 
 Inherit from the :class:`argopy.data_fetchers.proto.ArgoDataFetcherProto`.
 This enforces minimal internal design compliance.
 
 Auto-discovery of fetcher properties
-************************************
+""""""""""""""""""""""""""""""""""""
 
 The new fetcher must come with the ``access_points``, ``exit_formats`` and ``dataset_ids`` properties at the top of the
 file, e.g.:
@@ -377,12 +377,12 @@ to auto-discover the fetcher capabilities. The ``dataset_ids``
 property is used to determine which variables can be retrieved.
 
 Auto-discovery of fetcher access points
-***************************************
+"""""""""""""""""""""""""""""""""""""""
 
-The new fetcher must come at least with a ``Fetch_wmo`` or
+The new fetcher must come at least with a ``Fetch_box`` or
 ``Fetch_wmo`` class, basically one for each of the ``access_points``
-listed as properties. More generaly we may have a main class that
-provides the key functionalities to retrieve data from the source,
+listed as properties. More generally we may have a main class that
+provides the key functionality to retrieve data from the source,
 and then classes for each of the ``access_points`` of your fetcher.
 This pattern could look like this:
 
@@ -408,7 +408,7 @@ data. It must take in the ``__init__()`` method a ``WMO`` and a ``CYC``
 as first and second options. ``WMO`` is always passed, ``CYC`` is
 optional. These are passed by the facade to implement the
 ``fetcher.float`` and ``fetcher.profile`` methods. When a float is requested, the ``CYC`` option is
-not passed by the facade. Last, ``WMO`` and ``CYC`` are ether a single
+not passed by the facade. Last, ``WMO`` and ``CYC`` are either a single
 integer or a list of integers: this means that ``Fetch_wmo`` must be
 able to handle more than one float/platform retrieval.
 
@@ -421,7 +421,7 @@ and date\_max] should be optional (if not specified, the entire time
 series is requested by the user).
 
 File systems
-************
+""""""""""""
 
 All http requests must go through the internal
 ``httpstore``, an internal wrapper around fsspec that allows to
@@ -435,7 +435,7 @@ for json requests:
        profile = json.load(of)
 
 Output data format
-******************
+""""""""""""""""""
 
 Last but not least, about the output data. In **argopy**, we want
 to provide data for both expert and standard users. This is explained

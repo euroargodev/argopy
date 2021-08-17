@@ -3,48 +3,14 @@
     "layout-restorer:data": {
       "main": {
         "dock": {
-          "type": "split-area",
-          "orientation": "horizontal",
-          "sizes": [
-            0.5,
-            0.5
-          ],
-          "children": [
-            {
-              "type": "tab-area",
-              "currentIndex": 0,
-              "widgets": [
-                "markdownviewer-widget:README.md"
-              ]
-            },
-            {
-              "type": "split-area",
-              "orientation": "vertical",
-              "sizes": [
-                0.5,
-                0.5
-              ],
-              "children": [
-                {
-                  "type": "tab-area",
-                  "currentIndex": 0,
-                  "widgets": [
-                    "notebook:01-Launch_Dask_Cluster.ipynb"
-                  ]
-                },
-                {
-                  "type": "tab-area",
-                  "currentIndex": 0,
-                  "widgets": [
-                    "terminal:1"
-                  ]
-                }
-              ]
-            }
+          "type": "tab-area",
+          "currentIndex": 0,
+          "widgets": [
+            "notebook:argopy/docs/tryit.ipynb"
           ]
         },
         "mode": "multiple-document",
-        "current": "terminal:1"
+        "current": "notebook:argopy/docs/tryit.ipynb"
       },
       "left": {
         "collapsed": true,
@@ -62,22 +28,26 @@
         "widgets": []
       }
     },
-    "terminal:1": {
-      "data": {
-        "name": "1"
+    "@jupyterlab/settingeditor-extension:plugin": {
+      "sizes": [
+        0.16987416728349372,
+        0.8301258327165063
+      ],
+      "container": {
+        "plugin": "@jupyterlab/apputils-extension:themes",
+        "sizes": [
+          0.5,
+          0.5
+        ]
       }
     },
-    "notebook:Dask-Graph.ipynb": {
+    "file-browser-filebrowser:cwd": {
+      "path": "argopy/docs"
+    },
+    "notebook:argopy/docs/tryit.ipynb": {
       "data": {
-        "path": "practice/environment/01-Launch_Dask_Cluster.ipynb",
+        "path": "argopy/docs/tryit.ipynb",
         "factory": "Notebook"
-      }
-    },
-
-    "markdownviewer-widget:README.md": {
-      "data": {
-        "path": "practice/README.md",
-        "factory": "Markdown Preview"
       }
     }
   },

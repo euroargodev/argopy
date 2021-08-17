@@ -3,12 +3,34 @@
 What's New
 ==========
 
-v0.1.7 (XX Nov. 2020)
+v0.1.8 (X XXX. 2021)
 -----------------------
 
 **Features and front-end API**
 
 - Improve plotting functions. All functions are now available for both the index and data fetchers. Reduced plotting dependencies to `Matplotlib <https://matplotlib.org/>`_ only. If `Seaborn <seaborn.pydata.org/>`_ or `Cartopy <https://scitools.org.uk/cartopy>`_ are available: use them for rendering. (:pr:`56`).
+
+- Code spell fixes (:pr:`89`) by `K. Schwehr <https://github.com/schwehr>`_.
+
+
+v0.1.7 (4 Jan. 2021)
+-----------------------
+
+Long due release !
+
+**Features and front-end API**
+
+- Live monitor for the status (availability) of data sources. See documentation page on :ref:`api-status`. (:pr:`36`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    import argopy
+    argopy.status()
+    # or
+    argopy.status(refresh=15)
+
+.. image:: _static/status_monitor.png
+  :width: 350
 
 - Optimise large data fetching with parallelization, for all data fetchers (erddap, localftp and argovis). See documentation page on :ref:`parallel`. Two parallel methods are available: multi-threading or multi-processing. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
 
@@ -22,11 +44,17 @@ v0.1.7 (XX Nov. 2020)
 
 **Breaking changes with previous versions**
 
+- In the teos10 xarray accessor, the ``standard_name`` attribute will now be populated using values from the `CF Standard Name table <https://cfconventions.org/Data/cf-standard-names/76/build/cf-standard-name-table.html>`_ if one exists.
+  The previous values of ``standard_name`` have been moved to the ``long_name`` attribute.
+  (:pr:`74`) by `A. Barna <https://github.com/docotak>`_.
+  
 - The unique resource identifier property is now named ``uri`` for all data fetchers, it is always a list of strings.
 
 **Internals**
 
-- New ``open_mfdataset`` and ``open_mfjson`` methods in Argo stores. These can be used to open, preprocess and concatenate a collection of paths both in sequential or parallel order. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
+- New ``open_mfdataset`` and ``open_mfjson`` methods in Argo stores. These can be used to open, pre-process and concatenate a collection of paths both in sequential or parallel order. (:pr:`28`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Unit testing is now done on a controlled conda environment. This allows to more easily identify errors coming from development vs errors due to dependencies update. (:pr:`65`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 
 v0.1.6 (31 Aug. 2020)

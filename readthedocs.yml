@@ -9,14 +9,5 @@ version: 2
 #sphinx:
 #  configuration: docs/conf.py
 
-# Optionally build your docs in additional formats such as PDF and ePub
-formats:
-  - htmlzip
-
-# Optionally set the version of Python and requirements required to build your docs
-python:
-  version: 3.6
-  system_packages: true
-  install:
-    - requirements: requirements.txt
-    - requirements: docs/requirements.txt
+conda:
+    environment: ci/requirements/doc.yml

@@ -63,8 +63,7 @@ def test_isconnected():
 def test_isAPIconnected():
     assert isinstance(isAPIconnected(src="erddap", data=True), bool)
     assert isinstance(isAPIconnected(src="erddap", data=False), bool)
-    with pytest.raises(InvalidFetcher):
-        isAPIconnected(src="localftp")
+
 
 def test_erddap_ds_exists():
     assert isinstance(erddap_ds_exists(ds="ArgoFloats"), bool)
