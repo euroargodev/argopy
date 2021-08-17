@@ -108,8 +108,8 @@ class Test_teos10:
                 that = this.copy()  # To avoid modifying the original dataset
                 if format == "profile":
                     that = that.argo.point2profile()
-                that = that.argo.teos10(["CS"])
-                assert "CS" in that.variables
+                that = that.argo.teos10(["SOUND_SPEED"])
+                assert "SOUND_SPEED" in that.variables
 
     def test_teos10_variables_inplace(self, ds_pts):
         """Compute all default variables to a new dataset"""
