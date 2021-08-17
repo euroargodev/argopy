@@ -2,7 +2,7 @@ import numpy as np
 import xarray as xr
 
 import pytest
-import warnings
+# import warnings
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
