@@ -1,4 +1,4 @@
-import xarray as xr
+import pandas as pd
 import tempfile
 
 import pytest
@@ -36,7 +36,7 @@ class Test_Backend:
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
                 loader = ArgoIndexFetcher(src=self.src, cache=False).profile(*self.requests['profile'][0])
-                loader.to_xarray()
+                loader.to_dataframe()
                 with pytest.raises(FileSystemHasNoCache):
                     loader.fetcher.cachepath
 
@@ -45,7 +45,7 @@ class Test_Backend:
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
                 loader = ArgoIndexFetcher(src=self.src, cache=True).profile(*self.requests['profile'][0])
-                loader.to_xarray()
+                loader.to_dataframe()
                 loader.clear_cache()
                 with pytest.raises(CacheFileNotFound):
                     loader.fetcher.cachepath
@@ -56,10 +56,10 @@ class Test_Backend:
             with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
                 loader = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0])
                 # 1st call to load and save to cache:
-                loader.to_xarray()
+                loader.to_dataframe()
                 # 2nd call to load from cached file:
-                ds = loader.to_xarray()
-                assert isinstance(ds, xr.Dataset)
+                df = loader.to_dataframe()
+                assert isinstance(df, pd.core.frame.DataFrame)
                 assert isinstance(loader.fetcher.cachepath, str)
 
     def test_noresults(self):
@@ -76,22 +76,22 @@ class Test_Backend:
                 for arg in self.args["profile"]:
                     with argopy.set_options(local_ftp=self.local_ftp):
                         fetcher = ArgoIndexFetcher(src=self.src).profile(*arg).fetcher
-                        ds = fetcher.to_xarray()
-                        assert isinstance(ds, xr.Dataset)
+                        df = fetcher.to_dataframe()
+                        assert isinstance(df, pd.core.frame.DataFrame)
 
             if access_point == "float":
                 for arg in self.args["float"]:
                     with argopy.set_options(local_ftp=self.local_ftp):
                         fetcher = ArgoIndexFetcher(src=self.src).float(arg).fetcher
-                        ds = fetcher.to_xarray()
-                        assert isinstance(ds, xr.Dataset)
+                        df = fetcher.to_dataframe()
+                        assert isinstance(df, pd.core.frame.DataFrame)
 
             if access_point == "region":
                 for arg in self.args["region"]:
                     with argopy.set_options(local_ftp=self.local_ftp):
                         fetcher = ArgoIndexFetcher(src=self.src).region(arg).fetcher
-                        ds = fetcher.to_xarray()
-                        assert isinstance(ds, xr.Dataset)
+                        df = fetcher.to_dataframe()
+                        assert isinstance(df, pd.core.frame.DataFrame)
 
     @safe_to_server_errors
     def test_phy_float(self):

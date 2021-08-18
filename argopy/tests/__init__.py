@@ -51,10 +51,10 @@ AVAILABLE_INDEX_SOURCES = list_available_index_src()
 CONNECTED = isconnected()
 
 has_fetcher, requires_fetcher = _connectskip(
-    len(AVAILABLE_SOURCES) > 0, "requires at least one data fetcher"
+    len(AVAILABLE_SOURCES) > 0, "at least one data fetcher"
 )
 has_fetcher_index, requires_fetcher_index = _connectskip(
-    len(AVAILABLE_INDEX_SOURCES) > 0, "requires at least one index fetcher"
+    len(AVAILABLE_INDEX_SOURCES) > 0, "at least one index fetcher"
 )
 
 ##########
@@ -72,11 +72,11 @@ else:
     DSEXISTS_index = False
 
 has_connection, requires_connection = _connectskip(
-    CONNECTED, "requires an internet connection"
+    CONNECTED, "an internet connection"
 )
 
 has_erddap, requires_erddap = _connectskip(
-    "erddap" in AVAILABLE_SOURCES, "requires erddap data fetcher"
+    "erddap" in AVAILABLE_SOURCES, "erddap data fetcher"
 )
 
 has_erddap_phy, requires_erddap_phy = _connectskip(
@@ -97,49 +97,49 @@ has_erddap_index, requires_erddap_index = _connectskip(
 
 has_connected_erddap = has_connection and has_erddap
 requires_connected_erddap = pytest.mark.skipif(
-    not has_connected_erddap, reason="requires a live Ifremer erddap server"
+    not has_connected_erddap, reason="a live Ifremer erddap server"
 )
 has_connected_erddap_phy = has_connection and has_erddap and has_erddap_phy
 requires_connected_erddap_phy = pytest.mark.skipif(
     not has_connected_erddap_phy,
-    reason="requires a live and valid core Argo dataset from Ifremer erddap server",
+    reason="a live and valid core Argo dataset from Ifremer erddap server",
 )
 has_connected_erddap_bgc = has_connection and has_erddap and has_erddap_bgc
 requires_connected_erddap_bgc = pytest.mark.skipif(
     not has_connected_erddap_bgc,
-    reason="requires a live and valid BGC Argo dataset from Ifremer erddap server",
+    reason="a live and valid BGC Argo dataset from Ifremer erddap server",
 )
 has_connected_erddap_ref = has_connection and has_erddap and has_erddap_ref
 requires_connected_erddap_ref = pytest.mark.skipif(
     not has_connected_erddap_ref,
-    reason="requires a live and valid Reference Argo dataset from Ifremer erddap server",
+    reason="a live and valid Reference Argo dataset from Ifremer erddap server",
 )
 has_connected_erddap_index = has_connection and has_erddap and has_erddap_index
 requires_connected_erddap_index = pytest.mark.skipif(
     not has_connected_erddap_index,
-    reason="requires a live and valid Argo Index from Ifremer erddap server",
+    reason="a live and valid Argo Index from Ifremer erddap server",
 )
 
 ###########
 # ARGOVIS #
 ###########
 has_argovis, requires_argovis = _connectskip(
-    "argovis" in AVAILABLE_SOURCES, "requires argovis data fetcher"
+    "argovis" in AVAILABLE_SOURCES, "argovis data fetcher"
 )
 
 has_connected_argovis = has_connection and has_argovis
 requires_connected_argovis = pytest.mark.skipif(
-    not has_connected_argovis, reason="requires a live Argovis server"
+    has_connected_argovis, reason="a live Argovis server"
 )
 
 ############
 # LOCALFTP #
 ############
 has_localftp, requires_localftp = _connectskip(
-    "localftp" in AVAILABLE_SOURCES, "requires localftp data fetcher"
+    "localftp" in AVAILABLE_SOURCES, "the localftp data fetcher"
 )
 has_localftp_index, requires_localftp_index = _connectskip(
-    "localftp" in AVAILABLE_INDEX_SOURCES, "requires localftp index fetcher"
+    not "localftp" in AVAILABLE_INDEX_SOURCES, "the localftp index fetcher"
 )
 
 ############
