@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import xarray as xr
 
 import pytest
@@ -88,24 +89,27 @@ class Test_DataFetching:
         for arg in self.args["float"]:
             for mode in self.mode:
                 options = {**self.fetcher_opts, **ftc_opts}
-                f = ArgoDataFetcher(src=bk, mode=mode, **options).float(arg)
-                assert isinstance(f.to_xarray(), xr.Dataset)
+                f = ArgoDataFetcher(src=bk, mode=mode, **options).float(arg).load()
+                assert isinstance(f.data, xr.Dataset)
+                assert isinstance(f.index, pd.core.frame.DataFrame)
                 assert is_list_of_strings(f.uri)
 
     def __test_profile(self, bk):
         """ Test float for a given backend """
         for arg in self.args["profile"]:
             for mode in self.mode:
-                f = ArgoDataFetcher(src=bk, mode=mode).profile(*arg)
-                assert isinstance(f.to_xarray(), xr.Dataset)
+                f = ArgoDataFetcher(src=bk, mode=mode).profile(*arg).load()
+                assert isinstance(f.data, xr.Dataset)
+                assert isinstance(f.index, pd.core.frame.DataFrame)
                 assert is_list_of_strings(f.uri)
 
     def __test_region(self, bk):
         """ Test float for a given backend """
         for arg in self.args["region"]:
             for mode in self.mode:
-                f = ArgoDataFetcher(src=bk, mode=mode).region(arg)
-                assert isinstance(f.to_xarray(), xr.Dataset)
+                f = ArgoDataFetcher(src=bk, mode=mode).region(arg).load()
+                assert isinstance(f.data, xr.Dataset)
+                assert isinstance(f.index, pd.core.frame.DataFrame)
                 assert is_list_of_strings(f.uri)
 
     @requires_connected_erddap_phy

@@ -31,7 +31,7 @@ except:
     from erddapy.erddapy import parse_dates
 
 
-access_points = ['wmo', 'box']
+access_points = ['wmo']
 exit_formats = ['xarray', 'dataframe']
 dataset_ids = ['phy']  # First is default
 api_server = 'https://www.ifremer.fr/erddap'  # API root url

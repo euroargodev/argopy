@@ -8,9 +8,49 @@ v0.1.8 (X XXX. 2021)
 
 **Features and front-end API**
 
-- Improve plotting functions. All functions are now available for both the index and data fetchers. Reduced plotting dependencies to `Matplotlib <https://matplotlib.org/>`_ only. If `Seaborn <seaborn.pydata.org/>`_ or `Cartopy <https://scitools.org.uk/cartopy>`_ are available: use them for rendering. (:pr:`56`).
+- Improve plotting functions. All functions are now available for both the index and data fetchers. See the visualisation page for more details.
+ Reduced plotting dependencies to `Matplotlib <https://matplotlib.org/>`_ only. **Argopy** will use `Seaborn <seaborn.pydata.org/>`_ and/or `Cartopy <https://scitools.org.uk/cartopy>`_ if available. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy import IndexFetcher as ArgoIndexFetcher
+    from argopy import DataFetcher as ArgoDataFetcher
+    obj = ArgoIndexFetcher().float([6902766, 6902772, 6902914, 6902746])
+    # OR
+    obj = ArgoDataFetcher().float([6902766, 6902772, 6902914, 6902746])
+
+    fig, ax = obj.plot()
+    fig, ax = obj.plot('trajectory')
+    fig, ax = obj.plot('trajectory', style='white', palette='Set1', figsize=(10,6))
+    fig, ax = obj.plot('dac')
+    fig, ax = obj.plot('institution')
+    fig, ax = obj.plot('profiler')
+
+
+- New methods and properties for data and index fetchers. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy import DataFetcher as ArgoDataFetcher
+    loader = ArgoDataFetcher().float([6902766, 6902772, 6902914, 6902746])
+    loader.load()
+    loader.data
+    loader.index
+    loader.to_index()
+
+.. code-block:: python
+
+    from argopy import IndexFetcher as ArgoIndexFetcher
+    indexer = ArgoIndexFetcher().float([6902766, 6902772])
+    indexer.load()
+    indexer.index
 
 - Code spell fixes (:pr:`89`) by `K. Schwehr <https://github.com/schwehr>`_.
+
+**Breaking changes with previous versions**
+
+- In the plotters module, the ``plot_dac`` and ``plot_profilerType`` functions have been replaced by ``bar_plot``. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
+
 
 
 v0.1.7 (4 Jan. 2021)

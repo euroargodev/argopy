@@ -280,20 +280,36 @@ def plot_trajectory(
     style: str = STYLE["axes"],
     add_legend: bool = True,
     palette: str = STYLE["palette"],
+    set_global: bool = False,
     with_cartopy: bool = with_cartopy,
     with_seaborn: bool = with_seaborn,
     **kwargs
 ):
-    """ Plot trajectories for an index dataframe
+    """ Plot trajectories for an Argo index dataframe
 
+    This function is called by the Data and Index fetchers method: 'plot' with the 'trajectory' option:
+
+        from argopy import IndexFetcher as ArgoIndexFetcher
+        from argopy import DataFetcher as ArgoDataFetcher
+        obj = ArgoIndexFetcher().float([6902766, 6902772, 6902914, 6902746])
+        # OR
+        obj = ArgoDataFetcher().float([6902766, 6902772, 6902914, 6902746])
+
+        fig, ax = obj.plot('trajectory')
 
     Parameters
     ----------
     df: Pandas DataFrame
-        Input data with columns: 'wmo','longitude','latitude'
+        Input data with columns: 'wmo','longitude','latitude'.
     style: str
+        Define the Seaborn axes style: 'white' (default), 'darkgrid', 'whitegrid', 'dark', 'ticks'.
     add_legend: bool
+        Add a box legend with list of floats. True by default for a maximum of 15 floats, otherwise no legend.
     palette: str
+        Define colors to be used for floats: 'Set1' (default) or any other matplotlib colormap or name of
+        a seaborn palette (deep, muted, bright, pastel, dark, colorblind).
+    set_global: bool
+        Plot trajectories on a global world map or not. False by default.
 
     Returns
     -------
@@ -344,10 +360,15 @@ def plot_trajectory(
                 )
 
         if with_cartopy:
+            if set_global:
+                ax.set_global()
             latlongrid(ax, dx="auto", dy="auto", fontsize="auto")
             if not with_seaborn:
                 ax.get_yaxis().set_visible(False)
         else:
+            if set_global:
+                ax.set_xlim(-180, 180)
+                ax.set_ylim(-90, 90)
             ax.grid(b=True, linewidth=1, color="gray", alpha=0.7, linestyle=":")
 
         if add_legend and nfloat <= 15:
@@ -393,13 +414,15 @@ def bar_plot(
     with_seaborn: bool = with_seaborn,
     **kwargs
 ):
-    """ Create a bar plot for an index dataframe
+    """ Create a bar plot for an Argo index dataframe
 
     Parameters
     ----------
     df: Pandas DataFrame
     by: str
         The profile property to plot. Default is 'institution'
+    style: str
+        Define the Seaborn axes style: 'white' (default), 'darkgrid', 'whitegrid', 'dark', 'ticks'.
 
     Returns
     -------
