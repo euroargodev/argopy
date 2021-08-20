@@ -97,7 +97,7 @@ class ArgoAccessor:
                 da.values = da.values.astype(type)
                 da.attrs['casted'] = 1
             except Exception:
-                print("Oops!", sys.exc_info()[0], "occured.")
+                print("Oops!", sys.exc_info()[0], "occurred.")
                 print("Fail to cast: ", da.dtype,
                       "into:", type, "for: ", da.name)
                 print("Encountered unique values:", np.unique(da))
@@ -560,7 +560,7 @@ class ArgoAccessor:
         # Restore coordinate variables:
         new_ds = new_ds.set_coords([c for c in coords_list if c in new_ds])
 
-        # Misc formating
+        # Misc formatting
         new_ds = new_ds.sortby('TIME')
         new_ds = new_ds.argo.cast_types()
         new_ds = new_ds[np.sort(new_ds.data_vars)]

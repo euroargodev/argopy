@@ -7,9 +7,9 @@ import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy.errors import (
     FileSystemHasNoCache,
-    CacheFileNotFound
+    CacheFileNotFound,
 )
-from . import requires_connected_erddap_index, safe_to_server_errors
+from . import requires_connected_erddap_index, safe_to_server_errors, safe_to_fsspec_version
 
 
 @requires_connected_erddap_index
@@ -25,6 +25,7 @@ class Test_Backend:
         ],
     }
 
+    @safe_to_fsspec_version
     def test_cachepath_notfound(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
@@ -44,6 +45,7 @@ class Test_Backend:
                 with pytest.raises(FileSystemHasNoCache):
                     loader.fetcher.cachepath
 
+    @safe_to_fsspec_version
     @pytest.mark.skip(
         reason="Waiting for https://github.com/euroargodev/argopy/issues/16"
     )
@@ -57,6 +59,7 @@ class Test_Backend:
                 with pytest.raises(CacheFileNotFound):
                     loader.fetcher.cachepath
 
+    @safe_to_fsspec_version
     @pytest.mark.skip(
         reason="Waiting for https://github.com/euroargodev/argopy/issues/16"
     )
@@ -72,6 +75,7 @@ class Test_Backend:
                 assert isinstance(ds, xr.Dataset)
                 assert isinstance(loader.fetcher.cachepath, str)
 
+    @safe_to_fsspec_version
     def test_url(self):
         loader = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0])
         assert isinstance(loader.fetcher.url, str)
@@ -81,7 +85,7 @@ class Test_Backend:
     def __testthis(self):
         for access_point in self.args:
 
-            # Acces point not implemented yet for erddap
+            # Access point not implemented yet for erddap
             # if access_point == 'profile':
             #     for arg in self.args['profile']:
             #         fetcher = ArgoIndexFetcher(src=self.src).profile(*arg).fetcher

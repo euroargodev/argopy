@@ -10,6 +10,9 @@ v0.1.8 (X XXX. 2021)
 
 - Add Speed of sound computation to xarray accessor teos10 method. (:pr:`90`) by `G. Maze <http://www.github.com/gmaze>`_.
 
+- Code spell fixes (:pr:`89`) by `K. Schwehr <https://github.com/schwehr>`_.
+
+
 v0.1.7 (4 Jan. 2021)
 -----------------------
 

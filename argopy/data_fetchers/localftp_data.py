@@ -169,7 +169,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
 
         The file is searched using its expected file name pattern (following GDAC conventions).
 
-        If more than one file are found to match the pattern, the first 1 (alphabeticaly) is returned.
+        If more than one file are found to match the pattern, the first 1 (alphabetically) is returned.
 
         If no files match the pattern, the function can raise an error or fail silently and return None.
 

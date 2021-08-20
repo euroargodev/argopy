@@ -408,7 +408,7 @@ data. It must take in the ``__init__()`` method a ``WMO`` and a ``CYC``
 as first and second options. ``WMO`` is always passed, ``CYC`` is
 optional. These are passed by the facade to implement the
 ``fetcher.float`` and ``fetcher.profile`` methods. When a float is requested, the ``CYC`` option is
-not passed by the facade. Last, ``WMO`` and ``CYC`` are ether a single
+not passed by the facade. Last, ``WMO`` and ``CYC`` are either a single
 integer or a list of integers: this means that ``Fetch_wmo`` must be
 able to handle more than one float/platform retrieval.
 
