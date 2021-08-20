@@ -20,6 +20,18 @@ AVAILABLE_DATA_SOURCES = list_available_data_src()
 AVAILABLE_INDEX_SOURCES = list_available_index_src()
 
 
+def checkAccessPoint(AccessPoint):
+    """ Decorator to validate fetcher access points of a given data source """
+    def wrapper(*args):
+        if AccessPoint.__name__ not in args[0].valid_access_points:
+            raise InvalidFetcherAccessPoint(
+                            "'%s' not available with '%s' src. Available access point(s): %s" %
+                            (AccessPoint.__name__, args[0]._src, ", ".join(args[0].Fetchers.keys()))
+                        )
+        return AccessPoint(*args)
+    return wrapper
+
+
 class ArgoDataFetcher:
     """ Fetcher and post-processor of Argo data (API facade) """
 
@@ -188,6 +200,7 @@ class ArgoDataFetcher:
     #             % (self._src, self._AccessPoint)
     #         )
 
+    @checkAccessPoint
     def float(self, wmo, **kw):
         """ Float data fetcher
 
@@ -207,16 +220,10 @@ class ArgoDataFetcher:
                 "point to fetch specific profile data."
             )
 
-        if "float" in self.Fetchers:
-            self.fetcher = self.Fetchers["float"](WMO=wmo, **self.fetcher_options)
-            self._AccessPoint = "float"  # Register the requested access point
-        else:
-            raise InvalidFetcherAccessPoint(
-                "'float' not available with '%s' src" % self._src
-            )
+        self.fetcher = self.Fetchers["float"](WMO=wmo, **self.fetcher_options)
+        self._AccessPoint = "float"  # Register the requested access point
 
         if self._mode == "standard" and self._dataset_id != "ref":
-
             def postprocessing(xds):
                 xds = self.fetcher.filter_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
@@ -224,8 +231,10 @@ class ArgoDataFetcher:
                 return xds
 
             self.postproccessor = postprocessing
+
         return self
 
+    @checkAccessPoint
     def profile(self, wmo, cyc):
         """ Specific profile data fetcher
 
@@ -241,28 +250,20 @@ class ArgoDataFetcher:
         :class:`argopy.fetchers.ArgoDataFetcher.profile`
             A data source fetcher for specific float profiles
         """
-        if "profile" in self.Fetchers:
-            self.fetcher = self.Fetchers["profile"](
-                WMO=wmo, CYC=cyc, **self.fetcher_options
-            )
-            self._AccessPoint = "profile"  # Register the requested access point
-        else:
-            raise InvalidFetcherAccessPoint(
-                "'profile' not available with '%s' src" % self._src
-            )
+        self.fetcher = self.Fetchers["profile"](WMO=wmo, CYC=cyc, **self.fetcher_options)
+        self._AccessPoint = "profile"  # Register the requested access point
 
         if self._mode == "standard" and self._dataset_id != "ref":
-
             def postprocessing(xds):
                 xds = self.fetcher.filter_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
                 xds = self.fetcher.filter_variables(xds, self._mode)
                 return xds
-
             self.postproccessor = postprocessing
 
         return self
 
+    @checkAccessPoint
     def region(self, box: list):
         """ Space/time domain data fetcher
 
@@ -285,22 +286,15 @@ class ArgoDataFetcher:
             A data source fetcher for a space/time domain
         """
         is_box(box, errors="raise")  # Validate the box definition
-        if "region" in self.Fetchers:
-            self.fetcher = self.Fetchers["region"](box=box, **self.fetcher_options)
-            self._AccessPoint = "region"  # Register the requested access point
-        else:
-            raise InvalidFetcherAccessPoint(
-                "'region' not available with '%s' src" % self._src
-            )
+        self.fetcher = self.Fetchers["region"](box=box, **self.fetcher_options)
+        self._AccessPoint = "region"  # Register the requested access point
 
         if self._mode == "standard" and self._dataset_id != "ref":
-
             def postprocessing(xds):
                 xds = self.fetcher.filter_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
                 xds = self.fetcher.filter_variables(xds, self._mode)
                 return xds
-
             self.postproccessor = postprocessing
 
         return self
@@ -548,42 +542,28 @@ class ArgoIndexFetcher:
             self.load()
         return self._index
 
+    @checkAccessPoint
     def profile(self, wmo, cyc):
         """ Fetch index for a profile
 
             given one or more WMOs and CYCLE_NUMBER
         """
-        if "profile" in self.Fetchers:
-            self.fetcher = self.Fetchers["profile"](
-                WMO=wmo, CYC=cyc, **self.fetcher_options
-            )
-            self._AccessPoint = "profile"  # Register the requested access point
-        else:
-            raise InvalidFetcherAccessPoint(
-                "'profile' not available with '%s' src" % self._src
-            )
+        self.fetcher = self.Fetchers["profile"](WMO=wmo, CYC=cyc, **self.fetcher_options)
+        self._AccessPoint = "profile"  # Register the requested access point
         return self
 
+    @checkAccessPoint
     def float(self, wmo):
         """ Load index for one or more floats (WMOs) """
-        if "float" in self.Fetchers:
-            self.fetcher = self.Fetchers["float"](WMO=wmo, **self.fetcher_options)
-            self._AccessPoint = "float"  # Register the requested access point
-        else:
-            raise InvalidFetcherAccessPoint(
-                "'float' not available with '%s' src" % self._src
-            )
+        self.fetcher = self.Fetchers["float"](WMO=wmo, **self.fetcher_options)
+        self._AccessPoint = "float"  # Register the requested access point
         return self
 
+    @checkAccessPoint
     def region(self, box):
         """ Load index for a rectangular space/time domain region """
-        if "region" in self.Fetchers:
-            self.fetcher = self.Fetchers["region"](box=box, **self.fetcher_options)
-            self._AccessPoint = "region"  # Register the requested access point
-        else:
-            raise InvalidFetcherAccessPoint(
-                "'region' not available with '%s' src" % self._src
-            )
+        self.fetcher = self.Fetchers["region"](box=box, **self.fetcher_options)
+        self._AccessPoint = "region"  # Register the requested access point
         return self
 
     def to_dataframe(self, **kwargs):

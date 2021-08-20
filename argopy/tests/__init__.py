@@ -139,7 +139,7 @@ has_localftp, requires_localftp = _connectskip(
     "localftp" in AVAILABLE_SOURCES, "the localftp data fetcher"
 )
 has_localftp_index, requires_localftp_index = _connectskip(
-    not "localftp" in AVAILABLE_INDEX_SOURCES, "the localftp index fetcher"
+    "localftp" in AVAILABLE_INDEX_SOURCES, "the localftp index fetcher"
 )
 
 ############

@@ -35,11 +35,11 @@ class Test_Facade:
         with pytest.raises(InvalidFetcherAccessPoint):
             ArgoDataFetcher(
                 src=self.src
-            ).invalid_accesspoint.to_xarray()  # Can't get data if access point not defined first
+            ).invalid_accesspoint.to_xarray()
         with pytest.raises(InvalidFetcher):
             ArgoDataFetcher(
                 src=self.src
-            ).to_xarray()  # Can't get data if access point not defined first
+            ).to_xarray()  # Also can't get data if access point not defined first
 
     @requires_fetcher
     def test_invalid_dataset(self):
