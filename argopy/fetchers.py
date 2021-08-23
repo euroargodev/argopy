@@ -379,10 +379,13 @@ class ArgoDataFetcher:
             if self._AccessPoint == 'profile':
                 index_loader.profile(self._AccessPoint_data['wmo'], self._AccessPoint_data['cyc']).load()
             if self._AccessPoint == 'region':
-                index_loader.region(self._AccessPoint_data['box']).load()
+                # Convert data box to index box (remove depth info):
+                index_box = self._AccessPoint_data['box']
+                del index_box[4:6]
+                index_loader.region(index_box).load()
             df = index_loader.index
 
-            if not self._loaded and self._mode == 'standard' and len(self._index) != len(df):
+            if self._loaded and self._mode == 'standard' and len(self._index) != len(df):
                 warnings.warn("Loading a full index in 'standard' user mode may lead to more profiles in the "
                               "index than reported in data.")
 
