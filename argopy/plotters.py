@@ -39,7 +39,7 @@ try:
 except ModuleNotFoundError:
     with_cartopy = False
 
-STYLE = {"axes": "white", "palette": "Set1"}
+STYLE = {"axes": "whitegrid", "palette": "Set1"}
 try:
     import seaborn as sns
 

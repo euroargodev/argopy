@@ -26,6 +26,26 @@ Some options are available to customise the plot, for instance:
 
 .. image:: _static/trajectory_sample_white.png
 
+Histograms on properties
+------------------------
+
+It is also possible to create bar plot for histograms on some data properties: ' profiler' and 'dac':
+
+.. code-block:: python
+
+    from argopy import IndexFetcher as ArgoIndexFetcher
+    idx = ArgoIndexFetcher().region([-80,-30,20,50,'2021-01','2021-08']).load()
+    fig, ax = idx.plot('dac')
+
+.. image:: _static/bar_dac.png
+
+.. code-block:: python
+
+    fig, ax = idx.plot('profiler')
+
+.. image:: _static/bar_profiler.png
+
+
 Float dashboard
 ---------------
 
