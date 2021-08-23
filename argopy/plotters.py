@@ -419,6 +419,7 @@ def bar_plot(
     Parameters
     ----------
     df: Pandas DataFrame
+        As returned by a fetcher index property
     by: str
         The profile property to plot. Default is 'institution'
     style: str
@@ -429,14 +430,8 @@ def bar_plot(
     fig: :class:`matplotlib.pyplot.figure.Figure`
     ax: :class:`matplotlib.axes.Axes`
     """
-    if by not in [
-        "institution",
-        "institution_code",
-        "profiler",
-        "profiler_code",
-        "ocean",
-    ]:
-        raise ValueError("not a valid field")
+    if by not in df:
+        raise ValueError("'%s' is not a valid field for a bar plot" % by)
     with axes_style(style):
         defaults = {"figsize": (10, 6), "dpi": 90}
         fig, ax = plt.subplots(**{**defaults, **kwargs})
@@ -444,7 +439,7 @@ def bar_plot(
             mind = df.groupby(by).size().sort_values(ascending=False).index
             sns.countplot(y=by, data=df, order=mind)
         else:
-            df.groupby("profiler").size().sort_values(ascending=True).plot.barh(ax)
+            df.groupby(by).size().sort_values(ascending=True).plot.barh(ax)
         ax.set_xlabel("Number of profiles")
         ax.set_ylabel("")
     return fig, ax

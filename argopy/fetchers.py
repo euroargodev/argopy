@@ -94,6 +94,7 @@ class ArgoDataFetcher:
                 "%s dataset is not available for this data source (%s)"
                 % (self._dataset_id, self._src)
             )
+        self.fetcher_kwargs = {**fetcher_kwargs}
         self.fetcher_options = {**{"ds": self._dataset_id}, **fetcher_kwargs}
         self.postproccessor = self.__empty_processor
         self._AccessPoint = None
@@ -222,6 +223,7 @@ class ArgoDataFetcher:
 
         self.fetcher = self.Fetchers["float"](WMO=wmo, **self.fetcher_options)
         self._AccessPoint = "float"  # Register the requested access point
+        self._AccessPoint_data = {'wmo': wmo}  # Register the requested access point data
 
         if self._mode == "standard" and self._dataset_id != "ref":
             def postprocessing(xds):
@@ -252,6 +254,7 @@ class ArgoDataFetcher:
         """
         self.fetcher = self.Fetchers["profile"](WMO=wmo, CYC=cyc, **self.fetcher_options)
         self._AccessPoint = "profile"  # Register the requested access point
+        self._AccessPoint_data = {'wmo': wmo, 'cyc': cyc}  # Register the requested access point data
 
         if self._mode == "standard" and self._dataset_id != "ref":
             def postprocessing(xds):
@@ -288,6 +291,7 @@ class ArgoDataFetcher:
         is_box(box, errors="raise")  # Validate the box definition
         self.fetcher = self.Fetchers["region"](box=box, **self.fetcher_options)
         self._AccessPoint = "region"  # Register the requested access point
+        self._AccessPoint_data = {'box': box}  # Register the requested access point data
 
         if self._mode == "standard" and self._dataset_id != "ref":
             def postprocessing(xds):
@@ -329,33 +333,63 @@ class ArgoDataFetcher:
             )
         return self.load().data.to_dataframe(**kwargs)
 
-    def to_index(self):
-        """ Convert fetched data to index
+    def to_index(self, full: bool = False):
+        """ Create an index from fetched data
+
+            Parameters
+            ----------
+            full: bool
+                Should extract a full index, as returned by an IndexFetcher or only a space/time
+                index of fetched profiles (this is the default choice, i.e. full=False).
 
             Returns
             -------
             :class:`pandas.Dataframe`
         """
-        self.load()
-        ds = self.data.argo.point2profile()
-        df = (
-            ds.drop_vars(set(ds.data_vars) - set(["PLATFORM_NUMBER"]))
-            .drop_dims("N_LEVELS")
-            .to_dataframe()
-        )
-        df = (
-            df.reset_index()
-            .rename(
-                columns={
-                    "PLATFORM_NUMBER": "wmo",
-                    "LONGITUDE": "longitude",
-                    "LATITUDE": "latitude",
-                    "TIME": "date",
-                }
+        if not full:
+            self.load()
+            ds = self.data.argo.point2profile()
+            df = (
+                ds.drop_vars(set(ds.data_vars) - set(["PLATFORM_NUMBER"]))
+                .drop_dims("N_LEVELS")
+                .to_dataframe()
             )
-            .drop(columns="N_PROF")
-        )
-        df = df[["date", "latitude", "longitude", "wmo"]]
+            df = (
+                df.reset_index()
+                .rename(
+                    columns={
+                        "PLATFORM_NUMBER": "wmo",
+                        "LONGITUDE": "longitude",
+                        "LATITUDE": "latitude",
+                        "TIME": "date",
+                    }
+                )
+                .drop(columns="N_PROF")
+            )
+            df = df[["date", "latitude", "longitude", "wmo"]]
+
+        else:
+            # Instantiate and load an IndexFetcher:
+            index_loader = ArgoIndexFetcher(mode=self._mode,
+                                            src=self._src,
+                                            ds=self._dataset_id,
+                                            **self.fetcher_kwargs)
+            if self._AccessPoint == 'float':
+                index_loader.float(self._AccessPoint_data['wmo']).load()
+            if self._AccessPoint == 'profile':
+                index_loader.profile(self._AccessPoint_data['wmo'], self._AccessPoint_data['cyc']).load()
+            if self._AccessPoint == 'region':
+                index_loader.region(self._AccessPoint_data['box']).load()
+            df = index_loader.index
+
+            if not self._loaded and self._mode == 'standard' and len(self._index) != len(df):
+                warnings.warn("Loading a full index in 'standard' user mode may lead to more profiles in the "
+                              "index than reported in data.")
+
+            # Possibly replace the loaded index with the full version:
+            if not self._loaded or self._request == self.__repr__():
+                self._index = df
+
         return df
 
     def load(self, force: bool = False, **kwargs):
@@ -387,7 +421,7 @@ class ArgoDataFetcher:
             self._request = self.__repr__()  # Save definition of loaded data
             self._loaded = True
             # Extract measurements index from data:
-            self._index = self.to_index()
+            self._index = self.to_index(full=False)
         return self
 
     def clear_cache(self):
