@@ -492,7 +492,7 @@ def show_versions(file=sys.stdout):
         print(f"{k}: {stat}", file=file)
 
 
-def isconnected(host="http://www.ifremer.fr"):
+def isconnected(host="https://www.ifremer.fr"):
     """ check if we have a live internet connection
 
         Parameters
