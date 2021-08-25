@@ -523,7 +523,7 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         if not isinstance(WMO, list):
             WMO = [WMO]
         if not all(isinstance(x, (int, np.int64)) for x in WMO):
-            raise ValueError("WMO must be a list of integers")
+            raise ValueError("WMO must be an integer or a list of integers")
 
         if isinstance(CYC, int):
             CYC = np.array(
