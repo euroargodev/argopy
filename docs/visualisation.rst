@@ -5,8 +5,8 @@ Data visualisation
 
 Although ``argopy`` is not focus on visualisation, it provides a few functions to get you started. Plotting functions are available for both the data and index fetchers.
 
-Trajectories from an index
---------------------------
+Trajectories
+------------
 
 .. code-block:: python
 
@@ -29,7 +29,7 @@ Some options are available to customise the plot, for instance:
 Histograms on properties
 ------------------------
 
-It is also possible to create bar plot for histograms on some data properties: ' profiler' and 'dac':
+It is also possible to create bar plot for histograms on some data properties: 'profiler' and 'dac':
 
 .. code-block:: python
 

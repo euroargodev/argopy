@@ -334,7 +334,7 @@ class ArgoDataFetcher:
         return self.load().data.to_dataframe(**kwargs)
 
     def to_index(self, full: bool = False):
-        """ Create an index from fetched data
+        """ Create an index of Argo data
 
             Parameters
             ----------

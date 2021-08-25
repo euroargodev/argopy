@@ -15,7 +15,7 @@ from aiohttp.client_exceptions import ServerDisconnectedError, ClientResponseErr
 
 import argopy
 
-argopy.set_options(api_timeout=3 * 60)  # From Github actions, requests can take a while
+argopy.set_options(api_timeout=4 * 60)  # From Github actions, requests can take a while
 argopy.show_versions()
 
 
