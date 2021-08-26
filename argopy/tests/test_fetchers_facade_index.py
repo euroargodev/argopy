@@ -105,7 +105,7 @@ class Test_AllBackends:
     def test_float_erddap(self):
         self.__test_float("erddap")
 
-    # @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
+    @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
     @requires_connected_erddap_index
     def test_region_erddap(self):
         self.__test_region("erddap")
