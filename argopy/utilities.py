@@ -1055,8 +1055,48 @@ def format_oneline(s, max_width=65):
         return s
 
 
+def is_indexbox(box: list, errors="raise"):
+    """ Check if this array matches a 2d or 3d index box definition
+
+        box = [lon_min, lon_max, lat_min, lat_max
+    or:
+        box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
+
+    Parameters
+    ----------
+    box: list
+    errors: 'raise'
+
+    Returns
+    -------
+    bool
+    """
+
+    tests = {}
+
+    # Formats:
+    tests["index box must be a list"] = lambda b: isinstance(b, list)
+    tests["index box must be a list with 4 or 6 elements"] = lambda b: len(b) in [4, 6]
+
+    error = None
+    for msg, test in tests.items():
+        if not test(box):
+            error = msg
+            break
+
+    if error and errors == "raise":
+        raise ValueError(error)
+    elif error:
+        return False
+    else:
+        # Insert pressure bounds and use full box validator:
+        box.insert(4, 0.)
+        box.insert(5, 10000.)
+        return is_box(box)
+
+
 def is_box(box: list, errors="raise"):
-    """ Check if this array matches a 2d or 3d box definition
+    """ Check if this array matches a 2d or 3d data box definition
 
         box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
     or:
@@ -1071,7 +1111,6 @@ def is_box(box: list, errors="raise"):
     -------
     bool
     """
-
     def is_dateconvertible(d):
         try:
             pd.to_datetime(d)

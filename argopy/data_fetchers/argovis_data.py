@@ -18,7 +18,7 @@ import warnings
 
 from argopy.stores import httpstore
 from argopy.options import OPTIONS
-from argopy.utilities import list_standard_variables, format_oneline, is_box, Chunker
+from argopy.utilities import list_standard_variables, format_oneline, Chunker
 from argopy.plotters import open_dashboard
 
 access_points = ['wmo', 'box']
@@ -282,6 +282,7 @@ class Fetch_wmo(ArgovisDataFetcher):
         """
         if isinstance(WMO, int):
             WMO = [WMO]  # Make sure we deal with a list
+
         if isinstance(CYC, int):
             CYC = np.array(
                 (CYC,), dtype="int"
@@ -355,7 +356,6 @@ class Fetch_box(ArgovisDataFetcher):
             start = end - pd.DateOffset(months=1)
             box.append(start.strftime("%Y-%m-%d"))
             box.append(end.strftime("%Y-%m-%d"))
-        is_box(box)
         self.BOX = box
 
         self.definition = "?"

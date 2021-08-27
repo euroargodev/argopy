@@ -5,13 +5,15 @@
 High level helper methods to load Argo data from any source
 The facade should be able to work with all available data access point,
 
+Validity of access points parameters (eg: wmo) is made here, not at the data/index source fetcher level
+
 """
 
 import warnings
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher
-from .utilities import list_available_data_src, list_available_index_src, is_box
+from .utilities import list_available_data_src, list_available_index_src, is_box, is_indexbox
 from .plotters import plot_trajectory, plot_dac, plot_profilerType
 
 AVAILABLE_DATA_SOURCES = list_available_data_src()
@@ -452,6 +454,7 @@ class ArgoIndexFetcher:
         :class:`argopy.fetchers.ArgoIndexFetcher`
             A data source fetcher for a space/time domain index
         """
+        is_indexbox(box, errors="raise")  # Validate the box definition
         if "region" in self.Fetchers:
             self.fetcher = self.Fetchers["region"](box=box, **self.fetcher_options)
             self._AccessPoint = "region"  # Register the requested access point
