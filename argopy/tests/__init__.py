@@ -25,12 +25,12 @@ def _importorskip(modname):
         has = True
     except ImportError:
         has = False
-    func = pytest.mark.skipif(not has, reason="requires {}".format(modname))
+    func = pytest.mark.skipif(not has, reason="Requires {}".format(modname))
     return has, func
 
 
 def _connectskip(connected, msg):
-    func = pytest.mark.skipif(not connected, reason="requires {}".format(msg))
+    func = pytest.mark.skipif(not connected, reason="Requires {}".format(msg))
     return connected, func
 
 
@@ -97,27 +97,27 @@ has_erddap_index, requires_erddap_index = _connectskip(
 
 has_connected_erddap = has_connection and has_erddap
 requires_connected_erddap = pytest.mark.skipif(
-    not has_connected_erddap, reason="a live Ifremer erddap server"
+    not has_connected_erddap, reason="Requires a live Ifremer erddap server"
 )
 has_connected_erddap_phy = has_connection and has_erddap and has_erddap_phy
 requires_connected_erddap_phy = pytest.mark.skipif(
     not has_connected_erddap_phy,
-    reason="a live and valid core Argo dataset from Ifremer erddap server",
+    reason="Requires a live and valid core Argo dataset from Ifremer erddap server",
 )
 has_connected_erddap_bgc = has_connection and has_erddap and has_erddap_bgc
 requires_connected_erddap_bgc = pytest.mark.skipif(
     not has_connected_erddap_bgc,
-    reason="a live and valid BGC Argo dataset from Ifremer erddap server",
+    reason="Requires a live and valid BGC Argo dataset from Ifremer erddap server",
 )
 has_connected_erddap_ref = has_connection and has_erddap and has_erddap_ref
 requires_connected_erddap_ref = pytest.mark.skipif(
     not has_connected_erddap_ref,
-    reason="a live and valid Reference Argo dataset from Ifremer erddap server",
+    reason="Requires a live and valid Reference Argo dataset from Ifremer erddap server",
 )
 has_connected_erddap_index = has_connection and has_erddap and has_erddap_index
 requires_connected_erddap_index = pytest.mark.skipif(
     not has_connected_erddap_index,
-    reason="a live and valid Argo Index from Ifremer erddap server",
+    reason="Requires a live and valid Argo Index from Ifremer erddap server",
 )
 
 ###########
@@ -129,7 +129,7 @@ has_argovis, requires_argovis = _connectskip(
 
 has_connected_argovis = has_connection and has_argovis
 requires_connected_argovis = pytest.mark.skipif(
-    has_connected_argovis, reason="a live Argovis server"
+    has_connected_argovis, reason="Requires a live Argovis server"
 )
 
 ############
