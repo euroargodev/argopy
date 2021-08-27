@@ -203,8 +203,6 @@ class Fetch_wmo(ErddapArgoIndexFetcher):
             WMO : list(int)
                 The list of WMOs to load all Argo data for.
         """
-        if isinstance(WMO, int):
-            WMO = [WMO]  # Make sure we deal with a list
         self.WMO = WMO
         self.definition = 'Ifremer erddap Argo Index fetcher for floats'
         return self

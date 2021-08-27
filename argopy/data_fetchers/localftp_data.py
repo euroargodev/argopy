@@ -398,8 +398,6 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
         CYC: int, np.array(int), list(int)
             The cycle numbers to load.
         """
-        if isinstance(WMO, int):
-            WMO = [WMO]  # Make sure we deal with a list
         if isinstance(CYC, int):
             CYC = np.array((CYC,), dtype='int')  # Make sure we deal with an array of integers
         if isinstance(CYC, list):

@@ -1197,3 +1197,62 @@ def is_list_of_dicts(lst):
 
 def is_list_of_datasets(lst):
     return all(isinstance(x, xr.Dataset) for x in lst)
+
+
+def check_wmo(lst, errors="raise"):
+    """ Check a WMO option and returned a list of integers
+
+    Parameters
+    ----------
+    wmo: int
+        WMO must be an integer or an iterable with elements that can be casted as integers
+    errors: 'raise'
+
+    Returns
+    -------
+    list(int)
+    """
+    is_wmo(lst, errors=errors)
+
+    # Make sure we deal with a list
+    if not isinstance(lst, list):
+        if isinstance(lst, np.ndarray):
+            lst = list(lst)
+        else:
+            lst = [lst]
+
+    # Then cast list elements as integers
+    return [int(x) for x in lst]
+
+
+def is_wmo(lst, errors="raise"):
+    """ Assess validity of a WMO option
+
+    Parameters
+    ----------
+    wmo: int
+        WMO must be an integer or an iterable with elements that can be casted as integers
+    errors: 'raise'
+
+    Returns
+    -------
+    bool
+        True if wmo is indeed a list of integers
+    """
+
+    # Make sure we deal with a list
+    if not isinstance(lst, list):
+        if isinstance(lst, np.ndarray):
+            lst = list(lst)
+        else:
+            lst = [lst]
+
+    # Then try to cast list elements as integers, return True if ok
+    try:
+        [int(x) for x in lst]
+        return True
+    except:
+        if errors == "raise":
+            raise ValueError("WMO must be an integer or an iterable with elements that can be casted as integers")
+        else:
+            return False

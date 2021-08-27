@@ -13,7 +13,7 @@ import warnings
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher
-from .utilities import list_available_data_src, list_available_index_src, is_box, is_indexbox
+from .utilities import list_available_data_src, list_available_index_src, is_box, is_indexbox, check_wmo
 from .plotters import plot_trajectory, plot_dac, plot_profilerType
 
 AVAILABLE_DATA_SOURCES = list_available_data_src()
@@ -158,6 +158,8 @@ class ArgoDataFetcher:
         :class:`argopy.fetchers.ArgoDataFetcher.float`
             A data source fetcher for all float profiles
         """
+        wmo = check_wmo(wmo, errors="raise")  # Validate the WMO definition
+
         if "CYC" in kw or "cyc" in kw:
             raise TypeError(
                 "float() got an unexpected keyword argument 'cyc'. Use 'profile' access "
@@ -199,6 +201,8 @@ class ArgoDataFetcher:
         :class:`argopy.fetchers.ArgoDataFetcher.profile`
             A data source fetcher for specific float profiles
         """
+        wmo = check_wmo(wmo, errors="raise")  # Validate the WMO definition
+
         if "profile" in self.Fetchers:
             self.fetcher = self.Fetchers["profile"](
                 WMO=wmo, CYC=cyc, **self.fetcher_options
@@ -398,6 +402,8 @@ class ArgoIndexFetcher:
         :class:`argopy.fetchers.ArgoIndexFetcher.float`
             A data source fetcher for all float profiles index
         """
+        wmo = check_wmo(wmo, errors="raise")  # Validate the WMO definition
+
         if "float" in self.Fetchers:
             self.fetcher = self.Fetchers["float"](WMO=wmo, **self.fetcher_options)
             self._AccessPoint = "float"  # Register the requested access point
@@ -423,6 +429,8 @@ class ArgoIndexFetcher:
         :class:`argopy.fetchers.ArgoIndexFetcher.profile`
             A data source fetcher for specific float profiles index
         """
+        wmo = check_wmo(wmo, errors="raise")  # Validate the WMO definition
+
         if "profile" in self.Fetchers:
             self.fetcher = self.Fetchers["profile"](
                 WMO=wmo, CYC=cyc, **self.fetcher_options
