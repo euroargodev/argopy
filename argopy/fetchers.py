@@ -147,8 +147,9 @@ class ArgoDataFetcher:
 
         Parameters
         ----------
-        wmo: list(int)
-            Define the list of Argo floats to load data for. This is a list of integers with WMO numbers.
+        wmo: int, list(int)
+            Define the list of Argo floats to load data for. This is a list of integers with WMO float identifiers.
+            WMO is the World Meteorological Organization.
 
         Returns
         -------
@@ -185,8 +186,9 @@ class ArgoDataFetcher:
 
         Parameters
         ----------
-        wmo: list(int)
-            Define the list of Argo floats to load data for. This is a list of integers with WMO numbers.
+        wmo: int, list(int)
+            Define the list of Argo floats to load data for. This is a list of integers with WMO float identifiers.
+            WMO is the World Meteorological Organization.
         cyc: list(int)
             Define the list of cycle numbers to load for each Argo floats listed in ``wmo``.
 
@@ -380,10 +382,44 @@ class ArgoIndexFetcher:
             raise InvalidFetcherAccessPoint("'%s' is not a valid access point" % key)
         pass
 
+    def float(self, wmo):
+        """ Load index for one or more WMOs
+
+        Parameters
+        ----------
+        wmo: int, list(int)
+            Define the list of Argo floats to load index for. This is a list of integers with WMO float identifiers.
+            WMO is the World Meteorological Organization.
+
+        Returns
+        -------
+        :class:`argopy.fetchers.ArgoIndexFetcher.float`
+            A data source fetcher for all float profiles index
+        """
+        if "float" in self.Fetchers:
+            self.fetcher = self.Fetchers["float"](WMO=wmo, **self.fetcher_options)
+            self._AccessPoint = "float"  # Register the requested access point
+        else:
+            raise InvalidFetcherAccessPoint(
+                "'float' not available with '%s' src" % self._src
+            )
+        return self
+
     def profile(self, wmo, cyc):
         """ Fetch index for a profile
 
-            given one or more WMOs and CYCLE_NUMBER
+        Parameters
+        ----------
+        wmo: int, list(int)
+            Define the list of Argo floats to load index for. This is a list of integers with WMO float identifiers.
+            WMO is the World Meteorological Organization.
+        cyc: list(int)
+            Define the list of cycle numbers to load for each Argo floats listed in ``wmo``.
+
+        Returns
+        -------
+        :class:`argopy.fetchers.ArgoIndexFetcher.profile`
+            A data source fetcher for specific float profiles index
         """
         if "profile" in self.Fetchers:
             self.fetcher = self.Fetchers["profile"](
@@ -396,19 +432,26 @@ class ArgoIndexFetcher:
             )
         return self
 
-    def float(self, wmo):
-        """ Load index for one or more WMOs """
-        if "float" in self.Fetchers:
-            self.fetcher = self.Fetchers["float"](WMO=wmo, **self.fetcher_options)
-            self._AccessPoint = "float"  # Register the requested access point
-        else:
-            raise InvalidFetcherAccessPoint(
-                "'float' not available with '%s' src" % self._src
-            )
-        return self
-
     def region(self, box):
-        """ Load index for a rectangular space/time domain region """
+        """ Space/time domain index fetcher
+
+        Parameters
+        ----------
+        box: list()
+            Define the domain to load Argo data for. The box list is made of:
+                - lon_min: float, lon_max: float,
+                - lat_min: float, lat_max: float,
+                - date_min: str (optional), date_max: str (optional)
+
+            Longitude and latitude bounds are required, while the two bounding dates are optional.
+            If bounding dates are not specified, the entire time series is fetched.
+            Eg: [-60, -55, 40., 45., '2007-08-01', '2007-09-01']
+
+        Returns
+        -------
+        :class:`argopy.fetchers.ArgoIndexFetcher`
+            A data source fetcher for a space/time domain index
+        """
         if "region" in self.Fetchers:
             self.fetcher = self.Fetchers["region"](box=box, **self.fetcher_options)
             self._AccessPoint = "region"  # Register the requested access point
