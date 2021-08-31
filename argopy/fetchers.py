@@ -158,7 +158,7 @@ class ArgoDataFetcher:
         :class:`argopy.fetchers.ArgoDataFetcher.float`
             A data source fetcher for all float profiles
         """
-        wmo = check_wmo(wmo, errors="raise")  # Validate the WMO definition
+        wmo = check_wmo(wmo)  # Check and return a valid list of WMOs
 
         if "CYC" in kw or "cyc" in kw:
             raise TypeError(
@@ -201,7 +201,7 @@ class ArgoDataFetcher:
         :class:`argopy.fetchers.ArgoDataFetcher.profile`
             A data source fetcher for specific float profiles
         """
-        wmo = check_wmo(wmo, errors="raise")  # Validate the WMO definition
+        wmo = check_wmo(wmo)  # Check and return a valid list of WMOs
 
         if "profile" in self.Fetchers:
             self.fetcher = self.Fetchers["profile"](
@@ -402,7 +402,7 @@ class ArgoIndexFetcher:
         :class:`argopy.fetchers.ArgoIndexFetcher.float`
             A data source fetcher for all float profiles index
         """
-        wmo = check_wmo(wmo, errors="raise")  # Validate the WMO definition
+        wmo = check_wmo(wmo)  # Check and return a valid list of WMOs
 
         if "float" in self.Fetchers:
             self.fetcher = self.Fetchers["float"](WMO=wmo, **self.fetcher_options)
@@ -429,7 +429,7 @@ class ArgoIndexFetcher:
         :class:`argopy.fetchers.ArgoIndexFetcher.profile`
             A data source fetcher for specific float profiles index
         """
-        wmo = check_wmo(wmo, errors="raise")  # Validate the WMO definition
+        wmo = check_wmo(wmo)  # Check and return a valid list of WMOs
 
         if "profile" in self.Fetchers:
             self.fetcher = self.Fetchers["profile"](

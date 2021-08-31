@@ -46,6 +46,11 @@ from argopy.errors import (
 
 path2pkl = pkg_resources.resource_filename("argopy", "assets/")
 
+try:
+    collectionsAbc = collections.abc
+except AttributeError:
+    collectionsAbc = collections
+
 
 def clear_cache():
     """ Delete argopy cache folder content """
@@ -826,7 +831,7 @@ class Chunker:
         default = self.default_chunksize[[k for k in self.request.keys()][0]]
         if len(chunksize) == 0:  # chunksize = {}
             chunksize = default
-        if not isinstance(chunksize, collections.Mapping):
+        if not isinstance(chunksize, collectionsAbc.Mapping):
             raise ValueError("chunksize must be mappable")
         else:  # merge with default:
             chunksize = {**default, **chunksize}
@@ -837,7 +842,7 @@ class Chunker:
             chunks = default
         elif len(chunks) == 0:  # chunks = {}, i.e. chunk=1 for all
             chunks = {k: 1 for k in self.request}
-        if not isinstance(chunks, collections.Mapping):
+        if not isinstance(chunks, collectionsAbc.Mapping):
             raise ValueError("chunks must be 'auto' or mappable")
         chunks = {**default, **chunks}
         self.chunks = collections.OrderedDict(sorted(chunks.items()))
@@ -1199,8 +1204,8 @@ def is_list_of_datasets(lst):
     return all(isinstance(x, xr.Dataset) for x in lst)
 
 
-def check_wmo(lst, errors="raise"):
-    """ Check a WMO option and returned a list of integers
+def check_wmo(lst):
+    """ Check a WMO option and returned it as a list of integers
 
     Parameters
     ----------
@@ -1212,7 +1217,7 @@ def check_wmo(lst, errors="raise"):
     -------
     list(int)
     """
-    is_wmo(lst, errors=errors)
+    is_wmo(lst, errors="raise")
 
     # Make sure we deal with a list
     if not isinstance(lst, list):
@@ -1222,7 +1227,7 @@ def check_wmo(lst, errors="raise"):
             lst = [lst]
 
     # Then cast list elements as integers
-    return [int(x) for x in lst]
+    return [abs(int(x)) for x in lst]
 
 
 def is_wmo(lst, errors="raise"):
@@ -1230,9 +1235,10 @@ def is_wmo(lst, errors="raise"):
 
     Parameters
     ----------
-    wmo: int
-        WMO must be an integer or an iterable with elements that can be casted as integers
+    wmo: int, list(int), array(int)
+        WMO must be a single or a list of 5/7 digit positive numbers
     errors: 'raise'
+        Possibly raises a ValueError exception, otherwise fails silently.
 
     Returns
     -------
@@ -1247,12 +1253,29 @@ def is_wmo(lst, errors="raise"):
         else:
             lst = [lst]
 
+    # Error message:
+    # msg = "WMO must be an integer or an iterable with elements that can be casted as integers"
+    msg = "WMO must be a single or a list of 5/7 digit positive numbers"
+
     # Then try to cast list elements as integers, return True if ok
+    result = True
     try:
-        [int(x) for x in lst]
-        return True
+        for x in lst:
+            if not str(x).isdigit():
+                result = False
+
+            if (len(str(x)) != 5) and (len(str(x)) != 7):
+                result = False
+
+            if int(x) <= 0:
+                result = False
+
     except:
+        result = False
         if errors == "raise":
-            raise ValueError("WMO must be an integer or an iterable with elements that can be casted as integers")
-        else:
-            return False
+            raise ValueError(msg)
+
+    if not result and errors == "raise":
+        raise ValueError(msg)
+    else:
+        return result
