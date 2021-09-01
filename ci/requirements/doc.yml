@@ -24,8 +24,8 @@ dependencies:
   - ipykernel=5.3.4
   - cartopy=0.18.0
   - ipywidgets=7.5.1
-  - sphinx=3.2.1
-  - sphinx_rtd_theme=0.4.3
+#  - sphinx=3.2.1 # Automatically added by RTD
+#  - sphinx_rtd_theme=0.4.3 # Automatically added by RTD
   - sphinx-autosummary-accessors=0.1.2
   - nbsphinx=0.7.1
   - numpydoc=1.1.0

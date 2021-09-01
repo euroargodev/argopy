@@ -13,6 +13,7 @@ Trajectories
     from argopy import IndexFetcher as ArgoIndexFetcher
     idx = ArgoIndexFetcher().float([6902745, 6902746]).load()
     fig, ax = idx.plot('trajectory')
+    fig, ax = idx.plot()  # Trajectory is the default plot
 
 .. image:: _static/trajectory_sample.png
 

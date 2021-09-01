@@ -290,7 +290,7 @@ texinfo_documents = [
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
     'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
-    'iris': ('https://scitools.org.uk/iris/docs/latest/', None),
+    'iris': ('https://scitools-iris.readthedocs.io/en/stable/', None),
     'numpy': ('https://numpy.org/doc/stable/', None),
     'numba': ('https://numba.readthedocs.io/en/stable/', None),
     'matplotlib': ('https://matplotlib.org/', None),

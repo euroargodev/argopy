@@ -192,14 +192,14 @@ class ArgoDataFetcher:
             self.load()
         return self._index
 
-    # def dashboard(self, **kw):
-    #     try:
-    #         return self.fetcher.dashboard(**kw)
-    #     except Exception:
-    #         warnings.warn(
-    #             "dashboard not available for this fetcher access point (%s/%s)"
-    #             % (self._src, self._AccessPoint)
-    #         )
+    def dashboard(self, **kw):
+        try:
+            return self.fetcher.dashboard(**kw)
+        except Exception:
+            warnings.warn(
+                "dashboard not available for this fetcher access point (%s/%s)"
+                % (self._src, self._AccessPoint)
+            )
 
     @checkAccessPoint
     def float(self, wmo, **kw):
@@ -402,6 +402,7 @@ class ArgoDataFetcher:
             Access loaded measurements structure with the `data` and `index` properties:
 
                 ds = ArgoDataFetcher().profile(6902746, 34).load().data
+
                 df = ArgoDataFetcher().float(6902746).load().index
 
             Parameters

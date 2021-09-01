@@ -420,8 +420,8 @@ str, date\_max: str) from the facade. The two bounding dates [date\_min
 and date\_max] should be optional (if not specified, the entire time
 series is requested by the user).
 
-File systems
-""""""""""""
+Internal File systems
+"""""""""""""""""""""
 
 All http requests must go through the internal
 ``httpstore``, an internal wrapper around fsspec that allows to

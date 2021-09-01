@@ -37,12 +37,15 @@ I/O and Data formats
 .. autosummary::
    :toctree: generated/
 
+   argopy.DataFetcher.load
    argopy.DataFetcher.to_xarray
    argopy.DataFetcher.to_dataframe
+   argopy.DataFetcher.to_index
 
 .. autosummary::
    :toctree: generated/
 
+   argopy.IndexFetcher.load
    argopy.IndexFetcher.to_xarray
    argopy.IndexFetcher.to_dataframe
    argopy.IndexFetcher.to_csv
@@ -53,6 +56,7 @@ Visualisation
 .. autosummary::
    :toctree: generated/
 
+   argopy.DataFetcher.plot
    argopy.IndexFetcher.plot
    argopy.dashboard
 
@@ -64,6 +68,10 @@ Fetcher properties
    :toctree: generated/
 
    argopy.DataFetcher.uri
+   argopy.DataFetcher.data
+   argopy.DataFetcher.index
+   argopy.IndexFetcher.index
+
 
 Helpers
 -------
@@ -71,6 +79,7 @@ Helpers
 .. autosummary::
    :toctree: generated/
 
+   argopy.status
    argopy.set_options
    argopy.clear_cache
    argopy.tutorial.open_dataset
