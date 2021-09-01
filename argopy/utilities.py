@@ -1090,7 +1090,7 @@ def is_indexbox(box: list, errors="raise"):
             break
 
     if error and errors == "raise":
-        raise ValueError(error)
+        raise ValueError("%s: %s" % (box, error))
     elif error:
         return False
     else:
@@ -1098,11 +1098,11 @@ def is_indexbox(box: list, errors="raise"):
         tmp_box = box.copy()
         tmp_box.insert(4, 0.)
         tmp_box.insert(5, 10000.)
-        return is_box(tmp_box)
+        return is_box(tmp_box, errors=errors)
 
 
 def is_box(box: list, errors="raise"):
-    """ Check if this array matches a 2d or 3d data box definition
+    """ Check if this array matches a 3d or 4d data box definition
 
         box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
     or:
@@ -1186,7 +1186,7 @@ def is_box(box: list, errors="raise"):
             break
 
     if error and errors == "raise":
-        raise ValueError(error)
+        raise ValueError("%s: %s" % (box, error))
     elif error:
         return False
     else:
