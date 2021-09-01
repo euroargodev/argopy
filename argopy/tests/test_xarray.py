@@ -15,7 +15,6 @@ def ds_pts():
     """
     data = {}
     try:
-        # raise ValueError('toto')
         for user_mode in ['standard', 'expert']:
             data[user_mode] = (
                 ArgoDataFetcher(src="erddap", mode=user_mode)

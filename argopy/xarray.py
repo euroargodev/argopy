@@ -1,4 +1,6 @@
 import sys
+import warnings
+
 import numpy as np
 import pandas as pd
 import xarray as xr
@@ -690,8 +692,8 @@ class ArgoAccessor:
     def teos10(self, vlist: list = ['SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP'], inplace: bool = True):
         """ Add TEOS10 variables to the dataset
 
-        By default, adds: 'SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP'
-        Other possible variables: 'SOUND_SPEED'
+        By default, adds: 'SA', 'CT'
+        Other possible variables: 'SIG0', 'N2', 'PV', 'PTEMP', 'SOUND_SPEED'
         Relies on the gsw library.
 
         If one exists, the correct CF standard name will be added to the attrs.
@@ -735,6 +737,8 @@ class ArgoAccessor:
         allowed = ['SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP', 'SOUND_SPEED']
         if any(var not in allowed for var in vlist):
             raise ValueError(f"vlist must be a subset of {allowed}, instead found {vlist}")
+
+        warnings.warn("Default variables will be reduced to 'SA' and 'CT' in 0.1.9", category=FutureWarning)
 
         this = self._obj
 
