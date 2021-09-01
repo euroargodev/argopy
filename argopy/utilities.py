@@ -1063,7 +1063,7 @@ def format_oneline(s, max_width=65):
 def is_indexbox(box: list, errors="raise"):
     """ Check if this array matches a 2d or 3d index box definition
 
-        box = [lon_min, lon_max, lat_min, lat_max
+        box = [lon_min, lon_max, lat_min, lat_max]
     or:
         box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
 
@@ -1095,9 +1095,10 @@ def is_indexbox(box: list, errors="raise"):
         return False
     else:
         # Insert pressure bounds and use full box validator:
-        box.insert(4, 0.)
-        box.insert(5, 10000.)
-        return is_box(box)
+        tmp_box = box.copy()
+        tmp_box.insert(4, 0.)
+        tmp_box.insert(5, 10000.)
+        return is_box(tmp_box)
 
 
 def is_box(box: list, errors="raise"):
