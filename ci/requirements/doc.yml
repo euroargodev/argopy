@@ -1,6 +1,4 @@
 name: argopy-docs
-channels:
-  - conda-forge
 dependencies:
   - python=3.8
   - xarray=0.16.1
