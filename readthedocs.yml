@@ -16,4 +16,4 @@ python:
 #  configuration: docs/conf.py
 
 conda:
-    environment: ci/requirements/conda-linux-64.lock
+    environment: ci/requirements/rtd.yml
