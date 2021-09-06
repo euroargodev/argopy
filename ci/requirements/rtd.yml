@@ -8,6 +8,7 @@ dependencies:
   - aiohttp=3.6.2
   - dask=2.30.0
   - scipy=1.5.2
+  - scikit-learn=0.21
 #  - distributed=2.30.0
 #  - matplotlib=3.3.2
   - ipython=7.18.1
