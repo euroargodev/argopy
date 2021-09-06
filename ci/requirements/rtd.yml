@@ -7,7 +7,7 @@ dependencies:
   - xarray=0.16.1
   - aiohttp=3.6.2
   - dask=2.30.0
-  - scipy=1.5.2
+  - scipy=1.1.0
   - scikit-learn=0.21
 #  - distributed=2.30.0
 #  - matplotlib=3.3.2
