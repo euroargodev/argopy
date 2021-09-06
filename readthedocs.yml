@@ -16,4 +16,4 @@ python:
 #  configuration: docs/conf.py
 
 conda:
-    environment: ci/requirements/rtd.yml
+    environment: ci/requirements/doc.yml
