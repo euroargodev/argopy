@@ -1,5 +1,3 @@
-.. _usage:
-
 Usage
 =====
 
@@ -16,14 +14,14 @@ Data are returned as a collection of measurements in a :class:`xarray.Dataset`:
 
 .. ipython:: python
 
-    print(ds)
+    ds
 
 Fetched data are returned as a 1D array collection of measurements. If you prefer to work with a 2D array collection of vertical profiles, simply transform the dataset with the :class:`xarray.Dataset` accessor method :meth:`argopy.argo.point2profile`:
 
 .. ipython:: python
 
     ds = ds.argo.point2profile()
-    print(ds)
+    ds
 
 You can also fetch data for a specific float using its `WMO number <https://www.wmo.int/pages/prog/amp/mmop/wmo-number-rules.html>`_:
 

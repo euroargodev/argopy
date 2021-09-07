@@ -11,6 +11,7 @@ Import the **argopy** data fetcher:
 Then, to get access to Argo data, all you need is 1 line of code:
 
 .. ipython:: python
+    :okwarning:
 
     ds = ArgoDataFetcher().region([-75, -45, 20, 30, 0, 100, '2011', '2012']).to_xarray()
 
