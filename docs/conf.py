@@ -185,6 +185,7 @@ add_module_names = False
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
+# html_theme = 'sphinx_book_theme'
 # html_theme = 'bootstrap'
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -204,7 +205,10 @@ html_favicon = '_static/argopy.ico'
 html_static_path = ['_static']
 
 html_theme_options = {
-    #  'canonical_url': '',
+    "repository_url": "https://www.github.com/euroargodev/argopy",
+    "use_repository_button": True,
+    "html_logo": "_static/argopy_logo_long.png",
+#  'canonical_url': '',
     'analytics_id': 'UA-73130866-2',  # Provided by Google in your dashboard
     'logo_only': True,
     'display_version': False,

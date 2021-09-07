@@ -35,11 +35,13 @@ If you prefer to work with a 2D array collection of vertical profiles, simply tr
 You can also fetch data for a specific float using its [WMO number](<https://www.wmo.int/pages/prog/amp/mmop/wmo-number-rules.html):
 
 .. ipython:: python
+    :okwarning:
 
     ds = ArgoDataFetcher().float(6902746).to_xarray()
 
 or for a float profile using the cycle number:
 
 .. ipython:: python
+    :okwarning:
 
     ds = ArgoDataFetcher().profile(6902755, 12).to_xarray()

@@ -8,6 +8,7 @@ Performances
     sys.path.insert(0, os.path.abspath('..'))
     import numpy as np
     import xarray as xr
+    @suppress
     xr.set_options(display_style="text");
 
 To improve **argopy** data fetching performances (in terms of time of

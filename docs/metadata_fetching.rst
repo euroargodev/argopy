@@ -14,7 +14,7 @@ You can use the Index fetcher with the ``region`` or ``float`` access points, si
 
 .. ipython:: python
 
-    idx = index_loader.region([-75, -45, 20, 30]).load()
+    idx = index_loader.float(5902404).load()
     idx.index
 
 Alternatively, you can use :meth:`argopy.IndexFetcher.to_dataframe()`.

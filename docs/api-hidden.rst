@@ -53,6 +53,9 @@
     argopy.utilities.Chunker
 
     argopy.xarray.ArgoAccessor.point2profile
+    argopy.xarray.ArgoAccessor.profile2point
+    argopy.xarray.ArgoAccessor.interp_std_levels
+    argopy.xarray.ArgoAccessor.teos10
 
     argopy.plotters.open_dashboard
 
