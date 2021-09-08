@@ -41,7 +41,8 @@ class Test_Backend():
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
                 loader = ArgoDataFetcher(src=self.src, cache=True).float(2901623)
-                loader.to_xarray()
+                loader.to_xarray()  # 1st call to load from source and save in memory
+                loader.to_xarray()  # 2nd call to load from memory and save in cache
                 loader.clear_cache()
                 with pytest.raises(CacheFileNotFound):
                     loader.fetcher.cachepath
