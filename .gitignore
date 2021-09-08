@@ -71,6 +71,7 @@ docs/_build/html
 docs/_build/doctrees
 docs/generated/
 docs/mycache_folder/
+mycache_folder/
 
 # PyBuilder
 target/
