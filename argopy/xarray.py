@@ -1,9 +1,10 @@
 import sys
+import warnings
+
 import numpy as np
 import pandas as pd
 import xarray as xr
 from sklearn import preprocessing
-# import collections
 
 try:
     import gsw
@@ -14,7 +15,6 @@ except ModuleNotFoundError:
 
 from argopy.utilities import linear_interpolation_remap
 from argopy.errors import InvalidDatasetStructure
-# from argopy.plotters import _PlotMethods
 
 
 @xr.register_dataset_accessor("argo")
@@ -809,7 +809,8 @@ class ArgoAccessor:
     ):
         """ Add TEOS10 variables to the dataset
 
-        By default, adds: 'SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP'
+        By default, adds: 'SA', 'CT'
+        Other possible variables: 'SIG0', 'N2', 'PV', 'PTEMP', 'SOUND_SPEED'
         Relies on the gsw library.
 
         If one exists, the correct CF standard name will be added to the attrs.
@@ -835,6 +836,8 @@ class ArgoAccessor:
                 This variable has been regridded to the original pressure levels in the Dataset using a linear interpolation.
             * `"PTEMP"`
                 Adds a potential temperature variable
+            * `"SOUND_SPEED"`
+                Adds a sound speed variable
             
         inplace: boolean, True by default
             If True, return the input :class:`xarray.Dataset` with new TEOS10 variables added as a new :class:`xarray.DataArray`
@@ -847,9 +850,11 @@ class ArgoAccessor:
         if not with_gsw:
             raise ModuleNotFoundError("This functionality requires the gsw library")
 
-        allowed = ['SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP']
+        allowed = ['SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP', 'SOUND_SPEED']
         if any(var not in allowed for var in vlist):
             raise ValueError(f"vlist must be a subset of {allowed}, instead found {vlist}")
+
+        warnings.warn("Default variables will be reduced to 'SA' and 'CT' in 0.1.9", category=FutureWarning)
 
         this = self._obj
 
@@ -859,12 +864,11 @@ class ArgoAccessor:
             this = this.argo.profile2point()
 
         # Get base variables as numpy arrays:
-        psal = this["PSAL"].values
-        temp = this["TEMP"].values
-        pres = this["PRES"].values
-        lon = this["LONGITUDE"].values
-        lat = this["LATITUDE"].values
-        f = lat
+        psal = this['PSAL'].values
+        temp = this['TEMP'].values
+        pres = this['PRES'].values
+        lon = this['LONGITUDE'].values
+        lat = this['LATITUDE'].values
 
         # Coriolis
         f = gsw.f(lat)
@@ -899,6 +903,10 @@ class ArgoAccessor:
         # PV:
         if "PV" in vlist:
             pv = f * n2 / gsw.grav(lat, pres)
+
+        # Sound Speed:
+        if 'SOUND_SPEED' in vlist:
+            cs = gsw.sound_speed(sa, ct, pres)
 
         # Back to the dataset:
         that = []
@@ -941,6 +949,13 @@ class ArgoAccessor:
             PTEMP.attrs['standard_name'] = 'sea_water_potential_temperature'
             PTEMP.attrs['unit'] = 'degC'
             that.append(PTEMP)
+
+        if 'SOUND_SPEED' in vlist:
+            CS = xr.DataArray(cs, coords=this['TEMP'].coords, name='SOUND_SPEED')
+            CS.attrs['long_name'] = 'Speed of sound'
+            CS.attrs['standard_name'] = 'speed_of_sound_in_sea_water'
+            CS.attrs['unit'] = 'm/s'
+            that.append(CS)
 
         # Create a dataset with all new variables:
         that = xr.merge(that)

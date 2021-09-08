@@ -4,7 +4,7 @@ What's New
 ==========
 
 v0.1.8 (X XXX. 2021)
------------------------
+--------------------
 
 **Features and front-end API**
 
@@ -44,6 +44,8 @@ v0.1.8 (X XXX. 2021)
     indexer = ArgoIndexFetcher().float([6902766, 6902772])
     indexer.load()
     indexer.index
+
+- Add optional speed of sound computation to xarray accessor teos10 method. (:pr:`90`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 - Code spell fixes (:pr:`89`) by `K. Schwehr <https://github.com/schwehr>`_.
 
