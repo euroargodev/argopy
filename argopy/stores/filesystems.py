@@ -122,7 +122,7 @@ class argo_store_proto(ABC):
     def _clear_cache_item(self, uri):
         """ Open fsspec cache registry (pickle file) and remove entry for uri
 
-            This function will be replaced by the pop_from_cache fsspec method introduced in 0.7.4 in another PR
+            todo: Replace by the pop_from_cache fsspec method introduced in 0.7.4 in another PR
         """
         # See the "save_cache()" method in:
         # https://filesystem-spec.readthedocs.io/en/latest/_modules/fsspec/implementations/cached.html#WholeFileCacheFileSystem

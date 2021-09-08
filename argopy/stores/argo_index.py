@@ -486,8 +486,8 @@ class indexstore():
             If one columns has a missing value, the row is skipped
         """
         cols_name = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution', 'date_update']
-        cols_type = {'file': np.str, 'date': np.datetime64, 'latitude': np.float32, 'longitude': np.float32,
-                     'ocean': np.str, 'profiler_type': np.str, 'institution': np.str, 'date_update': np.datetime64}
+        cols_type = {'file': np.str_, 'date': np.datetime64, 'latitude': np.float32, 'longitude': np.float32,
+                     'ocean': np.str_, 'profiler_type': np.str_, 'institution': np.str_, 'date_update': np.datetime64}
         data = [x.split(',') for x in results.split('\n') if ",," not in x]
         return pd.DataFrame(data, columns=cols_name).astype(cols_type)[:-1]
 

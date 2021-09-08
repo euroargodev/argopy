@@ -7,6 +7,7 @@ To access Argo data, you need to use a data fetcher. You can import and instanti
 like this:
 
 .. ipython:: python
+    :okwarning:
 
     from argopy import DataFetcher as ArgoDataFetcher
     argo_loader = ArgoDataFetcher()
@@ -24,6 +25,7 @@ Use the fetcher access point :meth:`argopy.DataFetcher.region` to specify a doma
 For instance, to retrieve data from 75W to 45W, 20N to 30N, 0db to 10db and from January to May 2011:
 
 .. ipython:: python
+    :okwarning:
 
     ds = argo_loader.region([-75, -45, 20, 30, 0, 10, '2011-01-01', '2011-06']).to_xarray()
     ds
@@ -42,6 +44,7 @@ If you know the Argo float unique identifier number called a `WMO number <https:
 For instance, to retrieve data for float WMO *6902746*:
 
 .. ipython:: python
+    :okwarning:
 
     ds = argo_loader.float(6902746).to_xarray()
     ds
@@ -49,6 +52,7 @@ For instance, to retrieve data for float WMO *6902746*:
 To fetch data for a collection of floats, input them in a list:
 
 .. ipython:: python
+    :okwarning:
 
     ds = argo_loader.float([6902746, 6902755]).to_xarray()
     ds
@@ -61,6 +65,7 @@ Use the fetcher access point :meth:`argopy.DataFetcher.profile` to specify the f
 For instance, to retrieve data for the 12th profile of float WMO 6902755:
 
 .. ipython:: python
+    :okwarning:
 
     ds = argo_loader.profile(6902755, 12).to_xarray()
     ds
@@ -68,6 +73,7 @@ For instance, to retrieve data for the 12th profile of float WMO 6902755:
 To fetch data for more than one profile, input them in a list:
 
 .. ipython:: python
+    :okwarning:
 
     ds = argo_loader.profile(6902755, [3, 12]).to_xarray()
     ds

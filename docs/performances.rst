@@ -1,16 +1,6 @@
 Performances
 ============
 
-.. ipython:: python
-    :suppress:
-
-    import sys, os
-    sys.path.insert(0, os.path.abspath('..'))
-    import numpy as np
-    import xarray as xr
-    @suppress
-    xr.set_options(display_style="text");
-
 To improve **argopy** data fetching performances (in terms of time of
 retrieval), 2 solutions are available:
 
@@ -27,6 +17,7 @@ compatible, this solution is not possible (yet).
 Let's start with standard import:
 
 .. ipython:: python
+    :okwarning:
 
     import argopy
     from argopy import DataFetcher as ArgoDataFetcher
@@ -88,58 +79,48 @@ data are newly fetched, you can do it at the fetcher level with the
 
 Start to fetch data and store them in cache:
 
-.. code:: python
+.. ipython:: python
+    :okwarning:
 
    fetcher = ArgoDataFetcher(cache=True, cachedir='mycache_folder').profile(6902746, 34)
    fetcher.to_xarray();
 
 Fetched data are in the local cache folder:
 
-.. code:: python
+.. ipython:: python
+    :okwarning:
 
+   import os
    os.listdir('mycache_folder')
 
-.. code:: bash
-
-   ['cache', 
-    'c5c820b6aff7b2ef86ef00626782587a95d37edc54120a63ee4699be2b0c6b7c']
-
-where we see one hash entries the newly fetched data and the cache
+where we see one hash entries for the newly fetched data and the cache
 registry file ``cache``.
 
 We can then fetch something else using the same cache folder:
 
-.. code:: python
+.. ipython:: python
+    :okwarning:
 
    fetcher2 = ArgoDataFetcher(cache=True, cachedir='mycache_folder').profile(1901393, 1)
    fetcher2.to_xarray();
 
 All fetched data are cached:
 
-.. code:: python
+.. ipython:: python
+    :okwarning:
 
    os.listdir('mycache_folder')
 
-.. code:: bash
-
-   ['cache',
-    'c5c820b6aff7b2ef86ef00626782587a95d37edc54120a63ee4699be2b0c6b7c',
-    '58072df8477157c194449a2e6dff8d69ca3c8fded01eebdd8a5fc446f2f7f9a7']
-
-Note the new hash file with the ``fetcher2`` data.
+Note the new hash file from *fetcher2* data.
 
 It is important to note that we can safely clear the cache from the
-first ``fetcher`` data, it won’t remove the ``fetcher2`` data:
+first *fetcher* data, it won’t remove the *fetcher2* data:
 
-.. code:: python
+.. ipython:: python
+    :okwarning:
 
    fetcher.clear_cache()
    os.listdir('mycache_folder')
-
-.. code:: bash
-
-   ['cache', 
-    '58072df8477157c194449a2e6dff8d69ca3c8fded01eebdd8a5fc446f2f7f9a7']
 
 By using the fetcher level clear cache, you make sure that only data
 fetched with it are removed, while other fetched data (with other
@@ -148,24 +129,10 @@ fetchers for instance) will stay in place.
 If you want to clear the entire cache folder, whatever the fetcher used,
 do it at the package level with:
 
-.. code:: python
+.. ipython:: python
+    :okwarning:
 
    argopy.clear_cache()
-
-So, if we now check the cache folder, it’s been deleted:
-
-.. code:: python
-
-   os.listdir('mycache_folder')
-
-.. code:: bash
-
-   ---------------------------------------------------------------------------
-   FileNotFoundError                         Traceback (most recent call last)
-   <ipython-input-13-6726e674f21f> in <module>
-   ----> 1 os.listdir('mycache_folder')
-
-   FileNotFoundError: [Errno 2] No such file or directory: 'mycache_folder'
 
 .. _parallel:
 
@@ -184,6 +151,7 @@ argument ``parallel`` of the data fetcher and can be tuned using options
 This goes by default like this:
 
 .. ipython:: python
+    :okwarning:
 
     # Define a box to load (large enough to trigger chunking):
     box = [-60, -30, 40.0, 60.0, 0.0, 100.0, "2007-01-01", "2007-04-01"]
@@ -195,35 +163,18 @@ you can also use the option ``progress`` to display a progress bar
 during fetching:
 
 .. ipython:: python
+    :okwarning:
 
     loader_par = ArgoDataFetcher(src='erddap', parallel=True, progress=True).region(box)
     loader_par
 
-.. parsed-literal::
-
-    <datafetcher.erddap>
-    Name: Ifremer erddap Argo data fetcher for a space/time region
-    API: https://www.ifremer.fr/erddap
-    Domain: [x=-60.00/-30.00; y=40.00/60.0 ... 00.0; t=2007-01-01/2007-04-01]
-    Backend: erddap (parallel=True)
-    User mode: standard
-
 Then, you can fetch data as usual:
 
 .. ipython:: python
+    :okwarning:
 
     %%time
     ds = loader_par.to_xarray()
-
-.. parsed-literal::
-
-    100%|██████████| 2/2 [00:00<00:00,  3.72it/s]
-
-.. parsed-literal::
-
-    CPU times: user 310 ms, sys: 41.2 ms, total: 351 ms
-    Wall time: 856 ms
-
 
 Number of chunks
 ~~~~~~~~~~~~~~~~
@@ -233,16 +184,10 @@ the ``uri`` property of the fetcher, it gives you the list of paths
 toward data:
 
 .. ipython:: python
+    :okwarning:
 
     for uri in loader_par.uri:
         print("http: ... ", "&".join(uri.split("&")[1:-2]))  # Display only the relevant part of each URLs of URI:
-
-
-.. parsed-literal::
-
-    http: ...  longitude>=-60.0&longitude<=-45.0&latitude>=40.0&latitude<=60.0&pres>=0.0&pres<=100.0&time>=1167609600.0&time<=1175385600.0
-    http: ...  longitude>=-45.0&longitude<=-30.0&latitude>=40.0&latitude<=60.0&pres>=0.0&pres<=100.0&time>=1167609600.0&time<=1175385600.0
-
 
 To control chunking, you can use the **``chunks``** option that
 specifies the number of chunks in each of the *direction*:
@@ -251,6 +196,7 @@ specifies the number of chunks in each of the *direction*:
 -  ``wmo`` for a **float** and **profile** fetching.
 
 .. ipython:: python
+    :okwarning:
 
     # Create a large box:
     box = [-60, 0, 0.0, 60.0, 0.0, 500.0, "2007", "2010"]
@@ -261,15 +207,6 @@ specifies the number of chunks in each of the *direction*:
                                  chunks={'lon': 5}).region(box)
     # Check number of chunks:
     len(loader_par.uri)
-
-
-
-
-.. parsed-literal::
-
-    195
-
-
 
 This creates 195 chunks, and 5 along the longitudinale direction, as
 requested.
@@ -283,6 +220,7 @@ To chunk the request along a single direction, set explicitly all the
 other directions to ``1``:
 
 .. ipython:: python
+    :okwarning:
 
     # Init a parallel fetcher:
     loader_par = ArgoDataFetcher(src='erddap', 
@@ -292,32 +230,14 @@ other directions to ``1``:
     # Check number of chunks:
     len(loader_par.uri)
 
-
-
-
-.. parsed-literal::
-
-    5
-
-
-
 We now have 5 chunks along longitude, check out the URLs parameter in
 the list of URIs:
 
 .. ipython:: python
+    :okwarning:
 
     for uri in loader_par.uri:
         print("&".join(uri.split("&")[1:-2])) # Display only the relevant URL part
-
-
-.. parsed-literal::
-
-    longitude>=-60.0&longitude<=-48.0&latitude>=0.0&latitude<=60.0&pres>=0.0&pres<=500.0&time>=1167609600.0&time<=1262304000.0
-    longitude>=-48.0&longitude<=-36.0&latitude>=0.0&latitude<=60.0&pres>=0.0&pres<=500.0&time>=1167609600.0&time<=1262304000.0
-    longitude>=-36.0&longitude<=-24.0&latitude>=0.0&latitude<=60.0&pres>=0.0&pres<=500.0&time>=1167609600.0&time<=1262304000.0
-    longitude>=-24.0&longitude<=-12.0&latitude>=0.0&latitude<=60.0&pres>=0.0&pres<=500.0&time>=1167609600.0&time<=1262304000.0
-    longitude>=-12.0&longitude<=0.0&latitude>=0.0&latitude<=60.0&pres>=0.0&pres<=500.0&time>=1167609600.0&time<=1262304000.0
-
 
 .. note::
     You may notice that if you run the last command with the `argovis` fetcher, you will still have more than 5 chunks (i.e. 65). This is because `argovis` is limited to 3 months length requests. So, for this request that is 3 years long, argopy ends up with 13 chunks along time, times 5 chunks in longitude, leading to 65 chunks in total.
@@ -352,6 +272,7 @@ For instance if you want to make sure that your chunks are not larger
 then 100 meters (db) in depth (pressure), you can use:
 
 .. ipython:: python
+    :okwarning:
 
     # Create a large box:
     box = [-60, -10, 40.0, 60.0, 0.0, 500.0, "2007", "2010"]
@@ -363,19 +284,11 @@ then 100 meters (db) in depth (pressure), you can use:
     # Check number of chunks:
     len(loader_par.uri)
 
-
-
-
-.. parsed-literal::
-
-    195
-
-
-
 Since this creates a large number of chunks, let’s do this again and
 combine with the option ``chunks`` to see easily what’s going on:
 
 .. ipython:: python
+    :okwarning:
 
     # Init a parallel fetcher with chunking along the vertical axis alone:
     loader_par = ArgoDataFetcher(src='erddap', 
@@ -387,15 +300,6 @@ combine with the option ``chunks`` to see easily what’s going on:
         print("http: ... ", "&".join(uri.split("&")[1:-2])) # Display only the relevant URL part
 
 
-.. parsed-literal::
-
-    http: ...  longitude>=-60&longitude<=-10&latitude>=40.0&latitude<=60.0&pres>=0.0&pres<=100.0&time>=1167609600.0&time<=1262304000.0
-    http: ...  longitude>=-60&longitude<=-10&latitude>=40.0&latitude<=60.0&pres>=100.0&pres<=200.0&time>=1167609600.0&time<=1262304000.0
-    http: ...  longitude>=-60&longitude<=-10&latitude>=40.0&latitude<=60.0&pres>=200.0&pres<=300.0&time>=1167609600.0&time<=1262304000.0
-    http: ...  longitude>=-60&longitude<=-10&latitude>=40.0&latitude<=60.0&pres>=300.0&pres<=400.0&time>=1167609600.0&time<=1262304000.0
-    http: ...  longitude>=-60&longitude<=-10&latitude>=40.0&latitude<=60.0&pres>=400.0&pres<=500.0&time>=1167609600.0&time<=1262304000.0
-
-
 You can see, that the ``pres`` argument of this erddap list of URLs
 define layers not thicker than the requested 100db.
 
@@ -403,6 +307,7 @@ With the ``profile`` and ``float`` access points, you can use the
 ``wmo`` keyword to control the number of WMOs in each chunks.
 
 .. ipython:: python
+    :okwarning:
 
     WMO_list = [6902766, 6902772, 6902914, 6902746, 6902916, 6902915, 6902757, 6902771]
     
@@ -413,13 +318,6 @@ With the ``profile`` and ``float`` access points, you can use the
     
     for uri in loader_par.uri:
         print("http: ... ", "&".join(uri.split("&")[1:-2])) # Display only the relevant URL part
-
-
-.. parsed-literal::
-
-    http: ...  platform_number=~"6902766|6902772|6902914"
-    http: ...  platform_number=~"6902746|6902916|6902915"
-    http: ...  platform_number=~"6902757|6902771"
 
 
 You see here, that this request for 8 floats is split in chunks with no
@@ -462,7 +360,8 @@ Note that you can in fact pass the method directly with the ``parallel``
 option, so that in practice, the following two formulations are
 equivalent:
 
-.. code:: python
+.. ipython:: python
+    :okwarning:
 
    ArgoDataFetcher(parallel=True, parallel_method='thread')
    ArgoDataFetcher(parallel='thread')
@@ -477,6 +376,7 @@ here on the maximum latitude. This ensures that nearly the same of data
 will be requested and not cached by server.
 
 .. ipython:: python
+    :okwarning:
 
     def this_box():
         return [-60, 0, 
@@ -485,32 +385,20 @@ will be requested and not cached by server.
                "2007", "2009"]
 
 .. ipython:: python
+    :okwarning:
 
     %%time
     b1 = this_box()
     f1 = ArgoDataFetcher(src='argovis', parallel=False).region(b1)
     ds1 = f1.to_xarray()
 
-
-.. parsed-literal::
-
-    CPU times: user 7.44 s, sys: 928 ms, total: 8.37 s
-    Wall time: 37.3 s
-
-
 .. ipython:: python
+    :okwarning:
 
     %%time
     b2 = this_box()
     f2 = ArgoDataFetcher(src='argovis', parallel=True).region(b2)
     ds2 = f2.to_xarray()
-
-
-.. parsed-literal::
-
-    CPU times: user 8.53 s, sys: 975 ms, total: 9.51 s
-    Wall time: 12.4 s
-
 
 **This simple comparison shows that parallel request is significantly
 faster than the standard one.**
