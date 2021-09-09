@@ -63,6 +63,8 @@ print("sys.path:", sys.path)
 #     'sphinx.ext.viewcode',
 #     'sphinx.ext.githubpages']
 
+ipython_warning_is_error = False
+
 extensions = [
     # 'sphinx.ext.autodoc',
     'sphinx.ext.autosectionlabel',
