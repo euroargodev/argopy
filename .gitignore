@@ -67,7 +67,11 @@ instance/
 
 # Sphinx documentation
 docs/_build/
-docs/generated
+docs/_build/html
+docs/_build/doctrees
+docs/generated/
+docs/mycache_folder/
+mycache_folder/
 
 # PyBuilder
 target/
