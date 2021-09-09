@@ -91,7 +91,7 @@ This can be done using the :meth:`argopy.xarray.ArgoAccessor.teos10` method and 
 Data models
 -----------
 
-By default **argopy** works with `xarray.DataSet <http://xarray.pydata.org/en/stable/data-structures.html#dataset>`_ and comes with the accessor namespace ``argo`` (see `here for more on xarray accessor <http://xarray.pydata.org/en/stable/internals/extending-xarray.html>`).
+By default **argopy** works with `xarray.DataSet <http://xarray.pydata.org/en/stable/data-structures.html#dataset>`_ and comes with the accessor namespace ``argo`` (see `here for more on xarray accessor <http://xarray.pydata.org/en/stable/internals/extending-xarray.html>_`).
 
 For your own analysis, you may prefer to work with a `Pandas dataframe <https://pandas.pydata.org/pandas-docs/stable/getting_started/dsintro.html#dataframe>`_. 
 

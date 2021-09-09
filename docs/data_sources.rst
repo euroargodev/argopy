@@ -42,7 +42,6 @@ You have several ways to specify which data source you want to use:
 
 .. ipython:: python
     :okwarning:
-    :suppress:
 
     argopy.set_options(src='erddap')
 

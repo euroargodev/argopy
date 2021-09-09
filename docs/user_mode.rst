@@ -116,7 +116,7 @@ In **standard** mode:
 
     with argopy.set_options(mode='standard'):
         ds = ArgoDataFetcher(src='localftp').profile(6901929, 2).to_xarray()
-        ds.data_vars
+        print(ds.data_vars)
 
 In **expert** mode:
 
@@ -125,4 +125,4 @@ In **expert** mode:
 
     with argopy.set_options(mode='expert'):
         ds = ArgoDataFetcher(src='localftp').profile(6901929, 2).to_xarray()
-        ds.data_vars
+        print(ds.data_vars)

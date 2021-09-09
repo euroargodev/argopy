@@ -9,14 +9,22 @@ Since the Argo measurements dataset is quite complex, it comes with a collection
     :okwarning:
 
     from argopy import IndexFetcher as ArgoIndexFetcher
-    index_loader = ArgoIndexFetcher()
 
 You can use the Index fetcher with the ``region`` or ``float`` access points, similarly to data fetching:
 
 .. ipython:: python
+    :suppress:
+
+    import argopy
+    ftproot = argopy.tutorial.open_dataset('localftp')[0]
+    argopy.set_options(local_ftp=ftproot)
+
+.. ipython:: python
     :okwarning:
 
-    idx = index_loader.float(5902404).load()
+    idx = ArgoIndexFetcher(src='localftp').float(2901623).load()
     idx.index
 
 Alternatively, you can use :meth:`argopy.IndexFetcher.to_dataframe()`.
+
+See :ref:`fetching-methods` for a list of all methods available for the Index fetcher.

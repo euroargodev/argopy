@@ -9,14 +9,17 @@ This page provides an auto-generated summary of argopy's API. For more details a
 Top-levels functions
 ====================
 
+Fetchers
+--------
+
 .. autosummary::
     :toctree: generated/
 
     argopy.DataFetcher
     argopy.IndexFetcher
 
-Fetching entries
-----------------
+Fetcher access points
+---------------------
 
 .. autosummary::
    :toctree: generated/
@@ -31,8 +34,8 @@ Fetching entries
    argopy.IndexFetcher.region
    argopy.IndexFetcher.float
 
-I/O and Data formats
---------------------
+Fetching methods
+----------------
 
 .. autosummary::
    :toctree: generated/
@@ -50,8 +53,8 @@ I/O and Data formats
    argopy.IndexFetcher.to_dataframe
    argopy.IndexFetcher.to_csv
 
-Visualisation
--------------
+Fetched data visualisation
+--------------------------
 
 .. autosummary::
    :toctree: generated/

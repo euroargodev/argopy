@@ -132,7 +132,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '_templates',
                     '.ipynb_checkpoints', '_ext', 'tempo_out', '_src',
                     'offline', 'examples/.ipynb_checkpoints']
 
-# Give *lots* of time for cell execution!
+# Give *lots* of time for notebook cell execution!
 # Note nbsphinx compiles *all* notebooks in docs unless excluded
 nbsphinx_timeout = 300
 nbsphinx_execute = "always"
