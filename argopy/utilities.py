@@ -31,8 +31,6 @@ import shutil
 
 import threading
 
-# from IPython.display import HTML, display
-# import ipywidgets as widgets
 import time
 
 from argopy.options import OPTIONS, set_options
@@ -43,6 +41,12 @@ from argopy.errors import (
     OptionValueError,
     InvalidFetcherAccessPoint,
 )
+
+try:
+    collectionsAbc = collections.abc
+except AttributeError:
+    collectionsAbc = collections
+
 
 path2pkl = pkg_resources.resource_filename("argopy", "assets/")
 
@@ -764,7 +768,7 @@ def linear_interpolation_remap(
         vectorize=True,
         dask="parallelized",
         output_dtypes=[data.dtype],
-        output_sizes={output_dim: len(z_regridded[z_regridded_dim])},
+        dask_gufunc_kwargs={'output_sizes': {output_dim: len(z_regridded[z_regridded_dim])}},
     )
     remapped = xr.apply_ufunc(_regular_interp, z, data, z_regridded, **kwargs)
 
@@ -826,7 +830,7 @@ class Chunker:
         default = self.default_chunksize[[k for k in self.request.keys()][0]]
         if len(chunksize) == 0:  # chunksize = {}
             chunksize = default
-        if not isinstance(chunksize, collections.Mapping):
+        if not isinstance(chunksize, collectionsAbc.Mapping):
             raise ValueError("chunksize must be mappable")
         else:  # merge with default:
             chunksize = {**default, **chunksize}
@@ -837,7 +841,7 @@ class Chunker:
             chunks = default
         elif len(chunks) == 0:  # chunks = {}, i.e. chunk=1 for all
             chunks = {k: 1 for k in self.request}
-        if not isinstance(chunks, collections.Mapping):
+        if not isinstance(chunks, collectionsAbc.Mapping):
             raise ValueError("chunks must be 'auto' or mappable")
         chunks = {**default, **chunks}
         self.chunks = collections.OrderedDict(sorted(chunks.items()))
