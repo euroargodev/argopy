@@ -53,7 +53,9 @@ v0.1.8 (X XXX. 2021)
 
 - In the plotters module, the ``plot_dac`` and ``plot_profilerType`` functions have been replaced by ``bar_plot``. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
 
+**Internals**
 
+- Upgrade dependancies version support
 
 v0.1.7 (4 Jan. 2021)
 -----------------------
