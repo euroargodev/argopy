@@ -22,7 +22,7 @@ from argopy.utilities import (
     is_list_of_strings,
     format_oneline,
 )
-from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, FtpPathError
+from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
 from . import requires_connection, requires_localftp
 
