@@ -327,41 +327,40 @@ class ArgoAccessor:
             ]
             return ds
 
-        def new_arrays(argo_r, argo_a, argo_d, vname):
-            """ Merge the 3 datasets into a single one with the appropriate fields
+        def merge_arrays(this_argo_r, this_argo_a, this_argo_d, this_vname):
+            """ Merge one variable from 3 DataArrays
 
-                Homogeneise variable names.
                 Based on xarray merge function with ’no_conflicts’: only values
-                which are not null in both datasets must be equal. The returned
+                which are not null in all datasets must be equal. The returned
                 dataset then contains the combination of all non-null values.
 
                 Return a xarray.DataArray
             """
-            DS = xr.merge(
+            DA = xr.merge(
                 (
-                    argo_r[vname],
-                    argo_a[vname + "_ADJUSTED"].rename(vname),
-                    argo_d[vname + "_ADJUSTED"].rename(vname),
+                    this_argo_r[this_vname],
+                    this_argo_a[this_vname + "_ADJUSTED"].rename(this_vname),
+                    this_argo_d[this_vname + "_ADJUSTED"].rename(this_vname),
                 )
             )
-            DS_QC = xr.merge(
+            DA_QC = xr.merge(
                 (
-                    argo_r[vname + "_QC"],
-                    argo_a[vname + "_ADJUSTED_QC"].rename(vname + "_QC"),
-                    argo_d[vname + "_ADJUSTED_QC"].rename(vname + "_QC"),
+                    this_argo_r[this_vname + "_QC"],
+                    this_argo_a[this_vname + "_ADJUSTED_QC"].rename(this_vname + "_QC"),
+                    this_argo_d[this_vname + "_ADJUSTED_QC"].rename(this_vname + "_QC"),
                 )
             )
             if keep_error:
-                DS_ERROR = xr.merge(
+                DA_ERROR = xr.merge(
                     (
-                        argo_a[vname + "_ADJUSTED_ERROR"].rename(vname + "_ERROR"),
-                        argo_d[vname + "_ADJUSTED_ERROR"].rename(vname + "_ERROR"),
+                        this_argo_a[this_vname + "_ADJUSTED_ERROR"].rename(this_vname + "_ERROR"),
+                        this_argo_d[this_vname + "_ADJUSTED_ERROR"].rename(this_vname + "_ERROR"),
                     )
                 )
-                DS = xr.merge((DS, DS_QC, DS_ERROR))
+                DA = xr.merge((DA, DA_QC, DA_ERROR))
             else:
-                DS = xr.merge((DS, DS_QC))
-            return DS
+                DA = xr.merge((DA, DA_QC))
+            return DA
 
         #########
         # filter
@@ -409,7 +408,7 @@ class ArgoAccessor:
                 argo_d = argo_d.drop_vars(vname)
 
         # Create new arrays with the appropriate variables:
-        vlist = [new_arrays(argo_r, argo_a, argo_d, v) for v in plist]
+        vlist = [merge_arrays(argo_r, argo_a, argo_d, v) for v in plist]
 
         # Create final dataset by merging all available variables
         final = xr.merge(vlist)
