@@ -12,6 +12,7 @@ import pandas as pd
 import warnings
 from contextlib import contextmanager
 from argopy.errors import InvalidDashboard
+from argopy.utilities import warnUnless
 
 
 try:
@@ -39,7 +40,9 @@ try:
 except ModuleNotFoundError:
     with_cartopy = False
 
+# Default styles:
 STYLE = {"axes": "whitegrid", "palette": "Set1"}
+
 try:
     import seaborn as sns
 
@@ -50,10 +53,10 @@ except ModuleNotFoundError:
 
 
 @contextmanager
-def axes_style(style="white"):
+def axes_style(style: str = STYLE['axes']):
     """ Provide a context for plots
 
-        The point is to handle the availability of :mod:`seaborn` or not and to be able to use:
+        The point is to handle the availability of :mod:`seaborn` or not and to be able to use::
 
             with axes_style(style):
                 fig, ax = plt.subplots()
@@ -68,7 +71,7 @@ def axes_style(style="white"):
 
 
 def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type="ea"):
-    """ Insert in a notebook the Euro-Argo dashboard page
+    """ Insert in a notebook cell the Euro-Argo dashboard page
 
         Parameters
         ----------
@@ -111,7 +114,10 @@ def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type
 class discrete_coloring:
     """ Handy class to manage discrete coloring and the associated colorbar
 
-    Example:
+    Example
+    -------
+    This class can be used like this::
+
         year_range = np.arange(2002,2010)
         dc = discrete_coloring(name='Spectral', N=len(year_range) )
         plt.scatter(this['LONGITUDE'], this['LATITUDE'], c=this['TIME.year'],
@@ -121,6 +127,15 @@ class discrete_coloring:
     """
 
     def __init__(self, name="Set1", N=12):
+        """
+
+        Parameters
+        ----------
+        name: str
+            Name if the colormap to use. Default: 'Set1'
+        N: int
+            Number of colors to reduce the colormap to. Default: 12
+        """
         self.name = name
         self.Ncolors = N
 
@@ -128,8 +143,9 @@ class discrete_coloring:
     def cmap(self):
         """Return a discrete colormap from a quantitative or continuous colormap name
 
-        name: name of the colormap, eg 'Paired' or 'jet'
-        K: number of colors in the final discrete colormap
+        Returns
+        -------
+        :class:`matplotlib.colors.LinearSegmentedColormap`
         """
         name = self.name
         K = self.Ncolors
@@ -217,7 +233,12 @@ class discrete_coloring:
         return new_cmap
 
     def cbar(self, ticklabels=None, **kwargs):
-        """Return a colorbar with adjusted tick labels"""
+        """Return a colorbar with adjusted tick labels
+
+        Returns
+        -------
+        :class:`matplotlib.pyplot.colorbar`
+        """
         cmap = self.cmap
         ncolors = self.Ncolors
         mappable = cm.ScalarMappable(cmap=cmap)
@@ -237,7 +258,23 @@ class discrete_coloring:
 
 
 def latlongrid(ax, dx="auto", dy="auto", fontsize="auto", **kwargs):
-    """ Add latitude/longitude grid line and labels to a cartopy geoaxes """
+    """ Add latitude/longitude grid line and labels to a cartopy geoaxes
+
+    Parameters
+    ----------
+    ax: cartopy.mpl.geoaxes.GeoAxesSubplot
+        Cartopy axes to add the lat/lon grid to
+    dx: 'auto' or float
+        Grid spacing along longitude
+    dy: 'auto' or float
+        Grid spacing along latitude
+    fontsize: 'auto' or int
+        Grid label font size
+
+    Returns
+    -------
+    class:`cartopy.mpl.geoaxes.GeoAxesSubplot.gridlines`
+    """
     if not isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot):
         raise ValueError("Please provide a cartopy.mpl.geoaxes.GeoAxesSubplot instance")
     defaults = {"linewidth": 0.5, "color": "gray", "alpha": 0.5, "linestyle": ":"}
@@ -248,30 +285,16 @@ def latlongrid(ax, dx="auto", dy="auto", fontsize="auto", **kwargs):
         gl.ylocator = mticker.FixedLocator(np.arange(-90, 90 + 1, dy))
     gl.xformatter = LONGITUDE_FORMATTER
     gl.yformatter = LATITUDE_FORMATTER
-    # Cartopy <= 0.18
+    # Cartopy <= 0.18:
     # gl.xlabels_top = False
     # gl.ylabels_right = False
-    # Cartopy >= 0.18
+    # Cartopy >= 0.18:
     gl.top_labels = False
     gl.right_labels = False
     if fontsize != "auto":
         gl.xlabel_style = {"fontsize": fontsize}
         gl.ylabel_style = {"fontsize": fontsize}
     return gl
-
-
-def warnUnless(ok, txt):
-    def inner(fct):
-        def wrapper(*args, **kwargs):
-            warnings.warn("%s %s" % (fct.__name__, txt))
-            return fct(*args, **kwargs)
-
-        return wrapper
-
-    if not ok:
-        return inner
-    else:
-        return lambda f: f
 
 
 @warnUnless(with_matplotlib, "requires matplotlib installed")
@@ -287,7 +310,7 @@ def plot_trajectory(
 ):
     """ Plot trajectories for an Argo index dataframe
 
-    This function is called by the Data and Index fetchers method: 'plot' with the 'trajectory' option:
+    This function is called by the Data and Index fetchers method 'plot' with the 'trajectory' option::
 
         from argopy import IndexFetcher as ArgoIndexFetcher
         from argopy import DataFetcher as ArgoDataFetcher
@@ -302,18 +325,18 @@ def plot_trajectory(
     df: Pandas DataFrame
         Input data with columns: 'wmo','longitude','latitude'.
     style: str
-        Define the Seaborn axes style: 'white' (default), 'darkgrid', 'whitegrid', 'dark', 'ticks'.
+        Define the axes style: 'white', 'darkgrid', 'whitegrid', 'dark', 'ticks'. Only used if Seaborn is available.
     add_legend: bool
         Add a box legend with list of floats. True by default for a maximum of 15 floats, otherwise no legend.
     palette: str
         Define colors to be used for floats: 'Set1' (default) or any other matplotlib colormap or name of
-        a seaborn palette (deep, muted, bright, pastel, dark, colorblind).
+        a Seaborn palette (deep, muted, bright, pastel, dark, colorblind).
     set_global: bool
         Plot trajectories on a global world map or not. False by default.
 
     Returns
     -------
-    fig: :class:`matplotlib.pyplot.figure.Figure`
+    fig: :class:`matplotlib.figure.Figure`
     ax: :class:`matplotlib.axes.Axes`
     """
     with axes_style(style):
@@ -423,11 +446,11 @@ def bar_plot(
     by: str
         The profile property to plot. Default is 'institution'
     style: str
-        Define the Seaborn axes style: 'white' (default), 'darkgrid', 'whitegrid', 'dark', 'ticks'.
+        Define the axes style: 'white', 'darkgrid', 'whitegrid', 'dark', 'ticks'. Only used if Seaborn is available.
 
     Returns
     -------
-    fig: :class:`matplotlib.pyplot.figure.Figure`
+    fig: :class:`matplotlib.figure.Figure`
     ax: :class:`matplotlib.axes.Axes`
     """
     if by not in df:

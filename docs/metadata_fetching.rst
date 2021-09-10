@@ -27,4 +27,4 @@ You can use the Index fetcher with the ``region`` or ``float`` access points, si
 
 Alternatively, you can use :meth:`argopy.IndexFetcher.to_dataframe()`.
 
-See :ref:`fetching-methods` for a list of all methods available for the Index fetcher.
+See :ref:`fetching_methods` for a list of all methods available for the Index fetcher.

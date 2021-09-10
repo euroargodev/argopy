@@ -21,7 +21,11 @@ AVAILABLE_INDEX_SOURCES = list_available_index_src()
 
 
 def checkAccessPoint(AccessPoint):
-    """ Decorator to validate fetcher access points of a given data source """
+    """ Decorator to validate fetcher access points of a given data source
+
+        This decorator will check if an access point (eg: 'profile') is available for the data source (eg: 'erddap')
+        used to initiate the checker. If not, an error is raised.
+    """
     def wrapper(*args):
         if AccessPoint.__name__ not in args[0].valid_access_points:
             raise InvalidFetcherAccessPoint(
@@ -238,7 +242,7 @@ class ArgoDataFetcher:
 
     @checkAccessPoint
     def profile(self, wmo, cyc):
-        """ Specific profile data fetcher
+        """  Profile data fetcher
 
         Parameters
         ----------
@@ -389,7 +393,7 @@ class ArgoDataFetcher:
                 warnings.warn("Loading a full index in 'standard' user mode may lead to more profiles in the "
                               "index than reported in data.")
 
-            # Possibly replace the loaded index with the full version:
+            # Possibly replace the light index with the full version:
             if not self._loaded or self._request == self.__repr__():
                 self._index = df
 
@@ -399,10 +403,10 @@ class ArgoDataFetcher:
         """ Load data in memory
 
             Apply the default to_xarray() and to_index() methods and store results in memory.
-            Access loaded measurements structure with the `data` and `index` properties:
+            Access loaded measurements structure with the `data` and `index` properties::
 
                 ds = ArgoDataFetcher().profile(6902746, 34).load().data
-
+                # or
                 df = ArgoDataFetcher().float(6902746).load().index
 
             Parameters
@@ -412,7 +416,8 @@ class ArgoDataFetcher:
 
             Returns
             -------
-            self
+            :class:`argopy.fetchers.ArgoDataFetcher.float`
+                Data fetcher with `data` and `index` properties in memory
         """
         # Force to load data if the fetcher definition has changed
         if self._loaded and self._request != self.__repr__():
@@ -447,7 +452,7 @@ class ArgoDataFetcher:
 
             Returns
             -------
-            fig: :class:`matplotlib.pyplot.figure.Figure`
+            fig: :class:`matplotlib.figure.Figure`
             ax: :class:`matplotlib.axes.Axes`
         """
         self.load()
@@ -582,9 +587,19 @@ class ArgoIndexFetcher:
 
     @checkAccessPoint
     def profile(self, wmo, cyc):
-        """ Fetch index for a profile
+        """ Profile index fetcher
 
-            given one or more WMOs and CYCLE_NUMBER
+        Parameters
+        ----------
+        wmo: list(int)
+            Define the list of Argo floats to load data for. This is a list of integers with WMO numbers.
+        cyc: list(int)
+            Define the list of cycle numbers to load for each Argo floats listed in ``wmo``.
+
+        Returns
+        -------
+        :class:`argopy.fetchers.ArgoIndexFetcher`
+            A index fetcher initialised for specific float profiles
         """
         self.fetcher = self.Fetchers["profile"](WMO=wmo, CYC=cyc, **self.fetcher_options)
         self._AccessPoint = "profile"  # Register the requested access point
@@ -592,20 +607,54 @@ class ArgoIndexFetcher:
 
     @checkAccessPoint
     def float(self, wmo):
-        """ Load index for one or more floats (WMOs) """
+        """ Float index fetcher
+
+        Parameters
+        ----------
+        wmo: list(int)
+            Define the list of Argo floats to load data for. This is a list of integers with WMO numbers.
+
+        Returns
+        -------
+        :class:`argopy.fetchers.ArgoIndexFetcher`
+            A index fetcher initialised for all float profiles
+        """
         self.fetcher = self.Fetchers["float"](WMO=wmo, **self.fetcher_options)
         self._AccessPoint = "float"  # Register the requested access point
         return self
 
     @checkAccessPoint
     def region(self, box):
-        """ Load index for a rectangular space/time domain region """
+        """ Space/time domain index fetcher
+
+        Parameters
+        ----------
+        box: list()
+            Define the domain to load Argo index for. The box list is made of:
+                - lon_min: float, lon_max: float,
+                - lat_min: float, lat_max: float,
+                - date_min: str (optional), date_max: str (optional)
+
+            Longitude and latitude bounds are required, while the two bounding dates are optional.
+            If bounding dates are not specified, the entire time series is fetched.
+            Eg: [-60, -55, 40., 45., 0., 10., '2007-08-01', '2007-09-01']
+
+        Returns
+        -------
+        :class:`argopy.fetchers.ArgoIndexFetcher`
+            A index fetcher initialised for a space/time domain
+
+        Warning
+        -------
+        Note that the box option for an index fetcher does not have pressure bounds, contrary to the data fetcher.
+
+        """
         self.fetcher = self.Fetchers["region"](box=box, **self.fetcher_options)
         self._AccessPoint = "region"  # Register the requested access point
         return self
 
     def to_dataframe(self, **kwargs):
-        """ Fetch and return index data as pandas.Dataframe
+        """ Fetch and return index data as pandas Dataframe
 
             Returns
             -------
@@ -619,7 +668,9 @@ class ArgoIndexFetcher:
         return self.fetcher.to_dataframe(**kwargs)
 
     def to_xarray(self, **kwargs):
-        """ Fetch and return index data as xarray.DataSet
+        """ Fetch and return index data as xarray DataSet
+
+            This is a shortcut to .load().index.to_xarray()
 
             Returns
             -------
@@ -635,6 +686,8 @@ class ArgoIndexFetcher:
     def to_csv(self, file: str = "output_file.csv"):
         """ Fetch and save index data as csv in a file
 
+            This is a shortcut to .load().index.to_csv()
+
             Returns
             -------
             None
@@ -649,6 +702,11 @@ class ArgoIndexFetcher:
     def load(self, force: bool = False):
         """ Load index in memory
 
+            Apply the default to_dataframe() method and store results in memory.
+            Access loaded index structure with the `index` property::
+
+                df = ArgoIndexFetcher().float(6902746).load().index
+
             Parameters
             ----------
             force: bool
@@ -656,7 +714,8 @@ class ArgoIndexFetcher:
 
             Returns
             -------
-            self
+            :class:`argopy.fetchers.ArgoIndexFetcher.float`
+                Index fetcher with `index` property in memory
         """
         # Force to load data if the fetcher definition has changed
         if self._loaded and self._request != self.__repr__():
@@ -678,7 +737,7 @@ class ArgoIndexFetcher:
 
             Returns
             -------
-            fig: :class:`matplotlib.pyplot.figure.Figure`
+            fig: :class:`matplotlib.figure.Figure`
             ax: :class:`matplotlib.axes.Axes`
         """
         self.load()

@@ -4,7 +4,7 @@ import pytest
 
 import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
-from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher  #, ErddapServerError, DataNotFound
+from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher
 from . import (
     AVAILABLE_INDEX_SOURCES,
     requires_fetcher_index,

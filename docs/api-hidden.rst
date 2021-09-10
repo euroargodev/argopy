@@ -58,6 +58,8 @@
     argopy.xarray.ArgoAccessor.teos10
 
     argopy.plotters.open_dashboard
+    argopy.plotters.bar_plot
+    argopy.plotters.plot_trajectory
 
     argopy.stores.filesystems.filestore
     argopy.stores.filestore.open_dataset

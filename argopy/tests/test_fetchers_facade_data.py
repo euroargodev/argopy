@@ -3,7 +3,6 @@ import pandas as pd
 import xarray as xr
 
 import pytest
-# import warnings
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
@@ -109,7 +108,7 @@ class Test_Facade:
 
 
 @requires_fetcher
-class DataFetching:
+class Test_DataFetching:
     """ Test main API facade for all available fetching backends and default dataset """
 
     local_ftp = argopy.tutorial.open_dataset("localftp")[0]

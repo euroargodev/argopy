@@ -150,6 +150,17 @@ Argovis
     argopy.data_fetchers.argovis_data.Fetch_wmo
     argopy.data_fetchers.argovis_data.Fetch_box
 
+Plotters
+--------
+
+.. autosummary::
+   :toctree: generated/
+
+    argopy.plotters.plot_trajectory
+    argopy.plotters.bar_plot
+    argopy.plotters.open_dashboard
+
+
 Xarray *argo* name space
 ==========================
 
