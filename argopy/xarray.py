@@ -336,28 +336,27 @@ class ArgoAccessor:
 
                 Return a xarray.DataArray
             """
-            DA = xr.merge(
-                (
-                    this_argo_r[this_vname],
-                    this_argo_a[this_vname + "_ADJUSTED"].rename(this_vname),
-                    this_argo_d[this_vname + "_ADJUSTED"].rename(this_vname),
-                )
+
+            def merge_this(a1, a2, a3):
+                return xr.merge((xr.merge((a1, a2)), a3))
+
+            DA = merge_this(
+                this_argo_r[this_vname],
+                this_argo_a[this_vname + "_ADJUSTED"].rename(this_vname),
+                this_argo_d[this_vname + "_ADJUSTED"].rename(this_vname),
             )
-            DA_QC = xr.merge(
-                (
-                    this_argo_r[this_vname + "_QC"],
-                    this_argo_a[this_vname + "_ADJUSTED_QC"].rename(this_vname + "_QC"),
-                    this_argo_d[this_vname + "_ADJUSTED_QC"].rename(this_vname + "_QC"),
-                )
+            DA_QC = merge_this(
+                this_argo_r[this_vname + "_QC"],
+                this_argo_a[this_vname + "_ADJUSTED_QC"].rename(this_vname + "_QC"),
+                this_argo_d[this_vname + "_ADJUSTED_QC"].rename(this_vname + "_QC"),
             )
+
             if keep_error:
-                DA_ERROR = xr.merge(
-                    (
-                        this_argo_a[this_vname + "_ADJUSTED_ERROR"].rename(this_vname + "_ERROR"),
-                        this_argo_d[this_vname + "_ADJUSTED_ERROR"].rename(this_vname + "_ERROR"),
-                    )
-                )
-                DA = xr.merge((DA, DA_QC, DA_ERROR))
+                DA_ERROR = xr.merge((
+                    this_argo_a[this_vname + "_ADJUSTED_ERROR"].rename(this_vname + "_ERROR"),
+                    this_argo_d[this_vname + "_ADJUSTED_ERROR"].rename(this_vname + "_ERROR"),
+                ))
+                DA = merge_this(DA, DA_QC, DA_ERROR)
             else:
                 DA = xr.merge((DA, DA_QC))
             return DA
