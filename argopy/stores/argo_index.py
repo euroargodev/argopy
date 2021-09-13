@@ -2,10 +2,21 @@ import numpy as np
 import pandas as pd
 from abc import ABC, abstractmethod
 import hashlib
+import io
 
 from argopy.errors import DataNotFound
 from argopy.options import OPTIONS
 from .filesystems import filestore, memorystore
+
+
+def safe_rewind(this_index_obj):
+    """ Rewind io.TextIOWrapper if seekable """
+    if this_index_obj.seekable():
+        this_index_obj.seek(0)
+    # except io.UnsupportedOperation:
+    #     # print(type(this_index_obj))
+    #     pass
+    return this_index_obj
 
 
 class indexfilter_proto(ABC):
@@ -20,19 +31,19 @@ class indexfilter_proto(ABC):
 
     @abstractmethod
     def run(self):
-        """ Take a _io.TextIOWrapper and return filtered data as string (csv likes)
+        """ Take a class:`io.TextIOWrapper` and return filtered data as string (csv likes)
 
         Parameters
         ----------
-        index_file: _io.TextIOWrapper
+        index_file: class:`io.TextIOWrapper`
 
         Returns
         -------
-        csv rows matching the request, as a in-memory string. Or None.
+        csv rows matching the request, as in-memory string. Or None.
         """
         pass
 
-    @abstractmethod
+    @property
     def uri(self):
         """ Return a name for one specific filter run """
         pass
@@ -40,20 +51,21 @@ class indexfilter_proto(ABC):
     @property
     def sha(self):
         """ Unique filter hash string """
-        return hashlib.sha256(self.uri().encode()).hexdigest()
+        return hashlib.sha256(self.uri.encode()).hexdigest()
 
     def search_null(self, index):
         """ Perform a null search, ie return the full argo index file
 
         Parameters
         ----------
-        index: _io.TextIOWrapper
+        index: :class:`io.TextIOWrapper`
 
         Returns
         -------
         csv index, as a string
         """
-        index.seek(0)
+        safe_rewind(index)
+
         for line in index:
             if line[0] != '#':
                 break
@@ -77,14 +89,14 @@ class indexfilter_wmo(indexfilter_proto):
     filt = indexfilter_wmo()
 
     # Filter name:
-    print(filt.uri())
+    print(filt.uri)
 
     # Direct usage:
         with open("/Volumes/Data/ARGO/ar_index_global_prof.txt", "r") as f:
             results = filt.run(f)
 
     # With the indexstore:
-        indexstore(cache=1, index_file="/Volumes/Data/ARGO/ar_index_global_prof.txt").open_dataframe(filt)
+        indexstore(cache=1, index_file="/Volumes/Data/ARGO/ar_index_global_prof.txt").read_csv(filt)
 
     """
 
@@ -107,6 +119,7 @@ class indexfilter_wmo(indexfilter_proto):
         self.WMO = sorted(WMO)
         self.CYC = CYC
 
+    @property
     def uri(self):
         """ Return a unique name for this filter instance """
         if len(self.WMO) > 1:
@@ -155,7 +168,7 @@ class indexfilter_wmo(indexfilter_proto):
         -------
         csv chunk matching the request, as a string. Or None
         """
-        index.seek(0)
+        safe_rewind(index)
         results = ""
         il_read, il_loaded, il_this = 0, 0, 0
         for line in index:
@@ -186,7 +199,7 @@ class indexfilter_wmo(indexfilter_proto):
         csv chunk matching the request, as a string. Or None
         """
         search_this = self.define_search_this(cyc)
-        index.seek(0)
+        safe_rewind(index)
         results = ""
         il_read, il_loaded = 0, 0
         for line in index:
@@ -212,7 +225,7 @@ class indexfilter_wmo(indexfilter_proto):
         -------
         csv chunk matching the request, as a string. Or None
         """
-        index.seek(0)
+        safe_rewind(index)
         results = ""
 
         # Look for the float:
@@ -246,7 +259,8 @@ class indexfilter_wmo(indexfilter_proto):
 
         Parameters
         ----------
-        index_file: _io.TextIOWrapper
+        index_file: class:`io.TextIOWrapper`
+            Argo index text stream
 
         Returns
         -------
@@ -285,7 +299,7 @@ class indexfilter_box(indexfilter_proto):
     filt = indexfilter_box(BOX=[-70, -65, 30., 35., '2012-01-01', '2012-06-30'])
 
     # Filter name:
-    print(filt.uri())
+    print(filt.uri)
 
     # Direct usage:
         with open("/Volumes/Data/ARGO/ar_index_global_prof.txt", "r") as f:
@@ -323,6 +337,7 @@ class indexfilter_box(indexfilter_proto):
             return pd.to_datetime(x).strftime('%Y%m%d')
         return str(x)
 
+    @property
     def uri(self):
         """ Return a unique name for this filter instance """
         BOX = self.BOX
@@ -347,7 +362,7 @@ class indexfilter_box(indexfilter_proto):
         -------
         csv chunk matching the request, as a string. Or None
         """
-        index.seek(0)
+        safe_rewind(index)
         results = ""
         iv_lat, iv_lon = 2, 3
         il_loaded = 0
@@ -422,7 +437,8 @@ class indexfilter_box(indexfilter_proto):
 
         Parameters
         ----------
-        index_file: _io.TextIOWrapper
+        index_file: class:`io.TextIOWrapper`
+            Argo index text stream
 
         Returns
         -------
@@ -487,6 +503,15 @@ class indexstore():
         """ Convert a csv like string into a DataFrame
 
             If one columns has a missing value, the row is skipped
+
+        Parameters
+        ----------
+        str
+
+        Returns
+        -------
+        :class:`pandas.Dataframe`
+
         """
         cols_name = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution', 'date_update']
         cols_type = {'file': np.str_, 'date': np.datetime64, 'latitude': np.float32, 'longitude': np.float32,
@@ -499,21 +524,21 @@ class indexstore():
 
         Parameters
         ----------
-        search_cls: Class instance inheriting from index_filter_proto
+        search_cls: Class instance inheriting from indexfilter_proto
 
         Returns
         -------
         :class:`pandas.DataFrame`
 
         """
-        uri = search_cls.uri()
+        uri = search_cls.uri
         with self.open_index() as f:
             if self.cache and (self.in_cache(self.fs['search'].fs, uri) or self.in_memory(self.fs['search'].fs, uri)):
-                # print('Search already in memory, loading:', uri)
+                print('Search already in memory, loading:', uri)
                 with self.fs['search'].open(uri, "r") as of:
                     df = self.res2dataframe(of.read())
             else:
-                # print('Running search from scratch ...')
+                print('Running search from scratch ...')
                 # Run search:
                 results = search_cls.run(f)
                 if not results:

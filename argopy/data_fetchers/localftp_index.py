@@ -54,16 +54,16 @@ class LocalFTPArgoIndexFetcher(ABC):
 
     @property
     def cachepath(self):
-        return self.fs.cachepath(self.fcls.uri())
+        return self.fs.cachepath(self.fcls.uri)
 
     def cname(self):
         """ Return a unique string defining the request
 
         """
-        return self.fcls.uri()
+        return self.fcls.uri
 
     def filter_index(self):
-        """ Search for profile in a box in the argo index file
+        """ Return an index filter
 
         Parameters
         ----------
