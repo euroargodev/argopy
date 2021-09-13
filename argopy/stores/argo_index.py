@@ -42,6 +42,23 @@ class indexfilter_proto(ABC):
         """ Unique filter hash string """
         return hashlib.sha256(self.uri().encode()).hexdigest()
 
+    def search_null(self, index):
+        """ Perform a null search, ie return the full argo index file
+
+        Parameters
+        ----------
+        index: _io.TextIOWrapper
+
+        Returns
+        -------
+        csv index, as a string
+        """
+        index.seek(0)
+        for line in index:
+            if line[0] != '#':
+                break
+        return index.read()
+
 
 class indexfilter_wmo(indexfilter_proto):
     """ Index filter based on WMO and/or CYCLE_NUMER
@@ -52,12 +69,12 @@ class indexfilter_wmo(indexfilter_proto):
     --------
 
     # Create filters:
-    filt = index_filter_wmo(WMO=13857)
-    filt = index_filter_wmo(WMO=13857, CYC=np.arange(1,10))
-    filt = index_filter_wmo(WMO=[13857, 13858, 12], CYC=12)
-    filt = index_filter_wmo(WMO=[13857, 13858, 12], CYC=[1, 12])
-    filt = index_filter_wmo(CYC=250)
-    filt = index_filter_wmo()
+    filt = indexfilter_wmo(WMO=13857)
+    filt = indexfilter_wmo(WMO=13857, CYC=np.arange(1,10))
+    filt = indexfilter_wmo(WMO=[13857, 13858, 12], CYC=12)
+    filt = indexfilter_wmo(WMO=[13857, 13858, 12], CYC=[1, 12])
+    filt = indexfilter_wmo(CYC=250)
+    filt = indexfilter_wmo()
 
     # Filter name:
     print(filt.uri())
@@ -114,6 +131,116 @@ class indexfilter_wmo(indexfilter_proto):
             listname = hashlib.sha256(listname.encode()).hexdigest()
         return listname
 
+    def define_search_this(self, cyc):
+        """ Return a search function for a given cycle number """
+        if np.all(cyc >= 1000):
+            def search_this(this_line):
+                # return np.any([re.search("%0.4d.nc" % c, this_line.split(',')[0]) for c in cyc])
+                return np.any(["%0.4d.nc" % c in this_line for c in cyc])
+        else:
+            def search_this(this_line):
+                # return np.any([re.search("%0.3d.nc" % c, this_line.split(',')[0]) for c in cyc])
+                return np.any(["%0.3d.nc" % c in this_line for c in cyc])
+        return search_this
+
+    def search_one_wmo(self, index, wmo):
+        """ Search for a WMO in an argo index file
+
+        Parameters
+        ----------
+        index_file: _io.TextIOWrapper
+        wmo: int
+
+        Returns
+        -------
+        csv chunk matching the request, as a string. Or None
+        """
+        index.seek(0)
+        results = ""
+        il_read, il_loaded, il_this = 0, 0, 0
+        for line in index:
+            il_this = il_loaded
+            # if re.search("/%i/" % wmo, line.split(',')[0]):
+            if "/%i/" % wmo in line:  # much faster than re
+                # Search for the wmo at the beginning of the file name under: /<dac>/<wmo>/profiles/
+                results += line
+                il_loaded += 1
+            if il_this == il_loaded and il_this > 0:
+                break  # Since the index is sorted, once we found the float, we can stop reading the index !
+            il_read += 1
+        if il_loaded > 0:
+            return results
+        else:
+            return None
+
+    def search_any_wmo_cyc(self, index, cyc):
+        """ Search for a WMO in an argo index file
+
+        Parameters
+        ----------
+        index_file: _io.TextIOWrapper
+        cyc: array of integers
+
+        Returns
+        -------
+        csv chunk matching the request, as a string. Or None
+        """
+        search_this = self.define_search_this(cyc)
+        index.seek(0)
+        results = ""
+        il_read, il_loaded = 0, 0
+        for line in index:
+            if search_this(line):
+                results += line
+                il_loaded += 1
+            il_read += 1
+        if il_loaded > 0:
+            return results
+        else:
+            return None
+
+    def search_one_wmo_cyc(self, index, wmo, cyc):
+        """ Search for a WMO and CYC in an argo index file
+
+        Parameters
+        ----------
+        index: _io.TextIOWrapper
+        wmo: int
+        cyc: array of integers
+
+        Returns
+        -------
+        csv chunk matching the request, as a string. Or None
+        """
+        index.seek(0)
+        results = ""
+
+        # Look for the float:
+        il_read, il_loaded, il_this = 0, 0, 0
+        for line in index:
+            il_this = il_loaded
+            # if re.search("/%i/" % wmo, line.split(',')[0]):
+            if "/%i/" % wmo in line:  # much faster than re
+                results += line
+                il_loaded += 1
+            if il_this == il_loaded and il_this > 0:
+                break  # Since the index is sorted, once we found the float, we can stop reading the index !
+            il_read += 1
+
+        # Then look for the profile:
+        if results:
+            search_this = self.define_search_this(cyc)
+            il_loaded, cyc_results = 0, ""
+            for line in results.split():
+                if search_this(line):
+                    il_loaded += 1
+                    cyc_results += line + "\n"
+
+        if il_loaded > 0:
+            return cyc_results
+        else:
+            return None
+
     def run(self, index_file):
         """ Run search on an Argo index file
 
@@ -126,149 +253,23 @@ class indexfilter_wmo(indexfilter_proto):
         csv rows matching the request, as in-memory string. Or None.
         """
 
-        # Define one-line search functions:
-        def search_one_wmo(index, wmo):
-            """ Search for a WMO in the argo index file
-
-            Parameters
-            ----------
-            index_file: _io.TextIOWrapper
-            wmo: int
-
-            Returns
-            -------
-            csv chunk matching the request, as a string. Or None
-            """
-            index.seek(0)
-            results = ""
-            il_read, il_loaded, il_this = 0, 0, 0
-            for line in index:
-                il_this = il_loaded
-                # if re.search("/%i/" % wmo, line.split(',')[0]):
-                if "/%i/" % wmo in line:  # much faster than re
-                    # Search for the wmo at the beginning of the file name under: /<dac>/<wmo>/profiles/
-                    results += line
-                    il_loaded += 1
-                if il_this == il_loaded and il_this > 0:
-                    break  # Since the index is sorted, once we found the float, we can stop reading the index !
-                il_read += 1
-            if il_loaded > 0:
-                return results
-            else:
-                return None
-
-        def define_search_this(cyc):
-            if np.all(cyc >= 1000):
-                def search_this(this_line):
-                    # return np.any([re.search("%0.4d.nc" % c, this_line.split(',')[0]) for c in cyc])
-                    return np.any(["%0.4d.nc" % c in this_line for c in cyc])
-            else:
-                def search_this(this_line):
-                    # return np.any([re.search("%0.3d.nc" % c, this_line.split(',')[0]) for c in cyc])
-                    return np.any(["%0.3d.nc" % c in this_line for c in cyc])
-            return search_this
-
-        def search_any_wmo_cyc(index, cyc):
-            """ Search for a WMO in the argo index file
-
-            Parameters
-            ----------
-            index_file: _io.TextIOWrapper
-            cyc: array of integers
-
-            Returns
-            -------
-            csv chunk matching the request, as a string. Or None
-            """
-            search_this = define_search_this(cyc)
-            index.seek(0)
-            results = ""
-            il_read, il_loaded = 0, 0
-            for line in index:
-                if search_this(line):
-                    results += line
-                    il_loaded += 1
-                il_read += 1
-            if il_loaded > 0:
-                return results
-            else:
-                return None
-
-        def search_one_wmo_cyc(index, wmo, cyc):
-            """ Search for a WMO and CYC in the argo index file
-
-            Parameters
-            ----------
-            index: _io.TextIOWrapper
-            wmo: int
-            cyc: array of integers
-
-            Returns
-            -------
-            csv chunk matching the request, as a string. Or None
-            """
-            index.seek(0)
-            results = ""
-
-            # Look for the float:
-            il_read, il_loaded, il_this = 0, 0, 0
-            for line in index:
-                il_this = il_loaded
-                # if re.search("/%i/" % wmo, line.split(',')[0]):
-                if "/%i/" % wmo in line:  # much faster than re
-                    results += line
-                    il_loaded += 1
-                if il_this == il_loaded and il_this > 0:
-                    break  # Since the index is sorted, once we found the float, we can stop reading the index !
-                il_read += 1
-
-            # Then look for the profile:
-            if results:
-                search_this = define_search_this(cyc)
-                il_loaded, cyc_results = 0, ""
-                for line in results.split():
-                    if search_this(line):
-                        il_loaded += 1
-                        cyc_results += line + "\n"
-            if il_loaded > 0:
-                return cyc_results
-            else:
-                return None
-
-        def full_load(index):
-            """ Return the full argo index file (without header)
-
-            Parameters
-            ----------
-            index: _io.TextIOWrapper
-
-            Returns
-            -------
-            csv index, as a string
-            """
-            index.seek(0)
-            for line in index:
-                if line[0] != '#':
-                    break
-            return index.read()
-
         # Run the filter with the appropriate one-line search
         if len(self.WMO) > 1:
             if isinstance(self.CYC, (np.ndarray)):
-                return "".join([r for r in [search_one_wmo_cyc(index_file, w, self.CYC) for w in self.WMO] if r])
+                return "".join([r for r in [self.search_one_wmo_cyc(index_file, w, self.CYC) for w in self.WMO] if r])
             else:
-                return "".join([r for r in [search_one_wmo(index_file, w) for w in self.WMO] if r])
+                return "".join([r for r in [self.search_one_wmo(index_file, w) for w in self.WMO] if r])
         elif len(self.WMO) == 0:  # Search for cycle numbers only
             if isinstance(self.CYC, (np.ndarray)):
-                return search_any_wmo_cyc(index_file, self.CYC)
+                return self.search_any_wmo_cyc(index_file, self.CYC)
             else:
                 # No wmo, No cyc, return the full index:
-                return full_load(index_file)
+                return self.search_null(index_file)
         else:
             if isinstance(self.CYC, (np.ndarray)):
-                return search_one_wmo_cyc(index_file, self.WMO[0], self.CYC)
+                return self.search_one_wmo_cyc(index_file, self.WMO[0], self.CYC)
             else:
-                return search_one_wmo(index_file, self.WMO[0])
+                return self.search_one_wmo(index_file, self.WMO[0])
 
 
 class indexfilter_box(indexfilter_proto):
@@ -280,8 +281,8 @@ class indexfilter_box(indexfilter_proto):
     --------
 
     # Create filters:
-    filt = index_filter_box(BOX=[-70, -65, 30., 35.])
-    filt = index_filter_box(BOX=[-70, -65, 30., 35., '2012-01-01', '2012-06-30'])
+    filt = indexfilter_box(BOX=[-70, -65, 30., 35.])
+    filt = indexfilter_box(BOX=[-70, -65, 30., 35., '2012-01-01', '2012-06-30'])
 
     # Filter name:
     print(filt.uri())
@@ -409,9 +410,11 @@ class indexfilter_box(indexfilter_proto):
 
         # First search in space:
         results = self.search_latlon(index, self.BOX[0:2], self.BOX[2:4])
+
         # Then refine in time:
         if results:
             results = search_tim(results, pd.to_datetime(self.BOX[4:6]))
+
         return results
 
     def run(self, index_file):
