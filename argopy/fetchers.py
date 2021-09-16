@@ -384,7 +384,7 @@ class ArgoDataFetcher:
                 index_loader.profile(self._AccessPoint_data['wmo'], self._AccessPoint_data['cyc']).load()
             if self._AccessPoint == 'region':
                 # Convert data box to index box (remove depth info):
-                index_box = self._AccessPoint_data['box']
+                index_box = self._AccessPoint_data['box'].copy()
                 del index_box[4:6]
                 index_loader.region(index_box).load()
             df = index_loader.index
@@ -457,8 +457,12 @@ class ArgoDataFetcher:
         """
         self.load()
         if ptype in ["dac", "institution"]:
+            if "institution" not in self.index:
+                self.to_index(full=True)
             return bar_plot(self.index, by="institution", **kwargs)
         elif ptype == "profiler":
+            if "profiler" not in self.index:
+                self.to_index(full=True)
             return bar_plot(self.index, by="profiler", **kwargs)
         elif ptype == "trajectory":
             return plot_trajectory(self.index, **kwargs)
@@ -637,7 +641,7 @@ class ArgoIndexFetcher:
 
             Longitude and latitude bounds are required, while the two bounding dates are optional.
             If bounding dates are not specified, the entire time series is fetched.
-            Eg: [-60, -55, 40., 45., 0., 10., '2007-08-01', '2007-09-01']
+            Eg: [-60, -55, 40., 45., '2007-08-01', '2007-09-01']
 
         Returns
         -------
