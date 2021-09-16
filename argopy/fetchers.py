@@ -400,7 +400,7 @@ class ArgoIndexFetcher:
         Returns
         -------
         :class:`argopy.fetchers.ArgoIndexFetcher.float`
-            A data source fetcher for all float profiles index
+            An index source fetcher for all float profiles index
         """
         wmo = check_wmo(wmo)  # Check and return a valid list of WMOs
 
@@ -427,7 +427,7 @@ class ArgoIndexFetcher:
         Returns
         -------
         :class:`argopy.fetchers.ArgoIndexFetcher.profile`
-            A data source fetcher for specific float profiles index
+            An index source fetcher for specific float profiles index
         """
         wmo = check_wmo(wmo)  # Check and return a valid list of WMOs
 
@@ -448,7 +448,7 @@ class ArgoIndexFetcher:
         Parameters
         ----------
         box: list()
-            Define the domain to load Argo data for. The box list is made of:
+            Define the domain to load Argo index for. The box list is made of:
                 - lon_min: float, lon_max: float,
                 - lat_min: float, lat_max: float,
                 - date_min: str (optional), date_max: str (optional)
@@ -460,7 +460,7 @@ class ArgoIndexFetcher:
         Returns
         -------
         :class:`argopy.fetchers.ArgoIndexFetcher`
-            A data source fetcher for a space/time domain index
+            An index source fetcher for a space/time domain index
         """
         is_indexbox(box, errors="raise")  # Validate the box definition
         if "region" in self.Fetchers:
