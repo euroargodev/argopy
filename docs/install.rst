@@ -23,7 +23,7 @@ The **argopy** software is `continuously tested <https://github.com/euroargodev/
 Optional dependencies
 ^^^^^^^^^^^^^^^^^^^^^
 
-For full **argopy** functionalities to work, the following packages are also required:
+For a complete **argopy** experience, the following packages are also required:
 
 - ipython>=5.0.0
 - ipywidgets>=7.5.1

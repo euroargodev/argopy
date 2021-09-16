@@ -63,6 +63,8 @@ print("sys.path:", sys.path)
 #     'sphinx.ext.viewcode',
 #     'sphinx.ext.githubpages']
 
+ipython_warning_is_error = False
+
 extensions = [
     # 'sphinx.ext.autodoc',
     'sphinx.ext.autosectionlabel',
@@ -130,7 +132,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '_templates',
                     '.ipynb_checkpoints', '_ext', 'tempo_out', '_src',
                     'offline', 'examples/.ipynb_checkpoints']
 
-# Give *lots* of time for cell execution!
+# Give *lots* of time for notebook cell execution!
 # Note nbsphinx compiles *all* notebooks in docs unless excluded
 nbsphinx_timeout = 300
 nbsphinx_execute = "always"
@@ -185,6 +187,7 @@ add_module_names = False
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
+# html_theme = 'sphinx_book_theme'
 # html_theme = 'bootstrap'
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -204,7 +207,10 @@ html_favicon = '_static/argopy.ico'
 html_static_path = ['_static']
 
 html_theme_options = {
-    #  'canonical_url': '',
+    "repository_url": "https://www.github.com/euroargodev/argopy",
+    "use_repository_button": True,
+    "html_logo": "_static/argopy_logo_long.png",
+#  'canonical_url': '',
     'analytics_id': 'UA-73130866-2',  # Provided by Google in your dashboard
     'logo_only': True,
     'display_version': False,
@@ -290,7 +296,7 @@ texinfo_documents = [
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
     'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
-    'iris': ('https://scitools.org.uk/iris/docs/latest/', None),
+    'iris': ('https://scitools-iris.readthedocs.io/en/stable/', None),
     'numpy': ('https://numpy.org/doc/stable/', None),
     'numba': ('https://numba.readthedocs.io/en/stable/', None),
     'matplotlib': ('https://matplotlib.org/', None),

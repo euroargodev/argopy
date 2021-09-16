@@ -1,10 +1,10 @@
 import xarray as xr
 import pytest
-import warnings
+# import warnings
 
 import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
-from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, ErddapServerError, DataNotFound
+from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher
 from . import (
     AVAILABLE_INDEX_SOURCES,
     requires_fetcher_index,
@@ -58,8 +58,8 @@ class Test_AllBackends:
     args = {}
     args["float"] = [[2901623], [6901929, 2901623]]
     args["region"] = [
-        [-60, -40, 40.0, 60.0],
-        [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"],
+        [-60, -50, 40.0, 50.0],
+        [-60, -50, 40.0, 50.0, "2007-08-01", "2007-09-01"],
     ]
     args["profile"] = [[2901623, 2], [6901929, [5, 45]]]
 
@@ -84,12 +84,6 @@ class Test_AllBackends:
             f = ArgoIndexFetcher(src=bk, **options).region(arg)
             assert isinstance(f.to_xarray(), xr.Dataset)
 
-    @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
-    @requires_connected_erddap_index
-    @safe_to_server_errors
-    def test_float_erddap(self):
-        self.__test_float("erddap")
-
     @requires_localftp_index
     def test_float_localftp(self):
         with argopy.set_options(local_ftp=self.local_ftp):
@@ -100,12 +94,19 @@ class Test_AllBackends:
         with argopy.set_options(local_ftp=self.local_ftp):
             self.__test_profile("localftp", index_file="ar_index_global_prof.txt")
 
+    @requires_localftp_index
+    def test_region_localftp(self):
+        with argopy.set_options(local_ftp=self.local_ftp):
+            self.__test_region("localftp", index_file="ar_index_global_prof.txt")
+
+    # @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
+    @requires_connected_erddap_index
+    @safe_to_server_errors
+    def test_float_erddap(self):
+        self.__test_float("erddap")
+
     @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
     @requires_connected_erddap_index
     def test_region_erddap(self):
         self.__test_region("erddap")
 
-    @requires_localftp_index
-    def test_region_localftp(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
-            self.__test_region("localftp", index_file="ar_index_global_prof.txt")

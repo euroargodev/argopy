@@ -596,7 +596,7 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         if len(self.WMO) == 1:
             return open_dashboard(wmo=self.WMO[0], **kw)
         else:
-            warnings.warn("Plot dashboard only available for a single float request")
+            warnings.warn("Dashboard only available for a single float request")
 
 
 class Fetch_box(ErddapArgoDataFetcher):

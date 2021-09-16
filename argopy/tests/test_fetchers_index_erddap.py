@@ -20,8 +20,8 @@ class Test_Backend:
     requests = {
         "float": [[2901623], [2901623, 6901929]],
         "region": [
-            [-60, -40, 40.0, 60.0],
-            [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"],
+            [-60, -50, 40.0, 50.0],
+            [-60, -50, 40.0, 50.0, "2007-08-01", "2007-09-01"],
         ],
     }
 
@@ -33,9 +33,7 @@ class Test_Backend:
                 with pytest.raises(CacheFileNotFound):
                     loader.fetcher.cachepath
 
-    @pytest.mark.skip(
-        reason="Waiting for https://github.com/euroargodev/argopy/issues/16"
-    )
+    @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
     @safe_to_server_errors
     def test_nocache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
@@ -45,10 +43,8 @@ class Test_Backend:
                 with pytest.raises(FileSystemHasNoCache):
                     loader.fetcher.cachepath
 
+    @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
     @safe_to_fsspec_version
-    @pytest.mark.skip(
-        reason="Waiting for https://github.com/euroargodev/argopy/issues/16"
-    )
     @safe_to_server_errors
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
@@ -60,10 +56,8 @@ class Test_Backend:
                 with pytest.raises(CacheFileNotFound):
                     loader.fetcher.cachepath
 
+    @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
     @safe_to_fsspec_version
-    @pytest.mark.skip(
-        reason="Waiting for https://github.com/euroargodev/argopy/issues/16"
-    )
     @safe_to_server_errors
     def test_caching(self):
         with tempfile.TemporaryDirectory() as testcachedir:
@@ -123,9 +117,7 @@ class Test_Backend:
     #                              [6901929, [5, 45]]]}
     #     self.__testthis()
 
-    @pytest.mark.skip(
-        reason="Waiting for https://github.com/euroargodev/argopy/issues/16"
-    )
+    @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
     @safe_to_server_errors
     def test_phy_region(self):
         self.args = {"region": self.requests["region"]}
