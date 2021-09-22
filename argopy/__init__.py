@@ -6,20 +6,28 @@ except Exception:
     # Disable minimum version checks on downstream libraries.
     __version__ = "999"
 
-# Import facades:
-from .fetchers import ArgoDataFetcher as DataFetcher
-from .fetchers import ArgoIndexFetcher as IndexFetcher
+# Loggers
+import logging
+log = logging.getLogger(__name__)
+log.addHandler(logging.NullHandler())
+# log.info("Welcome ! this is a INFO msg")
+# log.debug("Welcome ! this is a DEBUG msg")
+# log.warning("Welcome ! this is a WARNING msg")
 
-from .xarray import ArgoAccessor
-from . import tutorial
+# Import facades:
+from .fetchers import ArgoDataFetcher as DataFetcher  # noqa: F401 isort:skip
+from .fetchers import ArgoIndexFetcher as IndexFetcher  # noqa: F401 isort:skip
+
+from .xarray import ArgoAccessor  # noqa: F401 isort:skip
+from . import tutorial  # noqa: F401 isort:skip
 
 # Other Import
-from . import utilities
-from . import stores
-from .utilities import show_versions, clear_cache
-from .utilities import monitor_status as status
-from .options import set_options
-from .plotters import open_dashboard as dashboard
+from . import utilities  # noqa: F401 isort:skip
+from . import stores  # noqa: F401 isort:skip
+from .utilities import show_versions, clear_cache  # noqa: F401 isort:skip
+from .utilities import monitor_status as status  # noqa: F401 isort:skip
+from .options import set_options  # noqa: F401 isort:skip
+from .plotters import open_dashboard as dashboard  # noqa: F401 isort:skip
 
 #
 __all__ = (

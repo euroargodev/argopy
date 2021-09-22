@@ -10,6 +10,7 @@ The facade should be able to work with all available data access point,
 import warnings
 import xarray as xr
 import pandas as pd
+import logging
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher
@@ -19,6 +20,7 @@ from .plotters import plot_trajectory, bar_plot
 AVAILABLE_DATA_SOURCES = list_available_data_src()
 AVAILABLE_INDEX_SOURCES = list_available_index_src()
 
+log = logging.getLogger("argopy.fetchers")
 
 def checkAccessPoint(AccessPoint):
     """ Decorator to validate fetcher access points of a given data source
