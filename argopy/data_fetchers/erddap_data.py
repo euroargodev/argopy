@@ -125,7 +125,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         version_tup = tuple(int(x) for x in fsspec.__version__.split("."))
         if cache and version_tup[0] == 0 and version_tup[1] == 8 and version_tup[-1] == 4:
             cache = False
-            warnings.warn("Cache is impossible with fsspec version 0.8.4, please upgrade or downgrade to use cache.\n Moving to non cached file system")
+            warnings.warn("Cache is not yet possible with fsspec version > 0.8.3, please downgrade to use cache.\n Moving to non cached file system")
 
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')

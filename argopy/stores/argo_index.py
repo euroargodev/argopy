@@ -345,9 +345,10 @@ class indexfilter_box(indexfilter_proto):
             boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f]") % (BOX[0], BOX[1], BOX[2], BOX[3])
         else:
             boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; t=%s/%s]") % (BOX[0], BOX[1], BOX[2], BOX[3], BOX[4], BOX[5])
-        if len(boxname) > 256:
-            boxname = hashlib.sha256(boxname.encode()).hexdigest()
-        return boxname
+        # if len(boxname) > 256:
+        #     boxname = hashlib.sha256(boxname.encode()).hexdigest()
+        return hashlib.sha256(boxname.encode()).hexdigest()
+        # return boxname
 
     def search_latlon(self, index, lon, lat):
         """ Search
@@ -472,8 +473,8 @@ class indexstore():
         self.cache = cache
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
         self.fs = {}
-        self.fs['index'] = filestore(cache, cachedir)
-        self.fs['search'] = memorystore(cache, cachedir)
+        self.fs['index'] = filestore(cache, cachedir)  # Manage the full index
+        self.fs['search'] = memorystore(cache, cachedir)  # Manage the search results
 
     def cachepath(self, uri: str, errors: str = 'raise'):
         """ Return path to cached file for a given URI """
@@ -483,21 +484,21 @@ class indexstore():
         self.fs['index'].clear_cache()
         self.fs['search'].clear_cache()
 
-    def in_cache(self, fs, uri):
-        """ Return true if uri is cached """
-        if not uri.startswith(fs.target_protocol):
-            store_path = fs.target_protocol + "://" + uri
-        else:
-            store_path = uri
-        fs.load_cache()
-        return store_path in fs.cached_files[-1]
+    # def in_cache(self, fs, uri):
+    #     """ Return True if uri is cached """
+    #     if not uri.startswith(fs.target_protocol):
+    #         store_path = fs.target_protocol + "://" + uri
+    #     else:
+    #         store_path = uri
+    #     fs.load_cache()
+    #     return store_path in fs.cached_files[-1]
 
-    def in_memory(self, fs, uri):
-        """ Return True if uri is in the memory store """
-        return uri in fs.store
+    # def in_memory(self, fs, uri):
+    #     """ Return True if uri is in memory """
+    #     return fs.exists(uri)
 
-    def open_index(self):
-        return self.fs['index'].open(self.index_file, "r")
+    # def open_index(self):
+    #     return self.fs['index'].open(self.index_file, "r")
 
     def res2dataframe(self, results):
         """ Convert a csv like string into a DataFrame
@@ -511,7 +512,6 @@ class indexstore():
         Returns
         -------
         :class:`pandas.Dataframe`
-
         """
         cols_name = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution', 'date_update']
         cols_type = {'file': np.str_, 'date': np.datetime64, 'latitude': np.float32, 'longitude': np.float32,
@@ -519,34 +519,35 @@ class indexstore():
         data = [x.split(',') for x in results.split('\n') if ",," not in x]
         return pd.DataFrame(data, columns=cols_name).astype(cols_type)[:-1]
 
-    def read_csv(self, search_cls):
+    def read_csv(self, search):
         """ Run a search on an csv Argo index file and return a Pandas DataFrame with results
 
         Parameters
         ----------
-        search_cls: Class instance inheriting from indexfilter_proto
+        search: :class:`indexfilter_wmo` or :class:`indexfilter_box`
+            Class instance inheriting from :class:`indexfilter_proto`
 
         Returns
         -------
         :class:`pandas.DataFrame`
-
         """
-        uri = search_cls.uri
-        with self.open_index() as f:
-            if self.cache and (self.in_cache(self.fs['search'].fs, uri) or self.in_memory(self.fs['search'].fs, uri)):
-                print('Search already in memory, loading:', uri)
-                with self.fs['search'].open(uri, "r") as of:
-                    df = self.res2dataframe(of.read())
-            else:
-                print('Running search from scratch ...')
+        if self.fs['search'].exists(search.uri):
+            # print('\nSearch already in memory, loading:', search.uri)
+            results = ""
+            with self.fs['search'].fs.open(search.uri, "r") as of:
+                results += of.readline()
+        else:
+            # print('\nRunning search from scratch ...')
+            with self.fs['index'].open(self.index_file, "r") as f:
                 # Run search:
-                results = search_cls.run(f)
+                results = search.run(f)
                 if not results:
-                    raise DataNotFound("No Argo data in the index correspond to your search criteria.\nSearch URI: %s" % uri)
+                    raise DataNotFound("No Argo data in the index correspond to your search criteria.\nSearch URI: %s" % search.uri)
                 # and save results for caching:
                 if self.cache:
-                    with self.fs['search'].open(uri, "w") as of:
-                        of.write(results)  # This happens in memory
-                    self.fs['search'].fs.save_cache()
-                df = self.res2dataframe(results)
-        return df
+                    with self.fs['search'].open(search.uri, "w") as of:
+                        of.write(results)  # Save in "memory"
+                    results = ""
+                    with self.fs['search'].fs.open(search.uri, "r") as of:
+                        results += of.readline()  # Trigger save in cache file
+        return self.res2dataframe(results)
