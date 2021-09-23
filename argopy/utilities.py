@@ -24,6 +24,7 @@ import xarray as xr
 import pandas as pd
 import numpy as np
 from scipy import interpolate
+import fsspec
 
 import pickle
 import pkg_resources
@@ -51,7 +52,7 @@ except AttributeError:
 path2pkl = pkg_resources.resource_filename("argopy", "assets/")
 
 
-def clear_cache():
+def clear_cache(fs=None):
     """ Delete argopy cache folder content """
     if os.path.exists(OPTIONS["cachedir"]):
         # shutil.rmtree(OPTIONS["cachedir"])
@@ -64,6 +65,9 @@ def clear_cache():
                     shutil.rmtree(file_path)
             except Exception as e:
                 print("Failed to delete %s. Reason: %s" % (file_path, e))
+        if fs:
+            fs.clear_cache()
+
 
 
 def load_dict(ptype):

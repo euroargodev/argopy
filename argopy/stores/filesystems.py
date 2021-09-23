@@ -115,13 +115,6 @@ class argo_store_proto(ABC):
             path = self.fs.target_protocol + "://" + path
         return path
 
-    # def store_path(self, uri):
-    #     if not uri.startswith(self.fs.target_protocol):
-    #         path = self.fs.target_protocol + "://" + uri
-    #     else:
-    #         path = uri
-    #     return path
-
     def register(self, uri):
         """ Keep track of files open with this instance """
         if self.cache:
