@@ -10,9 +10,6 @@ except Exception:
 import logging
 log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
-# log.info("Welcome ! this is a INFO msg")
-# log.debug("Welcome ! this is a DEBUG msg")
-# log.warning("Welcome ! this is a WARNING msg")
 
 # Import facades:
 from .fetchers import ArgoDataFetcher as DataFetcher  # noqa: F401 isort:skip
