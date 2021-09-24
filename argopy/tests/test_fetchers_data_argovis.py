@@ -64,10 +64,8 @@ class Test_Backend:
                 fetcher = (
                     ArgoDataFetcher(src=self.src, cache=True).float(self.requests['float'][0]).fetcher
                 )
-                # 1st call to load and save to cache:
-                fetcher.to_xarray()
-                # 2nd call to load from cached file:
-                ds = fetcher.to_xarray()
+                fetcher.to_xarray()  # 1st call: fetch from remote and load in memory
+                ds = fetcher.to_xarray()  # 2nd call: load from memory and save in cache file
                 assert isinstance(ds, xr.Dataset)
                 assert is_list_of_strings(fetcher.uri)
                 assert is_list_of_strings(fetcher.cachepath)
@@ -76,11 +74,7 @@ class Test_Backend:
     def test_caching_profile(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                fetcher = (
-                    ArgoDataFetcher(src=self.src, cache=True)
-                    .profile(*self.requests['profile'][0])
-                    .fetcher
-                )
+                fetcher = ArgoDataFetcher(src=self.src, cache=True).profile(*self.requests['profile'][0]).fetcher
                 # 1st call to load and save to cachedir:
                 fetcher.to_xarray()
                 # 2nd call to load from cached file

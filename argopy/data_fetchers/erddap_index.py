@@ -13,11 +13,17 @@ This is not intended to be used directly, only by the facade at fetchers.py
 import pandas as pd
 import numpy as np
 import copy
+import logging
+from packaging import version
+import fsspec
 
 from abc import ABC, abstractmethod
 
-from argopy.utilities import load_dict, mapp_dict, isconnected, format_oneline
+from argopy.utilities import load_dict, mapp_dict, format_oneline
 from argopy.stores import httpstore
+
+
+log = logging.getLogger("argopy.fetchers.erddap_index")
 
 
 # Load erddapy according to available version (breaking changes in v0.8.0)
@@ -71,6 +77,9 @@ class ErddapArgoIndexFetcher(ABC):
                  cachedir: str = "",
                  **kwargs):
         """ Instantiate an ERDDAP Argo index loader """
+        if version.parse(fsspec.__version__) > version.parse("0.8.3") and cache and self.access_point == 'wmo':
+            log.warning("Caching not available for WMO access point, falls back on NO cache (http cache store not compatible with erddap wmo requests)")
+            cache = False
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
         self.definition = 'Ifremer erddap Argo index fetcher'
         self.dataset_id = 'index'
@@ -193,6 +202,7 @@ class Fetch_wmo(ErddapArgoIndexFetcher):
     """ Manage access to Argo Index through Ifremer ERDDAP for: a list of WMOs
 
     """
+    access_point = 'wmo'
 
     def init(self, WMO=[]):
         """ Create Argo data loader for WMOs
@@ -229,6 +239,7 @@ class Fetch_box(ErddapArgoIndexFetcher):
 
         __author__: kevin.balem@ifremer.fr
     """
+    access_point = 'box'
 
     def init(self, box=[]):
         """ Create Argo Index loader

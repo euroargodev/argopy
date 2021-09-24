@@ -47,7 +47,7 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = "", **kwargs
     if not cache:
         fs = fsspec.filesystem(protocol, **kwargs)
         cache_registry = None
-        log.debug("Opening a fsspec [file] system with '%s' protocol" % protocol)
+        log.debug("Opening a fsspec [file] system for '%s' protocol" % protocol)
     else:
         fs = fsspec.filesystem("filecache",
                                target_protocol=protocol,
@@ -57,7 +57,7 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = "", **kwargs
         # We use a refresh rate for cache of 1 day,
         # since this is the update frequency of the Ifremer erddap
         cache_registry = []  # Will hold uri cached by this store instance
-        log.debug("Opening a fsspec [filecache] system with '%s' protocol" % protocol)
+        log.debug("Opening a fsspec [filecache] system for '%s' protocol" % protocol)
     return fs, cache_registry
 
 

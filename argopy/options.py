@@ -63,7 +63,7 @@ class set_options:
         - `mode`: User mode.
             Default: `standard`. Possible values: `standard` or `expert`.
         - `api_timeout`: Define the time out of internet requests to web API, in seconds.
-            Default: 120
+            Default: 60
 
     You can use `set_options` either as a context manager:
     >>> import argopy
