@@ -43,7 +43,6 @@ class ErddapArgoIndexFetcher(ABC):
 
         ERDDAP transaction are managed with the erddapy library
 
-        __author__: kevin.balem@ifremer.fr
     """
 
     ###
@@ -65,13 +64,13 @@ class ErddapArgoIndexFetcher(ABC):
         pass
 
     ###
-    # Methods that must not changed
+    # Methods that must not change
     ###
     def __init__(self,
                  cache: bool = False,
                  cachedir: str = "",
                  **kwargs):
-        """ Instantiate an ERDDAP Argo index loader with force caching """
+        """ Instantiate an ERDDAP Argo index loader """
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
         self.definition = 'Ifremer erddap Argo index fetcher'
         self.dataset_id = 'index'
