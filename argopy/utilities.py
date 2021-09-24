@@ -549,12 +549,13 @@ def isAPIconnected(src="erddap", data=True):
             # This is a special case because the source here is a local folder, and the folder validity is checked
             # when setting the option value of 'local_ftp'
             # So here, we just need to catch the appropriate error after a call to set_option
-            opts = {"src": src, "local_ftp": OPTIONS["local_ftp"]}
-            try:
-                set_options(**opts)
-                return True
-            except OptionValueError:
-                return False
+            # opts = {"src": src, "local_ftp": OPTIONS["local_ftp"]}
+            # try:
+            #     set_options(**opts)
+            #     return True
+            # except OptionValueError:
+            #     return False
+            return check_localftp(OPTIONS["local_ftp"])
         else:
             with set_options(src=src):
                 return isconnected(AVAILABLE_SOURCES[src].api_server_check)
