@@ -55,7 +55,19 @@ v0.1.8 (X XXX. 2021)
 
 **Internals**
 
-- Upgrade dependancies version support
+- Internal logging available and upgrade dependencies version support (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_. To see internal logs, you can set-up your application like this:
+
+.. code-block:: python
+
+    import logging
+    DEBUGFORMATTER = '%(asctime)s [%(levelname)s] [%(threadName)s:%(name)s] %(filename)s:%(lineno)d: %(message)s'
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format=DEBUGFORMATTER,
+        datefmt='%m/%d/%Y %I:%M:%S %p',
+        handlers=[logging.FileHandler("argopy.log", mode='w'), logging.StreamHandler()]
+    )
+
 
 v0.1.7 (4 Jan. 2021)
 -----------------------

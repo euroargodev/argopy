@@ -11,7 +11,8 @@ from . import (
     requires_connected_erddap_index,
     requires_localftp_index,
     requires_connection,
-    safe_to_server_errors
+    safe_to_server_errors,
+    safe_to_fsspec_version
 )
 
 
@@ -58,8 +59,8 @@ class Test_AllBackends:
     args = {}
     args["float"] = [[2901623], [6901929, 2901623]]
     args["region"] = [
-        [-60, -50, 40.0, 50.0],
-        [-60, -50, 40.0, 50.0, "2007-08-01", "2007-09-01"],
+        [-100., -95., -35., -30.],
+        [-100., -95., -35., -30., "2020-01-01", "2020-01-15"],
     ]
     args["profile"] = [[2901623, 2], [6901929, [5, 45]]]
 
@@ -89,6 +90,12 @@ class Test_AllBackends:
         with argopy.set_options(local_ftp=self.local_ftp):
             self.__test_float("localftp", index_file="ar_index_global_prof.txt")
 
+    @safe_to_fsspec_version
+    @requires_connected_erddap_index
+    @safe_to_server_errors
+    def test_float_erddap(self):
+        self.__test_float("erddap")
+
     @requires_localftp_index
     def test_profile_localftp(self):
         with argopy.set_options(local_ftp=self.local_ftp):
@@ -99,14 +106,7 @@ class Test_AllBackends:
         with argopy.set_options(local_ftp=self.local_ftp):
             self.__test_region("localftp", index_file="ar_index_global_prof.txt")
 
-    # @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
-    @requires_connected_erddap_index
-    @safe_to_server_errors
-    def test_float_erddap(self):
-        self.__test_float("erddap")
-
-    @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
+#    @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
     @requires_connected_erddap_index
     def test_region_erddap(self):
         self.__test_region("erddap")
-
