@@ -1,5 +1,4 @@
 import pandas as pd
-import xarray as xr
 
 import pytest
 import tempfile
@@ -14,7 +13,7 @@ from . import requires_connected_erddap_index, safe_to_server_errors, safe_to_fs
 
 
 @requires_connected_erddap_index
-class Test_Backend_WMO:
+class OOTest_Backend_WMO:
     """ Test ERDDAP index fetching backend for WMO access point"""
 
     src = "erddap"
@@ -22,49 +21,48 @@ class Test_Backend_WMO:
         "float": [[2901623], [2901623, 6901929]]
     }
 
+    def test_nocache(self):
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                fetcher = ArgoIndexFetcher(src=self.src, cache=False).float(self.requests['float'][0]).fetcher
+                with pytest.raises(FileSystemHasNoCache):
+                    fetcher.cachepath
+
     @safe_to_fsspec_version
     def test_cachepath_notfound(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0])
+                fetcher = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0]).fetcher
                 with pytest.raises(CacheFileNotFound):
-                    loader.fetcher.cachepath
+                    fetcher.cachepath
 
-    def test_nocache(self):
+    @safe_to_fsspec_version
+    @safe_to_server_errors
+    def test_cached(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoIndexFetcher(src=self.src, cache=False).float(self.requests['float'][0])
-                loader.to_dataframe()
-                with pytest.raises(FileSystemHasNoCache):
-                    loader.fetcher.cachepath
+                fetcher = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0]).fetcher
+                fetcher.to_dataframe()  # 1st call to load from source and save in memory
+                df = fetcher.to_dataframe()  # 2nd call to load from memory and save in cache
+                assert isinstance(df, pd.core.frame.DataFrame)
+                assert isinstance(fetcher.cachepath, str)
 
     @safe_to_fsspec_version
     @safe_to_server_errors
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0])
-                loader.fetcher.to_dataframe()  # 1st call to load from source and save in memory
-                loader.fetcher.to_dataframe()  # 2nd call to load from memory and save in cache
-                loader.fetcher.clear_cache()
+                fetcher = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0]).fetcher
+                fetcher.to_dataframe()  # 1st call to load from source and save in memory
+                fetcher.to_dataframe()  # 2nd call to load from memory and save in cache
+                fetcher.clear_cache()
                 with pytest.raises(CacheFileNotFound):
-                    loader.fetcher.cachepath
-
-    @safe_to_fsspec_version
-    @safe_to_server_errors
-    def test_caching(self):
-        with tempfile.TemporaryDirectory() as testcachedir:
-            with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0])
-                loader.to_dataframe()  # 1st call to load from source and save in memory
-                loader.to_dataframe()  # 2nd call to load from memory and save in cache
-                assert isinstance(loader.index, pd.core.frame.DataFrame)
-                assert isinstance(loader.fetcher.cachepath, str)
+                    fetcher.cachepath
 
     def test_url(self):
         for arg in self.requests["float"]:
-            loader = ArgoIndexFetcher(src=self.src).float(arg)
-            assert isinstance(loader.fetcher.url, str)
+            fetcher = ArgoIndexFetcher(src=self.src).float(arg).fetcher
+            assert isinstance(fetcher.url, str)
 
     def __testthis(self):
         for arg in self.requests["float"]:
@@ -90,46 +88,46 @@ class Test_Backend_BOX:
         ],
     }
 
-    def test_cachepath_notfound(self):
-        with tempfile.TemporaryDirectory() as testcachedir:
-            with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoIndexFetcher(src=self.src, cache=True).region(self.requests['region'][-1])
-                with pytest.raises(CacheFileNotFound):
-                    loader.fetcher.cachepath
-
     def test_nocache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoIndexFetcher(src=self.src, cache=False).region(self.requests['region'][-1])
-                loader.fetcher.to_dataframe()
+                fetcher = ArgoIndexFetcher(src=self.src, cache=False).region(self.requests['region'][-1]).fetcher
                 with pytest.raises(FileSystemHasNoCache):
-                    loader.fetcher.cachepath
+                    fetcher.cachepath
+
+    def test_cachepath_notfound(self):
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                fetcher = ArgoIndexFetcher(src=self.src, cache=True).region(self.requests['region'][-1]).fetcher
+                with pytest.raises(CacheFileNotFound):
+                    fetcher.cachepath
+
+    @safe_to_server_errors
+    def test_cached(self):
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                fetcher = ArgoIndexFetcher(src=self.src, cache=True).region(self.requests['region'][-1]).fetcher
+                fetcher.to_dataframe()  # 1st call to load from source and save in memory
+                df = fetcher.to_dataframe()  # 2nd call to load from memory and save in cache
+                assert isinstance(df, pd.core.frame.DataFrame)
+                assert isinstance(fetcher.cachepath, str)
 
     @safe_to_server_errors
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoIndexFetcher(src=self.src, cache=True).region(self.requests['region'][-1])
-                loader.fetcher.to_dataframe()  # 1st call to load from source and save in memory
-                loader.fetcher.to_dataframe()  # 2nd call to load from memory and save in cache
-                loader.fetcher.clear_cache()
+                fetcher = ArgoIndexFetcher(src=self.src, cache=True).region(self.requests['region'][-1]).fetcher
+                fetcher.to_dataframe()  # 1st call to load from source and save in memory
+                fetcher.to_dataframe()  # 2nd call to load from memory and save in cache
+                fetcher.clear_cache()
                 with pytest.raises(CacheFileNotFound):
-                    loader.fetcher.cachepath
+                    fetcher.cachepath
 
-    @safe_to_server_errors
-    def test_caching(self):
-        with tempfile.TemporaryDirectory() as testcachedir:
-            with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoIndexFetcher(src=self.src, cache=True).region(self.requests['region'][-1])
-                loader.fetcher.to_dataframe()  # 1st call to load from source and save in memory
-                df = loader.fetcher.to_dataframe()  # 2nd call to load from memory and save in cache
-                assert isinstance(df, pd.core.frame.DataFrame)
-                assert isinstance(loader.fetcher.cachepath, str)
 
     def test_url(self):
         for arg in self.requests["region"]:
-            loader = ArgoIndexFetcher(src=self.src).region(arg)
-            assert isinstance(loader.fetcher.url, str)
+            fetcher = ArgoIndexFetcher(src=self.src).region(arg).fetcher
+            assert isinstance(fetcher.url, str)
 
     def __testthis(self):
         for arg in self.requests["region"]:

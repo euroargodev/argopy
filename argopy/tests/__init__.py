@@ -19,6 +19,17 @@ import argopy
 argopy.set_options(api_timeout=4 * 60)  # From Github actions, requests can take a while
 argopy.show_versions()
 
+import logging
+logging.getLogger("matplotlib").setLevel(logging.ERROR)
+DEBUGFORMATTER = '%(asctime)s [%(levelname)s] [%(threadName)s:%(name)s] %(filename)s:%(lineno)d: %(message)s'
+# DEBUGFORMATTER = '%(asctime)s [%(levelname)s] [%(name)s] %(filename)s:%(lineno)d: %(message)s'
+logging.basicConfig(
+    level=logging.DEBUG,
+    format=DEBUGFORMATTER,
+    datefmt='%m/%d/%Y %I:%M:%S %p',
+    handlers=[logging.FileHandler("argopy-tests.log", mode='w')]
+)
+
 def _importorskip(modname):
     try:
         importlib.import_module(modname)

@@ -1,6 +1,6 @@
 import xarray as xr
+import pandas as pd
 import pytest
-# import warnings
 
 import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
@@ -69,21 +69,24 @@ class Test_AllBackends:
         for arg in self.args["float"]:
             options = {**self.fetcher_opts, **ftc_opts}
             f = ArgoIndexFetcher(src=bk, **options).float(arg)
-            assert isinstance(f.to_xarray(), xr.Dataset)
+            f.load()
+            assert isinstance(f.index, pd.core.frame.DataFrame)
 
     def __test_profile(self, bk, **ftc_opts):
         """ Test profile index fetching for a given backend """
         for arg in self.args["profile"]:
             options = {**self.fetcher_opts, **ftc_opts}
             f = ArgoIndexFetcher(src=bk, **options).profile(*arg)
-            assert isinstance(f.to_xarray(), xr.Dataset)
+            f.load()
+            assert isinstance(f.index, pd.core.frame.DataFrame)
 
     def __test_region(self, bk, **ftc_opts):
         """ Test float index fetching for a given backend """
         for arg in self.args["region"]:
             options = {**self.fetcher_opts, **ftc_opts}
             f = ArgoIndexFetcher(src=bk, **options).region(arg)
-            assert isinstance(f.to_xarray(), xr.Dataset)
+            f.load()
+            assert isinstance(f.index, pd.core.frame.DataFrame)
 
     @requires_localftp_index
     def test_float_localftp(self):

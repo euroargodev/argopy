@@ -195,6 +195,7 @@ class filestore(argo_store_proto):
             :class:`xarray.DataSet`
         """
         with self.open(url) as of:
+            log.debug("Opening dataset: %s" % url)
             ds = xr.open_dataset(of, *args, **kwargs)
         if "source" not in ds.encoding:
             if isinstance(url, str):
@@ -339,6 +340,7 @@ class filestore(argo_store_proto):
             -------
             :class:`pandas.DataFrame`
         """
+        log.debug("Reading csv: %s" % url)
         with self.open(url) as of:
             df = pd.read_csv(of, **kwargs)
         return df
@@ -369,6 +371,7 @@ class httpstore(argo_store_proto):
             :class:`xarray.Dataset`
 
         """
+        log.debug("Opening dataset: %s" % url)
         # try:
         # with self.fs.open(url) as of:
         #     ds = xr.open_dataset(of, *args, **kwargs)
@@ -537,6 +540,7 @@ class httpstore(argo_store_proto):
             :class:`pandas.DataFrame`
 
         """
+        log.debug("Reading csv: %s" % url)
         try:
             with self.open(url) as of:
                 df = pd.read_csv(of, **kwargs)
@@ -556,6 +560,7 @@ class httpstore(argo_store_proto):
             json
 
         """
+        log.debug("Opening json: %s" % url)
         try:
             with self.open(url) as of:
                 js = json.load(of, **kwargs)
