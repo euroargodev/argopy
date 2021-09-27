@@ -16,19 +16,16 @@ from packaging import version
 
 import argopy
 
+from argopy.utilities import (
+    list_available_data_src,
+    list_available_index_src,
+    isconnected,
+    erddap_ds_exists,
+)
+
 argopy.set_options(api_timeout=4 * 60)  # From Github actions, requests can take a while
 argopy.show_versions()
 
-import logging
-logging.getLogger("matplotlib").setLevel(logging.ERROR)
-DEBUGFORMATTER = '%(asctime)s [%(levelname)s] [%(threadName)s:%(name)s] %(filename)s:%(lineno)d: %(message)s'
-# DEBUGFORMATTER = '%(asctime)s [%(levelname)s] [%(name)s] %(filename)s:%(lineno)d: %(message)s'
-logging.basicConfig(
-    level=logging.DEBUG,
-    format=DEBUGFORMATTER,
-    datefmt='%m/%d/%Y %I:%M:%S %p',
-    handlers=[logging.FileHandler("argopy-tests.log", mode='w')]
-)
 
 def _importorskip(modname):
     try:
@@ -49,13 +46,6 @@ def _xfail(name, msg):
     func = pytest.mark.xfail(run=name, reason=msg)
     return name, func
 
-
-from argopy.utilities import (
-    list_available_data_src,
-    list_available_index_src,
-    isconnected,
-    erddap_ds_exists,
-)
 
 AVAILABLE_SOURCES = list_available_data_src()
 AVAILABLE_INDEX_SOURCES = list_available_index_src()
@@ -140,7 +130,7 @@ has_argovis, requires_argovis = _connectskip(
 
 has_connected_argovis = has_connection and has_argovis
 requires_connected_argovis = pytest.mark.skipif(
-    has_connected_argovis, reason="Requires a live Argovis server"
+    not has_connected_argovis, reason="Requires a live Argovis server"
 )
 
 ############
@@ -163,11 +153,12 @@ has_cartopy, requires_cartopy = _importorskip("cartopy")
 # - https://github.com/euroargodev/argopy/issues/63#issuecomment-742379699
 # - https://github.com/euroargodev/argopy/issues/96
 safe_to_fsspec_version = pytest.mark.skipif(
-    version.parse(fsspec.__version__) > version.parse("0.8.3"), reason="Not available for fsspec version %s > 0.8.3" % fsspec.__version__
+    version.parse(fsspec.__version__) > version.parse("0.8.3"),
+    reason="fsspec version %s > 0.8.3 (https://github.com/euroargodev/argopy/issues/96)" % fsspec.__version__
 )
 
-############
 
+############
 def safe_to_server_errors(test_func):
     """ Test fixture to make sure we don't fail because of an error from the server, not our Fault ! """
 
@@ -177,13 +168,13 @@ def safe_to_server_errors(test_func):
         except ErddapServerError as e:
             # Test is passed when something goes wrong because of the erddap server
             warnings.warn(
-                "\nSomething happened on erddap that should not: %s" % str(e.args)
+                "\nSomething happened on erddap server that should not: %s" % str(e.args)
             )
             pass
         except ArgovisServerError as e:
             # Test is passed when something goes wrong because of the argovis server
             warnings.warn(
-                "\nSomething happened on argovis that should not: %s" % str(e.args)
+                "\nSomething happened on argovis server that should not: %s" % str(e.args)
             )
             pass
         except DataNotFound as e:
