@@ -21,7 +21,7 @@ import getpass
 
 from .proto import ArgoDataFetcherProto
 from argopy.options import OPTIONS
-from argopy.utilities import list_standard_variables, isconnected, Chunker, format_oneline, is_box
+from argopy.utilities import list_standard_variables, Chunker, format_oneline, is_box
 from argopy.stores import httpstore
 from argopy.plotters import open_dashboard
 
@@ -30,7 +30,7 @@ from argopy.plotters import open_dashboard
 try:
     from erddapy import ERDDAP
     from erddapy.utilities import parse_dates, quote_string_constraints
-except:
+except:  # noqa: E722
     # >= v0.8.0
     from erddapy.erddapy import ERDDAP
     from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
@@ -120,13 +120,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         api_timeout: int (optional)
             Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
-
-        # Temporary fix for issue discussed here: https://github.com/euroargodev/argopy/issues/63#issuecomment-742379699
-        version_tup = tuple(int(x) for x in fsspec.__version__.split("."))
-        if cache and version_tup[0] == 0 and version_tup[1] == 8 and version_tup[-1] == 4:
-            cache = False
-            warnings.warn("Cache is not yet possible with fsspec version > 0.8.3, please downgrade to use cache.\n Moving to non cached file system")
-
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
         self.definition = "Ifremer erddap Argo data fetcher"
