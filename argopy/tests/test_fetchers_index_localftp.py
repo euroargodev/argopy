@@ -28,45 +28,42 @@ class Test_Backend:
     def test_cachepath_notfound(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
-                loader = ArgoIndexFetcher(src=self.src, cache=True).profile(*self.requests['profile'][0])
+                fetcher = ArgoIndexFetcher(src=self.src, cache=True).profile(*self.requests['profile'][0]).fetcher
                 with pytest.raises(CacheFileNotFound):
-                    loader.fetcher.cachepath
+                    fetcher.cachepath
 
     def test_nocache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
-                loader = ArgoIndexFetcher(src=self.src, cache=False).profile(*self.requests['profile'][0])
-                loader.to_dataframe()
+                fetcher = ArgoIndexFetcher(src=self.src, cache=False).profile(*self.requests['profile'][0]).fetcher
                 with pytest.raises(FileSystemHasNoCache):
-                    loader.fetcher.cachepath
+                    fetcher.cachepath
 
     @safe_to_server_errors
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
-                loader = ArgoIndexFetcher(src=self.src, cache=True).profile(*self.requests['profile'][0])
-                loader.to_dataframe()  # 1st call to load from source and save in memory
-                loader.to_dataframe()  # 2nd call to load from memory and save in cache
-                loader.clear_cache()
+                fetcher = ArgoIndexFetcher(src=self.src, cache=True).profile(*self.requests['profile'][0]).fetcher
+                fetcher.to_dataframe()
+                fetcher.clear_cache()
                 with pytest.raises(CacheFileNotFound):
-                    loader.fetcher.cachepath
+                    fetcher.cachepath
 
     @safe_to_server_errors
-    def test_caching(self):
+    def test_cached(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
-                loader = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0])
-                loader.to_dataframe()  # 1st call to load from source and save in memory
-                df = loader.to_dataframe()  # 2nd call to load from memory and save in cache
+                fetcher = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0]).fetcher
+                df = fetcher.to_dataframe()
                 assert isinstance(df, pd.core.frame.DataFrame)
-                assert isinstance(loader.fetcher.cachepath, str)
+                assert isinstance(fetcher.cachepath, str)
 
     def test_noresults(self):
         with argopy.set_options(local_ftp=self.local_ftp):
             with pytest.raises(DataNotFound):
                 ArgoIndexFetcher(src=self.src).region(
                     [-70, -65, 30.0, 35.0, "2030-01-01", "2030-06-30"]
-                ).to_dataframe()
+                ).fetcher.to_dataframe()
 
     def __testthis(self):
         for access_point in self.args:

@@ -42,8 +42,7 @@ class Test_Backend_WMO:
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
                 fetcher = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0]).fetcher
-                # fetcher.to_dataframe()  # 1st call to load from source and save in memory
-                df = fetcher.to_dataframe()  # 2nd call to load from memory and save in cache
+                df = fetcher.to_dataframe()
                 assert isinstance(df, pd.core.frame.DataFrame)
                 assert isinstance(fetcher.cachepath, str)
 
@@ -53,8 +52,7 @@ class Test_Backend_WMO:
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
                 fetcher = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0]).fetcher
-                fetcher.to_dataframe()  # 1st call to load from source and save in memory
-                # fetcher.to_dataframe()  # 2nd call to load from memory and save in cache
+                fetcher.to_dataframe()
                 fetcher.clear_cache()
                 with pytest.raises(CacheFileNotFound):
                     fetcher.cachepath
@@ -107,7 +105,6 @@ class Test_Backend_BOX:
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
                 fetcher = ArgoIndexFetcher(src=self.src, cache=True).region(self.requests['region'][-1]).fetcher
-                # fetcher.to_dataframe()  # 1st call to load from source and save in memory
                 df = fetcher.to_dataframe()  # 2nd call to load from memory and save in cache
                 assert isinstance(df, pd.core.frame.DataFrame)
                 assert isinstance(fetcher.cachepath, str)
@@ -117,7 +114,6 @@ class Test_Backend_BOX:
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
                 fetcher = ArgoIndexFetcher(src=self.src, cache=True).region(self.requests['region'][-1]).fetcher
-                # fetcher.to_dataframe()  # 1st call to load from source and save in memory
                 fetcher.to_dataframe()  # 2nd call to load from memory and save in cache
                 fetcher.clear_cache()
                 with pytest.raises(CacheFileNotFound):

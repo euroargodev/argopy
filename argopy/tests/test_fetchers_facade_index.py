@@ -109,7 +109,6 @@ class Test_AllBackends:
         with argopy.set_options(local_ftp=self.local_ftp):
             self.__test_region("localftp", index_file="ar_index_global_prof.txt")
 
-#    @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
     @requires_connected_erddap_index
     def test_region_erddap(self):
         self.__test_region("erddap")
