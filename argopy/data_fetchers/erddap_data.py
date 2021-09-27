@@ -10,7 +10,6 @@ This is not intended to be used directly, only by the facade at fetchers.py
 
 """
 
-import fsspec
 import pandas as pd
 import numpy as np
 import copy
@@ -62,14 +61,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     @abstractmethod
     def define_constraints(self):
         """ Define erddapy constraints """
-        pass
-
-    @abstractmethod
-    def cname(self):
-        """ Return a unique string defining the request
-
-            Provide this string to populate meta data and titles
-        """
         pass
 
     @property
@@ -150,7 +141,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         summary.append("Domain: %s" % format_oneline(self.cname()))
         return "\n".join(summary)
 
-    def _add_attributes(self, this):
+    def _add_attributes(self, this):  # noqa: C901
         """ Add variables attributes not return by erddap requests (csv)
 
             This is hard coded, but should be retrieved from an API somewhere
