@@ -23,7 +23,7 @@ from argopy.utilities import (
     format_oneline, is_indexbox,
     check_wmo, is_wmo
 )
-from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher, FtpPathError
+from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
 from . import requires_connection, requires_localftp
 
@@ -77,8 +77,9 @@ def test_clear_cache():
     ftproot, flist = argopy.tutorial.open_dataset("localftp")
     with tempfile.TemporaryDirectory() as cachedir:
         with argopy.set_options(cachedir=cachedir, local_ftp=ftproot):
-            ArgoDataFetcher(src="localftp").profile(2902696, 12).to_xarray()
-            ArgoDataFetcher(src="localftp").profile(2902696, 13).to_xarray()
+            loader = ArgoDataFetcher(src="localftp", cache=True).profile(2902696, 12)
+            loader.to_xarray()  # 1st call to load from source and save in memory
+            loader.to_xarray()  # 2nd call to load from memory and save in cache
             argopy.clear_cache()
             assert os.path.exists(cachedir) is True
             assert len(os.listdir(cachedir)) == 0

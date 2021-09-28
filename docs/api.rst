@@ -9,14 +9,17 @@ This page provides an auto-generated summary of argopy's API. For more details a
 Top-levels functions
 ====================
 
+Fetchers
+--------
+
 .. autosummary::
     :toctree: generated/
 
     argopy.DataFetcher
     argopy.IndexFetcher
 
-Fetching entries
-----------------
+Fetcher access points
+---------------------
 
 .. autosummary::
    :toctree: generated/
@@ -31,28 +34,32 @@ Fetching entries
    argopy.IndexFetcher.region
    argopy.IndexFetcher.float
 
-I/O and Data formats
---------------------
+Fetching methods
+----------------
 
 .. autosummary::
    :toctree: generated/
 
+   argopy.DataFetcher.load
    argopy.DataFetcher.to_xarray
    argopy.DataFetcher.to_dataframe
+   argopy.DataFetcher.to_index
 
 .. autosummary::
    :toctree: generated/
 
+   argopy.IndexFetcher.load
    argopy.IndexFetcher.to_xarray
    argopy.IndexFetcher.to_dataframe
    argopy.IndexFetcher.to_csv
 
-Visualisation
--------------
+Fetched data visualisation
+--------------------------
 
 .. autosummary::
    :toctree: generated/
 
+   argopy.DataFetcher.plot
    argopy.IndexFetcher.plot
    argopy.dashboard
 
@@ -64,6 +71,10 @@ Fetcher properties
    :toctree: generated/
 
    argopy.DataFetcher.uri
+   argopy.DataFetcher.data
+   argopy.DataFetcher.index
+   argopy.IndexFetcher.index
+
 
 Helpers
 -------
@@ -71,6 +82,7 @@ Helpers
 .. autosummary::
    :toctree: generated/
 
+   argopy.status
    argopy.set_options
    argopy.clear_cache
    argopy.tutorial.open_dataset
@@ -137,6 +149,17 @@ Argovis
     argopy.data_fetchers.argovis_data.ArgovisDataFetcher
     argopy.data_fetchers.argovis_data.Fetch_wmo
     argopy.data_fetchers.argovis_data.Fetch_box
+
+Plotters
+--------
+
+.. autosummary::
+   :toctree: generated/
+
+    argopy.plotters.plot_trajectory
+    argopy.plotters.bar_plot
+    argopy.plotters.open_dashboard
+
 
 Xarray *argo* name space
 ==========================

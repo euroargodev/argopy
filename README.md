@@ -73,9 +73,9 @@ Init the fetcher:
     from argopy import IndexFetcher as ArgoIndexFetcher
 
     index_loader = ArgoIndexFetcher()
-    index_loader = ArgoIndexFetcher(backend='erddap')    
+    index_loader = ArgoIndexFetcher(src='erddap')    
     #Local ftp backend 
-    #index_loader = ArgoIndexFetcher(backend='localftp',path_ftp='/path/to/your/argo/ftp/',index_file='ar_index_global_prof.txt')
+    #index_loader = ArgoIndexFetcher(src='localftp',path_ftp='/path/to/your/argo/ftp/',index_file='ar_index_global_prof.txt')
 ```
 and then, set the index request index for a domain:
 ```python
@@ -95,7 +95,7 @@ then you can see you index as a pandas dataframe or a xarray dataset :
 For plottings methods, you'll need `matplotlib`, `cartopy` and `seaborn` installed (they're not in requirements).  
 For plotting the map of your query :
 ```python    
-    idx.plot('trajectory)    
+    idx.plot('trajectory')    
 ```
 ![index_traj](https://user-images.githubusercontent.com/17851004/78023937-d0c2d580-7357-11ea-9974-70a2aaf30590.png)
 

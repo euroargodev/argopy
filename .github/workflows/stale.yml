@@ -17,7 +17,13 @@ jobs:
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         days-before-stale: 90
-        stale-issue-message: 'Stale issue message'
-        stale-pr-message: 'Stale pull request message'
-        stale-issue-label: 'no-issue-activity'
-        stale-pr-label: 'no-pr-activity'
+        exempt-issue-labels: 'argo-BGC'
+        stale-issue-message: 'This issue was marked as staled automatically because it has not seen any activity in 90 days'
+        stale-pr-message: 'This pull request was marked as staled automatically because it has not seen any activity in 90 days'
+        stale-issue-label: 'stale'
+        stale-pr-label: 'stale'
+        days-before-close: 365
+        close-issue-label: 'closed-as-stale'
+        close-pr-label: 'closed-as-stale'
+        close-issue-message: 'This issue was closed automatically because it has not seen any activity in 365 days'
+        close-pr-message: 'This pull request was closed automatically because it has not seen any activity in 365 days'

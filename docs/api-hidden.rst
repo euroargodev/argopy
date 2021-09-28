@@ -11,16 +11,23 @@
     argopy.fetchers.ArgoDataFetcher.region
     argopy.fetchers.ArgoDataFetcher.float
     argopy.fetchers.ArgoDataFetcher.profile
+    argopy.fetchers.ArgoDataFetcher.load
     argopy.fetchers.ArgoDataFetcher.to_xarray
     argopy.fetchers.ArgoDataFetcher.to_dataframe
+    argopy.fetchers.ArgoDataFetcher.to_index
+    argopy.fetchers.ArgoDataFetcher.plot
     argopy.fetchers.ArgoDataFetcher.uri
+    argopy.fetchers.ArgoDataFetcher.data
+    argopy.fetchers.ArgoDataFetcher.index
 
     argopy.fetchers.ArgoIndexFetcher.region
     argopy.fetchers.ArgoIndexFetcher.float
+    argopy.fetchers.ArgoIndexFetcher.load
     argopy.fetchers.ArgoIndexFetcher.to_xarray
     argopy.fetchers.ArgoIndexFetcher.to_dataframe
     argopy.fetchers.ArgoIndexFetcher.to_csv
     argopy.fetchers.ArgoIndexFetcher.plot
+    argopy.fetchers.ArgoIndexFetcher.index
 
     argopy.data_fetchers.erddap_data.ErddapArgoDataFetcher
     argopy.data_fetchers.erddap_data.Fetch_wmo
@@ -38,6 +45,7 @@
 
     argopy.tutorial.open_dataset
 
+    argopy.utilities.monitor_status
     argopy.utilities.show_versions
     argopy.utilities.clear_cache
     argopy.utilities.list_available_data_src
@@ -45,8 +53,13 @@
     argopy.utilities.Chunker
 
     argopy.xarray.ArgoAccessor.point2profile
+    argopy.xarray.ArgoAccessor.profile2point
+    argopy.xarray.ArgoAccessor.interp_std_levels
+    argopy.xarray.ArgoAccessor.teos10
 
     argopy.plotters.open_dashboard
+    argopy.plotters.bar_plot
+    argopy.plotters.plot_trajectory
 
     argopy.stores.filesystems.filestore
     argopy.stores.filestore.open_dataset

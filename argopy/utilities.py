@@ -503,7 +503,7 @@ def isconnected(host="https://www.ifremer.fr"):
         Parameters
         ----------
         host: str
-            URL to use, 'http://www.ifremer.fr' by default
+            URL to use, 'https://www.ifremer.fr' by default
 
         Returns
         -------
@@ -1280,3 +1280,37 @@ def is_wmo(lst, errors="raise"):
         raise ValueError(msg)
     else:
         return result
+
+# def docstring(value):
+#     """Replace one function docstring
+#
+#         To be used as a decorator
+#     """
+#     def _doc(func):
+#         func.__doc__ = value
+#         return func
+#     return _doc
+
+def warnUnless(ok, txt):
+    """ Decorator to raise warning unless condition is True
+
+    This function must be used as a decorator
+
+    Parameters
+    ----------
+    ok: bool
+        Condition to raise the warning or not
+    txt: str
+        Text to display in the warning
+    """
+    def inner(fct):
+        def wrapper(*args, **kwargs):
+            warnings.warn("%s %s" % (fct.__name__, txt))
+            return fct(*args, **kwargs)
+
+        return wrapper
+
+    if not ok:
+        return inner
+    else:
+        return lambda f: f
