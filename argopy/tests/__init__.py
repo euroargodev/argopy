@@ -129,7 +129,7 @@ has_argovis, requires_argovis = _connectskip(
 
 has_connected_argovis = has_connection and has_argovis
 requires_connected_argovis = pytest.mark.skipif(
-    has_connected_argovis, reason="Requires a live Argovis server"
+    not has_connected_argovis, reason="Requires a live Argovis server"
 )
 
 ############
