@@ -62,16 +62,12 @@ class Test_Backend_WMO:
             fetcher = ArgoIndexFetcher(src=self.src).float(arg).fetcher
             assert isinstance(fetcher.url, str)
 
-    def __testthis(self):
+    @safe_to_server_errors
+    def test_phy_float(self):
         for arg in self.requests["float"]:
             fetcher = ArgoIndexFetcher(src=self.src).float(arg).fetcher
             df = fetcher.to_dataframe()
             assert isinstance(df, pd.core.frame.DataFrame)
-
-    # @safe_to_server_errors
-    # def test_phy_float(self):
-    #     self.args = {"float": self.requests["float"]}
-    #     self.__testthis()
 
 
 @requires_connected_erddap_index
@@ -105,7 +101,7 @@ class Test_Backend_BOX:
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
                 fetcher = ArgoIndexFetcher(src=self.src, cache=True).region(self.requests['region'][-1]).fetcher
-                df = fetcher.to_dataframe()  # 2nd call to load from memory and save in cache
+                df = fetcher.to_dataframe()
                 assert isinstance(df, pd.core.frame.DataFrame)
                 assert isinstance(fetcher.cachepath, str)
 
@@ -114,36 +110,20 @@ class Test_Backend_BOX:
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
                 fetcher = ArgoIndexFetcher(src=self.src, cache=True).region(self.requests['region'][-1]).fetcher
-                fetcher.to_dataframe()  # 2nd call to load from memory and save in cache
+                fetcher.to_dataframe()
                 fetcher.clear_cache()
                 with pytest.raises(CacheFileNotFound):
                     fetcher.cachepath
-
 
     def test_url(self):
         for arg in self.requests["region"]:
             fetcher = ArgoIndexFetcher(src=self.src).region(arg).fetcher
             assert isinstance(fetcher.url, str)
 
-    def __testthis(self):
+    # @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
+    @safe_to_server_errors
+    def test_phy_region(self):
         for arg in self.requests["region"]:
             fetcher = ArgoIndexFetcher(src=self.src).region(arg).fetcher
             df = fetcher.to_dataframe()
             assert isinstance(df, pd.core.frame.DataFrame)
-
-    # @safe_to_server_errors
-    # def test_phy_float(self):
-    #     self.args = {"float": self.requests["float"]}
-    #     self.__testthis()
-    #
-    # # @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
-    # # def test_phy_profile(self):
-    # #     self.args = {'profile': [[6901929, 36],
-    # #                              [6901929, [5, 45]]]}
-    # #     self.__testthis()
-    #
-    # # @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
-    # @safe_to_server_errors
-    # def test_phy_region(self):
-    #     self.args = {"region": self.requests["region"]}
-    #     self.__testthis()
