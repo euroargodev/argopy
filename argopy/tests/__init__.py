@@ -4,18 +4,14 @@
 Test suite for argopy continuous integration
 
 """
-
 import importlib
 import pytest
 import fsspec
-
-import warnings
-from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound
+import argopy
 from aiohttp.client_exceptions import ServerDisconnectedError, ClientResponseError
 from packaging import version
-
-import argopy
-
+import warnings
+from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound
 from argopy.utilities import (
     list_available_data_src,
     list_available_index_src,
@@ -30,7 +26,7 @@ argopy.show_versions()
 
 def _importorskip(modname):
     try:
-        importlib.import_module(modname)
+        importlib.import_module(modname)  # noqa: E402
         has = True
     except ImportError:
         has = False

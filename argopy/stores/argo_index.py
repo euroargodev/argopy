@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from abc import ABC, abstractmethod
 import hashlib
-import io
+# import io
 
 from argopy.errors import DataNotFound
 from argopy.options import OPTIONS
@@ -371,10 +371,10 @@ class indexfilter_box(indexfilter_proto):
             index.readline()
         for line in index:
             # il_this = il_loaded
-            l = line.split(",")
-            if l[iv_lon] != "" and l[iv_lat] != "":
-                x = float(l[iv_lon])
-                y = float(l[iv_lat])
+            this_line = line.split(",")
+            if this_line[iv_lon] != "" and this_line[iv_lat] != "":
+                x = float(this_line[iv_lon])
+                y = float(this_line[iv_lat])
                 if x >= lon[0] and x <= lon[1] and y >= lat[0] and y <= lat[1]:
                     results += line
                     il_loaded += 1
@@ -413,9 +413,9 @@ class indexfilter_box(indexfilter_proto):
             iv_tim = 1
             il_loaded = 0
             for line in index.split():
-                l = line.split(",")
-                if l[iv_tim] != "":
-                    t = pd.to_datetime(str(l[iv_tim]))
+                this_line = line.split(",")
+                if this_line[iv_tim] != "":
+                    t = pd.to_datetime(str(this_line[iv_tim]))
                     if t >= tim[0] and t <= tim[1]:
                         results += line + "\n"
                         il_loaded += 1
@@ -542,7 +542,8 @@ class indexstore():
                 # Run search:
                 results = search.run(f)
                 if not results:
-                    raise DataNotFound("No Argo data in the index correspond to your search criteria.\nSearch URI: %s" % search.uri)
+                    raise DataNotFound("No Argo data in the index correspond to your search criteria."
+                                       "\nSearch URI: %s" % search.uri)
                 # and save results for caching:
                 if self.cache:
                     with self.fs['search'].open(search.uri, "w") as of:

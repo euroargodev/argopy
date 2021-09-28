@@ -73,7 +73,7 @@ class ArgoDataFetcherProto(ABC):
                 )
 
         elif hasattr(self, "WMO"):
-            prtcyc = lambda f, wmo: "WMO%i_%s" % (
+            prtcyc = lambda f, wmo: "WMO%i_%s" % (  # noqa: E731
                 wmo,
                 "_".join(["CYC%i" % (cyc) for cyc in sorted(f.CYC)]),
             )

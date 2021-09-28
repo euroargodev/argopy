@@ -1,4 +1,3 @@
-import xarray as xr
 import pandas as pd
 import pytest
 
@@ -26,7 +25,7 @@ class Test_Facade:
 
     @requires_fetcher_index
     def test_invalid_accesspoint(self):
-         # Use the first valid data source
+        # Use the first valid data source
         with pytest.raises(InvalidFetcherAccessPoint):
             ArgoIndexFetcher(
                 src=self.src

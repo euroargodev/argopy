@@ -2,6 +2,7 @@ import pytest
 import argopy
 from . import requires_connection
 
+
 def test_invalid_dataset():
     with pytest.raises(ValueError):
         argopy.tutorial.open_dataset('invalid_dataset')

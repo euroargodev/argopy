@@ -12,7 +12,6 @@ from argopy.errors import (
 )
 from argopy.utilities import is_list_of_strings
 from . import (
-    AVAILABLE_SOURCES,
     requires_fetcher,
     requires_connected_erddap_phy,
     requires_localftp,
@@ -47,9 +46,11 @@ class Test_Facade:
 
         if pt == 'region':
             if not empty:
-                return f, ArgoDataFetcher(src=self.src).region([-60, -55, 40.0, 45.0, 0.0, 10.0, "2007-08-01", "2007-09-01"])
+                return f, ArgoDataFetcher(src=self.src).region([-60, -55, 40.0, 45.0, 0.0, 10.0,
+                                                                "2007-08-01", "2007-09-01"])
             else:
-                return f, ArgoDataFetcher(src=self.src).region([-60, -55, 40.0, 45.0, 99.92, 99.99, "2007-08-01", "2007-08-01"])
+                return f, ArgoDataFetcher(src=self.src).region([-60, -55, 40.0, 45.0, 99.92, 99.99,
+                                                                "2007-08-01", "2007-08-01"])
 
     def test_invalid_fetcher(self):
         with pytest.raises(InvalidFetcher):
@@ -144,7 +145,6 @@ class Test_DataFetching:
         # f.to_xarray()
         # f.to_dataframe()
         # f.to_index()
-
 
     def __test_float(self, bk, **ftc_opts):
         """ Test float for a given backend """

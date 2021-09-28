@@ -16,8 +16,7 @@ from . import (
     requires_connected_erddap_phy,
     requires_connected_erddap_bgc,
     requires_connected_erddap_ref,
-    safe_to_server_errors,
-    safe_to_fsspec_version
+    safe_to_server_errors
 )
 
 
