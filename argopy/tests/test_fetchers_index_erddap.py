@@ -13,7 +13,7 @@ from . import requires_connected_erddap_index, safe_to_server_errors, safe_to_fs
 
 
 @requires_connected_erddap_index
-class Test_Backend_WMO:
+class OFFTest_Backend_WMO:
     """ Test ERDDAP index fetching backend for WMO access point"""
 
     src = "erddap"
@@ -71,7 +71,7 @@ class Test_Backend_WMO:
 
 
 @requires_connected_erddap_index
-class Test_Backend_BOX:
+class OFFTest_Backend_BOX:
     """ Test ERDDAP index fetching backend for the BOX access point """
 
     src = "erddap"
