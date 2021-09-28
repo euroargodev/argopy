@@ -21,7 +21,7 @@ from abc import ABC, abstractmethod
 
 from argopy.utilities import load_dict, mapp_dict, format_oneline
 from argopy.stores import httpstore
-
+from argopy.options import OPTIONS
 
 log = logging.getLogger("argopy.fetchers.erddap_index")
 
@@ -81,7 +81,7 @@ class ErddapArgoIndexFetcher(ABC):
             log.warning("Caching not available for WMO access point, falls back on NO cache "
                         "(http cache store not compatible with erddap wmo requests)")
             cache = False
-        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
+        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=OPTIONS['api_timeout'])
         self.definition = 'Ifremer erddap Argo index fetcher'
         self.dataset_id = 'index'
         self.server = api_server

@@ -21,7 +21,7 @@ from . import tutorial  # noqa: F402
 # Other Import
 from . import utilities  # noqa: F402
 from . import stores  # noqa: F402
-from .utilities import show_versions, clear_cache  # noqa: F402
+from .utilities import show_versions, show_options, clear_cache  # noqa: F402
 from .utilities import monitor_status as status  # noqa: F402
 from .options import set_options  # noqa: F402
 from .plotters import open_dashboard as dashboard  # noqa: F402
@@ -35,6 +35,7 @@ __all__ = (
     # Top-level functions:
     "set_options",
     "show_versions",
+    "show_options",
     "dashboard",
     "status",
     "clear_cache",

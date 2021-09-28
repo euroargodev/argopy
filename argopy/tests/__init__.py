@@ -24,6 +24,7 @@ from argopy.utilities import (
 )
 
 argopy.set_options(api_timeout=4 * 60)  # From Github actions, requests can take a while
+argopy.show_options()
 argopy.show_versions()
 
 
@@ -189,7 +190,8 @@ def safe_to_server_errors(test_func):
             # The server is sending back an error when creating the response
             warnings.warn("\nAnother server side error:\n%s" % str(e.args))
             pass
-        except Exception:
+        except Exception as e:
+            warnings.warn("\nUnknown server error:\n%s" % str(e.args))
             raise
 
     return test_wrapper

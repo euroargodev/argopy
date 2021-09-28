@@ -497,6 +497,21 @@ def show_versions(file=sys.stdout):  # noqa: C901
         print(f"{k}: {stat}", file=file)
 
 
+def show_options(file=sys.stdout):  # noqa: C901
+    """ Print options of argopy
+
+    Parameters
+    ----------
+    file : file-like, optional
+        print to the given file-like object. Defaults to sys.stdout.
+    """
+    print("\nARGOPY OPTIONS", file=file)
+    print("--------------", file=file)
+
+    for k, v in OPTIONS.items():
+        print(f"{k}: {v}", file=file)
+
+
 def isconnected(host="https://www.ifremer.fr"):
     """ check if we have a live internet connection
 
