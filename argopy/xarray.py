@@ -69,7 +69,7 @@ class ArgoAccessor:
         else:
             self._obj.attrs["history"] = txt
 
-    def cast_types(self):
+    def cast_types(self):  # noqa: C901
         """ Make sure variables are of the appropriate types
 
             This is hard coded, but should be retrieved from an API somewhere
@@ -235,7 +235,7 @@ class ArgoAccessor:
 
         return ds
 
-    def filter_data_mode(self, keep_error: bool = True, errors: str = "raise"):
+    def filter_data_mode(self, keep_error: bool = True, errors: str = "raise"):  # noqa: C901
         """ Filter variables according to their data mode
 
             This applies to <PARAM> and <PARAM_QC>
@@ -430,7 +430,7 @@ class ArgoAccessor:
 
         return final
 
-    def filter_qc(self, QC_list=[1, 2], drop=True, mode="all", mask=False):
+    def filter_qc(self, QC_list=[1, 2], drop=True, mode="all", mask=False):  # noqa: C901
         """ Filter data set according to QC values
 
             Mask the dataset for points where 'all' or 'any' of the QC fields has a value in the list of
@@ -532,7 +532,7 @@ class ArgoAccessor:
             cyc = -np.vectorize(int)(offset * wmo - np.abs(wmo_or_uid))
             return wmo, cyc, drc
 
-    def point2profile(self):
+    def point2profile(self):  # noqa: C901
         """ Transform a collection of points into a collection of profiles
 
         """
@@ -639,7 +639,7 @@ class ArgoAccessor:
                     y = new_ds[vname].values
                     x = prof[vname].values
                     try:
-                        y[i_prof, 0 : len(x)] = x
+                        y[i_prof, 0: len(x)] = x
                     except Exception:
                         print(vname, "input", x.shape, "output", y[i_prof, :].shape)
                         raise
@@ -709,16 +709,16 @@ class ArgoAccessor:
         return ds
 
     def interp_std_levels(self, std_lev):
-        """ Returns a new dataset interpolated to new inputs levels                 
-        
+        """ Returns a new dataset interpolated to new inputs levels
+
         Parameters
         ----------
-        list or np.array 
-            Standard levels used for interpolation
+        list or np.array
+        Standard levels used for interpolation
 
         Returns
         -------
-        :class:`xarray.Dataset`           
+        :class:`xarray.Dataset`
         """
 
         if (type(std_lev) is np.ndarray) | (type(std_lev) is list):
@@ -800,7 +800,7 @@ class ArgoAccessor:
 
         return ds_out
 
-    def teos10(
+    def teos10(  # noqa: C901
         self,
         vlist: list = ["SA", "CT", "SIG0", "N2", "PV", "PTEMP"],
         inplace: bool = True,
@@ -836,9 +836,10 @@ class ArgoAccessor:
                 Adds a potential temperature variable
             * `"SOUND_SPEED"`
                 Adds a sound speed variable
-            
+
         inplace: boolean, True by default
-            If True, return the input :class:`xarray.Dataset` with new TEOS10 variables added as a new :class:`xarray.DataArray`
+            If True, return the input :class:`xarray.Dataset` with new TEOS10 variables
+                added as a new :class:`xarray.DataArray`.
             If False, return a :class:`xarray.Dataset` with new TEOS10 variables
 
         Returns

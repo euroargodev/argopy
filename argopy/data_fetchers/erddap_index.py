@@ -30,7 +30,7 @@ log = logging.getLogger("argopy.fetchers.erddap_index")
 try:
     from erddapy import ERDDAP
     from erddapy.utilities import parse_dates, quote_string_constraints
-except:
+except Exception:
     # >= v0.8.0
     from erddapy.erddapy import ERDDAP
     from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
@@ -78,7 +78,8 @@ class ErddapArgoIndexFetcher(ABC):
                  **kwargs):
         """ Instantiate an ERDDAP Argo index loader """
         if version.parse(fsspec.__version__) > version.parse("0.8.3") and cache and self.access_point == 'wmo':
-            log.warning("Caching not available for WMO access point, falls back on NO cache (http cache store not compatible with erddap wmo requests)")
+            log.warning("Caching not available for WMO access point, falls back on NO cache "
+                        "(http cache store not compatible with erddap wmo requests)")
             cache = False
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
         self.definition = 'Ifremer erddap Argo index fetcher'

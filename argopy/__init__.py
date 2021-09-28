@@ -12,19 +12,19 @@ log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
 
 # Import facades:
-from .fetchers import ArgoDataFetcher as DataFetcher  # noqa: F401 isort:skip
-from .fetchers import ArgoIndexFetcher as IndexFetcher  # noqa: F401 isort:skip
+from .fetchers import ArgoDataFetcher as DataFetcher  # noqa: 
+from .fetchers import ArgoIndexFetcher as IndexFetcher  # noqa: F402
 
-from .xarray import ArgoAccessor  # noqa: F401 isort:skip
-from . import tutorial  # noqa: F401 isort:skip
+from .xarray import ArgoAccessor  # noqa: F402
+from . import tutorial  # noqa: F402
 
 # Other Import
-from . import utilities  # noqa: F401 isort:skip
-from . import stores  # noqa: F401 isort:skip
-from .utilities import show_versions, clear_cache  # noqa: F401 isort:skip
-from .utilities import monitor_status as status  # noqa: F401 isort:skip
-from .options import set_options  # noqa: F401 isort:skip
-from .plotters import open_dashboard as dashboard  # noqa: F401 isort:skip
+from . import utilities  # noqa: F402
+from . import stores  # noqa: F402
+from .utilities import show_versions, clear_cache  # noqa: F402
+from .utilities import monitor_status as status  # noqa: F402
+from .options import set_options  # noqa: F402
+from .plotters import open_dashboard as dashboard  # noqa: F402
 
 #
 __all__ = (

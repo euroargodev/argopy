@@ -39,14 +39,6 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         """ Initialisation for a specific fetcher """
         pass
 
-    @abstractmethod
-    def cname(self):
-        """ Return a unique string defining the request
-
-            Provide this string to populate meta data and titles
-        """
-        pass
-
     @property
     def uri(self):
         """ Return the URL used to download data """

@@ -22,6 +22,7 @@ AVAILABLE_INDEX_SOURCES = list_available_index_src()
 
 log = logging.getLogger("argopy.fetchers.facade")
 
+
 def checkAccessPoint(AccessPoint):
     """ Decorator to validate fetcher access points of a given data source
 

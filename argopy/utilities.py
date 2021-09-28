@@ -24,7 +24,6 @@ import xarray as xr
 import pandas as pd
 import numpy as np
 from scipy import interpolate
-import fsspec
 
 import pickle
 import pkg_resources
@@ -39,7 +38,6 @@ from argopy.stores import httpstore
 from argopy.errors import (
     FtpPathError,
     InvalidFetcher,
-    OptionValueError,
     InvalidFetcherAccessPoint,
 )
 
@@ -67,7 +65,6 @@ def clear_cache(fs=None):
                 print("Failed to delete %s. Reason: %s" % (file_path, e))
         if fs:
             fs.clear_cache()
-
 
 
 def load_dict(ptype):
@@ -418,7 +415,7 @@ def netcdf_and_hdf5_versions():
     return [("libhdf5", libhdf5_version), ("libnetcdf", libnetcdf_version)]
 
 
-def show_versions(file=sys.stdout):
+def show_versions(file=sys.stdout):  # noqa: C901
     """ Print the versions of argopy and its dependencies
 
     Parameters
@@ -854,7 +851,7 @@ class Chunker:
     def _split(self, lst, n=1):
         """Yield successive n-sized chunks from lst"""
         for i in range(0, len(lst), n):
-            yield lst[i : i + n]
+            yield lst[i: i + n]
 
     def _split_list_bychunknb(self, lst, n=1):
         """Split list in n-imposed chunks of similar size
@@ -865,7 +862,7 @@ class Chunker:
         for i in self._split(lst, siz):
             res.append(i)
         if len(res) > n:
-            res[n - 1 : :] = [reduce(lambda i, j: i + j, res[n - 1 : :])]
+            res[n - 1::] = [reduce(lambda i, j: i + j, res[n - 1::])]
         return res
 
     def _split_list_bychunksize(self, lst, max_size=1):
@@ -877,7 +874,7 @@ class Chunker:
             res.append(i)
         return res
 
-    def _split_box(self, large_box, n=1, d="x"):
+    def _split_box(self, large_box, n=1, d="x"):  # noqa: C901
         """Split a box domain in one direction in n-imposed equal chunks """
         if d == "x":
             i_left, i_right = 0, 1
@@ -901,7 +898,7 @@ class Chunker:
                     this_box[i_right] = right
                     boxes.append(this_box)
         elif "t" in d:
-            dates = pd.to_datetime(large_box[i_left : i_right + 1])
+            dates = pd.to_datetime(large_box[i_left: i_right + 1])
             date_bounds = [
                 d.strftime("%Y%m%d%H%M%S")
                 for d in pd.date_range(dates[0], dates[1], periods=n + 1)
@@ -938,7 +935,7 @@ class Chunker:
                     box_list.append(bxyz)
         return box_list
 
-    def _chunker_box4d(self, request, chunks, chunks_maxsize):
+    def _chunker_box4d(self, request, chunks, chunks_maxsize):  # noqa: C901
         BOX = request["box"]
         n_chunks = chunks
         for axis, n in n_chunks.items():
@@ -1059,7 +1056,7 @@ def format_oneline(s, max_width=65):
         if q == 0:
             return "".join([s[0:n], padding, s[-n:]])
         else:
-            return "".join([s[0 : n + 1], padding, s[-n:]])
+            return "".join([s[0: n + 1], padding, s[-n:]])
     else:
         return s
 
