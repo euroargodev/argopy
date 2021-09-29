@@ -27,7 +27,7 @@ v0.1.8 (X XXX. 2021)
     fig, ax = obj.plot('profiler')
 
 
-- New methods and properties for data and index fetchers. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
+- New methods and properties for data and index fetchers. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_. The :meth:`argopy.DataFetcher.load` and :meth:`argopy.IndexFetcher.load` methods internally call on the `to_xarray()` methods and store results in the fetcher instance. The :meth:`argopy.DataFetcher.to_xarray` will trigger a fetch on every call, while the :meth:`argopy.DataFetcher.load` will not.
 
 .. code-block:: python
 
@@ -60,12 +60,12 @@ v0.1.8 (X XXX. 2021)
 .. code-block:: python
 
     import logging
-    DEBUGFORMATTER = '%(asctime)s [%(levelname)s] [%(threadName)s:%(name)s] %(filename)s:%(lineno)d: %(message)s'
+    DEBUGFORMATTER = '%(asctime)s [%(levelname)s] [%(name)s] %(filename)s:%(lineno)d: %(message)s'
     logging.basicConfig(
         level=logging.DEBUG,
         format=DEBUGFORMATTER,
         datefmt='%m/%d/%Y %I:%M:%S %p',
-        handlers=[logging.FileHandler("argopy.log", mode='w'), logging.StreamHandler()]
+        handlers=[logging.FileHandler("argopy.log", mode='w')]
     )
 
 

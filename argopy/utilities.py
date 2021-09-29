@@ -770,7 +770,7 @@ def linear_interpolation_remap(
     # infer dim from input
     if z_dim is None:
         if len(z.dims) != 1:
-            raise RuntimeError("if z_dim is not specified,x must be a 1D array.")
+            raise RuntimeError("if z_dim is not specified, x must be a 1D array.")
         dim = z.dims[0]
     else:
         dim = z_dim

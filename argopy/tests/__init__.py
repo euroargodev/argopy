@@ -140,7 +140,9 @@ has_localftp_index, requires_localftp_index = _connectskip(
     "localftp" in AVAILABLE_INDEX_SOURCES, "the localftp index fetcher"
 )
 
-############
+########
+# PLOT #
+########
 has_matplotlib, requires_matplotlib = _importorskip("matplotlib")
 has_seaborn, requires_seaborn = _importorskip("seaborn")
 has_cartopy, requires_cartopy = _importorskip("cartopy")

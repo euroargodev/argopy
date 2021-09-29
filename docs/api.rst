@@ -84,6 +84,8 @@ Helpers
 
    argopy.status
    argopy.set_options
+   argopy.show_options
+   argopy.show_versions
    argopy.clear_cache
    argopy.tutorial.open_dataset
 
