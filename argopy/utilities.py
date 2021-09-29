@@ -13,6 +13,7 @@ import urllib
 import json
 import collections
 from functools import reduce
+from packaging import version
 
 import importlib
 import locale
@@ -779,14 +780,24 @@ def linear_interpolation_remap(
         raise ValueError("Dataset input is not supported yet")
         # TODO: for a dataset input just apply the function for each appropriate array
 
-    kwargs = dict(
-        input_core_dims=[[dim], [dim], [z_regridded_dim]],
-        output_core_dims=[[output_dim]],
-        vectorize=True,
-        dask="parallelized",
-        output_dtypes=[data.dtype],
-        dask_gufunc_kwargs={'output_sizes': {output_dim: len(z_regridded[z_regridded_dim])}},
-    )
+    if version.parse(xr.__version__) > version.parse("0.15.0"):
+        kwargs = dict(
+            input_core_dims=[[dim], [dim], [z_regridded_dim]],
+            output_core_dims=[[output_dim]],
+            vectorize=True,
+            dask="parallelized",
+            output_dtypes=[data.dtype],
+            dask_gufunc_kwargs={'output_sizes': {output_dim: len(z_regridded[z_regridded_dim])}},
+        )
+    else:
+        kwargs = dict(
+            input_core_dims=[[dim], [dim], [z_regridded_dim]],
+            output_core_dims=[[output_dim]],
+            vectorize=True,
+            dask="parallelized",
+            output_dtypes=[data.dtype],
+            output_sizes={output_dim: len(z_regridded[z_regridded_dim])},
+        )
     remapped = xr.apply_ufunc(_regular_interp, z, data, z_regridded, **kwargs)
 
     remapped.coords[output_dim] = z_regridded.rename(
