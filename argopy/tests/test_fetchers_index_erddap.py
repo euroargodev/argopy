@@ -22,41 +22,41 @@ class Test_Backend_WMO:
         "float": [[2901623], [2901623, 6901929]]
     }
 
-    # def test_nocache(self):
-    #     with tempfile.TemporaryDirectory() as testcachedir:
-    #         with argopy.set_options(cachedir=testcachedir):
-    #             fetcher = ArgoIndexFetcher(src=self.src, cache=False).float(self.requests['float'][0]).fetcher
-    #             with pytest.raises(FileSystemHasNoCache):
-    #                 fetcher.cachepath
-    #
-    # @safe_to_fsspec_version
-    # def test_cachepath_notfound(self):
-    #     with tempfile.TemporaryDirectory() as testcachedir:
-    #         with argopy.set_options(cachedir=testcachedir):
-    #             fetcher = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0]).fetcher
-    #             with pytest.raises(CacheFileNotFound):
-    #                 fetcher.cachepath
-    #
-    # @safe_to_fsspec_version
-    # @safe_to_server_errors
-    # def test_cached(self):
-    #     with tempfile.TemporaryDirectory() as testcachedir:
-    #         with argopy.set_options(cachedir=testcachedir):
-    #             fetcher = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0]).fetcher
-    #             df = fetcher.to_dataframe()
-    #             assert isinstance(df, pd.core.frame.DataFrame)
-    #             assert isinstance(fetcher.cachepath, str)
-    #
-    # @safe_to_fsspec_version
-    # @safe_to_server_errors
-    # def test_clearcache(self):
-    #     with tempfile.TemporaryDirectory() as testcachedir:
-    #         with argopy.set_options(cachedir=testcachedir):
-    #             fetcher = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0]).fetcher
-    #             fetcher.to_dataframe()
-    #             fetcher.clear_cache()
-    #             with pytest.raises(CacheFileNotFound):
-    #                 fetcher.cachepath
+    def test_nocache(self):
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                fetcher = ArgoIndexFetcher(src=self.src, cache=False).float(self.requests['float'][0]).fetcher
+                with pytest.raises(FileSystemHasNoCache):
+                    fetcher.cachepath
+
+    @safe_to_fsspec_version
+    def test_cachepath_notfound(self):
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir):
+                fetcher = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0]).fetcher
+                with pytest.raises(CacheFileNotFound):
+                    fetcher.cachepath
+
+    @safe_to_fsspec_version
+    @safe_to_server_errors
+    def test_cached(self):
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir, api_timeout=60):
+                fetcher = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0]).fetcher
+                df = fetcher.to_dataframe()
+                assert isinstance(df, pd.core.frame.DataFrame)
+                assert isinstance(fetcher.cachepath, str)
+
+    @safe_to_fsspec_version
+    @safe_to_server_errors
+    def test_clearcache(self):
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir, api_timeout=60):
+                fetcher = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0]).fetcher
+                fetcher.to_dataframe()
+                fetcher.clear_cache()
+                with pytest.raises(CacheFileNotFound):
+                    fetcher.cachepath
 
     def test_url(self):
         for arg in self.requests["float"]:
@@ -73,7 +73,7 @@ class Test_Backend_WMO:
 
 
 @requires_connected_erddap_index
-class OFFTest_Backend_BOX:
+class Test_Backend_BOX:
     """ Test ERDDAP index fetching backend for the BOX access point """
 
     src = "erddap"
@@ -101,7 +101,7 @@ class OFFTest_Backend_BOX:
     @safe_to_server_errors
     def test_cached(self):
         with tempfile.TemporaryDirectory() as testcachedir:
-            with argopy.set_options(cachedir=testcachedir):
+            with argopy.set_options(cachedir=testcachedir, api_timeout=60):
                 fetcher = ArgoIndexFetcher(src=self.src, cache=True).region(self.requests['region'][-1]).fetcher
                 df = fetcher.to_dataframe()
                 assert isinstance(df, pd.core.frame.DataFrame)
@@ -110,7 +110,7 @@ class OFFTest_Backend_BOX:
     @safe_to_server_errors
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
-            with argopy.set_options(cachedir=testcachedir):
+            with argopy.set_options(cachedir=testcachedir, api_timeout=60):
                 fetcher = ArgoIndexFetcher(src=self.src, cache=True).region(self.requests['region'][-1]).fetcher
                 fetcher.to_dataframe()
                 fetcher.clear_cache()
@@ -126,6 +126,7 @@ class OFFTest_Backend_BOX:
     @safe_to_server_errors
     def test_phy_region(self):
         for arg in self.requests["region"]:
-            fetcher = ArgoIndexFetcher(src=self.src).region(arg).fetcher
-            df = fetcher.to_dataframe()
-            assert isinstance(df, pd.core.frame.DataFrame)
+            with argopy.set_options(api_timeout=60):
+                fetcher = ArgoIndexFetcher(src=self.src).region(arg).fetcher
+                df = fetcher.to_dataframe()
+                assert isinstance(df, pd.core.frame.DataFrame)
