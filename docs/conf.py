@@ -39,7 +39,7 @@ root = pathlib.Path(__file__).absolute().parent.parent
 os.environ["PYTHONPATH"] = str(root)
 sys.path.insert(0, str(root))
 
-import argopy  # noqa: F402
+import argopy  # noqa: E402
 print("argopy: %s, %s" % (argopy.__version__, argopy.__file__))
 
 print("python exec:", sys.executable)
