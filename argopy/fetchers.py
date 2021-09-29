@@ -589,6 +589,24 @@ class ArgoIndexFetcher:
         return self._index
 
     @checkAccessPoint
+    def float(self, wmo):
+        """ Float index fetcher
+
+        Parameters
+        ----------
+        wmo: list(int)
+            Define the list of Argo floats to load data for. This is a list of integers with WMO numbers.
+
+        Returns
+        -------
+        :class:`argopy.fetchers.ArgoIndexFetcher`
+            A index fetcher initialised for all float profiles
+        """
+        self.fetcher = self.Fetchers["float"](WMO=wmo, **self.fetcher_options)
+        self._AccessPoint = "float"  # Register the requested access point
+        return self
+
+    @checkAccessPoint
     def profile(self, wmo, cyc):
         """ Profile index fetcher
 
@@ -606,24 +624,6 @@ class ArgoIndexFetcher:
         """
         self.fetcher = self.Fetchers["profile"](WMO=wmo, CYC=cyc, **self.fetcher_options)
         self._AccessPoint = "profile"  # Register the requested access point
-        return self
-
-    @checkAccessPoint
-    def float(self, wmo):
-        """ Float index fetcher
-
-        Parameters
-        ----------
-        wmo: list(int)
-            Define the list of Argo floats to load data for. This is a list of integers with WMO numbers.
-
-        Returns
-        -------
-        :class:`argopy.fetchers.ArgoIndexFetcher`
-            A index fetcher initialised for all float profiles
-        """
-        self.fetcher = self.Fetchers["float"](WMO=wmo, **self.fetcher_options)
-        self._AccessPoint = "float"  # Register the requested access point
         return self
 
     @checkAccessPoint
