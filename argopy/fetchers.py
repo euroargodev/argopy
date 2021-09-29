@@ -459,6 +459,8 @@ class ArgoDataFetcher:
             ax: :class:`matplotlib.axes.Axes`
         """
         self.load()
+        if "institution" not in self.index:
+            self.to_index(full=True)
         if ptype in ["dac", "institution"]:
             return bar_plot(self.index, by="institution", **kwargs)
         elif ptype == "profiler":

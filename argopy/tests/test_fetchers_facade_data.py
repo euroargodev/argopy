@@ -16,9 +16,19 @@ from . import (
     requires_connected_erddap_phy,
     requires_localftp,
     requires_connected_argovis,
-    safe_to_server_errors
+    safe_to_server_errors,
+    requires_matplotlib,
+    has_matplotlib,
+    has_seaborn,
+    has_cartopy
 )
 
+
+if has_matplotlib:
+    import matplotlib as mpl
+
+if has_cartopy:
+    import cartopy
 
 @requires_localftp
 class Test_Facade:
@@ -106,6 +116,41 @@ class Test_Facade:
             assert is_list_of_strings(new_fetcher.uri)
             assert isinstance(new_fetcher.data, xr.Dataset)
             assert isinstance(new_fetcher.index, pd.core.frame.DataFrame)
+
+    @requires_matplotlib
+    def test_plot(self):
+        with argopy.set_options(local_ftp=self.local_ftp):
+            f, fetcher = self.__get_fetcher(pt='float')
+
+            for ws in [False, has_seaborn]:
+                for wc in [False, has_cartopy]:
+                    for legend in [True, False]:
+                        fig, ax = fetcher.plot(ptype='trajectory', with_seaborn=ws, with_cartopy=wc, add_legend=legend)
+                        assert isinstance(fig, mpl.figure.Figure)
+
+                        expected_ax_type = (
+                            cartopy.mpl.geoaxes.GeoAxesSubplot
+                            if has_cartopy and wc
+                            else mpl.axes.Axes
+                        )
+                        assert isinstance(ax, expected_ax_type)
+
+                        expected_lg_type = mpl.legend.Legend if legend else type(None)
+                        assert isinstance(ax.get_legend(), expected_lg_type)
+
+                        mpl.pyplot.close(fig)
+
+            for ws in [False, has_seaborn]:
+                for by in [
+                    "dac",
+                    "profiler"
+                ]:
+                    fig, ax = fetcher.plot(ptype=by, with_seaborn=ws)
+                    assert isinstance(fig, mpl.figure.Figure)
+                    mpl.pyplot.close(fig)
+
+            with pytest.raises(ValueError):
+                fig, ax = fetcher.plot(ptype='invalid_cat', with_seaborn=ws)
 
 
 @requires_fetcher
