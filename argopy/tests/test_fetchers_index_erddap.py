@@ -10,7 +10,9 @@ from argopy.errors import (
     CacheFileNotFound,
 )
 from . import requires_connected_erddap_index, safe_to_server_errors, safe_to_fsspec_version
-import logging
+# import logging
+
+ERDDAP_TIMEOUT = 3 * 60
 
 @requires_connected_erddap_index
 class Test_Backend_WMO:
@@ -41,7 +43,7 @@ class Test_Backend_WMO:
     @safe_to_server_errors
     def test_cached(self):
         with tempfile.TemporaryDirectory() as testcachedir:
-            with argopy.set_options(cachedir=testcachedir, api_timeout=60):
+            with argopy.set_options(cachedir=testcachedir, api_timeout=ERDDAP_TIMEOUT):
                 fetcher = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0]).fetcher
                 df = fetcher.to_dataframe()
                 assert isinstance(df, pd.core.frame.DataFrame)
@@ -51,7 +53,7 @@ class Test_Backend_WMO:
     @safe_to_server_errors
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
-            with argopy.set_options(cachedir=testcachedir, api_timeout=60):
+            with argopy.set_options(cachedir=testcachedir, api_timeout=ERDDAP_TIMEOUT):
                 fetcher = ArgoIndexFetcher(src=self.src, cache=True).float(self.requests['float'][0]).fetcher
                 fetcher.to_dataframe()
                 fetcher.clear_cache()
@@ -66,7 +68,7 @@ class Test_Backend_WMO:
     @safe_to_server_errors
     def test_phy_float(self):
         for arg in self.requests["float"]:
-            with argopy.set_options(api_timeout=60):
+            with argopy.set_options(api_timeout=ERDDAP_TIMEOUT):
                 fetcher = ArgoIndexFetcher(src=self.src).float(arg).fetcher
                 df = fetcher.to_dataframe()
                 assert isinstance(df, pd.core.frame.DataFrame)
@@ -101,7 +103,7 @@ class Test_Backend_BOX:
     @safe_to_server_errors
     def test_cached(self):
         with tempfile.TemporaryDirectory() as testcachedir:
-            with argopy.set_options(cachedir=testcachedir, api_timeout=60):
+            with argopy.set_options(cachedir=testcachedir, api_timeout=ERDDAP_TIMEOUT):
                 fetcher = ArgoIndexFetcher(src=self.src, cache=True).region(self.requests['region'][-1]).fetcher
                 df = fetcher.to_dataframe()
                 assert isinstance(df, pd.core.frame.DataFrame)
@@ -110,7 +112,7 @@ class Test_Backend_BOX:
     @safe_to_server_errors
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
-            with argopy.set_options(cachedir=testcachedir, api_timeout=60):
+            with argopy.set_options(cachedir=testcachedir, api_timeout=ERDDAP_TIMEOUT):
                 fetcher = ArgoIndexFetcher(src=self.src, cache=True).region(self.requests['region'][-1]).fetcher
                 fetcher.to_dataframe()
                 fetcher.clear_cache()
@@ -126,7 +128,7 @@ class Test_Backend_BOX:
     @safe_to_server_errors
     def test_phy_region(self):
         for arg in self.requests["region"]:
-            with argopy.set_options(api_timeout=60):
+            with argopy.set_options(api_timeout=ERDDAP_TIMEOUT):
                 fetcher = ArgoIndexFetcher(src=self.src).region(arg).fetcher
                 df = fetcher.to_dataframe()
                 assert isinstance(df, pd.core.frame.DataFrame)
