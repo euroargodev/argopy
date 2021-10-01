@@ -14,8 +14,8 @@ import pandas as pd
 import numpy as np
 import copy
 import logging
-from packaging import version
-import fsspec
+# from packaging import version
+# import fsspec
 
 from abc import ABC, abstractmethod
 
@@ -77,7 +77,11 @@ class ErddapArgoIndexFetcher(ABC):
                  cachedir: str = "",
                  **kwargs):
         """ Instantiate an ERDDAP Argo index loader """
-        if version.parse(fsspec.__version__) > version.parse("0.8.3") and cache:
+        # if version.parse(fsspec.__version__) > version.parse("0.8.3") and cache:
+        #     log.warning("Caching not available for WMO access point, falls back on NO cache "
+        #                 "(http cache store not compatible with erddap wmo requests)")
+        #     cache = False
+        if cache:
             log.warning("Caching not available for WMO access point, falls back on NO cache "
                         "(http cache store not compatible with erddap wmo requests)")
             cache = False

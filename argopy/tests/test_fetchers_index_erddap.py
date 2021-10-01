@@ -14,6 +14,9 @@ from . import requires_connected_erddap_index, safe_to_server_errors, safe_to_fs
 
 ERDDAP_TIMEOUT = 3 * 60
 
+safe_to_no_cache = pytest.mark.skipif(True, reason="Cache disabled for erddap index fetcher")
+
+
 @requires_connected_erddap_index
 class Test_Backend_WMO:
     """ Test ERDDAP index fetching backend for WMO access point"""
@@ -31,7 +34,7 @@ class Test_Backend_WMO:
                 with pytest.raises(FileSystemHasNoCache):
                     fetcher.cachepath
 
-    @safe_to_fsspec_version
+    @safe_to_no_cache
     def test_cachepath_notfound(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
@@ -39,7 +42,7 @@ class Test_Backend_WMO:
                 with pytest.raises(CacheFileNotFound):
                     fetcher.cachepath
 
-    @safe_to_fsspec_version
+    @safe_to_no_cache
     @safe_to_server_errors
     def test_cached(self):
         with tempfile.TemporaryDirectory() as testcachedir:
@@ -49,7 +52,7 @@ class Test_Backend_WMO:
                 assert isinstance(df, pd.core.frame.DataFrame)
                 assert isinstance(fetcher.cachepath, str)
 
-    @safe_to_fsspec_version
+    @safe_to_no_cache
     @safe_to_server_errors
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
@@ -93,6 +96,7 @@ class Test_Backend_BOX:
                 with pytest.raises(FileSystemHasNoCache):
                     fetcher.cachepath
 
+    @safe_to_no_cache
     def test_cachepath_notfound(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
@@ -100,6 +104,7 @@ class Test_Backend_BOX:
                 with pytest.raises(CacheFileNotFound):
                     fetcher.cachepath
 
+    @safe_to_no_cache
     @safe_to_server_errors
     def test_cached(self):
         with tempfile.TemporaryDirectory() as testcachedir:
@@ -109,6 +114,7 @@ class Test_Backend_BOX:
                 assert isinstance(df, pd.core.frame.DataFrame)
                 assert isinstance(fetcher.cachepath, str)
 
+    @safe_to_no_cache
     @safe_to_server_errors
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
@@ -124,7 +130,6 @@ class Test_Backend_BOX:
             fetcher = ArgoIndexFetcher(src=self.src).region(arg).fetcher
             assert isinstance(fetcher.url, str)
 
-    # @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
     @safe_to_server_errors
     def test_phy_region(self):
         for arg in self.requests["region"]:

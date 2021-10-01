@@ -306,7 +306,7 @@ class indexfilter_box(indexfilter_proto):
             results = filt.run(f)
 
     # With the indexstore:
-        indexstore(cache=1, index_file="/Volumes/Data/ARGO/ar_index_global_prof.txt").open_dataframe(filt)
+        indexstore(cache=1, index_file="/Volumes/Data/ARGO/ar_index_global_prof.txt").read_csv(filt)
 
     """
 
