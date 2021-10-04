@@ -46,6 +46,11 @@ from argopy.errors import (
 
 path2pkl = pkg_resources.resource_filename("argopy", "assets/")
 
+try:
+    collectionsAbc = collections.abc
+except AttributeError:
+    collectionsAbc = collections
+
 
 def clear_cache():
     """ Delete argopy cache folder content """
@@ -826,7 +831,7 @@ class Chunker:
         default = self.default_chunksize[[k for k in self.request.keys()][0]]
         if len(chunksize) == 0:  # chunksize = {}
             chunksize = default
-        if not isinstance(chunksize, collections.Mapping):
+        if not isinstance(chunksize, collectionsAbc.Mapping):
             raise ValueError("chunksize must be mappable")
         else:  # merge with default:
             chunksize = {**default, **chunksize}
@@ -837,7 +842,7 @@ class Chunker:
             chunks = default
         elif len(chunks) == 0:  # chunks = {}, i.e. chunk=1 for all
             chunks = {k: 1 for k in self.request}
-        if not isinstance(chunks, collections.Mapping):
+        if not isinstance(chunks, collectionsAbc.Mapping):
             raise ValueError("chunks must be 'auto' or mappable")
         chunks = {**default, **chunks}
         self.chunks = collections.OrderedDict(sorted(chunks.items()))
@@ -1055,8 +1060,49 @@ def format_oneline(s, max_width=65):
         return s
 
 
+def is_indexbox(box: list, errors="raise"):
+    """ Check if this array matches a 2d or 3d index box definition
+
+        box = [lon_min, lon_max, lat_min, lat_max]
+    or:
+        box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
+
+    Parameters
+    ----------
+    box: list
+    errors: 'raise'
+
+    Returns
+    -------
+    bool
+    """
+
+    tests = {}
+
+    # Formats:
+    tests["index box must be a list"] = lambda b: isinstance(b, list)
+    tests["index box must be a list with 4 or 6 elements"] = lambda b: len(b) in [4, 6]
+
+    error = None
+    for msg, test in tests.items():
+        if not test(box):
+            error = msg
+            break
+
+    if error and errors == "raise":
+        raise ValueError("%s: %s" % (box, error))
+    elif error:
+        return False
+    else:
+        # Insert pressure bounds and use full box validator:
+        tmp_box = box.copy()
+        tmp_box.insert(4, 0.)
+        tmp_box.insert(5, 10000.)
+        return is_box(tmp_box, errors=errors)
+
+
 def is_box(box: list, errors="raise"):
-    """ Check if this array matches a 2d or 3d box definition
+    """ Check if this array matches a 3d or 4d data box definition
 
         box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
     or:
@@ -1071,7 +1117,6 @@ def is_box(box: list, errors="raise"):
     -------
     bool
     """
-
     def is_dateconvertible(d):
         try:
             pd.to_datetime(d)
@@ -1141,7 +1186,7 @@ def is_box(box: list, errors="raise"):
             break
 
     if error and errors == "raise":
-        raise ValueError(error)
+        raise ValueError("%s: %s" % (box, error))
     elif error:
         return False
     else:
@@ -1159,6 +1204,82 @@ def is_list_of_dicts(lst):
 def is_list_of_datasets(lst):
     return all(isinstance(x, xr.Dataset) for x in lst)
 
+
+def check_wmo(lst):
+    """ Check a WMO option and returned it as a list of integers
+
+    Parameters
+    ----------
+    wmo: int
+        WMO must be an integer or an iterable with elements that can be casted as integers
+    errors: 'raise'
+
+    Returns
+    -------
+    list(int)
+    """
+    is_wmo(lst, errors="raise")
+
+    # Make sure we deal with a list
+    if not isinstance(lst, list):
+        if isinstance(lst, np.ndarray):
+            lst = list(lst)
+        else:
+            lst = [lst]
+
+    # Then cast list elements as integers
+    return [abs(int(x)) for x in lst]
+
+
+def is_wmo(lst, errors="raise"):
+    """ Assess validity of a WMO option
+
+    Parameters
+    ----------
+    wmo: int, list(int), array(int)
+        WMO must be a single or a list of 5/7 digit positive numbers
+    errors: 'raise'
+        Possibly raises a ValueError exception, otherwise fails silently.
+
+    Returns
+    -------
+    bool
+        True if wmo is indeed a list of integers
+    """
+
+    # Make sure we deal with a list
+    if not isinstance(lst, list):
+        if isinstance(lst, np.ndarray):
+            lst = list(lst)
+        else:
+            lst = [lst]
+
+    # Error message:
+    # msg = "WMO must be an integer or an iterable with elements that can be casted as integers"
+    msg = "WMO must be a single or a list of 5/7 digit positive numbers"
+
+    # Then try to cast list elements as integers, return True if ok
+    result = True
+    try:
+        for x in lst:
+            if not str(x).isdigit():
+                result = False
+
+            if (len(str(x)) != 5) and (len(str(x)) != 7):
+                result = False
+
+            if int(x) <= 0:
+                result = False
+
+    except:
+        result = False
+        if errors == "raise":
+            raise ValueError(msg)
+
+    if not result and errors == "raise":
+        raise ValueError(msg)
+    else:
+        return result
 
 # def docstring(value):
 #     """Replace one function docstring

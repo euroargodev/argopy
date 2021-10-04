@@ -49,10 +49,13 @@ v0.1.8 (X XXX. 2021)
 
 - Code spell fixes (:pr:`89`) by `K. Schwehr <https://github.com/schwehr>`_.
 
+**Internals**
+
+- Check validity of access points options (WMO and box) in the facade, no checks at the fetcher level. (:pr:`92`) by `G. Maze <http://www.github.com/gmaze>`_.
+
 **Breaking changes with previous versions**
 
 - In the plotters module, the ``plot_dac`` and ``plot_profilerType`` functions have been replaced by ``bar_plot``. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
-
 
 
 v0.1.7 (4 Jan. 2021)

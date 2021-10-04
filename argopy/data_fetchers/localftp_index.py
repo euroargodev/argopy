@@ -146,8 +146,6 @@ class Fetch_wmo(LocalFTPArgoIndexFetcher):
             CYC : int, np.array(int), list(int)
                 The cycle numbers to load.
         """
-        if isinstance(WMO, int):
-            WMO = [WMO]  # Make sure we deal with a list
         if isinstance(CYC, int):
             CYC = np.array((CYC,), dtype='int')  # Make sure we deal with an array of integers
         if isinstance(CYC, list):
@@ -170,7 +168,5 @@ class Fetch_box(LocalFTPArgoIndexFetcher):
                 The box domain to load all Argo data for:
                 box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
-        if len(box) != 4 and len(box) != 6:
-            raise ValueError('Box must be 4 or 6 length')
         self.BOX = box
         self.fcls = indexfilter_box(self.BOX)

@@ -37,7 +37,7 @@ import getpass
 
 from .proto import ArgoDataFetcherProto
 from argopy.errors import NetCDF4FileNotFoundError
-from argopy.utilities import list_standard_variables, check_localftp, format_oneline, is_box
+from argopy.utilities import list_standard_variables, check_localftp, format_oneline
 from argopy.options import OPTIONS
 from argopy.stores import filestore, indexstore, indexfilter_box
 from argopy.plotters import open_dashboard
@@ -398,8 +398,6 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
         CYC: int, np.array(int), list(int)
             The cycle numbers to load.
         """
-        if isinstance(WMO, int):
-            WMO = [WMO]  # Make sure we deal with a list
         if isinstance(CYC, int):
             CYC = np.array((CYC,), dtype='int')  # Make sure we deal with an array of integers
         if isinstance(CYC, list):
@@ -464,7 +462,6 @@ class Fetch_box(LocalFTPArgoDataFetcher):
         """
         # We use a full domain definition (x, y, z, t) as argument for compatibility with the other fetchers
         # but at this point, we internally work only with x, y and t.
-        is_box(box)
         self.BOX = box
         self.indexBOX = [box[ii] for ii in [0, 1, 2, 3]]
         if len(box) == 8:

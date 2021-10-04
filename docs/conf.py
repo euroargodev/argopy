@@ -28,7 +28,7 @@ with suppress(ImportError):
 
 autodoc_mock_imports = []
 try:
-    import cartopy
+    import cartopy  # noqa: F401
 except ImportError:
     autodoc_mock_imports.append('cartopy')
 
@@ -39,7 +39,7 @@ root = pathlib.Path(__file__).absolute().parent.parent
 os.environ["PYTHONPATH"] = str(root)
 sys.path.insert(0, str(root))
 
-import argopy
+import argopy  # noqa: E402
 print("argopy: %s, %s" % (argopy.__version__, argopy.__file__))
 
 print("python exec:", sys.executable)
@@ -210,7 +210,7 @@ html_theme_options = {
     "repository_url": "https://www.github.com/euroargodev/argopy",
     "use_repository_button": True,
     "html_logo": "_static/argopy_logo_long.png",
-#  'canonical_url': '',
+    #  'canonical_url': '',
     'analytics_id': 'UA-73130866-2',  # Provided by Google in your dashboard
     'logo_only': True,
     'display_version': False,

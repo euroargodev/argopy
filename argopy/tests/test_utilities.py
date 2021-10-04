@@ -20,7 +20,8 @@ from argopy.utilities import (
     Chunker,
     is_box,
     is_list_of_strings,
-    format_oneline,
+    format_oneline, is_indexbox,
+    check_wmo, is_wmo
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
@@ -399,9 +400,83 @@ class Test_is_box:
             assert not is_box(box, errors="ignore")
 
 
+class Test_is_indexbox:
+    @pytest.fixture(autouse=True)
+    def create_data(self):
+        self.BOX2d = [0, 20, 40, 60]
+        self.BOX3d = [0, 20, 40, 60, "2001-01", "2001-6"]
+
+    def test_box_ok(self):
+        assert is_indexbox(self.BOX2d)
+        assert is_indexbox(self.BOX3d)
+
+    def test_box_notok(self):
+        for box in [[], list(range(0, 12))]:
+            with pytest.raises(ValueError):
+                is_indexbox(box)
+            with pytest.raises(ValueError):
+                is_indexbox(box, errors="raise")
+            assert not is_indexbox(box, errors="ignore")
+
+    def test_box_invalid_num(self):
+        for i in [0, 1, 2, 3]:
+            box = self.BOX2d
+            box[i] = "str"
+            with pytest.raises(ValueError):
+                is_indexbox(box)
+            with pytest.raises(ValueError):
+                is_indexbox(box, errors="raise")
+            assert not is_indexbox(box, errors="ignore")
+
+    def test_box_invalid_range(self):
+        for i in [0, 1, 2, 3]:
+            box = self.BOX2d
+            box[i] = -1000
+            with pytest.raises(ValueError):
+                is_indexbox(box)
+            with pytest.raises(ValueError):
+                is_indexbox(box, errors="raise")
+            assert not is_indexbox(box, errors="ignore")
+
+    def test_box_invalid_str(self):
+        for i in [4, 5]:
+            box = self.BOX3d
+            box[i] = "str"
+            with pytest.raises(ValueError):
+                is_indexbox(box)
+            with pytest.raises(ValueError):
+                is_indexbox(box, errors="raise")
+            assert not is_indexbox(box, errors="ignore")
+
+
 def test_format_oneline():
     s = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
     assert isinstance(format_oneline(s), str)
     assert isinstance(format_oneline(s[0:5]), str)
     s = format_oneline(s, max_width=12)
     assert isinstance(s, str) and len(s) == 12
+
+
+def test_is_wmo():
+    assert is_wmo(12345)
+    assert is_wmo([12345])
+    assert is_wmo([12345, 1234567])
+    with pytest.raises(ValueError):
+        is_wmo(1234, errors="raise")
+    with pytest.raises(ValueError):
+        is_wmo(-1234, errors="raise")
+    with pytest.raises(ValueError):
+        is_wmo(1234.12, errors="raise")
+    with pytest.raises(ValueError):
+        is_wmo(12345.7, errors="raise")
+    assert not is_wmo(12, errors="silent")
+    assert not is_wmo(-12, errors="silent")
+    assert not is_wmo(1234.12, errors="silent")
+    assert not is_wmo(12345.7, errors="silent")
+
+
+def test_check_wmo():
+    assert check_wmo(12345) == [12345]
+    assert check_wmo([1234567]) == [1234567]
+    assert check_wmo([12345, 1234567]) == [12345, 1234567]
+    assert check_wmo(np.array((12345, 1234567), dtype='int')) == [12345, 1234567]
