@@ -56,17 +56,17 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     @abstractmethod
     def init(self, *args, **kwargs):
         """ Initialisation for a specific fetcher """
-        pass
+        raise NotImplementedError("Not implemented")
 
     @abstractmethod
     def define_constraints(self):
         """ Define erddapy constraints """
-        pass
+        raise NotImplementedError("Not implemented")
 
     @property
     def uri(self) -> list:
         """ Return the list of Unique Resource Identifier (URI) to download data """
-        pass
+        raise NotImplementedError("Not implemented")
 
     ###
     # Methods that must not change

@@ -37,12 +37,12 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
     @abstractmethod
     def init(self):
         """ Initialisation for a specific fetcher """
-        pass
+        raise NotImplementedError("Not implemented")
 
     @property
     def uri(self):
         """ Return the URL used to download data """
-        pass
+        raise NotImplementedError("Not implemented")
 
     @property
     def cachepath(self):

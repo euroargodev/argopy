@@ -57,17 +57,17 @@ class ErddapArgoIndexFetcher(ABC):
     @abstractmethod
     def init(self):
         """ Initialisation for a specific fetcher """
-        pass
+        raise NotImplementedError("Not implemented")
 
     @abstractmethod
     def define_constraints(self):
         """ Define erddapy constraints """
-        pass
+        raise NotImplementedError("Not implemented")
 
     @abstractmethod
     def cname(self):
         """ Return a unique string defining the request """
-        pass
+        raise NotImplementedError("Not implemented")
 
     ###
     # Methods that must not change

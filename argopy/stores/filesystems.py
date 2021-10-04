@@ -167,11 +167,11 @@ class argo_store_proto(ABC):
 
     @abstractmethod
     def open_dataset(self, *args, **kwargs):
-        pass
+        raise NotImplementedError("Not implemented")
 
     @abstractmethod
     def read_csv(self):
-        pass
+        raise NotImplementedError("Not implemented")
 
 
 class filestore(argo_store_proto):

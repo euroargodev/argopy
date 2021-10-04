@@ -62,7 +62,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
     @abstractmethod
     def init(self, *args, **kwargs):
         """ Initialisation for a specific fetcher """
-        pass
+        raise NotImplementedError("Not implemented")
 
     # @abstractmethod
     # def list_argo_files(self, errors: str = 'raise'):
@@ -305,7 +305,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         -------
         list(str)
         """
-        pass
+        raise NotImplementedError("Not implemented")
 
     @property
     def cachepath(self):

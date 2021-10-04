@@ -26,8 +26,6 @@ class indexfilter_proto(ABC):
 
 
     """
-    def __init__(self):
-        pass
 
     @abstractmethod
     def run(self):
@@ -41,12 +39,12 @@ class indexfilter_proto(ABC):
         -------
         csv rows matching the request, as in-memory string. Or None.
         """
-        pass
+        raise NotImplementedError("Not implemented")
 
     @property
     def uri(self):
         """ Return a name for one specific filter run """
-        pass
+        raise NotImplementedError("Not implemented")
 
     @property
     def sha(self):

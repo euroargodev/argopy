@@ -7,19 +7,19 @@ import xarray
 class ArgoDataFetcherProto(ABC):
     @abstractmethod
     def to_xarray(self) -> xarray.Dataset:
-        pass
+        raise NotImplementedError("Not implemented")
 
     @abstractmethod
     def filter_data_mode(self, ds: xarray.Dataset) -> xarray.Dataset:
-        pass
+        raise NotImplementedError("Not implemented")
 
     @abstractmethod
     def filter_qc(self, ds: xarray.Dataset) -> xarray.Dataset:
-        pass
+        raise NotImplementedError("Not implemented")
 
     @abstractmethod
     def filter_variables(self, ds: xarray.Dataset, mode: str) -> xarray.Dataset:
-        pass
+        raise NotImplementedError("Not implemented")
 
     def clear_cache(self):
         """ Remove cache files and entries from resources opened with this fetcher """

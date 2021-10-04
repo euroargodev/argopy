@@ -50,7 +50,7 @@ class LocalFTPArgoIndexFetcher(ABC):
     @abstractmethod
     def init(self):
         """ Initialisation for a specific fetcher """
-        pass
+        raise NotImplementedError("Not implemented")
 
     @property
     def cachepath(self):
