@@ -118,6 +118,8 @@ requires_connected_erddap_index = pytest.mark.skipif(
     reason="Requires a live and valid Argo Index from Ifremer erddap server",
 )
 
+ci_erddap_index = pytest.mark.skipif(True, reason="Tests disabled for erddap index fetcher")
+
 ###########
 # ARGOVIS #
 ###########

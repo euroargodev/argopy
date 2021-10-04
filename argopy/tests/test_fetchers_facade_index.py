@@ -11,7 +11,7 @@ from . import (
     requires_localftp_index,
     requires_connection,
     safe_to_server_errors,
-    safe_to_fsspec_version
+    ci_erddap_index
 )
 
 ERDDAP_TIMEOUT = 3 * 60
@@ -94,6 +94,7 @@ class Test_AllBackends:
         with argopy.set_options(local_ftp=self.local_ftp):
             self.__test_float("localftp", index_file="ar_index_global_prof.txt")
 
+    @ci_erddap_index
     @requires_connected_erddap_index
     @safe_to_server_errors
     def test_float_erddap(self):
@@ -110,6 +111,7 @@ class Test_AllBackends:
         with argopy.set_options(local_ftp=self.local_ftp):
             self.__test_region("localftp", index_file="ar_index_global_prof.txt")
 
+    @ci_erddap_index
     @requires_connected_erddap_index
     def test_region_erddap(self):
         with argopy.set_options(api_timeout=ERDDAP_TIMEOUT):

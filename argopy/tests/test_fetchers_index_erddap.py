@@ -7,16 +7,15 @@ import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy.errors import (
     FileSystemHasNoCache,
-    CacheFileNotFound,
+    CacheFileNotFound
 )
-from . import requires_connected_erddap_index, safe_to_server_errors, safe_to_fsspec_version
-# import logging
+from . import requires_connected_erddap_index, safe_to_server_errors, ci_erddap_index
 
 ERDDAP_TIMEOUT = 3 * 60
-
 safe_to_no_cache = pytest.mark.skipif(True, reason="Cache disabled for erddap index fetcher")
 
 
+@ci_erddap_index
 @requires_connected_erddap_index
 class Test_Backend_WMO:
     """ Test ERDDAP index fetching backend for WMO access point"""
@@ -77,6 +76,7 @@ class Test_Backend_WMO:
                 assert isinstance(df, pd.core.frame.DataFrame)
 
 
+@ci_erddap_index
 @requires_connected_erddap_index
 class Test_Backend_BOX:
     """ Test ERDDAP index fetching backend for the BOX access point """
