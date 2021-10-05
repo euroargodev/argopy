@@ -45,12 +45,6 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         """ Return the URL used to download data """
         raise NotImplementedError("Not implemented")
 
-    @property
-    @abstractmethod
-    def cachepath(self):
-        """ Return path to cache file for this request """
-        return [self.fs.cachepath(url) for url in self.uri]
-
     ###
     # Methods that must not change
     ###
@@ -140,6 +134,11 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         else:
             this.attrs["history"] = txt
         return this
+
+    @property
+    def cachepath(self):
+        """ Return path to cache file for this request """
+        return [self.fs.cachepath(url) for url in self.uri]
 
     def cname(self):
         """ Return a unique string defining the constraints """
