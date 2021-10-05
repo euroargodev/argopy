@@ -298,6 +298,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
             return lst[0]
 
     @property
+    @abstractmethod
     def uri(self):
         """ Return the list of files to load
 

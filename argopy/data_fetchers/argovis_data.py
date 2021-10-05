@@ -40,11 +40,13 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         raise NotImplementedError("Not implemented")
 
     @property
+    @abstractmethod
     def uri(self):
         """ Return the URL used to download data """
         raise NotImplementedError("Not implemented")
 
     @property
+    @abstractmethod
     def cachepath(self):
         """ Return path to cache file for this request """
         return [self.fs.cachepath(url) for url in self.uri]

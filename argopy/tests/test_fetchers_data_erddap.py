@@ -138,6 +138,14 @@ class Test_Backend:
         )
         assert isinstance(n, int)
 
+    def test_minimal_vlist(self):
+        f = ArgoDataFetcher(src=self.src).region(self.requests["region"][1]).fetcher
+        assert is_list_of_strings(f._minimal_vlist)
+
+    def test_dtype(self):
+        f = ArgoDataFetcher(src=self.src).region(self.requests["region"][1]).fetcher
+        assert isinstance(f._dtype, dict)
+
     def __testthis_profile(self, dataset):
         fetcher_args = {"src": self.src, "ds": dataset}
         for arg in self.args["profile"]:

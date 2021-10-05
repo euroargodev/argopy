@@ -56,17 +56,18 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     @abstractmethod
     def init(self, *args, **kwargs):
         """ Initialisation for a specific fetcher """
-        raise NotImplementedError("Not implemented")
+        raise NotImplementedError("ErddapArgoDataFetcher.init not implemented")
 
     @abstractmethod
     def define_constraints(self):
         """ Define erddapy constraints """
-        raise NotImplementedError("Not implemented")
+        raise NotImplementedError("ErddapArgoDataFetcher.define_constraints not implemented")
 
     @property
+    @abstractmethod
     def uri(self) -> list:
         """ Return the list of Unique Resource Identifier (URI) to download data """
-        raise NotImplementedError("Not implemented")
+        raise NotImplementedError("ErddapArgoDataFetcher.uri not implemented")
 
     ###
     # Methods that must not change
@@ -311,6 +312,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             "time_qc": np.int64,
             "direction": object,
             "platform_number": np.int64,
+            "config_mission_number": np.int64,
+            "vertical_sampling_scheme": object,
             "cycle_number": np.int64,
             "pres": np.float64,
             "temp": np.float64,
