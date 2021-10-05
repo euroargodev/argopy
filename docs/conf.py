@@ -210,7 +210,7 @@ html_theme_options = {
     "repository_url": "https://www.github.com/euroargodev/argopy",
     "use_repository_button": True,
     "html_logo": "_static/argopy_logo_long.png",
-    # 'canonical_url': '',
+    #  'canonical_url': '',
     'analytics_id': 'UA-73130866-2',  # Provided by Google in your dashboard
     'logo_only': True,
     'display_version': False,

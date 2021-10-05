@@ -506,12 +506,6 @@ class Fetch_wmo(ErddapArgoDataFetcher):
             CYC : int, np.array(int), list(int)
                 The cycle numbers to load.
         """
-        # Make sure we deal with a list of integers for WMOs:
-        if not isinstance(WMO, list):
-            WMO = [WMO]
-        if not all(isinstance(x, (int, np.int64)) for x in WMO):
-            raise ValueError("WMO must be a list of integers")
-
         if isinstance(CYC, int):
             CYC = np.array(
                 (CYC,), dtype="int"
@@ -601,13 +595,6 @@ class Fetch_box(ErddapArgoDataFetcher):
                     or:
                     box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
-        # if len(box) == 6:
-        # Select the last months of data:
-        # end = pd.to_datetime('now')
-        # start = end - pd.DateOffset(months=1)
-        # box.append(start.strftime('%Y-%m-%d'))
-        # box.append(end.strftime('%Y-%m-%d'))
-        is_box(box, errors="raise")
         self.BOX = box
 
         if self.dataset_id == "phy":

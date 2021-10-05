@@ -5,6 +5,8 @@
 High level helper methods to load Argo data from any source
 The facade should be able to work with all available data access point,
 
+Validity of access points parameters (eg: wmo) is made here, not at the data/index source fetcher level
+
 """
 
 import warnings
@@ -14,8 +16,9 @@ import logging
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher
-from .utilities import list_available_data_src, list_available_index_src, is_box
+from .utilities import list_available_data_src, list_available_index_src, is_box, is_indexbox, check_wmo
 from .plotters import plot_trajectory, bar_plot
+
 
 AVAILABLE_DATA_SOURCES = list_available_data_src()
 AVAILABLE_INDEX_SOURCES = list_available_index_src()
@@ -214,14 +217,16 @@ class ArgoDataFetcher:
 
         Parameters
         ----------
-        wmo: list(int)
-            Define the list of Argo floats to load data for. This is a list of integers with WMO numbers.
+        wmo: int, list(int)
+            Define the list of Argo floats to load data for. This is a list of integers with WMO float identifiers.
+            WMO is the World Meteorological Organization.
 
         Returns
         -------
         :class:`argopy.fetchers.ArgoDataFetcher.float`
             A data source fetcher for all float profiles
         """
+        wmo = check_wmo(wmo)  # Check and return a valid list of WMOs
         if "CYC" in kw or "cyc" in kw:
             raise TypeError(
                 "float() got an unexpected keyword argument 'cyc'. Use 'profile' access "
@@ -249,8 +254,9 @@ class ArgoDataFetcher:
 
         Parameters
         ----------
-        wmo: list(int)
-            Define the list of Argo floats to load data for. This is a list of integers with WMO numbers.
+        wmo: int, list(int)
+            Define the list of Argo floats to load data for. This is a list of integers with WMO float identifiers.
+            WMO is the World Meteorological Organization.
         cyc: list(int)
             Define the list of cycle numbers to load for each Argo floats listed in ``wmo``.
 
@@ -259,6 +265,7 @@ class ArgoDataFetcher:
         :class:`argopy.fetchers.ArgoDataFetcher.profile`
             A data source fetcher for specific float profiles
         """
+        wmo = check_wmo(wmo)  # Check and return a valid list of WMOs
         self.fetcher = self.Fetchers["profile"](WMO=wmo, CYC=cyc, **self.fetcher_options)
         self._AccessPoint = "profile"  # Register the requested access point
         self._AccessPoint_data = {'wmo': wmo, 'cyc': cyc}  # Register the requested access point data
@@ -387,7 +394,7 @@ class ArgoDataFetcher:
                 index_loader.profile(self._AccessPoint_data['wmo'], self._AccessPoint_data['cyc']).load()
             if self._AccessPoint == 'region':
                 # Convert data box to index box (remove depth info):
-                index_box = self._AccessPoint_data['box']
+                index_box = self._AccessPoint_data['box'].copy()
                 del index_box[4:6]
                 index_loader.region(index_box).load()
             df = index_loader.index
@@ -462,8 +469,12 @@ class ArgoDataFetcher:
         if "institution" not in self.index:
             self.to_index(full=True)
         if ptype in ["dac", "institution"]:
+            if "institution" not in self.index:
+                self.to_index(full=True)
             return bar_plot(self.index, by="institution", **kwargs)
         elif ptype == "profiler":
+            if "profiler" not in self.index:
+                self.to_index(full=True)
             return bar_plot(self.index, by="profiler", **kwargs)
         elif ptype == "trajectory":
             return plot_trajectory(self.index, **kwargs)
@@ -601,9 +612,10 @@ class ArgoIndexFetcher:
 
         Returns
         -------
-        :class:`argopy.fetchers.ArgoIndexFetcher`
-            A index fetcher initialised for all float profiles
+        :class:`argopy.fetchers.ArgoIndexFetcher.float`
+            An index source fetcher for all float profiles index
         """
+        wmo = check_wmo(wmo)  # Check and return a valid list of WMOs
         self.fetcher = self.Fetchers["float"](WMO=wmo, **self.fetcher_options)
         self._AccessPoint = "float"  # Register the requested access point
         return self
@@ -612,18 +624,20 @@ class ArgoIndexFetcher:
     def profile(self, wmo, cyc):
         """ Profile index fetcher
 
-        Parameters
-        ----------
-        wmo: list(int)
-            Define the list of Argo floats to load data for. This is a list of integers with WMO numbers.
-        cyc: list(int)
-            Define the list of cycle numbers to load for each Argo floats listed in ``wmo``.
+            Parameters
+            ----------
+            wmo: int, list(int)
+                Define the list of Argo floats to load index for. This is a list of integers with WMO float identifiers.
+                WMO is the World Meteorological Organization.
+            cyc: list(int)
+                Define the list of cycle numbers to load for each Argo floats listed in ``wmo``.
 
-        Returns
-        -------
-        :class:`argopy.fetchers.ArgoIndexFetcher`
-            A index fetcher initialised for specific float profiles
+            Returns
+            -------
+            :class:`argopy.fetchers.ArgoIndexFetcher`
+                A index fetcher initialised for specific float profiles
         """
+        wmo = check_wmo(wmo)  # Check and return a valid list of WMOs
         self.fetcher = self.Fetchers["profile"](WMO=wmo, CYC=cyc, **self.fetcher_options)
         self._AccessPoint = "profile"  # Register the requested access point
         return self
@@ -642,7 +656,7 @@ class ArgoIndexFetcher:
 
             Longitude and latitude bounds are required, while the two bounding dates are optional.
             If bounding dates are not specified, the entire time series is fetched.
-            Eg: [-60, -55, 40., 45., 0., 10., '2007-08-01', '2007-09-01']
+            Eg: [-60, -55, 40., 45., '2007-08-01', '2007-09-01']
 
         Returns
         -------
@@ -652,8 +666,8 @@ class ArgoIndexFetcher:
         Warning
         -------
         Note that the box option for an index fetcher does not have pressure bounds, contrary to the data fetcher.
-
         """
+        is_indexbox(box, errors="raise")  # Validate the box definition
         self.fetcher = self.Fetchers["region"](box=box, **self.fetcher_options)
         self._AccessPoint = "region"  # Register the requested access point
         return self

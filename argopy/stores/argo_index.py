@@ -317,8 +317,7 @@ class indexfilter_box(indexfilter_proto):
                 The box domain to load all Argo data for:
                 box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
         """
-        if len(BOX) != 4 and len(BOX) != 6:
-            raise ValueError('Box must 4 or 6 length')
+        # is_indexbox(BOX)
         self.BOX = BOX
 
     def _format(self, x, typ):
@@ -348,14 +347,12 @@ class indexfilter_box(indexfilter_proto):
         return hashlib.sha256(boxname.encode()).hexdigest()
         # return boxname
 
-    def search_latlon(self, index, lon, lat):
+    def search_latlon(self, index):
         """ Search
 
         Parameters
         ----------
-        index_file: _io.TextIOWrapper
-        lon: [float, float]
-        lat: [float, float]
+        index: _io.TextIOWrapper
 
         Returns
         -------
@@ -381,54 +378,49 @@ class indexfilter_box(indexfilter_proto):
         else:
             return None
 
-    def search_latlontim(self, index, lon, lat, tim):
+    def search_tim(self, index):
         """ Search
 
         Parameters
         ----------
-        index_file: _io.TextIOWrapper
-        lon: [float, float]
-        lat: [float, float]
+        index: str csv like
+
+        Returns
+        -------
+        csv chunk matching the request, as a string. Or None
+        """
+        results = ""
+        iv_tim = 1
+        il_loaded = 0
+        for line in index.split():
+            l = line.split(",")
+            if l[iv_tim] != "":
+                t = pd.to_datetime(str(l[iv_tim]))
+                if t >= pd.to_datetime(self.BOX[4]) and t <= pd.to_datetime(self.BOX[5]):
+                    results += line + "\n"
+                    il_loaded += 1
+        if il_loaded > 0:
+            return results
+        else:
+            return None
+
+    def search_latlontim(self, index):
+        """ Search
+
+        Parameters
+        ----------
+        index: _io.TextIOWrapper
 
         Returns
         -------
         csv chunk matching the request, as a string. Or None
         """
 
-        def search_tim(index, tim):
-            """ Search
-
-            Parameters
-            ----------
-            index_file: str csv like
-            tim: [pd.datetime, pd.datetime]
-
-            Returns
-            -------
-            csv chunk matching the request, as a string. Or None
-            """
-            results = ""
-            iv_tim = 1
-            il_loaded = 0
-            for line in index.split():
-                this_line = line.split(",")
-                if this_line[iv_tim] != "":
-                    t = pd.to_datetime(str(this_line[iv_tim]))
-                    if t >= tim[0] and t <= tim[1]:
-                        results += line + "\n"
-                        il_loaded += 1
-            if il_loaded > 0:
-                return results
-            else:
-                return None
-
         # First search in space:
-        results = self.search_latlon(index, self.BOX[0:2], self.BOX[2:4])
-
+        results = self.search_latlon(index)
         # Then refine in time:
         if results:
-            results = search_tim(results, pd.to_datetime(self.BOX[4:6]))
-
+            results = self.search_tim(results)
         return results
 
     def run(self, index_file):
@@ -446,9 +438,9 @@ class indexfilter_box(indexfilter_proto):
 
         # Run the filter:
         if len(self.BOX) == 4:
-            return self.search_latlon(index_file, self.BOX[0:2], self.BOX[2:4])
+            return self.search_latlon(index_file)
         else:
-            return self.search_latlontim(index_file, self.BOX[0:2], self.BOX[2:4], pd.to_datetime(self.BOX[4:6]))
+            return self.search_latlontim(index_file)
 
 
 class indexstore():
