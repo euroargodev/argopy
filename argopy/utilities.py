@@ -442,7 +442,7 @@ def show_versions(file=sys.stdout):  # noqa: C901
         ("argopy", lambda mod: mod.__version__),
         ("xarray", lambda mod: mod.__version__),
         ("scipy", lambda mod: mod.__version__),
-        ("scikit-learn", lambda mod: mod.__version__),
+        ("sklearn", lambda mod: mod.__version__),
         ("netCDF4", lambda mod: mod.__version__),
         ("dask", lambda mod: mod.__version__),
         ("toolz", lambda mod: mod.__version__),

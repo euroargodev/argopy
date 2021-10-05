@@ -55,6 +55,8 @@ v0.1.8 (X XXX. 2021)
 
 **Breaking changes with previous versions**
 
+- Drop support for python 3.6 and older. Lock range of dependencies version support.
+
 - In the plotters module, the ``plot_dac`` and ``plot_profilerType`` functions have been replaced by ``bar_plot``. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 **Internals**
