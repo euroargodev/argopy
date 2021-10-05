@@ -20,7 +20,7 @@ import getpass
 
 from .proto import ArgoDataFetcherProto
 from argopy.options import OPTIONS
-from argopy.utilities import list_standard_variables, Chunker, format_oneline, is_box
+from argopy.utilities import list_standard_variables, Chunker, format_oneline
 from argopy.stores import httpstore
 from argopy.plotters import open_dashboard
 

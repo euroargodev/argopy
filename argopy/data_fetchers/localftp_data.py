@@ -40,8 +40,7 @@ from argopy.errors import NetCDF4FileNotFoundError
 from argopy.utilities import (
     list_standard_variables,
     check_localftp,
-    format_oneline,
-    is_box
+    format_oneline
 )
 from argopy.options import OPTIONS
 from argopy.stores import filestore, indexstore, indexfilter_box

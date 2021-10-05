@@ -576,14 +576,22 @@ def isAPIconnected(src="erddap", data=True):
         raise InvalidFetcher
 
 
-def erddap_ds_exists(ds="ArgoFloats"):
-    """ Given erddap fetcher, check if a Dataset exists, return a bool"""
-    # e = ArgoDataFetcher(src='erddap').float(wmo=0).fetcher
-    # erddap_index = json.load(urlopen(e.erddap.server + "/info/index.json"))
-    # erddap_index = json.load(urlopen("http://www.ifremer.fr/erddap/info/index.json"))
-    with httpstore(timeout=120).open(
-        "http://www.ifremer.fr/erddap/info/index.json"
-    ) as of:
+def erddap_ds_exists(ds: str = "ArgoFloats", erddap: str = 'http://www.ifremer.fr/erddap') -> bool:
+    """ Check if a dataset exists on a remote erddap server
+    return a bool
+
+    Parameter
+    ---------
+    ds: str
+        Name of the erddap dataset to check (default: 'ArgoFloats')
+    erddap: str
+        Url of the erddap server (default: 'http://www.ifremer.fr/erddap')
+
+    Return
+    ------
+    bool
+    """
+    with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
         erddap_index = json.load(of)
     return ds in [row[-1] for row in erddap_index["table"]["rows"]]
 
@@ -1258,8 +1266,8 @@ def check_wmo(lst):
     return [abs(int(x)) for x in lst]
 
 
-def is_wmo(lst, errors="raise"):
-    """ Assess validity of a WMO option
+def is_wmo(lst, errors="raise"):  # noqa: C901
+    """ Assess validity of a WMO option value
 
     Parameters
     ----------
@@ -1298,7 +1306,7 @@ def is_wmo(lst, errors="raise"):
             if int(x) <= 0:
                 result = False
 
-    except:
+    except Exception:
         result = False
         if errors == "raise":
             raise ValueError(msg)
@@ -1307,6 +1315,7 @@ def is_wmo(lst, errors="raise"):
         raise ValueError(msg)
     else:
         return result
+
 
 # def docstring(value):
 #     """Replace one function docstring
@@ -1317,6 +1326,7 @@ def is_wmo(lst, errors="raise"):
 #         func.__doc__ = value
 #         return func
 #     return _doc
+
 
 def warnUnless(ok, txt):
     """ Decorator to raise warning unless condition is True
