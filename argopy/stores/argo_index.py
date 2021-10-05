@@ -365,12 +365,11 @@ class indexfilter_box(indexfilter_proto):
         for ii in range(0, 9):
             index.readline()
         for line in index:
-            # il_this = il_loaded
             this_line = line.split(",")
             if this_line[iv_lon] != "" and this_line[iv_lat] != "":
                 x = float(this_line[iv_lon])
                 y = float(this_line[iv_lat])
-                if x >= lon[0] and x <= lon[1] and y >= lat[0] and y <= lat[1]:
+                if x >= self.BOX[0] and x <= self.BOX[1] and y >= self.BOX[2] and y <= self.BOX[3]:
                     results += line
                     il_loaded += 1
         if il_loaded > 0:
@@ -393,9 +392,9 @@ class indexfilter_box(indexfilter_proto):
         iv_tim = 1
         il_loaded = 0
         for line in index.split():
-            l = line.split(",")
-            if l[iv_tim] != "":
-                t = pd.to_datetime(str(l[iv_tim]))
+            this_line = line.split(",")
+            if this_line[iv_tim] != "":
+                t = pd.to_datetime(str(this_line[iv_tim]))
                 if t >= pd.to_datetime(self.BOX[4]) and t <= pd.to_datetime(self.BOX[5]):
                     results += line + "\n"
                     il_loaded += 1
