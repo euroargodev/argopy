@@ -42,6 +42,7 @@ class indexfilter_proto(ABC):
         raise NotImplementedError("Not implemented")
 
     @property
+    @abstractmethod
     def uri(self):
         """ Return a name for one specific filter run """
         raise NotImplementedError("Not implemented")

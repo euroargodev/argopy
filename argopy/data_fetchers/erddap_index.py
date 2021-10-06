@@ -240,7 +240,6 @@ class Fetch_wmo(ErddapArgoIndexFetcher):
 class Fetch_box(ErddapArgoIndexFetcher):
     """ Manage access to Argo Index through Ifremer ERDDAP for: an ocean rectangle
 
-        __author__: kevin.balem@ifremer.fr
     """
     access_point = 'box'
 

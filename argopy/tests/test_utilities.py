@@ -71,6 +71,9 @@ def test_erddap_ds_exists():
     assert erddap_ds_exists(ds="DummyDS") is False
 
 
+# todo : Implement tests for utilities functions: badge, fetch_status and monitor_status
+
+
 @requires_connection
 @requires_localftp
 def test_clear_cache():
