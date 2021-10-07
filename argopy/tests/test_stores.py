@@ -91,12 +91,13 @@ class Test_FileStore:
             with fs.open(uri, "r") as fp:
                 fp.read()
             assert isinstance(fs.cachepath(uri), str)
+            assert os.path.isfile(fs.cachepath(uri))
             # Now, we can clear the cache:
             fs.clear_cache()
             # And verify it does not exist anymore:
             with pytest.raises(CacheFileNotFound):
                 fs.cachepath(uri)
-            os.remove(uri)
+            os.remove(uri)  # Delete dummy file
 
 
 @requires_connection
@@ -172,6 +173,16 @@ class Test_HttpStore:
             fs.read_csv(uri, skiprows=8, header=0)
             assert isinstance(fs.cachepath(uri), str)
 
+    def test_clear_cache(self):
+        uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt"
+        with tempfile.TemporaryDirectory() as cachedir:
+            fs = httpstore(cache=True, cachedir=cachedir)
+            fs.read_csv(uri, skiprows=8, header=0)
+            assert isinstance(fs.cachepath(uri), str)
+            assert os.path.isfile(fs.cachepath(uri))
+            fs.clear_cache()
+            with pytest.raises(CacheFileNotFound):
+                fs.cachepath(uri)
 
 class Test_IndexFilter_WMO:
     kwargs = [
