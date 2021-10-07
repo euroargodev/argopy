@@ -52,6 +52,11 @@ v0.1.8 (X XXX. 2021)
 
 - Check validity of access points options (WMO and box) in the facade, no checks at the fetcher level. (:pr:`92`) by `G. Maze <http://www.github.com/gmaze>`_.
 
+- More general options:
+
+    - ``trust_env`` to allow for local environment variables to be used by fsspec to connect to the internet. Fix :issue:`91`.
+    - ``server_erddap`` and ``server_argovis`` to allow for users to specify the url used to connect to the erddap and argovis fetchers. Fix :issue:`91`.
+
 **Breaking changes with previous versions**
 
 - Drop support for python 3.6 and older. Lock range of dependencies version support.
