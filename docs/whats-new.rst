@@ -8,8 +8,7 @@ v0.1.8 (X XXX. 2021)
 
 **Features and front-end API**
 
-- Improve plotting functions. All functions are now available for both the index and data fetchers. See the :ref:`data_viz` page for more details.
- Reduced plotting dependencies to `Matplotlib <https://matplotlib.org/>`_ only. **Argopy** will use `Seaborn <seaborn.pydata.org/>`_ and/or `Cartopy <https://scitools.org.uk/cartopy>`_ if available. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Improve plotting functions. All functions are now available for both the index and data fetchers. See the :ref:`data_viz` page for more details. Reduced plotting dependencies to `Matplotlib <https://matplotlib.org/>`_ only. **Argopy** will use `Seaborn <seaborn.pydata.org/>`_ and/or `Cartopy <https://scitools.org.uk/cartopy>`_ if available. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 

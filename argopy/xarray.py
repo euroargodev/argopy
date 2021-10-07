@@ -837,6 +837,7 @@ class ArgoAccessor:
             * `"SOUND_SPEED"`
                 Adds a sound speed variable
 
+
         inplace: boolean, True by default
             If True, return the input :class:`xarray.Dataset` with new TEOS10 variables
                 added as a new :class:`xarray.DataArray`.
