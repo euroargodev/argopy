@@ -2,7 +2,6 @@ import os
 import types
 import xarray as xr
 import pandas as pd
-import requests
 import fsspec
 import shutil
 import pickle
@@ -44,14 +43,19 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = "", **kwargs
         Other arguments passed to :class:`fsspec.filesystem`
 
     """
+    default_filesystem_kwargs = {'simple_links': True, "block_size": 0}
+    if protocol == 'http':
+        default_filesystem_kwargs = {**default_filesystem_kwargs, **{"client_kwargs": {"trust_env": OPTIONS['trust_env']}}}
+    filesystem_kwargs = {**default_filesystem_kwargs, **kwargs}
+
     if not cache:
-        fs = fsspec.filesystem(protocol, **kwargs)
+        fs = fsspec.filesystem(protocol, **filesystem_kwargs)
         cache_registry = None
         log.debug("Opening a fsspec [file] system for '%s' protocol with options: %s" % (protocol, str(kwargs)))
     else:
         fs = fsspec.filesystem("filecache",
                                target_protocol=protocol,
-                               target_options={**{'simple_links': True, "block_size": 0}, **kwargs},
+                               target_options={**filesystem_kwargs},
                                cache_storage=cachedir,
                                expiry_time=86400, cache_check=10)
         # We use a refresh rate for cache of 1 day,
@@ -86,7 +90,7 @@ class argo_store_proto(ABC):
         """
         self.cache = cache
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        self._filesystem_kwargs = kwargs
+        self._filesystem_kwargs = {**kwargs}
         self.fs, self.cache_registry = new_fs(self.protocol,
                                               self.cache,
                                               self.cachedir,

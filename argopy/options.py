@@ -15,6 +15,8 @@ DATASET = "dataset"
 DATA_CACHE = "cachedir"
 USER_LEVEL = "mode"
 API_TIMEOUT = "api_timeout"
+TRUST_ENV = "trust_env"  # Get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if the parameter is True (False by default).
+# Get proxy credentials from ~/.netrc file if present.
 
 # Define the list of available options and default values:
 OPTIONS = {
@@ -23,7 +25,8 @@ OPTIONS = {
     DATASET: "phy",
     DATA_CACHE: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
     USER_LEVEL: "standard",
-    API_TIMEOUT: 60
+    API_TIMEOUT: 60,
+    TRUST_ENV: False
 }
 
 # Define the list of possible values
@@ -33,17 +36,14 @@ _USER_LEVEL_LIST = frozenset(["standard", "expert"])
 
 
 # Define how to validate options:
-def _positive_integer(value):
-    return isinstance(value, int) and value > 0
-
-
 _VALIDATORS = {
     DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
     LOCAL_FTP: os.path.exists,
     DATASET: _DATASET_LIST.__contains__,
     DATA_CACHE: os.path.exists,
     USER_LEVEL: _USER_LEVEL_LIST.__contains__,
-    API_TIMEOUT: _positive_integer,
+    API_TIMEOUT: lambda x: isinstance(x, int) and x > 0,
+    TRUST_ENV: lambda x: isinstance(x, bool)
 }
 
 
@@ -74,7 +74,6 @@ class set_options:
     >>> argopy.set_options(src='localftp')
 
     """
-
     def __init__(self, **kwargs):
         self.old = {}
         for k, v in kwargs.items():
