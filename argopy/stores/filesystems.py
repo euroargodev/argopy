@@ -29,7 +29,7 @@ except ModuleNotFoundError:
     tqdm = lambda fct, lst: fct  # noqa: E731
 
 
-def new_fs(protocol: str = '', cache: bool = False, cachedir: str = "", **kwargs):
+def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cachedir'], **kwargs):
     """ Create a new fsspec file system
 
     Parameters
@@ -45,13 +45,15 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = "", **kwargs
     """
     default_filesystem_kwargs = {'simple_links': True, "block_size": 0}
     if protocol == 'http':
-        default_filesystem_kwargs = {**default_filesystem_kwargs, **{"client_kwargs": {"trust_env": OPTIONS['trust_env']}}}
+        default_filesystem_kwargs = {**default_filesystem_kwargs,
+                                     **{"client_kwargs": {"trust_env": OPTIONS['trust_env']}}}
     filesystem_kwargs = {**default_filesystem_kwargs, **kwargs}
 
     if not cache:
         fs = fsspec.filesystem(protocol, **filesystem_kwargs)
         cache_registry = None
-        log.debug("Opening a fsspec [file] system for '%s' protocol with options: %s" % (protocol, str(kwargs)))
+        log.debug("Opening a fsspec [file] system for '%s' protocol with options: %s" %
+                  (protocol, str(filesystem_kwargs)))
     else:
         fs = fsspec.filesystem("filecache",
                                target_protocol=protocol,
@@ -61,7 +63,8 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = "", **kwargs
         # We use a refresh rate for cache of 1 day,
         # since this is the update frequency of the Ifremer erddap
         cache_registry = []  # Will hold uri cached by this store instance
-        log.debug("Opening a fsspec [filecache] system for '%s' protocol with options: %s" % (protocol, str(kwargs)))
+        log.debug("Opening a fsspec [filecache] system for '%s' protocol with options: %s" %
+                  (protocol, str(filesystem_kwargs)))
     return fs, cache_registry
 
 
@@ -353,8 +356,8 @@ class httpstore(argo_store_proto):
         Relies on:
             https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.http.HTTPFileSystem
 
-        This store intends to make argopy: safer to failures from http requests, provide more verbose message to users
-        if we can identify specific errors in http responses.
+        This store intends to make argopy: safer to failures from http requests and to provide higher levels methods to
+        work with our datasets
 
         This store is primarily used by the Erddap/Argovis data/index fetchers
     """
