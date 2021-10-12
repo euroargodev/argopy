@@ -1,5 +1,5 @@
 pip==20.2.3
-pkgconfig
+# pkgconfig
 ipykernel==5.3.4
 ipython==7.18.1
 ipywidgets==7.5.1
@@ -16,8 +16,8 @@ scipy>=1.1.0
 scikit-learn==0.23.2
 dask==2.30.0
 distributed==2.30.0
-bottleneck==1.3.2
-toolz>=0.8.2
+# bottleneck==1.3.2
+# toolz>=0.8.2
 
 erddapy==0.7.2
 gsw==3.4.0
@@ -35,4 +35,4 @@ zarr==2.4.0
 netcdf4==1.5.4
 cftime==1.2.1
 cfgrib==0.9.8.4
-#tqdm==4.50.2
+tqdm==4.50.2
