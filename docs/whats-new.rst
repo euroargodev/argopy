@@ -55,6 +55,8 @@ v0.1.8 (X XXX. 2021)
 
 - Documentation on `Read The Docs` now uses a pip environment and get rid of memory eager conda.
 
+- :class:`xarray.Dataset` argopy accessor ``argo`` has a clean documentation.
+
 **Breaking changes with previous versions**
 
 - In the plotters module, the ``plot_dac`` and ``plot_profilerType`` functions have been replaced by ``bar_plot``. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
