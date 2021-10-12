@@ -169,3 +169,4 @@ Xarray *argo* name space
    :template: autosummary/accessor_method.rst
 
    xarray.Dataset.argo.point2profile
+   argopy.xarray.ArgoAccessor.point2profile

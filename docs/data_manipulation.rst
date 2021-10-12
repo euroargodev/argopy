@@ -1,7 +1,14 @@
 Manipulating data
 =================
 
-Once you fetched data, **argopy** comes with a handy :class:`xarray.Dataset` accessor namespace ``argo`` to perform specific manipulation of the data. This means that if your dataset is `ds`, then you can use `ds.argo` to access more **argopy** functions.
+Once you fetched data, **argopy** comes with a handy :class:`xarray.Dataset` accessor ``argo`` to perform specific manipulation of the data:
+
+.. autosummary::
+   :toctree: generated/
+
+   xarray.dataset.argo
+
+This means that if your dataset is named `ds`, then you can use `ds.argo` to access more **argopy** functions. The full list is available in the API documentation page :ref:`Xarray *argo* name space`.
 
 Let's start with standard import:
 

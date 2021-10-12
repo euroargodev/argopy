@@ -100,3 +100,6 @@
     argopy.stores.argo_index.indexfilter_box
 
     argopy.xarray.ArgoAccessor.point2profile
+    argopy.xarray.ArgoAccessor.profile2point
+    argopy.xarray.ArgoAccessor.cast_types
+    argopy.xarray.ArgoAccessor

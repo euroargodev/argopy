@@ -23,17 +23,14 @@ class ArgoAccessor:
 
         Class registered under scope ``argo`` to access a :class:`xarray.Dataset` object.
 
-        - Ensure all variables are of the Argo required dtype with:
-
-            ds.argo.cast_types()
-
-        - Convert a collection of points into a collection of profiles:
-
-            ds.argo.point2profile()
-
-        - Convert a collection of profiles to a collection of points:
-
-            ds.argo.profile2point()
+        Methods
+        -------
+        cast_types:
+            Ensure all variables are of the Argo required dtype with:
+        point2profile:
+            Convert a collection of points into a collection of profiles
+        profile2point
+            Convert a collection of profiles to a collection of points:
 
      """
 
