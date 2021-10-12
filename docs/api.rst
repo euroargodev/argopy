@@ -162,9 +162,10 @@ Plotters
 
 
 Xarray *argo* name space
-==========================
+========================
 
-.. automodule:: argopy.xarray
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
 
-.. autoclass:: argopy.ArgoAccessor()
-    :members:
+   xarray.Dataset.argo.point2profile

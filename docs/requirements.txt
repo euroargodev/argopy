@@ -4,12 +4,14 @@ ipykernel==5.3.4
 ipython==7.18.1
 ipywidgets==7.5.1
 
-sphinx-autosummary-accessors==0.1.2
 nbsphinx==0.7.1
 numpydoc==1.1.0
 jinja2==2.11.2
 sphinx_issues==1.2.0
 gitpython>=3.1.2
+sphinx-autosummary-accessors==0.1.2
+readthedocs-sphinx-ext
+sphinx-rtd-theme
 
 xarray==0.16.1
 scipy>=1.1.0

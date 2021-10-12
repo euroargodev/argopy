@@ -52,11 +52,6 @@
     argopy.utilities.list_available_index_src
     argopy.utilities.Chunker
 
-    argopy.xarray.ArgoAccessor.point2profile
-    argopy.xarray.ArgoAccessor.profile2point
-    argopy.xarray.ArgoAccessor.interp_std_levels
-    argopy.xarray.ArgoAccessor.teos10
-
     argopy.plotters.open_dashboard
     argopy.plotters.bar_plot
     argopy.plotters.plot_trajectory
@@ -103,3 +98,5 @@
     argopy.stores.argo_index.indexstore
     argopy.stores.argo_index.indexfilter_wmo
     argopy.stores.argo_index.indexfilter_box
+
+    argopy.xarray.ArgoAccessor.point2profile
