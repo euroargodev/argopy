@@ -22,7 +22,7 @@ distributed==2.30.0
 erddapy==0.7.2
 gsw==3.4.0
 
-fsspec>=0.7.4, <0.8.4
+fsspec>=0.7.4, <2021.10.1
 aiohttp==3.6.2
 
 #matplotlib==3.3.2
