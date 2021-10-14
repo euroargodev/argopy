@@ -52,6 +52,8 @@ v0.1.8 (X XXX. 2021)
 
 - Check validity of access points options (WMO and box) in the facade, no checks at the fetcher level. (:pr:`92`) by `G. Maze <http://www.github.com/gmaze>`_.
 
+- Improve performances in reading the Argo index.
+
 **Breaking changes with previous versions**
 
 - Drop support for python 3.6 and older. Lock range of dependencies version support.
@@ -72,6 +74,8 @@ v0.1.8 (X XXX. 2021)
         datefmt='%m/%d/%Y %I:%M:%S %p',
         handlers=[logging.FileHandler("argopy.log", mode='w')]
     )
+
+- The file system read_csv function can use the pyarrow, not only pandas, implementation.
 
 v0.1.7 (4 Jan. 2021)
 -----------------------
