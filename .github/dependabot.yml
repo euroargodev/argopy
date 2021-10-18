@@ -17,4 +17,4 @@ updates:
       include: "scope"
     # Labels on pull requests for version updates only
     labels:
-      - "pip dependencies"      
+      - "dependencies"

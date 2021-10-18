@@ -52,6 +52,8 @@ v0.1.8 (X XXX. 2021)
 
 - Check validity of access points options (WMO and box) in the facade, no checks at the fetcher level. (:pr:`92`) by `G. Maze <http://www.github.com/gmaze>`_.
 
+- Documentation on `Read The Docs` now uses a pip environment and get rid of memory eager conda. (:pr:`103`) by `G. Maze <http://www.github.com/gmaze>`_.
+
 **Breaking changes with previous versions**
 
 - Drop support for python 3.6 and older. Lock range of dependencies version support.
