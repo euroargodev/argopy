@@ -9,11 +9,13 @@ build:
     image: latest
 
 python:
-  version: "3.8"
+   version: "3.8"
+   install:
+   - requirements: docs/requirements.txt
 
 # Build documentation in the docs/ directory with Sphinx
 #sphinx:
 #  configuration: docs/conf.py
 
-conda:
-    environment: ci/requirements/doc.yml
+#conda:
+#    environment: ci/requirements/doc.yml

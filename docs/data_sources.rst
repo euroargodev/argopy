@@ -23,7 +23,7 @@ Selecting a source
      mono-profile files of the GDAC.
 
 2. your local collection of Argo files, organised as in the `GDAC
-   ftp <http://www.argodatamgt.org/Access-to-data/Access-via-FTP-on-GDAC>`__.
+   ftp <http://www.argodatamgt.org/Access-to-data/Argo-GDAC-ftp-and-https-servers>`__.
 
    | This is how you would use **argopy** with your data, as long as
      they are formatted and organised the Argo way.

@@ -2,7 +2,7 @@ import os
 import pytest
 import argopy
 from argopy.options import OPTIONS
-from argopy.errors import OptionValueError
+from argopy.errors import OptionValueError, FtpPathError
 from . import requires_localftp
 
 
@@ -20,7 +20,7 @@ def test_opt_src():
 
 @requires_localftp
 def test_opt_local_ftp():
-    with pytest.raises(OptionValueError):
+    with pytest.raises(FtpPathError):
         argopy.set_options(local_ftp="invalid_path")
 
     local_ftp = argopy.tutorial.open_dataset("localftp")[0]
