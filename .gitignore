@@ -194,3 +194,4 @@ fabric.properties
 .pytest_cache
 knotebooks/
 argopy/tests/cov.xml
+*.txt
