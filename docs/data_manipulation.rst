@@ -88,7 +88,6 @@ This can be done using the :meth:`argopy.xarray.ArgoAccessor.teos10` method and 
 
     ds = ArgoDataFetcher().float(2901623).to_xarray()
     ds.argo.teos10(['SA', 'CT', 'PV'])
-    ds
 
 .. ipython:: python
     :okwarning:
@@ -98,17 +97,15 @@ This can be done using the :meth:`argopy.xarray.ArgoAccessor.teos10` method and 
 Data models
 -----------
 
-By default **argopy** works with `xarray.DataSet <http://xarray.pydata.org/en/stable/data-structures.html#dataset>`_ and comes with the accessor namespace ``argo`` (see `here for more on xarray accessor <http://xarray.pydata.org/en/stable/internals/extending-xarray.html>_`).
+By default **argopy** works with :class:`xarray.Dataset` for Argo data fetcher, and with :class:`pandas.DataFrame` for Argo index fetcher.
 
-For your own analysis, you may prefer to work with a `Pandas dataframe <https://pandas.pydata.org/pandas-docs/stable/getting_started/dsintro.html#dataframe>`_. 
+For your own analysis, you may prefer to switch from one to the other. This is all built in **argopy**, with the :meth:`argopy.DataFetcher.to_dataframe` and :meth:`argopy.IndexFetcher.to_xarray` methods.
 
 .. ipython:: python
     :okwarning:
 
-    df = ArgoDataFetcher().profile(6902746, 34).to_dataframe()
-    df
+    ArgoDataFetcher().profile(6902746, 34).to_dataframe()
 
-but keep in mind that this is merely a short cut for the :meth:`xarray.Dataset.to_dataframe` method.
 
 Saving data
 ===========

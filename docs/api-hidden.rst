@@ -19,15 +19,20 @@
     argopy.fetchers.ArgoDataFetcher.uri
     argopy.fetchers.ArgoDataFetcher.data
     argopy.fetchers.ArgoDataFetcher.index
+    argopy.fetchers.ArgoDataFetcher.dashboard
+    argopy.fetchers.ArgoDataFetcher.clear_cache
 
+    argopy.fetchers.ArgoIndexFetcher
     argopy.fetchers.ArgoIndexFetcher.region
     argopy.fetchers.ArgoIndexFetcher.float
+    argopy.fetchers.ArgoIndexFetcher.profile
     argopy.fetchers.ArgoIndexFetcher.load
     argopy.fetchers.ArgoIndexFetcher.to_xarray
     argopy.fetchers.ArgoIndexFetcher.to_dataframe
     argopy.fetchers.ArgoIndexFetcher.to_csv
     argopy.fetchers.ArgoIndexFetcher.plot
     argopy.fetchers.ArgoIndexFetcher.index
+    argopy.fetchers.ArgoIndexFetcher.clear_cache
 
     argopy.data_fetchers.erddap_data.ErddapArgoDataFetcher
     argopy.data_fetchers.erddap_data.Fetch_wmo

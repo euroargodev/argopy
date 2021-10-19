@@ -33,6 +33,7 @@ Fetcher access points
 
    argopy.IndexFetcher.region
    argopy.IndexFetcher.float
+   argopy.IndexFetcher.profile
 
 Fetching methods
 ----------------
