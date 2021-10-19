@@ -14,6 +14,16 @@ from packaging import version
 import concurrent.futures
 import multiprocessing
 
+
+try:
+    from tqdm import tqdm
+except ModuleNotFoundError:
+    warnings.warn("argopy needs tqdm installed to display progress bars")
+
+    def tqdm(fct, **kw):
+        return fct
+
+
 from argopy.options import OPTIONS
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
     InvalidMethod
