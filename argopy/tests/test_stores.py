@@ -14,9 +14,9 @@ from argopy.stores import (
     indexstore,
 )
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound
-from . import requires_connection, requires_connected_argovis
+from . import requires_connection, requires_connected_argovis, safe_to_server_errors
 from argopy.utilities import is_list_of_datasets, is_list_of_dicts
-
+from argopy.options import OPTIONS
 
 @requires_connection
 class Test_FileStore:
@@ -120,13 +120,15 @@ class Test_HttpStore:
         with pytest.raises(CacheFileNotFound):
             fs.cachepath("dummy_uri")
 
+    @safe_to_server_errors
     def test_open_dataset(self):
         uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/dac/csiro/5900865/5900865_prof.nc"
-        fs = httpstore()
+        fs = httpstore(timeout=OPTIONS['api_timeout'])
         assert isinstance(fs.open_dataset(uri), xr.Dataset)
 
+    @safe_to_server_errors
     def test_open_mfdataset(self):
-        fs = httpstore()
+        fs = httpstore(timeout=OPTIONS['api_timeout'])
         uri = [
             "https://github.com/euroargodev/argopy-data/raw/master/ftp/dac/csiro/5900865/profiles/D5900865_00%i.nc"
             % i
@@ -144,14 +146,16 @@ class Test_HttpStore:
                 )
 
     @requires_connected_argovis
+    @safe_to_server_errors
     def test_open_json(self):
         uri = "https://argovis.colorado.edu/catalog/mprofiles/?ids=['6902746_12']"
-        fs = httpstore()
+        fs = httpstore(timeout=OPTIONS['api_timeout'])
         assert is_list_of_dicts(fs.open_json(uri))
 
     @requires_connected_argovis
+    @safe_to_server_errors
     def test_open_mfjson(self):
-        fs = httpstore()
+        fs = httpstore(timeout=OPTIONS['api_timeout'])
         uri = [
             "https://argovis.colorado.edu/catalog/mprofiles/?ids=['6902746_%i']" % i
             for i in [12, 13]
@@ -161,24 +165,27 @@ class Test_HttpStore:
                 lst = fs.open_mfjson(uri, method=method, progress=progress)
                 assert all(is_list_of_dicts(x) for x in lst)
 
+    @safe_to_server_errors
     def test_read_csv(self):
         uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt"
-        fs = httpstore()
+        fs = httpstore(timeout=OPTIONS['api_timeout'])
         assert isinstance(
             fs.read_csv(uri, skiprows=8, header=0), pd.core.frame.DataFrame
         )
 
+    @safe_to_server_errors
     def test_cachefile(self):
         uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt"
         with tempfile.TemporaryDirectory() as cachedir:
-            fs = httpstore(cache=True, cachedir=cachedir)
+            fs = httpstore(cache=True, cachedir=cachedir, timeout=OPTIONS['api_timeout'])
             fs.read_csv(uri, skiprows=8, header=0)
             assert isinstance(fs.cachepath(uri), str)
 
+    @safe_to_server_errors
     def test_clear_cache(self):
         uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt"
         with tempfile.TemporaryDirectory() as cachedir:
-            fs = httpstore(cache=True, cachedir=cachedir)
+            fs = httpstore(cache=True, cachedir=cachedir, timeout=OPTIONS['api_timeout'])
             fs.read_csv(uri, skiprows=8, header=0)
             assert isinstance(fs.cachepath(uri), str)
             assert os.path.isfile(fs.cachepath(uri))
