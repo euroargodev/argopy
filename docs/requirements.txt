@@ -19,7 +19,7 @@ distributed==2.30.0
 # bottleneck==1.3.2
 # toolz>=0.8.2
 
-erddapy==0.7.2
+erddapy==1.1.0
 gsw==3.4.0
 
 fsspec>=0.7.4, <0.8.4
