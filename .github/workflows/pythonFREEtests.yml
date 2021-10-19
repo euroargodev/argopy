@@ -1,6 +1,6 @@
 name: tests-FREE
 
-on: [push]
+on: [pull_request, push.master]
 
 jobs:
   unit-testing-free:
