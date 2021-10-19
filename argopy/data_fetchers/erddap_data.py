@@ -10,7 +10,6 @@ This is not intended to be used directly, only by the facade at fetchers.py
 
 """
 
-import fsspec
 import pandas as pd
 import numpy as np
 import copy
@@ -30,7 +29,7 @@ from argopy.plotters import open_dashboard
 try:
     from erddapy import ERDDAP
     from erddapy.utilities import parse_dates, quote_string_constraints
-except:
+except:  # noqa: E722
     # >= v0.8.0
     from erddapy.erddapy import ERDDAP
     from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
@@ -57,25 +56,18 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     @abstractmethod
     def init(self, *args, **kwargs):
         """ Initialisation for a specific fetcher """
-        pass
+        raise NotImplementedError("ErddapArgoDataFetcher.init not implemented")
 
     @abstractmethod
     def define_constraints(self):
         """ Define erddapy constraints """
-        pass
-
-    @abstractmethod
-    def cname(self):
-        """ Return a unique string defining the request
-
-            Provide this string to populate meta data and titles
-        """
-        pass
+        raise NotImplementedError("ErddapArgoDataFetcher.define_constraints not implemented")
 
     @property
+    @abstractmethod
     def uri(self) -> list:
         """ Return the list of Unique Resource Identifier (URI) to download data """
-        pass
+        raise NotImplementedError("ErddapArgoDataFetcher.uri not implemented")
 
     ###
     # Methods that must not change
@@ -120,13 +112,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         api_timeout: int (optional)
             Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
-
-        # Temporary fix for issue discussed here: https://github.com/euroargodev/argopy/issues/63#issuecomment-742379699
-        version_tup = tuple(int(x) for x in fsspec.__version__.split("."))
-        if cache and version_tup[0] == 0 and version_tup[1] == 8 and version_tup[-1] == 4:
-            cache = False
-            warnings.warn("Cache is impossible with fsspec version 0.8.4, please upgrade or downgrade to use cache.\n Moving to non cached file system")
-
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
         self.definition = "Ifremer erddap Argo data fetcher"
@@ -157,7 +142,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         summary.append("Domain: %s" % format_oneline(self.cname()))
         return "\n".join(summary)
 
-    def _add_attributes(self, this):
+    def _add_attributes(self, this):  # noqa: C901
         """ Add variables attributes not return by erddap requests (csv)
 
             This is hard coded, but should be retrieved from an API somewhere
@@ -327,6 +312,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             "time_qc": np.int64,
             "direction": object,
             "platform_number": np.int64,
+            "config_mission_number": np.int64,
+            "vertical_sampling_scheme": object,
             "cycle_number": np.int64,
             "pres": np.float64,
             "temp": np.float64,

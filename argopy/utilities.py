@@ -13,6 +13,7 @@ import urllib
 import json
 import collections
 from functools import reduce
+from packaging import version
 
 import importlib
 import locale
@@ -31,8 +32,6 @@ import shutil
 
 import threading
 
-# from IPython.display import HTML, display
-# import ipywidgets as widgets
 import time
 
 from argopy.options import OPTIONS, set_options
@@ -40,9 +39,14 @@ from argopy.stores import httpstore
 from argopy.errors import (
     FtpPathError,
     InvalidFetcher,
-    OptionValueError,
     InvalidFetcherAccessPoint,
 )
+
+try:
+    collectionsAbc = collections.abc
+except AttributeError:
+    collectionsAbc = collections
+
 
 path2pkl = pkg_resources.resource_filename("argopy", "assets/")
 
@@ -52,7 +56,7 @@ except AttributeError:
     collectionsAbc = collections
 
 
-def clear_cache():
+def clear_cache(fs=None):
     """ Delete argopy cache folder content """
     if os.path.exists(OPTIONS["cachedir"]):
         # shutil.rmtree(OPTIONS["cachedir"])
@@ -65,6 +69,8 @@ def clear_cache():
                     shutil.rmtree(file_path)
             except Exception as e:
                 print("Failed to delete %s. Reason: %s" % (file_path, e))
+        if fs:
+            fs.clear_cache()
 
 
 def load_dict(ptype):
@@ -415,7 +421,7 @@ def netcdf_and_hdf5_versions():
     return [("libhdf5", libhdf5_version), ("libnetcdf", libnetcdf_version)]
 
 
-def show_versions(file=sys.stdout):
+def show_versions(file=sys.stdout):  # noqa: C901
     """ Print the versions of argopy and its dependencies
 
     Parameters
@@ -432,42 +438,37 @@ def show_versions(file=sys.stdout):
 
     deps = [
         # (MODULE_NAME, f(mod) -> mod version)
+        # In REQUIREMENTS:
         ("argopy", lambda mod: mod.__version__),
         ("xarray", lambda mod: mod.__version__),
-        ("pandas", lambda mod: mod.__version__),
-        ("numpy", lambda mod: mod.__version__),
         ("scipy", lambda mod: mod.__version__),
-        # argopy optionals
-        ("fsspec", lambda mod: mod.__version__),
-        ("erddapy", lambda mod: mod.__version__),
+        ("sklearn", lambda mod: mod.__version__),
         ("netCDF4", lambda mod: mod.__version__),
-        ("pydap", lambda mod: mod.__version__),
-        ("h5netcdf", lambda mod: mod.__version__),
-        ("h5py", lambda mod: mod.__version__),
-        ("Nio", lambda mod: mod.__version__),
-        ("zarr", lambda mod: mod.__version__),
-        ("cftime", lambda mod: mod.__version__),
-        ("nc_time_axis", lambda mod: mod.__version__),
-        ("PseudoNetCDF", lambda mod: mod.__version__),
-        ("rasterio", lambda mod: mod.__version__),
-        ("cfgrib", lambda mod: mod.__version__),
-        ("iris", lambda mod: mod.__version__),
-        ("bottleneck", lambda mod: mod.__version__),
         ("dask", lambda mod: mod.__version__),
-        ("distributed", lambda mod: mod.__version__),
-        ("matplotlib", lambda mod: mod.__version__),
-        ("cartopy", lambda mod: mod.__version__),
-        ("seaborn", lambda mod: mod.__version__),
-        ("numbagg", lambda mod: mod.__version__),
+        ("toolz", lambda mod: mod.__version__),
+        ("erddapy", lambda mod: mod.__version__),
+        ("fsspec", lambda mod: mod.__version__),
         ("gsw", lambda mod: mod.__version__),
-        # argopy setup/test
-        ("setuptools", lambda mod: mod.__version__),
-        ("pip", lambda mod: mod.__version__),
+        ("aiohttp", lambda mod: mod.__version__),
+        #
+        ("bottleneck", lambda mod: mod.__version__),
+        ("cartopy", lambda mod: mod.__version__),
+        ("cftime", lambda mod: mod.__version__),
         ("conda", lambda mod: mod.__version__),
-        ("pytest", lambda mod: mod.__version__),
-        # Misc.
+        ("distributed", lambda mod: mod.__version__),
         ("IPython", lambda mod: mod.__version__),
+        ("iris", lambda mod: mod.__version__),
+        ("matplotlib", lambda mod: mod.__version__),
+        ("nc_time_axis", lambda mod: mod.__version__),
+        ("numpy", lambda mod: mod.__version__),
+        ("pandas", lambda mod: mod.__version__),
+        ("pip", lambda mod: mod.__version__),
+        ("PseudoNetCDF", lambda mod: mod.__version__),
+        ("pytest", lambda mod: mod.__version__),
+        ("seaborn", lambda mod: mod.__version__),
+        ("setuptools", lambda mod: mod.__version__),
         ("sphinx", lambda mod: mod.__version__),
+        ("zarr", lambda mod: mod.__version__),
     ]
 
     deps_blob = list()
@@ -495,6 +496,21 @@ def show_versions(file=sys.stdout):
     print("", file=file)
     for k, stat in deps_blob:
         print(f"{k}: {stat}", file=file)
+
+
+def show_options(file=sys.stdout):  # noqa: C901
+    """ Print options of argopy
+
+    Parameters
+    ----------
+    file : file-like, optional
+        print to the given file-like object. Defaults to sys.stdout.
+    """
+    print("\nARGOPY OPTIONS", file=file)
+    print("--------------", file=file)
+
+    for k, v in OPTIONS.items():
+        print(f"{k}: {v}", file=file)
 
 
 def isconnected(host="https://www.ifremer.fr"):
@@ -546,12 +562,13 @@ def isAPIconnected(src="erddap", data=True):
             # This is a special case because the source here is a local folder, and the folder validity is checked
             # when setting the option value of 'local_ftp'
             # So here, we just need to catch the appropriate error after a call to set_option
-            opts = {"src": src, "local_ftp": OPTIONS["local_ftp"]}
-            try:
-                set_options(**opts)
-                return True
-            except OptionValueError:
-                return False
+            # opts = {"src": src, "local_ftp": OPTIONS["local_ftp"]}
+            # try:
+            #     set_options(**opts)
+            #     return True
+            # except OptionValueError:
+            #     return False
+            return check_localftp(OPTIONS["local_ftp"])
         else:
             with set_options(src=src):
                 return isconnected(AVAILABLE_SOURCES[src].api_server_check)
@@ -559,14 +576,22 @@ def isAPIconnected(src="erddap", data=True):
         raise InvalidFetcher
 
 
-def erddap_ds_exists(ds="ArgoFloats"):
-    """ Given erddap fetcher, check if a Dataset exists, return a bool"""
-    # e = ArgoDataFetcher(src='erddap').float(wmo=0).fetcher
-    # erddap_index = json.load(urlopen(e.erddap.server + "/info/index.json"))
-    # erddap_index = json.load(urlopen("http://www.ifremer.fr/erddap/info/index.json"))
-    with httpstore(timeout=120).open(
-        "http://www.ifremer.fr/erddap/info/index.json"
-    ) as of:
+def erddap_ds_exists(ds: str = "ArgoFloats", erddap: str = 'http://www.ifremer.fr/erddap') -> bool:
+    """ Check if a dataset exists on a remote erddap server
+    return a bool
+
+    Parameter
+    ---------
+    ds: str
+        Name of the erddap dataset to check (default: 'ArgoFloats')
+    erddap: str
+        Url of the erddap server (default: 'http://www.ifremer.fr/erddap')
+
+    Return
+    ------
+    bool
+    """
+    with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
         erddap_index = json.load(of)
     return ds in [row[-1] for row in erddap_index["table"]["rows"]]
 
@@ -753,7 +778,7 @@ def linear_interpolation_remap(
     # infer dim from input
     if z_dim is None:
         if len(z.dims) != 1:
-            raise RuntimeError("if z_dim is not specified,x must be a 1D array.")
+            raise RuntimeError("if z_dim is not specified, x must be a 1D array.")
         dim = z.dims[0]
     else:
         dim = z_dim
@@ -763,14 +788,24 @@ def linear_interpolation_remap(
         raise ValueError("Dataset input is not supported yet")
         # TODO: for a dataset input just apply the function for each appropriate array
 
-    kwargs = dict(
-        input_core_dims=[[dim], [dim], [z_regridded_dim]],
-        output_core_dims=[[output_dim]],
-        vectorize=True,
-        dask="parallelized",
-        output_dtypes=[data.dtype],
-        output_sizes={output_dim: len(z_regridded[z_regridded_dim])},
-    )
+    if version.parse(xr.__version__) > version.parse("0.15.0"):
+        kwargs = dict(
+            input_core_dims=[[dim], [dim], [z_regridded_dim]],
+            output_core_dims=[[output_dim]],
+            vectorize=True,
+            dask="parallelized",
+            output_dtypes=[data.dtype],
+            dask_gufunc_kwargs={'output_sizes': {output_dim: len(z_regridded[z_regridded_dim])}},
+        )
+    else:
+        kwargs = dict(
+            input_core_dims=[[dim], [dim], [z_regridded_dim]],
+            output_core_dims=[[output_dim]],
+            vectorize=True,
+            dask="parallelized",
+            output_dtypes=[data.dtype],
+            output_sizes={output_dim: len(z_regridded[z_regridded_dim])},
+        )
     remapped = xr.apply_ufunc(_regular_interp, z, data, z_regridded, **kwargs)
 
     remapped.coords[output_dim] = z_regridded.rename(
@@ -850,7 +885,7 @@ class Chunker:
     def _split(self, lst, n=1):
         """Yield successive n-sized chunks from lst"""
         for i in range(0, len(lst), n):
-            yield lst[i : i + n]
+            yield lst[i: i + n]
 
     def _split_list_bychunknb(self, lst, n=1):
         """Split list in n-imposed chunks of similar size
@@ -861,7 +896,7 @@ class Chunker:
         for i in self._split(lst, siz):
             res.append(i)
         if len(res) > n:
-            res[n - 1 : :] = [reduce(lambda i, j: i + j, res[n - 1 : :])]
+            res[n - 1::] = [reduce(lambda i, j: i + j, res[n - 1::])]
         return res
 
     def _split_list_bychunksize(self, lst, max_size=1):
@@ -873,7 +908,7 @@ class Chunker:
             res.append(i)
         return res
 
-    def _split_box(self, large_box, n=1, d="x"):
+    def _split_box(self, large_box, n=1, d="x"):  # noqa: C901
         """Split a box domain in one direction in n-imposed equal chunks """
         if d == "x":
             i_left, i_right = 0, 1
@@ -897,7 +932,7 @@ class Chunker:
                     this_box[i_right] = right
                     boxes.append(this_box)
         elif "t" in d:
-            dates = pd.to_datetime(large_box[i_left : i_right + 1])
+            dates = pd.to_datetime(large_box[i_left: i_right + 1])
             date_bounds = [
                 d.strftime("%Y%m%d%H%M%S")
                 for d in pd.date_range(dates[0], dates[1], periods=n + 1)
@@ -934,7 +969,7 @@ class Chunker:
                     box_list.append(bxyz)
         return box_list
 
-    def _chunker_box4d(self, request, chunks, chunks_maxsize):
+    def _chunker_box4d(self, request, chunks, chunks_maxsize):  # noqa: C901
         BOX = request["box"]
         n_chunks = chunks
         for axis, n in n_chunks.items():
@@ -1055,7 +1090,7 @@ def format_oneline(s, max_width=65):
         if q == 0:
             return "".join([s[0:n], padding, s[-n:]])
         else:
-            return "".join([s[0 : n + 1], padding, s[-n:]])
+            return "".join([s[0: n + 1], padding, s[-n:]])
     else:
         return s
 
@@ -1231,8 +1266,8 @@ def check_wmo(lst):
     return [abs(int(x)) for x in lst]
 
 
-def is_wmo(lst, errors="raise"):
-    """ Assess validity of a WMO option
+def is_wmo(lst, errors="raise"):  # noqa: C901
+    """ Assess validity of a WMO option value
 
     Parameters
     ----------
@@ -1271,7 +1306,7 @@ def is_wmo(lst, errors="raise"):
             if int(x) <= 0:
                 result = False
 
-    except:
+    except Exception:
         result = False
         if errors == "raise":
             raise ValueError(msg)
@@ -1280,6 +1315,7 @@ def is_wmo(lst, errors="raise"):
         raise ValueError(msg)
     else:
         return result
+
 
 # def docstring(value):
 #     """Replace one function docstring
@@ -1290,6 +1326,7 @@ def is_wmo(lst, errors="raise"):
 #         func.__doc__ = value
 #         return func
 #     return _doc
+
 
 def warnUnless(ok, txt):
     """ Decorator to raise warning unless condition is True

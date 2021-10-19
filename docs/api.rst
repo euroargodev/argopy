@@ -84,6 +84,8 @@ Helpers
 
    argopy.status
    argopy.set_options
+   argopy.show_options
+   argopy.show_versions
    argopy.clear_cache
    argopy.tutorial.open_dataset
 
@@ -117,8 +119,8 @@ File systems
     argopy.stores.indexfilter_wmo
     argopy.stores.indexfilter_box
 
-Fetchers
---------
+Data Fetchers
+-------------
 
 ERDDAP
 ^^^^^^

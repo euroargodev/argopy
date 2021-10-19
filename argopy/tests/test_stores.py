@@ -14,7 +14,7 @@ from argopy.stores import (
     indexstore,
 )
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound
-from . import requires_connection
+from . import requires_connection, requires_connected_argovis
 from argopy.utilities import is_list_of_datasets, is_list_of_dicts
 
 
@@ -143,11 +143,13 @@ class Test_HttpStore:
                     )
                 )
 
+    @requires_connected_argovis
     def test_open_json(self):
         uri = "https://argovis.colorado.edu/catalog/mprofiles/?ids=['6902746_12']"
         fs = httpstore()
         assert is_list_of_dicts(fs.open_json(uri))
 
+    @requires_connected_argovis
     def test_open_mfjson(self):
         fs = httpstore()
         uri = [
@@ -205,7 +207,7 @@ class Test_IndexFilter_WMO:
     def test_filters_uri(self):
         for kw in self.kwargs:
             filt = indexfilter_wmo(**kw)
-            assert isinstance(filt.uri(), str)
+            assert isinstance(filt.uri, str)
 
     def test_filters_sha(self):
         for kw in self.kwargs:

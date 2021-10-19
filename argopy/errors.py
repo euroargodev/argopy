@@ -77,17 +77,20 @@ class InvalidFetcher(ValueError):
     """
     pass
 
+
 class InvalidOption(ValueError):
     """
     Raise when trying to set an invalid option name
     """
     pass
 
+
 class OptionValueError(ValueError):
     """
     Raise when the option value is not valid
     """
     pass
+
 
 class InvalidMethod(ValueError):
     """

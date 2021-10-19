@@ -8,8 +8,7 @@ v0.1.8 (X XXX. 2021)
 
 **Features and front-end API**
 
-- Improve plotting functions. All functions are now available for both the index and data fetchers. See the :ref:`data_viz` page for more details.
- Reduced plotting dependencies to `Matplotlib <https://matplotlib.org/>`_ only. **Argopy** will use `Seaborn <seaborn.pydata.org/>`_ and/or `Cartopy <https://scitools.org.uk/cartopy>`_ if available. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Improve plotting functions. All functions are now available for both the index and data fetchers. See the :ref:`data_viz` page for more details. Reduced plotting dependencies to `Matplotlib <https://matplotlib.org/>`_ only. **Argopy** will use `Seaborn <seaborn.pydata.org/>`_ and/or `Cartopy <https://scitools.org.uk/cartopy>`_ if available. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 
@@ -27,7 +26,7 @@ v0.1.8 (X XXX. 2021)
     fig, ax = obj.plot('profiler')
 
 
-- New methods and properties for data and index fetchers. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
+- New methods and properties for data and index fetchers. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_. The :meth:`argopy.DataFetcher.load` and :meth:`argopy.IndexFetcher.load` methods internally call on the `to_xarray()` methods and store results in the fetcher instance. The :meth:`argopy.DataFetcher.to_xarray` will trigger a fetch on every call, while the :meth:`argopy.DataFetcher.load` will not.
 
 .. code-block:: python
 
@@ -57,8 +56,24 @@ v0.1.8 (X XXX. 2021)
 
 **Breaking changes with previous versions**
 
+- Drop support for python 3.6 and older. Lock range of dependencies version support.
+
 - In the plotters module, the ``plot_dac`` and ``plot_profilerType`` functions have been replaced by ``bar_plot``. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
 
+**Internals**
+
+- Internal logging available and upgrade dependencies version support (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_. To see internal logs, you can set-up your application like this:
+
+.. code-block:: python
+
+    import logging
+    DEBUGFORMATTER = '%(asctime)s [%(levelname)s] [%(name)s] %(filename)s:%(lineno)d: %(message)s'
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format=DEBUGFORMATTER,
+        datefmt='%m/%d/%Y %I:%M:%S %p',
+        handlers=[logging.FileHandler("argopy.log", mode='w')]
+    )
 
 v0.1.7 (4 Jan. 2021)
 -----------------------

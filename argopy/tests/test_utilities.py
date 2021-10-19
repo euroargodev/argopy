@@ -71,6 +71,9 @@ def test_erddap_ds_exists():
     assert erddap_ds_exists(ds="DummyDS") is False
 
 
+# todo : Implement tests for utilities functions: badge, fetch_status and monitor_status
+
+
 @requires_connection
 @requires_localftp
 def test_clear_cache():
@@ -450,7 +453,7 @@ class Test_is_indexbox:
 
 
 def test_format_oneline():
-    s = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
+    s = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore"
     assert isinstance(format_oneline(s), str)
     assert isinstance(format_oneline(s[0:5]), str)
     s = format_oneline(s, max_width=12)

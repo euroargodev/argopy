@@ -37,15 +37,19 @@ import getpass
 
 from .proto import ArgoDataFetcherProto
 from argopy.errors import NetCDF4FileNotFoundError
-from argopy.utilities import list_standard_variables, check_localftp, format_oneline
+from argopy.utilities import (
+    list_standard_variables,
+    check_localftp,
+    format_oneline
+)
 from argopy.options import OPTIONS
 from argopy.stores import filestore, indexstore, indexfilter_box
 from argopy.plotters import open_dashboard
 
-access_points = ['wmo', 'box']
-exit_formats = ['xarray']
-dataset_ids = ['phy', 'bgc']  # First is default
-api_server_check = OPTIONS['local_ftp']
+access_points = ["wmo", "box"]
+exit_formats = ["xarray"]
+dataset_ids = ["phy", "bgc"]  # First is default
+api_server_check = OPTIONS["local_ftp"]
 
 
 class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
@@ -57,7 +61,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
     @abstractmethod
     def init(self, *args, **kwargs):
         """ Initialisation for a specific fetcher """
-        pass
+        raise NotImplementedError("Not implemented")
 
     # @abstractmethod
     # def list_argo_files(self, errors: str = 'raise'):
@@ -75,19 +79,21 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
     ###
     # Methods that must not change
     ###
-    def __init__(self,
-                 local_ftp: str = "",
-                 ds: str = "",
-                 cache: bool = False,
-                 cachedir: str = "",
-                 dimension: str = 'point',
-                 errors: str = 'raise',
-                 parallel: bool = False,
-                 parallel_method: str = 'thread',
-                 progress: bool = False,
-                 chunks: str = 'auto',
-                 chunks_maxsize: dict = {},
-                 **kwargs):
+    def __init__(
+        self,
+        local_ftp: str = "",
+        ds: str = "",
+        cache: bool = False,
+        cachedir: str = "",
+        dimension: str = "point",
+        errors: str = "raise",
+        parallel: bool = False,
+        parallel_method: str = "thread",
+        progress: bool = False,
+        chunks: str = "auto",
+        chunks_maxsize: dict = {},
+        **kwargs
+    ):
         """ Init fetcher
 
         Parameters
@@ -133,21 +139,24 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         if not isinstance(parallel, bool):
             # The parallelization method is passed through the argument 'parallel':
             parallel_method = parallel
-            if parallel in ['thread', 'process']:
+            if parallel in ["thread", "process"]:
                 parallel = True
         if parallel_method not in ["thread", "process"]:
-            raise ValueError("localftp only support multi-threading and processing ('%s' unknown)" % parallel_method)
+            raise ValueError(
+                "localftp only support multi-threading and processing ('%s' unknown)"
+                % parallel_method
+            )
         self.parallel = parallel
         self.parallel_method = parallel_method
         self.progress = progress
         self.chunks = chunks
         self.chunks_maxsize = chunks_maxsize
 
-        self.definition = 'Local ftp Argo data fetcher'
-        self.dataset_id = OPTIONS['dataset'] if ds == '' else ds
+        self.definition = "Local ftp Argo data fetcher"
+        self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
 
-        self.local_ftp = OPTIONS['local_ftp'] if local_ftp == '' else local_ftp
-        check_localftp(self.local_ftp, errors='raise')  # Validate local_ftp
+        self.local_ftp = OPTIONS["local_ftp"] if local_ftp == "" else local_ftp
+        check_localftp(self.local_ftp, errors="raise")  # Validate local_ftp
 
         self.init(**kwargs)
 
@@ -156,13 +165,13 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         summary.append("Name: %s" % self.definition)
         summary.append("FTP: %s" % self.local_ftp)
         summary.append("Domain: %s" % format_oneline(self.cname()))
-        return '\n'.join(summary)
+        return "\n".join(summary)
 
     def cname(self):
         """ Return a unique string defining the constraints """
         return self._cname()
 
-    def get_path(self, wmo: int, cyc: int = None) -> str:
+    def get_path(self, wmo: int, cyc: int = None) -> str:  # noqa: C901
         """ Return the absolute path toward the netcdf source file of a given wmo/cyc pair and a dataset
 
         Based on the dataset, the wmo and the cycle requested, return the absolute path toward the file to load.
@@ -199,17 +208,39 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
             if cyc is None:
                 # Multi-profile file:
                 # dac/<DacName>/<FloatWmoID>/<FloatWmoID>_<S>prof.nc
-                if self.dataset_id == 'phy':
-                    return os.path.sep.join([self.local_ftp, "dac", "*", str(wmo), "%i_prof.nc" % wmo])
-                elif self.dataset_id == 'bgc':
-                    return os.path.sep.join([self.local_ftp, "dac", "*", str(wmo), "%i_Sprof.nc" % wmo])
+                if self.dataset_id == "phy":
+                    return os.path.sep.join(
+                        [self.local_ftp, "dac", "*", str(wmo), "%i_prof.nc" % wmo]
+                    )
+                elif self.dataset_id == "bgc":
+                    return os.path.sep.join(
+                        [self.local_ftp, "dac", "*", str(wmo), "%i_Sprof.nc" % wmo]
+                    )
             else:
                 # Single profile file:
                 # dac/<DacName>/<FloatWmoID>/profiles/<B/M/S><R/D><FloatWmoID>_<XXX><D>.nc
                 if cyc < 1000:
-                    return os.path.sep.join([self.local_ftp, "dac", "*", str(wmo), "profiles", "*%i_%0.3d*.nc" % (wmo, cyc)])
+                    return os.path.sep.join(
+                        [
+                            self.local_ftp,
+                            "dac",
+                            "*",
+                            str(wmo),
+                            "profiles",
+                            "*%i_%0.3d*.nc" % (wmo, cyc),
+                        ]
+                    )
                 else:
-                    return os.path.sep.join([self.local_ftp, "dac", "*", str(wmo), "profiles", "*%i_%0.4d*.nc" % (wmo, cyc)])
+                    return os.path.sep.join(
+                        [
+                            self.local_ftp,
+                            "dac",
+                            "*",
+                            str(wmo),
+                            "profiles",
+                            "*%i_%0.4d*.nc" % (wmo, cyc),
+                        ]
+                    )
 
         pattern = _filepathpattern(wmo, cyc)
         lst = sorted(glob(pattern))
@@ -217,7 +248,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         if len(lst) == 1:
             return lst[0]
         elif len(lst) == 0:
-            if self.errors == 'raise':
+            if self.errors == "raise":
                 raise NetCDF4FileNotFoundError(pattern)
             else:
                 # Otherwise remain silent/ignore
@@ -227,21 +258,46 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
             # warnings.warn("More than one file to load for a single float cycle ! Return the 1st one by default.")
             # The choice of the file to load depends on the user mode and dataset requested.
             # todo: define a robust choice
-            if self.dataset_id == 'phy':
+            if self.dataset_id == "phy":
                 if cyc is None:
                     # Use the synthetic profile:
-                    lst = [file for file in lst if
-                           [file for file in [os.path.split(w)[-1] for w in lst] if file[0] == 'S'][0] in file]
+                    lst = [
+                        file
+                        for file in lst
+                        if [
+                            file
+                            for file in [os.path.split(w)[-1] for w in lst]
+                            if file[0] == "S"
+                        ][0]
+                        in file
+                    ]
                 else:
                     # Use the ascent profile:
-                    lst = [file for file in lst if
-                           [file for file in [os.path.split(w)[-1] for w in lst] if file[-1] != 'D'][0] in file]
-            elif self.dataset_id == 'bgc':
-                lst = [file for file in lst if
-                       [file for file in [os.path.split(w)[-1] for w in lst] if file[0] == 'M'][0] in file]
+                    lst = [
+                        file
+                        for file in lst
+                        if [
+                            file
+                            for file in [os.path.split(w)[-1] for w in lst]
+                            if file[-1] != "D"
+                        ][0]
+                        in file
+                    ]
+            elif self.dataset_id == "bgc":
+                lst = [
+                    file
+                    for file in lst
+                    if [
+                        file
+                        for file in [os.path.split(w)[-1] for w in lst]
+                        if file[0] == "M"
+                    ][0]
+                    in file
+                ]
             return lst[0]
 
     @property
+    @abstractmethod
     def uri(self):
         """ Return the list of files to load
 
@@ -249,7 +305,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         -------
         list(str)
         """
-        pass
+        raise NotImplementedError("Not implemented")
 
     @property
     def cachepath(self):
@@ -275,15 +331,19 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
 
         """
         # Replace JULD and JULD_QC by TIME and TIME_QC
-        ds = ds.rename({'JULD': 'TIME', 'JULD_QC': 'TIME_QC', 'JULD_LOCATION': 'TIME_LOCATION'})
-        ds['TIME'].attrs = {'long_name': 'Datetime (UTC) of the station',
-                            'standard_name':  'time'}
+        ds = ds.rename(
+            {"JULD": "TIME", "JULD_QC": "TIME_QC", "JULD_LOCATION": "TIME_LOCATION"}
+        )
+        ds["TIME"].attrs = {
+            "long_name": "Datetime (UTC) of the station",
+            "standard_name": "time",
+        }
         # Cast data types:
         ds = ds.argo.cast_types()
 
         # Enforce real pressure resolution: 0.1 db
         for vname in ds.data_vars:
-            if 'PRES' in vname and 'QC' not in vname:
+            if "PRES" in vname and "QC" not in vname:
                 ds[vname].values = np.round(ds[vname].values, 1)
 
         # Remove variables without dimensions:
@@ -294,26 +354,28 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
 
         # print("DIRECTION", np.unique(ds['DIRECTION']))
         # print("N_PROF", np.unique(ds['N_PROF']))
-        ds = ds.argo.profile2point()  # Default output is a collection of points along N_POINTS
+        ds = (
+            ds.argo.profile2point()
+        )  # Default output is a collection of points along N_POINTS
         # print("DIRECTION", np.unique(ds['DIRECTION']))
 
         # Remove netcdf file attributes and replace them with argopy ones:
         ds.attrs = {}
-        if self.dataset_id == 'phy':
-            ds.attrs['DATA_ID'] = 'ARGO'
-        if self.dataset_id == 'bgc':
-            ds.attrs['DATA_ID'] = 'ARGO-BGC'
-        ds.attrs['DOI'] = 'http://doi.org/10.17882/42182'
-        ds.attrs['Fetched_from'] = self.local_ftp
-        ds.attrs['Fetched_by'] = getpass.getuser()
-        ds.attrs['Fetched_date'] = pd.to_datetime('now').strftime('%Y/%m/%d')
-        ds.attrs['Fetched_constraints'] = self.cname()
-        ds.attrs['Fetched_uri'] = ds.encoding['source']
+        if self.dataset_id == "phy":
+            ds.attrs["DATA_ID"] = "ARGO"
+        if self.dataset_id == "bgc":
+            ds.attrs["DATA_ID"] = "ARGO-BGC"
+        ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
+        ds.attrs["Fetched_from"] = self.local_ftp
+        ds.attrs["Fetched_by"] = getpass.getuser()
+        ds.attrs["Fetched_date"] = pd.to_datetime("now").strftime("%Y/%m/%d")
+        ds.attrs["Fetched_constraints"] = self.cname()
+        ds.attrs["Fetched_uri"] = ds.encoding["source"]
         ds = ds[np.sort(ds.data_vars)]
 
         return ds
 
-    def to_xarray(self, errors: str = 'ignore'):
+    def to_xarray(self, errors: str = "ignore"):
         """ Load Argo data and return a xarray.Dataset
 
         Returns
@@ -322,7 +384,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         """
         # Download data:
         if not self.parallel:
-            method = 'sequential'
+            method = "sequential"
         else:
             method = self.parallel_method
         # ds = self.fs.open_mfdataset(self.uri,
@@ -333,53 +395,61 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         #                             progress=self.progress,
         #                             errors=errors,
         #                             decode_cf=1, use_cftime=0, mask_and_scale=1, engine='h5netcdf')
-        ds = self.fs.open_mfdataset(self.uri,
-                                    method=method,
-                                    concat_dim='N_POINTS',
-                                    concat=True,
-                                    preprocess=self._preprocess_multiprof,
-                                    progress=self.progress,
-                                    errors=errors,
-                                    decode_cf=1, use_cftime=0, mask_and_scale=1)                            
+        ds = self.fs.open_mfdataset(
+            self.uri,
+            method=method,
+            concat_dim="N_POINTS",
+            concat=True,
+            preprocess=self._preprocess_multiprof,
+            progress=self.progress,
+            errors=errors,
+            decode_cf=1,
+            use_cftime=0,
+            mask_and_scale=1,
+        )
 
         # Data post-processing:
-        ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS']))  # Re-index to avoid duplicate values
-        ds = ds.set_coords('N_POINTS')
-        ds = ds.sortby('TIME')
+        ds["N_POINTS"] = np.arange(
+            0, len(ds["N_POINTS"])
+        )  # Re-index to avoid duplicate values
+        ds = ds.set_coords("N_POINTS")
+        ds = ds.sortby("TIME")
 
         # Remove netcdf file attributes and replace them with simplified argopy ones:
         ds.attrs = {}
-        if self.dataset_id == 'phy':
-            ds.attrs['DATA_ID'] = 'ARGO'
-        if self.dataset_id == 'bgc':
-            ds.attrs['DATA_ID'] = 'ARGO-BGC'
-        ds.attrs['DOI'] = 'http://doi.org/10.17882/42182'
-        ds.attrs['Fetched_from'] = self.local_ftp
-        ds.attrs['Fetched_by'] = getpass.getuser()
-        ds.attrs['Fetched_date'] = pd.to_datetime('now').strftime('%Y/%m/%d')
-        ds.attrs['Fetched_constraints'] = self.cname()
+        if self.dataset_id == "phy":
+            ds.attrs["DATA_ID"] = "ARGO"
+        if self.dataset_id == "bgc":
+            ds.attrs["DATA_ID"] = "ARGO-BGC"
+        ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
+        ds.attrs["Fetched_from"] = self.local_ftp
+        ds.attrs["Fetched_by"] = getpass.getuser()
+        ds.attrs["Fetched_date"] = pd.to_datetime("now").strftime("%Y/%m/%d")
+        ds.attrs["Fetched_constraints"] = self.cname()
         if len(self.uri) == 1:
-            ds.attrs['Fetched_uri'] = self.uri[0]
+            ds.attrs["Fetched_uri"] = self.uri[0]
         else:
-            ds.attrs['Fetched_uri'] = ";".join(self.uri)
+            ds.attrs["Fetched_uri"] = ";".join(self.uri)
 
         return ds
 
     def filter_data_mode(self, ds, **kwargs):
-        ds = ds.argo.filter_data_mode(errors='ignore', **kwargs)
-        if ds.argo._type == 'point':
-            ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS']))
+        ds = ds.argo.filter_data_mode(errors="ignore", **kwargs)
+        if ds.argo._type == "point":
+            ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
     def filter_qc(self, ds, **kwargs):
         ds = ds.argo.filter_qc(**kwargs)
-        if ds.argo._type == 'point':
-            ds['N_POINTS'] = np.arange(0, len(ds['N_POINTS']))
+        if ds.argo._type == "point":
+            ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
-    def filter_variables(self, ds, mode='standard'):
-        if mode == 'standard':
-            to_remove = sorted(list(set(list(ds.data_vars)) - set(list_standard_variables())))
+    def filter_variables(self, ds, mode="standard"):
+        if mode == "standard":
+            to_remove = sorted(
+                list(set(list(ds.data_vars)) - set(list_standard_variables()))
+            )
             return ds.drop_vars(to_remove)
         else:
             return ds
@@ -399,9 +469,13 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
             The cycle numbers to load.
         """
         if isinstance(CYC, int):
-            CYC = np.array((CYC,), dtype='int')  # Make sure we deal with an array of integers
+            CYC = np.array(
+                (CYC,), dtype="int"
+            )  # Make sure we deal with an array of integers
         if isinstance(CYC, list):
-            CYC = np.array(CYC, dtype='int')  # Make sure we deal with an array of integers
+            CYC = np.array(
+                CYC, dtype="int"
+            )  # Make sure we deal with an array of integers
         self.WMO = WMO
         self.CYC = CYC
 
@@ -415,6 +489,7 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
         -------
         list(str)
         """
+
         def list_bunch(wmos, cycs):
             this = []
             for wmo in wmos:
@@ -426,7 +501,7 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
             return this
 
         # Get list of files to load:
-        if not hasattr(self, '_list_of_argo_files'):
+        if not hasattr(self, "_list_of_argo_files"):
             # if not self.parallel:
             #     self._list_of_argo_files = list_bunch(self.WMO, self.CYC)
             # else:
@@ -474,9 +549,11 @@ class Fetch_box(LocalFTPArgoDataFetcher):
         #     self.BOX.append(start.strftime('%Y-%m-%d'))
         #     self.BOX.append(end.strftime('%Y-%m-%d'))
 
-        self.fs_index = indexstore(self.cache,
-                                   self.cachedir,
-                                   os.path.sep.join([self.local_ftp, "ar_index_global_prof.txt"]))
+        self.fs_index = indexstore(
+            self.cache,
+            self.cachedir,
+            os.path.sep.join([self.local_ftp, "ar_index_global_prof.txt"]),
+        )
         # todo we would need to check if the index file is there !
 
     @property
@@ -487,7 +564,7 @@ class Fetch_box(LocalFTPArgoDataFetcher):
         -------
         list(str)
         """
-        if not hasattr(self, '_list_of_argo_files'):
+        if not hasattr(self, "_list_of_argo_files"):
             self._list_of_argo_files = []
             # Fetch the index to retrieve the list of profiles to load:
             filt = indexfilter_box(self.indexBOX)
@@ -495,12 +572,12 @@ class Fetch_box(LocalFTPArgoDataFetcher):
             if isinstance(df_index, pd.core.frame.DataFrame):
                 # Ok, we found profiles in the index file,
                 # so now we can make sure these files exist:
-                lst = list(df_index['file'])
+                lst = list(df_index["file"])
                 for file in lst:
                     abs_file = os.path.sep.join([self.local_ftp, "dac", file])
                     if self.fs.exists(abs_file):
                         self._list_of_argo_files.append(abs_file)
-                    elif self.errors == 'raise':
+                    elif self.errors == "raise":
                         raise NetCDF4FileNotFoundError(abs_file)
                     else:
                         # Otherwise remain silent/ignore

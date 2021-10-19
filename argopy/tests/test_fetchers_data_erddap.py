@@ -16,8 +16,7 @@ from . import (
     requires_connected_erddap_phy,
     requires_connected_erddap_bgc,
     requires_connected_erddap_ref,
-    safe_to_server_errors,
-    safe_to_fsspec_version
+    safe_to_server_errors
 )
 
 
@@ -50,48 +49,43 @@ class Test_Backend:
         ]
     }
 
-    @safe_to_fsspec_version
     @requires_connected_erddap_phy
     def test_cachepath_notfound(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoDataFetcher(src=self.src, cache=True).profile(
+                fetcher = ArgoDataFetcher(src=self.src, cache=True).profile(
                     *self.requests["profile"][0]
-                )
+                ).fetcher
                 with pytest.raises(CacheFileNotFound):
-                    loader.fetcher.cachepath
+                    fetcher.cachepath
 
     @requires_connected_erddap_phy
     @safe_to_server_errors
     def test_nocache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoDataFetcher(src=self.src, cache=False).profile(
+                fetcher = ArgoDataFetcher(src=self.src, cache=False).profile(
                     *self.requests["profile"][0]
-                )
-                loader.to_xarray()
+                ).fetcher
                 with pytest.raises(FileSystemHasNoCache):
-                    loader.fetcher.cachepath
+                    fetcher.cachepath
 
-    @safe_to_fsspec_version
     @requires_connected_erddap_phy
     @safe_to_server_errors
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                loader = ArgoDataFetcher(src=self.src, cache=True).float(
+                fetcher = ArgoDataFetcher(src=self.src, cache=True).float(
                     self.requests["float"][0]
-                )
-                loader.to_xarray()  # 1st call to load from source and save in memory
-                loader.to_xarray()  # 2nd call to load from memory and save in cache
-                loader.clear_cache()
+                ).fetcher
+                fetcher.to_xarray()
+                fetcher.clear_cache()
                 with pytest.raises(CacheFileNotFound):
-                    loader.fetcher.cachepath
+                    fetcher.cachepath
 
-    @safe_to_fsspec_version
     @requires_connected_erddap_phy
     @safe_to_server_errors
-    def test_caching_float(self):
+    def test_cached_float(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
                 fetcher = (
@@ -99,18 +93,14 @@ class Test_Backend:
                     .float(self.requests["float"][0])
                     .fetcher
                 )
-                # 1st call to load and save to cache:
-                fetcher.to_xarray()
-                # 2nd call to load from cached file:
                 ds = fetcher.to_xarray()
                 assert isinstance(ds, xr.Dataset)
                 assert is_list_of_strings(fetcher.uri)
                 assert is_list_of_strings(fetcher.cachepath)
 
-    @safe_to_fsspec_version
     @requires_connected_erddap_phy
     @safe_to_server_errors
-    def test_caching_profile(self):
+    def test_cached_profile(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
                 fetcher = (
@@ -118,18 +108,14 @@ class Test_Backend:
                     .profile(*self.requests["profile"][0])
                     .fetcher
                 )
-                # 1st call to load and save to cachedir:
-                fetcher.to_xarray()
-                # 2nd call to load from cached file
                 ds = fetcher.to_xarray()
                 assert isinstance(ds, xr.Dataset)
                 assert is_list_of_strings(fetcher.uri)
                 assert is_list_of_strings(fetcher.cachepath)
 
-    @safe_to_fsspec_version
     @requires_connected_erddap_phy
     @safe_to_server_errors
-    def test_caching_region(self):
+    def test_cached_region(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
                 fetcher = (
@@ -137,9 +123,6 @@ class Test_Backend:
                     .region(self.requests["region"][1])
                     .fetcher
                 )
-                # 1st call to load and save to cachedir:
-                fetcher.to_xarray()
-                # 2nd call to load from cached file
                 ds = fetcher.to_xarray()
                 assert isinstance(ds, xr.Dataset)
                 assert is_list_of_strings(fetcher.uri)
@@ -155,26 +138,34 @@ class Test_Backend:
         )
         assert isinstance(n, int)
 
+    def test_minimal_vlist(self):
+        f = ArgoDataFetcher(src=self.src).region(self.requests["region"][1]).fetcher
+        assert is_list_of_strings(f._minimal_vlist)
+
+    def test_dtype(self):
+        f = ArgoDataFetcher(src=self.src).region(self.requests["region"][1]).fetcher
+        assert isinstance(f._dtype, dict)
+
     def __testthis_profile(self, dataset):
         fetcher_args = {"src": self.src, "ds": dataset}
         for arg in self.args["profile"]:
-            f = ArgoDataFetcher(**fetcher_args).profile(*arg)
-            assert isinstance(f.fetcher.to_xarray(), xr.Dataset)
-            assert is_list_of_strings(f.fetcher.uri)
+            f = ArgoDataFetcher(**fetcher_args).profile(*arg).fetcher
+            assert isinstance(f.to_xarray(), xr.Dataset)
+            assert is_list_of_strings(f.uri)
 
     def __testthis_float(self, dataset):
         fetcher_args = {"src": self.src, "ds": dataset}
         for arg in self.args["float"]:
-            f = ArgoDataFetcher(**fetcher_args).float(arg)
-            assert isinstance(f.fetcher.to_xarray(), xr.Dataset)
-            assert is_list_of_strings(f.fetcher.uri)
+            f = ArgoDataFetcher(**fetcher_args).float(arg).fetcher
+            assert isinstance(f.to_xarray(), xr.Dataset)
+            assert is_list_of_strings(f.uri)
 
     def __testthis_region(self, dataset):
         fetcher_args = {"src": self.src, "ds": dataset}
         for arg in self.args["region"]:
-            f = ArgoDataFetcher(**fetcher_args).region(arg)
-            assert isinstance(f.fetcher.to_xarray(), xr.Dataset)
-            assert is_list_of_strings(f.fetcher.uri)
+            f = ArgoDataFetcher(**fetcher_args).region(arg).fetcher
+            assert isinstance(f.to_xarray(), xr.Dataset)
+            assert is_list_of_strings(f.uri)
 
     def __testthis(self, dataset):
         for access_point in self.args:

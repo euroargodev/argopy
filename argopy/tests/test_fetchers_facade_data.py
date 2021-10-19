@@ -12,13 +12,23 @@ from argopy.errors import (
 )
 from argopy.utilities import is_list_of_strings
 from . import (
-    AVAILABLE_SOURCES,
     requires_fetcher,
     requires_connected_erddap_phy,
     requires_localftp,
     requires_connected_argovis,
-    safe_to_server_errors
+    safe_to_server_errors,
+    requires_matplotlib,
+    has_matplotlib,
+    has_seaborn,
+    has_cartopy
 )
+
+
+if has_matplotlib:
+    import matplotlib as mpl
+
+if has_cartopy:
+    import cartopy
 
 
 @requires_localftp
@@ -47,9 +57,11 @@ class Test_Facade:
 
         if pt == 'region':
             if not empty:
-                return f, ArgoDataFetcher(src=self.src).region([-60, -55, 40.0, 45.0, 0.0, 10.0, "2007-08-01", "2007-09-01"])
+                return f, ArgoDataFetcher(src=self.src).region([-60, -55, 40.0, 45.0, 0.0, 10.0,
+                                                                "2007-08-01", "2007-09-01"])
             else:
-                return f, ArgoDataFetcher(src=self.src).region([-60, -55, 40.0, 45.0, 99.92, 99.99, "2007-08-01", "2007-08-01"])
+                return f, ArgoDataFetcher(src=self.src).region([-60, -55, 40.0, 45.0, 99.92, 99.99,
+                                                                "2007-08-01", "2007-08-01"])
 
     def test_invalid_fetcher(self):
         with pytest.raises(InvalidFetcher):
@@ -106,6 +118,41 @@ class Test_Facade:
             assert isinstance(new_fetcher.data, xr.Dataset)
             assert isinstance(new_fetcher.index, pd.core.frame.DataFrame)
 
+    @requires_matplotlib
+    def test_plot(self):
+        with argopy.set_options(local_ftp=self.local_ftp):
+            f, fetcher = self.__get_fetcher(pt='float')
+
+            for ws in [False, has_seaborn]:
+                for wc in [False, has_cartopy]:
+                    for legend in [True, False]:
+                        fig, ax = fetcher.plot(ptype='trajectory', with_seaborn=ws, with_cartopy=wc, add_legend=legend)
+                        assert isinstance(fig, mpl.figure.Figure)
+
+                        expected_ax_type = (
+                            cartopy.mpl.geoaxes.GeoAxesSubplot
+                            if has_cartopy and wc
+                            else mpl.axes.Axes
+                        )
+                        assert isinstance(ax, expected_ax_type)
+
+                        expected_lg_type = mpl.legend.Legend if legend else type(None)
+                        assert isinstance(ax.get_legend(), expected_lg_type)
+
+                        mpl.pyplot.close(fig)
+
+            for ws in [False, has_seaborn]:
+                for by in [
+                    "dac",
+                    "profiler"
+                ]:
+                    fig, ax = fetcher.plot(ptype=by, with_seaborn=ws)
+                    assert isinstance(fig, mpl.figure.Figure)
+                    mpl.pyplot.close(fig)
+
+            with pytest.raises(ValueError):
+                fig, ax = fetcher.plot(ptype='invalid_cat', with_seaborn=ws)
+
 
 @requires_fetcher
 class Test_DataFetching:
@@ -144,7 +191,6 @@ class Test_DataFetching:
         # f.to_xarray()
         # f.to_dataframe()
         # f.to_index()
-
 
     def __test_float(self, bk, **ftc_opts):
         """ Test float for a given backend """

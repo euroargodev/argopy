@@ -69,7 +69,7 @@ class ArgoAccessor:
         else:
             self._obj.attrs["history"] = txt
 
-    def cast_types(self):
+    def cast_types(self):  # noqa: C901
         """ Make sure variables are of the appropriate types
 
             This is hard coded, but should be retrieved from an API somewhere
@@ -235,7 +235,7 @@ class ArgoAccessor:
 
         return ds
 
-    def filter_data_mode(self, keep_error: bool = True, errors: str = "raise"):
+    def filter_data_mode(self, keep_error: bool = True, errors: str = "raise"):  # noqa: C901
         """ Filter variables according to their data mode
 
             This applies to <PARAM> and <PARAM_QC>
@@ -327,41 +327,39 @@ class ArgoAccessor:
             ]
             return ds
 
-        def new_arrays(argo_r, argo_a, argo_d, vname):
-            """ Merge the 3 datasets into a single one with the appropriate fields
+        def merge_arrays(this_argo_r, this_argo_a, this_argo_d, this_vname):
+            """ Merge one variable from 3 DataArrays
 
-                Homogeneise variable names.
                 Based on xarray merge function with ’no_conflicts’: only values
-                which are not null in both datasets must be equal. The returned
+                which are not null in all datasets must be equal. The returned
                 dataset then contains the combination of all non-null values.
 
                 Return a xarray.DataArray
             """
-            DS = xr.merge(
-                (
-                    argo_r[vname],
-                    argo_a[vname + "_ADJUSTED"].rename(vname),
-                    argo_d[vname + "_ADJUSTED"].rename(vname),
-                )
+
+            def merge_this(a1, a2, a3):
+                return xr.merge((xr.merge((a1, a2)), a3))
+
+            DA = merge_this(
+                this_argo_r[this_vname],
+                this_argo_a[this_vname + "_ADJUSTED"].rename(this_vname),
+                this_argo_d[this_vname + "_ADJUSTED"].rename(this_vname),
             )
-            DS_QC = xr.merge(
-                (
-                    argo_r[vname + "_QC"],
-                    argo_a[vname + "_ADJUSTED_QC"].rename(vname + "_QC"),
-                    argo_d[vname + "_ADJUSTED_QC"].rename(vname + "_QC"),
-                )
+            DA_QC = merge_this(
+                this_argo_r[this_vname + "_QC"],
+                this_argo_a[this_vname + "_ADJUSTED_QC"].rename(this_vname + "_QC"),
+                this_argo_d[this_vname + "_ADJUSTED_QC"].rename(this_vname + "_QC"),
             )
+
             if keep_error:
-                DS_ERROR = xr.merge(
-                    (
-                        argo_a[vname + "_ADJUSTED_ERROR"].rename(vname + "_ERROR"),
-                        argo_d[vname + "_ADJUSTED_ERROR"].rename(vname + "_ERROR"),
-                    )
-                )
-                DS = xr.merge((DS, DS_QC, DS_ERROR))
+                DA_ERROR = xr.merge((
+                    this_argo_a[this_vname + "_ADJUSTED_ERROR"].rename(this_vname + "_ERROR"),
+                    this_argo_d[this_vname + "_ADJUSTED_ERROR"].rename(this_vname + "_ERROR"),
+                ))
+                DA = merge_this(DA, DA_QC, DA_ERROR)
             else:
-                DS = xr.merge((DS, DS_QC))
-            return DS
+                DA = xr.merge((DA, DA_QC))
+            return DA
 
         #########
         # filter
@@ -409,7 +407,7 @@ class ArgoAccessor:
                 argo_d = argo_d.drop_vars(vname)
 
         # Create new arrays with the appropriate variables:
-        vlist = [new_arrays(argo_r, argo_a, argo_d, v) for v in plist]
+        vlist = [merge_arrays(argo_r, argo_a, argo_d, v) for v in plist]
 
         # Create final dataset by merging all available variables
         final = xr.merge(vlist)
@@ -432,7 +430,7 @@ class ArgoAccessor:
 
         return final
 
-    def filter_qc(self, QC_list=[1, 2], drop=True, mode="all", mask=False):
+    def filter_qc(self, QC_list=[1, 2], drop=True, mode="all", mask=False):  # noqa: C901
         """ Filter data set according to QC values
 
             Mask the dataset for points where 'all' or 'any' of the QC fields has a value in the list of
@@ -534,7 +532,7 @@ class ArgoAccessor:
             cyc = -np.vectorize(int)(offset * wmo - np.abs(wmo_or_uid))
             return wmo, cyc, drc
 
-    def point2profile(self):
+    def point2profile(self):  # noqa: C901
         """ Transform a collection of points into a collection of profiles
 
         """
@@ -641,7 +639,7 @@ class ArgoAccessor:
                     y = new_ds[vname].values
                     x = prof[vname].values
                     try:
-                        y[i_prof, 0 : len(x)] = x
+                        y[i_prof, 0: len(x)] = x
                     except Exception:
                         print(vname, "input", x.shape, "output", y[i_prof, :].shape)
                         raise
@@ -711,16 +709,16 @@ class ArgoAccessor:
         return ds
 
     def interp_std_levels(self, std_lev):
-        """ Returns a new dataset interpolated to new inputs levels                 
-        
+        """ Returns a new dataset interpolated to new inputs levels
+
         Parameters
         ----------
-        list or np.array 
-            Standard levels used for interpolation
+        list or np.array
+        Standard levels used for interpolation
 
         Returns
         -------
-        :class:`xarray.Dataset`           
+        :class:`xarray.Dataset`
         """
 
         if (type(std_lev) is np.ndarray) | (type(std_lev) is list):
@@ -802,7 +800,7 @@ class ArgoAccessor:
 
         return ds_out
 
-    def teos10(
+    def teos10(  # noqa: C901
         self,
         vlist: list = ["SA", "CT", "SIG0", "N2", "PV", "PTEMP"],
         inplace: bool = True,
@@ -838,9 +836,11 @@ class ArgoAccessor:
                 Adds a potential temperature variable
             * `"SOUND_SPEED"`
                 Adds a sound speed variable
-            
+
+
         inplace: boolean, True by default
-            If True, return the input :class:`xarray.Dataset` with new TEOS10 variables added as a new :class:`xarray.DataArray`
+            If True, return the input :class:`xarray.Dataset` with new TEOS10 variables
+                added as a new :class:`xarray.DataArray`.
             If False, return a :class:`xarray.Dataset` with new TEOS10 variables
 
         Returns

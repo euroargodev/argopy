@@ -47,6 +47,7 @@
 
     argopy.utilities.monitor_status
     argopy.utilities.show_versions
+    argopy.utilities.show_options
     argopy.utilities.clear_cache
     argopy.utilities.list_available_data_src
     argopy.utilities.list_available_index_src

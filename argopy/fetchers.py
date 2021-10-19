@@ -12,6 +12,7 @@ Validity of access points parameters (eg: wmo) is made here, not at the data/ind
 import warnings
 import xarray as xr
 import pandas as pd
+import logging
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher
@@ -21,6 +22,8 @@ from .plotters import plot_trajectory, bar_plot
 
 AVAILABLE_DATA_SOURCES = list_available_data_src()
 AVAILABLE_INDEX_SOURCES = list_available_index_src()
+
+log = logging.getLogger("argopy.fetchers.facade")
 
 
 def checkAccessPoint(AccessPoint):
@@ -463,6 +466,8 @@ class ArgoDataFetcher:
             ax: :class:`matplotlib.axes.Axes`
         """
         self.load()
+        if "institution" not in self.index:
+            self.to_index(full=True)
         if ptype in ["dac", "institution"]:
             if "institution" not in self.index:
                 self.to_index(full=True)
