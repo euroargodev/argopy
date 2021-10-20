@@ -192,7 +192,7 @@ def safe_to_server_errors(test_func):
             pass
         except FileNotFoundError as e:
             warnings.warn("\nServer didn't return the data:\n%s" % str(e.args))
-            raise
+            pass
         except Exception as e:
             warnings.warn("\nUnknown server error:\n%s" % str(e.args))
             raise
