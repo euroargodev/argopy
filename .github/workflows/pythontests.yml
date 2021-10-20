@@ -3,8 +3,10 @@ name: tests
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
+    branches-ignore:
+      - 'dependabot*'
 
 jobs:
   unit-testing:

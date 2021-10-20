@@ -3,8 +3,10 @@ name: tests-FREE
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
+    branches-ignore:
+      - 'dependabot*'
 
 jobs:
   unit-testing-free:
