@@ -17,9 +17,9 @@ from argopy.stores import (
     indexstore,
 )
 from argopy.stores.filesystems import new_fs
-
+from argopy.options import OPTIONS
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound
-from . import requires_connection, requires_connected_argovis, skip_this_for_debug
+from . import requires_connection, requires_connected_argovis, skip_this_for_debug, safe_to_server_errors
 from argopy.utilities import is_list_of_datasets, is_list_of_dicts, modified_environ
 
 
@@ -38,7 +38,7 @@ class Test_new_fs:
         assert self.id_implementation(fs) == ['filecache']
 
 
-@skip_this_for_debug
+#@skip_this_for_debug
 @requires_connection
 class Test_FileStore:
     ftproot = argopy.tutorial.open_dataset("localftp")[0]
@@ -153,7 +153,7 @@ class Test_HttpStore:
     def test_cache_a_file(self):
         uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt"
         with tempfile.TemporaryDirectory() as cachedir:
-            fs = httpstore(cache=True, cachedir=cachedir)
+            fs = httpstore(cache=True, cachedir=cachedir, timeout=OPTIONS['api_timeout'])
             fs.read_csv(uri, skiprows=8, header=0)
             assert isinstance(fs.cachepath(uri), str)
 
@@ -161,7 +161,7 @@ class Test_HttpStore:
     def test_clear_cache(self):
         uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt"
         with tempfile.TemporaryDirectory() as cachedir:
-            fs = httpstore(cache=True, cachedir=cachedir)
+            fs = httpstore(cache=True, cachedir=cachedir, timeout=OPTIONS['api_timeout'])
             fs.read_csv(uri, skiprows=8, header=0)
             assert isinstance(fs.cachepath(uri), str)
             assert os.path.isfile(fs.cachepath(uri))
@@ -222,27 +222,8 @@ class Test_HttpStore:
             fs.read_csv(uri, skiprows=8, header=0), pd.core.frame.DataFrame
         )
 
-    @safe_to_server_errors
-    def test_cachefile(self):
-        uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt"
-        with tempfile.TemporaryDirectory() as cachedir:
-            fs = httpstore(cache=True, cachedir=cachedir, timeout=OPTIONS['api_timeout'])
-            fs.read_csv(uri, skiprows=8, header=0)
-            assert isinstance(fs.cachepath(uri), str)
 
-    @safe_to_server_errors
-    def test_clear_cache(self):
-        uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt"
-        with tempfile.TemporaryDirectory() as cachedir:
-            fs = httpstore(cache=True, cachedir=cachedir, timeout=OPTIONS['api_timeout'])
-            fs.read_csv(uri, skiprows=8, header=0)
-            assert isinstance(fs.cachepath(uri), str)
-            assert os.path.isfile(fs.cachepath(uri))
-            fs.clear_cache()
-            with pytest.raises(CacheFileNotFound):
-                fs.cachepath(uri)
-
-@skip_this_for_debug
+#@skip_this_for_debug
 class Test_IndexFilter_WMO:
     kwargs = [
         {"WMO": 6901929},
@@ -285,7 +266,7 @@ class Test_IndexFilter_WMO:
                     assert results is None
 
 
-@skip_this_for_debug
+#@skip_this_for_debug
 @requires_connection
 class Test_IndexStore:
     ftproot, flist = argopy.tutorial.open_dataset("localftp")
