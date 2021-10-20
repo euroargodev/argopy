@@ -1,6 +1,10 @@
 name: tests-FREE
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
   unit-testing-free:
