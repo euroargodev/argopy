@@ -383,7 +383,7 @@ def get_sys_info():
     blob.append(("commit", commit))
 
     try:
-        (sysname, nodename, release, version, machine, processor) = platform.uname()
+        (sysname, nodename, release, version_, machine, processor) = platform.uname()
         blob.extend(
             [
                 ("python", sys.version),
@@ -463,6 +463,7 @@ def show_versions(file=sys.stdout):  # noqa: C901
         ("nc_time_axis", lambda mod: mod.__version__),
         ("numpy", lambda mod: mod.__version__),
         ("pandas", lambda mod: mod.__version__),
+        ("packaging", lambda mod: mod.__version__),
         ("pip", lambda mod: mod.__version__),
         ("PseudoNetCDF", lambda mod: mod.__version__),
         ("pytest", lambda mod: mod.__version__),
