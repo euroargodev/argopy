@@ -310,6 +310,11 @@ def check_localftp(path, errors: str = "ignore"):
         "meds",
         "nmdis",
     ]
+    if path is None:
+        if errors == "raise":
+            raise FtpPathError("Argo FTP path is not set, use `local_ftp` option")
+        else:
+            return False
 
     # Case 1:
     check1 = (

@@ -335,7 +335,7 @@ class filestore(argo_store_proto):
         else:
             raise DataNotFound(urls)
 
-    def read_csv(self, url, **kwargs):
+    def read_csv(self, url, backend: str='pandas', **kwargs):
         """ Return a pandas.dataframe from an url that is a csv resource
 
             Parameters
@@ -347,9 +347,10 @@ class filestore(argo_store_proto):
             -------
             :class:`pandas.DataFrame`
         """
-        log.debug("Reading csv: %s" % url)
+        log.debug("Using %s backend to read csv: %s" % (backend, url))
         with self.open(url) as of:
-            df = pd.read_csv(of, **kwargs)
+            if backend == 'pandas':
+                df = pd.read_csv(of, **kwargs)
         return df
 
 

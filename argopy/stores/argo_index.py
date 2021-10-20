@@ -466,6 +466,13 @@ class indexstore():
         self.fs['index'] = filestore(cache, cachedir)  # Manage the full index
         self.fs['search'] = memorystore(cache, cachedir)  # Manage the search results
 
+    def __repr__(self):
+        summary = ["<store.index>"]
+        summary.append("Index: %s" % self.index_file)
+        if self.cache:
+            summary.append("Cache: %s" % self.cachedir)
+        return "\n".join(summary)
+
     def cachepath(self, uri: str, errors: str = 'raise'):
         """ Return path to cached file for a given URI """
         return self.fs['search'].cachepath(uri, errors)

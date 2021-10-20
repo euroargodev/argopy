@@ -147,6 +147,9 @@ def check_localftp(path, errors: str = "ignore"):
         "nmdis",
     ]
 
+    if path is None:
+        return False
+
     # Case 1:
     check1 = (
         os.path.isdir(path)
