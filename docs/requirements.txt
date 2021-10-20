@@ -2,7 +2,7 @@ pip==20.2.3
 # pkgconfig
 ipykernel==5.3.4
 ipython==7.18.1
-ipywidgets==7.5.1
+ipywidgets==7.6.5
 
 sphinx-autosummary-accessors==0.1.2
 nbsphinx==0.7.1
