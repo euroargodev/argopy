@@ -23,7 +23,7 @@ erddapy==0.7.2
 gsw==3.4.0
 
 fsspec>=0.7.4, <0.8.4
-aiohttp==3.6.2
+aiohttp==3.7.4.post0
 
 #matplotlib==3.3.2
 #cartopy==0.18.0
