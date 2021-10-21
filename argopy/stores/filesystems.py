@@ -2,7 +2,6 @@ import os
 import types
 import xarray as xr
 import pandas as pd
-import requests
 import fsspec
 import shutil
 import pickle
@@ -40,7 +39,7 @@ except ModuleNotFoundError:
     tqdm = lambda fct, lst: fct  # noqa: E731
 
 
-def new_fs(protocol: str = '', cache: bool = False, cachedir: str = "", **kwargs):
+def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cachedir'], **kwargs):
     """ Create a new fsspec file system
 
     Parameters
@@ -54,20 +53,28 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = "", **kwargs
         Other arguments passed to :class:`fsspec.filesystem`
 
     """
+    default_filesystem_kwargs = {'simple_links': True, "block_size": 0}
+    if protocol == 'http':
+        default_filesystem_kwargs = {**default_filesystem_kwargs,
+                                     **{"client_kwargs": {"trust_env": OPTIONS['trust_env']}}}
+    filesystem_kwargs = {**default_filesystem_kwargs, **kwargs}
+
     if not cache:
-        fs = fsspec.filesystem(protocol, **kwargs)
+        fs = fsspec.filesystem(protocol, **filesystem_kwargs)
         cache_registry = None
-        log.debug("Opening a fsspec [file] system for '%s' protocol with options: %s" % (protocol, str(kwargs)))
+        log.debug("Opening a fsspec [file] system for '%s' protocol with options: %s" %
+                  (protocol, str(filesystem_kwargs)))
     else:
         fs = fsspec.filesystem("filecache",
                                target_protocol=protocol,
-                               target_options={**{'simple_links': True, "block_size": 0}, **kwargs},
+                               target_options={**filesystem_kwargs},
                                cache_storage=cachedir,
                                expiry_time=86400, cache_check=10)
         # We use a refresh rate for cache of 1 day,
         # since this is the update frequency of the Ifremer erddap
         cache_registry = []  # Will hold uri cached by this store instance
-        log.debug("Opening a fsspec [filecache] system for '%s' protocol with options: %s" % (protocol, str(kwargs)))
+        log.debug("Opening a fsspec [filecache] system for '%s' protocol with options: %s" %
+                  (protocol, str(filesystem_kwargs)))
     return fs, cache_registry
 
 
@@ -96,7 +103,7 @@ class argo_store_proto(ABC):
         """
         self.cache = cache
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        self._filesystem_kwargs = kwargs
+        self._filesystem_kwargs = {**kwargs}
         self.fs, self.cache_registry = new_fs(self.protocol,
                                               self.cache,
                                               self.cachedir,
@@ -288,8 +295,8 @@ class filestore(argo_store_proto):
                         data = future.result()
                     except Exception as e:
                         if errors == 'ignore':
-                            warnings.warn(
-                                "Something went wrong with this file: %s\nException raised: %s"
+                            log.debug(
+                                "Ignored error with this file: %s\nException raised: %s"
                                 % (future_to_url[future], str(e.args)))
                             pass
                         else:
@@ -312,8 +319,8 @@ class filestore(argo_store_proto):
                     data = self._mfprocessor(url, preprocess=preprocess, *args, **kwargs)
                 except Exception as e:
                     if errors == 'ignore':
-                        warnings.warn(
-                            "Something went wrong with this url: %s\nException raised: %s" % (url, str(e.args)))
+                        log.debug(
+                            "Ignored error with this url: %s\nException raised: %s" % (url, str(e.args)))
                         pass
                     else:
                         raise
@@ -359,8 +366,8 @@ class httpstore(argo_store_proto):
         Relies on:
             https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.http.HTTPFileSystem
 
-        This store intends to make argopy: safer to failures from http requests, provide more verbose message to users
-        if we can identify specific errors in http responses.
+        This store intends to make argopy: safer to failures from http requests and to provide higher levels methods to
+        work with our datasets
 
         This store is primarily used by the Erddap/Argovis data/index fetchers
     """
@@ -450,6 +457,8 @@ class httpstore(argo_store_proto):
             :class:`xarray.Dataset`
 
         """
+        strUrl = lambda x: x.replace("https://", "").replace("http://", "")  # noqa: E731
+
         if not isinstance(urls, list):
             urls = [urls]
 
@@ -477,9 +486,8 @@ class httpstore(argo_store_proto):
                     except Exception as e:
                         failed.append(future_to_url[future])
                         if errors == 'ignore':
-                            warnings.warn(
-                                "\nSomething went wrong with this url: %s\nException raised: %s"
-                                % (future_to_url[future].replace("https://", "").replace("http://", ""), str(e.args)))
+                            log.debug("Ignored error with this url: %s" % strUrl(future_to_url[future]))
+                            # See fsspec.http logger for more
                             pass
                         elif errors == 'silent':
                             pass
@@ -504,9 +512,7 @@ class httpstore(argo_store_proto):
                 except Exception as e:
                     failed.append(url)
                     if errors == 'ignore':
-                        warnings.warn(
-                            "\nSomething went wrong with this url: %s\nException raised: %s"
-                            % (url.replace("https://", "").replace("http://", ""), str(e.args)))
+                        log.debug("Ignored error with this url: %s" % strUrl(url))  # See fsspec.http logger for more
                         pass
                     elif errors == 'silent':
                         pass
@@ -643,9 +649,8 @@ class httpstore(argo_store_proto):
                     except Exception as e:
                         failed.append(future_to_url[future])
                         if errors == 'ignore':
-                            warnings.warn(
-                                "\nSomething went wrong with this url: %s\nException raised: %s"
-                                % (strUrl(future_to_url[future]), str(e.args)))
+                            log.debug("Ignored error with this url: %s" % strUrl(future_to_url[future]))
+                            # See fsspec.http logger for more
                             pass
                         elif errors == 'silent':
                             pass
@@ -670,8 +675,8 @@ class httpstore(argo_store_proto):
                 except Exception as e:
                     failed.append(url)
                     if errors == 'ignore':
-                        warnings.warn(
-                            "\nSomething went wrong with this url: %s\nException raised: %s" % (strUrl(url), str(e.args)))
+                        log.debug("Ignored error with this url: %s" % strUrl(url))
+                        # See fsspec.http logger for more
                         pass
                     elif errors == 'silent':
                         pass
