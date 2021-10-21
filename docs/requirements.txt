@@ -1,6 +1,6 @@
 pip==20.2.3
 # pkgconfig
-ipykernel==5.3.4
+ipykernel==6.4.2
 ipython==7.18.1
 ipywidgets==7.6.5
 
@@ -23,7 +23,7 @@ erddapy==0.7.2
 gsw==3.4.0
 
 fsspec>=0.7.4, <0.8.4
-aiohttp==3.6.2
+aiohttp==3.7.4
 
 #matplotlib==3.3.2
 #cartopy==0.18.0
