@@ -4,15 +4,18 @@ Installation
 Required dependencies
 ^^^^^^^^^^^^^^^^^^^^^
 
-- xarray>=0.15.1
-- fsspec>=0.7.4, <0.8.4
-- scikit-learn>=0.21
-- erddapy>=0.6
-- gsw>=3.3.1
-- aiohttp>=3.6.2
-- netCDF4>=1.3.1
-- dask>=2.9
-- toolz>=0.8.2
+- xarray<=0.19.0, >=0.15.1
+- scipy<=1.7.1, >=1.1.0
+- scikit-learn<=1.0, >=0.21
+- netCDF4<=1.5.7, >=1.3.1
+- dask<=2021.09.1, >=2.9
+- toolz<=0.11.1, >=0.8.2
+- erddapy<=1.1.1, >=0.6
+- fsspec<=2021.10.0, >=0.7.4
+- gsw<=3.4.0, >=3.3.1
+- aiohttp<=3.7.4, >=3.6.2
+- packaging<=21.0, >= 20.4
+
 
 Note that Erddapy_ is required because `erddap <https://coastwatch.pfeg.noaa.gov/erddap/information.html>`_ is the default data fetching backend.
 
@@ -28,9 +31,9 @@ For a complete **argopy** experience, the following packages are also required:
 - ipython>=5.0.0
 - ipywidgets>=7.5.1
 - tqdm>=4.46.0
-- Matplotlib 3.0
-- Cartopy 0.17
-- Seaborn 0.9.0
+- Matplotlib>=3.0
+- Cartopy>=0.17
+- Seaborn>=0.9.0
 
 Instructions
 ^^^^^^^^^^^^
