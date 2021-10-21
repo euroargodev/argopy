@@ -372,8 +372,8 @@ Comparison of performances
 Note that to compare performances with or without the parallel option,
 we need to make sure that data are not cached on the server side. To do
 this, we use a very small random perturbation on the box definition,
-here on the maximum latitude. This ensures that nearly the same of data
-will be requested and not cached by server.
+here on the maximum latitude. This ensures that nearly the same amount of data
+will be requested but not cached by the server.
 
 .. ipython:: python
     :okwarning:

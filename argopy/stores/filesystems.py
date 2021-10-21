@@ -2,7 +2,6 @@ import os
 import types
 import xarray as xr
 import pandas as pd
-import requests
 import fsspec
 import shutil
 import pickle
@@ -288,8 +287,8 @@ class filestore(argo_store_proto):
                         data = future.result()
                     except Exception as e:
                         if errors == 'ignore':
-                            warnings.warn(
-                                "Something went wrong with this file: %s\nException raised: %s"
+                            log.debug(
+                                "Ignored error with this file: %s\nException raised: %s"
                                 % (future_to_url[future], str(e.args)))
                             pass
                         else:
@@ -312,8 +311,8 @@ class filestore(argo_store_proto):
                     data = self._mfprocessor(url, preprocess=preprocess, *args, **kwargs)
                 except Exception as e:
                     if errors == 'ignore':
-                        warnings.warn(
-                            "Something went wrong with this url: %s\nException raised: %s" % (url, str(e.args)))
+                        log.debug(
+                            "Ignored error with this url: %s\nException raised: %s" % (url, str(e.args)))
                         pass
                     else:
                         raise
@@ -450,6 +449,8 @@ class httpstore(argo_store_proto):
             :class:`xarray.Dataset`
 
         """
+        strUrl = lambda x: x.replace("https://", "").replace("http://", "")  # noqa: E731
+
         if not isinstance(urls, list):
             urls = [urls]
 
@@ -477,9 +478,8 @@ class httpstore(argo_store_proto):
                     except Exception as e:
                         failed.append(future_to_url[future])
                         if errors == 'ignore':
-                            warnings.warn(
-                                "\nSomething went wrong with this url: %s\nException raised: %s"
-                                % (future_to_url[future].replace("https://", "").replace("http://", ""), str(e.args)))
+                            log.debug("Ignored error with this url: %s" % strUrl(future_to_url[future]))
+                            # See fsspec.http logger for more
                             pass
                         elif errors == 'silent':
                             pass
@@ -504,9 +504,7 @@ class httpstore(argo_store_proto):
                 except Exception as e:
                     failed.append(url)
                     if errors == 'ignore':
-                        warnings.warn(
-                            "\nSomething went wrong with this url: %s\nException raised: %s"
-                            % (url.replace("https://", "").replace("http://", ""), str(e.args)))
+                        log.debug("Ignored error with this url: %s" % strUrl(url))  # See fsspec.http logger for more
                         pass
                     elif errors == 'silent':
                         pass
@@ -643,9 +641,8 @@ class httpstore(argo_store_proto):
                     except Exception as e:
                         failed.append(future_to_url[future])
                         if errors == 'ignore':
-                            warnings.warn(
-                                "\nSomething went wrong with this url: %s\nException raised: %s"
-                                % (strUrl(future_to_url[future]), str(e.args)))
+                            log.debug("Ignored error with this url: %s" % strUrl(future_to_url[future]))
+                            # See fsspec.http logger for more
                             pass
                         elif errors == 'silent':
                             pass
@@ -670,8 +667,8 @@ class httpstore(argo_store_proto):
                 except Exception as e:
                     failed.append(url)
                     if errors == 'ignore':
-                        warnings.warn(
-                            "\nSomething went wrong with this url: %s\nException raised: %s" % (strUrl(url), str(e.args)))
+                        log.debug("Ignored error with this url: %s" % strUrl(url))
+                        # See fsspec.http logger for more
                         pass
                     elif errors == 'silent':
                         pass
