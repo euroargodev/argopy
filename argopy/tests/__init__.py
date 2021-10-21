@@ -157,6 +157,7 @@ safe_to_fsspec_version = pytest.mark.skipif(
     version.parse(fsspec.__version__) > version.parse("0.8.3"),
     reason="fsspec version %s > 0.8.3 (https://github.com/euroargodev/argopy/issues/96)" % fsspec.__version__
 )
+skip_this_for_debug = pytest.mark.skipif(True, reason="Skipped temporarily for debug")
 
 
 ############

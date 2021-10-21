@@ -52,6 +52,10 @@ v0.1.8 (21 Oct. 2021)
 
 - Check validity of access points options (WMO and box) in the facade, no checks at the fetcher level. (:pr:`92`) by `G. Maze <http://www.github.com/gmaze>`_.
 
+- More general options. Fix :issue:`91`. (:pr:`102`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+    - ``trust_env`` to allow for local environment variables to be used by fsspec to connect to the internet. Usefull for those using a proxy.
+
 - Documentation on `Read The Docs` now uses a pip environment and get rid of memory eager conda. (:pr:`103`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 **Breaking changes with previous versions**

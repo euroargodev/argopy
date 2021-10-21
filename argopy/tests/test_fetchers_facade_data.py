@@ -151,7 +151,7 @@ class Test_Facade:
                     mpl.pyplot.close(fig)
 
             with pytest.raises(ValueError):
-                fig, ax = fetcher.plot(ptype='invalid_cat', with_seaborn=ws)
+                fetcher.plot(ptype='invalid_cat', with_seaborn=ws)
 
 
 @requires_fetcher

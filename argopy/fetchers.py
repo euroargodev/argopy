@@ -470,8 +470,6 @@ class ArgoDataFetcher:
             ax: :class:`matplotlib.axes.Axes`
         """
         self.load()
-        if "institution" not in self.index:
-            self.to_index(full=True)
         if ptype in ["dac", "institution"]:
             if "institution" not in self.index:
                 self.to_index(full=True)
