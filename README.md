@@ -110,7 +110,7 @@ See the [documentation page for more examples](https://argopy.readthedocs.io/en/
 ## Development roadmap
 
 Our next big steps:
-- [ ] To provide Bio-geochemical variables (#22, #77, #81)
+- [ ] To provide Bio-geochemical variables ([#22](https://github.com/euroargodev/argopy/issues/22), [#77](https://github.com/euroargodev/argopy/issues/77), [#81](https://github.com/euroargodev/argopy/issues/81))
 - [ ] To develop expert methods related to Quality Control of the data with other python softwares like: 
   - [ ] [pyowc](https://github.com/euroargodev/argodmqc_owc): [#33](https://github.com/euroargodev/argodmqc_owc/issues/33), [#53](https://github.com/euroargodev/argodmqc_owc/issues/53)
   - [ ] [bgcArgoDMQC](https://github.com/ArgoCanada/bgcArgoDMQC): [#37](https://github.com/ArgoCanada/bgcArgoDMQC/issues/37)
