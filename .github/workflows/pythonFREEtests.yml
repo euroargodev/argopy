@@ -1,4 +1,4 @@
-name: tests-FREE
+name: tests in FREE environment
 
 on:
   push:
