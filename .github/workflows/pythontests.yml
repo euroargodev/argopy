@@ -17,7 +17,7 @@ jobs:
       max-parallel: 12
       fail-fast: false
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.7, 3.8]
         os: [ubuntu-latest, macos-latest]
         experimental: [false]
 
