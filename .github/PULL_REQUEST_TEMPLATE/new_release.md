@@ -17,7 +17,7 @@ assignees: ''
 - [ ] Merge this PR to master
 
 # Publish release
-
+- [ ] Make sure that all [CI tests are passed](https://github.com/euroargodev/argopy/actions)
 - [ ] On the master branch, commit the release in git:
       ```git commit -a -m 'Release v0.X.Y'```
 - [ ] Tag the release:
