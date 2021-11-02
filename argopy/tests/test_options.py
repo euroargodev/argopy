@@ -60,3 +60,10 @@ def test_opt_api_timeout():
         argopy.set_options(api_timeout='toto')
     with pytest.raises(OptionValueError):
         argopy.set_options(api_timeout=-12)
+
+
+def test_trust_env():
+    with pytest.raises(ValueError):
+        argopy.set_options(trust_env='toto')
+    with pytest.raises(ValueError):
+        argopy.set_options(trust_env=0)

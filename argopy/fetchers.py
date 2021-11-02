@@ -88,14 +88,14 @@ class ArgoDataFetcher:
         self.Fetchers = {}
         self.valid_access_points = []
         for p in Fetchers.access_points:
-            if p == "wmo":  # Required for 'profile' and 'float'
-                self.Fetchers["profile"] = Fetchers.Fetch_wmo
-                self.valid_access_points.append("profile")
-                self.Fetchers["float"] = Fetchers.Fetch_wmo
-                self.valid_access_points.append("float")
             if p == "box":  # Required for 'region'
                 self.Fetchers["region"] = Fetchers.Fetch_box
                 self.valid_access_points.append("region")
+            if p == "wmo":  # Required for 'profile' and 'float'
+                self.Fetchers["float"] = Fetchers.Fetch_wmo
+                self.valid_access_points.append("float")
+                self.Fetchers["profile"] = Fetchers.Fetch_wmo
+                self.valid_access_points.append("profile")
 
         # Init sub-methods:
         self.fetcher = None
@@ -131,12 +131,16 @@ class ArgoDataFetcher:
                 )
             else:
                 summary.append("Backend: %s" % self._src)
-            summary.append("User mode: %s" % self._mode)
         else:
-            summary = ["<datafetcher> 'Not initialised'"]
-            summary.append("Current backend: %s" % self._src)
-            summary.append("Available fetchers: %s" % ", ".join(self.Fetchers.keys()))
-            summary.append("User mode: %s" % self._mode)
+            summary = ["<datafetcher.%s> 'No access point initialised'" % self._src]
+            summary.append("Available access points: %s" % ", ".join(self.Fetchers.keys()))
+            if "parallel" in self.fetcher_options:
+                summary.append("Backend: %s (parallel=%s)" % (self._src, str(self.fetcher_options["parallel"])))
+            else:
+                summary.append("Backend: %s" % self._src)
+
+        summary.append("User mode: %s" % self._mode)
+        summary.append("Dataset: %s" % self._dataset_id)
         return "\n".join(summary)
 
     def __empty_processor(self, xds):
@@ -466,8 +470,6 @@ class ArgoDataFetcher:
             ax: :class:`matplotlib.axes.Axes`
         """
         self.load()
-        if "institution" not in self.index:
-            self.to_index(full=True)
         if ptype in ["dac", "institution"]:
             if "institution" not in self.index:
                 self.to_index(full=True)
@@ -536,14 +538,14 @@ class ArgoIndexFetcher:
         self.Fetchers = {}
         self.valid_access_points = []
         for p in Fetchers.access_points:
-            if p == "wmo":  # Required for 'profile' and 'float'
-                self.Fetchers["profile"] = Fetchers.Fetch_wmo
-                self.valid_access_points.append("profile")
-                self.Fetchers["float"] = Fetchers.Fetch_wmo
-                self.valid_access_points.append("float")
             if p == "box":  # Required for 'region'
                 self.Fetchers["region"] = Fetchers.Fetch_box
                 self.valid_access_points.append("region")
+            if p == "wmo":  # Required for 'profile' and 'float'
+                self.Fetchers["float"] = Fetchers.Fetch_wmo
+                self.valid_access_points.append("float")
+                self.Fetchers["profile"] = Fetchers.Fetch_wmo
+                self.valid_access_points.append("profile")
 
         # Init sub-methods:
         self.fetcher = None
@@ -563,12 +565,13 @@ class ArgoIndexFetcher:
         if self.fetcher:
             summary = [self.fetcher.__repr__()]
             summary.append("Backend: %s" % self._src)
-            summary.append("User mode: %s" % self._mode)
         else:
-            summary = ["<indexfetcher> 'Not initialised'"]
-            summary.append("Current backend: %s" % self._src)
-            summary.append("Available fetchers: %s" % ", ".join(self.Fetchers.keys()))
-            summary.append("User mode: %s" % self._mode)
+            summary = ["<indexfetcher.%s> 'No access point initialised'" % self._src]
+            summary.append("Available access points: %s" % ", ".join(self.Fetchers.keys()))
+            summary.append("Backend: %s" % self._src)
+
+        summary.append("User mode: %s" % self._mode)
+        summary.append("Dataset: %s" % self._dataset_id)
         return "\n".join(summary)
 
     def __empty_processor(self, xds):

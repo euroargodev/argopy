@@ -20,7 +20,7 @@ But since this is a young library in active development, use direct install from
 pip install git+http://github.com/euroargodev/argopy.git@master
 ```
 
-The ``argopy`` library should work under all OS (Linux, Mac and Windows) and with python versions 3.6, 3.7 and 3.8.
+The ``argopy`` library is tested to work under most OS (Linux, Mac) and with python versions 3.7 and 3.8.
 
 ## Usage
 
@@ -28,89 +28,92 @@ The ``argopy`` library should work under all OS (Linux, Mac and Windows) and wit
 
 ### Fetching Argo Data
 
-Init the default data fetcher like:
+Import the data fetcher:
 ```python
 from argopy import DataFetcher as ArgoDataFetcher
-argo_loader = ArgoDataFetcher()
 ```
-and then, request data for a **specific space/time domain**:
+and then, set it up to request data for a **specific space/time domain**:
 ```python
-ds = argo_loader.region([-85,-45,10.,20.,0,10.]).to_xarray()
-ds = argo_loader.region([-85,-45,10.,20.,0,1000.,'2012-01','2012-12']).to_xarray()
+argo_loader = ArgoDataFetcher().region([-85,-45,10.,20.,0,10.])
+argo_loader = ArgoDataFetcher().region([-85,-45,10.,20.,0,1000.,'2012-01','2012-12'])
 ```
 for **profiles of a given float**: 
 ```python
-ds = argo_loader.profile(6902746, 34).to_xarray()
-ds = argo_loader.profile(6902746, np.arange(12,45)).to_xarray()
-ds = argo_loader.profile(6902746, [1,12]).to_xarray()
+argo_loader = ArgoDataFetcher().profile(6902746, 34)
+argo_loader = ArgoDataFetcher().profile(6902746, np.arange(12,45))
+argo_loader = ArgoDataFetcher().profile(6902746, [1,12])
 ```
 or for **one or a collection of floats**:
 ```python
-ds = argo_loader.float(6902746).to_xarray()
-ds = argo_loader.float([6902746, 6902747, 6902757, 6902766]).to_xarray()
+argo_loader = ArgoDataFetcher().float(6902746)
+argo_loader = ArgoDataFetcher().float([6902746, 6902747, 6902757, 6902766])
+```
+
+Once your fetcher is initialized you can trigger fetch/load data like this:
+```python
+ds = argo_loader.to_xarray()  # or:
+ds = argo_loader.load().data
 ```
 By default fetched data are returned in memory as [xarray.DataSet](http://xarray.pydata.org/en/stable/data-structures.html#dataset). 
 From there, it is easy to convert it to other formats like a [Pandas dataframe](https://pandas.pydata.org/pandas-docs/stable/getting_started/dsintro.html#dataframe):
 ```python
-ds = ArgoDataFetcher().profile(6902746, 34).to_xarray()
-df = ds.to_dataframe()
+df = ArgoDataFetcher().profile(6902746, 34).load().data.to_dataframe()
 ```
 
 or to export it to files:
 ```python
-ds = argo_loader.region([-85,-45,10.,20.,0,100.]).to_xarray()
+ds = ArgoDataFetcher().region([-85,-45,10.,20.,0,100.]).to_xarray()
 ds.to_netcdf('my_selection.nc')
 # or by profiles:
 ds.argo.point2profile().to_netcdf('my_selection.nc')
 ```
 
 
-### Argo Index Fetcher
-Index object is returned as a pandas dataframe.
+### Fetching only Argo index
+Argo index are returned as pandas dataframe. Index fetchers works similarly to data fetchers.
 
-Init the fetcher:
+Load the Argo index fetcher:
 ```python
     from argopy import IndexFetcher as ArgoIndexFetcher
+```
+then, set it up to request index for a **specific space/time domain**:
+```python
+    index_loader = ArgoIndexFetcher().region([-85,-45,10.,20.])
+    index_loader = ArgoIndexFetcher().region([-85,-45,10.,20.,'2012-01','2014-12'])
+```
+or for **one or a collection of floats**:
+```python
+    index_loader = ArgoIndexFetcher().float(6902746)
+    index_loader = ArgoIndexFetcher().float([6902746, 6902747, 6902757, 6902766])   
+```
+Once your fetcher is initialized you can trigger fetch/load index like this:
+```python
+    df = index_loader.to_dataframe()  # or
+    df = index_loader.load().index
+```
 
-    index_loader = ArgoIndexFetcher()
-    index_loader = ArgoIndexFetcher(src='erddap')    
-    #Local ftp backend 
-    #index_loader = ArgoIndexFetcher(src='localftp',path_ftp='/path/to/your/argo/ftp/',index_file='ar_index_global_prof.txt')
-```
-and then, set the index request index for a domain:
+Note that like the data fetcher, the index fetcher can use different sources, a local copy of the GDAC ftp for instance:
 ```python
-    idx=index_loader.region([-85,-45,10.,20.])
-    idx=index_loader.region([-85,-45,10.,20.,'2012-01','2014-12'])
+    index_fetcher = ArgoIndexFetcher(src='localftp', path_ftp='/path/to/your/argo/ftp/', index_file='ar_index_global_prof.txt')
 ```
-or for a collection of floats:
-```python
-    idx=index_loader.float(6902746)
-    idx=index_loader.float([6902746, 6902747, 6902757, 6902766])   
-```
-then you can see you index as a pandas dataframe or a xarray dataset :
-```python
-    idx.to_dataframe()
-    idx.to_xarray()
-```
-For plottings methods, you'll need `matplotlib`, `cartopy` and `seaborn` installed (they're not in requirements).  
-For plotting the map of your query :
+
+### Visualisation
+For plottings methods, you'll need `matplotlib` and possibly `cartopy` and `seaborn` installed.
+Argo Data and Index fetchers provide direct plotting methods, for instance:
 ```python    
-    idx.plot('trajectory')    
+    ArgoDataFetcher().float([6902745, 6902746]).plot('trajectory')    
 ```
-![index_traj](https://user-images.githubusercontent.com/17851004/78023937-d0c2d580-7357-11ea-9974-70a2aaf30590.png)
+![index_traj](https://github.com/euroargodev/argopy/raw/master/docs/_static/trajectory_sample.png)
 
-For plotting the distribution of DAC or profiler type of the indexed profiles :
-```python    
-    idx.plot('dac')    
-    idx.plot('profiler')`
-```
-![dac](https://user-images.githubusercontent.com/17851004/78024137-26977d80-7358-11ea-8557-ef39a88028b2.png)
-
+See the [documentation page for more examples](https://argopy.readthedocs.io/en/latest/visualisation.html).
 
 ## Development roadmap
 
 Our next big steps:
-- [ ] To provide Bio-geochemical variables
+- [ ] To provide Bio-geochemical variables ([#22](https://github.com/euroargodev/argopy/issues/22), [#77](https://github.com/euroargodev/argopy/issues/77), [#81](https://github.com/euroargodev/argopy/issues/81))
+- [ ] To develop expert methods related to Quality Control of the data with other python softwares like: 
+  - [ ] [pyowc](https://github.com/euroargodev/argodmqc_owc): [#33](https://github.com/euroargodev/argodmqc_owc/issues/33), [#53](https://github.com/euroargodev/argodmqc_owc/issues/53)
+  - [ ] [bgcArgoDMQC](https://github.com/ArgoCanada/bgcArgoDMQC): [#37](https://github.com/ArgoCanada/bgcArgoDMQC/issues/37)
 
 We aim to provide high level helper methods to load Argo data and meta-data from:
 - [x] Ifremer erddap
@@ -118,11 +121,9 @@ We aim to provide high level helper methods to load Argo data and meta-data from
 - [x] Index files (local and online)
 - [x] Argovis
 - [ ] Online GDAC ftp
-- [ ] any other useful access point to Argo data ?
 
 We also aim to provide high level helper methods to visualise and plot Argo data and meta-data:
 - [x] Map with trajectories
+- [x] Histograms for meta-data
 - [ ] Waterfall plots
 - [ ] T/S diagram
-- [ ] etc !
-
