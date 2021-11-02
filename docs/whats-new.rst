@@ -3,7 +3,7 @@
 What's New
 ==========
 
-v0.1.8 (21 Oct. 2021)
+v0.1.8 (2 Nov. 2021)
 ---------------------
 
 **Features and front-end API**
