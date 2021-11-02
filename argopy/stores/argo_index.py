@@ -72,7 +72,7 @@ class indexfilter_proto(ABC):
 
 
 class indexfilter_wmo(indexfilter_proto):
-    """ Index filter based on WMO and/or CYCLE_NUMER
+    """ Index filter based on WMO and/or CYCLE_NUMBER
 
     This is intended to be used by instances of an indexstore
 
