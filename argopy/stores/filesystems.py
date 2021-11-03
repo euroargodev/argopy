@@ -32,12 +32,6 @@ from abc import ABC, abstractmethod
 
 log = logging.getLogger("argopy.stores")
 
-try:
-    from tqdm import tqdm
-except ModuleNotFoundError:
-    log.debug("tqdm not found, argopy needs tqdm installed to display progress bars")
-    tqdm = lambda fct, lst: fct  # noqa: E731
-
 
 def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cachedir'], **kwargs):
     """ Create a new fsspec file system
@@ -483,7 +477,7 @@ class httpstore(argo_store_proto):
                     data = None
                     try:
                         data = future.result()
-                    except Exception as e:
+                    except Exception:
                         failed.append(future_to_url[future])
                         if errors == 'ignore':
                             log.debug("Ignored error with this url: %s" % strUrl(future_to_url[future]))
@@ -509,7 +503,7 @@ class httpstore(argo_store_proto):
                 data = None
                 try:
                     data = self._mfprocessor_dataset(url, preprocess=preprocess, *args, **kwargs)
-                except Exception as e:
+                except Exception:
                     failed.append(url)
                     if errors == 'ignore':
                         log.debug("Ignored error with this url: %s" % strUrl(url))  # See fsspec.http logger for more
@@ -646,7 +640,7 @@ class httpstore(argo_store_proto):
                     data = None
                     try:
                         data = future.result()
-                    except Exception as e:
+                    except Exception:
                         failed.append(future_to_url[future])
                         if errors == 'ignore':
                             log.debug("Ignored error with this url: %s" % strUrl(future_to_url[future]))
@@ -672,7 +666,7 @@ class httpstore(argo_store_proto):
                 data = None
                 try:
                     data = self._mfprocessor_json(url, preprocess=preprocess, *args, **kwargs)
-                except Exception as e:
+                except Exception:
                     failed.append(url)
                     if errors == 'ignore':
                         log.debug("Ignored error with this url: %s" % strUrl(url))

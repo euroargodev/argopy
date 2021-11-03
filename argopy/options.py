@@ -16,8 +16,11 @@ DATASET = "dataset"
 DATA_CACHE = "cachedir"
 USER_LEVEL = "mode"
 API_TIMEOUT = "api_timeout"
-TRUST_ENV = "trust_env"  # Get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if the parameter is True (False by default).
+
+# Get proxies information from HTTP_PROXY / HTTPS_PROXY environment
+# variables if the parameter is True (False by default).
 # Get proxy credentials from ~/.netrc file if present.
+TRUST_ENV = "trust_env"
 
 # Define the list of available options and default values:
 OPTIONS = {
@@ -40,11 +43,13 @@ _USER_LEVEL_LIST = frozenset(["standard", "expert"])
 def _positive_integer(value):
     return isinstance(value, int) and value > 0
 
+
 def validate_ftp(this_path):
     if this_path is not None:
         return check_localftp(this_path, errors='raise')
     else:
         return False
+
 
 _VALIDATORS = {
     DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
@@ -109,6 +114,7 @@ class set_options:
 
     def __exit__(self, type, value, traceback):
         self._apply_update(self.old)
+
 
 def check_localftp(path, errors: str = "ignore"):
     """ Check if the path has the expected GDAC ftp structure
