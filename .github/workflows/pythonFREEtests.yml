@@ -50,7 +50,7 @@ jobs:
           pytest -rfs -v -s --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2.1.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml
