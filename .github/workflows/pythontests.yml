@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    branches-ignore:
-      - 'dependabot*'
 
 jobs:
   unit-testing:
@@ -32,22 +29,26 @@ jobs:
           auto-update-conda: false
           python-version: ${{ matrix.python-version }}
           auto-activate-base: false
+        if: startsWith(github.head_ref, 'dependabot') == false
 
       - shell: bash -l {0}
         run: |
           conda info
           conda list
+        if: startsWith(github.head_ref, 'dependabot') == false
 
       - name: Lint with flake8
         shell: bash -l {0}
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        if: startsWith(github.head_ref, 'dependabot') == false
 
       - name: Test with pytest
         shell: bash -l {0}
         run: |
           pytest -rfs -v -s --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
+        if: startsWith(github.head_ref, 'dependabot') == false
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
@@ -57,3 +58,4 @@ jobs:
           flags: unittests
           name: codecov-github
           fail_ci_if_error: true
+        if: startsWith(github.head_ref, 'dependabot') == false
