@@ -10,6 +10,9 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
+    defaults:
+      run:
+        shell: bash -l {0}
     strategy:
       max-parallel: 12
       fail-fast: false
@@ -21,33 +24,65 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
+      - name: Set environment variables
+        run: |
+          if [[ ${{ matrix.os }} == windows* ]] ;
+          then
+            echo "CONDA_ENV_FILE=ci/requirements/environment-windows.yml" >> $GITHUB_ENV
+          else
+            echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-dev.yml" >> $GITHUB_ENV
+          fi
+          echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
+
+      - name: Cache conda
+        uses: actions/cache@v2
+        with:
+          path: ~/conda_pkgs_dir
+          key: ${{ runner.os }}-conda-py${{ matrix.python-version }}-${{
+            hashFiles('ci/requirements/**.yml') }}
+        if: startsWith(github.head_ref, 'dependabot') == false
+
       - name: Set up environment with py-${{ matrix.python-version }}
         uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: argopy-tests
-          environment-file: ci/requirements/py${{matrix.python-version}}-dev.yml
           auto-update-conda: false
           python-version: ${{ matrix.python-version }}
           auto-activate-base: false
         if: startsWith(github.head_ref, 'dependabot') == false
 
-      - shell: bash -l {0}
+      - name: Install conda dependencies
+        run: |
+          mamba env update -f $CONDA_ENV_FILE
+        if: startsWith(github.head_ref, 'dependabot') == false
+
+      - name: Install argopy
+        run: |
+          python -m pip install --no-deps -e .
+        if: startsWith(github.head_ref, 'dependabot') == false
+
+      - name: Version info
         run: |
           conda info
           conda list
         if: startsWith(github.head_ref, 'dependabot') == false
 
+      - name: Import argopy
+        run: |
+          python -c "import argopy"
+
       - name: Lint with flake8
-        shell: bash -l {0}
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         if: startsWith(github.head_ref, 'dependabot') == false
 
       - name: Test with pytest
-        shell: bash -l {0}
-        run: |
-          pytest -rfs -v -s --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
+        run: pytest -rfs -v -s
+          --cov=./
+          --cov-config=.coveragerc
+          --cov-report xml:cov.xml
+          --cov-report term-missing
         if: startsWith(github.head_ref, 'dependabot') == false
 
       - name: Upload coverage to Codecov
