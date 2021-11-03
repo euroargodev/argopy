@@ -2,7 +2,7 @@
 name: Prepare next release
 about: 'release'
 title: 'Prepare next release'
-labels: 'next-release'
+labels: 'release'
 assignees: ''
 ---
 

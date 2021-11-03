@@ -18,3 +18,4 @@ updates:
     # Labels on pull requests for version updates only
     labels:
       - "dependencies"
+      - "ignore-for-release"
