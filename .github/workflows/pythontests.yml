@@ -45,10 +45,13 @@ jobs:
       - name: Set up environment with py-${{ matrix.python-version }}
         uses: conda-incubator/setup-miniconda@v2
         with:
+          channels: conda-forge
+          mamba-version: "*"
           activate-environment: argopy-tests
           auto-update-conda: false
           python-version: ${{ matrix.python-version }}
           auto-activate-base: false
+          use-only-tar-bz2: true
         if: startsWith(github.head_ref, 'dependabot') == false
 
       - name: Install conda dependencies
