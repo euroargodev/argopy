@@ -24,3 +24,7 @@ updates:
     schedule:
       # Check for updates once a week
       interval: 'weekly'
+    labels:
+      - "github_actions"
+      - "dependencies"
+      - "ignore-for-release"
