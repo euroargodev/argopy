@@ -16,10 +16,6 @@ DATASET = "dataset"
 DATA_CACHE = "cachedir"
 USER_LEVEL = "mode"
 API_TIMEOUT = "api_timeout"
-
-# Get proxies information from HTTP_PROXY / HTTPS_PROXY environment
-# variables if the parameter is True (False by default).
-# Get proxy credentials from ~/.netrc file if present.
 TRUST_ENV = "trust_env"
 
 # Define the list of available options and default values:
@@ -79,6 +75,9 @@ class set_options:
             Default: `standard`. Possible values: `standard` or `expert`.
         - `api_timeout`: Define the time out of internet requests to web API, in seconds.
             Default: 60
+        - `trust_env`: Allow for local environment variables to be used by fsspec to connect to the internet. Get
+            proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True (False by
+            default). Also can get proxy credentials from ~/.netrc file if present.
 
     You can use `set_options` either as a context manager:
     >>> import argopy
@@ -97,16 +96,12 @@ class set_options:
                     "argument name %r is not in the set of valid options %r"
                     % (k, set(OPTIONS))
                 )
-
             if k in _VALIDATORS and not _VALIDATORS[k](v):
                 raise OptionValueError(f"option {k!r} given an invalid value: {v!r}")
             self.old[k] = OPTIONS[k]
         self._apply_update(kwargs)
 
     def _apply_update(self, options_dict):
-        # for k, v in options_dict.items():
-        #     if k in _SETTERS:
-        #         _SETTERS[k](v)
         OPTIONS.update(options_dict)
 
     def __enter__(self):
