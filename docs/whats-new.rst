@@ -3,6 +3,14 @@
 What's New
 ==========
 
+v0.1.9 (X XXX. 202X)
+---------------------
+
+**Features and front-end API**
+
+- New methods to preprocessed data for OWC software. These methods can preprocessed Argo data in python and possibly create
+float_source/<WMO>.mat files to be used as inputs for OWC implementations in `Matlab <https://github.com/ArgoDMQC/matlab_owc>`_ and `Python <https://github.com/euroargodev/argodmqc_owc>`_.
+
 v0.1.8 (2 Nov. 2021)
 ---------------------
 
