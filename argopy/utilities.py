@@ -648,10 +648,11 @@ def fetch_status(stdout: str = "html", insert: bool = True):
         if getattr(mod, "api_server_check", None):
             # status = isconnected(mod.api_server_check)
             status = isAPIconnected(api)
-            # message = "up" if status else "down"
-            message = "ok" if status else "offline"
             if api=='localftp' and OPTIONS['local_ftp'] == '-':
                 message = "ok" if status else "path undefined !"
+            else:
+                # message = "up" if status else "down"
+                message = "ok" if status else "offline"
             results[api] = {"value": status, "message": message}
 
     if "IPython" in sys.modules and stdout == "html":
