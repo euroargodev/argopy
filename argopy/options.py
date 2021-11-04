@@ -8,6 +8,11 @@ import os
 import numpy as np
 from argopy.errors import OptionValueError, FtpPathError
 import warnings
+import logging
+
+
+# Define a logger
+log = logging.getLogger("argopy.options")
 
 # Define option names as seen by users:
 DATA_SOURCE = "src"
@@ -21,7 +26,7 @@ TRUST_ENV = "trust_env"
 # Define the list of available options and default values:
 OPTIONS = {
     DATA_SOURCE: "erddap",
-    LOCAL_FTP: None,
+    LOCAL_FTP: "-",  # No default value
     DATASET: "phy",
     DATA_CACHE: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
     USER_LEVEL: "standard",
@@ -41,9 +46,10 @@ def _positive_integer(value):
 
 
 def validate_ftp(this_path):
-    if this_path is not None:
+    if this_path != "-":
         return check_localftp(this_path, errors='raise')
     else:
+        log.debug("OPTIONS['%s'] is not defined" % LOCAL_FTP)
         return False
 
 

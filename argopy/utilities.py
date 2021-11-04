@@ -650,6 +650,8 @@ def fetch_status(stdout: str = "html", insert: bool = True):
             status = isAPIconnected(api)
             # message = "up" if status else "down"
             message = "ok" if status else "offline"
+            if api=='localftp' and OPTIONS['local_ftp'] == '-':
+                message = "ok" if status else "path undefined !"
             results[api] = {"value": status, "message": message}
 
     if "IPython" in sys.modules and stdout == "html":
