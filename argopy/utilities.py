@@ -1254,6 +1254,11 @@ def is_list_of_datasets(lst):
     return all(isinstance(x, xr.Dataset) for x in lst)
 
 
+def is_list_equal(lst1, lst2):
+    """ Return true if 2 lists contain same elements"""
+    return len(lst1) == len(lst2) and len(lst1) == sum([1 for i, j in zip(lst1, lst2) if i == j])
+
+
 def check_wmo(lst):
     """ Check a WMO option and returned it as a list of integers
 

@@ -109,21 +109,4 @@ See the [documentation page for more examples](https://argopy.readthedocs.io/en/
 
 ## Development roadmap
 
-Our next big steps:
-- [ ] To provide Bio-geochemical variables ([#22](https://github.com/euroargodev/argopy/issues/22), [#77](https://github.com/euroargodev/argopy/issues/77), [#81](https://github.com/euroargodev/argopy/issues/81))
-- [ ] To develop expert methods related to Quality Control of the data with other python softwares like: 
-  - [ ] [pyowc](https://github.com/euroargodev/argodmqc_owc): [#33](https://github.com/euroargodev/argodmqc_owc/issues/33), [#53](https://github.com/euroargodev/argodmqc_owc/issues/53)
-  - [ ] [bgcArgoDMQC](https://github.com/ArgoCanada/bgcArgoDMQC): [#37](https://github.com/ArgoCanada/bgcArgoDMQC/issues/37)
-
-We aim to provide high level helper methods to load Argo data and meta-data from:
-- [x] Ifremer erddap
-- [x] local copy of the GDAC ftp folder
-- [x] Index files (local and online)
-- [x] Argovis
-- [ ] Online GDAC ftp
-
-We also aim to provide high level helper methods to visualise and plot Argo data and meta-data:
-- [x] Map with trajectories
-- [x] Histograms for meta-data
-- [ ] Waterfall plots
-- [ ] T/S diagram
+See milestone here: https://github.com/euroargodev/argopy/milestone/3

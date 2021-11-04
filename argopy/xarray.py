@@ -13,7 +13,7 @@ try:
 except ModuleNotFoundError:
     with_gsw = False
 
-from argopy.utilities import linear_interpolation_remap
+from argopy.utilities import linear_interpolation_remap, is_list_equal
 from argopy.errors import InvalidDatasetStructure
 
 
@@ -850,11 +850,12 @@ class ArgoAccessor:
         if not with_gsw:
             raise ModuleNotFoundError("This functionality requires the gsw library")
 
-        allowed = ['SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP', 'SOUND_SPEED']
+        allowed = ['SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP', 'SOUND_SPEED', 'CNDC']
         if any(var not in allowed for var in vlist):
             raise ValueError(f"vlist must be a subset of {allowed}, instead found {vlist}")
 
-        warnings.warn("Default variables will be reduced to 'SA' and 'CT' in 0.1.9", category=FutureWarning)
+        if is_list_equal(vlist, ["SA", "CT", "SIG0", "N2", "PV", "PTEMP"]):
+            warnings.warn("Default variables will be reduced to 'SA' and 'CT' in 0.1.9", category=FutureWarning)
 
         this = self._obj
 
@@ -886,6 +887,10 @@ class ArgoAccessor:
         # Potential density referenced to surface
         if "SIG0" in vlist:
             sig0 = gsw.sigma0(sa, ct)
+
+        # Electrical conductivity
+        if "CNDC" in vlist:
+            cndc = gsw.C_from_SP(psal, temp, pres)
 
         # N2
         if "N2" in vlist or "PV" in vlist:
@@ -930,6 +935,13 @@ class ArgoAccessor:
             SIG0.attrs['standard_name'] = 'sea_water_sigma_theta'
             SIG0.attrs['unit'] = 'kg/m^3'
             that.append(SIG0)
+
+        if 'CNDC' in vlist:
+            CNDC = xr.DataArray(cndc, coords=this['TEMP'].coords, name='CNDC')
+            CNDC.attrs['long_name'] = 'Electrical Conductivity'
+            CNDC.attrs['standard_name'] = 'sea_water_electrical_conductivity'
+            CNDC.attrs['unit'] = 'mS/cm'
+            that.append(CNDC)
 
         if 'N2' in vlist:
             N2 = xr.DataArray(n2, coords=this['TEMP'].coords, name='N2')
