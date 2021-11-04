@@ -8,6 +8,11 @@ import os
 import numpy as np
 from argopy.errors import OptionValueError, FtpPathError
 import warnings
+import logging
+
+
+# Define a logger
+log = logging.getLogger("argopy.options")
 
 # Define option names as seen by users:
 DATA_SOURCE = "src"
@@ -16,16 +21,12 @@ DATASET = "dataset"
 DATA_CACHE = "cachedir"
 USER_LEVEL = "mode"
 API_TIMEOUT = "api_timeout"
-
-# Get proxies information from HTTP_PROXY / HTTPS_PROXY environment
-# variables if the parameter is True (False by default).
-# Get proxy credentials from ~/.netrc file if present.
 TRUST_ENV = "trust_env"
 
 # Define the list of available options and default values:
 OPTIONS = {
     DATA_SOURCE: "erddap",
-    LOCAL_FTP: None,
+    LOCAL_FTP: "-",  # No default value
     DATASET: "phy",
     DATA_CACHE: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
     USER_LEVEL: "standard",
@@ -45,9 +46,10 @@ def _positive_integer(value):
 
 
 def validate_ftp(this_path):
-    if this_path is not None:
+    if this_path != "-":
         return check_localftp(this_path, errors='raise')
     else:
+        log.debug("OPTIONS['%s'] is not defined" % LOCAL_FTP)
         return False
 
 
@@ -79,6 +81,9 @@ class set_options:
             Default: `standard`. Possible values: `standard` or `expert`.
         - `api_timeout`: Define the time out of internet requests to web API, in seconds.
             Default: 60
+        - `trust_env`: Allow for local environment variables to be used by fsspec to connect to the internet. Get
+            proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True (False by
+            default). Also can get proxy credentials from ~/.netrc file if present.
 
     You can use `set_options` either as a context manager:
     >>> import argopy
@@ -97,16 +102,12 @@ class set_options:
                     "argument name %r is not in the set of valid options %r"
                     % (k, set(OPTIONS))
                 )
-
             if k in _VALIDATORS and not _VALIDATORS[k](v):
                 raise OptionValueError(f"option {k!r} given an invalid value: {v!r}")
             self.old[k] = OPTIONS[k]
         self._apply_update(kwargs)
 
     def _apply_update(self, options_dict):
-        # for k, v in options_dict.items():
-        #     if k in _SETTERS:
-        #         _SETTERS[k](v)
         OPTIONS.update(options_dict)
 
     def __enter__(self):

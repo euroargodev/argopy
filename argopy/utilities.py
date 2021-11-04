@@ -12,6 +12,7 @@ import warnings
 import urllib
 import json
 import collections
+import copy
 from functools import reduce
 from packaging import version
 
@@ -96,11 +97,11 @@ def mapp_dict(Adictionnary, Avalue):
 
 def list_available_data_src():
     """ List all available data sources """
-    AVAILABLE_SOURCES = {}
+    sources = {}
     try:
         from .data_fetchers import erddap_data as Erddap_Fetchers
 
-        AVAILABLE_SOURCES["erddap"] = Erddap_Fetchers
+        sources["erddap"] = Erddap_Fetchers
     except Exception:
         warnings.warn(
             "An error occurred while loading the ERDDAP data fetcher, "
@@ -112,7 +113,7 @@ def list_available_data_src():
     try:
         from .data_fetchers import localftp_data as LocalFTP_Fetchers
 
-        AVAILABLE_SOURCES["localftp"] = LocalFTP_Fetchers
+        sources["localftp"] = LocalFTP_Fetchers
     except Exception:
         warnings.warn(
             "An error occurred while loading the local FTP data fetcher, "
@@ -124,7 +125,7 @@ def list_available_data_src():
     try:
         from .data_fetchers import argovis_data as ArgoVis_Fetchers
 
-        AVAILABLE_SOURCES["argovis"] = ArgoVis_Fetchers
+        sources["argovis"] = ArgoVis_Fetchers
     except Exception:
         warnings.warn(
             "An error occurred while loading the ArgoVis data fetcher, "
@@ -133,7 +134,8 @@ def list_available_data_src():
         )
         pass
 
-    return AVAILABLE_SOURCES
+    # return dict(sorted(sources.items()))
+    return sources
 
 
 def list_available_index_src():
@@ -510,8 +512,9 @@ def show_options(file=sys.stdout):  # noqa: C901
     """
     print("\nARGOPY OPTIONS", file=file)
     print("--------------", file=file)
-
-    for k, v in OPTIONS.items():
+    opts = copy.deepcopy(OPTIONS)
+    opts = dict(sorted(opts.items()))
+    for k, v in opts.items():
         print(f"{k}: {v}", file=file)
 
 
@@ -554,26 +557,19 @@ def isAPIconnected(src="erddap", data=True):
         bool
     """
     if data:
-        AVAILABLE_SOURCES = list_available_data_src()
+        list_src = list_available_data_src()
     else:
-        AVAILABLE_SOURCES = list_available_index_src()
-    if src in AVAILABLE_SOURCES and getattr(
-        AVAILABLE_SOURCES[src], "api_server_check", None
+        list_src = list_available_index_src()
+
+    if src in list_src and getattr(
+        list_src[src], "api_server_check", None
     ):
         if "localftp" in src:
-            # This is a special case because the source here is a local folder, and the folder validity is checked
-            # when setting the option value of 'local_ftp'
-            # So here, we just need to catch the appropriate error after a call to set_option
-            # opts = {"src": src, "local_ftp": OPTIONS["local_ftp"]}
-            # try:
-            #     set_options(**opts)
-            #     return True
-            # except OptionValueError:
-            #     return False
-            return check_localftp(OPTIONS["local_ftp"])
+            # This is a special case because the source here is a local folder
+            result = check_localftp(OPTIONS["local_ftp"])
         else:
-            with set_options(src=src):
-                return isconnected(AVAILABLE_SOURCES[src].api_server_check)
+            result = isconnected(list_src[src].api_server_check)
+        return result
     else:
         raise InvalidFetcher
 
@@ -632,15 +628,31 @@ def badge(label="label", message="message", color="green", insert=False):
         return Image(url=img)
 
 
-def fetch_status(stdout="html", insert=True):
-    """ Fetch and report web API status """
+def fetch_status(stdout: str = "html", insert: bool = True):
+    """ Fetch and report web API status
+
+    Parameters
+    ----------
+    stdout: str
+        Format of the results, default is 'html'. Otherwise a simple string.
+    insert: bool
+        Print or display results directly in stdout format.
+
+    Returns
+    -------
+    IPython.display.HTML or str
+    """
     results = {}
-    for api, mod in list_available_data_src().items():
+    list_src = list_available_data_src()
+    for api, mod in list_src.items():
         if getattr(mod, "api_server_check", None):
             # status = isconnected(mod.api_server_check)
             status = isAPIconnected(api)
-            # message = "up" if status else "down"
-            message = "ok" if status else "offline"
+            if api=='localftp' and OPTIONS['local_ftp'] == '-':
+                message = "ok" if status else "path undefined !"
+            else:
+                # message = "up" if status else "down"
+                message = "ok" if status else "offline"
             results[api] = {"value": status, "message": message}
 
     if "IPython" in sys.modules and stdout == "html":
