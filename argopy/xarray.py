@@ -1048,16 +1048,20 @@ class ArgoAccessor:
         By default: this filter will return a dataset with raw PRES, PSAL and TEMP; and if PRES is adjusted,
         PRES variable will be replaced by PRES_ADJUSTED.
 
-        With option force='raw', you can force the filter to return a dataset with raw PRES, PSAL and TEMP wether PRES is adjusted or not.
+        With option force='raw', you can force the filter to return a dataset with raw PRES, PSAL and TEMP wether
+        PRES is adjusted or not.
 
-        With option force='adjusted', you can force the filter to return a dataset where PRES/PSAL and TEMP replaced with adjusted variables: PRES_ADJUSTED, PSAL_ADJUSTED, TEMP_ADJUSTED.
+        With option force='adjusted', you can force the filter to return a dataset where PRES/PSAL and TEMP replaced
+        with adjusted variables: PRES_ADJUSTED, PSAL_ADJUSTED, TEMP_ADJUSTED.
 
-        Since ADJUSTED variables are not required anymore after the filter, all *ADJUSTED* variables are dropped in order to avoid confusion wrt variable content.
+        Since ADJUSTED variables are not required anymore after the filter, all *ADJUSTED* variables are dropped in
+        order to avoid confusion wrt variable content.
 
         Parameters
         ----------
         force: str
-            Use force='default' to load PRES/PSAL/TEMP or PRES_ADJUSTED/PSAL/TEMP according to PRES_ADJUSTED filled or not.
+            Use force='default' to load PRES/PSAL/TEMP or PRES_ADJUSTED/PSAL/TEMP according to PRES_ADJUSTED
+            filled or not.
             Use force='raw' to force load of PRES/PSAL/TEMP
             Use force='adjusted' to force load of PRES_ADJUSTED/PSAL_ADJUSTED/TEMP_ADJUSTED
         inplace: boolean, True by default
@@ -1096,7 +1100,8 @@ class ArgoAccessor:
             # All ADJUSTED variables are removed (not required anymore, avoid confusion with variable content):
             this = this.drop_vars([v for v in this.data_vars if "ADJUSTED" in v])
         else:
-            # In default mode, we just need to do something if PRES_ADJUSTED is different from PRES, meaning pressure was adjusted:
+            # In default mode, we just need to do something if PRES_ADJUSTED is different from PRES, meaning
+            # pressure was adjusted:
             if np.any(this['PRES_ADJUSTED'] == this['PRES']):  # Yes
                 # We need to recompute salinity with adjusted pressur, so
                 # Compute raw conductivity from raw salinity and raw pressure:
@@ -1132,7 +1137,8 @@ class ArgoAccessor:
         """ Subsample dataset along pressure levels
 
         Select vertical levels to keep max 1 level every 10db, starting from the surface (0db)
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L208
+        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/
+        # ow_source/create_float_source.m#L208
 
         You can check the outcome of this filter by comparing the following figures:
         plt.hist(ds['PRES'], bins=np.arange(0,100,1))
@@ -1200,10 +1206,12 @@ class ArgoAccessor:
                 DATES (1xn, in decimal year, e.g. 10 Dec 2000 = 2000.939726)
                 LAT   (1xn, in decimal degrees, -ve means south of the equator, e.g. 20.5S = -20.5)
                 LONG  (1xn, in decimal degrees, from 0 to 360, e.g. 98.5W in the eastern Pacific = 261.5E)
-                PRES  (mxn, dbar, from shallow to deep, e.g. 10, 20, 30 ... These have to line up aLONG a fixed nominal depth axis.)
+                PRES  (mxn, dbar, from shallow to deep, e.g. 10, 20, 30 ... These have to line up along a fixed
+                        nominal depth axis.)
                 TEMP  (mxn, in-situ IPTS-90)
                 SAL   (mxn, PSS-78)
-                PTMP  (mxn, potential temperature referenced to zero pressure, use SAL in PSS-78 and in-situ TEMP in IPTS-90 for calculation, e.g. sw_ptmp.m)
+                PTMP  (mxn, potential temperature referenced to zero pressure, use SAL in PSS-78 and in-situ TEMP
+                        in IPTS-90 for calculation, e.g. sw_ptmp.m)
                 PROFILE_NO (1xn, this goes from 1 to n. PROFILE_NO is the same as CYCLE_NO in the Argo files.)
 
         Parameters
@@ -1240,11 +1248,13 @@ class ArgoAccessor:
                                    drop=True)  # Matlab says to keep != 4
         if len(this['N_POINTS']) == 0:
             raise DataNotFound(
-                'All data have been discarded because either PSAL_QC or TEMP_QC is filled with 4 or PRES_QC is filled with 3 or 4\n'
+                'All data have been discarded because either PSAL_QC or TEMP_QC is filled with 4 or'
+                ' PRES_QC is filled with 3 or 4\n'
                 'NO SOURCE FILE WILL BE GENERATED !!!')
 
         # Exclude dummies
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L427
+        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/
+        # ow_source/create_float_source.m#L427
         this = this.where(this['PSAL'] <= 50, drop=True).where(this['PSAL'] >= 0, drop=True) \
             .where(this['PTEMP'] <= 50, drop=True).where(this['PTEMP'] >= -10, drop=True) \
             .where(this['PRES'] <= 6000, drop=True).where(this['PRES'] >= 0, drop=True)
@@ -1257,21 +1267,25 @@ class ArgoAccessor:
         this = this.argo.point2profile()
 
         # Only use Ascending profiles:
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L143
+        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/
+        # ow_source/create_float_source.m#L143
         this = this.where(this['DIRECTION'] == 'A', drop=True)
 
         # Todo: ensure we load only the primary profile of cycles with multiple sampling schemes:
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L194
+        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/
+        # ow_source/create_float_source.m#L194
 
         # Subsample vertical levels (max 1 level every 10db):
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L208
+        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/
+        # ow_source/create_float_source.m#L208
         this.argo.subsample_pressure()
 
         # Compute fractional year:
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L334
+        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/
+        # ow_source/create_float_source.m#L334
         DATES = np.array([toYearFraction(d) for d in pd.to_datetime(this['TIME'].values)])[np.newaxis, :]
 
-        ## Read measurements:
+        # Read measurements:
         PRES = this['PRES'].values.T  # (mxn)
         TEMP = this['TEMP'].values.T  # (mxn)
         PTMP = this['PTEMP'].values.T  # (mxn)
@@ -1280,7 +1294,7 @@ class ArgoAccessor:
         LONG = wrap_longitude(this['LONGITUDE'].values)[np.newaxis, :]
         PROFILE_NO = this['CYCLE_NUMBER'].values[np.newaxis, :]
 
-        ## Create dataset with preprocessed data:
+        # Create dataset with preprocessed data:
         this_dsp_processed = xr.DataArray(PRES, dims=['m', 'n'], coords={'m': np.arange(0, PRES.shape[0]),
                                                                          'n': np.arange(0, PRES.shape[1])},
                                           name='PRES').to_dataset(promote_attrs=False)
@@ -1305,7 +1319,7 @@ class ArgoAccessor:
         this_dsp_processed['m'].attrs = {'long_name': 'vertical levels'}
         this_dsp_processed['n'].attrs = {'long_name': 'profiles'}
 
-        ## Create Matlab dictionnary with preprocessed data (to be used by savemat):
+        # Create Matlab dictionnary with preprocessed data (to be used by savemat):
         mdata = {}
         mdata['PROFILE_NO'] = PROFILE_NO.astype('uint8')
         mdata['DATES'] = DATES
