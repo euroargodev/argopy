@@ -13,7 +13,7 @@ try:
 except ModuleNotFoundError:
     with_gsw = False
 
-from argopy.utilities import linear_interpolation_remap, is_list_equal
+from argopy.utilities import linear_interpolation_remap, is_list_equal, is_list_of_strings
 from argopy.errors import InvalidDatasetStructure
 
 
@@ -238,10 +238,13 @@ class ArgoAccessor:
     def filter_data_mode(self, keep_error: bool = True, errors: str = "raise"):  # noqa: C901
         """ Filter variables according to their data mode
 
-            This applies to <PARAM> and <PARAM_QC>
+        This filter applies to <PARAM> and <PARAM_QC>
 
-            For data mode 'R' and 'A': keep <PARAM> (eg: 'PRES', 'TEMP' and 'PSAL')
-            For data mode 'D': keep <PARAM_ADJUSTED> (eg: 'PRES_ADJUSTED', 'TEMP_ADJUSTED' and 'PSAL_ADJUSTED')
+        For data mode 'R' and 'A': keep <PARAM> (eg: 'PRES', 'TEMP' and 'PSAL')
+        For data mode 'D': keep <PARAM_ADJUSTED> (eg: 'PRES_ADJUSTED', 'TEMP_ADJUSTED' and 'PSAL_ADJUSTED')
+
+        Since ADJUSTED variables are not required anymore after the filter, all *ADJUSTED* variables are dropped in
+        order to avoid confusion wrt variable content. DATA_MODE is preserved for the record.
 
         Parameters
         ----------
@@ -430,13 +433,31 @@ class ArgoAccessor:
 
         return final
 
-    def filter_qc(self, QC_list=[1, 2], drop=True, mode="all", mask=False):  # noqa: C901
+    def filter_qc(self, QC_list=[1, 2], QC_fields='all', drop=True, mode="all", mask=False):  # noqa: C901
         """ Filter data set according to QC values
 
-            Mask the dataset for points where 'all' or 'any' of the QC fields has a value in the list of
+            Filter the dataset for points where 'all' or 'any' of the QC fields has a value in the list of
             integer QC flags.
 
             This method can return the filtered dataset or the filter mask.
+
+        Parameters
+        ----------
+        QC_list: list(int)
+            List of QC flag values (integers) to keep
+        QC_fields: 'all' or list(str)
+            List of QC fields to consider to apply the filter. By default we use all available QC fields
+        drop: bool
+            Drop values not matching the QC filter, default is True
+        mode: str
+            Must be 'all' (default) or 'any'. Boolean operator on QC values: should we keep points
+            matching 'all' QC fields or 'any' one of them.
+        mask: bool
+            'False' by default. Determine if we should return the QC mask or the filtered dataset.
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
         """
         if self._type != "point":
             raise InvalidDatasetStructure(
@@ -446,13 +467,28 @@ class ArgoAccessor:
         if mode not in ["all", "any"]:
             raise ValueError("Mode must 'all' or 'any'")
 
+        # Make sure we deal with a list
+        if not isinstance(QC_list, list):
+            if isinstance(QC_list, np.ndarray):
+                QC_list = list(QC_list)
+            else:
+                QC_list = [QC_list]
+
         this = self._obj
 
         # Extract QC fields:
-        QC_fields = []
-        for v in this.data_vars:
-            if "QC" in v and "PROFILE" not in v:
-                QC_fields.append(v)
+        if isinstance(QC_fields, str) and QC_fields == 'all':
+            QC_fields = []
+            for v in this.data_vars:
+                if "QC" in v and "PROFILE" not in v:
+                    QC_fields.append(v)
+        elif is_list_of_strings(QC_fields):
+            for v in QC_fields:
+                if v not in this.data_vars:
+                    raise ValueError("%s not found in this dataset while trying to apply QC filter" % v)
+        else:
+            raise ValueError("Invalid content for parameter 'QC_fields'. Use 'all' or a list of strings")
+
         QC_fields = this[QC_fields]
         for v in QC_fields.data_vars:
             QC_fields[v] = QC_fields[v].astype(int)
