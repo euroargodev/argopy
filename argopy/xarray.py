@@ -1041,11 +1041,85 @@ class ArgoAccessor:
             else:
                 return that
 
-    # @property
-    # def plot(self):
-    #     """Access plotting functions"""
-    #     # Create a mutable instance on 1st call so that later changes will be reflected in future calls
-    #     # https://stackoverflow.com/a/8140747
-    #     if "plot" not in self._register:
-    #         self._register["plot"] = [_PlotMethods(self)]
-    #     return self._register["plot"][0]
+    def filter_scalib_pres(self, force: str = 'default', inplace: bool = True):
+        """ Filter variables according to OWC salinity calibration software requirements
+
+        By default: this filter will return a dataset with raw PRES, PSAL and TEMP; and if PRES is adjusted,
+        PRES variable will be replaced by PRES_ADJUSTED.
+
+        With option force='raw', you can force the filter to return a dataset with raw PRES, PSAL and TEMP wether PRES is adjusted or not.
+
+        With option force='adjusted', you can force the filter to return a dataset where PRES/PSAL and TEMP replaced with adjusted variables: PRES_ADJUSTED, PSAL_ADJUSTED, TEMP_ADJUSTED.
+
+        Since ADJUSTED variables are not required anymore after the filter, all *ADJUSTED* variables are dropped in order to avoid confusion wrt variable content.
+
+        Parameters
+        ----------
+        force: str
+            Use force='default' to load PRES/PSAL/TEMP or PRES_ADJUSTED/PSAL/TEMP according to PRES_ADJUSTED filled or not.
+            Use force='raw' to force load of PRES/PSAL/TEMP
+            Use force='adjusted' to force load of PRES_ADJUSTED/PSAL_ADJUSTED/TEMP_ADJUSTED
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+        """
+        if not with_gsw:
+            raise ModuleNotFoundError("This functionality requires the gsw library")
+
+        this = self._obj
+
+        # Will work with a collection of points
+        to_profile = False
+        if this.argo._type == "profile":
+            to_profile = True
+            this = this.argo.profile2point()
+
+        if force == 'raw':
+            # PRES/PSAL/TEMP are not changed
+            # All ADJUSTED variables are removed (not required anymore, avoid confusion with variable content):
+            this = this.drop_vars([v for v in this.data_vars if "ADJUSTED" in v])
+        elif force == 'adjusted':
+            # PRES/PSAL/TEMP are replaced by PRES_ADJUSTED/PSAL_ADJUSTED/TEMP_ADJUSTED
+            for v in ["PRES", "PSAL", "TEMP"]:
+                if "%s_ADJUSTED" % v in this.data_vars:
+                    this[v] = this["%s_ADJUSTED" % v]
+                    this["%s_ERROR" % v] = this["%s_ADJUSTED_ERROR" % v]
+                    this["%s_QC" % v] = this["%s_ADJUSTED_QC" % v]
+                else:
+                    raise InvalidDatasetStructure(
+                        "%s_ADJUSTED not in this dataset. Tip: fetch data in 'expert' mode" % v)
+            # All ADJUSTED variables are removed (not required anymore, avoid confusion with variable content):
+            this = this.drop_vars([v for v in this.data_vars if "ADJUSTED" in v])
+        else:
+            # In default mode, we just need to do something if PRES_ADJUSTED is different from PRES, meaning pressure was adjusted:
+            if np.any(this['PRES_ADJUSTED'] == this['PRES']):  # Yes
+                # We need to recompute salinity with adjusted pressur, so
+                # Compute raw conductivity from raw salinity and raw pressure:
+                cndc = gsw.C_from_SP(this['PSAL'].values,
+                                     this['TEMP'].values,
+                                     this['PRES'].values)
+                # Then recompute salinity with adjusted pressure:
+                sp = gsw.SP_from_C(cndc,
+                                   this['TEMP'].values,
+                                   this['PRES_ADJUSTED'].values)
+                # Now fill in filtered variables (no need to change TEMP):
+                this['PRES'] = this['PRES_ADJUSTED']
+                this['PRES_QC'] = this['PRES_ADJUSTED_QC']
+                this['PSAL'].values = sp
+
+            # Finally drop everything not required anymore:
+            this = this.drop_vars([v for v in this.data_vars if "ADJUSTED" in v])
+
+        # Manage output:
+        this.argo._add_history("Variables filtered according to OWC methodology")
+        this = this[np.sort(this.data_vars)]
+        if to_profile:
+            this = this.argo.point2profile()
+
+        # Manage output:
+        if inplace:
+            self._obj = this
+            return self._obj
+        else:
+            return this
