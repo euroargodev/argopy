@@ -74,6 +74,7 @@ jobs:
       - name: Import argopy
         run: |
           python -c "import argopy"
+        if: startsWith(github.head_ref, 'dependabot') == false
 
       - name: Lint with flake8
         run: |
