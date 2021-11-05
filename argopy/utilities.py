@@ -1402,3 +1402,60 @@ def modified_environ(*remove, **update):
     finally:
         env.update(update_after)
         [env.pop(k) for k in remove_after]
+
+
+def toYearFraction(date: pd._libs.tslibs.timestamps.Timestamp = pd.to_datetime('now')):
+    """ Compute decimal year
+
+    See discussion here: https://github.com/euroargodev/argodmqc_owc/issues/35
+    """
+    from datetime import datetime as dt
+    import time
+
+    def sinceEpoch(date):  # returns seconds since epoch
+        return time.mktime(date.timetuple())
+
+    s = sinceEpoch
+
+    year = date.year
+    startOfThisYear = dt(year=year, month=1, day=1)
+    startOfNextYear = dt(year=year + 1, month=1, day=1)
+
+    yearElapsed = s(date) - s(startOfThisYear)
+    yearDuration = s(startOfNextYear) - s(startOfThisYear)
+    fraction = yearElapsed / yearDuration
+
+    return date.year + fraction
+
+
+def wrap_longitude(grid_long):
+    """ Allows longitude (0-360) to wrap beyond the 360 mark, for mapping purposes.
+        Makes sure that, if the longitude is near the boundary (0 or 360) that we
+        wrap the values beyond
+        360 so it appears nicely on a map
+        This is a refactor between get_region_data and get_region_hist_locations to
+        avoid duplicate code
+
+        source: https://github.com/euroargodev/argodmqc_owc/blob/e174f4538fdae1534c9740491398972b1ffec3ca/pyowc/utilities.py#L80
+
+        Parameters
+        ----------
+        grid_long: array of longitude values
+
+        Returns
+        -------
+        array of longitude values that can extend past 360
+    """
+
+    neg_long = np.argwhere(grid_long < 0)
+    grid_long[neg_long] = grid_long[neg_long] + 360
+
+    # if we have data close to upper boundary (360), then wrap some of the data round
+    # so it appears on the map
+    top_long = np.argwhere(grid_long >= 320)
+    if top_long.__len__() != 0:
+        bottom_long = np.argwhere(grid_long <= 40)
+        grid_long[bottom_long] = 360 + grid_long[bottom_long]
+
+    return grid_long
+

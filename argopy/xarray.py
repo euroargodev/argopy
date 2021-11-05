@@ -13,7 +13,8 @@ try:
 except ModuleNotFoundError:
     with_gsw = False
 
-from argopy.utilities import linear_interpolation_remap, is_list_equal, is_list_of_strings
+from argopy.utilities import linear_interpolation_remap, \
+    is_list_equal, is_list_of_strings, toYearFraction, wrap_longitude
 from argopy.errors import InvalidDatasetStructure
 
 
@@ -1059,6 +1060,9 @@ class ArgoAccessor:
             Use force='default' to load PRES/PSAL/TEMP or PRES_ADJUSTED/PSAL/TEMP according to PRES_ADJUSTED filled or not.
             Use force='raw' to force load of PRES/PSAL/TEMP
             Use force='adjusted' to force load of PRES_ADJUSTED/PSAL_ADJUSTED/TEMP_ADJUSTED
+        inplace: boolean, True by default
+            If True, return the filtered input :class:`xarray.Dataset`
+            If False, return a new :class:`xarray.Dataset`
 
         Returns
         -------
@@ -1123,3 +1127,66 @@ class ArgoAccessor:
             return self._obj
         else:
             return this
+
+    def subsample_pressure(self, inplace: bool = True):
+        """ Subsample dataset along pressure levels
+
+        Select vertical levels to keep max 1 level every 10db, starting from the surface (0db)
+        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L208
+
+        You can check the outcome of this filter by comparing the following figures:
+        plt.hist(ds['PRES'], bins=np.arange(0,100,1))
+        plt.hist(subsample_pressure(ds)['PRES'], bins=np.arange(0,100,1))
+
+        Parameters
+        ----------
+        inplace: boolean, True by default
+            If True, return the filtered input :class:`xarray.Dataset`
+            If False, return a new :class:`xarray.Dataset`
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+        """
+        this = self._obj
+
+        # Will work with a collection of profiles:
+        to_point = False
+        if this.argo._type == "point":
+            to_point = True
+            this = this.argo.point2profile()
+
+        def sub_this_one(pressure, pressure_bin: int = 10, pressure_bin_start: float = 0):
+            bins = np.arange(pressure_bin_start, np.max(pressure) + pressure_bin, pressure_bin)
+            ip = np.digitize(pressure, bins, right=True)
+            ii, ij = np.unique(ip, return_index=True)
+            ij = ij[np.where(ij - 1 > 0)] - 1
+            return pressure[ij], ij
+
+        # Squeeze all profiles with 1 level every 10db (max value per bins):
+        this_dsp_lst = []
+        for i_prof in this['N_PROF']:
+            up, ip = sub_this_one(this['PRES'].sel(N_PROF=i_prof), pressure_bin=10)
+            this_dsp_lst.append(this.sel(N_PROF=i_prof).isel(N_LEVELS=ip))
+
+        # Reset N_LEVELS index
+        N_LEVELS = 0
+        for ids, this_dsp in enumerate(this_dsp_lst):
+            maxn = this_dsp['N_LEVELS'].shape[0]
+            N_LEVELS = np.max([N_LEVELS, maxn])
+            this_dsp_lst[ids] = this_dsp_lst[ids].assign_coords(N_LEVELS=np.arange(0, maxn))
+
+        # Reconstruct the dataset:
+        final = xr.concat(this_dsp_lst, 'N_PROF')
+        if N_LEVELS != final['N_LEVELS'].shape[0]:
+            raise ValueError("Something went wrong with vertical levels")
+
+        # Manage output:
+        final.attrs = this.attrs
+        if to_point:
+            final = final.argo.profile2point()
+        if inplace:
+            self._obj = this
+            return self._obj
+        else:
+            return final
