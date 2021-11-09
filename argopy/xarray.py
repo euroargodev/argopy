@@ -1250,6 +1250,12 @@ class ArgoAccessor:
         this = self._obj
         # log.debug("; ".join(["".join(v) for v in this.data_vars]))
 
+        if 'history' in this.attrs and 'DATA_MODE' in this.attrs['history'] and 'QC' in this.attrs['history']:
+            # This is surely a dataset fetch with 'standard' mode, we can't deal with this, we need 'expert' file
+            raise InvalidDatasetStructure("Need a full Argo dataset to create OWC float source. "
+                                          "This dataset was probably loaded with a 'standard' user mode. "
+                                          "Try to fetch float data in 'expert' mode")
+
         def pretty_print_count(dd, txt):
             if dd.argo._type == "point":
                 np = len(dd['N_POINTS'].values)
