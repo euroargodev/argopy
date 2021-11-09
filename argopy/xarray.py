@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 from sklearn import preprocessing
+import logging
 
 try:
     import gsw
@@ -16,6 +17,9 @@ except ModuleNotFoundError:
 from argopy.utilities import linear_interpolation_remap, \
     is_list_equal, is_list_of_strings, toYearFraction, wrap_longitude
 from argopy.errors import InvalidDatasetStructure, DataNotFound
+
+
+log = logging.getLogger("argopy.xarray")
 
 
 @xr.register_dataset_accessor("argo")
@@ -63,6 +67,23 @@ class ArgoAccessor:
             self._mode = "standard"
         else:
             raise InvalidDatasetStructure("Argo dataset structure not recognised")
+
+    def __repr__(self):
+        import xarray.core.formatting as xrf
+
+        summary = ["<xarray.{}.argo>".format(type(self._obj).__name__)]
+        if self._type == "profile":
+            summary.append("This is a collection of Argo profiles")
+        elif self._type == "point":
+            summary.append("This is a collection of Argo points")
+
+        col_width = xrf._calculate_col_width(xrf._get_col_items(self._obj.variables))
+        # max_rows = xr.core.options.OPTIONS["display_max_rows"]
+
+        dims_start = xrf.pretty_print("Dimensions:", col_width)
+        summary.append("{}({})".format(dims_start, xrf.dim_summary(self._obj)))
+
+        return "\n".join(summary)
 
     def _add_history(self, txt):
         if "history" in self._obj.attrs:
@@ -437,7 +458,7 @@ class ArgoAccessor:
     def filter_qc(self, QC_list=[1, 2], QC_fields='all', drop=True, mode="all", mask=False):  # noqa: C901
         """ Filter data set according to QC values
 
-            Filter the dataset for points where 'all' or 'any' of the QC fields has a value in the list of
+            Filter the dataset to keep points where 'all' or 'any' of the QC fields has a value in the list of
             integer QC flags.
 
             This method can return the filtered dataset or the filter mask.
@@ -466,14 +487,16 @@ class ArgoAccessor:
             )
 
         if mode not in ["all", "any"]:
-            raise ValueError("Mode must 'all' or 'any'")
+            raise ValueError("Mode must be 'all' or 'any'")
 
-        # Make sure we deal with a list
+        # Make sure we deal with a list of integers:
         if not isinstance(QC_list, list):
             if isinstance(QC_list, np.ndarray):
                 QC_list = list(QC_list)
             else:
                 QC_list = [QC_list]
+        QC_list = [abs(int(qc)) for qc in QC_list]
+        log.debug("filter_qc: Filtering dataset to keep points with QC in %s" % QC_list)
 
         this = self._obj
 
@@ -489,6 +512,7 @@ class ArgoAccessor:
                     raise ValueError("%s not found in this dataset while trying to apply QC filter" % v)
         else:
             raise ValueError("Invalid content for parameter 'QC_fields'. Use 'all' or a list of strings")
+        log.debug("filter_qc: Filter applied to '%s' of the fields: %s" % (mode, ",".join(QC_fields)))
 
         QC_fields = this[QC_fields]
         for v in QC_fields.data_vars:
@@ -501,8 +525,8 @@ class ArgoAccessor:
             coords={"N_POINTS": QC_fields["N_POINTS"]},
         )
         for v in QC_fields.data_vars:
-            for qc in QC_list:
-                this_mask += QC_fields[v] == qc
+            for qc_value in QC_list:
+                this_mask += QC_fields[v] == qc_value
         if mode == "all":
             this_mask = this_mask == len(QC_fields)  # all
         else:
@@ -510,9 +534,9 @@ class ArgoAccessor:
 
         if not mask:
             this = this.where(this_mask, drop=drop)
-            for v in this.data_vars:
-                if "QC" in v and "PROFILE" not in v:
-                    this[v] = this[v].astype(int)
+            # for v in this.data_vars:
+            #     if "QC" in v and "PROFILE" not in v:
+            #         this[v] = this[v].astype(int)
             this.argo._add_history("Variables selected according to QC")
             this = this.argo.cast_types()
             return this
@@ -1164,7 +1188,7 @@ class ArgoAccessor:
 
         def sub_this_one(pressure, pressure_bin: int = 10, pressure_bin_start: float = 0):
             bins = np.arange(pressure_bin_start, np.max(pressure) + pressure_bin, pressure_bin)
-            ip = np.digitize(pressure, bins, right=True)
+            ip = np.digitize(pressure, bins, right=False)
             ii, ij = np.unique(ip, return_index=True)
             ij = ij[np.where(ij - 1 > 0)] - 1
             return pressure[ij], ij
@@ -1224,15 +1248,39 @@ class ArgoAccessor:
 
         """
         this = self._obj
+        # log.debug("; ".join(["".join(v) for v in this.data_vars]))
+
+        def pretty_print_count(dd, txt):
+            if dd.argo._type == "point":
+                np = len(dd['N_POINTS'].values)
+                nc = len(dd.argo.point2profile()['N_PROF'].values)
+            else:
+                np = len(dd.argo.profile2point()['N_POINTS'].values)
+                nc = len(dd['N_PROF'].values)
+            return "%i points / %i profiles in dataset %s" % (np, nc, txt)
 
         # Add potential temperature:
         if 'PTEMP' not in this:
-            this.argo.teos10(vlist=['PTEMP'])
+            this = this.argo.teos10(vlist=['PTEMP'], inplace=True)
+
+        # Only use Ascending profiles:
+        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L143
+        this = this.where(this['DIRECTION'] == 'A', drop=True)
+        log.debug(pretty_print_count(this, "after direction selection"))
+
+        # Todo: ensure we load only the primary profile of cycles with multiple sampling schemes:
+        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L194
+
+        # Subsample vertical levels (max 1 level every 10db):
+        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L208
+        this = this.argo.subsample_pressure(inplace=False)
+        log.debug(pretty_print_count(this, "after vertical levels subsampling"))
 
         # Filter variables according to OWC workflow
         # (I don't understand why this come at the end of the Matlab routine ...)
         # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L258
-        this = self.filter_scalib_pres(this, force=force)
+        this = this.argo.filter_scalib_pres(force=force, inplace=False)
+        log.debug(pretty_print_count(this, "after pressure fields selection"))
 
         # Filter along some QC:
         # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L372
@@ -1245,16 +1293,16 @@ class ArgoAccessor:
                                    drop=True)  # Matlab says to keep != 3
         this = this.argo.filter_qc(QC_list=[v for v in range(10) if v != 4],
                                    QC_fields=['PRES_QC', 'TEMP_QC', 'PSAL_QC'],
-                                   drop=True)  # Matlab says to keep != 4
+                                   drop=True, mode='any')  # Matlab says to keep != 4
         if len(this['N_POINTS']) == 0:
             raise DataNotFound(
                 'All data have been discarded because either PSAL_QC or TEMP_QC is filled with 4 or'
                 ' PRES_QC is filled with 3 or 4\n'
                 'NO SOURCE FILE WILL BE GENERATED !!!')
+        log.debug(pretty_print_count(this, "after QC filter"))
 
         # Exclude dummies
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/
-        # ow_source/create_float_source.m#L427
+        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L427
         this = this.where(this['PSAL'] <= 50, drop=True).where(this['PSAL'] >= 0, drop=True) \
             .where(this['PTEMP'] <= 50, drop=True).where(this['PTEMP'] >= -10, drop=True) \
             .where(this['PRES'] <= 6000, drop=True).where(this['PRES'] >= 0, drop=True)
@@ -1262,27 +1310,13 @@ class ArgoAccessor:
             raise DataNotFound(
                 'All data have been discarded because they are filled with values out of range\n'
                 'NO SOURCE FILE WILL BE GENERATED !!!')
+        log.debug(pretty_print_count(this, "after dummy values exclusion"))
 
-        # Transform measurements to a collection of profiles:
+        # Transform measurements to a collection of profiles for Matlab-like formation:
         this = this.argo.point2profile()
 
-        # Only use Ascending profiles:
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/
-        # ow_source/create_float_source.m#L143
-        this = this.where(this['DIRECTION'] == 'A', drop=True)
-
-        # Todo: ensure we load only the primary profile of cycles with multiple sampling schemes:
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/
-        # ow_source/create_float_source.m#L194
-
-        # Subsample vertical levels (max 1 level every 10db):
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/
-        # ow_source/create_float_source.m#L208
-        this.argo.subsample_pressure()
-
         # Compute fractional year:
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/
-        # ow_source/create_float_source.m#L334
+        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L334
         DATES = np.array([toYearFraction(d) for d in pd.to_datetime(this['TIME'].values)])[np.newaxis, :]
 
         # Read measurements:
@@ -1301,9 +1335,9 @@ class ArgoAccessor:
         this_dsp_processed['TEMP'] = xr.DataArray(TEMP, dims=['m', 'n'], coords={'m': np.arange(0, TEMP.shape[0]),
                                                                                  'n': np.arange(0, TEMP.shape[1])},
                                                   name='TEMP')
-        this_dsp_processed['PTEMP'] = xr.DataArray(PTMP, dims=['m', 'n'], coords={'m': np.arange(0, PTMP.shape[0]),
+        this_dsp_processed['PTMP'] = xr.DataArray(PTMP, dims=['m', 'n'], coords={'m': np.arange(0, PTMP.shape[0]),
                                                                                   'n': np.arange(0, PTMP.shape[1])},
-                                                   name='PTEMP')
+                                                   name='PTMP')
         this_dsp_processed['SAL'] = xr.DataArray(SAL, dims=['m', 'n'], coords={'m': np.arange(0, SAL.shape[0]),
                                                                                'n': np.arange(0, SAL.shape[1])},
                                                  name='SAL')
