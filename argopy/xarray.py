@@ -91,6 +91,25 @@ class ArgoAccessor:
         else:
             self._obj.attrs["history"] = txt
 
+    def _where(self, cond, other=xr.core.dtypes.NA, drop: bool = False):
+        """ where that preserve dtypes of Argo fields
+
+        Parameters
+        ----------
+        cond : DataArray, Dataset, or callable
+            Locations at which to preserve this object's values. dtype must be `bool`.
+            If a callable, it must expect this object as its only parameter.
+        other : scalar, DataArray or Dataset, optional
+            Value to use for locations in this object where ``cond`` is False.
+            By default, these locations filled with NA.
+        drop : bool, optional
+            If True, coordinate labels that only correspond to False values of
+            the condition are dropped from the result. Mutually exclusive with
+            ``other``.
+        """
+        self._obj = self._obj.where(cond, other=other, drop=drop)
+        return self.cast_types()
+
     def cast_types(self):  # noqa: C901
         """ Make sure variables are of the appropriate types
 
@@ -341,16 +360,16 @@ class ArgoAccessor:
 
             return argo_r, argo_a, argo_d
 
-        def fill_adjusted_nan(ds, vname):
+        def fill_adjusted_nan(this_ds, vname):
             """Fill in the adjusted field with the non-adjusted wherever it is NaN
 
                Ensure to have values even for bad QC data in delayed mode
             """
-            ii = ds.where(np.isnan(ds[vname + "_ADJUSTED"]), drop=1)["N_POINTS"]
-            ds[vname + "_ADJUSTED"].loc[dict(N_POINTS=ii)] = ds[vname].loc[
+            ii = this_ds.where(np.isnan(this_ds[vname + "_ADJUSTED"]), drop=1)["N_POINTS"]
+            this_ds[vname + "_ADJUSTED"].loc[dict(N_POINTS=ii)] = this_ds[vname].loc[
                 dict(N_POINTS=ii)
             ]
-            return ds
+            return this_ds
 
         def merge_arrays(this_argo_r, this_argo_a, this_argo_d, this_vname):
             """ Merge one variable from 3 DataArrays
@@ -533,12 +552,9 @@ class ArgoAccessor:
             this_mask = this_mask >= 1  # any
 
         if not mask:
-            this = this.where(this_mask, drop=drop)
-            # for v in this.data_vars:
-            #     if "QC" in v and "PROFILE" not in v:
-            #         this[v] = this[v].astype(int)
+            this = this.argo._where(this_mask, drop=drop)
             this.argo._add_history("Variables selected according to QC")
-            this = this.argo.cast_types()
+            # this = this.argo.cast_types()
             return this
         else:
             return this_mask
@@ -628,7 +644,6 @@ class ArgoAccessor:
             name="dummy_argo_uid",
         )
         N_PROF = len(np.unique(dummy_argo_uid))
-        # that = this.groupby(dummy_argo_uid)
 
         N_LEVELS = int(
             xr.DataArray(
@@ -713,7 +728,7 @@ class ArgoAccessor:
         # Restore coordinate variables:
         new_ds = new_ds.set_coords([c for c in coords_list if c in new_ds])
 
-        # Misc formating
+        # Misc formatting
         new_ds = new_ds.sortby("TIME")
         new_ds = new_ds.argo.cast_types()
         new_ds = new_ds[np.sort(new_ds.data_vars)]
@@ -856,6 +871,7 @@ class ArgoAccessor:
 
         ds_out = ds_out.drop_vars(["N_LEVELS", "Z_LEVELS"])
         ds_out = ds_out[np.sort(ds_out.data_vars)]
+        ds_out = ds_out.argo.cast_types()
         ds_out.attrs = self.attrs  # Preserve original attributes
         ds_out.argo._add_history("Interpolated on standard levels")
 
@@ -1248,6 +1264,8 @@ class ArgoAccessor:
 
         """
         this = self._obj
+        log.debug("===================== START create_float_source")
+        # log.debug(np.unique(this['PSAL_QC'].values))
         # log.debug("; ".join(["".join(v) for v in this.data_vars]))
 
         if 'history' in this.attrs and 'DATA_MODE' in this.attrs['history'] and 'QC' in this.attrs['history']:
@@ -1263,16 +1281,21 @@ class ArgoAccessor:
             else:
                 np = len(dd.argo.profile2point()['N_POINTS'].values)
                 nc = len(dd['N_PROF'].values)
-            return "%i points / %i profiles in dataset %s" % (np, nc, txt)
+            out = "%i points / %i profiles in dataset %s" % (np, nc, txt)
+            # np.unique(this['PSAL_QC'].values))
+            return out
 
         # Add potential temperature:
         if 'PTEMP' not in this:
             this = this.argo.teos10(vlist=['PTEMP'], inplace=True)
+        # log.debug(np.unique(this['PSAL_QC'].values))
 
         # Only use Ascending profiles:
         # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L143
-        this = this.where(this['DIRECTION'] == 'A', drop=True)
+        this = this.argo._where(this['DIRECTION'] == 'A', drop=True)
+        # this = this.argo.cast_types()
         log.debug(pretty_print_count(this, "after direction selection"))
+        # log.debug(np.unique(this['PSAL_QC'].values))
 
         # Todo: ensure we load only the primary profile of cycles with multiple sampling schemes:
         # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L194
@@ -1281,12 +1304,14 @@ class ArgoAccessor:
         # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L208
         this = this.argo.subsample_pressure(inplace=False)
         log.debug(pretty_print_count(this, "after vertical levels subsampling"))
+        # log.debug(np.unique(this['PSAL_QC'].values))
 
         # Filter variables according to OWC workflow
         # (I don't understand why this come at the end of the Matlab routine ...)
         # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L258
         this = this.argo.filter_scalib_pres(force=force, inplace=False)
         log.debug(pretty_print_count(this, "after pressure fields selection"))
+        # log.debug(np.unique(this['PSAL_QC'].values))
 
         # Filter along some QC:
         # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L372
@@ -1309,17 +1334,22 @@ class ArgoAccessor:
 
         # Exclude dummies
         # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L427
-        this = this.where(this['PSAL'] <= 50, drop=True).where(this['PSAL'] >= 0, drop=True) \
-            .where(this['PTEMP'] <= 50, drop=True).where(this['PTEMP'] >= -10, drop=True) \
-            .where(this['PRES'] <= 6000, drop=True).where(this['PRES'] >= 0, drop=True)
+        this = this.argo._where(this['PSAL'] <= 50, drop=True)\
+                    .argo._where(this['PSAL'] >= 0, drop=True) \
+                    .argo._where(this['PTEMP'] <= 50, drop=True)\
+                    .argo._where(this['PTEMP'] >= -10, drop=True) \
+                    .argo._where(this['PRES'] <= 6000, drop=True)\
+                    .argo._where(this['PRES'] >= 0, drop=True)
         if len(this['N_POINTS']) == 0:
             raise DataNotFound(
                 'All data have been discarded because they are filled with values out of range\n'
                 'NO SOURCE FILE WILL BE GENERATED !!!')
         log.debug(pretty_print_count(this, "after dummy values exclusion"))
+        # log.debug(np.unique(this['PSAL_QC'].values))
 
         # Transform measurements to a collection of profiles for Matlab-like formation:
         this = this.argo.point2profile()
+        # log.debug(np.unique(this['PSAL_QC'].values))
 
         # Compute fractional year:
         # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L334
