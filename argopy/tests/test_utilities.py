@@ -21,7 +21,8 @@ from argopy.utilities import (
     is_box,
     is_list_of_strings,
     format_oneline, is_indexbox,
-    check_wmo, is_wmo
+    check_wmo, is_wmo,
+    wmo2box
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
@@ -483,3 +484,23 @@ def test_check_wmo():
     assert check_wmo([1234567]) == [1234567]
     assert check_wmo([12345, 1234567]) == [12345, 1234567]
     assert check_wmo(np.array((12345, 1234567), dtype='int')) == [12345, 1234567]
+
+
+def test_wmo2box():
+    with pytest.raises(ValueError):
+        wmo2box(12)
+    with pytest.raises(ValueError):
+        wmo2box(8000)
+    with pytest.raises(ValueError):
+        wmo2box(2000)
+
+    def complete_box(b):
+        b2 = b.copy()
+        b2.insert(4, 0.)
+        b2.insert(5, 10000.)
+        return b2
+
+    assert is_box(complete_box(wmo2box(1212)))
+    assert is_box(complete_box(wmo2box(3324)))
+    assert is_box(complete_box(wmo2box(5402)))
+    assert is_box(complete_box(wmo2box(7501)))
