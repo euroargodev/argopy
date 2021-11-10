@@ -16,7 +16,7 @@ except ModuleNotFoundError:
 
 from argopy.utilities import linear_interpolation_remap, \
     is_list_equal, is_list_of_strings, toYearFraction, wrap_longitude
-from argopy.errors import InvalidDatasetStructure, DataNotFound
+from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
 
 log = logging.getLogger("argopy.xarray")
@@ -84,6 +84,63 @@ class ArgoAccessor:
         summary.append("{}({})".format(dims_start, xrf.dim_summary(self._obj)))
 
         return "\n".join(summary)
+
+    @property
+    def N_PROF(self):
+        """Number of profiles"""
+        if self._type == "point":
+            dummy_argo_uid = xr.DataArray(
+                self.uid(
+                    self._obj["PLATFORM_NUMBER"].values,
+                    self._obj["CYCLE_NUMBER"].values,
+                    self._obj["DIRECTION"].values,
+                ),
+                dims="N_POINTS",
+                coords={"N_POINTS": self._obj["N_POINTS"]},
+                name="dummy_argo_uid",
+            )
+            N_PROF = len(np.unique(dummy_argo_uid))
+        else:
+            N_PROF = len(np.unique(self._obj['N_PROF']))
+        return N_PROF
+
+    @property
+    def N_LEVELS(self):
+        """Number of vertical levels"""
+        if self._type == "point":
+            dummy_argo_uid = xr.DataArray(
+                self.uid(
+                    self._obj["PLATFORM_NUMBER"].values,
+                    self._obj["CYCLE_NUMBER"].values,
+                    self._obj["DIRECTION"].values,
+                ),
+                dims="N_POINTS",
+                coords={"N_POINTS": self._obj["N_POINTS"]},
+                name="dummy_argo_uid",
+            )
+            N_LEVELS = int(
+                xr.DataArray(
+                    np.ones_like(self._obj["N_POINTS"].values),
+                    dims="N_POINTS",
+                    coords={"N_POINTS": self._obj["N_POINTS"]},
+                )
+                    .groupby(dummy_argo_uid)
+                    .sum()
+                    .max()
+                    .values
+            )
+        else:
+            N_LEVELS = len(np.unique(self._obj['N_LEVELS']))
+        return N_LEVELS
+
+    @property
+    def N_POINTS(self):
+        """Number of measurement points"""
+        if self._type == "profile":
+            N_POINTS = self.N_PROF*self.N_LEVELS
+        else:
+            N_POINTS = len(np.unique(self._obj['N_POINTS']))
+        return N_POINTS
 
     def _add_history(self, txt):
         if "history" in self._obj.attrs:
@@ -1209,7 +1266,7 @@ class ArgoAccessor:
             ij = ij[np.where(ij - 1 > 0)] - 1
             return pressure[ij], ij
 
-        # Squeeze all profiles with 1 level every 10db (max value per bins):
+        # Squeeze all profiles to 1 point every 10db (select deepest value per bins):
         this_dsp_lst = []
         for i_prof in this['N_PROF']:
             up, ip = sub_this_one(this['PRES'].sel(N_PROF=i_prof), pressure_bin=10)
@@ -1256,7 +1313,7 @@ class ArgoAccessor:
 
         Parameters
         ----------
-        file_name
+        file_name, not used yet
         force: str
             Use force='default' to load PRES/PSAL/TEMP or PRES_ADJUSTED/PSAL/TEMP according to PRES_ADJUSTED filled or not.
             Use force='raw' to force load of PRES/PSAL/TEMP
@@ -1274,13 +1331,17 @@ class ArgoAccessor:
                                           "This dataset was probably loaded with a 'standard' user mode. "
                                           "Try to fetch float data in 'expert' mode")
 
+        if force not in ['default', 'raw', 'adjusted']:
+            raise OptionValueError("force option must be 'default', 'raw' or 'adjusted'.")
+
         def pretty_print_count(dd, txt):
-            if dd.argo._type == "point":
-                np = len(dd['N_POINTS'].values)
-                nc = len(dd.argo.point2profile()['N_PROF'].values)
-            else:
-                np = len(dd.argo.profile2point()['N_POINTS'].values)
-                nc = len(dd['N_PROF'].values)
+            # if dd.argo._type == "point":
+            #     np = len(dd['N_POINTS'].values)
+            #     nc = len(dd.argo.point2profile()['N_PROF'].values)
+            # else:
+            #     np = len(dd.argo.profile2point()['N_POINTS'].values)
+            #     nc = len(dd['N_PROF'].values)
+            np, nc = dd.argo.N_POINTS, dd.argo.N_PROF
             out = "%i points / %i profiles in dataset %s" % (np, nc, txt)
             # np.unique(this['PSAL_QC'].values))
             return out
@@ -1350,6 +1411,9 @@ class ArgoAccessor:
         # Transform measurements to a collection of profiles for Matlab-like formation:
         this = this.argo.point2profile()
         # log.debug(np.unique(this['PSAL_QC'].values))
+
+        # todo: Put all pressure measurements at the same index levels
+        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L451
 
         # Compute fractional year:
         # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L334
