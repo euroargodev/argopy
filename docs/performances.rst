@@ -212,7 +212,7 @@ This creates 195 chunks, and 5 along the longitudinale direction, as
 requested.
 
 When the ``chunks`` option is not specified for a given *direction*, it
-relies on auto-chunking using pre-defined chunk maximum sizes (see
+relies on auto-chunking using predefined chunk maximum sizes (see
 below). In the case above, auto-chunking appends also along latitude,
 depth and time; this explains why we have 195 and not only 5 chunks.
 

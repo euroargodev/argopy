@@ -652,7 +652,7 @@ class ArgoAccessor:
         # Restore coordinate variables:
         new_ds = new_ds.set_coords([c for c in coords_list if c in new_ds])
 
-        # Misc formating
+        # Misc formatting
         new_ds = new_ds.sortby("TIME")
         new_ds = new_ds.argo.cast_types()
         new_ds = new_ds[np.sort(new_ds.data_vars)]

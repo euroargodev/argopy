@@ -6,7 +6,7 @@ Why argopy ?
 Surprisingly, the Argo community never provided its user base with a Python software to easily access and manipulate Argo measurements:
 **argopy** aims to fill this gap.
 
-Despite, or because, its tremendous success in data management and in developping good practices and well calibrated procedures [ADMT]_, the Argo dataset is very complex: with thousands of different variables, tens of reference tables and a `user manual <http://dx.doi.org/10.13155/29825>`_ more than 100 pages long:
+Despite, or because, its tremendous success in data management and in developing good practices and well calibrated procedures [ADMT]_, the Argo dataset is very complex: with thousands of different variables, tens of reference tables and a `user manual <http://dx.doi.org/10.13155/29825>`_ more than 100 pages long:
 **argopy** aims to help you navigate this complex realm.
 
 For non-experts of the Argo dataset, it has become rather complicated to get access to Argo measurements.
@@ -29,11 +29,11 @@ If you don't know in which category you would place yourself, try to answer the 
 * [ ] what is an adjusted parameter ?
 * [ ] what a QC flag of 3 means ?
 
-If you don't answer to more than 1 question: you probably will feel more confortable with the *standard* user mode.
+If you don't answer to more than 1 question: you probably will feel more comfortable with the *standard* user mode.
 
 By default, all **argopy** data fetchers are set to work with a **standard** user mode, the other possible mode is **expert**.
 
-In *standard* mode, fetched data are automatically filtered to account for their quality (only good are retained) and level of processing by the data centers (wether they looked at the data briefly or not).
+In *standard* mode, fetched data are automatically filtered to account for their quality (only good are retained) and level of processing by the data centers (whether they looked at the data briefly or not).
 
 Selecting user mode is further explained in the dedicated documentation section: :ref:`user-mode`.
 

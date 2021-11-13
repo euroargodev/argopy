@@ -54,7 +54,7 @@ v0.1.8 (2 Nov. 2021)
 
 - More general options. Fix :issue:`91`. (:pr:`102`) by `G. Maze <http://www.github.com/gmaze>`_.
 
-    - ``trust_env`` to allow for local environment variables to be used by fsspec to connect to the internet. Usefull for those using a proxy.
+    - ``trust_env`` to allow for local environment variables to be used by fsspec to connect to the internet. Useful for those using a proxy.
 
 - Documentation on `Read The Docs` now uses a pip environment and get rid of memory eager conda. (:pr:`103`) by `G. Maze <http://www.github.com/gmaze>`_.
 
@@ -220,11 +220,11 @@ v0.1.3 (15 May 2020)
     idx.to_dataframe()
     idx.plot('trajectory')
 
-The ``index`` fetcher can manage caching and works with both Erddap and localftp data sources. It is basically the same as the data fetcher, but do not load measurements, only meta-data. This can be very usefull when looking for regional sampling or trajectories.
+The ``index`` fetcher can manage caching and works with both Erddap and localftp data sources. It is basically the same as the data fetcher, but do not load measurements, only meta-data. This can be very useful when looking for regional sampling or trajectories.
 
 .. tip::
 
-  **Performance**: we recommand to use the ``localftp`` data source when working this ``index`` fetcher because the ``erddap`` data source currently suffers from poor performances. This is linked to :issue:`16` and is being addressed by Ifremer.
+  **Performance**: we recommend to use the ``localftp`` data source when working this ``index`` fetcher because the ``erddap`` data source currently suffers from poor performances. This is linked to :issue:`16` and is being addressed by Ifremer.
 
 The ``index`` fetcher comes with basic plotting functionalities with the :func:`argopy.IndexFetcher.plot` method to rapidly visualise measurement distributions by DAC, latitude/longitude and floats type.
 
