@@ -1230,8 +1230,8 @@ class ArgoAccessor:
         else:
             return this
 
-    def subsample_pressure(self, inplace: bool = True):
-        """ Subsample dataset along pressure levels
+    def subsample_pressure(self, pressure_bin_start: float = 0., pressure_bin: float = 10., inplace: bool = True):
+        """ Subsample dataset along pressure bins
 
         Select vertical levels to keep max 1 level every 10db, starting from the surface (0db)
         # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/
@@ -1239,10 +1239,14 @@ class ArgoAccessor:
 
         You can check the outcome of this filter by comparing the following figures:
         plt.hist(ds['PRES'], bins=np.arange(0,100,1))
-        plt.hist(subsample_pressure(ds)['PRES'], bins=np.arange(0,100,1))
+        plt.hist(subsample_pressure(ds)['PRES'], pressure_bin_start=0., pressure_bin=10.)
 
         Parameters
         ----------
+        pressure_bin_start: float
+            The shallowest pressure value to start bins
+        pressure_bin: float
+            Pressure bin size
         inplace: boolean, True by default
             If True, return the filtered input :class:`xarray.Dataset`
             If False, return a new :class:`xarray.Dataset`
@@ -1259,8 +1263,8 @@ class ArgoAccessor:
             to_point = True
             this = this.argo.point2profile()
 
-        def sub_this_one(pressure, pressure_bin: int = 10, pressure_bin_start: float = 0):
-            bins = np.arange(pressure_bin_start, np.max(pressure) + pressure_bin, pressure_bin)
+        def sub_this_one(pressure, db: int = 10, p0: float = 0):
+            bins = np.arange(p0, np.max(pressure) + db, db)
             ip = np.digitize(pressure, bins, right=False)
             ii, ij = np.unique(ip, return_index=True)
             ij = ij[np.where(ij - 1 > 0)] - 1
@@ -1269,7 +1273,9 @@ class ArgoAccessor:
         # Squeeze all profiles to 1 point every 10db (select deepest value per bins):
         this_dsp_lst = []
         for i_prof in this['N_PROF']:
-            up, ip = sub_this_one(this['PRES'].sel(N_PROF=i_prof), pressure_bin=10)
+            up, ip = sub_this_one(this['PRES'].sel(N_PROF=i_prof),
+                                  p0=pressure_bin_start,
+                                  db=pressure_bin)
             this_dsp_lst.append(this.sel(N_PROF=i_prof).isel(N_LEVELS=ip))
 
         # Reset N_LEVELS index
@@ -1293,6 +1299,7 @@ class ArgoAccessor:
             return self._obj
         else:
             return final
+
 
     def create_float_source(self, file_name, force: str = 'default'):
         """ Create a Matlab file to start the OWC analysis workflow
@@ -1341,10 +1348,100 @@ class ArgoAccessor:
             # else:
             #     np = len(dd.argo.profile2point()['N_POINTS'].values)
             #     nc = len(dd['N_PROF'].values)
+            out = []
             np, nc = dd.argo.N_POINTS, dd.argo.N_PROF
-            out = "%i points / %i profiles in dataset %s" % (np, nc, txt)
+            out.append("%i points / %i profiles in dataset %s" % (np, nc, txt))
             # np.unique(this['PSAL_QC'].values))
-            return out
+            out.append(pd.to_datetime(dd['TIME'][0].values).strftime('%Y/%m/%d %H:%M:%S'))
+            return "\n".join(out)
+
+        def ds_align_pressure(this, pressure_bins_start, pressure_bin: float = 10.):
+            """ Create a new dataset where binned pressure values align on pressure index for all profiles
+
+            This method is intended to be used after subsample_pressure
+
+            Parameters
+            ----------
+            pressure_bins_start: list
+            pressure_bin: float
+
+            Returns
+            ------
+            :class:`xarray.Dataset`
+            """
+            def align_pressure(pres_raw, pres_bins_start, pressure_bin: float = 10., fill_value: float = np.nan):
+                """ Align pressure values along a given pressure axis
+                    For numpy arrays
+                """
+                pres_align = np.ones_like(pres_bins_start) * fill_value
+                index_array = []
+                ip_inserted = []
+                for ip_insert, p_low in enumerate(pres_bins_start):
+                    p_hgh = p_low + pressure_bin
+                    ifound = np.digitize(pres_raw, [p_low, p_hgh], right=False)
+                    ip = np.argwhere(ifound == 1)
+                    if len(ip) > 0:
+                        # ip_selected = ip[0][0]  # Select the lowest pressure value in bins
+                        ip_selected = ip[-1][-1]  # Select the highest pressure value in bins
+                        pres_align[ip_insert] = pres_raw[ip_selected]
+                        index_array.append(ip_selected)
+                        ip_inserted.append(ip_insert)
+                index_array = np.array(index_array)
+                ip_inserted = np.array(ip_inserted)
+                return pres_align, index_array, ip_inserted
+
+            def replace_i_prof_values(this_da, i_prof, new_values):
+                if this_da.dims == ('m', 'n') or this_da.dims == ('m_aligned', 'n'):
+                    values = this_da.values
+                    values[:, i_prof] = new_values
+                    this_da.values = values
+                else:
+                    raise ValueError("Array not with expected (m, n) shape")
+                return this_da
+
+            # Create an empty dataset with the correct nb of vertical levels for each (m,n) variables
+            m_aligned = len(pressure_bins_start)
+            n = len(this['n'])
+            PRES_BINS = np.broadcast_to(pressure_bins_start[:, np.newaxis], (m_aligned, n))
+            dsp_aligned = xr.DataArray(PRES_BINS,
+                                       dims=['m_aligned', 'n'],
+                                       coords={'m_aligned': np.arange(0, PRES_BINS.shape[0]), 'n': this['n']},
+                                       name='PRES_BINS').to_dataset(promote_attrs=False)
+
+            for v in this.data_vars:
+                if this[v].dims == ('n',):
+                    # print('1D:', v)
+                    dsp_aligned[v] = this[v]
+                if this[v].dims == ('m', 'n'):
+                    # print("2D:", v)
+                    dsp_aligned[v] = xr.DataArray(np.full_like(PRES_BINS, np.nan),
+                                                  dims=['m_aligned', 'n'],
+                                                  coords={'m_aligned': np.arange(0, PRES_BINS.shape[0]),
+                                                          'n': np.arange(0, PRES_BINS.shape[1])},
+                                                  name=v)
+
+            # Align pressure/field values for each profiles:
+            for i_prof in dsp_aligned['n']:
+                assert this.isel(n=i_prof) == dsp_aligned.isel(n=i_prof)
+
+                p0 = this.isel(n=i_prof)['PRES'].values
+                pres_align, index_array, ip_inserted = align_pressure(p0, pressure_bins_start, pressure_bin)
+                pres_align = np.round(pres_align, 2)
+                dsp_aligned['PRES'] = replace_i_prof_values(dsp_aligned['PRES'], i_prof, pres_align)
+
+                for var in this.data_vars:
+                    if this[var].dims == ('m', 'n'):
+                        v0 = this.isel(n=i_prof)[var].values
+                        v_align = dsp_aligned.isel(n=i_prof)[var].values
+                        v_align[ip_inserted] = v0[index_array]
+                        dsp_aligned[var] = replace_i_prof_values(dsp_aligned[var], i_prof, v_align)
+                        dsp_aligned[var].attrs = this[var].attrs
+
+            dsp_aligned = dsp_aligned.rename({'m_aligned': 'm'})
+
+            # Manage output:
+            dsp_aligned.attrs = this.attrs
+            return dsp_aligned
 
         # Add potential temperature:
         if 'PTEMP' not in this:
@@ -1412,9 +1509,6 @@ class ArgoAccessor:
         this = this.argo.point2profile()
         # log.debug(np.unique(this['PSAL_QC'].values))
 
-        # todo: Put all pressure measurements at the same index levels
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L451
-
         # Compute fractional year:
         # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L334
         DATES = np.array([toYearFraction(d) for d in pd.to_datetime(this['TIME'].values)])[np.newaxis, :]
@@ -1425,7 +1519,8 @@ class ArgoAccessor:
         PTMP = this['PTEMP'].values.T  # (mxn)
         SAL = this['PSAL'].values.T  # (mxn)
         LAT = this['LATITUDE'].values[np.newaxis, :]
-        LONG = wrap_longitude(this['LONGITUDE'].values)[np.newaxis, :]
+        # LONG = wrap_longitude(this['LONGITUDE'].values)[np.newaxis, :]
+        LONG = this['LONGITUDE'].values[np.newaxis, :]
         PROFILE_NO = this['CYCLE_NUMBER'].values[np.newaxis, :]
 
         # Create dataset with preprocessed data:
@@ -1453,7 +1548,12 @@ class ArgoAccessor:
         this_dsp_processed['m'].attrs = {'long_name': 'vertical levels'}
         this_dsp_processed['n'].attrs = {'long_name': 'profiles'}
 
-        # Create Matlab dictionnary with preprocessed data (to be used by savemat):
+        # Put all pressure measurements at the same index levels
+        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L451
+        bins = np.arange(0., np.max(this_dsp_processed['PRES']) + 10., 10.)
+        this_dsp_processed = ds_align_pressure(this_dsp_processed, pressure_bins_start=bins, pressure_bin=10.)
+
+        # Create Matlab dictionary with preprocessed data (to be used by savemat):
         mdata = {}
         mdata['PROFILE_NO'] = PROFILE_NO.astype('uint8')
         mdata['DATES'] = DATES

@@ -1428,6 +1428,24 @@ def toYearFraction(date: pd._libs.tslibs.timestamps.Timestamp = pd.to_datetime('
     return date.year + fraction
 
 
+def YearFraction_to_datetime(yf):
+    from datetime import datetime as dt
+    import time
+
+    def sinceEpoch(date):  # returns seconds since epoch
+        return time.mktime(date.timetuple())
+
+    year = np.int32(yf)
+    frct = yf-year
+
+    startOfThisYear = dt(year=year, month=1, day=1)
+    startOfNextYear = dt(year=year + 1, month=1, day=1)
+    yearDuration_sec = sinceEpoch(startOfNextYear) - sinceEpoch(startOfThisYear)
+    yearElapsed_sec = np.round(frct*yearDuration_sec, 0)
+    yearElapsed_sec = pd.Timedelta(yearElapsed_sec, unit='s')
+    return startOfThisYear+yearElapsed_sec
+
+
 def wrap_longitude(grid_long):
     """ Allows longitude (0-360) to wrap beyond the 360 mark, for mapping purposes.
         Makes sure that, if the longitude is near the boundary (0 or 360) that we
