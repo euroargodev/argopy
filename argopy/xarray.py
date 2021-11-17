@@ -69,21 +69,21 @@ class ArgoAccessor:
             raise InvalidDatasetStructure("Argo dataset structure not recognised")
 
     def __repr__(self):
-        import xarray.core.formatting as xrf
+        # import xarray.core.formatting as xrf
+        # col_width = xrf._calculate_col_width(xrf._get_col_items(self._obj.variables))
+        # max_rows = xr.core.options.OPTIONS["display_max_rows"]
 
         summary = ["<xarray.{}.argo>".format(type(self._obj).__name__)]
         if self._type == "profile":
             summary.append("This is a collection of Argo profiles")
             summary.append("N_PROF(%i) x N_LEVELS(%i) ~ N_POINTS(%i)" % (self.N_PROF, self.N_LEVELS, self.N_POINTS))
+
         elif self._type == "point":
             summary.append("This is a collection of Argo points")
             summary.append("N_POINTS(%i) ~ N_PROF(%i) x N_LEVELS(%i)" % (self.N_POINTS, self.N_PROF, self.N_LEVELS))
 
-        col_width = xrf._calculate_col_width(xrf._get_col_items(self._obj.variables))
-        # max_rows = xr.core.options.OPTIONS["display_max_rows"]
-
-        dims_start = xrf.pretty_print("Dimensions:", col_width)
-        summary.append("{}({})".format(dims_start, xrf.dim_summary(self._obj)))
+        # dims_start = xrf.pretty_print("Dimensions:", col_width)
+        # summary.append("{}({})".format(dims_start, xrf.dim_summary(self._obj)))
 
         return "\n".join(summary)
 
