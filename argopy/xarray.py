@@ -74,8 +74,10 @@ class ArgoAccessor:
         summary = ["<xarray.{}.argo>".format(type(self._obj).__name__)]
         if self._type == "profile":
             summary.append("This is a collection of Argo profiles")
+            summary.append("N_PROF(%i) x N_LEVELS(%i) ~ N_POINTS(%i)" % (self.N_PROF, self.N_LEVELS, self.N_POINTS))
         elif self._type == "point":
             summary.append("This is a collection of Argo points")
+            summary.append("N_POINTS(%i) ~ N_PROF(%i) x N_LEVELS(%i)" % (self.N_POINTS, self.N_PROF, self.N_LEVELS))
 
         col_width = xrf._calculate_col_width(xrf._get_col_items(self._obj.variables))
         # max_rows = xr.core.options.OPTIONS["display_max_rows"]
@@ -164,8 +166,11 @@ class ArgoAccessor:
             the condition are dropped from the result. Mutually exclusive with
             ``other``.
         """
-        self._obj = self._obj.where(cond, other=other, drop=drop)
-        return self.cast_types()
+        this = self._obj.copy(deep=True)
+        this = this.where(cond, other=other, drop=drop)
+        this = this.argo.cast_types()
+        # this.argo._add_history("Modified with 'where' statement")
+        return this
 
     def cast_types(self):  # noqa: C901
         """ Make sure variables are of the appropriate types
@@ -572,7 +577,6 @@ class ArgoAccessor:
             else:
                 QC_list = [QC_list]
         QC_list = [abs(int(qc)) for qc in QC_list]
-        log.debug("filter_qc: Filtering dataset to keep points with QC in %s" % QC_list)
 
         this = self._obj
 
@@ -588,7 +592,10 @@ class ArgoAccessor:
                     raise ValueError("%s not found in this dataset while trying to apply QC filter" % v)
         else:
             raise ValueError("Invalid content for parameter 'QC_fields'. Use 'all' or a list of strings")
-        log.debug("filter_qc: Filter applied to '%s' of the fields: %s" % (mode, ",".join(QC_fields)))
+
+        log.debug("filter_qc: Filtering dataset to keep points with QC in %s for '%s' fields in %s" %
+                  (QC_list, mode, ",".join(QC_fields)))
+        # log.debug("filter_qc: Filter applied to '%s' of the fields: %s" % (mode, ",".join(QC_fields)))
 
         QC_fields = this[QC_fields]
         for v in QC_fields.data_vars:
@@ -1352,7 +1359,7 @@ class ArgoAccessor:
             np, nc = dd.argo.N_POINTS, dd.argo.N_PROF
             out.append("%i points / %i profiles in dataset %s" % (np, nc, txt))
             # np.unique(this['PSAL_QC'].values))
-            out.append(pd.to_datetime(dd['TIME'][0].values).strftime('%Y/%m/%d %H:%M:%S'))
+            # out.append(pd.to_datetime(dd['TIME'][0].values).strftime('%Y/%m/%d %H:%M:%S'))
             return "\n".join(out)
 
         def ds_align_pressure(this, pressure_bins_start, pressure_bin: float = 10.):
