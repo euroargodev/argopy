@@ -1348,6 +1348,19 @@ class ArgoAccessor:
         if force not in ['default', 'raw', 'adjusted']:
             raise OptionValueError("force option must be 'default', 'raw' or 'adjusted'.")
 
+        def ds2mat(this_dsp):
+            # Return a Matlab dictionary with dataset data to be used by savemat:
+            mdata = {}
+            mdata['PROFILE_NO'] = this_dsp['PROFILE_NO'].astype('uint8').values.T[np.newaxis, :]  # 1-based index in Matlab
+            mdata['DATES'] = this_dsp['DATES'].values.T[np.newaxis, :]
+            mdata['LAT'] = this_dsp['LAT'].values.T[np.newaxis, :]
+            mdata['LONG'] = this_dsp['LONG'].values.T[np.newaxis, :]
+            mdata['PRES'] = this_dsp['PRES'].values
+            mdata['TEMP'] = this_dsp['TEMP'].values
+            mdata['PTMP'] = this_dsp['PTMP'].values
+            mdata['SAL'] = this_dsp['SAL'].values
+            return mdata
+
         def pretty_print_count(dd, txt):
             # if dd.argo._type == "point":
             #     np = len(dd['N_POINTS'].values)
@@ -1444,9 +1457,11 @@ class ArgoAccessor:
                         dsp_aligned[var] = replace_i_prof_values(dsp_aligned[var], i_prof, v_align)
                         dsp_aligned[var].attrs = this[var].attrs
 
-            dsp_aligned = dsp_aligned.rename({'m_aligned': 'm'})
+            # Remove last vertical index full of NaNs
+            dsp_aligned = dsp_aligned.isel(m_aligned=range(0,len(dsp_aligned['m_aligned'])-1))
 
             # Manage output:
+            dsp_aligned = dsp_aligned.rename({'m_aligned': 'm'})
             dsp_aligned.attrs = this.attrs
             return dsp_aligned
 
@@ -1561,15 +1576,16 @@ class ArgoAccessor:
         this_dsp_processed = ds_align_pressure(this_dsp_processed, pressure_bins_start=bins, pressure_bin=10.)
 
         # Create Matlab dictionary with preprocessed data (to be used by savemat):
-        mdata = {}
-        mdata['PROFILE_NO'] = PROFILE_NO.astype('uint8')
-        mdata['DATES'] = DATES
-        mdata['LAT'] = LAT
-        mdata['LONG'] = LONG
-        mdata['PRES'] = PRES
-        mdata['TEMP'] = TEMP
-        mdata['PTMP'] = PTMP
-        mdata['SAL'] = SAL
+        # mdata = {}
+        # mdata['PROFILE_NO'] = PROFILE_NO.astype('uint8')
+        # mdata['DATES'] = DATES
+        # mdata['LAT'] = LAT
+        # mdata['LONG'] = LONG
+        # mdata['PRES'] = PRES
+        # mdata['TEMP'] = TEMP
+        # mdata['PTMP'] = PTMP
+        # mdata['SAL'] = SAL
+        mdata = ds2mat(this_dsp_processed)
 
         # Save it
         # savemat(file_name, mdata)
