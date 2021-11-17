@@ -1404,46 +1404,60 @@ def modified_environ(*remove, **update):
         [env.pop(k) for k in remove_after]
 
 
-def toYearFraction(date: pd._libs.tslibs.timestamps.Timestamp = pd.to_datetime('now')):
-    """ Compute decimal year
+def toYearFraction(this_date: pd._libs.tslibs.timestamps.Timestamp = pd.to_datetime('now')):
+    """ Compute decimal year, robust to leap years, precision to the second
+
+    Compute the fraction of the year a given timestamp corresponds to.
+    The "fraction of the year" goes:
+    - from 0 on 01-01T00:00:00.000 of the year
+    - to 1 on the 01-01T00:00:00.000 of the following year
+
+    1 second corresponds to the number of days in the year times 86400.
+    The faction of the year is rounded to 10-digits in order to have a "second" precision.
 
     See discussion here: https://github.com/euroargodev/argodmqc_owc/issues/35
+
+    Parameters
+    ----------
+    pd._libs.tslibs.timestamps.Timestamp
+
+    Returns
+    -------
+    float
     """
-    from datetime import datetime as dt
-    import time
+    if "UTC" in [this_date.tzname() if not this_date.tzinfo is None else ""]:
+        startOfThisYear = pd.to_datetime("%i-01-01T00:00:00.000" % this_date.year, utc=True)
+    else:
+        startOfThisYear = pd.to_datetime("%i-01-01T00:00:00.000" % this_date.year)
+    yearDuration_sec = (startOfThisYear + pd.offsets.DateOffset(years=1) - startOfThisYear).total_seconds()
 
-    def sinceEpoch(date):  # returns seconds since epoch
-        return time.mktime(date.timetuple())
-
-    s = sinceEpoch
-
-    year = date.year
-    startOfThisYear = dt(year=year, month=1, day=1)
-    startOfNextYear = dt(year=year + 1, month=1, day=1)
-
-    yearElapsed = s(date) - s(startOfThisYear)
-    yearDuration = s(startOfNextYear) - s(startOfThisYear)
-    fraction = yearElapsed / yearDuration
-
-    return date.year + fraction
+    yearElapsed_sec = (this_date - startOfThisYear).total_seconds()
+    fraction = yearElapsed_sec / yearDuration_sec
+    fraction = np.round(fraction, 10)
+    return this_date.year + fraction
 
 
-def YearFraction_to_datetime(yf):
-    from datetime import datetime as dt
-    import time
+def YearFraction_to_datetime(yf: float):
+    """ Compute datetime from year fraction
 
-    def sinceEpoch(date):  # returns seconds since epoch
-        return time.mktime(date.timetuple())
+    Inverse the toYearFraction() function
 
+    Parameters
+    ----------
+    float
+
+    Returns
+    -------
+    pd._libs.tslibs.timestamps.Timestamp
+    """
     year = np.int32(yf)
-    frct = yf-year
+    fraction = yf - year
+    fraction = np.round(fraction, 10)
 
-    startOfThisYear = dt(year=year, month=1, day=1)
-    startOfNextYear = dt(year=year + 1, month=1, day=1)
-    yearDuration_sec = sinceEpoch(startOfNextYear) - sinceEpoch(startOfThisYear)
-    yearElapsed_sec = np.round(frct*yearDuration_sec, 0)
-    yearElapsed_sec = pd.Timedelta(yearElapsed_sec, unit='s')
-    return startOfThisYear+yearElapsed_sec
+    startOfThisYear = pd.to_datetime("%i-01-01T00:00:00" % year)
+    yearDuration_sec = (startOfThisYear + pd.offsets.DateOffset(years=1) - startOfThisYear).total_seconds()
+    yearElapsed_sec = pd.Timedelta(fraction * yearDuration_sec, unit='s')
+    return pd.to_datetime(startOfThisYear + yearElapsed_sec, unit='s')
 
 
 def wrap_longitude(grid_long):
