@@ -15,7 +15,7 @@ except ModuleNotFoundError:
     with_gsw = False
 
 from argopy.utilities import linear_interpolation_remap, \
-    is_list_equal, is_list_of_strings, toYearFraction, wrap_longitude
+    is_list_equal, is_list_of_strings, toYearFraction
 from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
 
@@ -1541,8 +1541,8 @@ class ArgoAccessor:
         PTMP = this['PTEMP'].values.T  # (mxn)
         SAL = this['PSAL'].values.T  # (mxn)
         LAT = this['LATITUDE'].values[np.newaxis, :]
-        # LONG = wrap_longitude(this['LONGITUDE'].values)[np.newaxis, :]
         LONG = this['LONGITUDE'].values[np.newaxis, :]
+        LONG[0][np.argwhere(LONG[0]<0)] = LONG[0][np.argwhere(LONG[0]<0)] + 360
         PROFILE_NO = this['CYCLE_NUMBER'].values[np.newaxis, :]
 
         # Create dataset with preprocessed data:
@@ -1576,15 +1576,6 @@ class ArgoAccessor:
         this_dsp_processed = ds_align_pressure(this_dsp_processed, pressure_bins_start=bins, pressure_bin=10.)
 
         # Create Matlab dictionary with preprocessed data (to be used by savemat):
-        # mdata = {}
-        # mdata['PROFILE_NO'] = PROFILE_NO.astype('uint8')
-        # mdata['DATES'] = DATES
-        # mdata['LAT'] = LAT
-        # mdata['LONG'] = LONG
-        # mdata['PRES'] = PRES
-        # mdata['TEMP'] = TEMP
-        # mdata['PTMP'] = PTMP
-        # mdata['SAL'] = SAL
         mdata = ds2mat(this_dsp_processed)
 
         # Save it

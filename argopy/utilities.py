@@ -1478,7 +1478,6 @@ def wrap_longitude(grid_long):
         -------
         array of longitude values that can extend past 360
     """
-
     neg_long = np.argwhere(grid_long < 0)
     grid_long[neg_long] = grid_long[neg_long] + 360
 
