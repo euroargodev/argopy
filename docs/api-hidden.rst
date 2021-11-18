@@ -57,6 +57,12 @@
     argopy.xarray.ArgoAccessor.profile2point
     argopy.xarray.ArgoAccessor.interp_std_levels
     argopy.xarray.ArgoAccessor.teos10
+    argopy.xarray.ArgoAccessor.create_float_source
+    argopy.xarray.ArgoAccessor.filter_qc
+    argopy.xarray.ArgoAccessor.filter_data_mode
+    argopy.xarray.ArgoAccessor.filter_scalib_pres
+    argopy.xarray.ArgoAccessor.subsample_pressure
+    argopy.xarray.ArgoAccessor.cast_types
 
     argopy.plotters.open_dashboard
     argopy.plotters.bar_plot

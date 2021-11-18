@@ -1,6 +1,9 @@
 Manipulating data
 =================
 
+.. contents:: Table of contents:
+   :local:
+
 Once you fetched data, **argopy** comes with a handy :class:`xarray.Dataset` accessor namespace ``argo`` to perform specific manipulation of the data. This means that if your dataset is `ds`, then you can use `ds.argo` to access more **argopy** functions.
 
 Let's start with standard import:
@@ -61,10 +64,12 @@ Note on the linear interpolation process :
 Filters
 ~~~~~~~
 
-If you fetched data with the ``expert`` mode, you may want to use
-*filters* to help you curate the data.
+If you fetched data with the ``expert`` mode, you may want to use *filters* to help you curate the data.
 
-[To be added]
+- QC flag filter: :meth:`argopy.xarray.ArgoAccessor.filter_qc`. This method allows you to filter measurements according to QC flag values. This filter modifies all variables of the dataset.
+- Data mode filter: :meth:`argopy.xarray.ArgoAccessor.filter_data_mode`. This method allows you to filter variables according to their data mode. This filter modifies the <PARAM> and <PARAM_QC> variables of the dataset.
+- OWC variables filter: :meth:`argopy.xarray.ArgoAccessor.filter_scalib_pres`. This method allows you to filter variables according to OWC salinity calibration software requirements. This filter modifies pressure, temperature and salinity related variables of the dataset.
+
 
 Complementary data
 ------------------
@@ -72,7 +77,7 @@ Complementary data
 TEOS-10 variables
 ~~~~~~~~~~~~~~~~~
 
-You can compute additional ocean variables from `TEOS-10 <http://teos-10.org/>`_. The default list of variables is: 'SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP' ('SOUND_SPEED' is optional). `Simply raise an issue to add a new one <https://github.com/euroargodev/argopy/issues/new/choose>`_.
+You can compute additional ocean variables from `TEOS-10 <http://teos-10.org/>`_. The default list of variables is: 'SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP' ('SOUND_SPEED', 'CNDC' are optional). `Simply raise an issue to add a new one <https://github.com/euroargodev/argopy/issues/new/choose>`_.
 
 This can be done using the :meth:`argopy.xarray.ArgoAccessor.teos10` method and indicating the list of variables you want to compute:
 

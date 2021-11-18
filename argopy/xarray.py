@@ -1,3 +1,4 @@
+import os
 import sys
 import warnings
 
@@ -14,8 +15,12 @@ try:
 except ModuleNotFoundError:
     with_gsw = False
 
-from argopy.utilities import linear_interpolation_remap, \
-    is_list_equal, is_list_of_strings, toYearFraction
+from argopy.utilities import (
+    linear_interpolation_remap,
+    is_list_equal,
+    is_list_of_strings,
+    toYearFraction,
+)
 from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
 
@@ -29,16 +34,13 @@ class ArgoAccessor:
         Class registered under scope ``argo`` to access a :class:`xarray.Dataset` object.
 
         - Ensure all variables are of the Argo required dtype with:
-
-            ds.argo.cast_types()
+        >>> ds.argo.cast_types()
 
         - Convert a collection of points into a collection of profiles:
-
-            ds.argo.point2profile()
+        >>> ds.argo.point2profile()
 
         - Convert a collection of profiles to a collection of points:
-
-            ds.argo.profile2point()
+        >>> ds.argo.profile2point()
 
      """
 
@@ -76,11 +78,17 @@ class ArgoAccessor:
         summary = ["<xarray.{}.argo>".format(type(self._obj).__name__)]
         if self._type == "profile":
             summary.append("This is a collection of Argo profiles")
-            summary.append("N_PROF(%i) x N_LEVELS(%i) ~ N_POINTS(%i)" % (self.N_PROF, self.N_LEVELS, self.N_POINTS))
+            summary.append(
+                "N_PROF(%i) x N_LEVELS(%i) ~ N_POINTS(%i)"
+                % (self.N_PROF, self.N_LEVELS, self.N_POINTS)
+            )
 
         elif self._type == "point":
             summary.append("This is a collection of Argo points")
-            summary.append("N_POINTS(%i) ~ N_PROF(%i) x N_LEVELS(%i)" % (self.N_POINTS, self.N_PROF, self.N_LEVELS))
+            summary.append(
+                "N_POINTS(%i) ~ N_PROF(%i) x N_LEVELS(%i)"
+                % (self.N_POINTS, self.N_PROF, self.N_LEVELS)
+            )
 
         # dims_start = xrf.pretty_print("Dimensions:", col_width)
         # summary.append("{}({})".format(dims_start, xrf.dim_summary(self._obj)))
@@ -103,7 +111,7 @@ class ArgoAccessor:
             )
             N_PROF = len(np.unique(dummy_argo_uid))
         else:
-            N_PROF = len(np.unique(self._obj['N_PROF']))
+            N_PROF = len(np.unique(self._obj["N_PROF"]))
         return N_PROF
 
     @property
@@ -126,22 +134,22 @@ class ArgoAccessor:
                     dims="N_POINTS",
                     coords={"N_POINTS": self._obj["N_POINTS"]},
                 )
-                    .groupby(dummy_argo_uid)
-                    .sum()
-                    .max()
-                    .values
+                .groupby(dummy_argo_uid)
+                .sum()
+                .max()
+                .values
             )
         else:
-            N_LEVELS = len(np.unique(self._obj['N_LEVELS']))
+            N_LEVELS = len(np.unique(self._obj["N_LEVELS"]))
         return N_LEVELS
 
     @property
     def N_POINTS(self):
         """Number of measurement points"""
         if self._type == "profile":
-            N_POINTS = self.N_PROF*self.N_LEVELS
+            N_POINTS = self.N_PROF * self.N_LEVELS
         else:
-            N_POINTS = len(np.unique(self._obj['N_POINTS']))
+            N_POINTS = len(np.unique(self._obj["N_POINTS"]))
         return N_POINTS
 
     def _add_history(self, txt):
@@ -173,10 +181,10 @@ class ArgoAccessor:
         return this
 
     def cast_types(self):  # noqa: C901
-        """ Make sure variables are of the appropriate types
+        """ Make sure variables are of the appropriate types according to Argo
 
-            This is hard coded, but should be retrieved from an API somewhere
-            Should be able to handle all possible variables encountered in the Argo dataset
+            This is hard coded, but should be retrieved from an API somewhere.
+            Should be able to handle all possible variables encountered in the Argo dataset.
         """
         ds = self._obj
 
@@ -239,8 +247,7 @@ class ArgoAccessor:
                 da.attrs["casted"] = 1
             except Exception:
                 print("Oops!", sys.exc_info()[0], "occurred.")
-                print("Fail to cast: ", da.dtype,
-                      "into:", type, "for: ", da.name)
+                print("Fail to cast: ", da.dtype, "into:", type, "for: ", da.name)
                 print("Encountered unique values:", np.unique(da))
             return da
 
@@ -338,12 +345,15 @@ class ArgoAccessor:
 
         return ds
 
-    def filter_data_mode(self, keep_error: bool = True, errors: str = "raise"):  # noqa: C901
+    def filter_data_mode(   # noqa: C901
+        self, keep_error: bool = True, errors: str = "raise"
+    ):
         """ Filter variables according to their data mode
 
         This filter applies to <PARAM> and <PARAM_QC>
 
         For data mode 'R' and 'A': keep <PARAM> (eg: 'PRES', 'TEMP' and 'PSAL')
+
         For data mode 'D': keep <PARAM_ADJUSTED> (eg: 'PRES_ADJUSTED', 'TEMP_ADJUSTED' and 'PSAL_ADJUSTED')
 
         Since ADJUSTED variables are not required anymore after the filter, all *ADJUSTED* variables are dropped in
@@ -375,20 +385,25 @@ class ArgoAccessor:
             try:
                 return xds.where(xds[key] == value, drop=True)
             except ValueError as v:
-                if v.args[0] == ("zero-size array to reduction operation "
-                                 "minimum which has no identity"):
+                if v.args[0] == (
+                    "zero-size array to reduction operation "
+                    "minimum which has no identity"
+                ):
                     # A bug in xarray will cause a ValueError if trying to
                     # decode the times in a NetCDF file with length 0.
                     # See:
                     # https://github.com/pydata/xarray/issues/1329
                     # https://github.com/euroargodev/argopy/issues/64
                     # Here, we just need to return an empty array
-                    TIME = xds['TIME']
-                    xds = xds.drop_vars('TIME')
+                    TIME = xds["TIME"]
+                    xds = xds.drop_vars("TIME")
                     xds = xds.where(xds[key] == value, drop=True)
-                    xds['TIME'] = xr.DataArray(np.arange(len(xds['N_POINTS'])), dims='N_POINTS',
-                                               attrs=TIME.attrs).astype(np.datetime64)
-                    xds = xds.set_coords('TIME')
+                    xds["TIME"] = xr.DataArray(
+                        np.arange(len(xds["N_POINTS"])),
+                        dims="N_POINTS",
+                        attrs=TIME.attrs,
+                    ).astype(np.datetime64)
+                    xds = xds.set_coords("TIME")
                     return xds
 
         def ds_split_datamode(xds):
@@ -397,7 +412,7 @@ class ArgoAccessor:
                 Split full dataset into 3 datasets
             """
             # Real-time:
-            argo_r = safe_where_eq(xds, 'DATA_MODE', 'R')
+            argo_r = safe_where_eq(xds, "DATA_MODE", "R")
             for v in plist:
                 vname = v.upper() + "_ADJUSTED"
                 if vname in argo_r:
@@ -409,7 +424,7 @@ class ArgoAccessor:
                 if vname in argo_r:
                     argo_r = argo_r.drop_vars(vname)
             # Real-time adjusted:
-            argo_a = safe_where_eq(xds, 'DATA_MODE', 'A')
+            argo_a = safe_where_eq(xds, "DATA_MODE", "A")
             for v in plist:
                 vname = v.upper()
                 if vname in argo_a:
@@ -418,7 +433,7 @@ class ArgoAccessor:
                 if vname in argo_a:
                     argo_a = argo_a.drop_vars(vname)
             # Delayed mode:
-            argo_d = safe_where_eq(xds, 'DATA_MODE', 'D')
+            argo_d = safe_where_eq(xds, "DATA_MODE", "D")
 
             return argo_r, argo_a, argo_d
 
@@ -427,7 +442,9 @@ class ArgoAccessor:
 
                Ensure to have values even for bad QC data in delayed mode
             """
-            ii = this_ds.where(np.isnan(this_ds[vname + "_ADJUSTED"]), drop=1)["N_POINTS"]
+            ii = this_ds.where(np.isnan(this_ds[vname + "_ADJUSTED"]), drop=1)[
+                "N_POINTS"
+            ]
             this_ds[vname + "_ADJUSTED"].loc[dict(N_POINTS=ii)] = this_ds[vname].loc[
                 dict(N_POINTS=ii)
             ]
@@ -458,10 +475,16 @@ class ArgoAccessor:
             )
 
             if keep_error:
-                DA_ERROR = xr.merge((
-                    this_argo_a[this_vname + "_ADJUSTED_ERROR"].rename(this_vname + "_ERROR"),
-                    this_argo_d[this_vname + "_ADJUSTED_ERROR"].rename(this_vname + "_ERROR"),
-                ))
+                DA_ERROR = xr.merge(
+                    (
+                        this_argo_a[this_vname + "_ADJUSTED_ERROR"].rename(
+                            this_vname + "_ERROR"
+                        ),
+                        this_argo_d[this_vname + "_ADJUSTED_ERROR"].rename(
+                            this_vname + "_ERROR"
+                        ),
+                    )
+                )
                 DA = merge_this(DA, DA_QC, DA_ERROR)
             else:
                 DA = xr.merge((DA, DA_QC))
@@ -536,7 +559,9 @@ class ArgoAccessor:
 
         return final
 
-    def filter_qc(self, QC_list=[1, 2], QC_fields='all', drop=True, mode="all", mask=False):  # noqa: C901
+    def filter_qc(   # noqa: C901
+        self, QC_list=[1, 2], QC_fields="all", drop=True, mode="all", mask=False
+    ):
         """ Filter data set according to QC values
 
             Filter the dataset to keep points where 'all' or 'any' of the QC fields has a value in the list of
@@ -581,7 +606,7 @@ class ArgoAccessor:
         this = self._obj
 
         # Extract QC fields:
-        if isinstance(QC_fields, str) and QC_fields == 'all':
+        if isinstance(QC_fields, str) and QC_fields == "all":
             QC_fields = []
             for v in this.data_vars:
                 if "QC" in v and "PROFILE" not in v:
@@ -589,12 +614,19 @@ class ArgoAccessor:
         elif is_list_of_strings(QC_fields):
             for v in QC_fields:
                 if v not in this.data_vars:
-                    raise ValueError("%s not found in this dataset while trying to apply QC filter" % v)
+                    raise ValueError(
+                        "%s not found in this dataset while trying to apply QC filter"
+                        % v
+                    )
         else:
-            raise ValueError("Invalid content for parameter 'QC_fields'. Use 'all' or a list of strings")
+            raise ValueError(
+                "Invalid content for parameter 'QC_fields'. Use 'all' or a list of strings"
+            )
 
-        log.debug("filter_qc: Filtering dataset to keep points with QC in %s for '%s' fields in %s" %
-                  (QC_list, mode, ",".join(QC_fields)))
+        log.debug(
+            "filter_qc: Filtering dataset to keep points with QC in %s for '%s' fields in %s"
+            % (QC_list, mode, ",".join(QC_fields))
+        )
         # log.debug("filter_qc: Filter applied to '%s' of the fields: %s" % (mode, ",".join(QC_fields)))
 
         QC_fields = this[QC_fields]
@@ -991,12 +1023,17 @@ class ArgoAccessor:
         if not with_gsw:
             raise ModuleNotFoundError("This functionality requires the gsw library")
 
-        allowed = ['SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP', 'SOUND_SPEED', 'CNDC']
+        allowed = ["SA", "CT", "SIG0", "N2", "PV", "PTEMP", "SOUND_SPEED", "CNDC"]
         if any(var not in allowed for var in vlist):
-            raise ValueError(f"vlist must be a subset of {allowed}, instead found {vlist}")
+            raise ValueError(
+                f"vlist must be a subset of {allowed}, instead found {vlist}"
+            )
 
         if is_list_equal(vlist, ["SA", "CT", "SIG0", "N2", "PV", "PTEMP"]):
-            warnings.warn("Default variables will be reduced to 'SA' and 'CT' in 0.1.9", category=FutureWarning)
+            warnings.warn(
+                "Default variables will be reduced to 'SA' and 'CT' in 0.1.9",
+                category=FutureWarning,
+            )
 
         this = self._obj
 
@@ -1006,11 +1043,11 @@ class ArgoAccessor:
             this = this.argo.profile2point()
 
         # Get base variables as numpy arrays:
-        psal = this['PSAL'].values
-        temp = this['TEMP'].values
-        pres = this['PRES'].values
-        lon = this['LONGITUDE'].values
-        lat = this['LATITUDE'].values
+        psal = this["PSAL"].values
+        temp = this["TEMP"].values
+        pres = this["PRES"].values
+        lon = this["LONGITUDE"].values
+        lat = this["LATITUDE"].values
 
         # Coriolis
         f = gsw.f(lat)
@@ -1051,63 +1088,65 @@ class ArgoAccessor:
             pv = f * n2 / gsw.grav(lat, pres)
 
         # Sound Speed:
-        if 'SOUND_SPEED' in vlist:
+        if "SOUND_SPEED" in vlist:
             cs = gsw.sound_speed(sa, ct, pres)
 
         # Back to the dataset:
         that = []
-        if 'SA' in vlist:
-            SA = xr.DataArray(sa, coords=this['PSAL'].coords, name='SA')
-            SA.attrs['long_name'] = 'Absolute Salinity'
-            SA.attrs['standard_name'] = 'sea_water_absolute_salinity'
-            SA.attrs['unit'] = 'g/kg'
+        if "SA" in vlist:
+            SA = xr.DataArray(sa, coords=this["PSAL"].coords, name="SA")
+            SA.attrs["long_name"] = "Absolute Salinity"
+            SA.attrs["standard_name"] = "sea_water_absolute_salinity"
+            SA.attrs["unit"] = "g/kg"
             that.append(SA)
 
-        if 'CT' in vlist:
-            CT = xr.DataArray(ct, coords=this['TEMP'].coords, name='CT')
-            CT.attrs['long_name'] = 'Conservative Temperature'
-            CT.attrs['standard_name'] = 'sea_water_conservative_temperature'
-            CT.attrs['unit'] = 'degC'
+        if "CT" in vlist:
+            CT = xr.DataArray(ct, coords=this["TEMP"].coords, name="CT")
+            CT.attrs["long_name"] = "Conservative Temperature"
+            CT.attrs["standard_name"] = "sea_water_conservative_temperature"
+            CT.attrs["unit"] = "degC"
             that.append(CT)
 
-        if 'SIG0' in vlist:
-            SIG0 = xr.DataArray(sig0, coords=this['TEMP'].coords, name='SIG0')
-            SIG0.attrs['long_name'] = 'Potential density anomaly with reference pressure of 0 dbar'
-            SIG0.attrs['standard_name'] = 'sea_water_sigma_theta'
-            SIG0.attrs['unit'] = 'kg/m^3'
+        if "SIG0" in vlist:
+            SIG0 = xr.DataArray(sig0, coords=this["TEMP"].coords, name="SIG0")
+            SIG0.attrs[
+                "long_name"
+            ] = "Potential density anomaly with reference pressure of 0 dbar"
+            SIG0.attrs["standard_name"] = "sea_water_sigma_theta"
+            SIG0.attrs["unit"] = "kg/m^3"
             that.append(SIG0)
 
-        if 'CNDC' in vlist:
-            CNDC = xr.DataArray(cndc, coords=this['TEMP'].coords, name='CNDC')
-            CNDC.attrs['long_name'] = 'Electrical Conductivity'
-            CNDC.attrs['standard_name'] = 'sea_water_electrical_conductivity'
-            CNDC.attrs['unit'] = 'mS/cm'
+        if "CNDC" in vlist:
+            CNDC = xr.DataArray(cndc, coords=this["TEMP"].coords, name="CNDC")
+            CNDC.attrs["long_name"] = "Electrical Conductivity"
+            CNDC.attrs["standard_name"] = "sea_water_electrical_conductivity"
+            CNDC.attrs["unit"] = "mS/cm"
             that.append(CNDC)
 
-        if 'N2' in vlist:
-            N2 = xr.DataArray(n2, coords=this['TEMP'].coords, name='N2')
-            N2.attrs['long_name'] = 'Squared buoyancy frequency'
-            N2.attrs['unit'] = '1/s^2'
+        if "N2" in vlist:
+            N2 = xr.DataArray(n2, coords=this["TEMP"].coords, name="N2")
+            N2.attrs["long_name"] = "Squared buoyancy frequency"
+            N2.attrs["unit"] = "1/s^2"
             that.append(N2)
 
-        if 'PV' in vlist:
-            PV = xr.DataArray(pv, coords=this['TEMP'].coords, name='PV')
-            PV.attrs['long_name'] = 'Planetary Potential Vorticity'
-            PV.attrs['unit'] = '1/m/s'
+        if "PV" in vlist:
+            PV = xr.DataArray(pv, coords=this["TEMP"].coords, name="PV")
+            PV.attrs["long_name"] = "Planetary Potential Vorticity"
+            PV.attrs["unit"] = "1/m/s"
             that.append(PV)
 
-        if 'PTEMP' in vlist:
-            PTEMP = xr.DataArray(pt, coords=this['TEMP'].coords, name='PTEMP')
-            PTEMP.attrs['long_name'] = 'Potential Temperature'
-            PTEMP.attrs['standard_name'] = 'sea_water_potential_temperature'
-            PTEMP.attrs['unit'] = 'degC'
+        if "PTEMP" in vlist:
+            PTEMP = xr.DataArray(pt, coords=this["TEMP"].coords, name="PTEMP")
+            PTEMP.attrs["long_name"] = "Potential Temperature"
+            PTEMP.attrs["standard_name"] = "sea_water_potential_temperature"
+            PTEMP.attrs["unit"] = "degC"
             that.append(PTEMP)
 
-        if 'SOUND_SPEED' in vlist:
-            CS = xr.DataArray(cs, coords=this['TEMP'].coords, name='SOUND_SPEED')
-            CS.attrs['long_name'] = 'Speed of sound'
-            CS.attrs['standard_name'] = 'speed_of_sound_in_sea_water'
-            CS.attrs['unit'] = 'm/s'
+        if "SOUND_SPEED" in vlist:
+            CS = xr.DataArray(cs, coords=this["TEMP"].coords, name="SOUND_SPEED")
+            CS.attrs["long_name"] = "Speed of sound"
+            CS.attrs["standard_name"] = "speed_of_sound_in_sea_water"
+            CS.attrs["unit"] = "m/s"
             that.append(CS)
 
         # Create a dataset with all new variables:
@@ -1146,7 +1185,7 @@ class ArgoAccessor:
             else:
                 return that
 
-    def filter_scalib_pres(self, force: str = 'default', inplace: bool = True):
+    def filter_scalib_pres(self, force: str = "default", inplace: bool = True):
         """ Filter variables according to OWC salinity calibration software requirements
 
         By default: this filter will return a dataset with raw PRES, PSAL and TEMP; and if PRES is adjusted,
@@ -1166,10 +1205,13 @@ class ArgoAccessor:
         force: str
             Use force='default' to load PRES/PSAL/TEMP or PRES_ADJUSTED/PSAL/TEMP according to PRES_ADJUSTED
             filled or not.
+
             Use force='raw' to force load of PRES/PSAL/TEMP
+
             Use force='adjusted' to force load of PRES_ADJUSTED/PSAL_ADJUSTED/TEMP_ADJUSTED
         inplace: boolean, True by default
             If True, return the filtered input :class:`xarray.Dataset`
+
             If False, return a new :class:`xarray.Dataset`
 
         Returns
@@ -1187,11 +1229,11 @@ class ArgoAccessor:
             to_profile = True
             this = this.argo.profile2point()
 
-        if force == 'raw':
+        if force == "raw":
             # PRES/PSAL/TEMP are not changed
             # All ADJUSTED variables are removed (not required anymore, avoid confusion with variable content):
             this = this.drop_vars([v for v in this.data_vars if "ADJUSTED" in v])
-        elif force == 'adjusted':
+        elif force == "adjusted":
             # PRES/PSAL/TEMP are replaced by PRES_ADJUSTED/PSAL_ADJUSTED/TEMP_ADJUSTED
             for v in ["PRES", "PSAL", "TEMP"]:
                 if "%s_ADJUSTED" % v in this.data_vars:
@@ -1200,26 +1242,28 @@ class ArgoAccessor:
                     this["%s_QC" % v] = this["%s_ADJUSTED_QC" % v]
                 else:
                     raise InvalidDatasetStructure(
-                        "%s_ADJUSTED not in this dataset. Tip: fetch data in 'expert' mode" % v)
+                        "%s_ADJUSTED not in this dataset. Tip: fetch data in 'expert' mode"
+                        % v
+                    )
             # All ADJUSTED variables are removed (not required anymore, avoid confusion with variable content):
             this = this.drop_vars([v for v in this.data_vars if "ADJUSTED" in v])
         else:
             # In default mode, we just need to do something if PRES_ADJUSTED is different from PRES, meaning
             # pressure was adjusted:
-            if np.any(this['PRES_ADJUSTED'] == this['PRES']):  # Yes
+            if np.any(this["PRES_ADJUSTED"] == this["PRES"]):  # Yes
                 # We need to recompute salinity with adjusted pressur, so
                 # Compute raw conductivity from raw salinity and raw pressure:
-                cndc = gsw.C_from_SP(this['PSAL'].values,
-                                     this['TEMP'].values,
-                                     this['PRES'].values)
+                cndc = gsw.C_from_SP(
+                    this["PSAL"].values, this["TEMP"].values, this["PRES"].values
+                )
                 # Then recompute salinity with adjusted pressure:
-                sp = gsw.SP_from_C(cndc,
-                                   this['TEMP'].values,
-                                   this['PRES_ADJUSTED'].values)
+                sp = gsw.SP_from_C(
+                    cndc, this["TEMP"].values, this["PRES_ADJUSTED"].values
+                )
                 # Now fill in filtered variables (no need to change TEMP):
-                this['PRES'] = this['PRES_ADJUSTED']
-                this['PRES_QC'] = this['PRES_ADJUSTED_QC']
-                this['PSAL'].values = sp
+                this["PRES"] = this["PRES_ADJUSTED"]
+                this["PRES_QC"] = this["PRES_ADJUSTED_QC"]
+                this["PSAL"].values = sp
 
             # Finally drop everything not required anymore:
             this = this.drop_vars([v for v in this.data_vars if "ADJUSTED" in v])
@@ -1237,7 +1281,12 @@ class ArgoAccessor:
         else:
             return this
 
-    def subsample_pressure(self, pressure_bin_start: float = 0., pressure_bin: float = 10., inplace: bool = True):
+    def subsample_pressure(
+        self,
+        pressure_bin_start: float = 0.0,
+        pressure_bin: float = 10.0,
+        inplace: bool = True,
+    ):
         """ Subsample dataset along pressure bins
 
         Select vertical levels to keep max 1 level every 10db, starting from the surface (0db)
@@ -1279,22 +1328,24 @@ class ArgoAccessor:
 
         # Squeeze all profiles to 1 point every 10db (select deepest value per bins):
         this_dsp_lst = []
-        for i_prof in this['N_PROF']:
-            up, ip = sub_this_one(this['PRES'].sel(N_PROF=i_prof),
-                                  p0=pressure_bin_start,
-                                  db=pressure_bin)
+        for i_prof in this["N_PROF"]:
+            up, ip = sub_this_one(
+                this["PRES"].sel(N_PROF=i_prof), p0=pressure_bin_start, db=pressure_bin
+            )
             this_dsp_lst.append(this.sel(N_PROF=i_prof).isel(N_LEVELS=ip))
 
         # Reset N_LEVELS index
         N_LEVELS = 0
         for ids, this_dsp in enumerate(this_dsp_lst):
-            maxn = this_dsp['N_LEVELS'].shape[0]
+            maxn = this_dsp["N_LEVELS"].shape[0]
             N_LEVELS = np.max([N_LEVELS, maxn])
-            this_dsp_lst[ids] = this_dsp_lst[ids].assign_coords(N_LEVELS=np.arange(0, maxn))
+            this_dsp_lst[ids] = this_dsp_lst[ids].assign_coords(
+                N_LEVELS=np.arange(0, maxn)
+            )
 
         # Reconstruct the dataset:
-        final = xr.concat(this_dsp_lst, 'N_PROF')
-        if N_LEVELS != final['N_LEVELS'].shape[0]:
+        final = xr.concat(this_dsp_lst, "N_PROF")
+        if N_LEVELS != final["N_LEVELS"].shape[0]:
             raise ValueError("Something went wrong with vertical levels")
 
         # Manage output:
@@ -1307,31 +1358,78 @@ class ArgoAccessor:
         else:
             return final
 
+    def create_float_source(self,   # noqa: C901
+                            path: str or os.PathLike = None,
+                            force: str = "default",
+                            file_pref: str = '',
+                            file_suff: str = '',
+                            format: str = '5',
+                            do_compression: bool = True,
+                            debug_output: bool = False):
+        """ Preprocess data for OWC softwares calibration
 
-    def create_float_source(self, file_name, force: str = 'default'):
-        """ Create a Matlab file to start the OWC analysis workflow
+        This method can create a FLOAT SOURCE file (i.e. the .mat file that usually goes into /float_source/) for OWC software.
+        The FLOAT SOURCE file is saved as ``<path>/<file_pref><float_WMO><file_suff>.mat`` where the ``float_WMO`` is automatically extracted from the dataset variable PLATFORM_NUMBER (in order to avoid mismatch between user input and data content). So if this dataset has measurements from more than one float, more than one Matlab file will be created.
 
-            From an Argo xarray dataset (as returned by argopy), create a Matlab file to start the OWC analysis workflow.
+        By default, variables loaded are raw PRES, PSAL and TEMP.
+        If PRES is adjusted, variables loaded are PRES_ADJUSTED, raw PSAL calibrated in pressure and raw TEMP.
 
-            Matlab file will have the following variables (n is the number of profiles, m is the number of vertical levels):
-                DATES (1xn, in decimal year, e.g. 10 Dec 2000 = 2000.939726)
-                LAT   (1xn, in decimal degrees, -ve means south of the equator, e.g. 20.5S = -20.5)
-                LONG  (1xn, in decimal degrees, from 0 to 360, e.g. 98.5W in the eastern Pacific = 261.5E)
-                PRES  (mxn, dbar, from shallow to deep, e.g. 10, 20, 30 ... These have to line up along a fixed
-                        nominal depth axis.)
-                TEMP  (mxn, in-situ IPTS-90)
-                SAL   (mxn, PSS-78)
-                PTMP  (mxn, potential temperature referenced to zero pressure, use SAL in PSS-78 and in-situ TEMP
-                        in IPTS-90 for calculation, e.g. sw_ptmp.m)
-                PROFILE_NO (1xn, this goes from 1 to n. PROFILE_NO is the same as CYCLE_NO in the Argo files.)
+        You can force the program to load raw PRES, PSAL and TEMP whatever PRES is adjusted or not:
+
+        >>> ds.argo.create_float_source(flt_name, force='raw')
+
+        or you can force the program to load adjusted variables: PRES_ADJUSTED, PSAL_ADJUSTED, TEMP_ADJUSTED
+
+        >>> ds.argo.create_float_source(flt_name, force='adjusted')
+
+        Pre-processing details:
+
+        - select only ascending profiles
+        - subsample vertical levels to keep the deepest pressure levels on each 10db bins from the surface down to the deepest level
+        - filter variables according to the 'force' option (see above)
+        - filter variables according to QC flags:
+
+            - Remove measurements where timestamp QC is >= 3
+            - Keep measurements where pressure QC is anything but 3
+            - Keep measurements where pressure, temperature or salinity QC are anything but 4
+
+        - remove dummy values: salinity not in 0/50, potential temperature not in -10/50 and pressure not in 0/60000. Bounds inclusive.
+        - convert timestamp to fractional year
+        - convert longitudes to 0-360
+        - align pressure values, i.e. make sure that a pressure index corresponds to measurements from the same binned pressure values. This can lead to modify the number of levels in the dataset
 
         Parameters
         ----------
-        file_name, not used yet
-        force: str
-            Use force='default' to load PRES/PSAL/TEMP or PRES_ADJUSTED/PSAL/TEMP according to PRES_ADJUSTED filled or not.
-            Use force='raw' to force load of PRES/PSAL/TEMP
-            Use force='adjusted' to force load of PRES_ADJUSTED/PSAL_ADJUSTED/TEMP_ADJUSTED
+        path: str or path-like, optional
+            Path or folder name to which to save this Matlab file. If no path is provided, this function returns the resulting Matlab file as :class:`xarray.Dataset`.
+        force: {"default", "raw", "adjusted"}, default: "default"
+            If force='default' will load PRES/PSAL/TEMP or PRES_ADJUSTED/PSAL/TEMP according to PRES_ADJUSTED filled or not.
+
+            If force='raw' will load PRES/PSAL/TEMP
+
+            If force='adjusted' will load PRES_ADJUSTED/PSAL_ADJUSTED/TEMP_ADJUSTED
+        file_pref: str, optional
+            Preffix to add at the beginning of output file(s).
+        file_suff: str, optional
+            Suffix to add at the end of output file(s).
+        do_compression: bool, optional
+            Whether or not to compress matrices on write. Default is True.
+        format: {'5', '4'}, string, optional
+            Matlab file format version. '5' (the default) for MATLAB 5 and up (to 7.2). Use '4' for MATLAB 4 .mat files.
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+            The output dataset, or Matlab file, will have the following variables (`n` is the number of profiles, `m` is the number of vertical levels):
+
+            - DATES (1xn, in decimal year, e.g. 10 Dec 2000 = 2000.939726)
+            - LAT   (1xn, in decimal degrees, -ve means south of the equator, e.g. 20.5S = -20.5)
+            - LONG  (1xn, in decimal degrees, from 0 to 360, e.g. 98.5W in the eastern Pacific = 261.5E)
+            - PRES  (mxn, dbar, from shallow to deep, e.g. 10, 20, 30 ... These have to line up along a fixed nominal depth axis.)
+            - TEMP  (mxn, in-situ IPTS-90)
+            - SAL   (mxn, PSS-78)
+            - PTMP  (mxn, potential temperature referenced to zero pressure, use SAL in PSS-78 and in-situ TEMP in IPTS-90 for calculation)
+            - PROFILE_NO (1xn, this goes from 1 to n. PROFILE_NO is the same as CYCLE_NO in the Argo files.)
 
         """
         this = self._obj
@@ -1339,26 +1437,40 @@ class ArgoAccessor:
         # log.debug(np.unique(this['PSAL_QC'].values))
         # log.debug("; ".join(["".join(v) for v in this.data_vars]))
 
-        if 'history' in this.attrs and 'DATA_MODE' in this.attrs['history'] and 'QC' in this.attrs['history']:
+        if (
+            "history" in this.attrs
+            and "DATA_MODE" in this.attrs["history"]
+            and "QC" in this.attrs["history"]
+        ):
             # This is surely a dataset fetch with 'standard' mode, we can't deal with this, we need 'expert' file
-            raise InvalidDatasetStructure("Need a full Argo dataset to create OWC float source. "
-                                          "This dataset was probably loaded with a 'standard' user mode. "
-                                          "Try to fetch float data in 'expert' mode")
+            raise InvalidDatasetStructure(
+                "Need a full Argo dataset to create OWC float source. "
+                "This dataset was probably loaded with a 'standard' user mode. "
+                "Try to fetch float data in 'expert' mode"
+            )
 
-        if force not in ['default', 'raw', 'adjusted']:
-            raise OptionValueError("force option must be 'default', 'raw' or 'adjusted'.")
+        if force not in ["default", "raw", "adjusted"]:
+            raise OptionValueError(
+                "force option must be 'default', 'raw' or 'adjusted'."
+            )
+
+        if len(np.unique(this['PLATFORM_NUMBER'])) > 1:
+            log.debug("Found more than one 1 float in this dataset, will split processing")
+
 
         def ds2mat(this_dsp):
             # Return a Matlab dictionary with dataset data to be used by savemat:
             mdata = {}
-            mdata['PROFILE_NO'] = this_dsp['PROFILE_NO'].astype('uint8').values.T[np.newaxis, :]  # 1-based index in Matlab
-            mdata['DATES'] = this_dsp['DATES'].values.T[np.newaxis, :]
-            mdata['LAT'] = this_dsp['LAT'].values.T[np.newaxis, :]
-            mdata['LONG'] = this_dsp['LONG'].values.T[np.newaxis, :]
-            mdata['PRES'] = this_dsp['PRES'].values
-            mdata['TEMP'] = this_dsp['TEMP'].values
-            mdata['PTMP'] = this_dsp['PTMP'].values
-            mdata['SAL'] = this_dsp['SAL'].values
+            mdata["PROFILE_NO"] = (
+                this_dsp["PROFILE_NO"].astype("uint8").values.T[np.newaxis, :]
+            )  # 1-based index in Matlab
+            mdata["DATES"] = this_dsp["DATES"].values.T[np.newaxis, :]
+            mdata["LAT"] = this_dsp["LAT"].values.T[np.newaxis, :]
+            mdata["LONG"] = this_dsp["LONG"].values.T[np.newaxis, :]
+            mdata["PRES"] = this_dsp["PRES"].values
+            mdata["TEMP"] = this_dsp["TEMP"].values
+            mdata["PTMP"] = this_dsp["PTMP"].values
+            mdata["SAL"] = this_dsp["SAL"].values
             return mdata
 
         def pretty_print_count(dd, txt):
@@ -1375,7 +1487,7 @@ class ArgoAccessor:
             # out.append(pd.to_datetime(dd['TIME'][0].values).strftime('%Y/%m/%d %H:%M:%S'))
             return "\n".join(out)
 
-        def ds_align_pressure(this, pressure_bins_start, pressure_bin: float = 10.):
+        def ds_align_pressure(this: xr.Dataset, pressure_bins_start, pressure_bin: float = 10.0):
             """ Create a new dataset where binned pressure values align on pressure index for all profiles
 
             This method is intended to be used after subsample_pressure
@@ -1389,7 +1501,13 @@ class ArgoAccessor:
             ------
             :class:`xarray.Dataset`
             """
-            def align_pressure(pres_raw, pres_bins_start, pressure_bin: float = 10., fill_value: float = np.nan):
+
+            def align_pressure(
+                pres_raw,
+                pres_bins_start,
+                pressure_bin: float = 10.0,
+                fill_value: float = np.nan,
+            ):
                 """ Align pressure values along a given pressure axis
                     For numpy arrays
                 """
@@ -1402,7 +1520,9 @@ class ArgoAccessor:
                     ip = np.argwhere(ifound == 1)
                     if len(ip) > 0:
                         # ip_selected = ip[0][0]  # Select the lowest pressure value in bins
-                        ip_selected = ip[-1][-1]  # Select the highest pressure value in bins
+                        ip_selected = ip[-1][
+                            -1
+                        ]  # Select the highest pressure value in bins
                         pres_align[ip_insert] = pres_raw[ip_selected]
                         index_array.append(ip_selected)
                         ip_inserted.append(ip_insert)
@@ -1411,7 +1531,7 @@ class ArgoAccessor:
                 return pres_align, index_array, ip_inserted
 
             def replace_i_prof_values(this_da, i_prof, new_values):
-                if this_da.dims == ('m', 'n') or this_da.dims == ('m_aligned', 'n'):
+                if this_da.dims == ("m", "n") or this_da.dims == ("m_aligned", "n"):
                     values = this_da.values
                     values[:, i_prof] = new_values
                     this_da.values = values
@@ -1421,165 +1541,241 @@ class ArgoAccessor:
 
             # Create an empty dataset with the correct nb of vertical levels for each (m,n) variables
             m_aligned = len(pressure_bins_start)
-            n = len(this['n'])
-            PRES_BINS = np.broadcast_to(pressure_bins_start[:, np.newaxis], (m_aligned, n))
-            dsp_aligned = xr.DataArray(PRES_BINS,
-                                       dims=['m_aligned', 'n'],
-                                       coords={'m_aligned': np.arange(0, PRES_BINS.shape[0]), 'n': this['n']},
-                                       name='PRES_BINS').to_dataset(promote_attrs=False)
+            n = len(this["n"])
+            PRES_BINS = np.broadcast_to(
+                pressure_bins_start[:, np.newaxis], (m_aligned, n)
+            )
+            dsp_aligned = xr.DataArray(
+                PRES_BINS,
+                dims=["m_aligned", "n"],
+                coords={"m_aligned": np.arange(0, PRES_BINS.shape[0]), "n": this["n"]},
+                name="PRES_BINS",
+            ).to_dataset(promote_attrs=False)
 
             for v in this.data_vars:
-                if this[v].dims == ('n',):
+                if this[v].dims == ("n",):
                     # print('1D:', v)
                     dsp_aligned[v] = this[v]
-                if this[v].dims == ('m', 'n'):
+                if this[v].dims == ("m", "n"):
                     # print("2D:", v)
-                    dsp_aligned[v] = xr.DataArray(np.full_like(PRES_BINS, np.nan),
-                                                  dims=['m_aligned', 'n'],
-                                                  coords={'m_aligned': np.arange(0, PRES_BINS.shape[0]),
-                                                          'n': np.arange(0, PRES_BINS.shape[1])},
-                                                  name=v)
+                    dsp_aligned[v] = xr.DataArray(
+                        np.full_like(PRES_BINS, np.nan),
+                        dims=["m_aligned", "n"],
+                        coords={
+                            "m_aligned": np.arange(0, PRES_BINS.shape[0]),
+                            "n": np.arange(0, PRES_BINS.shape[1]),
+                        },
+                        name=v,
+                    )
 
             # Align pressure/field values for each profiles:
-            for i_prof in dsp_aligned['n']:
+            for i_prof in dsp_aligned["n"]:
                 assert this.isel(n=i_prof) == dsp_aligned.isel(n=i_prof)
 
-                p0 = this.isel(n=i_prof)['PRES'].values
-                pres_align, index_array, ip_inserted = align_pressure(p0, pressure_bins_start, pressure_bin)
+                p0 = this.isel(n=i_prof)["PRES"].values
+                pres_align, index_array, ip_inserted = align_pressure(
+                    p0, pressure_bins_start, pressure_bin
+                )
                 pres_align = np.round(pres_align, 2)
-                dsp_aligned['PRES'] = replace_i_prof_values(dsp_aligned['PRES'], i_prof, pres_align)
+                dsp_aligned["PRES"] = replace_i_prof_values(
+                    dsp_aligned["PRES"], i_prof, pres_align
+                )
 
                 for var in this.data_vars:
-                    if this[var].dims == ('m', 'n'):
+                    if this[var].dims == ("m", "n"):
                         v0 = this.isel(n=i_prof)[var].values
                         v_align = dsp_aligned.isel(n=i_prof)[var].values
                         v_align[ip_inserted] = v0[index_array]
-                        dsp_aligned[var] = replace_i_prof_values(dsp_aligned[var], i_prof, v_align)
+                        dsp_aligned[var] = replace_i_prof_values(
+                            dsp_aligned[var], i_prof, v_align
+                        )
                         dsp_aligned[var].attrs = this[var].attrs
 
             # Remove last vertical index full of NaNs
-            dsp_aligned = dsp_aligned.isel(m_aligned=range(0,len(dsp_aligned['m_aligned'])-1))
+            dsp_aligned = dsp_aligned.isel(
+                m_aligned=range(0, len(dsp_aligned["m_aligned"]) - 1)
+            )
 
             # Manage output:
-            dsp_aligned = dsp_aligned.rename({'m_aligned': 'm'})
+            dsp_aligned = dsp_aligned.rename({"m_aligned": "m"})
             dsp_aligned.attrs = this.attrs
+            dsp_aligned = dsp_aligned.drop_vars(['PRES_BINS'])
             return dsp_aligned
 
-        # Add potential temperature:
-        if 'PTEMP' not in this:
-            this = this.argo.teos10(vlist=['PTEMP'], inplace=True)
-        # log.debug(np.unique(this['PSAL_QC'].values))
+        def preprocess_one_float(this_one: xr.Dataset, this_path: str or os.PathLike = None, debug_output: bool = False):
+            """ Run the entire preprocessing on a given dataset with one float data """
 
-        # Only use Ascending profiles:
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L143
-        this = this.argo._where(this['DIRECTION'] == 'A', drop=True)
-        # this = this.argo.cast_types()
-        log.debug(pretty_print_count(this, "after direction selection"))
-        # log.debug(np.unique(this['PSAL_QC'].values))
+            # Add potential temperature:
+            if "PTEMP" not in this_one:
+                this_one = this_one.argo.teos10(vlist=["PTEMP"], inplace=True)
+            # log.debug(np.unique(this_one['PSAL_QC'].values))
 
-        # Todo: ensure we load only the primary profile of cycles with multiple sampling schemes:
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L194
+            # Only use Ascending profiles:
+            # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L143
+            this_one = this_one.argo._where(this_one["DIRECTION"] == "A", drop=True)
+            # this_one = this_one.argo.cast_types()
+            log.debug(pretty_print_count(this_one, "after direction selection"))
+            # log.debug(np.unique(this_one['PSAL_QC'].values))
 
-        # Subsample vertical levels (max 1 level every 10db):
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L208
-        this = this.argo.subsample_pressure(inplace=False)
-        log.debug(pretty_print_count(this, "after vertical levels subsampling"))
-        # log.debug(np.unique(this['PSAL_QC'].values))
+            # Todo: ensure we load only the primary profile of cycles with multiple sampling schemes:
+            # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L194
 
-        # Filter variables according to OWC workflow
-        # (I don't understand why this come at the end of the Matlab routine ...)
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L258
-        this = this.argo.filter_scalib_pres(force=force, inplace=False)
-        log.debug(pretty_print_count(this, "after pressure fields selection"))
-        # log.debug(np.unique(this['PSAL_QC'].values))
+            # Subsample vertical levels (max 1 level every 10db):
+            # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L208
+            this_one = this_one.argo.subsample_pressure(inplace=False)
+            log.debug(pretty_print_count(this_one, "after vertical levels subsampling"))
+            # log.debug(np.unique(this_one['PSAL_QC'].values))
 
-        # Filter along some QC:
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L372
-        this = this.argo.filter_qc(QC_list=[0, 1, 2],
-                                   QC_fields=['TIME_QC'],
-                                   drop=True)  # Matlab says to reject > 3
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L420
-        this = this.argo.filter_qc(QC_list=[v for v in range(10) if v != 3],
-                                   QC_fields=['PRES_QC'],
-                                   drop=True)  # Matlab says to keep != 3
-        this = this.argo.filter_qc(QC_list=[v for v in range(10) if v != 4],
-                                   QC_fields=['PRES_QC', 'TEMP_QC', 'PSAL_QC'],
-                                   drop=True, mode='any')  # Matlab says to keep != 4
-        if len(this['N_POINTS']) == 0:
-            raise DataNotFound(
-                'All data have been discarded because either PSAL_QC or TEMP_QC is filled with 4 or'
-                ' PRES_QC is filled with 3 or 4\n'
-                'NO SOURCE FILE WILL BE GENERATED !!!')
-        log.debug(pretty_print_count(this, "after QC filter"))
+            # Filter variables according to OWC workflow
+            # (I don't understand why this_one come at the end of the Matlab routine ...)
+            # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L258
+            this_one = this_one.argo.filter_scalib_pres(force=force, inplace=False)
+            log.debug(pretty_print_count(this_one, "after pressure fields selection"))
+            # log.debug(np.unique(this_one['PSAL_QC'].values))
 
-        # Exclude dummies
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L427
-        this = this.argo._where(this['PSAL'] <= 50, drop=True)\
-                    .argo._where(this['PSAL'] >= 0, drop=True) \
-                    .argo._where(this['PTEMP'] <= 50, drop=True)\
-                    .argo._where(this['PTEMP'] >= -10, drop=True) \
-                    .argo._where(this['PRES'] <= 6000, drop=True)\
-                    .argo._where(this['PRES'] >= 0, drop=True)
-        if len(this['N_POINTS']) == 0:
-            raise DataNotFound(
-                'All data have been discarded because they are filled with values out of range\n'
-                'NO SOURCE FILE WILL BE GENERATED !!!')
-        log.debug(pretty_print_count(this, "after dummy values exclusion"))
-        # log.debug(np.unique(this['PSAL_QC'].values))
+            # Filter along some QC:
+            # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L372
+            this_one = this_one.argo.filter_qc(
+                QC_list=[0, 1, 2], QC_fields=["TIME_QC"], drop=True
+            )  # Matlab says to reject > 3
+            # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L420
+            this_one = this_one.argo.filter_qc(
+                QC_list=[v for v in range(10) if v != 3], QC_fields=["PRES_QC"], drop=True
+            )  # Matlab says to keep != 3
+            this_one = this_one.argo.filter_qc(
+                QC_list=[v for v in range(10) if v != 4],
+                QC_fields=["PRES_QC", "TEMP_QC", "PSAL_QC"],
+                drop=True,
+                mode="any",
+            )  # Matlab says to keep != 4
+            if len(this_one["N_POINTS"]) == 0:
+                raise DataNotFound(
+                    "All data have been discarded because either PSAL_QC or TEMP_QC is filled with 4 or"
+                    " PRES_QC is filled with 3 or 4\n"
+                    "NO SOURCE FILE WILL BE GENERATED !!!"
+                )
+            log.debug(pretty_print_count(this_one, "after QC filter"))
 
-        # Transform measurements to a collection of profiles for Matlab-like formation:
-        this = this.argo.point2profile()
-        # log.debug(np.unique(this['PSAL_QC'].values))
+            # Exclude dummies
+            # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L427
+            this_one = (
+                this_one.argo._where(this_one["PSAL"] <= 50, drop=True)
+                    .argo._where(this_one["PSAL"] >= 0, drop=True)
+                    .argo._where(this_one["PTEMP"] <= 50, drop=True)
+                    .argo._where(this_one["PTEMP"] >= -10, drop=True)
+                    .argo._where(this_one["PRES"] <= 6000, drop=True)
+                    .argo._where(this_one["PRES"] >= 0, drop=True)
+            )
+            if len(this_one["N_POINTS"]) == 0:
+                raise DataNotFound(
+                    "All data have been discarded because they are filled with values out of range\n"
+                    "NO SOURCE FILE WILL BE GENERATED !!!"
+                )
+            log.debug(pretty_print_count(this_one, "after dummy values exclusion"))
+            # log.debug(np.unique(this_one['PSAL_QC'].values))
 
-        # Compute fractional year:
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L334
-        DATES = np.array([toYearFraction(d) for d in pd.to_datetime(this['TIME'].values)])[np.newaxis, :]
+            # Transform measurements to a collection of profiles for Matlab-like formation:
+            this_one = this_one.argo.point2profile()
+            # log.debug(np.unique(this_one['PSAL_QC'].values))
 
-        # Read measurements:
-        PRES = this['PRES'].values.T  # (mxn)
-        TEMP = this['TEMP'].values.T  # (mxn)
-        PTMP = this['PTEMP'].values.T  # (mxn)
-        SAL = this['PSAL'].values.T  # (mxn)
-        LAT = this['LATITUDE'].values[np.newaxis, :]
-        LONG = this['LONGITUDE'].values[np.newaxis, :]
-        LONG[0][np.argwhere(LONG[0]<0)] = LONG[0][np.argwhere(LONG[0]<0)] + 360
-        PROFILE_NO = this['CYCLE_NUMBER'].values[np.newaxis, :]
+            # Compute fractional year:
+            # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L334
+            DATES = np.array(
+                [toYearFraction(d) for d in pd.to_datetime(this_one["TIME"].values)]
+            )[np.newaxis, :]
 
-        # Create dataset with preprocessed data:
-        this_dsp_processed = xr.DataArray(PRES, dims=['m', 'n'], coords={'m': np.arange(0, PRES.shape[0]),
-                                                                         'n': np.arange(0, PRES.shape[1])},
-                                          name='PRES').to_dataset(promote_attrs=False)
-        this_dsp_processed['TEMP'] = xr.DataArray(TEMP, dims=['m', 'n'], coords={'m': np.arange(0, TEMP.shape[0]),
-                                                                                 'n': np.arange(0, TEMP.shape[1])},
-                                                  name='TEMP')
-        this_dsp_processed['PTMP'] = xr.DataArray(PTMP, dims=['m', 'n'], coords={'m': np.arange(0, PTMP.shape[0]),
-                                                                                  'n': np.arange(0, PTMP.shape[1])},
-                                                   name='PTMP')
-        this_dsp_processed['SAL'] = xr.DataArray(SAL, dims=['m', 'n'], coords={'m': np.arange(0, SAL.shape[0]),
-                                                                               'n': np.arange(0, SAL.shape[1])},
-                                                 name='SAL')
-        this_dsp_processed['PROFILE_NO'] = xr.DataArray(PROFILE_NO[0, :], dims=['n'],
-                                                        coords={'n': np.arange(0, PROFILE_NO.shape[1])},
-                                                        name='PROFILE_NO')
-        this_dsp_processed['DATES'] = xr.DataArray(DATES[0, :], dims=['n'], coords={'n': np.arange(0, DATES.shape[1])},
-                                                   name='DATES')
-        this_dsp_processed['LAT'] = xr.DataArray(LAT[0, :], dims=['n'], coords={'n': np.arange(0, LAT.shape[1])},
-                                                 name='LAT')
-        this_dsp_processed['LONG'] = xr.DataArray(LONG[0, :], dims=['n'], coords={'n': np.arange(0, LONG.shape[1])},
-                                                  name='LONG')
-        this_dsp_processed['m'].attrs = {'long_name': 'vertical levels'}
-        this_dsp_processed['n'].attrs = {'long_name': 'profiles'}
+            # Read measurements:
+            PRES = this_one["PRES"].values.T  # (mxn)
+            TEMP = this_one["TEMP"].values.T  # (mxn)
+            PTMP = this_one["PTEMP"].values.T  # (mxn)
+            SAL = this_one["PSAL"].values.T  # (mxn)
+            LAT = this_one["LATITUDE"].values[np.newaxis, :]
+            LONG = this_one["LONGITUDE"].values[np.newaxis, :]
+            LONG[0][np.argwhere(LONG[0] < 0)] = LONG[0][np.argwhere(LONG[0] < 0)] + 360
+            PROFILE_NO = this_one["CYCLE_NUMBER"].values[np.newaxis, :]
 
-        # Put all pressure measurements at the same index levels
-        # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L451
-        bins = np.arange(0., np.max(this_dsp_processed['PRES']) + 10., 10.)
-        this_dsp_processed = ds_align_pressure(this_dsp_processed, pressure_bins_start=bins, pressure_bin=10.)
+            # Create dataset with preprocessed data:
+            this_one_dsp_processed = xr.DataArray(
+                PRES,
+                dims=["m", "n"],
+                coords={"m": np.arange(0, PRES.shape[0]), "n": np.arange(0, PRES.shape[1])},
+                name="PRES",
+            ).to_dataset(promote_attrs=False)
+            this_one_dsp_processed["TEMP"] = xr.DataArray(
+                TEMP,
+                dims=["m", "n"],
+                coords={"m": np.arange(0, TEMP.shape[0]), "n": np.arange(0, TEMP.shape[1])},
+                name="TEMP",
+            )
+            this_one_dsp_processed["PTMP"] = xr.DataArray(
+                PTMP,
+                dims=["m", "n"],
+                coords={"m": np.arange(0, PTMP.shape[0]), "n": np.arange(0, PTMP.shape[1])},
+                name="PTMP",
+            )
+            this_one_dsp_processed["SAL"] = xr.DataArray(
+                SAL,
+                dims=["m", "n"],
+                coords={"m": np.arange(0, SAL.shape[0]), "n": np.arange(0, SAL.shape[1])},
+                name="SAL",
+            )
+            this_one_dsp_processed["PROFILE_NO"] = xr.DataArray(
+                PROFILE_NO[0, :],
+                dims=["n"],
+                coords={"n": np.arange(0, PROFILE_NO.shape[1])},
+                name="PROFILE_NO",
+            )
+            this_one_dsp_processed["DATES"] = xr.DataArray(
+                DATES[0, :],
+                dims=["n"],
+                coords={"n": np.arange(0, DATES.shape[1])},
+                name="DATES",
+            )
+            this_one_dsp_processed["LAT"] = xr.DataArray(
+                LAT[0, :], dims=["n"], coords={"n": np.arange(0, LAT.shape[1])}, name="LAT"
+            )
+            this_one_dsp_processed["LONG"] = xr.DataArray(
+                LONG[0, :],
+                dims=["n"],
+                coords={"n": np.arange(0, LONG.shape[1])},
+                name="LONG",
+            )
+            this_one_dsp_processed["m"].attrs = {"long_name": "vertical levels"}
+            this_one_dsp_processed["n"].attrs = {"long_name": "profiles"}
 
-        # Create Matlab dictionary with preprocessed data (to be used by savemat):
-        mdata = ds2mat(this_dsp_processed)
+            # Put all pressure measurements at the same index levels
+            # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L451
+            bins = np.arange(0.0, np.max(this_one_dsp_processed["PRES"]) + 10.0, 10.0)
+            this_one_dsp_processed = ds_align_pressure(
+                this_one_dsp_processed, pressure_bins_start=bins, pressure_bin=10.0
+            )
 
-        # Save it
-        # savemat(file_name, mdata)
+            # Create Matlab dictionary with preprocessed data (to be used by savemat):
+            mdata = ds2mat(this_one_dsp_processed)
 
-        # Temporary output
-        return mdata, this_dsp_processed, this
+            # Output
+            log.debug("%s" % this_path)
+            if this_path is None:
+                if debug_output:
+                    return mdata, this_one_dsp_processed, this_one  # For debug/devel
+                else:
+                    return this_one_dsp_processed
+            else:
+                from scipy.io import savemat
+                # Validity check of the path type is delegated to savemat
+                return savemat(this_path, mdata, appendmat=False, format=format, do_compression=do_compression)
+
+        # Run pre-processing for each float data
+        output = {}
+        for WMO in np.unique(this['PLATFORM_NUMBER']):
+            log.debug("Preprocessing data for float WMO %i" % WMO)
+            this_float = this.argo._where(this['PLATFORM_NUMBER']==WMO, drop=True)
+            if path is None:
+                output[WMO] = preprocess_one_float(this_float, this_path=path, debug_output=debug_output)
+            else:
+                float_path = os.path.join(path, "%s%i%s.mat" % (file_pref, WMO, file_suff))
+                preprocess_one_float(this_float, this_path=float_path, debug_output=debug_output)
+                output[WMO] = float_path
+        if path is None:
+            log.debug("===================== END create_float_source")
+            return output

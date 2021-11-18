@@ -29,10 +29,11 @@ Documentation
 * :doc:`data_fetching`
 * :doc:`data_sources`
 * :doc:`data_manipulation`
+* :doc:`visualisation`
 * :doc:`user_mode`
 * :doc:`metadata_fetching`
-* :doc:`visualisation`
 * :doc:`performances`
+* :doc:`data_quality_control`
 
 .. toctree::
     :maxdepth: 2
@@ -42,10 +43,11 @@ Documentation
     data_fetching
     data_sources
     data_manipulation
+    visualisation
     user_mode
     metadata_fetching
-    visualisation
     performances
+    data_quality_control
 
 **Help & reference**
 
