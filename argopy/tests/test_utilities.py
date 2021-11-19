@@ -22,11 +22,12 @@ from argopy.utilities import (
     is_list_of_strings,
     format_oneline, is_indexbox,
     check_wmo, is_wmo,
-    wmo2box
+    wmo2box,
+    TopoFetcher
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
-from . import requires_connection, requires_localftp
+from . import requires_connection, requires_localftp, requires_connection
 
 
 def test_invalid_dictionnary():
@@ -504,3 +505,17 @@ def test_wmo2box():
     assert is_box(complete_box(wmo2box(3324)))
     assert is_box(complete_box(wmo2box(5402)))
     assert is_box(complete_box(wmo2box(7501)))
+
+
+@requires_connection
+def test_TopoFetcher():
+    box = [81, 123, -67, -54]
+    fetcher = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=True)
+    ds = fetcher.to_xarray()
+    assert isinstance(ds, xr.Dataset)
+    assert 'elevation' in ds.data_vars
+
+    fetcher = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=False)
+    ds = fetcher.to_xarray()
+    assert isinstance(ds, xr.Dataset)
+    assert 'elevation' in ds.data_vars
