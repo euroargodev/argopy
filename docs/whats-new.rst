@@ -3,6 +3,19 @@
 What's New
 ==========
 
+v0.1.9 (X XXX. 2021)
+--------------------
+
+**Features and front-end API**
+
+- New utility method to retrieve `GEBCO topography <https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.html>`_ for a given region.
+
+.. code-block:: python
+
+    from argopy.utilities import load_gebco
+    box = [-75, -45, 20, 30]
+    topo = load_gebco(box)
+
 v0.1.8 (2 Nov. 2021)
 ---------------------
 
