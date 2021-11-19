@@ -169,7 +169,7 @@ def list_available_index_src():
 
 
 def list_standard_variables():
-    """ Return the list of variables for standard users """
+    """ List of variables for standard users """
     return [
         "DATA_MODE",
         "LATITUDE",
@@ -202,7 +202,7 @@ def list_standard_variables():
 
 
 def list_multiprofile_file_variables():
-    """ Return the list of variables in a netcdf multiprofile file.
+    """ List of variables in a netcdf multiprofile file.
 
         This is for files created by GDAC under <DAC>/<WMO>/<WMO>_prof.nc
     """
@@ -851,15 +851,19 @@ class Chunker:
         ----------
         request: dict
             Access point request to be chunked. One of the following:
-            {'box': [lon_min, lon_max, lat_min, lat_max, dpt_min, dpt_max, time_min, time_max]}
-            {'box': [lon_min, lon_max, lat_min, lat_max, dpt_min, dpt_max]}
-            {'wmo': [wmo1, wmo2, ...], 'cyc': [0,1, ...]}
+
+            - {'box': [lon_min, lon_max, lat_min, lat_max, dpt_min, dpt_max, time_min, time_max]}
+            - {'box': [lon_min, lon_max, lat_min, lat_max, dpt_min, dpt_max]}
+            - {'wmo': [wmo1, wmo2, ...], 'cyc': [0,1, ...]}
         chunks: 'auto' or dict
             Dictionary with request access point as keys and number of chunks to create as values.
+
             Eg: {'wmo':10} will create a maximum of 10 chunks along WMOs.
         chunksize: dict, optional
             Dictionary with request access point as keys and chunk size as values (used as maximum values in
-            'auto' chunking). Eg: {'wmo': 5} will create chunks with as many as 5 WMOs each.
+            'auto' chunking).
+
+            Eg: {'wmo': 5} will create chunks with as many as 5 WMOs each.
 
         """
         self.request = request
@@ -1255,7 +1259,7 @@ def is_list_of_datasets(lst):
 
 
 def check_wmo(lst):
-    """ Check a WMO option and returned it as a list of integers
+    """ Validate a WMO option and returned it as a list of integers
 
     Parameters
     ----------
@@ -1281,7 +1285,7 @@ def check_wmo(lst):
 
 
 def is_wmo(lst, errors="raise"):  # noqa: C901
-    """ Assess validity of a WMO option value
+    """ Check if a WMO is valid
 
     Parameters
     ----------
@@ -1485,7 +1489,9 @@ class TopoFetcher():
         Parameters
         ----------
         ds: str (optional), default: 'gebco'
-            Dataset to load
+            Dataset to load:
+
+            - 'gebco' will load the GEBCO_2020 Grid, a continuous terrain model for oceans and land at 15 arc-second intervals
         stride: list, default [1, 1]
             Strides along longitude and latitude. This allows to change the output resolution
         cache: bool (optional)

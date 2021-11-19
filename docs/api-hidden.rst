@@ -54,6 +54,16 @@
     argopy.utilities.Chunker
     argopy.utilities.TopoFetcher
 
+    argopy.utilities.list_standard_variables
+    argopy.utilities.list_multiprofile_file_variables
+    argopy.utilities.check_localftp
+    argopy.utilities.format_oneline
+    argopy.utilities.is_box
+    argopy.utilities.is_indexbox
+    argopy.utilities.is_wmo
+    argopy.utilities.check_wmo
+    argopy.utilities.wmo2box
+
     argopy.xarray.ArgoAccessor.point2profile
     argopy.xarray.ArgoAccessor.profile2point
     argopy.xarray.ArgoAccessor.interp_std_levels

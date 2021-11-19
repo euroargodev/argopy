@@ -6,6 +6,9 @@ API reference
 
 This page provides an auto-generated summary of argopy's API. For more details and examples, refer to the relevant chapters in the main part of the documentation.
 
+.. contents:: Table of contents:
+   :local:
+
 Top-levels functions
 ====================
 
@@ -89,16 +92,6 @@ Helpers and utilities
    argopy.TopoFetcher
    argopy.tutorial.open_dataset
 
-Low-level functions
-===================
-
-.. autosummary::
-    :toctree: generated/
-
-    argopy.show_versions
-    argopy.utilities.list_available_data_src
-    argopy.utilities.list_available_index_src
-
 Internals
 =========
 
@@ -118,6 +111,43 @@ File systems
     argopy.stores.indexstore
     argopy.stores.indexfilter_wmo
     argopy.stores.indexfilter_box
+
+Utilities
+---------
+
+Lister
+^^^^^^
+
+.. autosummary::
+    :toctree: generated/
+
+    argopy.utilities.list_available_data_src
+    argopy.utilities.list_available_index_src
+    argopy.utilities.list_standard_variables
+    argopy.utilities.list_multiprofile_file_variables
+
+Formatter
+^^^^^^^^^
+
+.. autosummary::
+    :toctree: generated/
+
+    argopy.utilities.format_oneline
+    argopy.utilities.Chunker
+    argopy.utilities.wmo2box
+
+Checker
+^^^^^^^
+
+.. autosummary::
+    :toctree: generated/
+
+    argopy.utilities.check_localftp
+    argopy.utilities.is_box
+    argopy.utilities.is_indexbox
+    argopy.utilities.is_wmo
+    argopy.utilities.check_wmo
+
 
 Data Fetchers
 -------------
