@@ -12,9 +12,11 @@ v0.1.9 (X XXX. 2021)
 
 .. code-block:: python
 
-    from argopy.utilities import load_gebco
+    from argopy import TopoFetcher
     box = [-75, -45, 20, 30]
-    topo = load_gebco(box)
+    ds = TopoFetcher(box).to_xarray()
+    ds = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=True).to_xarray()
+
 
 v0.1.8 (2 Nov. 2021)
 ---------------------

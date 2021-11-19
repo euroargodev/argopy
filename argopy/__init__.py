@@ -21,7 +21,7 @@ from . import tutorial  # noqa: E402
 # Other Import
 from . import utilities  # noqa: E402
 from . import stores  # noqa: E402
-from .utilities import show_versions, show_options, clear_cache  # noqa: E402
+from .utilities import show_versions, show_options, clear_cache, TopoFetcher  # noqa: E402
 from .utilities import monitor_status as status  # noqa: E402
 from .options import set_options  # noqa: E402
 from .plotters import open_dashboard as dashboard  # noqa: E402
@@ -32,13 +32,14 @@ __all__ = (
     "DataFetcher",
     "IndexFetcher",
     "ArgoAccessor",
-    # Top-level functions:
+    # Utilities promoted to top-level functions:
     "set_options",
     "show_versions",
     "show_options",
     "dashboard",
     "status",
     "clear_cache",
+    "TopoFetcher",  # Class
     # Sub-packages,
     "utilities",
     "errors",

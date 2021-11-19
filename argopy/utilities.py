@@ -1452,7 +1452,14 @@ def wmo2box(wmo_id: int):
 
 
 class TopoFetcher():
-    """ Manage access to Topo data through an ERDDAP server for an ocean rectangle
+    """ Fetch topographic data through an ERDDAP server for an ocean rectangle
+
+    Example:
+        >>> from argopy import TopoFetcher
+        >>> box = [-75, -45, 20, 30]  # Lon_min, lon_max, lat_min, lat_max
+        >>> ds = TopoFetcher(box).to_xarray()
+        >>> ds = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=True).to_xarray()
+
     """
 
     class ERDDAP():
@@ -1477,8 +1484,8 @@ class TopoFetcher():
 
         Parameters
         ----------
-        ds: str (optional)
-            Dataset to load: 'gebco'
+        ds: str (optional), default: 'gebco'
+            Dataset to load
         stride: list, default [1, 1]
             Strides along longitude and latitude. This allows to change the output resolution
         cache: bool (optional)
@@ -1613,4 +1620,5 @@ class TopoFetcher():
         return ds
 
     def load(self, errors: str = 'ignore'):
+        """ Load Topographic data and return a xarray.DataSet """
         return self.to_xarray(errors=errors)

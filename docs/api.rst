@@ -75,9 +75,8 @@ Fetcher properties
    argopy.DataFetcher.index
    argopy.IndexFetcher.index
 
-
-Helpers
--------
+Helpers and utilities
+---------------------
 
 .. autosummary::
    :toctree: generated/
@@ -87,6 +86,7 @@ Helpers
    argopy.show_options
    argopy.show_versions
    argopy.clear_cache
+   argopy.TopoFetcher
    argopy.tutorial.open_dataset
 
 Low-level functions
