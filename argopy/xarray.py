@@ -1433,9 +1433,6 @@ class ArgoAccessor:
 
         """
         this = self._obj
-        log.debug("===================== START create_float_source")
-        # log.debug(np.unique(this['PSAL_QC'].values))
-        # log.debug("; ".join(["".join(v) for v in this.data_vars]))
 
         if (
             "history" in this.attrs
@@ -1454,9 +1451,10 @@ class ArgoAccessor:
                 "force option must be 'default', 'raw' or 'adjusted'."
             )
 
+        log.debug("===================== START create_float_source in '%s' mode" % force)
+
         if len(np.unique(this['PLATFORM_NUMBER'])) > 1:
             log.debug("Found more than one 1 float in this dataset, will split processing")
-
 
         def ds2mat(this_dsp):
             # Return a Matlab dictionary with dataset data to be used by savemat:
@@ -1608,14 +1606,11 @@ class ArgoAccessor:
             # Add potential temperature:
             if "PTEMP" not in this_one:
                 this_one = this_one.argo.teos10(vlist=["PTEMP"], inplace=True)
-            # log.debug(np.unique(this_one['PSAL_QC'].values))
 
             # Only use Ascending profiles:
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L143
             this_one = this_one.argo._where(this_one["DIRECTION"] == "A", drop=True)
-            # this_one = this_one.argo.cast_types()
             log.debug(pretty_print_count(this_one, "after direction selection"))
-            # log.debug(np.unique(this_one['PSAL_QC'].values))
 
             # Todo: ensure we load only the primary profile of cycles with multiple sampling schemes:
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L194
@@ -1624,14 +1619,12 @@ class ArgoAccessor:
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L208
             this_one = this_one.argo.subsample_pressure(inplace=False)
             log.debug(pretty_print_count(this_one, "after vertical levels subsampling"))
-            # log.debug(np.unique(this_one['PSAL_QC'].values))
 
             # Filter variables according to OWC workflow
             # (I don't understand why this_one come at the end of the Matlab routine ...)
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L258
             this_one = this_one.argo.filter_scalib_pres(force=force, inplace=False)
             log.debug(pretty_print_count(this_one, "after pressure fields selection"))
-            # log.debug(np.unique(this_one['PSAL_QC'].values))
 
             # Filter along some QC:
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L372
@@ -1672,11 +1665,9 @@ class ArgoAccessor:
                     "NO SOURCE FILE WILL BE GENERATED !!!"
                 )
             log.debug(pretty_print_count(this_one, "after dummy values exclusion"))
-            # log.debug(np.unique(this_one['PSAL_QC'].values))
 
             # Transform measurements to a collection of profiles for Matlab-like formation:
             this_one = this_one.argo.point2profile()
-            # log.debug(np.unique(this_one['PSAL_QC'].values))
 
             # Compute fractional year:
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L334
@@ -1754,7 +1745,7 @@ class ArgoAccessor:
             mdata = ds2mat(this_one_dsp_processed)
 
             # Output
-            log.debug("%s" % this_path)
+            log.debug("float source data saved in: %s" % this_path)
             if this_path is None:
                 if debug_output:
                     return mdata, this_one_dsp_processed, this_one  # For debug/devel
@@ -1768,7 +1759,7 @@ class ArgoAccessor:
         # Run pre-processing for each float data
         output = {}
         for WMO in np.unique(this['PLATFORM_NUMBER']):
-            log.debug("Preprocessing data for float WMO %i" % WMO)
+            log.debug("> Preprocessing data for float WMO %i" % WMO)
             this_float = this.argo._where(this['PLATFORM_NUMBER']==WMO, drop=True)
             if path is None:
                 output[WMO] = preprocess_one_float(this_float, this_path=path, debug_output=debug_output)

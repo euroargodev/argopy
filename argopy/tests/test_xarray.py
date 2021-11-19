@@ -1,9 +1,14 @@
+import os
 import pytest
 import warnings
+import numpy as np
+import tempfile
+import xarray as xr
 
+import argopy
 from argopy import DataFetcher as ArgoDataFetcher
-from argopy.errors import InvalidDatasetStructure
-from . import requires_connected_erddap_phy
+from argopy.errors import InvalidDatasetStructure, OptionValueError
+from . import requires_connected_erddap_phy, requires_localftp
 
 
 @pytest.fixture(scope="module")
@@ -19,7 +24,8 @@ def ds_pts():
             data[user_mode] = (
                 ArgoDataFetcher(src="erddap", mode=user_mode)
                 .region([-75, -55, 30.0, 40.0, 0, 100.0, "2011-01-01", "2011-01-15"])
-                .to_xarray()
+                .load()
+                .data
             )
     except Exception as e:
         warnings.warn("Error when fetching tests data: %s" % str(e.args))
@@ -126,3 +132,44 @@ class Test_teos10:
                     that = that.argo.point2profile()
                 with pytest.raises(ValueError):
                     that.argo.teos10(["InvalidVariable"])
+
+
+@requires_localftp
+class Test_create_float_source:
+    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
+
+    # expert_ds = ArgoDataFetcher(src="erddap", mode='expert').float([6903075, 3901915]).load().data
+
+    def test_standard(self, ds_pts):
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
+                with pytest.raises(InvalidDatasetStructure):
+                    ds = ArgoDataFetcher(src="localftp", mode='standard').float([6901929, 2901623]).load().data
+                    ds.argo.create_float_source()
+
+    def test_force(self):
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
+                expert_ds = ArgoDataFetcher(src="localftp", mode='expert').float([6901929]).load().data
+
+                with pytest.raises(OptionValueError):
+                    expert_ds.argo.create_float_source(force='dummy')
+
+                ds_float_source = expert_ds.argo.create_float_source(path=None, force='default')
+                assert np.all([k in np.unique(expert_ds['PLATFORM_NUMBER']) for k in ds_float_source.keys()])
+                assert np.all([isinstance(ds_float_source[k], xr.Dataset) for k in ds_float_source.keys()])
+
+                ds_float_source = expert_ds.argo.create_float_source(path=None, force='raw')
+                assert np.all([k in np.unique(expert_ds['PLATFORM_NUMBER']) for k in ds_float_source.keys()])
+                assert np.all([isinstance(ds_float_source[k], xr.Dataset) for k in ds_float_source.keys()])
+
+
+    def test_filecreate(self):
+        with tempfile.TemporaryDirectory() as testcachedir:
+            with argopy.set_options(cachedir=testcachedir, local_ftp=self.local_ftp):
+                expert_ds = ArgoDataFetcher(src="localftp", mode='expert').float([6901929, 2901623]).load().data
+
+                N_file = len(np.unique(expert_ds['PLATFORM_NUMBER']))
+                with tempfile.TemporaryDirectory() as folder_output:
+                    expert_ds.argo.create_float_source(path=folder_output)
+                    assert len(os.listdir(folder_output)) == N_file

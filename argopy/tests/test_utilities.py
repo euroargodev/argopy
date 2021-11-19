@@ -22,7 +22,10 @@ from argopy.utilities import (
     is_list_of_strings,
     format_oneline, is_indexbox,
     check_wmo, is_wmo,
-    wmo2box
+    wmo2box,
+    modified_environ,
+    wrap_longitude,
+    toYearFraction, YearFraction_to_datetime
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
@@ -486,6 +489,14 @@ def test_check_wmo():
     assert check_wmo(np.array((12345, 1234567), dtype='int')) == [12345, 1234567]
 
 
+def test_modified_environ():
+    os.environ["DUMMY_ENV_ARGOPY"] = 'initial'
+    with modified_environ(DUMMY_ENV_ARGOPY='toto'):
+        assert os.environ['DUMMY_ENV_ARGOPY'] == 'toto'
+    assert os.environ['DUMMY_ENV_ARGOPY'] == 'initial'
+    os.environ.pop('DUMMY_ENV_ARGOPY')
+
+
 def test_wmo2box():
     with pytest.raises(ValueError):
         wmo2box(12)
@@ -504,3 +515,20 @@ def test_wmo2box():
     assert is_box(complete_box(wmo2box(3324)))
     assert is_box(complete_box(wmo2box(5402)))
     assert is_box(complete_box(wmo2box(7501)))
+
+
+def test_wrap_longitude():
+    assert wrap_longitude(np.array([-20])) == 340
+    assert wrap_longitude(np.array([40])) == 40
+    assert np.all(np.equal(wrap_longitude(np.array([340, 20])), np.array([340, 380])))
+
+
+def test_toYearFraction():
+    assert toYearFraction(pd.to_datetime('202001010000')) == 2020
+    assert toYearFraction(pd.to_datetime('202001010000', utc=True)) == 2020
+    assert toYearFraction(pd.to_datetime('202001010000')+pd.offsets.DateOffset(years=1)) == 2021
+
+
+def test_YearFraction_to_datetime():
+    assert YearFraction_to_datetime(2020) == pd.to_datetime('202001010000')
+    assert YearFraction_to_datetime(2020+1) == pd.to_datetime('202101010000')
