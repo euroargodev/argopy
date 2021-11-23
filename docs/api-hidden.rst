@@ -61,7 +61,7 @@
     argopy.xarray.ArgoAccessor.filter_qc
     argopy.xarray.ArgoAccessor.filter_data_mode
     argopy.xarray.ArgoAccessor.filter_scalib_pres
-    argopy.xarray.ArgoAccessor.subsample_pressure
+    argopy.xarray.ArgoAccessor.groupby_pressure_bins
     argopy.xarray.ArgoAccessor.cast_types
 
     argopy.plotters.open_dashboard

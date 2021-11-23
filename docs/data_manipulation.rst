@@ -45,8 +45,8 @@ You can simply reverse this transformation with the :meth:`argopy.xarray.ArgoAcc
     ds = ds_profiles.argo.profile2point()
     ds
 
-Interpolation to standard levels
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Interpolation to standard pressure levels
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Once your dataset is a collection of vertical **profiles**, you can interpolate variables on standard pressure levels using :meth:`argopy.xarray.ArgoAccessor.interp_std_levels` with your levels as input :
 
