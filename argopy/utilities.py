@@ -1544,7 +1544,7 @@ def wmo2box(wmo_id: int):
     return box
 
 
-def groupby_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped", select='deep'):
+def groupby_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped", select='deep', right=False):
     """ todo: Need a docstring here !"""
 
     # sub-sampling called in xarray ufunc
@@ -1557,7 +1557,7 @@ def groupby_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded",
         #         log.debug("y %s: %s" % (y.shape, y))
         #         log.debug("target_values %s: %s" % (target_values.shape, target_values))
 
-        ifound = np.digitize(x, target_values, right=False)  # ``bins[i-1] <= x < bins[i]``
+        ifound = np.digitize(x, target_values, right=right)  # ``bins[i-1] <= x < bins[i]``
         ifound -= 1  # Because digitize returns a 1-based indexing, we need to remove 1
         y_binned = np.ones_like(target_values) * np.nan
         #         log.debug("np.unique(ifound) %s" % np.unique(ifound))
@@ -1579,7 +1579,7 @@ def groupby_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded",
                 iselect = iselect[np.random.randint(len(iselect))]
                 mapped_value = y[iselect]
 
-            # Map to y statistics in the bin:
+            # or Map to y statistics in the bin:
             elif select == 'mean':
                 mapped_value = np.nanmean(y[iselect])
             elif select == 'min':

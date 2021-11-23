@@ -1792,16 +1792,27 @@ class ArgoAccessor:
             return output
 
 
-    def align_std_bins(self,
+    def groupby_pressure_bins(self,
                        pressure_bins: list or np.array,
                        fill_value: float = np.nan,
                        select: str = 'deep',
                        squeeze: bool = True,
+                       merge: bool = True,
+                       right: bool = False,
                        axis: str = 'PRES'):
         """ Returns a new dataset
 
         Parameters
         ----------
+        pressure_bins
+        fill_value
+        select
+        squeeze: bool, default: True
+            Squeeze from the output bins without measurements
+        merge: bool, default: True
+            Optimize bins axis by merging levels with a single value with the nearest neighbor
+        right
+        axis
 
         Returns
         -------
@@ -1827,10 +1838,9 @@ class ArgoAccessor:
             raise ValueError(
                 "Standard bins must be a list or a numpy array of positive and sorted values"
             )
-
         # log.debug("pressure_bins: %s" % pressure_bins)
 
-        # Adjust bins axis if we possibly need to squeeze empty bins:
+        # Adjust bins axis if we possibly have to squeeze empty bins:
         h, bin_edges = np.histogram(np.unique(np.round(this_ds[axis], 1)), pressure_bins)
         N_bins_empty = len(np.where(h == 0)[0])
         # check if any profile is left, ie if any profile match the requested bins
@@ -1841,7 +1851,121 @@ class ArgoAccessor:
             return None
         if N_bins_empty > 0 and squeeze:
             pressure_bins = pressure_bins[np.where(h > 0)]
-            log.debug("squeezed pressure_bins: %s" % pressure_bins)
+            log.debug("pressure_bins axis was squeezed to full bins only (%i bins found empty)" % N_bins_empty)
+            # log.debug("squeezed pressure_bins: %s" % pressure_bins)
+
+        def replace_i_level_values(this_da, this_i_level, new_values_along_profiles):
+            if this_da.dims == ("N_PROF", "N_LEVELS"):
+                values = this_da.values
+                values[:, this_i_level] = new_values_along_profiles
+                this_da.values = values
+            else:
+                print(this_da.dims)
+                raise ValueError("Array not with expected 'N_PROF', 'N_LEVELS' shape")
+            return this_da
+
+        def nanmerge(x, y):
+            z = x.copy()
+            for i, v in enumerate(x):
+                if np.isnan(v):
+                    z[i] = y[i]
+            return z
+
+        def merge_bin_matching_levels(this_ds):
+            # Merge pair of lines with the following pattern:
+            #   nan,    VAL, VAL, nan,    VAL, VAL
+            #   BINVAL, nan, nan, BINVAL, nan, nan
+            # This is due to the bins definition: bins[i] <= x < bins[i+1]
+            new_ds = this_ds.copy(deep=True)
+            idel = []
+            for i_level in range(0, this_ds.argo.N_LEVELS - 1 - 1):
+                this_ds_up = this_ds['PRES'].isel(N_LEVELS=i_level)
+                pres_up = np.unique(this_ds_up[~np.isnan(this_ds_up)])
+
+                this_ds_dw = this_ds['PRES'].isel(N_LEVELS=i_level + 1)
+                pres_dw = np.unique(this_ds_dw[~np.isnan(this_ds_dw)])
+                if len(pres_dw) == 1 and pres_dw[0] in this_ds['STD_PRES_BINS'] and len(
+                        np.unique(np.where(np.isnan(this_ds_up.values + this_ds_dw.values)))) == len(this_ds_up):
+                    #             print(i_level, pres_up, pres_dw)
+                    # Merge these lines:
+                    # new_values = np.nansum([this_ds_dw.values, this_ds_up.values], axis=0)
+                    new_values = nanmerge(this_ds_dw.values, this_ds_up.values)
+                    replace_i_level_values(new_ds['PRES'], i_level, new_values)
+                    idel.append(i_level + 1)
+
+            ikeep = [i for i in np.arange(0, new_ds.argo.N_LEVELS - 1) if i not in idel]
+            new_ds = new_ds.isel(N_LEVELS=ikeep)
+            new_ds = new_ds.assign_coords({'N_LEVELS': np.arange(0, len(new_ds['N_LEVELS']))})
+            val = new_ds['PRES'].values
+            new_ds['PRES'].values = np.where(val == 0, np.nan, val)
+            return new_ds
+
+        def merge_single_value_levels(this_ds):
+            # Merge levels with a single value with the deeper layer
+            # Look for this pattern:
+            #   VAL, VAL, VAL, nan, VAL, VAL
+            #   nan, nan, nan, VAL, nan, nan
+
+            new_ds = this_ds.copy(deep=True)
+
+            i_levels_single_val = np.where(np.sum(np.where(np.isnan(new_ds['PRES']), 0, 1), 0) == 1)[0]
+            N_LEVELS = new_ds.argo.N_LEVELS
+            idel = []
+            for i_level in i_levels_single_val:
+                if i_level + 1 < N_LEVELS:
+                    # Merge with deeper level:
+                    this_ds_level = this_ds['PRES'].isel(N_LEVELS=i_level)
+                    this_ds_dw = this_ds['PRES'].isel(N_LEVELS=i_level + 1)
+                    i_prof = np.where(~np.isnan(this_ds_level))[0][0]
+                    if np.isnan(this_ds_dw[i_prof].values):
+                        # new_values = np.nansum([this_ds_dw.values, this_ds_level.values], axis=0)
+                        # new_values = np.where(new_values == 0, np.nan, new_values)
+                        new_values = nanmerge(this_ds_level.values, this_ds_dw.values)
+                        replace_i_level_values(new_ds['PRES'], i_level, new_values)
+                        idel.append(i_level + 1)
+                elif i_level + 1 == N_LEVELS:
+                    # Last level to be possibly merged with penultimate level:
+                    this_ds_level = this_ds['PRES'].isel(N_LEVELS=i_level)
+                    this_ds_up = this_ds['PRES'].isel(N_LEVELS=i_level - 1)
+                    i_prof = np.where(~np.isnan(this_ds_level))[0][0]
+                    if np.isnan(this_ds_up[i_prof].values):
+                        # new_values = np.nansum([this_ds_up.values, this_ds_level.values], axis=0)
+                        # new_values = np.where(new_values == 0, np.nan, new_values)
+                        new_values = nanmerge(this_ds_level.values, this_ds_up.values)
+                        replace_i_level_values(new_ds['PRES'], i_level - 1, new_values)
+                        idel.append(i_level)
+
+            ikeep = [i for i in np.arange(0, new_ds.argo.N_LEVELS - 1) if i not in idel]
+            new_ds = new_ds.isel(N_LEVELS=ikeep)
+            new_ds = new_ds.assign_coords({'N_LEVELS': np.arange(0, len(new_ds['N_LEVELS']))})
+            val = new_ds['PRES'].values
+            new_ds['PRES'].values = np.where(val == 0, np.nan, val)
+            return new_ds
+
+        def merge_all_matching_levels(this_ds):
+            # Merge any pair of levels with a "matching" pattern:
+            #   VAL, VAL, VAL, nan, nan, VAL, nan, nan,
+            #   nan, nan, nan, VAL, VAL, nan, VAL, nan
+            new_ds = this_ds.copy(deep=True)
+
+            N_LEVELS = new_ds.argo.N_LEVELS
+            idel = []
+            for i_level in range(0, N_LEVELS):
+                if i_level + 1 < N_LEVELS:
+                    this_ds_level = this_ds['PRES'].isel(N_LEVELS=i_level)
+                    this_ds_dw = this_ds['PRES'].isel(N_LEVELS=i_level + 1)
+                    if len(np.unique(np.where(np.isnan(this_ds_level.values + this_ds_dw.values)))) == len(
+                            this_ds_level):
+                        new_values = nanmerge(this_ds_level.values, this_ds_dw.values)
+                        replace_i_level_values(new_ds['PRES'], i_level, new_values)
+                        idel.append(i_level + 1)
+
+            ikeep = [i for i in np.arange(0, new_ds.argo.N_LEVELS - 1) if i not in idel]
+            new_ds = new_ds.isel(N_LEVELS=ikeep)
+            new_ds = new_ds.assign_coords({'N_LEVELS': np.arange(0, len(new_ds['N_LEVELS']))})
+            val = new_ds['PRES'].values
+            new_ds['PRES'].values = np.where(val == 0, np.nan, val)
+            return new_ds
 
         # init
         new_ds = []
@@ -1882,7 +2006,8 @@ class ArgoAccessor:
                 this_dsp["Z_LEVELS"],
                 z_dim="N_LEVELS",
                 z_regridded_dim="Z_LEVELS",
-                select=select
+                select=select,
+                right=right
             )
             v.name = this_dsp[dv].name
             v.attrs = this_dsp[dv].attrs
@@ -1892,7 +2017,7 @@ class ArgoAccessor:
         new_ds = xr.merge(new_ds)
         new_ds = new_ds.rename({"remapped": "N_LEVELS"})
         # Remove the last index fill of NaNs:
-        new_ds = new_ds.isel(N_LEVELS=range(0, len(new_ds['N_LEVELS']) - 1))
+        # new_ds = new_ds.isel(N_LEVELS=range(0, len(new_ds['N_LEVELS']) - 1))
         #
         new_ds["STD_%s_BINS" % axis] = new_ds['N_LEVELS']
         new_ds["STD_%s_BINS" % axis].attrs = {
@@ -1908,7 +2033,12 @@ class ArgoAccessor:
         new_ds = new_ds.argo.cast_types()
         new_ds = new_ds[np.sort(new_ds.data_vars)]
         new_ds.attrs = this_ds.attrs  # Preserve original attributes
-        new_ds.argo._add_history("Subsampled and re-aligned on standard bins")
+        new_ds.argo._add_history("Sub-sampled and re-aligned on standard bins")
+
+        if merge:
+            new_ds = merge_bin_matching_levels(new_ds)
+            # new_ds = merge_single_value_levels(new_ds)
+            new_ds = merge_all_matching_levels(new_ds)
 
         if to_point:
             return new_ds.argo.profile2point()
@@ -2127,7 +2257,7 @@ class ArgoAccessor:
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L208
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L451
             bins = np.arange(0.0, np.max(this_one["PRES"]) + 10.0, 10.0)
-            this_one = this_one.argo.align_std_bins(pressure_bins=bins, select=select, axis='PRES')
+            this_one = this_one.argo.groupby_pressure_bins(pressure_bins=bins, select=select, axis='PRES')
             log.debug(pretty_print_count(this_one, "after vertical levels subsampling and re-alignment"))
 
             # Compute fractional year:
