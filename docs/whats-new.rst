@@ -12,7 +12,7 @@ v0.1.9 (X XXX. 202X)
   This new method comes with others improvements:
 
   - New ``filter_scalib_pres`` method to filter variables according to OWC salinity calibration software requirements,
-  - New ``subsample_pressure`` method to subsample a dataset down to one value by pressure bins,
+  - New ``groupby_pressure_bins`` method to subsample a dataset down to one value by pressure bins,
   - Improved ``filter_qc`` method to select which fields to consider,
   - Add conductivity (``CNDC``) to the possible output of the ``TEOS10`` method.
 

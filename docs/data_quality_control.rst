@@ -13,9 +13,6 @@ Let's start with import and set-up:
 .. ipython:: python
     :okwarning:
 
-    import os
-    os.makedirs('float_source', exist_ok=True)
-
     from argopy import DataFetcher as ArgoDataFetcher
 
 
@@ -41,10 +38,10 @@ Then, to create the float source data is as simple as:
 
     ds.argo.create_float_source("float_source")
 
-This will create the "float_source/6902766.mat" Matlab files to be set directly in the configuration file of the OWC software. This routine implements the same pre-processing as in the Matlab version (which is hosted on `this repo <https://github.com/euroargodev/dm_floats>`_ and ran with `this routine <https://github.com/euroargodev/dm_floats/blob/master/src/ow_source/create_float_source.m>`_).
+This will create the ``float_source/6902766.mat`` Matlab files to be set directly in the configuration file of the OWC software. This routine implements the same pre-processing as in the Matlab version (which is hosted on `this repo <https://github.com/euroargodev/dm_floats>`_ and ran with `this routine <https://github.com/euroargodev/dm_floats/blob/master/src/ow_source/create_float_source.m>`_).
 
 .. note::
-    If the dataset contains data from more than one float, several Matlab files are created, one for each float. This will allow you to prepare data from a collection of floats more easily.
+    If the dataset contains data from more than one float, several Matlab files are created, one for each float. This will allow you to prepare data from a collection of floats easier.
 
 If you don't specify a path name, the method returns a dictionary with the float WMO as keys and pre-processed data (as :class:`xarray.Dataset`) as values.
 
@@ -56,7 +53,11 @@ If you don't specify a path name, the method returns a dictionary with the float
 
 See all options available for this method here: :meth:`argopy.xarray.ArgoAccessor.create_float_source`.
 
-**argopy** also provides an OWC variables filter named :meth:`argopy.xarray.ArgoAccessor.filter_scalib_pres`. This method allows you to filter variables according to OWC salinity calibration software requirements. This filter modifies pressure, temperature and salinity related variables of the dataset.
+The method partially relies on two others:
+
+- :meth:`argopy.xarray.ArgoAccessor.filter_scalib_pres`: to filter variables according to OWC salinity calibration software requirements. This filter modifies pressure, temperature and salinity related variables of the dataset.
+
+- :meth:`argopy.xarray.ArgoAccessor.groupby_pressure_bins`: to sub-sampled measurements by pressure bins. This is an excellent alternative to the :meth:`argopy.xarray.ArgoAccessor.interp_std_levels` to avoid interpolation and preserve values of raw measurements while at the same time aligning measurements along approximately similar pressure levels (depending on the size of the bins).
 
 .. [OWC] See all the details about the OWC methodology in these references:
 "An improved calibration method for the drift of the conductivity sensor on autonomous CTD profiling floats by θ–S climatology".

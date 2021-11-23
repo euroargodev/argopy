@@ -1869,6 +1869,7 @@ class ArgoAccessor:
             if path is None:
                 output[WMO] = preprocess_one_float(this_float, this_path=path, select=select, debug_output=debug_output)
             else:
+                os.makedirs(path, exist_ok=True)  # Make path exists
                 float_path = os.path.join(path, "%s%i%s.mat" % (file_pref, WMO, file_suff))
                 preprocess_one_float(this_float, this_path=float_path, select=select, debug_output=debug_output)
                 output[WMO] = float_path
