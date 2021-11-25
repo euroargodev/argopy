@@ -9,7 +9,11 @@
 ## Install
 
 
-Install the last release with pip:
+Install the last release with conda:
+```bash
+conda install -c conda-forge argopy
+```
+or pip:
 ```bash
 pip install argopy
 ```
