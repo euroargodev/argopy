@@ -58,19 +58,13 @@ def test_point2profile2point(ds_pts):
 class Test_interp_std_levels:
     def test_interpolation(self, ds_pts):
         """Run with success"""
-        ds = ds_pts["standard"].argo.point2profile()
+        ds = ds_pts["standard"]#.argo.point2profile()
         assert "PRES_INTERPOLATED" in ds.argo.interp_std_levels([20, 30, 40, 50]).dims
 
     def test_interpolation_expert(self, ds_pts):
         """Run with success"""
-        ds = ds_pts["expert"].argo.point2profile()
+        ds = ds_pts["expert"]#.argo.point2profile()
         assert "PRES_INTERPOLATED" in ds.argo.interp_std_levels([20, 30, 40, 50]).dims
-
-    def test_points_error(self, ds_pts):
-        """Try to interpolate points, not profiles"""
-        ds = ds_pts["standard"]
-        with pytest.raises(InvalidDatasetStructure):
-            ds.argo.interp_std_levels([20, 30, 40, 50])
 
     def test_std_error(self, ds_pts):
         """Try to interpolate on a wrong axis"""

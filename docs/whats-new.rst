@@ -25,7 +25,7 @@ v0.1.9 (X XXX. 202X)
     ds_source = ds.argo.create_float_source()
 
 
-    New properties accessible for the `argo` xarray accessor: N_POINTS, N_LEVELS, N_PROF. Note that depending on the format of the dataset (a collection of points or of profiles) these values do or do not take into account NaN. These information are also visible by a simple print of the accessor.
+- New properties accessible for the `argo` xarray accessor: N_POINTS, N_LEVELS, N_PROF. Note that depending on the format of the dataset (a collection of points or of profiles) these values do or do not take into account NaN. These information are also visible by a simple print of the accessor. (:pr:`142`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 
@@ -35,6 +35,8 @@ v0.1.9 (X XXX. 202X)
     ds.argo.N_LEVELS
     ds.argo.N_PROF
     ds.argo
+
+
 v0.1.8 (2 Nov. 2021)
 ---------------------
 

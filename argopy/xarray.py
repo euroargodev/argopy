@@ -346,6 +346,231 @@ class ArgoAccessor:
 
         return ds
 
+    def uid(self, wmo_or_uid, cyc=None, direction=None):
+        """ UID encoder/decoder
+
+        Parameters
+        ----------
+        int
+            WMO number (to encode) or UID (to decode)
+        cyc: int, optional
+            Cycle number (to encode), not used to decode
+        direction: str, optional
+            Direction of the profile, must be 'A' (Ascending) or 'D' (Descending)
+
+        Returns
+        -------
+        int or tuple of int
+
+        Examples
+        --------
+        unique_float_profile_id = uid(690024,13,'A') # Encode
+        wmo, cyc, drc = uid(unique_float_profile_id) # Decode
+        """
+        le = preprocessing.LabelEncoder()
+        le.fit(["A", "D"])
+
+        def encode_direction(x):
+            y = 1 - le.transform(x)
+            return np.where(y == 0, -1, y)
+
+        def decode_direction(x):
+            y = 1 - np.where(x == -1, 0, x)
+            return le.inverse_transform(y)
+
+        offset = 1e5
+
+        if cyc is not None:
+            # ENCODER
+            if direction is not None:
+                return (
+                    encode_direction(direction)
+                    * np.vectorize(int)(offset * wmo_or_uid + cyc).ravel()
+                )
+            else:
+                return np.vectorize(int)(offset * wmo_or_uid + cyc).ravel()
+        else:
+            # DECODER
+            drc = decode_direction(np.sign(wmo_or_uid))
+            wmo = np.vectorize(int)(np.abs(wmo_or_uid) / offset)
+            cyc = -np.vectorize(int)(offset * wmo - np.abs(wmo_or_uid))
+            return wmo, cyc, drc
+
+    def point2profile(self):  # noqa: C901
+        """ Transform a collection of points into a collection of profiles
+
+        """
+        if self._type != "point":
+            raise InvalidDatasetStructure(
+                "Method only available to a collection of points"
+            )
+        this = self._obj  # Should not be modified
+
+        def fillvalue(da):
+            """ Return fillvalue for a dataarray """
+            # https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.kind.html#numpy.dtype.kind
+            if da.dtype.kind in ["U"]:
+                fillvalue = " "
+            elif da.dtype.kind == "i":
+                fillvalue = 99999
+            elif da.dtype.kind == "M":
+                fillvalue = np.datetime64("NaT")
+            else:
+                fillvalue = np.nan
+            return fillvalue
+
+        # Find the number of profiles (N_PROF) and vertical levels (N_LEVELS):
+        dummy_argo_uid = xr.DataArray(
+            self.uid(
+                this["PLATFORM_NUMBER"].values,
+                this["CYCLE_NUMBER"].values,
+                this["DIRECTION"].values,
+            ),
+            dims="N_POINTS",
+            coords={"N_POINTS": this["N_POINTS"]},
+            name="dummy_argo_uid",
+        )
+        N_PROF = len(np.unique(dummy_argo_uid))
+
+        N_LEVELS = int(
+            xr.DataArray(
+                np.ones_like(this["N_POINTS"].values),
+                dims="N_POINTS",
+                coords={"N_POINTS": this["N_POINTS"]},
+            )
+            .groupby(dummy_argo_uid)
+            .sum()
+            .max()
+            .values
+        )
+        assert N_PROF * N_LEVELS >= len(this["N_POINTS"])
+
+        # Store the initial set of coordinates:
+        coords_list = list(this.coords)
+        this = this.reset_coords()
+
+        # For each variables, determine if it has unique value by profile,
+        # if yes: the transformed variable should be [N_PROF]
+        # if no: the transformed variable should be [N_PROF, N_LEVELS]
+        count = np.zeros((N_PROF, len(this.data_vars)), "int")
+        for i_prof, grp in enumerate(this.groupby(dummy_argo_uid)):
+            i_uid, prof = grp
+            for iv, vname in enumerate(this.data_vars):
+                count[i_prof, iv] = len(np.unique(prof[vname]))
+        # Variables with a unique value for each profiles:
+        list_1d = list(np.array(this.data_vars)[count.sum(axis=0) == count.shape[0]])
+        # Variables with more than 1 value for each profiles:
+        list_2d = list(np.array(this.data_vars)[count.sum(axis=0) != count.shape[0]])
+
+        # Create new empty dataset:
+        new_ds = []
+        for vname in list_2d:
+            new_ds.append(
+                xr.DataArray(
+                    np.full(
+                        (N_PROF, N_LEVELS),
+                        fillvalue(this[vname]),
+                        dtype=this[vname].dtype,
+                    ),
+                    dims=["N_PROF", "N_LEVELS"],
+                    coords={
+                        "N_PROF": np.arange(N_PROF),
+                        "N_LEVELS": np.arange(N_LEVELS),
+                    },
+                    attrs=this[vname].attrs,
+                    name=vname,
+                )
+            )
+        for vname in list_1d:
+            new_ds.append(
+                xr.DataArray(
+                    np.full((N_PROF,), fillvalue(this[vname]), dtype=this[vname].dtype),
+                    dims=["N_PROF"],
+                    coords={"N_PROF": np.arange(N_PROF)},
+                    attrs=this[vname].attrs,
+                    name=vname,
+                )
+            )
+        new_ds = xr.merge(new_ds)
+
+        # Now fill in each profile values:
+        for i_prof, grp in enumerate(this.groupby(dummy_argo_uid)):
+            i_uid, prof = grp
+            for iv, vname in enumerate(this.data_vars):
+                # ['N_PROF', 'N_LEVELS'] array:
+                if len(new_ds[vname].dims) == 2:
+                    y = new_ds[vname].values
+                    x = prof[vname].values
+                    try:
+                        y[i_prof, 0: len(x)] = x
+                    except Exception:
+                        print(vname, "input", x.shape, "output", y[i_prof, :].shape)
+                        raise
+                    new_ds[vname].values = y
+                else:  # ['N_PROF', ] array:
+                    y = new_ds[vname].values
+                    x = prof[vname].values
+                    y[i_prof] = np.unique(x)[0]
+
+        # Restore coordinate variables:
+        new_ds = new_ds.set_coords([c for c in coords_list if c in new_ds])
+
+        # Misc formatting
+        new_ds = new_ds.sortby("TIME")
+        new_ds = new_ds.argo.cast_types()
+        new_ds = new_ds[np.sort(new_ds.data_vars)]
+        new_ds.encoding = self.encoding  # Preserve low-level encoding information
+        new_ds.attrs = self.attrs  # Preserve original attributes
+        new_ds.argo._add_history("Transformed with point2profile")
+        new_ds.argo._type = "profile"
+        return new_ds
+
+    def profile2point(self):
+        """ Convert a collection of profiles to a collection of points """
+        if self._type != "profile":
+            raise InvalidDatasetStructure(
+                "Method only available for a collection of profiles (N_PROF dimemsion)"
+            )
+        ds = self._obj
+
+        # Remove all variables for which a dimension is length=0 (eg: N_HISTORY)
+        dim_list = []
+        for v in ds.data_vars:
+            dims = ds[v].dims
+            for d in dims:
+                if len(ds[d]) == 0:
+                    dim_list.append(d)
+                    break
+
+        # Drop dimensions and associated variables from this dataset
+        ds = ds.drop_dims(np.unique(dim_list))
+
+        # Remove any variable that is not with dimensions (N_PROF,) or (N_PROF, N_LEVELS)
+        for v in ds:
+            dims = list(ds[v].dims)
+            dims = ".".join(dims)
+            if dims not in ["N_PROF", "N_PROF.N_LEVELS"]:
+                ds = ds.drop_vars(v)
+
+        (ds,) = xr.broadcast(ds)
+        ds = ds.stack({"N_POINTS": list(ds.dims)})
+        ds = ds.reset_index("N_POINTS").drop_vars(["N_PROF", "N_LEVELS"])
+        possible_coords = ["LATITUDE", "LONGITUDE", "TIME", "JULD", "N_POINTS"]
+        for c in [c for c in possible_coords if c in ds.data_vars]:
+            ds = ds.set_coords(c)
+
+        # Remove index without data (useless points)
+        ds = ds.where(~np.isnan(ds["PRES"]), drop=1)
+        ds = ds.sortby("TIME")
+        ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
+        ds = ds.argo.cast_types()
+        ds = ds[np.sort(ds.data_vars)]
+        ds.encoding = self.encoding  # Preserve low-level encoding information
+        ds.attrs = self.attrs  # Preserve original attributes
+        ds.argo._add_history("Transformed with profile2point")
+        ds.argo._type = "point"
+        return ds
+
     def filter_data_mode(   # noqa: C901
         self, keep_error: bool = True, errors: str = "raise"
     ):
@@ -656,243 +881,119 @@ class ArgoAccessor:
         else:
             return this_mask
 
-    def uid(self, wmo_or_uid, cyc=None, direction=None):
-        """ UID encoder/decoder
+    def filter_scalib_pres(self, force: str = "default", inplace: bool = True):
+        """ Filter variables according to OWC salinity calibration software requirements
+
+        By default: this filter will return a dataset with raw PRES, PSAL and TEMP; and if PRES is adjusted,
+        PRES variable will be replaced by PRES_ADJUSTED.
+
+        With option force='raw', you can force the filter to return a dataset with raw PRES, PSAL and TEMP wether
+        PRES is adjusted or not.
+
+        With option force='adjusted', you can force the filter to return a dataset where PRES/PSAL and TEMP replaced
+        with adjusted variables: PRES_ADJUSTED, PSAL_ADJUSTED, TEMP_ADJUSTED.
+
+        Since ADJUSTED variables are not required anymore after the filter, all *ADJUSTED* variables are dropped in
+        order to avoid confusion wrt variable content.
 
         Parameters
         ----------
-        int
-            WMO number (to encode) or UID (to decode)
-        cyc: int, optional
-            Cycle number (to encode), not used to decode
-        direction: str, optional
-            Direction of the profile, must be 'A' (Ascending) or 'D' (Descending)
+        force: str
+            Use force='default' to load PRES/PSAL/TEMP or PRES_ADJUSTED/PSAL/TEMP according to PRES_ADJUSTED
+            filled or not.
 
-        Returns
-        -------
-        int or tuple of int
+            Use force='raw' to force load of PRES/PSAL/TEMP
 
-        Examples
-        --------
-        unique_float_profile_id = uid(690024,13,'A') # Encode
-        wmo, cyc, drc = uid(unique_float_profile_id) # Decode
-        """
-        le = preprocessing.LabelEncoder()
-        le.fit(["A", "D"])
+            Use force='adjusted' to force load of PRES_ADJUSTED/PSAL_ADJUSTED/TEMP_ADJUSTED
+        inplace: boolean, True by default
+            If True, return the filtered input :class:`xarray.Dataset`
 
-        def encode_direction(x):
-            y = 1 - le.transform(x)
-            return np.where(y == 0, -1, y)
-
-        def decode_direction(x):
-            y = 1 - np.where(x == -1, 0, x)
-            return le.inverse_transform(y)
-
-        offset = 1e5
-
-        if cyc is not None:
-            # ENCODER
-            if direction is not None:
-                return (
-                    encode_direction(direction)
-                    * np.vectorize(int)(offset * wmo_or_uid + cyc).ravel()
-                )
-            else:
-                return np.vectorize(int)(offset * wmo_or_uid + cyc).ravel()
-        else:
-            # DECODER
-            drc = decode_direction(np.sign(wmo_or_uid))
-            wmo = np.vectorize(int)(np.abs(wmo_or_uid) / offset)
-            cyc = -np.vectorize(int)(offset * wmo - np.abs(wmo_or_uid))
-            return wmo, cyc, drc
-
-    def point2profile(self):  # noqa: C901
-        """ Transform a collection of points into a collection of profiles
-
-        """
-        if self._type != "point":
-            raise InvalidDatasetStructure(
-                "Method only available to a collection of points"
-            )
-        this = self._obj  # Should not be modified
-
-        def fillvalue(da):
-            """ Return fillvalue for a dataarray """
-            # https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.kind.html#numpy.dtype.kind
-            if da.dtype.kind in ["U"]:
-                fillvalue = " "
-            elif da.dtype.kind == "i":
-                fillvalue = 99999
-            elif da.dtype.kind == "M":
-                fillvalue = np.datetime64("NaT")
-            else:
-                fillvalue = np.nan
-            return fillvalue
-
-        # Find the number of profiles (N_PROF) and vertical levels (N_LEVELS):
-        dummy_argo_uid = xr.DataArray(
-            self.uid(
-                this["PLATFORM_NUMBER"].values,
-                this["CYCLE_NUMBER"].values,
-                this["DIRECTION"].values,
-            ),
-            dims="N_POINTS",
-            coords={"N_POINTS": this["N_POINTS"]},
-            name="dummy_argo_uid",
-        )
-        N_PROF = len(np.unique(dummy_argo_uid))
-
-        N_LEVELS = int(
-            xr.DataArray(
-                np.ones_like(this["N_POINTS"].values),
-                dims="N_POINTS",
-                coords={"N_POINTS": this["N_POINTS"]},
-            )
-            .groupby(dummy_argo_uid)
-            .sum()
-            .max()
-            .values
-        )
-        assert N_PROF * N_LEVELS >= len(this["N_POINTS"])
-
-        # Store the initial set of coordinates:
-        coords_list = list(this.coords)
-        this = this.reset_coords()
-
-        # For each variables, determine if it has unique value by profile,
-        # if yes: the transformed variable should be [N_PROF]
-        # if no: the transformed variable should be [N_PROF, N_LEVELS]
-        count = np.zeros((N_PROF, len(this.data_vars)), "int")
-        for i_prof, grp in enumerate(this.groupby(dummy_argo_uid)):
-            i_uid, prof = grp
-            for iv, vname in enumerate(this.data_vars):
-                count[i_prof, iv] = len(np.unique(prof[vname]))
-        # Variables with a unique value for each profiles:
-        list_1d = list(np.array(this.data_vars)[count.sum(axis=0) == count.shape[0]])
-        # Variables with more than 1 value for each profiles:
-        list_2d = list(np.array(this.data_vars)[count.sum(axis=0) != count.shape[0]])
-
-        # Create new empty dataset:
-        new_ds = []
-        for vname in list_2d:
-            new_ds.append(
-                xr.DataArray(
-                    np.full(
-                        (N_PROF, N_LEVELS),
-                        fillvalue(this[vname]),
-                        dtype=this[vname].dtype,
-                    ),
-                    dims=["N_PROF", "N_LEVELS"],
-                    coords={
-                        "N_PROF": np.arange(N_PROF),
-                        "N_LEVELS": np.arange(N_LEVELS),
-                    },
-                    attrs=this[vname].attrs,
-                    name=vname,
-                )
-            )
-        for vname in list_1d:
-            new_ds.append(
-                xr.DataArray(
-                    np.full((N_PROF,), fillvalue(this[vname]), dtype=this[vname].dtype),
-                    dims=["N_PROF"],
-                    coords={"N_PROF": np.arange(N_PROF)},
-                    attrs=this[vname].attrs,
-                    name=vname,
-                )
-            )
-        new_ds = xr.merge(new_ds)
-
-        # Now fill in each profile values:
-        for i_prof, grp in enumerate(this.groupby(dummy_argo_uid)):
-            i_uid, prof = grp
-            for iv, vname in enumerate(this.data_vars):
-                # ['N_PROF', 'N_LEVELS'] array:
-                if len(new_ds[vname].dims) == 2:
-                    y = new_ds[vname].values
-                    x = prof[vname].values
-                    try:
-                        y[i_prof, 0: len(x)] = x
-                    except Exception:
-                        print(vname, "input", x.shape, "output", y[i_prof, :].shape)
-                        raise
-                    new_ds[vname].values = y
-                else:  # ['N_PROF', ] array:
-                    y = new_ds[vname].values
-                    x = prof[vname].values
-                    y[i_prof] = np.unique(x)[0]
-
-        # Restore coordinate variables:
-        new_ds = new_ds.set_coords([c for c in coords_list if c in new_ds])
-
-        # Misc formatting
-        new_ds = new_ds.sortby("TIME")
-        new_ds = new_ds.argo.cast_types()
-        new_ds = new_ds[np.sort(new_ds.data_vars)]
-        new_ds.encoding = self.encoding  # Preserve low-level encoding information
-        new_ds.attrs = self.attrs  # Preserve original attributes
-        new_ds.argo._add_history("Transformed with point2profile")
-        new_ds.argo._type = "profile"
-        return new_ds
-
-    def profile2point(self):
-        """ Convert a collection of profiles to a collection of points """
-        if self._type != "profile":
-            raise InvalidDatasetStructure(
-                "Method only available for a collection of profiles (N_PROF dimemsion)"
-            )
-        ds = self._obj
-
-        # Remove all variables for which a dimension is length=0 (eg: N_HISTORY)
-        dim_list = []
-        for v in ds.data_vars:
-            dims = ds[v].dims
-            for d in dims:
-                if len(ds[d]) == 0:
-                    dim_list.append(d)
-                    break
-
-        # Drop dimensions and associated variables from this dataset
-        ds = ds.drop_dims(np.unique(dim_list))
-
-        # Remove any variable that is not with dimensions (N_PROF,) or (N_PROF, N_LEVELS)
-        for v in ds:
-            dims = list(ds[v].dims)
-            dims = ".".join(dims)
-            if dims not in ["N_PROF", "N_PROF.N_LEVELS"]:
-                ds = ds.drop_vars(v)
-
-        (ds,) = xr.broadcast(ds)
-        ds = ds.stack({"N_POINTS": list(ds.dims)})
-        ds = ds.reset_index("N_POINTS").drop_vars(["N_PROF", "N_LEVELS"])
-        possible_coords = ["LATITUDE", "LONGITUDE", "TIME", "JULD", "N_POINTS"]
-        for c in [c for c in possible_coords if c in ds.data_vars]:
-            ds = ds.set_coords(c)
-
-        # Remove index without data (useless points)
-        ds = ds.where(~np.isnan(ds["PRES"]), drop=1)
-        ds = ds.sortby("TIME")
-        ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
-        ds = ds.argo.cast_types()
-        ds = ds[np.sort(ds.data_vars)]
-        ds.encoding = self.encoding  # Preserve low-level encoding information
-        ds.attrs = self.attrs  # Preserve original attributes
-        ds.argo._add_history("Transformed with profile2point")
-        ds.argo._type = "point"
-        return ds
-
-    def interp_std_levels(self, std_lev):
-        """ Returns a new dataset interpolated to new inputs levels
-
-        Parameters
-        ----------
-        list or np.array
-        Standard levels used for interpolation
+            If False, return a new :class:`xarray.Dataset`
 
         Returns
         -------
         :class:`xarray.Dataset`
         """
+        if not with_gsw:
+            raise ModuleNotFoundError("This functionality requires the gsw library")
+
+        this = self._obj
+
+        # Will work with a collection of points
+        to_profile = False
+        if this.argo._type == "profile":
+            to_profile = True
+            this = this.argo.profile2point()
+
+        if force == "raw":
+            # PRES/PSAL/TEMP are not changed
+            # All ADJUSTED variables are removed (not required anymore, avoid confusion with variable content):
+            this = this.drop_vars([v for v in this.data_vars if "ADJUSTED" in v])
+        elif force == "adjusted":
+            # PRES/PSAL/TEMP are replaced by PRES_ADJUSTED/PSAL_ADJUSTED/TEMP_ADJUSTED
+            for v in ["PRES", "PSAL", "TEMP"]:
+                if "%s_ADJUSTED" % v in this.data_vars:
+                    this[v] = this["%s_ADJUSTED" % v]
+                    this["%s_ERROR" % v] = this["%s_ADJUSTED_ERROR" % v]
+                    this["%s_QC" % v] = this["%s_ADJUSTED_QC" % v]
+                else:
+                    raise InvalidDatasetStructure(
+                        "%s_ADJUSTED not in this dataset. Tip: fetch data in 'expert' mode"
+                        % v
+                    )
+            # All ADJUSTED variables are removed (not required anymore, avoid confusion with variable content):
+            this = this.drop_vars([v for v in this.data_vars if "ADJUSTED" in v])
+        else:
+            # In default mode, we just need to do something if PRES_ADJUSTED is different from PRES, meaning
+            # pressure was adjusted:
+            if np.any(this["PRES_ADJUSTED"] == this["PRES"]):  # Yes
+                # We need to recompute salinity with adjusted pressur, so
+                # Compute raw conductivity from raw salinity and raw pressure:
+                cndc = gsw.C_from_SP(
+                    this["PSAL"].values, this["TEMP"].values, this["PRES"].values
+                )
+                # Then recompute salinity with adjusted pressure:
+                sp = gsw.SP_from_C(
+                    cndc, this["TEMP"].values, this["PRES_ADJUSTED"].values
+                )
+                # Now fill in filtered variables (no need to change TEMP):
+                this["PRES"] = this["PRES_ADJUSTED"]
+                this["PRES_QC"] = this["PRES_ADJUSTED_QC"]
+                this["PSAL"].values = sp
+
+            # Finally drop everything not required anymore:
+            this = this.drop_vars([v for v in this.data_vars if "ADJUSTED" in v])
+
+        # Manage output:
+        this.argo._add_history("Variables filtered according to OWC methodology")
+        this = this[np.sort(this.data_vars)]
+        if to_profile:
+            this = this.argo.point2profile()
+
+        # Manage output:
+        if inplace:
+            self._obj = this
+            return self._obj
+        else:
+            return this
+
+    def interp_std_levels(self,
+                          std_lev: list or np.array,
+                          axis: str = 'PRES'):
+        """ Returns a new dataset interpolated to standard pressure levels
+
+        Parameters
+        ----------
+        std_lev: list or np.array
+            Standard pressure levels used for interpolation. It has to be 1-dimensional and monotonic.
+        axis: str, default: ``PRES``
+            The dataset variable to use as pressure axis. This could be ``PRES`` or ``PRES_ADJUSTED``.
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+        """
+        this_ds = self._obj
 
         if (type(std_lev) is np.ndarray) | (type(std_lev) is list):
             std_lev = np.array(std_lev)
@@ -905,27 +1006,31 @@ class ArgoAccessor:
                 "Standard levels must be a list or a numpy array of positive and sorted values"
             )
 
-        if self._type != "profile":
-            raise InvalidDatasetStructure(
-                "Method only available for a collection of profiles"
-            )
+        if axis not in ['PRES', 'PRES_ADJUSTED']:
+            raise ValueError("'axis' option must be 'PRES' or 'PRES_ADJUSTED'")
 
-        ds = self._obj
+        # Will work with a collection of profiles:
+        to_point = False
+        if this_ds.argo._type == "point":
+            to_point = True
+            this_dsp = this_ds.argo.point2profile()
+        else:
+            this_dsp = this_ds.copy(deep=True)
 
         # Selecting profiles that have a max(pressure) > max(std_lev) to avoid extrapolation in that direction
         # For levels < min(pressure), first level values of the profile are extended to surface.
-        i1 = ds["PRES"].max("N_LEVELS") >= std_lev[-1]
-        dsp = ds.where(i1, drop=True)
+        i1 = this_dsp[axis].max("N_LEVELS") >= std_lev[-1]
+        this_dsp = this_dsp.where(i1, drop=True)
 
         # check if any profile is left, ie if any profile match the requested depth
-        if len(dsp["N_PROF"]) == 0:
+        if len(this_dsp["N_PROF"]) == 0:
             raise Warning(
                 "None of the profiles can be interpolated (not reaching the requested depth range)."
             )
             return None
 
         # add new vertical dimensions, this has to be in the datasets to apply ufunc later
-        dsp["Z_LEVELS"] = xr.DataArray(std_lev, dims={"Z_LEVELS": std_lev})
+        this_dsp["Z_LEVELS"] = xr.DataArray(std_lev, dims={"Z_LEVELS": std_lev})
 
         # init
         ds_out = xr.Dataset()
@@ -933,17 +1038,17 @@ class ArgoAccessor:
         # vars to interpolate
         datavars = [
             dv
-            for dv in list(dsp.variables)
-            if set(["N_LEVELS", "N_PROF"]) == set(dsp[dv].dims)
+            for dv in list(this_dsp.variables)
+            if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
             and "QC" not in dv
             and "ERROR" not in dv
         ]
         # coords
-        coords = [dv for dv in list(dsp.coords)]
+        coords = [dv for dv in list(this_dsp.coords)]
         # vars depending on N_PROF only
         solovars = [
             dv
-            for dv in list(dsp.variables)
+            for dv in list(this_dsp.variables)
             if dv not in datavars
             and dv not in coords
             and "QC" not in dv
@@ -952,33 +1057,297 @@ class ArgoAccessor:
 
         for dv in datavars:
             ds_out[dv] = linear_interpolation_remap(
-                dsp.PRES,
-                dsp[dv],
-                dsp["Z_LEVELS"],
+                this_dsp[axis],
+                this_dsp[dv],
+                this_dsp["Z_LEVELS"],
                 z_dim="N_LEVELS",
                 z_regridded_dim="Z_LEVELS",
             )
-        ds_out = ds_out.rename({"remapped": "PRES_INTERPOLATED"})
+        ds_out = ds_out.rename({"remapped": "%s_INTERPOLATED" % axis})
 
         for sv in solovars:
-            ds_out[sv] = dsp[sv]
+            ds_out[sv] = this_dsp[sv]
 
         for co in coords:
-            ds_out.coords[co] = dsp[co]
+            ds_out.coords[co] = this_dsp[co]
 
         ds_out = ds_out.drop_vars(["N_LEVELS", "Z_LEVELS"])
         ds_out = ds_out[np.sort(ds_out.data_vars)]
         ds_out = ds_out.argo.cast_types()
         ds_out.attrs = self.attrs  # Preserve original attributes
-        ds_out.argo._add_history("Interpolated on standard levels")
+        ds_out.argo._add_history("Interpolated on standard %s levels" % axis)
 
-        return ds_out
+        if to_point:
+            return ds_out.argo.profile2point()
+        else:
+            return ds_out
+
+    def groupby_pressure_bins(self,  # noqa: C901
+                              bins: list or np.array,
+                              axis: str = 'PRES',
+                              right: bool = False,
+                              select: str = 'deep',
+                              squeeze: bool = True,
+                              merge: bool = True):
+        """ Group measurements by pressure bins
+
+        This method can be used to subsample and align an irregular dataset (pressure not being similar in all profiles)
+        on a set of pressure bins. The output dataset could then be used to perform statistics along the N_PROF dimension
+        because N_LEVELS will corresponds to similar pressure bins, while avoiding to interpolate data.
+
+        Parameters
+        ----------
+        bins: list or np.array,
+            Array of bins. It has to be 1-dimensional and monotonic. Bins of data are localised using values from
+            options `axis` (default: ``PRES``) and `right` (default: ``False``), see below.
+        axis: str, default: ``PRES``
+            The dataset variable to use as pressure axis. This could be ``PRES`` or ``PRES_ADJUSTED``
+        right: bool, default: False
+            Indicating whether the bin intervals include the right or the left bin edge. Default behavior is
+            (right==False) indicating that the interval does not include the right edge. The left bin end is open
+            in this case, i.e., bins[i-1] <= x < bins[i] is the default behavior for monotonically increasing bins.
+        select: str, default: ``deep``
+            The value selection method for bins.
+
+            This selection can be based on values at the pressure axis level with: ``deep`` (default), ``shallow``,
+            ``middle``, ``random``. For instance, ``select='deep'`` will lead to the value
+            returned for a bin to be taken at the deepest pressure level in the bin.
+
+            Or this selection can be based on statistics of measurements in a bin. Stats available are: ``min``, ``max``,
+            ``mean``, ``median``. For instance ``select='mean'`` will lead to the value returned for a bin to be the mean of
+            all measurements in the bin.
+        squeeze: bool, default: True
+            Squeeze from the output bin levels without measurements.
+        merge: bool, default: True
+            Optimize the output bins axis size by merging levels with/without data. The pressure bins axis is modified
+            accordingly. This means that the return STD_PRES_BINS axis has not necessarily the same size as
+            the input ``bins``.
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+
+        See Also
+        --------
+        :class:`numpy.digitize`, :class:`argopy.utilities.groupby_remap`
+        """
+        this_ds = self._obj
+
+        if (type(bins) is np.ndarray) | (type(bins) is list):
+            bins = np.array(bins)
+            if (np.any(sorted(bins) != bins)) | (np.any(bins < 0)):
+                raise ValueError(
+                    "Standard bins must be a list or a numpy array of positive and sorted values"
+                )
+        else:
+            raise ValueError(
+                "Standard bins must be a list or a numpy array of positive and sorted values"
+            )
+
+        if axis not in ['PRES', 'PRES_ADJUSTED']:
+            raise ValueError("'axis' option must be 'PRES' or 'PRES_ADJUSTED'")
+
+        # Will work with a collection of profiles:
+        to_point = False
+        if this_ds.argo._type == "point":
+            to_point = True
+            this_dsp = this_ds.argo.point2profile()
+        else:
+            this_dsp = this_ds.copy(deep=True)
+
+        # Adjust bins axis if we possibly have to squeeze empty bins:
+        h, bin_edges = np.histogram(np.unique(np.round(this_dsp[axis], 1)), bins)
+        N_bins_empty = len(np.where(h == 0)[0])
+        # check if any profile is left, ie if any profile match the requested bins
+        if N_bins_empty == len(h):
+            raise Warning(
+                "None of the profiles can be aligned (pressure values out of bins range)."
+            )
+            return None
+        if N_bins_empty > 0 and squeeze:
+            log.debug(
+                "bins axis was squeezed to full bins only (%i bins found empty out of %i)" % (N_bins_empty, len(bins)))
+            bins = bins[np.where(h > 0)]
+
+        def replace_i_level_values(this_da, this_i_level, new_values_along_profiles):
+            """ Convenience fct to update only one level of a ["N_PROF", "N_LEVELS"] xr.DataArray"""
+            if this_da.dims == ("N_PROF", "N_LEVELS"):
+                values = this_da.values
+                values[:, this_i_level] = new_values_along_profiles
+                this_da.values = values
+            else:
+                raise ValueError("Array not with expected ['N_PROF', 'N_LEVELS'] shape")
+            return this_da
+
+        def nanmerge(x, y):
+            """ Merge two 1D array
+
+                Given 2 arrays x, y of 1 dimension, return a new array with:
+                - x values where x is not NaN
+                - y values where x is NaN
+            """
+            z = x.copy()
+            for i, v in enumerate(x):
+                if np.isnan(v):
+                    z[i] = y[i]
+            return z
+
+        merged_is_nan = lambda l1, l2: len(np.unique(np.where(np.isnan(l1.values + l2.values)))) == len(
+            l1)  # noqa: E731
+
+        def merge_bin_matching_levels(this_ds: xr.Dataset) -> xr.Dataset:
+            """ Levels merger of type 'bins' value
+
+            Merge pair of lines with the following pattern:
+               nan,    VAL, VAL, nan,    VAL, VAL
+               BINVAL, nan, nan, BINVAL, nan, nan
+
+            This pattern is due to the bins definition: bins[i] <= x < bins[i+1]
+
+            Parameters
+            ----------
+            :class:`xarray.Dataset`
+
+            Returns
+            -------
+            :class:`xarray.Dataset`
+            """
+            new_ds = this_ds.copy(deep=True)
+            N_LEVELS = new_ds.argo.N_LEVELS
+            idel = []
+            for i_level in range(0, N_LEVELS - 1 - 1):
+                this_ds_level = this_ds[axis].isel(N_LEVELS=i_level)
+                this_ds_dw = this_ds[axis].isel(N_LEVELS=i_level + 1)
+                pres_dw = np.unique(this_ds_dw[~np.isnan(this_ds_dw)])
+                if len(pres_dw) == 1 \
+                        and pres_dw[0] in this_ds["STD_%s_BINS" % axis] \
+                        and merged_is_nan(this_ds_level, this_ds_dw):
+                    new_values = nanmerge(this_ds_dw.values, this_ds_level.values)
+                    replace_i_level_values(new_ds[axis], i_level, new_values)
+                    idel.append(i_level + 1)
+
+            ikeep = [i for i in np.arange(0, new_ds.argo.N_LEVELS - 1) if i not in idel]
+            new_ds = new_ds.isel(N_LEVELS=ikeep)
+            new_ds = new_ds.assign_coords({'N_LEVELS': np.arange(0, len(new_ds['N_LEVELS']))})
+            val = new_ds[axis].values
+            new_ds[axis].values = np.where(val == 0, np.nan, val)
+            return new_ds
+
+        def merge_all_matching_levels(this_ds: xr.Dataset) -> xr.Dataset:
+            """ Levels merger
+
+            Merge any pair of levels with a "matching" pattern like this:
+               VAL, VAL, VAL, nan, nan, VAL, nan, nan,
+               nan, nan, nan, VAL, VAL, nan, VAL, nan
+
+            This pattern is due to a strict application of the bins definition.
+            But when bins are small (eg: 10db), many bins can have no data.
+            This has the consequence to change the size and number of the bins.
+
+            Parameters
+            ----------
+            :class:`xarray.Dataset`
+
+            Returns
+            -------
+            :class:`xarray.Dataset`
+            """
+            new_ds = this_ds.copy(deep=True)
+            N_LEVELS = new_ds.argo.N_LEVELS
+            idel = []
+            for i_level in range(0, N_LEVELS):
+                if i_level + 1 < N_LEVELS:
+                    this_ds_level = this_ds[axis].isel(N_LEVELS=i_level)
+                    this_ds_dw = this_ds[axis].isel(N_LEVELS=i_level + 1)
+                    if merged_is_nan(this_ds_level, this_ds_dw):
+                        new_values = nanmerge(this_ds_level.values, this_ds_dw.values)
+                        replace_i_level_values(new_ds[axis], i_level, new_values)
+                        idel.append(i_level + 1)
+
+            ikeep = [i for i in np.arange(0, new_ds.argo.N_LEVELS - 1) if i not in idel]
+            new_ds = new_ds.isel(N_LEVELS=ikeep)
+            new_ds = new_ds.assign_coords({'N_LEVELS': np.arange(0, len(new_ds['N_LEVELS']))})
+            val = new_ds[axis].values
+            new_ds[axis].values = np.where(val == 0, np.nan, val)
+            return new_ds
+
+        # init
+        new_ds = []
+
+        # add new vertical dimensions, this has to be in the datasets to apply ufunc later
+        this_dsp["Z_LEVELS"] = xr.DataArray(bins, dims={"Z_LEVELS": bins})
+
+        # vars to align
+        if select in ["shallow", "deep", "middle", "random"]:
+            datavars = [
+                dv
+                for dv in list(this_dsp.data_vars)
+                if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
+            ]
+        else:
+            datavars = [
+                dv
+                for dv in list(this_dsp.data_vars)
+                if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
+                   and "QC" not in dv
+                   and "ERROR" not in dv
+            ]
+
+        # All other variables:
+        othervars = [
+            dv
+            for dv in list(this_dsp.variables)
+            if dv not in datavars
+               and dv not in this_dsp.coords
+        ]
+
+        # Sub-sample and align:
+        for dv in datavars:
+            v = groupby_remap(
+                this_dsp[axis],
+                this_dsp[dv],
+                this_dsp["Z_LEVELS"],
+                z_dim="N_LEVELS",
+                z_regridded_dim="Z_LEVELS",
+                select=select,
+                right=right
+            )
+            v.name = this_dsp[dv].name
+            v.attrs = this_dsp[dv].attrs
+            new_ds.append(v)
+
+        # Finish
+        new_ds = xr.merge(new_ds)
+        new_ds = new_ds.rename({"remapped": "N_LEVELS"})
+        new_ds["STD_%s_BINS" % axis] = new_ds['N_LEVELS']
+        new_ds["STD_%s_BINS" % axis].attrs = {
+            'Comment': "Range of bins is: bins[i] <= x < bins[i+1] for i=[0,N_LEVELS-2]\n"
+                       "Last bins is bins[N_LEVELS-1] <= x"}
+        new_ds = new_ds.set_coords("STD_%s_BINS" % axis)
+        new_ds = new_ds.assign_coords({'N_LEVELS': range(0, len(new_ds['N_LEVELS']))})
+        new_ds.attrs = this_ds.attrs
+
+        for dv in othervars:
+            new_ds[dv] = this_dsp[dv]
+
+        new_ds = new_ds.argo.cast_types()
+        new_ds = new_ds[np.sort(new_ds.data_vars)]
+        new_ds.attrs = this_dsp.attrs  # Preserve original attributes
+        new_ds.argo._add_history("Sub-sampled and re-aligned on standard bins")
+
+        if merge:
+            new_ds = merge_bin_matching_levels(new_ds)
+            new_ds = merge_all_matching_levels(new_ds)
+
+        if to_point:
+            new_ds = new_ds.argo.profile2point()
+
+        return new_ds
 
     def teos10(  # noqa: C901
         self,
         vlist: list = ["SA", "CT", "SIG0", "N2", "PV", "PTEMP"],
-        inplace: bool = True,
-    ):
+        inplace: bool = True):
         """ Add TEOS10 variables to the dataset
 
         By default, adds: 'SA', 'CT'
@@ -1186,365 +1555,6 @@ class ArgoAccessor:
             else:
                 return that
 
-    def filter_scalib_pres(self, force: str = "default", inplace: bool = True):
-        """ Filter variables according to OWC salinity calibration software requirements
-
-        By default: this filter will return a dataset with raw PRES, PSAL and TEMP; and if PRES is adjusted,
-        PRES variable will be replaced by PRES_ADJUSTED.
-
-        With option force='raw', you can force the filter to return a dataset with raw PRES, PSAL and TEMP wether
-        PRES is adjusted or not.
-
-        With option force='adjusted', you can force the filter to return a dataset where PRES/PSAL and TEMP replaced
-        with adjusted variables: PRES_ADJUSTED, PSAL_ADJUSTED, TEMP_ADJUSTED.
-
-        Since ADJUSTED variables are not required anymore after the filter, all *ADJUSTED* variables are dropped in
-        order to avoid confusion wrt variable content.
-
-        Parameters
-        ----------
-        force: str
-            Use force='default' to load PRES/PSAL/TEMP or PRES_ADJUSTED/PSAL/TEMP according to PRES_ADJUSTED
-            filled or not.
-
-            Use force='raw' to force load of PRES/PSAL/TEMP
-
-            Use force='adjusted' to force load of PRES_ADJUSTED/PSAL_ADJUSTED/TEMP_ADJUSTED
-        inplace: boolean, True by default
-            If True, return the filtered input :class:`xarray.Dataset`
-
-            If False, return a new :class:`xarray.Dataset`
-
-        Returns
-        -------
-        :class:`xarray.Dataset`
-        """
-        if not with_gsw:
-            raise ModuleNotFoundError("This functionality requires the gsw library")
-
-        this = self._obj
-
-        # Will work with a collection of points
-        to_profile = False
-        if this.argo._type == "profile":
-            to_profile = True
-            this = this.argo.profile2point()
-
-        if force == "raw":
-            # PRES/PSAL/TEMP are not changed
-            # All ADJUSTED variables are removed (not required anymore, avoid confusion with variable content):
-            this = this.drop_vars([v for v in this.data_vars if "ADJUSTED" in v])
-        elif force == "adjusted":
-            # PRES/PSAL/TEMP are replaced by PRES_ADJUSTED/PSAL_ADJUSTED/TEMP_ADJUSTED
-            for v in ["PRES", "PSAL", "TEMP"]:
-                if "%s_ADJUSTED" % v in this.data_vars:
-                    this[v] = this["%s_ADJUSTED" % v]
-                    this["%s_ERROR" % v] = this["%s_ADJUSTED_ERROR" % v]
-                    this["%s_QC" % v] = this["%s_ADJUSTED_QC" % v]
-                else:
-                    raise InvalidDatasetStructure(
-                        "%s_ADJUSTED not in this dataset. Tip: fetch data in 'expert' mode"
-                        % v
-                    )
-            # All ADJUSTED variables are removed (not required anymore, avoid confusion with variable content):
-            this = this.drop_vars([v for v in this.data_vars if "ADJUSTED" in v])
-        else:
-            # In default mode, we just need to do something if PRES_ADJUSTED is different from PRES, meaning
-            # pressure was adjusted:
-            if np.any(this["PRES_ADJUSTED"] == this["PRES"]):  # Yes
-                # We need to recompute salinity with adjusted pressur, so
-                # Compute raw conductivity from raw salinity and raw pressure:
-                cndc = gsw.C_from_SP(
-                    this["PSAL"].values, this["TEMP"].values, this["PRES"].values
-                )
-                # Then recompute salinity with adjusted pressure:
-                sp = gsw.SP_from_C(
-                    cndc, this["TEMP"].values, this["PRES_ADJUSTED"].values
-                )
-                # Now fill in filtered variables (no need to change TEMP):
-                this["PRES"] = this["PRES_ADJUSTED"]
-                this["PRES_QC"] = this["PRES_ADJUSTED_QC"]
-                this["PSAL"].values = sp
-
-            # Finally drop everything not required anymore:
-            this = this.drop_vars([v for v in this.data_vars if "ADJUSTED" in v])
-
-        # Manage output:
-        this.argo._add_history("Variables filtered according to OWC methodology")
-        this = this[np.sort(this.data_vars)]
-        if to_profile:
-            this = this.argo.point2profile()
-
-        # Manage output:
-        if inplace:
-            self._obj = this
-            return self._obj
-        else:
-            return this
-
-    def groupby_pressure_bins(self,
-                       pressure_bins: list or np.array,
-                       axis: str = 'PRES',
-                       right: bool = False,
-                       select: str = 'deep',
-                       squeeze: bool = True,
-                       merge: bool = True):
-        """ Group measurements by pressure bins
-
-        This method can be used to subsample and align an irregular dataset (pressure not being similar in all profiles)
-        on a set of pressure bins. The output dataset could then be used to perform statistics along the N_PROF dimension
-        because N_LEVELS will corresponds to similar pressure bins, while avoiding to interpolate data.
-
-        Parameters
-        ----------
-        pressure_bins: list or np.array,
-            Array of bins. It has to be 1-dimensional and monotonic. Bins of data are localised using values from
-            options `axis` (default: ``PRES``) and `right` (default: ``False``), see below.
-        axis: str, default: ``PRES``
-            The dataset variable to use as pressure axis. This could be ``PRES`` or ``PRES_ADJUSTED``
-        right: bool, default: False
-            Indicating whether the bin intervals include the right or the left bin edge. Default behavior is
-            (right==False) indicating that the interval does not include the right edge. The left bin end is open
-            in this case, i.e., bins[i-1] <= x < bins[i] is the default behavior for monotonically increasing bins.
-        select: str, default: ``deep``
-            The value selection method for bins.
-
-            This selection can be based on values at the pressure axis level with: ``deep`` (default), ``shallow``,
-            ``middle``, ``random``. For instance, ``select='deep'`` will lead to the value
-            returned for a bin to be taken at the deepest pressure level in the bin.
-
-            Or this selection can be based on statistics of measurements in a bin. Stats available are: ``min``, ``max``,
-            ``mean``, ``median``. For instance ``select='mean'`` will lead to the value returned for a bin to be mean of
-            all measurements in the bin.
-        squeeze: bool, default: True
-            Squeeze from the output bin levels without measurements.
-        merge: bool, default: True
-            Optimize the output bins axis size by merging levels with/without data. The pressure bins axis is modified
-            accordingly. This means that the return STD_PRES_BINS axis has not necessarily the same size as
-            the input ``pressure_bins``.
-
-        Returns
-        -------
-        :class:`xarray.Dataset`
-
-        See Also
-        --------
-        :class:`numpy.digitize`, :class:`argopy.utilities.groupby_remap`
-        """
-        this_ds = self._obj
-
-        # Will work with a collection of profiles:
-        to_point = False
-        if this_ds.argo._type == "point":
-            to_point = True
-            this_dsp = this_ds.argo.point2profile()
-        else:
-            this_dsp = this_ds.copy(deep=True)
-
-        if (type(pressure_bins) is np.ndarray) | (type(pressure_bins) is list):
-            pressure_bins = np.array(pressure_bins)
-            if (np.any(sorted(pressure_bins) != pressure_bins)) | (np.any(pressure_bins < 0)):
-                raise ValueError(
-                    "Standard bins must be a list or a numpy array of positive and sorted values"
-                )
-        else:
-            raise ValueError(
-                "Standard bins must be a list or a numpy array of positive and sorted values"
-            )
-
-        # Adjust bins axis if we possibly have to squeeze empty bins:
-        h, bin_edges = np.histogram(np.unique(np.round(this_ds[axis], 1)), pressure_bins)
-        N_bins_empty = len(np.where(h == 0)[0])
-        # check if any profile is left, ie if any profile match the requested bins
-        if N_bins_empty == len(h):
-            raise Warning(
-                "None of the profiles can be aligned (pressure values out of bins range)."
-            )
-            return None
-        if N_bins_empty > 0 and squeeze:
-            pressure_bins = pressure_bins[np.where(h > 0)]
-            log.debug("pressure_bins axis was squeezed to full bins only (%i bins found empty)" % N_bins_empty)
-
-        def replace_i_level_values(this_da, this_i_level, new_values_along_profiles):
-            """ Convenience fct to update only one level of a ["N_PROF", "N_LEVELS"] xr.DataArray"""
-            if this_da.dims == ("N_PROF", "N_LEVELS"):
-                values = this_da.values
-                values[:, this_i_level] = new_values_along_profiles
-                this_da.values = values
-            else:
-                raise ValueError("Array not with expected ['N_PROF', 'N_LEVELS'] shape")
-            return this_da
-
-        def nanmerge(x, y):
-            """ Merge two 1D array
-
-                Given 2 arrays x, y of 1 dimension, return a new array with:
-                - x values where x is not NaN
-                - y values where x is NaN
-            """
-            z = x.copy()
-            for i, v in enumerate(x):
-                if np.isnan(v):
-                    z[i] = y[i]
-            return z
-
-        def merge_bin_matching_levels(this_ds: xr.Dataset) -> xr.Dataset:
-            """ Levels merger of type 'bins' value
-
-            Merge pair of lines with the following pattern:
-               nan,    VAL, VAL, nan,    VAL, VAL
-               BINVAL, nan, nan, BINVAL, nan, nan
-
-            This pattern is due to the bins definition: bins[i] <= x < bins[i+1]
-
-            Parameters
-            ----------
-            :class:`xarray.Dataset`
-
-            Returns
-            -------
-            :class:`xarray.Dataset`
-            """
-            new_ds = this_ds.copy(deep=True)
-            idel = []
-            for i_level in range(0, this_ds.argo.N_LEVELS - 1 - 1):
-                this_ds_up = this_ds['PRES'].isel(N_LEVELS=i_level)
-                pres_up = np.unique(this_ds_up[~np.isnan(this_ds_up)])
-
-                this_ds_dw = this_ds['PRES'].isel(N_LEVELS=i_level + 1)
-                pres_dw = np.unique(this_ds_dw[~np.isnan(this_ds_dw)])
-                if len(pres_dw) == 1 and pres_dw[0] in this_ds['STD_PRES_BINS'] and len(
-                        np.unique(np.where(np.isnan(this_ds_up.values + this_ds_dw.values)))) == len(this_ds_up):
-                    #             print(i_level, pres_up, pres_dw)
-                    # Merge these lines:
-                    # new_values = np.nansum([this_ds_dw.values, this_ds_up.values], axis=0)
-                    new_values = nanmerge(this_ds_dw.values, this_ds_up.values)
-                    replace_i_level_values(new_ds['PRES'], i_level, new_values)
-                    idel.append(i_level + 1)
-
-            ikeep = [i for i in np.arange(0, new_ds.argo.N_LEVELS - 1) if i not in idel]
-            new_ds = new_ds.isel(N_LEVELS=ikeep)
-            new_ds = new_ds.assign_coords({'N_LEVELS': np.arange(0, len(new_ds['N_LEVELS']))})
-            val = new_ds['PRES'].values
-            new_ds['PRES'].values = np.where(val == 0, np.nan, val)
-            return new_ds
-
-        def merge_all_matching_levels(this_ds: xr.Dataset) -> xr.Dataset:
-            """ Levels merger
-
-            Merge any pair of levels with a "matching" pattern like this:
-               VAL, VAL, VAL, nan, nan, VAL, nan, nan,
-               nan, nan, nan, VAL, VAL, nan, VAL, nan
-
-            This pattern is due to a strict application of the bins definition.
-            But when bins are small (eg: 10db), many bins can have no data.
-            This has the consequence to change the size and number of the bins.
-
-            Parameters
-            ----------
-            :class:`xarray.Dataset`
-
-            Returns
-            -------
-            :class:`xarray.Dataset`
-            """
-
-            new_ds = this_ds.copy(deep=True)
-
-            N_LEVELS = new_ds.argo.N_LEVELS
-            idel = []
-            for i_level in range(0, N_LEVELS):
-                if i_level + 1 < N_LEVELS:
-                    this_ds_level = this_ds['PRES'].isel(N_LEVELS=i_level)
-                    this_ds_dw = this_ds['PRES'].isel(N_LEVELS=i_level + 1)
-                    if len(np.unique(np.where(np.isnan(this_ds_level.values + this_ds_dw.values)))) == len(
-                            this_ds_level):
-                        new_values = nanmerge(this_ds_level.values, this_ds_dw.values)
-                        replace_i_level_values(new_ds['PRES'], i_level, new_values)
-                        idel.append(i_level + 1)
-
-            ikeep = [i for i in np.arange(0, new_ds.argo.N_LEVELS - 1) if i not in idel]
-            new_ds = new_ds.isel(N_LEVELS=ikeep)
-            new_ds = new_ds.assign_coords({'N_LEVELS': np.arange(0, len(new_ds['N_LEVELS']))})
-            val = new_ds['PRES'].values
-            new_ds['PRES'].values = np.where(val == 0, np.nan, val)
-            return new_ds
-
-        # init
-        new_ds = []
-        this_dsp = this_ds.copy(deep=True)
-
-        # add new vertical dimensions, this has to be in the datasets to apply ufunc later
-        this_dsp["Z_LEVELS"] = xr.DataArray(pressure_bins, dims={"Z_LEVELS": pressure_bins})
-
-        # vars to align
-        if select in ["shallow", "deep", "middle", "random"]:
-            datavars = [
-                dv
-                for dv in list(this_dsp.data_vars)
-                if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
-            ]
-        else:
-            datavars = [
-                dv
-                for dv in list(this_dsp.data_vars)
-                if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
-                   and "QC" not in dv
-                   and "ERROR" not in dv
-            ]
-
-        # All other variables:
-        othervars = [
-            dv
-            for dv in list(this_dsp.variables)
-            if dv not in datavars
-               and dv not in this_dsp.coords
-        ]
-
-        # Sub-sample and align:
-        for dv in datavars:
-            v = groupby_remap(
-                this_dsp[axis],
-                this_dsp[dv],
-                this_dsp["Z_LEVELS"],
-                z_dim="N_LEVELS",
-                z_regridded_dim="Z_LEVELS",
-                select=select,
-                right=right
-            )
-            v.name = this_dsp[dv].name
-            v.attrs = this_dsp[dv].attrs
-            new_ds.append(v)
-
-        # Finish
-        new_ds = xr.merge(new_ds)
-        new_ds = new_ds.rename({"remapped": "N_LEVELS"})
-        new_ds["STD_%s_BINS" % axis] = new_ds['N_LEVELS']
-        new_ds["STD_%s_BINS" % axis].attrs = {
-            'Comment': "Range of bins is: bins[i] <= x < bins[i+1] for i=[0,N_LEVELS-2]\n"
-                       "Last bins is bins[N_LEVELS-1] <= x"}
-        new_ds = new_ds.set_coords("STD_%s_BINS" % axis)
-        new_ds = new_ds.assign_coords({'N_LEVELS': range(0, len(new_ds['N_LEVELS']))})
-        new_ds.attrs = this_ds.attrs
-
-        for dv in othervars:
-            new_ds[dv] = this_ds[dv]
-
-        new_ds = new_ds.argo.cast_types()
-        new_ds = new_ds[np.sort(new_ds.data_vars)]
-        new_ds.attrs = this_ds.attrs  # Preserve original attributes
-        new_ds.argo._add_history("Sub-sampled and re-aligned on standard bins")
-
-        if merge:
-            new_ds = merge_bin_matching_levels(new_ds)
-            new_ds = merge_all_matching_levels(new_ds)
-
-        if to_point:
-            return new_ds.argo.profile2point()
-        else:
-            return new_ds
-
-
     def create_float_source(self,   # noqa: C901
                             path: str or os.PathLike = None,
                             force: str = "default",
@@ -1561,7 +1571,9 @@ class ArgoAccessor:
 
         ``<path>/<file_pref><float_WMO><file_suff>.mat``
 
-        where ``<float_WMO>`` is automatically extracted from the dataset variable PLATFORM_NUMBER (in order to avoid mismatch between user input and data content). So if this dataset has measurements from more than one float, more than one Matlab file will be created.
+        where ``<float_WMO>`` is automatically extracted from the dataset variable PLATFORM_NUMBER (in order to avoid mismatch
+        between user input and data content). So if this dataset has measurements from more than one float, more than one
+        Matlab file will be created.
 
         By default, variables loaded are raw PRES, PSAL and TEMP.
         If PRES is adjusted, variables loaded are PRES_ADJUSTED, raw PSAL calibrated in pressure and raw TEMP.
@@ -1577,7 +1589,8 @@ class ArgoAccessor:
         Pre-processing details:
 
         - select only ascending profiles
-        - subsample vertical levels to keep the deepest pressure levels on each 10db bins from the surface down to the deepest level
+        - subsample vertical levels to keep the deepest pressure levels on each 10db bins from the surface down to the
+        deepest level
         - filter variables according to the 'force' option (see above)
         - filter variables according to QC flags:
 
@@ -1585,15 +1598,18 @@ class ArgoAccessor:
             - Keep measurements where pressure QC is anything but 3
             - Keep measurements where pressure, temperature or salinity QC are anything but 4
 
-        - remove dummy values: salinity not in 0/50, potential temperature not in -10/50 and pressure not in 0/60000. Bounds inclusive.
+        - remove dummy values: salinity not in 0/50, potential temperature not in -10/50 and pressure not in 0/60000.
+        Bounds inclusive.
         - convert timestamp to fractional year
         - convert longitudes to 0-360
-        - align pressure values, i.e. make sure that a pressure index corresponds to measurements from the same binned pressure values. This can lead to modify the number of levels in the dataset
+        - align pressure values, i.e. make sure that a pressure index corresponds to measurements from the same binned
+        pressure values. This can lead to modify the number of levels in the dataset
 
         Parameters
         ----------
         path: str or path-like, optional
-            Path or folder name to which to save this Matlab file. If no path is provided, this function returns the resulting Matlab file as :class:`xarray.Dataset`.
+            Path or folder name to which to save this Matlab file. If no path is provided, this function returns the
+            resulting Matlab file as :class:`xarray.Dataset`.
         force: {"default", "raw", "adjusted"}, default: "default"
             If force='default' will load PRES/PSAL/TEMP or PRES_ADJUSTED/PSAL/TEMP according to PRES_ADJUSTED filled or not.
 
@@ -1613,15 +1629,18 @@ class ArgoAccessor:
         Returns
         -------
         :class:`xarray.Dataset`
-            The output dataset, or Matlab file, will have the following variables (`n` is the number of profiles, `m` is the number of vertical levels):
+            The output dataset, or Matlab file, will have the following variables (`n` is the number of profiles, `m`
+            is the number of vertical levels):
 
             - DATES (1xn, in decimal year, e.g. 10 Dec 2000 = 2000.939726)
             - LAT   (1xn, in decimal degrees, -ve means south of the equator, e.g. 20.5S = -20.5)
             - LONG  (1xn, in decimal degrees, from 0 to 360, e.g. 98.5W in the eastern Pacific = 261.5E)
-            - PRES  (mxn, dbar, from shallow to deep, e.g. 10, 20, 30 ... These have to line up along a fixed nominal depth axis.)
+            - PRES  (mxn, dbar, from shallow to deep, e.g. 10, 20, 30 ... These have to line up along a fixed nominal
+            depth axis.)
             - TEMP  (mxn, in-situ IPTS-90)
             - SAL   (mxn, PSS-78)
-            - PTMP  (mxn, potential temperature referenced to zero pressure, use SAL in PSS-78 and in-situ TEMP in IPTS-90 for calculation)
+            - PTMP  (mxn, potential temperature referenced to zero pressure, use SAL in PSS-78 and in-situ TEMP in
+            IPTS-90 for calculation)
             - PROFILE_NO (1xn, this goes from 1 to n. PROFILE_NO is the same as CYCLE_NO in the Argo files.)
 
         """
@@ -1703,7 +1722,7 @@ class ArgoAccessor:
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L194
 
             # # Subsample and align vertical levels (max 1 level every 10db):
-            # # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L208
+            # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L208
             # this_one = this_one.argo.align_std_bins(inplace=False)
             # log.debug(pretty_print_count(this_one, "after vertical levels subsampling"))
 
@@ -1739,12 +1758,13 @@ class ArgoAccessor:
             # Exclude dummies
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L427
             this_one = (
-                this_one.argo._where(this_one["PSAL"] <= 50, drop=True)
-                    .argo._where(this_one["PSAL"] >= 0, drop=True)
-                    .argo._where(this_one["PTEMP"] <= 50, drop=True)
-                    .argo._where(this_one["PTEMP"] >= -10, drop=True)
-                    .argo._where(this_one["PRES"] <= 6000, drop=True)
-                    .argo._where(this_one["PRES"] >= 0, drop=True)
+                this_one
+                .argo._where(this_one["PSAL"] <= 50, drop=True)
+                .argo._where(this_one["PSAL"] >= 0, drop=True)
+                .argo._where(this_one["PTEMP"] <= 50, drop=True)
+                .argo._where(this_one["PTEMP"] >= -10, drop=True)
+                .argo._where(this_one["PRES"] <= 6000, drop=True)
+                .argo._where(this_one["PRES"] >= 0, drop=True)
             )
             if len(this_one["N_POINTS"]) == 0:
                 raise DataNotFound(
@@ -1760,7 +1780,7 @@ class ArgoAccessor:
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L208
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L451
             bins = np.arange(0.0, np.max(this_one["PRES"]) + 10.0, 10.0)
-            this_one = this_one.argo.groupby_pressure_bins(pressure_bins=bins, select=select, axis='PRES')
+            this_one = this_one.argo.groupby_pressure_bins(bins=bins, select=select, axis='PRES')
             log.debug(pretty_print_count(this_one, "after vertical levels subsampling and re-alignment"))
 
             # Compute fractional year:
@@ -1847,7 +1867,7 @@ class ArgoAccessor:
         output = {}
         for WMO in np.unique(this['PLATFORM_NUMBER']):
             log.debug("> Preprocessing data for float WMO %i" % WMO)
-            this_float = this.argo._where(this['PLATFORM_NUMBER']==WMO, drop=True)
+            this_float = this.argo._where(this['PLATFORM_NUMBER'] == WMO, drop=True)
             if path is None:
                 output[WMO] = preprocess_one_float(this_float, this_path=path, select=select, debug_output=debug_output)
             else:

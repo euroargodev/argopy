@@ -18,7 +18,7 @@ Transformation
 --------------
 
 Points vs profiles
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
 Fetched data are returned as a 1D array collection of measurements:
 
@@ -45,10 +45,10 @@ You can simply reverse this transformation with the :meth:`argopy.xarray.ArgoAcc
     ds = ds_profiles.argo.profile2point()
     ds
 
-Interpolation to standard pressure levels
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Pressure levels: Interpolation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Once your dataset is a collection of vertical **profiles**, you can interpolate variables on standard pressure levels using :meth:`argopy.xarray.ArgoAccessor.interp_std_levels` with your levels as input :
+Once your dataset is a collection of vertical **profiles**, you can interpolate variables on standard pressure levels using :meth:`argopy.xarray.ArgoAccessor.interp_std_levels` with standard levels as input :
 
 .. ipython:: python
     :okwarning:
@@ -61,8 +61,69 @@ Note on the linear interpolation process :
     - Remaining profiles must have at least five data points to allow interpolation.
     - For each profile, shallowest data point is repeated to the surface to allow a 0 standard level while avoiding extrapolation.
 
+Pressure levels: Group-by bins
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you prefer to avoid interpolation, you can opt for a pressure bins grouping reduction using :meth:`argopy.xarray.ArgoAccessor.groupby_pressure_bins`. This method can be used to subsample and align an irregular dataset (pressure not being similar in all profiles) on a set of pressure bins. The output dataset could then be used to perform statistics along the N_PROF dimension because N_LEVELS will corresponds to similar pressure bins.
+
+To illustrate this method, let's start by fetching some data from a low vertical resolution float:
+
+.. ipython:: python
+    :okwarning:
+
+    loader = ArgoDataFetcher(src='erddap', mode='expert').float(2901623)  # Low res float
+    ds = loader.load().data
+
+
+Let's now sub-sample these measurements along 250db bins, selecting values from the **deepest** pressure levels for each bins:
+
+.. ipython:: python
+    :okwarning:
+
+    bins = np.arange(0.0, np.max(ds["PRES"]), 250.0)
+    ds_binned = ds.argo.groupby_pressure_bins(bins=bins, select='deep')
+    ds_binned
+
+The sub-sampling can be seen like this:
+
+.. code-block:: python
+
+    import matplotlib as mpl
+    import matplotlib.pyplot as plt
+    import cmocean
+
+    fig, ax = plt.subplots(figsize=(18,6))
+    ds.plot.scatter(x='CYCLE_NUMBER', y='PRES', hue='PSAL', ax=ax, cmap=cmocean.cm.haline)
+    plt.plot(ds_binned['CYCLE_NUMBER'], ds_binned['PRES'], 'r+')
+    plt.hlines(bins, ds['CYCLE_NUMBER'].min(), ds['CYCLE_NUMBER'].max(), color='k')
+    plt.hlines(ds_binned['STD_PRES_BINS'], ds_binned['CYCLE_NUMBER'].min(), ds_binned['CYCLE_NUMBER'].max(), color='r')
+    plt.title(ds.attrs['Fetched_constraints'])
+    plt.gca().invert_yaxis()
+
+.. image:: _static/groupby_pressure_bins_select_deep.png
+
+where the bin limits are shown with horizontal red lines, the original data are in the background colored scatter and the group-by pressure bins values are highlighted in red marks.
+
+The ``select`` option can take many different values, see the full documentation of :meth:`argopy.xarray.ArgoAccessor.groupby_pressure_bins` , for all the details. Let's show here the 'random' sampling:
+
+.. code-block:: python
+
+    ds_binned = ds.argo.groupby_pressure_bins(bins=bins, select='random')
+
+    fig, ax = plt.subplots(figsize=(18,6))
+    ds.plot.scatter(x='CYCLE_NUMBER', y='PRES', hue='PSAL', ax=ax, cmap=cmocean.cm.haline)
+    plt.plot(ds_binned['CYCLE_NUMBER'], ds_binned['PRES'], 'r+')
+    plt.hlines(bins, ds['CYCLE_NUMBER'].min(), ds['CYCLE_NUMBER'].max(), color='k')
+    plt.hlines(ds_binned['STD_PRES_BINS'], ds_binned['CYCLE_NUMBER'].min(), ds_binned['CYCLE_NUMBER'].max(), color='r')
+    plt.title(ds.attrs['Fetched_constraints'])
+    plt.gca().invert_yaxis()
+
+
+.. image:: _static/groupby_pressure_bins_select_random.png
+
+
 Filters
-~~~~~~~
+^^^^^^^
 
 If you fetched data with the ``expert`` mode, you may want to use *filters* to help you curate the data.
 

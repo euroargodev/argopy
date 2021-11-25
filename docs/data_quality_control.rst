@@ -60,9 +60,9 @@ The method partially relies on two others:
 - :meth:`argopy.xarray.ArgoAccessor.groupby_pressure_bins`: to sub-sampled measurements by pressure bins. This is an excellent alternative to the :meth:`argopy.xarray.ArgoAccessor.interp_std_levels` to avoid interpolation and preserve values of raw measurements while at the same time aligning measurements along approximately similar pressure levels (depending on the size of the bins).
 
 .. [OWC] See all the details about the OWC methodology in these references:
+
 "An improved calibration method for the drift of the conductivity sensor on autonomous CTD profiling floats by θ–S climatology".
 Deep-Sea Research Part I: Oceanographic Research Papers, 56(3), 450-457, 2009. https://doi.org/10.1016/j.dsr.2008.09.008
 
 "Improvement of bias detection in Argo float conductivity sensors and its application in the North Atlantic".
 Deep-Sea Research Part I: Oceanographic Research Papers, 114, 128-136, 2016. https://doi.org/10.1016/j.dsr.2016.05.007
-
