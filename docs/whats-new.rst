@@ -8,12 +8,12 @@ v0.1.9 (X XXX. 202X)
 
 **Features and front-end API**
 
-- New methods to preprocess data for OWC software. These methods can preprocessed Argo data in python and possibly create float_source/<WMO>.mat files to be used as inputs for OWC implementations in `Matlab <https://github.com/ArgoDMQC/matlab_owc>`_ and `Python <https://github.com/euroargodev/argodmqc_owc>`_. (:pr:`142`) by `G. Maze <http://www.github.com/gmaze>`_.
-  This new method comes with others improvements:
+- New method to preprocess data for OWC software. This method can preprocessed Argo data and possibly create float_source/<WMO>.mat files to be used as inputs for OWC implementations in `Matlab <https://github.com/ArgoDMQC/matlab_owc>`_ and `Python <https://github.com/euroargodev/argodmqc_owc>`_. (:pr:`142`) by `G. Maze <http://www.github.com/gmaze>`_.
+  This new method comes with others methods and improvements:
 
-  - New ``filter_scalib_pres`` method to filter variables according to OWC salinity calibration software requirements,
-  - New ``groupby_pressure_bins`` method to subsample a dataset down to one value by pressure bins,
-  - Improved ``filter_qc`` method to select which fields to consider,
+  - A new ``filter_scalib_pres`` method to filter variables according to OWC salinity calibration software requirements,
+  - A new ``groupby_pressure_bins`` method to subsample a dataset down to one value by pressure bins (a perfect alternative to interpolation on standard depth levels to precisely avoid interpolation...),
+  - An improved ``filter_qc`` method to select which fields to consider (new option ``QC_fields``),
   - Add conductivity (``CNDC``) to the possible output of the ``TEOS10`` method.
 
 .. code-block:: python
@@ -25,6 +25,16 @@ v0.1.9 (X XXX. 202X)
     ds_source = ds.argo.create_float_source()
 
 
+    New properties accessible for the `argo` xarray accessor: N_POINTS, N_LEVELS, N_PROF. Note that depending on the format of the dataset (a collection of points or of profiles) these values do or do not take into account NaN. These information are also visible by a simple print of the accessor.
+
+.. code-block:: python
+
+    from argopy import DataFetcher as ArgoDataFetcher
+    ds = ArgoDataFetcher(mode='expert').float(6902766).load().data
+    ds.argo.N_POINTS
+    ds.argo.N_LEVELS
+    ds.argo.N_PROF
+    ds.argo
 v0.1.8 (2 Nov. 2021)
 ---------------------
 

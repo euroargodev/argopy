@@ -1553,14 +1553,11 @@ def groupby_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded",
         idx = np.logical_or(np.isnan(x), np.isnan(y))
         x = x[~idx]
         y = y[~idx]
-        #         log.debug("x %s: %s" % (x.shape, x))
-        #         log.debug("y %s: %s" % (y.shape, y))
-        #         log.debug("target_values %s: %s" % (target_values.shape, target_values))
 
         ifound = np.digitize(x, target_values, right=right)  # ``bins[i-1] <= x < bins[i]``
         ifound -= 1  # Because digitize returns a 1-based indexing, we need to remove 1
         y_binned = np.ones_like(target_values) * np.nan
-        #         log.debug("np.unique(ifound) %s" % np.unique(ifound))
+
         for ib, this_ibin in enumerate(np.unique(ifound)):
             ix = np.where(ifound == this_ibin)
             iselect = ix[-1]

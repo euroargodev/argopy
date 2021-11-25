@@ -1287,7 +1287,6 @@ class ArgoAccessor:
                        axis: str = 'PRES',
                        right: bool = False,
                        select: str = 'deep',
-                       fill_value: float = np.nan,
                        squeeze: bool = True,
                        merge: bool = True):
         """ Group measurements by pressure bins
@@ -1317,9 +1316,6 @@ class ArgoAccessor:
             Or this selection can be based on statistics of measurements in a bin. Stats available are: ``min``, ``max``,
             ``mean``, ``median``. For instance ``select='mean'`` will lead to the value returned for a bin to be mean of
             all measurements in the bin.
-
-        fill_value: float, default: np.nan
-            The filling value for bins without measurements.
         squeeze: bool, default: True
             Squeeze from the output bin levels without measurements.
         merge: bool, default: True
@@ -1355,7 +1351,6 @@ class ArgoAccessor:
             raise ValueError(
                 "Standard bins must be a list or a numpy array of positive and sorted values"
             )
-        # log.debug("pressure_bins: %s" % pressure_bins)
 
         # Adjust bins axis if we possibly have to squeeze empty bins:
         h, bin_edges = np.histogram(np.unique(np.round(this_ds[axis], 1)), pressure_bins)
@@ -1369,30 +1364,47 @@ class ArgoAccessor:
         if N_bins_empty > 0 and squeeze:
             pressure_bins = pressure_bins[np.where(h > 0)]
             log.debug("pressure_bins axis was squeezed to full bins only (%i bins found empty)" % N_bins_empty)
-            # log.debug("squeezed pressure_bins: %s" % pressure_bins)
 
         def replace_i_level_values(this_da, this_i_level, new_values_along_profiles):
+            """ Convenience fct to update only one level of a ["N_PROF", "N_LEVELS"] xr.DataArray"""
             if this_da.dims == ("N_PROF", "N_LEVELS"):
                 values = this_da.values
                 values[:, this_i_level] = new_values_along_profiles
                 this_da.values = values
             else:
-                print(this_da.dims)
-                raise ValueError("Array not with expected 'N_PROF', 'N_LEVELS' shape")
+                raise ValueError("Array not with expected ['N_PROF', 'N_LEVELS'] shape")
             return this_da
 
         def nanmerge(x, y):
+            """ Merge two 1D array
+
+                Given 2 arrays x, y of 1 dimension, return a new array with:
+                - x values where x is not NaN
+                - y values where x is NaN
+            """
             z = x.copy()
             for i, v in enumerate(x):
                 if np.isnan(v):
                     z[i] = y[i]
             return z
 
-        def merge_bin_matching_levels(this_ds):
-            # Merge pair of lines with the following pattern:
-            #   nan,    VAL, VAL, nan,    VAL, VAL
-            #   BINVAL, nan, nan, BINVAL, nan, nan
-            # This is due to the bins definition: bins[i] <= x < bins[i+1]
+        def merge_bin_matching_levels(this_ds: xr.Dataset) -> xr.Dataset:
+            """ Levels merger of type 'bins' value
+
+            Merge pair of lines with the following pattern:
+               nan,    VAL, VAL, nan,    VAL, VAL
+               BINVAL, nan, nan, BINVAL, nan, nan
+
+            This pattern is due to the bins definition: bins[i] <= x < bins[i+1]
+
+            Parameters
+            ----------
+            :class:`xarray.Dataset`
+
+            Returns
+            -------
+            :class:`xarray.Dataset`
+            """
             new_ds = this_ds.copy(deep=True)
             idel = []
             for i_level in range(0, this_ds.argo.N_LEVELS - 1 - 1):
@@ -1417,52 +1429,26 @@ class ArgoAccessor:
             new_ds['PRES'].values = np.where(val == 0, np.nan, val)
             return new_ds
 
-        def merge_single_value_levels(this_ds):
-            # Merge levels with a single value with the deeper layer
-            # Look for this pattern:
-            #   VAL, VAL, VAL, nan, VAL, VAL
-            #   nan, nan, nan, VAL, nan, nan
+        def merge_all_matching_levels(this_ds: xr.Dataset) -> xr.Dataset:
+            """ Levels merger
 
-            new_ds = this_ds.copy(deep=True)
+            Merge any pair of levels with a "matching" pattern like this:
+               VAL, VAL, VAL, nan, nan, VAL, nan, nan,
+               nan, nan, nan, VAL, VAL, nan, VAL, nan
 
-            i_levels_single_val = np.where(np.sum(np.where(np.isnan(new_ds['PRES']), 0, 1), 0) == 1)[0]
-            N_LEVELS = new_ds.argo.N_LEVELS
-            idel = []
-            for i_level in i_levels_single_val:
-                if i_level + 1 < N_LEVELS:
-                    # Merge with deeper level:
-                    this_ds_level = this_ds['PRES'].isel(N_LEVELS=i_level)
-                    this_ds_dw = this_ds['PRES'].isel(N_LEVELS=i_level + 1)
-                    i_prof = np.where(~np.isnan(this_ds_level))[0][0]
-                    if np.isnan(this_ds_dw[i_prof].values):
-                        # new_values = np.nansum([this_ds_dw.values, this_ds_level.values], axis=0)
-                        # new_values = np.where(new_values == 0, np.nan, new_values)
-                        new_values = nanmerge(this_ds_level.values, this_ds_dw.values)
-                        replace_i_level_values(new_ds['PRES'], i_level, new_values)
-                        idel.append(i_level + 1)
-                elif i_level + 1 == N_LEVELS:
-                    # Last level to be possibly merged with penultimate level:
-                    this_ds_level = this_ds['PRES'].isel(N_LEVELS=i_level)
-                    this_ds_up = this_ds['PRES'].isel(N_LEVELS=i_level - 1)
-                    i_prof = np.where(~np.isnan(this_ds_level))[0][0]
-                    if np.isnan(this_ds_up[i_prof].values):
-                        # new_values = np.nansum([this_ds_up.values, this_ds_level.values], axis=0)
-                        # new_values = np.where(new_values == 0, np.nan, new_values)
-                        new_values = nanmerge(this_ds_level.values, this_ds_up.values)
-                        replace_i_level_values(new_ds['PRES'], i_level - 1, new_values)
-                        idel.append(i_level)
+            This pattern is due to a strict application of the bins definition.
+            But when bins are small (eg: 10db), many bins can have no data.
+            This has the consequence to change the size and number of the bins.
 
-            ikeep = [i for i in np.arange(0, new_ds.argo.N_LEVELS - 1) if i not in idel]
-            new_ds = new_ds.isel(N_LEVELS=ikeep)
-            new_ds = new_ds.assign_coords({'N_LEVELS': np.arange(0, len(new_ds['N_LEVELS']))})
-            val = new_ds['PRES'].values
-            new_ds['PRES'].values = np.where(val == 0, np.nan, val)
-            return new_ds
+            Parameters
+            ----------
+            :class:`xarray.Dataset`
 
-        def merge_all_matching_levels(this_ds):
-            # Merge any pair of levels with a "matching" pattern:
-            #   VAL, VAL, VAL, nan, nan, VAL, nan, nan,
-            #   nan, nan, nan, VAL, VAL, nan, VAL, nan
+            Returns
+            -------
+            :class:`xarray.Dataset`
+            """
+
             new_ds = this_ds.copy(deep=True)
 
             N_LEVELS = new_ds.argo.N_LEVELS
@@ -1533,9 +1519,6 @@ class ArgoAccessor:
         # Finish
         new_ds = xr.merge(new_ds)
         new_ds = new_ds.rename({"remapped": "N_LEVELS"})
-        # Remove the last index fill of NaNs:
-        # new_ds = new_ds.isel(N_LEVELS=range(0, len(new_ds['N_LEVELS']) - 1))
-        #
         new_ds["STD_%s_BINS" % axis] = new_ds['N_LEVELS']
         new_ds["STD_%s_BINS" % axis].attrs = {
             'Comment': "Range of bins is: bins[i] <= x < bins[i+1] for i=[0,N_LEVELS-2]\n"
@@ -1554,7 +1537,6 @@ class ArgoAccessor:
 
         if merge:
             new_ds = merge_bin_matching_levels(new_ds)
-            # new_ds = merge_single_value_levels(new_ds)
             new_ds = merge_all_matching_levels(new_ds)
 
         if to_point:
