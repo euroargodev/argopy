@@ -33,6 +33,7 @@ Documentation
 * :doc:`metadata_fetching`
 * :doc:`visualisation`
 * :doc:`performances`
+* :doc:`data_quality_control`
 
 .. toctree::
     :maxdepth: 2
@@ -46,6 +47,7 @@ Documentation
     metadata_fetching
     visualisation
     performances
+    data_quality_control
 
 **Help & reference**
 

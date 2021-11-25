@@ -1186,22 +1186,22 @@ def is_box(box: list, errors="raise"):
 
     # Types:
     tests["lon_min must be numeric"] = lambda b: (
-        isinstance(b[0], int) or isinstance(b[0], float)
+        isinstance(b[0], int) or isinstance(b[0], (np.floating, float))
     )
     tests["lon_max must be numeric"] = lambda b: (
-        isinstance(b[1], int) or isinstance(b[1], float)
+        isinstance(b[1], int) or isinstance(b[1], (np.floating, float))
     )
     tests["lat_min must be numeric"] = lambda b: (
-        isinstance(b[2], int) or isinstance(b[2], float)
+        isinstance(b[2], int) or isinstance(b[2], (np.floating, float))
     )
     tests["lat_max must be numeric"] = lambda b: (
-        isinstance(b[3], int) or isinstance(b[3], float)
+        isinstance(b[3], int) or isinstance(b[3], (np.floating, float))
     )
     tests["pres_min must be numeric"] = lambda b: (
-        isinstance(b[4], int) or isinstance(b[4], float)
+        isinstance(b[4], int) or isinstance(b[4], (np.floating, float))
     )
     tests["pres_max must be numeric"] = lambda b: (
-        isinstance(b[5], int) or isinstance(b[5], float)
+        isinstance(b[5], int) or isinstance(b[5], (np.floating, float))
     )
     if len(box) == 8:
         tests[
