@@ -1397,3 +1397,55 @@ def modified_environ(*remove, **update):
     finally:
         env.update(update_after)
         [env.pop(k) for k in remove_after]
+
+
+def wmo2box(wmo_id: int):
+    """ Convert WMO square box number into a latitude/longitude box
+
+    See:
+    https://en.wikipedia.org/wiki/World_Meteorological_Organization_squares
+    https://commons.wikimedia.org/wiki/File:WMO-squares-global.gif
+
+    Parameters
+    ----------
+    wmo_id: int
+        WMO square number, must be between 1000 and 7817
+
+    Returns
+    -------
+    box: list(int)
+        [lon_min, lon_max, lat_min, lat_max] bounds to the WMO square number
+    """
+    if wmo_id < 1000 or wmo_id > 7817:
+        raise ValueError("Invalid WMO square number, must be between 1000 and 7817.")
+    wmo_id = str(wmo_id)
+
+    # "global quadrant" numbers where 1=NE, 3=SE, 5=SW, 7=NW
+    quadrant = int(wmo_id[0])
+    if quadrant not in [1, 3, 5 ,7]:
+        raise ValueError("Invalid WMO square number, 1st digit must be 1, 3, 5 or 7.")
+
+    # 'minimum' Latitude square boundary, nearest to the Equator
+    nearest_to_the_Equator_latitude = int(wmo_id[1])
+
+    # 'minimum' Longitude square boundary, nearest to the Prime Meridian
+    nearest_to_the_Prime_Meridian = int(wmo_id[2:4])
+
+    #
+    dd = 10
+    if quadrant in [1, 3]:
+        lon_min = nearest_to_the_Prime_Meridian*dd
+        lon_max = nearest_to_the_Prime_Meridian*dd+dd
+    elif quadrant in [5, 7]:
+        lon_min = -nearest_to_the_Prime_Meridian*dd-dd
+        lon_max = -nearest_to_the_Prime_Meridian*dd
+
+    if quadrant in [1, 7]:
+        lat_min = nearest_to_the_Equator_latitude*dd
+        lat_max = nearest_to_the_Equator_latitude*dd+dd
+    elif quadrant in [3, 5]:
+        lat_min = -nearest_to_the_Equator_latitude*dd-dd
+        lat_max = -nearest_to_the_Equator_latitude*dd
+
+    box = [lon_min, lon_max, lat_min, lat_max]
+    return box
