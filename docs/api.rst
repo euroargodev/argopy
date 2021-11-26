@@ -84,6 +84,7 @@ Helpers
    :toctree: generated/
 
    status
+   TopoFetcher
    set_options
    clear_cache
    tutorial.open_dataset
@@ -125,8 +126,8 @@ This accessor extends :py:class:`xarray.Dataset`. Proper use of this accessor sh
    >>> ds.argo.filter_qc
 
 
-Transformation
---------------
+Data Transformation
+-------------------
 
 .. autosummary::
    :toctree: generated/
@@ -136,8 +137,8 @@ Transformation
    Dataset.argo.profile2point
    Dataset.argo.interp_std_levels
 
-Filters
--------
+Data Filters
+------------
 
 .. autosummary::
    :toctree: generated/

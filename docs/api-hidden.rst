@@ -58,7 +58,15 @@
     argopy.utilities.list_available_data_src
     argopy.utilities.list_available_index_src
     argopy.utilities.Chunker
+
     argopy.utilities.TopoFetcher
+    argopy.utilities.TopoFetcher.cname
+    argopy.utilities.TopoFetcher.define_constraints
+    argopy.utilities.TopoFetcher.get_url
+    argopy.utilities.TopoFetcher.load
+    argopy.utilities.TopoFetcher.to_xarray
+    argopy.utilities.TopoFetcher.cachepath
+    argopy.utilities.TopoFetcher.uri
 
     argopy.utilities.list_standard_variables
     argopy.utilities.list_multiprofile_file_variables
