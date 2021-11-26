@@ -314,6 +314,8 @@ Contributing to the code base
 .. contents:: Code Base:
    :local:
 
+.. _data_fetchers:
+
 Data fetchers
 -------------
 

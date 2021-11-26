@@ -37,25 +37,13 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
     @abstractmethod
     def init(self):
         """ Initialisation for a specific fetcher """
-        pass
-
-    @abstractmethod
-    def cname(self):
-        """ Return a unique string defining the request
-
-            Provide this string to populate meta data and titles
-        """
-        pass
+        raise NotImplementedError("Not implemented")
 
     @property
+    @abstractmethod
     def uri(self):
         """ Return the URL used to download data """
-        pass
-
-    @property
-    def cachepath(self):
-        """ Return path to cache file for this request """
-        return [self.fs.cachepath(url) for url in self.uri]
+        raise NotImplementedError("Not implemented")
 
     ###
     # Methods that must not change
@@ -146,6 +134,11 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         else:
             this.attrs["history"] = txt
         return this
+
+    @property
+    def cachepath(self):
+        """ Return path to cache file for this request """
+        return [self.fs.cachepath(url) for url in self.uri]
 
     def cname(self):
         """ Return a unique string defining the constraints """

@@ -1,0 +1,26 @@
+# release.yml
+
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+    authors:
+      - octocat
+  categories:
+    - title: Breaking Changes 💔
+      labels:
+        - breaking-change
+    - title: New Features 🚀
+      labels:
+        - feature
+        - enhancement
+    - title: Internals 🛠
+      labels:
+        - internals
+        - backends
+    - title: Bug Fixes 🐛
+      labels:
+        - bug
+    - title: Other Changes
+      labels:
+        - "*"

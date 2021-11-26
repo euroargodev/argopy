@@ -1,6 +1,5 @@
-import xarray as xr
+import pandas as pd
 import pytest
-# import warnings
 
 import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
@@ -11,8 +10,11 @@ from . import (
     requires_connected_erddap_index,
     requires_localftp_index,
     requires_connection,
-    safe_to_server_errors
+    safe_to_server_errors,
+    ci_erddap_index
 )
+
+ERDDAP_TIMEOUT = 3 * 60
 
 
 class Test_Facade:
@@ -25,7 +27,7 @@ class Test_Facade:
 
     @requires_fetcher_index
     def test_invalid_accesspoint(self):
-         # Use the first valid data source
+        # Use the first valid data source
         with pytest.raises(InvalidFetcherAccessPoint):
             ArgoIndexFetcher(
                 src=self.src
@@ -58,8 +60,8 @@ class Test_AllBackends:
     args = {}
     args["float"] = [[2901623], [6901929, 2901623]]
     args["region"] = [
-        [-60, -50, 40.0, 50.0],
-        [-60, -50, 40.0, 50.0, "2007-08-01", "2007-09-01"],
+        [-100., -95., -35., -30.],
+        [-100., -95., -35., -30., "2020-01-01", "2020-01-15"],
     ]
     args["profile"] = [[2901623, 2], [6901929, [5, 45]]]
 
@@ -68,26 +70,36 @@ class Test_AllBackends:
         for arg in self.args["float"]:
             options = {**self.fetcher_opts, **ftc_opts}
             f = ArgoIndexFetcher(src=bk, **options).float(arg)
-            assert isinstance(f.to_xarray(), xr.Dataset)
+            f.load()
+            assert isinstance(f.index, pd.core.frame.DataFrame)
 
     def __test_profile(self, bk, **ftc_opts):
         """ Test profile index fetching for a given backend """
         for arg in self.args["profile"]:
             options = {**self.fetcher_opts, **ftc_opts}
             f = ArgoIndexFetcher(src=bk, **options).profile(*arg)
-            assert isinstance(f.to_xarray(), xr.Dataset)
+            f.load()
+            assert isinstance(f.index, pd.core.frame.DataFrame)
 
     def __test_region(self, bk, **ftc_opts):
         """ Test float index fetching for a given backend """
         for arg in self.args["region"]:
             options = {**self.fetcher_opts, **ftc_opts}
             f = ArgoIndexFetcher(src=bk, **options).region(arg)
-            assert isinstance(f.to_xarray(), xr.Dataset)
+            f.load()
+            assert isinstance(f.index, pd.core.frame.DataFrame)
 
     @requires_localftp_index
     def test_float_localftp(self):
         with argopy.set_options(local_ftp=self.local_ftp):
             self.__test_float("localftp", index_file="ar_index_global_prof.txt")
+
+    @ci_erddap_index
+    @requires_connected_erddap_index
+    @safe_to_server_errors
+    def test_float_erddap(self):
+        with argopy.set_options(api_timeout=ERDDAP_TIMEOUT):
+            self.__test_float("erddap")
 
     @requires_localftp_index
     def test_profile_localftp(self):
@@ -99,14 +111,8 @@ class Test_AllBackends:
         with argopy.set_options(local_ftp=self.local_ftp):
             self.__test_region("localftp", index_file="ar_index_global_prof.txt")
 
-    # @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
-    @requires_connected_erddap_index
-    @safe_to_server_errors
-    def test_float_erddap(self):
-        self.__test_float("erddap")
-
-    @pytest.mark.skip(reason="Waiting for https://github.com/euroargodev/argopy/issues/16")
+    @ci_erddap_index
     @requires_connected_erddap_index
     def test_region_erddap(self):
-        self.__test_region("erddap")
-
+        with argopy.set_options(api_timeout=ERDDAP_TIMEOUT):
+            self.__test_region("erddap")

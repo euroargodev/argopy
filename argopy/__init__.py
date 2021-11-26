@@ -6,20 +6,25 @@ except Exception:
     # Disable minimum version checks on downstream libraries.
     __version__ = "999"
 
-# Import facades:
-from .fetchers import ArgoDataFetcher as DataFetcher
-from .fetchers import ArgoIndexFetcher as IndexFetcher
+# Loggers
+import logging
+log = logging.getLogger(__name__)
+log.addHandler(logging.NullHandler())
 
-from .xarray import ArgoAccessor
-from . import tutorial
+# Import facades:
+from .fetchers import ArgoDataFetcher as DataFetcher  # noqa: E402
+from .fetchers import ArgoIndexFetcher as IndexFetcher  # noqa: E402
+
+from .xarray import ArgoAccessor  # noqa: E402
+from . import tutorial  # noqa: E402
 
 # Other Import
-from . import utilities
-from . import stores
-from .utilities import show_versions, clear_cache
-from .utilities import monitor_status as status
-from .options import set_options
-from .plotters import open_dashboard as dashboard
+from . import utilities  # noqa: E402
+from . import stores  # noqa: E402
+from .utilities import show_versions, show_options, clear_cache, TopoFetcher  # noqa: E402
+from .utilities import monitor_status as status  # noqa: E402
+from .options import set_options  # noqa: E402
+from .plotters import open_dashboard as dashboard  # noqa: E402
 
 #
 __all__ = (
@@ -27,12 +32,14 @@ __all__ = (
     "DataFetcher",
     "IndexFetcher",
     "ArgoAccessor",
-    # Top-level functions:
+    # Utilities promoted to top-level functions:
     "set_options",
     "show_versions",
+    "show_options",
     "dashboard",
     "status",
     "clear_cache",
+    "TopoFetcher",  # Class
     # Sub-packages,
     "utilities",
     "errors",

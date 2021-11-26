@@ -1,7 +1,6 @@
 [run]
 omit =
     argopy/tests/*
-    argopy/plotters.py
     setup.py
     *__init__*
 [report]

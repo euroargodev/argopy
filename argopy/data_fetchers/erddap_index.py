@@ -13,18 +13,24 @@ This is not intended to be used directly, only by the facade at fetchers.py
 import pandas as pd
 import numpy as np
 import copy
+import logging
+# from packaging import version
+# import fsspec
 
 from abc import ABC, abstractmethod
 
-from argopy.utilities import load_dict, mapp_dict, isconnected, format_oneline
+from argopy.utilities import load_dict, mapp_dict, format_oneline
 from argopy.stores import httpstore
+from argopy.options import OPTIONS
+
+log = logging.getLogger("argopy.fetchers.erddap_index")
 
 
 # Load erddapy according to available version (breaking changes in v0.8.0)
 try:
     from erddapy import ERDDAP
     from erddapy.utilities import parse_dates, quote_string_constraints
-except:
+except Exception:
     # >= v0.8.0
     from erddapy.erddapy import ERDDAP
     from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
@@ -43,7 +49,6 @@ class ErddapArgoIndexFetcher(ABC):
 
         ERDDAP transaction are managed with the erddapy library
 
-        __author__: kevin.balem@ifremer.fr
     """
 
     ###
@@ -52,27 +57,35 @@ class ErddapArgoIndexFetcher(ABC):
     @abstractmethod
     def init(self):
         """ Initialisation for a specific fetcher """
-        pass
+        raise NotImplementedError("Not implemented")
 
     @abstractmethod
     def define_constraints(self):
         """ Define erddapy constraints """
-        pass
+        raise NotImplementedError("Not implemented")
 
     @abstractmethod
     def cname(self):
         """ Return a unique string defining the request """
-        pass
+        raise NotImplementedError("Not implemented")
 
     ###
-    # Methods that must not changed
+    # Methods that must not change
     ###
     def __init__(self,
                  cache: bool = False,
                  cachedir: str = "",
                  **kwargs):
-        """ Instantiate an ERDDAP Argo index loader with force caching """
-        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=120)
+        """ Instantiate an ERDDAP Argo index loader """
+        # if version.parse(fsspec.__version__) > version.parse("0.8.3") and cache:
+        #     log.warning("Caching not available for WMO access point, falls back on NO cache "
+        #                 "(http cache store not compatible with erddap wmo requests)")
+        #     cache = False
+        if cache:
+            log.warning("Caching not available for WMO access point, falls back on NO cache "
+                        "(http cache store not compatible with erddap wmo requests)")
+            cache = False
+        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=OPTIONS['api_timeout'])
         self.definition = 'Ifremer erddap Argo index fetcher'
         self.dataset_id = 'index'
         self.server = api_server
@@ -194,6 +207,7 @@ class Fetch_wmo(ErddapArgoIndexFetcher):
     """ Manage access to Argo Index through Ifremer ERDDAP for: a list of WMOs
 
     """
+    access_point = 'wmo'
 
     def init(self, WMO=[]):
         """ Create Argo data loader for WMOs
@@ -226,8 +240,8 @@ class Fetch_wmo(ErddapArgoIndexFetcher):
 class Fetch_box(ErddapArgoIndexFetcher):
     """ Manage access to Argo Index through Ifremer ERDDAP for: an ocean rectangle
 
-        __author__: kevin.balem@ifremer.fr
     """
+    access_point = 'box'
 
     def init(self, box=[]):
         """ Create Argo Index loader

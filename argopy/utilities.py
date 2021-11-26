@@ -12,13 +12,16 @@ import warnings
 import urllib
 import json
 import collections
+import copy
 from functools import reduce
+from packaging import version
 
 import importlib
 import locale
 import platform
 import struct
 import subprocess
+import contextlib
 
 import xarray as xr
 import pandas as pd
@@ -31,8 +34,6 @@ import shutil
 
 import threading
 
-# from IPython.display import HTML, display
-# import ipywidgets as widgets
 import time
 
 from argopy.options import OPTIONS, set_options
@@ -40,9 +41,14 @@ from argopy.stores import httpstore
 from argopy.errors import (
     FtpPathError,
     InvalidFetcher,
-    OptionValueError,
     InvalidFetcherAccessPoint,
 )
+
+try:
+    collectionsAbc = collections.abc
+except AttributeError:
+    collectionsAbc = collections
+
 
 path2pkl = pkg_resources.resource_filename("argopy", "assets/")
 
@@ -52,7 +58,7 @@ except AttributeError:
     collectionsAbc = collections
 
 
-def clear_cache():
+def clear_cache(fs=None):
     """ Delete argopy cache folder content """
     if os.path.exists(OPTIONS["cachedir"]):
         # shutil.rmtree(OPTIONS["cachedir"])
@@ -65,6 +71,8 @@ def clear_cache():
                     shutil.rmtree(file_path)
             except Exception as e:
                 print("Failed to delete %s. Reason: %s" % (file_path, e))
+        if fs:
+            fs.clear_cache()
 
 
 def load_dict(ptype):
@@ -89,11 +97,11 @@ def mapp_dict(Adictionnary, Avalue):
 
 def list_available_data_src():
     """ List all available data sources """
-    AVAILABLE_SOURCES = {}
+    sources = {}
     try:
         from .data_fetchers import erddap_data as Erddap_Fetchers
 
-        AVAILABLE_SOURCES["erddap"] = Erddap_Fetchers
+        sources["erddap"] = Erddap_Fetchers
     except Exception:
         warnings.warn(
             "An error occurred while loading the ERDDAP data fetcher, "
@@ -105,7 +113,7 @@ def list_available_data_src():
     try:
         from .data_fetchers import localftp_data as LocalFTP_Fetchers
 
-        AVAILABLE_SOURCES["localftp"] = LocalFTP_Fetchers
+        sources["localftp"] = LocalFTP_Fetchers
     except Exception:
         warnings.warn(
             "An error occurred while loading the local FTP data fetcher, "
@@ -117,7 +125,7 @@ def list_available_data_src():
     try:
         from .data_fetchers import argovis_data as ArgoVis_Fetchers
 
-        AVAILABLE_SOURCES["argovis"] = ArgoVis_Fetchers
+        sources["argovis"] = ArgoVis_Fetchers
     except Exception:
         warnings.warn(
             "An error occurred while loading the ArgoVis data fetcher, "
@@ -126,7 +134,8 @@ def list_available_data_src():
         )
         pass
 
-    return AVAILABLE_SOURCES
+    # return dict(sorted(sources.items()))
+    return sources
 
 
 def list_available_index_src():
@@ -160,7 +169,7 @@ def list_available_index_src():
 
 
 def list_standard_variables():
-    """ Return the list of variables for standard users """
+    """ List of variables for standard users """
     return [
         "DATA_MODE",
         "LATITUDE",
@@ -193,7 +202,7 @@ def list_standard_variables():
 
 
 def list_multiprofile_file_variables():
-    """ Return the list of variables in a netcdf multiprofile file.
+    """ List of variables in a netcdf multiprofile file.
 
         This is for files created by GDAC under <DAC>/<WMO>/<WMO>_prof.nc
     """
@@ -376,7 +385,7 @@ def get_sys_info():
     blob.append(("commit", commit))
 
     try:
-        (sysname, nodename, release, version, machine, processor) = platform.uname()
+        (sysname, nodename, release, version_, machine, processor) = platform.uname()
         blob.extend(
             [
                 ("python", sys.version),
@@ -415,7 +424,7 @@ def netcdf_and_hdf5_versions():
     return [("libhdf5", libhdf5_version), ("libnetcdf", libnetcdf_version)]
 
 
-def show_versions(file=sys.stdout):
+def show_versions(file=sys.stdout):  # noqa: C901
     """ Print the versions of argopy and its dependencies
 
     Parameters
@@ -432,42 +441,38 @@ def show_versions(file=sys.stdout):
 
     deps = [
         # (MODULE_NAME, f(mod) -> mod version)
+        # In REQUIREMENTS:
         ("argopy", lambda mod: mod.__version__),
         ("xarray", lambda mod: mod.__version__),
-        ("pandas", lambda mod: mod.__version__),
-        ("numpy", lambda mod: mod.__version__),
         ("scipy", lambda mod: mod.__version__),
-        # argopy optionals
-        ("fsspec", lambda mod: mod.__version__),
-        ("erddapy", lambda mod: mod.__version__),
+        ("sklearn", lambda mod: mod.__version__),
         ("netCDF4", lambda mod: mod.__version__),
-        ("pydap", lambda mod: mod.__version__),
-        ("h5netcdf", lambda mod: mod.__version__),
-        ("h5py", lambda mod: mod.__version__),
-        ("Nio", lambda mod: mod.__version__),
-        ("zarr", lambda mod: mod.__version__),
-        ("cftime", lambda mod: mod.__version__),
-        ("nc_time_axis", lambda mod: mod.__version__),
-        ("PseudoNetCDF", lambda mod: mod.__version__),
-        ("rasterio", lambda mod: mod.__version__),
-        ("cfgrib", lambda mod: mod.__version__),
-        ("iris", lambda mod: mod.__version__),
-        ("bottleneck", lambda mod: mod.__version__),
         ("dask", lambda mod: mod.__version__),
-        ("distributed", lambda mod: mod.__version__),
-        ("matplotlib", lambda mod: mod.__version__),
-        ("cartopy", lambda mod: mod.__version__),
-        ("seaborn", lambda mod: mod.__version__),
-        ("numbagg", lambda mod: mod.__version__),
+        ("toolz", lambda mod: mod.__version__),
+        ("erddapy", lambda mod: mod.__version__),
+        ("fsspec", lambda mod: mod.__version__),
         ("gsw", lambda mod: mod.__version__),
-        # argopy setup/test
-        ("setuptools", lambda mod: mod.__version__),
-        ("pip", lambda mod: mod.__version__),
+        ("aiohttp", lambda mod: mod.__version__),
+        #
+        ("bottleneck", lambda mod: mod.__version__),
+        ("cartopy", lambda mod: mod.__version__),
+        ("cftime", lambda mod: mod.__version__),
         ("conda", lambda mod: mod.__version__),
-        ("pytest", lambda mod: mod.__version__),
-        # Misc.
+        ("distributed", lambda mod: mod.__version__),
         ("IPython", lambda mod: mod.__version__),
+        ("iris", lambda mod: mod.__version__),
+        ("matplotlib", lambda mod: mod.__version__),
+        ("nc_time_axis", lambda mod: mod.__version__),
+        ("numpy", lambda mod: mod.__version__),
+        ("pandas", lambda mod: mod.__version__),
+        ("packaging", lambda mod: mod.__version__),
+        ("pip", lambda mod: mod.__version__),
+        ("PseudoNetCDF", lambda mod: mod.__version__),
+        ("pytest", lambda mod: mod.__version__),
+        ("seaborn", lambda mod: mod.__version__),
+        ("setuptools", lambda mod: mod.__version__),
         ("sphinx", lambda mod: mod.__version__),
+        ("zarr", lambda mod: mod.__version__),
     ]
 
     deps_blob = list()
@@ -495,6 +500,22 @@ def show_versions(file=sys.stdout):
     print("", file=file)
     for k, stat in deps_blob:
         print(f"{k}: {stat}", file=file)
+
+
+def show_options(file=sys.stdout):  # noqa: C901
+    """ Print options of argopy
+
+    Parameters
+    ----------
+    file : file-like, optional
+        print to the given file-like object. Defaults to sys.stdout.
+    """
+    print("\nARGOPY OPTIONS", file=file)
+    print("--------------", file=file)
+    opts = copy.deepcopy(OPTIONS)
+    opts = dict(sorted(opts.items()))
+    for k, v in opts.items():
+        print(f"{k}: {v}", file=file)
 
 
 def isconnected(host="https://www.ifremer.fr"):
@@ -536,37 +557,39 @@ def isAPIconnected(src="erddap", data=True):
         bool
     """
     if data:
-        AVAILABLE_SOURCES = list_available_data_src()
+        list_src = list_available_data_src()
     else:
-        AVAILABLE_SOURCES = list_available_index_src()
-    if src in AVAILABLE_SOURCES and getattr(
-        AVAILABLE_SOURCES[src], "api_server_check", None
+        list_src = list_available_index_src()
+
+    if src in list_src and getattr(
+        list_src[src], "api_server_check", None
     ):
         if "localftp" in src:
-            # This is a special case because the source here is a local folder, and the folder validity is checked
-            # when setting the option value of 'local_ftp'
-            # So here, we just need to catch the appropriate error after a call to set_option
-            opts = {"src": src, "local_ftp": OPTIONS["local_ftp"]}
-            try:
-                set_options(**opts)
-                return True
-            except OptionValueError:
-                return False
+            # This is a special case because the source here is a local folder
+            result = check_localftp(OPTIONS["local_ftp"])
         else:
-            with set_options(src=src):
-                return isconnected(AVAILABLE_SOURCES[src].api_server_check)
+            result = isconnected(list_src[src].api_server_check)
+        return result
     else:
         raise InvalidFetcher
 
 
-def erddap_ds_exists(ds="ArgoFloats"):
-    """ Given erddap fetcher, check if a Dataset exists, return a bool"""
-    # e = ArgoDataFetcher(src='erddap').float(wmo=0).fetcher
-    # erddap_index = json.load(urlopen(e.erddap.server + "/info/index.json"))
-    # erddap_index = json.load(urlopen("http://www.ifremer.fr/erddap/info/index.json"))
-    with httpstore(timeout=120).open(
-        "http://www.ifremer.fr/erddap/info/index.json"
-    ) as of:
+def erddap_ds_exists(ds: str = "ArgoFloats", erddap: str = 'http://www.ifremer.fr/erddap') -> bool:
+    """ Check if a dataset exists on a remote erddap server
+    return a bool
+
+    Parameter
+    ---------
+    ds: str
+        Name of the erddap dataset to check (default: 'ArgoFloats')
+    erddap: str
+        Url of the erddap server (default: 'http://www.ifremer.fr/erddap')
+
+    Return
+    ------
+    bool
+    """
+    with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
         erddap_index = json.load(of)
     return ds in [row[-1] for row in erddap_index["table"]["rows"]]
 
@@ -605,15 +628,31 @@ def badge(label="label", message="message", color="green", insert=False):
         return Image(url=img)
 
 
-def fetch_status(stdout="html", insert=True):
-    """ Fetch and report web API status """
+def fetch_status(stdout: str = "html", insert: bool = True):
+    """ Fetch and report web API status
+
+    Parameters
+    ----------
+    stdout: str
+        Format of the results, default is 'html'. Otherwise a simple string.
+    insert: bool
+        Print or display results directly in stdout format.
+
+    Returns
+    -------
+    IPython.display.HTML or str
+    """
     results = {}
-    for api, mod in list_available_data_src().items():
+    list_src = list_available_data_src()
+    for api, mod in list_src.items():
         if getattr(mod, "api_server_check", None):
             # status = isconnected(mod.api_server_check)
             status = isAPIconnected(api)
-            # message = "up" if status else "down"
-            message = "ok" if status else "offline"
+            if api=='localftp' and OPTIONS['local_ftp'] == '-':
+                message = "ok" if status else "path undefined !"
+            else:
+                # message = "up" if status else "down"
+                message = "ok" if status else "offline"
             results[api] = {"value": status, "message": message}
 
     if "IPython" in sys.modules and stdout == "html":
@@ -753,7 +792,7 @@ def linear_interpolation_remap(
     # infer dim from input
     if z_dim is None:
         if len(z.dims) != 1:
-            raise RuntimeError("if z_dim is not specified,x must be a 1D array.")
+            raise RuntimeError("if z_dim is not specified, x must be a 1D array.")
         dim = z.dims[0]
     else:
         dim = z_dim
@@ -763,14 +802,24 @@ def linear_interpolation_remap(
         raise ValueError("Dataset input is not supported yet")
         # TODO: for a dataset input just apply the function for each appropriate array
 
-    kwargs = dict(
-        input_core_dims=[[dim], [dim], [z_regridded_dim]],
-        output_core_dims=[[output_dim]],
-        vectorize=True,
-        dask="parallelized",
-        output_dtypes=[data.dtype],
-        output_sizes={output_dim: len(z_regridded[z_regridded_dim])},
-    )
+    if version.parse(xr.__version__) > version.parse("0.15.0"):
+        kwargs = dict(
+            input_core_dims=[[dim], [dim], [z_regridded_dim]],
+            output_core_dims=[[output_dim]],
+            vectorize=True,
+            dask="parallelized",
+            output_dtypes=[data.dtype],
+            dask_gufunc_kwargs={'output_sizes': {output_dim: len(z_regridded[z_regridded_dim])}},
+        )
+    else:
+        kwargs = dict(
+            input_core_dims=[[dim], [dim], [z_regridded_dim]],
+            output_core_dims=[[output_dim]],
+            vectorize=True,
+            dask="parallelized",
+            output_dtypes=[data.dtype],
+            output_sizes={output_dim: len(z_regridded[z_regridded_dim])},
+        )
     remapped = xr.apply_ufunc(_regular_interp, z, data, z_regridded, **kwargs)
 
     remapped.coords[output_dim] = z_regridded.rename(
@@ -802,15 +851,19 @@ class Chunker:
         ----------
         request: dict
             Access point request to be chunked. One of the following:
-            {'box': [lon_min, lon_max, lat_min, lat_max, dpt_min, dpt_max, time_min, time_max]}
-            {'box': [lon_min, lon_max, lat_min, lat_max, dpt_min, dpt_max]}
-            {'wmo': [wmo1, wmo2, ...], 'cyc': [0,1, ...]}
+
+            - {'box': [lon_min, lon_max, lat_min, lat_max, dpt_min, dpt_max, time_min, time_max]}
+            - {'box': [lon_min, lon_max, lat_min, lat_max, dpt_min, dpt_max]}
+            - {'wmo': [wmo1, wmo2, ...], 'cyc': [0,1, ...]}
         chunks: 'auto' or dict
             Dictionary with request access point as keys and number of chunks to create as values.
+
             Eg: {'wmo':10} will create a maximum of 10 chunks along WMOs.
         chunksize: dict, optional
             Dictionary with request access point as keys and chunk size as values (used as maximum values in
-            'auto' chunking). Eg: {'wmo': 5} will create chunks with as many as 5 WMOs each.
+            'auto' chunking).
+
+            Eg: {'wmo': 5} will create chunks with as many as 5 WMOs each.
 
         """
         self.request = request
@@ -850,7 +903,7 @@ class Chunker:
     def _split(self, lst, n=1):
         """Yield successive n-sized chunks from lst"""
         for i in range(0, len(lst), n):
-            yield lst[i : i + n]
+            yield lst[i: i + n]
 
     def _split_list_bychunknb(self, lst, n=1):
         """Split list in n-imposed chunks of similar size
@@ -861,7 +914,7 @@ class Chunker:
         for i in self._split(lst, siz):
             res.append(i)
         if len(res) > n:
-            res[n - 1 : :] = [reduce(lambda i, j: i + j, res[n - 1 : :])]
+            res[n - 1::] = [reduce(lambda i, j: i + j, res[n - 1::])]
         return res
 
     def _split_list_bychunksize(self, lst, max_size=1):
@@ -873,7 +926,7 @@ class Chunker:
             res.append(i)
         return res
 
-    def _split_box(self, large_box, n=1, d="x"):
+    def _split_box(self, large_box, n=1, d="x"):  # noqa: C901
         """Split a box domain in one direction in n-imposed equal chunks """
         if d == "x":
             i_left, i_right = 0, 1
@@ -897,7 +950,7 @@ class Chunker:
                     this_box[i_right] = right
                     boxes.append(this_box)
         elif "t" in d:
-            dates = pd.to_datetime(large_box[i_left : i_right + 1])
+            dates = pd.to_datetime(large_box[i_left: i_right + 1])
             date_bounds = [
                 d.strftime("%Y%m%d%H%M%S")
                 for d in pd.date_range(dates[0], dates[1], periods=n + 1)
@@ -934,7 +987,7 @@ class Chunker:
                     box_list.append(bxyz)
         return box_list
 
-    def _chunker_box4d(self, request, chunks, chunks_maxsize):
+    def _chunker_box4d(self, request, chunks, chunks_maxsize):  # noqa: C901
         BOX = request["box"]
         n_chunks = chunks
         for axis, n in n_chunks.items():
@@ -1055,7 +1108,7 @@ def format_oneline(s, max_width=65):
         if q == 0:
             return "".join([s[0:n], padding, s[-n:]])
         else:
-            return "".join([s[0 : n + 1], padding, s[-n:]])
+            return "".join([s[0: n + 1], padding, s[-n:]])
     else:
         return s
 
@@ -1133,22 +1186,22 @@ def is_box(box: list, errors="raise"):
 
     # Types:
     tests["lon_min must be numeric"] = lambda b: (
-        isinstance(b[0], int) or isinstance(b[0], float)
+        isinstance(b[0], int) or isinstance(b[0], (np.floating, float))
     )
     tests["lon_max must be numeric"] = lambda b: (
-        isinstance(b[1], int) or isinstance(b[1], float)
+        isinstance(b[1], int) or isinstance(b[1], (np.floating, float))
     )
     tests["lat_min must be numeric"] = lambda b: (
-        isinstance(b[2], int) or isinstance(b[2], float)
+        isinstance(b[2], int) or isinstance(b[2], (np.floating, float))
     )
     tests["lat_max must be numeric"] = lambda b: (
-        isinstance(b[3], int) or isinstance(b[3], float)
+        isinstance(b[3], int) or isinstance(b[3], (np.floating, float))
     )
     tests["pres_min must be numeric"] = lambda b: (
-        isinstance(b[4], int) or isinstance(b[4], float)
+        isinstance(b[4], int) or isinstance(b[4], (np.floating, float))
     )
     tests["pres_max must be numeric"] = lambda b: (
-        isinstance(b[5], int) or isinstance(b[5], float)
+        isinstance(b[5], int) or isinstance(b[5], (np.floating, float))
     )
     if len(box) == 8:
         tests[
@@ -1206,7 +1259,7 @@ def is_list_of_datasets(lst):
 
 
 def check_wmo(lst):
-    """ Check a WMO option and returned it as a list of integers
+    """ Validate a WMO option and returned it as a list of integers
 
     Parameters
     ----------
@@ -1231,8 +1284,8 @@ def check_wmo(lst):
     return [abs(int(x)) for x in lst]
 
 
-def is_wmo(lst, errors="raise"):
-    """ Assess validity of a WMO option
+def is_wmo(lst, errors="raise"):  # noqa: C901
+    """ Check if a WMO is valid
 
     Parameters
     ----------
@@ -1271,7 +1324,7 @@ def is_wmo(lst, errors="raise"):
             if int(x) <= 0:
                 result = False
 
-    except:
+    except Exception:
         result = False
         if errors == "raise":
             raise ValueError(msg)
@@ -1280,6 +1333,7 @@ def is_wmo(lst, errors="raise"):
         raise ValueError(msg)
     else:
         return result
+
 
 # def docstring(value):
 #     """Replace one function docstring
@@ -1290,6 +1344,7 @@ def is_wmo(lst, errors="raise"):
 #         func.__doc__ = value
 #         return func
 #     return _doc
+
 
 def warnUnless(ok, txt):
     """ Decorator to raise warning unless condition is True
@@ -1314,3 +1369,262 @@ def warnUnless(ok, txt):
         return inner
     else:
         return lambda f: f
+
+
+@contextlib.contextmanager
+def modified_environ(*remove, **update):
+    """
+    Temporarily updates the ``os.environ`` dictionary in-place.
+
+    The ``os.environ`` dictionary is updated in-place so that the modification
+    is sure to work in all situations.
+
+    :param remove: Environment variables to remove.
+    :param update: Dictionary of environment variables and values to add/update.
+    """
+    # Source: https://github.com/laurent-laporte-pro/stackoverflow-q2059482
+    env = os.environ
+    update = update or {}
+    remove = remove or []
+
+    # List of environment variables being updated or removed.
+    stomped = (set(update.keys()) | set(remove)) & set(env.keys())
+    # Environment variables and values to restore on exit.
+    update_after = {k: env[k] for k in stomped}
+    # Environment variables and values to remove on exit.
+    remove_after = frozenset(k for k in update if k not in env)
+
+    try:
+        env.update(update)
+        [env.pop(k, None) for k in remove]
+        yield
+    finally:
+        env.update(update_after)
+        [env.pop(k) for k in remove_after]
+
+
+def wmo2box(wmo_id: int):
+    """ Convert WMO square box number into a latitude/longitude box
+
+    See:
+    https://en.wikipedia.org/wiki/World_Meteorological_Organization_squares
+    https://commons.wikimedia.org/wiki/File:WMO-squares-global.gif
+
+    Parameters
+    ----------
+    wmo_id: int
+        WMO square number, must be between 1000 and 7817
+
+    Returns
+    -------
+    box: list(int)
+        [lon_min, lon_max, lat_min, lat_max] bounds to the WMO square number
+    """
+    if wmo_id < 1000 or wmo_id > 7817:
+        raise ValueError("Invalid WMO square number, must be between 1000 and 7817.")
+    wmo_id = str(wmo_id)
+
+    # "global quadrant" numbers where 1=NE, 3=SE, 5=SW, 7=NW
+    quadrant = int(wmo_id[0])
+    if quadrant not in [1, 3, 5 ,7]:
+        raise ValueError("Invalid WMO square number, 1st digit must be 1, 3, 5 or 7.")
+
+    # 'minimum' Latitude square boundary, nearest to the Equator
+    nearest_to_the_Equator_latitude = int(wmo_id[1])
+
+    # 'minimum' Longitude square boundary, nearest to the Prime Meridian
+    nearest_to_the_Prime_Meridian = int(wmo_id[2:4])
+
+    #
+    dd = 10
+    if quadrant in [1, 3]:
+        lon_min = nearest_to_the_Prime_Meridian*dd
+        lon_max = nearest_to_the_Prime_Meridian*dd+dd
+    elif quadrant in [5, 7]:
+        lon_min = -nearest_to_the_Prime_Meridian*dd-dd
+        lon_max = -nearest_to_the_Prime_Meridian*dd
+
+    if quadrant in [1, 7]:
+        lat_min = nearest_to_the_Equator_latitude*dd
+        lat_max = nearest_to_the_Equator_latitude*dd+dd
+    elif quadrant in [3, 5]:
+        lat_min = -nearest_to_the_Equator_latitude*dd-dd
+        lat_max = -nearest_to_the_Equator_latitude*dd
+
+    box = [lon_min, lon_max, lat_min, lat_max]
+    return box
+
+
+class TopoFetcher():
+    """ Fetch topographic data through an ERDDAP server for an ocean rectangle
+
+    Example:
+        >>> from argopy import TopoFetcher
+        >>> box = [-75, -45, 20, 30]  # Lon_min, lon_max, lat_min, lat_max
+        >>> ds = TopoFetcher(box).to_xarray()
+        >>> ds = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=True).to_xarray()
+
+    """
+
+    class ERDDAP():
+        def __init__(self, server: str, protocol: str = 'tabledap'):
+            self.server = server
+            self.protocol = protocol
+            self.response = 'nc'
+            self.dataset_id = ''
+            self.constraints = ''
+
+    def __init__(
+            self,
+            box: list,
+            ds: str = "gebco",
+            cache: bool = False,
+            cachedir: str = "",
+            api_timeout: int = 0,
+            stride: list = [1, 1],
+            **kwargs,
+    ):
+        """ Instantiate an ERDDAP topo data fetcher
+
+        Parameters
+        ----------
+        ds: str (optional), default: 'gebco'
+            Dataset to load:
+
+            - 'gebco' will load the GEBCO_2020 Grid, a continuous terrain model for oceans and land at 15 arc-second intervals
+        stride: list, default [1, 1]
+            Strides along longitude and latitude. This allows to change the output resolution
+        cache: bool (optional)
+            Cache data or not (default: False)
+        cachedir: str (optional)
+            Path to cache folder
+        api_timeout: int (optional)
+            Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
+        """
+        timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
+        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
+        self.definition = "Erddap topographic data fetcher"
+
+        self.BOX = box
+        self.stride = stride
+        if ds == "gebco":
+            self.definition = "NOAA erddap gebco data fetcher for a space region"
+            self.server = 'https://coastwatch.pfeg.noaa.gov/erddap'
+            self.server_name = 'NOAA'
+            self.dataset_id = 'gebco'
+
+        self._init_erddap()
+
+    def _init_erddap(self):
+        # Init erddap
+        self.erddap = self.ERDDAP(server=self.server, protocol="griddap")
+        self.erddap.response = (
+            "nc"
+        )
+
+        if self.dataset_id == "gebco":
+            self.erddap.dataset_id = "GEBCO_2020"
+        else:
+            raise ValueError(
+                "Invalid database short name for %s erddap" % self.server_name
+            )
+        return self
+
+    def _cname(self) -> str:
+        """ Fetcher one line string definition helper """
+        cname = "?"
+
+        if hasattr(self, "BOX"):
+            BOX = self.BOX
+            cname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f]") % (
+                BOX[0],
+                BOX[1],
+                BOX[2],
+                BOX[3],
+            )
+        return cname
+
+    def __repr__(self):
+        summary = ["<topofetcher.erddap>"]
+        summary.append("Name: %s" % self.definition)
+        summary.append("API: %s" % self.server)
+        summary.append("Domain: %s" % format_oneline(self.cname()))
+        return "\n".join(summary)
+
+    def cname(self):
+        """ Return a unique string defining the constraints """
+        return self._cname()
+
+    @property
+    def cachepath(self):
+        """ Return path to cached file(s) for this request
+
+        Returns
+        -------
+        list(str)
+        """
+        return [self.fs.cachepath(uri) for uri in self.uri]
+
+    def define_constraints(self):
+        """ Define request constraints """
+        #        Eg: https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.nc?elevation%5B(34):5:(42)%5D%5B(-21):7:(-12)%5D
+        self.erddap.constraints = "%s(%0.2f):%i:(%0.2f)%s%s(%0.2f):%i:(%0.2f)%s" % (
+        "%5B", self.BOX[2], self.stride[1], self.BOX[3], "%5D",
+        "%5B", self.BOX[0], self.stride[0], self.BOX[1], "%5D")
+        return None
+
+    #     @property
+    #     def _minimal_vlist(self):
+    #         """ Return the minimal list of variables to retrieve """
+    #         vlist = list()
+    #         vlist.append("latitude")
+    #         vlist.append("longitude")
+    #         vlist.append("elevation")
+    #         return vlist
+
+    def get_url(self):
+        """ Return the URL to download data requested
+
+        Returns
+        -------
+        str
+        """
+        # First part of the URL:
+        protocol = self.erddap.protocol
+        dataset_id = self.erddap.dataset_id
+        response = self.erddap.response
+        url = f"{self.erddap.server}/{protocol}/{dataset_id}.{response}?"
+
+        # Add variables to retrieve:
+        variables = ["elevation"]
+        variables = ",".join(variables)
+        url += f"{variables}"
+
+        # Add constraints:
+        self.define_constraints()  # Define constraint to select this box of data (affect self.erddap.constraints)
+        url += f"{self.erddap.constraints}"
+
+        return url
+
+    @property
+    def uri(self):
+        """ List of files to load for a request
+
+        Returns
+        -------
+        list(str)
+        """
+        return [self.get_url()]
+
+    def to_xarray(self, errors: str = 'ignore'):
+        """ Load Topographic data and return a xarray.DataSet """
+
+        # Download data
+        if len(self.uri) == 1:
+            ds = self.fs.open_dataset(self.uri[0])
+
+        return ds
+
+    def load(self, errors: str = 'ignore'):
+        """ Load Topographic data and return a xarray.DataSet """
+        return self.to_xarray(errors=errors)

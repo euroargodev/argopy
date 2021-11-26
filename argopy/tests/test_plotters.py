@@ -120,6 +120,7 @@ class Test_index_plot:
                 loader = ArgoIndexFetcher(src=self.src).profile(*arg).load()
                 self.__test_bar_plot(loader.index)
 
+
 @requires_localftp
 @requires_matplotlib
 class Test_data_plot:

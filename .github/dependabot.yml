@@ -17,4 +17,14 @@ updates:
       include: "scope"
     # Labels on pull requests for version updates only
     labels:
-      - "pip dependencies"      
+      - "dependencies"
+      - "ignore-for-release"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      # Check for updates once a week
+      interval: 'weekly'
+    labels:
+      - "github_actions"
+      - "dependencies"
+      - "ignore-for-release"

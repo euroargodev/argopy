@@ -27,6 +27,7 @@ Some options are available to customise the plot, for instance:
 
 .. image:: _static/trajectory_sample_white.png
 
+
 Histograms on properties
 ------------------------
 

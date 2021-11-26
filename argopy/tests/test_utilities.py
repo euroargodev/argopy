@@ -21,11 +21,13 @@ from argopy.utilities import (
     is_box,
     is_list_of_strings,
     format_oneline, is_indexbox,
-    check_wmo, is_wmo
+    check_wmo, is_wmo,
+    wmo2box,
+    TopoFetcher
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
-from . import requires_connection, requires_localftp
+from . import requires_connection, requires_localftp, requires_connection
 
 
 def test_invalid_dictionnary():
@@ -69,6 +71,9 @@ def test_isAPIconnected():
 def test_erddap_ds_exists():
     assert isinstance(erddap_ds_exists(ds="ArgoFloats"), bool)
     assert erddap_ds_exists(ds="DummyDS") is False
+
+
+# todo : Implement tests for utilities functions: badge, fetch_status and monitor_status
 
 
 @requires_connection
@@ -450,7 +455,7 @@ class Test_is_indexbox:
 
 
 def test_format_oneline():
-    s = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
+    s = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore"
     assert isinstance(format_oneline(s), str)
     assert isinstance(format_oneline(s[0:5]), str)
     s = format_oneline(s, max_width=12)
@@ -480,3 +485,37 @@ def test_check_wmo():
     assert check_wmo([1234567]) == [1234567]
     assert check_wmo([12345, 1234567]) == [12345, 1234567]
     assert check_wmo(np.array((12345, 1234567), dtype='int')) == [12345, 1234567]
+
+
+def test_wmo2box():
+    with pytest.raises(ValueError):
+        wmo2box(12)
+    with pytest.raises(ValueError):
+        wmo2box(8000)
+    with pytest.raises(ValueError):
+        wmo2box(2000)
+
+    def complete_box(b):
+        b2 = b.copy()
+        b2.insert(4, 0.)
+        b2.insert(5, 10000.)
+        return b2
+
+    assert is_box(complete_box(wmo2box(1212)))
+    assert is_box(complete_box(wmo2box(3324)))
+    assert is_box(complete_box(wmo2box(5402)))
+    assert is_box(complete_box(wmo2box(7501)))
+
+
+@requires_connection
+def test_TopoFetcher():
+    box = [81, 123, -67, -54]
+    fetcher = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=True)
+    ds = fetcher.to_xarray()
+    assert isinstance(ds, xr.Dataset)
+    assert 'elevation' in ds.data_vars
+
+    fetcher = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=False)
+    ds = fetcher.to_xarray()
+    assert isinstance(ds, xr.Dataset)
+    assert 'elevation' in ds.data_vars

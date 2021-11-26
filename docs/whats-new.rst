@@ -3,13 +3,34 @@
 What's New
 ==========
 
-v0.1.8 (X XXX. 2021)
+v0.1.9 (X XXX. 2021)
 --------------------
 
 **Features and front-end API**
 
-- Improve plotting functions. All functions are now available for both the index and data fetchers. See the :ref:`data_viz` page for more details.
- Reduced plotting dependencies to `Matplotlib <https://matplotlib.org/>`_ only. **Argopy** will use `Seaborn <seaborn.pydata.org/>`_ and/or `Cartopy <https://scitools.org.uk/cartopy>`_ if available. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
+- New utility method :class:`argopy.TopoFetcher` to retrieve `GEBCO topography <https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.html>`_ for a given region.
+
+.. code-block:: python
+
+    from argopy import TopoFetcher
+    box = [-75, -45, 20, 30]
+    ds = TopoFetcher(box).to_xarray()
+    ds = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=True).to_xarray()
+
+
+For convenience we also added a new property to the data fetcher that return the domain covered by the dataset.
+
+.. code-block:: python
+
+    loader = ArgoDataFetcher().float(2901623)
+    loader.domain  # Returns [89.093, 96.036, -0.278, 4.16, 15.0, 2026.0, numpy.datetime64('2010-05-14T03:35:00.000000000'),  numpy.datetime64('2013-01-01T01:45:00.000000000')]
+
+v0.1.8 (2 Nov. 2021)
+---------------------
+
+**Features and front-end API**
+
+- Improve plotting functions. All functions are now available for both the index and data fetchers. See the :ref:`data_viz` page for more details. Reduced plotting dependencies to `Matplotlib <https://matplotlib.org/>`_ only. **Argopy** will use `Seaborn <seaborn.pydata.org/>`_ and/or `Cartopy <https://scitools.org.uk/cartopy>`_ if available. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 
@@ -27,7 +48,7 @@ v0.1.8 (X XXX. 2021)
     fig, ax = obj.plot('profiler')
 
 
-- New methods and properties for data and index fetchers. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
+- New methods and properties for data and index fetchers. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_. The :meth:`argopy.DataFetcher.load` and :meth:`argopy.IndexFetcher.load` methods internally call on the `to_xarray()` methods and store results in the fetcher instance. The :meth:`argopy.DataFetcher.to_xarray` will trigger a fetch on every call, while the :meth:`argopy.DataFetcher.load` will not.
 
 .. code-block:: python
 
@@ -53,14 +74,34 @@ v0.1.8 (X XXX. 2021)
 
 - Check validity of access points options (WMO and box) in the facade, no checks at the fetcher level. (:pr:`92`) by `G. Maze <http://www.github.com/gmaze>`_.
 
-- Documentation on `Read The Docs` now uses a pip environment and get rid of memory eager conda.
+- More general options. Fix :issue:`91`. (:pr:`102`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+    - ``trust_env`` to allow for local environment variables to be used by fsspec to connect to the internet. Usefull for those using a proxy.
+
+- Documentation on `Read The Docs` now uses a pip environment and get rid of memory eager conda. (:pr:`103`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 - :class:`xarray.Dataset` argopy accessor ``argo`` has a clean documentation.
 
 **Breaking changes with previous versions**
 
+- Drop support for python 3.6 and older. Lock range of dependencies version support.
+
 - In the plotters module, the ``plot_dac`` and ``plot_profilerType`` functions have been replaced by ``bar_plot``. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
 
+**Internals**
+
+- Internal logging available and upgrade dependencies version support (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_. To see internal logs, you can set-up your application like this:
+
+.. code-block:: python
+
+    import logging
+    DEBUGFORMATTER = '%(asctime)s [%(levelname)s] [%(name)s] %(filename)s:%(lineno)d: %(message)s'
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format=DEBUGFORMATTER,
+        datefmt='%m/%d/%Y %I:%M:%S %p',
+        handlers=[logging.FileHandler("argopy.log", mode='w')]
+    )
 
 v0.1.7 (4 Jan. 2021)
 -----------------------

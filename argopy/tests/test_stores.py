@@ -5,6 +5,9 @@ import tempfile
 import xarray as xr
 import pandas as pd
 import fsspec
+from fsspec.registry import known_implementations
+import aiohttp
+
 import argopy
 from argopy.stores import (
     filestore,
@@ -13,11 +16,29 @@ from argopy.stores import (
     indexfilter_box,
     indexstore,
 )
+from argopy.stores.filesystems import new_fs
+from argopy.options import OPTIONS
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound
-from . import requires_connection
-from argopy.utilities import is_list_of_datasets, is_list_of_dicts
+from . import requires_connection, requires_connected_argovis, skip_this_for_debug, safe_to_server_errors
+from argopy.utilities import is_list_of_datasets, is_list_of_dicts, modified_environ
 
 
+class Test_new_fs:
+    id_implementation = lambda y, x: [k for k, v in known_implementations.items()  # noqa: E731
+                                       if x.__class__.__name__ == v['class'].split('.')[-1]]
+    is_initialised = lambda y, x: ((x is None) or (x == []))  # noqa: E731
+
+    def test_default(self):
+        fs, cache_registry = new_fs()
+        assert self.id_implementation(fs) is not None
+        assert self.is_initialised(cache_registry)
+
+    def test_cache_type(self):
+        fs, cache_registry = new_fs(cache=True)
+        assert self.id_implementation(fs) == ['filecache']
+
+
+#@skip_this_for_debug
 @requires_connection
 class Test_FileStore:
     ftproot = argopy.tutorial.open_dataset("localftp")[0]
@@ -106,12 +127,20 @@ class Test_HttpStore:
         fs = httpstore(cache=False)
         assert isinstance(fs.fs, fsspec.implementations.http.HTTPFileSystem)
 
+    def test_trust_env(self):
+        with modified_environ(HTTP_PROXY='http://dummy_proxy'):
+            with argopy.set_options(trust_env=True):
+                fs = httpstore(cache=False)
+                with pytest.raises(aiohttp.client_exceptions.ClientConnectorError):
+                    uri = "http://github.com/euroargodev/argopy-data/raw/master/ftp/dac/csiro/5900865/5900865_prof.nc"
+                    fs.open_dataset(uri)
+
     def test_nocache(self):
         fs = httpstore(cache=False)
         with pytest.raises(FileSystemHasNoCache):
             fs.cachepath("dummy_uri")
 
-    def test_cache(self):
+    def test_cachable(self):
         fs = httpstore(cache=True)
         assert isinstance(fs.fs, fsspec.implementations.cached.WholeFileCacheFileSystem)
 
@@ -120,13 +149,35 @@ class Test_HttpStore:
         with pytest.raises(CacheFileNotFound):
             fs.cachepath("dummy_uri")
 
+    @safe_to_server_errors
+    def test_cache_a_file(self):
+        uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt"
+        with tempfile.TemporaryDirectory() as cachedir:
+            fs = httpstore(cache=True, cachedir=cachedir, timeout=OPTIONS['api_timeout'])
+            fs.read_csv(uri, skiprows=8, header=0)
+            assert isinstance(fs.cachepath(uri), str)
+
+    @safe_to_server_errors
+    def test_clear_cache(self):
+        uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt"
+        with tempfile.TemporaryDirectory() as cachedir:
+            fs = httpstore(cache=True, cachedir=cachedir, timeout=OPTIONS['api_timeout'])
+            fs.read_csv(uri, skiprows=8, header=0)
+            assert isinstance(fs.cachepath(uri), str)
+            assert os.path.isfile(fs.cachepath(uri))
+            fs.clear_cache()
+            with pytest.raises(CacheFileNotFound):
+                fs.cachepath(uri)
+
+    @safe_to_server_errors
     def test_open_dataset(self):
         uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/dac/csiro/5900865/5900865_prof.nc"
-        fs = httpstore()
+        fs = httpstore(timeout=OPTIONS['api_timeout'])
         assert isinstance(fs.open_dataset(uri), xr.Dataset)
 
+    @safe_to_server_errors
     def test_open_mfdataset(self):
-        fs = httpstore()
+        fs = httpstore(timeout=OPTIONS['api_timeout'])
         uri = [
             "https://github.com/euroargodev/argopy-data/raw/master/ftp/dac/csiro/5900865/profiles/D5900865_00%i.nc"
             % i
@@ -143,13 +194,17 @@ class Test_HttpStore:
                     )
                 )
 
+    @requires_connected_argovis
+    @safe_to_server_errors
     def test_open_json(self):
         uri = "https://argovis.colorado.edu/catalog/mprofiles/?ids=['6902746_12']"
-        fs = httpstore()
+        fs = httpstore(timeout=OPTIONS['api_timeout'])
         assert is_list_of_dicts(fs.open_json(uri))
 
+    @requires_connected_argovis
+    @safe_to_server_errors
     def test_open_mfjson(self):
-        fs = httpstore()
+        fs = httpstore(timeout=OPTIONS['api_timeout'])
         uri = [
             "https://argovis.colorado.edu/catalog/mprofiles/?ids=['6902746_%i']" % i
             for i in [12, 13]
@@ -159,31 +214,16 @@ class Test_HttpStore:
                 lst = fs.open_mfjson(uri, method=method, progress=progress)
                 assert all(is_list_of_dicts(x) for x in lst)
 
+    @safe_to_server_errors
     def test_read_csv(self):
         uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt"
-        fs = httpstore()
+        fs = httpstore(timeout=OPTIONS['api_timeout'])
         assert isinstance(
             fs.read_csv(uri, skiprows=8, header=0), pd.core.frame.DataFrame
         )
 
-    def test_cachefile(self):
-        uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt"
-        with tempfile.TemporaryDirectory() as cachedir:
-            fs = httpstore(cache=True, cachedir=cachedir)
-            fs.read_csv(uri, skiprows=8, header=0)
-            assert isinstance(fs.cachepath(uri), str)
 
-    def test_clear_cache(self):
-        uri = "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt"
-        with tempfile.TemporaryDirectory() as cachedir:
-            fs = httpstore(cache=True, cachedir=cachedir)
-            fs.read_csv(uri, skiprows=8, header=0)
-            assert isinstance(fs.cachepath(uri), str)
-            assert os.path.isfile(fs.cachepath(uri))
-            fs.clear_cache()
-            with pytest.raises(CacheFileNotFound):
-                fs.cachepath(uri)
-
+#@skip_this_for_debug
 class Test_IndexFilter_WMO:
     kwargs = [
         {"WMO": 6901929},
@@ -205,7 +245,7 @@ class Test_IndexFilter_WMO:
     def test_filters_uri(self):
         for kw in self.kwargs:
             filt = indexfilter_wmo(**kw)
-            assert isinstance(filt.uri(), str)
+            assert isinstance(filt.uri, str)
 
     def test_filters_sha(self):
         for kw in self.kwargs:
@@ -226,6 +266,7 @@ class Test_IndexFilter_WMO:
                     assert results is None
 
 
+#@skip_this_for_debug
 @requires_connection
 class Test_IndexStore:
     ftproot, flist = argopy.tutorial.open_dataset("localftp")

@@ -12,6 +12,8 @@ Validity of access points parameters (eg: wmo) is made here, not at the data/ind
 import warnings
 import xarray as xr
 import pandas as pd
+import numpy as np
+import logging
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher
@@ -21,6 +23,8 @@ from .plotters import plot_trajectory, bar_plot
 
 AVAILABLE_DATA_SOURCES = list_available_data_src()
 AVAILABLE_INDEX_SOURCES = list_available_index_src()
+
+log = logging.getLogger("argopy.fetchers.facade")
 
 
 def checkAccessPoint(AccessPoint):
@@ -97,14 +101,14 @@ class ArgoDataFetcher:
         self.Fetchers = {}
         self.valid_access_points = []
         for p in Fetchers.access_points:
-            if p == "wmo":  # Required for 'profile' and 'float'
-                self.Fetchers["profile"] = Fetchers.Fetch_wmo
-                self.valid_access_points.append("profile")
-                self.Fetchers["float"] = Fetchers.Fetch_wmo
-                self.valid_access_points.append("float")
             if p == "box":  # Required for 'region'
                 self.Fetchers["region"] = Fetchers.Fetch_box
                 self.valid_access_points.append("region")
+            if p == "wmo":  # Required for 'profile' and 'float'
+                self.Fetchers["float"] = Fetchers.Fetch_wmo
+                self.valid_access_points.append("float")
+                self.Fetchers["profile"] = Fetchers.Fetch_wmo
+                self.valid_access_points.append("profile")
 
         # Init sub-methods:
         self.fetcher = None
@@ -140,12 +144,16 @@ class ArgoDataFetcher:
                 )
             else:
                 summary.append("Backend: %s" % self._src)
-            summary.append("User mode: %s" % self._mode)
         else:
-            summary = ["<datafetcher> 'Not initialised'"]
-            summary.append("Current backend: %s" % self._src)
-            summary.append("Available fetchers: %s" % ", ".join(self.Fetchers.keys()))
-            summary.append("User mode: %s" % self._mode)
+            summary = ["<datafetcher.%s> 'No access point initialised'" % self._src]
+            summary.append("Available access points: %s" % ", ".join(self.Fetchers.keys()))
+            if "parallel" in self.fetcher_options:
+                summary.append("Backend: %s (parallel=%s)" % (self._src, str(self.fetcher_options["parallel"])))
+            else:
+                summary.append("Backend: %s" % self._src)
+
+        summary.append("User mode: %s" % self._mode)
+        summary.append("Dataset: %s" % self._dataset_id)
         return "\n".join(summary)
 
     def __empty_processor(self, xds):
@@ -161,6 +169,7 @@ class ArgoDataFetcher:
             "postproccessor",
             "data",
             "index",
+            "domain",
             "_loaded",
             "_request"
         ]
@@ -212,6 +221,25 @@ class ArgoDataFetcher:
         if not isinstance(self._index, pd.core.frame.DataFrame):
             self.load()
         return self._index
+
+    @property
+    def domain(self):
+        """" Domain of the dataset
+
+            This is different from a usual ``box`` because dates are already in numpy.datetime64 format.
+        """
+        this_ds = self.data
+        if 'PRES_ADJUSTED' in this_ds.data_vars:
+            Pmin = np.nanmin((np.min(this_ds['PRES'].values), np.min(this_ds['PRES_ADJUSTED'].values)))
+            Pmax = np.nanmax((np.max(this_ds['PRES'].values), np.max(this_ds['PRES_ADJUSTED'].values)))
+        else:
+            Pmin = np.min(this_ds['PRES'].values)
+            Pmax = np.max(this_ds['PRES'].values)
+
+        return [np.min(this_ds['LONGITUDE'].values), np.max(this_ds['LONGITUDE'].values),
+                np.min(this_ds['LATITUDE'].values), np.max(this_ds['LATITUDE'].values),
+                Pmin, Pmax,
+                np.min(this_ds['TIME'].values), np.max(this_ds['TIME'].values)]
 
     def dashboard(self, **kw):
         """ Open access point dashboard """
@@ -557,14 +585,14 @@ class ArgoIndexFetcher:
         self.Fetchers = {}
         self.valid_access_points = []
         for p in Fetchers.access_points:
-            if p == "wmo":  # Required for 'profile' and 'float'
-                self.Fetchers["profile"] = Fetchers.Fetch_wmo
-                self.valid_access_points.append("profile")
-                self.Fetchers["float"] = Fetchers.Fetch_wmo
-                self.valid_access_points.append("float")
             if p == "box":  # Required for 'region'
                 self.Fetchers["region"] = Fetchers.Fetch_box
                 self.valid_access_points.append("region")
+            if p == "wmo":  # Required for 'profile' and 'float'
+                self.Fetchers["float"] = Fetchers.Fetch_wmo
+                self.valid_access_points.append("float")
+                self.Fetchers["profile"] = Fetchers.Fetch_wmo
+                self.valid_access_points.append("profile")
 
         # Init sub-methods:
         self.fetcher = None
@@ -584,12 +612,13 @@ class ArgoIndexFetcher:
         if self.fetcher:
             summary = [self.fetcher.__repr__()]
             summary.append("Backend: %s" % self._src)
-            summary.append("User mode: %s" % self._mode)
         else:
-            summary = ["<indexfetcher> 'Not initialised'"]
-            summary.append("Current backend: %s" % self._src)
-            summary.append("Available fetchers: %s" % ", ".join(self.Fetchers.keys()))
-            summary.append("User mode: %s" % self._mode)
+            summary = ["<indexfetcher.%s> 'No access point initialised'" % self._src]
+            summary.append("Available access points: %s" % ", ".join(self.Fetchers.keys()))
+            summary.append("Backend: %s" % self._src)
+
+        summary.append("User mode: %s" % self._mode)
+        summary.append("Dataset: %s" % self._dataset_id)
         return "\n".join(summary)
 
     def __empty_processor(self, xds):

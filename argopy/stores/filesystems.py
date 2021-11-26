@@ -2,16 +2,19 @@ import os
 import types
 import xarray as xr
 import pandas as pd
-import requests
 import fsspec
 import shutil
 import pickle
 import json
 import tempfile
 import warnings
+import logging
+from packaging import version
 
 import concurrent.futures
 import multiprocessing
+
+
 try:
     from tqdm import tqdm
 except ModuleNotFoundError:
@@ -20,13 +23,17 @@ except ModuleNotFoundError:
     def tqdm(fct, **kw):
         return fct
 
+
 from argopy.options import OPTIONS
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
     InvalidMethod
 from abc import ABC, abstractmethod
 
 
-def new_fs(protocol: str = '', cache: bool = False, cachedir: str = "", **kwargs):
+log = logging.getLogger("argopy.stores")
+
+
+def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cachedir'], **kwargs):
     """ Create a new fsspec file system
 
     Parameters
@@ -40,18 +47,28 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = "", **kwargs
         Other arguments passed to :class:`fsspec.filesystem`
 
     """
+    default_filesystem_kwargs = {'simple_links': True, "block_size": 0}
+    if protocol == 'http':
+        default_filesystem_kwargs = {**default_filesystem_kwargs,
+                                     **{"client_kwargs": {"trust_env": OPTIONS['trust_env']}}}
+    filesystem_kwargs = {**default_filesystem_kwargs, **kwargs}
+
     if not cache:
-        fs = fsspec.filesystem(protocol, **kwargs)
+        fs = fsspec.filesystem(protocol, **filesystem_kwargs)
         cache_registry = None
+        log.debug("Opening a fsspec [file] system for '%s' protocol with options: %s" %
+                  (protocol, str(filesystem_kwargs)))
     else:
         fs = fsspec.filesystem("filecache",
                                target_protocol=protocol,
-                               target_options={**{'simple_links': True, "block_size": 0}, **kwargs},
+                               target_options={**filesystem_kwargs},
                                cache_storage=cachedir,
                                expiry_time=86400, cache_check=10)
         # We use a refresh rate for cache of 1 day,
         # since this is the update frequency of the Ifremer erddap
         cache_registry = []  # Will hold uri cached by this store instance
+        log.debug("Opening a fsspec [filecache] system for '%s' protocol with options: %s" %
+                  (protocol, str(filesystem_kwargs)))
     return fs, cache_registry
 
 
@@ -81,7 +98,7 @@ class argo_store_proto(ABC):
         """
         self.cache = cache
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        self._filesystem_kwargs = kwargs
+        self._filesystem_kwargs = {**kwargs}
         self.fs, self.cache_registry = new_fs(self.protocol,
                                               self.cache,
                                               self.cachedir,
@@ -97,11 +114,17 @@ class argo_store_proto(ABC):
     def exists(self, path, *args):
         return self.fs.exists(path, *args)
 
-    def store_path(self, uri):
-        if not uri.startswith(self.fs.target_protocol):
-            path = self.fs.target_protocol + "://" + uri
+    def expand_path(self, path):
+        if self.protocol != "http":
+            return self.fs.expand_path(path)
         else:
-            path = uri
+            return [path]
+
+    def store_path(self, uri):
+        path = uri
+        path = self.expand_path(path)[0]
+        if not path.startswith(self.fs.target_protocol) and version.parse(fsspec.__version__) <= version.parse("0.8.3"):
+            path = self.fs.target_protocol + "://" + path
         return path
 
     def register(self, uri):
@@ -116,7 +139,7 @@ class argo_store_proto(ABC):
                 raise FileSystemHasNoCache("%s has no cache system" % type(self.fs))
         else:
             store_path = self.store_path(uri)
-            self.fs.load_cache()
+            self.fs.load_cache()  # Read set of stored blocks from file and populate self.fs.cached_files
             if store_path in self.fs.cached_files[-1]:
                 return os.path.sep.join([self.cachedir, self.fs.cached_files[-1][store_path]['fn']])
             elif errors == 'raise':
@@ -153,11 +176,12 @@ class argo_store_proto(ABC):
 
     @abstractmethod
     def open_dataset(self, *args, **kwargs):
-        pass
+        raise NotImplementedError("Not implemented")
 
     @abstractmethod
     def read_csv(self):
-        pass
+        raise NotImplementedError("Not implemented")
+
 
 class filestore(argo_store_proto):
     """Argo local file system
@@ -179,15 +203,15 @@ class filestore(argo_store_proto):
             -------
             :class:`xarray.DataSet`
         """
-        with self.fs.open(url) as of:
+        with self.open(url) as of:
+            log.debug("Opening dataset: %s" % url)
             ds = xr.open_dataset(of, *args, **kwargs)
         if "source" not in ds.encoding:
             if isinstance(url, str):
                 ds.encoding["source"] = url
-        self.register(url)
         return ds.load().copy()
 
-    def _mfprocessor(self, url, preprocess = None, *args, **kwargs):
+    def _mfprocessor(self, url, preprocess=None, *args, **kwargs):
         # Load data
         ds = self.open_dataset(url, *args, **kwargs)
         # Pre-process
@@ -195,14 +219,14 @@ class filestore(argo_store_proto):
             ds = preprocess(ds)
         return ds
 
-    def open_mfdataset(self,
+    def open_mfdataset(self,  # noqa: C901
                        urls,
                        concat_dim='row',
                        max_workers: int = 112,
                        method: str = 'thread',
                        progress: bool = False,
                        concat: bool = True,
-                       preprocess = None,
+                       preprocess=None,
                        errors: str = 'ignore',
                        *args, **kwargs):
         """ Open multiple urls as a single xarray dataset.
@@ -231,6 +255,8 @@ class filestore(argo_store_proto):
                 Display a progress bar (True by default)
             preprocess: callable (optional)
                 If provided, call this function on each dataset prior to concatenation
+            errors: str
+                Should it 'raise' or 'ignore' errors. Default: 'ignore'
 
             Returns
             -------
@@ -250,7 +276,9 @@ class filestore(argo_store_proto):
                 ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
 
             with ConcurrentExecutor as executor:
-                future_to_url = {executor.submit(self._mfprocessor, url, preprocess=preprocess, *args, **kwargs): url for url in urls}
+                future_to_url = {executor.submit(self._mfprocessor, url,
+                                                 preprocess=preprocess, *args, **kwargs): url
+                                 for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
                     futures = tqdm(futures, total=len(urls))
@@ -262,8 +290,9 @@ class filestore(argo_store_proto):
                         data = future.result()
                     except Exception as e:
                         if errors == 'ignore':
-                            warnings.warn(
-                                "Something went wrong with this file: %s\nException raised: %s" % (future_to_url[future], str(e.args)))
+                            log.debug(
+                                "Ignored error with this file: %s\nException raised: %s"
+                                % (future_to_url[future], str(e.args)))
                             pass
                         else:
                             raise
@@ -285,8 +314,8 @@ class filestore(argo_store_proto):
                     data = self._mfprocessor(url, preprocess=preprocess, *args, **kwargs)
                 except Exception as e:
                     if errors == 'ignore':
-                        warnings.warn(
-                            "Something went wrong with this url: %s\nException raised: %s" % (url, str(e.args)))
+                        log.debug(
+                            "Ignored error with this url: %s\nException raised: %s" % (url, str(e.args)))
                         pass
                     else:
                         raise
@@ -320,9 +349,9 @@ class filestore(argo_store_proto):
             -------
             :class:`pandas.DataFrame`
         """
-        with self.fs.open(url) as of:
+        log.debug("Reading csv: %s" % url)
+        with self.open(url) as of:
             df = pd.read_csv(of, **kwargs)
-        self.register(url)
         return df
 
 
@@ -332,122 +361,12 @@ class httpstore(argo_store_proto):
         Relies on:
             https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.http.HTTPFileSystem
 
-        This store intends to make argopy: safer to failures from http requests, provide more verbose message to users
-        if we can identify specific errors in http responses.
+        This store intends to make argopy: safer to failures from http requests and to provide higher levels methods to
+        work with our datasets
 
         This store is primarily used by the Erddap/Argovis data/index fetchers
     """
     protocol = "http"
-
-    # def _verbose_requests_exceptions(self, e: requests.HTTPError):
-    #     r = e.response  # https://requests.readthedocs.io/en/master/api/#requests.Response
-    #     data = io.BytesIO(r.content)
-    #     url = r.url
-    #
-    #     # 4XX client error response
-    #     if r.status_code == 404:  # Empty response
-    #         error = ["Error %i " % r.status_code]
-    #         error.append(data.read().decode("utf-8").replace("Error", ""))
-    #         error.append("The URL triggering this error was: \n%s" % url)
-    #         msg = "\n".join(error)
-    #         if "Currently unknown datasetID" in msg:
-    #             raise ErddapServerError("Dataset not found in the Erddap, try again later. "
-    #                                     "The server may be rebooting. \n%s" % msg)
-    #         else:
-    #             raise requests.HTTPError(msg)
-    #
-    #     elif r.status_code == 413:  # Too large request
-    #         error = ["Error %i " % r.status_code]
-    #         error.append(data.read().decode("utf-8").replace("Error", ""))
-    #         error.append("The URL triggering this error was: \n%s" % url)
-    #         msg = "\n".join(error)
-    #         # if "Payload Too Large" in msg:
-    #         raise ErddapServerError("Your query produced too much data. "
-    #                                 "Try to request less data or to use the 'parallel=True' option in your fetcher.\n%s" % msg)
-    #         # else:
-    #         #     raise requests.HTTPError(msg)
-    #
-    #     # 5XX server error response
-    #     elif r.status_code == 500:  # 500 Internal Server Error
-    #         if "text/html" in r.headers.get('content-type'):
-    #             display(HTML(data.read().decode("utf-8")))
-    #         error = ["Error %i " % r.status_code]
-    #         error.append(data.read().decode("utf-8"))
-    #         error.append("The URL triggering this error was: \n%s" % url)
-    #         msg = "\n".join(error)
-    #         if "No space left on device" in msg or "java.io.EOFException" in msg:
-    #             raise ErddapServerError("An error occurred on the Erddap server side. "
-    #                                     "Please contact assistance@ifremer.fr to ask a "
-    #                                     "reboot of the erddap server. \n%s" % msg)
-    #         else:
-    #             raise requests.HTTPError(msg)
-    #
-    #     else:
-    #         error = ["Error %i " % r.status_code]
-    #         error.append(data.read().decode("utf-8"))
-    #         error.append("The URL triggering this error was: \n%s" % url)
-    #         print("\n".join(error))
-    #         r.raise_for_status()
-
-    # def _verbose_aiohttp_exceptions(self, e: aiohttp.ClientResponseError):
-    #     url = e.request_info.url
-    #     message = e.message
-    #
-    #     # 4XX client error response
-    #     if e.status == 404:  # Empty response
-    #         error = ["Error %i " % e.status]
-    #         error.append(message.replace("Error", ""))
-    #         error.append("The URL triggering this error was: \n%s" % url)
-    #         msg = "\n".join(error)
-    #         if "Currently unknown datasetID" in msg:
-    #             raise ErddapServerError("Dataset not found in the Erddap, try again later. "
-    #                                     "The server may be rebooting. \n%s" % msg)
-    #         else:
-    #             raise ErddapServerError(msg)
-    #
-    #     # aiohttp.ClientResponseError(
-    #     #     request_info: None,
-    #     # history: Tuple[NoneType, ...],
-    #     # *,
-    #     # code: Union[int, NoneType] = None,
-    #     #                              status:Union[int, NoneType] = None,
-    #     #                                                            message:str = '',
-    #     #                                                                          headers:Union[
-    #     #     multidict._multidict.CIMultiDict, NoneType] = None,
-    #     # ) -> None
-    #
-    #     elif e.status == 413:  # Too large request
-    #         error = ["Error %i " % e.status]
-    #         error.append(message.replace("Error", ""))
-    #         error.append("The URL triggering this error was: \n%s" % url)
-    #         msg = "\n".join(error)
-    #         # if "Payload Too Large" in msg:
-    #         raise ErddapServerError("Your query produced too much data. "
-    #                                 "Try to request less data or to use the 'parallel=True' option in your fetcher.\n%s" % msg)
-    #         # else:
-    #         #     raise requests.HTTPError(msg)
-    #
-    #     # 5XX server error response
-    #     elif e.status == 500:  # 500 Internal Server Error
-    #         if "text/html" in e.headers.get('content-type'):
-    #             display(HTML(message))
-    #         error = ["Error %i " % e.status]
-    #         error.append(message)
-    #         error.append("The URL triggering this error was: \n%s" % url)
-    #         msg = "\n".join(error)
-    #         if "No space left on device" in msg or "java.io.EOFException" in msg:
-    #             raise ErddapServerError("An error occurred on the Erddap server side. "
-    #                                     "Please contact assistance@ifremer.fr to ask a "
-    #                                     "reboot of the erddap server. \n%s" % msg)
-    #         else:
-    #             raise aiohttp.ClientResponseError(msg)
-    #
-    #     else:
-    #         error = ["Error %i " % e.status]
-    #         error.append(message)
-    #         error.append("The URL triggering this error was: \n%s" % url)
-    #         print("\n".join(error))
-    #         e.raise_for_status()
 
     def open_dataset(self, url, *args, **kwargs):
         """ Open and decode a xarray dataset from an url
@@ -461,6 +380,7 @@ class httpstore(argo_store_proto):
             :class:`xarray.Dataset`
 
         """
+        log.debug("Opening dataset: %s" % url)
         # try:
         # with self.fs.open(url) as of:
         #     ds = xr.open_dataset(of, *args, **kwargs)
@@ -482,7 +402,7 @@ class httpstore(argo_store_proto):
         #     self._verbose_aiohttp_exceptions(e)
         #     pass
 
-    def _mfprocessor_dataset(self, url, preprocess = None, *args, **kwargs):
+    def _mfprocessor_dataset(self, url, preprocess=None, *args, **kwargs):
         # Load data
         ds = self.open_dataset(url, *args, **kwargs)
         # Pre-process
@@ -490,14 +410,14 @@ class httpstore(argo_store_proto):
             ds = preprocess(ds)
         return ds
 
-    def open_mfdataset(self,
+    def open_mfdataset(self,  # noqa: C901
                        urls,
                        concat_dim='row',
                        max_workers: int = 112,
                        method: str = 'thread',
                        progress: bool = False,
                        concat: bool = True,
-                       preprocess = None,
+                       preprocess=None,
                        errors: str = 'ignore',
                        *args, **kwargs):
         """ Open multiple urls as a single xarray dataset.
@@ -532,6 +452,8 @@ class httpstore(argo_store_proto):
             :class:`xarray.Dataset`
 
         """
+        strUrl = lambda x: x.replace("https://", "").replace("http://", "")  # noqa: E731
+
         if not isinstance(urls, list):
             urls = [urls]
 
@@ -546,7 +468,8 @@ class httpstore(argo_store_proto):
                 ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
 
             with ConcurrentExecutor as executor:
-                future_to_url = {executor.submit(self._mfprocessor_dataset, url, preprocess=preprocess, *args, **kwargs): url for url in urls}
+                future_to_url = {executor.submit(self._mfprocessor_dataset, url,
+                                                 preprocess=preprocess, *args, **kwargs): url for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
                     futures = tqdm(futures, total=len(urls))
@@ -555,11 +478,11 @@ class httpstore(argo_store_proto):
                     data = None
                     try:
                         data = future.result()
-                    except Exception as e:
+                    except Exception:
                         failed.append(future_to_url[future])
                         if errors == 'ignore':
-                            warnings.warn(
-                                "\nSomething went wrong with this url: %s\nException raised: %s" % (future_to_url[future].replace("https://", "").replace("http://", ""), str(e.args)))
+                            log.debug("Ignored error with this url: %s" % strUrl(future_to_url[future]))
+                            # See fsspec.http logger for more
                             pass
                         elif errors == 'silent':
                             pass
@@ -581,11 +504,10 @@ class httpstore(argo_store_proto):
                 data = None
                 try:
                     data = self._mfprocessor_dataset(url, preprocess=preprocess, *args, **kwargs)
-                except Exception as e:
+                except Exception:
                     failed.append(url)
                     if errors == 'ignore':
-                        warnings.warn(
-                            "\nSomething went wrong with this url: %s\nException raised: %s" % (url.replace("https://", "").replace("http://", ""), str(e.args)))
+                        log.debug("Ignored error with this url: %s" % strUrl(url))  # See fsspec.http logger for more
                         pass
                     elif errors == 'silent':
                         pass
@@ -602,7 +524,11 @@ class httpstore(argo_store_proto):
         if len(results) > 0:
             if concat:
                 # ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
-                ds = xr.concat(results, dim=concat_dim, data_vars='minimal', coords='minimal', compat='override')
+                ds = xr.concat(results,
+                               dim=concat_dim,
+                               data_vars='minimal',
+                               coords='minimal',
+                               compat='override')
                 return ds
             else:
                 return results
@@ -622,9 +548,9 @@ class httpstore(argo_store_proto):
             :class:`pandas.DataFrame`
 
         """
-        with self.fs.open(url) as of:
+        log.debug("Reading csv: %s" % url)
+        with self.open(url) as of:
             df = pd.read_csv(of, **kwargs)
-        self.register(url)
         return df
 
     def open_json(self, url, **kwargs):
@@ -639,15 +565,15 @@ class httpstore(argo_store_proto):
             json
 
         """
+        log.debug("Opening json: %s" % url)
         try:
-            with self.fs.open(url) as of:
+            with self.open(url) as of:
                 js = json.load(of, **kwargs)
-            self.register(url)
             return js
         except json.JSONDecodeError:
             raise
 
-    def _mfprocessor_json(self, url, preprocess = None, *args, **kwargs):
+    def _mfprocessor_json(self, url, preprocess=None, *args, **kwargs):
         # Load data
         data = self.open_json(url, **kwargs)
         # Pre-process
@@ -655,12 +581,12 @@ class httpstore(argo_store_proto):
             data = preprocess(data)
         return data
 
-    def open_mfjson(self,
+    def open_mfjson(self,  # noqa: C901
                     urls,
-                    max_workers = 112,
+                    max_workers=112,
                     method: str = 'thread',
                     progress: bool = False,
-                    preprocess = None,
+                    preprocess=None,
                     errors: str = 'ignore',
                     *args, **kwargs):
         """ Open multiple json urls
@@ -689,7 +615,7 @@ class httpstore(argo_store_proto):
             -------
             list()
         """
-        strUrl = lambda x: x.replace("https://","").replace("http://","")
+        strUrl = lambda x: x.replace("https://", "").replace("http://", "")  # noqa: E731
 
         if not isinstance(urls, list):
             urls = [urls]
@@ -705,7 +631,8 @@ class httpstore(argo_store_proto):
                 ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
 
             with ConcurrentExecutor as executor:
-                future_to_url = {executor.submit(self._mfprocessor_json, url, preprocess=preprocess, *args, **kwargs): url for url in urls}
+                future_to_url = {executor.submit(self._mfprocessor_json, url,
+                                                 preprocess=preprocess, *args, **kwargs): url for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
                     futures = tqdm(futures, total=len(urls))
@@ -714,11 +641,11 @@ class httpstore(argo_store_proto):
                     data = None
                     try:
                         data = future.result()
-                    except Exception as e:
+                    except Exception:
                         failed.append(future_to_url[future])
                         if errors == 'ignore':
-                            warnings.warn(
-                                "\nSomething went wrong with this url: %s\nException raised: %s" % (strUrl(future_to_url[future]), str(e.args)))
+                            log.debug("Ignored error with this url: %s" % strUrl(future_to_url[future]))
+                            # See fsspec.http logger for more
                             pass
                         elif errors == 'silent':
                             pass
@@ -740,11 +667,11 @@ class httpstore(argo_store_proto):
                 data = None
                 try:
                     data = self._mfprocessor_json(url, preprocess=preprocess, *args, **kwargs)
-                except Exception as e:
+                except Exception:
                     failed.append(url)
                     if errors == 'ignore':
-                        warnings.warn(
-                            "\nSomething went wrong with this url: %s\nException raised: %s" % (strUrl(url), str(e.args)))
+                        log.debug("Ignored error with this url: %s" % strUrl(url))
+                        # See fsspec.http logger for more
                         pass
                     elif errors == 'silent':
                         pass
