@@ -58,7 +58,7 @@ class ArgoAccessor:
         - Group and reduce measurements by pressure bins:
         >>> ds.argo.groupby_pressure_bins(bins=[0, 200., 500., 1000.])
 `
-        - Compute and add additionnal variables to the dataset:
+        - Compute and add additional variables to the dataset:
         >>> ds.argo.teos10(vlist='PV')
 
         - Preprocess data for OWC salinity calibration:
@@ -812,10 +812,10 @@ class ArgoAccessor:
     ):
         """ Filter data set according to QC values
 
-            Filter the dataset to keep points where 'all' or 'any' of the QC fields has a value in the list of
-            integer QC flags.
+        Filter the dataset to keep points where ``all`` or ``any`` of the QC fields has a value in the list of
+        integer QC flags.
 
-            This method can return the filtered dataset or the filter mask.
+        This method can return the filtered dataset or the filter mask.
 
         Parameters
         ----------
@@ -826,10 +826,10 @@ class ArgoAccessor:
         drop: bool
             Drop values not matching the QC filter, default is True
         mode: str
-            Must be 'all' (default) or 'any'. Boolean operator on QC values: should we keep points
-            matching 'all' QC fields or 'any' one of them.
+            Must be ``all`` (default) or ``any``. Boolean operator on QC values: should we keep points
+            matching ``all`` QC fields or 'any' one of them.
         mask: bool
-            'False' by default. Determine if we should return the QC mask or the filtered dataset.
+            ``False`` by default. Determine if we should return the QC mask or the filtered dataset.
 
         Returns
         -------
@@ -909,7 +909,7 @@ class ArgoAccessor:
         By default: this filter will return a dataset with raw PRES, PSAL and TEMP; and if PRES is adjusted,
         PRES variable will be replaced by PRES_ADJUSTED.
 
-        With option force='raw', you can force the filter to return a dataset with raw PRES, PSAL and TEMP wether
+        With option force='raw', you can force the filter to return a dataset with raw PRES, PSAL and TEMP whether
         PRES is adjusted or not.
 
         With option force='adjusted', you can force the filter to return a dataset where PRES/PSAL and TEMP replaced
@@ -1594,7 +1594,7 @@ class ArgoAccessor:
                             format: str = '5',
                             do_compression: bool = True,
                             debug_output: bool = False):
-        """ Preprocess data for OWC softwares calibration
+        """ Preprocess data for OWC software calibration
 
         This method can create a FLOAT SOURCE file (i.e. the .mat file that usually goes into /float_source/) for OWC software.
         The FLOAT SOURCE file is saved as:

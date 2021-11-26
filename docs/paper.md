@@ -83,7 +83,7 @@ The result of this tremendous success in data management -- in developing good p
 procedures ([see all the Argo Data Management Team documentation here](http://www.argodatamgt.org/Documentation)) -- is 
 a very complex Argo dataset: the **argopy** software aims to help users navigate this complex realm.
 
-Since the Argo community focuses on delivering a curated dataset for science, software packages exist for Argo data operators to decode and quality control the data [e.g. @scoop]. However, no open source softwares are available for scientists, who therefore must develop their own machinery to download and manipulate the data.
+Since the Argo community focuses on delivering a curated dataset for science, software packages exist for Argo data operators to decode and quality control the data [e.g. @scoop]. However, no open source software are available for scientists, who therefore must develop their own machinery to download and manipulate the data.
 
 Python is becoming widely used by the scientific community and beyond: worldwide, and is the most popular and fastest growing language in the last 5 years (20%, source: http://pypl.github.io/PYPL.html). It offers a modern, powerful and open
 source framework to work with. Since, up to this point, no Python based software has been dedicated to the Argo dataset, it made sense to develop **argopy**.

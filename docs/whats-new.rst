@@ -21,9 +21,9 @@ v0.1.9 (X XXX. 202X)
 
 This new method comes with others methods and improvements:
 
-    - A new ``filter_scalib_pres`` method to filter variables according to OWC salinity calibration software requirements,
-    - A new ``groupby_pressure_bins`` method to subsample a dataset down to one value by pressure bins (a perfect alternative to interpolation on standard depth levels to precisely avoid interpolation...),
-    - An improved ``filter_qc`` method to select which fields to consider (new option ``QC_fields``),
+    - A new :meth:`argopy.xarray.ArgoAccessor.filter_scalib_pres` method to filter variables according to OWC salinity calibration software requirements,
+    - A new :meth:`argopy.xarray.ArgoAccessor.groupby_pressure_bins` method to subsample a dataset down to one value by pressure bins (a perfect alternative to interpolation on standard depth levels to precisely avoid interpolation...),
+    - An improved :meth:`argopy.xarray.ArgoAccessor.filter_qc` method to select which fields to consider (new option ``QC_fields``),
     - Add conductivity (``CNDC``) to the possible output of the ``TEOS10`` method.
 
 - **New dataset properties** accessible from the `argo` xarray accessor: ``N_POINTS``, ``N_LEVELS``, ``N_PROF``. Note that depending on the format of the dataset (a collection of points or of profiles) these values do or do not take into account NaN. These information are also visible by a simple print of the accessor. (:pr:`142`) by `G. Maze <http://www.github.com/gmaze>`_.
@@ -107,7 +107,7 @@ v0.1.8 (2 Nov. 2021)
 
 - More general options. Fix :issue:`91`. (:pr:`102`) by `G. Maze <http://www.github.com/gmaze>`_.
 
-    - ``trust_env`` to allow for local environment variables to be used by fsspec to connect to the internet. Usefull for those using a proxy.
+    - ``trust_env`` to allow for local environment variables to be used by fsspec to connect to the internet. Useful for those using a proxy.
 
 - Documentation on `Read The Docs` now uses a pip environment and get rid of memory eager conda. (:pr:`103`) by `G. Maze <http://www.github.com/gmaze>`_.
 
@@ -273,11 +273,11 @@ v0.1.3 (15 May 2020)
     idx.to_dataframe()
     idx.plot('trajectory')
 
-The ``index`` fetcher can manage caching and works with both Erddap and localftp data sources. It is basically the same as the data fetcher, but do not load measurements, only meta-data. This can be very usefull when looking for regional sampling or trajectories.
+The ``index`` fetcher can manage caching and works with both Erddap and localftp data sources. It is basically the same as the data fetcher, but do not load measurements, only meta-data. This can be very useful when looking for regional sampling or trajectories.
 
 .. tip::
 
-  **Performance**: we recommand to use the ``localftp`` data source when working this ``index`` fetcher because the ``erddap`` data source currently suffers from poor performances. This is linked to :issue:`16` and is being addressed by Ifremer.
+  **Performance**: we recommend to use the ``localftp`` data source when working this ``index`` fetcher because the ``erddap`` data source currently suffers from poor performances. This is linked to :issue:`16` and is being addressed by Ifremer.
 
 The ``index`` fetcher comes with basic plotting functionalities with the :func:`argopy.IndexFetcher.plot` method to rapidly visualise measurement distributions by DAC, latitude/longitude and floats type.
 
