@@ -53,6 +53,8 @@
     argopy.utilities.list_available_index_src
     argopy.utilities.Chunker
     argopy.utilities.TopoFetcher
+    argopy.utilities.groupby_remap
+    argopy.utilities.linear_interpolation_remap
 
     argopy.utilities.list_standard_variables
     argopy.utilities.list_multiprofile_file_variables

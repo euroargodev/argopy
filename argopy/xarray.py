@@ -1097,8 +1097,8 @@ class ArgoAccessor:
         """ Group measurements by pressure bins
 
         This method can be used to subsample and align an irregular dataset (pressure not being similar in all profiles)
-        on a set of pressure bins. The output dataset could then be used to perform statistics along the N_PROF dimension
-        because N_LEVELS will corresponds to similar pressure bins, while avoiding to interpolate data.
+        on a set of pressure bins. The output dataset could then be used to perform statistics along the ``N_PROF`` dimension
+        because ``N_LEVELS`` will corresponds to similar pressure bins, while avoiding to interpolate data.
 
         Parameters
         ----------
@@ -1111,6 +1111,7 @@ class ArgoAccessor:
             Indicating whether the bin intervals include the right or the left bin edge. Default behavior is
             (right==False) indicating that the interval does not include the right edge. The left bin end is open
             in this case, i.e., bins[i-1] <= x < bins[i] is the default behavior for monotonically increasing bins.
+            Note the ``merge`` option is intended to work only for the default ``right=False``.
         select: str, default: ``deep``
             The value selection method for bins.
 
@@ -1125,7 +1126,7 @@ class ArgoAccessor:
             Squeeze from the output bin levels without measurements.
         merge: bool, default: True
             Optimize the output bins axis size by merging levels with/without data. The pressure bins axis is modified
-            accordingly. This means that the return STD_PRES_BINS axis has not necessarily the same size as
+            accordingly. This means that the return ``STD_PRES_BINS`` axis has not necessarily the same size as
             the input ``bins``.
 
         Returns
@@ -1197,8 +1198,7 @@ class ArgoAccessor:
                     z[i] = y[i]
             return z
 
-        merged_is_nan = lambda l1, l2: len(np.unique(np.where(np.isnan(l1.values + l2.values)))) == len(
-            l1)  # noqa: E731
+        merged_is_nan = lambda l1, l2: len(np.unique(np.where(np.isnan(l1.values + l2.values)))) == len(l1)  # noqa: E731
 
         def merge_bin_matching_levels(this_ds: xr.Dataset) -> xr.Dataset:
             """ Levels merger of type 'bins' value
@@ -1294,8 +1294,8 @@ class ArgoAccessor:
                 dv
                 for dv in list(this_dsp.data_vars)
                 if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
-                   and "QC" not in dv
-                   and "ERROR" not in dv
+                and "QC" not in dv
+                and "ERROR" not in dv
             ]
 
         # All other variables:
@@ -1303,7 +1303,7 @@ class ArgoAccessor:
             dv
             for dv in list(this_dsp.variables)
             if dv not in datavars
-               and dv not in this_dsp.coords
+            and dv not in this_dsp.coords
         ]
 
         # Sub-sample and align:
@@ -1328,9 +1328,9 @@ class ArgoAccessor:
         # new_ds["STD_%s_BINS" % axis] = new_ds['N_LEVELS']
         new_ds["STD_%s_BINS" % axis] = xr.DataArray(bins,
                                                     dims=['N_LEVELS'],
-                                                    attrs={
-            'Comment': "Range of bins is: bins[i] <= x < bins[i+1] for i=[0,N_LEVELS-2]\n"
-                       "Last bins is bins[N_LEVELS-1] <= x"}
+                                                    attrs={'Comment':
+                                                            "Range of bins is: bins[i] <= x < bins[i+1] for i=[0,N_LEVELS-2]\n"
+                                                            "Last bins is bins[N_LEVELS-1] <= x"}
                                                     )
         new_ds = new_ds.set_coords("STD_%s_BINS" % axis)
         new_ds.attrs = this_ds.attrs
@@ -1637,19 +1637,17 @@ class ArgoAccessor:
         Returns
         -------
         :class:`xarray.Dataset`
-            The output dataset, or Matlab file, will have the following variables (`n` is the number of profiles, `m`
+            The output dataset, or Matlab file, will have the following variables (``n`` is the number of profiles, ``m``
             is the number of vertical levels):
 
-            - DATES (1xn, in decimal year, e.g. 10 Dec 2000 = 2000.939726)
-            - LAT   (1xn, in decimal degrees, -ve means south of the equator, e.g. 20.5S = -20.5)
-            - LONG  (1xn, in decimal degrees, from 0 to 360, e.g. 98.5W in the eastern Pacific = 261.5E)
-            - PRES  (mxn, dbar, from shallow to deep, e.g. 10, 20, 30 ... These have to line up along a fixed nominal
-            depth axis.)
-            - TEMP  (mxn, in-situ IPTS-90)
-            - SAL   (mxn, PSS-78)
-            - PTMP  (mxn, potential temperature referenced to zero pressure, use SAL in PSS-78 and in-situ TEMP in
-            IPTS-90 for calculation)
-            - PROFILE_NO (1xn, this goes from 1 to n. PROFILE_NO is the same as CYCLE_NO in the Argo files.)
+            - ``DATES`` (1xn): decimal year, e.g. 10 Dec 2000 = 2000.939726
+            - ``LAT``   (1xn): decimal degrees, -ve means south of the equator, e.g. 20.5S = -20.5
+            - ``LONG``  (1xn): decimal degrees, from 0 to 360, e.g. 98.5W in the eastern Pacific = 261.5E
+            - ``PROFILE_NO`` (1xn): this goes from 1 to n. PROFILE_NO is the same as CYCLE_NO in the Argo files
+            - ``PRES``  (mxn): dbar, from shallow to deep, e.g. 10, 20, 30 ... These have to line up along a fixed nominal depth axis.
+            - ``TEMP``  (mxn): in-situ IPTS-90
+            - ``SAL``   (mxn): PSS-78
+            - ``PTMP``  (mxn): potential temperature referenced to zero pressure, use SAL in PSS-78 and in-situ TEMP in IPTS-90 for calculation.
 
         """
         this = self._obj

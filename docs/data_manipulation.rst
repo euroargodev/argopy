@@ -102,7 +102,7 @@ See the new ``STD_PRES_BINS`` variable that hold the pressure bins definition. T
 
 .. image:: _static/groupby_pressure_bins_select_deep.png
 
-where the bin limits are shown with horizontal red lines, the original data are in the background colored scatter and the group-by pressure bins values are highlighted in red marks.
+The bin limits are shown with horizontal red lines, the original data are in the background colored scatter and the group-by pressure bins values are highlighted in red marks
 
 The ``select`` option can take many different values, see the full documentation of :meth:`argopy.xarray.ArgoAccessor.groupby_pressure_bins` , for all the details. Let's show here the 'random' sampling:
 

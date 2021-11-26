@@ -135,6 +135,8 @@ Formatter
     argopy.utilities.format_oneline
     argopy.utilities.Chunker
     argopy.utilities.wmo2box
+    argopy.utilities.groupby_remap
+    argopy.utilities.linear_interpolation_remap
 
 Checker
 ^^^^^^^

@@ -39,10 +39,10 @@ Then, to create the float source data, you call the method and provide a folder 
 
 This will create the ``float_source/6902766.mat`` Matlab files to be set directly in the configuration file of the OWC software. This routine implements the same pre-processing as in the Matlab version (which is hosted on `this repo <https://github.com/euroargodev/dm_floats>`_ and ran with `this routine <https://github.com/euroargodev/dm_floats/blob/master/src/ow_source/create_float_source.m>`_).
 
-.. note:: Several floats in dataset
+.. note::
     If the dataset contains data from more than one float, several Matlab files are created, one for each float. This will allow you to prepare data from a collection of floats.
 
-If you don't specify a path name, the method returns a dictionary with the float WMO as keys and pre-processed data (as :class:`xarray.Dataset`) as values.
+If you don't specify a path name, the method returns a dictionary with the float WMO as keys and pre-processed data as :class:`xarray.Dataset` as values.
 
 .. ipython:: python
     :okwarning:
@@ -84,16 +84,19 @@ For some QC of trajectories, it can be useful to easily get access to the topogr
 
 Combined with the fetcher property ``domain``, it now becomes easy to superimpose float trajectory with topography:
 
+.. ipython:: python
+    :okwarning:
+
     loader = ArgoDataFetcher().float(2901623)
     ds = TopoFetcher(loader.domain[0:4], cache=True).to_xarray()
 
 .. code-block:: python
 
     fig, ax = loader.plot('trajectory', figsize=(10, 10))
-    ds['elevation'].plot.contourf(levels=np.arange(-6000,0,200), ax=ax, add_colorbar=False)
+    ds['elevation'].plot.contourf(levels=np.arange(-6000,0,100), ax=ax, add_colorbar=False)
 
 .. image:: _static/trajectory_topography_sample.png
 
 
-.. note:: Resolution
+.. note::
     The ``TopoFetcher`` can return a lower resolution topography with the ``stride`` option. See the :class:`argopy.TopoFetcher` full documentation for all the details.
