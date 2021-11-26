@@ -3,6 +3,28 @@
 What's New
 ==========
 
+v0.1.9 (X XXX. 2021)
+--------------------
+
+**Features and front-end API**
+
+- New utility method :class:`argopy.TopoFetcher` to retrieve `GEBCO topography <https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.html>`_ for a given region.
+
+.. code-block:: python
+
+    from argopy import TopoFetcher
+    box = [-75, -45, 20, 30]
+    ds = TopoFetcher(box).to_xarray()
+    ds = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=True).to_xarray()
+
+
+For convenience we also added a new property to the data fetcher that return the domain covered by the dataset.
+
+.. code-block:: python
+
+    loader = ArgoDataFetcher().float(2901623)
+    loader.domain  # Returns [89.093, 96.036, -0.278, 4.16, 15.0, 2026.0, numpy.datetime64('2010-05-14T03:35:00.000000000'),  numpy.datetime64('2013-01-01T01:45:00.000000000')]
+
 v0.1.8 (2 Nov. 2021)
 ---------------------
 

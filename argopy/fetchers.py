@@ -12,6 +12,7 @@ Validity of access points parameters (eg: wmo) is made here, not at the data/ind
 import warnings
 import xarray as xr
 import pandas as pd
+import numpy as np
 import logging
 
 from argopy.options import OPTIONS, _VALIDATORS
@@ -156,6 +157,7 @@ class ArgoDataFetcher:
             "postproccessor",
             "data",
             "index",
+            "domain",
             "_loaded",
             "_request"
         ]
@@ -205,6 +207,25 @@ class ArgoDataFetcher:
         if not isinstance(self._index, pd.core.frame.DataFrame):
             self.load()
         return self._index
+
+    @property
+    def domain(self):
+        """" Domain of the dataset
+
+            This is different from a usual ``box`` because dates are already in numpy.datetime64 format.
+        """
+        this_ds = self.data
+        if 'PRES_ADJUSTED' in this_ds.data_vars:
+            Pmin = np.nanmin((np.min(this_ds['PRES'].values), np.min(this_ds['PRES_ADJUSTED'].values)))
+            Pmax = np.nanmax((np.max(this_ds['PRES'].values), np.max(this_ds['PRES_ADJUSTED'].values)))
+        else:
+            Pmin = np.min(this_ds['PRES'].values)
+            Pmax = np.max(this_ds['PRES'].values)
+
+        return [np.min(this_ds['LONGITUDE'].values), np.max(this_ds['LONGITUDE'].values),
+                np.min(this_ds['LATITUDE'].values), np.max(this_ds['LATITUDE'].values),
+                Pmin, Pmax,
+                np.min(this_ds['TIME'].values), np.max(this_ds['TIME'].values)]
 
     def dashboard(self, **kw):
         try:
