@@ -18,7 +18,7 @@ Let's start with import and set-up:
 Topography
 ----------
 
-For some QC of trajectories, it can be useful to easily get access to the topography. This can be done with the **argopy** utility class:`argopy.TopoFetcher`:
+For some QC of trajectories, it can be useful to easily get access to the topography. This can be done with the **argopy** utility :class:`argopy.TopoFetcher`:
 
 .. ipython:: python
     :okwarning:
@@ -36,9 +36,7 @@ Combined with the fetcher property ``domain``, it now becomes easy to superimpos
     :okwarning:
 
     loader = ArgoDataFetcher().float(2901623)
-    box = loader.domain[0:4]
-    # box = np.array(loader.domain[0:4]) + np.array([-2, 2, -2, 2])  # for a larger box
-    ds = TopoFetcher(box, cache=True).to_xarray()
+    ds = TopoFetcher(loader.domain[0:4], cache=True).to_xarray()
 
 .. code-block:: python
 
@@ -48,6 +46,6 @@ Combined with the fetcher property ``domain``, it now becomes easy to superimpos
 .. image:: _static/trajectory_topography_sample.png
 
 
-.. note::
+.. note:: Resolution
 
 The ``TopoFetcher`` can return a lower resolution topography with the ``stride`` option. See the :class:`argopy.TopoFetcher` full documentation for all the details.
