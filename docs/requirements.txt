@@ -12,6 +12,7 @@ gitpython>=3.1.2
 sphinx-autosummary-accessors>=0.1.2
 readthedocs-sphinx-ext
 sphinx-rtd-theme
+sphinx-book-theme
 
 xarray>=0.16.1
 scipy>=1.1.0

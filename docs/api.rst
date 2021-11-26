@@ -187,8 +187,8 @@ File systems
     argopy.stores.indexfilter_wmo
     argopy.stores.indexfilter_box
 
-Fetchers
---------
+Fetcher sources
+---------------
 
 ERDDAP
 ^^^^^^
