@@ -25,11 +25,12 @@ from argopy.utilities import (
     wmo2box,
     modified_environ,
     wrap_longitude,
-    toYearFraction, YearFraction_to_datetime
+    toYearFraction, YearFraction_to_datetime,
+    TopoFetcher
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
-from . import requires_connection, requires_localftp
+from . import requires_connection, requires_localftp, requires_connection
 
 
 def test_invalid_dictionnary():
@@ -532,3 +533,17 @@ def test_toYearFraction():
 def test_YearFraction_to_datetime():
     assert YearFraction_to_datetime(2020) == pd.to_datetime('202001010000')
     assert YearFraction_to_datetime(2020+1) == pd.to_datetime('202101010000')
+
+
+@requires_connection
+def test_TopoFetcher():
+    box = [81, 123, -67, -54]
+    fetcher = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=True)
+    ds = fetcher.to_xarray()
+    assert isinstance(ds, xr.Dataset)
+    assert 'elevation' in ds.data_vars
+
+    fetcher = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=False)
+    ds = fetcher.to_xarray()
+    assert isinstance(ds, xr.Dataset)
+    assert 'elevation' in ds.data_vars

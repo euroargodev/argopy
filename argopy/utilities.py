@@ -170,7 +170,7 @@ def list_available_index_src():
 
 
 def list_standard_variables():
-    """ Return the list of variables for standard users """
+    """ List of variables for standard users """
     return [
         "DATA_MODE",
         "LATITUDE",
@@ -203,7 +203,7 @@ def list_standard_variables():
 
 
 def list_multiprofile_file_variables():
-    """ Return the list of variables in a netcdf multiprofile file.
+    """ List of variables in a netcdf multiprofile file.
 
         This is for files created by GDAC under <DAC>/<WMO>/<WMO>_prof.nc
     """
@@ -852,15 +852,19 @@ class Chunker:
         ----------
         request: dict
             Access point request to be chunked. One of the following:
-            {'box': [lon_min, lon_max, lat_min, lat_max, dpt_min, dpt_max, time_min, time_max]}
-            {'box': [lon_min, lon_max, lat_min, lat_max, dpt_min, dpt_max]}
-            {'wmo': [wmo1, wmo2, ...], 'cyc': [0,1, ...]}
+
+            - {'box': [lon_min, lon_max, lat_min, lat_max, dpt_min, dpt_max, time_min, time_max]}
+            - {'box': [lon_min, lon_max, lat_min, lat_max, dpt_min, dpt_max]}
+            - {'wmo': [wmo1, wmo2, ...], 'cyc': [0,1, ...]}
         chunks: 'auto' or dict
             Dictionary with request access point as keys and number of chunks to create as values.
+
             Eg: {'wmo':10} will create a maximum of 10 chunks along WMOs.
         chunksize: dict, optional
             Dictionary with request access point as keys and chunk size as values (used as maximum values in
-            'auto' chunking). Eg: {'wmo': 5} will create chunks with as many as 5 WMOs each.
+            'auto' chunking).
+
+            Eg: {'wmo': 5} will create chunks with as many as 5 WMOs each.
 
         """
         self.request = request
@@ -1183,22 +1187,22 @@ def is_box(box: list, errors="raise"):
 
     # Types:
     tests["lon_min must be numeric"] = lambda b: (
-        isinstance(b[0], int) or isinstance(b[0], float)
+        isinstance(b[0], int) or isinstance(b[0], (np.floating, float))
     )
     tests["lon_max must be numeric"] = lambda b: (
-        isinstance(b[1], int) or isinstance(b[1], float)
+        isinstance(b[1], int) or isinstance(b[1], (np.floating, float))
     )
     tests["lat_min must be numeric"] = lambda b: (
-        isinstance(b[2], int) or isinstance(b[2], float)
+        isinstance(b[2], int) or isinstance(b[2], (np.floating, float))
     )
     tests["lat_max must be numeric"] = lambda b: (
-        isinstance(b[3], int) or isinstance(b[3], float)
+        isinstance(b[3], int) or isinstance(b[3], (np.floating, float))
     )
     tests["pres_min must be numeric"] = lambda b: (
-        isinstance(b[4], int) or isinstance(b[4], float)
+        isinstance(b[4], int) or isinstance(b[4], (np.floating, float))
     )
     tests["pres_max must be numeric"] = lambda b: (
-        isinstance(b[5], int) or isinstance(b[5], float)
+        isinstance(b[5], int) or isinstance(b[5], (np.floating, float))
     )
     if len(box) == 8:
         tests[
@@ -1261,7 +1265,7 @@ def is_list_equal(lst1, lst2):
 
 
 def check_wmo(lst):
-    """ Check a WMO option and returned it as a list of integers
+    """ Validate a WMO option and returned it as a list of integers
 
     Parameters
     ----------
@@ -1287,7 +1291,7 @@ def check_wmo(lst):
 
 
 def is_wmo(lst, errors="raise"):  # noqa: C901
-    """ Assess validity of a WMO option value
+    """ Check if a WMO is valid
 
     Parameters
     ----------
@@ -1628,3 +1632,178 @@ def groupby_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded",
 
     remapped.coords[output_dim] = z_regridded.rename({z_regridded_dim: output_dim}).coords[output_dim]
     return remapped
+
+
+class TopoFetcher():
+    """ Fetch topographic data through an ERDDAP server for an ocean rectangle
+
+    Example:
+        >>> from argopy import TopoFetcher
+        >>> box = [-75, -45, 20, 30]  # Lon_min, lon_max, lat_min, lat_max
+        >>> ds = TopoFetcher(box).to_xarray()
+        >>> ds = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=True).to_xarray()
+
+    """
+
+    class ERDDAP():
+        def __init__(self, server: str, protocol: str = 'tabledap'):
+            self.server = server
+            self.protocol = protocol
+            self.response = 'nc'
+            self.dataset_id = ''
+            self.constraints = ''
+
+    def __init__(
+            self,
+            box: list,
+            ds: str = "gebco",
+            cache: bool = False,
+            cachedir: str = "",
+            api_timeout: int = 0,
+            stride: list = [1, 1],
+            **kwargs,
+    ):
+        """ Instantiate an ERDDAP topo data fetcher
+
+        Parameters
+        ----------
+        ds: str (optional), default: 'gebco'
+            Dataset to load:
+
+            - 'gebco' will load the GEBCO_2020 Grid, a continuous terrain model for oceans and land at 15 arc-second intervals
+        stride: list, default [1, 1]
+            Strides along longitude and latitude. This allows to change the output resolution
+        cache: bool (optional)
+            Cache data or not (default: False)
+        cachedir: str (optional)
+            Path to cache folder
+        api_timeout: int (optional)
+            Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
+        """
+        timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
+        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
+        self.definition = "Erddap topographic data fetcher"
+
+        self.BOX = box
+        self.stride = stride
+        if ds == "gebco":
+            self.definition = "NOAA erddap gebco data fetcher for a space region"
+            self.server = 'https://coastwatch.pfeg.noaa.gov/erddap'
+            self.server_name = 'NOAA'
+            self.dataset_id = 'gebco'
+
+        self._init_erddap()
+
+    def _init_erddap(self):
+        # Init erddap
+        self.erddap = self.ERDDAP(server=self.server, protocol="griddap")
+        self.erddap.response = (
+            "nc"
+        )
+
+        if self.dataset_id == "gebco":
+            self.erddap.dataset_id = "GEBCO_2020"
+        else:
+            raise ValueError(
+                "Invalid database short name for %s erddap" % self.server_name
+            )
+        return self
+
+    def _cname(self) -> str:
+        """ Fetcher one line string definition helper """
+        cname = "?"
+
+        if hasattr(self, "BOX"):
+            BOX = self.BOX
+            cname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f]") % (
+                BOX[0],
+                BOX[1],
+                BOX[2],
+                BOX[3],
+            )
+        return cname
+
+    def __repr__(self):
+        summary = ["<topofetcher.erddap>"]
+        summary.append("Name: %s" % self.definition)
+        summary.append("API: %s" % self.server)
+        summary.append("Domain: %s" % format_oneline(self.cname()))
+        return "\n".join(summary)
+
+    def cname(self):
+        """ Return a unique string defining the constraints """
+        return self._cname()
+
+    @property
+    def cachepath(self):
+        """ Return path to cached file(s) for this request
+
+        Returns
+        -------
+        list(str)
+        """
+        return [self.fs.cachepath(uri) for uri in self.uri]
+
+    def define_constraints(self):
+        """ Define request constraints """
+        #        Eg: https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.nc?elevation%5B(34):5:(42)%5D%5B(-21):7:(-12)%5D
+        self.erddap.constraints = "%s(%0.2f):%i:(%0.2f)%s%s(%0.2f):%i:(%0.2f)%s" % (
+        "%5B", self.BOX[2], self.stride[1], self.BOX[3], "%5D",
+        "%5B", self.BOX[0], self.stride[0], self.BOX[1], "%5D")
+        return None
+
+    #     @property
+    #     def _minimal_vlist(self):
+    #         """ Return the minimal list of variables to retrieve """
+    #         vlist = list()
+    #         vlist.append("latitude")
+    #         vlist.append("longitude")
+    #         vlist.append("elevation")
+    #         return vlist
+
+    def get_url(self):
+        """ Return the URL to download data requested
+
+        Returns
+        -------
+        str
+        """
+        # First part of the URL:
+        protocol = self.erddap.protocol
+        dataset_id = self.erddap.dataset_id
+        response = self.erddap.response
+        url = f"{self.erddap.server}/{protocol}/{dataset_id}.{response}?"
+
+        # Add variables to retrieve:
+        variables = ["elevation"]
+        variables = ",".join(variables)
+        url += f"{variables}"
+
+        # Add constraints:
+        self.define_constraints()  # Define constraint to select this box of data (affect self.erddap.constraints)
+        url += f"{self.erddap.constraints}"
+
+        return url
+
+    @property
+    def uri(self):
+        """ List of files to load for a request
+
+        Returns
+        -------
+        list(str)
+        """
+        return [self.get_url()]
+
+    def to_xarray(self, errors: str = 'ignore'):
+        """ Load Topographic data and return a xarray.DataSet """
+
+        # Download data
+        if len(self.uri) == 1:
+            ds = self.fs.open_dataset(self.uri[0])
+
+        return ds
+
+    def load(self, errors: str = 'ignore'):
+        """ Load Topographic data and return a xarray.DataSet """
+        return self.to_xarray(errors=errors)

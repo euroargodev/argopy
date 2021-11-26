@@ -1,14 +1,13 @@
 .. _data_qc:
 
-
 Data quality control
 ====================
 
-**argopy** comes with handy methods to help you quality control measurements. This section is probably intended for `expert` users.
+**argopy** comes with methods to help you quality control measurements. This section is probably intended for `expert` users.
 
 Most of these methods are available through the :class:`xarray.Dataset` accessor namespace ``argo``. This means that if your dataset is `ds`, then you can use `ds.argo` to access more **argopy** functionalities.
 
-Let's start with import and set-up:
+Let's start with standard import:
 
 .. ipython:: python
     :okwarning:
@@ -24,14 +23,14 @@ Historically, the OWC method has been implemented in `Matlab <https://github.com
 
 **argopy** is able to perform this preprocessing and to create a *float source* data to be used by OWC software. This is made by :meth:`argopy.xarray.ArgoAccessor.create_float_source`.
 
-First, you would need to fetch the Argo float data you want to calibrate, in `expert` mode:
+First, you would need to fetch the Argo float data you want to calibrate, in ``expert`` mode:
 
 .. ipython:: python
     :okwarning:
 
     ds = ArgoDataFetcher(mode='expert').float(6902766).load().data
 
-Then, to create the float source data is as simple as:
+Then, to create the float source data, you call the method and provide a folder name to save output files:
 
 .. ipython:: python
     :okwarning:
@@ -40,8 +39,8 @@ Then, to create the float source data is as simple as:
 
 This will create the ``float_source/6902766.mat`` Matlab files to be set directly in the configuration file of the OWC software. This routine implements the same pre-processing as in the Matlab version (which is hosted on `this repo <https://github.com/euroargodev/dm_floats>`_ and ran with `this routine <https://github.com/euroargodev/dm_floats/blob/master/src/ow_source/create_float_source.m>`_).
 
-.. note::
-    If the dataset contains data from more than one float, several Matlab files are created, one for each float. This will allow you to prepare data from a collection of floats easier.
+.. note:: Several floats in dataset
+    If the dataset contains data from more than one float, several Matlab files are created, one for each float. This will allow you to prepare data from a collection of floats.
 
 If you don't specify a path name, the method returns a dictionary with the float WMO as keys and pre-processed data (as :class:`xarray.Dataset`) as values.
 
@@ -66,3 +65,35 @@ Deep-Sea Research Part I: Oceanographic Research Papers, 56(3), 450-457, 2009. h
 
 "Improvement of bias detection in Argo float conductivity sensors and its application in the North Atlantic".
 Deep-Sea Research Part I: Oceanographic Research Papers, 114, 128-136, 2016. https://doi.org/10.1016/j.dsr.2016.05.007
+
+
+Topography
+----------
+
+For some QC of trajectories, it can be useful to easily get access to the topography. This can be done with the **argopy** utility :class:`argopy.TopoFetcher`:
+
+.. ipython:: python
+    :okwarning:
+    
+    from argopy import TopoFetcher
+    box = [-65, -55, 10, 20]
+    ds = TopoFetcher(box, cache=True).to_xarray()
+
+.. image:: _static/topography_sample.png
+
+
+Combined with the fetcher property ``domain``, it now becomes easy to superimpose float trajectory with topography:
+
+    loader = ArgoDataFetcher().float(2901623)
+    ds = TopoFetcher(loader.domain[0:4], cache=True).to_xarray()
+
+.. code-block:: python
+
+    fig, ax = loader.plot('trajectory', figsize=(10, 10))
+    ds['elevation'].plot.contourf(levels=np.arange(-6000,0,200), ax=ax, add_colorbar=False)
+
+.. image:: _static/trajectory_topography_sample.png
+
+
+.. note:: Resolution
+    The ``TopoFetcher`` can return a lower resolution topography with the ``stride`` option. See the :class:`argopy.TopoFetcher` full documentation for all the details.
