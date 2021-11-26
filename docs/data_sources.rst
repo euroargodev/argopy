@@ -1,7 +1,7 @@
 Data sources
 ============
 
-.. contents:: Table of contents:
+.. contents::
    :local:
 
 Let's start with standard import:

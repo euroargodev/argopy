@@ -44,10 +44,10 @@ Documentation
     data_sources
     data_manipulation
     visualisation
+    data_quality_control
     user_mode
     metadata_fetching
     performances
-    data_quality_control
 
 **Help & reference**
 

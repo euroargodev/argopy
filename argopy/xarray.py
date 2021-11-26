@@ -43,6 +43,27 @@ class ArgoAccessor:
         - Convert a collection of profiles to a collection of points:
         >>> ds.argo.profile2point()
 
+        - Filter measurements according to data mode:
+        >>> ds.argo.filter_data_mode()
+
+        - Filter measurements according to QC flag values:
+        >>> ds.argo.filter_qc(QC_list=[1, 2], QC_fields='all')
+
+        - Filter variables according OWC salinity calibration requirements:
+        >>> ds.argo.filter_scalib_pres(force='default')
+
+        - Interpolate measurements on pressure levels:
+        >>> ds.argo.inter_std_levels(std_lev=[10., 500., 1000.])
+
+        - Group and reduce measurements by pressure bins:
+        >>> ds.argo.groupby_pressure_bins(bins=[0, 200., 500., 1000.])
+`
+        - Compute and add additionnal variables to the dataset:
+        >>> ds.argo.teos10(vlist='PV')
+
+        - Preprocess data for OWC salinity calibration:
+        >>> ds.argo.create_float_source("output_folder")
+
      """
 
     def __init__(self, xarray_obj):
@@ -364,8 +385,9 @@ class ArgoAccessor:
 
         Examples
         --------
-        unique_float_profile_id = uid(690024,13,'A') # Encode
-        wmo, cyc, drc = uid(unique_float_profile_id) # Decode
+        >>> unique_float_profile_id = uid(690024,13,'A') # Encode
+        >>> wmo, cyc, drc = uid(unique_float_profile_id) # Decode
+
         """
         le = preprocessing.LabelEncoder()
         le.fit(["A", "D"])

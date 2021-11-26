@@ -3,6 +3,9 @@
 Data quality control
 ====================
 
+.. contents::
+   :local:
+
 **argopy** comes with methods to help you quality control measurements. This section is probably intended for `expert` users.
 
 Most of these methods are available through the :class:`xarray.Dataset` accessor namespace ``argo``. This means that if your dataset is `ds`, then you can use `ds.argo` to access more **argopy** functionalities.
@@ -19,7 +22,12 @@ Salinity calibration
 --------------------
 
 The Argo salinity calibration method is called OWC_, after the names of the core developers: Breck Owens, Anny Wong and Cecile Cabanes.
-Historically, the OWC method has been implemented in `Matlab <https://github.com/ArgoDMQC/matlab_owc>`_ . More recently a `python version has been developed <https://github.com/euroargodev/argodmqc_owc>`_. At this point, both software take as input a pre-processed version of the Argo float data to evaluate/calibrate.
+Historically, the OWC method has been implemented in `Matlab <https://github.com/ArgoDMQC/matlab_owc>`_ . More recently a `python version has been developed <https://github.com/euroargodev/argodmqc_owc>`_.
+
+Preprocessing data
+^^^^^^^^^^^^^^^^^^
+
+At this point, both OWC software take as input a pre-processed version of the Argo float data to evaluate/calibrate.
 
 **argopy** is able to perform this preprocessing and to create a *float source* data to be used by OWC software. This is made by :meth:`argopy.xarray.ArgoAccessor.create_float_source`.
 
@@ -58,6 +66,14 @@ The method partially relies on two others:
 
 - :meth:`argopy.xarray.ArgoAccessor.groupby_pressure_bins`: to sub-sampled measurements by pressure bins. This is an excellent alternative to the :meth:`argopy.xarray.ArgoAccessor.interp_std_levels` to avoid interpolation and preserve values of raw measurements while at the same time aligning measurements along approximately similar pressure levels (depending on the size of the bins).
 
+Running the calibration
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Please refer to the OWC python software documentation: https://github.com/euroargodev/argodmqc_owc
+
+OWC references
+^^^^^^^^^^^^^^
+
 .. [OWC] See all the details about the OWC methodology in these references:
 
 "An improved calibration method for the drift of the conductivity sensor on autonomous CTD profiling floats by θ–S climatology".
@@ -67,8 +83,11 @@ Deep-Sea Research Part I: Oceanographic Research Papers, 56(3), 450-457, 2009. h
 Deep-Sea Research Part I: Oceanographic Research Papers, 114, 128-136, 2016. https://doi.org/10.1016/j.dsr.2016.05.007
 
 
+Trajectories
+------------
+
 Topography
-----------
+^^^^^^^^^^
 
 For some QC of trajectories, it can be useful to easily get access to the topography. This can be done with the **argopy** utility :class:`argopy.TopoFetcher`:
 
@@ -100,3 +119,5 @@ Combined with the fetcher property ``domain``, it now becomes easy to superimpos
 
 .. note::
     The ``TopoFetcher`` can return a lower resolution topography with the ``stride`` option. See the :class:`argopy.TopoFetcher` full documentation for all the details.
+
+

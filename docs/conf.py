@@ -85,7 +85,8 @@ extensions = [
     'sphinx.ext.inheritance_diagram',
     'nbsphinx',
     'numpydoc',
-    'sphinx_issues'
+    'sphinx_issues',
+#    'sphinx_thebe'
 ]
 
 # sphinx_gallery_conf = {
@@ -227,7 +228,7 @@ html_theme_options = {
     'navigation_depth': 4,
     # 'includehidden': True,
     # 'titles_only': False
-    'toc_title':''
+#    'launch_buttons': { "thebe": True}
 }
 
 # Sometimes the savefig directory doesn't exist and needs to be created

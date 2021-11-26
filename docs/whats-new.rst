@@ -9,12 +9,6 @@ v0.1.9 (X XXX. 202X)
 **Features and front-end API**
 
 - **New method to preprocess data for OWC software**. This method can preprocessed Argo data and possibly create float_source/<WMO>.mat files to be used as inputs for OWC implementations in `Matlab <https://github.com/ArgoDMQC/matlab_owc>`_ and `Python <https://github.com/euroargodev/argodmqc_owc>`_. See the :ref:`Salinity calibration` documentation page for more. (:pr:`142`) by `G. Maze <http://www.github.com/gmaze>`_.
-  This new method comes with others methods and improvements:
-
-  - A new ``filter_scalib_pres`` method to filter variables according to OWC salinity calibration software requirements,
-  - A new ``groupby_pressure_bins`` method to subsample a dataset down to one value by pressure bins (a perfect alternative to interpolation on standard depth levels to precisely avoid interpolation...),
-  - An improved ``filter_qc`` method to select which fields to consider (new option ``QC_fields``),
-  - Add conductivity (``CNDC``) to the possible output of the ``TEOS10`` method.
 
 .. code-block:: python
 
@@ -24,6 +18,13 @@ v0.1.9 (X XXX. 202X)
     ds.argo.create_float_source("float_source", force='raw')
     ds_source = ds.argo.create_float_source()
 
+
+This new method comes with others methods and improvements:
+
+    - A new ``filter_scalib_pres`` method to filter variables according to OWC salinity calibration software requirements,
+    - A new ``groupby_pressure_bins`` method to subsample a dataset down to one value by pressure bins (a perfect alternative to interpolation on standard depth levels to precisely avoid interpolation...),
+    - An improved ``filter_qc`` method to select which fields to consider (new option ``QC_fields``),
+    - Add conductivity (``CNDC``) to the possible output of the ``TEOS10`` method.
 
 - **New dataset properties** accessible from the `argo` xarray accessor: ``N_POINTS``, ``N_LEVELS``, ``N_PROF``. Note that depending on the format of the dataset (a collection of points or of profiles) these values do or do not take into account NaN. These information are also visible by a simple print of the accessor. (:pr:`142`) by `G. Maze <http://www.github.com/gmaze>`_.
 

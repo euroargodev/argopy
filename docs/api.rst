@@ -6,7 +6,7 @@ API reference
 
 This page provides an auto-generated summary of argopy's API. For more details and examples, refer to the relevant chapters in the main part of the documentation.
 
-.. contents:: Table of contents:
+.. contents::
    :local:
 
 Top-levels functions
@@ -37,8 +37,8 @@ Fetcher access points
    argopy.IndexFetcher.region
    argopy.IndexFetcher.float
 
-Fetching methods
-----------------
+Fetcher methods
+---------------
 
 .. autosummary::
    :toctree: generated/
@@ -56,8 +56,8 @@ Fetching methods
    argopy.IndexFetcher.to_dataframe
    argopy.IndexFetcher.to_csv
 
-Fetched data visualisation
---------------------------
+Data visualisation
+------------------
 
 .. autosummary::
    :toctree: generated/
@@ -76,6 +76,10 @@ Fetcher properties
    argopy.DataFetcher.uri
    argopy.DataFetcher.data
    argopy.DataFetcher.index
+
+.. autosummary::
+   :toctree: generated/
+
    argopy.IndexFetcher.index
 
 Helpers and utilities
