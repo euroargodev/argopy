@@ -71,7 +71,7 @@ def axes_style(style: str = STYLE['axes']):
 
 
 def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type="ea"):
-    """ Insert in a notebook cell the Euro-Argo dashboard page
+    """ Insert the Euro-Argo dashboard page in a notebook cell
 
         Parameters
         ----------
@@ -80,7 +80,7 @@ def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type
 
         Returns
         -------
-        IFrame: IPython.lib.display.IFrame
+        :class:`IPython.lib.display.IFrame`
     """
     if type not in ["ea", "eric", "coriolis"]:
         raise InvalidDashboard("Invalid dashboard type")

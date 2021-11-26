@@ -19,23 +19,18 @@ from argopy.errors import InvalidDatasetStructure
 
 @xr.register_dataset_accessor("argo")
 class ArgoAccessor:
+    """Class registered under scope ``argo`` to access a :class:`xarray.Dataset` object.
+
+    Methods
+    -------
+    cast_types:
+        Ensure all variables are of the Argo required dtype with:
+    point2profile:
+        Convert a collection of points into a collection of profiles
+    profile2point:
+        Convert a collection of profiles to a collection of points:
+
     """
-
-        Class registered under scope ``argo`` to access a :class:`xarray.Dataset` object.
-
-        - Ensure all variables are of the Argo required dtype with:
-
-            ds.argo.cast_types()
-
-        - Convert a collection of points into a collection of profiles:
-
-            ds.argo.point2profile()
-
-        - Convert a collection of profiles to a collection of points:
-
-            ds.argo.profile2point()
-
-     """
 
     def __init__(self, xarray_obj):
         """ Init """
@@ -663,7 +658,9 @@ class ArgoAccessor:
         return new_ds
 
     def profile2point(self):
-        """ Convert a collection of profiles to a collection of points """
+        """ Convert a collection of profiles to a collection of points
+
+        """
         if self._type != "profile":
             raise InvalidDatasetStructure(
                 "Method only available for a collection of profiles (N_PROF dimemsion)"

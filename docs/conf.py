@@ -16,6 +16,7 @@ import pathlib
 import sys
 import xarray
 import datetime
+import sphinx_autosummary_accessors
 
 from contextlib import suppress
 allowed_failures = set()
@@ -78,6 +79,7 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'sphinx.ext.napoleon',
     'IPython.sphinxext.ipython_directive',
     'IPython.sphinxext.ipython_console_highlighting',
     'sphinx.ext.doctest',
@@ -86,7 +88,8 @@ extensions = [
     'matplotlib.sphinxext.plot_directive',
     'nbsphinx',
     'numpydoc',
-    'sphinx_issues'
+    'sphinx_issues',
+    'sphinx_autosummary_accessors'
 ]
 
 # sphinx_gallery_conf = {
@@ -94,7 +97,7 @@ extensions = [
 #                        }
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ['_templates', sphinx_autosummary_accessors.templates_path]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -186,8 +189,8 @@ add_module_names = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
-# html_theme = 'sphinx_book_theme'
+# html_theme = 'sphinx_rtd_theme'
+html_theme = 'sphinx_book_theme'
 # html_theme = 'bootstrap'
 
 # Theme options are theme-specific and customize the look and feel of a theme

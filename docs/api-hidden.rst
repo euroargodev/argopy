@@ -2,11 +2,12 @@
 .. This extra page is a work around for sphinx not having any support for
 .. hiding an autosummary table.
 
-.. currentmodule:: argopy
-
 .. autosummary::
     :toctree: generated/
 
+    argopy
+
+    argopy.fetchers
     argopy.fetchers.ArgoDataFetcher
     argopy.fetchers.ArgoDataFetcher.region
     argopy.fetchers.ArgoDataFetcher.float
@@ -19,15 +20,20 @@
     argopy.fetchers.ArgoDataFetcher.uri
     argopy.fetchers.ArgoDataFetcher.data
     argopy.fetchers.ArgoDataFetcher.index
+    argopy.fetchers.ArgoDataFetcher.dashboard
+    argopy.fetchers.ArgoDataFetcher.clear_cache
 
+    argopy.fetchers.ArgoIndexFetcher
     argopy.fetchers.ArgoIndexFetcher.region
     argopy.fetchers.ArgoIndexFetcher.float
+    argopy.fetchers.ArgoIndexFetcher.profile
     argopy.fetchers.ArgoIndexFetcher.load
     argopy.fetchers.ArgoIndexFetcher.to_xarray
     argopy.fetchers.ArgoIndexFetcher.to_dataframe
     argopy.fetchers.ArgoIndexFetcher.to_csv
     argopy.fetchers.ArgoIndexFetcher.plot
     argopy.fetchers.ArgoIndexFetcher.index
+    argopy.fetchers.ArgoIndexFetcher.clear_cache
 
     argopy.data_fetchers.erddap_data.ErddapArgoDataFetcher
     argopy.data_fetchers.erddap_data.Fetch_wmo
@@ -52,7 +58,15 @@
     argopy.utilities.list_available_data_src
     argopy.utilities.list_available_index_src
     argopy.utilities.Chunker
+
     argopy.utilities.TopoFetcher
+    argopy.utilities.TopoFetcher.cname
+    argopy.utilities.TopoFetcher.define_constraints
+    argopy.utilities.TopoFetcher.get_url
+    argopy.utilities.TopoFetcher.load
+    argopy.utilities.TopoFetcher.to_xarray
+    argopy.utilities.TopoFetcher.cachepath
+    argopy.utilities.TopoFetcher.uri
 
     argopy.utilities.list_standard_variables
     argopy.utilities.list_multiprofile_file_variables
@@ -63,11 +77,6 @@
     argopy.utilities.is_wmo
     argopy.utilities.check_wmo
     argopy.utilities.wmo2box
-
-    argopy.xarray.ArgoAccessor.point2profile
-    argopy.xarray.ArgoAccessor.profile2point
-    argopy.xarray.ArgoAccessor.interp_std_levels
-    argopy.xarray.ArgoAccessor.teos10
 
     argopy.plotters.open_dashboard
     argopy.plotters.bar_plot
@@ -115,3 +124,12 @@
     argopy.stores.argo_index.indexstore
     argopy.stores.argo_index.indexfilter_wmo
     argopy.stores.argo_index.indexfilter_box
+
+    argopy.xarray.ArgoAccessor.point2profile
+    argopy.xarray.ArgoAccessor.profile2point
+    argopy.xarray.ArgoAccessor.cast_types
+    argopy.xarray.ArgoAccessor.uid
+    argopy.xarray.ArgoAccessor.filter_qc
+    argopy.xarray.ArgoAccessor.filter_data_mode
+    argopy.xarray.ArgoAccessor.interp_std_levels
+    argopy.xarray.ArgoAccessor.teos10

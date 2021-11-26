@@ -79,7 +79,8 @@ class argo_store_proto(ABC):
 
         Should this class inherits from fsspec.spec.AbstractFileSystem ?
     """
-    protocol = ''  # File system name, one in fsspec.registry.known_implementations
+    protocol = ''
+    """str: File system name, one in fsspec.registry.known_implementations"""
 
     def __init__(self,
                  cache: bool = False,
