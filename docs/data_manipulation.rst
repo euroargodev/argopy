@@ -84,7 +84,7 @@ Let's now sub-sample these measurements along 250db bins, selecting values from 
     ds_binned = ds.argo.groupby_pressure_bins(bins=bins, select='deep')
     ds_binned
 
-The sub-sampling can be seen like this:
+See the new ``STD_PRES_BINS`` variable that hold the pressure bins definition. The sub-sampling can be seen like this:
 
 .. code-block:: python
 

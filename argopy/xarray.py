@@ -993,7 +993,7 @@ class ArgoAccessor:
         -------
         :class:`xarray.Dataset`
         """
-        this_ds = self._obj
+        this_dsp = self._obj
 
         if (type(std_lev) is np.ndarray) | (type(std_lev) is list):
             std_lev = np.array(std_lev)
@@ -1009,13 +1009,18 @@ class ArgoAccessor:
         if axis not in ['PRES', 'PRES_ADJUSTED']:
             raise ValueError("'axis' option must be 'PRES' or 'PRES_ADJUSTED'")
 
+        if self._type != "profile":
+            raise InvalidDatasetStructure(
+                "Method only available for a collection of profiles"
+            )
+
         # Will work with a collection of profiles:
-        to_point = False
-        if this_ds.argo._type == "point":
-            to_point = True
-            this_dsp = this_ds.argo.point2profile()
-        else:
-            this_dsp = this_ds.copy(deep=True)
+        # to_point = False
+        # if this_ds.argo._type == "point":
+        #     to_point = True
+        #     this_dsp = this_ds.argo.point2profile()
+        # else:
+        #     this_dsp = this_ds.copy(deep=True)
 
         # Selecting profiles that have a max(pressure) > max(std_lev) to avoid extrapolation in that direction
         # For levels < min(pressure), first level values of the profile are extended to surface.
@@ -1024,7 +1029,7 @@ class ArgoAccessor:
 
         # check if any profile is left, ie if any profile match the requested depth
         if len(this_dsp["N_PROF"]) == 0:
-            raise Warning(
+            warnings.warn(
                 "None of the profiles can be interpolated (not reaching the requested depth range)."
             )
             return None
@@ -1077,10 +1082,10 @@ class ArgoAccessor:
         ds_out.attrs = self.attrs  # Preserve original attributes
         ds_out.argo._add_history("Interpolated on standard %s levels" % axis)
 
-        if to_point:
-            return ds_out.argo.profile2point()
-        else:
-            return ds_out
+        # if to_point:
+        #     ds_out = ds_out.argo.profile2point()
+
+        return ds_out
 
     def groupby_pressure_bins(self,  # noqa: C901
                               bins: list or np.array,
@@ -1160,7 +1165,7 @@ class ArgoAccessor:
         N_bins_empty = len(np.where(h == 0)[0])
         # check if any profile is left, ie if any profile match the requested bins
         if N_bins_empty == len(h):
-            raise Warning(
+            warnings.warn(
                 "None of the profiles can be aligned (pressure values out of bins range)."
             )
             return None
@@ -1175,8 +1180,8 @@ class ArgoAccessor:
                 values = this_da.values
                 values[:, this_i_level] = new_values_along_profiles
                 this_da.values = values
-            else:
-                raise ValueError("Array not with expected ['N_PROF', 'N_LEVELS'] shape")
+            # else:
+            #     raise ValueError("Array not with expected ['N_PROF', 'N_LEVELS'] shape")
             return this_da
 
         def nanmerge(x, y):
@@ -1319,12 +1324,15 @@ class ArgoAccessor:
         # Finish
         new_ds = xr.merge(new_ds)
         new_ds = new_ds.rename({"remapped": "N_LEVELS"})
-        new_ds["STD_%s_BINS" % axis] = new_ds['N_LEVELS']
-        new_ds["STD_%s_BINS" % axis].attrs = {
+        new_ds = new_ds.assign_coords({'N_LEVELS': range(0, len(new_ds['N_LEVELS']))})
+        # new_ds["STD_%s_BINS" % axis] = new_ds['N_LEVELS']
+        new_ds["STD_%s_BINS" % axis] = xr.DataArray(bins,
+                                                    dims=['N_LEVELS'],
+                                                    attrs={
             'Comment': "Range of bins is: bins[i] <= x < bins[i+1] for i=[0,N_LEVELS-2]\n"
                        "Last bins is bins[N_LEVELS-1] <= x"}
+                                                    )
         new_ds = new_ds.set_coords("STD_%s_BINS" % axis)
-        new_ds = new_ds.assign_coords({'N_LEVELS': range(0, len(new_ds['N_LEVELS']))})
         new_ds.attrs = this_ds.attrs
 
         for dv in othervars:
@@ -1580,11 +1588,11 @@ class ArgoAccessor:
 
         You can force the program to load raw PRES, PSAL and TEMP whatever PRES is adjusted or not:
 
-        >>> ds.argo.create_float_source(flt_name, force='raw')
+        >>> ds.argo.create_float_source(force='raw')
 
         or you can force the program to load adjusted variables: PRES_ADJUSTED, PSAL_ADJUSTED, TEMP_ADJUSTED
 
-        >>> ds.argo.create_float_source(flt_name, force='adjusted')
+        >>> ds.argo.create_float_source(force='adjusted')
 
         Pre-processing details:
 
