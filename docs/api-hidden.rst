@@ -2,11 +2,12 @@
 .. This extra page is a work around for sphinx not having any support for
 .. hiding an autosummary table.
 
-.. currentmodule:: argopy
-
 .. autosummary::
     :toctree: generated/
 
+    argopy
+
+    argopy.fetchers
     argopy.fetchers.ArgoDataFetcher
     argopy.fetchers.ArgoDataFetcher.region
     argopy.fetchers.ArgoDataFetcher.float
@@ -107,4 +108,8 @@
     argopy.xarray.ArgoAccessor.point2profile
     argopy.xarray.ArgoAccessor.profile2point
     argopy.xarray.ArgoAccessor.cast_types
-    argopy.xarray.ArgoAccessor
+    argopy.xarray.ArgoAccessor.uid
+    argopy.xarray.ArgoAccessor.filter_qc
+    argopy.xarray.ArgoAccessor.filter_data_mode
+    argopy.xarray.ArgoAccessor.interp_std_levels
+    argopy.xarray.ArgoAccessor.teos10

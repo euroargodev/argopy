@@ -1,14 +1,9 @@
 Manipulating data
 =================
 
-Once you fetched data, **argopy** comes with a handy :class:`xarray.Dataset` accessor ``argo`` to perform specific manipulation of the data:
+.. currentmodule:: xarray
 
-.. autosummary::
-   :toctree: generated/
-
-   xarray.dataset.argo
-
-This means that if your dataset is named `ds`, then you can use `ds.argo` to access more **argopy** functions. The full list is available in the API documentation page :ref:`Xarray *argo* name space`.
+Once you fetched data, **argopy** comes with a handy :class:`xarray.Dataset` accessor ``argo`` to perform specific manipulation of the data. This means that if your dataset is named `ds`, then you can use `ds.argo` to access more **argopy** functions. The full list is available in the API documentation page :ref:`Dataset.argo (xarray accessor)`.
 
 Let's start with standard import:
 
@@ -16,7 +11,6 @@ Let's start with standard import:
     :okwarning:
 
     from argopy import DataFetcher as ArgoDataFetcher
-
 
 Transformation
 --------------
@@ -33,7 +27,7 @@ Fetched data are returned as a 1D array collection of measurements:
     ds_points = argo_loader.to_xarray()
     ds_points
 
-If you prefer to work with a 2D array collection of vertical profiles, simply transform the dataset with :meth:`argopy.xarray.ArgoAccessor.point2profile`:
+If you prefer to work with a 2D array collection of vertical profiles, simply transform the dataset with :meth:`Dataset.argo.point2profile`:
 
 .. ipython:: python
     :okwarning:
@@ -41,7 +35,7 @@ If you prefer to work with a 2D array collection of vertical profiles, simply tr
     ds_profiles = ds_points.argo.point2profile()
     ds_profiles
 
-You can simply reverse this transformation with the :meth:`argopy.xarray.ArgoAccessor.profile2point`:
+You can simply reverse this transformation with the :meth:`Dataset.argo.profile2point`:
 
 .. ipython:: python
     :okwarning:
@@ -52,7 +46,7 @@ You can simply reverse this transformation with the :meth:`argopy.xarray.ArgoAcc
 Interpolation to standard levels
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Once your dataset is a collection of vertical **profiles**, you can interpolate variables on standard pressure levels using :meth:`argopy.xarray.ArgoAccessor.interp_std_levels` with your levels as input :
+Once your dataset is a collection of vertical **profiles**, you can interpolate variables on standard pressure levels using :meth:`Dataset.argo.interp_std_levels` with your levels as input :meth:`Dataset.argo.interp_std_levels`:
 
 .. ipython:: python
     :okwarning:
@@ -81,7 +75,7 @@ TEOS-10 variables
 
 You can compute additional ocean variables from `TEOS-10 <http://teos-10.org/>`_. The default list of variables is: 'SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP' ('SOUND_SPEED' is optional). `Simply raise an issue to add a new one <https://github.com/euroargodev/argopy/issues/new/choose>`_.
 
-This can be done using the :meth:`argopy.xarray.ArgoAccessor.teos10` method and indicating the list of variables you want to compute:
+This can be done using the :meth:`Dataset.argo.teos10` method and indicating the list of variables you want to compute:
 
 .. ipython:: python
     :okwarning:
