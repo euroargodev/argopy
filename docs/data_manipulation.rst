@@ -4,8 +4,6 @@ Manipulating data
 .. contents::
    :local:
 
-Once you fetched data, **argopy** comes with a handy :class:`xarray.Dataset` accessor namespace ``argo`` to perform specific manipulation of the data. This means that if your dataset is `ds`, then you can use `ds.argo` to access more **argopy** functions.
-
 .. currentmodule:: xarray
 
 Once you fetched data, **argopy** comes with a handy :class:`xarray.Dataset` accessor ``argo`` to perform specific manipulation of the data. This means that if your dataset is named `ds`, then you can use `ds.argo` to access more **argopy** functions. The full list is available in the API documentation page :ref:`Dataset.argo (xarray accessor)`.
@@ -23,7 +21,7 @@ Transformation
 Points vs profiles
 ^^^^^^^^^^^^^^^^^^
 
-Fetched data are returned as a 1D array collection of measurements:
+By default, fetched data are returned as a 1D array collection of measurements:
 
 .. ipython:: python
     :okwarning:
@@ -51,7 +49,7 @@ You can simply reverse this transformation with the :meth:`Dataset.argo.profile2
 Pressure levels: Interpolation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Once your dataset is a collection of vertical **profiles**, you can interpolate variables on standard pressure levels using :meth:`Dataset.argo.interp_std_levels` with your levels as input :meth:`Dataset.argo.interp_std_levels`:
+Once your dataset is a collection of vertical **profiles**, you can interpolate variables on standard pressure levels using :meth:`Dataset.argo.interp_std_levels` with your levels as input:
 
 .. ipython:: python
     :okwarning:

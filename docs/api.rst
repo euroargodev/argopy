@@ -139,6 +139,7 @@ Data Transformation
    Dataset.argo.point2profile
    Dataset.argo.profile2point
    Dataset.argo.interp_std_levels
+   Dataset.argo.groupby_pressure_bins
 
 Data Filters
 ------------
@@ -149,6 +150,7 @@ Data Filters
 
    Dataset.argo.filter_qc
    Dataset.argo.filter_data_mode
+   Dataset.argo.filter_scalib_pres
 
 Complementing
 -------------
