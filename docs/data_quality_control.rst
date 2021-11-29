@@ -21,6 +21,8 @@ Let's start with standard import:
 Salinity calibration
 --------------------
 
+.. currentmodule:: xarray
+
 The Argo salinity calibration method is called OWC_, after the names of the core developers: Breck Owens, Anny Wong and Cecile Cabanes.
 Historically, the OWC method has been implemented in `Matlab <https://github.com/ArgoDMQC/matlab_owc>`_ . More recently a `python version has been developed <https://github.com/euroargodev/argodmqc_owc>`_.
 
@@ -29,7 +31,7 @@ Preprocessing data
 
 At this point, both OWC software take as input a pre-processed version of the Argo float data to evaluate/calibrate.
 
-**argopy** is able to perform this preprocessing and to create a *float source* data to be used by OWC software. This is made by :meth:`argopy.xarray.ArgoAccessor.create_float_source`.
+**argopy** is able to perform this preprocessing and to create a *float source* data to be used by OWC software. This is made by :meth:`Dataset.argo.create_float_source`.
 
 First, you would need to fetch the Argo float data you want to calibrate, in ``expert`` mode:
 
@@ -58,18 +60,72 @@ If you don't specify a path name, the method returns a dictionary with the float
     ds_source = ds.argo.create_float_source()
     ds_source
 
-See all options available for this method here: :meth:`argopy.xarray.ArgoAccessor.create_float_source`.
+See all options available for this method here: :meth:`Dataset.argo.create_float_source`.
 
 The method partially relies on two others:
 
-- :meth:`argopy.xarray.ArgoAccessor.filter_scalib_pres`: to filter variables according to OWC salinity calibration software requirements. This filter modifies pressure, temperature and salinity related variables of the dataset.
+- :meth:`Dataset.argo.filter_scalib_pres`: to filter variables according to OWC salinity calibration software requirements. This filter modifies pressure, temperature and salinity related variables of the dataset.
 
-- :meth:`argopy.xarray.ArgoAccessor.groupby_pressure_bins`: to sub-sampled measurements by pressure bins. This is an excellent alternative to the :meth:`argopy.xarray.ArgoAccessor.interp_std_levels` to avoid interpolation and preserve values of raw measurements while at the same time aligning measurements along approximately similar pressure levels (depending on the size of the bins).
+- :meth:`Dataset.argo.groupby_pressure_bins`: to sub-sampled measurements by pressure bins. This is an excellent alternative to the :meth:`Dataset.argo.interp_std_levels` to avoid interpolation and preserve values of raw measurements while at the same time aligning measurements along approximately similar pressure levels (depending on the size of the bins).
 
 Running the calibration
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Please refer to the OWC python software documentation: https://github.com/euroargodev/argodmqc_owc
+Please refer to the `OWC python software documentation <https://github.com/euroargodev/argodmqc_owc>`_.
+
+A typical workflow would look like this:
+
+.. code-block:: python
+
+    import os, shutil
+    from pathlib import Path
+
+    import pyowc as owc
+    import argopy
+    from argopy import DataFetcher
+
+    # Define float to calibrate:
+    FLOAT_NAME = "6903010"
+
+    # Set-up where to save OWC analysis results:
+    results_folder = './analysis/%s' % FLOAT_NAME
+    Path(results_folder).mkdir(parents=True, exist_ok=True)
+    shutil.rmtree(results_folder) # Clean up folder content
+    Path(os.path.sep.join([results_folder, 'float_source'])).mkdir(parents=True, exist_ok=True)
+    Path(os.path.sep.join([results_folder, 'float_calib'])).mkdir(parents=True, exist_ok=True)
+    Path(os.path.sep.join([results_folder, 'float_mapped'])).mkdir(parents=True, exist_ok=True)
+    Path(os.path.sep.join([results_folder, 'float_plots'])).mkdir(parents=True, exist_ok=True)
+
+    # fetch the default configuration and parameters
+    USER_CONFIG = owc.configuration.load()
+
+    # Fix paths to run at Ifremer:
+    for k in USER_CONFIG:
+        if "FLOAT" in k and "data/" in USER_CONFIG[k][0:5]:
+            USER_CONFIG[k] = os.path.abspath(USER_CONFIG[k].replace("data", results_folder))
+    USER_CONFIG['CONFIG_DIRECTORY'] = os.path.abspath('../data/constants')
+    USER_CONFIG['HISTORICAL_DIRECTORY'] = os.path.abspath('/Volumes/OWC/CLIMATOLOGY/')  # where to find ARGO_for_DMQC_2020V03 and CTD_for_DMQC_2021V01 folders
+    USER_CONFIG['HISTORICAL_ARGO_PREFIX'] = 'ARGO_for_DMQC_2020V03/argo_'
+    USER_CONFIG['HISTORICAL_CTD_PREFIX'] = 'CTD_for_DMQC_2021V01/ctd_'
+    print(owc.configuration.print_cfg(USER_CONFIG))
+
+    # Create float source data with argopy:
+    fetcher_for_real = DataFetcher(src='localftp', cache=True, mode='expert').float(FLOAT_NAME)
+    fetcher_sample = DataFetcher(src='localftp', cache=True, mode='expert').profile(FLOAT_NAME, [1, 2])  # To reduce execution time for demo
+    ds = fetcher.load().data
+    ds.argo.create_float_source(path=USER_CONFIG['FLOAT_SOURCE_DIRECTORY'], force='default')
+
+    # Prepare data for calibration: map salinity on theta levels
+    owc.calibration.update_salinity_mapping("", USER_CONFIG, FLOAT_NAME)
+
+    # Set the calseries parameters for analysis and line fitting
+    owc.configuration.set_calseries("", FLOAT_NAME, USER_CONFIG)
+
+    # Calculate the fit of each break and calibrate salinities
+    owc.calibration.calc_piecewisefit("", FLOAT_NAME, USER_CONFIG)
+
+    # Results figures
+    owc.plot.dashboard("", FLOAT_NAME, USER_CONFIG)
 
 OWC references
 ^^^^^^^^^^^^^^

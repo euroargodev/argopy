@@ -1004,7 +1004,7 @@ class ArgoAccessor:
     def interp_std_levels(self,
                           std_lev: list or np.array,
                           axis: str = 'PRES'):
-        """ Returns a new dataset interpolated to standard pressure levels
+        """ Interpolate measurements to standard pressure levels
 
         Parameters
         ----------
@@ -1136,7 +1136,7 @@ class ArgoAccessor:
             (right==False) indicating that the interval does not include the right edge. The left bin end is open
             in this case, i.e., bins[i-1] <= x < bins[i] is the default behavior for monotonically increasing bins.
             Note the ``merge`` option is intended to work only for the default ``right=False``.
-        select: str, default: ``deep``
+        select: {'deep','shallow','middle','random','min','max','mean','median'}, default: 'deep'
             The value selection method for bins.
 
             This selection can be based on values at the pressure axis level with: ``deep`` (default), ``shallow``,
@@ -1394,29 +1394,31 @@ class ArgoAccessor:
             List with the name of variables to add.
             Must be a list containing one or more of the following string values:
 
-            * `"SA"`
+            * ``SA``
                 Adds an absolute salinity variable
-            * `"CT"`
+            * ``CT``
                 Adds a conservative temperature variable
-            * `"SIG0"`
+            * ``SIG0``
                 Adds a potential density anomaly variable referenced to 0 dbar
-            * `"N2"`
+            * ``N2``
                 Adds a buoyancy (Brunt-Vaisala) frequency squared variable.
                 This variable has been regridded to the original pressure levels in the Dataset using a linear interpolation.
-            * `"PV"`
+            * ``PV``
                 Adds a planetary vorticity variable calculated from :math:`\\frac{f N^2}{\\text{gravity}}`.
                 This is not a TEOS-10 variable from the gsw toolbox, but is provided for convenience.
                 This variable has been regridded to the original pressure levels in the Dataset using a linear interpolation.
-            * `"PTEMP"`
-                Adds a potential temperature variable
-            * `"SOUND_SPEED"`
-                Adds a sound speed variable
+            * ``PTEMP``
+                Add potential temperature
+            * ``SOUND_SPEED``
+                Add sound speed
+            * ``CNDC``
+                Add Electrical Conductivity
 
 
-        inplace: boolean, True by default
-            If True, return the input :class:`xarray.Dataset` with new TEOS10 variables
+        inplace: boolean, True by default        
+            * If True, return the input :class:`xarray.Dataset` with new TEOS10 variables
                 added as a new :class:`xarray.DataArray`.
-            If False, return a :class:`xarray.Dataset` with new TEOS10 variables
+            * If False, return a :class:`xarray.Dataset` with new TEOS10 variables
 
         Returns
         -------
@@ -1618,24 +1620,33 @@ class ArgoAccessor:
 
         >>> ds.argo.create_float_source(force='adjusted')
 
-        Pre-processing details:
+        **Pre-processing details**:
 
-        - select only ascending profiles
-        - subsample vertical levels to keep the deepest pressure levels on each 10db bins from the surface down to the
-        deepest level
-        - filter variables according to the 'force' option (see above)
-        - filter variables according to QC flags:
+        #.  select only ascending profiles
 
-            - Remove measurements where timestamp QC is >= 3
-            - Keep measurements where pressure QC is anything but 3
-            - Keep measurements where pressure, temperature or salinity QC are anything but 4
+        #.  subsample vertical levels to keep the deepest pressure levels on each 10db bins from the surface down
+            to the deepest level.
 
-        - remove dummy values: salinity not in 0/50, potential temperature not in -10/50 and pressure not in 0/60000.
-        Bounds inclusive.
-        - convert timestamp to fractional year
-        - convert longitudes to 0-360
-        - align pressure values, i.e. make sure that a pressure index corresponds to measurements from the same binned
-        pressure values. This can lead to modify the number of levels in the dataset
+        #.  align pressure values, i.e. make sure that a pressure index corresponds to measurements from the same
+            binned pressure values. This can lead to modify the number of levels in the dataset.
+
+        #.  filter variables according to the ``force`` option (see below)
+
+        #.  filter variables according to QC flags:
+
+            *  Remove measurements where timestamp QC is >= 3
+            *  Keep measurements where pressure QC is anything but 3
+            *  Keep measurements where pressure, temperature or salinity QC are anything but 4
+
+
+        #.  remove dummy values: salinity not in [0/50], potential temperature not in [-10/50] and pressure not
+            in [0/60000]. Bounds inclusive.
+
+        #.  convert timestamp to fractional year
+
+        #.  convert longitudes to 0-360
+
+
 
         Parameters
         ----------
