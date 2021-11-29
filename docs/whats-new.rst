@@ -21,10 +21,14 @@ v0.1.9 (X XXX. 202X)
 
 This new method comes with others methods and improvements:
 
-    - A new :meth:`argopy.xarray.ArgoAccessor.filter_scalib_pres` method to filter variables according to OWC salinity calibration software requirements,
-    - A new :meth:`argopy.xarray.ArgoAccessor.groupby_pressure_bins` method to subsample a dataset down to one value by pressure bins (a perfect alternative to interpolation on standard depth levels to precisely avoid interpolation...),
-    - An improved :meth:`argopy.xarray.ArgoAccessor.filter_qc` method to select which fields to consider (new option ``QC_fields``),
+.. currentmodule:: xarray
+
+    - A new :meth:`Dataset.argo.filter_scalib_pres` method to filter variables according to OWC salinity calibration software requirements,
+    - A new :meth:`Dataset.argo.groupby_pressure_bins` method to subsample a dataset down to one value by pressure bins (a perfect alternative to interpolation on standard depth levels to precisely avoid interpolation...),
+    - An improved :meth:`Dataset.argo.filter_qc` method to select which fields to consider (new option ``QC_fields``),
     - Add conductivity (``CNDC``) to the possible output of the ``TEOS10`` method.
+
+.. currentmodule:: argopy
 
 - **New dataset properties** accessible from the `argo` xarray accessor: ``N_POINTS``, ``N_LEVELS``, ``N_PROF``. Note that depending on the format of the dataset (a collection of points or of profiles) these values do or do not take into account NaN. These information are also visible by a simple print of the accessor. (:pr:`142`) by `G. Maze <http://www.github.com/gmaze>`_.
 
@@ -55,6 +59,10 @@ For convenience we also added a new property to the data fetcher that return the
     loader = ArgoDataFetcher().float(2901623)
     loader.domain  # Returns [89.093, 96.036, -0.278, 4.16, 15.0, 2026.0, numpy.datetime64('2010-05-14T03:35:00.000000000'),  numpy.datetime64('2013-01-01T01:45:00.000000000')]
 
+
+**Internals**
+
+- Update documentation pages to use the `xarray accessor sphinx extension <https://github.com/xarray-contrib/sphinx-autosummary-accessors>`_. (:pr:`104`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 v0.1.8 (2 Nov. 2021)
 ---------------------
@@ -110,6 +118,8 @@ v0.1.8 (2 Nov. 2021)
     - ``trust_env`` to allow for local environment variables to be used by fsspec to connect to the internet. Useful for those using a proxy.
 
 - Documentation on `Read The Docs` now uses a pip environment and get rid of memory eager conda. (:pr:`103`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- :class:`xarray.Dataset` argopy accessor ``argo`` has a clean documentation.
 
 **Breaking changes with previous versions**
 

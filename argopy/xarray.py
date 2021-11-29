@@ -548,7 +548,9 @@ class ArgoAccessor:
         return new_ds
 
     def profile2point(self):
-        """ Convert a collection of profiles to a collection of points """
+        """ Convert a collection of profiles to a collection of points
+
+        """
         if self._type != "profile":
             raise InvalidDatasetStructure(
                 "Method only available for a collection of profiles (N_PROF dimemsion)"

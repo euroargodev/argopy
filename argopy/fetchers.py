@@ -40,26 +40,38 @@ def checkAccessPoint(AccessPoint):
                             (AccessPoint.__name__, args[0]._src, ", ".join(args[0].Fetchers.keys()))
                         )
         return AccessPoint(*args)
+    wrapper.__name__ = AccessPoint.__name__
+    wrapper.__doc__ = AccessPoint.__doc__
     return wrapper
 
 
 class ArgoDataFetcher:
-    """ Fetcher and post-processor of Argo data (API facade) """
+    """ Fetcher and post-processor of Argo data (API facade)
+
+    Parameters
+    ----------
+    mode: str, optional
+        User mode. Eg: ``standard`` or ``expert``. Set to OPTIONS['mode'] by default if empty.
+    src: str, optional
+         Source of the data to use. Eg: ``erddap``. Set to OPTIONS['src'] by default if empty.
+    ds: str, optional
+        Name of the dataset to load. Eg: ``phy``. Set to OPTIONS['dataset'] by default if empty.
+    **fetcher_kwargs: optional
+        Additional arguments passed on data source fetcher creation of each access points.
+
+    Examples
+    --------
+    >>> from argopy import DataFetcher
+    >>> adf = DataFetcher.region([-75, -65, 10, 20]).load()
+    >>> idx.plot()
+    >>> idx.data
+
+    """
 
     def __init__(self, mode: str = "", src: str = "", ds: str = "", **fetcher_kwargs):
 
         """ Create a fetcher instance
 
-        Parameters
-        ----------
-        mode: str, optional
-            User mode. Eg: ``standard`` or ``expert``. Set to OPTIONS['mode'] by default if empty.
-        src: str, optional
-             Source of the data to use. Eg: ``erddap``. Set to OPTIONS['src'] by default if empty.
-        ds: str, optional
-            Name of the dataset to load. Eg: ``phy``. Set to OPTIONS['dataset'] by default if empty.
-        **fetcher_kwargs: optional
-            Additional arguments passed on data source instance creation of each access points.
 
         Returns
         -------
@@ -174,6 +186,7 @@ class ArgoDataFetcher:
         Returns
         -------
         list(str)
+            List of resources used to fetch data
         """
         if self.fetcher:
             return self.fetcher.uri
@@ -190,6 +203,7 @@ class ArgoDataFetcher:
             Returns
             --------
             :class:`xarray.DataArray`
+                Fetched data
         """
         if not isinstance(self._data, xr.Dataset):
             self.load()
@@ -201,8 +215,8 @@ class ArgoDataFetcher:
 
             Returns
             --------
-            :class:`pandas.Dataframe`
-
+            :class:`pandas.DataFrame`
+                Argo-like index of fetched data
         """
         if not isinstance(self._index, pd.core.frame.DataFrame):
             self.load()
@@ -228,6 +242,7 @@ class ArgoDataFetcher:
                 np.min(this_ds['TIME'].values), np.max(this_ds['TIME'].values)]
 
     def dashboard(self, **kw):
+        """ Open access point dashboard """
         try:
             return self.fetcher.dashboard(**kw)
         except Exception:
@@ -309,23 +324,23 @@ class ArgoDataFetcher:
     def region(self, box: list):
         """ Space/time domain data fetcher
 
-        Parameters
-        ----------
-        box: list()
-            Define the domain to load Argo data for. The box list is made of:
-                - lon_min: float, lon_max: float,
-                - lat_min: float, lat_max: float,
-                - dpt_min: float, dpt_max: float,
-                - date_min: str (optional), date_max: str (optional)
+            Parameters
+            ----------
+            box: list()
+                Define the domain to load Argo data for. The box list is made of:
+                    - lon_min: float, lon_max: float,
+                    - lat_min: float, lat_max: float,
+                    - dpt_min: float, dpt_max: float,
+                    - date_min: str (optional), date_max: str (optional)
 
-            Longitude, latitude and pressure bounds are required, while the two bounding dates are optional.
-            If bounding dates are not specified, the entire time series is fetched.
-            Eg: [-60, -55, 40., 45., 0., 10., '2007-08-01', '2007-09-01']
+                Longitude, latitude and pressure bounds are required, while the two bounding dates are optional.
+                If bounding dates are not specified, the entire time series is fetched.
+                Eg: [-60, -55, 40., 45., 0., 10., '2007-08-01', '2007-09-01']
 
-        Returns
-        -------
-        :class:`argopy.fetchers.ArgoDataFetcher`
-            A data source fetcher for a space/time domain
+            Returns
+            -------
+            :class:`argopy.fetchers.ArgoDataFetcher`
+                A data source fetcher for a space/time domain
         """
         is_box(box, errors="raise")  # Validate the box definition
         self.fetcher = self.Fetchers["region"](box=box, **self.fetcher_options)
@@ -345,9 +360,12 @@ class ArgoDataFetcher:
     def to_xarray(self, **kwargs):
         """ Fetch and return data as xarray.DataSet
 
+            Trigger a fetch of data by the specified source and access point.
+
             Returns
             -------
             :class:`xarray.DataSet`
+                Fetched data
         """
         if not self.fetcher:
             raise InvalidFetcher(
@@ -359,11 +377,14 @@ class ArgoDataFetcher:
         return xds
 
     def to_dataframe(self, **kwargs):
-        """  Fetch and return data as pandas.Dataframe
+        """ Fetch and return data as pandas.Dataframe
+
+            Trigger a fetch of data by the specified source and access point.
 
             Returns
             -------
-            :class:`pandas.Dataframe`
+            :class:`pandas.DataFrame`
+                Fetched data
         """
         if not self.fetcher:
             raise InvalidFetcher(
@@ -373,7 +394,9 @@ class ArgoDataFetcher:
         return self.load().data.to_dataframe(**kwargs)
 
     def to_index(self, full: bool = False):
-        """ Create an index of Argo data
+        """ Create an index of Argo data, fetch data if necessary
+
+            Build an Argo-like index of profiles from fetched data.
 
             Parameters
             ----------
@@ -383,7 +406,8 @@ class ArgoDataFetcher:
 
             Returns
             -------
-            :class:`pandas.Dataframe`
+            :class:`pandas.DataFrame`
+                Argo-like index of fetched data
         """
         if not full:
             self.load()
@@ -435,7 +459,7 @@ class ArgoDataFetcher:
         return df
 
     def load(self, force: bool = False, **kwargs):
-        """ Load data in memory
+        """ Fetch data (and compute an index) if not already in memory
 
             Apply the default to_xarray() and to_index() methods and store results in memory.
             Access loaded measurements structure with the `data` and `index` properties::
@@ -447,7 +471,7 @@ class ArgoDataFetcher:
             Parameters
             ----------
             force: bool
-                Force loading, default is False.
+                Force fetching data if not already in memory, default is False.
 
             Returns
             -------
@@ -508,30 +532,32 @@ class ArgoDataFetcher:
 
 
 class ArgoIndexFetcher:
-    """
-    Specs discussion :
-    https://github.com/euroargodev/argopy/issues/8
-    https://github.com/euroargodev/argopy/pull/6)
+    """ Fetcher and post-processor of Argo index data (API facade)
 
-    Usage:
+    Parameters
+    ----------
+    mode: str, optional
+        User mode. Eg: ``standard`` or ``expert``. Set to OPTIONS['mode'] by default if empty.
+    src: str, optional
+         Source of the data to use. Eg: ``erddap``. Set to OPTIONS['src'] by default if empty.
+    ds: str, optional
+        Name of the dataset to load. Eg: ``phy``. Set to OPTIONS['dataset'] by default if empty.
+    **fetcher_kwargs: optional
+        Additional arguments passed on data source fetcher of each access points.
 
-    from argopy import ArgoIndexFetcher
-    idx = ArgoIndexFetcher.region([-75, -65, 10, 20])
-    idx.plot.trajectories()
-    idx.load().to_dataframe()
+    Notes
+    -----
+    Spec discussions can be found here:
+        https://github.com/euroargodev/argopy/issues/8
 
-    Fetch and process Argo index.
+        https://github.com/euroargodev/argopy/pull/6
 
-    Can return metadata from index of :
-        - one or more float(s), defined by WMOs
-        - one or more profile(s), defined for one WMO and one or more CYCLE NUMBER
-        - a space/time rectangular domain, defined by lat/lon/pres/time range
-
-    idx object can also be used as an input :
-     argo_loader = ArgoDataFetcher(index=idx)
-
-    Specify here all options to data_fetchers
-
+    Examples
+    --------
+    >>> from argopy import IndexFetcher
+    >>> adf = IndexFetcher.region([-75, -65, 10, 20]).load()
+    >>> idx.plot()
+    >>> idx.index
     """
 
     def __init__(self, mode: str = "", src: str = "", ds: str = "", **fetcher_kwargs):
@@ -619,7 +645,8 @@ class ArgoIndexFetcher:
 
             Returns
             --------
-            :class:`pandas.Dataframe`
+            :class:`pandas.DataFrame`
+                Argo-like index of fetched data
         """
         if not isinstance(self._index, pd.core.frame.DataFrame):
             self.load()
@@ -636,8 +663,8 @@ class ArgoIndexFetcher:
 
         Returns
         -------
-        :class:`argopy.fetchers.ArgoIndexFetcher.float`
-            An index source fetcher for all float profiles index
+        :class:`argopy.fetchers.ArgoIndexFetcher`
+            An index fetcher initialised for specific floats
         """
         wmo = check_wmo(wmo)  # Check and return a valid list of WMOs
         self.fetcher = self.Fetchers["float"](WMO=wmo, **self.fetcher_options)
@@ -659,7 +686,7 @@ class ArgoIndexFetcher:
             Returns
             -------
             :class:`argopy.fetchers.ArgoIndexFetcher`
-                A index fetcher initialised for specific float profiles
+                An index fetcher initialised for specific float profiles
         """
         wmo = check_wmo(wmo)  # Check and return a valid list of WMOs
         self.fetcher = self.Fetchers["profile"](WMO=wmo, CYC=cyc, **self.fetcher_options)
@@ -670,26 +697,26 @@ class ArgoIndexFetcher:
     def region(self, box):
         """ Space/time domain index fetcher
 
-        Parameters
-        ----------
-        box: list()
-            Define the domain to load Argo index for. The box list is made of:
-                - lon_min: float, lon_max: float,
-                - lat_min: float, lat_max: float,
-                - date_min: str (optional), date_max: str (optional)
+            Parameters
+            ----------
+            box: list()
+                Define the domain to load Argo index for. The box list is made of:
+                    - lon_min: float, lon_max: float,
+                    - lat_min: float, lat_max: float,
+                    - date_min: str (optional), date_max: str (optional)
 
-            Longitude and latitude bounds are required, while the two bounding dates are optional.
-            If bounding dates are not specified, the entire time series is fetched.
-            Eg: [-60, -55, 40., 45., '2007-08-01', '2007-09-01']
+                Longitude and latitude bounds are required, while the two bounding dates are optional.
+                If bounding dates are not specified, the entire time series is fetched.
+                Eg: [-60, -55, 40., 45., '2007-08-01', '2007-09-01']
 
-        Returns
-        -------
-        :class:`argopy.fetchers.ArgoIndexFetcher`
-            A index fetcher initialised for a space/time domain
+            Returns
+            -------
+            :class:`argopy.fetchers.ArgoIndexFetcher`
+                An index fetcher initialised for a space/time domain
 
-        Warning
-        -------
-        Note that the box option for an index fetcher does not have pressure bounds, contrary to the data fetcher.
+            Warnings
+            --------
+            Note that the box option for an index fetcher does not have pressure bounds, contrary to the data fetcher.
         """
         is_indexbox(box, errors="raise")  # Validate the box definition
         self.fetcher = self.Fetchers["region"](box=box, **self.fetcher_options)
@@ -701,7 +728,7 @@ class ArgoIndexFetcher:
 
             Returns
             -------
-            :class:`pandas.Dataframe`
+            :class:`pandas.DataFrame`
         """
         if not self.fetcher:
             raise InvalidFetcher(
@@ -729,7 +756,14 @@ class ArgoIndexFetcher:
     def to_csv(self, file: str = "output_file.csv"):
         """ Fetch and save index data as csv in a file
 
-            This is a shortcut to .load().index.to_csv()
+            Notes
+            -----
+            >>> idx.to_csv()
+            is a shortcut to:
+            >>> idx.load().index.to_csv()
+
+            Since the ``index`` property is a :class:`pandas.DataFrame`, this is currently a short
+            cut to :meth:`pandas.DataFrame.to_index`
 
             Returns
             -------

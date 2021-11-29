@@ -1,5 +1,3 @@
-.. currentmodule:: argopy
-
 #############
 API reference
 #############
@@ -12,14 +10,16 @@ This page provides an auto-generated summary of argopy's API. For more details a
 Top-levels functions
 ====================
 
+.. currentmodule:: argopy
+
 Fetchers
 --------
 
 .. autosummary::
     :toctree: generated/
 
-    argopy.DataFetcher
-    argopy.IndexFetcher
+    DataFetcher
+    IndexFetcher
 
 Fetcher access points
 ---------------------
@@ -27,15 +27,16 @@ Fetcher access points
 .. autosummary::
    :toctree: generated/
 
-   argopy.DataFetcher.region
-   argopy.DataFetcher.float
-   argopy.DataFetcher.profile
+   DataFetcher.region
+   DataFetcher.float
+   DataFetcher.profile
 
 .. autosummary::
    :toctree: generated/
 
-   argopy.IndexFetcher.region
-   argopy.IndexFetcher.float
+   IndexFetcher.region
+   IndexFetcher.float
+   IndexFetcher.profile
 
 Fetcher methods
 ---------------
@@ -43,18 +44,18 @@ Fetcher methods
 .. autosummary::
    :toctree: generated/
 
-   argopy.DataFetcher.load
-   argopy.DataFetcher.to_xarray
-   argopy.DataFetcher.to_dataframe
-   argopy.DataFetcher.to_index
+   DataFetcher.load
+   DataFetcher.to_xarray
+   DataFetcher.to_dataframe
+   DataFetcher.to_index
 
 .. autosummary::
    :toctree: generated/
 
-   argopy.IndexFetcher.load
-   argopy.IndexFetcher.to_xarray
-   argopy.IndexFetcher.to_dataframe
-   argopy.IndexFetcher.to_csv
+   IndexFetcher.load
+   IndexFetcher.to_xarray
+   IndexFetcher.to_dataframe
+   IndexFetcher.to_csv
 
 Data visualisation
 ------------------
@@ -62,9 +63,9 @@ Data visualisation
 .. autosummary::
    :toctree: generated/
 
-   argopy.DataFetcher.plot
-   argopy.IndexFetcher.plot
-   argopy.dashboard
+   DataFetcher.plot
+   IndexFetcher.plot
+   dashboard
 
 
 Fetcher properties
@@ -73,31 +74,105 @@ Fetcher properties
 .. autosummary::
    :toctree: generated/
 
-   argopy.DataFetcher.uri
-   argopy.DataFetcher.data
-   argopy.DataFetcher.index
+   DataFetcher.uri
+   DataFetcher.data
+   DataFetcher.index
+   IndexFetcher.index
+
+
+Helpers
+-------
 
 .. autosummary::
    :toctree: generated/
 
-   argopy.IndexFetcher.index
+   status
+   TopoFetcher
+   set_options
+   clear_cache
+   tutorial.open_dataset
 
-Helpers and utilities
----------------------
+Low-level functions
+===================
+
+.. currentmodule:: argopy
+
+.. autosummary::
+    :toctree: generated/
+
+    show_versions
+    utilities.list_available_data_src
+    utilities.list_available_data_src
+    utilities.list_available_index_src
+
+
+Dataset.argo (xarray accessor)
+==============================
+
+.. currentmodule:: xarray
 
 .. autosummary::
    :toctree: generated/
+   :template: autosummary/accessor.rst
 
-   argopy.status
-   argopy.set_options
-   argopy.show_options
-   argopy.show_versions
-   argopy.clear_cache
-   argopy.TopoFetcher
-   argopy.tutorial.open_dataset
+   Dataset.argo
+
+This accessor extends :py:class:`xarray.Dataset`. Proper use of this accessor should be like:
+
+.. code-block:: python
+
+   >>> import xarray as xr         # first import xarray
+   >>> import argopy               # import argopy (the dataset 'argo' accessor is registered)
+   >>> from argopy import DataFetcher as ArgoDataFetcher
+   >>> ds = ArgoIndexFetcher().float([6902766, 6902772, 6902914, 6902746]).load().data
+   >>> ds.argo
+   >>> ds.argo.filter_qc
+
+
+Data Transformation
+-------------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   Dataset.argo.point2profile
+   Dataset.argo.profile2point
+   Dataset.argo.interp_std_levels
+
+Data Filters
+------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   Dataset.argo.filter_qc
+   Dataset.argo.filter_data_mode
+
+Complementing
+-------------
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+    Dataset.argo.teos10
+
+Misc
+----
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+    Dataset.argo.uid
+    Dataset.argo.cast_types
 
 Internals
 =========
+
+.. currentmodule:: argopy
 
 File systems
 ------------
@@ -116,47 +191,8 @@ File systems
     argopy.stores.indexfilter_wmo
     argopy.stores.indexfilter_box
 
-Utilities
----------
-
-Lister
-^^^^^^
-
-.. autosummary::
-    :toctree: generated/
-
-    argopy.utilities.list_available_data_src
-    argopy.utilities.list_available_index_src
-    argopy.utilities.list_standard_variables
-    argopy.utilities.list_multiprofile_file_variables
-
-Formatter
-^^^^^^^^^
-
-.. autosummary::
-    :toctree: generated/
-
-    argopy.utilities.format_oneline
-    argopy.utilities.Chunker
-    argopy.utilities.wmo2box
-    argopy.utilities.groupby_remap
-    argopy.utilities.linear_interpolation_remap
-
-Checker
-^^^^^^^
-
-.. autosummary::
-    :toctree: generated/
-
-    argopy.utilities.check_localftp
-    argopy.utilities.is_box
-    argopy.utilities.is_indexbox
-    argopy.utilities.is_wmo
-    argopy.utilities.check_wmo
-
-
-Data Fetchers
--------------
+Fetcher sources
+---------------
 
 ERDDAP
 ^^^^^^
@@ -197,12 +233,3 @@ Plotters
     argopy.plotters.plot_trajectory
     argopy.plotters.bar_plot
     argopy.plotters.open_dashboard
-
-
-Xarray *argo* name space
-==========================
-
-.. automodule:: argopy.xarray
-
-.. autoclass:: argopy.ArgoAccessor()
-    :members:

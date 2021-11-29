@@ -16,6 +16,7 @@ import pathlib
 import sys
 import xarray
 import datetime
+import sphinx_autosummary_accessors
 
 from contextlib import suppress
 allowed_failures = set()
@@ -78,6 +79,7 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'sphinx.ext.napoleon',
     'IPython.sphinxext.ipython_directive',
     'IPython.sphinxext.ipython_console_highlighting',
     'sphinx.ext.doctest',
@@ -86,7 +88,7 @@ extensions = [
     'nbsphinx',
     'numpydoc',
     'sphinx_issues',
-#    'sphinx_thebe'
+    'sphinx_autosummary_accessors'
 ]
 
 # sphinx_gallery_conf = {
@@ -94,7 +96,7 @@ extensions = [
 #                        }
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ['_templates', sphinx_autosummary_accessors.templates_path]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -191,7 +193,6 @@ html_theme = 'sphinx_book_theme'
 # html_theme = 'bootstrap'  # pip install sphinx-bootstrap-theme
 # html_theme = 'sphinx_redactor_theme' # pip install sphinx-redactor-theme
 # html_theme = 'pydata_sphinx_theme'  # pip install pydata-sphinx-theme
-
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

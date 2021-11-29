@@ -4,12 +4,14 @@ ipykernel>=5.3.4
 ipython>=7.28.0
 ipywidgets>=7.6.5
 
-sphinx-autosummary-accessors>=0.1.2
 nbsphinx>=0.8.7
 numpydoc>=1.1.0
 jinja2>=3.0.2
 sphinx_issues>=1.2.0
 gitpython>=3.1.2
+sphinx-autosummary-accessors>=0.1.2
+readthedocs-sphinx-ext
+sphinx-rtd-theme
 sphinx-book-theme
 # sphinx-bootstrap-theme
 
@@ -24,7 +26,7 @@ distributed>=2.30.0
 erddapy>=0.7.2
 gsw>=3.4.0
 
-fsspec>=0.7.4, <2021.11.1
+fsspec>=0.7.4, <2021.11.2
 aiohttp>=3.7.4
 
 #matplotlib>=3.3.2
