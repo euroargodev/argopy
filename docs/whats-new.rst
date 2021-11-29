@@ -8,6 +8,16 @@ v0.1.9 (X XXX. 2021)
 
 **Features and front-end API**
 
+- New fetcher backend ``ftp`` in DataFetcher.
+
+.. code-block:: python
+
+    from argopy import IndexFetcher
+    from argopy import DataFetcher
+    IdF = IndexFetcher(src='ftp')
+    AdF = DataFetcher(src='ftp')
+
+
 - New utility method :class:`argopy.TopoFetcher` to retrieve `GEBCO topography <https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.html>`_ for a given region.
 
 .. code-block:: python
