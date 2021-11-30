@@ -389,8 +389,8 @@ class Fetch_box(ArgovisDataFetcher):
         return url
 
     def get_url(self):
-        # return self.get_url_shape()
-        return self.get_url_rect()
+        return self.get_url_shape()
+        # return self.get_url_rect()
 
     @property
     def uri(self):
@@ -442,5 +442,5 @@ class Fetch_box(ArgovisDataFetcher):
 
     @property
     def url(self):
-        # return self.get_url_shape()
-        return self.get_url_rect()
+        return self.get_url_shape()
+        # return self.get_url_rect()
