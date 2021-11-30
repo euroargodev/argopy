@@ -29,7 +29,7 @@ For convenience we also added a new property to the data fetcher that return the
 
 **Internals**
 
-- New API endpoint for the argovis data source when fetching a ``region``.
+- Uses a new API endpoint for the ``argovis`` data source when fetching a ``region``. `More on this issue here <https://github.com/donatagiglio/Argovis/issues/3>`_. (:pr:`158`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 - Update documentation theme, and pages now use the `xarray accessor sphinx extension <https://github.com/xarray-contrib/sphinx-autosummary-accessors>`_. (:pr:`104`) by `G. Maze <http://www.github.com/gmaze>`_.
 
