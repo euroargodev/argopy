@@ -548,7 +548,7 @@ class httpstore(argo_store_proto):
             :class:`pandas.DataFrame`
 
         """
-        log.debug("Reading csv: %s" % url)
+        log.debug("Opening/reading csv: %s" % url)
         with self.open(url) as of:
             df = pd.read_csv(of, **kwargs)
         return df
@@ -566,12 +566,18 @@ class httpstore(argo_store_proto):
 
         """
         log.debug("Opening json: %s" % url)
-        try:
-            with self.open(url) as of:
-                js = json.load(of, **kwargs)
-            return js
-        except json.JSONDecodeError:
-            raise
+        # try:
+        #     with self.open(url) as of:
+        #         js = json.load(of, **kwargs)
+        #     return js
+        # except ClientResponseError:
+        #     raise
+        # except json.JSONDecodeError:
+        #     raise
+        data = self.fs.cat_file(url)
+        js = json.loads(data, **kwargs)
+        self.register(url)
+        return js
 
     def _mfprocessor_json(self, url, preprocess=None, *args, **kwargs):
         # Load data
