@@ -574,7 +574,7 @@ def isAPIconnected(src="erddap", data=True):
         raise InvalidFetcher
 
 
-def erddap_ds_exists(ds: str = "ArgoFloats", erddap: str = 'http://www.ifremer.fr/erddap') -> bool:
+def erddap_ds_exists(ds: str = "ArgoFloats", erddap: str = 'https://www.ifremer.fr/erddap') -> bool:
     """ Check if a dataset exists on a remote erddap server
     return a bool
 
@@ -583,7 +583,7 @@ def erddap_ds_exists(ds: str = "ArgoFloats", erddap: str = 'http://www.ifremer.f
     ds: str
         Name of the erddap dataset to check (default: 'ArgoFloats')
     erddap: str
-        Url of the erddap server (default: 'http://www.ifremer.fr/erddap')
+        Url of the erddap server (default: 'https://www.ifremer.fr/erddap')
 
     Return
     ------
