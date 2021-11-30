@@ -13,6 +13,7 @@ import pandas as pd
 from abc import abstractmethod
 import warnings
 import getpass
+import logging
 
 from .proto import ArgoDataFetcherProto
 from argopy.errors import NetCDF4FileNotFoundError
@@ -25,17 +26,19 @@ from argopy.options import OPTIONS
 from argopy.stores import httpstore
 from argopy.plotters import open_dashboard
 
-access_points = ["wmo"]
+import pyarrow.csv as csv
+import pyarrow as pa
+import gzip
+
+
+access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
 dataset_ids = ["phy", "bgc"]  # First is default
 api_server = 'https://data-argo.ifremer.fr/'  # API root url
 api_server_check = api_server + 'readme_before_using_the_data.txt'  # URL to check if the API is alive
 # api_server_check = OPTIONS["gdac_ftp"]
 
-import pyarrow.csv as csv
-import pyarrow as pa
-import gzip
-
+log = logging.getLogger("argopy.gdacftp")
 
 class indexstore():
     def __init__(self,
@@ -56,7 +59,8 @@ class indexstore():
         self.index_file = index_file
         self.cache = cache
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        self.fs = httpstore(cache, cachedir)  # Only for https://data-argo.ifremer.fr
+        timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
+        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')  # Only for https://data-argo.ifremer.fr
         self.host = host
 
     def load(self, force=False):
@@ -510,3 +514,44 @@ class Fetch_wmo(FTPArgoDataFetcher):
             return open_dashboard(wmo=self.WMO[0], **kw)
         else:
             warnings.warn("Dashboard only available for a single float request")
+
+
+class Fetch_box(FTPArgoDataFetcher):
+    """ Manage access to local ftp Argo data for: a rectangular space/time domain  """
+
+    def init(self, box: list):
+        """ Create Argo data loader
+
+        Parameters
+        ----------
+        box : list()
+            The box domain to load all Argo data for, with one of the following convention:
+
+                - box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
+                - box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
+        """
+        # We use a full domain definition (x, y, z, t) as argument for compatibility with the other fetchers
+        # but at this point, we internally work only with x, y and t.
+        self.BOX = box
+        self.indexBOX = [box[ii] for ii in [0, 1, 2, 3]]
+        if len(box) == 8:
+            self.indexBOX = [box[ii] for ii in [0, 1, 2, 3, 6, 7]]
+        log.debug("Created FTPArgoDataFetcher.Fetch_box instance with index BOX: %s" % self.indexBOX)
+        return self
+
+    @property
+    def uri(self):
+        """ List of files to load for a request
+
+        Returns
+        -------
+        list(str)
+        """
+        # Get list of files to load:
+        if not hasattr(self, "_list_of_argo_files"):
+            if len(self.indexBOX) == 4:
+                self._list_of_argo_files = self.indexfs.search_latlon(self.BOX).uri
+            else:
+                self._list_of_argo_files = self.indexfs.search_latlontim(self.BOX).uri
+
+        return self._list_of_argo_files
