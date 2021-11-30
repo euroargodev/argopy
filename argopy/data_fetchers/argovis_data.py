@@ -15,6 +15,7 @@ import getpass
 from .proto import ArgoDataFetcherProto
 from abc import abstractmethod
 import warnings
+import urllib
 
 from argopy.stores import httpstore
 from argopy.options import OPTIONS
@@ -143,6 +144,10 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
     def cname(self):
         """ Return a unique string defining the constraints """
         return self._cname()
+
+    def url_encode(self, urls):
+        return urls
+        # return [urllib.parse.quote(url, safe='/:?=[]&') for url in urls]
 
     def json2dataframe(self, profiles):
         """ convert json data to Pandas DataFrame """
@@ -318,7 +323,8 @@ class Fetch_wmo(ArgovisDataFetcher):
                     this.append(self.get_url(wmo, cycs))
             return this
 
-        return list_bunch(self.WMO, self.CYC)
+        urls = list_bunch(self.WMO, self.CYC)
+        return self.url_encode(urls)
 
     def dashboard(self, **kw):
         if len(self.WMO) == 1:
@@ -404,6 +410,7 @@ class Fetch_box(ArgovisDataFetcher):
         MaxLenTime = 90
         MaxLen = np.timedelta64(MaxLenTime, "D")
 
+        urls = []
         if not self.parallel:
             # Check if the time range is not larger than allowed (90 days):
             if Lt > MaxLen:
@@ -413,12 +420,10 @@ class Fetch_box(ArgovisDataFetcher):
                     chunksize={"time": MaxLenTime},
                 )
                 boxes = self.Chunker.fit_transform()
-                urls = []
                 for box in boxes:
                     urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())
-                return urls
             else:
-                return [self.get_url()]
+                urls.append(self.get_url())
         else:
             if 'time' not in self.chunks_maxsize:
                 self.chunks_maxsize['time'] = MaxLenTime
@@ -435,10 +440,10 @@ class Fetch_box(ArgovisDataFetcher):
                 {"box": self.BOX}, chunks=self.chunks, chunksize=self.chunks_maxsize
             )
             boxes = self.Chunker.fit_transform()
-            urls = []
             for box in boxes:
                 urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())
-            return urls
+
+        return self.url_encode(urls)
 
     @property
     def url(self):

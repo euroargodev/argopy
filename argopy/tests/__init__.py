@@ -4,6 +4,7 @@
 Test suite for argopy continuous integration
 
 """
+import traceback
 import importlib
 import pytest
 import fsspec
@@ -180,8 +181,9 @@ def safe_to_server_errors(test_func):
             )
             pass
         except DataNotFound as e:
-            # We make sure that data requested by tests are available from API, so this must be a server side error.
-            warnings.warn("\nSomething happened on server: %s" % str(e.args))
+            # We make sure that data requested by tests are available from API, so this must be a server side error !
+            warnings.warn("\nDataNotFound, Something happened on server side with:\n\t-%s" % "\n\t-".join(list(e.path)))
+            # traceback.print_tb(e.__traceback__)
             pass
         except ServerDisconnectedError as e:
             # We can't do anything about this !
