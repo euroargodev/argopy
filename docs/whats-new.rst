@@ -8,7 +8,7 @@ v0.1.9 (X XXX. 2021)
 
 **Features and front-end API**
 
-- New fetcher backend ``ftp`` in DataFetcher.
+- New fetcher backend ``ftp`` in DataFetcher. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
