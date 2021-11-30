@@ -47,7 +47,7 @@ Then, to create the float source data, you call the method and provide a folder 
 
     ds.argo.create_float_source("float_source")
 
-This will create the ``float_source/6902766.mat`` Matlab files to be set directly in the configuration file of the OWC software. This routine implements the same pre-processing as in the Matlab version (which is hosted on `this repo <https://github.com/euroargodev/dm_floats>`_ and ran with `this routine <https://github.com/euroargodev/dm_floats/blob/master/src/ow_source/create_float_source.m>`_).
+This will create the ``float_source/6902766.mat`` Matlab files to be set directly in the configuration file of the OWC software. This routine implements the same pre-processing as in the Matlab version (which is hosted on `this repo <https://github.com/euroargodev/dm_floats>`_ and ran with `this routine <https://github.com/euroargodev/dm_floats/blob/master/src/ow_source/create_float_source.m>`_). All the detailed steps of this pre-processing are given in the :meth:`Dataset.argo.create_float_source` API page.
 
 .. note::
     If the dataset contains data from more than one float, several Matlab files are created, one for each float. This will allow you to prepare data from a collection of floats.
