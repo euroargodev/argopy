@@ -146,6 +146,11 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         return self._cname()
 
     def url_encode(self, urls):
+        """ Return safely encoded list of urls
+
+            This was made to debug for fsspec caching system not working with cache of profile and region in argovis
+            Not working yet, see: https://github.com/euroargodev/argopy/issues/101
+        """
         return urls
         # return [urllib.parse.quote(url, safe='/:?=[]&') for url in urls]
 
