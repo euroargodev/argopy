@@ -1,5 +1,5 @@
 from .argo_index import indexstore, indexfilter_wmo, indexfilter_box
-from .filesystems import filestore, httpstore, memorystore
+from .filesystems import filestore, httpstore, memorystore, ftpstore
 
 #
 __all__ = (
@@ -9,5 +9,6 @@ __all__ = (
     "indexfilter_box",
     "filestore",
     "httpstore",
+    "ftpstore",
     "memorystore"
 )

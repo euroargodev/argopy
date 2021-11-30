@@ -134,6 +134,18 @@ def list_available_data_src():
         )
         pass
 
+    try:
+        from .data_fetchers import gdacftp_data as FTP_Fetchers
+
+        sources["ftp"] = FTP_Fetchers
+    except Exception:
+        warnings.warn(
+            "An error occurred while loading the FTP data fetcher, "
+            "it will not be available !\n%s\n%s"
+            % (sys.exc_info()[0], sys.exc_info()[1])
+        )
+        pass
+
     # return dict(sorted(sources.items()))
     return sources
 

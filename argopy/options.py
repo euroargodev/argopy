@@ -17,6 +17,7 @@ log = logging.getLogger("argopy.options")
 # Define option names as seen by users:
 DATA_SOURCE = "src"
 LOCAL_FTP = "local_ftp"
+FTP = "gdac_ftp"
 DATASET = "dataset"
 DATA_CACHE = "cachedir"
 USER_LEVEL = "mode"
@@ -27,6 +28,7 @@ TRUST_ENV = "trust_env"
 OPTIONS = {
     DATA_SOURCE: "erddap",
     LOCAL_FTP: "-",  # No default value
+    FTP: "https://data-argo.ifremer.fr",
     DATASET: "phy",
     DATA_CACHE: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
     USER_LEVEL: "standard",
@@ -35,7 +37,7 @@ OPTIONS = {
 }
 
 # Define the list of possible values
-_DATA_SOURCE_LIST = frozenset(["erddap", "localftp", "argovis"])
+_DATA_SOURCE_LIST = frozenset(["erddap", "localftp", "argovis", "ftp"])
 _DATASET_LIST = frozenset(["phy", "bgc", "ref"])
 _USER_LEVEL_LIST = frozenset(["standard", "expert"])
 
@@ -45,17 +47,21 @@ def _positive_integer(value):
     return isinstance(value, int) and value > 0
 
 
-def validate_ftp(this_path):
+def validate_localftp(this_path):
     if this_path != "-":
         return check_localftp(this_path, errors='raise')
     else:
         log.debug("OPTIONS['%s'] is not defined" % LOCAL_FTP)
         return False
 
+def validate_ftp(this_path):
+    log.debug("FTP:%s option not checked" % this_path)
+    return True
 
 _VALIDATORS = {
     DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
-    LOCAL_FTP: validate_ftp,
+    LOCAL_FTP: validate_localftp,
+    FTP: validate_ftp,
     DATASET: _DATASET_LIST.__contains__,
     DATA_CACHE: os.path.exists,
     USER_LEVEL: _USER_LEVEL_LIST.__contains__,

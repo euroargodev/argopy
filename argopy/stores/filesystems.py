@@ -700,3 +700,12 @@ class memorystore(filestore):
             https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.memory.MemoryFileSystem
     """
     protocol = 'memory'
+
+
+class ftpstore(httpstore):
+    """ Argo ftp file system
+
+        Relies on:
+            https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.memory.MemoryFileSystem
+    """
+    protocol = 'ftp'
