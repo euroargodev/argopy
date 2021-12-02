@@ -529,7 +529,7 @@ class ArgoDataFetcher:
             return open_sat_altim_report(WMOs, **kwargs)
         else:
             raise ValueError(
-                "Type of plot unavailable. Use: 'dac', 'profiler' or 'trajectory' (default)"
+                "Type of plot unavailable. Use: 'trajectory', 'dac', 'profiler', 'qc_altimetry'"
             )
 
 
@@ -830,7 +830,7 @@ class ArgoIndexFetcher:
             return open_sat_altim_report(WMOs, **kwargs)
         else:
             raise ValueError(
-                "Type of plot unavailable. Use: 'dac', 'profiler' or 'trajectory' (default)"
+                "Type of plot unavailable. Use: 'trajectory', 'dac', 'profiler', 'qc_altimetry'"
             )
 
     def clear_cache(self):
