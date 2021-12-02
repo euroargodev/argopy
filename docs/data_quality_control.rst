@@ -1,6 +1,5 @@
 .. _data_qc:
 
-
 Data quality control
 ====================
 
