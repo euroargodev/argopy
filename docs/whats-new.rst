@@ -8,18 +8,22 @@ v0.1.9 (X XXX. 2021)
 
 **Features and front-end API**
 
-- New plotter function :function:`argopy.plotters.open_sat_altim_report` to insert the CLS Satellite Altimeter Report figure on a notebook cell.
+- New plotter function :function:`argopy.plotters.open_sat_altim_report` to insert the CLS Satellite Altimeter Report figure on a notebook cell. (:pr:`159`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 
     from argopy.plotters import open_sat_altim_report
     open_sat_altim_report(6902766)
     open_sat_altim_report([6902766, 6902772, 6902914])
+    open_sat_altim_report([6902766, 6902772, 6902914], embed='dropdown')  # Default
     open_sat_altim_report([6902766, 6902772, 6902914], embed='slide')
-    open_sat_altim_report([6902766, 6902772, 6902914], embed='dropdown')
     open_sat_altim_report([6902766, 6902772, 6902914], embed='list')
     open_sat_altim_report([6902766, 6902772, 6902914], embed=None)
 
+    from argopy import DataFetcher
+    from argopy import IndexFetcher
+    DataFetcher().float([6902745, 6902746]).plot('qc_altimetry')
+    IndexFetcher().float([6902745, 6902746]).plot('qc_altimetry')
 
 - New utility method :class:`argopy.TopoFetcher` to retrieve `GEBCO topography <https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.html>`_ for a given region. (:pr:`150`) by `G. Maze <http://www.github.com/gmaze>`_.
 

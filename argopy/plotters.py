@@ -113,14 +113,14 @@ def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type
     return IFrame(url, width=width, height=height)
 
 
-def open_sat_altim_report(WMO=None, embed='slide'):
+def open_sat_altim_report(WMO=None, embed='dropdown'):
     """" Insert the CLS Satellite Altimeter Report figure on a notebook cell
 
         Parameters
         ----------
         wmo: int
             The float WMO to display. By default, this is set to None and will insert the general dashboard.
-        embed: {'list', 'slide', 'dropdown'}, default: 'slide'
+        embed: {'list', 'slide', 'dropdown'}, default: 'dropdown'
     """
     if embed in ['list', 'slide', 'dropdown']:
         from IPython.display import Image

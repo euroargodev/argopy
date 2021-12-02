@@ -41,13 +41,15 @@ def test_valid_dashboard():
 @requires_connection
 def test_open_sat_altim_report():
     import IPython
-    dsh = open_sat_altim_report(wmo=5904797, embed='slide')
-    assert isinstance(dsh[0], IPython.lib.display.Image)
+    dsh = open_sat_altim_report(WMO=5904797, embed='slide')
+    assert isinstance(dsh(0), IPython.display.Image)
 
-    dsh = open_sat_altim_report(wmo=5904797, embed='dropdown')
-    assert isinstance(dsh[5904797], IPython.lib.display.Image)
+    dsh = open_sat_altim_report(WMO=5904797, embed='dropdown')
+    assert isinstance(dsh(5904797), IPython.display.Image)
 
-    dsh = open_sat_altim_report(wmo=5904797, embed='list')
+    open_sat_altim_report(WMO=5904797, embed='list')
+
+    dsh = open_sat_altim_report(WMO=5904797, embed=None)
     assert isinstance(dsh, dict)
     assert 5904797 in dsh
 
