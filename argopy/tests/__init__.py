@@ -46,6 +46,8 @@ def _xfail(name, msg):
 
 
 AVAILABLE_SOURCES = list_available_data_src()
+warnings.warn(";".join(AVAILABLE_SOURCES.keys()))
+
 AVAILABLE_INDEX_SOURCES = list_available_index_src()
 CONNECTED = isconnected()
 
@@ -141,6 +143,22 @@ has_localftp, requires_localftp = _connectskip(
 )
 has_localftp_index, requires_localftp_index = _connectskip(
     "localftp" in AVAILABLE_INDEX_SOURCES, "the localftp index fetcher"
+)
+
+############
+# GDAC FTP #
+############
+has_pyarrow, requires_pyarrow = _importorskip("pyarrow")
+
+has_ftp, requires_ftp = _connectskip(
+    "ftp" in AVAILABLE_SOURCES, "the ftp data fetcher"
+)
+has_ftp_index, requires_ftp_index = _connectskip(
+    "ftp" in AVAILABLE_INDEX_SOURCES, "the ftp index fetcher"
+)
+has_connected_gdac = has_connection and has_ftp and has_pyarrow
+requires_connected_gdac = pytest.mark.skipif(
+    not has_connected_gdac, reason="Requires a live Ifremer FTP server and pyarrow"
 )
 
 ########

@@ -164,9 +164,15 @@ class Fetch_box(LocalFTPArgoIndexFetcher):
 
             Parameters
             ----------
-            box : list(float, float, float, float, float, float, str, str)
-                The box domain to load all Argo data for:
-                box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
+            box: list()
+                Define the domain to load Argo index for. The box list is made of:
+                    - lon_min: float, lon_max: float,
+                    - lat_min: float, lat_max: float,
+                    - date_min: str (optional), date_max: str (optional)
+
+                Longitude and latitude bounds are required, while the two bounding dates are optional.
+                If bounding dates are not specified, the entire time series is fetched.
+                Eg: [-60, -55, 40., 45., '2007-08-01', '2007-09-01']
         """
         self.BOX = box
         self.fcls = indexfilter_box(self.BOX)

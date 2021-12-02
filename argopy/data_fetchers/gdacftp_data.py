@@ -16,7 +16,9 @@ import getpass
 import logging
 
 from .proto import ArgoDataFetcherProto
-from argopy.errors import NetCDF4FileNotFoundError
+from .gdacftp_index import Fetch_wmo as FTPArgoIndexFetcher_wmo
+from .gdacftp_index import Fetch_box as FTPArgoIndexFetcher_box
+
 from argopy.utilities import (
     list_standard_variables,
     check_localftp,
@@ -26,10 +28,6 @@ from argopy.options import OPTIONS
 from argopy.stores import httpstore
 from argopy.plotters import open_dashboard
 
-import pyarrow.csv as csv
-import pyarrow as pa
-import gzip
-
 
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
@@ -38,167 +36,7 @@ api_server = 'https://data-argo.ifremer.fr/'  # API root url
 api_server_check = api_server + 'readme_before_using_the_data.txt'  # URL to check if the API is alive
 # api_server_check = OPTIONS["gdac_ftp"]
 
-log = logging.getLogger("argopy.gdacftp")
-
-class indexstore():
-    def __init__(self,
-                 host: str = "https://data-argo.ifremer.fr",
-                 index_file: str = "ar_index_global_prof.txt",
-                 cache: bool = False,
-                 cachedir: str = "",
-                 api_timeout: int = 0,
-                 **kw):
-        """ Create a file storage system for Argo index file requests
-
-            Parameters
-            ----------
-            cache : bool (False)
-            cachedir : str (used value in global OPTIONS)
-            index_file: str ("ar_index_global_prof.txt")
-        """
-        self.index_file = index_file
-        self.cache = cache
-        self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
-        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')  # Only for https://data-argo.ifremer.fr
-        self.host = host
-
-    def load(self, force=False):
-        """ Load an Argo-index file content
-
-        Try to load the gzipped file first, and if not found, fall back on the raw .txt file.
-
-        Returns
-        -------
-        pyarrow.table
-        """
-
-        def read_csv(input_file):
-            this_table = csv.read_csv(
-                input_file,
-                read_options=csv.ReadOptions(use_threads=True, skip_rows=8),
-                convert_options=csv.ConvertOptions(
-                    column_types={
-                        'date': pa.timestamp('s', tz='utc'),
-                        'date_update': pa.timestamp('s', tz='utc')
-                    },
-                    timestamp_parsers=['%Y%m%d%H%M%S']
-                )
-            )
-            return this_table
-
-        if not hasattr(self, 'index') or force:
-            this_path = self.host + "/" + self.index_file
-            if self.fs.exists(this_path + '.gz'):
-                with self.fs.open(this_path + '.gz', "rb") as fg:
-                    with gzip.open(fg) as f:
-                        self.index = read_csv(f)
-            else:
-                with self.fs.open(this_path, "rb") as f:
-                    self.index = read_csv(f)
-
-        return self
-
-    def __repr__(self):
-        summary = ["<argoindex>"]
-        summary.append("Name: %s" % self.index_file)
-        summary.append("FTP: %s" % self.host)
-        if hasattr(self, 'index'):
-            summary.append("Loaded: True (%i records)" % self.shape[0])
-        else:
-            summary.append("Loaded: False")
-        if hasattr(self, 'search'):
-            summary.append("Searched: True (%i records, %0.4f%%)" % (self.N_FILES, self.N_FILES * 100 / self.shape[0]))
-        else:
-            summary.append("Searched: False")
-        return "\n".join(summary)
-
-    @property
-    def data(self):
-        return self.index.to_pandas()
-
-    @property
-    def full_uri(self):
-        return ["/".join([self.host, "dac", f.as_py()]) for f in self.index['file']]
-
-    @property
-    def uri(self):
-        return ["/".join([self.host, "dac", f.as_py()]) for f in self.search['file']]
-
-    @property
-    def shape(self):
-        return self.index.shape
-
-    @property
-    def N_FILES(self):
-        if hasattr(self, 'search'):
-            return self.search.shape[0]
-        else:
-            return self.index.shape[0]
-
-    def to_dataframe(self):
-        return self.search.to_pandas()
-
-    def search_wmo(self, WMOs):
-        self.load()
-        filt = []
-        for wmo in WMOs:
-            filt.append(pa.compute.match_substring_regex(self.index['file'], pattern="/%i/" % wmo))
-        filt = np.logical_or.reduce(filt)
-        self.search = self.index.filter(filt)
-        return self
-
-    def search_wmo_cyc(self, WMOs, CYCs):
-        self.load()
-        filt = []
-        for wmo in WMOs:
-            for cyc in CYCs:
-                if cyc < 1000:
-                    pattern = "%i_%0.3d.nc" % (wmo, cyc)
-                else:
-                    pattern = "%i_%0.4d.nc" % (wmo, cyc)
-                filt.append(pa.compute.match_substring_regex(self.index['file'], pattern=pattern))
-        filt = np.logical_or.reduce(filt)
-        self.search = self.index.filter(filt)
-        return self
-
-    def search_latlon(self, BOX):
-        self.load()
-        filt = []
-        filt.append(pa.compute.greater_equal(self.index['longitude'], BOX[0]))
-        filt.append(pa.compute.less_equal(self.index['longitude'], BOX[1]))
-        filt.append(pa.compute.greater_equal(self.index['latitude'], BOX[2]))
-        filt.append(pa.compute.less_equal(self.index['latitude'], BOX[3]))
-        filt = np.logical_and.reduce(filt)
-        self.search = self.index.filter(filt)
-        return self
-
-    def search_tim(self, BOX):
-        self.load()
-        filt = []
-        filt.append(pa.compute.greater_equal(pa.compute.cast(self.index['date'], pa.timestamp('ms')),
-                                             pa.array([pd.to_datetime(BOX[4])], pa.timestamp('ms'))[0]))
-        filt.append(pa.compute.less_equal(pa.compute.cast(self.index['date'], pa.timestamp('ms')),
-                                          pa.array([pd.to_datetime(BOX[5])], pa.timestamp('ms'))[0]))
-        filt = np.logical_and.reduce(filt)
-        self.search = self.index.filter(filt)
-        return self
-
-    def search_latlontim(self, BOX):
-        self.load()
-        filt = []
-        filt.append(pa.compute.greater_equal(self.index['longitude'], BOX[0]))
-        filt.append(pa.compute.less_equal(self.index['longitude'], BOX[1]))
-        filt.append(pa.compute.greater_equal(self.index['latitude'], BOX[2]))
-        filt.append(pa.compute.less_equal(self.index['latitude'], BOX[3]))
-        filt.append(pa.compute.greater_equal(pa.compute.cast(self.index['date'], pa.timestamp('ms')),
-                                             pa.array([pd.to_datetime(BOX[4])], pa.timestamp('ms'))[0]))
-        filt.append(pa.compute.less_equal(pa.compute.cast(self.index['date'], pa.timestamp('ms')),
-                                          pa.array([pd.to_datetime(BOX[5])], pa.timestamp('ms'))[0]))
-        filt = np.logical_and.reduce(filt)
-        self.search = self.index.filter(filt)
-        return self
-
+log = logging.getLogger("argopy.gdacftp.data")
 
 class FTPArgoDataFetcher(ArgoDataFetcherProto):
     """ Manage access to Argo data from a remote GDAC FTP """
@@ -269,16 +107,17 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         api_timeout: int (optional)
             FTP request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
-
-        timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
-        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
+        self.cache = cache
+        self.cachedir = cachedir
+        self.timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
+        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=self.timeout, size_policy='head')
         self.definition = "Ifremer GDAC ftp Argo data fetcher"
         self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
         self.server = api_server
         self.errors = errors
+
         self.ftp = OPTIONS["gdac_ftp"] if ftp == "" else ftp
         # check_gdacftp(self.ftp, errors="raise")  # Validate ftp
-        self.indexfs = indexstore(host=self.ftp, cachedir=cachedir, cache=cache, timeout=timeout)
 
         if not isinstance(parallel, bool):
             parallel_method = parallel
@@ -363,12 +202,9 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
             if len(list(ds[v].dims)) == 0:
                 ds = ds.drop_vars(v)
 
-        # print("DIRECTION", np.unique(ds['DIRECTION']))
-        # print("N_PROF", np.unique(ds['N_PROF']))
         ds = (
             ds.argo.profile2point()
         )  # Default output is a collection of points along N_POINTS
-        # print("DIRECTION", np.unique(ds['DIRECTION']))
 
         # Remove netcdf file attributes and replace them with argopy ones:
         ds.attrs = {}
@@ -398,14 +234,6 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
             method = "sequential"
         else:
             method = self.parallel_method
-        # ds = self.fs.open_mfdataset(self.uri,
-        #                             method=method,
-        #                             concat_dim='N_POINTS',
-        #                             concat=True,
-        #                             preprocess=self._preprocess_multiprof,
-        #                             progress=self.progress,
-        #                             errors=errors,
-        #                             decode_cf=1, use_cftime=0, mask_and_scale=1, engine='h5netcdf')
         ds = self.fs.open_mfdataset(
             self.uri,
             method=method,
@@ -490,6 +318,14 @@ class Fetch_wmo(FTPArgoDataFetcher):
         self.WMO = WMO
         self.CYC = CYC
 
+        self.AiF = FTPArgoIndexFetcher_wmo(ftp=self.ftp,
+                                           ds=self.dataset_id,
+                                           cachedir=self.cachedir,
+                                           cache=self.cache,
+                                           api_timeout=self.timeout,
+                                           WMO=self.WMO,
+                                           CYC=self.CYC)
+
         return self
 
     @property
@@ -500,14 +336,16 @@ class Fetch_wmo(FTPArgoDataFetcher):
         -------
         list(str)
         """
-        # Get list of files to load:
-        if not hasattr(self, "_list_of_argo_files"):
-            if self.CYC is None:
-                self._list_of_argo_files = self.indexfs.search_wmo(self.WMO).uri
-            else:
-                self._list_of_argo_files = self.indexfs.search_wmo_cyc(self.WMO, self.CYC).uri
+        return self.AiF.uri
 
-        return self._list_of_argo_files
+        # # Get list of files to load:
+        # if not hasattr(self, "_list_of_argo_files"):
+        #     if self.CYC is None:
+        #         self._list_of_argo_files = self.indexfs.search_wmo(self.WMO).uri
+        #     else:
+        #         self._list_of_argo_files = self.indexfs.search_wmo_cyc(self.WMO, self.CYC).uri
+        #
+        # return self._list_of_argo_files
 
     def dashboard(self, **kw):
         if len(self.WMO) == 1:
@@ -537,6 +375,13 @@ class Fetch_box(FTPArgoDataFetcher):
         if len(box) == 8:
             self.indexBOX = [box[ii] for ii in [0, 1, 2, 3, 6, 7]]
         log.debug("Created FTPArgoDataFetcher.Fetch_box instance with index BOX: %s" % self.indexBOX)
+
+        self.AiF = FTPArgoIndexFetcher_box(ftp=self.ftp,
+                                           ds=self.dataset_id,
+                                           cachedir=self.cachedir,
+                                           cache=self.cache,
+                                           api_timeout=self.timeout,
+                                           box=self.indexBOX)
         return self
 
     @property
@@ -547,11 +392,13 @@ class Fetch_box(FTPArgoDataFetcher):
         -------
         list(str)
         """
-        # Get list of files to load:
-        if not hasattr(self, "_list_of_argo_files"):
-            if len(self.indexBOX) == 4:
-                self._list_of_argo_files = self.indexfs.search_latlon(self.BOX).uri
-            else:
-                self._list_of_argo_files = self.indexfs.search_latlontim(self.BOX).uri
+        return self.AiF.uri
 
-        return self._list_of_argo_files
+        # # Get list of files to load:
+        # if not hasattr(self, "_list_of_argo_files"):
+        #     if len(self.indexBOX) == 4:
+        #         self._list_of_argo_files = self.indexfs.search_latlon(self.indexBOX).uri
+        #     else:
+        #         self._list_of_argo_files = self.indexfs.search_latlontim(self.indexBOX).uri
+        #
+        # return self._list_of_argo_files

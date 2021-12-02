@@ -448,9 +448,9 @@ class ArgoDataFetcher:
                 index_loader.region(index_box).load()
             df = index_loader.index
 
-            if self._loaded and self._mode == 'standard' and len(self._index) != len(df):
-                warnings.warn("Loading a full index in 'standard' user mode may lead to more profiles in the "
-                              "index than reported in data.")
+            # if self._loaded and self._mode == 'standard' and len(self._index) != len(df):
+            #     warnings.warn("Loading a full index in 'standard' user mode may lead to more profiles in the "
+            #                   "index than reported in data.")
 
             # Possibly replace the light index with the full version:
             if not self._loaded or self._request == self.__repr__():

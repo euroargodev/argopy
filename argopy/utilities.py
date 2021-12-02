@@ -177,6 +177,18 @@ def list_available_index_src():
         )
         pass
 
+    try:
+        from .data_fetchers import gdacftp_index as FTP_Fetchers
+
+        AVAILABLE_SOURCES["ftp"] = FTP_Fetchers
+    except Exception:
+        warnings.warn(
+            "An error occurred while loading the FTP index fetcher, "
+            "it will not be available !\n%s\n%s"
+            % (sys.exc_info()[0], sys.exc_info()[1])
+        )
+        pass
+
     return AVAILABLE_SOURCES
 
 

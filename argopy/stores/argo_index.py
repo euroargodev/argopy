@@ -1,8 +1,9 @@
+""" Argo index store """
+
 import numpy as np
 import pandas as pd
 from abc import ABC, abstractmethod
 import hashlib
-# import io
 
 from argopy.errors import DataNotFound
 from argopy.options import OPTIONS

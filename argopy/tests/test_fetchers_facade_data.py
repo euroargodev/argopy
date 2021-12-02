@@ -15,6 +15,8 @@ from . import (
     requires_fetcher,
     requires_connected_erddap_phy,
     requires_localftp,
+    requires_ftp,
+    requires_connected_gdac,
     requires_connected_argovis,
     safe_to_server_errors,
     requires_matplotlib,
@@ -230,6 +232,11 @@ class Test_DataFetching:
     def test_float_argovis(self):
         self.__test_float("argovis")
 
+    @requires_ftp
+    @safe_to_server_errors
+    def test_float_ftp(self):
+        self.__test_float("ftp")
+
     @requires_connected_erddap_phy
     @safe_to_server_errors
     def test_profile_erddap(self):
@@ -246,6 +253,11 @@ class Test_DataFetching:
     def test_profile_argovis(self):
         self.__test_profile("argovis")
 
+    @requires_ftp
+    @safe_to_server_errors
+    def test_profile_ftp(self):
+        self.__test_profile("ftp")
+
     @requires_connected_erddap_phy
     @safe_to_server_errors
     def test_region_erddap(self):
@@ -261,3 +273,8 @@ class Test_DataFetching:
     @safe_to_server_errors
     def test_region_argovis(self):
         self.__test_region("argovis")
+
+    @requires_ftp
+    @safe_to_server_errors
+    def test_region_ftp(self):
+        self.__test_region("ftp")

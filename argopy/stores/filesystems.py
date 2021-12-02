@@ -1,5 +1,6 @@
 import os
 import types
+import numpy as np
 import xarray as xr
 import pandas as pd
 import fsspec
@@ -204,7 +205,7 @@ class filestore(argo_store_proto):
             :class:`xarray.DataSet`
         """
         with self.open(url) as of:
-            log.debug("Opening dataset: %s" % url)
+            # log.debug("Opening dataset: %s" % url)  # Redundant with fsspec logger
             ds = xr.open_dataset(of, *args, **kwargs)
         if "source" not in ds.encoding:
             if isinstance(url, str):
@@ -380,7 +381,7 @@ class httpstore(argo_store_proto):
             :class:`xarray.Dataset`
 
         """
-        log.debug("Opening dataset: %s" % url)
+        # log.debug("Opening dataset: %s" % url)  # Redundant with fsspec logger
         # try:
         # with self.fs.open(url) as of:
         #     ds = xr.open_dataset(of, *args, **kwargs)
@@ -454,6 +455,37 @@ class httpstore(argo_store_proto):
         """
         strUrl = lambda x: x.replace("https://", "").replace("http://", "")  # noqa: E731
 
+        def drop_variables_not_in_all_datasets(ds_collection):
+            """Drop variables that are not in all datasets (Lowest common denominator)"""
+            # List all possible data variables:
+            vlist = []
+            for res in ds_collection:
+                [vlist.append(v) for v in list(res.data_vars)]
+            vlist = np.unique(vlist)
+
+            # Check if all possible variables are in each datasets:
+            ishere = np.zeros((len(vlist), len(ds_collection)))
+            for ir, res in enumerate(ds_collection):
+                for iv, v in enumerate(res.data_vars):
+                    for iu, u in enumerate(vlist):
+                        if v == u:
+                            ishere[iu, ir] = 1
+            # List of dataset with missing variables:
+            ir_missing = np.sum(ishere, axis=0) < len(vlist)
+            # List of variables missing in some dataset:
+            iv_missing = np.sum(ishere, axis=1) < len(ds_collection)
+
+            # List of variables to keep
+            iv_tokeep = np.sum(ishere, axis=1) == len(ds_collection)
+            for ir, res in enumerate(ds_collection):
+                #         print("\n", res.attrs['Fetched_uri'])
+                v_to_drop = []
+                for iv, v in enumerate(res.data_vars):
+                    if v not in vlist[iv_tokeep]:
+                        v_to_drop.append(v)
+                ds_collection[ir] = ds_collection[ir].drop_vars(v_to_drop)
+            return ds_collection
+
         if not isinstance(urls, list):
             urls = [urls]
 
@@ -524,6 +556,7 @@ class httpstore(argo_store_proto):
         if len(results) > 0:
             if concat:
                 # ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
+                results = drop_variables_not_in_all_datasets(results)
                 ds = xr.concat(results,
                                dim=concat_dim,
                                data_vars='minimal',

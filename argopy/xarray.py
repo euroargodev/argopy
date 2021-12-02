@@ -124,6 +124,12 @@ class ArgoAccessor:
             "HISTORY_DATE",
         ]
 
+        def fix_weird_bytes(x):
+            x = x.replace(b"\xb1", b"+/-")
+            return x
+
+        fix_weird_bytes = np.vectorize(fix_weird_bytes)
+
         def cast_this(da, type):
             """ Low-level casting of DataArray values """
             try:
@@ -138,8 +144,11 @@ class ArgoAccessor:
 
         def cast_this_da(da):
             """ Cast any DataArray """
+            v = da.name
             da.attrs["casted"] = 0
             if v in list_str and da.dtype == "O":  # Object
+                if v in ["SCIENTIFIC_CALIB_COEFFICIENT"]:
+                    da.values = fix_weird_bytes(da.values)
                 da = cast_this(da, str)
 
             if v in list_int:  # and da.dtype == 'O':  # Object
@@ -530,6 +539,8 @@ class ArgoAccessor:
     def point2profile(self):  # noqa: C901
         """ Transform a collection of points into a collection of profiles
 
+        A "point" is a single location for measurements in space and time
+        A "point" is localised as unique UID based on WMO, CYCLE_NUMBER and DIRECTION variable values.
         """
         if self._type != "point":
             raise InvalidDatasetStructure(
@@ -647,7 +658,7 @@ class ArgoAccessor:
         # Restore coordinate variables:
         new_ds = new_ds.set_coords([c for c in coords_list if c in new_ds])
 
-        # Misc formating
+        # Misc formatting
         new_ds = new_ds.sortby("TIME")
         new_ds = new_ds.argo.cast_types()
         new_ds = new_ds[np.sort(new_ds.data_vars)]
@@ -660,6 +671,8 @@ class ArgoAccessor:
     def profile2point(self):
         """ Convert a collection of profiles to a collection of points
 
+        A "point" is a single location for measurements in space and time
+        A "point" is localised as unique UID based on WMO, CYCLE_NUMBER and DIRECTION variable values.
         """
         if self._type != "profile":
             raise InvalidDatasetStructure(
@@ -668,6 +681,7 @@ class ArgoAccessor:
         ds = self._obj
 
         # Remove all variables for which a dimension is length=0 (eg: N_HISTORY)
+        # todo: We should be able to find a way to keep them somewhere in the data structure
         dim_list = []
         for v in ds.data_vars:
             dims = ds[v].dims
@@ -680,6 +694,7 @@ class ArgoAccessor:
         ds = ds.drop_dims(np.unique(dim_list))
 
         # Remove any variable that is not with dimensions (N_PROF,) or (N_PROF, N_LEVELS)
+        # todo: We should be able to find a way to keep them somewhere in the data structure
         for v in ds:
             dims = list(ds[v].dims)
             dims = ".".join(dims)
