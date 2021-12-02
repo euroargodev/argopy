@@ -8,7 +8,7 @@ v0.1.9 (X XXX. 2021)
 
 **Features and front-end API**
 
-- New plotter function :function:`argopy.plotters.open_sat_altim_report` to insert the CLS Satellite Altimeter Report figure on a notebook cell. (:pr:`159`) by `G. Maze <http://www.github.com/gmaze>`_.
+- New plotter function :meth:`argopy.plotters.open_sat_altim_report` to insert the CLS Satellite Altimeter Report figure in a notebook cell. (:pr:`159`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 
@@ -42,7 +42,7 @@ For convenience we also added a new property to the data fetcher that return the
     loader = ArgoDataFetcher().float(2901623)
     loader.domain  # Returns [89.093, 96.036, -0.278, 4.16, 15.0, 2026.0, numpy.datetime64('2010-05-14T03:35:00.000000000'),  numpy.datetime64('2013-01-01T01:45:00.000000000')]
 
-- Update documentation with new section on Quality Control, see :ref:`data_qc`_
+- Update the documentation with a new section about :ref:`data_qc`.
 
 **Internals**
 
