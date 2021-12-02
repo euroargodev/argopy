@@ -114,13 +114,18 @@ def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type
 
 
 def open_sat_altim_report(WMO=None, embed='dropdown'):
-    """" Insert the CLS Satellite Altimeter Report figure on a notebook cell
+    """ Insert the CLS Satellite Altimeter Report figure in notebook cell
+
+        This is the method called when using the facade fetcher methods ``plot``:
+
+        >>> DataFetcher().float(6902745).plot('qc_altimetry')
 
         Parameters
         ----------
-        wmo: int
+        WMO: int or list
             The float WMO to display. By default, this is set to None and will insert the general dashboard.
         embed: {'list', 'slide', 'dropdown'}, default: 'dropdown'
+            Set the embedding method. If set to None, simply return the list of urls to figures.
     """
     if embed in ['list', 'slide', 'dropdown']:
         from IPython.display import Image
