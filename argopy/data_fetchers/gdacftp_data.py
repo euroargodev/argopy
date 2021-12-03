@@ -26,6 +26,7 @@ from argopy.utilities import (
 )
 from argopy.options import OPTIONS
 from argopy.stores import httpstore
+from argopy.stores.argo_index_pa import indexstore
 from argopy.plotters import open_dashboard
 
 
@@ -118,13 +119,15 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
 
         self.ftp = OPTIONS["gdac_ftp"] if ftp == "" else ftp
         # check_gdacftp(self.ftp, errors="raise")  # Validate ftp
+        self.indexfs = indexstore(host=self.ftp, cache=cache, cachedir=cachedir, timeout=self.timeout)
+        self.N_RECORDS = self.indexfs.load().shape[0]  # Number of records in the index
 
         if not isinstance(parallel, bool):
             parallel_method = parallel
             parallel = True
         if parallel_method not in ["thread"]:
             raise ValueError(
-                "erddap only support multi-threading, use 'thread' instead of '%s'"
+                "'ftp' only support multi-threading, use 'thread' instead of '%s'"
                 % parallel_method
             )
         self.parallel = parallel
@@ -140,6 +143,8 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         summary.append("Name: %s" % self.definition)
         summary.append("FTP: %s" % self.ftp)
         summary.append("Domain: %s" % format_oneline(self.cname()))
+        if hasattr(self.indexfs, 'search'):
+            summary.append("Index: %i files matching domain definition (%0.4f%% of total)" % (self.N_FILES, self.N_FILES * 100 / self.N_RECORDS))
         return "\n".join(summary)
 
     def cname(self):
@@ -318,14 +323,14 @@ class Fetch_wmo(FTPArgoDataFetcher):
         self.WMO = WMO
         self.CYC = CYC
 
-        self.AiF = FTPArgoIndexFetcher_wmo(ftp=self.ftp,
-                                           ds=self.dataset_id,
-                                           cachedir=self.cachedir,
-                                           cache=self.cache,
-                                           api_timeout=self.timeout,
-                                           WMO=self.WMO,
-                                           CYC=self.CYC)
-
+        # self.AiF = FTPArgoIndexFetcher_wmo(ftp=self.ftp,
+        #                                    ds=self.dataset_id,
+        #                                    cachedir=self.cachedir,
+        #                                    cache=self.cache,
+        #                                    api_timeout=self.timeout,
+        #                                    WMO=self.WMO,
+        #                                    CYC=self.CYC)
+        self.N_FILES = len(self.uri)  # Trigger search in the index
         return self
 
     @property
@@ -336,16 +341,16 @@ class Fetch_wmo(FTPArgoDataFetcher):
         -------
         list(str)
         """
-        return self.AiF.uri
+        # return self.AiF.uri
 
-        # # Get list of files to load:
-        # if not hasattr(self, "_list_of_argo_files"):
-        #     if self.CYC is None:
-        #         self._list_of_argo_files = self.indexfs.search_wmo(self.WMO).uri
-        #     else:
-        #         self._list_of_argo_files = self.indexfs.search_wmo_cyc(self.WMO, self.CYC).uri
-        #
-        # return self._list_of_argo_files
+        # Get list of files to load:
+        if not hasattr(self, "_list_of_argo_files"):
+            if self.CYC is None:
+                self._list_of_argo_files = self.indexfs.search_wmo(self.WMO).uri
+            else:
+                self._list_of_argo_files = self.indexfs.search_wmo_cyc(self.WMO, self.CYC).uri
+
+        return self._list_of_argo_files
 
     def dashboard(self, **kw):
         if len(self.WMO) == 1:
@@ -374,14 +379,15 @@ class Fetch_box(FTPArgoDataFetcher):
         self.indexBOX = [box[ii] for ii in [0, 1, 2, 3]]
         if len(box) == 8:
             self.indexBOX = [box[ii] for ii in [0, 1, 2, 3, 6, 7]]
-        log.debug("Created FTPArgoDataFetcher.Fetch_box instance with index BOX: %s" % self.indexBOX)
+        # log.debug("Created FTPArgoDataFetcher.Fetch_box instance with index BOX: %s" % self.indexBOX)
 
-        self.AiF = FTPArgoIndexFetcher_box(ftp=self.ftp,
-                                           ds=self.dataset_id,
-                                           cachedir=self.cachedir,
-                                           cache=self.cache,
-                                           api_timeout=self.timeout,
-                                           box=self.indexBOX)
+        # self.AiF = FTPArgoIndexFetcher_box(ftp=self.ftp,
+        #                                    ds=self.dataset_id,
+        #                                    cachedir=self.cachedir,
+        #                                    cache=self.cache,
+        #                                    api_timeout=self.timeout,
+        #                                    box=self.indexBOX)
+        self.N_FILES = len(self.uri)  # Trigger search in the index
         return self
 
     @property
@@ -392,13 +398,13 @@ class Fetch_box(FTPArgoDataFetcher):
         -------
         list(str)
         """
-        return self.AiF.uri
+        # return self.AiF.uri
 
-        # # Get list of files to load:
-        # if not hasattr(self, "_list_of_argo_files"):
-        #     if len(self.indexBOX) == 4:
-        #         self._list_of_argo_files = self.indexfs.search_latlon(self.indexBOX).uri
-        #     else:
-        #         self._list_of_argo_files = self.indexfs.search_latlontim(self.indexBOX).uri
-        #
-        # return self._list_of_argo_files
+        # Get list of files to load:
+        if not hasattr(self, "_list_of_argo_files"):
+            if len(self.indexBOX) == 4:
+                self._list_of_argo_files = self.indexfs.search_latlon(self.indexBOX).uri
+            else:
+                self._list_of_argo_files = self.indexfs.search_latlontim(self.indexBOX).uri
+
+        return self._list_of_argo_files

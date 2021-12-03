@@ -127,7 +127,6 @@ class ArgoAccessor:
         def fix_weird_bytes(x):
             x = x.replace(b"\xb1", b"+/-")
             return x
-
         fix_weird_bytes = np.vectorize(fix_weird_bytes)
 
         def cast_this(da, type):
@@ -169,7 +168,9 @@ class ArgoAccessor:
                             s = da.stack(dummy_index=da.dims)
                             val = s.astype(str).values.astype("U14")
                             # This should not happen, but still ! That's real world data
+                            val[val == ""] = "nan"
                             val[val == "              "] = "nan"
+                            #
                             s.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
                             da.values = s.unstack("dummy_index")
                         da = cast_this(da, np.datetime64)

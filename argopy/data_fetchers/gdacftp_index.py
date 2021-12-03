@@ -93,8 +93,8 @@ class FTPArgoIndexFetcher(ABC):
     def __repr__(self):
         summary = ["<indexfetcher.ftp>"]
         summary.append("Name: %s" % self.definition)
+        summary.append("Index: %s" % self.indexfs.index_file)
         summary.append("FTP: %s" % self.ftp)
-        summary.append("File: %s" % self.indexfs.index_file)
         summary.append("Domain: %s" % format_oneline(self.cname()))
         if hasattr(self.indexfs, 'search'):
             summary.append("Records: %i/%i (%0.4f%%)" % (self.indexfs.N_FILES, self.indexfs.shape[0], self.indexfs.N_FILES * 100 / self.indexfs.shape[0]))
@@ -184,9 +184,14 @@ class Fetch_wmo(FTPArgoIndexFetcher):
             )  # Make sure we deal with an array of integers
         self.WMO = WMO
         self.CYC = CYC
-        log.debug("Create FTPArgoIndexFetcher.Fetch_box instance with index with WMOs=[%s] and CYCs=[%s]" % (
-            ";".join([str(wmo) for wmo in self.WMO]),
-            ";".join([str(cyc) for cyc in self.CYC])))
+        if len(self.CYC) > 0:
+            log.debug("Create FTPArgoIndexFetcher.Fetch_box instance with index with WMOs=[%s] and CYCs=[%s]" % (
+                ";".join([str(wmo) for wmo in self.WMO]),
+                ";".join([str(cyc) for cyc in self.CYC])))
+        else:
+            log.debug("Create FTPArgoIndexFetcher.Fetch_box instance with index with WMOs=[%s] and CYCs=[%s]" % (
+                ";".join([str(wmo) for wmo in self.WMO])))
+
         self.N_FILES = len(self.uri)  # Trigger file index load and search
         return self
 
@@ -224,7 +229,7 @@ class Fetch_wmo(FTPArgoIndexFetcher):
 
 
 class Fetch_box(FTPArgoIndexFetcher):
-    """ Manage access to local ftp Argo index for: a rectangular space/time domain  """
+    """ Manage access to GDAC ftp Argo index for: a rectangular space/time domain  """
 
     def init(self, box: list):
         """ Create Argo data loader

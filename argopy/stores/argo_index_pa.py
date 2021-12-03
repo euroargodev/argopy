@@ -12,6 +12,7 @@ from argopy.errors import DataNotFound
 try:
     import pyarrow.csv as csv
     import pyarrow as pa
+    import pyarrow.parquet as pq
 except ModuleNotFoundError:
     pass
 
@@ -81,27 +82,62 @@ class ArgoIndexStoreProto(ABC):
                     cname = ";".join([prtcyc(CYC, wmo) for wmo in WMO])
                 cname = "[%s]" % cname
 
-        cname = "index-%s" % cname
         return cname
 
     @property
-    def sha(self) -> str:
-        if self.cname() == "?":
+    def sha_df(self) -> str:
+        cname = "pd-%s" % self.cname()
+        if cname == "?":
             raise ValueError("Search not initialised")
         else:
-            path = self.cname()
+            path = cname
         return hashlib.sha256(path.encode()).hexdigest()
 
+    @property
+    def sha_pq(self) -> str:
+        cname = "pq-%s" % self.cname()
+        if cname == "?":
+            raise ValueError("Search not initialised")
+        else:
+            path = cname
+        return hashlib.sha256(path.encode()).hexdigest()
 
 class indexstore(ArgoIndexStoreProto):
+    """ Argo index store based on pyarrow table
+
+    API Design:
+    -----------
+    The store is instantiated with the file name and access protocol:
+    >>> idx = indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt", cache=True)
+
+    Then, search can be carried with:
+    >>> idx.search_wmo(1901393)
+    >>> idx.search_wmo_cyc(1901393, [1,12])
+    >>> idx.search_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
+    >>> idx.search_latlon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+    >>> idx.search_latlontim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+
+    Index and search properties:
+    >>> idx.shape  # shape of the full index pyarrow table
+    >>> idx.N_FILES  # Shortcut for length of 1st dimension of the search results pyarrow table (fall back on full index table if search not run)
+    >>> idx.uri  # List of absolute path to files from the search results table column 'file'
+    >>> idx.index  # Pyarrow table with full index
+    >>> idx.search  # Pyarrow table with search results
+    >>> idx.data  # Pandas dataframe with full index
+
+    Internals:
+    >>> idx.load()  # Load and read the full index file, using cache if necessary
+    >>> idx.run()  # Run the search and save results in cache if necessary
+    >>> idx.to_dataframe()  # Convert search results to pandas dataframe
+
+    """
 
     def __init__(self,
                  host: str = "https://data-argo.ifremer.fr",
                  index_file: str = "ar_index_global_prof.txt",
                  cache: bool = False,
                  cachedir: str = "",
-                 api_timeout: int = 0,
-                 **kw):
+                 timeout: int = 0):
         """ Create a file storage system for Argo index file requests
 
             Parameters
@@ -113,8 +149,7 @@ class indexstore(ArgoIndexStoreProto):
         self.index_file = index_file
         self.cache = cache
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
-        # self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')  # Only for https://data-argo.ifremer.fr
+        timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
         self.fs = {}
         self.fs['index'] = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')  # Only for https://data-argo.ifremer.fr
         self.fs['search'] = memorystore(cache, cachedir)  # Manage the search results
@@ -160,7 +195,7 @@ class indexstore(ArgoIndexStoreProto):
 
     def __repr__(self):
         summary = ["<argoindex>"]
-        summary.append("Name: %s" % self.index_file)
+        summary.append("Index: %s" % self.index_file)
         summary.append("FTP: %s" % self.host)
         if hasattr(self, 'index'):
             summary.append("Loaded: True (%i records)" % self.shape[0])
@@ -180,31 +215,31 @@ class indexstore(ArgoIndexStoreProto):
     def to_dataframe(self):
         """ Return search results as dataframe
 
-        If store is cached, caching is triggered here:
+        If store is cached, caching is triggered here
         """
         # df = self.search.to_pandas()
         if self.N_FILES == 0:
             raise DataNotFound("No Argo data in the index correspond to your search criteria."
                                "Search definition: %s" % self.cname())
 
-        this_path = self.sha
+        this_path = self.sha_df
         if self.fs['search'].exists(this_path):
-            log.debug('Search results already in memory')
+            log.debug('Search results already in memory as dataframe')
             with self.fs['search'].fs.open(this_path, "rb") as of:
                 df = pd.read_pickle(of)
         else:
-            log.debug('Search results conversion from scratch')
+            log.debug('Search results conversion to dataframe from scratch')
             df = self.search.to_pandas()  # Convert pyarrow table to pandas dataframe
             if self.cache:
-                log.debug('Search results conversion saved in cache')
                 with self.fs['search'].open(this_path, "wb") as of:
                     df.to_pickle(of) # Save in "memory"
                 with self.fs['search'].fs.open(this_path, "rb") as of:
                     df = pd.read_pickle(of)  # Trigger save in cache file
+                log.debug('Search results as dataframe saved in cache')
         return df
 
     @property
-    def full_uri(self):
+    def uri_full_index(self):
         return ["/".join([self.host, "dac", f.as_py()]) for f in self.index['file']]
 
     @property
@@ -222,14 +257,32 @@ class indexstore(ArgoIndexStoreProto):
         else:
             return self.index.shape[0]
 
+    def run(self):
+        """ Filter index with search criteria """
+        search_path = self.sha_pq
+        if self.fs['search'].exists(search_path):
+            log.debug('Search results already in memory as pyarrow table, loading')
+            with self.fs['search'].fs.open(search_path, "rb") as of:
+                self.search = pa.parquet.read_table(of)
+        else:
+            log.debug('Compute search from scratch')
+            self.search = self.index.filter(self.search_filter)
+            if self.cache:
+                with self.fs['search'].open(search_path, "wb") as of:
+                    pa.parquet.write_table(self.search, of)
+                with self.fs['search'].fs.open(search_path, "rb") as of:
+                    self.search = pa.parquet.read_table(of)
+                log.debug('Search results as pyarrow table saved in cache')
+        return self
+
     def search_wmo(self, WMOs):
         self.load()
         self.search_type = {'WMO': WMOs}
         filt = []
         for wmo in WMOs:
             filt.append(pa.compute.match_substring_regex(self.index['file'], pattern="/%i/" % wmo))
-        filt = np.logical_or.reduce(filt)
-        self.search = self.index.filter(filt)
+        self.search_filter = np.logical_or.reduce(filt)
+        self.run()
         log.debug("Argo index searched for WMOs=[%s]" % ";".join([str(wmo) for wmo in WMOs]))
         return self
 
@@ -244,24 +297,11 @@ class indexstore(ArgoIndexStoreProto):
                 else:
                     pattern = "%i_%0.4d.nc" % (wmo, cyc)
                 filt.append(pa.compute.match_substring_regex(self.index['file'], pattern=pattern))
-        filt = np.logical_or.reduce(filt)
-        self.search = self.index.filter(filt)
+        self.search_filter = np.logical_or.reduce(filt)
+        self.run()
         log.debug("Argo index searched for WMOs=[%s] and CYCs=[%s]" % (
             ";".join([str(wmo) for wmo in WMOs]),
             ";".join([str(cyc) for cyc in CYCs])))
-        return self
-
-    def search_latlon(self, BOX):
-        self.load()
-        self.search_type = {'BOX': BOX}
-        filt = []
-        filt.append(pa.compute.greater_equal(self.index['longitude'], BOX[0]))
-        filt.append(pa.compute.less_equal(self.index['longitude'], BOX[1]))
-        filt.append(pa.compute.greater_equal(self.index['latitude'], BOX[2]))
-        filt.append(pa.compute.less_equal(self.index['latitude'], BOX[3]))
-        filt = np.logical_and.reduce(filt)
-        self.search = self.index.filter(filt)
-        log.debug("Argo index searched for BOX=%s" % BOX)
         return self
 
     def search_tim(self, BOX):
@@ -272,8 +312,21 @@ class indexstore(ArgoIndexStoreProto):
                                              pa.array([pd.to_datetime(BOX[4])], pa.timestamp('ms'))[0]))
         filt.append(pa.compute.less_equal(pa.compute.cast(self.index['date'], pa.timestamp('ms')),
                                           pa.array([pd.to_datetime(BOX[5])], pa.timestamp('ms'))[0]))
-        filt = np.logical_and.reduce(filt)
-        self.search = self.index.filter(filt)
+        self.search_filter = np.logical_and.reduce(filt)
+        self.run()
+        log.debug("Argo index searched for BOX=%s" % BOX)
+        return self
+
+    def search_latlon(self, BOX):
+        self.load()
+        self.search_type = {'BOX': BOX}
+        filt = []
+        filt.append(pa.compute.greater_equal(self.index['longitude'], BOX[0]))
+        filt.append(pa.compute.less_equal(self.index['longitude'], BOX[1]))
+        filt.append(pa.compute.greater_equal(self.index['latitude'], BOX[2]))
+        filt.append(pa.compute.less_equal(self.index['latitude'], BOX[3]))
+        self.search_filter = np.logical_and.reduce(filt)
+        self.run()
         log.debug("Argo index searched for BOX=%s" % BOX)
         return self
 
@@ -289,8 +342,8 @@ class indexstore(ArgoIndexStoreProto):
                                              pa.array([pd.to_datetime(BOX[4])], pa.timestamp('ms'))[0]))
         filt.append(pa.compute.less_equal(pa.compute.cast(self.index['date'], pa.timestamp('ms')),
                                           pa.array([pd.to_datetime(BOX[5])], pa.timestamp('ms'))[0]))
-        filt = np.logical_and.reduce(filt)
-        self.search = self.index.filter(filt)
+        self.search_filter = np.logical_and.reduce(filt)
+        self.run()
         log.debug("Argo index searched for BOX=%s" % BOX)
         return self
 

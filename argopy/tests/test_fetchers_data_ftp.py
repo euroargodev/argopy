@@ -12,7 +12,6 @@ from argopy.errors import (
 )
 from argopy.utilities import is_list_of_strings
 from . import (
-    requires_ftp,
     requires_connected_gdac,
     safe_to_server_errors
 )
@@ -20,31 +19,16 @@ from . import (
 
 @requires_connected_gdac
 class Test_Backend:
-    """ Test ERDDAP data fetching backend """
+    """ Test GDAC FTP data fetching backend """
 
     src = "ftp"
     requests = {
-        "float": [[1901393], [1901393, 6902746]],
-        "profile": [[6902746, 34], [6902746, np.arange(12, 13)], [6902746, [1, 12]]],
+        "float": [[1901393], [6902746]],
+        "profile": [[6902746, 34], [6902746, np.arange(12, 14)], [6902746, [1, 12]]],
         "region": [
-            [-70, -65, 35.0, 40.0, 0, 10.0],
-            [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-03"],
-            [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-06"],
+            [-65.1, -65, 35.1, 36., 0, 10.0],
+            [-65.1, -65, 35.1, 36., 0, 10.0, "2013-01", "2013-03"]
         ],
-    }
-    requests_bgc = {
-        "float": [[5903248], [7900596, 2902264]],
-        "profile": [[5903248, 34], [5903248, np.arange(12, 14)], [5903248, [1, 12]]],
-        "region": [
-            [-70, -65, 35.0, 40.0, 0, 10.0],
-            [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01-1", "2012-12-31"],
-        ],
-    }
-    requests_ref = {
-        "region": [
-            [-70, -65, 35.0, 40.0, 0, 10.0],
-            [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01-01", "2012-12-31"],
-        ]
     }
 
     def test_cachepath_notfound(self):
@@ -120,15 +104,6 @@ class Test_Backend:
                 assert is_list_of_strings(fetcher.uri)
                 assert is_list_of_strings(fetcher.cachepath)
 
-    @safe_to_server_errors
-    def test_N_POINTS(self):
-        n = (
-            ArgoDataFetcher(src=self.src)
-            .region(self.requests["region"][1])
-            .fetcher.N_POINTS
-        )
-        assert isinstance(n, int)
-
     def test_minimal_vlist(self):
         f = ArgoDataFetcher(src=self.src).region(self.requests["region"][1]).fetcher
         assert is_list_of_strings(f._minimal_vlist)
@@ -182,29 +157,9 @@ class Test_Backend:
         self.args = {"region": self.requests["region"]}
         self.__testthis("phy")
 
-    @safe_to_server_errors
-    def test_bgc_float(self):
-        self.args = {"float": self.requests_bgc["float"]}
-        self.__testthis("bgc")
 
-    @safe_to_server_errors
-    def test_bgc_profile(self):
-        self.args = {"profile": self.requests_bgc["profile"]}
-        self.__testthis("bgc")
-
-    @safe_to_server_errors
-    def test_bgc_region(self):
-        self.args = {"region": self.requests_bgc["region"]}
-        self.__testthis("bgc")
-
-    @safe_to_server_errors
-    def test_ref_region(self):
-        self.args = {"region": self.requests_ref["region"]}
-        self.__testthis("ref")
-
-
-@requires_connected_ftp
-class Test_BackendParallel:
+@requires_connected_gdac
+class offTest_BackendParallel:
     """ This test backend for parallel requests """
 
     src = "ftp"
