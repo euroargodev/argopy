@@ -136,6 +136,106 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             this.attrs["history"] = txt
         return this
 
+    def _add_attributes(self, this):  # noqa: C901
+        """ Add variables attributes not return by erddap requests (csv)
+
+            This is hard coded, but should be retrieved from an API somewhere
+        """
+        for v in this.data_vars:
+            if "TEMP" in v and "_QC" not in v:
+                this[v].attrs = {
+                    "long_name": "SEA TEMPERATURE IN SITU ITS-90 SCALE",
+                    "standard_name": "sea_water_temperature",
+                    "units": "degree_Celsius",
+                    "valid_min": -2.0,
+                    "valid_max": 40.0,
+                    "resolution": 0.001,
+                }
+                if "ERROR" in v:
+                    this[v].attrs["long_name"] = (
+                        "ERROR IN %s" % this[v].attrs["long_name"]
+                    )
+
+        for v in this.data_vars:
+            if "PSAL" in v and "_QC" not in v:
+                this[v].attrs = {
+                    "long_name": "PRACTICAL SALINITY",
+                    "standard_name": "sea_water_salinity",
+                    "units": "psu",
+                    "valid_min": 0.0,
+                    "valid_max": 43.0,
+                    "resolution": 0.001,
+                }
+                if "ERROR" in v:
+                    this[v].attrs["long_name"] = (
+                        "ERROR IN %s" % this[v].attrs["long_name"]
+                    )
+
+        for v in this.data_vars:
+            if "PRES" in v and "_QC" not in v:
+                this[v].attrs = {
+                    "long_name": "Sea Pressure",
+                    "standard_name": "sea_water_pressure",
+                    "units": "decibar",
+                    "valid_min": 0.0,
+                    "valid_max": 12000.0,
+                    "resolution": 0.1,
+                    "axis": "Z",
+                }
+                if "ERROR" in v:
+                    this[v].attrs["long_name"] = (
+                        "ERROR IN %s" % this[v].attrs["long_name"]
+                    )
+
+        for v in this.data_vars:
+            if "DOXY" in v and "_QC" not in v:
+                this[v].attrs = {
+                    "long_name": "Dissolved oxygen",
+                    "standard_name": "moles_of_oxygen_per_unit_mass_in_sea_water",
+                    "units": "micromole/kg",
+                    "valid_min": -5.0,
+                    "valid_max": 600.0,
+                    "resolution": 0.001,
+                }
+                if "ERROR" in v:
+                    this[v].attrs["long_name"] = (
+                        "ERROR IN %s" % this[v].attrs["long_name"]
+                    )
+
+        for v in this.data_vars:
+            if "_QC" in v:
+                attrs = {
+                    "long_name": "Global quality flag of %s profile" % v,
+                    "convention": "Argo reference table 2a",
+                }
+                this[v].attrs = attrs
+
+        if "CYCLE_NUMBER" in this.data_vars:
+            this["CYCLE_NUMBER"].attrs = {
+                "long_name": "Float cycle number",
+                "convention": "0..N, 0 : launch cycle (if exists), 1 : first complete cycle",
+            }
+
+        if "DATA_MODE" in this.data_vars:
+            this["DATA_MODE"].attrs = {
+                "long_name": "Delayed mode or real time data",
+                "convention": "R : real time; D : delayed mode; A : real time with adjustment",
+            }
+
+        if "DIRECTION" in this.data_vars:
+            this["DIRECTION"].attrs = {
+                "long_name": "Direction of the station profiles",
+                "convention": "A: ascending profiles, D: descending profiles",
+            }
+
+        if "PLATFORM_NUMBER" in this.data_vars:
+            this["PLATFORM_NUMBER"].attrs = {
+                "long_name": "Float unique identifier",
+                "convention": "WMO float identifier : A9IIIII",
+            }
+
+        return this
+
     @property
     def cachepath(self):
         """ Return path to cache file for this request """
@@ -216,7 +316,9 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         ds = ds.set_coords(coords)
 
         # Cast data types and add variable attributes (not available in the csv download):
+        ds['TIME'] = ds['TIME'].astype(np.datetime64)
         ds = ds.argo.cast_types()
+        ds = self._add_attributes(ds)
 
         # Remove argovis file attributes and replace them with argopy ones:
         ds.attrs = {}

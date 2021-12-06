@@ -122,6 +122,7 @@ class ArgoAccessor:
             "JULD_LOCATION",
             "SCIENTIFIC_CALIB_DATE",
             "HISTORY_DATE",
+            "TIME"
         ]
 
         def fix_weird_bytes(x):
@@ -229,7 +230,7 @@ class ArgoAccessor:
 
             return da
 
-        for v in ds.data_vars:
+        for v in ds.variables:
             try:
                 ds[v] = cast_this_da(ds[v])
             except Exception:

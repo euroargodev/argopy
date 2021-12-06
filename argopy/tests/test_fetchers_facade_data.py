@@ -125,6 +125,7 @@ class Test_Facade:
         with argopy.set_options(local_ftp=self.local_ftp):
             f, fetcher = self.__get_fetcher(pt='float')
 
+            # Test 'trajectory'
             for ws in [False, has_seaborn]:
                 for wc in [False, has_cartopy]:
                     for legend in [True, False]:
@@ -143,6 +144,7 @@ class Test_Facade:
 
                         mpl.pyplot.close(fig)
 
+            # Test 'dac', 'profiler'
             for ws in [False, has_seaborn]:
                 for by in [
                     "dac",
@@ -152,6 +154,12 @@ class Test_Facade:
                     assert isinstance(fig, mpl.figure.Figure)
                     mpl.pyplot.close(fig)
 
+            # Test 'qc_altimetry'
+            import IPython
+            dsh = fetcher.plot(ptype='qc_altimetry', embed='slide')
+            assert isinstance(dsh(0), IPython.display.Image)
+
+            # Test invalid plot
             with pytest.raises(ValueError):
                 fetcher.plot(ptype='invalid_cat', with_seaborn=ws)
 

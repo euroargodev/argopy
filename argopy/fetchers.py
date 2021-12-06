@@ -18,7 +18,7 @@ import logging
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher
 from .utilities import list_available_data_src, list_available_index_src, is_box, is_indexbox, check_wmo
-from .plotters import plot_trajectory, bar_plot
+from .plotters import plot_trajectory, bar_plot, open_sat_altim_report
 
 
 AVAILABLE_DATA_SOURCES = list_available_data_src()
@@ -500,8 +500,7 @@ class ArgoDataFetcher:
 
             Parameters
             ----------
-            ptype: str
-                Type of plot to generate. This can be: 'trajectory',' profiler', 'dac'.
+            ptype: {'trajectory',' profiler', 'dac', 'qc_altimetry}, default: 'trajectory'
 
             Returns
             -------
@@ -519,9 +518,12 @@ class ArgoDataFetcher:
             return bar_plot(self.index, by="profiler", **kwargs)
         elif ptype == "trajectory":
             return plot_trajectory(self.index, **kwargs)
+        elif ptype == "qc_altimetry":
+            WMOs = np.unique(self.data['PLATFORM_NUMBER'])
+            return open_sat_altim_report(WMOs, **kwargs)
         else:
             raise ValueError(
-                "Type of plot unavailable. Use: 'dac', 'profiler' or 'trajectory' (default)"
+                "Type of plot unavailable. Use: 'trajectory', 'dac', 'profiler', 'qc_altimetry'"
             )
 
 
@@ -803,8 +805,7 @@ class ArgoIndexFetcher:
 
             Parameters
             ----------
-            ptype: str
-                Type of plot to generate. This can be: 'trajectory',' profiler', 'dac'.
+            ptype: {'trajectory',' profiler', 'dac', 'qc_altimetry}, default: 'trajectory'
 
             Returns
             -------
@@ -818,9 +819,12 @@ class ArgoIndexFetcher:
             return bar_plot(self.index, by="profiler", **kwargs)
         elif ptype == "trajectory":
             return plot_trajectory(self.index.sort_values(["file"]), **kwargs)
+        elif ptype == "qc_altimetry":
+            WMOs = np.unique(self.index['wmo'])
+            return open_sat_altim_report(WMOs, **kwargs)
         else:
             raise ValueError(
-                "Type of plot unavailable. Use: 'dac', 'profiler' or 'trajectory' (default)"
+                "Type of plot unavailable. Use: 'trajectory', 'dac', 'profiler', 'qc_altimetry'"
             )
 
     def clear_cache(self):
