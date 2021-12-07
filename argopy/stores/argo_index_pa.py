@@ -40,7 +40,10 @@ class ArgoIndexStoreProto(ABC):
         return str(x)
 
     def cname(self) -> str:
-        """ Fetcher one line string definition helper """
+        """ Return the index constraints name as a string
+
+         This method uses the BOX, WMO, CYC keys of the index instance ``search_type`` property
+         """
         cname = "?"
 
         if "BOX" in self.search_type:
@@ -86,6 +89,7 @@ class ArgoIndexStoreProto(ABC):
 
     @property
     def sha_df(self) -> str:
+        """ Returns a unique SHA for a cname/dataframe """
         cname = "pd-%s" % self.cname()
         if cname == "?":
             raise ValueError("Search not initialised")
@@ -95,6 +99,7 @@ class ArgoIndexStoreProto(ABC):
 
     @property
     def sha_pq(self) -> str:
+        """ Returns a unique SHA for a cname/parquet """
         cname = "pq-%s" % self.cname()
         if cname == "?":
             raise ValueError("Search not initialised")
@@ -274,6 +279,39 @@ class indexstore(ArgoIndexStoreProto):
                     self.search = pa.parquet.read_table(of)
                 log.debug('Search results as pyarrow table saved in cache')
         return self
+
+    def read_wmo(self):
+        """ Return list of unique WMOs in search results
+
+            Fall back on full index if search not found
+        """
+        if hasattr(self, 'search'):
+            results = pa.compute.split_pattern(self.search['file'], pattern="/")
+        else:
+            results = pa.compute.split_pattern(self.index['file'], pattern="/")
+        df = results.to_pandas()
+        def fct(row):
+            return row[1]
+        wmo = df.map(fct)
+        wmo = wmo.unique()
+        wmo = [int(w) for w in wmo]
+        return wmo
+
+    def records_per_wmo(self):
+        """ Return the number of records per unique WMOs in search results
+
+            Fall back on full index if search not found
+        """
+        ulist = self.read_wmo()
+        count = {}
+        for wmo in ulist:
+            if hasattr(self, 'search'):
+                search_filter = pa.compute.match_substring_regex(self.search['file'], pattern="/%i/" % wmo)
+                count[wmo] = self.search.filter(search_filter).shape[0]
+            else:
+                search_filter = pa.compute.match_substring_regex(self.index['file'], pattern="/%i/" % wmo)
+                count[wmo] = self.index.filter(search_filter).shape[0]
+        return count
 
     def search_wmo(self, WMOs):
         self.load()

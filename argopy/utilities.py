@@ -1652,3 +1652,132 @@ class TopoFetcher():
     def load(self, errors: str = 'ignore'):
         """ Load Topographic data and return a xarray.DataSet """
         return self.to_xarray(errors=errors)
+
+
+def argo_split_path(this_path):
+    """ Split and retrieve information from a GDAC ftp style Argo netcdf file path
+
+    >>> argo_split_path('coriolis/6901035/profiles/D6901035_001D.nc')
+    >>> argo_split_path('https://data-argo.ifremer.fr/dac/csiro/5903939/profiles/D5903939_103.nc')
+
+    Parameters
+    ----------
+    list
+
+    Returns
+    -------
+    dict
+    """
+    dacs = [
+        "aoml",
+        "bodc",
+        "coriolis",
+        "csio",
+        "csiro",
+        "incois",
+        "jma",
+        "kma",
+        "kordi",
+        "meds",
+        "nmdis",
+    ]
+    output = {}
+
+    (path, file) = os.path.split(this_path)
+    #     if 'http' in path or 'ftp' in path:
+    #         raise ValueError("This is not a Argo GDAC compliant file path (should be a relative path)")
+    if 'https://data-argo.ifremer.fr' in path:
+        output['origin'] = 'https://data-argo.ifremer.fr/'
+        sep = '/'
+    elif 'ftp://ftp.ifremer.fr/ifremer/argo' in path:
+        output['origin'] = 'ftp://ftp.ifremer.fr/ifremer/argo/'
+        sep = '/'
+    elif 'ftp://usgodae.org/pub/outgoing/argo' in path:
+        output['origin'] = 'ftp://usgodae.org/pub/outgoing/argo/'
+        sep = '/'
+    else:
+        output['origin'] = '.'
+        sep = os.path.sep
+
+    output['path'] = path.replace(output['origin'], '')
+    output['name'] = file
+
+    # Deal with the path:
+    # dac/<DAC>/<FloatWmoID>/
+    # dac/<DAC>/<FloatWmoID>/profiles
+    path_parts = path.split(sep)
+
+    if path_parts[-1] == 'profiles':
+        output['type'] = 'Mono-cycle profile file'
+        output['wmo'] = path_parts[-2]
+        output['dac'] = path_parts[-3]
+    else:
+        output['type'] = 'Multi-cycle profile file'
+        output['wmo'] = path_parts[-1]
+        output['dac'] = path_parts[-2]
+
+    if output['dac'] not in dacs:
+        raise ValueError("This is not a Argo GDAC compliant file path (invalid DAC name `%s`)" % output['dac'])
+
+    # Deal with the file name:
+    filename, file_extension = os.path.splitext(output['name'])
+    output['extension'] = file_extension
+    if file_extension != '.nc':
+        raise ValueError(
+            "This is not a Argo GDAC compliant file path (invalid file extension `%s`)" % file_extension)
+    filename_parts = output['name'].split("_")
+
+    if "Mono" in output['type']:
+        prefix = filename_parts[0].split(output['wmo'])[0]
+        if 'R' in prefix:
+            output['data_mode'] = 'R, Real-time data'
+        if 'D' in prefix:
+            output['data_mode'] = 'D, Delayed-time data'
+
+        if 'S' in prefix:
+            output['type'] = 'S, Synthetic BGC Mono-cycle profile file'
+        if 'M' in prefix:
+            output['type'] = 'M, Merged BGC Mono-cycle profile file'
+        if 'B' in prefix:
+            output['type'] = 'B, BGC Mono-cycle profile file'
+
+        suffix = filename_parts[-1].split(output['wmo'])[-1]
+        if 'D' in suffix:
+            output['direction'] = 'D, descending profiles'
+        elif suffix == "" and "Mono" in output['type']:
+            output['direction'] = 'A, ascending profiles (implicit)'
+
+    else:
+        typ = filename_parts[-1].split(".nc")[0]
+        if typ == 'prof':
+            output['type'] = 'Multi-cycle file'
+        if typ == 'Sprof':
+            output['type'] = 'S, Synthetic BGC Multi-cycle profiles file'
+        if typ == 'tech':
+            output['type'] = 'Technical data file'
+        if typ == 'meta':
+            output['type'] = 'Metadata file'
+        if 'traj' in typ:
+            output['type'] = 'Trajectory file'
+            if typ.split("traj")[0] == 'D':
+                output['data_mode'] = 'D, Delayed-time data'
+            elif typ.split("traj")[0] == 'R':
+                output['data_mode'] = 'R, Real-time data'
+            else:
+                output['data_mode'] = 'R, Real-time data (implicit)'
+
+    # Adjust origin and path for local files:
+    # This ensure that output['path'] is agnostic to users and can be reused on any gdac compliant architecture
+    parts = path.split(sep)
+    i, stop = len(parts) - 1, False
+    while not stop:
+        if parts[i] == 'profiles' or parts[i] == output['wmo'] or parts[i] == output['dac'] or parts[i] == 'dac':
+            i = i - 1
+            if i < 0:
+                stop = True
+        else:
+            stop = True
+    output['origin'] = sep.join(parts[0:i + 1])
+    output['path'] = output['path'].replace(output['origin'], '')
+
+    return dict(sorted(output.items()))

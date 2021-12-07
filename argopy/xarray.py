@@ -152,7 +152,7 @@ class ArgoAccessor:
                 da = cast_this(da, str)
 
             if v in list_int:  # and da.dtype == 'O':  # Object
-                da = cast_this(da, int)
+                da = cast_this(da, np.int32)
 
             if v in list_datetime and da.dtype == "O":  # Object
                 if (
@@ -223,7 +223,7 @@ class ArgoAccessor:
                     da = xr.where(ii, "0", da)
 
                 # finally convert QC strings to integers:
-                da = cast_this(da, int)
+                da = cast_this(da, np.int32)
 
             if da.dtype != "O":
                 da.attrs["casted"] = 1
@@ -659,6 +659,7 @@ class ArgoAccessor:
 
         # Restore coordinate variables:
         new_ds = new_ds.set_coords([c for c in coords_list if c in new_ds])
+        new_ds['N_PROF'] = np.arange(N_PROF)
 
         # Misc formatting
         new_ds = new_ds.sortby("TIME")

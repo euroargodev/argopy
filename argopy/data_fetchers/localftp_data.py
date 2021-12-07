@@ -566,7 +566,7 @@ class Fetch_box(LocalFTPArgoDataFetcher):
         """
         if not hasattr(self, "_list_of_argo_files"):
             self._list_of_argo_files = []
-            # Fetch the index to retrieve the list of profiles to load:
+            # Fetch the index to retrieve the list of files/profiles to load:
             filt = indexfilter_box(self.indexBOX)
             df_index = self.fs_index.read_csv(filt)
             if isinstance(df_index, pd.core.frame.DataFrame):

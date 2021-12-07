@@ -403,12 +403,12 @@ class httpstore(argo_store_proto):
         #     self._verbose_aiohttp_exceptions(e)
         #     pass
 
-    def _mfprocessor_dataset(self, url, preprocess=None, *args, **kwargs):
+    def _mfprocessor_dataset(self, url, preprocess=None, preprocess_opts={}, *args, **kwargs):
         # Load data
         ds = self.open_dataset(url, *args, **kwargs)
         # Pre-process
         if isinstance(preprocess, types.FunctionType) or isinstance(preprocess, types.MethodType):
-            ds = preprocess(ds)
+            ds = preprocess(ds, **preprocess_opts)
         return ds
 
     def open_mfdataset(self,  # noqa: C901
@@ -419,6 +419,7 @@ class httpstore(argo_store_proto):
                        progress: bool = False,
                        concat: bool = True,
                        preprocess=None,
+                       preprocess_opts={},
                        errors: str = 'ignore',
                        *args, **kwargs):
         """ Open multiple urls as a single xarray dataset.
@@ -501,7 +502,7 @@ class httpstore(argo_store_proto):
 
             with ConcurrentExecutor as executor:
                 future_to_url = {executor.submit(self._mfprocessor_dataset, url,
-                                                 preprocess=preprocess, *args, **kwargs): url for url in urls}
+                                                 preprocess=preprocess, preprocess_opts=preprocess_opts, *args, **kwargs): url for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
                     futures = tqdm(futures, total=len(urls))
@@ -535,7 +536,7 @@ class httpstore(argo_store_proto):
             for url in urls:
                 data = None
                 try:
-                    data = self._mfprocessor_dataset(url, preprocess=preprocess, *args, **kwargs)
+                    data = self._mfprocessor_dataset(url, preprocess=preprocess, preprocess_opts=preprocess_opts, *args, **kwargs)
                 except Exception:
                     failed.append(url)
                     if errors == 'ignore':

@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import pandas as pd
 import numpy as np
 import xarray
+import hashlib
 
 
 class ArgoDataFetcherProto(ABC):
@@ -90,3 +91,9 @@ class ArgoDataFetcherProto(ABC):
                 cname = self.dataset_id + ";" + cname
 
         return cname
+
+    @property
+    def sha(self) -> str:
+        """ Returns a unique SHA for a specifc cname / fetcher implementation"""
+        path = "%s: %s" % (self.definition, self.cname())
+        return hashlib.sha256(path.encode()).hexdigest()
