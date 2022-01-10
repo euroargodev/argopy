@@ -8,7 +8,7 @@ v0.1.9 (X XXX. 2021)
 
 **Features and front-end API**
 
-- New data source ``ftp`` in DataFetcher. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
+- New data source ``ftp`` to retrieve data from Ifremer GDAC FTP server in DataFetcher and IndexFetcher. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
