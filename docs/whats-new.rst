@@ -50,6 +50,8 @@ For convenience we also added a new property to the data fetcher that return the
 
 - Update documentation theme, and pages now use the `xarray accessor sphinx extension <https://github.com/xarray-contrib/sphinx-autosummary-accessors>`_. (:pr:`104`) by `G. Maze <http://www.github.com/gmaze>`_.
 
+- Update Binder links to work without the deprecated Pangeo service.
+
 v0.1.8 (2 Nov. 2021)
 ---------------------
 
