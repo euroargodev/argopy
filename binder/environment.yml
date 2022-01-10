@@ -13,6 +13,7 @@ dependencies:
   - seaborn
   - tqdm
   - cartopy
+  - gsw
   - pip
   - pip:
     - graphviz
