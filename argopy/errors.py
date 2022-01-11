@@ -62,6 +62,12 @@ class UnrecognisedProfileDirection(ValueError):
         self.wmo = wmo
 
 
+class InvalidDataset(ValueError):
+    """
+    This is to be used when the dataset name is not valid
+    """
+    pass
+
 class InvalidDatasetStructure(ValueError):
     """
     This is to be used when the in-memory xarray dataset is not structured as expected
