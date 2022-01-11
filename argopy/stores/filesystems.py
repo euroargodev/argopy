@@ -4,6 +4,7 @@ import numpy as np
 import xarray as xr
 import pandas as pd
 import fsspec
+import aiohttp
 import shutil
 import pickle
 import json
@@ -385,12 +386,20 @@ class httpstore(argo_store_proto):
         # try:
         # with self.fs.open(url) as of:
         #     ds = xr.open_dataset(of, *args, **kwargs)
-        data = self.fs.cat_file(url)
+        try:
+            data = self.fs.cat_file(url)
+        except aiohttp.ClientResponseError as e:
+            if e.status == 413:
+                warnings.warn("Server says payload Too Large ! Try to use 'parallel=True' or a smaller chunk parameter with your fetcher")
+                log.debug("Error %i (Payload Too Large) raised with %s" % (e.status, url))
+            raise
+
         ds = xr.open_dataset(data, *args, **kwargs)
         if "source" not in ds.encoding:
             if isinstance(url, str):
                 ds.encoding["source"] = url
         self.register(url)
+
         return ds
         # except Exception as e:
         #     raise e
@@ -424,7 +433,7 @@ class httpstore(argo_store_proto):
                        *args, **kwargs):
         """ Open multiple urls as a single xarray dataset.
 
-            This is a version of the ``open_dataset`` method that is able to handle a list of urls/paths
+            This is a version of the :class:`argopy.stores.httpstore.open_dataset` method that is able to handle a list of urls/paths
             sequentially or in parallel.
 
             Use a Threads Pool by default for parallelization.
@@ -443,12 +452,23 @@ class httpstore(argo_store_proto):
                     - ``process``: use a pool of at most ``max_workers`` processes
                     - (XFAIL) a :class:`distributed.client.Client` object (:class:`distributed.client.Client`)
 
-                Use 'seq' to simply open data sequentially
+                Use ''seq'' to simply open data sequentially
             progress: bool
                 Display a progress bar (True by default)
+            concat: bool, default: True
+                Concatenate results in a single :class:`xarray.Dataset` or not (in this case, function will return a
+                list of :class:`xarray.Dataset`)
             preprocess: callable (optional)
                 If provided, call this function on each dataset prior to concatenation
+            preprocess_opts: dict (optional)
+                If ``preprocess`` is provided, pass this as options
+            errors: str, default='ignore'
+                Define how to handle errors raised during data URIs fetching:
 
+                    - 'ignore' (default): Do not stop processing, simply issue a debug message in logging console
+                    - 'silent':  Do not stop processing and do not issue log message
+                    - 'raise': Raise any error encountered
+            *args, **kwargs are passed to the :class:`argopy.stores.httpstore.open_dataset` method.
             Returns
             -------
             :class:`xarray.Dataset`
@@ -582,7 +602,7 @@ class httpstore(argo_store_proto):
             :class:`pandas.DataFrame`
 
         """
-        log.debug("Opening/reading csv: %s" % url)
+        log.debug("Opening/reading csv from: %s" % url)
         with self.open(url) as of:
             df = pd.read_csv(of, **kwargs)
         return df
@@ -599,7 +619,7 @@ class httpstore(argo_store_proto):
             json
 
         """
-        log.debug("Opening json: %s" % url)
+        log.debug("Opening json from: %s" % url)
         # try:
         #     with self.open(url) as of:
         #         js = json.load(of, **kwargs)
@@ -610,6 +630,8 @@ class httpstore(argo_store_proto):
         #     raise
         data = self.fs.cat_file(url)
         js = json.loads(data, **kwargs)
+        if len(js) == 0:
+            js = None
         self.register(url)
         return js
 
@@ -617,7 +639,9 @@ class httpstore(argo_store_proto):
         # Load data
         data = self.open_json(url, **kwargs)
         # Pre-process
-        if isinstance(preprocess, types.FunctionType) or isinstance(preprocess, types.MethodType):
+        if data is None:
+            raise DataNotFound(url)
+        elif isinstance(preprocess, types.FunctionType) or isinstance(preprocess, types.MethodType):
             data = preprocess(data)
         return data
 
