@@ -15,7 +15,7 @@ from packaging import version
 
 import concurrent.futures
 import multiprocessing
-
+import distributed
 
 try:
     from tqdm import tqdm
@@ -373,14 +373,13 @@ class httpstore(argo_store_proto):
     def open_dataset(self, url, *args, **kwargs):
         """ Open and decode a xarray dataset from an url
 
-            Parameters
-            ----------
-            url: str
+        Parameters
+        ----------
+        url: str
 
-            Returns
-            -------
-            :class:`xarray.Dataset`
-
+        Returns
+        -------
+        :class:`xarray.Dataset`
         """
         # log.debug("Opening dataset: %s" % url)  # Redundant with fsspec logger
         # try:
@@ -422,11 +421,11 @@ class httpstore(argo_store_proto):
 
     def open_mfdataset(self,  # noqa: C901
                        urls,
-                       concat_dim='row',
                        max_workers: int = 112,
                        method: str = 'thread',
                        progress: bool = False,
                        concat: bool = True,
+                       concat_dim='row',
                        preprocess=None,
                        preprocess_opts={},
                        errors: str = 'ignore',
@@ -442,36 +441,37 @@ class httpstore(argo_store_proto):
             ----------
             urls: list(str)
                 List of url/path to open
-            concat_dim: str
-                Name of the dimension to use to concatenate all datasets (passed to :class:`xarray.concat`)
-            max_workers: int
+            max_workers: int, default: 112
                 Maximum number of threads or processes
-            method: str
+            method: str, default: ``thread``
                 The parallelization method to execute calls asynchronously:
-                    - ``thread`` (Default): use a pool of at most ``max_workers`` threads
-                    - ``process``: use a pool of at most ``max_workers`` processes
-                    - (XFAIL) a :class:`distributed.client.Client` object (:class:`distributed.client.Client`)
 
-                Use ''seq'' to simply open data sequentially
-            progress: bool
-                Display a progress bar (True by default)
+                    - ``thread`` (default): use a pool of at most ``max_workers`` threads
+                    - ``process``: use a pool of at most ``max_workers`` processes
+                    - :class:`distributed.client.Client`: Experimental, expect this method to fail !
+                    - ``seq``: open data sequentially, no parallelization applied
+            progress: bool, default: False
+                Display a progress bar
             concat: bool, default: True
                 Concatenate results in a single :class:`xarray.Dataset` or not (in this case, function will return a
                 list of :class:`xarray.Dataset`)
+            concat_dim: str, default: ``row``
+                Name of the dimension to use to concatenate all datasets (passed to :class:`xarray.concat`)
             preprocess: callable (optional)
                 If provided, call this function on each dataset prior to concatenation
             preprocess_opts: dict (optional)
                 If ``preprocess`` is provided, pass this as options
-            errors: str, default='ignore'
+            errors: str, default: ``ignore``
                 Define how to handle errors raised during data URIs fetching:
 
-                    - 'ignore' (default): Do not stop processing, simply issue a debug message in logging console
-                    - 'silent':  Do not stop processing and do not issue log message
-                    - 'raise': Raise any error encountered
-            *args, **kwargs are passed to the :class:`argopy.stores.httpstore.open_dataset` method.
+                    - ``raise``: Raise any error encountered
+                    - ``ignore`` (default): Do not stop processing, simply issue a debug message in logging console
+                    - ``silent``:  Do not stop processing and do not issue log message
+            Other args and kwargs: other options passed to :class:`argopy.stores.httpstore.open_dataset`.
+
             Returns
             -------
-            :class:`xarray.Dataset`
+            output: :class:`xarray.Dataset` or list of :class:`xarray.Dataset`
 
         """
         strUrl = lambda x: x.replace("https://", "").replace("http://", "")  # noqa: E731
@@ -544,10 +544,10 @@ class httpstore(argo_store_proto):
                     finally:
                         results.append(data)
 
-        # elif type(method) == distributed.client.Client:
-        #     # Use a dask client:
-        #     futures = method.map(self._mfprocessor_dataset, urls, preprocess=preprocess, *args, **kwargs)
-        #     results = method.gather(futures)
+        elif type(method) == distributed.client.Client:
+            # Use a dask client:
+            futures = method.map(self._mfprocessor_dataset, urls, preprocess=preprocess, *args, **kwargs)
+            results = method.gather(futures)
 
         elif method in ['seq', 'sequential']:
             if progress:
