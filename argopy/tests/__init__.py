@@ -46,7 +46,7 @@ def _xfail(name, msg):
 
 
 AVAILABLE_SOURCES = list_available_data_src()
-warnings.warn(";".join(AVAILABLE_SOURCES.keys()))
+# warnings.warn(";".join(AVAILABLE_SOURCES.keys()))
 
 AVAILABLE_INDEX_SOURCES = list_available_index_src()
 CONNECTED = isconnected()

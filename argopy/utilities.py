@@ -1655,7 +1655,7 @@ class TopoFetcher():
 
 
 def argo_split_path(this_path):
-    """ Split and retrieve information from a GDAC ftp style Argo netcdf file path
+    """ Split path from a GDAC ftp style Argo netcdf file and return informations
 
     >>> argo_split_path('coriolis/6901035/profiles/D6901035_001D.nc')
     >>> argo_split_path('https://data-argo.ifremer.fr/dac/csiro/5903939/profiles/D5903939_103.nc')

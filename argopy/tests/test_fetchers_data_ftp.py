@@ -34,9 +34,11 @@ class Test_Backend:
     def test_cachepath_notfound(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                fetcher = ArgoDataFetcher(src=self.src, cache=True).profile(
-                    *self.requests["profile"][0]
-                ).fetcher
+                fetcher = (
+                    ArgoDataFetcher(src=self.src, cache=True)
+                    .profile(*self.requests["profile"][0])
+                    .fetcher
+                )
                 with pytest.raises(CacheFileNotFound):
                     fetcher.cachepath
 
@@ -44,9 +46,11 @@ class Test_Backend:
     def test_nocache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                fetcher = ArgoDataFetcher(src=self.src, cache=False).profile(
-                    *self.requests["profile"][0]
-                ).fetcher
+                fetcher = (
+                    ArgoDataFetcher(src=self.src, cache=False)
+                    .profile(*self.requests["profile"][0])
+                    .fetcher
+                )
                 with pytest.raises(FileSystemHasNoCache):
                     fetcher.cachepath
 
@@ -54,9 +58,11 @@ class Test_Backend:
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
-                fetcher = ArgoDataFetcher(src=self.src, cache=True).float(
-                    self.requests["float"][0]
-                ).fetcher
+                fetcher = (
+                    ArgoDataFetcher(src=self.src, cache=True)
+                    .profile(*self.requests["profile"][0])
+                    .fetcher
+                )
                 fetcher.to_xarray()
                 fetcher.clear_cache()
                 with pytest.raises(CacheFileNotFound):
@@ -103,14 +109,6 @@ class Test_Backend:
                 assert isinstance(ds, xr.Dataset)
                 assert is_list_of_strings(fetcher.uri)
                 assert is_list_of_strings(fetcher.cachepath)
-
-    def test_minimal_vlist(self):
-        f = ArgoDataFetcher(src=self.src).region(self.requests["region"][1]).fetcher
-        assert is_list_of_strings(f._minimal_vlist)
-
-    def test_dtype(self):
-        f = ArgoDataFetcher(src=self.src).region(self.requests["region"][1]).fetcher
-        assert isinstance(f._dtype, dict)
 
     def __testthis_profile(self, dataset):
         fetcher_args = {"src": self.src, "ds": dataset}
@@ -159,14 +157,14 @@ class Test_Backend:
 
 
 @requires_connected_gdac
-class offTest_BackendParallel:
+class Test_BackendParallel:
     """ This test backend for parallel requests """
 
     src = "ftp"
     requests = {
         "region": [
-            [-60, -55, 40.0, 45.0, 0.0, 20.0],
-            [-60, -55, 40.0, 45.0, 0.0, 20.0, "2007-08-01", "2007-09-01"],
+            [-65.1, -65, 35.1, 36., 0, 10.0],
+            [-65.4, -65, 35.1, 36., 0, 10.0, "2013-01-01", "2013-09-01"],
         ],
         "wmo": [[6902766, 6902772, 6902914]],
     }
@@ -190,29 +188,29 @@ class offTest_BackendParallel:
                 ArgoDataFetcher(**fetcher_args).float(self.requests["wmo"][0])
 
     @safe_to_server_errors
-    def test_chunks_region(self):
+    def test_parallel(self):
         for access_arg in self.requests["region"]:
             fetcher_args = {
                 "src": self.src,
                 "parallel": True,
-                "chunks": {"lon": 1, "lat": 2, "dpt": 2, "time": 1},
+                # "chunks": {"lon": 1, "lat": 2, "dpt": 2, "time": 1},
             }
             f = ArgoDataFetcher(**fetcher_args).region(access_arg).fetcher
             assert isinstance(f.to_xarray(), xr.Dataset)
             assert is_list_of_strings(f.uri)
-            assert len(f.uri) == np.prod(
-                [v for k, v in fetcher_args["chunks"].items()]
-            )
+            # assert len(f.uri) == np.prod(
+            #     [v for k, v in fetcher_args["chunks"].items()]
+            # )
 
-    @safe_to_server_errors
-    def test_chunks_wmo(self):
-        for access_arg in self.requests["wmo"]:
-            fetcher_args = {
-                "src": self.src,
-                "parallel": True,
-                "chunks_maxsize": {"wmo": 1},
-            }
-            f = ArgoDataFetcher(**fetcher_args).profile(access_arg, 12).fetcher
-            assert isinstance(f.to_xarray(), xr.Dataset)
-            assert is_list_of_strings(f.uri)
-            assert len(f.uri) == len(access_arg)
+    # @safe_to_server_errors
+    # def test_chunks_wmo(self):
+    #     for access_arg in self.requests["wmo"]:
+    #         fetcher_args = {
+    #             "src": self.src,
+    #             "parallel": True,
+    #             # "chunks_maxsize": {"wmo": 1},
+    #         }
+    #         f = ArgoDataFetcher(**fetcher_args).profile(access_arg, 12).fetcher
+    #         assert isinstance(f.to_xarray(), xr.Dataset)
+    #         assert is_list_of_strings(f.uri)
+    #         # assert len(f.uri) == len(access_arg)
