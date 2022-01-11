@@ -190,7 +190,7 @@ class indexstore(ArgoIndexStoreProto):
                 with self.fs['index'].open(this_path + '.gz', "rb") as fg:
                     with gzip.open(fg) as f:
                         self.index = read_csv(f)
-                        log.debug("Argo index file loaded with pyarrow read_csv from: %s" % f.name)
+                        log.debug("Argo index file loaded with pyarrow read_csv from: '%s'" % f.name)
             else:
                 with self.fs['index'].open(this_path, "rb") as f:
                     self.index = read_csv(f)
@@ -207,7 +207,8 @@ class indexstore(ArgoIndexStoreProto):
         else:
             summary.append("Loaded: False")
         if hasattr(self, 'search'):
-            summary.append("Searched: True (%i records, %0.4f%%)" % (self.N_FILES, self.N_FILES * 100 / self.shape[0]))
+            match = 'matches' if self.N_FILES > 1 else 'match'
+            summary.append("Searched: True (%i %s, %0.4f%%)" % (self.N_FILES, match, self.N_FILES * 100 / self.shape[0]))
         else:
             summary.append("Searched: False")
         return "\n".join(summary)
@@ -227,9 +228,10 @@ class indexstore(ArgoIndexStoreProto):
             raise DataNotFound("No Argo data in the index correspond to your search criteria."
                                "Search definition: %s" % self.cname())
 
-        this_path = self.sha_df
+        # this_path = self.sha_df
+        this_path = self.host + "/" + self.index_file + "/" + self.sha_df
         if self.fs['search'].exists(this_path):
-            log.debug('Search results already in memory as dataframe')
+            log.debug('Search results already in memory as dataframe, loading...')
             with self.fs['search'].fs.open(this_path, "rb") as of:
                 df = pd.read_pickle(of)
         else:
@@ -264,20 +266,21 @@ class indexstore(ArgoIndexStoreProto):
 
     def run(self):
         """ Filter index with search criteria """
-        search_path = self.sha_pq
+        search_path = self.host + "/" + self.index_file + "/" + self.sha_pq
         if self.fs['search'].exists(search_path):
-            log.debug('Search results already in memory as pyarrow table, loading')
+            log.debug('Search results already in memory as pyarrow table, loading...')
             with self.fs['search'].fs.open(search_path, "rb") as of:
                 self.search = pa.parquet.read_table(of)
         else:
             log.debug('Compute search from scratch')
             self.search = self.index.filter(self.search_filter)
+            log.debug('Found %i matches' % self.search.shape[0])
             if self.cache:
                 with self.fs['search'].open(search_path, "wb") as of:
                     pa.parquet.write_table(self.search, of)
                 with self.fs['search'].fs.open(search_path, "rb") as of:
                     self.search = pa.parquet.read_table(of)
-                log.debug('Search results as pyarrow table saved in cache')
+                log.debug('Search results saved in cache as pyarrow table')
         return self
 
     def read_wmo(self):
