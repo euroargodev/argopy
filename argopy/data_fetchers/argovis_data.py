@@ -12,15 +12,16 @@
 import numpy as np
 import pandas as pd
 import getpass
+import logging
 from .proto import ArgoDataFetcherProto
 from abc import abstractmethod
 import warnings
-import urllib
 
 from argopy.stores import httpstore
 from argopy.options import OPTIONS
 from argopy.utilities import list_standard_variables, format_oneline, Chunker
 from argopy.plotters import open_dashboard
+from argopy.errors import DataNotFound
 
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']
@@ -29,6 +30,8 @@ api_server = 'https://argovis.colorado.edu'  # API root url
 api_server_check = (
     api_server + "/selection/overview"
 )  # URL to check if the API is alive
+
+log = logging.getLogger("argopy.argovis.data")
 
 
 class ArgovisDataFetcher(ArgoDataFetcherProto):
@@ -291,6 +294,8 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             df = df[[value for value in self.key_map.values() if value in df.columns]]
             df_list[i] = df
         df = pd.concat(df_list, ignore_index=True)
+        if df.shape[0] == 0:
+            raise DataNotFound(self.cname())
         df.sort_values(by=["TIME", "PRES"], inplace=True)
         df = df.set_index(["N_POINTS"])
         return df
