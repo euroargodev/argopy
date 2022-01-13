@@ -19,12 +19,12 @@ v0.1.9 (X XXX. 202X)
     ds_source = ds.argo.create_float_source()
 
 
-This new method comes with others methods and improvements:
-
 .. currentmodule:: xarray
 
+This new method comes with others methods and improvements:
+
     - A new :meth:`Dataset.argo.filter_scalib_pres` method to filter variables according to OWC salinity calibration software requirements,
-    - A new :meth:`Dataset.argo.groupby_pressure_bins` method to subsample a dataset down to one value by pressure bins (a perfect alternative to interpolation on standard depth levels to precisely avoid interpolation...),
+    - A new :meth:`Dataset.argo.groupby_pressure_bins` method to subsample a dataset down to one value by pressure bins (a perfect alternative to interpolation on standard depth levels to precisely avoid interpolation...), see :ref:`Pressure levels: Group-by bins` for more help,
     - An improved :meth:`Dataset.argo.filter_qc` method to select which fields to consider (new option ``QC_fields``),
     - Add conductivity (``CNDC``) to the possible output of the ``TEOS10`` method.
 
