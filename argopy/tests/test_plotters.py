@@ -14,7 +14,7 @@ from . import (
     has_seaborn,
     has_cartopy,
 )
-from argopy.plotters import bar_plot, plot_trajectory
+from argopy.plotters import bar_plot, plot_trajectory, open_sat_altim_report
 from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy import DataFetcher as ArgoDataFetcher
 
@@ -36,6 +36,22 @@ def test_valid_dashboard():
     import IPython
     dsh = argopy.dashboard(wmo=5904797)
     assert isinstance(dsh, IPython.lib.display.IFrame)
+
+
+@requires_connection
+def test_open_sat_altim_report():
+    import IPython
+    dsh = open_sat_altim_report(WMO=5904797, embed='slide')
+    assert isinstance(dsh(0), IPython.display.Image)
+
+    dsh = open_sat_altim_report(WMO=5904797, embed='dropdown')
+    assert isinstance(dsh(5904797), IPython.display.Image)
+
+    open_sat_altim_report(WMO=5904797, embed='list')
+
+    dsh = open_sat_altim_report(WMO=5904797, embed=None)
+    assert isinstance(dsh, dict)
+    assert 5904797 in dsh
 
 
 @requires_localftp

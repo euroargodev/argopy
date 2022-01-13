@@ -42,6 +42,24 @@ This new method comes with others methods and improvements:
     ds.argo
     
 
+- **New plotter function** :meth:`argopy.plotters.open_sat_altim_report` to insert the CLS Satellite Altimeter Report figure in a notebook cell. (:pr:`159`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy.plotters import open_sat_altim_report
+    open_sat_altim_report(6902766)
+    open_sat_altim_report([6902766, 6902772, 6902914])
+    open_sat_altim_report([6902766, 6902772, 6902914], embed='dropdown')  # Default
+    open_sat_altim_report([6902766, 6902772, 6902914], embed='slide')
+    open_sat_altim_report([6902766, 6902772, 6902914], embed='list')
+    open_sat_altim_report([6902766, 6902772, 6902914], embed=None)
+
+    from argopy import DataFetcher
+    from argopy import IndexFetcher
+    DataFetcher().float([6902745, 6902746]).plot('qc_altimetry')
+    IndexFetcher().float([6902745, 6902746]).plot('qc_altimetry')
+
+
 - **New utility method to retrieve topography**. The :class:`argopy.TopoFetcher` will load the `GEBCO topography <https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.html>`_ for a given region. (:pr:`150`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
@@ -59,10 +77,15 @@ For convenience we also added a new property to the data fetcher that return the
     loader = ArgoDataFetcher().float(2901623)
     loader.domain  # Returns [89.093, 96.036, -0.278, 4.16, 15.0, 2026.0, numpy.datetime64('2010-05-14T03:35:00.000000000'),  numpy.datetime64('2013-01-01T01:45:00.000000000')]
 
+- Update the documentation with a new section about :ref:`data_qc`.
 
 **Internals**
 
-- Update documentation pages to use the `xarray accessor sphinx extension <https://github.com/xarray-contrib/sphinx-autosummary-accessors>`_. (:pr:`104`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Uses a new API endpoint for the ``argovis`` data source when fetching a ``region``. `More on this issue here <https://github.com/donatagiglio/Argovis/issues/3>`_. (:pr:`158`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Update documentation theme, and pages now use the `xarray accessor sphinx extension <https://github.com/xarray-contrib/sphinx-autosummary-accessors>`_. (:pr:`104`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Update Binder links to work without the deprecated Pangeo-Binder service. (:pr:`164`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 v0.1.8 (2 Nov. 2021)
 ---------------------

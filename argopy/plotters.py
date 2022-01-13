@@ -12,7 +12,7 @@ import pandas as pd
 import warnings
 from contextlib import contextmanager
 from argopy.errors import InvalidDashboard
-from argopy.utilities import warnUnless
+from argopy.utilities import warnUnless, check_wmo
 
 
 try:
@@ -92,11 +92,13 @@ def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type
             if wmo is None:
                 url = "https://fleetmonitoring.euro-argo.eu"
             else:
-                url = "https://fleetmonitoring.euro-argo.eu/float/{}".format(str(wmo))
+                wmo = check_wmo(wmo)
+                url = "https://fleetmonitoring.euro-argo.eu/float/{}".format(str(wmo[0]))
         elif type == 'coriolis':  # Open Coriolis dashboard
             if wmo is not None:
+                wmo = check_wmo(wmo)
                 url = ("https://co-insitucharts.ifremer.fr/platform/{}/charts").format(
-                    str(wmo)
+                    str(wmo[0])
                 )
 
         # return open_dashboard(url=("https://co-insitucharts.ifremer.fr/platform/{}/charts").format(str(self.WMO[0])), **kw)
@@ -109,6 +111,52 @@ def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type
         #         url = "https://argovis.colorado.edu/catalog/profiles/{}_{}/page".format(str(wmo),str(cyc))
 
     return IFrame(url, width=width, height=height)
+
+
+def open_sat_altim_report(WMO=None, embed='dropdown'):
+    """ Insert the CLS Satellite Altimeter Report figure in notebook cell
+
+        This is the method called when using the facade fetcher methods ``plot``:
+
+        >>> DataFetcher().float(6902745).plot('qc_altimetry')
+
+        Parameters
+        ----------
+        WMO: int or list
+            The float WMO to display. By default, this is set to None and will insert the general dashboard.
+        embed: {'list', 'slide', 'dropdown'}, default: 'dropdown'
+            Set the embedding method. If set to None, simply return the list of urls to figures.
+    """
+    if embed in ['list', 'slide', 'dropdown']:
+        from IPython.display import Image
+    if embed in ['list']:
+        from IPython.display import display
+    if embed in ['slide', 'dropdown']:
+        import ipywidgets as wg
+
+    WMOs = check_wmo(WMO)
+    urls = []
+    urls_dict = {}
+    for this_wmo in WMOs:
+        url = "https://data-argo.ifremer.fr/etc/argo-ast9-item13-AltimeterComparison/figures/%i.png" % this_wmo
+        if embed == 'list':
+            urls.append(Image(url, embed=True))
+        else:
+            urls.append(url)
+            urls_dict[this_wmo] = url
+
+    if embed == 'list':
+        return display(*urls)
+    elif embed == 'slide':
+        def f(Float):
+            return Image(url=urls[Float])
+        return wg.interact(f, Float=wg.IntSlider(min=0, max=len(urls) - 1, step=1))
+    elif embed == 'dropdown':
+        def f(Float):
+            return Image(url=urls_dict[int(Float)])
+        return wg.interact(f, Float=[str(wmo) for wmo in WMOs])
+    else:
+        return urls_dict
 
 
 class discrete_coloring:

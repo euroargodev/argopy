@@ -17,6 +17,10 @@ or pip:
 ```bash
 pip install argopy
 ```
+or conda:
+```bash
+conda install -c conda-forge argopy
+```
 
 But since this is a young library in active development, use direct install from this repo to benefit from the latest version:
 
@@ -28,7 +32,7 @@ The ``argopy`` library is tested to work under most OS (Linux, Mac) and with pyt
 
 ## Usage
 
-[![badge](https://img.shields.io/static/v1.svg?logo=Jupyter&label=Pangeo+Binder&message=Click+here+to+try+argopy+online+!&color=blue&style=for-the-badge)](https://binder.pangeo.io/v2/gh/euroargodev/argopy/master?urlpath=lab/tree/docs/tryit.ipynb)
+[![badge](https://img.shields.io/static/v1.svg?logo=Jupyter&label=Pangeo+Binder&message=Click+here+to+try+argopy+online+!&color=blue&style=for-the-badge)](https://mybinder.org/v2/gh/euroargodev/argopy/master?labpath=docs/tryit.ipynb)
 
 ### Fetching Argo Data
 

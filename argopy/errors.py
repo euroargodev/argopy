@@ -7,7 +7,12 @@ A bunch of custom errors used in argopy.
 
 class DataNotFound(ValueError):
     """ Raise when a data selection returns nothing """
-    pass
+    def __init__(self, path: str = "?"):
+        self.value = "No data found at %s" % path
+        self.path = path
+
+    def __str__(self):
+        return (repr(self.value))
 
 
 class FtpPathError(ValueError):
