@@ -546,8 +546,15 @@ class httpstore(argo_store_proto):
 
         elif type(method) == distributed.client.Client:
             # Use a dask client:
-            futures = method.map(self._mfprocessor_dataset, urls, preprocess=preprocess, *args, **kwargs)
-            results = method.gather(futures)
+
+            if progress:
+                from dask.diagnostics import ProgressBar
+                with ProgressBar():
+                    futures = method.map(self._mfprocessor_dataset, urls, preprocess=preprocess, *args, **kwargs)
+                    results = method.gather(futures)
+            else:
+                futures = method.map(self._mfprocessor_dataset, urls, preprocess=preprocess, *args, **kwargs)
+                results = method.gather(futures)
 
         elif method in ['seq', 'sequential']:
             if progress:
