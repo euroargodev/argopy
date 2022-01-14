@@ -13,6 +13,7 @@ sphinx-autosummary-accessors>=0.1.2
 readthedocs-sphinx-ext
 sphinx-rtd-theme
 sphinx-book-theme
+# sphinx-bootstrap-theme
 
 xarray>=0.16.1
 scipy>=1.1.0

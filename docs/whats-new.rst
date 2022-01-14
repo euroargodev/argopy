@@ -3,12 +3,46 @@
 What's New
 ==========
 
-v0.1.9 (X XXX. 2021)
---------------------
+v0.1.9 (X XXX. 202X)
+---------------------
 
 **Features and front-end API**
 
-- New plotter function :meth:`argopy.plotters.open_sat_altim_report` to insert the CLS Satellite Altimeter Report figure in a notebook cell. (:pr:`159`) by `G. Maze <http://www.github.com/gmaze>`_.
+- **New method to preprocess data for OWC software**. This method can preprocessed Argo data and possibly create float_source/<WMO>.mat files to be used as inputs for OWC implementations in `Matlab <https://github.com/ArgoDMQC/matlab_owc>`_ and `Python <https://github.com/euroargodev/argodmqc_owc>`_. See the :ref:`Salinity calibration` documentation page for more. (:pr:`142`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy import DataFetcher as ArgoDataFetcher
+    ds = ArgoDataFetcher(mode='expert').float(6902766).load().data
+    ds.argo.create_float_source("float_source")
+    ds.argo.create_float_source("float_source", force='raw')
+    ds_source = ds.argo.create_float_source()
+
+
+.. currentmodule:: xarray
+
+This new method comes with others methods and improvements:
+
+    - A new :meth:`Dataset.argo.filter_scalib_pres` method to filter variables according to OWC salinity calibration software requirements,
+    - A new :meth:`Dataset.argo.groupby_pressure_bins` method to subsample a dataset down to one value by pressure bins (a perfect alternative to interpolation on standard depth levels to precisely avoid interpolation...), see :ref:`Pressure levels: Group-by bins` for more help,
+    - An improved :meth:`Dataset.argo.filter_qc` method to select which fields to consider (new option ``QC_fields``),
+    - Add conductivity (``CNDC``) to the possible output of the ``TEOS10`` method.
+
+.. currentmodule:: argopy
+
+- **New dataset properties** accessible from the `argo` xarray accessor: ``N_POINTS``, ``N_LEVELS``, ``N_PROF``. Note that depending on the format of the dataset (a collection of points or of profiles) these values do or do not take into account NaN. These information are also visible by a simple print of the accessor. (:pr:`142`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy import DataFetcher as ArgoDataFetcher
+    ds = ArgoDataFetcher(mode='expert').float(6902766).load().data
+    ds.argo.N_POINTS
+    ds.argo.N_LEVELS
+    ds.argo.N_PROF
+    ds.argo
+    
+
+- **New plotter function** :meth:`argopy.plotters.open_sat_altim_report` to insert the CLS Satellite Altimeter Report figure in a notebook cell. (:pr:`159`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 
@@ -25,7 +59,8 @@ v0.1.9 (X XXX. 2021)
     DataFetcher().float([6902745, 6902746]).plot('qc_altimetry')
     IndexFetcher().float([6902745, 6902746]).plot('qc_altimetry')
 
-- New utility method :class:`argopy.TopoFetcher` to retrieve `GEBCO topography <https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.html>`_ for a given region. (:pr:`150`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- **New utility method to retrieve topography**. The :class:`argopy.TopoFetcher` will load the `GEBCO topography <https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.html>`_ for a given region. (:pr:`150`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 
@@ -103,7 +138,7 @@ v0.1.8 (2 Nov. 2021)
 
 - More general options. Fix :issue:`91`. (:pr:`102`) by `G. Maze <http://www.github.com/gmaze>`_.
 
-    - ``trust_env`` to allow for local environment variables to be used by fsspec to connect to the internet. Usefull for those using a proxy.
+    - ``trust_env`` to allow for local environment variables to be used by fsspec to connect to the internet. Useful for those using a proxy.
 
 - Documentation on `Read The Docs` now uses a pip environment and get rid of memory eager conda. (:pr:`103`) by `G. Maze <http://www.github.com/gmaze>`_.
 
@@ -271,11 +306,11 @@ v0.1.3 (15 May 2020)
     idx.to_dataframe()
     idx.plot('trajectory')
 
-The ``index`` fetcher can manage caching and works with both Erddap and localftp data sources. It is basically the same as the data fetcher, but do not load measurements, only meta-data. This can be very usefull when looking for regional sampling or trajectories.
+The ``index`` fetcher can manage caching and works with both Erddap and localftp data sources. It is basically the same as the data fetcher, but do not load measurements, only meta-data. This can be very useful when looking for regional sampling or trajectories.
 
 .. tip::
 
-  **Performance**: we recommand to use the ``localftp`` data source when working this ``index`` fetcher because the ``erddap`` data source currently suffers from poor performances. This is linked to :issue:`16` and is being addressed by Ifremer.
+  **Performance**: we recommend to use the ``localftp`` data source when working this ``index`` fetcher because the ``erddap`` data source currently suffers from poor performances. This is linked to :issue:`16` and is being addressed by Ifremer.
 
 The ``index`` fetcher comes with basic plotting functionalities with the :func:`argopy.IndexFetcher.plot` method to rapidly visualise measurement distributions by DAC, latitude/longitude and floats type.
 

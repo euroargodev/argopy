@@ -85,7 +85,6 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.viewcode',
     'sphinx.ext.inheritance_diagram',
-    'matplotlib.sphinxext.plot_directive',
     'nbsphinx',
     'numpydoc',
     'sphinx_issues',
@@ -191,7 +190,9 @@ add_module_names = False
 #
 # html_theme = 'sphinx_rtd_theme'
 html_theme = 'sphinx_book_theme'
-# html_theme = 'bootstrap'
+# html_theme = 'bootstrap'  # pip install sphinx-bootstrap-theme
+# html_theme = 'sphinx_redactor_theme' # pip install sphinx-redactor-theme
+# html_theme = 'pydata_sphinx_theme'  # pip install pydata-sphinx-theme
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -218,6 +219,7 @@ html_theme_options = {
     'logo_only': True,
     'display_version': False,
     'prev_next_buttons_location': 'bottom',
+    'show_navbar_depth': 1,
     # 'style_external_links': False,
     # 'vcs_pageview_mode': '',
     # 'style_nav_header_background': 'white',
@@ -227,6 +229,7 @@ html_theme_options = {
     'navigation_depth': 4,
     # 'includehidden': True,
     # 'titles_only': False
+#    'launch_buttons': { "thebe": True}
 }
 
 # Sometimes the savefig directory doesn't exist and needs to be created

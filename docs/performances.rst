@@ -1,6 +1,9 @@
 Performances
 ============
 
+.. contents::
+   :local:
+
 To improve **argopy** data fetching performances (in terms of time of
 retrieval), 2 solutions are available:
 

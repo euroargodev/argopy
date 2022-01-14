@@ -189,10 +189,10 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
-#pytest quai20
+#pytest and misc
 .vscode/
 .pytest_cache
 knotebooks/
 argopy/tests/cov.xml
 argopy/tests/dummy_fileA.txt
-float_source
+float_source/

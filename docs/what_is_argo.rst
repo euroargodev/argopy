@@ -22,7 +22,7 @@ in situ temperature/salinity measurements of the ocean interior, key information
 (`Riser et al, 2016 <http://dx.doi.org/10.1038/nclimate2872>`_).
 
 The Argo array reached its full global coverage (of 1 profile per month and per 3x3 degree horizontal area) in 2007, and
-continuously pursues its evolution to fullfill new scientific requirements (`Roemmich et al, 2019
+continuously pursues its evolution to fulfill new scientific requirements (`Roemmich et al, 2019
 <https://www.frontiersin.org/article/10.3389/fmars.2019.00439>`_). It now extents to higher latitudes and some of the
 floats are able to profile down to 4000m and 6000m. New floats are also equipped with biogeochemical sensors, measuring
 oxygen and chlorophyll for instance. Argo is thus providing a deluge of in situ data: more than 400 profiles per day.

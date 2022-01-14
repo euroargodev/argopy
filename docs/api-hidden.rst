@@ -58,8 +58,10 @@
     argopy.utilities.list_available_data_src
     argopy.utilities.list_available_index_src
     argopy.utilities.Chunker
+    
+    argopy.utilities.groupby_remap
+    argopy.utilities.linear_interpolation_remap
 
-    argopy.utilities.TopoFetcher
     argopy.utilities.TopoFetcher.cname
     argopy.utilities.TopoFetcher.define_constraints
     argopy.utilities.TopoFetcher.get_url
@@ -125,12 +127,14 @@
     argopy.stores.argo_index.indexstore
     argopy.stores.argo_index.indexfilter_wmo
     argopy.stores.argo_index.indexfilter_box
-
+    
     argopy.xarray.ArgoAccessor.point2profile
     argopy.xarray.ArgoAccessor.profile2point
-    argopy.xarray.ArgoAccessor.cast_types
-    argopy.xarray.ArgoAccessor.uid
+    argopy.xarray.ArgoAccessor.interp_std_levels
+    argopy.xarray.ArgoAccessor.groupby_pressure_bins
+    argopy.xarray.ArgoAccessor.teos10
+    argopy.xarray.ArgoAccessor.create_float_source
     argopy.xarray.ArgoAccessor.filter_qc
     argopy.xarray.ArgoAccessor.filter_data_mode
-    argopy.xarray.ArgoAccessor.interp_std_levels
-    argopy.xarray.ArgoAccessor.teos10
+    argopy.xarray.ArgoAccessor.filter_scalib_pres
+    argopy.xarray.ArgoAccessor.cast_types
