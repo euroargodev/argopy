@@ -4,6 +4,9 @@ API reference
 
 This page provides an auto-generated summary of argopy's API. For more details and examples, refer to the relevant chapters in the main part of the documentation.
 
+.. contents::
+   :local:
+
 Top-levels functions
 ====================
 
@@ -35,8 +38,8 @@ Fetcher access points
    IndexFetcher.float
    IndexFetcher.profile
 
-Fetching methods
-----------------
+Fetcher methods
+---------------
 
 .. autosummary::
    :toctree: generated/
@@ -54,8 +57,8 @@ Fetching methods
    IndexFetcher.to_dataframe
    IndexFetcher.to_csv
 
-Fetched data visualisation
---------------------------
+Data visualisation
+------------------
 
 .. autosummary::
    :toctree: generated/
@@ -120,10 +123,10 @@ This accessor extends :py:class:`xarray.Dataset`. Proper use of this accessor sh
 
    >>> import xarray as xr         # first import xarray
    >>> import argopy               # import argopy (the dataset 'argo' accessor is registered)
-   >>> from argopy import DataFetcher as ArgoDataFetcher
-   >>> ds = ArgoIndexFetcher().float([6902766, 6902772, 6902914, 6902746]).load().data
+   >>> from argopy import DataFetcher
+   >>> ds = DataFetcher().float([6902766, 6902772, 6902914, 6902746]).load().data
    >>> ds.argo
-   >>> ds.argo.filter_qc
+   >>> ds.argo.filter_qc()
 
 
 Data Transformation
@@ -136,6 +139,7 @@ Data Transformation
    Dataset.argo.point2profile
    Dataset.argo.profile2point
    Dataset.argo.interp_std_levels
+   Dataset.argo.groupby_pressure_bins
 
 Data Filters
 ------------
@@ -146,15 +150,17 @@ Data Filters
 
    Dataset.argo.filter_qc
    Dataset.argo.filter_data_mode
+   Dataset.argo.filter_scalib_pres
 
-Complementing
--------------
+Processing
+----------
 
 .. autosummary::
    :toctree: generated/
    :template: autosummary/accessor_method.rst
 
     Dataset.argo.teos10
+    Dataset.argo.create_float_source
 
 Misc
 ----

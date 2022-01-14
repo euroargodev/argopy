@@ -1,9 +1,14 @@
+import os
 import pytest
 import warnings
+import numpy as np
+import tempfile
+import xarray as xr
 
+import argopy
 from argopy import DataFetcher as ArgoDataFetcher
-from argopy.errors import InvalidDatasetStructure
-from . import requires_connected_erddap_phy
+from argopy.errors import InvalidDatasetStructure, OptionValueError
+from . import requires_connected_erddap_phy, requires_localftp
 
 
 @pytest.fixture(scope="module")
@@ -19,7 +24,8 @@ def ds_pts():
             data[user_mode] = (
                 ArgoDataFetcher(src="erddap", mode=user_mode)
                 .region([-75, -55, 30.0, 40.0, 0, 100.0, "2011-01-01", "2011-01-15"])
-                .to_xarray()
+                .load()
+                .data
             )
     except Exception as e:
         warnings.warn("Error when fetching tests data: %s" % str(e.args))
@@ -60,12 +66,6 @@ class Test_interp_std_levels:
         ds = ds_pts["expert"].argo.point2profile()
         assert "PRES_INTERPOLATED" in ds.argo.interp_std_levels([20, 30, 40, 50]).dims
 
-    def test_points_error(self, ds_pts):
-        """Try to interpolate points, not profiles"""
-        ds = ds_pts["standard"]
-        with pytest.raises(InvalidDatasetStructure):
-            ds.argo.interp_std_levels([20, 30, 40, 50])
-
     def test_std_error(self, ds_pts):
         """Try to interpolate on a wrong axis"""
         ds = ds_pts["standard"].argo.point2profile()
@@ -75,6 +75,48 @@ class Test_interp_std_levels:
             ds.argo.interp_std_levels([-20, 20, 30, 40, 50])
         with pytest.raises(ValueError):
             ds.argo.interp_std_levels(12)
+
+
+@requires_connected_erddap_phy
+class Test_groupby_pressure_bins:
+    def test_groupby_ds_type(self, ds_pts):
+        """Run with success for standard/expert mode and point/profile"""
+        for user_mode, this in ds_pts.items():
+            for format in ["point", "profile"]:
+                if format == 'profile':
+                    that = this.argo.point2profile()
+                else:
+                    that = this.copy()
+                bins = np.arange(0.0, np.max(that["PRES"]) + 10.0, 10.0)
+                assert "STD_PRES_BINS" in that.argo.groupby_pressure_bins(bins).coords
+
+    def test_bins_error(self, ds_pts):
+        """Try to groupby over invalid bins """
+        ds = ds_pts["standard"]
+        with pytest.raises(ValueError):
+            ds.argo.groupby_pressure_bins([100, 20, 30, 40, 50])  # un-sorted
+        with pytest.raises(ValueError):
+            ds.argo.groupby_pressure_bins([-20, 20, 30, 40, 50])  # Negative values
+
+    def test_axis_error(self, ds_pts):
+        """Try to group by using invalid pressure axis """
+        ds = ds_pts["standard"]
+        bins = np.arange(0.0, np.max(ds["PRES"]) + 10.0, 10.0)
+        with pytest.raises(ValueError):
+            ds.argo.groupby_pressure_bins(bins, axis='invalid')
+
+    def test_empty_result(self, ds_pts):
+        """Try to groupby over bins without data"""
+        ds = ds_pts["standard"]
+        with pytest.warns(Warning):
+            out = ds.argo.groupby_pressure_bins([10000, 20000])
+        assert out == None
+
+    def test_all_select(self, ds_pts):
+        ds = ds_pts["standard"]
+        bins = np.arange(0.0, np.max(ds["PRES"]) + 10.0, 10.0)
+        for select in ["shallow", "deep", "middle", "random", "min", "max", "mean", "median"]:
+            assert "STD_PRES_BINS" in ds.argo.groupby_pressure_bins(bins).coords
 
 
 @requires_connected_erddap_phy
@@ -126,3 +168,58 @@ class Test_teos10:
                     that = that.argo.point2profile()
                 with pytest.raises(ValueError):
                     that.argo.teos10(["InvalidVariable"])
+
+
+@requires_localftp
+class Test_create_float_source:
+    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
+
+    def is_valid_mdata(self, this_mdata):
+        """Validate structure of the output dataset """
+        check = []
+        # Check for dimensions:
+        check.append(argopy.utilities.is_list_equal(['m', 'n'], list(this_mdata.dims)))
+        # Check for coordinates:
+        check.append(argopy.utilities.is_list_equal(['m', 'n'], list(this_mdata.coords)))
+        # Check for data variables:
+        check.append(np.all(
+            [v in this_mdata.data_vars for v in ['PRES', 'TEMP', 'PTMP', 'SAL', 'DATES', 'LAT', 'LONG', 'PROFILE_NO']]))
+        check.append(np.all(
+            [argopy.utilities.is_list_equal(['n'], this_mdata[v].dims) for v in ['LONG', 'LAT', 'DATES', 'PROFILE_NO']
+             if v in this_mdata.data_vars]))
+        check.append(np.all(
+            [argopy.utilities.is_list_equal(['m', 'n'], this_mdata[v].dims) for v in ['PRES', 'TEMP', 'SAL', 'PTMP'] if
+             v in this_mdata.data_vars]))
+        return np.all(check)
+
+    def test_error_user_mode(self):
+        with argopy.set_options(local_ftp=self.local_ftp):
+            with pytest.raises(InvalidDatasetStructure):
+                ds = ArgoDataFetcher(src="localftp", mode='standard').float([6901929, 2901623]).load().data
+                ds.argo.create_float_source()
+
+    def test_opt_force(self):
+        with argopy.set_options(local_ftp=self.local_ftp):
+            expert_ds = ArgoDataFetcher(src="localftp", mode='expert').float([2901623]).load().data
+
+            with pytest.raises(OptionValueError):
+                expert_ds.argo.create_float_source(force='dummy')
+
+            ds_float_source = expert_ds.argo.create_float_source(path=None, force='default')
+            assert np.all([k in np.unique(expert_ds['PLATFORM_NUMBER']) for k in ds_float_source.keys()])
+            assert np.all([isinstance(ds_float_source[k], xr.Dataset) for k in ds_float_source.keys()])
+            assert np.all([self.is_valid_mdata(ds_float_source[k]) for k in ds_float_source.keys()])
+
+            ds_float_source = expert_ds.argo.create_float_source(path=None, force='raw')
+            assert np.all([k in np.unique(expert_ds['PLATFORM_NUMBER']) for k in ds_float_source.keys()])
+            assert np.all([isinstance(ds_float_source[k], xr.Dataset) for k in ds_float_source.keys()])
+            assert np.all([self.is_valid_mdata(ds_float_source[k]) for k in ds_float_source.keys()])
+
+    def test_filecreate(self):
+        with argopy.set_options(local_ftp=self.local_ftp):
+            expert_ds = ArgoDataFetcher(src="localftp", mode='expert').float([6901929, 2901623]).load().data
+
+            N_file = len(np.unique(expert_ds['PLATFORM_NUMBER']))
+            with tempfile.TemporaryDirectory() as folder_output:
+                expert_ds.argo.create_float_source(path=folder_output)
+                assert len(os.listdir(folder_output)) == N_file

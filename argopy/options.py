@@ -71,32 +71,37 @@ _VALIDATORS = {
 
 
 class set_options:
-    """Set options for argopy.
+    """Set options for argopy
 
     List of options:
 
-        - `dataset`: Define the Dataset to work with.
-            Default: `phy`. Possible values: `phy`, `bgc` or `ref`.
-        - `src`: Source of fetched data.
-            Default: `erddap`. Possible values: `erddap`, `localftp`, `argovis`
-        - `local_ftp`: Absolute path to a local GDAC ftp copy.
-            Default: `.`
-        - `cachedir`: Absolute path to a local cache directory.
-            Default: `~/.cache/argopy`
-        - `mode`: User mode.
-            Default: `standard`. Possible values: `standard` or `expert`.
-        - `api_timeout`: Define the time out of internet requests to web API, in seconds.
-            Default: 60
-        - `trust_env`: Allow for local environment variables to be used by fsspec to connect to the internet. Get
-            proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True (False by
-            default). Also can get proxy credentials from ~/.netrc file if present.
+    - ``dataset``: Define the Dataset to work with.
+        Default: ``phy``.
+        Possible values: ``phy``, ``bgc`` or ``ref``.
+    - ``src``: Source of fetched data.
+        Default: ``erddap``.
+        Possible values: ``erddap``, ``localftp``, ``argovis``
+    - ``local_ftp``: Absolute path to a local GDAC ftp copy.
+        Default: None
+    - ``cachedir``: Absolute path to a local cache directory.
+        Default: ``~/.cache/argopy``
+    - ``mode``: User mode.
+        Default: ``standard``.
+        Possible values: ``standard`` or ``expert``.
+    - ``api_timeout``: Define the time out of internet requests to web API, in seconds.
+        Default: 60
+    - ``trust_env``: Allow for local environment variables to be used by fsspec to connect to the internet.
+        Get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True (
+        False by default). Also can get proxy credentials from ~/.netrc file if present.
 
     You can use `set_options` either as a context manager:
+
     >>> import argopy
     >>> with argopy.set_options(src='localftp'):
     >>>    ds = argopy.DataFetcher().float(3901530).to_xarray()
 
     Or to set global options:
+
     >>> argopy.set_options(src='localftp')
 
     """

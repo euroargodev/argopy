@@ -29,9 +29,9 @@ Documentation
 * :doc:`data_fetching`
 * :doc:`data_sources`
 * :doc:`data_manipulation`
+* :doc:`visualisation`
 * :doc:`user_mode`
 * :doc:`metadata_fetching`
-* :doc:`visualisation`
 * :doc:`performances`
 * :doc:`data_quality_control`
 
@@ -43,11 +43,11 @@ Documentation
     data_fetching
     data_sources
     data_manipulation
+    visualisation
+    data_quality_control
     user_mode
     metadata_fetching
-    visualisation
     performances
-    data_quality_control
 
 **Help & reference**
 

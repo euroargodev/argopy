@@ -1,6 +1,9 @@
 Data sources
 ============
 
+.. contents::
+   :local:
+
 Let's start with standard import:
 
 .. ipython:: python

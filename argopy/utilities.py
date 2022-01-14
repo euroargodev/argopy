@@ -42,6 +42,7 @@ from argopy.errors import (
     FtpPathError,
     InvalidFetcher,
     InvalidFetcherAccessPoint,
+    InvalidOption
 )
 
 try:
@@ -1282,6 +1283,11 @@ def is_list_of_datasets(lst):
     return all(isinstance(x, xr.Dataset) for x in lst)
 
 
+def is_list_equal(lst1, lst2):
+    """ Return true if 2 lists contain same elements"""
+    return len(lst1) == len(lst2) and len(lst1) == sum([1 for i, j in zip(lst1, lst2) if i == j])
+
+
 def check_wmo(lst):
     """ Validate a WMO option and returned it as a list of integers
 
@@ -1427,6 +1433,93 @@ def modified_environ(*remove, **update):
         [env.pop(k) for k in remove_after]
 
 
+def toYearFraction(this_date: pd._libs.tslibs.timestamps.Timestamp = pd.to_datetime('now')):
+    """ Compute decimal year, robust to leap years, precision to the second
+
+    Compute the fraction of the year a given timestamp corresponds to.
+    The "fraction of the year" goes:
+    - from 0 on 01-01T00:00:00.000 of the year
+    - to 1 on the 01-01T00:00:00.000 of the following year
+
+    1 second corresponds to the number of days in the year times 86400.
+    The faction of the year is rounded to 10-digits in order to have a "second" precision.
+
+    See discussion here: https://github.com/euroargodev/argodmqc_owc/issues/35
+
+    Parameters
+    ----------
+    pd._libs.tslibs.timestamps.Timestamp
+
+    Returns
+    -------
+    float
+    """
+    if "UTC" in [this_date.tzname() if not this_date.tzinfo is None else ""]:
+        startOfThisYear = pd.to_datetime("%i-01-01T00:00:00.000" % this_date.year, utc=True)
+    else:
+        startOfThisYear = pd.to_datetime("%i-01-01T00:00:00.000" % this_date.year)
+    yearDuration_sec = (startOfThisYear + pd.offsets.DateOffset(years=1) - startOfThisYear).total_seconds()
+
+    yearElapsed_sec = (this_date - startOfThisYear).total_seconds()
+    fraction = yearElapsed_sec / yearDuration_sec
+    fraction = np.round(fraction, 10)
+    return this_date.year + fraction
+
+
+def YearFraction_to_datetime(yf: float):
+    """ Compute datetime from year fraction
+
+    Inverse the toYearFraction() function
+
+    Parameters
+    ----------
+    float
+
+    Returns
+    -------
+    pd._libs.tslibs.timestamps.Timestamp
+    """
+    year = np.int32(yf)
+    fraction = yf - year
+    fraction = np.round(fraction, 10)
+
+    startOfThisYear = pd.to_datetime("%i-01-01T00:00:00" % year)
+    yearDuration_sec = (startOfThisYear + pd.offsets.DateOffset(years=1) - startOfThisYear).total_seconds()
+    yearElapsed_sec = pd.Timedelta(fraction * yearDuration_sec, unit='s')
+    return pd.to_datetime(startOfThisYear + yearElapsed_sec, unit='s')
+
+
+def wrap_longitude(grid_long):
+    """ Allows longitude (0-360) to wrap beyond the 360 mark, for mapping purposes.
+        Makes sure that, if the longitude is near the boundary (0 or 360) that we
+        wrap the values beyond
+        360 so it appears nicely on a map
+        This is a refactor between get_region_data and get_region_hist_locations to
+        avoid duplicate code
+
+        source: https://github.com/euroargodev/argodmqc_owc/blob/e174f4538fdae1534c9740491398972b1ffec3ca/pyowc/utilities.py#L80
+
+        Parameters
+        ----------
+        grid_long: array of longitude values
+
+        Returns
+        -------
+        array of longitude values that can extend past 360
+    """
+    neg_long = np.argwhere(grid_long < 0)
+    grid_long[neg_long] = grid_long[neg_long] + 360
+
+    # if we have data close to upper boundary (360), then wrap some of the data round
+    # so it appears on the map
+    top_long = np.argwhere(grid_long >= 320)
+    if top_long.__len__() != 0:
+        bottom_long = np.argwhere(grid_long <= 40)
+        grid_long[bottom_long] = 360 + grid_long[bottom_long]
+
+    return grid_long
+
+
 def wmo2box(wmo_id: int):
     """ Convert WMO square box number into a latitude/longitude box
 
@@ -1477,6 +1570,92 @@ def wmo2box(wmo_id: int):
 
     box = [lon_min, lon_max, lat_min, lat_max]
     return box
+
+
+def groupby_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped", select='deep', right=False):
+    """ todo: Need a docstring here !"""
+
+    # sub-sampling called in xarray ufunc
+    def _subsample_bins(x, y, target_values):
+        # remove all nans from input x and y
+        idx = np.logical_or(np.isnan(x), np.isnan(y))
+        x = x[~idx]
+        y = y[~idx]
+
+        ifound = np.digitize(x, target_values, right=right)  # ``bins[i-1] <= x < bins[i]``
+        ifound -= 1  # Because digitize returns a 1-based indexing, we need to remove 1
+        y_binned = np.ones_like(target_values) * np.nan
+
+        for ib, this_ibin in enumerate(np.unique(ifound)):
+            ix = np.where(ifound == this_ibin)
+            iselect = ix[-1]
+
+            # Map to y value at specific x index in the bin:
+            if select == 'shallow':
+                iselect = iselect[0]  # min/shallow
+                mapped_value = y[iselect]
+            elif select == 'deep':
+                iselect = iselect[-1]  # max/deep
+                mapped_value = y[iselect]
+            elif select == 'middle':
+                iselect = iselect[np.where(x[iselect] >= np.median(x[iselect]))[0][0]]  # median/middle
+                mapped_value = y[iselect]
+            elif select == 'random':
+                iselect = iselect[np.random.randint(len(iselect))]
+                mapped_value = y[iselect]
+
+            # or Map to y statistics in the bin:
+            elif select == 'mean':
+                mapped_value = np.nanmean(y[iselect])
+            elif select == 'min':
+                mapped_value = np.nanmin(y[iselect])
+            elif select == 'max':
+                mapped_value = np.nanmax(y[iselect])
+            elif select == 'median':
+                mapped_value = np.median(y[iselect])
+
+            else:
+                raise InvalidOption("`select` option has invalid value (%s)" % select)
+
+            y_binned[this_ibin] = mapped_value
+
+        return y_binned
+
+    # infer dim from input
+    if z_dim is None:
+        if len(z.dims) != 1:
+            raise RuntimeError("if z_dim is not specified, x must be a 1D array.")
+        dim = z.dims[0]
+    else:
+        dim = z_dim
+
+    # if dataset is passed drop all data_vars that dont contain dim
+    if isinstance(data, xr.Dataset):
+        raise ValueError("Dataset input is not supported yet")
+        # TODO: for a dataset input just apply the function for each appropriate array
+
+    if version.parse(xr.__version__) > version.parse("0.15.0"):
+        kwargs = dict(
+            input_core_dims=[[dim], [dim], [z_regridded_dim]],
+            output_core_dims=[[output_dim]],
+            vectorize=True,
+            dask="parallelized",
+            output_dtypes=[data.dtype],
+            dask_gufunc_kwargs={'output_sizes': {output_dim: len(z_regridded[z_regridded_dim])}},
+        )
+    else:
+        kwargs = dict(
+            input_core_dims=[[dim], [dim], [z_regridded_dim]],
+            output_core_dims=[[output_dim]],
+            vectorize=True,
+            dask="parallelized",
+            output_dtypes=[data.dtype],
+            output_sizes={output_dim: len(z_regridded[z_regridded_dim])},
+        )
+    remapped = xr.apply_ufunc(_subsample_bins, z, data, z_regridded, **kwargs)
+
+    remapped.coords[output_dim] = z_regridded.rename({z_regridded_dim: output_dim}).coords[output_dim]
+    return remapped
 
 
 class TopoFetcher():

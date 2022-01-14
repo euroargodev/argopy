@@ -205,7 +205,7 @@ def safe_to_server_errors(test_func):
             pass
         except ServerDisconnectedError as e:
             # We can't do anything about this !
-            warnings.warn("\nWe were disconnected from server !\n%s" % str(e.args))
+            warnings.warn("\n We were disconnected from server !\n%s" % str(e.args))
             pass
         except ClientResponseError as e:
             # The server is sending back an error when creating the response
