@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 import logging
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from argopy.options import OPTIONS
 from argopy.stores import httpstore, memorystore
@@ -24,6 +24,21 @@ log = logging.getLogger("argopy.stores.index.pa")
 
 
 class ArgoIndexStoreProto(ABC):
+
+    def __repr__(self):
+        summary = ["<argoindex>"]
+        summary.append("Index: %s" % self.index_file)
+        summary.append("FTP: %s" % self.host)
+        if hasattr(self, 'index'):
+            summary.append("Loaded: True (%i records)" % self.shape[0])
+        else:
+            summary.append("Loaded: False")
+        if hasattr(self, 'search'):
+            match = 'matches' if self.N_FILES > 1 else 'match'
+            summary.append("Searched: True (%i %s, %0.4f%%)" % (self.N_FILES, match, self.N_FILES * 100 / self.shape[0]))
+        else:
+            summary.append("Searched: False")
+        return "\n".join(summary)
 
     def _format(self, x, typ: str) -> str:
         """ string formatting helper """
@@ -106,6 +121,28 @@ class ArgoIndexStoreProto(ABC):
         else:
             path = cname
         return hashlib.sha256(path.encode()).hexdigest()
+
+    @property
+    def data(self):
+        """ Return index as dataframe """
+        return self.index.to_pandas()
+
+    @abstractmethod
+    def load(self, force=False):
+        """ Load an Argo-index file content
+
+        Try to load the gzipped file first, and if not found, fall back on the raw .txt file.
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def to_dataframe(self):
+        """ Return search results as dataframe
+
+        If store is cached, caching is triggered here
+        """
+        raise NotImplementedError("Not implemented")
+
 
 class indexstore(ArgoIndexStoreProto):
     """ Argo index store based on pyarrow table
@@ -197,26 +234,6 @@ class indexstore(ArgoIndexStoreProto):
                     log.debug("Argo index file loaded with pyarrow read_csv from: %s" % f.name)
 
         return self
-
-    def __repr__(self):
-        summary = ["<argoindex>"]
-        summary.append("Index: %s" % self.index_file)
-        summary.append("FTP: %s" % self.host)
-        if hasattr(self, 'index'):
-            summary.append("Loaded: True (%i records)" % self.shape[0])
-        else:
-            summary.append("Loaded: False")
-        if hasattr(self, 'search'):
-            match = 'matches' if self.N_FILES > 1 else 'match'
-            summary.append("Searched: True (%i %s, %0.4f%%)" % (self.N_FILES, match, self.N_FILES * 100 / self.shape[0]))
-        else:
-            summary.append("Searched: False")
-        return "\n".join(summary)
-
-    @property
-    def data(self):
-        """ Return index as dataframe """
-        return self.index.to_pandas()
 
     def to_dataframe(self):
         """ Return search results as dataframe
