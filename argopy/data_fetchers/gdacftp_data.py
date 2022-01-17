@@ -172,7 +172,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
 
         Multi-profile file name is based on the dataset requested ('phy' or 'bgc')
 
-        This method does not ensure that multi-profile files exist
+        This method does not ensure that multi-profile files exist !
 
         Parameters
         ----------
