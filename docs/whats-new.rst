@@ -3,7 +3,7 @@
 What's New
 ==========
 
-v0.1.9 (X XXX. 202X)
+v0.1.9 (19 Jan. 2022)
 ---------------------
 
 **Features and front-end API**
