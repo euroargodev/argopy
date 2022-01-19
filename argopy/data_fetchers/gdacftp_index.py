@@ -4,18 +4,13 @@ Argo index fetcher for remote GDAC FTP
 This is not intended to be used directly, only by the facade at fetchers.py
 
 """
-import os
-from glob import glob
 import numpy as np
 import pandas as pd
 from abc import ABC, abstractmethod
 import warnings
-import getpass
 import logging
 
 from argopy.utilities import (
-    list_standard_variables,
-    check_localftp,
     format_oneline,
     load_dict,
     mapp_dict
@@ -78,7 +73,6 @@ class FTPArgoIndexFetcher(ABC):
         api_timeout: int (optional)
             FTP request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
-
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
         self.definition = "Ifremer GDAC ftp Argo index fetcher"

@@ -100,6 +100,7 @@ class LocalFTPArgoIndexFetcher(ABC):
     def __repr__(self):
         summary = ["<indexfetcher.localftp>"]
         summary.append("Name: %s" % self.definition)
+        summary.append("Index: %s" % self.index_file)
         summary.append("FTP: %s" % self.local_ftp)
         summary.append("Domain: %s" % format_oneline(self.cname()))
         return '\n'.join(summary)
