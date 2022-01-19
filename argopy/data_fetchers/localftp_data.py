@@ -36,7 +36,7 @@ import warnings
 import getpass
 
 from .proto import ArgoDataFetcherProto
-from argopy.errors import NetCDF4FileNotFoundError
+from argopy.errors import NetCDF4FileNotFoundError, DataNotFound
 from argopy.utilities import (
     list_standard_variables,
     check_localftp,
@@ -569,18 +569,19 @@ class Fetch_box(LocalFTPArgoDataFetcher):
             # Fetch the index to retrieve the list of files/profiles to load:
             filt = indexfilter_box(self.indexBOX)
             df_index = self.fs_index.read_csv(filt)
-            if isinstance(df_index, pd.core.frame.DataFrame):
-                # Ok, we found profiles in the index file,
-                # so now we can make sure these files exist:
-                lst = list(df_index["file"])
-                for file in lst:
-                    abs_file = os.path.sep.join([self.local_ftp, "dac", file])
-                    if self.fs.exists(abs_file):
-                        self._list_of_argo_files.append(abs_file)
-                    elif self.errors == "raise":
-                        raise NetCDF4FileNotFoundError(abs_file)
-                    else:
-                        # Otherwise remain silent/ignore
-                        # todo should raise a warning instead ?
-                        return None
+
+            # if isinstance(df_index, pd.core.frame.DataFrame):
+            # Ok, we found profiles in the index file,
+            # so now we can make sure these files exist:
+            lst = list(df_index["file"])
+            for file in lst:
+                abs_file = os.path.sep.join([self.local_ftp, "dac", file])
+                if self.fs.exists(abs_file):
+                    self._list_of_argo_files.append(abs_file)
+                elif self.errors == "raise":
+                    raise NetCDF4FileNotFoundError(abs_file)
+                else:
+                    # Otherwise remain silent/ignore
+                    # todo should raise a warning instead ?
+                    return None
         return self._list_of_argo_files

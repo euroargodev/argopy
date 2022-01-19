@@ -533,8 +533,7 @@ class indexstore():
                 # Run search:
                 results = search.run(f)
                 if not results:
-                    raise DataNotFound("No Argo data in the index correspond to your search criteria."
-                                       "\nSearch URI: %s" % search.uri)
+                    raise DataNotFound("index:%s" % search.uri)
                 # and save results for caching:
                 if self.cache:
                     with self.fs['search'].open(search.uri, "w") as of:
