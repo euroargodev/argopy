@@ -4,10 +4,11 @@ import numpy as np
 import pandas as pd
 import logging
 from abc import ABC, abstractmethod
+from fsspec.core import split_protocol
 
 from argopy.options import OPTIONS
-from argopy.stores import httpstore, memorystore
-from argopy.errors import DataNotFound
+from argopy.stores import httpstore, memorystore, filestore, ftpstore
+from argopy.errors import DataNotFound, FtpPathError
 
 try:
     import pyarrow.csv as csv
@@ -28,7 +29,7 @@ class ArgoIndexStoreProto(ABC):
     def __repr__(self):
         summary = ["<argoindex>"]
         summary.append("Index: %s" % self.index_file)
-        summary.append("FTP: %s" % self.host)
+        summary.append("Host: %s" % self.host)
         if hasattr(self, 'index'):
             summary.append("Loaded: True (%i records)" % self.shape[0])
         else:
@@ -344,8 +345,25 @@ class indexstore(ArgoIndexStoreProto):
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
         timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
         self.fs = {}
-        self.fs['index'] = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')  # Only for https://data-argo.ifremer.fr
-        self.fs['search'] = memorystore(cache, cachedir)  # Manage the search results
+        if split_protocol(host)[0] is None:
+            self.fs['index'] = filestore(cache=cache, cachedir=cachedir)
+        elif 'https' in split_protocol(host)[0]:
+            self.fs['index'] = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')  # Only for https://data-argo.ifremer.fr
+        elif 'ftp' in split_protocol(host)[0]:
+            self.fs['index'] = ftpstore(host=split_protocol(host)[-1],
+                                        cache=cache,
+                                        cachedir=cachedir,
+                                        timeout=timeout,
+                                        block_size= 5 * (2 ** 20))
+            if 'ifremer' in host:
+                self.index_file = '/ifremer/argo/' + index_file
+            elif 'usgodae' in host:
+                self.index_file = '/pub/outgoing/argo/' + index_file
+            else:
+                raise FtpPathError("Invalid Argo ftp: %s" % host)
+        else:
+            raise ValueError("Unknown protocol for an Argo index store: %s" % split_protocol(host)[0])
+        self.fs['search'] = memorystore(cache, cachedir)  # Manage search results
         self.host = host
 
     def load(self, force=False):
