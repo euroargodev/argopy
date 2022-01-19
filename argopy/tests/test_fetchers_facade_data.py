@@ -159,7 +159,7 @@ class Test_Facade:
             dsh = fetcher.plot(ptype='qc_altimetry', embed='slide')
             assert isinstance(dsh(0), IPython.display.Image)
 
-            # Test invalid plot
+            # Test invalid plot name
             with pytest.raises(ValueError):
                 fetcher.plot(ptype='invalid_cat', with_seaborn=ws)
 
@@ -182,8 +182,8 @@ class Test_DataFetching:
     args["float"] = [[2901623], [2901623, 6901929]]
     args["profile"] = [[2901623, 12], [2901623, np.arange(12, 14)], [6901929, [1, 6]]]
     args["region"] = [
-        [-65.1, -65, 35.1, 36., 0, 10.0],
-        [-65.4, -65, 35.1, 36., 0, 10.0, "2013-01-01", "2013-09-01"],
+        [12.181, 13.459, -40.416, -39.444, 0.0, 1014.0],
+        [12.181, 17.459, -40.416, -34.444, 0.0, 2014.0, '2008-06-07', '2008-09-06'],
     ]
 
     def test_profile_from_float(self):
@@ -240,7 +240,7 @@ class Test_DataFetching:
     def test_float_argovis(self):
         self.__test_float("argovis")
 
-    @requires_ftp
+    @requires_connected_gdac
     @safe_to_server_errors
     def test_float_ftp(self):
         self.__test_float("ftp")
@@ -261,7 +261,7 @@ class Test_DataFetching:
     def test_profile_argovis(self):
         self.__test_profile("argovis")
 
-    @requires_ftp
+    @requires_connected_gdac
     @safe_to_server_errors
     def test_profile_ftp(self):
         self.__test_profile("ftp")
@@ -282,7 +282,7 @@ class Test_DataFetching:
     def test_region_argovis(self):
         self.__test_region("argovis")
 
-    @requires_ftp
+    @requires_connected_gdac
     @safe_to_server_errors
     def test_region_ftp(self):
         self.__test_region("ftp")
