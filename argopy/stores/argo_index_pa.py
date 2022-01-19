@@ -123,6 +123,21 @@ class ArgoIndexStoreProto(ABC):
         return hashlib.sha256(path.encode()).hexdigest()
 
     @property
+    def shape(self):
+        """ Shape of in the index """
+        # Should work for pyarrow.table and pandas.dataframe
+        return self.index.shape
+
+    @property
+    def N_FILES(self):
+        """ Number of files in search result, or index if search not triggered """
+        # Should work for pyarrow.table and pandas.dataframe
+        if hasattr(self, 'search'):
+            return self.search.shape[0]
+        else:
+            return self.index.shape[0]
+
+    @property
     @abstractmethod
     def data(self):
         """ Return index as dataframe """
@@ -149,21 +164,6 @@ class ArgoIndexStoreProto(ABC):
         list(str)
         """
         raise NotImplementedError("Not implemented")
-
-    @property
-    def shape(self):
-        """ Shape of in the index """
-        # Should work for pyarrow.table and pandas.dataframe
-        return self.index.shape
-
-    @property
-    def N_FILES(self):
-        """ Number of files in search result, or index if search not triggered """
-        # Should work for pyarrow.table and pandas.dataframe
-        if hasattr(self, 'search'):
-            return self.search.shape[0]
-        else:
-            return self.index.shape[0]
 
     @abstractmethod
     def load(self, force=False):
