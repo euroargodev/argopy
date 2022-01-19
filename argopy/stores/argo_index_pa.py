@@ -123,15 +123,63 @@ class ArgoIndexStoreProto(ABC):
         return hashlib.sha256(path.encode()).hexdigest()
 
     @property
+    @abstractmethod
     def data(self):
         """ Return index as dataframe """
-        return self.index.to_pandas()
+        raise NotImplementedError("Not implemented")
+
+    @property
+    @abstractmethod
+    def uri_full_index(self):
+        """ List of URI from index
+
+        Returns
+        -------
+        list(str)
+        """
+        raise NotImplementedError("Not implemented")
+
+    @property
+    @abstractmethod
+    def uri(self):
+        """ List of URI from search results
+
+        Returns
+        -------
+        list(str)
+        """
+        raise NotImplementedError("Not implemented")
+
+    @property
+    def shape(self):
+        """ Shape of in the index """
+        # Should work for pyarrow.table and pandas.dataframe
+        return self.index.shape
+
+    @property
+    def N_FILES(self):
+        """ Number of files in search result, or index if search not triggered """
+        # Should work for pyarrow.table and pandas.dataframe
+        if hasattr(self, 'search'):
+            return self.search.shape[0]
+        else:
+            return self.index.shape[0]
 
     @abstractmethod
     def load(self, force=False):
         """ Load an Argo-index file content
 
-        Try to load the gzipped file first, and if not found, fall back on the raw .txt file.
+        Fill in self.index internal property
+        If store is cached, caching is triggered here
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def run(self):
+        """ Filter index with search criteria
+
+        Fill in self.search internal property
+        If store is cached, caching is triggered here
         """
         raise NotImplementedError("Not implemented")
 
@@ -140,6 +188,109 @@ class ArgoIndexStoreProto(ABC):
         """ Return search results as dataframe
 
         If store is cached, caching is triggered here
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def read_wmo(self):
+        """ Return list of unique WMOs in search results
+
+        Fall back on full index if search not found
+
+        Returns
+        -------
+        list(int)
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def records_per_wmo(self):
+        """ Return the number of records per unique WMOs in search results
+
+        Fall back on full index if search not found
+
+        Returns
+        -------
+        dict
+            WMO are in keys, nb of records in values
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def search_wmo(self, WMOs):
+        """ Search index for WMO
+
+        - Define search method
+        - Trigger self.run() to set self.search internal property
+
+        Parameters
+        ----------
+        list(int)
+            List of WMOs to search
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def search_wmo_cyc(self, WMOs, CYCs):
+        """ Search index for WMO and CYC
+
+        - Define search method
+        - Trigger self.run() to set self.search internal property
+
+        Parameters
+        ----------
+        list(int)
+            List of WMOs to search
+        list(int)
+            List of CYCs to search
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def search_tim(self, BOX):
+        """ Search index for time range
+
+        - Define search method
+        - Trigger self.run() to set self.search internal property
+
+        Parameters
+        ----------
+        box : list()
+            An index box to search Argo records for:
+
+                - box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def search_latlon(self, BOX):
+        """ Search index for rectangular latitude/longitude domain
+
+        - Define search method
+        - Trigger self.run() to set self.search internal property
+
+        Parameters
+        ----------
+        box : list()
+            An index box to search Argo records for:
+
+                - box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def search_latlontim(self, BOX):
+        """ Search index for rectangular latitude/longitude domain and time range
+
+        - Define search method
+        - Trigger self.run() to set self.search internal property
+
+        Parameters
+        ----------
+        box : list()
+            An index box to search Argo records for:
+
+                - box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
         """
         raise NotImplementedError("Not implemented")
 
@@ -235,6 +386,25 @@ class indexstore(ArgoIndexStoreProto):
 
         return self
 
+    def run(self):
+        """ Filter index with search criteria """
+        search_path = self.host + "/" + self.index_file + "/" + self.sha_pq
+        if self.fs['search'].exists(search_path):
+            log.debug('Search results already in memory as pyarrow table, loading...')
+            with self.fs['search'].fs.open(search_path, "rb") as of:
+                self.search = pa.parquet.read_table(of)
+        else:
+            log.debug('Compute search from scratch')
+            self.search = self.index.filter(self.search_filter)
+            log.debug('Found %i matches' % self.search.shape[0])
+            if self.cache:
+                with self.fs['search'].open(search_path, "wb") as of:
+                    pa.parquet.write_table(self.search, of)
+                with self.fs['search'].fs.open(search_path, "rb") as of:
+                    self.search = pa.parquet.read_table(of)
+                log.debug('Search results saved in cache as pyarrow table')
+        return self
+
     def to_dataframe(self):
         """ Return search results as dataframe
 
@@ -263,6 +433,11 @@ class indexstore(ArgoIndexStoreProto):
         return df
 
     @property
+    def data(self):
+        """ Return index as dataframe """
+        return self.index.to_pandas()
+
+    @property
     def uri_full_index(self):
         return ["/".join([self.host, "dac", f.as_py()]) for f in self.index['file']]
 
@@ -270,40 +445,14 @@ class indexstore(ArgoIndexStoreProto):
     def uri(self):
         return ["/".join([self.host, "dac", f.as_py()]) for f in self.search['file']]
 
-    @property
-    def shape(self):
-        return self.index.shape
-
-    @property
-    def N_FILES(self):
-        if hasattr(self, 'search'):
-            return self.search.shape[0]
-        else:
-            return self.index.shape[0]
-
-    def run(self):
-        """ Filter index with search criteria """
-        search_path = self.host + "/" + self.index_file + "/" + self.sha_pq
-        if self.fs['search'].exists(search_path):
-            log.debug('Search results already in memory as pyarrow table, loading...')
-            with self.fs['search'].fs.open(search_path, "rb") as of:
-                self.search = pa.parquet.read_table(of)
-        else:
-            log.debug('Compute search from scratch')
-            self.search = self.index.filter(self.search_filter)
-            log.debug('Found %i matches' % self.search.shape[0])
-            if self.cache:
-                with self.fs['search'].open(search_path, "wb") as of:
-                    pa.parquet.write_table(self.search, of)
-                with self.fs['search'].fs.open(search_path, "rb") as of:
-                    self.search = pa.parquet.read_table(of)
-                log.debug('Search results saved in cache as pyarrow table')
-        return self
-
     def read_wmo(self):
         """ Return list of unique WMOs in search results
 
-            Fall back on full index if search not found
+        Fall back on full index if search not found
+
+        Returns
+        -------
+        list(int)
         """
         if hasattr(self, 'search'):
             results = pa.compute.split_pattern(self.search['file'], pattern="/")
