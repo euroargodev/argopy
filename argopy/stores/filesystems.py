@@ -777,6 +777,222 @@ class ftpstore(httpstore):
     """ Argo ftp file system
 
         Relies on:
-            https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.memory.MemoryFileSystem
+            https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.ftp.FTPFileSystem
     """
     protocol = 'ftp'
+
+    def open_dataset(self, url, *args, **kwargs):
+        """ Open and decode a xarray dataset from an url
+
+        Parameters
+        ----------
+        url: str
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+        """
+        # log.debug("Opening dataset: %s" % url)  # Redundant with fsspec logger
+        # try:
+        #     with self.fs.open(url, "rb") as of:
+        #         ds = xr.open_dataset(of, *args, **kwargs)
+        try:
+            this_url = self.fs._strip_protocol(url)
+            data = self.fs.cat_file(this_url)
+        except Exception as e:
+            log.debug("Error with: %s" % url)
+        # except aiohttp.ClientResponseError as e:
+            raise
+
+        ds = xr.open_dataset(data, *args, **kwargs)
+        if "source" not in ds.encoding:
+            if isinstance(url, str):
+                ds.encoding["source"] = url
+        self.register(url)
+        return ds
+
+    def _mfprocessor_dataset(self, url, preprocess=None, preprocess_opts={}, *args, **kwargs):
+        # Load data
+        ds = self.open_dataset(url, *args, **kwargs)
+        # Pre-process
+        if isinstance(preprocess, types.FunctionType) or isinstance(preprocess, types.MethodType):
+            ds = preprocess(ds, **preprocess_opts)
+        return ds
+
+    def open_mfdataset(self,  # noqa: C901
+                       urls,
+                       max_workers: int = 112,
+                       method: str = 'thread',
+                       progress: bool = False,
+                       concat: bool = True,
+                       concat_dim='row',
+                       preprocess=None,
+                       preprocess_opts={},
+                       errors: str = 'ignore',
+                       *args, **kwargs):
+        """ Open multiple urls as a single xarray dataset.
+
+            This is a version of the :class:`argopy.stores.httpstore.open_dataset` method that is able to handle a list of urls/paths
+            sequentially or in parallel.
+
+            Use a Threads Pool by default for parallelization.
+
+            Parameters
+            ----------
+            urls: list(str)
+                List of url/path to open
+            max_workers: int, default: 112
+                Maximum number of threads or processes
+            method: str, default: ``thread``
+                The parallelization method to execute calls asynchronously:
+
+                    - ``thread`` (default): use a pool of at most ``max_workers`` threads
+                    - ``process``: use a pool of at most ``max_workers`` processes
+                    - :class:`distributed.client.Client`: Experimental, expect this method to fail !
+                    - ``seq``: open data sequentially, no parallelization applied
+            progress: bool, default: False
+                Display a progress bar
+            concat: bool, default: True
+                Concatenate results in a single :class:`xarray.Dataset` or not (in this case, function will return a
+                list of :class:`xarray.Dataset`)
+            concat_dim: str, default: ``row``
+                Name of the dimension to use to concatenate all datasets (passed to :class:`xarray.concat`)
+            preprocess: callable (optional)
+                If provided, call this function on each dataset prior to concatenation
+            preprocess_opts: dict (optional)
+                If ``preprocess`` is provided, pass this as options
+            errors: str, default: ``ignore``
+                Define how to handle errors raised during data URIs fetching:
+
+                    - ``raise``: Raise any error encountered
+                    - ``ignore`` (default): Do not stop processing, simply issue a debug message in logging console
+                    - ``silent``:  Do not stop processing and do not issue log message
+            Other args and kwargs: other options passed to :class:`argopy.stores.httpstore.open_dataset`.
+
+            Returns
+            -------
+            output: :class:`xarray.Dataset` or list of :class:`xarray.Dataset`
+
+        """
+        strUrl = lambda x: x.replace("ftps://", "").replace("ftp://", "")  # noqa: E731
+
+        def drop_variables_not_in_all_datasets(ds_collection):
+            """Drop variables that are not in all datasets (Lowest common denominator)"""
+            # List all possible data variables:
+            vlist = []
+            for res in ds_collection:
+                [vlist.append(v) for v in list(res.data_vars)]
+            vlist = np.unique(vlist)
+
+            # Check if all possible variables are in each datasets:
+            ishere = np.zeros((len(vlist), len(ds_collection)))
+            for ir, res in enumerate(ds_collection):
+                for iv, v in enumerate(res.data_vars):
+                    for iu, u in enumerate(vlist):
+                        if v == u:
+                            ishere[iu, ir] = 1
+            # List of dataset with missing variables:
+            ir_missing = np.sum(ishere, axis=0) < len(vlist)
+            # List of variables missing in some dataset:
+            iv_missing = np.sum(ishere, axis=1) < len(ds_collection)
+
+            # List of variables to keep
+            iv_tokeep = np.sum(ishere, axis=1) == len(ds_collection)
+            for ir, res in enumerate(ds_collection):
+                #         print("\n", res.attrs['Fetched_uri'])
+                v_to_drop = []
+                for iv, v in enumerate(res.data_vars):
+                    if v not in vlist[iv_tokeep]:
+                        v_to_drop.append(v)
+                ds_collection[ir] = ds_collection[ir].drop_vars(v_to_drop)
+            return ds_collection
+
+        if not isinstance(urls, list):
+            urls = [urls]
+
+        results = []
+        failed = []
+        if method in ['thread', 'process']:
+            if method == 'thread':
+                ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
+            else:
+                if max_workers == 112:
+                    max_workers = multiprocessing.cpu_count()
+                ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
+
+            with ConcurrentExecutor as executor:
+                future_to_url = {executor.submit(self._mfprocessor_dataset, url,
+                                                 preprocess=preprocess, preprocess_opts=preprocess_opts, *args, **kwargs): url for url in urls}
+                futures = concurrent.futures.as_completed(future_to_url)
+                if progress:
+                    futures = tqdm(futures, total=len(urls))
+
+                for future in futures:
+                    data = None
+                    try:
+                        data = future.result()
+                    except Exception:
+                        failed.append(future_to_url[future])
+                        if errors == 'ignore':
+                            log.debug("Ignored error with this url: %s" % strUrl(future_to_url[future]))
+                            # See fsspec.http logger for more
+                            pass
+                        elif errors == 'silent':
+                            pass
+                        else:
+                            raise
+                    finally:
+                        results.append(data)
+
+        elif type(method) == distributed.client.Client:
+            # Use a dask client:
+
+            if progress:
+                from dask.diagnostics import ProgressBar
+                with ProgressBar():
+                    futures = method.map(self._mfprocessor_dataset, urls, preprocess=preprocess, *args, **kwargs)
+                    results = method.gather(futures)
+            else:
+                futures = method.map(self._mfprocessor_dataset, urls, preprocess=preprocess, *args, **kwargs)
+                results = method.gather(futures)
+
+        elif method in ['seq', 'sequential']:
+            if progress:
+                urls = tqdm(urls, total=len(urls))
+
+            for url in urls:
+                data = None
+                try:
+                    data = self._mfprocessor_dataset(url, preprocess=preprocess, preprocess_opts=preprocess_opts, *args, **kwargs)
+                except Exception:
+                    failed.append(url)
+                    if errors == 'ignore':
+                        log.debug("Ignored error with this url: %s" % strUrl(url))  # See fsspec.http logger for more
+                        pass
+                    elif errors == 'silent':
+                        pass
+                    else:
+                        raise
+                finally:
+                    results.append(data)
+
+        else:
+            raise InvalidMethod(method)
+
+        # Post-process results
+        results = [r for r in results if r is not None]  # Only keep non-empty results
+        if len(results) > 0:
+            if concat:
+                # ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
+                results = drop_variables_not_in_all_datasets(results)
+                ds = xr.concat(results,
+                               dim=concat_dim,
+                               data_vars='minimal',
+                               coords='minimal',
+                               compat='override')
+                return ds
+            else:
+                return results
+        else:
+            raise DataNotFound(urls)
+
