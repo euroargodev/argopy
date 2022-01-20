@@ -303,6 +303,7 @@ class indexstore(ArgoIndexStoreProto):
     -----------
     The store is instantiated with the file name and access protocol:
     >>> idx = indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt", cache=True)
+    >>> idx = indexstore(host="ftp://ftp.ifremer.fr/ifremer/argo")
 
     Then, search can be carried with:
     >>> idx.search_wmo(1901393)
@@ -336,10 +337,14 @@ class indexstore(ArgoIndexStoreProto):
 
             Parameters
             ----------
+            host: str, default: "https://data-argo.ifremer.fr"
+                Host to the 'dac' folder, could also be: "ftp://ftp.ifremer.fr/ifremer/argo", "ftp://usgodae.org/pub/outgoing/argo"
+                or a local absolute path.
+            index_file: str ("ar_index_global_prof.txt")
             cache : bool (False)
             cachedir : str (used value in global OPTIONS)
-            index_file: str ("ar_index_global_prof.txt")
         """
+        self.host = host
         self.index_file = index_file
         self.cache = cache
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
@@ -350,21 +355,16 @@ class indexstore(ArgoIndexStoreProto):
         elif 'https' in split_protocol(host)[0]:
             self.fs['index'] = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')  # Only for https://data-argo.ifremer.fr
         elif 'ftp' in split_protocol(host)[0]:
-            self.fs['index'] = ftpstore(host=split_protocol(host)[-1],
+            if 'ifremer' not in host and 'usgodae' not in host:
+                raise FtpPathError("Unknown Argo ftp: %s" % host)
+            self.fs['index'] = ftpstore(host=split_protocol(host)[-1].split('/')[0],
                                         cache=cache,
                                         cachedir=cachedir,
                                         timeout=timeout,
-                                        block_size= 5 * (2 ** 20))
-            if 'ifremer' in host:
-                self.index_file = '/ifremer/argo/' + index_file
-            elif 'usgodae' in host:
-                self.index_file = '/pub/outgoing/argo/' + index_file
-            else:
-                raise FtpPathError("Invalid Argo ftp: %s" % host)
+                                        block_size= 1000 * (2 ** 20))
         else:
             raise ValueError("Unknown protocol for an Argo index store: %s" % split_protocol(host)[0])
         self.fs['search'] = memorystore(cache, cachedir)  # Manage search results
-        self.host = host
 
     def load(self, force=False):
         """ Load an Argo-index file content
