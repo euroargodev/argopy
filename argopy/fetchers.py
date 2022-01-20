@@ -62,7 +62,7 @@ class ArgoDataFetcher:
     Examples
     --------
     >>> from argopy import DataFetcher
-    >>> adf = DataFetcher.region([-75, -65, 10, 20]).load()
+    >>> adf = DataFetcher().region([-75, -65, 10, 20]).load()
     >>> idx.plot()
     >>> idx.data
 
