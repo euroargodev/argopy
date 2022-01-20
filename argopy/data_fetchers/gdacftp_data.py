@@ -13,6 +13,7 @@ from abc import abstractmethod
 import warnings
 import getpass
 import logging
+from fsspec.core import split_protocol
 
 from .proto import ArgoDataFetcherProto
 
@@ -21,17 +22,16 @@ from argopy.utilities import (
     format_oneline,
     argo_split_path
 )
-from argopy.options import OPTIONS
-from argopy.stores import httpstore
+from argopy.options import OPTIONS, check_gdac_path
 from argopy.stores.argo_index_pa import indexstore
 from argopy.plotters import open_dashboard
-from argopy.errors import InvalidDataset
+from argopy.errors import FtpPathError
 
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
 dataset_ids = ["phy", "bgc"]  # First is default
-api_server = 'https://data-argo.ifremer.fr/'  # API root url
-api_server_check = api_server + 'readme_before_using_the_data.txt'  # URL to check if the API is alive
+api_server = OPTIONS['gdac_ftp']  # API root url
+api_server_check = api_server# + 'readme_before_using_the_data.txt'  # URL to check if the API is alive
 # api_server_check = OPTIONS["gdac_ftp"]
 
 log = logging.getLogger("argopy.gdacftp.data")
@@ -108,21 +108,51 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         self.cache = cache
         self.cachedir = cachedir
         self.timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
-        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=self.timeout, size_policy='head')
         self.definition = "Ifremer GDAC ftp Argo data fetcher"
         self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
-        self.server = api_server
+        self.server = OPTIONS['gdac_ftp'] if ftp == "" else ftp
         self.errors = errors
 
-        self.ftp = OPTIONS["gdac_ftp"] if ftp == "" else ftp
-        # check_gdacftp(self.ftp, errors="raise")  # Validate ftp
-        if ds == 'phy':
+        # Validate server:
+        check_gdac_path(self.server, errors='raise')
+
+        if self.dataset_id == 'phy':
             index_file = "ar_index_global_prof.txt"
-        elif ds == 'bgc':
+        elif self.dataset_id == 'bgc':
             index_file = "argo_synthetic-profile_index.txt"
+        # else:
+        #     raise InvalidDataset("Dataset option 'ds' must be in ['phy', 'bgc']")
+
+        if split_protocol(self.server)[0] is None:
+            # from argopy.stores import filestore
+            # self.fs = filestore(cache=cache, cachedir=cachedir)
+            self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
+            self.fs = self.indexfs.fs['index']
+
+        elif 'https' in split_protocol(self.server)[0]:
+            # from argopy.stores import httpstore
+            # self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=self.timeout, size_policy='head')
+            self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
+            self.fs = self.indexfs.fs['index']
+
+        elif 'ftp' in split_protocol(self.server)[0]:
+            if 'ifremer' not in self.server and 'usgodae' not in self.server:
+                raise FtpPathError("Unknown Argo ftp: %s" % self.server)
+            # from argopy.stores import ftpstore
+            # self.fs = ftpstore(host=split_protocol(self.server)[-1].split('/')[0],
+            #                             cache=cache,
+            #                             cachedir=cachedir,
+            #                             timeout=self.timeout,
+            #                             block_size= 5 * (2 ** 20))
+            self.indexfs = indexstore(host=self.server,
+                                      index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
+            # self.indexfs = indexstore(host=split_protocol(self.server)[-1].split('/')[0],
+            #                           index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
+            self.fs = self.indexfs.fs['index']
+
         else:
-            raise InvalidDataset("Dataset option 'ds' must be in ['phy', 'bgc']")
-        self.indexfs = indexstore(host=self.ftp, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
+            raise ValueError("Unknown protocol for an Argo index store: %s" % split_protocol(self.server)[0])
+
         self.N_RECORDS = self.indexfs.load().shape[0]  # Number of records in the index
         self._post_filter_points = False
 
@@ -145,11 +175,18 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
     def __repr__(self):
         summary = ["<datafetcher.ftp>"]
         summary.append("Name: %s" % self.definition)
-        summary.append("FTP: %s" % self.ftp)
+        summary.append("FTP: %s" % self.server)
         summary.append("Domain: %s" % format_oneline(self.cname()))
+        if hasattr(self.indexfs, 'index'):
+            summary.append("Index loaded: True (%i records)" % self.N_RECORDS)
+        else:
+            summary.append("Index loaded: False")
         if hasattr(self.indexfs, 'search'):
-            summary.append("Index: %i files matching domain definition (%0.4f%% of total)" % (self.N_FILES,
-                                                                                              self.N_FILES * 100 / self.N_RECORDS))
+            match = 'matches' if self.N_FILES > 1 else 'match'
+            summary.append("Index searched: True (%i %s, %0.4f%%)" % (self.N_FILES, match,
+                                                                      self.N_FILES * 100 / self.N_RECORDS))
+        else:
+            summary.append("Index searched: False")
         return "\n".join(summary)
 
     def cname(self):
@@ -249,7 +286,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         if self.dataset_id == "bgc":
             ds.attrs["DATA_ID"] = "ARGO-BGC"
         ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
-        ds.attrs["Fetched_from"] = self.ftp
+        ds.attrs["Fetched_from"] = self.server
         ds.attrs["Fetched_by"] = getpass.getuser()
         ds.attrs["Fetched_date"] = pd.to_datetime("now").strftime("%Y/%m/%d")
         ds.attrs["Fetched_constraints"] = self.cname()
@@ -314,7 +351,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         if self.dataset_id == "bgc":
             ds.attrs["DATA_ID"] = "ARGO-BGC"
         ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
-        ds.attrs["Fetched_from"] = self.ftp
+        ds.attrs["Fetched_from"] = self.server
         ds.attrs["Fetched_by"] = getpass.getuser()
         ds.attrs["Fetched_date"] = pd.to_datetime("now").strftime("%Y/%m/%d")
         ds.attrs["Fetched_constraints"] = self.cname()
@@ -410,7 +447,8 @@ class Fetch_wmo(FTPArgoDataFetcher):
             )  # Make sure we deal with an array of integers
         self.WMO = WMO
         self.CYC = CYC
-        self.N_FILES = len(self.uri)  # Trigger search in the index
+        # self.N_FILES = len(self.uri)  # Trigger search in the index, should we do this at instanciation or later ???
+        self.N_FILES = np.NaN
         return self
 
     @property
@@ -429,6 +467,7 @@ class Fetch_wmo(FTPArgoDataFetcher):
             else:
                 self._list_of_argo_files = self.indexfs.search_wmo_cyc(self.WMO, self.CYC).uri
 
+        self.N_FILES = len(self._list_of_argo_files)
         return self._list_of_argo_files
 
     def dashboard(self, **kw):
@@ -458,7 +497,8 @@ class Fetch_box(FTPArgoDataFetcher):
         self.indexBOX = [box[ii] for ii in [0, 1, 2, 3]]
         if len(box) == 8:
             self.indexBOX = [box[ii] for ii in [0, 1, 2, 3, 6, 7]]
-        self.N_FILES = len(self.uri)  # Trigger search in the index
+        # self.N_FILES = len(self.uri)  # Trigger search in the index
+        self.N_FILES = np.NaN
         return self
 
     @property
@@ -482,4 +522,5 @@ class Fetch_box(FTPArgoDataFetcher):
             else:
                 self._list_of_argo_files = URIs
 
+        self.N_FILES = len(self._list_of_argo_files)
         return self._list_of_argo_files
