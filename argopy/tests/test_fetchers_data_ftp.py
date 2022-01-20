@@ -8,7 +8,8 @@ import argopy
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import (
     CacheFileNotFound,
-    FileSystemHasNoCache
+    FileSystemHasNoCache,
+    FtpPathError
 )
 from argopy.utilities import is_list_of_strings
 from . import (
@@ -30,6 +31,7 @@ class Test_Backend:
             [-65.1, -65, 35.1, 36., 0, 10.0, "2013-01", "2013-03"]
         ],
     }
+    # local_ftp = argopy.tutorial.open_dataset("localftp")[0]
 
     def test_cachepath_notfound(self):
         with tempfile.TemporaryDirectory() as testcachedir:
@@ -109,6 +111,21 @@ class Test_Backend:
                 assert isinstance(ds, xr.Dataset)
                 assert is_list_of_strings(fetcher.uri)
                 assert is_list_of_strings(fetcher.cachepath)
+
+    def test_ftp_server(self):
+        with pytest.raises(FtpPathError):
+            ArgoDataFetcher(src='ftp', ftp='invalid').profile(1900857, np.arange(10,20))
+        with pytest.raises(FtpPathError):
+            ArgoDataFetcher(src=self.src, ftp='https://invalid_ftp').profile(1900857, np.arange(10,20))
+        with pytest.raises(FtpPathError):
+            ArgoDataFetcher(src=self.src, ftp='ftp://invalid_ftp').profile(1900857, np.arange(10,20))
+
+        # for this_ftp in ['https://data-argo.ifremer.fr',
+        #             'ftp://ftp.ifremer.fr/ifremer/argo',
+        #             'ftp://usgodae.org/pub/outgoing/argo',
+        #             self.local_ftp]:
+        #     fetcher = ArgoDataFetcher(src=self.src, ftp=this_ftp).profile(*self.requests["profile"][0]).fetcher
+        #     assert(fetcher.N_RECORDS >= 1)
 
     def __testthis_profile(self, dataset):
         fetcher_args = {"src": self.src, "ds": dataset}
