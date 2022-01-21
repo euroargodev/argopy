@@ -9,22 +9,23 @@ import pandas as pd
 from abc import ABC, abstractmethod
 import warnings
 import logging
+from fsspec.core import split_protocol
 
 from argopy.utilities import (
     format_oneline,
     load_dict,
     mapp_dict
 )
-from argopy.options import OPTIONS
-from argopy.stores import httpstore
+from argopy.options import OPTIONS, check_gdac_path
 from argopy.stores.argo_index_pa import indexstore
 from argopy.plotters import open_dashboard
+from argopy.errors import FtpPathError
 
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
 dataset_ids = ["phy", "bgc"]  # First is default
-api_server = 'https://data-argo.ifremer.fr/'  # API root url
-api_server_check = api_server + 'readme_before_using_the_data.txt'  # URL to check if the API is alive
+api_server = OPTIONS['gdac_ftp']  # API root url
+api_server_check = api_server# + 'readme_before_using_the_data.txt'  # URL to check if the API is alive
 # api_server_check = OPTIONS["gdac_ftp"]
 
 log = logging.getLogger("argopy.gdacftp.index")
@@ -32,7 +33,7 @@ log = logging.getLogger("argopy.gdacftp.index")
 
 class FTPArgoIndexFetcher(ABC):
     """ Manage access to Argo index from a remote GDAC FTP """
-    N_FILES = None
+    # N_FILES = None
 
     ###
     # Methods to be customised for a specific request
@@ -73,27 +74,63 @@ class FTPArgoIndexFetcher(ABC):
         api_timeout: int (optional)
             FTP request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
-        timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
-        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
+        self.timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
+        # self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
         self.definition = "Ifremer GDAC ftp Argo index fetcher"
         self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
-        self.server = api_server
+        self.server = OPTIONS['gdac_ftp'] if ftp == "" else ftp
         self.errors = errors
-        self.ftp = OPTIONS["gdac_ftp"] if ftp == "" else ftp
+
+        # Validate server, raise FtpPathError if not valid.
+        check_gdac_path(self.server, errors='raise')
+
+        # self.ftp = OPTIONS["gdac_ftp"] if ftp == "" else ftp
         # check_gdacftp(self.ftp, errors="raise")  # Validate ftp
-        self.indexfs = indexstore(host=self.ftp, cachedir=cachedir, cache=cache, timeout=timeout)
+        # self.indexfs = indexstore(host=self.ftp, cachedir=cachedir, cache=cache, timeout=timeout)
+
+        if self.dataset_id == 'phy':
+            index_file = "ar_index_global_prof.txt"
+        elif self.dataset_id == 'bgc':
+            index_file = "argo_synthetic-profile_index.txt"
+
+        if split_protocol(self.server)[0] is None:
+            self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
+            self.fs = self.indexfs.fs['index']
+
+        elif 'https' in split_protocol(self.server)[0]:
+            self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
+            self.fs = self.indexfs.fs['index']
+
+        elif 'ftp' in split_protocol(self.server)[0]:
+            if 'ifremer' not in self.server and 'usgodae' not in self.server:
+                raise FtpPathError("Unknown Argo ftp: %s" % self.server)
+            self.indexfs = indexstore(host=self.server,
+                                      index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
+            self.fs = self.indexfs.fs['index']
+
+        else:
+            raise ValueError("Unknown protocol for an Argo index store: %s" % split_protocol(self.server)[0])
+
+        self.N_RECORDS = self.indexfs.load().shape[0]  # Number of records in the index
+
         self.init(**kwargs)
 
     def __repr__(self):
         summary = ["<indexfetcher.ftp>"]
         summary.append("Name: %s" % self.definition)
         summary.append("Index: %s" % self.indexfs.index_file)
-        summary.append("FTP: %s" % self.ftp)
+        summary.append("FTP: %s" % self.server)
         summary.append("Domain: %s" % format_oneline(self.cname()))
-        if hasattr(self.indexfs, 'search'):
-            summary.append("Records: %i/%i (%0.4f%%)" % (self.indexfs.N_FILES, self.indexfs.shape[0], self.indexfs.N_FILES * 100 / self.indexfs.shape[0]))
+        if hasattr(self.indexfs, 'index'):
+            summary.append("Index loaded: True (%i records)" % self.N_RECORDS)
         else:
-            summary.append("Records: <not loaded yet>")
+            summary.append("Index loaded: False")
+        if hasattr(self.indexfs, 'search'):
+            match = 'matches' if self.N_FILES > 1 else 'match'
+            summary.append("Index searched: True (%i %s, %0.4f%%)" % (self.N_FILES, match,
+                                                                      self.N_FILES * 100 / self.N_RECORDS))
+        else:
+            summary.append("Index searched: False")
         return "\n".join(summary)
 
     def _format(self, x, typ):
@@ -130,6 +167,10 @@ class FTPArgoIndexFetcher(ABC):
         list(str)
         """
         return [self.fs.cachepath(url) for url in self.uri]
+
+    def clear_cache(self):
+        """ Remove cache files and entries from resources open with this fetcher """
+        return self.fs.clear_cache()
 
     def to_dataframe(self):
         """ Filter index file and return a pandas dataframe """
@@ -178,15 +219,16 @@ class Fetch_wmo(FTPArgoIndexFetcher):
             )  # Make sure we deal with an array of integers
         self.WMO = WMO
         self.CYC = CYC
-        if len(self.CYC) > 0:
-            log.debug("Create FTPArgoIndexFetcher.Fetch_box instance with index with WMOs=[%s] and CYCs=[%s]" % (
-                ";".join([str(wmo) for wmo in self.WMO]),
-                ";".join([str(cyc) for cyc in self.CYC])))
-        else:
-            log.debug("Create FTPArgoIndexFetcher.Fetch_box instance with index with WMOs=[%s] and CYCs=[%s]" % (
-                ";".join([str(wmo) for wmo in self.WMO])))
+        # if len(self.CYC) > 0:
+        #     log.debug("Create FTPArgoIndexFetcher.Fetch_box instance with index with WMOs=[%s] and CYCs=[%s]" % (
+        #         ";".join([str(wmo) for wmo in self.WMO]),
+        #         ";".join([str(cyc) for cyc in self.CYC])))
+        # else:
+        #     log.debug("Create FTPArgoIndexFetcher.Fetch_box instance with index with WMOs=[%s] and CYCs=[%s]" % (
+        #         ";".join([str(wmo) for wmo in self.WMO])))
 
-        self.N_FILES = len(self.uri)  # Trigger file index load and search
+        # self.N_FILES = len(self.uri)  # Trigger file index load and search
+        self.N_FILES = np.NaN
         return self
 
     def cname(self):
@@ -213,6 +255,7 @@ class Fetch_wmo(FTPArgoIndexFetcher):
             else:
                 self._list_of_argo_files = self.indexfs.search_wmo_cyc(self.WMO, self.CYC).uri
 
+        self.N_FILES = len(self._list_of_argo_files)
         return self._list_of_argo_files
 
     def dashboard(self, **kw):
@@ -245,7 +288,8 @@ class Fetch_box(FTPArgoIndexFetcher):
         # but at this point, we internally work only with x, y and t.
         log.debug("Create FTPArgoIndexFetcher.Fetch_box instance with index BOX: %s" % box)
         self.indexBOX = box
-        self.N_FILES = len(self.uri)  # Trigger file index load and search
+        # self.N_FILES = len(self.uri)  # Trigger file index load and search
+        self.N_FILES = np.NaN
         return self
 
     def cname(self):
@@ -274,4 +318,5 @@ class Fetch_box(FTPArgoIndexFetcher):
             else:
                 self._list_of_argo_files = self.indexfs.search_latlontim(self.indexBOX).uri
 
+        self.N_FILES = len(self._list_of_argo_files)
         return self._list_of_argo_files

@@ -161,6 +161,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
     def __repr__(self):
         summary = ["<datafetcher.ftp>"]
         summary.append("Name: %s" % self.definition)
+        summary.append("Index: %s" % self.indexfs.index_file)
         summary.append("FTP: %s" % self.server)
         summary.append("Domain: %s" % format_oneline(self.cname()))
         if hasattr(self.indexfs, 'index'):
