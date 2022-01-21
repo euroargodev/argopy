@@ -31,7 +31,7 @@ class Test_Backend:
             [-65.1, -65, 35.1, 36., 0, 10.0, "2013-01", "2013-03"]
         ],
     }
-    # local_ftp = argopy.tutorial.open_dataset("localftp")[0]
+    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
 
     def test_cachepath_notfound(self):
         with tempfile.TemporaryDirectory() as testcachedir:
@@ -113,6 +113,7 @@ class Test_Backend:
                 assert is_list_of_strings(fetcher.cachepath)
 
     def test_ftp_server(self):
+        # Invalid servers:
         with pytest.raises(FtpPathError):
             ArgoDataFetcher(src='ftp', ftp='invalid').profile(1900857, np.arange(10,20))
         with pytest.raises(FtpPathError):
@@ -120,12 +121,13 @@ class Test_Backend:
         with pytest.raises(FtpPathError):
             ArgoDataFetcher(src=self.src, ftp='ftp://invalid_ftp').profile(1900857, np.arange(10,20))
 
-        # for this_ftp in ['https://data-argo.ifremer.fr',
-        #             'ftp://ftp.ifremer.fr/ifremer/argo',
-        #             'ftp://usgodae.org/pub/outgoing/argo',
-        #             self.local_ftp]:
-        #     fetcher = ArgoDataFetcher(src=self.src, ftp=this_ftp).profile(*self.requests["profile"][0]).fetcher
-        #     assert(fetcher.N_RECORDS >= 1)
+        # Valid list of servers, using all possible protocols:
+        for this_ftp in ['https://data-argo.ifremer.fr',
+                    'ftp://ftp.ifremer.fr/ifremer/argo',
+                    # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but takes too long to respond, slow down CI
+                    self.local_ftp]:
+            fetcher = ArgoDataFetcher(src=self.src, ftp=this_ftp).profile(*self.requests["profile"][0]).fetcher
+            assert(fetcher.N_RECORDS >= 1)  # Make sure we loaded the index file content
 
     def __testthis_profile(self, dataset):
         fetcher_args = {"src": self.src, "ds": dataset}
@@ -197,8 +199,8 @@ class Test_BackendParallel:
 
         args_list = [
             {"src": self.src, "parallel": True, "parallel_method": "toto"},
-            {"src": self.src, "parallel": "process"},
-            {"src": self.src, "parallel": True, "parallel_method": "process"},
+            # {"src": self.src, "parallel": "process"},
+            # {"src": self.src, "parallel": True, "parallel_method": "process"},
         ]
         for fetcher_args in args_list:
             with pytest.raises(ValueError):
@@ -215,19 +217,3 @@ class Test_BackendParallel:
             f = ArgoDataFetcher(**fetcher_args).region(access_arg).fetcher
             assert isinstance(f.to_xarray(), xr.Dataset)
             assert is_list_of_strings(f.uri)
-            # assert len(f.uri) == np.prod(
-            #     [v for k, v in fetcher_args["chunks"].items()]
-            # )
-
-    # @safe_to_server_errors
-    # def test_chunks_wmo(self):
-    #     for access_arg in self.requests["wmo"]:
-    #         fetcher_args = {
-    #             "src": self.src,
-    #             "parallel": True,
-    #             # "chunks_maxsize": {"wmo": 1},
-    #         }
-    #         f = ArgoDataFetcher(**fetcher_args).profile(access_arg, 12).fetcher
-    #         assert isinstance(f.to_xarray(), xr.Dataset)
-    #         assert is_list_of_strings(f.uri)
-    #         # assert len(f.uri) == len(access_arg)

@@ -11,6 +11,7 @@ import warnings
 import logging
 import fsspec
 from fsspec.core import split_protocol
+from socket import gaierror
 
 # Define a logger
 log = logging.getLogger("argopy.options")
@@ -169,24 +170,33 @@ def check_gdac_path(path, errors='ignore'):
 #         fs = httpstore()
         fs = fsspec.filesystem('http')
     elif 'ftp' in split_protocol(path)[0]:
-#         fs = ftpstore(host=split_protocol(path)[-1].split('/')[0], block_size= 1000 * (2 ** 20))
-        fs = fsspec.filesystem('ftp', host=split_protocol(path)[-1].split('/')[0])
+        try:
+            host = split_protocol(path)[-1].split('/')[0]
+            fs = fsspec.filesystem('ftp', host=host)
+        except gaierror:
+            if errors == 'raise':
+                raise FtpPathError("Can't get address info (GAIerror) on '%s'" % host)
+            elif errors == "warn":
+                warnings.warn("Can't get address info (GAIerror) on '%s'" % host)
+                return False
+            else:
+                return False
     else:
-        raise ValueError("Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0])
+        raise FtpPathError("Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0])
 
-    dacs = [
-        "aoml",
-        "bodc",
-        "coriolis",
-        "csio",
-        "csiro",
-        "incois",
-        "jma",
-        "kma",
-        "kordi",
-        "meds",
-        "nmdis",
-    ]
+    # dacs = [
+    #     "aoml",
+    #     "bodc",
+    #     "coriolis",
+    #     "csio",
+    #     "csiro",
+    #     "incois",
+    #     "jma",
+    #     "kma",
+    #     "kordi",
+    #     "meds",
+    #     "nmdis",
+    # ]
 
     # Case 1:
     check1 = (

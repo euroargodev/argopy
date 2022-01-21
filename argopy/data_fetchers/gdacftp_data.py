@@ -113,41 +113,27 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         self.server = OPTIONS['gdac_ftp'] if ftp == "" else ftp
         self.errors = errors
 
-        # Validate server:
+        # Validate server, raise FtpPathError if not valid.
         check_gdac_path(self.server, errors='raise')
 
         if self.dataset_id == 'phy':
             index_file = "ar_index_global_prof.txt"
         elif self.dataset_id == 'bgc':
             index_file = "argo_synthetic-profile_index.txt"
-        # else:
-        #     raise InvalidDataset("Dataset option 'ds' must be in ['phy', 'bgc']")
 
         if split_protocol(self.server)[0] is None:
-            # from argopy.stores import filestore
-            # self.fs = filestore(cache=cache, cachedir=cachedir)
             self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
             self.fs = self.indexfs.fs['index']
 
         elif 'https' in split_protocol(self.server)[0]:
-            # from argopy.stores import httpstore
-            # self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=self.timeout, size_policy='head')
             self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
             self.fs = self.indexfs.fs['index']
 
         elif 'ftp' in split_protocol(self.server)[0]:
             if 'ifremer' not in self.server and 'usgodae' not in self.server:
                 raise FtpPathError("Unknown Argo ftp: %s" % self.server)
-            # from argopy.stores import ftpstore
-            # self.fs = ftpstore(host=split_protocol(self.server)[-1].split('/')[0],
-            #                             cache=cache,
-            #                             cachedir=cachedir,
-            #                             timeout=self.timeout,
-            #                             block_size= 5 * (2 ** 20))
             self.indexfs = indexstore(host=self.server,
                                       index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
-            # self.indexfs = indexstore(host=split_protocol(self.server)[-1].split('/')[0],
-            #                           index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
             self.fs = self.indexfs.fs['index']
 
         else:
@@ -159,7 +145,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         if not isinstance(parallel, bool):
             parallel_method = parallel
             parallel = True
-        if parallel_method not in ["thread"]:
+        if parallel_method not in ["thread", "process"]:
             raise ValueError(
                 "'ftp' only support multi-threading, use 'thread' instead of '%s'"
                 % parallel_method
