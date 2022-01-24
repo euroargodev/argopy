@@ -3,8 +3,6 @@ Argo data fetcher for remote GDAC FTP
 
 This is not intended to be used directly, only by the facade at fetchers.py
 
-Since the GDAC ftp is organised by DAC/WMO folders, we start by implementing the 'float' and 'profile' entry points.
-
 """
 import numpy as np
 import pandas as pd
@@ -61,8 +59,6 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         parallel: bool = False,
         parallel_method: str = "thread",
         progress: bool = False,
-        chunks: str = "auto",
-        chunks_maxsize: dict = {},
         api_timeout: int = 0,
         **kwargs
     ):
@@ -74,39 +70,26 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
             Path to the remote FTP directory where the 'dac' folder is located.
         ds: str (optional)
             Dataset to load: 'phy' or 'bgc'
-        errors: str (optional)
-            If set to 'raise' (default), will raise a NetCDF4FileNotFoundError error if any of the requested
-            files cannot be found. If set to 'ignore', the file not found is skipped when fetching data.
         cache: bool (optional)
             Cache data or not (default: False)
         cachedir: str (optional)
             Path to cache folder
-        dimension: str
+        dimension: str, default: 'point'
             Main dimension of the output dataset. This can be "profile" to retrieve a collection of
             profiles, or "point" (default) to have data as a collection of measurements.
             This can be used to optimise performances.
+        errors: str (optional)
+            If set to 'raise' (default), will raise a NetCDF4FileNotFoundError error if any of the requested
+            files cannot be found. If set to 'ignore', the file not found is skipped when fetching data.
         parallel: bool (optional)
             Chunk request to use parallel fetching (default: False)
         parallel_method: str (optional)
             Define the parallelization method: ``thread``, ``process`` or a :class:`dask.distributed.client.Client`.
         progress: bool (optional)
             Show a progress bar or not when fetching data.
-        chunks: 'auto' or dict of integers (optional)
-            Dictionary with request access point as keys and number of chunks to create as values.
-            Eg:
-
-                - ``{'wmo': 10}`` will create a maximum of 10 chunks along WMOs when used with ``Fetch_wmo``.
-                - ``{'lon': 2}`` will create a maximum of 2 chunks along longitude when used with ``Fetch_box``.
-
-        chunks_maxsize: dict (optional)
-            Dictionary with request access point as keys and chunk size as values (used as maximum values in
-            'auto' chunking).
-            Eg: ``{'wmo': 5}`` will create chunks with as many as 5 WMOs each.
         api_timeout: int (optional)
             FTP request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
-        self.cache = cache
-        self.cachedir = cachedir
         self.timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.definition = "Ifremer GDAC ftp Argo data fetcher"
         self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
@@ -153,8 +136,6 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         self.parallel = parallel
         self.parallel_method = parallel_method
         self.progress = progress
-        self.chunks = chunks
-        self.chunks_maxsize = chunks_maxsize
 
         self.init(**kwargs)
 
