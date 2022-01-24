@@ -30,9 +30,10 @@ When a request is done, we
 import os
 import numpy as np
 from abc import ABC, abstractmethod
+import warnings
 
-from argopy.utilities import load_dict, mapp_dict, check_localftp, format_oneline
-from argopy.options import OPTIONS
+from argopy.utilities import load_dict, mapp_dict, format_oneline
+from argopy.options import OPTIONS, check_gdac_path
 from argopy.stores import indexstore, indexfilter_wmo, indexfilter_box
 
 access_points = ['wmo', 'box']
@@ -77,7 +78,8 @@ class LocalFTPArgoIndexFetcher(ABC):
 
     def __init__(self,
                  local_ftp: str = "",
-                 index_file: str = "ar_index_global_prof.txt",
+                 ds: str = "",
+                 # index_file: str = "ar_index_global_prof.txt",
                  cache: bool = False,
                  cachedir: str = "",
                  **kwargs):
@@ -87,14 +89,25 @@ class LocalFTPArgoIndexFetcher(ABC):
             ----------
             local_path : str
                 Path to the directory with the 'dac' folder and index file
+            ds: str (optional)
+                Dataset to load: 'phy' or 'bgc'
         """
+        if 'index_file' in kwargs:
+            warnings.warn("'index_file option' is deprecated: name of the index file is internally determined as a "
+                          "function of the 'ds' dataset option.", DeprecationWarning)
+
         self.cache = cache
         self.definition = 'Local ftp Argo index fetcher'
+        self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
         self.local_ftp = OPTIONS['local_ftp'] if local_ftp == '' else local_ftp
-        check_localftp(self.local_ftp, errors='raise')  # Validate local_ftp
-        self.index_file = index_file
+        # Validate server, raise FtpPathError if not valid.
+        check_gdac_path(self.local_ftp, errors='raise')
+
+        if self.dataset_id == 'phy':
+            self.index_file = "ar_index_global_prof.txt"
+        elif self.dataset_id == 'bgc':
+            self.index_file = "argo_synthetic-profile_index.txt"
         self.fs = indexstore(cache, cachedir, os.path.sep.join([self.local_ftp, self.index_file]))
-        self.dataset_id = 'index'
         self.init(**kwargs)
 
     def __repr__(self):
@@ -160,7 +173,7 @@ class Fetch_box(LocalFTPArgoIndexFetcher):
     """ Manage access to local ftp Argo data for: an ocean rectangle
 
     """
-    def init(self, box: list = [-180, 180, -90, 90, '1900-01-01', '2100-12-31']):
+    def init(self, box: list = [-180, 180, -90, 90, '1900-01-01', '2100-12-31'], **kwargs):
         """ Create Argo index loader
 
             Parameters
