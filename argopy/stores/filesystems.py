@@ -15,7 +15,7 @@ from packaging import version
 
 import concurrent.futures
 import multiprocessing
-import distributed
+# import distributed
 
 try:
     from tqdm import tqdm
@@ -544,7 +544,7 @@ class httpstore(argo_store_proto):
                     finally:
                         results.append(data)
 
-        elif type(method) == distributed.client.Client:
+        elif str(type(method)) == 'distributed.client.Client':
             # Use a dask client:
 
             if progress:
@@ -944,7 +944,7 @@ class ftpstore(httpstore):
                     finally:
                         results.append(data)
 
-        elif type(method) == distributed.client.Client:
+        elif str(type(method)) == 'distributed.client.Client':
             # Use a dask client:
 
             if progress:
