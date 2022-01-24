@@ -75,7 +75,6 @@ class FTPArgoIndexFetcher(ABC):
             FTP request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
         self.timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
-        # self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
         self.definition = "Ifremer GDAC ftp Argo index fetcher"
         self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
         self.server = OPTIONS['gdac_ftp'] if ftp == "" else ftp
@@ -83,10 +82,6 @@ class FTPArgoIndexFetcher(ABC):
 
         # Validate server, raise FtpPathError if not valid.
         check_gdac_path(self.server, errors='raise')
-
-        # self.ftp = OPTIONS["gdac_ftp"] if ftp == "" else ftp
-        # check_gdacftp(self.ftp, errors="raise")  # Validate ftp
-        # self.indexfs = indexstore(host=self.ftp, cachedir=cachedir, cache=cache, timeout=timeout)
 
         if self.dataset_id == 'phy':
             index_file = "ar_index_global_prof.txt"
@@ -219,16 +214,7 @@ class Fetch_wmo(FTPArgoIndexFetcher):
             )  # Make sure we deal with an array of integers
         self.WMO = WMO
         self.CYC = CYC
-        # if len(self.CYC) > 0:
-        #     log.debug("Create FTPArgoIndexFetcher.Fetch_box instance with index with WMOs=[%s] and CYCs=[%s]" % (
-        #         ";".join([str(wmo) for wmo in self.WMO]),
-        #         ";".join([str(cyc) for cyc in self.CYC])))
-        # else:
-        #     log.debug("Create FTPArgoIndexFetcher.Fetch_box instance with index with WMOs=[%s] and CYCs=[%s]" % (
-        #         ";".join([str(wmo) for wmo in self.WMO])))
-
-        # self.N_FILES = len(self.uri)  # Trigger file index load and search
-        self.N_FILES = np.NaN
+        self.N_FILES = len(self.uri)  # Must trigger file index load and search at instantiation
         return self
 
     def cname(self):
@@ -268,7 +254,7 @@ class Fetch_wmo(FTPArgoIndexFetcher):
 class Fetch_box(FTPArgoIndexFetcher):
     """ Manage access to GDAC ftp Argo index for: a rectangular space/time domain  """
 
-    def init(self, box: list):
+    def init(self, box: list, **kwargs):
         """ Create Argo data loader
 
         Parameters
@@ -286,10 +272,9 @@ class Fetch_box(FTPArgoIndexFetcher):
         """
         # We use a full domain definition (x, y, z, t) as argument for compatibility with the other fetchers
         # but at this point, we internally work only with x, y and t.
-        log.debug("Create FTPArgoIndexFetcher.Fetch_box instance with index BOX: %s" % box)
+        # log.debug("Create FTPArgoIndexFetcher.Fetch_box instance with index BOX: %s" % box)
         self.indexBOX = box
-        # self.N_FILES = len(self.uri)  # Trigger file index load and search
-        self.N_FILES = np.NaN
+        self.N_FILES = len(self.uri)  # Must trigger file index load and search at instantiation
         return self
 
     def cname(self):

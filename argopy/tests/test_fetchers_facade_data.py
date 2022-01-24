@@ -15,7 +15,7 @@ from . import (
     requires_fetcher,
     requires_connected_erddap_phy,
     requires_localftp,
-    requires_ftp,
+    # requires_ftp,
     requires_connected_gdac,
     requires_connected_argovis,
     safe_to_server_errors,

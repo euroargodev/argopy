@@ -5,7 +5,7 @@ import warnings
 import numpy as np
 import pandas as pd
 import xarray as xr
-from sklearn import preprocessing
+from sklearn import preprocessing  #todo: reduce requirements, can't we replace preprocessing.LabelEncoder() ?
 import logging
 
 try:

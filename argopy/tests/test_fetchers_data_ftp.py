@@ -212,7 +212,6 @@ class Test_BackendParallel:
             fetcher_args = {
                 "src": self.src,
                 "parallel": True,
-                # "chunks": {"lon": 1, "lat": 2, "dpt": 2, "time": 1},
             }
             f = ArgoDataFetcher(**fetcher_args).region(access_arg).fetcher
             assert isinstance(f.to_xarray(), xr.Dataset)

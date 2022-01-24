@@ -502,14 +502,6 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
 
         # Get list of files to load:
         if not hasattr(self, "_list_of_argo_files"):
-            # if not self.parallel:
-            #     self._list_of_argo_files = list_bunch(self.WMO, self.CYC)
-            # else:
-            #     C = Chunker({'wmo': self.WMO}, chunks=self.chunks, chunksize=self.chunks_maxsize)
-            #     wmo_grps = C.fit_transform()
-            #     self._list_of_argo_files = []
-            #     for wmos in wmo_grps:
-            #         self._list_of_argo_files.append(list_bunch(wmos, self.CYC))
             self._list_of_argo_files = list_bunch(self.WMO, self.CYC)
 
         return self._list_of_argo_files
@@ -541,13 +533,6 @@ class Fetch_box(LocalFTPArgoDataFetcher):
         self.indexBOX = [box[ii] for ii in [0, 1, 2, 3]]
         if len(box) == 8:
             self.indexBOX = [box[ii] for ii in [0, 1, 2, 3, 6, 7]]
-
-        # if len(box) == 6:
-        #     # Select the last months of data:
-        #     end = pd.to_datetime('now')
-        #     start = end - pd.DateOffset(months=1)
-        #     self.BOX.append(start.strftime('%Y-%m-%d'))
-        #     self.BOX.append(end.strftime('%Y-%m-%d'))
 
         self.fs_index = indexstore(
             self.cache,

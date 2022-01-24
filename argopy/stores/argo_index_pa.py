@@ -428,7 +428,9 @@ class indexstore(ArgoIndexStoreProto):
 
         If store is cached, caching is triggered here
         """
-        # df = self.search.to_pandas()
+        if not hasattr(self, 'search'):
+            self.run()
+
         if self.N_FILES == 0:
             raise DataNotFound("No Argo data in the index correspond to your search criteria."
                                "Search definition: %s" % self.cname())
