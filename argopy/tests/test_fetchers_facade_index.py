@@ -131,7 +131,6 @@ class Test_AllBackends:
     """ Test main API facade for all available index fetching backends """
 
     local_ftp = argopy.tutorial.open_dataset("localftp")[0]
-    index_file = "ar_index_global_prof.txt"
 
     # todo Determine the list of output format to test
     # what else beyond .to_xarray() ?
@@ -175,11 +174,11 @@ class Test_AllBackends:
     @requires_localftp_index
     def test_float_localftp(self):
         with argopy.set_options(local_ftp=self.local_ftp):
-            self.__test_float("localftp", index_file=self.index_file)
+            self.__test_float("localftp")
 
     @requires_connected_gdac
     def test_float_ftp(self):
-        self.__test_float("ftp", index_file=self.index_file)
+        self.__test_float("ftp")
 
     @ci_erddap_index
     @requires_connected_erddap_index
@@ -191,16 +190,16 @@ class Test_AllBackends:
     @requires_localftp_index
     def test_profile_localftp(self):
         with argopy.set_options(local_ftp=self.local_ftp):
-            self.__test_profile("localftp", index_file=self.index_file)
+            self.__test_profile("localftp")
 
     @requires_connected_gdac
     def test_profile_ftp(self):
-        self.__test_profile("ftp", index_file=self.index_file)
+        self.__test_profile("ftp")
 
     @requires_localftp_index
     def test_region_localftp(self):
         with argopy.set_options(local_ftp=self.local_ftp):
-            self.__test_region("localftp", index_file=self.index_file)
+            self.__test_region("localftp")
 
     @ci_erddap_index
     @requires_connected_erddap_index
@@ -210,4 +209,4 @@ class Test_AllBackends:
 
     @requires_connected_gdac
     def test_region_ftp(self):
-        self.__test_region("ftp", index_file=self.index_file)
+        self.__test_region("ftp")

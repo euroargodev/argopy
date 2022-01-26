@@ -64,7 +64,7 @@ class UnrecognisedProfileDirection(ValueError):
 
 class InvalidDataset(ValueError):
     """
-    This is to be used when the dataset name is not valid
+    This is to be used when a dataset or its property is not valid
     """
     pass
 

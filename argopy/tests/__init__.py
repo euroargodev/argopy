@@ -156,9 +156,9 @@ has_ftp, requires_ftp = _connectskip(
 has_ftp_index, requires_ftp_index = _connectskip(
     "ftp" in AVAILABLE_INDEX_SOURCES, "the ftp index fetcher"
 )
-has_connected_gdac = has_connection and has_ftp and has_pyarrow
+has_connected_gdac = has_connection and has_ftp# and has_pyarrow
 requires_connected_gdac = pytest.mark.skipif(
-    not has_connected_gdac, reason="Requires a live Ifremer FTP server and pyarrow"
+    not has_connected_gdac, reason="Requires a live Ifremer FTP server"# and pyarrow"
 )
 
 ########

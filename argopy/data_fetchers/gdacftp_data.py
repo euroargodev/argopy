@@ -12,7 +12,7 @@ import warnings
 import getpass
 import logging
 from fsspec.core import split_protocol
-
+import importlib
 from .proto import ArgoDataFetcherProto
 
 from argopy.utilities import (
@@ -21,18 +21,26 @@ from argopy.utilities import (
     argo_split_path
 )
 from argopy.options import OPTIONS, check_gdac_path
-from argopy.stores.argo_index_pa import indexstore
 from argopy.plotters import open_dashboard
 from argopy.errors import FtpPathError
+
+
+log = logging.getLogger("argopy.gdacftp.data")
+
+has_pyarrow = (spec := importlib.util.find_spec('pyarrow')) is not None
+if has_pyarrow:
+    from argopy.stores.argo_index_pa import indexstore_pyarrow as indexstore
+    log.debug("Using pyarrow indexstore")
+else:
+    from argopy.stores.argo_index_pa import indexstore_pandas as indexstore
+    log.debug("Using pandas indexstore")
 
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
 dataset_ids = ["phy", "bgc"]  # First is default
 api_server = OPTIONS['gdac_ftp']  # API root url
-api_server_check = api_server# + 'readme_before_using_the_data.txt'  # URL to check if the API is alive
-# api_server_check = OPTIONS["gdac_ftp"]
+api_server_check = api_server  # URL to check if the API is alive, used by isAPIconnected
 
-log = logging.getLogger("argopy.gdacftp.data")
 
 class FTPArgoDataFetcher(ArgoDataFetcherProto):
     """ Manage access to Argo data from a remote GDAC FTP """
@@ -480,9 +488,9 @@ class Fetch_box(FTPArgoDataFetcher):
         # Get list of files to load:
         if not hasattr(self, "_list_of_argo_files"):
             if len(self.indexBOX) == 4:
-                URIs = self.indexfs.search_latlon(self.indexBOX).uri
+                URIs = self.indexfs.search_lat_lon(self.indexBOX).uri
             else:
-                URIs = self.indexfs.search_latlontim(self.indexBOX).uri
+                URIs = self.indexfs.search_lat_lon_tim(self.indexBOX).uri
 
             if len(URIs) > 25:
                 self._list_of_argo_files = self.uri_mono2multi(URIs)

@@ -10,23 +10,27 @@ from abc import ABC, abstractmethod
 import warnings
 import logging
 from fsspec.core import split_protocol
+import importlib
 
 from argopy.utilities import (
-    format_oneline,
-    load_dict,
-    mapp_dict
+    format_oneline
 )
 from argopy.options import OPTIONS, check_gdac_path
-from argopy.stores.argo_index_pa import indexstore
 from argopy.plotters import open_dashboard
 from argopy.errors import FtpPathError
+
+
+has_pyarrow = (spec := importlib.util.find_spec('pyarrow')) is not None
+if has_pyarrow:
+    from argopy.stores.argo_index_pa import indexstore_pyarrow as indexstore
+else:
+    from argopy.stores.argo_index_pa import indexstore_pandas as indexstore
 
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
 dataset_ids = ["phy", "bgc"]  # First is default
 api_server = OPTIONS['gdac_ftp']  # API root url
-api_server_check = api_server# + 'readme_before_using_the_data.txt'  # URL to check if the API is alive
-# api_server_check = OPTIONS["gdac_ftp"]
+api_server_check = api_server  # URL to check if the API is alive, used by isAPIconnected
 
 log = logging.getLogger("argopy.gdacftp.index")
 
@@ -171,18 +175,19 @@ class FTPArgoIndexFetcher(ABC):
         """ Filter index file and return a pandas dataframe """
         df = self.indexfs.to_dataframe()
 
-        # Post-processing of the filtered index:
-        df['wmo'] = df['file'].apply(lambda x: int(x.split('/')[1]))
-
-        # institution & profiler mapping for all users
-        # todo: may be we need to separate this for standard and expert users
-        institution_dictionnary = load_dict('institutions')
-        df['tmp1'] = df.institution.apply(lambda x: mapp_dict(institution_dictionnary, x))
-        df = df.rename(columns={"institution": "institution_code", "tmp1": "institution"})
-
-        profiler_dictionnary = load_dict('profilers')
-        df['profiler'] = df.profiler_type.apply(lambda x: mapp_dict(profiler_dictionnary, int(x)))
-        df = df.rename(columns={"profiler_type": "profiler_code"})
+        # Post-processing of the filtered index is done at the indexstore level
+        # if 'wmo' not in df:
+        #     df['wmo'] = df['file'].apply(lambda x: int(x.split('/')[1]))
+        #
+        # # institution & profiler mapping for all users
+        # # todo: may be we need to separate this for standard and expert users
+        # institution_dictionnary = load_dict('institutions')
+        # df['tmp1'] = df.institution.apply(lambda x: mapp_dict(institution_dictionnary, x))
+        # df = df.rename(columns={"institution": "institution_code", "tmp1": "institution"})
+        #
+        # profiler_dictionnary = load_dict('profilers')
+        # df['profiler'] = df.profiler_type.apply(lambda x: mapp_dict(profiler_dictionnary, int(x)))
+        # df = df.rename(columns={"profiler_type": "profiler_code"})
 
         return df
 
@@ -299,9 +304,9 @@ class Fetch_box(FTPArgoIndexFetcher):
         # Get list of files to load:
         if not hasattr(self, "_list_of_argo_files"):
             if len(self.indexBOX) == 4:
-                self._list_of_argo_files = self.indexfs.search_latlon(self.indexBOX).uri
+                self._list_of_argo_files = self.indexfs.search_lat_lon(self.indexBOX).uri
             else:
-                self._list_of_argo_files = self.indexfs.search_latlontim(self.indexBOX).uri
+                self._list_of_argo_files = self.indexfs.search_lat_lon_tim(self.indexBOX).uri
 
         self.N_FILES = len(self._list_of_argo_files)
         return self._list_of_argo_files
