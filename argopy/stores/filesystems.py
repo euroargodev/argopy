@@ -117,7 +117,7 @@ class argo_store_proto(ABC):
         return self.fs.exists(path, *args)
 
     def expand_path(self, path):
-        if self.protocol != "http":
+        if self.protocol != "http" and self.protocol != "https":
             return self.fs.expand_path(path)
         else:
             return [path]
