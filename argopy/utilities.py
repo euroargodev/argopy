@@ -479,6 +479,9 @@ def show_versions(file=sys.stdout):  # noqa: C901
         ("gsw", lambda mod: mod.__version__),
         ("aiohttp", lambda mod: mod.__version__),
         #
+        ("pyarrow", lambda mod: mod.__version__),
+        ("tables", lambda mod: mod.__version__),
+
         ("bottleneck", lambda mod: mod.__version__),
         ("cartopy", lambda mod: mod.__version__),
         ("cftime", lambda mod: mod.__version__),
