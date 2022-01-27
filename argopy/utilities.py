@@ -1891,13 +1891,13 @@ def argo_split_path(this_path):
     (path, file) = os.path.split(this_path)
     #     if 'http' in path or 'ftp' in path:
     #         raise ValueError("This is not a Argo GDAC compliant file path (should be a relative path)")
-    if 'https://data-argo.ifremer.fr' in path:  # Could trigger a CW-20 "Incomplete URL substring sanitization" with codeQL
+    if path == 'https://data-argo.ifremer.fr':
         output['origin'] = 'https://data-argo.ifremer.fr/'
         sep = '/'
-    elif 'ftp://ftp.ifremer.fr/ifremer/argo' in path:
+    elif path == 'ftp://ftp.ifremer.fr/ifremer/argo':
         output['origin'] = 'ftp://ftp.ifremer.fr/ifremer/argo/'
         sep = '/'
-    elif 'ftp://usgodae.org/pub/outgoing/argo' in path:
+    elif path == 'ftp://usgodae.org/pub/outgoing/argo':
         output['origin'] = 'ftp://usgodae.org/pub/outgoing/argo/'
         sep = '/'
     else:
