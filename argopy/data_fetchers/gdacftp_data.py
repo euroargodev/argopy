@@ -27,7 +27,7 @@ from argopy.errors import FtpPathError
 
 log = logging.getLogger("argopy.gdacftp.data")
 
-has_pyarrow = (spec := importlib.util.find_spec('pyarrow')) is not None
+has_pyarrow = importlib.util.find_spec('pyarrow') is not None
 if has_pyarrow:
     from argopy.stores.argo_index_pa import indexstore_pyarrow as indexstore
     log.debug("Using pyarrow indexstore")

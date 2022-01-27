@@ -20,7 +20,7 @@ from argopy.plotters import open_dashboard
 from argopy.errors import FtpPathError
 
 
-has_pyarrow = (spec := importlib.util.find_spec('pyarrow')) is not None
+has_pyarrow = importlib.util.find_spec('pyarrow') is not None
 if has_pyarrow:
     from argopy.stores.argo_index_pa import indexstore_pyarrow as indexstore
 else:
