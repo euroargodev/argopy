@@ -440,7 +440,7 @@ def plot_trajectory(
             if set_global:
                 ax.set_xlim(-180, 180)
                 ax.set_ylim(-90, 90)
-            ax.grid(b=True, linewidth=1, color="gray", alpha=0.7, linestyle=":")
+            ax.grid(visible=True, linewidth=1, color="gray", alpha=0.7, linestyle=":")
 
         if add_legend and nfloat <= 15:
             handles, labels = ax.get_legend_handles_labels()
