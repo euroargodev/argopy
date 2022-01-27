@@ -22,6 +22,92 @@ v0.1.10 (X XXX. 2022)
 
 - Index fetcher for local FTP no longer support the option ``index_file``. The name of the file index is internally determined using the dataset requested: ``ar_index_global_prof.txt`` for ``ds='phy'`` and ``argo_synthetic-profile_index.txt`` for ``ds='bgc'``. (:pr:`157`).
 
+
+v0.1.9 (19 Jan. 2022)
+---------------------
+
+**Features and front-end API**
+
+- **New method to preprocess data for OWC software**. This method can preprocessed Argo data and possibly create float_source/<WMO>.mat files to be used as inputs for OWC implementations in `Matlab <https://github.com/ArgoDMQC/matlab_owc>`_ and `Python <https://github.com/euroargodev/argodmqc_owc>`_. See the :ref:`Salinity calibration` documentation page for more. (:pr:`142`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy import DataFetcher as ArgoDataFetcher
+    ds = ArgoDataFetcher(mode='expert').float(6902766).load().data
+    ds.argo.create_float_source("float_source")
+    ds.argo.create_float_source("float_source", force='raw')
+    ds_source = ds.argo.create_float_source()
+
+
+.. currentmodule:: xarray
+
+This new method comes with others methods and improvements:
+
+    - A new :meth:`Dataset.argo.filter_scalib_pres` method to filter variables according to OWC salinity calibration software requirements,
+    - A new :meth:`Dataset.argo.groupby_pressure_bins` method to subsample a dataset down to one value by pressure bins (a perfect alternative to interpolation on standard depth levels to precisely avoid interpolation...), see :ref:`Pressure levels: Group-by bins` for more help,
+    - An improved :meth:`Dataset.argo.filter_qc` method to select which fields to consider (new option ``QC_fields``),
+    - Add conductivity (``CNDC``) to the possible output of the ``TEOS10`` method.
+
+.. currentmodule:: argopy
+
+- **New dataset properties** accessible from the `argo` xarray accessor: ``N_POINTS``, ``N_LEVELS``, ``N_PROF``. Note that depending on the format of the dataset (a collection of points or of profiles) these values do or do not take into account NaN. These information are also visible by a simple print of the accessor. (:pr:`142`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy import DataFetcher as ArgoDataFetcher
+    ds = ArgoDataFetcher(mode='expert').float(6902766).load().data
+    ds.argo.N_POINTS
+    ds.argo.N_LEVELS
+    ds.argo.N_PROF
+    ds.argo
+
+
+- **New plotter function** :meth:`argopy.plotters.open_sat_altim_report` to insert the CLS Satellite Altimeter Report figure in a notebook cell. (:pr:`159`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy.plotters import open_sat_altim_report
+    open_sat_altim_report(6902766)
+    open_sat_altim_report([6902766, 6902772, 6902914])
+    open_sat_altim_report([6902766, 6902772, 6902914], embed='dropdown')  # Default
+    open_sat_altim_report([6902766, 6902772, 6902914], embed='slide')
+    open_sat_altim_report([6902766, 6902772, 6902914], embed='list')
+    open_sat_altim_report([6902766, 6902772, 6902914], embed=None)
+
+    from argopy import DataFetcher
+    from argopy import IndexFetcher
+    DataFetcher().float([6902745, 6902746]).plot('qc_altimetry')
+    IndexFetcher().float([6902745, 6902746]).plot('qc_altimetry')
+
+
+- **New utility method to retrieve topography**. The :class:`argopy.TopoFetcher` will load the `GEBCO topography <https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.html>`_ for a given region. (:pr:`150`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy import TopoFetcher
+    box = [-75, -45, 20, 30]
+    ds = TopoFetcher(box).to_xarray()
+    ds = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=True).to_xarray()
+
+
+For convenience we also added a new property to the data fetcher that return the domain covered by the dataset.
+
+.. code-block:: python
+
+    loader = ArgoDataFetcher().float(2901623)
+    loader.domain  # Returns [89.093, 96.036, -0.278, 4.16, 15.0, 2026.0, numpy.datetime64('2010-05-14T03:35:00.000000000'),  numpy.datetime64('2013-01-01T01:45:00.000000000')]
+
+- Update the documentation with a new section about :ref:`data_qc`.
+
+**Internals**
+
+- Uses a new API endpoint for the ``argovis`` data source when fetching a ``region``. `More on this issue here <https://github.com/donatagiglio/Argovis/issues/3>`_. (:pr:`158`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Update documentation theme, and pages now use the `xarray accessor sphinx extension <https://github.com/xarray-contrib/sphinx-autosummary-accessors>`_. (:pr:`104`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Update Binder links to work without the deprecated Pangeo-Binder service. (:pr:`164`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+
 v0.1.8 (2 Nov. 2021)
 ---------------------
 
