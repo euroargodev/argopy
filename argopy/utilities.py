@@ -15,6 +15,7 @@ import collections
 import copy
 from functools import reduce
 from packaging import version
+import logging
 
 import importlib
 import locale
@@ -36,14 +37,15 @@ import threading
 
 import time
 
-from argopy.options import OPTIONS, set_options
+from argopy.options import OPTIONS
 from argopy.stores import httpstore
 from argopy.errors import (
     FtpPathError,
     InvalidFetcher,
     InvalidFetcherAccessPoint,
     InvalidOption,
-    InvalidDatasetStructure
+    InvalidDatasetStructure,
+    FileSystemHasNoCache
 )
 
 try:
@@ -58,6 +60,8 @@ try:
     collectionsAbc = collections.abc
 except AttributeError:
     collectionsAbc = collections
+
+log = logging.getLogger("argopy.utilities")
 
 
 def clear_cache(fs=None):
@@ -75,6 +79,74 @@ def clear_cache(fs=None):
                 print("Failed to delete %s. Reason: %s" % (file_path, e))
         if fs:
             fs.clear_cache()
+
+
+def lscache(cache_path: str = ""):
+    """ Decode and list cache folder content
+
+        Parameters
+        ----------
+        cache_path: str
+    """
+    from datetime import datetime
+    import math
+    summary = []
+
+    cache_path = OPTIONS['cachedir'] if cache_path == '' else cache_path
+    apath = os.path.abspath(cache_path)
+    log.debug("Listing cache content at: %s" %cache_path )
+
+    def convert_size(size_bytes):
+        if size_bytes == 0:
+            return "0B"
+        size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+        i = int(math.floor(math.log(size_bytes, 1024)))
+        p = math.pow(1024, i)
+        s = round(size_bytes / p, 2)
+        return "%s %s" % (s, size_name[i])
+
+    cached_files = []
+    fn = os.path.join(apath, "cache")
+    if os.path.exists(fn):
+        with open(fn, "rb") as f:
+            loaded_cached_files = pickle.load(f)
+            for c in loaded_cached_files.values():
+                if isinstance(c["blocks"], list):
+                    c["blocks"] = set(c["blocks"])
+            cached_files.append(loaded_cached_files)
+    else:
+        raise FileSystemHasNoCache("No fsspec cache system at: %s" % apath)
+
+    cached_files = cached_files or [{}]
+    cached_files = cached_files[-1]
+
+    N_FILES = len(cached_files)
+    TOTAL_SIZE = 0
+    for cfile in cached_files:
+        path = os.path.join(apath, cached_files[cfile]['fn'])
+        TOTAL_SIZE += os.path.getsize(path)
+
+    summary.append("%s %s" % ("=" * 20, "%i files in fsspec cache folder (%s)" % (N_FILES, convert_size(TOTAL_SIZE))))
+    summary.append("lscache %s" % os.path.sep.join([apath, ""]))
+    summary.append("=" * 20)
+
+    for cfile in cached_files:
+        summary.append("- %s" % cached_files[cfile]['fn'])
+        path = os.path.join(cache_path, cached_files[cfile]['fn'])
+        summary.append("\t%8s: %s" % ('SIZE', convert_size(os.path.getsize(path))))
+        key = 'time'
+        ts = cached_files[cfile][key]
+        tsf = pd.to_datetime(datetime.fromtimestamp(ts)).strftime("%c")
+        summary.append("\t%8s: %s (%s)" % (key, tsf, ts))
+        key = 'original'
+        summary.append("\t%8s: %s" % (key, cached_files[cfile][key]))
+        key = 'uid'
+        summary.append("\t%8s: %s" % (key, cached_files[cfile][key]))
+        key = 'blocks'
+        summary.append("\t%8s: %s" % (key, cached_files[cfile][key]))
+
+    summary.append("=" * 20)
+    return "\n".join(summary)
 
 
 def load_dict(ptype):
