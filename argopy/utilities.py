@@ -42,7 +42,8 @@ from argopy.errors import (
     FtpPathError,
     InvalidFetcher,
     InvalidFetcherAccessPoint,
-    InvalidOption
+    InvalidOption,
+    InvalidDatasetStructure
 )
 
 try:
@@ -1367,6 +1368,28 @@ def is_wmo(lst, errors="raise"):  # noqa: C901
     else:
         return result
 
+
+def check_index_cols(column_names: list, convention: str = 'ar_index_global_prof'):
+    """
+        ar_index_global_prof.txt: Index of profile files
+        Profile directory file of the Argo Global Data Assembly Center
+        file,date,latitude,longitude,ocean,profiler_type,institution,date_update
+
+        argo_bio-profile_index.txt: bgc Argo profiles index file
+        The directory file describes all individual bio-profile files of the argo GDAC ftp site.
+        file,date,latitude,longitude,ocean,profiler_type,institution,parameters,parameter_data_mode,date_update
+    """
+    # Default for 'ar_index_global_prof'
+    ref = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
+           'date_update']
+    if convention == 'argo_bio-profile_index':
+        ref = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
+               'parameters', 'parameter_data_mode', 'date_update']
+    if not is_list_equal(column_names, ref):
+        # log.debug("Expected: %s, got: %s" % (";".join(ref), ";".join(column_names)))
+        raise InvalidDatasetStructure("Unexpected column names in this index !")
+    else:
+        return column_names
 
 # def docstring(value):
 #     """Replace one function docstring
