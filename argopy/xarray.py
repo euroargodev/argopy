@@ -1451,11 +1451,11 @@ class ArgoAccessor:
                 f"vlist must be a subset of {allowed}, instead found {vlist}"
             )
 
-        if is_list_equal(vlist, ["SA", "CT", "SIG0", "N2", "PV", "PTEMP"]):
-            warnings.warn(
-                "Default variables will be reduced to 'SA' and 'CT' in 0.1.9",
-                category=FutureWarning,
-            )
+        # if is_list_equal(vlist, ["SA", "CT"]):
+        #     warnings.warn(
+        #         "Default variables will be reduced to 'SA' and 'CT' in 0.1.9",
+        #         category=FutureWarning,
+        #     )
 
         this = self._obj
 
