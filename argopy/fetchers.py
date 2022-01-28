@@ -17,7 +17,11 @@ import logging
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher
-from .utilities import list_available_data_src, list_available_index_src, is_box, is_indexbox, check_wmo
+from .utilities import (
+    list_available_data_src, list_available_index_src,
+    is_box, is_indexbox,
+    check_wmo, check_cyc
+)
 from .plotters import plot_trajectory, bar_plot, open_sat_altim_report
 
 
@@ -300,6 +304,7 @@ class ArgoDataFetcher:
             A data source fetcher for specific float profiles
         """
         wmo = check_wmo(wmo)  # Check and return a valid list of WMOs
+        cyc = check_cyc(cyc)  # Check and return a valid list of CYCs
         self.fetcher = self.Fetchers["profile"](WMO=wmo, CYC=cyc, **self.fetcher_options)
         self._AccessPoint = "profile"  # Register the requested access point
         self._AccessPoint_data = {'wmo': wmo, 'cyc': cyc}  # Register the requested access point data
@@ -685,6 +690,7 @@ class ArgoIndexFetcher:
                 An index fetcher initialised for specific float profiles
         """
         wmo = check_wmo(wmo)  # Check and return a valid list of WMOs
+        cyc = check_cyc(cyc)  # Check and return a valid list of CYCs
         self.fetcher = self.Fetchers["profile"](WMO=wmo, CYC=cyc, **self.fetcher_options)
         self._AccessPoint = "profile"  # Register the requested access point
         return self

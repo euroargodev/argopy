@@ -413,14 +413,6 @@ class Fetch_wmo(FTPArgoDataFetcher):
         CYC: int, np.array(int), list(int)
             The cycle numbers to load.
         """
-        if isinstance(CYC, int):
-            CYC = np.array(
-                (CYC,), dtype="int"
-            )  # Make sure we deal with an array of integers
-        if isinstance(CYC, list):
-            CYC = np.array(
-                CYC, dtype="int"
-            )  # Make sure we deal with an array of integers
         self.WMO = WMO
         self.CYC = CYC
         # self.N_FILES = len(self.uri)  # Trigger search in the index, should we do this at instanciation or later ???
