@@ -22,6 +22,7 @@ from argopy.utilities import (
     is_list_of_strings,
     format_oneline, is_indexbox,
     check_wmo, is_wmo,
+    check_cyc, is_cyc,
     wmo2box,
     modified_environ,
     wrap_longitude,
@@ -488,6 +489,31 @@ def test_check_wmo():
     assert check_wmo([1234567]) == [1234567]
     assert check_wmo([12345, 1234567]) == [12345, 1234567]
     assert check_wmo(np.array((12345, 1234567), dtype='int')) == [12345, 1234567]
+
+
+def test_is_cyc():
+    assert is_cyc(123)
+    assert is_cyc([123])
+    assert is_cyc([12, 123, 1234])
+    with pytest.raises(ValueError):
+        is_cyc(12345, errors="raise")
+    with pytest.raises(ValueError):
+        is_cyc(-1234, errors="raise")
+    with pytest.raises(ValueError):
+        is_cyc(1234.12, errors="raise")
+    with pytest.raises(ValueError):
+        is_cyc(12345.7, errors="raise")
+    assert not is_cyc(12345, errors="silent")
+    assert not is_cyc(-12, errors="silent")
+    assert not is_cyc(1234.12, errors="silent")
+    assert not is_cyc(12345.7, errors="silent")
+
+
+def test_check_cyc():
+    assert check_cyc(123) == [123]
+    assert check_cyc([12]) == [12]
+    assert check_cyc([12, 123]) == [12, 123]
+    assert check_cyc(np.array((123, 1234), dtype='int')) == [123, 1234]
 
 
 def test_modified_environ():

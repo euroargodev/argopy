@@ -789,6 +789,8 @@ class memorystore(filestore):
                 return True
             except CacheFileNotFound:
                 pass
+            except FileSystemHasNoCache:
+                pass
         return guess
 
 class ftpstore(httpstore):

@@ -27,15 +27,13 @@ from argopy.utilities import (
     is_list_of_dicts,
     modified_environ,
     is_list_of_strings,
-    check_wmo,
+    check_wmo, check_cyc,
+    lscache
 )
 
+from argopy.stores.argo_index_pa import indexstore_pandas
 has_pyarrow = (spec := importlib.util.find_spec('pyarrow')) is not None
-if has_pyarrow:
-    from argopy.stores.argo_index_pa import indexstore_pyarrow as new_indexstore
-else:
-    from argopy.stores.argo_index_pa import indexstore_pandas as new_indexstore
-
+skip_pyarrow = pytest.mark.skipif(not has_pyarrow, reason="Requires pyarrow")
 
 skip_this = pytest.mark.skipif(True, reason="Skipped temporarily")
 
@@ -333,64 +331,75 @@ class Test_Legacy_IndexStore:
             assert isinstance(df, pd.core.frame.DataFrame)
 
 
-class Test_IndexStore:
+class IndexStore_test_proto:
     host, flist = argopy.tutorial.open_dataset("localftp")
     index_file = "ar_index_global_prof.txt"
 
     kwargs_wmo = [
         {"WMO": 6901929},
         {"WMO": [6901929, 2901623]},
-        # {"CYC": 1},
-        # {"CYC": [1, 6]},
-        {"WMO": 6901929, "CYC": 36},
-        {"WMO": 6901929, "CYC": [5, 45]},
-        {"WMO": [6901929, 2901623], "CYC": 2},
-        {"WMO": [6901929, 2901623], "CYC": [2, 23]},
-        {},
+    ]
+
+    kwargs_cyc = [
+        {"CYC": 36},
+        {"CYC": [5, 45]},
     ]
 
     kwargs_box = [
-        {"BOX": [-60, -40, 40.0, 60.0]},
         {"BOX": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     ]
 
+    def new_idx(self, cache=False, cachedir="."):
+        idx = self.indexstore(host=self.host, index_file=self.index_file, cache=cache, cachedir=cachedir).load()
+        return idx
+
+    def assert_index(self, this_idx):
+        assert hasattr(this_idx, 'index')
+        assert this_idx.shape[0] == this_idx.index.shape[0]
+        assert this_idx.N_RECORDS == this_idx.index.shape[0]
+        assert is_list_of_strings(this_idx.uri_full_index) and len(this_idx.uri_full_index) == this_idx.N_RECORDS
+
+    def assert_search(self, this_idx):
+        assert hasattr(this_idx, 'search')
+        assert this_idx.N_MATCH == this_idx.search.shape[0]
+        assert this_idx.N_FILES == this_idx.N_MATCH
+        assert is_list_of_strings(this_idx.uri) and len(this_idx.uri) == this_idx.N_MATCH
+
     def test_creation(self):
-        assert isinstance(new_indexstore(), argopy.stores.argo_index_pa.ArgoIndexStoreProto)
-        assert isinstance(new_indexstore(cache=True), argopy.stores.argo_index_pa.ArgoIndexStoreProto)
+        assert isinstance(self.indexstore(), argopy.stores.argo_index_pa.ArgoIndexStoreProto)
+        assert isinstance(self.indexstore(cache=True), argopy.stores.argo_index_pa.ArgoIndexStoreProto)
         assert isinstance(
-            new_indexstore(cache=True, cachedir="."), argopy.stores.argo_index_pa.ArgoIndexStoreProto
+            self.indexstore(cache=True, cachedir="."), argopy.stores.argo_index_pa.ArgoIndexStoreProto
         )
         assert isinstance(
-            new_indexstore(host=self.host, index_file=self.index_file), argopy.stores.argo_index_pa.ArgoIndexStoreProto
+            self.indexstore(host=self.host, index_file=self.index_file), argopy.stores.argo_index_pa.ArgoIndexStoreProto
         )
         with pytest.raises(FtpPathError):
-            new_indexstore(host=self.host, index_file="dummy_index.txt")
+            self.indexstore(host=self.host, index_file="dummy_index.txt")
         with pytest.raises(FtpPathError):
-            new_indexstore(host="ftp://ftp.dummy.fr/argo")
+            self.indexstore(host="ftp://ftp.dummy.fr/argo")
         with pytest.raises(FtpPathError):
-            new_indexstore(host="s3://dummy_cloud_store")
+            self.indexstore(host="s3://dummy_cloud_store")
 
     def test_index(self):
         def new_idx():
-            return new_indexstore(host=self.host, index_file=self.index_file, cache=False)
-        assert hasattr(new_idx().load(), 'index')
-        assert hasattr(new_idx().load(force=True), 'index')
+            return self.indexstore(host=self.host, index_file=self.index_file, cache=False)
+        self.assert_index(new_idx().load())
+        self.assert_index(new_idx().load(force=True))
 
         N = np.random.randint(1,100+1)
         idx = new_idx().load(nrows=N)
-        assert hasattr(idx, 'index') and idx.index.shape[0] == N
-        assert idx.shape[0] == idx.index.shape[0]
-        assert idx.N_RECORDS == idx.index.shape[0]
+        self.assert_index(idx)
+        assert idx.index.shape[0] == N
+        # Since no search was triggered:
         assert idx.N_FILES == idx.N_RECORDS
-        assert is_list_of_strings(idx.uri_full_index) and len(idx.uri_full_index) == idx.N_RECORDS
 
         with pytest.raises(InvalidDatasetStructure):
-            idx = new_indexstore(host=self.host, index_file="ar_greylist.txt", cache=False)
+            idx = self.indexstore(host=self.host, index_file="ar_greylist.txt", cache=False)
             idx.load()
 
-    def test_index_to_dataframe(self):
-        idx = new_indexstore(host=self.host, index_file=self.index_file, cache=False)
-        idx.load()
+    def test_to_dataframe_index(self):
+        idx = self.new_idx()
         assert isinstance(idx.to_dataframe(), pd.core.frame.DataFrame)
 
         df = idx.to_dataframe(index=True)
@@ -399,27 +408,76 @@ class Test_IndexStore:
         df = idx.to_dataframe()
         assert df.shape[0] == idx.N_RECORDS
 
-        N = np.random.randint(1,100+1)
+        N = np.random.randint(1,20+1)
         df = idx.to_dataframe(index=True, nrows=N)
         assert df.shape[0] == N
 
     def test_search_wmo(self):
         for kw in self.kwargs_wmo:
-            def new_idx(kw):
-                idx = new_indexstore(host=self.host, index_file=self.index_file, cache=False).load()
-                return idx.search_wmo(check_wmo(kw))
+            idx = self.new_idx()
+            self.assert_search(idx.search_wmo(check_wmo(kw['WMO'])))
 
-            idx = new_idx(kw['WMO'])
-            assert hasattr(idx, 'search')
-            assert idx.N_MATCH == idx.search.shape[0]
-            assert idx.N_FILES == idx.N_MATCH
-            assert is_list_of_strings(idx.uri) and len(idx.uri) == idx.N_MATCH
+    def test_search_cyc(self):
+        for kw in self.kwargs_cyc:
+            idx = self.new_idx()
+            self.assert_search(idx.search_cyc(check_cyc(kw['CYC'])))
 
-            # assert isinstance(df, pd.core.frame.DataFrame)
+    def test_search_wmo_cyc(self):
+        for kwo in self.kwargs_wmo:
+            for kwc in self.kwargs_cyc:
+                idx = self.new_idx()
+                self.assert_search(idx.search_wmo_cyc(check_wmo(kwo['WMO']), check_cyc(kwc['CYC'])))
 
-    # def test_search_box(self):
-    #     for kw in self.kwargs_box:
-    #         df = indexstore(cache=False, index_file=self.index_file).read_csv(
-    #             indexfilter_box(**kw)
-    #         )
-    #         assert isinstance(df, pd.core.frame.DataFrame)
+    def test_search_box(self):
+        for kw in self.kwargs_box:
+            idx = self.new_idx()
+            self.assert_search(idx.search_tim(kw['BOX']))
+            self.assert_search(idx.search_lat_lon(kw['BOX']))
+            self.assert_search(idx.search_lat_lon_tim(kw['BOX']))
+
+    def test_to_dataframe_search(self):
+        idx = self.new_idx()
+        idx = idx.search_wmo(check_wmo(self.kwargs_wmo[0]['WMO']))
+
+        df = idx.to_dataframe()
+        assert isinstance(df, pd.core.frame.DataFrame)
+        assert df.shape[0] == idx.N_MATCH
+
+        N = np.random.randint(1,10+1)
+        df = idx.to_dataframe(nrows=N)
+        assert df.shape[0] == N
+
+    def test_caching_index(self):
+        with tempfile.TemporaryDirectory() as testcachedir:
+            idx = self.new_idx(cache=True, cachedir=testcachedir)
+            self.assert_index(idx.load())
+            self.assert_index(idx.load(nrows=12))
+            assert len(lscache(testcachedir, prt=False)) == 1
+
+    def test_caching_search(self):
+        with tempfile.TemporaryDirectory() as testcachedir:
+            idx = self.new_idx(cache=True, cachedir=testcachedir)
+            idx.load().search_wmo(check_wmo(self.kwargs_wmo[0]['WMO']))
+            self.assert_search(idx)
+            assert len(lscache(testcachedir, prt=False)) == 2  # 2 files: the index and the search results
+
+    def test_read_wmo(self):
+        wmo = check_wmo(self.kwargs_wmo[-1]['WMO'])
+        idx = self.new_idx().search_wmo(wmo)
+        assert len(idx.read_wmo()) == len(wmo)
+
+    def test_records_per_wmo(self):
+        wmo = check_wmo(self.kwargs_wmo[-1]['WMO'])
+        idx = self.new_idx().search_wmo(wmo)
+        C = idx.records_per_wmo()
+        for w in C:
+            assert str(C[w]).isdigit()
+
+
+class Test_IndexStore_pandas(IndexStore_test_proto):
+    indexstore = indexstore_pandas
+
+@skip_pyarrow
+class Test_IndexStore_pyarrow(IndexStore_test_proto):
+    from argopy.stores.argo_index_pa import indexstore_pyarrow
+    indexstore = indexstore_pyarrow

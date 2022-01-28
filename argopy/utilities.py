@@ -81,12 +81,18 @@ def clear_cache(fs=None):
             fs.clear_cache()
 
 
-def lscache(cache_path: str = ""):
+def lscache(cache_path: str = "", prt=True):
     """ Decode and list cache folder content
 
         Parameters
         ----------
         cache_path: str
+        prt: bool, default=True
+            Return a printable string or a :class:`pandas.DataFrame`
+
+        Returns
+        -------
+        str or :class:`pandas.DataFrame`
     """
     from datetime import datetime
     import math
@@ -130,23 +136,40 @@ def lscache(cache_path: str = ""):
     summary.append("lscache %s" % os.path.sep.join([apath, ""]))
     summary.append("=" * 20)
 
+    listing = {'fn': [], 'size': [], 'time': [], 'original': [], 'uid': [], 'blocks': []}
     for cfile in cached_files:
         summary.append("- %s" % cached_files[cfile]['fn'])
+        listing['fn'].append(cached_files[cfile]['fn'])
+
         path = os.path.join(cache_path, cached_files[cfile]['fn'])
         summary.append("\t%8s: %s" % ('SIZE', convert_size(os.path.getsize(path))))
+        listing['size'].append(os.path.getsize(path))
+
         key = 'time'
         ts = cached_files[cfile][key]
         tsf = pd.to_datetime(datetime.fromtimestamp(ts)).strftime("%c")
         summary.append("\t%8s: %s (%s)" % (key, tsf, ts))
+        listing['time'].append(pd.to_datetime(datetime.fromtimestamp(ts)))
+
         key = 'original'
         summary.append("\t%8s: %s" % (key, cached_files[cfile][key]))
+        listing[key].append(cached_files[cfile][key])
         key = 'uid'
         summary.append("\t%8s: %s" % (key, cached_files[cfile][key]))
+        listing[key].append(cached_files[cfile][key])
         key = 'blocks'
         summary.append("\t%8s: %s" % (key, cached_files[cfile][key]))
+        listing[key].append(cached_files[cfile][key])
 
     summary.append("=" * 20)
-    return "\n".join(summary)
+    summary = "\n".join(summary)
+    if prt:
+        # Return string to be printed:
+        return summary
+    else:
+        # Return dataframe listing:
+        # log.debug(summary)
+        return pd.DataFrame(listing)
 
 
 def load_dict(ptype):
@@ -1440,6 +1463,80 @@ def is_wmo(lst, errors="raise"):  # noqa: C901
     else:
         return result
 
+
+def check_cyc(lst):
+    """ Validate a CYC option and returned it as a list of integers
+
+    Parameters
+    ----------
+    cyc: int
+        CYC must be an integer or an iterable with elements that can be casted as positive integers
+    errors: 'raise'
+
+    Returns
+    -------
+    list(int)
+    """
+    is_cyc(lst, errors="raise")
+
+    # Make sure we deal with a list
+    if not isinstance(lst, list):
+        if isinstance(lst, np.ndarray):
+            lst = list(lst)
+        else:
+            lst = [lst]
+
+    # Then cast list elements as integers
+    return [abs(int(x)) for x in lst]
+
+
+def is_cyc(lst, errors="raise"):  # noqa: C901
+    """ Check if a CYC is valid
+
+    Parameters
+    ----------
+    cyc: int, list(int), array(int)
+        CYC must be a single or a list of at most 4 digit positive numbers
+    errors: 'raise'
+        Possibly raises a ValueError exception, otherwise fails silently.
+
+    Returns
+    -------
+    bool
+        True if cyc is indeed a list of integers
+    """
+    # Make sure we deal with a list
+    if not isinstance(lst, list):
+        if isinstance(lst, np.ndarray):
+            lst = list(lst)
+        else:
+            lst = [lst]
+
+    # Error message:
+    msg = "CYC must be a single or a list of at most 4 digit positive numbers"
+
+    # Then try to cast list elements as integers, return True if ok
+    result = True
+    try:
+        for x in lst:
+            if not str(x).isdigit():
+                result = False
+
+            if (len(str(x)) > 4):
+                result = False
+
+            if int(x) <= 0:
+                result = False
+
+    except Exception:
+        result = False
+        if errors == "raise":
+            raise ValueError(msg)
+
+    if not result and errors == "raise":
+        raise ValueError(msg)
+    else:
+        return result
 
 def check_index_cols(column_names: list, convention: str = 'ar_index_global_prof'):
     """

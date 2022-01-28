@@ -12,6 +12,7 @@ import argopy
 from aiohttp.client_exceptions import ServerDisconnectedError, ClientResponseError
 from packaging import version
 import warnings
+import logging
 from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound
 from argopy.utilities import (
     list_available_data_src,
@@ -20,9 +21,12 @@ from argopy.utilities import (
     erddap_ds_exists,
 )
 
+logging.getLogger("matplotlib").setLevel(logging.ERROR)
+
 argopy.set_options(api_timeout=4 * 60)  # From Github actions, requests can take a while
 argopy.show_options()
 argopy.show_versions()
+
 
 
 def _importorskip(modname):
@@ -167,6 +171,7 @@ requires_connected_gdac = pytest.mark.skipif(
 has_matplotlib, requires_matplotlib = _importorskip("matplotlib")
 has_seaborn, requires_seaborn = _importorskip("seaborn")
 has_cartopy, requires_cartopy = _importorskip("cartopy")
+has_ipython, requires_ipython = _importorskip("IPython")
 
 ############
 # Fix for issues discussed here:
