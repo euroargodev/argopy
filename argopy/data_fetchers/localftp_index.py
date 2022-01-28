@@ -160,10 +160,6 @@ class Fetch_wmo(LocalFTPArgoIndexFetcher):
             CYC : int, np.array(int), list(int)
                 The cycle numbers to load.
         """
-        if isinstance(CYC, int):
-            CYC = np.array((CYC,), dtype='int')  # Make sure we deal with an array of integers
-        if isinstance(CYC, list):
-            CYC = np.array(CYC, dtype='int')  # Make sure we deal with an array of integers
         self.WMO = WMO
         self.CYC = CYC
         self.fcls = indexfilter_wmo(self.WMO, self.CYC)
