@@ -7,10 +7,12 @@ from abc import ABC, abstractmethod
 from fsspec.core import split_protocol
 import io
 import gzip
+import hashlib
 
 from argopy.options import OPTIONS
 from argopy.stores import httpstore, memorystore, filestore, ftpstore
 from argopy.errors import DataNotFound, FtpPathError, InvalidDataset
+from argopy.utilities import check_index_cols
 
 try:
     import pyarrow.csv as csv
@@ -35,7 +37,7 @@ class ArgoIndexStoreProto(ABC):
         Methods/properties of the full index:
         >>> idx.load()
         >>> idx.load(nrows=12)  # Only load the first N rows
-        >>> idx.N_FILES  # Shortcut for length of 1st dimension of the search results pyarrow table (fall back on full index table if search not run)
+        >>> idx.N_RECORDS  # Shortcut for length of 1st dimension of the index array
         >>> idx.index  # Access the internal storage structure of the full index (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
         >>> idx.shape  # shape of the full index array
         >>> idx.uri_full_index  # List of absolute path to files from the full index table column 'file'
@@ -49,18 +51,62 @@ class ArgoIndexStoreProto(ABC):
         >>> idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
 
         Index and search properties:
-        >>> idx.N_FILES  # Shortcut for length of 1st dimension of the search results pyarrow table (fall back on full index table if search not run)
+        >>> idx.N_MATCH  # Shortcut for length of 1st dimension of the search results array (fall back on full index table if search not run)
         >>> idx.uri  # List of absolute path to files from the search results table column 'file'
         >>> idx.search  # Pyarrow table with search results
         >>> idx.data  # Pandas dataframe with full index
 
-        Internals:
+        Misc:
+        >>> idx.N_FILES  # Shortcut for length of 1st dimension of the search results array (but all back on full index table if search not run)
         >>> idx.run()  # Run the search and save results in cache if necessary
         >>> idx.to_dataframe()  # Convert search results to pandas dataframe
 
     """
     backend = '?'
     search_type = '?'
+
+    def __init__(self,
+                 host: str = "https://data-argo.ifremer.fr",
+                 index_file: str = "ar_index_global_prof.txt",
+                 cache: bool = False,
+                 cachedir: str = "",
+                 timeout: int = 0):
+        """ Create a file storage system for Argo index file requests
+
+            Parameters
+            ----------
+            host: str, default: "https://data-argo.ifremer.fr"
+                Host to the 'dac' folder, could also be: "ftp://ftp.ifremer.fr/ifremer/argo", "ftp://usgodae.org/pub/outgoing/argo"
+                or a local absolute path.
+            index_file: str ("ar_index_global_prof.txt")
+            cache : bool (False)
+            cachedir : str (used value in global OPTIONS)
+        """
+        self.host = host
+        self.index_file = index_file
+        self.cache = cache
+        self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
+        timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
+        self.fs = {}
+        if split_protocol(host)[0] is None:
+            self.fs['index'] = filestore(cache=cache, cachedir=cachedir)
+        elif 'https' in split_protocol(host)[0]:
+            self.fs['index'] = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')  # Only for https://data-argo.ifremer.fr
+        elif 'ftp' in split_protocol(host)[0]:
+            if 'ifremer' not in host and 'usgodae' not in host:
+                raise FtpPathError("Unknown Argo ftp: %s" % host)
+            self.fs['index'] = ftpstore(host=split_protocol(host)[-1].split('/')[0],  # eg: ftp.ifremer.fr
+                                        cache=cache,
+                                        cachedir=cachedir,
+                                        timeout=timeout,
+                                        block_size= 1000 * (2 ** 20))
+        else:
+            raise FtpPathError("Unknown protocol for an Argo index store: %s" % split_protocol(host)[0])
+        self.fs['search'] = memorystore(cache, cachedir)  # Manage search results
+
+        self.index_path = self.fs['index'].fs.sep.join([self.host, self.index_file])
+        if not self.fs['index'].exists(self.index_path):
+            raise FtpPathError("Index file does not exist: %s" % self.index_path)
 
     def __repr__(self):
         summary = ["<argoindex.%s>" % self.backend]
@@ -140,6 +186,14 @@ class ArgoIndexStoreProto(ABC):
                     cname = ";".join([prtcyc(CYC, wmo) for wmo in WMO])
                 cname = "%s" % cname
 
+        elif "CYC" in self.search_type and not "WMO" in self.search_type:
+            CYC = self.search_type['CYC']
+            if len(CYC) == 1:
+                cname = "CYC%i" % (CYC[0])
+            else:
+                cname = ";".join(["CYC%i" % cyc for cyc in sorted(CYC)])
+            cname = "%s" % cname
+
         return cname
 
     def _sha_from(self, path):
@@ -149,6 +203,7 @@ class ArgoIndexStoreProto(ABC):
         """
         sha = path  # no encoding
         # sha = hashlib.sha256(path.encode()).hexdigest()  # Full encoding
+        # log.debug("%s > %s" % (path, sha))
         return sha
 
     @property
@@ -156,7 +211,6 @@ class ArgoIndexStoreProto(ABC):
         """ Returns a unique SHA for a cname/dataframe """
         cname = "pd-%s" % self.cname
         sha = self._sha_from(cname)
-        log.debug("%s > %s" % (cname, sha))
         return sha
 
     @property
@@ -168,7 +222,6 @@ class ArgoIndexStoreProto(ABC):
         # else:
         #     path = cname
         sha = self._sha_from(cname)
-        log.debug("%s > %s" % (cname, sha))
         return sha
 
     @property
@@ -180,7 +233,6 @@ class ArgoIndexStoreProto(ABC):
         # else:
         #     path = cname
         sha = self._sha_from(cname)
-        log.debug("%s > %s" % (cname, sha))
         return sha
 
     @property
@@ -402,45 +454,6 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
     """ Argo index store, using :class:`pyarrow.Table` as internal storage format """
     backend = 'pyarrow'
 
-    def __init__(self,
-                 host: str = "https://data-argo.ifremer.fr",
-                 index_file: str = "ar_index_global_prof.txt",
-                 cache: bool = False,
-                 cachedir: str = "",
-                 timeout: int = 0):
-        """ Create a file storage system for Argo index file requests
-
-            Parameters
-            ----------
-            host: str, default: "https://data-argo.ifremer.fr"
-                Host to the 'dac' folder, could also be: "ftp://ftp.ifremer.fr/ifremer/argo", "ftp://usgodae.org/pub/outgoing/argo"
-                or a local absolute path.
-            index_file: str ("ar_index_global_prof.txt")
-            cache : bool (False)
-            cachedir : str (used value in global OPTIONS)
-        """
-        self.host = host
-        self.index_file = index_file
-        self.cache = cache
-        self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
-        self.fs = {}
-        if split_protocol(host)[0] is None:
-            self.fs['index'] = filestore(cache=cache, cachedir=cachedir)
-        elif 'https' in split_protocol(host)[0]:
-            self.fs['index'] = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')  # Only for https://data-argo.ifremer.fr
-        elif 'ftp' in split_protocol(host)[0]:
-            if 'ifremer' not in host and 'usgodae' not in host:
-                raise FtpPathError("Unknown Argo ftp: %s" % host)
-            self.fs['index'] = ftpstore(host=split_protocol(host)[-1].split('/')[0],
-                                        cache=cache,
-                                        cachedir=cachedir,
-                                        timeout=timeout,
-                                        block_size= 1000 * (2 ** 20))
-        else:
-            raise ValueError("Unknown protocol for an Argo index store: %s" % split_protocol(host)[0])
-        self.fs['search'] = memorystore(cache, cachedir)  # Manage search results
-
     def load(self, force=False, nrows=None):
         """ Load an Argo-index file content
 
@@ -481,22 +494,29 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             return this_table
 
         if not hasattr(self, 'index') or force:
-            this_path = self.host + "/" + self.index_file
+            this_path = self.index_path
             if self.fs['index'].exists(this_path + '.gz'):
                 with self.fs['index'].open(this_path + '.gz', "rb") as fg:
                     with gzip.open(fg) as f:
                         self.index = read_csv(f, nrows=nrows)
+                        check_index_cols(self.index.column_names)
                         log.debug("Argo index file loaded with pyarrow read_csv. src='%s'" % (this_path + '.gz'))
             else:
                 with self.fs['index'].open(this_path, "rb") as f:
                     self.index = read_csv(f, nrows=nrows)
+                    check_index_cols(self.index.column_names)
                     log.debug("Argo index file loaded with pyarrow read_csv. src='%s'" % this_path)
+
+        if self.N_RECORDS == 0:
+            raise DataNotFound("the index.")
+        elif nrows is not None and self.N_RECORDS != nrows:
+            self.index = self.index[0:nrows-1]
 
         return self
 
     def run(self):
         """ Filter index with search criteria """
-        search_path = self.host + "/" + self.index_file + "/" + self.sha_pq
+        search_path = self.host + "/" + self.index_file + "." + self.sha_pq
         if self.cache and self.fs['search'].exists(search_path):
             log.debug("Search results already in memory as pyarrow table, loading... src='%s'" % (search_path))
             self.search = self._read(self.fs['search'].fs, search_path)
@@ -518,32 +538,31 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             This is where we can process the internal dataframe structure for the end user.
             If this processing is long, we can implement caching here.
         """
-        this_path = self.host + "/" + self.index_file + "/" + self.sha_pq + "/export"
-        if nrows is not None:
-            this_path = this_path + "/" + "%i" % nrows
-
         if hasattr(self, 'search') and not index:
+            this_path = self.host + "/" + self.index_file + "/" + self.sha_pq
             src = 'search results'
-            if self.N_FILES == 0:
+            if self.N_MATCH == 0:
                 raise DataNotFound("the index correspond to your search criteria."
                                    " Search definition: %s" % self.cname)
             else:
                 df = self.search.to_pandas()
         else:
+            this_path = self.host + "/" + self.index_file + "/" + self._sha_from("pq-full")
             src = 'full index'
             if not hasattr(self, 'index'):
-                self.load()
-            if self.N_FILES == 0:
-                raise DataNotFound("the index.")
-            else:
-                df = self.index.to_pandas()
-        log.debug("Converting [%s] to dataframe ..." % src)
+                self.load(nrows=nrows)
+            df = self.index.to_pandas()
+
+        if nrows is not None:
+            this_path = this_path + "/export" + ".%i" % nrows
+        else:
+            this_path = this_path + ".export"
 
         if self.cache and self.fs['search'].exists(this_path):
             log.debug("[%s] already processed as Dataframe, loading ... src='%s'" % (src, this_path))
             df = self._read(self.fs['search'].fs, this_path, format='pd')
         else:
-            log.debug("Processing [%s] as dataframe from scratch ..." % (src))
+            log.debug("Converting [%s] to dataframe from scratch ..." % src)
             # Post-processing for user:
             from argopy.utilities import load_dict, mapp_dict
 
@@ -639,6 +658,22 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         self.run()
         return self
 
+    def search_cyc(self, CYCs):
+        log.debug("Argo index searching for CYCs=[%s] ..." % (
+            ";".join([str(cyc) for cyc in CYCs])))
+        self.load()
+        self.search_type = {'CYC': CYCs}
+        filt = []
+        for cyc in CYCs:
+            if cyc < 1000:
+                pattern = "_%0.3d.nc" % (cyc)
+            else:
+                pattern = "_%0.4d.nc" % (cyc)
+            filt.append(pa.compute.match_substring_regex(self.index['file'], pattern=pattern))
+        self.search_filter = np.logical_or.reduce(filt)
+        self.run()
+        return self
+
     def search_wmo_cyc(self, WMOs, CYCs):
         log.debug("Argo index searching for WMOs=[%s] and CYCs=[%s] ..." % (
             ";".join([str(wmo) for wmo in WMOs]),
@@ -705,46 +740,6 @@ class indexstore_pandas(ArgoIndexStoreProto):
     """ Argo index store, using :class:`pandas.DataFrame` as internal storage format """
     backend = 'pandas'
 
-    def __init__(self,
-                 host: str = "https://data-argo.ifremer.fr",
-                 index_file: str = "ar_index_global_prof.txt",
-                 cache: bool = False,
-                 cachedir: str = "",
-                 timeout: int = 0):
-        """ Create a file storage system for Argo index file requests
-
-            Parameters
-            ----------
-            host: str, default: "https://data-argo.ifremer.fr"
-                Host to the 'dac' folder, could also be: "ftp://ftp.ifremer.fr/ifremer/argo", "ftp://usgodae.org/pub/outgoing/argo"
-                or a local absolute path.
-            index_file: str ("ar_index_global_prof.txt")
-            cache : bool (False)
-            cachedir : str (used value in global OPTIONS)
-        """
-        self.host = host
-        self.index_file = index_file
-        self.cache = cache
-        self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
-        self.fs = {}
-        if split_protocol(host)[0] is None:
-            self.fs['index'] = filestore(cache=cache, cachedir=cachedir)
-        elif 'https' in split_protocol(host)[0]:
-            self.fs['index'] = httpstore(cache=cache, cachedir=cachedir, timeout=timeout,
-                                         size_policy='head')  # Only for https://data-argo.ifremer.fr
-        elif 'ftp' in split_protocol(host)[0]:
-            if 'ifremer' not in host and 'usgodae' not in host:
-                raise FtpPathError("Unknown Argo ftp: %s" % host)
-            self.fs['index'] = ftpstore(host=split_protocol(host)[-1].split('/')[0],
-                                        cache=cache,
-                                        cachedir=cachedir,
-                                        timeout=timeout,
-                                        block_size=1000 * (2 ** 20))
-        else:
-            raise ValueError("Unknown protocol for an Argo index store: %s" % split_protocol(host)[0])
-        self.fs['search'] = memorystore(cache, cachedir)  # Manage search results
-
     def load(self, force=False, nrows=None):
         """ Load an Argo-index file content
 
@@ -765,13 +760,22 @@ class indexstore_pandas(ArgoIndexStoreProto):
             if self.fs['index'].exists(index_path + '.gz'):
                 with self.fs['index'].open(index_path + '.gz', "rb") as fg:
                     with gzip.open(fg) as f:
-                        self.index = read_csv(f, nrows=nrows)
+                        df = read_csv(f, nrows=nrows)
+                        check_index_cols(df.columns.to_list())
+                        self.index = df
                         log.debug("Argo index file loaded with pandas read_csv. src='%s'" % (index_path + '.gz'))
 
             else:
                 with self.fs['index'].open(index_path, "rb") as f:
-                    self.index = read_csv(f, nrows=nrows)
+                    df = read_csv(f, nrows=nrows)
+                    check_index_cols(df.columns.to_list())
+                    self.index = df
                     log.debug("Argo index file loaded with pandas read_csv. src='%s'" % index_path)
+
+        if self.N_RECORDS == 0:
+            raise DataNotFound("the index.")
+        elif nrows is not None and self.N_RECORDS != nrows:
+            self.index = self.index[0:nrows-1]
 
         return self
 
@@ -822,12 +826,12 @@ class indexstore_pandas(ArgoIndexStoreProto):
     def run(self):
         """ Filter index with search criteria """
 
-        search_path = self.host + "/" + self.index_file + "/" + self.sha_df
+        search_path = self.host + "/" + self.index_file + "." + self.sha_df
         if self.cache and self.fs['search'].exists(search_path):
             log.debug("Search results already in memory as pandas dataframe, loading... src='%s'" % (search_path))
             self.search = self._read(self.fs['search'].fs, search_path, format='pd')
         else:
-            log.debug('Compute search from scratch ...')
+            log.debug("Compute search from scratch ... (not found '%s')" % search_path)
             self.search = self.index[self.search_filter].reset_index()
             log.debug('Found %i matches' % self.search.shape[0])
             if self.cache and self.search.shape[0] > 0:
@@ -842,32 +846,35 @@ class indexstore_pandas(ArgoIndexStoreProto):
             This is where we can process the internal dataframe structure for the end user.
             If this processing is long, we can implement caching here.
         """
-        this_path = self.host + "/" + self.index_file + "/" + self.sha_df + "/export"
-        if nrows is not None:
-            this_path = this_path + "/" + "%i" % nrows
-
         if hasattr(self, 'search') and not index:
+            this_path = self.host + "/" + self.index_file + "/" + self.sha_df
             src = 'search results'
-            if self.N_FILES == 0:
+            if self.N_MATCH == 0:
                 raise DataNotFound("the index correspond to your search criteria."
                                    " Search definition: %s" % self.cname)
             else:
                 df = self.search
         else:
+            this_path = self.host + "/" + self.index_file + "/" + self._sha_from("pd-full")
             src = 'full index'
             if not hasattr(self, 'index'):
                 self.load(nrows=nrows)
-            if self.N_FILES == 0:
-                raise DataNotFound("the index.")
-            else:
-                df = self.index
-        log.debug("Converting [%s] to dataframe ..." % src)
+            df = self.index
+
+        if nrows is not None:
+            this_path = this_path + "/export" + ".%i" % nrows
+        else:
+            this_path = this_path + ".export"
 
         if self.cache and self.fs['search'].exists(this_path):
             log.debug("[%s] already processed as Dataframe, loading ... src='%s'" % (src, this_path))
             df = self._read(self.fs['search'].fs, this_path, format='pd')
         else:
-            log.debug("Processing [%s] as dataframe from scratch ..." % (src))
+            log.debug("Converting [%s] to dataframe from scratch ..." % src)
+            # log.debug("Cache: %s" % self.cache)
+            # log.debug("this_path: %s" % this_path)
+            # log.debug("exists: %s" % self.fs['search'].exists(this_path))
+
             # Post-processing for user:
             from argopy.utilities import load_dict, mapp_dict
 
@@ -902,7 +909,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
             df = df.rename(columns={"profiler_type": "profiler_code"})
 
             if self.cache:
-                #                 log.debug("Saving this dataframe to cache. dest='%s'" % this_path)
+                # log.debug("Saving this dataframe to cache. dest='%s'" % this_path)
                 self._write(self.fs['search'], this_path, df, format='pd')
                 df = self._read(self.fs['search'].fs, this_path, format='pd')
                 log.debug("This dataframe saved in cache. dest='%s'" % this_path)
@@ -916,6 +923,22 @@ class indexstore_pandas(ArgoIndexStoreProto):
         filt = []
         for wmo in WMOs:
             filt.append(self.index['file'].str.contains("/%i/" % wmo, regex=True, case=False))
+        self.search_filter = np.logical_or.reduce(filt)
+        self.run()
+        return self
+
+    def search_cyc(self, CYCs):
+        log.debug("Argo index searching for CYCs=[%s] ..." % (
+            ";".join([str(cyc) for cyc in CYCs])))
+        self.load()
+        self.search_type = {'CYC': CYCs}
+        filt = []
+        for cyc in CYCs:
+            if cyc < 1000:
+                pattern = "_%0.3d.nc" % (cyc)
+            else:
+                pattern = "_%0.4d.nc" % (cyc)
+            filt.append(self.index['file'].str.contains(pattern, regex=True, case=False))
         self.search_filter = np.logical_or.reduce(filt)
         self.run()
         return self
