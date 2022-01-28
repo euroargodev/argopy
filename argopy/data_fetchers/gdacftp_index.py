@@ -24,6 +24,7 @@ has_pyarrow = importlib.util.find_spec('pyarrow') is not None
 if has_pyarrow:
     from argopy.stores.argo_index_pa import indexstore_pyarrow as indexstore
 else:
+    warnings.warn("Consider installing pyarrow in order to improve performances when fetching GDAC data")
     from argopy.stores.argo_index_pa import indexstore_pandas as indexstore
 
 access_points = ["wmo", "box"]

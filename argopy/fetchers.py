@@ -23,7 +23,7 @@ from .utilities import (
     check_wmo, check_cyc
 )
 from .plotters import plot_trajectory, bar_plot, open_sat_altim_report
-
+from argopy.stores import filestore
 
 AVAILABLE_DATA_SOURCES = list_available_data_src()
 AVAILABLE_INDEX_SOURCES = list_available_index_src()
@@ -130,6 +130,11 @@ class ArgoDataFetcher:
         self._index = None
         self._data = None
 
+        # Init file system for local storage
+        # self.cache = True if 'cache' not in fetcher_kwargs else fetcher_kwargs['cache']
+        # self.cachedir = OPTIONS['cachedir'] if 'cachedir' not in fetcher_kwargs else fetcher_kwargs['cachedir']
+        # self.fs = filestore(cache=self.cache, cachedir=self.cachedir)
+
         # Dev warnings
         # Todo Clean-up before each release
         if self._dataset_id == "bgc" and self._mode == "standard":
@@ -169,11 +174,40 @@ class ArgoDataFetcher:
             "index",
             "domain",
             "_loaded",
-            "_request"
+            "_request",
+            "cache", "cachedir"
         ]
         if key not in self.valid_access_points and key not in valid_attrs:
             raise InvalidFetcherAccessPoint("'%s' is not a valid access point" % key)
         pass
+
+    # def _write(self, path, obj, format='zarr'):
+    #     """ Write internal array object to file store
+    #
+    #         Parameters
+    #         ----------
+    #         obj: :class:`xarray.DataSet` or :class:`pandas.DataFrame`
+    #     """
+    #     with self.fs.open(path, "wb") as handle:
+    #         if format in ['zarr']:
+    #             obj.to_zarr(handle)
+    #         elif format in ['pk']:
+    #             obj.to_pickle(handle)  # obj is a :class:`pandas.DataFrame`
+    #     return self
+    #
+    # def _read(self, path, format='zarr'):
+    #     """ Read internal array object from file store
+    #
+    #         Returns
+    #         -------
+    #         obj: :class:`xarray.DataSet` or :class:`pandas.DataFrame`
+    #     """
+    #     with self.fs.open(path, "rb") as handle:
+    #         if format in ['zarr']:
+    #             obj = xr.open_zarr(handle)
+    #         elif format in ['pk']:
+    #             obj = pd.read_pickle(handle)
+    #     return obj
 
     @property
     def uri(self):
@@ -373,6 +407,15 @@ class ArgoDataFetcher:
             )
         xds = self.fetcher.to_xarray(**kwargs)
         xds = self.postproccessor(xds)
+
+        # data_path = self.fetcher.cname() + self._mode + ".zarr"
+        # log.debug(data_path)
+        # if self.cache and self.fs.exists(data_path):
+        #     xds = self._read(data_path)
+        # else:
+        #     xds = self.fetcher.to_xarray(**kwargs)
+        #     xds = self.postproccessor(xds)
+        #     xds = self._write(data_path, xds)._read(data_path)
         return xds
 
     def to_dataframe(self, **kwargs):

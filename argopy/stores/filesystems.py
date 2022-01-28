@@ -108,6 +108,7 @@ class argo_store_proto(ABC):
 
     def open(self, path, *args, **kwargs):
         self.register(path)
+        log.debug(path)
         return self.fs.open(path, *args, **kwargs)
 
     def glob(self, path, **kwargs):

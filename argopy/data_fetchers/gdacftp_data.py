@@ -33,6 +33,7 @@ if has_pyarrow:
     log.debug("Using pyarrow indexstore")
 else:
     from argopy.stores.argo_index_pa import indexstore_pandas as indexstore
+    warnings.warn("Consider installing pyarrow in order to improve performances when fetching GDAC data")
     log.debug("Using pandas indexstore")
 
 access_points = ["wmo", "box"]
@@ -152,7 +153,10 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         summary.append("Name: %s" % self.definition)
         summary.append("Index: %s" % self.indexfs.index_file)
         summary.append("FTP: %s" % self.server)
-        summary.append("Domain: %s" % format_oneline(self.cname()))
+        if hasattr(self, 'BOX'):
+            summary.append("Domain: %s" % self.cname())
+        else:
+            summary.append("Domain: %s" % format_oneline(self.cname()))
         if hasattr(self.indexfs, 'index'):
             summary.append("Index loaded: True (%i records)" % self.N_RECORDS)
         else:

@@ -36,7 +36,7 @@ import warnings
 import getpass
 
 from .proto import ArgoDataFetcherProto
-from argopy.errors import NetCDF4FileNotFoundError, DataNotFound
+from argopy.errors import NetCDF4FileNotFoundError
 from argopy.utilities import (
     list_standard_variables,
     check_localftp,

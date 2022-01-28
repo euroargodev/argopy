@@ -95,5 +95,5 @@ class ArgoDataFetcherProto(ABC):
     @property
     def sha(self) -> str:
         """ Returns a unique SHA for a specifc cname / fetcher implementation"""
-        path = "%s: %s" % (self.definition, self.cname())
+        path = "%s-%s" % (self.definition, self.cname())
         return hashlib.sha256(path.encode()).hexdigest()
