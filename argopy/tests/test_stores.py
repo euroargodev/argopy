@@ -35,7 +35,7 @@ from argopy.stores.argo_index_pa import indexstore_pandas
 has_pyarrow = importlib.util.find_spec('pyarrow') is not None
 skip_pyarrow = pytest.mark.skipif(not has_pyarrow, reason="Requires pyarrow")
 
-skip_this = pytest.mark.skipif(True, reason="Skipped temporarily")
+skip_this = pytest.mark.skipif(False, reason="Skipped temporarily")
 
 
 @skip_this
