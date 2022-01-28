@@ -17,10 +17,13 @@ import concurrent.futures
 import multiprocessing
 # import distributed
 
+
+log = logging.getLogger("argopy.stores")
+
 try:
     from tqdm import tqdm
 except ModuleNotFoundError:
-    warnings.warn("argopy needs tqdm installed to display progress bars")
+    log.debug("argopy needs tqdm installed to display progress bars")
 
     def tqdm(fct, **kw):
         return fct
@@ -30,9 +33,6 @@ from argopy.options import OPTIONS
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
     InvalidMethod
 from abc import ABC, abstractmethod
-
-
-log = logging.getLogger("argopy.stores")
 
 
 def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cachedir'], **kwargs):

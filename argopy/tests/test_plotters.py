@@ -51,7 +51,7 @@ def test_open_sat_altim_report():
     dsh = open_sat_altim_report(WMO=5904797, embed='dropdown')
     assert isinstance(dsh(5904797), IPython.display.Image)
 
-    open_sat_altim_report(WMO=5904797, embed='list')
+    assert argopy.plotters.open_sat_altim_report(WMO=5904797, embed='list') is None
 
     dsh = open_sat_altim_report(WMO=5904797, embed=None)
     assert isinstance(dsh, dict)
