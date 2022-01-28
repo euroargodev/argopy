@@ -398,7 +398,7 @@ class Fetch_wmo(ArgovisDataFetcher):
         if cyc is None:
             return (self.server + "/catalog/platforms/{}").format(str(wmo))
         else:
-            profIds = [str(wmo) + "_" + str(c) for c in cyc.tolist()]
+            profIds = [str(wmo) + "_" + str(c) for c in cyc]
             return (
                 (self.server + "/catalog/mprofiles/?ids={}")
                 .format(profIds)

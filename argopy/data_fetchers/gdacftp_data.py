@@ -415,7 +415,7 @@ class Fetch_wmo(FTPArgoDataFetcher):
         """
         self.WMO = WMO
         self.CYC = CYC
-        # self.N_FILES = len(self.uri)  # Trigger search in the index, should we do this at instanciation or later ???
+        # self.N_FILES = len(self.uri)  # Trigger search in the index, should we do this at instantiation or later ???
         self.N_FILES = np.NaN
         return self
 
