@@ -159,7 +159,7 @@ class FTPArgoIndexFetcher(ABC):
         -------
         str
         """
-        return self.fs.cachepath(self.indexfs.search_path)
+        return self.indexfs.fs['search'].cachepath(self.indexfs.search_path)
 
     def clear_cache(self):
         """ Remove cache files and entries from resources open with this fetcher """

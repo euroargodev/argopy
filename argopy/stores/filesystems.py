@@ -53,6 +53,9 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cac
     if protocol == 'http':
         default_filesystem_kwargs = {**default_filesystem_kwargs,
                                      **{"client_kwargs": {"trust_env": OPTIONS['trust_env']}}}
+    elif protocol == 'ftp':
+        default_filesystem_kwargs = {**default_filesystem_kwargs,
+                                     **{"block_size": 1000 * (2 ** 20)}}
     filesystem_kwargs = {**default_filesystem_kwargs, **kwargs}
 
     if not cache:

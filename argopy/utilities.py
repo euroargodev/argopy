@@ -576,7 +576,6 @@ def show_versions(file=sys.stdout):  # noqa: C901
         ("aiohttp", lambda mod: mod.__version__),
         #
         ("pyarrow", lambda mod: mod.__version__),
-        ("tables", lambda mod: mod.__version__),
 
         ("bottleneck", lambda mod: mod.__version__),
         ("cartopy", lambda mod: mod.__version__),
@@ -1551,9 +1550,10 @@ def check_index_cols(column_names: list, convention: str = 'ar_index_global_prof
     # Default for 'ar_index_global_prof'
     ref = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
            'date_update']
-    if convention == 'argo_bio-profile_index':
+    if convention == 'argo_bio-profile_index' or convention == 'argo_synthetic-profile_index':
         ref = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
                'parameters', 'parameter_data_mode', 'date_update']
+
     if not is_list_equal(column_names, ref):
         # log.debug("Expected: %s, got: %s" % (";".join(ref), ";".join(column_names)))
         raise InvalidDatasetStructure("Unexpected column names in this index !")

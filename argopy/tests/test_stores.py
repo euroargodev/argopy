@@ -14,6 +14,8 @@ import argopy
 from argopy.stores import (
     filestore,
     httpstore,
+    memorystore,
+    ftpstore,
     indexfilter_wmo,
     indexfilter_box,
     indexstore,
@@ -60,7 +62,7 @@ class Test_FileStore:
     ftproot = argopy.tutorial.open_dataset("localftp")[0]
     csvfile = os.path.sep.join([ftproot, "ar_index_global_prof.txt"])
 
-    def test_creation(self):
+    def test_implementation(self):
         fs = filestore(cache=False)
         assert isinstance(fs.fs, fsspec.implementations.local.LocalFileSystem)
 
@@ -140,7 +142,7 @@ class Test_FileStore:
 @skip_this
 @requires_connection
 class Test_HttpStore:
-    def test_creation(self):
+    def test_implementation(self):
         fs = httpstore(cache=False)
         assert isinstance(fs.fs, fsspec.implementations.http.HTTPFileSystem)
 
@@ -241,6 +243,69 @@ class Test_HttpStore:
 
 
 @skip_this
+@requires_connection
+class Test_MemoryStore:
+    def test_implementation(self):
+        fs = memorystore(cache=False)
+        assert isinstance(fs.fs, fsspec.implementations.memory.MemoryFileSystem)
+
+    def test_nocache(self):
+        fs = memorystore(cache=False)
+        with pytest.raises(FileSystemHasNoCache):
+            fs.cachepath("dummy_uri")
+
+    def test_cachable(self):
+        fs = memorystore(cache=True)
+        assert isinstance(fs.fs, fsspec.implementations.cached.WholeFileCacheFileSystem)
+
+    def test_nocachefile(self):
+        fs = memorystore(cache=True)
+        with pytest.raises(CacheFileNotFound):
+            fs.cachepath("dummy_uri")
+
+    def test_exists(self):
+        fs = memorystore(cache=False)
+        assert fs.exists('dummy.txt') == False
+        fs = memorystore(cache=True)
+        assert fs.exists('dummy.txt') == False
+
+
+# @skip_this
+@requires_connection
+class Test_FtpStore:
+    host =  'ftp.ifremer.fr'
+
+    def test_implementation(self):
+        fs = ftpstore(host=self.host, cache=False)
+        assert isinstance(fs.fs, fsspec.implementations.ftp.FTPFileSystem)
+
+    @safe_to_server_errors
+    def test_open_dataset(self):
+        uri = "ifremer/argo/dac/csiro/5900865/5900865_prof.nc"
+        fs = ftpstore(host=self.host, cache=False)
+        assert isinstance(fs.open_dataset(uri), xr.Dataset)
+
+    @safe_to_server_errors
+    def test_open_mfdataset(self):
+        fs = ftpstore(host=self.host, cache=False)
+        uri = [
+            "ifremer/argo/dac/csiro/5900865/profiles/D5900865_00%i.nc"
+            % i
+            for i in [1, 2]
+        ]
+        for method in ["seq", "thread"]:
+            for progress in [True, False]:
+                assert isinstance(
+                    fs.open_mfdataset(uri, method=method, progress=progress), xr.Dataset
+                )
+                assert is_list_of_datasets(
+                    fs.open_mfdataset(
+                        uri, method=method, progress=progress, concat=False
+                    )
+                )
+
+
+@skip_this
 class Test_IndexFilter_WMO:
     kwargs = [
         {"WMO": 6901929},
@@ -254,7 +319,7 @@ class Test_IndexFilter_WMO:
         {},
     ]
 
-    def test_creation(self):
+    def test_implementation(self):
         for kw in self.kwargs:
             filt = indexfilter_wmo(**kw)
             assert isinstance(filt, argopy.stores.argo_index.indexfilter_wmo)
@@ -306,7 +371,7 @@ class Test_Legacy_IndexStore:
         {"BOX": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     ]
 
-    def test_creation(self):
+    def test_implementation(self):
         assert isinstance(indexstore(), argopy.stores.argo_index.indexstore)
         assert isinstance(indexstore(cache=True), argopy.stores.argo_index.indexstore)
         assert isinstance(
@@ -365,7 +430,7 @@ class IndexStore_test_proto:
         assert this_idx.N_FILES == this_idx.N_MATCH
         assert is_list_of_strings(this_idx.uri) and len(this_idx.uri) == this_idx.N_MATCH
 
-    def test_creation(self):
+    def test_implementation(self):
         assert isinstance(self.indexstore(), argopy.stores.argo_index_pa.ArgoIndexStoreProto)
         assert isinstance(self.indexstore(cache=True), argopy.stores.argo_index_pa.ArgoIndexStoreProto)
         assert isinstance(

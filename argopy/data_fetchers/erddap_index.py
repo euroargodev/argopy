@@ -209,7 +209,7 @@ class Fetch_wmo(ErddapArgoIndexFetcher):
     """
     access_point = 'wmo'
 
-    def init(self, WMO=[]):
+    def init(self, WMO=[], **kwargs:
         """ Create Argo data loader for WMOs
 
             Parameters
@@ -243,7 +243,7 @@ class Fetch_box(ErddapArgoIndexFetcher):
     """
     access_point = 'box'
 
-    def init(self, box=[]):
+    def init(self, box=[], **kwargs):
         """ Create Argo Index loader
 
             Parameters

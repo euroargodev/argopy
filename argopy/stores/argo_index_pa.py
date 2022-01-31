@@ -515,12 +515,12 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                 with self.fs['index'].open(this_path + '.gz', "rb") as fg:
                     with gzip.open(fg) as f:
                         self.index = read_csv(f, nrows=nrows)
-                        check_index_cols(self.index.column_names)
+                        check_index_cols(self.index.column_names, convention=self.index_file.split(".")[0])
                         log.debug("Argo index file loaded with pyarrow read_csv. src='%s'" % (this_path + '.gz'))
             else:
                 with self.fs['index'].open(this_path, "rb") as f:
                     self.index = read_csv(f, nrows=nrows)
-                    check_index_cols(self.index.column_names)
+                    check_index_cols(self.index.column_names, convention=self.index_file.split(".")[0])
                     log.debug("Argo index file loaded with pyarrow read_csv. src='%s'" % this_path)
 
         if self.N_RECORDS == 0:
@@ -630,7 +630,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
     def uri(self):
         return ["/".join([self.host, "dac", f.as_py()]) for f in self.search['file']]
 
-    def read_wmo(self):
+    def read_wmo(self, index=False):
         """ Return list of unique WMOs in search results
 
         Fall back on full index if search not found
@@ -639,7 +639,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         -------
         list(int)
         """
-        if hasattr(self, 'search'):
+        if hasattr(self, 'search') and not index:
             results = pa.compute.split_pattern(self.search['file'], pattern="/")
         else:
             results = pa.compute.split_pattern(self.index['file'], pattern="/")
@@ -651,7 +651,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         wmo = [int(w) for w in wmo]
         return wmo
 
-    def records_per_wmo(self):
+    def records_per_wmo(self, index=False):
         """ Return the number of records per unique WMOs in search results
 
             Fall back on full index if search not found
@@ -659,7 +659,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         ulist = self.read_wmo()
         count = {}
         for wmo in ulist:
-            if hasattr(self, 'search'):
+            if hasattr(self, 'search') and not index:
                 search_filter = pa.compute.match_substring_regex(self.search['file'], pattern="/%i/" % wmo)
                 count[wmo] = self.search.filter(search_filter).shape[0]
             else:
@@ -781,14 +781,14 @@ class indexstore_pandas(ArgoIndexStoreProto):
                 with self.fs['index'].open(index_path + '.gz', "rb") as fg:
                     with gzip.open(fg) as f:
                         df = read_csv(f, nrows=nrows)
-                        check_index_cols(df.columns.to_list())
+                        check_index_cols(df.columns.to_list(), convention=self.index_file.split(".")[0])
                         self.index = df
                         log.debug("Argo index file loaded with pandas read_csv. src='%s'" % (index_path + '.gz'))
 
             else:
                 with self.fs['index'].open(index_path, "rb") as f:
                     df = read_csv(f, nrows=nrows)
-                    check_index_cols(df.columns.to_list())
+                    check_index_cols(df.columns.to_list(), convention=self.index_file.split(".")[0])
                     self.index = df
                     log.debug("Argo index file loaded with pandas read_csv. src='%s'" % index_path)
 

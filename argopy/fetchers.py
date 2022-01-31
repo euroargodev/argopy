@@ -645,7 +645,7 @@ class ArgoIndexFetcher:
                 "%s dataset is not available for this index source (%s)"
                 % (self._dataset_id, self._src)
             )
-        self.fetcher_options = {**fetcher_kwargs}
+        self.fetcher_options = {**{"ds": self._dataset_id}, **fetcher_kwargs}
         self.postproccessor = self.__empty_processor
         self._AccessPoint = None
 

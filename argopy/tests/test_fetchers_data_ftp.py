@@ -24,14 +24,19 @@ class Test_Backend:
 
     src = "ftp"
     requests = {
-        "float": [[1901393], [6902746]],
-        "profile": [[6902746, 34], [6902746, np.arange(12, 14)], [6902746, [1, 12]]],
+        "float": [[4902252], [2901746]],
+        "profile": [[2901746, 90], [6901929, np.arange(12, 14)]],
         "region": [
-            [-65.1, -65, 35.1, 36., 0, 10.0],
-            [-65.1, -65, 35.1, 36., 0, 10.0, "2013-01", "2013-03"]
+            [-60, -58, 40.0, 45.0, 0, 100.],
+            [-60, -58, 40.0, 45.0, 0, 100., "2007-08-01", "2007-09-01"],
         ],
     }
     local_ftp = argopy.tutorial.open_dataset("localftp")[0]
+
+    ftp = [#'https://data-argo.ifremer.fr',
+     # 'ftp://ftp.ifremer.fr/ifremer/argo',
+     # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but takes too long to respond, slow down CI
+     argopy.tutorial.open_dataset("localftp")[0]]
 
     def test_cachepath_notfound(self):
         with tempfile.TemporaryDirectory() as testcachedir:
@@ -121,34 +126,35 @@ class Test_Backend:
         with pytest.raises(FtpPathError):
             ArgoDataFetcher(src=self.src, ftp='ftp://invalid_ftp').profile(1900857, np.arange(10,20))
 
-        # Valid list of servers, using all possible protocols:
-        for this_ftp in ['https://data-argo.ifremer.fr',
-                    'ftp://ftp.ifremer.fr/ifremer/argo',
-                    # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but takes too long to respond, slow down CI
-                    self.local_ftp]:
+        # Valid list of servers, test all possible host protocols:
+        for this_ftp in self.ftp:
             fetcher = ArgoDataFetcher(src=self.src, ftp=this_ftp).profile(*self.requests["profile"][0]).fetcher
             assert(fetcher.N_RECORDS >= 1)  # Make sure we loaded the index file content
 
+    def _assert_fetcher(self, this_fetcher):
+        assert isinstance(this_fetcher.to_xarray(), xr.Dataset)
+        assert is_list_of_strings(this_fetcher.uri)
+
     def __testthis_profile(self, dataset):
-        fetcher_args = {"src": self.src, "ds": dataset}
-        for arg in self.args["profile"]:
-            f = ArgoDataFetcher(**fetcher_args).profile(*arg).fetcher
-            assert isinstance(f.to_xarray(), xr.Dataset)
-            assert is_list_of_strings(f.uri)
+        for ftp in self.ftp:
+            fetcher_args = {"src": self.src, "ds": dataset, "ftp": ftp}
+            for arg in self.args["profile"]:
+                f = ArgoDataFetcher(**fetcher_args).profile(*arg).fetcher
+                self._assert_fetcher(f)
 
     def __testthis_float(self, dataset):
-        fetcher_args = {"src": self.src, "ds": dataset}
-        for arg in self.args["float"]:
-            f = ArgoDataFetcher(**fetcher_args).float(arg).fetcher
-            assert isinstance(f.to_xarray(), xr.Dataset)
-            assert is_list_of_strings(f.uri)
+        for ftp in self.ftp:
+            fetcher_args = {"src": self.src, "ds": dataset, "ftp": ftp}
+            for arg in self.args["float"]:
+                f = ArgoDataFetcher(**fetcher_args).float(arg).fetcher
+                self._assert_fetcher(f)
 
     def __testthis_region(self, dataset):
-        fetcher_args = {"src": self.src, "ds": dataset}
-        for arg in self.args["region"]:
-            f = ArgoDataFetcher(**fetcher_args).region(arg).fetcher
-            assert isinstance(f.to_xarray(), xr.Dataset)
-            assert is_list_of_strings(f.uri)
+        for ftp in self.ftp:
+            fetcher_args = {"src": self.src, "ds": dataset, "ftp": ftp}
+            for arg in self.args["region"]:
+                f = ArgoDataFetcher(**fetcher_args).region(arg).fetcher
+                self._assert_fetcher(f)
 
     def __testthis(self, dataset):
         for access_point in self.args:
