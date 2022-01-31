@@ -331,7 +331,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
         ds.attrs["Fetched_from"] = self.server
         ds.attrs["Fetched_by"] = getpass.getuser()
-        ds.attrs["Fetched_date"] = pd.to_datetime("now").strftime("%Y/%m/%d")
+        ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
         ds.attrs["Fetched_constraints"] = self.cname()
         ds.attrs["Fetched_uri"] = self.uri
         ds = ds[np.sort(ds.data_vars)]
@@ -455,7 +455,7 @@ class Fetch_box(ArgovisDataFetcher):
         """
         if len(box) == 6:
             # Select the last months of data:
-            end = pd.to_datetime("now")
+            end = pd.to_datetime("now", utc=True)
             start = end - pd.DateOffset(months=1)
             box.append(start.strftime("%Y-%m-%d"))
             box.append(end.strftime("%Y-%m-%d"))

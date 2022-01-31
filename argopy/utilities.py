@@ -1409,7 +1409,7 @@ def modified_environ(*remove, **update):
         [env.pop(k) for k in remove_after]
 
 
-def toYearFraction(this_date: pd._libs.tslibs.timestamps.Timestamp = pd.to_datetime('now')):
+def toYearFraction(this_date: pd._libs.tslibs.timestamps.Timestamp = pd.to_datetime('now', utc=True)):
     """ Compute decimal year, robust to leap years, precision to the second
 
     Compute the fraction of the year a given timestamp corresponds to.

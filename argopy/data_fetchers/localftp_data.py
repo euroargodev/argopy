@@ -368,7 +368,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
         ds.attrs["Fetched_from"] = self.local_ftp
         ds.attrs["Fetched_by"] = getpass.getuser()
-        ds.attrs["Fetched_date"] = pd.to_datetime("now").strftime("%Y/%m/%d")
+        ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
         ds.attrs["Fetched_constraints"] = self.cname()
         ds.attrs["Fetched_uri"] = ds.encoding["source"]
         ds = ds[np.sort(ds.data_vars)]
@@ -424,7 +424,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
         ds.attrs["Fetched_from"] = self.local_ftp
         ds.attrs["Fetched_by"] = getpass.getuser()
-        ds.attrs["Fetched_date"] = pd.to_datetime("now").strftime("%Y/%m/%d")
+        ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
         ds.attrs["Fetched_constraints"] = self.cname()
         if len(self.uri) == 1:
             ds.attrs["Fetched_uri"] = self.uri[0]
@@ -544,7 +544,7 @@ class Fetch_box(LocalFTPArgoDataFetcher):
 
         # if len(box) == 6:
         #     # Select the last months of data:
-        #     end = pd.to_datetime('now')
+        #     end = pd.to_datetime('now', utc=True)
         #     start = end - pd.DateOffset(months=1)
         #     self.BOX.append(start.strftime('%Y-%m-%d'))
         #     self.BOX.append(end.strftime('%Y-%m-%d'))
