@@ -111,7 +111,7 @@ class FTPArgoIndexFetcher(ABC):
         else:
             raise ValueError("Unknown protocol for an Argo index store: %s" % split_protocol(self.server)[0])
 
-        self.N_RECORDS = self.indexfs.load().shape[0]  # Number of records in the index
+        self.N_RECORDS = self.indexfs.load().N_RECORDS  # Number of records in the index
 
         self.init(**kwargs)
 
@@ -147,34 +147,29 @@ class FTPArgoIndexFetcher(ABC):
             return pd.to_datetime(x).strftime('%Y-%m-%d')
         return str(x)
 
-    @property
-    @abstractmethod
-    def uri(self):
-        """ Return the list of files to load
-
-        Returns
-        -------
-        list(str)
-        """
-        raise NotImplementedError("Not implemented")
+    def cname(self):
+        """ Return a unique string defining the constraints """
+        return self.indexfs.cname
 
     @property
     def cachepath(self):
-        """ Return path to cache file(s) for this request
+        """ Return path to cache file for this request
 
         Returns
         -------
-        list(str)
+        str
         """
-        return [self.fs.cachepath(url) for url in self.uri]
+        return self.fs.cachepath(self.indexfs.search_path)
 
     def clear_cache(self):
         """ Remove cache files and entries from resources open with this fetcher """
-        return self.fs.clear_cache()
+        self.indexfs.clear_cache()
+        self.fs.clear_cache()
+        return self
 
     def to_dataframe(self):
         """ Filter index file and return a pandas dataframe """
-        df = self.indexfs.to_dataframe()
+        df = self.indexfs.run().to_dataframe()
 
         # Post-processing of the filtered index is done at the indexstore level
         # if 'wmo' not in df:
@@ -201,7 +196,7 @@ class Fetch_wmo(FTPArgoIndexFetcher):
     """ Manage access to GDAC ftp Argo index for: a list of WMOs, CYCs  """
 
     def init(self, WMO: list = [], CYC=None, **kwargs):
-        """ Create Argo data loader for WMOs
+        """ Create Argo index fetcher for WMOs
 
         Parameters
         ----------
@@ -212,17 +207,8 @@ class Fetch_wmo(FTPArgoIndexFetcher):
         """
         self.WMO = WMO
         self.CYC = CYC
-        self.N_FILES = len(self.uri)  # Must trigger file index load and search at instantiation
+        self.uri  # Must trigger file index load and search at instantiation
         return self
-
-    def cname(self):
-        """ Return a unique string defining the constraints """
-        if len(self.WMO) > 1:
-            listname = ["WMO%i" % i for i in self.WMO]
-            listname = ";".join(listname)
-        else:
-            listname = "WMO%i" % self.WMO[0]
-        return listname
 
     @property
     def uri(self):
@@ -253,7 +239,7 @@ class Fetch_box(FTPArgoIndexFetcher):
     """ Manage access to GDAC ftp Argo index for: a rectangular space/time domain  """
 
     def init(self, box: list, **kwargs):
-        """ Create Argo data loader
+        """ Create Argo index fetcher
 
         Parameters
         ----------
@@ -272,19 +258,8 @@ class Fetch_box(FTPArgoIndexFetcher):
         # but at this point, we internally work only with x, y and t.
         # log.debug("Create FTPArgoIndexFetcher.Fetch_box instance with index BOX: %s" % box)
         self.indexBOX = box
-        self.N_FILES = len(self.uri)  # Must trigger file index load and search at instantiation
+        self.uri  # Must trigger file index load and search at instantiation
         return self
-
-    def cname(self):
-        """ Return a unique string defining the constraints """
-        BOX = self.indexBOX
-        if len(BOX) == 6:
-            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; t=%s/%s]") % \
-                      (BOX[0], BOX[1], BOX[2], BOX[3], self._format(BOX[4], 'tim'), self._format(BOX[5], 'tim'))
-        else:
-            boxname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f]") % \
-                      (BOX[0], BOX[1], BOX[2], BOX[3])
-        return boxname
 
     @property
     def uri(self):

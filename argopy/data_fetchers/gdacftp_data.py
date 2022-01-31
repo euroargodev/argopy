@@ -268,7 +268,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
         ds.attrs["Fetched_from"] = self.server
         ds.attrs["Fetched_by"] = getpass.getuser()
-        ds.attrs["Fetched_date"] = pd.to_datetime("now").strftime("%Y/%m/%d")
+        ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
         ds.attrs["Fetched_constraints"] = self.cname()
         ds.attrs["Fetched_uri"] = ds.encoding["source"]
         ds = ds[np.sort(ds.data_vars)]
@@ -333,7 +333,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
         ds.attrs["Fetched_from"] = self.server
         ds.attrs["Fetched_by"] = getpass.getuser()
-        ds.attrs["Fetched_date"] = pd.to_datetime("now").strftime("%Y/%m/%d")
+        ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
         ds.attrs["Fetched_constraints"] = self.cname()
         if len(self.uri) == 1:
             ds.attrs["Fetched_uri"] = self.uri[0]

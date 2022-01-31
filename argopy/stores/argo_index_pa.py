@@ -298,6 +298,22 @@ class ArgoIndexStoreProto(ABC):
                 obj = pd.read_pickle(handle)
         return obj
 
+    def clear_cache(self):
+        self.fs['index'].clear_cache()
+        self.fs['search'].clear_cache()
+        return self
+
+    @property
+    @abstractmethod
+    def search_path(self):
+        """ Path to search result uri
+
+        Returns
+        -------
+        str
+        """
+        raise NotImplementedError("Not implemented")
+
     @property
     @abstractmethod
     def uri_full_index(self):
@@ -516,18 +532,17 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
 
     def run(self):
         """ Filter index with search criteria """
-        search_path = self.host + "/" + self.index_file + "." + self.sha_pq
-        if self.cache and self.fs['search'].exists(search_path):
-            log.debug("Search results already in memory as pyarrow table, loading... src='%s'" % (search_path))
-            self.search = self._read(self.fs['search'].fs, search_path)
+        if self.cache and self.fs['search'].exists(self.search_path):
+            log.debug("Search results already in memory as pyarrow table, loading... src='%s'" % (self.search_path))
+            self.search = self._read(self.fs['search'].fs, self.search_path)
         else:
             log.debug('Compute search from scratch ...')
             self.search = self.index.filter(self.search_filter)
             log.debug('Found %i matches' % self.search.shape[0])
             if self.cache and self.search.shape[0] > 0:
-                self._write(self.fs['search'], search_path, self.search)
-                self.search = self._read(self.fs['search'].fs, search_path)
-                log.debug("Search results saved in cache as pyarrow table. dest='%s'" % search_path)
+                self._write(self.fs['search'], self.search_path, self.search)
+                self.search = self._read(self.fs['search'].fs, self.search_path)
+                log.debug("Search results saved in cache as pyarrow table. dest='%s'" % self.search_path)
         return self
 
     def to_dataframe(self, nrows=None, index=False):
@@ -601,6 +616,11 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                 log.debug("This dataframe saved in cache. dest='%s'" % this_path)
 
         return df
+
+    @property
+    def search_path(self):
+        """ Path to search result uri"""
+        return self.host + "/" + self.index_file + "." + self.sha_pq
 
     @property
     def uri_full_index(self):
@@ -780,6 +800,11 @@ class indexstore_pandas(ArgoIndexStoreProto):
         return self
 
     @property
+    def search_path(self):
+        """ Path to search result uri"""
+        return self.host + "/" + self.index_file + "." + self.sha_df
+
+    @property
     def uri_full_index(self):
         return ["/".join([self.host, "dac", f]) for f in self.index['file']]
 
@@ -825,19 +850,17 @@ class indexstore_pandas(ArgoIndexStoreProto):
 
     def run(self):
         """ Filter index with search criteria """
-
-        search_path = self.host + "/" + self.index_file + "." + self.sha_df
-        if self.cache and self.fs['search'].exists(search_path):
-            log.debug("Search results already in memory as pandas dataframe, loading... src='%s'" % (search_path))
-            self.search = self._read(self.fs['search'].fs, search_path, format='pd')
+        if self.cache and self.fs['search'].exists(self.search_path):
+            log.debug("Search results already in memory as pandas dataframe, loading... src='%s'" % (self.search_path))
+            self.search = self._read(self.fs['search'].fs, self.search_path, format='pd')
         else:
-            log.debug("Compute search from scratch ... (not found '%s')" % search_path)
+            log.debug("Compute search from scratch ... (not found '%s')" % self.search_path)
             self.search = self.index[self.search_filter].reset_index()
             log.debug('Found %i matches' % self.search.shape[0])
             if self.cache and self.search.shape[0] > 0:
-                self._write(self.fs['search'], search_path, self.search, format='pd')
-                self.search = self._read(self.fs['search'].fs, search_path, format='pd')
-                log.debug("Search results saved in cache as pandas dataframe. dest='%s'" % search_path)
+                self._write(self.fs['search'], self.search_path, self.search, format='pd')
+                self.search = self._read(self.fs['search'].fs, self.search_path, format='pd')
+                log.debug("Search results saved in cache as pandas dataframe. dest='%s'" % self.search_path)
         return self
 
     def to_dataframe(self, nrows=None, index=False):

@@ -824,20 +824,20 @@ class ArgoIndexFetcher:
     def load(self, force: bool = False):
         """ Load index in memory
 
-            Apply the default to_dataframe() method and store results in memory.
-            Access loaded index structure with the `index` property::
+        Apply the default to_dataframe() method and store results in memory.
+        You can access the index array with the `index` property::
 
-                df = ArgoIndexFetcher().float(6902746).load().index
+        >>> df = ArgoIndexFetcher().float(6902746).load().index
 
-            Parameters
-            ----------
-            force: bool
-                Force loading, default is False.
+        Parameters
+        ----------
+        force: bool
+            Force loading, default is False.
 
-            Returns
-            -------
-            :class:`argopy.fetchers.ArgoIndexFetcher.float`
-                Index fetcher with `index` property in memory
+        Returns
+        -------
+        :class:`argopy.fetchers.ArgoIndexFetcher.float`
+            Index fetcher with `index` property in memory
         """
         # Force to load data if the fetcher definition has changed
         if self._loaded and self._request != self.__repr__():

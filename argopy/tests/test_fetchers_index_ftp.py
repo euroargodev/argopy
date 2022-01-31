@@ -24,13 +24,6 @@ class Test_Backend:
         ],
     }
 
-    def test_cachepath_notfound(self):
-        with tempfile.TemporaryDirectory() as testcachedir:
-            with argopy.set_options(cachedir=testcachedir, gdac_ftp=self.ftp):
-                fetcher = ArgoIndexFetcher(src=self.src, cache=True).profile(*self.requests['profile'][0]).fetcher
-                with pytest.raises(CacheFileNotFound):
-                    fetcher.cachepath
-
     def test_nocache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir, gdac_ftp=self.ftp):
