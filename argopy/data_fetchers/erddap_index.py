@@ -209,7 +209,7 @@ class Fetch_wmo(ErddapArgoIndexFetcher):
     """
     access_point = 'wmo'
 
-    def init(self, WMO=[], **kwargs:
+    def init(self, WMO=[], **kwargs):
         """ Create Argo data loader for WMOs
 
             Parameters
