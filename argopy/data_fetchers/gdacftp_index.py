@@ -20,12 +20,16 @@ from argopy.plotters import open_dashboard
 from argopy.errors import FtpPathError
 
 
+log = logging.getLogger("argopy.gdacftp.index")
+
 has_pyarrow = importlib.util.find_spec('pyarrow') is not None
 if has_pyarrow:
     from argopy.stores.argo_index_pa import indexstore_pyarrow as indexstore
+    log.debug("Using pyarrow indexstore")
 else:
-    warnings.warn("Consider installing pyarrow in order to improve performances when fetching GDAC data")
     from argopy.stores.argo_index_pa import indexstore_pandas as indexstore
+    # warnings.warn("Consider installing pyarrow in order to improve performances when fetching GDAC data")
+    log.debug("Using pandas indexstore")
 
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
@@ -33,7 +37,6 @@ dataset_ids = ["phy", "bgc"]  # First is default
 api_server = OPTIONS['gdac_ftp']  # API root url
 api_server_check = api_server  # URL to check if the API is alive, used by isAPIconnected
 
-log = logging.getLogger("argopy.gdacftp.index")
 
 
 class FTPArgoIndexFetcher(ABC):

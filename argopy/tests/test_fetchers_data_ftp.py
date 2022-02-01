@@ -24,17 +24,17 @@ class Test_Backend:
 
     src = "ftp"
     requests = {
-        "float": [[4902252], [2901746]],
+        "float": [[4902252], [2901746, 4902252]],
         "profile": [[2901746, 90], [6901929, np.arange(12, 14)]],
         "region": [
-            [-60, -58, 40.0, 45.0, 0, 100.],
+            [-58.3, -58, 40.1, 40.3, 0, 100.],
             [-60, -58, 40.0, 45.0, 0, 100., "2007-08-01", "2007-09-01"],
         ],
     }
-    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
-
-    ftp = [#'https://data-argo.ifremer.fr',
-     # 'ftp://ftp.ifremer.fr/ifremer/argo',
+    # List ftp hosts to be tested. Since the fetcher is compatible with host from local, http or ftp protocols, we
+    # test them all:
+    ftp = ['https://data-argo.ifremer.fr',
+     'ftp://ftp.ifremer.fr/ifremer/argo',
      # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but takes too long to respond, slow down CI
      argopy.tutorial.open_dataset("localftp")[0]]
 

@@ -33,7 +33,7 @@ if has_pyarrow:
     log.debug("Using pyarrow indexstore")
 else:
     from argopy.stores.argo_index_pa import indexstore_pandas as indexstore
-    warnings.warn("Consider installing pyarrow in order to improve performances when fetching GDAC data")
+    # warnings.warn("Consider installing pyarrow in order to improve performances when fetching GDAC data")
     log.debug("Using pandas indexstore")
 
 access_points = ["wmo", "box"]

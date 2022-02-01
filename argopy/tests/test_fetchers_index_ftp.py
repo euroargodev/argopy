@@ -15,13 +15,12 @@ class Test_Backend:
     """ Test GDAC FTP index fetcher backend """
 
     src = "ftp"
-    # ftp = 'https://data-argo.ifremer.fr'  # FTP server to use for tests
     requests = {
-        "float": [[4902252], [2901746]],
+        "float": [[4902252], [2901746, 4902252]],
         "profile": [[2901746, 90], [6901929, np.arange(12, 14)]],
         "region": [
-            [-60, -40, 40.0, 60.0],
-            [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"],
+            [-58.3, -58, 40.1, 40.3, 0, 100.],
+            [-60, -58, 40.0, 45.0, 0, 100., "2007-08-01", "2007-09-01"],
         ],
     }
 
