@@ -33,7 +33,6 @@ dependencies:
   - setuptools
   - pip
   - ipykernel
-  - toolz
   - black
   - flake8
   - packaging

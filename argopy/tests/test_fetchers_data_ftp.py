@@ -147,7 +147,7 @@ class Test_Backend:
         with pytest.raises(FtpPathError):
             create_fetcher({"src": self.src, "ftp": ftp_host}, valid_access_points[0])
 
-    @pytest.mark.parametrize("_cached_fetcher", fixtures, indirect=True, ids=fixtures_ids)
+    @pytest.mark.parametrize("_cached_fetcher", fixtures, indirect=True, ids=fixtures_ids_short)
     def test_fetching_cached(self, _cached_fetcher):
         @safe_to_server_errors
         def test(this_fetcher):
@@ -165,7 +165,7 @@ class Test_Backend:
 
         test(_cached_fetcher)
 
-    @pytest.mark.parametrize("_fetcher", fixtures, indirect=True, ids=fixtures_ids)
+    @pytest.mark.parametrize("_fetcher", fixtures, indirect=True, ids=fixtures_ids_short)
     def test_fetching(self, _fetcher):
         @safe_to_server_errors
         def test(this_fetcher):
@@ -179,7 +179,9 @@ class Test_BackendParallel:
 
     # Create list of tests scenarios
     # combine all hosts with all access points and valid parallel options:
-    fixtures = [(h, mth, ap) for h in valid_hosts for ap in valid_access_points for mth in valid_parallel_opts]
+    # fixtures = [(h, mth, ap) for h in valid_hosts for ap in valid_access_points for mth in valid_parallel_opts]
+    fixtures = [(h, mth, ap) for h in valid_hosts for ap in valid_access_points if 'float' in ap for mth in
+                valid_parallel_opts]
     fixtures_ids = [
         "%s, %s, %s" % (
             fix[0],

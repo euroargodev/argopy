@@ -13,7 +13,7 @@ from aiohttp.client_exceptions import ServerDisconnectedError, ClientResponseErr
 from packaging import version
 import warnings
 import logging
-from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound
+from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound, FtpPathError
 from argopy.utilities import (
     list_available_data_src,
     list_available_index_src,
@@ -190,7 +190,7 @@ skip_this_for_debug = pytest.mark.skipif(True, reason="Skipped temporarily for d
 
 ############
 def safe_to_server_errors(test_func, *args, **kwargs):
-    """ Test fixture to make sure we don't fail because of an error from the server, not our Fault ! """
+    """ Use this as decorator to make sure a test won't fail because of an error from the server, not our Fault ! """
 
     def test_wrapper(*args, **kwargs):
         try:
@@ -222,6 +222,9 @@ def safe_to_server_errors(test_func, *args, **kwargs):
             pass
         except FileNotFoundError as e:
             warnings.warn("\nServer didn't return the data:\n%s" % str(e.args))
+            pass
+        except FtpPathError as e:
+            warnings.warn("\nCannot connect to the FTP path index file\n%s" % str(e.args))
             pass
         except Exception as e:
             warnings.warn("\nUnknown server error:\n%s" % str(e.args))

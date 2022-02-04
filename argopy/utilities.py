@@ -568,35 +568,36 @@ def show_versions(file=sys.stdout):  # noqa: C901
         ("xarray", lambda mod: mod.__version__),
         ("scipy", lambda mod: mod.__version__),
         ("sklearn", lambda mod: mod.__version__),
+        ("erddapy", lambda mod: mod.__version__),
+        ("fsspec", lambda mod: mod.__version__),
+        ("aiohttp", lambda mod: mod.__version__),
+
+        ("matplotlib", lambda mod: mod.__version__),
+        ("gsw", lambda mod: mod.__version__),
         ("netCDF4", lambda mod: mod.__version__),
         ("dask", lambda mod: mod.__version__),
         # ("toolz", lambda mod: mod.__version__),
-        ("erddapy", lambda mod: mod.__version__),
-        ("fsspec", lambda mod: mod.__version__),
-        ("gsw", lambda mod: mod.__version__),
-        ("aiohttp", lambda mod: mod.__version__),
-        #
+
         ("pyarrow", lambda mod: mod.__version__),
+        ("zarr", lambda mod: mod.__version__),
+
+        ("seaborn", lambda mod: mod.__version__),
+        ("IPython", lambda mod: mod.__version__),
 
         ("bottleneck", lambda mod: mod.__version__),
         ("cartopy", lambda mod: mod.__version__),
         ("cftime", lambda mod: mod.__version__),
         ("conda", lambda mod: mod.__version__),
         ("distributed", lambda mod: mod.__version__),
-        ("IPython", lambda mod: mod.__version__),
-        ("iris", lambda mod: mod.__version__),
-        ("matplotlib", lambda mod: mod.__version__),
         ("nc_time_axis", lambda mod: mod.__version__),
+
         ("numpy", lambda mod: mod.__version__),
         ("pandas", lambda mod: mod.__version__),
         ("packaging", lambda mod: mod.__version__),
         ("pip", lambda mod: mod.__version__),
-        ("PseudoNetCDF", lambda mod: mod.__version__),
         ("pytest", lambda mod: mod.__version__),
-        ("seaborn", lambda mod: mod.__version__),
         ("setuptools", lambda mod: mod.__version__),
         ("sphinx", lambda mod: mod.__version__),
-        ("zarr", lambda mod: mod.__version__),
     ]
 
     deps_blob = list()

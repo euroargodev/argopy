@@ -120,16 +120,16 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         self.N_RECORDS = self.indexfs.load().shape[0]  # Number of records in the index
         self._post_filter_points = False
 
+        # Set method to download data:
         if not isinstance(parallel, bool):
-            parallel_method = parallel
+            method = parallel
             parallel = True
-        # if parallel_method not in ["thread", "process"]:
-        #     raise ValueError(
-        #         "'ftp' only support multi-threading, use 'thread' instead of '%s'"
-        #         % parallel_method
-        #     )
+        elif not parallel:
+            method = "sequential"
+        else:
+            method = parallel_method
         self.parallel = parallel
-        self.parallel_method = parallel_method
+        self.method = method
         self.progress = progress
 
         self.init(**kwargs)
@@ -277,19 +277,14 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         -------
         :class:`xarray.Dataset`
         """
-        # Set method to download data:
-        if not self.parallel:
-            method = "sequential"
-            if len(self.uri) > 50:
-                warnings.warn("Found more than 50 files to load, this may take a while to process ! "
-                              "Consider using another data source (eg: 'erddap') or the 'parallel=True' option to improve processing time.")
-        else:
-            method = self.parallel_method
+        if len(self.uri) > 50 and isinstance(self.method, str) and self.method == 'sequential':
+            warnings.warn("Found more than 50 files to load, this may take a while to process ! "
+                          "Consider using another data source (eg: 'erddap') or the 'parallel=True' option to improve processing time.")
 
         # Download data:
         ds = self.fs.open_mfdataset(
             self.uri,
-            method=method,
+            method=self.method,
             concat_dim="N_POINTS",
             concat=True,
             preprocess=self._preprocess_multiprof,
