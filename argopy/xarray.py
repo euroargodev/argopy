@@ -17,7 +17,6 @@ except ModuleNotFoundError:
 
 from argopy.utilities import (
     linear_interpolation_remap,
-    is_list_equal,
     is_list_of_strings,
     toYearFraction,
     groupby_remap
