@@ -113,23 +113,9 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         elif self.dataset_id == 'bgc':
             index_file = "argo_synthetic-profile_index.txt"
 
-        if split_protocol(self.server)[0] is None:
-            self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
-            self.fs = self.indexfs.fs['index']
-
-        elif 'https' in split_protocol(self.server)[0]:
-            self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
-            self.fs = self.indexfs.fs['index']
-
-        elif 'ftp' in split_protocol(self.server)[0]:
-            if 'ifremer' not in self.server and 'usgodae' not in self.server:
-                raise FtpPathError("Unknown Argo ftp: %s" % self.server)
-            self.indexfs = indexstore(host=self.server,
-                                      index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
-            self.fs = self.indexfs.fs['index']
-
-        else:
-            raise ValueError("Unknown protocol for an Argo index store: %s" % split_protocol(self.server)[0])
+        # Validation of self.server is done by the indexstore:
+        self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
+        self.fs = self.indexfs.fs['index']
 
         self.N_RECORDS = self.indexfs.load().shape[0]  # Number of records in the index
         self._post_filter_points = False
@@ -137,11 +123,11 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         if not isinstance(parallel, bool):
             parallel_method = parallel
             parallel = True
-        if parallel_method not in ["thread", "process"]:
-            raise ValueError(
-                "'ftp' only support multi-threading, use 'thread' instead of '%s'"
-                % parallel_method
-            )
+        # if parallel_method not in ["thread", "process"]:
+        #     raise ValueError(
+        #         "'ftp' only support multi-threading, use 'thread' instead of '%s'"
+        #         % parallel_method
+        #     )
         self.parallel = parallel
         self.parallel_method = parallel_method
         self.progress = progress
@@ -295,8 +281,8 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         if not self.parallel:
             method = "sequential"
             if len(self.uri) > 50:
-                warnings.warn("Found more than 50 files to load, this may take a while to process. "
-                              "Consider using another data source or the 'parallel=True' option to improve processing time.")
+                warnings.warn("Found more than 50 files to load, this may take a while to process ! "
+                              "Consider using another data source (eg: 'erddap') or the 'parallel=True' option to improve processing time.")
         else:
             method = self.parallel_method
 

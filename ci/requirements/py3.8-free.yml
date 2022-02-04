@@ -1,33 +1,39 @@
-name: argopy-tests
+name: argopy-tests-py38free
 channels:
   - conda-forge
 dependencies:
   - python=3.8
+  - scipy
   - xarray
-  - aiohttp
-  - black
-  - dask
-  - distributed
-  - matplotlib
-  - zarr
-  - scikit-learn
-  - ipython
-  - netcdf4
-  - h5netcdf
-  - seaborn
-  - flake8
-  - erddapy
   - fsspec
-  - gsw
-  - bottleneck
-  - cftime
-  - cfgrib
+  - aiohttp
+  - erddapy
+  - scikit-learn
+  - matplotlib
   - pytest
   - pytest-cov
   - pytest-env
+
+  - dask
+  - distributed
+  - zarr
+  - netcdf4
+  - pyarrow
+  - seaborn
+  - gsw
+  - tqdm
+  - cartopy
+  - ipython
+  - ipywidgets
+
+  - h5netcdf
+  - bottleneck
+  - cftime
+  - cfgrib
   - setuptools
   - pip
-  - tqdm
   - ipykernel
-  - cartopy
-  - ipywidgets
+  - toolz
+  - black
+  - flake8
+  - packaging

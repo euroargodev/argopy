@@ -19,9 +19,12 @@ from argopy.utilities import (
     list_available_index_src,
     isconnected,
     erddap_ds_exists,
+    isAPIconnected
 )
 
 logging.getLogger("matplotlib").setLevel(logging.ERROR)
+logging.getLogger("fsspec").setLevel(logging.ERROR)
+# log = logging.getLogger("argopy.tests")
 
 argopy.set_options(api_timeout=4 * 60)  # From Github actions, requests can take a while
 argopy.show_options()
@@ -62,6 +65,10 @@ has_fetcher_index, requires_fetcher_index = _connectskip(
     len(AVAILABLE_INDEX_SOURCES) > 0, "at least one index fetcher"
 )
 
+has_connection, requires_connection = _connectskip(
+    CONNECTED, "an internet connection"
+)
+
 ##########
 # ERDDAP #
 ##########
@@ -75,10 +82,6 @@ else:
     DSEXISTS_bgc = False
     DSEXISTS_ref = False
     DSEXISTS_index = False
-
-has_connection, requires_connection = _connectskip(
-    CONNECTED, "an internet connection"
-)
 
 has_erddap, requires_erddap = _connectskip(
     "erddap" in AVAILABLE_SOURCES, "erddap data fetcher"
@@ -134,10 +137,11 @@ has_argovis, requires_argovis = _connectskip(
     "argovis" in AVAILABLE_SOURCES, "argovis data fetcher"
 )
 
-has_connected_argovis = has_connection and has_argovis
+has_connected_argovis = has_connection and has_argovis and isAPIconnected(src='argovis', data=True)
 requires_connected_argovis = pytest.mark.skipif(
     not has_connected_argovis, reason="Requires a live Argovis server"
 )
+
 
 ############
 # LOCALFTP #
@@ -160,9 +164,9 @@ has_ftp, requires_ftp = _connectskip(
 has_ftp_index, requires_ftp_index = _connectskip(
     "ftp" in AVAILABLE_INDEX_SOURCES, "the ftp index fetcher"
 )
-has_connected_gdac = has_connection and has_ftp# and has_pyarrow
+has_connected_gdac = has_connection and has_ftp and isAPIconnected(src='ftp', data=True)
 requires_connected_gdac = pytest.mark.skipif(
-    not has_connected_gdac, reason="Requires a live Ifremer FTP server"# and pyarrow"
+    not has_connected_gdac, reason="Requires a live FTP server"# and pyarrow"
 )
 
 ########
@@ -185,12 +189,12 @@ skip_this_for_debug = pytest.mark.skipif(True, reason="Skipped temporarily for d
 
 
 ############
-def safe_to_server_errors(test_func):
+def safe_to_server_errors(test_func, *args, **kwargs):
     """ Test fixture to make sure we don't fail because of an error from the server, not our Fault ! """
 
-    def test_wrapper(fix):
+    def test_wrapper(*args, **kwargs):
         try:
-            test_func(fix)
+            test_func(*args, **kwargs)
         except ErddapServerError as e:
             # Test is passed when something goes wrong because of the erddap server
             warnings.warn(

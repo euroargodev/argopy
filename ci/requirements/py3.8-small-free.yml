@@ -1,4 +1,4 @@
-name: argopy-tests
+name: argopy-tests-py38-small-free
 channels:
   - conda-forge
 dependencies:
