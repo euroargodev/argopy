@@ -50,11 +50,13 @@ List access points to be tested.
 For each access points, we list 2 scenarios to make sure all possibilities are tested
 """
 valid_access_points = [
-    {"float": [4902252]},
+    {"float": [13857]},
     # {"float": [2901746, 4902252]},
-    {"profile": [2901746, 90]},
+    # {"profile": [2901746, 90]},
+    {"profile": [13857, 90]},
     # {"profile": [6901929, np.arange(12, 14)]},
     # {"region": [-58.3, -58, 40.1, 40.3, 0, 100.]},
+    {"region": [-20, -16., 0, 1, 0, 100.]},
     {"region": [-60, -58, 40.0, 45.0, 0, 100., "2007-08-01", "2007-09-01"]},
     ]
 
@@ -105,10 +107,18 @@ class Test_Backend:
     def _fetcher(self, request):
         """ Fixture to create a FTP fetcher for a given host and access point """
         if isinstance(request.param, tuple):
-            fetcher_args = {"src": self.src, "ftp": request.param[0], "cache": False}
+            if 'tutorial' not in request.param[0]:
+                N_RECORDS = 100
+            else:
+                N_RECORDS = None
+            fetcher_args = {"src": self.src, "ftp": request.param[0], "cache": False, "N_RECORDS": N_RECORDS}
             yield create_fetcher(fetcher_args, request.param[1]).fetcher
         else:
-            fetcher_args = {"src": self.src, "ftp": request.param, "cache": False}
+            if 'tutorial' not in request.param:
+                N_RECORDS = 100
+            else:
+                N_RECORDS = None
+            fetcher_args = {"src": self.src, "ftp": request.param, "cache": False, "N_RECORDS": N_RECORDS}
             # log.debug(fetcher_args)
             # log.debug(valid_access_points[0])
             yield create_fetcher(fetcher_args, valid_access_points[0]).fetcher  # Use 1st valid access point
@@ -119,10 +129,18 @@ class Test_Backend:
         testcachedir = tempfile.mkdtemp()
         # log.debug(type(request.param))
         if isinstance(request.param, tuple):
-            fetcher_args = {"src": self.src, "ftp": request.param[0], "cache": True, "cachedir": testcachedir}
+            if 'tutorial' not in request.param[0]:
+                N_RECORDS = 100
+            else:
+                N_RECORDS = None
+            fetcher_args = {"src": self.src, "ftp": request.param[0], "cache": True, "cachedir": testcachedir, "N_RECORDS": N_RECORDS}
             yield create_fetcher(fetcher_args, request.param[1]).fetcher
         else:
-            fetcher_args = {"src": self.src, "ftp": request.param, "cache": True, "cachedir": testcachedir}
+            if 'tutorial' not in request.param:
+                N_RECORDS = 100
+            else:
+                N_RECORDS = None
+            fetcher_args = {"src": self.src, "ftp": request.param, "cache": True, "cachedir": testcachedir, "N_RECORDS": N_RECORDS}
             # log.debug(fetcher_args)
             # log.debug(valid_access_points[0])
             yield create_fetcher(fetcher_args, valid_access_points[0]).fetcher  # Use 1st valid access point
@@ -151,14 +169,10 @@ class Test_Backend:
     def test_fetching_cached(self, _cached_fetcher):
         @safe_to_server_errors
         def test(this_fetcher):
-            # Before data fetching, the cache does not exist yet:
-            with pytest.raises(CacheFileNotFound):
-                this_fetcher.cachepath
-
             # Assert the fetcher (this trigger data fetching, hence caching as well):
             assert_fetcher(this_fetcher, cachable=True)
 
-            # Finally make sure we can clear the cache:
+            # Make sure we can clear the cache:
             this_fetcher.clear_cache()
             with pytest.raises(CacheFileNotFound):
                 this_fetcher.cachepath
@@ -198,7 +212,11 @@ class Test_BackendParallel:
     @pytest.fixture
     def _fetcher(self, request):
         """ Fixture to create a FTP fetcher for a given host and access point """
-        fetcher_args = {"src": self.src, "ftp": request.param[0], "cache": False, **request.param[1]}
+        if 'tutorial' not in request.param[0]:
+            N_RECORDS = 100
+        else:
+            N_RECORDS = None
+        fetcher_args = {"src": self.src, "ftp": request.param[0], "cache": False, **request.param[1], "N_RECORDS": N_RECORDS}
         yield create_fetcher(fetcher_args, request.param[2]).fetcher
 
     @pytest.mark.parametrize("opts", [

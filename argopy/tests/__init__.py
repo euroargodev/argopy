@@ -208,7 +208,7 @@ def safe_to_server_errors(test_func, *args, **kwargs):
             pass
         except DataNotFound as e:
             # We make sure that data requested by tests are available from API, so this must be a server side error !
-            msg = "\nDataNotFound, Something happened on server side with:\n\t-%s" % "\n\t-".join(list(e.path))
+            msg = "\nDataNotFound, Something happened on server side with:\n\t-%s" % str(e.args)
             xmsg = "Failing because some data were not founds, but should work"
             pass
         except ServerDisconnectedError as e:
