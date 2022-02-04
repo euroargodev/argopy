@@ -375,7 +375,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
 
 
 class Fetch_wmo(ArgovisDataFetcher):
-    def init(self, WMO=[], CYC=None):
+    def init(self, WMO=[], CYC=None, **kwargs):
         """ Create Argo data loader for WMOs and CYCs
 
             Parameters
@@ -434,7 +434,7 @@ class Fetch_wmo(ArgovisDataFetcher):
 
 class Fetch_box(ArgovisDataFetcher):
 
-    def init(self, box: list):
+    def init(self, box: list, **kwargs):
         """ Create Argo data loader
 
             Parameters

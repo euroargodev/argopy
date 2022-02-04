@@ -15,7 +15,6 @@ from packaging import version
 
 import concurrent.futures
 import multiprocessing
-# import distributed
 
 
 log = logging.getLogger("argopy.stores")
@@ -27,6 +26,14 @@ except ModuleNotFoundError:
 
     def tqdm(fct, **kw):
         return fct
+
+
+try:
+    import distributed
+    has_distributed = True
+except ModuleNotFoundError:
+    log.debug("argopy needs distributed to use Dask cluster/client")
+    has_distributed = False
 
 
 from argopy.options import OPTIONS
@@ -305,10 +312,17 @@ class filestore(argo_store_proto):
                     finally:
                         results.append(data)
 
-        # elif type(method) == distributed.client.Client:
-        #     # Use a dask client:
-        #     futures = method.map(self._mfprocessor, urls, preprocess=preprocess, *args, **kwargs)
-        #     results = method.gather(futures)
+        elif has_distributed and isinstance(method, distributed.client.Client):
+            # Use a dask client:
+
+            if progress:
+                from dask.diagnostics import ProgressBar
+                with ProgressBar():
+                    futures = method.map(self._mfprocessor_dataset, urls, preprocess=preprocess, *args, **kwargs)
+                    results = method.gather(futures)
+            else:
+                futures = method.map(self._mfprocessor_dataset, urls, preprocess=preprocess, *args, **kwargs)
+                results = method.gather(futures)
 
         elif method in ['seq', 'sequential']:
             if progress:
@@ -548,8 +562,8 @@ class httpstore(argo_store_proto):
                     finally:
                         results.append(data)
 
-        elif str(type(method)) == 'distributed.client.Client':
-            # Use a dask client:
+        elif has_distributed and isinstance(method, distributed.client.Client):
+        # Use a dask client:
 
             if progress:
                 from dask.diagnostics import ProgressBar
@@ -946,7 +960,8 @@ class ftpstore(httpstore):
 
             with ConcurrentExecutor as executor:
                 future_to_url = {executor.submit(self._mfprocessor_dataset, url,
-                                                 preprocess=preprocess, preprocess_opts=preprocess_opts, *args, **kwargs): url for url in urls}
+                                                 preprocess=preprocess,
+                                                 preprocess_opts=preprocess_opts, *args, **kwargs): url for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
                     futures = tqdm(futures, total=len(urls))
@@ -968,7 +983,7 @@ class ftpstore(httpstore):
                     finally:
                         results.append(data)
 
-        elif str(type(method)) == 'distributed.client.Client':
+        elif has_distributed and isinstance(method, distributed.client.Client):
             # Use a dask client:
 
             if progress:

@@ -23,6 +23,7 @@ import platform
 import struct
 import subprocess
 import contextlib
+from fsspec.core import split_protocol
 
 import xarray as xr
 import pandas as pd
@@ -569,7 +570,7 @@ def show_versions(file=sys.stdout):  # noqa: C901
         ("sklearn", lambda mod: mod.__version__),
         ("netCDF4", lambda mod: mod.__version__),
         ("dask", lambda mod: mod.__version__),
-        ("toolz", lambda mod: mod.__version__),
+        # ("toolz", lambda mod: mod.__version__),
         ("erddapy", lambda mod: mod.__version__),
         ("fsspec", lambda mod: mod.__version__),
         ("gsw", lambda mod: mod.__version__),
@@ -653,7 +654,7 @@ def isconnected(host="https://www.ifremer.fr"):
         -------
         bool
     """
-    if "http" in host or "ftp" in host:
+    if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
         try:
             urllib.request.urlopen(host, timeout=1)  # Python 3.x
             return True

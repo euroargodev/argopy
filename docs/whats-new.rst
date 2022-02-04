@@ -18,6 +18,17 @@ v0.1.10 (X XXX. 2022)
     AdF = DataFetcher(src='ftp')
 
 
+**Internals**
+
+- The data fetcher can return the index array without loading the data for the ``ftp`` and ``localftp`` data sources.
+
+.. code-block:: python
+
+    from argopy import DataFetcher
+    AdF = DataFetcher(src='ftp').float(6903076)
+    AdF.index
+
+
 **Breaking changes**
 
 - Index fetcher for local FTP no longer support the option ``index_file``. The name of the file index is internally determined using the dataset requested: ``ar_index_global_prof.txt`` for ``ds='phy'`` and ``argo_synthetic-profile_index.txt`` for ``ds='bgc'``. (:pr:`157`).
