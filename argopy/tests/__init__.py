@@ -193,41 +193,49 @@ def safe_to_server_errors(test_func, *args, **kwargs):
     """ Use this as decorator to make sure a test won't fail because of an error from the server, not our Fault ! """
 
     def test_wrapper(*args, **kwargs):
+        msg, xmsg = None, None
         try:
             test_func(*args, **kwargs)
         except ErddapServerError as e:
             # Test is passed when something goes wrong because of the erddap server
-            warnings.warn(
-                "\nSomething happened on erddap server that should not: %s" % str(e.args)
-            )
+            msg = "\nSomething happened on erddap server that should not: %s" % str(e.args)
+            xmsg = "Failing because something happened on erddap server, but should work"
             pass
         except ArgovisServerError as e:
             # Test is passed when something goes wrong because of the argovis server
-            warnings.warn(
-                "\nSomething happened on argovis server that should not: %s" % str(e.args)
-            )
+            msg = "\nSomething happened on argovis server that should not: %s" % str(e.args)
+            xmsg = "Failing because something happened on argovis server, but should work"
             pass
         except DataNotFound as e:
             # We make sure that data requested by tests are available from API, so this must be a server side error !
-            warnings.warn("\nDataNotFound, Something happened on server side with:\n\t-%s" % "\n\t-".join(list(e.path)))
-            # traceback.print_tb(e.__traceback__)
+            msg = "\nDataNotFound, Something happened on server side with:\n\t-%s" % "\n\t-".join(list(e.path))
+            xmsg = "Failing because some data were not founds, but should work"
             pass
         except ServerDisconnectedError as e:
             # We can't do anything about this !
-            warnings.warn("\n We were disconnected from server !\n%s" % str(e.args))
+            msg = "\n We were disconnected from server !\n%s" % str(e.args)
+            xmsg = "Failing because we were disconnected from the server, but should work"
             pass
         except ClientResponseError as e:
             # The server is sending back an error when creating the response
-            warnings.warn("\nAnother server side error:\n%s" % str(e.args))
+            msg = "\nAnother server side error:\n%s" % str(e.args)
+            xmsg = "Failing because an error happened on the server side"
             pass
         except FileNotFoundError as e:
-            warnings.warn("\nServer didn't return the data:\n%s" % str(e.args))
+            msg = "\nServer didn't return the data:\n%s" % str(e.args)
+            xmsg = "Failing because some file were not founds, but should work"
             pass
         except FtpPathError as e:
-            warnings.warn("\nCannot connect to the FTP path index file\n%s" % str(e.args))
+            msg = "\nCannot connect to the FTP path index file\n%s" % str(e.args)
+            xmsg = "Failing because cannot connect to the FTP path index file, but should work"
             pass
         except Exception as e:
             warnings.warn("\nUnknown server error:\n%s" % str(e.args))
             raise
+        finally:
+            if msg is not None:
+                warnings.warn(msg)
+            if xmsg is not None:
+                pytest.xfail(xmsg)
 
     return test_wrapper

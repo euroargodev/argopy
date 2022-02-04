@@ -119,7 +119,7 @@ class InvalidDashboard(ValueError):
 
 class APIServerError(ValueError):
     """
-    Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery
+    Raise this when argopy is disrupted by an error due to an API, not argopy machinery
     """
     pass
 
@@ -133,6 +133,6 @@ class ErddapServerError(APIServerError):
 
 class ArgovisServerError(APIServerError):
     """
-    Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery
+    Raise this when argopy is disrupted by an error due to the Argovis, not argopy machinery
     """
     pass
