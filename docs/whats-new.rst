@@ -8,7 +8,7 @@ v0.1.10 (X XXX. 2022)
 
 **Features and front-end API**
 
-- New data source ``ftp`` to retrieve data from Ifremer GDAC FTP server in DataFetcher and IndexFetcher. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
+- New data source ``ftp`` to retrieve data from a GDAC FTP compliant host, for DataFetcher and IndexFetcher. You can specify the host name with the ``ftp`` fetcher option or with the argopy option ``gdac_ftp``. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -16,11 +16,15 @@ v0.1.10 (X XXX. 2022)
     from argopy import DataFetcher
     IdF = IndexFetcher(src='ftp')
     AdF = DataFetcher(src='ftp')
+    AdF = DataFetcher(src='ftp', ftp="https://data-argo.ifremer.fr")  # Default and fastest !
+    AdF = DataFetcher(src='ftp', ftp="ftp://ftp.ifremer.fr/ifremer/argo")
+    with argopy.set_options(gdac_ftp='ftp://usgodae.org/pub/outgoing/argo'):
+        AdF = DataFetcher(src='ftp')
 
 
 **Internals**
 
-- The data fetcher can return the index array without loading the data for the ``ftp`` and ``localftp`` data sources.
+- The data fetcher can return the index array without loading the data for the ``ftp`` and ``localftp`` data sources. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -28,6 +32,9 @@ v0.1.10 (X XXX. 2022)
     AdF = DataFetcher(src='ftp').float(6903076)
     AdF.index
 
+- New indexstore design.
+
+- Refactoring of CI tests to use more fixtures and pytest parametrize. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
 
 **Breaking changes**
 

@@ -93,7 +93,7 @@ class LocalFTPArgoIndexFetcher(ABC):
                 Dataset to load: 'phy' or 'bgc'
         """
         if 'index_file' in kwargs:
-            warnings.warn("'index_file option' is deprecated: name of the index file is internally determined as a "
+            warnings.warn("'index_file option' is deprecated: the name of the index file is internally determined as a "
                           "function of the 'ds' dataset option.", DeprecationWarning)
 
         self.cache = cache
