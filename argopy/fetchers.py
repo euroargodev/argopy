@@ -379,6 +379,7 @@ class ArgoDataFetcher:
                 A data source fetcher for a space/time domain
         """
         is_box(box, errors="raise")  # Validate the box definition
+
         self.fetcher = self.Fetchers["region"](box=box, **self.fetcher_options)
         self._AccessPoint = "region"  # Register the requested access point
         self._AccessPoint_data = {'box': box}  # Register the requested access point data

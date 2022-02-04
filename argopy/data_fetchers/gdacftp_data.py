@@ -11,7 +11,6 @@ from abc import abstractmethod
 import warnings
 import getpass
 import logging
-from fsspec.core import split_protocol
 import importlib
 from .proto import ArgoDataFetcherProto
 
@@ -22,7 +21,7 @@ from argopy.utilities import (
 )
 from argopy.options import OPTIONS, check_gdac_path
 from argopy.plotters import open_dashboard
-from argopy.errors import FtpPathError
+from argopy.errors import DataNotFound
 
 
 log = logging.getLogger("argopy.gdacftp.data")
@@ -117,7 +116,10 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
         self.fs = self.indexfs.fs['index']
 
-        self.N_RECORDS = self.indexfs.load().shape[0]  # Number of records in the index
+        nrows = None
+        if 'N_RECORDS' in kwargs:
+            nrows = kwargs['N_RECORDS']
+        self.N_RECORDS = self.indexfs.load(nrows=nrows).shape[0]  # Number of records in the index
         self._post_filter_points = False
 
         # Set method to download data:
@@ -278,8 +280,10 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         :class:`xarray.Dataset`
         """
         if len(self.uri) > 50 and isinstance(self.method, str) and self.method == 'sequential':
-            warnings.warn("Found more than 50 files to load, this may take a while to process ! "
+            warnings.warn("Found more than 50 files to load, this may take a while to process sequentially ! "
                           "Consider using another data source (eg: 'erddap') or the 'parallel=True' option to improve processing time.")
+        elif len(self.uri) == 0:
+            raise DataNotFound(self.indexfs.cname)
 
         # Download data:
         ds = self.fs.open_mfdataset(
@@ -402,6 +406,9 @@ class Fetch_wmo(FTPArgoDataFetcher):
         self.CYC = CYC
         # self.N_FILES = len(self.uri)  # Trigger search in the index, should we do this at instantiation or later ???
         self.N_FILES = np.NaN
+        self._nrows = None
+        if 'MAX_FILES' in kwargs:
+            self._nrows = kwargs['MAX_FILES']
         return self
 
     @property
@@ -415,10 +422,10 @@ class Fetch_wmo(FTPArgoDataFetcher):
         # Get list of files to load:
         if not hasattr(self, "_list_of_argo_files"):
             if self.CYC is None:
-                URIs = self.indexfs.search_wmo(self.WMO).uri
+                URIs = self.indexfs.search_wmo(self.WMO, nrows=self._nrows).uri
                 self._list_of_argo_files = self.uri_mono2multi(URIs)
             else:
-                self._list_of_argo_files = self.indexfs.search_wmo_cyc(self.WMO, self.CYC).uri
+                self._list_of_argo_files = self.indexfs.search_wmo_cyc(self.WMO, self.CYC, nrows=self._nrows).uri
 
         self.N_FILES = len(self._list_of_argo_files)
         return self._list_of_argo_files
@@ -433,7 +440,7 @@ class Fetch_wmo(FTPArgoDataFetcher):
 class Fetch_box(FTPArgoDataFetcher):
     """ Manage access to GDAC ftp Argo data for: a rectangular space/time domain  """
 
-    def init(self, box: list):
+    def init(self, box: list, nrows=None, **kwargs):
         """ Create Argo data loader
 
         Parameters
@@ -452,6 +459,9 @@ class Fetch_box(FTPArgoDataFetcher):
             self.indexBOX = [box[ii] for ii in [0, 1, 2, 3, 6, 7]]
         # self.N_FILES = len(self.uri)  # Trigger search in the index
         self.N_FILES = np.NaN
+        self._nrows = None
+        if 'MAX_FILES' in kwargs:
+            self._nrows = kwargs['MAX_FILES']
         return self
 
     @property
@@ -465,9 +475,9 @@ class Fetch_box(FTPArgoDataFetcher):
         # Get list of files to load:
         if not hasattr(self, "_list_of_argo_files"):
             if len(self.indexBOX) == 4:
-                URIs = self.indexfs.search_lat_lon(self.indexBOX).uri
+                URIs = self.indexfs.search_lat_lon(self.indexBOX, nrows=self._nrows).uri
             else:
-                URIs = self.indexfs.search_lat_lon_tim(self.indexBOX).uri
+                URIs = self.indexfs.search_lat_lon_tim(self.indexBOX, nrows=self._nrows).uri
 
             if len(URIs) > 25:
                 self._list_of_argo_files = self.uri_mono2multi(URIs)

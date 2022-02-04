@@ -530,14 +530,20 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
 
         return self
 
-    def run(self):
+    def run(self, nrows=None):
         """ Filter index with search criteria """
         if self.cache and self.fs['search'].exists(self.search_path):
             log.debug("Search results already in memory as pyarrow table, loading... src='%s'" % (self.search_path))
             self.search = self._read(self.fs['search'].fs, self.search_path)
         else:
             log.debug('Compute search from scratch ...')
-            self.search = self.index.filter(self.search_filter)
+            this_filter = np.nonzero(self.search_filter)[0]
+            n_match = this_filter.shape[0]
+            if nrows is not None and n_match > 0:
+                self.search = self.index.take(this_filter.take(range(np.min([nrows, n_match]))))
+            else:
+                self.search = self.index.filter(self.search_filter)
+
             log.debug('Found %i matches' % self.search.shape[0])
             if self.cache and self.search.shape[0] > 0:
                 self._write(self.fs['search'], self.search_path, self.search)
@@ -667,7 +673,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                 count[wmo] = self.index.filter(search_filter).shape[0]
         return count
 
-    def search_wmo(self, WMOs):
+    def search_wmo(self, WMOs, nrows=None):
         log.debug("Argo index searching for WMOs=[%s] ..." % ";".join([str(wmo) for wmo in WMOs]))
         self.load()
         self.search_type = {'WMO': WMOs}
@@ -675,10 +681,10 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         for wmo in WMOs:
             filt.append(pa.compute.match_substring_regex(self.index['file'], pattern="/%i/" % wmo))
         self.search_filter = np.logical_or.reduce(filt)
-        self.run()
+        self.run(nrows=nrows)
         return self
 
-    def search_cyc(self, CYCs):
+    def search_cyc(self, CYCs, nrows=None):
         log.debug("Argo index searching for CYCs=[%s] ..." % (
             ";".join([str(cyc) for cyc in CYCs])))
         self.load()
@@ -691,10 +697,10 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                 pattern = "_%0.4d.nc" % (cyc)
             filt.append(pa.compute.match_substring_regex(self.index['file'], pattern=pattern))
         self.search_filter = np.logical_or.reduce(filt)
-        self.run()
+        self.run(nrows=nrows)
         return self
 
-    def search_wmo_cyc(self, WMOs, CYCs):
+    def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
         log.debug("Argo index searching for WMOs=[%s] and CYCs=[%s] ..." % (
             ";".join([str(wmo) for wmo in WMOs]),
             ";".join([str(cyc) for cyc in CYCs])))
@@ -709,10 +715,10 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                     pattern = "%i_%0.4d.nc" % (wmo, cyc)
                 filt.append(pa.compute.match_substring_regex(self.index['file'], pattern=pattern))
         self.search_filter = np.logical_or.reduce(filt)
-        self.run()
+        self.run(nrows=nrows)
         return self
 
-    def search_tim(self, BOX):
+    def search_tim(self, BOX, nrows=None):
         log.debug("Argo index searching for time in BOX=%s ..." % BOX)
         self.load()
         self.search_type = {'BOX': BOX}
@@ -722,10 +728,10 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         filt.append(pa.compute.less_equal(pa.compute.cast(self.index['date'], pa.timestamp('ms')),
                                           pa.array([pd.to_datetime(BOX[5])], pa.timestamp('ms'))[0]))
         self.search_filter = np.logical_and.reduce(filt)
-        self.run()
+        self.run(nrows=nrows)
         return self
 
-    def search_lat_lon(self, BOX):
+    def search_lat_lon(self, BOX, nrows=None):
         log.debug("Argo index searching for lat/lon in BOX=%s ..." % BOX)
         self.load()
         self.search_type = {'BOX': BOX}
@@ -735,10 +741,10 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         filt.append(pa.compute.greater_equal(self.index['latitude'], BOX[2]))
         filt.append(pa.compute.less_equal(self.index['latitude'], BOX[3]))
         self.search_filter = np.logical_and.reduce(filt)
-        self.run()
+        self.run(nrows=nrows)
         return self
 
-    def search_lat_lon_tim(self, BOX):
+    def search_lat_lon_tim(self, BOX, nrows=None):
         log.debug("Argo index searching for lat/lon/time in BOX=%s ..." % BOX)
         self.load()
         self.search_type = {'BOX': BOX}
@@ -752,7 +758,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         filt.append(pa.compute.less_equal(pa.compute.cast(self.index['date'], pa.timestamp('ms')),
                                           pa.array([pd.to_datetime(BOX[5])], pa.timestamp('ms'))[0]))
         self.search_filter = np.logical_and.reduce(filt)
-        self.run()
+        self.run(nrows=nrows)
         return self
 
 
@@ -848,14 +854,19 @@ class indexstore_pandas(ArgoIndexStoreProto):
                 count[wmo] = self.index[search_filter].shape[0]
         return count
 
-    def run(self):
+    def run(self, nrows=None):
         """ Filter index with search criteria """
         if self.cache and self.fs['search'].exists(self.search_path):
             log.debug("Search results already in memory as pandas dataframe, loading... src='%s'" % (self.search_path))
             self.search = self._read(self.fs['search'].fs, self.search_path, format='pd')
         else:
             log.debug("Compute search from scratch ... (not found '%s')" % self.search_path)
-            self.search = self.index[self.search_filter].reset_index()
+            this_filter = np.nonzero(self.search_filter)[0]
+            n_match = this_filter.shape[0]
+            if nrows is not None and n_match > 0:
+                self.search = self.index.head(np.min([nrows, n_match])).reset_index()
+            else:
+                self.search = self.index[self.search_filter].reset_index()
             log.debug('Found %i matches' % self.search.shape[0])
             if self.cache and self.search.shape[0] > 0:
                 self._write(self.fs['search'], self.search_path, self.search, format='pd')
@@ -939,7 +950,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
 
         return df
 
-    def search_wmo(self, WMOs):
+    def search_wmo(self, WMOs, nrows=None):
         log.debug("Argo index searching for WMOs=[%s] ..." % ";".join([str(wmo) for wmo in WMOs]))
         self.load()
         self.search_type = {'WMO': WMOs}
@@ -947,10 +958,10 @@ class indexstore_pandas(ArgoIndexStoreProto):
         for wmo in WMOs:
             filt.append(self.index['file'].str.contains("/%i/" % wmo, regex=True, case=False))
         self.search_filter = np.logical_or.reduce(filt)
-        self.run()
+        self.run(nrows=nrows)
         return self
 
-    def search_cyc(self, CYCs):
+    def search_cyc(self, CYCs, nrows=None):
         log.debug("Argo index searching for CYCs=[%s] ..." % (
             ";".join([str(cyc) for cyc in CYCs])))
         self.load()
@@ -963,10 +974,10 @@ class indexstore_pandas(ArgoIndexStoreProto):
                 pattern = "_%0.4d.nc" % (cyc)
             filt.append(self.index['file'].str.contains(pattern, regex=True, case=False))
         self.search_filter = np.logical_or.reduce(filt)
-        self.run()
+        self.run(nrows=nrows)
         return self
 
-    def search_wmo_cyc(self, WMOs, CYCs):
+    def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
         log.debug("Argo index searching for WMOs=[%s] and CYCs=[%s] ..." % (
             ";".join([str(wmo) for wmo in WMOs]),
             ";".join([str(cyc) for cyc in CYCs])))
@@ -981,10 +992,10 @@ class indexstore_pandas(ArgoIndexStoreProto):
                     pattern = "%i_%0.4d.nc" % (wmo, cyc)
                 filt.append(self.index['file'].str.contains(pattern, regex=True, case=False))
         self.search_filter = np.logical_or.reduce(filt)
-        self.run()
+        self.run(nrows=nrows)
         return self
 
-    def search_tim(self, BOX):
+    def search_tim(self, BOX, nrows=None):
         log.debug("Argo index searching for time in BOX=%s ..." % BOX)
         self.load()
         self.search_type = {'BOX': BOX}
@@ -994,10 +1005,10 @@ class indexstore_pandas(ArgoIndexStoreProto):
         filt.append(self.index['date'].ge(tim_min))
         filt.append(self.index['date'].le(tim_max))
         self.search_filter = np.logical_and.reduce(filt)
-        self.run()
+        self.run(nrows=nrows)
         return self
 
-    def search_lat_lon(self, BOX):
+    def search_lat_lon(self, BOX, nrows=None):
         log.debug("Argo index searching for lat/lon in BOX=%s ..." % BOX)
         self.load()
         self.search_type = {'BOX': BOX}
@@ -1007,10 +1018,10 @@ class indexstore_pandas(ArgoIndexStoreProto):
         filt.append(self.index['latitude'].ge(BOX[2]))
         filt.append(self.index['latitude'].le(BOX[3]))
         self.search_filter = np.logical_and.reduce(filt)
-        self.run()
+        self.run(nrows=nrows)
         return self
 
-    def search_lat_lon_tim(self, BOX):
+    def search_lat_lon_tim(self, BOX, nrows=None):
         log.debug("Argo index searching for lat/lon/time in BOX=%s ..." % BOX)
         self.load()
         self.search_type = {'BOX': BOX}
@@ -1024,5 +1035,5 @@ class indexstore_pandas(ArgoIndexStoreProto):
         filt.append(self.index['latitude'].ge(BOX[2]))
         filt.append(self.index['latitude'].le(BOX[3]))
         self.search_filter = np.logical_and.reduce(filt)
-        self.run()
+        self.run(nrows=nrows)
         return self
