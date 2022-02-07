@@ -1,6 +1,8 @@
 #!/bin/bash
 
 create_this_env () {
+	# $1 is the name of the new environment
+	# $2 is path to environment yaml file	
 	
 	# Overwrite name of the environment set in the file
 	cp ${2} temp_env.yml
