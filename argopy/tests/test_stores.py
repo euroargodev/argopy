@@ -21,7 +21,7 @@ from argopy.stores import (
     indexstore,
 )
 from argopy.stores.filesystems import new_fs
-from argopy.options import OPTIONS
+from argopy.options import OPTIONS, check_gdac_path
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, InvalidDatasetStructure, FtpPathError
 from . import requires_connection, requires_connected_argovis, safe_to_server_errors
 from argopy.utilities import (
@@ -30,7 +30,7 @@ from argopy.utilities import (
     modified_environ,
     is_list_of_strings,
     check_wmo, check_cyc,
-    lscache
+    lscache, isconnected
 )
 
 from argopy.stores.argo_index_pa import indexstore_pandas
@@ -395,6 +395,18 @@ class Test_Legacy_IndexStore:
             )
             assert isinstance(df, pd.core.frame.DataFrame)
 
+"""
+List ftp hosts to be tested. 
+Since the fetcher is compatible with host from local, http or ftp protocols, we
+try to test them all:
+"""
+host_list = [argopy.tutorial.open_dataset("localftp")[0],
+             'https://data-argo.ifremer.fr',
+             'ftp://ftp.ifremer.fr/ifremer/argo',
+             # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but takes too long to respond, slow down CI
+             ]
+# Make sure hosts are valid and available at test time:
+valid_hosts = [h for h in host_list if isconnected(h) and check_gdac_path(h, errors='ignore')]
 
 class IndexStore_test_proto:
     host, flist = argopy.tutorial.open_dataset("localftp")
@@ -417,6 +429,26 @@ class IndexStore_test_proto:
     def new_idx(self, cache=False, cachedir="."):
         idx = self.indexstore(host=self.host, index_file=self.index_file, cache=cache, cachedir=cachedir).load()
         return idx
+
+    @pytest.fixture
+    def _fetcher(self, request):
+        """ Fixture to create a FTP fetcher for a given host and access point """
+        if isinstance(request.param, tuple):
+            if 'tutorial' not in request.param[0]:
+                N_RECORDS = 100
+            else:
+                N_RECORDS = None
+            fetcher_args = {"host": request.param[0], "index_file": self.index_file, "cache": False}
+            yield self.indexstore(**fetcher_args).load(nrows=N_RECORDS)
+        else:
+            if 'tutorial' not in request.param:
+                N_RECORDS = 100
+            else:
+                N_RECORDS = None
+            fetcher_args = {"host": request.param, "index_file": self.index_file, "cache": False}
+            # log.debug(fetcher_args)
+            # log.debug(valid_access_points[0])
+            yield self.indexstore(**fetcher_args).load(nrows=N_RECORDS)
 
     def assert_index(self, this_idx):
         assert hasattr(this_idx, 'index')
@@ -441,10 +473,23 @@ class IndexStore_test_proto:
         )
         with pytest.raises(FtpPathError):
             self.indexstore(host=self.host, index_file="dummy_index.txt")
+        # with pytest.raises(FtpPathError):
+        #     self.indexstore(host="ftp://ftp.dummy.fr/argo")
+        # with pytest.raises(FtpPathError):
+        #     self.indexstore(host="s3://dummy_cloud_store")
+
+    @pytest.mark.parametrize("_fetcher", valid_hosts, indirect=True)
+    def test_hosts_valid(self, _fetcher):
+        @safe_to_server_errors
+        def test(this_fetcher):
+            assert (this_fetcher.N_RECORDS >= 1)  # Make sure we loaded the index file content
+        test(_fetcher)
+
+    @pytest.mark.parametrize("ftp_host", ['invalid', 'https://invalid_ftp', 'ftp://invalid_ftp'], indirect=False)
+    def test_hosts_invalid(self, ftp_host):
+        # Invalid servers:
         with pytest.raises(FtpPathError):
-            self.indexstore(host="ftp://ftp.dummy.fr/argo")
-        with pytest.raises(FtpPathError):
-            self.indexstore(host="s3://dummy_cloud_store")
+            self.indexstore(host=ftp_host)
 
     def test_index(self):
         def new_idx():
