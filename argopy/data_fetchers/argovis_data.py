@@ -290,7 +290,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             df_list[i] = df
         df = pd.concat(df_list, ignore_index=True)
         if df.shape[0] == 0:
-            raise DataNotFound(self.cname())
+            raise DataNotFound("No data found for: %s" % self.cname())
         df.sort_values(by=["TIME", "PRES"], inplace=True)
         df = df.set_index(["N_POINTS"])
         return df

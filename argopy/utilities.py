@@ -1254,12 +1254,59 @@ def is_indexbox(box: list, errors="raise"):
     -------
     bool
     """
+    def is_dateconvertible(d):
+        try:
+            pd.to_datetime(d)
+            isit = True
+        except Exception:
+            isit = False
+        return isit
 
     tests = {}
 
     # Formats:
     tests["index box must be a list"] = lambda b: isinstance(b, list)
     tests["index box must be a list with 4 or 6 elements"] = lambda b: len(b) in [4, 6]
+
+    # Types:
+    tests["lon_min must be numeric"] = lambda b: (
+        isinstance(b[0], int) or isinstance(b[0], (np.floating, float))
+    )
+    tests["lon_max must be numeric"] = lambda b: (
+        isinstance(b[1], int) or isinstance(b[1], (np.floating, float))
+    )
+    tests["lat_min must be numeric"] = lambda b: (
+        isinstance(b[2], int) or isinstance(b[2], (np.floating, float))
+    )
+    tests["lat_max must be numeric"] = lambda b: (
+        isinstance(b[3], int) or isinstance(b[3], (np.floating, float))
+    )
+    if len(box) > 4:
+        tests[
+            "datetim_min must be a string convertible to a Pandas datetime"
+        ] = lambda b: isinstance(b[-2], str) and is_dateconvertible(b[-2])
+        tests[
+            "datetim_max must be a string convertible to a Pandas datetime"
+        ] = lambda b: isinstance(b[-1], str) and is_dateconvertible(b[-1])
+
+    # Ranges:
+    tests["lon_min must be in [-180;180] or [0;360]"] = (
+        lambda b: b[0] >= -180.0 and b[0] <= 360.0
+    )
+    tests["lon_max must be in [-180;180] or [0;360]"] = (
+        lambda b: b[1] >= -180.0 and b[1] <= 360.0
+    )
+    tests["lat_min must be in [-90;90]"] = lambda b: b[2] >= -90.0 and b[2] <= 90
+    tests["lat_max must be in [-90;90]"] = lambda b: b[3] >= -90.0 and b[3] <= 90.0
+
+    # Orders:
+    tests["lon_max must be larger than lon_min"] = lambda b: b[0] < b[1]
+    tests["lat_max must be larger than lat_min"] = lambda b: b[2] < b[3]
+    if len(box) > 4:
+        tests["datetim_max must come after datetim_min"] = lambda b: pd.to_datetime(
+            b[-2]
+        ) < pd.to_datetime(b[-1])
+
 
     error = None
     for msg, test in tests.items():
@@ -1272,11 +1319,7 @@ def is_indexbox(box: list, errors="raise"):
     elif error:
         return False
     else:
-        # Insert pressure bounds and use full box validator:
-        tmp_box = box.copy()
-        tmp_box.insert(4, 0.)
-        tmp_box.insert(5, 10000.)
-        return is_box(tmp_box, errors=errors)
+        return True
 
 
 def is_box(box: list, errors="raise"):

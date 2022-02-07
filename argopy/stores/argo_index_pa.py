@@ -12,7 +12,7 @@ import hashlib
 from argopy.options import OPTIONS
 from argopy.stores import httpstore, memorystore, filestore, ftpstore
 from argopy.errors import DataNotFound, FtpPathError, InvalidDataset
-from argopy.utilities import check_index_cols
+from argopy.utilities import check_index_cols, is_indexbox, check_wmo, check_cyc
 
 try:
     import pyarrow.csv as csv
@@ -524,7 +524,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                     log.debug("Argo index file loaded with pyarrow read_csv. src='%s'" % this_path)
 
         if self.N_RECORDS == 0:
-            raise DataNotFound("the index.")
+            raise DataNotFound("No data found in the index")
         elif nrows is not None and self.N_RECORDS != nrows:
             self.index = self.index[0:nrows-1]
 
@@ -563,7 +563,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             this_path = self.host + "/" + self.index_file + "/" + self.sha_pq
             src = 'search results'
             if self.N_MATCH == 0:
-                raise DataNotFound("the index correspond to your search criteria."
+                raise DataNotFound("No data found in the index corresponding to your search criteria."
                                    " Search definition: %s" % self.cname)
             else:
                 df = self.search.to_pandas()
@@ -674,6 +674,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         return count
 
     def search_wmo(self, WMOs, nrows=None):
+        WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
         log.debug("Argo index searching for WMOs=[%s] ..." % ";".join([str(wmo) for wmo in WMOs]))
         self.load()
         self.search_type = {'WMO': WMOs}
@@ -685,6 +686,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         return self
 
     def search_cyc(self, CYCs, nrows=None):
+        CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
         log.debug("Argo index searching for CYCs=[%s] ..." % (
             ";".join([str(cyc) for cyc in CYCs])))
         self.load()
@@ -701,6 +703,8 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         return self
 
     def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
+        WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
+        CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
         log.debug("Argo index searching for WMOs=[%s] and CYCs=[%s] ..." % (
             ";".join([str(wmo) for wmo in WMOs]),
             ";".join([str(cyc) for cyc in CYCs])))
@@ -719,6 +723,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         return self
 
     def search_tim(self, BOX, nrows=None):
+        is_indexbox(BOX)
         log.debug("Argo index searching for time in BOX=%s ..." % BOX)
         self.load()
         self.search_type = {'BOX': BOX}
@@ -732,6 +737,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         return self
 
     def search_lat_lon(self, BOX, nrows=None):
+        is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon in BOX=%s ..." % BOX)
         self.load()
         self.search_type = {'BOX': BOX}
@@ -745,6 +751,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         return self
 
     def search_lat_lon_tim(self, BOX, nrows=None):
+        is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon/time in BOX=%s ..." % BOX)
         self.load()
         self.search_type = {'BOX': BOX}
@@ -799,7 +806,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
                     log.debug("Argo index file loaded with pandas read_csv. src='%s'" % index_path)
 
         if self.N_RECORDS == 0:
-            raise DataNotFound("the index.")
+            raise DataNotFound("No data found in the index")
         elif nrows is not None and self.N_RECORDS != nrows:
             self.index = self.index[0:nrows-1]
 
@@ -884,16 +891,16 @@ class indexstore_pandas(ArgoIndexStoreProto):
             this_path = self.host + "/" + self.index_file + "/" + self.sha_df
             src = 'search results'
             if self.N_MATCH == 0:
-                raise DataNotFound("the index correspond to your search criteria."
+                raise DataNotFound("No data found in the index corresponding to your search criteria."
                                    " Search definition: %s" % self.cname)
             else:
-                df = self.search
+                df = self.search.copy()
         else:
             this_path = self.host + "/" + self.index_file + "/" + self._sha_from("pd-full")
             src = 'full index'
             if not hasattr(self, 'index'):
                 self.load(nrows=nrows)
-            df = self.index
+            df = self.index.copy()
 
         if nrows is not None:
             this_path = this_path + "/export" + ".%i" % nrows
@@ -951,6 +958,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         return df
 
     def search_wmo(self, WMOs, nrows=None):
+        WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
         log.debug("Argo index searching for WMOs=[%s] ..." % ";".join([str(wmo) for wmo in WMOs]))
         self.load()
         self.search_type = {'WMO': WMOs}
@@ -962,6 +970,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         return self
 
     def search_cyc(self, CYCs, nrows=None):
+        CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
         log.debug("Argo index searching for CYCs=[%s] ..." % (
             ";".join([str(cyc) for cyc in CYCs])))
         self.load()
@@ -978,6 +987,8 @@ class indexstore_pandas(ArgoIndexStoreProto):
         return self
 
     def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
+        WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
+        CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
         log.debug("Argo index searching for WMOs=[%s] and CYCs=[%s] ..." % (
             ";".join([str(wmo) for wmo in WMOs]),
             ";".join([str(cyc) for cyc in CYCs])))
@@ -996,6 +1007,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         return self
 
     def search_tim(self, BOX, nrows=None):
+        is_indexbox(BOX)
         log.debug("Argo index searching for time in BOX=%s ..." % BOX)
         self.load()
         self.search_type = {'BOX': BOX}
@@ -1009,6 +1021,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         return self
 
     def search_lat_lon(self, BOX, nrows=None):
+        is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon in BOX=%s ..." % BOX)
         self.load()
         self.search_type = {'BOX': BOX}
@@ -1022,6 +1035,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         return self
 
     def search_lat_lon_tim(self, BOX, nrows=None):
+        is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon/time in BOX=%s ..." % BOX)
         self.load()
         self.search_type = {'BOX': BOX}

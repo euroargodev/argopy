@@ -8,7 +8,7 @@ A bunch of custom errors used in argopy.
 class DataNotFound(ValueError):
     """ Raise when a data selection returns nothing """
     def __init__(self, path: str = "?"):
-        self.value = "No data found at %s" % path
+        self.value = "%s" % path
         self.path = path
 
     def __str__(self):

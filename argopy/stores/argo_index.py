@@ -533,7 +533,7 @@ class indexstore():
                 # Run search:
                 results = search.run(f)
                 if not results:
-                    raise DataNotFound("index:%s" % search.uri)
+                    raise DataNotFound("No data found in index: %s" % search.uri)
                 # and save results for caching:
                 if self.cache:
                     with self.fs['search'].open(search.uri, "w") as of:

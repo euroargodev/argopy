@@ -100,7 +100,10 @@ class FTPArgoIndexFetcher(ABC):
         self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
         self.fs = self.indexfs.fs['index']
 
-        self.N_RECORDS = self.indexfs.load().N_RECORDS  # Number of records in the index
+        nrows = None
+        if 'N_RECORDS' in kwargs:
+            nrows = kwargs['N_RECORDS']
+        self.N_RECORDS = self.indexfs.load(nrows=nrows).N_RECORDS  # Number of records in the index
 
         self.init(**kwargs)
 
@@ -196,7 +199,10 @@ class Fetch_wmo(FTPArgoIndexFetcher):
         """
         self.WMO = WMO
         self.CYC = CYC
-        self.uri  # Must trigger file index load and search at instantiation
+        self._nrows = None
+        if 'MAX_FILES' in kwargs:
+            self._nrows = kwargs['MAX_FILES']
+        self.N_FILES = len(self.uri)  #  Must trigger file index load and search at instantiation
         return self
 
     @property
@@ -210,9 +216,9 @@ class Fetch_wmo(FTPArgoIndexFetcher):
         # Get list of files to load:
         if not hasattr(self, "_list_of_argo_files"):
             if self.CYC is None:
-                self._list_of_argo_files = self.indexfs.search_wmo(self.WMO).uri
+                self._list_of_argo_files = self.indexfs.search_wmo(self.WMO, nrows=self._nrows).uri
             else:
-                self._list_of_argo_files = self.indexfs.search_wmo_cyc(self.WMO, self.CYC).uri
+                self._list_of_argo_files = self.indexfs.search_wmo_cyc(self.WMO, self.CYC, nrows=self._nrows).uri
 
         self.N_FILES = len(self._list_of_argo_files)
         return self._list_of_argo_files
@@ -247,7 +253,12 @@ class Fetch_box(FTPArgoIndexFetcher):
         # but at this point, we internally work only with x, y and t.
         # log.debug("Create FTPArgoIndexFetcher.Fetch_box instance with index BOX: %s" % box)
         self.indexBOX = box
-        self.uri  # Must trigger file index load and search at instantiation
+
+        self._nrows = None
+        if 'MAX_FILES' in kwargs:
+            self._nrows = kwargs['MAX_FILES']
+        self.N_FILES = len(self.uri)  #  Must trigger file index load and search at instantiation
+
         return self
 
     @property
@@ -261,9 +272,9 @@ class Fetch_box(FTPArgoIndexFetcher):
         # Get list of files to load:
         if not hasattr(self, "_list_of_argo_files"):
             if len(self.indexBOX) == 4:
-                self._list_of_argo_files = self.indexfs.search_lat_lon(self.indexBOX).uri
+                self._list_of_argo_files = self.indexfs.search_lat_lon(self.indexBOX, nrows=self._nrows).uri
             else:
-                self._list_of_argo_files = self.indexfs.search_lat_lon_tim(self.indexBOX).uri
+                self._list_of_argo_files = self.indexfs.search_lat_lon_tim(self.indexBOX, nrows=self._nrows).uri
 
         self.N_FILES = len(self._list_of_argo_files)
         return self._list_of_argo_files

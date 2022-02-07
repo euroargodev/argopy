@@ -119,7 +119,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         nrows = None
         if 'N_RECORDS' in kwargs:
             nrows = kwargs['N_RECORDS']
-        self.N_RECORDS = self.indexfs.load(nrows=nrows).shape[0]  # Number of records in the index
+        self.N_RECORDS = self.indexfs.load(nrows=nrows).N_RECORDS  # Number of records in the index
         self._post_filter_points = False
 
         # Set method to download data:
@@ -283,7 +283,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
             warnings.warn("Found more than 50 files to load, this may take a while to process sequentially ! "
                           "Consider using another data source (eg: 'erddap') or the 'parallel=True' option to improve processing time.")
         elif len(self.uri) == 0:
-            raise DataNotFound(self.indexfs.cname)
+            raise DataNotFound("No data found for: %s" % self.indexfs.cname)
 
         # Download data:
         ds = self.fs.open_mfdataset(
