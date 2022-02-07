@@ -10,6 +10,8 @@ dependencies:
   - erddapy
   - scikit-learn
   - matplotlib
+  - packaging
+
   - pytest
   - pytest-cov
   - pytest-env

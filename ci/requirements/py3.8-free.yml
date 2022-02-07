@@ -10,14 +10,12 @@ dependencies:
   - erddapy
   - scikit-learn
   - matplotlib
-  - pytest
-  - pytest-cov
-  - pytest-env
+  - packaging
 
+  - netcdf4
   - dask
   - distributed
   - zarr
-  - netcdf4
   - pyarrow
   - seaborn
   - gsw
@@ -26,13 +24,16 @@ dependencies:
   - ipython
   - ipywidgets
 
-  - h5netcdf
   - bottleneck
   - cftime
   - cfgrib
   - setuptools
   - pip
   - ipykernel
+
+  - pytest
+  - pytest-cov
+  - pytest-env
   - black
   - flake8
-  - packaging
+
