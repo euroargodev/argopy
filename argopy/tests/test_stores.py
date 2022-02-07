@@ -473,10 +473,6 @@ class IndexStore_test_proto:
         )
         with pytest.raises(FtpPathError):
             self.indexstore(host=self.host, index_file="dummy_index.txt")
-        # with pytest.raises(FtpPathError):
-        #     self.indexstore(host="ftp://ftp.dummy.fr/argo")
-        # with pytest.raises(FtpPathError):
-        #     self.indexstore(host="s3://dummy_cloud_store")
 
     @pytest.mark.parametrize("_fetcher", valid_hosts, indirect=True)
     def test_hosts_valid(self, _fetcher):
