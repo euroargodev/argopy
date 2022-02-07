@@ -96,23 +96,9 @@ class FTPArgoIndexFetcher(ABC):
         elif self.dataset_id == 'bgc':
             index_file = "argo_synthetic-profile_index.txt"
 
-        if split_protocol(self.server)[0] is None:
-            self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
-            self.fs = self.indexfs.fs['index']
-
-        elif 'https' in split_protocol(self.server)[0]:
-            self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
-            self.fs = self.indexfs.fs['index']
-
-        elif 'ftp' in split_protocol(self.server)[0]:
-            if 'ifremer' not in self.server and 'usgodae' not in self.server:
-                raise FtpPathError("Unknown Argo ftp: %s" % self.server)
-            self.indexfs = indexstore(host=self.server,
-                                      index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
-            self.fs = self.indexfs.fs['index']
-
-        else:
-            raise ValueError("Unknown protocol for an Argo index store: %s" % split_protocol(self.server)[0])
+        # Validation of self.server is done by the indexstore:
+        self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
+        self.fs = self.indexfs.fs['index']
 
         self.N_RECORDS = self.indexfs.load().N_RECORDS  # Number of records in the index
 
