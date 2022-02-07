@@ -1,0 +1,59 @@
+name: tests OS Windows
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches-ignore:
+      - 'dependabot*'
+
+jobs:
+  unit-testing-free:
+
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      max-parallel: 12
+      fail-fast: false
+      matrix:
+        python-version: [3.7, 3.8]
+        os: [windows-latest]
+        experimental: [false]
+
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Set up environment with py-${{ matrix.python-version }}
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: argopy-tests
+          environment-file: ci/requirements/py${{matrix.python-version}}-free.yml
+          auto-update-conda: false
+          python-version: ${{ matrix.python-version }}
+          auto-activate-base: false
+
+      - shell: bash -l {0}
+        run: |
+          conda info
+          conda list
+
+      - name: Lint with flake8
+        shell: bash -l {0}
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Test with pytest
+        shell: bash -l {0}
+        run: |
+          pytest -rfs -v -s --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2.1.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./cov.xml
+          flags: unittests
+          name: codecov-github
+          fail_ci_if_error: true
