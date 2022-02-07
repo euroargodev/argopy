@@ -15,7 +15,7 @@ create_this_env () {
 		# conda remove --quiet --name $1 --all --yes --json > tmp.json
 		conda remove --quiet --name $1 --all --yes --json > /dev/null 2>&1
 	else
-		printf "Creating conda anvironment $1 ...\n"	
+		printf "Creating conda environment $1 ...\n"
 	fi
 
 	# Create the environment from file
@@ -27,8 +27,9 @@ create_this_env () {
 	/bin/rm temp_env.yml > /dev/null 2>&1
 }
 
-create_this_env "argopy-tests-py38free-small" "py3.8-small-free.yml"
-create_this_env "argopy-tests-py38free" "py3.8-free.yml"
-create_this_env "argopy-tests-py38dev" "py3.8-dev.yml"
+create_this_env "argopy-tests-py37dev" "py3.7-dev.yml"
+#create_this_env "argopy-tests-py38free-small" "py3.8-small-free.yml"
+#create_this_env "argopy-tests-py38free" "py3.8-free.yml"
+#create_this_env "argopy-tests-py38dev" "py3.8-dev.yml"
 
 exit 0

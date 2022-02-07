@@ -31,7 +31,7 @@ from argopy.utilities import (
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
-from . import requires_connection, requires_localftp, requires_connection
+from . import safe_to_server_errors, requires_localftp, requires_connection
 
 
 def test_invalid_dictionnary():
@@ -562,6 +562,7 @@ def test_YearFraction_to_datetime():
 
 
 @requires_connection
+@safe_to_server_errors
 def test_TopoFetcher():
     box = [81, 123, -67, -54]
     fetcher = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=True)

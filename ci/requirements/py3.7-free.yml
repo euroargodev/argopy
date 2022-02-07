@@ -3,31 +3,38 @@ channels:
   - conda-forge
 dependencies:
   - python=3.7
+  - scipy
   - xarray
+  - fsspec
   - aiohttp
-  - black
+  - erddapy
+  - scikit-learn
+  - matplotlib
+  - packaging
+#  - pandas
+#  - numpy
+
+  - netcdf4
   - dask
   - distributed
-  - matplotlib
   - zarr
-  - scikit-learn
-  - ipython
-  - netcdf4
-  - h5netcdf
+  - pyarrow
   - seaborn
-  - flake8
-  - erddapy
-  - fsspec
   - gsw
+  - tqdm
+  - cartopy
+  - ipython
+  - ipywidgets
+
   - bottleneck
   - cftime
   - cfgrib
+  - setuptools
+  - pip
+  - ipykernel
+
   - pytest
   - pytest-cov
   - pytest-env
-  - setuptools
-  - pip
-  - tqdm
-  - ipykernel
-  - cartopy
-  - ipywidgets
+  - black
+  - flake8

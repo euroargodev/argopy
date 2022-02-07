@@ -1,4 +1,8 @@
-""" Argo file index store based on pyarrow """
+"""
+Argo file index store
+
+This file has the prototype and 2 implementations, one based on pyarrow and the other based on pandas
+"""
 
 import numpy as np
 import pandas as pd
@@ -7,7 +11,6 @@ from abc import ABC, abstractmethod
 from fsspec.core import split_protocol
 import io
 import gzip
-import hashlib
 
 from argopy.options import OPTIONS
 from argopy.stores import httpstore, memorystore, filestore, ftpstore
@@ -17,12 +20,12 @@ from argopy.utilities import check_index_cols, is_indexbox, check_wmo, check_cyc
 try:
     import pyarrow.csv as csv
     import pyarrow as pa
-    import pyarrow.parquet as pq
+    # import pyarrow.parquet as pq
 except ModuleNotFoundError:
     pass
 
 
-log = logging.getLogger("argopy.stores.index.pa")
+log = logging.getLogger("argopy.stores.index")
 
 
 class ArgoIndexStoreProto(ABC):
@@ -30,36 +33,40 @@ class ArgoIndexStoreProto(ABC):
 
         API Design:
         -----------
-        An index store is instantiated with the index file name and access path (host):
-        >>> idx = indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt", cache=True)
+        An index store is instantiated with the access path (host) and the index file:
+        >>> idx = indexstore()
         >>> idx = indexstore(host="ftp://ftp.ifremer.fr/ifremer/argo")
+        >>> idx = indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt")
+        >>> idx = indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt", cache=True)
 
-        Methods/properties of the full index:
+        Index methods and properties:
         >>> idx.load()
-        >>> idx.load(nrows=12)  # Only load the first N rows
+        >>> idx.load(nrows=12)  # Only load the first N rows of the index
         >>> idx.N_RECORDS  # Shortcut for length of 1st dimension of the index array
-        >>> idx.index  # Access the internal storage structure of the full index (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
+        >>> idx.index  # internal storage structure of the full index (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
         >>> idx.shape  # shape of the full index array
         >>> idx.uri_full_index  # List of absolute path to files from the full index table column 'file'
         >>> idx.to_dataframe(index=True)  # Convert index to user-friendly :class:`pandas.DataFrame`
+        >>> idx.to_dataframe(index=True, nrows=2)  # Only returns the first nrows of the index
 
-        Index search can be carried with:
+        Search methods and properties:
         >>> idx.search_wmo(1901393)
         >>> idx.search_wmo_cyc(1901393, [1,12])
         >>> idx.search_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
         >>> idx.search_lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
         >>> idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
-
-        Index and search properties:
-        >>> idx.N_MATCH  # Shortcut for length of 1st dimension of the search results array (fall back on full index table if search not run)
-        >>> idx.uri  # List of absolute path to files from the search results table column 'file'
+        >>> idx.N_MATCH  # Shortcut for length of 1st dimension of the search results array
         >>> idx.search  # Pyarrow table with search results
-        >>> idx.data  # Pandas dataframe with full index
+        >>> idx.uri  # List of absolute path to files from the search results table column 'file'
+        >>> idx.run()  # Run the search and save results in cache if necessary
+        >>> idx.to_dataframe()  # Convert search results to user-friendly :class:`pandas.DataFrame`
+        >>> idx.to_dataframe(nrows=2)  # Only returns the first nrows of the search results
+
 
         Misc:
-        >>> idx.N_FILES  # Shortcut for length of 1st dimension of the search results array (but all back on full index table if search not run)
-        >>> idx.run()  # Run the search and save results in cache if necessary
-        >>> idx.to_dataframe()  # Convert search results to pandas dataframe
+        >>> idx.cname
+        >>> idx.read_wmo
+        >>> idx.records_per_wmo
 
     """
     backend = '?'
@@ -71,14 +78,14 @@ class ArgoIndexStoreProto(ABC):
                  cache: bool = False,
                  cachedir: str = "",
                  timeout: int = 0):
-        """ Create a file storage system for Argo index file requests
+        """ Create an Argo index file store
 
             Parameters
             ----------
             host: str, default: "https://data-argo.ifremer.fr"
-                Host to the 'dac' folder, could also be: "ftp://ftp.ifremer.fr/ifremer/argo", "ftp://usgodae.org/pub/outgoing/argo"
-                or a local absolute path.
-            index_file: str ("ar_index_global_prof.txt")
+                Host is a local or remote ftp/http path to a 'dac' folder (GDAC structure compliant). This takes values
+                like: "ftp://ftp.ifremer.fr/ifremer/argo", "ftp://usgodae.org/pub/outgoing/argo" or a local absolute path.
+            index_file: str, default: "ar_index_global_prof.txt"
             cache : bool (False)
             cachedir : str (used value in global OPTIONS)
         """
@@ -91,7 +98,8 @@ class ArgoIndexStoreProto(ABC):
         if split_protocol(host)[0] is None:
             self.fs['index'] = filestore(cache=cache, cachedir=cachedir)
         elif 'https' in split_protocol(host)[0]:
-            self.fs['index'] = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')  # Only for https://data-argo.ifremer.fr
+            # Only for https://data-argo.ifremer.fr (much faster than the ftp servers)
+            self.fs['index'] = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
         elif 'ftp' in split_protocol(host)[0]:
             if 'ifremer' not in host and 'usgodae' not in host:
                 raise FtpPathError("Unknown Argo ftp: %s" % host)
@@ -99,7 +107,7 @@ class ArgoIndexStoreProto(ABC):
                                         cache=cache,
                                         cachedir=cachedir,
                                         timeout=timeout,
-                                        block_size= 1000 * (2 ** 20))
+                                        block_size=1000*(2**20))
         else:
             raise FtpPathError("Unknown protocol for an Argo index store: %s" % split_protocol(host)[0])
         self.fs['search'] = memorystore(cache, cachedir)  # Manage search results
@@ -176,17 +184,17 @@ class ArgoIndexStoreProto(ABC):
             )
 
             if len(WMO) == 1:
-                if "CYC" in self.search_type:  #and isinstance(CYC, (np.ndarray)):
+                if "CYC" in self.search_type:
                     cname = "%s" % prtcyc(CYC, WMO[0])
                 else:
                     cname = "WMO%i" % (WMO[0])
             else:
                 cname = ";".join(["WMO%i" % wmo for wmo in sorted(WMO)])
-                if "CYC" in self.search_type:  #and isinstance(CYC, (np.ndarray)):
+                if "CYC" in self.search_type:
                     cname = ";".join([prtcyc(CYC, wmo) for wmo in WMO])
                 cname = "%s" % cname
 
-        elif "CYC" in self.search_type and not "WMO" in self.search_type:
+        elif "CYC" in self.search_type and "WMO" not in self.search_type:
             CYC = self.search_type['CYC']
             if len(CYC) == 1:
                 cname = "CYC%i" % (CYC[0])
@@ -551,7 +559,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                 log.debug("Search results saved in cache as pyarrow table. dest='%s'" % self.search_path)
         return self
 
-    def to_dataframe(self, nrows=None, index=False):
+    def to_dataframe(self, nrows=None, index=False):  # noqa: C901
         """ Return index or search results as pandas dataframe
 
             If search not triggered, fall back on full index by default. Using index=True force to return the full index.
@@ -607,16 +615,16 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
 
             profiler_dictionnary = load_dict('profilers')
             profiler_dictionnary['?'] = '?'
+
             def ev(x):
                 try:
                     return int(x)
-                except:
+                except Exception:
                     return x
             df['profiler'] = df['profiler_type'].apply(lambda x: mapp_dict(profiler_dictionnary, ev(x)))
             df = df.rename(columns={"profiler_type": "profiler_code"})
 
             if self.cache:
-#                 log.debug("Saving this dataframe to cache. dest='%s'" % this_path)
                 self._write(self.fs['search'], this_path, df, format='pd')
                 df = self._read(self.fs['search'].fs, this_path, format='pd')
                 log.debug("This dataframe saved in cache. dest='%s'" % this_path)
@@ -650,6 +658,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         else:
             results = pa.compute.split_pattern(self.index['file'], pattern="/")
         df = results.to_pandas()
+
         def fct(row):
             return row[1]
         wmo = df.map(fct)
@@ -881,7 +890,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
                 log.debug("Search results saved in cache as pandas dataframe. dest='%s'" % self.search_path)
         return self
 
-    def to_dataframe(self, nrows=None, index=False):
+    def to_dataframe(self, nrows=None, index=False):  # noqa: C901
         """ Return search results as dataframe
 
             This is where we can process the internal dataframe structure for the end user.
@@ -943,7 +952,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
             def ev(x):
                 try:
                     return int(x)
-                except:
+                except Exception:
                     return x
 
             df['profiler'] = df['profiler_type'].apply(lambda x: mapp_dict(profiler_dictionnary, ev(x)))
