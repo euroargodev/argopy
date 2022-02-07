@@ -16,8 +16,10 @@ class Test_Backend:
 
     src = "ftp"
     requests = {
-        "float": [[4902252], [2901746, 4902252]],
-        "profile": [[2901746, 90], [6901929, np.arange(12, 14)]],
+        # "float": [[4902252], [2901746, 4902252]],
+        # "profile": [[2901746, 90], [6901929, np.arange(12, 14)]],
+        "float": [13857],
+        "profile": [[13857, 90]],
         "region": [
             [-20, -16., 0, 1],
             [-60, -58, 40.0, 45.0, "2007-08-01", "2007-09-01"],
@@ -88,21 +90,33 @@ class Test_Backend:
 
     def __testthis_profile(self, dataset):
         for this_ftp in self.ftp:
-            fetcher_args = {"src": self.src, "ds": dataset, "ftp": this_ftp}
+            if 'tutorial' not in this_ftp:
+                N_RECORDS = 100
+            else:
+                N_RECORDS = None
+            fetcher_args = {"src": self.src, "ds": dataset, "ftp": this_ftp, "N_RECORDS": N_RECORDS}
             for arg in self.args["profile"]:
                 fetcher = ArgoIndexFetcher(**fetcher_args).profile(*arg).fetcher
                 self._assert_fetcher(fetcher)
 
     def __testthis_float(self, dataset):
         for this_ftp in self.ftp:
-            fetcher_args = {"src": self.src, "ds": dataset, "ftp": this_ftp}
+            if 'tutorial' not in this_ftp:
+                N_RECORDS = 100
+            else:
+                N_RECORDS = None
+            fetcher_args = {"src": self.src, "ds": dataset, "ftp": this_ftp, "N_RECORDS": N_RECORDS}
             for arg in self.args["float"]:
                 fetcher = ArgoIndexFetcher(**fetcher_args).float(arg).fetcher
                 self._assert_fetcher(fetcher)
 
     def __testthis_region(self, dataset):
         for this_ftp in self.ftp:
-            fetcher_args = {"src": self.src, "ds": dataset, "ftp": this_ftp}
+            if 'tutorial' not in this_ftp:
+                N_RECORDS = 100
+            else:
+                N_RECORDS = None
+            fetcher_args = {"src": self.src, "ds": dataset, "ftp": this_ftp, "N_RECORDS": N_RECORDS}
             for arg in self.args["region"]:
                 fetcher = ArgoIndexFetcher(**fetcher_args).region(arg).fetcher
                 self._assert_fetcher(fetcher)
