@@ -1,7 +1,7 @@
 name: Cancel duplicate runs
 on:
   workflow_run:
-    workflows: ["tests", "tests in FREE environment", "CodeQL"]
+    workflows: ["tests in DEV env", "tests in minimal FREE env", "tests in FREE env", "tests OS Windows", "CodeQL"]
     types:
       - requested
 jobs:
