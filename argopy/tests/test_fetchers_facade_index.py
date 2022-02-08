@@ -153,12 +153,18 @@ class Test_AllBackends:
     # Define API entry point options to tests:
     # These should be available online and with the argopy-data dummy gdac ftp
     args = {}
-    args["float"] = [[2901623], [6901929, 2901623]]
+    # args["float"] = [[2901623], [6901929, 2901623]]
+    # args["region"] = [
+    #     [-100., -95., -35., -30.],
+    #     [-100., -95., -35., -30., "2020-01-01", "2020-01-15"],
+    # ]
+    # args["profile"] = [[2901623, 2], [6901929, [5, 45]]]
+    args["float"] = [[13857]]
+    args["profile"] = [[13857, 90], [13857, [90, 91]]]
     args["region"] = [
-        [-100., -95., -35., -30.],
-        [-100., -95., -35., -30., "2020-01-01", "2020-01-15"],
+        [-20, -16., 0, 1.],
+        [-20, -16., 0, 1., "1997-07-01", "1997-09-01"],
     ]
-    args["profile"] = [[2901623, 2], [6901929, [5, 45]]]
 
     def __test_float(self, bk, **ftc_opts):
         """ Test float index fetching for a given backend """
@@ -185,13 +191,13 @@ class Test_AllBackends:
             assert isinstance(f.index, pd.core.frame.DataFrame)
 
     @requires_localftp_index
-    def test_float_localftp(self):
+    def test_float_localftp(self, **ftc_opts):
         with argopy.set_options(local_ftp=self.local_ftp):
             self.__test_float("localftp")
 
     @requires_connected_gdac
     def test_float_ftp(self):
-        self.__test_float("ftp")
+        self.__test_float("ftp", N_RECORDS=100)
 
     @ci_erddap_index
     @requires_connected_erddap_index
@@ -207,7 +213,7 @@ class Test_AllBackends:
 
     @requires_connected_gdac
     def test_profile_ftp(self):
-        self.__test_profile("ftp")
+        self.__test_profile("ftp", N_RECORDS=100)
 
     @requires_localftp_index
     def test_region_localftp(self):
@@ -222,4 +228,4 @@ class Test_AllBackends:
 
     @requires_connected_gdac
     def test_region_ftp(self):
-        self.__test_region("ftp")
+        self.__test_region("ftp", N_RECORDS=100)

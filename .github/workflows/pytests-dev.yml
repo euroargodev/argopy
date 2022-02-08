@@ -27,12 +27,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-          if [[ ${{ matrix.os }} == windows* ]] ;
-          then
-            echo "CONDA_ENV_FILE=ci/requirements/environment-windows.yml" >> $GITHUB_ENV
-          else
-            echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-dev.yml" >> $GITHUB_ENV
-          fi
+          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-dev.yml" >> $GITHUB_ENV
           echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
 
       - name: Cache conda
