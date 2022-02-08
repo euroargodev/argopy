@@ -31,6 +31,7 @@ import logging
 
 log = logging.getLogger("argopy.tests.data.ftp")
 
+skip_for_debug = pytest.mark.skipif(True, reason="Taking too long !")
 
 """
 List ftp hosts to be tested. 
@@ -92,6 +93,7 @@ def assert_fetcher(this_fetcher, cachable=False):
         assert is_list_of_strings(this_fetcher.cachepath)
 
 
+@skip_for_debug
 @requires_ftp
 class Test_Backend:
     src = 'ftp'
@@ -188,6 +190,7 @@ class Test_Backend:
         test(_fetcher)
 
 
+@skip_for_debug
 @requires_ftp
 class Test_BackendParallel:
     src = 'ftp'
