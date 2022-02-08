@@ -83,7 +83,7 @@ jobs:
         if: startsWith(github.head_ref, 'dependabot') == false
 
       - name: Test with pytest
-        run: pytest -rfs -v -s
+        run: pytest -rfs -v -s --durations=10
           --cov=./
           --cov-config=.coveragerc
           --cov-report xml:cov.xml
