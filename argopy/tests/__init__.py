@@ -4,12 +4,11 @@
 Test suite for argopy continuous integration
 
 """
-import traceback
 import importlib
 import pytest
 import fsspec
 import argopy
-from aiohttp.client_exceptions import ServerDisconnectedError, ClientResponseError
+from aiohttp.client_exceptions import ServerDisconnectedError, ClientResponseError, ClientConnectorError
 from packaging import version
 import warnings
 import logging
@@ -219,7 +218,11 @@ def safe_to_server_errors(test_func, *args, **kwargs):
         except ClientResponseError as e:
             # The server is sending back an error when creating the response
             msg = "\nAnother server side error:\n%s" % str(e.args)
-            xmsg = "Failing because an error happened on the server side"
+            xmsg = "Failing because an error happened on the server side, but should work"
+            pass
+        except ClientConnectorError as e:
+            msg = "\naiohttp cannot connect to host:\n%s" % str(e.args)
+            xmsg = "Failing because aiohttp cannot connect to host, but should work"
             pass
         except FileNotFoundError as e:
             msg = "\nServer didn't return the data:\n%s" % str(e.args)

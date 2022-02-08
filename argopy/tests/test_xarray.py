@@ -36,7 +36,7 @@ def ds_pts():
 
     if "expert" not in data or "standard" not in data:
         # We don't have what we need for testing, skip this test module:
-        pytest.skip("Tests data not available")
+        pytest.xfail("Could not retrieve erddap data in both standard and expert mode")
     else:
         return data
 
@@ -127,6 +127,7 @@ class Test_teos10:
 
     @requires_nogsw
     def test_gsw_not_available(self, ds_pts):
+        # Make sure we raise an error when GSW is not available
         for key, this in ds_pts.items():
             that = this.copy()  # To avoid modifying the original dataset
             with pytest.raises(ModuleNotFoundError):
