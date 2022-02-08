@@ -172,7 +172,7 @@ class Test_Facade:
 
 
 @requires_fetcher
-class Test_DataFetching:
+class OFFTest_DataFetching:
     """ Test main API facade for all available fetching backends and default dataset """
 
     local_ftp = argopy.tutorial.open_dataset("localftp")[0]
