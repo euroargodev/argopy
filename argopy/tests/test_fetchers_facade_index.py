@@ -191,7 +191,7 @@ class Test_AllBackends:
             assert isinstance(f.index, pd.core.frame.DataFrame)
 
     @requires_localftp_index
-    def test_float_localftp(self, **ftc_opts):
+    def test_float_localftp(self):
         with argopy.set_options(local_ftp=self.local_ftp):
             self.__test_float("localftp")
 
