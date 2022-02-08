@@ -185,13 +185,21 @@ class Test_DataFetching:
     mode = ["standard", "expert"]
 
     # Define API entry point options to tests:
+    # args = {}
+    # args["float"] = [[2901623], [2901623, 6901929]]
+    # args["profile"] = [[2901623, 12], [2901623, np.arange(12, 14)], [6901929, [1, 6]]]
+    # args["region"] = [
+    #     [12.181, 13.459, -40.416, -39.444, 0.0, 1014.0],
+    #     [12.181, 17.459, -40.416, -34.444, 0.0, 2014.0, '2008-06-07', '2008-09-06'],
+    # ]
     args = {}
-    args["float"] = [[2901623], [2901623, 6901929]]
-    args["profile"] = [[2901623, 12], [2901623, np.arange(12, 14)], [6901929, [1, 6]]]
+    args["float"] = [[13857]]
+    args["profile"] = [[13857, 90], [13857, [88, 89]]]
     args["region"] = [
-        [12.181, 13.459, -40.416, -39.444, 0.0, 1014.0],
-        [12.181, 17.459, -40.416, -34.444, 0.0, 2014.0, '2008-06-07', '2008-09-06'],
+        [-20, -16., 0, 1., 0, 100.],
+        [-20, -16., 0, 1, 0, 100., "1997-07-01", "1997-09-01"],
     ]
+
 
     def test_profile_from_float(self):
         with pytest.raises(TypeError):
@@ -217,18 +225,20 @@ class Test_DataFetching:
                 f = ArgoDataFetcher(src=bk, mode=mode, **options).float(arg)
                 self.__assert_fetcher(f)
 
-    def __test_profile(self, bk):
+    def __test_profile(self, bk, **ftc_opts):
         """ Test profile for a given backend """
         for arg in self.args["profile"]:
             for mode in self.mode:
-                f = ArgoDataFetcher(src=bk, mode=mode).profile(*arg)
+                options = {**self.fetcher_opts, **ftc_opts}
+                f = ArgoDataFetcher(src=bk, mode=mode, **options).profile(*arg)
                 self.__assert_fetcher(f)
 
-    def __test_region(self, bk):
+    def __test_region(self, bk, **ftc_opts):
         """ Test region for a given backend """
         for arg in self.args["region"]:
             for mode in self.mode:
-                f = ArgoDataFetcher(src=bk, mode=mode).region(arg)
+                options = {**self.fetcher_opts, **ftc_opts}
+                f = ArgoDataFetcher(src=bk, mode=mode, **options).region(arg)
                 self.__assert_fetcher(f)
 
     @requires_connected_erddap_phy
@@ -250,7 +260,7 @@ class Test_DataFetching:
     @requires_connected_gdac
     @safe_to_server_errors
     def test_float_ftp(self):
-        self.__test_float("ftp")
+        self.__test_float("ftp", N_RECORDS=100)
 
     @requires_connected_erddap_phy
     @safe_to_server_errors
@@ -271,7 +281,7 @@ class Test_DataFetching:
     @requires_connected_gdac
     @safe_to_server_errors
     def test_profile_ftp(self):
-        self.__test_profile("ftp")
+        self.__test_profile("ftp", N_RECORDS=100)
 
     @requires_connected_erddap_phy
     @safe_to_server_errors
@@ -292,4 +302,4 @@ class Test_DataFetching:
     @requires_connected_gdac
     @safe_to_server_errors
     def test_region_ftp(self):
-        self.__test_region("ftp")
+        self.__test_region("ftp", N_RECORDS=100)

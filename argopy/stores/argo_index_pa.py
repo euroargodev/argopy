@@ -20,7 +20,7 @@ from argopy.utilities import check_index_cols, is_indexbox, check_wmo, check_cyc
 try:
     import pyarrow.csv as csv
     import pyarrow as pa
-    # import pyarrow.parquet as pq
+    import pyarrow.parquet as pq
 except ModuleNotFoundError:
     pass
 
