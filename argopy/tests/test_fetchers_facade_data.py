@@ -33,6 +33,8 @@ if has_matplotlib:
 if has_cartopy:
     import cartopy
 
+skip_for_debug = pytest.mark.skipif(True, reason="Taking too long !")
+
 
 @requires_localftp
 class Test_Facade:
@@ -257,6 +259,7 @@ class OFFTest_DataFetching:
     def test_float_argovis(self):
         self.__test_float("argovis")
 
+    @skip_for_debug
     @requires_connected_gdac
     @safe_to_server_errors
     def test_float_ftp(self):
@@ -278,6 +281,7 @@ class OFFTest_DataFetching:
     def test_profile_argovis(self):
         self.__test_profile("argovis")
 
+    @skip_for_debug
     @requires_connected_gdac
     @safe_to_server_errors
     def test_profile_ftp(self):
@@ -299,6 +303,7 @@ class OFFTest_DataFetching:
     def test_region_argovis(self):
         self.__test_region("argovis")
 
+    @skip_for_debug
     @requires_connected_gdac
     @safe_to_server_errors
     def test_region_ftp(self):

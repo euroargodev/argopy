@@ -23,6 +23,7 @@ import logging
 
 
 log = logging.getLogger("argopy.tests.index.ftp")
+skip_for_debug = pytest.mark.skipif(True, reason="Taking too long !")
 
 
 """
@@ -76,6 +77,7 @@ def assert_fetcher(this_fetcher, cachable=False):
         assert isinstance(this_fetcher.cachepath, str)
 
 
+@skip_for_debug
 @requires_ftp
 class Test_Backend:
     src = 'ftp'

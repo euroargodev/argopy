@@ -196,3 +196,4 @@ knotebooks/
 argopy/tests/cov.xml
 argopy/tests/dummy_fileA.txt
 float_source/
+cli/

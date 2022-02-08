@@ -30,6 +30,7 @@ if has_cartopy:
 
 
 ERDDAP_TIMEOUT = 3 * 60
+skip_for_debug = pytest.mark.skipif(True, reason="Taking too long !")
 
 
 @requires_connection
@@ -195,6 +196,7 @@ class Test_AllBackends:
         with argopy.set_options(local_ftp=self.local_ftp):
             self.__test_float("localftp")
 
+    @skip_for_debug
     @requires_connected_gdac
     def test_float_ftp(self):
         self.__test_float("ftp", N_RECORDS=100)
@@ -211,6 +213,7 @@ class Test_AllBackends:
         with argopy.set_options(local_ftp=self.local_ftp):
             self.__test_profile("localftp")
 
+    @skip_for_debug
     @requires_connected_gdac
     def test_profile_ftp(self):
         self.__test_profile("ftp", N_RECORDS=100)
@@ -226,6 +229,7 @@ class Test_AllBackends:
         with argopy.set_options(api_timeout=ERDDAP_TIMEOUT):
             self.__test_region("erddap")
 
+    @skip_for_debug
     @requires_connected_gdac
     def test_region_ftp(self):
         self.__test_region("ftp", N_RECORDS=100)

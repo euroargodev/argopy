@@ -38,6 +38,7 @@ has_pyarrow = importlib.util.find_spec('pyarrow') is not None
 skip_pyarrow = pytest.mark.skipif(not has_pyarrow, reason="Requires pyarrow")
 
 skip_this = pytest.mark.skipif(False, reason="Skipped temporarily")
+skip_for_debug = pytest.mark.skipif(True, reason="Taking too long !")
 
 
 @skip_this
@@ -579,10 +580,11 @@ class IndexStore_test_proto:
         for w in C:
             assert str(C[w]).isdigit()
 
-
+@skip_for_debug
 class Test_IndexStore_pandas(IndexStore_test_proto):
     indexstore = indexstore_pandas
 
+@skip_for_debug
 @skip_pyarrow
 class Test_IndexStore_pyarrow(IndexStore_test_proto):
     from argopy.stores.argo_index_pa import indexstore_pyarrow
