@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Get the latest run for the current branch
+# (update to use JSON output once implemented - see https://github.com/cli/cli/issues/3477)
+#run_id=$(gh run list | grep $(git rev-parse --abbrev-ref HEAD) | cut -d$'\t' -f 7 | head -n 1)
+
+# or get it from the user:
+run_id=$1
+
+gh run watch $run_id

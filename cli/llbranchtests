@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#gh run list -b master -L10
+#gh run list -b gdac-ftp-fetcher -L10
+
+
+#alias ghrun="gh run list | grep \$(git branch --show-current) | cut -d$'\t' -f 8 | xargs gh run watch && notify-send 'Run finished'"
+#alias ghrun="gh run list | grep \$(git branch --show-current) | cut -d$'\t' -f 8"
+#gh run list | grep $(git rev-parse --abbrev-ref HEAD) | cut -d$'\t' -f 7
+
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+gh run list -b $current_branch -w "tests in DEV env" -L5
+gh run list -b $current_branch -w "tests in FREE env" -L5
+gh run list -b $current_branch -w "tests in minimal FREE env" -L5
+

@@ -1,0 +1,64 @@
+#!/bin/bash
+
+#gh run list --json status,workflowDatabaseId,databaseId,headBranch,conclusion,name,createdAt,url --template \
+#'{{tablerow (autocolor "gray+h" "STATUS") (autocolor "gray+h" "CONCLUSION") (autocolor "gray+h" "ID") (autocolor "gray+h" "BRANCH") (autocolor "gray+h" "WORKFLOW") (autocolor "gray+h" "AGE") (autocolor "gray+h" "URL")}}{{range .}}{{tablerow (autocolor "green" .status) .conclusion (autocolor "white+h" .databaseId) .headBranch .name (timeago .createdAt) .url}}{{end}}'
+#echo "For details on a run, try: gh run view <run-id>"
+
+while :
+do
+#	echo "Refreshing every 5 secs. Press [CTRL+C] to stop.."
+	gh run list -L 30 --json status,workflowDatabaseId,databaseId,headBranch,conclusion,name,createdAt,url --template \
+ '{{tablerow (autocolor "white+h" "STATUS") (autocolor "white+h" "CONCLUSION") (autocolor "white+h" "ID") (autocolor "white+h" "BRANCH") (autocolor "white+h" "WORKFLOW") (autocolor "white+h" "AGE")}}{{range .}}{{tablerow (autocolor "green" .status) .conclusion (autocolor "white+h" .databaseId) .headBranch .name (timeago .createdAt)}}{{end}}'
+	sleep 5
+done
+
+#gh run list -b master -L10
+#gh run list -b gdac-ftp-fetcher -L10
+
+
+#alias ghrun="gh run list | grep \$(git branch --show-current) | cut -d$'\t' -f 8 | xargs gh run watch && notify-send 'Run finished'"
+#alias ghrun="gh run list | grep \$(git branch --show-current) | cut -d$'\t' -f 8"
+#gh run list | grep $(git rev-parse --abbrev-ref HEAD) | cut -d$'\t' -f 7
+
+#current_branch=$(git rev-parse --abbrev-ref HEAD)
+#gh run list -b $current_branch -w "tests in DEV env" -L5
+#gh run list -b $current_branch -w "tests in FREE env" -L5
+#gh run list -b $current_branch -w "tests in minimal FREE env" -L5
+
+#Specify one or more comma-separated fields for `--json`:
+#  conclusion
+#  createdAt
+#  databaseId
+#  event
+#  headBranch
+#  headSha
+#  name
+#  status
+#  updatedAt
+#  url
+#  workflowDatabaseId
+#gh llissues list --json number,title --template '{{range .}}{{tablerow (printf "#%v" .number | autocolor "green") .title}}{{end}}'
+#gh run list --json status,workflowDatabaseId,headBranch,conclusion,name
+
+#gh run list --json status,workflowDatabaseId,headBranch,conclusion,name --template \
+# '{{range .}}{{tablerow (printf "%v" .status | autocolor "green") .conclusion .workflowDatabaseId .headBranch .name}}{{end}}'
+
+#gh run list --json status,workflowDatabaseId,headBranch,conclusion,name,createdAt --template \
+# '{{range .}}{{tablerow (printf "%v" .status | autocolor "green") .conclusion .workflowDatabaseId .headBranch .name (timeago .createdAt)}}{{end}}'
+
+#gh run list --json status,workflowDatabaseId,headBranch,conclusion,name,createdAt --template \
+# '{{tablerow (autocolor "gray+h" "STATUS") (autocolor "gray+h" "CONCLUSION")}}{{range .}}{{tablerow (autocolor "green" .status) .conclusion}}{{end}}'
+
+#gh run list --json conclusion,createdAt,databaseId,event,headBranch,headSha,name,status,updatedAt,url,workflowDatabaseId
+
+
+
+
+#gh alias set prcomments - << 'EOF'
+#pr view $1 --json number,title,reviewDecision,body,assignees,comments --template '{{printf "#%v" .number | autocolor "green"}} {{.title}} ({{autocolor "yellow" .reviewDecision}})
+#
+#{{.body}}
+#
+#{{tablerow (autocolor "gray+h" "ASSIGNEE") (autocolor "gray+h" "NAME")}}{{range .assignees}}{{tablerow (autocolor "green" .login) .name}}{{end}}{{tablerender}}
+#{{tablerow (autocolor "gray+h" "COMMENTER") (autocolor "gray+h" "ROLE") (autocolor "gray+h" "COMMENT")}}{{range .comments}}{{tablerow (autocolor "green" .author.login) .authorAssociation .body}}{{end}}'
+#EOF

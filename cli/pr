@@ -1,0 +1,10 @@
+#!/bin/bash
+
+gh pr view $1 --json number,title,body,reviews,assignees --template \
+  '{{printf "#%v" .number}} {{.title}}
+
+  {{.body}}
+
+  {{tablerow "ASSIGNEE" "NAME"}}{{range .assignees}}{{tablerow .login .name}}{{end}}{{tablerender}}
+  {{tablerow "REVIEWER" "STATE" "COMMENT"}}{{range .reviews}}{{tablerow .author.login .state .body}}{{end}}
+  '
