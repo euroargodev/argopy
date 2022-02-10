@@ -249,7 +249,12 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             This was made to debug for fsspec caching system not working with cache of profile and region in argovis
             Not working yet, see: https://github.com/euroargodev/argopy/issues/101
         """
-        return urls
+        # return urls
+        def safe_for_fsspec_cache(url):
+            url = url.replace("[", "%5B")  # This is the one really necessary
+            url = url.replace("]", "%5D")  # For consistency
+            return url
+        return [safe_for_fsspec_cache(url) for url in urls]
         # return [urllib.parse.quote(url, safe='/:?=[]&') for url in urls]
 
     def json2dataframe(self, profiles):

@@ -101,7 +101,7 @@ def lscache(cache_path: str = "", prt=True):
 
     cache_path = OPTIONS['cachedir'] if cache_path == '' else cache_path
     apath = os.path.abspath(cache_path)
-    log.debug("Listing cache content at: %s" %cache_path )
+    log.debug("Listing cache content at: %s" % cache_path)
 
     def convert_size(size_bytes):
         if size_bytes == 0:
@@ -773,7 +773,7 @@ def fetch_status(stdout: str = "html", insert: bool = True):
         if getattr(mod, "api_server_check", None):
             # status = isconnected(mod.api_server_check)
             status = isAPIconnected(api)
-            if api=='localftp' and OPTIONS['local_ftp'] == '-':
+            if api == 'localftp' and OPTIONS['local_ftp'] == '-':
                 message = "ok" if status else "path undefined !"
             else:
                 # message = "up" if status else "down"
@@ -1307,7 +1307,6 @@ def is_indexbox(box: list, errors="raise"):
             b[-2]
         ) < pd.to_datetime(b[-1])
 
-
     error = None
     for msg, test in tests.items():
         if not test(box):
@@ -1582,6 +1581,7 @@ def is_cyc(lst, errors="raise"):  # noqa: C901
     else:
         return result
 
+
 def check_index_cols(column_names: list, convention: str = 'ar_index_global_prof'):
     """
         ar_index_global_prof.txt: Index of profile files
@@ -1694,7 +1694,7 @@ def toYearFraction(this_date: pd._libs.tslibs.timestamps.Timestamp = pd.to_datet
     -------
     float
     """
-    if "UTC" in [this_date.tzname() if not this_date.tzinfo is None else ""]:
+    if "UTC" in [this_date.tzname() if this_date.tzinfo is not None else ""]:
         startOfThisYear = pd.to_datetime("%i-01-01T00:00:00.000" % this_date.year, utc=True)
     else:
         startOfThisYear = pd.to_datetime("%i-01-01T00:00:00.000" % this_date.year)
@@ -1737,7 +1737,8 @@ def wrap_longitude(grid_long):
         This is a refactor between get_region_data and get_region_hist_locations to
         avoid duplicate code
 
-        source: https://github.com/euroargodev/argodmqc_owc/blob/e174f4538fdae1534c9740491398972b1ffec3ca/pyowc/utilities.py#L80
+        source:
+        https://github.com/euroargodev/argodmqc_owc/blob/e174f4538fdae1534c9740491398972b1ffec3ca/pyowc/utilities.py#L80
 
         Parameters
         ----------
@@ -1783,7 +1784,7 @@ def wmo2box(wmo_id: int):
 
     # "global quadrant" numbers where 1=NE, 3=SE, 5=SW, 7=NW
     quadrant = int(wmo_id[0])
-    if quadrant not in [1, 3, 5 ,7]:
+    if quadrant not in [1, 3, 5, 7]:
         raise ValueError("Invalid WMO square number, 1st digit must be 1, 3, 5 or 7.")
 
     # 'minimum' Latitude square boundary, nearest to the Equator
@@ -1812,7 +1813,12 @@ def wmo2box(wmo_id: int):
     return box
 
 
-def groupby_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped", select='deep', right=False):
+def groupby_remap(z, data, z_regridded,   # noqa C901
+                  z_dim=None,
+                  z_regridded_dim="regridded",
+                  output_dim="remapped",
+                  select='deep',
+                  right=False):
     """ todo: Need a docstring here !"""
 
     # sub-sampling called in xarray ufunc
@@ -2010,10 +2016,17 @@ class TopoFetcher():
 
     def define_constraints(self):
         """ Define request constraints """
-        #        Eg: https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.nc?elevation%5B(34):5:(42)%5D%5B(-21):7:(-12)%5D
-        self.erddap.constraints = "%s(%0.2f):%i:(%0.2f)%s%s(%0.2f):%i:(%0.2f)%s" % (
-        "%5B", self.BOX[2], self.stride[1], self.BOX[3], "%5D",
-        "%5B", self.BOX[0], self.stride[0], self.BOX[1], "%5D")
+        # Eg: https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.nc?elevation%5B(34):5:(42)%5D%5B(-21):7:(-12)%5D
+        self.erddap.constraints = "%s(%0.2f):%i:(%0.2f)%s%s(%0.2f):%i:(%0.2f)%s" % ("%5B",
+                                                                                    self.BOX[2],
+                                                                                    self.stride[1],
+                                                                                    self.BOX[3],
+                                                                                    "%5D",
+                                                                                    "%5B",
+                                                                                    self.BOX[0],
+                                                                                    self.stride[0],
+                                                                                    self.BOX[1],
+                                                                                    "%5D")
         return None
 
     #     @property
@@ -2024,6 +2037,20 @@ class TopoFetcher():
     #         vlist.append("longitude")
     #         vlist.append("elevation")
     #         return vlist
+
+    def url_encode(self, url):
+        """ Return safely encoded list of urls
+
+            This is necessary because fsspec cannot handle in cache paths/urls with a '[' character
+        """
+
+        # return urls
+        def safe_for_fsspec_cache(url):
+            url = url.replace("[", "%5B")  # This is the one really necessary
+            url = url.replace("]", "%5D")  # For consistency
+            return url
+
+        return safe_for_fsspec_cache(url)
 
     def get_url(self):
         """ Return the URL to download data requested
@@ -2047,7 +2074,7 @@ class TopoFetcher():
         self.define_constraints()  # Define constraint to select this box of data (affect self.erddap.constraints)
         url += f"{self.erddap.constraints}"
 
-        return url
+        return self.url_encode(url)
 
     @property
     def uri(self):
@@ -2073,7 +2100,7 @@ class TopoFetcher():
         return self.to_xarray(errors=errors)
 
 
-def argo_split_path(this_path):
+def argo_split_path(this_path):  # noqa C901
     """ Split path from a GDAC ftp style Argo netcdf file and return informations
 
     >>> argo_split_path('coriolis/6901035/profiles/D6901035_001D.nc')

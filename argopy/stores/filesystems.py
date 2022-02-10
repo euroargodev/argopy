@@ -16,6 +16,11 @@ from packaging import version
 import concurrent.futures
 import multiprocessing
 
+from argopy.options import OPTIONS
+from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
+    InvalidMethod
+from abc import ABC, abstractmethod
+
 
 log = logging.getLogger("argopy.stores")
 
@@ -34,12 +39,6 @@ try:
 except ModuleNotFoundError:
     log.debug("argopy needs distributed to use Dask cluster/client")
     has_distributed = False
-
-
-from argopy.options import OPTIONS
-from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
-    InvalidMethod
-from abc import ABC, abstractmethod
 
 
 def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cachedir'], **kwargs):
@@ -407,7 +406,8 @@ class httpstore(argo_store_proto):
             data = self.fs.cat_file(url)
         except aiohttp.ClientResponseError as e:
             if e.status == 413:
-                warnings.warn("Server says payload Too Large ! Try to use 'parallel=True' or a smaller chunk parameter with your fetcher")
+                warnings.warn("Server says payload Too Large ! Try to use 'parallel=True' or a smaller "
+                              "chunk parameter with your fetcher")
                 log.debug("Error %i (Payload Too Large) raised with %s" % (e.status, url))
             raise
 
@@ -450,8 +450,8 @@ class httpstore(argo_store_proto):
                        *args, **kwargs):
         """ Open multiple urls as a single xarray dataset.
 
-            This is a version of the :class:`argopy.stores.httpstore.open_dataset` method that is able to handle a list of urls/paths
-            sequentially or in parallel.
+            This is a version of the :class:`argopy.stores.httpstore.open_dataset` method that is able to
+            handle a list of urls/paths sequentially or in parallel.
 
             Use a Threads Pool by default for parallelization.
 
@@ -539,8 +539,11 @@ class httpstore(argo_store_proto):
                 ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
 
             with ConcurrentExecutor as executor:
-                future_to_url = {executor.submit(self._mfprocessor_dataset, url,
-                                                 preprocess=preprocess, preprocess_opts=preprocess_opts, *args, **kwargs): url for url in urls}
+                future_to_url = {executor.submit(self._mfprocessor_dataset,
+                                                 url,
+                                                 preprocess=preprocess,
+                                                 preprocess_opts=preprocess_opts, *args, **kwargs): url
+                                 for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
                     futures = tqdm(futures, total=len(urls))
@@ -563,15 +566,19 @@ class httpstore(argo_store_proto):
                         results.append(data)
 
         elif has_distributed and isinstance(method, distributed.client.Client):
-        # Use a dask client:
+            # Use a dask client:
 
             if progress:
                 from dask.diagnostics import ProgressBar
                 with ProgressBar():
-                    futures = method.map(self._mfprocessor_dataset, urls, preprocess=preprocess, *args, **kwargs)
+                    futures = method.map(self._mfprocessor_dataset,
+                                         urls,
+                                         preprocess=preprocess, *args, **kwargs)
                     results = method.gather(futures)
             else:
-                futures = method.map(self._mfprocessor_dataset, urls, preprocess=preprocess, *args, **kwargs)
+                futures = method.map(self._mfprocessor_dataset,
+                                     urls,
+                                     preprocess=preprocess, *args, **kwargs)
                 results = method.gather(futures)
 
         elif method in ['seq', 'sequential']:
@@ -581,7 +588,9 @@ class httpstore(argo_store_proto):
             for url in urls:
                 data = None
                 try:
-                    data = self._mfprocessor_dataset(url, preprocess=preprocess, preprocess_opts=preprocess_opts, *args, **kwargs)
+                    data = self._mfprocessor_dataset(url,
+                                                     preprocess=preprocess,
+                                                     preprocess_opts=preprocess_opts, *args, **kwargs)
                 except Exception:
                     failed.append(url)
                     if errors == 'ignore':
@@ -811,6 +820,7 @@ class memorystore(filestore):
                 pass
         return guess
 
+
 class ftpstore(httpstore):
     """ Argo ftp file system
 
@@ -837,7 +847,7 @@ class ftpstore(httpstore):
         try:
             this_url = self.fs._strip_protocol(url)
             data = self.fs.cat_file(this_url)
-        except Exception as e:
+        except Exception:
             log.debug("Error with: %s" % url)
         # except aiohttp.ClientResponseError as e:
             raise
@@ -870,8 +880,8 @@ class ftpstore(httpstore):
                        *args, **kwargs):
         """ Open multiple urls as a single xarray dataset.
 
-            This is a version of the :class:`argopy.stores.httpstore.open_dataset` method that is able to handle a list of urls/paths
-            sequentially or in parallel.
+            This is a version of the :class:`argopy.stores.httpstore.open_dataset` method that is able
+            to handle a list of urls/paths sequentially or in parallel.
 
             Use a Threads Pool by default for parallelization.
 
@@ -989,10 +999,16 @@ class ftpstore(httpstore):
             if progress:
                 from dask.diagnostics import ProgressBar
                 with ProgressBar():
-                    futures = method.map(self._mfprocessor_dataset, urls, preprocess=preprocess, *args, **kwargs)
+                    futures = method.map(self._mfprocessor_dataset,
+                                         urls,
+                                         preprocess=preprocess,
+                                         *args, **kwargs)
                     results = method.gather(futures)
             else:
-                futures = method.map(self._mfprocessor_dataset, urls, preprocess=preprocess, *args, **kwargs)
+                futures = method.map(self._mfprocessor_dataset,
+                                     urls,
+                                     preprocess=preprocess,
+                                     *args, **kwargs)
                 results = method.gather(futures)
 
         elif method in ['seq', 'sequential']:
@@ -1002,7 +1018,10 @@ class ftpstore(httpstore):
             for url in urls:
                 data = None
                 try:
-                    data = self._mfprocessor_dataset(url, preprocess=preprocess, preprocess_opts=preprocess_opts, *args, **kwargs)
+                    data = self._mfprocessor_dataset(url,
+                                                     preprocess=preprocess,
+                                                     preprocess_opts=preprocess_opts,
+                                                     *args, **kwargs)
                 except Exception:
                     failed.append(url)
                     if errors == 'ignore':
@@ -1034,4 +1053,3 @@ class ftpstore(httpstore):
                 return results
         else:
             raise DataNotFound(urls)
-
