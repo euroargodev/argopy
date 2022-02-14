@@ -30,7 +30,7 @@ from argopy.utilities import (
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
-from . import requires_connection, requires_localftp, requires_connection
+from . import requires_connection, requires_localftp, safe_to_server_errors
 
 
 def test_invalid_dictionnary():
@@ -535,15 +535,20 @@ def test_YearFraction_to_datetime():
     assert YearFraction_to_datetime(2020+1) == pd.to_datetime('202101010000')
 
 
-@requires_connection
-def test_TopoFetcher():
-    box = [81, 123, -67, -54]
-    fetcher = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=True)
-    ds = fetcher.to_xarray()
-    assert isinstance(ds, xr.Dataset)
-    assert 'elevation' in ds.data_vars
+class Test_TopoFetcher():
 
-    fetcher = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=False)
-    ds = fetcher.to_xarray()
-    assert isinstance(ds, xr.Dataset)
-    assert 'elevation' in ds.data_vars
+    @safe_to_server_errors
+    def test_fetching(self):
+        box = [81, 123, -67, -54]
+        fetcher = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=True)
+        ds = fetcher.to_xarray()
+        assert isinstance(ds, xr.Dataset)
+        assert 'elevation' in ds.data_vars
+
+    @safe_to_server_errors
+    def test_fetching_cached(self):
+        box = [81, 123, -67, -54]
+        fetcher = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=False)
+        ds = fetcher.to_xarray()
+        assert isinstance(ds, xr.Dataset)
+        assert 'elevation' in ds.data_vars
