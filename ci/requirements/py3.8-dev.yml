@@ -5,7 +5,7 @@ dependencies:
   - python=3.8
   - xarray=2022.3.0
   - scipy=1.8.0
-  - sklearn=1.0.2
+  - scikit-learn=1.0.2
   - netcdf4=1.5.8
   - dask=2022.02.1
   - toolz=0.11.2
