@@ -3,6 +3,13 @@
 What's New
 ==========
 
+v0.1.10 (4 Mar. 2022)
+---------------------
+
+**Internals**
+
+- Update and clean up requirements. Remove upper bound on all dependencies (:pr:`182`) by `R. Abernathey <http://www.github.com/rabernat>`_.
+
 v0.1.9 (19 Jan. 2022)
 ---------------------
 

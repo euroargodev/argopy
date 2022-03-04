@@ -4,30 +4,35 @@ channels:
 dependencies:
   - python=3.7
   - xarray
-  - aiohttp
-  - black
-  - dask
-  - distributed
-  - matplotlib
-  - zarr
+  - scipy
   - scikit-learn
-  - ipython
   - netcdf4
-  - h5netcdf
-  - seaborn
-  - flake8
+  - dask
+  - toolz
   - erddapy
   - fsspec
   - gsw
+  - aiohttp
   - bottleneck
+  - cartopy
   - cftime
-  - cfgrib
-  - pytest
-  - pytest-cov
-  - pytest-env
-  - setuptools
+  - distributed
+  - ipython
+  - matplotlib
+  - numpy
+  - pandas
+  - packaging
   - pip
+  - pytest
+  - seaborn
+  - setuptools
+  - zarr
   - tqdm
   - ipykernel
-  - cartopy
   - ipywidgets
+# Not showing up with argopy.show_versions():
+  - cfgrib
+  - black
+  - flake8
+  - pytest-cov
+  - pytest-env

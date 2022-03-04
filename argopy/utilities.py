@@ -474,6 +474,9 @@ def show_versions(file=sys.stdout):  # noqa: C901
         ("setuptools", lambda mod: mod.__version__),
         ("sphinx", lambda mod: mod.__version__),
         ("zarr", lambda mod: mod.__version__),
+        ("tqdm", lambda mod: mod.__version__),
+        ("ipykernel", lambda mod: mod.__version__),
+        ("ipywidgets", lambda mod: mod.__version__),
     ]
 
     deps_blob = list()
