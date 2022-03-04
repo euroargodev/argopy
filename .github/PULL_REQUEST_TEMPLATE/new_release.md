@@ -7,18 +7,19 @@ assignees: ''
 ---
 
 - [ ] Create a new branch for this release: ``git checkout -b releaseX.Y.Z``
-- [ ] Create a PR to prepare it, name it with one of the [Nature emoji](https://www.webfx.com/tools/emoji-cheat-sheet/#tabs-3) 
+- [ ] Create a PR to prepare it, name it with one of the [Nature emoji](https://www.webfx.com/tools/emoji-cheat-sheet/#tabs-3) and make sure it was [never used before](https://github.com/euroargodev/argopy/pulls?q=is%3Apr+label%3Arelease+) 
 
 # Prepare release
 
 - [ ] Run codespell from repo root and fix errors: ``codespell -q 2``
+- [ ] Increase release version in ``./setup.py``
+- [ ] Update date and release version in ``./docs/whats-new.rst``
 - [ ] Make sure that all [CI tests are passed with *free* environments](https://github.com/euroargodev/argopy/actions?query=workflow%3A%22tests+in+FREE+env%22+event%3Apull_request)
 - [ ] Update ``./requirements.txt`` and ``./docs/requirements.txt`` with CI free environments dependencies versions 
 - [ ] Update ``./ci/requirements/py*-dev.yml`` with last free environments dependencies versions
 - [ ] Make sure that all [CI tests are passed with *dev* environments](https://github.com/euroargodev/argopy/actions?query=workflow%3A%22tests+in+DEV+env%22+event%3Apull_request)
-- [ ] Increase release version in ``./setup.py`` file
-- [ ] Update date and release version in ``./docs/whats-new.rst``
 - [ ] Merge this PR to master
+- [ ] Make sure all [CI tests are passed on the master branch](https://github.com/euroargodev/argopy/actions?query=workflow%3Atests*+branch%3Amaster)
 
 # Publish release
 
