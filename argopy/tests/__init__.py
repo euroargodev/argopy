@@ -4,7 +4,7 @@
 Test suite for argopy continuous integration
 
 """
-import traceback
+# import traceback
 import importlib
 import pytest
 import fsspec
