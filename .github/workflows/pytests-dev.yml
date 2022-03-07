@@ -22,7 +22,7 @@ jobs:
         experimental: [false]
 
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
 
       - name: Set up environment with py-${{ matrix.python-version }}
         uses: conda-incubator/setup-miniconda@v2
