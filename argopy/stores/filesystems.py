@@ -167,7 +167,7 @@ class argo_store_proto(ABC):
         cache = self.fs.cached_files[-1]
         if os.path.exists(fn):
             with open(fn, "rb") as f:
-                cached_files = pickle.load(f)
+                cached_files = pickle.load(f)  # nosec B301 because files controlled internally
         else:
             cached_files = cache
         cache = {}

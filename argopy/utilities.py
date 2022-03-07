@@ -116,7 +116,7 @@ def lscache(cache_path: str = "", prt=True):
     fn = os.path.join(apath, "cache")
     if os.path.exists(fn):
         with open(fn, "rb") as f:
-            loaded_cached_files = pickle.load(f)
+            loaded_cached_files = pickle.load(f)  # nosec B301 because files controlled internally
             for c in loaded_cached_files.values():
                 if isinstance(c["blocks"], list):
                     c["blocks"] = set(c["blocks"])
@@ -176,11 +176,11 @@ def lscache(cache_path: str = "", prt=True):
 def load_dict(ptype):
     if ptype == "profilers":
         with open(os.path.join(path2pkl, "dict_profilers.pickle"), "rb") as f:
-            loaded_dict = pickle.load(f)
+            loaded_dict = pickle.load(f)  # nosec B301 because files controlled internally
         return loaded_dict
     elif ptype == "institutions":
         with open(os.path.join(path2pkl, "dict_institutions.pickle"), "rb") as f:
-            loaded_dict = pickle.load(f)
+            loaded_dict = pickle.load(f)  # nosec B301 because files controlled internally
         return loaded_dict
     else:
         raise ValueError("Invalid dictionary pickle file")
