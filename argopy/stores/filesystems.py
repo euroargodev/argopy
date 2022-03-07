@@ -6,7 +6,7 @@ import pandas as pd
 import fsspec
 import aiohttp
 import shutil
-import pickle
+import pickle  # nosec B403 only used with internal files/assets
 import json
 import tempfile
 import warnings

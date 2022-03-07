@@ -21,7 +21,7 @@ import importlib
 import locale
 import platform
 import struct
-import subprocess
+import subprocess # nosec B404 only used without user inputs
 import contextlib
 from fsspec.core import split_protocol
 
@@ -30,7 +30,7 @@ import pandas as pd
 import numpy as np
 from scipy import interpolate
 
-import pickle
+import pickle  # nosec B403 only used with internal files/assets
 import pkg_resources
 import shutil
 
