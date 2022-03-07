@@ -36,7 +36,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
     # Methods to be customised for a specific Argovis request
     ###
     @abstractmethod
-    def init(self):
+    def init(self, *args, **kwargs):
         """ Initialisation for a specific fetcher """
         raise NotImplementedError("Not implemented")
 
