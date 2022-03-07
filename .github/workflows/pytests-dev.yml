@@ -32,7 +32,7 @@ jobs:
           auto-update-conda: false
           python-version: ${{ matrix.python-version }}
           auto-activate-base: false
-
+  
       - shell: bash -l {0}
         run: |
           conda info
