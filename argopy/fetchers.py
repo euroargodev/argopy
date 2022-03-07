@@ -36,6 +36,8 @@ def checkAccessPoint(AccessPoint):
 
         This decorator will check if an access point (eg: 'profile') is available for the data source (eg: 'erddap')
         used to initiate the checker. If not, an error is raised.
+
+    #todo Make sure this decorator preserves the doc string !
     """
     def wrapper(*args):
         if AccessPoint.__name__ not in args[0].valid_access_points:
@@ -135,11 +137,14 @@ class ArgoDataFetcher:
         # self.cachedir = OPTIONS['cachedir'] if 'cachedir' not in fetcher_kwargs else fetcher_kwargs['cachedir']
         # self.fs = filestore(cache=self.cache, cachedir=self.cachedir)
 
+        # More init:
+        self._loaded = False
+
         # Dev warnings
         # Todo Clean-up before each release
         if self._dataset_id == "bgc" and self._mode == "standard":
             warnings.warn(
-                "'BGC' dataset fetching in 'standard' user mode is not reliable. "
+                "'BGC' dataset fetching in 'standard' user mode is not yet reliable. "
                 "Try to switch to 'expert' mode if you encounter errors."
             )
 
@@ -658,14 +663,17 @@ class ArgoIndexFetcher:
         # Init data structure holders:
         self._index = None
 
+        # More init:
+        self._loaded = False
+
     def __repr__(self):
         if self.fetcher:
-            summary = [self.fetcher.__repr__()]
-            summary.append("Backend: %s" % self._src)
+            summary = [self.fetcher.__repr__(),
+                       "Backend: %s" % self._src]
         else:
-            summary = ["<indexfetcher.%s> 'No access point initialised'" % self._src]
-            summary.append("Available access points: %s" % ", ".join(self.Fetchers.keys()))
-            summary.append("Backend: %s" % self._src)
+            summary = ["<indexfetcher.%s> 'No access point initialised'" % self._src,
+                       "Available access points: %s" % ", ".join(self.Fetchers.keys()),
+                       "Backend: %s" % self._src]
 
         summary.append("User mode: %s" % self._mode)
         summary.append("Dataset: %s" % self._dataset_id)

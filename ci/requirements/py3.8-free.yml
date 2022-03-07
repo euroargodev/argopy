@@ -3,37 +3,36 @@ channels:
   - conda-forge
 dependencies:
   - python=3.8
-  - scipy
   - xarray
-  - fsspec
-  - aiohttp
-  - erddapy
+  - scipy
   - scikit-learn
-  - matplotlib
-  - packaging
-
   - netcdf4
   - dask
-  - distributed
-  - zarr
-  - pyarrow
-  - seaborn
+  - toolz
+  - erddapy
+  - fsspec
   - gsw
-  - tqdm
-  - cartopy
-  - ipython
-  - ipywidgets
-
+  - aiohttp
   - bottleneck
+  - cartopy
   - cftime
-  - cfgrib
-  - setuptools
+  - distributed
+  - ipython
+  - matplotlib
+  - numpy
+  - pandas
+  - packaging
   - pip
-  - ipykernel
-
   - pytest
-  - pytest-cov
-  - pytest-env
+  - seaborn
+  - setuptools
+  - zarr
+  - tqdm
+  - ipykernel
+  - ipywidgets
+# Not showing up with argopy.show_versions():
+  - cfgrib
   - black
   - flake8
-
+  - pytest-cov
+  - pytest-env

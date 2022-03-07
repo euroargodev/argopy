@@ -218,10 +218,11 @@ class filestore(argo_store_proto):
         with self.open(url) as of:
             # log.debug("Opening dataset: %s" % url)  # Redundant with fsspec logger
             ds = xr.open_dataset(of, *args, **kwargs)
+            ds.load()
         if "source" not in ds.encoding:
             if isinstance(url, str):
                 ds.encoding["source"] = url
-        return ds.load().copy()
+        return ds.copy()
 
     def _mfprocessor(self, url, preprocess=None, *args, **kwargs):
         # Load data

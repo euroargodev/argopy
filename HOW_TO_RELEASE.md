@@ -1,42 +1,23 @@
-1. [ ] Create a new branch and PR to prepare for release:
+- [ ] Create a new branch for this release: ``git checkout -b releaseX.Y.Z``
+- [ ] Create a PR to prepare it, name it with one of the [Nature emoji](https://www.webfx.com/tools/emoji-cheat-sheet/#tabs-3) and make sure it was [never used before](https://github.com/euroargodev/argopy/pulls?q=is%3Apr+label%3Arelease+) 
 
-     ```git checkout -b releaseX.Y```
+# Prepare release
 
-   1. [ ] Run codespell from repo root and fix errors:
+- [ ] Run codespell from repo root and fix errors: ``codespell -q 2``
+- [ ] Increase release version in ``./setup.py``
+- [ ] Update date and release version in ``./docs/whats-new.rst``
+- [ ] Make sure that all [CI tests are passed with *free* environments](https://github.com/euroargodev/argopy/actions?query=workflow%3A%22tests+in+FREE+env%22+event%3Apull_request)
+- [ ] Update ``./requirements.txt`` and ``./docs/requirements.txt`` with CI free environments dependencies versions 
+- [ ] Update ``./ci/requirements/py*-dev.yml`` with last free environments dependencies versions
+- [ ] Make sure that all [CI tests are passed with *dev* environments](https://github.com/euroargodev/argopy/actions?query=workflow%3A%22tests+in+DEV+env%22+event%3Apull_request)
+- [ ] Merge this PR to master
+- [ ] Make sure all [CI tests are passed on the master branch](https://github.com/euroargodev/argopy/actions?query=workflow%3Atests*+branch%3Amaster)
 
-         ```codespell -q 2```
+# Publish release
 
-   2. [ ] Make sure that all CI tests are passed with **free* environments
-
-   3. [ ] Update ``./requirements.txt`` and ``./docs/requirements.txt`` with CI free environments dependencies versions
-
-   4. [ ] Update ``./ci/requirements/py*-dev.yml`` with last free environments dependencies versions
-
-   5. [ ] Make sure that all CI tests are passed with **dev* environments
-
-   6. [ ] Increase release version in ``./setup.py`` file
-
-   7. [ ] Update date and release version in ``./docs/whats-new.rst``
-
-   8. [ ] Merge PR to master:
-   
-        ```git checkout master```
-   
-        ```git merge releaseX.Y```
-
-2. [ ] On the master branch, commit the release in git:
-
-      ```git commit -a -m 'Release v0.X.Y'```
-
-3. [ ] Tag the release:
-
-      ```git tag -a v0.X.Y -m 'v0.X.Y'```
-
-4. [ ] Push it online:
-
-      ```git push origin v0.X.Y```
-
-5. [ ] Issue the release on GitHub. Click on "Draft a new release" at
-    https://github.com/euroargodev/argopy/releases. Type in the version number ``v0.X.Y``, and click on the auto-generate a release note button.
-    
-    This will trigger the publish Github action that will push the release on Pypi.
+- [ ] On the master branch, commit the release in git: ``git commit -a -m 'Release v0.X.Y'``
+- [ ] Tag the release: ``git tag -a v0.X.Y -m 'v0.X.Y'``
+- [ ] Push it online: ``git push origin v0.X.Y``
+- [ ] Issue the release on GitHub by first ["Drafting a new release"](https://github.com/euroargodev/argopy/releases/new)
+Choose the release tag v0.X.Y, fill in the release title and click on the `Auto-generate release notes` button.  
+This will trigger the [publish Github action](https://github.com/euroargodev/argopy/blob/master/.github/workflows/pythonpublish.yml) that will push the release on [Pypi](https://pypi.org/project/argopy/#history).

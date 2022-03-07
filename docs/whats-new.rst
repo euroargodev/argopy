@@ -3,7 +3,7 @@
 What's New
 ==========
 
-v0.1.10 (X XXX. 2022)
+v0.1.11 (X XXX. 2022)
 ---------------------
 
 **Features and front-end API**
@@ -20,7 +20,6 @@ v0.1.10 (X XXX. 2022)
     AdF = DataFetcher(src='ftp', ftp="ftp://ftp.ifremer.fr/ifremer/argo")
     with argopy.set_options(gdac_ftp='ftp://usgodae.org/pub/outgoing/argo'):
         AdF = DataFetcher(src='ftp')
-
 
 **Internals**
 
@@ -40,6 +39,12 @@ v0.1.10 (X XXX. 2022)
 
 - Index fetcher for local FTP no longer support the option ``index_file``. The name of the file index is internally determined using the dataset requested: ``ar_index_global_prof.txt`` for ``ds='phy'`` and ``argo_synthetic-profile_index.txt`` for ``ds='bgc'``. (:pr:`157`).
 
+v0.1.10 (4 Mar. 2022)
+---------------------
+
+**Internals**
+
+- Update and clean up requirements. Remove upper bound on all dependencies (:pr:`182`) by `R. Abernathey <http://www.github.com/rabernat>`_.
 
 v0.1.9 (19 Jan. 2022)
 ---------------------

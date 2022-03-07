@@ -41,20 +41,22 @@ skip_this = pytest.mark.skipif(False, reason="Skipped temporarily")
 skip_for_debug = pytest.mark.skipif(True, reason="Taking too long !")
 
 
+id_implementation = lambda x: [k for k, v in known_implementations.items()  # noqa: E731
+                                      if x.__class__.__name__ == v['class'].split('.')[-1]]
+is_initialised = lambda x: ((x is None) or (x == []))  # noqa: E731
+
+
 @skip_this
 class Test_new_fs:
-    id_implementation = lambda y, x: [k for k, v in known_implementations.items()  # noqa: E731
-                                       if x.__class__.__name__ == v['class'].split('.')[-1]]
-    is_initialised = lambda y, x: ((x is None) or (x == []))  # noqa: E731
 
     def test_default(self):
         fs, cache_registry = new_fs()
-        assert self.id_implementation(fs) is not None
-        assert self.is_initialised(cache_registry)
+        assert id_implementation(fs) is not None
+        assert is_initialised(cache_registry)
 
     def test_cache_type(self):
         fs, cache_registry = new_fs(cache=True)
-        assert self.id_implementation(fs) == ['filecache']
+        assert id_implementation(fs) == ['filecache']
 
 
 @skip_this
