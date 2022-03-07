@@ -16,8 +16,11 @@
 # Publish release
 
 - [ ] On the master branch, commit the release in git: ``git commit -a -m 'Release v0.X.Y'``
+
 - [ ] Tag the release: ``git tag -a v0.X.Y -m 'v0.X.Y'``
+
 - [ ] Push it online: ``git push origin v0.X.Y``
+
 - [ ] Issue the release on GitHub by first ["Drafting a new release"](https://github.com/euroargodev/argopy/releases/new)
 Choose the release tag v0.X.Y, fill in the release title and click on the `Auto-generate release notes` button.  
 This will trigger the [publish Github action](https://github.com/euroargodev/argopy/blob/master/.github/workflows/pythonpublish.yml) that will push the release on [Pypi](https://pypi.org/project/argopy/#history).

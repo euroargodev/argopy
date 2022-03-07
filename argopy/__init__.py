@@ -1,3 +1,7 @@
+"""
+Argopy library
+"""
+
 try:
     import pkg_resources
     __version__ = pkg_resources.get_distribution("argopy").version
@@ -21,6 +25,8 @@ from . import tutorial  # noqa: E402
 # Other Import
 from . import utilities  # noqa: E402
 from . import stores  # noqa: E402
+from . import errors  # noqa: E402
+from . import plotters  # noqa: E402
 from .utilities import show_versions, show_options, clear_cache, lscache, TopoFetcher  # noqa: E402
 from .utilities import monitor_status as status  # noqa: E402
 from .options import set_options  # noqa: E402
