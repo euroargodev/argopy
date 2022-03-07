@@ -70,7 +70,7 @@ class ArgoIndexStoreProto(ABC):
 
     """
     backend = '?'
-    search_type = '?'
+    search_type = {}
 
     def __init__(self,
                  host: str = "https://data-argo.ifremer.fr",
