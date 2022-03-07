@@ -487,7 +487,7 @@ def get_sys_info():
     commit = None
     if os.path.isdir(".git") and os.path.isdir("argopy"):
         try:
-            pipe = subprocess.Popen(
+            pipe = subprocess.Popen(  # nosec No user provided input to control here
                 'git log --format="%H" -n 1'.split(" "),
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
