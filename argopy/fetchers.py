@@ -139,6 +139,7 @@ class ArgoDataFetcher:
 
         # More init:
         self._loaded = False
+        self._request = ''
 
         # Dev warnings
         # Todo Clean-up before each release
@@ -659,12 +660,12 @@ class ArgoIndexFetcher:
         self.postproccessor = self.__empty_processor
         self._AccessPoint = None
 
-
         # Init data structure holders:
         self._index = None
 
         # More init:
         self._loaded = False
+        self._request = ''
 
     def __repr__(self):
         if self.fetcher:
