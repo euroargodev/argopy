@@ -661,7 +661,7 @@ def isconnected(host="https://www.ifremer.fr"):
     """
     if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
         try:
-            urllib.request.urlopen(host, timeout=1)  # Python 3.x
+            urllib.request.urlopen(host, timeout=1)  # nosec B310 because host protocol already checked
             return True
         except Exception:
             return False
