@@ -14,11 +14,7 @@ import logging
 import importlib
 from .proto import ArgoDataFetcherProto
 
-from argopy.utilities import (
-    list_standard_variables,
-    format_oneline,
-    argo_split_path
-)
+from argopy.utilities import list_standard_variables, format_oneline, argo_split_path
 from argopy.options import OPTIONS, check_gdac_path
 from argopy.plotters import open_dashboard
 from argopy.errors import DataNotFound
@@ -26,20 +22,24 @@ from argopy.errors import DataNotFound
 
 log = logging.getLogger("argopy.gdacftp.data")
 
-has_pyarrow = importlib.util.find_spec('pyarrow') is not None
+has_pyarrow = importlib.util.find_spec("pyarrow") is not None
 if has_pyarrow:
     from argopy.stores.argo_index_pa import indexstore_pyarrow as indexstore
+
     log.debug("Using pyarrow indexstore")
 else:
     from argopy.stores.argo_index_pa import indexstore_pandas as indexstore
+
     # warnings.warn("Consider installing pyarrow in order to improve performances when fetching GDAC data")
     log.debug("Using pandas indexstore")
 
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
 dataset_ids = ["phy", "bgc"]  # First is default
-api_server = OPTIONS['gdac_ftp']  # API root url
-api_server_check = api_server  # URL to check if the API is alive, used by isAPIconnected
+api_server = OPTIONS["gdac_ftp"]  # API root url
+api_server_check = (
+    api_server  # URL to check if the API is alive, used by isAPIconnected
+)
 
 
 class FTPArgoDataFetcher(ArgoDataFetcherProto):
@@ -101,25 +101,33 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         self.timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.definition = "Ifremer GDAC ftp Argo data fetcher"
         self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
-        self.server = OPTIONS['gdac_ftp'] if ftp == "" else ftp
+        self.server = OPTIONS["gdac_ftp"] if ftp == "" else ftp
         self.errors = errors
 
         # Validate server, raise FtpPathError if not valid.
-        check_gdac_path(self.server, errors='raise')
+        check_gdac_path(self.server, errors="raise")
 
-        if self.dataset_id == 'phy':
+        if self.dataset_id == "phy":
             index_file = "ar_index_global_prof.txt"
-        elif self.dataset_id == 'bgc':
+        elif self.dataset_id == "bgc":
             index_file = "argo_synthetic-profile_index.txt"
 
         # Validation of self.server is done by the indexstore:
-        self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
-        self.fs = self.indexfs.fs['index']
+        self.indexfs = indexstore(
+            host=self.server,
+            index_file=index_file,
+            cache=cache,
+            cachedir=cachedir,
+            timeout=self.timeout,
+        )
+        self.fs = self.indexfs.fs["index"]
 
         nrows = None
-        if 'N_RECORDS' in kwargs:
-            nrows = kwargs['N_RECORDS']
-        self.N_RECORDS = self.indexfs.load(nrows=nrows).N_RECORDS  # Number of records in the index
+        if "N_RECORDS" in kwargs:
+            nrows = kwargs["N_RECORDS"]
+        self.N_RECORDS = self.indexfs.load(
+            nrows=nrows
+        ).N_RECORDS  # Number of records in the index
         self._post_filter_points = False
 
         # Set method to download data:
@@ -141,18 +149,20 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         summary.append("Name: %s" % self.definition)
         summary.append("Index: %s" % self.indexfs.index_file)
         summary.append("FTP: %s" % self.server)
-        if hasattr(self, 'BOX'):
+        if hasattr(self, "BOX"):
             summary.append("Domain: %s" % self.cname())
         else:
             summary.append("Domain: %s" % format_oneline(self.cname()))
-        if hasattr(self.indexfs, 'index'):
+        if hasattr(self.indexfs, "index"):
             summary.append("Index loaded: True (%i records)" % self.N_RECORDS)
         else:
             summary.append("Index loaded: False")
-        if hasattr(self.indexfs, 'search'):
-            match = 'matches' if self.N_FILES > 1 else 'match'
-            summary.append("Index searched: True (%i %s, %0.4f%%)" % (self.N_FILES, match,
-                                                                      self.N_FILES * 100 / self.N_RECORDS))
+        if hasattr(self.indexfs, "search"):
+            match = "matches" if self.N_FILES > 1 else "match"
+            summary.append(
+                "Index searched: True (%i %s, %0.4f%%)"
+                % (self.N_FILES, match, self.N_FILES * 100 / self.N_RECORDS)
+            )
         else:
             summary.append("Index searched: False")
         return "\n".join(summary)
@@ -188,12 +198,30 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         -------
         list(str)
         """
+
         def mono2multi(mono_path):
             meta = argo_split_path(mono_path)
-            if self.dataset_id == 'phy':
-                return "/".join([meta['origin'], 'dac', meta['dac'], meta['wmo'], "%s_prof.nc" % meta['wmo']])
-            elif self.dataset_id == 'bgc':
-                return "/".join([meta['origin'], 'dac', meta['dac'], meta['wmo'], "%s_Sprof.nc" % meta['wmo']])
+            if self.dataset_id == "phy":
+                return "/".join(
+                    [
+                        meta["origin"],
+                        "dac",
+                        meta["dac"],
+                        meta["wmo"],
+                        "%s_prof.nc" % meta["wmo"],
+                    ]
+                )
+            elif self.dataset_id == "bgc":
+                return "/".join(
+                    [
+                        meta["origin"],
+                        "dac",
+                        meta["dac"],
+                        meta["wmo"],
+                        "%s_Sprof.nc" % meta["wmo"],
+                    ]
+                )
+
         new_uri = [mono2multi(uri) for uri in URIs]
         new_uri = list(set(new_uri))
         return new_uri
@@ -279,9 +307,15 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         -------
         :class:`xarray.Dataset`
         """
-        if len(self.uri) > 50 and isinstance(self.method, str) and self.method == 'sequential':
-            warnings.warn("Found more than 50 files to load, this may take a while to process sequentially ! "
-                          "Consider using another data source (eg: 'erddap') or the 'parallel=True' option to improve processing time.")
+        if (
+            len(self.uri) > 50
+            and isinstance(self.method, str)
+            and self.method == "sequential"
+        ):
+            warnings.warn(
+                "Found more than 50 files to load, this may take a while to process sequentially ! "
+                "Consider using another data source (eg: 'erddap') or the 'parallel=True' option to improve processing time."
+            )
         elif len(self.uri) == 0:
             raise DataNotFound("No data found for: %s" % self.indexfs.cname)
 
@@ -333,33 +367,30 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         This may be necessary if for download performance improvement we had to work with multi instead of mono profile
         files: we loaded and merged multi-profile files, and then we need to make sure to retain only profiles requested.
         """
-        if hasattr(self, 'BOX'):
+        if hasattr(self, "BOX"):
             # - box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
             # - box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
             ds = (
-                ds
-                .where(ds['LONGITUDE'] >= self.BOX[0], drop=True)
-                .where(ds['LONGITUDE'] < self.BOX[1], drop=True)
-                .where(ds['LATITUDE'] >= self.BOX[2], drop=True)
-                .where(ds['LATITUDE'] < self.BOX[3], drop=True)
-                .where(ds['PRES'] >= self.BOX[4], drop=True)
-                .where(ds['PRES'] < self.BOX[5], drop=True)
+                ds.where(ds["LONGITUDE"] >= self.BOX[0], drop=True)
+                .where(ds["LONGITUDE"] < self.BOX[1], drop=True)
+                .where(ds["LATITUDE"] >= self.BOX[2], drop=True)
+                .where(ds["LATITUDE"] < self.BOX[3], drop=True)
+                .where(ds["PRES"] >= self.BOX[4], drop=True)
+                .where(ds["PRES"] < self.BOX[5], drop=True)
             )
             if len(self.BOX) == 8:
-                ds = (
-                    ds
-                    .where(ds['TIME'] >= np.datetime64(self.BOX[6]), drop=True)
-                    .where(ds['TIME'] < np.datetime64(self.BOX[7]), drop=True)
-                )
+                ds = ds.where(
+                    ds["TIME"] >= np.datetime64(self.BOX[6]), drop=True
+                ).where(ds["TIME"] < np.datetime64(self.BOX[7]), drop=True)
 
-        if hasattr(self, 'CYC'):
+        if hasattr(self, "CYC"):
             this_mask = xr.DataArray(
                 np.zeros_like(ds["N_POINTS"]),
                 dims=["N_POINTS"],
                 coords={"N_POINTS": ds["N_POINTS"]},
             )
             for cyc in self.CYC:
-                this_mask += ds['CYCLE_NUMBER'] == cyc
+                this_mask += ds["CYCLE_NUMBER"] == cyc
             this_mask = this_mask >= 1  # any
             ds = ds.where(this_mask, drop=True)
 
@@ -407,8 +438,8 @@ class Fetch_wmo(FTPArgoDataFetcher):
         # self.N_FILES = len(self.uri)  # Trigger search in the index, should we do this at instantiation or later ???
         self.N_FILES = np.NaN
         self._nrows = None
-        if 'MAX_FILES' in kwargs:
-            self._nrows = kwargs['MAX_FILES']
+        if "MAX_FILES" in kwargs:
+            self._nrows = kwargs["MAX_FILES"]
         return self
 
     @property
@@ -425,7 +456,9 @@ class Fetch_wmo(FTPArgoDataFetcher):
                 URIs = self.indexfs.search_wmo(self.WMO, nrows=self._nrows).uri
                 self._list_of_argo_files = self.uri_mono2multi(URIs)
             else:
-                self._list_of_argo_files = self.indexfs.search_wmo_cyc(self.WMO, self.CYC, nrows=self._nrows).uri
+                self._list_of_argo_files = self.indexfs.search_wmo_cyc(
+                    self.WMO, self.CYC, nrows=self._nrows
+                ).uri
 
         self.N_FILES = len(self._list_of_argo_files)
         return self._list_of_argo_files
@@ -460,8 +493,8 @@ class Fetch_box(FTPArgoDataFetcher):
         # self.N_FILES = len(self.uri)  # Trigger search in the index
         self.N_FILES = np.NaN
         self._nrows = None
-        if 'MAX_FILES' in kwargs:
-            self._nrows = kwargs['MAX_FILES']
+        if "MAX_FILES" in kwargs:
+            self._nrows = kwargs["MAX_FILES"]
         return self
 
     @property
@@ -477,7 +510,9 @@ class Fetch_box(FTPArgoDataFetcher):
             if len(self.indexBOX) == 4:
                 URIs = self.indexfs.search_lat_lon(self.indexBOX, nrows=self._nrows).uri
             else:
-                URIs = self.indexfs.search_lat_lon_tim(self.indexBOX, nrows=self._nrows).uri
+                URIs = self.indexfs.search_lat_lon_tim(
+                    self.indexBOX, nrows=self._nrows
+                ).uri
 
             if len(URIs) > 25:
                 self._list_of_argo_files = self.uri_mono2multi(URIs)
