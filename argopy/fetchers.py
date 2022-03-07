@@ -28,10 +28,10 @@ log = logging.getLogger("argopy.fetchers.facade")
 
 
 def checkAccessPoint(AccessPoint):
-    """ Decorator to validate fetcher access points of a given data source
+    """Decorator to validate fetcher access points of a given data source.
 
-        This decorator will check if an access point (eg: 'profile') is available for the data source (eg: 'erddap')
-        used to initiate the checker. If not, an error is raised.
+    This decorator will check if an access point (eg: 'profile') is available for the
+    data source (eg: 'erddap') used to initiate the checker. If not, an error is raised.
 
     #todo Make sure this decorator preserves the doc string !
     """
