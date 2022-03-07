@@ -7,19 +7,19 @@ import hashlib
 
 class ArgoDataFetcherProto(ABC):
     @abstractmethod
-    def to_xarray(self) -> xarray.Dataset:
+    def to_xarray(self, *args, **kwargs) -> xarray.Dataset:
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def filter_data_mode(self, ds: xarray.Dataset) -> xarray.Dataset:
+    def filter_data_mode(self, ds: xarray.Dataset, *args, **kwargs) -> xarray.Dataset:
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def filter_qc(self, ds: xarray.Dataset) -> xarray.Dataset:
+    def filter_qc(self, ds: xarray.Dataset, *args, **kwargs) -> xarray.Dataset:
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def filter_variables(self, ds: xarray.Dataset, mode: str) -> xarray.Dataset:
+    def filter_variables(self, ds: xarray.Dataset, mode: str, *args, **kwargs) -> xarray.Dataset:
         raise NotImplementedError("Not implemented")
 
     def clear_cache(self):
