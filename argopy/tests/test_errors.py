@@ -5,7 +5,6 @@ from argopy.errors import (
     NetCDF4FileNotFoundError,
     CacheFileNotFound,
     FileSystemHasNoCache,
-    UnrecognisedDataSelectionMode,
     UnrecognisedProfileDirection,
     InvalidDataset,
     InvalidDatasetStructure,
@@ -27,7 +26,6 @@ from argopy.errors import (
     NetCDF4FileNotFoundError,
     CacheFileNotFound,
     FileSystemHasNoCache,
-    UnrecognisedDataSelectionMode,
     UnrecognisedProfileDirection,
     InvalidDataset,
     InvalidDatasetStructure,
@@ -41,6 +39,6 @@ from argopy.errors import (
     ErddapServerError,
     ArgovisServerError,
     ], indirect=False)
-def test_Raise(error):
+def test_raise_all_errors(error):
     with pytest.raises(error):
         raise error()
