@@ -57,9 +57,3 @@ jobs:
           flags: unittests
           name: codecov-github
           fail_ci_if_error: true
-
-      - name: Upload coverage to Codacy
-        uses: codacy/codacy-coverage-reporter-action@v1
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: cov.xml
