@@ -29,7 +29,8 @@ Standard usage:
 ```python
 # Import the main fetcher:
 from argopy import DataFetcher as ArgoDataFetcher
-
+```
+```python
 # Define what you want to fetch... 
 # a region:
 ArgoSet = ArgoDataFetcher().region([-85,-45,10.,20.,0,10.])
@@ -37,12 +38,14 @@ ArgoSet = ArgoDataFetcher().region([-85,-45,10.,20.,0,10.])
 ArgoSet = ArgoDataFetcher().float([6902746, 6902747, 6902757, 6902766])
 # or specific profiles:
 ArgoSet = ArgoDataFetcher().profile(6902746, 34)
-
+```
+```python
 # then fetch and get data as xarray datasets:
 ds = ArgoSet.load().data
 # or
 ds = ArgoSet.to_xarray()
-
+```
+```python
 # you can even plot some information:
 ArgoSet.plot('trajectory')    
 ```
