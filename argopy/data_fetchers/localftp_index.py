@@ -28,13 +28,16 @@ When a request is done, we
 
 """
 import os
-import numpy as np
 from abc import ABC, abstractmethod
 import warnings
+from packaging import version
 
 from argopy.utilities import load_dict, mapp_dict, format_oneline
 from argopy.options import OPTIONS, check_gdac_path
 from argopy.stores import indexstore, indexfilter_wmo, indexfilter_box
+from argopy.errors import InvalidOption
+from argopy import __version__
+
 
 access_points = ['wmo', 'box']
 exit_formats = ['xarray', 'dataframe']
@@ -79,7 +82,6 @@ class LocalFTPArgoIndexFetcher(ABC):
     def __init__(self,
                  local_ftp: str = "",
                  ds: str = "",
-                 # index_file: str = "ar_index_global_prof.txt",
                  cache: bool = False,
                  cachedir: str = "",
                  **kwargs):
@@ -93,8 +95,13 @@ class LocalFTPArgoIndexFetcher(ABC):
                 Dataset to load: 'phy' or 'bgc'
         """
         if 'index_file' in kwargs:
-            warnings.warn("'index_file option' is deprecated: the name of the index file is internally determined as a "
-                          "function of the 'ds' dataset option.", DeprecationWarning)
+            if version.parse(__version__) > version.parse("0.1.13"):
+                raise InvalidOption("Invalid option `index_file`")
+            else:
+                #todo Update version with appropriate release for this PR
+                warnings.warn("'index_file option' is deprecated since 0.1.11: the name of the index file is "
+                              "internally determined as a "
+                              "function of the 'ds' dataset option. ", DeprecationWarning)
 
         self.cache = cache
         self.definition = 'Local ftp Argo index fetcher'

@@ -41,7 +41,7 @@ v0.1.11 (X XXX. 2022)
 
 **Breaking changes**
 
-- Index fetcher for local FTP no longer support the option ``index_file``. The name of the file index is internally determined using the dataset requested: ``ar_index_global_prof.txt`` for ``ds='phy'`` and ``argo_synthetic-profile_index.txt`` for ``ds='bgc'``. (:pr:`157`).
+- Index fetcher for local FTP no longer support the option ``index_file``. The name of the file index is internally determined using the dataset requested: ``ar_index_global_prof.txt`` for ``ds='phy'`` and ``argo_synthetic-profile_index.txt`` for ``ds='bgc'``. Using this option will raise a deprecation warning up to v0.1.13 and will then raise an error. (:pr:`157`).
 
 v0.1.10 (4 Mar. 2022)
 ---------------------

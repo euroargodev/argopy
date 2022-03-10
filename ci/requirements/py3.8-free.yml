@@ -30,6 +30,7 @@ dependencies:
   - tqdm
   - ipykernel
   - ipywidgets
+  - pyarrow
 # Not showing up with argopy.show_versions():
   - cfgrib
   - black

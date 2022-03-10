@@ -30,6 +30,7 @@ dependencies:
   - tqdm=4.63.0
   - ipykernel=6.9.1
   - ipywidgets=7.6.5
+  - pyarrow=4.0.1
 # Not showing up with argopy.show_versions():
   - cfgrib=0.9.10
   - black=22.1.0
