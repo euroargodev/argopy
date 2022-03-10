@@ -3,7 +3,7 @@ import pytest
 import argopy
 from argopy.options import OPTIONS
 from argopy.errors import OptionValueError, FtpPathError
-from . import requires_localftp, requires_ftp
+from utils import requires_localftp, requires_ftp
 
 
 def test_invalid_option_name():

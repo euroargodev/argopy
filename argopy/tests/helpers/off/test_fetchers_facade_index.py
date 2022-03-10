@@ -5,7 +5,7 @@ import importlib
 import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher
-from . import (
+from utils import (
     # AVAILABLE_INDEX_SOURCES,
     requires_fetcher_index,
     requires_connected_erddap_index,

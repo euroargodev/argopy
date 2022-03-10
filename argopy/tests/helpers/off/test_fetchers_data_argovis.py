@@ -11,7 +11,7 @@ from argopy.errors import (
     FileSystemHasNoCache,
 )
 from argopy.utilities import is_list_of_strings
-from . import requires_connected_argovis, safe_to_server_errors
+from utils import requires_connected_argovis, safe_to_server_errors
 
 
 @requires_connected_argovis

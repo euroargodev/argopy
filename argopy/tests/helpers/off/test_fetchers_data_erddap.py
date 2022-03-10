@@ -11,7 +11,7 @@ from argopy.errors import (
     FileSystemHasNoCache
 )
 from argopy.utilities import is_list_of_strings
-from . import (
+from utils import (
     requires_connected_erddap,
     requires_connected_erddap_phy,
     requires_connected_erddap_bgc,

@@ -9,7 +9,7 @@ import argopy
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import CacheFileNotFound, FileSystemHasNoCache, FtpPathError
 from argopy.utilities import list_available_data_src, is_list_of_strings
-from . import requires_localftp, safe_to_server_errors
+from utils import requires_localftp, safe_to_server_errors
 
 AVAILABLE_SOURCES = list_available_data_src()
 

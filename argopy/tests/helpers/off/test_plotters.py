@@ -7,7 +7,7 @@ import importlib
 
 import argopy
 from argopy.errors import InvalidDashboard
-from . import (
+from utils import (
     requires_localftp,
     requires_connection,
     requires_matplotlib,

@@ -14,7 +14,7 @@ from argopy.errors import (
 )
 from argopy.utilities import isconnected
 from argopy.options import check_gdac_path
-from . import (
+from utils import (
     requires_ftp,
     safe_to_server_errors
 )

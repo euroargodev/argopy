@@ -8,7 +8,7 @@ import xarray as xr
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import InvalidDatasetStructure, OptionValueError
-from . import requires_connected_erddap_phy, requires_localftp, _importorskip, _connectskip
+from utils import requires_connected_erddap_phy, requires_localftp, _importorskip, _connectskip
 
 has_gsw, requires_gsw = _importorskip("gsw")
 has_nogsw, requires_nogsw = _connectskip(not has_gsw, "missing GSW")

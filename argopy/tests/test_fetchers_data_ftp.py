@@ -21,7 +21,7 @@ from argopy.errors import (
 )
 from argopy.utilities import is_list_of_strings, isconnected
 from argopy.options import check_gdac_path
-from . import (
+from utils import (
     requires_ftp,
     safe_to_server_errors
 )
@@ -93,9 +93,9 @@ def assert_fetcher(this_fetcher, cachable=False):
         assert is_list_of_strings(this_fetcher.cachepath)
 
 
-@skip_for_debug
+# @skip_for_debug
 @requires_ftp
-class Test_Backend:
+class TestBackend:
     src = 'ftp'
 
     # Create list of tests scenarios
@@ -110,17 +110,11 @@ class Test_Backend:
     def _fetcher(self, request):
         """ Fixture to create a FTP fetcher for a given host and access point """
         if isinstance(request.param, tuple):
-            if 'tutorial' not in request.param[0]:
-                N_RECORDS = 100
-            else:
-                N_RECORDS = None
+            N_RECORDS = None if 'tutorial' in request.param[0] else 100
             fetcher_args = {"src": self.src, "ftp": request.param[0], "cache": False, "N_RECORDS": N_RECORDS}
             yield create_fetcher(fetcher_args, request.param[1]).fetcher
         else:
-            if 'tutorial' not in request.param:
-                N_RECORDS = 100
-            else:
-                N_RECORDS = None
+            N_RECORDS = None if 'tutorial' in request.param else 100
             fetcher_args = {"src": self.src, "ftp": request.param, "cache": False, "N_RECORDS": N_RECORDS}
             # log.debug(fetcher_args)
             # log.debug(valid_access_points[0])
@@ -132,17 +126,11 @@ class Test_Backend:
         testcachedir = tempfile.mkdtemp()
         # log.debug(type(request.param))
         if isinstance(request.param, tuple):
-            if 'tutorial' not in request.param[0]:
-                N_RECORDS = 100
-            else:
-                N_RECORDS = None
+            N_RECORDS = None if 'tutorial' in request.param[0] else 100
             fetcher_args = {"src": self.src, "ftp": request.param[0], "cache": True, "cachedir": testcachedir, "N_RECORDS": N_RECORDS}
             yield create_fetcher(fetcher_args, request.param[1]).fetcher
         else:
-            if 'tutorial' not in request.param:
-                N_RECORDS = 100
-            else:
-                N_RECORDS = None
+            N_RECORDS = None if 'tutorial' in request.param else 100
             fetcher_args = {"src": self.src, "ftp": request.param, "cache": True, "cachedir": testcachedir, "N_RECORDS": N_RECORDS}
             # log.debug(fetcher_args)
             # log.debug(valid_access_points[0])

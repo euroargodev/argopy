@@ -23,7 +23,7 @@ from argopy.stores import (
 from argopy.stores.filesystems import new_fs
 from argopy.options import OPTIONS, check_gdac_path
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, InvalidDatasetStructure, FtpPathError
-from . import requires_connection, requires_connected_argovis, safe_to_server_errors
+from utils import requires_connection, requires_connected_argovis, safe_to_server_errors
 from argopy.utilities import (
     is_list_of_datasets,
     is_list_of_dicts,

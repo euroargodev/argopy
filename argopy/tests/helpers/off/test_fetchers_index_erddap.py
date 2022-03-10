@@ -9,7 +9,7 @@ from argopy.errors import (
     FileSystemHasNoCache,
     CacheFileNotFound
 )
-from . import requires_connected_erddap_index, safe_to_server_errors, ci_erddap_index
+from utils import requires_connected_erddap_index, safe_to_server_errors, ci_erddap_index
 
 ERDDAP_TIMEOUT = 3 * 60
 safe_to_no_cache = pytest.mark.skipif(True, reason="Cache disabled for erddap index fetcher")
