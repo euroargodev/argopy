@@ -50,7 +50,7 @@ ArgoSet.plot('trajectory')
 ```
 
 They are many more usages and fine-tuning to allow you to access and manipulate Argo data:
-- [filters at fetch time]() (standard vs expert users, automatically select QC flags or data mode, ...)
+- [filters at fetch time](https://argopy.readthedocs.io/en/latest/user_mode.html) (standard vs expert users, automatically select QC flags or data mode, ...)
 - [select data sources](https://argopy.readthedocs.io/en/latest/data_sources.html) (erddap, ftp, local, ...)
 - [manipulate data](https://argopy.readthedocs.io/en/latest/data_manipulation.html) (points, profiles, interpolations, binning, ...)
 - [visualisation](https://argopy.readthedocs.io/en/latest/visualisation.html) (trajectories, topography, histograms, ...)
