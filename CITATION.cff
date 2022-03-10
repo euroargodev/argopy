@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Maze"
+  given-names: "Guillaume"
+  orcid: "https://orcid.org/0000-0001-7231-2095"
+- family-names: "Balem"
+  given-names: "Kevin"
+  orcid: "https://orcid.org/0000-0002-4956-8698"
+title: "argopy"
+doi: 10.5281/zenodo.4010160
+url: "https://github.com/euroargodev/argopy"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Maze"
+      given-names: "Guillaume"
+      orcid: "https://orcid.org/0000-0001-7231-2095"
+    - family-names: "Balem"
+      given-names: "Kevin"
+      orcid: "https://orcid.org/0000-0002-4956-8698"
+  doi: "10.21105/joss.02425"
+  journal: "Journal of Open Source Software"
+  title: "argopy: A Python library for Argo ocean data analysis"
+  year: 2020
+  volume: 5
+  issue: 53
+  page: 2425

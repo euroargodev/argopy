@@ -3,6 +3,21 @@
 What's New
 ==========
 
+|release date| |PyPI| |Conda|
+
+|pypi dwn| |conda dwn|
+
+.. |pypi dwn| image:: https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads
+   :target: //pypi.org/project/argopy/
+.. |conda dwn| image:: https://img.shields.io/conda/dn/conda-forge/argopy?label=Conda%20downloads
+   :target: //anaconda.org/conda-forge/argopy
+.. |PyPI| image:: https://img.shields.io/pypi/v/argopy
+   :target: //pypi.org/project/argopy/
+.. |Conda| image:: https://anaconda.org/conda-forge/argopy/badges/version.svg
+   :target: //anaconda.org/conda-forge/argopy
+.. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy
+   :target: //github.com/euroargodev/argopy/releases
+
 v0.1.10 (4 Mar. 2022)
 ---------------------
 
