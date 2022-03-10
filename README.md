@@ -1,115 +1,66 @@
-|<img src="https://raw.githubusercontent.com/euroargodev/argopy/master/docs/_static/argopy_logo_long.png" alt="argopy logo" width="400"/>|``argopy`` is a python library that aims to ease Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators|
-|:---------:|:-------|
-|Documentation|[![JOSS](https://img.shields.io/badge/DOI-10.21105%2Fjoss.02425-brightgreen)](//dx.doi.org/10.21105/joss.02425) <br>[![Documentation](https://img.shields.io/static/v1?label=&message=Read%20the%20documentation&color=blue&logo=read-the-docs&logoColor=white)](https://argopy.readthedocs.io) <br>[![Gitter](https://badges.gitter.im/Argo-floats/argopy.svg)](https://gitter.im/Argo-floats/argopy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)|
-|Usage|![License](https://img.shields.io/github/license/euroargodev/argopy) [![Python version](https://img.shields.io/pypi/pyversions/argopy)](//pypi.org/project/argopy/)<br>[![pypi dwn](https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads)](//pypi.org/project/argopy/) [![conda dwn](https://img.shields.io/conda/dn/conda-forge/argopy?label=Conda%20downloads)](//anaconda.org/conda-forge/argopy)|
-|Release|[![](https://img.shields.io/github/release-date/euroargodev/argopy)](//github.com/euroargodev/argopy/releases) [![PyPI](https://img.shields.io/pypi/v/argopy)](//pypi.org/project/argopy/) [![Conda](https://anaconda.org/conda-forge/argopy/badges/version.svg)](//anaconda.org/conda-forge/argopy)|
-|Development|![tests in FREE env](https://github.com/euroargodev/argopy/actions/workflows/pytests-free.yml/badge.svg) ![tests in DEV env](https://github.com/euroargodev/argopy/actions/workflows/pytests-dev.yml/badge.svg) [![Documentation Status](https://img.shields.io/readthedocs/argopy?logo=readthedocs)](https://argopy.readthedocs.io/en/latest/?badge=latest) <br>[![codecov](https://codecov.io/gh/euroargodev/argopy/branch/master/graph/badge.svg)](https://codecov.io/gh/euroargodev/argopy) <br>[![lifecycle](https://img.shields.io/badge/lifecycle-stable-green.svg)](https://www.tidyverse.org/lifecycle/#stable)|
-|Data sources|![Erddap status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_erddap.json) ![Argovis status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_argovis.json) <br>![Profile count](https://img.shields.io/endpoint?label=Number%20of%20Argo%20profiles%3A&style=social&url=https%3A%2F%2Fapi.ifremer.fr%2Fargopy%2Fdata%2FARGO-FULL.json) <br>[![Statuspage](https://img.shields.io/static/v1?label=&message=Check%20all%20Argo%20monitors&color=blue&logo=statuspage&logoColor=white)](https://argopy.statuspage.io)|
+|<img src="https://raw.githubusercontent.com/euroargodev/argopy/master/docs/_static/argopy_logo_long.png" alt="argopy logo" width="200"/><br>``argopy`` is a python library dedicated to Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators|
+|:---------:|
+|[![JOSS](https://img.shields.io/badge/DOI-10.21105%2Fjoss.02425-brightgreen)](//dx.doi.org/10.21105/joss.02425) ![CI](https://github.com/euroargodev/argopy/actions/workflows/pytests-free.yml/badge.svg) [![codecov](https://codecov.io/gh/euroargodev/argopy/branch/master/graph/badge.svg)](https://codecov.io/gh/euroargodev/argopy) [![Documentation Status](https://img.shields.io/readthedocs/argopy?logo=readthedocs)](https://argopy.readthedocs.io/en/latest/?badge=latest) [![PyPI](https://img.shields.io/pypi/v/argopy)](//pypi.org/project/argopy/)|
 
-## Install
+### Documentation
 
-Install the last release with conda:
+The official documentation is hosted on ReadTheDocs.org: https://argopy.readthedocs.io
+
+### Install
+
+Binary installers for the latest released version are available at the [Python Package Index (PyPI)](https://pypi.org/project/argopy/) and on [Conda](https://anaconda.org/conda-forge/argopy).
+
 ```bash
+# conda
 conda install -c conda-forge argopy
-```
-or pip:
+````
 ```bash
+# or PyPI
 pip install argopy
 ````
 
-But since this is a young library in active development, use direct installation from this repo to benefit from the latest version:
+``argopy`` is continuously tested to work under most OS (Linux, Mac, Windows) and with python versions 3.7 and 3.8.
 
-```bash
-pip install git+http://github.com/euroargodev/argopy.git@master
-```
-
-The ``argopy`` library is tested to work under most OS (Linux, Mac, Windows) and with python versions 3.7 and 3.8.
-
-## Usage
+### Usage
 
 [![badge](https://img.shields.io/static/v1.svg?logo=Jupyter&label=Binder&message=Click+here+to+try+argopy+online+!&color=blue&style=for-the-badge)](https://mybinder.org/v2/gh/euroargodev/binder-sandbox/main?urlpath=git-pull%3Frepo%3Dhttps%253A%252F%252Fgithub.com%252Feuroargodev%252Fargopy%26urlpath%3Dlab%252Ftree%252Fargopy%252Fdocs%252Ftryit.ipynb%26branch%3Dmaster)
 
-### Fetching Argo Data
-
-Import the data fetcher:
 ```python
+# Import the main fetcher:
 from argopy import DataFetcher as ArgoDataFetcher
 ```
-and then, set it up to request data for a **specific space/time domain**:
 ```python
-argo_loader = ArgoDataFetcher().region([-85,-45,10.,20.,0,10.])
-argo_loader = ArgoDataFetcher().region([-85,-45,10.,20.,0,1000.,'2012-01','2012-12'])
+# Define what you want to fetch... 
+# a region:
+ArgoSet = ArgoDataFetcher().region([-85,-45,10.,20.,0,10.])
+# floats:
+ArgoSet = ArgoDataFetcher().float([6902746, 6902747, 6902757, 6902766])
+# or specific profiles:
+ArgoSet = ArgoDataFetcher().profile(6902746, 34)
 ```
-for **profiles of a given float**: 
 ```python
-argo_loader = ArgoDataFetcher().profile(6902746, 34)
-argo_loader = ArgoDataFetcher().profile(6902746, np.arange(12,45))
-argo_loader = ArgoDataFetcher().profile(6902746, [1,12])
+# then fetch and get data as xarray datasets:
+ds = ArgoSet.load().data
+# or
+ds = ArgoSet.to_xarray()
 ```
-or for **one or a collection of floats**:
 ```python
-argo_loader = ArgoDataFetcher().float(6902746)
-argo_loader = ArgoDataFetcher().float([6902746, 6902747, 6902757, 6902766])
+# you can even plot some information:
+ArgoSet.plot('trajectory')    
 ```
 
-Once your fetcher is initialized you can trigger fetch/load data like this:
-```python
-ds = argo_loader.to_xarray()  # or:
-ds = argo_loader.load().data
-```
-By default fetched data are returned in memory as [xarray.DataSet](http://xarray.pydata.org/en/stable/data-structures.html#dataset). 
-From there, it is easy to convert it to other formats like a [Pandas dataframe](https://pandas.pydata.org/pandas-docs/stable/getting_started/dsintro.html#dataframe):
-```python
-df = ArgoDataFetcher().profile(6902746, 34).load().data.to_dataframe()
-```
+They are many more usages and fine-tuning to allow you to access and manipulate Argo data:
+- [filters at fetch time](https://argopy.readthedocs.io/en/latest/user_mode.html) (standard vs expert users, automatically select QC flags or data mode, ...)
+- [select data sources](https://argopy.readthedocs.io/en/latest/data_sources.html) (erddap, ftp, local, ...)
+- [manipulate data](https://argopy.readthedocs.io/en/latest/data_manipulation.html) (points, profiles, interpolations, binning, ...)
+- [visualisation](https://argopy.readthedocs.io/en/latest/visualisation.html) (trajectories, topography, histograms, ...)
+- [tools for Quality Control](https://argopy.readthedocs.io/en/latest/data_quality_control.html) (OWC, figures, ...)
+- [improve performances](https://argopy.readthedocs.io/en/latest/performances.html) (caching, parallel data fetching)
 
-or to export it to files:
-```python
-ds = ArgoDataFetcher().region([-85,-45,10.,20.,0,100.]).to_xarray()
-ds.to_netcdf('my_selection.nc')
-# or by profiles:
-ds.argo.point2profile().to_netcdf('my_selection.nc')
-```
+Just check out [the documentation for more](https://argopy.readthedocs.io) ! 
 
+## Development and contributions 
 
-### Fetching only Argo index
-Argo index are returned as pandas dataframe. Index fetchers works similarly to data fetchers.
+See our development roadmap here: https://github.com/euroargodev/argopy/milestone/3
 
-Load the Argo index fetcher:
-```python
-    from argopy import IndexFetcher as ArgoIndexFetcher
-```
-then, set it up to request index for a **specific space/time domain**:
-```python
-    index_loader = ArgoIndexFetcher().region([-85,-45,10.,20.])
-    index_loader = ArgoIndexFetcher().region([-85,-45,10.,20.,'2012-01','2014-12'])
-```
-or for **one or a collection of floats**:
-```python
-    index_loader = ArgoIndexFetcher().float(6902746)
-    index_loader = ArgoIndexFetcher().float([6902746, 6902747, 6902757, 6902766])   
-```
-Once your fetcher is initialized you can trigger fetch/load index like this:
-```python
-    df = index_loader.to_dataframe()  # or
-    df = index_loader.load().index
-```
-
-Note that like the data fetcher, the index fetcher can use different sources, a local copy of the GDAC ftp for instance:
-```python
-    index_fetcher = ArgoIndexFetcher(src='localftp', path_ftp='/path/to/your/argo/ftp/', index_file='ar_index_global_prof.txt')
-```
-
-### Visualisation
-For plottings methods, you'll need `matplotlib` and possibly `cartopy` and `seaborn` installed.
-Argo Data and Index fetchers provide direct plotting methods, for instance:
-```python    
-    ArgoDataFetcher().float([6902745, 6902746]).plot('trajectory')    
-```
-![index_traj](https://github.com/euroargodev/argopy/raw/master/docs/_static/trajectory_sample.png)
-
-See the [documentation page for more examples](https://argopy.readthedocs.io/en/latest/visualisation.html).
-
-## Development roadmap
-
-See milestone here: https://github.com/euroargodev/argopy/milestone/3
+Checkout [the contribution page](https://argopy.readthedocs.io/en/latest/contributing.html) if you want to get involved and help maintain or develop ``argopy``.

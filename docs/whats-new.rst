@@ -3,6 +3,10 @@
 What's New
 ==========
 
+|release date| |PyPI| |Conda|
+
+|pypi dwn| |conda dwn|
+
 v0.1.11 (X XXX. 2022)
 ---------------------
 
@@ -463,3 +467,15 @@ v0.1.0 (17 Mar. 2020)
 - Initial release.
 
 - Erddap data fetcher
+
+.. |pypi dwn| image:: https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads
+   :target: //pypi.org/project/argopy/
+.. |conda dwn| image:: https://img.shields.io/conda/dn/conda-forge/argopy?label=Conda%20downloads
+   :target: //anaconda.org/conda-forge/argopy
+.. |PyPI| image:: https://img.shields.io/pypi/v/argopy
+   :target: //pypi.org/project/argopy/
+.. |Conda| image:: https://anaconda.org/conda-forge/argopy/badges/version.svg
+   :target: //anaconda.org/conda-forge/argopy
+.. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy
+   :target: //github.com/euroargodev/argopy/releases
+   
