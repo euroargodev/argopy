@@ -1,6 +1,10 @@
 Installation
 ============
 
+|License| |Python version| |Anaconda-Server Badge|
+
+|pypi dwn| |conda dwn|
+
 Required dependencies
 ^^^^^^^^^^^^^^^^^^^^^
 
@@ -15,7 +19,6 @@ Required dependencies
 - gsw
 - aiohttp
 - packaging
-
 
 Note that Erddapy_ is required because `erddap <https://coastwatch.pfeg.noaa.gov/erddap/information.html>`_ is the default data fetching backend.
 
@@ -57,4 +60,26 @@ you can also work with the latest version:
     pip install git+http://github.com/euroargodev/argopy.git@master
 
 .. _Erddapy: https://github.com/ioos/erddapy
-
+.. |Gitter| image:: https://badges.gitter.im/Argo-floats/argopy.svg
+   :target: https://gitter.im/Argo-floats/argopy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge
+.. |License| image:: https://img.shields.io/github/license/euroargodev/argopy
+.. |Python version| image:: https://img.shields.io/pypi/pyversions/argopy
+   :target: //pypi.org/project/argopy/
+.. |Anaconda-Server Badge| image:: https://anaconda.org/conda-forge/argopy/badges/platforms.svg
+   :target: https://anaconda.org/conda-forge/argopy
+.. |pypi dwn| image:: https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads
+   :target: //pypi.org/project/argopy/
+.. |conda dwn| image:: https://img.shields.io/conda/dn/conda-forge/argopy?label=Conda%20downloads
+   :target: //anaconda.org/conda-forge/argopy
+.. |PyPI| image:: https://img.shields.io/pypi/v/argopy
+   :target: //pypi.org/project/argopy/
+.. |Conda| image:: https://anaconda.org/conda-forge/argopy/badges/version.svg
+   :target: //anaconda.org/conda-forge/argopy
+.. |tests in FREE env| image:: https://github.com/euroargodev/argopy/actions/workflows/pytests-free.yml/badge.svg
+.. |tests in DEV env| image:: https://github.com/euroargodev/argopy/actions/workflows/pytests-dev.yml/badge.svg
+.. |image20| image:: https://img.shields.io/github/release-date/euroargodev/argopy
+   :target: //github.com/euroargodev/argopy/releases
+.. |image21| image:: https://img.shields.io/github/release-date/euroargodev/argopy
+   :target: //github.com/euroargodev/argopy/releases
+.. |badge| image:: https://img.shields.io/static/v1.svg?logo=Jupyter&label=Binder&message=Click+here+to+try+argopy+online+!&color=blue&style=for-the-badge
+   :target: https://mybinder.org/v2/gh/euroargodev/binder-sandbox/main?urlpath=git-pull%3Frepo%3Dhttps%253A%252F%252Fgithub.com%252Feuroargodev%252Fargopy%26urlpath%3Dlab%252Ftree%252Fargopy%252Fdocs%252Ftryit.ipynb%26branch%3Dmaster
