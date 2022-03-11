@@ -10,6 +10,7 @@ import importlib
 import pytest
 import fsspec
 from aiohttp.client_exceptions import ServerDisconnectedError, ClientResponseError, ClientConnectorError
+import ftplib
 from packaging import version
 import warnings
 from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound, FtpPathError
@@ -222,6 +223,11 @@ def safe_to_server_errors(test_func, *args, **kwargs):
             msg = "\nCannot connect to the FTP path index file\n%s" % str(e.args)
             xmsg = "Failing because cannot connect to the FTP path index file, but should work"
             pass
+        except ftplib.error_temp as e:
+            msg = "\nCannot connect to the FTP server\n%s" % str(e.args)
+            xmsg = "Failing because cannot connect to the FTP server, but should work"
+            pass
+
         except Exception as e:
             warnings.warn("\nUnknown server error:\n%s" % str(e.args))
             raise

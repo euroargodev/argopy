@@ -86,7 +86,7 @@ def create_fetcher(fetcher_args, access_point, xfail=False):
             f = f.profile(*access_point['profile'])
         elif "region" in access_point:
             f = f.region(access_point['region'])
-    except FtpPathError:  # I dont know why this error is not catched by safe_to_server_errors
+    except FtpPathError:  # I don't know why this error is not caught by safe_to_server_errors
         if not xfail:
             pytest.xfail("Fails because we could not create the fetcher")
         else:
@@ -217,10 +217,7 @@ class Test_BackendParallel:
     @pytest.fixture
     def _fetcher(self, request):
         """ Fixture to create a FTP fetcher for a given host and access point """
-        if 'tutorial' not in request.param[0]:
-            N_RECORDS = 100
-        else:
-            N_RECORDS = None
+        N_RECORDS = None if 'tutorial' in request.param[0] else 100  # Make sure we're not going to load the full index
         fetcher_args = {"src": self.src, "ftp": request.param[0], "cache": False, **request.param[1], "N_RECORDS": N_RECORDS}
         yield create_fetcher(fetcher_args, request.param[2]).fetcher
 
