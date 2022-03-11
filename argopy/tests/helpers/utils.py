@@ -202,7 +202,7 @@ def safe_to_server_errors(test_func, *args, **kwargs):
             pass
         except ServerDisconnectedError as e:
             # We can't do anything about this !
-            msg = "\n We were disconnected from server !\n%s" % str(e.args)
+            msg = "\nWe were disconnected from server !\n%s" % str(e.args)
             xmsg = "Failing because we were disconnected from the server, but should work"
             pass
         except ClientResponseError as e:
