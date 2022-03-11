@@ -527,7 +527,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             # pyarrow.lib.ArrowInvalid: In CSV column  # 7: CSV conversion error to timestamp[s, tz=utc]: expected a
             # zone offset in '20181011180520'. If these timestamps are in local time, parse them as timestamps without
             # timezone, then call assume_timezone. If using strptime, ensure '%z' is in the format string.
-            # So I removed the option in
+            # So I removed the option in c0a15ec68013c78d83f2689a8f9c062fdfa160ab
             return this_table
 
         if not hasattr(self, "index") or force:

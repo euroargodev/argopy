@@ -546,13 +546,15 @@ def netcdf_and_hdf5_versions():
     return [("libhdf5", libhdf5_version), ("libnetcdf", libnetcdf_version)]
 
 
-def show_versions(file=sys.stdout):  # noqa: C901
+def show_versions(file=sys.stdout, conda=False):  # noqa: C901
     """ Print the versions of argopy and its dependencies
 
     Parameters
     ----------
     file : file-like, optional
         print to the given file-like object. Defaults to sys.stdout.
+    conda: bool, optional
+        format versions to be copy/pasted on a conda environment file (default, False)
     """
     sys_info = get_sys_info()
 
@@ -561,64 +563,71 @@ def show_versions(file=sys.stdout):  # noqa: C901
     except Exception as e:
         print(f"Error collecting netcdf / hdf5 version: {e}")
 
-    deps = [
-        # (MODULE_NAME, f(mod) -> mod version)
-        # In REQUIREMENTS:
-        ("argopy", lambda mod: mod.__version__),
-        ("xarray", lambda mod: mod.__version__),
-        ("scipy", lambda mod: mod.__version__),
-        ("sklearn", lambda mod: mod.__version__),
-        ("erddapy", lambda mod: mod.__version__),
-        ("fsspec", lambda mod: mod.__version__),
-        ("aiohttp", lambda mod: mod.__version__),
+    DEPS = {
+        'core': sorted([
+            ("argopy", lambda mod: mod.__version__),
+            ("xarray", lambda mod: mod.__version__),
+            ("scipy", lambda mod: mod.__version__),
+            ("netCDF4", lambda mod: mod.__version__),
+            ("sklearn", lambda mod: mod.__version__),  # Using 'preprocessing.LabelEncoder()' in xarray accessor, used by filters
+            ("erddapy", lambda mod: mod.__version__),  # This could go away from requirements ?
+            ("fsspec", lambda mod: mod.__version__),
+            ("packaging", lambda mod: mod.__version__),  # will come with xarray, Using 'version' to make API compatible with several fsspec releases
+            ("dask", lambda mod: mod.__version__),  # This could go away from requirements ?
+            ("toolz", lambda mod: mod.__version__),
+            ("gsw", lambda mod: mod.__version__),   # Used by xarray accessor to compute new variables
+        ]),
+        'ext.misc': sorted([
+            ("h5py", lambda mod: mod.__version__),
+            ("pyarrow", lambda mod: mod.__version__),
+            ("tqdm", lambda mod: mod.__version__),
+            ("distributed", lambda mod: mod.__version__),
+        ]),
+        'ext.plotters': sorted([
+            ("matplotlib", lambda mod: mod.__version__),
+            ("cartopy", lambda mod: mod.__version__),
+            ("seaborn", lambda mod: mod.__version__),
+            ("IPython", lambda mod: mod.__version__),
+            ("ipywidgets", lambda mod: mod.__version__),
+            ("ipykernel", lambda mod: mod.__version__),
+        ]),
+        'dev': sorted([
+            ("zarr", lambda mod: mod.__version__),
 
-        ("matplotlib", lambda mod: mod.__version__),
-        ("gsw", lambda mod: mod.__version__),
-        ("netCDF4", lambda mod: mod.__version__),
-        ("dask", lambda mod: mod.__version__),
-        # ("toolz", lambda mod: mod.__version__),
+            ("bottleneck", lambda mod: mod.__version__),
+            ("cftime", lambda mod: mod.__version__),
+            ("conda", lambda mod: mod.__version__),
+            ("nc_time_axis", lambda mod: mod.__version__),
 
-        ("pyarrow", lambda mod: mod.__version__),
-        ("zarr", lambda mod: mod.__version__),
+            ("numpy", lambda mod: mod.__version__),  # will come with xarray and pandas
+            ("pandas", lambda mod: mod.__version__),  # will come with xarray
 
-        ("seaborn", lambda mod: mod.__version__),
-        ("IPython", lambda mod: mod.__version__),
+            ("pip", lambda mod: mod.__version__),
+            ("pytest", lambda mod: mod.__version__),  # will come with pandas
+            ("setuptools", lambda mod: mod.__version__),  # Provides: pkg_resources
+            ("sphinx", lambda mod: mod.__version__),
+        ]),
+    }
 
-        ("bottleneck", lambda mod: mod.__version__),
-        ("cartopy", lambda mod: mod.__version__),
-        ("cftime", lambda mod: mod.__version__),
-        ("conda", lambda mod: mod.__version__),
-        ("distributed", lambda mod: mod.__version__),
-        ("nc_time_axis", lambda mod: mod.__version__),
-
-        ("numpy", lambda mod: mod.__version__),
-        ("pandas", lambda mod: mod.__version__),
-        ("packaging", lambda mod: mod.__version__),
-        ("pip", lambda mod: mod.__version__),
-        ("pytest", lambda mod: mod.__version__),
-        ("setuptools", lambda mod: mod.__version__),
-        ("sphinx", lambda mod: mod.__version__),
-
-        ("tqdm", lambda mod: mod.__version__),
-        ("ipykernel", lambda mod: mod.__version__),
-        ("ipywidgets", lambda mod: mod.__version__),
-    ]
-
-    deps_blob = list()
-    for (modname, ver_f) in deps:
-        try:
-            if modname in sys.modules:
-                mod = sys.modules[modname]
-            else:
-                mod = importlib.import_module(modname)
-        except Exception:
-            deps_blob.append((modname, None))
-        else:
+    DEPS_blob = {}
+    for level in DEPS.keys():
+        deps = DEPS[level]
+        deps_blob = list()
+        for (modname, ver_f) in deps:
             try:
-                ver = ver_f(mod)
-                deps_blob.append((modname, ver))
+                if modname in sys.modules:
+                    mod = sys.modules[modname]
+                else:
+                    mod = importlib.import_module(modname)
             except Exception:
-                deps_blob.append((modname, "installed"))
+                deps_blob.append((modname, None))
+            else:
+                try:
+                    ver = ver_f(mod)
+                    deps_blob.append((modname, ver))
+                except Exception:
+                    deps_blob.append((modname, "installed"))
+        DEPS_blob[level] = deps_blob
 
     print("\nINSTALLED VERSIONS", file=file)
     print("------------------", file=file)
@@ -626,9 +635,19 @@ def show_versions(file=sys.stdout):  # noqa: C901
     for k, stat in sys_info:
         print(f"{k}: {stat}", file=file)
 
-    print("", file=file)
-    for k, stat in deps_blob:
-        print(f"{k}: {stat}", file=file)
+    # print("", file=file)
+    for level in DEPS_blob:
+        if conda:
+            print("\n# %s:" % level.upper(), file=file)
+        else:
+            print("\n%s" % level.upper(), file=file)
+        deps_blob = DEPS_blob[level]
+        for k, stat in deps_blob:
+            if conda:
+                print(f"  - {k} = {stat}", file=file)  # Format like a conda env line, useful to update ci/requirements
+            else:
+                print(f"\t{k}: {stat}", file=file)
+
 
 
 def show_options(file=sys.stdout):  # noqa: C901
