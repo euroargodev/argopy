@@ -72,6 +72,7 @@ valid_parallel_opts = [
 ]
 
 
+@requires_ftp
 def create_fetcher(fetcher_args, access_point):
     """ Create a fetcher for given facade options and access point """
     f = ArgoDataFetcher(**fetcher_args)
@@ -112,10 +113,14 @@ class TestBackend:
         if isinstance(request.param, tuple):
             N_RECORDS = None if 'tutorial' in request.param[0] else 100
             fetcher_args = {"src": self.src, "ftp": request.param[0], "cache": False, "N_RECORDS": N_RECORDS}
+            if not isconnected(fetcher_args['ftp']):
+                pytest.xfail("Fails because %s not available" % fetcher_args['ftp'])
             yield create_fetcher(fetcher_args, request.param[1]).fetcher
         else:
             N_RECORDS = None if 'tutorial' in request.param else 100
             fetcher_args = {"src": self.src, "ftp": request.param, "cache": False, "N_RECORDS": N_RECORDS}
+            if not isconnected(fetcher_args['ftp']):
+                pytest.xfail("Fails because %s not available" % fetcher_args['ftp'])
             # log.debug(fetcher_args)
             # log.debug(valid_access_points[0])
             yield create_fetcher(fetcher_args, valid_access_points[0]).fetcher  # Use 1st valid access point
