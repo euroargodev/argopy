@@ -122,7 +122,7 @@ class TestBackend:
         if cached:
             testcachedir = tempfile.mkdtemp()
             fetcher_args = {**fetcher_args, **{"cache": True, "cachedir": testcachedir}}
-        if not isconnected(fetcher_args['ftp']):
+        if not isconnected(fetcher_args['ftp']+"/"+"ar_index_global_prof.txt"):
             pytest.xfail("Fails because %s not available" % fetcher_args['ftp'])
         else:
             return fetcher_args, access_point, testcachedir

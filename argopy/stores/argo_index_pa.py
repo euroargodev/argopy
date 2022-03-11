@@ -107,9 +107,11 @@ class ArgoIndexStoreProto(ABC):
             )
         elif "ftp" in split_protocol(host)[0]:
             if "ifremer" not in host and "usgodae" not in host:
-                raise FtpPathError("Unknown Argo ftp: %s" % host)
+                raise FtpPathError("Unknown Argo ftp: %s. Raise on issue if you wish to add your own to the "
+                                   "valid list of FTP servers: "
+                                   "https://github.com/euroargodev/argopy/issues/new?title=New%20FTP%20server" % host)
             self.fs["index"] = ftpstore(
-                host=split_protocol(host)[-1].split("/")[0],  # eg: ftp.ifremer.fr
+                host=split_protocol(host)[-1].split("/")[0],  # host eg: ftp.ifremer.fr
                 cache=cache,
                 cachedir=cachedir,
                 timeout=timeout,
