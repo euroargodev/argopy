@@ -107,39 +107,37 @@ class TestBackend:
         "%s, %s" % ((lambda x: 'file' if x is None else x)(split_protocol(fix[0])[0]), list(fix[1].keys())[0]) for fix in
         fixtures]
 
+    def setup_fetcher(self, this_request, cached=False):
+        """Helper method to set-up options for a fetcher creation"""
+        if isinstance(this_request.param, tuple):
+            ftp = this_request.param[0]
+            access_point = this_request.param[1]
+        else:
+            ftp = this_request.param
+            access_point = valid_access_points[0]  # Use 1st valid access point
+
+        N_RECORDS = None if 'tutorial' in ftp else 100  # Make sure we're not going to load the full index
+        testcachedir = None
+        fetcher_args = {"src": self.src, "ftp": ftp, "cache": False, "N_RECORDS": N_RECORDS}
+        if cached:
+            testcachedir = tempfile.mkdtemp()
+            fetcher_args = {**fetcher_args, **{"cache": True, "cachedir": testcachedir}}
+        if not isconnected(fetcher_args['ftp']):
+            pytest.xfail("Fails because %s not available" % fetcher_args['ftp'])
+        else:
+            return fetcher_args, access_point, testcachedir
+
     @pytest.fixture
     def _fetcher(self, request):
         """ Fixture to create a FTP fetcher for a given host and access point """
-        if isinstance(request.param, tuple):
-            N_RECORDS = None if 'tutorial' in request.param[0] else 100
-            fetcher_args = {"src": self.src, "ftp": request.param[0], "cache": False, "N_RECORDS": N_RECORDS}
-            if not isconnected(fetcher_args['ftp']):
-                pytest.xfail("Fails because %s not available" % fetcher_args['ftp'])
-            yield create_fetcher(fetcher_args, request.param[1]).fetcher
-        else:
-            N_RECORDS = None if 'tutorial' in request.param else 100
-            fetcher_args = {"src": self.src, "ftp": request.param, "cache": False, "N_RECORDS": N_RECORDS}
-            if not isconnected(fetcher_args['ftp']):
-                pytest.xfail("Fails because %s not available" % fetcher_args['ftp'])
-            # log.debug(fetcher_args)
-            # log.debug(valid_access_points[0])
-            yield create_fetcher(fetcher_args, valid_access_points[0]).fetcher  # Use 1st valid access point
+        fetcher_args, access_point, dummy = self.setup_fetcher(request, cached=False)
+        yield create_fetcher(fetcher_args, access_point).fetcher
 
     @pytest.fixture
     def _cached_fetcher(self, request):
         """ Fixture to create a FTP cached fetcher for a given host and access point """
-        testcachedir = tempfile.mkdtemp()
-        # log.debug(type(request.param))
-        if isinstance(request.param, tuple):
-            N_RECORDS = None if 'tutorial' in request.param[0] else 100
-            fetcher_args = {"src": self.src, "ftp": request.param[0], "cache": True, "cachedir": testcachedir, "N_RECORDS": N_RECORDS}
-            yield create_fetcher(fetcher_args, request.param[1]).fetcher
-        else:
-            N_RECORDS = None if 'tutorial' in request.param else 100
-            fetcher_args = {"src": self.src, "ftp": request.param, "cache": True, "cachedir": testcachedir, "N_RECORDS": N_RECORDS}
-            # log.debug(fetcher_args)
-            # log.debug(valid_access_points[0])
-            yield create_fetcher(fetcher_args, valid_access_points[0]).fetcher  # Use 1st valid access point
+        fetcher_args, access_point, testcachedir = self.setup_fetcher(request, cached=True)
+        yield create_fetcher(fetcher_args, access_point).fetcher
         shutil.rmtree(testcachedir)
 
     @safe_to_server_errors
