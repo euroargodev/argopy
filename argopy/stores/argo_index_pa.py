@@ -69,15 +69,18 @@ class ArgoIndexStoreProto(ABC):
         >>> idx.records_per_wmo
 
     """
-    backend = '?'
+
+    backend = "?"
     search_type = {}
 
-    def __init__(self,
-                 host: str = "https://data-argo.ifremer.fr",
-                 index_file: str = "ar_index_global_prof.txt",
-                 cache: bool = False,
-                 cachedir: str = "",
-                 timeout: int = 0):
+    def __init__(
+        self,
+        host: str = "https://data-argo.ifremer.fr",
+        index_file: str = "ar_index_global_prof.txt",
+        cache: bool = False,
+        cachedir: str = "",
+        timeout: int = 0,
+    ):
         """ Create an Argo index file store
 
             Parameters
@@ -92,41 +95,50 @@ class ArgoIndexStoreProto(ABC):
         self.host = host
         self.index_file = index_file
         self.cache = cache
-        self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
+        self.cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
         timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
         self.fs = {}
         if split_protocol(host)[0] is None:
-            self.fs['index'] = filestore(cache=cache, cachedir=cachedir)
-        elif 'https' in split_protocol(host)[0]:
+            self.fs["index"] = filestore(cache=cache, cachedir=cachedir)
+        elif "https" in split_protocol(host)[0]:
             # Only for https://data-argo.ifremer.fr (much faster than the ftp servers)
-            self.fs['index'] = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
-        elif 'ftp' in split_protocol(host)[0]:
-            if 'ifremer' not in host and 'usgodae' not in host:
+            self.fs["index"] = httpstore(
+                cache=cache, cachedir=cachedir, timeout=timeout, size_policy="head"
+            )
+        elif "ftp" in split_protocol(host)[0]:
+            if "ifremer" not in host and "usgodae" not in host:
                 raise FtpPathError("Unknown Argo ftp: %s" % host)
-            self.fs['index'] = ftpstore(host=split_protocol(host)[-1].split('/')[0],  # eg: ftp.ifremer.fr
-                                        cache=cache,
-                                        cachedir=cachedir,
-                                        timeout=timeout,
-                                        block_size=1000*(2**20))
+            self.fs["index"] = ftpstore(
+                host=split_protocol(host)[-1].split("/")[0],  # eg: ftp.ifremer.fr
+                cache=cache,
+                cachedir=cachedir,
+                timeout=timeout,
+                block_size=1000 * (2 ** 20),
+            )
         else:
-            raise FtpPathError("Unknown protocol for an Argo index store: %s" % split_protocol(host)[0])
-        self.fs['search'] = memorystore(cache, cachedir)  # Manage search results
+            raise FtpPathError(
+                "Unknown protocol for an Argo index store: %s" % split_protocol(host)[0]
+            )
+        self.fs["search"] = memorystore(cache, cachedir)  # Manage search results
 
-        self.index_path = self.fs['index'].fs.sep.join([self.host, self.index_file])
-        if not self.fs['index'].exists(self.index_path):
+        self.index_path = self.fs["index"].fs.sep.join([self.host, self.index_file])
+        if not self.fs["index"].exists(self.index_path):
             raise FtpPathError("Index file does not exist: %s" % self.index_path)
 
     def __repr__(self):
         summary = ["<argoindex.%s>" % self.backend]
         summary.append("Host: %s" % self.host)
         summary.append("Index: %s" % self.index_file)
-        if hasattr(self, 'index'):
+        if hasattr(self, "index"):
             summary.append("Loaded: True (%i records)" % self.N_RECORDS)
         else:
             summary.append("Loaded: False")
-        if hasattr(self, 'search'):
-            match = 'matches' if self.N_MATCH > 1 else 'match'
-            summary.append("Searched: True (%i %s, %0.4f%%)" % (self.N_MATCH, match, self.N_MATCH * 100 / self.N_RECORDS))
+        if hasattr(self, "search"):
+            match = "matches" if self.N_MATCH > 1 else "match"
+            summary.append(
+                "Searched: True (%i %s, %0.4f%%)"
+                % (self.N_MATCH, match, self.N_MATCH * 100 / self.N_RECORDS)
+            )
         else:
             summary.append("Searched: False")
         return "\n".join(summary)
@@ -156,13 +168,8 @@ class ArgoIndexStoreProto(ABC):
         cname = "full"
 
         if "BOX" in self.search_type:
-            BOX = self.search_type['BOX']
-            cname = ("x=%0.2f/%0.2f;y=%0.2f/%0.2f") % (
-                BOX[0],
-                BOX[1],
-                BOX[2],
-                BOX[3],
-            )
+            BOX = self.search_type["BOX"]
+            cname = ("x=%0.2f/%0.2f;y=%0.2f/%0.2f") % (BOX[0], BOX[1], BOX[2], BOX[3],)
             if len(BOX) == 6:
                 cname = ("x=%0.2f/%0.2f;y=%0.2f/%0.2f;t=%s/%s") % (
                     BOX[0],
@@ -174,9 +181,9 @@ class ArgoIndexStoreProto(ABC):
                 )
 
         elif "WMO" in self.search_type:
-            WMO = self.search_type['WMO']
+            WMO = self.search_type["WMO"]
             if "CYC" in self.search_type:
-                CYC = self.search_type['CYC']
+                CYC = self.search_type["CYC"]
 
             prtcyc = lambda CYC, wmo: "WMO%i_%s" % (  # noqa: E731
                 wmo,
@@ -195,7 +202,7 @@ class ArgoIndexStoreProto(ABC):
                 cname = "%s" % cname
 
         elif "CYC" in self.search_type and "WMO" not in self.search_type:
-            CYC = self.search_type['CYC']
+            CYC = self.search_type["CYC"]
             if len(CYC) == 1:
                 cname = "CYC%i" % (CYC[0])
             else:
@@ -253,9 +260,9 @@ class ArgoIndexStoreProto(ABC):
     def N_FILES(self):
         """ Number of rows in search result or index if search not triggered """
         # Must work for all internal storage type (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
-        if hasattr(self, 'search'):
+        if hasattr(self, "search"):
             return self.search.shape[0]
-        elif hasattr(self, 'index'):
+        elif hasattr(self, "index"):
             return self.index.shape[0]
         else:
             raise InvalidDataset("You must, at least, load the index first !")
@@ -264,7 +271,7 @@ class ArgoIndexStoreProto(ABC):
     def N_RECORDS(self):
         """ Number of rows in the full index """
         # Must work for all internal storage type (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
-        if hasattr(self, 'index'):
+        if hasattr(self, "index"):
             return self.index.shape[0]
         else:
             raise InvalidDataset("Load the index first !")
@@ -273,12 +280,12 @@ class ArgoIndexStoreProto(ABC):
     def N_MATCH(self):
         """ Number of rows in search result """
         # Must work for all internal storage type (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
-        if hasattr(self, 'search'):
+        if hasattr(self, "search"):
             return self.search.shape[0]
         else:
             raise InvalidDataset("Initialised search first !")
 
-    def _write(self, fs, path, obj, format='pq'):
+    def _write(self, fs, path, obj, format="pq"):
         """ Write internal array object to file store
 
             Parameters
@@ -286,13 +293,13 @@ class ArgoIndexStoreProto(ABC):
             obj: :class:`pyarrow.Table` or :class:`pandas.DataFrame`
         """
         with fs.open(path, "wb") as handle:
-            if format in ['pq', 'parquet']:
+            if format in ["pq", "parquet"]:
                 pa.parquet.write_table(obj, handle)
-            elif format in ['pd']:
+            elif format in ["pd"]:
                 obj.to_pickle(handle)  # obj is a pandas dataframe
         return self
 
-    def _read(self, fs, path, format='pq'):
+    def _read(self, fs, path, format="pq"):
         """ Read internal array object from file store
 
             Returns
@@ -300,15 +307,15 @@ class ArgoIndexStoreProto(ABC):
             obj: :class:`pyarrow.Table` or :class:`pandas.DataFrame`
         """
         with fs.open(path, "rb") as handle:
-            if format in ['pq', 'parquet']:
+            if format in ["pq", "parquet"]:
                 obj = pa.parquet.read_table(handle)
-            elif format in ['pd']:
+            elif format in ["pd"]:
                 obj = pd.read_pickle(handle)
         return obj
 
     def clear_cache(self):
-        self.fs['index'].clear_cache()
-        self.fs['search'].clear_cache()
+        self.fs["index"].clear_cache()
+        self.fs["search"].clear_cache()
         return self
 
     @property
@@ -476,7 +483,8 @@ class ArgoIndexStoreProto(ABC):
 
 class indexstore_pyarrow(ArgoIndexStoreProto):
     """ Argo index store, using :class:`pyarrow.Table` as internal storage format """
-    backend = 'pyarrow'
+
+    backend = "pyarrow"
 
     def load(self, force=False, nrows=None):
         """ Load an Argo-index file content
@@ -509,54 +517,79 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                 read_options=csv.ReadOptions(use_threads=True, skip_rows=8),
                 convert_options=csv.ConvertOptions(
                     column_types={
-                        'date': pa.timestamp('s', tz='utc'),
-                        'date_update': pa.timestamp('s', tz='utc')
+                        "date": pa.timestamp("s"),  # , tz="utc"
+                        "date_update": pa.timestamp("s"),
                     },
-                    timestamp_parsers=['%Y%m%d%H%M%S']
-                )
+                    timestamp_parsers=["%Y%m%d%H%M%S"],
+                ),
             )
+            # Using tz="utc" was raising this error:
+            # pyarrow.lib.ArrowInvalid: In CSV column  # 7: CSV conversion error to timestamp[s, tz=utc]: expected a
+            # zone offset in '20181011180520'. If these timestamps are in local time, parse them as timestamps without
+            # timezone, then call assume_timezone. If using strptime, ensure '%z' is in the format string.
+            # So I removed the option in
             return this_table
 
-        if not hasattr(self, 'index') or force:
+        if not hasattr(self, "index") or force:
             this_path = self.index_path
-            if self.fs['index'].exists(this_path + '.gz'):
-                with self.fs['index'].open(this_path + '.gz', "rb") as fg:
+            if self.fs["index"].exists(this_path + ".gz"):
+                with self.fs["index"].open(this_path + ".gz", "rb") as fg:
                     with gzip.open(fg) as f:
                         self.index = read_csv(f, nrows=nrows)
-                        check_index_cols(self.index.column_names, convention=self.index_file.split(".")[0])
-                        log.debug("Argo index file loaded with pyarrow read_csv. src='%s'" % (this_path + '.gz'))
+                        check_index_cols(
+                            self.index.column_names,
+                            convention=self.index_file.split(".")[0],
+                        )
+                        log.debug(
+                            "Argo index file loaded with pyarrow read_csv. src='%s'"
+                            % (this_path + ".gz")
+                        )
             else:
-                with self.fs['index'].open(this_path, "rb") as f:
+                with self.fs["index"].open(this_path, "rb") as f:
                     self.index = read_csv(f, nrows=nrows)
-                    check_index_cols(self.index.column_names, convention=self.index_file.split(".")[0])
-                    log.debug("Argo index file loaded with pyarrow read_csv. src='%s'" % this_path)
+                    check_index_cols(
+                        self.index.column_names,
+                        convention=self.index_file.split(".")[0],
+                    )
+                    log.debug(
+                        "Argo index file loaded with pyarrow read_csv. src='%s'"
+                        % this_path
+                    )
 
         if self.N_RECORDS == 0:
             raise DataNotFound("No data found in the index")
         elif nrows is not None and self.N_RECORDS != nrows:
-            self.index = self.index[0:nrows-1]
+            self.index = self.index[0 : nrows - 1]
 
         return self
 
     def run(self, nrows=None):
         """ Filter index with search criteria """
-        if self.cache and self.fs['search'].exists(self.search_path):
-            log.debug("Search results already in memory as pyarrow table, loading... src='%s'" % (self.search_path))
-            self.search = self._read(self.fs['search'].fs, self.search_path)
+        if self.cache and self.fs["search"].exists(self.search_path):
+            log.debug(
+                "Search results already in memory as pyarrow table, loading... src='%s'"
+                % (self.search_path)
+            )
+            self.search = self._read(self.fs["search"].fs, self.search_path)
         else:
-            log.debug('Compute search from scratch ...')
+            log.debug("Compute search from scratch ...")
             this_filter = np.nonzero(self.search_filter)[0]
             n_match = this_filter.shape[0]
             if nrows is not None and n_match > 0:
-                self.search = self.index.take(this_filter.take(range(np.min([nrows, n_match]))))
+                self.search = self.index.take(
+                    this_filter.take(range(np.min([nrows, n_match])))
+                )
             else:
                 self.search = self.index.filter(self.search_filter)
 
-            log.debug('Found %i matches' % self.search.shape[0])
+            log.debug("Found %i matches" % self.search.shape[0])
             if self.cache and self.search.shape[0] > 0:
-                self._write(self.fs['search'], self.search_path, self.search)
-                self.search = self._read(self.fs['search'].fs, self.search_path)
-                log.debug("Search results saved in cache as pyarrow table. dest='%s'" % self.search_path)
+                self._write(self.fs["search"], self.search_path, self.search)
+                self.search = self._read(self.fs["search"].fs, self.search_path)
+                log.debug(
+                    "Search results saved in cache as pyarrow table. dest='%s'"
+                    % self.search_path
+                )
         return self
 
     def to_dataframe(self, nrows=None, index=False):  # noqa: C901
@@ -567,18 +600,22 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             This is where we can process the internal dataframe structure for the end user.
             If this processing is long, we can implement caching here.
         """
-        if hasattr(self, 'search') and not index:
+        if hasattr(self, "search") and not index:
             this_path = self.host + "/" + self.index_file + "/" + self.sha_pq
-            src = 'search results'
+            src = "search results"
             if self.N_MATCH == 0:
-                raise DataNotFound("No data found in the index corresponding to your search criteria."
-                                   " Search definition: %s" % self.cname)
+                raise DataNotFound(
+                    "No data found in the index corresponding to your search criteria."
+                    " Search definition: %s" % self.cname
+                )
             else:
                 df = self.search.to_pandas()
         else:
-            this_path = self.host + "/" + self.index_file + "/" + self._sha_from("pq-full")
-            src = 'full index'
-            if not hasattr(self, 'index'):
+            this_path = (
+                self.host + "/" + self.index_file + "/" + self._sha_from("pq-full")
+            )
+            src = "full index"
+            if not hasattr(self, "index"):
                 self.load(nrows=nrows)
             df = self.index.to_pandas()
 
@@ -587,46 +624,56 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         else:
             this_path = this_path + ".export"
 
-        if self.cache and self.fs['search'].exists(this_path):
-            log.debug("[%s] already processed as Dataframe, loading ... src='%s'" % (src, this_path))
-            df = self._read(self.fs['search'].fs, this_path, format='pd')
+        if self.cache and self.fs["search"].exists(this_path):
+            log.debug(
+                "[%s] already processed as Dataframe, loading ... src='%s'"
+                % (src, this_path)
+            )
+            df = self._read(self.fs["search"].fs, this_path, format="pd")
         else:
             log.debug("Converting [%s] to dataframe from scratch ..." % src)
             # Post-processing for user:
             from argopy.utilities import load_dict, mapp_dict
 
             if nrows is not None:
-                df = df.loc[0:nrows - 1].copy()
+                df = df.loc[0 : nrows - 1].copy()
 
-            if 'index' in df:
-                df.drop('index', axis=1, inplace=True)
+            if "index" in df:
+                df.drop("index", axis=1, inplace=True)
 
             df.reset_index(drop=True, inplace=True)
 
-            df['wmo'] = df['file'].apply(lambda x: int(x.split('/')[1]))
-            df['date'] = pd.to_datetime(df['date'], format="%Y%m%d%H%M%S")
-            df['date_update'] = pd.to_datetime(df['date_update'], format="%Y%m%d%H%M%S")
+            df["wmo"] = df["file"].apply(lambda x: int(x.split("/")[1]))
+            df["date"] = pd.to_datetime(df["date"], format="%Y%m%d%H%M%S")
+            df["date_update"] = pd.to_datetime(df["date_update"], format="%Y%m%d%H%M%S")
 
             # institution & profiler mapping for all users
             # todo: may be we need to separate this for standard and expert users
-            institution_dictionnary = load_dict('institutions')
-            df['tmp1'] = df['institution'].apply(lambda x: mapp_dict(institution_dictionnary, x))
-            df = df.rename(columns={"institution": "institution_code", "tmp1": "institution"})
+            institution_dictionnary = load_dict("institutions")
+            df["tmp1"] = df["institution"].apply(
+                lambda x: mapp_dict(institution_dictionnary, x)
+            )
+            df = df.rename(
+                columns={"institution": "institution_code", "tmp1": "institution"}
+            )
 
-            profiler_dictionnary = load_dict('profilers')
-            profiler_dictionnary['?'] = '?'
+            profiler_dictionnary = load_dict("profilers")
+            profiler_dictionnary["?"] = "?"
 
             def ev(x):
                 try:
                     return int(x)
                 except Exception:
                     return x
-            df['profiler'] = df['profiler_type'].apply(lambda x: mapp_dict(profiler_dictionnary, ev(x)))
+
+            df["profiler"] = df["profiler_type"].apply(
+                lambda x: mapp_dict(profiler_dictionnary, ev(x))
+            )
             df = df.rename(columns={"profiler_type": "profiler_code"})
 
             if self.cache:
-                self._write(self.fs['search'], this_path, df, format='pd')
-                df = self._read(self.fs['search'].fs, this_path, format='pd')
+                self._write(self.fs["search"], this_path, df, format="pd")
+                df = self._read(self.fs["search"].fs, this_path, format="pd")
                 log.debug("This dataframe saved in cache. dest='%s'" % this_path)
 
         return df
@@ -638,11 +685,11 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
 
     @property
     def uri_full_index(self):
-        return ["/".join([self.host, "dac", f.as_py()]) for f in self.index['file']]
+        return ["/".join([self.host, "dac", f.as_py()]) for f in self.index["file"]]
 
     @property
     def uri(self):
-        return ["/".join([self.host, "dac", f.as_py()]) for f in self.search['file']]
+        return ["/".join([self.host, "dac", f.as_py()]) for f in self.search["file"]]
 
     def read_wmo(self, index=False):
         """ Return list of unique WMOs in search results
@@ -653,14 +700,15 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         -------
         list(int)
         """
-        if hasattr(self, 'search') and not index:
-            results = pa.compute.split_pattern(self.search['file'], pattern="/")
+        if hasattr(self, "search") and not index:
+            results = pa.compute.split_pattern(self.search["file"], pattern="/")
         else:
-            results = pa.compute.split_pattern(self.index['file'], pattern="/")
+            results = pa.compute.split_pattern(self.index["file"], pattern="/")
         df = results.to_pandas()
 
         def fct(row):
             return row[1]
+
         wmo = df.map(fct)
         wmo = wmo.unique()
         wmo = [int(w) for w in wmo]
@@ -674,39 +722,54 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         ulist = self.read_wmo()
         count = {}
         for wmo in ulist:
-            if hasattr(self, 'search') and not index:
-                search_filter = pa.compute.match_substring_regex(self.search['file'], pattern="/%i/" % wmo)
+            if hasattr(self, "search") and not index:
+                search_filter = pa.compute.match_substring_regex(
+                    self.search["file"], pattern="/%i/" % wmo
+                )
                 count[wmo] = self.search.filter(search_filter).shape[0]
             else:
-                search_filter = pa.compute.match_substring_regex(self.index['file'], pattern="/%i/" % wmo)
+                search_filter = pa.compute.match_substring_regex(
+                    self.index["file"], pattern="/%i/" % wmo
+                )
                 count[wmo] = self.index.filter(search_filter).shape[0]
         return count
 
     def search_wmo(self, WMOs, nrows=None):
         WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
-        log.debug("Argo index searching for WMOs=[%s] ..." % ";".join([str(wmo) for wmo in WMOs]))
+        log.debug(
+            "Argo index searching for WMOs=[%s] ..."
+            % ";".join([str(wmo) for wmo in WMOs])
+        )
         self.load()
-        self.search_type = {'WMO': WMOs}
+        self.search_type = {"WMO": WMOs}
         filt = []
         for wmo in WMOs:
-            filt.append(pa.compute.match_substring_regex(self.index['file'], pattern="/%i/" % wmo))
+            filt.append(
+                pa.compute.match_substring_regex(
+                    self.index["file"], pattern="/%i/" % wmo
+                )
+            )
         self.search_filter = np.logical_or.reduce(filt)
         self.run(nrows=nrows)
         return self
 
     def search_cyc(self, CYCs, nrows=None):
         CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
-        log.debug("Argo index searching for CYCs=[%s] ..." % (
-            ";".join([str(cyc) for cyc in CYCs])))
+        log.debug(
+            "Argo index searching for CYCs=[%s] ..."
+            % (";".join([str(cyc) for cyc in CYCs]))
+        )
         self.load()
-        self.search_type = {'CYC': CYCs}
+        self.search_type = {"CYC": CYCs}
         filt = []
         for cyc in CYCs:
             if cyc < 1000:
                 pattern = "_%0.3d.nc" % (cyc)
             else:
                 pattern = "_%0.4d.nc" % (cyc)
-            filt.append(pa.compute.match_substring_regex(self.index['file'], pattern=pattern))
+            filt.append(
+                pa.compute.match_substring_regex(self.index["file"], pattern=pattern)
+            )
         self.search_filter = np.logical_or.reduce(filt)
         self.run(nrows=nrows)
         return self
@@ -714,11 +777,15 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
     def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
         WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
         CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
-        log.debug("Argo index searching for WMOs=[%s] and CYCs=[%s] ..." % (
-            ";".join([str(wmo) for wmo in WMOs]),
-            ";".join([str(cyc) for cyc in CYCs])))
+        log.debug(
+            "Argo index searching for WMOs=[%s] and CYCs=[%s] ..."
+            % (
+                ";".join([str(wmo) for wmo in WMOs]),
+                ";".join([str(cyc) for cyc in CYCs]),
+            )
+        )
         self.load()
-        self.search_type = {'WMO': WMOs, 'CYC': CYCs}
+        self.search_type = {"WMO": WMOs, "CYC": CYCs}
         filt = []
         for wmo in WMOs:
             for cyc in CYCs:
@@ -726,7 +793,11 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                     pattern = "%i_%0.3d.nc" % (wmo, cyc)
                 else:
                     pattern = "%i_%0.4d.nc" % (wmo, cyc)
-                filt.append(pa.compute.match_substring_regex(self.index['file'], pattern=pattern))
+                filt.append(
+                    pa.compute.match_substring_regex(
+                        self.index["file"], pattern=pattern
+                    )
+                )
         self.search_filter = np.logical_or.reduce(filt)
         self.run(nrows=nrows)
         return self
@@ -735,12 +806,20 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         is_indexbox(BOX)
         log.debug("Argo index searching for time in BOX=%s ..." % BOX)
         self.load()
-        self.search_type = {'BOX': BOX}
+        self.search_type = {"BOX": BOX}
         filt = []
-        filt.append(pa.compute.greater_equal(pa.compute.cast(self.index['date'], pa.timestamp('ms')),
-                                             pa.array([pd.to_datetime(BOX[4])], pa.timestamp('ms'))[0]))
-        filt.append(pa.compute.less_equal(pa.compute.cast(self.index['date'], pa.timestamp('ms')),
-                                          pa.array([pd.to_datetime(BOX[5])], pa.timestamp('ms'))[0]))
+        filt.append(
+            pa.compute.greater_equal(
+                pa.compute.cast(self.index["date"], pa.timestamp("ms")),
+                pa.array([pd.to_datetime(BOX[4])], pa.timestamp("ms"))[0],
+            )
+        )
+        filt.append(
+            pa.compute.less_equal(
+                pa.compute.cast(self.index["date"], pa.timestamp("ms")),
+                pa.array([pd.to_datetime(BOX[5])], pa.timestamp("ms"))[0],
+            )
+        )
         self.search_filter = np.logical_and.reduce(filt)
         self.run(nrows=nrows)
         return self
@@ -749,12 +828,12 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon in BOX=%s ..." % BOX)
         self.load()
-        self.search_type = {'BOX': BOX}
+        self.search_type = {"BOX": BOX}
         filt = []
-        filt.append(pa.compute.greater_equal(self.index['longitude'], BOX[0]))
-        filt.append(pa.compute.less_equal(self.index['longitude'], BOX[1]))
-        filt.append(pa.compute.greater_equal(self.index['latitude'], BOX[2]))
-        filt.append(pa.compute.less_equal(self.index['latitude'], BOX[3]))
+        filt.append(pa.compute.greater_equal(self.index["longitude"], BOX[0]))
+        filt.append(pa.compute.less_equal(self.index["longitude"], BOX[1]))
+        filt.append(pa.compute.greater_equal(self.index["latitude"], BOX[2]))
+        filt.append(pa.compute.less_equal(self.index["latitude"], BOX[3]))
         self.search_filter = np.logical_and.reduce(filt)
         self.run(nrows=nrows)
         return self
@@ -763,16 +842,24 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon/time in BOX=%s ..." % BOX)
         self.load()
-        self.search_type = {'BOX': BOX}
+        self.search_type = {"BOX": BOX}
         filt = []
-        filt.append(pa.compute.greater_equal(self.index['longitude'], BOX[0]))
-        filt.append(pa.compute.less_equal(self.index['longitude'], BOX[1]))
-        filt.append(pa.compute.greater_equal(self.index['latitude'], BOX[2]))
-        filt.append(pa.compute.less_equal(self.index['latitude'], BOX[3]))
-        filt.append(pa.compute.greater_equal(pa.compute.cast(self.index['date'], pa.timestamp('ms')),
-                                             pa.array([pd.to_datetime(BOX[4])], pa.timestamp('ms'))[0]))
-        filt.append(pa.compute.less_equal(pa.compute.cast(self.index['date'], pa.timestamp('ms')),
-                                          pa.array([pd.to_datetime(BOX[5])], pa.timestamp('ms'))[0]))
+        filt.append(pa.compute.greater_equal(self.index["longitude"], BOX[0]))
+        filt.append(pa.compute.less_equal(self.index["longitude"], BOX[1]))
+        filt.append(pa.compute.greater_equal(self.index["latitude"], BOX[2]))
+        filt.append(pa.compute.less_equal(self.index["latitude"], BOX[3]))
+        filt.append(
+            pa.compute.greater_equal(
+                pa.compute.cast(self.index["date"], pa.timestamp("ms")),
+                pa.array([pd.to_datetime(BOX[4])], pa.timestamp("ms"))[0],
+            )
+        )
+        filt.append(
+            pa.compute.less_equal(
+                pa.compute.cast(self.index["date"], pa.timestamp("ms")),
+                pa.array([pd.to_datetime(BOX[5])], pa.timestamp("ms"))[0],
+            )
+        )
         self.search_filter = np.logical_and.reduce(filt)
         self.run(nrows=nrows)
         return self
@@ -780,7 +867,8 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
 
 class indexstore_pandas(ArgoIndexStoreProto):
     """ Argo index store, using :class:`pandas.DataFrame` as internal storage format """
-    backend = 'pandas'
+
+    backend = "pandas"
 
     def load(self, force=False, nrows=None):
         """ Load an Argo-index file content
@@ -793,31 +881,44 @@ class indexstore_pandas(ArgoIndexStoreProto):
         """
 
         def read_csv(input_file, nrows=None):
-            this_table = pd.read_csv(input_file, sep=',', index_col=None, header=0, skiprows=8, nrows=nrows)
+            this_table = pd.read_csv(
+                input_file, sep=",", index_col=None, header=0, skiprows=8, nrows=nrows
+            )
             return this_table
 
-        if not hasattr(self, 'index') or force:
+        if not hasattr(self, "index") or force:
             index_path = self.host + "/" + self.index_file
 
-            if self.fs['index'].exists(index_path + '.gz'):
-                with self.fs['index'].open(index_path + '.gz', "rb") as fg:
+            if self.fs["index"].exists(index_path + ".gz"):
+                with self.fs["index"].open(index_path + ".gz", "rb") as fg:
                     with gzip.open(fg) as f:
                         df = read_csv(f, nrows=nrows)
-                        check_index_cols(df.columns.to_list(), convention=self.index_file.split(".")[0])
+                        check_index_cols(
+                            df.columns.to_list(),
+                            convention=self.index_file.split(".")[0],
+                        )
                         self.index = df
-                        log.debug("Argo index file loaded with pandas read_csv. src='%s'" % (index_path + '.gz'))
+                        log.debug(
+                            "Argo index file loaded with pandas read_csv. src='%s'"
+                            % (index_path + ".gz")
+                        )
 
             else:
-                with self.fs['index'].open(index_path, "rb") as f:
+                with self.fs["index"].open(index_path, "rb") as f:
                     df = read_csv(f, nrows=nrows)
-                    check_index_cols(df.columns.to_list(), convention=self.index_file.split(".")[0])
+                    check_index_cols(
+                        df.columns.to_list(), convention=self.index_file.split(".")[0]
+                    )
                     self.index = df
-                    log.debug("Argo index file loaded with pandas read_csv. src='%s'" % index_path)
+                    log.debug(
+                        "Argo index file loaded with pandas read_csv. src='%s'"
+                        % index_path
+                    )
 
         if self.N_RECORDS == 0:
             raise DataNotFound("No data found in the index")
         elif nrows is not None and self.N_RECORDS != nrows:
-            self.index = self.index[0:nrows-1]
+            self.index = self.index[0 : nrows - 1]
 
         return self
 
@@ -828,11 +929,11 @@ class indexstore_pandas(ArgoIndexStoreProto):
 
     @property
     def uri_full_index(self):
-        return ["/".join([self.host, "dac", f]) for f in self.index['file']]
+        return ["/".join([self.host, "dac", f]) for f in self.index["file"]]
 
     @property
     def uri(self):
-        return ["/".join([self.host, "dac", f]) for f in self.search['file']]
+        return ["/".join([self.host, "dac", f]) for f in self.search["file"]]
 
     def read_wmo(self):
         """ Return list of unique WMOs in search results
@@ -843,10 +944,10 @@ class indexstore_pandas(ArgoIndexStoreProto):
         -------
         list(int)
         """
-        if hasattr(self, 'search'):
-            results = self.search['file'].apply(lambda x: int(x.split('/')[1]))
+        if hasattr(self, "search"):
+            results = self.search["file"].apply(lambda x: int(x.split("/")[1]))
         else:
-            results = self.index['file'].apply(lambda x: int(x.split('/')[1]))
+            results = self.index["file"].apply(lambda x: int(x.split("/")[1]))
         wmo = np.unique(results)
         return wmo
 
@@ -862,32 +963,50 @@ class indexstore_pandas(ArgoIndexStoreProto):
         ulist = self.read_wmo()
         count = {}
         for wmo in ulist:
-            if hasattr(self, 'search'):
-                search_filter = self.search['file'].str.contains("/%i/" % wmo, regex=True, case=False)
+            if hasattr(self, "search"):
+                search_filter = self.search["file"].str.contains(
+                    "/%i/" % wmo, regex=True, case=False
+                )
                 count[wmo] = self.search[search_filter].shape[0]
             else:
-                search_filter = self.index['file'].str.contains("/%i/" % wmo, regex=True, case=False)
+                search_filter = self.index["file"].str.contains(
+                    "/%i/" % wmo, regex=True, case=False
+                )
                 count[wmo] = self.index[search_filter].shape[0]
         return count
 
     def run(self, nrows=None):
         """ Filter index with search criteria """
-        if self.cache and self.fs['search'].exists(self.search_path):
-            log.debug("Search results already in memory as pandas dataframe, loading... src='%s'" % (self.search_path))
-            self.search = self._read(self.fs['search'].fs, self.search_path, format='pd')
+        if self.cache and self.fs["search"].exists(self.search_path):
+            log.debug(
+                "Search results already in memory as pandas dataframe, loading... src='%s'"
+                % (self.search_path)
+            )
+            self.search = self._read(
+                self.fs["search"].fs, self.search_path, format="pd"
+            )
         else:
-            log.debug("Compute search from scratch ... (not found '%s')" % self.search_path)
+            log.debug(
+                "Compute search from scratch ... (not found '%s')" % self.search_path
+            )
             this_filter = np.nonzero(self.search_filter)[0]
             n_match = this_filter.shape[0]
             if nrows is not None and n_match > 0:
                 self.search = self.index.head(np.min([nrows, n_match])).reset_index()
             else:
                 self.search = self.index[self.search_filter].reset_index()
-            log.debug('Found %i matches' % self.search.shape[0])
+            log.debug("Found %i matches" % self.search.shape[0])
             if self.cache and self.search.shape[0] > 0:
-                self._write(self.fs['search'], self.search_path, self.search, format='pd')
-                self.search = self._read(self.fs['search'].fs, self.search_path, format='pd')
-                log.debug("Search results saved in cache as pandas dataframe. dest='%s'" % self.search_path)
+                self._write(
+                    self.fs["search"], self.search_path, self.search, format="pd"
+                )
+                self.search = self._read(
+                    self.fs["search"].fs, self.search_path, format="pd"
+                )
+                log.debug(
+                    "Search results saved in cache as pandas dataframe. dest='%s'"
+                    % self.search_path
+                )
         return self
 
     def to_dataframe(self, nrows=None, index=False):  # noqa: C901
@@ -896,18 +1015,22 @@ class indexstore_pandas(ArgoIndexStoreProto):
             This is where we can process the internal dataframe structure for the end user.
             If this processing is long, we can implement caching here.
         """
-        if hasattr(self, 'search') and not index:
+        if hasattr(self, "search") and not index:
             this_path = self.host + "/" + self.index_file + "/" + self.sha_df
-            src = 'search results'
+            src = "search results"
             if self.N_MATCH == 0:
-                raise DataNotFound("No data found in the index corresponding to your search criteria."
-                                   " Search definition: %s" % self.cname)
+                raise DataNotFound(
+                    "No data found in the index corresponding to your search criteria."
+                    " Search definition: %s" % self.cname
+                )
             else:
                 df = self.search.copy()
         else:
-            this_path = self.host + "/" + self.index_file + "/" + self._sha_from("pd-full")
-            src = 'full index'
-            if not hasattr(self, 'index'):
+            this_path = (
+                self.host + "/" + self.index_file + "/" + self._sha_from("pd-full")
+            )
+            src = "full index"
+            if not hasattr(self, "index"):
                 self.load(nrows=nrows)
             df = self.index.copy()
 
@@ -916,9 +1039,12 @@ class indexstore_pandas(ArgoIndexStoreProto):
         else:
             this_path = this_path + ".export"
 
-        if self.cache and self.fs['search'].exists(this_path):
-            log.debug("[%s] already processed as Dataframe, loading ... src='%s'" % (src, this_path))
-            df = self._read(self.fs['search'].fs, this_path, format='pd')
+        if self.cache and self.fs["search"].exists(this_path):
+            log.debug(
+                "[%s] already processed as Dataframe, loading ... src='%s'"
+                % (src, this_path)
+            )
+            df = self._read(self.fs["search"].fs, this_path, format="pd")
         else:
             log.debug("Converting [%s] to dataframe from scratch ..." % src)
             # log.debug("Cache: %s" % self.cache)
@@ -929,25 +1055,29 @@ class indexstore_pandas(ArgoIndexStoreProto):
             from argopy.utilities import load_dict, mapp_dict
 
             if nrows is not None:
-                df = df.loc[0:nrows - 1].copy()
+                df = df.loc[0 : nrows - 1].copy()
 
-            if 'index' in df:
-                df.drop('index', axis=1, inplace=True)
+            if "index" in df:
+                df.drop("index", axis=1, inplace=True)
 
             df.reset_index(drop=True, inplace=True)
 
-            df['wmo'] = df['file'].apply(lambda x: int(x.split('/')[1]))
-            df['date'] = pd.to_datetime(df['date'], format="%Y%m%d%H%M%S")
-            df['date_update'] = pd.to_datetime(df['date_update'], format="%Y%m%d%H%M%S")
+            df["wmo"] = df["file"].apply(lambda x: int(x.split("/")[1]))
+            df["date"] = pd.to_datetime(df["date"], format="%Y%m%d%H%M%S")
+            df["date_update"] = pd.to_datetime(df["date_update"], format="%Y%m%d%H%M%S")
 
             # institution & profiler mapping for all users
             # todo: may be we need to separate this for standard and expert users
-            institution_dictionnary = load_dict('institutions')
-            df['tmp1'] = df['institution'].apply(lambda x: mapp_dict(institution_dictionnary, x))
-            df = df.rename(columns={"institution": "institution_code", "tmp1": "institution"})
+            institution_dictionnary = load_dict("institutions")
+            df["tmp1"] = df["institution"].apply(
+                lambda x: mapp_dict(institution_dictionnary, x)
+            )
+            df = df.rename(
+                columns={"institution": "institution_code", "tmp1": "institution"}
+            )
 
-            profiler_dictionnary = load_dict('profilers')
-            profiler_dictionnary['?'] = '?'
+            profiler_dictionnary = load_dict("profilers")
+            profiler_dictionnary["?"] = "?"
 
             def ev(x):
                 try:
@@ -955,42 +1085,53 @@ class indexstore_pandas(ArgoIndexStoreProto):
                 except Exception:
                     return x
 
-            df['profiler'] = df['profiler_type'].apply(lambda x: mapp_dict(profiler_dictionnary, ev(x)))
+            df["profiler"] = df["profiler_type"].apply(
+                lambda x: mapp_dict(profiler_dictionnary, ev(x))
+            )
             df = df.rename(columns={"profiler_type": "profiler_code"})
 
             if self.cache:
                 # log.debug("Saving this dataframe to cache. dest='%s'" % this_path)
-                self._write(self.fs['search'], this_path, df, format='pd')
-                df = self._read(self.fs['search'].fs, this_path, format='pd')
+                self._write(self.fs["search"], this_path, df, format="pd")
+                df = self._read(self.fs["search"].fs, this_path, format="pd")
                 log.debug("This dataframe saved in cache. dest='%s'" % this_path)
 
         return df
 
     def search_wmo(self, WMOs, nrows=None):
         WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
-        log.debug("Argo index searching for WMOs=[%s] ..." % ";".join([str(wmo) for wmo in WMOs]))
+        log.debug(
+            "Argo index searching for WMOs=[%s] ..."
+            % ";".join([str(wmo) for wmo in WMOs])
+        )
         self.load()
-        self.search_type = {'WMO': WMOs}
+        self.search_type = {"WMO": WMOs}
         filt = []
         for wmo in WMOs:
-            filt.append(self.index['file'].str.contains("/%i/" % wmo, regex=True, case=False))
+            filt.append(
+                self.index["file"].str.contains("/%i/" % wmo, regex=True, case=False)
+            )
         self.search_filter = np.logical_or.reduce(filt)
         self.run(nrows=nrows)
         return self
 
     def search_cyc(self, CYCs, nrows=None):
         CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
-        log.debug("Argo index searching for CYCs=[%s] ..." % (
-            ";".join([str(cyc) for cyc in CYCs])))
+        log.debug(
+            "Argo index searching for CYCs=[%s] ..."
+            % (";".join([str(cyc) for cyc in CYCs]))
+        )
         self.load()
-        self.search_type = {'CYC': CYCs}
+        self.search_type = {"CYC": CYCs}
         filt = []
         for cyc in CYCs:
             if cyc < 1000:
                 pattern = "_%0.3d.nc" % (cyc)
             else:
                 pattern = "_%0.4d.nc" % (cyc)
-            filt.append(self.index['file'].str.contains(pattern, regex=True, case=False))
+            filt.append(
+                self.index["file"].str.contains(pattern, regex=True, case=False)
+            )
         self.search_filter = np.logical_or.reduce(filt)
         self.run(nrows=nrows)
         return self
@@ -998,11 +1139,15 @@ class indexstore_pandas(ArgoIndexStoreProto):
     def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
         WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
         CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
-        log.debug("Argo index searching for WMOs=[%s] and CYCs=[%s] ..." % (
-            ";".join([str(wmo) for wmo in WMOs]),
-            ";".join([str(cyc) for cyc in CYCs])))
+        log.debug(
+            "Argo index searching for WMOs=[%s] and CYCs=[%s] ..."
+            % (
+                ";".join([str(wmo) for wmo in WMOs]),
+                ";".join([str(cyc) for cyc in CYCs]),
+            )
+        )
         self.load()
-        self.search_type = {'WMO': WMOs, 'CYC': CYCs}
+        self.search_type = {"WMO": WMOs, "CYC": CYCs}
         filt = []
         for wmo in WMOs:
             for cyc in CYCs:
@@ -1010,7 +1155,9 @@ class indexstore_pandas(ArgoIndexStoreProto):
                     pattern = "%i_%0.3d.nc" % (wmo, cyc)
                 else:
                     pattern = "%i_%0.4d.nc" % (wmo, cyc)
-                filt.append(self.index['file'].str.contains(pattern, regex=True, case=False))
+                filt.append(
+                    self.index["file"].str.contains(pattern, regex=True, case=False)
+                )
         self.search_filter = np.logical_or.reduce(filt)
         self.run(nrows=nrows)
         return self
@@ -1019,12 +1166,12 @@ class indexstore_pandas(ArgoIndexStoreProto):
         is_indexbox(BOX)
         log.debug("Argo index searching for time in BOX=%s ..." % BOX)
         self.load()
-        self.search_type = {'BOX': BOX}
+        self.search_type = {"BOX": BOX}
         tim_min = int(pd.to_datetime(BOX[4]).strftime("%Y%m%d%H%M%S"))
         tim_max = int(pd.to_datetime(BOX[5]).strftime("%Y%m%d%H%M%S"))
         filt = []
-        filt.append(self.index['date'].ge(tim_min))
-        filt.append(self.index['date'].le(tim_max))
+        filt.append(self.index["date"].ge(tim_min))
+        filt.append(self.index["date"].le(tim_max))
         self.search_filter = np.logical_and.reduce(filt)
         self.run(nrows=nrows)
         return self
@@ -1033,12 +1180,12 @@ class indexstore_pandas(ArgoIndexStoreProto):
         is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon in BOX=%s ..." % BOX)
         self.load()
-        self.search_type = {'BOX': BOX}
+        self.search_type = {"BOX": BOX}
         filt = []
-        filt.append(self.index['longitude'].ge(BOX[0]))
-        filt.append(self.index['longitude'].le(BOX[1]))
-        filt.append(self.index['latitude'].ge(BOX[2]))
-        filt.append(self.index['latitude'].le(BOX[3]))
+        filt.append(self.index["longitude"].ge(BOX[0]))
+        filt.append(self.index["longitude"].le(BOX[1]))
+        filt.append(self.index["latitude"].ge(BOX[2]))
+        filt.append(self.index["latitude"].le(BOX[3]))
         self.search_filter = np.logical_and.reduce(filt)
         self.run(nrows=nrows)
         return self
@@ -1047,16 +1194,16 @@ class indexstore_pandas(ArgoIndexStoreProto):
         is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon/time in BOX=%s ..." % BOX)
         self.load()
-        self.search_type = {'BOX': BOX}
+        self.search_type = {"BOX": BOX}
         tim_min = int(pd.to_datetime(BOX[4]).strftime("%Y%m%d%H%M%S"))
         tim_max = int(pd.to_datetime(BOX[5]).strftime("%Y%m%d%H%M%S"))
         filt = []
-        filt.append(self.index['date'].ge(tim_min))
-        filt.append(self.index['date'].le(tim_max))
-        filt.append(self.index['longitude'].ge(BOX[0]))
-        filt.append(self.index['longitude'].le(BOX[1]))
-        filt.append(self.index['latitude'].ge(BOX[2]))
-        filt.append(self.index['latitude'].le(BOX[3]))
+        filt.append(self.index["date"].ge(tim_min))
+        filt.append(self.index["date"].le(tim_max))
+        filt.append(self.index["longitude"].ge(BOX[0]))
+        filt.append(self.index["longitude"].le(BOX[1]))
+        filt.append(self.index["latitude"].ge(BOX[2]))
+        filt.append(self.index["latitude"].le(BOX[3]))
         self.search_filter = np.logical_and.reduce(filt)
         self.run(nrows=nrows)
         return self
