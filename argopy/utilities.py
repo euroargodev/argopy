@@ -578,7 +578,6 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
             ("gsw", lambda mod: mod.__version__),   # Used by xarray accessor to compute new variables
         ]),
         'ext.misc': sorted([
-            ("h5py", lambda mod: mod.__version__),
             ("pyarrow", lambda mod: mod.__version__),
             ("tqdm", lambda mod: mod.__version__),
             ("distributed", lambda mod: mod.__version__),
@@ -620,7 +619,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 else:
                     mod = importlib.import_module(modname)
             except Exception:
-                deps_blob.append((modname, None))
+                deps_blob.append((modname, '-'))
             else:
                 try:
                     ver = ver_f(mod)
@@ -629,24 +628,24 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                     deps_blob.append((modname, "installed"))
         DEPS_blob[level] = deps_blob
 
-    print("\nINSTALLED VERSIONS", file=file)
-    print("------------------", file=file)
-
+    print("\nSYSTEM", file=file)
+    print("------", file=file)
     for k, stat in sys_info:
         print(f"{k}: {stat}", file=file)
 
-    # print("", file=file)
     for level in DEPS_blob:
         if conda:
             print("\n# %s:" % level.upper(), file=file)
         else:
-            print("\n%s" % level.upper(), file=file)
+            title = "INSTALLED VERSIONS: %s" % level.upper()
+            print("\n%s" % title, file=file)
+            print("-"*len(title), file=file)
         deps_blob = DEPS_blob[level]
         for k, stat in deps_blob:
             if conda:
                 print(f"  - {k} = {stat}", file=file)  # Format like a conda env line, useful to update ci/requirements
             else:
-                print(f"\t{k}: {stat}", file=file)
+                print("{:<12}: {:<12}".format(k, stat), file=file)
 
 
 
