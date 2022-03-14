@@ -224,6 +224,8 @@ def safe_to_server_errors(test_func, *args, **kwargs):
             xmsg = "Failing because cannot connect to the FTP path index file, but should work"
             pass
         except ftplib.error_temp as e:
+            # ftplib.error_temp: 421 There are too many connections from your internet address.
+            # ftplib.error_temp: 426 Failure writing network stream.
             msg = "\nCannot connect to the FTP server\n%s" % str(e.args)
             xmsg = "Failing because cannot connect to the FTP server, but should work"
             pass

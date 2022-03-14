@@ -2188,14 +2188,15 @@ def argo_split_path(this_path):  # noqa C901
         output['dac'] = path_parts[-2]
 
     if output['dac'] not in dacs:
-        raise ValueError("This is not a Argo GDAC compliant file path (invalid DAC name `%s`)" % output['dac'])
+        log.debug("This is not a Argo GDAC compliant file path: %s" % path)
+        raise ValueError("This is not a Argo GDAC compliant file path (invalid DAC name: '%s')" % output['dac'])
 
     # Deal with the file name:
     filename, file_extension = os.path.splitext(output['name'])
     output['extension'] = file_extension
     if file_extension != '.nc':
         raise ValueError(
-            "This is not a Argo GDAC compliant file path (invalid file extension `%s`)" % file_extension)
+            "This is not a Argo GDAC compliant file path (invalid file extension: '%s')" % file_extension)
     filename_parts = output['name'].split("_")
 
     if "Mono" in output['type']:
