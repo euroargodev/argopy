@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 gh issue list --state open --repo euroargodev/argopy --json number,title,url,state --template \
  '{{tablerow (autocolor "gray+h" "ID") (autocolor "gray+h" "STATE")  (autocolor "gray+h" "TITLE") (autocolor "gray+h" "URL")}}{{range .}}{{tablerow (printf "#%v" .number | autocolor "green") .state .title (printf .url | autocolor "white")}}{{end}}'

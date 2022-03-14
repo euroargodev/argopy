@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Get the latest run for the current branch
 # (update to use JSON output once implemented - see https://github.com/cli/cli/issues/3477)

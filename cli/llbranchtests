@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #gh run list -b master -L10
 #gh run list -b gdac-ftp-fetcher -L10

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #gh run list --json status,workflowDatabaseId,databaseId,headBranch,conclusion,name,createdAt,url --template \
 #'{{tablerow (autocolor "gray+h" "STATUS") (autocolor "gray+h" "CONCLUSION") (autocolor "gray+h" "ID") (autocolor "gray+h" "BRANCH") (autocolor "gray+h" "WORKFLOW") (autocolor "gray+h" "AGE") (autocolor "gray+h" "URL")}}{{range .}}{{tablerow (autocolor "green" .status) .conclusion (autocolor "white+h" .databaseId) .headBranch .name (timeago .createdAt) .url}}{{end}}'
