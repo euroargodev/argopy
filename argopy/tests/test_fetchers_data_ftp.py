@@ -112,9 +112,9 @@ class TestBackend:
 
     # Create list of tests scenarios
     # combine all hosts with all access points:
-    # scenarios = [(h, ap) for h in valid_hosts for ap in valid_access_points]
+    scenarios = [(h, ap) for h in valid_hosts for ap in valid_access_points]
     # scenarios = [(valid_hosts[1], valid_access_points[0])]
-    scenarios = [(valid_hosts[1], ap) for ap in valid_access_points]
+    # scenarios = [(valid_hosts[1], ap) for ap in valid_access_points]
     # scenarios_ids = ["%s, %s" % (fix[0], list(fix[1].keys())[0]) for fix in scenarios]
     scenarios_ids = [
         "%s, %s" % ((lambda x: 'file' if x is None else x)(split_protocol(fix[0])[0]), list(fix[1].keys())[0]) for fix in
