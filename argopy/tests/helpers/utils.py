@@ -21,6 +21,10 @@ from argopy.utilities import (
     erddap_ds_exists,
     isAPIconnected
 )
+import logging
+
+
+log = logging.getLogger("argopy.tests.utils")
 
 
 def _importorskip(modname):
@@ -63,6 +67,7 @@ has_connection, requires_connection = _connectskip(
 # ERDDAP #
 ##########
 if CONNECTED:
+    log.debug("Check which Erddap dataset are available (eg: core, bgc, ref, index)")
     DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
     DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-bio")
     DSEXISTS_ref = erddap_ds_exists(ds="ArgoFloats-ref")

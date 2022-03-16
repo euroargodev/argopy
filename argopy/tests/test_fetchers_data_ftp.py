@@ -41,7 +41,7 @@ try to test them all:
 host_list = [argopy.tutorial.open_dataset("localftp")[0],
              'https://data-argo.ifremer.fr',
              'ftp://ftp.ifremer.fr/ifremer/argo',
-             # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but takes too long to respond, slow down CI
+             # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but takes slow down CI and no need for 2 ftp tests
              ]
 # Make sure hosts are valid and available at test time:
 valid_hosts = [h for h in host_list if isconnected(h) and check_gdac_path(h, errors='ignore')]
@@ -76,7 +76,7 @@ valid_parallel_opts = [
 def create_fetcher(fetcher_args, access_point, xfail=False):
     """ Create a fetcher for given facade options and access point
 
-        Use xfail=True when a test is expected to fail
+        Use xfail=True when a test with this fetcher is expected to fail
     """
     try:
         f = ArgoDataFetcher(**fetcher_args)
@@ -95,7 +95,7 @@ def create_fetcher(fetcher_args, access_point, xfail=False):
 
 
 def assert_fetcher(this_fetcher, cachable=False):
-    """ Assert structure of a fetcher """
+    """ Assert structure of a data fetcher """
     assert isinstance(this_fetcher.to_xarray(), xr.Dataset)
     assert is_list_of_strings(this_fetcher.uri)
     assert (this_fetcher.N_RECORDS >= 1)  # Make sure we loaded the index file content
@@ -108,16 +108,19 @@ def assert_fetcher(this_fetcher, cachable=False):
 @requires_ftp
 class TestBackend:
     src = 'ftp'
+    cachedir = tempfile.mkdtemp()
 
     # Create list of tests scenarios
     # combine all hosts with all access points:
-    fixtures = [(h, ap) for h in valid_hosts for ap in valid_access_points]
-    fixtures_ids = ["%s, %s" % (fix[0], list(fix[1].keys())[0]) for fix in fixtures]
-    fixtures_ids_short = [
+    # scenarios = [(h, ap) for h in valid_hosts for ap in valid_access_points]
+    # scenarios = [(valid_hosts[1], valid_access_points[0])]
+    scenarios = [(valid_hosts[1], ap) for ap in valid_access_points]
+    # scenarios_ids = ["%s, %s" % (fix[0], list(fix[1].keys())[0]) for fix in scenarios]
+    scenarios_ids = [
         "%s, %s" % ((lambda x: 'file' if x is None else x)(split_protocol(fix[0])[0]), list(fix[1].keys())[0]) for fix in
-        fixtures]
+        scenarios]
 
-    def setup_fetcher(self, this_request, cached=False):
+    def _setup_fetcher(self, this_request, cached=False):
         """Helper method to set-up options for a fetcher creation"""
         if isinstance(this_request.param, tuple):
             ftp = this_request.param[0]
@@ -130,47 +133,57 @@ class TestBackend:
         testcachedir = None
         fetcher_args = {"src": self.src, "ftp": ftp, "cache": False, "N_RECORDS": N_RECORDS}
         if cached:
-            testcachedir = tempfile.mkdtemp()
-            fetcher_args = {**fetcher_args, **{"cache": True, "cachedir": testcachedir}}
+            fetcher_args = {**fetcher_args, **{"cache": True, "cachedir": self.cachedir}}
         if not isconnected(fetcher_args['ftp']+"/"+"ar_index_global_prof.txt"):
             pytest.xfail("Fails because %s not available" % fetcher_args['ftp'])
         else:
             return fetcher_args, access_point, testcachedir
 
     @pytest.fixture
-    def _fetcher(self, request):
+    def _make_a_fetcher(self, request):
         """ Fixture to create a FTP fetcher for a given host and access point """
-        fetcher_args, access_point, dummy = self.setup_fetcher(request, cached=False)
+        fetcher_args, access_point, dummy = self._setup_fetcher(request, cached=False)
         yield create_fetcher(fetcher_args, access_point).fetcher
 
     @pytest.fixture
-    def _cached_fetcher(self, request):
-        """ Fixture to create a FTP cached fetcher for a given host and access point """
-        fetcher_args, access_point, testcachedir = self.setup_fetcher(request, cached=True)
+    def _make_a_cached_fetcher(self, request):
+        """ Fixture to create a cached FTP fetcher for a given host and access point """
+        fetcher_args, access_point, testcachedir = self._setup_fetcher(request, cached=True)
         yield create_fetcher(fetcher_args, access_point).fetcher
-        shutil.rmtree(testcachedir)
+        # shutil.rmtree(testcachedir)
 
+    @skip_for_debug
     @safe_to_server_errors
     def test_nocache(self):
         this_fetcher = create_fetcher({"src": self.src, "ftp": valid_hosts[0]}, valid_access_points[0]).fetcher
         with pytest.raises(FileSystemHasNoCache):
             this_fetcher.cachepath
 
-    @pytest.mark.parametrize("_fetcher", valid_hosts, indirect=True)
-    def test_hosts_valid(self, _fetcher):
+    @skip_for_debug
+    @pytest.mark.parametrize("_make_a_fetcher", valid_hosts, indirect=True)
+    def test_hosts(self, _make_a_fetcher):
         @safe_to_server_errors
         def test(this_fetcher):
             assert (this_fetcher.N_RECORDS >= 1)  # Make sure we loaded the index file content
-        test(_fetcher)
+        test(_make_a_fetcher)
 
+    @skip_for_debug
     @pytest.mark.parametrize("ftp_host", ['invalid', 'https://invalid_ftp', 'ftp://invalid_ftp'], indirect=False)
     def test_hosts_invalid(self, ftp_host):
         # Invalid servers:
         with pytest.raises(FtpPathError):
             create_fetcher({"src": self.src, "ftp": ftp_host}, valid_access_points[0], xfail=True)
 
-    @pytest.mark.parametrize("_cached_fetcher", fixtures, indirect=True, ids=fixtures_ids_short)
-    def test_fetching_cached(self, _cached_fetcher):
+    # @skip_for_debug
+    @pytest.mark.parametrize("_make_a_fetcher", scenarios, indirect=True, ids=scenarios_ids)
+    def test_fetching(self, _make_a_fetcher):
+        @safe_to_server_errors
+        def test(this_fetcher):
+            assert_fetcher(this_fetcher, cachable=False)
+        test(_make_a_fetcher)
+
+    @pytest.mark.parametrize("_make_a_cached_fetcher", scenarios, indirect=True, ids=scenarios_ids)
+    def test_fetching_cached(self, _make_a_cached_fetcher):
         @safe_to_server_errors
         def test(this_fetcher):
             # Assert the fetcher (this trigger data fetching, hence caching as well):
@@ -181,14 +194,7 @@ class TestBackend:
             with pytest.raises(CacheFileNotFound):
                 this_fetcher.cachepath
 
-        test(_cached_fetcher)
-
-    @pytest.mark.parametrize("_fetcher", fixtures, indirect=True, ids=fixtures_ids_short)
-    def test_fetching(self, _fetcher):
-        @safe_to_server_errors
-        def test(this_fetcher):
-            assert_fetcher(this_fetcher, cachable=False)
-        test(_fetcher)
+        test(_make_a_cached_fetcher)
 
 
 @skip_for_debug
