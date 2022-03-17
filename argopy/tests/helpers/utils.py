@@ -189,11 +189,17 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
 
         This wrapper makes sure a function call won't fail because of an error from the server, not our Fault !
         This wrapper return the function results
+        For a test decorator, use safe_to_server_errors instead
     """
     def func_wrapper(*args, **kwargs):
         msg, xmsg = None, None
         try:
-            return func(*args, **kwargs)
+            kw = kwargs.copy()
+            if 'xfail' in kw:
+                del kw['xfail']
+            # log.debug(args)
+            # log.debug(kw)
+            return func(*args, **kw)
         except ErddapServerError as e:
             # Test is passed when something goes wrong because of the erddap server
             msg = "\nSomething happened on erddap server that should not: %s" % str(e.args)
@@ -228,9 +234,14 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
             xmsg = "Failing because some file were not founds, but should work"
             pass
         except FtpPathError as e:
-            msg = "\nCannot connect to the FTP path index file\n%s" % str(e.args)
-            xmsg = "Failing because cannot connect to the FTP path index file, but should work"
-            pass
+            if 'xfail' in kwargs and kwargs['xfail']:
+                # Some tests will expect this error to be raised, so we make sure it is, for pytest to catch it
+                raise
+            else:
+                # Otherwise we pass, because this is not due to argopy
+                msg = "\nCannot connect to the FTP path index file\n%s" % str(e.args)
+                xmsg = "Failing because cannot connect to the FTP path index file, but should work"
+                pass
         except ftplib.error_temp as e:
             # ftplib.error_temp: 421 There are too many connections from your internet address.
             # ftplib.error_temp: 426 Failure writing network stream.
@@ -238,9 +249,11 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
             xmsg = "Failing because cannot connect to the FTP server, but should work"
             pass
         except Exception as e:
-            warnings.warn("\nUnknown server error:\n%s" % str(e.args))
-            raise
+            msg = "\nUnknown server error:\n%s" % str(e.args)
+            xmsg = "Unknown server error, but should work:\n%s" % str(e.args)
+            raise  # Because we need to ID this for addition in this list
         finally:
+            # We just document in log and warning what happened
             if msg is not None:
                 warnings.warn(msg)
             if xmsg is not None:
