@@ -23,11 +23,11 @@ from argopy.utilities import is_list_of_strings, isconnected
 from argopy.options import check_gdac_path
 from utils import (
     requires_ftp,
-    safe_to_server_errors
+    safe_to_server_errors,
+    fct_safe_to_server_errors
 )
 
 import logging
-
 
 log = logging.getLogger("argopy.tests.data.ftp")
 
@@ -72,26 +72,30 @@ valid_parallel_opts = [
 ]
 
 
+
+
 @requires_ftp
 def create_fetcher(fetcher_args, access_point, xfail=False):
     """ Create a fetcher for given facade options and access point
 
         Use xfail=True when a test with this fetcher is expected to fail
     """
-    try:
-        f = ArgoDataFetcher(**fetcher_args)
-        if "float" in access_point:
-            f = f.float(access_point['float'])
-        elif "profile" in access_point:
-            f = f.profile(*access_point['profile'])
-        elif "region" in access_point:
-            f = f.region(access_point['region'])
-    except FtpPathError:  # I don't know why this error is not caught by safe_to_server_errors
-        if not xfail:
-            pytest.xfail("Fails because we could not create the fetcher")
-        else:
-            raise
-    return f
+    def core(fargs, apts, xf):
+        try:
+            f = ArgoDataFetcher(**fargs)
+            if "float" in apts:
+                f = f.float(apts['float'])
+            elif "profile" in apts:
+                f = f.profile(*apts['profile'])
+            elif "region" in apts:
+                f = f.region(apts['region'])
+        except FtpPathError:  # I don't know why this error is not caught by safe_to_server_errors
+            if not xf:
+                pytest.xfail("Fails because we could not create the fetcher")
+            else:
+                raise
+        return f
+    return fct_safe_to_server_errors(core)(fetcher_args, access_point, xfail)
 
 
 def assert_fetcher(this_fetcher, cachable=False):
@@ -113,7 +117,7 @@ class TestBackend:
     # Create list of tests scenarios
     # combine all hosts with all access points:
     scenarios = [(h, ap) for h in valid_hosts for ap in valid_access_points]
-    # scenarios = [(valid_hosts[1], valid_access_points[0])]
+    # scenarios = [(valid_hosts[0], valid_access_points[0])]
     # scenarios = [(valid_hosts[1], ap) for ap in valid_access_points]
     # scenarios_ids = ["%s, %s" % (fix[0], list(fix[1].keys())[0]) for fix in scenarios]
     scenarios_ids = [

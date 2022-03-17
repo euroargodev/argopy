@@ -184,13 +184,16 @@ skip_this_for_debug = pytest.mark.skipif(True, reason="Skipped temporarily for d
 
 
 ############
-def safe_to_server_errors(test_func, *args, **kwargs):
-    """ Use this as decorator to make sure a test won't fail because of an error from the server, not our Fault ! """
+def fct_safe_to_server_errors(func, *args, **kwargs):
+    """Make any function safe to server error.
 
-    def test_wrapper(*args, **kwargs):
+        This wrapper makes sure a function call won't fail because of an error from the server, not our Fault !
+        This wrapper return the function results
+    """
+    def func_wrapper(*args, **kwargs):
         msg, xmsg = None, None
         try:
-            test_func(*args, **kwargs)
+            return func(*args, **kwargs)
         except ErddapServerError as e:
             # Test is passed when something goes wrong because of the erddap server
             msg = "\nSomething happened on erddap server that should not: %s" % str(e.args)
@@ -234,7 +237,6 @@ def safe_to_server_errors(test_func, *args, **kwargs):
             msg = "\nCannot connect to the FTP server\n%s" % str(e.args)
             xmsg = "Failing because cannot connect to the FTP server, but should work"
             pass
-
         except Exception as e:
             warnings.warn("\nUnknown server error:\n%s" % str(e.args))
             raise
@@ -244,4 +246,14 @@ def safe_to_server_errors(test_func, *args, **kwargs):
             if xmsg is not None:
                 pytest.xfail(xmsg)
 
+    return func_wrapper
+
+
+def safe_to_server_errors(test_func, *args, **kwargs):
+    """Decorator to safely execute a test
+        This execution the test function, but does not return the result
+    """
+    def test_wrapper(*args, **kwargs):
+        fct_safe_to_server_errors(test_func)(*args, **kwargs)
     return test_wrapper
+
