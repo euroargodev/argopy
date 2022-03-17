@@ -26,7 +26,7 @@ from utils import (
     safe_to_server_errors,
     fct_safe_to_server_errors
 )
-
+import warnings
 import logging
 
 log = logging.getLogger("argopy.tests.data.ftp")
@@ -80,7 +80,7 @@ def create_fetcher(fetcher_args, access_point, xfail=False):
 
         Use xfail=True when a test with this fetcher is expected to fail
     """
-    def core(fargs, apts, xf):
+    def core(fargs, apts, xfail=False):
         try:
             f = ArgoDataFetcher(**fargs)
             if "float" in apts:
@@ -89,13 +89,15 @@ def create_fetcher(fetcher_args, access_point, xfail=False):
                 f = f.profile(*apts['profile'])
             elif "region" in apts:
                 f = f.region(apts['region'])
-        except FtpPathError:  # I don't know why this error is not caught by safe_to_server_errors
-            if not xf:
-                pytest.xfail("Fails because we could not create the fetcher")
-            else:
-                raise
+        except Exception:
+            raise
+            # log.debug("Xfail arg was: %s" % xf)
+            # if not xf:
+            #     pytest.xfail("Unexpected xfail !")
+            # else:
+            #     raise
         return f
-    return fct_safe_to_server_errors(core)(fetcher_args, access_point, xfail)
+    return fct_safe_to_server_errors(core)(fetcher_args, access_point, xfail=xfail)
 
 
 def assert_fetcher(this_fetcher, cachable=False):
@@ -156,14 +158,14 @@ class TestBackend:
         yield create_fetcher(fetcher_args, access_point).fetcher
         # shutil.rmtree(testcachedir)
 
-    @skip_for_debug
+    # @skip_for_debug
     @safe_to_server_errors
     def test_nocache(self):
         this_fetcher = create_fetcher({"src": self.src, "ftp": valid_hosts[0]}, valid_access_points[0]).fetcher
         with pytest.raises(FileSystemHasNoCache):
             this_fetcher.cachepath
 
-    @skip_for_debug
+    # @skip_for_debug
     @pytest.mark.parametrize("_make_a_fetcher", valid_hosts, indirect=True)
     def test_hosts(self, _make_a_fetcher):
         @safe_to_server_errors
@@ -171,7 +173,7 @@ class TestBackend:
             assert (this_fetcher.N_RECORDS >= 1)  # Make sure we loaded the index file content
         test(_make_a_fetcher)
 
-    @skip_for_debug
+    # @skip_for_debug
     @pytest.mark.parametrize("ftp_host", ['invalid', 'https://invalid_ftp', 'ftp://invalid_ftp'], indirect=False)
     def test_hosts_invalid(self, ftp_host):
         # Invalid servers:
@@ -186,6 +188,7 @@ class TestBackend:
             assert_fetcher(this_fetcher, cachable=False)
         test(_make_a_fetcher)
 
+    # @skip_for_debug
     @pytest.mark.parametrize("_make_a_cached_fetcher", scenarios, indirect=True, ids=scenarios_ids)
     def test_fetching_cached(self, _make_a_cached_fetcher):
         @safe_to_server_errors
@@ -200,8 +203,13 @@ class TestBackend:
 
         test(_make_a_cached_fetcher)
 
+    def test_z(self):
+        warnings.warn(argopy.lscache(self.cachedir))
+        shutil.rmtree(self.cachedir)
+        assert True
 
-@skip_for_debug
+
+# @skip_for_debug
 @requires_ftp
 class Test_BackendParallel:
     src = 'ftp'
