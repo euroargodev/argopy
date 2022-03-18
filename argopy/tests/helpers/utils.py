@@ -250,7 +250,6 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
             pass
         except Exception as e:
             msg = "\nUnknown server error:\n%s" % str(e.args)
-            xmsg = "Unknown server error, but should work:\n%s" % str(e.args)
             raise  # Because we need to ID this for addition in this list
         finally:
             # We just document in log and warning what happened

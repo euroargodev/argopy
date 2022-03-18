@@ -48,7 +48,7 @@ valid_hosts = [h for h in host_list if isconnected(h) and check_gdac_path(h, err
 
 """
 List access points to be tested.
-For each access points, we list 2 scenarios to make sure all possibilities are tested
+For each access points, we list 1-to-2 scenario to make sure all possibilities are tested
 """
 valid_access_points = [
     {"float": [13857]},
@@ -72,15 +72,13 @@ valid_parallel_opts = [
 ]
 
 
-
-
 @requires_ftp
 def create_fetcher(fetcher_args, access_point, xfail=False):
     """ Create a fetcher for given facade options and access point
 
         Use xfail=True when a test with this fetcher is expected to fail
     """
-    def core(fargs, apts, xfail=False):
+    def core(fargs, apts):
         try:
             f = ArgoDataFetcher(**fargs)
             if "float" in apts:
@@ -91,17 +89,15 @@ def create_fetcher(fetcher_args, access_point, xfail=False):
                 f = f.region(apts['region'])
         except Exception:
             raise
-            # log.debug("Xfail arg was: %s" % xf)
-            # if not xf:
-            #     pytest.xfail("Unexpected xfail !")
-            # else:
-            #     raise
         return f
     return fct_safe_to_server_errors(core)(fetcher_args, access_point, xfail=xfail)
 
 
 def assert_fetcher(this_fetcher, cachable=False):
-    """ Assert structure of a data fetcher """
+    """Assert a data fetcher.
+
+        This should be used by all tests
+    """
     assert isinstance(this_fetcher.to_xarray(), xr.Dataset)
     assert is_list_of_strings(this_fetcher.uri)
     assert (this_fetcher.N_RECORDS >= 1)  # Make sure we loaded the index file content
@@ -123,7 +119,8 @@ class TestBackend:
     # scenarios = [(valid_hosts[1], ap) for ap in valid_access_points]
     # scenarios_ids = ["%s, %s" % (fix[0], list(fix[1].keys())[0]) for fix in scenarios]
     scenarios_ids = [
-        "%s, %s" % ((lambda x: 'file' if x is None else x)(split_protocol(fix[0])[0]), list(fix[1].keys())[0]) for fix in
+        "%s, %s" % ((lambda x: 'file' if x is None else x)(split_protocol(fix[0])[0]), list(fix[1].keys())[0]) for fix
+        in
         scenarios]
 
     def _setup_fetcher(self, this_request, cached=False):
@@ -136,27 +133,25 @@ class TestBackend:
             access_point = valid_access_points[0]  # Use 1st valid access point
 
         N_RECORDS = None if 'tutorial' in ftp else 100  # Make sure we're not going to load the full index
-        testcachedir = None
         fetcher_args = {"src": self.src, "ftp": ftp, "cache": False, "N_RECORDS": N_RECORDS}
         if cached:
             fetcher_args = {**fetcher_args, **{"cache": True, "cachedir": self.cachedir}}
         if not isconnected(fetcher_args['ftp']+"/"+"ar_index_global_prof.txt"):
             pytest.xfail("Fails because %s not available" % fetcher_args['ftp'])
         else:
-            return fetcher_args, access_point, testcachedir
+            return fetcher_args, access_point
 
     @pytest.fixture
     def _make_a_fetcher(self, request):
         """ Fixture to create a FTP fetcher for a given host and access point """
-        fetcher_args, access_point, dummy = self._setup_fetcher(request, cached=False)
+        fetcher_args, access_point = self._setup_fetcher(request, cached=False)
         yield create_fetcher(fetcher_args, access_point).fetcher
 
     @pytest.fixture
     def _make_a_cached_fetcher(self, request):
         """ Fixture to create a cached FTP fetcher for a given host and access point """
-        fetcher_args, access_point, testcachedir = self._setup_fetcher(request, cached=True)
+        fetcher_args, access_point = self._setup_fetcher(request, cached=True)
         yield create_fetcher(fetcher_args, access_point).fetcher
-        # shutil.rmtree(testcachedir)
 
     # @skip_for_debug
     @safe_to_server_errors
@@ -203,10 +198,13 @@ class TestBackend:
 
         test(_make_a_cached_fetcher)
 
-    def test_z(self):
-        warnings.warn(argopy.lscache(self.cachedir))
-        shutil.rmtree(self.cachedir)
-        assert True
+    @pytest.fixture(scope="class", autouse=True)
+    def cleanup(self, request):
+        """Cleanup once we are finished."""
+        def remove_test_dir():
+            # warnings.warn("\n%s" % argopy.lscache(self.cachedir))  # This could be useful to debug tests
+            shutil.rmtree(self.cachedir)
+        request.addfinalizer(remove_test_dir)
 
 
 # @skip_for_debug

@@ -27,7 +27,7 @@ if has_pyarrow:
     from argopy.stores.argo_index_pa import indexstore_pyarrow as indexstore
     log.debug("Using pyarrow indexstore")
 else:
-    from argopy.stores.argo_index_pa import indexstore_pandas as indexstore
+    from argopy.stores.argo_index_pd import indexstore_pandas as indexstore
     # warnings.warn("Consider installing pyarrow in order to improve performances when fetching GDAC data")
     log.debug("Using pandas indexstore")
 
@@ -98,7 +98,7 @@ class FTPArgoIndexFetcher(ABC):
 
         # Validation of self.server is done by the indexstore:
         self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
-        self.fs = self.indexfs.fs['index']
+        self.fs = self.indexfs.fs['src']
 
         nrows = None
         if 'N_RECORDS' in kwargs:
