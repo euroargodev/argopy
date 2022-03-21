@@ -106,7 +106,7 @@ def assert_fetcher(this_fetcher, cachable=False):
         assert is_list_of_strings(this_fetcher.cachepath)
 
 
-# @skip_for_debug
+@skip_for_debug
 @requires_ftp
 class TestBackend:
     src = 'ftp'
@@ -207,7 +207,7 @@ class TestBackend:
         request.addfinalizer(remove_test_dir)
 
 
-# @skip_for_debug
+@skip_for_debug
 @requires_ftp
 class Test_BackendParallel:
     src = 'ftp'

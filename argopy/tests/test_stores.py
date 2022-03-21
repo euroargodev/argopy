@@ -506,6 +506,7 @@ class IndexStore_test_proto:
     #     with pytest.raises(FtpPathError):
     #         self.indexstore(host=self.host, index_file="dummy_index.txt")
 
+    # @skip_this
     @pytest.mark.parametrize("_make_a_store", valid_hosts, indirect=True)
     def test_hosts(self, _make_a_store):
         @safe_to_server_errors
@@ -513,12 +514,14 @@ class IndexStore_test_proto:
             assert (this_store.N_RECORDS >= 1)  # Make sure we loaded the index file content
         test(_make_a_store)
 
+    # @skip_this
     @pytest.mark.parametrize("ftp_host", ['invalid', 'https://invalid_ftp', 'ftp://invalid_ftp'], indirect=False)
     def test_hosts_invalid(self, ftp_host):
         # Invalid servers:
         with pytest.raises(FtpPathError):
             self.indexstore(host=ftp_host)
 
+    # @skip_this
     def test_index(self):
         def new_idx():
             return self.indexstore(host=self.host, index_file=self.index_file, cache=False)
@@ -536,6 +539,7 @@ class IndexStore_test_proto:
             idx = self.indexstore(host=self.host, index_file="ar_greylist.txt", cache=False)
             idx.load()
 
+    # @skip_this
     def test_to_dataframe_index(self):
         idx = self.new_idx()
         assert isinstance(idx.to_dataframe(), pd.core.frame.DataFrame)
@@ -550,22 +554,26 @@ class IndexStore_test_proto:
         df = idx.to_dataframe(index=True, nrows=N)
         assert df.shape[0] == N
 
+    # @skip_this
     def test_search_wmo(self):
         for kw in self.kwargs_wmo:
             idx = self.new_idx()
             self.assert_search(idx.search_wmo(check_wmo(kw['WMO'])))
 
+    # @skip_this
     def test_search_cyc(self):
         for kw in self.kwargs_cyc:
             idx = self.new_idx()
             self.assert_search(idx.search_cyc(check_cyc(kw['CYC'])))
 
+    # @skip_this
     def test_search_wmo_cyc(self):
         for kwo in self.kwargs_wmo:
             for kwc in self.kwargs_cyc:
                 idx = self.new_idx()
                 self.assert_search(idx.search_wmo_cyc(check_wmo(kwo['WMO']), check_cyc(kwc['CYC'])))
 
+    # @skip_this
     def test_search_box(self):
         for kw in self.kwargs_box:
             idx = self.new_idx()
@@ -573,6 +581,7 @@ class IndexStore_test_proto:
             self.assert_search(idx.search_lat_lon(kw['BOX']))
             self.assert_search(idx.search_lat_lon_tim(kw['BOX']))
 
+    # @skip_this
     def test_to_dataframe_search(self):
         idx = self.new_idx()
         idx = idx.search_wmo(check_wmo(self.kwargs_wmo[0]['WMO']))
@@ -595,11 +604,13 @@ class IndexStore_test_proto:
         idx.search_wmo(check_wmo(self.kwargs_wmo[0]['WMO']))
         self.assert_search(idx, cachable=True)
 
+    # @skip_this
     def test_read_wmo(self):
         wmo = check_wmo(self.kwargs_wmo[-1]['WMO'])
         idx = self.new_idx().search_wmo(wmo)
         assert len(idx.read_wmo()) == len(wmo)
 
+    # @skip_this
     def test_records_per_wmo(self):
         wmo = check_wmo(self.kwargs_wmo[-1]['WMO'])
         idx = self.new_idx().search_wmo(wmo)
@@ -616,6 +627,7 @@ class IndexStore_test_proto:
         request.addfinalizer(remove_test_dir)
 
 
+# @skip_this
 @skip_for_debug
 class Test_IndexStore_pandas(IndexStore_test_proto):
     indexstore = indexstore_pandas

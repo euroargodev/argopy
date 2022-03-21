@@ -21,6 +21,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
     """ Argo index store, using :class:`pandas.DataFrame` as internal storage format """
 
     backend = "pandas"
+    ext = "pd"  # path extension name for client store
 
     def load(self, force=False, nrows=None):
         """ Load an Argo-index file content
@@ -38,60 +39,52 @@ class indexstore_pandas(ArgoIndexStoreProto):
             )
             return this_table
 
+        def csv2index(obj, origin):
+            index_file = origin.split(self.fs['src'].fs.sep)[-1]
+            index = read_csv(obj, nrows=nrows)
+            check_index_cols(
+                index.columns.to_list(),
+                convention=index_file.split(".")[0],
+            )
+            log.debug("Argo index file loaded with pandas read_csv. src='%s'" % origin)
+            return index
+
         if not hasattr(self, "index") or force:
             this_path = self.index_path
             if nrows is not None:
-                this_path = this_path + "/local" + "#%i.pd" % nrows
+                this_path = this_path + "/local" + "#%i.%s" % (nrows, self.ext)
             else:
-                this_path = this_path + "/local.pd"
+                this_path = this_path + "/local.%s" % self.ext
 
             if self.cache and self.fs["client"].exists(this_path) and self._same_origin(this_path):
                 log.debug(
                     "Index already in memory as pandas table, loading... src='%s'"
                     % (this_path)
                 )
-                self.index = self._read(self.fs["client"].fs, this_path, fmt="pd")
+                self.index = self._read(self.fs["client"].fs, this_path, fmt=self.ext)
             else:
                 log.debug("Load index from scratch ...")
                 if self.fs["src"].exists(self.index_path + ".gz"):
                     with self.fs["src"].open(self.index_path + ".gz", "rb") as fg:
                         with gzip.open(fg) as f:
-                            df = read_csv(f, nrows=nrows)
-                            check_index_cols(
-                                df.columns.to_list(),
-                                convention=self.index_file.split(".")[0],
-                            )
-                            self.index = df
-                            log.debug(
-                                "Argo index file loaded with pandas read_csv. src='%s'"
-                                % (self.index_path + ".gz")
-                            )
-
+                            self.index = csv2index(f, self.index_path + ".gz")
                 else:
                     with self.fs["src"].open(self.index_path, "rb") as f:
-                        df = read_csv(f, nrows=nrows)
-                        check_index_cols(
-                            df.columns.to_list(), convention=self.index_file.split(".")[0]
-                        )
-                        self.index = df
-                        log.debug(
-                            "Argo index file loaded with pandas read_csv. src='%s'"
-                            % self.index_path
-                        )
+                        self.index = csv2index(f, self.index_path)
+
                 if self.cache and self.index.shape[0] > 0:
-                    self._write(self.fs["client"], this_path, self.index, fmt="pd")
-                    self.index = self._read(self.fs["client"].fs, this_path, fmt="pd")
+                    self._write(self.fs["client"], this_path, self.index, fmt=self.ext)
+                    self.index = self._read(self.fs["client"].fs, this_path, fmt=self.ext)
                     self.index_path_cache = this_path
                     log.debug(
                         "Index saved in cache as pandas table. dest='%s'"
                         % this_path
                     )
 
-
         if self.N_RECORDS == 0:
             raise DataNotFound("No data found in the index")
         elif nrows is not None and self.N_RECORDS != nrows:
-            self.index = self.index[0 : nrows - 1]
+            self.index = self.index[0: nrows - 1]
 
         return self
 
@@ -99,16 +92,16 @@ class indexstore_pandas(ArgoIndexStoreProto):
         """ Filter index with search criteria """
         this_path = self.search_path
         if nrows is not None:
-            this_path = this_path + "/local" + "#%i.pd" % nrows
+            this_path = this_path + "/local" + "#%i.%s" % (nrows, self.ext)
         else:
-            this_path = this_path + "/local.pd"
+            this_path = this_path + "/local.%s" % self.ext
 
         if self.cache and self.fs["client"].exists(this_path) and self._same_origin(this_path):
             log.debug(
                 "Search results already in memory as pandas dataframe, loading... src='%s'"
                 % (this_path)
             )
-            self.search = self._read(self.fs["client"].fs, this_path, fmt="pd")
+            self.search = self._read(self.fs["client"].fs, this_path, fmt=self.ext)
         else:
             log.debug("Compute search from scratch ... ")
             this_filter = np.nonzero(self.search_filter)[0]
@@ -117,10 +110,11 @@ class indexstore_pandas(ArgoIndexStoreProto):
                 self.search = self.index.head(np.min([nrows, n_match])).reset_index()
             else:
                 self.search = self.index[self.search_filter].reset_index()
+
             log.debug("Found %i matches" % self.search.shape[0])
             if self.cache and self.search.shape[0] > 0:
-                self._write(self.fs["client"], this_path, self.search, fmt="pd")
-                self.search = self._read(self.fs["client"].fs, this_path, fmt="pd")
+                self._write(self.fs["client"], this_path, self.search, fmt=self.ext)
+                self.search = self._read(self.fs["client"].fs, this_path, fmt=self.ext)
                 self.search_path_cache = this_path
                 log.debug(
                     "Search results saved in cache as pandas dataframe. dest='%s'"

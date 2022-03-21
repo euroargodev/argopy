@@ -79,6 +79,16 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             # So I removed the option in c0a15ec68013c78d83f2689a8f9c062fdfa160ab
             return this_table
 
+        def csv2index(obj, origin):
+            index_file = origin.split(self.fs['src'].fs.sep)[-1]
+            index = read_csv(obj, nrows=nrows)
+            check_index_cols(
+                index.column_names,
+                convention=index_file.split(".")[0],
+            )
+            log.debug("Argo index file loaded with pyarrow read_csv. src='%s'" % origin)
+            return index
+
         if not hasattr(self, "index") or force:
             this_path = self.index_path
             if nrows is not None:
@@ -91,34 +101,19 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                     "Index already in memory as pyarrow table, loading... src='%s'"
                     % (this_path)
                 )
-                self.index = self._read(self.fs["client"].fs, this_path)
+                self.index = self._read(self.fs["client"].fs, this_path, fmt=self.ext)
             else:
                 log.debug("Load index from scratch ...")
                 if self.fs["src"].exists(self.index_path + ".gz"):
                     with self.fs["src"].open(self.index_path + ".gz", "rb") as fg:
                         with gzip.open(fg) as f:
-                            self.index = read_csv(f, nrows=nrows)
-                            check_index_cols(
-                                self.index.column_names,
-                                convention=self.index_file.split(".")[0],
-                            )
-                            log.debug(
-                                "Argo index file loaded with pyarrow read_csv. src='%s'"
-                                % (self.index_path + ".gz")
-                            )
+                            self.index = csv2index(f, self.index_path + ".gz")
                 else:
                     with self.fs["src"].open(self.index_path, "rb") as f:
-                        self.index = read_csv(f, nrows=nrows)
-                        check_index_cols(
-                            self.index.column_names,
-                            convention=self.index_file.split(".")[0],
-                        )
-                        log.debug(
-                            "Argo index file loaded with pyarrow read_csv. src='%s'"
-                            % self.index_path
-                        )
+                        self.index = csv2index(f, self.index_path)
+
                 if self.cache and self.index.shape[0] > 0:
-                    self._write(self.fs["client"], this_path, self.index, fmt= self.ext)
+                    self._write(self.fs["client"], this_path, self.index, fmt=self.ext)
                     self.index = self._read(self.fs["client"].fs, this_path)
                     self.index_path_cache = this_path
                     log.debug(
@@ -146,7 +141,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                 "Search results already in memory as pyarrow table, loading... src='%s'"
                 % (this_path)
             )
-            self.search = self._read(self.fs["client"].fs, this_path)
+            self.search = self._read(self.fs["client"].fs, this_path, fmt=self.ext)
         else:
             log.debug("Compute search from scratch ...")
             this_filter = np.nonzero(self.search_filter)[0]
@@ -160,7 +155,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
 
             log.debug("Found %i matches" % self.search.shape[0])
             if self.cache and self.search.shape[0] > 0:
-                self._write(self.fs["client"], this_path, self.search, fmt= self.ext)
+                self._write(self.fs["client"], this_path, self.search, fmt=self.ext)
                 self.search = self._read(self.fs["client"].fs, this_path)
                 self.search_path_cache = this_path
                 log.debug(
@@ -197,8 +192,8 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
     @property
     def search_path(self):
         """ Path to search result uri"""
-        return self.fs["client"].fs.sep.join([self.host, "%s.%s" % (self.index_file, self.sha_pq)])
         # return self.host + "/" + self.index_file + "." + self.sha_pq
+        return self.fs["client"].fs.sep.join([self.host, "%s.%s" % (self.index_file, self.sha_pq)])
 
     @property
     def uri_full_index(self):
