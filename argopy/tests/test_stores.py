@@ -47,7 +47,7 @@ log = logging.getLogger("argopy.tests.stores")
 has_pyarrow = importlib.util.find_spec('pyarrow') is not None
 skip_pyarrow = pytest.mark.skipif(not has_pyarrow, reason="Requires pyarrow")
 
-skip_this = pytest.mark.skipif(True, reason="Skipped temporarily")
+skip_this = pytest.mark.skipif(False, reason="Skipped temporarily")
 skip_for_debug = pytest.mark.skipif(False, reason="Taking too long !")
 
 id_implementation = lambda x: [k for k, v in known_implementations.items()  # noqa: E731
@@ -643,7 +643,7 @@ class IndexStore_test_proto:
 class Test_IndexStore_pandas(IndexStore_test_proto):
     indexstore = indexstore_pandas
 
-@skip_for_debug
+# @skip_for_debug
 @skip_pyarrow
 class Test_IndexStore_pyarrow(IndexStore_test_proto):
     from argopy.stores.argo_index_pa import indexstore_pyarrow

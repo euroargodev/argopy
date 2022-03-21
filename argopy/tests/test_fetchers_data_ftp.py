@@ -31,7 +31,7 @@ import logging
 
 log = logging.getLogger("argopy.tests.data.ftp")
 
-skip_for_debug = pytest.mark.skipif(True, reason="Taking too long !")
+skip_for_debug = pytest.mark.skipif(False, reason="Taking too long !")
 
 """
 List ftp hosts to be tested. 
