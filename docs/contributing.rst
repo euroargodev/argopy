@@ -13,7 +13,7 @@ First off, thanks for taking the time to contribute!
   and `Pandas <http://pandas.pydata.org/pandas*docs/stable/contributing.html>`_ contributing guides.
 
 If you seek **support** for your argopy usage or if you don't want to read
-this whole thing and just have a question: `visit the chat room at gitter <https://gitter.im/Argo-floats/argopy>`_.
+this whole thing and just have a question: `visit our Discussion forum <https://github.com/euroargodev/argopy/discussions>`_.
 
 Where to start?
 ===============
@@ -21,18 +21,18 @@ Where to start?
 All contributions, bug reports, bug fixes, documentation improvements,
 enhancements, and ideas are welcome.
 
-We will complete this document for guidelines with regard to each of these contributions over time.
-
 If you are brand new to *argopy* or open source development, we recommend going
 through the `GitHub "issues" tab <https://github.com/euroargodev/argopy/issues>`_
 to find issues that interest you. There are a number of issues listed under
 `Documentation <https://github.com/euroargodev/argopy/issues?q=is%3Aissue+is%3Aopen+label%3Adocumentation>`_
-and `good first issue
+and `Good first issue
 <https://github.com/euroargodev/argopy/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22>`_
 where you could start out. Once you've found an interesting issue, you can
 return here to get your development environment setup.
 
-Please don't file an issue to ask a question, instead `visit the chat room at gitter <https://gitter.im/Argo-floats/argopy>`_.
+Please don't file an issue to ask a question, instead `visit our Discussion forum <https://github.com/euroargodev/argopy/discussions>`_.
+where a number of items are listed under `Documentation <https://github.com/euroargodev/argopy/discussions?discussions_q=label%3Adocumentation+>`_
+and `Good first issue <https://github.com/euroargodev/argopy/discussions?discussions_q=label%3A%22good+first+issue%22++>`_
 
 .. _contributing.bug_reports:
 
