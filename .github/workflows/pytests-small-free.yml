@@ -1,4 +1,4 @@
-name: tests in minimal FREE env
+name: tests in small FREE env
 
 on:
   push:
