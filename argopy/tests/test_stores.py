@@ -13,6 +13,7 @@ import aiohttp
 import importlib
 import shutil
 import logging
+from fsspec.core import split_protocol
 
 import argopy
 from argopy.stores import (
@@ -419,23 +420,55 @@ host_list = [argopy.tutorial.open_dataset("localftp")[0],
 # Make sure hosts are valid and available at test time:
 valid_hosts = [h for h in host_list if isconnected(h) and check_gdac_path(h, errors='ignore')]
 
+"""
+List index searches to be tested.
+"""
+valid_searches = [
+    # {"wmo": [6901929]},
+    {"wmo": [6901929, 2901623]},
+    # {"cyc": [36]},
+    {"cyc": [5 ,45]},
+    {"wmo_cyc": [6901929, 36]},
+    {"tim": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
+    {"lat_lon": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
+    {"lat_lon_tim": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
+    ]
+
+def run_a_search(idx_maker, fetcher_args, search_point, xfail=False):
+    """ Create and run a search on a given index store
+
+        Use xfail=True when a test with this is expected to fail
+    """
+    def core(fargs, apts):
+        try:
+            idx = idx_maker(**fargs)
+            if "wmo" in apts:
+                idx.search_wmo(apts['wmo'])
+            if "cyc" in apts:
+                idx.search_cyc(apts['cyc'])
+            if "wmo_cyc" in apts:
+                idx.search_wmo_cyc(apts['wmo_cyc'][0], apts['wmo_cyc'][1])
+            if "tim" in apts:
+                idx.search_tim(apts['tim'])
+            if "lat_lon" in apts:
+                idx.search_lat_lon(apts['lat_lon'])
+            if "lat_lon_tim" in apts:
+                idx.search_lat_lon_tim(apts['lat_lon_tim'])
+        except Exception:
+            raise
+        return idx
+    return fct_safe_to_server_errors(core)(fetcher_args, search_point, xfail=xfail)
+
+
 class IndexStore_test_proto:
     host, flist = argopy.tutorial.open_dataset("localftp")
     index_file = "ar_index_global_prof.txt"
 
-    kwargs_wmo = [
-        {"WMO": 6901929},
-        {"WMO": [6901929, 2901623]},
-    ]
-
-    kwargs_cyc = [
-        {"CYC": 36},
-        {"CYC": [5, 45]},
-    ]
-
-    kwargs_box = [
-        {"BOX": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
-    ]
+    search_scenarios = [(h, ap) for h in valid_hosts for ap in valid_searches]
+    search_scenarios_ids = [
+        "%s, %s" % ((lambda x: 'file' if x is None else x)(split_protocol(fix[0])[0]), list(fix[1].keys())[0]) for fix
+        in
+        search_scenarios]
 
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
@@ -451,32 +484,40 @@ class IndexStore_test_proto:
             return idx
         return fct_safe_to_server_errors(core)(store_args, xfail=xfail)
 
-    def new_idx(self, cache=False, cachedir=None):
-        N_RECORDS = None if 'tutorial' in self.host else 100  # Make sure we're not going to load the full index
-        idx = self.create_store({'host': self.host,
-                                 'index_file': self.index_file,
-                                 'cache': cache,
-                                 'cachedir': self.cachedir if cachedir is None else cachedir}).load(nrows=N_RECORDS)
-        return idx
-
     def _setup_store(self, this_request, cached=False):
         """Helper method to set-up options for an index store creation"""
-        if isinstance(this_request.param, tuple):
-            host = this_request.param[0]
+        if hasattr(this_request, 'param'):
+            if isinstance(this_request.param, tuple):
+                host = this_request.param[0]
+            else:
+                host = this_request.param
         else:
-            host = this_request.param
+            host = this_request['param']
         N_RECORDS = None if 'tutorial' in host else 100  # Make sure we're not going to load the full index
         fetcher_args = {"host": host, "index_file": self.index_file, "cache": False}
         if cached:
             fetcher_args = {**fetcher_args, **{"cache": True, "cachedir": self.cachedir}}
         return fetcher_args, N_RECORDS
 
+    def new_idx(self, cache=False, cachedir=None, **kwargs):
+        host = kwargs['host'] if 'host' in kwargs else self.host
+        fetcher_args, N_RECORDS = self._setup_store({'param': host}, cached=cache)
+        idx = self.create_store(fetcher_args).load(nrows=N_RECORDS)
+        return idx
+
     @pytest.fixture
-    def _make_a_store(self, request):
+    def a_store(self, request):
         """Fixture to create an index store for a given host."""
         fetcher_args, N_RECORDS = self._setup_store(request)
         # yield self.indexstore(**fetcher_args).load(nrows=N_RECORDS)
         yield self.create_store(fetcher_args).load(nrows=N_RECORDS)
+
+    @pytest.fixture
+    def a_search(self, request):
+        """ Fixture to create a FTP fetcher for a given host and access point """
+        host = request.param[0]
+        srch = request.param[1]
+        yield run_a_search(self.new_idx, {'host': host, 'cache': True}, srch)
 
     def assert_index(self, this_idx, cachable=False):
         assert hasattr(this_idx, 'index')
@@ -494,25 +535,13 @@ class IndexStore_test_proto:
         if cachable:
             assert is_list_of_strings(this_idx.cachepath('search'))
 
-    # def test_implementation(self):
-    #     assert isinstance(self.indexstore(), argopy.stores.argo_index_pa.ArgoIndexStoreProto)
-    #     assert isinstance(self.indexstore(cache=True), argopy.stores.argo_index_pa.ArgoIndexStoreProto)
-    #     assert isinstance(
-    #         self.indexstore(cache=True, cachedir="."), argopy.stores.argo_index_pa.ArgoIndexStoreProto
-    #     )
-    #     assert isinstance(
-    #         self.indexstore(host=self.host, index_file=self.index_file), argopy.stores.argo_index_pa.ArgoIndexStoreProto
-    #     )
-    #     with pytest.raises(FtpPathError):
-    #         self.indexstore(host=self.host, index_file="dummy_index.txt")
-
     # @skip_this
-    @pytest.mark.parametrize("_make_a_store", valid_hosts, indirect=True)
-    def test_hosts(self, _make_a_store):
+    @pytest.mark.parametrize("a_store", valid_hosts, indirect=True)
+    def test_hosts(self, a_store):
         @safe_to_server_errors
         def test(this_store):
-            assert (this_store.N_RECORDS >= 1)  # Make sure we loaded the index file content
-        test(_make_a_store)
+            self.assert_index(this_store) # assert (this_store.N_RECORDS >= 1)  # Make sure we loaded the index file content
+        test(a_store)
 
     # @skip_this
     @pytest.mark.parametrize("ftp_host", ['invalid', 'https://invalid_ftp', 'ftp://invalid_ftp'], indirect=False)
@@ -528,7 +557,7 @@ class IndexStore_test_proto:
         self.assert_index(new_idx().load())
         self.assert_index(new_idx().load(force=True))
 
-        N = np.random.randint(1,100+1)
+        N = np.random.randint(1, 100+1)
         idx = new_idx().load(nrows=N)
         self.assert_index(idx)
         assert idx.index.shape[0] == N
@@ -538,6 +567,13 @@ class IndexStore_test_proto:
         with pytest.raises(InvalidDatasetStructure):
             idx = self.indexstore(host=self.host, index_file="ar_greylist.txt", cache=False)
             idx.load()
+
+    @pytest.mark.parametrize("a_search", search_scenarios, indirect=True, ids=search_scenarios_ids)
+    def test_search(self, a_search):
+        @safe_to_server_errors
+        def test(this_searched_store):
+            self.assert_search(this_searched_store, cachable=False)
+        test(a_search)
 
     # @skip_this
     def test_to_dataframe_index(self):
@@ -550,41 +586,15 @@ class IndexStore_test_proto:
         df = idx.to_dataframe()
         assert df.shape[0] == idx.N_RECORDS
 
-        N = np.random.randint(1,20+1)
+        N = np.random.randint(1, 20+1)
         df = idx.to_dataframe(index=True, nrows=N)
         assert df.shape[0] == N
 
     # @skip_this
-    def test_search_wmo(self):
-        for kw in self.kwargs_wmo:
-            idx = self.new_idx()
-            self.assert_search(idx.search_wmo(check_wmo(kw['WMO'])))
-
-    # @skip_this
-    def test_search_cyc(self):
-        for kw in self.kwargs_cyc:
-            idx = self.new_idx()
-            self.assert_search(idx.search_cyc(check_cyc(kw['CYC'])))
-
-    # @skip_this
-    def test_search_wmo_cyc(self):
-        for kwo in self.kwargs_wmo:
-            for kwc in self.kwargs_cyc:
-                idx = self.new_idx()
-                self.assert_search(idx.search_wmo_cyc(check_wmo(kwo['WMO']), check_cyc(kwc['CYC'])))
-
-    # @skip_this
-    def test_search_box(self):
-        for kw in self.kwargs_box:
-            idx = self.new_idx()
-            self.assert_search(idx.search_tim(kw['BOX']))
-            self.assert_search(idx.search_lat_lon(kw['BOX']))
-            self.assert_search(idx.search_lat_lon_tim(kw['BOX']))
-
-    # @skip_this
     def test_to_dataframe_search(self):
         idx = self.new_idx()
-        idx = idx.search_wmo(check_wmo(self.kwargs_wmo[0]['WMO']))
+        wmo = [s['wmo'] for s in valid_searches if 'wmo' in s.keys()][0]
+        idx = idx.search_wmo(wmo)
 
         df = idx.to_dataframe()
         assert isinstance(df, pd.core.frame.DataFrame)
@@ -601,18 +611,19 @@ class IndexStore_test_proto:
     # @skip_this
     def test_caching_search(self):
         idx = self.new_idx(cache=True)
-        idx.search_wmo(check_wmo(self.kwargs_wmo[0]['WMO']))
+        wmo = [s['wmo'] for s in valid_searches if 'wmo' in s.keys()][0]
+        idx.search_wmo(wmo)
         self.assert_search(idx, cachable=True)
 
     # @skip_this
     def test_read_wmo(self):
-        wmo = check_wmo(self.kwargs_wmo[-1]['WMO'])
+        wmo = [s['wmo'] for s in valid_searches if 'wmo' in s.keys()][0]
         idx = self.new_idx().search_wmo(wmo)
         assert len(idx.read_wmo()) == len(wmo)
 
     # @skip_this
     def test_records_per_wmo(self):
-        wmo = check_wmo(self.kwargs_wmo[-1]['WMO'])
+        wmo = [s['wmo'] for s in valid_searches if 'wmo' in s.keys()][0]
         idx = self.new_idx().search_wmo(wmo)
         C = idx.records_per_wmo()
         for w in C:

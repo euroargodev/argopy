@@ -24,6 +24,7 @@ import struct
 import subprocess # nosec B404 only used without user inputs
 import contextlib
 from fsspec.core import split_protocol
+import fsspec
 
 import xarray as xr
 import pandas as pd
@@ -152,12 +153,15 @@ def lscache(cache_path: str = "", prt=True):
         summary.append("\t%8s: %s (%s)" % (key, tsf, ts))
         listing['time'].append(pd.to_datetime(datetime.fromtimestamp(ts)))
 
-        key = 'original'
-        summary.append("\t%8s: %s" % (key, cached_files[cfile][key]))
-        listing[key].append(cached_files[cfile][key])
+        if version.parse(fsspec.__version__) > version.parse("0.8.7"):
+            key = 'original'
+            summary.append("\t%8s: %s" % (key, cached_files[cfile][key]))
+            listing[key].append(cached_files[cfile][key])
+
         key = 'uid'
         summary.append("\t%8s: %s" % (key, cached_files[cfile][key]))
         listing[key].append(cached_files[cfile][key])
+
         key = 'blocks'
         summary.append("\t%8s: %s" % (key, cached_files[cfile][key]))
         listing[key].append(cached_files[cfile][key])

@@ -62,6 +62,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
                     % (this_path)
                 )
                 self.index = self._read(self.fs["client"].fs, this_path, fmt=self.ext)
+                self.index_path_cache = this_path
             else:
                 log.debug("Load index from scratch ...")
                 if self.fs["src"].exists(self.index_path + ".gz"):
@@ -102,6 +103,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
                 % (this_path)
             )
             self.search = self._read(self.fs["client"].fs, this_path, fmt=self.ext)
+            self.search_path_cache = this_path
         else:
             log.debug("Compute search from scratch ... ")
             this_filter = np.nonzero(self.search_filter)[0]
