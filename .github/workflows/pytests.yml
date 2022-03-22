@@ -23,6 +23,7 @@ jobs:
         experimental: [false]
         include:
           - os: windows-latest
+            python-version: [3.7, 3.8]
             experimental: true
 
     steps:
