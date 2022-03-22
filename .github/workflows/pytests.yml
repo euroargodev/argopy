@@ -9,11 +9,29 @@ on:
       - 'dependabot*'
 
 jobs:
+  detect-ci-trigger:
+    name: detect ci trigger
+    runs-on: ubuntu-latest
+    if: |
+      github.repository == 'euroargodev/argopy'
+      && (github.event_name == 'push' || github.event_name == 'pull_request')
+    outputs:
+      triggered: ${{ steps.detect-trigger.outputs.trigger-found }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+      - uses: xarray-contrib/ci-trigger@v1.1
+        id: detect-trigger
+        with:
+          keyword: "[skip-ci]"
 
   dev:
     # CI tests for pinned environments, argopy must pass tests in a controlled environment
 
     runs-on: ${{ matrix.os }}
+    needs: detect-ci-trigger
+    if: needs.detect-ci-trigger.outputs.triggered == 'false'
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       max-parallel: 12
@@ -35,7 +53,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-dev-full.yml" >> $GITHUB_ENV
+          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-dev.yml" >> $GITHUB_ENV
           echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
 
       - name: Cache conda
@@ -87,8 +105,9 @@ jobs:
 
   min:
 
-    needs: dev
+    needs: detect-ci-trigger
     runs-on: ${{ matrix.os }}
+    if: needs.detect-ci-trigger.outputs.triggered == 'false'
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       max-parallel: 12
