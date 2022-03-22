@@ -68,7 +68,7 @@ List parallel methods to be tested.
 valid_parallel_opts = [
     # {"parallel": "thread"},
     {"parallel": True, "parallel_method": "thread"},  # opts0
-    {"parallel": True, "parallel_method": "process"}  # opts1
+    # {"parallel": True, "parallel_method": "process"}  # opts1
 ]
 
 
