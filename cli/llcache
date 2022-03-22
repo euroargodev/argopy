@@ -1,0 +1,84 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import pickle
+import math
+import pandas as pd
+
+
+def convert_size(size_bytes):
+	if size_bytes == 0:
+		return "0B"
+	size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+	i = int(math.floor(math.log(size_bytes, 1024)))
+	p = math.pow(1024, i)
+	s = round(size_bytes / p, 2)
+	return "%s %s" % (s, size_name[i])
+
+
+def hline(size):
+	return "-" * size
+
+
+def print_this_cache(apath, cached_files, file=sys.stdout):
+	N_FILES = len(cached_files)
+	TOTAL_SIZE = 0
+	for cfile in cached_files:
+		path = os.path.join(apath, cached_files[cfile]["fn"])
+		TOTAL_SIZE += os.path.getsize(path)
+
+	if N_FILES == 0:
+		print("No files in fsspec cache \U0001F616", file=file)
+	else:
+		title = "\U0001F5C4  %i files, %s: \033[31m %s\033[0m" % (
+			N_FILES, convert_size(TOTAL_SIZE), os.path.sep.join([apath, ""]))
+		print(hline(len(title)-9), file=file)
+		print("{0:^{width}}".format(title, width=len(title)))
+		print(hline(len(title)-9), file=file)
+
+		for cfile in cached_files:
+			this_time = pd.to_datetime(cached_files[cfile]["time"], unit="s").strftime("%b %d %H:%M")
+			this_size = convert_size(os.path.getsize(os.path.join(apath, cached_files[cfile]["fn"])))
+			# print("%10s %10s \033[91m%s\033[0m" % (
+			print("\u21AA %s %10s %s\033[0m" % (
+					this_size,
+				this_time,
+				cached_files[cfile]["fn"],
+				), file=file)
+			print("%s \33[3m\033[92m%s\033[0m\n" % (
+			# print("%22s %s \33[3m%s\033[0m" % (
+			# 		" ",
+				"  \U0001F49E",
+				cached_files[cfile]["original"],
+				), file=file)
+
+
+def listscache(cache_path: str, file=sys.stdout):
+	apath = os.path.abspath(cache_path)
+
+	cached_files = []
+	fn = os.path.join(apath, "cache")
+	if os.path.exists(fn):
+		with open(fn, "rb") as f:
+			loaded_cached_files = pickle.load(f)
+			for c in loaded_cached_files.values():
+				if isinstance(c["blocks"], list):
+					c["blocks"] = set(c["blocks"])
+			cached_files.append(loaded_cached_files)
+	else:
+		# raise ValueError("This is not a valid fsspec cache folder (missing 'cache' pickle file)")
+		cached_files.append({})
+	cached_files = cached_files or [{}]
+	cached_files = cached_files[-1]
+
+	print_this_cache(apath, cached_files, file=file)
+
+
+if __name__ == "__main__":
+	# print('\U0001F984')
+	if len(sys.argv) == 1:
+		this_path = os.getcwd()
+	else:
+		this_path = sys.argv[1]
+	listscache(this_path)

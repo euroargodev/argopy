@@ -1,0 +1,97 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import pickle
+import math
+from datetime import datetime
+import pandas as pd
+
+
+def convert_size(size_bytes):
+    if size_bytes == 0:
+        return "0B"
+    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+    i = int(math.floor(math.log(size_bytes, 1024)))
+    p = math.pow(1024, i)
+    s = round(size_bytes / p, 2)
+    return "%s %s" % (s, size_name[i])
+
+
+def hline(size):
+    return "-" * size
+
+
+def print_this_cache(apath, cached_files, file=sys.stdout):
+    N_FILES = len(cached_files)
+    TOTAL_SIZE = 0
+    for cfile in cached_files:
+        path = os.path.join(apath, cached_files[cfile]["fn"])
+        TOTAL_SIZE += os.path.getsize(path)
+
+    if N_FILES == 0:
+        print("No files in fsspec cache \U0001F616", file=file)
+    else:
+        title = "\U0001F5C4  %i files, %s: \033[31m %s\033[0m" % (
+            N_FILES, convert_size(TOTAL_SIZE), os.path.sep.join([apath, ""]))
+        print(hline(len(title)-9), file=file)
+        print("{0:^{width}}".format(title, width=len(title)))
+        print(hline(len(title)-9), file=file)
+
+        for cfile in cached_files:
+            # print(apath)  # Similar to: cached_files[cfile]['original']
+            #         print(os.path.sep.join([cached_files[cfile]['fn']]))
+            print("\u21AA %s\033[0m" % cached_files[cfile]["fn"], file=file)
+            # print("\u21AA\033[91m %s\033[0m" % cached_files[cfile]["fn"], file=file)
+            # print("\u21AA\033[32m %s\033[0m" % cached_files[cfile]["fn"])
+            # print("\u21AA\033[92m %s\033[0m" % cached_files[cfile]["fn"])
+
+            key = 'SIZE'
+            path = os.path.join(apath, cached_files[cfile]["fn"])
+            print("\t\U0001F4C2 %s" % (convert_size(os.path.getsize(path))), file=file)
+
+            key = "time"
+            ts = cached_files[cfile][key]
+            tsf = pd.to_datetime(datetime.fromtimestamp(ts)).strftime("%c")
+            print("\t\u23F1  %s (%s)" % (tsf, ts), file=file)
+
+            key = "original"
+            # print("\t\U0001F49E %s" % (cached_files[cfile][key]))
+            print("\t\U0001F49E \033[92m%s\33[0m" % (cached_files[cfile][key]), file=file)
+
+            key = "uid"
+            print("\t\U0001F9EC %s" % (cached_files[cfile][key]), file=file)
+
+            key = "blocks"
+            print("\t\U0001F9F1 %s (%s)" % (cached_files[cfile][key], key), file=file)
+
+        # print(hline(len(title) - 9), file=file)
+
+
+def listscache(cache_path: str, file=sys.stdout):
+    apath = os.path.abspath(cache_path)
+
+    cached_files = []
+    fn = os.path.join(apath, "cache")
+    if os.path.exists(fn):
+        with open(fn, "rb") as f:
+            loaded_cached_files = pickle.load(f)
+            for c in loaded_cached_files.values():
+                if isinstance(c["blocks"], list):
+                    c["blocks"] = set(c["blocks"])
+            cached_files.append(loaded_cached_files)
+    else:
+        # raise ValueError("This is not a valid fsspec cache folder (missing 'cache' pickle file)")
+        cached_files.append({})
+    cached_files = cached_files or [{}]
+    cached_files = cached_files[-1]
+
+    print_this_cache(apath, cached_files, file=file)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        this_path = os.getcwd()
+    else:
+        this_path = sys.argv[1]
+    listscache(this_path)
