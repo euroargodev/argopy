@@ -123,11 +123,11 @@ jobs:
       matrix:
         python-version: [3.7, 3.8]
         os: [ubuntu-latest, macos-latest]
-        python-domain: []
+        python-domain: [full]
         experimental: [false]
         include:
           - python-version: [3.8]
-          - python-domain: [-small]
+          - python-domain: [small]
 
     steps:
       - uses: actions/checkout@v3
@@ -136,7 +136,7 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: argopy-tests
-          environment-file: ci/requirements/py${{matrix.python-version}}-free${{matrix.python-domain}}.yml
+          environment-file: ci/requirements/py${{matrix.python-version}}-free-${{matrix.python-domain}}.yml
           auto-update-conda: false
           python-version: ${{ matrix.python-version }}
           auto-activate-base: false
