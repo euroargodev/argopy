@@ -1,0 +1,19 @@
+name: argopy-tests
+channels:
+  - conda-forge
+dependencies:
+  - python=3.8
+  - scipy
+  - xarray
+  - fsspec
+  - aiohttp
+  - erddapy
+  - scikit-learn
+  - matplotlib
+  - packaging
+
+  - pytest
+  - pytest-cov
+  - pytest-env
+  - black
+  - flake8
