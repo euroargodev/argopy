@@ -10,7 +10,7 @@ on:
 
 jobs:
 
-  dev:
+  main:
 
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
@@ -32,14 +32,31 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Set environment variables
+        run: |
+          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-free-full.yml" >> $GITHUB_ENV
+          echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
+
+      - name: Cache conda
+        uses: actions/cache@v2
+        with:
+          path: ~/conda_pkgs_dir
+          key: ${{ runner.os }}-conda-py${{ matrix.python-version }}-${{
+            hashFiles('ci/requirements/**.yml') }}
+
       - name: Set up environment with py-${{ matrix.python-version }}
         uses: conda-incubator/setup-miniconda@v2
         with:
+          mamba-version: "*"
           activate-environment: argopy-tests
-          environment-file: ci/requirements/py${{matrix.python-version}}-dev.yml
-          auto-update-conda: false
           python-version: ${{ matrix.python-version }}
+          auto-update-conda: false
           auto-activate-base: false
+          use-only-tar-bz2: true
+
+      - name: Install conda dependencies
+        run: |
+          mamba env update -f $CONDA_ENV_FILE
 
       - shell: bash -l {0}
         run: |
@@ -65,107 +82,108 @@ jobs:
           flags: unittests
           name: codecov-github
           fail_ci_if_error: true
+          env_vars: RUNNER_OS,PYTHON_VERSION
 
-  min:
-
-    needs: dev
-    runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.experimental }}
-    strategy:
-      max-parallel: 12
-      fail-fast: false
-      matrix:
-        python-version: [3.7, 3.8]
-        os: [ubuntu-latest, macos-latest]
-        experimental: [false]
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up environment with py-${{ matrix.python-version }}
-        uses: conda-incubator/setup-miniconda@v2
-        with:
-          activate-environment: argopy-tests
-          environment-file: ci/requirements/py${{matrix.python-version}}-min.yml
-          auto-update-conda: false
-          python-version: ${{ matrix.python-version }}
-          auto-activate-base: false
-
-      - shell: bash -l {0}
-        run: |
-          conda info
-          conda list
-
-      - name: Lint with flake8
-        shell: bash -l {0}
-        run: |
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
-      - name: Test with pytest
-        shell: bash -l {0}
-        run: |
-          pytest -rfs -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2.1.0
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./cov.xml
-          flags: unittests
-          name: codecov-github
-          fail_ci_if_error: true
-
-  free:
-
-    needs: min
-    runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.experimental }}
-    strategy:
-      max-parallel: 12
-      fail-fast: false
-      matrix:
-        python-version: [3.7, 3.8]
-        os: [ubuntu-latest, macos-latest]
-        python-domain: [full]
-        experimental: [false]
-        include:
-          - python-version: [3.8]
-          - python-domain: [small]
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up environment with py-${{ matrix.python-version }}
-        uses: conda-incubator/setup-miniconda@v2
-        with:
-          activate-environment: argopy-tests
-          environment-file: ci/requirements/py${{matrix.python-version}}-free-${{matrix.python-domain}}.yml
-          auto-update-conda: false
-          python-version: ${{ matrix.python-version }}
-          auto-activate-base: false
-
-      - shell: bash -l {0}
-        run: |
-          conda info
-          conda list
-
-      - name: Lint with flake8
-        shell: bash -l {0}
-        run: |
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
-      - name: Test with pytest
-        shell: bash -l {0}
-        run: |
-          pytest -rfs -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2.1.0
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./cov.xml
-          flags: unittests
-          name: codecov-github
-          fail_ci_if_error: true
+#  min:
+#
+#    needs: main
+#    runs-on: ${{ matrix.os }}
+#    continue-on-error: ${{ matrix.experimental }}
+#    strategy:
+#      max-parallel: 12
+#      fail-fast: false
+#      matrix:
+#        python-version: [3.7, 3.8]
+#        os: [ubuntu-latest, macos-latest]
+#        experimental: [false]
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#
+#      - name: Set up environment with py-${{ matrix.python-version }}
+#        uses: conda-incubator/setup-miniconda@v2
+#        with:
+#          activate-environment: argopy-tests
+#          environment-file: ci/requirements/py${{matrix.python-version}}-min.yml
+#          auto-update-conda: false
+#          python-version: ${{ matrix.python-version }}
+#          auto-activate-base: false
+#
+#      - shell: bash -l {0}
+#        run: |
+#          conda info
+#          conda list
+#
+#      - name: Lint with flake8
+#        shell: bash -l {0}
+#        run: |
+#          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+#          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+#
+#      - name: Test with pytest
+#        shell: bash -l {0}
+#        run: |
+#          pytest -rfs -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
+#
+#      - name: Upload coverage to Codecov
+#        uses: codecov/codecov-action@v2.1.0
+#        with:
+#          token: ${{ secrets.CODECOV_TOKEN }}
+#          file: ./cov.xml
+#          flags: unittests
+#          name: codecov-github
+#          fail_ci_if_error: true
+#
+#  free:
+#
+#    needs: min
+#    runs-on: ${{ matrix.os }}
+#    continue-on-error: ${{ matrix.experimental }}
+#    strategy:
+#      max-parallel: 12
+#      fail-fast: false
+#      matrix:
+#        python-version: [3.7, 3.8]
+#        os: [ubuntu-latest, macos-latest]
+#        python-domain: [full]
+#        experimental: [false]
+#        include:
+#          - python-version: [3.8]
+#          - python-domain: [small]
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#
+#      - name: Set up environment with py-${{ matrix.python-version }}
+#        uses: conda-incubator/setup-miniconda@v2
+#        with:
+#          activate-environment: argopy-tests
+#          environment-file: ci/requirements/py${{matrix.python-version}}-free-${{matrix.python-domain}}.yml
+#          auto-update-conda: false
+#          python-version: ${{ matrix.python-version }}
+#          auto-activate-base: false
+#
+#      - shell: bash -l {0}
+#        run: |
+#          conda info
+#          conda list
+#
+#      - name: Lint with flake8
+#        shell: bash -l {0}
+#        run: |
+#          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+#          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+#
+#      - name: Test with pytest
+#        shell: bash -l {0}
+#        run: |
+#          pytest -rfs -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
+#
+#      - name: Upload coverage to Codecov
+#        uses: codecov/codecov-action@v2.1.0
+#        with:
+#          token: ${{ secrets.CODECOV_TOKEN }}
+#          file: ./cov.xml
+#          flags: unittests
+#          name: codecov-github
+#          fail_ci_if_error: true
