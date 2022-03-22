@@ -41,17 +41,18 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/conda_pkgs_dir
-          key: ${{ runner.os }}-conda-py${{ matrix.python-version }}-${{
-            hashFiles('ci/requirements/**.yml') }}
+          key: ${{ runner.os }}-conda-py${{ matrix.python-version }}-${{ hashFiles('ci/requirements/**.yml') }}
 
       - name: Set up environment with py-${{ matrix.python-version }}
         uses: conda-incubator/setup-miniconda@v2
         with:
+          channels: conda-forge
+          channel-priority: strict
           mamba-version: "*"
           activate-environment: argopy-tests
           python-version: ${{ matrix.python-version }}
           auto-update-conda: false
-          auto-activate-base: false
+#          auto-activate-base: false
           use-only-tar-bz2: true
 
       - name: Install conda dependencies
