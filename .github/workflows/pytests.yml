@@ -117,9 +117,9 @@ jobs:
           auto-update-conda: false
           use-only-tar-bz2: true
 
-        - name: Install conda dependencies
-          run: |
-            mamba env update -f $CONDA_ENV_FILE
+      - name: Install conda dependencies
+        run: |
+          mamba env update -f $CONDA_ENV_FILE
 
       - shell: bash -l {0}
         run: |
