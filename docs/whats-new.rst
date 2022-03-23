@@ -18,6 +18,14 @@ What's New
 .. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy
    :target: //github.com/euroargodev/argopy/releases
 
+v0.1.11 (X XXX. 2022)
+---------------------
+
+**Internals**
+
+- Fix bug in erddap fata fetcher that was causing a `profile` request to do not account for cycle numbers. (:commit:`301e557fdec1f2d536841464b383edc3a4c4a62d`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+
 v0.1.10 (4 Mar. 2022)
 ---------------------
 
