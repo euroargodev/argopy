@@ -530,7 +530,7 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         self.erddap.constraints = {
             "platform_number=~": "|".join(["%i" % i for i in self.WMO])
         }
-        if isinstance(self.CYC, (np.ndarray)):
+        if self.CYC is not None:
             self.erddap.constraints.update(
                 {"cycle_number=~": "|".join(["%i" % i for i in self.CYC])}
             )
