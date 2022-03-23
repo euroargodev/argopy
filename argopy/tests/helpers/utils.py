@@ -153,15 +153,15 @@ has_localftp_index, requires_localftp_index = _connectskip(
 ############
 has_pyarrow, requires_pyarrow = _importorskip("pyarrow")
 
-has_ftp, requires_ftp = _connectskip(
-    "ftp" in AVAILABLE_SOURCES, "the ftp data fetcher"
+has_gdac, requires_gdac = _connectskip(
+    "gdac" in AVAILABLE_SOURCES, "the gdac data fetcher"
 )
-has_ftp_index, requires_ftp_index = _connectskip(
-    "ftp" in AVAILABLE_INDEX_SOURCES, "the ftp index fetcher"
+has_gdac_index, requires_gdac_index = _connectskip(
+    "gdac" in AVAILABLE_INDEX_SOURCES, "the gdac index fetcher"
 )
-has_connected_gdac = has_connection and has_ftp and isAPIconnected(src='ftp', data=True)
+has_connected_gdac = has_connection and has_gdac and isAPIconnected(src='gdac', data=True)
 requires_connected_gdac = pytest.mark.skipif(
-    not has_connected_gdac, reason="Requires a live FTP server"# and pyarrow"
+    not has_connected_gdac, reason="Requires a live GDAC server"# and pyarrow"
 )
 
 ########

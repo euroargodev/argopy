@@ -236,6 +236,12 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         """
         return [self.fs.cachepath(url) for url in self.uri]
 
+    def clear_cache(self):
+        """ Remove cached files and entries from resources opened with this fetcher """
+        self.indexfs.clear_cache()
+        self.fs.clear_cache()
+        return self
+
     def _preprocess_multiprof(self, ds):
         """ Pre-process one Argo multi-profile file as a collection of points
 
@@ -289,6 +295,9 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         ds.attrs["Fetched_uri"] = ds.encoding["source"]
         ds = ds[np.sort(ds.data_vars)]
 
+        if self._post_filter_points:
+            ds = self.filter_points(ds)
+
         return ds
 
     def to_xarray(self, errors: str = "ignore"):
@@ -339,9 +348,6 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         )  # Re-index to avoid duplicate values
         ds = ds.set_coords("N_POINTS")
         ds = ds.sortby("TIME")
-
-        if self._post_filter_points:
-            ds = self.filter_points(ds)
 
         # Remove netcdf file attributes and replace them with simplified argopy ones:
         ds.attrs = {}

@@ -139,9 +139,12 @@ class Test_Facade:
             assert isinstance(dsh(0), IPython.display.Image)
 
 
+"""
+The following tests are not necessary, since index fetching is tested from each index fetcher tests 
+"""
 @requires_connection
 @requires_fetcher_index
-class Test_AllBackends:
+class OFFTest_IndexFetching:
     """ Test main API facade for all available index fetching backends """
 
     local_ftp = argopy.tutorial.open_dataset("localftp")[0]
@@ -198,8 +201,8 @@ class Test_AllBackends:
 
     @skip_for_debug
     @requires_connected_gdac
-    def test_float_ftp(self):
-        self.__test_float("ftp", N_RECORDS=100)
+    def test_float_gdac(self):
+        self.__test_float("gdac", N_RECORDS=100)
 
     @ci_erddap_index
     @requires_connected_erddap_index
@@ -215,8 +218,8 @@ class Test_AllBackends:
 
     @skip_for_debug
     @requires_connected_gdac
-    def test_profile_ftp(self):
-        self.__test_profile("ftp", N_RECORDS=100)
+    def test_profile_gdac(self):
+        self.__test_profile("gdac", N_RECORDS=100)
 
     @requires_localftp_index
     def test_region_localftp(self):
@@ -231,5 +234,5 @@ class Test_AllBackends:
 
     @skip_for_debug
     @requires_connected_gdac
-    def test_region_ftp(self):
-        self.__test_region("ftp", N_RECORDS=100)
+    def test_region_gdac(self):
+        self.__test_region("gdac", N_RECORDS=100)

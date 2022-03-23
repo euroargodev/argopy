@@ -464,11 +464,19 @@ class ArgoDataFetcher:
         if not full:
             self.load()
             ds = self.data.argo.point2profile()
-            df = (
-                ds.drop_vars(set(ds.data_vars) - set(["PLATFORM_NUMBER"]))
-                .drop_dims("N_LEVELS")
-                .to_dataframe()
-            )
+            if "N_LEVELS" in ds.dims:
+                df = (
+                    ds.drop_vars(set(ds.data_vars) - set(["PLATFORM_NUMBER"]))
+                    .drop_dims("N_LEVELS")
+                    .to_dataframe()
+                )
+            else:
+                # This is a special case where there is no vertical level in the dataset
+                # This can happen when a single measurement was loaded
+                df = (
+                    ds.drop_vars(set(ds.data_vars) - set(["PLATFORM_NUMBER"]))
+                    .to_dataframe()
+                )
             df = (
                 df.reset_index()
                 .rename(
@@ -514,11 +522,7 @@ class ArgoDataFetcher:
         """ Fetch data (and compute an index) if not already in memory
 
             Apply the default to_xarray() and to_index() methods and store results in memory.
-            Access loaded measurements structure with the `data` and `index` properties::
-
-                ds = ArgoDataFetcher().profile(6902746, 34).load().data
-                # or
-                df = ArgoDataFetcher().float(6902746).load().index
+            You can access loaded measurements structure with the `data` and `index` properties.
 
             Parameters
             ----------
@@ -529,6 +533,11 @@ class ArgoDataFetcher:
             -------
             :class:`argopy.fetchers.ArgoDataFetcher.float`
                 Data fetcher with `data` and `index` properties in memory
+
+            Examples
+            --------
+            >>> ds = ArgoDataFetcher().profile(6902746, 34).load().data
+            >>> df = ArgoDataFetcher().float(6902746).load().index
         """
         # Force to load data if the fetcher definition has changed
         if self._loaded and self._request != self.__repr__():

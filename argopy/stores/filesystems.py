@@ -117,7 +117,7 @@ class argo_store_proto(ABC):
 
     def open(self, path, *args, **kwargs):
         self.register(path)
-        log.debug(path)
+        log.debug("Opening path: %s" % path)
         return self.fs.open(path, *args, **kwargs)
 
     def glob(self, path, **kwargs):
@@ -142,7 +142,9 @@ class argo_store_proto(ABC):
     def register(self, uri):
         """ Keep track of files open with this instance """
         if self.cache:
-            self.cache_registry.append(self.store_path(uri))
+            path = self.store_path(uri)
+            if path not in self.cache_registry:
+                self.cache_registry.append(path)
 
     def cachepath(self, uri: str, errors: str = 'raise'):
         """ Return path to cached file for a given URI """
@@ -185,6 +187,7 @@ class argo_store_proto(ABC):
         if self.cache:
             for uri in self.cache_registry:
                 self._clear_cache_item(uri)
+            self.cache_registry = []  # Reset registry
 
     @abstractmethod
     def open_dataset(self, *args, **kwargs):

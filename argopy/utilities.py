@@ -237,12 +237,12 @@ def list_available_data_src():
         pass
 
     try:
-        from .data_fetchers import gdacftp_data as FTP_Fetchers
+        from .data_fetchers import gdacftp_data as GDAC_Fetchers
 
-        sources["ftp"] = FTP_Fetchers
+        sources["gdac"] = GDAC_Fetchers
     except Exception:
         warnings.warn(
-            "An error occurred while loading the FTP data fetcher, "
+            "An error occurred while loading the GDAC data fetcher, "
             "it will not be available !\n%s\n%s"
             % (sys.exc_info()[0], sys.exc_info()[1])
         )
@@ -280,12 +280,12 @@ def list_available_index_src():
         pass
 
     try:
-        from .data_fetchers import gdacftp_index as FTP_Fetchers
+        from .data_fetchers import gdacftp_index as GDAC_Fetchers
 
-        AVAILABLE_SOURCES["ftp"] = FTP_Fetchers
+        AVAILABLE_SOURCES["gdac"] = GDAC_Fetchers
     except Exception:
         warnings.warn(
-            "An error occurred while loading the FTP index fetcher, "
+            "An error occurred while loading the GDAC index fetcher, "
             "it will not be available !\n%s\n%s"
             % (sys.exc_info()[0], sys.exc_info()[1])
         )

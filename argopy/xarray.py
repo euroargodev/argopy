@@ -436,7 +436,7 @@ class ArgoAccessor:
         """
         if self._type != "point":
             raise InvalidDatasetStructure(
-                "Method only available to a collection of points"
+                "Method only available for a collection of points"
             )
         this = self._obj  # Should not be modified
 
@@ -478,6 +478,9 @@ class ArgoAccessor:
             .values
         )
         assert N_PROF * N_LEVELS >= len(this["N_POINTS"])
+        if N_LEVELS == 1:
+            log.debug("This dataset has a single vertical level, thus final variables will only have a N_PROF "
+                      "dimension and no N_LEVELS")
 
         # Store the initial set of coordinates:
         coords_list = list(this.coords)

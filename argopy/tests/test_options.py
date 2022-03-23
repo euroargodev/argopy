@@ -3,7 +3,7 @@ import pytest
 import argopy
 from argopy.options import OPTIONS
 from argopy.errors import OptionValueError, FtpPathError
-from utils import requires_localftp, requires_ftp
+from utils import requires_localftp, requires_gdac
 
 
 def test_invalid_option_name():
@@ -27,7 +27,7 @@ def test_opt_local_ftp():
     with argopy.set_options(local_ftp=local_ftp):
         assert OPTIONS["local_ftp"]
 
-@requires_ftp
+@requires_gdac
 def test_opt_gdac_ftp():
     with pytest.raises(FtpPathError):
         argopy.set_options(gdac_ftp="invalid_path")

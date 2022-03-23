@@ -15,7 +15,7 @@ from utils import (
     requires_fetcher,
     requires_connected_erddap_phy,
     requires_localftp,
-    # requires_ftp,
+    # requires_gdac,
     requires_connected_gdac,
     requires_connected_argovis,
     requires_ipython,
@@ -173,6 +173,9 @@ class Test_Facade:
             assert isinstance(dsh(0), IPython.display.Image)
 
 
+"""
+The following tests are not necessary, since data fetching is tested from each data fetcher tests 
+"""
 @requires_fetcher
 class OFFTest_DataFetching:
     """ Test main API facade for all available fetching backends and default dataset """
@@ -198,8 +201,8 @@ class OFFTest_DataFetching:
     args["float"] = [[13857]]
     args["profile"] = [[13857, 90], [13857, [88, 89]]]
     args["region"] = [
-        [-20, -16., 0, 1., 0, 100.],
-        [-20, -16., 0, 1, 0, 100., "1997-07-01", "1997-09-01"],
+        [-20., -16., 0., 1., 0., 100.],
+        [-20., -16., 0., 1., 0., 100., "1997-07-01", "1997-09-01"],
     ]
 
 
@@ -262,8 +265,8 @@ class OFFTest_DataFetching:
     @skip_for_debug
     @requires_connected_gdac
     @safe_to_server_errors
-    def test_float_ftp(self):
-        self.__test_float("ftp", N_RECORDS=100)
+    def test_float_gdac(self):
+        self.__test_float("gdac", N_RECORDS=100)
 
     @requires_connected_erddap_phy
     @safe_to_server_errors
@@ -284,8 +287,8 @@ class OFFTest_DataFetching:
     @skip_for_debug
     @requires_connected_gdac
     @safe_to_server_errors
-    def test_profile_ftp(self):
-        self.__test_profile("ftp", N_RECORDS=100)
+    def test_profile_gdac(self):
+        self.__test_profile("gdac", N_RECORDS=100)
 
     @requires_connected_erddap_phy
     @safe_to_server_errors
@@ -306,5 +309,5 @@ class OFFTest_DataFetching:
     @skip_for_debug
     @requires_connected_gdac
     @safe_to_server_errors
-    def test_region_ftp(self):
-        self.__test_region("ftp", N_RECORDS=100)
+    def test_region_gdac(self):
+        self.__test_region("gdac", N_RECORDS=100)

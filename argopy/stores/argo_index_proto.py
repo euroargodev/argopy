@@ -358,9 +358,9 @@ class ArgoIndexStoreProto(ABC):
         -------
         list(str)
         """
-        if path == 'index':
+        if path == 'index' and hasattr(self, 'index_path_cache'):
             return [self.fs["client"].cachepath(self.index_path_cache)]
-        elif path == 'search':
+        elif path == 'search' and hasattr(self, 'search_path_cache'):
             return [self.fs["client"].cachepath(self.search_path_cache)]
         else:
             return [self.fs["client"].cachepath(path)]

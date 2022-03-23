@@ -34,6 +34,7 @@ import pandas as pd
 from abc import abstractmethod
 import warnings
 import getpass
+import logging
 
 from .proto import ArgoDataFetcherProto
 from argopy.errors import NetCDF4FileNotFoundError
@@ -50,6 +51,8 @@ access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
 dataset_ids = ["phy", "bgc"]  # First is default
 api_server_check = OPTIONS["local_ftp"]
+
+log = logging.getLogger("argopy.localftp.data")
 
 
 class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
@@ -244,6 +247,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
 
         pattern = _filepathpattern(wmo, cyc)
         lst = sorted(glob(pattern))
+        # log.debug(lst)
         # lst = sorted(self.fs.glob(pattern))  # Much slower than the regular glob !
         if len(lst) == 1:
             return lst[0]
