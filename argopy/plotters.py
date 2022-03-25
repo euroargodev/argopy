@@ -12,8 +12,8 @@ import pandas as pd
 import warnings
 from contextlib import contextmanager
 from argopy.errors import InvalidDashboard
-from argopy.utilities import warnUnless, check_wmo, get_ea_profile_page
-from argopy.stores import httpstore
+from argopy.utilities import warnUnless, check_wmo, check_cyc, get_ea_profile_page
+
 
 try:
     with_matplotlib = True
@@ -70,50 +70,83 @@ def axes_style(style: str = STYLE['axes']):
         yield
 
 
-def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type="ea"):
-    """ Insert the Euro-Argo dashboard page in a notebook cell
+def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, type="ea", url_only=False):
+    """ Insert the Euro-Argo dashboard page in a notebook cell, or return the corresponding url
 
         Parameters
         ----------
-        wmo: int
+        wmo: int, default (None)
             The float WMO to display. By default, this is set to None and will insert the general dashboard.
+        cyc: int, default (None)
+            The float CYCLE NUMBER to display. If ``wmo`` is not None, this will open a profile dashboard.
+        width: int or str, default ("100%")
+            Width in percentage or pixel of the returned Iframe or Image
+        height: int, default (1000)
+            Height in pixel of the returned Iframe or Image
+        url_only: bool, default (False)
+            If set to True, will only return the URL toward the dashboard
+        type: str, default ("ea")
+            Type of dashboard to use. By default, we use the Euro-Argo fleet monitoring dashboard ("ea"). Other possibilities are:
+            "ocean-ops", "bgc" or "argovis".
 
         Returns
         -------
-        :class:`IPython.lib.display.IFrame`
+        str or :class:`IPython.lib.display.IFrame` or :class:`IPython.lib.display.Image`
     """
-    if type not in ["ea", "eric", "coriolis"]:
+    if type not in ["ea", "eric", "argovis", "op", "ocean-ops", "bgc"]:
         raise InvalidDashboard("Invalid dashboard type")
 
-    from IPython.display import IFrame
+    try:
+        from IPython.display import IFrame, Image
+        has_IPython = True
+        insert = lambda x: IFrame(x, width=width, height=height)
+    except Exception:
+        has_IPython = False
+        insert = lambda url: url
 
-    if url is None:
-        if type == "ea" or type == "eric":  # Open Euro-Argo dashboard
-            if wmo is None:
-                url = "https://fleetmonitoring.euro-argo.eu"
-            elif cyc is None:
-                wmo = check_wmo(wmo)
-                url = "https://fleetmonitoring.euro-argo.eu/float/{}".format(str(wmo[0]))
-            else:
+    if wmo is not None:
+        wmo = check_wmo(wmo)[0]
+    if cyc is not None:
+        cyc = check_cyc(cyc)[0]
+
+    if type == "ea" or type == "eric":  # Euro-Argo dashboard
+        url = "https://fleetmonitoring.euro-argo.eu"
+        if wmo is not None:
+            url = "https://fleetmonitoring.euro-argo.eu/float/{}".format(str(wmo))
+            if cyc is not None:
                 url = get_ea_profile_page(wmo, cyc)[0]
 
-        elif type == 'coriolis':  # Open Coriolis dashboard
-            if wmo is not None:
-                wmo = check_wmo(wmo)
-                url = ("https://co-insitucharts.ifremer.fr/platform/{}/charts").format(
-                    str(wmo[0])
-                )
+    # elif type == 'coriolis':  # Coriolis dashboard
+    #     if wmo is not None:
+    #         url = ("https://co-insitucharts.ifremer.fr/platform/{}/charts").format(str(wmo))
 
-        # return open_dashboard(url=("https://co-insitucharts.ifremer.fr/platform/{}/charts").format(str(self.WMO[0])), **kw)
+    elif type == 'argovis':  # Argovis dashboard, but this can't be inserted in cell
+        warnings.warn(
+            "argovis doesn't allow X-Frame insertion ! So we can't insert this webpage. Try with type='ea' or 'coriolis'.")
+        url_only = True
+        url = "https://argovis.colorado.edu"
+        if wmo is not None:
+            url = "https://argovis.colorado.edu/catalog/platforms/{}/page".format(str(wmo))
+            if cyc is not None:
+                url = "https://argovis.colorado.edu/catalog/profiles/{}_{}/page".format(str(wmo), str(cyc))
 
-        # # Note that argovis doesn't allow X-Frame insertion !
-        # elif type == 'argovis':
-        #     if cyc is None:
-        #         url = "https://argovis.colorado.edu/catalog/platforms/{}/page".format(str(wmo))
-        #     else:
-        #         url = "https://argovis.colorado.edu/catalog/profiles/{}_{}/page".format(str(wmo),str(cyc))
+    elif type == "op" or type == "ocean-ops":
+        url = "https://www.ocean-ops.org/board?t=argo"
+        if wmo is not None:
+            url = ("https://www.ocean-ops.org/board/wa/Platform?ref={}").format(str(wmo))
 
-    return IFrame(url, width=width, height=height)
+    elif type == "bgc":
+        url = "https://maps.biogeochemical-argo.com/bgcargo"
+        if wmo is not None:
+            url = "https://maps.biogeochemical-argo.com/bgcargo/?&txt={}".format(str(wmo))
+            if cyc is not None:
+                url = "https://maps.biogeochemical-argo.com/datamap/jpeg/%i_%0.3d.jpeg" % (wmo, cyc)
+                insert = lambda x: Image(url=x)
+
+    if url_only:
+        return url
+    else:
+        return insert(url)
 
 
 def open_sat_altim_report(WMO=None, embed='dropdown'):

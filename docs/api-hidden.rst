@@ -77,8 +77,12 @@
     argopy.utilities.is_box
     argopy.utilities.is_indexbox
     argopy.utilities.is_wmo
+    argopy.utilities.is_cyc
     argopy.utilities.check_wmo
+    argopy.utilities.check_cyc
     argopy.utilities.wmo2box
+    argopy.utilities.get_coriolis_profile_id
+    argopy.utilities.get_ea_profile_page
 
     argopy.plotters.open_dashboard
     argopy.plotters.bar_plot

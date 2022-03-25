@@ -64,6 +64,7 @@ Data visualisation
    :toctree: generated/
 
    DataFetcher.plot
+   DataFetcher.dashboard
    IndexFetcher.plot
    dashboard
 
@@ -104,6 +105,8 @@ Low-level functions
     utilities.list_available_data_src
     utilities.list_available_data_src
     utilities.list_available_index_src
+    utilities.get_coriolis_profile_id
+    utilities.get_ea_profile_page
 
 
 Dataset.argo (xarray accessor)

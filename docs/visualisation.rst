@@ -48,10 +48,14 @@ It is also possible to create bar plot for histograms on some data properties: '
 .. image:: _static/bar_profiler.png
 
 
-Float dashboard
----------------
+Dashboards
+----------
 
-When working in Jupyter notebook, you can insert the EuroArgo dashboard in a cell with:
+We provide a few shortcuts toward third-party online dashboards that can help you visualise float or profile data.
+When working in Jupyter notebook, you can insert a dashboard in a cell, or get the url toward the dashboard to open it elsewhere.
+You have access to the Euro-Argo ERIC, Ocean-OPS, Argovis and BGC dashboards with the option ``type``. See :meth:`argopy.dashboard` for all the options.
+
+Open the default dashboard:
 
 .. code-block:: python
 
@@ -60,11 +64,21 @@ When working in Jupyter notebook, you can insert the EuroArgo dashboard in a cel
 
 .. image:: _static/dashboard.png
 
-and for a specific float, just provide its WMO:
+for a specific float, just provide its WMO:
 
 .. code-block:: python
 
     import argopy
-    argopy.dashboard(wmo=6902746)
+    argopy.dashboard(6902746)
 
 .. image:: _static/dashboard_float.png
+
+or for specific float cycle:
+
+.. code-block:: python
+
+    import argopy
+    argopy.dashboard(6902746, 12)
+
+.. image:: _static/dashboard_profile.png
+

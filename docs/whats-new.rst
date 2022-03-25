@@ -23,12 +23,34 @@ v0.1.11 (X XXX. 2022)
 
 **Features and front-end API**
 
-- **New dashboard for profiles**. Calling on the data fetcher dashboard method will return the Euro-Argo profile page for a single profile. (:pr:`198`) by `G. Maze <http://www.github.com/gmaze>`_.
+- **New dashboards and dashboard for profiles**. Calling on the data fetcher dashboard method will return the Euro-Argo profile page for a single profile. Very useful to look at the data before load. This comes with 2 new utilities functions to get Coriolis ID of profiles (:meth:`utilities.get_coriolis_profile_id`) and to return the list of profile webpages (:meth:`utilities.get_ea_profile_page`). (:pr:`198`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 
     from argopy import DataFetcher as ArgoDataFetcher
     ArgoDataFetcher().profile(6902755, 11).dashboard()
+
+.. code-block:: python
+
+    from argopy.utilities import get_coriolis_profile_id, get_ea_profile_page
+    get_coriolis_profile_id([6902755, 6902756], [11, 12])
+    get_ea_profile_page([6902755, 6902756], [11, 12])
+
+The new profile dashboard can also be access with:
+
+.. code-block:: python
+
+    import argopy
+    argopy.dashboard(6902755, 11)
+
+We also added the Ocean-OPS (former JCOMMOPS) dashboard for all floats and the Argo-BGC dashboard for BGC floats:
+
+.. code-block:: python
+
+    import argopy
+    argopy.dashboard(6902755, type='ocean-ops')
+    # or
+    argopy.dashboard(5906471, 12, type='bgc')
 
 **Internals**
 

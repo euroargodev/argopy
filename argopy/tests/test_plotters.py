@@ -32,9 +32,16 @@ def test_invalid_dashboard():
         argopy.dashboard(wmo=5904797, type="invalid_service")
 
 
+@pytest.mark.parametrize("board_type", ["ea", "eric", "argovis", "op", "ocean-ops", "bgc"], indirect=False)
+def test_valid_dashboard(board_type):
+    assert isinstance(argopy.dashboard(type=board_type, url_only=True), str)
+    assert isinstance(argopy.dashboard(5904797, type=board_type, url_only=True), str)
+    assert isinstance(argopy.dashboard(5904797, 12, type=board_type, url_only=True), str)
+
+
 @requires_ipython
 @requires_connection
-def test_valid_dashboard():
+def test_valid_dashboard_output():
     import IPython
 
     dsh = argopy.dashboard()
