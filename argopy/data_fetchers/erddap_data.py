@@ -254,7 +254,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         elif self.dataset_id == "ref":
             self.erddap.dataset_id = "ArgoFloats-ref"
         elif self.dataset_id == "bgc":
-            self.erddap.dataset_id = "ArgoFloats-bio"
+            self.erddap.dataset_id = "ArgoFloats-synthetic-BGC"
         elif self.dataset_id == "fail":
             self.erddap.dataset_id = "invalid_db"
         else:
@@ -267,7 +267,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     def _minimal_vlist(self):
         """ Return the minimal list of variables to retrieve measurements for """
         vlist = list()
-        if self.dataset_id == "phy" or self.dataset_id == "bgc":
+        if self.dataset_id == "phy":
             plist = [
                 "data_mode",
                 "latitude",
@@ -284,8 +284,42 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             [vlist.append(p) for p in plist]
 
             plist = ["pres", "temp", "psal"]
-            if self.dataset_id == "bgc":
-                plist = ["pres", "temp", "psal", "doxy"]
+            [vlist.append(p) for p in plist]
+            [vlist.append(p + "_qc") for p in plist]
+            [vlist.append(p + "_adjusted") for p in plist]
+            [vlist.append(p + "_adjusted_qc") for p in plist]
+            [vlist.append(p + "_adjusted_error") for p in plist]
+
+        if self.dataset_id == "bgc":
+            plist = [
+                "parameter_data_mode",
+                "latitude",
+                "longitude",
+                "position_qc",
+                "time",
+                "time_qc",
+                "direction",
+                "platform_number",
+                "cycle_number",
+                "config_mission_number",
+            ]
+            [vlist.append(p) for p in plist]
+
+            plist = ["pres", "temp", "psal",
+                     "cndc",
+                     "doxy",
+                     "beta_backscattering",
+                     "fluorescence_chla",
+                     # "fluorescence_cdom",
+                     # "side_scattering_turbidity",
+                     # "transmittance_particle_beam_attenuation",
+                     "bbp",
+                     "turbidity",
+                     "cp",
+                     "chla",
+                     "cdom",
+                     "nitrate",
+                     ]
             [vlist.append(p) for p in plist]
             [vlist.append(p + "_qc") for p in plist]
             [vlist.append(p + "_adjusted") for p in plist]
@@ -340,7 +374,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         plist = self._minimal_vlist
         response = {}
         for p in plist:
-            response[p] = dref[p]
+            if p in dref:
+                response[p] = dref[p]
+            else:
+                response[p] = object
         return response
 
     def cname(self):
