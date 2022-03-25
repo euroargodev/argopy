@@ -36,16 +36,10 @@ def test_invalid_dashboard():
 @requires_connection
 def test_valid_dashboard():
     import IPython
-    dsh = argopy.dashboard(wmo=5904797)
+
+    dsh = argopy.dashboard()
     assert isinstance(dsh, IPython.lib.display.IFrame)
 
-    dsh = argopy.dashboard(wmo=5904797, cyc=3)
-    assert isinstance(dsh, IPython.lib.display.IFrame)
-
-
-@requires_connection
-def test_valid_dashboard():
-    import IPython
     dsh = argopy.dashboard(wmo=5904797)
     assert isinstance(dsh, IPython.lib.display.IFrame)
 
