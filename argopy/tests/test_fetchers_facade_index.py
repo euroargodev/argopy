@@ -10,6 +10,7 @@ from . import (
     requires_connected_erddap_index,
     requires_localftp_index,
     requires_connection,
+    requires_ipython,
     safe_to_server_errors,
     ci_erddap_index,
     requires_matplotlib,
@@ -114,14 +115,20 @@ class Test_Facade:
                     assert isinstance(fig, mpl.figure.Figure)
                     mpl.pyplot.close(fig)
 
-            # Test 'qc_altimetry'
-            import IPython
-            dsh = fetcher.plot(ptype='qc_altimetry', embed='slide')
-            assert isinstance(dsh(0), IPython.display.Image)
-
             # Test invalid plot
             with pytest.raises(ValueError):
                 fetcher.plot(ptype='invalid_cat', with_seaborn=ws)
+
+    @requires_ipython
+    @requires_matplotlib
+    def test_plot_qc_altimetry(self):
+        import IPython
+        with argopy.set_options(local_ftp=self.local_ftp):
+            f, fetcher = self.__get_fetcher(pt='float')
+
+            # Test 'qc_altimetry'
+            dsh = fetcher.plot(ptype='qc_altimetry', embed='slide')
+            assert isinstance(dsh(0), IPython.display.Image)
 
 
 @requires_connection
