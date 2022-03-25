@@ -31,7 +31,7 @@ dependencies:
   - ipykernel
   - ipywidgets
 # Not showing up with argopy.show_versions():
-  - cfgrib
+#  - cfgrib  # Causes Python interpreter crash on Windows
   - black
   - flake8
   - pytest-cov
