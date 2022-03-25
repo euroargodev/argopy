@@ -8,7 +8,11 @@ import xarray as xr
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import InvalidDatasetStructure, OptionValueError
-from . import requires_connected_erddap_phy, requires_localftp
+from . import requires_connected_erddap_phy, requires_localftp, _importorskip, _connectskip
+
+
+has_gsw, requires_gsw = _importorskip("gsw")
+has_nogsw, requires_nogsw = _connectskip(not has_gsw, "missing GSW")
 
 
 @pytest.fixture(scope="module")
@@ -121,6 +125,16 @@ class Test_groupby_pressure_bins:
 
 @requires_connected_erddap_phy
 class Test_teos10:
+
+    @requires_nogsw
+    def test_gsw_not_available(self, ds_pts):
+        # Make sure we raise an error when GSW is not available
+        for key, this in ds_pts.items():
+            that = this.copy()  # To avoid modifying the original dataset
+            with pytest.raises(ModuleNotFoundError):
+                that.argo.teos10()
+
+    @requires_gsw
     def test_teos10_variables_default(self, ds_pts):
         """Add default new set of TEOS10 variables"""
         for key, this in ds_pts.items():
@@ -132,6 +146,7 @@ class Test_teos10:
                 assert "SA" in that.variables
                 assert "CT" in that.variables
 
+    @requires_gsw
     def test_teos10_variables_single(self, ds_pts):
         """Add a single TEOS10 variables"""
         for key, this in ds_pts.items():
@@ -142,6 +157,7 @@ class Test_teos10:
                 that = that.argo.teos10(["PV"])
                 assert "PV" in that.variables
 
+    @requires_gsw
     def test_teos10_opt_variables_single(self, ds_pts):
         """Add a single TEOS10 optional variables"""
         for key, this in ds_pts.items():
@@ -152,6 +168,7 @@ class Test_teos10:
                 that = that.argo.teos10(["SOUND_SPEED"])
                 assert "SOUND_SPEED" in that.variables
 
+    @requires_gsw
     def test_teos10_variables_inplace(self, ds_pts):
         """Compute all default variables to a new dataset"""
         for key, this in ds_pts.items():
@@ -159,6 +176,7 @@ class Test_teos10:
             assert "SA" in ds.variables
             assert "SA" not in this.variables
 
+    @requires_gsw
     def test_teos10_invalid_variable(self, ds_pts):
         """Try to add an invalid variable"""
         for key, this in ds_pts.items():
@@ -170,6 +188,7 @@ class Test_teos10:
                     that.argo.teos10(["InvalidVariable"])
 
 
+@requires_gsw
 @requires_localftp
 class Test_create_float_source:
     local_ftp = argopy.tutorial.open_dataset("localftp")[0]
