@@ -23,7 +23,7 @@ v0.1.11 (X XXX. 2022)
 
 **Features and front-end API**
 
-- **New dashboard for profiles**. Calling on the data fetcher dashboard method will return the Euro-Argo profile page for a single profile.
+- **New dashboard for profiles**. Calling on the data fetcher dashboard method will return the Euro-Argo profile page for a single profile. (:pr:`198`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 

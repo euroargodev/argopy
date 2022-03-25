@@ -37,6 +37,19 @@ def test_valid_dashboard():
     dsh = argopy.dashboard(wmo=5904797)
     assert isinstance(dsh, IPython.lib.display.IFrame)
 
+    dsh = argopy.dashboard(wmo=5904797, cyc=3)
+    assert isinstance(dsh, IPython.lib.display.IFrame)
+
+
+@requires_connection
+def test_valid_dashboard():
+    import IPython
+    dsh = argopy.dashboard(wmo=5904797)
+    assert isinstance(dsh, IPython.lib.display.IFrame)
+
+    dsh = argopy.dashboard(wmo=5904797, cyc=3)
+    assert isinstance(dsh, IPython.lib.display.IFrame)
+
 
 @requires_connection
 def test_open_sat_altim_report():
