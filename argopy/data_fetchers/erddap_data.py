@@ -22,7 +22,6 @@ from .proto import ArgoDataFetcherProto
 from argopy.options import OPTIONS
 from argopy.utilities import list_standard_variables, Chunker, format_oneline
 from argopy.stores import httpstore
-from argopy.plotters import open_dashboard
 
 
 # Load erddapy according to available version (breaking changes in v0.8.0)
@@ -572,12 +571,6 @@ class Fetch_wmo(ErddapArgoDataFetcher):
                     ).get_url()
                 )
             return urls
-
-    def dashboard(self, **kw):
-        if len(self.WMO) == 1:
-            return open_dashboard(wmo=self.WMO[0], **kw)
-        else:
-            warnings.warn("Dashboard only available for a single float request")
 
 
 class Fetch_box(ErddapArgoDataFetcher):

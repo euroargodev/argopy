@@ -514,12 +514,6 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
 
         return self._list_of_argo_files
 
-    def dashboard(self, **kw):
-        if len(self.WMO) == 1:
-            return open_dashboard(wmo=self.WMO[0], **kw)
-        else:
-            warnings.warn("Dashboard only available for a single float request")
-
 
 class Fetch_box(LocalFTPArgoDataFetcher):
     """ Manage access to local ftp Argo data for: a rectangular space/time domain  """

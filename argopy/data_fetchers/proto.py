@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 import pandas as pd
 import numpy as np
 import xarray
+import warnings
+from argopy.plotters import open_dashboard
 
 
 class ArgoDataFetcherProto(ABC):
@@ -90,3 +92,13 @@ class ArgoDataFetcherProto(ABC):
                 cname = self.dataset_id + ";" + cname
 
         return cname
+
+    def dashboard(self, **kw):
+        if self.WMO is not None:
+
+            if len(self.WMO) == 1 and self.CYC is not None and len(self.CYC) == 1:
+                return open_dashboard(wmo=self.WMO[0], cyc=self.CYC[0], **kw)
+            elif len(self.WMO) == 1:
+                return open_dashboard(wmo=self.WMO[0], **kw)
+            else:
+                warnings.warn("Dashboard only available for a single float or profile request")
