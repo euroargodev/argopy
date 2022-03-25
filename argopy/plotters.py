@@ -12,8 +12,8 @@ import pandas as pd
 import warnings
 from contextlib import contextmanager
 from argopy.errors import InvalidDashboard
-from argopy.utilities import warnUnless, check_wmo
-
+from argopy.utilities import warnUnless, check_wmo, check_cyc
+from argopy.stores import httpstore
 
 try:
     with_matplotlib = True
@@ -70,6 +70,21 @@ def axes_style(style: str = STYLE['axes']):
         yield
 
 
+def get_coriolis_profile_id(WMO, CYC):
+    WMO = check_wmo(WMO)
+    CYC = check_cyc(CYC)
+    URI = []
+    fs = httpstore(cache=True)
+    for this_wmo in WMO:
+        js = fs.open_json('https://dataselection.euro-argo.eu/api/trajectory/%i' % this_wmo)
+        traj = {}
+        for p in js:
+            traj[p['cvNumber']] = p['id']
+        for this_cyc in CYC:
+            URI.append('https://dataselection.euro-argo.eu/cycle/%s' % traj[this_cyc])
+    return URI
+
+
 def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type="ea"):
     """ Insert the Euro-Argo dashboard page in a notebook cell
 
@@ -91,9 +106,12 @@ def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, url=None, type
         if type == "ea" or type == "eric":  # Open Euro-Argo dashboard
             if wmo is None:
                 url = "https://fleetmonitoring.euro-argo.eu"
-            else:
+            elif cyc is None:
                 wmo = check_wmo(wmo)
                 url = "https://fleetmonitoring.euro-argo.eu/float/{}".format(str(wmo[0]))
+            else:
+                url = get_coriolis_profile_id(wmo, cyc)[0]
+
         elif type == 'coriolis':  # Open Coriolis dashboard
             if wmo is not None:
                 wmo = check_wmo(wmo)

@@ -1344,6 +1344,77 @@ def is_wmo(lst, errors="raise"):  # noqa: C901
         return result
 
 
+def check_cyc(lst):
+    """ Validate a CYC option and returned it as a list of integers
+    Parameters
+    ----------
+    cyc: int
+        CYC must be an integer or an iterable with elements that can be casted as positive integers
+    errors: 'raise'
+    Returns
+    -------
+    list(int)
+    """
+    is_cyc(lst, errors="raise")
+
+    # Make sure we deal with a list
+    if not isinstance(lst, list):
+        if isinstance(lst, np.ndarray):
+            lst = list(lst)
+        else:
+            lst = [lst]
+
+    # Then cast list elements as integers
+    return [abs(int(x)) for x in lst]
+
+
+def is_cyc(lst, errors="raise"):  # noqa: C901
+    """ Check if a CYC is valid
+    Parameters
+    ----------
+    cyc: int, list(int), array(int)
+        CYC must be a single or a list of at most 4 digit positive numbers
+    errors: 'raise'
+        Possibly raises a ValueError exception, otherwise fails silently.
+    Returns
+    -------
+    bool
+        True if cyc is indeed a list of integers
+    """
+    # Make sure we deal with a list
+    if not isinstance(lst, list):
+        if isinstance(lst, np.ndarray):
+            lst = list(lst)
+        else:
+            lst = [lst]
+
+    # Error message:
+    msg = "CYC must be a single or a list of at most 4 digit positive numbers"
+
+    # Then try to cast list elements as integers, return True if ok
+    result = True
+    try:
+        for x in lst:
+            if not str(x).isdigit():
+                result = False
+
+            if (len(str(x)) > 4):
+                result = False
+
+            if int(x) <= 0:
+                result = False
+
+    except Exception:
+        result = False
+        if errors == "raise":
+            raise ValueError(msg)
+
+    if not result and errors == "raise":
+        raise ValueError(msg)
+    else:
+        return result
+
+
 # def docstring(value):
 #     """Replace one function docstring
 #
