@@ -159,7 +159,7 @@ class Fetch_box(LocalFTPArgoIndexFetcher):
     """ Manage access to local ftp Argo data for: an ocean rectangle
 
     """
-    def init(self, box: list = [-180, 180, -90, 90, '1900-01-01', '2100-12-31']):
+    def init(self, box: list = [-180, 180, -90, 90, '1900-01-01', '2100-12-31'], **kwargs):
         """ Create Argo index loader
 
             Parameters
