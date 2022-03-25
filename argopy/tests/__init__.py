@@ -149,6 +149,7 @@ has_localftp_index, requires_localftp_index = _connectskip(
 has_matplotlib, requires_matplotlib = _importorskip("matplotlib")
 has_seaborn, requires_seaborn = _importorskip("seaborn")
 has_cartopy, requires_cartopy = _importorskip("cartopy")
+has_ipython, requires_ipython = _importorskip("IPython")
 
 ############
 # Fix for issues discussed here:
