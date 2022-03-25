@@ -10,6 +10,7 @@ from . import (
     requires_localftp,
     requires_connection,
     requires_matplotlib,
+    requires_ipython,
     has_matplotlib,
     has_seaborn,
     has_cartopy,
@@ -31,6 +32,7 @@ def test_invalid_dashboard():
         argopy.dashboard(wmo=5904797, type="invalid_service")
 
 
+@requires_ipython
 @requires_connection
 def test_valid_dashboard():
     import IPython
@@ -38,6 +40,7 @@ def test_valid_dashboard():
     assert isinstance(dsh, IPython.lib.display.IFrame)
 
 
+@requires_ipython
 @requires_connection
 def test_open_sat_altim_report():
     import IPython
