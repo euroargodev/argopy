@@ -33,9 +33,12 @@ jobs:
     needs: detect-ci-trigger
     runs-on: ${{ matrix.os }}
     if: needs.detect-ci-trigger.outputs.triggered == 'false'
+    defaults:
+      run:
+        shell: bash -l {0}
     continue-on-error: ${{ matrix.experimental }}
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         python-version: [3.7, 3.8]
         os: [windows-latest]
