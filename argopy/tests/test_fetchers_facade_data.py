@@ -157,7 +157,6 @@ class Test_Facade:
                     assert isinstance(fig, mpl.figure.Figure)
                     mpl.pyplot.close(fig)
 
-            # Test invalid plot name
             with pytest.raises(ValueError):
                 fetcher.plot(ptype='invalid_cat', with_seaborn=ws)
 
