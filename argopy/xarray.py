@@ -89,7 +89,7 @@ class ArgoAccessor:
         elif "PRES" in self._vars:
             self._mode = "standard"
         else:
-            raise InvalidDatasetStructure("Argo dataset structure not recognised")
+            raise InvalidDatasetStructure("Argo dataset structure not recognised (no PRES nor PRES_ADJUSTED")
 
     def __repr__(self):
         # import xarray.core.formatting as xrf

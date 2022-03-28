@@ -860,6 +860,7 @@ class ftpstore(httpstore):
         if "source" not in ds.encoding:
             if isinstance(url, str):
                 ds.encoding["source"] = url
+        self.register(this_url)
         self.register(url)
         return ds
 

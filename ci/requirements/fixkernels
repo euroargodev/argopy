@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Fix the jupyter kernel spec configuration file when it does not point to the appropriate conda env python path
 
 source ~/miniconda3/etc/profile.d/conda.sh
 

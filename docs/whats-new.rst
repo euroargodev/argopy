@@ -12,27 +12,27 @@ v0.1.11 (X XXX. 2022)
 
 **Features and front-end API**
 
-- New data source ``ftp`` to retrieve data from a GDAC FTP compliant host, for DataFetcher and IndexFetcher. You can specify the host name with the ``ftp`` fetcher option or with the argopy option ``gdac_ftp``. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
+- New data source ``gdac`` to retrieve data from a GDAC compliant FTP-like source, for DataFetcher and IndexFetcher. You can specify the FTP source with the ``ftp`` fetcher option or with the argopy option ``gdac_ftp``. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
     from argopy import IndexFetcher
     from argopy import DataFetcher
-    IdF = IndexFetcher(src='ftp')
-    AdF = DataFetcher(src='ftp')
-    AdF = DataFetcher(src='ftp', ftp="https://data-argo.ifremer.fr")  # Default and fastest !
-    AdF = DataFetcher(src='ftp', ftp="ftp://ftp.ifremer.fr/ifremer/argo")
+    IdF = IndexFetcher(src='gdac')
+    AdF = DataFetcher(src='gdac')
+    AdF = DataFetcher(src='gdac', ftp="https://data-argo.ifremer.fr")  # Default and fastest !
+    AdF = DataFetcher(src='gdac', ftp="ftp://ftp.ifremer.fr/ifremer/argo")
     with argopy.set_options(gdac_ftp='ftp://usgodae.org/pub/outgoing/argo'):
-        AdF = DataFetcher(src='ftp')
+        AdF = DataFetcher(src='gdac')
 
 **Internals**
 
-- The data fetcher can return the index array without loading the data for the ``ftp`` and ``localftp`` data sources. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
+- The data fetcher can return the index array without loading the data for the ``gdac`` and ``localftp`` data sources. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
     from argopy import DataFetcher
-    AdF = DataFetcher(src='ftp').float(6903076)
+    AdF = DataFetcher(src='gdac').float(6903076)
     AdF.index
 
 - New indexstore design.
@@ -41,7 +41,7 @@ v0.1.11 (X XXX. 2022)
 
 **Breaking changes**
 
-- Index fetcher for local FTP no longer support the option ``index_file``. The name of the file index is internally determined using the dataset requested: ``ar_index_global_prof.txt`` for ``ds='phy'`` and ``argo_synthetic-profile_index.txt`` for ``ds='bgc'``. Using this option will raise a deprecation warning up to v0.1.13 and will then raise an error. (:pr:`157`).
+- Index fetcher for local FTP no longer support the option ``index_file``. The name of the file index is internally determined using the dataset requested: ``ar_index_global_prof.txt`` for ``ds='phy'`` and ``argo_synthetic-profile_index.txt`` for ``ds='bgc'``. Using this option will raise a deprecation warning up to v0.1.13 and will then raise an error. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
 
 v0.1.11 (X XXX. 2022)
 ---------------------
