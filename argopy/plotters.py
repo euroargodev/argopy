@@ -6,13 +6,15 @@
 #
 # Decorator warnUnless is mandatory
 #
-
+import os
 import numpy as np
 import pandas as pd
 import warnings
 from contextlib import contextmanager
+from argopy import __version__ as argopy_version
 from argopy.errors import InvalidDashboard
 from argopy.utilities import warnUnless, check_wmo, check_cyc, get_ea_profile_page
+from packaging import version
 
 
 try:
@@ -40,6 +42,14 @@ try:
 except ModuleNotFoundError:
     with_cartopy = False
 
+try:
+    from IPython.display import IFrame, Image
+
+    with_IPython = True
+except ModuleNotFoundError:
+    with_IPython = False
+
+
 # Default styles:
 STYLE = {"axes": "whitegrid", "palette": "Set1"}
 
@@ -53,7 +63,7 @@ except ModuleNotFoundError:
 
 
 @contextmanager
-def axes_style(style: str = STYLE['axes']):
+def axes_style(style: str = STYLE["axes"]):
     """ Provide a context for plots
 
         The point is to handle the availability of :mod:`seaborn` or not and to be able to use::
@@ -70,8 +80,10 @@ def axes_style(style: str = STYLE['axes']):
         yield
 
 
-def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, type="ea", url_only=False):
-    """ Insert the Euro-Argo dashboard page in a notebook cell, or return the corresponding url
+def open_dashboard(
+    wmo=None, cyc=None, width="100%", height=1000, type="ea", url_only=False
+):
+    """ Insert an Argo dashboard page in a notebook cell, or return the corresponding url
 
         Parameters
         ----------
@@ -86,62 +98,123 @@ def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, type="ea", url
         url_only: bool, default (False)
             If set to True, will only return the URL toward the dashboard
         type: str, default ("ea")
-            Type of dashboard to use. By default, we use the Euro-Argo fleet monitoring dashboard ("ea"). Other possibilities are:
-            "ocean-ops", "bgc" or "argovis".
+            Type of dashboard to use. This can be any one of the following:
+            - "ea", "data": the Euro-Argo data selection dashboard (https://dataselection.euro-argo.eu)
+            - "meta": the Euro-Argo fleet monitoring dashboard (https://fleetmonitoring.euro-argo.eu)
+            - "op", "ocean-ops": the Ocean-OPS Argo dashboard (https://www.ocean-ops.org/board?t=argo)
+            - "bgc": the Argo-BGC specific dashbaord (https://maps.biogeochemical-argo.com/bgcargo)
+            - "argovis": the Colorado Argovis dashboard (https://argovis.colorado.edu)
 
         Returns
         -------
         str or :class:`IPython.lib.display.IFrame` or :class:`IPython.lib.display.Image`
     """
-    if type not in ["ea", "eric", "argovis", "op", "ocean-ops", "bgc"]:
-        raise InvalidDashboard("Invalid dashboard type")
+    dashboard_definitions = {
+        "data": {
+            "shorts": ["ea", "eric"],
+            "uri": {
+                "base": "https://dataselection.euro-argo.eu",
+                "wmo": "https://fleetmonitoring.euro-argo.eu/float/{}".format,
+                "cyc": lambda wmo, cyc: get_ea_profile_page(wmo, cyc)[0],
+            },
+        },
+        "meta": {
+            "shorts": [],
+            "uri": {
+                "base": "https://fleetmonitoring.euro-argo.eu",
+                "wmo": "https://fleetmonitoring.euro-argo.eu/float/{}".format,
+                "cyc": lambda wmo, cyc: get_ea_profile_page(wmo, cyc)[0],
+            },
+        },
+        "coriolis": {
+            "shorts": ["cor"],
+            "uri": {
+                "base": None,
+                "wmo": ("https://co-insitucharts.ifremer.fr/platform/{}/charts").format,
+                "cyc": None,
+            },
+        },
+        "argovis": {
+            "shorts": [],
+            "uri": {
+                "base": "https://argovis.colorado.edu",
+                "wmo": "https://argovis.colorado.edu/catalog/platforms/{}/page".format,
+                "cyc": "https://argovis.colorado.edu/catalog/profiles/{}_{}/page".format,
+            },
+        },
+        "ocean-ops": {
+            "shorts": ["op"],
+            "uri": {
+                "base": "https://www.ocean-ops.org/board?t=argo",
+                "wmo": ("https://www.ocean-ops.org/board/wa/Platform?ref={}").format,
+                "cyc": None,
+            },
+        },
+        "bgc": {
+            "shorts": [],
+            "uri": {
+                "base": "https://maps.biogeochemical-argo.com/bgcargo",
+                "wmo": "https://maps.biogeochemical-argo.com/bgcargo/?&txt={}".format,
+                "cyc": lambda wmo, cyc: "https://maps.biogeochemical-argo.com/datamap/jpeg/%i_%0.3d.jpeg"
+                % (wmo, cyc),
+            },
+        },
+    }
 
-    try:
-        from IPython.display import IFrame, Image
-        has_IPython = True
-        insert = lambda x: IFrame(x, width=width, height=height)
-    except Exception:
-        has_IPython = False
-        insert = lambda url: url
+    def get_type_name(defs, input_type):
+        return "%s%s" % (
+            "".join(
+                [board for board in defs.keys() if input_type in defs[board]["shorts"]]
+            ),
+            "".join([board for board in defs.keys() if input_type == board]),
+        )
 
+    def get_valid_type(defs):
+        l = []
+        for board in defs.keys():
+            l.append(board)
+            board_shorts = defs[board]["shorts"]
+            if board_shorts is not None:
+                [l.append(s) for s in board_shorts]
+        return l
+
+    if type == "eric":
+        type = "meta"
+        if version.parse(argopy_version) < version.parse("0.1.13"):
+            warnings.warn(
+                "The 'eric' option has been replaced by 'meta'. After 0.1.13, this will raise an error.",
+                category=DeprecationWarning,
+                stacklevel=2,
+            )
+
+    if type not in get_valid_type(dashboard_definitions):
+        raise InvalidDashboard(
+            "Invalid dashboard type. %s not in %s"
+            % (type, get_valid_type(dashboard_definitions))
+        )
+
+    URIs = dashboard_definitions[get_type_name(dashboard_definitions, type)]["uri"]
+    url = URIs["base"] if URIs["base"] is not None else "?"
     if wmo is not None:
         wmo = check_wmo(wmo)[0]
-    if cyc is not None:
-        cyc = check_cyc(cyc)[0]
+        url = URIs["wmo"](wmo) if URIs["wmo"] is not None else "?"
+        if cyc is not None:
+            cyc = check_cyc(cyc)[0]
+            url = URIs["cyc"](wmo, cyc) if URIs["cyc"] is not None else "?"
 
-    if type == "ea" or type == "eric":  # Euro-Argo dashboard
-        url = "https://fleetmonitoring.euro-argo.eu"
-        if wmo is not None:
-            url = "https://fleetmonitoring.euro-argo.eu/float/{}".format(str(wmo))
-            if cyc is not None:
-                url = get_ea_profile_page(wmo, cyc)[0]
+    if url == "?":
+        raise InvalidDashboard(
+            "Dashboard not available for this combination of wmo (%s), cyc (%s) and type (%s)"
+            % (str(wmo), str(cyc), type)
+        )
 
-    # elif type == 'coriolis':  # Coriolis dashboard
-    #     if wmo is not None:
-    #         url = ("https://co-insitucharts.ifremer.fr/platform/{}/charts").format(str(wmo))
-
-    elif type == 'argovis':  # Argovis dashboard, but this can't be inserted in cell
-        warnings.warn(
-            "argovis doesn't allow X-Frame insertion ! So we can't insert this webpage. Try with type='ea' or 'coriolis'.")
-        url_only = True
-        url = "https://argovis.colorado.edu"
-        if wmo is not None:
-            url = "https://argovis.colorado.edu/catalog/platforms/{}/page".format(str(wmo))
-            if cyc is not None:
-                url = "https://argovis.colorado.edu/catalog/profiles/{}_{}/page".format(str(wmo), str(cyc))
-
-    elif type == "op" or type == "ocean-ops":
-        url = "https://www.ocean-ops.org/board?t=argo"
-        if wmo is not None:
-            url = ("https://www.ocean-ops.org/board/wa/Platform?ref={}").format(str(wmo))
-
-    elif type == "bgc":
-        url = "https://maps.biogeochemical-argo.com/bgcargo"
-        if wmo is not None:
-            url = "https://maps.biogeochemical-argo.com/bgcargo/?&txt={}".format(str(wmo))
-            if cyc is not None:
-                url = "https://maps.biogeochemical-argo.com/datamap/jpeg/%i_%0.3d.jpeg" % (wmo, cyc)
-                insert = lambda x: Image(url=x)
+    insert = lambda url: url
+    if with_IPython:
+        filename, file_extension = os.path.splitext(url)
+        if file_extension in [".jpeg"]:
+            insert = lambda x: Image(url=x)
+        else:
+            insert = lambda x: IFrame(x, width=width, height=height)
 
     if url_only:
         return url
@@ -149,7 +222,7 @@ def open_dashboard(wmo=None, cyc=None, width="100%", height=1000, type="ea", url
         return insert(url)
 
 
-def open_sat_altim_report(WMO=None, embed='dropdown'):
+def open_sat_altim_report(WMO=None, embed="dropdown"):
     """ Insert the CLS Satellite Altimeter Report figure in notebook cell
 
         This is the method called when using the facade fetcher methods ``plot``:
@@ -163,33 +236,40 @@ def open_sat_altim_report(WMO=None, embed='dropdown'):
         embed: {'list', 'slide', 'dropdown'}, default: 'dropdown'
             Set the embedding method. If set to None, simply return the list of urls to figures.
     """
-    if embed in ['list', 'slide', 'dropdown']:
+    if embed in ["list", "slide", "dropdown"]:
         from IPython.display import Image
-    if embed in ['list']:
+    if embed in ["list"]:
         from IPython.display import display
-    if embed in ['slide', 'dropdown']:
+    if embed in ["slide", "dropdown"]:
         import ipywidgets as wg
 
     WMOs = check_wmo(WMO)
     urls = []
     urls_dict = {}
     for this_wmo in WMOs:
-        url = "https://data-argo.ifremer.fr/etc/argo-ast9-item13-AltimeterComparison/figures/%i.png" % this_wmo
-        if embed == 'list':
+        url = (
+            "https://data-argo.ifremer.fr/etc/argo-ast9-item13-AltimeterComparison/figures/%i.png"
+            % this_wmo
+        )
+        if embed == "list":
             urls.append(Image(url, embed=True))
         else:
             urls.append(url)
             urls_dict[this_wmo] = url
 
-    if embed == 'list':
+    if embed == "list":
         return display(*urls)
-    elif embed == 'slide':
+    elif embed == "slide":
+
         def f(Float):
             return Image(url=urls[Float])
+
         return wg.interact(f, Float=wg.IntSlider(min=0, max=len(urls) - 1, step=1))
-    elif embed == 'dropdown':
+    elif embed == "dropdown":
+
         def f(Float):
             return Image(url=urls_dict[int(Float)])
+
         return wg.interact(f, Float=[str(wmo) for wmo in WMOs])
     else:
         return urls_dict

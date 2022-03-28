@@ -3,6 +3,7 @@ This file covers the plotters module
 We test plotting functions from IndexFetcher and DataFetcher
 """
 import pytest
+import logging
 
 import argopy
 from argopy.errors import InvalidDashboard
@@ -25,17 +26,29 @@ if has_matplotlib:
 if has_cartopy:
     import cartopy
 
+log = logging.getLogger("argopy.tests.plotters")
 
-@requires_connection
-def test_invalid_dashboard():
+
+@pytest.mark.parametrize("board_type", ["invalid", "coriolis"], indirect=False)
+def test_invalid_dashboard(board_type):
     with pytest.raises(InvalidDashboard):
-        argopy.dashboard(wmo=5904797, type="invalid_service")
+        argopy.dashboard(type=board_type, url_only=True)
 
+@pytest.mark.parametrize("board_type", ["op", "ocean-ops", "coriolis"], indirect=False)
+def test_invalid_dashboard_profile(board_type):
+    with pytest.raises(InvalidDashboard):
+        argopy.dashboard(6902755, 12, type=board_type, url_only=True)
 
-@pytest.mark.parametrize("board_type", ["ea", "eric", "argovis", "op", "ocean-ops", "bgc"], indirect=False)
+@pytest.mark.parametrize("board_type", ["data", "meta", "ea", "eric", "argovis", "op", "ocean-ops", "bgc"], indirect=False)
 def test_valid_dashboard(board_type):
     assert isinstance(argopy.dashboard(type=board_type, url_only=True), str)
+
+@pytest.mark.parametrize("board_type", ["data", "meta", "ea", "eric", "argovis", "op", "ocean-ops", "bgc"], indirect=False)
+def test_valid_dashboard_float(board_type):
     assert isinstance(argopy.dashboard(5904797, type=board_type, url_only=True), str)
+
+@pytest.mark.parametrize("board_type", ["data", "meta", "ea", "eric", "argovis", "bgc"], indirect=False)
+def test_valid_dashboard_profile(board_type):
     assert isinstance(argopy.dashboard(5904797, 12, type=board_type, url_only=True), str)
 
 

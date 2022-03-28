@@ -95,7 +95,6 @@ class ArgoDataFetcherProto(ABC):
 
     def dashboard(self, **kw):
         if self.WMO is not None:
-
             if len(self.WMO) == 1 and self.CYC is not None and len(self.CYC) == 1:
                 return open_dashboard(wmo=self.WMO[0], cyc=self.CYC[0], **kw)
             elif len(self.WMO) == 1:
