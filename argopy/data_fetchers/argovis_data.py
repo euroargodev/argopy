@@ -15,12 +15,11 @@ import getpass
 from .proto import ArgoDataFetcherProto
 from abc import abstractmethod
 import warnings
-import urllib
 
 from argopy.stores import httpstore
 from argopy.options import OPTIONS
 from argopy.utilities import list_standard_variables, format_oneline, Chunker
-from argopy.plotters import open_dashboard
+
 
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']

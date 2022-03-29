@@ -15,8 +15,9 @@ from . import (
     has_matplotlib,
     has_seaborn,
     has_cartopy,
+    has_ipython,
 )
-from argopy.plotters import bar_plot, plot_trajectory, open_sat_altim_report
+from ..plot import bar_plot, plot_trajectory, open_sat_altim_report
 from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy import DataFetcher as ArgoDataFetcher
 
@@ -54,7 +55,7 @@ def test_valid_dashboard_profile(board_type):
 
 @requires_ipython
 @requires_connection
-def test_valid_dashboard_output():
+def test_valid_dashboard_ipython_output():
     import IPython
 
     dsh = argopy.dashboard()
@@ -67,17 +68,27 @@ def test_valid_dashboard_output():
     assert isinstance(dsh, IPython.lib.display.IFrame)
 
 
-@requires_ipython
 @requires_connection
 def test_open_sat_altim_report():
-    import IPython
+    if has_ipython:
+        import IPython
+
     dsh = open_sat_altim_report(WMO=5904797, embed='slide')
-    assert isinstance(dsh(0), IPython.display.Image)
+    if has_ipython:
+        assert isinstance(dsh(0), IPython.display.Image)
+    else:
+        assert isinstance(dsh, dict)
 
     dsh = open_sat_altim_report(WMO=5904797, embed='dropdown')
-    assert isinstance(dsh(5904797), IPython.display.Image)
+    if has_ipython:
+        assert isinstance(dsh(5904797), IPython.display.Image)
+    else:
+        assert isinstance(dsh, dict)
 
-    open_sat_altim_report(WMO=5904797, embed='list')
+    if has_ipython:
+        open_sat_altim_report(WMO=5904797, embed='list')
+    else:
+        assert isinstance(dsh, dict)
 
     dsh = open_sat_altim_report(WMO=5904797, embed=None)
     assert isinstance(dsh, dict)

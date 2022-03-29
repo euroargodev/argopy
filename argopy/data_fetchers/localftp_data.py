@@ -32,7 +32,6 @@ from glob import glob
 import numpy as np
 import pandas as pd
 from abc import abstractmethod
-import warnings
 import getpass
 
 from .proto import ArgoDataFetcherProto
@@ -44,7 +43,7 @@ from argopy.utilities import (
 )
 from argopy.options import OPTIONS
 from argopy.stores import filestore, indexstore, indexfilter_box
-from argopy.plotters import open_dashboard
+
 
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]

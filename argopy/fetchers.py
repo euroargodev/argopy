@@ -18,7 +18,7 @@ import logging
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher
 from .utilities import list_available_data_src, list_available_index_src, is_box, is_indexbox, check_wmo, get_coriolis_profile_id
-from .plotters import plot_trajectory, bar_plot, open_sat_altim_report
+from .plot import plot_trajectory, bar_plot, open_sat_altim_report
 
 
 AVAILABLE_DATA_SOURCES = list_available_data_src()

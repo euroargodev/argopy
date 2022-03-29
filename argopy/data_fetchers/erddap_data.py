@@ -13,7 +13,6 @@ This is not intended to be used directly, only by the facade at fetchers.py
 import pandas as pd
 import numpy as np
 import copy
-import warnings
 
 from abc import abstractmethod
 import getpass
