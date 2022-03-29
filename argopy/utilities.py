@@ -42,7 +42,7 @@ from argopy.errors import (
     FtpPathError,
     InvalidFetcher,
     InvalidFetcherAccessPoint,
-    InvalidOption
+    InvalidOption,
 )
 
 try:
@@ -276,17 +276,17 @@ def list_multiprofile_file_variables():
 
 
 def check_localftp(path, errors: str = "ignore"):
-    """ Check if the path has the expected GDAC ftp structure
+    """Check if the path has the expected GDAC ftp structure.
 
         Check if the path is structured like:
-        .
-        └── dac
-            ├── aoml
-            ├── ...
-            ├── coriolis
-            ├── ...
-            ├── meds
-            └── nmdis
+            .
+            └── dac
+                ├── aoml
+                ├── ...
+                ├── coriolis
+                ├── ...
+                ├── meds
+                └── nmdis
 
         Parameters
         ----------
@@ -565,9 +565,7 @@ def isAPIconnected(src="erddap", data=True):
     else:
         list_src = list_available_index_src()
 
-    if src in list_src and getattr(
-        list_src[src], "api_server_check", None
-    ):
+    if src in list_src and getattr(list_src[src], "api_server_check", None):
         if "localftp" in src:
             # This is a special case because the source here is a local folder
             result = check_localftp(OPTIONS["local_ftp"])
@@ -578,7 +576,9 @@ def isAPIconnected(src="erddap", data=True):
         raise InvalidFetcher
 
 
-def erddap_ds_exists(ds: str = "ArgoFloats", erddap: str = 'https://www.ifremer.fr/erddap') -> bool:
+def erddap_ds_exists(
+    ds: str = "ArgoFloats", erddap: str = "https://www.ifremer.fr/erddap"
+) -> bool:
     """ Check if a dataset exists on a remote erddap server
     return a bool
 
@@ -593,7 +593,9 @@ def erddap_ds_exists(ds: str = "ArgoFloats", erddap: str = 'https://www.ifremer.
     ------
     bool
     """
-    with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
+    with httpstore(timeout=OPTIONS["api_timeout"]).open(
+        "".join([erddap, "/info/index.json"])
+    ) as of:
         erddap_index = json.load(of)
     return ds in [row[-1] for row in erddap_index["table"]["rows"]]
 
@@ -652,7 +654,7 @@ def fetch_status(stdout: str = "html", insert: bool = True):
         if getattr(mod, "api_server_check", None):
             # status = isconnected(mod.api_server_check)
             status = isAPIconnected(api)
-            if api=='localftp' and OPTIONS['local_ftp'] == '-':
+            if api == "localftp" and OPTIONS["local_ftp"] == "-":
                 message = "ok" if status else "path undefined !"
             else:
                 # message = "up" if status else "down"
@@ -813,7 +815,9 @@ def linear_interpolation_remap(
             vectorize=True,
             dask="parallelized",
             output_dtypes=[data.dtype],
-            dask_gufunc_kwargs={'output_sizes': {output_dim: len(z_regridded[z_regridded_dim])}},
+            dask_gufunc_kwargs={
+                "output_sizes": {output_dim: len(z_regridded[z_regridded_dim])}
+            },
         )
     else:
         kwargs = dict(
@@ -907,7 +911,7 @@ class Chunker:
     def _split(self, lst, n=1):
         """Yield successive n-sized chunks from lst"""
         for i in range(0, len(lst), n):
-            yield lst[i: i + n]
+            yield lst[i : i + n]
 
     def _split_list_bychunknb(self, lst, n=1):
         """Split list in n-imposed chunks of similar size
@@ -918,7 +922,7 @@ class Chunker:
         for i in self._split(lst, siz):
             res.append(i)
         if len(res) > n:
-            res[n - 1::] = [reduce(lambda i, j: i + j, res[n - 1::])]
+            res[n - 1 : :] = [reduce(lambda i, j: i + j, res[n - 1 : :])]
         return res
 
     def _split_list_bychunksize(self, lst, max_size=1):
@@ -954,7 +958,7 @@ class Chunker:
                     this_box[i_right] = right
                     boxes.append(this_box)
         elif "t" in d:
-            dates = pd.to_datetime(large_box[i_left: i_right + 1])
+            dates = pd.to_datetime(large_box[i_left : i_right + 1])
             date_bounds = [
                 d.strftime("%Y%m%d%H%M%S")
                 for d in pd.date_range(dates[0], dates[1], periods=n + 1)
@@ -1112,7 +1116,7 @@ def format_oneline(s, max_width=65):
         if q == 0:
             return "".join([s[0:n], padding, s[-n:]])
         else:
-            return "".join([s[0: n + 1], padding, s[-n:]])
+            return "".join([s[0 : n + 1], padding, s[-n:]])
     else:
         return s
 
@@ -1153,8 +1157,8 @@ def is_indexbox(box: list, errors="raise"):
     else:
         # Insert pressure bounds and use full box validator:
         tmp_box = box.copy()
-        tmp_box.insert(4, 0.)
-        tmp_box.insert(5, 10000.)
+        tmp_box.insert(4, 0.0)
+        tmp_box.insert(5, 10000.0)
         return is_box(tmp_box, errors=errors)
 
 
@@ -1174,6 +1178,7 @@ def is_box(box: list, errors="raise"):
     -------
     bool
     """
+
     def is_dateconvertible(d):
         try:
             pd.to_datetime(d)
@@ -1264,7 +1269,9 @@ def is_list_of_datasets(lst):
 
 def is_list_equal(lst1, lst2):
     """ Return true if 2 lists contain same elements"""
-    return len(lst1) == len(lst2) and len(lst1) == sum([1 for i, j in zip(lst1, lst2) if i == j])
+    return len(lst1) == len(lst2) and len(lst1) == sum(
+        [1 for i, j in zip(lst1, lst2) if i == j]
+    )
 
 
 def check_wmo(lst):
@@ -1398,7 +1405,7 @@ def is_cyc(lst, errors="raise"):  # noqa: C901
             if not str(x).isdigit():
                 result = False
 
-            if (len(str(x)) > 4):
+            if len(str(x)) > 4:
                 result = False
 
             if int(x) < 0:  # Some cycle number are 0 !
@@ -1438,6 +1445,7 @@ def warnUnless(ok, txt):
     txt: str
         Text to display in the warning
     """
+
     def inner(fct):
         def wrapper(*args, **kwargs):
             warnings.warn("%s %s" % (fct.__name__, txt))
@@ -1483,7 +1491,9 @@ def modified_environ(*remove, **update):
         [env.pop(k) for k in remove_after]
 
 
-def toYearFraction(this_date: pd._libs.tslibs.timestamps.Timestamp = pd.to_datetime('now', utc=True)):
+def toYearFraction(
+    this_date: pd._libs.tslibs.timestamps.Timestamp = pd.to_datetime("now", utc=True)
+):
     """ Compute decimal year, robust to leap years, precision to the second
 
     Compute the fraction of the year a given timestamp corresponds to.
@@ -1505,10 +1515,14 @@ def toYearFraction(this_date: pd._libs.tslibs.timestamps.Timestamp = pd.to_datet
     float
     """
     if "UTC" in [this_date.tzname() if not this_date.tzinfo is None else ""]:
-        startOfThisYear = pd.to_datetime("%i-01-01T00:00:00.000" % this_date.year, utc=True)
+        startOfThisYear = pd.to_datetime(
+            "%i-01-01T00:00:00.000" % this_date.year, utc=True
+        )
     else:
         startOfThisYear = pd.to_datetime("%i-01-01T00:00:00.000" % this_date.year)
-    yearDuration_sec = (startOfThisYear + pd.offsets.DateOffset(years=1) - startOfThisYear).total_seconds()
+    yearDuration_sec = (
+        startOfThisYear + pd.offsets.DateOffset(years=1) - startOfThisYear
+    ).total_seconds()
 
     yearElapsed_sec = (this_date - startOfThisYear).total_seconds()
     fraction = yearElapsed_sec / yearDuration_sec
@@ -1534,9 +1548,11 @@ def YearFraction_to_datetime(yf: float):
     fraction = np.round(fraction, 10)
 
     startOfThisYear = pd.to_datetime("%i-01-01T00:00:00" % year)
-    yearDuration_sec = (startOfThisYear + pd.offsets.DateOffset(years=1) - startOfThisYear).total_seconds()
-    yearElapsed_sec = pd.Timedelta(fraction * yearDuration_sec, unit='s')
-    return pd.to_datetime(startOfThisYear + yearElapsed_sec, unit='s')
+    yearDuration_sec = (
+        startOfThisYear + pd.offsets.DateOffset(years=1) - startOfThisYear
+    ).total_seconds()
+    yearElapsed_sec = pd.Timedelta(fraction * yearDuration_sec, unit="s")
+    return pd.to_datetime(startOfThisYear + yearElapsed_sec, unit="s")
 
 
 def wrap_longitude(grid_long):
@@ -1593,7 +1609,7 @@ def wmo2box(wmo_id: int):
 
     # "global quadrant" numbers where 1=NE, 3=SE, 5=SW, 7=NW
     quadrant = int(wmo_id[0])
-    if quadrant not in [1, 3, 5 ,7]:
+    if quadrant not in [1, 3, 5, 7]:
         raise ValueError("Invalid WMO square number, 1st digit must be 1, 3, 5 or 7.")
 
     # 'minimum' Latitude square boundary, nearest to the Equator
@@ -1605,24 +1621,33 @@ def wmo2box(wmo_id: int):
     #
     dd = 10
     if quadrant in [1, 3]:
-        lon_min = nearest_to_the_Prime_Meridian*dd
-        lon_max = nearest_to_the_Prime_Meridian*dd+dd
+        lon_min = nearest_to_the_Prime_Meridian * dd
+        lon_max = nearest_to_the_Prime_Meridian * dd + dd
     elif quadrant in [5, 7]:
-        lon_min = -nearest_to_the_Prime_Meridian*dd-dd
-        lon_max = -nearest_to_the_Prime_Meridian*dd
+        lon_min = -nearest_to_the_Prime_Meridian * dd - dd
+        lon_max = -nearest_to_the_Prime_Meridian * dd
 
     if quadrant in [1, 7]:
-        lat_min = nearest_to_the_Equator_latitude*dd
-        lat_max = nearest_to_the_Equator_latitude*dd+dd
+        lat_min = nearest_to_the_Equator_latitude * dd
+        lat_max = nearest_to_the_Equator_latitude * dd + dd
     elif quadrant in [3, 5]:
-        lat_min = -nearest_to_the_Equator_latitude*dd-dd
-        lat_max = -nearest_to_the_Equator_latitude*dd
+        lat_min = -nearest_to_the_Equator_latitude * dd - dd
+        lat_max = -nearest_to_the_Equator_latitude * dd
 
     box = [lon_min, lon_max, lat_min, lat_max]
     return box
 
 
-def groupby_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped", select='deep', right=False):
+def groupby_remap(
+    z,
+    data,
+    z_regridded,
+    z_dim=None,
+    z_regridded_dim="regridded",
+    output_dim="remapped",
+    select="deep",
+    right=False,
+):
     """ todo: Need a docstring here !"""
 
     # sub-sampling called in xarray ufunc
@@ -1632,7 +1657,9 @@ def groupby_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded",
         x = x[~idx]
         y = y[~idx]
 
-        ifound = np.digitize(x, target_values, right=right)  # ``bins[i-1] <= x < bins[i]``
+        ifound = np.digitize(
+            x, target_values, right=right
+        )  # ``bins[i-1] <= x < bins[i]``
         ifound -= 1  # Because digitize returns a 1-based indexing, we need to remove 1
         y_binned = np.ones_like(target_values) * np.nan
 
@@ -1641,27 +1668,29 @@ def groupby_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded",
             iselect = ix[-1]
 
             # Map to y value at specific x index in the bin:
-            if select == 'shallow':
+            if select == "shallow":
                 iselect = iselect[0]  # min/shallow
                 mapped_value = y[iselect]
-            elif select == 'deep':
+            elif select == "deep":
                 iselect = iselect[-1]  # max/deep
                 mapped_value = y[iselect]
-            elif select == 'middle':
-                iselect = iselect[np.where(x[iselect] >= np.median(x[iselect]))[0][0]]  # median/middle
+            elif select == "middle":
+                iselect = iselect[
+                    np.where(x[iselect] >= np.median(x[iselect]))[0][0]
+                ]  # median/middle
                 mapped_value = y[iselect]
-            elif select == 'random':
+            elif select == "random":
                 iselect = iselect[np.random.randint(len(iselect))]
                 mapped_value = y[iselect]
 
             # or Map to y statistics in the bin:
-            elif select == 'mean':
+            elif select == "mean":
                 mapped_value = np.nanmean(y[iselect])
-            elif select == 'min':
+            elif select == "min":
                 mapped_value = np.nanmin(y[iselect])
-            elif select == 'max':
+            elif select == "max":
                 mapped_value = np.nanmax(y[iselect])
-            elif select == 'median':
+            elif select == "median":
                 mapped_value = np.median(y[iselect])
 
             else:
@@ -1691,7 +1720,9 @@ def groupby_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded",
             vectorize=True,
             dask="parallelized",
             output_dtypes=[data.dtype],
-            dask_gufunc_kwargs={'output_sizes': {output_dim: len(z_regridded[z_regridded_dim])}},
+            dask_gufunc_kwargs={
+                "output_sizes": {output_dim: len(z_regridded[z_regridded_dim])}
+            },
         )
     else:
         kwargs = dict(
@@ -1704,11 +1735,13 @@ def groupby_remap(z, data, z_regridded, z_dim=None, z_regridded_dim="regridded",
         )
     remapped = xr.apply_ufunc(_subsample_bins, z, data, z_regridded, **kwargs)
 
-    remapped.coords[output_dim] = z_regridded.rename({z_regridded_dim: output_dim}).coords[output_dim]
+    remapped.coords[output_dim] = z_regridded.rename(
+        {z_regridded_dim: output_dim}
+    ).coords[output_dim]
     return remapped
 
 
-class TopoFetcher():
+class TopoFetcher:
     """ Fetch topographic data through an ERDDAP server for an ocean rectangle
 
     Example:
@@ -1719,23 +1752,23 @@ class TopoFetcher():
 
     """
 
-    class ERDDAP():
-        def __init__(self, server: str, protocol: str = 'tabledap'):
+    class ERDDAP:
+        def __init__(self, server: str, protocol: str = "tabledap"):
             self.server = server
             self.protocol = protocol
-            self.response = 'nc'
-            self.dataset_id = ''
-            self.constraints = ''
+            self.response = "nc"
+            self.dataset_id = ""
+            self.constraints = ""
 
     def __init__(
-            self,
-            box: list,
-            ds: str = "gebco",
-            cache: bool = False,
-            cachedir: str = "",
-            api_timeout: int = 0,
-            stride: list = [1, 1],
-            **kwargs,
+        self,
+        box: list,
+        ds: str = "gebco",
+        cache: bool = False,
+        cachedir: str = "",
+        api_timeout: int = 0,
+        stride: list = [1, 1],
+        **kwargs,
     ):
         """ Instantiate an ERDDAP topo data fetcher
 
@@ -1755,25 +1788,25 @@ class TopoFetcher():
             Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
-        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
+        self.fs = httpstore(
+            cache=cache, cachedir=cachedir, timeout=timeout, size_policy="head"
+        )
         self.definition = "Erddap topographic data fetcher"
 
         self.BOX = box
         self.stride = stride
         if ds == "gebco":
             self.definition = "NOAA erddap gebco data fetcher for a space region"
-            self.server = 'https://coastwatch.pfeg.noaa.gov/erddap'
-            self.server_name = 'NOAA'
-            self.dataset_id = 'gebco'
+            self.server = "https://coastwatch.pfeg.noaa.gov/erddap"
+            self.server_name = "NOAA"
+            self.dataset_id = "gebco"
 
         self._init_erddap()
 
     def _init_erddap(self):
         # Init erddap
         self.erddap = self.ERDDAP(server=self.server, protocol="griddap")
-        self.erddap.response = (
-            "nc"
-        )
+        self.erddap.response = "nc"
 
         if self.dataset_id == "gebco":
             self.erddap.dataset_id = "GEBCO_2020"
@@ -1822,8 +1855,17 @@ class TopoFetcher():
         """ Define request constraints """
         #        Eg: https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.nc?elevation%5B(34):5:(42)%5D%5B(-21):7:(-12)%5D
         self.erddap.constraints = "%s(%0.2f):%i:(%0.2f)%s%s(%0.2f):%i:(%0.2f)%s" % (
-        "%5B", self.BOX[2], self.stride[1], self.BOX[3], "%5D",
-        "%5B", self.BOX[0], self.stride[0], self.BOX[1], "%5D")
+            "%5B",
+            self.BOX[2],
+            self.stride[1],
+            self.BOX[3],
+            "%5D",
+            "%5B",
+            self.BOX[0],
+            self.stride[0],
+            self.BOX[1],
+            "%5D",
+        )
         return None
 
     #     @property
@@ -1869,7 +1911,7 @@ class TopoFetcher():
         """
         return [self.get_url()]
 
-    def to_xarray(self, errors: str = 'ignore'):
+    def to_xarray(self, errors: str = "ignore"):
         """ Load Topographic data and return a xarray.DataSet """
 
         # Download data
@@ -1878,7 +1920,7 @@ class TopoFetcher():
 
         return ds
 
-    def load(self, errors: str = 'ignore'):
+    def load(self, errors: str = "ignore"):
         """ Load Topographic data and return a xarray.DataSet """
         return self.to_xarray(errors=errors)
 
@@ -1886,8 +1928,8 @@ class TopoFetcher():
 def get_coriolis_profile_id(WMO, CYC=None):
     """ Return a :class:`pandas.DataFrame` with CORIOLIS ID of WMO/CYC profile pairs
 
-        Inputs
-        ------
+        Parameters
+        ----------
         WMO: int, list(int)
             Define the list of Argo floats. This is a list of integers with WMO float identifiers.
             WMO is the World Meteorological Organization.
@@ -1901,34 +1943,36 @@ def get_coriolis_profile_id(WMO, CYC=None):
     WMO_list = check_wmo(WMO)
     if CYC is not None:
         CYC_list = check_cyc(CYC)
-    URIs = ['https://dataselection.euro-argo.eu/api/trajectory/%i' % wmo for wmo in WMO_list]
+    URIs = [
+        "https://dataselection.euro-argo.eu/api/trajectory/%i" % wmo for wmo in WMO_list
+    ]
 
     def prec(data, url):
         # Transform trajectory json to dataframe
         # See: https://dataselection.euro-argo.eu/swagger-ui.html#!/cycle-controller/getCyclesByPlatformCodeUsingGET
-        WMO = check_wmo(url.split('/')[-1])[0]
+        WMO = check_wmo(url.split("/")[-1])[0]
         rows = []
         for profile in data:
             keys = [x for x in profile.keys() if x not in ["coordinate"]]
             meta_row = dict((key, profile[key]) for key in keys)
             for row in profile["coordinate"]:
                 meta_row[row] = profile["coordinate"][row]
-            meta_row['WMO'] = WMO
+            meta_row["WMO"] = WMO
             rows.append(meta_row)
         return pd.DataFrame(rows)
 
     fs = httpstore(cache=True)
-    data = fs.open_mfjson(URIs, preprocess=prec, errors='raise', url_follow=True)
+    data = fs.open_mfjson(URIs, preprocess=prec, errors="raise", url_follow=True)
 
     # Merge results (list of dataframe):
     key_map = {
-                "id": "ID",
-                "lat": "LATITUDE",
-                "lon": "LONGITUDE",
-                "cvNumber": "CYCLE_NUMBER",
-                "level": "level",
-                "WMO": "PLATFORM_NUMBER"
-            }
+        "id": "ID",
+        "lat": "LATITUDE",
+        "lon": "LONGITUDE",
+        "cvNumber": "CYCLE_NUMBER",
+        "level": "level",
+        "WMO": "PLATFORM_NUMBER",
+    }
     for i, df in enumerate(data):
         df = df.reset_index()
         df = df.rename(columns=key_map)
@@ -1938,17 +1982,21 @@ def get_coriolis_profile_id(WMO, CYC=None):
     df.sort_values(by=["PLATFORM_NUMBER", "CYCLE_NUMBER"], inplace=True)
     df = df.reset_index(drop=True)
     # df = df.set_index(["PLATFORM_NUMBER", "CYCLE_NUMBER"])
-    df = df.astype({'ID': int})
+    df = df.astype({"ID": int})
     if CYC is not None:
-        df = pd.concat([df[df['CYCLE_NUMBER']==cyc] for cyc in CYC_list]).reset_index(drop=True)
-    return df[['PLATFORM_NUMBER', 'CYCLE_NUMBER', 'ID', 'LATITUDE', 'LONGITUDE', 'level']]
+        df = pd.concat([df[df["CYCLE_NUMBER"] == cyc] for cyc in CYC_list]).reset_index(
+            drop=True
+        )
+    return df[
+        ["PLATFORM_NUMBER", "CYCLE_NUMBER", "ID", "LATITUDE", "LONGITUDE", "level"]
+    ]
 
 
 def get_ea_profile_page(WMO, CYC=None):
     """ Return a list of URL
 
-        Inputs
-        ------
+        Parameters
+        ----------
         WMO: int, list(int)
             WMO must be an integer or an iterable with elements that can be casted as integers
         CYC: int, list(int), default (None)
@@ -1963,5 +2011,5 @@ def get_ea_profile_page(WMO, CYC=None):
         get_coriolis_profile_id
     """
     df = get_coriolis_profile_id(WMO, CYC)
-    url = 'https://dataselection.euro-argo.eu/cycle/{}'
-    return [url.format(this_id) for this_id in sorted(df['ID'])]
+    url = "https://dataselection.euro-argo.eu/cycle/{}"
+    return [url.format(this_id) for this_id in sorted(df["ID"])]
