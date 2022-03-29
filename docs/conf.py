@@ -312,5 +312,6 @@ intersphinx_mapping = {
     'dask_ml': ('https://ml.dask.org/', None),
     'sklearn': ('https://scikit-learn.org/stable/', None),
     'seaborn': ('https://seaborn.pydata.org/', None),
-    'fsspec': ('https://filesystem-spec.readthedocs.io/en/stable/', None)
+    'fsspec': ('https://filesystem-spec.readthedocs.io/en/stable/', None),
+    'IPython': ('https://ipython.readthedocs.io/en/stable/', None),
 }

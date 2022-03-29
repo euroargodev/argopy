@@ -46,3 +46,4 @@ dependencies:
     - numpydoc
     - readthedocs-sphinx-ext
     - sphinx-autosummary-accessors
+    - pydocstyle

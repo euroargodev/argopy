@@ -236,7 +236,7 @@ Plotters
 .. autosummary::
    :toctree: generated/
 
-    argopy.plotters.plot_trajectory
-    argopy.plotters.bar_plot
-    argopy.plotters.open_dashboard
-    argopy.plotters.open_sat_altim_report
+    argopy.plot.dashboard
+    argopy.plot.plot_trajectory
+    argopy.plot.bar_plot
+    argopy.plot.open_sat_altim_report

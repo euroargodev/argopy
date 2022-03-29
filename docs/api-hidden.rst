@@ -84,10 +84,10 @@
     argopy.utilities.get_coriolis_profile_id
     argopy.utilities.get_ea_profile_page
 
-    argopy.plotters.open_dashboard
-    argopy.plotters.bar_plot
-    argopy.plotters.plot_trajectory
-    argopy.plotters.open_sat_altim_report
+    argopy.plot.dashboard
+    argopy.plot.bar_plot
+    argopy.plot.plot_trajectory
+    argopy.plot.open_sat_altim_report
 
     argopy.stores.filesystems.filestore
     argopy.stores.filestore.open_dataset

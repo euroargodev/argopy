@@ -23,7 +23,7 @@ v0.1.11 (X XXX. 2022)
 
 **Features and front-end API**
 
-- **New dashboards and dashboard for profiles**. Calling on the data fetcher dashboard method will return the Euro-Argo profile page for a single profile. Very useful to look at the data before load. This comes with 2 new utilities functions to get Coriolis ID of profiles (:meth:`utilities.get_coriolis_profile_id`) and to return the list of profile webpages (:meth:`utilities.get_ea_profile_page`). (:pr:`198`) by `G. Maze <http://www.github.com/gmaze>`_.
+- **New dashboard for profiles and new 3rd party dashboards**. Calling on the data fetcher dashboard method will return the Euro-Argo profile page for a single profile. Very useful to look at the data before load. This comes with 2 new utilities functions to get Coriolis ID of profiles (:meth:`utilities.get_coriolis_profile_id`) and to return the list of profile webpages (:meth:`utilities.get_ea_profile_page`). (:pr:`198`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 
@@ -43,7 +43,7 @@ The new profile dashboard can also be access with:
     import argopy
     argopy.dashboard(6902755, 11)
 
-We also added the Ocean-OPS (former JCOMMOPS) dashboard for all floats and the Argo-BGC dashboard for BGC floats:
+We added the Ocean-OPS (former JCOMMOPS) dashboard for all floats and the Argo-BGC dashboard for BGC floats:
 
 .. code-block:: python
 
@@ -56,6 +56,11 @@ We also added the Ocean-OPS (former JCOMMOPS) dashboard for all floats and the A
 
 - Fix bug in erddap fata fetcher that was causing a `profile` request to do not account for cycle numbers. (:commit:`301e557fdec1f2d536841464b383edc3a4c4a62d`) by `G. Maze <http://www.github.com/gmaze>`_.
 
+- Complete refactoring of the ``argopy.plotters`` module into ``argopy.plot``. (:pr:`198`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+**Breaking changes with previous versions**
+
+- Remove deprecation warnings for: 'plotters.plot_dac', 'plotters.plot_profilerType'. These now raise an error.
 
 v0.1.10 (4 Mar. 2022)
 ---------------------
