@@ -55,6 +55,23 @@ We provide a few shortcuts toward third-party online dashboards that can help yo
 When working in Jupyter notebook, you can insert a dashboard in a cell, or get the url toward the dashboard to open it elsewhere.
 You have access to the Euro-Argo ERIC, Ocean-OPS, Argovis and BGC dashboards with the option ``type``. See :meth:`argopy.dashboard` for all the options.
 
+Summary of available dashboards properties:
+
+=================== ==== ===== =======
+**Type**            base float profile
+=================== ==== ===== =======
+"data", "ea"        X    X     X
+"meta"              X    X     X
+"bgc"               X    X     X
+"ocean-ops", "op"   X    X
+"coriolis", "cor"        X
+"argovis"           X    X     X
+=================== ==== ===== =======
+
+.. note::
+
+    Dashboards can be open at the package level or from data fetchers.
+
 Open the default dashboard:
 
 .. code-block:: python
@@ -70,6 +87,8 @@ for a specific float, just provide its WMO:
 
     import argopy
     argopy.dashboard(6902746)
+    # or
+    ArgoDataFetcher().float(6902755).dashboard()
 
 .. image:: _static/dashboard_float.png
 
@@ -79,6 +98,7 @@ or for specific float cycle:
 
     import argopy
     argopy.dashboard(6902746, 12)
+    # or
+    ArgoDataFetcher().profile(6902755, 11).dashboard()
 
 .. image:: _static/dashboard_profile.png
-

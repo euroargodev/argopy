@@ -100,7 +100,7 @@ def get_type_name(defs, input_type):
 
 @warnUnless(has_ipython, "requires IPython to work as expected, otherwise this will just return URLs")
 def open_dashboard(
-    wmo=None, cyc=None, width="100%", height=1000, type="ea", url_only=False
+    wmo=None, cyc=None, type="ea", url_only=False, width="100%", height=1000,
 ):
     """ Insert an Argo dashboard page in a notebook cell, or return the corresponding url
 
@@ -108,15 +108,9 @@ def open_dashboard(
         ----------
         wmo: int, optional
             The float WMO to display. By default, this is set to None and will insert the general dashboard.
-        cyc: int, default (None)
+        cyc: int, optional
             The float CYCLE NUMBER to display. If ``wmo`` is not None, this will open a profile dashboard.
-        width: int or str, default ("100%")
-            Width in percentage or pixel of the returned Iframe or Image
-        height: int, default (1000)
-            Height in pixel of the returned Iframe or Image
-        url_only: bool, default (False)
-            If set to True, will only return the URL toward the dashboard
-        type: str, default ("ea")
+        type: str, optional, default: "ea"
             Type of dashboard to use. This can be any one of the following:
 
             * "ea", "data": the `Euro-Argo data selection dashboard <https://dataselection.euro-argo.eu>`_
@@ -124,6 +118,12 @@ def open_dashboard(
             * "op", "ocean-ops": the `Ocean-OPS Argo dashboard <https://www.ocean-ops.org/board?t=argo>`_
             * "bgc": the `Argo-BGC specific dashbaord <https://maps.biogeochemical-argo.com/bgcargo>`_
             * "argovis": the `Colorado Argovis dashboard <https://argovis.colorado.edu>`_
+        url_only: bool, optional, default: False
+            If set to True, will only return the URL toward the dashboard
+        width: str, optional, default: "100%"
+            Width in percentage or pixel of the returned Iframe or Image
+        height: int, optional, default: 1000
+            Height in pixel of the returned Iframe or Image
 
         Returns
         -------

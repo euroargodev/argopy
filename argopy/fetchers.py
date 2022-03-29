@@ -248,7 +248,12 @@ class ArgoDataFetcher:
                 np.min(this_ds['TIME'].values), np.max(this_ds['TIME'].values)]
 
     def dashboard(self, **kw):
-        """ Open access point dashboard """
+        """Open access point dashboard.
+
+            See Also
+            --------
+            :class:`argopy.dashboard`
+        """
         try:
             return self.fetcher.dashboard(**kw)
         except Exception:
@@ -518,7 +523,8 @@ class ArgoDataFetcher:
 
             Parameters
             ----------
-            ptype: {'trajectory',' profiler', 'dac', 'qc_altimetry}, default: 'trajectory'
+            ptype: str, optional, default: 'trajectory'
+                Plot type, one of the following: 'trajectory',' profiler', 'dac', 'qc_altimetry'.
 
             Returns
             -------

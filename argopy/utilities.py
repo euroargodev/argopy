@@ -279,21 +279,21 @@ def check_localftp(path, errors: str = "ignore"):
     """Check if the path has the expected GDAC ftp structure.
 
         Check if the path is structured like:
-            .
-            └── dac
-                ├── aoml
-                ├── ...
-                ├── coriolis
-                ├── ...
-                ├── meds
-                └── nmdis
+        .
+        └── dac
+            ├── aoml
+            ├── ...
+            ├── coriolis
+            ├── ...
+            ├── meds
+            └── nmdis
 
         Parameters
         ----------
         path: str
             Path name to check
-        errors: str
-            "ignore" or "raise" (or "warn"
+        errors: str, optional
+            "ignore" or "raise" (or "warn")
 
         Returns
         -------
