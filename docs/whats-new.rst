@@ -17,6 +17,9 @@ What's New
    :target: //anaconda.org/conda-forge/argopy
 .. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy
    :target: //github.com/euroargodev/argopy/releases
+v0.1.XX
+-------
+- Add oxy 
 
 v0.1.11 (X XXX. 2022)
 ---------------------
