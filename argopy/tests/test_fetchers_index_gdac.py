@@ -123,6 +123,7 @@ class TestBackend:
         fetcher_args = {"src": self.src, "ftp": ftp, "cache": False, "N_RECORDS": N_RECORDS}
         if cached:
             fetcher_args = {**fetcher_args, **{"cache": True, "cachedir": self.cachedir}}
+            # fetcher_args = {**fetcher_args, **{"cache": True, "cachedir": tempfile.mkdtemp()}}
         if not isconnected(fetcher_args['ftp']+"/"+"ar_index_global_prof.txt"):
             pytest.xfail("Fails because %s not available" % fetcher_args['ftp'])
         else:

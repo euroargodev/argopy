@@ -118,6 +118,7 @@ class ArgoIndexStoreProto(ABC):
                 "Unknown protocol for an Argo index store: %s" % split_protocol(host)[0]
             )
         self.fs["client"] = memorystore(cache, cachedir)  # Manage search results
+        self._memory_store_content = []  # Track files opened with this memory store, since it's a global store
 
         self.index_path = self.fs["src"].fs.sep.join([self.host, self.index_file])
         if not self.fs["src"].exists(self.index_path):
@@ -285,12 +286,10 @@ class ArgoIndexStoreProto(ABC):
 
     def _same_origin(self, path):
         """Compare origin of path with current memory fs"""
-        current_id = id(self.fs["client"])
-        if path in self.fs["client"].fs.store:
-            origin_id = id(self.fs["client"].fs.store[path].fs)  # Memory fs used to create this path
-        else:
-            origin_id = current_id  # Since path is not on fs yet
-        return current_id != origin_id
+        return path in self._memory_store_content
+
+    def _commit(self, path):
+        self._memory_store_content.append(path)
 
     def _write(self, fs, path, obj, fmt="pq"):
         """ Write internal array object to file store
@@ -309,15 +308,11 @@ class ArgoIndexStoreProto(ABC):
         }
         if fmt == 'parquet':
             fmt = 'pq'
-        # if not self._same_origin(this_path):
-        #     # log.debug("Writing %s (same_origin=%s)" % (this_path, self._same_origin(this_path)))
-        #     if this_path in fs.fs.store:
-        #         # log.debug("Deleting path created with another fs instance: %s")
-        #         fs.fs.rm(this_path)
         with fs.open(this_path, "wb") as handle:
             write_this[fmt](obj, handle)
-        # else:
-        #     log.debug("Not over-writing (because same_origin=%s) this path: %s" % (self._same_origin(this_path), this_path))
+            if fs.protocol == 'memory':
+                self._commit(this_path)
+
         return self
 
     def _read(self, fs, path, fmt="pq"):
@@ -349,6 +344,7 @@ class ArgoIndexStoreProto(ABC):
     def clear_cache(self):
         self.fs["src"].clear_cache()
         self.fs["client"].clear_cache()
+        self._memory_store_content = []
         return self
 
     def cachepath(self, path):

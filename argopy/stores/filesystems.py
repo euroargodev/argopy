@@ -70,6 +70,7 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cac
         log.debug("Opening a fsspec [file] system for '%s' protocol with options: %s" %
                   (protocol, str(filesystem_kwargs)))
     else:
+        # https://filesystem-spec.readthedocs.io/en/latest/_modules/fsspec/implementations/cached.html#WholeFileCacheFileSystem
         fs = fsspec.filesystem("filecache",
                                target_protocol=protocol,
                                target_options={**filesystem_kwargs},
@@ -166,6 +167,7 @@ class argo_store_proto(ABC):
         # See the "save_cache()" method in:
         # https://filesystem-spec.readthedocs.io/en/latest/_modules/fsspec/implementations/cached.html#WholeFileCacheFileSystem
         fn = os.path.join(self.fs.storage[-1], "cache")
+        self.fs.load_cache()  # Read set of stored blocks from file and populate self.fs.cached_files
         cache = self.fs.cached_files[-1]
         if os.path.exists(fn):
             with open(fn, "rb") as f:
@@ -178,6 +180,7 @@ class argo_store_proto(ABC):
                 cache[k] = v.copy()
             else:
                 os.remove(os.path.join(self.fs.storage[-1], v['fn']))
+                # log.debug("Removed %s -> %s" % (uri, v['fn']))
         with tempfile.NamedTemporaryFile(mode="wb", delete=False) as f:
             pickle.dump(cache, f)
         shutil.move(f.name, fn)
@@ -186,6 +189,7 @@ class argo_store_proto(ABC):
         """ Remove cache files and entry from uri open with this store instance """
         if self.cache:
             for uri in self.cache_registry:
+                # log.debug("Removing from cache %s" % uri)
                 self._clear_cache_item(uri)
             self.cache_registry = []  # Reset registry
 

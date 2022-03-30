@@ -43,7 +43,6 @@ from argopy.stores.argo_index_pd import indexstore_pandas
 
 log = logging.getLogger("argopy.tests.stores")
 
-
 has_pyarrow = importlib.util.find_spec('pyarrow') is not None
 skip_pyarrow = pytest.mark.skipif(not has_pyarrow, reason="Requires pyarrow")
 
@@ -633,7 +632,7 @@ class IndexStore_test_proto:
     def cleanup(self, request):
         """Cleanup once we are finished."""
         def remove_test_dir():
-            warnings.warn("\n%s" % argopy.lscache(self.cachedir))
+            # warnings.warn("\n%s" % argopy.lscache(self.cachedir))
             shutil.rmtree(self.cachedir)
         request.addfinalizer(remove_test_dir)
 
