@@ -60,19 +60,17 @@ def open_sat_altim_report(WMO=None, embed="dropdown"):
 
     if embed == "list" and has_ipython:
         return display(*urls)
-    elif embed == "slide" and has_ipython and has_ipywidgets:
 
+    elif embed == "slide" and has_ipython and has_ipywidgets:
         def f(Float):
             return Image(url=urls[Float])
-
         return ipywidgets.interact(
             f, Float=ipywidgets.IntSlider(min=0, max=len(urls) - 1, step=1)
         )
-    elif embed == "dropdown" and has_ipython and has_ipywidgets:
 
+    elif embed == "dropdown" and has_ipython and has_ipywidgets:
         def f(Float):
             return Image(url=urls_dict[int(Float)])
-
         return ipywidgets.interact(f, Float=[str(wmo) for wmo in WMOs])
     else:
         return urls_dict
