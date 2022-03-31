@@ -2195,6 +2195,7 @@ def argo_split_path(this_path):  # noqa C901
         log.warning(this_path)
         log.warning(path)
         log.warning(path_parts)
+        log.warning(output)
         raise
 
     if output['dac'] not in dacs:
