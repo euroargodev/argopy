@@ -200,14 +200,16 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
     @property
     def uri_full_index(self):
         # return ["/".join([self.host, "dac", f.as_py()]) for f in self.index["file"]]
-        return [self.fs["src"].fs.sep.join([self.host, "dac", f.as_py()]) for f in self.index["file"]]
+        sep = self.fs["src"].fs.sep
+        return [sep.join([self.host, "dac", f.as_py().replace('/', sep)]) for f in self.index["file"]]
 
     @property
     def uri(self):
         # return ["/".join([self.host, "dac", f.as_py()]) for f in self.search["file"]]
         #todo Should also modify separator from "f.as_py()" because it's "/" on the index file,
         # but should be turned to "\" for local file index on Windows. Remains "/" in all others (linux, mac, ftp. http)
-        return [self.fs["src"].fs.sep.join([self.host, "dac", f.as_py()]) for f in self.search["file"]]
+        sep = self.fs["src"].fs.sep
+        return [sep.join([self.host, "dac", f.as_py().replace('/', sep)]) for f in self.search["file"]]
 
     def read_wmo(self, index=False):
         """ Return list of unique WMOs in search results
