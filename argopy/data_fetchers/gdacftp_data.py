@@ -202,7 +202,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         def mono2multi(mono_path):
             meta = argo_split_path(mono_path)
             if self.dataset_id == "phy":
-                return self.indexfs["src"].fs.sep.join(
+                return self.indexfs.fs["src"].fs.sep.join(
                     [
                         meta["origin"],
                         "dac",
@@ -212,7 +212,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
                     ]
                 )
             elif self.dataset_id == "bgc":
-                return self.indexfs["src"].fs.sep.join(
+                return self.indexfs.fs["src"].fs.sep.join(
                     [
                         meta["origin"],
                         "dac",
