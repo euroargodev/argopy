@@ -2156,11 +2156,7 @@ def argo_split_path(this_path):  # noqa C901
     output = {}
 
     (path, file) = os.path.split(this_path)
-    from pathlib import PurePath
-    # log.debug(PurePath(this_path).parts)
 
-    #     if 'http' in path or 'ftp' in path:
-    #         raise ValueError("This is not a Argo GDAC compliant file path (should be a relative path)")
     if path == 'https://data-argo.ifremer.fr':
         output['origin'] = 'https://data-argo.ifremer.fr/'
         sep = '/'
@@ -2194,6 +2190,7 @@ def argo_split_path(this_path):  # noqa C901
     except Exception:
         log.warning(this_path)
         log.warning(path)
+        log.warning(sep)
         log.warning(path_parts)
         log.warning(output)
         raise
