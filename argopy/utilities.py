@@ -2182,14 +2182,20 @@ def argo_split_path(this_path):  # noqa C901
     # dac/<DAC>/<FloatWmoID>/profiles
     path_parts = path.split(sep)
 
-    if path_parts[-1] == 'profiles':
-        output['type'] = 'Mono-cycle profile file'
-        output['wmo'] = path_parts[-2]
-        output['dac'] = path_parts[-3]
-    else:
-        output['type'] = 'Multi-cycle profile file'
-        output['wmo'] = path_parts[-1]
-        output['dac'] = path_parts[-2]
+    try:
+        if path_parts[-1] == 'profiles':
+            output['type'] = 'Mono-cycle profile file'
+            output['wmo'] = path_parts[-2]
+            output['dac'] = path_parts[-3]
+        else:
+            output['type'] = 'Multi-cycle profile file'
+            output['wmo'] = path_parts[-1]
+            output['dac'] = path_parts[-2]
+    except Exception:
+        log.warning(this_path)
+        log.warning(path)
+        log.warning(path_parts)
+        raise
 
     if output['dac'] not in dacs:
         log.debug("This is not a Argo GDAC compliant file path: %s" % path)
