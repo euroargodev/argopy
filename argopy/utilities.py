@@ -2155,20 +2155,33 @@ def argo_split_path(this_path):  # noqa C901
     ]
     output = {}
 
-    (path, file) = os.path.split(this_path)
+    start_with = lambda f, x: f[0:len(x)] == x if len(x) <= len(f) else False
 
-    if path == 'https://data-argo.ifremer.fr':
+    def split_path(p, sep='/'):
+        """Split a pathname.  Returns tuple "(head, tail)" where "tail" is
+        everything after the final slash.  Either part may be empty."""
+        # Same as posixpath.py but we get to choose the file separator !
+        p = os.fspath(p)
+        i = p.rfind(sep) + 1
+        head, tail = p[:i], p[i:]
+        if head and head != sep * len(head):
+            head = head.rstrip(sep)
+        return head, tail
+
+    if start_with(this_path, 'https://data-argo.ifremer.fr'):
         output['origin'] = 'https://data-argo.ifremer.fr/'
         sep = '/'
-    elif path == 'ftp://ftp.ifremer.fr/ifremer/argo':
+    elif start_with(this_path, 'ftp://ftp.ifremer.fr/ifremer/argo'):
         output['origin'] = 'ftp://ftp.ifremer.fr/ifremer/argo/'
         sep = '/'
-    elif path == 'ftp://usgodae.org/pub/outgoing/argo':
+    elif start_with(this_path, 'ftp://usgodae.org/pub/outgoing/argo'):
         output['origin'] = 'ftp://usgodae.org/pub/outgoing/argo/'
         sep = '/'
     else:
         output['origin'] = '.'
         sep = os.path.sep
+
+    (path, file) = split_path(this_path, sep=sep)
 
     output['path'] = path.replace(output['origin'], '')
     output['name'] = file
