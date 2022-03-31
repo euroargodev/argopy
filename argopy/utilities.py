@@ -2134,7 +2134,7 @@ def argo_split_path(this_path):  # noqa C901
 
     Parameters
     ----------
-    list
+    str
 
     Returns
     -------
@@ -2168,18 +2168,14 @@ def argo_split_path(this_path):  # noqa C901
             head = head.rstrip(sep)
         return head, tail
 
-    if start_with(this_path, 'https://data-argo.ifremer.fr'):
-        output['origin'] = 'https://data-argo.ifremer.fr/'
-        sep = '/'
-    elif start_with(this_path, 'ftp://ftp.ifremer.fr/ifremer/argo'):
-        output['origin'] = 'ftp://ftp.ifremer.fr/ifremer/argo/'
-        sep = '/'
-    elif start_with(this_path, 'ftp://usgodae.org/pub/outgoing/argo'):
-        output['origin'] = 'ftp://usgodae.org/pub/outgoing/argo/'
-        sep = '/'
-    else:
-        output['origin'] = '.'
-        sep = os.path.sep
+    known_origins = ['https://data-argo.ifremer.fr',
+                     'ftp://ftp.ifremer.fr/ifremer/argo',
+                     'ftp://usgodae.org/pub/outgoing/argo',
+                     '']
+
+    output['origin'] = [origin for origin in known_origins if start_with(this_path, origin)][0]
+    output['origin'] = '.' if output['origin'] == '' else output['origin'] + '/'
+    sep = '/' if output['origin'] != '.' else os.path.sep
 
     (path, file) = split_path(this_path, sep=sep)
 
@@ -2210,6 +2206,11 @@ def argo_split_path(this_path):  # noqa C901
 
     if output['dac'] not in dacs:
         log.debug("This is not a Argo GDAC compliant file path: %s" % path)
+        log.warning(this_path)
+        log.warning(path)
+        log.warning(sep)
+        log.warning(path_parts)
+        log.warning(output)
         raise ValueError("This is not a Argo GDAC compliant file path (invalid DAC name: '%s')" % output['dac'])
 
     # Deal with the file name:
