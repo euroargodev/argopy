@@ -4,6 +4,7 @@ Argo file index store
 Implementation based on pyarrow
 """
 
+import os
 import numpy as np
 import pandas as pd
 import logging
@@ -209,6 +210,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         #todo Should also modify separator from "f.as_py()" because it's "/" on the index file,
         # but should be turned to "\" for local file index on Windows. Remains "/" in all others (linux, mac, ftp. http)
         sep = self.fs["src"].fs.sep
+        log.warning("[sys sep=%s] vs [fs/src sep=%s]" % (os.path.sep, self.fs["src"].fs.sep))
         return [sep.join([self.host, "dac", f.as_py().replace('/', sep)]) for f in self.search["file"]]
 
     def read_wmo(self, index=False):
