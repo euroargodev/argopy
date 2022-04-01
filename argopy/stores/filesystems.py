@@ -82,6 +82,9 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cac
         log_msg = "Opening a fsspec [filecache, storage='%s'] system for '%s' protocol with options: %s" % \
                   (cachedir, protocol, str(filesystem_kwargs))
 
+    if protocol == 'file' and os.path.sep != fs.sep:
+        fs.sep = os.path.sep  # For some reasons, fs.sep is not '\' under Windows OS.
+    
     log_msg = "%s\n[sys sep=%s] vs [fs sep=%s]" % (log_msg, os.path.sep, fs.sep)
     # log.debug(log_msg)
     log.warning(log_msg)
