@@ -67,8 +67,8 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cac
     if not cache:
         fs = fsspec.filesystem(protocol, **filesystem_kwargs)
         cache_registry = None
-        log.debug("Opening a fsspec [file] system for '%s' protocol with options: %s" %
-                  (protocol, str(filesystem_kwargs)))
+        log_msg = "Opening a fsspec [file] system for '%s' protocol with options: %s" % \
+                  (protocol, str(filesystem_kwargs))
     else:
         # https://filesystem-spec.readthedocs.io/en/latest/_modules/fsspec/implementations/cached.html#WholeFileCacheFileSystem
         fs = fsspec.filesystem("filecache",
@@ -79,8 +79,12 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cac
         # We use a refresh rate for cache of 1 day,
         # since this is the update frequency of the Ifremer erddap
         cache_registry = []  # Will hold uri cached by this store instance
-        log.debug("Opening a fsspec [filecache, storage='%s'] system for '%s' protocol with options: %s" %
-                  (cachedir, protocol, str(filesystem_kwargs)))
+        log_msg = "Opening a fsspec [filecache, storage='%s'] system for '%s' protocol with options: %s" % \
+                  (cachedir, protocol, str(filesystem_kwargs))
+
+    log_msg = "%s\n[sys sep=%s] vs [fs sep=%s]" % (log_msg, os.path.sep, fs.sep)
+    # log.debug(log_msg)
+    log.warning(log_msg)
     return fs, cache_registry
 
 
@@ -325,10 +329,10 @@ class filestore(argo_store_proto):
             if progress:
                 from dask.diagnostics import ProgressBar
                 with ProgressBar():
-                    futures = method.map(self._mfprocessor_dataset, urls, preprocess=preprocess, *args, **kwargs)
+                    futures = method.map(self._mfprocessor, urls, preprocess=preprocess, *args, **kwargs)
                     results = method.gather(futures)
             else:
-                futures = method.map(self._mfprocessor_dataset, urls, preprocess=preprocess, *args, **kwargs)
+                futures = method.map(self._mfprocessor, urls, preprocess=preprocess, *args, **kwargs)
                 results = method.gather(futures)
 
         elif method in ['seq', 'sequential']:
