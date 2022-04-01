@@ -19,7 +19,8 @@ What's New
    :target: //github.com/euroargodev/argopy/releases
 v0.1.XX
 -------
-- Add oxy 
+- Add variables of BGC-Argo in Argopy
+1) expert mode and erddap source
 
 v0.1.11 (X XXX. 2022)
 ---------------------

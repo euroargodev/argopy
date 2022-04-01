@@ -42,6 +42,8 @@ dataset_ids = ['phy', 'ref', 'bgc']  # First is default
 api_server = 'https://www.ifremer.fr/erddap'  # API root url
 api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
 
+#class NewDataFetcher(ArgoDataFetcherProto):
+
 
 class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     """ Manage access to Argo data through Ifremer ERDDAP
@@ -68,6 +70,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     def uri(self) -> list:
         """ Return the list of Unique Resource Identifier (URI) to download data """
         raise NotImplementedError("ErddapArgoDataFetcher.uri not implemented")
+
+    @staticmethod
+    def test_prise_en_compte_jup(self):
+        print('La modification a été prise en compte')
+
+    def variable_bgc(self):
+        print(self)
 
     ###
     # Methods that must not change
@@ -320,6 +329,38 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                      "cdom",
                      "nitrate",
                      ]
+#                     "temp_doxy",
+#                     "temp_voltage_doxy",
+#                     "voltage_doxy",
+#                     "frequency_doxy",
+#                     "count_doxy",
+#                     "bphase_doxy",
+#                     "dphase_doxy",
+#                     "tphase_doxy",
+#                     "c1phase_doxy",
+#                     "c2phase_doxy",
+#                     "molar_doxy",
+#                     "phase_delay_doxy",
+#                     "mlpl_doxy",
+#                     "nb_sample",
+#                     "rphase_doxy",
+#                     "temp_count",
+#                     "led_flashing_count",
+#                     "ppox_doxy",
+#                     "beta_backscattering470",
+#                     "beta_backscattering532",
+#                     "beta_backscattering700",
+#                     "temp_cpu_chla",
+#                     "bbp470",
+#                     "bbp532",
+#                     "bbp700",
+#                     "uv_intensity_nitrate",
+#                     "uv_intensity_dark_nitrate",
+#                     "uv_intensity_dark_sea_water",
+#                     "bisulfide",
+#                     "molar_nitrate",
+#                     ...,
+#                     ]
             [vlist.append(p) for p in plist]
             [vlist.append(p + "_qc") for p in plist]
             [vlist.append(p + "_adjusted") for p in plist]
@@ -675,3 +716,4 @@ class Fetch_box(ErddapArgoDataFetcher):
             for box in boxes:
                 urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())
             return urls
+
