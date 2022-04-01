@@ -12,7 +12,6 @@ jobs:
 
   dev:
 
-    needs: detect-ci-trigger
     runs-on: windows-latest
     defaults:
       run:
