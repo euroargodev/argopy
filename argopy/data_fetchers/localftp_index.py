@@ -93,6 +93,9 @@ class LocalFTPArgoIndexFetcher(ABC):
                 Path to the directory with the 'dac' folder and index file
             ds: str (optional)
                 Dataset to load: 'phy' or 'bgc'
+
+            .. deprecated:: 0.1.11
+                `index_file` will be removed in argopy 0.1.13.
         """
         if 'index_file' in kwargs:
             if version.parse(__version__) > version.parse("0.1.13"):

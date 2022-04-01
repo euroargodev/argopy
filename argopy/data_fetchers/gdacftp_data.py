@@ -14,21 +14,21 @@ import logging
 import importlib
 from .proto import ArgoDataFetcherProto
 
-from argopy.utilities import list_standard_variables, format_oneline, argo_split_path
-from argopy.options import OPTIONS, check_gdac_path
-from argopy.plotters import open_dashboard
-from argopy.errors import DataNotFound
+from ..utilities import list_standard_variables, format_oneline, argo_split_path
+from ..options import OPTIONS, check_gdac_path
+from ..plotters import open_dashboard
+from ..errors import DataNotFound
 
 
 log = logging.getLogger("argopy.gdacftp.data")
 
 has_pyarrow = importlib.util.find_spec("pyarrow") is not None
 if has_pyarrow:
-    from argopy.stores.argo_index_pa import indexstore_pyarrow as indexstore
+    from ..stores.argo_index_pa import indexstore_pyarrow as indexstore
 
     log.debug("Using pyarrow indexstore")
 else:
-    from argopy.stores.argo_index_pd import indexstore_pandas as indexstore
+    from ..stores.argo_index_pd import indexstore_pandas as indexstore
 
     # warnings.warn("Consider installing pyarrow in order to improve performances when fetching GDAC data")
     log.debug("Using pandas indexstore")
@@ -43,7 +43,13 @@ api_server_check = (
 
 
 class FTPArgoDataFetcher(ArgoDataFetcherProto):
-    """ Manage access to Argo data from a remote GDAC FTP """
+    """Manage access to Argo data from a remote GDAC FTP.
+
+    Warnings
+    --------
+    This class is a prototype not meant to be instantiated directly
+
+    """
 
     ###
     # Methods to be customised for a specific request
@@ -427,7 +433,14 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
 
 
 class Fetch_wmo(FTPArgoDataFetcher):
-    """ Manage access to GDAC ftp Argo data for: a list of WMOs  """
+    """Manage access to GDAC ftp Argo data for: a list of WMOs.
+
+    This class is instantiated when a call is made to these facade access points:
+
+    >>> ArgoDataFetcher(src='gdac').float(**)
+    >>> ArgoDataFetcher(src='gdac').profile(**)
+
+    """
 
     def init(self, WMO: list = [], CYC=None, **kwargs):
         """ Create Argo data loader for WMOs
@@ -477,7 +490,13 @@ class Fetch_wmo(FTPArgoDataFetcher):
 
 
 class Fetch_box(FTPArgoDataFetcher):
-    """ Manage access to GDAC ftp Argo data for: a rectangular space/time domain  """
+    """Manage access to GDAC ftp Argo data for: a rectangular space/time domain.
+
+    This class is instantiated when a call is made to these facade access points:
+
+    >>> ArgoDataFetcher(src='gdac').region(**)
+
+    """
 
     def init(self, box: list, nrows=None, **kwargs):
         """ Create Argo data loader

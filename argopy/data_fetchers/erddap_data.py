@@ -48,6 +48,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         ERDDAP transaction are managed with the erddapy library
 
+        This class is a prototype not meant to be instantiated directly
+
     """
 
     ###

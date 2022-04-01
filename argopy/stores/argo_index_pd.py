@@ -9,8 +9,8 @@ import pandas as pd
 import logging
 import gzip
 
-from argopy.errors import DataNotFound
-from argopy.utilities import check_index_cols, is_indexbox, check_wmo, check_cyc
+from ..errors import DataNotFound
+from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, doc_inherit
 from .argo_index_proto import ArgoIndexStoreProto
 
 
@@ -18,19 +18,25 @@ log = logging.getLogger("argopy.stores.index")
 
 
 class indexstore_pandas(ArgoIndexStoreProto):
-    """ Argo index store, using :class:`pandas.DataFrame` as internal storage format """
+    """Argo GDAC index store using :class:`pandas.DataFrame` as internal storage format.
+
+    With this store, index and search results are saved as pickle files in cache
+
+    """
+    __doc__ += ArgoIndexStoreProto.__doc__
 
     backend = "pandas"
-    ext = "pd"  # path extension name for client store
 
-    def load(self, force=False, nrows=None):
+    ext = "pd"
+    """Storage file extension"""
+
+    @doc_inherit
+    def load(self, nrows=None, force=False):
         """ Load an Argo-index file content
-
-        Try to load the gzipped file first, and if not found, fall back on the raw .txt file.
 
         Returns
         -------
-        pandas.dataframe
+        :class:`pandas.DataFrame`
         """
 
         def read_csv(input_file, nrows=None):

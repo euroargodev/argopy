@@ -9,9 +9,9 @@ import logging
 from abc import ABC, abstractmethod
 from fsspec.core import split_protocol
 
-from argopy.options import OPTIONS
-from argopy.stores import httpstore, memorystore, filestore, ftpstore
-from argopy.errors import FtpPathError, InvalidDataset
+from ..options import OPTIONS
+from ..errors import FtpPathError, InvalidDataset
+from .filesystems import httpstore, memorystore, filestore, ftpstore
 
 try:
     import pyarrow.csv as csv
@@ -25,17 +25,20 @@ log = logging.getLogger("argopy.stores.index")
 
 
 class ArgoIndexStoreProto(ABC):
-    """ Prototype for Argo index store
+    """
 
-        API Design:
-        -----------
+        Examples
+        --------
+
         An index store is instantiated with the access path (host) and the index file:
+
         >>> idx = indexstore()
         >>> idx = indexstore(host="ftp://ftp.ifremer.fr/ifremer/argo")
         >>> idx = indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt")
         >>> idx = indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt", cache=True)
 
         Index methods and properties:
+
         >>> idx.load()
         >>> idx.load(nrows=12)  # Only load the first N rows of the index
         >>> idx.N_RECORDS  # Shortcut for length of 1st dimension of the index array
@@ -46,13 +49,15 @@ class ArgoIndexStoreProto(ABC):
         >>> idx.to_dataframe(index=True, nrows=2)  # Only returns the first nrows of the index
 
         Search methods and properties:
+
         >>> idx.search_wmo(1901393)
+        >>> idx.search_cyc(1)
         >>> idx.search_wmo_cyc(1901393, [1,12])
         >>> idx.search_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
         >>> idx.search_lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
         >>> idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
         >>> idx.N_MATCH  # Shortcut for length of 1st dimension of the search results array
-        >>> idx.search  # Pyarrow table with search results
+        >>> idx.search  # Internal table with search results
         >>> idx.uri  # List of absolute path to files from the search results table column 'file'
         >>> idx.run()  # Run the search and save results in cache if necessary
         >>> idx.to_dataframe()  # Convert search results to user-friendly :class:`pandas.DataFrame`
@@ -60,6 +65,7 @@ class ArgoIndexStoreProto(ABC):
 
 
         Misc:
+
         >>> idx.cname
         >>> idx.read_wmo
         >>> idx.records_per_wmo
@@ -67,7 +73,13 @@ class ArgoIndexStoreProto(ABC):
     """
 
     backend = "?"
+    """Name of store backend"""
+
     search_type = {}
+    """Dictionary with search meta-data"""
+
+    ext = None
+    """Storage file extension"""
 
     def __init__(
         self,
@@ -81,12 +93,15 @@ class ArgoIndexStoreProto(ABC):
 
             Parameters
             ----------
-            host: str, default: "https://data-argo.ifremer.fr"
-                Host is a local or remote ftp/http path to a 'dac' folder (GDAC structure compliant). This takes values
-                like: "ftp://ftp.ifremer.fr/ifremer/argo", "ftp://usgodae.org/pub/outgoing/argo" or a local absolute path.
-            index_file: str, default: "ar_index_global_prof.txt"
-            cache : bool (False)
-            cachedir : str (used value in global OPTIONS)
+            host: str, default: ``https://data-argo.ifremer.fr``
+                Host is a local or remote ftp/http path to a `dac` folder (GDAC structure compliant). This takes values
+                like: ``ftp://ftp.ifremer.fr/ifremer/argo``, ``ftp://usgodae.org/pub/outgoing/argo`` or a local absolute path.
+            index_file: str, default: ``ar_index_global_prof.txt``
+                Name of the csv-like text file with the index
+            cache : bool, default: False
+                Use cache or not.
+            cachedir : str, default: OPTIONS['cachedir'])
+                Folder where to store cached files
         """
         self.host = host
         self.index_file = index_file
@@ -158,9 +173,9 @@ class ArgoIndexStoreProto(ABC):
 
     @property
     def cname(self) -> str:
-        """ Return the search constraint(s) as a formatted string
+        """ Return the search constraint(s) as a pretty formatted string
 
-            Return 'full' if a search was not performed on the indexstore instance
+            Return 'full' if a search was not yet performed on the indexstore instance
 
             This method uses the BOX, WMO, CYC keys of the index instance ``search_type`` property
          """
@@ -342,13 +357,20 @@ class ArgoIndexStoreProto(ABC):
         return obj
 
     def clear_cache(self):
+        """Clear cache registry and files associated with this store instance."""
         self.fs["src"].clear_cache()
         self.fs["client"].clear_cache()
         self._memory_store_content = []
         return self
 
     def cachepath(self, path):
-        """ Return path to cache file(s)
+        """ Return path to a cached file
+
+        Parameters
+        ----------
+        path: str
+            Path for which to return the cached file path for. You can use `index` or `search` as shortcuts
+            to access path to the internal index or search tables.
 
         Returns
         -------
@@ -362,12 +384,20 @@ class ArgoIndexStoreProto(ABC):
             return [self.fs["client"].cachepath(path)]
 
     def to_dataframe(self, nrows=None, index=False):  # noqa: C901
-        """ Return index or search results as pandas dataframe
+        """ Return index or search results as :class:`pandas.DataFrame`
 
             If search not triggered, fall back on full index by default. Using index=True force to return the full index.
 
-            This is where we can process the internal dataframe structure for the end user.
-            If this processing is long, we can implement caching here.
+            Parameters
+            ----------
+            nrows: {int, None}, default: None
+                Will return only the first `nrows` of search results. None returns all.
+            index: bool, default: False
+                Force to return the index, even if a search was performed with this store instance.
+
+            Returns
+            -------
+            :class:`pandas.DataFrame`
         """
         def get_filename(s, index):
             if hasattr(self, "search") and not index:
@@ -438,7 +468,6 @@ class ArgoIndexStoreProto(ABC):
 
         return df
 
-
     @property
     @abstractmethod
     def search_path(self):
@@ -473,11 +502,23 @@ class ArgoIndexStoreProto(ABC):
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def load(self, force=False):
+    def load(self, nrows=None, force=False):
         """ Load an Argo-index file content
 
         Fill in self.index internal property
         If store is cached, caching is triggered here
+
+        Try to load the gzipped file first, and if not found, fall back on the raw .txt file.
+
+
+        Parameters
+        ----------
+        force: bool, default: False
+            Force to refresh the index stored with this store instance
+        nrows: {int, None}, default: None
+            Maximum number of index rows to load
+
+
         """
         raise NotImplementedError("Not implemented")
 
@@ -525,7 +566,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def search_wmo(self, WMOs):
-        """ Search index for WMO
+        """ Search index for floats defined by their WMO
 
         - Define search method
         - Trigger self.run() to set self.search internal property
@@ -534,15 +575,33 @@ class ArgoIndexStoreProto(ABC):
         ----------
         list(int)
             List of WMOs to search
+
+        Examples
+        --------
+        >>> idx.search_wmo(2901746)
+        >>> idx.search_wmo([2901746, 4902252])
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def search_cyc(self, CYCs):
+        """ Search index for cycle numbers
+
+        Parameters
+        ----------
+        list(int)
+            List of CYCs to search
+
+        Examples
+        --------
+        >>> idx.search_cyc(1)
+        >>> idx.search_cyc([1,2])
         """
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
     def search_wmo_cyc(self, WMOs, CYCs):
-        """ Search index for WMO and CYC
-
-        - Define search method
-        - Trigger self.run() to set self.search internal property
+        """ Search index for floats defined by their WMO and specific cycle numbers
 
         Parameters
         ----------
@@ -550,54 +609,67 @@ class ArgoIndexStoreProto(ABC):
             List of WMOs to search
         list(int)
             List of CYCs to search
+
+        Examples
+        --------
+        >>> idx.search_wmo_cyc(2901746, 12)
+        >>> idx.search_wmo_cyc([2901746, 4902252], [1,2])
         """
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
     def search_tim(self, BOX):
-        """ Search index for time range
-
-        - Define search method
-        - Trigger self.run() to set self.search internal property
+        """ Search index for a time range
 
         Parameters
         ----------
         box : list()
-            An index box to search Argo records for:
+            An index box to search Argo records for.
 
-                - box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
+        Warnings
+        --------
+        Only date bounds are considered from the index box.
+
+        Examples
+        --------
+        >>> idx.search_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+
         """
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
     def search_lat_lon(self, BOX):
-        """ Search index for rectangular latitude/longitude domain
-
-        - Define search method
-        - Trigger self.run() to set self.search internal property
+        """ Search index for a rectangular latitude/longitude domain
 
         Parameters
         ----------
         box : list()
-            An index box to search Argo records for:
+            An index box to search Argo records for.
 
-                - box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
+        Warnings
+        --------
+        Only lat/lon bounds are considered  from the index box.
+
+        Examples
+        --------
+        >>> idx.search_lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+
         """
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
     def search_lat_lon_tim(self, BOX):
-        """ Search index for rectangular latitude/longitude domain and time range
-
-        - Define search method
-        - Trigger self.run() to set self.search internal property
+        """ Search index for a rectangular latitude/longitude domain and time range
 
         Parameters
         ----------
         box : list()
-            An index box to search Argo records for:
+            An index box to search Argo records for.
 
-                - box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
+        Examples
+        --------
+        >>> idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+
         """
         raise NotImplementedError("Not implemented")
 

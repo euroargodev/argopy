@@ -39,9 +39,8 @@ import threading
 
 import time
 
-from argopy.options import OPTIONS
-from argopy.stores import httpstore
-from argopy.errors import (
+from .options import OPTIONS
+from .errors import (
     FtpPathError,
     InvalidFetcher,
     InvalidFetcherAccessPoint,
@@ -740,6 +739,7 @@ def erddap_ds_exists(ds: str = "ArgoFloats", erddap: str = 'https://www.ifremer.
     ------
     bool
     """
+    from .stores import httpstore
     with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
         erddap_index = json.load(of)
     return ds in [row[-1] for row in erddap_index["table"]["rows"]]
@@ -1976,6 +1976,7 @@ class TopoFetcher():
         api_timeout: int (optional)
             Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
+        from .stores import httpstore
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
         self.definition = "Erddap topographic data fetcher"
@@ -2275,3 +2276,73 @@ def argo_split_path(this_path):  # noqa C901
     output['path'] = output['path'].replace(output['origin'], '')
 
     return dict(sorted(output.items()))
+
+
+"""
+doc_inherit decorator
+
+Usage:
+
+class Foo(object):
+    def foo(self):
+        "Frobber"
+        pass
+
+class Bar(Foo):
+    @doc_inherit
+    def foo(self):
+        pass 
+
+Now, Bar.foo.__doc__ == Bar().foo.__doc__ == Foo.foo.__doc__ == "Frobber"
+
+src: https://code.activestate.com/recipes/576862/
+"""
+
+from functools import wraps
+
+class DocInherit(object):
+    """
+    Docstring inheriting method descriptor
+
+    The class itself is also used as a decorator
+    """
+
+    def __init__(self, mthd):
+        self.mthd = mthd
+        self.name = mthd.__name__
+
+    def __get__(self, obj, cls):
+        if obj:
+            return self.get_with_inst(obj, cls)
+        else:
+            return self.get_no_inst(cls)
+
+    def get_with_inst(self, obj, cls):
+
+        overridden = getattr(super(cls, obj), self.name, None)
+
+        @wraps(self.mthd, assigned=('__name__','__module__'))
+        def f(*args, **kwargs):
+            return self.mthd(obj, *args, **kwargs)
+
+        return self.use_parent_doc(f, overridden)
+
+    def get_no_inst(self, cls):
+
+        for parent in cls.__mro__[1:]:
+            overridden = getattr(parent, self.name, None)
+            if overridden: break
+
+        @wraps(self.mthd, assigned=('__name__','__module__'))
+        def f(*args, **kwargs):
+            return self.mthd(*args, **kwargs)
+
+        return self.use_parent_doc(f, overridden)
+
+    def use_parent_doc(self, func, source):
+        if source is None:
+            raise NameError("Can't find '%s' in parents"%self.name)
+        func.__doc__ = source.__doc__
+        return func
+
+doc_inherit = DocInherit

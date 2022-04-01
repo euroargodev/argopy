@@ -5,8 +5,8 @@ import pandas as pd
 from abc import ABC, abstractmethod
 import hashlib
 
-from argopy.errors import DataNotFound
-from argopy.options import OPTIONS
+from ..errors import DataNotFound
+from ..options import OPTIONS
 from .filesystems import filestore, memorystore
 
 
@@ -445,7 +445,14 @@ class indexfilter_box(indexfilter_proto):
 
 
 class indexstore():
-    """ Use to manage access to a local Argo index and searches """
+    """Legacy Argo index store.
+
+    Examples
+    --------
+    BOX = [-60, -55, 40., 45., '2007-08-01', '2007-09-01']
+    filt = indexfilter_box(BOX)
+    df = indexstore(cache=True).read_csv(filt)
+    """
 
     def __init__(self,
                  cache: bool = False,

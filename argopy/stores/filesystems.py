@@ -16,8 +16,8 @@ from packaging import version
 import concurrent.futures
 import multiprocessing
 
-from argopy.options import OPTIONS
-from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
+from ..options import OPTIONS
+from ..errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
     InvalidMethod
 from abc import ABC, abstractmethod
 
@@ -219,25 +219,27 @@ class filestore(argo_store_proto):
     """
     protocol = 'file'
 
-    def open_dataset(self, url, *args, **kwargs):
-        """ Return a xarray.dataset from an url
+    def open_dataset(self, path, *args, **kwargs):
+        """Return a xarray.dataset from a path.
 
-            Parameters
-            ----------
-            Path: str
-                Path to resources passed to xarray.open_dataset
+        Parameters
+        ----------
+        path: str
+            Path to resources passed to xarray.open_dataset
+        *args, **kwargs:
+            Other arguments are passed to :func:`xarray.open_dataset`
 
-            Returns
-            -------
-            :class:`xarray.DataSet`
+        Returns
+        -------
+        :class:`xarray.DataSet`
         """
-        with self.open(url) as of:
+        with self.open(path) as of:
             # log.debug("Opening dataset: %s" % url)  # Redundant with fsspec logger
             ds = xr.open_dataset(of, *args, **kwargs)
             ds.load()
         if "source" not in ds.encoding:
-            if isinstance(url, str):
-                ds.encoding["source"] = url
+            if isinstance(path, str):
+                ds.encoding["source"] = path
         return ds.copy()
 
     def _mfprocessor(self, url, preprocess=None, *args, **kwargs):
@@ -807,7 +809,7 @@ class httpstore(argo_store_proto):
 
 
 class memorystore(filestore):
-    """ Argo in-memory file system
+    """ Argo in-memory file system (global)
 
         Note that this inherits from filestore, not argo_store_proto
 
@@ -847,7 +849,7 @@ class ftpstore(httpstore):
     protocol = 'ftp'
 
     def open_dataset(self, url, *args, **kwargs):
-        """ Open and decode a xarray dataset from an url
+        """ Open and decode a xarray dataset from an ftp url
 
         Parameters
         ----------
@@ -857,10 +859,6 @@ class ftpstore(httpstore):
         -------
         :class:`xarray.Dataset`
         """
-        # log.debug("Opening dataset: %s" % url)  # Redundant with fsspec logger
-        # try:
-        #     with self.fs.open(url, "rb") as of:
-        #         ds = xr.open_dataset(of, *args, **kwargs)
         try:
             this_url = self.fs._strip_protocol(url)
             data = self.fs.cat_file(this_url)
@@ -896,9 +894,9 @@ class ftpstore(httpstore):
                        preprocess_opts={},
                        errors: str = 'ignore',
                        *args, **kwargs):
-        """ Open multiple urls as a single xarray dataset.
+        """ Open multiple ftp urls as a single xarray dataset.
 
-            This is a version of the :class:`argopy.stores.httpstore.open_dataset` method that is able
+            This is a version of the :class:`argopy.stores.ftpstore.open_dataset` method that is able
             to handle a list of urls/paths sequentially or in parallel.
 
             Use a Threads Pool by default for parallelization.

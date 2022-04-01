@@ -102,7 +102,6 @@ Low-level functions
 
     show_versions
     utilities.list_available_data_src
-    utilities.list_available_data_src
     utilities.list_available_index_src
 
 
@@ -186,6 +185,10 @@ File systems
     argopy.stores.filestore
     argopy.stores.httpstore
     argopy.stores.memorystore
+    argopy.stores.ftpstore
+
+Argo index store
+----------------
 
 .. autosummary::
     :toctree: generated/
@@ -193,6 +196,8 @@ File systems
     argopy.stores.indexstore
     argopy.stores.indexfilter_wmo
     argopy.stores.indexfilter_box
+    argopy.stores.indexstore_pa
+    argopy.stores.indexstore_pd
 
 Fetcher sources
 ---------------
@@ -206,6 +211,16 @@ ERDDAP
     argopy.data_fetchers.erddap_data.ErddapArgoDataFetcher
     argopy.data_fetchers.erddap_data.Fetch_wmo
     argopy.data_fetchers.erddap_data.Fetch_box
+
+GDAC
+^^^^
+
+.. autosummary::
+    :toctree: generated/
+
+    argopy.data_fetchers.gdacftp_data.FTPArgoDataFetcher
+    argopy.data_fetchers.gdacftp_data.Fetch_wmo
+    argopy.data_fetchers.gdacftp_data.Fetch_box
 
 Local FTP
 ^^^^^^^^^

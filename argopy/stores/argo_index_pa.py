@@ -11,8 +11,8 @@ import logging
 import io
 import gzip
 
-from argopy.errors import DataNotFound
-from argopy.utilities import check_index_cols, is_indexbox, check_wmo, check_cyc
+from ..errors import DataNotFound
+from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, doc_inherit
 from .argo_index_proto import ArgoIndexStoreProto
 try:
     import pyarrow.csv as csv
@@ -26,19 +26,25 @@ log = logging.getLogger("argopy.stores.index.pa")
 
 
 class indexstore_pyarrow(ArgoIndexStoreProto):
-    """ Argo index store, using :class:`pyarrow.Table` as internal storage format """
+    """Argo GDAC index store using :class:`pyarrow.Table` as internal storage format.
+
+    With this store, index and search results are saved as pyarrow/parquet files in cache
+
+    """
+    __doc__ += ArgoIndexStoreProto.__doc__
 
     backend = "pyarrow"
-    ext = "pq"  # path extension name for client store
 
-    def load(self, force=False, nrows=None):
+    ext = "pq"
+    """Storage file extension"""
+
+    @doc_inherit
+    def load(self, nrows=None, force=False):
         """ Load an Argo-index file content
-
-        Try to load the gzipped file first, and if not found, fall back on the raw .txt file.
 
         Returns
         -------
-        pyarrow.table
+        :class:`pyarrow.Table`
         """
 
         def read_csv(input_file, nrows=None):

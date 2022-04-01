@@ -25,32 +25,34 @@ Let's start with standard import:
     import argopy
     from argopy import DataFetcher as ArgoDataFetcher
 
-Selecting a source
-------------------
+Available data sources
+----------------------
 
-**argopy** can get access to Argo data from different sources:
+**argopy** can get access to Argo data from the following sources:
 
 1. the `Ifremer erddap server <http://www.ifremer.fr/erddap>`__.
+    The erddap server database is updated daily and doesn’t require you to download anymore data than what you need.
+    You can select this data source with the keyword ``erddap`` and methods described below.
+    The Ifremer erddap dataset is based on mono-profile files of the GDAC.
+    Since this is the most efficient method to fetcher Argo data, it's the default data source in **argopy**.
 
-   | The erddap server database is updated daily and doesn’t require you
-     to download anymore data than what you need.
-   | You can select this data source with the keyword ``erddap`` and
-     methods described below. The Ifremer erddap dataset is based on
-     mono-profile files of the GDAC.
+2. an Argo GDAC server or any other GDAC-compliant folders.
+    You can fetch data from any of the 3 official GDAC online servers: the Ifremer https and ftp and the US ftp.
+    This data source can also point toward your own local copy of the `GDAC
+    ftp content <http://www.argodatamgt.org/Access-to-data/Argo-GDAC-ftp-and-https-servers>`__.
+    You can select this data source with the keyword ``gdac`` and methods described below.
 
-2. your local collection of Argo files, organised as in the `GDAC
-   ftp <http://www.argodatamgt.org/Access-to-data/Argo-GDAC-ftp-and-https-servers>`__.
+3. your local collection of Argo files, organised as in the `GDAC ftp <http://www.argodatamgt.org/Access-to-data/Argo-GDAC-ftp-and-https-servers>`__.
+    This is how you would use **argopy** with your data, as long as they are formatted and organised the Argo way.
+    You can select this data source with the keyword ``localftp`` and methods described below.
 
-   | This is how you would use **argopy** with your data, as long as
-     they are formatted and organised the Argo way.
-   | You can select this data source with the keyword ``localftp`` and
-     methods described below.
+4. the `Argovis server <https://argovis.colorado.edu/>`__.
+    The Argovis server database is updated daily and only provides access to curated Argo data (QC=1 only).
+    You can select this data source with the keyword ``argovis`` and methods described below.
 
-3. the `Argovis server <https://argovis.colorado.edu/>`__.
 
-   The Argovis server database is updated daily and provides access to
-   curated Argo data (QC=1 only). You can select this data source with
-   the keyword ``argovis`` and methods described below.
+Selecting a source
+------------------
 
 You have several ways to specify which data source you want to use:
 
@@ -76,52 +78,21 @@ You have several ways to specify which data source you want to use:
 
     loader = ArgoDataFetcher(src='erddap').profile(6902746, 34)
 
-Setting a local copy of the GDAC ftp
-------------------------------------
+.. warning::
 
-Data fetching with the ``localftp`` data source will require you to
-specify the path toward your local copy of the GDAC ftp server with the
-``local_ftp`` option.
+    Since the ``gdac`` fetcher can use a local copy of the GDAC ftp server, the following 2 fetchers are now equivalent:
 
-This is not an issue for expert users, but standard users may wonder how
-to set this up. The primary distribution point for Argo data, the only
-one with full support from data centers and with nearly a 100% time
-availability, is the GDAC ftp. Two mirror servers are available:
+    .. code-block:: python
 
--  France Coriolis: ftp://ftp.ifremer.fr/ifremer/argo
--  US GODAE: ftp://usgodae.org/pub/outgoing/argo
+        # For any local GDAC-compliant folder, for instance:
+        ftproot = argopy.tutorial.open_dataset('localftp')[0]
 
-If you want to get your own copy of the ftp server content, Ifremer
-provides a nice rsync service. The rsync server “vdmzrs.ifremer.fr”
-provides a synchronization service between the “dac” directory of the
-GDAC and a user mirror. The “dac” index files are also available from
-“argo-index”.
+        # These are similar:
+        DataFetcher(src='gdac', ftp=ftproot)
+        # or
+        DataFetcher(src='localftp', local_ftp=ftproot)
 
-From the user side, the rsync service:
-
--  Downloads the new files
--  Downloads the updated files
--  Removes the files that have been removed from the GDAC
--  Compresses/uncompresses the files during the transfer
--  Preserves the files creation/update dates
--  Lists all the files that have been transferred (easy to use for a
-   user side post-processing)
-
-To synchronize the whole dac directory of the Argo GDAC:
-
-.. code:: bash
-
-   rsync -avzh --delete vdmzrs.ifremer.fr::argo/ /home/mydirectory/...
-
-To synchronize the index:
-
-.. code:: bash
-
-   rsync -avzh --delete vdmzrs.ifremer.fr::argo-index/ /home/mydirectory/...
-
-.. note::
-
-    The first synchronisation of the whole dac directory of the Argo GDAC (365Gb) can take quite a long time (several hours).
+    Hence the ``localftp`` fetcher should be remove in the future.
 
 Comparing data sources
 ----------------------
@@ -132,25 +103,26 @@ Features
 Each of the available data sources have their own features and
 capabilities. Here is a summary:
 
-======================= ====== ======== =======
-Data source:            erddap localftp argovis
-======================= ====== ======== =======
-**Access Points**                       
-region                  X      X        X
-float                   X      X        X
-profile                 X      X        X
-**User mode**                           
-standard                X      X        X
-expert                  X      X        
-**Dataset**                             
-core (T/S)              X      X        X
-BGC                                     
-Reference data for DMQC X               
+======================= ====== ==== ======== =======
+Data source:            erddap gdac localftp argovis
+======================= ====== ==== ======== =======
+**Access Points**
+region                  X      X    X        X
+float                   X      X    X        X
+profile                 X      X    X        X
+**User mode**
+standard                X      X    X        X
+expert                  X      X    X
+**Dataset**
+core (T/S)              X      X    X        X
+BGC
+Reference data for DMQC X
 **Parallel method**                     
-multi-threading         X      X        X
-multi-processes                X        
-Dask client                             
-======================= ====== ======== =======
+multi-threading         X      X    X        X
+multi-processes                     X
+Dask client
+**Offline mode**               x    X
+======================= ====== ==== ======== =======
 
 Fetched data and variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -219,3 +191,50 @@ If one of the data source become unavailable, you will see the status bar changi
 Note that the :meth:`argopy.status` method has a ``refresh`` option to let you specify the refresh rate in seconds of the monitoring.
 
 Last, you can check out `the following argopy status webpage that monitors all important resources to the software <https://argopy.statuspage.io>`_.
+
+Setting a local copy of the GDAC ftp
+------------------------------------
+
+Data fetching with the ``localftp`` data source will require you to
+specify the path toward your local copy of the GDAC ftp server with the
+``local_ftp`` option.
+
+This is not an issue for expert users, but standard users may wonder how
+to set this up. The primary distribution point for Argo data, the only
+one with full support from data centers and with nearly a 100% time
+availability, is the GDAC ftp. Two mirror servers are available:
+
+-  France Coriolis: ftp://ftp.ifremer.fr/ifremer/argo
+-  US GODAE: ftp://usgodae.org/pub/outgoing/argo
+
+If you want to get your own copy of the ftp server content, Ifremer
+provides a nice rsync service. The rsync server “vdmzrs.ifremer.fr”
+provides a synchronization service between the “dac” directory of the
+GDAC and a user mirror. The “dac” index files are also available from
+“argo-index”.
+
+From the user side, the rsync service:
+
+-  Downloads the new files
+-  Downloads the updated files
+-  Removes the files that have been removed from the GDAC
+-  Compresses/uncompresses the files during the transfer
+-  Preserves the files creation/update dates
+-  Lists all the files that have been transferred (easy to use for a
+   user side post-processing)
+
+To synchronize the whole dac directory of the Argo GDAC:
+
+.. code:: bash
+
+   rsync -avzh --delete vdmzrs.ifremer.fr::argo/ /home/mydirectory/...
+
+To synchronize the index:
+
+.. code:: bash
+
+   rsync -avzh --delete vdmzrs.ifremer.fr::argo-index/ /home/mydirectory/...
+
+.. note::
+
+    The first synchronisation of the whole dac directory of the Argo GDAC (365Gb) can take quite a long time (several hours).
