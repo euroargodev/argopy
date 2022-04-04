@@ -315,20 +315,19 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             [vlist.append(p) for p in plist]
 
             plist = ["pres", "temp", "psal",
-                     "cndc",
+#                    "cndc",
                      "doxy",
-                     "beta_backscattering",
-                     "fluorescence_chla",
-                     # "fluorescence_cdom",
-                     # "side_scattering_turbidity",
-                     # "transmittance_particle_beam_attenuation",
-                     "bbp",
-                     "turbidity",
-                     "cp",
-                     "chla",
-                     "cdom",
-                     "nitrate",
-                     ]
+#                     "beta_backscattering",
+#                     "fluorescence_chla",
+#                     "fluorescence_cdom", #1
+#                     "side_scattering_turbidity", #1
+#                     "transmittance_particle_beam_attenuation", #1
+#                     "bbp",
+#                     "turbidity",
+#                     "cp",
+#                     "chla",
+#                     "cdom",
+#                     "nitrate",
 #                     "temp_doxy",
 #                     "temp_voltage_doxy",
 #                     "voltage_doxy",
@@ -359,8 +358,42 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 #                     "uv_intensity_dark_sea_water",
 #                     "bisulfide",
 #                     "molar_nitrate",
-#                     ...,
-#                     ]
+#                     "fit_error",
+#                     "temp_nitrate",
+#                     "temp_spectrophotometer_nitrate",
+#                     "humidity_nitrate",
+#                     "vrs_pH",
+#                     "temp_ph",
+#                     "ib_ph",
+#                     "vk_ph",
+#                     "ik_ph",
+#                     "ph_in_situ_total",
+#                     "ph_in_situ_free",
+#                     "raw_downwelling_irradiance",
+#                     "raw_downwelling_irradiance380",
+#                     "raw_downwelling_irradiance412",
+#                     "raw_downwelling_irradiance490",
+#                     "raw_downwelling_irradiance555",
+#                     "down_irradiance",
+#                     "down_irradiance380",
+#                     "down_irradiance412",
+#                     "down_irradiance490",
+#                     "down_irradiance555",
+#                     "raw_upwelling_radiance",
+#                     "raw_upwelling_radiance412",
+#                     "raw_upwelling_radiance443",
+#                     "raw_upwelling_radiance490",
+#                     "raw_upwelling_radiance555",
+#                     "up_radiance",
+#                     "up_radiance412",
+#                     "up_radiance443",
+#                     "up_radiance490",
+#                     "up_radiance555",
+#                     "raw_downwelling_par",
+#                     "downwelling_par",
+#                     "tilt",
+#                     "mtime",
+                     ]
             [vlist.append(p) for p in plist]
             [vlist.append(p + "_qc") for p in plist]
             [vlist.append(p + "_adjusted") for p in plist]
@@ -378,6 +411,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     @property
     def _dtype(self):
         """ Return a dictionary of data types for each variable requested to erddap in the minimal vlist """
+        # not up to date : TODO
         dref = {
             "data_mode": object,
             "latitude": np.float64,
@@ -601,6 +635,8 @@ class Fetch_wmo(ErddapArgoDataFetcher):
             self.definition = "Ifremer erddap Argo data fetcher for floats"
         elif self.dataset_id == "ref":
             self.definition = "Ifremer erddap Argo REFERENCE data fetcher for floats"
+        elif self.dataset_id == "bgc":
+            self.definition = "Ifremer erddap Argo bgc data fetcher for floats"
         return self
 
     def define_constraints(self):
@@ -680,6 +716,10 @@ class Fetch_box(ErddapArgoDataFetcher):
         elif self.dataset_id == "ref":
             self.definition = (
                 "Ifremer erddap Argo REFERENCE data fetcher for a space/time region"
+            )
+        elif self.dataset_id == "bgc":
+            self.definition = (
+                "Ifremer erddap Argo bgc data fetcher for a space/time region"
             )
 
         return self
