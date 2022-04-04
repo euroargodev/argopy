@@ -83,13 +83,16 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cac
                   (cachedir, protocol, str(filesystem_kwargs))
 
     if protocol == 'file' and os.path.sep != fs.sep:
-        # For some reasons, fs.sep is not '\' under Windows (https://github.com/fsspec/filesystem_spec/issues/937)
-        # so, trying this dirty fix to overwrite it
+        # For some reasons (see https://github.com/fsspec/filesystem_spec/issues/937), the property fs.sep is
+        # not '\' under Windows. So, using this dirty fix to overwrite it:
         fs.sep = os.path.sep
+        # fsspec folks recommend to use posix internally. But I don't see how to handle this. So keeping this fix
+        # because it solves issues with failing tests under Windows. Enough at this time.
+        #todo: Revisit this choice in a while
 
-    log_msg = "%s\n[sys sep=%s] vs [fs sep=%s]" % (log_msg, os.path.sep, fs.sep)
-    # log.debug(log_msg)
-    log.warning(log_msg)
+    # log_msg = "%s\n[sys sep=%s] vs [fs sep=%s]" % (log_msg, os.path.sep, fs.sep)
+    # log.warning(log_msg)
+    log.debug(log_msg)
     return fs, cache_registry
 
 
