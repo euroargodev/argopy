@@ -276,16 +276,17 @@ class Test_MemoryStore:
 
     def test_exists(self):
         fs = memorystore(cache=False)
-        assert fs.exists('dummy.txt') == False
+        assert not fs.exists('dummy.txt')
         fs = memorystore(cache=True)
-        assert fs.exists('dummy.txt') == False
+        assert not fs.exists('dummy.txt')
 
 
 @skip_this
 @requires_connection
 class Test_FtpStore:
-    host =  'ftp.ifremer.fr'
+    host = 'ftp.ifremer.fr'
 
+    @safe_to_server_errors
     def test_implementation(self):
         fs = ftpstore(host=self.host, cache=False)
         assert isinstance(fs.fs, fsspec.implementations.ftp.FTPFileSystem)
