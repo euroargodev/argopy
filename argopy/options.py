@@ -19,7 +19,7 @@ log = logging.getLogger("argopy.options")
 # Define option names as seen by users:
 DATA_SOURCE = "src"
 LOCAL_FTP = "local_ftp"
-FTP = "gdac_ftp"
+FTP = "ftp"
 DATASET = "dataset"
 DATA_CACHE = "cachedir"
 USER_LEVEL = "mode"
@@ -39,7 +39,7 @@ OPTIONS = {
 }
 
 # Define the list of possible values
-_DATA_SOURCE_LIST = frozenset(["erddap", "localftp", "argovis", "ftp"])
+_DATA_SOURCE_LIST = frozenset(["erddap", "localftp", "argovis", "gdac"])
 _DATASET_LIST = frozenset(["phy", "bgc", "ref"])
 _USER_LEVEL_LIST = frozenset(["standard", "expert"])
 

@@ -36,7 +36,7 @@ else:
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
 dataset_ids = ["phy", "bgc"]  # First is default
-api_server = OPTIONS["gdac_ftp"]  # API root url
+api_server = OPTIONS["ftp"]  # API root url
 api_server_check = (
     api_server  # URL to check if the API is alive, used by isAPIconnected
 )
@@ -107,7 +107,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         self.timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.definition = "Ifremer GDAC ftp Argo data fetcher"
         self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
-        self.server = OPTIONS["gdac_ftp"] if ftp == "" else ftp
+        self.server = OPTIONS["ftp"] if ftp == "" else ftp
         self.errors = errors
 
         # Validate server, raise FtpPathError if not valid.

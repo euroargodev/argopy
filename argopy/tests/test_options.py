@@ -25,26 +25,26 @@ def test_opt_local_ftp():
 
     local_ftp = argopy.tutorial.open_dataset("localftp")[0]
     with argopy.set_options(local_ftp=local_ftp):
-        assert OPTIONS["local_ftp"]
+        assert OPTIONS["local_ftp"] == local_ftp
 
 @requires_gdac
 def test_opt_gdac_ftp():
     with pytest.raises(FtpPathError):
-        argopy.set_options(gdac_ftp="invalid_path")
+        argopy.set_options(ftp="invalid_path")
 
     local_ftp = argopy.tutorial.open_dataset("localftp")[0]
-    with argopy.set_options(gdac_ftp=local_ftp):
-        assert OPTIONS["gdac_ftp"]
+    with argopy.set_options(ftp=local_ftp):
+        assert OPTIONS["ftp"] == local_ftp
 
 def test_opt_dataset():
     with pytest.raises(OptionValueError):
         argopy.set_options(dataset="invalid_ds")
     with argopy.set_options(dataset="phy"):
-        assert OPTIONS["dataset"]
+        assert OPTIONS["dataset"] == "phy"
     with argopy.set_options(dataset="bgc"):
-        assert OPTIONS["dataset"]
+        assert OPTIONS["dataset"] == "bgc"
     with argopy.set_options(dataset="ref"):
-        assert OPTIONS["dataset"]
+        assert OPTIONS["dataset"] == "ref"
 
 
 def test_opt_cachedir():

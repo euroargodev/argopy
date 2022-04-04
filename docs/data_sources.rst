@@ -141,8 +141,8 @@ Let's retrieve one float data from a local sample of the GDAC ftp (a sample GDAC
     ftproot = argopy.tutorial.open_dataset('localftp')[0]
     
     # then fetch data:
-    with argopy.set_options(src='localftp', local_ftp=ftproot):
-        ds = ArgoDataFetcher().float(1900857).to_xarray()
+    with argopy.set_options(src='gdac', ftp=ftproot):
+        ds = ArgoDataFetcher().float(1900857).load().data
         print(ds)
 
 Let’s now retrieve the latest data for this float from the ``erddap`` and ``argovis`` sources:
@@ -151,20 +151,18 @@ Let’s now retrieve the latest data for this float from the ``erddap`` and ``ar
     :okwarning:
 
     with argopy.set_options(src='erddap'):
-        ds = ArgoDataFetcher().float(1900857).to_xarray()
+        ds = ArgoDataFetcher().float(1900857).load().data
         print(ds)
 
 .. ipython:: python
     :okwarning:
 
     with argopy.set_options(src='argovis'):
-        ds = ArgoDataFetcher().float(1900857).to_xarray()
+        ds = ArgoDataFetcher().float(1900857).load().data
         print(ds)
 
-We can see some minor differences between ``localftp``/``erddap`` vs the
-``argovis`` response: this later data source does not include the
-descending part of the first profile, this explains why ``argovis``
-returns slightly less data.
+We can see some minor differences between ``gdac``/``erddap`` vs the
+``argovis`` response.
 
 .. _api-status:
 
@@ -192,12 +190,13 @@ Note that the :meth:`argopy.status` method has a ``refresh`` option to let you s
 
 Last, you can check out `the following argopy status webpage that monitors all important resources to the software <https://argopy.statuspage.io>`_.
 
-Setting a local copy of the GDAC ftp
-------------------------------------
 
-Data fetching with the ``localftp`` data source will require you to
+Setting-up your own local copy of the GDAC ftp
+----------------------------------------------
+
+Data fetching with the ``gdac`` data source will require you to
 specify the path toward your local copy of the GDAC ftp server with the
-``local_ftp`` option.
+``ftp`` option.
 
 This is not an issue for expert users, but standard users may wonder how
 to set this up. The primary distribution point for Argo data, the only
@@ -207,8 +206,26 @@ availability, is the GDAC ftp. Two mirror servers are available:
 -  France Coriolis: ftp://ftp.ifremer.fr/ifremer/argo
 -  US GODAE: ftp://usgodae.org/pub/outgoing/argo
 
-If you want to get your own copy of the ftp server content, Ifremer
-provides a nice rsync service. The rsync server “vdmzrs.ifremer.fr”
+If you want to get your own copy of the ftp server content, you have 2 options detailed below.
+
+
+Copy with DOI reference
+~~~~~~~~~~~~~~~~~~~~~~~
+
+If you need an Argo database referenced with a DOI, one that you could use to make your analysis reproducible, then we
+recommend you to visit https://doi.org/10.17882/42182. There, you will find links toward monthly snapshots of the
+Argo database, and each snapshot has its own DOI.
+
+For instance, https://doi.org/10.17882/42182#92121 points toward the snapshot archived on February 10st 2022. Simply
+download the tar archive file (about 44Gb) and uncompress it locally.
+
+You're done !
+
+Synchronized copy
+~~~~~~~~~~~~~~~~~
+
+If you need a local Argo database always up to date with the GDAC server,
+Ifremer provides a nice rsync service. The rsync server “vdmzrs.ifremer.fr”
 provides a synchronization service between the “dac” directory of the
 GDAC and a user mirror. The “dac” index files are also available from
 “argo-index”.
@@ -238,3 +255,4 @@ To synchronize the index:
 .. note::
 
     The first synchronisation of the whole dac directory of the Argo GDAC (365Gb) can take quite a long time (several hours).
+
