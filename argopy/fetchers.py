@@ -452,9 +452,9 @@ class ArgoDataFetcher:
 
             Parameters
             ----------
-            full: bool
-                Should extract a full index, as returned by an IndexFetcher or only a space/time
-                index of fetched profiles (this is the default choice, i.e. full=False).
+            full: bool, default: False
+                Should extract a reduced index (only a space/time) from fetched profiles, or a full index,
+                as returned by an IndexFetcher.
 
             Returns
             -------

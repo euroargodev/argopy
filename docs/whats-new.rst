@@ -12,7 +12,7 @@ v0.1.11 (X XXX. 2022)
 
 **Features and front-end API**
 
-- New data source ``gdac`` to retrieve data from a GDAC compliant FTP-like source, for DataFetcher and IndexFetcher. You can specify the FTP source with the ``ftp`` fetcher option or with the argopy global option ``gdac_ftp``. The FTP source support http, ftp or local files protocols. This fetcher is optimised if pyarrow is available. Otherwise pandas dataframe are used. See update on all :ref:`Data sources`. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
+- New data source ``gdac`` to retrieve data from a GDAC compliant FTP-like source, for DataFetcher and IndexFetcher. You can specify the FTP source with the ``ftp`` fetcher option or with the argopy global option ``ftp``. The FTP source support http, ftp or local files protocols. This fetcher is optimised if pyarrow is available, otherwise pandas dataframe are used. See update on :ref:`Data sources`. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -22,12 +22,18 @@ v0.1.11 (X XXX. 2022)
     argo = DataFetcher(src='gdac')
     argo = DataFetcher(src='gdac', ftp="https://data-argo.ifremer.fr")  # Default and fastest !
     argo = DataFetcher(src='gdac', ftp="ftp://ftp.ifremer.fr/ifremer/argo")
-    with argopy.set_options(gdac_ftp='ftp://usgodae.org/pub/outgoing/argo'):
-        argo = DataFetcher(src='gdac')
+    with argopy.set_options(src='gdac', ftp='ftp://usgodae.org/pub/outgoing/argo'):
+        argo = DataFetcher()
+
+.. warning::
+
+    Since the new ``gdac`` fetcher can use a local copy of the GDAC ftp server, the legacy ``localftp`` fetcher is now deprecated.
+    Using it will raise a warning up to v0.1.12. It will then raise an error in v0.1.13 and will be removed afterward.
+
 
 **Internals**
 
-- The data fetcher can return the index array without loading the data for the ``gdac`` and ``localftp`` data sources. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
+- ``gdac`` and ``localftp`` data fetchers can return an index without loading the data. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -35,14 +41,15 @@ v0.1.11 (X XXX. 2022)
     argo = DataFetcher(src='gdac').float(6903076)
     argo.index
 
-- New index store design. The new index store is used by 'gdac' fetchers to handle access and search in Argo index csv files. It uses pyarrow table if available or pandas dataframe otherwise. More details at :ref:`Argo index store`
+- New index store design. The new index store is used by ``gdac`` fetchers to handle access and search in Argo index csv files. It uses pyarrow table if available or pandas dataframe otherwise. More details at :ref:`Argo index store`
 
 .. code-block:: python
 
     from argopy.stores.argo_index_pa import indexstore_pyarrow as indexstore
-    idx = indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt").load()
-    print(idx)
-    idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01']).to_dataframe()
+    idx = indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt")
+    idx.load()
+    idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+    idx.to_dataframe()
 
 - Refactoring of CI tests to use more fixtures and pytest parametrize. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
 

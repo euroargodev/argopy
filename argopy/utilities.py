@@ -13,7 +13,7 @@ import urllib
 import json
 import collections
 import copy
-from functools import reduce
+from functools import reduce, wraps
 from packaging import version
 import logging
 
@@ -2298,7 +2298,6 @@ Now, Bar.foo.__doc__ == Bar().foo.__doc__ == Foo.foo.__doc__ == "Frobber"
 src: https://code.activestate.com/recipes/576862/
 """
 
-from functools import wraps
 
 class DocInherit(object):
     """
@@ -2346,3 +2345,89 @@ class DocInherit(object):
         return func
 
 doc_inherit = DocInherit
+
+
+def deprecated(reason):
+    """Deprecation warning decorator.
+
+    This is a decorator which can be used to mark functions
+    as deprecated. It will result in a warning being emitted
+    when the function is used.
+
+    Parameters
+    ----------
+    reason: {str, None}
+        Text message to send with deprecation warning
+
+    Examples
+    --------
+    The @deprecated can be used with a 'reason'.
+
+        .. code-block:: python
+
+           @deprecated("please, use another function")
+           def old_function(x, y):
+             pass
+
+    or without:
+
+        .. code-block:: python
+
+           @deprecated
+           def old_function(x, y):
+             pass
+
+    References
+    ----------
+    https://stackoverflow.com/a/40301488
+    """
+    import inspect
+
+    if isinstance(reason, str):
+
+        def decorator(func1):
+
+            if inspect.isclass(func1):
+                fmt1 = "Call to deprecated class {name} ({reason})."
+            else:
+                fmt1 = "Call to deprecated function {name} ({reason})."
+
+            @wraps(func1)
+            def new_func1(*args, **kwargs):
+                warnings.simplefilter('always', DeprecationWarning)
+                warnings.warn(
+                    fmt1.format(name=func1.__name__, reason=reason),
+                    category=DeprecationWarning,
+                    stacklevel=2
+                )
+                warnings.simplefilter('default', DeprecationWarning)
+                return func1(*args, **kwargs)
+
+            return new_func1
+
+        return decorator
+
+    elif inspect.isclass(reason) or inspect.isfunction(reason):
+
+        func2 = reason
+
+        if inspect.isclass(func2):
+            fmt2 = "Call to deprecated class {name}."
+        else:
+            fmt2 = "Call to deprecated function {name}."
+
+        @wraps(func2)
+        def new_func2(*args, **kwargs):
+            warnings.simplefilter('always', DeprecationWarning)
+            warnings.warn(
+                fmt2.format(name=func2.__name__),
+                category=DeprecationWarning,
+                stacklevel=2
+            )
+            warnings.simplefilter('default', DeprecationWarning)
+            return func2(*args, **kwargs)
+
+        return new_func2
+
+    else:
+        raise TypeError(repr(type(reason)))

@@ -62,7 +62,7 @@
     argopy.utilities.list_available_data_src
     argopy.utilities.list_available_index_src
     argopy.utilities.Chunker
-    
+
     argopy.utilities.groupby_remap
     argopy.utilities.linear_interpolation_remap
 
@@ -82,7 +82,10 @@
     argopy.utilities.is_indexbox
     argopy.utilities.is_wmo
     argopy.utilities.check_wmo
+    argopy.utilities.is_cyc
+    argopy.utilities.check_cyc
     argopy.utilities.wmo2box
+    argopy.utilities.deprecated
 
     argopy.plotters.open_dashboard
     argopy.plotters.bar_plot

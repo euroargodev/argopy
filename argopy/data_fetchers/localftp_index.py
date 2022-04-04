@@ -1,30 +1,11 @@
-#!/bin/env python
-# -*coding: UTF-8 -*-
-"""
-Argo data fetcher for a local copy of GDAC ftp.
+"""Argo index fetcher for a local copy of GDAC ftp.
 
 This is not intended to be used directly, only by the facade at fetchers.py
 
-Since the GDAC ftp is organised by DAC/WMO folders, we start by implementing the 'float' and 'profile' entry points.
-
-
-
-About the index local ftp fetcher:
-
-We have a large index csv file "ar_index_global_prof.txt", that is about ~200Mb
-For a given request, we need to load/read it
-and then to apply a filter to select lines matching the request
-With the current version, a dataframe of the full index is cached
-and then another cached file is created for the result of the filter.
-
-df_full = pd.read_csv("index.txt")
-df_small = filter(df_full)
-write_on_file(df_small)
-
-I think we can avoid this with a virtual file system
-When a request is done, we
-
-
+Deprecation cycle:
+Warning: 0.1.11
+Error:   0.1.12
+Delete:  0.1.13
 
 """
 import os
@@ -32,11 +13,11 @@ from abc import ABC, abstractmethod
 import warnings
 from packaging import version
 
-from argopy.utilities import load_dict, mapp_dict, format_oneline
-from argopy.options import OPTIONS, check_gdac_path
-from argopy.stores import indexstore, indexfilter_wmo, indexfilter_box
-from argopy.errors import InvalidOption
-from argopy import __version__
+from ..utilities import load_dict, mapp_dict, format_oneline, deprecated
+from ..options import OPTIONS, check_gdac_path
+from ..stores import indexstore, indexfilter_wmo, indexfilter_box
+from ..errors import InvalidOption
+from .. import __version__
 
 
 access_points = ['wmo', 'box']
@@ -46,6 +27,18 @@ dataset_ids = ['phy', 'bgc']  # First is default
 
 class LocalFTPArgoIndexFetcher(ABC):
     """ Manage access to Argo index from a local copy of GDAC ftp
+
+    .. warning:
+
+        This fetcher is deprecated. It's been replaced by the ``gdac`` fetcher.
+
+        ================= ======
+        Deprecation cycle
+        ================= ======
+        Warning           0.1.11
+        Error             0.1.12
+        Delete            0.1.13
+        ================= ======
 
     """
     ###
@@ -79,6 +72,7 @@ class LocalFTPArgoIndexFetcher(ABC):
         """
         return self.fcls
 
+    @deprecated("The 'localftp' data source is deprecated. It's been replaced by 'gdac'. It will raise an error after argopy 0.1.11")
     def __init__(self,
                  local_ftp: str = "",
                  ds: str = "",
@@ -98,11 +92,11 @@ class LocalFTPArgoIndexFetcher(ABC):
                 `index_file` will be removed in argopy 0.1.13.
         """
         if 'index_file' in kwargs:
-            if version.parse(__version__) > version.parse("0.1.13"):
+            if version.parse(__version__) > version.parse("0.1.11"):
                 raise InvalidOption("Invalid option `index_file`")
             else:
                 #todo Update version with appropriate release for this PR
-                warnings.warn("'index_file option' is deprecated since 0.1.11: the name of the index file is "
+                warnings.warn("'index_file option' is deprecated since 0.1.11: the name of the index file is now "
                               "internally determined as a "
                               "function of the 'ds' dataset option. ", DeprecationWarning)
 

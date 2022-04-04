@@ -27,7 +27,7 @@ from argopy.utilities import (
     modified_environ,
     wrap_longitude,
     toYearFraction, YearFraction_to_datetime,
-    TopoFetcher
+    TopoFetcher,
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher

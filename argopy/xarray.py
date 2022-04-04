@@ -29,9 +29,10 @@ log = logging.getLogger("argopy.xarray")
 
 @xr.register_dataset_accessor("argo")
 class ArgoAccessor:
-    """
+    """Class registered under scope ``argo`` to access a :class:`xarray.Dataset` object.
 
-        Class registered under scope ``argo`` to access a :class:`xarray.Dataset` object.
+        Examples
+        --------
 
         - Ensure all variables are of the Argo required dtype with:
         >>> ds.argo.cast_types()
@@ -56,7 +57,7 @@ class ArgoAccessor:
 
         - Group and reduce measurements by pressure bins:
         >>> ds.argo.groupby_pressure_bins(bins=[0, 200., 500., 1000.])
-`
+
         - Compute and add additional variables to the dataset:
         >>> ds.argo.teos10(vlist='PV')
 

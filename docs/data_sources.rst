@@ -80,7 +80,7 @@ You have several ways to specify which data source you want to use:
 
 .. warning::
 
-    Since the ``gdac`` fetcher can use a local copy of the GDAC ftp server, the following 2 fetchers are now equivalent:
+    Since the ``gdac`` fetcher can use a local copy of the GDAC ftp server, the following 2 fetchers are equivalent:
 
     .. code-block:: python
 
@@ -92,7 +92,7 @@ You have several ways to specify which data source you want to use:
         # or
         DataFetcher(src='localftp', local_ftp=ftproot)
 
-    Hence the ``localftp`` fetcher should be remove in the future.
+    Hence the ``localftp`` fetcher is deprecated and will be remove in the future.
 
 Comparing data sources
 ----------------------
@@ -103,26 +103,26 @@ Features
 Each of the available data sources have their own features and
 capabilities. Here is a summary:
 
-======================= ====== ==== ======== =======
-Data source:            erddap gdac localftp argovis
-======================= ====== ==== ======== =======
+======================= ====== ==== ============ =======
+Data source:            erddap gdac localftp     argovis
+======================= ====== ==== ============ =======
 **Access Points**
-region                  X      X    X        X
-float                   X      X    X        X
-profile                 X      X    X        X
+region                  X      X    X            X
+float                   X      X    X            X
+profile                 X      X    X            X
 **User mode**
-standard                X      X    X        X
+standard                X      X    X            X
 expert                  X      X    X
 **Dataset**
-core (T/S)              X      X    X        X
+core (T/S)              X      X    X            X
 BGC
 Reference data for DMQC X
 **Parallel method**                     
-multi-threading         X      X    X        X
+multi-threading         X      X    X            X
 multi-processes                     X
 Dask client
 **Offline mode**               x    X
-======================= ====== ==== ======== =======
+======================= ====== ==== ============ =======
 
 Fetched data and variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
