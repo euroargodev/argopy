@@ -130,7 +130,7 @@ class argo_store_proto(ABC):
 
     def open(self, path, *args, **kwargs):
         self.register(path)
-        log.debug("Opening path: %s" % path)
+        # log.debug("Opening path: %s" % path)
         return self.fs.open(path, *args, **kwargs)
 
     def glob(self, path, **kwargs):
@@ -237,7 +237,7 @@ class filestore(argo_store_proto):
         :class:`xarray.DataSet`
         """
         with self.open(path) as of:
-            # log.debug("Opening dataset: %s" % url)  # Redundant with fsspec logger
+            # log.debug("Opening dataset: '%s'" % path)  # Redundant with fsspec logger
             ds = xr.open_dataset(of, *args, **kwargs)
             ds.load()
         if "source" not in ds.encoding:
@@ -420,10 +420,6 @@ class httpstore(argo_store_proto):
         -------
         :class:`xarray.Dataset`
         """
-        # log.debug("Opening dataset: %s" % url)  # Redundant with fsspec logger
-        # try:
-        # with self.fs.open(url) as of:
-        #     ds = xr.open_dataset(of, *args, **kwargs)
         try:
             data = self.fs.cat_file(url)
         except aiohttp.ClientResponseError as e:
@@ -440,16 +436,6 @@ class httpstore(argo_store_proto):
         self.register(url)
 
         return ds
-        # except Exception as e:
-        #     raise e
-        # except requests.exceptions.ConnectionError as e:
-        #     raise APIServerError("No API response for %s" % url)
-        # except requests.HTTPError as e:
-        #     self._verbose_requests_exceptions(e)
-        #     pass
-        # except aiohttp.ClientResponseError as e:
-        #     self._verbose_aiohttp_exceptions(e)
-        #     pass
 
     def _mfprocessor_dataset(self, url, preprocess=None, preprocess_opts={}, *args, **kwargs):
         # Load data
@@ -642,6 +628,8 @@ class httpstore(argo_store_proto):
                 return ds
             else:
                 return results
+        elif len(failed) == len(urls):
+            raise ValueError("Errors happened with all URLs, this could be due to an internal impossibility to read returned content.")
         else:
             raise DataNotFound(urls)
 
