@@ -582,33 +582,23 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         list(str)
         """
         if not self.parallel:
-            if len(self.WMO) <= 5:  # todo: This max WMO number should be parameterized somewhere else
-                # Retrieve all WMOs in a single request
-                return [self.get_url()]
-            else:
-                # Retrieve one WMO by URL sequentially (same behaviour as localftp and argovis)
-                urls = []
-                for wmo in self.WMO:
-                    urls.append(
-                        Fetch_wmo(
-                            WMO=wmo, CYC=self.CYC, ds=self.dataset_id, parallel=False
-                        ).get_url()
-                    )
-                return urls
+            chunks = "auto"
+            chunks_maxsize = {'wmo': 5}
         else:
-            self.Chunker = Chunker(
-                {"wmo": self.WMO}, chunks=self.chunks, chunksize=self.chunks_maxsize
+            chunks = self.chunks
+            chunks_maxsize = self.chunks_maxsize
+        self.Chunker = Chunker(
+            {"wmo": self.WMO}, chunks=chunks, chunksize=chunks_maxsize
+        )
+        wmo_grps = self.Chunker.fit_transform()
+        urls = []
+        for wmos in wmo_grps:
+            urls.append(
+                Fetch_wmo(
+                    WMO=wmos, CYC=self.CYC, ds=self.dataset_id, parallel=False
+                ).get_url()
             )
-            wmo_grps = self.Chunker.fit_transform()
-            # self.chunks = C.chunks
-            urls = []
-            for wmos in wmo_grps:
-                urls.append(
-                    Fetch_wmo(
-                        WMO=wmos, CYC=self.CYC, ds=self.dataset_id, parallel=False
-                    ).get_url()
-                )
-            return urls
+        return urls
 
     def dashboard(self, **kw):
         if len(self.WMO) == 1:
