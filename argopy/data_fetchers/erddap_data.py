@@ -315,19 +315,19 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             [vlist.append(p) for p in plist]
 
             plist = ["pres", "temp", "psal",
-#                    "cndc",
+                    "cndc",
                      "doxy",
-#                     "beta_backscattering",
-#                     "fluorescence_chla",
+                     "beta_backscattering",
+                     "fluorescence_chla",
 #                     "fluorescence_cdom", #1
 #                     "side_scattering_turbidity", #1
 #                     "transmittance_particle_beam_attenuation", #1
-#                     "bbp",
-#                     "turbidity",
-#                     "cp",
-#                     "chla",
-#                     "cdom",
-#                     "nitrate",
+                     "bbp",
+                     "turbidity",
+                     "cp",
+                     "chla",
+                     "cdom",
+                     "nitrate",
 #                     "temp_doxy",
 #                     "temp_voltage_doxy",
 #                     "voltage_doxy",
@@ -367,7 +367,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 #                     "ib_ph",
 #                     "vk_ph",
 #                     "ik_ph",
-#                     "ph_in_situ_total",
+                     "ph_in_situ_total",
 #                     "ph_in_situ_free",
 #                     "raw_downwelling_irradiance",
 #                     "raw_downwelling_irradiance380",
