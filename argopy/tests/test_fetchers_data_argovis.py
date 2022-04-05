@@ -1,5 +1,8 @@
+import warnings
+
 import numpy as np
 import xarray as xr
+import pandas as pd
 
 import pytest
 import tempfile
@@ -14,6 +17,9 @@ from argopy.utilities import is_list_of_strings
 from . import requires_connected_argovis, safe_to_server_errors
 
 
+skip_this_for_debug = pytest.mark.skipif(False, reason="Skipped temporarily for debug")
+
+
 @requires_connected_argovis
 class Test_Backend:
     """ Test main API facade for all available dataset and access points of the ARGOVIS data fetching backend """
@@ -21,13 +27,15 @@ class Test_Backend:
     src = "argovis"
     requests = {
         "float": [[1901393], [1901393, 6902746]],
-        "profile": [[6902746, 12], [6902746, np.arange(12, 13)], [6902746, [1, 12]]],
+        # "profile": [[6902746, 12], [6902746, np.arange(12, 13)], [6902746, [1, 12]]],
+        "profile": [[6902746, 12]],
         "region": [
             [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-03"],
             [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-06"],
         ],
     }
 
+    @skip_this_for_debug
     def test_cachepath_notfound(self):
         with tempfile.TemporaryDirectory() as testcachedir:
             with argopy.set_options(cachedir=testcachedir):
@@ -35,6 +43,7 @@ class Test_Backend:
                 with pytest.raises(CacheFileNotFound):
                     fetcher.cachepath
 
+    @skip_this_for_debug
     @safe_to_server_errors
     def test_nocache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
@@ -43,6 +52,7 @@ class Test_Backend:
                 with pytest.raises(FileSystemHasNoCache):
                     fetcher.cachepath
 
+    @skip_this_for_debug
     @safe_to_server_errors
     def test_clearcache(self):
         with tempfile.TemporaryDirectory() as testcachedir:
@@ -53,6 +63,7 @@ class Test_Backend:
                 with pytest.raises(CacheFileNotFound):
                     fetcher.cachepath
 
+    @skip_this_for_debug
     @safe_to_server_errors
     def test_caching_float(self):
         with tempfile.TemporaryDirectory() as testcachedir:
@@ -65,6 +76,7 @@ class Test_Backend:
                 assert is_list_of_strings(fetcher.uri)
                 assert is_list_of_strings(fetcher.cachepath)
 
+    @skip_this_for_debug
     @safe_to_server_errors
     def test_caching_profile(self):
         with tempfile.TemporaryDirectory() as testcachedir:
@@ -75,6 +87,7 @@ class Test_Backend:
                 assert is_list_of_strings(fetcher.uri)
                 assert is_list_of_strings(fetcher.cachepath)
 
+    @skip_this_for_debug
     @safe_to_server_errors
     def test_caching_region(self):
         with tempfile.TemporaryDirectory() as testcachedir:
@@ -94,6 +107,30 @@ class Test_Backend:
         for arg in self.args["profile"]:
             f = ArgoDataFetcher(**fetcher_args).profile(*arg).fetcher
             assert isinstance(f.to_xarray(), xr.Dataset)
+            # assert isinstance(f.to_dataframe(), pd.core.frame.DataFrame)
+            # ds = xr.Dataset.from_dataframe(f.to_dataframe())
+            # ds = ds.sortby(
+            #     ["TIME", "PRES"]
+            # )  # should already be sorted by date in descending order
+            # ds["N_POINTS"] = np.arange(
+            #     0, len(ds["N_POINTS"])
+            # )  # Re-index to avoid duplicate values
+            #
+            # # Set coordinates:
+            # # ds = ds.set_coords('N_POINTS')
+            # coords = ("LATITUDE", "LONGITUDE", "TIME", "N_POINTS")
+            # ds = ds.reset_coords()
+            # ds["N_POINTS"] = ds["N_POINTS"]
+            # # Convert all coordinate variable names to upper case
+            # for v in ds.data_vars:
+            #     ds = ds.rename({v: v.upper()})
+            # ds = ds.set_coords(coords)
+            #
+            # # Cast data types and add variable attributes (not available in the csv download):
+            # warnings.warn(type(ds['TIME'].data))
+            # warnings.warn(ds['TIME'].data[0])
+            # ds['TIME'] = ds['TIME'].astype(np.datetime64)
+            # assert isinstance(ds, xr.Dataset)
             assert is_list_of_strings(f.uri)
 
     def __testthis_float(self, dataset):
@@ -119,6 +156,7 @@ class Test_Backend:
             elif access_point == "region":
                 self.__testthis_region(dataset)
 
+    @skip_this_for_debug
     @safe_to_server_errors
     def test_phy_float(self):
         self.args = {"float": self.requests['float']}
@@ -129,12 +167,14 @@ class Test_Backend:
         self.args = {"profile": self.requests['profile']}
         self.__testthis("phy")
 
+    @skip_this_for_debug
     @safe_to_server_errors
     def test_phy_region(self):
         self.args = {"region": self.requests['region']}
         self.__testthis("phy")
 
 
+@skip_this_for_debug
 @requires_connected_argovis
 class Test_BackendParallel:
     """ This test backend for parallel requests """
