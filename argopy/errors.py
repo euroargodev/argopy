@@ -100,9 +100,13 @@ class InvalidDashboard(ValueError):
 
 
 class APIServerError(ValueError):
-    """Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery."""
+    """Raise this when argopy is disrupted by an error due to a webAPI, not argopy machinery."""
+    def __init__(self, path: str = None):
+        self.value = path
 
-    pass
+    def __str__(self):
+        """Print error."""
+        return repr(self.value)
 
 
 class ErddapServerError(APIServerError):

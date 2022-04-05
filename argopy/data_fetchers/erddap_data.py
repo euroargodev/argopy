@@ -23,7 +23,8 @@ from argopy.options import OPTIONS
 from argopy.utilities import list_standard_variables, Chunker, format_oneline
 from argopy.stores import httpstore
 from argopy.plotters import open_dashboard
-
+from ..errors import ErddapServerError
+from aiohttp import ClientResponseError
 
 # Load erddapy according to available version (breaking changes in v0.8.0)
 try:
@@ -440,14 +441,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     def N_POINTS(self) -> int:
         """ Number of measurements expected to be returned by a request """
         try:
-            with self.fs.open(
-                self.get_url().replace("." + self.erddap.response, ".ncHeader")
-            ) as of:
+            url = self.get_url().replace("." + self.erddap.response, ".ncHeader")
+            with self.fs.open(url) as of:
                 ncHeader = of.read().decode("utf-8")
             lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
             return int(lines.split("=")[1].split(";")[0])
         except Exception:
-            pass
+            raise ErddapServerError("Erddap server can't return ncHeader for this url. ")
 
     def to_xarray(self, errors: str = 'ignore'):
         """ Load Argo data and return a xarray.DataSet """
@@ -455,15 +455,24 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         # Download data
         if not self.parallel:
             if len(self.uri) == 1:
-                ds = self.fs.open_dataset(self.uri[0])
+                try:
+                    ds = self.fs.open_dataset(self.uri[0])
+                except ClientResponseError as e:
+                    raise ErddapServerError(e.message)
             else:
-                ds = self.fs.open_mfdataset(
-                    self.uri, method="sequential", progress=self.progress, errors=errors
-                )
+                try:
+                    ds = self.fs.open_mfdataset(
+                        self.uri, method="sequential", progress=self.progress, errors=errors
+                    )
+                except ClientResponseError as e:
+                    raise ErddapServerError(e.message)
         else:
-            ds = self.fs.open_mfdataset(
-                self.uri, method=self.parallel_method, progress=self.progress, errors=errors
-            )
+            try:
+                ds = self.fs.open_mfdataset(
+                    self.uri, method=self.parallel_method, progress=self.progress, errors=errors
+                )
+            except ClientResponseError as e:
+                raise ErddapServerError(e.message)
 
         ds = ds.rename({"row": "N_POINTS"})
 
