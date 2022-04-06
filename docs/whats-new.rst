@@ -28,7 +28,7 @@ v0.1.11 (X XXX. 2022)
 .. code-block:: python
 
     from argopy import DataFetcher as ArgoDataFetcher
-    ArgoDataFetcher().profile(6902755, 11).dashboard()
+    ArgoDataFetcher().profile(5904797, 11).dashboard()
 
 .. code-block:: python
 
@@ -36,21 +36,21 @@ v0.1.11 (X XXX. 2022)
     get_coriolis_profile_id([6902755, 6902756], [11, 12])
     get_ea_profile_page([6902755, 6902756], [11, 12])
 
-The new profile dashboard can also be access with:
+The new profile dashboard can also be accessed with:
 
 .. code-block:: python
 
     import argopy
-    argopy.dashboard(6902755, 11)
+    argopy.dashboard(5904797, 11)
 
 We added the Ocean-OPS (former JCOMMOPS) dashboard for all floats and the Argo-BGC dashboard for BGC floats:
 
 .. code-block:: python
 
     import argopy
-    argopy.dashboard(6902755, type='ocean-ops')
+    argopy.dashboard(5904797, type='ocean-ops')
     # or
-    argopy.dashboard(5906471, 12, type='bgc')
+    argopy.dashboard(5904797, 12, type='bgc')
 
 **Internals**
 

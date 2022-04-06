@@ -86,9 +86,9 @@ for a specific float, just provide its WMO:
 .. code-block:: python
 
     import argopy
-    argopy.dashboard(6902746)
+    argopy.dashboard(5904797)
     # or
-    ArgoDataFetcher().float(6902755).dashboard()
+    ArgoDataFetcher().float(5904797).dashboard()
 
 .. image:: _static/dashboard_float.png
 
@@ -97,8 +97,8 @@ or for specific float cycle:
 .. code-block:: python
 
     import argopy
-    argopy.dashboard(6902746, 12)
+    argopy.dashboard(5904797, 12)
     # or
-    ArgoDataFetcher().profile(6902755, 11).dashboard()
+    ArgoDataFetcher().profile(5904797, 12).dashboard()
 
 .. image:: _static/dashboard_profile.png
