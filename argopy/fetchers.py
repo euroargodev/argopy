@@ -257,7 +257,7 @@ class ArgoDataFetcher:
                 Argo-like index of fetched data
         """
         if not isinstance(self._index, pd.core.frame.DataFrame):
-            if "ftp" in self._src or "localftp" in self._src:
+            if "gdac" in self._src or "localftp" in self._src:
                 self.to_index(full=True)
             else:
                 self.load()
