@@ -7,7 +7,7 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-v0.1.11 (X XXX. 2022)
+v0.1.XX (X XXX. 2022)
 ---------------------
 
 **Features and front-end API**
@@ -25,6 +25,10 @@ v0.1.11 (X XXX. 2022)
     with argopy.set_options(src='gdac', ftp='ftp://usgodae.org/pub/outgoing/argo'):
         argo = DataFetcher()
 
+.. note::
+
+    The new ``gdac`` fetcher uses Argo index to determine which profile files to load. Hence, this fetcher may show poor performances when used with a ``region`` access point. Don't hesitate to check :ref:`Performances` to try to improve performances, otherwise, we recommand to use a webAPI access point (``erddap`` or ``argovis``).
+
 .. warning::
 
     Since the new ``gdac`` fetcher can use a local copy of the GDAC ftp server, the legacy ``localftp`` fetcher is now deprecated.
@@ -41,15 +45,16 @@ v0.1.11 (X XXX. 2022)
     argo = DataFetcher(src='gdac').float(6903076)
     argo.index
 
-- New index store design. The new index store is used by ``gdac`` fetchers to handle access and search in Argo index csv files. It uses pyarrow table if available or pandas dataframe otherwise. More details at :ref:`Argo index store`
+- New index store design. A new index store is used by data and index ``gdac`` fetchers to handle access and search in Argo index csv files. It uses pyarrow table if available or pandas dataframe otherwise. More details at :ref:`Argo index store`. Directly using this index store is not recommended but provides better performances for expert users interested in Argo sampling analysis.
 
 .. code-block:: python
 
     from argopy.stores.argo_index_pa import indexstore_pyarrow as indexstore
-    idx = indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt")
+    idx = indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt")  # Default
     idx.load()
     idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
-    idx.to_dataframe()
+    idx.N_MATCH  # Return number of search results
+    idx.to_dataframe()  # Convert search results to a dataframe
 
 - Refactoring of CI tests to use more fixtures and pytest parametrize. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
 
@@ -57,7 +62,7 @@ v0.1.11 (X XXX. 2022)
 
 **Breaking changes**
 
-- Index fetcher for local FTP no longer support the option ``index_file``. The name of the file index is internally determined using the dataset requested: ``ar_index_global_prof.txt`` for ``ds='phy'`` and ``argo_synthetic-profile_index.txt`` for ``ds='bgc'``. Using this option will raise a deprecation warning up to v0.1.13 and will then raise an error. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
+- Index fetcher for local FTP no longer support the option ``index_file``. The name of the file index is internally determined using the dataset requested: ``ar_index_global_prof.txt`` for ``ds='phy'`` and ``argo_synthetic-profile_index.txt`` for ``ds='bgc'``. Using this option will raise a deprecation warning up to v0.1.12 and will then raise an error. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
 
 
 v0.1.10 (4 Mar. 2022)
