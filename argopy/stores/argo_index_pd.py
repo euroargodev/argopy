@@ -62,7 +62,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
             else:
                 this_path = this_path + "/local.%s" % self.ext
 
-            if self.cache and self.fs["client"].exists(this_path) and self._same_origin(this_path):
+            if self.cache and self.fs["client"].exists(this_path): # and self._same_origin(this_path):
                 log.debug(
                     "Index already in memory as pandas table, loading... src='%s'"
                     % (this_path)
@@ -103,7 +103,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         else:
             this_path = this_path + "/local.%s" % self.ext
 
-        if self.cache and self.fs["client"].exists(this_path) and self._same_origin(this_path):
+        if self.cache and self.fs["client"].exists(this_path): # and self._same_origin(this_path):
             log.debug(
                 "Search results already in memory as pandas dataframe, loading... src='%s'"
                 % (this_path)

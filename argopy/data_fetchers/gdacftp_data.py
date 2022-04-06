@@ -131,9 +131,10 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         nrows = None
         if "N_RECORDS" in kwargs:
             nrows = kwargs["N_RECORDS"]
+        # Number of records in the index, this will force to load the index file:
         self.N_RECORDS = self.indexfs.load(
             nrows=nrows
-        ).N_RECORDS  # Number of records in the index
+        ).N_RECORDS
         self._post_filter_points = False
 
         # Set method to download data:
