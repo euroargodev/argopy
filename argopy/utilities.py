@@ -1456,7 +1456,7 @@ def is_list_equal(lst1, lst2):
     return len(lst1) == len(lst2) and len(lst1) == sum([1 for i, j in zip(lst1, lst2) if i == j])
 
 
-def check_wmo(lst):
+def check_wmo(lst, errors="raise"):
     """ Validate a WMO option and returned it as a list of integers
 
     Parameters
@@ -1469,7 +1469,7 @@ def check_wmo(lst):
     -------
     list(int)
     """
-    is_wmo(lst, errors="raise")
+    is_wmo(lst, errors=errors)
 
     # Make sure we deal with a list
     if not isinstance(lst, list):
@@ -2431,3 +2431,134 @@ def deprecated(reason):
 
     else:
         raise TypeError(repr(type(reason)))
+
+
+class Registry:
+    """
+
+    Examples
+    --------
+    You can commit new entry to the registry, one by one:
+        >>> R = Registry('file')
+        >>> R.commit('meds/4901105/profiles/D4901105_017.nc')
+        >>> R.commit('aoml/1900046/profiles/D1900046_179.nc')
+
+    Or with a list:
+        >>> R = Registry('My floats', dtype='wmo')
+        >>> R.commit([2901746, 4902252])
+
+    Registry can be used like a list.
+    It is iterable:
+        >>> for wmo in R:
+        >>>     print(wmo)
+
+    It has a ``len`` property:
+        >>> len(R)
+
+    It can be checked for values:
+        >>> 4902252 in R
+
+    You can also remove items from the registry, again one by one or with a list:
+        >>> R.remove('2901746')
+
+    """
+
+    class RegistryIterator:
+        """Class to iterate over a registry content"""
+
+        def __init__(self, register):
+            self._register = register
+            self._index = 0
+
+        def __next__(self):
+            if self._index < len(self._register.register):
+                result = self._register.register[self._index]
+                self._index += 1
+                return result
+            raise StopIteration
+
+    def _complain(self, msg):
+        if self._invalid == 'raise':
+            raise ValueError(msg)
+        elif self._invalid == 'ignore':
+            warnings.warn(msg)
+        else:
+            log.debug(msg)
+
+    def _str(self, item):
+        is_valid = isinstance(item, str)
+        if not is_valid:
+            self._complain("%s is not a valid %s" % (str(item), self.dtype))
+        return is_valid
+
+    def _wmo(self, item):
+        is_valid = is_wmo(item)
+        if not is_valid:
+            self._complain("%s is not a valid %s" % (str(item), self.dtype))
+        return is_valid
+
+    def __init__(self, name: str = 'My register', dtype='str', invalid='raise'):
+        """Registry
+
+        Parameters
+        ----------
+        name: str
+            Name of the Registry
+        dtype: str, default: 'str'
+            Data type of registry content. Supported values are: 'str', 'wmo'
+        invalid: str, default: 'raise'
+            Define what do to when new item is not valid. Can be 'raise' or 'ignore'
+        """
+        self.register = []
+        self.name = name
+        self._invalid = invalid
+        if dtype == 'str':
+            self._validator = self._str
+            self.dtype = str
+        elif dtype.lower() == 'wmo':
+            self._validator = self._wmo
+            self.dtype = 'wmo'
+        else:
+            raise ValueError('Unrecognised Registry data type')
+
+    @property
+    def content(self):
+        return self.register
+
+    def __repr__(self):
+        summary = ["<argopy.registry>%s" % str(self.dtype)]
+        summary.append("Name: %s" % self.name)
+        N = len(self.register)
+        msg = "Nitems: %s" % N if N > 1 else "Nitem: %s" % N
+        summary.append(msg)
+        if N > 0:
+            items = [str(item) for item in self.register]
+            msg = format_oneline("[%s]" % "; ".join(items), max_width=120)
+            summary.append("Content: %s" % msg)
+        return "\n".join(summary)
+
+    def __len__(self):
+        return len(self.register)
+
+    def __iter__(self):
+        return self.RegistryIterator(self)
+
+    def commit(self, items):
+        if not isinstance(items, list):
+            items = [items]
+        if self.dtype == 'wmo':
+            items = check_wmo(items, errors=self._invalid)
+        [self.register.append(item) for item in items if item not in self.register and self._validator(item)]
+        return self
+
+    def clear(self):
+        self.register = []
+        return self
+
+    def remove(self, items):
+        if not isinstance(items, list):
+            items = [items]
+        if self.dtype == 'wmo':
+            items = check_wmo(items, errors=self._invalid)
+        [self.register.remove(item) for item in items if item in self.register]
+        return self

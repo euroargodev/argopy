@@ -164,13 +164,15 @@ class argo_store_proto(ABC):
         if not self.cache:
             if errors == 'raise':
                 raise FileSystemHasNoCache("%s has no cache system" % type(self.fs))
-        else:
+        elif uri is not None:
             store_path = self.store_path(uri)
             self.fs.load_cache()  # Read set of stored blocks from file and populate self.fs.cached_files
             if store_path in self.fs.cached_files[-1]:
                 return os.path.sep.join([self.cachedir, self.fs.cached_files[-1][store_path]['fn']])
             elif errors == 'raise':
                 raise CacheFileNotFound("No cached file found in %s for: \n%s" % (self.fs.storage[-1], uri))
+        else:
+            raise CacheFileNotFound("No cached file found in %s for: \n%s" % (self.fs.storage[-1], uri))
 
     def _clear_cache_item(self, uri):
         """ Open fsspec cache registry (pickle file) and remove entry for uri
@@ -814,7 +816,7 @@ class memorystore(filestore):
 
             Special handling for memory store
 
-            The fsspec.exists() will return False even if the path is in cache !
+            The fsspec.exists() will return False even if the path is in cache.
             Here we bypass this in order to return True if the path is in cache
             This assumes that the goal of fs.exists is to determine if we can load the path or not
             If the path is in cache, it can be loaded

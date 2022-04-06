@@ -85,7 +85,6 @@ def assert_fetcher(this_fetcher, cachable=False):
     assert (this_fetcher.N_RECORDS >= 1)  # Make sure we loaded the index file content
     assert (this_fetcher.N_FILES >= 1)  # Make sure we found results
     if cachable:
-        # assert isinstance(this_fetcher.cachepath, str)
         assert is_list_of_strings(this_fetcher.cachepath)
 
 

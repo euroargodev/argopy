@@ -10,7 +10,8 @@ from abc import ABC, abstractmethod
 from fsspec.core import split_protocol
 
 from ..options import OPTIONS
-from ..errors import FtpPathError, InvalidDataset
+from ..errors import FtpPathError, InvalidDataset, CacheFileNotFound
+from ..utilities import Registry
 from .filesystems import httpstore, memorystore, filestore, ftpstore
 
 try:
@@ -133,7 +134,8 @@ class ArgoIndexStoreProto(ABC):
                 "Unknown protocol for an Argo index store: %s" % split_protocol(host)[0]
             )
         self.fs["client"] = memorystore(cache, cachedir)  # Manage search results
-        self._memory_store_content = []  # Track files opened with this memory store, since it's a global store
+        self._memory_store_content = Registry('memory store') # Track files opened with this memory store, since it's a global store
+        self.search_path_cache = Registry('cached search') # Track cached files related to search
 
         self.index_path = self.fs["src"].fs.sep.join([self.host, self.index_file])
         if not self.fs["src"].exists(self.index_path):
@@ -304,7 +306,7 @@ class ArgoIndexStoreProto(ABC):
         return path in self._memory_store_content
 
     def _commit(self, path):
-        self._memory_store_content.append(path)
+        self._memory_store_content.commit(path)
 
     def _write(self, fs, path, obj, fmt="pq"):
         """ Write internal array object to file store
@@ -360,7 +362,8 @@ class ArgoIndexStoreProto(ABC):
         """Clear cache registry and files associated with this store instance."""
         self.fs["src"].clear_cache()
         self.fs["client"].clear_cache()
-        self._memory_store_content = []
+        self._memory_store_content.clear()
+        self.search_path_cache.clear()
         return self
 
     def cachepath(self, path):
@@ -377,11 +380,19 @@ class ArgoIndexStoreProto(ABC):
         list(str)
         """
         if path == 'index' and hasattr(self, 'index_path_cache'):
-            return [self.fs["client"].cachepath(self.index_path_cache)]
-        elif path == 'search' and hasattr(self, 'search_path_cache'):
-            return [self.fs["client"].cachepath(self.search_path_cache)]
-        else:
-            return [self.fs["client"].cachepath(path)]
+            path = [self.index_path_cache]
+        elif path == 'search':
+            if len(self.search_path_cache) > 0:
+                path = self.search_path_cache
+            else:
+                path = [None]
+            # elif not self.fs['client'].cache:
+            #     raise
+            # elif self.fs['client'].cache:
+            #     raise
+        elif not isinstance(path, list):
+            path = [path]
+        return [self.fs["client"].cachepath(p) for p in path]
 
     def to_dataframe(self, nrows=None, index=False):  # noqa: C901
         """ Return index or search results as :class:`pandas.DataFrame`
@@ -464,6 +475,8 @@ class ArgoIndexStoreProto(ABC):
             if self.cache:
                 self._write(self.fs["client"], fname, df, fmt="pd")
                 df = self._read(self.fs["client"].fs, fname, fmt="pd")
+                if not index:
+                    self.search_path_cache.commit(fname)  # Keep track of files related to search results
                 log.debug("This dataframe saved in cache. dest='%s'" % fname)
 
         return df

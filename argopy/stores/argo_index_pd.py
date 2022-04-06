@@ -109,7 +109,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
                 % (this_path)
             )
             self.search = self._read(self.fs["client"].fs, this_path, fmt=self.ext)
-            self.search_path_cache = this_path
+            self.search_path_cache.commit(this_path)
         else:
             log.debug("Compute search from scratch ... ")
             this_filter = np.nonzero(self.search_filter)[0]
@@ -123,7 +123,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
             if self.cache and self.search.shape[0] > 0:
                 self._write(self.fs["client"], this_path, self.search, fmt=self.ext)
                 self.search = self._read(self.fs["client"].fs, this_path, fmt=self.ext)
-                self.search_path_cache = this_path
+                self.search_path_cache.commit(this_path)
                 log.debug(
                     "Search results saved in cache as pandas dataframe. dest='%s'"
                     % this_path
