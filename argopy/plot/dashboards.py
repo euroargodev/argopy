@@ -3,7 +3,8 @@ Use this module directly:
     >>> import argopy.dashboard as dashboard
 
 Or use the methods on a DataFetcher or IndexFetcher:
-    >>> DataFetcher().float().dashboard()
+    >>> DataFetcher().float(**).dashboard()
+    >>> DataFetcher().profile(**).dashboard()
 """
 import os
 import warnings
@@ -52,7 +53,7 @@ dashboard_definitions = {
     "argovis": {
         "shorts": [],
         "uri": {
-            "base": "https://argovis.colorado.edu",
+            "base": None,
             "wmo": "https://argovis.colorado.edu/catalog/platforms/{}/page".format,
             "cyc": "https://argovis.colorado.edu/catalog/profiles/{}_{}/page".format,
         },
@@ -60,8 +61,8 @@ dashboard_definitions = {
     "ocean-ops": {
         "shorts": ["op"],
         "uri": {
-            "base": "https://www.ocean-ops.org/board?t=argo",
-            "wmo": ("https://www.ocean-ops.org/board/wa/Platform?ref={}").format,
+            "base": None,
+            "wmo": "https://www.ocean-ops.org/board/wa/Platform?ref={}".format,
             "cyc": None,
         },
     },
