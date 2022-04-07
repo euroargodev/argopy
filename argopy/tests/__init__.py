@@ -61,7 +61,7 @@ has_fetcher_index, requires_fetcher_index = _connectskip(
 ##########
 if CONNECTED:
     DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
-    DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-bio")
+    DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-synthetic-BGC")
     DSEXISTS_ref = erddap_ds_exists(ds="ArgoFloats-ref")
     DSEXISTS_index = erddap_ds_exists(ds="ArgoFloats-index")
 else:
