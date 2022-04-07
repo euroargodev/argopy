@@ -321,34 +321,25 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             ]
             [vlist.append(p) for p in plist]
 
-            if self.dataset_id == "bgc":
+            if OPTIONS.get('mode')  == "standard":
+                plist = ["pres", "temp", "psal",
+                         "doxy",
+                ]
+
+            elif OPTIONS.get('mode')  == "expert":
                 plist = ["pres", "temp", "psal",
                          "cndc",
                          "doxy",
 #                         "beta_backscattering",
-#                         "fluorescence_chla",
-#                         "turbidity",
-#                         "cp",
-#                         "chla",
-#                         "cdom",
-#                         "nitrate",
-#                         "pH_in_situ_total",
-                ]
-
-            elif self.mode =='expert':
-                plist = ["pres", "temp", "psal",
-                         "cndc",
-                         "doxy",
-                         "beta_backscattering",
                          "fluorescence_chla",
 #                        "fluorescence_cdom", #1
 #                        "side_scattering_turbidity", #1
 #                        "transmittance_particle_beam_attenuation", #1
-                         "bbp",
+#                         "bbp",
                          "turbidity",
-                         "cp",
+#                         "cp",
                          "chla",
-                         "cdom",
+#                         "cdom",
                          "nitrate",
 #                        "temp_doxy",
 #                        "temp_voltage_doxy",
