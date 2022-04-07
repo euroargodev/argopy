@@ -328,7 +328,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
             elif OPTIONS.get('mode')  == "expert":
                 plist = ["pres", "temp", "psal",
-                         "cndc",
+#                         "cndc",
                          "doxy",
 #                         "beta_backscattering",
                          "fluorescence_chla",
