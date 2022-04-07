@@ -237,6 +237,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 "convention": "R : real time; D : delayed mode; A : real time with adjustment",
             }
 
+        # BGC variables
+        if "PARAMAMETER_DATA_MODE" in this.data_vars:
+            this["PARAMETER_DATA_MODE"].attrs = {
+                "long_name": "Delayed mode or real time data for BGC variables",
+                "convention": "R : real time; D : delayed mode; A : real time with adjustment",
+            }
+
         if "DIRECTION" in this.data_vars:
             this["DIRECTION"].attrs = {
                 "long_name": "Direction of the station profiles",
@@ -318,14 +325,14 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 plist = ["pres", "temp", "psal",
                          "cndc",
                          "doxy",
-                         "beta_backscattering",
-                         "fluorescence_chla",
-                         "turbidity",
-                         "cp",
-                         "chla",
-                         "cdom",
-                         "nitrate",
-                         "pH_in_situ_total",
+#                         "beta_backscattering",
+#                         "fluorescence_chla",
+#                         "turbidity",
+#                         "cp",
+#                         "chla",
+#                         "cdom",
+#                         "nitrate",
+#                         "pH_in_situ_total",
                 ]
 
             elif self.mode =='expert':
@@ -411,20 +418,20 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 ]
 
 # TODO : implement two modes (standard/expert) for two lists of possible BGC variables
-            plist = ["pres", "temp", "psal",
-                    "cndc",
-                     "doxy",
-                     "beta_backscattering",
-                     "fluorescence_chla",
+#            plist = ["pres", "temp", "psal",
+#                    "cndc",
+#                     "doxy",
+#                     "beta_backscattering",
+#                     "fluorescence_chla",
 #                     "fluorescence_cdom", #1
 #                     "side_scattering_turbidity", #1
 #                     "transmittance_particle_beam_attenuation", #1
-                     "bbp",
-                     "turbidity",
-                     "cp",
-                     "chla",
-                     "cdom",
-                     "nitrate",
+#                     "bbp",
+#                     "turbidity",
+#                     "cp",
+#                     "chla",
+#                     "cdom",
+#                     "nitrate",
 #                     "temp_doxy",
 #                     "temp_voltage_doxy",
 #                     "voltage_doxy",
@@ -464,7 +471,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 #                     "ib_ph",
 #                     "vk_ph",
 #                     "ik_ph",
-                     "ph_in_situ_total",
+#                     "ph_in_situ_total",
 #                     "ph_in_situ_free",
 #                     "raw_downwelling_irradiance",
 #                     "raw_downwelling_irradiance380",
@@ -490,7 +497,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 #                     "downwelling_par",
 #                     "tilt",
 #                     "mtime",
-                     ]
+#                     ]
             [vlist.append(p) for p in plist]
             [vlist.append(p + "_qc") for p in plist]
             [vlist.append(p + "_adjusted") for p in plist]
