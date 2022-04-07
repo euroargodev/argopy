@@ -134,8 +134,8 @@ class ArgoIndexStoreProto(ABC):
                 "Unknown protocol for an Argo index store: %s" % split_protocol(host)[0]
             )
         self.fs["client"] = memorystore(cache, cachedir)  # Manage search results
-        self._memory_store_content = Registry('memory store') # Track files opened with this memory store, since it's a global store
-        self.search_path_cache = Registry('cached search') # Track cached files related to search
+        self._memory_store_content = Registry(name='memory store') # Track files opened with this memory store, since it's a global store
+        self.search_path_cache = Registry(name='cached search') # Track cached files related to search
 
         self.index_path = self.fs["src"].fs.sep.join([self.host, self.index_file])
         if not self.fs["src"].exists(self.index_path):
@@ -383,7 +383,7 @@ class ArgoIndexStoreProto(ABC):
             path = [self.index_path_cache]
         elif path == 'search':
             if len(self.search_path_cache) > 0:
-                path = self.search_path_cache
+                path = self.search_path_cache.data
             else:
                 path = [None]
             # elif not self.fs['client'].cache:

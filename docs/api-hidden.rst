@@ -86,6 +86,8 @@
     argopy.utilities.check_cyc
     argopy.utilities.wmo2box
     argopy.utilities.deprecated
+    argopy.utilities.Registry
+    argopy.utilities.float_wmo
 
     argopy.plotters.open_dashboard
     argopy.plotters.bar_plot

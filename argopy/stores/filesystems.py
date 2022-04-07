@@ -20,7 +20,7 @@ from ..options import OPTIONS
 from ..errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
     InvalidMethod
 from abc import ABC, abstractmethod
-
+from ..utilities import Registry
 
 log = logging.getLogger("argopy.stores")
 
@@ -78,7 +78,7 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cac
                                expiry_time=86400, cache_check=10)
         # We use a refresh rate for cache of 1 day,
         # since this is the update frequency of the Ifremer erddap
-        cache_registry = []  # Will hold uri cached by this store instance
+        cache_registry = Registry(name='Cache')  # Will hold uri cached by this store instance
         log_msg = "Opening a fsspec [filecache, storage='%s'] system for '%s' protocol with options: %s" % \
                   (cachedir, protocol, str(filesystem_kwargs))
 
@@ -157,7 +157,7 @@ class argo_store_proto(ABC):
         if self.cache:
             path = self.store_path(uri)
             if path not in self.cache_registry:
-                self.cache_registry.append(path)
+                self.cache_registry.commit(path)
 
     def cachepath(self, uri: str, errors: str = 'raise'):
         """ Return path to cached file for a given URI """
@@ -205,7 +205,7 @@ class argo_store_proto(ABC):
             for uri in self.cache_registry:
                 # log.debug("Removing from cache %s" % uri)
                 self._clear_cache_item(uri)
-            self.cache_registry = []  # Reset registry
+            self.cache_registry.clear()  # Reset registry
 
     @abstractmethod
     def open_dataset(self, *args, **kwargs):
