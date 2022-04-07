@@ -17,7 +17,7 @@ import copy
 from functools import reduce, wraps
 from packaging import version
 import logging
-from abc import ABC, abstractmethod, abstractproperty
+from abc import ABC, abstractmethod
 
 import importlib
 import locale
@@ -1460,7 +1460,8 @@ def check_wmo(lst, errors="raise"):
     ----------
     wmo: int
         WMO must be an integer or an iterable with elements that can be casted as integers
-    errors: 'raise'
+    errors: {'raise', 'warn', 'ignore'}
+        Possibly raises a ValueError exception or UserWarning, otherwise fails silently.
 
     Returns
     -------
@@ -1486,8 +1487,8 @@ def is_wmo(lst, errors="raise"):  # noqa: C901
     ----------
     wmo: int, list(int), array(int)
         WMO must be a single or a list of 5/7 digit positive numbers
-    errors: 'raise'
-        Possibly raises a ValueError exception, otherwise fails silently.
+    errors: {'raise', 'warn', 'ignore'}
+        Possibly raises a ValueError exception or UserWarning, otherwise fails silently.
 
     Returns
     -------
@@ -1523,27 +1524,33 @@ def is_wmo(lst, errors="raise"):  # noqa: C901
         result = False
         if errors == "raise":
             raise ValueError(msg(x))
+        elif errors == 'warn':
+            warnings.warn(msg(x))
 
-    if not result and errors == "raise":
-        raise ValueError(msg(x))
+    if not result:
+        if errors == "raise":
+            raise ValueError(msg(x))
+        elif errors == 'warn':
+            warnings.warn(msg(x))
     else:
         return result
 
 
-def check_cyc(lst):
+def check_cyc(lst, errors="raise"):
     """ Validate a CYC option and returned it as a list of integers
 
     Parameters
     ----------
     cyc: int
         CYC must be an integer or an iterable with elements that can be casted as positive integers
-    errors: 'raise'
+    errors: {'raise', 'warn', 'ignore'}
+        Possibly raises a ValueError exception or UserWarning, otherwise fails silently.
 
     Returns
     -------
     list(int)
     """
-    is_cyc(lst, errors="raise")
+    is_cyc(lst, errors=errors)
 
     # Make sure we deal with a list
     if not isinstance(lst, list):
@@ -1563,8 +1570,8 @@ def is_cyc(lst, errors="raise"):  # noqa: C901
     ----------
     cyc: int, list(int), array(int)
         CYC must be a single or a list of at most 4 digit positive numbers
-    errors: 'raise'
-        Possibly raises a ValueError exception, otherwise fails silently.
+    errors: {'raise', 'warn', 'ignore'}
+        Possibly raises a ValueError exception or UserWarning, otherwise fails silently.
 
     Returns
     -------
@@ -1579,7 +1586,7 @@ def is_cyc(lst, errors="raise"):  # noqa: C901
             lst = [lst]
 
     # Error message:
-    msg = "CYC must be a single or a list of at most 4 digit positive numbers"
+    msg = "CYC must be a single or a list of at most 4 digit positive numbers. Invalid: '{}'".format
 
     # Then try to cast list elements as integers, return True if ok
     result = True
@@ -1597,10 +1604,15 @@ def is_cyc(lst, errors="raise"):  # noqa: C901
     except Exception:
         result = False
         if errors == "raise":
-            raise ValueError(msg)
+            raise ValueError(msg(x))
+        elif errors == 'warn':
+            warnings.warn(msg(x))
 
-    if not result and errors == "raise":
-        raise ValueError(msg)
+    if not result:
+        if errors == "raise":
+            raise ValueError(msg(x))
+        elif errors == 'warn':
+            warnings.warn(msg(x))
     else:
         return result
 
@@ -2431,8 +2443,9 @@ def deprecated(reason):
 
 
 class RegistryItem(ABC):
-
-    @abstractproperty
+    """Prototype for possible custom items in a Registry"""
+    @property
+    @abstractmethod
     def value(self):
         raise NotImplementedError("Not implemented")
 
@@ -2451,20 +2464,36 @@ class RegistryItem(ABC):
 
 
 class float_wmo(RegistryItem):
-    def __init__(self, item, errors='raise'):
-        if isinstance(item, float_wmo):
-            item = item.value
+    def __init__(self, WMO_number, errors='raise'):
+        """Create an Argo float WMO number object
+
+        Parameters
+        ----------
+        WMO_number: object
+            Anything that could be casted as an integer
+        errors: {'raise', 'warn', 'ignore'}
+            Possibly raises a ValueError exception or UserWarning, otherwise fails silently if WMO_number is not valid
+
+        Returns
+        -------
+        :class:`argopy.utilities.float_wmo`
+        """
+        self.errors = errors
+        if isinstance(WMO_number, float_wmo):
+            item = WMO_number.value
         else:
-            item = check_wmo(item, errors=errors)[0]  # This will automatically validate item
+            item = check_wmo(WMO_number, errors=self.errors)[0]  # This will automatically validate item
         self.item = item
 
     @property
     def isvalid(self):
-        # return is_wmo(self.item)
-        return True  # Because it was checked at instantiation
+        """Check if WMO number is valid"""
+        return is_wmo(self.item, errors=self.errors)
+        # return True  # Because it was checked at instantiation
 
     @property
     def value(self):
+        """Return WMO number as in integer"""
         return int(self.item)
 
     def __str__(self):
@@ -2474,12 +2503,29 @@ class float_wmo(RegistryItem):
     def __repr__(self):
         return f"WMO(%s)" % self.item
 
+    def __check_other__(self, other):
+        return check_wmo(other)[0] if type(other) is not float_wmo else other.item
+
     def __eq__(self, other):
-        if type(other) is not float_wmo:
-            other = check_wmo(other)[0]
-        else:
-            other = other.item
-        return other == self.item
+        return self.item.__eq__(self.__check_other__(other))
+
+    def __ne__(self, other):
+        return self.item.__ne__(self.__check_other__(other))
+
+    def __gt__(self, other):
+        return self.item.__gt__(self.__check_other__(other))
+
+    def __lt__(self, other):
+        return self.item.__lt__(self.__check_other__(other))
+
+    def __ge__(self, other):
+        return self.item.__ge__(self.__check_other__(other))
+
+    def __le__(self, other):
+        return self.item.__le__(self.__check_other__(other))
+
+    def __hash__(self):
+        return hash(self.item)
 
 
 class Registry(UserList):
@@ -2518,7 +2564,7 @@ class Registry(UserList):
     def _complain(self, msg):
         if self._invalid == 'raise':
             raise ValueError(msg)
-        elif self._invalid == 'ignore':
+        elif self._invalid == 'warn':
             warnings.warn(msg)
         else:
             log.debug(msg)
@@ -2548,14 +2594,14 @@ class Registry(UserList):
         """
         self.name = name
         self._invalid = invalid
-        if dtype == 'str':
+        if repr(dtype) == "<class 'str'>" or dtype == 'str':
             self._validator = self._str
             self.dtype = str
         elif dtype == float_wmo or str(dtype).lower() == 'wmo':
             self._validator = self._wmo
             self.dtype = float_wmo
         else:
-            raise ValueError('Unrecognised Registry data type')
+            raise ValueError("Unrecognised Registry data type '%s'" % dtype)
         if initlist is not None:
             initlist = self._process_items(initlist)
         super().__init__(initlist)
