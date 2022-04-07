@@ -2534,29 +2534,37 @@ class Registry(UserList):
     Examples
     --------
     You can commit new entry to the registry, one by one:
+
         >>> R = Registry(name='file')
         >>> R.commit('meds/4901105/profiles/D4901105_017.nc')
         >>> R.commit('aoml/1900046/profiles/D1900046_179.nc')
 
     Or with a list:
+
         >>> R = Registry(name='My floats', dtype='wmo')
         >>> R.commit([2901746, 4902252])
 
     And also at instantiation time (name and dtype are optional):
-        >>> R = Registry([2901746, 4902252], name='My floats', dtype='wmo')
+
+        >>> R = Registry([2901746, 4902252], name='My floats', dtype=float_wmo)
 
     Registry can be used like a list.
+
     It is iterable:
+
         >>> for wmo in R:
         >>>     print(wmo)
 
     It has a ``len`` property:
+
         >>> len(R)
 
     It can be checked for values:
+
         >>> 4902252 in R
 
     You can also remove items from the registry, again one by one or with a list:
+
         >>> R.remove('2901746')
 
     """
@@ -2587,7 +2595,7 @@ class Registry(UserList):
             List of values to register
         name: str, default: 'unnamed'
             Name of the Registry
-        dtype: str, default: 'str'
+        dtype: :class:`str` or dtype, default: :class:`str`
             Data type of registry content. Supported values are: 'str', 'wmo', float_wmo
         invalid: str, default: 'raise'
             Define what do to when a new item is not valid. Can be 'raise' or 'ignore'
