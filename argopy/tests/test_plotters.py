@@ -30,26 +30,31 @@ if has_cartopy:
 log = logging.getLogger("argopy.tests.plot")
 
 
-@pytest.mark.parametrize("board_type", ["invalid", "coriolis"], indirect=False)
+@pytest.mark.parametrize("board_type", ["invalid", "argovis", "op", "ocean-ops", "coriolis"], indirect=False)
 def test_invalid_dashboard(board_type):
+    # Test types without 'base'
     with pytest.raises(InvalidDashboard):
         argopy.dashboard(type=board_type, url_only=True)
 
 @pytest.mark.parametrize("board_type", ["op", "ocean-ops", "coriolis"], indirect=False)
 def test_invalid_dashboard_profile(board_type):
+    # Test types without 'cyc'
     with pytest.raises(InvalidDashboard):
         argopy.dashboard(6902755, 12, type=board_type, url_only=True)
 
-@pytest.mark.parametrize("board_type", ["data", "meta", "ea", "eric", "argovis", "op", "ocean-ops", "bgc"], indirect=False)
+@pytest.mark.parametrize("board_type", ["data", "meta", "ea", "eric", "bgc"], indirect=False)
 def test_valid_dashboard(board_type):
+    # Test types with 'base'
     assert isinstance(argopy.dashboard(type=board_type, url_only=True), str)
 
 @pytest.mark.parametrize("board_type", ["data", "meta", "ea", "eric", "argovis", "op", "ocean-ops", "bgc"], indirect=False)
 def test_valid_dashboard_float(board_type):
+    # Test types with 'wmo' (should be all)
     assert isinstance(argopy.dashboard(5904797, type=board_type, url_only=True), str)
 
 @pytest.mark.parametrize("board_type", ["data", "meta", "ea", "eric", "argovis", "bgc"], indirect=False)
 def test_valid_dashboard_profile(board_type):
+    # Test types with 'cyc'
     assert isinstance(argopy.dashboard(5904797, 12, type=board_type, url_only=True), str)
 
 
