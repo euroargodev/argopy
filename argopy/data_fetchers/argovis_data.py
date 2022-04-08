@@ -265,6 +265,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         for profile in data:
             keys = [x for x in profile.keys() if x not in ["measurements", "bgcMeas"]]
             meta_row = dict((key, profile[key]) for key in keys)
+            meta_row['date'] = meta_row['date'][0:-2] if meta_row['date'][-1] == 'Z' else meta_row['date']  # Remove timezone #101
             for row in profile["measurements"]:
                 row.update(meta_row)
                 rows.append(row)
