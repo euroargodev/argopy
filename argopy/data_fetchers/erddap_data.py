@@ -320,6 +320,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 "config_mission_number",
             ]
             [vlist.append(p) for p in plist]
+            # TODO : implement two modes (standard/expert) for two lists of possible BGC variables
 
             if OPTIONS.get('mode')  == "standard":
                 plist = ["pres", "temp", "psal",
@@ -408,7 +409,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 #                        "mtime",
                 ]
 
-# TODO : implement two modes (standard/expert) for two lists of possible BGC variables
 #            plist = ["pres", "temp", "psal",
 #                    "cndc",
 #                     "doxy",
