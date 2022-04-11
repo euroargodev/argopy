@@ -237,3 +237,15 @@ Plotters
     argopy.plotters.bar_plot
     argopy.plotters.open_dashboard
     argopy.plotters.open_sat_altim_report
+
+Utilities
+---------
+
+.. autosummary::
+   :toctree: generated/
+
+    argopy.utilities.check_wmo
+    argopy.utilities.list_standard_variables
+    argopy.utilities.list_multiprofile_file_variables
+    argopy.utilities.Chunker
+    argopy.utilities.ArgoNVSReferenceTables

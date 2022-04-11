@@ -58,6 +58,7 @@
     argopy.utilities.list_available_data_src
     argopy.utilities.list_available_index_src
     argopy.utilities.Chunker
+    argopy.utilities.ArgoNVSReferenceTables
     
     argopy.utilities.groupby_remap
     argopy.utilities.linear_interpolation_remap
