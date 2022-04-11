@@ -18,6 +18,19 @@ What's New
 .. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy
    :target: //github.com/euroargodev/argopy/releases
 
+v0.1.XX (X XXX. 2022)
+---------------------
+
+**Features and front-end API**
+
+- ``argopy`` now provide a specific *engine* to properly read Argo netcdf files. Using the **argo** engine, the :class:`xarray.DataSet` variables are properly casted, i.e. they now have the appropriate data types (which is not the case otherwise).
+
+.. code-block:: python
+
+    import xarray as xr
+    ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
+
+
 v0.1.11 (X XXX. 2022)
 ---------------------
 
