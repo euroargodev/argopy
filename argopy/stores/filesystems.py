@@ -7,7 +7,7 @@ import shutil
 import pickle
 import json
 import tempfile
-import warnings
+# import warnings
 import logging
 from packaging import version
 
@@ -18,7 +18,7 @@ import multiprocessing
 try:
     from tqdm import tqdm
 except ModuleNotFoundError:
-    warnings.warn("argopy needs tqdm installed to display progress bars")
+    # warnings.warn("argopy needs tqdm installed to display progress bars")  # no real needs for warnings
 
     def tqdm(fct, **kw):
         return fct
