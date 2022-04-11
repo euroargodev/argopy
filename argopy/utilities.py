@@ -1855,6 +1855,21 @@ class TopoFetcher:
 
 
 class ArgoNVSReferenceTables:
+    """Argo Reference Tables
+
+    Utility function to retrieve Argo Reference Tables from a NVS server
+    By default, this relies on: https://vocab.nerc.ac.uk/collection
+
+    Examples
+    --------
+    >>> R = ArgoNVSReferenceTables()
+    >>> R.valid_ref
+    >>> R.all_tbl_name()
+    >>> R.tbl(3)
+    >>> R.tbl('R09')
+    >>> R.all_tbl()
+
+    """
     valid_ref = [
         "R01",
         "RR2",
