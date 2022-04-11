@@ -21,6 +21,18 @@ What's New
 v0.1.11 (X XXX. 2022)
 ---------------------
 
+**Features and front-end API**
+
+- New utility function :class:`argopy.utilities.ArgoNVSReferenceTables` to retrieve Argo Reference Tables. (:commit:`cc8fdbe132874b71b35203053626cc29ae7d19c4`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy.utilities import ArgoNVSReferenceTables
+    R = ArgoNVSReferenceTables()
+    R.all_tbl_name()
+    R.tbl(3)
+    R.tbl('R09')
+
 **Internals**
 
 - Fix bug in erddap fata fetcher that was causing a `profile` request to do not account for cycle numbers. (:commit:`301e557fdec1f2d536841464b383edc3a4c4a62d`) by `G. Maze <http://www.github.com/gmaze>`_.
