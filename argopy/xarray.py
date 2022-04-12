@@ -7,6 +7,9 @@ import pandas as pd
 import xarray as xr
 from sklearn import preprocessing
 import logging
+from xarray.backends import BackendEntrypoint
+from .utilities import ArgoNVSReferenceTables
+
 
 try:
     import gsw
@@ -20,12 +23,174 @@ from argopy.utilities import (
     is_list_equal,
     is_list_of_strings,
     toYearFraction,
-    groupby_remap
+    groupby_remap,
 )
 from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
 
 log = logging.getLogger("argopy.xarray")
+
+
+def cast_Argo_variable_type(ds):
+    """Cast Argo type of all DataArray in any DataSet"""
+
+    list_str = [
+        "PLATFORM_NUMBER",
+        "DATA_MODE",
+        "DIRECTION",
+        "DATA_CENTRE",
+        "DATA_TYPE",
+        "FORMAT_VERSION",
+        "HANDBOOK_VERSION",
+        "PROJECT_NAME",
+        "PI_NAME",
+        "STATION_PARAMETERS",
+        "DATA_CENTER",
+        "DC_REFERENCE",
+        "DATA_STATE_INDICATOR",
+        "PLATFORM_TYPE",
+        "FIRMWARE_VERSION",
+        "POSITIONING_SYSTEM",
+        "PARAMETER",
+        "SCIENTIFIC_CALIB_EQUATION",
+        "SCIENTIFIC_CALIB_COEFFICIENT",
+        "SCIENTIFIC_CALIB_COMMENT",
+        "HISTORY_INSTITUTION",
+        "HISTORY_STEP",
+        "HISTORY_SOFTWARE",
+        "HISTORY_SOFTWARE_RELEASE",
+        "HISTORY_REFERENCE",
+        "HISTORY_QCTEST",
+        "HISTORY_ACTION",
+        "HISTORY_PARAMETER",
+        "VERTICAL_SAMPLING_SCHEME",
+        "FLOAT_SERIAL_NO",
+        "PARAMETER_DATA_MODE",
+    ]
+    [list_str.append("PROFILE_{}_QC".format(v)) for v in list(ArgoNVSReferenceTables().tbl(3)["altLabel"])]
+
+    list_int = [
+        "PLATFORM_NUMBER",
+        "WMO_INST_TYPE",
+        "WMO_INST_TYPE",
+        "CYCLE_NUMBER",
+        "CONFIG_MISSION_NUMBER",
+    ]
+    list_datetime = [
+        "REFERENCE_DATE_TIME",
+        "DATE_CREATION",
+        "DATE_UPDATE",
+        "JULD",
+        "JULD_LOCATION",
+        "SCIENTIFIC_CALIB_DATE",
+        "HISTORY_DATE",
+        "TIME",
+    ]
+
+    def cast_this(da, type):
+        """ Low-level casting of DataArray values """
+        try:
+            da.values = da.values.astype(type)
+            da.attrs["casted"] = 1
+        except Exception:
+            print("Oops!", sys.exc_info()[0], "occurred.")
+            print("Fail to cast: ", da.dtype, "into:", type, "for: ", da.name)
+            print("Encountered unique values:", np.unique(da))
+        return da
+
+    def cast_this_da(da):
+        """ Cast any DataArray """
+        da.attrs["casted"] = 0
+        if v in list_str and da.dtype == "O":  # Object
+            da = cast_this(da, str)
+
+        if v in list_int:  # and da.dtype == 'O':  # Object
+            da = cast_this(da, int)
+
+        if v in list_datetime and da.dtype == "O":  # Object
+            if (
+                    "conventions" in da.attrs
+                    and da.attrs["conventions"] == "YYYYMMDDHHMISS"
+            ):
+                if da.size != 0:
+                    if len(da.dims) <= 1:
+                        val = da.astype(str).values.astype("U14")
+                        # This should not happen, but still ! That's real world data
+                        val[val == "              "] = "nan"
+                        da.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
+                    else:
+                        s = da.stack(dummy_index=da.dims)
+                        val = s.astype(str).values.astype("U14")
+                        # This should not happen, but still ! That's real world data
+                        val[val == "              "] = "nan"
+                        s.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
+                        da.values = s.unstack("dummy_index")
+                    da = cast_this(da, np.datetime64)
+                else:
+                    da = cast_this(da, np.datetime64)
+
+            elif v == "SCIENTIFIC_CALIB_DATE":
+                da = cast_this(da, str)
+                s = da.stack(dummy_index=da.dims)
+                s.values = pd.to_datetime(s.values, format="%Y%m%d%H%M%S")
+                da.values = (s.unstack("dummy_index")).values
+                da = cast_this(da, np.datetime64)
+
+        if "QC" in v and "PROFILE" not in v and "QCTEST" not in v:
+            if da.dtype == "O":  # convert object to string
+                da = cast_this(da, str)
+
+            # Address weird string values:
+            # (replace missing or nan values by a '0' that will be cast as an integer later
+
+            if da.dtype == "<U3":  # string, len 3 because of a 'nan' somewhere
+                ii = (
+                        da == "   "
+                )  # This should not happen, but still ! That's real world data
+                da = xr.where(ii, "0", da)
+
+                ii = (
+                        da == "nan"
+                )  # This should not happen, but still ! That's real world data
+                da = xr.where(ii, "0", da)
+
+                # Get back to regular U1 string
+                da = cast_this(da, np.dtype("U1"))
+
+            if da.dtype == "<U1":  # string
+                ii = (
+                        da == ""
+                )  # This should not happen, but still ! That's real world data
+                da = xr.where(ii, "0", da)
+
+                ii = (
+                        da == " "
+                )  # This should not happen, but still ! That's real world data
+                da = xr.where(ii, "0", da)
+
+                ii = (
+                        da == "n"
+                )  # This should not happen, but still ! That's real world data
+                da = xr.where(ii, "0", da)
+
+            # finally convert QC strings to integers:
+            da = cast_this(da, int)
+
+        if da.dtype != "O":
+            da.attrs["casted"] = 1
+
+        return da
+
+    for v in ds.variables:
+        try:
+            ds[v] = cast_this_da(ds[v])
+        except Exception:
+            print("Oops!", sys.exc_info()[0], "occurred.")
+            print("Fail to cast: %s " % v)
+            print("Encountered unique values:", np.unique(ds[v]))
+            raise
+
+    return ds
 
 
 @xr.register_dataset_accessor("argo")
@@ -83,7 +248,9 @@ class ArgoAccessor:
         elif "N_POINTS" in self._dims:
             self._type = "point"
         else:
-            raise InvalidDatasetStructure("Argo dataset structure not recognised (dimensions N_PROF or N_POINTS not found)")
+            raise InvalidDatasetStructure(
+                "Argo dataset structure not recognised (dimensions N_PROF or N_POINTS not found)"
+            )
 
         if "PRES_ADJUSTED" in self._vars:
             self._mode = "expert"
@@ -209,164 +376,7 @@ class ArgoAccessor:
             Should be able to handle all possible variables encountered in the Argo dataset.
         """
         ds = self._obj
-
-        list_str = [
-            "PLATFORM_NUMBER",
-            "DATA_MODE",
-            "DIRECTION",
-            "DATA_CENTRE",
-            "DATA_TYPE",
-            "FORMAT_VERSION",
-            "HANDBOOK_VERSION",
-            "PROJECT_NAME",
-            "PI_NAME",
-            "STATION_PARAMETERS",
-            "DATA_CENTER",
-            "DC_REFERENCE",
-            "DATA_STATE_INDICATOR",
-            "PLATFORM_TYPE",
-            "FIRMWARE_VERSION",
-            "POSITIONING_SYSTEM",
-            "PROFILE_PRES_QC",
-            "PROFILE_PSAL_QC",
-            "PROFILE_TEMP_QC",
-            "PARAMETER",
-            "SCIENTIFIC_CALIB_EQUATION",
-            "SCIENTIFIC_CALIB_COEFFICIENT",
-            "SCIENTIFIC_CALIB_COMMENT",
-            "HISTORY_INSTITUTION",
-            "HISTORY_STEP",
-            "HISTORY_SOFTWARE",
-            "HISTORY_SOFTWARE_RELEASE",
-            "HISTORY_REFERENCE",
-            "HISTORY_QCTEST",
-            "HISTORY_ACTION",
-            "HISTORY_PARAMETER",
-            "VERTICAL_SAMPLING_SCHEME",
-            "FLOAT_SERIAL_NO",
-        ]
-        list_int = [
-            "PLATFORM_NUMBER",
-            "WMO_INST_TYPE",
-            "WMO_INST_TYPE",
-            "CYCLE_NUMBER",
-            "CONFIG_MISSION_NUMBER",
-        ]
-        list_datetime = [
-            "REFERENCE_DATE_TIME",
-            "DATE_CREATION",
-            "DATE_UPDATE",
-            "JULD",
-            "JULD_LOCATION",
-            "SCIENTIFIC_CALIB_DATE",
-            "HISTORY_DATE",
-            "TIME"
-        ]
-
-        def cast_this(da, type):
-            """ Low-level casting of DataArray values """
-            try:
-                da.values = da.values.astype(type)
-                da.attrs["casted"] = 1
-            except Exception:
-                print("Oops!", sys.exc_info()[0], "occurred.")
-                print("Fail to cast: ", da.dtype, "into:", type, "for: ", da.name)
-                print("Encountered unique values:", np.unique(da))
-            return da
-
-        def cast_this_da(da):
-            """ Cast any DataArray """
-            da.attrs["casted"] = 0
-            if v in list_str and da.dtype == "O":  # Object
-                da = cast_this(da, str)
-
-            if v in list_int:  # and da.dtype == 'O':  # Object
-                da = cast_this(da, int)
-
-            if v in list_datetime and da.dtype == "O":  # Object
-                if (
-                    "conventions" in da.attrs
-                    and da.attrs["conventions"] == "YYYYMMDDHHMISS"
-                ):
-                    if da.size != 0:
-                        if len(da.dims) <= 1:
-                            val = da.astype(str).values.astype("U14")
-                            # This should not happen, but still ! That's real world data
-                            val[val == "              "] = "nan"
-                            da.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
-                        else:
-                            s = da.stack(dummy_index=da.dims)
-                            val = s.astype(str).values.astype("U14")
-                            # This should not happen, but still ! That's real world data
-                            val[val == "              "] = "nan"
-                            s.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
-                            da.values = s.unstack("dummy_index")
-                        da = cast_this(da, np.datetime64)
-                    else:
-                        da = cast_this(da, np.datetime64)
-
-                elif v == "SCIENTIFIC_CALIB_DATE":
-                    da = cast_this(da, str)
-                    s = da.stack(dummy_index=da.dims)
-                    s.values = pd.to_datetime(s.values, format="%Y%m%d%H%M%S")
-                    da.values = (s.unstack("dummy_index")).values
-                    da = cast_this(da, np.datetime64)
-
-            if "QC" in v and "PROFILE" not in v and "QCTEST" not in v:
-                if da.dtype == "O":  # convert object to string
-                    da = cast_this(da, str)
-
-                # Address weird string values:
-                # (replace missing or nan values by a '0' that will be cast as an integer later
-
-                if da.dtype == "<U3":  # string, len 3 because of a 'nan' somewhere
-                    ii = (
-                        da == "   "
-                    )  # This should not happen, but still ! That's real world data
-                    da = xr.where(ii, "0", da)
-
-                    ii = (
-                        da == "nan"
-                    )  # This should not happen, but still ! That's real world data
-                    da = xr.where(ii, "0", da)
-
-                    # Get back to regular U1 string
-                    da = cast_this(da, np.dtype("U1"))
-
-                if da.dtype == "<U1":  # string
-                    ii = (
-                        da == ""
-                    )  # This should not happen, but still ! That's real world data
-                    da = xr.where(ii, "0", da)
-
-                    ii = (
-                        da == " "
-                    )  # This should not happen, but still ! That's real world data
-                    da = xr.where(ii, "0", da)
-
-                    ii = (
-                        da == "n"
-                    )  # This should not happen, but still ! That's real world data
-                    da = xr.where(ii, "0", da)
-
-                # finally convert QC strings to integers:
-                da = cast_this(da, int)
-
-            if da.dtype != "O":
-                da.attrs["casted"] = 1
-
-            return da
-
-        for v in ds.variables:
-            try:
-                ds[v] = cast_this_da(ds[v])
-            except Exception:
-                print("Oops!", sys.exc_info()[0], "occurred.")
-                print("Fail to cast: %s " % v)
-                print("Encountered unique values:", np.unique(ds[v]))
-                raise
-
-        return ds
+        return cast_Argo_variable_type(ds)
 
     def uid(self, wmo_or_uid, cyc=None, direction=None):
         """ UID encoder/decoder
@@ -525,7 +535,7 @@ class ArgoAccessor:
                     y = new_ds[vname].values
                     x = prof[vname].values
                     try:
-                        y[i_prof, 0: len(x)] = x
+                        y[i_prof, 0 : len(x)] = x
                     except Exception:
                         print(vname, "input", x.shape, "output", y[i_prof, :].shape)
                         raise
@@ -596,7 +606,7 @@ class ArgoAccessor:
         ds.argo._type = "point"
         return ds
 
-    def filter_data_mode(   # noqa: C901
+    def filter_data_mode(  # noqa: C901
         self, keep_error: bool = True, errors: str = "raise"
     ):
         """ Filter variables according to their data mode
@@ -810,7 +820,7 @@ class ArgoAccessor:
 
         return final
 
-    def filter_qc(   # noqa: C901
+    def filter_qc(  # noqa: C901
         self, QC_list=[1, 2], QC_fields="all", drop=True, mode="all", mask=False
     ):
         """ Filter data set according to QC values
@@ -1002,9 +1012,7 @@ class ArgoAccessor:
         else:
             return this
 
-    def interp_std_levels(self,
-                          std_lev: list or np.array,
-                          axis: str = 'PRES'):
+    def interp_std_levels(self, std_lev: list or np.array, axis: str = "PRES"):
         """ Interpolate measurements to standard pressure levels
 
         Parameters
@@ -1031,7 +1039,7 @@ class ArgoAccessor:
                 "Standard levels must be a list or a numpy array of positive and sorted values"
             )
 
-        if axis not in ['PRES', 'PRES_ADJUSTED']:
+        if axis not in ["PRES", "PRES_ADJUSTED"]:
             raise ValueError("'axis' option must be 'PRES' or 'PRES_ADJUSTED'")
 
         if self._type != "profile":
@@ -1112,13 +1120,15 @@ class ArgoAccessor:
 
         return ds_out
 
-    def groupby_pressure_bins(self,  # noqa: C901
-                              bins: list or np.array,
-                              axis: str = 'PRES',
-                              right: bool = False,
-                              select: str = 'deep',
-                              squeeze: bool = True,
-                              merge: bool = True):
+    def groupby_pressure_bins(
+        self,  # noqa: C901
+        bins: list or np.array,
+        axis: str = "PRES",
+        right: bool = False,
+        select: str = "deep",
+        squeeze: bool = True,
+        merge: bool = True,
+    ):
         """ Group measurements by pressure bins
 
         This method can be used to subsample and align an irregular dataset (pressure not being similar in all profiles)
@@ -1175,7 +1185,7 @@ class ArgoAccessor:
                 "Standard bins must be a list or a numpy array of positive and sorted values"
             )
 
-        if axis not in ['PRES', 'PRES_ADJUSTED']:
+        if axis not in ["PRES", "PRES_ADJUSTED"]:
             raise ValueError("'axis' option must be 'PRES' or 'PRES_ADJUSTED'")
 
         # Will work with a collection of profiles:
@@ -1197,7 +1207,9 @@ class ArgoAccessor:
             return None
         if N_bins_empty > 0 and squeeze:
             log.debug(
-                "bins axis was squeezed to full bins only (%i bins found empty out of %i)" % (N_bins_empty, len(bins)))
+                "bins axis was squeezed to full bins only (%i bins found empty out of %i)"
+                % (N_bins_empty, len(bins))
+            )
             bins = bins[np.where(h > 0)]
 
         def replace_i_level_values(this_da, this_i_level, new_values_along_profiles):
@@ -1223,7 +1235,11 @@ class ArgoAccessor:
                     z[i] = y[i]
             return z
 
-        merged_is_nan = lambda l1, l2: len(np.unique(np.where(np.isnan(l1.values + l2.values)))) == len(l1)  # noqa: E731
+        merged_is_nan = lambda l1, l2: len(
+            np.unique(np.where(np.isnan(l1.values + l2.values)))
+        ) == len(
+            l1
+        )  # noqa: E731
 
         def merge_bin_matching_levels(this_ds: xr.Dataset) -> xr.Dataset:
             """ Levels merger of type 'bins' value
@@ -1249,16 +1265,20 @@ class ArgoAccessor:
                 this_ds_level = this_ds[axis].isel(N_LEVELS=i_level)
                 this_ds_dw = this_ds[axis].isel(N_LEVELS=i_level + 1)
                 pres_dw = np.unique(this_ds_dw[~np.isnan(this_ds_dw)])
-                if len(pres_dw) == 1 \
-                        and pres_dw[0] in this_ds["STD_%s_BINS" % axis] \
-                        and merged_is_nan(this_ds_level, this_ds_dw):
+                if (
+                    len(pres_dw) == 1
+                    and pres_dw[0] in this_ds["STD_%s_BINS" % axis]
+                    and merged_is_nan(this_ds_level, this_ds_dw)
+                ):
                     new_values = nanmerge(this_ds_dw.values, this_ds_level.values)
                     replace_i_level_values(new_ds[axis], i_level, new_values)
                     idel.append(i_level + 1)
 
             ikeep = [i for i in np.arange(0, new_ds.argo.N_LEVELS - 1) if i not in idel]
             new_ds = new_ds.isel(N_LEVELS=ikeep)
-            new_ds = new_ds.assign_coords({'N_LEVELS': np.arange(0, len(new_ds['N_LEVELS']))})
+            new_ds = new_ds.assign_coords(
+                {"N_LEVELS": np.arange(0, len(new_ds["N_LEVELS"]))}
+            )
             val = new_ds[axis].values
             new_ds[axis].values = np.where(val == 0, np.nan, val)
             return new_ds
@@ -1296,7 +1316,9 @@ class ArgoAccessor:
 
             ikeep = [i for i in np.arange(0, new_ds.argo.N_LEVELS - 1) if i not in idel]
             new_ds = new_ds.isel(N_LEVELS=ikeep)
-            new_ds = new_ds.assign_coords({'N_LEVELS': np.arange(0, len(new_ds['N_LEVELS']))})
+            new_ds = new_ds.assign_coords(
+                {"N_LEVELS": np.arange(0, len(new_ds["N_LEVELS"]))}
+            )
             val = new_ds[axis].values
             new_ds[axis].values = np.where(val == 0, np.nan, val)
             return new_ds
@@ -1327,8 +1349,7 @@ class ArgoAccessor:
         othervars = [
             dv
             for dv in list(this_dsp.variables)
-            if dv not in datavars
-            and dv not in this_dsp.coords
+            if dv not in datavars and dv not in this_dsp.coords
         ]
 
         # Sub-sample and align:
@@ -1340,7 +1361,7 @@ class ArgoAccessor:
                 z_dim="N_LEVELS",
                 z_regridded_dim="Z_LEVELS",
                 select=select,
-                right=right
+                right=right,
             )
             v.name = this_dsp[dv].name
             v.attrs = this_dsp[dv].attrs
@@ -1349,14 +1370,16 @@ class ArgoAccessor:
         # Finish
         new_ds = xr.merge(new_ds)
         new_ds = new_ds.rename({"remapped": "N_LEVELS"})
-        new_ds = new_ds.assign_coords({'N_LEVELS': range(0, len(new_ds['N_LEVELS']))})
+        new_ds = new_ds.assign_coords({"N_LEVELS": range(0, len(new_ds["N_LEVELS"]))})
         # new_ds["STD_%s_BINS" % axis] = new_ds['N_LEVELS']
-        new_ds["STD_%s_BINS" % axis] = xr.DataArray(bins,
-                                                    dims=['N_LEVELS'],
-                                                    attrs={'Comment':
-                                                            "Range of bins is: bins[i] <= x < bins[i+1] for i=[0,N_LEVELS-2]\n"
-                                                            "Last bins is bins[N_LEVELS-1] <= x"}
-                                                    )
+        new_ds["STD_%s_BINS" % axis] = xr.DataArray(
+            bins,
+            dims=["N_LEVELS"],
+            attrs={
+                "Comment": "Range of bins is: bins[i] <= x < bins[i+1] for i=[0,N_LEVELS-2]\n"
+                "Last bins is bins[N_LEVELS-1] <= x"
+            },
+        )
         new_ds = new_ds.set_coords("STD_%s_BINS" % axis)
         new_ds.attrs = this_ds.attrs
 
@@ -1380,7 +1403,8 @@ class ArgoAccessor:
     def teos10(  # noqa: C901
         self,
         vlist: list = ["SA", "CT", "SIG0", "N2", "PV", "PTEMP"],
-        inplace: bool = True):
+        inplace: bool = True,
+    ):
         """ Add TEOS10 variables to the dataset
 
         By default, adds: 'SA', 'CT'
@@ -1590,15 +1614,17 @@ class ArgoAccessor:
             else:
                 return that
 
-    def create_float_source(self,   # noqa: C901
-                            path: str or os.PathLike = None,
-                            force: str = "default",
-                            select: str = 'deep',
-                            file_pref: str = '',
-                            file_suff: str = '',
-                            format: str = '5',
-                            do_compression: bool = True,
-                            debug_output: bool = False):
+    def create_float_source(
+        self,  # noqa: C901
+        path: str or os.PathLike = None,
+        force: str = "default",
+        select: str = "deep",
+        file_pref: str = "",
+        file_suff: str = "",
+        format: str = "5",
+        do_compression: bool = True,
+        debug_output: bool = False,
+    ):
         """ Preprocess data for OWC software calibration
 
         This method can create a FLOAT SOURCE file (i.e. the .mat file that usually goes into /float_source/) for OWC software.
@@ -1705,10 +1731,14 @@ class ArgoAccessor:
                 "force option must be 'default', 'raw' or 'adjusted'."
             )
 
-        log.debug("===================== START create_float_source in '%s' mode" % force)
+        log.debug(
+            "===================== START create_float_source in '%s' mode" % force
+        )
 
-        if len(np.unique(this['PLATFORM_NUMBER'])) > 1:
-            log.debug("Found more than one 1 float in this dataset, will split processing")
+        if len(np.unique(this["PLATFORM_NUMBER"])) > 1:
+            log.debug(
+                "Found more than one 1 float in this dataset, will split processing"
+            )
 
         def ds2mat(this_dsp):
             # Return a Matlab dictionary with dataset data to be used by savemat:
@@ -1745,10 +1775,12 @@ class ArgoAccessor:
             ii = ii[np.where(ii - 1 > 0)] - 1
             return bins[ii]
 
-        def preprocess_one_float(this_one: xr.Dataset,
-                                 this_path: str or os.PathLike = None,
-                                 select: str = 'deep',
-                                 debug_output: bool = False):
+        def preprocess_one_float(
+            this_one: xr.Dataset,
+            this_path: str or os.PathLike = None,
+            select: str = "deep",
+            debug_output: bool = False,
+        ):
             """ Run the entire preprocessing on a given dataset with one float data """
 
             # Add potential temperature:
@@ -1781,7 +1813,9 @@ class ArgoAccessor:
             )  # Matlab says to reject > 3
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L420
             this_one = this_one.argo.filter_qc(
-                QC_list=[v for v in range(10) if v != 3], QC_fields=["PRES_QC"], drop=True
+                QC_list=[v for v in range(10) if v != 3],
+                QC_fields=["PRES_QC"],
+                drop=True,
             )  # Matlab says to keep != 3
             this_one = this_one.argo.filter_qc(
                 QC_list=[v for v in range(10) if v != 4],
@@ -1800,8 +1834,7 @@ class ArgoAccessor:
             # Exclude dummies
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L427
             this_one = (
-                this_one
-                .argo._where(this_one["PSAL"] <= 50, drop=True)
+                this_one.argo._where(this_one["PSAL"] <= 50, drop=True)
                 .argo._where(this_one["PSAL"] >= 0, drop=True)
                 .argo._where(this_one["PTEMP"] <= 50, drop=True)
                 .argo._where(this_one["PTEMP"] >= -10, drop=True)
@@ -1822,8 +1855,14 @@ class ArgoAccessor:
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L208
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L451
             bins = np.arange(0.0, np.max(this_one["PRES"]) + 10.0, 10.0)
-            this_one = this_one.argo.groupby_pressure_bins(bins=bins, select=select, axis='PRES')
-            log.debug(pretty_print_count(this_one, "after vertical levels subsampling and re-alignment"))
+            this_one = this_one.argo.groupby_pressure_bins(
+                bins=bins, select=select, axis="PRES"
+            )
+            log.debug(
+                pretty_print_count(
+                    this_one, "after vertical levels subsampling and re-alignment"
+                )
+            )
 
             # Compute fractional year:
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L334
@@ -1845,25 +1884,37 @@ class ArgoAccessor:
             this_one_dsp_processed = xr.DataArray(
                 PRES,
                 dims=["m", "n"],
-                coords={"m": np.arange(0, PRES.shape[0]), "n": np.arange(0, PRES.shape[1])},
+                coords={
+                    "m": np.arange(0, PRES.shape[0]),
+                    "n": np.arange(0, PRES.shape[1]),
+                },
                 name="PRES",
             ).to_dataset(promote_attrs=False)
             this_one_dsp_processed["TEMP"] = xr.DataArray(
                 TEMP,
                 dims=["m", "n"],
-                coords={"m": np.arange(0, TEMP.shape[0]), "n": np.arange(0, TEMP.shape[1])},
+                coords={
+                    "m": np.arange(0, TEMP.shape[0]),
+                    "n": np.arange(0, TEMP.shape[1]),
+                },
                 name="TEMP",
             )
             this_one_dsp_processed["PTMP"] = xr.DataArray(
                 PTMP,
                 dims=["m", "n"],
-                coords={"m": np.arange(0, PTMP.shape[0]), "n": np.arange(0, PTMP.shape[1])},
+                coords={
+                    "m": np.arange(0, PTMP.shape[0]),
+                    "n": np.arange(0, PTMP.shape[1]),
+                },
                 name="PTMP",
             )
             this_one_dsp_processed["SAL"] = xr.DataArray(
                 SAL,
                 dims=["m", "n"],
-                coords={"m": np.arange(0, SAL.shape[0]), "n": np.arange(0, SAL.shape[1])},
+                coords={
+                    "m": np.arange(0, SAL.shape[0]),
+                    "n": np.arange(0, SAL.shape[1]),
+                },
                 name="SAL",
             )
             this_one_dsp_processed["PROFILE_NO"] = xr.DataArray(
@@ -1879,7 +1930,10 @@ class ArgoAccessor:
                 name="DATES",
             )
             this_one_dsp_processed["LAT"] = xr.DataArray(
-                LAT[0, :], dims=["n"], coords={"n": np.arange(0, LAT.shape[1])}, name="LAT"
+                LAT[0, :],
+                dims=["n"],
+                coords={"n": np.arange(0, LAT.shape[1])},
+                name="LAT",
             )
             this_one_dsp_processed["LONG"] = xr.DataArray(
                 LONG[0, :],
@@ -1902,21 +1956,62 @@ class ArgoAccessor:
                     return this_one_dsp_processed
             else:
                 from scipy.io import savemat
+
                 # Validity check of the path type is delegated to savemat
-                return savemat(this_path, mdata, appendmat=False, format=format, do_compression=do_compression)
+                return savemat(
+                    this_path,
+                    mdata,
+                    appendmat=False,
+                    format=format,
+                    do_compression=do_compression,
+                )
 
         # Run pre-processing for each float data
         output = {}
-        for WMO in np.unique(this['PLATFORM_NUMBER']):
+        for WMO in np.unique(this["PLATFORM_NUMBER"]):
             log.debug("> Preprocessing data for float WMO %i" % WMO)
-            this_float = this.argo._where(this['PLATFORM_NUMBER'] == WMO, drop=True)
+            this_float = this.argo._where(this["PLATFORM_NUMBER"] == WMO, drop=True)
             if path is None:
-                output[WMO] = preprocess_one_float(this_float, this_path=path, select=select, debug_output=debug_output)
+                output[WMO] = preprocess_one_float(
+                    this_float, this_path=path, select=select, debug_output=debug_output
+                )
             else:
                 os.makedirs(path, exist_ok=True)  # Make path exists
-                float_path = os.path.join(path, "%s%i%s.mat" % (file_pref, WMO, file_suff))
-                preprocess_one_float(this_float, this_path=float_path, select=select, debug_output=debug_output)
+                float_path = os.path.join(
+                    path, "%s%i%s.mat" % (file_pref, WMO, file_suff)
+                )
+                preprocess_one_float(
+                    this_float,
+                    this_path=float_path,
+                    select=select,
+                    debug_output=debug_output,
+                )
                 output[WMO] = float_path
         if path is None:
             log.debug("===================== END create_float_source")
             return output
+
+
+def my_open_dataset(filename_or_obj, drop_variables=None):
+    return xr.open_dataset(filename_or_obj, decode_cf=1, use_cftime=0, mask_and_scale=1)
+
+
+class ArgoEngine(BackendEntrypoint):
+    def open_dataset(
+        self,
+        filename_or_obj,
+        *,
+        drop_variables=None,
+        # other backend specific keyword arguments
+        # `chunks` and `cache` DO NOT go here, they are handled by xarray
+    ):
+        return my_open_dataset(filename_or_obj, drop_variables=drop_variables)
+
+    open_dataset_parameters = ["filename_or_obj", "drop_variables"]
+
+    def guess_can_open(self, filename_or_obj):
+        try:
+            _, ext = os.path.splitext(filename_or_obj)
+        except TypeError:
+            return False
+        return ext in {".nc"}

@@ -28,5 +28,8 @@ setuptools.setup(
         "Intended Audience :: Science/Research",
         "Operating System :: OS Independent",
         "Development Status :: 3 - Alpha"
-    ]
+    ],
+    entry_points = {
+                       "xarray.backends": ["my_engine=argopy.xarray:ArgoEngine"],
+                   },
 )
