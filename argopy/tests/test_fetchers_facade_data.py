@@ -106,6 +106,7 @@ class Test_Facade:
         with argopy.set_options(local_ftp=self.local_ftp):
             assert isinstance(self.__get_fetcher()[1].to_index(), pd.core.frame.DataFrame)
             assert isinstance(self.__get_fetcher()[1].to_index(full=True), pd.core.frame.DataFrame)
+            assert isinstance(self.__get_fetcher()[1].to_index(full=False, coriolis_id=True), pd.core.frame.DataFrame)
 
     def test_load(self):
         with argopy.set_options(local_ftp=self.local_ftp):

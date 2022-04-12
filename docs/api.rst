@@ -64,6 +64,7 @@ Data visualisation
    :toctree: generated/
 
    DataFetcher.plot
+   DataFetcher.dashboard
    IndexFetcher.plot
    dashboard
 
@@ -103,6 +104,8 @@ Low-level functions
     show_versions
     utilities.list_available_data_src
     utilities.list_available_index_src
+    utilities.get_coriolis_profile_id
+    utilities.get_ea_profile_page
 
 
 Dataset.argo (xarray accessor)
@@ -248,10 +251,10 @@ Plotters
 .. autosummary::
    :toctree: generated/
 
-    argopy.plotters.plot_trajectory
-    argopy.plotters.bar_plot
-    argopy.plotters.open_dashboard
-    argopy.plotters.open_sat_altim_report
+    argopy.plot.dashboard
+    argopy.plot.plot_trajectory
+    argopy.plot.bar_plot
+    argopy.plot.open_sat_altim_report
 
 Utilities
 ---------
@@ -266,3 +269,4 @@ Utilities
     argopy.utilities.list_standard_variables
     argopy.utilities.list_multiprofile_file_variables
     argopy.utilities.Chunker
+    argopy.utilities.ArgoNVSReferenceTables

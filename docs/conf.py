@@ -314,4 +314,5 @@ intersphinx_mapping = {
     'seaborn': ('https://seaborn.pydata.org/', None),
     'fsspec': ('https://filesystem-spec.readthedocs.io/en/stable/', None),
     'pyarrow': ('https://arrow.apache.org/docs/', None),
+    'IPython': ('https://ipython.readthedocs.io/en/stable/', None),
 }

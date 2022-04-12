@@ -9,7 +9,7 @@ import shutil
 import pickle  # nosec B403 only used with internal files/assets
 import json
 import tempfile
-import warnings
+# import warnings
 import logging
 from packaging import version
 
@@ -681,14 +681,17 @@ class httpstore(argo_store_proto):
         self.register(url)
         return js
 
-    def _mfprocessor_json(self, url, preprocess=None, *args, **kwargs):
+    def _mfprocessor_json(self, url, preprocess=None, url_follow=False, *args, **kwargs):
         # Load data
         data = self.open_json(url, **kwargs)
         # Pre-process
         if data is None:
             raise DataNotFound(url)
         elif isinstance(preprocess, types.FunctionType) or isinstance(preprocess, types.MethodType):
-            data = preprocess(data)
+            if url_follow:
+                data = preprocess(data, url=url, **kwargs)
+            else:
+                data = preprocess(data)
         return data
 
     def open_mfjson(self,  # noqa: C901
@@ -697,6 +700,7 @@ class httpstore(argo_store_proto):
                     method: str = 'thread',
                     progress: bool = False,
                     preprocess=None,
+                    url_follow=False,
                     errors: str = 'ignore',
                     *args, **kwargs):
         """ Open multiple json urls
@@ -720,6 +724,8 @@ class httpstore(argo_store_proto):
                 Display a progress bar (True by default, not for dask client method)
             preprocess: (callable, optional)
                 If provided, call this function on each json set
+            url_follow: bool, False
+                Follow the URL to the preprocess method as ``url`` argument.
 
             Returns
             -------
@@ -742,7 +748,7 @@ class httpstore(argo_store_proto):
 
             with ConcurrentExecutor as executor:
                 future_to_url = {executor.submit(self._mfprocessor_json, url,
-                                                 preprocess=preprocess, *args, **kwargs): url for url in urls}
+                                                 preprocess=preprocess, url_follow=url_follow, *args, **kwargs): url for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
                     futures = tqdm(futures, total=len(urls))
@@ -776,7 +782,7 @@ class httpstore(argo_store_proto):
             for url in urls:
                 data = None
                 try:
-                    data = self._mfprocessor_json(url, preprocess=preprocess, *args, **kwargs)
+                    data = self._mfprocessor_json(url, preprocess=preprocess, url_follow=url_follow, *args, **kwargs)
                 except Exception:
                     failed.append(url)
                     if errors == 'ignore':

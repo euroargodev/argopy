@@ -15,8 +15,8 @@ import warnings
 from argopy.stores import httpstore
 from argopy.options import OPTIONS
 from argopy.utilities import list_standard_variables, format_oneline, Chunker
-from argopy.plotters import open_dashboard
 from argopy.errors import DataNotFound
+
 
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']
@@ -430,12 +430,6 @@ class Fetch_wmo(ArgovisDataFetcher):
 
         urls = list_bunch(self.WMO, self.CYC)
         return self.url_encode(urls)
-
-    def dashboard(self, **kw):
-        if len(self.WMO) == 1:
-            return open_dashboard(wmo=self.WMO[0], **kw)
-        else:
-            warnings.warn("Plot dashboard only available for request with a single float")
 
 
 class Fetch_box(ArgovisDataFetcher):

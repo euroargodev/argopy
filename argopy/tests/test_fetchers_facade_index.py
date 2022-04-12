@@ -134,8 +134,6 @@ class Test_Facade:
         import IPython
         with argopy.set_options(local_ftp=self.local_ftp):
             f, fetcher = self.__get_fetcher(pt='float')
-
-            # Test 'qc_altimetry'
             dsh = fetcher.plot(ptype='qc_altimetry', embed='slide')
             assert isinstance(dsh(0), IPython.display.Image)
 

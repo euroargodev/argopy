@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import xarray
 import hashlib
+from ..plot import dashboard
 
 
 class ArgoDataFetcherProto(ABC):
@@ -97,3 +98,13 @@ class ArgoDataFetcherProto(ABC):
         """ Returns a unique SHA for a specifc cname / fetcher implementation"""
         path = "%s-%s" % (self.definition, self.cname())
         return hashlib.sha256(path.encode()).hexdigest()
+
+    def dashboard(self, **kw):
+        if self.WMO is not None:
+            if len(self.WMO) == 1 and self.CYC is not None and len(self.CYC) == 1:
+                return dashboard(wmo=self.WMO[0], cyc=self.CYC[0], **kw)
+            elif len(self.WMO) == 1:
+                return dashboard(wmo=self.WMO[0], **kw)
+            else:
+                warnings.warn("Dashboard only available for a single float or profile request")
+

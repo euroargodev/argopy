@@ -62,7 +62,8 @@
     argopy.utilities.list_available_data_src
     argopy.utilities.list_available_index_src
     argopy.utilities.Chunker
-
+    argopy.utilities.ArgoNVSReferenceTables
+    
     argopy.utilities.groupby_remap
     argopy.utilities.linear_interpolation_remap
 
@@ -81,18 +82,20 @@
     argopy.utilities.is_box
     argopy.utilities.is_indexbox
     argopy.utilities.is_wmo
-    argopy.utilities.check_wmo
     argopy.utilities.is_cyc
+    argopy.utilities.check_wmo
     argopy.utilities.check_cyc
     argopy.utilities.wmo2box
     argopy.utilities.deprecated
     argopy.utilities.Registry
     argopy.utilities.float_wmo
+    argopy.utilities.get_coriolis_profile_id
+    argopy.utilities.get_ea_profile_page
 
-    argopy.plotters.open_dashboard
-    argopy.plotters.bar_plot
-    argopy.plotters.plot_trajectory
-    argopy.plotters.open_sat_altim_report
+    argopy.plot.dashboard
+    argopy.plot.bar_plot
+    argopy.plot.plot_trajectory
+    argopy.plot.open_sat_altim_report
 
     argopy.stores.filesystems.filestore
     argopy.stores.filestore.open_dataset

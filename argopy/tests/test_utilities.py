@@ -30,6 +30,8 @@ from argopy.utilities import (
     TopoFetcher,
     Registry,
     float_wmo,
+    get_coriolis_profile_id,
+    get_ea_profile_page,
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
@@ -684,4 +686,16 @@ class Test_Registry():
             Registry(opts[0][0], dtype=opts[1], invalid='warn').commit(opts[0][-1])
         # Raise nothing:
         Registry(opts[0][0], dtype=opts[1], invalid='ignore').commit(opts[0][-1])
+
+
+@requires_connection
+def test_get_coriolis_profile_id():
+    assert isinstance(get_coriolis_profile_id(6901929), pd.core.frame.DataFrame)
+    assert isinstance(get_coriolis_profile_id(6901929, 12), pd.core.frame.DataFrame)
+
+
+@requires_connection
+def test_get_ea_profile_page():
+    assert is_list_of_strings(get_ea_profile_page(6901929))
+    assert is_list_of_strings(get_ea_profile_page(6901929, 12))
 
