@@ -12,11 +12,10 @@ import warnings
 import getpass
 import logging
 import importlib
-from .proto import ArgoDataFetcherProto
 
+from .proto import ArgoDataFetcherProto
 from ..utilities import list_standard_variables, format_oneline, argo_split_path
 from ..options import OPTIONS, check_gdac_path
-from ..plotters import open_dashboard
 from ..errors import DataNotFound
 
 
@@ -30,7 +29,7 @@ if has_pyarrow:
 else:
     from ..stores.argo_index_pd import indexstore_pandas as indexstore
 
-    # warnings.warn("Consider installing pyarrow in order to improve performances when fetching GDAC data")
+    # log.warning("Consider installing pyarrow in order to improve performances when fetching GDAC data")
     log.debug("Using pandas indexstore")
 
 access_points = ["wmo", "box"]
@@ -482,12 +481,6 @@ class Fetch_wmo(FTPArgoDataFetcher):
 
         self.N_FILES = len(self._list_of_argo_files)
         return self._list_of_argo_files
-
-    def dashboard(self, **kw):
-        if len(self.WMO) == 1:
-            return open_dashboard(wmo=self.WMO[0], **kw)
-        else:
-            warnings.warn("Dashboard only available for a single float request")
 
 
 class Fetch_box(FTPArgoDataFetcher):

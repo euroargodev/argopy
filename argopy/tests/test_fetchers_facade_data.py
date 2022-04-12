@@ -23,7 +23,8 @@ from utils import (
     requires_matplotlib,
     has_matplotlib,
     has_seaborn,
-    has_cartopy
+    has_cartopy,
+    has_ipython,
 )
 
 
@@ -161,16 +162,29 @@ class Test_Facade:
             with pytest.raises(ValueError):
                 fetcher.plot(ptype='invalid_cat', with_seaborn=ws)
 
-    @requires_ipython
     @requires_matplotlib
     def test_plot_qc_altimetry(self):
-        import IPython
+        if has_ipython:
+            import IPython
+
         with argopy.set_options(local_ftp=self.local_ftp):
             f, fetcher = self.__get_fetcher(pt='float')
-
-            # Test 'qc_altimetry'
             dsh = fetcher.plot(ptype='qc_altimetry', embed='slide')
-            assert isinstance(dsh(0), IPython.display.Image)
+            if has_ipython:
+                assert isinstance(dsh(0), IPython.display.Image)
+            else:
+                assert isinstance(dsh, dict)
+
+    # @requires_ipython
+    # @requires_matplotlib
+    # def test_plot_qc_altimetry(self):
+    #     import IPython
+    #     with argopy.set_options(local_ftp=self.local_ftp):
+    #         f, fetcher = self.__get_fetcher(pt='float')
+    #
+    #         # Test 'qc_altimetry'
+    #         dsh = fetcher.plot(ptype='qc_altimetry', embed='slide')
+    #         assert isinstance(dsh(0), IPython.display.Image)
 
 
 """

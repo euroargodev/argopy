@@ -474,7 +474,7 @@ class ArgoDataFetcher:
             ds = self.data.argo.point2profile()
             if "N_LEVELS" in ds.dims:
                 df = (
-                    ds.drop_vars(set(ds.data_vars) - set(["PLATFORM_NUMBER"]))
+                    ds.drop_vars(set(ds.data_vars) - set(["PLATFORM_NUMBER", "CYCLE_NUMBER"]))
                     .drop_dims("N_LEVELS")
                     .to_dataframe()
                 )
@@ -482,7 +482,7 @@ class ArgoDataFetcher:
                 # This is a special case where there is no vertical level in the dataset
                 # This can happen when a single measurement was loaded
                 df = (
-                    ds.drop_vars(set(ds.data_vars) - set(["PLATFORM_NUMBER"]))
+                    ds.drop_vars(set(ds.data_vars) - set(["PLATFORM_NUMBER", "CYCLE_NUMBER"]))
                     .to_dataframe()
                 )
 

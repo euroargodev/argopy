@@ -9,15 +9,11 @@ import pandas as pd
 from abc import ABC, abstractmethod
 import warnings
 import logging
-from fsspec.core import split_protocol
 import importlib
 
-from argopy.utilities import (
-    format_oneline
-)
-from argopy.options import OPTIONS, check_gdac_path
-from argopy.plotters import open_dashboard
-from argopy.errors import FtpPathError
+from ..utilities import format_oneline
+from ..options import OPTIONS, check_gdac_path
+from ..plot import dashboard
 
 
 log = logging.getLogger("argopy.gdacftp.index")
@@ -36,7 +32,6 @@ exit_formats = ["xarray"]
 dataset_ids = ["phy", "bgc"]  # First is default
 api_server = OPTIONS['ftp']  # API root url
 api_server_check = api_server  # URL to check if the API is alive, used by isAPIconnected
-
 
 
 class FTPArgoIndexFetcher(ABC):
@@ -183,6 +178,15 @@ class FTPArgoIndexFetcher(ABC):
         """ Load Argo index and return a xarray Dataset """
         return self.to_dataframe().to_xarray()
 
+    def dashboard(self, **kw):
+        if self.WMO is not None:
+            if len(self.WMO) == 1 and self.CYC is not None and len(self.CYC) == 1:
+                return dashboard(wmo=self.WMO[0], cyc=self.CYC[0], **kw)
+            elif len(self.WMO) == 1:
+                return dashboard(wmo=self.WMO[0], **kw)
+            else:
+                warnings.warn("Dashboard only available for a single float or profile request")
+
 
 class Fetch_wmo(FTPArgoIndexFetcher):
     """ Manage access to GDAC ftp Argo index for: a list of WMOs, CYCs  """
@@ -222,12 +226,6 @@ class Fetch_wmo(FTPArgoIndexFetcher):
 
         self.N_FILES = len(self._list_of_argo_files)
         return self._list_of_argo_files
-
-    def dashboard(self, **kw):
-        if len(self.WMO) == 1:
-            return open_dashboard(wmo=self.WMO[0], **kw)
-        else:
-            warnings.warn("Dashboard only available for a single float request")
 
 
 class Fetch_box(FTPArgoIndexFetcher):

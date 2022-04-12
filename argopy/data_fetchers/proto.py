@@ -108,4 +108,3 @@ class ArgoDataFetcherProto(ABC):
                 return dashboard(wmo=self.WMO[0], **kw)
             else:
                 warnings.warn("Dashboard only available for a single float or profile request")
-
