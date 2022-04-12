@@ -30,6 +30,10 @@ v0.1.XX (X XXX. 2022)
     import xarray as xr
     ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
 
+**Breaking changes with previous versions**
+
+- :class:`argopy.utilities.ArgoNVSReferenceTables` methods ``all_tbl`` and ``all_tbl_name`` are now properties, not methods.
+
 
 v0.1.11 (X XXX. 2022)
 ---------------------

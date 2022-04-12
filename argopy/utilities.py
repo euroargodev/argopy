@@ -1993,6 +1993,7 @@ class ArgoNVSReferenceTables:
         js = self.fs.open_json(self.get_url(rtid))
         return self._jsCollection(js)
 
+    @property
     def all_tbl(self):
         """Return all Argo Reference tables
 
@@ -2008,6 +2009,7 @@ class ArgoNVSReferenceTables:
         all_tables = collections.OrderedDict(sorted(all_tables.items()))
         return all_tables
 
+    @property
     def all_tbl_name(self):
         """Return names of all Argo Reference tables
 
