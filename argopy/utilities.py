@@ -276,7 +276,7 @@ def list_multiprofile_file_variables():
 
 
 def check_localftp(path, errors: str = "ignore"):
-    """ Check if the path has the expected GDAC ftp structure
+    """Check if the path has the expected GDAC ftp structure.
 
         Check if the path is structured like:
         .
@@ -292,8 +292,8 @@ def check_localftp(path, errors: str = "ignore"):
         ----------
         path: str
             Path name to check
-        errors: str
-            "ignore" or "raise" (or "warn"
+        errors: str, optional
+            "ignore" or "raise" (or "warn")
 
         Returns
         -------
@@ -1351,6 +1351,77 @@ def is_wmo(lst, errors="raise"):  # noqa: C901
         return result
 
 
+def check_cyc(lst):
+    """ Validate a CYC option and returned it as a list of integers
+    Parameters
+    ----------
+    cyc: int
+        CYC must be an integer or an iterable with elements that can be casted as positive integers
+    errors: 'raise'
+    Returns
+    -------
+    list(int)
+    """
+    is_cyc(lst, errors="raise")
+
+    # Make sure we deal with a list
+    if not isinstance(lst, list):
+        if isinstance(lst, np.ndarray):
+            lst = list(lst)
+        else:
+            lst = [lst]
+
+    # Then cast list elements as integers
+    return [abs(int(x)) for x in lst]
+
+
+def is_cyc(lst, errors="raise"):  # noqa: C901
+    """ Check if a CYC is valid
+    Parameters
+    ----------
+    cyc: int, list(int), array(int)
+        CYC must be a single or a list of at most 4 digit positive numbers
+    errors: 'raise'
+        Possibly raises a ValueError exception, otherwise fails silently.
+    Returns
+    -------
+    bool
+        True if cyc is indeed a list of integers
+    """
+    # Make sure we deal with a list
+    if not isinstance(lst, list):
+        if isinstance(lst, np.ndarray):
+            lst = list(lst)
+        else:
+            lst = [lst]
+
+    # Error message:
+    msg = "CYC must be a single or a list of at most 4 digit positive numbers"
+
+    # Then try to cast list elements as integers, return True if ok
+    result = True
+    try:
+        for x in lst:
+            if not str(x).isdigit():
+                result = False
+
+            if len(str(x)) > 4:
+                result = False
+
+            if int(x) < 0:  # Some cycle number are 0 !
+                result = False
+
+    except Exception:
+        result = False
+        if errors == "raise":
+            raise ValueError(msg)
+
+    if not result and errors == "raise":
+        raise ValueError(msg)
+    else:
+        return result
+
+
 # def docstring(value):
 #     """Replace one function docstring
 #
@@ -1852,6 +1923,96 @@ class TopoFetcher:
     def load(self, errors: str = "ignore"):
         """ Load Topographic data and return a xarray.DataSet """
         return self.to_xarray(errors=errors)
+
+
+def get_coriolis_profile_id(WMO, CYC=None):
+    """ Return a :class:`pandas.DataFrame` with CORIOLIS ID of WMO/CYC profile pairs
+
+        Parameters
+        ----------
+        WMO: int, list(int)
+            Define the list of Argo floats. This is a list of integers with WMO float identifiers.
+            WMO is the World Meteorological Organization.
+        CYC: int, list(int)
+            Define the list of cycle numbers to load ID for each Argo floats listed in ``WMO``.
+
+        Returns
+        -------
+        :class:`pandas.DataFrame`
+    """
+    WMO_list = check_wmo(WMO)
+    if CYC is not None:
+        CYC_list = check_cyc(CYC)
+    URIs = [
+        "https://dataselection.euro-argo.eu/api/trajectory/%i" % wmo for wmo in WMO_list
+    ]
+
+    def prec(data, url):
+        # Transform trajectory json to dataframe
+        # See: https://dataselection.euro-argo.eu/swagger-ui.html#!/cycle-controller/getCyclesByPlatformCodeUsingGET
+        WMO = check_wmo(url.split("/")[-1])[0]
+        rows = []
+        for profile in data:
+            keys = [x for x in profile.keys() if x not in ["coordinate"]]
+            meta_row = dict((key, profile[key]) for key in keys)
+            for row in profile["coordinate"]:
+                meta_row[row] = profile["coordinate"][row]
+            meta_row["WMO"] = WMO
+            rows.append(meta_row)
+        return pd.DataFrame(rows)
+
+    fs = httpstore(cache=True)
+    data = fs.open_mfjson(URIs, preprocess=prec, errors="raise", url_follow=True)
+
+    # Merge results (list of dataframe):
+    key_map = {
+        "id": "ID",
+        "lat": "LATITUDE",
+        "lon": "LONGITUDE",
+        "cvNumber": "CYCLE_NUMBER",
+        "level": "level",
+        "WMO": "PLATFORM_NUMBER",
+    }
+    for i, df in enumerate(data):
+        df = df.reset_index()
+        df = df.rename(columns=key_map)
+        df = df[[value for value in key_map.values() if value in df.columns]]
+        data[i] = df
+    df = pd.concat(data, ignore_index=True)
+    df.sort_values(by=["PLATFORM_NUMBER", "CYCLE_NUMBER"], inplace=True)
+    df = df.reset_index(drop=True)
+    # df = df.set_index(["PLATFORM_NUMBER", "CYCLE_NUMBER"])
+    df = df.astype({"ID": int})
+    if CYC is not None:
+        df = pd.concat([df[df["CYCLE_NUMBER"] == cyc] for cyc in CYC_list]).reset_index(
+            drop=True
+        )
+    return df[
+        ["PLATFORM_NUMBER", "CYCLE_NUMBER", "ID", "LATITUDE", "LONGITUDE", "level"]
+    ]
+
+
+def get_ea_profile_page(WMO, CYC=None):
+    """ Return a list of URL
+
+        Parameters
+        ----------
+        WMO: int, list(int)
+            WMO must be an integer or an iterable with elements that can be casted as integers
+        CYC: int, list(int), default (None)
+            CYC must be an integer or an iterable with elements that can be casted as positive integers
+
+        Returns
+        -------
+        list(str)
+
+        See also
+        --------
+        get_coriolis_profile_id
+    """
+    df = get_coriolis_profile_id(WMO, CYC)
+    url = "https://dataselection.euro-argo.eu/cycle/{}"
+    return [url.format(this_id) for this_id in sorted(df["ID"])]
 
 
 class ArgoNVSReferenceTables:

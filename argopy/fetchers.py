@@ -17,8 +17,8 @@ import logging
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher
-from .utilities import list_available_data_src, list_available_index_src, is_box, is_indexbox, check_wmo
-from .plotters import plot_trajectory, bar_plot, open_sat_altim_report
+from .utilities import list_available_data_src, list_available_index_src, is_box, is_indexbox, check_wmo, get_coriolis_profile_id
+from .plot import plot_trajectory, bar_plot, open_sat_altim_report
 
 
 AVAILABLE_DATA_SOURCES = list_available_data_src()
@@ -248,7 +248,12 @@ class ArgoDataFetcher:
                 np.min(this_ds['TIME'].values), np.max(this_ds['TIME'].values)]
 
     def dashboard(self, **kw):
-        """ Open access point dashboard """
+        """Open access point dashboard.
+
+            See Also
+            --------
+            :class:`argopy.dashboard`
+        """
         try:
             return self.fetcher.dashboard(**kw)
         except Exception:
@@ -399,7 +404,7 @@ class ArgoDataFetcher:
             )
         return self.load().data.to_dataframe(**kwargs)
 
-    def to_index(self, full: bool = False):
+    def to_index(self, full: bool = False, coriolis_id = False):
         """ Create an index of Argo data, fetch data if necessary
 
             Build an Argo-like index of profiles from fetched data.
@@ -419,7 +424,7 @@ class ArgoDataFetcher:
             self.load()
             ds = self.data.argo.point2profile()
             df = (
-                ds.drop_vars(set(ds.data_vars) - set(["PLATFORM_NUMBER"]))
+                ds.drop_vars(set(ds.data_vars) - set(["PLATFORM_NUMBER", "CYCLE_NUMBER"]))
                 .drop_dims("N_LEVELS")
                 .to_dataframe()
             )
@@ -428,6 +433,7 @@ class ArgoDataFetcher:
                 .rename(
                     columns={
                         "PLATFORM_NUMBER": "wmo",
+                        "CYCLE_NUMBER": "cyc",
                         "LONGITUDE": "longitude",
                         "LATITUDE": "latitude",
                         "TIME": "date",
@@ -435,8 +441,13 @@ class ArgoDataFetcher:
                 )
                 .drop(columns="N_PROF")
             )
-            df = df[["date", "latitude", "longitude", "wmo"]]
-
+            df = df[["date", "latitude", "longitude", "wmo", "cyc"]]
+            if coriolis_id:
+                df['id'] = None
+                def fc(row):
+                    row['id'] = get_coriolis_profile_id(row['wmo'], row['cyc'])['ID'].values[0]
+                    return row
+                df = df.apply(fc, axis=1)
         else:
             # Instantiate and load an IndexFetcher:
             index_loader = ArgoIndexFetcher(mode=self._mode,
@@ -491,7 +502,7 @@ class ArgoDataFetcher:
         if not self._loaded or force:
             # Fetch measurements:
             self._data = self.to_xarray(**kwargs)
-            # Next 2 lines must come before ._index because to_index() calls back on .load() to read .data
+            # Next 2 lines must come before ._index because to_index(full=False) calls back on .load() to read .data
             self._request = self.__repr__()  # Save definition of loaded data
             self._loaded = True
             # Extract measurements index from data:
@@ -512,7 +523,8 @@ class ArgoDataFetcher:
 
             Parameters
             ----------
-            ptype: {'trajectory',' profiler', 'dac', 'qc_altimetry}, default: 'trajectory'
+            ptype: str, optional, default: 'trajectory'
+                Plot type, one of the following: 'trajectory',' profiler', 'dac', 'qc_altimetry'.
 
             Returns
             -------

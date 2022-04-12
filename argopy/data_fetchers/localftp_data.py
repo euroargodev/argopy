@@ -32,7 +32,6 @@ from glob import glob
 import numpy as np
 import pandas as pd
 from abc import abstractmethod
-import warnings
 import getpass
 
 from .proto import ArgoDataFetcherProto
@@ -44,7 +43,7 @@ from argopy.utilities import (
 )
 from argopy.options import OPTIONS
 from argopy.stores import filestore, indexstore, indexfilter_box
-from argopy.plotters import open_dashboard
+
 
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
@@ -513,12 +512,6 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
             self._list_of_argo_files = list_bunch(self.WMO, self.CYC)
 
         return self._list_of_argo_files
-
-    def dashboard(self, **kw):
-        if len(self.WMO) == 1:
-            return open_dashboard(wmo=self.WMO[0], **kw)
-        else:
-            warnings.warn("Dashboard only available for a single float request")
 
 
 class Fetch_box(LocalFTPArgoDataFetcher):

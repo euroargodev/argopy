@@ -22,11 +22,14 @@ from argopy.utilities import (
     is_list_of_strings,
     format_oneline, is_indexbox,
     check_wmo, is_wmo,
+    check_cyc, is_cyc,
     wmo2box,
     modified_environ,
     wrap_longitude,
     toYearFraction, YearFraction_to_datetime,
-    TopoFetcher
+    TopoFetcher,
+    get_coriolis_profile_id,
+    get_ea_profile_page,
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
@@ -490,6 +493,31 @@ def test_check_wmo():
     assert check_wmo(np.array((12345, 1234567), dtype='int')) == [12345, 1234567]
 
 
+def test_is_cyc():
+    assert is_cyc(123)
+    assert is_cyc([123])
+    assert is_cyc([12, 123, 1234])
+    with pytest.raises(ValueError):
+        is_cyc(12345, errors="raise")
+    with pytest.raises(ValueError):
+        is_cyc(-1234, errors="raise")
+    with pytest.raises(ValueError):
+        is_cyc(1234.12, errors="raise")
+    with pytest.raises(ValueError):
+        is_cyc(12345.7, errors="raise")
+    assert not is_cyc(12345, errors="silent")
+    assert not is_cyc(-12, errors="silent")
+    assert not is_cyc(1234.12, errors="silent")
+    assert not is_cyc(12345.7, errors="silent")
+
+
+def test_check_cyc():
+    assert check_cyc(123) == [123]
+    assert check_cyc([12]) == [12]
+    assert check_cyc([12, 123]) == [12, 123]
+    assert check_cyc(np.array((123, 1234), dtype='int')) == [123, 1234]
+
+
 def test_modified_environ():
     os.environ["DUMMY_ENV_ARGOPY"] = 'initial'
     with modified_environ(DUMMY_ENV_ARGOPY='toto'):
@@ -552,3 +580,15 @@ class Test_TopoFetcher():
         ds = fetcher.to_xarray()
         assert isinstance(ds, xr.Dataset)
         assert 'elevation' in ds.data_vars
+
+
+@requires_connection
+def test_get_coriolis_profile_id():
+    assert isinstance(get_coriolis_profile_id(6901929), pd.core.frame.DataFrame)
+    assert isinstance(get_coriolis_profile_id(6901929, 12), pd.core.frame.DataFrame)
+
+
+@requires_connection
+def test_get_ea_profile_page():
+    assert is_list_of_strings(get_ea_profile_page(6901929))
+    assert is_list_of_strings(get_ea_profile_page(6901929, 12))
