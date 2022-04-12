@@ -2720,6 +2720,7 @@ def get_coriolis_profile_id(WMO, CYC=None):
             rows.append(meta_row)
         return pd.DataFrame(rows)
 
+    from .stores import httpstore
     fs = httpstore(cache=True)
     data = fs.open_mfjson(URIs, preprocess=prec, errors="raise", url_follow=True)
 
@@ -2828,6 +2829,7 @@ class ArgoNVSReferenceTables:
                  cachedir: str = "",
                  ):
         """Argo Reference Tables from NVS"""
+        from .stores import httpstore
         cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
         self.fs = httpstore(cache=cache, cachedir=cachedir)
         self.nvs = nvs
