@@ -576,6 +576,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
             ("dask", lambda mod: mod.__version__),  # This could go away from requirements ?
             ("toolz", lambda mod: mod.__version__),
             ("gsw", lambda mod: mod.__version__),   # Used by xarray accessor to compute new variables
+            ("aiohttp", lambda mod: mod.__version__),
         ]),
         'ext.misc': sorted([
             ("pyarrow", lambda mod: mod.__version__),
