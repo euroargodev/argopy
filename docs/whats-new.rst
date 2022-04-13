@@ -7,8 +7,8 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-v0.1.XX (X XXX. 2022)
----------------------
+v0.1.11 (13 Apr. 2022)
+----------------------
 
 **Features and front-end API**
 
@@ -63,7 +63,7 @@ We added the Ocean-OPS (former JCOMMOPS) dashboard for all floats and the Argo-B
     # or
     argopy.dashboard(5904797, 12, type='bgc')
 
-- New utility function :class:`argopy.utilities.ArgoNVSReferenceTables` to retrieve Argo Reference Tables. (:commit:`cc8fdbe132874b71b35203053626cc29ae7d19c4`) by `G. Maze <http://www.github.com/gmaze>`_.
+- **New utility function :class:`argopy.utilities.ArgoNVSReferenceTables` to retrieve Argo Reference Tables**. (:commit:`cc8fdbe132874b71b35203053626cc29ae7d19c4`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 
