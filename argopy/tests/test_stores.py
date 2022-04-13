@@ -170,7 +170,7 @@ class Test_HttpStore:
         with pytest.raises(FileSystemHasNoCache):
             fs.cachepath("dummy_uri")
 
-    def test_cachable(self):
+    def test_cacheable(self):
         fs = httpstore(cache=True)
         assert isinstance(fs.fs, fsspec.implementations.cached.WholeFileCacheFileSystem)
 
@@ -265,7 +265,7 @@ class Test_MemoryStore:
         with pytest.raises(FileSystemHasNoCache):
             fs.cachepath("dummy_uri")
 
-    def test_cachable(self):
+    def test_cacheable(self):
         fs = memorystore(cache=True)
         assert isinstance(fs.fs, fsspec.implementations.cached.WholeFileCacheFileSystem)
 
@@ -519,20 +519,20 @@ class IndexStore_test_proto:
         srch = request.param[1]
         yield run_a_search(self.new_idx, {'host': host, 'cache': True}, srch)
 
-    def assert_index(self, this_idx, cachable=False):
+    def assert_index(self, this_idx, cacheable=False):
         assert hasattr(this_idx, 'index')
         assert this_idx.shape[0] == this_idx.index.shape[0]
         assert this_idx.N_RECORDS == this_idx.index.shape[0]
         assert is_list_of_strings(this_idx.uri_full_index) and len(this_idx.uri_full_index) == this_idx.N_RECORDS
-        if cachable:
+        if cacheable:
             assert is_list_of_strings(this_idx.cachepath('index'))
 
-    def assert_search(self, this_idx, cachable=False):
+    def assert_search(self, this_idx, cacheable=False):
         assert hasattr(this_idx, 'search')
         assert this_idx.N_MATCH == this_idx.search.shape[0]
         assert this_idx.N_FILES == this_idx.N_MATCH
         assert is_list_of_strings(this_idx.uri) and len(this_idx.uri) == this_idx.N_MATCH
-        if cachable:
+        if cacheable:
             assert is_list_of_strings(this_idx.cachepath('search'))
 
     # @skip_this
@@ -572,7 +572,7 @@ class IndexStore_test_proto:
     def test_search(self, a_search):
         @safe_to_server_errors
         def test(this_searched_store):
-            self.assert_search(this_searched_store, cachable=False)
+            self.assert_search(this_searched_store, cacheable=False)
         test(a_search)
 
     # @skip_this
@@ -606,14 +606,14 @@ class IndexStore_test_proto:
 
     def test_caching_index(self):
         idx = self.new_idx(cache=True)
-        self.assert_index(idx, cachable=True)
+        self.assert_index(idx, cacheable=True)
 
     # @skip_this
     def test_caching_search(self):
         idx = self.new_idx(cache=True)
         wmo = [s['wmo'] for s in valid_searches if 'wmo' in s.keys()][0]
         idx.search_wmo(wmo)
-        self.assert_search(idx, cachable=True)
+        self.assert_search(idx, cacheable=True)
 
     # @skip_this
     def test_read_wmo(self):

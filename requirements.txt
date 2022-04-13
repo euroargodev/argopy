@@ -6,6 +6,6 @@ dask>=2.9  # This could go away ?
 toolz>=0.8.2
 erddapy>=0.6  # This could go away ?
 fsspec>=0.7.4
-gsw<=3.4.0  # Used by xarray accessor to compute new variables, so not necessary to core functionnalities
+gsw<=3.4.0  # Used by xarray accessor to compute new variables, so not necessary to core functionalities
 aiohttp>=3.6.2
 packaging>= 20.4  # Using 'version' to make API compatible with several fsspec releases

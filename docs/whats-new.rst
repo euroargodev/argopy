@@ -27,7 +27,7 @@ v0.1.11 (13 Apr. 2022)
 
 .. note::
 
-    The new ``gdac`` fetcher uses Argo index to determine which profile files to load. Hence, this fetcher may show poor performances when used with a ``region`` access point. Don't hesitate to check :ref:`Performances` to try to improve performances, otherwise, we recommand to use a webAPI access point (``erddap`` or ``argovis``).
+    The new ``gdac`` fetcher uses Argo index to determine which profile files to load. Hence, this fetcher may show poor performances when used with a ``region`` access point. Don't hesitate to check :ref:`Performances` to try to improve performances, otherwise, we recommend to use a webAPI access point (``erddap`` or ``argovis``).
 
 .. warning::
 
