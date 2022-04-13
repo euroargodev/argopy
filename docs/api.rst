@@ -106,6 +106,7 @@ Low-level functions
     utilities.list_available_index_src
     utilities.get_coriolis_profile_id
     utilities.get_ea_profile_page
+    utilities.ArgoNVSReferenceTables
 
 
 Dataset.argo (xarray accessor)
@@ -269,4 +270,3 @@ Utilities
     argopy.utilities.list_standard_variables
     argopy.utilities.list_multiprofile_file_variables
     argopy.utilities.Chunker
-    argopy.utilities.ArgoNVSReferenceTables
