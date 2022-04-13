@@ -1541,12 +1541,14 @@ def is_wmo(lst, errors="raise"):  # noqa: C901
 
 def check_cyc(lst, errors="raise"):
     """ Validate a CYC option and returned it as a list of integers
+
     Parameters
     ----------
     cyc: int
         CYC must be an integer or an iterable with elements that can be casted as positive integers
     errors: {'raise', 'warn', 'ignore'}
         Possibly raises a ValueError exception or UserWarning, otherwise fails silently.
+
     Returns
     -------
     list(int)
@@ -2779,7 +2781,8 @@ def get_ea_profile_page(WMO, CYC=None):
 class ArgoNVSReferenceTables:
     """Argo Reference Tables
 
-    Utility function to retrieve Argo Reference Tables from a NVS server
+    Utility function to retrieve Argo Reference Tables from a NVS server.
+
     By default, this relies on: https://vocab.nerc.ac.uk/collection
 
     Examples
@@ -2877,9 +2880,28 @@ class ArgoNVSReferenceTables:
         return (name, desc, rtid)
 
     def get_url(self, rtid, fmt="ld+json"):
+        """Return URL toward a given reference table for a given format
+
+        Parameters
+        ----------
+        rtid: {str, int}
+            Name or number of the reference table to retrieve. Eg: 'R01', 12
+        fmt: str, default: "ld+json"
+            Format of the NVS server response. Can be: "ld+json", "rdf+xml" or "text/turtle".
+
+        Returns
+        -------
+        str
+        """
         rtid = self._valid_ref(rtid)
         if fmt == "ld+json":
             fmt_ext = "?_profile=nvs&_mediatype=application/ld+json"
+        elif fmt == "rdf+xml":
+            fmt_ext = "?_profile=nvs&_mediatype=application/rdf+xml"
+        elif fmt == "text/turtle":
+            fmt_ext = "?_profile=nvs&_mediatype=text/turtle"
+        else:
+            raise ValueError("Invalid format. Must be in: 'ld+json', 'rdf+xml' or 'text/turtle'.")
         url = "{}/{}/current/{}".format
         return url(self.nvs, rtid, fmt_ext)
 
@@ -2889,7 +2911,7 @@ class ArgoNVSReferenceTables:
         Parameters
         ----------
         rtid: {str, int}
-            Name or number of the reference table to retrieve. This can be 'R01' or '12'
+            Name or number of the reference table to retrieve. Eg: 'R01', 12
 
         Returns
         -------
@@ -2906,7 +2928,7 @@ class ArgoNVSReferenceTables:
         Parameters
         ----------
         rtid: {str, int}
-            Name or number of the reference table to retrieve. This can be 'R01' or '12'
+            Name or number of the reference table to retrieve. Eg: 'R01', 12
 
         Returns
         -------
