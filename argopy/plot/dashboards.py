@@ -117,7 +117,7 @@ def open_dashboard(
             * "ea", "data": the `Euro-Argo data selection dashboard <https://dataselection.euro-argo.eu>`_
             * "meta": the `Euro-Argo fleet monitoring dashboard <https://fleetmonitoring.euro-argo.eu>`_
             * "op", "ocean-ops": the `Ocean-OPS Argo dashboard <https://www.ocean-ops.org/board?t=argo>`_
-            * "bgc": the `Argo-BGC specific dashbaord <https://maps.biogeochemical-argo.com/bgcargo>`_
+            * "bgc": the `Argo-BGC specific dashboard <https://maps.biogeochemical-argo.com/bgcargo>`_
             * "argovis": the `Colorado Argovis dashboard <https://argovis.colorado.edu>`_
         url_only: bool, optional, default: False
             If set to True, will only return the URL toward the dashboard

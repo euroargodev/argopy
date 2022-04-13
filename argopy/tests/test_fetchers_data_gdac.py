@@ -93,7 +93,7 @@ def create_fetcher(fetcher_args, access_point, xfail=False):
     return fct_safe_to_server_errors(core)(fetcher_args, access_point, xfail=xfail)
 
 
-def assert_fetcher(this_fetcher, cachable=False):
+def assert_fetcher(this_fetcher, cacheable=False):
     """Assert a data fetcher.
 
         This should be used by all tests
@@ -102,7 +102,7 @@ def assert_fetcher(this_fetcher, cachable=False):
     assert is_list_of_strings(this_fetcher.uri)
     assert (this_fetcher.N_RECORDS >= 1)  # Make sure we loaded the index file content
     assert (this_fetcher.N_FILES >= 1)  # Make sure we found results
-    if cachable:
+    if cacheable:
         assert is_list_of_strings(this_fetcher.cachepath)
 
 
@@ -184,7 +184,7 @@ class TestBackend:
     def test_fetching(self, _make_a_fetcher):
         @safe_to_server_errors
         def test(this_fetcher):
-            assert_fetcher(this_fetcher, cachable=False)
+            assert_fetcher(this_fetcher, cacheable=False)
         test(_make_a_fetcher)
 
     # @skip_for_debug
@@ -193,7 +193,7 @@ class TestBackend:
         @safe_to_server_errors
         def test(this_fetcher):
             # Assert the fetcher (this trigger data fetching, hence caching as well):
-            assert_fetcher(this_fetcher, cachable=True)
+            assert_fetcher(this_fetcher, cacheable=True)
 
             # Make sure we can clear the cache:
             this_fetcher.clear_cache()
