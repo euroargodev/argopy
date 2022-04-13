@@ -1,6 +1,4 @@
 import warnings
-
-import warnings
 warnings.filterwarnings("default", category=DeprecationWarning, module=__name__)
 
 def deprecation_of_plotters():
@@ -26,7 +24,6 @@ def plot_trajectory(*args, **kwargs):
     deprecation_of_plotters()
     from .plot import plot_trajectory
     return plot_trajectory(*args, **kwargs)
-
 
 def bar_plot(*args, **kwargs):
     deprecation_of_plotters()

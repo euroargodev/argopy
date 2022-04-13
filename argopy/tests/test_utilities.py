@@ -28,12 +28,14 @@ from argopy.utilities import (
     wrap_longitude,
     toYearFraction, YearFraction_to_datetime,
     TopoFetcher,
+    Registry,
+    float_wmo,
     get_coriolis_profile_id,
     get_ea_profile_page,
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
-from . import requires_connection, requires_localftp, safe_to_server_errors
+from utils import requires_connection, requires_localftp, safe_to_server_errors
 
 
 def test_invalid_dictionnary():
@@ -88,9 +90,8 @@ def test_clear_cache():
     ftproot, flist = argopy.tutorial.open_dataset("localftp")
     with tempfile.TemporaryDirectory() as cachedir:
         with argopy.set_options(cachedir=cachedir, local_ftp=ftproot):
-            loader = ArgoDataFetcher(src="localftp", cache=True).profile(2902696, 12)
-            loader.to_xarray()  # 1st call to load from source and save in memory
-            loader.to_xarray()  # 2nd call to load from memory and save in cache
+            loader = ArgoDataFetcher(src="gdac", ftp=ftproot, cache=True).profile(2902696, 12)
+            loader.to_xarray()
             argopy.clear_cache()
             assert os.path.exists(cachedir) is True
             assert len(os.listdir(cachedir)) == 0
@@ -472,6 +473,7 @@ def test_is_wmo():
     assert is_wmo(12345)
     assert is_wmo([12345])
     assert is_wmo([12345, 1234567])
+
     with pytest.raises(ValueError):
         is_wmo(1234, errors="raise")
     with pytest.raises(ValueError):
@@ -480,10 +482,20 @@ def test_is_wmo():
         is_wmo(1234.12, errors="raise")
     with pytest.raises(ValueError):
         is_wmo(12345.7, errors="raise")
-    assert not is_wmo(12, errors="silent")
-    assert not is_wmo(-12, errors="silent")
-    assert not is_wmo(1234.12, errors="silent")
-    assert not is_wmo(12345.7, errors="silent")
+
+    with pytest.warns(UserWarning):
+        is_wmo(1234, errors="warn")
+    with pytest.warns(UserWarning):
+        is_wmo(-1234, errors="warn")
+    with pytest.warns(UserWarning):
+        is_wmo(1234.12, errors="warn")
+    with pytest.warns(UserWarning):
+        is_wmo(12345.7, errors="warn")
+
+    assert not is_wmo(12, errors="ignore")
+    assert not is_wmo(-12, errors="ignore")
+    assert not is_wmo(1234.12, errors="ignore")
+    assert not is_wmo(12345.7, errors="ignore")
 
 
 def test_check_wmo():
@@ -497,6 +509,7 @@ def test_is_cyc():
     assert is_cyc(123)
     assert is_cyc([123])
     assert is_cyc([12, 123, 1234])
+
     with pytest.raises(ValueError):
         is_cyc(12345, errors="raise")
     with pytest.raises(ValueError):
@@ -505,10 +518,20 @@ def test_is_cyc():
         is_cyc(1234.12, errors="raise")
     with pytest.raises(ValueError):
         is_cyc(12345.7, errors="raise")
-    assert not is_cyc(12345, errors="silent")
-    assert not is_cyc(-12, errors="silent")
-    assert not is_cyc(1234.12, errors="silent")
-    assert not is_cyc(12345.7, errors="silent")
+
+    with pytest.warns(UserWarning):
+        is_cyc(12345, errors="warn")
+    with pytest.warns(UserWarning):
+        is_cyc(-1234, errors="warn")
+    with pytest.warns(UserWarning):
+        is_cyc(1234.12, errors="warn")
+    with pytest.warns(UserWarning):
+        is_cyc(12345.7, errors="warn")
+
+    assert not is_cyc(12345, errors="ignore")
+    assert not is_cyc(-12, errors="ignore")
+    assert not is_cyc(1234.12, errors="ignore")
+    assert not is_cyc(12345.7, errors="ignore")
 
 
 def test_check_cyc():
@@ -582,6 +605,89 @@ class Test_TopoFetcher():
         assert 'elevation' in ds.data_vars
 
 
+class Test_float_wmo():
+
+    def test_init(self):
+        assert isinstance(float_wmo(2901746), float_wmo)
+        assert isinstance(float_wmo(float_wmo(2901746)), float_wmo)
+
+    def test_isvalid(self):
+        assert float_wmo(2901746).isvalid
+        assert not float_wmo(12, errors='ignore').isvalid
+
+    def test_ppt(self):
+        assert isinstance(str(float_wmo(2901746)), str)
+        assert isinstance(repr(float_wmo(2901746)), str)
+
+    def test_comparisons(self):
+        assert float_wmo(2901746) == float_wmo(2901746)
+        assert float_wmo(2901746) != float_wmo(2901745)
+        assert float_wmo(2901746) >= float_wmo(2901746)
+        assert float_wmo(2901746) > float_wmo(2901745)
+        assert float_wmo(2901746) <= float_wmo(2901746)
+        assert float_wmo(2901746) < float_wmo(2901747)
+
+    def test_hashable(self):
+        assert isinstance(hash(float_wmo(2901746)), int)
+
+
+class Test_Registry():
+
+    opts = [(None, 'str'), (['hello', 'world'], str), (None, float_wmo), ([2901746, 4902252], float_wmo)]
+    opts_ids = ["%s, %s" % ((lambda x: 'iterlist' if x is not None else x)(opt[0]), repr(opt[1])) for opt in opts]
+
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_init(self, opts):
+        assert isinstance(Registry(opts[0], dtype=opts[1]), Registry)
+
+    opts = [(['hello', 'world'], str), ([2901746, 4902252], float_wmo)]
+    opts_ids = ["%s, %s" % ((lambda x: 'iterlist' if x is not None else x)(opt[0]), repr(opt[1])) for opt in opts]
+
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_commit(self, opts):
+        R = Registry(dtype=opts[1])
+        R.commit(opts[0])
+
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_append(self, opts):
+        R = Registry(dtype=opts[1])
+        R.append(opts[0][0])
+
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_extend(self, opts):
+        R = Registry(dtype=opts[1])
+        R.append(opts[0])
+
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_insert(self, opts):
+        R = Registry(opts[0][0], dtype=opts[1])
+        R.insert(0, opts[0][-1])
+        assert R[0] == opts[0][-1]
+
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_remove(self, opts):
+        R = Registry(opts[0], dtype=opts[1])
+        R.remove(opts[0][0])
+        assert opts[0][0] not in R
+
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_copy(self, opts):
+        R = Registry(opts[0], dtype=opts[1])
+        assert R == R.copy()
+
+    bad_opts = [(['hello', 12], str), ([2901746, 1], float_wmo)]
+    bad_opts_ids = ["%s, %s" % ((lambda x: 'iterlist' if x is not None else x)(opt[0]), repr(opt[1])) for opt in opts]
+
+    @pytest.mark.parametrize("opts", bad_opts, indirect=False, ids=bad_opts_ids)
+    def test_invalid_dtype(self, opts):
+        with pytest.raises(ValueError):
+            Registry(opts[0][0], dtype=opts[1], invalid='raise').commit(opts[0][-1])
+        with pytest.warns(UserWarning):
+            Registry(opts[0][0], dtype=opts[1], invalid='warn').commit(opts[0][-1])
+        # Raise nothing:
+        Registry(opts[0][0], dtype=opts[1], invalid='ignore').commit(opts[0][-1])
+
+
 @requires_connection
 def test_get_coriolis_profile_id():
     assert isinstance(get_coriolis_profile_id(6901929), pd.core.frame.DataFrame)
@@ -592,3 +698,4 @@ def test_get_coriolis_profile_id():
 def test_get_ea_profile_page():
     assert is_list_of_strings(get_ea_profile_page(6901929))
     assert is_list_of_strings(get_ea_profile_page(6901929, 12))
+

@@ -6,9 +6,12 @@ from argopy.errors import (
     CacheFileNotFound,
     FileSystemHasNoCache,
     UnrecognisedProfileDirection,
+    InvalidDataset,
     InvalidDatasetStructure,
     InvalidFetcherAccessPoint,
     InvalidFetcher,
+    InvalidOption,
+    OptionValueError,
     InvalidMethod,
     InvalidDashboard,
     APIServerError,
@@ -17,27 +20,25 @@ from argopy.errors import (
 )
 
 
-class Test_Errors:
-    def __test_one(self, ThisError):
-        with pytest.raises(ThisError):
-            raise ThisError()
-
-    def test_RaiseAll(self):
-        elist = [
-            DataNotFound,
-            FtpPathError,
-            NetCDF4FileNotFoundError,
-            CacheFileNotFound,
-            FileSystemHasNoCache,
-            UnrecognisedProfileDirection,
-            InvalidDatasetStructure,
-            InvalidFetcherAccessPoint,
-            InvalidFetcher,
-            InvalidMethod,
-            InvalidDashboard,
-            APIServerError,
-            ErddapServerError,
-            ArgovisServerError
-        ]
-        for e in elist:
-            self.__test_one(e)
+@pytest.mark.parametrize("error", [
+    DataNotFound,
+    FtpPathError,
+    NetCDF4FileNotFoundError,
+    CacheFileNotFound,
+    FileSystemHasNoCache,
+    UnrecognisedProfileDirection,
+    InvalidDataset,
+    InvalidDatasetStructure,
+    InvalidFetcherAccessPoint,
+    InvalidFetcher,
+    InvalidOption,
+    OptionValueError,
+    InvalidMethod,
+    InvalidDashboard,
+    APIServerError,
+    ErddapServerError,
+    ArgovisServerError,
+    ], indirect=False)
+def test_raise_all_errors(error):
+    with pytest.raises(error):
+        raise error()

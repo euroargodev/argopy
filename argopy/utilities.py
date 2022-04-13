@@ -12,23 +12,28 @@ import warnings
 import urllib
 import json
 import collections
+from collections import UserList
 import copy
-from functools import reduce
+from functools import reduce, wraps
 from packaging import version
+import logging
+from abc import ABC, abstractmethod
 
 import importlib
 import locale
 import platform
 import struct
-import subprocess
+import subprocess # nosec B404 only used without user inputs
 import contextlib
+from fsspec.core import split_protocol
+import fsspec
 
 import xarray as xr
 import pandas as pd
 import numpy as np
 from scipy import interpolate
 
-import pickle
+import pickle  # nosec B403 only used with internal files/assets
 import pkg_resources
 import shutil
 
@@ -36,13 +41,14 @@ import threading
 
 import time
 
-from argopy.options import OPTIONS, set_options
-from argopy.stores import httpstore
-from argopy.errors import (
+from .options import OPTIONS
+from .errors import (
     FtpPathError,
     InvalidFetcher,
     InvalidFetcherAccessPoint,
     InvalidOption,
+    InvalidDatasetStructure,
+    FileSystemHasNoCache,
 )
 
 try:
@@ -53,10 +59,7 @@ except AttributeError:
 
 path2pkl = pkg_resources.resource_filename("argopy", "assets/")
 
-try:
-    collectionsAbc = collections.abc
-except AttributeError:
-    collectionsAbc = collections
+log = logging.getLogger("argopy.utilities")
 
 
 def clear_cache(fs=None):
@@ -76,14 +79,108 @@ def clear_cache(fs=None):
             fs.clear_cache()
 
 
+def lscache(cache_path: str = "", prt=True):
+    """ Decode and list cache folder content
+
+        Parameters
+        ----------
+        cache_path: str
+        prt: bool, default=True
+            Return a printable string or a :class:`pandas.DataFrame`
+
+        Returns
+        -------
+        str or :class:`pandas.DataFrame`
+    """
+    from datetime import datetime
+    import math
+    summary = []
+
+    cache_path = OPTIONS['cachedir'] if cache_path == '' else cache_path
+    apath = os.path.abspath(cache_path)
+    log.debug("Listing cache content at: %s" % cache_path)
+
+    def convert_size(size_bytes):
+        if size_bytes == 0:
+            return "0B"
+        size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+        i = int(math.floor(math.log(size_bytes, 1024)))
+        p = math.pow(1024, i)
+        s = round(size_bytes / p, 2)
+        return "%s %s" % (s, size_name[i])
+
+    cached_files = []
+    fn = os.path.join(apath, "cache")
+    if os.path.exists(fn):
+        with open(fn, "rb") as f:
+            loaded_cached_files = pickle.load(f)  # nosec B301 because files controlled internally
+            for c in loaded_cached_files.values():
+                if isinstance(c["blocks"], list):
+                    c["blocks"] = set(c["blocks"])
+            cached_files.append(loaded_cached_files)
+    else:
+        raise FileSystemHasNoCache("No fsspec cache system at: %s" % apath)
+
+    cached_files = cached_files or [{}]
+    cached_files = cached_files[-1]
+
+    N_FILES = len(cached_files)
+    TOTAL_SIZE = 0
+    for cfile in cached_files:
+        path = os.path.join(apath, cached_files[cfile]['fn'])
+        TOTAL_SIZE += os.path.getsize(path)
+
+    summary.append("%s %s" % ("=" * 20, "%i files in fsspec cache folder (%s)" % (N_FILES, convert_size(TOTAL_SIZE))))
+    summary.append("lscache %s" % os.path.sep.join([apath, ""]))
+    summary.append("=" * 20)
+
+    listing = {'fn': [], 'size': [], 'time': [], 'original': [], 'uid': [], 'blocks': []}
+    for cfile in cached_files:
+        summary.append("- %s" % cached_files[cfile]['fn'])
+        listing['fn'].append(cached_files[cfile]['fn'])
+
+        path = os.path.join(cache_path, cached_files[cfile]['fn'])
+        summary.append("\t%8s: %s" % ('SIZE', convert_size(os.path.getsize(path))))
+        listing['size'].append(os.path.getsize(path))
+
+        key = 'time'
+        ts = cached_files[cfile][key]
+        tsf = pd.to_datetime(datetime.fromtimestamp(ts)).strftime("%c")
+        summary.append("\t%8s: %s (%s)" % (key, tsf, ts))
+        listing['time'].append(pd.to_datetime(datetime.fromtimestamp(ts)))
+
+        if version.parse(fsspec.__version__) > version.parse("0.8.7"):
+            key = 'original'
+            summary.append("\t%8s: %s" % (key, cached_files[cfile][key]))
+            listing[key].append(cached_files[cfile][key])
+
+        key = 'uid'
+        summary.append("\t%8s: %s" % (key, cached_files[cfile][key]))
+        listing[key].append(cached_files[cfile][key])
+
+        key = 'blocks'
+        summary.append("\t%8s: %s" % (key, cached_files[cfile][key]))
+        listing[key].append(cached_files[cfile][key])
+
+    summary.append("=" * 20)
+    summary = "\n".join(summary)
+    if prt:
+        # Return string to be printed:
+        return summary
+    else:
+        # Return dataframe listing:
+        # log.debug(summary)
+        return pd.DataFrame(listing)
+
+
 def load_dict(ptype):
     if ptype == "profilers":
         with open(os.path.join(path2pkl, "dict_profilers.pickle"), "rb") as f:
-            loaded_dict = pickle.load(f)
+            loaded_dict = pickle.load(f)  # nosec B301 because files controlled internally
         return loaded_dict
     elif ptype == "institutions":
         with open(os.path.join(path2pkl, "dict_institutions.pickle"), "rb") as f:
-            loaded_dict = pickle.load(f)
+            loaded_dict = pickle.load(f)  # nosec B301 because files controlled internally
         return loaded_dict
     else:
         raise ValueError("Invalid dictionary pickle file")
@@ -135,6 +232,18 @@ def list_available_data_src():
         )
         pass
 
+    try:
+        from .data_fetchers import gdacftp_data as GDAC_Fetchers
+
+        sources["gdac"] = GDAC_Fetchers
+    except Exception:
+        warnings.warn(
+            "An error occurred while loading the GDAC data fetcher, "
+            "it will not be available !\n%s\n%s"
+            % (sys.exc_info()[0], sys.exc_info()[1])
+        )
+        pass
+
     # return dict(sorted(sources.items()))
     return sources
 
@@ -161,6 +270,18 @@ def list_available_index_src():
     except Exception:
         warnings.warn(
             "An error occurred while loading the local FTP index fetcher, "
+            "it will not be available !\n%s\n%s"
+            % (sys.exc_info()[0], sys.exc_info()[1])
+        )
+        pass
+
+    try:
+        from .data_fetchers import gdacftp_index as GDAC_Fetchers
+
+        AVAILABLE_SOURCES["gdac"] = GDAC_Fetchers
+    except Exception:
+        warnings.warn(
+            "An error occurred while loading the GDAC index fetcher, "
             "it will not be available !\n%s\n%s"
             % (sys.exc_info()[0], sys.exc_info()[1])
         )
@@ -366,7 +487,7 @@ def get_sys_info():
     commit = None
     if os.path.isdir(".git") and os.path.isdir("argopy"):
         try:
-            pipe = subprocess.Popen(
+            pipe = subprocess.Popen(  # nosec No user provided input to control here
                 'git log --format="%H" -n 1'.split(" "),
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -425,13 +546,15 @@ def netcdf_and_hdf5_versions():
     return [("libhdf5", libhdf5_version), ("libnetcdf", libnetcdf_version)]
 
 
-def show_versions(file=sys.stdout):  # noqa: C901
+def show_versions(file=sys.stdout, conda=False):  # noqa: C901
     """ Print the versions of argopy and its dependencies
 
     Parameters
     ----------
     file : file-like, optional
         print to the given file-like object. Defaults to sys.stdout.
+    conda: bool, optional
+        format versions to be copy/pasted on a conda environment file (default, False)
     """
     sys_info = get_sys_info()
 
@@ -440,70 +563,90 @@ def show_versions(file=sys.stdout):  # noqa: C901
     except Exception as e:
         print(f"Error collecting netcdf / hdf5 version: {e}")
 
-    deps = [
-        # (MODULE_NAME, f(mod) -> mod version)
-        # In REQUIREMENTS:
-        ("argopy", lambda mod: mod.__version__),
-        ("xarray", lambda mod: mod.__version__),
-        ("scipy", lambda mod: mod.__version__),
-        ("sklearn", lambda mod: mod.__version__),
-        ("netCDF4", lambda mod: mod.__version__),
-        ("dask", lambda mod: mod.__version__),
-        ("toolz", lambda mod: mod.__version__),
-        ("erddapy", lambda mod: mod.__version__),
-        ("fsspec", lambda mod: mod.__version__),
-        ("gsw", lambda mod: mod.__version__),
-        ("aiohttp", lambda mod: mod.__version__),
-        #
-        ("bottleneck", lambda mod: mod.__version__),
-        ("cartopy", lambda mod: mod.__version__),
-        ("cftime", lambda mod: mod.__version__),
-        ("conda", lambda mod: mod.__version__),
-        ("distributed", lambda mod: mod.__version__),
-        ("IPython", lambda mod: mod.__version__),
-        ("iris", lambda mod: mod.__version__),
-        ("matplotlib", lambda mod: mod.__version__),
-        ("nc_time_axis", lambda mod: mod.__version__),
-        ("numpy", lambda mod: mod.__version__),
-        ("pandas", lambda mod: mod.__version__),
-        ("packaging", lambda mod: mod.__version__),
-        ("pip", lambda mod: mod.__version__),
-        ("PseudoNetCDF", lambda mod: mod.__version__),
-        ("pytest", lambda mod: mod.__version__),
-        ("seaborn", lambda mod: mod.__version__),
-        ("setuptools", lambda mod: mod.__version__),
-        ("sphinx", lambda mod: mod.__version__),
-        ("zarr", lambda mod: mod.__version__),
-        ("tqdm", lambda mod: mod.__version__),
-        ("ipykernel", lambda mod: mod.__version__),
-        ("ipywidgets", lambda mod: mod.__version__),
-    ]
+    DEPS = {
+        'core': sorted([
+            ("argopy", lambda mod: mod.__version__),
+            ("xarray", lambda mod: mod.__version__),
+            ("scipy", lambda mod: mod.__version__),
+            ("netCDF4", lambda mod: mod.__version__),
+            ("sklearn", lambda mod: mod.__version__),  # Using 'preprocessing.LabelEncoder()' in xarray accessor, used by filters
+            ("erddapy", lambda mod: mod.__version__),  # This could go away from requirements ?
+            ("fsspec", lambda mod: mod.__version__),
+            ("packaging", lambda mod: mod.__version__),  # will come with xarray, Using 'version' to make API compatible with several fsspec releases
+            ("dask", lambda mod: mod.__version__),  # This could go away from requirements ?
+            ("toolz", lambda mod: mod.__version__),
+            ("gsw", lambda mod: mod.__version__),   # Used by xarray accessor to compute new variables
+        ]),
+        'ext.misc': sorted([
+            ("pyarrow", lambda mod: mod.__version__),
+            ("tqdm", lambda mod: mod.__version__),
+            ("distributed", lambda mod: mod.__version__),
+        ]),
+        'ext.plotters': sorted([
+            ("matplotlib", lambda mod: mod.__version__),
+            ("cartopy", lambda mod: mod.__version__),
+            ("seaborn", lambda mod: mod.__version__),
+            ("IPython", lambda mod: mod.__version__),
+            ("ipywidgets", lambda mod: mod.__version__),
+            ("ipykernel", lambda mod: mod.__version__),
+        ]),
+        'dev': sorted([
+            ("zarr", lambda mod: mod.__version__),
 
-    deps_blob = list()
-    for (modname, ver_f) in deps:
-        try:
-            if modname in sys.modules:
-                mod = sys.modules[modname]
-            else:
-                mod = importlib.import_module(modname)
-        except Exception:
-            deps_blob.append((modname, None))
-        else:
+            ("bottleneck", lambda mod: mod.__version__),
+            ("cftime", lambda mod: mod.__version__),
+            ("conda", lambda mod: mod.__version__),
+            ("nc_time_axis", lambda mod: mod.__version__),
+
+            ("numpy", lambda mod: mod.__version__),  # will come with xarray and pandas
+            ("pandas", lambda mod: mod.__version__),  # will come with xarray
+
+            ("pip", lambda mod: mod.__version__),
+            ("pytest", lambda mod: mod.__version__),  # will come with pandas
+            ("setuptools", lambda mod: mod.__version__),  # Provides: pkg_resources
+            ("sphinx", lambda mod: mod.__version__),
+        ]),
+    }
+
+    DEPS_blob = {}
+    for level in DEPS.keys():
+        deps = DEPS[level]
+        deps_blob = list()
+        for (modname, ver_f) in deps:
             try:
-                ver = ver_f(mod)
-                deps_blob.append((modname, ver))
+                if modname in sys.modules:
+                    mod = sys.modules[modname]
+                else:
+                    mod = importlib.import_module(modname)
             except Exception:
-                deps_blob.append((modname, "installed"))
+                deps_blob.append((modname, '-'))
+            else:
+                try:
+                    ver = ver_f(mod)
+                    deps_blob.append((modname, ver))
+                except Exception:
+                    deps_blob.append((modname, "installed"))
+        DEPS_blob[level] = deps_blob
 
-    print("\nINSTALLED VERSIONS", file=file)
-    print("------------------", file=file)
-
+    print("\nSYSTEM", file=file)
+    print("------", file=file)
     for k, stat in sys_info:
         print(f"{k}: {stat}", file=file)
 
-    print("", file=file)
-    for k, stat in deps_blob:
-        print(f"{k}: {stat}", file=file)
+    for level in DEPS_blob:
+        if conda:
+            print("\n# %s:" % level.upper(), file=file)
+        else:
+            title = "INSTALLED VERSIONS: %s" % level.upper()
+            print("\n%s" % title, file=file)
+            print("-"*len(title), file=file)
+        deps_blob = DEPS_blob[level]
+        for k, stat in deps_blob:
+            if conda:
+                print(f"  - {k} = {stat}", file=file)  # Format like a conda env line, useful to update ci/requirements
+            else:
+                print("{:<12}: {:<12}".format(k, stat), file=file)
+
 
 
 def show_options(file=sys.stdout):  # noqa: C901
@@ -534,9 +677,9 @@ def isconnected(host="https://www.ifremer.fr"):
         -------
         bool
     """
-    if "http" in host or "ftp" in host:
+    if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
         try:
-            urllib.request.urlopen(host, timeout=1)  # Python 3.x
+            urllib.request.urlopen(host, timeout=1)  # nosec B310 because host protocol already checked
             return True
         except Exception:
             return False
@@ -593,9 +736,8 @@ def erddap_ds_exists(
     ------
     bool
     """
-    with httpstore(timeout=OPTIONS["api_timeout"]).open(
-        "".join([erddap, "/info/index.json"])
-    ) as of:
+    from .stores import httpstore
+    with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
         erddap_index = json.load(of)
     return ds in [row[-1] for row in erddap_index["table"]["rows"]]
 
@@ -1123,26 +1265,69 @@ def format_oneline(s, max_width=65):
 
 def is_indexbox(box: list, errors="raise"):
     """ Check if this array matches a 2d or 3d index box definition
-
         box = [lon_min, lon_max, lat_min, lat_max]
     or:
         box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
-
     Parameters
     ----------
     box: list
     errors: 'raise'
-
     Returns
     -------
     bool
     """
+    def is_dateconvertible(d):
+        try:
+            pd.to_datetime(d)
+            isit = True
+        except Exception:
+            isit = False
+        return isit
 
     tests = {}
 
     # Formats:
     tests["index box must be a list"] = lambda b: isinstance(b, list)
     tests["index box must be a list with 4 or 6 elements"] = lambda b: len(b) in [4, 6]
+
+    # Types:
+    tests["lon_min must be numeric"] = lambda b: (
+        isinstance(b[0], int) or isinstance(b[0], (np.floating, float))
+    )
+    tests["lon_max must be numeric"] = lambda b: (
+        isinstance(b[1], int) or isinstance(b[1], (np.floating, float))
+    )
+    tests["lat_min must be numeric"] = lambda b: (
+        isinstance(b[2], int) or isinstance(b[2], (np.floating, float))
+    )
+    tests["lat_max must be numeric"] = lambda b: (
+        isinstance(b[3], int) or isinstance(b[3], (np.floating, float))
+    )
+    if len(box) > 4:
+        tests[
+            "datetim_min must be a string convertible to a Pandas datetime"
+        ] = lambda b: isinstance(b[-2], str) and is_dateconvertible(b[-2])
+        tests[
+            "datetim_max must be a string convertible to a Pandas datetime"
+        ] = lambda b: isinstance(b[-1], str) and is_dateconvertible(b[-1])
+
+    # Ranges:
+    tests["lon_min must be in [-180;180] or [0;360]"] = (
+        lambda b: b[0] >= -180.0 and b[0] <= 360.0
+    )
+    tests["lon_max must be in [-180;180] or [0;360]"] = (
+        lambda b: b[1] >= -180.0 and b[1] <= 360.0
+    )
+    tests["lat_min must be in [-90;90]"] = lambda b: b[2] >= -90.0 and b[2] <= 90
+    tests["lat_max must be in [-90;90]"] = lambda b: b[3] >= -90.0 and b[3] <= 90.0
+
+    # Orders:
+    tests["lon_max must be larger than lon_min"] = lambda b: b[0] < b[1]
+    tests["lat_max must be larger than lat_min"] = lambda b: b[2] < b[3]
+    if len(box) > 4:
+        tests["datetim_max must come after datetim_min"] = lambda b: pd.to_datetime(
+            b[-2]
+        ) < pd.to_datetime(b[-1])
 
     error = None
     for msg, test in tests.items():
@@ -1155,11 +1340,7 @@ def is_indexbox(box: list, errors="raise"):
     elif error:
         return False
     else:
-        # Insert pressure bounds and use full box validator:
-        tmp_box = box.copy()
-        tmp_box.insert(4, 0.0)
-        tmp_box.insert(5, 10000.0)
-        return is_box(tmp_box, errors=errors)
+        return True
 
 
 def is_box(box: list, errors="raise"):
@@ -1274,20 +1455,21 @@ def is_list_equal(lst1, lst2):
     )
 
 
-def check_wmo(lst):
+def check_wmo(lst, errors="raise"):
     """ Validate a WMO option and returned it as a list of integers
 
     Parameters
     ----------
     wmo: int
         WMO must be an integer or an iterable with elements that can be casted as integers
-    errors: 'raise'
+    errors: {'raise', 'warn', 'ignore'}
+        Possibly raises a ValueError exception or UserWarning, otherwise fails silently.
 
     Returns
     -------
     list(int)
     """
-    is_wmo(lst, errors="raise")
+    is_wmo(lst, errors=errors)
 
     # Make sure we deal with a list
     if not isinstance(lst, list):
@@ -1307,8 +1489,8 @@ def is_wmo(lst, errors="raise"):  # noqa: C901
     ----------
     wmo: int, list(int), array(int)
         WMO must be a single or a list of 5/7 digit positive numbers
-    errors: 'raise'
-        Possibly raises a ValueError exception, otherwise fails silently.
+    errors: {'raise', 'warn', 'ignore'}
+        Possibly raises a ValueError exception or UserWarning, otherwise fails silently.
 
     Returns
     -------
@@ -1325,7 +1507,7 @@ def is_wmo(lst, errors="raise"):  # noqa: C901
 
     # Error message:
     # msg = "WMO must be an integer or an iterable with elements that can be casted as integers"
-    msg = "WMO must be a single or a list of 5/7 digit positive numbers"
+    msg = "WMO must be a single or a list of 5/7 digit positive numbers. Invalid: '{}'".format
 
     # Then try to cast list elements as integers, return True if ok
     result = True
@@ -1343,26 +1525,32 @@ def is_wmo(lst, errors="raise"):  # noqa: C901
     except Exception:
         result = False
         if errors == "raise":
-            raise ValueError(msg)
+            raise ValueError(msg(x))
+        elif errors == 'warn':
+            warnings.warn(msg(x))
 
-    if not result and errors == "raise":
-        raise ValueError(msg)
+    if not result:
+        if errors == "raise":
+            raise ValueError(msg(x))
+        elif errors == 'warn':
+            warnings.warn(msg(x))
     else:
         return result
 
 
-def check_cyc(lst):
+def check_cyc(lst, errors="raise"):
     """ Validate a CYC option and returned it as a list of integers
     Parameters
     ----------
     cyc: int
         CYC must be an integer or an iterable with elements that can be casted as positive integers
-    errors: 'raise'
+    errors: {'raise', 'warn', 'ignore'}
+        Possibly raises a ValueError exception or UserWarning, otherwise fails silently.
     Returns
     -------
     list(int)
     """
-    is_cyc(lst, errors="raise")
+    is_cyc(lst, errors=errors)
 
     # Make sure we deal with a list
     if not isinstance(lst, list):
@@ -1381,8 +1569,8 @@ def is_cyc(lst, errors="raise"):  # noqa: C901
     ----------
     cyc: int, list(int), array(int)
         CYC must be a single or a list of at most 4 digit positive numbers
-    errors: 'raise'
-        Possibly raises a ValueError exception, otherwise fails silently.
+    errors: {'raise', 'warn', 'ignore'}
+        Possibly raises a ValueError exception or UserWarning, otherwise fails silently.
     Returns
     -------
     bool
@@ -1396,7 +1584,7 @@ def is_cyc(lst, errors="raise"):  # noqa: C901
             lst = [lst]
 
     # Error message:
-    msg = "CYC must be a single or a list of at most 4 digit positive numbers"
+    msg = "CYC must be a single or a list of at most 4 digit positive numbers. Invalid: '{}'".format
 
     # Then try to cast list elements as integers, return True if ok
     result = True
@@ -1405,32 +1593,50 @@ def is_cyc(lst, errors="raise"):  # noqa: C901
             if not str(x).isdigit():
                 result = False
 
-            if len(str(x)) > 4:
+            if (len(str(x)) > 4):
                 result = False
 
-            if int(x) < 0:  # Some cycle number are 0 !
+            if int(x) <= 0:
                 result = False
 
     except Exception:
         result = False
         if errors == "raise":
-            raise ValueError(msg)
+            raise ValueError(msg(x))
+        elif errors == 'warn':
+            warnings.warn(msg(x))
 
-    if not result and errors == "raise":
-        raise ValueError(msg)
+    if not result:
+        if errors == "raise":
+            raise ValueError(msg(x))
+        elif errors == 'warn':
+            warnings.warn(msg(x))
     else:
         return result
 
 
-# def docstring(value):
-#     """Replace one function docstring
-#
-#         To be used as a decorator
-#     """
-#     def _doc(func):
-#         func.__doc__ = value
-#         return func
-#     return _doc
+def check_index_cols(column_names: list, convention: str = 'ar_index_global_prof'):
+    """
+        ar_index_global_prof.txt: Index of profile files
+        Profile directory file of the Argo Global Data Assembly Center
+        file,date,latitude,longitude,ocean,profiler_type,institution,date_update
+
+        argo_bio-profile_index.txt: bgc Argo profiles index file
+        The directory file describes all individual bio-profile files of the argo GDAC ftp site.
+        file,date,latitude,longitude,ocean,profiler_type,institution,parameters,parameter_data_mode,date_update
+    """
+    # Default for 'ar_index_global_prof'
+    ref = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
+           'date_update']
+    if convention == 'argo_bio-profile_index' or convention == 'argo_synthetic-profile_index':
+        ref = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
+               'parameters', 'parameter_data_mode', 'date_update']
+
+    if not is_list_equal(column_names, ref):
+        # log.debug("Expected: %s, got: %s" % (";".join(ref), ";".join(column_names)))
+        raise InvalidDatasetStructure("Unexpected column names in this index !")
+    else:
+        return column_names
 
 
 def warnUnless(ok, txt):
@@ -1514,10 +1720,8 @@ def toYearFraction(
     -------
     float
     """
-    if "UTC" in [this_date.tzname() if not this_date.tzinfo is None else ""]:
-        startOfThisYear = pd.to_datetime(
-            "%i-01-01T00:00:00.000" % this_date.year, utc=True
-        )
+    if "UTC" in [this_date.tzname() if this_date.tzinfo is not None else ""]:
+        startOfThisYear = pd.to_datetime("%i-01-01T00:00:00.000" % this_date.year, utc=True)
     else:
         startOfThisYear = pd.to_datetime("%i-01-01T00:00:00.000" % this_date.year)
     yearDuration_sec = (
@@ -1563,7 +1767,8 @@ def wrap_longitude(grid_long):
         This is a refactor between get_region_data and get_region_hist_locations to
         avoid duplicate code
 
-        source: https://github.com/euroargodev/argodmqc_owc/blob/e174f4538fdae1534c9740491398972b1ffec3ca/pyowc/utilities.py#L80
+        source:
+        https://github.com/euroargodev/argodmqc_owc/blob/e174f4538fdae1534c9740491398972b1ffec3ca/pyowc/utilities.py#L80
 
         Parameters
         ----------
@@ -1638,16 +1843,12 @@ def wmo2box(wmo_id: int):
     return box
 
 
-def groupby_remap(
-    z,
-    data,
-    z_regridded,
-    z_dim=None,
-    z_regridded_dim="regridded",
-    output_dim="remapped",
-    select="deep",
-    right=False,
-):
+def groupby_remap(z, data, z_regridded,   # noqa C901
+                  z_dim=None,
+                  z_regridded_dim="regridded",
+                  output_dim="remapped",
+                  select='deep',
+                  right=False):
     """ todo: Need a docstring here !"""
 
     # sub-sampling called in xarray ufunc
@@ -1787,6 +1988,7 @@ class TopoFetcher:
         api_timeout: int (optional)
             Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
+        from .stores import httpstore
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.fs = httpstore(
             cache=cache, cachedir=cachedir, timeout=timeout, size_policy="head"
@@ -1877,6 +2079,20 @@ class TopoFetcher:
     #         vlist.append("elevation")
     #         return vlist
 
+    def url_encode(self, url):
+        """ Return safely encoded list of urls
+
+            This is necessary because fsspec cannot handle in cache paths/urls with a '[' character
+        """
+
+        # return urls
+        def safe_for_fsspec_cache(url):
+            url = url.replace("[", "%5B")  # This is the one really necessary
+            url = url.replace("]", "%5D")  # For consistency
+            return url
+
+        return safe_for_fsspec_cache(url)
+
     def get_url(self):
         """ Return the URL to download data requested
 
@@ -1899,7 +2115,7 @@ class TopoFetcher:
         self.define_constraints()  # Define constraint to select this box of data (affect self.erddap.constraints)
         url += f"{self.erddap.constraints}"
 
-        return url
+        return self.url_encode(url)
 
     @property
     def uri(self):
@@ -1923,6 +2139,549 @@ class TopoFetcher:
     def load(self, errors: str = "ignore"):
         """ Load Topographic data and return a xarray.DataSet """
         return self.to_xarray(errors=errors)
+
+
+def argo_split_path(this_path):  # noqa C901
+    """ Split path from a GDAC ftp style Argo netcdf file and return informations
+
+    >>> argo_split_path('coriolis/6901035/profiles/D6901035_001D.nc')
+    >>> argo_split_path('https://data-argo.ifremer.fr/dac/csiro/5903939/profiles/D5903939_103.nc')
+
+    Parameters
+    ----------
+    str
+
+    Returns
+    -------
+    dict
+    """
+    dacs = [
+        "aoml",
+        "bodc",
+        "coriolis",
+        "csio",
+        "csiro",
+        "incois",
+        "jma",
+        "kma",
+        "kordi",
+        "meds",
+        "nmdis",
+    ]
+    output = {}
+
+    start_with = lambda f, x: f[0:len(x)] == x if len(x) <= len(f) else False
+
+    def split_path(p, sep='/'):
+        """Split a pathname.  Returns tuple "(head, tail)" where "tail" is
+        everything after the final slash.  Either part may be empty."""
+        # Same as posixpath.py but we get to choose the file separator !
+        p = os.fspath(p)
+        i = p.rfind(sep) + 1
+        head, tail = p[:i], p[i:]
+        if head and head != sep * len(head):
+            head = head.rstrip(sep)
+        return head, tail
+
+    known_origins = ['https://data-argo.ifremer.fr',
+                     'ftp://ftp.ifremer.fr/ifremer/argo',
+                     'ftp://usgodae.org/pub/outgoing/argo',
+                     '']
+
+    output['origin'] = [origin for origin in known_origins if start_with(this_path, origin)][0]
+    output['origin'] = '.' if output['origin'] == '' else output['origin'] + '/'
+    sep = '/' if output['origin'] != '.' else os.path.sep
+
+    (path, file) = split_path(this_path, sep=sep)
+
+    output['path'] = path.replace(output['origin'], '')
+    output['name'] = file
+
+    # Deal with the path:
+    # dac/<DAC>/<FloatWmoID>/
+    # dac/<DAC>/<FloatWmoID>/profiles
+    path_parts = path.split(sep)
+
+    try:
+        if path_parts[-1] == 'profiles':
+            output['type'] = 'Mono-cycle profile file'
+            output['wmo'] = path_parts[-2]
+            output['dac'] = path_parts[-3]
+        else:
+            output['type'] = 'Multi-cycle profile file'
+            output['wmo'] = path_parts[-1]
+            output['dac'] = path_parts[-2]
+    except Exception:
+        log.warning(this_path)
+        log.warning(path)
+        log.warning(sep)
+        log.warning(path_parts)
+        log.warning(output)
+        raise
+
+    if output['dac'] not in dacs:
+        log.debug("This is not a Argo GDAC compliant file path: %s" % path)
+        log.warning(this_path)
+        log.warning(path)
+        log.warning(sep)
+        log.warning(path_parts)
+        log.warning(output)
+        raise ValueError("This is not a Argo GDAC compliant file path (invalid DAC name: '%s')" % output['dac'])
+
+    # Deal with the file name:
+    filename, file_extension = os.path.splitext(output['name'])
+    output['extension'] = file_extension
+    if file_extension != '.nc':
+        raise ValueError(
+            "This is not a Argo GDAC compliant file path (invalid file extension: '%s')" % file_extension)
+    filename_parts = output['name'].split("_")
+
+    if "Mono" in output['type']:
+        prefix = filename_parts[0].split(output['wmo'])[0]
+        if 'R' in prefix:
+            output['data_mode'] = 'R, Real-time data'
+        if 'D' in prefix:
+            output['data_mode'] = 'D, Delayed-time data'
+
+        if 'S' in prefix:
+            output['type'] = 'S, Synthetic BGC Mono-cycle profile file'
+        if 'M' in prefix:
+            output['type'] = 'M, Merged BGC Mono-cycle profile file'
+        if 'B' in prefix:
+            output['type'] = 'B, BGC Mono-cycle profile file'
+
+        suffix = filename_parts[-1].split(output['wmo'])[-1]
+        if 'D' in suffix:
+            output['direction'] = 'D, descending profiles'
+        elif suffix == "" and "Mono" in output['type']:
+            output['direction'] = 'A, ascending profiles (implicit)'
+
+    else:
+        typ = filename_parts[-1].split(".nc")[0]
+        if typ == 'prof':
+            output['type'] = 'Multi-cycle file'
+        if typ == 'Sprof':
+            output['type'] = 'S, Synthetic BGC Multi-cycle profiles file'
+        if typ == 'tech':
+            output['type'] = 'Technical data file'
+        if typ == 'meta':
+            output['type'] = 'Metadata file'
+        if 'traj' in typ:
+            output['type'] = 'Trajectory file'
+            if typ.split("traj")[0] == 'D':
+                output['data_mode'] = 'D, Delayed-time data'
+            elif typ.split("traj")[0] == 'R':
+                output['data_mode'] = 'R, Real-time data'
+            else:
+                output['data_mode'] = 'R, Real-time data (implicit)'
+
+    # Adjust origin and path for local files:
+    # This ensure that output['path'] is agnostic to users and can be reused on any gdac compliant architecture
+    parts = path.split(sep)
+    i, stop = len(parts) - 1, False
+    while not stop:
+        if parts[i] == 'profiles' or parts[i] == output['wmo'] or parts[i] == output['dac'] or parts[i] == 'dac':
+            i = i - 1
+            if i < 0:
+                stop = True
+        else:
+            stop = True
+    output['origin'] = sep.join(parts[0:i + 1])
+    output['path'] = output['path'].replace(output['origin'], '')
+
+    return dict(sorted(output.items()))
+
+
+"""
+doc_inherit decorator
+
+Usage:
+
+class Foo(object):
+    def foo(self):
+        "Frobber"
+        pass
+
+class Bar(Foo):
+    @doc_inherit
+    def foo(self):
+        pass 
+
+Now, Bar.foo.__doc__ == Bar().foo.__doc__ == Foo.foo.__doc__ == "Frobber"
+
+src: https://code.activestate.com/recipes/576862/
+"""
+
+
+class DocInherit(object):
+    """
+    Docstring inheriting method descriptor
+
+    The class itself is also used as a decorator
+    """
+
+    def __init__(self, mthd):
+        self.mthd = mthd
+        self.name = mthd.__name__
+
+    def __get__(self, obj, cls):
+        if obj:
+            return self.get_with_inst(obj, cls)
+        else:
+            return self.get_no_inst(cls)
+
+    def get_with_inst(self, obj, cls):
+
+        overridden = getattr(super(cls, obj), self.name, None)
+
+        @wraps(self.mthd, assigned=('__name__','__module__'))
+        def f(*args, **kwargs):
+            return self.mthd(obj, *args, **kwargs)
+
+        return self.use_parent_doc(f, overridden)
+
+    def get_no_inst(self, cls):
+
+        for parent in cls.__mro__[1:]:
+            overridden = getattr(parent, self.name, None)
+            if overridden: break
+
+        @wraps(self.mthd, assigned=('__name__','__module__'))
+        def f(*args, **kwargs):
+            return self.mthd(*args, **kwargs)
+
+        return self.use_parent_doc(f, overridden)
+
+    def use_parent_doc(self, func, source):
+        if source is None:
+            raise NameError("Can't find '%s' in parents"%self.name)
+        func.__doc__ = source.__doc__
+        return func
+
+doc_inherit = DocInherit
+
+
+def deprecated(reason):
+    """Deprecation warning decorator.
+
+    This is a decorator which can be used to mark functions
+    as deprecated. It will result in a warning being emitted
+    when the function is used.
+
+    Parameters
+    ----------
+    reason: {str, None}
+        Text message to send with deprecation warning
+
+    Examples
+    --------
+    The @deprecated can be used with a 'reason'.
+
+        .. code-block:: python
+
+           @deprecated("please, use another function")
+           def old_function(x, y):
+             pass
+
+    or without:
+
+        .. code-block:: python
+
+           @deprecated
+           def old_function(x, y):
+             pass
+
+    References
+    ----------
+    https://stackoverflow.com/a/40301488
+    """
+    import inspect
+
+    if isinstance(reason, str):
+
+        def decorator(func1):
+
+            if inspect.isclass(func1):
+                fmt1 = "Call to deprecated class {name} ({reason})."
+            else:
+                fmt1 = "Call to deprecated function {name} ({reason})."
+
+            @wraps(func1)
+            def new_func1(*args, **kwargs):
+                warnings.simplefilter('always', DeprecationWarning)
+                warnings.warn(
+                    fmt1.format(name=func1.__name__, reason=reason),
+                    category=DeprecationWarning,
+                    stacklevel=2
+                )
+                warnings.simplefilter('default', DeprecationWarning)
+                return func1(*args, **kwargs)
+
+            return new_func1
+
+        return decorator
+
+    elif inspect.isclass(reason) or inspect.isfunction(reason):
+
+        func2 = reason
+
+        if inspect.isclass(func2):
+            fmt2 = "Call to deprecated class {name}."
+        else:
+            fmt2 = "Call to deprecated function {name}."
+
+        @wraps(func2)
+        def new_func2(*args, **kwargs):
+            warnings.simplefilter('always', DeprecationWarning)
+            warnings.warn(
+                fmt2.format(name=func2.__name__),
+                category=DeprecationWarning,
+                stacklevel=2
+            )
+            warnings.simplefilter('default', DeprecationWarning)
+            return func2(*args, **kwargs)
+
+        return new_func2
+
+    else:
+        raise TypeError(repr(type(reason)))
+
+
+class RegistryItem(ABC):
+    """Prototype for possible custom items in a Registry"""
+    @property
+    @abstractmethod
+    def value(self):
+        raise NotImplementedError("Not implemented")
+
+    @property
+    @abstractmethod
+    def isvalid(self, item):
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def __str__(self):
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def __repr__(self):
+        raise NotImplementedError("Not implemented")
+
+
+class float_wmo(RegistryItem):
+    def __init__(self, WMO_number, errors='raise'):
+        """Create an Argo float WMO number object
+
+        Parameters
+        ----------
+        WMO_number: object
+            Anything that could be casted as an integer
+        errors: {'raise', 'warn', 'ignore'}
+            Possibly raises a ValueError exception or UserWarning, otherwise fails silently if WMO_number is not valid
+
+        Returns
+        -------
+        :class:`argopy.utilities.float_wmo`
+        """
+        self.errors = errors
+        if isinstance(WMO_number, float_wmo):
+            item = WMO_number.value
+        else:
+            item = check_wmo(WMO_number, errors=self.errors)[0]  # This will automatically validate item
+        self.item = item
+
+    @property
+    def isvalid(self):
+        """Check if WMO number is valid"""
+        return is_wmo(self.item, errors=self.errors)
+        # return True  # Because it was checked at instantiation
+
+    @property
+    def value(self):
+        """Return WMO number as in integer"""
+        return int(self.item)
+
+    def __str__(self):
+        # return "%s" % check_wmo(self.item)[0]
+        return "%s" % self.item
+
+    def __repr__(self):
+        return f"WMO(%s)" % self.item
+
+    def __check_other__(self, other):
+        return check_wmo(other)[0] if type(other) is not float_wmo else other.item
+
+    def __eq__(self, other):
+        return self.item.__eq__(self.__check_other__(other))
+
+    def __ne__(self, other):
+        return self.item.__ne__(self.__check_other__(other))
+
+    def __gt__(self, other):
+        return self.item.__gt__(self.__check_other__(other))
+
+    def __lt__(self, other):
+        return self.item.__lt__(self.__check_other__(other))
+
+    def __ge__(self, other):
+        return self.item.__ge__(self.__check_other__(other))
+
+    def __le__(self, other):
+        return self.item.__le__(self.__check_other__(other))
+
+    def __hash__(self):
+        return hash(self.item)
+
+
+class Registry(UserList):
+    """A list manager can that validate item type
+
+    Examples
+    --------
+    You can commit new entry to the registry, one by one:
+
+        >>> R = Registry(name='file')
+        >>> R.commit('meds/4901105/profiles/D4901105_017.nc')
+        >>> R.commit('aoml/1900046/profiles/D1900046_179.nc')
+
+    Or with a list:
+
+        >>> R = Registry(name='My floats', dtype='wmo')
+        >>> R.commit([2901746, 4902252])
+
+    And also at instantiation time (name and dtype are optional):
+
+        >>> R = Registry([2901746, 4902252], name='My floats', dtype=float_wmo)
+
+    Registry can be used like a list.
+
+    It is iterable:
+
+        >>> for wmo in R:
+        >>>     print(wmo)
+
+    It has a ``len`` property:
+
+        >>> len(R)
+
+    It can be checked for values:
+
+        >>> 4902252 in R
+
+    You can also remove items from the registry, again one by one or with a list:
+
+        >>> R.remove('2901746')
+
+    """
+
+    def _complain(self, msg):
+        if self._invalid == 'raise':
+            raise ValueError(msg)
+        elif self._invalid == 'warn':
+            warnings.warn(msg)
+        else:
+            log.debug(msg)
+
+    def _str(self, item):
+        is_valid = isinstance(item, str)
+        if not is_valid:
+            self._complain("%s is not a valid %s" % (str(item), self.dtype))
+        return is_valid
+
+    def _wmo(self, item):
+        return item.isvalid
+
+    def __init__(self, initlist=None, name: str = 'unnamed', dtype='str', invalid='raise'):
+        """Create a registry, i.e. a controlled list
+
+        Parameters
+        ----------
+        initlist: list, optional
+            List of values to register
+        name: str, default: 'unnamed'
+            Name of the Registry
+        dtype: :class:`str` or dtype, default: :class:`str`
+            Data type of registry content. Supported values are: 'str', 'wmo', float_wmo
+        invalid: str, default: 'raise'
+            Define what do to when a new item is not valid. Can be 'raise' or 'ignore'
+        """
+        self.name = name
+        self._invalid = invalid
+        if repr(dtype) == "<class 'str'>" or dtype == 'str':
+            self._validator = self._str
+            self.dtype = str
+        elif dtype == float_wmo or str(dtype).lower() == 'wmo':
+            self._validator = self._wmo
+            self.dtype = float_wmo
+        else:
+            raise ValueError("Unrecognised Registry data type '%s'" % dtype)
+        if initlist is not None:
+            initlist = self._process_items(initlist)
+        super().__init__(initlist)
+
+    def __repr__(self):
+        summary = ["<argopy.registry>%s" % str(self.dtype)]
+        summary.append("Name: %s" % self.name)
+        N = len(self.data)
+        msg = "Nitems: %s" % N if N > 1 else "Nitem: %s" % N
+        summary.append(msg)
+        if N > 0:
+            items = [repr(item) for item in self.data]
+            # msg = format_oneline("[%s]" % "; ".join(items), max_width=120)
+            msg = "[%s]" % "; ".join(items)
+            summary.append("Content: %s" % msg)
+        return "\n".join(summary)
+
+    def _process_items(self, items):
+        if not isinstance(items, list):
+            items = [items]
+        if self.dtype == float_wmo:
+            items = [float_wmo(item, errors=self._invalid) for item in items]
+        return items
+
+    def commit(self, values):
+        """R.commit(values) -- append values to the end of the registry if not already in"""
+        items = self._process_items(values)
+        for item in items:
+            if item not in self.data and self._validator(item):
+                super().append(item)
+        return self
+
+    def append(self, value):
+        """R.append(value) -- append value to the end of the registry"""
+        items = self._process_items(value)
+        for item in items:
+            if self._validator(item):
+                super().append(item)
+        return self
+
+    def extend(self, other):
+        """R.extend(iterable) -- extend registry by appending elements from the iterable"""
+        self.append(other)
+        return self
+
+    def remove(self, values):
+        """R.remove(valueS) -- remove first occurrence of values."""
+        items = self._process_items(values)
+        for item in items:
+            if item in self.data:
+                super().remove(item)
+        return self
+
+    def insert(self, index, value):
+        """R.insert(index, value) -- insert value before index."""
+        item = self._process_items(value)[0]
+        if self._validator(item):
+            super().insert(index, item)
+        return self
+
+    def __copy__(self):
+        # Called with copy.copy(R)
+        return Registry(copy.copy(self.data), dtype=self.dtype)
+
+    def copy(self):
+        """Return a shallow copy of the registry"""
+        return self.__copy__()
 
 
 def get_coriolis_profile_id(WMO, CYC=None):
@@ -1961,6 +2720,7 @@ def get_coriolis_profile_id(WMO, CYC=None):
             rows.append(meta_row)
         return pd.DataFrame(rows)
 
+    from .stores import httpstore
     fs = httpstore(cache=True)
     data = fs.open_mfjson(URIs, preprocess=prec, errors="raise", url_follow=True)
 
@@ -2069,6 +2829,7 @@ class ArgoNVSReferenceTables:
                  cachedir: str = "",
                  ):
         """Argo Reference Tables from NVS"""
+        from .stores import httpstore
         cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
         self.fs = httpstore(cache=cache, cachedir=cachedir)
         self.nvs = nvs

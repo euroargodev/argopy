@@ -11,7 +11,7 @@ from argopy.errors import (
     FileSystemHasNoCache
 )
 from argopy.utilities import is_list_of_strings
-from . import (
+from utils import (
     requires_connected_erddap,
     requires_connected_erddap_phy,
     requires_connected_erddap_bgc,
@@ -29,9 +29,8 @@ class Test_Backend:
         "float": [[1901393], [1901393, 6902746]],
         "profile": [[6902746, 34], [6902746, np.arange(12, 13)], [6902746, [1, 12]]],
         "region": [
-            [-70, -65, 35.0, 40.0, 0, 10.0],
-            [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-03"],
-            [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-06"],
+            [-20, -16., 0, 1, 0, 100.],
+            [-20, -16., 0, 1, 0, 100., "1997-07-01", "1997-09-01"]
         ],
     }
     requests_bgc = {

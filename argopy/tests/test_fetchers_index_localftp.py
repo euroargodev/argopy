@@ -6,7 +6,7 @@ import pytest
 import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound
-from . import requires_localftp_index, requires_connection, safe_to_server_errors
+from utils import requires_localftp_index, requires_connection, safe_to_server_errors
 
 
 @requires_localftp_index

@@ -39,6 +39,10 @@
     argopy.data_fetchers.erddap_data.Fetch_wmo
     argopy.data_fetchers.erddap_data.Fetch_box
 
+    argopy.data_fetchers.gdacftp_data.FTPArgoDataFetcher
+    argopy.data_fetchers.gdacftp_data.Fetch_wmo
+    argopy.data_fetchers.gdacftp_data.Fetch_box
+
     argopy.data_fetchers.localftp_data.LocalFTPArgoDataFetcher
     argopy.data_fetchers.localftp_data.Fetch_wmo
     argopy.data_fetchers.localftp_data.Fetch_box
@@ -82,6 +86,9 @@
     argopy.utilities.check_wmo
     argopy.utilities.check_cyc
     argopy.utilities.wmo2box
+    argopy.utilities.deprecated
+    argopy.utilities.Registry
+    argopy.utilities.float_wmo
     argopy.utilities.get_coriolis_profile_id
     argopy.utilities.get_ea_profile_page
 
@@ -129,10 +136,35 @@
     argopy.stores.memorystore.open_mfdataset
     argopy.stores.memorystore.read_csv
 
+    argopy.stores.filesystems.ftpstore
+    argopy.stores.ftpstore.open_dataset
+    argopy.stores.ftpstore.open_mfdataset
+
     argopy.stores.argo_index.indexstore
     argopy.stores.argo_index.indexfilter_wmo
     argopy.stores.argo_index.indexfilter_box
-    
+
+    argopy.stores.argo_index_proto.ArgoIndexStoreProto
+    argopy.stores.argo_index_pa.indexstore_pyarrow
+    argopy.stores.argo_index_pa.indexstore_pyarrow.load
+    argopy.stores.argo_index_pa.indexstore_pyarrow.search_wmo
+    argopy.stores.argo_index_pa.indexstore_pyarrow.search_cyc
+    argopy.stores.argo_index_pa.indexstore_pyarrow.search_wmo_cyc
+    argopy.stores.argo_index_pa.indexstore_pyarrow.search_tim
+    argopy.stores.argo_index_pa.indexstore_pyarrow.search_lat_lon
+    argopy.stores.argo_index_pa.indexstore_pyarrow.search_lat_lon_tim
+    argopy.stores.argo_index_pa.indexstore_pyarrow.to_dataframe
+
+    argopy.stores.argo_index_pd.indexstore_pandas
+    argopy.stores.argo_index_pd.indexstore_pandas.load
+    argopy.stores.argo_index_pd.indexstore_pandas.search_wmo
+    argopy.stores.argo_index_pd.indexstore_pandas.search_cyc
+    argopy.stores.argo_index_pd.indexstore_pandas.search_wmo_cyc
+    argopy.stores.argo_index_pd.indexstore_pandas.search_tim
+    argopy.stores.argo_index_pd.indexstore_pandas.search_lat_lon
+    argopy.stores.argo_index_pd.indexstore_pandas.search_lat_lon_tim
+    argopy.stores.argo_index_pd.indexstore_pandas.to_dataframe
+
     argopy.xarray.ArgoAccessor.point2profile
     argopy.xarray.ArgoAccessor.profile2point
     argopy.xarray.ArgoAccessor.interp_std_levels

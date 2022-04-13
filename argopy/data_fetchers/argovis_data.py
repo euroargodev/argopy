@@ -2,16 +2,12 @@
 # -*coding: UTF-8 -*-
 #
 # Argo data fetcher for Argovis.
-# Code borrows heavily from API gathered at:
-# https://github.com/earthcube2020/ec20_tucker_etal/blob/master/EC2020_argovis_python_api.ipynb
-#
-# This is comprised of functions used to query Argovis api
-# query functions either return dictionary objects or error messages.
 #
 
 import numpy as np
 import pandas as pd
 import getpass
+import logging
 from .proto import ArgoDataFetcherProto
 from abc import abstractmethod
 import warnings
@@ -19,6 +15,7 @@ import warnings
 from argopy.stores import httpstore
 from argopy.options import OPTIONS
 from argopy.utilities import list_standard_variables, format_oneline, Chunker
+from argopy.errors import DataNotFound
 
 
 access_points = ['wmo', 'box']
@@ -28,6 +25,8 @@ api_server = 'https://argovis.colorado.edu'  # API root url
 api_server_check = (
     api_server + "/selection/overview"
 )  # URL to check if the API is alive
+
+log = logging.getLogger("argopy.argovis.data")
 
 
 class ArgovisDataFetcher(ArgoDataFetcherProto):
@@ -250,7 +249,12 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             This was made to debug for fsspec caching system not working with cache of profile and region in argovis
             Not working yet, see: https://github.com/euroargodev/argopy/issues/101
         """
-        return urls
+        # return urls
+        def safe_for_fsspec_cache(url):
+            url = url.replace("[", "%5B")  # This is the one really necessary
+            url = url.replace("]", "%5D")  # For consistency
+            return url
+        return [safe_for_fsspec_cache(url) for url in urls]
         # return [urllib.parse.quote(url, safe='/:?=[]&') for url in urls]
 
     def json2dataframe(self, profiles):
@@ -291,6 +295,8 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             df = df[[value for value in self.key_map.values() if value in df.columns]]
             df_list[i] = df
         df = pd.concat(df_list, ignore_index=True)
+        if df.shape[0] == 0:
+            raise DataNotFound("No data found for: %s" % self.cname())
         df.sort_values(by=["TIME", "PRES"], inplace=True)
         df = df.set_index(["N_POINTS"])
         return df
@@ -375,7 +381,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
 
 
 class Fetch_wmo(ArgovisDataFetcher):
-    def init(self, WMO=[], CYC=None):
+    def init(self, WMO=[], CYC=None, **kwargs):
         """ Create Argo data loader for WMOs and CYCs
 
             Parameters
@@ -385,14 +391,6 @@ class Fetch_wmo(ArgovisDataFetcher):
             CYC : int, np.array(int), list(int)
                 The cycle numbers to load.
         """
-        if isinstance(CYC, int):
-            CYC = np.array(
-                (CYC,), dtype="int"
-            )  # Make sure we deal with an array of integers
-        if isinstance(CYC, list):
-            CYC = np.array(
-                CYC, dtype="int"
-            )  # Make sure we deal with an array of integers
         self.WMO = WMO
         self.CYC = CYC
 
@@ -406,7 +404,7 @@ class Fetch_wmo(ArgovisDataFetcher):
         if cyc is None:
             return (self.server + "/catalog/platforms/{}").format(str(wmo))
         else:
-            profIds = [str(wmo) + "_" + str(c) for c in cyc.tolist()]
+            profIds = [str(wmo) + "_" + str(c) for c in cyc]
             return (
                 (self.server + "/catalog/mprofiles/?ids={}")
                 .format(profIds)
@@ -436,7 +434,7 @@ class Fetch_wmo(ArgovisDataFetcher):
 
 class Fetch_box(ArgovisDataFetcher):
 
-    def init(self, box: list):
+    def init(self, box: list, **kwargs):
         """ Create Argo data loader
 
             Parameters

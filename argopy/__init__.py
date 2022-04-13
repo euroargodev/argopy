@@ -28,8 +28,7 @@ from . import stores  # noqa: E402
 from . import errors  # noqa: E402
 from . import plot  # noqa: E402
 from .plot import dashboard  # noqa: E402
-# from . import plotters  # noqa: E402
-from .utilities import show_versions, show_options, clear_cache, TopoFetcher  # noqa: E402
+from .utilities import show_versions, show_options, clear_cache, lscache, TopoFetcher  # noqa: E402
 from .utilities import monitor_status as status  # noqa: E402
 from .options import set_options  # noqa: E402
 
@@ -47,6 +46,7 @@ __all__ = (
     "dashboard",
     "status",
     "clear_cache",
+    "lscache",
     "TopoFetcher",  # Class
     # Sub-packages,
     "utilities",

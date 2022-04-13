@@ -103,7 +103,6 @@ Low-level functions
 
     show_versions
     utilities.list_available_data_src
-    utilities.list_available_data_src
     utilities.list_available_index_src
     utilities.get_coriolis_profile_id
     utilities.get_ea_profile_page
@@ -189,6 +188,10 @@ File systems
     argopy.stores.filestore
     argopy.stores.httpstore
     argopy.stores.memorystore
+    argopy.stores.ftpstore
+
+Argo index store
+----------------
 
 .. autosummary::
     :toctree: generated/
@@ -196,6 +199,8 @@ File systems
     argopy.stores.indexstore
     argopy.stores.indexfilter_wmo
     argopy.stores.indexfilter_box
+    argopy.stores.indexstore_pa
+    argopy.stores.indexstore_pd
 
 Fetcher sources
 ---------------
@@ -209,6 +214,16 @@ ERDDAP
     argopy.data_fetchers.erddap_data.ErddapArgoDataFetcher
     argopy.data_fetchers.erddap_data.Fetch_wmo
     argopy.data_fetchers.erddap_data.Fetch_box
+
+GDAC
+^^^^
+
+.. autosummary::
+    :toctree: generated/
+
+    argopy.data_fetchers.gdacftp_data.FTPArgoDataFetcher
+    argopy.data_fetchers.gdacftp_data.Fetch_wmo
+    argopy.data_fetchers.gdacftp_data.Fetch_box
 
 Local FTP
 ^^^^^^^^^
@@ -241,7 +256,6 @@ Plotters
     argopy.plot.bar_plot
     argopy.plot.open_sat_altim_report
 
-
 Utilities
 ---------
 
@@ -249,6 +263,9 @@ Utilities
    :toctree: generated/
 
     argopy.utilities.check_wmo
+    argopy.utilities.check_cyc
+    argopy.utilities.float_wmo
+    argopy.utilities.Registry
     argopy.utilities.list_standard_variables
     argopy.utilities.list_multiprofile_file_variables
     argopy.utilities.Chunker

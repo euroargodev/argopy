@@ -1,30 +1,6 @@
-#!/bin/env python
-# -*coding: UTF-8 -*-
-"""
-Argo data fetcher for a local copy of GDAC ftp.
+"""Argo data fetcher for a local copy of GDAC ftp.
 
 This is not intended to be used directly, only by the facade at fetchers.py
-
-Since the GDAC ftp is organised by DAC/WMO folders, we start by implementing the 'float' and 'profile' entry points.
-
-
-
-About the index local ftp fetcher:
-
-We have a large index csv file "ar_index_global_prof.txt", that is about ~200Mb
-For a given request, we need to load/read it
-and then to apply a filter to select lines matching the request
-With the current version, a dataframe of the full index is cached
-and then another cached file is created for the result of the filter.
-
-df_full = pd.read_csv("index.txt")
-df_small = filter(df_full)
-write_on_file(df_small)
-
-I think we can avoid this with a virtual file system
-When a request is done, we
-
-
 
 """
 import os
@@ -33,13 +9,15 @@ import numpy as np
 import pandas as pd
 from abc import abstractmethod
 import getpass
+import logging
 
 from .proto import ArgoDataFetcherProto
 from argopy.errors import NetCDF4FileNotFoundError
 from argopy.utilities import (
     list_standard_variables,
     check_localftp,
-    format_oneline
+    format_oneline,
+    deprecated
 )
 from argopy.options import OPTIONS
 from argopy.stores import filestore, indexstore, indexfilter_box
@@ -50,9 +28,24 @@ exit_formats = ["xarray"]
 dataset_ids = ["phy", "bgc"]  # First is default
 api_server_check = OPTIONS["local_ftp"]
 
+log = logging.getLogger("argopy.localftp.data")
+
 
 class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
-    """ Manage access to Argo data from a local copy of GDAC ftp """
+    """Manage access to Argo data from a local copy of GDAC ftp.
+
+    .. warning::
+
+        This fetcher is deprecated. It's been replaced by the ``gdac`` fetcher.
+
+        ================= ======
+        Deprecation cycle
+        ================= ======
+        Warning           0.1.11
+        Error             0.1.12
+        Delete            0.1.13
+        ================= ======
+    """
 
     ###
     # Methods to be customised for a specific request
@@ -62,22 +55,10 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
         """ Initialisation for a specific fetcher """
         raise NotImplementedError("Not implemented")
 
-    # @abstractmethod
-    # def list_argo_files(self, errors: str = 'raise'):
-    #     """ Set the internal list of absolute path of all files to load
-    #     This function must define the attribute: self._list_of_argo_files with a list of path(s)
-    #
-    #     Parameters
-    #     ----------
-    #     errors: {'raise','ignore'}, optional
-    #         If 'raise' (default), raises a NetCDF4FileNotFoundError error if any of the requested
-    #         files cannot be found. If 'ignore', file not found is skipped when fetching data.
-    #     """
-    #     pass
-
     ###
     # Methods that must not change
     ###
+    @deprecated("The 'localftp' data source is deprecated. It's been replaced by 'gdac'. It will raise an error after argopy 0.1.11")
     def __init__(
         self,
         local_ftp: str = "",
@@ -97,26 +78,26 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
 
         Parameters
         ----------
-        local_ftp: str (optional)
+        local_ftp: str, optional
             Path to the local directory where the 'dac' folder is located.
-        ds: str (optional)
+        ds: str, optional
             Dataset to load: 'phy' or 'ref' or 'bgc'
-        errors: str (optional)
+        errors: str, optional
             If set to 'raise' (default), will raise a NetCDF4FileNotFoundError error if any of the requested
             files cannot be found. If set to 'ignore', the file not found is skipped when fetching data.
-        cache: bool (optional)
-            Cache data or not (default: False)
-        cachedir: str (optional)
+        cache: bool, default: False
+            Cache data or not
+        cachedir: str, optional
             Path to cache folder
-        dimension: str
-            Main dimension of the output dataset. This can be "profile" to retrieve a collection of
-            profiles, or "point" (default) to have data as a collection of measurements.
+        dimension: str, default: point
+            Main dimension of the output dataset. This can be ``profile`` to retrieve a collection of
+            profiles, or ``point`` to have data as a collection of measurements.
             This can be used to optimise performances.
-        parallel: bool (optional)
-            Chunk request to use parallel fetching (default: False)
-        parallel_method: str (optional)
+        parallel: bool, default: False
+            Chunk request to use parallel fetching
+        parallel_method: str, default: thread
             Define the parallelization method: ``thread``, ``process`` or a :class:`dask.distributed.client.Client`.
-        progress: bool (optional)
+        progress: bool, default: False
             Show a progress bar or not when fetching data.
         chunks: 'auto' or dict of integers (optional)
             Dictionary with request access point as keys and number of chunks to create as values.
@@ -243,6 +224,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
 
         pattern = _filepathpattern(wmo, cyc)
         lst = sorted(glob(pattern))
+        # log.debug(lst)
         # lst = sorted(self.fs.glob(pattern))  # Much slower than the regular glob !
         if len(lst) == 1:
             return lst[0]
@@ -467,14 +449,6 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
         CYC: int, np.array(int), list(int)
             The cycle numbers to load.
         """
-        if isinstance(CYC, int):
-            CYC = np.array(
-                (CYC,), dtype="int"
-            )  # Make sure we deal with an array of integers
-        if isinstance(CYC, list):
-            CYC = np.array(
-                CYC, dtype="int"
-            )  # Make sure we deal with an array of integers
         self.WMO = WMO
         self.CYC = CYC
 
@@ -501,14 +475,6 @@ class Fetch_wmo(LocalFTPArgoDataFetcher):
 
         # Get list of files to load:
         if not hasattr(self, "_list_of_argo_files"):
-            # if not self.parallel:
-            #     self._list_of_argo_files = list_bunch(self.WMO, self.CYC)
-            # else:
-            #     C = Chunker({'wmo': self.WMO}, chunks=self.chunks, chunksize=self.chunks_maxsize)
-            #     wmo_grps = C.fit_transform()
-            #     self._list_of_argo_files = []
-            #     for wmos in wmo_grps:
-            #         self._list_of_argo_files.append(list_bunch(wmos, self.CYC))
             self._list_of_argo_files = list_bunch(self.WMO, self.CYC)
 
         return self._list_of_argo_files
@@ -535,13 +501,6 @@ class Fetch_box(LocalFTPArgoDataFetcher):
         if len(box) == 8:
             self.indexBOX = [box[ii] for ii in [0, 1, 2, 3, 6, 7]]
 
-        # if len(box) == 6:
-        #     # Select the last months of data:
-        #     end = pd.to_datetime('now', utc=True)
-        #     start = end - pd.DateOffset(months=1)
-        #     self.BOX.append(start.strftime('%Y-%m-%d'))
-        #     self.BOX.append(end.strftime('%Y-%m-%d'))
-
         self.fs_index = indexstore(
             self.cache,
             self.cachedir,
@@ -559,21 +518,22 @@ class Fetch_box(LocalFTPArgoDataFetcher):
         """
         if not hasattr(self, "_list_of_argo_files"):
             self._list_of_argo_files = []
-            # Fetch the index to retrieve the list of profiles to load:
+            # Fetch the index to retrieve the list of files/profiles to load:
             filt = indexfilter_box(self.indexBOX)
             df_index = self.fs_index.read_csv(filt)
-            if isinstance(df_index, pd.core.frame.DataFrame):
-                # Ok, we found profiles in the index file,
-                # so now we can make sure these files exist:
-                lst = list(df_index["file"])
-                for file in lst:
-                    abs_file = os.path.sep.join([self.local_ftp, "dac", file])
-                    if self.fs.exists(abs_file):
-                        self._list_of_argo_files.append(abs_file)
-                    elif self.errors == "raise":
-                        raise NetCDF4FileNotFoundError(abs_file)
-                    else:
-                        # Otherwise remain silent/ignore
-                        # todo should raise a warning instead ?
-                        return None
+
+            # if isinstance(df_index, pd.core.frame.DataFrame):
+            # Ok, we found profiles in the index file,
+            # so now we can make sure these files exist:
+            lst = list(df_index["file"])
+            for file in lst:
+                abs_file = os.path.sep.join([self.local_ftp, "dac", file])
+                if self.fs.exists(abs_file):
+                    self._list_of_argo_files.append(abs_file)
+                elif self.errors == "raise":
+                    raise NetCDF4FileNotFoundError(abs_file)
+                else:
+                    # Otherwise remain silent/ignore
+                    # todo should raise a warning instead ?
+                    return None
         return self._list_of_argo_files
