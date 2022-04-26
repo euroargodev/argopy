@@ -472,20 +472,7 @@ class ArgoDataFetcher:
         if not full:
             self.load()
             ds = self.data.argo.point2profile()
-            if "N_LEVELS" in ds.dims:
-                df = (
-                    ds.drop_vars(set(ds.data_vars) - set(["PLATFORM_NUMBER", "CYCLE_NUMBER"]))
-                    .drop_dims("N_LEVELS")
-                    .to_dataframe()
-                )
-            else:
-                # This is a special case where there is no vertical level in the dataset
-                # This can happen when a single measurement was loaded
-                df = (
-                    ds.drop_vars(set(ds.data_vars) - set(["PLATFORM_NUMBER", "CYCLE_NUMBER"]))
-                    .to_dataframe()
-                )
-
+            df = ds[set(["PLATFORM_NUMBER", "CYCLE_NUMBER", "LONGITUDE", "LATITUDE", "TIME"])].to_dataframe()
             df = (
                 df.reset_index()
                 .rename(
@@ -499,6 +486,7 @@ class ArgoDataFetcher:
                 )
                 .drop(columns="N_PROF")
             )
+
             df = df[["date", "latitude", "longitude", "wmo", "cyc"]]
             if coriolis_id:
                 df['id'] = None
