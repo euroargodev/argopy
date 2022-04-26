@@ -188,5 +188,5 @@ class Fetch_box(LocalFTPArgoIndexFetcher):
                 If bounding dates are not specified, the entire time series is fetched.
                 Eg: [-60, -55, 40., 45., '2007-08-01', '2007-09-01']
         """
-        self.BOX = box
+        self.BOX = box.copy()
         self.fcls = indexfilter_box(self.BOX)

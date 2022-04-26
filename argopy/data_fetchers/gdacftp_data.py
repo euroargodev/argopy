@@ -505,10 +505,10 @@ class Fetch_box(FTPArgoDataFetcher):
         """
         # We use a full domain definition (x, y, z, t) as argument for compatibility with the other fetchers
         # but at this point, we internally work only with x, y and t.
-        self.BOX = box
-        self.indexBOX = [box[ii] for ii in [0, 1, 2, 3]]
-        if len(box) == 8:
-            self.indexBOX = [box[ii] for ii in [0, 1, 2, 3, 6, 7]]
+        self.BOX = box.copy()
+        self.indexBOX = [self.BOX[ii] for ii in [0, 1, 2, 3]]
+        if len(self.BOX) == 8:
+            self.indexBOX = [self.BOX[ii] for ii in [0, 1, 2, 3, 6, 7]]
         # self.N_FILES = len(self.uri)  # Trigger search in the index
         self.N_FILES = np.NaN
         self._nrows = None

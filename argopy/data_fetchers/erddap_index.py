@@ -250,11 +250,11 @@ class Fetch_box(ErddapArgoIndexFetcher):
             The box domain to load all Argo data for:
             box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
         """
+        self.BOX = box.copy()
         if len(box) == 4:
             # Use all time line:
-            box.append('1900-01-01')
-            box.append('2100-12-31')
-        self.BOX = box
+            self.BOX.append('1900-01-01')
+            self.BOX.append('2100-12-31')
         self.definition = 'Ifremer erddap Argo Index fetcher for a space/time region'
 
         return self

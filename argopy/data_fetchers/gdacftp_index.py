@@ -250,7 +250,7 @@ class Fetch_box(FTPArgoIndexFetcher):
         # We use a full domain definition (x, y, z, t) as argument for compatibility with the other fetchers
         # but at this point, we internally work only with x, y and t.
         # log.debug("Create FTPArgoIndexFetcher.Fetch_box instance with index BOX: %s" % box)
-        self.indexBOX = box
+        self.indexBOX = box.copy()
 
         self._nrows = None
         if 'MAX_FILES' in kwargs:

@@ -487,8 +487,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         ds = ds.set_coords(coords)
 
         # Cast data types and add variable attributes (not available in the csv download):
-        ds = ds.argo.cast_types()
         ds = self._add_attributes(ds)
+        ds = ds.argo.cast_types()
 
         # More convention:
         #         ds = ds.rename({'pres': 'pressure'})
@@ -617,7 +617,7 @@ class Fetch_box(ErddapArgoDataFetcher):
                     or:
                     box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
-        self.BOX = box
+        self.BOX = box.copy()
 
         if self.dataset_id == "phy":
             self.definition = "Ifremer erddap Argo data fetcher for a space/time region"

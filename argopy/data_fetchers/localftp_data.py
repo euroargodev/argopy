@@ -496,10 +496,10 @@ class Fetch_box(LocalFTPArgoDataFetcher):
         """
         # We use a full domain definition (x, y, z, t) as argument for compatibility with the other fetchers
         # but at this point, we internally work only with x, y and t.
-        self.BOX = box
-        self.indexBOX = [box[ii] for ii in [0, 1, 2, 3]]
-        if len(box) == 8:
-            self.indexBOX = [box[ii] for ii in [0, 1, 2, 3, 6, 7]]
+        self.BOX = box.copy()
+        self.indexBOX = [self.BOX[ii] for ii in [0, 1, 2, 3]]
+        if len(self.BOX) == 8:
+            self.indexBOX = [self.BOX[ii] for ii in [0, 1, 2, 3, 6, 7]]
 
         self.fs_index = indexstore(
             self.cache,

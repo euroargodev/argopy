@@ -445,13 +445,13 @@ class Fetch_box(ArgovisDataFetcher):
                 or:
                 box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
-        if len(box) == 6:
+        self.BOX = box.copy()
+        if len(self.BOX) == 6:
             # Select the last months of data:
             end = pd.to_datetime("now", utc=True)
             start = end - pd.DateOffset(months=1)
-            box.append(start.strftime("%Y-%m-%d"))
-            box.append(end.strftime("%Y-%m-%d"))
-        self.BOX = box
+            self.BOX.append(start.strftime("%Y-%m-%d"))
+            self.BOX.append(end.strftime("%Y-%m-%d"))
 
         self.definition = "?"
         if self.dataset_id == "phy":
