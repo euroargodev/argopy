@@ -191,7 +191,7 @@ class Test_Facade:
 The following tests are not necessary, since data fetching is tested from each data fetcher tests 
 """
 @requires_fetcher
-class OFFTest_DataFetching:
+class Test_DataFetching:
     """ Test main API facade for all available fetching backends and default dataset """
 
     local_ftp = argopy.tutorial.open_dataset("localftp")[0]
@@ -202,6 +202,7 @@ class OFFTest_DataFetching:
     fetcher_opts = {}
 
     mode = ["standard", "expert"]
+    # mode = ["standard"]
 
     # Define API entry point options to tests:
     # args = {}
@@ -212,11 +213,11 @@ class OFFTest_DataFetching:
     #     [12.181, 17.459, -40.416, -34.444, 0.0, 2014.0, '2008-06-07', '2008-09-06'],
     # ]
     args = {}
-    args["float"] = [[13857]]
-    args["profile"] = [[13857, 90], [13857, [88, 89]]]
+    args["float"] = [[4901079]]
+    args["profile"] = [[4901079, 135], [4901079, [138, 139]]]
     args["region"] = [
-        [-20., -16., 0., 1., 0., 100.],
-        [-20., -16., 0., 1., 0., 100., "1997-07-01", "1997-09-01"],
+        [-50., -45., 36., 37., 0., 100.],
+        [-50., -45., 36., 37., 0., 100., "2008-01-01", "2008-02-15"],
     ]
 
 
@@ -226,15 +227,15 @@ class OFFTest_DataFetching:
 
     def __assert_fetcher(self, f):
         # Standard loading of measurements:
-        f.load()
-        assert is_list_of_strings(f.uri)
-        assert isinstance(f.data, xr.Dataset)
-        assert isinstance(f.index, pd.core.frame.DataFrame)
+        # f.load()
+        # assert is_list_of_strings(f.uri)
+        # assert isinstance(f.data, xr.Dataset)
+        # assert isinstance(f.index, pd.core.frame.DataFrame)
 
         # Only test specific output structures:
         # f.to_xarray()
         # f.to_dataframe()
-        # f.to_index()
+        f.to_index(full=False)
 
     def __test_float(self, bk, **ftc_opts):
         """ Test float for a given backend """
@@ -276,11 +277,12 @@ class OFFTest_DataFetching:
     def test_float_argovis(self):
         self.__test_float("argovis")
 
-    @skip_for_debug
-    @requires_connected_gdac
+    # @requires_connected_gdac
     @safe_to_server_errors
     def test_float_gdac(self):
-        self.__test_float("gdac", N_RECORDS=100)
+        # self.__test_float("gdac", N_RECORDS=100)
+        with argopy.set_options(ftp=self.local_ftp):
+            self.__test_float("gdac")
 
     @requires_connected_erddap_phy
     @safe_to_server_errors
@@ -298,11 +300,11 @@ class OFFTest_DataFetching:
     def test_profile_argovis(self):
         self.__test_profile("argovis")
 
-    @skip_for_debug
-    @requires_connected_gdac
+    # @requires_connected_gdac
     @safe_to_server_errors
     def test_profile_gdac(self):
-        self.__test_profile("gdac", N_RECORDS=100)
+        with argopy.set_options(ftp=self.local_ftp):
+            self.__test_profile("gdac")
 
     @requires_connected_erddap_phy
     @safe_to_server_errors
@@ -320,8 +322,9 @@ class OFFTest_DataFetching:
     def test_region_argovis(self):
         self.__test_region("argovis")
 
-    @skip_for_debug
-    @requires_connected_gdac
+    # @requires_connected_gdac
     @safe_to_server_errors
     def test_region_gdac(self):
-        self.__test_region("gdac", N_RECORDS=100)
+        # self.__test_region("gdac", N_RECORDS=100)
+        with argopy.set_options(ftp=self.local_ftp):
+            self.__test_region("gdac")
