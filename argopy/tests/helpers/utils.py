@@ -213,7 +213,7 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
         except DataNotFound as e:
             # We make sure that data requested by tests are available from API, so this must be a server side error !
             msg = "\nDataNotFound, Something happened on server side with:\n\t-%s" % str(e.args)
-            xmsg = "Failing because some data were not founds, but should work"
+            xmsg = "Failing because some data were not found, but should work"
             pass
         except ServerDisconnectedError as e:
             # We can't do anything about this !
@@ -231,7 +231,7 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
             pass
         except FileNotFoundError as e:
             msg = "\nServer didn't return the data:\n%s" % str(e.args)
-            xmsg = "Failing because some file were not founds, but should work"
+            xmsg = "Failing because some file were not found, but should work"
             pass
         except FtpPathError as e:
             if 'xfail' in kwargs and kwargs['xfail']:
