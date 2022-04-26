@@ -443,6 +443,9 @@ class ArgoAccessor:
             raise InvalidDatasetStructure(
                 "Method only available for a collection of points"
             )
+        if self.N_POINTS == 0:
+            raise DataNotFound("Empty dataset, no data to transform !")
+
         this = self._obj  # Should not be modified
 
         def fillvalue(da):
@@ -934,7 +937,8 @@ class ArgoAccessor:
         if not mask:
             this = this.argo._where(this_mask, drop=drop)
             this.argo._add_history("Variables selected according to QC")
-            # this = this.argo.cast_types()
+            if this.argo.N_POINTS == 0:
+                log.warning("No data left after QC filtering !")
             return this
         else:
             return this_mask
