@@ -205,7 +205,7 @@ class ArgoAccessor:
     def cast_types(self):  # noqa: C901
         """ Make sure variables are of the appropriate types according to Argo
 
-            This is hard coded, but should be retrieved from an API somewhere.
+            #todo: This is hard coded, but should be retrieved from an API somewhere.
             Should be able to handle all possible variables encountered in the Argo dataset.
         """
         ds = self._obj
@@ -362,6 +362,10 @@ class ArgoAccessor:
                 # finally convert QC strings to integers:
                 da = cast_this(da, np.int32)
 
+            if da.dtype == 'O':
+                # By default, try to cast as float:
+                da = cast_this(da, np.float32)
+
             if da.dtype != "O":
                 da.attrs["casted"] = 1
 
@@ -478,6 +482,7 @@ class ArgoAccessor:
             .max()
             .values
         )
+        log.debug("New dataset should be [N_PROF=%i, N_LEVELS=%i]" % (N_PROF, N_LEVELS))
         assert N_PROF * N_LEVELS >= len(this["N_POINTS"])
         if N_LEVELS == 1:
             log.debug("This dataset has a single vertical level, thus final variables will only have a N_PROF "
@@ -494,7 +499,12 @@ class ArgoAccessor:
         for i_prof, grp in enumerate(this.groupby(dummy_argo_uid)):
             i_uid, prof = grp
             for iv, vname in enumerate(this.data_vars):
-                count[i_prof, iv] = len(np.unique(prof[vname]))
+                try:
+                    count[i_prof, iv] = len(np.unique(prof[vname]))
+                except Exception as e:
+                    log.error("An error happened when dealing with the '%s' data variable" % vname)
+                    raise(e)
+
         # Variables with a unique value for each profiles:
         list_1d = list(np.array(this.data_vars)[count.sum(axis=0) == count.shape[0]])
         # Variables with more than 1 value for each profiles:
@@ -553,6 +563,9 @@ class ArgoAccessor:
         # Restore coordinate variables:
         new_ds = new_ds.set_coords([c for c in coords_list if c in new_ds])
         new_ds['N_PROF'] = np.arange(N_PROF)
+        if 'N_LEVELS' in new_ds['LATITUDE'].dims:
+            new_ds['LATITUDE'] = new_ds['LATITUDE'].isel(N_LEVELS=0)  # Make sure LAT is (N_PROF) and not (N_PROF, N_LEVELS)
+            new_ds['LONGITUDE'] = new_ds['LONGITUDE'].isel(N_LEVELS=0)
 
         # Misc formatting
         new_ds = new_ds.sortby("TIME")

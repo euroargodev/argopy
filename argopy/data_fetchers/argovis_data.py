@@ -135,9 +135,9 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         return this
 
     def _add_attributes(self, this):  # noqa: C901
-        """ Add variables attributes not return by erddap requests (csv)
+        """ Add variables attributes not return by argovis requests
 
-            This is hard coded, but should be retrieved from an API somewhere
+            #todo: This is hard coded, but should be retrieved from an API somewhere
         """
         for v in this.data_vars:
             if "TEMP" in v and "_QC" not in v:
@@ -323,8 +323,8 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
 
         # Cast data types and add variable attributes (not available in the csv download):
         ds['TIME'] = ds['TIME'].astype(np.datetime64)
-        ds = ds.argo.cast_types()
         ds = self._add_attributes(ds)
+        ds = ds.argo.cast_types()
 
         # Remove argovis file attributes and replace them with argopy ones:
         ds.attrs = {}

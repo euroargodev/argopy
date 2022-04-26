@@ -27,6 +27,9 @@ setuptools.setup(
         "Topic :: Scientific/Engineering",
         "Intended Audience :: Science/Research",
         "Operating System :: OS Independent",
+        "Operating System :: POSIX",
+        "Operating System :: MacOS",
+        "Operating System :: Microsoft :: Windows",
         "Development Status :: 3 - Alpha"
     ]
 )
