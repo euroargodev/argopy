@@ -4,12 +4,12 @@ Argo file index store
 Implementation based on pyarrow
 """
 
-import os
 import numpy as np
 import pandas as pd
 import logging
 import io
 import gzip
+from packaging import version
 
 from ..errors import DataNotFound
 from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, doc_inherit
@@ -18,6 +18,7 @@ try:
     import pyarrow.csv as csv
     import pyarrow as pa
     import pyarrow.parquet as pq
+    import pyarrow.compute as pc
 except ModuleNotFoundError:
     pass
 
@@ -111,7 +112,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                 self.index = self._read(self.fs["client"].fs, this_path, fmt=self.ext)
                 self.index_path_cache = this_path
             else:
-                log.debug("Load index from scratch ...")
+                log.debug("Load index from scratch (nrows=%s) ..." % nrows)
                 if self.fs["src"].exists(self.index_path + ".gz"):
                     with self.fs["src"].open(self.index_path + ".gz", "rb") as fg:
                         with gzip.open(fg) as f:
@@ -152,9 +153,10 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             self.search = self._read(self.fs["client"].fs, this_path, fmt=self.ext)
             self.search_path_cache.commit(this_path)
         else:
-            log.debug("Compute search from scratch ...")
+            log.debug("Compute search from scratch (nrows=%s) ..." % nrows)
             this_filter = np.nonzero(self.search_filter)[0]
             n_match = this_filter.shape[0]
+            log.debug(n_match)
             if nrows is not None and n_match > 0:
                 self.search = self.index.take(
                     this_filter.take(range(np.min([nrows, n_match])))
@@ -162,7 +164,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             else:
                 self.search = self.index.filter(self.search_filter)
 
-            log.debug("Found %i matches" % self.search.shape[0])
+            log.debug("Found %i/%i matches" % (self.search.shape[0], self.index.shape[0]))
             if self.cache and self.search.shape[0] > 0:
                 self._write(self.fs["client"], this_path, self.search, fmt=self.ext)
                 self.search = self._read(self.fs["client"].fs, this_path)
@@ -262,6 +264,14 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                 count[wmo] = self.index.filter(search_filter).shape[0]
         return count
 
+    def _reduce_a_filter_list(self, filters, op='or'):
+        if version.parse(pa.__version__) < version.parse("7.0"):
+            filters = [i.to_pylist() for i in filters]
+        if op == 'or':
+            return np.logical_or.reduce(filters)
+        elif op == 'and':
+            return np.logical_and.reduce(filters)
+
     def search_wmo(self, WMOs, nrows=None):
         WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
         log.debug(
@@ -277,7 +287,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                     self.index["file"], pattern="/%i/" % wmo
                 )
             )
-        self.search_filter = np.logical_or.reduce(filt)
+        self.search_filter = self._reduce_a_filter_list(filt)
         self.run(nrows=nrows)
         return self
 
@@ -298,7 +308,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             filt.append(
                 pa.compute.match_substring_regex(self.index["file"], pattern=pattern)
             )
-        self.search_filter = np.logical_or.reduce(filt)
+        self.search_filter = self._reduce_a_filter_list(filt)
         self.run(nrows=nrows)
         return self
 
@@ -326,7 +336,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                         self.index["file"], pattern=pattern
                     )
                 )
-        self.search_filter = np.logical_or.reduce(filt)
+        self.search_filter = self._reduce_a_filter_list(filt)
         self.run(nrows=nrows)
         return self
 
@@ -348,7 +358,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                 pa.array([pd.to_datetime(BOX[5])], pa.timestamp("ms"))[0],
             )
         )
-        self.search_filter = np.logical_and.reduce(filt)
+        self.search_filter = self._reduce_a_filter_list(filt, op='and')
         self.run(nrows=nrows)
         return self
 
@@ -362,7 +372,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         filt.append(pa.compute.less_equal(self.index["longitude"], BOX[1]))
         filt.append(pa.compute.greater_equal(self.index["latitude"], BOX[2]))
         filt.append(pa.compute.less_equal(self.index["latitude"], BOX[3]))
-        self.search_filter = np.logical_and.reduce(filt)
+        self.search_filter = self._reduce_a_filter_list(filt, op='and')
         self.run(nrows=nrows)
         return self
 
@@ -388,6 +398,6 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                 pa.array([pd.to_datetime(BOX[5])], pa.timestamp("ms"))[0],
             )
         )
-        self.search_filter = np.logical_and.reduce(filt)
+        self.search_filter = self._reduce_a_filter_list(filt, op='and')
         self.run(nrows=nrows)
         return self
