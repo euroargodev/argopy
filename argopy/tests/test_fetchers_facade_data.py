@@ -227,15 +227,15 @@ class Test_DataFetching:
 
     def __assert_fetcher(self, f):
         # Standard loading of measurements:
-        # f.load()
-        # assert is_list_of_strings(f.uri)
-        # assert isinstance(f.data, xr.Dataset)
-        # assert isinstance(f.index, pd.core.frame.DataFrame)
+        f.load()
+        assert is_list_of_strings(f.uri)
+        assert isinstance(f.data, xr.Dataset)
+        assert isinstance(f.index, pd.core.frame.DataFrame)
 
         # Only test specific output structures:
         # f.to_xarray()
         # f.to_dataframe()
-        f.to_index(full=False)
+        # f.to_index(full=False)
 
     def __test_float(self, bk, **ftc_opts):
         """ Test float for a given backend """
