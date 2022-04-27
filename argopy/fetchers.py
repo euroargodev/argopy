@@ -472,7 +472,7 @@ class ArgoDataFetcher:
         if not full:
             self.load()
             ds = self.data.argo.point2profile()
-            df = ds[set(["PLATFORM_NUMBER", "CYCLE_NUMBER", "LONGITUDE", "LATITUDE", "TIME"])].to_dataframe()
+            df = ds[["PLATFORM_NUMBER", "CYCLE_NUMBER", "LONGITUDE", "LATITUDE", "TIME"]].to_dataframe()
             df = (
                 df.reset_index()
                 .rename(
