@@ -129,7 +129,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-dev.yml" >> $GITHUB_ENV
+          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-dev-full.yml" >> $GITHUB_ENV
           echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
 
       - name: Cache conda
@@ -208,7 +208,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-min.yml" >> $GITHUB_ENV
+          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-min-full.yml" >> $GITHUB_ENV
           echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
 
       - name: Set up environment with py-${{ matrix.python-version }}
@@ -252,7 +252,7 @@ jobs:
           fail_ci_if_error: true
           env_vars: RUNNER_OS,PYTHON_VERSION
 
-  free-small:
+  free-core:
 
     needs: detect-ci-trigger
     runs-on: ${{ matrix.os }}
@@ -278,7 +278,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-free-small.yml" >> $GITHUB_ENV
+          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-free-core.yml" >> $GITHUB_ENV
           echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
 
       - name: Set up environment with py-${{ matrix.python-version }}

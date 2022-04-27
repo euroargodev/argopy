@@ -15,14 +15,14 @@ create_this_env () {
 	if conda env list | grep $1; then
 	    printf "$1 already exists, remove and re-create this environment...\n"
 		# conda remove --quiet --name $1 --all --yes --json > tmp.json
-		  conda remove --quiet --name $1 --all --yes --json > /dev/null 2>&1
+		  mamba remove --quiet --name $1 --all --yes --json > /dev/null 2>&1
 	else
 		  printf "Creating conda environment $1 ...\n"
 	fi
 
 	# Create the environment from file
 	# conda env create --quiet --file temp_env.yml --json >> tmp.json
-	conda env create --quiet --file temp_env.yml --json > /dev/null 2>&1
+	mamba env create --quiet --file temp_env.yml --json > /dev/null 2>&1
 	
 	# Clean-up
 	/bin/rm tmp.json > /dev/null 2>&1
@@ -82,7 +82,7 @@ fix_kernel_path (){
 
 add_to_ipykernel () {
   # Possibly add it the Jupyter kernels:
-   conda activate ${1}
+#   conda activate ${1}
    echo ${1}
    python -m ipykernel install --user --name=$1
 
@@ -113,40 +113,59 @@ while [[ $# -gt 0 ]]; do
       echo "--py38dev"
       echo "--py38free"
       echo "--py38small"
+      echo "--py38min"
       exit 0
       ;;
     -a|--all)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py37dev]="py3.7-dev.yml"
-      ENV_LIST[argopy-tests-py37free]="py3.7-free.yml"
-      ENV_LIST[argopy-tests-py38dev]="py3.8-dev.yml"
-      ENV_LIST[argopy-tests-py38free]="py3.8-free.yml"
-      ENV_LIST[argopy-tests-py38free-small]="py3.8-small-free.yml"
+      ENV_LIST[argopy-tests-py37dev]="py3.7-dev-full.yml"
+      ENV_LIST[argopy-tests-py37free]="py3.7-free-full.yml"
+      ENV_LIST[argopy-tests-py37min]="py3.7-min-full.yml"
+      ENV_LIST[argopy-tests-py38dev]="py3.8-dev-full.yml"
+      ENV_LIST[argopy-tests-py38free]="py3.8-free-full.yml"
+      ENV_LIST[argopy-tests-py38min]="py3.8-min-full.yml"
+      ENV_LIST[argopy-tests-py38free-core]="py3.8-free-core.yml"
+      ENV_LIST[argopy-tests-py38min-core]="py3.8-min-core.yml"
       shift # past argument
       ;;
     --py37dev)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py37dev]="py3.7-dev.yml"
+      ENV_LIST[argopy-tests-py37dev]="py3.7-dev-full.yml"
       shift # past argument
       ;;
     --py37free)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py37free]="py3.7-free.yml"
+      ENV_LIST[argopy-tests-py37free]="py3.7-free-full.yml"
+      shift # past argument
+      ;;
+    --py37min)
+      declare -A ENV_LIST
+      ENV_LIST[argopy-tests-py37min]="py3.7-min-full.yml"
       shift # past argument
       ;;
     --py38dev)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py38dev]="py3.8-dev.yml"
+      ENV_LIST[argopy-tests-py38dev]="py3.8-dev-full.yml"
       shift # past argument
       ;;
     --py38free)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py38free]="py3.8-free.yml"
+      ENV_LIST[argopy-tests-py38free]="py3.8-free-full.yml"
       shift # past argument
       ;;
-    --py38small)
+    --py38min)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py38free-small]="py3.8-small-free.yml"
+      ENV_LIST[argopy-tests-py38min]="py3.8-min-full.yml"
+      shift # past argument
+      ;;
+    --py38free-core)
+      declare -A ENV_LIST
+      ENV_LIST[argopy-tests-py38free-core]="py3.8-free-core.yml"
+      shift # past argument
+      ;;
+    --py38min-core)
+      declare -A ENV_LIST
+      ENV_LIST[argopy-tests-py38min-core]="py3.8-min-core.yml"
       shift # past argument
       ;;
   esac

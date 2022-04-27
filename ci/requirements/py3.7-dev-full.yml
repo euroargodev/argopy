@@ -5,34 +5,37 @@ dependencies:
   - python=3.7
   - xarray=0.20.2
   - scipy=1.7.3
-  - scikit-learn=1.0.2
   - netcdf4=1.5.8
-  - dask=2022.02.0
-  - toolz=0.11.2
+  - scikit-learn=1.0.2
   - erddapy=1.2.0
   - fsspec=2022.02.0
-  - gsw=3.4.0
   - aiohttp=3.8.1
-  - bottleneck=1.3.4
-  - cartopy=0.20.2
-  - cftime=1.5.2
+  - packaging=21.3
+  - toolz=0.11.2
+
+  - dask=2022.02.0
+  - gsw=3.4.0
+  - pyarrow=4.0.1
+  - tqdm=4.63.0
   - distributed=2022.02.0
-  - ipython=7.32.0
+
   - matplotlib=3.5.1
+  - cartopy=0.20.2
+  - seaborn=0.11.2
+  - ipython=7.32.0
+  - ipywidgets=7.6.5
+  - ipykernel=6.9.1
+
+  - zarr=2.11.0
+  - bottleneck=1.3.4
+  - cftime=1.5.2
+  - cfgrib=0.9.10
   - numpy=1.21.5
   - pandas=1.3.5
-  - packaging=21.3
-  - pytest=7.0.1
-  - seaborn=0.11.2
-  - setuptools=59.8.0
-  - zarr=2.11.0
-  - tqdm=4.63.0
-  - ipykernel=6.9.1
-  - ipywidgets=7.6.5
-  - pyarrow=4.0.1
-# Not showing up with argopy.show_versions():
+
   - pip=22.0.3
-  - cfgrib=0.9.10
+  - pytest=7.0.1
+  - setuptools=59.8.0
   - black=22.1.0
   - flake8=4.0.1
   - pytest-cov=3.0.0

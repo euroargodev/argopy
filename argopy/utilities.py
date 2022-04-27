@@ -564,21 +564,22 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         print(f"Error collecting netcdf / hdf5 version: {e}")
 
     DEPS = {
-        'core': sorted([
+        'min': sorted([
             ("argopy", lambda mod: mod.__version__),
+
             ("xarray", lambda mod: mod.__version__),
             ("scipy", lambda mod: mod.__version__),
             ("netCDF4", lambda mod: mod.__version__),
             ("sklearn", lambda mod: mod.__version__),  # Using 'preprocessing.LabelEncoder()' in xarray accessor, used by filters
             ("erddapy", lambda mod: mod.__version__),  # This could go away from requirements ?
             ("fsspec", lambda mod: mod.__version__),
-            ("packaging", lambda mod: mod.__version__),  # will come with xarray, Using 'version' to make API compatible with several fsspec releases
-            ("dask", lambda mod: mod.__version__),  # This could go away from requirements ?
-            ("toolz", lambda mod: mod.__version__),
-            ("gsw", lambda mod: mod.__version__),   # Used by xarray accessor to compute new variables
             ("aiohttp", lambda mod: mod.__version__),
+            ("packaging", lambda mod: mod.__version__),  # will come with xarray, Using 'version' to make API compatible with several fsspec releases
+            ("toolz", lambda mod: mod.__version__),
         ]),
-        'ext.misc': sorted([
+        'ext.extra': sorted([
+            ("dask", lambda mod: mod.__version__),
+            ("gsw", lambda mod: mod.__version__),   # Used by xarray accessor to compute new variables
             ("pyarrow", lambda mod: mod.__version__),
             ("tqdm", lambda mod: mod.__version__),
             ("distributed", lambda mod: mod.__version__),
@@ -596,6 +597,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
 
             ("bottleneck", lambda mod: mod.__version__),
             ("cftime", lambda mod: mod.__version__),
+            ("cfgrib", lambda mod: mod.__version__),
             ("conda", lambda mod: mod.__version__),
             ("nc_time_axis", lambda mod: mod.__version__),
 

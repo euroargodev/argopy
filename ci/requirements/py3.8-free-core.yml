@@ -3,14 +3,15 @@ channels:
   - conda-forge
 dependencies:
   - python=3.8
-  - scipy
   - xarray
+  - scipy
+  - netCDF4
+  - scikit-learn
+  - erddapy
   - fsspec
   - aiohttp
-  - erddapy
-  - scikit-learn
-  - matplotlib
   - packaging
+  - toolz
 
   - pytest
   - pytest-cov
