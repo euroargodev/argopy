@@ -27,7 +27,7 @@ jobs:
         with:
           keyword: "[skip-ci]"
 
-  dev:
+  pinned:
     # CI tests for pinned environments, argopy must pass tests in a controlled environment
 
     needs: detect-ci-trigger
@@ -248,6 +248,10 @@ jobs:
         python-version: [3.7, 3.8]
         os: [ubuntu-latest, macos-latest, windows-latest]
         experimental: [false]
+        include:
+          - python-version: 3.10
+            os: ubuntu-latest
+            experimental: true
 
     steps:
       - uses: actions/checkout@v3
