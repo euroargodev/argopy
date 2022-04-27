@@ -156,7 +156,6 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             log.debug("Compute search from scratch (nrows=%s) ..." % nrows)
             this_filter = np.nonzero(self.search_filter)[0]
             n_match = this_filter.shape[0]
-            log.debug(n_match)
             if nrows is not None and n_match > 0:
                 self.search = self.index.take(
                     this_filter.take(range(np.min([nrows, n_match])))
