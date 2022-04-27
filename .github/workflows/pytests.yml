@@ -324,7 +324,7 @@ jobs:
 
   free:
 
-    needs: free-small
+    needs: free-core
     runs-on: ${{ matrix.os }}
     if: needs.detect-ci-trigger.outputs.triggered == 'false'
     defaults:
