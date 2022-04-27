@@ -15,7 +15,7 @@ dependencies:
 
   - dask=2.30
   - gsw=3.4
-  - pyarrow
+  - pyarrow=4.0.1
   - tqdm=4.51
   - distributed=2.30
 
