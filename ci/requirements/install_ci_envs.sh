@@ -110,10 +110,13 @@ while [[ $# -gt 0 ]]; do
       echo "--all"
       echo "--py37dev"
       echo "--py37free"
+      echo "--py37min"
+      echo "--py37free-core"
       echo "--py38dev"
       echo "--py38free"
-      echo "--py38small"
+      echo "--py38free-core"
       echo "--py38min"
+      echo "--py38min-core"
       exit 0
       ;;
     -a|--all)
@@ -121,6 +124,8 @@ while [[ $# -gt 0 ]]; do
       ENV_LIST[argopy-tests-py37dev]="py3.7-dev-full.yml"
       ENV_LIST[argopy-tests-py37free]="py3.7-free-full.yml"
       ENV_LIST[argopy-tests-py37min]="py3.7-min-full.yml"
+      ENV_LIST[argopy-tests-py37free-core]="py3.7-free-core.yml"
+
       ENV_LIST[argopy-tests-py38dev]="py3.8-dev-full.yml"
       ENV_LIST[argopy-tests-py38free]="py3.8-free-full.yml"
       ENV_LIST[argopy-tests-py38min]="py3.8-min-full.yml"
@@ -141,6 +146,11 @@ while [[ $# -gt 0 ]]; do
     --py37min)
       declare -A ENV_LIST
       ENV_LIST[argopy-tests-py37min]="py3.7-min-full.yml"
+      shift # past argument
+      ;;
+    --py37free-core)
+      declare -A ENV_LIST
+      ENV_LIST[argopy-tests-py37free-core]="py3.7-free-core.yml"
       shift # past argument
       ;;
     --py38dev)
