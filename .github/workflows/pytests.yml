@@ -8,6 +8,10 @@ on:
     branches-ignore:
       - 'dependabot*'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
   detect-ci-trigger:
@@ -235,7 +239,7 @@ jobs:
           fail_ci_if_error: true
           env_vars: RUNNER_OS,PYTHON_VERSION
 
-  free:
+  free-all:
 
     name: Env. all free - Py ${{matrix.python-version}} - ${{ matrix.os }}
     needs: free-core
