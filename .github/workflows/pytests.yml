@@ -30,7 +30,7 @@ jobs:
   pinned:
     # CI tests for pinned environments, argopy must pass tests in a controlled environment
 
-    name: Py ${{matrix.python-version}} - Env. all pinned - ${{ matrix.os }}
+    name: Env. all pinned - Py ${{matrix.python-version}} - ${{ matrix.os }}
     needs: detect-ci-trigger
     runs-on: ${{ matrix.os }}
     if: needs.detect-ci-trigger.outputs.triggered == 'false'
@@ -51,7 +51,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-dev-full.yml" >> $GITHUB_ENV
+          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-all-pinned.yml" >> $GITHUB_ENV
           echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
 
       - name: Cache conda
@@ -103,7 +103,7 @@ jobs:
 
   min:
 
-    name: Py ${{matrix.python-version}} - Env. all minimum - ${{ matrix.os }}
+    name: Env. all minimum - Py ${{matrix.python-version}} - ${{ matrix.os }}
     needs: detect-ci-trigger
     runs-on: ${{ matrix.os }}
     if: needs.detect-ci-trigger.outputs.triggered == 'false'
@@ -124,7 +124,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-min-full.yml" >> $GITHUB_ENV
+          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-all-min.yml" >> $GITHUB_ENV
           echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
 
       - name: Set up environment with py-${{ matrix.python-version }}
@@ -170,7 +170,7 @@ jobs:
 
   free-core:
 
-    name: Py ${{matrix.python-version}} - Env. core free - ${{ matrix.os }}
+    name: Env. core free - Py ${{matrix.python-version}} - ${{ matrix.os }}
     needs: detect-ci-trigger
     runs-on: ${{ matrix.os }}
     if: needs.detect-ci-trigger.outputs.triggered == 'false'
@@ -191,7 +191,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-free-core.yml" >> $GITHUB_ENV
+          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-core-free.yml" >> $GITHUB_ENV
           echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
 
       - name: Set up environment with py-${{ matrix.python-version }}
@@ -237,7 +237,7 @@ jobs:
 
   free:
 
-    name: Py ${{matrix.python-version}} - Env. all free - ${{ matrix.os }}
+    name: Env. all free - Py ${{matrix.python-version}} - ${{ matrix.os }}
     needs: free-core
     runs-on: ${{ matrix.os }}
     if: needs.detect-ci-trigger.outputs.triggered == 'false'
@@ -262,7 +262,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-free-full.yml" >> $GITHUB_ENV
+          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-all-free.yml" >> $GITHUB_ENV
           echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
 
       - name: Set up environment with py-${{ matrix.python-version }}

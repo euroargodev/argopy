@@ -108,74 +108,76 @@ while [[ $# -gt 0 ]]; do
     -l|--list|-h|--help)
       echo "Possible environment options include:"
       echo "--all"
-      echo "--py37dev"
+      echo "--py37pinned"
       echo "--py37free"
       echo "--py37min"
       echo "--py37free-core"
-      echo "--py38dev"
+      echo "--py38pinned"
       echo "--py38free"
-      echo "--py38free-core"
       echo "--py38min"
+      echo "--py38free-core"
       echo "--py38min-core"
       exit 0
       ;;
     -a|--all)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py37dev]="py3.7-dev-full.yml"
-      ENV_LIST[argopy-tests-py37free]="py3.7-free-full.yml"
-      ENV_LIST[argopy-tests-py37min]="py3.7-min-full.yml"
-      ENV_LIST[argopy-tests-py37free-core]="py3.7-free-core.yml"
+      ENV_LIST[argopy-tests-py37pinned]="py3.7-all-pinned.yml"
+      ENV_LIST[argopy-tests-py37free]="py3.7-all-free.yml"
+      ENV_LIST[argopy-tests-py37min]="py3.7-all-min.yml"
 
-      ENV_LIST[argopy-tests-py38dev]="py3.8-dev-full.yml"
-      ENV_LIST[argopy-tests-py38free]="py3.8-free-full.yml"
-      ENV_LIST[argopy-tests-py38min]="py3.8-min-full.yml"
-      ENV_LIST[argopy-tests-py38free-core]="py3.8-free-core.yml"
-      ENV_LIST[argopy-tests-py38min-core]="py3.8-min-core.yml"
+      ENV_LIST[argopy-tests-py38pinned]="py3.8-pinned-all.yml"
+      ENV_LIST[argopy-tests-py38free]="py3.8-all-free.yml"
+      ENV_LIST[argopy-tests-py38min]="py3.8-all-min.yml"
+
+      ENV_LIST[argopy-tests-py37free-core]="py3.7-core-free.yml"
+
+      ENV_LIST[argopy-tests-py38free-core]="py3.8-core-free.yml"
+      ENV_LIST[argopy-tests-py38min-core]="py3.8-core-min.yml"
       shift # past argument
       ;;
-    --py37dev)
+    --py37pinned)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py37dev]="py3.7-dev-full.yml"
+      ENV_LIST[argopy-tests-py37pinned]="py3.7-all-pinned.yml"
       shift # past argument
       ;;
     --py37free)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py37free]="py3.7-free-full.yml"
+      ENV_LIST[argopy-tests-py37free]="py3.7-all-free.yml"
       shift # past argument
       ;;
     --py37min)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py37min]="py3.7-min-full.yml"
+      ENV_LIST[argopy-tests-py37min]="py3.7-all-min.yml"
       shift # past argument
       ;;
     --py37free-core)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py37free-core]="py3.7-free-core.yml"
+      ENV_LIST[argopy-tests-py37free-core]="py3.7-core-free.yml"
       shift # past argument
       ;;
-    --py38dev)
+    --py38pinned)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py38dev]="py3.8-dev-full.yml"
+      ENV_LIST[argopy-tests-py38pinned]="py3.8-all-pinned.yml"
       shift # past argument
       ;;
     --py38free)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py38free]="py3.8-free-full.yml"
+      ENV_LIST[argopy-tests-py38free]="py3.8-all-free.yml"
       shift # past argument
       ;;
     --py38min)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py38min]="py3.8-min-full.yml"
+      ENV_LIST[argopy-tests-py38min]="py3.8-all-min.yml"
       shift # past argument
       ;;
     --py38free-core)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py38free-core]="py3.8-free-core.yml"
+      ENV_LIST[argopy-tests-py38free-core]="py3.8-core-free.yml"
       shift # past argument
       ;;
     --py38min-core)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py38min-core]="py3.8-min-core.yml"
+      ENV_LIST[argopy-tests-py38min-core]="py3.8-core-min.yml"
       shift # past argument
       ;;
   esac
