@@ -1,5 +1,6 @@
 name: tests Upstream
-# Daily tests with un-pinned dependencies
+# Daily tests with all un-pinned dependencies
+# Allows to be warned when argopy will fail tests due to dependencies last updates
 
 on:
   schedule:
@@ -30,7 +31,7 @@ jobs:
           keyword: "[test-upstream]"
 
   upstream:
-    name: upstream
+    name: Env. all free - Py ${{matrix.python-version}} - ubuntu-latest
     runs-on: ubuntu-latest
     needs: detect-ci-trigger
     if: |
@@ -99,7 +100,7 @@ jobs:
     if: |
       failure()
       && github.event_name == 'schedule'
-      && needs.upstream-dev.outputs.artifacts_availability == 'true'
+      && needs.upstream.outputs.artifacts_availability == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
