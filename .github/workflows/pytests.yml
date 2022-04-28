@@ -1,4 +1,5 @@
 name: tests
+# CI tests ran every time new code is pushed to the repo
 
 on:
   push:
