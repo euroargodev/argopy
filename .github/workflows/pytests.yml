@@ -170,7 +170,7 @@ jobs:
 
   free-core:
 
-    name: ${{ matrix.os }} - Py ${{matrix.python-version}} - Env. core free
+    name: Py ${{matrix.python-version}} - Env. core free - ${{ matrix.os }}
     needs: detect-ci-trigger
     runs-on: ${{ matrix.os }}
     if: needs.detect-ci-trigger.outputs.triggered == 'false'
@@ -237,7 +237,7 @@ jobs:
 
   free:
 
-    name: ${{ matrix.os }} - Py ${{matrix.python-version}} - Env. all free
+    name: Py ${{matrix.python-version}} - Env. all free - ${{ matrix.os }}
     needs: free-core
     runs-on: ${{ matrix.os }}
     if: needs.detect-ci-trigger.outputs.triggered == 'false'
