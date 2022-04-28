@@ -564,7 +564,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         print(f"Error collecting netcdf / hdf5 version: {e}")
 
     DEPS = {
-        'min': sorted([
+        'core': sorted([
             ("argopy", lambda mod: mod.__version__),
 
             ("xarray", lambda mod: mod.__version__),
@@ -577,14 +577,16 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
             ("packaging", lambda mod: mod.__version__),  # will come with xarray, Using 'version' to make API compatible with several fsspec releases
             ("toolz", lambda mod: mod.__version__),
         ]),
-        'ext.extra': sorted([
-            ("dask", lambda mod: mod.__version__),
+        'ext.util': sorted([
             ("gsw", lambda mod: mod.__version__),   # Used by xarray accessor to compute new variables
-            ("pyarrow", lambda mod: mod.__version__),
             ("tqdm", lambda mod: mod.__version__),
+        ]),
+        'ext.perf': sorted([
+            ("dask", lambda mod: mod.__version__),
+            ("pyarrow", lambda mod: mod.__version__),
             ("distributed", lambda mod: mod.__version__),
         ]),
-        'ext.plotters': sorted([
+        'ext.plot': sorted([
             ("matplotlib", lambda mod: mod.__version__),
             ("cartopy", lambda mod: mod.__version__),
             ("seaborn", lambda mod: mod.__version__),
