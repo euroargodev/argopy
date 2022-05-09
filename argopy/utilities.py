@@ -850,7 +850,7 @@ def fetch_status(stdout: str = "html", insert: bool = True):
 class monitor_status:
     """ Monitor data source status with a refresh rate """
 
-    def __init__(self, refresh=1):
+    def __init__(self, refresh=60):
         import ipywidgets as widgets
 
         self.refresh_rate = refresh
