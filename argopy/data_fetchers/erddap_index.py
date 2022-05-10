@@ -38,7 +38,7 @@ except Exception:
 access_points = ['wmo', 'box']
 exit_formats = ['xarray', 'dataframe']
 dataset_ids = ['phy']  # First is default
-api_server = 'https://erddap.ifremer.fr/'  # API root url
+api_server = 'https://erddap.ifremer.fr/erddap/'  # API root url
 api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
 
 

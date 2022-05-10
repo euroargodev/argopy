@@ -39,7 +39,7 @@ except:  # noqa: E722
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy', 'ref', 'bgc']  # First is default
-api_server = 'https://erddap.ifremer.fr/'  # API root url
+api_server = 'https://erddap.ifremer.fr/erddap/'  # API root url
 api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
 
 
