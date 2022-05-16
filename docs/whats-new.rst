@@ -7,6 +7,14 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+v0.1.12 (16 May 2022)
+----------------------
+
+**Internals**
+
+- Update ``erddap`` server from https://www.ifremer.fr/erddap to https://erddap.ifremer.fr/erddap. (:commit:`af5692f9f7b236c5cd62c202252074cccec97c34`) by `G. Maze <http://www.github.com/gmaze>`_
+
+
 v0.1.11 (13 Apr. 2022)
 ----------------------
 
