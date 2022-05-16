@@ -58,7 +58,7 @@ class LocalFTPArgoDataFetcher(ArgoDataFetcherProto):
     ###
     # Methods that must not change
     ###
-    @deprecated("The 'localftp' data source is deprecated. It's been replaced by 'gdac'. It will raise an error after argopy 0.1.11")
+    @deprecated("The 'localftp' data source is deprecated. It's been replaced by 'gdac'. It will raise an error after argopy 0.1.12")
     def __init__(
         self,
         local_ftp: str = "",
