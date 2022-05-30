@@ -1,6 +1,6 @@
 import pytest
 import argopy
-from . import requires_connection
+from utils import requires_connection
 
 
 def test_invalid_dataset():

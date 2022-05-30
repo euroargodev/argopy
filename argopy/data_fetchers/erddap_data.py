@@ -13,7 +13,6 @@ This is not intended to be used directly, only by the facade at fetchers.py
 import pandas as pd
 import numpy as np
 import copy
-import warnings
 
 from abc import abstractmethod
 import getpass
@@ -22,7 +21,8 @@ from .proto import ArgoDataFetcherProto
 from argopy.options import OPTIONS
 from argopy.utilities import list_standard_variables, Chunker, format_oneline
 from argopy.stores import httpstore
-from argopy.plotters import open_dashboard
+from ..errors import ErddapServerError
+from aiohttp import ClientResponseError
 
 
 # Load erddapy according to available version (breaking changes in v0.8.0)
@@ -39,7 +39,7 @@ except:  # noqa: E722
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy', 'ref', 'bgc']  # First is default
-api_server = 'https://www.ifremer.fr/erddap'  # API root url
+api_server = 'https://erddap.ifremer.fr/erddap/'  # API root url
 api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
 
 #class NewDataFetcher(ArgoDataFetcherProto):
@@ -49,6 +49,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     """ Manage access to Argo data through Ifremer ERDDAP
 
         ERDDAP transaction are managed with the erddapy library
+
+        This class is a prototype not meant to be instantiated directly
 
     """
 
@@ -608,14 +610,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     def N_POINTS(self) -> int:
         """ Number of measurements expected to be returned by a request """
         try:
-            with self.fs.open(
-                self.get_url().replace("." + self.erddap.response, ".ncHeader")
-            ) as of:
+            url = self.get_url().replace("." + self.erddap.response, ".ncHeader")
+            with self.fs.open(url) as of:
                 ncHeader = of.read().decode("utf-8")
             lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
             return int(lines.split("=")[1].split(";")[0])
         except Exception:
-            pass
+            raise ErddapServerError("Erddap server can't return ncHeader for this url. ")
 
     def to_xarray(self, errors: str = 'ignore'):
         """ Load Argo data and return a xarray.DataSet """
@@ -623,15 +624,24 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         # Download data
         if not self.parallel:
             if len(self.uri) == 1:
-                ds = self.fs.open_dataset(self.uri[0])
+                try:
+                    ds = self.fs.open_dataset(self.uri[0])
+                except ClientResponseError as e:
+                    raise ErddapServerError(e.message)
             else:
-                ds = self.fs.open_mfdataset(
-                    self.uri, method="sequential", progress=self.progress, errors=errors
-                )
+                try:
+                    ds = self.fs.open_mfdataset(
+                        self.uri, method="sequential", progress=self.progress, errors=errors
+                    )
+                except ClientResponseError as e:
+                    raise ErddapServerError(e.message)
         else:
-            ds = self.fs.open_mfdataset(
-                self.uri, method=self.parallel_method, progress=self.progress, errors=errors
-            )
+            try:
+                ds = self.fs.open_mfdataset(
+                    self.uri, method=self.parallel_method, progress=self.progress, errors=errors
+                )
+            except ClientResponseError as e:
+                raise ErddapServerError(e.message)
 
         ds = ds.rename({"row": "N_POINTS"})
 
@@ -647,8 +657,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         ds = ds.set_coords(coords)
 
         # Cast data types and add variable attributes (not available in the csv download):
-        ds = ds.argo.cast_types()
         ds = self._add_attributes(ds)
+        ds = ds.argo.cast_types()
 
         # More convention:
         #         ds = ds.rename({'pres': 'pressure'})
@@ -713,15 +723,6 @@ class Fetch_wmo(ErddapArgoDataFetcher):
             CYC : int, np.array(int), list(int)
                 The cycle numbers to load.
         """
-        if isinstance(CYC, int):
-            CYC = np.array(
-                (CYC,), dtype="int"
-            )  # Make sure we deal with an array of integers
-        if isinstance(CYC, list):
-            CYC = np.array(
-                CYC, dtype="int"
-            )  # Make sure we deal with an array of integers
-
         self.WMO = WMO
         self.CYC = CYC
 
@@ -754,39 +755,23 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         list(str)
         """
         if not self.parallel:
-            if len(self.WMO) <= 5:  # todo: This max WMO number should be parameterized somewhere else
-                # Retrieve all WMOs in a single request
-                return [self.get_url()]
-            else:
-                # Retrieve one WMO by URL sequentially (same behaviour as localftp and argovis)
-                urls = []
-                for wmo in self.WMO:
-                    urls.append(
-                        Fetch_wmo(
-                            WMO=wmo, CYC=self.CYC, ds=self.dataset_id, parallel=False
-                        ).get_url()
-                    )
-                return urls
+            chunks = "auto"
+            chunks_maxsize = {'wmo': 5}
         else:
-            self.Chunker = Chunker(
-                {"wmo": self.WMO}, chunks=self.chunks, chunksize=self.chunks_maxsize
+            chunks = self.chunks
+            chunks_maxsize = self.chunks_maxsize
+        self.Chunker = Chunker(
+            {"wmo": self.WMO}, chunks=chunks, chunksize=chunks_maxsize
+        )
+        wmo_grps = self.Chunker.fit_transform()
+        urls = []
+        for wmos in wmo_grps:
+            urls.append(
+                Fetch_wmo(
+                    WMO=wmos, CYC=self.CYC, ds=self.dataset_id, parallel=False
+                ).get_url()
             )
-            wmo_grps = self.Chunker.fit_transform()
-            # self.chunks = C.chunks
-            urls = []
-            for wmos in wmo_grps:
-                urls.append(
-                    Fetch_wmo(
-                        WMO=wmos, CYC=self.CYC, ds=self.dataset_id, parallel=False
-                    ).get_url()
-                )
-            return urls
-
-    def dashboard(self, **kw):
-        if len(self.WMO) == 1:
-            return open_dashboard(wmo=self.WMO[0], **kw)
-        else:
-            warnings.warn("Dashboard only available for a single float request")
+        return urls
 
 
 class Fetch_box(ErddapArgoDataFetcher):
@@ -804,7 +789,7 @@ class Fetch_box(ErddapArgoDataFetcher):
                     or:
                     box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
-        self.BOX = box
+        self.BOX = box.copy()
 
         if self.dataset_id == "phy":
             self.definition = "Ifremer erddap Argo data fetcher for a space/time region"

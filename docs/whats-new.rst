@@ -17,17 +17,118 @@ What's New
    :target: //anaconda.org/conda-forge/argopy
 .. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy
    :target: //github.com/euroargodev/argopy/releases
+   
 v0.1.XX
 -------
 - Add variables of BGC-Argo in Argopy
 1) expert mode and erddap source
 
-v0.1.11 (X XXX. 2022)
----------------------
+v0.1.12 (16 May 2022)
+----------------------
 
 **Internals**
 
+- Update ``erddap`` server from https://www.ifremer.fr/erddap to https://erddap.ifremer.fr/erddap. (:commit:`af5692f9f7b236c5cd62c202252074cccec97c34`) by `G. Maze <http://www.github.com/gmaze>`_
+
+
+v0.1.11 (13 Apr. 2022)
+----------------------
+
+**Features and front-end API**
+
+- **New data source ``gdac`` to retrieve data from a GDAC compliant source**, for DataFetcher and IndexFetcher. You can specify the FTP source with the ``ftp`` fetcher option or with the argopy global option ``ftp``. The FTP source support http, ftp or local files protocols. This fetcher is optimised if pyarrow is available, otherwise pandas dataframe are used. See update on :ref:`Data sources`. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import IndexFetcher
+    from argopy import DataFetcher
+    argo = IndexFetcher(src='gdac')
+    argo = DataFetcher(src='gdac')
+    argo = DataFetcher(src='gdac', ftp="https://data-argo.ifremer.fr")  # Default and fastest !
+    argo = DataFetcher(src='gdac', ftp="ftp://ftp.ifremer.fr/ifremer/argo")
+    with argopy.set_options(src='gdac', ftp='ftp://usgodae.org/pub/outgoing/argo'):
+        argo = DataFetcher()
+
+.. note::
+
+    The new ``gdac`` fetcher uses Argo index to determine which profile files to load. Hence, this fetcher may show poor performances when used with a ``region`` access point. Don't hesitate to check :ref:`Performances` to try to improve performances, otherwise, we recommend to use a webAPI access point (``erddap`` or ``argovis``).
+
+.. warning::
+
+    Since the new ``gdac`` fetcher can use a local copy of the GDAC ftp server, the legacy ``localftp`` fetcher is now deprecated.
+    Using it will raise a warning up to v0.1.12. It will then raise an error in v0.1.13 and will be removed afterward.
+
+- **New dashboard for profiles and new 3rd party dashboards**. Calling on the data fetcher dashboard method will return the Euro-Argo profile page for a single profile. Very useful to look at the data before load. This comes with 2 new utilities functions to get Coriolis ID of profiles (:meth:`utilities.get_coriolis_profile_id`) and to return the list of profile webpages (:meth:`utilities.get_ea_profile_page`). (:pr:`198`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy import DataFetcher as ArgoDataFetcher
+    ArgoDataFetcher().profile(5904797, 11).dashboard()
+
+.. code-block:: python
+
+    from argopy.utilities import get_coriolis_profile_id, get_ea_profile_page
+    get_coriolis_profile_id([6902755, 6902756], [11, 12])
+    get_ea_profile_page([6902755, 6902756], [11, 12])
+
+The new profile dashboard can also be accessed with:
+
+.. code-block:: python
+
+    import argopy
+    argopy.dashboard(5904797, 11)
+
+We added the Ocean-OPS (former JCOMMOPS) dashboard for all floats and the Argo-BGC dashboard for BGC floats:
+
+.. code-block:: python
+
+    import argopy
+    argopy.dashboard(5904797, type='ocean-ops')
+    # or
+    argopy.dashboard(5904797, 12, type='bgc')
+
+- **New utility function :class:`argopy.utilities.ArgoNVSReferenceTables` to retrieve Argo Reference Tables**. (:commit:`cc8fdbe132874b71b35203053626cc29ae7d19c4`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    from argopy.utilities import ArgoNVSReferenceTables
+    R = ArgoNVSReferenceTables()
+    R.all_tbl_name()
+    R.tbl(3)
+    R.tbl('R09')
+
+**Internals**
+
+- ``gdac`` and ``localftp`` data fetchers can return an index without loading the data. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import DataFetcher
+    argo = DataFetcher(src='gdac').float(6903076)
+    argo.index
+
+- New index store design. A new index store is used by data and index ``gdac`` fetchers to handle access and search in Argo index csv files. It uses pyarrow table if available or pandas dataframe otherwise. More details at :ref:`Argo index store`. Directly using this index store is not recommended but provides better performances for expert users interested in Argo sampling analysis.
+
+.. code-block:: python
+
+    from argopy.stores.argo_index_pa import indexstore_pyarrow as indexstore
+    idx = indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt")  # Default
+    idx.load()
+    idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+    idx.N_MATCH  # Return number of search results
+    idx.to_dataframe()  # Convert search results to a dataframe
+
+- Refactoring of CI tests to use more fixtures and pytest parametrize. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
+
 - Fix bug in erddap fata fetcher that was causing a `profile` request to do not account for cycle numbers. (:commit:`301e557fdec1f2d536841464b383edc3a4c4a62d`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+**Breaking changes**
+
+- Index fetcher for local FTP no longer support the option ``index_file``. The name of the file index is internally determined using the dataset requested: ``ar_index_global_prof.txt`` for ``ds='phy'`` and ``argo_synthetic-profile_index.txt`` for ``ds='bgc'``. Using this option will raise a deprecation warning up to v0.1.12 and will then raise an error. (:pr:`157`) by `G. Maze <http://www.github.com/gmaze>`_
+
+- Complete refactoring of the ``argopy.plotters`` module into ``argopy.plot``. (:pr:`198`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Remove deprecation warnings for: 'plotters.plot_dac', 'plotters.plot_profilerType'. These now raise an error.
 
 
 v0.1.10 (4 Mar. 2022)
@@ -74,7 +175,7 @@ This new method comes with others methods and improvements:
     ds.argo.N_LEVELS
     ds.argo.N_PROF
     ds.argo
-    
+
 
 - **New plotter function** :meth:`argopy.plotters.open_sat_altim_report` to insert the CLS Satellite Altimeter Report figure in a notebook cell. (:pr:`159`) by `G. Maze <http://www.github.com/gmaze>`_.
 
@@ -120,6 +221,7 @@ For convenience we also added a new property to the data fetcher that return the
 - Update documentation theme, and pages now use the `xarray accessor sphinx extension <https://github.com/xarray-contrib/sphinx-autosummary-accessors>`_. (:pr:`104`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 - Update Binder links to work without the deprecated Pangeo-Binder service. (:pr:`164`) by `G. Maze <http://www.github.com/gmaze>`_.
+
 
 v0.1.8 (2 Nov. 2021)
 ---------------------
@@ -453,3 +555,15 @@ v0.1.0 (17 Mar. 2020)
 - Initial release.
 
 - Erddap data fetcher
+
+.. |pypi dwn| image:: https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads
+   :target: //pypi.org/project/argopy/
+.. |conda dwn| image:: https://img.shields.io/conda/dn/conda-forge/argopy?label=Conda%20downloads
+   :target: //anaconda.org/conda-forge/argopy
+.. |PyPI| image:: https://img.shields.io/pypi/v/argopy
+   :target: //pypi.org/project/argopy/
+.. |Conda| image:: https://anaconda.org/conda-forge/argopy/badges/version.svg
+   :target: //anaconda.org/conda-forge/argopy
+.. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy
+   :target: //github.com/euroargodev/argopy/releases
+   

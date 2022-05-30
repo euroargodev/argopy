@@ -11,7 +11,7 @@ efforts and set up a `Global Ocean Observing System <https://www.goosocean.org>`
 
 *Argo* is a global network of nearly 4000 autonomous probes measuring
 pressure, temperature and salinity from the surface to 2000m depth every 10 days. The localisation of these probes is
-nearly random between the 60th parallels (`see live coverage here <http://map.argo-france.fr>`_).
+nearly random between the 60th parallels (`see live coverage here <https://dataselection.euro-argo.eu/>`_).
 All probes data are collected by satellite in real-time, processed by several data centers and finally merged in a single
 dataset (collecting more than 2 millions of vertical profiles data) made freely available to anyone through
 a `ftp server <ftp://ftp.ifremer.fr/ifremer/argo>`_ or `monthly zip snapshots <http://dx.doi.org/10.17882/42182>`_.

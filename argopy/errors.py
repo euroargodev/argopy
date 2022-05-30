@@ -5,7 +5,7 @@ class DataNotFound(ValueError):
     """Raise when a data selection returns nothing."""
 
     def __init__(self, path: str = "?"):
-        self.value = "No data found at %s" % path
+        self.value = "%s" % path
         self.path = path
 
     def __str__(self):
@@ -51,6 +51,12 @@ class UnrecognisedProfileDirection(ValueError):
         self.wmo = wmo
 
 
+class InvalidDataset(ValueError):
+    """
+    This is to be used when a dataset or its property is not valid
+    """
+    pass
+
 class InvalidDatasetStructure(ValueError):
     """Raise when the xarray dataset is not as expected."""
 
@@ -94,9 +100,13 @@ class InvalidDashboard(ValueError):
 
 
 class APIServerError(ValueError):
-    """Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery."""
+    """Raise this when argopy is disrupted by an error due to a webAPI, not argopy machinery."""
+    def __init__(self, path: str = None):
+        self.value = path
 
-    pass
+    def __str__(self):
+        """Print error."""
+        return repr(self.value)
 
 
 class ErddapServerError(APIServerError):

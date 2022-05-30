@@ -5,7 +5,7 @@ import warnings
 import numpy as np
 import pandas as pd
 import xarray as xr
-from sklearn import preprocessing
+from sklearn import preprocessing  #todo: reduce requirements, can't we replace preprocessing.LabelEncoder() ?
 import logging
 
 try:
@@ -17,7 +17,6 @@ except ModuleNotFoundError:
 
 from argopy.utilities import (
     linear_interpolation_remap,
-    is_list_equal,
     is_list_of_strings,
     toYearFraction,
     groupby_remap
@@ -30,9 +29,10 @@ log = logging.getLogger("argopy.xarray")
 
 @xr.register_dataset_accessor("argo")
 class ArgoAccessor:
-    """
+    """Class registered under scope ``argo`` to access a :class:`xarray.Dataset` object.
 
-        Class registered under scope ``argo`` to access a :class:`xarray.Dataset` object.
+        Examples
+        --------
 
         - Ensure all variables are of the Argo required dtype with:
         >>> ds.argo.cast_types()
@@ -57,7 +57,7 @@ class ArgoAccessor:
 
         - Group and reduce measurements by pressure bins:
         >>> ds.argo.groupby_pressure_bins(bins=[0, 200., 500., 1000.])
-`
+
         - Compute and add additional variables to the dataset:
         >>> ds.argo.teos10(vlist='PV')
 
@@ -90,7 +90,7 @@ class ArgoAccessor:
         elif "PRES" in self._vars:
             self._mode = "standard"
         else:
-            raise InvalidDatasetStructure("Argo dataset structure not recognised")
+            raise InvalidDatasetStructure("Argo dataset structure not recognised (no PRES nor PRES_ADJUSTED")
 
     def __repr__(self):
         # import xarray.core.formatting as xrf
@@ -205,7 +205,7 @@ class ArgoAccessor:
     def cast_types(self):  # noqa: C901
         """ Make sure variables are of the appropriate types according to Argo
 
-            This is hard coded, but should be retrieved from an API somewhere.
+            #todo: This is hard coded, but should be retrieved from an API somewhere.
             Should be able to handle all possible variables encountered in the Argo dataset.
         """
         ds = self._obj
@@ -263,6 +263,11 @@ class ArgoAccessor:
             "TIME"
         ]
 
+        def fix_weird_bytes(x):
+            x = x.replace(b"\xb1", b"+/-")
+            return x
+        fix_weird_bytes = np.vectorize(fix_weird_bytes)
+
         def cast_this(da, type):
             """ Low-level casting of DataArray values """
             try:
@@ -276,12 +281,15 @@ class ArgoAccessor:
 
         def cast_this_da(da):
             """ Cast any DataArray """
+            v = da.name
             da.attrs["casted"] = 0
             if v in list_str and da.dtype == "O":  # Object
+                if v in ["SCIENTIFIC_CALIB_COEFFICIENT"]:
+                    da.values = fix_weird_bytes(da.values)
                 da = cast_this(da, str)
 
             if v in list_int:  # and da.dtype == 'O':  # Object
-                da = cast_this(da, int)
+                da = cast_this(da, np.int32)
 
             if v in list_datetime and da.dtype == "O":  # Object
                 if (
@@ -298,7 +306,9 @@ class ArgoAccessor:
                             s = da.stack(dummy_index=da.dims)
                             val = s.astype(str).values.astype("U14")
                             # This should not happen, but still ! That's real world data
+                            val[val == ""] = "nan"
                             val[val == "              "] = "nan"
+                            #
                             s.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
                             da.values = s.unstack("dummy_index")
                         da = cast_this(da, np.datetime64)
@@ -350,7 +360,11 @@ class ArgoAccessor:
                     da = xr.where(ii, "0", da)
 
                 # finally convert QC strings to integers:
-                da = cast_this(da, int)
+                da = cast_this(da, np.int32)
+
+            if da.dtype == 'O':
+                # By default, try to cast as float:
+                da = cast_this(da, np.float32)
 
             if da.dtype != "O":
                 da.attrs["casted"] = 1
@@ -422,11 +436,16 @@ class ArgoAccessor:
     def point2profile(self):  # noqa: C901
         """ Transform a collection of points into a collection of profiles
 
+        A "point" is a single location for measurements in space and time
+        A "point" is localised as unique UID based on WMO, CYCLE_NUMBER and DIRECTION variable values.
         """
         if self._type != "point":
             raise InvalidDatasetStructure(
-                "Method only available to a collection of points"
+                "Method only available for a collection of points"
             )
+        if self.N_POINTS == 0:
+            raise DataNotFound("Empty dataset, no data to transform !")
+
         this = self._obj  # Should not be modified
 
         def fillvalue(da):
@@ -466,7 +485,11 @@ class ArgoAccessor:
             .max()
             .values
         )
+        log.debug("New dataset should be [N_PROF=%i, N_LEVELS=%i]" % (N_PROF, N_LEVELS))
         assert N_PROF * N_LEVELS >= len(this["N_POINTS"])
+        if N_LEVELS == 1:
+            log.debug("This dataset has a single vertical level, thus final variables will only have a N_PROF "
+                      "dimension and no N_LEVELS")
 
         # Store the initial set of coordinates:
         coords_list = list(this.coords)
@@ -479,7 +502,12 @@ class ArgoAccessor:
         for i_prof, grp in enumerate(this.groupby(dummy_argo_uid)):
             i_uid, prof = grp
             for iv, vname in enumerate(this.data_vars):
-                count[i_prof, iv] = len(np.unique(prof[vname]))
+                try:
+                    count[i_prof, iv] = len(np.unique(prof[vname]))
+                except Exception as e:
+                    log.error("An error happened when dealing with the '%s' data variable" % vname)
+                    raise(e)
+
         # Variables with a unique value for each profiles:
         list_1d = list(np.array(this.data_vars)[count.sum(axis=0) == count.shape[0]])
         # Variables with more than 1 value for each profiles:
@@ -537,6 +565,10 @@ class ArgoAccessor:
 
         # Restore coordinate variables:
         new_ds = new_ds.set_coords([c for c in coords_list if c in new_ds])
+        new_ds['N_PROF'] = np.arange(N_PROF)
+        if 'N_LEVELS' in new_ds['LATITUDE'].dims:
+            new_ds['LATITUDE'] = new_ds['LATITUDE'].isel(N_LEVELS=0)  # Make sure LAT is (N_PROF) and not (N_PROF, N_LEVELS)
+            new_ds['LONGITUDE'] = new_ds['LONGITUDE'].isel(N_LEVELS=0)
 
         # Misc formatting
         new_ds = new_ds.sortby("TIME")
@@ -551,6 +583,8 @@ class ArgoAccessor:
     def profile2point(self):
         """ Convert a collection of profiles to a collection of points
 
+        A "point" is a single location for measurements in space and time
+        A "point" is localised as unique UID based on WMO, CYCLE_NUMBER and DIRECTION variable values.
         """
         if self._type != "profile":
             raise InvalidDatasetStructure(
@@ -559,6 +593,7 @@ class ArgoAccessor:
         ds = self._obj
 
         # Remove all variables for which a dimension is length=0 (eg: N_HISTORY)
+        # todo: We should be able to find a way to keep them somewhere in the data structure
         dim_list = []
         for v in ds.data_vars:
             dims = ds[v].dims
@@ -571,6 +606,7 @@ class ArgoAccessor:
         ds = ds.drop_dims(np.unique(dim_list))
 
         # Remove any variable that is not with dimensions (N_PROF,) or (N_PROF, N_LEVELS)
+        # todo: We should be able to find a way to keep them somewhere in the data structure
         for v in ds:
             dims = list(ds[v].dims)
             dims = ".".join(dims)
@@ -901,7 +937,8 @@ class ArgoAccessor:
         if not mask:
             this = this.argo._where(this_mask, drop=drop)
             this.argo._add_history("Variables selected according to QC")
-            # this = this.argo.cast_types()
+            if this.argo.N_POINTS == 0:
+                log.warning("No data left after QC filtering !")
             return this
         else:
             return this_mask

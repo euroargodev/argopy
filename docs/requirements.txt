@@ -16,7 +16,7 @@ sphinx-book-theme
 # sphinx-bootstrap-theme
 
 xarray>=0.16.1
-scipy>=1.1.0
+scipy>=1.5
 scikit-learn>=0.23.2
 dask>=2021.9.1
 distributed>=2.30.0
@@ -26,7 +26,7 @@ distributed>=2.30.0
 erddapy>=0.7.2
 gsw>=3.4.0
 
-fsspec>=0.7.4, <2022.2.1
+fsspec>=0.7.4 #, <2022.3.1
 aiohttp>=3.7.4
 
 #matplotlib>=3.3.2

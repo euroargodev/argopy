@@ -17,8 +17,15 @@ import logging
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher
-from .utilities import list_available_data_src, list_available_index_src, is_box, is_indexbox, check_wmo
-from .plotters import plot_trajectory, bar_plot, open_sat_altim_report
+
+from .utilities import (
+    list_available_data_src, list_available_index_src,
+    is_box, is_indexbox,
+    check_wmo, check_cyc,
+    get_coriolis_profile_id
+)
+from argopy.stores import filestore
+from .plot import plot_trajectory, bar_plot, open_sat_altim_report
 
 
 AVAILABLE_DATA_SOURCES = list_available_data_src()
@@ -64,7 +71,7 @@ class ArgoDataFetcher:
     Examples
     --------
     >>> from argopy import DataFetcher
-    >>> adf = DataFetcher.region([-75, -65, 10, 20]).load()
+    >>> adf = DataFetcher().region([-75, -65, 10, 20]).load()
     >>> idx.plot()
     >>> idx.data
 
@@ -128,6 +135,11 @@ class ArgoDataFetcher:
         self._index = None
         self._data = None
 
+        # Init file system for local storage
+        # self.cache = True if 'cache' not in fetcher_kwargs else fetcher_kwargs['cache']
+        # self.cachedir = OPTIONS['cachedir'] if 'cachedir' not in fetcher_kwargs else fetcher_kwargs['cachedir']
+        # self.fs = filestore(cache=self.cache, cachedir=self.cachedir)
+
         # More init:
         self._loaded = False
         self._request = ""
@@ -141,23 +153,17 @@ class ArgoDataFetcher:
             )
 
     def __repr__(self):
+
+        para = self.fetcher_options['parallel'] if "parallel" in self.fetcher_options else False
+        cach = self.fetcher_options['cache'] if "cache" in self.fetcher_options else False
+
         if self.fetcher:
             summary = [self.fetcher.__repr__()]
-            if "parallel" in self.fetcher_options:
-                summary.append(
-                    "Backend: %s (parallel=%s)"
-                    % (self._src, str(self.fetcher_options["parallel"]))
-                )
-            else:
-                summary.append("Backend: %s" % self._src)
         else:
             summary = ["<datafetcher.%s> 'No access point initialised'" % self._src]
             summary.append("Available access points: %s" % ", ".join(self.Fetchers.keys()))
-            if "parallel" in self.fetcher_options:
-                summary.append("Backend: %s (parallel=%s)" % (self._src, str(self.fetcher_options["parallel"])))
-            else:
-                summary.append("Backend: %s" % self._src)
 
+        summary.append("Performances: cache=%s, parallel=%s" % (str(cach), str(para)))
         summary.append("User mode: %s" % self._mode)
         summary.append("Dataset: %s" % self._dataset_id)
         return "\n".join(summary)
@@ -177,11 +183,40 @@ class ArgoDataFetcher:
             "index",
             "domain",
             "_loaded",
-            "_request"
+            "_request",
+            "cache", "cachedir"
         ]
         if key not in self.valid_access_points and key not in valid_attrs:
             raise InvalidFetcherAccessPoint("'%s' is not a valid access point" % key)
         pass
+
+    # def _write(self, path, obj, format='zarr'):
+    #     """ Write internal array object to file store
+    #
+    #         Parameters
+    #         ----------
+    #         obj: :class:`xarray.DataSet` or :class:`pandas.DataFrame`
+    #     """
+    #     with self.fs.open(path, "wb") as handle:
+    #         if format in ['zarr']:
+    #             obj.to_zarr(handle)
+    #         elif format in ['pk']:
+    #             obj.to_pickle(handle)  # obj is a :class:`pandas.DataFrame`
+    #     return self
+    #
+    # def _read(self, path, format='zarr'):
+    #     """ Read internal array object from file store
+    #
+    #         Returns
+    #         -------
+    #         obj: :class:`xarray.DataSet` or :class:`pandas.DataFrame`
+    #     """
+    #     with self.fs.open(path, "rb") as handle:
+    #         if format in ['zarr']:
+    #             obj = xr.open_zarr(handle)
+    #         elif format in ['pk']:
+    #             obj = pd.read_pickle(handle)
+    #     return obj
 
     @property
     def uri(self):
@@ -225,7 +260,10 @@ class ArgoDataFetcher:
                 Argo-like index of fetched data
         """
         if not isinstance(self._index, pd.core.frame.DataFrame):
-            self.load()
+            if "gdac" in self._src or "localftp" in self._src:
+                self.to_index(full=True)
+            else:
+                self.load()
         return self._index
 
     @property
@@ -248,7 +286,12 @@ class ArgoDataFetcher:
                 np.min(this_ds['TIME'].values), np.max(this_ds['TIME'].values)]
 
     def dashboard(self, **kw):
-        """ Open access point dashboard """
+        """Open access point dashboard.
+
+            See Also
+            --------
+            :class:`argopy.dashboard`
+        """
         try:
             return self.fetcher.dashboard(**kw)
         except Exception:
@@ -312,6 +355,7 @@ class ArgoDataFetcher:
             A data source fetcher for specific float profiles
         """
         wmo = check_wmo(wmo)  # Check and return a valid list of WMOs
+        cyc = check_cyc(cyc)  # Check and return a valid list of CYCs
         self.fetcher = self.Fetchers["profile"](WMO=wmo, CYC=cyc, **self.fetcher_options)
         self._AccessPoint = "profile"  # Register the requested access point
         self._AccessPoint_data = {'wmo': wmo, 'cyc': cyc}  # Register the requested access point data
@@ -349,6 +393,7 @@ class ArgoDataFetcher:
                 A data source fetcher for a space/time domain
         """
         is_box(box, errors="raise")  # Validate the box definition
+
         self.fetcher = self.Fetchers["region"](box=box, **self.fetcher_options)
         self._AccessPoint = "region"  # Register the requested access point
         self._AccessPoint_data = {'box': box}  # Register the requested access point data
@@ -380,6 +425,15 @@ class ArgoDataFetcher:
             )
         xds = self.fetcher.to_xarray(**kwargs)
         xds = self.postproccessor(xds)
+
+        # data_path = self.fetcher.cname() + self._mode + ".zarr"
+        # log.debug(data_path)
+        # if self.cache and self.fs.exists(data_path):
+        #     xds = self._read(data_path)
+        # else:
+        #     xds = self.fetcher.to_xarray(**kwargs)
+        #     xds = self.postproccessor(xds)
+        #     xds = self._write(data_path, xds)._read(data_path)
         return xds
 
     def to_dataframe(self, **kwargs):
@@ -399,16 +453,16 @@ class ArgoDataFetcher:
             )
         return self.load().data.to_dataframe(**kwargs)
 
-    def to_index(self, full: bool = False):
+    def to_index(self, full: bool = False, coriolis_id = False):
         """ Create an index of Argo data, fetch data if necessary
 
             Build an Argo-like index of profiles from fetched data.
 
             Parameters
             ----------
-            full: bool
-                Should extract a full index, as returned by an IndexFetcher or only a space/time
-                index of fetched profiles (this is the default choice, i.e. full=False).
+            full: bool, default: False
+                Should extract a reduced index (only a space/time) from fetched profiles, or a full index,
+                as returned by an IndexFetcher.
 
             Returns
             -------
@@ -418,16 +472,13 @@ class ArgoDataFetcher:
         if not full:
             self.load()
             ds = self.data.argo.point2profile()
-            df = (
-                ds.drop_vars(set(ds.data_vars) - set(["PLATFORM_NUMBER"]))
-                .drop_dims("N_LEVELS")
-                .to_dataframe()
-            )
+            df = ds[["PLATFORM_NUMBER", "CYCLE_NUMBER", "LONGITUDE", "LATITUDE", "TIME"]].to_dataframe()
             df = (
                 df.reset_index()
                 .rename(
                     columns={
                         "PLATFORM_NUMBER": "wmo",
+                        "CYCLE_NUMBER": "cyc",
                         "LONGITUDE": "longitude",
                         "LATITUDE": "latitude",
                         "TIME": "date",
@@ -435,8 +486,14 @@ class ArgoDataFetcher:
                 )
                 .drop(columns="N_PROF")
             )
-            df = df[["date", "latitude", "longitude", "wmo"]]
 
+            df = df[["date", "latitude", "longitude", "wmo", "cyc"]]
+            if coriolis_id:
+                df['id'] = None
+                def fc(row):
+                    row['id'] = get_coriolis_profile_id(row['wmo'], row['cyc'])['ID'].values[0]
+                    return row
+                df = df.apply(fc, axis=1)
         else:
             # Instantiate and load an IndexFetcher:
             index_loader = ArgoIndexFetcher(mode=self._mode,
@@ -454,9 +511,9 @@ class ArgoDataFetcher:
                 index_loader.region(index_box).load()
             df = index_loader.index
 
-            if self._loaded and self._mode == 'standard' and len(self._index) != len(df):
-                warnings.warn("Loading a full index in 'standard' user mode may lead to more profiles in the "
-                              "index than reported in data.")
+            # if self._loaded and self._mode == 'standard' and len(self._index) != len(df):
+            #     warnings.warn("Loading a full index in 'standard' user mode may lead to more profiles in the "
+            #                   "index than reported in data.")
 
             # Possibly replace the light index with the full version:
             if not self._loaded or self._request == self.__repr__():
@@ -468,11 +525,7 @@ class ArgoDataFetcher:
         """ Fetch data (and compute an index) if not already in memory
 
             Apply the default to_xarray() and to_index() methods and store results in memory.
-            Access loaded measurements structure with the `data` and `index` properties::
-
-                ds = ArgoDataFetcher().profile(6902746, 34).load().data
-                # or
-                df = ArgoDataFetcher().float(6902746).load().index
+            You can access loaded measurements structure with the `data` and `index` properties.
 
             Parameters
             ----------
@@ -483,6 +536,11 @@ class ArgoDataFetcher:
             -------
             :class:`argopy.fetchers.ArgoDataFetcher.float`
                 Data fetcher with `data` and `index` properties in memory
+
+            Examples
+            --------
+            >>> ds = ArgoDataFetcher().profile(6902746, 34).load().data
+            >>> df = ArgoDataFetcher().float(6902746).load().index
         """
         # Force to load data if the fetcher definition has changed
         if self._loaded and self._request != self.__repr__():
@@ -491,7 +549,7 @@ class ArgoDataFetcher:
         if not self._loaded or force:
             # Fetch measurements:
             self._data = self.to_xarray(**kwargs)
-            # Next 2 lines must come before ._index because to_index() calls back on .load() to read .data
+            # Next 2 lines must come before ._index because to_index(full=False) calls back on .load() to read .data
             self._request = self.__repr__()  # Save definition of loaded data
             self._loaded = True
             # Extract measurements index from data:
@@ -512,7 +570,8 @@ class ArgoDataFetcher:
 
             Parameters
             ----------
-            ptype: {'trajectory',' profiler', 'dac', 'qc_altimetry}, default: 'trajectory'
+            ptype: str, optional, default: 'trajectory'
+                Plot type, one of the following: 'trajectory',' profiler', 'dac', 'qc_altimetry'.
 
             Returns
             -------
@@ -609,7 +668,8 @@ class ArgoIndexFetcher:
                 "%s dataset is not available for this index source (%s)"
                 % (self._dataset_id, self._src)
             )
-        self.fetcher_options = {**fetcher_kwargs}
+        # self.fetcher_kwargs = {**fetcher_kwargs}
+        self.fetcher_options = {**{"ds": self._dataset_id}, **fetcher_kwargs}
         self.postproccessor = self.__empty_processor
         self._AccessPoint = None
 
@@ -701,6 +761,7 @@ class ArgoIndexFetcher:
                 An index fetcher initialised for specific float profiles
         """
         wmo = check_wmo(wmo)  # Check and return a valid list of WMOs
+        cyc = check_cyc(cyc)  # Check and return a valid list of CYCs
         self.fetcher = self.Fetchers["profile"](WMO=wmo, CYC=cyc, **self.fetcher_options)
         self._AccessPoint = "profile"  # Register the requested access point
         return self
@@ -791,20 +852,20 @@ class ArgoIndexFetcher:
     def load(self, force: bool = False):
         """ Load index in memory
 
-            Apply the default to_dataframe() method and store results in memory.
-            Access loaded index structure with the `index` property::
+        Apply the default to_dataframe() method and store results in memory.
+        You can access the index array with the `index` property::
 
-                df = ArgoIndexFetcher().float(6902746).load().index
+        >>> df = ArgoIndexFetcher().float(6902746).load().index
 
-            Parameters
-            ----------
-            force: bool
-                Force loading, default is False.
+        Parameters
+        ----------
+        force: bool
+            Force loading, default is False.
 
-            Returns
-            -------
-            :class:`argopy.fetchers.ArgoIndexFetcher.float`
-                Index fetcher with `index` property in memory
+        Returns
+        -------
+        :class:`argopy.fetchers.ArgoIndexFetcher.float`
+            Index fetcher with `index` property in memory
         """
         # Force to load data if the fetcher definition has changed
         if self._loaded and self._request != self.__repr__():

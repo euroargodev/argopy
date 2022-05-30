@@ -129,7 +129,7 @@ Complementary data
 ------------------
 
 TEOS-10 variables
-~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^
 
 You can compute additional ocean variables from `TEOS-10 <http://teos-10.org/>`_. The default list of variables is: 'SA', 'CT', 'SIG0', 'N2', 'PV', 'PTEMP' ('SOUND_SPEED', 'CNDC' are optional). `Simply raise an issue to add a new one <https://github.com/euroargodev/argopy/issues/new/choose>`_.
 

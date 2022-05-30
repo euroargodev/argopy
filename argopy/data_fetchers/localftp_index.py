@@ -1,39 +1,24 @@
-#!/bin/env python
-# -*coding: UTF-8 -*-
-"""
-Argo data fetcher for a local copy of GDAC ftp.
+"""Argo index fetcher for a local copy of GDAC ftp.
 
 This is not intended to be used directly, only by the facade at fetchers.py
 
-Since the GDAC ftp is organised by DAC/WMO folders, we start by implementing the 'float' and 'profile' entry points.
-
-
-
-About the index local ftp fetcher:
-
-We have a large index csv file "ar_index_global_prof.txt", that is about ~200Mb
-For a given request, we need to load/read it
-and then to apply a filter to select lines matching the request
-With the current version, a dataframe of the full index is cached
-and then another cached file is created for the result of the filter.
-
-df_full = pd.read_csv("index.txt")
-df_small = filter(df_full)
-write_on_file(df_small)
-
-I think we can avoid this with a virtual file system
-When a request is done, we
-
-
+Deprecation cycle:
+Warning: 0.1.11
+Error:   0.1.12
+Delete:  0.1.13
 
 """
 import os
-import numpy as np
 from abc import ABC, abstractmethod
+import warnings
+from packaging import version
 
-from argopy.utilities import load_dict, mapp_dict, check_localftp, format_oneline
-from argopy.options import OPTIONS
-from argopy.stores import indexstore, indexfilter_wmo, indexfilter_box
+from ..utilities import load_dict, mapp_dict, format_oneline, deprecated
+from ..options import OPTIONS, check_gdac_path
+from ..stores import indexstore, indexfilter_wmo, indexfilter_box
+from ..errors import InvalidOption
+from .. import __version__
+
 
 access_points = ['wmo', 'box']
 exit_formats = ['xarray', 'dataframe']
@@ -42,6 +27,18 @@ dataset_ids = ['phy', 'bgc']  # First is default
 
 class LocalFTPArgoIndexFetcher(ABC):
     """ Manage access to Argo index from a local copy of GDAC ftp
+
+    .. warning:
+
+        This fetcher is deprecated. It's been replaced by the ``gdac`` fetcher.
+
+        ================= ======
+        Deprecation cycle
+        ================= ======
+        Warning           0.1.11
+        Error             0.1.12
+        Delete            0.1.13
+        ================= ======
 
     """
     ###
@@ -75,9 +72,10 @@ class LocalFTPArgoIndexFetcher(ABC):
         """
         return self.fcls
 
+    @deprecated("The 'localftp' data source is deprecated. It's been replaced by 'gdac'. It will raise an error after argopy 0.1.12")
     def __init__(self,
                  local_ftp: str = "",
-                 index_file: str = "ar_index_global_prof.txt",
+                 ds: str = "",
                  cache: bool = False,
                  cachedir: str = "",
                  **kwargs):
@@ -87,19 +85,39 @@ class LocalFTPArgoIndexFetcher(ABC):
             ----------
             local_path : str
                 Path to the directory with the 'dac' folder and index file
+            ds: str (optional)
+                Dataset to load: 'phy' or 'bgc'
+
+            .. deprecated:: 0.1.11
+                `index_file` will be removed in argopy 0.1.13.
         """
+        if 'index_file' in kwargs:
+            if version.parse(__version__) > version.parse("0.1.11"):
+                raise InvalidOption("Invalid option `index_file`")
+            else:
+                #todo Update version with appropriate release for this PR
+                warnings.warn("'index_file option' is deprecated since 0.1.11: the name of the index file is now "
+                              "internally determined as a "
+                              "function of the 'ds' dataset option. ", DeprecationWarning)
+
         self.cache = cache
         self.definition = 'Local ftp Argo index fetcher'
+        self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
         self.local_ftp = OPTIONS['local_ftp'] if local_ftp == '' else local_ftp
-        check_localftp(self.local_ftp, errors='raise')  # Validate local_ftp
-        self.index_file = index_file
+        # Validate server, raise FtpPathError if not valid.
+        check_gdac_path(self.local_ftp, errors='raise')
+
+        if self.dataset_id == 'phy':
+            self.index_file = "ar_index_global_prof.txt"
+        elif self.dataset_id == 'bgc':
+            self.index_file = "argo_synthetic-profile_index.txt"
         self.fs = indexstore(cache, cachedir, os.path.sep.join([self.local_ftp, self.index_file]))
-        self.dataset_id = 'index'
         self.init(**kwargs)
 
     def __repr__(self):
         summary = ["<indexfetcher.localftp>"]
         summary.append("Name: %s" % self.definition)
+        summary.append("Index: %s" % self.index_file)
         summary.append("FTP: %s" % self.local_ftp)
         summary.append("Domain: %s" % format_oneline(self.cname()))
         return '\n'.join(summary)
@@ -146,10 +164,6 @@ class Fetch_wmo(LocalFTPArgoIndexFetcher):
             CYC : int, np.array(int), list(int)
                 The cycle numbers to load.
         """
-        if isinstance(CYC, int):
-            CYC = np.array((CYC,), dtype='int')  # Make sure we deal with an array of integers
-        if isinstance(CYC, list):
-            CYC = np.array(CYC, dtype='int')  # Make sure we deal with an array of integers
         self.WMO = WMO
         self.CYC = CYC
         self.fcls = indexfilter_wmo(self.WMO, self.CYC)
@@ -159,14 +173,20 @@ class Fetch_box(LocalFTPArgoIndexFetcher):
     """ Manage access to local ftp Argo data for: an ocean rectangle
 
     """
-    def init(self, box: list = [-180, 180, -90, 90, '1900-01-01', '2100-12-31']):
+    def init(self, box: list = [-180, 180, -90, 90, '1900-01-01', '2100-12-31'], **kwargs):
         """ Create Argo index loader
 
             Parameters
             ----------
-            box : list(float, float, float, float, float, float, str, str)
-                The box domain to load all Argo data for:
-                box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
+            box: list()
+                Define the domain to load Argo index for. The box list is made of:
+                    - lon_min: float, lon_max: float,
+                    - lat_min: float, lat_max: float,
+                    - date_min: str (optional), date_max: str (optional)
+
+                Longitude and latitude bounds are required, while the two bounding dates are optional.
+                If bounding dates are not specified, the entire time series is fetched.
+                Eg: [-60, -55, 40., 45., '2007-08-01', '2007-09-01']
         """
-        self.BOX = box
+        self.BOX = box.copy()
         self.fcls = indexfilter_box(self.BOX)

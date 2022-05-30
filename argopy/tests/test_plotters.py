@@ -3,10 +3,13 @@ This file covers the plotters module
 We test plotting functions from IndexFetcher and DataFetcher
 """
 import pytest
+import importlib
+import logging
 
 import argopy
 from argopy.errors import InvalidDashboard
-from . import (
+from utils import (
+    requires_gdac,
     requires_localftp,
     requires_connection,
     requires_matplotlib,
@@ -14,8 +17,9 @@ from . import (
     has_matplotlib,
     has_seaborn,
     has_cartopy,
+    has_ipython,
 )
-from argopy.plotters import bar_plot, plot_trajectory, open_sat_altim_report
+from ..plot import bar_plot, plot_trajectory, open_sat_altim_report
 from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy import DataFetcher as ArgoDataFetcher
 
@@ -25,42 +29,68 @@ if has_matplotlib:
 if has_cartopy:
     import cartopy
 
+log = logging.getLogger("argopy.tests.plot")
 
-@requires_connection
-def test_invalid_dashboard():
+
+@pytest.mark.parametrize("board_type", ["invalid", "argovis", "op", "ocean-ops", "coriolis"], indirect=False)
+def test_invalid_dashboard(board_type):
+    # Test types without 'base'
     with pytest.raises(InvalidDashboard):
-        argopy.dashboard(wmo=5904797, type="invalid_service")
+        argopy.dashboard(type=board_type, url_only=True)
+
+@pytest.mark.parametrize("board_type", ["op", "ocean-ops", "coriolis"], indirect=False)
+def test_invalid_dashboard_profile(board_type):
+    # Test types without 'cyc'
+    with pytest.raises(InvalidDashboard):
+        argopy.dashboard(6902755, 12, type=board_type, url_only=True)
+
+@pytest.mark.parametrize("board_type", ["data", "meta", "ea", "eric", "bgc"], indirect=False)
+def test_valid_dashboard(board_type):
+    # Test types with 'base'
+    assert isinstance(argopy.dashboard(type=board_type, url_only=True), str)
+
+@pytest.mark.parametrize("board_type", ["data", "meta", "ea", "eric", "argovis", "op", "ocean-ops", "bgc"], indirect=False)
+def test_valid_dashboard_float(board_type):
+    # Test types with 'wmo' (should be all)
+    assert isinstance(argopy.dashboard(5904797, type=board_type, url_only=True), str)
+
+@pytest.mark.parametrize("board_type", ["data", "meta", "ea", "eric", "argovis", "bgc"], indirect=False)
+def test_valid_dashboard_profile(board_type):
+    # Test types with 'cyc'
+    assert isinstance(argopy.dashboard(5904797, 12, type=board_type, url_only=True), str)
 
 
 @requires_ipython
 @requires_connection
-def test_valid_dashboard():
+def test_valid_dashboard_ipython_output():
     import IPython
+
+    dsh = argopy.dashboard()
+    assert isinstance(dsh, IPython.lib.display.IFrame)
+
     dsh = argopy.dashboard(wmo=5904797)
     assert isinstance(dsh, IPython.lib.display.IFrame)
 
+    dsh = argopy.dashboard(wmo=5904797, cyc=3)
+    assert isinstance(dsh, IPython.lib.display.IFrame)
 
-@requires_ipython
+
 @requires_connection
 def test_open_sat_altim_report():
-    import IPython
-    dsh = open_sat_altim_report(WMO=5904797, embed='slide')
-    assert isinstance(dsh(0), IPython.display.Image)
+    if has_ipython:
+        import IPython
 
     dsh = open_sat_altim_report(WMO=5904797, embed='dropdown')
-    assert isinstance(dsh(5904797), IPython.display.Image)
-
-    open_sat_altim_report(WMO=5904797, embed='list')
-
-    dsh = open_sat_altim_report(WMO=5904797, embed=None)
-    assert isinstance(dsh, dict)
-    assert 5904797 in dsh
+    if has_ipython:
+        assert isinstance(dsh(5904797), IPython.display.Image)
+    else:
+        assert isinstance(dsh, dict)
 
 
-@requires_localftp
+@requires_gdac
 @requires_matplotlib
 class Test_index_plot:
-    src = "localftp"
+    src = "gdac"
     local_ftp = argopy.tutorial.open_dataset("localftp")[0]
     requests = {
         "float": [[2901623], [2901623, 6901929, 5906072]],
@@ -104,46 +134,46 @@ class Test_index_plot:
                 mpl.pyplot.close(fig)
 
     def test_traj_plot_region(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
+        with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["region"]:
-                loader = ArgoIndexFetcher(src=self.src).region(arg).load()
+                loader = ArgoIndexFetcher().region(arg).load()
                 self.__test_traj_plot(loader.index)
 
     def test_traj_plot_float(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
+        with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["float"]:
-                loader = ArgoIndexFetcher(src=self.src).float(arg).load()
+                loader = ArgoIndexFetcher().float(arg).load()
                 self.__test_traj_plot(loader.index)
 
     def test_traj_plot_profile(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
+        with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["profile"]:
-                loader = ArgoIndexFetcher(src=self.src).profile(*arg).load()
+                loader = ArgoIndexFetcher().profile(*arg).load()
                 self.__test_traj_plot(loader.index)
 
     def test_bar_plot_region(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
+        with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["region"]:
-                loader = ArgoIndexFetcher(src=self.src).region(arg).load()
+                loader = ArgoIndexFetcher().region(arg).load()
                 self.__test_bar_plot(loader.index)
 
     def test_bar_plot_float(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
+        with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["float"]:
-                loader = ArgoIndexFetcher(src=self.src).float(arg).load()
+                loader = ArgoIndexFetcher().float(arg).load()
                 self.__test_bar_plot(loader.index)
 
     def test_bar_plot_profile(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
+        with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["profile"]:
-                loader = ArgoIndexFetcher(src=self.src).profile(*arg).load()
+                loader = ArgoIndexFetcher().profile(*arg).load()
                 self.__test_bar_plot(loader.index)
 
 
-@requires_localftp
+@requires_gdac
 @requires_matplotlib
 class Test_data_plot:
-    src = "localftp"
+    src = "gdac"
     local_ftp = argopy.tutorial.open_dataset("localftp")[0]
     requests = {
         "float": [[2901623], [2901623, 6901929, 5906072]],
@@ -186,37 +216,37 @@ class Test_data_plot:
                 mpl.pyplot.close(fig)
 
     def test_traj_plot_region(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
+        with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["region"]:
-                loader = ArgoDataFetcher(src=self.src).region(arg).load()
+                loader = ArgoDataFetcher().region(arg).load()
                 self.__test_traj_plot(loader.index)
 
     def test_traj_plot_float(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
+        with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["float"]:
-                loader = ArgoDataFetcher(src=self.src).float(arg).load()
+                loader = ArgoDataFetcher().float(arg).load()
                 self.__test_traj_plot(loader.index)
 
     def test_traj_plot_profile(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
+        with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["profile"]:
-                loader = ArgoDataFetcher(src=self.src).profile(*arg).load()
+                loader = ArgoDataFetcher().profile(*arg).load()
                 self.__test_traj_plot(loader.index)
 
     def test_bar_plot_region(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
+        with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["region"]:
-                loader = ArgoDataFetcher(src=self.src).region(arg)
+                loader = ArgoDataFetcher().region(arg)
                 self.__test_bar_plot(loader.to_index(full=True))
 
     def test_bar_plot_float(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
+        with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["float"]:
-                loader = ArgoDataFetcher(src=self.src).float(arg)
+                loader = ArgoDataFetcher().float(arg)
                 self.__test_bar_plot(loader.to_index(full=True))
 
     def test_bar_plot_profile(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
+        with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["profile"]:
-                loader = ArgoDataFetcher(src=self.src).profile(*arg)
+                loader = ArgoDataFetcher().profile(*arg)
                 self.__test_bar_plot(loader.to_index(full=True))
