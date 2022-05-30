@@ -610,7 +610,7 @@ class ArgoAccessor:
         for v in ds:
             dims = list(ds[v].dims)
             dims = ".".join(dims)
-            if dims not in ["N_PROF", "N_PROF.N_LEVELS"]:
+            if dims not in ["N_PROF", "N_PROF.N_LEVELS", "N_PROF.N_PARAM"]:
                 ds = ds.drop_vars(v)
 
         (ds,) = xr.broadcast(ds)

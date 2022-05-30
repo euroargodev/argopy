@@ -334,16 +334,16 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 #                         "cndc",
                          "doxy",
 #                         "beta_backscattering",
-                         "fluorescence_chla",
+#                         "fluorescence_chla", #TODO
 #                        "fluorescence_cdom", #1
 #                        "side_scattering_turbidity", #1
 #                        "transmittance_particle_beam_attenuation", #1
 #                         "bbp",
-                         "turbidity",
+#                         "turbidity", #TODO
 #                         "cp",
-                         "chla",
+#                         "chla", #TODO
 #                         "cdom",
-                         "nitrate",
+#                         "nitrate", #TODO
 #                        "temp_doxy",
 #                        "temp_voltage_doxy",
 #                        "voltage_doxy",
@@ -383,7 +383,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 #                        "ib_ph",
 #                        "vk_ph",
 #                        "ik_ph",
-                         "ph_in_situ_total",
+#                         "ph_in_situ_total", #TODO
 #                        "ph_in_situ_free",
 #                        "raw_downwelling_irradiance",
 #                        "raw_downwelling_irradiance380",
