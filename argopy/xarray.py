@@ -231,6 +231,7 @@ class ArgoAccessor:
             "PROFILE_PSAL_QC",
             "PROFILE_TEMP_QC",
             "PARAMETER",
+            "PARAMETER_DATA_MODE",
             "SCIENTIFIC_CALIB_EQUATION",
             "SCIENTIFIC_CALIB_COEFFICIENT",
             "SCIENTIFIC_CALIB_COMMENT",
@@ -245,6 +246,7 @@ class ArgoAccessor:
             "VERTICAL_SAMPLING_SCHEME",
             "FLOAT_SERIAL_NO",
         ]
+        print(list_str)
         list_int = [
             "PLATFORM_NUMBER",
             "WMO_INST_TYPE",
