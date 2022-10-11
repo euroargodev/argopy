@@ -1603,7 +1603,7 @@ def is_cyc(lst, errors="raise"):  # noqa: C901
             if (len(str(x)) > 4):
                 result = False
 
-            if int(x) <= 0:
+            if int(x) < 0:
                 result = False
 
     except Exception:
