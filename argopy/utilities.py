@@ -2694,6 +2694,8 @@ class Registry(UserList):
 def get_coriolis_profile_id(WMO, CYC=None):
     """ Return a :class:`pandas.DataFrame` with CORIOLIS ID of WMO/CYC profile pairs
 
+        This method get ID by requesting the dataselection.euro-argo.eu trajectory API.
+
         Parameters
         ----------
         WMO: int, list(int)
