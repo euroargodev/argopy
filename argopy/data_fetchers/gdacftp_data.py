@@ -104,7 +104,6 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
             FTP request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
         self.timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
-        self.definition = "Ifremer GDAC ftp Argo data fetcher"
         self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
         self.server = OPTIONS["ftp"] if ftp == "" else ftp
         self.errors = errors
@@ -459,6 +458,12 @@ class Fetch_wmo(FTPArgoDataFetcher):
         self._nrows = None
         if "MAX_FILES" in kwargs:
             self._nrows = kwargs["MAX_FILES"]
+
+        self.definition = "Ifremer GDAC ftp Argo data fetcher"
+        if self.CYC is not None:
+            self.definition = "%s for profiles" % self.definition
+        else:
+            self.definition = "%s for floats" % self.definition
         return self
 
     @property
@@ -514,6 +519,8 @@ class Fetch_box(FTPArgoDataFetcher):
         self._nrows = None
         if "MAX_FILES" in kwargs:
             self._nrows = kwargs["MAX_FILES"]
+
+        self.definition = "Ifremer GDAC ftp Argo data fetcher for a space/time region"
         return self
 
     @property
