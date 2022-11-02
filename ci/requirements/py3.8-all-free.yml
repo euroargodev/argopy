@@ -15,7 +15,7 @@ dependencies:
 
   - dask
   - gsw
-  - pyarrow
+  - pyarrow>4.0.0
   - tqdm
   - distributed
 
