@@ -570,7 +570,6 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
             ("xarray", lambda mod: mod.__version__),
             ("scipy", lambda mod: mod.__version__),
             ("netCDF4", lambda mod: mod.__version__),
-            ("sklearn", lambda mod: mod.__version__),  # Using 'preprocessing.LabelEncoder()' in xarray accessor, used by filters
             ("erddapy", lambda mod: mod.__version__),  # This could go away from requirements ?
             ("fsspec", lambda mod: mod.__version__),
             ("aiohttp", lambda mod: mod.__version__),
@@ -605,6 +604,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
 
             ("numpy", lambda mod: mod.__version__),  # will come with xarray and pandas
             ("pandas", lambda mod: mod.__version__),  # will come with xarray
+            ("sklearn", lambda mod: mod.__version__),
 
             ("pip", lambda mod: mod.__version__),
             ("pytest", lambda mod: mod.__version__),  # will come with pandas
