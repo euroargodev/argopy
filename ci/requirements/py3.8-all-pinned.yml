@@ -9,7 +9,6 @@ dependencies:
   - netcdf4=1.5.8
   - packaging=21.3
   - scipy=1.8.0
-  - scikit-learn=1.1.0
   - toolz=0.11.2
   - xarray=2022.3.0
 

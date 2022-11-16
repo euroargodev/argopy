@@ -6,7 +6,6 @@ dependencies:
   - xarray
   - scipy
   - netcdf4
-  - scikit-learn
   - erddapy
   - fsspec
   - aiohttp
