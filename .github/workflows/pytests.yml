@@ -35,7 +35,7 @@ jobs:
   pinned:
     # CI tests for pinned environments, argopy must pass tests in a controlled environment
 
-    name: Env. all pinned - Py ${{matrix.python-version}} - ${{ matrix.os }}
+    name: All pinned - Py ${{matrix.python-version}} - ${{ matrix.os }}
     needs: detect-ci-trigger
     runs-on: ${{ matrix.os }}
     if: needs.detect-ci-trigger.outputs.triggered == 'false'
@@ -108,7 +108,7 @@ jobs:
 
   min:
 
-    name: Env. all minimum - Py ${{matrix.python-version}} - ${{ matrix.os }}
+    name: All minimum - Py ${{matrix.python-version}} - ${{ matrix.os }}
     needs: detect-ci-trigger
     runs-on: ${{ matrix.os }}
     if: needs.detect-ci-trigger.outputs.triggered == 'false'
@@ -175,7 +175,7 @@ jobs:
 
   free-core:
 
-    name: Env. core free - Py ${{matrix.python-version}} - ${{ matrix.os }}
+    name: Core free - Py ${{matrix.python-version}} - ${{ matrix.os }}
     needs: detect-ci-trigger
     runs-on: ${{ matrix.os }}
     if: needs.detect-ci-trigger.outputs.triggered == 'false'
@@ -242,7 +242,7 @@ jobs:
 
   free-all:
 
-    name: Env. all free - Py ${{matrix.python-version}} - ${{ matrix.os }}
+    name: All free - Py ${{matrix.python-version}} - ${{ matrix.os }}
     needs: free-core
     runs-on: ${{ matrix.os }}
     if: needs.detect-ci-trigger.outputs.triggered == 'false'
