@@ -80,8 +80,7 @@ jobs:
           python -m pytest -ra -v | tee output-${{ matrix.python-version }}-log || (
               echo '::set-output name=ARTIFACTS_AVAILABLE::true' && false
           )
-          python -c "import toto" 
-#          pytest -rfs -v -s --durations=10
+          pytest -rfs -v -s --durations=10
 
       - name: Upload artifacts
         if: |

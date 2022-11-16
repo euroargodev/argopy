@@ -2,7 +2,7 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
-  - python=3.8
+  - python=3.9
   - xarray
   - scipy
   - netCDF4
@@ -15,7 +15,7 @@ dependencies:
 
   - dask
   - gsw
-  - pyarrow>4.0.0
+  - pyarrow
   - tqdm
   - distributed
 
