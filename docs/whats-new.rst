@@ -7,6 +7,17 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+v0.1.13 (XX XXX. 202X)
+----------------------
+
+**Internals**
+
+- Removed small dependency to Scikit-learn LabelEncoder (:pr:`239`) by `G. Maze <http://www.github.com/gmaze>`_
+
+**Breaking changes**
+
+- Data source ``localftp`` is deprecated is now raises an error when called. It's been replaced by the ``gdac`` data source with the appropriate ``ftp`` option. See :ref:`Data sources`.
+
 v0.1.12 (16 May 2022)
 ----------------------
 

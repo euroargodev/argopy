@@ -18,7 +18,6 @@ log = logging.getLogger("argopy.options")
 
 # Define option names as seen by users:
 DATA_SOURCE = "src"
-LOCAL_FTP = "local_ftp"
 FTP = "ftp"
 DATASET = "dataset"
 DATA_CACHE = "cachedir"
@@ -29,7 +28,6 @@ TRUST_ENV = "trust_env"
 # Define the list of available options and default values:
 OPTIONS = {
     DATA_SOURCE: "erddap",
-    LOCAL_FTP: "-",  # No default value
     FTP: "https://data-argo.ifremer.fr",
     DATASET: "phy",
     DATA_CACHE: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
@@ -39,7 +37,7 @@ OPTIONS = {
 }
 
 # Define the list of possible values
-_DATA_SOURCE_LIST = frozenset(["erddap", "localftp", "argovis", "gdac"])
+_DATA_SOURCE_LIST = frozenset(["erddap", "argovis", "gdac"])
 _DATASET_LIST = frozenset(["phy", "bgc", "ref"])
 _USER_LEVEL_LIST = frozenset(["standard", "expert"])
 
@@ -53,13 +51,12 @@ def validate_ftp(this_path):
     if this_path != "-":
         return check_gdac_path(this_path, errors='raise')
     else:
-        log.debug("OPTIONS['%s'] is not defined" % LOCAL_FTP)
+        log.debug("OPTIONS['%s'] is not defined" % FTP)
         return False
 
 
 _VALIDATORS = {
     DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
-    LOCAL_FTP: validate_ftp,
     FTP: validate_ftp,
     DATASET: _DATASET_LIST.__contains__,
     DATA_CACHE: os.path.exists,
@@ -79,8 +76,8 @@ class set_options:
         Possible values: ``phy``, ``bgc`` or ``ref``.
     - ``src``: Source of fetched data.
         Default: ``erddap``.
-        Possible values: ``erddap``, ``localftp``, ``argovis``
-    - ``local_ftp``: Absolute path to a local GDAC ftp copy.
+        Possible values: ``erddap``, ``gdac``, ``argovis``
+    - ``ftp``: Path to a local or remote GDAC
         Default: None
     - ``cachedir``: Absolute path to a local cache directory.
         Default: ``~/.cache/argopy``
@@ -96,12 +93,12 @@ class set_options:
     You can use `set_options` either as a context manager:
 
     >>> import argopy
-    >>> with argopy.set_options(src='localftp'):
+    >>> with argopy.set_options(src='gdac'):
     >>>    ds = argopy.DataFetcher().float(3901530).to_xarray()
 
     Or to set global options:
 
-    >>> argopy.set_options(src='localftp')
+    >>> argopy.set_options(src='gdac')
 
     """
     def __init__(self, **kwargs):
@@ -161,13 +158,10 @@ def check_gdac_path(path, errors='ignore'):
             True if at least one DAC folder is found under path/dac/<dac_name>
             False otherwise
     """
-#     print(path)#, split_protocol(path))
     # Create a file system for this path
     if split_protocol(path)[0] is None:
-#         fs = filestore()
         fs = fsspec.filesystem('file')
     elif 'https' in split_protocol(path)[0]:
-#         fs = httpstore()
         fs = fsspec.filesystem('http')
     elif 'ftp' in split_protocol(path)[0]:
         try:
@@ -212,84 +206,5 @@ def check_gdac_path(path, errors='ignore'):
     elif errors == "warn":
         warnings.warn("This path is not GDAC compliant:\n%s" % path)
         return False
-    else:
-        return False
-
-
-def check_localftp(path, errors: str = "ignore"):
-    """ Check if the path has the expected GDAC ftp structure
-        Check if the path is structured like:
-        .
-        └── dac
-            ├── aoml
-            ├── ...
-            ├── coriolis
-            ├── ...
-            ├── meds
-            └── nmdis
-        Parameters
-        ----------
-        path: str
-            Path name to check
-        errors: str
-            "ignore" or "raise" (or "warn"
-        Returns
-        -------
-        checked: boolean
-            True if at least one DAC folder is found under path/dac/<dac_name>
-            False otherwise
-    """
-    dacs = [
-        "aoml",
-        "bodc",
-        "coriolis",
-        "csio",
-        "csiro",
-        "incois",
-        "jma",
-        "kma",
-        "kordi",
-        "meds",
-        "nmdis",
-    ]
-
-    # Case 1:
-    check1 = (
-        os.path.isdir(path)
-        and os.path.isdir(os.path.join(path, "dac"))
-        and np.any([os.path.isdir(os.path.join(path, "dac", dac)) for dac in dacs])
-    )
-
-    if check1:
-        return True
-    elif errors == "raise":
-        # This was possible up to v0.1.3:
-        check2 = os.path.isdir(path) and np.any(
-            [os.path.isdir(os.path.join(path, dac)) for dac in dacs]
-        )
-        if check2:
-            raise FtpPathError(
-                "This path is no longer GDAC compliant for argopy.\n"
-                "Please make sure you point toward a path with a 'dac' folder:\n%s"
-                % path
-            )
-        else:
-            raise FtpPathError("This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s" % path)
-
-    elif errors == "warn":
-        # This was possible up to v0.1.3:
-        check2 = os.path.isdir(path) and np.any(
-            [os.path.isdir(os.path.join(path, dac)) for dac in dacs]
-        )
-        if check2:
-            warnings.warn(
-                "This path is no longer GDAC compliant for argopy. This will raise an error in the future.\n"
-                "Please make sure you point toward a path with a 'dac' folder:\n%s"
-                % path
-            )
-            return False
-        else:
-            warnings.warn("This path is not GDAC compliant:\n%s" % path)
-            return False
     else:
         return False
