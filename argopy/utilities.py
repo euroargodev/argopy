@@ -670,24 +670,28 @@ def show_options(file=sys.stdout):  # noqa: C901
         print(f"{k}: {v}", file=file)
 
 
-def isconnected(host="https://www.ifremer.fr"):
+def isconnected(host="https://www.ifremer.fr", maxtry=10):
     """ check if we have a live internet connection
 
         Parameters
         ----------
         host: str
             URL to use, 'https://www.ifremer.fr' by default
-
+        maxtry: int, default: 10
+            Maximum number of host connections to try before
         Returns
         -------
         bool
     """
     if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
-        try:
-            urllib.request.urlopen(host, timeout=1)  # nosec B310 because host protocol already checked
-            return True
-        except Exception:
-            return False
+        it = 0
+        while it < maxtry:
+            try:
+                urllib.request.urlopen(host, timeout=1)  # nosec B310 because host protocol already checked
+                result, it = True, maxtry
+            except Exception:
+                result, it = False, it+1
+        return result
     else:
         return os.path.exists(host)
 
