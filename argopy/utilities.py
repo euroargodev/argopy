@@ -38,6 +38,7 @@ import pkg_resources
 import shutil
 
 import threading
+from socket import gaierror
 
 import time
 
@@ -209,18 +210,6 @@ def list_available_data_src():
         pass
 
     try:
-        from .data_fetchers import localftp_data as LocalFTP_Fetchers
-
-        sources["localftp"] = LocalFTP_Fetchers
-    except Exception:
-        warnings.warn(
-            "An error occurred while loading the local FTP data fetcher, "
-            "it will not be available !\n%s\n%s"
-            % (sys.exc_info()[0], sys.exc_info()[1])
-        )
-        pass
-
-    try:
         from .data_fetchers import argovis_data as ArgoVis_Fetchers
 
         sources["argovis"] = ArgoVis_Fetchers
@@ -258,18 +247,6 @@ def list_available_index_src():
     except Exception:
         warnings.warn(
             "An error occurred while loading the ERDDAP index fetcher, "
-            "it will not be available !\n%s\n%s"
-            % (sys.exc_info()[0], sys.exc_info()[1])
-        )
-        pass
-
-    try:
-        from .data_fetchers import localftp_index as LocalFTP_Fetchers
-
-        AVAILABLE_SOURCES["localftp"] = LocalFTP_Fetchers
-    except Exception:
-        warnings.warn(
-            "An error occurred while loading the local FTP index fetcher, "
             "it will not be available !\n%s\n%s"
             % (sys.exc_info()[0], sys.exc_info()[1])
         )
@@ -394,88 +371,6 @@ def list_multiprofile_file_variables():
         "VERTICAL_SAMPLING_SCHEME",
         "WMO_INST_TYPE",
     ]
-
-
-def check_localftp(path, errors: str = "ignore"):
-    """Check if the path has the expected GDAC ftp structure.
-
-        Check if the path is structured like:
-        .
-        └── dac
-            ├── aoml
-            ├── ...
-            ├── coriolis
-            ├── ...
-            ├── meds
-            └── nmdis
-
-        Parameters
-        ----------
-        path: str
-            Path name to check
-        errors: str, optional
-            "ignore" or "raise" (or "warn")
-
-        Returns
-        -------
-        checked: boolean
-            True if at least one DAC folder is found under path/dac/<dac_name>
-            False otherwise
-    """
-    dacs = [
-        "aoml",
-        "bodc",
-        "coriolis",
-        "csio",
-        "csiro",
-        "incois",
-        "jma",
-        "kma",
-        "kordi",
-        "meds",
-        "nmdis",
-    ]
-
-    # Case 1:
-    check1 = (
-        os.path.isdir(path)
-        and os.path.isdir(os.path.join(path, "dac"))
-        and np.any([os.path.isdir(os.path.join(path, "dac", dac)) for dac in dacs])
-    )
-
-    if check1:
-        return True
-    elif errors == "raise":
-        # This was possible up to v0.1.3:
-        check2 = os.path.isdir(path) and np.any(
-            [os.path.isdir(os.path.join(path, dac)) for dac in dacs]
-        )
-        if check2:
-            raise FtpPathError(
-                "This path is no longer GDAC compliant for argopy.\n"
-                "Please make sure you point toward a path with a 'dac' folder:\n%s"
-                % path
-            )
-        else:
-            raise FtpPathError("This path is not GDAC compliant:\n%s" % path)
-
-    elif errors == "warn":
-        # This was possible up to v0.1.3:
-        check2 = os.path.isdir(path) and np.any(
-            [os.path.isdir(os.path.join(path, dac)) for dac in dacs]
-        )
-        if check2:
-            warnings.warn(
-                "This path is no longer GDAC compliant for argopy. This will raise an error in the future.\n"
-                "Please make sure you point toward a path with a 'dac' folder:\n%s"
-                % path
-            )
-            return False
-        else:
-            warnings.warn("This path is not GDAC compliant:\n%s" % path)
-            return False
-    else:
-        return False
 
 
 def get_sys_info():
@@ -670,24 +565,114 @@ def show_options(file=sys.stdout):  # noqa: C901
         print(f"{k}: {v}", file=file)
 
 
-def isconnected(host="https://www.ifremer.fr"):
+def check_gdac_path(path, errors='ignore'):
+    """ Check if a path has the expected GDAC ftp structure
+
+        Check if a path is structured like:
+        .
+        └── dac
+            ├── aoml
+            ├── ...
+            ├── coriolis
+            ├── ...
+            ├── meds
+            └── nmdis
+
+        Examples:
+        >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
+        >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
+        >>> check_gdac_path("ftp://usgodae.org/pub/outgoing/argo") # True
+        >>> check_gdac_path("/home/ref-argo/gdac") # True
+        >>> check_gdac_path("https://www.ifremer.fr") # False
+        >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
+
+        Parameters
+        ----------
+        path: str
+            Path name to check, including access protocol
+        errors: str
+            "ignore" or "raise" (or "warn")
+
+        Returns
+        -------
+        checked: boolean
+            True if at least one DAC folder is found under path/dac/<dac_name>
+            False otherwise
+    """
+    # Create a file system for this path
+    if split_protocol(path)[0] is None:
+        fs = fsspec.filesystem('file')
+    elif 'https' in split_protocol(path)[0]:
+        fs = fsspec.filesystem('http')
+    elif 'ftp' in split_protocol(path)[0]:
+        try:
+            host = split_protocol(path)[-1].split('/')[0]
+            fs = fsspec.filesystem('ftp', host=host)
+        except gaierror:
+            if errors == 'raise':
+                raise FtpPathError("Can't get address info (GAIerror) on '%s'" % host)
+            elif errors == "warn":
+                warnings.warn("Can't get address info (GAIerror) on '%s'" % host)
+                return False
+            else:
+                return False
+    else:
+        raise FtpPathError("Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0])
+
+    # dacs = [
+    #     "aoml",
+    #     "bodc",
+    #     "coriolis",
+    #     "csio",
+    #     "csiro",
+    #     "incois",
+    #     "jma",
+    #     "kma",
+    #     "kordi",
+    #     "meds",
+    #     "nmdis",
+    # ]
+
+    # Case 1:
+    check1 = (
+        fs.exists(path)
+        and fs.exists(fs.sep.join([path, "dac"]))
+#         and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
+    )
+    if check1:
+        return True
+    elif errors == "raise":
+        raise FtpPathError("This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s" % path)
+
+    elif errors == "warn":
+        warnings.warn("This path is not GDAC compliant:\n%s" % path)
+        return False
+    else:
+        return False
+
+
+def isconnected(host="https://www.ifremer.fr", maxtry=10):
     """ check if we have a live internet connection
 
         Parameters
         ----------
         host: str
             URL to use, 'https://www.ifremer.fr' by default
-
+        maxtry: int, default: 10
+            Maximum number of host connections to try before
         Returns
         -------
         bool
     """
     if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
-        try:
-            urllib.request.urlopen(host, timeout=1)  # nosec B310 because host protocol already checked
-            return True
-        except Exception:
-            return False
+        it = 0
+        while it < maxtry:
+            try:
+                urllib.request.urlopen(host, timeout=1)  # nosec B310 because host protocol already checked
+                result, it = True, maxtry
+            except Exception:
+                result, it = False, it+1
+        return result
     else:
         return os.path.exists(host)
 
@@ -714,12 +699,7 @@ def isAPIconnected(src="erddap", data=True):
         list_src = list_available_index_src()
 
     if src in list_src and getattr(list_src[src], "api_server_check", None):
-        if "localftp" in src:
-            # This is a special case because the source here is a local folder
-            result = check_localftp(OPTIONS["local_ftp"])
-        else:
-            result = isconnected(list_src[src].api_server_check)
-        return result
+        return isconnected(list_src[src].api_server_check)
     else:
         raise InvalidFetcher
 
@@ -799,13 +779,8 @@ def fetch_status(stdout: str = "html", insert: bool = True):
     list_src = list_available_data_src()
     for api, mod in list_src.items():
         if getattr(mod, "api_server_check", None):
-            # status = isconnected(mod.api_server_check)
             status = isAPIconnected(api)
-            if api == "localftp" and OPTIONS["local_ftp"] == "-":
-                message = "ok" if status else "path undefined !"
-            else:
-                # message = "up" if status else "down"
-                message = "ok" if status else "offline"
+            message = "ok" if status else "offline"
             results[api] = {"value": status, "message": message}
 
     if "IPython" in sys.modules and stdout == "html":
@@ -813,9 +788,6 @@ def fetch_status(stdout: str = "html", insert: bool = True):
         for api in sorted(results.keys()):
             color = "green" if results[api]["value"] else "orange"
             if isconnected():
-                # img = badge("src='%s'" % api, message=results[api]['message'], color=color, insert=False)
-                # img = badge(label="argopy src", message="%s is %s" %
-                # (api, results[api]['message']), color=color, insert=False)
                 img = badge(
                     label="src %s is" % api,
                     message="%s" % results[api]["message"],

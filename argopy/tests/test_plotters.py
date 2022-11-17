@@ -10,7 +10,6 @@ import argopy
 from argopy.errors import InvalidDashboard
 from utils import (
     requires_gdac,
-    requires_localftp,
     requires_connection,
     requires_matplotlib,
     requires_ipython,
@@ -91,7 +90,7 @@ def test_open_sat_altim_report():
 @requires_matplotlib
 class Test_index_plot:
     src = "gdac"
-    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
+    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
     requests = {
         "float": [[2901623], [2901623, 6901929, 5906072]],
         "profile": [[2901623, 12], [6901929, [5, 45]]],
@@ -174,7 +173,7 @@ class Test_index_plot:
 @requires_matplotlib
 class Test_data_plot:
     src = "gdac"
-    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
+    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
     requests = {
         "float": [[2901623], [2901623, 6901929, 5906072]],
         "profile": [[2901623, 12], [6901929, [5, 45]]],

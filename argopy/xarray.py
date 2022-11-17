@@ -273,9 +273,9 @@ class ArgoAccessor:
                 da.values = da.values.astype(type)
                 da.attrs["casted"] = 1
             except Exception:
-                print("Oops!", sys.exc_info()[0], "occurred.")
-                print("Fail to cast: ", da.dtype, "into:", type, "for: ", da.name)
-                print("Encountered unique values:", np.unique(da))
+                log.warning(["Oops!", sys.exc_info()[0], "occurred."])
+                log.warning(["Fail to cast: ", da.dtype, "into:", type, "for: ", da.name])
+                log.warning(["Encountered unique values:", np.unique(da)])
             return da
 
         def cast_this_da(da):
@@ -374,9 +374,9 @@ class ArgoAccessor:
             try:
                 ds[v] = cast_this_da(ds[v])
             except Exception:
-                print("Oops!", sys.exc_info()[0], "occurred.")
-                print("Fail to cast: %s " % v)
-                print("Encountered unique values:", np.unique(ds[v]))
+                log.debug(["Oops!", sys.exc_info()[0], "occurred."])
+                log.debug(["Fail to cast: %s " % v])
+                log.debug(["Encountered unique values:", np.unique(ds[v])])
                 raise
 
         return ds
