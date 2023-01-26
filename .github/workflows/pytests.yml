@@ -36,7 +36,7 @@ jobs:
     # CI tests for environments with all requirements in pinned versions
     # All commits must pass this
 
-    name: All pinned - Py ${{matrix.python-version}} - ${{ matrix.os }}
+    name: All - pinned - Py${{matrix.python-version}} - ${{ matrix.os }}
     needs: detect-ci-trigger
     runs-on: ${{ matrix.os }}
     if: needs.detect-ci-trigger.outputs.triggered == 'false'
@@ -105,7 +105,7 @@ jobs:
   min-core:
     # CI tests for environments with core requirements in oldest (min) versions
 
-    name: Core minimum - Py ${{matrix.python-version}} - ${{ matrix.os }}
+    name: Core - min - Py${{matrix.python-version}} - ${{ matrix.os }}
     needs: detect-ci-trigger
     runs-on: ${{ matrix.os }}
     if: needs.detect-ci-trigger.outputs.triggered == 'false'
@@ -167,7 +167,7 @@ jobs:
   min-all:
     # CI tests for environments with all requirements in oldest (min) versions
 
-    name: All minimum - Py ${{matrix.python-version}} - ${{ matrix.os }}
+    name: All - min - Py${{matrix.python-version}} - ${{ matrix.os }}
     needs: min-core
     runs-on: ${{ matrix.os }}
     if: needs.detect-ci-trigger.outputs.triggered == 'false'

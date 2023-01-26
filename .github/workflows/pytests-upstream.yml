@@ -32,7 +32,7 @@ jobs:
   free-core:
     # CI tests for environments with core requirements in free versions
 
-    name: Core - Py ${{matrix.python-version}} - ${{ matrix.os }}
+    name: Free - Core - Py${{matrix.python-version}} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     needs: detect-ci-trigger
     if: |
@@ -99,7 +99,7 @@ jobs:
   free-all:
     # CI tests for environments with all possible requirements in free versions
 
-    name: All - Py ${{matrix.python-version}} - ${{ matrix.os }}
+    name: Free - All - Py${{matrix.python-version}} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     needs: free-core
     if: |
