@@ -3,8 +3,8 @@ name: tests Upstream
 # Allows to be warned when argopy will fail tests due to dependencies last updates
 
 on:
-  schedule:
-    - cron: "0 0 * * *" # Daily “At 00:00” UTC
+#  schedule:
+#    - cron: "0 0 * * *" # Daily “At 00:00” UTC
   workflow_dispatch: # allows you to trigger the workflow run manually
 
 concurrency:
