@@ -46,7 +46,7 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       max-parallel: 12
-      fail-fast: true
+      fail-fast: false
       matrix:
         python-version: ["3.7", "3.8"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
@@ -109,7 +109,7 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       max-parallel: 12
-      fail-fast: true
+      fail-fast: false
       matrix:
         python-version: ["3.7", "3.8"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
@@ -178,7 +178,7 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       max-parallel: 12
-      fail-fast: true
+      fail-fast: false
       matrix:
         python-version: ["3.7", "3.8"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
@@ -240,7 +240,7 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       max-parallel: 12
-      fail-fast: true
+      fail-fast: false
       matrix:
         python-version: ["3.7", "3.8"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
