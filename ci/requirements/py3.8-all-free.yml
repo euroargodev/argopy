@@ -5,9 +5,37 @@ dependencies:
   - python=3.8
   - xarray
   - scipy
-  - netCDF4
+  - netcdf4
   - erddapy
   - fsspec
   - aiohttp
   - packaging
   - toolz
+
+  - dask
+  - gsw
+  - pyarrow
+  - tqdm
+  - distributed
+
+  - matplotlib
+  - cartopy
+  - seaborn
+  - ipython
+  - ipywidgets
+  - ipykernel
+
+  - zarr
+  - bottleneck
+  - cftime
+  - cfgrib
+  - numpy
+  - pandas
+
+  - pip
+  - pytest
+  - setuptools
+  - black
+  - flake8
+  - pytest-cov
+  - pytest-env
