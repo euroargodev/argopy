@@ -168,7 +168,7 @@ jobs:
   core-min:
     # CI tests for environments with core requirements in oldest (min) versions
 
-    name: Core - min - Py${{matrix.python-version}} - ${{ matrix.os }}
+    name: Core - Min - Py${{matrix.python-version}} - ${{ matrix.os }}
     needs: detect-ci-trigger
     runs-on: ${{ matrix.os }}
     if: needs.detect-ci-trigger.outputs.triggered == 'false'
@@ -230,7 +230,7 @@ jobs:
   all-min:
     # CI tests for environments with all requirements in oldest (min) versions
 
-    name: All - min - Py${{matrix.python-version}} - ${{ matrix.os }}
+    name: All - Min - Py${{matrix.python-version}} - ${{ matrix.os }}
     needs: core-min
     runs-on: ${{ matrix.os }}
     if: needs.detect-ci-trigger.outputs.triggered == 'false'
