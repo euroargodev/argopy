@@ -101,7 +101,7 @@ jobs:
 
     name: All - Free - Py${{matrix.python-version}} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    needs: free-core
+    needs: core-free
     if: |
         always()
         && (
