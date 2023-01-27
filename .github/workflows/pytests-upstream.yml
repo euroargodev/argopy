@@ -29,10 +29,10 @@ jobs:
         with:
           keyword: "[test-upstream]"
 
-  free-core:
+  core-free:
     # CI tests for environments with core requirements in free versions
 
-    name: Free - Core - Py${{matrix.python-version}} - ${{ matrix.os }}
+    name: Core - Free - Py${{matrix.python-version}} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     needs: detect-ci-trigger
     if: |
@@ -47,7 +47,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8"]
+        python-version: ["3.7", "3.8", "3.9"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
 
     steps:
@@ -96,10 +96,10 @@ jobs:
         with:
           log-path: output-${{ matrix.python-version }}-log.jsonl
 
-  free-all:
+  all-free:
     # CI tests for environments with all possible requirements in free versions
 
-    name: Free - All - Py${{matrix.python-version}} - ${{ matrix.os }}
+    name: All - Free - Py${{matrix.python-version}} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     needs: free-core
     if: |
