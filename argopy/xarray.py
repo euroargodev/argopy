@@ -690,10 +690,10 @@ class ArgoAccessor:
                     xds = xds.drop_vars("TIME")
                     xds = xds.where(xds[key] == value, drop=True)
                     xds["TIME"] = xr.DataArray(
-                        np.arange(len(xds["N_POINTS"])),
+                        np.empty((len(xds["N_POINTS"]),), dtype='datetime64[ns]'),
                         dims="N_POINTS",
                         attrs=TIME.attrs,
-                    ).astype(np.datetime64)
+                    )
                     xds = xds.set_coords("TIME")
                     return xds
 
