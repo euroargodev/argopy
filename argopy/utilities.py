@@ -2603,6 +2603,12 @@ class Registry(UserList):
             self._complain("%s is not a valid %s" % (str(item), self.dtype))
         return is_valid
 
+    def _dict(self, item):
+        is_valid = isinstance(item, dict)
+        if not is_valid:
+            self._complain("%s is not a valid %s" % (str(item), self.dtype))
+        return is_valid
+
     def _wmo(self, item):
         return item.isvalid
 
@@ -2628,6 +2634,9 @@ class Registry(UserList):
         elif dtype == float_wmo or str(dtype).lower() == 'wmo':
             self._validator = self._wmo
             self.dtype = float_wmo
+        elif repr(dtype) == "<class 'dict'>" or dtype == 'dict':
+            self._validator = self._dict
+            self.dtype = dict
         else:
             raise ValueError("Unrecognised Registry data type '%s'" % dtype)
         if initlist is not None:
@@ -2991,16 +3000,20 @@ class ArgoNVSReferenceTables:
 
 
 class OceanOPS_Deployments:
-    """ Use the OceanOPS API for metadata access to retrieve Argo floats deployment information
+    """Use the OceanOPS API for metadata access to retrieve Argo floats deployment information
 
     API Swagger: https://www.ocean-ops.org/api/swagger/?url=https://www.ocean-ops.org/api/1/oceanops-api.yaml
 
     Description of deployment status name:
 
-    - 'PROBABLE' [0]: Starting status for some platforms, when there is only a few metadata available, like rough deployment location and date. The platform may be deployed,
-    - 'CONFIRMED' [1]: Automatically set when a ship is attached to the deployment information. The platform is ready to be deployed, deployment is planned,
-    - 'REGISTERED' [2]: Starting status for most of the networks, when deployment planning is not done. The deployment is certain, and a notification has been sent via the OceanOPS system,
-    - 'OPERATIONAL' [6]: Automatically set when the platform is emitting a pulse and observations are distributed within a certain time interval,
+    - 'PROBABLE' [0]: Starting status for some platforms, when there is only a few metadata available, like rough
+     deployment location and date. The platform may be deployed,
+    - 'CONFIRMED' [1]: Automatically set when a ship is attached to the deployment information. The platform is
+    ready to be deployed, deployment is planned,
+    - 'REGISTERED' [2]: Starting status for most of the networks, when deployment planning is not done. The
+    deployment is certain, and a notification has been sent via the OceanOPS system,
+    - 'OPERATIONAL' [6]: Automatically set when the platform is emitting a pulse and observations are distributed
+    within a certain time interval,
     - 'INACTIVE' [4]: The platform is not emitting a pulse since a certain time,
     - 'CLOSED' [5]: The platform is not emitting a pulse since a long time, it is considered as dead.
 
@@ -3025,8 +3038,10 @@ class OceanOPS_Deployments:
     """
     api = "https://www.ocean-ops.org"
     """URL to the API"""
+
     model = "api/1/data/platform"
-    """This model represents a Platform entity and is used to retrieve a platform information (schema model named 'Ptf')."""
+    """This model represents a Platform entity and is used to retrieve a platform information (schema model 
+    named 'Ptf')."""
 
     def __init__(self, box: list, deployed_only: bool = False):
         """
@@ -3044,8 +3059,9 @@ class OceanOPS_Deployments:
             Eg: [-60, -55, 40., 45., '2007-08-01', '2007-09-01']
 
         deployed_only: bool, optional, default=False
-            Should we return only floats already deployed or not. If set to False (default), will return the full deployment plan (floats with all possible status). If set to True, will return only floats with one of the following status:
-            ``OPERATIONAL``, ``INACTIVE``, and ``CLOSED``.
+            Should we return only floats already deployed or not. If set to False (default), will return the full
+            deployment plan (floats with all possible status). If set to True, will return only floats with one
+            of the following status: ``OPERATIONAL``, ``INACTIVE``, and ``CLOSED``.
         """
         self.box = box
         self.deployed_only = deployed_only
@@ -3053,6 +3069,29 @@ class OceanOPS_Deployments:
 
         from .stores import httpstore
         self.fs = httpstore(cache=False)
+
+    def __format(self, x, typ: str) -> str:
+        """ string formatting helper """
+        if typ == "lon":
+            return str(x) if x is not None else "-"
+        elif typ == "lat":
+            return str(x) if x is not None else "-"
+        elif typ == "tim":
+            return pd.to_datetime(x).strftime("%Y-%m-%d") if x is not None else "-"
+        else:
+            return str(x)
+
+    def __repr__(self):
+        summary = ["<argo.deployment_plan>"]
+        summary.append("API: %s/%s" % (self.api, self.model))
+        summary.append("Domain: %s" % self.box_name)
+        summary.append("Deployed only: %s" % self.deployed_only)
+        if self.data is not None:
+            summary.append("Nb of floats in the deployment plan: %s" % self.size)
+        else:
+            summary.append("Nb of floats in the deployment plan: - [Data not retrieved yet]")
+        return '\n'.join(summary)
+
 
     def __encode_inc(self, inc):
         """Return encoded uri expression for 'include' parameter
@@ -3079,6 +3118,11 @@ class OceanOPS_Deployments:
         str
         """
         return exp.replace("\"", "%22").replace("'", "%27").replace(" ", "%20").replace(">", "%3E").replace("<", "%3C")
+
+    def __get_uri(self, encoded=False):
+        uri = "exp=%s&include=%s" % (self.exp(encoded=encoded), self.include(encoded=encoded))
+        url = "%s/%s?%s" % (self.api, self.model, uri)
+        return url
 
     def include(self, encoded=False):
         """Return an Ocean-Ops API 'include' expression
@@ -3141,10 +3185,45 @@ class OceanOPS_Deployments:
         exp = "[\"%s\", %s]" % (exp, ", ".join(arg))
         return exp if not encoded else self.__encode_exp(exp)
 
-    def __get_uri(self, encoded=False):
-        uri = "exp=%s&include=%s" % (self.exp(encoded=encoded), self.include(encoded=encoded))
-        url = "%s/%s?%s" % (self.api, self.model, uri)
-        return url
+    @property
+    def size(self):
+        return len(self.data['data']) if self.data is not None else None
+
+    @property
+    def status_code(self):
+        """Return a :class:`pandas.DataFrame` with the definition of status"""
+        status = {'status_code': [0, 1, 2, 6, 4, 5],
+                  'status_name': ['PROBABLE', 'CONFIRMED', 'REGISTERED', 'OPERATIONAL', 'INACTIVE', 'CLOSED'],
+                  'description': [
+                      'Starting status for some platforms, when there is only a few metadata available, like rough deployment location and date. The platform may be deployed',
+                      'Automatically set when a ship is attached to the deployment information. The platform is ready to be deployed, deployment is planned',
+                      'Starting status for most of the networks, when deployment planning is not done. The deployment is certain, and a notification has been sent via the OceanOPS system',
+                      'Automatically set when the platform is emitting a pulse and observations are distributed within a certain time interval',
+                      'The platform is not emitting a pulse since a certain time',
+                      'The platform is not emitting a pulse since a long time, it is considered as dead',
+                  ]}
+        return pd.DataFrame(status).set_index('status_code')
+
+    @property
+    def box_name(self):
+        """Return a string to print the box property"""
+        BOX = self.box
+        cname = ("[lon=%s/%s; lat=%s/%s]") % (
+            self.__format(BOX[0], "lon"),
+            self.__format(BOX[1], "lon"),
+            self.__format(BOX[2], "lat"),
+            self.__format(BOX[3], "lat"),
+        )
+        if len(BOX) == 6:
+            cname = ("[lon=%s/%s; lat=%s/%s; t=%s/%s]") % (
+                self.__format(BOX[0], "lon"),
+                self.__format(BOX[1], "lon"),
+                self.__format(BOX[2], "lat"),
+                self.__format(BOX[3], "lat"),
+                self.__format(BOX[4], "tim"),
+                self.__format(BOX[5], "tim"),
+            )
+        return cname
 
     @property
     def uri(self):
@@ -3165,6 +3244,19 @@ class OceanOPS_Deployments:
         str
         """
         return self.__get_uri(encoded=False)
+
+    @property
+    def plan(self):
+        """Return a dictionary to be used as argument in a :class:`VirtualFleet`
+
+        This method is for dev, but will be moved to the VirtualFleet software utilities
+        """
+        df = self.to_dataframe()
+        plan = df[['lon', 'lat', 'date']].rename(columns={"date": "time"}).to_dict('series')
+        for key in plan.keys():
+            plan[key] = plan[key].to_list()
+        plan['time'] = np.array(plan['time'], dtype='datetime64')
+        return plan
 
     def to_json(self):
         """Return OceanOPS API request response as a json object"""
@@ -3211,115 +3303,24 @@ class OceanOPS_Deployments:
             #     status[ptf['ptfStatus']['name']] = ptf['ptfStatus']['description']
 
         df = pd.DataFrame(res)
+        df = df.astype({'date': np.datetime64})
         df = df.sort_values(by='date').reset_index(drop=True)
         # df = df[ (df['status_name'] == 'CLOSED') | (df['status_name'] == 'OPERATIONAL')] # Select only floats that have been deployed and returned data
         # print(status)
         return df
 
-    @property
-    def plan(self):
-        """Return a dictionary to be used as argument in a :class:`VirtualFleet`
-
-        This method is for dev, but will be moved to the VirtualFleet software utilities
-        """
-        df = self.to_dataframe()
-        plan = df[['lon', 'lat', 'date']].rename(columns={"date": "time"}).to_dict('series')
-        for key in plan.keys():
-            plan[key] = plan[key].to_list()
-        plan['time'] = np.array(plan['time'], dtype='datetime64')
-        return plan
-
-    @property
-    def status_code(self):
-        """Return a :class:`pandas.DataFrame` with the definition of status"""
-        status = {'status_code': [0, 1, 2, 6, 4, 5],
-                  'status_name': ['PROBABLE', 'CONFIRMED', 'REGISTERED', 'OPERATIONAL', 'INACTIVE', 'CLOSED'],
-                  'description': [
-                      'Starting status for some platforms, when there is only a few metadata available, like rough deployment location and date. The platform may be deployed',
-                      'Automatically set when a ship is attached to the deployment information. The platform is ready to be deployed, deployment is planned',
-                      'Starting status for most of the networks, when deployment planning is not done. The deployment is certain, and a notification has been sent via the OceanOPS system',
-                      'Automatically set when the platform is emitting a pulse and observations are distributed within a certain time interval',
-                      'The platform is not emitting a pulse since a certain time',
-                      'The platform is not emitting a pulse since a long time, it is considered as dead',
-                  ]}
-        return pd.DataFrame(status).set_index('status_code')
-
-    def _format(self, x, typ: str) -> str:
-        """ string formatting helper """
-        if typ == "lon":
-            return str(x) if x is not None else "-"
-        elif typ == "lat":
-            return str(x) if x is not None else "-"
-        elif typ == "tim":
-            return pd.to_datetime(x).strftime("%Y-%m-%d") if x is not None else "-"
-        else:
-            return str(x)
-
-    @property
-    def box_name(self):
-        """Return a string to print the box property"""
-        BOX = self.box
-        cname = ("[lon=%s/%s; lat=%s/%s]") % (
-            self._format(BOX[0], "lon"),
-            self._format(BOX[1], "lon"),
-            self._format(BOX[2], "lat"),
-            self._format(BOX[3], "lat"),
-        )
-        if len(BOX) == 6:
-            cname = ("[lon=%s/%s; lat=%s/%s; t=%s/%s]") % (
-                self._format(BOX[0], "lon"),
-                self._format(BOX[1], "lon"),
-                self._format(BOX[2], "lat"),
-                self._format(BOX[3], "lat"),
-                self._format(BOX[4], "tim"),
-                self._format(BOX[5], "tim"),
-            )
-        return cname
-
-    def __repr__(self):
-        summary = ["<argo.deployment_plan>"]
-        summary.append("API: %s/%s" % (self.api, self.model))
-        summary.append("Domain: %s" % self.box_name)
-        summary.append("Deployed only: %s" % self.deployed_only)
-        if self.data is not None:
-            summary.append("Nb of floats in the deployment plan: %s" % self.data['total'])
-        else:
-            summary.append("Nb of floats in the deployment plan: Data not retrieved yet")
-        return '\n'.join(summary)
-
-    def plot_status(self, **kwargs):
+    def plot_status(self,
+                    **kwargs
+                    ):
         """Quick plot of the deployment plan
 
-        Named arguments are passed to plt.subplots
+        Named arguments are passed to :class:`plot.scatter_map`
 
         Returns
         -------
         fig: :class:`matplotlib.figure.Figure`
         ax: :class:`matplotlib.axes.Axes`
         """
-        from .plot.utils import discrete_coloring, latlongrid, land_feature
-        from .plot.plot import ccrs, plt
-
+        from .plot.utils import scatter_map
         df = self.to_dataframe()
-
-        defaults = {"figsize": (10, 6), "dpi": 90}
-        subplot_kw = {"projection": ccrs.PlateCarree()}
-        fig, ax = plt.subplots(**{**defaults, **kwargs}, subplot_kw=subplot_kw)
-        ax.add_feature(land_feature, edgecolor="black")
-
-        status = self.status_code['status_name'].to_dict()
-        ticklabels = ["%i: %s" % (k, status[k]) for k in status]
-        dc = discrete_coloring(name='Spectral', N=6)
-        ax.scatter(df['lon'], df['lat'], c=df['status_code'], cmap=dc.cmap, vmin=0, vmax=6)
-        dc.cbar(ticklabels=ticklabels, fraction=0.03, label='Status')
-
-        latlongrid(ax, dx="auto", dy="auto", fontsize="auto")
-        # ax.set_title("Source: OceanOPS API as of %s" % pd.to_datetime('now', utc=True).strftime("%Y-%m-%d %H:%M:%S"), fontsize=10)
-        # fig.suptitle("Argo network deployment plan\n%s" % self.box_name, fontsize=14)
-        ax.set_title("Argo network deployment plan\n%s\nSource: OceanOPS API as of %s" % (
-            self.box_name,
-            pd.to_datetime('now', utc=True).strftime("%Y-%m-%d %H:%M:%S")),
-                     fontsize=12
-                     )
-
-        return fig, ax
+        return scatter_map(df, ['lon', 'lat', 'status_code'], cbar=0, traj=0, cmap='deployment_status', **kwargs)
