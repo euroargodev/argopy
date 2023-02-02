@@ -3323,3 +3323,37 @@ class OceanOPSDeployments:
         else:
             summary.append("Nb of floats in the deployment plan: Data not retrieved yet")
         return '\n'.join(summary)
+
+    def plot_status(self, **kwargs):
+        """Quick plot of the deployment plan
+
+        Named arguments are passed to plt.subplots
+        Returns
+        -------
+        fig: :class:`matplotlib.figure.Figure`
+        ax: :class:`matplotlib.axes.Axes`
+        """
+        from .plot.utils import discrete_coloring, latlongrid, land_feature
+        from .plot.plot import ccrs, plt
+
+        df = self.to_dataframe()
+
+        defaults = {"figsize": (10, 6), "dpi": 90}
+        subplot_kw = {"projection": ccrs.PlateCarree()}
+        fig, ax = plt.subplots(**{**defaults, **kwargs}, subplot_kw=subplot_kw)
+        ax.add_feature(land_feature, edgecolor="black")
+
+        status = self.status_code['status_name'].to_dict()
+        ticklabels = ["%i: %s" % (k, status[k]) for k in status]
+        dc = discrete_coloring(name='Spectral', N=6)
+        ax.scatter(df['lon'], df['lat'], c=df['status_code'], cmap=dc.cmap, vmin=0, vmax=6)
+        dc.cbar(ticklabels=ticklabels, fraction=0.03, label='Status')
+
+        latlongrid(ax, dx="auto", dy="auto", fontsize="auto")
+        ax.set_title("Argo network deployment plan\n%s\nSource: OceanOPS API as of %s" % (
+            self.box_name,
+            pd.to_datetime('now', utc=True).strftime("%Y-%m-%d %H:%M:%S")),
+                     fontsize=12
+                     )
+
+        return fig, ax
