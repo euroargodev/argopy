@@ -32,7 +32,7 @@ from argopy.utilities import (
     float_wmo,
     get_coriolis_profile_id,
     get_ea_profile_page,
-    OceanOPS_Deployments,
+    OceanOPSDeployments,
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
@@ -729,11 +729,11 @@ class Test_OceanOPS_Deployments:
             deployed_only = None
 
         args = {"box": box, "deployed_only": deployed_only}
-        return OceanOPS_Deployments(**args)
+        return OceanOPSDeployments(**args)
 
     @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
     def test_init(self, an_instance):
-        assert isinstance(an_instance, OceanOPS_Deployments)
+        assert isinstance(an_instance, OceanOPSDeployments)
 
     @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
     def test_attributes(self, an_instance):

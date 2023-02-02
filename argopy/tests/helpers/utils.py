@@ -20,7 +20,7 @@ from argopy.utilities import (
     isconnected,
     erddap_ds_exists,
     isAPIconnected,
-    OceanOPS_Deployments,
+    OceanOPSDeployments,
 )
 import logging
 
@@ -177,7 +177,7 @@ has_ipython, requires_ipython = _importorskip("IPython")
 # Ocean-OPS API #
 #################
 has_oops, requires_oops = _connectskip(
-    isconnected(OceanOPS_Deployments([]).api_server_check), "a live Ocean-OPS server"
+    isconnected(OceanOPSDeployments().api_server_check), "a live Ocean-OPS server"
 )
 
 ############
