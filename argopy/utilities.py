@@ -2999,41 +2999,55 @@ class ArgoNVSReferenceTables:
         return all_tables
 
 
-class OceanOPS_Deployments:
-    """Use the OceanOPS API for metadata access to retrieve Argo floats deployment information
+class OceanOPSDeployments:
+    """Use the OceanOPS API for metadata access to retrieve Argo floats deployment information.
 
-    API Swagger: https://www.ocean-ops.org/api/swagger/?url=https://www.ocean-ops.org/api/1/oceanops-api.yaml
+    The API is documented here: https://www.ocean-ops.org/api/swagger/?url=https://www.ocean-ops.org/api/1/oceanops-api.yaml
 
     Description of deployment status name:
-
-    - 'PROBABLE' [0]: Starting status for some platforms, when there is only a few metadata available, like rough
-     deployment location and date. The platform may be deployed,
-    - 'CONFIRMED' [1]: Automatically set when a ship is attached to the deployment information. The platform is
-    ready to be deployed, deployment is planned,
-    - 'REGISTERED' [2]: Starting status for most of the networks, when deployment planning is not done. The
-    deployment is certain, and a notification has been sent via the OceanOPS system,
-    - 'OPERATIONAL' [6]: Automatically set when the platform is emitting a pulse and observations are distributed
-    within a certain time interval,
-    - 'INACTIVE' [4]: The platform is not emitting a pulse since a certain time,
-    - 'CLOSED' [5]: The platform is not emitting a pulse since a long time, it is considered as dead.
+    =========== == ====
+    Status      Id Description
+    =========== == ====
+    PROBABLE    0  Starting status for some platforms, when there is only a few metadata available, like rough deployment location and date. The platform may be deployed
+    CONFIRMED   1  Automatically set when a ship is attached to the deployment information. The platform is ready to be deployed, deployment is planned
+    REGISTERED  2  Starting status for most of the networks, when deployment planning is not done. The deployment is certain, and a notification has been sent via the OceanOPS system
+    OPERATIONAL 6  Automatically set when the platform is emitting a pulse and observations are distributed within a certain time interval
+    INACTIVE    4  The platform is not emitting a pulse since a certain time
+    CLOSED      5  The platform is not emitting a pulse since a long time, it is considered as dead
+    =========== == ====
 
     Examples
     --------
-    box = [-20, 0, 42, 51]
-    box = [-20, 0, 42, 51, '2023-01', '2024-01']
-    box = [-180, 180, -90, 90, '2020-01', '2021-01']
 
-    deployment = OceanOPS_Deployments(box)
-    deployment = OceanOPS_Deployments(box, deployed_only=True) # Remove plannification
+    Import the utility class:
 
-    data = deployment.to_json()
-    df = deployment.to_dataframe()
-    plan_virtualfleet = deployment.plan
+    >>> from argopy.utilities import OceanOPSDeployments
+    >>> from argopy import OceanOPSDeployments
 
-    fig, ax = deployment.plot_status()
-    deployment.uri
-    deployment.uri_decoded
-    deployment.status_code
+    Possibly define the space/time box to work with:
+
+    >>> box = [-20, 0, 42, 51]
+    >>> box = [-20, 0, 42, 51, '2020-01', '2021-01']
+    >>> box = [-180, 180, -90, 90, '2020-01', None]
+
+    Instantiate the metadata fetcher:
+
+    >>> deployment = OceanOPSDeployments()
+    >>> deployment = OceanOPSDeployments(box)
+    >>> deployment = OceanOPSDeployments(box, deployed_only=True) # Remove planification
+
+    Load information:
+
+    >>> df = deployment.to_dataframe()
+    >>> data = deployment.to_json()
+
+    Usefull attributes and methods:
+
+    >>> deployment.uri
+    >>> deployment.uri_decoded
+    >>> deployment.status_code
+    >>> fig, ax = deployment.plot_status()
+    >>> plan_virtualfleet = deployment.plan
 
     """
     api = "https://www.ocean-ops.org"
@@ -3043,26 +3057,43 @@ class OceanOPS_Deployments:
     """This model represents a Platform entity and is used to retrieve a platform information (schema model 
     named 'Ptf')."""
 
-    def __init__(self, box: list, deployed_only: bool = False):
+    api_server_check = 'https://www.ocean-ops.org/api/1/oceanops-api.yaml'
+    """URL to check if the API is alive"""
+
+    def __init__(self, box: list = None, deployed_only: bool = False):
         """
 
         Parameters
         ----------
-        box: list()
-            Define the domain to load Argo index for. The box list is made of:
-                - lon_min: float, lon_max: float,
-                - lat_min: float, lat_max: float,
-                - date_min: str (optional), date_max: str (optional)
+        box: list, optional, default=None
+            Define the domain to load the Argo deployment plan for. By default **box** is set to None to work with the
+            global deployment plan starting from the current date.
+            The list expects one of the following format:
 
-            Longitude and latitude bounds are required, while the two bounding dates are optional.
-            If bounding dates are not specified, the entire time series is fetched.
-            Eg: [-60, -55, 40., 45., '2007-08-01', '2007-09-01']
+            - [lon_min, lon_max, lat_min, lat_max]
+            - [lon_min, lon_max, lat_min, lat_max, date_min]
+            - [lon_min, lon_max, lat_min, lat_max, date_min, date_max]
+
+            Longitude and latitude values must be floats. Dates are strings.
+            If **box** is provided with a regional domain definition (only 4 values given), then ``date_min`` will be
+            set to the current date.
 
         deployed_only: bool, optional, default=False
-            Should we return only floats already deployed or not. If set to False (default), will return the full
-            deployment plan (floats with all possible status). If set to True, will return only floats with one
-            of the following status: ``OPERATIONAL``, ``INACTIVE``, and ``CLOSED``.
+            Return only floats already deployed. If set to False (default), will return the full
+            deployment plan (floats with all possible status). If set to True, will return only floats with one of the
+            following status: ``OPERATIONAL``, ``INACTIVE``, and ``CLOSED``.
         """
+        if box is None:
+            box = [None, None, None, None, pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"), None]
+        elif len(box) == 4:
+            box = box.append(pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"))
+            box = box.append(None)
+        elif len(box) == 5:
+            box = box.append(None)
+
+        if len(box) != 6:
+            raise ValueError("The 'box' argument must be: None or of lengths 4 or 5 or 6\n%s" % str(box))
+
         self.box = box
         self.deployed_only = deployed_only
         self.data = None
@@ -3227,7 +3258,7 @@ class OceanOPS_Deployments:
 
     @property
     def uri(self):
-        """Return encoded URL to post to Ocean-Ops API request
+        """Return encoded URL to post an Ocean-Ops API request
 
         Returns
         -------
@@ -3237,7 +3268,7 @@ class OceanOPS_Deployments:
 
     @property
     def uri_decoded(self):
-        """Return decoded URL to post to Ocean-Ops API request
+        """Return decoded URL to post an Ocean-Ops API request
 
         Returns
         -------

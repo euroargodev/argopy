@@ -702,7 +702,7 @@ def test_get_ea_profile_page():
 
 
 @requires_oops
-class Test_OceanOPS_Deployments:
+class Test_OceanOPSDeployments:
 
     # Define the list of region/box to use in tests
     valid_boxes = [[val if i1 != i2 else None for i2, val in enumerate(
