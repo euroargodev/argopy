@@ -31,7 +31,6 @@ create_this_env () {
 
 }
 
-
 fix_kernel_path (){
   ENV=${1}
 
@@ -89,7 +88,6 @@ add_to_ipykernel () {
    # Check installation of the kernel:
    fix_kernel_path ${1}
 }
-
 
 POSITIONAL_ARGS=()
 
@@ -171,6 +169,11 @@ while [[ $# -gt 0 ]]; do
     --py38min)
       declare -A ENV_LIST
       ENV_LIST[argopy-tests-py38min]="py3.8-all-min.yml"
+      shift # past argument
+      ;;
+    --py38pinned-core)
+      declare -A ENV_LIST
+      ENV_LIST[argopy-tests-py38pinned-core]="py3.8-core-pinned.yml"
       shift # past argument
       ;;
     --py38free-core)
