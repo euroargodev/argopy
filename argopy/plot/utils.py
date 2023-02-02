@@ -67,7 +67,7 @@ class discrete_coloring:
 
     Example
     -------
-    This class can be used like this::
+    This class can be used like this:
 
         year_range = np.arange(2002,2010)
         dc = discrete_coloring(name='Spectral', N=len(year_range) )
@@ -208,7 +208,7 @@ class discrete_coloring:
         return scalarMap.to_rgba(value)
 
 
-def latlongrid(ax, dx="auto", dy="auto", fontsize="auto", **kwargs):
+def latlongrid(ax, dx="auto", dy="auto", fontsize="auto", label_style_arg={}, **kwargs):
     """ Add latitude/longitude grid line and labels to a cartopy geoaxes
 
     Parameters
@@ -242,7 +242,11 @@ def latlongrid(ax, dx="auto", dy="auto", fontsize="auto", **kwargs):
     # Cartopy >= 0.18:
     gl.top_labels = False
     gl.right_labels = False
+    label_style_arg_defaults = {"fontsize": None}
     if fontsize != "auto":
-        gl.xlabel_style = {"fontsize": fontsize}
-        gl.ylabel_style = {"fontsize": fontsize}
+        label_style_arg_defaults = {"fontsize": fontsize}
+
+    gl.xlabel_style = {**label_style_arg_defaults, **label_style_arg}
+    gl.ylabel_style = {**label_style_arg_defaults, **label_style_arg}
     return gl
+

@@ -6,9 +6,14 @@
 #
 # Decorator warnUnless is mandatory
 #
+import numpy as np
 import pandas as pd
+from typing import Union
+
 from .utils import STYLE, has_seaborn, has_mpl, has_cartopy, has_ipython, has_ipywidgets
 from .utils import axes_style, discrete_coloring, latlongrid, land_feature
+from .argo_colors import ArgoColors
+
 from ..utilities import warnUnless, check_wmo
 
 
@@ -119,7 +124,7 @@ def plot_trajectory(
     ax: :class:`matplotlib.axes.Axes`
     """
     with axes_style(style):
-        # Set-up the figure and axis:
+        # Set up the figure and axis:
         defaults = {"figsize": (10, 6), "dpi": 90}
         if with_cartopy:
             subplot_kw = {"projection": ccrs.PlateCarree()}
@@ -226,4 +231,148 @@ def bar_plot(
             df.groupby(by).size().sort_values(ascending=True).plot.barh(ax)
         ax.set_xlabel("Number of profiles")
         ax.set_ylabel("")
+    return fig, ax
+
+
+@warnUnless(has_mpl, "requires matplotlib installed")
+@warnUnless(has_cartopy, "requires cartopy installed")
+def scatter_map(
+        df: pd.core.frame.DataFrame,
+        axis: list = ['longitude', 'latitude', 'wmo'],
+
+        markersize: int = 36,
+        markeredgesize: float = 0.5,
+        markeredgecolor: str = 'default',
+
+        cmap: str = STYLE["palette"],
+        vmin: Union[str, float] = 'auto',
+        vmax: Union[str, float] = 'auto',
+
+        traj: bool = True,
+        traj_axis: str = 'wmo',
+        traj_color: str = 'default',
+
+        legend: bool = True,
+        legend_title: str = 'default',
+        legend_location: str = "upper right",
+
+        cbar: bool = False,
+        cbarlabels: Union[str, list] = 'auto',
+
+        style: str = STYLE["axes"],
+        set_global: bool = False,
+
+        **kwargs
+):
+    """ Generic function to create a scatter plot on a map
+
+    Each point is an Argo profile location, colored with a user defined variable and colormap.
+
+    Each float trajectory can also be plotted.
+
+    Parameters
+    ----------
+    df: :class:`pd.DataFrame`
+        Input data
+    axis: list, default=['longitude', 'latitude', 'wmo']
+        Name of :class:`pd.DataFrame` columns to take the scatter longitude, latitude and hue values.
+
+    Returns
+    -------
+    fig: :class:`matplotlib.figure.Figure`
+    ax: :class:`matplotlib.axes.Axes`
+    """
+    lon, lat, hue = axis
+    if legend_title == 'default':
+        legend_title = str(hue)
+
+    # Load Argo colors:
+    nHue = len(df.groupby(hue).first())
+    mycolors = ArgoColors(cmap, nHue)
+
+    COLORS = mycolors.COLORS
+    if markeredgecolor == 'default':
+        markeredgecolor = COLORS['DARKBLUE']
+
+    if traj_color == 'default':
+        traj_color = markeredgecolor
+
+    # Set up the figure and axis:
+    defaults = {"figsize": (10, 6), "dpi": 90}
+
+    subplot_kw = {"projection": ccrs.PlateCarree()}
+    fig, ax = plt.subplots(**{**defaults, **kwargs}, subplot_kw=subplot_kw)
+    # ax.add_feature(land_feature, edgecolor="black")
+    ax.add_feature(land_feature, color=COLORS['BLUE'], edgecolor=COLORS['CYAN'], linewidth=.1, alpha=0.3)
+
+    vmin = df[hue].min() if vmin == 'auto' else vmin
+    vmax = df[hue].max() if vmax == 'auto' else vmax
+
+    patches = []
+    for k, [name, group] in enumerate(df.groupby(hue)):
+        hue_value = np.unique(group[hue].values)[0]
+        color = mycolors.lookup[name] if mycolors.registered else mycolors.cmap(k)
+        label = "%s: %s" % (name, mycolors.ticklabels[name]) if mycolors.registered else name
+        sc = group.plot.scatter(
+            x=lon, y=lat,
+            ax=ax,
+            color=color,
+            label=label,
+            # label="%s: %s" % (hue, str(hue_value)),
+            vmin=vmin, vmax=vmax,
+            zorder=10,
+            sizes=[markersize],
+            edgecolor=markeredgecolor,
+            linewidths=markeredgesize,
+        )
+        patches.append(sc)
+    # print(len(patches))
+    # sc = mpl.collections.PatchCollection(patches)
+
+    if cbar:
+        if cbarlabels == 'auto':
+            cbarlabels = None
+        mycolors.cbar(ticklabels=cbarlabels,
+                      ax=ax,
+                      cax=sc,
+                      fraction=0.03, label=legend_title)
+
+    if traj:
+        nTraj = len(df.groupby(traj_axis).first())
+        for k, [name, group] in enumerate(df.groupby(traj_axis)):
+            group.plot.line(
+                x=lon,
+                y=lat,
+                ax=ax,
+                color=traj_color,
+                legend=False,
+                linewidth=0.5,
+                label="_nolegend_",
+                zorder=2,
+            )
+
+    if set_global:
+        ax.set_global()
+
+    latlongrid(ax, dx="auto", dy="auto",
+               label_style_arg={'color': COLORS['BLUE'], 'fontsize': 10},
+               **{"color": COLORS['BLUE'], "alpha": 0.7})
+    ax.get_xaxis().set_visible(False)
+    ax.get_yaxis().set_visible(False)
+
+    if legend and nHue <= 15:
+        handles, labels = ax.get_legend_handles_labels()
+        plt.legend(
+            handles,
+            labels,
+            loc=legend_location,
+            bbox_to_anchor=(1.26, 1),
+            title=legend_title,
+        )
+    else:
+        ax.get_legend().remove()
+
+    for spine in ax.spines.values():
+        spine.set_edgecolor(COLORS['DARKBLUE'])
+
     return fig, ax
