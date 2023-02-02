@@ -3090,6 +3090,7 @@ class OceanOPSDeployments:
             box = box.append(None)
         elif len(box) == 5:
             box = box.append(None)
+        print(box)
 
         if len(box) != 6:
             raise ValueError("The 'box' argument must be: None or of lengths 4 or 5 or 6\n%s" % str(box))
@@ -3352,6 +3353,12 @@ class OceanOPSDeployments:
         fig: :class:`matplotlib.figure.Figure`
         ax: :class:`matplotlib.axes.Axes`
         """
-        from .plot.utils import scatter_map
+        from .plot.plot import scatter_map
         df = self.to_dataframe()
-        return scatter_map(df, ['lon', 'lat', 'status_code'], cbar=0, traj=0, cmap='deployment_status', **kwargs)
+        fig, ax = scatter_map(df, ['lon', 'lat', 'status_code'], cbar=0, traj=0, cmap='deployment_status', **kwargs)
+        ax.set_title("Argo network deployment plan\n%s\nSource: OceanOPS API as of %s" % (
+            self.box_name,
+            pd.to_datetime('now', utc=True).strftime("%Y-%m-%d %H:%M:%S")),
+                     fontsize=12
+                     )
+        return fig, ax
