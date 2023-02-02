@@ -3027,6 +3027,8 @@ class OceanOPS_Deployments:
     """URL to the API"""
     model = "api/1/data/platform"
     """This model represents a Platform entity and is used to retrieve a platform information (schema model named 'Ptf')."""
+    api_server_check = 'https://www.ocean-ops.org/api/1/oceanops-api.yaml'
+    """URL to check if the API is alive"""
 
     def __init__(self, box: list, deployed_only: bool = False):
         """

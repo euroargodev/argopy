@@ -32,10 +32,11 @@ from argopy.utilities import (
     float_wmo,
     get_coriolis_profile_id,
     get_ea_profile_page,
+    OceanOPS_Deployments,
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
-from utils import requires_connection, requires_localftp, safe_to_server_errors
+from utils import requires_connection, requires_localftp, safe_to_server_errors, requires_oops
 
 
 def test_invalid_dictionnary():
@@ -698,4 +699,51 @@ def test_get_coriolis_profile_id():
 def test_get_ea_profile_page():
     assert is_list_of_strings(get_ea_profile_page(6901929))
     assert is_list_of_strings(get_ea_profile_page(6901929, 12))
+
+
+@requires_oops
+class Test_OceanOPS_Deployments:
+
+    # Define the list of region/box to use in tests
+    valid_boxes = [[val if i1 != i2 else None for i2, val in enumerate(
+        [-90,
+         0,
+         0,
+         90,
+         pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"),
+         (pd.to_datetime('now', utc=True) + pd.Timedelta(365, unit='days')).strftime("%Y-%m-%d")]
+    )] for i1 in range(6)]
+
+    # Combine the list of boxex with other possible options:
+    scenarios = [(box, deployed_only) for box in valid_boxes for deployed_only in [True, False]]
+    scenarios_ids = ["%s, %s" % (opt[0], opt[1]) for opt in scenarios]
+
+    @pytest.fixture
+    def an_instance(self, request):
+        """ Fixture to create a OceanOPS_Deployments instance for a given set of arguments """
+        if isinstance(request.param, tuple):
+            box = request.param[0]
+            deployed_only = request.param[1]
+        else:
+            box = request.param
+            deployed_only = None
+
+        args = {"box": box, "deployed_only": deployed_only}
+        return OceanOPS_Deployments(**args)
+
+    @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
+    def test_init(self, an_instance):
+        assert isinstance(an_instance, OceanOPS_Deployments)
+
+    @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
+    def test_attributes(self, an_instance):
+        dep = an_instance
+        assert isinstance(dep.uri, str)
+        assert isinstance(dep.uri_decoded, str)
+        assert isinstance(dep.status_code, pd.DataFrame)
+        assert isinstance(dep.box_name, str)
+    #
+    @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
+    def test_to_dataframe(self, an_instance):
+        assert isinstance(an_instance.to_dataframe(), pd.DataFrame)
 
