@@ -52,7 +52,7 @@ def open_dataset(name):
         List of files with the requested dataset
 
     """
-    if name == 'localftp':
+    if name == 'localftp' or name == 'gdac':
         gdacftp = sample_ftp()
         gdacftp.download(overwrite=False)
         return gdacftp.rootpath, gdacftp.ls()

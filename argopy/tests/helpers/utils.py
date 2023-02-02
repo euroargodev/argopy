@@ -19,7 +19,8 @@ from argopy.utilities import (
     list_available_index_src,
     isconnected,
     erddap_ds_exists,
-    isAPIconnected
+    isAPIconnected,
+    OceanOPSDeployments,
 )
 import logging
 
@@ -171,6 +172,13 @@ has_matplotlib, requires_matplotlib = _importorskip("matplotlib")
 has_seaborn, requires_seaborn = _importorskip("seaborn")
 has_cartopy, requires_cartopy = _importorskip("cartopy")
 has_ipython, requires_ipython = _importorskip("IPython")
+
+#################
+# Ocean-OPS API #
+#################
+has_oops, requires_oops = _connectskip(
+    isconnected(OceanOPSDeployments().api_server_check), "a live Ocean-OPS server"
+)
 
 ############
 # Fix for issues discussed here:

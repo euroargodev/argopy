@@ -3,7 +3,7 @@
 Data visualisation
 ##################
 
-Although **argopy** is not focus on visualisation, it provides a few functions to get you started. Plotting functions are available for both the data and index fetchers.
+Although **argopy** is not focused on visualisation, it provides a few functions to get you started. Plotting functions are available for both the data and index fetchers.
 
 Trajectories
 ------------
