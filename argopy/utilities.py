@@ -53,6 +53,7 @@ from .errors import (
     InvalidOption,
     InvalidDatasetStructure,
     FileSystemHasNoCache,
+    DataNotFound,
 )
 
 try:
@@ -3303,6 +3304,9 @@ class OceanOPSDeployments:
         :class:`pandas.DataFrame`
         """
         data = self.to_json()
+        if data['total'] == 0:
+            raise DataNotFound('Your search matches no results')
+
         # res = {'date': [], 'lat': [], 'lon': [], 'wmo': [], 'status_name': [], 'status_code': []}
         # res = {'date': [], 'lat': [], 'lon': [], 'wmo': [], 'status_name': [], 'status_code': [], 'ship_name': []}
         res = {'date': [], 'lat': [], 'lon': [], 'wmo': [], 'status_name': [], 'status_code': [], 'program': [],
@@ -3340,6 +3344,7 @@ class OceanOPSDeployments:
         # print(status)
         return df
 
+
     def plot_status(self,
                     **kwargs
                     ):
@@ -3354,7 +3359,11 @@ class OceanOPSDeployments:
         """
         from .plot.plot import scatter_map
         df = self.to_dataframe()
-        fig, ax = scatter_map(df, ['lon', 'lat', 'status_code'], cbar=0, traj=0, cmap='deployment_status', **kwargs)
+        fig, ax = scatter_map(df,
+                              axis=['lon', 'lat', 'status_code'],
+                              traj=False,
+                              cmap='deployment_status',
+                              **kwargs)
         ax.set_title("Argo network deployment plan\n%s\nSource: OceanOPS API as of %s" % (
             self.box_name,
             pd.to_datetime('now', utc=True).strftime("%Y-%m-%d %H:%M:%S")),
