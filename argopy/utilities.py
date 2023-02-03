@@ -3066,7 +3066,7 @@ class OceanOPSDeployments:
         Parameters
         ----------
         box: list, optional, default=None
-            Define the domain to load the Argo deployment plan for. By default **box** is set to None to work with the
+            Define the domain to load the Argo deployment plan for. By default, **box** is set to None to work with the
             global deployment plan starting from the current date.
             The list expects one of the following format:
 
@@ -3086,11 +3086,10 @@ class OceanOPSDeployments:
         if box is None:
             box = [None, None, None, None, pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"), None]
         elif len(box) == 4:
-            box = box.append(pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"))
-            box = box.append(None)
+            box.append(pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"))
+            box.append(None)
         elif len(box) == 5:
-            box = box.append(None)
-        print(box)
+            box.append(None)
 
         if len(box) != 6:
             raise ValueError("The 'box' argument must be: None or of lengths 4 or 5 or 6\n%s" % str(box))
