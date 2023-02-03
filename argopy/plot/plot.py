@@ -302,7 +302,6 @@ def scatter_map(
 
     subplot_kw = {"projection": ccrs.PlateCarree()}
     fig, ax = plt.subplots(**{**defaults, **kwargs}, subplot_kw=subplot_kw)
-    # ax.add_feature(land_feature, edgecolor="black")
     ax.add_feature(land_feature, color=COLORS['BLUE'], edgecolor=COLORS['CYAN'], linewidth=.1, alpha=0.3)
 
     vmin = df[hue].min() if vmin == 'auto' else vmin
@@ -310,7 +309,7 @@ def scatter_map(
 
     patches = []
     for k, [name, group] in enumerate(df.groupby(hue)):
-        hue_value = np.unique(group[hue].values)[0]
+        # hue_value = np.unique(group[hue].values)[0]
         color = mycolors.lookup[name] if mycolors.registered else mycolors.cmap(k)
         label = "%s: %s" % (name, mycolors.ticklabels[name]) if mycolors.registered else name
         sc = group.plot.scatter(
@@ -318,7 +317,6 @@ def scatter_map(
             ax=ax,
             color=color,
             label=label,
-            # label="%s: %s" % (hue, str(hue_value)),
             vmin=vmin, vmax=vmax,
             zorder=10,
             sizes=[markersize],
@@ -326,8 +324,6 @@ def scatter_map(
             linewidths=markeredgesize,
         )
         patches.append(sc)
-    # print(len(patches))
-    # sc = mpl.collections.PatchCollection(patches)
 
     if cbar:
         if cbarlabels == 'auto':
@@ -338,7 +334,7 @@ def scatter_map(
                       fraction=0.03, label=legend_title)
 
     if traj:
-        nTraj = len(df.groupby(traj_axis).first())
+        # nTraj = len(df.groupby(traj_axis).first())
         for k, [name, group] in enumerate(df.groupby(traj_axis)):
             group.plot.line(
                 x=lon,
