@@ -161,6 +161,22 @@ class ArgoColors:
         )
         return new_cmap
 
+    def _colormap_continuous(self):
+        """Return a continuous colormap"""
+        N = self.Ncolors
+        cmap = plt.get_cmap(name=self.name)
+        colors_i = np.concatenate((np.linspace(0, 1.0, N), (0.0, 0.0, 0.0, 0.0)))
+        colors_rgba = cmap(colors_i)  # N x 4
+        indices = np.linspace(0, 1.0, N + 1)
+        cdict = {}
+        for ki, key in enumerate(("red", "green", "blue")):
+            cdict[key] = [
+                (indices[i], colors_rgba[i - 1, ki], colors_rgba[i, ki])
+                for i in np.arange(N + 1)
+            ]
+        new_cmap = mcolors.LinearSegmentedColormap(cmap.name + "_%d" % N, cdict, N)
+        return new_cmap
+
     def _colormap_month(self):
         """Return colormap with one value per month"""
         clist = [
@@ -189,22 +205,6 @@ class ArgoColors:
                 for i in np.arange(N + 1)
             ]
         new_cmap = mcolors.LinearSegmentedColormap("month_%d" % N, cdict, N)
-        return new_cmap
-
-    def _colormap_continuous(self):
-        """Return a continuous colormap"""
-        N = self.Ncolors
-        cmap = plt.get_cmap(name=self.name)
-        colors_i = np.concatenate((np.linspace(0, 1.0, N), (0.0, 0.0, 0.0, 0.0)))
-        colors_rgba = cmap(colors_i)  # N x 4
-        indices = np.linspace(0, 1.0, N + 1)
-        cdict = {}
-        for ki, key in enumerate(("red", "green", "blue")):
-            cdict[key] = [
-                (indices[i], colors_rgba[i - 1, ki], colors_rgba[i, ki])
-                for i in np.arange(N + 1)
-            ]
-        new_cmap = mcolors.LinearSegmentedColormap(cmap.name + "_%d" % N, cdict, N)
         return new_cmap
 
     def _colormap_deployment_status(self):
