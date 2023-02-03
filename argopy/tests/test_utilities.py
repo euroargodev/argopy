@@ -705,17 +705,49 @@ def test_get_ea_profile_page():
 class Test_OceanOPSDeployments:
 
     # Define the list of region/box to use in tests
-    valid_boxes = [[val if i1 != i2 else None for i2, val in enumerate(
-        [-90,
-         0,
-         0,
-         90,
-         pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"),
-         (pd.to_datetime('now', utc=True) + pd.Timedelta(365, unit='days')).strftime("%Y-%m-%d")]
-    )] for i1 in range(6)]
+    # valid_boxes = [[val if i1 != i2 else None for i2, val in enumerate(
+    #     [-90,
+    #      0,
+    #      0,
+    #      90,
+    #      pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"),
+    #      (pd.to_datetime('now', utc=True) + pd.Timedelta(365, unit='days')).strftime("%Y-%m-%d")]
+    # )] for i1 in range(6)]
+    # valid_boxes = [
+    #     None,
+    #     [-90, 0, 0, 90],
+    #     [-90, 0, 0, 90, '2022-01'],
+    #     [None, 0, 0, 90, '2022-01-01', '2023-01-01'],
+    #     [-90, None, 0, 90, '2022-01-01', '2023-01-01'],
+    #     [-90, 0, None, 90, '2022-01-01', '2023-01-01'],
+    #     [-90, 0, 0, None, '2022-01-01', '2023-01-01'],
+    #     [-90, 0, 0, 90, None, '2023-01-01'],
+    #     [-90, 0, 0, 90, '2022-01-01', None]]
+    # scenarios generation can't be automated because of the None/True combination of arguments.
+    # If box=None and deployed_only=True, OceanOPSDeployments will seek for OPERATING floats deployed today ! which is
+    # impossible and if it happens it's due to an error in the database...
+    scenarios = [
+        (None, True),
+        (None, False),
+        # ([-90, 0, 0, 90], True),
+        ([-90, 0, 0, 90], False),
+        ([-90, 0, 0, 90, '2022-01'], True),
+        ([-90, 0, 0, 90, '2022-01'], False),
+        ([None, 0, 0, 90, '2022-01-01', '2023-01-01'], True),
+        ([None, 0, 0, 90, '2022-01-01', '2023-01-01'], False),
+        ([-90, None, 0, 90, '2022-01-01', '2023-01-01'], True),
+        ([-90, None, 0, 90, '2022-01-01', '2023-01-01'], False),
+        ([-90, 0, None, 90, '2022-01-01', '2023-01-01'], True),
+        ([-90, 0, None, 90, '2022-01-01', '2023-01-01'], False),
+        ([-90, 0, 0, None, '2022-01-01', '2023-01-01'], True),
+        ([-90, 0, 0, None, '2022-01-01', '2023-01-01'], False),
+        ([-90, 0, 0, 90, None, '2023-01-01'], True),
+        ([-90, 0, 0, 90, None, '2023-01-01'], False),
+        ([-90, 0, 0, 90, '2022-01-01', None], True),
+        ([-90, 0, 0, 90, '2022-01-01', None], False)]
 
     # Combine the list of boxex with other possible options:
-    scenarios = [(box, deployed_only) for box in valid_boxes for deployed_only in [True, False]]
+    # scenarios = [(box, deployed_only) for box in valid_boxes for deployed_only in [True, False]]
     scenarios_ids = ["%s, %s" % (opt[0], opt[1]) for opt in scenarios]
 
     @pytest.fixture
@@ -742,6 +774,7 @@ class Test_OceanOPSDeployments:
         assert isinstance(dep.uri_decoded, str)
         assert isinstance(dep.status_code, pd.DataFrame)
         assert isinstance(dep.box_name, str)
+        assert len(dep.box) == 6
     #
     @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
     def test_to_dataframe(self, an_instance):
