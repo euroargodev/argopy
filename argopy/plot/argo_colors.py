@@ -4,9 +4,11 @@ from ..utilities import warnUnless
 
 if has_mpl:
     from .utils import mpl, cm, mcolors, plt
+    from matplotlib.colors import to_hex
 
 if has_seaborn:
     from .utils import sns
+
 
 @warnUnless(has_mpl, "requires matplotlib to be installed")
 class ArgoColors:
@@ -33,7 +35,7 @@ class ArgoColors:
               }
     """Set of Argo colors derived from the logo"""
 
-    def __init__(self, name="Set1", N=12):
+    def __init__(self, name="Set1", N=None):
         """
 
         Parameters
@@ -43,30 +45,33 @@ class ArgoColors:
         N: int
             Number of colors to reduce the colormap to. Default: 12
         """
+        if name in self.quantitative and N is None:
+            N = self.quantitative[name]
+        elif N is None:
+            N = 12
+        elif not isinstance(N, int):
+            raise ValueError("N the number of colors must be an integer")
+
         self.Ncolors = N
         self.name = name
         self.known_colormaps = {
             "data_mode": {
+                "name": "Argo Data-Mode",
                 "aka": ["datamode", "dm"],
                 "constructor": self._colormap_datamode,
                 "ticks": ["R", "A", "D"],
                 "ticklabels": ["Real-time", "Adjusted", "Delayed"],
             },
             "deployment_status": {
+                "name": "Deployment status",
                 "aka": ["deployment_code", "deployment_id", "ptfstatus.id", "ptfstatus"],
                 "constructor": self._colormap_deployment_status,
                 "ticks": [0, 1, 2, 6, 4, 5],
                 "ticklabels": ['PROBABLE', 'CONFIRMED', 'REGISTERED', 'OPERATIONAL', 'INACTIVE', 'CLOSED'],
             },
-            "month": {
-                "aka": None,
-                "constructor": self._colormap_month,
-                "ticks": np.arange(0, 12) + 1,
-                "ticklabels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            },
             "qc": {
-                "aka": ["qc_flag", "quality_control", "quality_control_flag", "Quality control flag scale"],
+                "name": "Quality control flag scale",
+                "aka": ["qc_flag", "quality_control", "quality_control_flag", "quality_control_flag_scale"],
                 "constructor": self._colormap_quality_control_flag,
                 "ticks": np.arange(0, 9 + 1),
                 "ticklabels": ["No QC performed",
@@ -80,17 +85,26 @@ class ArgoColors:
                                "Estimated value",
                                "Missing value"]
             },
+            "month": {
+                "name": "Months",
+                "aka": None,
+                "constructor": self._colormap_month,
+                "ticks": np.arange(0, 12) + 1,
+                "ticklabels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            },
         }
-        self.registered = self.name in self._list_valid_known_colormaps
+        self.registered = self.name in self.list_valid_known_colormaps
+        self._colormap = self.cmap
 
     @property
-    def _list_valid_known_colormaps(self):
+    def list_valid_known_colormaps(self):
         """Return the list of all known colormaps, including a.k.a. names"""
         defs = self.known_colormaps
         l = []
-        for cmap in defs.keys():
-            l.append(cmap)
-            cmap_others = defs[cmap]["aka"]
+        for cname in defs.keys():
+            l.append(cname)
+            cmap_others = defs[cname]["aka"]
             if cmap_others is not None:
                 [l.append(s) for s in cmap_others]
         return l
@@ -136,8 +150,8 @@ class ArgoColors:
                 (indices[i], colors_rgba[i - 1, ki], colors_rgba[i, ki])
                 for i in np.arange(N + 1)
             ]
-        new_cmap = mcolors.LinearSegmentedColormap("month_%d" % N, cdict, N)
-        new_cmap.name = self.name
+        new_cmap = mcolors.LinearSegmentedColormap("?", cdict, N)
+        new_cmap.name = "Monochrome_%s" % self.name
         return new_cmap
 
     def _colormap_segmented(self):
@@ -204,7 +218,8 @@ class ArgoColors:
                 (indices[i], colors_rgba[i - 1, ki], colors_rgba[i, ki])
                 for i in np.arange(N + 1)
             ]
-        new_cmap = mcolors.LinearSegmentedColormap("month_%d" % N, cdict, N)
+        new_cmap = mcolors.LinearSegmentedColormap("?", cdict, N)
+        new_cmap.name = self.definition['name']
         return new_cmap
 
     def _colormap_deployment_status(self):
@@ -215,7 +230,7 @@ class ArgoColors:
         # ['PROBABLE', 'CONFIRMED', 'REGISTERED', 'OPERATIONAL', 'INACTIVE', 'CLOSED']
         clist = ["white", "yellow", "orange", "limegreen", "red", "black"]
         cmap = mcolors.LinearSegmentedColormap.from_list("?", clist, 6)
-        cmap.name = "Deployment status"
+        cmap.name = self.definition['name']
         return cmap
 
     def _colormap_datamode(self):
@@ -225,7 +240,7 @@ class ArgoColors:
             "orange",
             "limegreen",
         ]
-        return mcolors.LinearSegmentedColormap.from_list("Argo Data-Mode", clist, 3)
+        return mcolors.LinearSegmentedColormap.from_list(self.definition['name'], clist, 3)
 
     def _colormap_quality_control_flag(self):
         """Return a colormap for QC flag"""
@@ -240,7 +255,7 @@ class ArgoColors:
                  '#B22CC9',
                  '#000000'
                  ]
-        return mcolors.LinearSegmentedColormap.from_list("Quality control flag", clist, 10)
+        return mcolors.LinearSegmentedColormap.from_list(self.definition['name'], clist, 10)
 
     @property
     def cmap(self):
@@ -250,14 +265,14 @@ class ArgoColors:
         -------
         :class:`matplotlib.colors.LinearSegmentedColormap`
         """
-        if self.name in self._list_valid_known_colormaps:
+        if self.name in self.list_valid_known_colormaps:
             cmap = self._get_known_colormap_constructor()
         elif self.Ncolors == 1:
             cmap = self._colormap_constant()
+        elif self.name in self.quantitative:
+            cmap = self._colormap_segmented()
         else:
             cmap = self._colormap_continuous()
-
-        self._colormap = cmap
         return cmap
 
     def cbar(self, ticklabels=None, **kwargs):
@@ -319,3 +334,45 @@ class ArgoColors:
                 return sns.color_palette(self.name, self.Ncolors)
         except ValueError:
             return self.cmap
+
+    def _repr_html_(self):
+        """Generate an HTML representation of the Colormap."""
+
+        if self.registered:
+            names = [self.name]
+            if self.definition['aka'] is not None:
+                [names.append(aka) for aka in self.definition['aka']]
+
+            html = []
+
+            td_title = lambda \
+                title: '<td colspan="3"><div style="vertical-align: middle;text-align:center"><strong>%s</strong></div></td>' % title
+            tr_title = lambda title: "<thead><tr>%s</tr></thead>" % td_title(title)
+
+            tr_aka = lambda \
+                names: "<tr><td colspan='3' style='text-align:left'><strong>Names: </strong>%s</td></tr>" % ", ".join(
+                names)
+
+            td_color = lambda color: "<td style='background-color:%s;border-width:0px;width:12px'></td>" % \
+                                     to_hex(color, keep_alpha=True)
+            td_tick = lambda tick: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % str(tick)
+            td_ticklabel = lambda label: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % label
+            tr_tick = lambda color, tick, label: '<tr>%s%s%s</tr>' % (td_color(color), td_tick(tick), td_ticklabel(label))
+
+            html.append("<table style='border-collapse:collapse;border-spacing:0'>")
+            html.append("<thead>")
+            html.append(tr_title(self.definition['name']))
+            html.append("</thead>")
+            html.append("<tbody>")
+            html.append(tr_aka(names))
+            for ii, tick in enumerate(self.definition['ticks']):
+                html.append(tr_tick(self.lookup[tick], tick, self.definition['ticklabels'][ii]))
+            html.append("</tbody>")
+            html.append("</table>")
+
+            html = "\n".join(html)
+
+        else:
+            html = self.cmap._repr_html_()
+
+        return html
