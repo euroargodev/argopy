@@ -7,6 +7,7 @@
 # Decorator warnUnless is mandatory
 #
 import numpy as np
+import xarray as xr
 import pandas as pd
 from typing import Union
 
@@ -237,7 +238,7 @@ def bar_plot(
 @warnUnless(has_mpl, "requires matplotlib installed")
 @warnUnless(has_cartopy, "requires cartopy installed")
 def scatter_map(
-        df: pd.core.frame.DataFrame,
+        data: Union[xr.Dataset, pd.core.frame.DataFrame],
         axis: list = ['longitude', 'latitude', 'wmo'],
 
         markersize: int = 36,
@@ -272,10 +273,10 @@ def scatter_map(
 
     Parameters
     ----------
-    df: :class:`pd.DataFrame`
-        Input data
+    data: :class:`xr.Dataset` or :class:`pd.DataFrame`
+        Input data structure
     axis: list, default=['longitude', 'latitude', 'wmo']
-        Name of :class:`pd.DataFrame` columns to take the scatter longitude, latitude and hue values.
+        Name of data columns to take the scatter longitude, latitude and hue values.
 
     Returns
     -------
@@ -287,7 +288,7 @@ def scatter_map(
         legend_title = str(hue)
 
     # Load Argo colors:
-    nHue = len(df.groupby(hue).first())
+    nHue = len(data.groupby(hue).first()) if isinstance(data, pd.DataFrame) else len(data.groupby(hue))
     mycolors = ArgoColors(cmap, nHue)
 
     COLORS = mycolors.COLORS
@@ -304,11 +305,11 @@ def scatter_map(
     fig, ax = plt.subplots(**{**defaults, **kwargs}, subplot_kw=subplot_kw)
     ax.add_feature(land_feature, color=COLORS['BLUE'], edgecolor=COLORS['CYAN'], linewidth=.1, alpha=0.3)
 
-    vmin = df[hue].min() if vmin == 'auto' else vmin
-    vmax = df[hue].max() if vmax == 'auto' else vmax
+    vmin = data[hue].min() if vmin == 'auto' else vmin
+    vmax = data[hue].max() if vmax == 'auto' else vmax
 
     patches = []
-    for k, [name, group] in enumerate(df.groupby(hue)):
+    for k, [name, group] in enumerate(data.groupby(hue)):
         # hue_value = np.unique(group[hue].values)[0]
         color = mycolors.lookup[name] if mycolors.registered else mycolors.cmap(k)
         label = "%s: %s" % (name, mycolors.ticklabels[name]) if mycolors.registered else name
@@ -334,18 +335,26 @@ def scatter_map(
                       fraction=0.03, label=legend_title)
 
     if traj:
-        # nTraj = len(df.groupby(traj_axis).first())
-        for k, [name, group] in enumerate(df.groupby(traj_axis)):
-            group.plot.line(
-                x=lon,
-                y=lat,
-                ax=ax,
-                color=traj_color,
-                legend=False,
-                linewidth=0.5,
-                label="_nolegend_",
-                zorder=2,
-            )
+        if isinstance(data, pd.DataFrame):
+            for k, [name, group] in enumerate(data.groupby(traj_axis)):
+                group.plot.line(
+                    x=lon,
+                    y=lat,
+                    ax=ax,
+                    color=traj_color,
+                    legend=False,
+                    linewidth=0.5,
+                    label="_nolegend_",
+                    zorder=2,
+                )
+        else:
+            for k, [name, group] in enumerate(data.groupby(traj_axis)):
+                ax.plot(group[lon], group[lat],
+                         color=traj_color,
+                         linewidth=0.5,
+                         label="_nolegend_",
+                         zorder=2,
+                         )
 
     if set_global:
         ax.set_global()
@@ -365,10 +374,12 @@ def scatter_map(
             bbox_to_anchor=(1.26, 1),
             title=legend_title,
         )
-    else:
+    elif ax.get_legend():
         ax.get_legend().remove()
 
     for spine in ax.spines.values():
         spine.set_edgecolor(COLORS['DARKBLUE'])
+
+    ax.set_title('')
 
     return fig, ax
