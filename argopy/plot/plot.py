@@ -128,7 +128,12 @@ def plot_trajectory(
         # Set up the figure and axis:
         defaults = {"figsize": (10, 6), "dpi": 90}
         if with_cartopy:
-            return scatter_map(df, x='longitude', y='latitude', hue='wmo', traj=True, cmap=STYLE['palette'], **kwargs)
+            return scatter_map(df, x='longitude', y='latitude', hue='wmo',
+                               traj=True,
+                               legend=add_legend,
+                               set_global=set_global,
+                               cmap=palette,
+                               **kwargs)
         else:
             fig, ax = plt.subplots(**{**defaults, **kwargs})
 
