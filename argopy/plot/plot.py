@@ -283,7 +283,7 @@ def scatter_map(
     ax: :class:`matplotlib.axes.Axes`
     """
     if isinstance(data, xr.Dataset) and data.argo._type == "points":
-        data = data.argo.map_profiles()
+        data = data.argo.point2profile(drop=True)
 
     if legend_title == 'default':
         legend_title = str(hue)
