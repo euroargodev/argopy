@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import logging
+from typing import Union
 
 try:
     import gsw
@@ -18,7 +19,8 @@ from argopy.utilities import (
     linear_interpolation_remap,
     is_list_of_strings,
     toYearFraction,
-    groupby_remap
+    groupby_remap,
+    cast_types,
 )
 from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
@@ -207,179 +209,25 @@ class ArgoAccessor:
             #todo: This is hard coded, but should be retrieved from an API somewhere.
             Should be able to handle all possible variables encountered in the Argo dataset.
         """
-        ds = self._obj
+        return cast_types(self._obj)
 
-        list_str = [
-            "PLATFORM_NUMBER",
-            "DATA_MODE",
-            "DIRECTION",
-            "DATA_CENTRE",
-            "DATA_TYPE",
-            "FORMAT_VERSION",
-            "HANDBOOK_VERSION",
-            "PROJECT_NAME",
-            "PI_NAME",
-            "STATION_PARAMETERS",
-            "DATA_CENTER",
-            "DC_REFERENCE",
-            "DATA_STATE_INDICATOR",
-            "PLATFORM_TYPE",
-            "FIRMWARE_VERSION",
-            "POSITIONING_SYSTEM",
-            "PROFILE_PRES_QC",
-            "PROFILE_PSAL_QC",
-            "PROFILE_TEMP_QC",
-            "PARAMETER",
-            "SCIENTIFIC_CALIB_EQUATION",
-            "SCIENTIFIC_CALIB_COEFFICIENT",
-            "SCIENTIFIC_CALIB_COMMENT",
-            "HISTORY_INSTITUTION",
-            "HISTORY_STEP",
-            "HISTORY_SOFTWARE",
-            "HISTORY_SOFTWARE_RELEASE",
-            "HISTORY_REFERENCE",
-            "HISTORY_QCTEST",
-            "HISTORY_ACTION",
-            "HISTORY_PARAMETER",
-            "VERTICAL_SAMPLING_SCHEME",
-            "FLOAT_SERIAL_NO",
-        ]
-        list_int = [
-            "PLATFORM_NUMBER",
-            "WMO_INST_TYPE",
-            "WMO_INST_TYPE",
-            "CYCLE_NUMBER",
-            "CONFIG_MISSION_NUMBER",
-        ]
-        list_datetime = [
-            "REFERENCE_DATE_TIME",
-            "DATE_CREATION",
-            "DATE_UPDATE",
-            "JULD",
-            "JULD_LOCATION",
-            "SCIENTIFIC_CALIB_DATE",
-            "HISTORY_DATE",
-            "TIME"
-        ]
-
-        def fix_weird_bytes(x):
-            x = x.replace(b"\xb1", b"+/-")
-            return x
-        fix_weird_bytes = np.vectorize(fix_weird_bytes)
-
-        def cast_this(da, type):
-            """ Low-level casting of DataArray values """
-            try:
-                da.values = da.values.astype(type)
-                da.attrs["casted"] = 1
-            except Exception:
-                print("Oops!", sys.exc_info()[0], "occurred.")
-                print("Fail to cast: ", da.dtype, "into:", type, "for: ", da.name)
-                print("Encountered unique values:", np.unique(da))
-            return da
-
-        def cast_this_da(da):
-            """ Cast any DataArray """
-            v = da.name
-            da.attrs["casted"] = 0
-            if v in list_str and da.dtype == "O":  # Object
-                if v in ["SCIENTIFIC_CALIB_COEFFICIENT"]:
-                    da.values = fix_weird_bytes(da.values)
-                da = cast_this(da, str)
-
-            if v in list_int:  # and da.dtype == 'O':  # Object
-                da = cast_this(da, np.int32)
-
-            if v in list_datetime and da.dtype == "O":  # Object
-                if (
-                    "conventions" in da.attrs
-                    and da.attrs["conventions"] == "YYYYMMDDHHMISS"
-                ):
-                    if da.size != 0:
-                        if len(da.dims) <= 1:
-                            val = da.astype(str).values.astype("U14")
-                            # This should not happen, but still ! That's real world data
-                            val[val == "              "] = "nan"
-                            da.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
-                        else:
-                            s = da.stack(dummy_index=da.dims)
-                            val = s.astype(str).values.astype("U14")
-                            # This should not happen, but still ! That's real world data
-                            val[val == ""] = "nan"
-                            val[val == "              "] = "nan"
-                            #
-                            s.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
-                            da.values = s.unstack("dummy_index")
-                        da = cast_this(da, np.datetime64)
-                    else:
-                        da = cast_this(da, np.datetime64)
-
-                elif v == "SCIENTIFIC_CALIB_DATE":
-                    da = cast_this(da, str)
-                    s = da.stack(dummy_index=da.dims)
-                    s.values = pd.to_datetime(s.values, format="%Y%m%d%H%M%S")
-                    da.values = (s.unstack("dummy_index")).values
-                    da = cast_this(da, np.datetime64)
-
-            if "QC" in v and "PROFILE" not in v and "QCTEST" not in v:
-                if da.dtype == "O":  # convert object to string
-                    da = cast_this(da, str)
-
-                # Address weird string values:
-                # (replace missing or nan values by a '0' that will be cast as an integer later
-
-                if da.dtype == "<U3":  # string, len 3 because of a 'nan' somewhere
-                    ii = (
-                        da == "   "
-                    )  # This should not happen, but still ! That's real world data
-                    da = xr.where(ii, "0", da)
-
-                    ii = (
-                        da == "nan"
-                    )  # This should not happen, but still ! That's real world data
-                    da = xr.where(ii, "0", da)
-
-                    # Get back to regular U1 string
-                    da = cast_this(da, np.dtype("U1"))
-
-                if da.dtype == "<U1":  # string
-                    ii = (
-                        da == ""
-                    )  # This should not happen, but still ! That's real world data
-                    da = xr.where(ii, "0", da)
-
-                    ii = (
-                        da == " "
-                    )  # This should not happen, but still ! That's real world data
-                    da = xr.where(ii, "0", da)
-
-                    ii = (
-                        da == "n"
-                    )  # This should not happen, but still ! That's real world data
-                    da = xr.where(ii, "0", da)
-
-                # finally convert QC strings to integers:
-                da = cast_this(da, np.int32)
-
-            if da.dtype == 'O':
-                # By default, try to cast as float:
-                da = cast_this(da, np.float32)
-
-            if da.dtype != "O":
-                da.attrs["casted"] = 1
-
-            return da
-
-        for v in ds.variables:
-            try:
-                ds[v] = cast_this_da(ds[v])
-            except Exception:
-                print("Oops!", sys.exc_info()[0], "occurred.")
-                print("Fail to cast: %s " % v)
-                print("Encountered unique values:", np.unique(ds[v]))
-                raise
-
-        return ds
+    @property
+    def _dummy_argo_uid(self):
+        if self._type == "point":
+            return xr.DataArray(
+                        self.uid(
+                            self._obj["PLATFORM_NUMBER"].values,
+                            self._obj["CYCLE_NUMBER"].values,
+                            self._obj["DIRECTION"].values,
+                        ),
+                        dims="N_POINTS",
+                        coords={"N_POINTS": self._obj["N_POINTS"]},
+                        name="dummy_argo_uid",
+                    )
+        else:
+            raise InvalidDatasetStructure(
+                "Property only available for a collection of points"
+            )
 
     def uid(self, wmo_or_uid, cyc=None, direction=None):
         """ UID encoder/decoder
@@ -437,11 +285,18 @@ class ArgoAccessor:
             cyc = -np.vectorize(int)(offset * wmo - np.abs(wmo_or_uid))
             return wmo, cyc, drc
 
-    def point2profile(self):  # noqa: C901
+    def point2profile(self, drop: bool = False):  # noqa: C901
         """ Transform a collection of points into a collection of profiles
 
         A "point" is a single location for measurements in space and time
         A "point" is localised as unique UID based on WMO, CYCLE_NUMBER and DIRECTION variable values.
+
+        Parameter
+        ---------
+        drop: bool, default=False
+            By default will return all variables. But if set to True, then all [N_PROF, N_LEVELS] 2d variables will be
+            dropped, and only 1d variables of dimension [N_PROF] will be returned.
+
         """
         if self._type != "point":
             raise InvalidDatasetStructure(
@@ -466,16 +321,7 @@ class ArgoAccessor:
             return fillvalue
 
         # Find the number of profiles (N_PROF) and vertical levels (N_LEVELS):
-        dummy_argo_uid = xr.DataArray(
-            self.uid(
-                this["PLATFORM_NUMBER"].values,
-                this["CYCLE_NUMBER"].values,
-                this["DIRECTION"].values,
-            ),
-            dims="N_POINTS",
-            coords={"N_POINTS": this["N_POINTS"]},
-            name="dummy_argo_uid",
-        )
+        dummy_argo_uid = self._dummy_argo_uid
         N_PROF = len(np.unique(dummy_argo_uid))
 
         N_LEVELS = int(
@@ -499,9 +345,10 @@ class ArgoAccessor:
         coords_list = list(this.coords)
         this = this.reset_coords()
 
-        # For each variables, determine if it has unique value by profile,
+        # For each variable, determine if it has a single unique value by profile,
         # if yes: the transformed variable should be [N_PROF]
         # if no: the transformed variable should be [N_PROF, N_LEVELS]
+        # Note: this may lead to differences with the Argo User Manual convention for some variables
         count = np.zeros((N_PROF, len(this.data_vars)), "int")
         for i_prof, grp in enumerate(this.groupby(dummy_argo_uid)):
             i_uid, prof = grp
@@ -519,23 +366,24 @@ class ArgoAccessor:
 
         # Create new empty dataset:
         new_ds = []
-        for vname in list_2d:
-            new_ds.append(
-                xr.DataArray(
-                    np.full(
-                        (N_PROF, N_LEVELS),
-                        fillvalue(this[vname]),
-                        dtype=this[vname].dtype,
-                    ),
-                    dims=["N_PROF", "N_LEVELS"],
-                    coords={
-                        "N_PROF": np.arange(N_PROF),
-                        "N_LEVELS": np.arange(N_LEVELS),
-                    },
-                    attrs=this[vname].attrs,
-                    name=vname,
+        if not drop:
+            for vname in list_2d:
+                new_ds.append(
+                    xr.DataArray(
+                        np.full(
+                            (N_PROF, N_LEVELS),
+                            fillvalue(this[vname]),
+                            dtype=this[vname].dtype,
+                        ),
+                        dims=["N_PROF", "N_LEVELS"],
+                        coords={
+                            "N_PROF": np.arange(N_PROF),
+                            "N_LEVELS": np.arange(N_LEVELS),
+                        },
+                        attrs=this[vname].attrs,
+                        name=vname,
+                    )
                 )
-            )
         for vname in list_1d:
             new_ds.append(
                 xr.DataArray(
@@ -553,7 +401,7 @@ class ArgoAccessor:
             i_uid, prof = grp
             for iv, vname in enumerate(this.data_vars):
                 # ['N_PROF', 'N_LEVELS'] array:
-                if len(new_ds[vname].dims) == 2:
+                if vname in new_ds and not drop and len(new_ds[vname].dims) == 2:
                     y = new_ds[vname].values
                     x = prof[vname].values
                     try:
@@ -562,7 +410,8 @@ class ArgoAccessor:
                         print(vname, "input", x.shape, "output", y[i_prof, :].shape)
                         raise
                     new_ds[vname].values = y
-                else:  # ['N_PROF', ] array:
+                # ['N_PROF', ] array:
+                elif vname in new_ds:
                     y = new_ds[vname].values
                     x = prof[vname].values
                     y[i_prof] = np.unique(x)[0]
@@ -576,12 +425,13 @@ class ArgoAccessor:
 
         # Misc formatting
         new_ds = new_ds.sortby("TIME")
-        new_ds = new_ds.argo.cast_types()
+        new_ds = new_ds.argo.cast_types() if not drop else cast_types(new_ds)
         new_ds = new_ds[np.sort(new_ds.data_vars)]
         new_ds.encoding = self.encoding  # Preserve low-level encoding information
         new_ds.attrs = self.attrs  # Preserve original attributes
-        new_ds.argo._add_history("Transformed with point2profile")
-        new_ds.argo._type = "profile"
+        if not drop:
+            new_ds.argo._add_history("Transformed with point2profile")
+            new_ds.argo._type = "profile"
         return new_ds
 
     def profile2point(self):
@@ -1961,3 +1811,32 @@ class ArgoAccessor:
         if path is None:
             log.debug("===================== END create_float_source")
             return output
+
+    def list_N_PROF_variables(self, uid=False):
+        """Return the list of variables with unique values along the N_PROF dimension"""
+        this = self._obj  # Should not be modified
+
+        # Find the number of profiles (N_PROF):
+        dummy_argo_uid = self._dummy_argo_uid
+        N_PROF = len(np.unique(dummy_argo_uid))
+
+        # For each variable, determine if it has unique value by profile,
+        # if yes: the transformed variable should be [N_PROF]
+        # if no: the transformed variable should be [N_PROF, N_LEVELS]
+        count = np.zeros((N_PROF, len(this.variables)), "int")
+        for i_prof, grp in enumerate(this.groupby(dummy_argo_uid)):
+            i_uid, prof = grp
+            for iv, vname in enumerate(this.variables):
+                try:
+                    count[i_prof, iv] = len(np.unique(prof[vname]))
+                except Exception as e:
+                    print("An error happened when dealing with the '%s' data variable" % vname)
+                    raise (e)
+
+        # Variables with a single unique value for each profile:
+        list_1d = list(np.array(this.variables)[count.sum(axis=0) == count.shape[0]])
+
+        if not uid:
+            return list_1d
+        else:
+            return list_1d, dummy_argo_uid
