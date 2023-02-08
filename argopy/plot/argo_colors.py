@@ -267,10 +267,10 @@ class ArgoColors:
         """
         if self.name in self.list_valid_known_colormaps:
             cmap = self._get_known_colormap_constructor()
-        elif self.Ncolors == 1:
-            cmap = self._colormap_constant()
         elif self.name in self.quantitative:
             cmap = self._colormap_segmented()
+        elif self.Ncolors == 1:
+            cmap = self._colormap_constant()
         else:
             cmap = self._colormap_continuous()
         return cmap
