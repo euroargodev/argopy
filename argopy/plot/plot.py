@@ -16,7 +16,7 @@ from .utils import axes_style, discrete_coloring, latlongrid, land_feature
 from .argo_colors import ArgoColors
 
 from ..utilities import warnUnless, check_wmo
-
+from ..errors import InvalidDatasetStructure
 
 if has_mpl:
     import matplotlib.pyplot as plt
@@ -239,7 +239,9 @@ def bar_plot(
 @warnUnless(has_cartopy, "requires cartopy installed")
 def scatter_map(
         data: Union[xr.Dataset, pd.core.frame.DataFrame],
-        axis: list = ['longitude', 'latitude', 'wmo'],
+        x: str = 'longitude',
+        y: str = 'latitude',
+        hue: str = 'wmo',
 
         markersize: int = 36,
         markeredgesize: float = 0.5,
@@ -260,12 +262,11 @@ def scatter_map(
         cbar: bool = False,
         cbarlabels: Union[str, list] = 'auto',
 
-        style: str = STYLE["axes"],
         set_global: bool = False,
 
         **kwargs
 ):
-    """ Generic function to create a scatter plot on a map
+    """Generic function to create a scatter plot on a map
 
     Each point is an Argo profile location, colored with a user defined variable and colormap.
 
@@ -275,15 +276,15 @@ def scatter_map(
     ----------
     data: :class:`xr.Dataset` or :class:`pd.DataFrame`
         Input data structure
-    axis: list, default=['longitude', 'latitude', 'wmo']
-        Name of data columns to take the scatter longitude, latitude and hue values.
 
     Returns
     -------
     fig: :class:`matplotlib.figure.Figure`
     ax: :class:`matplotlib.axes.Axes`
     """
-    lon, lat, hue = axis
+    if isinstance(data, xr.Dataset) and data.argo._type == "points":
+        data = data.argo.map_profiles()
+
     if legend_title == 'default':
         legend_title = str(hue)
 
@@ -314,7 +315,7 @@ def scatter_map(
         color = mycolors.lookup[name] if mycolors.registered else mycolors.cmap(k)
         label = "%s: %s" % (name, mycolors.ticklabels[name]) if mycolors.registered else name
         sc = group.plot.scatter(
-            x=lon, y=lat,
+            x=x, y=y,
             ax=ax,
             color=color,
             label=label,
@@ -335,26 +336,13 @@ def scatter_map(
                       fraction=0.03, label=legend_title)
 
     if traj:
-        if isinstance(data, pd.DataFrame):
-            for k, [name, group] in enumerate(data.groupby(traj_axis)):
-                group.plot.line(
-                    x=lon,
-                    y=lat,
-                    ax=ax,
-                    color=traj_color,
-                    legend=False,
-                    linewidth=0.5,
-                    label="_nolegend_",
-                    zorder=2,
-                )
-        else:
-            for k, [name, group] in enumerate(data.groupby(traj_axis)):
-                ax.plot(group[lon], group[lat],
-                         color=traj_color,
-                         linewidth=0.5,
-                         label="_nolegend_",
-                         zorder=2,
-                         )
+        for k, [name, group] in enumerate(data.groupby(traj_axis)):
+            ax.plot(group[x], group[y],
+                     color=traj_color,
+                     linewidth=0.5,
+                     label="_nolegend_",
+                     zorder=2,
+                    )
 
     if set_global:
         ax.set_global()
