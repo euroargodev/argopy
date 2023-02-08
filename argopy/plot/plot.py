@@ -128,9 +128,7 @@ def plot_trajectory(
         # Set up the figure and axis:
         defaults = {"figsize": (10, 6), "dpi": 90}
         if with_cartopy:
-            subplot_kw = {"projection": ccrs.PlateCarree()}
-            fig, ax = plt.subplots(**{**defaults, **kwargs}, subplot_kw=subplot_kw)
-            ax.add_feature(land_feature, edgecolor="black")
+            return scatter_map(df, x='longitude', y='latitude', hue='wmo', traj=True, cmap=STYLE['palette'], **kwargs)
         else:
             fig, ax = plt.subplots(**{**defaults, **kwargs})
 

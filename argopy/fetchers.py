@@ -588,7 +588,8 @@ class ArgoDataFetcher:
                 self.to_index(full=True)
             return bar_plot(self.index, by="profiler", **kwargs)
         elif ptype == "trajectory":
-            return plot_trajectory(self.index, **kwargs)
+            defaults = {"style": 'white'}
+            return plot_trajectory(self.index, **{**defaults, **kwargs})
         elif ptype == "qc_altimetry":
             WMOs = np.unique(self.data['PLATFORM_NUMBER'])
             return open_sat_altim_report(WMOs, **kwargs)
@@ -895,7 +896,8 @@ class ArgoIndexFetcher:
         elif ptype == "profiler":
             return bar_plot(self.index, by="profiler", **kwargs)
         elif ptype == "trajectory":
-            return plot_trajectory(self.index.sort_values(["file"]), **kwargs)
+            defaults = {"style": 'white'}
+            return plot_trajectory(self.index.sort_values(["file"]), **{**defaults, **kwargs})
         elif ptype == "qc_altimetry":
             WMOs = np.unique(self.index['wmo'])
             return open_sat_altim_report(WMOs, **kwargs)
