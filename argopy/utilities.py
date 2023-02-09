@@ -1409,11 +1409,11 @@ def is_box(box: list, errors="raise"):
     )
     if len(box) == 8:
         tests[
-            "datetim_min must be a string convertible to a Pandas datetime"
-        ] = lambda b: isinstance(b[-2], str) and is_dateconvertible(b[-2])
+            "datetim_min must be an object convertible to a Pandas datetime"
+        ] = lambda b: is_dateconvertible(b[-2])
         tests[
-            "datetim_max must be a string convertible to a Pandas datetime"
-        ] = lambda b: isinstance(b[-1], str) and is_dateconvertible(b[-1])
+            "datetim_max must be an object convertible to a Pandas datetime"
+        ] = lambda b: is_dateconvertible(b[-1])
 
     # Ranges:
     tests["lon_min must be in [-180;180] or [0;360]"] = (
