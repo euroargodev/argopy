@@ -252,8 +252,8 @@ def bar_plot(
 @warnUnless(has_cartopy, "requires cartopy installed")
 def scatter_map(
         data: Union[xr.Dataset, pd.core.frame.DataFrame],
-        x: str = 'longitude',
-        y: str = 'latitude',
+        x: Union[str] = None,
+        y: Union[str] = None,
         hue: str = 'wmo',
 
         markersize: int = 36,
@@ -310,6 +310,42 @@ def scatter_map(
             cmap = 'deployment_status'
         else:
             cmap = STYLE['palette']
+
+    # Try to guess the x and y variables:
+    def get_xvar(data):
+        for v in ['lon', 'long', 'longitude', 'x']:
+            if v.lower() in data:
+                return v.lower()
+            if v.upper() in data:
+                return v.upper()
+
+        if isinstance(data, xr.Dataset):
+            for v in data.coords:
+                if '_CoordinateAxisType' in data[v].attrs and data[v].attrs['_CoordinateAxisType'] == 'Lon':
+                    return v
+                if 'axis' in data[v].attrs and data[v].attrs['axis'] == 'X':
+                    return v
+
+        raise ValueError("Can't guess the variable name for longitudes")
+
+    def get_yvar(data):
+        for v in ['lat', 'lati', 'latitude', 'y']:
+            if v.lower() in data:
+                return v.lower()
+            if v.upper() in data:
+                return v.upper()
+
+        if isinstance(data, xr.Dataset):
+            for v in data.coords:
+                if '_CoordinateAxisType' in data[v].attrs and data[v].attrs['_CoordinateAxisType'] == 'Lat':
+                    return v
+                if 'axis' in data[v].attrs and data[v].attrs['axis'] == 'Y':
+                    return v
+
+        raise ValueError("Can't guess the variable name for latitudes")
+
+    x = get_xvar(data) if x is None else x
+    y = get_yvar(data) if y is None else y
 
     # Adjust legend title:
     if legend_title == 'default':
