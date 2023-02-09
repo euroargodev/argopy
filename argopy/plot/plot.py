@@ -36,7 +36,7 @@ if has_ipywidgets:
 
 
 @warnUnless(has_ipython, "requires IPython to work as expected, only URLs are returned otherwise")
-def open_sat_altim_report(WMO: Union[str, list, None], embed: str="dropdown"):
+def open_sat_altim_report(WMO: Union[str, list]=None, embed: Union[str, None] = "dropdown"):
     """ Insert the CLS Satellite Altimeter Report figure in notebook cell
 
         This is the method called when using the facade fetcher methods ``plot``:
@@ -47,8 +47,9 @@ def open_sat_altim_report(WMO: Union[str, list, None], embed: str="dropdown"):
         ----------
         WMO: int or list
             The float WMO to display. By default, this is set to None and will insert the general dashboard.
-        embed: {'dropdown', 'slide, 'list'}, default: 'dropdown'
+        embed: str, default='dropdown'
             Set the embedding method. If set to None, simply return the list of urls to figures.
+            Possible values are: 'dropdown', 'slide and 'list'.
 
         Returns
         -------
@@ -65,28 +66,28 @@ def open_sat_altim_report(WMO: Union[str, list, None], embed: str="dropdown"):
             "https://data-argo.ifremer.fr/etc/argo-ast9-item13-AltimeterComparison/figures/%i.png"
             % this_wmo
         )
-        if embed == "list":
+        if has_ipython and embed == "list":
             urls.append(Image(url, embed=True))
         else:
             urls.append(url)
             urls_dict[this_wmo] = url
 
     # Prepare rendering:
-    if embed == "list" and has_ipython:
-        return display(*urls)
-
-    elif embed == "slide" and has_ipython and has_ipywidgets:
-        def f(Float):
-            return Image(url=urls[Float])
-        return ipywidgets.interact(
-            f, Float=ipywidgets.IntSlider(min=0, max=len(urls) - 1, step=1)
-        )
-
-    elif embed == "dropdown" and has_ipython and has_ipywidgets:
-        def f(Float):
-            return Image(url=urls_dict[int(Float)])
-        return ipywidgets.interact(f, Float=[str(wmo) for wmo in WMOs])
-
+    if has_ipython and embed is not None:
+        if has_ipywidgets and embed == "dropdown":
+            def f(Float):
+                return Image(url=urls_dict[int(Float)])
+            return ipywidgets.interact(f, Float=[str(wmo) for wmo in WMOs])
+        elif has_ipywidgets and embed == "slide":
+            def f(Float):
+                return Image(url=urls[Float])
+            return ipywidgets.interact(
+                f, Float=ipywidgets.IntSlider(min=0, max=len(urls) - 1, step=1)
+            )
+        elif embed == "list":
+            return display(*urls)
+        else:
+            raise ValueError("Invalid value for 'embed' argument. Must be: 'dropdown', 'slide', 'list' or None")
     else:
         return urls_dict
 
