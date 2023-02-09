@@ -48,17 +48,17 @@ def test_invalid_dashboard_profile(board_type):
     with pytest.raises(InvalidDashboard):
         argopy.dashboard(6902755, 12, type=board_type, url_only=True)
 
-@pytest.mark.parametrize("board_type", ["data", "meta", "ea", "eric", "bgc"], indirect=False)
+@pytest.mark.parametrize("board_type", ["data", "meta", "ea", "bgc"], indirect=False)
 def test_valid_dashboard(board_type):
     # Test types with 'base'
     assert isinstance(argopy.dashboard(type=board_type, url_only=True), str)
 
-@pytest.mark.parametrize("board_type", ["data", "meta", "ea", "eric", "argovis", "op", "ocean-ops", "bgc"], indirect=False)
+@pytest.mark.parametrize("board_type", ["data", "meta", "ea", "argovis", "op", "ocean-ops", "bgc"], indirect=False)
 def test_valid_dashboard_float(board_type):
     # Test types with 'wmo' (should be all)
     assert isinstance(argopy.dashboard(5904797, type=board_type, url_only=True), str)
 
-@pytest.mark.parametrize("board_type", ["data", "meta", "ea", "eric", "argovis", "bgc"], indirect=False)
+@pytest.mark.parametrize("board_type", ["data", "meta", "ea", "argovis", "bgc"], indirect=False)
 def test_valid_dashboard_profile(board_type):
     # Test types with 'cyc'
     assert isinstance(argopy.dashboard(5904797, 12, type=board_type, url_only=True), str)
@@ -156,7 +156,7 @@ class Test_plot_trajectory:
     def test_with_a_region(self, opts):
         with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["region"]:
-                loader = ArgoDataFetcher().region(arg).load()
+                loader = ArgoDataFetcher(cache=True).region(arg).load()
                 self.__test_traj_plot(loader.index, opts)
 
 
@@ -227,19 +227,19 @@ class Test_scatter_map:
     def test_with_a_dataset_of_points(self, opts):
         with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["region"]:
-                loader = ArgoDataFetcher().region(arg).load()
-                self.__test(loader.data, ('LONGITUDE', 'LATITUDE', 'PLATFORM_NUMBER'), opts)
+                loader = ArgoDataFetcher(cache=True).region(arg).load()
+                self.__test(loader.data, (None, None, 'PLATFORM_NUMBER'), opts)
 
     @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
     def test_with_a_dataset_of_profiles(self, opts):
         with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["region"]:
-                loader = ArgoDataFetcher().region(arg).load()
-                self.__test(loader.data.argo.point2profile(), ('LONGITUDE', 'LATITUDE', 'PLATFORM_NUMBER'), opts)
+                loader = ArgoDataFetcher(cache=True).region(arg).load()
+                self.__test(loader.data.argo.point2profile(), (None, None, 'PLATFORM_NUMBER'), opts)
 
     @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
     def test_with_a_dataframe_of_index(self, opts):
         with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["region"]:
-                loader = ArgoDataFetcher().region(arg).load()
-                self.__test(loader.index, ('longitude', 'latitude', 'wmo'), opts)
+                loader = ArgoDataFetcher(cache=True).region(arg).load()
+                self.__test(loader.index, (None, None, 'wmo'), opts)
