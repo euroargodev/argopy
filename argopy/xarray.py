@@ -442,7 +442,7 @@ class ArgoAccessor:
         """
         if self._type != "profile":
             raise InvalidDatasetStructure(
-                "Method only available for a collection of profiles (N_PROF dimemsion)"
+                "Method only available for a collection of profiles (N_PROF dimension)"
             )
         ds = self._obj
 
