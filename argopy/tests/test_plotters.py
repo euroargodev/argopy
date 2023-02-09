@@ -79,26 +79,42 @@ def test_valid_dashboard_ipython_output():
 
 
 @requires_connection
-@pytest.mark.parametrize("WMOs", [2901623, [2901623, 6901929]],
-                         ids=['For unique WMO', 'For a list of WMOs'],
-                         indirect=False)
-@pytest.mark.parametrize("embed", ['dropdown', 'slide', 'list'],
-                         indirect=False)
-def test_open_sat_altim_report(WMOs, embed):
-    dsh = open_sat_altim_report(WMO=WMOs, embed=embed)
+class Test_open_sat_altim_report:
+    WMOs = [2901623, [2901623, 6901929]]
 
-    if not has_ipython:
-        assert isinstance(dsh, dict)
+    @pytest.mark.parametrize("WMOs", WMOs,
+                             ids=['For unique WMO', 'For a list of WMOs'],
+                             indirect=False)
+    @pytest.mark.parametrize("embed", ['dropdown', 'slide', 'list', None],
+                             indirect=False)
+    def test_open_sat_altim_report(self, WMOs, embed):
+        if has_ipython:
+            import IPython
 
-    elif embed == 'dropdown' and has_ipywidgets:
-        assert isinstance(dsh, Callable)
-        assert isinstance(dsh(2901623), IPython.display.Image)
+        dsh = open_sat_altim_report(WMO=WMOs, embed=embed)
 
-    elif embed == 'slide' and has_ipywidgets:
-        assert isinstance(dsh, Callable)
+        if has_ipython and embed is not None:
 
-    elif embed == 'list':
-        assert dsh is None
+            if has_ipywidgets:
+
+                if embed == "dropdown":
+                    assert isinstance(dsh, Callable)
+                    assert isinstance(dsh(2901623), IPython.display.Image)
+
+                if embed == "slide":
+                    assert isinstance(dsh, Callable)
+
+            else:
+                assert dsh is None
+
+        else:
+            assert isinstance(dsh, dict)
+
+    @requires_ipython
+    def test_invalid_method(self):
+        with pytest.raises(ValueError):
+            open_sat_altim_report(WMO=self.WMOs[0], embed='dummy_method')
+
 
 @requires_gdac
 @requires_matplotlib
