@@ -195,5 +195,6 @@ fabric.properties
 knotebooks/
 argopy/tests/cov.xml
 argopy/tests/dummy_fileA.txt
+argopy/tests/test_local.py
 float_source/
 cli/
