@@ -36,7 +36,7 @@ if has_ipywidgets:
 
 
 @warnUnless(has_ipython, "requires IPython to work as expected, only URLs are returned otherwise")
-def open_sat_altim_report(WMO=None, embed="dropdown"):
+def open_sat_altim_report(WMO: Union[str, list, None], embed: str="dropdown"):
     """ Insert the CLS Satellite Altimeter Report figure in notebook cell
 
         This is the method called when using the facade fetcher methods ``plot``:
@@ -47,9 +47,16 @@ def open_sat_altim_report(WMO=None, embed="dropdown"):
         ----------
         WMO: int or list
             The float WMO to display. By default, this is set to None and will insert the general dashboard.
-        embed: {'list', 'slide', 'dropdown'}, default: 'dropdown'
+        embed: {'dropdown', 'slide, 'list'}, default: 'dropdown'
             Set the embedding method. If set to None, simply return the list of urls to figures.
+
+        Returns
+        -------
+        list of Image for ``list``
+
+        dict with URLs
     """
+    # Create the list of URLs and put them in a dictionary with WMO as keys:
     WMOs = check_wmo(WMO)
     urls = []
     urls_dict = {}
@@ -64,6 +71,7 @@ def open_sat_altim_report(WMO=None, embed="dropdown"):
             urls.append(url)
             urls_dict[this_wmo] = url
 
+    # Prepare rendering:
     if embed == "list" and has_ipython:
         return display(*urls)
 
@@ -78,6 +86,7 @@ def open_sat_altim_report(WMO=None, embed="dropdown"):
         def f(Float):
             return Image(url=urls_dict[int(Float)])
         return ipywidgets.interact(f, Float=[str(wmo) for wmo in WMOs])
+
     else:
         return urls_dict
 

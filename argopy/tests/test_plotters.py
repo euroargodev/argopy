@@ -4,6 +4,7 @@ We test plotting functions from IndexFetcher and DataFetcher
 """
 import pytest
 import logging
+from typing import Callable
 
 import argopy
 from argopy.errors import InvalidDashboard
@@ -18,6 +19,7 @@ from utils import (
     has_seaborn,
     has_cartopy,
     has_ipython,
+    has_ipywidgets,
 )
 from ..plot import bar_plot, plot_trajectory, open_sat_altim_report, scatter_map
 from argopy import DataFetcher as ArgoDataFetcher
@@ -27,6 +29,9 @@ if has_matplotlib:
 
 if has_cartopy:
     import cartopy
+
+if has_ipython:
+    import IPython
 
 log = logging.getLogger("argopy.tests.plot")
 
@@ -62,7 +67,6 @@ def test_valid_dashboard_profile(board_type):
 @requires_ipython
 @requires_connection
 def test_valid_dashboard_ipython_output():
-    import IPython
 
     dsh = argopy.dashboard()
     assert isinstance(dsh, IPython.lib.display.IFrame)
@@ -75,22 +79,26 @@ def test_valid_dashboard_ipython_output():
 
 
 @requires_connection
-def test_open_sat_altim_report():
-    if has_ipython:
-        import IPython
+@pytest.mark.parametrize("WMOs", [2901623, [2901623, 6901929]],
+                         ids=['For unique WMO', 'For a list of WMOs'],
+                         indirect=False)
+@pytest.mark.parametrize("embed", ['dropdown', 'slide', 'list'],
+                         indirect=False)
+def test_open_sat_altim_report(WMOs, embed):
+    dsh = open_sat_altim_report(WMO=WMOs, embed=embed)
 
-    dsh = open_sat_altim_report(WMO=5904797, embed='dropdown')
-    if has_ipython:
-        assert isinstance(dsh(5904797), IPython.display.Image)
-    else:
+    if not has_ipython:
         assert isinstance(dsh, dict)
 
-    # dsh = open_sat_altim_report(WMO=5904797, embed='list')
-    # if has_ipython:
-    #     assert isinstance(dsh(5904797), IPython.display.Image)
-    # else:
-    #     assert isinstance(dsh, dict)
+    elif embed == 'dropdown' and has_ipywidgets:
+        assert isinstance(dsh, Callable)
+        assert isinstance(dsh(2901623), IPython.display.Image)
 
+    elif embed == 'slide' and has_ipywidgets:
+        assert isinstance(dsh, Callable)
+
+    elif embed == 'list':
+        assert dsh is None
 
 @requires_gdac
 @requires_matplotlib

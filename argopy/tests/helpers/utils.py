@@ -172,6 +172,7 @@ has_matplotlib, requires_matplotlib = _importorskip("matplotlib")
 has_seaborn, requires_seaborn = _importorskip("seaborn")
 has_cartopy, requires_cartopy = _importorskip("cartopy")
 has_ipython, requires_ipython = _importorskip("IPython")
+has_ipywidgets, requires_ipywidgets = _importorskip("ipywidgets")
 
 #################
 # Ocean-OPS API #
