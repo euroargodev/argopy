@@ -1428,13 +1428,13 @@ def is_box(box: list, errors="raise"):
     tests["pres_max must be in [0;10000]"] = lambda b: b[5] >= 0 and b[5] <= 10000
 
     # Orders:
-    tests["lon_max must be larger than lon_min"] = lambda b: b[0] < b[1]
-    tests["lat_max must be larger than lat_min"] = lambda b: b[2] < b[3]
-    tests["pres_max must be larger than pres_min"] = lambda b: b[4] < b[5]
+    tests["lon_max must be larger than lon_min"] = lambda b: b[0] <= b[1]
+    tests["lat_max must be larger than lat_min"] = lambda b: b[2] <= b[3]
+    tests["pres_max must be larger than pres_min"] = lambda b: b[4] <= b[5]
     if len(box) == 8:
         tests["datetim_max must come after datetim_min"] = lambda b: pd.to_datetime(
             b[-2]
-        ) < pd.to_datetime(b[-1])
+        ) <= pd.to_datetime(b[-1])
 
     error = None
     for msg, test in tests.items():
