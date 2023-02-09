@@ -166,7 +166,7 @@ def plot_trajectory(
                 x="longitude", y="latitude", hue="wmo", data=df, palette=mypal
             )
         else:
-            mypal = discrete_coloring(palette, N=nfloat).cmap
+            mypal = ArgoColors(palette, N=nfloat).cmap
             for k, [name, group] in enumerate(df.groupby("wmo")):
                 group.plot.line(
                     x="longitude",
@@ -260,7 +260,7 @@ def scatter_map(
         markeredgesize: float = 0.5,
         markeredgecolor: str = 'default',
 
-        cmap: str = STYLE["palette"],
+        cmap: str = 'auto',
         vmin: Union[str, float] = 'auto',
         vmax: Union[str, float] = 'auto',
 
@@ -298,6 +298,20 @@ def scatter_map(
     if isinstance(data, xr.Dataset) and data.argo._type == "points":
         data = data.argo.point2profile(drop=True)
 
+    # Try to guess the colormap to use as a function of the 'hue' variable:
+    if cmap == 'auto':
+        if hue.lower() in ArgoColors().list_valid_known_colormaps:
+            cmap = hue.lower()
+        elif 'qc' in hue.lower():
+            cmap = 'qc'
+        elif 'mode' in hue.lower():
+            cmap = 'data_mode'
+        elif 'status_code' in hue.lower():
+            cmap = 'deployment_status'
+        else:
+            cmap = STYLE['palette']
+
+    # Adjust legend title:
     if legend_title == 'default':
         legend_title = str(hue)
 

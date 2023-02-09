@@ -64,7 +64,7 @@ class ArgoColors:
             },
             "deployment_status": {
                 "name": "Deployment status",
-                "aka": ["deployment_code", "deployment_id", "ptfstatus.id", "ptfstatus"],
+                "aka": ["deployment_code", "deployment_id", "ptfstatus.id", "ptfstatus", "status_code"],
                 "constructor": self._colormap_deployment_status,
                 "ticks": [0, 1, 2, 6, 4, 5],
                 "ticklabels": ['PROBABLE', 'CONFIRMED', 'REGISTERED', 'OPERATIONAL', 'INACTIVE', 'CLOSED'],
@@ -87,7 +87,7 @@ class ArgoColors:
             },
             "month": {
                 "name": "Months",
-                "aka": None,
+                "aka": [],
                 "constructor": self._colormap_month,
                 "ticks": np.arange(0, 12) + 1,
                 "ticklabels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
