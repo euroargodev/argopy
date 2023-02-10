@@ -12,11 +12,10 @@ import pandas as pd
 from typing import Union
 
 from .utils import STYLE, has_seaborn, has_mpl, has_cartopy, has_ipython, has_ipywidgets
-from .utils import axes_style, discrete_coloring, latlongrid, land_feature
+from .utils import axes_style, latlongrid, land_feature
 from .argo_colors import ArgoColors
 
 from ..utilities import warnUnless, check_wmo
-from ..errors import InvalidDatasetStructure
 
 if has_mpl:
     import matplotlib.pyplot as plt

@@ -10,7 +10,7 @@ if has_seaborn:
     from .utils import sns
 
 
-@warnUnless(has_mpl, "requires matplotlib to be installed")
+@warnUnless(has_mpl, "requires matplotlib to be used")
 class ArgoColors:
     """ Handy class to manage discrete coloring for Argo related variables
 

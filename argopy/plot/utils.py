@@ -1,6 +1,7 @@
 import numpy as np
 from contextlib import contextmanager
 import importlib
+from ..utilities import deprecated
 
 def _importorskip(modname):
     try:
@@ -62,6 +63,7 @@ def axes_style(style: str = STYLE["axes"]):
         yield
 
 
+@deprecated("The 'discrete_coloring' plotting utility is deprecated since 0.1.13. It's been replaced by 'ArgoColors'. Calling it will raise an error after argopy 0.1.14")
 class discrete_coloring:
     """ Handy class to manage discrete coloring and the associated colorbar
 
