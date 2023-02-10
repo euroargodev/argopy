@@ -9,6 +9,7 @@ This module contains:
 import importlib
 import pytest
 import fsspec
+import asyncio
 from aiohttp.client_exceptions import ServerDisconnectedError, ClientResponseError, ClientConnectorError
 import ftplib
 from packaging import version
@@ -189,7 +190,8 @@ safe_to_fsspec_version = pytest.mark.skipif(
     version.parse(fsspec.__version__) > version.parse("0.8.3"),
     reason="fsspec version %s > 0.8.3 (https://github.com/euroargodev/argopy/issues/96)" % fsspec.__version__
 )
-skip_this_for_debug = pytest.mark.skipif(True, reason="Skipped temporarily for debug")
+
+TimeoutError = asyncio.exceptions.TimeoutError if version.parse(fsspec.__version__) < version.parse("2021.05.0") else fsspec.exceptions.FSTimeoutError
 
 
 ############
@@ -256,6 +258,11 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
             # ftplib.error_temp: 426 Failure writing network stream.
             msg = "\nCannot connect to the FTP server\n%s" % str(e.args)
             xmsg = "Failing because cannot connect to the FTP server, but should work"
+            pass
+        except TimeoutError as e:
+            # Sometimes, the timeout is not long enough !
+            msg = "\nUnexpected server time out\n%s" % str(e.args)
+            xmsg = "Failing because the server is temporarily too slow to respond, but should work"
             pass
         except Exception as e:
             msg = "\nUnknown server error:\n%s" % str(e.args)
