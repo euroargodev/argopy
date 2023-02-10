@@ -12,6 +12,6 @@ logging.getLogger("fsspec").setLevel(logging.ERROR)
 # log = logging.getLogger("argopy.tests")
 
 # argopy.set_options(api_timeout=4 * 60)  # From Github actions, requests can take a while
-argopy.set_options(api_timeout=10)  # From Github actions, requests can take a while
+argopy.set_options(api_timeout=60)  # From Github actions, requests can take a while
 argopy.show_options()
 argopy.show_versions()
