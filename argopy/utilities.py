@@ -734,26 +734,31 @@ def isAPIconnected(src="erddap", data=True):
 
 
 def erddap_ds_exists(
-    ds: str = "ArgoFloats", erddap: str = "https://www.ifremer.fr/erddap"
+    ds: str = "ArgoFloats", erddap: str = "https://erddap.ifremer.fr/erddap"
 ) -> bool:
     """ Check if a dataset exists on a remote erddap server
     return a bool
 
     Parameter
     ---------
-    ds: str
-        Name of the erddap dataset to check (default: 'ArgoFloats')
-    erddap: str
-        Url of the erddap server (default: 'https://www.ifremer.fr/erddap')
+    ds: str, default='ArgoFloats'
+        Name of the erddap dataset to check
+    erddap: str, default='https://erddap.ifremer.fr/erddap'
+        Url of the erddap server
 
     Return
     ------
     bool
     """
     from .stores import httpstore
-    with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
-        erddap_index = json.load(of)
-    return ds in [row[-1] for row in erddap_index["table"]["rows"]]
+    if isconnected(erddap, maxtry=1):
+        with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
+            erddap_index = json.load(of)
+        return ds in [row[-1] for row in erddap_index["table"]["rows"]]
+    else:
+        log.debug("Cannot reach erddap server: %s" % erddap)
+        warnings.warn("Return False because we cannot reach the erddap server %s" % erddap)
+        return False
 
 
 def badge(label="label", message="message", color="green", insert=False):
