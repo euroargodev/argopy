@@ -68,7 +68,11 @@ has_connection, requires_connection = _connectskip(
 ##########
 # ERDDAP #
 ##########
-if CONNECTED:
+has_erddap, requires_erddap = _connectskip(
+    "erddap" in AVAILABLE_SOURCES, "erddap data fetcher"
+)
+
+if CONNECTED and has_erddap:
     log.debug("Check which Erddap dataset are available (eg: core, bgc, ref, index)")
     DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
     DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-bio")
@@ -79,10 +83,6 @@ else:
     DSEXISTS_bgc = False
     DSEXISTS_ref = False
     DSEXISTS_index = False
-
-has_erddap, requires_erddap = _connectskip(
-    "erddap" in AVAILABLE_SOURCES, "erddap data fetcher"
-)
 
 has_erddap_phy, requires_erddap_phy = _connectskip(
     DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
