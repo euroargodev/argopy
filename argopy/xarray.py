@@ -247,7 +247,7 @@ class ArgoAccessor:
             "VERTICAL_SAMPLING_SCHEME",
             "FLOAT_SERIAL_NO",
         ]
-        print(list_str)
+        #print(list_str)
         list_int = [
             "PLATFORM_NUMBER",
             "WMO_INST_TYPE",
