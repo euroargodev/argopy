@@ -230,6 +230,7 @@ class ArgoAccessor:
             "PROFILE_PRES_QC",
             "PROFILE_PSAL_QC",
             "PROFILE_TEMP_QC",
+            "PROFILE_DOXY_QC",
             "PARAMETER",
             "PARAMETER_DATA_MODE",
             "SCIENTIFIC_CALIB_EQUATION",
@@ -615,16 +616,35 @@ class ArgoAccessor:
             if dims not in ["N_PROF", "N_PROF.N_LEVELS", "N_PROF.N_PARAM"]:
                 ds = ds.drop_vars(v)
 
+        # Stack the dataset except on the dimension (N_PARAM,) if it exists
+        dim_list = list(ds.dims)
+        if "N_PARAM" in dim_list:
+            dim_list.remove("N_PARAM")
+        #
         (ds,) = xr.broadcast(ds)
-        ds = ds.stack({"N_POINTS": list(ds.dims)})
+        ds = ds.stack({"N_POINTS": dim_list})
         ds = ds.reset_index("N_POINTS").drop_vars(["N_PROF", "N_LEVELS"])
-        possible_coords = ["LATITUDE", "LONGITUDE", "TIME", "JULD", "N_POINTS"]
+        possible_coords = ["LATITUDE", "LONGITUDE", "TIME", "JULD", "N_POINTS", "N_PARAM"]
         for c in [c for c in possible_coords if c in ds.data_vars]:
             ds = ds.set_coords(c)
 
+        # Remove N_PARAM dimension where it is useless for variables, dimensions
+        if "PARAMETER_DATA_MODE" in ds:
+            # for variables
+            for v in ds:
+                if v != 'PARAMETER_DATA_MODE' and v != 'STATION_PARAMETERS':
+                    ds[v] = ds[v].sel(N_PARAM=0)
+            # for dimensions
+            for c in ds.coords:
+                if len(ds[c].shape) != 1:
+                    ds[c] = ds[c].sel(N_PARAM=0)
+
         # Remove index without data (useless points)
         ds = ds.where(~np.isnan(ds["PRES"]), drop=1)
-        ds = ds.sortby("TIME")
+        if "TIME" in ds:
+            ds = ds.sortby("TIME")
+        else:
+            ds = ds.sortby("JULD")
         ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         ds = ds.argo.cast_types()
         ds = ds[np.sort(ds.data_vars)]
