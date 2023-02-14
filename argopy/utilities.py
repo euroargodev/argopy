@@ -564,27 +564,28 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         print(f"Error collecting netcdf / hdf5 version: {e}")
 
     DEPS = {
-        'min': sorted([
+        'core': sorted([
             ("argopy", lambda mod: mod.__version__),
 
             ("xarray", lambda mod: mod.__version__),
             ("scipy", lambda mod: mod.__version__),
             ("netCDF4", lambda mod: mod.__version__),
-            ("sklearn", lambda mod: mod.__version__),  # Using 'preprocessing.LabelEncoder()' in xarray accessor, used by filters
             ("erddapy", lambda mod: mod.__version__),  # This could go away from requirements ?
             ("fsspec", lambda mod: mod.__version__),
             ("aiohttp", lambda mod: mod.__version__),
             ("packaging", lambda mod: mod.__version__),  # will come with xarray, Using 'version' to make API compatible with several fsspec releases
             ("toolz", lambda mod: mod.__version__),
         ]),
-        'ext.extra': sorted([
-            ("dask", lambda mod: mod.__version__),
+        'ext.util': sorted([
             ("gsw", lambda mod: mod.__version__),   # Used by xarray accessor to compute new variables
-            ("pyarrow", lambda mod: mod.__version__),
             ("tqdm", lambda mod: mod.__version__),
+        ]),
+        'ext.perf': sorted([
+            ("dask", lambda mod: mod.__version__),
+            ("pyarrow", lambda mod: mod.__version__),
             ("distributed", lambda mod: mod.__version__),
         ]),
-        'ext.plotters': sorted([
+        'ext.plot': sorted([
             ("matplotlib", lambda mod: mod.__version__),
             ("cartopy", lambda mod: mod.__version__),
             ("seaborn", lambda mod: mod.__version__),
@@ -603,6 +604,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
 
             ("numpy", lambda mod: mod.__version__),  # will come with xarray and pandas
             ("pandas", lambda mod: mod.__version__),  # will come with xarray
+            ("sklearn", lambda mod: mod.__version__),
 
             ("pip", lambda mod: mod.__version__),
             ("pytest", lambda mod: mod.__version__),  # will come with pandas
@@ -668,24 +670,28 @@ def show_options(file=sys.stdout):  # noqa: C901
         print(f"{k}: {v}", file=file)
 
 
-def isconnected(host="https://www.ifremer.fr"):
+def isconnected(host="https://www.ifremer.fr", maxtry=10):
     """ check if we have a live internet connection
 
         Parameters
         ----------
         host: str
             URL to use, 'https://www.ifremer.fr' by default
-
+        maxtry: int, default: 10
+            Maximum number of host connections to try before
         Returns
         -------
         bool
     """
     if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
-        try:
-            urllib.request.urlopen(host, timeout=1)  # nosec B310 because host protocol already checked
-            return True
-        except Exception:
-            return False
+        it = 0
+        while it < maxtry:
+            try:
+                urllib.request.urlopen(host, timeout=1)  # nosec B310 because host protocol already checked
+                result, it = True, maxtry
+            except Exception:
+                result, it = False, it+1
+        return result
     else:
         return os.path.exists(host)
 
@@ -1601,7 +1607,7 @@ def is_cyc(lst, errors="raise"):  # noqa: C901
             if (len(str(x)) > 4):
                 result = False
 
-            if int(x) <= 0:
+            if int(x) < 0:
                 result = False
 
     except Exception:
@@ -2692,6 +2698,8 @@ class Registry(UserList):
 def get_coriolis_profile_id(WMO, CYC=None):
     """ Return a :class:`pandas.DataFrame` with CORIOLIS ID of WMO/CYC profile pairs
 
+        This method get ID by requesting the dataselection.euro-argo.eu trajectory API.
+
         Parameters
         ----------
         WMO: int, list(int)
@@ -2817,6 +2825,7 @@ class ArgoNVSReferenceTables:
         "RMC",
         "RTV",
         "R16",
+        # "R18",
         "R19",
         "R20",
         "R21",
@@ -2826,6 +2835,9 @@ class ArgoNVSReferenceTables:
         "R25",
         "R26",
         "R27",
+        # "R28",
+        # "R29",
+        # "R30",
     ]
     """List of all available Reference Tables"""
 

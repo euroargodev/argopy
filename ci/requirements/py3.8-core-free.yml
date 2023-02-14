@@ -5,8 +5,7 @@ dependencies:
   - python=3.8
   - xarray
   - scipy
-  - netCDF4
-  - scikit-learn
+  - netcdf4
   - erddapy
   - fsspec
   - aiohttp

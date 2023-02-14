@@ -248,6 +248,11 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
             msg = "\nCannot connect to the FTP server\n%s" % str(e.args)
             xmsg = "Failing because cannot connect to the FTP server, but should work"
             pass
+        except fsspec.exceptions.FSTimeoutError as e:
+            # Sometimes, mostly from FTP, the time out is not long enough !            
+            msg = "\nUnexpected server time out\n%s" % str(e.args)
+            xmsg = "Failing because the server is temporarily too slow to respond, but should work"
+            pass
         except Exception as e:
             msg = "\nUnknown server error:\n%s" % str(e.args)
             raise  # Because we need to ID this for addition in this list
