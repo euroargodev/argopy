@@ -81,13 +81,13 @@ class ArgoDataFetcherProto(ABC):
                 "_".join(["CYC%i" % (cyc) for cyc in sorted(f.CYC)]),
             )
             if len(self.WMO) == 1:
-                if hasattr(self, "CYC") and isinstance(self.CYC, (np.ndarray)):
+                if hasattr(self, "CYC") and self.CYC is not None:
                     cname = prtcyc(self, self.WMO[0])
                 else:
                     cname = "WMO%i" % (self.WMO[0])
             else:
                 cname = ";".join(["WMO%i" % wmo for wmo in sorted(self.WMO)])
-                if hasattr(self, "CYC") and isinstance(self.CYC, (np.ndarray)):
+                if hasattr(self, "CYC") and self.CYC is not None:
                     cname = ";".join([prtcyc(self, wmo) for wmo in self.WMO])
             if hasattr(self, "dataset_id"):
                 cname = self.dataset_id + ";" + cname

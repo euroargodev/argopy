@@ -734,11 +734,13 @@ class Fetch_wmo(ErddapArgoDataFetcher):
 
         self.definition = "?"
         if self.dataset_id == "phy":
-            self.definition = "Ifremer erddap Argo data fetcher for floats"
+            self.definition = "Ifremer erddap Argo data fetcher"
         elif self.dataset_id == "ref":
-            self.definition = "Ifremer erddap Argo REFERENCE data fetcher for floats"
-        elif self.dataset_id == "bgc":
-            self.definition = "Ifremer erddap Argo bgc data fetcher for floats"
+            self.definition = "Ifremer erddap Argo REFERENCE data fetcher"
+        if self.CYC is not None:
+            self.definition = "%s for profiles" % self.definition
+        else:
+            self.definition = "%s for floats" % self.definition
         return self
 
     def define_constraints(self):

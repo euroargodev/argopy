@@ -396,7 +396,12 @@ class Fetch_wmo(ArgovisDataFetcher):
 
         self.definition = "?"
         if self.dataset_id == "phy":
-            self.definition = "Argovis Argo data fetcher for floats"
+            self.definition = "Argovis Argo data fetcher"
+        if self.CYC is not None:
+            self.definition = "%s for profiles" % self.definition
+        else:
+            self.definition = "%s for floats" % self.definition
+
         return self
 
     def get_url(self, wmo: int, cyc: int = None) -> str:

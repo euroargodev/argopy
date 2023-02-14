@@ -2,10 +2,10 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
-  - python=3.7
+  - python=3.9
   - xarray
   - scipy
-  - netcdf4
+  - netCDF4
   - erddapy
   - fsspec
   - aiohttp

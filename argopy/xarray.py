@@ -5,7 +5,6 @@ import warnings
 import numpy as np
 import pandas as pd
 import xarray as xr
-from sklearn import preprocessing  #todo: reduce requirements, can't we replace preprocessing.LabelEncoder() ?
 import logging
 
 try:
@@ -407,16 +406,21 @@ class ArgoAccessor:
         >>> wmo, cyc, drc = uid(unique_float_profile_id) # Decode
 
         """
-        le = preprocessing.LabelEncoder()
-        le.fit(["A", "D"])
-
         def encode_direction(x):
-            y = 1 - le.transform(x)
-            return np.where(y == 0, -1, y)
+            y = np.where(x=='A', 1, x)
+            y = np.where(y=='D', -1, y)
+            try:
+                return y.astype(int)
+            except ValueError:
+                raise ValueError('x has un-expected values')
 
         def decode_direction(x):
-            y = 1 - np.where(x == -1, 0, x)
-            return le.inverse_transform(y)
+            x = np.array(x)
+            if np.any(np.unique(np.abs(x)) != 1):
+                raise ValueError('x has un-expected values')
+            y = np.where(x==1, 'A', x)
+            y = np.where(y=='-1', 'D', y)
+            return y.astype('<U1')
 
         offset = 1e5
 
