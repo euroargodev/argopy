@@ -42,7 +42,7 @@ class Test_ArgoColors:
     @pytest.mark.parametrize("cname", quantitative, indirect=False)
     def test_quantitative_colormaps(self, cname):
         ac = ArgoColors(name=cname)
-        assert ac.Ncolors == self.quantitative[cname]
+        assert ac.Ncolors == quantitative[cname]
         assert isinstance(ac.cmap, mpl.colors.LinearSegmentedColormap)
 
     @pytest.mark.parametrize("opts", [('Spectral', None),
@@ -69,14 +69,14 @@ class Test_ArgoColors:
         assert isinstance( ArgoColors(cname).definition, dict)
 
     def test_colors_lookup_dict(self):
-        ac = ArgoColors(self.list_valid_known_colormaps[0])
+        ac = ArgoColors(list_valid_known_colormaps[0])
         assert isinstance(ac.lookup, dict)
 
         with pytest.raises(ValueError):
             ArgoColors('Blues').lookup
 
     def test_ticklabels_dict(self):
-        ac = ArgoColors(self.list_valid_known_colormaps[0])
+        ac = ArgoColors(list_valid_known_colormaps[0])
         assert isinstance(ac.ticklabels, dict)
 
         with pytest.raises(ValueError):
