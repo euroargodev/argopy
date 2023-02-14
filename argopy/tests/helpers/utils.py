@@ -191,7 +191,12 @@ safe_to_fsspec_version = pytest.mark.skipif(
     reason="fsspec version %s > 0.8.3 (https://github.com/euroargodev/argopy/issues/96)" % fsspec.__version__
 )
 
-TimeoutError = asyncio.exceptions.TimeoutError if version.parse(fsspec.__version__) < version.parse("2021.05.0") else fsspec.exceptions.FSTimeoutError
+TimeoutError = asyncio.TimeoutError if version.parse(fsspec.__version__) < version.parse("2021.05.0") else fsspec.exceptions.FSTimeoutError
+
+# if version.parse(fsspec.__version__) < version.parse("2021.05.0"):
+#     TimeoutError = asyncio.exceptions.TimeoutError
+# else:
+#     TimeoutError = fsspec.exceptions.FSTimeoutError
 
 
 ############
