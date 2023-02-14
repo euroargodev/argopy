@@ -803,29 +803,29 @@ class ArgoAccessor:
         # filter
         #########
         ds = self._obj
-        if "DATA_MODE" not in ds:
+        if "DATA_MODE" or "PARAMETER_DATA_MODE" in ds:
+            self.mode_variable = "PARAMETER_DATA_MODE" if "PARAMETER_DATA_MODE" in ds else "DATA_MODE"
+
+        else:
             if errors:
-                raise InvalidDatasetStructure(
-                    "Method only available for dataset with a 'DATA_MODE' variable "
+                raise AttributeError(
+                    "Method only available for dataset with a 'DATA_MODE' or 'PARAMETER_DATA_MODE' variable "
                 )
             else:
-                # todo should raise a warning instead ?
+                # TODO should raise a warning instead ?
                 return ds
 
         # Define variables to filter:
-        possible_list = [
-            "PRES",
-            "TEMP",
-            "PSAL",
-            "DOXY",
-            "CHLA",
-            "BBP532",
-            "BBP700",
-            "DOWNWELLING_PAR",
-            "DOWN_IRRADIANCE380",
-            "DOWN_IRRADIANCE412",
-            "DOWN_IRRADIANCE490",
-        ]
+        if self.mode_variable == "PARAMETER_DATA_MODE":
+            possible_list = list(map(lambda x: str.strip(x), ds.STATION_PARAMETERS.isel(N_POINTS=0).data))
+
+        elif self.mode_variable == "DATA_MODE":
+            possible_list = [
+                "PRES",
+                "TEMP",
+                "PSAL",
+            ]
+
         plist = [p for p in possible_list if p in ds.data_vars]
 
         # Create one dataset for each of the data_mode:
