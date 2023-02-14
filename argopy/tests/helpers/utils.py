@@ -193,12 +193,6 @@ safe_to_fsspec_version = pytest.mark.skipif(
 
 TimeoutError = asyncio.TimeoutError if version.parse(fsspec.__version__) < version.parse("2021.05.0") else fsspec.exceptions.FSTimeoutError
 
-# if version.parse(fsspec.__version__) < version.parse("2021.05.0"):
-#     TimeoutError = asyncio.exceptions.TimeoutError
-# else:
-#     TimeoutError = fsspec.exceptions.FSTimeoutError
-
-
 ############
 def fct_safe_to_server_errors(func, *args, **kwargs):
     """Make any function safe to server error.
