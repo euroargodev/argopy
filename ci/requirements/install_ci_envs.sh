@@ -112,6 +112,8 @@ while [[ $# -gt 0 ]]; do
       ENV_LIST[argopy-py38-core-pinned]="py3.8-core-pinned.yml"
       ENV_LIST[argopy-py38-core-min]="py3.8-core-min.yml"
       ENV_LIST[argopy-py38-core-free]="py3.8-core-free.yml"
+
+      ENV_LIST[argopy-py37-all-min]="py3.7-all-min.yml"
       shift # past argument
       ;;
     --py38-all-pinned)
@@ -142,6 +144,11 @@ while [[ $# -gt 0 ]]; do
     --py38-core-free)
       declare -A ENV_LIST
       ENV_LIST[argopy-py38-core-free]="py3.8-core-free.yml"
+      shift # past argument
+      ;;
+    --py37-all-min)
+      declare -A ENV_LIST
+      ENV_LIST[argopy-py37-all-min]="py3.7-all-min.yml"
       shift # past argument
       ;;
   esac
