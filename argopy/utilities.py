@@ -675,7 +675,7 @@ def show_options(file=sys.stdout):  # noqa: C901
         print(f"{k}: {v}", file=file)
 
 
-def isconnected(host="https://www.ifremer.fr", maxtry=10):
+def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
     """ check if we have a live internet connection
 
         Parameters
@@ -734,7 +734,9 @@ def isAPIconnected(src="erddap", data=True):
 
 
 def erddap_ds_exists(
-    ds: str = "ArgoFloats", erddap: str = "https://erddap.ifremer.fr/erddap"
+        ds: str = "ArgoFloats",
+        erddap: str = "https://erddap.ifremer.fr/erddap",
+        maxtry: int = 2
 ) -> bool:
     """ Check if a dataset exists on a remote erddap server
     return a bool
@@ -745,13 +747,14 @@ def erddap_ds_exists(
         Name of the erddap dataset to check
     erddap: str, default='https://erddap.ifremer.fr/erddap'
         Url of the erddap server
-
+    maxtry: int, default: 2
+        Maximum number of host connections to try
     Return
     ------
     bool
     """
     from .stores import httpstore
-    if isconnected(erddap, maxtry=1):
+    if isconnected(erddap, maxtry=maxtry):
         with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
             erddap_index = json.load(of)
         return ds in [row[-1] for row in erddap_index["table"]["rows"]]
@@ -3365,7 +3368,9 @@ class OceanOPSDeployments:
         from .plot.plot import scatter_map
         df = self.to_dataframe()
         fig, ax = scatter_map(df,
-                              axis=['lon', 'lat', 'status_code'],
+                              x='lon',
+                              y='lat',
+                              hue='status_code',
                               traj=False,
                               cmap='deployment_status',
                               **kwargs)

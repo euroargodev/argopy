@@ -36,7 +36,22 @@ from argopy.utilities import (
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
-from utils import requires_connection, requires_localftp, safe_to_server_errors, requires_oops
+from utils import (
+    requires_connection,
+    requires_localftp,
+    requires_matplotlib,
+    requires_cartopy,
+    requires_oops,
+    safe_to_server_errors,
+    has_matplotlib,
+    has_cartopy,
+)
+
+if has_matplotlib:
+    import matplotlib as mpl
+
+if has_cartopy:
+    import cartopy
 
 
 def test_invalid_dictionnary():
@@ -775,8 +790,21 @@ class Test_OceanOPSDeployments:
         assert isinstance(dep.status_code, pd.DataFrame)
         assert isinstance(dep.box_name, str)
         assert len(dep.box) == 6
-    #
+
     @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
     def test_to_dataframe(self, an_instance):
-        assert isinstance(an_instance.to_dataframe(), pd.DataFrame)
+        @safe_to_server_errors
+        def test(an_instance):
+            assert isinstance(an_instance.to_dataframe(), pd.DataFrame)
+        test(an_instance)
 
+    @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
+    @requires_matplotlib
+    @requires_cartopy
+    def test_plot_status(self, an_instance):
+        @safe_to_server_errors
+        def test(an_instance):
+            fig, ax = an_instance.plot_status()
+            assert isinstance(fig, mpl.figure.Figure)
+            assert isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot)
+        test(an_instance)

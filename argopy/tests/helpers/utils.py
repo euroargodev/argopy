@@ -74,10 +74,13 @@ has_erddap, requires_erddap = _connectskip(
 
 if CONNECTED and has_erddap:
     log.debug("Check which Erddap dataset are available (eg: core, bgc, ref, index)")
-    DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
-    DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-bio")
-    DSEXISTS_ref = erddap_ds_exists(ds="ArgoFloats-ref")
-    DSEXISTS_index = erddap_ds_exists(ds="ArgoFloats-index")
+    try:
+        DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
+        DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-synthetic-BGC")
+        DSEXISTS_ref = erddap_ds_exists(ds="ArgoFloats-ref")
+        DSEXISTS_index = erddap_ds_exists(ds="ArgoFloats-index")
+    except:
+        log.debug("Cannot determine which erddap dataset are available, will skip corresponding tests.")
 else:
     DSEXISTS = False
     DSEXISTS_bgc = False
