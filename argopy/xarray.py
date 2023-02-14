@@ -696,7 +696,29 @@ class ArgoAccessor:
         def safe_where_eq(xds, key, value):
             # xds.where(xds[key] == value, drop=True) is not safe to empty time variables, cf issue #64
             try:
-                return xds.where(xds[key] == value, drop=True)
+                if self.mode_variable == "DATA_MODE":
+                    return xds.where(xds[key] == value, drop=True)
+
+                elif self.mode_variable == "PARAMETER_DATA_MODE":
+                    for v in possible_list:
+                        # normally everything will be present in possible list, but it depends how we define it, this is why the following double check
+                        if v.startswith(tuple(plist)):
+                            # get the right PARAMETER_DATA_MODE for the variable v
+                            ma_liste = [True if var == v else False for var in possible_list]
+                            corresp_data_mode = xds[key][ma_liste].isel(N_PARAM=0)
+                            # select the correpsonding data mode for variable v
+                            xds[v] = xds[v].where(
+                                corresp_data_mode == value,
+                                drop=True
+                            )
+
+                        else:
+                            xds[v].where(xds[key] == value, drop=True)
+
+                    return xds
+
+                else:
+                    raise ValueError('No corresponding mode variable in the dataset')
             except ValueError as v:
                 if v.args[0] == (
                     "zero-size array to reduction operation "
