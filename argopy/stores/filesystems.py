@@ -873,7 +873,14 @@ class ftpstore(httpstore):
         # except aiohttp.ClientResponseError as e:
             raise
 
-        ds = xr.open_dataset(data, *args, **kwargs)
+        try:
+            ds = xr.open_dataset(data, *args, **kwargs)
+        except ValueError as e:
+            if str(e) == "can't open netCDF4/HDF5 as bytes try passing a path or file-like object":
+                ds = xr.open_dataset(io.BytesIO(data), *args, **kwargs)
+            else:
+                raise
+
         if "source" not in ds.encoding:
             if isinstance(url, str):
                 ds.encoding["source"] = url
