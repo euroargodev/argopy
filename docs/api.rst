@@ -270,3 +270,8 @@ Utilities
     argopy.utilities.list_standard_variables
     argopy.utilities.list_multiprofile_file_variables
     argopy.utilities.Chunker
+
+    argopy.utilities.isconnected
+    argopy.utilities.urlhaskeyword
+    argopy.utilities.isalive
+    argopy.utilities.isAPIconnected

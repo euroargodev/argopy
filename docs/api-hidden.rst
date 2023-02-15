@@ -63,7 +63,12 @@
     argopy.utilities.list_available_index_src
     argopy.utilities.Chunker
     argopy.utilities.ArgoNVSReferenceTables
-    
+
+    argopy.utilities.isconnected
+    argopy.utilities.urlhaskeyword
+    argopy.utilities.isalive
+    argopy.utilities.isAPIconnected
+
     argopy.utilities.groupby_remap
     argopy.utilities.linear_interpolation_remap
 
