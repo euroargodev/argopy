@@ -696,6 +696,45 @@ def isconnected(host="https://www.ifremer.fr", maxtry=10):
         return os.path.exists(host)
 
 
+def urlhaskeyword(url: str = "", keyword: str = '', maxtry: int = 10):
+    """ Check if a keyword is in the content of a URL
+
+        Parameters
+        ----------
+        url: str
+        keyword: str
+        maxtry: int, default: 10
+            Maximum number of host connections to try before returning False
+
+        Returns
+        -------
+        bool
+    """
+    it = 0
+    while it < maxtry:
+        try:
+            with fsspec.open(url) as f:
+                data = f.read()
+            result = keyword in str(data)
+            it = maxtry
+        except Exception:
+            result, it = False, it + 1
+    return result
+
+
+def isalive(api_server_check):
+    """Check if a source API is alive or not
+
+        2 methods are available:
+        - Ping a URL
+        - Check for a keyword in a URL content
+    """
+    if isinstance(api_server_check, dict):
+        return urlhaskeyword(url=api_server_check['url'], keyword=api_server_check['keyword'])
+    else:
+        return isconnected(api_server_check)
+
+
 def isAPIconnected(src="erddap", data=True):
     """ Check if a source API is alive or not
 
@@ -722,36 +761,10 @@ def isAPIconnected(src="erddap", data=True):
             # This is a special case because the source here is a local folder
             result = check_localftp(OPTIONS["local_ftp"])
         else:
-            result = isconnected(list_src[src].api_server_check)
+            result = isalive(list_src[src].api_server_check)
         return result
     else:
         raise InvalidFetcher
-
-
-def urlhaskeyword(url: str = "", keyword: str = '', maxtry: int = 10):
-    """ Check if a keyword is in the content of an URL
-
-        Parameters
-        ----------
-        url: str
-        keyword: str
-        maxtry: int, default: 10
-            Maximum number of host connections to try before returning False
-
-        Returns
-        -------
-        bool
-    """
-    it = 0
-    while it < maxtry:
-        try:
-            with fsspec.open(url) as f:
-                data = f.read()
-            result = keyword in str(data)
-            it = maxtry
-        except Exception:
-            result, it = False, it + 1
-    return result
 
 
 def erddap_ds_exists(
