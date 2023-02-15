@@ -38,7 +38,6 @@ from argopy.utilities import (
     check_cyc,
     lscache,
     isconnected,
-    is_json,
 )
 
 from argopy.stores.argo_index_pd import indexstore_pandas
