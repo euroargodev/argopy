@@ -7,6 +7,15 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+
+v0.1.13 (XX)
+----------------------
+
+**Internals**
+
+- New method to check status of web API. Now allows for a keyword check rather than a simple url ping.
+
+
 v0.1.12 (16 May 2022)
 ----------------------
 
