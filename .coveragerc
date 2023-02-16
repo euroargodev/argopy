@@ -4,4 +4,10 @@ omit =
     setup.py
     *__init__*
 [report]
-exclude_lines = def __repr__
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if self.debug:
+    if settings.DEBUG
+    if __name__ == .__main__.:
+    @deprecated
