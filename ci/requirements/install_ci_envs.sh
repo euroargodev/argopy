@@ -96,6 +96,8 @@ while [[ $# -gt 0 ]]; do
     -l|--list|-h|--help)
       echo "Possible environment options include:"
       echo "--all"
+      echo "--py37-all-min"
+      echo "--py37-core-min"
       echo "--py38-all-pinned"
       echo "--py38-all-min"
       echo "--py38-all-free"
@@ -114,6 +116,7 @@ while [[ $# -gt 0 ]]; do
       ENV_LIST[argopy-py38-core-free]="py3.8-core-free.yml"
 
       ENV_LIST[argopy-py37-all-min]="py3.7-all-min.yml"
+      ENV_LIST[argopy-py37-core-min]="py3.7-core-min.yml"
       shift # past argument
       ;;
     --py38-all-pinned)
@@ -149,6 +152,11 @@ while [[ $# -gt 0 ]]; do
     --py37-all-min)
       declare -A ENV_LIST
       ENV_LIST[argopy-py37-all-min]="py3.7-all-min.yml"
+      shift # past argument
+      ;;
+    --py37-core-min)
+      declare -A ENV_LIST
+      ENV_LIST[argopy-py37-core-min]="py3.7-core-min.yml"
       shift # past argument
       ;;
   esac
