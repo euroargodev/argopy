@@ -166,7 +166,7 @@ Misc
 Plotters
 ========
 
-Function under the :mod:`argopy.plot` submodule.
+Functions in the :mod:`argopy.plot` submodule.
 
 .. currentmodule:: argopy.plot
 
@@ -176,7 +176,10 @@ Function under the :mod:`argopy.plot` submodule.
     dashboard
     plot_trajectory
     bar_plot
+    scatter_map
     open_sat_altim_report
+    ArgoColors
+
 
 Utilities
 =========

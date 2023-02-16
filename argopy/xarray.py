@@ -291,8 +291,8 @@ class ArgoAccessor:
         A "point" is a single location for measurements in space and time
         A "point" is localised as unique UID based on WMO, CYCLE_NUMBER and DIRECTION variable values.
 
-        Parameter
-        ---------
+        Parameters
+        ----------
         drop: bool, default=False
             By default will return all variables. But if set to True, then all [N_PROF, N_LEVELS] 2d variables will be
             dropped, and only 1d variables of dimension [N_PROF] will be returned.

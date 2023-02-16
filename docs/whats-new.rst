@@ -25,6 +25,31 @@ v0.1.13 (xx Feb. 2023)
     df = deployment.to_dataframe()
     deployment.status_code
 
+- **New scatter map utility for easy Argo-related variables plotting.** The new :meth:`argopy.plot.scatter_map` utility function is dedicated to making maps with Argo profiles positions coloured according to specific variables: a scatter map. Profiles colouring is finely tuned for some variables: QC flags, Data Mode and Deployment Status. By default, floats trajectories are always shown, but if the WMO is not given by a default wmo variable, it must be given as argument. (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy.plot import scatter_map
+
+    fig, ax = scatter_map(ds_or_df,
+                          x='LONGITUDE', y='LATITUDE', hue='PSAL_QC',
+                          traj_axis='PLATFORM_NUMBER')
+
+- **New Argo colors utility to manage segmented colormaps and pre-defined Argo colors set.** The new :class:`argopy.plot.ArgoColors` utility class aims to easily provide colors for Argo-related variables plot. (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy.plot import ArgoColors
+
+    ArgoColors().list_valid_known_colormaps
+    ArgoColors().known_colormaps.keys()
+
+    ArgoColors('data_mode')
+    ArgoColors('data_mode').cmap
+    ArgoColors('data_mode').definition
+
+    ArgoColors('Set2').cmap
+    ArgoColors('Spectral', N=25).cmap
 
 v0.1.12 (16 May 2022)
 ----------------------

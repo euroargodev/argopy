@@ -15,20 +15,19 @@ if has_seaborn:
 class ArgoColors:
     """ Handy class to manage discrete coloring for Argo related variables
 
+    Call signatures::
 
-    Examples
-    --------
-    from argopy.plot import ArgoColors
+        from argopy.plot import ArgoColors
 
-    ArgoColors().list_valid_known_colormaps
-    ArgoColors().known_colormaps.keys()
+        ArgoColors().list_valid_known_colormaps
+        ArgoColors().known_colormaps.keys()
 
-    ArgoColors('data_mode')
-    ArgoColors('data_mode').cmap
-    ArgoColors('data_mode').definition
+        ArgoColors('data_mode')
+        ArgoColors('data_mode').cmap
+        ArgoColors('data_mode').definition
 
-    ArgoColors('Set2').cmap
-    ArgoColors('Spectral', N=25).cmap
+        ArgoColors('Set2').cmap
+        ArgoColors('Spectral', N=25).cmap
     """
     quantitative = {
         "Set1": 9,

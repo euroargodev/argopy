@@ -565,18 +565,31 @@ class ArgoDataFetcher:
             )
         return self.fetcher.clear_cache()
 
-    def plot(self, ptype="trajectory", **kwargs):
-        """ Create custom plots from data
+    def plot(self, ptype: str = "trajectory", **kwargs):
+        """ Create custom plots from this fetcher data or index.
 
-            Parameters
-            ----------
-            ptype: str, optional, default: 'trajectory'
-                Plot type, one of the following: 'trajectory',' profiler', 'dac', 'qc_altimetry'.
+        This is basically shortcuts to some plotting submodules:
 
-            Returns
-            -------
-            fig: :class:`matplotlib.figure.Figure`
-            ax: :class:`matplotlib.axes.Axes`
+        - **trajectory** calls :class:`argopy.plot.plot_trajectory` with index DataFrame
+        - **profiler** or **dac** calls :class:`argopy.plot.bar_plot` with index DataFrame
+        - **qc_altimetry** calls :class:`argopy.plot.open_sat_altim_report` with data unique list of ``PLATFORM_NUMBER``
+
+        Parameters
+        ----------
+        ptype: str, default: 'trajectory'
+            Plot type, one of the following: ``trajectory``, ``profiler``, ``dac`` or ``qc_altimetry``.
+        kwargs:
+            Other arguments passed to the plotting submodule.
+
+        Returns
+        -------
+        fig: :class:`matplotlib.figure.Figure`
+        ax: :class:`matplotlib.axes.Axes`
+
+        Warnings
+        --------
+        Calling this method will automatically trigger a call to the :class:`argopy.DataFetcher.load` method.
+
         """
         self.load()
         if ptype in ["dac", "institution"]:
@@ -878,17 +891,31 @@ class ArgoIndexFetcher:
             self._loaded = True
         return self
 
-    def plot(self, ptype="trajectory", **kwargs):
-        """ Create custom plots from index
+    def plot(self, ptype: str = "trajectory", **kwargs):
+        """ Create custom plots from this fetcher index.
 
-            Parameters
-            ----------
-            ptype: {'trajectory',' profiler', 'dac', 'qc_altimetry}, default: 'trajectory'
+        This is basically shortcuts to some plotting submodules:
 
-            Returns
-            -------
-            fig: :class:`matplotlib.figure.Figure`
-            ax: :class:`matplotlib.axes.Axes`
+        - **trajectory** calls :class:`argopy.plot.plot_trajectory` with index DataFrame
+        - **profiler** or **dac** calls :class:`argopy.plot.bar_plot` with index DataFrame
+        - **qc_altimetry** calls :class:`argopy.plot.open_sat_altim_report` with index unique list of ``wmo``
+
+        Parameters
+        ----------
+        ptype: str, default: 'trajectory'
+            Plot type, one of the following: ``trajectory``, ``profiler``, ``dac`` or ``qc_altimetry``.
+        kwargs:
+            Other arguments passed to the plotting submodule.
+
+        Returns
+        -------
+        fig: :class:`matplotlib.figure.Figure`
+        ax: :class:`matplotlib.axes.Axes`
+
+        Warnings
+        --------
+        Calling this method will automatically trigger a call to the :class:`argopy.IndexFetcher.load` method.
+
         """
         self.load()
         if ptype in ["dac", "institution"]:

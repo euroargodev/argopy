@@ -3,7 +3,10 @@
 Data visualisation
 ##################
 
-Although **argopy** is not focused on visualisation, it provides a few functions to get you started. Plotting functions are available for both the data and index fetchers.
+From Data or Index fetchers
+***************************
+
+The :class:`argopy.DataFetcher` and :class:`argopy.IndexFetcher` come with a **plot** method to have a quick look to your data. This method can take 'trajectory',' profiler', 'dac' and 'qc_altimetry' as arguments. All details are available :class:`argopy.fetchers.ArgoDataFetcher.plot` and here :class:`argopy.fetchers.ArgoIndexFetcher.plot`.
 
 Trajectories
 ------------
@@ -25,7 +28,7 @@ Some options are available to customise the plot, for instance:
     idx = ArgoDataFetcher().float([6901020, 6902746, 2903359]).load()
     fig, ax = idx.plot('trajectory', style='white', palette='hls', figsize=(10,6), set_global=True)
 
-.. image:: _static/trajectory_sample_white.png
+.. image:: _static/trajectory_sample_opts.png
 
 
 Histograms on properties
@@ -49,7 +52,7 @@ It is also possible to create bar plot for histograms on some data properties: '
 
 
 Dashboards
-----------
+**********
 
 We provide a few shortcuts toward third-party online dashboards that can help you visualise float or profile data.
 When working in Jupyter notebook, you can insert a dashboard in a cell, or get the url toward the dashboard to open it elsewhere.

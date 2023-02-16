@@ -105,7 +105,16 @@
     argopy.plot.dashboard
     argopy.plot.bar_plot
     argopy.plot.plot_trajectory
+    argopy.plot.scatter_map
     argopy.plot.open_sat_altim_report
+    argopy.plot.ArgoColors
+    argopy.plot.ArgoColors.COLORS
+    argopy.plot.ArgoColors.quantitative
+    argopy.plot.ArgoColors.definition
+    argopy.plot.ArgoColors.cmap
+    argopy.plot.ArgoColors.lookup
+    argopy.plot.ArgoColors.ticklabels
+    argopy.plot.ArgoColors.list_valid_known_colormaps
 
     argopy.stores.filesystems.filestore
     argopy.stores.filestore.open_dataset
