@@ -483,19 +483,20 @@ def scatter_map(
 
     patches = []
     for k, [name, group] in enumerate(data.groupby(hue)):
-        # hue_value = np.unique(group[hue].values)[0]
-        color = mycolors.lookup[name] if mycolors.registered else mycolors.cmap(k)
-        label = "%s: %s" % (name, mycolors.ticklabels[name]) if mycolors.registered else name
+        scatter_opts = {
+            'color': mycolors.lookup[name] if mycolors.registered else mycolors.cmap(k),
+            'label': "%s: %s" % (name, mycolors.ticklabels[name]) if mycolors.registered else name,
+            'zorder': 10,
+            'sizes': [markersize],
+            'edgecolor': markeredgecolor,
+            'linewidths': markeredgesize,
+        }
+        if isinstance(data, pd.DataFrame):
+            scatter_opts['legend'] = False  # otherwise Pandas will add a legend even if we set legend=False
         sc = group.plot.scatter(
             x=x, y=y,
             ax=ax,
-            color=color,
-            label=label,
-            # vmin=vmin, vmax=vmax,
-            zorder=10,
-            sizes=[markersize],
-            edgecolor=markeredgecolor,
-            linewidths=markeredgesize,
+            **scatter_opts
         )
         patches.append(sc)
 

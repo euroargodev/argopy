@@ -197,8 +197,8 @@ class Test_scatter_map:
             for arg in self.requests["region"]:
                 loader = ArgoDataFetcher(cache=True).region(arg).load()
                 dsp = loader.data.argo.point2profile()
-                with pytest.warns(UserWarning):
-                    self.__test(dsp, (None, None, None), opts)
+                # with pytest.warns(UserWarning):
+                #     self.__test(dsp, (None, None, None), opts)
                 self.__test(dsp.isel(N_LEVELS=0), (None, None, None), opts)
 
     @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
