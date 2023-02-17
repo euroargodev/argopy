@@ -21,6 +21,7 @@ from utils import (
 )
 
 from ..plot import bar_plot, plot_trajectory, open_sat_altim_report, scatter_map
+from argopy.errors import InvalidDatasetStructure
 from argopy import DataFetcher as ArgoDataFetcher
 
 if has_matplotlib:
@@ -34,6 +35,7 @@ if has_ipython:
 
 
 log = logging.getLogger("argopy.tests.plot.plot")
+argopy.clear_cache()
 
 
 @requires_connection
@@ -186,18 +188,22 @@ class Test_scatter_map:
         with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["region"]:
                 loader = ArgoDataFetcher(cache=True).region(arg).load()
-                self.__test(loader.data, (None, None, 'PLATFORM_NUMBER'), opts)
+                with pytest.raises(InvalidDatasetStructure):
+                    self.__test(loader.data, (None, None, None), opts)
 
     @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
     def test_with_a_dataset_of_profiles(self, opts):
         with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["region"]:
                 loader = ArgoDataFetcher(cache=True).region(arg).load()
-                self.__test(loader.data.argo.point2profile(), (None, None, 'PLATFORM_NUMBER'), opts)
+                dsp = loader.data.argo.point2profile()
+                with pytest.warns(UserWarning):
+                    self.__test(dsp, (None, None, None), opts)
+                self.__test(dsp.isel(N_LEVELS=0), (None, None, None), opts)
 
     @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
     def test_with_a_dataframe_of_index(self, opts):
         with argopy.set_options(src=self.src, ftp=self.local_ftp):
             for arg in self.requests["region"]:
                 loader = ArgoDataFetcher(cache=True).region(arg).load()
-                self.__test(loader.index, (None, None, 'wmo'), opts)
+                self.__test(loader.index, (None, None, None), opts)

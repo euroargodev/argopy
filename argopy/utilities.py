@@ -3287,7 +3287,7 @@ class OceanOPSDeployments:
 
     @property
     def plan(self):
-        """Return a dictionary to be used as argument in a :class:`VirtualFleet`
+        """Return a dictionary to be used as argument in a :class:`virtualargofleet.VirtualFleet`
 
         This method is for dev, but will be moved to the VirtualFleet software utilities
         """

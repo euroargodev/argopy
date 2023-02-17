@@ -14,6 +14,8 @@ readthedocs-sphinx-ext
 sphinx-rtd-theme
 sphinx-book-theme
 # sphinx-bootstrap-theme
+sphinx-tabs
+git+https://github.com/sphinx-contrib/googleanalytics
 
 xarray>=0.16.1
 scipy>=1.5
