@@ -6,6 +6,8 @@
 #
 # Decorator warnUnless is mandatory
 #
+import warnings
+
 import numpy as np
 import xarray as xr
 import pandas as pd
@@ -16,6 +18,7 @@ from .utils import axes_style, latlongrid, land_feature
 from .argo_colors import ArgoColors
 
 from ..utilities import warnUnless, check_wmo
+from ..errors import InvalidDatasetStructure
 
 if has_mpl:
     import matplotlib.pyplot as plt
@@ -273,23 +276,23 @@ def scatter_map(
         data: Union[xr.Dataset, pd.core.frame.DataFrame],
         x: Union[str] = None,
         y: Union[str] = None,
-        hue: str = 'wmo',
+        hue: Union[str] = None,
 
         markersize: int = 36,
         markeredgesize: float = 0.5,
         markeredgecolor: str = 'default',
 
-        cmap: str = 'auto',
+        cmap: Union[str] = None,
         # vmin: Union[str, float] = 'auto',
         # vmax: Union[str, float] = 'auto',
 
         traj: bool = True,
-        traj_axis: str = 'wmo',
+        traj_axis: Union[str] = None,
         traj_color: str = 'default',
 
         legend: bool = True,
         legend_title: str = 'default',
-        legend_location: str = "upper right",
+        legend_location: Union[str, int] = 0,
 
         cbar: bool = False,
         cbarlabels: Union[str, list] = 'auto',
@@ -336,8 +339,9 @@ def scatter_map(
     y: str, default=None
         Name of the data variable to use as latitude.
         If y is set to None, we'll try to guess which variable to use among standard names.
-    hue: str, default='wmo'
+    hue: str, default=None
         Name of the data variable to use for points coloring.
+        If hue is set to None, we'll try to guess which variable to use to color points according to WMO.
 
     Returns
     -------
@@ -353,8 +357,8 @@ def scatter_map(
     markeredgecolor: str, default='default'
         Color to use for the markers edge. The default color is 'DARKBLUE' from :class:`argopy.plot.ArgoColors.COLORS`
 
-    cmap: str, default='auto'
-        Colormap to use for points coloring. If set to 'auto', we'll try to guess the most appropriate colormap for the
+    cmap: str, default=None
+        Colormap to use for points coloring. If set to None, we'll try to guess the most appropriate colormap for the
         ``hue`` argument by matching it to values in :class:`argopy.plot.ArgoColors.list_valid_known_colormaps`.
 
     traj: bool, default=True
@@ -365,7 +369,7 @@ def scatter_map(
         The unique color to use for all trajectories. The default color is the ``markeredgecolor`` value.
 
     legend: bool, default=True
-        Display or not a legend for hue colors meaning.
+        Display or not a legend for hue colors meaning. If the legend is too large, it can be removed with ``ax.get_legend().remove()``
     legend_title: str, default='default'
         String title of the legend box. By default, it is set to the ``hue`` value.
     legend_location: str, default='upper right'
@@ -382,11 +386,26 @@ def scatter_map(
     This function requires `Cartopy <https://scitools.org.uk/cartopy/docs/latest/>`_.
 
     """
-    if isinstance(data, xr.Dataset) and data.argo._type == "points":
-        data = data.argo.point2profile(drop=True)
+    if isinstance(data, xr.Dataset) and data.argo._type == "point":
+        # data = data.argo.point2profile(drop=True)
+        raise InvalidDatasetStructure('Function only available to a collection of profiles')
+
+    # Try to guess the default hue, i.e. name for WMO:
+    def guess_trajvar(data):
+        for v in ['WMO', 'PLATFORM_NUMBER']:
+            if v.lower() in data:
+                return v.lower()
+            if v.upper() in data:
+                return v.upper()
+        raise ValueError("Can't guess the variable name for default hue/trajectory grouping (WMO)")
+    hue = guess_trajvar(data) if hue is None else hue
+
+    if isinstance(data, xr.Dataset) and data.argo.N_LEVELS > 1 and 'N_LEVELS' in data[hue].dims:
+        warnings.warn("More than one level found in this dataset for '%s', scatter_map will use the first level only" % hue)
+        data = data.isel(N_LEVELS=0)
 
     # Try to guess the colormap to use as a function of the 'hue' variable:
-    if cmap == 'auto':
+    def guess_cmap(hue):
         if hue.lower() in ArgoColors().list_valid_known_colormaps:
             cmap = hue.lower()
         elif 'qc' in hue.lower():
@@ -397,9 +416,11 @@ def scatter_map(
             cmap = 'deployment_status'
         else:
             cmap = STYLE['palette']
+        return cmap
+    cmap = guess_cmap(hue) if cmap is None else cmap
 
     # Try to guess the x and y variables:
-    def get_xvar(data):
+    def guess_xvar(data):
         for v in ['lon', 'long', 'longitude', 'x']:
             if v.lower() in data:
                 return v.lower()
@@ -414,8 +435,7 @@ def scatter_map(
                     return v
 
         raise ValueError("Can't guess the variable name for longitudes")
-
-    def get_yvar(data):
+    def guess_yvar(data):
         for v in ['lat', 'lati', 'latitude', 'y']:
             if v.lower() in data:
                 return v.lower()
@@ -430,9 +450,8 @@ def scatter_map(
                     return v
 
         raise ValueError("Can't guess the variable name for latitudes")
-
-    x = get_xvar(data) if x is None else x
-    y = get_yvar(data) if y is None else y
+    x = guess_xvar(data) if x is None else x
+    y = guess_yvar(data) if y is None else y
 
     # Adjust legend title:
     if legend_title == 'default':
@@ -448,6 +467,9 @@ def scatter_map(
 
     if traj_color == 'default':
         traj_color = markeredgecolor
+
+    # Try to guess the trajectory grouping variable, i.e. name for WMO
+    traj_axis = guess_trajvar(data) if traj_axis is None else traj_axis
 
     # Set up the figure and axis:
     defaults = {"figsize": (10, 6), "dpi": 90}
@@ -503,7 +525,7 @@ def scatter_map(
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
 
-    if legend and nHue <= 15:
+    if legend:
         handles, labels = ax.get_legend_handles_labels()
         plt.legend(
             handles,
@@ -512,8 +534,6 @@ def scatter_map(
             bbox_to_anchor=(1.26, 1),
             title=legend_title,
         )
-    elif ax.get_legend():
-        ax.get_legend().remove()
 
     for spine in ax.spines.values():
         spine.set_edgecolor(COLORS['DARKBLUE'])
