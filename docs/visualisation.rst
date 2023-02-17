@@ -29,22 +29,6 @@ Trajectories
 
 .. image:: _static/trajectory_sample.png
 
-Some options are available to customise the plot, for instance:
-
-.. code-block:: python
-
-    idx = ArgoDataFetcher().float([6901020, 6902746, 2903359]).load()
-    fig, ax = idx.plot('trajectory',
-                       figsize=(10,6),
-                       set_global=True,
-                       markersize=20,
-                       markeredgecolor='gray',
-                       legend_title='Floats WMO',
-                       cmap='Set3')
-
-.. image:: _static/trajectory_sample_opts.png
-
-
 Histograms on properties
 ========================
 
@@ -170,6 +154,48 @@ Let's import this function, the usual suspects and some data to work with. Note 
 
 And see in the examples below how it can be used and tuned.
 
+Default scatter map for trajectories
+====================================
+By default, the :func:`argopy.plot.scatter_map` function will try to plot a trajectory map, i.e. a map where profile points are of the same color for each floats and joined by a simple line.
+
+.. note::
+
+    When `Cartopy <https://scitools.org.uk/cartopy/docs/latest/>`_ is installed, the :func:`argopy.plot.plot_trajectory` called by :class:`argopy.fetchers.ArgoDataFetcher.plot` and :class:`argopy.fetchers.ArgoIndexFetcher.plot` with the ``trajectory`` option will rely on the scatter map described here.
+
+.. code-block:: python
+
+    scatter_map(df)
+
+.. image:: _static/scatter_map_index.png
+
+Arguments can be passed explicitly as well:
+
+.. code-block:: python
+
+    scatter_map(df,
+                x='longitude',
+                y='latitude',
+                hue='wmo',
+                cmap='Set1',
+                traj_axis='wmo')
+
+
+Some options are available to customise the plot, for instance:
+
+.. code-block:: python
+
+    fig, ax = scatter_map(df,
+                       figsize=(10,6),
+                       set_global=True,
+                       markersize=2,
+                       markeredgecolor=None,
+                       legend_title='Floats WMO',
+                       cmap='Set2')
+
+.. image:: _static/scatter_map_index_opts.png
+
+
+
 Use predefined Argo Colors
 ==========================
 The :class:`argopy.plot.scatter_map` function uses the :class:`argopy.plot.ArgoColors` utility class to better resolve discrete colormaps of known variables. The colormap is automatically guessed using the ``hue`` argument. Here are some examples.
@@ -228,3 +254,8 @@ The :class:`argopy.plot.scatter_map` function uses the :class:`argopy.plot.ArgoC
             scatter_map(df_deployment, hue='status_code', traj=False)
 
         .. image:: _static/scatter_map_deployment_status.png
+
+
+Use any discrete colors
+=======================
+Beyond the predefined set of Argo colors, one can use any colormap that can be discretesized with a scatter map.
