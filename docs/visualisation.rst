@@ -153,16 +153,20 @@ The :class:`argopy.plot.scatter_map` utility function is dedicated to making map
 
 Profiles colouring is finely tuned for some variables: QC flags, Data Mode and Deployment Status. By default, floats trajectories are always shown, but if the WMO is not given by a default wmo variable, it must be given as argument. The :class:`argopy.plot.scatter_map` function works with **argopy** :class:`xarray.Dataset` or :class:`pandas.DataFrame` data.
 
-Let's import this function, the usual suspects and some data to work with:
+Let's import this function, the usual suspects and some data to work with. Note that scatter_map is only available to a collection of profiles:
 
 .. code-block:: python
 
     from argopy.plot import scatter_map
     from argopy import DataFetcher as ArgoDataFetcher
+    from argopy import OceanOPSDeployments
 
     ArgoSet = ArgoDataFetcher(mode='expert').float([6902771, 4903348]).load()
-    ds = ArgoSet.data
+    ds = ArgoSet.data.argo.point2profiles()
     df = ArgoSet.index
+
+    df_deployment = OceanOPSDeployments([-90, 0, 0, 90]).to_dataframe()
+
 
 And see in the examples below how it can be used and tuned.
 
@@ -170,23 +174,57 @@ Use predefined Argo Colors
 ==========================
 The :class:`argopy.plot.scatter_map` function uses the :class:`argopy.plot.ArgoColors` utility class to better resolve discrete colormaps of known variables. The colormap is automatically guessed using the ``hue`` argument. Here are some examples.
 
-Parameter Data Mode
--------------------
+.. tabs::
 
-.. code-block:: python
+    .. tab:: Parameter Data Mode
 
-    scatter_map(ds, hue='DATA_MODE')
-    # scatter_map(ds, hue='DATA_MODE', traj_axis='PLATFORM_NUMBER', cmap='data_mode')
+        Using guess mode for arguments:
 
-.. image:: _static/scatter_map_datamode.png
+        .. code-block:: python
+
+            scatter_map(ds, hue='DATA_MODE')
+
+        or more explicitly:
+
+        .. code-block:: python
+
+            scatter_map(ds,
+                        x='LONGITUDE',
+                        y='LATITUDE',
+                        hue='DATA_MODE',
+                        cmap='data_mode',
+                        traj_axis='PLATFORM_NUMBER')
+
+        .. image:: _static/scatter_map_datamode.png
 
 
-QC flag
--------
+    .. tab:: QC flag
 
-.. code-block:: python
+        Since QC flags are given for each measurements, we need to select a specific depth levels for this plot:
 
-    scatter_map(ds, hue='PSAL_QC', traj_axis='PLATFORM_NUMBER')
-    # scatter_map(ds, hue='PSAL_QC', traj_axis='PLATFORM_NUMBER', cmap='qc')
+        .. code-block:: python
 
-.. image:: _static/scatter_map_qcflag.png
+            scatter_map(ds.isel(N_LEVELS=0), hue='PSAL_QC')
+
+        using guess mode for arguments, or more explicitly:
+
+        .. code-block:: python
+
+            scatter_map(ds.isel(N_LEVELS=0),
+                        x='LONGITUDE',
+                        y='LATITUDE',
+                        hue='PSAL_QC',
+                        cmap='qc',
+                        traj_axis='PLATFORM_NUMBER')
+
+        .. image:: _static/scatter_map_qcflag.png
+
+    .. tab:: Deployment status
+
+        For the deployment status, there is only one point for each float, so we can make a faster plot by not using the ``traj`` option.
+
+        .. code-block:: python
+
+            scatter_map(df_deployment, hue='status_code', traj=False)
+
+        .. image:: _static/scatter_map_deployment_status.png

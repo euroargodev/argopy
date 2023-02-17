@@ -315,12 +315,13 @@ def scatter_map(
         from argopy import DataFetcher
 
         ArgoSet = DataFetcher(mode='expert').float([6902771, 4903348]).load()
-        ds = ArgoSet.data
+        ds = ArgoSet.data.argo.point2profile()
         df = ArgoSet.index
 
         scatter_map(df)
-        scatter_map(ds, hue='DATA_MODE', traj_axis='PLATFORM_NUMBER')
-        scatter_map(ds, hue='PLATFORM_NUMBER', traj_axis='PLATFORM_NUMBER')
+        scatter_map(ds)
+        scatter_map(ds, hue='DATA_MODE')
+        scatter_map(ds, hue='PSAL_QC')
 
     ::
 
@@ -491,7 +492,7 @@ def scatter_map(
             'edgecolor': markeredgecolor,
             'linewidths': markeredgesize,
         }
-        if isinstance(data, pd.DataFrame):
+        if isinstance(data, pd.DataFrame) and not legend:
             scatter_opts['legend'] = False  # otherwise Pandas will add a legend even if we set legend=False
         sc = group.plot.scatter(
             x=x, y=y,

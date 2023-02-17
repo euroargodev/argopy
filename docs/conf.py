@@ -134,7 +134,7 @@ release = argopy.__version__
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '_templates',
                     '.ipynb_checkpoints', '_ext', 'tempo_out', '_src',
-                    'offline', 'examples/.ipynb_checkpoints']
+                    'offline', 'examples/.ipynb_checkpoints', 'tryit.ipynb']
 
 # Give *lots* of time for notebook cell execution!
 # Note nbsphinx compiles *all* notebooks in docs unless excluded
