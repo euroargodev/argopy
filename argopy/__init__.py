@@ -56,7 +56,7 @@ __all__ = (
     "utilities",
     "errors",
     "plot",
-    "ArgoColors",
+    "ArgoColors",  # Class
     # "plotters",  # Deprec, to be removed after 0.1.13
     "stores",
     "tutorial",
