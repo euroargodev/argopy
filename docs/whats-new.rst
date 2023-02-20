@@ -7,21 +7,30 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-.. |pypi dwn| image:: https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads
-   :target: //pypi.org/project/argopy/
-.. |conda dwn| image:: https://img.shields.io/conda/dn/conda-forge/argopy?label=Conda%20downloads
-   :target: //anaconda.org/conda-forge/argopy
-.. |PyPI| image:: https://img.shields.io/pypi/v/argopy
-   :target: //pypi.org/project/argopy/
-.. |Conda| image:: https://anaconda.org/conda-forge/argopy/badges/version.svg
-   :target: //anaconda.org/conda-forge/argopy
-.. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy
-   :target: //github.com/euroargodev/argopy/releases
    
 v0.1.XX
 -------
 - Add variables of BGC-Argo in Argopy
 1) expert mode and erddap source
+
+v0.1.13 (xx Feb. 2023)
+----------------------
+
+**Features and front-end API**
+
+- **New utility class to retrieve the Argo deployment plan from the Ocean-OPS api.** This is the utility class :class:`OceanOPSDeployments` (:pr:`244`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import OceanOPSDeployments
+
+    deployment = OceanOPSDeployments()
+    deployment = OceanOPSDeployments([-90,0,0,90])
+    deployment = OceanOPSDeployments([-90,0,0,90], deployed_only=True) # Remove planification
+
+    df = deployment.to_dataframe()
+    deployment.status_code
+
 
 v0.1.12 (16 May 2022)
 ----------------------
