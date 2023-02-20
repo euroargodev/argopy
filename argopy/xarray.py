@@ -91,6 +91,15 @@ class ArgoAccessor:
         else:
             raise InvalidDatasetStructure("Argo dataset structure not recognised (no PRES nor PRES_ADJUSTED")
 
+        if "PARAMETER_DATA_MODE" in self._vars:
+            self.mode_variable = "PARAMETER_DATA_MODE"
+        elif "DATA_MODE" in self._vars:
+            self.mode_variable = "DATA_MODE"
+        else:
+            raise InvalidDatasetStructure("Argo dataset structure not recognised (no PARAMETER_DATA_MODE nor DATA_MODE")
+
+        #self.mode_variable = "PARAMETER_DATA_MODE" if "PARAMETER_DATA_MODE" in self._vars else "DATA_MODE"
+
     def __repr__(self):
         # import xarray.core.formatting as xrf
         # col_width = xrf._calculate_col_width(xrf._get_col_items(self._obj.variables))
