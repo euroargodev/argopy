@@ -238,7 +238,15 @@ class ArgoAccessor:
             "PROFILE_PRES_QC",
             "PROFILE_PSAL_QC",
             "PROFILE_TEMP_QC",
-            "PROFILE_DOXY_QC",
+            "PROFILE_DOXY_QC", # new variables associated to BGC floats to cast -->
+            "PROFILE_BBP700_QC",
+            "PROFILE_CDOM_QC",
+            "PROFILE_CHLA_QC",
+            "PROFILE_NITRATE_QC",
+            "PROFILE_DOWN_IRRADIANCE380_QC",
+            "PROFILE_DOWN_IRRADIANCE412_QC",
+            "PROFILE_DOWN_IRRADIANCE490_QC",
+            "PROFILE_DOWNWELLING_PAR_QC", # <--
             "PARAMETER",
             "PARAMETER_DATA_MODE",
             "SCIENTIFIC_CALIB_EQUATION",
