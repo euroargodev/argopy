@@ -498,6 +498,20 @@ class ArgoAccessor:
             log.debug("This dataset has a single vertical level, thus final variables will only have a N_PROF "
                       "dimension and no N_LEVELS")
 
+        # differentiate bgc expert mode with the mode_variable
+        self.mode_variable = "PARAMETER_DATA_MODE" if "PARAMETER_DATA_MODE" in this else "DATA_MODE"
+
+        if self.mode_variable == "PARAMETER_DATA_MODE":
+            parameter_data_mode = []
+            station_parameters = []
+            for uid in np.unique(dummy_argo_uid):
+                # select the first occurrence
+                index = np.where(dummy_argo_uid == uid)[0][0]
+                parameter_data_mode.append(this.PARAMETER_DATA_MODE.isel(N_POINTS=index).data)
+                station_parameters.append(this.STATION_PARAMETERS.isel(N_POINTS=index).data)
+
+            this = this.drop_vars(['PARAMETER_DATA_MODE', 'STATION_PARAMETERS'])
+
         # Store the initial set of coordinates:
         coords_list = list(this.coords)
         this = this.reset_coords()
@@ -576,6 +590,14 @@ class ArgoAccessor:
         if 'N_LEVELS' in new_ds['LATITUDE'].dims:
             new_ds['LATITUDE'] = new_ds['LATITUDE'].isel(N_LEVELS=0)  # Make sure LAT is (N_PROF) and not (N_PROF, N_LEVELS)
             new_ds['LONGITUDE'] = new_ds['LONGITUDE'].isel(N_LEVELS=0)
+
+        # Add the PARAMETER_DATA_MODE and STATION_PARAMETERS created above in the function with specific dimensions
+        if self.mode_variable == "PARAMETER_DATA_MODE":
+            new_ds = new_ds.assign(
+                {'STATION_PARAMETERS': (('N_PROF', 'N_PARAM'), station_parameters),
+                 'PARAMETER_DATA_MODE': (('N_PROF', 'N_PARAM'), parameter_data_mode),
+                 }
+            )
 
         # Misc formatting
         new_ds = new_ds.sortby("TIME")
@@ -706,7 +728,7 @@ class ArgoAccessor:
                             # get the right PARAMETER_DATA_MODE for the variable v
                             ma_liste = [True if var == v else False for var in possible_list]
                             corresp_data_mode = xds[key][ma_liste].isel(N_PARAM=0)
-                            # select the correpsonding data mode for variable v
+                            # select the corresponding data mode for variable v
                             xds[v] = xds[v].where(
                                 corresp_data_mode == value,
                                 drop=True
