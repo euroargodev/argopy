@@ -20,8 +20,8 @@ from argopy.utilities import (
     toYearFraction,
     groupby_remap
 )
+from argopy.options import OPTIONS
 from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueError
-
 
 log = logging.getLogger("argopy.xarray")
 
@@ -525,9 +525,13 @@ class ArgoAccessor:
                 # select the first occurrence
                 index = np.where(dummy_argo_uid == uid)[0][0]
                 parameter_data_mode.append(this.PARAMETER_DATA_MODE.isel(N_POINTS=index).data)
-                station_parameters.append(this.STATION_PARAMETERS.isel(N_POINTS=index).data)
+                if OPTIONS.get('src') == 'gdac':
+                    station_parameters.append(this.STATION_PARAMETERS.isel(N_POINTS=index).data)
 
-            this = this.drop_vars(['PARAMETER_DATA_MODE', 'STATION_PARAMETERS'])
+            this = this.drop_vars(['PARAMETER_DATA_MODE'])
+
+            if OPTIONS.get('src') == 'gdac':
+                this = this.drop_vars(['STATION_PARAMETERS'])
 
         # Store the initial set of coordinates:
         coords_list = list(this.coords)
@@ -611,10 +615,12 @@ class ArgoAccessor:
         # Add the PARAMETER_DATA_MODE and STATION_PARAMETERS created above in the function with specific dimensions
         if self.mode_variable == "PARAMETER_DATA_MODE":
             new_ds = new_ds.assign(
-                {'STATION_PARAMETERS': (('N_PROF', 'N_PARAM'), station_parameters),
-                 'PARAMETER_DATA_MODE': (('N_PROF', 'N_PARAM'), parameter_data_mode),
-                 }
+                {'PARAMETER_DATA_MODE': (('N_PROF', 'N_PARAM'), parameter_data_mode)}
             )
+            if OPTIONS.get('src') == 'gdac':
+                new_ds = new_ds.assign(
+                    {'STATION_PARAMETERS': (('N_PROF', 'N_PARAM'), station_parameters)}
+                )
 
         # Misc formatting
         new_ds = new_ds.sortby("TIME")
