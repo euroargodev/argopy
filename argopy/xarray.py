@@ -841,7 +841,10 @@ class ArgoAccessor:
             """
 
             def merge_this(a1, a2, a3):
-                return xr.merge((xr.merge((a1, a2)), a3))
+                try:
+                    return xr.merge((xr.merge((a1, a2)), a3))
+                except:
+                    return xr.merge((xr.merge((a1, a2), compat='override'), a3), compat='override')
 
             DA = merge_this(
                 this_argo_r[this_vname],
