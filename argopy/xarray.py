@@ -792,7 +792,7 @@ class ArgoAccessor:
                 Split full dataset into 3 datasets
             """
             # Real-time:
-            argo_r = safe_where_eq(xds, "DATA_MODE", "R")
+            argo_r = safe_where_eq(xds, self.mode_variable, "R")
             for v in plist:
                 vname = v.upper() + "_ADJUSTED"
                 if vname in argo_r:
@@ -804,7 +804,7 @@ class ArgoAccessor:
                 if vname in argo_r:
                     argo_r = argo_r.drop_vars(vname)
             # Real-time adjusted:
-            argo_a = safe_where_eq(xds, "DATA_MODE", "A")
+            argo_a = safe_where_eq(xds, self.mode_variable, "A")
             for v in plist:
                 vname = v.upper()
                 if vname in argo_a:
@@ -813,7 +813,7 @@ class ArgoAccessor:
                 if vname in argo_a:
                     argo_a = argo_a.drop_vars(vname)
             # Delayed mode:
-            argo_d = safe_where_eq(xds, "DATA_MODE", "D")
+            argo_d = safe_where_eq(xds, self.mode_variable, "D")
 
             return argo_r, argo_a, argo_d
 
