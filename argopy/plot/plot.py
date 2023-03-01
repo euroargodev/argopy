@@ -307,6 +307,10 @@ def scatter_map(
 
     Note that all parameters have default values.
 
+    Warnings
+    --------
+    This function requires `Cartopy <https://scitools.org.uk/cartopy/docs/latest/>`_.
+
     Examples
     --------
     ::
@@ -382,9 +386,6 @@ def scatter_map(
     kwargs
         All other arguments are passed to :class:`~matplotlib:matplotlib.figure.Figure.subplots`
 
-    Warnings
-    --------
-    This function requires `Cartopy <https://scitools.org.uk/cartopy/docs/latest/>`_.
 
     """
     if isinstance(data, xr.Dataset) and data.argo._type == "point":

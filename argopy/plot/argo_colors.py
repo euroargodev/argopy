@@ -13,7 +13,7 @@ if has_seaborn:
 
 @warnUnless(has_mpl, "requires matplotlib to be used")
 class ArgoColors:
-    """ Handy class to manage discrete coloring for Argo related variables
+    """Class to manage discrete coloring for Argo related variables
 
     Call signatures::
 
@@ -39,7 +39,7 @@ class ArgoColors:
         "Dark2": 8,
         "Accent": 8,
     }
-    """Number of colors in quantitative maps"""
+    """Dictionary with number of colors in known quantitative maps"""
 
     COLORS = {'CYAN': (18 / 256, 235 / 256, 229 / 256),
               'BLUE': (16 / 256, 137 / 256, 182 / 256),
@@ -49,15 +49,16 @@ class ArgoColors:
               }
     """Set of Argo colors derived from the logo"""
 
-    def __init__(self, name="Set1", N=None):
+    def __init__(self, name: str = "Set1", N: int = None):
         """
 
         Parameters
         ----------
-        name: str
-            Name of the colormap to use. Default: 'Set1'
-        N: int
-            Number of colors to reduce the colormap to. Default: 12
+        name: str, default: 'Set1'
+            Name of the colormap to use.
+        N: int, default: None
+            Number of colors to reduce the colormap to. If set to None, use the known quantitative colormap number of
+            colors or fall back on a default 12 value.
         """
         if name in self.quantitative and N is None:
             N = self.quantitative[name]
@@ -101,7 +102,7 @@ class ArgoColors:
             },
             "month": {
                 "name": "Months",
-                "aka": [],
+                "aka": ["months", "month", "season", "seasonal"],
                 "constructor": self._colormap_month,
                 "ticks": np.arange(0, 12) + 1,
                 "ticklabels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -113,7 +114,7 @@ class ArgoColors:
 
     @property
     def list_valid_known_colormaps(self):
-        """Return the list of all known colormaps, including a.k.a. names"""
+        """List of all known colormaps, including alternative names"""
         defs = self.known_colormaps
         l = []
         for cname in defs.keys():
@@ -125,7 +126,7 @@ class ArgoColors:
 
     @property
     def _get_known_colormap_constructor(self):
-        """Return the method constructor of a known colormap"""
+        """Method constructor of a known colormap"""
         constructor = None
         if self.name in self.known_colormaps:
             constructor = self.known_colormaps[self.name]['constructor']
@@ -137,6 +138,7 @@ class ArgoColors:
 
     @property
     def definition(self):
+        """Definition of the current known colormap, as a dictionary"""
         defs = None
         if self.registered:
             if self.name in self.known_colormaps:
@@ -273,7 +275,7 @@ class ArgoColors:
 
     @property
     def cmap(self):
-        """Return a discrete colormap
+        """Discrete colormap as :class:`matplotlib.colors.LinearSegmentedColormap`
 
         Returns
         -------
@@ -290,7 +292,7 @@ class ArgoColors:
         return cmap
 
     def cbar(self, ticklabels=None, **kwargs):
-        """Return a colorbar with adjusted tick labels
+        """Return a colorbar with adjusted tick labels, **experimental**
 
         Returns
         -------
@@ -316,7 +318,7 @@ class ArgoColors:
 
     @property
     def lookup(self):
-        """Return a dictionary with ticks as keys and colors as values"""
+        """Dictionary with ticks as keys and colors as values"""
         cmap = self.cmap
         defs = self.definition
         if defs is not None:
@@ -329,7 +331,7 @@ class ArgoColors:
 
     @property
     def ticklabels(self):
-        """Return a dictionary with ticks as keys and ticklabels as values"""
+        """Dictionary with ticks as keys and ticklabels as values"""
         defs = self.definition
         if defs is not None:
             lookup = {}
@@ -341,6 +343,7 @@ class ArgoColors:
 
     @property
     def palette(self):
+        """Try to return a seaborn color palette as a list of RGB tuples or :class:`matplotlib.colors.ListedColormap`"""
         try:
             if self.Ncolors == 1:
                 return sns.color_palette("light:%s" % self.name, self.Ncolors)

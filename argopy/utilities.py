@@ -3014,6 +3014,7 @@ class OceanOPSDeployments:
     The API is documented here: https://www.ocean-ops.org/api/swagger/?url=https://www.ocean-ops.org/api/1/oceanops-api.yaml
 
     Description of deployment status name:
+
     =========== == ====
     Status      Id Description
     =========== == ====
