@@ -79,7 +79,7 @@ class set_options:
         Possible values: ``phy``, ``bgc`` or ``ref``.
     - ``src``: Source of fetched data.
         Default: ``erddap``.
-        Possible values: ``erddap``, ``localftp``, ``argovis``
+        Possible values: ``erddap``, ``gdac``, ``argovis``. Deprecated values: ``localftp``.
     - ``local_ftp``: Absolute path to a local GDAC ftp copy.
         Default: None
     - ``cachedir``: Absolute path to a local cache directory.
@@ -89,9 +89,9 @@ class set_options:
         Possible values: ``standard`` or ``expert``.
     - ``api_timeout``: Define the time out of internet requests to web API, in seconds.
         Default: 60
-    - ``trust_env``: Allow for local environment variables to be used by fsspec to connect to the internet.
-        Get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True (
-        False by default). Also can get proxy credentials from ~/.netrc file if present.
+    - ``trust_env``: Allow for local environment variables to be used to connect to the internet.
+        Argopy will get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True (
+        False by default) and it can also get proxy credentials from ~/.netrc file if this file exists.
 
     You can use `set_options` either as a context manager:
 

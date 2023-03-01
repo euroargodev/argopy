@@ -613,40 +613,42 @@ class ArgoDataFetcher:
 
 
 class ArgoIndexFetcher:
-    """ Fetcher and post-processor of Argo index data (API facade)
+    """Fetcher and post-processor of Argo index data (API facade)
 
-    Parameters
-    ----------
-    mode: str, optional
-        User mode. Eg: ``standard`` or ``expert``. Set to OPTIONS['mode'] by default if empty.
-    src: str, optional
-         Source of the data to use. Eg: ``erddap``. Set to OPTIONS['src'] by default if empty.
-    ds: str, optional
-        Name of the dataset to load. Eg: ``phy``. Set to OPTIONS['dataset'] by default if empty.
-    **fetcher_kwargs: optional
-        Additional arguments passed on data source fetcher of each access points.
-
-    Notes
-    -----
-    Spec discussions can be found here:
-        https://github.com/euroargodev/argopy/issues/8
-
-        https://github.com/euroargodev/argopy/pull/6
+    An index dataset gather space/time information, and possibly more meta-data, of Argo profiles.
 
     Examples
     --------
     >>> from argopy import IndexFetcher
     >>> adf = IndexFetcher.region([-75, -65, 10, 20]).load()
-    >>> idx.plot()
     >>> idx.index
+    >>> idx.plot()
     """
 
-    def __init__(self, mode: str = "", src: str = "", ds: str = "", **fetcher_kwargs):
+    def __init__(self,
+                 mode: str = OPTIONS["mode"],
+                 src: str = OPTIONS["src"],
+                 ds: str = OPTIONS["dataset"],
+                 **fetcher_kwargs):
+        """Facade for Argo index fetchers
 
-        # Facade options:
-        self._mode = OPTIONS["mode"] if mode == "" else mode
-        self._dataset_id = OPTIONS["dataset"] if ds == "" else ds
-        self._src = OPTIONS["src"] if src == "" else src
+        Parameters
+        ----------
+        mode: str, optional
+            User mode. Eg: ``standard`` or ``expert``.
+
+        src: str, optional
+             Source of the data to use. Eg: ``erddap``.
+
+        ds: str, optional
+            Name of the dataset to load. Eg: ``phy``.
+
+        **fetcher_kwargs: optional
+            Additional arguments passed on data source fetcher of each access points.
+        """
+        self._mode = mode
+        self._dataset_id = ds
+        self._src = src
 
         _VALIDATORS["mode"](self._mode)
         _VALIDATORS["src"](self._src)
