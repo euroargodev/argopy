@@ -3462,9 +3462,8 @@ def cast_types(ds):  # noqa: C901
             da.values = da.values.astype(type)
             da.attrs["casted"] = 1
         except Exception:
-            print("Oops!", sys.exc_info()[0], "occurred.")
-            print("Fail to cast: ", da.dtype, "into:", type, "for: ", da.name)
-            print("Encountered unique values:", np.unique(da))
+            msg = "Oops! %s occurred. Fail to cast <%s> into %s for: %s. Encountered unique values: %s" % (sys.exc_info()[0], str(da.dtype), type, da.name, str(np.unique(da)))
+            log.debug(msg)
         return da
 
     def cast_this_da(da):
