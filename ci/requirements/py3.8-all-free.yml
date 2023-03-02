@@ -5,7 +5,7 @@ dependencies:
   - python=3.8
   - xarray
   - scipy
-  - netCDF4
+  - netcdf4
   - erddapy
   - fsspec
   - aiohttp
@@ -14,7 +14,7 @@ dependencies:
 
   - dask
   - gsw
-  - pyarrow>4.0.0
+  - pyarrow
   - tqdm
   - distributed
 

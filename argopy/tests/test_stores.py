@@ -34,8 +34,10 @@ from argopy.utilities import (
     is_list_of_dicts,
     modified_environ,
     is_list_of_strings,
-    check_wmo, check_cyc,
-    lscache, isconnected
+    check_wmo,
+    check_cyc,
+    lscache,
+    isconnected,
 )
 
 from argopy.stores.argo_index_pd import indexstore_pandas
@@ -224,25 +226,23 @@ class Test_HttpStore:
                     )
                 )
 
-    @requires_connected_argovis
     @safe_to_server_errors
     def test_open_json(self):
-        uri = "https://argovis.colorado.edu/catalog/mprofiles/?ids=['6902746_12']"
+        uri = "http://api.ifremer.fr/argopy/data/ARGO-FULL.json"
         fs = httpstore(timeout=OPTIONS['api_timeout'])
-        assert is_list_of_dicts(fs.open_json(uri))
+        assert isinstance(fs.open_json(uri), dict)
 
-    @requires_connected_argovis
     @safe_to_server_errors
     def test_open_mfjson(self):
         fs = httpstore(timeout=OPTIONS['api_timeout'])
         uri = [
-            "https://argovis.colorado.edu/catalog/mprofiles/?ids=['6902746_%i']" % i
-            for i in [12, 13]
+            "http://api.ifremer.fr/argopy/data/ARGO-FULL.json",
+            "http://api.ifremer.fr/argopy/data/ARGO-BGC.json",
         ]
         for method in ["seq", "thread"]:
             for progress in [True, False]:
                 lst = fs.open_mfjson(uri, method=method, progress=progress)
-                assert all(is_list_of_dicts(x) for x in lst)
+                assert is_list_of_dicts(lst)
 
     @safe_to_server_errors
     def test_read_csv(self):

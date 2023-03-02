@@ -7,16 +7,33 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-v0.1.13 (XX XXX. 202X)
+
+v0.1.13 (xx Feb. 2023)
 ----------------------
+
+**Features and front-end API**
+
+- **New utility class to retrieve the Argo deployment plan from the Ocean-OPS api.** This is the utility class :class:`OceanOPSDeployments` (:pr:`244`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import OceanOPSDeployments
+
+    deployment = OceanOPSDeployments()
+    deployment = OceanOPSDeployments([-90,0,0,90])
+    deployment = OceanOPSDeployments([-90,0,0,90], deployed_only=True) # Remove planification
+
+    df = deployment.to_dataframe()
+    deployment.status_code
 
 **Internals**
 
-- Removed small dependency to Scikit-learn LabelEncoder (:pr:`239`) by `G. Maze <http://www.github.com/gmaze>`_
+- Removed dependency to Scikit-learn LabelEncoder (:pr:`239`) by `G. Maze <http://www.github.com/gmaze>`_
 
 **Breaking changes**
 
-- Data source ``localftp`` is deprecated is now raises an error when called. It's been replaced by the ``gdac`` data source with the appropriate ``ftp`` option. See :ref:`Data sources`.
+- Data source ``localftp`` is deprecated and removed from **argopy**. It's been replaced by the ``gdac`` data source with the appropriate ``ftp`` option. See :ref:`Data sources`. (:pr:`240`) by `G. Maze <http://www.github.com/gmaze>`_
+
 
 v0.1.12 (16 May 2022)
 ----------------------

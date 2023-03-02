@@ -3,14 +3,14 @@ channels:
   - conda-forge
 dependencies:
   - python=3.7
-  - aiohttp=3.8.1
+  - xarray=0.20.2
+  - scipy=1.7.3
+  - netcdf4=1.5.8
   - erddapy=1.2.1
   - fsspec=2022.3.0
-  - netcdf4=1.5.8
+  - aiohttp=3.8.1
   - packaging=21.3
-  - scipy=1.7.3
   - toolz=0.11.2
-  - xarray=0.20.2
 
   - dask=2022.02.0
   - distributed=2022.02.0

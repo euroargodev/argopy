@@ -74,7 +74,7 @@ class ArgoIndexStoreProto(ABC):
     """
 
     backend = "?"
-    """Name of store backend"""
+    """Name of store backend"""  # Pandas or Parquet
 
     search_type = {}
     """Dictionary with search meta-data"""

@@ -2,18 +2,20 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
-  - python=3.8
+  - python=3.9
   - xarray
   - scipy
-  - netcdf4
+  - netCDF4
   - erddapy
   - fsspec
   - aiohttp
   - packaging
   - toolz
 
+  - pip
   - pytest
-  - pytest-cov
-  - pytest-env
+  - setuptools
   - black
   - flake8
+  - pytest-cov
+  - pytest-env
