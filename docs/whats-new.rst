@@ -7,7 +7,7 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-v0.1.13 (xx Feb. 2023)
+v0.1.13 (xx Mar. 2023)
 ----------------------
 
 **Features and front-end API**
