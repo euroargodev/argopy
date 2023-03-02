@@ -36,7 +36,7 @@ from argopy.utilities import (
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
-from utils import requires_connection, requires_gdac, safe_to_server_errors
+from utils import requires_connection, requires_gdac, safe_to_server_errors, requires_oops
 
 
 def test_invalid_dictionnary():
