@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+OWNER='euroargodev'
+REPO='argopy'
+
+# list workflows
+gh api -X GET /repos/$OWNER/$REPO/actions/workflows | jq '.workflows[] | .name,.id'
