@@ -215,7 +215,7 @@ html_theme_options = {
     "use_repository_button": True,
     "html_logo": "_static/argopy_logo_long.png",
     #  'canonical_url': '',
-    'analytics_id': 'UA-73130866-2',  # Provided by Google in your dashboard
+    'analytics_id': 'G-C4MWDXYMXQ',
     'logo_only': True,
     'display_version': False,
     'prev_next_buttons_location': 'bottom',
@@ -224,9 +224,9 @@ html_theme_options = {
     # 'vcs_pageview_mode': '',
     # 'style_nav_header_background': 'white',
     # # Toc options
-    'collapse_navigation': True,
+    'collapse_navigation': False,
     # 'sticky_navigation': True,
-    'navigation_depth': 4,
+    # 'navigation_depth': 4,
     # 'includehidden': True,
     # 'titles_only': False
 #    'launch_buttons': { "thebe": True}
@@ -312,5 +312,7 @@ intersphinx_mapping = {
     'dask_ml': ('https://ml.dask.org/', None),
     'sklearn': ('https://scikit-learn.org/stable/', None),
     'seaborn': ('https://seaborn.pydata.org/', None),
-    'fsspec': ('https://filesystem-spec.readthedocs.io/en/stable/', None)
+    'fsspec': ('https://filesystem-spec.readthedocs.io/en/stable/', None),
+    'pyarrow': ('https://arrow.apache.org/docs/', None),
+    'IPython': ('https://ipython.readthedocs.io/en/stable/', None),
 }

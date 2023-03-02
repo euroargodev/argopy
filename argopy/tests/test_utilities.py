@@ -22,15 +22,21 @@ from argopy.utilities import (
     is_list_of_strings,
     format_oneline, is_indexbox,
     check_wmo, is_wmo,
+    check_cyc, is_cyc,
     wmo2box,
     modified_environ,
     wrap_longitude,
     toYearFraction, YearFraction_to_datetime,
-    TopoFetcher
+    TopoFetcher,
+    Registry,
+    float_wmo,
+    get_coriolis_profile_id,
+    get_ea_profile_page,
+    OceanOPSDeployments,
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
-from . import requires_connection, requires_localftp, safe_to_server_errors
+from utils import requires_connection, requires_localftp, safe_to_server_errors, requires_oops
 
 
 def test_invalid_dictionnary():
@@ -85,9 +91,8 @@ def test_clear_cache():
     ftproot, flist = argopy.tutorial.open_dataset("localftp")
     with tempfile.TemporaryDirectory() as cachedir:
         with argopy.set_options(cachedir=cachedir, local_ftp=ftproot):
-            loader = ArgoDataFetcher(src="localftp", cache=True).profile(2902696, 12)
-            loader.to_xarray()  # 1st call to load from source and save in memory
-            loader.to_xarray()  # 2nd call to load from memory and save in cache
+            loader = ArgoDataFetcher(src="gdac", ftp=ftproot, cache=True).profile(2902696, 12)
+            loader.to_xarray()
             argopy.clear_cache()
             assert os.path.exists(cachedir) is True
             assert len(os.listdir(cachedir)) == 0
@@ -469,6 +474,7 @@ def test_is_wmo():
     assert is_wmo(12345)
     assert is_wmo([12345])
     assert is_wmo([12345, 1234567])
+
     with pytest.raises(ValueError):
         is_wmo(1234, errors="raise")
     with pytest.raises(ValueError):
@@ -477,10 +483,20 @@ def test_is_wmo():
         is_wmo(1234.12, errors="raise")
     with pytest.raises(ValueError):
         is_wmo(12345.7, errors="raise")
-    assert not is_wmo(12, errors="silent")
-    assert not is_wmo(-12, errors="silent")
-    assert not is_wmo(1234.12, errors="silent")
-    assert not is_wmo(12345.7, errors="silent")
+
+    with pytest.warns(UserWarning):
+        is_wmo(1234, errors="warn")
+    with pytest.warns(UserWarning):
+        is_wmo(-1234, errors="warn")
+    with pytest.warns(UserWarning):
+        is_wmo(1234.12, errors="warn")
+    with pytest.warns(UserWarning):
+        is_wmo(12345.7, errors="warn")
+
+    assert not is_wmo(12, errors="ignore")
+    assert not is_wmo(-12, errors="ignore")
+    assert not is_wmo(1234.12, errors="ignore")
+    assert not is_wmo(12345.7, errors="ignore")
 
 
 def test_check_wmo():
@@ -488,6 +504,42 @@ def test_check_wmo():
     assert check_wmo([1234567]) == [1234567]
     assert check_wmo([12345, 1234567]) == [12345, 1234567]
     assert check_wmo(np.array((12345, 1234567), dtype='int')) == [12345, 1234567]
+
+
+def test_is_cyc():
+    assert is_cyc(123)
+    assert is_cyc([123])
+    assert is_cyc([12, 123, 1234])
+
+    with pytest.raises(ValueError):
+        is_cyc(12345, errors="raise")
+    with pytest.raises(ValueError):
+        is_cyc(-1234, errors="raise")
+    with pytest.raises(ValueError):
+        is_cyc(1234.12, errors="raise")
+    with pytest.raises(ValueError):
+        is_cyc(12345.7, errors="raise")
+
+    with pytest.warns(UserWarning):
+        is_cyc(12345, errors="warn")
+    with pytest.warns(UserWarning):
+        is_cyc(-1234, errors="warn")
+    with pytest.warns(UserWarning):
+        is_cyc(1234.12, errors="warn")
+    with pytest.warns(UserWarning):
+        is_cyc(12345.7, errors="warn")
+
+    assert not is_cyc(12345, errors="ignore")
+    assert not is_cyc(-12, errors="ignore")
+    assert not is_cyc(1234.12, errors="ignore")
+    assert not is_cyc(12345.7, errors="ignore")
+
+
+def test_check_cyc():
+    assert check_cyc(123) == [123]
+    assert check_cyc([12]) == [12]
+    assert check_cyc([12, 123]) == [12, 123]
+    assert check_cyc(np.array((123, 1234), dtype='int')) == [123, 1234]
 
 
 def test_modified_environ():
@@ -552,3 +604,146 @@ class Test_TopoFetcher():
         ds = fetcher.to_xarray()
         assert isinstance(ds, xr.Dataset)
         assert 'elevation' in ds.data_vars
+
+
+class Test_float_wmo():
+
+    def test_init(self):
+        assert isinstance(float_wmo(2901746), float_wmo)
+        assert isinstance(float_wmo(float_wmo(2901746)), float_wmo)
+
+    def test_isvalid(self):
+        assert float_wmo(2901746).isvalid
+        assert not float_wmo(12, errors='ignore').isvalid
+
+    def test_ppt(self):
+        assert isinstance(str(float_wmo(2901746)), str)
+        assert isinstance(repr(float_wmo(2901746)), str)
+
+    def test_comparisons(self):
+        assert float_wmo(2901746) == float_wmo(2901746)
+        assert float_wmo(2901746) != float_wmo(2901745)
+        assert float_wmo(2901746) >= float_wmo(2901746)
+        assert float_wmo(2901746) > float_wmo(2901745)
+        assert float_wmo(2901746) <= float_wmo(2901746)
+        assert float_wmo(2901746) < float_wmo(2901747)
+
+    def test_hashable(self):
+        assert isinstance(hash(float_wmo(2901746)), int)
+
+
+class Test_Registry():
+
+    opts = [(None, 'str'), (['hello', 'world'], str), (None, float_wmo), ([2901746, 4902252], float_wmo)]
+    opts_ids = ["%s, %s" % ((lambda x: 'iterlist' if x is not None else x)(opt[0]), repr(opt[1])) for opt in opts]
+
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_init(self, opts):
+        assert isinstance(Registry(opts[0], dtype=opts[1]), Registry)
+
+    opts = [(['hello', 'world'], str), ([2901746, 4902252], float_wmo)]
+    opts_ids = ["%s, %s" % ((lambda x: 'iterlist' if x is not None else x)(opt[0]), repr(opt[1])) for opt in opts]
+
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_commit(self, opts):
+        R = Registry(dtype=opts[1])
+        R.commit(opts[0])
+
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_append(self, opts):
+        R = Registry(dtype=opts[1])
+        R.append(opts[0][0])
+
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_extend(self, opts):
+        R = Registry(dtype=opts[1])
+        R.append(opts[0])
+
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_insert(self, opts):
+        R = Registry(opts[0][0], dtype=opts[1])
+        R.insert(0, opts[0][-1])
+        assert R[0] == opts[0][-1]
+
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_remove(self, opts):
+        R = Registry(opts[0], dtype=opts[1])
+        R.remove(opts[0][0])
+        assert opts[0][0] not in R
+
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_copy(self, opts):
+        R = Registry(opts[0], dtype=opts[1])
+        assert R == R.copy()
+
+    bad_opts = [(['hello', 12], str), ([2901746, 1], float_wmo)]
+    bad_opts_ids = ["%s, %s" % ((lambda x: 'iterlist' if x is not None else x)(opt[0]), repr(opt[1])) for opt in opts]
+
+    @pytest.mark.parametrize("opts", bad_opts, indirect=False, ids=bad_opts_ids)
+    def test_invalid_dtype(self, opts):
+        with pytest.raises(ValueError):
+            Registry(opts[0][0], dtype=opts[1], invalid='raise').commit(opts[0][-1])
+        with pytest.warns(UserWarning):
+            Registry(opts[0][0], dtype=opts[1], invalid='warn').commit(opts[0][-1])
+        # Raise nothing:
+        Registry(opts[0][0], dtype=opts[1], invalid='ignore').commit(opts[0][-1])
+
+
+@requires_connection
+def test_get_coriolis_profile_id():
+    assert isinstance(get_coriolis_profile_id(6901929), pd.core.frame.DataFrame)
+    assert isinstance(get_coriolis_profile_id(6901929, 12), pd.core.frame.DataFrame)
+
+
+@requires_connection
+def test_get_ea_profile_page():
+    assert is_list_of_strings(get_ea_profile_page(6901929))
+    assert is_list_of_strings(get_ea_profile_page(6901929, 12))
+
+
+@requires_oops
+class Test_OceanOPS_Deployments:
+
+    # Define the list of region/box to use in tests
+    valid_boxes = [[val if i1 != i2 else None for i2, val in enumerate(
+        [-90,
+         0,
+         0,
+         90,
+         pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"),
+         (pd.to_datetime('now', utc=True) + pd.Timedelta(365, unit='days')).strftime("%Y-%m-%d")]
+    )] for i1 in range(6)]
+
+    # Combine the list of boxex with other possible options:
+    scenarios = [(box, deployed_only) for box in valid_boxes for deployed_only in [True, False]]
+    scenarios_ids = ["%s, %s" % (opt[0], opt[1]) for opt in scenarios]
+
+    @pytest.fixture
+    def an_instance(self, request):
+        """ Fixture to create a OceanOPS_Deployments instance for a given set of arguments """
+        if isinstance(request.param, tuple):
+            box = request.param[0]
+            deployed_only = request.param[1]
+        else:
+            box = request.param
+            deployed_only = None
+
+        args = {"box": box, "deployed_only": deployed_only}
+        return OceanOPSDeployments(**args)
+
+    @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
+    def test_init(self, an_instance):
+        assert isinstance(an_instance, OceanOPSDeployments)
+
+    @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
+    def test_attributes(self, an_instance):
+        dep = an_instance
+        assert isinstance(dep.uri, str)
+        assert isinstance(dep.uri_decoded, str)
+        assert isinstance(dep.status_code, pd.DataFrame)
+        assert isinstance(dep.box_name, str)
+    #
+    @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
+    def test_to_dataframe(self, an_instance):
+        assert isinstance(an_instance.to_dataframe(), pd.DataFrame)
+

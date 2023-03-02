@@ -2,33 +2,32 @@
 # -*coding: UTF-8 -*-
 #
 # Argo data fetcher for Argovis.
-# Code borrows heavily from API gathered at:
-# https://github.com/earthcube2020/ec20_tucker_etal/blob/master/EC2020_argovis_python_api.ipynb
-#
-# This is comprised of functions used to query Argovis api
-# query functions either return dictionary objects or error messages.
 #
 
 import numpy as np
 import pandas as pd
 import getpass
+import logging
 from .proto import ArgoDataFetcherProto
 from abc import abstractmethod
 import warnings
-import urllib
 
 from argopy.stores import httpstore
 from argopy.options import OPTIONS
 from argopy.utilities import list_standard_variables, format_oneline, Chunker
-from argopy.plotters import open_dashboard
+from argopy.errors import DataNotFound
+
 
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy']  # First is default
-api_server = 'https://argovis.colorado.edu'  # API root url
+# api_server = 'https://argovis.colorado.edu'  # API root url
+api_server = "https://argovisbeta02.colorado.edu"   # v1 API, expires on March 31, 2023
 api_server_check = (
     api_server + "/selection/overview"
 )  # URL to check if the API is alive
+
+log = logging.getLogger("argopy.argovis.data")
 
 
 class ArgovisDataFetcher(ArgoDataFetcherProto):
@@ -137,9 +136,9 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         return this
 
     def _add_attributes(self, this):  # noqa: C901
-        """ Add variables attributes not return by erddap requests (csv)
+        """ Add variables attributes not return by argovis requests
 
-            This is hard coded, but should be retrieved from an API somewhere
+            #todo: This is hard coded, but should be retrieved from an API somewhere
         """
         for v in this.data_vars:
             if "TEMP" in v and "_QC" not in v:
@@ -251,7 +250,12 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             This was made to debug for fsspec caching system not working with cache of profile and region in argovis
             Not working yet, see: https://github.com/euroargodev/argopy/issues/101
         """
-        return urls
+        # return urls
+        def safe_for_fsspec_cache(url):
+            url = url.replace("[", "%5B")  # This is the one really necessary
+            url = url.replace("]", "%5D")  # For consistency
+            return url
+        return [safe_for_fsspec_cache(url) for url in urls]
         # return [urllib.parse.quote(url, safe='/:?=[]&') for url in urls]
 
     def json2dataframe(self, profiles):
@@ -292,6 +296,8 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             df = df[[value for value in self.key_map.values() if value in df.columns]]
             df_list[i] = df
         df = pd.concat(df_list, ignore_index=True)
+        if df.shape[0] == 0:
+            raise DataNotFound("No data found for: %s" % self.cname())
         df.sort_values(by=["TIME", "PRES"], inplace=True)
         df = df.set_index(["N_POINTS"])
         return df
@@ -318,8 +324,8 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
 
         # Cast data types and add variable attributes (not available in the csv download):
         ds['TIME'] = ds['TIME'].astype(np.datetime64)
-        ds = ds.argo.cast_types()
         ds = self._add_attributes(ds)
+        ds = ds.argo.cast_types()
 
         # Remove argovis file attributes and replace them with argopy ones:
         ds.attrs = {}
@@ -376,7 +382,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
 
 
 class Fetch_wmo(ArgovisDataFetcher):
-    def init(self, WMO=[], CYC=None):
+    def init(self, WMO=[], CYC=None, **kwargs):
         """ Create Argo data loader for WMOs and CYCs
 
             Parameters
@@ -386,20 +392,17 @@ class Fetch_wmo(ArgovisDataFetcher):
             CYC : int, np.array(int), list(int)
                 The cycle numbers to load.
         """
-        if isinstance(CYC, int):
-            CYC = np.array(
-                (CYC,), dtype="int"
-            )  # Make sure we deal with an array of integers
-        if isinstance(CYC, list):
-            CYC = np.array(
-                CYC, dtype="int"
-            )  # Make sure we deal with an array of integers
         self.WMO = WMO
         self.CYC = CYC
 
         self.definition = "?"
         if self.dataset_id == "phy":
-            self.definition = "Argovis Argo data fetcher for floats"
+            self.definition = "Argovis Argo data fetcher"
+        if self.CYC is not None:
+            self.definition = "%s for profiles" % self.definition
+        else:
+            self.definition = "%s for floats" % self.definition
+
         return self
 
     def get_url(self, wmo: int, cyc: int = None) -> str:
@@ -407,7 +410,7 @@ class Fetch_wmo(ArgovisDataFetcher):
         if cyc is None:
             return (self.server + "/catalog/platforms/{}").format(str(wmo))
         else:
-            profIds = [str(wmo) + "_" + str(c) for c in cyc.tolist()]
+            profIds = [str(wmo) + "_" + str(c) for c in cyc]
             return (
                 (self.server + "/catalog/mprofiles/?ids={}")
                 .format(profIds)
@@ -434,16 +437,10 @@ class Fetch_wmo(ArgovisDataFetcher):
         urls = list_bunch(self.WMO, self.CYC)
         return self.url_encode(urls)
 
-    def dashboard(self, **kw):
-        if len(self.WMO) == 1:
-            return open_dashboard(wmo=self.WMO[0], **kw)
-        else:
-            warnings.warn("Plot dashboard only available for request with a single float")
-
 
 class Fetch_box(ArgovisDataFetcher):
 
-    def init(self, box: list):
+    def init(self, box: list, **kwargs):
         """ Create Argo data loader
 
             Parameters
@@ -454,13 +451,13 @@ class Fetch_box(ArgovisDataFetcher):
                 or:
                 box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
-        if len(box) == 6:
+        self.BOX = box.copy()
+        if len(self.BOX) == 6:
             # Select the last months of data:
             end = pd.to_datetime("now", utc=True)
             start = end - pd.DateOffset(months=1)
-            box.append(start.strftime("%Y-%m-%d"))
-            box.append(end.strftime("%Y-%m-%d"))
-        self.BOX = box
+            self.BOX.append(start.strftime("%Y-%m-%d"))
+            self.BOX.append(end.strftime("%Y-%m-%d"))
 
         self.definition = "?"
         if self.dataset_id == "phy":

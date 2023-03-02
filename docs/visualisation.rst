@@ -3,7 +3,7 @@
 Data visualisation
 ##################
 
-Although **argopy** is not focus on visualisation, it provides a few functions to get you started. Plotting functions are available for both the data and index fetchers.
+Although **argopy** is not focused on visualisation, it provides a few functions to get you started. Plotting functions are available for both the data and index fetchers.
 
 Trajectories
 ------------
@@ -48,23 +48,57 @@ It is also possible to create bar plot for histograms on some data properties: '
 .. image:: _static/bar_profiler.png
 
 
-Float dashboard
----------------
+Dashboards
+----------
 
-When working in Jupyter notebook, you can insert the EuroArgo dashboard in a cell with:
+We provide a few shortcuts toward third-party online dashboards that can help you visualise float or profile data.
+When working in Jupyter notebook, you can insert a dashboard in a cell, or get the url toward the dashboard to open it elsewhere.
+You have access to the Euro-Argo ERIC, Ocean-OPS, Argovis and BGC dashboards with the option ``type``. See :meth:`argopy.dashboard` for all the options.
+
+Summary of available dashboards:
+
+=================== ==== ===== =======
+**Type**            base float profile
+=================== ==== ===== =======
+"data", "ea"        X    X     X
+"meta"              X    X     X
+"bgc"               X    X     X
+"ocean-ops", "op"   X    X
+"coriolis", "cor"        X
+"argovis"           X    X     X
+=================== ==== ===== =======
+
+.. note::
+
+    Dashboards can be open at the package level or from data fetchers.
+
+Open the default dashboard:
 
 .. code-block:: python
 
     import argopy
     argopy.dashboard()
 
-.. image:: _static/dashboard.png
+.. image:: _static/dashboard_data.png
 
-and for a specific float, just provide its WMO:
+for a specific float, just provide its WMO:
 
 .. code-block:: python
 
     import argopy
-    argopy.dashboard(wmo=6902746)
+    argopy.dashboard(5904797)
+    # or
+    ArgoDataFetcher().float(5904797).dashboard()
 
 .. image:: _static/dashboard_float.png
+
+or for specific float cycle:
+
+.. code-block:: python
+
+    import argopy
+    argopy.dashboard(5904797, 12)
+    # or
+    ArgoDataFetcher().profile(5904797, 12).dashboard()
+
+.. image:: _static/dashboard_profile.png

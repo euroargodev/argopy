@@ -11,17 +11,20 @@ from argopy.errors import (
     InvalidFetcher
 )
 from argopy.utilities import is_list_of_strings
-from . import (
+from utils import (
     requires_fetcher,
     requires_connected_erddap_phy,
     requires_localftp,
+    # requires_gdac,
+    requires_connected_gdac,
     requires_connected_argovis,
     requires_ipython,
     safe_to_server_errors,
     requires_matplotlib,
     has_matplotlib,
     has_seaborn,
-    has_cartopy
+    has_cartopy,
+    has_ipython,
 )
 
 
@@ -30,6 +33,8 @@ if has_matplotlib:
 
 if has_cartopy:
     import cartopy
+
+skip_for_debug = pytest.mark.skipif(True, reason="Taking too long !")
 
 
 @requires_localftp
@@ -102,6 +107,7 @@ class Test_Facade:
         with argopy.set_options(local_ftp=self.local_ftp):
             assert isinstance(self.__get_fetcher()[1].to_index(), pd.core.frame.DataFrame)
             assert isinstance(self.__get_fetcher()[1].to_index(full=True), pd.core.frame.DataFrame)
+            assert isinstance(self.__get_fetcher()[1].to_index(full=False, coriolis_id=True), pd.core.frame.DataFrame)
 
     def test_load(self):
         with argopy.set_options(local_ftp=self.local_ftp):
@@ -153,21 +159,37 @@ class Test_Facade:
                     assert isinstance(fig, mpl.figure.Figure)
                     mpl.pyplot.close(fig)
 
-            # Test invalid plot
             with pytest.raises(ValueError):
                 fetcher.plot(ptype='invalid_cat', with_seaborn=ws)
 
-    @requires_ipython
     @requires_matplotlib
     def test_plot_qc_altimetry(self):
-        import IPython
+        if has_ipython:
+            import IPython
+
         with argopy.set_options(local_ftp=self.local_ftp):
             f, fetcher = self.__get_fetcher(pt='float')
-
-            # Test 'qc_altimetry'
             dsh = fetcher.plot(ptype='qc_altimetry', embed='slide')
-            assert isinstance(dsh(0), IPython.display.Image)
+            if has_ipython:
+                assert isinstance(dsh(0), IPython.display.Image)
+            else:
+                assert isinstance(dsh, dict)
 
+    # @requires_ipython
+    # @requires_matplotlib
+    # def test_plot_qc_altimetry(self):
+    #     import IPython
+    #     with argopy.set_options(local_ftp=self.local_ftp):
+    #         f, fetcher = self.__get_fetcher(pt='float')
+    #
+    #         # Test 'qc_altimetry'
+    #         dsh = fetcher.plot(ptype='qc_altimetry', embed='slide')
+    #         assert isinstance(dsh(0), IPython.display.Image)
+
+
+"""
+The following tests are not necessary, since data fetching is tested from each data fetcher tests 
+"""
 @requires_fetcher
 class Test_DataFetching:
     """ Test main API facade for all available fetching backends and default dataset """
@@ -180,15 +202,24 @@ class Test_DataFetching:
     fetcher_opts = {}
 
     mode = ["standard", "expert"]
+    # mode = ["standard"]
 
     # Define API entry point options to tests:
+    # args = {}
+    # args["float"] = [[2901623], [2901623, 6901929]]
+    # args["profile"] = [[2901623, 12], [2901623, np.arange(12, 14)], [6901929, [1, 6]]]
+    # args["region"] = [
+    #     [12.181, 13.459, -40.416, -39.444, 0.0, 1014.0],
+    #     [12.181, 17.459, -40.416, -34.444, 0.0, 2014.0, '2008-06-07', '2008-09-06'],
+    # ]
     args = {}
-    args["float"] = [[2901623], [2901623, 6901929]]
-    args["profile"] = [[2901623, 12], [2901623, np.arange(12, 14)], [6901929, [1, 6]]]
+    args["float"] = [[4901079]]
+    args["profile"] = [[4901079, 135], [4901079, [138, 139]]]
     args["region"] = [
-        [-60, -55, 40.0, 45.0, 0.0, 10.0],
-        [-60, -55, 40.0, 45.0, 0.0, 10.0, "2007-08-01", "2007-09-01"],
+        [-50., -45., 36., 37., 0., 100.],
+        [-50., -45., 36., 37., 0., 100., "2008-01-01", "2008-02-15"],
     ]
+
 
     def test_profile_from_float(self):
         with pytest.raises(TypeError):
@@ -204,7 +235,7 @@ class Test_DataFetching:
         # Only test specific output structures:
         # f.to_xarray()
         # f.to_dataframe()
-        # f.to_index()
+        # f.to_index(full=False)
 
     def __test_float(self, bk, **ftc_opts):
         """ Test float for a given backend """
@@ -214,18 +245,20 @@ class Test_DataFetching:
                 f = ArgoDataFetcher(src=bk, mode=mode, **options).float(arg)
                 self.__assert_fetcher(f)
 
-    def __test_profile(self, bk):
+    def __test_profile(self, bk, **ftc_opts):
         """ Test profile for a given backend """
         for arg in self.args["profile"]:
             for mode in self.mode:
-                f = ArgoDataFetcher(src=bk, mode=mode).profile(*arg)
+                options = {**self.fetcher_opts, **ftc_opts}
+                f = ArgoDataFetcher(src=bk, mode=mode, **options).profile(*arg)
                 self.__assert_fetcher(f)
 
-    def __test_region(self, bk):
+    def __test_region(self, bk, **ftc_opts):
         """ Test region for a given backend """
         for arg in self.args["region"]:
             for mode in self.mode:
-                f = ArgoDataFetcher(src=bk, mode=mode).region(arg)
+                options = {**self.fetcher_opts, **ftc_opts}
+                f = ArgoDataFetcher(src=bk, mode=mode, **options).region(arg)
                 self.__assert_fetcher(f)
 
     @requires_connected_erddap_phy
@@ -244,6 +277,13 @@ class Test_DataFetching:
     def test_float_argovis(self):
         self.__test_float("argovis")
 
+    # @requires_connected_gdac
+    @safe_to_server_errors
+    def test_float_gdac(self):
+        # self.__test_float("gdac", N_RECORDS=100)
+        with argopy.set_options(ftp=self.local_ftp):
+            self.__test_float("gdac")
+
     @requires_connected_erddap_phy
     @safe_to_server_errors
     def test_profile_erddap(self):
@@ -260,6 +300,12 @@ class Test_DataFetching:
     def test_profile_argovis(self):
         self.__test_profile("argovis")
 
+    # @requires_connected_gdac
+    @safe_to_server_errors
+    def test_profile_gdac(self):
+        with argopy.set_options(ftp=self.local_ftp):
+            self.__test_profile("gdac")
+
     @requires_connected_erddap_phy
     @safe_to_server_errors
     def test_region_erddap(self):
@@ -275,3 +321,10 @@ class Test_DataFetching:
     @safe_to_server_errors
     def test_region_argovis(self):
         self.__test_region("argovis")
+
+    # @requires_connected_gdac
+    @safe_to_server_errors
+    def test_region_gdac(self):
+        # self.__test_region("gdac", N_RECORDS=100)
+        with argopy.set_options(ftp=self.local_ftp):
+            self.__test_region("gdac")

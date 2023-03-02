@@ -157,7 +157,7 @@ to build the docs you need to use the specific file ``docs/requirements.txt``:
 
 .. code-block:: bash
 
-    $ conda create --yes -n argopy-docs python=3.6 xarray dask numpy pytest future gsw sphinx sphinx_rtd_theme
+    $ conda create --yes -n argopy-docs python=3.8 xarray dask numpy pytest future gsw sphinx
     $ conda activate argopy-docs
     $ pip install argopy
     $ pip install -r docs/requirements.txt
@@ -271,12 +271,11 @@ install it, check the version, and tear down the virtual environment.
 
 .. code-block:: bash
 
-    $ conda create --yes -n argopy-tests python=3.6 xarray dask numpy pytest future gsw
+    $ conda create -c conda-forge -n argopy-tests python=3.8
+    $ conda env update -f ci/requirements/py3.8-dev.yml
     $ conda activate argopy-tests
     $ pip install argopy
     $ python -c 'import argopy; print(argopy.__version__);'
-    $ conda deactivate
-    $ conda env remove --yes -n argopy-tests
 
 
 Code standards

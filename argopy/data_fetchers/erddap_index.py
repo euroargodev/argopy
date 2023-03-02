@@ -14,8 +14,6 @@ import pandas as pd
 import numpy as np
 import copy
 import logging
-# from packaging import version
-# import fsspec
 
 from abc import ABC, abstractmethod
 
@@ -40,7 +38,7 @@ except Exception:
 access_points = ['wmo', 'box']
 exit_formats = ['xarray', 'dataframe']
 dataset_ids = ['phy']  # First is default
-api_server = 'https://www.ifremer.fr/erddap'  # API root url
+api_server = 'https://erddap.ifremer.fr/erddap/'  # API root url
 api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
 
 
@@ -209,7 +207,7 @@ class Fetch_wmo(ErddapArgoIndexFetcher):
     """
     access_point = 'wmo'
 
-    def init(self, WMO=[]):
+    def init(self, WMO=[], **kwargs):
         """ Create Argo data loader for WMOs
 
             Parameters
@@ -243,7 +241,7 @@ class Fetch_box(ErddapArgoIndexFetcher):
     """
     access_point = 'box'
 
-    def init(self, box=[]):
+    def init(self, box=[], **kwargs):
         """ Create Argo Index loader
 
             Parameters
@@ -252,11 +250,11 @@ class Fetch_box(ErddapArgoIndexFetcher):
             The box domain to load all Argo data for:
             box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
         """
+        self.BOX = box.copy()
         if len(box) == 4:
             # Use all time line:
-            box.append('1900-01-01')
-            box.append('2100-12-31')
-        self.BOX = box
+            self.BOX.append('1900-01-01')
+            self.BOX.append('2100-12-31')
         self.definition = 'Ifremer erddap Argo Index fetcher for a space/time region'
 
         return self

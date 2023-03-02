@@ -2,36 +2,39 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
-  - python=3.8
+  - python=3.7
   - xarray
   - scipy
-  - scikit-learn
   - netcdf4
-  - dask
-  - toolz
   - erddapy
   - fsspec
-  - gsw
   - aiohttp
-  - bottleneck
-  - cartopy
-  - cftime
+  - packaging
+  - toolz
+
+  - dask
+  - gsw
+  - pyarrow
+  - tqdm
   - distributed
-  - ipython
+
   - matplotlib
+  - cartopy
+  - seaborn
+  - ipython
+  - ipywidgets
+  - ipykernel
+
+  - zarr
+  - bottleneck
+  - cftime
+  - cfgrib
   - numpy
   - pandas
-  - packaging
+
   - pip
   - pytest
-  - seaborn
   - setuptools
-  - zarr
-  - tqdm
-  - ipykernel
-  - ipywidgets
-# Not showing up with argopy.show_versions():
-  - cfgrib
   - black
   - flake8
   - pytest-cov
