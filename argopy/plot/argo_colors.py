@@ -396,3 +396,27 @@ class ArgoColors:
             html = '<p>No HTML representation available, please upgrade Matplotlib.</p>'
 
         return html
+
+    def show_COLORS(self):
+        html = []
+
+        td_title = lambda \
+                title: '<td colspan="2"><div style="vertical-align: middle;text-align:center"><strong>%s</strong></div></td>' % title
+        tr_title = lambda title: "<thead><tr>%s</tr></thead>" % td_title(title)
+
+        td_color = lambda color: "<td style='background-color:%s;border-width:0px;width:20px'></td>" % to_hex(color,
+                                                                                                              keep_alpha=True)
+        td_ticklabel = lambda label: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % label
+        tr_tick = lambda color, tick, label: '<tr>%s%s</tr>' % (td_color(color), td_ticklabel(label))
+
+        html.append("<table style='border-collapse:collapse;border-spacing:0'>")
+        html.append("<thead>")
+        html.append(tr_title('ArgoColors.COLORS'))
+        html.append("</thead>")
+        html.append("<tbody>")
+        for ii, tick in enumerate(self.COLORS):
+            html.append(tr_tick(self.COLORS[tick], '', tick))
+        html.append("</tbody>")
+        html.append("</table>")
+
+        return "\n".join(html)

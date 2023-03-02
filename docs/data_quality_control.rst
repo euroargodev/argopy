@@ -23,7 +23,7 @@ Salinity calibration
 
 .. currentmodule:: xarray
 
-The Argo salinity calibration method is called OWC_, after the names of the core developers: Breck Owens, Anny Wong and Cecile Cabanes.
+The Argo salinity calibration method is called [OWC]_, after the names of the core developers: Breck Owens, Anny Wong and Cecile Cabanes.
 Historically, the OWC method has been implemented in `Matlab <https://github.com/ArgoDMQC/matlab_owc>`_ . More recently a `python version has been developed <https://github.com/euroargodev/argodmqc_owc>`_.
 
 Preprocessing data
@@ -148,8 +148,7 @@ Topography
 
 For some QC of trajectories, it can be useful to easily get access to the topography. This can be done with the **argopy** utility :class:`TopoFetcher`:
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
     
     from argopy import TopoFetcher
     box = [-65, -55, 10, 20]
@@ -160,8 +159,7 @@ For some QC of trajectories, it can be useful to easily get access to the topogr
 
 Combined with the fetcher property ``domain``, it now becomes easy to superimpose float trajectory with topography:
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
 
     fetcher = ArgoDataFetcher().float(2901623)
     ds = TopoFetcher(fetcher.domain[0:4], cache=True).to_xarray()

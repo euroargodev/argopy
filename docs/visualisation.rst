@@ -142,9 +142,9 @@ Scatter Maps
 
 The :class:`argopy.plot.scatter_map` utility function is dedicated to making maps with Argo profile positions coloured according to specific variables: **a scatter map**.
 
-Profiles colouring is finely tuned for some variables: QC flags, Data Mode and Deployment Status. By default, floats trajectories are always shown, but this can be changed.
+Profiles colouring is finely tuned for some variables: QC flags, Data Mode and Deployment Status. By default, floats trajectories are always shown, but this can be changed with the ``traj`` boolean option.
 
-Note that the :class:`argopy.plot.scatter_map` function seamlessly with **argopy** profile index :class:`pandas.DataFrame` or a :class:`xarray.Dataset` collection of profiles. However, all default arguments can be overwritten so that it should work with other data models.
+Note that the :class:`argopy.plot.scatter_map` integrates seamlessly with **argopy** :ref:`Index of profiles` :class:`pandas.DataFrame` and :class:`xarray.Dataset` :ref:`collection of profiles <Points vs profiles>`. However, all default arguments can be overwritten so that it should work with other data models.
 
 Let's import the usual suspects and some data to work with.
 
