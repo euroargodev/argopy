@@ -3,10 +3,10 @@ import pytest
 import argopy
 from argopy.options import OPTIONS
 from argopy.errors import OptionValueError, FtpPathError
-from . import requires_localftp
+from utils import requires_localftp, requires_gdac
 
 
-def test_invalid_option():
+def test_invalid_option_name():
     with pytest.raises(ValueError):
         argopy.set_options(not_a_valid_options=True)
 
@@ -25,18 +25,26 @@ def test_opt_local_ftp():
 
     local_ftp = argopy.tutorial.open_dataset("localftp")[0]
     with argopy.set_options(local_ftp=local_ftp):
-        assert OPTIONS["local_ftp"]
+        assert OPTIONS["local_ftp"] == local_ftp
 
+@requires_gdac
+def test_opt_gdac_ftp():
+    with pytest.raises(FtpPathError):
+        argopy.set_options(ftp="invalid_path")
+
+    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
+    with argopy.set_options(ftp=local_ftp):
+        assert OPTIONS["ftp"] == local_ftp
 
 def test_opt_dataset():
     with pytest.raises(OptionValueError):
         argopy.set_options(dataset="invalid_ds")
     with argopy.set_options(dataset="phy"):
-        assert OPTIONS["dataset"]
+        assert OPTIONS["dataset"] == "phy"
     with argopy.set_options(dataset="bgc"):
-        assert OPTIONS["dataset"]
+        assert OPTIONS["dataset"] == "bgc"
     with argopy.set_options(dataset="ref"):
-        assert OPTIONS["dataset"]
+        assert OPTIONS["dataset"] == "ref"
 
 
 def test_opt_cachedir():
@@ -62,7 +70,7 @@ def test_opt_api_timeout():
         argopy.set_options(api_timeout=-12)
 
 
-def test_trust_env():
+def test_opt_trust_env():
     with pytest.raises(ValueError):
         argopy.set_options(trust_env='toto')
     with pytest.raises(ValueError):

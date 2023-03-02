@@ -1,14 +1,16 @@
 import pandas as pd
 import pytest
+import importlib
 
 import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher
-from . import (
-    AVAILABLE_INDEX_SOURCES,
+from utils import (
+    # AVAILABLE_INDEX_SOURCES,
     requires_fetcher_index,
     requires_connected_erddap_index,
     requires_localftp_index,
+    requires_connected_gdac,
     requires_connection,
     requires_ipython,
     safe_to_server_errors,
@@ -28,6 +30,7 @@ if has_cartopy:
 
 
 ERDDAP_TIMEOUT = 3 * 60
+skip_for_debug = pytest.mark.skipif(True, reason="Taking too long !")
 
 
 @requires_connection
@@ -115,6 +118,12 @@ class Test_Facade:
                     assert isinstance(fig, mpl.figure.Figure)
                     mpl.pyplot.close(fig)
 
+            # Test 'qc_altimetry'
+            if importlib.util.find_spec('IPython') is not None:
+                import IPython
+                dsh = fetcher.plot(ptype='qc_altimetry', embed='slide')
+                assert isinstance(dsh(0), IPython.display.Image)
+
             # Test invalid plot
             with pytest.raises(ValueError):
                 fetcher.plot(ptype='invalid_cat', with_seaborn=ws)
@@ -125,15 +134,16 @@ class Test_Facade:
         import IPython
         with argopy.set_options(local_ftp=self.local_ftp):
             f, fetcher = self.__get_fetcher(pt='float')
-
-            # Test 'qc_altimetry'
             dsh = fetcher.plot(ptype='qc_altimetry', embed='slide')
             assert isinstance(dsh(0), IPython.display.Image)
 
 
+"""
+The following tests are not necessary, since index fetching is tested from each index fetcher tests 
+"""
 @requires_connection
 @requires_fetcher_index
-class Test_AllBackends:
+class OFFTest_IndexFetching:
     """ Test main API facade for all available index fetching backends """
 
     local_ftp = argopy.tutorial.open_dataset("localftp")[0]
@@ -146,12 +156,18 @@ class Test_AllBackends:
     # Define API entry point options to tests:
     # These should be available online and with the argopy-data dummy gdac ftp
     args = {}
-    args["float"] = [[2901623], [6901929, 2901623]]
+    # args["float"] = [[2901623], [6901929, 2901623]]
+    # args["region"] = [
+    #     [-100., -95., -35., -30.],
+    #     [-100., -95., -35., -30., "2020-01-01", "2020-01-15"],
+    # ]
+    # args["profile"] = [[2901623, 2], [6901929, [5, 45]]]
+    args["float"] = [[13857]]
+    args["profile"] = [[13857, 90], [13857, [90, 91]]]
     args["region"] = [
-        [-100., -95., -35., -30.],
-        [-100., -95., -35., -30., "2020-01-01", "2020-01-15"],
+        [-20, -16., 0, 1.],
+        [-20, -16., 0, 1., "1997-07-01", "1997-09-01"],
     ]
-    args["profile"] = [[2901623, 2], [6901929, [5, 45]]]
 
     def __test_float(self, bk, **ftc_opts):
         """ Test float index fetching for a given backend """
@@ -180,7 +196,12 @@ class Test_AllBackends:
     @requires_localftp_index
     def test_float_localftp(self):
         with argopy.set_options(local_ftp=self.local_ftp):
-            self.__test_float("localftp", index_file="ar_index_global_prof.txt")
+            self.__test_float("localftp")
+
+    @skip_for_debug
+    @requires_connected_gdac
+    def test_float_gdac(self):
+        self.__test_float("gdac", N_RECORDS=100)
 
     @ci_erddap_index
     @requires_connected_erddap_index
@@ -192,15 +213,25 @@ class Test_AllBackends:
     @requires_localftp_index
     def test_profile_localftp(self):
         with argopy.set_options(local_ftp=self.local_ftp):
-            self.__test_profile("localftp", index_file="ar_index_global_prof.txt")
+            self.__test_profile("localftp")
+
+    @skip_for_debug
+    @requires_connected_gdac
+    def test_profile_gdac(self):
+        self.__test_profile("gdac", N_RECORDS=100)
 
     @requires_localftp_index
     def test_region_localftp(self):
         with argopy.set_options(local_ftp=self.local_ftp):
-            self.__test_region("localftp", index_file="ar_index_global_prof.txt")
+            self.__test_region("localftp")
 
     @ci_erddap_index
     @requires_connected_erddap_index
     def test_region_erddap(self):
         with argopy.set_options(api_timeout=ERDDAP_TIMEOUT):
             self.__test_region("erddap")
+
+    @skip_for_debug
+    @requires_connected_gdac
+    def test_region_gdac(self):
+        self.__test_region("gdac", N_RECORDS=100)

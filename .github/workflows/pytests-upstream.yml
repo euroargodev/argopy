@@ -1,0 +1,164 @@
+name: CI tests Upstream
+# Daily tests with all un-pinned dependencies
+# Allows to be warned when argopy fail tests due to updates in dependencies
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # Daily “At 00:00” UTC
+  workflow_dispatch: # allows you to trigger the workflow run manually
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detect-ci-trigger:
+    name: detect upstream ci trigger
+    runs-on: ubuntu-latest
+    if: |
+      github.repository == 'euroargodev/argopy'
+      && (github.event_name == 'push' || github.event_name == 'pull_request')
+    outputs:
+      triggered: ${{ steps.detect-trigger.outputs.trigger-found }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+      - uses: xarray-contrib/ci-trigger@v1
+        id: detect-trigger
+        with:
+          keyword: "[test-upstream]"
+
+  core-free:
+    # CI tests for environments with core requirements in free versions
+
+    name: Core - Free - Py${{matrix.python-version}} - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: detect-ci-trigger
+    if: |
+        always()
+        && (
+            (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+            || needs.detect-ci-trigger.outputs.triggered == 'true'
+        )
+    defaults:
+      run:
+        shell: bash -l {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.7", "3.8", "3.9"]
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetch all history for all branches and tags.
+
+      - name: Set environment variables
+        run: |
+          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-core-free.yml" >> $GITHUB_ENV
+          echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
+
+      - name: Set up conda environment
+        uses: mamba-org/provision-with-micromamba@v15
+        with:
+          environment-file: ${{ env.CONDA_ENV_FILE }}
+          environment-name: argopy-tests
+          cache-env: true
+          cache-env-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
+          extra-specs: |
+            python=${{matrix.python-version}}
+            pytest-reportlog
+            conda  
+
+      - name: Version info
+        run: |
+          conda info
+          conda list
+
+      - name: Lint with flake8
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Test with pytest
+        run: |
+          pytest -ra -v -s --durations=10 \
+            --report-log output-${{ matrix.python-version }}-log.jsonl
+
+      - name: Generate and publish the report
+        if: |
+          failure()
+          && steps.status.outcome == 'failure'
+          && github.repository_owner == 'euroargodev'
+        uses: xarray-contrib/issue-from-pytest-log@v1
+        with:
+          log-path: output-${{ matrix.python-version }}-log.jsonl
+
+  all-free:
+    # CI tests for environments with all possible requirements in free versions
+
+    name: All - Free - Py${{matrix.python-version}} - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: core-free
+    if: |
+        always()
+        && (
+            (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+            || needs.detect-ci-trigger.outputs.triggered == 'true'
+        )
+    defaults:
+      run:
+        shell: bash -l {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.7", "3.8", "3.9"]
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetch all history for all branches and tags.
+
+      - name: Set environment variables
+        run: |
+          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-all-free.yml" >> $GITHUB_ENV
+          echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
+
+      - name: Set up conda environment
+        uses: mamba-org/provision-with-micromamba@v15
+        with:
+          environment-file: ${{ env.CONDA_ENV_FILE }}
+          environment-name: argopy-tests
+          cache-env: true
+          cache-env-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
+          extra-specs: |
+            python=${{matrix.python-version}}
+            pytest-reportlog
+            conda  
+
+      - name: Version info
+        run: |
+          conda info
+          conda list
+
+      - name: Lint with flake8
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Test with pytest
+        run: |
+          pytest -ra -v -s --durations=10 \
+            --report-log output-${{ matrix.python-version }}-log.jsonl
+
+      - name: Generate and publish the report
+        if: |
+          failure()
+          && steps.status.outcome == 'failure'
+          && github.repository_owner == 'euroargodev'
+        uses: xarray-contrib/issue-from-pytest-log@v1
+        with:
+          log-path: output-${{ matrix.python-version }}-log.jsonl

@@ -64,6 +64,7 @@ Data visualisation
    :toctree: generated/
 
    DataFetcher.plot
+   DataFetcher.dashboard
    IndexFetcher.plot
    dashboard
 
@@ -87,23 +88,13 @@ Helpers
    :toctree: generated/
 
    status
-   TopoFetcher
    set_options
    clear_cache
    tutorial.open_dataset
-
-Low-level functions
-===================
-
-.. currentmodule:: argopy
-
-.. autosummary::
-    :toctree: generated/
-
-    show_versions
-    utilities.list_available_data_src
-    utilities.list_available_data_src
-    utilities.list_available_index_src
+   TopoFetcher
+   ArgoNVSReferenceTables
+   OceanOPSDeployments
+   show_versions
 
 
 Dataset.argo (xarray accessor)
@@ -172,6 +163,45 @@ Misc
     Dataset.argo.uid
     Dataset.argo.cast_types
 
+Plotters
+========
+
+Function under the :mod:`argopy.plot` submodule.
+
+.. currentmodule:: argopy.plot
+
+.. autosummary::
+   :toctree: generated/
+
+    dashboard
+    plot_trajectory
+    bar_plot
+    open_sat_altim_report
+
+Utilities
+=========
+
+Function under the :mod:`argopy.utilities` submodule.
+
+.. currentmodule:: argopy.utilities
+
+.. autosummary::
+   :toctree: generated/
+
+    list_available_data_src
+    list_available_index_src
+    get_coriolis_profile_id
+    get_ea_profile_page
+
+    check_wmo
+    check_cyc
+    float_wmo
+    Registry
+    list_standard_variables
+    list_multiprofile_file_variables
+    Chunker
+
+
 Internals
 =========
 
@@ -186,6 +216,10 @@ File systems
     argopy.stores.filestore
     argopy.stores.httpstore
     argopy.stores.memorystore
+    argopy.stores.ftpstore
+
+Argo index store
+----------------
 
 .. autosummary::
     :toctree: generated/
@@ -193,6 +227,8 @@ File systems
     argopy.stores.indexstore
     argopy.stores.indexfilter_wmo
     argopy.stores.indexfilter_box
+    argopy.stores.indexstore_pa
+    argopy.stores.indexstore_pd
 
 Fetcher sources
 ---------------
@@ -206,6 +242,16 @@ ERDDAP
     argopy.data_fetchers.erddap_data.ErddapArgoDataFetcher
     argopy.data_fetchers.erddap_data.Fetch_wmo
     argopy.data_fetchers.erddap_data.Fetch_box
+
+GDAC
+^^^^
+
+.. autosummary::
+    :toctree: generated/
+
+    argopy.data_fetchers.gdacftp_data.FTPArgoDataFetcher
+    argopy.data_fetchers.gdacftp_data.Fetch_wmo
+    argopy.data_fetchers.gdacftp_data.Fetch_box
 
 Local FTP
 ^^^^^^^^^
@@ -227,25 +273,3 @@ Argovis
     argopy.data_fetchers.argovis_data.Fetch_wmo
     argopy.data_fetchers.argovis_data.Fetch_box
 
-Plotters
---------
-
-.. autosummary::
-   :toctree: generated/
-
-    argopy.plotters.plot_trajectory
-    argopy.plotters.bar_plot
-    argopy.plotters.open_dashboard
-    argopy.plotters.open_sat_altim_report
-
-Utilities
----------
-
-.. autosummary::
-   :toctree: generated/
-
-    argopy.utilities.check_wmo
-    argopy.utilities.list_standard_variables
-    argopy.utilities.list_multiprofile_file_variables
-    argopy.utilities.Chunker
-    argopy.utilities.ArgoNVSReferenceTables

@@ -52,7 +52,7 @@ def open_dataset(name):
         List of files with the requested dataset
 
     """
-    if name == 'localftp':
+    if name == 'localftp' or name == 'gdac':
         gdacftp = sample_ftp()
         gdacftp.download(overwrite=False)
         return gdacftp.rootpath, gdacftp.ls()
@@ -107,7 +107,7 @@ class repodata():
         localzipfile = self.localpath + ".zip"
 
         # Download zip file:
-        urlretrieve(zipurl, localzipfile)
+        urlretrieve(zipurl, localzipfile) # nosec B310 because protocol cannot be modified
 
         # Expand zip file to a temporary location:
         _tempo_dir = self.localpath + "_master"

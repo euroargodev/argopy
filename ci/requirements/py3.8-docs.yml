@@ -1,11 +1,10 @@
-name: argopy-tests
+name: argopy-docs
 channels:
   - conda-forge
 dependencies:
-  - python=3.7
+  - python=3.8
   - xarray
   - scipy
-  - scikit-learn
   - netcdf4
   - dask
   - toolz
@@ -30,9 +29,20 @@ dependencies:
   - tqdm
   - ipykernel
   - ipywidgets
-# Not showing up with argopy.show_versions():
+  - nbsphinx
+  - jinja2
+  - sphinx-issues
+  - sphinx_rtd_theme
+  - sphinx-book-theme
+  - codespell
   - cfgrib
   - black
   - flake8
   - pytest-cov
   - pytest-env
+  - pip:
+    - Sphinx
+    - numpydoc
+    - readthedocs-sphinx-ext
+    - sphinx-autosummary-accessors
+    - pydocstyle
