@@ -4,6 +4,9 @@
 Argo meta-data
 ==============
 
+.. contents::
+   :local:
+
 Index of profiles
 -----------------
 .. currentmodule:: argopy

@@ -194,7 +194,7 @@ Satellite altimeter measurements can be used to check the quality of the Argo pr
 
 .. image:: https://data-argo.ifremer.fr/etc/argo-ast9-item13-AltimeterComparison/figures/6902745.png
 
-See all details about this method here: :meth:`argopy.plotters.open_sat_altim_report`
+See all details about this method here: :meth:`argopy.plot.open_sat_altim_report`
 
 
 .. rubric:: References

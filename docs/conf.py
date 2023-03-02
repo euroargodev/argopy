@@ -42,6 +42,8 @@ sys.path.insert(0, str(root))
 
 import argopy  # noqa: E402
 print("argopy: %s, %s" % (argopy.__version__, argopy.__file__))
+argopy.show_versions()
+argopy.show_options()
 
 print("python exec:", sys.executable)
 print("sys.path:", sys.path)
