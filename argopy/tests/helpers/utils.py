@@ -10,8 +10,15 @@ import importlib
 import pytest
 import fsspec
 import asyncio
-from aiohttp.client_exceptions import ServerDisconnectedError, ClientResponseError, ClientConnectorError
+from aiohttp.client_exceptions import (
+    ServerDisconnectedError,
+    ClientResponseError,
+    ClientConnectorError,
+    ClientPayloadError
+)
 import ftplib
+import socket
+import asyncio
 from packaging import version
 import warnings
 from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound, FtpPathError
@@ -242,6 +249,10 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
             msg = "\naiohttp cannot connect to host:\n%s" % str(e.args)
             xmsg = "Failing because aiohttp cannot connect to host, but should work"
             pass
+        except ClientPayloadError as e:
+            msg = "\nUnexpected server transfer error\n%s" % str(e.args)
+            xmsg = "Failing because an unexpected error occured during data transfer, but should work"
+            pass
         except FileNotFoundError as e:
             msg = "\nServer didn't return the data:\n%s" % str(e.args)
             xmsg = "Failing because some file were not found, but should work"
@@ -261,8 +272,18 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
             msg = "\nCannot connect to the FTP server\n%s" % str(e.args)
             xmsg = "Failing because cannot connect to the FTP server, but should work"
             pass
+        except ftplib.error_perm as e:
+            # ftplib.error_perm: 550 Failed to open file
+            msg = "\nCannot read file from FTP server\n%s" % str(e.args)
+            xmsg = "Failing because cannot read file from the FTP server, but should work"
+            pass
         except TimeoutError as e:
-            # Sometimes, the timeout is not long enough !
+            # Sometimes, mostly from FTP, the timeout is not long enough !
+            msg = "\nUnexpected server time out\n%s" % str(e.args)
+            xmsg = "Failing because the server is temporarily too slow to respond, but should work"
+            pass
+        except socket.timeout as e:
+            # Sometimes, mostly from FTP, the timeout is not long enough !
             msg = "\nUnexpected server time out\n%s" % str(e.args)
             xmsg = "Failing because the server is temporarily too slow to respond, but should work"
             pass
