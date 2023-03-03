@@ -8,7 +8,7 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-v0.1.13 (xx Feb. 2023)
+v0.1.13 (xx Mar. 2023)
 ----------------------
 
 **Features and front-end API**
@@ -68,7 +68,7 @@ v0.1.11 (13 Apr. 2022)
 .. warning::
 
     Since the new ``gdac`` fetcher can use a local copy of the GDAC ftp server, the legacy ``localftp`` fetcher is now deprecated.
-    Using it will raise a warning up to v0.1.12. It will then raise an error in v0.1.13 and will be removed afterward.
+    Using it will raise a error up to v0.1.12. It will then be removed in v0.1.13.
 
 - **New dashboard for profiles and new 3rd party dashboards**. Calling on the data fetcher dashboard method will return the Euro-Argo profile page for a single profile. Very useful to look at the data before load. This comes with 2 new utilities functions to get Coriolis ID of profiles (:meth:`utilities.get_coriolis_profile_id`) and to return the list of profile webpages (:meth:`utilities.get_ea_profile_page`). (:pr:`198`) by `G. Maze <http://www.github.com/gmaze>`_.
 

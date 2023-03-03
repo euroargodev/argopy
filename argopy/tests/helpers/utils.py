@@ -9,8 +9,15 @@ This module contains:
 import importlib
 import pytest
 import fsspec
-from aiohttp.client_exceptions import ServerDisconnectedError, ClientResponseError, ClientConnectorError
+from aiohttp.client_exceptions import (
+    ServerDisconnectedError,
+    ClientResponseError,
+    ClientConnectorError,
+    ClientPayloadError
+)
 import ftplib
+import socket
+import asyncio
 from packaging import version
 import warnings
 from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound, FtpPathError
@@ -180,6 +187,8 @@ safe_to_fsspec_version = pytest.mark.skipif(
 )
 skip_this_for_debug = pytest.mark.skipif(True, reason="Skipped temporarily for debug")
 
+TimeoutError = asyncio.TimeoutError if version.parse(fsspec.__version__) < version.parse("2021.05.0") else fsspec.exceptions.FSTimeoutError
+
 
 ############
 def fct_safe_to_server_errors(func, *args, **kwargs):
@@ -227,6 +236,10 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
             msg = "\naiohttp cannot connect to host:\n%s" % str(e.args)
             xmsg = "Failing because aiohttp cannot connect to host, but should work"
             pass
+        except ClientPayloadError as e:
+            msg = "\nUnexpected server transfer error\n%s" % str(e.args)
+            xmsg = "Failing because an unexpected error occured during data transfer, but should work"
+            pass
         except FileNotFoundError as e:
             msg = "\nServer didn't return the data:\n%s" % str(e.args)
             xmsg = "Failing because some file were not found, but should work"
@@ -246,8 +259,18 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
             msg = "\nCannot connect to the FTP server\n%s" % str(e.args)
             xmsg = "Failing because cannot connect to the FTP server, but should work"
             pass
-        except fsspec.exceptions.FSTimeoutError as e:
-            # Sometimes, mostly from FTP, the time out is not long enough !            
+        except ftplib.error_perm as e:
+            # ftplib.error_perm: 550 Failed to open file
+            msg = "\nCannot read file from FTP server\n%s" % str(e.args)
+            xmsg = "Failing because cannot read file from the FTP server, but should work"
+            pass
+        except TimeoutError as e:
+            # Sometimes, mostly from FTP, the timeout is not long enough !
+            msg = "\nUnexpected server time out\n%s" % str(e.args)
+            xmsg = "Failing because the server is temporarily too slow to respond, but should work"
+            pass
+        except socket.timeout as e:
+            # Sometimes, mostly from FTP, the timeout is not long enough !
             msg = "\nUnexpected server time out\n%s" % str(e.args)
             xmsg = "Failing because the server is temporarily too slow to respond, but should work"
             pass

@@ -195,19 +195,19 @@ class Test_Backend:
         self.__testthis("phy")
 
     @requires_connected_erddap_bgc
-    @safe_to_server_errors
+    @pytest.mark.xfail(reason="because BGC is not yet supported")
     def test_bgc_float(self):
         self.args = {"float": self.requests_bgc["float"]}
         self.__testthis("bgc")
 
     @requires_connected_erddap_bgc
-    @safe_to_server_errors
+    @pytest.mark.xfail(reason="because BGC is not yet supported")
     def test_bgc_profile(self):
         self.args = {"profile": self.requests_bgc["profile"]}
         self.__testthis("bgc")
 
     @requires_connected_erddap_bgc
-    @safe_to_server_errors
+    @pytest.mark.xfail(reason="because BGC is not yet supported")
     def test_bgc_region(self):
         self.args = {"region": self.requests_bgc["region"]}
         self.__testthis("bgc")
