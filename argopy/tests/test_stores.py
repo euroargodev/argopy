@@ -639,7 +639,7 @@ class IndexStore_test_proto:
 
 
 # @skip_this
-@skip_for_debug
+# @skip_for_debug
 class Test_IndexStore_pandas(IndexStore_test_proto):
     indexstore = indexstore_pandas
 
