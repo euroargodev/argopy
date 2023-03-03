@@ -40,7 +40,7 @@ v0.1.13 (xx Mar. 2023)
 
 .. image:: _static/scatter_map_qcflag.png
 
-- **New Argo colors utility to manage segmented colormaps and pre-defined Argo colors set.** The new :class:`argopy.plot.ArgoColors` utility class aims to easily provide colors for Argo-related variables plot. See the documentation section :ref:`Argo colors` for more. (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
+- **New Argo colors utility to manage segmented colormaps and pre-defined Argo colors set.** The new :class:`argopy.plot.ArgoColors` utility class aims to easily provide colors for Argo-related variables plot. See the documentation section :ref:`Argo colors` for more (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -55,6 +55,10 @@ v0.1.13 (xx Mar. 2023)
 
     ArgoColors('Set2').cmap
     ArgoColors('Spectral', N=25).cmap
+
+**Internals**
+
+- Because of the new :class:`argopy.plot.ArgoColors`, the :class:`argopy.plot.discrete_coloring` utility is deprecated in 0.1.13. Calling it will raise an error after argopy 0.1.14. (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
 
 v0.1.12 (16 May 2022)
 ----------------------
