@@ -62,12 +62,18 @@
     argopy.utilities.list_available_data_src
     argopy.utilities.list_available_index_src
     argopy.utilities.Chunker
-    argopy.utilities.ArgoNVSReferenceTables
 
     argopy.utilities.isconnected
     argopy.utilities.urlhaskeyword
     argopy.utilities.isalive
     argopy.utilities.isAPIconnected
+
+    argopy.utilities.ArgoNVSReferenceTables
+    argopy.utilities.ArgoNVSReferenceTables.valid_ref
+    argopy.utilities.ArgoNVSReferenceTables.all_tbl
+    argopy.utilities.ArgoNVSReferenceTables.all_tbl_name
+    argopy.utilities.ArgoNVSReferenceTables.tbl
+    argopy.utilities.ArgoNVSReferenceTables.tbl_name
 
     argopy.utilities.groupby_remap
     argopy.utilities.linear_interpolation_remap
@@ -96,6 +102,10 @@
     argopy.utilities.float_wmo
     argopy.utilities.get_coriolis_profile_id
     argopy.utilities.get_ea_profile_page
+
+    argopy.utilities.OceanOPSDeployments
+    argopy.utilities.OceanOPSDeployments.to_dataframe
+    argopy.utilities.OceanOPSDeployments.status_code
 
     argopy.plot.dashboard
     argopy.plot.bar_plot

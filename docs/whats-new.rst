@@ -8,8 +8,23 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-v0.1.13 (XX)
+v0.1.13 (xx Mar. 2023)
 ----------------------
+
+**Features and front-end API**
+
+- **New utility class to retrieve the Argo deployment plan from the Ocean-OPS api.** This is the utility class :class:`OceanOPSDeployments` (:pr:`244`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import OceanOPSDeployments
+
+    deployment = OceanOPSDeployments()
+    deployment = OceanOPSDeployments([-90,0,0,90])
+    deployment = OceanOPSDeployments([-90,0,0,90], deployed_only=True) # Remove planification
+
+    df = deployment.to_dataframe()
+    deployment.status_code
 
 **Internals**
 
