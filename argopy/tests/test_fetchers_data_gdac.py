@@ -105,7 +105,7 @@ def assert_fetcher(this_fetcher, cacheable=False):
 def ftp_shortname(ftp):
     """Get a short name for scenarios IDs, given a FTP host"""
     if ftp != 'MOCKFTP':
-        return (lambda x: 'file' if x is "" else x)(urlparse(ftp).scheme)
+        return (lambda x: 'file' if x == "" else x)(urlparse(ftp).scheme)
     else:
         return 'ftp_mocked'
 
