@@ -24,7 +24,6 @@ from utils import (
     safe_to_server_errors,
     fct_safe_to_server_errors
 )
-import warnings
 import logging
 
 
@@ -47,7 +46,7 @@ VALID_HOSTS = [argopy.tutorial.open_dataset("localftp")[0],
 List access points to be tested.
 For each access points, we list 1-to-2 scenario to make sure all possibilities are tested
 """
-valid_access_points = [
+VALID_ACCESS_POINTS = [
     {"float": [13857]},
     # {"float": [2901746, 4902252]},
     # {"profile": [2901746, 90]},
@@ -106,9 +105,9 @@ def assert_fetcher(this_fetcher, cacheable=False):
 def ftp_shortname(ftp):
     """Get a short name for scenarios IDs, given a FTP host"""
     if ftp != 'MOCKFTP':
-        return (lambda x: 'file' if x is None else x)(urlparse(ftp).hostname)
+        return (lambda x: 'file' if x is "" else x)(urlparse(ftp).scheme)
     else:
-        return 'mocked_ftp'
+        return 'ftp_mocked'
 
 
 @requires_gdac
@@ -117,7 +116,7 @@ class TestBackend:
 
     # Create list of tests scenarios
     # combine all hosts with all access points:
-    scenarios = [(h, ap) for h in VALID_HOSTS for ap in valid_access_points]
+    scenarios = [(h, ap) for h in VALID_HOSTS for ap in VALID_ACCESS_POINTS]
 
     scenarios_ids = [
         "%s, %s" % (ftp_shortname(fix[0]), list(fix[1].keys())[0]) for
@@ -129,7 +128,6 @@ class TestBackend:
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
         self.cachedir = tempfile.mkdtemp()
-        [log.debug(s) for s in self.scenarios]
 
     def _patch_ftp(self, ftp):
         """Patch Mocked FTP server keyword"""
@@ -145,9 +143,9 @@ class TestBackend:
             access_point = this_request.param[1]
         else:
             ftp = this_request.param
-            access_point = valid_access_points[0]  # Use 1st valid access point
+            access_point = VALID_ACCESS_POINTS[0]  # Use 1st valid access point
 
-        N_RECORDS = None if 'tutorial' in ftp or 'localhost' in ftp else 100  # Make sure we're not going to load the full index
+        N_RECORDS = None if 'tutorial' in ftp or 'MOCK' in ftp else 100  # Make sure we're not going to load the full index
         fetcher_args = {"src": self.src, "ftp": self._patch_ftp(ftp), "cache": False, "N_RECORDS": N_RECORDS}
 
         if cached:
@@ -172,12 +170,15 @@ class TestBackend:
     # @skip_for_debug
     @safe_to_server_errors
     def test_nocache(self):
-        this_fetcher = create_fetcher({"src": self.src, "ftp": self._patch_ftp(VALID_HOSTS[0])}, valid_access_points[0]).fetcher
+        this_fetcher = create_fetcher({"src": self.src, "ftp": self._patch_ftp(VALID_HOSTS[0])},
+                                      VALID_ACCESS_POINTS[0]).fetcher
         with pytest.raises(FileSystemHasNoCache):
             this_fetcher.cachepath
 
     # @skip_for_debug
-    @pytest.mark.parametrize("_make_a_fetcher", VALID_HOSTS, indirect=True)
+    @pytest.mark.parametrize("_make_a_fetcher", VALID_HOSTS,
+                             indirect=True,
+                             ids=["%s" % ftp_shortname(ftp) for ftp in VALID_HOSTS])
     def test_hosts(self, _make_a_fetcher):
         @safe_to_server_errors
         def test(this_fetcher):
@@ -189,7 +190,7 @@ class TestBackend:
     def test_hosts_invalid(self, ftp_host):
         # Invalid servers:
         with pytest.raises(FtpPathError):
-            create_fetcher({"src": self.src, "ftp": ftp_host}, valid_access_points[0], xfail=True)
+            create_fetcher({"src": self.src, "ftp": ftp_host}, VALID_ACCESS_POINTS[0], xfail=True)
 
     # @skip_for_debug
     @pytest.mark.parametrize("_make_a_fetcher", scenarios, indirect=True, ids=scenarios_ids)
