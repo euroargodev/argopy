@@ -123,7 +123,7 @@ class ArgoIndexStoreProto(ABC):
                 log.info("""Working with a non-official Argo ftp server: %s. Raise on issue if you wish to add your own to the valid list of FTP servers: https://github.com/euroargodev/argopy/issues/new?title=New%%20FTP%%20server""" % host)
             self.fs["src"] = ftpstore(
                 host=urlparse(host).hostname,  # host eg: ftp.ifremer.fr
-                port=urlparse(host).port,
+                port=0 if urlparse(host).port is None else urlparse(host).port,
                 cache=cache,
                 cachedir=cachedir,
                 timeout=timeout,
