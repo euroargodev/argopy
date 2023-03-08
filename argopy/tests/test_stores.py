@@ -485,7 +485,7 @@ class IndexStore_test_proto:
         return fct_safe_to_server_errors(core)(store_args, xfail=xfail)
 
     def _setup_store(self, this_request, cached=False):
-        """Helper method to set-up options for an index store creation"""
+        """Helper method to set up options for an index store creation"""
         if hasattr(this_request, 'param'):
             if isinstance(this_request.param, tuple):
                 host = this_request.param[0]

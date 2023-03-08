@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 
 from ..options import OPTIONS
 from ..errors import FtpPathError, InvalidDataset, CacheFileNotFound
-from ..utilities import Registry
+from ..utilities import Registry, isconnected
 from .filesystems import httpstore, memorystore, filestore, ftpstore
 
 try:
@@ -121,6 +121,8 @@ class ArgoIndexStoreProto(ABC):
         elif "ftp" in split_protocol(host)[0]:
             if "ifremer" not in host and "usgodae" not in host:
                 log.info("""Working with a non-official Argo ftp server: %s. Raise on issue if you wish to add your own to the valid list of FTP servers: https://github.com/euroargodev/argopy/issues/new?title=New%%20FTP%%20server""" % host)
+            if not isconnected(host):
+                raise FtpPathError("This host (%s) is not alive !" % host)
             self.fs["src"] = ftpstore(
                 host=urlparse(host).hostname,  # host eg: ftp.ifremer.fr
                 port=0 if urlparse(host).port is None else urlparse(host).port,
