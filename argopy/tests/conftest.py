@@ -3,6 +3,8 @@ import os
 import logging
 from argopy import tutorial
 import pytest
+import tempfile
+import shutil
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
 log = logging.getLogger("argopy.tests.conftests")
@@ -16,7 +18,7 @@ def pytest_sessionstart(session):
 def mocked_ftpserver(ftpserver):
     os.environ['FTP_USER'] = 'janedow'
     os.environ['FTP_PASS'] = 'please'
-    os.environ['FTP_HOME'] = 'test_folder'
+    os.environ['FTP_HOME'] = tempfile.mkdtemp()
     os.environ['FTP_PORT'] = '31175'
 
     # Set up the ftp server with the tutorial repo GDAC content:
@@ -27,7 +29,7 @@ def mocked_ftpserver(ftpserver):
                             style="url", anon=True)
 
     #
-    ftp_login_data = ftpserver.get_login_data()
+    # ftp_login_data = ftpserver.get_login_data()
     MOCKFTP = ftpserver.get_login_data(style="url", anon=True)
     pytest.MOCKFTP = MOCKFTP
     log.debug("Mocked GDAC ftp server located at: %s" % MOCKFTP)
@@ -35,6 +37,7 @@ def mocked_ftpserver(ftpserver):
     yield ftpserver
 
 def pytest_sessionfinish(session, exitstatus):
+    shutil.rmtree(os.getenv('FTP_HOME'))
     log.debug("Ending tests session")
     log.debug("Final session state: %s" % session)
     pass
