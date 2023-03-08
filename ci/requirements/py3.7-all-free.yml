@@ -13,10 +13,10 @@ dependencies:
   - toolz
 
   - dask
+  - distributed
   - gsw
   - pyarrow
   - tqdm
-  - distributed
 
   - matplotlib
   - cartopy

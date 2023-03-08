@@ -586,8 +586,8 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         ]),
         'ext.perf': sorted([
             ("dask", lambda mod: mod.__version__),
-            ("pyarrow", lambda mod: mod.__version__),
             ("distributed", lambda mod: mod.__version__),
+            ("pyarrow", lambda mod: mod.__version__),
         ]),
         'ext.plot': sorted([
             ("matplotlib", lambda mod: mod.__version__),
