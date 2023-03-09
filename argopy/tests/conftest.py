@@ -37,7 +37,10 @@ def mocked_ftpserver(ftpserver):
     yield ftpserver
 
 def pytest_sessionfinish(session, exitstatus):
-    shutil.rmtree(os.getenv('FTP_HOME'))
+    try:
+        shutil.rmtree(os.getenv('FTP_HOME'))
+    except:
+        pass
     log.debug("Ending tests session")
     log.debug("Final session state: %s" % session)
     pass
