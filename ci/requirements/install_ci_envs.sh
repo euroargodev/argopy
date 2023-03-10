@@ -4,13 +4,13 @@ source ~/miniconda3/etc/profile.d/conda.sh
 
 create_this_env () {
 	# $1 is the name of the new environment
-	# $2 is path to environment yaml file	
-	
+	# $2 is path to environment yaml file
+
 	# Overwrite name of the environment set in the file
 	cp ${2} temp_env.yml
 	var="name: $1"
 	sed -i '' "1s/.*/$var/" temp_env.yml > /dev/null 2>&1
-	
+
 	# Eventually remove environment if exists:
 	if conda env list | grep $1; then
 	    printf "$1 already exists, remove and re-create this environment...\n"
@@ -23,7 +23,7 @@ create_this_env () {
 	# Create the environment from file
 	# conda env create --quiet --file temp_env.yml --json >> tmp.json
 	mamba env create --quiet --file temp_env.yml --json > /dev/null 2>&1
-	
+
 	# Clean-up
 	/bin/rm tmp.json > /dev/null 2>&1
 	/bin/rm temp_env.yml > /dev/null 2>&1
