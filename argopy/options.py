@@ -12,6 +12,7 @@ import logging
 import fsspec
 from fsspec.core import split_protocol
 from socket import gaierror
+from urllib.parse import urlparse
 
 # Define a logger
 log = logging.getLogger("argopy.options")
@@ -171,8 +172,9 @@ def check_gdac_path(path, errors='ignore'):
         fs = fsspec.filesystem('http')
     elif 'ftp' in split_protocol(path)[0]:
         try:
-            host = split_protocol(path)[-1].split('/')[0]
-            fs = fsspec.filesystem('ftp', host=host)
+            host = urlparse(path).hostname
+            port = 0 if urlparse(path).port is None else urlparse(path).port
+            fs = fsspec.filesystem('ftp', host=host, port=port)
         except gaierror:
             if errors == 'raise':
                 raise FtpPathError("Can't get address info (GAIerror) on '%s'" % host)

@@ -18,6 +18,7 @@ from functools import reduce, wraps
 from packaging import version
 import logging
 from abc import ABC, abstractmethod
+from urllib.parse import urlparse
 
 import aiohttp
 import asyncio
@@ -586,8 +587,8 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         ]),
         'ext.perf': sorted([
             ("dask", lambda mod: mod.__version__),
-            ("pyarrow", lambda mod: mod.__version__),
             ("distributed", lambda mod: mod.__version__),
+            ("pyarrow", lambda mod: mod.__version__),
         ]),
         'ext.plot': sorted([
             ("matplotlib", lambda mod: mod.__version__),
@@ -2198,9 +2199,16 @@ def argo_split_path(this_path):  # noqa C901
             head = head.rstrip(sep)
         return head, tail
 
+    def fix_localhostftp(ftp):
+        if 'ftp://localhost:' in ftp:
+            return "ftp://%s" % (urlparse(ftp).netloc)
+        else:
+            return ""
+
     known_origins = ['https://data-argo.ifremer.fr',
                      'ftp://ftp.ifremer.fr/ifremer/argo',
                      'ftp://usgodae.org/pub/outgoing/argo',
+                     fix_localhostftp(this_path),
                      '']
 
     output['origin'] = [origin for origin in known_origins if start_with(this_path, origin)][0]

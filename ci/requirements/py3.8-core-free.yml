@@ -12,8 +12,11 @@ dependencies:
   - packaging
   - toolz
 
+  - pip
+  - setuptools
   - pytest
   - pytest-cov
   - pytest-env
+  - pytest-localftpserver
   - black
   - flake8

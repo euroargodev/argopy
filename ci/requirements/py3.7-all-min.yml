@@ -13,10 +13,10 @@ dependencies:
   - toolz=0.11.2
 
   - dask=2.30
+  - distributed=2.30
   - gsw=3.4
   - pyarrow=4.0.1
   - tqdm=4.51
-  - distributed=2.30
 
   - matplotlib=3.3
   - cartopy=0.18
@@ -39,3 +39,4 @@ dependencies:
   - flake8=4.0
   - pytest-cov=3.0
   - pytest-env=0.6
+  - pytest-localftpserver=1.1.4

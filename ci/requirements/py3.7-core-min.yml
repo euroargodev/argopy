@@ -13,9 +13,10 @@ dependencies:
   - toolz=0.11.2
 
   - pip=21.3
-  - pytest=6.2
   - setuptools=58.2
-  - black=21.9b0
-  - flake8=4.0
+  - pytest=6.2
   - pytest-cov=3.0
   - pytest-env=0.6
+  - pytest-localftpserver=1.1.4
+  - black=21.9b0
+  - flake8=4.0
