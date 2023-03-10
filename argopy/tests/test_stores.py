@@ -14,6 +14,7 @@ import importlib
 import shutil
 import logging
 from fsspec.core import split_protocol
+from urllib.parse import urlparse
 
 import argopy
 from argopy.stores import (
@@ -284,24 +285,37 @@ class Test_MemoryStore:
 @skip_this
 @requires_connection
 class Test_FtpStore:
-    host = 'ftp.ifremer.fr'
+
+    @property
+    def host(self):
+        # h = 'ftp.ifremer.fr'
+        h = urlparse(pytest.MOCKFTP).hostname
+        log.debug("Using FTP host: %s" % h)
+        return h
+
+    @property
+    def port(self):
+        p = 0
+        p = int(urlparse(pytest.MOCKFTP).port)
+        log.debug("Using FTP port: %i" % p)
+        return p
 
     @safe_to_server_errors
     def test_implementation(self):
-        fs = ftpstore(host=self.host, cache=False)
+        fs = ftpstore(host=self.host, port=self.port, cache=False)
         assert isinstance(fs.fs, fsspec.implementations.ftp.FTPFileSystem)
 
     @safe_to_server_errors
     def test_open_dataset(self):
-        uri = "ifremer/argo/dac/csiro/5900865/5900865_prof.nc"
-        fs = ftpstore(host=self.host, cache=False)
+        uri = "dac/csiro/5900865/5900865_prof.nc"
+        fs = ftpstore(host=self.host, port=self.port, cache=False)
         assert isinstance(fs.open_dataset(uri), xr.Dataset)
 
     @safe_to_server_errors
     def test_open_mfdataset(self):
-        fs = ftpstore(host=self.host, cache=False)
+        fs = ftpstore(host=self.host, port=self.port, cache=False)
         uri = [
-            "ifremer/argo/dac/csiro/5900865/profiles/D5900865_00%i.nc"
+            "dac/csiro/5900865/profiles/D5900865_00%i.nc"
             % i
             for i in [1, 2]
         ]
@@ -412,18 +426,17 @@ List ftp hosts to be tested.
 Since the fetcher is compatible with host from local, http or ftp protocols, we
 try to test them all:
 """
-host_list = [argopy.tutorial.open_dataset("localftp")[0],
+VALID_HOSTS = [argopy.tutorial.open_dataset("localftp")[0],
              'https://data-argo.ifremer.fr',
-             'ftp://ftp.ifremer.fr/ifremer/argo',
+             # 'ftp://ftp.ifremer.fr/ifremer/argo',
              # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but takes too long to respond, slow down CI
+             'MOCKFTP',  # keyword to use a fake/mocked ftp server (running on localhost)
              ]
-# Make sure hosts are valid and available at test time:
-valid_hosts = [h for h in host_list if isconnected(h) and check_gdac_path(h, errors='ignore')]
 
 """
 List index searches to be tested.
 """
-valid_searches = [
+VALID_SEARCHES = [
     # {"wmo": [6901929]},
     {"wmo": [6901929, 2901623]},
     # {"cyc": [36]},
@@ -460,13 +473,21 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False):
     return fct_safe_to_server_errors(core)(fetcher_args, search_point, xfail=xfail)
 
 
+def ftp_shortname(ftp):
+    """Get a short name for scenarios IDs, given a FTP host"""
+    if ftp != 'MOCKFTP':
+        return (lambda x: 'file' if x == "" else x)(urlparse(ftp).scheme)
+    else:
+        return 'ftp_mocked'
+
+
 class IndexStore_test_proto:
     host, flist = argopy.tutorial.open_dataset("localftp")
     index_file = "ar_index_global_prof.txt"
 
-    search_scenarios = [(h, ap) for h in valid_hosts for ap in valid_searches]
+    search_scenarios = [(h, ap) for h in VALID_HOSTS for ap in VALID_SEARCHES]
     search_scenarios_ids = [
-        "%s, %s" % ((lambda x: 'file' if x is None else x)(split_protocol(fix[0])[0]), list(fix[1].keys())[0]) for fix
+        "%s, %s" % (ftp_shortname(fix[0]), list(fix[1].keys())[0]) for fix
         in
         search_scenarios]
 
@@ -474,6 +495,13 @@ class IndexStore_test_proto:
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
         self.cachedir = tempfile.mkdtemp()
+
+    def _patch_ftp(self, ftp):
+        """Patch Mocked FTP server keyword"""
+        if ftp == 'MOCKFTP':
+            return pytest.MOCKFTP  # this was set in conftest.py
+        else:
+            return ftp
 
     def create_store(self, store_args, xfail=False):
         def core(fargs):
@@ -485,7 +513,7 @@ class IndexStore_test_proto:
         return fct_safe_to_server_errors(core)(store_args, xfail=xfail)
 
     def _setup_store(self, this_request, cached=False):
-        """Helper method to set-up options for an index store creation"""
+        """Helper method to set up options for an index store creation"""
         if hasattr(this_request, 'param'):
             if isinstance(this_request.param, tuple):
                 host = this_request.param[0]
@@ -493,8 +521,8 @@ class IndexStore_test_proto:
                 host = this_request.param
         else:
             host = this_request['param']
-        N_RECORDS = None if 'tutorial' in host else 100  # Make sure we're not going to load the full index
-        fetcher_args = {"host": host, "index_file": self.index_file, "cache": False}
+        N_RECORDS = None if 'tutorial' in host or 'MOCK' in host else 100  # Make sure we're not going to load the full index
+        fetcher_args = {"host": self._patch_ftp(host), "index_file": self.index_file, "cache": False}
         if cached:
             fetcher_args = {**fetcher_args, **{"cache": True, "cachedir": self.cachedir}}
         return fetcher_args, N_RECORDS
@@ -536,7 +564,9 @@ class IndexStore_test_proto:
             assert is_list_of_strings(this_idx.cachepath('search'))
 
     # @skip_this
-    @pytest.mark.parametrize("a_store", valid_hosts, indirect=True)
+    @pytest.mark.parametrize("a_store", VALID_HOSTS,
+                             indirect=True,
+                             ids=["%s" % ftp_shortname(ftp) for ftp in VALID_HOSTS])
     def test_hosts(self, a_store):
         @safe_to_server_errors
         def test(this_store):
@@ -593,7 +623,7 @@ class IndexStore_test_proto:
     # @skip_this
     def test_to_dataframe_search(self):
         idx = self.new_idx()
-        wmo = [s['wmo'] for s in valid_searches if 'wmo' in s.keys()][0]
+        wmo = [s['wmo'] for s in VALID_SEARCHES if 'wmo' in s.keys()][0]
         idx = idx.search_wmo(wmo)
 
         df = idx.to_dataframe()
@@ -611,19 +641,19 @@ class IndexStore_test_proto:
     # @skip_this
     def test_caching_search(self):
         idx = self.new_idx(cache=True)
-        wmo = [s['wmo'] for s in valid_searches if 'wmo' in s.keys()][0]
+        wmo = [s['wmo'] for s in VALID_SEARCHES if 'wmo' in s.keys()][0]
         idx.search_wmo(wmo)
         self.assert_search(idx, cacheable=True)
 
     # @skip_this
     def test_read_wmo(self):
-        wmo = [s['wmo'] for s in valid_searches if 'wmo' in s.keys()][0]
+        wmo = [s['wmo'] for s in VALID_SEARCHES if 'wmo' in s.keys()][0]
         idx = self.new_idx().search_wmo(wmo)
         assert len(idx.read_wmo()) == len(wmo)
 
     # @skip_this
     def test_records_per_wmo(self):
-        wmo = [s['wmo'] for s in valid_searches if 'wmo' in s.keys()][0]
+        wmo = [s['wmo'] for s in VALID_SEARCHES if 'wmo' in s.keys()][0]
         idx = self.new_idx().search_wmo(wmo)
         C = idx.records_per_wmo()
         for w in C:

@@ -9,6 +9,8 @@ import logging
 
 logging.getLogger("matplotlib").setLevel(logging.ERROR)
 logging.getLogger("fsspec").setLevel(logging.ERROR)
+logging.getLogger("pyftpdlib").setLevel(logging.ERROR)
+# logging.getLogger("MainThread").setLevel(logging.ERROR)
 # log = logging.getLogger("argopy.tests")
 
 # argopy.set_options(api_timeout=4 * 60)  # From Github actions, requests can take a while
