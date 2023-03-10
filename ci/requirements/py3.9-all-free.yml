@@ -39,3 +39,4 @@ dependencies:
   - flake8
   - pytest-cov
   - pytest-env
+  - pytest-localftpserver

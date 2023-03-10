@@ -13,10 +13,10 @@ dependencies:
   - toolz
 
   - dask
+  - distributed
   - gsw
   - pyarrow
   - tqdm
-  - distributed
 
   - matplotlib
   - cartopy
@@ -39,3 +39,4 @@ dependencies:
   - flake8
   - pytest-cov
   - pytest-env
+  - pytest-localftpserver

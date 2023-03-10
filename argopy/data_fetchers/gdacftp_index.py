@@ -92,7 +92,11 @@ class FTPArgoIndexFetcher(ABC):
             index_file = "argo_synthetic-profile_index.txt"
 
         # Validation of self.server is done by the indexstore:
-        self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
+        self.indexfs = indexstore(host=self.server,
+                                  index_file=index_file,
+                                  cache=cache,
+                                  cachedir=cachedir,
+                                  timeout=self.timeout)
         self.fs = self.indexfs.fs['src']
 
         nrows = None

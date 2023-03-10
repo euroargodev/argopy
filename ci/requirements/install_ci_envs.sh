@@ -4,13 +4,13 @@ source ~/miniconda3/etc/profile.d/conda.sh
 
 create_this_env () {
 	# $1 is the name of the new environment
-	# $2 is path to environment yaml file	
-	
+	# $2 is path to environment yaml file
+
 	# Overwrite name of the environment set in the file
 	cp ${2} temp_env.yml
 	var="name: $1"
 	sed -i '' "1s/.*/$var/" temp_env.yml > /dev/null 2>&1
-	
+
 	# Eventually remove environment if exists:
 	if conda env list | grep $1; then
 	    printf "$1 already exists, remove and re-create this environment...\n"
@@ -23,14 +23,13 @@ create_this_env () {
 	# Create the environment from file
 	# conda env create --quiet --file temp_env.yml --json >> tmp.json
 	mamba env create --quiet --file temp_env.yml --json > /dev/null 2>&1
-	
+
 	# Clean-up
 	/bin/rm tmp.json > /dev/null 2>&1
 	/bin/rm temp_env.yml > /dev/null 2>&1
 
 
 }
-
 
 fix_kernel_path (){
   ENV=${1}
@@ -90,102 +89,81 @@ add_to_ipykernel () {
    fix_kernel_path ${1}
 }
 
-
 POSITIONAL_ARGS=()
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-#    -n|--name)
-#      NAME="$2"
-#      shift # past argument
-#      shift # past value
-#      ;;
-#    -f|--file)
-#      FILE="$2"
-#      shift # past argument
-#      shift # past value
-#      ;;
     -l|--list|-h|--help)
       echo "Possible environment options include:"
       echo "--all"
-      echo "--py37pinned"
-      echo "--py37free"
-      echo "--py37min"
-      echo "--py37free-core"
-      echo "--py38pinned"
-      echo "--py38free"
-      echo "--py38min"
-      echo "--py38free-core"
-      echo "--py38min-core"
-      echo "--py39free"
+      echo "--py37-all-min"
+      echo "--py37-core-min"
+      echo "--py38-all-pinned"
+      echo "--py38-all-min"
+      echo "--py38-all-free"
+      echo "--py38-core-pinned"
+      echo "--py38-core-min"
+      echo "--py38-core-free"
+      echo "--py39-all-free"
       exit 0
       ;;
     -a|--all)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py37pinned]="py3.7-all-pinned.yml"
-      ENV_LIST[argopy-tests-py38pinned]="py3.8-all-pinned.yml"
+      ENV_LIST[argopy-py38-all-pinned]="py3.8-all-pinned.yml"
+      ENV_LIST[argopy-py38-all-min]="py3.8-all-min.yml"
+      ENV_LIST[argopy-py38-all-free]="py3.8-all-free.yml"
+      ENV_LIST[argopy-py38-core-pinned]="py3.8-core-pinned.yml"
+      ENV_LIST[argopy-py38-core-min]="py3.8-core-min.yml"
+      ENV_LIST[argopy-py38-core-free]="py3.8-core-free.yml"
 
-      ENV_LIST[argopy-tests-py37free]="py3.7-all-free.yml"
-      ENV_LIST[argopy-tests-py38free]="py3.8-all-free.yml"
-      ENV_LIST[argopy-tests-py39free]="py3.9-all-free.yml"
+      ENV_LIST[argopy-py37-all-min]="py3.7-all-min.yml"
+      ENV_LIST[argopy-py37-core-min]="py3.7-core-min.yml"
 
-      ENV_LIST[argopy-tests-py37min]="py3.7-all-min.yml"
-      ENV_LIST[argopy-tests-py38min]="py3.8-all-min.yml"
-
-      ENV_LIST[argopy-tests-py37free-core]="py3.7-core-free.yml"
-      ENV_LIST[argopy-tests-py38free-core]="py3.8-core-free.yml"
-
-      ENV_LIST[argopy-tests-py38min-core]="py3.8-core-min.yml"
+      ENV_LIST[argopy-py39-all-free]="py3.9-all-free.yml"
       shift # past argument
       ;;
-    --py37pinned)
+    --py38-all-pinned)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py37pinned]="py3.7-all-pinned.yml"
+      ENV_LIST[argopy-py38-all-pinned]="py3.8-all-pinned.yml"
       shift # past argument
       ;;
-    --py37free)
+    --py38-all-min)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py37free]="py3.7-all-free.yml"
+      ENV_LIST[argopy-py38-all-min]="py3.8-all-min.yml"
       shift # past argument
       ;;
-    --py37min)
+    --py38-all-free)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py37min]="py3.7-all-min.yml"
+      ENV_LIST[argopy-py38-all-free]="py3.8-all-free.yml"
       shift # past argument
       ;;
-    --py37free-core)
+    --py38-core-pinned)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py37free-core]="py3.7-core-free.yml"
+      ENV_LIST[argopy-py38-core-pinned]="py3.8-core-pinned.yml"
       shift # past argument
       ;;
-    --py38pinned)
+    --py38-core-min)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py38pinned]="py3.8-all-pinned.yml"
+      ENV_LIST[argopy-py38-core-min]="py3.8-core-min.yml"
       shift # past argument
       ;;
-    --py38free)
+    --py38-core-free)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py38free]="py3.8-all-free.yml"
+      ENV_LIST[argopy-py38-core-free]="py3.8-core-free.yml"
       shift # past argument
       ;;
-    --py38min)
+    --py37-all-min)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py38min]="py3.8-all-min.yml"
+      ENV_LIST[argopy-py37-all-min]="py3.7-all-min.yml"
       shift # past argument
       ;;
-    --py38free-core)
+    --py37-core-min)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py38free-core]="py3.8-core-free.yml"
-      shift # past argument
+      ENV_LIST[argopy-py37-core-min]="py3.7-core-min.yml"
       ;;
-    --py38min-core)
+    --py39-all-free)
       declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py38min-core]="py3.8-core-min.yml"
-      shift # past argument
-      ;;
-    --py39free)
-      declare -A ENV_LIST
-      ENV_LIST[argopy-tests-py39free]="py3.9-all-free.yml"
+      ENV_LIST[argopy-py39-all-free]="py3.9-all-free.yml"
       shift # past argument
       ;;
   esac
