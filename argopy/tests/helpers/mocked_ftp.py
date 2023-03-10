@@ -13,7 +13,7 @@ def mocked_ftpserver(ftpserver):
     os.environ['FTP_USER'] = 'janedow'
     os.environ['FTP_PASS'] = 'please'
     os.environ['FTP_HOME'] = tempfile.mkdtemp()
-    os.environ['FTP_PORT'] = '31175'
+    # os.environ['FTP_PORT'] = '31175'  # Let this be chosen automatically
 
     # Set up the ftp server with the tutorial repo GDAC content:
     ftproot, flist = tutorial.open_dataset('localftp')
@@ -23,10 +23,13 @@ def mocked_ftpserver(ftpserver):
                             style="url", anon=True)
 
     #
-    # ftp_login_data = ftpserver.get_login_data()
+    ftp_login_data = ftpserver.get_login_data()
+    # log.info(ftp_login_data)
+    os.environ['FTP_HOST'] = ftp_login_data['host']
+    os.environ['FTP_PORT'] = str(ftp_login_data['port'])
     MOCKFTP = ftpserver.get_login_data(style="url", anon=True)
     pytest.MOCKFTP = MOCKFTP
-    log.debug("Mocked GDAC ftp server ready (%s)" % MOCKFTP)
+    log.info("Mocked GDAC ftp server ready (%s)" % MOCKFTP)
 
     yield ftpserver
 
