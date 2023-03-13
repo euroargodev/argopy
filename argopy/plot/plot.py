@@ -277,28 +277,19 @@ def scatter_map(
         x: Union[str] = None,
         y: Union[str] = None,
         hue: Union[str] = None,
-
         markersize: int = 36,
         markeredgesize: float = 0.5,
         markeredgecolor: str = 'default',
-
         cmap: Union[str] = None,
-        # vmin: Union[str, float] = 'auto',
-        # vmax: Union[str, float] = 'auto',
-
         traj: bool = True,
         traj_axis: Union[str] = None,
         traj_color: str = 'default',
-
         legend: bool = True,
         legend_title: str = 'default',
         legend_location: Union[str, int] = 0,
-
         cbar: bool = False,
         cbarlabels: Union[str, list] = 'auto',
-
         set_global: bool = False,
-
         **kwargs
 ):
     """Try-to-be generic function to create a scatter plot on a map"""

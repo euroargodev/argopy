@@ -292,4 +292,5 @@ Plotters
     argopy.plot.bar_plot
     argopy.plot.scatter_map
     argopy.plot.open_sat_altim_report
+    argopy.plot.discrete_coloring
 

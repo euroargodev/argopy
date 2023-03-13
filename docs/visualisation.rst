@@ -137,8 +137,8 @@ Examples:
         ArgoDataFetcher().profile(WMO, CYC).dashboard()
 
 
-Scatter Maps
-************
+Easy Scatter Maps
+*****************
 
 The :class:`argopy.plot.scatter_map` utility function is dedicated to making maps with Argo profile positions coloured according to specific variables: **a scatter map**.
 
