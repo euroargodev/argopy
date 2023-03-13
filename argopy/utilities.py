@@ -19,6 +19,7 @@ from packaging import version
 import logging
 from abc import ABC, abstractmethod
 from urllib.parse import urlparse
+from typing import Union
 
 import aiohttp
 import asyncio
@@ -659,7 +660,6 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 print("{:<12}: {:<12}".format(k, stat), file=file)
 
 
-
 def show_options(file=sys.stdout):  # noqa: C901
     """ Print options of argopy
 
@@ -677,7 +677,7 @@ def show_options(file=sys.stdout):  # noqa: C901
 
 
 def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
-    """ check if we have a live internet connection
+    """Check if an URL is alive
 
         Parameters
         ----------
@@ -728,12 +728,25 @@ def urlhaskeyword(url: str = "", keyword: str = '', maxtry: int = 10):
     return result
 
 
-def isalive(api_server_check):
-    """Check if a source API is alive or not
+def isalive(api_server_check: Union[str, dict] = "") -> bool:
+    """Check if an API is alive or not
 
         2 methods are available:
-        - Ping a URL
-        - Check for a keyword in a URL content
+
+        - URL Ping
+        - keyword Check
+
+        Parameters
+        ----------
+        api_server_check
+            Url string or dictionary with [``url``, ``keyword``] keys.
+
+            - For a string, uses: :class:`argopy.utilities.isconnected`
+            - For a dictionary,  uses: :class:`argopy.utilities.urlhaskeyword`
+
+        Returns
+        -------
+        bool
     """
     if isinstance(api_server_check, dict):
         return urlhaskeyword(url=api_server_check['url'], keyword=api_server_check['keyword'])
@@ -1327,13 +1340,19 @@ def format_oneline(s, max_width=65):
 
 def is_indexbox(box: list, errors="raise"):
     """ Check if this array matches a 2d or 3d index box definition
-        box = [lon_min, lon_max, lat_min, lat_max]
-    or:
-        box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
+
+    Argopy expects one of the following 2 format to define an index box:
+
+    - box = [lon_min, lon_max, lat_min, lat_max]
+    - box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
+
+    This function check for this format compliance.
+
     Parameters
     ----------
     box: list
-    errors: 'raise'
+    errors: str, default='raise'
+
     Returns
     -------
     bool
@@ -1406,11 +1425,14 @@ def is_indexbox(box: list, errors="raise"):
 
 
 def is_box(box: list, errors="raise"):
-    """ Check if this array matches a 3d or 4d data box definition
+    """Check if this array matches a 3d or 4d data box definition
 
-        box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
-    or:
-        box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
+    Argopy expects one of the following 2 format to define a box:
+
+    - box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
+    - box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
+
+    This function check for this format compliance.
 
     Parameters
     ----------
