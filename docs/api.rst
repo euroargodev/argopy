@@ -67,6 +67,7 @@ Data visualisation
    DataFetcher.dashboard
    IndexFetcher.plot
    dashboard
+   ArgoColors
 
 
 Fetcher properties
@@ -180,7 +181,6 @@ Functions in the :mod:`argopy.plot` submodule.
     open_sat_altim_report
     ArgoColors
 
-
 Utilities
 =========
 
@@ -203,6 +203,11 @@ Function under the :mod:`argopy.utilities` submodule.
     list_standard_variables
     list_multiprofile_file_variables
     Chunker
+
+    isconnected
+    urlhaskeyword
+    isalive
+    isAPIconnected
 
 
 Internals
@@ -285,23 +290,6 @@ Plotters
     argopy.plot.dashboard
     argopy.plot.plot_trajectory
     argopy.plot.bar_plot
+    argopy.plot.scatter_map
     argopy.plot.open_sat_altim_report
 
-Utilities
----------
-
-.. autosummary::
-   :toctree: generated/
-
-    argopy.utilities.check_wmo
-    argopy.utilities.check_cyc
-    argopy.utilities.float_wmo
-    argopy.utilities.Registry
-    argopy.utilities.list_standard_variables
-    argopy.utilities.list_multiprofile_file_variables
-    argopy.utilities.Chunker
-
-    argopy.utilities.isconnected
-    argopy.utilities.urlhaskeyword
-    argopy.utilities.isalive
-    argopy.utilities.isAPIconnected
