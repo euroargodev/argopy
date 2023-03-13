@@ -61,6 +61,9 @@ v0.1.13 (xx Mar. 2023)
 
 - Because of the new :class:`argopy.plot.ArgoColors`, the :class:`argopy.plot.discrete_coloring` utility is deprecated in 0.1.13. Calling it will raise an error after argopy 0.1.14. (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
 
+- New method to check status of web API: now allows for a keyword check rather than a simple url ping. This comes with 2 new utilities functions :meth:`utilities.urlhaskeyword` and :meth:`utilities.isalive`. (:pr:`247`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+
 v0.1.12 (16 May 2022)
 ----------------------
 

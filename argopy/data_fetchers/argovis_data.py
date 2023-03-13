@@ -23,9 +23,7 @@ exit_formats = ['xarray']
 dataset_ids = ['phy']  # First is default
 # api_server = 'https://argovis.colorado.edu'  # API root url
 api_server = "https://argovisbeta02.colorado.edu"   # v1 API, expires on March 31, 2023
-api_server_check = (
-    api_server + "/selection/overview"
-)  # URL to check if the API is alive
+api_server_check = {'url': api_server + "/selection/overview", 'keyword': 'numberOfProfiles'}  # URL to check if the API is alive
 
 log = logging.getLogger("argopy.argovis.data")
 

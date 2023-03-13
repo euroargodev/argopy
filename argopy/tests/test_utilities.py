@@ -14,6 +14,8 @@ from argopy.utilities import (
     list_multiprofile_file_variables,
     check_localftp,
     isconnected,
+    urlhaskeyword,
+    isalive,
     isAPIconnected,
     erddap_ds_exists,
     linear_interpolation_remap,
@@ -85,6 +87,15 @@ def test_show_versions():
 def test_isconnected():
     assert isinstance(isconnected(), bool)
     assert isconnected(host="http://dummyhost") is False
+
+
+def test_urlhaskeyword():
+    assert isinstance(urlhaskeyword('http://api.ifremer.fr/argopy/data/ARGO-FULL.json', 'label'), bool)
+
+
+def test_isalive():
+    assert isinstance(isalive('https://github.com/euroargodev'), bool)
+    assert isinstance(isalive({'url': 'http://api.ifremer.fr/argopy/data/ARGO-FULL.json', 'keyword': 'label'}), bool)
 
 
 def test_isAPIconnected():
