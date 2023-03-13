@@ -109,8 +109,8 @@
 
     argopy.plot.dashboard
     argopy.plot.bar_plot
-    argopy.plot.plot_trajectory
     argopy.plot.scatter_map
+    argopy.plot.plot_trajectory
     argopy.plot.open_sat_altim_report
     argopy.plot.ArgoColors
     argopy.plot.ArgoColors.COLORS

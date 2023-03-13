@@ -301,17 +301,7 @@ def scatter_map(
 
         **kwargs
 ):
-    """Try-to-be generic function to create a scatter plot on a map from **argopy** :class:`xarray.Dataset` or :class:`pandas.DataFrame` data
-
-    Each point is an Argo profile location, colored with a user defined variable and colormap. Floats trajectory can be plotted or not.
-
-    Note that all parameters have default values.
-
-    Warnings
-    --------
-    This function requires `Cartopy <https://scitools.org.uk/cartopy/docs/latest/>`_.
-
-    """
+    """Try-to-be generic function to create a scatter plot on a map"""
     if isinstance(data, xr.Dataset) and data.argo._type == "point":
         # data = data.argo.point2profile(drop=True)
         raise InvalidDatasetStructure('Function only available to a collection of profiles')
