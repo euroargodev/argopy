@@ -28,6 +28,7 @@ from . import stores  # noqa: E402
 from . import errors  # noqa: E402
 from . import plot  # noqa: E402
 from .plot import dashboard  # noqa: E402
+from .plot import ArgoColors  # noqa: E402
 from .utilities import show_versions, show_options, clear_cache, lscache # noqa: E402
 from .utilities import TopoFetcher, ArgoNVSReferenceTables, OceanOPSDeployments  # noqa: E402
 from .utilities import monitor_status as status  # noqa: E402
@@ -55,6 +56,7 @@ __all__ = (
     "utilities",
     "errors",
     "plot",
+    "ArgoColors",  # Class
     # "plotters",  # Deprec, to be removed after 0.1.13
     "stores",
     "tutorial",

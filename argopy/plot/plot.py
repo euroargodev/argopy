@@ -6,11 +6,19 @@
 #
 # Decorator warnUnless is mandatory
 #
-import pandas as pd
-from .utils import STYLE, has_seaborn, has_mpl, has_cartopy, has_ipython, has_ipywidgets
-from .utils import axes_style, discrete_coloring, latlongrid, land_feature
-from ..utilities import warnUnless, check_wmo
+import warnings
 
+import numpy as np
+import xarray as xr
+import pandas as pd
+from typing import Union
+
+from .utils import STYLE, has_seaborn, has_mpl, has_cartopy, has_ipython, has_ipywidgets
+from .utils import axes_style, latlongrid, land_feature
+from .argo_colors import ArgoColors
+
+from ..utilities import warnUnless, check_wmo
+from ..errors import InvalidDatasetStructure
 
 if has_mpl:
     import matplotlib.pyplot as plt
@@ -30,20 +38,31 @@ if has_ipywidgets:
 
 
 @warnUnless(has_ipython, "requires IPython to work as expected, only URLs are returned otherwise")
-def open_sat_altim_report(WMO=None, embed="dropdown"):
+def open_sat_altim_report(WMO: Union[str, list] = None, embed: Union[str, None] = "dropdown"):
     """ Insert the CLS Satellite Altimeter Report figure in notebook cell
 
-        This is the method called when using the facade fetcher methods ``plot``:
+        This is the method called when using the facade fetcher methods ``plot``::
 
-        >>> DataFetcher().float(6902745).plot('qc_altimetry')
+            DataFetcher().float(6902745).plot('qc_altimetry')
 
         Parameters
         ----------
         WMO: int or list
             The float WMO to display. By default, this is set to None and will insert the general dashboard.
-        embed: {'list', 'slide', 'dropdown'}, default: 'dropdown'
+        embed: str, default='dropdown'
             Set the embedding method. If set to None, simply return the list of urls to figures.
+            Possible values are: ``dropdown``, ``slide`` and ``list``.
+
+        Returns
+        -------
+        list of Image with ``list`` embed or a dict with URLs
+
+        Notes
+        -----
+        Requires IPython to work as expected. If IPython is not available only URLs are returned.
+
     """
+    # Create the list of URLs and put them in a dictionary with WMO as keys:
     WMOs = check_wmo(WMO)
     urls = []
     urls_dict = {}
@@ -52,26 +71,28 @@ def open_sat_altim_report(WMO=None, embed="dropdown"):
             "https://data-argo.ifremer.fr/etc/argo-ast9-item13-AltimeterComparison/figures/%i.png"
             % this_wmo
         )
-        if embed == "list":
+        if has_ipython and embed == "list":
             urls.append(Image(url, embed=True))
         else:
             urls.append(url)
             urls_dict[this_wmo] = url
 
-    if embed == "list" and has_ipython:
-        return display(*urls)
-
-    elif embed == "slide" and has_ipython and has_ipywidgets:
-        def f(Float):
-            return Image(url=urls[Float])
-        return ipywidgets.interact(
-            f, Float=ipywidgets.IntSlider(min=0, max=len(urls) - 1, step=1)
-        )
-
-    elif embed == "dropdown" and has_ipython and has_ipywidgets:
-        def f(Float):
-            return Image(url=urls_dict[int(Float)])
-        return ipywidgets.interact(f, Float=[str(wmo) for wmo in WMOs])
+    # Prepare rendering:
+    if has_ipython and embed is not None:
+        if has_ipywidgets and embed == "dropdown":
+            def f(Float):
+                return Image(url=urls_dict[int(Float)])
+            return ipywidgets.interact(f, Float=[str(wmo) for wmo in WMOs])
+        elif has_ipywidgets and embed == "slide":
+            def f(Float):
+                return Image(url=urls[Float])
+            return ipywidgets.interact(
+                f, Float=ipywidgets.IntSlider(min=0, max=len(urls) - 1, step=1)
+            )
+        elif embed == "list":
+            return display(*urls)
+        else:
+            raise ValueError("Invalid value for 'embed' argument. Must be: 'dropdown', 'slide', 'list' or None")
     else:
         return urls_dict
 
@@ -91,40 +112,49 @@ def plot_trajectory(
 
     This function is called by the Data and Index fetchers method 'plot' with the 'trajectory' option::
 
-        from argopy import IndexFetcher as ArgoIndexFetcher
-        from argopy import DataFetcher as ArgoDataFetcher
-        obj = ArgoIndexFetcher().float([6902766, 6902772, 6902914, 6902746])
+        from argopy import DataFetcher, IndexFetcher
+
+        obj = IndexFetcher().float([6902766, 6902772, 6902914, 6902746])
         # OR
-        obj = ArgoDataFetcher().float([6902766, 6902772, 6902914, 6902746])
+        obj = DataFetcher().float([6902766, 6902772, 6902914, 6902746])
 
         fig, ax = obj.plot('trajectory')
 
     Parameters
     ----------
-    df: Pandas DataFrame
-        Input data with columns: 'wmo','longitude','latitude'.
+    df: :class:`pandas.DataFrame`
+        Input data with columns: 'wmo', 'longitude', 'latitude'.
     style: str
-        Define the axes style: 'white', 'darkgrid', 'whitegrid', 'dark', 'ticks'. Only used if Seaborn is available.
-    add_legend: bool
+        Define the Seaborn axes style: 'white', 'darkgrid', 'whitegrid', 'dark', 'ticks'.
+    add_legend: bool, default=True
         Add a box legend with list of floats. True by default for a maximum of 15 floats, otherwise no legend.
     palette: str
         Define colors to be used for floats: 'Set1' (default) or any other matplotlib colormap or name of
         a Seaborn palette (deep, muted, bright, pastel, dark, colorblind).
-    set_global: bool
-        Plot trajectories on a global world map or not. False by default.
+    set_global: bool, default=False
+        Plot trajectories on a global world map or not.
 
     Returns
     -------
     fig: :class:`matplotlib.figure.Figure`
     ax: :class:`matplotlib.axes.Axes`
+
+    Warnings
+    --------
+    This function will produce a plot even if `Cartopy <https://scitools.org.uk/cartopy/docs/latest/>`_ is not installed.
+    If `Cartopy <https://scitools.org.uk/cartopy/docs/latest/>`_ is found, then this function will call
+    :class:`argopy.plot.scatter_map`.
+
     """
     with axes_style(style):
-        # Set-up the figure and axis:
+        # Set up the figure and axis:
         defaults = {"figsize": (10, 6), "dpi": 90}
         if with_cartopy:
-            subplot_kw = {"projection": ccrs.PlateCarree()}
-            fig, ax = plt.subplots(**{**defaults, **kwargs}, subplot_kw=subplot_kw)
-            ax.add_feature(land_feature, edgecolor="black")
+            opts = {**defaults, **{'x': 'longitude', 'y': 'latitude', 'hue': 'wmo',
+                        'traj': True, 'legend': add_legend, 'set_global': set_global,
+                        'cmap': palette}}
+            opts = {**opts, **kwargs}
+            return scatter_map(df, **opts)
         else:
             fig, ax = plt.subplots(**{**defaults, **kwargs})
 
@@ -147,7 +177,7 @@ def plot_trajectory(
                 x="longitude", y="latitude", hue="wmo", data=df, palette=mypal
             )
         else:
-            mypal = discrete_coloring(palette, N=nfloat).cmap
+            mypal = ArgoColors(palette, N=nfloat).cmap
             for k, [name, group] in enumerate(df.groupby("wmo")):
                 group.plot.line(
                     x="longitude",
@@ -200,14 +230,25 @@ def bar_plot(
 ):
     """ Create a bar plot for an Argo index dataframe
 
+
+    This is the method called when using the facade fetcher methods ``plot`` with the ``dac`` or ``profiler`` arguments::
+
+        IndexFetcher(src='gdac').region([-80,-30,20,50,'2021-01','2021-08']).plot('dac')
+
+    To use it directly, you must pass a :class:`pandas.DataFrame` as returned by a :class:`argopy.DataFetcher.index` or :class:`argopy.IndexFetcher.index` property::
+
+        from argopy import IndexFetcher
+        df = IndexFetcher(src='gdac').region([-80,-30,20,50,'2021-01','2021-08']).index
+        bar_plot(df, by='profiler')
+
     Parameters
     ----------
-    df: Pandas DataFrame
+    df: :class:`pandas.DataFrame`
         As returned by a fetcher index property
-    by: str
-        The profile property to plot. Default is 'institution'
-    style: str
-        Define the axes style: 'white', 'darkgrid', 'whitegrid', 'dark', 'ticks'. Only used if Seaborn is available.
+    by: str, default='institution'
+        The profile property to plot
+    style: str, optional
+        Define the Seaborn axes style: 'white', 'darkgrid', 'whitegrid', 'dark', 'ticks'
 
     Returns
     -------
@@ -226,4 +267,204 @@ def bar_plot(
             df.groupby(by).size().sort_values(ascending=True).plot.barh(ax)
         ax.set_xlabel("Number of profiles")
         ax.set_ylabel("")
+    return fig, ax
+
+
+@warnUnless(has_mpl, "requires matplotlib installed")
+@warnUnless(has_cartopy, "requires cartopy installed")
+def scatter_map(
+        data: Union[xr.Dataset, pd.core.frame.DataFrame],
+        x: Union[str] = None,
+        y: Union[str] = None,
+        hue: Union[str] = None,
+
+        markersize: int = 36,
+        markeredgesize: float = 0.5,
+        markeredgecolor: str = 'default',
+
+        cmap: Union[str] = None,
+        # vmin: Union[str, float] = 'auto',
+        # vmax: Union[str, float] = 'auto',
+
+        traj: bool = True,
+        traj_axis: Union[str] = None,
+        traj_color: str = 'default',
+
+        legend: bool = True,
+        legend_title: str = 'default',
+        legend_location: Union[str, int] = 0,
+
+        cbar: bool = False,
+        cbarlabels: Union[str, list] = 'auto',
+
+        set_global: bool = False,
+
+        **kwargs
+):
+    """Try-to-be generic function to create a scatter plot on a map from **argopy** :class:`xarray.Dataset` or :class:`pandas.DataFrame` data
+
+    Each point is an Argo profile location, colored with a user defined variable and colormap. Floats trajectory can be plotted or not.
+
+    Note that all parameters have default values.
+
+    Warnings
+    --------
+    This function requires `Cartopy <https://scitools.org.uk/cartopy/docs/latest/>`_.
+
+    """
+    if isinstance(data, xr.Dataset) and data.argo._type == "point":
+        # data = data.argo.point2profile(drop=True)
+        raise InvalidDatasetStructure('Function only available to a collection of profiles')
+
+    # Try to guess the default hue, i.e. name for WMO:
+    def guess_trajvar(data):
+        for v in ['WMO', 'PLATFORM_NUMBER']:
+            if v.lower() in data:
+                return v.lower()
+            if v.upper() in data:
+                return v.upper()
+        raise ValueError("Can't guess the variable name for default hue/trajectory grouping (WMO)")
+    hue = guess_trajvar(data) if hue is None else hue
+
+    if isinstance(data, xr.Dataset) and data.argo.N_LEVELS > 1 and 'N_LEVELS' in data[hue].dims:
+        warnings.warn("More than one level found in this dataset for '%s', scatter_map will use the first level only" % hue)
+        data = data.isel(N_LEVELS=0)
+
+    # Try to guess the colormap to use as a function of the 'hue' variable:
+    def guess_cmap(hue):
+        if hue.lower() in ArgoColors().list_valid_known_colormaps:
+            cmap = hue.lower()
+        elif 'qc' in hue.lower():
+            cmap = 'qc'
+        elif 'mode' in hue.lower():
+            cmap = 'data_mode'
+        elif 'status_code' in hue.lower():
+            cmap = 'deployment_status'
+        else:
+            cmap = STYLE['palette']
+        return cmap
+    cmap = guess_cmap(hue) if cmap is None else cmap
+
+    # Try to guess the x and y variables:
+    def guess_xvar(data):
+        for v in ['lon', 'long', 'longitude', 'x']:
+            if v.lower() in data:
+                return v.lower()
+            if v.upper() in data:
+                return v.upper()
+
+        if isinstance(data, xr.Dataset):
+            for v in data.coords:
+                if '_CoordinateAxisType' in data[v].attrs and data[v].attrs['_CoordinateAxisType'] == 'Lon':
+                    return v
+                if 'axis' in data[v].attrs and data[v].attrs['axis'] == 'X':
+                    return v
+
+        raise ValueError("Can't guess the variable name for longitudes")
+    def guess_yvar(data):
+        for v in ['lat', 'lati', 'latitude', 'y']:
+            if v.lower() in data:
+                return v.lower()
+            if v.upper() in data:
+                return v.upper()
+
+        if isinstance(data, xr.Dataset):
+            for v in data.coords:
+                if '_CoordinateAxisType' in data[v].attrs and data[v].attrs['_CoordinateAxisType'] == 'Lat':
+                    return v
+                if 'axis' in data[v].attrs and data[v].attrs['axis'] == 'Y':
+                    return v
+
+        raise ValueError("Can't guess the variable name for latitudes")
+    x = guess_xvar(data) if x is None else x
+    y = guess_yvar(data) if y is None else y
+
+    # Adjust legend title:
+    if legend_title == 'default':
+        legend_title = str(hue)
+
+    # Load Argo colors:
+    nHue = len(data.groupby(hue).first()) if isinstance(data, pd.DataFrame) else len(data.groupby(hue))
+    mycolors = ArgoColors(cmap, nHue)
+
+    COLORS = mycolors.COLORS
+    if markeredgecolor == 'default':
+        markeredgecolor = COLORS['DARKBLUE']
+
+    if traj_color == 'default':
+        traj_color = markeredgecolor
+
+    # Try to guess the trajectory grouping variable, i.e. name for WMO
+    traj_axis = guess_trajvar(data) if traj_axis is None else traj_axis
+
+    # Set up the figure and axis:
+    defaults = {"figsize": (10, 6), "dpi": 90}
+
+    subplot_kw = {"projection": ccrs.PlateCarree()}
+    fig, ax = plt.subplots(**{**defaults, **kwargs}, subplot_kw=subplot_kw)
+    ax.add_feature(land_feature, color=COLORS['BLUE'], edgecolor=COLORS['CYAN'], linewidth=.1, alpha=0.3)
+
+    # vmin = data[hue].min() if vmin == 'auto' else vmin
+    # vmax = data[hue].max() if vmax == 'auto' else vmax
+
+    patches = []
+    for k, [name, group] in enumerate(data.groupby(hue)):
+        scatter_opts = {
+            'color': mycolors.lookup[name] if mycolors.registered else mycolors.cmap(k),
+            'label': "%s: %s" % (name, mycolors.ticklabels[name]) if mycolors.registered else name,
+            'zorder': 10,
+            'sizes': [markersize],
+            'edgecolor': markeredgecolor,
+            'linewidths': markeredgesize,
+        }
+        if isinstance(data, pd.DataFrame) and not legend:
+            scatter_opts['legend'] = False  # otherwise Pandas will add a legend even if we set legend=False
+        sc = group.plot.scatter(
+            x=x, y=y,
+            ax=ax,
+            **scatter_opts
+        )
+        patches.append(sc)
+
+    if cbar:
+        if cbarlabels == 'auto':
+            cbarlabels = None
+        mycolors.cbar(ticklabels=cbarlabels,
+                      ax=ax,
+                      cax=sc,
+                      fraction=0.03, label=legend_title)
+
+    if traj:
+        for k, [name, group] in enumerate(data.groupby(traj_axis)):
+            ax.plot(group[x], group[y],
+                     color=traj_color,
+                     linewidth=0.5,
+                     label="_nolegend_",
+                     zorder=2,
+                    )
+
+    if set_global:
+        ax.set_global()
+
+    latlongrid(ax, dx="auto", dy="auto",
+               label_style_arg={'color': COLORS['BLUE'], 'fontsize': 10},
+               **{"color": COLORS['BLUE'], "alpha": 0.7})
+    ax.get_xaxis().set_visible(False)
+    ax.get_yaxis().set_visible(False)
+
+    if legend:
+        handles, labels = ax.get_legend_handles_labels()
+        plt.legend(
+            handles,
+            labels,
+            loc=legend_location,
+            bbox_to_anchor=(1.26, 1),
+            title=legend_title,
+        )
+
+    for spine in ax.spines.values():
+        spine.set_edgecolor(COLORS['DARKBLUE'])
+
+    ax.set_title('')
+
     return fig, ax

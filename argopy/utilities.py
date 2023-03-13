@@ -54,6 +54,7 @@ from .errors import (
     InvalidOption,
     InvalidDatasetStructure,
     FileSystemHasNoCache,
+    DataNotFound,
 )
 
 try:
@@ -675,7 +676,7 @@ def show_options(file=sys.stdout):  # noqa: C901
         print(f"{k}: {v}", file=file)
 
 
-def isconnected(host="https://www.ifremer.fr", maxtry=10):
+def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
     """ check if we have a live internet connection
 
         Parameters
@@ -699,6 +700,45 @@ def isconnected(host="https://www.ifremer.fr", maxtry=10):
         return result
     else:
         return os.path.exists(host)
+
+
+def urlhaskeyword(url: str = "", keyword: str = '', maxtry: int = 10):
+    """ Check if a keyword is in the content of a URL
+
+        Parameters
+        ----------
+        url: str
+        keyword: str
+        maxtry: int, default: 10
+            Maximum number of host connections to try before returning False
+
+        Returns
+        -------
+        bool
+    """
+    it = 0
+    while it < maxtry:
+        try:
+            with fsspec.open(url) as f:
+                data = f.read()
+            result = keyword in str(data)
+            it = maxtry
+        except Exception:
+            result, it = False, it + 1
+    return result
+
+
+def isalive(api_server_check):
+    """Check if a source API is alive or not
+
+        2 methods are available:
+        - Ping a URL
+        - Check for a keyword in a URL content
+    """
+    if isinstance(api_server_check, dict):
+        return urlhaskeyword(url=api_server_check['url'], keyword=api_server_check['keyword'])
+    else:
+        return isconnected(api_server_check)
 
 
 def isAPIconnected(src="erddap", data=True):
@@ -727,33 +767,41 @@ def isAPIconnected(src="erddap", data=True):
             # This is a special case because the source here is a local folder
             result = check_localftp(OPTIONS["local_ftp"])
         else:
-            result = isconnected(list_src[src].api_server_check)
+            result = isalive(list_src[src].api_server_check)
         return result
     else:
         raise InvalidFetcher
 
 
 def erddap_ds_exists(
-    ds: str = "ArgoFloats", erddap: str = "https://www.ifremer.fr/erddap"
+        ds: str = "ArgoFloats",
+        erddap: str = "https://erddap.ifremer.fr/erddap",
+        maxtry: int = 2
 ) -> bool:
     """ Check if a dataset exists on a remote erddap server
     return a bool
 
     Parameter
     ---------
-    ds: str
-        Name of the erddap dataset to check (default: 'ArgoFloats')
-    erddap: str
-        Url of the erddap server (default: 'https://www.ifremer.fr/erddap')
-
+    ds: str, default='ArgoFloats'
+        Name of the erddap dataset to check
+    erddap: str, default='https://erddap.ifremer.fr/erddap'
+        Url of the erddap server
+    maxtry: int, default: 2
+        Maximum number of host connections to try
     Return
     ------
     bool
     """
     from .stores import httpstore
-    with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
-        erddap_index = json.load(of)
-    return ds in [row[-1] for row in erddap_index["table"]["rows"]]
+    if isconnected(erddap, maxtry=maxtry):
+        with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
+            erddap_index = json.load(of)
+        return ds in [row[-1] for row in erddap_index["table"]["rows"]]
+    else:
+        log.debug("Cannot reach erddap server: %s" % erddap)
+        warnings.warn("Return False because we cannot reach the erddap server %s" % erddap)
+        return False
 
 
 def badge(label="label", message="message", color="green", insert=False):
@@ -1409,11 +1457,11 @@ def is_box(box: list, errors="raise"):
     )
     if len(box) == 8:
         tests[
-            "datetim_min must be a string convertible to a Pandas datetime"
-        ] = lambda b: isinstance(b[-2], str) and is_dateconvertible(b[-2])
+            "datetim_min must be an object convertible to a Pandas datetime"
+        ] = lambda b: is_dateconvertible(b[-2])
         tests[
-            "datetim_max must be a string convertible to a Pandas datetime"
-        ] = lambda b: isinstance(b[-1], str) and is_dateconvertible(b[-1])
+            "datetim_max must be an object convertible to a Pandas datetime"
+        ] = lambda b: is_dateconvertible(b[-1])
 
     # Ranges:
     tests["lon_min must be in [-180;180] or [0;360]"] = (
@@ -1428,13 +1476,13 @@ def is_box(box: list, errors="raise"):
     tests["pres_max must be in [0;10000]"] = lambda b: b[5] >= 0 and b[5] <= 10000
 
     # Orders:
-    tests["lon_max must be larger than lon_min"] = lambda b: b[0] < b[1]
-    tests["lat_max must be larger than lat_min"] = lambda b: b[2] < b[3]
-    tests["pres_max must be larger than pres_min"] = lambda b: b[4] < b[5]
+    tests["lon_max must be larger than lon_min"] = lambda b: b[0] <= b[1]
+    tests["lat_max must be larger than lat_min"] = lambda b: b[2] <= b[3]
+    tests["pres_max must be larger than pres_min"] = lambda b: b[4] <= b[5]
     if len(box) == 8:
         tests["datetim_max must come after datetim_min"] = lambda b: pd.to_datetime(
             b[-2]
-        ) < pd.to_datetime(b[-1])
+        ) <= pd.to_datetime(b[-1])
 
     error = None
     for msg, test in tests.items():
@@ -2611,6 +2659,12 @@ class Registry(UserList):
             self._complain("%s is not a valid %s" % (str(item), self.dtype))
         return is_valid
 
+    def _dict(self, item):
+        is_valid = isinstance(item, dict)
+        if not is_valid:
+            self._complain("%s is not a valid %s" % (str(item), self.dtype))
+        return is_valid
+
     def _wmo(self, item):
         return item.isvalid
 
@@ -2636,6 +2690,9 @@ class Registry(UserList):
         elif dtype == float_wmo or str(dtype).lower() == 'wmo':
             self._validator = self._wmo
             self.dtype = float_wmo
+        elif repr(dtype) == "<class 'dict'>" or dtype == 'dict':
+            self._validator = self._dict
+            self.dtype = dict
         else:
             raise ValueError("Unrecognised Registry data type '%s'" % dtype)
         if initlist is not None:
@@ -2970,7 +3027,7 @@ class ArgoNVSReferenceTables:
         Returns
         -------
         OrderedDict
-            Dictionary with all table short names as key and table content as :class:`pandas.DataFrame`
+            Dictionary with all table short names as key and table content as class:`pandas.DataFrame`
         """
         URLs = [self.get_url(rtid) for rtid in self.valid_ref]
         df_list = self.fs.open_mfjson(URLs, preprocess=self._jsConcept2df)
@@ -3018,6 +3075,7 @@ class OceanOPSDeployments:
 
     Examples
     --------
+
     Import the utility class:
 
     >>> from argopy.utilities import OceanOPSDeployments
@@ -3051,8 +3109,11 @@ class OceanOPSDeployments:
     """
     api = "https://www.ocean-ops.org"
     """URL to the API"""
+
     model = "api/1/data/platform"
-    """This model represents a Platform entity and is used to retrieve a platform information (schema model named 'Ptf')."""
+    """This model represents a Platform entity and is used to retrieve a platform information (schema model 
+    named 'Ptf')."""
+
     api_server_check = 'https://www.ocean-ops.org/api/1/oceanops-api.yaml'
     """URL to check if the API is alive"""
 
@@ -3062,9 +3123,8 @@ class OceanOPSDeployments:
         Parameters
         ----------
         box: list, optional, default=None
-            Define the domain to load the Argo deployment plan for. By default **box** is set to None to work with the
+            Define the domain to load the Argo deployment plan for. By default, **box** is set to None to work with the
             global deployment plan starting from the current date.
-
             The list expects one of the following format:
 
             - [lon_min, lon_max, lat_min, lat_max]
@@ -3072,7 +3132,6 @@ class OceanOPSDeployments:
             - [lon_min, lon_max, lat_min, lat_max, date_min, date_max]
 
             Longitude and latitude values must be floats. Dates are strings.
-
             If **box** is provided with a regional domain definition (only 4 values given), then ``date_min`` will be
             set to the current date.
 
@@ -3084,10 +3143,10 @@ class OceanOPSDeployments:
         if box is None:
             box = [None, None, None, None, pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"), None]
         elif len(box) == 4:
-            box = box.append(pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"))
-            box = box.append(None)
+            box.append(pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"))
+            box.append(None)
         elif len(box) == 5:
-            box = box.append(None)
+            box.append(None)
 
         if len(box) != 6:
             raise ValueError("The 'box' argument must be: None or of lengths 4 or 5 or 6\n%s" % str(box))
@@ -3098,6 +3157,29 @@ class OceanOPSDeployments:
 
         from .stores import httpstore
         self.fs = httpstore(cache=False)
+
+    def __format(self, x, typ: str) -> str:
+        """ string formatting helper """
+        if typ == "lon":
+            return str(x) if x is not None else "-"
+        elif typ == "lat":
+            return str(x) if x is not None else "-"
+        elif typ == "tim":
+            return pd.to_datetime(x).strftime("%Y-%m-%d") if x is not None else "-"
+        else:
+            return str(x)
+
+    def __repr__(self):
+        summary = ["<argo.deployment_plan>"]
+        summary.append("API: %s/%s" % (self.api, self.model))
+        summary.append("Domain: %s" % self.box_name)
+        summary.append("Deployed only: %s" % self.deployed_only)
+        if self.data is not None:
+            summary.append("Nb of floats in the deployment plan: %s" % self.size)
+        else:
+            summary.append("Nb of floats in the deployment plan: - [Data not retrieved yet]")
+        return '\n'.join(summary)
+
 
     def __encode_inc(self, inc):
         """Return encoded uri expression for 'include' parameter
@@ -3124,6 +3206,11 @@ class OceanOPSDeployments:
         str
         """
         return exp.replace("\"", "%22").replace("'", "%27").replace(" ", "%20").replace(">", "%3E").replace("<", "%3C")
+
+    def __get_uri(self, encoded=False):
+        uri = "exp=%s&include=%s" % (self.exp(encoded=encoded), self.include(encoded=encoded))
+        url = "%s/%s?%s" % (self.api, self.model, uri)
+        return url
 
     def include(self, encoded=False):
         """Return an Ocean-Ops API 'include' expression
@@ -3186,10 +3273,45 @@ class OceanOPSDeployments:
         exp = "[\"%s\", %s]" % (exp, ", ".join(arg))
         return exp if not encoded else self.__encode_exp(exp)
 
-    def __get_uri(self, encoded=False):
-        uri = "exp=%s&include=%s" % (self.exp(encoded=encoded), self.include(encoded=encoded))
-        url = "%s/%s?%s" % (self.api, self.model, uri)
-        return url
+    @property
+    def size(self):
+        return len(self.data['data']) if self.data is not None else None
+
+    @property
+    def status_code(self):
+        """Return a :class:`pandas.DataFrame` with the definition of status"""
+        status = {'status_code': [0, 1, 2, 6, 4, 5],
+                  'status_name': ['PROBABLE', 'CONFIRMED', 'REGISTERED', 'OPERATIONAL', 'INACTIVE', 'CLOSED'],
+                  'description': [
+                      'Starting status for some platforms, when there is only a few metadata available, like rough deployment location and date. The platform may be deployed',
+                      'Automatically set when a ship is attached to the deployment information. The platform is ready to be deployed, deployment is planned',
+                      'Starting status for most of the networks, when deployment planning is not done. The deployment is certain, and a notification has been sent via the OceanOPS system',
+                      'Automatically set when the platform is emitting a pulse and observations are distributed within a certain time interval',
+                      'The platform is not emitting a pulse since a certain time',
+                      'The platform is not emitting a pulse since a long time, it is considered as dead',
+                  ]}
+        return pd.DataFrame(status).set_index('status_code')
+
+    @property
+    def box_name(self):
+        """Return a string to print the box property"""
+        BOX = self.box
+        cname = ("[lon=%s/%s; lat=%s/%s]") % (
+            self.__format(BOX[0], "lon"),
+            self.__format(BOX[1], "lon"),
+            self.__format(BOX[2], "lat"),
+            self.__format(BOX[3], "lat"),
+        )
+        if len(BOX) == 6:
+            cname = ("[lon=%s/%s; lat=%s/%s; t=%s/%s]") % (
+                self.__format(BOX[0], "lon"),
+                self.__format(BOX[1], "lon"),
+                self.__format(BOX[2], "lat"),
+                self.__format(BOX[3], "lat"),
+                self.__format(BOX[4], "tim"),
+                self.__format(BOX[5], "tim"),
+            )
+        return cname
 
     @property
     def uri(self):
@@ -3211,6 +3333,19 @@ class OceanOPSDeployments:
         """
         return self.__get_uri(encoded=False)
 
+    @property
+    def plan(self):
+        """Return a dictionary to be used as argument in a :class:`virtualargofleet.VirtualFleet`
+
+        This method is for dev, but will be moved to the VirtualFleet software utilities
+        """
+        df = self.to_dataframe()
+        plan = df[['lon', 'lat', 'date']].rename(columns={"date": "time"}).to_dict('series')
+        for key in plan.keys():
+            plan[key] = plan[key].to_list()
+        plan['time'] = np.array(plan['time'], dtype='datetime64')
+        return plan
+
     def to_json(self):
         """Return OceanOPS API request response as a json object"""
         if self.data is None:
@@ -3225,6 +3360,9 @@ class OceanOPSDeployments:
         :class:`pandas.DataFrame`
         """
         data = self.to_json()
+        if data['total'] == 0:
+            raise DataNotFound('Your search matches no results')
+
         # res = {'date': [], 'lat': [], 'lon': [], 'wmo': [], 'status_name': [], 'status_code': []}
         # res = {'date': [], 'lat': [], 'lon': [], 'wmo': [], 'status_name': [], 'status_code': [], 'ship_name': []}
         res = {'date': [], 'lat': [], 'lon': [], 'wmo': [], 'status_name': [], 'status_code': [], 'program': [],
@@ -3256,108 +3394,34 @@ class OceanOPSDeployments:
             #     status[ptf['ptfStatus']['name']] = ptf['ptfStatus']['description']
 
         df = pd.DataFrame(res)
+        df = df.astype({'date': np.datetime64})
         df = df.sort_values(by='date').reset_index(drop=True)
         # df = df[ (df['status_name'] == 'CLOSED') | (df['status_name'] == 'OPERATIONAL')] # Select only floats that have been deployed and returned data
         # print(status)
         return df
 
-    @property
-    def plan(self):
-        """Return a dictionary to be used as argument in a :class:`VirtualFleet`
 
-        This method is for dev, but will be moved to the VirtualFleet software utilities
-        """
-        df = self.to_dataframe()
-        plan = df[['lon', 'lat', 'date']].rename(columns={"date": "time"}).to_dict('series')
-        for key in plan.keys():
-            plan[key] = plan[key].to_list()
-        plan['time'] = np.array(plan['time'], dtype='datetime64')
-        return plan
-
-    @property
-    def status_code(self):
-        """Return a :class:`pandas.DataFrame` with the definition of status"""
-        status = {'status_code': [0, 1, 2, 6, 4, 5],
-                  'status_name': ['PROBABLE', 'CONFIRMED', 'REGISTERED', 'OPERATIONAL', 'INACTIVE', 'CLOSED'],
-                  'description': [
-                      'Starting status for some platforms, when there is only a few metadata available, like rough deployment location and date. The platform may be deployed',
-                      'Automatically set when a ship is attached to the deployment information. The platform is ready to be deployed, deployment is planned',
-                      'Starting status for most of the networks, when deployment planning is not done. The deployment is certain, and a notification has been sent via the OceanOPS system',
-                      'Automatically set when the platform is emitting a pulse and observations are distributed within a certain time interval',
-                      'The platform is not emitting a pulse since a certain time',
-                      'The platform is not emitting a pulse since a long time, it is considered as dead',
-                  ]}
-        return pd.DataFrame(status).set_index('status_code')
-
-    def _format(self, x, typ: str) -> str:
-        """ string formatting helper """
-        if typ == "lon":
-            return str(x) if x is not None else "-"
-        elif typ == "lat":
-            return str(x) if x is not None else "-"
-        elif typ == "tim":
-            return pd.to_datetime(x).strftime("%Y-%m-%d") if x is not None else "-"
-        else:
-            return str(x)
-
-    @property
-    def box_name(self):
-        """Return a string to print the box property"""
-        BOX = self.box
-        cname = ("[lon=%s/%s; lat=%s/%s]") % (
-            self._format(BOX[0], "lon"),
-            self._format(BOX[1], "lon"),
-            self._format(BOX[2], "lat"),
-            self._format(BOX[3], "lat"),
-        )
-        if len(BOX) == 6:
-            cname = ("[lon=%s/%s; lat=%s/%s; t=%s/%s]") % (
-                self._format(BOX[0], "lon"),
-                self._format(BOX[1], "lon"),
-                self._format(BOX[2], "lat"),
-                self._format(BOX[3], "lat"),
-                self._format(BOX[4], "tim"),
-                self._format(BOX[5], "tim"),
-            )
-        return cname
-
-    def __repr__(self):
-        summary = ["<argo.deployment_plan>"]
-        summary.append("API: %s/%s" % (self.api, self.model))
-        summary.append("Domain: %s" % self.box_name)
-        summary.append("Deployed only: %s" % self.deployed_only)
-        if self.data is not None:
-            summary.append("Nb of floats in the deployment plan: %s" % self.data['total'])
-        else:
-            summary.append("Nb of floats in the deployment plan: Data not retrieved yet")
-        return '\n'.join(summary)
-
-    def plot_status(self, **kwargs):
+    def plot_status(self,
+                    **kwargs
+                    ):
         """Quick plot of the deployment plan
 
-        Named arguments are passed to plt.subplots
+        Named arguments are passed to :class:`plot.scatter_map`
+
         Returns
         -------
         fig: :class:`matplotlib.figure.Figure`
         ax: :class:`matplotlib.axes.Axes`
         """
-        from .plot.utils import discrete_coloring, latlongrid, land_feature
-        from .plot.plot import ccrs, plt
-
+        from .plot.plot import scatter_map
         df = self.to_dataframe()
-
-        defaults = {"figsize": (10, 6), "dpi": 90}
-        subplot_kw = {"projection": ccrs.PlateCarree()}
-        fig, ax = plt.subplots(**{**defaults, **kwargs}, subplot_kw=subplot_kw)
-        ax.add_feature(land_feature, edgecolor="black")
-
-        status = self.status_code['status_name'].to_dict()
-        ticklabels = ["%i: %s" % (k, status[k]) for k in status]
-        dc = discrete_coloring(name='Spectral', N=6)
-        ax.scatter(df['lon'], df['lat'], c=df['status_code'], cmap=dc.cmap, vmin=0, vmax=6)
-        dc.cbar(ticklabels=ticklabels, fraction=0.03, label='Status')
-
-        latlongrid(ax, dx="auto", dy="auto", fontsize="auto")
+        fig, ax = scatter_map(df,
+                              x='lon',
+                              y='lat',
+                              hue='status_code',
+                              traj=False,
+                              cmap='deployment_status',
+                              **kwargs)
         ax.set_title("Argo network deployment plan\n%s\nSource: OceanOPS API as of %s" % (
             self.box_name,
             pd.to_datetime('now', utc=True).strftime("%Y-%m-%d %H:%M:%S")),

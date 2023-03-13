@@ -268,9 +268,9 @@ class ArgoDataFetcher:
 
     @property
     def domain(self):
-        """" Domain of the dataset
+        """ Domain of the dataset
 
-            This is different from a usual ``box`` because dates are already in numpy.datetime64 format.
+            This is different from a usual ``box`` because dates are in numpy.datetime64 format.
         """
         this_ds = self.data
         if 'PRES_ADJUSTED' in this_ds.data_vars:
@@ -565,18 +565,31 @@ class ArgoDataFetcher:
             )
         return self.fetcher.clear_cache()
 
-    def plot(self, ptype="trajectory", **kwargs):
-        """ Create custom plots from data
+    def plot(self, ptype: str = "trajectory", **kwargs):
+        """ Create custom plots from this fetcher data or index.
 
-            Parameters
-            ----------
-            ptype: str, optional, default: 'trajectory'
-                Plot type, one of the following: 'trajectory',' profiler', 'dac', 'qc_altimetry'.
+        This is basically shortcuts to some plotting submodules:
 
-            Returns
-            -------
-            fig: :class:`matplotlib.figure.Figure`
-            ax: :class:`matplotlib.axes.Axes`
+        - **trajectory** calls :class:`argopy.plot.plot_trajectory` with index DataFrame
+        - **profiler** or **dac** calls :class:`argopy.plot.bar_plot` with index DataFrame
+        - **qc_altimetry** calls :class:`argopy.plot.open_sat_altim_report` with data unique list of ``PLATFORM_NUMBER``
+
+        Parameters
+        ----------
+        ptype: str, default: 'trajectory'
+            Plot type, one of the following: ``trajectory``, ``profiler``, ``dac`` or ``qc_altimetry``.
+        kwargs:
+            Other arguments passed to the plotting submodule.
+
+        Returns
+        -------
+        fig: :class:`matplotlib.figure.Figure`
+        ax: :class:`matplotlib.axes.Axes`
+
+        Warnings
+        --------
+        Calling this method will automatically trigger a call to the :class:`argopy.DataFetcher.load` method.
+
         """
         self.load()
         if ptype in ["dac", "institution"]:
@@ -588,7 +601,8 @@ class ArgoDataFetcher:
                 self.to_index(full=True)
             return bar_plot(self.index, by="profiler", **kwargs)
         elif ptype == "trajectory":
-            return plot_trajectory(self.index, **kwargs)
+            defaults = {"style": 'white'}
+            return plot_trajectory(self.index, **{**defaults, **kwargs})
         elif ptype == "qc_altimetry":
             WMOs = np.unique(self.data['PLATFORM_NUMBER'])
             return open_sat_altim_report(WMOs, **kwargs)
@@ -599,40 +613,42 @@ class ArgoDataFetcher:
 
 
 class ArgoIndexFetcher:
-    """ Fetcher and post-processor of Argo index data (API facade)
+    """Fetcher and post-processor of Argo index data (API facade)
 
-    Parameters
-    ----------
-    mode: str, optional
-        User mode. Eg: ``standard`` or ``expert``. Set to OPTIONS['mode'] by default if empty.
-    src: str, optional
-         Source of the data to use. Eg: ``erddap``. Set to OPTIONS['src'] by default if empty.
-    ds: str, optional
-        Name of the dataset to load. Eg: ``phy``. Set to OPTIONS['dataset'] by default if empty.
-    **fetcher_kwargs: optional
-        Additional arguments passed on data source fetcher of each access points.
-
-    Notes
-    -----
-    Spec discussions can be found here:
-        https://github.com/euroargodev/argopy/issues/8
-
-        https://github.com/euroargodev/argopy/pull/6
+    An index dataset gather space/time information, and possibly more meta-data, of Argo profiles.
 
     Examples
     --------
     >>> from argopy import IndexFetcher
     >>> adf = IndexFetcher.region([-75, -65, 10, 20]).load()
-    >>> idx.plot()
     >>> idx.index
+    >>> idx.plot()
     """
 
-    def __init__(self, mode: str = "", src: str = "", ds: str = "", **fetcher_kwargs):
+    def __init__(self,
+                 mode: str = OPTIONS["mode"],
+                 src: str = OPTIONS["src"],
+                 ds: str = OPTIONS["dataset"],
+                 **fetcher_kwargs):
+        """Facade for Argo index fetchers
 
-        # Facade options:
-        self._mode = OPTIONS["mode"] if mode == "" else mode
-        self._dataset_id = OPTIONS["dataset"] if ds == "" else ds
-        self._src = OPTIONS["src"] if src == "" else src
+        Parameters
+        ----------
+        mode: str, optional
+            User mode. Eg: ``standard`` or ``expert``.
+
+        src: str, optional
+             Source of the data to use. Eg: ``erddap``.
+
+        ds: str, optional
+            Name of the dataset to load. Eg: ``phy``.
+
+        **fetcher_kwargs: optional
+            Additional arguments passed on data source fetcher of each access points.
+        """
+        self._mode = mode
+        self._dataset_id = ds
+        self._src = src
 
         _VALIDATORS["mode"](self._mode)
         _VALIDATORS["src"](self._src)
@@ -877,17 +893,31 @@ class ArgoIndexFetcher:
             self._loaded = True
         return self
 
-    def plot(self, ptype="trajectory", **kwargs):
-        """ Create custom plots from index
+    def plot(self, ptype: str = "trajectory", **kwargs):
+        """ Create custom plots from this fetcher index.
 
-            Parameters
-            ----------
-            ptype: {'trajectory',' profiler', 'dac', 'qc_altimetry}, default: 'trajectory'
+        This is basically shortcuts to some plotting submodules:
 
-            Returns
-            -------
-            fig: :class:`matplotlib.figure.Figure`
-            ax: :class:`matplotlib.axes.Axes`
+        - **trajectory** calls :class:`argopy.plot.plot_trajectory` with index DataFrame
+        - **profiler** or **dac** calls :class:`argopy.plot.bar_plot` with index DataFrame
+        - **qc_altimetry** calls :class:`argopy.plot.open_sat_altim_report` with index unique list of ``wmo``
+
+        Parameters
+        ----------
+        ptype: str, default: 'trajectory'
+            Plot type, one of the following: ``trajectory``, ``profiler``, ``dac`` or ``qc_altimetry``.
+        kwargs:
+            Other arguments passed to the plotting submodule.
+
+        Returns
+        -------
+        fig: :class:`matplotlib.figure.Figure`
+        ax: :class:`matplotlib.axes.Axes`
+
+        Warnings
+        --------
+        Calling this method will automatically trigger a call to the :class:`argopy.IndexFetcher.load` method.
+
         """
         self.load()
         if ptype in ["dac", "institution"]:
@@ -895,7 +925,8 @@ class ArgoIndexFetcher:
         elif ptype == "profiler":
             return bar_plot(self.index, by="profiler", **kwargs)
         elif ptype == "trajectory":
-            return plot_trajectory(self.index.sort_values(["file"]), **kwargs)
+            defaults = {"style": 'white'}
+            return plot_trajectory(self.index.sort_values(["file"]), **{**defaults, **kwargs})
         elif ptype == "qc_altimetry":
             WMOs = np.unique(self.index['wmo'])
             return open_sat_altim_report(WMOs, **kwargs)

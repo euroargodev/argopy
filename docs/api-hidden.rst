@@ -63,6 +63,11 @@
     argopy.utilities.list_available_index_src
     argopy.utilities.Chunker
 
+    argopy.utilities.isconnected
+    argopy.utilities.urlhaskeyword
+    argopy.utilities.isalive
+    argopy.utilities.isAPIconnected
+
     argopy.utilities.ArgoNVSReferenceTables
     argopy.utilities.ArgoNVSReferenceTables.valid_ref
     argopy.utilities.ArgoNVSReferenceTables.all_tbl
@@ -105,7 +110,16 @@
     argopy.plot.dashboard
     argopy.plot.bar_plot
     argopy.plot.plot_trajectory
+    argopy.plot.scatter_map
     argopy.plot.open_sat_altim_report
+    argopy.plot.ArgoColors
+    argopy.plot.ArgoColors.COLORS
+    argopy.plot.ArgoColors.quantitative
+    argopy.plot.ArgoColors.definition
+    argopy.plot.ArgoColors.cmap
+    argopy.plot.ArgoColors.lookup
+    argopy.plot.ArgoColors.ticklabels
+    argopy.plot.ArgoColors.list_valid_known_colormaps
 
     argopy.stores.filesystems.filestore
     argopy.stores.filestore.open_dataset

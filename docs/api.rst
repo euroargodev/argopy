@@ -67,6 +67,7 @@ Data visualisation
    DataFetcher.dashboard
    IndexFetcher.plot
    dashboard
+   ArgoColors
 
 
 Fetcher properties
@@ -166,7 +167,7 @@ Misc
 Plotters
 ========
 
-Function under the :mod:`argopy.plot` submodule.
+Functions in the :mod:`argopy.plot` submodule.
 
 .. currentmodule:: argopy.plot
 
@@ -176,7 +177,9 @@ Function under the :mod:`argopy.plot` submodule.
     dashboard
     plot_trajectory
     bar_plot
+    scatter_map
     open_sat_altim_report
+    ArgoColors
 
 Utilities
 =========
@@ -200,6 +203,11 @@ Function under the :mod:`argopy.utilities` submodule.
     list_standard_variables
     list_multiprofile_file_variables
     Chunker
+
+    isconnected
+    urlhaskeyword
+    isalive
+    isAPIconnected
 
 
 Internals
@@ -272,4 +280,16 @@ Argovis
     argopy.data_fetchers.argovis_data.ArgovisDataFetcher
     argopy.data_fetchers.argovis_data.Fetch_wmo
     argopy.data_fetchers.argovis_data.Fetch_box
+
+Plotters
+--------
+
+.. autosummary::
+   :toctree: generated/
+
+    argopy.plot.dashboard
+    argopy.plot.plot_trajectory
+    argopy.plot.bar_plot
+    argopy.plot.scatter_map
+    argopy.plot.open_sat_altim_report
 
