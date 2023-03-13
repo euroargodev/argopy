@@ -63,6 +63,11 @@
     argopy.utilities.list_available_index_src
     argopy.utilities.Chunker
 
+    argopy.utilities.isconnected
+    argopy.utilities.urlhaskeyword
+    argopy.utilities.isalive
+    argopy.utilities.isAPIconnected
+
     argopy.utilities.ArgoNVSReferenceTables
     argopy.utilities.ArgoNVSReferenceTables.valid_ref
     argopy.utilities.ArgoNVSReferenceTables.all_tbl

@@ -7,6 +7,7 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+
 v0.1.13 (xx Mar. 2023)
 ----------------------
 
@@ -24,6 +25,10 @@ v0.1.13 (xx Mar. 2023)
 
     df = deployment.to_dataframe()
     deployment.status_code
+
+**Internals**
+
+- New method to check status of web API: now allows for a keyword check rather than a simple url ping. This comes with 2 new utilities functions :meth:`utilities.urlhaskeyword` and :meth:`utilities.isalive`. (:pr:`247`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 
 v0.1.12 (16 May 2022)
