@@ -54,6 +54,7 @@ span.linenos.special { color: #607A86; background-color: #263238; padding-left: 
 .highlight .nt { color: #FF5370 } /* Name.Tag */
 .highlight .nv { color: #89DDFF } /* Name.Variable */
 .highlight .ow { color: #89DDFF; font-style: italic } /* Operator.Word */
+.highlight .pm { color: #89DDFF } /* Punctuation.Marker */
 .highlight .w { color: #EEFFFF } /* Text.Whitespace */
 .highlight .mb { color: #F78C6C } /* Literal.Number.Bin */
 .highlight .mf { color: #F78C6C } /* Literal.Number.Float */

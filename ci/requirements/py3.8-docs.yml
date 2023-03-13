@@ -46,3 +46,5 @@ dependencies:
     - readthedocs-sphinx-ext
     - sphinx-autosummary-accessors
     - pydocstyle
+    - sphinx-tabs
+    - git+https://github.com/sphinx-contrib/googleanalytics
