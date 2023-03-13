@@ -292,7 +292,92 @@ def scatter_map(
         set_global: bool = False,
         **kwargs
 ):
-    """Try-to-be generic function to create a scatter plot on a map"""
+    """Try-to-be generic function to create a scatter plot on a map from **argopy** :class:`xarray.Dataset` or :class:`pandas.DataFrame` data
+
+    Each point is an Argo profile location, colored with a user defined variable and colormap. Floats trajectory can be plotted or not.
+
+    Note that all parameters have default values.
+
+    Warnings
+    --------
+    This function requires `Cartopy <https://scitools.org.uk/cartopy/docs/latest/>`_.
+
+    Examples
+    --------
+    ::
+
+        from argopy.plot import scatter_map
+        from argopy import DataFetcher
+
+        ArgoSet = DataFetcher(mode='expert').float([6902771, 4903348]).load()
+        ds = ArgoSet.data.argo.point2profile()
+        df = ArgoSet.index
+
+        scatter_map(df)
+        scatter_map(ds)
+        scatter_map(ds, hue='DATA_MODE')
+        scatter_map(ds, hue='PSAL_QC')
+
+    ::
+
+        from argopy import OceanOPSDeployments
+        df = OceanOPSDeployments([-90, 0, 0, 90]).to_dataframe()
+        scatter_map(df, hue='status_code', traj=False)
+        scatter_map(df, x='lon', y='lat', hue='status_code', traj=False, cmap='deployment_status')
+
+    Parameters
+    ----------
+    data: :class:`xarray.Dataset` or :class:`pandas.DataFrame`
+        Input data structure
+    x: str, default=None
+        Name of the data variable to use as longitude.
+        If x is set to None, we'll try to guess which variable to use among standard names.
+    y: str, default=None
+        Name of the data variable to use as latitude.
+        If y is set to None, we'll try to guess which variable to use among standard names.
+    hue: str, default=None
+        Name of the data variable to use for points coloring.
+        If hue is set to None, we'll try to guess which variable to use to color points according to WMO.
+
+    Returns
+    -------
+    fig: :class:`matplotlib.figure.Figure`
+    ax: :class:`matplotlib.axes.Axes`
+
+    Other Parameters
+    ----------------
+    markersize: int, default=36
+        Size of the marker used for profiles location.
+    markeredgesize: float, default=0.5
+        Size of the marker edge used for profiles location.
+    markeredgecolor: str, default='default'
+        Color to use for the markers edge. The default color is 'DARKBLUE' from :class:`argopy.plot.ArgoColors.COLORS`
+
+    cmap: str, default=None
+        Colormap to use for points coloring. If set to None, we'll try to guess the most appropriate colormap for the
+        ``hue`` argument by matching it to values in :class:`argopy.plot.ArgoColors.list_valid_known_colormaps`.
+
+    traj: bool, default=True
+        Set to True in order to plot each float trajectories, i.e. join with a line all profiles from a single platform.
+    traj_axis: str, default='wmo'
+        Name of the data variable to use in order to determine profiles group making a single trajectory.
+    traj_color: str, default='default'
+        The unique color to use for all trajectories. The default color is the ``markeredgecolor`` value.
+
+    legend: bool, default=True
+        Display or not a legend for hue colors meaning. If the legend is too large, it can be removed with ``ax.get_legend().remove()``
+    legend_title: str, default='default'
+        String title of the legend box. By default, it is set to the ``hue`` value.
+    legend_location: str, default='upper right'
+        Location of the legend box. This is passed to the ``loc`` argument of :class:`~matplotlib:matplotlib.legend.Legend`.
+
+    set_global: bool, default=False
+        Force the map to be global.
+
+    kwargs
+        All other arguments are passed to :class:`matplotlib.figure.Figure.subplots`
+
+    """
     if isinstance(data, xr.Dataset) and data.argo._type == "point":
         # data = data.argo.point2profile(drop=True)
         raise InvalidDatasetStructure('Function only available to a collection of profiles')
