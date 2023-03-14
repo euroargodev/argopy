@@ -269,6 +269,8 @@ def bar_plot(
         ax.set_ylabel("")
     return fig, ax
 
+
+@warnUnless(has_mpl and has_cartopy, "requires matplotlib AND cartopy installed")
 def scatter_map(
         data: Union[xr.Dataset, pd.core.frame.DataFrame],
         x: Union[str] = None,
