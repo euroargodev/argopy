@@ -333,19 +333,52 @@ def scatter_map(
         Input data structure
     x: str, default=None
         Name of the data variable to use as longitude.
-        If x is set to None, we'll try to guess which variable to use among standard names.
+        If ``x`` is set to None, we'll try to guess which variable to use among standard names.
     y: str, default=None
         Name of the data variable to use as latitude.
-        If y is set to None, we'll try to guess which variable to use among standard names.
+        If ``y`` is set to None, we'll try to guess which variable to use among standard names.
     hue: str, default=None
         Name of the data variable to use for points coloring.
-        If hue is set to None, we'll try to guess which variable to use to color points according to WMO.
+        If ``hue`` is set to None, we'll try to guess which variable to use to color points according to WMO.
 
     Returns
     -------
     fig: :class:`matplotlib.figure.Figure`
     ax: :class:`matplotlib.axes.Axes`
-        
+
+    Other Parameters
+    ----------------
+    markersize: int, default=36
+        Size of the marker used for profiles location.
+    markeredgesize: float, default=0.5
+        Size of the marker edge used for profiles location.
+    markeredgecolor: str, default='default'
+        Color to use for the markers edge. The default color is 'DARKBLUE' from :class:`argopy.plot.ArgoColors.COLORS`
+
+    cmap: str, default=None
+        Colormap to use for points coloring. If set to None, we'll try to guess the most appropriate colormap for the
+        ``hue`` argument by matching it to values in :class:`argopy.plot.ArgoColors.list_valid_known_colormaps`.
+
+    traj: bool, default=True
+        Set to True in order to plot each float trajectories, i.e. join with a line all profiles from a single platform.
+    traj_axis: str, default='wmo'
+        Name of the data variable to use in order to determine profiles group making a single trajectory.
+    traj_color: str, default='default'
+        The unique color to use for all trajectories. The default color is the ``markeredgecolor`` value.
+
+    legend: bool, default=True
+        Display or not a legend for hue colors meaning. If the legend is too large, it can be removed with ``ax.get_legend().remove()``
+    legend_title: str, default='default'
+        String title of the legend box. By default, it is set to the ``hue`` value.
+    legend_location: str, default='upper right'
+        Location of the legend box. This is passed to the ``loc`` argument of :class:`~matplotlib:matplotlib.legend.Legend`.
+
+    set_global: bool, default=False
+        Force the map to be global.
+
+    kwargs
+        All other arguments are passed to :class:`matplotlib.figure.Figure.subplots`
+
     """
     pass
 
