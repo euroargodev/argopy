@@ -20,6 +20,7 @@ Let's import the usual suspects:
     from argopy import IndexFetcher as ArgoIndexFetcher
     from argopy import DataFetcher as ArgoDataFetcher
 
+.. _viz_traj:
 
 Trajectories
 ============
@@ -136,9 +137,8 @@ Examples:
         # similar to:
         ArgoDataFetcher().profile(WMO, CYC).dashboard()
 
-
-Easy Scatter Maps
-*****************
+Scatter Maps
+************
 
 The :class:`argopy.plot.scatter_map` utility function is dedicated to making maps with Argo profile positions coloured according to specific variables: **a scatter map**.
 

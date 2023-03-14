@@ -138,6 +138,7 @@ Deep-Sea Research Part I: Oceanographic Research Papers, 56(3), 450-457, 2009. h
 "Improvement of bias detection in Argo float conductivity sensors and its application in the North Atlantic".
 Deep-Sea Research Part I: Oceanographic Research Papers, 114, 128-136, 2016. https://doi.org/10.1016/j.dsr.2016.05.007
 
+.. _qc_traj:
 
 Trajectories
 ------------
