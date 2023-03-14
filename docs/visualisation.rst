@@ -60,7 +60,7 @@ Dashboards
 We provide shortcuts to third-party online dashboards that can help you visualise float or profile data.
 When working in Jupyter notebooks, you can insert a dashboard in a cell, or if you don't, you can get the url toward the dashboard to open it elsewhere.
 
-We provide access to the Euro-Argo ERIC, Ocean-OPS, Argovis and BGC dashboards with the option ``type``. See :meth:`argopy.dashboard` for all the options.
+We provide access to the Euro-Argo ERIC, Ocean-OPS, Argovis and BGC dashboards with the option ``type``. See :meth:`argopy.plot.dashboard` for all the options.
 
 Summary of all available dashboards:
 

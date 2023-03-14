@@ -96,20 +96,13 @@ Data visualisation
 
 Visualisation functions available at the ``argopy`` module level:
 
-.. currentmodule:: argopy.plot
+.. currentmodule:: argopy
 
 .. autosummary::
    :toctree: generated/
 
     dashboard
     ArgoColors
-    ArgoColors.COLORS
-    ArgoColors.quantitative
-    ArgoColors.definition
-    ArgoColors.cmap
-    ArgoColors.lookup
-    ArgoColors.ticklabels
-    ArgoColors.list_valid_known_colormaps
 
 
 All other visualisation functions are in the :mod:`argopy.plot` submodule:
@@ -125,33 +118,6 @@ All other visualisation functions are in the :mod:`argopy.plot` submodule:
     latlongrid
     discrete_coloring
 
-Utilities
-=========
-
-Function under the ``argopy.utilities`` submodule.
-
-.. currentmodule:: argopy.utilities
-
-.. autosummary::
-   :toctree: generated/
-
-    list_available_data_src
-    list_available_index_src
-    get_coriolis_profile_id
-    get_ea_profile_page
-
-    check_wmo
-    check_cyc
-    float_wmo
-    Registry
-    list_standard_variables
-    list_multiprofile_file_variables
-    Chunker
-
-    isconnected
-    urlhaskeyword
-    isalive
-    isAPIconnected
 
 Dataset.argo (xarray accessor)
 ==============================
@@ -219,9 +185,36 @@ Misc
     Dataset.argo.uid
     Dataset.argo.cast_types
 
+Utilities
+=========
 
-Helpers
-=======
+Function under the ``argopy.utilities`` submodule.
+
+.. currentmodule:: argopy.utilities
+
+.. autosummary::
+   :toctree: generated/
+
+    list_available_data_src
+    list_available_index_src
+    get_coriolis_profile_id
+    get_ea_profile_page
+
+    check_wmo
+    check_cyc
+    float_wmo
+    Registry
+    list_standard_variables
+    list_multiprofile_file_variables
+    Chunker
+
+    isconnected
+    urlhaskeyword
+    isalive
+    isAPIconnected
+
+Argopy helpers
+==============
 .. currentmodule:: argopy
 
 .. autosummary::
