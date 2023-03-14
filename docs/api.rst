@@ -94,7 +94,7 @@ Argo related data utilities
 Data visualisation
 ==================
 
-Visualisation functions available at the :mod:`argopy` module level:
+Visualisation functions available at the ``argopy`` module level:
 
 .. currentmodule:: argopy
 
@@ -120,7 +120,7 @@ All other visualisation functions are in the :mod:`argopy.plot` submodule:
 Utilities
 =========
 
-Function under the :mod:`argopy.utilities` submodule.
+Function under the ``argopy.utilities`` submodule.
 
 .. currentmodule:: argopy.utilities
 

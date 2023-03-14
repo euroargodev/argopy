@@ -292,7 +292,7 @@ def scatter_map(
     """Hello world !
 
     Try-to-be generic function to create a scatter plot on a map from **argopy** :class:`xarray.Dataset` or :class:`pandas.DataFrame` data
-    
+
     Each point is an Argo profile location, colored with a user defined variable and colormap. Floats trajectory can be plotted or not.
 
     Note that all parameters have default values.
@@ -301,6 +301,30 @@ def scatter_map(
     --------
     This function requires `Cartopy <https://scitools.org.uk/cartopy/docs/latest/>`_.
 
+    Examples
+    --------
+    ::
+
+        from argopy.plot import scatter_map
+        from argopy import DataFetcher
+
+        ArgoSet = DataFetcher(mode='expert').float([6902771, 4903348]).load()
+        ds = ArgoSet.data.argo.point2profile()
+        df = ArgoSet.index
+
+        scatter_map(df)
+        scatter_map(ds)
+        scatter_map(ds, hue='DATA_MODE')
+        scatter_map(ds, hue='PSAL_QC')
+
+    ::
+
+        from argopy import OceanOPSDeployments
+        df = OceanOPSDeployments([-90, 0, 0, 90]).to_dataframe()
+        scatter_map(df, hue='status_code', traj=False)
+        scatter_map(df, x='lon', y='lat', hue='status_code', traj=False, cmap='deployment_status')
+
+    
     """
     pass
 

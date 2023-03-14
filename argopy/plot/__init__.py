@@ -1,3 +1,6 @@
+"""
+Plot Submodule docstring !
+"""
 from .plot import plot_trajectory, bar_plot, open_sat_altim_report, scatter_map
 from .argo_colors import ArgoColors
 from .dashboards import open_dashboard as dashboard
