@@ -322,9 +322,30 @@ def scatter_map(
         from argopy import OceanOPSDeployments
         df = OceanOPSDeployments([-90, 0, 0, 90]).to_dataframe()
         scatter_map(df, hue='status_code', traj=False)
-        scatter_map(df, x='lon', y='lat', hue='status_code', traj=False, cmap='deployment_status')
+        scatter_map(df, x='lon', y='lat',
+                    hue='status_code',
+                    traj=False,
+                    cmap='deployment_status')
 
-    
+    Parameters
+    ----------
+    data: :class:`xarray.Dataset` or :class:`pandas.DataFrame`
+        Input data structure
+    x: str, default=None
+        Name of the data variable to use as longitude.
+        If x is set to None, we'll try to guess which variable to use among standard names.
+    y: str, default=None
+        Name of the data variable to use as latitude.
+        If y is set to None, we'll try to guess which variable to use among standard names.
+    hue: str, default=None
+        Name of the data variable to use for points coloring.
+        If hue is set to None, we'll try to guess which variable to use to color points according to WMO.
+
+    Returns
+    -------
+    fig: :class:`matplotlib.figure.Figure`
+    ax: :class:`matplotlib.axes.Axes`
+        
     """
     pass
 
