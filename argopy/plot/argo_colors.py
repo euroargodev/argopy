@@ -11,7 +11,6 @@ if has_seaborn:
     from .utils import sns
 
 
-@warnUnless(has_mpl, "requires matplotlib to be used")
 class ArgoColors:
     """Class to manage discrete coloring for Argo related variables
 
@@ -60,6 +59,8 @@ class ArgoColors:
             Number of colors to reduce the colormap to. If set to None, use the known quantitative colormap number of
             colors or fall back on a default 12 value.
         """
+        warnUnless(has_mpl, "requires matplotlib to be used")
+
         if name in self.quantitative and N is None:
             N = self.quantitative[name]
         elif N is None:

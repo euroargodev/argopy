@@ -404,9 +404,10 @@ def list_multiprofile_file_variables():
 
 
 def check_localftp(path, errors: str = "ignore"):
-    """Check if the path has the expected GDAC ftp structure.
+    """Return True if a path has the expected GDAC ftp structure.
 
-        Check if the path is structured like:
+    Expected GDAC ftp structure::
+
         .
         └── dac
             ├── aoml
@@ -416,18 +417,18 @@ def check_localftp(path, errors: str = "ignore"):
             ├── meds
             └── nmdis
 
-        Parameters
-        ----------
-        path: str
-            Path name to check
-        errors: str, optional
-            "ignore" or "raise" (or "warn")
+    This check will return True if at least one DAC sub-folder is found under path/dac/<dac_name>
 
-        Returns
-        -------
-        checked: boolean
-            True if at least one DAC folder is found under path/dac/<dac_name>
-            False otherwise
+    Parameters
+    ----------
+    path: str
+        Path name to check
+    errors: str, optional
+        "ignore" or "raise" (or "warn")
+
+    Returns
+    -------
+    checked: boolean
     """
     dacs = [
         "aoml",
@@ -1724,11 +1725,12 @@ def check_index_cols(column_names: list, convention: str = 'ar_index_global_prof
     else:
         return column_names
 
+import inspect
 
 def warnUnless(ok, txt):
-    """ Decorator to raise warning unless condition is True
+    """Function to raise a warning unless condition is True
 
-    This function must be used as a decorator
+    This function IS NOT to be used as a decorator anymore
 
     Parameters
     ----------
@@ -1737,18 +1739,12 @@ def warnUnless(ok, txt):
     txt: str
         Text to display in the warning
     """
-
-    def inner(fct):
-        def wrapper(*args, **kwargs):
-            warnings.warn("%s %s" % (fct.__name__, txt))
-            return fct(*args, **kwargs)
-
-        return wrapper
+    print(inspect.stack()[1].function)
 
     if not ok:
-        return inner
-    else:
-        return lambda f: f
+        # warnings.warn("%s %s" % (fct.__name__, txt))
+        warnings.warn(txt)
+
 
 
 @contextlib.contextmanager
@@ -2427,7 +2423,7 @@ class DocInherit(object):
 
         overridden = getattr(super(cls, obj), self.name, None)
 
-        @wraps(self.mthd, assigned=('__name__','__module__'))
+        @wraps(self.mthd, assigned=('__name__', '__module__'))
         def f(*args, **kwargs):
             return self.mthd(obj, *args, **kwargs)
 
@@ -2562,6 +2558,8 @@ class RegistryItem(ABC):
 
 
 class float_wmo(RegistryItem):
+    """Argo float WMO number object"""
+
     def __init__(self, WMO_number, errors='raise'):
         """Create an Argo float WMO number object
 

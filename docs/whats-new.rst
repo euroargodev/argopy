@@ -13,7 +13,7 @@ v0.1.13 (xx Mar. 2023)
 
 **Features and front-end API**
 
-- **New utility class to retrieve the Argo deployment plan from the Ocean-OPS api.** This is the utility class :class:`OceanOPSDeployments`. See the documentation section :ref:`Deployment Plan` for more. (:pr:`244`) by `G. Maze <http://www.github.com/gmaze>`_
+- **New utility class to retrieve the Argo deployment plan from the Ocean-OPS api.** This is the utility class :class:`OceanOPSDeployments`. See the new documentation section on :ref:`Deployment Plan` for more. (:pr:`244`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -29,7 +29,7 @@ v0.1.13 (xx Mar. 2023)
 
 .. image:: _static/scatter_map_deployment_status.png
 
-- **New scatter map utility for easy Argo-related variables plotting.** The new :meth:`argopy.plot.scatter_map` utility function is dedicated to making maps with Argo profiles positions coloured according to specific variables: a scatter map. Profiles colouring is finely tuned for some variables: QC flags, Data Mode and Deployment Status. By default, floats trajectories are always shown, but this can be changed. See the documentation section :ref:`Scatter Maps` for more. (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
+- **New scatter map utility for easy Argo-related variables plotting.** The new :meth:`argopy.plot.scatter_map` utility function is dedicated to making maps with Argo profiles positions coloured according to specific variables: a scatter map. Profiles colouring is finely tuned for some variables: QC flags, Data Mode and Deployment Status. By default, floats trajectories are always shown, but this can be changed. See the new documentation section on :ref:`Scatter Maps` for more. (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -41,7 +41,7 @@ v0.1.13 (xx Mar. 2023)
 
 .. image:: _static/scatter_map_qcflag.png
 
-- **New Argo colors utility to manage segmented colormaps and pre-defined Argo colors set.** The new :class:`argopy.plot.ArgoColors` utility class aims to easily provide colors for Argo-related variables plot. See the documentation section :ref:`Argo colors` for more (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
+- **New Argo colors utility to manage segmented colormaps and pre-defined Argo colors set.** The new :class:`argopy.plot.ArgoColors` utility class aims to easily provide colors for Argo-related variables plot. See the new documentation section on :ref:`Argo colors` for more (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 

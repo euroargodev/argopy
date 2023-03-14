@@ -27,8 +27,7 @@ from . import utilities  # noqa: E402
 from . import stores  # noqa: E402
 from . import errors  # noqa: E402
 from . import plot  # noqa: E402
-from .plot import dashboard  # noqa: E402
-from .plot import ArgoColors  # noqa: E402
+from .plot import dashboard, ArgoColors  # noqa: E402
 from .utilities import show_versions, show_options, clear_cache, lscache # noqa: E402
 from .utilities import TopoFetcher, ArgoNVSReferenceTables, OceanOPSDeployments  # noqa: E402
 from .utilities import monitor_status as status  # noqa: E402
@@ -37,10 +36,11 @@ from .options import set_options  # noqa: E402
 
 #
 __all__ = (
-    # Classes:
+    # Top-level classes:
     "DataFetcher",
     "IndexFetcher",
     "ArgoAccessor",
+
     # Utilities promoted to top-level functions:
     "set_options",
     "show_versions",
@@ -49,10 +49,12 @@ __all__ = (
     "status",
     "clear_cache",
     "lscache",
+
     "TopoFetcher",  # Class
     "ArgoNVSReferenceTables",  # Class
     "OceanOPSDeployments",  # Class
-    # Sub-packages,
+
+    # Submodules:
     "utilities",
     "errors",
     "plot",

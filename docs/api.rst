@@ -96,13 +96,21 @@ Data visualisation
 
 Visualisation functions available at the ``argopy`` module level:
 
-.. currentmodule:: argopy
+.. currentmodule:: argopy.plot
 
 .. autosummary::
    :toctree: generated/
 
     dashboard
     ArgoColors
+    ArgoColors.COLORS
+    ArgoColors.quantitative
+    ArgoColors.definition
+    ArgoColors.cmap
+    ArgoColors.lookup
+    ArgoColors.ticklabels
+    ArgoColors.list_valid_known_colormaps
+
 
 All other visualisation functions are in the :mod:`argopy.plot` submodule:
 
