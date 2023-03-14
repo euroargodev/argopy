@@ -68,7 +68,6 @@ Data visualisation
    DataFetcher.plot
    DataFetcher.dashboard
    IndexFetcher.plot
-   dashboard
 
 
 Properties
@@ -95,18 +94,27 @@ Argo related data utilities
 Data visualisation
 ==================
 
-Functions in the :mod:`argopy.plot` submodule.
+Visualisation functions available at the :mod:`argopy` module level:
+
+.. currentmodule:: argopy
+
+.. autosummary::
+   :toctree: generated/
+
+    dashboard
+    ArgoColors
+
+All other visualisation functions are in the :mod:`argopy.plot` submodule:
 
 .. currentmodule:: argopy.plot
 
 .. autosummary::
    :toctree: generated/
 
-    dashboard
     open_sat_altim_report
     scatter_map
     bar_plot
-    ArgoColors
+    latlongrid
     discrete_coloring
 
 Utilities

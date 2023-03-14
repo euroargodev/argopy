@@ -16,4 +16,5 @@ __all__ = (
 
     # Utils:
     "latlongrid",
+    "discrete_coloring",
 )

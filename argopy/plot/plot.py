@@ -289,7 +289,17 @@ def scatter_map(
         set_global: bool = False,
         **kwargs
 ):
-    """Hello world !"""
+    """Hello world !
+
+    Each point is an Argo profile location, colored with a user defined variable and colormap. Floats trajectory can be plotted or not.
+
+    Note that all parameters have default values.
+
+    Warnings
+    --------
+    This function requires `Cartopy <https://scitools.org.uk/cartopy/docs/latest/>`_.
+
+    """
     pass
 
 @warnUnless(has_mpl and has_cartopy, "requires matplotlib AND cartopy installed")
