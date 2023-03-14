@@ -18,9 +18,14 @@ from utils import (
     requires_connected_erddap_ref,
     safe_to_server_errors
 )
+from mocked_erddap_ifremer import mocked_erddap
 
+requires_connected_erddap = pytest.mark.skipif(False, reason="?")
+requires_connected_erddap_phy = pytest.mark.skipif(False, reason="?")
+requires_connected_erddap_bgc = pytest.mark.skipif(False, reason="?")
+requires_connected_erddap_ref = pytest.mark.skipif(False, reason="?")
 
-@requires_connected_erddap
+@pytest.mark.usefixtures("mocked_erddap")
 class Test_Backend:
     """ Test ERDDAP data fetching backend """
 
@@ -220,7 +225,7 @@ class Test_Backend:
 
 
 @requires_connected_erddap_phy
-class Test_BackendParallel:
+class TTest_BackendParallel:
     """ This test backend for parallel requests """
 
     src = "erddap"

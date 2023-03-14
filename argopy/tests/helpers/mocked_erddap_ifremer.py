@@ -43,13 +43,13 @@ def mocked_erddap():
 
     with aioresponses() as httpserver:
         for ressource in URI:
-            test_data_file = os.path.join(DATA_FOLDER, "%s.nc" % ressource['sha'])
+            test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (ressource['sha'], ressource['ext']))
             with open(test_data_file, mode='rb') as file:
                 data = file.read()
             httpserver.get(ressource['uri'], body=data)#, headers={'Content-Type': 'application/x-netcdf'})
 
             # assert can_be_xr_opened(True, test_data_file)
-            log.debug("%s -> %s" % (parse_qs(ressource['uri']), test_data_file))
+            # log.debug("%s -> %s" % (parse_qs(ressource['uri']), test_data_file))
 
             # log.debug(xr.open_dataset(test_data_file, engine='netcdf4'))
 
@@ -78,8 +78,9 @@ if __name__ == '__main__':
     from argopy import DataFetcher
 
     async def fetch_download_links(session: aiohttp.ClientSession):
-        # First we get the list of URI to download.
+        # Get the list of URI to download.
         # This should correspond to all the possible erddap requests made during CI tests.
+        # And because of the erddap fetcher N_POINT attribute, we also need to fetch ".ncHeader" on top of ".nc" files
         requests_phy = {
             "float": [[1901393], [1901393, 6902746]],
             "profile": [[6902746, 34], [6902746, np.arange(12, 13)], [6902746, [1, 12]]],
@@ -105,6 +106,9 @@ if __name__ == '__main__':
         }
         requests = {'phy': requests_phy, 'bgc': requests_bgc, 'ref': requests_ref}
 
+        nc_file = lambda url, sha, iter: {'uri': url, 'ext': "nc", 'sha': "%s_%03.d" % (sha, iter)}
+        ncHeader_file = lambda url, sha, iter: {'uri': url.replace(".nc", ".ncHeader"), 'ext': "ncHeader", 'sha': "%s_%03.d" % (sha, iter)}
+
         URI = []
         for ds in requests:
             fetcher = DataFetcher(src='erddap', ds=ds)
@@ -114,21 +118,24 @@ if __name__ == '__main__':
                         f = fetcher.profile(*cfg)
                         uri = f.uri
                         for ii, url in enumerate(uri):
-                            URI.append({'uri': url, 'sha': "%s_%03.d" % (f.fetcher.sha, ii)})
+                            URI.append(nc_file(url, f.fetcher.sha, ii))
+                            URI.append(ncHeader_file(url, f.fetcher.sha, ii))
                         # print(ds, access_point, cfg, f.fetcher.sha)
                 if access_point == 'float':
                     for cfg in requests[ds][access_point]:
                         f = fetcher.float(cfg)
                         uri = f.uri
                         for ii, url in enumerate(uri):
-                            URI.append({'uri': url, 'sha': "%s_%03.d" % (f.fetcher.sha, ii)})
+                            URI.append(nc_file(url, f.fetcher.sha, ii))
+                            URI.append(ncHeader_file(url, f.fetcher.sha, ii))
                         # print(ds, access_point, cfg, f.fetcher.sha)
                 if access_point == 'region':
                     for cfg in requests[ds][access_point]:
                         f = fetcher.region(cfg)
                         uri = f.uri
                         for ii, url in enumerate(uri):
-                            URI.append({'uri': url, 'sha': "%s_%03.d" % (f.fetcher.sha, ii)})
+                            URI.append(nc_file(url, f.fetcher.sha, ii))
+                            URI.append(ncHeader_file(url, f.fetcher.sha, ii))
                         # print(ds, access_point, cfg, f.fetcher.sha)
 
         return URI
@@ -140,12 +147,11 @@ if __name__ == '__main__':
             if not r.content_type == 'application/x-netcdf':
                 print("Unexpected content type (%s) with this request: %s" % (r.content_type, parse_qs(source['uri'])))
 
-            test_data_file = os.path.join(DATA_FOLDER, "%s.nc" % source['sha'])
+            test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (source['sha'], source['ext']))
             async with aiofiles.open(test_data_file, 'wb') as f:
-                async for data in r.content.iter_any():
-                    # print(r.content_type)
-                    await f.write(data)
-                    return can_be_xr_opened(source, test_data_file)
+                data = await r.content.read(n=-1)  # load all read bytes !
+                await f.write(data)
+                return can_be_xr_opened(source, test_data_file)
 
     async def main():
         async with aiohttp.ClientSession() as session:
