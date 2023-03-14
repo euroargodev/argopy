@@ -398,6 +398,7 @@ class ArgoColors:
         return html
 
     def show_COLORS(self):
+        """Generate an HTML representation of the :class:`ArgoColors.COLORS` palette"""
         html = []
 
         td_title = lambda \

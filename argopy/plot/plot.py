@@ -269,8 +269,6 @@ def bar_plot(
         ax.set_ylabel("")
     return fig, ax
 
-
-@warnUnless(has_mpl and has_cartopy, "requires matplotlib AND cartopy installed")
 def scatter_map(
         data: Union[xr.Dataset, pd.core.frame.DataFrame],
         x: Union[str] = None,
@@ -291,7 +289,33 @@ def scatter_map(
         set_global: bool = False,
         **kwargs
 ):
-    """Try-to-be generic function to create a scatter plot on a map from **argopy** :class:`xarray.Dataset` or :class:`pandas.DataFrame` data
+    """Hello world !"""
+    pass
+
+@warnUnless(has_mpl and has_cartopy, "requires matplotlib AND cartopy installed")
+def scatter_map2(
+        data: Union[xr.Dataset, pd.core.frame.DataFrame],
+        x: Union[str] = None,
+        y: Union[str] = None,
+        hue: Union[str] = None,
+        markersize: int = 36,
+        markeredgesize: float = 0.5,
+        markeredgecolor: str = 'default',
+        cmap: Union[str] = None,
+        traj: bool = True,
+        traj_axis: Union[str] = None,
+        traj_color: str = 'default',
+        legend: bool = True,
+        legend_title: str = 'default',
+        legend_location: Union[str, int] = 0,
+        cbar: bool = False,
+        cbarlabels: Union[str, list] = 'auto',
+        set_global: bool = False,
+        **kwargs
+):
+    """Hello world !
+
+    Try-to-be generic function to create a scatter plot on a map from **argopy** :class:`xarray.Dataset` or :class:`pandas.DataFrame` data
 
     Each point is an Argo profile location, colored with a user defined variable and colormap. Floats trajectory can be plotted or not.
 

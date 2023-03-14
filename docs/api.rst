@@ -68,6 +68,7 @@ Data visualisation
    DataFetcher.plot
    DataFetcher.dashboard
    IndexFetcher.plot
+   dashboard
 
 
 Properties
