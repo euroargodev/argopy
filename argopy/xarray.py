@@ -677,16 +677,15 @@ class ArgoAccessor:
         for c in [c for c in possible_coords if c in ds.data_vars]:
             ds = ds.set_coords(c)
 
-        # Remove N_PARAM dimension where it is useless for variables, dimensions
-        if "PARAMETER_DATA_MODE" in ds:
-            # for variables
-            for v in ds:
-                if v != 'PARAMETER_DATA_MODE' and v != 'STATION_PARAMETERS':
-                    ds[v] = ds[v].sel(N_PARAM=0)
-            # for dimensions
-            for c in ds.coords:
-                if len(ds[c].shape) != 1:
-                    ds[c] = ds[c].sel(N_PARAM=0)
+        # Remove N_PARAM dimension where it is useless for variable dimensions
+        # TODO: there may be a way to do it more cleaner
+        # for variables
+        for v in ds:
+            if v != 'PARAMETER_DATA_MODE' and v != 'STATION_PARAMETERS':
+                ds[v] = ds[v].sel(N_PARAM=0) # each variable is repeated along (N_PARAM,)
+        # for dimensions
+            if len(ds[c].shape) != 1:
+                ds[c] = ds[c].sel(N_PARAM=0)
 
         # Remove index without data (useless points)
         ds = ds.where(~np.isnan(ds["PRES"]), drop=1)
@@ -892,7 +891,11 @@ class ArgoAccessor:
 
         # Define variables to filter:
         if self.mode_variable == "PARAMETER_DATA_MODE":
-            possible_list = list(map(lambda x: str.strip(x), ds.STATION_PARAMETERS.isel(N_POINTS=0).data))
+            if "STATION_PARAMETERS" in ds:
+                possible_list = list(map(lambda x: str.strip(x), ds.STATION_PARAMETERS.isel(N_POINTS=0).data))
+            elif OPTIONS.get('src') == 'erddap':
+                # STATION_PARAMETERS is not in ds while loading the data from erddap server, so for erddap
+                possible_list = ["PRES", "TEMP", "DOXY"]
 
         elif self.mode_variable == "DATA_MODE":
             possible_list = [
