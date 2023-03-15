@@ -515,23 +515,29 @@ class ArgoAccessor:
             log.debug("This dataset has a single vertical level, thus final variables will only have a N_PROF "
                       "dimension and no N_LEVELS")
 
-        # differentiate bgc expert mode with the mode_variable
-        self.mode_variable = "PARAMETER_DATA_MODE" if "PARAMETER_DATA_MODE" in this else "DATA_MODE"
-
+        # Take PARAMETER_DATA_MODE and STATION_PARAMETERS in a list in order to remove them from the dataset for now
+        # It may be possible to do this with fewer lines of code, but it also depends on the source of the data
         if self.mode_variable == "PARAMETER_DATA_MODE":
             parameter_data_mode = []
-            station_parameters = []
+            station_parameters = [] if OPTIONS.get('src') == 'gdac' else None
             for uid in np.unique(dummy_argo_uid):
                 # select the first occurrence
                 index = np.where(dummy_argo_uid == uid)[0][0]
                 parameter_data_mode.append(this.PARAMETER_DATA_MODE.isel(N_POINTS=index).data)
-                if OPTIONS.get('src') == 'gdac':
-                    station_parameters.append(this.STATION_PARAMETERS.isel(N_POINTS=index).data)
-
+                station_parameters.append(this.STATION_PARAMETERS.isel(N_POINTS=index).data) if OPTIONS.get(
+                    'src') == 'gdac' else None
             this = this.drop_vars(['PARAMETER_DATA_MODE'])
+            this = this.drop_vars(['STATION_PARAMETERS']) if OPTIONS.get('src') == 'gdac' else None
 
-            if OPTIONS.get('src') == 'gdac':
-                this = this.drop_vars(['STATION_PARAMETERS'])
+        elif self.mode_variable == 'DATA_MODE' and OPTIONS.get('src') == 'gdac':
+            station_parameters = []
+            for uid in np.unique(dummy_argo_uid):
+                index = np.where(dummy_argo_uid == uid)[0][0]
+                station_parameters.append(this.STATION_PARAMETERS.isel(N_POINTS=index).data)
+            this = this.drop_vars(['STATION_PARAMETERS'])
+        else:
+            # other data sources, no need to keep STATION_PARAMETERS for now
+            pass
 
         # Store the initial set of coordinates:
         coords_list = list(this.coords)
@@ -612,15 +618,15 @@ class ArgoAccessor:
             new_ds['LATITUDE'] = new_ds['LATITUDE'].isel(N_LEVELS=0)  # Make sure LAT is (N_PROF) and not (N_PROF, N_LEVELS)
             new_ds['LONGITUDE'] = new_ds['LONGITUDE'].isel(N_LEVELS=0)
 
-        # Add the PARAMETER_DATA_MODE and STATION_PARAMETERS created above in the function with specific dimensions
-        if self.mode_variable == "PARAMETER_DATA_MODE":
-            new_ds = new_ds.assign(
-                {'PARAMETER_DATA_MODE': (('N_PROF', 'N_PARAM'), parameter_data_mode)}
-            )
+        # Add the removed PARAMETER_DATA_MODE and STATION_PARAMETERS variables with specific dimensions
+        def add_nparam_variables(new_ds):
+            if self.mode_variable == "PARAMETER_DATA_MODE":
+                new_ds = new_ds.assign({self.mode_variable: (('N_PROF', 'N_PARAM'), parameter_data_mode)})
             if OPTIONS.get('src') == 'gdac':
-                new_ds = new_ds.assign(
-                    {'STATION_PARAMETERS': (('N_PROF', 'N_PARAM'), station_parameters)}
-                )
+                new_ds = new_ds.assign({'STATION_PARAMETERS': (('N_PROF', 'N_PARAM'), station_parameters)})
+            return new_ds
+
+        new_ds = add_nparam_variables(new_ds)
 
         # Misc formatting
         new_ds = new_ds.sortby("TIME")
