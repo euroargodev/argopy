@@ -677,21 +677,22 @@ class ArgoAccessor:
         for c in [c for c in possible_coords if c in ds.data_vars]:
             ds = ds.set_coords(c)
 
-        # Remove N_PARAM dimension where it is useless for variable dimensions
-        # TODO: there may be a way to do it more cleaner
+        # Remove N_PARAM dimension where it is useless for variables, dimensions
+        # TODO: there may be a way to do it cleaner
         # for variables
         for v in ds:
-            if v != 'PARAMETER_DATA_MODE' and v != 'STATION_PARAMETERS':
-                ds[v] = ds[v].sel(N_PARAM=0) # each variable is repeated along (N_PARAM,)
+            if 'N_PARAM' in ds[v].dims and v not in ['PARAMETER_DATA_MODE', 'STATION_PARAMETERS']:
+                ds[v] = ds[v].sel(N_PARAM=0) # each variable is repeated along the N_PARAM dimension
         # for dimensions
-            if len(ds[c].shape) != 1:
+        for c in ds.coords:
+            if 'N_PARAM' in ds[c].dims and len(ds[c].shape) != 1:
                 ds[c] = ds[c].sel(N_PARAM=0)
 
         # Remove index without data (useless points)
         ds = ds.where(~np.isnan(ds["PRES"]), drop=1)
         if "TIME" in ds:
             ds = ds.sortby("TIME")
-        else:
+        elif "JULD" in ds:
             ds = ds.sortby("JULD")
         ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         ds = ds.argo.cast_types()
