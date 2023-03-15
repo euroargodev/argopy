@@ -515,11 +515,13 @@ class ArgoAccessor:
             log.debug("This dataset has a single vertical level, thus final variables will only have a N_PROF "
                       "dimension and no N_LEVELS")
 
+        cond_src = (OPTIONS.get('src') == "gdac" or OPTIONS.get('src') == "localftp")
+
         # Take PARAMETER_DATA_MODE and STATION_PARAMETERS in a list in order to remove them from the dataset for now
         # It may be possible to do this with fewer lines of code, but it also depends on the source of the data
         if self.mode_variable == "PARAMETER_DATA_MODE":
             parameter_data_mode = []
-            station_parameters = [] if OPTIONS.get('src') == 'gdac' else None
+            station_parameters = [] if cond_src else None
             for uid in np.unique(dummy_argo_uid):
                 # select the first occurrence
                 index = np.where(dummy_argo_uid == uid)[0][0]
@@ -527,9 +529,9 @@ class ArgoAccessor:
                 station_parameters.append(this.STATION_PARAMETERS.isel(N_POINTS=index).data) if OPTIONS.get(
                     'src') == 'gdac' else None
             this = this.drop_vars(['PARAMETER_DATA_MODE'])
-            this = this.drop_vars(['STATION_PARAMETERS']) if OPTIONS.get('src') == 'gdac' else None
+            this = this.drop_vars(['STATION_PARAMETERS']) if cond_src else None
 
-        elif self.mode_variable == 'DATA_MODE' and OPTIONS.get('src') == 'gdac':
+        elif self.mode_variable == 'DATA_MODE' and cond_src and "STATION_PARAMETERS" in this: # no STATION_PARAMETERS for standard mode
             station_parameters = []
             for uid in np.unique(dummy_argo_uid):
                 index = np.where(dummy_argo_uid == uid)[0][0]
