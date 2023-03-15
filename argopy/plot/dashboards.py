@@ -99,7 +99,6 @@ def get_type_name(defs, input_type):
     )
 
 
-@warnUnless(has_ipython, "requires IPython to work as expected, otherwise this will just return URLs")
 def open_dashboard(
     wmo=None, cyc=None, type="ea", url_only=False, width="100%", height=1000,
 ):
@@ -143,6 +142,7 @@ def open_dashboard(
             >>> DataFetcher().float(6902745).dashboard()
 
     """
+    warnUnless(has_ipython, "requires IPython to work as expected, otherwise this will just return URLs")
     # This function is 'generic', it consumes the dashboard_definitions dictionary defined above
 
     if type == "eric":

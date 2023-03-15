@@ -219,8 +219,7 @@ class argo_store_proto(ABC):
 class filestore(argo_store_proto):
     """Argo local file system
 
-        Relies on:
-            https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.local.LocalFileSystem
+        Relies on :class:`fsspec.implementations.local.LocalFileSystem`
     """
     protocol = 'file'
 
@@ -398,11 +397,41 @@ class filestore(argo_store_proto):
         return df
 
 
+class memorystore(filestore):
+    """ Argo in-memory file system (global)
+
+        Note that this inherits from :class:`argopy.stores.filestore`, not the:class:`argopy.stores.argo_store_proto`.
+
+        Relies on :class:`fsspec.implementations.memory.MemoryFileSystem`
+    """
+    protocol = 'memory'
+
+    def exists(self, path, *args):
+        """ Check if path can be open or not
+
+            Special handling for memory store
+
+            The fsspec.exists() will return False even if the path is in cache.
+            Here we bypass this in order to return True if the path is in cache.
+            This assumes that the goal of fs.exists is to determine if we can load the path or not.
+            If the path is in cache, it can be loaded.
+        """
+        guess = self.fs.exists(path, *args)
+        if not guess:
+            try:
+                self.cachepath(path)
+                return True
+            except CacheFileNotFound:
+                pass
+            except FileSystemHasNoCache:
+                pass
+        return guess
+
+
 class httpstore(argo_store_proto):
     """Argo http file system
 
-        Relies on:
-            https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.http.HTTPFileSystem
+        Relies on :class:`fsspec.implementations.http.HTTPFileSystem`
 
         This store intends to make argopy: safer to failures from http requests and to provide higher levels methods to
         work with our datasets
@@ -814,43 +843,10 @@ class httpstore(argo_store_proto):
             raise DataNotFound(urls)
 
 
-class memorystore(filestore):
-    """ Argo in-memory file system (global)
-
-        Note that this inherits from filestore, not argo_store_proto
-
-        Relies on:
-            https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.memory.MemoryFileSystem
-    """
-    protocol = 'memory'
-
-    def exists(self, path, *args):
-        """ Check if path can be open or not
-
-            Special handling for memory store
-
-            The fsspec.exists() will return False even if the path is in cache.
-            Here we bypass this in order to return True if the path is in cache.
-            This assumes that the goal of fs.exists is to determine if we can load the path or not.
-            If the path is in cache, it can be loaded.
-        """
-        guess = self.fs.exists(path, *args)
-        if not guess:
-            try:
-                self.cachepath(path)
-                return True
-            except CacheFileNotFound:
-                pass
-            except FileSystemHasNoCache:
-                pass
-        return guess
-
-
 class ftpstore(httpstore):
     """ Argo ftp file system
 
-        Relies on:
-            https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.ftp.FTPFileSystem
+        Relies on :class:`fsspec.implementations.ftp.FTPFileSystem`
     """
     protocol = 'ftp'
 

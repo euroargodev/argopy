@@ -42,6 +42,8 @@ sys.path.insert(0, str(root))
 
 import argopy  # noqa: E402
 print("argopy: %s, %s" % (argopy.__version__, argopy.__file__))
+argopy.show_versions()
+argopy.show_options()
 
 print("python exec:", sys.executable)
 print("sys.path:", sys.path)
@@ -88,7 +90,9 @@ extensions = [
     'nbsphinx',
     'numpydoc',
     'sphinx_issues',
-    'sphinx_autosummary_accessors'
+    'sphinx_autosummary_accessors',
+    'sphinx_tabs.tabs',
+    'sphinxcontrib.googleanalytics',
 ]
 
 # sphinx_gallery_conf = {
@@ -132,7 +136,7 @@ release = argopy.__version__
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '_templates',
                     '.ipynb_checkpoints', '_ext', 'tempo_out', '_src',
-                    'offline', 'examples/.ipynb_checkpoints']
+                    'offline', 'examples/.ipynb_checkpoints', 'tryit.ipynb']
 
 # Give *lots* of time for notebook cell execution!
 # Note nbsphinx compiles *all* notebooks in docs unless excluded
@@ -204,33 +208,56 @@ html_theme = 'sphinx_book_theme'
 # of the sidebar.
 html_logo = "_static/argopy_logo_long.png"
 html_favicon = '_static/argopy.ico'
+# html_title = "My site title"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+# For sphinx_book_theme:
 html_theme_options = {
     "repository_url": "https://www.github.com/euroargodev/argopy",
     "use_repository_button": True,
-    "html_logo": "_static/argopy_logo_long.png",
-    #  'canonical_url': '',
-    'analytics_id': 'G-C4MWDXYMXQ',
-    'logo_only': True,
-    'display_version': False,
-    'prev_next_buttons_location': 'bottom',
-    'show_navbar_depth': 1,
-    # 'style_external_links': False,
-    # 'vcs_pageview_mode': '',
-    # 'style_nav_header_background': 'white',
-    # # Toc options
+    "use_issues_button": True,
+    # "html_logo": "_static/argopy_logo_long.png",
+    "logo": {
+            "image": html_logo,
+            "image_dark": "_static/argopy_logo_long_dark.png",
+    },
+    # "display_version": True,
+    "logo_only": True,
+    'show_navbar_depth': 1, # https://sphinx-book-theme.readthedocs.io/en/stable/customize/sidebar-primary.html?highlight=logo#control-the-depth-of-the-left-sidebar-lists-to-expand
     'collapse_navigation': False,
-    # 'sticky_navigation': True,
-    # 'navigation_depth': 4,
-    # 'includehidden': True,
-    # 'titles_only': False
+    'show_toc_level': 3, # https://sphinx-book-theme.readthedocs.io/en/stable/customize/sidebar-secondary.html#show-more-levels-of-the-in-page-toc-by-default
 #    'launch_buttons': { "thebe": True}
 }
+
+# html_theme_options = {
+#     "repository_url": "https://www.github.com/euroargodev/argopy",
+#     "use_repository_button": True,
+#     "html_logo": "_static/argopy_logo_long.png",
+#     #  'canonical_url': '',
+#     'analytics_id': 'G-C4MWDXYMXQ',
+#     'logo_only': True,
+#     'display_version': False,
+#     'prev_next_buttons_location': 'bottom',
+#     'show_navbar_depth': 1,
+#     'show_toc_level': 3, # https://sphinx-book-theme.readthedocs.io/en/stable/customize/sidebar-secondary.html#show-more-levels-of-the-in-page-toc-by-default
+#     # 'style_external_links': False,
+#     # 'vcs_pageview_mode': '',
+#     # 'style_nav_header_background': 'white',
+#     # # Toc options
+#     'collapse_navigation': False,
+#     # 'sticky_navigation': True,
+#     # 'navigation_depth': 4,
+#     # 'includehidden': True,
+#     # 'titles_only': False
+# #    'launch_buttons': { "thebe": True}
+# }
+
+googleanalytics_id = 'G-C4MWDXYMXQ'
+googleanalytics_enabled = True
 
 # Sometimes the savefig directory doesn't exist and needs to be created
 # https://github.com/ipython/ipython/issues/8733
@@ -305,8 +332,8 @@ intersphinx_mapping = {
     'iris': ('https://scitools-iris.readthedocs.io/en/stable/', None),
     'numpy': ('https://numpy.org/doc/stable/', None),
     'numba': ('https://numba.readthedocs.io/en/stable/', None),
-    'matplotlib': ('https://matplotlib.org/', None),
-    'xarray': ('http://xarray.pydata.org/en/stable/', None),
+    'matplotlib': ('https://matplotlib.org/stable/', None),
+    'xarray': ('https://docs.xarray.dev/en/stable/', None),
     'dask': ('https://docs.dask.org/en/stable/', None),
     'distributed': ('https://distributed.dask.org/en/stable/', None),
     'dask_ml': ('https://ml.dask.org/', None),
@@ -315,4 +342,5 @@ intersphinx_mapping = {
     'fsspec': ('https://filesystem-spec.readthedocs.io/en/stable/', None),
     'pyarrow': ('https://arrow.apache.org/docs/', None),
     'IPython': ('https://ipython.readthedocs.io/en/stable/', None),
+    'virtualfleet': ('https://virtualfleet.readthedocs.io/en/latest/', None),
 }

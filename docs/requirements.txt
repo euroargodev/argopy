@@ -14,6 +14,8 @@ readthedocs-sphinx-ext
 sphinx-rtd-theme
 sphinx-book-theme
 # sphinx-bootstrap-theme
+sphinx-tabs
+git+https://github.com/sphinx-contrib/googleanalytics
 
 xarray>=0.16.1
 scipy>=1.5
@@ -29,7 +31,7 @@ gsw>=3.4.0
 fsspec>=0.7.4 #, <2022.3.1
 aiohttp>=3.7.4
 
-#matplotlib>=3.3.2
+matplotlib>=3.4.0
 #cartopy>=0.18.0
 #seaborn>=0.11.0
 #geos>=0.2

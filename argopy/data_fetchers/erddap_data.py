@@ -34,6 +34,8 @@ except:  # noqa: E722
     from erddapy.erddapy import ERDDAP
     from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
     from erddapy.erddapy import parse_dates
+    # Soon ! https://github.com/ioos/erddapy
+
 
 
 access_points = ['wmo', 'box']

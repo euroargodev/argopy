@@ -91,7 +91,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml
 
-          flags: unittests, Core Pinned Py${{matrix.python-version}} ${{ matrix.os }}
+          flags: unittests, core, pinned, py${{matrix.python-version}}
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
@@ -161,7 +161,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml
-          flags: unittests, All Pinned Py${{matrix.python-version}} ${{ matrix.os }}
+          flags: unittests, all, pinned, py${{matrix.python-version}}
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
@@ -223,7 +223,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml
-          flags: unittests, Core Min Py${{matrix.python-version}} ${{ matrix.os }}
+          flags: unittests, core, min, py${{matrix.python-version}}
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
@@ -285,7 +285,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml
-          flags: unittests, All Min Py${{matrix.python-version}} ${{ matrix.os }}
+          flags: unittests, all, min, py${{matrix.python-version}}
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
