@@ -20,6 +20,7 @@ import logging
 from abc import ABC, abstractmethod
 from urllib.parse import urlparse
 from typing import Union
+import inspect
 
 import aiohttp
 import asyncio
@@ -1725,7 +1726,6 @@ def check_index_cols(column_names: list, convention: str = 'ar_index_global_prof
     else:
         return column_names
 
-import inspect
 
 def warnUnless(ok, txt):
     """Function to raise a warning unless condition is True
@@ -1739,12 +1739,14 @@ def warnUnless(ok, txt):
     txt: str
         Text to display in the warning
     """
-    print(inspect.stack()[1].function)
-
     if not ok:
         # warnings.warn("%s %s" % (fct.__name__, txt))
-        warnings.warn(txt)
-
+        # print("\n")
+        # print(txt)
+        # for f in inspect.stack():
+        #     print(f.function)
+        msg = "%s %s" % (inspect.stack()[1].function, txt)
+        warnings.warn(msg)
 
 
 @contextlib.contextmanager
