@@ -13,7 +13,7 @@ v0.1.13 (xx Mar. 2023)
 
 **Features and front-end API**
 
-- **New utility class to retrieve the Argo deployment plan from the Ocean-OPS api.** This is the utility class :class:`OceanOPSDeployments` (:pr:`244`) by `G. Maze <http://www.github.com/gmaze>`_
+- **New utility class to retrieve the Argo deployment plan from the Ocean-OPS api.** This is the utility class :class:`OceanOPSDeployments`. See the new documentation section on :ref:`Deployment Plan` for more. (:pr:`244`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -25,6 +25,43 @@ v0.1.13 (xx Mar. 2023)
 
     df = deployment.to_dataframe()
     deployment.status_code
+    fig, ax = deployment.plot_status()
+
+.. image:: _static/scatter_map_deployment_status.png
+
+- **New scatter map utility for easy Argo-related variables plotting.** The new :meth:`argopy.plot.scatter_map` utility function is dedicated to making maps with Argo profiles positions coloured according to specific variables: a scatter map. Profiles colouring is finely tuned for some variables: QC flags, Data Mode and Deployment Status. By default, floats trajectories are always shown, but this can be changed. See the new documentation section on :ref:`Scatter Maps` for more. (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy.plot import scatter_map
+
+    fig, ax = scatter_map(ds_or_df,
+                          x='LONGITUDE', y='LATITUDE', hue='PSAL_QC',
+                          traj_axis='PLATFORM_NUMBER')
+
+.. image:: _static/scatter_map_qcflag.png
+
+- **New Argo colors utility to manage segmented colormaps and pre-defined Argo colors set.** The new :class:`argopy.plot.ArgoColors` utility class aims to easily provide colors for Argo-related variables plot. See the new documentation section on :ref:`Argo colors` for more (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy.plot import ArgoColors
+
+    ArgoColors().list_valid_known_colormaps
+    ArgoColors().known_colormaps.keys()
+
+    ArgoColors('data_mode')
+    ArgoColors('data_mode').cmap
+    ArgoColors('data_mode').definition
+
+    ArgoColors('Set2').cmap
+    ArgoColors('Spectral', N=25).cmap
+
+**Internals**
+
+- Because of the new :class:`argopy.plot.ArgoColors`, the :class:`argopy.plot.discrete_coloring` utility is deprecated in 0.1.13. Calling it will raise an error after argopy 0.1.14. (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
+
+- New method to check status of web API: now allows for a keyword check rather than a simple url ping. This comes with 2 new utilities functions :meth:`utilities.urlhaskeyword` and :meth:`utilities.isalive`. (:pr:`247`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 **Internals**
 

@@ -9,7 +9,7 @@ import xarray as xr
 import pytest
 import tempfile
 import shutil
-from fsspec.core import split_protocol
+from urllib.parse import urlparse
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
@@ -17,20 +17,17 @@ from argopy.errors import (
     CacheFileNotFound,
     FileSystemHasNoCache,
     FtpPathError,
-    InvalidMethod
 )
 from argopy.utilities import is_list_of_strings, isconnected
-from argopy.options import check_gdac_path
 from utils import (
     requires_gdac,
     safe_to_server_errors,
     fct_safe_to_server_errors
 )
-import warnings
 import logging
 
-log = logging.getLogger("argopy.tests.data.gdac")
 
+log = logging.getLogger("argopy.tests.data.gdac")
 skip_for_debug = pytest.mark.skipif(False, reason="Taking too long !")
 
 """
@@ -38,19 +35,18 @@ List ftp hosts to be tested.
 Since the fetcher is compatible with host from local, http or ftp protocols, we
 try to test them all:
 """
-host_list = [argopy.tutorial.open_dataset("gdac")[0],
+VALID_HOSTS = [argopy.tutorial.open_dataset("gdac")[0],
              'https://data-argo.ifremer.fr',
-             'ftp://ftp.ifremer.fr/ifremer/argo',
-             # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but takes slow down CI and no need for 2 ftp tests
-             ]
-# Make sure hosts are valid and available at test time:
-valid_hosts = [h for h in host_list if isconnected(h) and check_gdac_path(h, errors='ignore')]
+               # 'ftp://ftp.ifremer.fr/ifremer/argo',
+               # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but slow down CI and no need for 2 ftp tests
+             'MOCKFTP',  # keyword to use the fake/mocked ftp server (running on localhost)
+            ]
 
 """
 List access points to be tested.
 For each access points, we list 1-to-2 scenario to make sure all possibilities are tested
 """
-valid_access_points = [
+VALID_ACCESS_POINTS = [
     {"float": [13857]},
     # {"float": [2901746, 4902252]},
     # {"profile": [2901746, 90]},
@@ -74,7 +70,7 @@ valid_parallel_opts = [
 
 @requires_gdac
 def create_fetcher(fetcher_args, access_point, xfail=False):
-    """ Create a fetcher for given facade options and access point
+    """ Create a fetcher for a given set of facade options and access point
 
         Use xfail=True when a test with this fetcher is expected to fail
     """
@@ -106,19 +102,25 @@ def assert_fetcher(this_fetcher, cacheable=False):
         assert is_list_of_strings(this_fetcher.cachepath)
 
 
-@skip_for_debug
+def ftp_shortname(ftp):
+    """Get a short name for scenarios IDs, given a FTP host"""
+    if ftp != 'MOCKFTP':
+        return (lambda x: 'file' if x == "" else x)(urlparse(ftp).scheme)
+    else:
+        return 'ftp_mocked'
+
+
 @requires_gdac
 class TestBackend:
     src = 'gdac'
 
     # Create list of tests scenarios
     # combine all hosts with all access points:
-    scenarios = [(h, ap) for h in valid_hosts for ap in valid_access_points]
-    # scenarios = [(valid_hosts[0], valid_access_points[0])]
-    # scenarios = [(valid_hosts[1], ap) for ap in valid_access_points]
-    # scenarios_ids = ["%s, %s" % (fix[0], list(fix[1].keys())[0]) for fix in scenarios]
+    scenarios = [(h, ap) for h in VALID_HOSTS for ap in VALID_ACCESS_POINTS]
+
     scenarios_ids = [
-        "%s, %s" % ((lambda x: 'file' if x is None else x)(split_protocol(fix[0])[0]), list(fix[1].keys())[0]) for fix
+        "%s, %s" % (ftp_shortname(fix[0]), list(fix[1].keys())[0]) for
+        fix
         in
         scenarios]
 
@@ -127,17 +129,25 @@ class TestBackend:
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
         self.cachedir = tempfile.mkdtemp()
 
+    def _patch_ftp(self, ftp):
+        """Patch Mocked FTP server keyword"""
+        if ftp == 'MOCKFTP':
+            return pytest.MOCKFTP  # this was set in conftest.py
+        else:
+            return ftp
+
     def _setup_fetcher(self, this_request, cached=False):
-        """Helper method to set-up options for a fetcher creation"""
+        """Helper method to set up options for a fetcher creation"""
         if isinstance(this_request.param, tuple):
             ftp = this_request.param[0]
             access_point = this_request.param[1]
         else:
             ftp = this_request.param
-            access_point = valid_access_points[0]  # Use 1st valid access point
+            access_point = VALID_ACCESS_POINTS[0]  # Use 1st valid access point
 
-        N_RECORDS = None if 'tutorial' in ftp else 100  # Make sure we're not going to load the full index
-        fetcher_args = {"src": self.src, "ftp": ftp, "cache": False, "N_RECORDS": N_RECORDS}
+        N_RECORDS = None if 'tutorial' in ftp or 'MOCK' in ftp else 100  # Make sure we're not going to load the full index
+        fetcher_args = {"src": self.src, "ftp": self._patch_ftp(ftp), "cache": False, "N_RECORDS": N_RECORDS}
+
         if cached:
             fetcher_args = {**fetcher_args, **{"cache": True, "cachedir": self.cachedir}}
         if not isconnected(fetcher_args['ftp']+"/"+"ar_index_global_prof.txt"):
@@ -160,12 +170,15 @@ class TestBackend:
     # @skip_for_debug
     @safe_to_server_errors
     def test_nocache(self):
-        this_fetcher = create_fetcher({"src": self.src, "ftp": valid_hosts[0]}, valid_access_points[0]).fetcher
+        this_fetcher = create_fetcher({"src": self.src, "ftp": self._patch_ftp(VALID_HOSTS[0])},
+                                      VALID_ACCESS_POINTS[0]).fetcher
         with pytest.raises(FileSystemHasNoCache):
             this_fetcher.cachepath
 
     # @skip_for_debug
-    @pytest.mark.parametrize("_make_a_fetcher", valid_hosts, indirect=True)
+    @pytest.mark.parametrize("_make_a_fetcher", VALID_HOSTS,
+                             indirect=True,
+                             ids=["%s" % ftp_shortname(ftp) for ftp in VALID_HOSTS])
     def test_hosts(self, _make_a_fetcher):
         @safe_to_server_errors
         def test(this_fetcher):
@@ -177,7 +190,7 @@ class TestBackend:
     def test_hosts_invalid(self, ftp_host):
         # Invalid servers:
         with pytest.raises(FtpPathError):
-            create_fetcher({"src": self.src, "ftp": ftp_host}, valid_access_points[0], xfail=True)
+            create_fetcher({"src": self.src, "ftp": ftp_host}, VALID_ACCESS_POINTS[0], xfail=True)
 
     # @skip_for_debug
     @pytest.mark.parametrize("_make_a_fetcher", scenarios, indirect=True, ids=scenarios_ids)
@@ -209,50 +222,3 @@ class TestBackend:
             # warnings.warn("\n%s" % argopy.lscache(self.cachedir))  # This could be useful to debug tests
             shutil.rmtree(self.cachedir)
         request.addfinalizer(remove_test_dir)
-
-
-@skip_for_debug
-@requires_gdac
-class Test_BackendParallel:
-    src = 'gdac'
-
-    # Create list of tests scenarios
-    # combine all hosts with all access points and valid parallel options:
-    # fixtures = [(h, mth, ap) for h in valid_hosts for ap in valid_access_points for mth in valid_parallel_opts]
-    fixtures = [(h, mth, ap) for h in valid_hosts for ap in valid_access_points if 'float' in ap for mth in
-                valid_parallel_opts]
-    fixtures_ids = [
-        "%s, %s, %s" % (
-            fix[0],
-            (lambda x: x['parallel_method'] if 'parallel_method' in x else x['parallel'])(fix[1]),
-            list(fix[2].keys())[0])
-        for fix in fixtures]
-    fixtures_ids_short = [
-        "%s, %s, %s" % (
-            (lambda x: 'file' if x is None else x)(split_protocol(fix[0])[0]),
-            (lambda x: x['parallel_method'] if 'parallel_method' in x else x['parallel'])(fix[1]),
-            list(fix[2].keys())[0])
-        for fix in fixtures]
-
-    @pytest.fixture
-    def _fetcher(self, request):
-        """ Fixture to create a FTP fetcher for a given host and access point """
-        N_RECORDS = None if 'tutorial' in request.param[0] else 100  # Make sure we're not going to load the full index
-        fetcher_args = {"src": self.src, "ftp": request.param[0], "cache": False, **request.param[1], "N_RECORDS": N_RECORDS}
-        yield create_fetcher(fetcher_args, request.param[2]).fetcher
-
-    @pytest.mark.parametrize("opts", [
-        {"parallel": True, "parallel_method": "invalid"},  # opts0
-        {"parallel": "invalid"}  # opts1
-        ], indirect=False)
-    def test_methods_invalid(self, opts):
-        with pytest.raises(InvalidMethod):
-            this_fetcher = create_fetcher({**{"src": self.src}, **opts}, valid_access_points[0]).fetcher
-            assert_fetcher(this_fetcher)
-
-    @pytest.mark.parametrize("_fetcher", fixtures, ids=fixtures_ids_short, indirect=True)
-    def test_fetching(self, _fetcher):
-        @safe_to_server_errors
-        def test(this_fetcher):
-            assert_fetcher(this_fetcher)
-        test(_fetcher)

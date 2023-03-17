@@ -9,6 +9,7 @@ This module contains:
 import importlib
 import pytest
 import fsspec
+import asyncio
 from aiohttp.client_exceptions import (
     ServerDisconnectedError,
     ClientResponseError,
@@ -74,21 +75,24 @@ has_connection, requires_connection = _connectskip(
 ##########
 # ERDDAP #
 ##########
-if CONNECTED:
+has_erddap, requires_erddap = _connectskip(
+    "erddap" in AVAILABLE_SOURCES, "erddap data fetcher"
+)
+
+if CONNECTED and has_erddap:
     log.debug("Check which Erddap dataset are available (eg: core, bgc, ref, index)")
-    DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
-    DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-bio")
-    DSEXISTS_ref = erddap_ds_exists(ds="ArgoFloats-ref")
-    DSEXISTS_index = erddap_ds_exists(ds="ArgoFloats-index")
+    try:
+        DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
+        DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-synthetic-BGC")
+        DSEXISTS_ref = erddap_ds_exists(ds="ArgoFloats-ref")
+        DSEXISTS_index = erddap_ds_exists(ds="ArgoFloats-index")
+    except:
+        log.debug("Cannot determine which erddap dataset are available, will skip corresponding tests.")
 else:
     DSEXISTS = False
     DSEXISTS_bgc = False
     DSEXISTS_ref = False
     DSEXISTS_index = False
-
-has_erddap, requires_erddap = _connectskip(
-    "erddap" in AVAILABLE_SOURCES, "erddap data fetcher"
-)
 
 has_erddap_phy, requires_erddap_phy = _connectskip(
     DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
@@ -131,7 +135,7 @@ requires_connected_erddap_index = pytest.mark.skipif(
     reason="Requires a live and valid Argo Index from Ifremer erddap server",
 )
 
-ci_erddap_index = pytest.mark.skipif(True, reason="Tests disabled for erddap index fetcher")
+ci_erddap_index = pytest.mark.skipif(True, reason="Tests disabled for erddap index fetcher (way too long !)")
 
 ###########
 # ARGOVIS #
@@ -169,6 +173,7 @@ has_matplotlib, requires_matplotlib = _importorskip("matplotlib")
 has_seaborn, requires_seaborn = _importorskip("seaborn")
 has_cartopy, requires_cartopy = _importorskip("cartopy")
 has_ipython, requires_ipython = _importorskip("IPython")
+has_ipywidgets, requires_ipywidgets = _importorskip("ipywidgets")
 
 #################
 # Ocean-OPS API #
@@ -185,10 +190,8 @@ safe_to_fsspec_version = pytest.mark.skipif(
     version.parse(fsspec.__version__) > version.parse("0.8.3"),
     reason="fsspec version %s > 0.8.3 (https://github.com/euroargodev/argopy/issues/96)" % fsspec.__version__
 )
-skip_this_for_debug = pytest.mark.skipif(True, reason="Skipped temporarily for debug")
 
 TimeoutError = asyncio.TimeoutError if version.parse(fsspec.__version__) < version.parse("2021.05.0") else fsspec.exceptions.FSTimeoutError
-
 
 ############
 def fct_safe_to_server_errors(func, *args, **kwargs):

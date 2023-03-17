@@ -7,13 +7,10 @@ This page provides an auto-generated summary of argopy's API. For more details a
 .. contents::
    :local:
 
-Top-levels functions
-====================
+Argo Data Fetchers
+==================
 
 .. currentmodule:: argopy
-
-Fetchers
---------
 
 .. autosummary::
     :toctree: generated/
@@ -21,8 +18,8 @@ Fetchers
     DataFetcher
     IndexFetcher
 
-Fetcher access points
----------------------
+Data selection
+--------------
 
 .. autosummary::
    :toctree: generated/
@@ -38,13 +35,15 @@ Fetcher access points
    IndexFetcher.float
    IndexFetcher.profile
 
-Fetcher methods
----------------
+Data access
+-----------
 
 .. autosummary::
    :toctree: generated/
 
    DataFetcher.load
+   DataFetcher.data
+   DataFetcher.index
    DataFetcher.to_xarray
    DataFetcher.to_dataframe
    DataFetcher.to_index
@@ -53,9 +52,12 @@ Fetcher methods
    :toctree: generated/
 
    IndexFetcher.load
+   IndexFetcher.index
    IndexFetcher.to_xarray
    IndexFetcher.to_dataframe
    IndexFetcher.to_csv
+
+.. _Fetcher Data Visualisation:
 
 Data visualisation
 ------------------
@@ -66,35 +68,55 @@ Data visualisation
    DataFetcher.plot
    DataFetcher.dashboard
    IndexFetcher.plot
-   dashboard
 
 
-Fetcher properties
-------------------
+Properties
+----------
 
 .. autosummary::
    :toctree: generated/
 
    DataFetcher.uri
-   DataFetcher.data
-   DataFetcher.index
-   IndexFetcher.index
 
-
-Helpers
--------
+Argo related data utilities
+===========================
 
 .. autosummary::
    :toctree: generated/
 
    status
-   set_options
-   clear_cache
-   tutorial.open_dataset
    TopoFetcher
    ArgoNVSReferenceTables
    OceanOPSDeployments
-   show_versions
+
+.. _Module Visualisation:
+
+Data visualisation
+==================
+
+Visualisation functions available at the ``argopy`` module level:
+
+.. currentmodule:: argopy
+
+.. autosummary::
+   :toctree: generated/
+
+    dashboard
+    ArgoColors
+
+
+All other visualisation functions are in the :mod:`argopy.plot` submodule:
+
+.. currentmodule:: argopy.plot
+
+.. autosummary::
+   :toctree: generated/
+
+    open_sat_altim_report
+    scatter_map
+    bar_plot
+    latlongrid
+    discrete_coloring
 
 
 Dataset.argo (xarray accessor)
@@ -163,25 +185,10 @@ Misc
     Dataset.argo.uid
     Dataset.argo.cast_types
 
-Plotters
-========
-
-Function under the :mod:`argopy.plot` submodule.
-
-.. currentmodule:: argopy.plot
-
-.. autosummary::
-   :toctree: generated/
-
-    dashboard
-    plot_trajectory
-    bar_plot
-    open_sat_altim_report
-
 Utilities
 =========
 
-Function under the :mod:`argopy.utilities` submodule.
+Function under the ``argopy.utilities`` submodule.
 
 .. currentmodule:: argopy.utilities
 
@@ -201,10 +208,25 @@ Function under the :mod:`argopy.utilities` submodule.
     list_multiprofile_file_variables
     Chunker
 
+    isconnected
+    urlhaskeyword
+    isalive
+    isAPIconnected
+
+Argopy helpers
+==============
+.. currentmodule:: argopy
+
+.. autosummary::
+   :toctree: generated/
+
+   set_options
+   clear_cache
+   tutorial.open_dataset
+   show_versions
 
 Internals
 =========
-
 .. currentmodule:: argopy
 
 File systems
@@ -272,4 +294,3 @@ Argovis
     argopy.data_fetchers.argovis_data.ArgovisDataFetcher
     argopy.data_fetchers.argovis_data.Fetch_wmo
     argopy.data_fetchers.argovis_data.Fetch_box
-

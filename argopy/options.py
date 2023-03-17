@@ -12,6 +12,7 @@ import logging
 import fsspec
 from fsspec.core import split_protocol
 from socket import gaierror
+from urllib.parse import urlparse
 
 # Define a logger
 log = logging.getLogger("argopy.options")
@@ -86,9 +87,9 @@ class set_options:
         Possible values: ``standard`` or ``expert``.
     - ``api_timeout``: Define the time out of internet requests to web API, in seconds.
         Default: 60
-    - ``trust_env``: Allow for local environment variables to be used by fsspec to connect to the internet.
-        Get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True (
-        False by default). Also can get proxy credentials from ~/.netrc file if present.
+    - ``trust_env``: Allow for local environment variables to be used to connect to the internet.
+        Argopy will get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True (
+        False by default) and it can also get proxy credentials from ~/.netrc file if this file exists.
 
     You can use `set_options` either as a context manager:
 
@@ -165,8 +166,9 @@ def check_gdac_path(path, errors='ignore'):
         fs = fsspec.filesystem('http')
     elif 'ftp' in split_protocol(path)[0]:
         try:
-            host = split_protocol(path)[-1].split('/')[0]
-            fs = fsspec.filesystem('ftp', host=host)
+            host = urlparse(path).hostname
+            port = 0 if urlparse(path).port is None else urlparse(path).port
+            fs = fsspec.filesystem('ftp', host=host, port=port)
         except gaierror:
             if errors == 'raise':
                 raise FtpPathError("Can't get address info (GAIerror) on '%s'" % host)

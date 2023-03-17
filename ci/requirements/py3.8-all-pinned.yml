@@ -39,3 +39,6 @@ dependencies:
   - flake8=4.0.1
   - pytest-cov=3.0.0
   - pytest-env=0.6.2
+  - pytest-localftpserver=1.1.4
+  - pip:
+      - aioresponses==0.7.4
