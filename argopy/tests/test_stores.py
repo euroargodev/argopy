@@ -73,7 +73,7 @@ class Test_new_fs:
 @skip_this
 @requires_connection
 class Test_FileStore:
-    ftproot = argopy.tutorial.open_dataset("localftp")[0]
+    ftproot = argopy.tutorial.open_dataset("gdac")[0]
     csvfile = os.path.sep.join([ftproot, "ar_index_global_prof.txt"])
 
     def test_implementation(self):
@@ -362,7 +362,7 @@ class Test_IndexFilter_WMO:
 
     @requires_connection
     def test_filters_run(self):
-        ftproot, flist = argopy.tutorial.open_dataset("localftp")
+        ftproot, flist = argopy.tutorial.open_dataset("gdac")
         index_file = os.path.sep.join([ftproot, "ar_index_global_prof.txt"])
         for kw in self.kwargs:
             filt = indexfilter_wmo(**kw)
@@ -377,7 +377,7 @@ class Test_IndexFilter_WMO:
 @skip_this
 @requires_connection
 class Test_Legacy_IndexStore:
-    ftproot, flist = argopy.tutorial.open_dataset("localftp")
+    ftproot, flist = argopy.tutorial.open_dataset("gdac")
     index_file = os.path.sep.join([ftproot, "ar_index_global_prof.txt"])
 
     kwargs_wmo = [
@@ -426,7 +426,7 @@ List ftp hosts to be tested.
 Since the fetcher is compatible with host from local, http or ftp protocols, we
 try to test them all:
 """
-VALID_HOSTS = [argopy.tutorial.open_dataset("localftp")[0],
+VALID_HOSTS = [argopy.tutorial.open_dataset("gdac")[0],
              'https://data-argo.ifremer.fr',
              # 'ftp://ftp.ifremer.fr/ifremer/argo',
              # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but takes too long to respond, slow down CI
@@ -482,7 +482,7 @@ def ftp_shortname(ftp):
 
 
 class IndexStore_test_proto:
-    host, flist = argopy.tutorial.open_dataset("localftp")
+    host, flist = argopy.tutorial.open_dataset("gdac")
     index_file = "ar_index_global_prof.txt"
 
     search_scenarios = [(h, ap) for h in VALID_HOSTS for ap in VALID_SEARCHES]

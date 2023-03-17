@@ -14,7 +14,6 @@ from argopy.utilities import is_list_of_strings, is_box
 from utils import (
     requires_fetcher,
     requires_connected_erddap_phy,
-    requires_localftp,
     requires_gdac,
     requires_connected_gdac,
     requires_connected_argovis,
@@ -45,31 +44,32 @@ class Test_Facade:
 
     # Use the first valid data source:
     # src = list(AVAILABLE_SOURCES.keys())[0]
-    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
+    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
     src = 'gdac'
+    src_opts = {'ftp': local_ftp}
 
     def __get_fetcher(self, empty: bool = False, pt: str = 'profile'):
-        f = ArgoDataFetcher(src=self.src)
+        f = ArgoDataFetcher(src=self.src, **self.src_opts)
         # f.valid_access_points[0]
 
         if pt == 'float':
             if not empty:
-                return f, ArgoDataFetcher(src=self.src).float(2901623)
+                return f, ArgoDataFetcher(src=self.src, **self.src_opts).float(2901623)
             else:
-                return f, ArgoDataFetcher(src=self.src).float(12)
+                return f, ArgoDataFetcher(src=self.src, **self.src_opts).float(12)
 
         if pt == 'profile':
             if not empty:
-                return f, ArgoDataFetcher(src=self.src).profile(2901623, 12)
+                return f, ArgoDataFetcher(src=self.src, **self.src_opts).profile(2901623, 12)
             else:
-                return f, ArgoDataFetcher(src=self.src).profile(12, 1200)
+                return f, ArgoDataFetcher(src=self.src, **self.src_opts).profile(12, 1200)
 
         if pt == 'region':
             if not empty:
-                return f, ArgoDataFetcher(src=self.src).region([-60, -55, 40.0, 45.0, 0.0, 10.0,
+                return f, ArgoDataFetcher(src=self.src, **self.src_opts).region([-60, -55, 40.0, 45.0, 0.0, 10.0,
                                                                 "2007-08-01", "2007-09-01"])
             else:
-                return f, ArgoDataFetcher(src=self.src).region([-60, -55, 40.0, 45.0, 99.92, 99.99,
+                return f, ArgoDataFetcher(src=self.src, **self.src_opts).region([-60, -55, 40.0, 45.0, 99.92, 99.99,
                                                                 "2007-08-01", "2007-08-01"])
 
     def test_invalid_fetcher(self):
@@ -77,9 +77,8 @@ class Test_Facade:
             ArgoDataFetcher(src="invalid_fetcher").to_xarray()
 
     def test_invalid_accesspoint(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            with pytest.raises(InvalidFetcherAccessPoint):
-                self.__get_fetcher()[0].invalid_accesspoint.to_xarray()
+        with pytest.raises(InvalidFetcherAccessPoint):
+            self.__get_fetcher()[0].invalid_accesspoint.to_xarray()
 
     def test_invalid_dataset(self):
         with pytest.raises(ValueError):
@@ -90,94 +89,81 @@ class Test_Facade:
             ArgoDataFetcher(src='erddap', ds='bgc', mode='standard')
 
     def test_no_uri(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            with pytest.raises(InvalidFetcherAccessPoint):
-                self.__get_fetcher()[0].uri
+        with pytest.raises(InvalidFetcherAccessPoint):
+            self.__get_fetcher()[0].uri
 
     def test_to_xarray(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            assert isinstance(self.__get_fetcher()[1].to_xarray(), xr.Dataset)
-            with pytest.raises(InvalidFetcher):
-                assert self.__get_fetcher()[0].to_xarray()
+        assert isinstance(self.__get_fetcher()[1].to_xarray(), xr.Dataset)
+        with pytest.raises(InvalidFetcher):
+            assert self.__get_fetcher()[0].to_xarray()
 
     def test_to_dataframe(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            assert isinstance(self.__get_fetcher()[1].to_dataframe(), pd.core.frame.DataFrame)
-            with pytest.raises(InvalidFetcher):
-                assert self.__get_fetcher()[0].to_dataframe()
+        assert isinstance(self.__get_fetcher()[1].to_dataframe(), pd.core.frame.DataFrame)
+        with pytest.raises(InvalidFetcher):
+            assert self.__get_fetcher()[0].to_dataframe()
 
     def test_to_index(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            assert isinstance(self.__get_fetcher()[1].to_index(), pd.core.frame.DataFrame)
-            assert isinstance(self.__get_fetcher()[1].to_index(full=True), pd.core.frame.DataFrame)
-            assert isinstance(self.__get_fetcher()[1].to_index(full=False, coriolis_id=True), pd.core.frame.DataFrame)
+        assert isinstance(self.__get_fetcher()[1].to_index(), pd.core.frame.DataFrame)
+        assert isinstance(self.__get_fetcher()[1].to_index(full=True), pd.core.frame.DataFrame)
+        assert isinstance(self.__get_fetcher()[1].to_index(full=False, coriolis_id=True), pd.core.frame.DataFrame)
 
     def test_load(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            f, fetcher = self.__get_fetcher(pt='float')
+        f, fetcher = self.__get_fetcher(pt='float')
 
-            fetcher.load()
-            assert is_list_of_strings(fetcher.uri)
-            assert isinstance(fetcher.data, xr.Dataset)
-            assert isinstance(fetcher.index, pd.core.frame.DataFrame)
-            assert is_box(fetcher.domain)
+        fetcher.load()
+        assert is_list_of_strings(fetcher.uri)
+        assert isinstance(fetcher.data, xr.Dataset)
+        assert isinstance(fetcher.index, pd.core.frame.DataFrame)
 
-            # Change the access point:
-            new_fetcher = f.profile(fetcher._AccessPoint_data['wmo'], 1)
-            new_fetcher.load()
-            assert is_list_of_strings(new_fetcher.uri)
-            assert isinstance(new_fetcher.data, xr.Dataset)
-            assert isinstance(new_fetcher.index, pd.core.frame.DataFrame)
-            assert is_box(new_fetcher.domain)
+        # Change the access point:
+        new_fetcher = f.profile(fetcher._AccessPoint_data['wmo'], 1)
+        new_fetcher.load()
+        assert is_list_of_strings(new_fetcher.uri)
+        assert isinstance(new_fetcher.data, xr.Dataset)
+        assert isinstance(new_fetcher.index, pd.core.frame.DataFrame)
 
     @requires_matplotlib
     def test_plot_trajectory(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            f, fetcher = self.__get_fetcher(pt='float')
-            fig, ax = fetcher.plot(ptype='trajectory',
-                                   with_seaborn=has_seaborn,
-                                   with_cartopy=has_cartopy)
-            assert isinstance(fig, mpl.figure.Figure)
-            expected_ax_type = (
-                cartopy.mpl.geoaxes.GeoAxesSubplot
-                if has_cartopy
-                else mpl.axes.Axes
-            )
-            assert isinstance(ax, expected_ax_type)
-            assert isinstance(ax.get_legend(), mpl.legend.Legend)
-            mpl.pyplot.close(fig)
+        f, fetcher = self.__get_fetcher(pt='float')
+        fig, ax = fetcher.plot(ptype='trajectory',
+                               with_seaborn=has_seaborn,
+                               with_cartopy=has_cartopy)
+        assert isinstance(fig, mpl.figure.Figure)
+        expected_ax_type = (
+            cartopy.mpl.geoaxes.GeoAxesSubplot
+            if has_cartopy
+            else mpl.axes.Axes
+        )
+        assert isinstance(ax, expected_ax_type)
+        assert isinstance(ax.get_legend(), mpl.legend.Legend)
+        mpl.pyplot.close(fig)
 
     @requires_matplotlib
     @pytest.mark.parametrize("by", ["dac", "profiler"], indirect=False)
     def test_plot_bar(self, by):
-        with argopy.set_options(ftp=self.local_ftp):
-            f, fetcher = self.__get_fetcher(pt='float')
-            fig, ax = fetcher.plot(ptype=by, with_seaborn=has_seaborn)
-            assert isinstance(fig, mpl.figure.Figure)
-            mpl.pyplot.close(fig)
+        f, fetcher = self.__get_fetcher(pt='float')
+        fig, ax = fetcher.plot(ptype=by, with_seaborn=has_seaborn)
+        assert isinstance(fig, mpl.figure.Figure)
+        mpl.pyplot.close(fig)
 
     @requires_matplotlib
     def test_plot_invalid(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            f, fetcher = self.__get_fetcher(pt='float')
-            with pytest.raises(ValueError):
-                fetcher.plot(ptype='invalid_cat')
+        f, fetcher = self.__get_fetcher(pt='float')
+        with pytest.raises(ValueError):
+            fetcher.plot(ptype='invalid_cat')
 
     @requires_matplotlib
     def test_plot_qc_altimetry(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            f, fetcher = self.__get_fetcher(pt='float')
-            dsh = fetcher.plot(ptype='qc_altimetry', embed='slide')
-            if has_ipython:
-                assert isinstance(dsh(0), IPython.display.Image)
-            else:
-                assert isinstance(dsh, dict)
+        f, fetcher = self.__get_fetcher(pt='float')
+        dsh = fetcher.plot(ptype='qc_altimetry', embed='slide')
+        if has_ipython:
+            assert isinstance(dsh(0), IPython.display.Image)
+        else:
+            assert isinstance(dsh, dict)
 
     def test_domain(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            f, fetcher = self.__get_fetcher(pt='float')
-            fetcher.domain
-
+        f, fetcher = self.__get_fetcher(pt='float')
+        fetcher.domain
 
 
 """
@@ -187,7 +173,7 @@ The following tests are not necessary, since data fetching is tested from each d
 class OFF_DataFetching:
     """ Test main API facade for all available fetching backends and default dataset """
 
-    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
+    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
 
     # todo Determine the list of output format to test
     # what else beyond .to_xarray() ?
@@ -259,12 +245,6 @@ class OFF_DataFetching:
     def test_float_erddap(self):
         self.__test_float("erddap")
 
-    @requires_localftp
-    @safe_to_server_errors
-    def test_float_localftp(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
-            self.__test_float("localftp")
-
     @requires_connected_argovis
     @safe_to_server_errors
     def test_float_argovis(self):
@@ -282,12 +262,6 @@ class OFF_DataFetching:
     def test_profile_erddap(self):
         self.__test_profile("erddap")
 
-    @requires_localftp
-    @safe_to_server_errors
-    def test_profile_localftp(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
-            self.__test_profile("localftp")
-
     @requires_connected_argovis
     @safe_to_server_errors
     def test_profile_argovis(self):
@@ -303,12 +277,6 @@ class OFF_DataFetching:
     @safe_to_server_errors
     def test_region_erddap(self):
         self.__test_region("erddap")
-
-    @requires_localftp
-    @safe_to_server_errors
-    def test_region_localftp(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
-            self.__test_region("localftp")
 
     @requires_connected_argovis
     @safe_to_server_errors

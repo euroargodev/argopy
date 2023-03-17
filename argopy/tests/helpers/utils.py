@@ -151,16 +151,6 @@ requires_connected_argovis = pytest.mark.skipif(
 
 
 ############
-# LOCALFTP #
-############
-has_localftp, requires_localftp = _connectskip(
-    "localftp" in AVAILABLE_SOURCES, "the localftp data fetcher"
-)
-has_localftp_index, requires_localftp_index = _connectskip(
-    "localftp" in AVAILABLE_INDEX_SOURCES, "the localftp index fetcher"
-)
-
-############
 # GDAC FTP #
 ############
 has_pyarrow, requires_pyarrow = _importorskip("pyarrow")

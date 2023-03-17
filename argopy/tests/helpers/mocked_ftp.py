@@ -16,7 +16,7 @@ def mocked_ftpserver(ftpserver):
     # os.environ['FTP_PORT'] = '31175'  # Let this be chosen automatically
 
     # Set up the ftp server with the tutorial repo GDAC content:
-    ftproot, flist = tutorial.open_dataset('localftp')
+    ftproot, flist = tutorial.open_dataset('gdac')
     for f in flist:
         ftpserver.put_files({"src": f,
                              "dest": f.replace(ftproot, ".")},

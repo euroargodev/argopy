@@ -97,6 +97,9 @@ class ArgoDataFetcher:
         _VALIDATORS["dataset"](self._dataset_id)
 
         # Load data source access points:
+        if self._src == 'localftp':
+            raise ValueError("The 'localftp' data source is deprecated. It's been replaced by 'gdac'.")
+
         if self._src not in AVAILABLE_DATA_SOURCES:
             raise InvalidFetcher(
                 "Requested data fetcher '%s' not available ! Please try again with any of: %s"
@@ -260,7 +263,7 @@ class ArgoDataFetcher:
                 Argo-like index of fetched data
         """
         if not isinstance(self._index, pd.core.frame.DataFrame):
-            if "gdac" in self._src or "localftp" in self._src:
+            if "gdac" in self._src:
                 self.to_index(full=True)
             else:
                 self.load()
@@ -654,6 +657,9 @@ class ArgoIndexFetcher:
         _VALIDATORS["src"](self._src)
 
         # Load data source access points:
+        if self._src == 'localftp':
+            raise ValueError("The 'localftp' data source is deprecated. It's been replaced by 'gdac'.")
+
         if self._src not in AVAILABLE_INDEX_SOURCES:
             raise InvalidFetcher(
                 "Requested index fetcher '%s' not available ! "

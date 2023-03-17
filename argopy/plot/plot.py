@@ -145,7 +145,6 @@ def plot_trajectory(
     :class:`argopy.plot.scatter_map`.
 
     """
-
     warnUnless(has_mpl, "requires matplotlib installed")
 
     with axes_style(style):

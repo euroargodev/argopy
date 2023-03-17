@@ -63,6 +63,14 @@ v0.1.13 (xx Mar. 2023)
 
 - New method to check status of web API: now allows for a keyword check rather than a simple url ping. This comes with 2 new utilities functions :meth:`utilities.urlhaskeyword` and :meth:`utilities.isalive`. (:pr:`247`) by `G. Maze <http://www.github.com/gmaze>`_.
 
+**Internals**
+
+- Removed dependency to Scikit-learn LabelEncoder (:pr:`239`) by `G. Maze <http://www.github.com/gmaze>`_
+
+**Breaking changes**
+
+- Data source ``localftp`` is deprecated and removed from **argopy**. It's been replaced by the ``gdac`` data source with the appropriate ``ftp`` option. See :ref:`Data sources`. (:pr:`240`) by `G. Maze <http://www.github.com/gmaze>`_
+
 
 v0.1.12 (16 May 2022)
 ----------------------
@@ -97,7 +105,7 @@ v0.1.11 (13 Apr. 2022)
 .. warning::
 
     Since the new ``gdac`` fetcher can use a local copy of the GDAC ftp server, the legacy ``localftp`` fetcher is now deprecated.
-    Using it will raise a warning up to v0.1.12. It will then raise an error in v0.1.13 and will be removed afterward.
+    Using it will raise a error up to v0.1.12. It will then be removed in v0.1.13.
 
 - **New dashboard for profiles and new 3rd party dashboards**. Calling on the data fetcher dashboard method will return the Euro-Argo profile page for a single profile. Very useful to look at the data before load. This comes with 2 new utilities functions to get Coriolis ID of profiles (:meth:`utilities.get_coriolis_profile_id`) and to return the list of profile webpages (:meth:`utilities.get_ea_profile_page`). (:pr:`198`) by `G. Maze <http://www.github.com/gmaze>`_.
 
