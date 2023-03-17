@@ -40,6 +40,7 @@ from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
 from utils import (
     requires_connection,
+    requires_gdac,
     requires_matplotlib,
     requires_cartopy,
     requires_oops,

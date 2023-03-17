@@ -123,140 +123,47 @@ class Test_Facade:
         assert isinstance(new_fetcher.index, pd.core.frame.DataFrame)
 
     @requires_matplotlib
-    def test_plot(self):
+    def test_plot_trajectory(self):
         f, fetcher = self.__get_fetcher(pt='float')
+        fig, ax = fetcher.plot(ptype='trajectory',
+                               with_seaborn=has_seaborn,
+                               with_cartopy=has_cartopy)
+        assert isinstance(fig, mpl.figure.Figure)
+        expected_ax_type = (
+            cartopy.mpl.geoaxes.GeoAxesSubplot
+            if has_cartopy
+            else mpl.axes.Axes
+        )
+        assert isinstance(ax, expected_ax_type)
+        assert isinstance(ax.get_legend(), mpl.legend.Legend)
+        mpl.pyplot.close(fig)
 
-        # Test 'trajectory'
-        for ws in [False, has_seaborn]:
-            for wc in [False, has_cartopy]:
-                for legend in [True, False]:
-                    fig, ax = fetcher.plot(ptype='trajectory', with_seaborn=ws, with_cartopy=wc, add_legend=legend)
-                    assert isinstance(fig, mpl.figure.Figure)
+    @requires_matplotlib
+    @pytest.mark.parametrize("by", ["dac", "profiler"], indirect=False)
+    def test_plot_bar(self, by):
+        f, fetcher = self.__get_fetcher(pt='float')
+        fig, ax = fetcher.plot(ptype=by, with_seaborn=has_seaborn)
+        assert isinstance(fig, mpl.figure.Figure)
+        mpl.pyplot.close(fig)
 
-                    expected_ax_type = (
-                        cartopy.mpl.geoaxes.GeoAxesSubplot
-                        if has_cartopy and wc
-                        else mpl.axes.Axes
-                    )
-                    assert isinstance(ax, expected_ax_type)
-
-                    expected_lg_type = mpl.legend.Legend if legend else type(None)
-                    assert isinstance(ax.get_legend(), expected_lg_type)
-
-                    mpl.pyplot.close(fig)
-
-        # Test 'dac', 'profiler'
-        for ws in [False, has_seaborn]:
-            for by in [
-                "dac",
-                "profiler"
-            ]:
-                fig, ax = fetcher.plot(ptype=by, with_seaborn=ws)
-                assert isinstance(fig, mpl.figure.Figure)
-                mpl.pyplot.close(fig)
-
+    @requires_matplotlib
+    def test_plot_invalid(self):
+        f, fetcher = self.__get_fetcher(pt='float')
         with pytest.raises(ValueError):
-            fetcher.plot(ptype='invalid_cat', with_seaborn=ws)
+            fetcher.plot(ptype='invalid_cat')
 
     @requires_matplotlib
     def test_plot_qc_altimetry(self):
-        if has_ipython:
-            import IPython
-
         f, fetcher = self.__get_fetcher(pt='float')
         dsh = fetcher.plot(ptype='qc_altimetry', embed='slide')
         if has_ipython:
             assert isinstance(dsh(0), IPython.display.Image)
         else:
             assert isinstance(dsh, dict)
-=======
-        with argopy.set_options(ftp=self.local_ftp):
-            with pytest.raises(InvalidFetcherAccessPoint):
-                self.__get_fetcher()[0].uri
-
-    def test_to_xarray(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            assert isinstance(self.__get_fetcher()[1].to_xarray(), xr.Dataset)
-            with pytest.raises(InvalidFetcher):
-                assert self.__get_fetcher()[0].to_xarray()
-
-    def test_to_dataframe(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            assert isinstance(self.__get_fetcher()[1].to_dataframe(), pd.core.frame.DataFrame)
-            with pytest.raises(InvalidFetcher):
-                assert self.__get_fetcher()[0].to_dataframe()
-
-    def test_to_index(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            assert isinstance(self.__get_fetcher()[1].to_index(), pd.core.frame.DataFrame)
-            assert isinstance(self.__get_fetcher()[1].to_index(full=True), pd.core.frame.DataFrame)
-            assert isinstance(self.__get_fetcher()[1].to_index(full=False, coriolis_id=True), pd.core.frame.DataFrame)
-
-    def test_load(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            f, fetcher = self.__get_fetcher(pt='float')
-
-            fetcher.load()
-            assert is_list_of_strings(fetcher.uri)
-            assert isinstance(fetcher.data, xr.Dataset)
-            assert isinstance(fetcher.index, pd.core.frame.DataFrame)
-            assert is_box(fetcher.domain)
-
-            # Change the access point:
-            new_fetcher = f.profile(fetcher._AccessPoint_data['wmo'], 1)
-            new_fetcher.load()
-            assert is_list_of_strings(new_fetcher.uri)
-            assert isinstance(new_fetcher.data, xr.Dataset)
-            assert isinstance(new_fetcher.index, pd.core.frame.DataFrame)
-            assert is_box(new_fetcher.domain)
-
-    @requires_matplotlib
-    def test_plot_trajectory(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            f, fetcher = self.__get_fetcher(pt='float')
-            fig, ax = fetcher.plot(ptype='trajectory',
-                                   with_seaborn=has_seaborn,
-                                   with_cartopy=has_cartopy)
-            assert isinstance(fig, mpl.figure.Figure)
-            expected_ax_type = (
-                cartopy.mpl.geoaxes.GeoAxesSubplot
-                if has_cartopy
-                else mpl.axes.Axes
-            )
-            assert isinstance(ax, expected_ax_type)
-            assert isinstance(ax.get_legend(), mpl.legend.Legend)
-            mpl.pyplot.close(fig)
-
-    @requires_matplotlib
-    @pytest.mark.parametrize("by", ["dac", "profiler"], indirect=False)
-    def test_plot_bar(self, by):
-        with argopy.set_options(ftp=self.local_ftp):
-            f, fetcher = self.__get_fetcher(pt='float')
-            fig, ax = fetcher.plot(ptype=by, with_seaborn=has_seaborn)
-            assert isinstance(fig, mpl.figure.Figure)
-            mpl.pyplot.close(fig)
-
-    @requires_matplotlib
-    def test_plot_invalid(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            f, fetcher = self.__get_fetcher(pt='float')
-            with pytest.raises(ValueError):
-                fetcher.plot(ptype='invalid_cat')
-
-    @requires_matplotlib
-    def test_plot_qc_altimetry(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            f, fetcher = self.__get_fetcher(pt='float')
-            dsh = fetcher.plot(ptype='qc_altimetry', embed='slide')
-            if has_ipython:
-                assert isinstance(dsh(0), IPython.display.Image)
-            else:
-                assert isinstance(dsh, dict)
 
     def test_domain(self):
-        with argopy.set_options(ftp=self.local_ftp):
-            f, fetcher = self.__get_fetcher(pt='float')
-            fetcher.domain
+        f, fetcher = self.__get_fetcher(pt='float')
+        fetcher.domain
 
 
 """
