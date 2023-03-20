@@ -311,25 +311,28 @@ class Test_FtpStore:
         fs = ftpstore(host=self.host, port=self.port, cache=False)
         assert isinstance(fs.open_dataset(uri), xr.Dataset)
 
-    @safe_to_server_errors
-    def test_open_mfdataset(self):
-        fs = ftpstore(host=self.host, port=self.port, cache=False)
+    params = [(m, p) for m in ["seq", "thread"] for p in [True, False]]
+    ids_params = ["method=%s, progress=%s" % (p[0], p[1]) for p in params]
+    @pytest.mark.parametrize("params", params,
+                             indirect=False,
+                             ids=ids_params)
+    def test_open_mfdataset(self, params):
         uri = [
-            "dac/csiro/5900865/profiles/D5900865_00%i.nc"
-            % i
-            for i in [1, 2]
-        ]
-        for method in ["seq", "thread"]:
-            for progress in [True, False]:
-                assert isinstance(
-                    fs.open_mfdataset(uri, method=method, progress=progress), xr.Dataset
-                )
-                assert is_list_of_datasets(
-                    fs.open_mfdataset(
-                        uri, method=method, progress=progress, concat=False
-                    )
-                )
+              "dac/csiro/5900865/profiles/D5900865_00%i.nc"
+              % i
+              for i in [1, 2]
+          ]
+        @safe_to_server_errors
+        def test(this_params):
+            method, progress = this_params
+            fs = ftpstore(host=self.host, port=self.port, cache=False)
 
+            ds = fs.open_mfdataset(uri, method=method, progress=progress)
+            assert isinstance(ds, xr.Dataset)
+
+            ds = fs.open_mfdataset(uri, method=method, progress=progress, concat=False)
+            assert is_list_of_datasets(ds)
+        test(params)
 
 @skip_this
 class Test_IndexFilter_WMO:
