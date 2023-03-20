@@ -22,7 +22,7 @@ jobs:
       github.repository == 'euroargodev/argopy'
       && (github.event_name == 'push' || github.event_name == 'pull_request')
     outputs:
-      skipped: ${{ steps.detect-trigger.outputs.trigger-found }}
+      skipped: ${{ steps.detect-skip.outputs.trigger-found }}
     steps:
       - uses: actions/checkout@v3
         with:
