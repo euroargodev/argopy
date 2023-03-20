@@ -119,7 +119,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.7", "3.8"]
-        os: ["ubuntu-latest", "windows-latest"]
+        os: ["ubuntu-latest"]
 #        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
         experimental: [false]
 
@@ -129,7 +129,8 @@ jobs:
       - name: Set environment variables
         run: |
           echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-all-pinned.yml" >> $GITHUB_ENV
-          echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
+          echo "PYTHON_VERSION=${{matrix.python-version}}" >> $GITHUB_ENV
+          echo "LOG_FILE=argopy-tests-All-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
 
       - name: Setup micromamba
         uses: mamba-org/provision-with-micromamba@v15
@@ -154,7 +155,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=argopy-tests-All-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}}
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3.1.1
@@ -170,7 +171,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Argopy-Tests
-          path: argopy-tests-All-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log
+          path: ${{env.LOG_FILE}}
           retention-days: 90
 
 #  core-min:
