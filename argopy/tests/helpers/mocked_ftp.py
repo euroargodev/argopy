@@ -29,7 +29,7 @@ def mocked_ftpserver(ftpserver):
     os.environ['FTP_PORT'] = str(ftp_login_data['port'])
     MOCKFTP = ftpserver.get_login_data(style="url", anon=True)
     pytest.MOCKFTP = MOCKFTP
-    log.info("Mocked GDAC ftp server ready (%s)" % MOCKFTP)
+    log.info("Mocked GDAC ftp server ready at %s with %i files" % (MOCKFTP, len(flist)))
 
     yield ftpserver
 
