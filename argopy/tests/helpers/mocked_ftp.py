@@ -32,6 +32,7 @@ def mocked_ftpserver(ftpserver):
     pytest.MOCKFTP = MOCKFTP
     log.info("Mocked GDAC ftp server up and ready at %s, serving %i files" % (MOCKFTP, len(flist)))
 
+    # Run test
     yield ftpserver
 
     # Teardown

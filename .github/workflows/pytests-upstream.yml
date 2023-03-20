@@ -106,7 +106,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s --durations=10 \
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 \
             --report-log output-${{ matrix.python-version }}-log.jsonl
 
       - name: Generate and publish the report
@@ -121,8 +121,8 @@ jobs:
       - name: 'Save tests log as artifact'
         uses: actions/upload-artifact@v3
         with:
-          name: py${{matrix.python-version}}-core-free
-          path: argopy-tests.log
+          name: Argopy-Tests
+          path: output-${{ matrix.python-version }}-log.jsonl
           retention-days: 90
 
   all-free:
@@ -157,6 +157,7 @@ jobs:
         run: |
           echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-all-free.yml" >> $GITHUB_ENV
           echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
+          echo "LOG_FILE=argopy-tests-All-Min-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
 
       - name: Set up conda environment
         uses: mamba-org/provision-with-micromamba@v15
@@ -182,7 +183,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s --durations=10 \
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 \
             --report-log output-${{ matrix.python-version }}-log.jsonl
 
       - name: Generate and publish the report
@@ -197,6 +198,6 @@ jobs:
       - name: 'Save tests log as artifact'
         uses: actions/upload-artifact@v3
         with:
-          name: py${{matrix.python-version}}-all-free
-          path: argopy-tests.log
+          name: Argopy-Tests
+          path: output-${{ matrix.python-version }}-log.jsonl
           retention-days: 90
