@@ -154,7 +154,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s -c tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=argopy-tests-All-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=argopy-tests-All-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3.1.1
@@ -166,7 +166,7 @@ jobs:
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
           
-      - name: 'Save tests log as artifact'
+      - name: Upload tests log to GA
         uses: actions/upload-artifact@v3
         with:
           name: Argopy-Tests
