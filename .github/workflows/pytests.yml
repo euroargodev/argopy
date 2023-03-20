@@ -160,7 +160,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=argopy-tests.log
+          pytest -ra -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=argopy-tests-All-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3.1.1
@@ -175,8 +175,8 @@ jobs:
       - name: 'Save tests log as artifact'
         uses: actions/upload-artifact@v3
         with:
-          name: ${{runner.name}}
-          path: argopy-tests.log
+          name: Argopy-Tests
+          path: argopy-tests-All-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log
           retention-days: 90
 
 #  core-min:
