@@ -43,10 +43,6 @@
     argopy.data_fetchers.gdacftp_data.Fetch_wmo
     argopy.data_fetchers.gdacftp_data.Fetch_box
 
-    argopy.data_fetchers.localftp_data.LocalFTPArgoDataFetcher
-    argopy.data_fetchers.localftp_data.Fetch_wmo
-    argopy.data_fetchers.localftp_data.Fetch_box
-
     argopy.data_fetchers.argovis_data.ArgovisDataFetcher
     argopy.data_fetchers.argovis_data.Fetch_wmo
     argopy.data_fetchers.argovis_data.Fetch_box

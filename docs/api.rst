@@ -275,15 +275,6 @@ GDAC
     argopy.data_fetchers.gdacftp_data.Fetch_wmo
     argopy.data_fetchers.gdacftp_data.Fetch_box
 
-Local FTP
-^^^^^^^^^
-
-.. autosummary::
-    :toctree: generated/
-
-    argopy.data_fetchers.localftp_data.LocalFTPArgoDataFetcher
-    argopy.data_fetchers.localftp_data.Fetch_wmo
-    argopy.data_fetchers.localftp_data.Fetch_box
 
 Argovis
 ^^^^^^^
