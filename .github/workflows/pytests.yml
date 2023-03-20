@@ -99,7 +99,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: py${{matrix.python-version}}-core-pinned
-          path: argopy-tests.log
+          path: tests/argopy-tests.log
           retention-days: 90
 
   all-pinned:
@@ -176,7 +176,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: py${{matrix.python-version}}-all-pinned
-          path: argopy-tests.log
+          path: argopy/tests/argopy-tests.log
           retention-days: 90
 
   core-min:
