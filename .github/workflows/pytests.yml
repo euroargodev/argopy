@@ -83,7 +83,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
+          pytest -ra -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=argopy-tests.log
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3.1.1
@@ -95,11 +95,11 @@ jobs:
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
           
-      - name: 'Save tests log as artifact'
+      - name: Save tests log as artifact
         uses: actions/upload-artifact@v3
         with:
           name: py${{matrix.python-version}}-core-pinned
-          path: tests/argopy-tests.log
+          path: argopy-tests.log
           retention-days: 90
 
   all-pinned:
@@ -160,7 +160,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
+          pytest -ra -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=argopy-tests.log
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3.1.1
@@ -176,7 +176,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: py${{matrix.python-version}}-all-pinned
-          path: argopy/tests/argopy-tests.log
+          path: argopy-tests.log
           retention-days: 90
 
   core-min:
@@ -229,7 +229,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
+          pytest -ra -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=argopy-tests.log
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3.1.1
@@ -298,7 +298,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
+          pytest -ra -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=argopy-tests.log
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3.1.1
