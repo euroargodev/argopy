@@ -94,6 +94,13 @@ jobs:
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
+          
+      - name: 'Save tests log as artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: py${{matrix.python-version}}-core-pinned
+          path: argopy-tests.log
+          retention-days: 90
 
   all-pinned:
     # CI tests for environments with all requirements in pinned versions
@@ -164,6 +171,13 @@ jobs:
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
+          
+      - name: 'Save tests log as artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: py${{matrix.python-version}}-all-pinned
+          path: argopy-tests.log
+          retention-days: 90
 
   core-min:
     # CI tests for environments with core requirements in oldest (min) versions
@@ -226,6 +240,13 @@ jobs:
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
+          
+      - name: 'Save tests log as artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: py${{matrix.python-version}}-core-min
+          path: argopy-tests.log
+          retention-days: 90
 
   all-min:
     # CI tests for environments with all requirements in oldest (min) versions
@@ -288,3 +309,10 @@ jobs:
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
+          
+      - name: 'Save tests log as artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: py${{matrix.python-version}}-all-min
+          path: argopy-tests.log
+          retention-days: 90
