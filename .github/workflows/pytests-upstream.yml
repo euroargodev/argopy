@@ -98,6 +98,13 @@ jobs:
         uses: xarray-contrib/issue-from-pytest-log@v1
         with:
           log-path: output-${{ matrix.python-version }}-log.jsonl
+          
+      - name: 'Save tests log as artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: py${{matrix.python-version}}-core-free
+          path: argopy-tests.log
+          retention-days: 90
 
   all-free:
     # CI tests for environments with all possible requirements in free versions
@@ -166,3 +173,10 @@ jobs:
         uses: xarray-contrib/issue-from-pytest-log@v1
         with:
           log-path: output-${{ matrix.python-version }}-log.jsonl
+          
+      - name: 'Save tests log as artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: py${{matrix.python-version}}-all-free
+          path: argopy-tests.log
+          retention-days: 90
