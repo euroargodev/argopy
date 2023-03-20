@@ -3086,7 +3086,7 @@ class OceanOPSDeployments:
     >>> df = deployment.to_dataframe()
     >>> data = deployment.to_json()
 
-    Usefull attributes and methods:
+    Useful attributes and methods:
 
     >>> deployment.uri
     >>> deployment.uri_decoded

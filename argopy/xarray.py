@@ -1553,11 +1553,11 @@ class ArgoAccessor:
             If force='adjusted' will load PRES_ADJUSTED/PSAL_ADJUSTED/TEMP_ADJUSTED
         select: {'deep','shallow','middle','random','min','max','mean','median'}, default: 'deep'
         file_pref: str, optional
-            Preffix to add at the beginning of output file(s).
+            Prefix to add at the beginning of output file(s).
         file_suff: str, optional
             Suffix to add at the end of output file(s).
         do_compression: bool, optional
-            Whether or not to compress matrices on write. Default is True.
+            Whether to compress matrices on write. Default is True.
         format: {'5', '4'}, string, optional
             Matlab file format version. '5' (the default) for MATLAB 5 and up (to 7.2). Use '4' for MATLAB 4 .mat files.
 

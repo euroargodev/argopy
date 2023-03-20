@@ -51,7 +51,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         def read_csv(input_file, nrows=None):
             # pyarrow doesn't have a concept of 'nrows' but it's really important
             # for partial downloading of the giant prof index
-            # This is totaly copied from: https://github.com/ArgoCanada/argopandas/blob/master/argopandas/global_index.py#L20
+            # This is totally copied from: https://github.com/ArgoCanada/argopandas/blob/master/argopandas/global_index.py#L20
             if nrows is not None:
                 buf = io.BytesIO()
                 n = 0

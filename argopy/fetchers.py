@@ -158,7 +158,7 @@ class ArgoDataFetcher:
     def __repr__(self):
 
         para = self.fetcher_options['parallel'] if "parallel" in self.fetcher_options else False
-        cach = self.fetcher_options['cache'] if "cache" in self.fetcher_options else False
+        cache = self.fetcher_options['cache'] if "cache" in self.fetcher_options else False
 
         if self.fetcher:
             summary = [self.fetcher.__repr__()]
@@ -166,7 +166,7 @@ class ArgoDataFetcher:
             summary = ["<datafetcher.%s> 'No access point initialised'" % self._src]
             summary.append("Available access points: %s" % ", ".join(self.Fetchers.keys()))
 
-        summary.append("Performances: cache=%s, parallel=%s" % (str(cach), str(para)))
+        summary.append("Performances: cache=%s, parallel=%s" % (str(cache), str(para)))
         summary.append("User mode: %s" % self._mode)
         summary.append("Dataset: %s" % self._dataset_id)
         return "\n".join(summary)
