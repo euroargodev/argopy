@@ -10,6 +10,7 @@ log = logging.getLogger("argopy.tests")
 
 @pytest.fixture(scope="module", autouse=True)
 def mocked_ftpserver(ftpserver):
+    """https://github.com/oz123/pytest-localftpserver"""
     os.environ['FTP_USER'] = 'janedow'
     os.environ['FTP_PASS'] = 'please'
     os.environ['FTP_HOME'] = tempfile.mkdtemp()
@@ -29,7 +30,11 @@ def mocked_ftpserver(ftpserver):
     os.environ['FTP_PORT'] = str(ftp_login_data['port'])
     MOCKFTP = ftpserver.get_login_data(style="url", anon=True)
     pytest.MOCKFTP = MOCKFTP
-    log.info("Mocked GDAC ftp server ready at %s with %i files" % (MOCKFTP, len(flist)))
+    log.info("Mocked GDAC ftp server up and ready at %s, serving %i files" % (MOCKFTP, len(flist)))
 
+    # Run test
     yield ftpserver
 
+    # Teardown
+    log.info("Teardown mocked GDAC ftp")
+    ftpserver.stop()
