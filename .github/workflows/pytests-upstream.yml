@@ -6,8 +6,8 @@ on:
   schedule:
     - cron: "0 0 * * *" # Daily “At 00:00” UTC
   workflow_dispatch: # allows you to trigger the workflow run manually
-#  pull_request:
-#    types: [synchronize]
+  pull_request:
+    types: [synchronize]
     
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
