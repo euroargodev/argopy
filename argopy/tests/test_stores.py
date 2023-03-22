@@ -327,10 +327,10 @@ class Test_FtpStore:
             method, progress = this_params
             fs = ftpstore(host=self.host, port=self.port, cache=False)
 
-            ds = fs.open_mfdataset(uri, method=method, progress=progress)
+            ds = fs.open_mfdataset(uri, method=method, progress=progress, errors='raise')
             assert isinstance(ds, xr.Dataset)
 
-            ds = fs.open_mfdataset(uri, method=method, progress=progress, concat=False)
+            ds = fs.open_mfdataset(uri, method=method, progress=progress, concat=False, errors='raise')
             assert is_list_of_datasets(ds)
         test(params)
 
