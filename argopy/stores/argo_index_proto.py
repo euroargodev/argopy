@@ -12,14 +12,14 @@ from fsspec.core import split_protocol
 from urllib.parse import urlparse
 
 from ..options import OPTIONS
-from ..errors import FtpPathError, InvalidDataset, CacheFileNotFound
+from ..errors import FtpPathError, InvalidDataset
 from ..utilities import Registry, isconnected
 from .filesystems import httpstore, memorystore, filestore, ftpstore
 
 try:
-    import pyarrow.csv as csv
+    # import pyarrow.csv as csv
     import pyarrow as pa
-    import pyarrow.parquet as pq
+    # import pyarrow.parquet as pq
 except ModuleNotFoundError:
     pass
 
@@ -137,8 +137,8 @@ class ArgoIndexStoreProto(ABC):
                 "Unknown protocol for an Argo index store: %s" % split_protocol(host)[0]
             )
         self.fs["client"] = memorystore(cache, cachedir)  # Manage search results
-        self._memory_store_content = Registry(name='memory store') # Track files opened with this memory store, since it's a global store
-        self.search_path_cache = Registry(name='cached search') # Track cached files related to search
+        self._memory_store_content = Registry(name='memory store')  # Track files opened with this memory store, since it's a global store
+        self.search_path_cache = Registry(name='cached search')  # Track cached files related to search
 
         self.index_path = self.fs["src"].fs.sep.join([self.host, self.index_file])
         # Check if the index file exists. Allow for up to 10 try to account for some slow websites
@@ -449,7 +449,7 @@ class ArgoIndexStoreProto(ABC):
             from argopy.utilities import load_dict, mapp_dict
 
             if nrows is not None:
-                df = df.loc[0 : nrows - 1].copy()
+                df = df.loc[0:nrows-1].copy()
 
             if "index" in df:
                 df.drop("index", axis=1, inplace=True)
@@ -697,4 +697,3 @@ class ArgoIndexStoreProto(ABC):
 
         """
         raise NotImplementedError("Not implemented")
-

@@ -88,7 +88,7 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cac
         fs.sep = os.path.sep
         # fsspec folks recommend to use posix internally. But I don't see how to handle this. So keeping this fix
         # because it solves issues with failing tests under Windows. Enough at this time.
-        #todo: Revisit this choice in a while
+        # todo: Revisit this choice in a while
 
     # log_msg = "%s\n[sys sep=%s] vs [fs sep=%s]" % (log_msg, os.path.sep, fs.sep)
     # log.warning(log_msg)
@@ -548,10 +548,10 @@ class httpstore(argo_store_proto):
                     for iu, u in enumerate(vlist):
                         if v == u:
                             ishere[iu, ir] = 1
-            # List of dataset with missing variables:
-            ir_missing = np.sum(ishere, axis=0) < len(vlist)
-            # List of variables missing in some dataset:
-            iv_missing = np.sum(ishere, axis=1) < len(ds_collection)
+            # # List of dataset with missing variables:
+            # ir_missing = np.sum(ishere, axis=0) < len(vlist)
+            # # List of variables missing in some dataset:
+            # iv_missing = np.sum(ishere, axis=1) < len(ds_collection)
 
             # List of variables to keep
             iv_tokeep = np.sum(ishere, axis=1) == len(ds_collection)
@@ -950,10 +950,10 @@ class ftpstore(httpstore):
                     for iu, u in enumerate(vlist):
                         if v == u:
                             ishere[iu, ir] = 1
-            # List of dataset with missing variables:
-            ir_missing = np.sum(ishere, axis=0) < len(vlist)
-            # List of variables missing in some dataset:
-            iv_missing = np.sum(ishere, axis=1) < len(ds_collection)
+            # # List of dataset with missing variables:
+            # ir_missing = np.sum(ishere, axis=0) < len(vlist)
+            # # List of variables missing in some dataset:
+            # iv_missing = np.sum(ishere, axis=1) < len(ds_collection)
 
             # List of variables to keep
             iv_tokeep = np.sum(ishere, axis=1) == len(ds_collection)

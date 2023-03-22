@@ -17,8 +17,8 @@ from .argo_index_proto import ArgoIndexStoreProto
 try:
     import pyarrow.csv as csv
     import pyarrow as pa
-    import pyarrow.parquet as pq
-    import pyarrow.compute as pc
+    # import pyarrow.parquet as pq
+    # import pyarrow.compute as pc
 except ModuleNotFoundError:
     pass
 
@@ -40,7 +40,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
     """Storage file extension"""
 
     @doc_inherit
-    def load(self, nrows=None, force=False):
+    def load(self, nrows=None, force=False):  # noqa: C901
         """ Load an Argo-index file content
 
         Returns
@@ -104,7 +104,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             else:
                 this_path = this_path + "/local.%s" % self.ext
 
-            if self.cache and self.fs["client"].exists(this_path): # and self._same_origin(this_path):
+            if self.cache and self.fs["client"].exists(this_path):  # and self._same_origin(this_path):
                 log.debug(
                     "Index already in memory as pyarrow table, loading... src='%s'"
                     % (this_path)
@@ -145,7 +145,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         else:
             this_path = this_path + "/local.%s" % self.ext
 
-        if self.cache and self.fs["client"].exists(this_path): # and self._same_origin(this_path):
+        if self.cache and self.fs["client"].exists(this_path):  # and self._same_origin(this_path):
             log.debug(
                 "Search results already in memory as pyarrow table, loading... src='%s'"
                 % (this_path)
@@ -214,7 +214,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
     @property
     def uri(self):
         # return ["/".join([self.host, "dac", f.as_py()]) for f in self.search["file"]]
-        #todo Should also modify separator from "f.as_py()" because it's "/" on the index file,
+        # todo Should also modify separator from "f.as_py()" because it's "/" on the index file,
         # but should be turned to "\" for local file index on Windows. Remains "/" in all others (linux, mac, ftp. http)
         sep = self.fs["src"].fs.sep
         # log.warning("[sys sep=%s] vs [fs/src sep=%s]" % (os.path.sep, self.fs["src"].fs.sep))
