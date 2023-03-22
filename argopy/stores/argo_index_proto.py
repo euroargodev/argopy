@@ -19,7 +19,7 @@ from .filesystems import httpstore, memorystore, filestore, ftpstore
 try:
     # import pyarrow.csv as csv
     import pyarrow as pa
-    # import pyarrow.parquet as pq
+    import pyarrow.parquet as pq  # noqa: F401
 except ModuleNotFoundError:
     pass
 
@@ -142,7 +142,7 @@ class ArgoIndexStoreProto(ABC):
 
         self.index_path = self.fs["src"].fs.sep.join([self.host, self.index_file])
         # Check if the index file exists. Allow for up to 10 try to account for some slow websites
-        i_try, max_try, index_found = 0, 1 if 'invalid' in split_protocol(host)[0] else 10, False
+        i_try, max_try, index_found = 0, 1 if 'invalid' in host else 10, False
         while i_try < max_try:
             if not self.fs["src"].exists(self.index_path):
                 time.sleep(1)
