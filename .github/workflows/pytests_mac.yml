@@ -1,4 +1,4 @@
-name: CI tests
+name: CI tests (MacOs)
 # CI tests ran every time new code is pushed to the repo
 
 on:
