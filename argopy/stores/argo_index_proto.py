@@ -141,10 +141,9 @@ class ArgoIndexStoreProto(ABC):
         self.search_path_cache = Registry(name='cached search') # Track cached files related to search
 
         self.index_path = self.fs["src"].fs.sep.join([self.host, self.index_file])
-        # if not self.fs["src"].exists(self.index_path):
-        #     raise FtpPathError("Index file does not exist: %s" % self.index_path)
-        i_try, index_found = 0, False
-        while i_try < 10:
+        # Check if the index file exists. Allow for up to 10 try to account for some slow websites
+        i_try, max_try, index_found = 0, 1 if 'invalid' in split_protocol(host)[0] else 10, False
+        while i_try < max_try:
             if not self.fs["src"].exists(self.index_path):
                 time.sleep(1)
                 i_try += 1
