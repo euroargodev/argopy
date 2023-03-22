@@ -15,10 +15,10 @@ from ..errors import DataNotFound
 from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, doc_inherit
 from .argo_index_proto import ArgoIndexStoreProto
 try:
-    import pyarrow.csv as csv
+    import pyarrow.csv as csv  # noqa: F401
     import pyarrow as pa
-    # import pyarrow.parquet as pq
-    # import pyarrow.compute as pc
+    import pyarrow.parquet as pq  # noqa: F401
+    import pyarrow.compute as pc  # noqa: F401
 except ModuleNotFoundError:
     pass
 

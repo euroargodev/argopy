@@ -17,7 +17,7 @@ from ..utilities import Registry, isconnected
 from .filesystems import httpstore, memorystore, filestore, ftpstore
 
 try:
-    # import pyarrow.csv as csv
+    import pyarrow.csv as csv  # noqa: F401
     import pyarrow as pa
     import pyarrow.parquet as pq  # noqa: F401
 except ModuleNotFoundError:
