@@ -22,10 +22,6 @@ from urllib.parse import urlparse
 from typing import Union
 import inspect
 
-import aiohttp
-import asyncio
-from aiohttp.helpers import URL
-
 import importlib
 import locale
 import platform

@@ -378,7 +378,7 @@ def scatter_map(
         All other arguments are passed to :class:`matplotlib.figure.Figure.subplots`
 
     """
-    warnUnless(has_mpl and False, "requires matplotlib AND cartopy installed")
+    warnUnless(has_mpl and has_cartopy, "requires matplotlib AND cartopy installed")
 
     if isinstance(data, xr.Dataset) and data.argo._type == "point":
         # data = data.argo.point2profile(drop=True)

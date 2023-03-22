@@ -6,6 +6,7 @@ Argo file index store prototype
 import numpy as np
 import pandas as pd
 import logging
+import time
 from abc import ABC, abstractmethod
 from fsspec.core import split_protocol
 from urllib.parse import urlparse
@@ -140,7 +141,17 @@ class ArgoIndexStoreProto(ABC):
         self.search_path_cache = Registry(name='cached search') # Track cached files related to search
 
         self.index_path = self.fs["src"].fs.sep.join([self.host, self.index_file])
-        if not self.fs["src"].exists(self.index_path):
+        # if not self.fs["src"].exists(self.index_path):
+        #     raise FtpPathError("Index file does not exist: %s" % self.index_path)
+        i_try, index_found = 0, False
+        while i_try < 10:
+            if not self.fs["src"].exists(self.index_path):
+                time.sleep(1)
+                i_try += 1
+            else:
+                index_found = True
+                break
+        if not index_found:
             raise FtpPathError("Index file does not exist: %s" % self.index_path)
 
     def __repr__(self):
