@@ -3,6 +3,7 @@ from contextlib import contextmanager
 import importlib
 from ..utilities import deprecated
 
+
 def _importorskip(modname):
     try:
         importlib.import_module(modname)  # noqa: E402
@@ -258,4 +259,3 @@ def latlongrid(ax, dx="auto", dy="auto", fontsize="auto", label_style_arg={}, **
     gl.xlabel_style = {**label_style_arg_defaults, **label_style_arg}
     gl.ylabel_style = {**label_style_arg_defaults, **label_style_arg}
     return gl
-

@@ -8,7 +8,6 @@
 #
 import warnings
 
-import numpy as np
 import xarray as xr
 import pandas as pd
 from typing import Union
@@ -152,8 +151,8 @@ def plot_trajectory(
         defaults = {"figsize": (10, 6), "dpi": 90}
         if with_cartopy:
             opts = {**defaults, **{'x': 'longitude', 'y': 'latitude', 'hue': 'wmo',
-                        'traj': True, 'legend': add_legend, 'set_global': set_global,
-                        'cmap': palette}}
+                                   'traj': True, 'legend': add_legend, 'set_global': set_global,
+                                   'cmap': palette}}
             opts = {**opts, **kwargs}
             return scatter_map(df, **opts)
         else:
@@ -272,7 +271,8 @@ def bar_plot(
         ax.set_ylabel("")
     return fig, ax
 
-def scatter_map(
+
+def scatter_map(  # noqa: C901
         data: Union[xr.Dataset, pd.core.frame.DataFrame],
         x: Union[str] = None,
         y: Union[str] = None,
@@ -429,6 +429,7 @@ def scatter_map(
                     return v
 
         raise ValueError("Can't guess the variable name for longitudes")
+
     def guess_yvar(data):
         for v in ['lat', 'lati', 'latitude', 'y']:
             if v.lower() in data:
@@ -505,10 +506,10 @@ def scatter_map(
     if traj:
         for k, [name, group] in enumerate(data.groupby(traj_axis)):
             ax.plot(group[x], group[y],
-                     color=traj_color,
-                     linewidth=0.5,
-                     label="_nolegend_",
-                     zorder=2,
+                    color=traj_color,
+                    linewidth=0.5,
+                    label="_nolegend_",
+                    zorder=2,
                     )
 
     if set_global:

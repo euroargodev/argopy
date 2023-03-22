@@ -107,7 +107,7 @@ class repodata():
         localzipfile = self.localpath + ".zip"
 
         # Download zip file:
-        urlretrieve(zipurl, localzipfile) # nosec B310 because protocol cannot be modified
+        urlretrieve(zipurl, localzipfile)  # nosec B310 because protocol cannot be modified
 
         # Expand zip file to a temporary location:
         _tempo_dir = self.localpath + "_master"

@@ -24,7 +24,6 @@ from .utilities import (
     check_wmo, check_cyc,
     get_coriolis_profile_id
 )
-from argopy.stores import filestore
 from .plot import plot_trajectory, bar_plot, open_sat_altim_report
 
 
@@ -456,7 +455,7 @@ class ArgoDataFetcher:
             )
         return self.load().data.to_dataframe(**kwargs)
 
-    def to_index(self, full: bool = False, coriolis_id = False):
+    def to_index(self, full: bool = False, coriolis_id: bool = False):
         """ Create an index of Argo data, fetch data if necessary
 
             Build an Argo-like index of profiles from fetched data.
@@ -466,6 +465,8 @@ class ArgoDataFetcher:
             full: bool, default: False
                 Should extract a reduced index (only a space/time) from fetched profiles, or a full index,
                 as returned by an IndexFetcher.
+            coriolis_id: bool, default: False
+                Add a column to the index with the Coriolis ID of profiles
 
             Returns
             -------
@@ -493,6 +494,7 @@ class ArgoDataFetcher:
             df = df[["date", "latitude", "longitude", "wmo", "cyc"]]
             if coriolis_id:
                 df['id'] = None
+
                 def fc(row):
                     row['id'] = get_coriolis_profile_id(row['wmo'], row['cyc'])['ID'].values[0]
                     return row

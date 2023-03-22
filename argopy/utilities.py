@@ -26,7 +26,7 @@ import importlib
 import locale
 import platform
 import struct
-import subprocess # nosec B404 only used without user inputs
+import subprocess  # nosec B404 only used without user inputs
 import contextlib
 from fsspec.core import split_protocol
 import fsspec
@@ -568,11 +568,11 @@ def show_options(file=sys.stdout):  # noqa: C901
         print(f"{k}: {v}", file=file)
 
 
-def check_gdac_path(path, errors='ignore'):
+def check_gdac_path(path, errors='ignore'):  # noqa: C901
     """ Check if a path has the expected GDAC ftp structure
 
         Expected GDAC ftp structure::
-        
+
             .
             └── dac
                 ├── aoml
@@ -581,7 +581,7 @@ def check_gdac_path(path, errors='ignore'):
                 ├── ...
                 ├── meds
                 └── nmdis
-                
+
         This check will return True if at least one DAC sub-folder is found under path/dac/<dac_name>
 
         Examples::
@@ -643,7 +643,7 @@ def check_gdac_path(path, errors='ignore'):
     check1 = (
         fs.exists(path)
         and fs.exists(fs.sep.join([path, "dac"]))
-#         and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
+        # and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
     )
     if check1:
         return True
@@ -666,7 +666,7 @@ def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
             URL to use, 'https://www.ifremer.fr' by default
         maxtry: int, default: 10
             Maximum number of host connections to try before
-        
+
         Returns
         -------
         bool
@@ -758,7 +758,7 @@ def isAPIconnected(src="erddap", data=True):
         list_src = list_available_index_src()
 
     if src in list_src and getattr(list_src[src], "api_server_check", None):
-        return isalive(list_src[src].api_server_check)        
+        return isalive(list_src[src].api_server_check)
     else:
         raise InvalidFetcher
 
@@ -1097,7 +1097,7 @@ class Chunker:
     def _split(self, lst, n=1):
         """Yield successive n-sized chunks from lst"""
         for i in range(0, len(lst), n):
-            yield lst[i : i + n]
+            yield lst[i: i + n]
 
     def _split_list_bychunknb(self, lst, n=1):
         """Split list in n-imposed chunks of similar size
@@ -1108,7 +1108,7 @@ class Chunker:
         for i in self._split(lst, siz):
             res.append(i)
         if len(res) > n:
-            res[n - 1 : :] = [reduce(lambda i, j: i + j, res[n - 1 : :])]
+            res[n-1::] = [reduce(lambda i, j: i + j, res[n-1::])]
         return res
 
     def _split_list_bychunksize(self, lst, max_size=1):
@@ -1144,7 +1144,7 @@ class Chunker:
                     this_box[i_right] = right
                     boxes.append(this_box)
         elif "t" in d:
-            dates = pd.to_datetime(large_box[i_left : i_right + 1])
+            dates = pd.to_datetime(large_box[i_left: i_right + 1])
             date_bounds = [
                 d.strftime("%Y%m%d%H%M%S")
                 for d in pd.date_range(dates[0], dates[1], periods=n + 1)
@@ -1302,7 +1302,7 @@ def format_oneline(s, max_width=65):
         if q == 0:
             return "".join([s[0:n], padding, s[-n:]])
         else:
-            return "".join([s[0 : n + 1], padding, s[-n:]])
+            return "".join([s[0:n+1], padding, s[-n:]])
     else:
         return s
 
@@ -2216,7 +2216,7 @@ def argo_split_path(this_path):  # noqa C901
     ]
     output = {}
 
-    start_with = lambda f, x: f[0:len(x)] == x if len(x) <= len(f) else False
+    start_with = lambda f, x: f[0:len(x)] == x if len(x) <= len(f) else False  # noqa: E731
 
     def split_path(p, sep='/'):
         """Split a pathname.  Returns tuple "(head, tail)" where "tail" is
@@ -2345,32 +2345,26 @@ def argo_split_path(this_path):  # noqa C901
     return dict(sorted(output.items()))
 
 
-"""
-doc_inherit decorator
-
-Usage:
-
-class Foo(object):
-    def foo(self):
-        "Frobber"
-        pass
-
-class Bar(Foo):
-    @doc_inherit
-    def foo(self):
-        pass 
-
-Now, Bar.foo.__doc__ == Bar().foo.__doc__ == Foo.foo.__doc__ == "Frobber"
-
-src: https://code.activestate.com/recipes/576862/
-"""
-
-
 class DocInherit(object):
-    """
-    Docstring inheriting method descriptor
+    """Docstring inheriting method descriptor
 
     The class itself is also used as a decorator
+
+    Usage:
+
+    class Foo(object):
+        def foo(self):
+            "Frobber"
+            pass
+
+    class Bar(Foo):
+        @doc_inherit
+        def foo(self):
+            pass
+
+    Now, Bar.foo.__doc__ == Bar().foo.__doc__ == Foo.foo.__doc__ == "Frobber"
+
+    src: https://code.activestate.com/recipes/576862/
     """
 
     def __init__(self, mthd):
@@ -2397,9 +2391,10 @@ class DocInherit(object):
 
         for parent in cls.__mro__[1:]:
             overridden = getattr(parent, self.name, None)
-            if overridden: break
+            if overridden:
+                break
 
-        @wraps(self.mthd, assigned=('__name__','__module__'))
+        @wraps(self.mthd, assigned=('__name__', '__module__'))
         def f(*args, **kwargs):
             return self.mthd(*args, **kwargs)
 
@@ -2407,9 +2402,10 @@ class DocInherit(object):
 
     def use_parent_doc(self, func, source):
         if source is None:
-            raise NameError("Can't find '%s' in parents"%self.name)
+            raise NameError("Can't find '%s' in parents" % self.name)
         func.__doc__ = source.__doc__
         return func
+
 
 doc_inherit = DocInherit
 
@@ -2561,7 +2557,7 @@ class float_wmo(RegistryItem):
         return "%s" % self.item
 
     def __repr__(self):
-        return f"WMO(%s)" % self.item
+        return f"WMO({self.item})"
 
     def __check_other__(self, other):
         return check_wmo(other)[0] if type(other) is not float_wmo else other.item
@@ -3095,8 +3091,8 @@ class OceanOPSDeployments:
     """URL to the API"""
 
     model = "api/1/data/platform"
-    """This model represents a Platform entity and is used to retrieve a platform information (schema model 
-    named 'Ptf')."""
+    """This model represents a Platform entity and is used to retrieve a platform information (schema model
+     named 'Ptf')."""
 
     api_server_check = 'https://www.ocean-ops.org/api/1/oceanops-api.yaml'
     """URL to check if the API is alive"""
@@ -3163,7 +3159,6 @@ class OceanOPSDeployments:
         else:
             summary.append("Nb of floats in the deployment plan: - [Data not retrieved yet]")
         return '\n'.join(summary)
-
 
     def __encode_inc(self, inc):
         """Return encoded uri expression for 'include' parameter
@@ -3383,7 +3378,6 @@ class OceanOPSDeployments:
         # df = df[ (df['status_name'] == 'CLOSED') | (df['status_name'] == 'OPERATIONAL')] # Select only floats that have been deployed and returned data
         # print(status)
         return df
-
 
     def plot_status(self,
                     **kwargs

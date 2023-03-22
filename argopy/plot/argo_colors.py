@@ -117,13 +117,13 @@ class ArgoColors:
     def list_valid_known_colormaps(self):
         """List of all known colormaps, including alternative names"""
         defs = self.known_colormaps
-        l = []
+        the_list = []
         for cname in defs.keys():
-            l.append(cname)
+            the_list.append(cname)
             cmap_others = defs[cname]["aka"]
             if cmap_others is not None:
-                [l.append(s) for s in cmap_others]
-        return l
+                [the_list.append(s) for s in cmap_others]
+        return the_list
 
     @property
     def _get_known_colormap_constructor(self):
@@ -364,18 +364,16 @@ class ArgoColors:
             html = []
 
             td_title = lambda \
-                title: '<td colspan="3"><div style="vertical-align: middle;text-align:center"><strong>%s</strong></div></td>' % title
-            tr_title = lambda title: "<thead><tr>%s</tr></thead>" % td_title(title)
+                title: '<td colspan="3"><div style="vertical-align: middle;text-align:center"><strong>%s</strong></div></td>' % title  # noqa: E731
+            tr_title = lambda title: "<thead><tr>%s</tr></thead>" % td_title(title)  # noqa: E731
 
-            tr_aka = lambda \
-                names: "<tr><td colspan='3' style='text-align:left'><strong>Names: </strong>%s</td></tr>" % ", ".join(
-                names)
+            tr_aka = lambda names: "<tr><td colspan='3' style='text-align:left'><strong>Names: </strong>%s</td></tr>" % ", ".join(names)  # noqa: E731
 
             td_color = lambda color: "<td style='background-color:%s;border-width:0px;width:12px'></td>" % \
-                                     to_hex(color, keep_alpha=True)
-            td_tick = lambda tick: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % str(tick)
-            td_ticklabel = lambda label: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % label
-            tr_tick = lambda color, tick, label: '<tr>%s%s%s</tr>' % (td_color(color), td_tick(tick), td_ticklabel(label))
+                                     to_hex(color, keep_alpha=True)  # noqa: E731
+            td_tick = lambda tick: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % str(tick)  # noqa: E731
+            td_ticklabel = lambda label: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % label  # noqa: E731
+            tr_tick = lambda color, tick, label: '<tr>%s%s%s</tr>' % (td_color(color), td_tick(tick), td_ticklabel(label))  # noqa: E731
 
             html.append("<table style='border-collapse:collapse;border-spacing:0'>")
             html.append("<thead>")
@@ -402,14 +400,13 @@ class ArgoColors:
         """Generate an HTML representation of the :class:`ArgoColors.COLORS` palette"""
         html = []
 
-        td_title = lambda \
-                title: '<td colspan="2"><div style="vertical-align: middle;text-align:center"><strong>%s</strong></div></td>' % title
-        tr_title = lambda title: "<thead><tr>%s</tr></thead>" % td_title(title)
+        td_title = lambda title: '<td colspan="2"><div style="vertical-align: middle;text-align:center"><strong>%s</strong></div></td>' % title  # noqa: E731
+        tr_title = lambda title: "<thead><tr>%s</tr></thead>" % td_title(title)  # noqa: E731
 
-        td_color = lambda color: "<td style='background-color:%s;border-width:0px;width:20px'></td>" % to_hex(color,
+        td_color = lambda color: "<td style='background-color:%s;border-width:0px;width:20px'></td>" % to_hex(color,  # noqa: E731
                                                                                                               keep_alpha=True)
-        td_ticklabel = lambda label: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % label
-        tr_tick = lambda color, tick, label: '<tr>%s%s</tr>' % (td_color(color), td_ticklabel(label))
+        td_ticklabel = lambda label: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % label  # noqa: E731
+        tr_tick = lambda color, tick, label: '<tr>%s%s</tr>' % (td_color(color), td_ticklabel(label))  # noqa: E731
 
         html.append("<table style='border-collapse:collapse;border-spacing:0'>")
         html.append("<thead>")

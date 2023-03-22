@@ -227,10 +227,10 @@ html_theme_options = {
     },
     # "display_version": True,
     "logo_only": True,
-    'show_navbar_depth': 1, # https://sphinx-book-theme.readthedocs.io/en/stable/customize/sidebar-primary.html?highlight=logo#control-the-depth-of-the-left-sidebar-lists-to-expand
+    'show_navbar_depth': 1,  # https://sphinx-book-theme.readthedocs.io/en/stable/customize/sidebar-primary.html?highlight=logo#control-the-depth-of-the-left-sidebar-lists-to-expand
     'collapse_navigation': False,
-    'show_toc_level': 3, # https://sphinx-book-theme.readthedocs.io/en/stable/customize/sidebar-secondary.html#show-more-levels-of-the-in-page-toc-by-default
-#    'launch_buttons': { "thebe": True}
+    'show_toc_level': 3,  # https://sphinx-book-theme.readthedocs.io/en/stable/customize/sidebar-secondary.html#show-more-levels-of-the-in-page-toc-by-default
+    # 'launch_buttons': { "thebe": True}
 }
 
 # html_theme_options = {
