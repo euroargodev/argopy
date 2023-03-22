@@ -881,7 +881,7 @@ class ftpstore(httpstore):
     def open_mfdataset(self,  # noqa: C901
                        urls,
                        max_workers: int = 112,
-                       method: str = 'thread',
+                       method: str = 'seq',
                        progress: bool = False,
                        concat: bool = True,
                        concat_dim='row',
@@ -905,10 +905,9 @@ class ftpstore(httpstore):
             method: str, default: ``thread``
                 The parallelization method to execute calls asynchronously:
 
-                    - ``thread`` (default): use a pool of at most ``max_workers`` threads
+                    - ``seq`` (default): open data sequentially, no parallelization applied
                     - ``process``: use a pool of at most ``max_workers`` processes
                     - :class:`distributed.client.Client`: Experimental, expect this method to fail !
-                    - ``seq``: open data sequentially, no parallelization applied
             progress: bool, default: False
                 Display a progress bar
             concat: bool, default: True
@@ -971,13 +970,10 @@ class ftpstore(httpstore):
 
         results = []
         failed = []
-        if method in ['thread', 'process']:
-            if method == 'thread':
-                ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
-            else:
-                if max_workers == 112:
-                    max_workers = multiprocessing.cpu_count()
-                ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
+        if method in ['process']:
+            if max_workers == 112:
+                max_workers = multiprocessing.cpu_count()
+            ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
 
             with ConcurrentExecutor as executor:
                 future_to_url = {executor.submit(self._mfprocessor_dataset, url,
