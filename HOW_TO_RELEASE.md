@@ -3,7 +3,8 @@
 
 # Prepare release
 
-- [ ] Run codespell from repo root and fix errors: ``codespell -q 2``
+- [ ] Run [codespell](https://github.com/codespell-project/codespell) from repo root and fix errors: ``codespell -q 2``
+- [ ] Run [flake8](https://github.com/PyCQA/flake8) from repo root and fix errors
 - [ ] Increase release version in ``./setup.py``
 - [ ] Update date and release version in ``./docs/whats-new.rst``
 - [ ] Make sure that all CI tests are passed
