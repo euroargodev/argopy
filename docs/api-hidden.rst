@@ -20,6 +20,7 @@
     argopy.fetchers.ArgoDataFetcher.uri
     argopy.fetchers.ArgoDataFetcher.data
     argopy.fetchers.ArgoDataFetcher.index
+    argopy.fetchers.ArgoDataFetcher.domain
     argopy.fetchers.ArgoDataFetcher.dashboard
     argopy.fetchers.ArgoDataFetcher.clear_cache
 

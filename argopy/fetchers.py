@@ -272,7 +272,7 @@ class ArgoDataFetcher:
     def domain(self):
         """ Domain of the dataset
 
-            This is different from a usual ``box`` because dates are in numpy.datetime64 format.
+            This is different from a usual ``box`` because dates are in :class:`numpy.datetime64` format.
         """
         this_ds = self.data
         if 'PRES_ADJUSTED' in this_ds.data_vars:
