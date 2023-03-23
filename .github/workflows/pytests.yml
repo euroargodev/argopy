@@ -44,6 +44,7 @@ jobs:
       run:
         shell: bash -l {0}
     continue-on-error: ${{ matrix.experimental }}
+    timeout-minutes: 30
     strategy:
       max-parallel: 12
       fail-fast: false
@@ -115,6 +116,7 @@ jobs:
       run:
         shell: bash -l {0}
     continue-on-error: ${{ matrix.experimental }}
+    timeout-minutes: 30
     strategy:
       max-parallel: 12
       fail-fast: false
@@ -186,6 +188,7 @@ jobs:
       run:
         shell: bash -l {0}
     continue-on-error: ${{ matrix.experimental }}
+    timeout-minutes: 30
     strategy:
       max-parallel: 12
       fail-fast: false
@@ -256,6 +259,7 @@ jobs:
       run:
         shell: bash -l {0}
     continue-on-error: ${{ matrix.experimental }}
+    timeout-minutes: 30
     strategy:
       max-parallel: 12
       fail-fast: false
