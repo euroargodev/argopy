@@ -478,6 +478,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         'ext.util': sorted([
             ("gsw", lambda mod: mod.__version__),   # Used by xarray accessor to compute new variables
             ("tqdm", lambda mod: mod.__version__),
+            ("zarr", lambda mod: mod.__version__),
         ]),
         'ext.perf': sorted([
             ("dask", lambda mod: mod.__version__),
@@ -493,7 +494,6 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
             ("ipykernel", lambda mod: mod.__version__),
         ]),
         'dev': sorted([
-            ("zarr", lambda mod: mod.__version__),
 
             ("bottleneck", lambda mod: mod.__version__),
             ("cftime", lambda mod: mod.__version__),
@@ -503,10 +503,14 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
 
             ("numpy", lambda mod: mod.__version__),  # will come with xarray and pandas
             ("pandas", lambda mod: mod.__version__),  # will come with xarray
-            ("sklearn", lambda mod: mod.__version__),
 
             ("pip", lambda mod: mod.__version__),
+            ("black", lambda mod: mod.__version__),
+            ("flake8", lambda mod: mod.__version__),
             ("pytest", lambda mod: mod.__version__),  # will come with pandas
+            ("pytest_env", lambda mod: mod.__version__),  # will come with pandas
+            ("pytest_cov", lambda mod: mod.__version__),  # will come with pandas
+            ("pytest_localftpserver", lambda mod: mod.__version__),  # will come with pandas
             ("setuptools", lambda mod: mod.__version__),  # Provides: pkg_resources
             ("sphinx", lambda mod: mod.__version__),
         ]),
@@ -547,7 +551,10 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         deps_blob = DEPS_blob[level]
         for k, stat in deps_blob:
             if conda:
-                print(f"  - {k} = {stat}", file=file)  # Format like a conda env line, useful to update ci/requirements
+                if k != 'argopy':
+                    kf = k.replace("_", "-")
+                    comment = ' ' if stat != '-' else '# '
+                    print(f"{comment} - {kf} = {stat}", file=file)  # Format like a conda env line, useful to update ci/requirements
             else:
                 print("{:<12}: {:<12}".format(k, stat), file=file)
 

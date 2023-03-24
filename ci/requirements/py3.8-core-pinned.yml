@@ -2,21 +2,50 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
-  - python=3.8
-  - xarray=2023.1.0
-  - scipy=1.10.1
-  - netcdf4=1.6.3
-  - erddapy=1.2.1
-  - fsspec=2023.3.0
-  - aiohttp=3.8.4
-  - packaging=23.0
-  - toolz=0.12.0
+# CORE:
+  - aiohttp = 3.8.3
+  - erddapy = 1.2.1
+  - fsspec = 2023.1.0
+  - netCDF4 = 1.6.2
+  - packaging = 23.0
+  - scipy = 1.10.0
+  - toolz = 0.12.0
+  - xarray = 2023.1.0
 
-  - pip=23.0.1
-  - setuptools=67.6.0
-  - pytest=7.2.2
-  - pytest-cov=4.0.0
-  - pytest-env=0.8.1
-  - pytest-localftpserver=1.1.4
-  - black=23.1.0
-  - flake8=6.0.0
+# EXT.UTIL:
+#  - gsw = -
+#  - tqdm = -
+#  - zarr = -
+
+# EXT.PERF:
+#  - dask = -
+#  - distributed = -
+#  - pyarrow = -
+
+# EXT.PLOT:
+#  - IPython = -
+#  - cartopy = -
+#  - ipykernel = -
+#  - ipywidgets = -
+#  - matplotlib = -
+#  - seaborn = -
+
+# DEV:
+  - black = 23.1.0
+#  - bottleneck = -
+#  - cfgrib = -
+  - cftime = 1.6.2
+#  - conda = -
+  - flake8 = 6.0.0
+#  - nc-time-axis = -
+  - numpy = 1.24.2
+  - pandas = 1.5.3
+  - pip = 23.0
+  - pytest = 7.2.1
+  - pytest-cov = 4.0.0
+  - pytest-env = 0.8.1
+  - pytest-localftpserver = 1.1.4
+#  - setuptools = -
+#  - sphinx = -
+  - pip:
+      - aioresponses==0.7.4
