@@ -2,21 +2,31 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
-  - python=3.7
-  - xarray
-  - scipy
-  - netcdf4
+  - python = 3.7
+
+# CORE:
+  - aiohttp
   - erddapy
   - fsspec
-  - aiohttp
+  - netCDF4
   - packaging
+  - scipy
   - toolz
+  - xarray
 
+# DEV:
+  - black
+  - bottleneck
+  - cfgrib
+  - cftime
+  - flake8
+  - numpy
+  - pandas
   - pip
-  - setuptools
   - pytest
   - pytest-cov
   - pytest-env
   - pytest-localftpserver
-  - black
-  - flake8
+  - setuptools
+  - pip:
+      - aioresponses
