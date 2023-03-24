@@ -44,6 +44,7 @@ import threading
 from socket import gaierror
 
 import time
+import setuptools  # noqa: F401
 
 from .options import OPTIONS
 from .errors import (
