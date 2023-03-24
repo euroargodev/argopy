@@ -49,5 +49,7 @@ dependencies:
   - pytest-localftpserver = 1.1.4
   - setuptools = 59.8.0
 #  - sphinx = -
+
+# PIP:
   - pip:
-      - aioresponses==0.7.3
+      - aioresponses == 0.7.3

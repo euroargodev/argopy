@@ -2,6 +2,8 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
+  - python = 3.8
+
 # CORE:
   - aiohttp = 3.8.4
   - erddapy = 1.2.1
@@ -35,7 +37,9 @@ dependencies:
   - bottleneck = 1.3.7
   - cfgrib = 0.9.10.3
   - cftime = 1.6.2
+#  - conda = -
   - flake8 = 6.0.0
+#  - nc-time-axis = -
   - numpy = 1.24.2
   - pandas = 1.5.3
   - pip = 23.0.1
@@ -44,5 +48,8 @@ dependencies:
   - pytest-env = 0.8.1
   - pytest-localftpserver = 1.1.4
   - setuptools = 67.6.0
+#  - sphinx = -
+
+# PIP:
   - pip:
       - aioresponses==0.7.4

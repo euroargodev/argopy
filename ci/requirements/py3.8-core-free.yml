@@ -15,31 +15,31 @@ dependencies:
   - xarray
 
 # EXT.UTIL:
-#  - gsw = -
-#  - tqdm = -
-#  - zarr = -
+#  - gsw
+#  - tqdm
+#  - zarr
 
 # EXT.PERF:
-#  - dask = -
-#  - distributed = -
-#  - pyarrow = -
+#  - dask
+#  - distributed
+#  - pyarrow
 
 # EXT.PLOT:
-#  - IPython = -
-#  - cartopy = -
-#  - ipykernel = -
-#  - ipywidgets = -
-#  - matplotlib = -
-#  - seaborn = -
+#  - IPython
+#  - cartopy
+#  - ipykernel
+#  - ipywidgets
+#  - matplotlib
+#  - seaborn
 
 # DEV:
   - black
-#  - bottleneck = -
-#  - cfgrib = -
+  - bottleneck
+  - cfgrib
   - cftime
-#  - conda = -
+#  - conda
   - flake8
-#  - nc-time-axis = -
+#  - nc-time-axis
   - numpy
   - pandas
   - pip
@@ -47,7 +47,9 @@ dependencies:
   - pytest-cov
   - pytest-env
   - pytest-localftpserver
-#  - setuptools = -
-#  - sphinx = -
+  - setuptools
+#  - sphinx
+
+# PIP:
   - pip:
-      - aioresponses
+     #  - aioresponses

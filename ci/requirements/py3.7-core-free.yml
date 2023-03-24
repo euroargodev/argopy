@@ -14,6 +14,24 @@ dependencies:
   - toolz
   - xarray
 
+# EXT.UTIL:
+#  - gsw
+#  - tqdm
+#  - zarr
+
+# EXT.PERF:
+#  - dask
+#  - distributed
+#  - pyarrow
+
+# EXT.PLOT:
+#  - IPython
+#  - cartopy
+#  - ipykernel
+#  - ipywidgets
+#  - matplotlib
+#  - seaborn
+
 # DEV:
   - black
   - bottleneck
