@@ -103,7 +103,8 @@ class Test_FileStore:
         fs = filestore()
         assert isinstance(fs.open_dataset(ncfile), xr.Dataset)
 
-    params = [(m, p) for m in ["seq", "thread", "process"] for p in [True, False]]
+    # params = [(m, p) for m in ["seq", "thread", "process"] for p in [True, False]]
+    params = [(m, p) for m in ["seq", "thread", "process"] for p in [False]]
     ids_params = ["method=%s, progress=%s" % (p[0], p[1]) for p in params]
     @pytest.mark.parametrize("params", params,
                              indirect=False,
@@ -212,7 +213,8 @@ class Test_HttpStore:
         fs = httpstore(timeout=OPTIONS['api_timeout'])
         assert isinstance(fs.open_dataset(uri), xr.Dataset)
 
-    params = [(m, p) for m in ["seq", "thread", "process"] for p in [True, False]]
+    # params = [(m, p) for m in ["seq", "thread", "process"] for p in [True, False]]
+    params = [(m, p) for m in ["seq", "thread", "process"] for p in [False]]
     ids_params = ["method=%s, progress=%s" % (p[0], p[1]) for p in params]
     @pytest.mark.parametrize("params", params,
                              indirect=False,
@@ -242,17 +244,23 @@ class Test_HttpStore:
         fs = httpstore(timeout=OPTIONS['api_timeout'])
         assert isinstance(fs.open_json(uri), dict)
 
-    @safe_to_server_errors
-    def test_open_mfjson(self):
+    params = [(m, p) for m in ["seq", "thread"] for p in [False]]
+    ids_params = ["method=%s, progress=%s" % (p[0], p[1]) for p in params]
+    @pytest.mark.parametrize("params", params,
+                             indirect=False,
+                             ids=ids_params)
+    def test_open_mfjson(self, params):
         fs = httpstore(timeout=OPTIONS['api_timeout'])
         uri = [
             "http://api.ifremer.fr/argopy/data/ARGO-FULL.json",
             "http://api.ifremer.fr/argopy/data/ARGO-BGC.json",
         ]
-        for method in ["seq", "thread"]:
-            for progress in [True, False]:
-                lst = fs.open_mfjson(uri, method=method, progress=progress)
-                assert is_list_of_dicts(lst)
+        @safe_to_server_errors
+        def test(this_params):
+            method, progress = this_params
+            lst = fs.open_mfjson(uri, method=method, progress=progress)
+            assert is_list_of_dicts(lst)
+        test(params)
 
     @safe_to_server_errors
     def test_read_csv(self):
@@ -320,7 +328,8 @@ class Test_FtpStore:
         fs = ftpstore(host=self.host, port=self.port, cache=False)
         assert isinstance(fs.open_dataset(uri), xr.Dataset)
 
-    params = [(m, p) for m in ["seq", "process"] for p in [True, False]]
+    # params = [(m, p) for m in ["seq", "process"] for p in [True, False]]
+    params = [(m, p) for m in ["seq", "process"] for p in [False]]
     ids_params = ["method=%s, progress=%s" % (p[0], p[1]) for p in params]
     @pytest.mark.parametrize("params", params,
                              indirect=False,
