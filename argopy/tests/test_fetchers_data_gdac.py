@@ -35,11 +35,11 @@ List ftp hosts to be tested.
 Since the fetcher is compatible with host from local, http or ftp protocols, we
 try to test them all:
 """
-VALID_HOSTS = [argopy.tutorial.open_dataset("localftp")[0],
+VALID_HOSTS = [argopy.tutorial.open_dataset("gdac")[0],
              'https://data-argo.ifremer.fr',
                # 'ftp://ftp.ifremer.fr/ifremer/argo',
-               # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but takes slow down CI and no need for 2 ftp tests
-             'MOCKFTP',  # keyword to use a fake/mocked ftp server (running on localhost)
+               # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but slow down CI and no need for 2 ftp tests
+             'MOCKFTP',  # keyword to use the fake/mocked ftp server (running on localhost)
             ]
 
 """
@@ -222,49 +222,3 @@ class TestBackend:
             # warnings.warn("\n%s" % argopy.lscache(self.cachedir))  # This could be useful to debug tests
             shutil.rmtree(self.cachedir)
         request.addfinalizer(remove_test_dir)
-
-
-# @requires_gdac
-# class Test_BackendParallel:
-#     src = 'gdac'
-#
-#     # Create list of tests scenarios
-#     # combine all hosts with all access points and valid parallel options:
-#     # fixtures = [(h, mth, ap) for h in valid_hosts for ap in valid_access_points for mth in valid_parallel_opts]
-#     fixtures = [(h, mth, ap) for h in valid_hosts for ap in valid_access_points if 'float' in ap for mth in
-#                 valid_parallel_opts]
-#     fixtures_ids = [
-#         "%s, %s, %s" % (
-#             fix[0],
-#             (lambda x: x['parallel_method'] if 'parallel_method' in x else x['parallel'])(fix[1]),
-#             list(fix[2].keys())[0])
-#         for fix in fixtures]
-#     fixtures_ids_short = [
-#         "%s, %s, %s" % (
-#             (lambda x: 'file' if x is None else x)(split_protocol(fix[0])[0]),
-#             (lambda x: x['parallel_method'] if 'parallel_method' in x else x['parallel'])(fix[1]),
-#             list(fix[2].keys())[0])
-#         for fix in fixtures]
-#
-#     @pytest.fixture
-#     def _fetcher(self, request):
-#         """ Fixture to create a FTP fetcher for a given host and access point """
-#         N_RECORDS = None if 'tutorial' in request.param[0] else 100  # Make sure we're not going to load the full index
-#         fetcher_args = {"src": self.src, "ftp": request.param[0], "cache": False, **request.param[1], "N_RECORDS": N_RECORDS}
-#         yield create_fetcher(fetcher_args, request.param[2]).fetcher
-#
-#     @pytest.mark.parametrize("opts", [
-#         {"parallel": True, "parallel_method": "invalid"},  # opts0
-#         {"parallel": "invalid"}  # opts1
-#         ], indirect=False)
-#     def test_methods_invalid(self, opts):
-#         with pytest.raises(InvalidMethod):
-#             this_fetcher = create_fetcher({**{"src": self.src}, **opts}, valid_access_points[0]).fetcher
-#             assert_fetcher(this_fetcher)
-#
-#     @pytest.mark.parametrize("_fetcher", fixtures, ids=fixtures_ids_short, indirect=True)
-#     def test_fetching(self, _fetcher):
-#         @safe_to_server_errors
-#         def test(this_fetcher):
-#             assert_fetcher(this_fetcher)
-#         test(_fetcher)

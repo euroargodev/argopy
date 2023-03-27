@@ -25,7 +25,7 @@ If you are brand new to *argopy* or open source development, we recommend going
 through the `GitHub "issues" tab <https://github.com/euroargodev/argopy/issues>`_
 to find issues that interest you. There are a number of issues listed under
 `Documentation <https://github.com/euroargodev/argopy/issues?q=is%3Aissue+is%3Aopen+label%3Adocumentation>`_
-and `Good first issue
+and `Good first issues
 <https://github.com/euroargodev/argopy/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22>`_
 where you could start out. Once you've found an interesting issue, you can
 return here to get your development environment setup.
@@ -73,8 +73,6 @@ from others.
 
 `Click here to open an issue with the specific bug reporting template <https://github.com/euroargodev/argopy/issues/new?template=bug_report.md>`_
 
-
-.. _contributing.documentation:
 
 Contributing to the documentation
 =================================

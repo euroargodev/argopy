@@ -8,7 +8,7 @@ import xarray as xr
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import InvalidDatasetStructure, OptionValueError
-from utils import requires_connected_erddap_phy, requires_localftp, _importorskip, _connectskip
+from utils import requires_connected_erddap_phy, requires_gdac, _importorskip, _connectskip
 
 has_gsw, requires_gsw = _importorskip("gsw")
 has_nogsw, requires_nogsw = _connectskip(not has_gsw, "missing GSW")
@@ -188,9 +188,9 @@ class Test_teos10:
 
 
 @requires_gsw
-@requires_localftp
+@requires_gdac
 class Test_create_float_source:
-    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
+    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
 
     def is_valid_mdata(self, this_mdata):
         """Validate structure of the output dataset """
@@ -211,14 +211,14 @@ class Test_create_float_source:
         return np.all(check)
 
     def test_error_user_mode(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
+        with argopy.set_options(ftp=self.local_ftp):
             with pytest.raises(InvalidDatasetStructure):
-                ds = ArgoDataFetcher(src="localftp", mode='standard').float([6901929, 2901623]).load().data
+                ds = ArgoDataFetcher(src="gdac", mode='standard').float([6901929, 2901623]).load().data
                 ds.argo.create_float_source()
 
     def test_opt_force(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
-            expert_ds = ArgoDataFetcher(src="localftp", mode='expert').float([2901623]).load().data
+        with argopy.set_options(ftp=self.local_ftp):
+            expert_ds = ArgoDataFetcher(src="gdac", mode='expert').float([2901623]).load().data
 
             with pytest.raises(OptionValueError):
                 expert_ds.argo.create_float_source(force='dummy')
@@ -234,8 +234,8 @@ class Test_create_float_source:
             assert np.all([self.is_valid_mdata(ds_float_source[k]) for k in ds_float_source.keys()])
 
     def test_filecreate(self):
-        with argopy.set_options(local_ftp=self.local_ftp):
-            expert_ds = ArgoDataFetcher(src="localftp", mode='expert').float([6901929, 2901623]).load().data
+        with argopy.set_options(ftp=self.local_ftp):
+            expert_ds = ArgoDataFetcher(src="gdac", mode='expert').float([6901929, 2901623]).load().data
 
             N_file = len(np.unique(expert_ds['PLATFORM_NUMBER']))
             with tempfile.TemporaryDirectory() as folder_output:

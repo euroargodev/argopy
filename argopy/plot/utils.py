@@ -67,9 +67,16 @@ def axes_style(style: str = STYLE["axes"]):
 class discrete_coloring:
     """ Handy class to manage discrete coloring and the associated colorbar
 
-    Example
-    -------
+    Warnings
+    --------
+        This plotting utility is deprecated since 0.1.13. It's been replaced by :class:`argopy.plot.ArgoColors`. Calling
+        it will raise an error after argopy 0.1.14.
+
+    Examples
+    --------
     This class can be used like this:
+
+    ::
 
         year_range = np.arange(2002,2010)
         dc = discrete_coloring(name='Spectral', N=len(year_range) )

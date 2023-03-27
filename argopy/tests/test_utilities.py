@@ -12,7 +12,7 @@ from argopy.utilities import (
     load_dict,
     mapp_dict,
     list_multiprofile_file_variables,
-    check_localftp,
+    check_gdac_path,
     isconnected,
     urlhaskeyword,
     isalive,
@@ -40,7 +40,7 @@ from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
 from utils import (
     requires_connection,
-    requires_localftp,
+    requires_gdac,
     requires_matplotlib,
     requires_cartopy,
     requires_oops,
@@ -70,12 +70,12 @@ def test_list_multiprofile_file_variables():
     assert is_list_of_strings(list_multiprofile_file_variables())
 
 
-def test_check_localftp():
-    assert check_localftp("dummy_path", errors='ignore') is False
+def test_check_gdac_path():
+    assert check_gdac_path("dummy_path", errors='ignore') is False
     with pytest.raises(FtpPathError):
-        check_localftp("dummy_path", errors='raise')
+        check_gdac_path("dummy_path", errors='raise')
     with pytest.warns(UserWarning):
-        assert check_localftp("dummy_path", errors='warn') is False
+        assert check_gdac_path("dummy_path", errors='warn') is False
 
 
 def test_show_versions():
@@ -112,11 +112,11 @@ def test_erddap_ds_exists():
 
 
 @requires_connection
-@requires_localftp
+@requires_gdac
 def test_clear_cache():
-    ftproot, flist = argopy.tutorial.open_dataset("localftp")
+    ftproot, flist = argopy.tutorial.open_dataset("gdac")
     with tempfile.TemporaryDirectory() as cachedir:
-        with argopy.set_options(cachedir=cachedir, local_ftp=ftproot):
+        with argopy.set_options(cachedir=cachedir):
             loader = ArgoDataFetcher(src="gdac", ftp=ftproot, cache=True).profile(2902696, 12)
             loader.to_xarray()
             argopy.clear_cache()

@@ -10,7 +10,6 @@ import argopy
 from argopy.errors import InvalidDashboard
 from utils import (
     requires_gdac,
-    requires_localftp,
     requires_connection,
     requires_matplotlib,
     requires_ipython,
@@ -34,5 +33,3 @@ if has_ipython:
     import IPython
 
 log = logging.getLogger("argopy.tests.plot")
-
-

@@ -20,6 +20,7 @@ Let's import the usual suspects:
     from argopy import IndexFetcher as ArgoIndexFetcher
     from argopy import DataFetcher as ArgoDataFetcher
 
+.. _viz_traj:
 
 Trajectories
 ============
@@ -59,7 +60,7 @@ Dashboards
 We provide shortcuts to third-party online dashboards that can help you visualise float or profile data.
 When working in Jupyter notebooks, you can insert a dashboard in a cell, or if you don't, you can get the url toward the dashboard to open it elsewhere.
 
-We provide access to the Euro-Argo ERIC, Ocean-OPS, Argovis and BGC dashboards with the option ``type``. See :meth:`argopy.dashboard` for all the options.
+We provide access to the Euro-Argo ERIC, Ocean-OPS, Argovis and BGC dashboards with the option ``type``. See :meth:`argopy.plot.dashboard` for all the options.
 
 Summary of all available dashboards:
 
@@ -135,7 +136,6 @@ Examples:
         argopy.dashboard(WMO, CYC)
         # similar to:
         ArgoDataFetcher().profile(WMO, CYC).dashboard()
-
 
 Scatter Maps
 ************

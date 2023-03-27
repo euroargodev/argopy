@@ -31,11 +31,11 @@ List ftp hosts to be tested.
 Since the fetcher is compatible with host from local, http or ftp protocols, we
 try to test them all:
 """
-VALID_HOSTS = [argopy.tutorial.open_dataset("localftp")[0],
+VALID_HOSTS = [argopy.tutorial.open_dataset("gdac")[0],
              'https://data-argo.ifremer.fr',
              #'ftp://ftp.ifremer.fr/ifremer/argo',
                # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but takes too long to respond, slow down CI
-             'MOCKFTP',  # keyword to use a fake/mocked ftp server (running on localhost)
+             'MOCKFTP',  # keyword to use the fake/mocked ftp server (running on localhost)
                ]
 
 """

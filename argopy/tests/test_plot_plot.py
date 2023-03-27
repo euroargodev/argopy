@@ -8,7 +8,6 @@ from typing import Callable
 import argopy
 from utils import (
     requires_gdac,
-    requires_localftp,
     requires_connection,
     requires_matplotlib,
     requires_ipython,
@@ -80,7 +79,7 @@ class Test_open_sat_altim_report:
 @requires_matplotlib
 class Test_plot_trajectory:
     src = "gdac"
-    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
+    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
     requests = {
         # "float": [[2901623], [2901623, 6901929, 5906072]],
         # "profile": [[2901623, 12], [6901929, [5, 45]]],
@@ -124,7 +123,7 @@ class Test_plot_trajectory:
 @requires_matplotlib
 class Test_bar_plot:
     src = "gdac"
-    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
+    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
     requests = {
         # "float": [[2901623], [2901623, 6901929, 5906072]],
         # "profile": [[2901623, 12], [6901929, [5, 45]]],
@@ -156,7 +155,7 @@ class Test_bar_plot:
 @requires_cartopy
 class Test_scatter_map:
     src = "gdac"
-    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
+    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
     requests = {
         # "float": [[2901623], [2901623, 6901929, 5906072]],
         # "profile": [[2901623, 12], [6901929, [5, 45]]],

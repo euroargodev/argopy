@@ -7,17 +7,9 @@ import logging
 import argopy
 from argopy.errors import InvalidDashboard
 from utils import (
-    requires_gdac,
-    requires_localftp,
     requires_connection,
-    requires_matplotlib,
     requires_ipython,
-    requires_cartopy,
-    has_matplotlib,
-    has_seaborn,
-    has_cartopy,
     has_ipython,
-    has_ipywidgets,
 )
 
 if has_ipython:

@@ -107,11 +107,15 @@
     argopy.utilities.OceanOPSDeployments.to_dataframe
     argopy.utilities.OceanOPSDeployments.status_code
 
+    argopy.plot
     argopy.plot.dashboard
     argopy.plot.bar_plot
-    argopy.plot.plot_trajectory
     argopy.plot.scatter_map
+    argopy.plot.plot_trajectory
+    argopy.plot.latlongrid
+    argopy.plot.discrete_coloring
     argopy.plot.open_sat_altim_report
+
     argopy.plot.ArgoColors
     argopy.plot.ArgoColors.COLORS
     argopy.plot.ArgoColors.quantitative
@@ -121,10 +125,11 @@
     argopy.plot.ArgoColors.ticklabels
     argopy.plot.ArgoColors.list_valid_known_colormaps
 
+    argopy.stores.filesystems.argo_store_proto
+
     argopy.stores.filesystems.filestore
     argopy.stores.filestore.open_dataset
     argopy.stores.filestore.read_csv
-
     argopy.stores.filestore.open
     argopy.stores.filestore.glob
     argopy.stores.filestore.exists
@@ -199,3 +204,4 @@
     argopy.xarray.ArgoAccessor.filter_data_mode
     argopy.xarray.ArgoAccessor.filter_scalib_pres
     argopy.xarray.ArgoAccessor.cast_types
+

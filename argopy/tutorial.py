@@ -6,7 +6,7 @@ Data files are hosted on companion repository: http://www.github.com/euroargodev
 
 ```
 import argopy
-ftproot, flist = argopy.tutorial.open_dataset('localftp')
+ftproot, flist = argopy.tutorial.open_dataset('gdac')
 txtfile = argopy.tutorial.open_dataset('weekly_index_prof')
 txtfile = argopy.tutorial.open_dataset('global_index_prof')
 
@@ -36,10 +36,10 @@ def open_dataset(name):
     Parameters
     ----------
     name: str
-        Name of the dataset to load or get information for. It can be: ``localftp``,
+        Name of the dataset to load or get information for. It can be: ``gdac``,
         ``weekly_index_prof`` or ``global_index_prof``.
 
-            - ``localftp``, return the absolute path and list of files in the sample local ftp files.
+            - ``gdac``, return the absolute path and list of files in the sample local ftp files.
             - ``weekly_index_prof``, return path and to weekly profile index file
             - ``global_index_prof``, return path and to global profile index file
 
@@ -52,7 +52,7 @@ def open_dataset(name):
         List of files with the requested dataset
 
     """
-    if name == 'localftp' or name == 'gdac':
+    if name == 'gdac':
         gdacftp = sample_ftp()
         gdacftp.download(overwrite=False)
         return gdacftp.rootpath, gdacftp.ls()

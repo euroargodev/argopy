@@ -223,7 +223,7 @@ html_theme_options = {
     # "html_logo": "_static/argopy_logo_long.png",
     "logo": {
             "image": html_logo,
-            "image_dark": "_static/logo-wide-dark.svg",
+            "image_dark": "_static/argopy_logo_long_dark.png",
     },
     # "display_version": True,
     "logo_only": True,
