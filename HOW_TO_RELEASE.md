@@ -7,6 +7,9 @@
 
 # Prepare code for release
 
+- [ ] Run [codespell](https://github.com/codespell-project/codespell) from repo root and fix errors: ``codespell -q 2``
+- [ ] Run [flake8](https://github.com/PyCQA/flake8) from repo root and fix errors
+
 ## Code clean-up
 - [ ] Run [codespell](https://github.com/codespell-project/codespell) from repo root and fix errors: ``codespell -q 2``
 - [ ] Run [flake8](https://github.com/PyCQA/flake8) from repo root and fix errors

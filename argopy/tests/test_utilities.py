@@ -753,7 +753,7 @@ class Test_OceanOPSDeployments:
     # If box=None and deployed_only=True, OceanOPSDeployments will seek for OPERATING floats deployed today ! which is
     # impossible and if it happens it's due to an error in the database...
     scenarios = [
-        (None, True),
+        # (None, True),  # This often lead to an empty dataframe !
         (None, False),
         # ([-90, 0, 0, 90], True),
         ([-90, 0, 0, 90], False),

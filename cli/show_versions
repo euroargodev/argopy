@@ -6,6 +6,8 @@ import platform
 import struct
 import importlib
 import locale
+import argparse
+import setuptools
 
 def get_sys_info():
     """Returns system information as a dict."""
@@ -75,7 +77,7 @@ def netcdf_and_hdf5_versions():
     return [("libhdf5", libhdf5_version), ("libnetcdf", libnetcdf_version)]
 
 
-def show_versions(file=sys.stdout, conda=False):  # noqa: C901
+def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa: C901
     """ Print the versions of argopy and its dependencies
 
     Parameters
@@ -93,27 +95,29 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         print(f"Error collecting netcdf / hdf5 version: {e}")
 
     DEPS = {
-        'min': sorted([
+        'core': sorted([
             ("argopy", lambda mod: mod.__version__),
 
             ("xarray", lambda mod: mod.__version__),
             ("scipy", lambda mod: mod.__version__),
             ("netCDF4", lambda mod: mod.__version__),
-            ("sklearn", lambda mod: mod.__version__),  # Using 'preprocessing.LabelEncoder()' in xarray accessor, used by filters
             ("erddapy", lambda mod: mod.__version__),  # This could go away from requirements ?
             ("fsspec", lambda mod: mod.__version__),
             ("aiohttp", lambda mod: mod.__version__),
             ("packaging", lambda mod: mod.__version__),  # will come with xarray, Using 'version' to make API compatible with several fsspec releases
             ("toolz", lambda mod: mod.__version__),
         ]),
-        'ext.extra': sorted([
-            ("dask", lambda mod: mod.__version__),
+        'ext.util': sorted([
             ("gsw", lambda mod: mod.__version__),   # Used by xarray accessor to compute new variables
-            ("pyarrow", lambda mod: mod.__version__),
             ("tqdm", lambda mod: mod.__version__),
-            ("distributed", lambda mod: mod.__version__),
+            ("zarr", lambda mod: mod.__version__),
         ]),
-        'ext.plotters': sorted([
+        'ext.perf': sorted([
+            ("dask", lambda mod: mod.__version__),
+            ("distributed", lambda mod: mod.__version__),
+            ("pyarrow", lambda mod: mod.__version__),
+        ]),
+        'ext.plot': sorted([
             ("matplotlib", lambda mod: mod.__version__),
             ("cartopy", lambda mod: mod.__version__),
             ("seaborn", lambda mod: mod.__version__),
@@ -122,7 +126,6 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
             ("ipykernel", lambda mod: mod.__version__),
         ]),
         'dev': sorted([
-            ("zarr", lambda mod: mod.__version__),
 
             ("bottleneck", lambda mod: mod.__version__),
             ("cftime", lambda mod: mod.__version__),
@@ -134,12 +137,21 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
             ("pandas", lambda mod: mod.__version__),  # will come with xarray
 
             ("pip", lambda mod: mod.__version__),
+            ("black", lambda mod: mod.__version__),
+            ("flake8", lambda mod: mod.__version__),
             ("pytest", lambda mod: mod.__version__),  # will come with pandas
+            ("pytest_env", lambda mod: mod.__version__),  # will come with pandas
+            ("pytest_cov", lambda mod: mod.__version__),  # will come with pandas
+            ("pytest_localftpserver", lambda mod: mod.__version__),  # will come with pandas
             ("setuptools", lambda mod: mod.__version__),  # Provides: pkg_resources
             ("sphinx", lambda mod: mod.__version__),
         ]),
+        'pip': sorted([
+            ("aioresponses", lambda mod: mod.__version__),
+        ])
     }
 
+    # Get versions:
     DEPS_blob = {}
     for level in DEPS.keys():
         deps = DEPS[level]
@@ -160,30 +172,74 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                     deps_blob.append((modname, "installed"))
         DEPS_blob[level] = deps_blob
 
-    print("\nSYSTEM", file=file)
-    print("------", file=file)
-    for k, stat in sys_info:
-        print(f"{k}: {stat}", file=file)
+    # Print:
+    if conda:
+        # print("\nSYSTEM", file=file)
+        print("\n------", file=file)
+        print(f"  - python = {sys.version.split('|')[0].strip()}", file=file)
 
-    for level in DEPS_blob:
-        if conda:
+        for level in DEPS_blob:
             print("\n# %s:" % level.upper(), file=file)
-        else:
-            title = "INSTALLED VERSIONS: %s" % level.upper()
-            print("\n%s" % title, file=file)
-            print("-"*len(title), file=file)
-        deps_blob = DEPS_blob[level]
-        for k, stat in deps_blob:
-            if conda:
-                print(f"  - {k} = {stat}", file=file)  # Format like a conda env line, useful to update ci/requirements
+            deps_blob = DEPS_blob[level]
+            if level != 'pip':
+                for k, stat in deps_blob:
+                    if k != 'argopy':
+                        kf = k.replace("_", "-")
+                        comment = ' ' if stat != '-' else '# '
+                        if core and 'EXT' in level.upper():
+                            comment = '# '
+                        if not free:
+                            print(f"{comment} - {kf} = {stat}",
+                                  file=file)  # Format like a conda env line, useful to update ci/requirements
+                        else:
+                            print(f"{comment} - {kf}", file=file)
             else:
-                print("{:<12}: {:<12}".format(k, stat), file=file)
+                #   - pip:
+                #       - aioresponses==0.7.4
+                print("  - pip:", file=file)
+                for k, stat in deps_blob:
+                    kf = k.replace("_", "-")
+                    comment = '     ' if stat != '-' else '     # '
+                    if not free:
+                        print(f"{comment} - {kf} == {stat}",
+                              file=file)  # Format like a conda env line, useful to update ci/requirements
+                    else:
+                        print(f"{comment} - {kf}", file=file)
+
+    else:
+
+        print("\nSYSTEM", file=file)
+        print("------", file=file)
+        for k, stat in sys_info:
+            print(f"{k}: {stat}", file=file)
+
+        for level in DEPS_blob:
+            if conda:
+                print("\n# %s:" % level.upper(), file=file)
+            else:
+                title = "INSTALLED VERSIONS: %s" % level.upper()
+                print("\n%s" % title, file=file)
+                print("-" * len(title), file=file)
+            deps_blob = DEPS_blob[level]
+            for k, stat in deps_blob:
+                if conda:
+                    if k != 'argopy':
+                        kf = k.replace("_", "-")
+                        comment = ' ' if stat != '-' else '# '
+                        print(f"{comment} - {kf} = {stat}",
+                              file=file)  # Format like a conda env line, useful to update ci/requirements
+                else:
+                    print("{:<12}: {:<12}".format(k, stat), file=file)
 
 
 if __name__ == '__main__':
-    # sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
-    # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-    # import argopy
-    # argopy.show_versions()
-    show_versions()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "--conda", help="Print package versions for conda yml files", action="store_true")
+    parser.add_argument("--free", help="Just print package lists for FREE conda yml files", action="store_true")
+    parser.add_argument("--core", help="Just print CORE package lists for conda yml files", action="store_true")
+    args = parser.parse_args()
+
+    show_versions(conda=args.conda if args.conda else False,
+                  free=args.free if args.free else False,
+                  core=args.core if args.core else False)
 

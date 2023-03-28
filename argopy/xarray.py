@@ -1,12 +1,10 @@
 import os
-import sys
 import warnings
 
 import numpy as np
 import pandas as pd
 import xarray as xr
 import logging
-from typing import Union
 
 try:
     import gsw
@@ -252,8 +250,8 @@ class ArgoAccessor:
 
         """
         def encode_direction(x):
-            y = np.where(x=='A', 1, x)
-            y = np.where(y=='D', -1, y)
+            y = np.where(x == 'A', 1, x)
+            y = np.where(y == 'D', -1, y)
             try:
                 return y.astype(int)
             except ValueError:
@@ -263,8 +261,8 @@ class ArgoAccessor:
             x = np.array(x)
             if np.any(np.unique(np.abs(x)) != 1):
                 raise ValueError('x has un-expected values')
-            y = np.where(x==1, 'A', x)
-            y = np.where(y=='-1', 'D', y)
+            y = np.where(x == 1, 'A', x)
+            y = np.where(y == '-1', 'D', y)
             return y.astype('<U1')
 
         offset = 1e5
@@ -1244,9 +1242,9 @@ class ArgoAccessor:
         # new_ds["STD_%s_BINS" % axis] = new_ds['N_LEVELS']
         new_ds["STD_%s_BINS" % axis] = xr.DataArray(bins,
                                                     dims=['N_LEVELS'],
-                                                    attrs={'Comment':
-                                                            "Range of bins is: bins[i] <= x < bins[i+1] for i=[0,N_LEVELS-2]\n"
-                                                            "Last bins is bins[N_LEVELS-1] <= x"}
+                                                    attrs={"Comment":
+                                                           "Range of bins is: bins[i] <= x < bins[i+1] for i=[0,N_LEVELS-2]\n"
+                                                           "Last bins is bins[N_LEVELS-1] <= x"}
                                                     )
         new_ds = new_ds.set_coords("STD_%s_BINS" % axis)
         new_ds.attrs = this_ds.attrs
@@ -1269,9 +1267,9 @@ class ArgoAccessor:
         return new_ds
 
     def teos10(  # noqa: C901
-        self,
-        vlist: list = ["SA", "CT", "SIG0", "N2", "PV", "PTEMP"],
-        inplace: bool = True):
+                self,
+                vlist: list = ["SA", "CT", "SIG0", "N2", "PV", "PTEMP"],
+                inplace: bool = True):
         """ Add TEOS10 variables to the dataset
 
         By default, adds: 'SA', 'CT'
@@ -1306,8 +1304,7 @@ class ArgoAccessor:
             * ``CNDC``
                 Add Electrical Conductivity
 
-
-        inplace: boolean, True by default        
+        inplace: boolean, True by default
             * If True, return the input :class:`xarray.Dataset` with new TEOS10 variables
                 added as a new :class:`xarray.DataArray`.
             * If False, return a :class:`xarray.Dataset` with new TEOS10 variables
@@ -1553,11 +1550,11 @@ class ArgoAccessor:
             If force='adjusted' will load PRES_ADJUSTED/PSAL_ADJUSTED/TEMP_ADJUSTED
         select: {'deep','shallow','middle','random','min','max','mean','median'}, default: 'deep'
         file_pref: str, optional
-            Preffix to add at the beginning of output file(s).
+            Prefix to add at the beginning of output file(s).
         file_suff: str, optional
             Suffix to add at the end of output file(s).
         do_compression: bool, optional
-            Whether or not to compress matrices on write. Default is True.
+            Whether to compress matrices on write. Default is True.
         format: {'5', '4'}, string, optional
             Matlab file format version. '5' (the default) for MATLAB 5 and up (to 7.2). Use '4' for MATLAB 4 .mat files.
 

@@ -57,6 +57,7 @@ class InvalidDataset(ValueError):
     """
     pass
 
+
 class InvalidDatasetStructure(ValueError):
     """Raise when the xarray dataset is not as expected."""
 

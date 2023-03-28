@@ -238,7 +238,7 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
             pass
         except ClientPayloadError as e:
             msg = "\nUnexpected server transfer error\n%s" % str(e.args)
-            xmsg = "Failing because an unexpected error occured during data transfer, but should work"
+            xmsg = "Failing because an unexpected error occurred during data transfer, but should work"
             pass
         except FileNotFoundError as e:
             msg = "\nServer didn't return the data:\n%s" % str(e.args)

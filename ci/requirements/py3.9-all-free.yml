@@ -3,40 +3,53 @@ channels:
   - conda-forge
 dependencies:
   - python=3.9
-  - xarray
-  - scipy
-  - netCDF4
+
+# CORE:
+  - aiohttp
   - erddapy
   - fsspec
-  - aiohttp
+  - netCDF4
   - packaging
+  - scipy
   - toolz
+  - xarray
 
-  - dask
+# EXT.UTIL:
   - gsw
-  - pyarrow
   - tqdm
-  - distributed
-
-  - matplotlib
-  - cartopy
-  - seaborn
-  - ipython
-  - ipywidgets
-  - ipykernel
-
   - zarr
+
+# EXT.PERF:
+  - dask
+  - distributed
+  - pyarrow
+
+# EXT.PLOT:
+  - IPython
+  - cartopy
+  - ipykernel
+  - ipywidgets
+  - matplotlib
+  - seaborn
+
+# DEV:
+  - black
   - bottleneck
-  - cftime
   - cfgrib
+  - cftime
+#  - conda
+  - flake8
+#  - nc-time-axis
   - numpy
   - pandas
-
   - pip
   - pytest
-  - setuptools
-  - black
-  - flake8
   - pytest-cov
   - pytest-env
   - pytest-localftpserver
+  - setuptools
+#  - sphinx
+
+# PIP:
+  - pip:
+      - aioresponses

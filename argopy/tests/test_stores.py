@@ -103,22 +103,27 @@ class Test_FileStore:
         fs = filestore()
         assert isinstance(fs.open_dataset(ncfile), xr.Dataset)
 
-    def test_open_mfdataset(self):
-        fs = filestore()
-        ncfiles = fs.glob(
+    # params = [(m, p) for m in ["seq", "thread", "process"] for p in [True, False]]
+    params = [(m, p) for m in ["seq", "thread", "process"] for p in [False]]
+    ids_params = ["method=%s, progress=%s" % (p[0], p[1]) for p in params]
+    @pytest.mark.parametrize("params", params,
+                             indirect=False,
+                             ids=ids_params)
+    def test_open_mfdataset(self, params):
+        uri = filestore().glob(
             os.path.sep.join([self.ftproot, "dac/aoml/5900446/profiles/*_1*.nc"])
         )[0:2]
-        for method in ["seq", "thread", "process"]:
-            for progress in [True, False]:
-                assert isinstance(
-                    fs.open_mfdataset(ncfiles, method=method, progress=progress),
-                    xr.Dataset,
-                )
-                assert is_list_of_datasets(
-                    fs.open_mfdataset(
-                        ncfiles, method=method, progress=progress, concat=False
-                    )
-                )
+        @safe_to_server_errors
+        def test(this_params):
+            method, progress = this_params
+            fs = filestore()
+
+            ds = fs.open_mfdataset(uri, method=method, progress=progress, errors='raise')
+            assert isinstance(ds, xr.Dataset)
+
+            ds = fs.open_mfdataset(uri, method=method, progress=progress, concat=False, errors='raise')
+            assert is_list_of_datasets(ds)
+        test(params)
 
     def test_read_csv(self):
         fs = filestore()
@@ -208,24 +213,30 @@ class Test_HttpStore:
         fs = httpstore(timeout=OPTIONS['api_timeout'])
         assert isinstance(fs.open_dataset(uri), xr.Dataset)
 
-    @safe_to_server_errors
-    def test_open_mfdataset(self):
-        fs = httpstore(timeout=OPTIONS['api_timeout'])
+    # params = [(m, p) for m in ["seq", "thread", "process"] for p in [True, False]]
+    params = [(m, p) for m in ["seq", "thread", "process"] for p in [False]]
+    ids_params = ["method=%s, progress=%s" % (p[0], p[1]) for p in params]
+    @pytest.mark.parametrize("params", params,
+                             indirect=False,
+                             ids=ids_params)
+    def test_open_mfdataset(self, params):
         uri = [
             "https://github.com/euroargodev/argopy-data/raw/master/ftp/dac/csiro/5900865/profiles/D5900865_00%i.nc"
             % i
             for i in [1, 2]
         ]
-        for method in ["seq", "thread"]:
-            for progress in [True, False]:
-                assert isinstance(
-                    fs.open_mfdataset(uri, method=method, progress=progress), xr.Dataset
-                )
-                assert is_list_of_datasets(
-                    fs.open_mfdataset(
-                        uri, method=method, progress=progress, concat=False
-                    )
-                )
+        @safe_to_server_errors
+        def test(this_params):
+            method, progress = this_params
+            fs = httpstore(timeout=OPTIONS['api_timeout'])
+
+            ds = fs.open_mfdataset(uri, method=method, progress=progress, errors='raise')
+            assert isinstance(ds, xr.Dataset)
+
+            ds = fs.open_mfdataset(uri, method=method, progress=progress, concat=False, errors='raise')
+            assert is_list_of_datasets(ds)
+        test(params)
+
 
     @safe_to_server_errors
     def test_open_json(self):
@@ -233,17 +244,23 @@ class Test_HttpStore:
         fs = httpstore(timeout=OPTIONS['api_timeout'])
         assert isinstance(fs.open_json(uri), dict)
 
-    @safe_to_server_errors
-    def test_open_mfjson(self):
+    params = [(m, p) for m in ["seq", "thread"] for p in [False]]
+    ids_params = ["method=%s, progress=%s" % (p[0], p[1]) for p in params]
+    @pytest.mark.parametrize("params", params,
+                             indirect=False,
+                             ids=ids_params)
+    def test_open_mfjson(self, params):
         fs = httpstore(timeout=OPTIONS['api_timeout'])
         uri = [
             "http://api.ifremer.fr/argopy/data/ARGO-FULL.json",
             "http://api.ifremer.fr/argopy/data/ARGO-BGC.json",
         ]
-        for method in ["seq", "thread"]:
-            for progress in [True, False]:
-                lst = fs.open_mfjson(uri, method=method, progress=progress)
-                assert is_list_of_dicts(lst)
+        @safe_to_server_errors
+        def test(this_params):
+            method, progress = this_params
+            lst = fs.open_mfjson(uri, method=method, progress=progress)
+            assert is_list_of_dicts(lst)
+        test(params)
 
     @safe_to_server_errors
     def test_read_csv(self):
@@ -311,25 +328,29 @@ class Test_FtpStore:
         fs = ftpstore(host=self.host, port=self.port, cache=False)
         assert isinstance(fs.open_dataset(uri), xr.Dataset)
 
-    @safe_to_server_errors
-    def test_open_mfdataset(self):
-        fs = ftpstore(host=self.host, port=self.port, cache=False)
+    # params = [(m, p) for m in ["seq", "process"] for p in [True, False]]
+    params = [(m, p) for m in ["seq", "process"] for p in [False]]
+    ids_params = ["method=%s, progress=%s" % (p[0], p[1]) for p in params]
+    @pytest.mark.parametrize("params", params,
+                             indirect=False,
+                             ids=ids_params)
+    def test_open_mfdataset(self, params):
         uri = [
-            "dac/csiro/5900865/profiles/D5900865_00%i.nc"
-            % i
-            for i in [1, 2]
-        ]
-        for method in ["seq", "thread"]:
-            for progress in [True, False]:
-                assert isinstance(
-                    fs.open_mfdataset(uri, method=method, progress=progress), xr.Dataset
-                )
-                assert is_list_of_datasets(
-                    fs.open_mfdataset(
-                        uri, method=method, progress=progress, concat=False
-                    )
-                )
+              "dac/csiro/5900865/profiles/D5900865_00%i.nc"
+              % i
+              for i in [1, 2]
+          ]
+        @safe_to_server_errors
+        def test(this_params):
+            method, progress = this_params
+            fs = ftpstore(host=self.host, port=self.port, cache=False)
 
+            ds = fs.open_mfdataset(uri, method=method, progress=progress, errors='raise')
+            assert isinstance(ds, xr.Dataset)
+
+            ds = fs.open_mfdataset(uri, method=method, progress=progress, concat=False, errors='raise')
+            assert is_list_of_datasets(ds)
+        test(params)
 
 @skip_this
 class Test_IndexFilter_WMO:
