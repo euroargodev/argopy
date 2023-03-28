@@ -37,7 +37,6 @@ except:  # noqa: E722
     # Soon ! https://github.com/ioos/erddapy
 
 
-
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy', 'ref', 'bgc']  # First is default
@@ -450,7 +449,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         except Exception:
             raise ErddapServerError("Erddap server can't return ncHeader for this url. ")
 
-    def to_xarray(self, errors: str = 'ignore'):
+    def to_xarray(self, errors: str = 'ignore'):  # noqa: C901
         """ Load Argo data and return a xarray.DataSet """
 
         # Download data

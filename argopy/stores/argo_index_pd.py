@@ -62,7 +62,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
             else:
                 this_path = this_path + "/local.%s" % self.ext
 
-            if self.cache and self.fs["client"].exists(this_path): # and self._same_origin(this_path):
+            if self.cache and self.fs["client"].exists(this_path):  # and self._same_origin(this_path):
                 log.debug(
                     "Index already in memory as pandas table, loading... src='%s'"
                     % (this_path)
@@ -103,7 +103,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         else:
             this_path = this_path + "/local.%s" % self.ext
 
-        if self.cache and self.fs["client"].exists(this_path): # and self._same_origin(this_path):
+        if self.cache and self.fs["client"].exists(this_path):  # and self._same_origin(this_path):
             log.debug(
                 "Search results already in memory as pandas dataframe, loading... src='%s'"
                 % (this_path)
@@ -170,7 +170,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
     @property
     def uri(self):
         # return ["/".join([self.host, "dac", f]) for f in self.search["file"]]
-        #todo Should also modify separator from "f" because it's "/" on the index file,
+        # todo Should also modify separator from "f" because it's "/" on the index file,
         # but should be turned to "\" for local file index on Windows. Remains "/" in all others (linux, mac, ftp. http)
         sep = self.fs["src"].fs.sep
         return [sep.join([self.host, "dac", f.replace('/', sep)]) for f in self.search["file"]]

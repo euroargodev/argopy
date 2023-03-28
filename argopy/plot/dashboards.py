@@ -20,7 +20,7 @@ if has_ipython:
     from IPython.display import IFrame, Image
 
 
-""" Define all dashboards 
+""" Define all dashboards
 
 Use this dictionary to implement or modify a new 3rd party dashboard
 
@@ -80,13 +80,13 @@ dashboard_definitions = {
 
 def get_valid_type(defs):
     """Return the list of all boards 'type', including shortcuts"""
-    l = []
+    the_list = []
     for board in defs.keys():
-        l.append(board)
+        the_list.append(board)
         board_shorts = defs[board]["shorts"]
         if board_shorts is not None:
-            [l.append(s) for s in board_shorts]
-    return l
+            [the_list.append(s) for s in board_shorts]
+    return the_list
 
 
 def get_type_name(defs, input_type):
@@ -175,13 +175,13 @@ def open_dashboard(
             % (str(wmo), str(cyc), type)
         )
 
-    insert = lambda url: url
+    insert = lambda url: url  # noqa: E731
     if has_ipython:
         filename, file_extension = os.path.splitext(url)
         if file_extension in [".jpeg"]:
-            insert = lambda x: Image(url=x)
+            insert = lambda x: Image(url=x)  # noqa: E731
         else:
-            insert = lambda x: IFrame(x, width=width, height=height)
+            insert = lambda x: IFrame(x, width=width, height=height)  # noqa: E731
 
     if url_only:
         return url

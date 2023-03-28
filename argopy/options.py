@@ -5,7 +5,6 @@ This module manage options of the package
 # https://github.com/pydata/xarray/blob/cafab46aac8f7a073a32ec5aa47e213a9810ed54/xarray/core/options.py
 """
 import os
-import numpy as np
 from argopy.errors import OptionValueError, FtpPathError
 import warnings
 import logging
@@ -125,7 +124,7 @@ class set_options:
         self._apply_update(self.old)
 
 
-def check_gdac_path(path, errors='ignore'):
+def check_gdac_path(path, errors='ignore'):  # noqa: C901
     """ Check if a path has the expected GDAC ftp structure
 
         Check if a path is structured like:
@@ -198,7 +197,7 @@ def check_gdac_path(path, errors='ignore'):
     check1 = (
         fs.exists(path)
         and fs.exists(fs.sep.join([path, "dac"]))
-#         and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
+        # and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
     )
     if check1:
         return True
