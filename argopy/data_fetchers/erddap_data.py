@@ -37,12 +37,8 @@ except:  # noqa: E722
     # Soon ! https://github.com/ioos/erddapy
 
 
-<<<<<<< Updated upstream
-=======
 log = logging.getLogger("argopy.erddap.data")
 
-
->>>>>>> Stashed changes
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy', 'ref', 'bgc']  # First is default
