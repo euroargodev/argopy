@@ -62,7 +62,7 @@ def can_be_xr_opened(src, file):
         xr.open_dataset(file)
         return src
     except:
-        print("This source can't be opened with xarray: %s" % src)
+        # print("This source can't be opened with xarray: %s" % src)
         return src
 
 
@@ -83,12 +83,12 @@ if __name__ == '__main__':
         # And because of the erddap fetcher N_POINT attribute, we also need to fetch ".ncHeader" on top of ".nc" files
         requests_phy = {
             "float": [[1901393], [1901393, 6902746]],
-            "profile": [[6902746, 34], [6902746, np.arange(12, 13)], [6902746, [1, 12]]],
-            "region": [
-                [-20, -16., 0, 1, 0, 100.],
-                # [-20, -16., 0, 1, 0, 100., "1997-07-01", "1997-09-01"]
-                [-20, -16., 0, 1, 0, 100., "2004-01-01", "2004-01-31"]
-            ],
+            # "profile": [[6902746, 34], [6902746, np.arange(12, 13)], [6902746, [1, 12]]],
+            # "region": [
+            #     [-20, -16., 0, 1, 0, 100.],
+            #     # [-20, -16., 0, 1, 0, 100., "1997-07-01", "1997-09-01"]
+            #     [-20, -16., 0, 1, 0, 100., "2004-01-01", "2004-01-31"]
+            # ],
         }
         requests_bgc = {
             "float": [[5903248], [7900596, 2902264]],
@@ -104,10 +104,11 @@ if __name__ == '__main__':
                 [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01-01", "2012-12-31"],
             ]
         }
-        requests = {'phy': requests_phy, 'bgc': requests_bgc, 'ref': requests_ref}
+        # requests = {'phy': requests_phy, 'bgc': requests_bgc, 'ref': requests_ref}
+        requests = {'phy': requests_phy}
 
         nc_file = lambda url, sha, iter: {'uri': url, 'ext': "nc", 'sha': "%s_%03.d" % (sha, iter)}
-        ncHeader_file = lambda url, sha, iter: {'uri': url.replace(".nc", ".ncHeader"), 'ext': "ncHeader", 'sha': "%s_%03.d" % (sha, iter)}
+        ncHeader_file = lambda url, sha, iter: {'uri': url, 'ext': "ncHeader", 'sha': "%s_%03.d" % (sha, iter)}
 
         URI = []
         for ds in requests:
@@ -119,7 +120,8 @@ if __name__ == '__main__':
                         uri = f.uri
                         for ii, url in enumerate(uri):
                             URI.append(nc_file(url, f.fetcher.sha, ii))
-                            URI.append(ncHeader_file(url, f.fetcher.sha, ii))
+                        url = f.fetcher.get_url().replace("." + f.fetcher.erddap.response, ".ncHeader")
+                        URI.append(ncHeader_file(url, f.fetcher.sha, ii))
                         # print(ds, access_point, cfg, f.fetcher.sha)
                 if access_point == 'float':
                     for cfg in requests[ds][access_point]:
@@ -127,7 +129,8 @@ if __name__ == '__main__':
                         uri = f.uri
                         for ii, url in enumerate(uri):
                             URI.append(nc_file(url, f.fetcher.sha, ii))
-                            URI.append(ncHeader_file(url, f.fetcher.sha, ii))
+                        url = f.fetcher.get_url().replace("." + f.fetcher.erddap.response, ".ncHeader")
+                        URI.append(ncHeader_file(url, f.fetcher.sha, ii))
                         # print(ds, access_point, cfg, f.fetcher.sha)
                 if access_point == 'region':
                     for cfg in requests[ds][access_point]:
@@ -135,7 +138,8 @@ if __name__ == '__main__':
                         uri = f.uri
                         for ii, url in enumerate(uri):
                             URI.append(nc_file(url, f.fetcher.sha, ii))
-                            URI.append(ncHeader_file(url, f.fetcher.sha, ii))
+                        url = f.fetcher.get_url().replace("." + f.fetcher.erddap.response, ".ncHeader")
+                        URI.append(ncHeader_file(url, f.fetcher.sha, ii))
                         # print(ds, access_point, cfg, f.fetcher.sha)
 
         return URI
@@ -144,8 +148,9 @@ if __name__ == '__main__':
         # print(source['uri'])
         # r = await session.get(source['uri'], ssl=False)
         async with session.get(source['uri'], ssl=False) as r:
-            if not r.content_type == 'application/x-netcdf':
-                print("Unexpected content type (%s) with this request: %s" % (r.content_type, parse_qs(source['uri'])))
+            if r.content_type not in ['application/x-netcdf', 'text/plain']:
+                print("Unexpected content type (%s) with this request: %s (%s extension)" %
+                      (r.content_type, parse_qs(source['uri']), os.path.splitext(urlparse(source['uri']).path)[1]))
 
             test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (source['sha'], source['ext']))
             async with aiofiles.open(test_data_file, 'wb') as f:
@@ -158,7 +163,8 @@ if __name__ == '__main__':
             urls = await fetch_download_links(session)
             return await asyncio.gather(*[place_file(session, url) for url in urls])
 
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     URLS = loop.run_until_complete(main())
     # URLS = [url for url in URLS if url is not None]
     print("Saved %i urls" % len(URLS))

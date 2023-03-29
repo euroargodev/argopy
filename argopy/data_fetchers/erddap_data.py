@@ -23,7 +23,7 @@ from argopy.utilities import list_standard_variables, Chunker, format_oneline
 from argopy.stores import httpstore
 from ..errors import ErddapServerError
 from aiohttp import ClientResponseError
-
+import logging
 
 # Load erddapy according to available version (breaking changes in v0.8.0)
 try:
@@ -37,6 +37,12 @@ except:  # noqa: E722
     # Soon ! https://github.com/ioos/erddapy
 
 
+<<<<<<< Updated upstream
+=======
+log = logging.getLogger("argopy.erddap.data")
+
+
+>>>>>>> Stashed changes
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy', 'ref', 'bgc']  # First is default
@@ -442,6 +448,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         """ Number of measurements expected to be returned by a request """
         try:
             url = self.get_url().replace("." + self.erddap.response, ".ncHeader")
+            log.debug('N_POINTS url:' % url)
             with self.fs.open(url) as of:
                 ncHeader = of.read().decode("utf-8")
             lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
