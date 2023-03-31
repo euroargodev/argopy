@@ -42,15 +42,18 @@ from argopy.data_fetchers.erddap_data import api_server
 # (this will be filling the mocked http server content)
 ERDDAP_FILES = {}
 DATA_FOLDER = os.path.dirname(os.path.realpath(__file__)).replace("helpers", "test_data")
-with open(os.path.join(DATA_FOLDER, "erddap_file_index.pkl"), "rb") as f:
-    URI = pickle.load(f)
-for ressource in URI:
-    test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (ressource['sha'], ressource['ext']))
-    with open(test_data_file, mode='rb') as file:
-        data = file.read()
-    ERDDAP_FILES[ressource['uri'].replace(api_server, '')] = data
-    # ERDDAP_FILES[ressource['uri'].replace(api_server, '').replace('"', "%22")] = data
-
+DB_FILE = os.path.join(DATA_FOLDER, "erddap_file_index.pkl")
+if os.path.exists(DB_FILE):
+    with open(os.path.join(DATA_FOLDER, "erddap_file_index.pkl"), "rb") as f:
+        URI = pickle.load(f)
+    for ressource in URI:
+        test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (ressource['sha'], ressource['ext']))
+        with open(test_data_file, mode='rb') as file:
+            data = file.read()
+        ERDDAP_FILES[ressource['uri'].replace(api_server, '')] = data
+        # ERDDAP_FILES[ressource['uri'].replace(api_server, '').replace('"', "%22")] = data
+else:
+    log.debug("Loading this sub-module with DB_FILE %s" % DB_FILE)
 
 class HTTPTestHandler(BaseHTTPRequestHandler):
     static_files = {

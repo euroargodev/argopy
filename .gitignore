@@ -79,7 +79,7 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 cache
-*.nc
+#*.nc
 .idea
 local_work/
 cache
