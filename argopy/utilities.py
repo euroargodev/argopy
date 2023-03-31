@@ -21,7 +21,7 @@ from abc import ABC, abstractmethod
 from urllib.parse import urlparse
 from typing import Union
 import inspect
-
+import pathlib
 import importlib
 import locale
 import platform
@@ -683,6 +683,7 @@ def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
         it = 0
         while it < maxtry:
             try:
+                # log.debug("Checking if %s is connected ..." % host)
                 urllib.request.urlopen(host, timeout=1)  # nosec B310 because host protocol already checked
                 result, it = True, maxtry
             except Exception:
@@ -3601,3 +3602,22 @@ def cast_types(ds):  # noqa: C901
             raise
 
     return ds
+
+
+def log_argopy_callerstack(level='debug'):
+    """log the caller’s stack"""
+    froot = str(pathlib.Path(__file__).parent.resolve())
+    for ideep, frame in enumerate(inspect.stack()[1:]):
+        if os.path.join('argopy', 'argopy') in frame.filename:
+            # msg = ["└─"]
+            # [msg.append("─") for ii in range(ideep)]
+            msg = [""]
+            [msg.append("  ") for ii in range(ideep)]
+            msg.append("└─ %s:%i -> %s" % (frame.filename.replace(froot, ''), frame.lineno, frame.function))
+            msg = "".join(msg)
+            if level == "info":
+                log.info(msg)
+            elif level == "debug":
+                log.debug(msg)
+            elif level == "warning":
+                log.warning(msg)

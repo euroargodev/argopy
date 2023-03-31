@@ -13,6 +13,7 @@ import warnings
 import logging
 from packaging import version
 
+
 import concurrent.futures
 import multiprocessing
 
@@ -20,7 +21,7 @@ from ..options import OPTIONS
 from ..errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
     InvalidMethod
 from abc import ABC, abstractmethod
-from ..utilities import Registry
+from ..utilities import Registry, log_argopy_callerstack
 
 log = logging.getLogger("argopy.stores")
 
@@ -93,7 +94,10 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cac
     # log_msg = "%s\n[sys sep=%s] vs [fs sep=%s]" % (log_msg, os.path.sep, fs.sep)
     # log.warning(log_msg)
     log.debug(log_msg)
+    # log_argopy_callerstack()
     return fs, cache_registry
+
+
 
 
 class argo_store_proto(ABC):
@@ -452,6 +456,8 @@ class httpstore(argo_store_proto):
         :class:`xarray.Dataset`
         """
         try:
+            # log.info("open_dataset('%s')" % url)
+            # log_argopy_callerstack()
             data = self.fs.cat_file(url)
         except aiohttp.ClientResponseError as e:
             if e.status == 413:
@@ -460,6 +466,10 @@ class httpstore(argo_store_proto):
                 log.debug("Error %i (Payload Too Large) raised with %s" % (e.status, url))
             raise
 
+        if data[0:3] != b'CDF':
+            raise TypeError("We didn't get a CDF binary data as expected ! We get: %s" % data)
+
+        # log.debug('type(data): %s' % type(data))
         ds = xr.open_dataset(data, *args, **kwargs)
         if "source" not in ds.encoding:
             if isinstance(url, str):
