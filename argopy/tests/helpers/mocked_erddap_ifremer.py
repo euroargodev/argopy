@@ -1,60 +1,201 @@
 """
-Mock the Ifremer erddap
+Mock the Ifremer erddap server
 
 For this to work, we need to catch all the possible erddap URI sent from unit tests and return some json or netcdf data
 we downloaded once before tests.
 
-This requires to download data using a fully functional erddap server: this is done by this script when executed from 
+This requires to download data using a fully functional erddap server: this is done by this script when executed from
 the command line.
 
+The HTTPTestHandler class below is taken from the fsspec tests suite at:
+https://github.com/fsspec/filesystem_spec/blob/55c5d71e657445cbfbdba15049d660a5c9639ff0/fsspec/tests/conftest.py
+
 """
-import logging
-import pytest
-from aioresponses import aioresponses
 import numpy as np
-import sys
+import contextlib
+import json
 import os
+import sys
+import threading
+from collections import ChainMap
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import pytest
+import logging
+from urllib.parse import unquote
+import socket
 import pickle
 import xarray as xr
+import hashlib
 from urllib.parse import urlparse, parse_qs
-
 
 log = logging.getLogger("argopy.tests.mocked_erddap")
 
+requests = pytest.importorskip("requests")
+port = 9898  # Select the port to run the local server on
+mocked_server_address = "http://127.0.0.1:%i" % port
 
-# @pytest.fixture(scope="module", autouse=True)
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+from argopy.data_fetchers.erddap_data import api_server
+
+
+# Create the dictionary mapping of URL requests as keys, and expected responses as values:
+# (this will be filling the mocked http server content)
+ERDDAP_FILES = {}
+DATA_FOLDER = os.path.dirname(os.path.realpath(__file__)).replace("helpers", "test_data")
+with open(os.path.join(DATA_FOLDER, "erddap_file_index.pkl"), "rb") as f:
+    URI = pickle.load(f)
+for ressource in URI:
+    test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (ressource['sha'], ressource['ext']))
+    with open(test_data_file, mode='rb') as file:
+        data = file.read()
+    ERDDAP_FILES[ressource['uri'].replace(api_server, '')] = data
+    # ERDDAP_FILES[ressource['uri'].replace(api_server, '').replace('"', "%22")] = data
+
+
+class HTTPTestHandler(BaseHTTPRequestHandler):
+    static_files = {
+        # "/index/realfile": data,
+        # "/index/otherfile": data,
+        # "/index": index,
+        # "/data/20020401": listing,
+    }
+    dynamic_files = {}
+
+    files = ChainMap(dynamic_files, static_files, ERDDAP_FILES)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def _respond(self, code=200, headers=None, data=b""):
+        headers = headers or {}
+        headers.update({"User-Agent": "test"})
+        self.send_response(code)
+        for k, v in headers.items():
+            self.send_header(k, str(v))
+        self.end_headers()
+        if data:
+            try:
+                self.wfile.write(data)
+            except socket.error as e:
+                log.debug("socket error %s" % str(e))
+                pass
+
+    def log_message(self, format, *args):
+        # Quiet logging !
+        return
+
+    def do_GET(self):
+        file_path = unquote(self.path.rstrip("/"))
+        # log.debug("Requesting: %s" % file_path)
+        # [log.debug("└─ %s" % k) for k in self.files.keys()]
+        file_data = self.files.get(file_path)
+        if "give_path" in self.headers:
+            return self._respond(200, data=json.dumps({"path": self.path}).encode())
+        if file_data is None:
+            # log.debug("file data empty, returning 404")
+            return self._respond(404)
+
+        status = 200
+        content_range = "bytes 0-%i/%i" % (len(file_data) - 1, len(file_data))
+        if ("Range" in self.headers) and ("ignore_range" not in self.headers):
+            ran = self.headers["Range"]
+            b, ran = ran.split("=")
+            start, end = ran.split("-")
+            if start:
+                content_range = f"bytes {start}-{end}/{len(file_data)}"
+                file_data = file_data[int(start): (int(end) + 1) if end else None]
+            else:
+                # suffix only
+                l = len(file_data)
+                content_range = f"bytes {l-int(end)}-{l-1}/{l}"
+                file_data = file_data[-int(end):]
+            if "use_206" in self.headers:
+                status = 206
+        if "give_length" in self.headers:
+            response_headers = {"Content-Length": len(file_data)}
+            self._respond(status, response_headers, file_data)
+        elif "give_range" in self.headers:
+            self._respond(status, {"Content-Range": content_range}, file_data)
+        else:
+            self._respond(status, data=file_data)
+
+    def do_POST(self):
+        length = self.headers.get("Content-Length")
+        file_path = unquote(self.path.rstrip("/"))
+        if length is None:
+            assert self.headers.get("Transfer-Encoding") == "chunked"
+            self.files[file_path] = b"".join(self.read_chunks())
+        else:
+            self.files[file_path] = self.rfile.read(length)
+        self._respond(200)
+
+    do_PUT = do_POST
+
+    def read_chunks(self):
+        length = -1
+        while length != 0:
+            line = self.rfile.readline().strip()
+            if len(line) == 0:
+                length = 0
+            else:
+                length = int(line, 16)
+            yield self.rfile.read(length)
+            self.rfile.readline()
+
+    def do_HEAD(self):
+        if "head_not_auth" in self.headers:
+            return self._respond(
+                403, {"Content-Length": 123}, b"not authorized for HEAD request"
+            )
+        elif "head_ok" not in self.headers:
+            return self._respond(405)
+
+        file_path = unquote(self.path.rstrip("/"))
+        file_data = self.files.get(file_path)
+        if file_data is None:
+            return self._respond(404)
+
+        if ("give_length" in self.headers) or ("head_give_length" in self.headers):
+            response_headers = {"Content-Length": len(file_data)}
+            if "zero_length" in self.headers:
+                response_headers["Content-Length"] = 0
+
+            self._respond(200, response_headers)
+        elif "give_range" in self.headers:
+            self._respond(
+                200, {"Content-Range": "0-%i/%i" % (len(file_data) - 1, len(file_data))}
+            )
+        elif "give_etag" in self.headers:
+            self._respond(200, {"ETag": "xxx"})
+        else:
+            self._respond(200)  # OK response, but no useful info
+
+
+@contextlib.contextmanager
+def serve():
+    server_address = ("", port)
+    httpd = HTTPServer(server_address, HTTPTestHandler)
+    th = threading.Thread(target=httpd.serve_forever)
+    th.daemon = True
+    th.start()
+    try:
+        log.info("Mocked ERDDAP HTTP server up and ready at %s, serving %i URI. (id=%s)" %
+                 (mocked_server_address, len(HTTPTestHandler.files), id(httpd)))
+        # for f in HTTPTestHandler.files.keys():
+        #     log.info(f)
+        #     log.info("└─ %s" % HTTPTestHandler.files[f][0:3])
+        yield mocked_server_address
+    finally:
+        httpd.socket.close()
+        httpd.shutdown()
+        th.join()
+        log.info("Teardown mocked ERDDAP HTTP server with id=%s" % id(httpd))
+
+
 @pytest.fixture(scope="module")
-def mocked_erddap():
-    # uri = "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?data_mode,latitude,longitude,position_qc,time,time_qc,direction,platform_number,cycle_number,config_mission_number,vertical_sampling_scheme,pres,temp,psal,pres_qc,temp_qc,psal_qc,pres_adjusted,temp_adjusted,psal_adjusted,pres_adjusted_qc,temp_adjusted_qc,psal_adjusted_qc,pres_adjusted_error,temp_adjusted_error,psal_adjusted_error&platform_number=~%221901393%22&distinct()&orderBy(%22time,pres%22)"
-    # with aioresponses() as httpserver:
-    #     with open('test_data/ArgoFloats_float_1901393.nc', mode='rb') as file:
-    #         data = file.read()
-    #     httpserver.get(uri, body=data)
-    #
-    #     log.info('Mocked IFREMER erddap ready.')
-    #     yield httpserver
-
-    DATA_FOLDER = os.path.dirname(os.path.realpath(__file__)).replace("helpers", "test_data")
-    # log.info("Tests DATA_FOLDER: %s" % DATA_FOLDER)
-
-    with open(os.path.join(DATA_FOLDER, "erddap_file_index.pkl"), "rb") as f:
-        URI = pickle.load(f)
-    # log.debug(URI)
-
-    with aioresponses() as httpserver:
-        for ressource in URI:
-            test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (ressource['sha'], ressource['ext']))
-            with open(test_data_file, mode='rb') as file:
-                data = file.read()
-            httpserver.get(ressource['uri'], body=data)#, headers={'Content-Type': 'application/x-netcdf'})
-
-            # assert can_be_xr_opened(True, test_data_file)
-            # log.debug("%s -> %s" % (parse_qs(ressource['uri']), test_data_file))
-
-            # log.debug(xr.open_dataset(test_data_file, engine='netcdf4'))
-
-        log.info("Mocked IFREMER erddap ready with %i URLs registered." % len(URI))
-        yield httpserver
+def mocked_erddapserver():
+    with serve() as s:
+        yield s
 
 
 def can_be_xr_opened(src, file):
@@ -72,7 +213,7 @@ if __name__ == '__main__':
     import aiofiles
 
     DATA_FOLDER = os.path.dirname(os.path.realpath(__file__)).replace("helpers", "test_data")
-    print("Tests DATA_FOLDER: %s" % DATA_FOLDER)
+    print("Data will be saved in: %s" % DATA_FOLDER)
 
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
     from argopy import DataFetcher
@@ -83,12 +224,12 @@ if __name__ == '__main__':
         # And because of the erddap fetcher N_POINT attribute, we also need to fetch ".ncHeader" on top of ".nc" files
         requests_phy = {
             "float": [[1901393], [1901393, 6902746]],
-            # "profile": [[6902746, 34], [6902746, np.arange(12, 13)], [6902746, [1, 12]]],
-            # "region": [
-            #     [-20, -16., 0, 1, 0, 100.],
-            #     # [-20, -16., 0, 1, 0, 100., "1997-07-01", "1997-09-01"]
-            #     [-20, -16., 0, 1, 0, 100., "2004-01-01", "2004-01-31"]
-            # ],
+            "profile": [[6902746, 34], [6902746, np.arange(12, 13)], [6902746, [1, 12]]],
+            "region": [
+                [-20, -16., 0, 1, 0, 100.],
+                # [-20, -16., 0, 1, 0, 100., "1997-07-01", "1997-09-01"]
+                [-20, -16., 0, 1, 0, 100., "2004-01-01", "2004-01-31"]
+            ],
         }
         requests_bgc = {
             "float": [[5903248], [7900596, 2902264]],
@@ -104,57 +245,116 @@ if __name__ == '__main__':
                 [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01-01", "2012-12-31"],
             ]
         }
-        # requests = {'phy': requests_phy, 'bgc': requests_bgc, 'ref': requests_ref}
-        requests = {'phy': requests_phy}
+        requests_par = {
+            "float": [[6902766, 6902772, 6902914]],
+            "region": [[-60, -55, 40.0, 45.0, 0.0, 20.0],
+                       [-60, -55, 40.0, 45.0, 0.0, 20.0, "2007-08-01", "2007-09-01"]]
+        }
 
-        nc_file = lambda url, sha, iter: {'uri': url, 'ext': "nc", 'sha': "%s_%03.d" % (sha, iter)}
-        ncHeader_file = lambda url, sha, iter: {'uri': url, 'ext': "ncHeader", 'sha': "%s_%03.d" % (sha, iter)}
+        requests = {'phy': requests_phy, 'bgc': requests_bgc, 'ref': requests_ref}
+        # requests = {'phy': requests_phy}
+
+        def nc_file(url, sha, iter):
+            return {
+                'uri': url,
+                'ext': "nc",
+                'sha': "%s_%03.d" % (sha, iter),
+                'type': 'application/x-netcdf',
+            }
+
+        def nc_normfile(url, sha, iter):
+            return {
+                'uri': url,
+                'ext': "nc",
+                'sha': "%s_%03.d_norm" % (sha, iter),
+                'type': 'application/x-netcdf',
+            }
+
+        def ncHeader_file(url, sha, iter):
+            return {
+                'uri': url,
+                'ext': "ncHeader",
+                'sha': "%s_%03.d" % (sha, iter),
+                'type': 'text/plain'
+            }
+
+        def ncHeader_normfile(url, sha, iter):
+            return {
+                'uri': url,
+                'ext': "ncHeader",
+                'sha': "%s_%03.d_norm" % (sha, iter),
+                'type': 'text/plain'
+            }
+
+        def add_to_URI(URI, this_fetcher):
+            uri = this_fetcher.uri
+            for ii, url in enumerate(uri):
+                URI.append(nc_file(url, this_fetcher.fetcher.sha, ii))
+                # URI.append(nc_normfile(normalize_url(url), f.fetcher.sha, ii))
+
+            url = f.fetcher.get_url().replace("." + f.fetcher.erddap.response, ".ncHeader")
+            URI.append(ncHeader_file(url, f.fetcher.sha, ii))
+            # URI.append(ncHeader_normfile(normalize_url(url), f.fetcher.sha, ii))
+            return URI
 
         URI = []
         for ds in requests:
             fetcher = DataFetcher(src='erddap', ds=ds)
+
             for access_point in requests[ds]:
                 if access_point == 'profile':
                     for cfg in requests[ds][access_point]:
                         f = fetcher.profile(*cfg)
-                        uri = f.uri
-                        for ii, url in enumerate(uri):
-                            URI.append(nc_file(url, f.fetcher.sha, ii))
-                        url = f.fetcher.get_url().replace("." + f.fetcher.erddap.response, ".ncHeader")
-                        URI.append(ncHeader_file(url, f.fetcher.sha, ii))
-                        # print(ds, access_point, cfg, f.fetcher.sha)
+                        URI = add_to_URI(URI, f)
+
                 if access_point == 'float':
                     for cfg in requests[ds][access_point]:
                         f = fetcher.float(cfg)
-                        uri = f.uri
-                        for ii, url in enumerate(uri):
-                            URI.append(nc_file(url, f.fetcher.sha, ii))
-                        url = f.fetcher.get_url().replace("." + f.fetcher.erddap.response, ".ncHeader")
-                        URI.append(ncHeader_file(url, f.fetcher.sha, ii))
-                        # print(ds, access_point, cfg, f.fetcher.sha)
+                        URI = add_to_URI(URI, f)
+
                 if access_point == 'region':
                     for cfg in requests[ds][access_point]:
                         f = fetcher.region(cfg)
-                        uri = f.uri
-                        for ii, url in enumerate(uri):
-                            URI.append(nc_file(url, f.fetcher.sha, ii))
-                        url = f.fetcher.get_url().replace("." + f.fetcher.erddap.response, ".ncHeader")
-                        URI.append(ncHeader_file(url, f.fetcher.sha, ii))
-                        # print(ds, access_point, cfg, f.fetcher.sha)
+                        URI = add_to_URI(URI, f)
 
+        fetcher = DataFetcher(src='erddap', ds=ds, parallel=True)
+        for access_point in requests_par:
+
+            if access_point == 'profile':
+                for cfg in requests_par[access_point]:
+                    f = fetcher.profile(*cfg)
+                    URI = add_to_URI(URI, f)
+
+            if access_point == 'float':
+                for cfg in requests_par[access_point]:
+                    f = fetcher.float(cfg)
+                    URI = add_to_URI(URI, f)
+
+            if access_point == 'region':
+                for cfg in requests_par[access_point]:
+                    f = fetcher.region(cfg)
+                    URI = add_to_URI(URI, f)
+
+        # Add more URI:
+        URI.append({'uri': 'https://erddap.ifremer.fr/erddap/info/ArgoFloats/index.json',
+                    'ext': 'json',
+                    'sha': hashlib.sha256('https://erddap.ifremer.fr/erddap/info/ArgoFloats/index.json'.encode()).hexdigest(),
+                    'type': 'application/json',
+                    })
+
+        #
         return URI
 
     async def place_file(session: aiohttp.ClientSession, source: dict) -> None:
-        # print(source['uri'])
-        # r = await session.get(source['uri'], ssl=False)
         async with session.get(source['uri'], ssl=False) as r:
-            if r.content_type not in ['application/x-netcdf', 'text/plain']:
-                print("Unexpected content type (%s) with this request: %s (%s extension)" %
+            if r.content_type not in ['application/x-netcdf', 'text/plain', 'application/json']:
+                print("Unexpected content type (%s) with this GET request: %s (%s extension)" %
                       (r.content_type, parse_qs(source['uri']), os.path.splitext(urlparse(source['uri']).path)[1]))
 
             test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (source['sha'], source['ext']))
             async with aiofiles.open(test_data_file, 'wb') as f:
                 data = await r.content.read(n=-1)  # load all read bytes !
+                print(f.name, data[0:3])
                 await f.write(data)
                 return can_be_xr_opened(source, test_data_file)
 
@@ -163,14 +363,34 @@ if __name__ == '__main__':
             urls = await fetch_download_links(session)
             return await asyncio.gather(*[place_file(session, url) for url in urls])
 
+    # async def place_fileHEAD(session: aiohttp.ClientSession, source: dict) -> None:
+    #     async with session.head(source['uri'], ssl=False) as r:
+    #         if r.content_type not in ['application/x-netcdf', 'text/plain', 'application/json']:
+    #             print("Unexpected content type (%s) with this HEAD request: %s (%s extension)" %
+    #                   (r.content_type, parse_qs(source['uri']), os.path.splitext(urlparse(source['uri']).path)[1]))
+    #         # else:
+    #         #     print("\nLoading: %s" % source['uri'])
+    #
+    #         test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (source['sha'], source['ext']))
+    #         async with aiofiles.open(test_data_file, 'wb') as f:
+    #             data = await r.content.read(n=-1)  # load all read bytes !
+    #             print(f.name, data[0:3])
+    #             await f.write(data)
+    #             return can_be_xr_opened(source, test_data_file)
+    #
+    # async def mainHEAD():
+    #     async with aiohttp.ClientSession() as session:
+    #         urls = await fetch_download_links(session)
+    #         return await asyncio.gather(*[place_fileHEAD(session, url) for url in urls])
+
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     URLS = loop.run_until_complete(main())
+    # [URLS.append(uri) for uri in loop.run_until_complete(mainHEAD())]
+
     # URLS = [url for url in URLS if url is not None]
-    print("Saved %i urls" % len(URLS))
+    print("\nSaved %i urls" % len(URLS))
 
     # Save the URI list in a pickle to be loaded and used by the erddap mocker:
     with open(os.path.join(DATA_FOLDER, "erddap_file_index.pkl"), 'wb') as f:
         pickle.dump(URLS, f)
-
-    # print(URLS)
