@@ -1,0 +1,4 @@
+Error {
+    code=400;
+    message="Bad Request: Query error: All constraints (including \"platform_number=~...\") must be preceded by '&'.";
+}
