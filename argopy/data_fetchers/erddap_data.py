@@ -42,7 +42,7 @@ log = logging.getLogger("argopy.erddap.data")
 access_points = ['wmo', 'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy', 'ref', 'bgc']  # First is default
-api_server = 'https://erddap.ifremer.fr/erddap/'  # API root url
+api_server = OPTIONS['erddap']  # API root url
 api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
 
 
@@ -118,10 +118,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
-        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
+        self.fs = kwargs['fs'] if 'fs' in kwargs else httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
         self.definition = "Ifremer erddap Argo data fetcher"
         self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
-        self.server = api_server
+        self.server = kwargs['server'] if 'server' in kwargs else OPTIONS['erddap']
 
         if not isinstance(parallel, bool):
             parallel_method = parallel
@@ -143,9 +143,20 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     def __repr__(self):
         summary = ["<datafetcher.erddap>"]
         summary.append("Name: %s" % self.definition)
-        summary.append("API: %s" % api_server)
+        summary.append("API: %s" % self.server)
         summary.append("Domain: %s" % format_oneline(self.cname()))
         return "\n".join(summary)
+
+    @property
+    def server(self):
+        return self._server
+
+    @server.setter
+    def server(self, value):
+        self._server = value
+        if hasattr(self, 'erddap') and self.erddap.server != value:
+            log.debug("The erddap server has been modified, updating internal data")
+            self._init_erddapy()
 
     def _add_attributes(self, this):  # noqa: C901
         """ Add variables attributes not return by erddap requests (csv)
@@ -249,7 +260,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     def _init_erddapy(self):
         # Init erddapy
-        self.erddap = ERDDAP(server=self.server, protocol="tabledap")
+        self.erddap = ERDDAP(server=str(self.server), protocol="tabledap")
         self.erddap.response = (
             "nc"  # This is a major change in v0.4, we used to work with csv files
         )
@@ -442,11 +453,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     @property
     def N_POINTS(self) -> int:
         """ Number of measurements expected to be returned by a request """
+        url = self.get_url().replace("." + self.erddap.response, ".ncHeader")
         try:
-            url = self.get_url().replace("." + self.erddap.response, ".ncHeader")
-            log.debug('N_POINTS url:' % url)
-            with self.fs.open(url) as of:
-                ncHeader = of.read().decode("utf-8")
+            ncHeader = str(self.fs.fs.cat_file(url))
             lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
             return int(lines.split("=")[1].split(";")[0])
         except Exception:
@@ -455,24 +464,28 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     def to_xarray(self, errors: str = 'ignore'):  # noqa: C901
         """ Load Argo data and return a xarray.DataSet """
 
+        URI = self.uri  # Call it once
+
         # Download data
         if not self.parallel:
-            if len(self.uri) == 1:
+            if len(URI) == 1:
                 try:
-                    ds = self.fs.open_dataset(self.uri[0])
+                    # log.debug("to_xarray: %s" % URI[0])
+                    # log_argopy_callerstack()
+                    ds = self.fs.open_dataset(URI[0])
                 except ClientResponseError as e:
                     raise ErddapServerError(e.message)
             else:
                 try:
                     ds = self.fs.open_mfdataset(
-                        self.uri, method="sequential", progress=self.progress, errors=errors
+                        URI, method="sequential", progress=self.progress, errors=errors
                     )
                 except ClientResponseError as e:
                     raise ErddapServerError(e.message)
         else:
             try:
                 ds = self.fs.open_mfdataset(
-                    self.uri, method=self.parallel_method, progress=self.progress, errors=errors
+                    URI, method=self.parallel_method, progress=self.progress, errors=errors
                 )
             except ClientResponseError as e:
                 raise ErddapServerError(e.message)
@@ -510,7 +523,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         ds.attrs["Fetched_by"] = getpass.getuser()
         ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
         ds.attrs["Fetched_constraints"] = self.cname()
-        ds.attrs["Fetched_uri"] = self.uri
+        ds.attrs["Fetched_uri"] = URI
         ds = ds[np.sort(ds.data_vars)]
 
         #
@@ -605,7 +618,7 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         for wmos in wmo_grps:
             urls.append(
                 Fetch_wmo(
-                    WMO=wmos, CYC=self.CYC, ds=self.dataset_id, parallel=False
+                    WMO=wmos, CYC=self.CYC, ds=self.dataset_id, parallel=False, fs=self.fs, server=self.server,
                 ).get_url()
             )
         return urls
@@ -667,5 +680,5 @@ class Fetch_box(ErddapArgoDataFetcher):
             boxes = self.Chunker.fit_transform()
             urls = []
             for box in boxes:
-                urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())
+                urls.append(Fetch_box(box=box, ds=self.dataset_id, fs=self.fs, server=self.server).get_url())
             return urls

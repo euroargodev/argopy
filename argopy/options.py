@@ -19,6 +19,7 @@ log = logging.getLogger("argopy.options")
 # Define option names as seen by users:
 DATA_SOURCE = "src"
 FTP = "ftp"
+ERDDAP = 'erddap'
 DATASET = "dataset"
 DATA_CACHE = "cachedir"
 USER_LEVEL = "mode"
@@ -29,6 +30,7 @@ TRUST_ENV = "trust_env"
 OPTIONS = {
     DATA_SOURCE: "erddap",
     FTP: "https://data-argo.ifremer.fr",
+    ERDDAP: "https://erddap.ifremer.fr/erddap",
     DATASET: "phy",
     DATA_CACHE: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
     USER_LEVEL: "standard",
@@ -58,6 +60,7 @@ def validate_ftp(this_path):
 _VALIDATORS = {
     DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
     FTP: validate_ftp,
+    ERDDAP: lambda x: True,
     DATASET: _DATASET_LIST.__contains__,
     DATA_CACHE: os.path.exists,
     USER_LEVEL: _USER_LEVEL_LIST.__contains__,
