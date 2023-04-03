@@ -51,7 +51,6 @@ if os.path.exists(DB_FILE):
         with open(test_data_file, mode='rb') as file:
             data = file.read()
         ERDDAP_FILES[ressource['uri'].replace(api_server, '')] = data
-        # ERDDAP_FILES[ressource['uri'].replace(api_server, '').replace('"', "%22")] = data
 else:
     log.debug("Loading this sub-module with DB_FILE %s" % DB_FILE)
 
@@ -295,48 +294,38 @@ if __name__ == '__main__':
                 URI.append(nc_file(url, this_fetcher.fetcher.sha, ii))
                 # URI.append(nc_normfile(normalize_url(url), f.fetcher.sha, ii))
 
-            url = f.fetcher.get_url().replace("." + f.fetcher.erddap.response, ".ncHeader")
-            URI.append(ncHeader_file(url, f.fetcher.sha, ii))
+            url = this_fetcher.fetcher.get_url().replace("." + this_fetcher.fetcher.erddap.response, ".ncHeader")
+            URI.append(ncHeader_file(url, this_fetcher.fetcher.sha, ii))
             # URI.append(ncHeader_normfile(normalize_url(url), f.fetcher.sha, ii))
             return URI
 
         URI = []
         for ds in requests:
             fetcher = DataFetcher(src='erddap', ds=ds)
-
             for access_point in requests[ds]:
                 if access_point == 'profile':
                     for cfg in requests[ds][access_point]:
-                        f = fetcher.profile(*cfg)
-                        URI = add_to_URI(URI, f)
-
+                        URI = add_to_URI(URI, fetcher.profile(*cfg))
                 if access_point == 'float':
                     for cfg in requests[ds][access_point]:
-                        f = fetcher.float(cfg)
-                        URI = add_to_URI(URI, f)
-
+                        URI = add_to_URI(URI, fetcher.float(cfg))
                 if access_point == 'region':
                     for cfg in requests[ds][access_point]:
-                        f = fetcher.region(cfg)
-                        URI = add_to_URI(URI, f)
+                        URI = add_to_URI(URI, fetcher.region(cfg))
 
-        fetcher = DataFetcher(src='erddap', ds=ds, parallel=True)
+
+        fetcher = DataFetcher(src='erddap', ds='phy', parallel=True)
         for access_point in requests_par:
-
             if access_point == 'profile':
                 for cfg in requests_par[access_point]:
-                    f = fetcher.profile(*cfg)
-                    URI = add_to_URI(URI, f)
-
+                    URI = add_to_URI(URI, fetcher.profile(*cfg))
             if access_point == 'float':
                 for cfg in requests_par[access_point]:
-                    f = fetcher.float(cfg)
-                    URI = add_to_URI(URI, f)
-
+                    URI = add_to_URI(URI, fetcher.float(cfg))
             if access_point == 'region':
                 for cfg in requests_par[access_point]:
-                    f = fetcher.region(cfg)
-                    URI = add_to_URI(URI, f)
+                    URI = add_to_URI(URI, fetcher.region(cfg))
+
 
         # Add more URI:
         URI.append({'uri': 'https://erddap.ifremer.fr/erddap/info/ArgoFloats/index.json',
