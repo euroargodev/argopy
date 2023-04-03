@@ -209,6 +209,16 @@ def can_be_xr_opened(src, file):
         return src
 
 
+def log_file_desc(file, data, src):
+    size = float(os.stat(file).st_size / (1024 * 1024))
+    prt_size = lambda x: "< 1Mb" if x < 1 else "%0.2dMb" % x
+    msg = []
+    # msg.append("- %s, %s" % (file.replace(DATA_FOLDER, '<DATA_FOLDER>'), data[0:3]))
+    msg.append("\n🤖 %s" % parse_qs(src['uri']))
+    msg.append("%s, %s, %s" % (file.replace(DATA_FOLDER, '<DATA_FOLDER>'), data[0:3], prt_size(size)))
+    return "\n".join(msg)
+
+
 if __name__ == '__main__':
     import aiohttp
     import asyncio
@@ -248,7 +258,8 @@ if __name__ == '__main__':
             ]
         }
         requests_par = {
-            "float": [[6902766, 6902772, 6902914]],
+            # "float": [[6902766, 6902772, 6902914]],  # >128Mb file !
+            "float": [[1900468, 1900117, 1900386]],
             "region": [[-60, -55, 40.0, 45.0, 0.0, 20.0],
                        [-60, -55, 40.0, 45.0, 0.0, 20.0, "2007-08-01", "2007-09-01"]]
         }
@@ -346,8 +357,8 @@ if __name__ == '__main__':
             test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (source['sha'], source['ext']))
             async with aiofiles.open(test_data_file, 'wb') as f:
                 data = await r.content.read(n=-1)  # load all read bytes !
-                print(f.name, data[0:3])
                 await f.write(data)
+                print(log_file_desc(f.name, data, source))
                 return can_be_xr_opened(source, test_data_file)
 
     async def main():
