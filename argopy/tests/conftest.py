@@ -5,7 +5,7 @@ import shutil
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
 from mocked_ftp import mocked_ftpserver
-from mocked_erddap_ifremer import mocked_erddapserver
+from mocked_http import mocked_httpserver
 
 
 log = logging.getLogger("argopy.tests.conftests")

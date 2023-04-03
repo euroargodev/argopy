@@ -8,8 +8,8 @@ import pytest
 import xarray as xr
 
 # from mocked_erddap_ifremer import mocked_server_address, mocked_erddapserver
-from mocked_http3 import mocked_server_address
-from mocked_http3 import mocked_httpserver as mocked_erddapserver
+from mocked_http import mocked_server_address
+from mocked_http import mocked_httpserver as mocked_erddapserver
 import tempfile
 import shutil
 from collections import ChainMap

@@ -301,7 +301,6 @@ class Test_MemoryStore:
 
 
 @skip_this
-@requires_connection
 class Test_FtpStore:
 
     @property
@@ -318,12 +317,10 @@ class Test_FtpStore:
         log.debug("Using FTP port: %i" % p)
         return p
 
-    @safe_to_server_errors
     def test_implementation(self):
         fs = ftpstore(host=self.host, port=self.port, cache=False)
         assert isinstance(fs.fs, fsspec.implementations.ftp.FTPFileSystem)
 
-    @safe_to_server_errors
     def test_open_dataset(self):
         uri = "dac/csiro/5900865/5900865_prof.nc"
         fs = ftpstore(host=self.host, port=self.port, cache=False)
@@ -396,7 +393,6 @@ class Test_IndexFilter_WMO:
                     assert results is None
 
 
-@skip_this
 @requires_connection
 class Test_Legacy_IndexStore:
     ftproot, flist = argopy.tutorial.open_dataset("gdac")
@@ -585,24 +581,20 @@ class IndexStore_test_proto:
         if cacheable:
             assert is_list_of_strings(this_idx.cachepath('search'))
 
-    # @skip_this
     @pytest.mark.parametrize("a_store", VALID_HOSTS,
                              indirect=True,
                              ids=["%s" % ftp_shortname(ftp) for ftp in VALID_HOSTS])
     def test_hosts(self, a_store):
-        @safe_to_server_errors
         def test(this_store):
             self.assert_index(this_store) # assert (this_store.N_RECORDS >= 1)  # Make sure we loaded the index file content
         test(a_store)
 
-    # @skip_this
     @pytest.mark.parametrize("ftp_host", ['invalid', 'https://invalid_ftp', 'ftp://invalid_ftp'], indirect=False)
     def test_hosts_invalid(self, ftp_host):
         # Invalid servers:
         with pytest.raises(FtpPathError):
             self.indexstore(host=ftp_host)
 
-    # @skip_this
     def test_index(self):
         def new_idx():
             return self.indexstore(host=self.host, index_file=self.index_file, cache=False)
@@ -622,12 +614,10 @@ class IndexStore_test_proto:
 
     @pytest.mark.parametrize("a_search", search_scenarios, indirect=True, ids=search_scenarios_ids)
     def test_search(self, a_search):
-        @safe_to_server_errors
         def test(this_searched_store):
             self.assert_search(this_searched_store, cacheable=False)
         test(a_search)
 
-    # @skip_this
     def test_to_dataframe_index(self):
         idx = self.new_idx()
         assert isinstance(idx.to_dataframe(), pd.core.frame.DataFrame)
@@ -642,7 +632,6 @@ class IndexStore_test_proto:
         df = idx.to_dataframe(index=True, nrows=N)
         assert df.shape[0] == N
 
-    # @skip_this
     def test_to_dataframe_search(self):
         idx = self.new_idx()
         wmo = [s['wmo'] for s in VALID_SEARCHES if 'wmo' in s.keys()][0]
@@ -660,20 +649,17 @@ class IndexStore_test_proto:
         idx = self.new_idx(cache=True)
         self.assert_index(idx, cacheable=True)
 
-    # @skip_this
     def test_caching_search(self):
         idx = self.new_idx(cache=True)
         wmo = [s['wmo'] for s in VALID_SEARCHES if 'wmo' in s.keys()][0]
         idx.search_wmo(wmo)
         self.assert_search(idx, cacheable=True)
 
-    # @skip_this
     def test_read_wmo(self):
         wmo = [s['wmo'] for s in VALID_SEARCHES if 'wmo' in s.keys()][0]
         idx = self.new_idx().search_wmo(wmo)
         assert len(idx.read_wmo()) == len(wmo)
 
-    # @skip_this
     def test_records_per_wmo(self):
         wmo = [s['wmo'] for s in VALID_SEARCHES if 'wmo' in s.keys()][0]
         idx = self.new_idx().search_wmo(wmo)
@@ -690,12 +676,9 @@ class IndexStore_test_proto:
         request.addfinalizer(remove_test_dir)
 
 
-# @skip_this
-# @skip_for_debug
 class Test_IndexStore_pandas(IndexStore_test_proto):
     indexstore = indexstore_pandas
 
-# @skip_for_debug
 @skip_pyarrow
 class Test_IndexStore_pyarrow(IndexStore_test_proto):
     from argopy.stores.argo_index_pa import indexstore_pyarrow
