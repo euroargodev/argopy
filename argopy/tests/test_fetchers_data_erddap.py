@@ -7,7 +7,9 @@ from argopy.utilities import is_list_of_strings
 import pytest
 import xarray as xr
 
-from mocked_erddap_ifremer import mocked_server_address, mocked_erddapserver
+# from mocked_erddap_ifremer import mocked_server_address, mocked_erddapserver
+from mocked_http3 import mocked_server_address
+from mocked_http3 import mocked_httpserver as mocked_erddapserver
 import tempfile
 import shutil
 from collections import ChainMap
@@ -104,7 +106,7 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
     """
     def assert_all(this_fetcher, cacheable):
         # log.debug(this_fetcher.to_xarray(errors='raise'))
-        assert isinstance(this_fetcher.to_xarray(), xr.Dataset)
+        assert isinstance(this_fetcher.to_xarray(errors='raise'), xr.Dataset)
         assert (this_fetcher.N_POINTS >= 1)
         if cacheable:
             assert is_list_of_strings(this_fetcher.cachepath)
@@ -115,7 +117,9 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
         if this_fetcher.dataset_id == 'bgc':
             pytest.xfail("BGC is not yet fully supported")
         else:
+            raise
             assert False
+
 
 class Test_Backend:
     """ Test ERDDAP data fetching backend """
@@ -127,7 +131,7 @@ class Test_Backend:
         self.cachedir = tempfile.mkdtemp()
 
     def _setup_fetcher(self, this_request, cached=False, parallel=False):
-        log.debug("")
+        # log.debug("")
         defaults_args = {"src": self.src,
                          "server": mocked_server_address,
                          "cache": cached,
@@ -147,8 +151,8 @@ class Test_Backend:
             # parallel is False by default, so we don't need to clutter the arguments list
             del fetcher_args["parallel"]
 
-        log.debug("Setting up a new fetcher with the following arguments:")
-        log.debug(fetcher_args)
+        # log.debug("Setting up a new fetcher with the following arguments:")
+        # log.debug(fetcher_args)
         return fetcher_args, access_point
 
     @pytest.fixture
