@@ -350,52 +350,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         return vlist
 
-    @property
-    def _dtype(self):
-        """ Return a dictionary of data types for each variable requested to erddap in the minimal vlist """
-        dref = {
-            "data_mode": object,
-            "latitude": np.float64,
-            "longitude": np.float64,
-            "position_qc": np.int64,
-            "time": object,
-            "time_qc": np.int64,
-            "direction": object,
-            "platform_number": np.int64,
-            "config_mission_number": np.int64,
-            "vertical_sampling_scheme": object,
-            "cycle_number": np.int64,
-            "pres": np.float64,
-            "temp": np.float64,
-            "psal": np.float64,
-            "doxy": np.float64,
-            "pres_qc": np.int64,
-            "temp_qc": object,
-            "psal_qc": object,
-            "doxy_qc": object,
-            "pres_adjusted": np.float64,
-            "temp_adjusted": np.float64,
-            "psal_adjusted": np.float64,
-            "doxy_adjusted": np.float64,
-            "pres_adjusted_qc": object,
-            "temp_adjusted_qc": object,
-            "psal_adjusted_qc": object,
-            "doxy_adjusted_qc": object,
-            "pres_adjusted_error": np.float64,
-            "temp_adjusted_error": np.float64,
-            "psal_adjusted_error": np.float64,
-            "doxy_adjusted_error": np.float64,
-            "ptmp": np.float64,
-        }
-        plist = self._minimal_vlist
-        response = {}
-        for p in plist:
-            if p in dref:
-                response[p] = dref[p]
-            else:
-                response[p] = object
-        return response
-
     def cname(self):
         """ Return a unique string defining the constraints """
         return self._cname()
