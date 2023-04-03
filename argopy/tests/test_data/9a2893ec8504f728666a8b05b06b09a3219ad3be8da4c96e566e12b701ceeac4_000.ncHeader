@@ -87,8 +87,8 @@ netcdf ArgoFloats-ref_802a_600e_1b36.nc {
   :geospatial_lon_max = -65.00999999999999; // double
   :geospatial_lon_min = -69.99500274658203; // double
   :geospatial_lon_units = "degrees_east";
-  :history = "2023-03-31T12:45:22Z (local files)
-2023-03-31T12:45:22Z http://www.ifremer.fr/erddap/tabledap/ArgoFloats-ref.nc?latitude,longitude,time,platform_number,cycle_number,pres,temp,psal,ptmp&longitude%3E=-70&longitude%3C=-65&latitude%3E=35.0&latitude%3C=40.0&pres%3E=0&pres%3C=10.0&distinct()&orderBy(%22time,pres%22)";
+  :history = "2023-04-03T08:28:01Z (local files)
+2023-04-03T08:28:01Z http://www.ifremer.fr/erddap/tabledap/ArgoFloats-ref.nc?latitude,longitude,time,platform_number,cycle_number,pres,temp,psal,ptmp&longitude%3E=-70&longitude%3C=-65&latitude%3E=35.0&latitude%3C=40.0&pres%3E=0&pres%3C=10.0&distinct()&orderBy(%22time,pres%22)";
   :id = "ArgoFloats-ref";
   :infoUrl = "http://www.argodatamgt.org/DMQC/Reference-data-base";
   :institution = "Argo";
