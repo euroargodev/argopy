@@ -20,7 +20,7 @@ log = logging.getLogger("argopy.tests.data.erddap")
 List access points to be tested for each datasets: phy, bgc and ref.
 For each access points, we list 1-to-2 scenario to make sure all possibilities are tested
 """
-TESTS_POINTS = [
+ACCESS_POINTS = [
     {"phy": [
             {"float": 1901393},
             {"float": [1901393, 6902746]},
@@ -42,31 +42,41 @@ TESTS_POINTS = [
         {"region": [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01-1", "2012-12-31"]},
     ]},
 ]
-PARALLEL_TESTS_POINTS = [
+PARALLEL_ACCESS_POINTS = [
     {"phy": [
-        {"float": [1901393, 6902746, 6902914]},
-        {"region": [-60, -55, 40.0, 45.0, 0.0, 20.0]},
-        {"region": [-60, -55, 40.0, 45.0, 0.0, 20.0, "2007-08-01", "2007-09-01"]},
+        {"float": [6902766, 6902772, 6902914]},
+        # {"region": [-60, -55, 40.0, 45.0, 0.0, 20.0]},
+        # {"region": [-60, -55, 40.0, 45.0, 0.0, 20.0, "2007-08-01", "2007-09-01"]},
     ]},
 ]
 
 """
+List user modes to be testes
+"""
+USER_MODES = ['standard', 'expert']
+
+
+"""
 Make a list of VALID dataset/access_points to be tested
 """
-VALID_ACCESS_POINTS = []
-for entry in TESTS_POINTS:
+VALID_ACCESS_POINTS, VALID_ACCESS_POINTS_IDS = [], []
+for entry in ACCESS_POINTS:
     for ds in entry:
-        for ap in entry[ds]:
-            VALID_ACCESS_POINTS.append({'ds': ds, 'access_point': ap})
-VALID_ACCESS_POINTS_IDS = ["ds='%s', %s" % (sc['ds'], sc['access_point']) for sc in VALID_ACCESS_POINTS]
+        for mode in USER_MODES:
+            for ap in entry[ds]:
+                VALID_ACCESS_POINTS.append({'ds': ds, 'mode': mode, 'access_point': ap})
+                VALID_ACCESS_POINTS_IDS.append("ds='%s', mode='%s', %s" % (ds, mode, ap))
 
 
-VALID_PARALLEL_ACCESS_POINTS = []
-for entry in PARALLEL_TESTS_POINTS:
+VALID_PARALLEL_ACCESS_POINTS, VALID_PARALLEL_ACCESS_POINTS_IDS = [], []
+for entry in PARALLEL_ACCESS_POINTS:
     for ds in entry:
-        for ap in entry[ds]:
-            VALID_PARALLEL_ACCESS_POINTS.append({'ds': ds, 'access_point': ap})
-VALID_PARALLEL_ACCESS_POINTS_IDS = ["ds='%s', %s" % (sc['ds'], sc['access_point']) for sc in VALID_PARALLEL_ACCESS_POINTS]
+        for mode in USER_MODES:
+            for ap in entry[ds]:
+                VALID_PARALLEL_ACCESS_POINTS.append({'ds': ds, 'mode': mode, 'access_point': ap})
+                VALID_PARALLEL_ACCESS_POINTS_IDS.append("ds='%s', mode='%s', %s" % (ds, mode, ap))
+
+
 
 
 def create_fetcher(fetcher_args, access_point):
@@ -93,11 +103,12 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
         This should be used by all tests asserting a fetcher
     """
     def assert_all(this_fetcher, cacheable):
+        # log.debug(this_fetcher.to_xarray(errors='raise'))
         assert isinstance(this_fetcher.to_xarray(), xr.Dataset)
         assert (this_fetcher.N_POINTS >= 1)
         if cacheable:
             assert is_list_of_strings(this_fetcher.cachepath)
-
+        # return True
     try:
         assert_all(this_fetcher, cacheable)
     except:
@@ -155,7 +166,7 @@ class Test_Backend:
     @pytest.fixture
     def parallel_fetcher(self, request):
         """ Fixture to create a ERDDAP data fetcher for a given dataset and access point """
-        fetcher_args, access_point = self._setup_fetcher(request, parallel=True)
+        fetcher_args, access_point = self._setup_fetcher(request, parallel="thread")
         yield create_fetcher(fetcher_args, access_point)
 
     @pytest.fixture(scope="class", autouse=True)
@@ -168,6 +179,10 @@ class Test_Backend:
     #########
     # TESTS #
     #########
+    def test_invalid_dataset(self):
+        with pytest.raises(ValueError):
+            ArgoDataFetcher(src=self.src, ds='invalid')
+
     @pytest.mark.parametrize("fetcher", VALID_ACCESS_POINTS,
                              indirect=True,
                              ids=VALID_ACCESS_POINTS_IDS)
@@ -177,11 +192,11 @@ class Test_Backend:
     @pytest.mark.parametrize("cached_fetcher", VALID_ACCESS_POINTS,
                              indirect=True,
                              ids=VALID_ACCESS_POINTS_IDS)
-    def ttest_cached_fetching(self, mocked_erddapserver, cached_fetcher):
+    def test_cached_fetching(self, mocked_erddapserver, cached_fetcher):
         assert_fetcher(mocked_erddapserver, cached_fetcher, cacheable=True)
 
     @pytest.mark.parametrize("parallel_fetcher", VALID_PARALLEL_ACCESS_POINTS,
                              indirect=True,
                              ids=VALID_PARALLEL_ACCESS_POINTS_IDS)
-    def ttest_parallel_fetching(self, mocked_erddapserver, parallel_fetcher):
+    def test_parallel_fetching(self, mocked_erddapserver, parallel_fetcher):
         assert_fetcher(mocked_erddapserver, parallel_fetcher, cacheable=False)
