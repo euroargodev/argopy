@@ -12,7 +12,7 @@ import tempfile
 import warnings
 import logging
 from packaging import version
-
+from typing import Union
 
 import concurrent.futures
 import multiprocessing
@@ -320,7 +320,7 @@ class filestore(argo_store_proto):
                                  for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
-                    futures = tqdm(futures, total=len(urls))
+                    futures = tqdm(futures, total=len(urls), disable='disable' in progress)
 
                 for future in futures:
                     data = None
@@ -352,7 +352,7 @@ class filestore(argo_store_proto):
 
         elif method in ['seq', 'sequential']:
             if progress:
-                urls = tqdm(urls, total=len(urls))
+                urls = tqdm(urls, total=len(urls), disable='disable' in progress)
 
             for url in urls:
                 data = None
@@ -490,7 +490,7 @@ class httpstore(argo_store_proto):
                        urls,
                        max_workers: int = 112,
                        method: str = 'thread',
-                       progress: bool = False,
+                       progress: Union[bool, str] = False,
                        concat: bool = True,
                        concat_dim='row',
                        preprocess=None,
@@ -595,7 +595,7 @@ class httpstore(argo_store_proto):
                                  for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
-                    futures = tqdm(futures, total=len(urls))
+                    futures = tqdm(futures, total=len(urls), disable='disable' in progress)
 
                 for future in futures:
                     data = None
@@ -632,7 +632,7 @@ class httpstore(argo_store_proto):
 
         elif method in ['seq', 'sequential']:
             if progress:
-                urls = tqdm(urls, total=len(urls))
+                urls = tqdm(urls, total=len(urls), disable='disable' in progress)
 
             for url in urls:
                 data = None
@@ -737,7 +737,7 @@ class httpstore(argo_store_proto):
                     urls,
                     max_workers=112,
                     method: str = 'thread',
-                    progress: bool = False,
+                    progress: Union[bool, str] = False,
                     preprocess=None,
                     url_follow=False,
                     errors: str = 'ignore',
@@ -790,7 +790,7 @@ class httpstore(argo_store_proto):
                                                  preprocess=preprocess, url_follow=url_follow, *args, **kwargs): url for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
-                    futures = tqdm(futures, total=len(urls))
+                    futures = tqdm(futures, total=len(urls), disable='disable' in progress)
 
                 for future in futures:
                     data = None
@@ -816,7 +816,8 @@ class httpstore(argo_store_proto):
 
         elif method in ['seq', 'sequential']:
             if progress:
-                urls = tqdm(urls, total=len(urls))
+                log.debug("We ask for progress bar !")
+                urls = tqdm(urls, total=len(urls), disable='disable' in progress)
 
             for url in urls:
                 data = None
@@ -991,7 +992,7 @@ class ftpstore(httpstore):
                                                  preprocess_opts=preprocess_opts, *args, **kwargs): url for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
-                    futures = tqdm(futures, total=len(urls))
+                    futures = tqdm(futures, total=len(urls), disable='disable' in progress)
 
                 for future in futures:
                     data = None
@@ -1030,7 +1031,7 @@ class ftpstore(httpstore):
 
         elif method in ['seq', 'sequential']:
             if progress:
-                urls = tqdm(urls, total=len(urls))
+                urls = tqdm(urls, total=len(urls), disable='disable' in progress)
 
             for url in urls:
                 data = None
