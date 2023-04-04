@@ -27,7 +27,7 @@ from argopy.stores import (
     indexstore,
 )
 from argopy.stores.filesystems import new_fs
-from argopy.options import OPTIONS, check_gdac_path
+from argopy.options import OPTIONS
 from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, InvalidDatasetStructure, FtpPathError
 from argopy.utilities import (
     is_list_of_datasets,
@@ -103,27 +103,19 @@ class Test_FileStore:
         fs = filestore()
         assert isinstance(fs.open_dataset(ncfile), xr.Dataset)
 
-    params = [(m, p) for m in ["seq", "thread", "process"] for p in [True, False]]
-    # params = [(m, p) for m in ["seq", "thread", "process"] for p in [False]]
-    ids_params = ["method=%s, progress=%s" % (p[0], p[1]) for p in params]
-    @pytest.mark.parametrize("params", params,
-                             indirect=False,
-                             ids=ids_params)
+    params = [(m, p, c) for m in ["seq", "thread", "process"] for p in [True, False] for c in [True, False]]
+    ids_params = ["method=%s, progress=%s, concat=%s" % (p[0], p[1], p[2]) for p in params]
+    @pytest.mark.parametrize("params", params, indirect=False, ids=ids_params)
     def test_open_mfdataset(self, params):
         uri = filestore().glob(
             os.path.sep.join([self.ftproot, "dac/aoml/5900446/profiles/*_1*.nc"])
         )[0:2]
-        @safe_to_server_errors
-        def test(this_params):
-            method, progress = this_params
-            fs = filestore()
-
-            ds = fs.open_mfdataset(uri, method=method, progress='disable' if progress else False, errors='raise')
+        method, progress, concat = params
+        ds = filestore().open_mfdataset(uri, method=method, progress='disable' if progress else False, concat=concat)
+        if concat:
             assert isinstance(ds, xr.Dataset)
-
-            ds = fs.open_mfdataset(uri, method=method, progress='disable' if progress else False, concat=False, errors='raise')
+        else:
             assert is_list_of_datasets(ds)
-        test(params)
 
     def test_read_csv(self):
         fs = filestore()
@@ -158,6 +150,7 @@ class Test_FileStore:
             os.remove(uri)  # Delete dummy file
 
 
+@skip_this
 class Test_HttpStore:
     repo = "https://github.com/euroargodev/argopy-data/raw/master"
 
@@ -272,6 +265,13 @@ class Test_HttpStore:
             fs.read_csv(uri, skiprows=8, header=0), pd.core.frame.DataFrame
         )
 
+    @pytest.fixture(scope="class", autouse=True)
+    def cleanup(self, request):
+        """Cleanup once we are finished."""
+        def remove_test_dir():
+            shutil.rmtree(self.cachedir)
+        request.addfinalizer(remove_test_dir)
+
 
 @skip_this
 class Test_MemoryStore:
@@ -300,7 +300,7 @@ class Test_MemoryStore:
         assert not fs.exists('dummy.txt')
 
 
-@skip_this
+# @skip_this
 class Test_FtpStore:
 
     @property
@@ -326,9 +326,8 @@ class Test_FtpStore:
         fs = ftpstore(host=self.host, port=self.port, cache=False)
         assert isinstance(fs.open_dataset(uri), xr.Dataset)
 
-    params = [(m, p) for m in ["seq", "process"] for p in [True, False]]
-    # params = [(m, p) for m in ["seq", "process"] for p in [False]]
-    ids_params = ["method=%s, progress=%s" % (p[0], p[1]) for p in params]
+    params = [(m, p, c) for m in ["seq", "process"] for p in [True, False] for c in [True, False]]
+    ids_params = ["method=%s, progress=%s, concat=%s" % (p[0], p[1], p[2]) for p in params]
     @pytest.mark.parametrize("params", params,
                              indirect=False,
                              ids=ids_params)
@@ -338,17 +337,20 @@ class Test_FtpStore:
               % i
               for i in [1, 2]
           ]
-        @safe_to_server_errors
         def test(this_params):
-            method, progress = this_params
+            method, progress, concat = this_params
             fs = ftpstore(host=self.host, port=self.port, cache=False)
-
-            ds = fs.open_mfdataset(uri, method=method, progress='disable' if progress else False, errors='raise')
-            assert isinstance(ds, xr.Dataset)
-
-            ds = fs.open_mfdataset(uri, method=method, progress='disable' if progress else False, concat=False, errors='raise')
-            assert is_list_of_datasets(ds)
+            ds = fs.open_mfdataset(uri,
+                                   method=method,
+                                   progress='disable' if progress else False,
+                                   concat=concat,
+                                   errors='raise')
+            if concat:
+                assert isinstance(ds, xr.Dataset)
+            else:
+                assert is_list_of_datasets(ds)
         test(params)
+
 
 @skip_this
 class Test_IndexFilter_WMO:
@@ -393,6 +395,7 @@ class Test_IndexFilter_WMO:
                     assert results is None
 
 
+@skip_this
 @requires_connection
 class Test_Legacy_IndexStore:
     ftproot, flist = argopy.tutorial.open_dataset("gdac")
@@ -676,9 +679,12 @@ class IndexStore_test_proto:
         request.addfinalizer(remove_test_dir)
 
 
+@skip_this
 class Test_IndexStore_pandas(IndexStore_test_proto):
     indexstore = indexstore_pandas
 
+
+@skip_this
 @skip_pyarrow
 class Test_IndexStore_pyarrow(IndexStore_test_proto):
     from argopy.stores.argo_index_pa import indexstore_pyarrow

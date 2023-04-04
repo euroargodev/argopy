@@ -373,6 +373,64 @@ def list_ifremer_links(session: aiohttp.ClientSession):
                          })
     return this_URI
 
+def list_gdac_links(session: aiohttp.ClientSession):
+    this_URI = []
+
+    requests = {
+        "float": [13857],
+        "profile": [[13857, 90]],
+        "region": [
+            [-20, -16., 0, 1, 0, 100.],
+            [-20, -16., 0, 1, 0, 100., "1997-07-01", "1997-09-01"]
+        ],
+    }
+
+    def nc_file(url, sha, iter):
+        return {
+            'uri': url,
+            'ext': "nc",
+            'sha': "%s_%03.d" % (sha, iter),
+            'type': CONTENT_TYPE['nc'],
+        }
+
+    def ncHeader_file(url, sha, iter):
+        return {
+            'uri': url,
+            'ext': "ncHeader",
+            'sha': "%s_%03.d" % (sha, iter),
+            'type': CONTENT_TYPE['ncHeader'],
+        }
+
+    def add_to_URI(this, this_fetcher):
+        uri = this_fetcher.uri
+        for ii, url in enumerate(uri):
+            this.append(nc_file(url, this_fetcher.fetcher.sha, ii))
+        # url = this_fetcher.fetcher.get_url().replace("." + this_fetcher.fetcher.erddap.response, ".ncHeader")
+        # this.append(ncHeader_file(url, this_fetcher.fetcher.sha, ii))
+        return this
+
+    for ds in requests:
+        fetcher = DataFetcher(src='gdac', ftp="https://data-argo.ifremer.fr", ds='phy')
+        for access_point in requests[ds]:
+            if access_point == 'profile':
+                for cfg in requests[ds][access_point]:
+                    this_URI = add_to_URI(this_URI, fetcher.profile(*cfg))
+            if access_point == 'float':
+                for cfg in requests[ds][access_point]:
+                    this_URI = add_to_URI(this_URI, fetcher.float(cfg))
+            if access_point == 'region':
+                for cfg in requests[ds][access_point]:
+                    this_URI = add_to_URI(this_URI, fetcher.region(cfg))
+
+    # Add more URI from the erddap:
+    this_URI.append({'uri': 'https://data-argo.ifremer.fr/ar_index_global_prof.txt.gz',
+                     'ext': 'gz',
+                     'sha': hashlib.sha256(
+                         'https://data-argo.ifremer.fr/ar_index_global_prof.txt.gz'.encode()).hexdigest(),
+                     'type': CONTENT_TYPE['txt'],
+                     })
+
+    return this_URI
 
 if __name__ == '__main__':
     import asyncio
@@ -406,6 +464,11 @@ if __name__ == '__main__':
         # api.ifremer.fr REQUESTS #
         ###########################
         [URI.append(link) for link in list_ifremer_links(session)]
+
+        ###########################
+        # api.ifremer.fr REQUESTS #
+        ###########################
+        [URI.append(link) for link in list_gdac_links(session)]
 
         # Return the list of dictionaries
         return URI

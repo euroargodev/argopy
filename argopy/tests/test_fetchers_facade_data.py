@@ -13,6 +13,7 @@ from argopy.errors import (
 from argopy.utilities import is_list_of_strings, is_box
 from utils import (
     requires_fetcher,
+    requires_connection,
     requires_connected_erddap_phy,
     requires_gdac,
     requires_connected_gdac,
@@ -102,10 +103,25 @@ class Test_Facade:
         with pytest.raises(InvalidFetcher):
             assert self.__get_fetcher()[0].to_dataframe()
 
-    def test_to_index(self):
-        assert isinstance(self.__get_fetcher()[1].to_index(), pd.core.frame.DataFrame)
-        assert isinstance(self.__get_fetcher()[1].to_index(full=True), pd.core.frame.DataFrame)
-        assert isinstance(self.__get_fetcher()[1].to_index(full=False, coriolis_id=True), pd.core.frame.DataFrame)
+
+    params = [(p, c) for p in [True, False] for c in [False]]
+    ids_params = ["full=%s, coriolis_id=%s" % (p[0], p[1]) for p in params]
+    @pytest.mark.parametrize("params", params,
+                             indirect=False,
+                             ids=ids_params)
+    def test_to_index(self, params):
+        full, coriolis_id = params
+        assert isinstance(self.__get_fetcher()[1].to_index(full=full, coriolis_id=coriolis_id), pd.core.frame.DataFrame)
+
+    params = [(p, c) for p in [True, False] for c in [True]]
+    ids_params = ["full=%s, coriolis_id=%s" % (p[0], p[1]) for p in params]
+    @pytest.mark.parametrize("params", params,
+                             indirect=False,
+                             ids=ids_params)
+    @requires_connection
+    def test_to_index_coriolis(self, params):
+        full, coriolis_id = params
+        assert isinstance(self.__get_fetcher()[1].to_index(full=full, coriolis_id=coriolis_id), pd.core.frame.DataFrame)
 
     def test_load(self):
         f, fetcher = self.__get_fetcher(pt='float')

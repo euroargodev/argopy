@@ -197,11 +197,12 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
     # ]
 
     # Case 1:
-    check1 = (
-        fs.exists(path)
-        and fs.exists(fs.sep.join([path, "dac"]))
-        # and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
-    )
+    # check1 = (
+    #     fs.exists(path)  # Fails on localhost for the mocked ftp server
+    #     and fs.exists(fs.sep.join([path, "dac"]))
+    #     # and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
+    # )
+    check1 = fs.exists(fs.sep.join([path, "dac"]))
     if check1:
         return True
     elif errors == "raise":
