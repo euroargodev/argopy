@@ -8,15 +8,16 @@ import xarray as xr
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import InvalidDatasetStructure, OptionValueError
-from utils import requires_connected_erddap_phy, requires_gdac, _importorskip, _connectskip
+from utils import requires_gdac, _importorskip, _connectskip
+from mocked_http import mocked_server_address
+
 
 has_gsw, requires_gsw = _importorskip("gsw")
-has_nogsw, requires_nogsw = _connectskip(not has_gsw, "missing GSW")
+has_nogsw, requires_nogsw = _connectskip(not has_gsw, "that GSW module is NOT installed")
 
 
 @pytest.fixture(scope="module")
-@requires_connected_erddap_phy
-def ds_pts():
+def ds_pts(mocked_httpserver):
     """ Create a dictionary of datasets to be used by tests
 
         Note that these datasets can be modified by tests, which can affect the behaviour of other tests !
@@ -25,8 +26,8 @@ def ds_pts():
     try:
         for user_mode in ['standard', 'expert']:
             data[user_mode] = (
-                ArgoDataFetcher(src="erddap", mode=user_mode)
-                .region([-75, -55, 30.0, 40.0, 0, 100.0, "2011-01-01", "2011-01-15"])
+                ArgoDataFetcher(src="erddap", mode=user_mode, server=mocked_server_address)
+                .region([-20, -16., 0, 1, 0, 100., "2004-01-01", "2004-01-31"])
                 .load()
                 .data
             )
@@ -41,23 +42,19 @@ def ds_pts():
         return data
 
 
-@requires_connected_erddap_phy
 def test_point2profile(ds_pts):
     assert "N_PROF" in ds_pts['standard'].argo.point2profile().dims
 
 
-@requires_connected_erddap_phy
 def test_profile2point(ds_pts):
     with pytest.raises(InvalidDatasetStructure):
         ds_pts['standard'].argo.profile2point()
 
 
-@requires_connected_erddap_phy
 def test_point2profile2point(ds_pts):
     assert ds_pts['standard'].argo.point2profile().argo.profile2point().equals(ds_pts['standard'])
 
 
-@requires_connected_erddap_phy
 class Test_interp_std_levels:
     def test_interpolation(self, ds_pts):
         """Run with success"""
@@ -80,7 +77,6 @@ class Test_interp_std_levels:
             ds.argo.interp_std_levels(12)
 
 
-@requires_connected_erddap_phy
 class Test_groupby_pressure_bins:
     def test_groupby_ds_type(self, ds_pts):
         """Run with success for standard/expert mode and point/profile"""
@@ -122,7 +118,6 @@ class Test_groupby_pressure_bins:
             assert "STD_PRES_BINS" in ds.argo.groupby_pressure_bins(bins).coords
 
 
-@requires_connected_erddap_phy
 class Test_teos10:
 
     @requires_nogsw

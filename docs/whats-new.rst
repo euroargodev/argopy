@@ -8,6 +8,17 @@ What's New
 |pypi dwn| |conda dwn|
 
 
+v0.1.14 (XX Xxx. 2023)
+----------------------
+
+**Internals**
+
+- Use a mocked ftp server for GDAC ftp requests in CI tests (:pr:`249`) by `G. Maze <http://www.github.com/gmaze>`_
+- Use a mocked http server for Erddap requests in CI tests (:pr:`252`) by `G. Maze <http://www.github.com/gmaze>`_
+- Removed support for minimal dependency requirements and for python 3.7. (:pr:`252`) by `G. Maze <http://www.github.com/gmaze>`_
+- Changed License from Apache to `CeCILL 2.1 <http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html>`_ (:commit:`3eadce73bab1c4bd1a770af196fc8bd1126e8ad2`)
+
+
 v0.1.13 (28 Mar. 2023)
 ----------------------
 
@@ -62,8 +73,6 @@ v0.1.13 (28 Mar. 2023)
 - Because of the new :class:`argopy.plot.ArgoColors`, the :class:`argopy.plot.discrete_coloring` utility is deprecated in 0.1.13. Calling it will raise an error after argopy 0.1.14. (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
 
 - New method to check status of web API: now allows for a keyword check rather than a simple url ping. This comes with 2 new utilities functions :meth:`utilities.urlhaskeyword` and :meth:`utilities.isalive`. (:pr:`247`) by `G. Maze <http://www.github.com/gmaze>`_.
-
-**Internals**
 
 - Removed dependency to Scikit-learn LabelEncoder (:pr:`239`) by `G. Maze <http://www.github.com/gmaze>`_
 
@@ -613,6 +622,6 @@ v0.1.0 (17 Mar. 2020)
    :target: //pypi.org/project/argopy/
 .. |Conda| image:: https://anaconda.org/conda-forge/argopy/badges/version.svg
    :target: //anaconda.org/conda-forge/argopy
-.. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy
+.. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy?display_date=published_at
    :target: //github.com/euroargodev/argopy/releases
    

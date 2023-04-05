@@ -124,6 +124,10 @@ class TestBackend:
         in
         scenarios]
 
+    #############
+    # UTILITIES #
+    #############
+
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
@@ -167,7 +171,26 @@ class TestBackend:
         fetcher_args, access_point = self._setup_fetcher(request, cached=True)
         yield create_fetcher(fetcher_args, access_point).fetcher
 
-    # @skip_for_debug
+    # @pytest.fixture(scope="class", autouse=True)
+    # def teardown_class(self, request):
+    #     """Cleanup once we are finished."""
+    #     def remove_test_dir():
+    #         log.debug("cleanup")
+    #         log.debug("\n%s" % argopy.lscache(self.cachedir))  # This could be useful to debug tests
+    #         shutil.rmtree(self.cachedir)
+    #     request.addfinalizer(remove_test_dir)
+
+    def teardown_class(self):
+        """Cleanup once we are finished."""
+        def remove_test_dir():
+            # log.debug("cleanup cache test")
+            # log.debug("\n%s" % argopy.lscache(self.cachedir))  # This could be useful to debug tests
+            shutil.rmtree(self.cachedir)
+        remove_test_dir()
+
+    #########
+    # TESTS #
+    #########
     @safe_to_server_errors
     def test_nocache(self):
         this_fetcher = create_fetcher({"src": self.src, "ftp": self._patch_ftp(VALID_HOSTS[0])},
@@ -175,7 +198,6 @@ class TestBackend:
         with pytest.raises(FileSystemHasNoCache):
             this_fetcher.cachepath
 
-    # @skip_for_debug
     @pytest.mark.parametrize("_make_a_fetcher", VALID_HOSTS,
                              indirect=True,
                              ids=["%s" % ftp_shortname(ftp) for ftp in VALID_HOSTS])
@@ -185,14 +207,12 @@ class TestBackend:
             assert (this_fetcher.N_RECORDS >= 1)  # Make sure we loaded the index file content
         test(_make_a_fetcher)
 
-    # @skip_for_debug
     @pytest.mark.parametrize("ftp_host", ['invalid', 'https://invalid_ftp', 'ftp://invalid_ftp'], indirect=False)
     def test_hosts_invalid(self, ftp_host):
         # Invalid servers:
         with pytest.raises(FtpPathError):
             create_fetcher({"src": self.src, "ftp": ftp_host}, VALID_ACCESS_POINTS[0], xfail=True)
 
-    # @skip_for_debug
     @pytest.mark.parametrize("_make_a_fetcher", scenarios, indirect=True, ids=scenarios_ids)
     def test_fetching(self, _make_a_fetcher):
         @safe_to_server_errors
@@ -200,25 +220,19 @@ class TestBackend:
             assert_fetcher(this_fetcher, cacheable=False)
         test(_make_a_fetcher)
 
-    # @skip_for_debug
     @pytest.mark.parametrize("_make_a_cached_fetcher", scenarios, indirect=True, ids=scenarios_ids)
     def test_fetching_cached(self, _make_a_cached_fetcher):
         @safe_to_server_errors
         def test(this_fetcher):
             # Assert the fetcher (this trigger data fetching, hence caching as well):
             assert_fetcher(this_fetcher, cacheable=True)
-
             # Make sure we can clear the cache:
             this_fetcher.clear_cache()
             with pytest.raises(CacheFileNotFound):
                 this_fetcher.cachepath
-
         test(_make_a_cached_fetcher)
 
-    @pytest.fixture(scope="class", autouse=True)
-    def cleanup(self, request):
-        """Cleanup once we are finished."""
-        def remove_test_dir():
-            # warnings.warn("\n%s" % argopy.lscache(self.cachedir))  # This could be useful to debug tests
-            shutil.rmtree(self.cachedir)
-        request.addfinalizer(remove_test_dir)
+    def test_uri_mono2multi(self):
+        ap = [v for v in VALID_ACCESS_POINTS if 'region' in v.keys()][0]
+        f = create_fetcher({"src": self.src}, ap).fetcher
+        assert is_list_of_strings(f.uri_mono2multi(f.uri))

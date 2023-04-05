@@ -75,7 +75,8 @@ Documentation
    :target: https://argopy.readthedocs.io
 .. |Gitter| image:: https://badges.gitter.im/Argo-floats/argopy.svg
    :target: https://gitter.im/Argo-floats/argopy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge
-.. |License| image:: https://img.shields.io/github/license/euroargodev/argopy
+.. |License| image:: https://img.shields.io/badge/License-CeCILL%202.1-brightgreen
+    :target: http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 .. |Python version| image:: https://img.shields.io/pypi/pyversions/argopy
    :target: //pypi.org/project/argopy/
 .. |Anaconda-Server Badge| image:: https://anaconda.org/conda-forge/argopy/badges/platforms.svg

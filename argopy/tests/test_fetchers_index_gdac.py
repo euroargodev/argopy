@@ -3,7 +3,6 @@ import pandas as pd
 import pytest
 import tempfile
 import shutil
-from fsspec.core import split_protocol
 from urllib.parse import urlparse
 
 import argopy
@@ -14,7 +13,6 @@ from argopy.errors import (
     FtpPathError
 )
 from argopy.utilities import is_list_of_strings, isconnected
-from argopy.options import check_gdac_path
 from utils import (
     requires_gdac,
     safe_to_server_errors,
@@ -151,7 +149,7 @@ class TestBackend:
         yield create_fetcher(fetcher_args, access_point).fetcher
 
     # @skip_for_debug
-    @safe_to_server_errors
+    # @safe_to_server_errors
     def test_nocache(self):
         this_fetcher = create_fetcher({"src": self.src, "ftp": self._patch_ftp(VALID_HOSTS[0])},
                                       VALID_ACCESS_POINTS[0]).fetcher
@@ -163,7 +161,7 @@ class TestBackend:
                              indirect=True,
                              ids=["%s" % ftp_shortname(ftp) for ftp in VALID_HOSTS])
     def test_hosts(self, _make_a_fetcher):
-        @safe_to_server_errors
+        # @safe_to_server_errors
         def test(this_fetcher):
             assert (this_fetcher.N_RECORDS >= 1)  # Make sure we loaded the index file content
         test(_make_a_fetcher)
@@ -178,7 +176,7 @@ class TestBackend:
     # @skip_for_debug
     @pytest.mark.parametrize("_make_a_fetcher", scenarios, indirect=True, ids=scenarios_ids)
     def test_fetching(self, _make_a_fetcher):
-        @safe_to_server_errors
+        # @safe_to_server_errors
         def test(this_fetcher):
             assert_fetcher(this_fetcher, cacheable=False)
         test(_make_a_fetcher)
@@ -186,7 +184,7 @@ class TestBackend:
     # @skip_for_debug
     @pytest.mark.parametrize("_make_a_cached_fetcher", scenarios, indirect=True, ids=scenarios_ids)
     def test_fetching_cached(self, _make_a_cached_fetcher):
-        @safe_to_server_errors
+        # @safe_to_server_errors
         def test(this_fetcher):
             # Assert the fetcher (this trigger data fetching, hence caching as well):
             assert_fetcher(this_fetcher, cacheable=True)

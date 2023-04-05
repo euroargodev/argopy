@@ -5,7 +5,7 @@ This module manage options of the package
 # https://github.com/pydata/xarray/blob/cafab46aac8f7a073a32ec5aa47e213a9810ed54/xarray/core/options.py
 """
 import os
-from argopy.errors import OptionValueError, FtpPathError
+from argopy.errors import OptionValueError, FtpPathError, ErddapPathError
 import warnings
 import logging
 import fsspec
@@ -19,6 +19,7 @@ log = logging.getLogger("argopy.options")
 # Define option names as seen by users:
 DATA_SOURCE = "src"
 FTP = "ftp"
+ERDDAP = 'erddap'
 DATASET = "dataset"
 DATA_CACHE = "cachedir"
 USER_LEVEL = "mode"
@@ -29,6 +30,7 @@ TRUST_ENV = "trust_env"
 OPTIONS = {
     DATA_SOURCE: "erddap",
     FTP: "https://data-argo.ifremer.fr",
+    ERDDAP: "https://erddap.ifremer.fr/erddap",
     DATASET: "phy",
     DATA_CACHE: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
     USER_LEVEL: "standard",
@@ -55,9 +57,18 @@ def validate_ftp(this_path):
         return False
 
 
+def validate_http(this_path):
+    if this_path != "-":
+        return check_erddap_path(this_path, errors='raise')
+    else:
+        log.debug("OPTIONS['%s'] is not defined" % ERDDAP)
+        return False
+
+
 _VALIDATORS = {
     DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
     FTP: validate_ftp,
+    ERDDAP: validate_http,
     DATASET: _DATASET_LIST.__contains__,
     DATA_CACHE: os.path.exists,
     USER_LEVEL: _USER_LEVEL_LIST.__contains__,
@@ -122,6 +133,22 @@ class set_options:
 
     def __exit__(self, type, value, traceback):
         self._apply_update(self.old)
+
+
+def check_erddap_path(path, errors='ignore'):
+    """Check if an url points to an ERDDAP server"""
+    fs = fsspec.filesystem('http')
+    check1 = fs.exists(path + "/info/index.json")
+    if check1:
+        return True
+    elif errors == "raise":
+        raise ErddapPathError("This url is not a valid ERDDAP server:\n%s" % path)
+
+    elif errors == "warn":
+        warnings.warn("This url is not a valid ERDDAP server:\n%s" % path)
+        return False
+    else:
+        return False
 
 
 def check_gdac_path(path, errors='ignore'):  # noqa: C901
@@ -194,11 +221,12 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
     # ]
 
     # Case 1:
-    check1 = (
-        fs.exists(path)
-        and fs.exists(fs.sep.join([path, "dac"]))
-        # and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
-    )
+    # check1 = (
+    #     fs.exists(path)  # Fails on localhost for the mocked ftp server
+    #     and fs.exists(fs.sep.join([path, "dac"]))
+    #     # and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
+    # )
+    check1 = fs.exists(fs.sep.join([path, "dac"]))
     if check1:
         return True
     elif errors == "raise":

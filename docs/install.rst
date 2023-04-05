@@ -6,7 +6,7 @@ Installation
 |pypi dwn| |conda dwn|
 
 Instructions
-^^^^^^^^^^^^
+------------
 
 Install the last release with conda:
 
@@ -27,43 +27,54 @@ you can also work with the latest version:
     pip install git+http://github.com/euroargodev/argopy.git@master
 
 Required dependencies
-^^^^^^^^^^^^^^^^^^^^^
+---------------------
 
-- xarray
-- scipy
-- scikit-learn
-- netCDF4
-- dask
-- toolz
+- aiohttp
 - erddapy
 - fsspec
-- gsw
-- aiohttp
-- packaging
+- netCDF4
+- scipy
+- toolz
+- xarray
 
 Note that Erddapy_ is required because `erddap <https://coastwatch.pfeg.noaa.gov/erddap/information.html>`_ is the default data fetching backend.
 
 Requirement dependencies details can be found `here <https://github.com/euroargodev/argopy/network/dependencies#requirements.txt>`_.
 
-The **argopy** software is `continuously tested <https://github.com/euroargodev/argopy/actions?query=workflow%3Atests>`_ under latest OS (Linux, Mac OS and Windows) and with python versions 3.7 and 3.8.
+The **argopy** software is `continuously tested <https://github.com/euroargodev/argopy/actions?query=workflow%3Atests>`_ under latest OS (Linux, Mac OS and Windows) and with python versions 3.8 and 3.9
 
 Optional dependencies
-^^^^^^^^^^^^^^^^^^^^^
+---------------------
 
-For a complete **argopy** experience, the following packages are also required:
+For a complete **argopy** experience, you may also consider to install the following packages:
 
-- ipython>=5.0.0
-- ipywidgets>=7.5.1
-- tqdm>=4.46.0
-- Matplotlib>=3.0
-- Cartopy>=0.17
-- Seaborn>=0.9.0
+**Utilities**
+
+- gsw
+- tqdm
+- zarr
+
+**Performances**
+
+- dask
+- distributed
+- pyarrow
+
+**Visualisation**
+
+- IPython
+- cartopy
+- ipykernel
+- ipywidgets
+- matplotlib
+- seaborn
+
 
 
 .. _Erddapy: https://github.com/ioos/erddapy
 .. |Gitter| image:: https://badges.gitter.im/Argo-floats/argopy.svg
    :target: https://gitter.im/Argo-floats/argopy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge
-.. |License| image:: https://img.shields.io/github/license/euroargodev/argopy
+.. |License| image:: https://img.shields.io/badge/License-CeCILL%202.1-brightgreen
 .. |Python version| image:: https://img.shields.io/pypi/pyversions/argopy
    :target: //pypi.org/project/argopy/
 .. |Anaconda-Server Badge| image:: https://anaconda.org/conda-forge/argopy/badges/platforms.svg

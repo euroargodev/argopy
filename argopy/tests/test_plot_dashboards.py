@@ -44,6 +44,7 @@ def test_valid_dashboard_float(board_type):
     assert isinstance(argopy.dashboard(5904797, type=board_type, url_only=True), str)
 
 
+@requires_connection
 @pytest.mark.parametrize("board_type", ["data", "meta", "ea", "argovis", "bgc"], indirect=False)
 def test_valid_dashboard_profile(board_type):
     # Test types with 'cyc'

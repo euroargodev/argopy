@@ -19,6 +19,11 @@ class FtpPathError(ValueError):
     pass
 
 
+class ErddapPathError(ValueError):
+    """Raise when the erddap path is not appropriate."""
+
+    pass
+
 class NetCDF4FileNotFoundError(FileNotFoundError):
     """Raise when NETCDF4 file not found."""
 

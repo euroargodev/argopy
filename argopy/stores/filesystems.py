@@ -12,6 +12,7 @@ import tempfile
 import warnings
 import logging
 from packaging import version
+from typing import Union
 
 import concurrent.futures
 import multiprocessing
@@ -20,7 +21,7 @@ from ..options import OPTIONS
 from ..errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
     InvalidMethod
 from abc import ABC, abstractmethod
-from ..utilities import Registry
+from ..utilities import Registry, log_argopy_callerstack
 
 log = logging.getLogger("argopy.stores")
 
@@ -93,7 +94,10 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cac
     # log_msg = "%s\n[sys sep=%s] vs [fs sep=%s]" % (log_msg, os.path.sep, fs.sep)
     # log.warning(log_msg)
     log.debug(log_msg)
+    # log_argopy_callerstack()
     return fs, cache_registry
+
+
 
 
 class argo_store_proto(ABC):
@@ -316,7 +320,7 @@ class filestore(argo_store_proto):
                                  for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
-                    futures = tqdm(futures, total=len(urls))
+                    futures = tqdm(futures, total=len(urls), disable='disable' in progress)
 
                 for future in futures:
                     data = None
@@ -348,7 +352,7 @@ class filestore(argo_store_proto):
 
         elif method in ['seq', 'sequential']:
             if progress:
-                urls = tqdm(urls, total=len(urls))
+                urls = tqdm(urls, total=len(urls), disable='disable' in progress)
 
             for url in urls:
                 data = None
@@ -452,6 +456,8 @@ class httpstore(argo_store_proto):
         :class:`xarray.Dataset`
         """
         try:
+            # log.info("open_dataset('%s')" % url)
+            # log_argopy_callerstack()
             data = self.fs.cat_file(url)
         except aiohttp.ClientResponseError as e:
             if e.status == 413:
@@ -460,6 +466,10 @@ class httpstore(argo_store_proto):
                 log.debug("Error %i (Payload Too Large) raised with %s" % (e.status, url))
             raise
 
+        if data[0:3] != b'CDF':
+            raise TypeError("We didn't get a CDF binary data as expected ! We get: %s" % data)
+
+        # log.debug('type(data): %s' % type(data))
         ds = xr.open_dataset(data, *args, **kwargs)
         if "source" not in ds.encoding:
             if isinstance(url, str):
@@ -480,7 +490,7 @@ class httpstore(argo_store_proto):
                        urls,
                        max_workers: int = 112,
                        method: str = 'thread',
-                       progress: bool = False,
+                       progress: Union[bool, str] = False,
                        concat: bool = True,
                        concat_dim='row',
                        preprocess=None,
@@ -585,7 +595,7 @@ class httpstore(argo_store_proto):
                                  for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
-                    futures = tqdm(futures, total=len(urls))
+                    futures = tqdm(futures, total=len(urls), disable='disable' in progress)
 
                 for future in futures:
                     data = None
@@ -622,7 +632,7 @@ class httpstore(argo_store_proto):
 
         elif method in ['seq', 'sequential']:
             if progress:
-                urls = tqdm(urls, total=len(urls))
+                urls = tqdm(urls, total=len(urls), disable='disable' in progress)
 
             for url in urls:
                 data = None
@@ -727,7 +737,7 @@ class httpstore(argo_store_proto):
                     urls,
                     max_workers=112,
                     method: str = 'thread',
-                    progress: bool = False,
+                    progress: Union[bool, str] = False,
                     preprocess=None,
                     url_follow=False,
                     errors: str = 'ignore',
@@ -780,7 +790,7 @@ class httpstore(argo_store_proto):
                                                  preprocess=preprocess, url_follow=url_follow, *args, **kwargs): url for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
-                    futures = tqdm(futures, total=len(urls))
+                    futures = tqdm(futures, total=len(urls), disable='disable' in progress)
 
                 for future in futures:
                     data = None
@@ -806,7 +816,8 @@ class httpstore(argo_store_proto):
 
         elif method in ['seq', 'sequential']:
             if progress:
-                urls = tqdm(urls, total=len(urls))
+                log.debug("We ask for progress bar !")
+                urls = tqdm(urls, total=len(urls), disable='disable' in progress)
 
             for url in urls:
                 data = None
@@ -981,7 +992,7 @@ class ftpstore(httpstore):
                                                  preprocess_opts=preprocess_opts, *args, **kwargs): url for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
-                    futures = tqdm(futures, total=len(urls))
+                    futures = tqdm(futures, total=len(urls), disable='disable' in progress)
 
                 for future in futures:
                     data = None
@@ -1020,7 +1031,7 @@ class ftpstore(httpstore):
 
         elif method in ['seq', 'sequential']:
             if progress:
-                urls = tqdm(urls, total=len(urls))
+                urls = tqdm(urls, total=len(urls), disable='disable' in progress)
 
             for url in urls:
                 data = None

@@ -1,0 +1,551 @@
+netcdf ArgoFloats-synthetic-BGC_bfab_ad68_5040.nc {
+  dimensions:
+    row = 31164;
+    parameter_data_mode_strlen = 1;
+    direction_strlen = 1;
+    platform_number_strlen = 7;
+    pres_qc_strlen = 1;
+    temp_qc_strlen = 1;
+    psal_qc_strlen = 1;
+    cndc_qc_strlen = 1;
+    doxy_qc_strlen = 1;
+    beta_backscattering_qc_strlen = 1;
+    fluorescence_chla_qc_strlen = 1;
+    bbp_qc_strlen = 1;
+    turbidity_qc_strlen = 1;
+    cp_qc_strlen = 1;
+    chla_qc_strlen = 1;
+    cdom_qc_strlen = 1;
+    nitrate_qc_strlen = 1;
+    pres_adjusted_qc_strlen = 1;
+    temp_adjusted_qc_strlen = 1;
+    psal_adjusted_qc_strlen = 1;
+    cndc_adjusted_qc_strlen = 1;
+    doxy_adjusted_qc_strlen = 1;
+    beta_backscattering_adjusted_qc_strlen = 1;
+    fluorescence_chla_adjusted_qc_strlen = 1;
+    bbp_adjusted_qc_strlen = 1;
+    turbidity_adjusted_qc_strlen = 1;
+    cp_adjusted_qc_strlen = 1;
+    chla_adjusted_qc_strlen = 1;
+    cdom_adjusted_qc_strlen = 1;
+    nitrate_adjusted_qc_strlen = 1;
+  variables:
+    char parameter_data_mode(row=31164, parameter_data_mode_strlen=1);
+      :_ChunkSizes = 296, 4; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "R : real time; D : delayed mode; A : real time with adjustment";
+      :long_name = "Delayed mode or real time data";
+
+    double latitude(row=31164);
+      :_CoordinateAxisType = "Lat";
+      :_FillValue = 99999.0; // double
+      :actual_range = -60.589, -44.943; // double
+      :axis = "Y";
+      :colorBarMaximum = 90.0; // double
+      :colorBarMinimum = -90.0; // double
+      :ioos_category = "Location";
+      :long_name = "Latitude of the station, best estimate";
+      :standard_name = "latitude";
+      :units = "degrees_north";
+      :valid_max = 90.0; // double
+      :valid_min = -90.0; // double
+
+    double longitude(row=31164);
+      :_CoordinateAxisType = "Lon";
+      :_FillValue = 99999.0; // double
+      :actual_range = -179.717, 179.96; // double
+      :axis = "X";
+      :colorBarMaximum = 180.0; // double
+      :colorBarMinimum = -180.0; // double
+      :ioos_category = "Location";
+      :long_name = "Longitude of the station, best estimate";
+      :standard_name = "longitude";
+      :units = "degrees_east";
+      :valid_max = 180.0; // double
+      :valid_min = -180.0; // double
+
+    char position_qc(row=31164);
+      :actual_range = "11";
+      :colorBarMaximum = 150.0; // double
+      :colorBarMinimum = 0.0; // double
+      :conventions = "Argo reference table 2";
+      :long_name = "Quality on position (latitude and longitude)";
+
+    double time(row=31164);
+      :_CoordinateAxisType = "Time";
+      :actual_range = 1.266899783E9, 1.588319145E9; // double
+      :axis = "T";
+      :conventions = "Relative julian days with decimal part (as parts of day)";
+      :ioos_category = "Time";
+      :long_name = "Julian day (UTC) of the station relative to REFERENCE_DATE_TIME";
+      :source_name = "JULD";
+      :standard_name = "time";
+      :time_origin = "01-JAN-1970 00:00:00";
+      :units = "seconds since 1970-01-01T00:00:00Z";
+
+    char time_qc(row=31164);
+      :actual_range = "11";
+      :colorBarMaximum = 150.0; // double
+      :colorBarMinimum = 0.0; // double
+      :conventions = "Argo reference table 2";
+      :long_name = "Quality on date and time";
+
+    char direction(row=31164, direction_strlen=1);
+      :_ChunkSizes = 296; // int
+      :_Encoding = "ISO-8859-1";
+      :colorBarMaximum = 360.0; // double
+      :colorBarMinimum = 0.0; // double
+      :conventions = "A: ascending profiles, D: descending profiles";
+      :ioos_category = "Currents";
+      :long_name = "Direction of the station profiles";
+
+    char platform_number(row=31164, platform_number_strlen=7);
+      :_Encoding = "ISO-8859-1";
+      :cf_role = "trajectory_id";
+      :conventions = "WMO float identifier : A9IIIII";
+      :ioos_category = "Identifier";
+      :long_name = "Float unique identifier";
+
+    int cycle_number(row=31164);
+      :_FillValue = 99999; // int
+      :actual_range = 1, 373; // int
+      :cf_role = "profile_id";
+      :colorBarMaximum = 100.0; // double
+      :colorBarMinimum = 0.0; // double
+      :conventions = "0...N, 0 : launch cycle (if exists), 1 : first complete cycle";
+      :long_name = "Float cycle number";
+
+    int config_mission_number(row=31164);
+      :_ChunkSizes = 296; // int
+      :_FillValue = 99999; // int
+      :actual_range = 1, 1; // int
+      :colorBarMaximum = 100.0; // double
+      :colorBarMinimum = 0.0; // double
+      :conventions = "1...N, 1 : first complete mission";
+      :ioos_category = "Statistics";
+      :long_name = "Unique number denoting the missions performed by the float";
+
+    float pres(row=31164);
+      :_ChunkSizes = 296, 186; // int
+      :_CoordinateAxisType = "Height";
+      :_FillValue = 99999.0f; // float
+      :actual_range = 3.4f, 2009.7f; // float
+      :axis = "Z";
+      :C_format = "%7.1f";
+      :cf_standard_name = "sea_water_pressure";
+      :FORTRAN_format = "F7.1";
+      :long_name = "Sea water pressure, equals 0 at sea-level";
+      :resolution = 0.1f; // float
+      :sdn_parameter_urn = "SDN:P01::PRESPR01";
+      :standard_name = "sea_water_pressure";
+      :units = "decibar";
+      :valid_max = 12000.0f; // float
+      :valid_min = 0.0f; // float
+
+    float temp(row=31164);
+      :_ChunkSizes = 296, 186; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 0.046f, 10.132f; // float
+      :C_format = "%9.3f";
+      :cf_standard_name = "sea_water_temperature";
+      :FORTRAN_format = "F9.3";
+      :long_name = "Sea temperature in-situ ITS-90 scale";
+      :resolution = 0.001f; // float
+      :sdn_parameter_urn = "SDN:P01::TEMPST01";
+      :standard_name = "sea_water_temperature";
+      :units = "degree_Celsius";
+      :valid_max = 40.0f; // float
+      :valid_min = -2.5f; // float
+
+    float psal(row=31164);
+      :_ChunkSizes = 296, 186; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 33.231f, 34.796f; // float
+      :C_format = "%9.3f";
+      :cf_standard_name = "sea_water_salinity";
+      :FORTRAN_format = "F9.3";
+      :long_name = "Practical salinity";
+      :resolution = 0.001f; // float
+      :sdn_parameter_urn = "SDN:P01::PSALST01";
+      :standard_name = "sea_water_salinity";
+      :units = "psu";
+      :valid_max = 41.0f; // float
+      :valid_min = 2.0f; // float
+
+    float cndc(row=31164);
+      :_FillValue = 99999.0f; // float
+      :cf_standard_name = "sea_water_electrical_conductivity";
+      :long_name = "Electrical conductivity";
+      :sdn_parameter_urn = "SDN:P01::CNDCST01";
+      :units = "mhos/m";
+      :valid_max = 8.5f; // float
+      :valid_min = 0.0f; // float
+
+    float doxy(row=31164);
+      :_ChunkSizes = 296, 186; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 2.358001f, 322.7896f; // float
+      :C_format = "%9.3f";
+      :cf_standard_name = "moles_of_oxygen_per_unit_mass_in_sea_water";
+      :FORTRAN_format = "F9.3";
+      :long_name = "Dissolved oxygen";
+      :resolution = 0.001f; // float
+      :sdn_parameter_urn = "SDN:P01::DOXMZZXX";
+      :standard_name = "moles_of_oxygen_per_unit_mass_in_sea_water";
+      :units = "micromole/kg";
+      :valid_max = 600.0f; // float
+      :valid_min = -5.0f; // float
+
+    float beta_backscattering(row=31164);
+      :_FillValue = 99999.0f; // float
+      :cf_standard_name = "-";
+      :long_name = "Total angle specific volume from backscattering sensor at x nanometers";
+      :sdn_parameter_urn = "SDN:P01::NVLTOBS1";
+      :units = "count";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    float fluorescence_chla(row=31164);
+      :_FillValue = 99999.0f; // float
+      :cf_standard_name = "-";
+      :long_name = "Chlorophyll-A signal from fluorescence sensor";
+      :sdn_parameter_urn = "SDN:P01::FCNTRW01";
+      :units = "count";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    float bbp(row=31164);
+      :_FillValue = 99999.0f; // float
+      :cf_standard_name = "-";
+      :long_name = "Particle backscattering at x nanometers";
+      :sdn_parameter_urn = "SDN:P01::BSXXXVSF";
+      :units = "m-1";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    float turbidity(row=31164);
+      :_FillValue = 99999.0f; // float
+      :cf_standard_name = "sea_water_turbidity";
+      :long_name = "Sea water turbidity";
+      :sdn_parameter_urn = "SDN:P01::TURBXXXX";
+      :units = "ntu";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    float cp(row=31164);
+      :_FillValue = 99999.0f; // float
+      :cf_standard_name = "-";
+      :long_name = "Particle beam attenuation at x nanometers";
+      :sdn_parameter_urn = "SDN:P01::ATTNZZ01";
+      :units = "m-1";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    float chla(row=31164);
+      :_FillValue = 99999.0f; // float
+      :cf_standard_name = "mass_concentration_of_chlorophyll_a_in_sea_water";
+      :long_name = "Chlorophyll-A";
+      :sdn_parameter_urn = "SDN:P01::CPHLPR01";
+      :units = "mg/m3";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    float cdom(row=31164);
+      :_FillValue = 99999.0f; // float
+      :cf_standard_name = "-";
+      :long_name = "Concentration of coloured dissolved organic matter in sea water";
+      :sdn_parameter_urn = "SDN:P01::CDOMZZ01";
+      :units = "ppb";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    float nitrate(row=31164);
+      :_FillValue = 99999.0f; // float
+      :cf_standard_name = "moles_of_nitrate_per_unit_mass_in_sea_water";
+      :long_name = "Nitrate";
+      :sdn_parameter_urn = "SDN:P01::MDMAP005";
+      :units = "micromole/kg";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    char pres_qc(row=31164, pres_qc_strlen=1);
+      :_ChunkSizes = 296, 186; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    char temp_qc(row=31164, temp_qc_strlen=1);
+      :_ChunkSizes = 296, 186; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    char psal_qc(row=31164, psal_qc_strlen=1);
+      :_ChunkSizes = 296, 186; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    char cndc_qc(row=31164, cndc_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    char doxy_qc(row=31164, doxy_qc_strlen=1);
+      :_ChunkSizes = 296, 186; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    char beta_backscattering_qc(row=31164, beta_backscattering_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    char fluorescence_chla_qc(row=31164, fluorescence_chla_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    char bbp_qc(row=31164, bbp_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    char turbidity_qc(row=31164, turbidity_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    char cp_qc(row=31164, cp_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    char chla_qc(row=31164, chla_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    char cdom_qc(row=31164, cdom_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    char nitrate_qc(row=31164, nitrate_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    float pres_adjusted(row=31164);
+      :_ChunkSizes = 296, 186; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 3.3f, 2010.0f; // float
+      :axis = "Z";
+      :C_format = "%7.1f";
+      :FORTRAN_format = "F7.1";
+      :long_name = "Sea water pressure, equals 0 at sea-level";
+      :resolution = 0.1f; // float
+      :standard_name = "sea_water_pressure";
+      :units = "decibar";
+      :valid_max = 12000.0f; // float
+      :valid_min = 0.0f; // float
+
+    float temp_adjusted(row=31164);
+      :_ChunkSizes = 296, 186; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 0.046f, 10.132f; // float
+      :C_format = "%9.3f";
+      :FORTRAN_format = "F9.3";
+      :long_name = "Sea temperature in-situ ITS-90 scale";
+      :resolution = 0.001f; // float
+      :standard_name = "sea_water_temperature";
+      :units = "degree_Celsius";
+      :valid_max = 40.0f; // float
+      :valid_min = -2.5f; // float
+
+    float psal_adjusted(row=31164);
+      :_ChunkSizes = 296, 186; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 33.66283f, 34.7961f; // float
+      :C_format = "%9.3f";
+      :FORTRAN_format = "F9.3";
+      :long_name = "Practical salinity";
+      :resolution = 0.001f; // float
+      :standard_name = "sea_water_salinity";
+      :units = "psu";
+      :valid_max = 41.0f; // float
+      :valid_min = 2.0f; // float
+
+    float cndc_adjusted(row=31164);
+
+    float doxy_adjusted(row=31164);
+      :_ChunkSizes = 296, 186; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 167.5023f, 352.5889f; // float
+      :C_format = "%9.3f";
+      :FORTRAN_format = "F9.3";
+      :long_name = "Dissolved oxygen";
+      :resolution = 0.001f; // float
+      :standard_name = "moles_of_oxygen_per_unit_mass_in_sea_water";
+      :units = "micromole/kg";
+      :valid_max = 600.0f; // float
+      :valid_min = -5.0f; // float
+
+    float beta_backscattering_adjusted(row=31164);
+
+    float fluorescence_chla_adjusted(row=31164);
+
+    float bbp_adjusted(row=31164);
+
+    float turbidity_adjusted(row=31164);
+
+    float cp_adjusted(row=31164);
+
+    float chla_adjusted(row=31164);
+
+    float cdom_adjusted(row=31164);
+
+    float nitrate_adjusted(row=31164);
+
+    char pres_adjusted_qc(row=31164, pres_adjusted_qc_strlen=1);
+      :_ChunkSizes = 296, 186; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    char temp_adjusted_qc(row=31164, temp_adjusted_qc_strlen=1);
+      :_ChunkSizes = 296, 186; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    char psal_adjusted_qc(row=31164, psal_adjusted_qc_strlen=1);
+      :_ChunkSizes = 296, 186; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    char cndc_adjusted_qc(row=31164, cndc_adjusted_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    char doxy_adjusted_qc(row=31164, doxy_adjusted_qc_strlen=1);
+      :_ChunkSizes = 296, 186; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    char beta_backscattering_adjusted_qc(row=31164, beta_backscattering_adjusted_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    char fluorescence_chla_adjusted_qc(row=31164, fluorescence_chla_adjusted_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    char bbp_adjusted_qc(row=31164, bbp_adjusted_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    char turbidity_adjusted_qc(row=31164, turbidity_adjusted_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    char cp_adjusted_qc(row=31164, cp_adjusted_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    char chla_adjusted_qc(row=31164, chla_adjusted_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    char cdom_adjusted_qc(row=31164, cdom_adjusted_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    char nitrate_adjusted_qc(row=31164, nitrate_adjusted_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    float pres_adjusted_error(row=31164);
+      :_ChunkSizes = 296, 186; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 2.4f, 2.4f; // float
+      :C_format = "%7.1f";
+      :FORTRAN_format = "F7.1";
+      :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
+      :resolution = 0.1f; // float
+      :units = "decibar";
+
+    float temp_adjusted_error(row=31164);
+      :_ChunkSizes = 296, 186; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 0.002f, 0.002f; // float
+      :C_format = "%9.3f";
+      :FORTRAN_format = "F9.3";
+      :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
+      :resolution = 0.001f; // float
+      :units = "degree_Celsius";
+
+    float psal_adjusted_error(row=31164);
+      :_ChunkSizes = 296, 186; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 0.01f, 0.0155498f; // float
+      :C_format = "%9.3f";
+      :FORTRAN_format = "F9.3";
+      :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
+      :resolution = 0.001f; // float
+      :units = "psu";
+
+    float cndc_adjusted_error(row=31164);
+
+    float doxy_adjusted_error(row=31164);
+      :_ChunkSizes = 296, 186; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 5.025068f, 16.03393f; // float
+      :C_format = "%9.3f";
+      :FORTRAN_format = "F9.3";
+      :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
+      :resolution = 0.001f; // float
+      :units = "micromole/kg";
+
+    float beta_backscattering_adjusted_error(row=31164);
+
+    float fluorescence_chla_adjusted_error(row=31164);
+
+    float bbp_adjusted_error(row=31164);
+
+    float turbidity_adjusted_error(row=31164);
+
+    float cp_adjusted_error(row=31164);
+
+    float chla_adjusted_error(row=31164);
+
+    float cdom_adjusted_error(row=31164);
+
+    float nitrate_adjusted_error(row=31164);
+
+  // global attributes:
+  :cdm_altitude_proxy = "pres";
+  :cdm_data_type = "TrajectoryProfile";
+  :cdm_profile_variables = "cycle_number, latitude, longitude, time";
+  :cdm_trajectory_variables = "platform_number";
+  :Conventions = "Argo-3.1 CF-1.6, COARDS, ACDD-1.3";
+  :creator_name = "Argo";
+  :creator_type = "institution";
+  :creator_url = "http://www.argodatamgt.org/Documentation";
+  :defaultGraphQuery = "longitude%2Clatitude%2Cph_in_situ_total&time>=now-2days&time<=now&pres<=10&.draw=markers&.marker=5|5&.color=0x000000&.colorBar=|||||&.bgColor=0xffccccff";
+  :Easternmost_Easting = 179.96; // double
+  :featureType = "TrajectoryProfile";
+  :geospatial_lat_max = -44.943; // double
+  :geospatial_lat_min = -60.589; // double
+  :geospatial_lat_units = "degrees_north";
+  :geospatial_lon_max = 179.96; // double
+  :geospatial_lon_min = -179.717; // double
+  :geospatial_lon_units = "degrees_east";
+  :history = "2023-04-04T07:13:49Z creation (software version 1.15 (version 09.06.2022 for ARGO_simplified_profile))
+2023-04-05T11:51:12Z (local files)
+2023-04-05T11:51:12Z http://www.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.ncHeader?parameter_data_mode,latitude,longitude,position_qc,time,time_qc,direction,platform_number,cycle_number,config_mission_number,pres,temp,psal,cndc,doxy,beta_backscattering,fluorescence_chla,bbp,turbidity,cp,chla,cdom,nitrate,pres_qc,temp_qc,psal_qc,cndc_qc,doxy_qc,beta_backscattering_qc,fluorescence_chla_qc,bbp_qc,turbidity_qc,cp_qc,chla_qc,cdom_qc,nitrate_qc,pres_adjusted,temp_adjusted,psal_adjusted,cndc_adjusted,doxy_adjusted,beta_backscattering_adjusted,fluorescence_chla_adjusted,bbp_adjusted,turbidity_adjusted,cp_adjusted,chla_adjusted,cdom_adjusted,nitrate_adjusted,pres_adjusted_qc,temp_adjusted_qc,psal_adjusted_qc,cndc_adjusted_qc,doxy_adjusted_qc,beta_backscattering_adjusted_qc,fluorescence_chla_adjusted_qc,bbp_adjusted_qc,turbidity_adjusted_qc,cp_adjusted_qc,chla_adjusted_qc,cdom_adjusted_qc,nitrate_adjusted_qc,pres_adjusted_error,temp_adjusted_error,psal_adjusted_error,cndc_adjusted_error,doxy_adjusted_error,beta_backscattering_adjusted_error,fluorescence_chla_adjusted_error,bbp_adjusted_error,turbidity_adjusted_error,cp_adjusted_error,chla_adjusted_error,cdom_adjusted_error,nitrate_adjusted_error&platform_number=~%225903248%22&distinct()&orderBy(%22time,pres%22)";
+  :id = "ArgoFloats-synthetic-BGC";
+  :infoUrl = "http://www.argodatamgt.org/Documentation";
+  :institution = "Argo";
+  :keywords = "adjusted, argo, array, centre, charge, chemistry, coded, CONFIG_MISSION_NUMBER, contains, coriolis, creation, cycle, CYCLE_NUMBER, data, DATA_CENTRE, DATA_TYPE, date, DATE_CREATION, DATE_UPDATE, day, days, delayed, denoting, density, determined, direction, displacement, dissolved, doxy, DOXY_ADJUSTED, DOXY_ADJUSTED_ERROR, DOXY_ADJUSTED_QC, DOXY_dPRES, DOXY_QC, earth, Earth Science > Oceans > Ocean Chemistry > Oxygen, Earth Science > Oceans > Ocean Pressure > Water Pressure, Earth Science > Oceans > Ocean Temperature > Water Temperature, Earth Science > Oceans > Salinity/Density > Salinity, equals, error, file, firmware, FIRMWARE_VERSION, flag, float, FLOAT_SERIAL_NO, format, FORMAT_VERSION, geostrophic, global, handbook, HANDBOOK_VERSION, identifier, in-situ, instrument, investigator, its, its-90, JULD_LOCATION, JULD_QC, julian, latitude, level, longitude, mass, missions, mode, moles, moles_of_oxygen_per_unit_mass_in_sea_water, name, number, O2, ocean, oceanography, oceans, original, oxygen, per, performed, PI_NAME, PLATFORM_NUMBER, PLATFORM_TYPE, position, POSITION_QC, positioning, POSITIONING_SYSTEM, practical, pres, PRES_ADJUSTED, PRES_ADJUSTED_ERROR, PRES_ADJUSTED_QC, PRES_QC, pressure, principal, process, processing, profile, PROFILE_DOXY_QC, PROFILE_PRES_QC, PROFILE_PSAL_QC, PROFILE_TEMP_QC, profiles, project, PROJECT_NAME, psal, PSAL_ADJUSTED, PSAL_ADJUSTED_ERROR, PSAL_ADJUSTED_QC, PSAL_dPRES, PSAL_QC, quality, real, real time, real-time, realtime, reference, REFERENCE_DATE_TIME, relative, salinity, sampled, scale, science, sea, sea-level, sea_water_practical_salinity, sea_water_pressure, sea_water_temperature, seawater, serial, situ, station, system, TEMP, TEMP_ADJUSTED, TEMP_ADJUSTED_ERROR, TEMP_ADJUSTED_QC, TEMP_dPRES, TEMP_QC, temperature, time, type, unique, unit, update, value, values, version, vertical, water, WMO_INST_TYPE";
+  :keywords_vocabulary = "GCMD Science Keywords";
+  :license = "The data may be used and redistributed for free but is not intended
+for legal use, since it may contain inaccuracies. Neither the data
+Contributor, ERD, NOAA, nor the United States Government, nor any
+of their employees or contractors, makes any warranty, express or
+implied, including warranties of merchantability and fitness for a
+particular purpose, or assumes any legal liability for the accuracy,
+completeness, or usefulness, of this information.";
+  :Northernmost_Northing = -44.943; // double
+  :references = "http://www.argodatamgt.org/Documentation";
+  :software_version = "1.15 (version 09.06.2022 for ARGO_simplified_profile)";
+  :source = "Argo float";
+  :sourceUrl = "(local files)";
+  :Southernmost_Northing = -60.589; // double
+  :standard_name_vocabulary = "CF Standard Name Table v55";
+  :subsetVariables = "data_type, data_centre, platform_type, wmo_inst_type, time_qc, position_qc, pres_qc";
+  :summary = "Argo float synthetic vertical profiles : BGC data";
+  :testOutOfDate = "now-5days";
+  :time_coverage_end = "2020-05-01T07:45:45Z";
+  :time_coverage_start = "2010-02-23T04:36:23Z";
+  :title = "Argo float synthetic vertical profiles : BGC data";
+  :user_manual_version = "1.0";
+  :Westernmost_Easting = -179.717; // double
+}
