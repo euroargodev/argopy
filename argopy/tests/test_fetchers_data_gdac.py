@@ -183,8 +183,8 @@ class TestBackend:
     def teardown_class(self):
         """Cleanup once we are finished."""
         def remove_test_dir():
-            log.debug("cleanup cache test")
-            log.debug("\n%s" % argopy.lscache(self.cachedir))  # This could be useful to debug tests
+            # log.debug("cleanup cache test")
+            # log.debug("\n%s" % argopy.lscache(self.cachedir))  # This could be useful to debug tests
             shutil.rmtree(self.cachedir)
         remove_test_dir()
 
