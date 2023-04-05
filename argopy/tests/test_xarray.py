@@ -8,12 +8,11 @@ import xarray as xr
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import InvalidDatasetStructure, OptionValueError
-from utils import requires_connected_erddap_phy, requires_gdac, _importorskip, _connectskip
+from utils import requires_gdac, _importorskip, _connectskip
 from mocked_http import mocked_server_address
-from mocked_http import mocked_httpserver as mocked_erddapserver
 
 has_gsw, requires_gsw = _importorskip("gsw")
-has_nogsw, requires_nogsw = _connectskip(not has_gsw, "missing GSW")
+has_nogsw, requires_nogsw = _connectskip(not has_gsw, "that GSW module is NOT installed")
 
 
 @pytest.fixture(scope="module")
@@ -77,7 +76,6 @@ class Test_interp_std_levels:
             ds.argo.interp_std_levels(12)
 
 
-@requires_connected_erddap_phy
 class Test_groupby_pressure_bins:
     def test_groupby_ds_type(self, ds_pts):
         """Run with success for standard/expert mode and point/profile"""
@@ -119,7 +117,6 @@ class Test_groupby_pressure_bins:
             assert "STD_PRES_BINS" in ds.argo.groupby_pressure_bins(bins).coords
 
 
-@requires_connected_erddap_phy
 class Test_teos10:
 
     @requires_nogsw
