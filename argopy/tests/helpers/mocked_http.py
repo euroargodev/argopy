@@ -442,6 +442,7 @@ if __name__ == '__main__':
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
     from argopy import DataFetcher
 
+
     async def fetch_download_links(session: aiohttp.ClientSession):
         """Gather the list of all remote ressources to download
 
@@ -495,31 +496,10 @@ if __name__ == '__main__':
             return await asyncio.gather(*[place_file(session, url) for url in urls])
 
 
-    # async def place_fileHEAD(session: aiohttp.ClientSession, source: dict) -> None:
-    #     async with session.head(source['uri'], ssl=False) as r:
-    #         if r.content_type not in ['application/x-netcdf', 'text/plain', 'application/json']:
-    #             print("Unexpected content type (%s) with this HEAD request: %s (%s extension)" %
-    #                   (r.content_type, parse_qs(source['uri']), os.path.splitext(urlparse(source['uri']).path)[1]))
-    #         # else:
-    #         #     print("\nLoading: %s" % source['uri'])
-    #
-    #         test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (source['sha'], source['ext']))
-    #         async with aiofiles.open(test_data_file, 'wb') as f:
-    #             data = await r.content.read(n=-1)  # load all read bytes !
-    #             print(f.name, data[0:3])
-    #             await f.write(data)
-    #             return can_be_xr_opened(source, test_data_file)
-    #
-    # async def mainHEAD():
-    #     async with aiohttp.ClientSession() as session:
-    #         urls = await fetch_download_links(session)
-    #         return await asyncio.gather(*[place_fileHEAD(session, url) for url in urls])
-
     # Async download of all remote ressources:
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     URLS = loop.run_until_complete(main())
-    # [URLS.append(uri) for uri in loop.run_until_complete(mainHEAD())]
 
     # URLS = [url for url in URLS if url is not None]
     print("\nSaved %i urls" % len(URLS))
