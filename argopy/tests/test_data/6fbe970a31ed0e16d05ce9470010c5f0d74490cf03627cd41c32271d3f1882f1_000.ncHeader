@@ -303,8 +303,8 @@ netcdf ArgoFloats_5586_a326_ffcc.nc {
   :geospatial_lon_max = -55.00059509277344; // double
   :geospatial_lon_min = -59.99700927734375; // double
   :geospatial_lon_units = "degrees_east";
-  :history = "2023-04-03T12:54:23Z (local files)
-2023-04-03T12:54:23Z http://www.ifremer.fr/erddap/tabledap/ArgoFloats.nc?data_mode,latitude,longitude,position_qc,time,time_qc,direction,platform_number,cycle_number,config_mission_number,vertical_sampling_scheme,pres,temp,psal,pres_qc,temp_qc,psal_qc,pres_adjusted,temp_adjusted,psal_adjusted,pres_adjusted_qc,temp_adjusted_qc,psal_adjusted_qc,pres_adjusted_error,temp_adjusted_error,psal_adjusted_error&longitude%3E=-60&longitude%3C=-55&latitude%3E=40.0&latitude%3C=45.0&pres%3E=0.0&pres%3C=20.0&distinct()&orderBy(%22time,pres%22)";
+  :history = "2023-04-05T11:51:11Z (local files)
+2023-04-05T11:51:11Z http://www.ifremer.fr/erddap/tabledap/ArgoFloats.nc?data_mode,latitude,longitude,position_qc,time,time_qc,direction,platform_number,cycle_number,config_mission_number,vertical_sampling_scheme,pres,temp,psal,pres_qc,temp_qc,psal_qc,pres_adjusted,temp_adjusted,psal_adjusted,pres_adjusted_qc,temp_adjusted_qc,psal_adjusted_qc,pres_adjusted_error,temp_adjusted_error,psal_adjusted_error&longitude%3E=-60&longitude%3C=-55&latitude%3E=40.0&latitude%3C=45.0&pres%3E=0.0&pres%3C=20.0&distinct()&orderBy(%22time,pres%22)";
   :id = "ArgoFloats";
   :infoUrl = "https://argo.ucsd.edu/";
   :institution = "Argo";
