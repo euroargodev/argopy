@@ -22,18 +22,14 @@ declare -A ENV_LIST=(
 ['argopy-docs']="requirements/py3.8-docs.yml"
 
 ['argopy-py37-all-free']="requirements/py3.7-all-free.yml"
-['argopy-py37-all-min']="requirements/py3.7-all-min.yml"
 
 ['argopy-py37-core-free']="requirements/py3.7-core-free.yml"
-['argopy-py37-core-min']="requirements/py3.7-core-min.yml"
 
 ['argopy-py38-all-free']="requirements/py3.8-all-free.yml"
 ['argopy-py38-all-pinned']="requirements/py3.8-all-pinned.yml"
-['argopy-py38-all-min']="requirements/py3.8-all-min.yml"
 
 ['argopy-py38-core-free']="requirements/py3.8-core-free.yml"
 ['argopy-py38-core-pinned']="requirements/py3.8-core-pinned.yml"
-['argopy-py38-core-min']="requirements/py3.8-core-min.yml"
 
 ['argopy-py39-all-free']="requirements/py3.9-all-free.yml"
 ['argopy-py39-all-pinned']="requirements/py3.9-all-pinned.yml"
@@ -135,13 +131,12 @@ install_conda_env () {
 
 	# Eventually remove environment if exists:
 	if conda env list | grep $1; then
-	    printf "$1 already exists, remove and re-create this environment...\n"
+	    printf "$1 already exists, removing this environment...\n"
 		  mamba remove --quiet --name $1 --all --yes --json > /dev/null 2>&1
-	else
-		  printf "Creating conda environment $1 ...\n"
 	fi
 
 	# Create the environment from file
+  printf "Creating conda environment $1 ...\n"
 	mamba env create --file temp_env.yml --quiet --json > /dev/null 2>&1
 
 	# Clean-up
@@ -236,7 +231,7 @@ fi
 if [ -n "${envname_to_install}" ]; then
   found_at_least_one=false
   if [[ "$dry_run" == true ]]; then
-    echo "Environment(s) to install:"
+    echo "Environment to install:"
   fi
   for NAME in "${!ENV_LIST[@]}"
   do
@@ -261,7 +256,7 @@ fi
 if [ -n "${envname_to_kernel}" ];then
   found_at_least_one=false
   if [[ "$dry_run" == true ]]; then
-    echo "Environment(s) to install Jupyter kernel for:"
+    echo "Environment to install Jupyter kernel for:"
   fi
   for NAME in "${!ENV_LIST[@]}"
   do
