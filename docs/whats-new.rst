@@ -17,7 +17,7 @@ v0.1.14 (XX Xxx. 2023)
 - Use a mocked http server for Erddap requests in CI tests (:pr:`252`) by `G. Maze <http://www.github.com/gmaze>`_
 - Removed support for minimal dependency requirements and for python 3.7. (:pr:`252`) by `G. Maze <http://www.github.com/gmaze>`_
 - Changed License from Apache to `CeCILL 2.1 <http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html>`_ (:commit:`3eadce73bab1c4bd1a770af196fc8bd1126e8ad2`)
-
+- Use a mocked http server for all http requests in CI tests
 
 v0.1.13 (28 Mar. 2023)
 ----------------------
