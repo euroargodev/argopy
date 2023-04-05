@@ -51,6 +51,3 @@ dependencies:
   - setuptools = 67.6.0
 #  - sphinx = -
 
-# PIP:
-  - pip:
-      - aioresponses==0.7.4

@@ -49,7 +49,3 @@ dependencies:
   - pytest-localftpserver
   - setuptools
 #  - sphinx
-
-# PIP:
-  - pip:
-      - aioresponses
