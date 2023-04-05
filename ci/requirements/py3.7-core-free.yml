@@ -39,7 +39,7 @@ dependencies:
   - cftime
   - flake8
   - numpy
-  - pandas
+  - pandas < 2.0
   - pip
   - pytest
   - pytest-cov

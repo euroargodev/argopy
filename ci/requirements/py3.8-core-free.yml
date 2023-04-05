@@ -41,7 +41,7 @@ dependencies:
   - flake8
 #  - nc-time-axis
   - numpy
-  - pandas
+  - pandas < 2.0
   - pip
   - pytest
   - pytest-cov
