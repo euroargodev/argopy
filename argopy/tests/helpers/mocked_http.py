@@ -339,6 +339,12 @@ def list_erddap_links(session: aiohttp.ClientSession):
                          'https://erddap.ifremer.fr/erddap/info/ArgoFloats/index.json'.encode()).hexdigest(),
                      'type': CONTENT_TYPE['json'],
                      })
+    this_URI.append({'uri': 'https://erddap.ifremer.fr/erddap/info/index.json',
+                     'ext': 'json',
+                     'sha': hashlib.sha256(
+                         'https://erddap.ifremer.fr/erddap/info/index.json'.encode()).hexdigest(),
+                     'type': CONTENT_TYPE['json'],
+                     })
 
     return this_URI
 

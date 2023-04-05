@@ -5,7 +5,7 @@ This module manage options of the package
 # https://github.com/pydata/xarray/blob/cafab46aac8f7a073a32ec5aa47e213a9810ed54/xarray/core/options.py
 """
 import os
-from argopy.errors import OptionValueError, FtpPathError
+from argopy.errors import OptionValueError, FtpPathError, ErddapPathError
 import warnings
 import logging
 import fsspec
@@ -57,10 +57,18 @@ def validate_ftp(this_path):
         return False
 
 
+def validate_http(this_path):
+    if this_path != "-":
+        return check_erddap_path(this_path, errors='raise')
+    else:
+        log.debug("OPTIONS['%s'] is not defined" % ERDDAP)
+        return False
+
+
 _VALIDATORS = {
     DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
     FTP: validate_ftp,
-    ERDDAP: lambda x: True,
+    ERDDAP: validate_http,
     DATASET: _DATASET_LIST.__contains__,
     DATA_CACHE: os.path.exists,
     USER_LEVEL: _USER_LEVEL_LIST.__contains__,
@@ -125,6 +133,22 @@ class set_options:
 
     def __exit__(self, type, value, traceback):
         self._apply_update(self.old)
+
+
+def check_erddap_path(path, errors='ignore'):
+    """Check if an url points to an ERDDAP server"""
+    fs = fsspec.filesystem('http')
+    check1 = fs.exists(path + "/info/index.json")
+    if check1:
+        return True
+    elif errors == "raise":
+        raise ErddapPathError("This url is not a valid ERDDAP server:\n%s" % path)
+
+    elif errors == "warn":
+        warnings.warn("This url is not a valid ERDDAP server:\n%s" % path)
+        return False
+    else:
+        return False
 
 
 def check_gdac_path(path, errors='ignore'):  # noqa: C901

@@ -3,7 +3,6 @@ import pandas as pd
 import pytest
 import tempfile
 import shutil
-from fsspec.core import split_protocol
 from urllib.parse import urlparse
 
 import argopy
@@ -14,7 +13,6 @@ from argopy.errors import (
     FtpPathError
 )
 from argopy.utilities import is_list_of_strings, isconnected
-from argopy.options import check_gdac_path
 from utils import (
     requires_gdac,
     safe_to_server_errors,
