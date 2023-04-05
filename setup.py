@@ -22,8 +22,8 @@ setuptools.setup(
     package_data={'argopy': ['assets/*.pickle']},
     install_requires=requirements,
     classifiers=[
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Topic :: Scientific/Engineering",
         "Intended Audience :: Science/Research",
         "Operating System :: OS Independent",
