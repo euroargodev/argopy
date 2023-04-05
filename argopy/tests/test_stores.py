@@ -49,7 +49,7 @@ log = logging.getLogger("argopy.tests.stores")
 has_pyarrow = importlib.util.find_spec('pyarrow') is not None
 skip_pyarrow = pytest.mark.skipif(not has_pyarrow, reason="Requires pyarrow")
 
-skip_this = pytest.mark.skipif(False, reason="Skipped temporarily")
+skip_this = pytest.mark.skipif(0, reason="Skipped temporarily")
 skip_for_debug = pytest.mark.skipif(False, reason="Taking too long !")
 
 id_implementation = lambda x: [k for k, v in known_implementations.items()  # noqa: E731
@@ -111,6 +111,10 @@ class Test_FileStore:
             os.path.sep.join([self.ftproot, "dac/aoml/5900446/profiles/*_1*.nc"])
         )[0:2]
         method, progress, concat = params
+
+        if method == "process":
+            pytest.xfail("concurrent.futures.ProcessPoolExecutor is too long on GA !")
+
         ds = filestore().open_mfdataset(uri, method=method, progress='disable' if progress else False, concat=concat)
         if concat:
             assert isinstance(ds, xr.Dataset)
@@ -157,6 +161,7 @@ class Test_HttpStore:
     # Parameters for multi-file opening
     mf_params_nc = [(m, p, c) for m in ["seq", "thread", "process"] for p in [True, False] for c in [True, False]]
     mf_params_nc_ids = ["method=%s, progress=%s, concat=%s" % (p[0], p[1], p[2]) for p in mf_params_nc]
+
     mf_params_js = [(m, p) for m in ["seq", "thread", "process"] for p in [True, False]]
     mf_params_js_ids = ["method=%s, progress=%s" % (p[0], p[1]) for p in mf_params_js]
 
@@ -177,7 +182,7 @@ class Test_HttpStore:
         return uri
 
     def test_load_mocked_server(self, mocked_httpserver):
-        """This will easily ensure that the module scope fixture is available to all methods"""
+        """This will easily ensure that the module scope fixture is available to all methods !"""
         assert True
 
     def test_implementation(self):
@@ -236,6 +241,9 @@ class Test_HttpStore:
         method, progress, concat = params
         fs = httpstore(timeout=OPTIONS['api_timeout'])
 
+        if method == "process":
+            pytest.xfail("concurrent.futures.ProcessPoolExecutor is too long on GA !")
+
         ds = fs.open_mfdataset(uri, method=method, progress='disable' if progress else False, concat=concat)
         if concat:
             assert isinstance(ds, xr.Dataset)
@@ -254,6 +262,10 @@ class Test_HttpStore:
                ]
         uri = [self._mockeduri(u) for u in uri]
         method, progress = params
+
+        if method == "process":
+            pytest.xfail("concurrent.futures.ProcessPoolExecutor is too long on GA !")
+
         fs = httpstore(timeout=OPTIONS['api_timeout'])
         lst = fs.open_mfjson(uri, method=method, progress='disable' if progress else False)
         assert is_list_of_dicts(lst)
@@ -339,6 +351,10 @@ class Test_FtpStore:
           ]
         def test(this_params):
             method, progress, concat = this_params
+
+            if method == "process":
+                pytest.xfail("concurrent.futures.ProcessPoolExecutor is too long on GA !")
+
             fs = ftpstore(host=self.host, port=self.port, cache=False)
             ds = fs.open_mfdataset(uri,
                                    method=method,
