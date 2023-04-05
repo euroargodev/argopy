@@ -40,6 +40,8 @@ requests = pytest.importorskip("requests")
 port = 9898  # Select the port to run the local server on
 mocked_server_address = "http://127.0.0.1:%i" % port
 
+start_with = lambda f, x: f[0:len(x)] == x if len(x) <= len(f) else False  # noqa: E731
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 from argopy.data_fetchers.erddap_data import api_server as erddap_api_server
 
@@ -64,12 +66,12 @@ if os.path.exists(DB_FILE):
         test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (ressource['sha'], ressource['ext']))
         with open(test_data_file, mode='rb') as file:
             data = file.read()
-        if erddap_api_server in ressource['uri']:
+        if start_with(ressource['uri'], erddap_api_server):
             MOCKED_REQUESTS[ressource['uri'].replace(erddap_api_server, "")] = data
-        if "https://github.com/euroargodev/argopy-data/raw/master" in ressource['uri']:
+        if start_with(ressource['uri'], "https://github.com/euroargodev/argopy-data/raw/master"):
             MOCKED_REQUESTS[
                 ressource['uri'].replace("https://github.com/euroargodev/argopy-data/raw/master", "")] = data
-        if "https://api.ifremer.fr" in ressource['uri']:
+        if start_with(ressource['uri'], "https://api.ifremer.fr"):
             MOCKED_REQUESTS[ressource['uri'].replace("https://api.ifremer.fr", "")] = data
 else:
     log.debug("Loading this sub-module with DB_FILE %s" % DB_FILE)
