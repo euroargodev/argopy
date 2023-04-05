@@ -11,12 +11,13 @@ from argopy.errors import InvalidDatasetStructure, OptionValueError
 from utils import requires_gdac, _importorskip, _connectskip
 from mocked_http import mocked_server_address
 
+
 has_gsw, requires_gsw = _importorskip("gsw")
 has_nogsw, requires_nogsw = _connectskip(not has_gsw, "that GSW module is NOT installed")
 
 
 @pytest.fixture(scope="module")
-def ds_pts(mocked_erddapserver):
+def ds_pts(mocked_httpserver):
     """ Create a dictionary of datasets to be used by tests
 
         Note that these datasets can be modified by tests, which can affect the behaviour of other tests !

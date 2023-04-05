@@ -9,7 +9,6 @@ import xarray as xr
 from utils import (
     requires_erddap,
 )
-# from mocked_erddap_ifremer import mocked_server_address, mocked_erddapserver
 from mocked_http import mocked_server_address
 from mocked_http import mocked_httpserver as mocked_erddapserver
 import tempfile
