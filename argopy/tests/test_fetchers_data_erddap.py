@@ -6,7 +6,9 @@ from argopy.utilities import is_list_of_strings
 
 import pytest
 import xarray as xr
-
+from utils import (
+    requires_erddap,
+)
 # from mocked_erddap_ifremer import mocked_server_address, mocked_erddapserver
 from mocked_http import mocked_server_address
 from mocked_http import mocked_httpserver as mocked_erddapserver
@@ -79,8 +81,6 @@ for entry in PARALLEL_ACCESS_POINTS:
                 VALID_PARALLEL_ACCESS_POINTS_IDS.append("ds='%s', mode='%s', %s" % (ds, mode, ap))
 
 
-
-
 def create_fetcher(fetcher_args, access_point):
     """ Create a fetcher for a given set of facade options and access point """
     def core(fargs, apts):
@@ -121,9 +121,14 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
             assert False
 
 
+@requires_erddap
 class Test_Backend:
     """ Test ERDDAP data fetching backend """
     src = 'erddap'
+
+    #############
+    # UTILITIES #
+    #############
 
     def setup_class(self):
         """setup any state specific to the execution of the given class"""

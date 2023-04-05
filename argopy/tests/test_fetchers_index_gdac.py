@@ -116,15 +116,6 @@ class TestBackend:
     def _patch_ftp(self, ftp):
         """Patch Mocked FTP server keyword"""
         if ftp == 'MOCKFTP':
-            # log.debug(pytest.MOCKFTP)
-            # log.debug(urlparse(pytest.MOCKFTP).hostname)
-            # # check_gdac_path(pytest.MOCKFTP, errors='raise')
-            # fs = fsspec.filesystem('ftp', host=urlparse(pytest.MOCKFTP).hostname, port=int(urlparse(pytest.MOCKFTP).port))
-            # log.debug(fs.exists(urlparse(pytest.MOCKFTP).hostname))
-            # log.debug(fs.exists(pytest.MOCKFTP))
-            # log.debug(fs.exists(fs.sep.join([pytest.MOCKFTP, ""])))
-            # log.debug(fs.exists(fs.sep.join([pytest.MOCKFTP, "dac"])))
-
             return pytest.MOCKFTP  # this was set in conftest.py
         else:
             return ftp
