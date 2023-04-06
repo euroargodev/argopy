@@ -13,7 +13,6 @@ import aiohttp
 import importlib
 import shutil
 import logging
-from fsspec.core import split_protocol
 from urllib.parse import urlparse
 
 import argopy
@@ -34,10 +33,6 @@ from argopy.utilities import (
     is_list_of_dicts,
     modified_environ,
     is_list_of_strings,
-    check_wmo,
-    check_cyc,
-    lscache,
-    isconnected,
 )
 from argopy.stores.argo_index_pd import indexstore_pandas
 from utils import requires_connection, requires_connected_argovis, safe_to_server_errors, fct_safe_to_server_errors

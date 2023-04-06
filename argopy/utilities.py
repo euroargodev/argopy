@@ -2024,6 +2024,7 @@ class TopoFetcher:
         cachedir: str = "",
         api_timeout: int = 0,
         stride: list = [1, 1],
+        server: Union[str] = None,
         **kwargs,
     ):
         """ Instantiate an ERDDAP topo data fetcher
@@ -2054,7 +2055,7 @@ class TopoFetcher:
         self.stride = stride
         if ds == "gebco":
             self.definition = "NOAA erddap gebco data fetcher for a space region"
-            self.server = "https://coastwatch.pfeg.noaa.gov/erddap"
+            self.server = server if server is not None else "https://coastwatch.pfeg.noaa.gov/erddap"
             self.server_name = "NOAA"
             self.dataset_id = "gebco"
 

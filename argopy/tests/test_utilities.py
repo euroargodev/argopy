@@ -6,6 +6,8 @@ import xarray as xr
 import pandas as pd
 import numpy as np
 import types
+from collections import ChainMap
+import shutil
 
 import argopy
 from argopy.utilities import (
@@ -48,6 +50,7 @@ from utils import (
     has_matplotlib,
     has_cartopy,
 )
+from mocked_http import mocked_httpserver, mocked_server_address
 
 if has_matplotlib:
     import matplotlib as mpl
@@ -614,22 +617,40 @@ def test_YearFraction_to_datetime():
 
 
 class Test_TopoFetcher():
+    box = [81, 123, -67, -54]
 
-    @safe_to_server_errors
-    def test_fetching(self):
-        box = [81, 123, -67, -54]
-        fetcher = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=True)
-        ds = fetcher.to_xarray()
+    def setup_class(self):
+        """setup any state specific to the execution of the given class"""
+        # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
+        self.cachedir = tempfile.mkdtemp()
+
+    def teardown_class(self):
+        """Cleanup once we are finished."""
+        def remove_test_dir():
+            shutil.rmtree(self.cachedir)
+        remove_test_dir()
+
+    def make_a_fetcher(self, cached=False):
+        opts = {'ds': 'gebco', 'stride': [10, 10], 'server': mocked_server_address}
+        if cached:
+            opts = ChainMap(opts, {'cache': True, 'cachedir': self.cachedir})
+        return TopoFetcher(self.box, **opts)
+
+    def assert_fetcher(self, f):
+        ds = f.to_xarray()
         assert isinstance(ds, xr.Dataset)
         assert 'elevation' in ds.data_vars
 
-    @safe_to_server_errors
-    def test_fetching_cached(self):
-        box = [81, 123, -67, -54]
-        fetcher = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=False)
-        ds = fetcher.to_xarray()
-        assert isinstance(ds, xr.Dataset)
-        assert 'elevation' in ds.data_vars
+    def test_load_mocked_server(self, mocked_httpserver):
+        """This will easily ensure that the module scope fixture is available to all methods !"""
+        assert True
+
+    params = [True, False]
+    ids_params = ["cached=%s" % p for p in params]
+    @pytest.mark.parametrize("params", params, indirect=False, ids=ids_params)
+    def test_fetching(self, params):
+        fetcher = self.make_a_fetcher(cached=params)
+        self.assert_fetcher(fetcher)
 
 
 class Test_float_wmo():
@@ -730,25 +751,6 @@ def test_get_ea_profile_page():
 @requires_oops
 class Test_OceanOPSDeployments:
 
-    # Define the list of region/box to use in tests
-    # valid_boxes = [[val if i1 != i2 else None for i2, val in enumerate(
-    #     [-90,
-    #      0,
-    #      0,
-    #      90,
-    #      pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"),
-    #      (pd.to_datetime('now', utc=True) + pd.Timedelta(365, unit='days')).strftime("%Y-%m-%d")]
-    # )] for i1 in range(6)]
-    # valid_boxes = [
-    #     None,
-    #     [-90, 0, 0, 90],
-    #     [-90, 0, 0, 90, '2022-01'],
-    #     [None, 0, 0, 90, '2022-01-01', '2023-01-01'],
-    #     [-90, None, 0, 90, '2022-01-01', '2023-01-01'],
-    #     [-90, 0, None, 90, '2022-01-01', '2023-01-01'],
-    #     [-90, 0, 0, None, '2022-01-01', '2023-01-01'],
-    #     [-90, 0, 0, 90, None, '2023-01-01'],
-    #     [-90, 0, 0, 90, '2022-01-01', None]]
     # scenarios generation can't be automated because of the None/True combination of arguments.
     # If box=None and deployed_only=True, OceanOPSDeployments will seek for OPERATING floats deployed today ! which is
     # impossible and if it happens it's due to an error in the database...
@@ -771,9 +773,6 @@ class Test_OceanOPSDeployments:
         ([-90, 0, 0, 90, None, '2023-01-01'], False),
         ([-90, 0, 0, 90, '2022-01-01', None], True),
         ([-90, 0, 0, 90, '2022-01-01', None], False)]
-
-    # Combine the list of boxex with other possible options:
-    # scenarios = [(box, deployed_only) for box in valid_boxes for deployed_only in [True, False]]
     scenarios_ids = ["%s, %s" % (opt[0], opt[1]) for opt in scenarios]
 
     @pytest.fixture
@@ -787,7 +786,17 @@ class Test_OceanOPSDeployments:
             deployed_only = None
 
         args = {"box": box, "deployed_only": deployed_only}
-        return OceanOPSDeployments(**args)
+        oops = OceanOPSDeployments(**args)
+
+        # Adjust server info to use the mocked HTTP server:
+        oops.api = mocked_server_address
+        oops.model = 'data/platform'
+
+        return oops
+
+    def test_load_mocked_server(self, mocked_httpserver):
+        """This will easily ensure that the module scope fixture is available to all methods !"""
+        assert True
 
     @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
     def test_init(self, an_instance):
@@ -804,18 +813,12 @@ class Test_OceanOPSDeployments:
 
     @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
     def test_to_dataframe(self, an_instance):
-        @safe_to_server_errors
-        def test(an_instance):
-            assert isinstance(an_instance.to_dataframe(), pd.DataFrame)
-        test(an_instance)
+        assert isinstance(an_instance.to_dataframe(), pd.DataFrame)
 
     @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
     @requires_matplotlib
     @requires_cartopy
     def test_plot_status(self, an_instance):
-        @safe_to_server_errors
-        def test(an_instance):
-            fig, ax = an_instance.plot_status()
-            assert isinstance(fig, mpl.figure.Figure)
-            assert isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot)
-        test(an_instance)
+        fig, ax = an_instance.plot_status()
+        assert isinstance(fig, mpl.figure.Figure)
+        assert isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot)

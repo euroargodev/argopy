@@ -232,14 +232,22 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
                     print("{:<12}: {:<12}".format(k, stat), file=file)
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+def setup_args():
+    icons_help_string = """This script display argopy dependencies versions of current environment"""
+
+    parser = argparse.ArgumentParser(description='argopy dependencies versions',
+                                     formatter_class=argparse.RawTextHelpFormatter,
+                                     epilog="%s\n(c) Argo-France/Ifremer/LOPS, 2023" % icons_help_string)
+
     parser.add_argument("-c", "--conda", help="Print package versions for conda yml files", action="store_true")
     parser.add_argument("--free", help="Just print package lists for FREE conda yml files", action="store_true")
     parser.add_argument("--core", help="Just print CORE package lists for conda yml files", action="store_true")
-    args = parser.parse_args()
 
-    show_versions(conda=args.conda if args.conda else False,
-                  free=args.free if args.free else False,
-                  core=args.core if args.core else False)
+    return parser
+
+if __name__ == '__main__':
+    ARGS = setup_args().parse_args()
+    show_versions(conda=ARGS.conda if ARGS.conda else False,
+                  free=ARGS.free if ARGS.free else False,
+                  core=ARGS.core if ARGS.core else False)
 
