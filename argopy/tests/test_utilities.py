@@ -42,6 +42,7 @@ from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
 from utils import (
     requires_connection,
+    requires_erddap,
     requires_gdac,
     requires_matplotlib,
     requires_cartopy,
@@ -87,35 +88,43 @@ def test_show_versions():
     assert "INSTALLED VERSIONS" in f.getvalue()
 
 
-def test_isconnected():
-    assert isinstance(isconnected(), bool)
+def test_isconnected(mocked_httpserver):
+    assert isinstance(isconnected(host=mocked_server_address), bool)
     assert isconnected(host="http://dummyhost") is False
 
 
-def test_urlhaskeyword():
-    assert isinstance(urlhaskeyword('http://api.ifremer.fr/argopy/data/ARGO-FULL.json', 'label'), bool)
+def test_urlhaskeyword(mocked_httpserver):
+    url = "https://api.ifremer.fr/argopy/data/ARGO-FULL.json"
+    url.replace("https://api.ifremer.fr", mocked_server_address)
+    assert isinstance(urlhaskeyword(url, "label"), bool)
 
 
-def test_isalive():
-    assert isinstance(isalive('https://github.com/euroargodev'), bool)
-    assert isinstance(isalive({'url': 'http://api.ifremer.fr/argopy/data/ARGO-FULL.json', 'keyword': 'label'}), bool)
+params = [mocked_server_address,
+          {"url": mocked_server_address + "/argopy/data/ARGO-FULL.json", "keyword": "label"}
+          ]
+params_ids = ["url is a %s" % str(type(p)) for p in params]
+@pytest.mark.parametrize("params", params, indirect=False, ids=params_ids)
+def test_isalive(params, mocked_httpserver):
+    assert isinstance(isalive(params), bool)
 
 
-def test_isAPIconnected():
-    assert isinstance(isAPIconnected(src="erddap", data=True), bool)
-    assert isinstance(isAPIconnected(src="erddap", data=False), bool)
+@requires_erddap
+@pytest.mark.parametrize("data", [True, False], indirect=False, ids=["data=%s" % t for t in [True, False]])
+def test_isAPIconnected(data, mocked_httpserver):
+    with argopy.set_options(erddap=mocked_server_address):
+        assert isinstance(isAPIconnected(src="erddap", data=data), bool)
 
 
-def test_erddap_ds_exists():
-    assert isinstance(erddap_ds_exists(ds="ArgoFloats"), bool)
-    assert erddap_ds_exists(ds="DummyDS") is False
-
+def test_erddap_ds_exists(mocked_httpserver):
+    with argopy.set_options(erddap=mocked_server_address):
+        assert isinstance(erddap_ds_exists(ds="ArgoFloats"), bool)
+        assert erddap_ds_exists(ds="DummyDS") is False
 
 # todo : Implement tests for utilities functions: badge, fetch_status and monitor_status
 
 
-@requires_connection
 @requires_gdac
+@pytest.mark.skipif(not isconnected(), reason="Requires a connection to load tutorial data")
 def test_clear_cache():
     ftproot, flist = argopy.tutorial.open_dataset("gdac")
     with tempfile.TemporaryDirectory() as cachedir:
@@ -125,16 +134,6 @@ def test_clear_cache():
             argopy.clear_cache()
             assert os.path.exists(cachedir) is True
             assert len(os.listdir(cachedir)) == 0
-
-
-# We disable this test because the server has not responded over a week (May 29th)
-# @unittest.skipUnless(CONNECTED, "open_etopo1 requires an internet connection")
-# def test_open_etopo1():
-#     try:
-#         ds = open_etopo1([-80, -79, 20, 21], res='l')
-#         assert isinstance(ds, xr.DataArray) is True
-#     except requests.HTTPError:  # not our fault
-#         pass
 
 
 class Test_linear_interpolation_remap:
@@ -736,16 +735,15 @@ class Test_Registry():
         Registry(opts[0][0], dtype=opts[1], invalid='ignore').commit(opts[0][-1])
 
 
-@requires_connection
-def test_get_coriolis_profile_id():
-    assert isinstance(get_coriolis_profile_id(6901929), pd.core.frame.DataFrame)
-    assert isinstance(get_coriolis_profile_id(6901929, 12), pd.core.frame.DataFrame)
+@pytest.mark.parametrize("params", [[6901929, None], [6901929, 12]], indirect=False, ids=['float', 'profile'])
+def test_get_coriolis_profile_id(params, mocked_httpserver):
+    with argopy.set_options(cachedir=tempfile.mkdtemp()):
+        assert isinstance(get_coriolis_profile_id(params[0], params[1], api_server=mocked_server_address), pd.core.frame.DataFrame)
 
-
-@requires_connection
-def test_get_ea_profile_page():
-    assert is_list_of_strings(get_ea_profile_page(6901929))
-    assert is_list_of_strings(get_ea_profile_page(6901929, 12))
+@pytest.mark.parametrize("params", [[6901929, None], [6901929, 12]], indirect=False, ids=['float', 'profile'])
+def test_get_ea_profile_page(params, mocked_httpserver):
+    with argopy.set_options(cachedir=tempfile.mkdtemp()):
+        assert is_list_of_strings(get_ea_profile_page(params[0], params[1], api_server=mocked_server_address))
 
 
 @requires_oops
@@ -756,9 +754,9 @@ class Test_OceanOPSDeployments:
     # impossible and if it happens it's due to an error in the database...
     scenarios = [
         # (None, True),  # This often lead to an empty dataframe !
-        (None, False),
+        # (None, False),  # Can't be handled by the mocked server (test date is surely different from the test data date)
         # ([-90, 0, 0, 90], True),
-        ([-90, 0, 0, 90], False),
+        # ([-90, 0, 0, 90], False),  # Can't be handled by the mocked server (test date is surely different from the test data date)
         ([-90, 0, 0, 90, '2022-01'], True),
         ([-90, 0, 0, 90, '2022-01'], False),
         ([None, 0, 0, 90, '2022-01-01', '2023-01-01'], True),

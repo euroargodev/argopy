@@ -942,40 +942,6 @@ class monitor_status:
         thread.start()
 
 
-# def open_etopo1(box, res="l"):
-#     """ Download ETOPO for a box
-#
-#         Parameters
-#         ----------
-#         box: [xmin, xmax, ymin, ymax]
-#
-#         Returns
-#         -------
-#         xarray.Dataset
-#     """
-#     # This function is in utilities to anticipate usage outside of plotting, eg interpolation, grounding detection
-#     resx, resy = 0.1, 0.1
-#     if res == "h":
-#         resx, resy = 0.016, 0.016
-#
-#     uri = (
-#         "https://gis.ngdc.noaa.gov/mapviewer-support/wcs-proxy/wcs.groovy?filename=etopo1.nc"
-#         "&request=getcoverage&version=1.0.0&service=wcs&coverage=etopo1&CRS=EPSG:4326&format=netcdf"
-#         "&resx={}&resy={}"
-#         "&bbox={}"
-#     ).format
-#     thisurl = uri(
-#         resx, resy, ",".join([str(b) for b in [box[0], box[2], box[1], box[3]]])
-#     )
-#     ds = httpstore(cache=True).open_dataset(thisurl)
-#     da = ds["Band1"].rename("topo")
-#     for a in ds.attrs:
-#         da.attrs[a] = ds.attrs[a]
-#     da.attrs["Data source"] = "https://maps.ngdc.noaa.gov/viewers/wcs-client/"
-#     da.attrs["URI"] = thisurl
-#     return da
-
-
 #
 #  From xarrayutils : https://github.com/jbusecke/xarrayutils/blob/master/xarrayutils/vertical_coordinates.py
 #  Direct integration of those 2 functions to minimize dependencies and possibility of tuning them to our needs
@@ -2772,7 +2738,7 @@ class Registry(UserList):
         return self.__copy__()
 
 
-def get_coriolis_profile_id(WMO, CYC=None):
+def get_coriolis_profile_id(WMO, CYC=None, **kwargs):
     """ Return a :class:`pandas.DataFrame` with CORIOLIS ID of WMO/CYC profile pairs
 
         This method get ID by requesting the dataselection.euro-argo.eu trajectory API.
@@ -2792,9 +2758,11 @@ def get_coriolis_profile_id(WMO, CYC=None):
     WMO_list = check_wmo(WMO)
     if CYC is not None:
         CYC_list = check_cyc(CYC)
-    URIs = [
-        "https://dataselection.euro-argo.eu/api/trajectory/%i" % wmo for wmo in WMO_list
-    ]
+    if 'api_server' in kwargs:
+        api_server = kwargs['api_server']
+    else:
+        api_server = "https://dataselection.euro-argo.eu/api"
+    URIs = [api_server + "/trajectory/%i" % wmo for wmo in WMO_list]
 
     def prec(data, url):
         # Transform trajectory json to dataframe
@@ -2842,7 +2810,7 @@ def get_coriolis_profile_id(WMO, CYC=None):
     ]
 
 
-def get_ea_profile_page(WMO, CYC=None):
+def get_ea_profile_page(WMO, CYC=None, **kwargs):
     """ Return a list of URL
 
         Parameters
@@ -2860,7 +2828,7 @@ def get_ea_profile_page(WMO, CYC=None):
         --------
         get_coriolis_profile_id
     """
-    df = get_coriolis_profile_id(WMO, CYC)
+    df = get_coriolis_profile_id(WMO, CYC, **kwargs)
     url = "https://dataselection.euro-argo.eu/cycle/{}"
     return [url.format(this_id) for this_id in sorted(df["ID"])]
 

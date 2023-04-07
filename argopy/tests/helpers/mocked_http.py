@@ -31,6 +31,7 @@ import pickle
 
 
 log = logging.getLogger("argopy.tests.mocked_erddap")
+LOG_SERVER_CONTENT = False  # Also log the list of files/uris available from the mocked server
 
 requests = pytest.importorskip("requests")
 port = 9898  # Select the port to run the local server on
@@ -70,13 +71,18 @@ if os.path.exists(DB_FILE):
 
         if start_with(ressource['uri'], "https://www.ocean-ops.org/api/1"):
             MOCKED_REQUESTS[ressource['uri'].replace("https://www.ocean-ops.org/api/1", "")] = data
+
+        if start_with(ressource['uri'], "https://dataselection.euro-argo.eu/api"):
+            MOCKED_REQUESTS[ressource['uri'].replace("https://dataselection.euro-argo.eu/api", "")] = data
+
+
 else:
-    log.debug("Loading this sub-module with DB_FILE %s" % DB_FILE)
+    log.debug("Loading this sub-module without DB_FILE ! %s" % DB_FILE)
 
 
 class HTTPTestHandler(BaseHTTPRequestHandler):
     static_files = {
-        # "/index/realfile": data,
+        "": b"Mocked HTTP server is up and running, serving %i files" % len(URI),  # This is mandatory for the server to respond without content
         # "/index/otherfile": data,
         # "/index": index,
         # "/data/20020401": listing,
@@ -203,7 +209,7 @@ def serve():
     try:
         log.info("Mocked HTTP server up and ready at %s, serving %i URI. (id=%s)" %
                  (mocked_server_address, len(HTTPTestHandler.files), id(httpd)))
-        if 0:
+        if LOG_SERVER_CONTENT:
             # Use these lines to log test data name and content
             for f in HTTPTestHandler.files.keys():
                 log.info(f)

@@ -34,7 +34,7 @@ import logging
 
 
 log = logging.getLogger("argopy.tests.utils")
-
+log.debug("%s TESTS UTILS %s" % ("="*50, "="*50))
 
 def _importorskip(modname):
     try:
@@ -175,9 +175,10 @@ has_ipywidgets, requires_ipywidgets = _importorskip("ipywidgets")
 #################
 # Ocean-OPS API #
 #################
-has_oops, requires_oops = _connectskip(
-    isconnected(OceanOPSDeployments().api_server_check), "a live Ocean-OPS server"
-)
+# has_oops, requires_oops = _connectskip(
+#     isconnected(OceanOPSDeployments().api_server_check), "a live Ocean-OPS server"
+# )
+has_oops, requires_oops = _connectskip(1, "a live Ocean-OPS server")  # Always ON with the mocked server
 
 ############
 # Fix for issues discussed here:
@@ -295,3 +296,4 @@ def safe_to_server_errors(test_func, *args, **kwargs):
         fct_safe_to_server_errors(test_func)(*args, **kwargs)
     return test_wrapper
 
+log.debug("%s TESTS UTILS %s" % ("="*50, "="*50))

@@ -17,6 +17,7 @@ import copy
 from abc import abstractmethod
 import getpass
 
+import argopy
 from .proto import ArgoDataFetcherProto
 from argopy.options import OPTIONS
 from argopy.utilities import list_standard_variables, Chunker, format_oneline
@@ -43,7 +44,7 @@ access_points = ['wmo', 'box']
 exit_formats = ['xarray']
 dataset_ids = ['phy', 'ref', 'bgc']  # First is default
 api_server = OPTIONS['erddap']  # API root url
-api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
+api_server_check = OPTIONS['erddap'] + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
 
 
 class ErddapArgoDataFetcher(ArgoDataFetcherProto):
