@@ -6,7 +6,7 @@ import xarray as xr
 import pandas as pd
 import numpy as np
 import types
-from collections import ChainMap
+from collections import ChainMap, OrderedDict
 import shutil
 
 import argopy
@@ -36,6 +36,7 @@ from argopy.utilities import (
     float_wmo,
     get_coriolis_profile_id,
     get_ea_profile_page,
+    ArgoNVSReferenceTables,
     OceanOPSDeployments,
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
@@ -744,6 +745,75 @@ def test_get_coriolis_profile_id(params, mocked_httpserver):
 def test_get_ea_profile_page(params, mocked_httpserver):
     with argopy.set_options(cachedir=tempfile.mkdtemp()):
         assert is_list_of_strings(get_ea_profile_page(params[0], params[1], api_server=mocked_server_address))
+
+
+class Test_ArgoNVSReferenceTables:
+
+    def setup_class(self):
+        """setup any state specific to the execution of the given class"""
+        # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
+        self.cachedir = tempfile.mkdtemp()
+        self.nvs = ArgoNVSReferenceTables(cache=True, cachedir=self.cachedir)
+
+    def teardown_class(self):
+        """Cleanup once we are finished."""
+        def remove_test_dir():
+            shutil.rmtree(self.cachedir)
+        remove_test_dir()
+
+    def test_load_mocked_server(self, mocked_httpserver):
+        """This will easily ensure that the module scope fixture is available to all methods !"""
+        assert True
+
+    def test_valid_ref(self):
+        assert is_list_of_strings(self.nvs.valid_ref)
+
+    opts = [3, 'R09']
+    opts_ids = ["rtid is a %s" % type(o) for o in opts]
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_tbl(self, opts):
+        assert isinstance(self.nvs.tbl(opts), pd.DataFrame)
+
+    opts = [3, 'R09']
+    opts_ids = ["rtid is a %s" % type(o) for o in opts]
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_tbl_name(self, opts):
+        names = self.nvs.tbl_name(opts)
+        assert isinstance(names, tuple)
+        assert isinstance(names[0], str)
+        assert isinstance(names[1], str)
+        assert isinstance(names[2], str)
+
+    def test_all_tbl(self):
+        all = self.nvs.all_tbl()
+        assert isinstance(all, OrderedDict)
+        assert isinstance(all[list(all.keys())[0]], pd.DataFrame)
+
+    def test_all_tbl_name(self):
+        all = self.nvs.all_tbl_name()
+        assert isinstance(all, OrderedDict)
+        assert isinstance(all[list(all.keys())[0]], tuple)
+
+    opts = ["ld+json", "rdf+xml", "text/turtle", "invalid"]
+    opts_ids = ["fmt=%s" % o for o in opts]
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_get_url(self, opts):
+        if opts != 'invalid':
+            url = self.nvs.get_url(3, fmt=opts)
+            assert isinstance(url, str)
+            if "json" in opts:
+                data = self.nvs.fs.open_json(url)
+                assert isinstance(data, dict)
+            elif "xml" in opts:
+                data = self.nvs.fs.fs.cat_file(url)
+                assert data[0:5] == b'<?xml'
+            else:
+                # log.debug(self.nvs.fs.fs.info(url))
+                data = self.nvs.fs.fs.cat_file(url)
+                assert data[0:7] == b'@prefix'
+        else:
+            with pytest.raises(ValueError):
+                self.nvs.get_url(3, fmt=opts)
 
 
 @requires_oops
