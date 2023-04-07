@@ -31,6 +31,7 @@ import contextlib
 from fsspec.core import split_protocol
 import fsspec
 
+import argopy
 import xarray as xr
 import pandas as pd
 import numpy as np
@@ -204,6 +205,9 @@ def list_available_data_src():
     sources = {}
     try:
         from .data_fetchers import erddap_data as Erddap_Fetchers
+        # Ensure we're loading the erddap data fetcher with the current options:
+        Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(Erddap_Fetchers.api_server, OPTIONS['erddap'])
+        Erddap_Fetchers.api_server = OPTIONS['erddap']
 
         sources["erddap"] = Erddap_Fetchers
     except Exception:
@@ -228,6 +232,9 @@ def list_available_data_src():
 
     try:
         from .data_fetchers import gdacftp_data as GDAC_Fetchers
+        # Ensure we're loading the gdac data fetcher with the current options:
+        GDAC_Fetchers.api_server_check = OPTIONS['ftp']
+        GDAC_Fetchers.api_server = OPTIONS['ftp']
 
         sources["gdac"] = GDAC_Fetchers
     except Exception:
@@ -244,11 +251,14 @@ def list_available_data_src():
 
 def list_available_index_src():
     """ List all available index sources """
-    AVAILABLE_SOURCES = {}
+    sources = {}
     try:
         from .data_fetchers import erddap_index as Erddap_Fetchers
+        # Ensure we're loading the erddap data fetcher with the current options:
+        Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(Erddap_Fetchers.api_server, OPTIONS['erddap'])
+        Erddap_Fetchers.api_server = OPTIONS['erddap']
 
-        AVAILABLE_SOURCES["erddap"] = Erddap_Fetchers
+        sources["erddap"] = Erddap_Fetchers
     except Exception:
         warnings.warn(
             "An error occurred while loading the ERDDAP index fetcher, "
@@ -259,8 +269,11 @@ def list_available_index_src():
 
     try:
         from .data_fetchers import gdacftp_index as GDAC_Fetchers
+        # Ensure we're loading the gdac data fetcher with the current options:
+        GDAC_Fetchers.api_server_check = OPTIONS['ftp']
+        GDAC_Fetchers.api_server = OPTIONS['ftp']
 
-        AVAILABLE_SOURCES["gdac"] = GDAC_Fetchers
+        sources["gdac"] = GDAC_Fetchers
     except Exception:
         warnings.warn(
             "An error occurred while loading the GDAC index fetcher, "
@@ -269,7 +282,7 @@ def list_available_index_src():
         )
         pass
 
-    return AVAILABLE_SOURCES
+    return sources
 
 
 def list_standard_variables():
@@ -679,6 +692,7 @@ def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
         -------
         bool
     """
+    # log.debug("isconnected: %s" % host)
     if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
         it = 0
         while it < maxtry:
@@ -739,6 +753,7 @@ def isalive(api_server_check: Union[str, dict] = "") -> bool:
         -------
         bool
     """
+    # log.debug("isalive: %s" % api_server_check)
     if isinstance(api_server_check, dict):
         return urlhaskeyword(url=api_server_check['url'], keyword=api_server_check['keyword'])
     else:
@@ -774,24 +789,27 @@ def isAPIconnected(src="erddap", data=True):
 
 def erddap_ds_exists(
         ds: str = "ArgoFloats",
-        erddap: str = "https://erddap.ifremer.fr/erddap",
+        erddap: str = None,
         maxtry: int = 2
 ) -> bool:
     """ Check if a dataset exists on a remote erddap server
-    return a bool
 
     Parameter
     ---------
     ds: str, default='ArgoFloats'
         Name of the erddap dataset to check
-    erddap: str, default='https://erddap.ifremer.fr/erddap'
+    erddap: str, default=OPTIONS['erddap']
         Url of the erddap server
     maxtry: int, default: 2
         Maximum number of host connections to try
+
     Return
     ------
     bool
     """
+    if erddap is None:
+        erddap = OPTIONS['erddap']
+    # log.debug("from erddap_ds_exists: %s" % erddap)
     from .stores import httpstore
     if isconnected(erddap, maxtry=maxtry):
         with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
