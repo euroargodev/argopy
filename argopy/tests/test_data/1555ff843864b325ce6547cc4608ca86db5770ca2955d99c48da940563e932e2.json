@@ -1,0 +1,743 @@
+{
+  "@graph" : [ {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/",
+    "@type" : "skos:Collection",
+    "alternative" : "SENSOR_MAKER",
+    "creator" : "Argo Data Management Team",
+    "date" : "2021-09-15 03:00:07.0",
+    "description" : "Terms describing sensor developers and manufacturers in Argo NetCDF arrays",
+    "publisher" : "Natural Environment Research Council",
+    "title" : "Argo sensor manufacturers",
+    "RE_RegisterManager" : "British Oceanographic Data Centre",
+    "RE_RegisterOwner" : "Argo Data Management Team",
+    "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+    "seeAlso" : "https://github.com/nvs-vocabs/R26",
+    "versionInfo" : "4",
+    "altLabel" : "SENSOR_MAKER",
+    "member" : [ "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/", "http://vocab.nerc.ac.uk/collection/R26/current/PAINE/", "http://vocab.nerc.ac.uk/collection/R26/current/Unknown/", "http://vocab.nerc.ac.uk/collection/R26/current/FSI/", "http://vocab.nerc.ac.uk/collection/R26/current/MICRON/", "http://vocab.nerc.ac.uk/collection/R26/current/TSK/", "http://vocab.nerc.ac.uk/collection/R26/current/MENSOR/", "http://vocab.nerc.ac.uk/collection/R26/current/RBR/", "http://vocab.nerc.ac.uk/collection/R26/current/AMETEK/", "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/", "http://vocab.nerc.ac.uk/collection/R26/current/SEASCAN/", "http://vocab.nerc.ac.uk/collection/R26/current/TRIOS/", "http://vocab.nerc.ac.uk/collection/R26/current/AANDERAA/", "http://vocab.nerc.ac.uk/collection/R26/current/QUARTZDYNE/", "http://vocab.nerc.ac.uk/collection/R26/current/MBARI/", "http://vocab.nerc.ac.uk/collection/R26/current/DRUCK/", "http://vocab.nerc.ac.uk/collection/R26/current/SBE/", "http://vocab.nerc.ac.uk/collection/R26/current/KELLER/", "http://vocab.nerc.ac.uk/collection/R26/current/KISTLER/", "http://vocab.nerc.ac.uk/collection/R26/current/TURNER_DESIGN/", "http://vocab.nerc.ac.uk/collection/R26/current/APL_UW/", "http://vocab.nerc.ac.uk/collection/R26/current/SEAPOINT/", "http://vocab.nerc.ac.uk/collection/R26/current/JAC/" ],
+    "prefLabel" : "Argo sensor manufacturers"
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/AANDERAA/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::AANDERAA",
+    "date" : "2019-10-11 15:08:43.0",
+    "identifier" : "SDN:R26::AANDERAA",
+    "authoredOn" : "2019-10-11 15:08:43.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/AANDERAA/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "AANDERAA",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A Xylem brand, headquartered in Bergen (Norway) that designs, manufactures and sells sensors, instruments and systems for measuring and monitoring in Environmental Research, Marine Transportation, Oil and Gas, Aquaculture, Road and Traffic and Construction."
+    },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330F/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3830/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831F/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330/" ],
+    "notation" : "SDN:R26::AANDERAA",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Aanderaa"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/AMETEK/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::AMETEK",
+    "date" : "2019-10-11 15:08:43.0",
+    "identifier" : "SDN:R26::AMETEK",
+    "authoredOn" : "2019-10-11 15:08:43.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/AMETEK/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "AMETEK",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Organisation e-mail: Unavailable; Organisation website: http://www.ametekpi.com"
+    },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R27/current/AMETEK_3000PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/AMETEK/" ],
+    "notation" : "SDN:R26::AMETEK",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Ametek Process Instruments"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/APL_UW/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::APL_UW",
+    "date" : "2021-02-11 14:21:39.0",
+    "identifier" : "SDN:R26::APL_UW",
+    "authoredOn" : "2021-02-11 14:21:39.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/APL_UW/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "APL_UW",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Organisation e-mail: webadmin@apl.washington.edu; Organisation website: http://www.apl.washington.edu/"
+    },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R27/current/PAL_UW/", "http://vocab.nerc.ac.uk/collection/R27/current/EM/" ],
+    "notation" : "SDN:R26::APL_UW",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "University of Washington, Applied Physics Laboratory"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/DRUCK/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::DRUCK",
+    "date" : "2019-10-11 15:08:43.0",
+    "identifier" : "SDN:R26::DRUCK",
+    "authoredOn" : "2019-10-11 15:08:43.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/DRUCK/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "DRUCK",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Organisation e-mail: usa.sales@druck.com; Organisation website: http://www.druckinc.com"
+    },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_2900PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK/" ],
+    "notation" : "SDN:R26::DRUCK",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Druck Inc."
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/FSI/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::FSI",
+    "date" : "2019-10-11 15:08:43.0",
+    "identifier" : "SDN:R26::FSI",
+    "authoredOn" : "2019-10-11 15:08:43.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/FSI/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "FSI",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Organisation e-mail: sales@falmouth.com; Organisation website: http://www.falmouth.com/index.html"
+    },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R27/current/FSI/",
+    "notation" : "SDN:R26::FSI",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Falmouth Scientific Inc."
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/JAC/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::JAC",
+    "date" : "2019-10-11 15:08:43.0",
+    "identifier" : "SDN:R26::JAC",
+    "authoredOn" : "2019-10-11 15:08:43.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/JAC/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "JAC",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A Japanese company based in Nishinomiya that manufactures and sells measuring instruments, water level gauges, and other diagnostic equipment. It was established in 1973 and is a subsidiary of Kawasaki Steel, now known as JFE Steel."
+    },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R27/current/AROD_FT/", "http://vocab.nerc.ac.uk/collection/R27/current/ARO_FT/" ],
+    "notation" : "SDN:R26::JAC",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "JFE Advantech Co., Ltd"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/KELLER/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::KELLER",
+    "date" : "2021-02-11 14:21:39.0",
+    "identifier" : "SDN:R26::KELLER",
+    "authoredOn" : "2021-02-11 14:21:39.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/KELLER/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "KELLER",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A multinational technology company based in Winterthur, Switzerland, specialised in the manufacture of pressure sensors."
+    },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R27/current/KELLER_PA8/",
+    "notation" : "SDN:R26::KELLER",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "KELLER AG für Druckmesstechnik"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/KISTLER/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::KISTLER",
+    "date" : "2019-10-11 15:08:43.0",
+    "identifier" : "SDN:R26::KISTLER",
+    "authoredOn" : "2019-10-11 15:08:43.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/KISTLER/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "KISTLER",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Organisation e-mail: Unavailable; Organisation website: https://www.kistler.com/en/"
+    },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_10153PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER/", "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_2900PSIA/" ],
+    "notation" : "SDN:R26::KISTLER",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Kistler"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/MBARI/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::MBARI",
+    "date" : "2021-02-11 14:21:39.0",
+    "identifier" : "SDN:R26::MBARI",
+    "authoredOn" : "2021-02-11 14:21:39.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/MBARI/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "MBARI",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A non-profit oceanographic research centre located in Moss Landing, California (United States of America), with a technology unit dedicated to the development of oceanographic instruments and platforms."
+    },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R27/current/DURA/", "http://vocab.nerc.ac.uk/collection/R27/current/ISUS/" ],
+    "notation" : "SDN:R26::MBARI",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Monterey Bay Aquarium Research Institute"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/MENSOR/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::MENSOR",
+    "date" : "2021-09-14 12:16:36.0",
+    "identifier" : "SDN:R26::MENSOR",
+    "authoredOn" : "2021-09-14 12:16:36.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/MENSOR/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "MENSOR",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A manufacturing company located in San Marcos, Texas (United States of America), specialised in precision pressure products."
+    },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R27/current/MENSOR/",
+    "notation" : "SDN:R26::MENSOR",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Mensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/MICRON/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::MICRON",
+    "date" : "2021-02-11 14:21:39.0",
+    "identifier" : "SDN:R26::MICRON",
+    "authoredOn" : "2021-02-11 14:21:39.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/MICRON/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "MICRON",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A manufacturing company located in Simi Valley, California (United States of America), specialised in the production and supply of semiconductor strain gages, pressure transducers, temperature sensors and measuring systems."
+    },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R27/current/MP40_C_2000_G/",
+    "notation" : "SDN:R26::MICRON",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Micron Instruments"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/PAINE/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::PAINE",
+    "date" : "2019-10-11 15:08:43.0",
+    "identifier" : "SDN:R26::PAINE",
+    "authoredOn" : "2019-10-11 15:08:43.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/PAINE/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "PAINE",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Organisation e-mail: moreinfo@paineelectronics.com; Organisation website: http://www3.emersonprocess.com/rosemount/paineelectronics/default.aspx"
+    },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2000PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_3000PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1600PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1500PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2900PSIA/" ],
+    "notation" : "SDN:R26::PAINE",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Paine Electronics"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/QUARTZDYNE/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::QUARTZDYNE",
+    "date" : "2021-09-14 12:16:36.0",
+    "identifier" : "SDN:R26::QUARTZDYNE",
+    "authoredOn" : "2021-09-14 12:16:36.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/QUARTZDYNE/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "QUARTZDYNE",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A ChampionX company specialised in resonating quartz pressure transducers and temperature gauges, located in Salt Lake City, Utah (United States of America)."
+    },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/",
+    "notation" : "SDN:R26::QUARTZDYNE",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Quartzdyne"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/RBR/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::RBR",
+    "date" : "2019-10-11 15:08:43.0",
+    "identifier" : "SDN:R26::RBR",
+    "authoredOn" : "2019-10-11 15:08:43.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/RBR/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "RBR",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A Canadian designer and manufacturer of oceanographic instruments, including sensors, loggers and compact systems."
+    },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES_A/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR/" ],
+    "notation" : "SDN:R26::RBR",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "RBR Ltd"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::SATLANTIC",
+    "date" : "2019-10-11 15:08:43.0",
+    "identifier" : "SDN:R26::SATLANTIC",
+    "authoredOn" : "2019-10-11 15:08:43.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SATLANTIC",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "An ocean technology company and brand of Sea-Bird Scientific that develops optical sensors for aquatic research and water quality monitoring. The company was initially founded in 1990. Danaher acquired three ocean science instrumentation companies, Sea-Bird Electronics (2008), WET Labs (2010), and Satlantic (2011), which were then combined to form Sea-Bird Scientific."
+    },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R27/current/SUNA_V2/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_PAR/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_R10W/", "http://vocab.nerc.ac.uk/collection/R27/current/ISUS_V3/", "http://vocab.nerc.ac.uk/collection/R27/current/SUNA/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSWR10W/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/" ],
+    "notation" : "SDN:R26::SATLANTIC",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Satlantic Inc."
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::SBE",
+    "date" : "2021-06-02 23:04:11.0",
+    "identifier" : "SDN:R26::SBE",
+    "authoredOn" : "2021-06-02 23:04:11.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A large, global company based in the United States of America that develops and manufactures products for the measurement of salinity, temperature, pressure, dissolved oxygen, fluorescence, nutrients and related oceanographic parameters in marine waters. It is formed from three ocean science companies, Sea-Bird Electronics, WET Labs and Satlantic that were combined in 2011."
+    },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9a/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE37/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_PAR/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_2K/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/", "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBBCD/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.1/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE43F_IDO/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/", "http://vocab.nerc.ac.uk/collection/R27/current/SUNA_V2/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSWR10W/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE63_OPTODE/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_R10W/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE_STS/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_NTU/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.6/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE43_IDO/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.0.1/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLNTU/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE43I/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.7/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FL/", "http://vocab.nerc.ac.uk/collection/R27/current/C_ROVER/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.5/", "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBB2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.0/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.1/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.1/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0a/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.5/", "http://vocab.nerc.ac.uk/collection/R27/current/SEAFET/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3b/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0c/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9/", "http://vocab.nerc.ac.uk/collection/R27/current/SUNA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.8/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/" ],
+    "notation" : "SDN:R26::SBE",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/SEAPOINT/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::SEAPOINT",
+    "date" : "2021-02-11 14:21:39.0",
+    "identifier" : "SDN:R26::SEAPOINT",
+    "authoredOn" : "2021-02-11 14:21:39.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/SEAPOINT/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SEAPOINT",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A worldwide supplier of underwater optical sensors located in Exeter, New Hampshire (United States of America)."
+    },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R27/current/SEAPOINT_TURBIDITY_METER/",
+    "notation" : "SDN:R26::SEAPOINT",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Seapoint Sensors, Inc."
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/SEASCAN/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::SEASCAN",
+    "date" : "2021-02-11 14:21:39.0",
+    "identifier" : "SDN:R26::SEASCAN",
+    "authoredOn" : "2021-02-11 14:21:39.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/SEASCAN/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SEASCAN",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A small manufacturing company located in Falmouth, Massachusetts (United States of America), specialising in oceanographic research equipment."
+    },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/",
+    "notation" : "SDN:R26::SEASCAN",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Seascan, Inc."
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/TRIOS/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::TRIOS",
+    "date" : "2021-02-11 14:21:39.0",
+    "identifier" : "SDN:R26::TRIOS",
+    "authoredOn" : "2021-02-11 14:21:39.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/TRIOS/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "TRIOS",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A manufacturing company located in Rastede, Germany, specialised in the production and supply of optical sensors including radiometers, photometers and fluorometers for marine research and industrial applications."
+    },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R27/current/RAMSES_ACC/", "http://vocab.nerc.ac.uk/collection/R27/current/OPUS_DS/" ],
+    "notation" : "SDN:R26::TRIOS",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TriOS Mess- und Datentechnik GmbH"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/TSK/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::TSK",
+    "date" : "2021-02-11 14:21:39.0",
+    "identifier" : "SDN:R26::TSK",
+    "authoredOn" : "2021-02-11 14:21:39.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/TSK/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "TSK",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A Japanese manufacturer based in Yokohama (head office), specialised in the production of oceanographic observation equipment and water quality monitoring instruments."
+    },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R27/current/CTD_F01/",
+    "notation" : "SDN:R26::TSK",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Tsurumi-Seiki Co., Ltd."
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/TURNER_DESIGN/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::TURNER_DESIGN",
+    "date" : "2021-02-11 14:21:39.0",
+    "identifier" : "SDN:R26::TURNER_DESIGN",
+    "authoredOn" : "2021-02-11 14:21:39.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/TURNER_DESIGN/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "TURNER_DESIGN",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A manufacturing company located in San Jose, California (United States of America), specialised in the supply of fluorometers for environmental and industrial uses."
+    },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R27/current/CYCLOPS_7_FLUOROMETER/",
+    "notation" : "SDN:R26::TURNER_DESIGN",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Turner Designs"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/Unknown/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::Unknown",
+    "date" : "2021-02-11 14:21:39.0",
+    "identifier" : "SDN:R26::Unknown",
+    "authoredOn" : "2021-02-11 14:21:39.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/Unknown/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "Unknown",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Unknown sensor maker; the use of this code should be exceptional, as the sensor maker should be known."
+    },
+    "notation" : "SDN:R26::Unknown",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Unknown"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R26::WETLABS",
+    "date" : "2019-10-11 15:08:43.0",
+    "identifier" : "SDN:R26::WETLABS",
+    "authoredOn" : "2019-10-11 15:08:43.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "WETLABS",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A brand of Sea-Bird Scientific, the business manufactures oceanographic and environmental fluorometers, transmissometers, scattering sensors and spectrophotometers. The company was initially founded in 1992. Danaher acquired three ocean science instrumentation companies, Sea-Bird Electronics (2008), WET Labs (2010), and Satlantic (2011), which were then combined to form Sea-Bird Scientific."
+    },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FL/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_2K/", "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBBCD/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_NTU/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLNTU/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB3/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/", "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBB2/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/", "http://vocab.nerc.ac.uk/collection/R27/current/C_ROVER/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/" ],
+    "notation" : "SDN:R26::WETLABS",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Wetlabs Inc."
+    }
+  } ],
+  "@context" : {
+    "versionInfo" : {
+      "@id" : "http://www.w3.org/2002/07/owl#versionInfo"
+    },
+    "definition" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#definition"
+    },
+    "deprecated" : {
+      "@id" : "http://www.w3.org/2002/07/owl#deprecated"
+    },
+    "notation" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#notation"
+    },
+    "note" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#note"
+    },
+    "hasCurrentVersion" : {
+      "@id" : "http://purl.org/pav/hasCurrentVersion",
+      "@type" : "@id"
+    },
+    "inDataset" : {
+      "@id" : "http://rdfs.org/ns/void#inDataset",
+      "@type" : "@id"
+    },
+    "prefLabel" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+    },
+    "altLabel" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#altLabel"
+    },
+    "identifier" : {
+      "@id" : "http://purl.org/dc/terms/identifier"
+    },
+    "narrower" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#narrower",
+      "@type" : "@id"
+    },
+    "date" : {
+      "@id" : "http://purl.org/dc/terms/date"
+    },
+    "version" : {
+      "@id" : "http://purl.org/pav/version"
+    },
+    "authoredOn" : {
+      "@id" : "http://purl.org/pav/authoredOn"
+    },
+    "hasVersion" : {
+      "@id" : "http://purl.org/pav/hasVersion",
+      "@type" : "@id"
+    },
+    "member" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#member",
+      "@type" : "@id"
+    },
+    "comment" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"
+    },
+    "RE_RegisterOwner" : {
+      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"
+    },
+    "publisher" : {
+      "@id" : "http://purl.org/dc/terms/publisher"
+    },
+    "seeAlso" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+      "@type" : "@id"
+    },
+    "RE_RegisterManager" : {
+      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
+    },
+    "creator" : {
+      "@id" : "http://purl.org/dc/terms/creator"
+    },
+    "title" : {
+      "@id" : "http://purl.org/dc/terms/title"
+    },
+    "alternative" : {
+      "@id" : "http://purl.org/dc/terms/alternative"
+    },
+    "qudt" : "https://qudt.org/2.1/schema/qudt#",
+    "owl" : "http://www.w3.org/2002/07/owl#",
+    "dce" : "http://purl.org/dc/elements/1.1/",
+    "skos" : "http://www.w3.org/2004/02/skos/core#",
+    "ns0" : "http://www.w3.org/ns/dx/conneg/altr#",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "iop" : "https://w3id.org/iadopt/ont#",
+    "ns1" : "http://www.w3.org/ns/dx/prof/",
+    "puv" : "https://w3id.org/env/puv#",
+    "dct" : "http://purl.org/dc/terms/",
+    "reg" : "http://purl.org/linked-data/registry#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "grg" : "http://www.isotc211.org/schemas/grg/",
+    "prov" : "https://www.w3.org/ns/prov#",
+    "cpm" : "http://purl.org/voc/cpm#",
+    "void" : "http://rdfs.org/ns/void#",
+    "pav" : "http://purl.org/pav/",
+    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "dc" : "http://purl.org/dc/terms/"
+  }
+}

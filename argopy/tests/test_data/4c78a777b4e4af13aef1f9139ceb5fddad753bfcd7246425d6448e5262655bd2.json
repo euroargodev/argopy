@@ -1,0 +1,4711 @@
+{
+  "@graph" : [ {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/",
+    "@type" : "skos:Collection",
+    "alternative" : "MEASUREMENT_CODE_ID",
+    "creator" : "Argo Data Management Team",
+    "date" : "2021-12-01 02:00:02.0",
+    "description" : "Measurement code IDs used in Argo trajectory NetCDF files",
+    "publisher" : "Natural Environment Research Council",
+    "title" : "Argo trajectory measurement code identifiers",
+    "RE_RegisterManager" : "British Oceanographic Data Centre",
+    "RE_RegisterOwner" : "Argo Data Management Team",
+    "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+    "versionInfo" : "1",
+    "altLabel" : "MEASUREMENT_CODE_ID",
+    "member" : [ "http://vocab.nerc.ac.uk/collection/R15/current/248/", "http://vocab.nerc.ac.uk/collection/R15/current/903/", "http://vocab.nerc.ac.uk/collection/R15/current/587/", "http://vocab.nerc.ac.uk/collection/R15/current/610/", "http://vocab.nerc.ac.uk/collection/R15/current/449/", "http://vocab.nerc.ac.uk/collection/R15/current/444/", "http://vocab.nerc.ac.uk/collection/R15/current/239/", "http://vocab.nerc.ac.uk/collection/R15/current/697/", "http://vocab.nerc.ac.uk/collection/R15/current/288/", "http://vocab.nerc.ac.uk/collection/R15/current/687/", "http://vocab.nerc.ac.uk/collection/R15/current/89/", "http://vocab.nerc.ac.uk/collection/R15/current/435/", "http://vocab.nerc.ac.uk/collection/R15/current/786/", "http://vocab.nerc.ac.uk/collection/R15/current/145/", "http://vocab.nerc.ac.uk/collection/R15/current/494/", "http://vocab.nerc.ac.uk/collection/R15/current/244/", "http://vocab.nerc.ac.uk/collection/R15/current/596/", "http://vocab.nerc.ac.uk/collection/R15/current/501/", "http://vocab.nerc.ac.uk/collection/R15/current/136/", "http://vocab.nerc.ac.uk/collection/R15/current/450/", "http://vocab.nerc.ac.uk/collection/R15/current/588/", "http://vocab.nerc.ac.uk/collection/R15/current/235/", "http://vocab.nerc.ac.uk/collection/R15/current/196/", "http://vocab.nerc.ac.uk/collection/R15/current/440/", "http://vocab.nerc.ac.uk/collection/R15/current/294/", "http://vocab.nerc.ac.uk/collection/R15/current/704/", "http://vocab.nerc.ac.uk/collection/R15/current/711/", "http://vocab.nerc.ac.uk/collection/R15/current/387/", "http://vocab.nerc.ac.uk/collection/R15/current/490/", "http://vocab.nerc.ac.uk/collection/R15/current/250/", "http://vocab.nerc.ac.uk/collection/R15/current/240/", "http://vocab.nerc.ac.uk/collection/R15/current/495/", "http://vocab.nerc.ac.uk/collection/R15/current/594/", "http://vocab.nerc.ac.uk/collection/R15/current/290/", "http://vocab.nerc.ac.uk/collection/R15/current/597/", "http://vocab.nerc.ac.uk/collection/R15/current/200/", "http://vocab.nerc.ac.uk/collection/R15/current/446/", "http://vocab.nerc.ac.uk/collection/R15/current/197/", "http://vocab.nerc.ac.uk/collection/R15/current/544/", "http://vocab.nerc.ac.uk/collection/R15/current/295/", "http://vocab.nerc.ac.uk/collection/R15/current/699/", "http://vocab.nerc.ac.uk/collection/R15/current/188/", "http://vocab.nerc.ac.uk/collection/R15/current/388/", "http://vocab.nerc.ac.uk/collection/R15/current/437/", "http://vocab.nerc.ac.uk/collection/R15/current/810/", "http://vocab.nerc.ac.uk/collection/R15/current/147/", "http://vocab.nerc.ac.uk/collection/R15/current/500/", "http://vocab.nerc.ac.uk/collection/R15/current/535/", "http://vocab.nerc.ac.uk/collection/R15/current/590/", "http://vocab.nerc.ac.uk/collection/R15/current/95/", "http://vocab.nerc.ac.uk/collection/R15/current/237/", "http://vocab.nerc.ac.uk/collection/R15/current/537/", "http://vocab.nerc.ac.uk/collection/R15/current/447/", "http://vocab.nerc.ac.uk/collection/R15/current/394/", "http://vocab.nerc.ac.uk/collection/R15/current/300/", "http://vocab.nerc.ac.uk/collection/R15/current/545/", "http://vocab.nerc.ac.uk/collection/R15/current/397/", "http://vocab.nerc.ac.uk/collection/R15/current/799/", "http://vocab.nerc.ac.uk/collection/R15/current/497/", "http://vocab.nerc.ac.uk/collection/R15/current/789/", "http://vocab.nerc.ac.uk/collection/R15/current/148/", "http://vocab.nerc.ac.uk/collection/R15/current/487/", "http://vocab.nerc.ac.uk/collection/R15/current/902/", "http://vocab.nerc.ac.uk/collection/R15/current/586/", "http://vocab.nerc.ac.uk/collection/R15/current/247/", "http://vocab.nerc.ac.uk/collection/R15/current/96/", "http://vocab.nerc.ac.uk/collection/R15/current/199/", "http://vocab.nerc.ac.uk/collection/R15/current/390/", "http://vocab.nerc.ac.uk/collection/R15/current/238/", "http://vocab.nerc.ac.uk/collection/R15/current/696/", "http://vocab.nerc.ac.uk/collection/R15/current/287/", "http://vocab.nerc.ac.uk/collection/R15/current/187/", "http://vocab.nerc.ac.uk/collection/R15/current/795/", "http://vocab.nerc.ac.uk/collection/R15/current/88/", "http://vocab.nerc.ac.uk/collection/R15/current/285/", "http://vocab.nerc.ac.uk/collection/R15/current/785/", "http://vocab.nerc.ac.uk/collection/R15/current/144/", "http://vocab.nerc.ac.uk/collection/R15/current/275/", "http://vocab.nerc.ac.uk/collection/R15/current/135/", "http://vocab.nerc.ac.uk/collection/R15/current/100/", "http://vocab.nerc.ac.uk/collection/R15/current/703/", "http://vocab.nerc.ac.uk/collection/R15/current/190/", "http://vocab.nerc.ac.uk/collection/R15/current/710/", "http://vocab.nerc.ac.uk/collection/R15/current/539/", "http://vocab.nerc.ac.uk/collection/R15/current/203/", "http://vocab.nerc.ac.uk/collection/R15/current/689/", "http://vocab.nerc.ac.uk/collection/R15/current/386/", "http://vocab.nerc.ac.uk/collection/R15/current/150/", "http://vocab.nerc.ac.uk/collection/R15/current/396/", "http://vocab.nerc.ac.uk/collection/R15/current/547/", "http://vocab.nerc.ac.uk/collection/R15/current/788/", "http://vocab.nerc.ac.uk/collection/R15/current/701/", "http://vocab.nerc.ac.uk/collection/R15/current/503/", "http://vocab.nerc.ac.uk/collection/R15/current/138/", "http://vocab.nerc.ac.uk/collection/R15/current/800/", "http://vocab.nerc.ac.uk/collection/R15/current/249/", "http://vocab.nerc.ac.uk/collection/R15/current/98/", "http://vocab.nerc.ac.uk/collection/R15/current/685/", "http://vocab.nerc.ac.uk/collection/R15/current/445/", "http://vocab.nerc.ac.uk/collection/R15/current/698/", "http://vocab.nerc.ac.uk/collection/R15/current/85/", "http://vocab.nerc.ac.uk/collection/R15/current/797/", "http://vocab.nerc.ac.uk/collection/R15/current/400/", "http://vocab.nerc.ac.uk/collection/R15/current/94/", "http://vocab.nerc.ac.uk/collection/R15/current/245/", "http://vocab.nerc.ac.uk/collection/R15/current/599/", "http://vocab.nerc.ac.uk/collection/R15/current/589/", "http://vocab.nerc.ac.uk/collection/R15/current/694/", "http://vocab.nerc.ac.uk/collection/R15/current/439/", "http://vocab.nerc.ac.uk/collection/R15/current/99/", "http://vocab.nerc.ac.uk/collection/R15/current/297/", "http://vocab.nerc.ac.uk/collection/R15/current/686/", "http://vocab.nerc.ac.uk/collection/R15/current/700/", "http://vocab.nerc.ac.uk/collection/R15/current/90/", "http://vocab.nerc.ac.uk/collection/R15/current/798/", "http://vocab.nerc.ac.uk/collection/R15/current/496/", "http://vocab.nerc.ac.uk/collection/R15/current/595/", "http://vocab.nerc.ac.uk/collection/R15/current/901/", "http://vocab.nerc.ac.uk/collection/R15/current/585/", "http://vocab.nerc.ac.uk/collection/R15/current/246/", "http://vocab.nerc.ac.uk/collection/R15/current/195/", "http://vocab.nerc.ac.uk/collection/R15/current/540/", "http://vocab.nerc.ac.uk/collection/R15/current/695/", "http://vocab.nerc.ac.uk/collection/R15/current/550/", "http://vocab.nerc.ac.uk/collection/R15/current/186/", "http://vocab.nerc.ac.uk/collection/R15/current/794/", "http://vocab.nerc.ac.uk/collection/R15/current/87/", "http://vocab.nerc.ac.uk/collection/R15/current/189/", "http://vocab.nerc.ac.uk/collection/R15/current/140/", "http://vocab.nerc.ac.uk/collection/R15/current/399/", "http://vocab.nerc.ac.uk/collection/R15/current/389/", "http://vocab.nerc.ac.uk/collection/R15/current/489/", "http://vocab.nerc.ac.uk/collection/R15/current/611/", "http://vocab.nerc.ac.uk/collection/R15/current/548/", "http://vocab.nerc.ac.uk/collection/R15/current/702/", "http://vocab.nerc.ac.uk/collection/R15/current/289/", "http://vocab.nerc.ac.uk/collection/R15/current/688/", "http://vocab.nerc.ac.uk/collection/R15/current/436/", "http://vocab.nerc.ac.uk/collection/R15/current/301/", "http://vocab.nerc.ac.uk/collection/R15/current/787/", "http://vocab.nerc.ac.uk/collection/R15/current/485/", "http://vocab.nerc.ac.uk/collection/R15/current/146/", "http://vocab.nerc.ac.uk/collection/R15/current/498/", "http://vocab.nerc.ac.uk/collection/R15/current/502/", "http://vocab.nerc.ac.uk/collection/R15/current/137/", "http://vocab.nerc.ac.uk/collection/R15/current/0/", "http://vocab.nerc.ac.uk/collection/R15/current/236/", "http://vocab.nerc.ac.uk/collection/R15/current/97/", "http://vocab.nerc.ac.uk/collection/R15/current/298/", "http://vocab.nerc.ac.uk/collection/R15/current/549/", "http://vocab.nerc.ac.uk/collection/R15/current/796/", "http://vocab.nerc.ac.uk/collection/R15/current/486/", "http://vocab.nerc.ac.uk/collection/R15/current/499/", "http://vocab.nerc.ac.uk/collection/R15/current/598/", "http://vocab.nerc.ac.uk/collection/R15/current/101/", "http://vocab.nerc.ac.uk/collection/R15/current/690/", "http://vocab.nerc.ac.uk/collection/R15/current/198/", "http://vocab.nerc.ac.uk/collection/R15/current/600/", "http://vocab.nerc.ac.uk/collection/R15/current/438/", "http://vocab.nerc.ac.uk/collection/R15/current/296/", "http://vocab.nerc.ac.uk/collection/R15/current/299/", "http://vocab.nerc.ac.uk/collection/R15/current/286/", "http://vocab.nerc.ac.uk/collection/R15/current/811/", "http://vocab.nerc.ac.uk/collection/R15/current/139/", "http://vocab.nerc.ac.uk/collection/R15/current/194/", "http://vocab.nerc.ac.uk/collection/R15/current/538/", "http://vocab.nerc.ac.uk/collection/R15/current/790/", "http://vocab.nerc.ac.uk/collection/R15/current/448/", "http://vocab.nerc.ac.uk/collection/R15/current/185/", "http://vocab.nerc.ac.uk/collection/R15/current/395/", "http://vocab.nerc.ac.uk/collection/R15/current/546/", "http://vocab.nerc.ac.uk/collection/R15/current/86/", "http://vocab.nerc.ac.uk/collection/R15/current/398/", "http://vocab.nerc.ac.uk/collection/R15/current/385/", "http://vocab.nerc.ac.uk/collection/R15/current/536/", "http://vocab.nerc.ac.uk/collection/R15/current/149/", "http://vocab.nerc.ac.uk/collection/R15/current/488/" ],
+    "prefLabel" : "Argo trajectory measurement code identifiers"
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/0/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::0",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::0",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/0/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "0",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Launch time and location of the float."
+    },
+    "notation" : "SDN:R15::0",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Launch time"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/100/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::100",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::100",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/100/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "100",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "All measurements made when float leaves the surface, beginning descent."
+    },
+    "notation" : "SDN:R15::100",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DST"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/101/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::101",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::101",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/101/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "101",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "This measurement code is used in the delayed-mode trajectory (TRAJ) file when new cycles have been recovered during delayed-mode operations. This is because the technical (TECH) file, where surface pressure measurements usually belong, is not updated during delayed-mode operations on the TRAJ file. The pressure variable (PRES) should contain the measurement provided by the float (after 5dbar subtraction when needed). For APEX floats, this measurement is used to compute a pressure offset applied to all pressure measurements (see procedure 3.2.1 of Argo QC manual). This offset should be stored in the PRES_ADJUSTED variable. No information should be stored with this measurement code in real-time."
+    },
+    "notation" : "SDN:R15::101",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Delayed-mode trajectory file measurement code ID"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/135/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::135",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::135",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/135/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "135",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the median value (FST-5)."
+    },
+    "notation" : "SDN:R15::135",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "FST-15"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/136/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::136",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::136",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/136/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "136",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the average value (FST-4)."
+    },
+    "notation" : "SDN:R15::136",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "FST-14"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/137/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::137",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::137",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/137/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "137",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the minimum value (FST-3)."
+    },
+    "notation" : "SDN:R15::137",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "FST-13"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/138/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::138",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::138",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/138/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "138",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the maximum value (FST-2)."
+    },
+    "notation" : "SDN:R15::138",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "FST-12"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/139/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::139",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::139",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/139/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "139",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Active adjustment to buoyancy made at this time."
+    },
+    "notation" : "SDN:R15::139",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "FST-11"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/140/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::140",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::140",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/140/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "140",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any series of measurements recorded while transitioning towards FST (e.g. PROVOR 'spy' measurements, SOLO-II pressure-time pairs, etc)."
+    },
+    "notation" : "SDN:R15::140",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "FST-10"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/144/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::144",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::144",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/144/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "144",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Standard deviation of measurements taken during transition towards FST."
+    },
+    "notation" : "SDN:R15::144",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "FST-6"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/145/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::145",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::145",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/145/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "145",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Median value while float is transitioning towards FST."
+    },
+    "notation" : "SDN:R15::145",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "FST-5"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/146/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::146",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::146",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/146/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "146",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any averaged measurements made during transition to FST."
+    },
+    "notation" : "SDN:R15::146",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "FST-4"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/147/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::147",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::147",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/147/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "147",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Minimum value while float is transitioning towards FST (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::147",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "FST-3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/148/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::148",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::148",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/148/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "148",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Maximum value while float is transitioning towards FST (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::148",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "FST-2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/149/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::149",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::149",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/149/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "149",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any single measurement transitioning towards FST (see FST-10 for a 'series' of measurements)."
+    },
+    "notation" : "SDN:R15::149",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "FST-1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/150/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::150",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::150",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/150/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "150",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "All measurements made at time when a float first becomes water-neutral."
+    },
+    "notation" : "SDN:R15::150",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "FST"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/185/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::185",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::185",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/185/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "185",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the median value (DET-5)."
+    },
+    "notation" : "SDN:R15::185",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DET-15"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/186/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::186",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::186",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/186/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "186",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the average value (DET-4)."
+    },
+    "notation" : "SDN:R15::186",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DET-14"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/187/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::187",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::187",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/187/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "187",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the minimum value (DET-3)."
+    },
+    "notation" : "SDN:R15::187",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DET-13"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/188/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::188",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::188",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/188/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "188",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the maximum value (DET-2)."
+    },
+    "notation" : "SDN:R15::188",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DET-12"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/189/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::189",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::189",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/189/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "189",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Active adjustment to buoyancy made at this time."
+    },
+    "notation" : "SDN:R15::189",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DET-11"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/190/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::190",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::190",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/190/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "190",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any series of measurements recorded while transitioning towards DET (e.g. PROVOR 'spy' measurements, SOLO-II pressure-time pairs, etc)."
+    },
+    "notation" : "SDN:R15::190",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DET-10"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/194/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::194",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::194",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/194/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "194",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Standard deviation of measurements taken during transition towards DET."
+    },
+    "notation" : "SDN:R15::194",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DET-6"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/195/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::195",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::195",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/195/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "195",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Median value while float is transitioning towards DET."
+    },
+    "notation" : "SDN:R15::195",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DET-5"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/196/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::196",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::196",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/196/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "196",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any averaged measurements made during transition to DET."
+    },
+    "notation" : "SDN:R15::196",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DET-4"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/197/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::197",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::197",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/197/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "197",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Minimum value while float is transitioning towards DET (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::197",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DET-3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/198/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::198",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::198",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/198/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "198",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Maximum value while float is transitioning towards DET (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::198",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DET-2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/199/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::199",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::199",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/199/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "199",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any single measurement transitioning towards DET (see DET-10 for a 'series' of measurements)."
+    },
+    "notation" : "SDN:R15::199",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DET-1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/200/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::200",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::200",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/200/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "200",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "All measurements made at time when float first approaches within 3% of the eventual drift pressure. Float may be transitioning from the surface or from a deep profile. This variable is based on measured or estimated pressure only In the case of a float that overshoots the drift pressure on descent, DET is the time of the overshoot."
+    },
+    "notation" : "SDN:R15::200",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DET"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/203/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::203",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::203",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/203/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "203",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Deepest bin reached during descending profile."
+    },
+    "notation" : "SDN:R15::203",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DET+3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/235/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::235",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::235",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/235/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "235",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the median value (PST-5)."
+    },
+    "notation" : "SDN:R15::235",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PST-15"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/236/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::236",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::236",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/236/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "236",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the average value (PST-4)."
+    },
+    "notation" : "SDN:R15::236",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PST-14"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/237/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::237",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::237",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/237/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "237",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the minimum value (PST-3)."
+    },
+    "notation" : "SDN:R15::237",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PST-13"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/238/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::238",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::238",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/238/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "238",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the maximum value (PST-2)."
+    },
+    "notation" : "SDN:R15::238",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PST-12"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/239/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::239",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::239",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/239/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "239",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Active adjustment to buoyancy made at this time."
+    },
+    "notation" : "SDN:R15::239",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PST-11"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/240/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::240",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::240",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/240/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "240",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any series of measurements recorded while transitioning towards PST (e.g. PROVOR 'spy' measurements, SOLO-II pressure-time pairs, etc)."
+    },
+    "notation" : "SDN:R15::240",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PST-10"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/244/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::244",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::244",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/244/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "244",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Standard deviation of measurements taken during transition towards PST."
+    },
+    "notation" : "SDN:R15::244",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PST-6"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/245/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::245",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::245",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/245/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "245",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Median value while float is transitioning towards PST."
+    },
+    "notation" : "SDN:R15::245",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PST-5"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/246/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::246",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::246",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/246/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "246",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any averaged measurements made during transition to PST."
+    },
+    "notation" : "SDN:R15::246",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PST-4"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/247/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::247",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::247",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/247/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "247",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Minimum value while float is transitioning towards PST (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::247",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PST-3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/248/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::248",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::248",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/248/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "248",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Maximum value while float is transitioning towards PST (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::248",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PST-2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/249/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::249",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::249",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/249/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "249",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any single measurement transitioning towards PST (see PST-10 for a 'series' of measurements)."
+    },
+    "notation" : "SDN:R15::249",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PST-1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/250/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::250",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::250",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/250/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "250",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "All measurements made at time when float transitions to its Park or Drift mission. This variable is based on float logic based on a descent timer (i.e. SOLO), or be based on measurements of pressure (i.e. PROVOR)."
+    },
+    "notation" : "SDN:R15::250",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PST"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/275/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::275",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::275",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/275/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "275",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "RAFOS positions and times determined during drift."
+    },
+    "notation" : "SDN:R15::275",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "RAFOS"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/285/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::285",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::285",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/285/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "285",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the median value (PET-5)."
+    },
+    "notation" : "SDN:R15::285",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PET-15"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/286/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::286",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::286",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/286/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "286",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the average value (PET-4)."
+    },
+    "notation" : "SDN:R15::286",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PET-14"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/287/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::287",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::287",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/287/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "287",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the minimum value (PET-3)."
+    },
+    "notation" : "SDN:R15::287",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PET-13"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/288/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::288",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::288",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/288/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "288",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the maximum value (PET-2)."
+    },
+    "notation" : "SDN:R15::288",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PET-12"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/289/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::289",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::289",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/289/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "289",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Active adjustment to buoyancy made at this time."
+    },
+    "notation" : "SDN:R15::289",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PET-11"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/290/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::290",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::290",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/290/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "290",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any series of measurements recorded while transitioning towards PET (e.g. PROVOR 'spy' measurements, SOLO-II pressure-time pairs, etc)."
+    },
+    "notation" : "SDN:R15::290",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PET-10"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/294/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::294",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::294",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/294/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "294",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Standard deviation of measurements taken during transition towards PET."
+    },
+    "notation" : "SDN:R15::294",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PET-6"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/295/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::295",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::295",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/295/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "295",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Median value while float is transitioning towards PET."
+    },
+    "notation" : "SDN:R15::295",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PET-5"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/296/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::296",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::296",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/296/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "296",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any averaged measurements made during transition to PET."
+    },
+    "notation" : "SDN:R15::296",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PET-4"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/297/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::297",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::297",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/297/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "297",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Minimum value while float is transitioning towards PET (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::297",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PET-3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/298/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::298",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::298",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/298/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "298",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Maximum value while float is transitioning towards PET (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::298",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PET-2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/299/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::299",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::299",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/299/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "299",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any single measurement transitioning towards PET (see PET-10 for a 'series' of measurements)."
+    },
+    "notation" : "SDN:R15::299",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PET-1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/300/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::300",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::300",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/300/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "300",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "All measurements made at time when float exits from its Park or Drift mission. It may next rise to the surface (AST) or sink to profile depth."
+    },
+    "notation" : "SDN:R15::300",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PET"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/301/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::301",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::301",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/301/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "301",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Representative Park <PARAM> found either from measurements taken during drift or from metafile information."
+    },
+    "notation" : "SDN:R15::301",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PET+1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/385/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::385",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::385",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/385/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "385",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the median value (DDET-5)."
+    },
+    "notation" : "SDN:R15::385",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DDET-15"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/386/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::386",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::386",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/386/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "386",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the average value (DDET-4)."
+    },
+    "notation" : "SDN:R15::386",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DDET-14"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/387/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::387",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::387",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/387/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "387",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the minimum value (DDET-3)."
+    },
+    "notation" : "SDN:R15::387",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DDET-13"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/388/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::388",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::388",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/388/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "388",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the maximum value (DDET-2)."
+    },
+    "notation" : "SDN:R15::388",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DDET-12"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/389/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::389",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::389",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/389/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "389",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Active adjustment to buoyancy made at this time."
+    },
+    "notation" : "SDN:R15::389",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DDET-11"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/390/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::390",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::390",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/390/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "390",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any series of measurements recorded while transitioning towards DDET (e.g. PROVOR 'spy' measurements, SOLO-II pressure-time pairs, etc)."
+    },
+    "notation" : "SDN:R15::390",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DDET-10"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/394/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::394",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::394",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/394/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "394",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Standard deviation of measurements taken during transition towards DDET."
+    },
+    "notation" : "SDN:R15::394",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DDET-6"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/395/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::395",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::395",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/395/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "395",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Median value while float is transitioning towards DDET."
+    },
+    "notation" : "SDN:R15::395",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DDET-5"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/396/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::396",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::396",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/396/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "396",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any averaged measurements made during transition to DDET."
+    },
+    "notation" : "SDN:R15::396",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DDET-4"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/397/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::397",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::397",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/397/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "397",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Minimum value while float is transitioning towards DDET (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::397",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DDET-3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/398/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::398",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::398",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/398/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "398",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Maximum value while float is transitioning towards DDET (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::398",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DDET-2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/399/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::399",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::399",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/399/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "399",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any single measurement transitioning towards DDET (see DDET-10 for a 'series' of measurements)."
+    },
+    "notation" : "SDN:R15::399",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DDET-1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/400/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::400",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::400",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/400/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "400",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "All measurements made at time when float first approaches within 3% of the eventual deep drift/profile pressure. This variable is based on pressure only and can be measured or estimated."
+    },
+    "notation" : "SDN:R15::400",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DDET"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/435/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::435",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::435",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/435/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "435",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the median value (DPST-5)."
+    },
+    "notation" : "SDN:R15::435",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DPST-15"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/436/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::436",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::436",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/436/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "436",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the average value (DPST-4)."
+    },
+    "notation" : "SDN:R15::436",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DPST-14"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/437/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::437",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::437",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/437/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "437",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the minimum value (DPST-3)."
+    },
+    "notation" : "SDN:R15::437",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DPST-13"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/438/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::438",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::438",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/438/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "438",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the maximum value (DPST-2)."
+    },
+    "notation" : "SDN:R15::438",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DPST-12"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/439/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::439",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::439",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/439/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "439",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Active adjustment to buoyancy made at this time."
+    },
+    "notation" : "SDN:R15::439",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DPST-11"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/440/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::440",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::440",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/440/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "440",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any series of measurements recorded while transitioning towards DPST (e.g. PROVOR 'spy' measurements, SOLO-II pressure-time pairs, etc)."
+    },
+    "notation" : "SDN:R15::440",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DPST-10"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/444/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::444",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::444",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/444/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "444",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Standard deviation of measurements taken during transition towards DPST."
+    },
+    "notation" : "SDN:R15::444",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DPST-6"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/445/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::445",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::445",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/445/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "445",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Median value while float is transitioning towards DPST."
+    },
+    "notation" : "SDN:R15::445",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DPST-5"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/446/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::446",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::446",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/446/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "446",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any averaged measurements made during transition to DPST."
+    },
+    "notation" : "SDN:R15::446",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DPST-4"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/447/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::447",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::447",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/447/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "447",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Minimum value while float is transitioning towards DPST (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::447",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DPST-3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/448/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::448",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::448",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/448/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "448",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Maximum value while float is transitioning towards DPST (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::448",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DPST-2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/449/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::449",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::449",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/449/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "449",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any single measurement transitioning towards DPST (see DPST-10 for a 'series' of measurements)."
+    },
+    "notation" : "SDN:R15::449",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DPST-1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/450/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::450",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::450",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/450/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "450",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "All measurements made at time when float transitions to a deep park drift mission. This variable is only defined if the float enters a deep drift phase (i.e. DPST not defined in cases of constant deep pressure due to bottom hits, or buoyancy issues)."
+    },
+    "notation" : "SDN:R15::450",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DPST"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/485/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::485",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::485",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/485/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "485",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the median value (AST-5)."
+    },
+    "notation" : "SDN:R15::485",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AST-15"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/486/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::486",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::486",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/486/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "486",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the average value (AST-4)."
+    },
+    "notation" : "SDN:R15::486",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AST-14"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/487/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::487",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::487",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/487/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "487",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the minimum value (AST-3)."
+    },
+    "notation" : "SDN:R15::487",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AST-13"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/488/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::488",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::488",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/488/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "488",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the maximum value (AST-2)."
+    },
+    "notation" : "SDN:R15::488",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AST-12"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/489/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::489",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::489",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/489/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "489",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Active adjustment to buoyancy made at this time."
+    },
+    "notation" : "SDN:R15::489",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AST-11"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/490/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::490",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::490",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/490/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "490",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any series of measurements recorded while transitioning towards AST (e.g. PROVOR 'spy' measurements, SOLO-II pressure-time pairs, etc)."
+    },
+    "notation" : "SDN:R15::490",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AST-10"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/494/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::494",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::494",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/494/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "494",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Standard deviation of measurements taken during transition towards AST."
+    },
+    "notation" : "SDN:R15::494",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AST-6"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/495/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::495",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::495",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/495/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "495",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Median value while float is transitioning towards AST."
+    },
+    "notation" : "SDN:R15::495",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AST-5"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/496/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::496",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::496",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/496/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "496",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any averaged measurements made during transition to AST."
+    },
+    "notation" : "SDN:R15::496",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AST-4"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/497/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::497",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::497",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/497/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "497",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Minimum value while float is transitioning towards AST (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::497",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AST-3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/498/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::498",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::498",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/498/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "498",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Maximum value while float is transitioning towards AST (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::498",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AST-2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/499/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::499",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::499",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/499/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "499",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any single measurement transitioning towards AST (see AST-10 for a 'series' of measurements)."
+    },
+    "notation" : "SDN:R15::499",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AST-1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/500/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::500",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::500",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/500/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "500",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "All measurements made at the start of the float's ascent to the surface."
+    },
+    "notation" : "SDN:R15::500",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AST"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/501/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::501",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::501",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/501/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "501",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Down-time end time: end date of the down-time parameter reported by APEX floats."
+    },
+    "notation" : "SDN:R15::501",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AST+1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/502/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::502",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::502",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/502/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "502",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Ascent start time directly transmitted by APEX floats."
+    },
+    "notation" : "SDN:R15::502",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AST+2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/503/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::503",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::503",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/503/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "503",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Deepest bin reached during ascending profile."
+    },
+    "notation" : "SDN:R15::503",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AST+3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/535/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::535",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::535",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/535/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "535",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the median value (DAST-5)."
+    },
+    "notation" : "SDN:R15::535",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DAST-15"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/536/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::536",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::536",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/536/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "536",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the average value (DAST-4)."
+    },
+    "notation" : "SDN:R15::536",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DAST-14"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/537/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::537",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::537",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/537/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "537",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the minimum value (DAST-3)."
+    },
+    "notation" : "SDN:R15::537",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DAST-13"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/538/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::538",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::538",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/538/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "538",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the maximum value (DAST-2)."
+    },
+    "notation" : "SDN:R15::538",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DAST-12"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/539/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::539",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::539",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/539/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "539",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Active adjustment to buoyancy made at this time."
+    },
+    "notation" : "SDN:R15::539",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DAST-11"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/540/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::540",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::540",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/540/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "540",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any series of measurements recorded while transitioning towards DAST (e.g. PROVOR 'spy' measurements, SOLO-II pressure-time pairs, etc)."
+    },
+    "notation" : "SDN:R15::540",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DAST-10"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/544/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::544",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::544",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/544/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "544",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Standard deviation of measurements taken during transition towards DAST."
+    },
+    "notation" : "SDN:R15::544",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DAST-6"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/545/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::545",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::545",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/545/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "545",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Median value while float is transitioning towards DAST."
+    },
+    "notation" : "SDN:R15::545",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DAST-5"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/546/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::546",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::546",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/546/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "546",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any averaged measurements made during transition to DAST."
+    },
+    "notation" : "SDN:R15::546",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DAST-4"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/547/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::547",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::547",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/547/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "547",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Minimum value while float is transitioning towards DAST (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::547",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DAST-3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/548/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::548",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::548",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/548/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "548",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Maximum value while float is transitioning towards DAST (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::548",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DAST-2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/549/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::549",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::549",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/549/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "549",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any single measurement transitioning towards DAST (see DAST-10 for a 'series' of measurements)."
+    },
+    "notation" : "SDN:R15::549",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DAST-1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/550/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::550",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::550",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/550/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "550",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "All measurements made at the start of the float's ascent from profile pressure to drift pressure. Used for floats that profile on descent and then move back up to drift pressure."
+    },
+    "notation" : "SDN:R15::550",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DAST"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/585/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::585",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::585",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/585/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "585",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the median value (AET-5)."
+    },
+    "notation" : "SDN:R15::585",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AET-15"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/586/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::586",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::586",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/586/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "586",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the average value (AET-4)."
+    },
+    "notation" : "SDN:R15::586",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AET-14"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/587/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::587",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::587",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/587/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "587",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the minimum value (AET-3)."
+    },
+    "notation" : "SDN:R15::587",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AET-13"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/588/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::588",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::588",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/588/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "588",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the maximum value (AET-2)."
+    },
+    "notation" : "SDN:R15::588",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AET-12"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/589/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::589",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::589",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/589/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "589",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Active adjustment to buoyancy made at this time."
+    },
+    "notation" : "SDN:R15::589",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AET-11"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/590/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::590",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::590",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/590/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "590",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any series of measurements recorded while transitioning towards AET (e.g. PROVOR 'spy' measurements, SOLO-II pressure-time pairs, etc)."
+    },
+    "notation" : "SDN:R15::590",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AET-10"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/594/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::594",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::594",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/594/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "594",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Standard deviation of measurements taken during transition towards AET."
+    },
+    "notation" : "SDN:R15::594",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AET-6"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/595/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::595",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::595",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/595/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "595",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Median value while float is transitioning towards AET."
+    },
+    "notation" : "SDN:R15::595",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AET-5"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/596/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::596",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::596",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/596/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "596",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any averaged measurements made during transition to AET."
+    },
+    "notation" : "SDN:R15::596",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AET-4"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/597/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::597",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::597",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/597/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "597",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Minimum value while float is transitioning towards AET (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::597",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AET-3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/598/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::598",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::598",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/598/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "598",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Maximum value while float is transitioning towards AET (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::598",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AET-2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/599/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::599",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::599",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/599/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "599",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any single measurement transitioning towards AET (see AET-10 for a 'series' of measurements)."
+    },
+    "notation" : "SDN:R15::599",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AET-1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/600/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::600",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::600",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/600/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "600",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "All measurements made at the end of ascent."
+    },
+    "notation" : "SDN:R15::600",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AET"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/610/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::610",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::610",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/610/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "610",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any in-water samples taken as part of a surface sequence (e.g. O2 samples taken prior to air-bladder inflation or max buoyancy as part of in-air measurement sequence)."
+    },
+    "notation" : "SDN:R15::610",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AET+10"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/611/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::611",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::611",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/611/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "611",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any in-air samples taken as part of a surface sequence (e.g. O2 samples taken after in air-bladder inflation or max buoyancy as part of in-air measurement sequence)."
+    },
+    "notation" : "SDN:R15::611",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "AET+11"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/685/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::685",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::685",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/685/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "685",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the median value (TST-5)."
+    },
+    "notation" : "SDN:R15::685",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TST-15"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/686/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::686",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::686",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/686/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "686",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the average value (TST-4)."
+    },
+    "notation" : "SDN:R15::686",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TST-14"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/687/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::687",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::687",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/687/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "687",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the minimum value (TST-3)."
+    },
+    "notation" : "SDN:R15::687",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TST-13"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/688/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::688",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::688",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/688/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "688",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the maximum value (TST-2)."
+    },
+    "notation" : "SDN:R15::688",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TST-12"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/689/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::689",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::689",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/689/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "689",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Active adjustment to buoyancy made at this time."
+    },
+    "notation" : "SDN:R15::689",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TST-11"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/690/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::690",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::690",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/690/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "690",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any series of measurements recorded while transitioning towards TST (e.g. PROVOR 'spy' measurements, SOLO-II pressure-time pairs, etc)."
+    },
+    "notation" : "SDN:R15::690",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TST-10"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/694/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::694",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::694",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/694/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "694",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Standard deviation of measurements taken during transition towards TST."
+    },
+    "notation" : "SDN:R15::694",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TST-6"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/695/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::695",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::695",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/695/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "695",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Median value while float is transitioning towards TST."
+    },
+    "notation" : "SDN:R15::695",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TST-5"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/696/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::696",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::696",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/696/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "696",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any averaged measurements made during transition to TST."
+    },
+    "notation" : "SDN:R15::696",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TST-4"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/697/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::697",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::697",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/697/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "697",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Minimum value while float is transitioning towards TST (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::697",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TST-3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/698/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::698",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::698",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/698/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "698",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Maximum value while float is transitioning towards TST (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::698",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TST-2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/699/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::699",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::699",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/699/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "699",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any single measurement transitioning towards TST (see TST-10 for a 'series' of measurements)."
+    },
+    "notation" : "SDN:R15::699",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TST-1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/700/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::700",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::700",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/700/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "700",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Time and location of the start of transmission for the float."
+    },
+    "notation" : "SDN:R15::700",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TST"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/701/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::701",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::701",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/701/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "701",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Transmission start time directly transmitted by an APEX float."
+    },
+    "notation" : "SDN:R15::701",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TST+1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/702/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::702",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::702",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/702/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "702",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Earliest time of all messages received by telecommunications system - may or may not have a location fix."
+    },
+    "notation" : "SDN:R15::702",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "FMT"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/703/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::703",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::703",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/703/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "703",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Surface times and locations (if available) during surface drift. Should be listed in chronological order."
+    },
+    "notation" : "SDN:R15::703",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "FMT+1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/704/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::704",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::704",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/704/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "704",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Latest time of all messages received by telecommunications system - may or may not have a location fix."
+    },
+    "notation" : "SDN:R15::704",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "LMT"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/710/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::710",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::710",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/710/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "710",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any in-water samples taken as part of a surface sequence (e.g. O2 samples taken prior to air-bladder inflation or max buoyancy as part of in-air measurement sequence)."
+    },
+    "notation" : "SDN:R15::710",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "LMT+10"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/711/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::711",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::711",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/711/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "711",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any in-air samples taken as part of a surface sequence (e.g. O2 samples taken after in air-bladder inflation or max buoyancy as part of in-air measurement sequence)."
+    },
+    "notation" : "SDN:R15::711",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "LMT+11"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/785/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::785",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::785",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/785/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "785",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the median value (TET-5)."
+    },
+    "notation" : "SDN:R15::785",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TET-15"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/786/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::786",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::786",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/786/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "786",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the average value (TET-4)."
+    },
+    "notation" : "SDN:R15::786",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TET-14"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/787/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::787",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::787",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/787/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "787",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the minimum value (TET-3)."
+    },
+    "notation" : "SDN:R15::787",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TET-13"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/788/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::788",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::788",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/788/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "788",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the maximum value (TET-2)."
+    },
+    "notation" : "SDN:R15::788",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TET-12"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/789/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::789",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::789",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/789/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "789",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Active adjustment to buoyancy made at this time."
+    },
+    "notation" : "SDN:R15::789",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TET-11"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/790/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::790",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::790",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/790/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "790",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any series of measurements recorded while transitioning towards TET (e.g. PROVOR 'spy' measurements, SOLO-II pressure-time pairs, etc)."
+    },
+    "notation" : "SDN:R15::790",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TET-10"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/794/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::794",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::794",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/794/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "794",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Standard deviation of measurements taken during transition towards TET."
+    },
+    "notation" : "SDN:R15::794",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TET-6"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/795/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::795",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::795",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/795/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "795",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Median value while float is transitioning towards TET."
+    },
+    "notation" : "SDN:R15::795",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TET-5"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/796/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::796",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::796",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/796/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "796",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any averaged measurements made during transition to TET."
+    },
+    "notation" : "SDN:R15::796",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TET-4"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/797/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::797",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::797",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/797/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "797",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Minimum value while float is transitioning towards TET (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::797",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TET-3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/798/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::798",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::798",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/798/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "798",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Maximum value while float is transitioning towards TET (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::798",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TET-2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/799/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::799",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::799",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/799/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "799",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any single measurement transitioning towards TET (see TET-10 for a 'series' of measurements)."
+    },
+    "notation" : "SDN:R15::799",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TET-1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/800/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::800",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::800",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/800/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "800",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Time and location of the end of transmission for the float."
+    },
+    "notation" : "SDN:R15::800",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TET"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/810/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::810",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::810",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/810/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "810",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any in-water samples taken as part of a surface sequence (e.g. O2 samples taken prior to air-bladder inflation or max buoyancy as part of in-air measurement sequence)."
+    },
+    "notation" : "SDN:R15::810",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TET+10"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/811/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::811",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::811",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/811/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "811",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any in-air samples taken as part of a surface sequence (e.g. O2 samples taken after in air-bladder inflation or max buoyancy as part of in-air measurement sequence)."
+    },
+    "notation" : "SDN:R15::811",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TET+11"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/85/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::85",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::85",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/85/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "85",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the median value (DST-5)."
+    },
+    "notation" : "SDN:R15::85",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DST-15"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/86/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::86",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::86",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/86/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "86",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the average value (DST-4)."
+    },
+    "notation" : "SDN:R15::86",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DST-14"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/87/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::87",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::87",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/87/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "87",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the minimum value (DST-3)."
+    },
+    "notation" : "SDN:R15::87",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DST-13"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/88/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::88",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::88",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/88/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "88",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any supporting measurements for the maximum value (DST-2)."
+    },
+    "notation" : "SDN:R15::88",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DST-12"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/89/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::89",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::89",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/89/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "89",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Active adjustment to buoyancy made at this time."
+    },
+    "notation" : "SDN:R15::89",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DST-11"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/90/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::90",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::90",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/90/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "90",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any series of measurements recorded while transitioning towards DST (e.g. PROVOR 'spy' measurements, SOLO-II pressure-time pairs, etc)."
+    },
+    "notation" : "SDN:R15::90",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DST-10"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/901/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::901",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::901",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/901/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "901",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Grounded flag. Configuration phase."
+    },
+    "notation" : "SDN:R15::901",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Grounded"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/902/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::902",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::902",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/902/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "902",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Last time before float recovery. For floats that have been recovered, it is important to know when this occurred. This time in the JULD array will be the last time before the float was recovered. Determined by inspection of data."
+    },
+    "notation" : "SDN:R15::902",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Time before recovery"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/903/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::903",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::903",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/903/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "903",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Pressure offset used to correct APEX pressure measurements."
+    },
+    "notation" : "SDN:R15::903",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "APEX pressure offset"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/94/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::94",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::94",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/94/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "94",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Standard deviation of measurements taken during transition towards DST."
+    },
+    "notation" : "SDN:R15::94",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DST-6"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/95/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::95",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::95",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/95/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "95",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Median value while float is transitioning towards DST."
+    },
+    "notation" : "SDN:R15::95",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DST-5"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/96/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::96",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::96",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/96/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "96",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any averaged measurements made during transition to DST."
+    },
+    "notation" : "SDN:R15::96",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DST-4"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/97/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::97",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::97",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/97/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "97",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Minimum value while float is transitioning towards DST (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::97",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DST-3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/98/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::98",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::98",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/98/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "98",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Maximum value while float is transitioning towards DST (e.g. pressure)."
+    },
+    "notation" : "SDN:R15::98",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DST-2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R15/current/99/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R15::99",
+    "date" : "2021-11-30 09:53:34.0",
+    "identifier" : "SDN:R15::99",
+    "authoredOn" : "2021-11-30 09:53:34.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R15/current/99/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "99",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Any single measurement transitioning towards DST (see DST-10 for a 'series' of measurements)."
+    },
+    "notation" : "SDN:R15::99",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DST-1"
+    }
+  } ],
+  "@context" : {
+    "deprecated" : {
+      "@id" : "http://www.w3.org/2002/07/owl#deprecated"
+    },
+    "notation" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#notation"
+    },
+    "identifier" : {
+      "@id" : "http://purl.org/dc/terms/identifier"
+    },
+    "versionInfo" : {
+      "@id" : "http://www.w3.org/2002/07/owl#versionInfo"
+    },
+    "prefLabel" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+    },
+    "hasCurrentVersion" : {
+      "@id" : "http://purl.org/pav/hasCurrentVersion",
+      "@type" : "@id"
+    },
+    "date" : {
+      "@id" : "http://purl.org/dc/terms/date"
+    },
+    "note" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#note"
+    },
+    "authoredOn" : {
+      "@id" : "http://purl.org/pav/authoredOn"
+    },
+    "altLabel" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#altLabel"
+    },
+    "inDataset" : {
+      "@id" : "http://rdfs.org/ns/void#inDataset",
+      "@type" : "@id"
+    },
+    "version" : {
+      "@id" : "http://purl.org/pav/version"
+    },
+    "definition" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#definition"
+    },
+    "member" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#member",
+      "@type" : "@id"
+    },
+    "alternative" : {
+      "@id" : "http://purl.org/dc/terms/alternative"
+    },
+    "comment" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"
+    },
+    "title" : {
+      "@id" : "http://purl.org/dc/terms/title"
+    },
+    "creator" : {
+      "@id" : "http://purl.org/dc/terms/creator"
+    },
+    "publisher" : {
+      "@id" : "http://purl.org/dc/terms/publisher"
+    },
+    "RE_RegisterManager" : {
+      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
+    },
+    "RE_RegisterOwner" : {
+      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"
+    },
+    "qudt" : "https://qudt.org/2.1/schema/qudt#",
+    "owl" : "http://www.w3.org/2002/07/owl#",
+    "dce" : "http://purl.org/dc/elements/1.1/",
+    "skos" : "http://www.w3.org/2004/02/skos/core#",
+    "ns0" : "http://www.w3.org/ns/dx/conneg/altr#",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "iop" : "https://w3id.org/iadopt/ont#",
+    "ns1" : "http://www.w3.org/ns/dx/prof/",
+    "puv" : "https://w3id.org/env/puv#",
+    "dct" : "http://purl.org/dc/terms/",
+    "reg" : "http://purl.org/linked-data/registry#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "grg" : "http://www.isotc211.org/schemas/grg/",
+    "prov" : "https://www.w3.org/ns/prov#",
+    "cpm" : "http://purl.org/voc/cpm#",
+    "void" : "http://rdfs.org/ns/void#",
+    "pav" : "http://purl.org/pav/",
+    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "dc" : "http://purl.org/dc/terms/"
+  }
+}

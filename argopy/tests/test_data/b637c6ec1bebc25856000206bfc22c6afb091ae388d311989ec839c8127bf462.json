@@ -1,0 +1,478 @@
+{
+  "@graph" : [ {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R07/current/",
+    "@type" : "skos:Collection",
+    "alternative" : "HISTORY_ACTION",
+    "creator" : "Argo Data Management Team",
+    "date" : "2020-04-08 03:00:04.0",
+    "description" : "Coded history information for each action performed on each profile by a data centre.",
+    "publisher" : "Natural Environment Research Council",
+    "title" : "Argo history action codes",
+    "RE_RegisterManager" : "British Oceanographic Data Centre",
+    "RE_RegisterOwner" : "Argo Data Management Team",
+    "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+    "seeAlso" : "https://github.com/nvs-vocabs/R07",
+    "versionInfo" : "1",
+    "altLabel" : "HISTORY_ACTION",
+    "member" : [ "http://vocab.nerc.ac.uk/collection/R07/current/PE/", "http://vocab.nerc.ac.uk/collection/R07/current/CR/", "http://vocab.nerc.ac.uk/collection/R07/current/TE/", "http://vocab.nerc.ac.uk/collection/R07/current/CF/", "http://vocab.nerc.ac.uk/collection/R07/current/UP/", "http://vocab.nerc.ac.uk/collection/R07/current/SV/", "http://vocab.nerc.ac.uk/collection/R07/current/ED/", "http://vocab.nerc.ac.uk/collection/R07/current/DC/", "http://vocab.nerc.ac.uk/collection/R07/current/CV/", "http://vocab.nerc.ac.uk/collection/R07/current/IP/", "http://vocab.nerc.ac.uk/collection/R07/current/QCF/", "http://vocab.nerc.ac.uk/collection/R07/current/NG/", "http://vocab.nerc.ac.uk/collection/R07/current/QC/", "http://vocab.nerc.ac.uk/collection/R07/current/QCP/" ],
+    "prefLabel" : "Argo history action codes"
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R07/current/CF/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R07::CF",
+    "date" : "2020-04-07 22:59:46.0",
+    "dc:identifier" : "SDN:R07::CF",
+    "authoredOn" : "2020-04-07 22:59:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R07/current/CF/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "CF",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A quality flag was changed."
+    },
+    "notation" : "SDN:R07::CF",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Quality flag change"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R07/current/CR/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R07::CR",
+    "date" : "2020-04-07 22:59:46.0",
+    "dc:identifier" : "SDN:R07::CR",
+    "authoredOn" : "2020-04-07 22:59:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R07/current/CR/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "CR",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A new record was created."
+    },
+    "notation" : "SDN:R07::CR",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Record creation"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R07/current/CV/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R07::CV",
+    "date" : "2020-04-07 22:59:46.0",
+    "dc:identifier" : "SDN:R07::CV",
+    "authoredOn" : "2020-04-07 22:59:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R07/current/CV/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "CV",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A value was changed."
+    },
+    "notation" : "SDN:R07::CV",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Value change"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R07/current/DC/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R07::DC",
+    "date" : "2020-04-07 22:59:46.0",
+    "dc:identifier" : "SDN:R07::DC",
+    "authoredOn" : "2020-04-07 22:59:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R07/current/DC/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "DC",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "The station was checked using duplicate checking software."
+    },
+    "notation" : "SDN:R07::DC",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Station check with duplicate checking software"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R07/current/ED/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R07::ED",
+    "date" : "2020-04-07 22:59:46.0",
+    "dc:identifier" : "SDN:R07::ED",
+    "authoredOn" : "2020-04-07 22:59:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R07/current/ED/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ED",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A parameter value was edited."
+    },
+    "notation" : "SDN:R07::ED",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Parameter value edit"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R07/current/IP/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R07::IP",
+    "date" : "2020-04-07 22:59:46.0",
+    "dc:identifier" : "SDN:R07::IP",
+    "authoredOn" : "2020-04-07 22:59:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R07/current/IP/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "IP",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "This history group operates on the complete input record."
+    },
+    "notation" : "SDN:R07::IP",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "History group for complete input record"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R07/current/NG/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R07::NG",
+    "date" : "2020-04-07 22:59:46.0",
+    "dc:identifier" : "SDN:R07::NG",
+    "authoredOn" : "2020-04-07 22:59:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R07/current/NG/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "NG",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "No good trace."
+    },
+    "notation" : "SDN:R07::NG",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "No good trace"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R07/current/PE/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R07::PE",
+    "date" : "2020-04-07 22:59:46.0",
+    "dc:identifier" : "SDN:R07::PE",
+    "authoredOn" : "2020-04-07 22:59:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R07/current/PE/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "PE",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Profile position has been erroneously encoded, and has been corrected where possible."
+    },
+    "notation" : "SDN:R07::PE",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Position error"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R07/current/QC/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R07::QC",
+    "date" : "2020-04-07 22:59:46.0",
+    "dc:identifier" : "SDN:R07::QC",
+    "authoredOn" : "2020-04-07 22:59:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R07/current/QC/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "QC",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Quality control performed."
+    },
+    "notation" : "SDN:R07::QC",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Quality control"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R07/current/QCF/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R07::QCF",
+    "date" : "2020-04-07 22:59:46.0",
+    "dc:identifier" : "SDN:R07::QCF",
+    "authoredOn" : "2020-04-07 22:59:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R07/current/QCF/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "QCF$",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Tests failed."
+    },
+    "notation" : "SDN:R07::QCF",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Tests failed"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R07/current/QCP/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R07::QCP",
+    "date" : "2020-04-07 22:59:46.0",
+    "dc:identifier" : "SDN:R07::QCP",
+    "authoredOn" : "2020-04-07 22:59:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R07/current/QCP/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "QCP$",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Tests performed."
+    },
+    "notation" : "SDN:R07::QCP",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Tests performed"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R07/current/SV/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R07::SV",
+    "date" : "2020-04-07 22:59:46.0",
+    "dc:identifier" : "SDN:R07::SV",
+    "authoredOn" : "2020-04-07 22:59:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R07/current/SV/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SV",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Set a value."
+    },
+    "notation" : "SDN:R07::SV",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Value set"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R07/current/TE/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R07::TE",
+    "date" : "2020-04-07 22:59:46.0",
+    "dc:identifier" : "SDN:R07::TE",
+    "authoredOn" : "2020-04-07 22:59:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R07/current/TE/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "TE",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Profile date and/or time have been erroneously encoded, and have been corrected where possible."
+    },
+    "notation" : "SDN:R07::TE",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Time error"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R07/current/UP/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R07::UP",
+    "date" : "2020-04-07 22:59:46.0",
+    "dc:identifier" : "SDN:R07::UP",
+    "authoredOn" : "2020-04-07 22:59:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R07/current/UP/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "UP",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "The station passed through the update program."
+    },
+    "notation" : "SDN:R07::UP",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Station passed through the update program"
+    }
+  } ],
+  "@context" : {
+    "versionInfo" : {
+      "@id" : "http://www.w3.org/2002/07/owl#versionInfo"
+    },
+    "prefLabel" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+    },
+    "date" : {
+      "@id" : "http://purl.org/dc/terms/date"
+    },
+    "note" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#note"
+    },
+    "identifier" : {
+      "@id" : "http://purl.org/dc/elements/1.1/identifier"
+    },
+    "altLabel" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#altLabel"
+    },
+    "inDataset" : {
+      "@id" : "http://rdfs.org/ns/void#inDataset",
+      "@type" : "@id"
+    },
+    "definition" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#definition"
+    },
+    "deprecated" : {
+      "@id" : "http://www.w3.org/2002/07/owl#deprecated"
+    },
+    "hasCurrentVersion" : {
+      "@id" : "http://purl.org/pav/hasCurrentVersion",
+      "@type" : "@id"
+    },
+    "version" : {
+      "@id" : "http://purl.org/pav/version"
+    },
+    "notation" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#notation"
+    },
+    "authoredOn" : {
+      "@id" : "http://purl.org/pav/authoredOn"
+    },
+    "member" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#member",
+      "@type" : "@id"
+    },
+    "creator" : {
+      "@id" : "http://purl.org/dc/terms/creator"
+    },
+    "publisher" : {
+      "@id" : "http://purl.org/dc/terms/publisher"
+    },
+    "seeAlso" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+      "@type" : "@id"
+    },
+    "title" : {
+      "@id" : "http://purl.org/dc/terms/title"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
+    },
+    "RE_RegisterManager" : {
+      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
+    },
+    "comment" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"
+    },
+    "RE_RegisterOwner" : {
+      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"
+    },
+    "alternative" : {
+      "@id" : "http://purl.org/dc/terms/alternative"
+    },
+    "qudt" : "https://qudt.org/2.1/schema/qudt#",
+    "owl" : "http://www.w3.org/2002/07/owl#",
+    "dce" : "http://purl.org/dc/elements/1.1/",
+    "skos" : "http://www.w3.org/2004/02/skos/core#",
+    "ns0" : "http://www.w3.org/ns/dx/conneg/altr#",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "iop" : "https://w3id.org/iadopt/ont#",
+    "ns1" : "http://www.w3.org/ns/dx/prof/",
+    "puv" : "https://w3id.org/env/puv#",
+    "dct" : "http://purl.org/dc/terms/",
+    "reg" : "http://purl.org/linked-data/registry#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "grg" : "http://www.isotc211.org/schemas/grg/",
+    "prov" : "https://www.w3.org/ns/prov#",
+    "cpm" : "http://purl.org/voc/cpm#",
+    "void" : "http://rdfs.org/ns/void#",
+    "pav" : "http://purl.org/pav/",
+    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "dc" : "http://purl.org/dc/terms/"
+  }
+}
