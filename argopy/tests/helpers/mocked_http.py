@@ -56,28 +56,19 @@ if os.path.exists(DB_FILE):
         with open(test_data_file, mode='rb') as file:
             data = file.read()
 
-        if start_with(ressource['uri'], erddap_api_server):
-            MOCKED_REQUESTS[ressource['uri'].replace(erddap_api_server, "")] = data
-
-        if start_with(ressource['uri'], "https://github.com/euroargodev/argopy-data/raw/master"):
-            MOCKED_REQUESTS[
-                ressource['uri'].replace("https://github.com/euroargodev/argopy-data/raw/master", "")] = data
-
-        if start_with(ressource['uri'], "https://api.ifremer.fr"):
-            MOCKED_REQUESTS[ressource['uri'].replace("https://api.ifremer.fr", "")] = data
-
-        if start_with(ressource['uri'], "https://coastwatch.pfeg.noaa.gov/erddap"):
-            MOCKED_REQUESTS[ressource['uri'].replace("https://coastwatch.pfeg.noaa.gov/erddap", "")] = data
-
-        if start_with(ressource['uri'], "https://www.ocean-ops.org/api/1"):
-            MOCKED_REQUESTS[ressource['uri'].replace("https://www.ocean-ops.org/api/1", "")] = data
-
-        if start_with(ressource['uri'], "https://dataselection.euro-argo.eu/api"):
-            MOCKED_REQUESTS[ressource['uri'].replace("https://dataselection.euro-argo.eu/api", "")] = data
-
-        if start_with(ressource['uri'], "https://data-argo.ifremer.fr"):
-            MOCKED_REQUESTS[ressource['uri'].replace("https://data-argo.ifremer.fr", "")] = data
-
+        # Remove all specific api/server, that will be served by the mocked http server:
+        patterns = [
+                "https://erddap.ifremer.fr/erddap",
+                "https://github.com/euroargodev/argopy-data/raw/master",
+                "https://api.ifremer.fr",
+                "https://coastwatch.pfeg.noaa.gov/erddap",
+                "https://www.ocean-ops.org/api/1",
+                "https://dataselection.euro-argo.eu/api",
+                "https://data-argo.ifremer.fr"
+            ]
+        for pattern in patterns:
+            if start_with(ressource['uri'], pattern):
+                MOCKED_REQUESTS[ressource['uri'].replace(pattern, "")] = data
 
 else:
     log.debug("Loading this sub-module without DB_FILE ! %s" % DB_FILE)
