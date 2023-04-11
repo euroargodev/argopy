@@ -11,7 +11,6 @@ from utils import (
     requires_connected_gdac,
     requires_connection,
     requires_ipython,
-    safe_to_server_errors,
     ci_erddap_index,
     requires_matplotlib,
     has_matplotlib,
@@ -27,7 +26,6 @@ if has_cartopy:
     import cartopy
 
 
-ERDDAP_TIMEOUT = 3 * 60
 skip_for_debug = pytest.mark.skipif(True, reason="Taking too long !")
 
 

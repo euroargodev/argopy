@@ -252,8 +252,8 @@ class Test_HttpStore:
 
     @pytest.mark.parametrize("params", mf_params_js, indirect=False, ids=mf_params_js_ids)
     def test_open_mfjson(self, params):
-        uri = ["http://api.ifremer.fr/argopy/data/ARGO-FULL.json",
-               "http://api.ifremer.fr/argopy/data/ARGO-BGC.json",
+        uri = ["https://api.ifremer.fr/argopy/data/ARGO-FULL.json",
+               "https://api.ifremer.fr/argopy/data/ARGO-BGC.json",
                ]
         uri = [self._mockeduri(u) for u in uri]
         method, progress = params
@@ -453,13 +453,15 @@ class Test_Legacy_IndexStore:
             )
             assert isinstance(df, pd.core.frame.DataFrame)
 
+
 """
 List ftp hosts to be tested. 
 Since the fetcher is compatible with host from local, http or ftp protocols, we
 try to test them all:
 """
 VALID_HOSTS = [argopy.tutorial.open_dataset("gdac")[0],
-             'https://data-argo.ifremer.fr',
+             #'https://data-argo.ifremer.fr',
+               mocked_server_address,
              # 'ftp://ftp.ifremer.fr/ifremer/argo',
              # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but takes too long to respond, slow down CI
              'MOCKFTP',  # keyword to use a fake/mocked ftp server (running on localhost)
@@ -469,11 +471,10 @@ VALID_HOSTS = [argopy.tutorial.open_dataset("gdac")[0],
 List index searches to be tested.
 """
 VALID_SEARCHES = [
-    # {"wmo": [6901929]},
-    {"wmo": [6901929, 2901623]},
-    # {"cyc": [36]},
+    {"wmo": [13857]},
+    # {"wmo": [6901929, 2901623]},
     {"cyc": [5 ,45]},
-    {"wmo_cyc": [6901929, 36]},
+    {"wmo_cyc": [13857, 2]},
     {"tim": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"lat_lon": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"lat_lon_tim": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
@@ -502,15 +503,17 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False):
         except Exception:
             raise
         return idx
-    return fct_safe_to_server_errors(core)(fetcher_args, search_point, xfail=xfail)
+    return core(fetcher_args, search_point)
 
 
 def ftp_shortname(ftp):
     """Get a short name for scenarios IDs, given a FTP host"""
-    if ftp != 'MOCKFTP':
-        return (lambda x: 'file' if x == "" else x)(urlparse(ftp).scheme)
-    else:
+    if ftp == 'MOCKFTP':
         return 'ftp_mocked'
+    elif 'localhost' in ftp or '127.0.0.1' in ftp:
+        return 'http_mocked'
+    else:
+        return (lambda x: 'file' if x == "" else x)(urlparse(ftp).scheme)
 
 
 class IndexStore_test_proto:
@@ -523,10 +526,20 @@ class IndexStore_test_proto:
         in
         search_scenarios]
 
+    #############
+    # UTILITIES #
+    #############
+
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
         self.cachedir = tempfile.mkdtemp()
+
+    def teardown_class(self):
+        """Cleanup once we are finished."""
+        def remove_test_dir():
+            shutil.rmtree(self.cachedir)
+        remove_test_dir()
 
     def _patch_ftp(self, ftp):
         """Patch Mocked FTP server keyword"""
@@ -542,7 +555,7 @@ class IndexStore_test_proto:
             except Exception:
                 raise
             return idx
-        return fct_safe_to_server_errors(core)(store_args, xfail=xfail)
+        return core(store_args)
 
     def _setup_store(self, this_request, cached=False):
         """Helper method to set up options for an index store creation"""
@@ -595,13 +608,15 @@ class IndexStore_test_proto:
         if cacheable:
             assert is_list_of_strings(this_idx.cachepath('search'))
 
+    #########
+    # TESTS #
+    #########
+
     @pytest.mark.parametrize("a_store", VALID_HOSTS,
                              indirect=True,
                              ids=["%s" % ftp_shortname(ftp) for ftp in VALID_HOSTS])
-    def test_hosts(self, a_store):
-        def test(this_store):
-            self.assert_index(this_store) # assert (this_store.N_RECORDS >= 1)  # Make sure we loaded the index file content
-        test(a_store)
+    def test_hosts(self, mocked_httpserver, a_store):
+        self.assert_index(a_store) # assert (this_store.N_RECORDS >= 1)  # Make sure we loaded the index file content
 
     @pytest.mark.parametrize("ftp_host", ['invalid', 'https://invalid_ftp', 'ftp://invalid_ftp'], indirect=False)
     def test_hosts_invalid(self, ftp_host):
@@ -627,10 +642,8 @@ class IndexStore_test_proto:
             idx.load()
 
     @pytest.mark.parametrize("a_search", search_scenarios, indirect=True, ids=search_scenarios_ids)
-    def test_search(self, a_search):
-        def test(this_searched_store):
-            self.assert_search(this_searched_store, cacheable=False)
-        test(a_search)
+    def test_search(self, mocked_httpserver, a_search):
+        self.assert_search(a_search, cacheable=False)
 
     def test_to_dataframe_index(self):
         idx = self.new_idx()
@@ -680,14 +693,6 @@ class IndexStore_test_proto:
         C = idx.records_per_wmo()
         for w in C:
             assert str(C[w]).isdigit()
-
-    @pytest.fixture(scope="class", autouse=True)
-    def cleanup(self, request):
-        """Cleanup once we are finished."""
-        def remove_test_dir():
-            # warnings.warn("\n%s" % argopy.lscache(self.cachedir))
-            shutil.rmtree(self.cachedir)
-        request.addfinalizer(remove_test_dir)
 
 
 @skip_this
