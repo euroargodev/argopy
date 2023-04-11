@@ -48,7 +48,6 @@ from utils import (
     requires_matplotlib,
     requires_cartopy,
     requires_oops,
-    safe_to_server_errors,
     has_matplotlib,
     has_cartopy,
 )

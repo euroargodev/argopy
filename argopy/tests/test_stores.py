@@ -35,7 +35,7 @@ from argopy.utilities import (
     is_list_of_strings,
 )
 from argopy.stores.argo_index_pd import indexstore_pandas
-from utils import requires_connection, requires_connected_argovis, safe_to_server_errors, fct_safe_to_server_errors
+from utils import requires_connection, requires_connected_argovis
 from mocked_http import mocked_httpserver, mocked_server_address
 
 
