@@ -31,7 +31,7 @@ import pickle
 
 
 log = logging.getLogger("argopy.tests.mocked_erddap")
-LOG_SERVER_CONTENT = False  # Also log the list of files/uris available from the mocked server
+LOG_SERVER_CONTENT = 0  # Also log the list of files/uris available from the mocked server
 
 requests = pytest.importorskip("requests")
 port = 9898  # Select the port to run the local server on
@@ -90,7 +90,7 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
 
     def _respond(self, code=200, headers=None, data=b""):
         headers = headers or {}
-        headers.update({"User-Agent": "test"})
+        headers.update({"User-Agent": "Mocked http server for unit tests"})
         self.send_response(code)
         for k, v in headers.items():
             self.send_header(k, str(v))
@@ -99,7 +99,11 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
             try:
                 self.wfile.write(data)
             except socket.error as e:
-                log.debug("socket error %s" % str(e))
+                # socket error [Errno 32] Broken pipe
+                # This might be happening when a client program doesn't wait till all the data from the server is
+                # received and simply closes a socket
+                if "32" not in str(e):
+                    log.debug("socket error %s" % str(e))
                 pass
 
     def log_message(self, format, *args):

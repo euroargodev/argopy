@@ -191,7 +191,7 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
     # Create a file system for this path
     if split_protocol(path)[0] is None:
         fs = fsspec.filesystem('file')
-    elif 'https' in split_protocol(path)[0]:
+    elif split_protocol(path)[0] in ['https', 'http']:
         fs = fsspec.filesystem('http')
     elif 'ftp' in split_protocol(path)[0]:
         try:
@@ -232,11 +232,13 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
     check1 = fs.exists(fs.sep.join([path, "dac"]))
     if check1:
         return True
+
     elif errors == "raise":
         raise FtpPathError("This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s" % path)
 
     elif errors == "warn":
         warnings.warn("This path is not GDAC compliant:\n%s" % path)
         return False
+
     else:
         return False

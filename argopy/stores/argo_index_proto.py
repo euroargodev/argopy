@@ -114,7 +114,7 @@ class ArgoIndexStoreProto(ABC):
         self.fs = {}
         if split_protocol(host)[0] is None:
             self.fs["src"] = filestore(cache=cache, cachedir=cachedir)
-        elif "https" in split_protocol(host)[0]:
+        elif split_protocol(host)[0] in ["https", "http"]:
             # Only for https://data-argo.ifremer.fr (much faster than the ftp servers)
             self.fs["src"] = httpstore(
                 cache=cache, cachedir=cachedir, timeout=timeout, size_policy="head"
@@ -140,11 +140,11 @@ class ArgoIndexStoreProto(ABC):
         self._memory_store_content = Registry(name='memory store')  # Track files opened with this memory store, since it's a global store
         self.search_path_cache = Registry(name='cached search')  # Track cached files related to search
 
-        self.index_path = self.fs["src"].fs.sep.join([self.host, self.index_file])
         # Check if the index file exists. Allow for up to 10 try to account for some slow websites
+        self.index_path = self.fs["src"].fs.sep.join([self.host, self.index_file])
         i_try, max_try, index_found = 0, 1 if 'invalid' in host else 10, False
         while i_try < max_try:
-            if not self.fs["src"].exists(self.index_path):
+            if not self.fs["src"].exists(self.index_path) and not self.fs["src"].exists(self.index_path + ".gz"):
                 time.sleep(1)
                 i_try += 1
             else:
