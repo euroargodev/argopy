@@ -2230,7 +2230,7 @@ def argo_split_path(this_path):  # noqa C901
         if 'ftp://localhost:' in host:
             return "ftp://%s" % (urlparse(host).netloc)
         if 'http://127.0.0.1:' in host:
-            return "ftp://%s" % (urlparse(host).netloc)
+            return "http://%s" % (urlparse(host).netloc)
         else:
             return ""
 
