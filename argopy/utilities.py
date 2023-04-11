@@ -2226,16 +2226,18 @@ def argo_split_path(this_path):  # noqa C901
             head = head.rstrip(sep)
         return head, tail
 
-    def fix_localhostftp(ftp):
-        if 'ftp://localhost:' in ftp:
-            return "ftp://%s" % (urlparse(ftp).netloc)
+    def fix_localhost(host):
+        if 'ftp://localhost:' in host:
+            return "ftp://%s" % (urlparse(host).netloc)
+        if 'http://127.0.0.1:' in host:
+            return "ftp://%s" % (urlparse(host).netloc)
         else:
             return ""
 
     known_origins = ['https://data-argo.ifremer.fr',
                      'ftp://ftp.ifremer.fr/ifremer/argo',
                      'ftp://usgodae.org/pub/outgoing/argo',
-                     fix_localhostftp(this_path),
+                     fix_localhost(this_path),
                      '']
 
     output['origin'] = [origin for origin in known_origins if start_with(this_path, origin)][0]
