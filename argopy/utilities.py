@@ -2763,6 +2763,8 @@ def get_coriolis_profile_id(WMO, CYC=None, **kwargs):
         CYC_list = check_cyc(CYC)
     if 'api_server' in kwargs:
         api_server = kwargs['api_server']
+    elif OPTIONS['server'] is not None:
+        api_server = OPTIONS['server']
     else:
         api_server = "https://dataselection.euro-argo.eu/api"
     URIs = [api_server + "/trajectory/%i" % wmo for wmo in WMO_list]
@@ -2782,7 +2784,7 @@ def get_coriolis_profile_id(WMO, CYC=None, **kwargs):
         return pd.DataFrame(rows)
 
     from .stores import httpstore
-    fs = httpstore(cache=True)
+    fs = httpstore(cache=True, cachedir=OPTIONS['cachedir'])
     data = fs.open_mfjson(URIs, preprocess=prec, errors="raise", url_follow=True)
 
     # Merge results (list of dataframe):
