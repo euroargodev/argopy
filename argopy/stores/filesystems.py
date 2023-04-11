@@ -13,6 +13,7 @@ import warnings
 import logging
 from packaging import version
 from typing import Union
+from urllib.parse import urlparse
 
 import concurrent.futures
 import multiprocessing
@@ -444,6 +445,33 @@ class httpstore(argo_store_proto):
     """
     protocol = "http"
 
+    def curateurl(self, url):
+        """Possibly replace server of a given url by a local argopy option value
+
+        This is intended to be used by tests and dev
+        """
+        return url
+        # if OPTIONS["server"] is not None:
+        #     # log.debug("Replaced '%s' with '%s'" % (urlparse(url).netloc, OPTIONS["netloc"]))
+        #
+        #     if urlparse(url).scheme == "":
+        #         patternA = "//%s" % (urlparse(url).netloc)
+        #     else:
+        #         patternA = "%s://%s" % (urlparse(url).scheme, urlparse(url).netloc)
+        #
+        #     patternB = "%s://%s" % (urlparse(OPTIONS["server"]).scheme, urlparse(OPTIONS["server"]).netloc)
+        #     log.debug(patternA)
+        #     log.debug(patternB)
+        #
+        #     new_url = url.replace(patternA, patternB)
+        #     # log.debug(url)
+        #     # log.debug(new_url)
+        #     return new_url
+        # else:
+        #     # log.debug("'%s' left unchanged" % urlparse(url).netloc)
+        #     log.debug(url)
+        #     return url
+
     def open_dataset(self, url, *args, **kwargs):
         """ Open and decode a xarray dataset from an url
 
@@ -455,6 +483,7 @@ class httpstore(argo_store_proto):
         -------
         :class:`xarray.Dataset`
         """
+        url = self.curateurl(url)
         try:
             # log.info("open_dataset('%s')" % url)
             # log_argopy_callerstack()
@@ -479,6 +508,7 @@ class httpstore(argo_store_proto):
         return ds
 
     def _mfprocessor_dataset(self, url, preprocess=None, preprocess_opts={}, *args, **kwargs):
+        url = self.curateurl(url)
         # Load data
         ds = self.open_dataset(url, *args, **kwargs)
         # Pre-process
@@ -576,6 +606,8 @@ class httpstore(argo_store_proto):
 
         if not isinstance(urls, list):
             urls = [urls]
+
+        urls = [self.curateurl(url) for url in urls]
 
         results = []
         failed = []
@@ -687,6 +719,7 @@ class httpstore(argo_store_proto):
             :class:`pandas.DataFrame`
 
         """
+        url = self.curateurl(url)
         log.debug("Opening/reading csv from: %s" % url)
         with self.open(url) as of:
             df = pd.read_csv(of, **kwargs)
@@ -704,6 +737,7 @@ class httpstore(argo_store_proto):
             json
 
         """
+        url = self.curateurl(url)
         log.debug("Opening json from: %s" % url)
         # try:
         #     with self.open(url) as of:
@@ -774,6 +808,8 @@ class httpstore(argo_store_proto):
 
         if not isinstance(urls, list):
             urls = [urls]
+
+        urls = [self.curateurl(url) for url in urls]
 
         results = []
         failed = []
