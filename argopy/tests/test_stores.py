@@ -108,7 +108,7 @@ class Test_FileStore:
         method, progress, concat = params
 
         if method == "process":
-            pytest.xfail("concurrent.futures.ProcessPoolExecutor is too long on GA !")
+            pytest.skip("concurrent.futures.ProcessPoolExecutor is too long on GA !")
 
         ds = filestore().open_mfdataset(uri, method=method, progress='disable' if progress else False, concat=concat)
         if concat:
@@ -237,7 +237,7 @@ class Test_HttpStore:
         fs = httpstore(timeout=OPTIONS['api_timeout'])
 
         if method == "process":
-            pytest.xfail("concurrent.futures.ProcessPoolExecutor is too long on GA !")
+            pytest.skip("concurrent.futures.ProcessPoolExecutor is too long on GA !")
 
         ds = fs.open_mfdataset(uri, method=method, progress='disable' if progress else False, concat=concat)
         if concat:
@@ -259,7 +259,7 @@ class Test_HttpStore:
         method, progress = params
 
         if method == "process":
-            pytest.xfail("concurrent.futures.ProcessPoolExecutor is too long on GA !")
+            pytest.skip("concurrent.futures.ProcessPoolExecutor is too long on GA !")
 
         fs = httpstore(timeout=OPTIONS['api_timeout'])
         lst = fs.open_mfjson(uri, method=method, progress='disable' if progress else False)
@@ -348,7 +348,7 @@ class Test_FtpStore:
             method, progress, concat = this_params
 
             if method == "process":
-                pytest.xfail("concurrent.futures.ProcessPoolExecutor is too long on GA !")
+                pytest.skip("concurrent.futures.ProcessPoolExecutor is too long on GA !")
 
             fs = ftpstore(host=self.host, port=self.port, cache=False)
             ds = fs.open_mfdataset(uri,
