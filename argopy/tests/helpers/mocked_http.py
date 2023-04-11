@@ -58,13 +58,14 @@ if os.path.exists(DB_FILE):
 
         # Remove all specific api/server, that will be served by the mocked http server:
         patterns = [
-                "https://erddap.ifremer.fr/erddap",
                 "https://github.com/euroargodev/argopy-data/raw/master",
+                "https://erddap.ifremer.fr/erddap",
+                "https://data-argo.ifremer.fr",
                 "https://api.ifremer.fr",
                 "https://coastwatch.pfeg.noaa.gov/erddap",
                 "https://www.ocean-ops.org/api/1",
                 "https://dataselection.euro-argo.eu/api",
-                "https://data-argo.ifremer.fr"
+                "https://vocab.nerc.ac.uk/collection",
             ]
         for pattern in patterns:
             if start_with(ressource['uri'], pattern):

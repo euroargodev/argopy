@@ -747,13 +747,14 @@ def test_get_ea_profile_page(params, mocked_httpserver):
         assert is_list_of_strings(get_ea_profile_page(params[0], params[1], api_server=mocked_server_address))
 
 
+
 class Test_ArgoNVSReferenceTables:
 
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
         self.cachedir = tempfile.mkdtemp()
-        self.nvs = ArgoNVSReferenceTables(cache=True, cachedir=self.cachedir)
+        self.nvs = ArgoNVSReferenceTables(cache=True, cachedir=self.cachedir, nvs=mocked_server_address)
 
     def teardown_class(self):
         """Cleanup once we are finished."""
