@@ -75,6 +75,9 @@ if os.path.exists(DB_FILE):
         if start_with(ressource['uri'], "https://dataselection.euro-argo.eu/api"):
             MOCKED_REQUESTS[ressource['uri'].replace("https://dataselection.euro-argo.eu/api", "")] = data
 
+        if start_with(ressource['uri'], "https://data-argo.ifremer.fr"):
+            MOCKED_REQUESTS[ressource['uri'].replace("https://data-argo.ifremer.fr", "")] = data
+
 
 else:
     log.debug("Loading this sub-module without DB_FILE ! %s" % DB_FILE)
@@ -200,7 +203,7 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
 
 
 @contextlib.contextmanager
-def serve():
+def serve_mocked_httpserver():
     server_address = ("", port)
     httpd = HTTPServer(server_address, HTTPTestHandler)
     th = threading.Thread(target=httpd.serve_forever)
@@ -224,5 +227,5 @@ def serve():
 
 @pytest.fixture(scope="module")
 def mocked_httpserver():
-    with serve() as s:
+    with serve_mocked_httpserver() as s:
         yield s
