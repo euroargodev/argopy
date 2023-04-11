@@ -788,7 +788,7 @@ def isAPIconnected(src="erddap", data=True):
 
 
 def erddap_ds_exists(
-        ds: str = "ArgoFloats",
+        ds: Union[list, str] = "ArgoFloats",
         erddap: str = None,
         maxtry: int = 2
 ) -> bool:
@@ -814,7 +814,10 @@ def erddap_ds_exists(
     if isconnected(erddap, maxtry=maxtry):
         with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
             erddap_index = json.load(of)
-        return ds in [row[-1] for row in erddap_index["table"]["rows"]]
+        if is_list_of_strings(ds):
+            return [this_ds in [row[-1] for row in erddap_index["table"]["rows"]] for this_ds in ds]
+        else:
+            return ds in [row[-1] for row in erddap_index["table"]["rows"]]
     else:
         log.debug("Cannot reach erddap server: %s" % erddap)
         warnings.warn("Return False because we cannot reach the erddap server %s" % erddap)

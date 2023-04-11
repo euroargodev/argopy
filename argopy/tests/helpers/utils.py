@@ -21,6 +21,7 @@ import socket
 import asyncio
 from packaging import version
 import warnings
+from argopy.options import set_options
 from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound, FtpPathError
 from argopy.utilities import (
     list_available_data_src,
@@ -31,6 +32,7 @@ from argopy.utilities import (
     OceanOPSDeployments,
 )
 import logging
+from mocked_http import mocked_server_address, serve_mocked_httpserver
 
 
 log = logging.getLogger("argopy.tests.utils")
@@ -81,10 +83,17 @@ has_erddap, requires_erddap = _connectskip(
 
 if CONNECTED:
     log.debug("Checking which Erddap dataset are available (eg: core, bgc, ref, index)")
-    DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
-    DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-bio")
-    DSEXISTS_ref = erddap_ds_exists(ds="ArgoFloats-ref")
-    DSEXISTS_index = erddap_ds_exists(ds="ArgoFloats-index")
+    with serve_mocked_httpserver() as s:  # Use the mocked http server
+        with set_options(erddap=mocked_server_address):
+            res = erddap_ds_exists(["ArgoFloats", "ArgoFloats-bio", "ArgoFloats-ref", "ArgoFloats-index"])
+            DSEXISTS = res[0]
+            DSEXISTS_bgc = res[1]
+            DSEXISTS_ref = res[2]
+            DSEXISTS_index = res[3]
+            # DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
+            # DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-bio")
+            # DSEXISTS_ref = erddap_ds_exists(ds="ArgoFloats-ref")
+            # DSEXISTS_index = erddap_ds_exists(ds="ArgoFloats-index")
 else:
     DSEXISTS = False
     DSEXISTS_bgc = False
