@@ -484,6 +484,7 @@ class httpstore(argo_store_proto):
         :class:`xarray.Dataset`
         """
         url = self.curateurl(url)
+        # log.debug("Opening netcdf from: %s" % url)
         try:
             # log.info("open_dataset('%s')" % url)
             # log_argopy_callerstack()
@@ -720,7 +721,7 @@ class httpstore(argo_store_proto):
 
         """
         url = self.curateurl(url)
-        log.debug("Opening/reading csv from: %s" % url)
+        # log.debug("Opening/reading csv from: %s" % url)
         with self.open(url) as of:
             df = pd.read_csv(of, **kwargs)
         return df
@@ -738,7 +739,7 @@ class httpstore(argo_store_proto):
 
         """
         url = self.curateurl(url)
-        log.debug("Opening json from: %s" % url)
+        # log.debug("Opening json from: %s" % url)
         # try:
         #     with self.open(url) as of:
         #         js = json.load(of, **kwargs)
@@ -852,7 +853,7 @@ class httpstore(argo_store_proto):
 
         elif method in ['seq', 'sequential']:
             if progress:
-                log.debug("We ask for progress bar !")
+                # log.debug("We asked for a progress bar !")
                 urls = tqdm(urls, total=len(urls), disable='disable' in progress)
 
             for url in urls:

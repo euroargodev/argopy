@@ -27,7 +27,7 @@ from argopy.stores import (
 )
 from argopy.stores.filesystems import new_fs
 from argopy.options import OPTIONS
-from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, InvalidDatasetStructure, FtpPathError
+from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, InvalidDatasetStructure, FtpPathError, InvalidMethod, DataNotFound
 from argopy.utilities import (
     is_list_of_datasets,
     is_list_of_dicts,
@@ -70,6 +70,7 @@ class Test_new_fs:
 class Test_FileStore:
     ftproot = argopy.tutorial.open_dataset("gdac")[0]
     csvfile = os.path.sep.join([ftproot, "ar_index_global_prof.txt"])
+    fs = filestore()  # Default filestore instance
 
     def test_implementation(self):
         fs = filestore(cache=False)
@@ -90,19 +91,17 @@ class Test_FileStore:
             fs.cachepath("dummy_uri")
 
     def test_glob(self):
-        fs = filestore()
-        assert isinstance(fs.glob(os.path.sep.join([self.ftproot, "dac/*"])), list)
+        assert isinstance(self.fs.glob(os.path.sep.join([self.ftproot, "dac/*"])), list)
 
     def test_open_dataset(self):
         ncfile = os.path.sep.join([self.ftproot, "dac/aoml/5900446/5900446_prof.nc"])
-        fs = filestore()
-        assert isinstance(fs.open_dataset(ncfile), xr.Dataset)
+        assert isinstance(self.fs.open_dataset(ncfile), xr.Dataset)
 
     params = [(m, p, c) for m in ["seq", "thread", "process"] for p in [True, False] for c in [True, False]]
     ids_params = ["method=%s, progress=%s, concat=%s" % (p[0], p[1], p[2]) for p in params]
     @pytest.mark.parametrize("params", params, indirect=False, ids=ids_params)
     def test_open_mfdataset(self, params):
-        uri = filestore().glob(
+        uri = self.fs.glob(
             os.path.sep.join([self.ftproot, "dac/aoml/5900446/profiles/*_1*.nc"])
         )[0:2]
         method, progress, concat = params
@@ -110,16 +109,47 @@ class Test_FileStore:
         if method == "process":
             pytest.skip("concurrent.futures.ProcessPoolExecutor is too long on GA !")
 
-        ds = filestore().open_mfdataset(uri, method=method, progress='disable' if progress else False, concat=concat)
+        ds = self.fs.open_mfdataset(uri, method=method, progress='disable' if progress else False, concat=concat)
         if concat:
             assert isinstance(ds, xr.Dataset)
         else:
             assert is_list_of_datasets(ds)
 
+    params = [(m) for m in ["seq", "thread", "invalid"]]
+    ids_params = ["method=%s" % (p) for p in params]
+    @pytest.mark.parametrize("params", params, indirect=False, ids=ids_params)
+    def test_open_mfdataset_error(self, params):
+        uri = self.fs.glob(
+            os.path.sep.join([self.ftproot, "dac/aoml/5900446/profiles/*_1*.nc"])
+        )[0:2]
+
+        def preprocess(ds):
+            """Fake preprocessor raising an error"""
+            raise ValueError
+
+        method = params
+        if 'invalid' in method:
+            err = InvalidMethod
+        else:
+            err = ValueError
+        with pytest.raises(err):
+            self.fs.open_mfdataset(uri, method=method, preprocess=preprocess, errors='raise')
+
+    def test_open_mfdataset_DataNotFound(self):
+        uri = self.fs.glob(
+            os.path.sep.join([self.ftproot, "dac/aoml/5900446/profiles/*_1*.nc"])
+        )[0:2]
+
+        def preprocess(ds):
+            """Fake preprocessor returning nothing"""
+            return None
+
+        with pytest.raises(DataNotFound):
+            self.fs.open_mfdataset(uri, preprocess=preprocess)
+
     def test_read_csv(self):
-        fs = filestore()
         assert isinstance(
-            fs.read_csv(self.csvfile, skiprows=8, header=0), pd.core.frame.DataFrame
+            self.fs.read_csv(self.csvfile, skiprows=8, header=0), pd.core.frame.DataFrame
         )
 
     def test_cachefile(self):
@@ -152,18 +182,45 @@ class Test_FileStore:
 @skip_this
 class Test_HttpStore:
     repo = "https://github.com/euroargodev/argopy-data/raw/master"
+    fs = httpstore(timeout=OPTIONS["api_timeout"])  # Default http file store
 
-    # Parameters for multi-file opening
-    mf_params_nc = [(m, p, c) for m in ["seq", "thread", "process"] for p in [True, False] for c in [True, False]]
-    mf_params_nc_ids = ["method=%s, progress=%s, concat=%s" % (p[0], p[1], p[2]) for p in mf_params_nc]
+    # Parameters for multiple files opening
+    mf_params_nc = [
+        (m, p, c)
+        for m in ["seq", "thread", "process"]
+        for p in [True, False]
+        for c in [True, False]
+    ]
+    mf_params_nc_ids = [
+        "method=%s, progress=%s, concat=%s" % (p[0], p[1], p[2]) for p in mf_params_nc
+    ]
+    mf_nc = [
+        repo + "ftp/dac/csiro/5900865/profiles/D5900865_001.nc",
+        repo + "ftp/dac/csiro/5900865/profiles/D5900865_002.nc",
+    ]
 
     mf_params_js = [(m, p) for m in ["seq", "thread", "process"] for p in [True, False]]
     mf_params_js_ids = ["method=%s, progress=%s" % (p[0], p[1]) for p in mf_params_js]
+    mf_js = [
+        "https://api.ifremer.fr/argopy/data/ARGO-FULL.json",
+        "https://api.ifremer.fr/argopy/data/ARGO-BGC.json",
+    ]
 
+    #########
+    # UTILS #
+    #########
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
         self.cachedir = tempfile.mkdtemp()
+
+    def teardown_class(self):
+        """Cleanup once we are finished."""
+
+        def remove_test_dir():
+            shutil.rmtree(self.cachedir)
+
+        remove_test_dir()
 
     def _mockeduri(self, uri):
         """Replace real server by the mocked local server
@@ -171,7 +228,7 @@ class Test_HttpStore:
         Simply return uri unchanged if you want to run tests with real servers.
         Otherwise, let this method take the tests offline with the mocked server.
         """
-        for server_to_mock in [self.repo, "https://api.ifremer.fr"]:
+        for server_to_mock in [self.repo, "https://api.ifremer.fr/"]:
             if server_to_mock in uri:
                 uri = uri.replace(server_to_mock, mocked_server_address + "/")
         return uri
@@ -180,16 +237,21 @@ class Test_HttpStore:
         """This will easily ensure that the module scope fixture is available to all methods !"""
         assert True
 
+    #########
+    # TESTS #
+    #########
     def test_implementation(self):
         fs = httpstore(cache=False)
         assert isinstance(fs.fs, fsspec.implementations.http.HTTPFileSystem)
 
     def test_trust_env(self):
-        with modified_environ(HTTP_PROXY='http://dummy_proxy'):
+        with modified_environ(HTTP_PROXY="http://dummy_proxy"):
             with argopy.set_options(trust_env=True):
                 fs = httpstore(cache=False)
                 with pytest.raises(aiohttp.client_exceptions.ClientConnectorError):
-                    uri = self._mockeduri(self.repo + "ftp/dac/csiro/5900865/5900865_prof.nc")
+                    uri = self._mockeduri(
+                        self.repo + "ftp/dac/csiro/5900865/5900865_prof.nc"
+                    )
                     fs.open_dataset(uri)
 
     def test_nocache(self):
@@ -198,23 +260,29 @@ class Test_HttpStore:
             fs.cachepath("dummy_uri")
 
     def test_cacheable(self):
-        fs = httpstore(cache=True)
-        assert isinstance(fs.fs, fsspec.implementations.cached.WholeFileCacheFileSystem)
+        with argopy.set_options(cachedir=self.cachedir):
+            fs = httpstore(cache=True)
+            assert isinstance(fs.fs, fsspec.implementations.cached.WholeFileCacheFileSystem)
 
     def test_nocachefile(self):
-        fs = httpstore(cache=True)
-        with pytest.raises(CacheFileNotFound):
-            fs.cachepath("dummy_uri")
+        with argopy.set_options(cachedir=self.cachedir):
+            fs = httpstore(cache=True)
+            with pytest.raises(CacheFileNotFound):
+                fs.cachepath("dummy_uri")
 
     def test_cache_a_file(self):
         uri = self._mockeduri(self.repo + "ftp/ar_index_global_prof.txt")
-        fs = httpstore(cache=True, cachedir=self.cachedir, timeout=OPTIONS['api_timeout'])
+        fs = httpstore(
+            cache=True, cachedir=self.cachedir, timeout=OPTIONS["api_timeout"]
+        )
         fs.read_csv(uri, skiprows=8, header=0)
         assert isinstance(fs.cachepath(uri), str)
 
     def test_clear_cache(self):
         uri = self._mockeduri(self.repo + "ftp/ar_index_global_prof.txt")
-        fs = httpstore(cache=True, cachedir=self.cachedir, timeout=OPTIONS['api_timeout'])
+        fs = httpstore(
+            cache=True, cachedir=self.cachedir, timeout=OPTIONS["api_timeout"]
+        )
         fs.read_csv(uri, skiprows=8, header=0)
         assert isinstance(fs.cachepath(uri), str)
         assert os.path.isfile(fs.cachepath(uri))
@@ -224,60 +292,125 @@ class Test_HttpStore:
 
     def test_open_dataset(self):
         uri = self._mockeduri(self.repo + "ftp/dac/csiro/5900865/5900865_prof.nc")
-        fs = httpstore(timeout=OPTIONS['api_timeout'])
-        assert isinstance(fs.open_dataset(uri), xr.Dataset)
+        assert isinstance(self.fs.open_dataset(uri), xr.Dataset)
 
-    @pytest.mark.parametrize("params", mf_params_nc, indirect=False, ids=mf_params_nc_ids)
+    @pytest.mark.parametrize(
+        "params", mf_params_nc, indirect=False, ids=mf_params_nc_ids
+    )
     def test_open_mfdataset(self, params):
-        uri = [self.repo + "ftp/dac/csiro/5900865/profiles/D5900865_001.nc",
-               self.repo + "ftp/dac/csiro/5900865/profiles/D5900865_002.nc"]
-        uri = [self._mockeduri(u) for u in uri]
+        uri = [self._mockeduri(u) for u in self.mf_nc]
 
         method, progress, concat = params
-        fs = httpstore(timeout=OPTIONS['api_timeout'])
 
         if method == "process":
             pytest.skip("concurrent.futures.ProcessPoolExecutor is too long on GA !")
 
-        ds = fs.open_mfdataset(uri, method=method, progress='disable' if progress else False, concat=concat)
+        ds = self.fs.open_mfdataset(
+            uri, method=method, progress="disable" if progress else False, concat=concat
+        )
         if concat:
             assert isinstance(ds, xr.Dataset)
         else:
             assert is_list_of_datasets(ds)
 
+    params = [(m) for m in ["seq", "thread", "invalid"]]
+    ids_params = ["method=%s" % (p) for p in params]
+
+    @pytest.mark.parametrize("params", params, indirect=False, ids=ids_params)
+    def test_open_mfdataset_error(self, params):
+        uri = [self._mockeduri(u) for u in self.mf_nc]
+
+        def preprocess(ds):
+            """Fake preprocessor raising an error"""
+            raise ValueError
+
+        method = params
+        if "invalid" in method:
+            err = InvalidMethod
+        else:
+            err = ValueError
+        with pytest.raises(err):
+            self.fs.open_mfdataset(
+                uri, method=method, preprocess=preprocess, errors="raise"
+            )
+
+        for errors in ["ignore", "silent"]:
+            with pytest.raises(ValueError):
+                self.fs.open_mfdataset(
+                    uri, method=method, preprocess=preprocess, errors=errors
+                )
+
+    def test_open_mfdataset_DataNotFound(self):
+        uri = [self._mockeduri(u) for u in self.mf_nc]
+
+        def preprocess(ds):
+            """Fake preprocessor returning nothing"""
+            return None
+
+        with pytest.raises(DataNotFound):
+            self.fs.open_mfdataset(uri, preprocess=preprocess)
+
     def test_open_json(self):
         uri = self._mockeduri("https://api.ifremer.fr/argopy/data/ARGO-FULL.json")
-        fs = httpstore(timeout=OPTIONS['api_timeout'])
-        assert isinstance(fs.open_json(uri), dict)
+        assert isinstance(self.fs.open_json(uri), dict)
 
-    @pytest.mark.parametrize("params", mf_params_js, indirect=False, ids=mf_params_js_ids)
+    @pytest.mark.parametrize(
+        "params", mf_params_js, indirect=False, ids=mf_params_js_ids
+    )
     def test_open_mfjson(self, params):
-        uri = ["https://api.ifremer.fr/argopy/data/ARGO-FULL.json",
-               "https://api.ifremer.fr/argopy/data/ARGO-BGC.json",
-               ]
-        uri = [self._mockeduri(u) for u in uri]
+        uri = [self._mockeduri(u) for u in self.mf_js]
         method, progress = params
 
         if method == "process":
             pytest.skip("concurrent.futures.ProcessPoolExecutor is too long on GA !")
 
-        fs = httpstore(timeout=OPTIONS['api_timeout'])
-        lst = fs.open_mfjson(uri, method=method, progress='disable' if progress else False)
+        lst = self.fs.open_mfjson(
+            uri, method=method, progress="disable" if progress else False
+        )
         assert is_list_of_dicts(lst)
+
+    params = [(m) for m in ["seq", "thread", "invalid"]]
+    ids_params = ["method=%s" % (p) for p in params]
+
+    @pytest.mark.parametrize("params", params, indirect=False, ids=ids_params)
+    def test_open_mfjson_error(self, params):
+        uri = [self._mockeduri(u) for u in self.mf_js]
+
+        def preprocess(ds):
+            """Fake preprocessor raising an error"""
+            raise ValueError
+
+        method = params
+        if "invalid" in method:
+            err = InvalidMethod
+        else:
+            err = ValueError
+        with pytest.raises(err):
+            self.fs.open_mfjson(
+                uri, method=method, preprocess=preprocess, errors="raise"
+            )
+
+        for errors in ["ignore", "silent"]:
+            with pytest.raises(ValueError):
+                self.fs.open_mfjson(
+                    uri, method=method, preprocess=preprocess, errors=errors
+                )
+
+    def test_open_mfjson_DataNotFound(self):
+        uri = [self._mockeduri(u) for u in self.mf_js]
+
+        def preprocess(ds):
+            """Fake preprocessor returning nothing"""
+            return None
+
+        with pytest.raises(DataNotFound):
+            self.fs.open_mfjson(uri, preprocess=preprocess)
 
     def test_read_csv(self):
         uri = self._mockeduri(self.repo + "ftp/ar_index_global_prof.txt")
-        fs = httpstore(timeout=OPTIONS['api_timeout'])
         assert isinstance(
-            fs.read_csv(uri, skiprows=8, header=0), pd.core.frame.DataFrame
+            self.fs.read_csv(uri, skiprows=8, header=0), pd.core.frame.DataFrame
         )
-
-    @pytest.fixture(scope="class", autouse=True)
-    def cleanup(self, request):
-        """Cleanup once we are finished."""
-        def remove_test_dir():
-            shutil.rmtree(self.cachedir)
-        request.addfinalizer(remove_test_dir)
 
 
 @skip_this
@@ -332,6 +465,12 @@ class Test_FtpStore:
         uri = "dac/csiro/5900865/5900865_prof.nc"
         fs = ftpstore(host=self.host, port=self.port, cache=False)
         assert isinstance(fs.open_dataset(uri), xr.Dataset)
+
+    def test_open_dataset_error(self):
+        uri = "dac/csiro/5900865/5900865_profs.nc"
+        fs = ftpstore(host=self.host, port=self.port, cache=False)
+        with pytest.raises(ValueError):
+            assert isinstance(fs.open_dataset(uri), xr.Dataset)
 
     params = [(m, p, c) for m in ["seq", "process"] for p in [True, False] for c in [True, False]]
     ids_params = ["method=%s, progress=%s, concat=%s" % (p[0], p[1], p[2]) for p in params]
