@@ -14,6 +14,7 @@ import importlib
 import shutil
 import logging
 from urllib.parse import urlparse
+import ftplib
 
 import argopy
 from argopy.stores import (
@@ -467,9 +468,9 @@ class Test_FtpStore:
         assert isinstance(fs.open_dataset(uri), xr.Dataset)
 
     def test_open_dataset_error(self):
-        uri = "dac/csiro/5900865/5900865_profs.nc"
+        uri = "dac/csiro/5900865/5900865_prof_error.nc"
         fs = ftpstore(host=self.host, port=self.port, cache=False)
-        with pytest.raises(ValueError):
+        with pytest.raises(ftplib.error_perm):
             assert isinstance(fs.open_dataset(uri), xr.Dataset)
 
     params = [(m, p, c) for m in ["seq", "process"] for p in [True, False] for c in [True, False]]
