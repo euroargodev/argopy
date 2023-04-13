@@ -25,6 +25,7 @@ DATA_CACHE = "cachedir"
 USER_LEVEL = "mode"
 API_TIMEOUT = "api_timeout"
 TRUST_ENV = "trust_env"
+SERVER = "server"
 
 # Define the list of available options and default values:
 OPTIONS = {
@@ -35,7 +36,8 @@ OPTIONS = {
     DATA_CACHE: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
     USER_LEVEL: "standard",
     API_TIMEOUT: 60,
-    TRUST_ENV: False
+    TRUST_ENV: False,
+    SERVER: None
 }
 
 # Define the list of possible values
@@ -73,7 +75,8 @@ _VALIDATORS = {
     DATA_CACHE: os.path.exists,
     USER_LEVEL: _USER_LEVEL_LIST.__contains__,
     API_TIMEOUT: lambda x: isinstance(x, int) and x > 0,
-    TRUST_ENV: lambda x: isinstance(x, bool)
+    TRUST_ENV: lambda x: isinstance(x, bool),
+    SERVER: lambda x: True,
 }
 
 
@@ -188,7 +191,7 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
     # Create a file system for this path
     if split_protocol(path)[0] is None:
         fs = fsspec.filesystem('file')
-    elif 'https' in split_protocol(path)[0]:
+    elif split_protocol(path)[0] in ['https', 'http']:
         fs = fsspec.filesystem('http')
     elif 'ftp' in split_protocol(path)[0]:
         try:
@@ -229,11 +232,13 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
     check1 = fs.exists(fs.sep.join([path, "dac"]))
     if check1:
         return True
+
     elif errors == "raise":
         raise FtpPathError("This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s" % path)
 
     elif errors == "warn":
         warnings.warn("This path is not GDAC compliant:\n%s" % path)
         return False
+
     else:
         return False

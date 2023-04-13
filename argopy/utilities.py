@@ -31,6 +31,7 @@ import contextlib
 from fsspec.core import split_protocol
 import fsspec
 
+import argopy
 import xarray as xr
 import pandas as pd
 import numpy as np
@@ -204,6 +205,9 @@ def list_available_data_src():
     sources = {}
     try:
         from .data_fetchers import erddap_data as Erddap_Fetchers
+        # Ensure we're loading the erddap data fetcher with the current options:
+        Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(Erddap_Fetchers.api_server, OPTIONS['erddap'])
+        Erddap_Fetchers.api_server = OPTIONS['erddap']
 
         sources["erddap"] = Erddap_Fetchers
     except Exception:
@@ -228,6 +232,9 @@ def list_available_data_src():
 
     try:
         from .data_fetchers import gdacftp_data as GDAC_Fetchers
+        # Ensure we're loading the gdac data fetcher with the current options:
+        GDAC_Fetchers.api_server_check = OPTIONS['ftp']
+        GDAC_Fetchers.api_server = OPTIONS['ftp']
 
         sources["gdac"] = GDAC_Fetchers
     except Exception:
@@ -244,11 +251,14 @@ def list_available_data_src():
 
 def list_available_index_src():
     """ List all available index sources """
-    AVAILABLE_SOURCES = {}
+    sources = {}
     try:
         from .data_fetchers import erddap_index as Erddap_Fetchers
+        # Ensure we're loading the erddap data fetcher with the current options:
+        Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(Erddap_Fetchers.api_server, OPTIONS['erddap'])
+        Erddap_Fetchers.api_server = OPTIONS['erddap']
 
-        AVAILABLE_SOURCES["erddap"] = Erddap_Fetchers
+        sources["erddap"] = Erddap_Fetchers
     except Exception:
         warnings.warn(
             "An error occurred while loading the ERDDAP index fetcher, "
@@ -259,8 +269,11 @@ def list_available_index_src():
 
     try:
         from .data_fetchers import gdacftp_index as GDAC_Fetchers
+        # Ensure we're loading the gdac data fetcher with the current options:
+        GDAC_Fetchers.api_server_check = OPTIONS['ftp']
+        GDAC_Fetchers.api_server = OPTIONS['ftp']
 
-        AVAILABLE_SOURCES["gdac"] = GDAC_Fetchers
+        sources["gdac"] = GDAC_Fetchers
     except Exception:
         warnings.warn(
             "An error occurred while loading the GDAC index fetcher, "
@@ -269,7 +282,7 @@ def list_available_index_src():
         )
         pass
 
-    return AVAILABLE_SOURCES
+    return sources
 
 
 def list_standard_variables():
@@ -679,6 +692,7 @@ def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
         -------
         bool
     """
+    # log.debug("isconnected: %s" % host)
     if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
         it = 0
         while it < maxtry:
@@ -739,6 +753,7 @@ def isalive(api_server_check: Union[str, dict] = "") -> bool:
         -------
         bool
     """
+    # log.debug("isalive: %s" % api_server_check)
     if isinstance(api_server_check, dict):
         return urlhaskeyword(url=api_server_check['url'], keyword=api_server_check['keyword'])
     else:
@@ -773,30 +788,36 @@ def isAPIconnected(src="erddap", data=True):
 
 
 def erddap_ds_exists(
-        ds: str = "ArgoFloats",
-        erddap: str = "https://erddap.ifremer.fr/erddap",
+        ds: Union[list, str] = "ArgoFloats",
+        erddap: str = None,
         maxtry: int = 2
 ) -> bool:
     """ Check if a dataset exists on a remote erddap server
-    return a bool
 
     Parameter
     ---------
     ds: str, default='ArgoFloats'
         Name of the erddap dataset to check
-    erddap: str, default='https://erddap.ifremer.fr/erddap'
+    erddap: str, default=OPTIONS['erddap']
         Url of the erddap server
     maxtry: int, default: 2
         Maximum number of host connections to try
+
     Return
     ------
     bool
     """
+    if erddap is None:
+        erddap = OPTIONS['erddap']
+    # log.debug("from erddap_ds_exists: %s" % erddap)
     from .stores import httpstore
     if isconnected(erddap, maxtry=maxtry):
         with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
             erddap_index = json.load(of)
-        return ds in [row[-1] for row in erddap_index["table"]["rows"]]
+        if is_list_of_strings(ds):
+            return [this_ds in [row[-1] for row in erddap_index["table"]["rows"]] for this_ds in ds]
+        else:
+            return ds in [row[-1] for row in erddap_index["table"]["rows"]]
     else:
         log.debug("Cannot reach erddap server: %s" % erddap)
         warnings.warn("Return False because we cannot reach the erddap server %s" % erddap)
@@ -922,40 +943,6 @@ class monitor_status:
         thread = threading.Thread(target=self.work)
         display(self.text)
         thread.start()
-
-
-# def open_etopo1(box, res="l"):
-#     """ Download ETOPO for a box
-#
-#         Parameters
-#         ----------
-#         box: [xmin, xmax, ymin, ymax]
-#
-#         Returns
-#         -------
-#         xarray.Dataset
-#     """
-#     # This function is in utilities to anticipate usage outside of plotting, eg interpolation, grounding detection
-#     resx, resy = 0.1, 0.1
-#     if res == "h":
-#         resx, resy = 0.016, 0.016
-#
-#     uri = (
-#         "https://gis.ngdc.noaa.gov/mapviewer-support/wcs-proxy/wcs.groovy?filename=etopo1.nc"
-#         "&request=getcoverage&version=1.0.0&service=wcs&coverage=etopo1&CRS=EPSG:4326&format=netcdf"
-#         "&resx={}&resy={}"
-#         "&bbox={}"
-#     ).format
-#     thisurl = uri(
-#         resx, resy, ",".join([str(b) for b in [box[0], box[2], box[1], box[3]]])
-#     )
-#     ds = httpstore(cache=True).open_dataset(thisurl)
-#     da = ds["Band1"].rename("topo")
-#     for a in ds.attrs:
-#         da.attrs[a] = ds.attrs[a]
-#     da.attrs["Data source"] = "https://maps.ngdc.noaa.gov/viewers/wcs-client/"
-#     da.attrs["URI"] = thisurl
-#     return da
 
 
 #
@@ -2024,6 +2011,7 @@ class TopoFetcher:
         cachedir: str = "",
         api_timeout: int = 0,
         stride: list = [1, 1],
+        server: Union[str] = None,
         **kwargs,
     ):
         """ Instantiate an ERDDAP topo data fetcher
@@ -2054,7 +2042,7 @@ class TopoFetcher:
         self.stride = stride
         if ds == "gebco":
             self.definition = "NOAA erddap gebco data fetcher for a space region"
-            self.server = "https://coastwatch.pfeg.noaa.gov/erddap"
+            self.server = server if server is not None else "https://coastwatch.pfeg.noaa.gov/erddap"
             self.server_name = "NOAA"
             self.dataset_id = "gebco"
 
@@ -2238,16 +2226,18 @@ def argo_split_path(this_path):  # noqa C901
             head = head.rstrip(sep)
         return head, tail
 
-    def fix_localhostftp(ftp):
-        if 'ftp://localhost:' in ftp:
-            return "ftp://%s" % (urlparse(ftp).netloc)
+    def fix_localhost(host):
+        if 'ftp://localhost:' in host:
+            return "ftp://%s" % (urlparse(host).netloc)
+        if 'http://127.0.0.1:' in host:
+            return "http://%s" % (urlparse(host).netloc)
         else:
             return ""
 
     known_origins = ['https://data-argo.ifremer.fr',
                      'ftp://ftp.ifremer.fr/ifremer/argo',
                      'ftp://usgodae.org/pub/outgoing/argo',
-                     fix_localhostftp(this_path),
+                     fix_localhost(this_path),
                      '']
 
     output['origin'] = [origin for origin in known_origins if start_with(this_path, origin)][0]
@@ -2753,7 +2743,7 @@ class Registry(UserList):
         return self.__copy__()
 
 
-def get_coriolis_profile_id(WMO, CYC=None):
+def get_coriolis_profile_id(WMO, CYC=None, **kwargs):
     """ Return a :class:`pandas.DataFrame` with CORIOLIS ID of WMO/CYC profile pairs
 
         This method get ID by requesting the dataselection.euro-argo.eu trajectory API.
@@ -2773,9 +2763,13 @@ def get_coriolis_profile_id(WMO, CYC=None):
     WMO_list = check_wmo(WMO)
     if CYC is not None:
         CYC_list = check_cyc(CYC)
-    URIs = [
-        "https://dataselection.euro-argo.eu/api/trajectory/%i" % wmo for wmo in WMO_list
-    ]
+    if 'api_server' in kwargs:
+        api_server = kwargs['api_server']
+    elif OPTIONS['server'] is not None:
+        api_server = OPTIONS['server']
+    else:
+        api_server = "https://dataselection.euro-argo.eu/api"
+    URIs = [api_server + "/trajectory/%i" % wmo for wmo in WMO_list]
 
     def prec(data, url):
         # Transform trajectory json to dataframe
@@ -2792,7 +2786,7 @@ def get_coriolis_profile_id(WMO, CYC=None):
         return pd.DataFrame(rows)
 
     from .stores import httpstore
-    fs = httpstore(cache=True)
+    fs = httpstore(cache=True, cachedir=OPTIONS['cachedir'])
     data = fs.open_mfjson(URIs, preprocess=prec, errors="raise", url_follow=True)
 
     # Merge results (list of dataframe):
@@ -2823,7 +2817,7 @@ def get_coriolis_profile_id(WMO, CYC=None):
     ]
 
 
-def get_ea_profile_page(WMO, CYC=None):
+def get_ea_profile_page(WMO, CYC=None, **kwargs):
     """ Return a list of URL
 
         Parameters
@@ -2841,7 +2835,7 @@ def get_ea_profile_page(WMO, CYC=None):
         --------
         get_coriolis_profile_id
     """
-    df = get_coriolis_profile_id(WMO, CYC)
+    df = get_coriolis_profile_id(WMO, CYC, **kwargs)
     url = "https://dataselection.euro-argo.eu/cycle/{}"
     return [url.format(this_id) for this_id in sorted(df["ID"])]
 

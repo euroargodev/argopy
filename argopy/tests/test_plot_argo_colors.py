@@ -93,3 +93,10 @@ class Test_ArgoColors:
     def test_repr_html_(self, cname):
         ac = ArgoColors(cname)
         assert isinstance(ac._repr_html_(), str)
+
+    @pytest.mark.parametrize("cname", ['data_mode', 'Blues'],
+                             ids=['known', 'other'],
+                             indirect=False)
+    def test_show_COLORS(self, cname):
+        ac = ArgoColors(cname)
+        assert isinstance(ac.show_COLORS(), str)

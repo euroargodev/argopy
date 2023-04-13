@@ -7,6 +7,7 @@
 # Decorator warnUnless is mandatory
 #
 import warnings
+import logging
 
 import xarray as xr
 import pandas as pd
@@ -36,7 +37,10 @@ if has_ipywidgets:
     import ipywidgets
 
 
-def open_sat_altim_report(WMO: Union[str, list] = None, embed: Union[str, None] = "dropdown"):
+log = logging.getLogger("argopy.plot.plot")
+
+
+def open_sat_altim_report(WMO: Union[str, list] = None, embed: Union[str, None] = "dropdown", **kwargs):
     """ Insert the CLS Satellite Altimeter Report figure in notebook cell
 
         This is the method called when using the facade fetcher methods ``plot``::
@@ -61,15 +65,19 @@ def open_sat_altim_report(WMO: Union[str, list] = None, embed: Union[str, None] 
 
     """
     warnUnless(has_ipython, "requires IPython to work as expected, only URLs are returned otherwise")
+
+    if 'api_server' in kwargs:
+        api_server = kwargs['api_server']
+    else:
+        api_server = "https://data-argo.ifremer.fr"
+
     # Create the list of URLs and put them in a dictionary with WMO as keys:
     WMOs = check_wmo(WMO)
     urls = []
     urls_dict = {}
     for this_wmo in WMOs:
-        url = (
-            "https://data-argo.ifremer.fr/etc/argo-ast9-item13-AltimeterComparison/figures/%i.png"
-            % this_wmo
-        )
+        url = "%s/etc/argo-ast9-item13-AltimeterComparison/figures/%i.png" % (api_server, this_wmo)
+        log.debug(url)
         if has_ipython and embed == "list":
             urls.append(Image(url, embed=True))
         else:
