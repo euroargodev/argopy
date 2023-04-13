@@ -136,6 +136,10 @@ class Test_FileStore:
         with pytest.raises(err):
             self.fs.open_mfdataset(uri, method=method, preprocess=preprocess, errors='raise')
 
+        with pytest.raises(ValueError):
+            self.fs.open_mfdataset(uri, method=method, preprocess=preprocess, errors="ignore")
+
+
     def test_open_mfdataset_DataNotFound(self):
         uri = self.fs.glob(
             os.path.sep.join([self.ftproot, "dac/aoml/5900446/profiles/*_1*.nc"])
