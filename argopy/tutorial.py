@@ -23,7 +23,7 @@ import shutil
 _DEFAULT_CACHE_DIR = os.path.expanduser(os.path.sep.join(["~", ".argopy_tutorial_data"]))
 
 
-def open_dataset(name):
+def open_dataset(name: str) -> tuple:
     """ Open a dataset from the argopy online data repository (requires internet).
 
     If a local copy is found then always use that to avoid network traffic.
@@ -36,13 +36,11 @@ def open_dataset(name):
     Parameters
     ----------
     name: str
-        Name of the dataset to load or get information for. It can be: ``gdac``,
-        ``weekly_index_prof`` or ``global_index_prof``.
+        Name of the dataset to load or get information for. It can be one of the following:
 
-            - ``gdac``, return the absolute path and list of files in the sample local ftp files.
-            - ``weekly_index_prof``, return path and to weekly profile index file
-            - ``global_index_prof``, return path and to global profile index file
-
+            - ``gdac``: A small subset of the GDAC ftp.
+            - ``weekly_index_prof``: The weekly profile index file
+            - ``global_index_prof``: The global profile index file
 
     Returns
     -------
@@ -70,6 +68,7 @@ def open_dataset(name):
         flist = gdacftp.ls()
         ifile = [f for f in flist if 'ar_index_global_prof.txt' in f][0]
         return gdacftp.rootpath, ifile
+
     else:
         raise ValueError("Unknown tutorial dataset ('%s')" % name)
 
@@ -125,7 +124,7 @@ class repodata():
 
 
 class sample_ftp(repodata):
-    """ Helper class for the local_work local GDAC ftp folder """
+    """ Helper class for the local GDAC ftp folder """
 
     @property
     def rootpath(self):
