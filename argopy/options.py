@@ -13,6 +13,7 @@ from fsspec.core import split_protocol
 from socket import gaierror
 from urllib.parse import urlparse
 
+
 # Define a logger
 log = logging.getLogger("argopy.options")
 
@@ -26,6 +27,8 @@ USER_LEVEL = "mode"
 API_TIMEOUT = "api_timeout"
 TRUST_ENV = "trust_env"
 SERVER = "server"
+USER = "user"
+PASSWORD = "password"
 
 # Define the list of available options and default values:
 OPTIONS = {
@@ -37,7 +40,9 @@ OPTIONS = {
     USER_LEVEL: "standard",
     API_TIMEOUT: 60,
     TRUST_ENV: False,
-    SERVER: None
+    SERVER: None,
+    USER: None,
+    PASSWORD: None,
 }
 
 # Define the list of possible values
@@ -77,6 +82,8 @@ _VALIDATORS = {
     API_TIMEOUT: lambda x: isinstance(x, int) and x > 0,
     TRUST_ENV: lambda x: isinstance(x, bool),
     SERVER: lambda x: True,
+    USER: lambda x: isinstance(x, str),
+    PASSWORD: lambda x: isinstance(x, str),
 }
 
 
