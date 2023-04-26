@@ -101,7 +101,7 @@ class ErddapREFDataFetcher(ErddapArgoDataFetcher):
         # Init erddapy
         self.erddap = ERDDAP(server=str(self.server), protocol="tabledap")
         self.erddap.response = "nc"
-        self.erddap.dataset_id = "Argo-ref-ctd"
+        self.erddap.dataset_id = "Argo-ref-ctd-petit"
         return self
 
     @property

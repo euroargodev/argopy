@@ -1169,16 +1169,44 @@ class httpstore_erddap_auth(httpstore):
         if auto:
             assert isinstance(self.connect(), bool)
 
-    def __repr__(self):
-        # summary = ["<httpstore_erddap_auth.%i>" % id(self)]
-        summary = ["<httpstore_erddap_auth>"]
-        summary.append("login page: %s" % self._login_page)
-        summary.append("login data: %s" % (self._login_payload))
+    # def __repr__(self):
+    #     # summary = ["<httpstore_erddap_auth.%i>" % id(self)]
+    #     summary = ["<httpstore_erddap_auth>"]
+    #     summary.append("login page: %s" % self._login_page)
+    #     summary.append("login data: %s" % (self._login_payload))
+    #     if hasattr(self, '_connected'):
+    #         summary.append("connected: %s" % (self._connected))
+    #     else:
+    #         summary.append("connected: ?")
+    #     return "\n".join(summary)
+
+    def _repr_html_(self):
+        td_title = lambda title: '<td colspan="2"><div style="vertical-align: middle;text-align:left"><strong>%s</strong></div></td>' % title  # noqa: E731
+        tr_title = lambda title: "<thead><tr>%s</tr></thead>" % td_title(title)  # noqa: E731
+        a_link = lambda url, txt: '<a href="%s">%s</a>' % (url, txt)
+        td_key = lambda prop: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % str(prop)  # noqa: E731
+        td_val = lambda label: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % str(label)  # noqa: E731
+        tr_tick = lambda key, value: '<tr>%s%s</tr>' % (td_key(key), td_val(value))  # noqa: E731
+        td_vallink = lambda url, label: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % a_link(url, label)  # noqa: E731
+        tr_ticklink = lambda key, url, value: '<tr>%s%s</tr>' % (td_key(key), td_vallink(url, value))  # noqa: E731
+
+        html = []
+        html.append("<table style='border-collapse:collapse;border-spacing:0'>")
+        html.append("<thead>")
+        html.append(tr_title("httpstore_erddap_auth"))
+        html.append("</thead>")
+        html.append("<tbody>")
+        html.append(tr_ticklink("login page", self._login_page, self._login_page))
+        html.append(tr_tick("login data", self._login_payload))
         if hasattr(self, '_connected'):
-            summary.append("connected: %s" % (self._connected))
+            html.append(tr_tick("connected", "✅" if self._connected else "⛔"))
         else:
-            summary.append("connected: ?")
-        return "\n".join(summary)
+            html.append(tr_tick("connected", "?"))
+        html.append("</tbody>")
+        html.append("</table>")
+
+        html = "\n".join(html)
+        return html
 
     def connect(self):
         try:
