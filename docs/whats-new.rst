@@ -13,7 +13,15 @@ v0.1.14 (XX Xxx. 2023)
 
 **Features and front-end API**
 
-- **Argopy now provides authenticated access to the Argo reference database for DMQC**. Using login/password new **argopy* options, it is now possible to fetch the `Argo reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, both CTD data and Argo CTD.
+- **Argopy now provides authenticated access to the Argo reference database for DMQC**. Using user/password new **argopy** options, it is now possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (pr:`256`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import CTDRefDataFetcher
+
+    with argopy.set_options(user="john_doe", password="***"):
+        f = CTDRefDataFetcher(box=[15, 30, -70, -60, 0, 5000.0])
+        ds = f.to_xarray()
 
 **Internals**
 

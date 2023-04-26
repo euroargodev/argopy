@@ -101,6 +101,7 @@ class ArgoDataFetcherProto(ABC):
         return hashlib.sha256(path.encode()).hexdigest()
 
     def dashboard(self, **kw):
+        """Return 3rd party dashboard for the access point"""
         if self.WMO is not None:
             if len(self.WMO) == 1 and self.CYC is not None and len(self.CYC) == 1:
                 return dashboard(wmo=self.WMO[0], cyc=self.CYC[0], **kw)

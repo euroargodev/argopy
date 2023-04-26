@@ -4,7 +4,7 @@ Fetcher to retrieve CTD reference data from Ifremer erddap
 import xarray as xr
 from .erddap_data import ErddapArgoDataFetcher
 from argopy.options import OPTIONS
-from argopy.utilities import Chunker
+from argopy.utilities import Chunker, doc_inherit
 from argopy.stores import httpstore_erddap_auth
 import logging
 
@@ -33,9 +33,21 @@ api_server_check = (
 
 
 class ErddapREFDataFetcher(ErddapArgoDataFetcher):
-    """Manage access to Argo CTD reference data through Ifremer ERDDAP"""
+    """Manage access to Argo CTD-reference data through Ifremer ERDDAP"""
 
+    # @doc_inherit
     def __init__(self, **kwargs):
+        """Instantiate an authenticated ERDDAP Argo data fetcher
+
+        Parameters
+        ----------
+        cache: bool (optional)
+            Cache data or not (default: False)
+        cachedir: str (optional)
+            Path to cache folder
+        api_timeout: int (optional)
+            Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
+        """
         kwargs["ds"] = "ref-ctd"
         super().__init__(**kwargs)
         kw = kwargs
@@ -150,7 +162,7 @@ class ErddapREFDataFetcher(ErddapArgoDataFetcher):
 
 
 class Fetch_box(ErddapREFDataFetcher):
-    """Manage access to Argo data through Ifremer ERDDAP for: an ocean rectangle"""
+    """Manage access to Argo CTD-reference data through Ifremer ERDDAP for: an ocean rectangle"""
 
     def init(self, box: list, **kw):
         """Create Argo data loader

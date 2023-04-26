@@ -82,7 +82,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     ###
     # Methods that must not change
     ###
-
     def __init__(
         self,
         ds: str = "",
@@ -155,6 +154,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def server(self):
+        """URL of the Erddap server"""
         return self._server
 
     @server.setter
@@ -500,18 +500,21 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         return ds
 
     def filter_data_mode(self, ds, **kwargs):
+        """Apply xarray argo accessor filter_data_mode method"""
         ds = ds.argo.filter_data_mode(errors="ignore", **kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
     def filter_qc(self, ds, **kwargs):
+        """Apply xarray argo accessor filter_qc method"""
         ds = ds.argo.filter_qc(**kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
     def filter_variables(self, ds, mode="standard"):
+        """Filter variables according to user mode"""
         if mode == "standard":
             to_remove = sorted(
                 list(set(list(ds.data_vars)) - set(list_standard_variables()))
