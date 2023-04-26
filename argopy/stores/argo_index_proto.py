@@ -493,6 +493,11 @@ class ArgoIndexStoreProto(ABC):
 
         return df
 
+    @abstractmethod
+    def to_indexfile(self):
+        """Save search results on file, following the Argo standard index formats"""
+        raise NotImplementedError("Not implemented")
+
     @property
     @abstractmethod
     def search_path(self):
