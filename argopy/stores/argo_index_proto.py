@@ -3,6 +3,7 @@ Argo file index store prototype
 
 """
 
+import os
 import numpy as np
 import pandas as pd
 import logging
@@ -701,3 +702,22 @@ class ArgoIndexStoreProto(ABC):
 
         """
         raise NotImplementedError("Not implemented")
+
+    def _insert_header(self, originalfile):
+        header = """# Title : Profile directory file of the Argo Global Data Assembly Center
+# Description : The directory file describes all individual profile files of the argo GDAC ftp site.
+# Project : ARGO
+# Format version : 2.0
+# Date of update : %s
+# FTP root number 1 : ftp://ftp.ifremer.fr/ifremer/argo/dac
+# FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
+# GDAC node : CORIOLIS
+file,date,latitude,longitude,ocean,profiler_type,institution,date_update
+""" % pd.to_datetime('now', utc=True).strftime('%Y%m%d%H%M%S')
+        with open(originalfile, 'r') as f:
+            with open('newfile.txt', 'w') as f2:
+                f2.write(header)
+                f2.write(f.read())
+        os.remove(originalfile)
+        os.rename('newfile.txt', originalfile)
+        return originalfile

@@ -403,7 +403,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         return self
 
     def to_indexfile(self, file):
-        """
+        """Save search result on file like an index profile
 
         Parameters
         ----------
@@ -427,26 +427,8 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         s = s.set_column(1, "date", new_date)
         s = s.set_column(7, "date_update", new_date_update)
 
-        def insert_header(originalfile):
-            header = """# Title : Profile directory file of the Argo Global Data Assembly Center
-# Description : The directory file describes all individual profile files of the argo GDAC ftp site.
-# Project : ARGO
-# Format version : 2.0
-# Date of update : %s
-# FTP root number 1 : ftp://ftp.ifremer.fr/ifremer/argo/dac
-# FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
-# GDAC node : CORIOLIS
-file,date,latitude,longitude,ocean,profiler_type,institution,date_update
-""" % pd.to_datetime('now', utc=True).strftime('%Y%m%d%H%M%S')
-            with open(originalfile, 'r') as f:
-                with open('newfile.txt', 'w') as f2:
-                    f2.write(header)
-                    f2.write(f.read())
-            os.remove(originalfile)
-            os.rename('newfile.txt', originalfile)
-
         write_options = csv.WriteOptions(delimiter=",", include_header=False, quoting_style="none")
         csv.write_csv(s, file, write_options=write_options)
-        insert_header(file)
+        file = self._insert_header(file)
 
         return file

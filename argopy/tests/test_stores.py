@@ -899,18 +899,6 @@ class IndexStore_test_proto:
         for w in C:
             assert str(C[w]).isdigit()
 
-
-@skip_this
-class Test_IndexStore_pandas(IndexStore_test_proto):
-    indexstore = indexstore_pandas
-
-
-@skip_this
-@skip_pyarrow
-class Test_IndexStore_pyarrow(IndexStore_test_proto):
-    from argopy.stores.argo_index_pa import indexstore_pyarrow
-    indexstore = indexstore_pyarrow
-
     def test_to_indexfile(self):
         # Create a store and make a simple float search:
         idx = self.new_idx()
@@ -924,3 +912,15 @@ class Test_IndexStore_pyarrow(IndexStore_test_proto):
         # Test succeeds if we can load this new index, like it was an official one:
         idx = self.new_idx(host=os.path.dirname(new_indexfile), index_file=os.path.basename(new_indexfile))
         self.assert_index(idx.load())
+
+
+@skip_this
+class Test_IndexStore_pandas(IndexStore_test_proto):
+    indexstore = indexstore_pandas
+
+
+@skip_this
+@skip_pyarrow
+class Test_IndexStore_pyarrow(IndexStore_test_proto):
+    from argopy.stores.argo_index_pa import indexstore_pyarrow
+    indexstore = indexstore_pyarrow
