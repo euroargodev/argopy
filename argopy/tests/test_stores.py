@@ -761,22 +761,25 @@ class IndexStore_test_proto:
 
     def _setup_store(self, this_request, cached=False):
         """Helper method to set up options for an index store creation"""
+        index_file = self.index_file
         if hasattr(this_request, 'param'):
             if isinstance(this_request.param, tuple):
                 host = this_request.param[0]
             else:
                 host = this_request.param
         else:
-            host = this_request['param']
+            host = this_request['param']['host']
+            index_file = this_request['param']['index_file']
         N_RECORDS = None if 'tutorial' in host or 'MOCK' in host else 100  # Make sure we're not going to load the full index
-        fetcher_args = {"host": self._patch_ftp(host), "index_file": self.index_file, "cache": False}
+        fetcher_args = {"host": self._patch_ftp(host), "index_file": index_file, "cache": False}
         if cached:
             fetcher_args = {**fetcher_args, **{"cache": True, "cachedir": self.cachedir}}
         return fetcher_args, N_RECORDS
 
     def new_idx(self, cache=False, cachedir=None, **kwargs):
         host = kwargs['host'] if 'host' in kwargs else self.host
-        fetcher_args, N_RECORDS = self._setup_store({'param': host}, cached=cache)
+        index_file = kwargs['index_file'] if 'index_file' in kwargs else self.index_file
+        fetcher_args, N_RECORDS = self._setup_store({'param': {'host': host, 'index_file': index_file}}, cached=cache)
         idx = self.create_store(fetcher_args).load(nrows=N_RECORDS)
         return idx
 
@@ -907,3 +910,17 @@ class Test_IndexStore_pandas(IndexStore_test_proto):
 class Test_IndexStore_pyarrow(IndexStore_test_proto):
     from argopy.stores.argo_index_pa import indexstore_pyarrow
     indexstore = indexstore_pyarrow
+
+    def test_to_indexfile(self):
+        # Create a store and make a simple float search:
+        idx = self.new_idx()
+        wmo = [s['wmo'] for s in VALID_SEARCHES if 'wmo' in s.keys()][0]
+        idx = idx.search_wmo(wmo)
+
+        # Then save this search as new Argo index file:
+        tf = tempfile.NamedTemporaryFile(delete=True)
+        new_indexfile = idx.to_indexfile(tf.name)
+
+        # Test succeeds if we can load this new index, like it was an official one:
+        idx = self.new_idx(host=os.path.dirname(new_indexfile), index_file=os.path.basename(new_indexfile))
+        self.assert_index(idx.load())
