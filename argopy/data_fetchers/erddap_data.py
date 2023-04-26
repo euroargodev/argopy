@@ -131,7 +131,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         if not isinstance(parallel, bool):
             parallel_method = parallel
             parallel = True
-        if parallel_method not in ["thread"]:
+        if parallel_method not in ["thread", "seq"]:
             raise ValueError(
                 "erddap only support multi-threading, use 'thread' instead of '%s'"
                 % parallel_method
