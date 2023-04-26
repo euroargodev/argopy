@@ -106,7 +106,7 @@ copy of the GDAC ftp, so let’s use a sample of this provided by
 .. ipython:: python
     :okwarning:
 
-    ftproot, flist = argopy.tutorial.open_dataset('localftp')
+    ftproot, flist = argopy.tutorial.open_dataset('gdac')
     argopy.set_options(ftp=ftproot)
 
 In **standard** mode:
