@@ -1,0 +1,278 @@
+#!/usr/bin/env bash
+#
+# Script to (re)install argopy related Conda environments and handle associated Jupyter kernels
+# Use mamba, not conda
+#
+# manager -h
+# manager -l
+#
+# manager -r py37-all-free
+# manager -i py37-all-free
+# manager -k py37-all-free
+#
+# manager -d -i all-free
+#
+
+source ~/miniconda3/etc/profile.d/conda.sh
+
+#########################
+# LIST ALL  AVAILABLE ENVIRONMENTS AND THE ASSOCIATED YAML FILE
+#########################
+declare -A ENV_LIST=(
+['argopy-docs']="requirements/py3.8-docs.yml"
+
+['argopy-py37-all-free']="requirements/py3.7-all-free.yml"
+
+['argopy-py37-core-free']="requirements/py3.7-core-free.yml"
+
+['argopy-py38-all-free']="requirements/py3.8-all-free.yml"
+['argopy-py38-all-pinned']="requirements/py3.8-all-pinned.yml"
+
+['argopy-py38-core-free']="requirements/py3.8-core-free.yml"
+['argopy-py38-core-pinned']="requirements/py3.8-core-pinned.yml"
+
+['argopy-py39-all-free']="requirements/py3.9-all-free.yml"
+['argopy-py39-all-pinned']="requirements/py3.9-all-pinned.yml"
+
+['argopy-py39-core-free']="requirements/py3.9-core-free.yml"
+)
+
+
+#########################
+# FUNCTIONS
+#########################
+Help() {
+   # Display Help
+   echo "Manage argopy related Conda environments"
+   echo
+   echo "Syntax: manage_ci_envs [-hl] [-d] [-rik]"
+   echo "options:"
+   echo "h     Print this Help"
+   echo "l     List all available environments"
+   echo "d     Dry run, just list what the script would do"
+   echo ""
+   echo "r     Remove an environment"
+   echo "i     Install an environment (start by removing it if it's already installed)"
+   echo "k     Install an environment as a Jupyter kernel"
+   echo
+}
+
+List_avail_envs () {
+  echo "Available environments:"
+  for NAME in "${!ENV_LIST[@]}"
+  do
+    :
+    FILE=${ENV_LIST[$NAME]}
+    echo " ${NAME}"
+  done
+}
+
+fix_kernel_path (){
+  ENV=${1}
+
+  kernelspec="$(jupyter kernelspec list | grep ${ENV})"
+  echo "${kernelspec}"
+  IFS=' ' read -ra ADDR <<< "$kernelspec"
+  kernel_path="${ADDR[1]}"
+  kernel_cfg_file="${kernel_path}/kernel.json"
+  python_path="$(more ${kernel_cfg_file} | jq .argv[0] | sed 's/\"//g')"
+  DIR="$(dirname ${python_path})"
+  FILE="$(basename ${python_path})"
+  #echo "[${DIR}] [${FILE}]"
+  IFS='/' read -r -a parts <<< "$DIR"
+  # We expect: /Users/gmaze/miniconda3/envs/<ENV>/bin
+  if [ "${parts[-2]}" = ${ENV} ]; then
+    echo "kernel spec OK"
+  else
+    parts[-2]=${ENV}  # update with appropriate python path
+    NEW_DIR=$(IFS='/' ; echo "${parts[*]}")
+    new_python_path="${NEW_DIR}/${FILE}"
+
+    while true; do
+      printf "Replace: \n${python_path} \nwith: \n${new_python_path}\n"
+      read -p "Do you confirm ? [Yy/Nn] " yn
+      case $yn in
+          [Yy]* )
+            cp -f ${kernel_cfg_file} "${kernel_cfg_file}.bak"
+            tmp=$(mktemp)
+            jq --arg a "$new_python_path" '.argv[0] = $a' ${kernel_cfg_file} > "$tmp" && mv "$tmp" ${kernel_cfg_file}
+            break;;
+          [Nn]* ) exit;;
+          * ) echo "Please answer yes [Yy] or no [Nn]";;
+      esac
+    done
+
+  fi
+}
+
+add_ipykernel () {
+  # Possibly add it the Jupyter kernels:
+
+   python -m ipykernel install --user --name=$1
+
+   # Check installation of the kernel:
+   fix_kernel_path ${1}
+}
+
+remove_ipykernel(){
+#   python -m ipykernel uninstall --user --name=$1
+  jupyter kernelspec uninstall $1
+}
+
+install_conda_env () {
+	# $1 is the name of the environment to install
+	# $2 is path to the environment yaml file to use
+	# (we replace the yaml file 'name' with the value from $1)
+
+	# Overwrite name of the environment set in the file
+	cp ${2} temp_env.yml
+	var="name: $1"
+	sed -i '' "1s/.*/$var/" temp_env.yml > /dev/null 2>&1
+
+	# Eventually remove environment if exists:
+	if conda env list | grep $1; then
+	    printf "$1 already exists, removing this environment...\n"
+		  mamba remove --quiet --name $1 --all --yes --json > /dev/null 2>&1
+	fi
+
+	# Create the environment from file
+  printf "Creating conda environment $1 ...\n"
+	mamba env create --file temp_env.yml --quiet --json > /dev/null 2>&1
+
+	# Clean-up
+	/bin/rm tmp.json > /dev/null 2>&1
+	/bin/rm temp_env.yml > /dev/null 2>&1
+}
+
+remove_conda_env () {
+  # $1 is the name of the environment to remove
+
+	# Eventually remove environment if exists:
+	if conda env list | grep $1; then
+		  mamba remove --quiet --name $1 --all --yes --json > /dev/null 2>&1
+		  # Also remove the ipython kernel
+		  remove_ipykernel $1
+	else
+		  printf "Conda environment $1 not found !\n"
+	fi
+}
+
+
+#########################
+# PROCESS OPTIONS
+#########################
+
+# Set variables
+envname_to_remove=""
+envname_to_install=""
+envname_to_kernel=""
+dry_run=false
+
+# Get the options
+while getopts "hli:r:k:d" option; do
+   case $option in
+      h) # display Help
+         Help
+         exit 0
+         ;;
+      l) # List environments
+         List_avail_envs
+         exit 0
+         ;;
+      i) # Enter an action to perform
+         envname_to_install=$OPTARG
+         ;;
+      r) # Enter an action to perform
+         envname_to_remove=$OPTARG
+         ;;
+      k) # Enter an action to perform
+         envname_to_kernel=$OPTARG
+         ;;
+      d) #
+         dry_run=true
+         ;;
+   esac
+done
+
+#########################
+# ACTIONS
+#########################
+
+if [[ "$dry_run" == true ]]; then
+    echo "Showing dry run output..."
+fi
+
+
+if [ -n "$envname_to_remove" ]; then
+  found_at_least_one=false
+  if [[ "$dry_run" == true ]]; then
+    echo "Environment(s) to remove:"
+  fi
+  for NAME in "${!ENV_LIST[@]}"
+  do
+    :
+    if [[ $NAME == *$envname_to_remove* ]]; then
+      found_at_least_one=true
+      FILE=${ENV_LIST[$NAME]}
+      if [[ "$dry_run" == true ]]; then
+        echo " ${NAME}"
+      else
+        echo "Removing the '${NAME}' environment ..."
+        remove_conda_env ${NAME}
+      fi
+    fi
+  done
+  if [[ "${found_at_least_one}" == false ]]; then
+    echo "None of the environments match your request"
+  fi
+fi
+
+
+if [ -n "${envname_to_install}" ]; then
+  found_at_least_one=false
+  if [[ "$dry_run" == true ]]; then
+    echo "Environment to install:"
+  fi
+  for NAME in "${!ENV_LIST[@]}"
+  do
+    :
+    if [[ $NAME == *$envname_to_install* ]]; then
+      found_at_least_one=true
+      if [[ "$dry_run" == true ]]; then
+        echo " ${NAME}"
+      else
+        FILE=${ENV_LIST[$NAME]}
+        echo "Installing the '${NAME}' environment using '${FILE}'..."
+        install_conda_env ${NAME} ${FILE}
+      fi
+    fi
+  done
+  if [[ "${found_at_least_one}" == false ]]; then
+    echo "None of the environments match your request"
+  fi
+fi
+
+
+if [ -n "${envname_to_kernel}" ];then
+  found_at_least_one=false
+  if [[ "$dry_run" == true ]]; then
+    echo "Environment to install Jupyter kernel for:"
+  fi
+  for NAME in "${!ENV_LIST[@]}"
+  do
+    :
+    if [[ $NAME == *$envname_to_kernel* ]]; then
+      found_at_least_one=true
+      if [[ "$dry_run" == true ]]; then
+        echo " ${NAME}"
+      else
+        echo "Installing Jupyter kernel for '${NAME}' ..."
+        add_ipykernel ${NAME}
+      fi
+    fi
+  done
+  if [[ "${found_at_least_one}" == false ]]; then
+    echo "None of the environments match your request"
+  fi
+fi
+

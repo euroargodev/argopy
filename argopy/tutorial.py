@@ -6,7 +6,7 @@ Data files are hosted on companion repository: http://www.github.com/euroargodev
 
 ```
 import argopy
-ftproot, flist = argopy.tutorial.open_dataset('localftp')
+ftproot, flist = argopy.tutorial.open_dataset('gdac')
 txtfile = argopy.tutorial.open_dataset('weekly_index_prof')
 txtfile = argopy.tutorial.open_dataset('global_index_prof')
 
@@ -23,7 +23,7 @@ import shutil
 _DEFAULT_CACHE_DIR = os.path.expanduser(os.path.sep.join(["~", ".argopy_tutorial_data"]))
 
 
-def open_dataset(name):
+def open_dataset(name: str) -> tuple:
     """ Open a dataset from the argopy online data repository (requires internet).
 
     If a local copy is found then always use that to avoid network traffic.
@@ -36,13 +36,11 @@ def open_dataset(name):
     Parameters
     ----------
     name: str
-        Name of the dataset to load or get information for. It can be: ``localftp``,
-        ``weekly_index_prof`` or ``global_index_prof``.
+        Name of the dataset to load or get information for. It can be one of the following:
 
-            - ``localftp``, return the absolute path and list of files in the sample local ftp files.
-            - ``weekly_index_prof``, return path and to weekly profile index file
-            - ``global_index_prof``, return path and to global profile index file
-
+            - ``gdac``: A small subset of the GDAC ftp.
+            - ``weekly_index_prof``: The weekly profile index file
+            - ``global_index_prof``: The global profile index file
 
     Returns
     -------
@@ -52,7 +50,7 @@ def open_dataset(name):
         List of files with the requested dataset
 
     """
-    if name == 'localftp' or name == 'gdac':
+    if name == 'gdac':
         gdacftp = sample_ftp()
         gdacftp.download(overwrite=False)
         return gdacftp.rootpath, gdacftp.ls()
@@ -70,6 +68,7 @@ def open_dataset(name):
         flist = gdacftp.ls()
         ifile = [f for f in flist if 'ar_index_global_prof.txt' in f][0]
         return gdacftp.rootpath, ifile
+
     else:
         raise ValueError("Unknown tutorial dataset ('%s')" % name)
 
@@ -107,7 +106,7 @@ class repodata():
         localzipfile = self.localpath + ".zip"
 
         # Download zip file:
-        urlretrieve(zipurl, localzipfile) # nosec B310 because protocol cannot be modified
+        urlretrieve(zipurl, localzipfile)  # nosec B310 because protocol cannot be modified
 
         # Expand zip file to a temporary location:
         _tempo_dir = self.localpath + "_master"
@@ -125,7 +124,7 @@ class repodata():
 
 
 class sample_ftp(repodata):
-    """ Helper class for the local_work local GDAC ftp folder """
+    """ Helper class for the local GDAC ftp folder """
 
     @property
     def rootpath(self):

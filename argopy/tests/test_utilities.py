@@ -6,14 +6,18 @@ import xarray as xr
 import pandas as pd
 import numpy as np
 import types
+from collections import ChainMap, OrderedDict
+import shutil
 
 import argopy
 from argopy.utilities import (
     load_dict,
     mapp_dict,
     list_multiprofile_file_variables,
-    check_localftp,
+    check_gdac_path,
     isconnected,
+    urlhaskeyword,
+    isalive,
     isAPIconnected,
     erddap_ds_exists,
     linear_interpolation_remap,
@@ -32,11 +36,28 @@ from argopy.utilities import (
     float_wmo,
     get_coriolis_profile_id,
     get_ea_profile_page,
+    ArgoNVSReferenceTables,
     OceanOPSDeployments,
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
-from utils import requires_connection, requires_localftp, safe_to_server_errors, requires_oops
+from utils import (
+    requires_connection,
+    requires_erddap,
+    requires_gdac,
+    requires_matplotlib,
+    requires_cartopy,
+    requires_oops,
+    has_matplotlib,
+    has_cartopy,
+)
+from mocked_http import mocked_httpserver, mocked_server_address
+
+if has_matplotlib:
+    import matplotlib as mpl
+
+if has_cartopy:
+    import cartopy
 
 
 def test_invalid_dictionnary():
@@ -53,12 +74,12 @@ def test_list_multiprofile_file_variables():
     assert is_list_of_strings(list_multiprofile_file_variables())
 
 
-def test_check_localftp():
-    assert check_localftp("dummy_path", errors='ignore') is False
+def test_check_gdac_path():
+    assert check_gdac_path("dummy_path", errors='ignore') is False
     with pytest.raises(FtpPathError):
-        check_localftp("dummy_path", errors='raise')
+        check_gdac_path("dummy_path", errors='raise')
     with pytest.warns(UserWarning):
-        assert check_localftp("dummy_path", errors='warn') is False
+        assert check_gdac_path("dummy_path", errors='warn') is False
 
 
 def test_show_versions():
@@ -67,45 +88,52 @@ def test_show_versions():
     assert "INSTALLED VERSIONS" in f.getvalue()
 
 
-def test_isconnected():
-    assert isinstance(isconnected(), bool)
+def test_isconnected(mocked_httpserver):
+    assert isinstance(isconnected(host=mocked_server_address), bool)
     assert isconnected(host="http://dummyhost") is False
 
 
-def test_isAPIconnected():
-    assert isinstance(isAPIconnected(src="erddap", data=True), bool)
-    assert isinstance(isAPIconnected(src="erddap", data=False), bool)
+def test_urlhaskeyword(mocked_httpserver):
+    url = "https://api.ifremer.fr/argopy/data/ARGO-FULL.json"
+    url.replace("https://api.ifremer.fr", mocked_server_address)
+    assert isinstance(urlhaskeyword(url, "label"), bool)
 
 
-def test_erddap_ds_exists():
-    assert isinstance(erddap_ds_exists(ds="ArgoFloats"), bool)
-    assert erddap_ds_exists(ds="DummyDS") is False
+params = [mocked_server_address,
+          {"url": mocked_server_address + "/argopy/data/ARGO-FULL.json", "keyword": "label"}
+          ]
+params_ids = ["url is a %s" % str(type(p)) for p in params]
+@pytest.mark.parametrize("params", params, indirect=False, ids=params_ids)
+def test_isalive(params, mocked_httpserver):
+    assert isinstance(isalive(params), bool)
 
+
+@requires_erddap
+@pytest.mark.parametrize("data", [True, False], indirect=False, ids=["data=%s" % t for t in [True, False]])
+def test_isAPIconnected(data, mocked_httpserver):
+    with argopy.set_options(erddap=mocked_server_address):
+        assert isinstance(isAPIconnected(src="erddap", data=data), bool)
+
+
+def test_erddap_ds_exists(mocked_httpserver):
+    with argopy.set_options(erddap=mocked_server_address):
+        assert isinstance(erddap_ds_exists(ds="ArgoFloats"), bool)
+        assert erddap_ds_exists(ds="DummyDS") is False
 
 # todo : Implement tests for utilities functions: badge, fetch_status and monitor_status
 
 
-@requires_connection
-@requires_localftp
+@requires_gdac
+@pytest.mark.skipif(not isconnected(), reason="Requires a connection to load tutorial data")
 def test_clear_cache():
-    ftproot, flist = argopy.tutorial.open_dataset("localftp")
+    ftproot, flist = argopy.tutorial.open_dataset("gdac")
     with tempfile.TemporaryDirectory() as cachedir:
-        with argopy.set_options(cachedir=cachedir, local_ftp=ftproot):
+        with argopy.set_options(cachedir=cachedir):
             loader = ArgoDataFetcher(src="gdac", ftp=ftproot, cache=True).profile(2902696, 12)
             loader.to_xarray()
             argopy.clear_cache()
             assert os.path.exists(cachedir) is True
             assert len(os.listdir(cachedir)) == 0
-
-
-# We disable this test because the server has not responded over a week (May 29th)
-# @unittest.skipUnless(CONNECTED, "open_etopo1 requires an internet connection")
-# def test_open_etopo1():
-#     try:
-#         ds = open_etopo1([-80, -79, 20, 21], res='l')
-#         assert isinstance(ds, xr.DataArray) is True
-#     except requests.HTTPError:  # not our fault
-#         pass
 
 
 class Test_linear_interpolation_remap:
@@ -588,22 +616,40 @@ def test_YearFraction_to_datetime():
 
 
 class Test_TopoFetcher():
+    box = [81, 123, -67, -54]
 
-    @safe_to_server_errors
-    def test_fetching(self):
-        box = [81, 123, -67, -54]
-        fetcher = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=True)
-        ds = fetcher.to_xarray()
+    def setup_class(self):
+        """setup any state specific to the execution of the given class"""
+        # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
+        self.cachedir = tempfile.mkdtemp()
+
+    def teardown_class(self):
+        """Cleanup once we are finished."""
+        def remove_test_dir():
+            shutil.rmtree(self.cachedir)
+        remove_test_dir()
+
+    def make_a_fetcher(self, cached=False):
+        opts = {'ds': 'gebco', 'stride': [10, 10], 'server': mocked_server_address}
+        if cached:
+            opts = ChainMap(opts, {'cache': True, 'cachedir': self.cachedir})
+        return TopoFetcher(self.box, **opts)
+
+    def assert_fetcher(self, f):
+        ds = f.to_xarray()
         assert isinstance(ds, xr.Dataset)
         assert 'elevation' in ds.data_vars
 
-    @safe_to_server_errors
-    def test_fetching_cached(self):
-        box = [81, 123, -67, -54]
-        fetcher = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=False)
-        ds = fetcher.to_xarray()
-        assert isinstance(ds, xr.Dataset)
-        assert 'elevation' in ds.data_vars
+    def test_load_mocked_server(self, mocked_httpserver):
+        """This will easily ensure that the module scope fixture is available to all methods !"""
+        assert True
+
+    params = [True, False]
+    ids_params = ["cached=%s" % p for p in params]
+    @pytest.mark.parametrize("params", params, indirect=False, ids=ids_params)
+    def test_fetching(self, params):
+        fetcher = self.make_a_fetcher(cached=params)
+        self.assert_fetcher(fetcher)
 
 
 class Test_float_wmo():
@@ -689,33 +735,112 @@ class Test_Registry():
         Registry(opts[0][0], dtype=opts[1], invalid='ignore').commit(opts[0][-1])
 
 
-@requires_connection
-def test_get_coriolis_profile_id():
-    assert isinstance(get_coriolis_profile_id(6901929), pd.core.frame.DataFrame)
-    assert isinstance(get_coriolis_profile_id(6901929, 12), pd.core.frame.DataFrame)
+@pytest.mark.parametrize("params", [[6901929, None], [6901929, 12]], indirect=False, ids=['float', 'profile'])
+def test_get_coriolis_profile_id(params, mocked_httpserver):
+    with argopy.set_options(cachedir=tempfile.mkdtemp()):
+        assert isinstance(get_coriolis_profile_id(params[0], params[1], api_server=mocked_server_address), pd.core.frame.DataFrame)
+
+@pytest.mark.parametrize("params", [[6901929, None], [6901929, 12]], indirect=False, ids=['float', 'profile'])
+def test_get_ea_profile_page(params, mocked_httpserver):
+    with argopy.set_options(cachedir=tempfile.mkdtemp()):
+        assert is_list_of_strings(get_ea_profile_page(params[0], params[1], api_server=mocked_server_address))
 
 
-@requires_connection
-def test_get_ea_profile_page():
-    assert is_list_of_strings(get_ea_profile_page(6901929))
-    assert is_list_of_strings(get_ea_profile_page(6901929, 12))
+
+class Test_ArgoNVSReferenceTables:
+
+    def setup_class(self):
+        """setup any state specific to the execution of the given class"""
+        # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
+        self.cachedir = tempfile.mkdtemp()
+        self.nvs = ArgoNVSReferenceTables(cache=True, cachedir=self.cachedir, nvs=mocked_server_address)
+
+    def teardown_class(self):
+        """Cleanup once we are finished."""
+        def remove_test_dir():
+            shutil.rmtree(self.cachedir)
+        remove_test_dir()
+
+    def test_load_mocked_server(self, mocked_httpserver):
+        """This will easily ensure that the module scope fixture is available to all methods !"""
+        assert True
+
+    def test_valid_ref(self):
+        assert is_list_of_strings(self.nvs.valid_ref)
+
+    opts = [3, 'R09']
+    opts_ids = ["rtid is a %s" % type(o) for o in opts]
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_tbl(self, opts):
+        assert isinstance(self.nvs.tbl(opts), pd.DataFrame)
+
+    opts = [3, 'R09']
+    opts_ids = ["rtid is a %s" % type(o) for o in opts]
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_tbl_name(self, opts):
+        names = self.nvs.tbl_name(opts)
+        assert isinstance(names, tuple)
+        assert isinstance(names[0], str)
+        assert isinstance(names[1], str)
+        assert isinstance(names[2], str)
+
+    def test_all_tbl(self):
+        all = self.nvs.all_tbl()
+        assert isinstance(all, OrderedDict)
+        assert isinstance(all[list(all.keys())[0]], pd.DataFrame)
+
+    def test_all_tbl_name(self):
+        all = self.nvs.all_tbl_name()
+        assert isinstance(all, OrderedDict)
+        assert isinstance(all[list(all.keys())[0]], tuple)
+
+    opts = ["ld+json", "rdf+xml", "text/turtle", "invalid"]
+    opts_ids = ["fmt=%s" % o for o in opts]
+    @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
+    def test_get_url(self, opts):
+        if opts != 'invalid':
+            url = self.nvs.get_url(3, fmt=opts)
+            assert isinstance(url, str)
+            if "json" in opts:
+                data = self.nvs.fs.open_json(url)
+                assert isinstance(data, dict)
+            elif "xml" in opts:
+                data = self.nvs.fs.fs.cat_file(url)
+                assert data[0:5] == b'<?xml'
+            else:
+                # log.debug(self.nvs.fs.fs.info(url))
+                data = self.nvs.fs.fs.cat_file(url)
+                assert data[0:7] == b'@prefix'
+        else:
+            with pytest.raises(ValueError):
+                self.nvs.get_url(3, fmt=opts)
 
 
 @requires_oops
-class Test_OceanOPS_Deployments:
+class Test_OceanOPSDeployments:
 
-    # Define the list of region/box to use in tests
-    valid_boxes = [[val if i1 != i2 else None for i2, val in enumerate(
-        [-90,
-         0,
-         0,
-         90,
-         pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"),
-         (pd.to_datetime('now', utc=True) + pd.Timedelta(365, unit='days')).strftime("%Y-%m-%d")]
-    )] for i1 in range(6)]
-
-    # Combine the list of boxex with other possible options:
-    scenarios = [(box, deployed_only) for box in valid_boxes for deployed_only in [True, False]]
+    # scenarios generation can't be automated because of the None/True combination of arguments.
+    # If box=None and deployed_only=True, OceanOPSDeployments will seek for OPERATING floats deployed today ! which is
+    # impossible and if it happens it's due to an error in the database...
+    scenarios = [
+        # (None, True),  # This often lead to an empty dataframe !
+        # (None, False),  # Can't be handled by the mocked server (test date is surely different from the test data date)
+        # ([-90, 0, 0, 90], True),
+        # ([-90, 0, 0, 90], False),  # Can't be handled by the mocked server (test date is surely different from the test data date)
+        ([-90, 0, 0, 90, '2022-01'], True),
+        ([-90, 0, 0, 90, '2022-01'], False),
+        ([None, 0, 0, 90, '2022-01-01', '2023-01-01'], True),
+        ([None, 0, 0, 90, '2022-01-01', '2023-01-01'], False),
+        ([-90, None, 0, 90, '2022-01-01', '2023-01-01'], True),
+        ([-90, None, 0, 90, '2022-01-01', '2023-01-01'], False),
+        ([-90, 0, None, 90, '2022-01-01', '2023-01-01'], True),
+        ([-90, 0, None, 90, '2022-01-01', '2023-01-01'], False),
+        ([-90, 0, 0, None, '2022-01-01', '2023-01-01'], True),
+        ([-90, 0, 0, None, '2022-01-01', '2023-01-01'], False),
+        ([-90, 0, 0, 90, None, '2023-01-01'], True),
+        ([-90, 0, 0, 90, None, '2023-01-01'], False),
+        ([-90, 0, 0, 90, '2022-01-01', None], True),
+        ([-90, 0, 0, 90, '2022-01-01', None], False)]
     scenarios_ids = ["%s, %s" % (opt[0], opt[1]) for opt in scenarios]
 
     @pytest.fixture
@@ -729,7 +854,17 @@ class Test_OceanOPS_Deployments:
             deployed_only = None
 
         args = {"box": box, "deployed_only": deployed_only}
-        return OceanOPSDeployments(**args)
+        oops = OceanOPSDeployments(**args)
+
+        # Adjust server info to use the mocked HTTP server:
+        oops.api = mocked_server_address
+        oops.model = 'data/platform'
+
+        return oops
+
+    def test_load_mocked_server(self, mocked_httpserver):
+        """This will easily ensure that the module scope fixture is available to all methods !"""
+        assert True
 
     @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
     def test_init(self, an_instance):
@@ -742,8 +877,16 @@ class Test_OceanOPS_Deployments:
         assert isinstance(dep.uri_decoded, str)
         assert isinstance(dep.status_code, pd.DataFrame)
         assert isinstance(dep.box_name, str)
-    #
+        assert len(dep.box) == 6
+
     @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
     def test_to_dataframe(self, an_instance):
         assert isinstance(an_instance.to_dataframe(), pd.DataFrame)
 
+    @pytest.mark.parametrize("an_instance", scenarios, indirect=True, ids=scenarios_ids)
+    @requires_matplotlib
+    @requires_cartopy
+    def test_plot_status(self, an_instance):
+        fig, ax = an_instance.plot_status()
+        assert isinstance(fig, mpl.figure.Figure)
+        assert isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot)

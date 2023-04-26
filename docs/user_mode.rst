@@ -106,8 +106,8 @@ copy of the GDAC ftp, so let’s use a sample of this provided by
 .. ipython:: python
     :okwarning:
 
-    ftproot, flist = argopy.tutorial.open_dataset('localftp')
-    argopy.set_options(local_ftp=ftproot)
+    ftproot, flist = argopy.tutorial.open_dataset('gdac')
+    argopy.set_options(ftp=ftproot)
 
 In **standard** mode:
 
@@ -115,7 +115,7 @@ In **standard** mode:
     :okwarning:
 
     with argopy.set_options(mode='standard'):
-        ds = ArgoDataFetcher(src='localftp').profile(6901929, 2).to_xarray()
+        ds = ArgoDataFetcher(src='gdac').profile(6901929, 2).to_xarray()
         print(ds.data_vars)
 
 In **expert** mode:
@@ -124,5 +124,5 @@ In **expert** mode:
     :okwarning:
 
     with argopy.set_options(mode='expert'):
-        ds = ArgoDataFetcher(src='localftp').profile(6901929, 2).to_xarray()
+        ds = ArgoDataFetcher(src='gdac').profile(6901929, 2).to_xarray()
         print(ds.data_vars)

@@ -20,6 +20,7 @@
     argopy.fetchers.ArgoDataFetcher.uri
     argopy.fetchers.ArgoDataFetcher.data
     argopy.fetchers.ArgoDataFetcher.index
+    argopy.fetchers.ArgoDataFetcher.domain
     argopy.fetchers.ArgoDataFetcher.dashboard
     argopy.fetchers.ArgoDataFetcher.clear_cache
 
@@ -43,13 +44,13 @@
     argopy.data_fetchers.gdacftp_data.Fetch_wmo
     argopy.data_fetchers.gdacftp_data.Fetch_box
 
-    argopy.data_fetchers.localftp_data.LocalFTPArgoDataFetcher
-    argopy.data_fetchers.localftp_data.Fetch_wmo
-    argopy.data_fetchers.localftp_data.Fetch_box
-
     argopy.data_fetchers.argovis_data.ArgovisDataFetcher
     argopy.data_fetchers.argovis_data.Fetch_wmo
     argopy.data_fetchers.argovis_data.Fetch_box
+
+    argopy.data_fetchers.erddap_refdata.ErddapREFDataFetcher
+    argopy.data_fetchers.erddap_refdata.Fetch_box
+    argopy.data_fetchers.CTDRefDataFetcher
 
     argopy.options.set_options
 
@@ -62,6 +63,11 @@
     argopy.utilities.list_available_data_src
     argopy.utilities.list_available_index_src
     argopy.utilities.Chunker
+
+    argopy.utilities.isconnected
+    argopy.utilities.urlhaskeyword
+    argopy.utilities.isalive
+    argopy.utilities.isAPIconnected
 
     argopy.utilities.ArgoNVSReferenceTables
     argopy.utilities.ArgoNVSReferenceTables.valid_ref
@@ -102,15 +108,29 @@
     argopy.utilities.OceanOPSDeployments.to_dataframe
     argopy.utilities.OceanOPSDeployments.status_code
 
+    argopy.plot
     argopy.plot.dashboard
     argopy.plot.bar_plot
+    argopy.plot.scatter_map
     argopy.plot.plot_trajectory
+    argopy.plot.latlongrid
+    argopy.plot.discrete_coloring
     argopy.plot.open_sat_altim_report
+
+    argopy.plot.ArgoColors
+    argopy.plot.ArgoColors.COLORS
+    argopy.plot.ArgoColors.quantitative
+    argopy.plot.ArgoColors.definition
+    argopy.plot.ArgoColors.cmap
+    argopy.plot.ArgoColors.lookup
+    argopy.plot.ArgoColors.ticklabels
+    argopy.plot.ArgoColors.list_valid_known_colormaps
+
+    argopy.stores.filesystems.argo_store_proto
 
     argopy.stores.filesystems.filestore
     argopy.stores.filestore.open_dataset
     argopy.stores.filestore.read_csv
-
     argopy.stores.filestore.open
     argopy.stores.filestore.glob
     argopy.stores.filestore.exists
@@ -185,3 +205,4 @@
     argopy.xarray.ArgoAccessor.filter_data_mode
     argopy.xarray.ArgoAccessor.filter_scalib_pres
     argopy.xarray.ArgoAccessor.cast_types
+

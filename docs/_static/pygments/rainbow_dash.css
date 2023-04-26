@@ -1,5 +1,10 @@
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 .highlight .hll { background-color: #ffffcc }
-.highlight  { background: #ffffff; color: #4d4d4d }
+.highlight { background: #ffffff; color: #4d4d4d }
 .highlight .c { color: #0080ff; font-style: italic } /* Comment */
 .highlight .err { color: #ffffff; background-color: #cc0000 } /* Error */
 .highlight .k { color: #2c5dcd; font-weight: bold } /* Keyword */

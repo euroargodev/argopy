@@ -6,18 +6,20 @@ Argo file index store prototype
 import numpy as np
 import pandas as pd
 import logging
+import time
 from abc import ABC, abstractmethod
 from fsspec.core import split_protocol
+from urllib.parse import urlparse
 
 from ..options import OPTIONS
-from ..errors import FtpPathError, InvalidDataset, CacheFileNotFound
-from ..utilities import Registry
+from ..errors import FtpPathError, InvalidDataset
+from ..utilities import Registry, isconnected
 from .filesystems import httpstore, memorystore, filestore, ftpstore
 
 try:
-    import pyarrow.csv as csv
+    import pyarrow.csv as csv  # noqa: F401
     import pyarrow as pa
-    import pyarrow.parquet as pq
+    import pyarrow.parquet as pq  # noqa: F401
 except ModuleNotFoundError:
     pass
 
@@ -112,18 +114,19 @@ class ArgoIndexStoreProto(ABC):
         self.fs = {}
         if split_protocol(host)[0] is None:
             self.fs["src"] = filestore(cache=cache, cachedir=cachedir)
-        elif "https" in split_protocol(host)[0]:
+        elif split_protocol(host)[0] in ["https", "http"]:
             # Only for https://data-argo.ifremer.fr (much faster than the ftp servers)
             self.fs["src"] = httpstore(
                 cache=cache, cachedir=cachedir, timeout=timeout, size_policy="head"
             )
         elif "ftp" in split_protocol(host)[0]:
             if "ifremer" not in host and "usgodae" not in host:
-                raise FtpPathError("""Unknown Argo ftp: %s. Raise on issue if you wish to add your own to the
-                                   valid list of FTP servers:
-                                   https://github.com/euroargodev/argopy/issues/new?title=New%%20FTP%%20server""" % host)
+                log.info("""Working with a non-official Argo ftp server: %s. Raise on issue if you wish to add your own to the valid list of FTP servers: https://github.com/euroargodev/argopy/issues/new?title=New%%20FTP%%20server""" % host)
+            if not isconnected(host):
+                raise FtpPathError("This host (%s) is not alive !" % host)
             self.fs["src"] = ftpstore(
-                host=split_protocol(host)[-1].split("/")[0],  # host eg: ftp.ifremer.fr
+                host=urlparse(host).hostname,  # host eg: ftp.ifremer.fr
+                port=0 if urlparse(host).port is None else urlparse(host).port,
                 cache=cache,
                 cachedir=cachedir,
                 timeout=timeout,
@@ -134,11 +137,20 @@ class ArgoIndexStoreProto(ABC):
                 "Unknown protocol for an Argo index store: %s" % split_protocol(host)[0]
             )
         self.fs["client"] = memorystore(cache, cachedir)  # Manage search results
-        self._memory_store_content = Registry(name='memory store') # Track files opened with this memory store, since it's a global store
-        self.search_path_cache = Registry(name='cached search') # Track cached files related to search
+        self._memory_store_content = Registry(name='memory store')  # Track files opened with this memory store, since it's a global store
+        self.search_path_cache = Registry(name='cached search')  # Track cached files related to search
 
+        # Check if the index file exists. Allow for up to 10 try to account for some slow websites
         self.index_path = self.fs["src"].fs.sep.join([self.host, self.index_file])
-        if not self.fs["src"].exists(self.index_path):
+        i_try, max_try, index_found = 0, 1 if 'invalid' in host else 10, False
+        while i_try < max_try:
+            if not self.fs["src"].exists(self.index_path) and not self.fs["src"].exists(self.index_path + ".gz"):
+                time.sleep(1)
+                i_try += 1
+            else:
+                index_found = True
+                break
+        if not index_found:
             raise FtpPathError("Index file does not exist: %s" % self.index_path)
 
     def __repr__(self):
@@ -437,7 +449,7 @@ class ArgoIndexStoreProto(ABC):
             from argopy.utilities import load_dict, mapp_dict
 
             if nrows is not None:
-                df = df.loc[0 : nrows - 1].copy()
+                df = df.loc[0:nrows-1].copy()
 
             if "index" in df:
                 df.drop("index", axis=1, inplace=True)
@@ -685,4 +697,3 @@ class ArgoIndexStoreProto(ABC):
 
         """
         raise NotImplementedError("Not implemented")
-

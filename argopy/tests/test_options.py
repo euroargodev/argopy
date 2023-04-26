@@ -2,8 +2,9 @@ import os
 import pytest
 import argopy
 from argopy.options import OPTIONS
-from argopy.errors import OptionValueError, FtpPathError
-from utils import requires_localftp, requires_gdac
+from argopy.errors import OptionValueError, FtpPathError, ErddapPathError
+from utils import requires_gdac
+from mocked_http import mocked_httpserver, mocked_server_address
 
 
 def test_invalid_option_name():
@@ -18,23 +19,23 @@ def test_opt_src():
         assert OPTIONS["src"]
 
 
-@requires_localftp
-def test_opt_local_ftp():
-    with pytest.raises(FtpPathError):
-        argopy.set_options(local_ftp="invalid_path")
-
-    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
-    with argopy.set_options(local_ftp=local_ftp):
-        assert OPTIONS["local_ftp"] == local_ftp
-
 @requires_gdac
 def test_opt_gdac_ftp():
     with pytest.raises(FtpPathError):
         argopy.set_options(ftp="invalid_path")
 
-    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
+    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
     with argopy.set_options(ftp=local_ftp):
         assert OPTIONS["ftp"] == local_ftp
+
+
+def test_opt_ifremer_erddap(mocked_httpserver):
+    with pytest.raises(ErddapPathError):
+        argopy.set_options(erddap="invalid_path")
+
+    with argopy.set_options(erddap=mocked_server_address):
+        assert OPTIONS["erddap"] == mocked_server_address
+
 
 def test_opt_dataset():
     with pytest.raises(OptionValueError):

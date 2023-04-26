@@ -1,5 +1,10 @@
+pre { line-height: 125%; }
+td.linenos .normal { color: #93a1a1; background-color: #eee8d5; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #93a1a1; background-color: #eee8d5; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 .highlight .hll { background-color: #eee8d5 }
-.highlight  { background: #fdf6e3; color: #657b83 }
+.highlight { background: #fdf6e3; color: #657b83 }
 .highlight .c { color: #93a1a1; font-style: italic } /* Comment */
 .highlight .err { color: #657b83; background-color: #dc322f } /* Error */
 .highlight .esc { color: #657b83 } /* Escape */
@@ -22,7 +27,7 @@
 .highlight .gh { color: #657b83; font-weight: bold } /* Generic.Heading */
 .highlight .gi { color: #859900 } /* Generic.Inserted */
 .highlight .go { color: #657b83 } /* Generic.Output */
-.highlight .gp { color: #657b83 } /* Generic.Prompt */
+.highlight .gp { color: #268bd2; font-weight: bold } /* Generic.Prompt */
 .highlight .gs { color: #657b83; font-weight: bold } /* Generic.Strong */
 .highlight .gu { color: #657b83; text-decoration: underline } /* Generic.Subheading */
 .highlight .gt { color: #268bd2 } /* Generic.Traceback */
@@ -50,6 +55,7 @@
 .highlight .nt { color: #268bd2 } /* Name.Tag */
 .highlight .nv { color: #268bd2 } /* Name.Variable */
 .highlight .ow { color: #859900 } /* Operator.Word */
+.highlight .pm { color: #657b83 } /* Punctuation.Marker */
 .highlight .w { color: #657b83 } /* Text.Whitespace */
 .highlight .mb { color: #2aa198 } /* Literal.Number.Bin */
 .highlight .mf { color: #2aa198 } /* Literal.Number.Float */
