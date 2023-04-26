@@ -1,6 +1,6 @@
 import os
-import sys
 import warnings
+import sys
 
 import numpy as np
 import pandas as pd
@@ -22,6 +22,7 @@ from argopy.utilities import (
     is_list_of_strings,
     toYearFraction,
     groupby_remap,
+    cast_types,
 )
 from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
@@ -377,6 +378,24 @@ class ArgoAccessor:
         ds = self._obj
         return cast_Argo_variable_type(ds)
 
+    @property
+    def _dummy_argo_uid(self):
+        if self._type == "point":
+            return xr.DataArray(
+                        self.uid(
+                            self._obj["PLATFORM_NUMBER"].values,
+                            self._obj["CYCLE_NUMBER"].values,
+                            self._obj["DIRECTION"].values,
+                        ),
+                        dims="N_POINTS",
+                        coords={"N_POINTS": self._obj["N_POINTS"]},
+                        name="dummy_argo_uid",
+                    )
+        else:
+            raise InvalidDatasetStructure(
+                "Property only available for a collection of points"
+            )
+
     def uid(self, wmo_or_uid, cyc=None, direction=None):
         """ UID encoder/decoder
 
@@ -400,8 +419,8 @@ class ArgoAccessor:
 
         """
         def encode_direction(x):
-            y = np.where(x=='A', 1, x)
-            y = np.where(y=='D', -1, y)
+            y = np.where(x == 'A', 1, x)
+            y = np.where(y == 'D', -1, y)
             try:
                 return y.astype(int)
             except ValueError:
@@ -411,8 +430,8 @@ class ArgoAccessor:
             x = np.array(x)
             if np.any(np.unique(np.abs(x)) != 1):
                 raise ValueError('x has un-expected values')
-            y = np.where(x==1, 'A', x)
-            y = np.where(y=='-1', 'D', y)
+            y = np.where(x == 1, 'A', x)
+            y = np.where(y == '-1', 'D', y)
             return y.astype('<U1')
 
         offset = 1e5
@@ -433,11 +452,18 @@ class ArgoAccessor:
             cyc = -np.vectorize(int)(offset * wmo - np.abs(wmo_or_uid))
             return wmo, cyc, drc
 
-    def point2profile(self):  # noqa: C901
+    def point2profile(self, drop: bool = False):  # noqa: C901
         """ Transform a collection of points into a collection of profiles
 
         A "point" is a single location for measurements in space and time
         A "point" is localised as unique UID based on WMO, CYCLE_NUMBER and DIRECTION variable values.
+
+        Parameters
+        ----------
+        drop: bool, default=False
+            By default will return all variables. But if set to True, then all [N_PROF, N_LEVELS] 2d variables will be
+            dropped, and only 1d variables of dimension [N_PROF] will be returned.
+
         """
         if self._type != "point":
             raise InvalidDatasetStructure(
@@ -462,16 +488,7 @@ class ArgoAccessor:
             return fillvalue
 
         # Find the number of profiles (N_PROF) and vertical levels (N_LEVELS):
-        dummy_argo_uid = xr.DataArray(
-            self.uid(
-                this["PLATFORM_NUMBER"].values,
-                this["CYCLE_NUMBER"].values,
-                this["DIRECTION"].values,
-            ),
-            dims="N_POINTS",
-            coords={"N_POINTS": this["N_POINTS"]},
-            name="dummy_argo_uid",
-        )
+        dummy_argo_uid = self._dummy_argo_uid
         N_PROF = len(np.unique(dummy_argo_uid))
 
         N_LEVELS = int(
@@ -495,9 +512,10 @@ class ArgoAccessor:
         coords_list = list(this.coords)
         this = this.reset_coords()
 
-        # For each variables, determine if it has unique value by profile,
+        # For each variable, determine if it has a single unique value by profile,
         # if yes: the transformed variable should be [N_PROF]
         # if no: the transformed variable should be [N_PROF, N_LEVELS]
+        # Note: this may lead to differences with the Argo User Manual convention for some variables
         count = np.zeros((N_PROF, len(this.data_vars)), "int")
         for i_prof, grp in enumerate(this.groupby(dummy_argo_uid)):
             i_uid, prof = grp
@@ -515,23 +533,24 @@ class ArgoAccessor:
 
         # Create new empty dataset:
         new_ds = []
-        for vname in list_2d:
-            new_ds.append(
-                xr.DataArray(
-                    np.full(
-                        (N_PROF, N_LEVELS),
-                        fillvalue(this[vname]),
-                        dtype=this[vname].dtype,
-                    ),
-                    dims=["N_PROF", "N_LEVELS"],
-                    coords={
-                        "N_PROF": np.arange(N_PROF),
-                        "N_LEVELS": np.arange(N_LEVELS),
-                    },
-                    attrs=this[vname].attrs,
-                    name=vname,
+        if not drop:
+            for vname in list_2d:
+                new_ds.append(
+                    xr.DataArray(
+                        np.full(
+                            (N_PROF, N_LEVELS),
+                            fillvalue(this[vname]),
+                            dtype=this[vname].dtype,
+                        ),
+                        dims=["N_PROF", "N_LEVELS"],
+                        coords={
+                            "N_PROF": np.arange(N_PROF),
+                            "N_LEVELS": np.arange(N_LEVELS),
+                        },
+                        attrs=this[vname].attrs,
+                        name=vname,
+                    )
                 )
-            )
         for vname in list_1d:
             new_ds.append(
                 xr.DataArray(
@@ -549,7 +568,7 @@ class ArgoAccessor:
             i_uid, prof = grp
             for iv, vname in enumerate(this.data_vars):
                 # ['N_PROF', 'N_LEVELS'] array:
-                if len(new_ds[vname].dims) == 2:
+                if vname in new_ds and not drop and len(new_ds[vname].dims) == 2:
                     y = new_ds[vname].values
                     x = prof[vname].values
                     try:
@@ -558,7 +577,8 @@ class ArgoAccessor:
                         print(vname, "input", x.shape, "output", y[i_prof, :].shape)
                         raise
                     new_ds[vname].values = y
-                else:  # ['N_PROF', ] array:
+                # ['N_PROF', ] array:
+                elif vname in new_ds:
                     y = new_ds[vname].values
                     x = prof[vname].values
                     y[i_prof] = np.unique(x)[0]
@@ -572,12 +592,13 @@ class ArgoAccessor:
 
         # Misc formatting
         new_ds = new_ds.sortby("TIME")
-        new_ds = new_ds.argo.cast_types()
+        new_ds = new_ds.argo.cast_types() if not drop else cast_types(new_ds)
         new_ds = new_ds[np.sort(new_ds.data_vars)]
         new_ds.encoding = self.encoding  # Preserve low-level encoding information
         new_ds.attrs = self.attrs  # Preserve original attributes
-        new_ds.argo._add_history("Transformed with point2profile")
-        new_ds.argo._type = "profile"
+        if not drop:
+            new_ds.argo._add_history("Transformed with point2profile")
+            new_ds.argo._type = "profile"
         return new_ds
 
     def profile2point(self):
@@ -588,7 +609,7 @@ class ArgoAccessor:
         """
         if self._type != "profile":
             raise InvalidDatasetStructure(
-                "Method only available for a collection of profiles (N_PROF dimemsion)"
+                "Method only available for a collection of profiles (N_PROF dimension)"
             )
         ds = self._obj
 
@@ -1407,6 +1428,7 @@ class ArgoAccessor:
                 "Last bins is bins[N_LEVELS-1] <= x"
             },
         )
+
         new_ds = new_ds.set_coords("STD_%s_BINS" % axis)
         new_ds.attrs = this_ds.attrs
 
@@ -1466,8 +1488,7 @@ class ArgoAccessor:
             * ``CNDC``
                 Add Electrical Conductivity
 
-
-        inplace: boolean, True by default        
+        inplace: boolean, True by default
             * If True, return the input :class:`xarray.Dataset` with new TEOS10 variables
                 added as a new :class:`xarray.DataArray`.
             * If False, return a :class:`xarray.Dataset` with new TEOS10 variables
@@ -1715,11 +1736,11 @@ class ArgoAccessor:
             If force='adjusted' will load PRES_ADJUSTED/PSAL_ADJUSTED/TEMP_ADJUSTED
         select: {'deep','shallow','middle','random','min','max','mean','median'}, default: 'deep'
         file_pref: str, optional
-            Preffix to add at the beginning of output file(s).
+            Prefix to add at the beginning of output file(s).
         file_suff: str, optional
             Suffix to add at the end of output file(s).
         do_compression: bool, optional
-            Whether or not to compress matrices on write. Default is True.
+            Whether to compress matrices on write. Default is True.
         format: {'5', '4'}, string, optional
             Matlab file format version. '5' (the default) for MATLAB 5 and up (to 7.2). Use '4' for MATLAB 4 .mat files.
 
@@ -2018,6 +2039,35 @@ class ArgoAccessor:
             log.debug("===================== END create_float_source")
             return output
 
+    def list_N_PROF_variables(self, uid=False):
+        """Return the list of variables with unique values along the N_PROF dimension"""
+        this = self._obj  # Should not be modified
+
+        # Find the number of profiles (N_PROF):
+        dummy_argo_uid = self._dummy_argo_uid
+        N_PROF = len(np.unique(dummy_argo_uid))
+
+        # For each variable, determine if it has unique value by profile,
+        # if yes: the transformed variable should be [N_PROF]
+        # if no: the transformed variable should be [N_PROF, N_LEVELS]
+        count = np.zeros((N_PROF, len(this.variables)), "int")
+        for i_prof, grp in enumerate(this.groupby(dummy_argo_uid)):
+            i_uid, prof = grp
+            for iv, vname in enumerate(this.variables):
+                try:
+                    count[i_prof, iv] = len(np.unique(prof[vname]))
+                except Exception as e:
+                    print("An error happened when dealing with the '%s' data variable" % vname)
+                    raise (e)
+
+        # Variables with a single unique value for each profile:
+        list_1d = list(np.array(this.variables)[count.sum(axis=0) == count.shape[0]])
+
+        if not uid:
+            return list_1d
+        else:
+            return list_1d, dummy_argo_uid
+
 
 def my_open_dataset(filename_or_obj, drop_variables=None):
     return xr.open_dataset(filename_or_obj, decode_cf=1, use_cftime=0, mask_and_scale=1)
@@ -2042,3 +2092,4 @@ class ArgoEngine(BackendEntrypoint):
         except TypeError:
             return False
         return ext in {".nc"}
+
