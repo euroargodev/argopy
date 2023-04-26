@@ -89,12 +89,13 @@ def cast_Argo_variable_type(ds):
     def cast_this(da, type):
         """ Low-level casting of DataArray values """
         try:
-            da.values = da.values.astype(type)
+            # da.values = da.values.astype(type)
+            da = da.astype(type)
             da.attrs["casted"] = 1
         except Exception:
             print("Oops!", sys.exc_info()[0], "occurred.")
-            print("Fail to cast: ", da.dtype, "into:", type, "for: ", da.name)
-            print("Encountered unique values:", np.unique(da))
+            print("Fail to cast %s[%s] from '%s' to %s" % (da.name, da.dims, da.dtype, type))
+            print("Unique values:", np.unique(da))
         return da
 
     def cast_this_da(da):
@@ -124,16 +125,16 @@ def cast_Argo_variable_type(ds):
                         val[val == "              "] = "nan"
                         s.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
                         da.values = s.unstack("dummy_index")
-                    da = cast_this(da, np.datetime64)
+                    da = cast_this(da, 'datetime64[s]')
                 else:
-                    da = cast_this(da, np.datetime64)
+                    da = cast_this(da, 'datetime64[s]')
 
             elif v == "SCIENTIFIC_CALIB_DATE":
                 da = cast_this(da, str)
                 s = da.stack(dummy_index=da.dims)
                 s.values = pd.to_datetime(s.values, format="%Y%m%d%H%M%S")
                 da.values = (s.unstack("dummy_index")).values
-                da = cast_this(da, np.datetime64)
+                da = cast_this(da, 'datetime64[s]')
 
         if "QC" in v and "PROFILE" not in v and "QCTEST" not in v:
             if da.dtype == "O":  # convert object to string
@@ -2076,7 +2077,7 @@ def my_open_dataset(filename_or_obj, drop_variables=None):
 
 
 class ArgoEngine(BackendEntrypoint):
-    description = "Use Argo netcdf files in Xarray"
+    description = "Open Argo netCDF files (.nc)"
     url = "https://argopy.readthedocs.io/"
 
     def open_dataset(
