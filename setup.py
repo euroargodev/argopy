@@ -33,6 +33,6 @@ setuptools.setup(
         "Development Status :: 3 - Alpha"
     ],
     entry_points = {
-                       "xarray.backends": ["my_engine=argopy.xarray:ArgoEngine"],
+                       "xarray.backends": ["argo=argopy.xarray:ArgoEngine"],
                    },
 )

@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import logging
-from xarray.backends import BackendEntrypoint
+from xarray.backends import BackendEntrypoint  # For xarray > 0.18
 from .utilities import ArgoNVSReferenceTables
 
 
@@ -2070,10 +2070,15 @@ class ArgoAccessor:
 
 
 def my_open_dataset(filename_or_obj, drop_variables=None):
-    return xr.open_dataset(filename_or_obj, decode_cf=1, use_cftime=0, mask_and_scale=1)
+    ds = xr.open_dataset(filename_or_obj, decode_cf=1, use_cftime=0, mask_and_scale=1)
+    ds = cast_Argo_variable_type(ds)
+    return ds
 
 
 class ArgoEngine(BackendEntrypoint):
+    description = "Use Argo netcdf files in Xarray"
+    url = "https://argopy.readthedocs.io/"
+
     def open_dataset(
         self,
         filename_or_obj,
@@ -2091,5 +2096,8 @@ class ArgoEngine(BackendEntrypoint):
             _, ext = os.path.splitext(filename_or_obj)
         except TypeError:
             return False
-        return ext in {".nc"}
-
+        if ext in {".nc"}:
+            attrs = xr.open_dataset(filename_or_obj, engine='netcdf4').attrs
+            return 'Conventions' in attrs and 'Argo' in attrs['Conventions']
+        else:
+            return False
