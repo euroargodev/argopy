@@ -13,14 +13,14 @@ import warnings
 import logging
 from packaging import version
 from typing import Union
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 
 import concurrent.futures
 import multiprocessing
 
 from ..options import OPTIONS
 from ..errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
-    InvalidMethod
+    InvalidMethod, ErddapHTTPUnauthorized, ErddapHTTPNotFound
 from abc import ABC, abstractmethod
 from ..utilities import Registry, log_argopy_callerstack
 
@@ -1108,3 +1108,139 @@ class ftpstore(httpstore):
                 return results
         else:
             raise DataNotFound(urls)
+
+
+class httpstore_erddap_auth(httpstore):
+
+    async def get_auth_client(self, **kwargs):
+        session = aiohttp.ClientSession(**kwargs)
+
+        async with session.post(self._login_page, data=self._login_payload) as resp:
+            resp_query = dict(parse_qs(urlparse(str(resp.url)).query))
+
+            if resp.status == 404:
+                raise ErddapHTTPNotFound(
+                    "Error %s: %s. This erddap server does not support log-in" % (resp.status, resp.reason))
+
+            elif resp.status == 200:
+                has_expected = 'message' in resp_query  # only available when there is a form page response
+                if has_expected:
+                    message = resp_query['message'][0]
+                    if 'failed' in message:
+                        raise ErddapHTTPUnauthorized("Error %i: %s (%s)" % (401, message, self._login_payload))
+                else:
+                    raise ErddapHTTPUnauthorized("This erddap server does not support log-in with a user/password")
+
+            else:
+                log.debug('resp.status', resp.status)
+                log.debug('resp.reason', resp.reason)
+                log.debug('resp.headers', resp.headers)
+                log.debug('resp.url', urlparse(str(resp.url)))
+                log.debug('resp.url.query', resp_query)
+                data = await resp.read()
+                log.debug('data', data)
+
+        return session
+
+    def __init__(self,
+                 cache: bool = False,
+                 cachedir: str = "",
+                 login: str = None,
+                 payload: dict = {"user": None, "password": None},
+                 auto: bool = True,
+                 **kwargs):
+
+        if login is None:
+            raise ValueError("Invalid login url")
+        else:
+            self._login_page = login
+
+        self._login_auto = auto  # Should we try to log-in automatically at instanciation ?
+
+        self._login_payload = payload.copy()
+        if "user" in self._login_payload and self._login_payload['user'] is None:
+            self._login_payload['user'] = OPTIONS['user']
+        if "password" in self._login_payload and self._login_payload['password'] is None:
+            self._login_payload['password'] = OPTIONS['password']
+
+        filesystem_kwargs = {**kwargs, **{"get_client": self.get_auth_client}}
+        super().__init__(cache=cache, cachedir=cachedir, **filesystem_kwargs)
+
+        if auto:
+            assert isinstance(self.connect(), bool)
+
+    # def __repr__(self):
+    #     # summary = ["<httpstore_erddap_auth.%i>" % id(self)]
+    #     summary = ["<httpstore_erddap_auth>"]
+    #     summary.append("login page: %s" % self._login_page)
+    #     summary.append("login data: %s" % (self._login_payload))
+    #     if hasattr(self, '_connected'):
+    #         summary.append("connected: %s" % (self._connected))
+    #     else:
+    #         summary.append("connected: ?")
+    #     return "\n".join(summary)
+
+    def _repr_html_(self):
+        td_title = lambda title: '<td colspan="2"><div style="vertical-align: middle;text-align:left"><strong>%s</strong></div></td>' % title  # noqa: E731
+        tr_title = lambda title: "<thead><tr>%s</tr></thead>" % td_title(title)  # noqa: E731
+        a_link = lambda url, txt: '<a href="%s">%s</a>' % (url, txt)
+        td_key = lambda prop: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % str(prop)  # noqa: E731
+        td_val = lambda label: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % str(label)  # noqa: E731
+        tr_tick = lambda key, value: '<tr>%s%s</tr>' % (td_key(key), td_val(value))  # noqa: E731
+        td_vallink = lambda url, label: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % a_link(url, label)  # noqa: E731
+        tr_ticklink = lambda key, url, value: '<tr>%s%s</tr>' % (td_key(key), td_vallink(url, value))  # noqa: E731
+
+        html = []
+        html.append("<table style='border-collapse:collapse;border-spacing:0'>")
+        html.append("<thead>")
+        html.append(tr_title("httpstore_erddap_auth"))
+        html.append("</thead>")
+        html.append("<tbody>")
+        html.append(tr_ticklink("login page", self._login_page, self._login_page))
+        html.append(tr_tick("login data", self._login_payload))
+        if hasattr(self, '_connected'):
+            html.append(tr_tick("connected", "✅" if self._connected else "⛔"))
+        else:
+            html.append(tr_tick("connected", "?"))
+        html.append("</tbody>")
+        html.append("</table>")
+
+        html = "\n".join(html)
+        return html
+
+    def connect(self):
+        try:
+            log.info("Try to log-in to '%s' page with %s data ..." % (self._login_page, self._login_payload))
+            self.fs.info(self._login_page)
+            self._connected = True
+        except ErddapHTTPUnauthorized:
+            self._connected = False
+        except:  #noqa: E722
+            raise
+        return self._connected
+
+    @property
+    def connected(self):
+        if not hasattr(self, '_connected'):
+            self.connect()
+        return self._connected
+
+
+def httpstore_erddap(url: str = "",
+                     cache: bool = False,
+                     cachedir: str = "",
+                     **kwargs):
+
+    login_page = "%s/login.html" % url.rstrip("/")
+    login_store = httpstore_erddap_auth(cache=cache, cachedir=cachedir, login=login_page, auto=False, **kwargs)
+    try:
+        login_store.connect()
+        keep = True
+    except ErddapHTTPNotFound:
+        keep = False
+        pass
+
+    if keep:
+        return login_store
+    else:
+        return httpstore(cache=cache, cachedir=cachedir, **kwargs)

@@ -3460,6 +3460,9 @@ def cast_types(ds):  # noqa: C901
         "HISTORY_PARAMETER",
         "VERTICAL_SAMPLING_SCHEME",
         "FLOAT_SERIAL_NO",
+        "SOURCE",
+        "EXPOCODE",
+        "QCLEVEL",
     ]
     list_int = [
         "PLATFORM_NUMBER",

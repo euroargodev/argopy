@@ -125,3 +125,14 @@ class ArgovisServerError(APIServerError):
     """Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery."""
 
     pass
+
+
+class ErddapHTTPUnauthorized(APIServerError):
+    """Raise when login to erddap fails"""
+
+    pass
+
+class ErddapHTTPNotFound(APIServerError):
+    """Raise when erddap ressource is not found"""
+
+    pass

@@ -1,5 +1,6 @@
 import logging
 import numpy as np
+import pandas as pd
 
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.utilities import is_list_of_strings
