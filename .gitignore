@@ -197,3 +197,4 @@ argopy/tests/cov.xml
 argopy/tests/dummy_fileA.txt
 float_source/
 cli/
+argopy/tests/test_tobeignored.py
