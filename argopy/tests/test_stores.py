@@ -906,7 +906,7 @@ class IndexStore_test_proto:
         idx = idx.search_wmo(wmo)
 
         # Then save this search as a new Argo index file:
-        tf = tempfile.NamedTemporaryFile(delete=True, mode='w')
+        tf = tempfile.NamedTemporaryFile(delete=False)
         new_indexfile = idx.to_indexfile(tf.name)
 
         # Finally try to load the new index file, like it was an official one:
