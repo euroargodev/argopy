@@ -2142,7 +2142,7 @@ class ArgoAccessor:
             return list_1d, dummy_argo_uid
 
 
-def my_open_dataset(filename_or_obj, drop_variables=None):
+def my_open_dataset(filename_or_obj):
     ds = xr.open_dataset(filename_or_obj, decode_cf=1, use_cftime=0, mask_and_scale=1)
     ds = cast_Argo_variable_type(ds)
     return ds
@@ -2160,9 +2160,9 @@ class ArgoEngine(BackendEntrypoint):
         # other backend specific keyword arguments
         # `chunks` and `cache` DO NOT go here, they are handled by xarray
     ):
-        return my_open_dataset(filename_or_obj, drop_variables=drop_variables)
+        return my_open_dataset(filename_or_obj)
 
-    open_dataset_parameters = ["filename_or_obj", "drop_variables"]
+    open_dataset_parameters = ["filename_or_obj"]
 
     def guess_can_open(self, filename_or_obj):
         try:
