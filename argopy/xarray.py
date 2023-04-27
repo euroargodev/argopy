@@ -31,7 +31,7 @@ log = logging.getLogger("argopy.xarray")
 
 
 def cast_Argo_variable_type(ds):
-    """Cast Argo type of all DataArray in any DataSet"""
+    """List of  Argo variable in appropriate type in a DataSet"""
 
     list_str = [
         "PLATFORM_NUMBER",
@@ -68,7 +68,50 @@ def cast_Argo_variable_type(ds):
 
         # Trajectory file variables:
         'TRAJECTORY_PARAMETERS', 'POSITION_ACCURACY', 'GROUNDED', 'SATELLITE_NAME', 'HISTORY_INDEX_DIMENSION',
+
+        # Technical file variables:
+        'TECHNICAL_PARAMETER_NAME', 'TECHNICAL_PARAMETER_VALUE', 'PTT',
+
+        # Metadata file variables:
+        'END_MISSION_STATUS',
+        'TRANS_SYSTEM',
+         'TRANS_SYSTEM_ID',
+         'TRANS_FREQUENCY',
+         'PLATFORM_FAMILY',
+         'PLATFORM_MAKER',
+         'MANUAL_VERSION',
+         'STANDARD_FORMAT_ID',
+         'DAC_FORMAT_ID',
+         'ANOMALY',
+         'BATTERY_TYPE',
+         'BATTERY_PACKS',
+         'CONTROLLER_BOARD_TYPE_PRIMARY',
+         'CONTROLLER_BOARD_TYPE_SECONDARY',
+         'CONTROLLER_BOARD_SERIAL_NO_PRIMARY',
+         'CONTROLLER_BOARD_SERIAL_NO_SECONDARY',
+         'SPECIAL_FEATURES',
+         'FLOAT_OWNER',
+         'OPERATING_INSTITUTION',
+         'CUSTOMISATION',
+         'DEPLOYMENT_PLATFORM',
+         'DEPLOYMENT_CRUISE_ID',
+         'DEPLOYMENT_REFERENCE_STATION_ID',
+         'LAUNCH_CONFIG_PARAMETER_NAME',
+         'CONFIG_PARAMETER_NAME',
+         'CONFIG_MISSION_COMMENT',
+         'SENSOR',
+         'SENSOR_MAKER',
+         'SENSOR_MODEL',
+         'SENSOR_SERIAL_NO',
+         'PARAMETER_SENSOR',
+         'PARAMETER_UNITS',
+         'PARAMETER_ACCURACY',
+         'PARAMETER_RESOLUTION',
+         'PREDEPLOYMENT_CALIB_EQUATION',
+         'PREDEPLOYMENT_CALIB_COEFFICIENT',
+         'PREDEPLOYMENT_CALIB_COMMENT',
     ]
+
     [list_str.append("PROFILE_{}_QC".format(v)) for v in list(ArgoNVSReferenceTables().tbl(3)["altLabel"])]
 
     list_int = [
@@ -95,6 +138,9 @@ def cast_Argo_variable_type(ds):
         "SCIENTIFIC_CALIB_DATE",
         "HISTORY_DATE",
         "TIME",
+
+        # Metadata file variables:
+        'LAUNCH_DATE', 'START_DATE', 'STARTUP_DATE', 'END_MISSION_DATE',
     ]
 
     def cast_this(da, type):
