@@ -716,10 +716,10 @@ file,date,latitude,longitude,ocean,profiler_type,institution,date_update
 """ % pd.to_datetime('now', utc=True).strftime('%Y%m%d%H%M%S')
 
         with open(originalfile, 'r') as f:
-            with open('newfile.txt', 'w') as f2:
-                f2.write(header)
-                f2.write(f.read())
-        f.close()
-        os.remove(originalfile)
-        os.rename('newfile.txt', originalfile)
+            data = f.read()
+
+        with open(originalfile, 'w') as f:
+            f.write(header)
+            f.write(data)
+
         return originalfile
