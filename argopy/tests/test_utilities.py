@@ -785,12 +785,12 @@ class Test_ArgoNVSReferenceTables:
         assert isinstance(names[2], str)
 
     def test_all_tbl(self):
-        all = self.nvs.all_tbl()
+        all = self.nvs.all_tbl
         assert isinstance(all, OrderedDict)
         assert isinstance(all[list(all.keys())[0]], pd.DataFrame)
 
     def test_all_tbl_name(self):
-        all = self.nvs.all_tbl_name()
+        all = self.nvs.all_tbl_name
         assert isinstance(all, OrderedDict)
         assert isinstance(all[list(all.keys())[0]], tuple)
 
