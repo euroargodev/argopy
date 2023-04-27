@@ -23,6 +23,8 @@ v0.1.14 (XX Xxx. 2023)
         f = CTDRefDataFetcher(box=[15, 30, -70, -60, 0, 5000.0])
         ds = f.to_xarray()
 
+- Index store can now export search results to standard Argo index files. (pr:`260`) by `G. Maze <http://www.github.com/gmaze>`_
+
 **Internals**
 
 - Use a mocked server for all http and GDAC ftp requests in CI tests (:pr:`249`, :pr:`252`, :pr:`255`) by `G. Maze <http://www.github.com/gmaze>`_

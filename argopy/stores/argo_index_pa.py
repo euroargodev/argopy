@@ -4,6 +4,7 @@ Argo file index store
 Implementation based on pyarrow
 """
 
+import os
 import numpy as np
 import pandas as pd
 import logging
@@ -400,3 +401,34 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         self.search_filter = self._reduce_a_filter_list(filt, op='and')
         self.run(nrows=nrows)
         return self
+
+    def to_indexfile(self, file):
+        """Save search result on file like an index profile
+
+        Parameters
+        ----------
+        file: str
+            File path to write search results to
+
+        Returns
+        -------
+        str
+        """
+        def convert_a_date(row):
+            try:
+                return row.strftime('%Y%m%d%H%M%S')
+            except:
+                return ""
+
+        new_date = pa.array(self.search['date'].to_pandas().apply(convert_a_date))
+        new_date_update = pa.array(self.search['date_update'].to_pandas().apply(convert_a_date))
+
+        s = self.search
+        s = s.set_column(1, "date", new_date)
+        s = s.set_column(7, "date_update", new_date_update)
+
+        write_options = csv.WriteOptions(delimiter=",", include_header=False, quoting_style="none")
+        csv.write_csv(s, file, write_options=write_options)
+        file = self._insert_header(file)
+
+        return file

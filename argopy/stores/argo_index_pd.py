@@ -324,3 +324,24 @@ class indexstore_pandas(ArgoIndexStoreProto):
         self.search_filter = np.logical_and.reduce(filt)
         self.run(nrows=nrows)
         return self
+
+    def to_indexfile(self, outputfile):
+        """Save search result on file like an index profile
+
+        Parameters
+        ----------
+        file: str
+            File path to write search results to
+
+        Returns
+        -------
+        str
+        """
+
+        self.search.to_csv(outputfile, sep=',', index=False, index_label=False,
+                      header=False,
+                      columns=['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
+                               'date_update'])
+        outputfile = self._insert_header(outputfile)
+
+        return outputfile
