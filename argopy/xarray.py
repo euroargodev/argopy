@@ -65,6 +65,9 @@ def cast_Argo_variable_type(ds):
         "VERTICAL_SAMPLING_SCHEME",
         "FLOAT_SERIAL_NO",
         "PARAMETER_DATA_MODE",
+
+        # Trajectory file variables:
+        'TRAJECTORY_PARAMETERS', 'POSITION_ACCURACY', 'GROUNDED', 'SATELLITE_NAME', 'HISTORY_INDEX_DIMENSION',
     ]
     [list_str.append("PROFILE_{}_QC".format(v)) for v in list(ArgoNVSReferenceTables().tbl(3)["altLabel"])]
 
@@ -74,6 +77,14 @@ def cast_Argo_variable_type(ds):
         "WMO_INST_TYPE",
         "CYCLE_NUMBER",
         "CONFIG_MISSION_NUMBER",
+
+        # Trajectory file variables:
+        'JULD_STATUS', 'JULD_ADJUSTED_STATUS', 'JULD_DESCENT_START_STATUS',
+        'JULD_FIRST_STABILIZATION_STATUS', 'JULD_DESCENT_END_STATUS', 'JULD_PARK_START_STATUS', 'JULD_PARK_END_STATUS',
+        'JULD_DEEP_DESCENT_END_STATUS', 'JULD_DEEP_PARK_START_STATUS', 'JULD_DEEP_ASCENT_START_STATUS',
+        'JULD_ASCENT_START_STATUS', 'JULD_ASCENT_END_STATUS', 'JULD_TRANSMISSION_START_STATUS',
+        'JULD_FIRST_MESSAGE_STATUS', 'JULD_FIRST_LOCATION_STATUS', 'JULD_LAST_LOCATION_STATUS',
+        'JULD_LAST_MESSAGE_STATUS', 'JULD_TRANSMISSION_END_STATUS', 'REPRESENTATIVE_PARK_PRESSURE_STATUS',
     ]
     list_datetime = [
         "REFERENCE_DATE_TIME",
@@ -95,16 +106,31 @@ def cast_Argo_variable_type(ds):
         except Exception:
             print("Oops!", sys.exc_info()[0], "occurred.")
             print("Fail to cast %s[%s] from '%s' to %s" % (da.name, da.dims, da.dtype, type))
-            print("Unique values:", np.unique(da))
+            try:
+                print("Unique values:", np.unique(da))
+            except:
+                print("Can't read unique values !")
+                pass
         return da
 
     def cast_this_da(da):
         """ Cast any DataArray """
+        # print("Casting %s ..." % da.name)
         da.attrs["casted"] = 0
+
         if v in list_str and da.dtype == "O":  # Object
             da = cast_this(da, str)
 
         if v in list_int:  # and da.dtype == 'O':  # Object
+            if (
+                    "conventions" in da.attrs
+                    and da.attrs["conventions"] in ["Argo reference table 19", "Argo reference table 21"]
+            ):
+                # Some values may be missing, and the _FillValue=" " cannot be casted as an integer.
+                # so, we replace missing values with a 999:
+                val = da.astype(str).values
+                val[np.where(val == 'nan')] = '999'
+                da.values = val
             da = cast_this(da, int)
 
         if v in list_datetime and da.dtype == "O":  # Object
