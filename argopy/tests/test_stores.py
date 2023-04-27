@@ -905,13 +905,16 @@ class IndexStore_test_proto:
         wmo = [s['wmo'] for s in VALID_SEARCHES if 'wmo' in s.keys()][0]
         idx = idx.search_wmo(wmo)
 
-        # Then save this search as new Argo index file:
-        tf = tempfile.NamedTemporaryFile(delete=True)
+        # Then save this search as a new Argo index file:
+        tf = tempfile.NamedTemporaryFile(delete=True, mode='w')
         new_indexfile = idx.to_indexfile(tf.name)
 
-        # Test succeeds if we can load this new index, like it was an official one:
+        # Finally try to load the new index file, like it was an official one:
         idx = self.new_idx(host=os.path.dirname(new_indexfile), index_file=os.path.basename(new_indexfile))
         self.assert_index(idx.load())
+
+        # Cleanup
+        tf.close()
 
 
 @skip_this
