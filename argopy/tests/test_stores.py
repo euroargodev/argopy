@@ -31,7 +31,7 @@ from argopy.options import OPTIONS
 from argopy.errors import (
     FileSystemHasNoCache,
     CacheFileNotFound,
-    FtpPathError, 
+    FtpPathError,
     InvalidMethod,
     DataNotFound,
     OptionValueError,
@@ -664,13 +664,13 @@ class Test_Legacy_IndexStore:
 
 
 """
-List ftp hosts to be tested. 
+List gdac hosts to be tested. 
 Since the fetcher is compatible with host from local, http or ftp protocols, we
 try to test them all:
 """
 VALID_HOSTS = [argopy.tutorial.open_dataset("gdac")[0],
              #'https://data-argo.ifremer.fr',
-               mocked_server_address,
+             mocked_server_address,
              # 'ftp://ftp.ifremer.fr/ifremer/argo',
              # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but takes too long to respond, slow down CI
              'MOCKFTP',  # keyword to use a fake/mocked ftp server (running on localhost)
@@ -680,16 +680,19 @@ VALID_HOSTS = [argopy.tutorial.open_dataset("gdac")[0],
 List index searches to be tested.
 """
 VALID_SEARCHES = [
-    {"wmo": [13857]},
+    # {"wmo": [13857]},
+    {"wmo": [3902131]},  # BGC
     # {"wmo": [6901929, 2901623]},
-    {"cyc": [5 ,45]},
-    {"wmo_cyc": [13857, 2]},
+    {"cyc": [5, 45]},
+    # {"wmo_cyc": [13857, 2]},
+    {"wmo_cyc": [3902131, 2]},  # BGC
     {"tim": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"lat_lon": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"lat_lon_tim": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
+    {"params": ['C1PHASE_DOXY', 'DOWNWELLING_PAR']},
     ]
 
-def run_a_search(idx_maker, fetcher_args, search_point, xfail=False):
+def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason='?'):
     """ Create and run a search on a given index store
 
         Use xfail=True when a test with this is expected to fail
@@ -709,9 +712,15 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False):
                 idx.search_lat_lon(apts['lat_lon'])
             if "lat_lon_tim" in apts:
                 idx.search_lat_lon_tim(apts['lat_lon_tim'])
-        except Exception:
-            raise
+            if "params" in apts:
+                idx.search_params(apts['params'])
+        except:
+            if xfail:
+                pytest.xfail(reason)
+            else:
+                raise
         return idx
+
     return core(fetcher_args, search_point)
 
 
@@ -727,7 +736,6 @@ def ftp_shortname(ftp):
 
 class IndexStore_test_proto:
     host, flist = argopy.tutorial.open_dataset("gdac")
-    index_file = "ar_index_global_prof.txt"
 
     search_scenarios = [(h, ap) for h in VALID_HOSTS for ap in VALID_SEARCHES]
     search_scenarios_ids = [
@@ -769,6 +777,7 @@ class IndexStore_test_proto:
     def _setup_store(self, this_request, cached=False):
         """Helper method to set up options for an index store creation"""
         index_file = self.index_file
+        convention = None
         if hasattr(this_request, 'param'):
             if isinstance(this_request.param, tuple):
                 host = this_request.param[0]
@@ -777,8 +786,9 @@ class IndexStore_test_proto:
         else:
             host = this_request['param']['host']
             index_file = this_request['param']['index_file']
+            convention = this_request['param']['convention']
         N_RECORDS = None if 'tutorial' in host or 'MOCK' in host else 100  # Make sure we're not going to load the full index
-        fetcher_args = {"host": self._patch_ftp(host), "index_file": index_file, "cache": False}
+        fetcher_args = {"host": self._patch_ftp(host), "index_file": index_file, "cache": False, "convention": convention}
         if cached:
             fetcher_args = {**fetcher_args, **{"cache": True, "cachedir": self.cachedir}}
         return fetcher_args, N_RECORDS
@@ -786,7 +796,8 @@ class IndexStore_test_proto:
     def new_idx(self, cache=False, cachedir=None, **kwargs):
         host = kwargs['host'] if 'host' in kwargs else self.host
         index_file = kwargs['index_file'] if 'index_file' in kwargs else self.index_file
-        fetcher_args, N_RECORDS = self._setup_store({'param': {'host': host, 'index_file': index_file}}, cached=cache)
+        convention = kwargs['convention'] if 'convention' in kwargs else None
+        fetcher_args, N_RECORDS = self._setup_store({'param': {'host': host, 'index_file': index_file, 'convention': convention}}, cached=cache)
         idx = self.create_store(fetcher_args).load(nrows=N_RECORDS)
         return idx
 
@@ -802,7 +813,10 @@ class IndexStore_test_proto:
         """ Fixture to create a FTP fetcher for a given host and access point """
         host = request.param[0]
         srch = request.param[1]
-        yield run_a_search(self.new_idx, {'host': host, 'cache': True}, srch)
+        xfail = self.index_file == 'ar_index_global_prof.txt' and 'params' in srch
+        reason = "'params' search only available to BGC profile index" if xfail else '?'
+        # log.debug("a_search: %s, %s, %s" % (self.index_file, srch, xfail))
+        yield run_a_search(self.new_idx, {'host': host, 'cache': True}, srch, xfail=xfail, reason=reason)
 
     def assert_index(self, this_idx, cacheable=False):
         assert hasattr(this_idx, 'index')
@@ -851,7 +865,6 @@ class IndexStore_test_proto:
 
         with pytest.raises(OptionValueError):
             idx = self.indexstore(host=self.host, index_file="ar_greylist.txt", cache=False)
-            idx.load()
 
     @pytest.mark.parametrize("a_search", search_scenarios, indirect=True, ids=search_scenarios_ids)
     def test_search(self, mocked_httpserver, a_search):
@@ -908,16 +921,18 @@ class IndexStore_test_proto:
 
     def test_to_indexfile(self):
         # Create a store and make a simple float search:
-        idx = self.new_idx()
+        idx0 = self.new_idx()
         wmo = [s['wmo'] for s in VALID_SEARCHES if 'wmo' in s.keys()][0]
-        idx = idx.search_wmo(wmo)
+        idx0 = idx0.search_wmo(wmo)
 
         # Then save this search as a new Argo index file:
         tf = tempfile.NamedTemporaryFile(delete=False)
-        new_indexfile = idx.to_indexfile(tf.name)
+        new_indexfile = idx0.to_indexfile(tf.name)
 
         # Finally try to load the new index file, like it was an official one:
-        idx = self.new_idx(host=os.path.dirname(new_indexfile), index_file=os.path.basename(new_indexfile))
+        idx = self.new_idx(host=os.path.dirname(new_indexfile),
+                           index_file=os.path.basename(new_indexfile),
+                           convention=idx0.convention)
         self.assert_index(idx.load())
 
         # Cleanup
@@ -925,12 +940,28 @@ class IndexStore_test_proto:
 
 
 @skip_this
-class Test_IndexStore_pandas(IndexStore_test_proto):
+class Test_IndexStore_pandas_CORE(IndexStore_test_proto):
     indexstore = indexstore_pandas
+    index_file = "ar_index_global_prof.txt"
 
 
 @skip_this
 @skip_pyarrow
-class Test_IndexStore_pyarrow(IndexStore_test_proto):
+class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto):
     from argopy.stores.argo_index_pa import indexstore_pyarrow
     indexstore = indexstore_pyarrow
+    index_file = "ar_index_global_prof.txt"
+
+
+@skip_this
+class Test_IndexStore_pandas_BGC(IndexStore_test_proto):
+    indexstore = indexstore_pandas
+    index_file = "argo_bio-profile_index.txt"
+
+
+@skip_this
+@skip_pyarrow
+class Test_IndexStore_pyarrow_BGC(IndexStore_test_proto):
+    from argopy.stores.argo_index_pa import indexstore_pyarrow
+    indexstore = indexstore_pyarrow
+    index_file = "argo_bio-profile_index.txt"
