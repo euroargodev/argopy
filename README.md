@@ -23,10 +23,8 @@ pip install argopy
 
 ### Usage
 
-[![badge](https://img.shields.io/static/v1.svg?logo=Jupyter&label=Binder&message=Click+here+to+try+argopy+online+!&color=blue&style=for-the-badge)](https://mybinder.org/v2/gh/euroargodev/binder-sandbox/main?urlpath=git-pull%3Frepo%3Dhttps%253A%252F%252Fgithub.com%252Feuroargodev%252Fargopy%26urlpath%3Dlab%252Ftree%252Fargopy%252Fdocs%252Ftryit.ipynb%26branch%3Dmaster)
-
 ```python
-# Import the main fetcher:
+# Import the main data fetcher:
 from argopy import DataFetcher as ArgoDataFetcher
 ```
 ```python
@@ -51,10 +49,11 @@ ArgoSet.plot('trajectory')
 
 They are many more usages and fine-tuning to allow you to access and manipulate Argo data:
 - [filters at fetch time](https://argopy.readthedocs.io/en/latest/user_mode.html) (standard vs expert users, automatically select QC flags or data mode, ...)
-- [select data sources](https://argopy.readthedocs.io/en/latest/data_sources.html) (erddap, ftp, local, ...)
+- [select data sources](https://argopy.readthedocs.io/en/latest/data_sources.html) (erddap, ftp, local, argovis, ...)
 - [manipulate data](https://argopy.readthedocs.io/en/latest/data_manipulation.html) (points, profiles, interpolations, binning, ...)
 - [visualisation](https://argopy.readthedocs.io/en/latest/visualisation.html) (trajectories, topography, histograms, ...)
 - [tools for Quality Control](https://argopy.readthedocs.io/en/latest/data_quality_control.html) (OWC, figures, ...)
+- [access meta-data and other Argo-related datasets](https://argopy.readthedocs.io/en/latest/metadata_fetching.html) (index, reference tables, deployment plans, topography, ...)
 - [improve performances](https://argopy.readthedocs.io/en/latest/performances.html) (caching, parallel data fetching)
 
 Just check out [the documentation for more](https://argopy.readthedocs.io) ! 
