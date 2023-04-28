@@ -28,7 +28,14 @@ from argopy.stores import (
 )
 from argopy.stores.filesystems import new_fs
 from argopy.options import OPTIONS
-from argopy.errors import FileSystemHasNoCache, CacheFileNotFound, InvalidDatasetStructure, FtpPathError, InvalidMethod, DataNotFound
+from argopy.errors import (
+    FileSystemHasNoCache,
+    CacheFileNotFound,
+    FtpPathError, 
+    InvalidMethod,
+    DataNotFound,
+    OptionValueError,
+)
 from argopy.utilities import (
     is_list_of_datasets,
     is_list_of_dicts,
@@ -842,7 +849,7 @@ class IndexStore_test_proto:
         # Since no search was triggered:
         assert idx.N_FILES == idx.N_RECORDS
 
-        with pytest.raises(InvalidDatasetStructure):
+        with pytest.raises(OptionValueError):
             idx = self.indexstore(host=self.host, index_file="ar_greylist.txt", cache=False)
             idx.load()
 
