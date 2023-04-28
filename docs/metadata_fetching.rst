@@ -61,6 +61,9 @@ At this point, we implemented an index store that can rely on 2 differents inter
 
 All index store methods and properties are fully documented in :class:`argopy.stores.indexstore_pa` and :class:`argopy.stores.indexstore_pd`.
 
+Usage
+"""""
+
 First, you should select which internal storage format you want. Don't worry, they both provide the same user API.
 
 .. note::
@@ -137,15 +140,16 @@ And finally the list of methods and properties for **search results**:
 
 .. hint::
 
-    The **argopy** index store supports the Bio-Profile directory file with the list of all individual bio-profile files:
+    The **argopy** index store supports the Bio and Synthetic Profile directory files:
 
     .. ipython:: python
         :okwarning:
 
         idx = indexstore(index_file="argo_bio-profile_index.txt").load()
+        # idx = indexstore(index_file="argo_synthetic-profile_index.txt").load()
         idx
 
-    This specific index store comes with an additional search possibility: by parameters:
+    This BGC index store comes with an additional search possibility for parameters:
 
     .. ipython:: python
         :okwarning:
@@ -157,8 +161,45 @@ And finally the list of methods and properties for **search results**:
 
         idx.to_dataframe()
 
-.. warning::
-    At this point, **argopy** support access to the Argo GDAC "Profile" and "Bio-Profile" directory files. Other index files can be added on demand. `Click here to raise an issue if you'd like to access other index files <https://github.com/euroargodev/argopy/issues/new>`_.
+
+Index file supported
+""""""""""""""""""""
+
+The table below summarize the **argopy** support status of all Argo index files:
+
+.. list-table:: **argopy** GDAC index file support status
+    :header-rows: 1
+    :stub-columns: 1
+
+    * -
+      - Index file
+      - Supported
+    * - Profile
+      - ar_index_global_prof.txt
+      - ✅
+    * - Synthetic-Profile
+      - argo_synthetic-profile_index.txt
+      - ✅
+    * - Bio-Profile
+      - argo_bio-profile_index.txt
+      - ✅
+    * - Trajectory
+      - ar_index_global_traj.txt
+      - 🔜
+    * - Bio-Trajectory
+      - argo_bio-traj_index.txt
+      - 🔜
+    * - Metadata
+      - ar_index_global_meta.txt
+      - ❌
+    * - Technical
+      - ar_index_global_tech.txt
+      - ❌
+    * - Greylist
+      - ar_greylist.txt
+      - ❌
+
+Index files support can be added on demand. `Click here to raise an issue if you'd like to access other index files <https://github.com/euroargodev/argopy/issues/new>`_.
 
 
 Reference tables
