@@ -252,6 +252,10 @@ class ArgoIndexStoreProto(ABC):
                 cname = ";".join(["CYC%i" % cyc for cyc in sorted(CYC)])
             cname = "%s" % cname
 
+        elif "PARAM" in self.search_type:
+            PARAM = self.search_type["PARAM"]
+            cname = "-".join(PARAM)
+
         return cname
 
     def _sha_from(self, path):
@@ -721,6 +725,28 @@ class ArgoIndexStoreProto(ABC):
 
         """
         raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def search_params(self, PARAMs):
+        """ Search index for a list of parameters
+
+        Parameters
+        ----------
+        PARAMs : list()
+            A list of strings to search Argo records for.
+
+        Examples
+        --------
+        >>> idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
+
+        Warnings
+        --------
+        This method is only available for index following the 'argo_bio-profile_index' convention.
+
+        """
+        raise NotImplementedError("Not implemented")
+
+
 
     def _insert_header(self, originalfile):
         if self.convention == "ar_index_global_prof":

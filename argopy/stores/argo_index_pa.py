@@ -12,7 +12,7 @@ import io
 import gzip
 from packaging import version
 
-from ..errors import DataNotFound
+from ..errors import DataNotFound, InvalidDatasetStructure
 from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, doc_inherit
 from .argo_index_proto import ArgoIndexStoreProto
 try:
@@ -397,6 +397,30 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                 pa.array([pd.to_datetime(BOX[5])], pa.timestamp("ms"))[0],
             )
         )
+        self.search_filter = self._reduce_a_filter_list(filt, op='and')
+        self.run(nrows=nrows)
+        return self
+
+    def search_params(self, PARAMs, nrows=None):
+        if self.convention != "argo_bio-profile_index":
+            raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC profile index)")
+        log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
+        # Make sure we deal with a list
+        if not isinstance(PARAMs, list):
+            if isinstance(PARAMs, np.ndarray):
+                PARAMs = list(PARAMs)
+            else:
+                PARAMs = [PARAMs]
+        self.load()
+        self.search_type = {"PARAM": PARAMs}
+        filt = []
+        for param in PARAMs:
+            pattern = "%s" % param
+            filt.append(
+                pa.compute.match_substring_regex(
+                    self.index["parameters"], pattern=pattern
+                )
+            )
         self.search_filter = self._reduce_a_filter_list(filt, op='and')
         self.run(nrows=nrows)
         return self

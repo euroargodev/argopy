@@ -9,7 +9,7 @@ import pandas as pd
 import logging
 import gzip
 
-from ..errors import DataNotFound
+from ..errors import DataNotFound, InvalidDatasetStructure
 from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, doc_inherit
 from .argo_index_proto import ArgoIndexStoreProto
 
@@ -320,6 +320,27 @@ class indexstore_pandas(ArgoIndexStoreProto):
         filt.append(self.index["longitude"].le(BOX[1]))
         filt.append(self.index["latitude"].ge(BOX[2]))
         filt.append(self.index["latitude"].le(BOX[3]))
+        self.search_filter = np.logical_and.reduce(filt)
+        self.run(nrows=nrows)
+        return self
+
+    def search_params(self, PARAMs, nrows=None):
+        if self.convention != "argo_bio-profile_index":
+            raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC profile index)")
+        log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
+        # Make sure we deal with a list
+        if not isinstance(PARAMs, list):
+            if isinstance(PARAMs, np.ndarray):
+                PARAMs = list(PARAMs)
+            else:
+                PARAMs = [PARAMs]
+        self.load()
+        self.search_type = {"PARAM": PARAMs}
+        filt = []
+        for param in PARAMs:
+            filt.append(
+                self.index["parameters"].str.contains("%s" % param, regex=True, case=False)
+            )
         self.search_filter = np.logical_and.reduce(filt)
         self.run(nrows=nrows)
         return self
