@@ -35,6 +35,8 @@ v0.1.14 (XX Xxx. 2023)
     idx.to_indexfile('short_index.txt')  # export search results as standard Argo index csv file
 
 
+- **Index store can now load/search the BGC Argo profile index**.
+
 **Internals**
 
 - Use a mocked server for all http and GDAC ftp requests in CI tests (:pr:`249`, :pr:`252`, :pr:`255`) by `G. Maze <http://www.github.com/gmaze>`_
