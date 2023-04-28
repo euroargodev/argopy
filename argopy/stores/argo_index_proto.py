@@ -13,7 +13,7 @@ from fsspec.core import split_protocol
 from urllib.parse import urlparse
 
 from ..options import OPTIONS
-from ..errors import FtpPathError, InvalidDataset
+from ..errors import FtpPathError, InvalidDataset, OptionValueError
 from ..utilities import Registry, isconnected
 from .filesystems import httpstore, memorystore, filestore, ftpstore
 
@@ -85,6 +85,9 @@ class ArgoIndexStoreProto(ABC):
     ext = None
     """Storage file extension"""
 
+    convention_supported = ["ar_index_global_prof", "argo_bio-profile_index"]
+    """List of supported conventions"""
+
     def __init__(
         self,
         host: str = "https://data-argo.ifremer.fr",
@@ -92,6 +95,7 @@ class ArgoIndexStoreProto(ABC):
         cache: bool = False,
         cachedir: str = "",
         timeout: int = 0,
+        convention: str = None,
     ):
         """ Create an Argo index file store
 
@@ -104,8 +108,10 @@ class ArgoIndexStoreProto(ABC):
                 Name of the csv-like text file with the index
             cache : bool, default: False
                 Use cache or not.
-            cachedir : str, default: OPTIONS['cachedir'])
+            cachedir : str, default: OPTIONS['cachedir']
                 Folder where to store cached files
+            convention: str, default: ``ar_index_global_prof``
+                Set the expected format convention of the index file. This is useful when trying to load index file with custom name.
         """
         self.host = host
         self.index_file = index_file
@@ -154,10 +160,18 @@ class ArgoIndexStoreProto(ABC):
         if not index_found:
             raise FtpPathError("Index file does not exist: %s" % self.index_path)
 
+        if convention is None:
+            # Try to infer the convention from the file name:
+            convention = index_file.split(self.fs['src'].fs.sep)[-1].split(".")[0]
+        if convention not in self.convention_supported:
+            raise OptionValueError("Convention '%s' is not supported, it must be one in: %s" % (convention, self.convention_supported))
+        self._convention = convention
+
     def __repr__(self):
         summary = ["<argoindex.%s>" % self.backend]
         summary.append("Host: %s" % self.host)
         summary.append("Index: %s" % self.index_file)
+        summary.append("Convention: %s" % self.convention)
         if hasattr(self, "index"):
             summary.append("Loaded: True (%i records)" % self.N_RECORDS)
         else:
@@ -313,6 +327,11 @@ class ArgoIndexStoreProto(ABC):
             return self.search.shape[0]
         else:
             raise InvalidDataset("Initialised search first !")
+
+    @property
+    def convention(self):
+        """Convention of the index, expected csv format"""
+        return self._convention
 
     def _same_origin(self, path):
         """Compare origin of path with current memory fs"""
@@ -704,7 +723,8 @@ class ArgoIndexStoreProto(ABC):
         raise NotImplementedError("Not implemented")
 
     def _insert_header(self, originalfile):
-        header = """# Title : Profile directory file of the Argo Global Data Assembly Center
+        if self.convention == "ar_index_global_prof":
+            header = """# Title : Profile directory file of the Argo Global Data Assembly Center
 # Description : The directory file describes all individual profile files of the argo GDAC ftp site.
 # Project : ARGO
 # Format version : 2.0
@@ -713,6 +733,18 @@ class ArgoIndexStoreProto(ABC):
 # FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
 # GDAC node : CORIOLIS
 file,date,latitude,longitude,ocean,profiler_type,institution,date_update
+""" % pd.to_datetime('now', utc=True).strftime('%Y%m%d%H%M%S')
+
+        elif self.convention == "argo_bio-profile_index":
+            header = """# Title : Bio-Profile directory file of the Argo Global Data Assembly Center
+# Description : The directory file describes all individual bio-profile files of the argo GDAC ftp site.
+# Project : ARGO
+# Format version : 2.2
+# Date of update : %s
+# FTP root number 1 : ftp://ftp.ifremer.fr/ifremer/argo/dac
+# FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
+# GDAC node : CORIOLIS
+file,date,latitude,longitude,ocean,profiler_type,institution,parameters,parameter_data_mode,date_update
 """ % pd.to_datetime('now', utc=True).strftime('%Y%m%d%H%M%S')
 
         with open(originalfile, 'r') as f:

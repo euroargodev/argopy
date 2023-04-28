@@ -46,11 +46,10 @@ class indexstore_pandas(ArgoIndexStoreProto):
             return this_table
 
         def csv2index(obj, origin):
-            index_file = origin.split(self.fs['src'].fs.sep)[-1]
             index = read_csv(obj, nrows=nrows)
             check_index_cols(
                 index.columns.to_list(),
-                convention=index_file.split(".")[0],
+                convention=self.convention,
             )
             log.debug("Argo index file loaded with pandas read_csv. src='%s'" % origin)
             return index
@@ -338,10 +337,16 @@ class indexstore_pandas(ArgoIndexStoreProto):
         str
         """
 
+        if self.convention == "ar_index_global_prof":
+            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
+                               'date_update']
+        elif self.convention == "argo_bio-profile_index":
+            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
+                               'parameters', 'parameter_data_mode', 'date_update']
+
         self.search.to_csv(outputfile, sep=',', index=False, index_label=False,
                       header=False,
-                      columns=['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
-                               'date_update'])
+                      columns=columns)
         outputfile = self._insert_header(outputfile)
 
         return outputfile

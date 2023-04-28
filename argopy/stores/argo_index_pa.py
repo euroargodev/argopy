@@ -89,11 +89,10 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             return this_table
 
         def csv2index(obj, origin):
-            index_file = origin.split(self.fs['src'].fs.sep)[-1]
             index = read_csv(obj, nrows=nrows)
             check_index_cols(
                 index.column_names,
-                convention=index_file.split(".")[0],
+                convention=self.convention,
             )
             log.debug("Argo index file loaded with pyarrow read_csv. src='%s'" % origin)
             return index
@@ -425,7 +424,10 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
 
         s = self.search
         s = s.set_column(1, "date", new_date)
-        s = s.set_column(7, "date_update", new_date_update)
+        if self.convention == "ar_index_global_prof":
+            s = s.set_column(7, "date_update", new_date_update)
+        elif self.convention == "argo_bio-profile_index":
+            s = s.set_column(9, "date_update", new_date_update)
 
         write_options = csv.WriteOptions(delimiter=",", include_header=False, quoting_style="none")
         csv.write_csv(s, file, write_options=write_options)
