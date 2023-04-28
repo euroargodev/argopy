@@ -402,7 +402,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         return self
 
     def search_params(self, PARAMs, nrows=None):
-        if self.convention != "argo_bio-profile_index":
+        if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
             raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC profile index)")
         log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
         # Make sure we deal with a list
@@ -450,7 +450,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         s = s.set_column(1, "date", new_date)
         if self.convention == "ar_index_global_prof":
             s = s.set_column(7, "date_update", new_date_update)
-        elif self.convention == "argo_bio-profile_index":
+        elif self.convention in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
             s = s.set_column(9, "date_update", new_date_update)
 
         write_options = csv.WriteOptions(delimiter=",", include_header=False, quoting_style="none")

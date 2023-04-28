@@ -325,7 +325,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         return self
 
     def search_params(self, PARAMs, nrows=None):
-        if self.convention != "argo_bio-profile_index":
+        if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
             raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC profile index)")
         log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
         # Make sure we deal with a list
@@ -361,7 +361,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         if self.convention == "ar_index_global_prof":
             columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
                                'date_update']
-        elif self.convention == "argo_bio-profile_index":
+        elif self.convention in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
             columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
                                'parameters', 'parameter_data_mode', 'date_update']
 

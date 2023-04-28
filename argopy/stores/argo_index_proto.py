@@ -87,7 +87,7 @@ class ArgoIndexStoreProto(ABC):
     ext = None
     """Storage file extension"""
 
-    convention_supported = ["ar_index_global_prof", "argo_bio-profile_index"]
+    convention_supported = ["ar_index_global_prof", "argo_bio-profile_index", "argo_synthetic-profile_index"]
     """List of supported conventions"""
 
     def __init__(
@@ -774,6 +774,18 @@ file,date,latitude,longitude,ocean,profiler_type,institution,date_update
 # GDAC node : CORIOLIS
 file,date,latitude,longitude,ocean,profiler_type,institution,parameters,parameter_data_mode,date_update
 """ % pd.to_datetime('now', utc=True).strftime('%Y%m%d%H%M%S')
+
+        elif self.convention == "argo_synthetic-profile_index":
+            header = """# Title : Synthetic-Profile directory file of the Argo Global Data Assembly Center
+# Description : The directory file describes all individual synthetic-profile files of the argo GDAC ftp site.
+# Project : ARGO
+# Format version : 2.2
+# Date of update : %s
+# FTP root number 1 : ftp://ftp.ifremer.fr/ifremer/argo/dac
+# FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
+# GDAC node : CORIOLIS
+file,date,latitude,longitude,ocean,profiler_type,institution,parameters,parameter_data_mode,date_update
+"""  % pd.to_datetime('now', utc=True).strftime('%Y%m%d%H%M%S')
 
         with open(originalfile, 'r') as f:
             data = f.read()
