@@ -11,7 +11,14 @@ Index of profiles
 -----------------
 .. currentmodule:: argopy
 
-Since the Argo measurements dataset is quite complex, it comes with a collection of index files, or lookup tables with meta data. These index help you determine what you can expect before retrieving the full set of measurements. **argopy** has a specific fetcher for index files:
+Since the Argo measurements dataset is quite complex, it comes with a collection of index files, or lookup tables with meta data. These index help you determine what you can expect before retrieving the full set of measurements.
+
+**argopy** provides two methods to work with Argo index files: one is high-level and works like the data fetcher, the other is low-level and works like a "store".
+
+Fetcher: High-level Argo index access
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**argopy** has a specific fetcher for index files:
 
 .. ipython:: python
     :okwarning:
@@ -43,7 +50,94 @@ Alternatively, you can use :meth:`argopy.IndexFetcher.to_dataframe()`:
 
 The difference is that with the `load` method, data are stored in memory and not fetched on every call to the `index` attribute.
 
-The index fetcher has pretty much the same methods than the data fetchers. you can check them all here: :class:`argopy.fetchers.ArgoIndexFetcher`.
+The index fetcher has pretty much the same methods than the data fetchers. You can check them all here: :class:`argopy.fetchers.ArgoIndexFetcher`.
+
+
+Store: Low-level Argo Index access
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The IndexFetcher shown above is a user-friendly layer on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index store.
+At this point, we implemented an index store that can rely on 2 differents internal storage format for the index: one is using :class:`pyarrow.Table` and the other :class:`pandas.DataFrame`.
+
+All index store methods and properties are fully documented in :class:`argopy.stores.indexstore_pa` and :class:`argopy.stores.indexstore_pd`.
+
+First, you should select which internal storage format you want. Don't worry, they both provide the same user API.
+
+.. note::
+
+    To improve performances, we recommend to use the Pyarrow index store :class:`argopy.stores.indexstore_pa`. Loading the full Argo profile index takes about 2/3 secs with Pyarrow, while it can take up to 6/7 secs with Pandas.
+
+.. ipython:: python
+    :okwarning:
+
+    from argopy.stores import indexstore_pd as indexstore  # Rely on Pandas
+    # or:
+    # from argopy.stores import indexstore_pa as indexstore  # Rely on Pyarrow
+
+Then, you create the index store with default or custom options:
+
+.. ipython:: python
+    :okwarning:
+
+    idx = indexstore()
+    # or:
+    # indexstore(host="ftp://ftp.ifremer.fr/ifremer/argo")
+    # indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt")
+    # indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt", cache=True)
+
+You can then trigger loading of the index content:
+
+.. ipython:: python
+    :okwarning:
+
+    idx.load()  # Load the full index in memory
+
+Here is the list of methods and properties of the **full index**:
+
+.. code-block:: python
+
+    idx.load(nrows=12)  # Only load the first N rows of the index
+    idx.N_RECORDS  # Shortcut for length of 1st dimension of the index array
+    idx.to_dataframe(index=True)  # Convert index to user-friendly :class:`pandas.DataFrame`
+    idx.to_dataframe(index=True, nrows=2)  # Only returns the first nrows of the index
+    idx.index  # internal storage structure of the full index (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
+    idx.uri_full_index  # List of absolute path to files from the full index table column 'file'
+
+
+They are several methods to **search** the index, for instance:
+
+.. ipython:: python
+    :okwarning:
+
+    idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+
+Here the list of all methods to **search** the index:
+
+.. code-block:: python
+
+    idx.search_wmo(1901393)
+    idx.search_cyc(1)
+    idx.search_wmo_cyc(1901393, [1,12])
+    idx.search_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only time is used
+    idx.search_lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only lat/lon is used
+    idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
+
+
+And finally the list of methods and properties for **search results**:
+
+.. code-block:: python
+
+    idx.N_MATCH  # Shortcut for length of 1st dimension of the search results array
+    idx.to_dataframe()  # Convert search results to user-friendly :class:`pandas.DataFrame`
+    idx.to_dataframe(nrows=2)  # Only returns the first nrows of the search results
+    idx.to_indexfile("search_index.txt")  # Export search results to Argo standard index file
+    idx.search  # Internal table with search results
+    idx.uri  # List of absolute path to files from the search results table column 'file'
+
+
+.. warning::
+    At this point, **argopy** support access to the Argo GDAC "Profile directory file". Other index files can be added on demand. `Click here to raise an issue if you'd like to access other index files <https://github.com/euroargodev/argopy/issues/new>`_.
+
 
 Reference tables
 ----------------
