@@ -184,6 +184,7 @@
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_lat_lon
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_lat_lon_tim
     argopy.stores.argo_index_pa.indexstore_pyarrow.to_dataframe
+    argopy.stores.argo_index_pa.indexstore_pyarrow.to_indexfile
 
     argopy.stores.argo_index_pd.indexstore_pandas
     argopy.stores.argo_index_pd.indexstore_pandas.load
@@ -194,6 +195,7 @@
     argopy.stores.argo_index_pd.indexstore_pandas.search_lat_lon
     argopy.stores.argo_index_pd.indexstore_pandas.search_lat_lon_tim
     argopy.stores.argo_index_pd.indexstore_pandas.to_dataframe
+    argopy.stores.argo_index_pd.indexstore_pandas.to_indexfile
 
     argopy.xarray.ArgoAccessor.point2profile
     argopy.xarray.ArgoAccessor.profile2point

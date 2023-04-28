@@ -326,7 +326,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         return self
 
     def to_indexfile(self, outputfile):
-        """Save search result on file like an index profile
+        """Save search results on file, following the Argo standard index formats
 
         Parameters
         ----------

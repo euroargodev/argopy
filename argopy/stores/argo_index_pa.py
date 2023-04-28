@@ -403,7 +403,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         return self
 
     def to_indexfile(self, file):
-        """Save search result on file like an index profile
+        """Save search results on file, following the Argo standard index formats
 
         Parameters
         ----------

@@ -13,7 +13,7 @@ v0.1.14 (XX Xxx. 2023)
 
 **Features and front-end API**
 
-- **Argopy now provides authenticated access to the Argo reference database for DMQC**. Using user/password new **argopy** options, it is now possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (pr:`256`) by `G. Maze <http://www.github.com/gmaze>`_
+- **Argopy now provides authenticated access to the Argo reference database for DMQC**. Using user/password new **argopy** options, it is now possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -23,7 +23,17 @@ v0.1.14 (XX Xxx. 2023)
         f = CTDRefDataFetcher(box=[15, 30, -70, -60, 0, 5000.0])
         ds = f.to_xarray()
 
-- Index store can now export search results to standard Argo index files. (pr:`260`) by `G. Maze <http://www.github.com/gmaze>`_
+- **Index store can now export search results to standard Argo index files**. (:pr:`260`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy.stores import indexstore_pd as indexstore
+    # or:
+    # from argopy.stores import indexstore_pa as indexstore
+
+    idx = indexstore().search_wmo(3902131)  # Perform any search
+    idx.to_indexfile('short_index.txt')  # export search results as standard Argo index csv file
+
 
 **Internals**
 

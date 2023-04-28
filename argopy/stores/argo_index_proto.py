@@ -41,7 +41,7 @@ class ArgoIndexStoreProto(ABC):
         >>> idx = indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt")
         >>> idx = indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt", cache=True)
 
-        Index methods and properties:
+        Full index methods and properties:
 
         >>> idx.load()
         >>> idx.load(nrows=12)  # Only load the first N rows of the index
@@ -66,7 +66,7 @@ class ArgoIndexStoreProto(ABC):
         >>> idx.run()  # Run the search and save results in cache if necessary
         >>> idx.to_dataframe()  # Convert search results to user-friendly :class:`pandas.DataFrame`
         >>> idx.to_dataframe(nrows=2)  # Only returns the first nrows of the search results
-
+        >>> idx.to_indexfile("search_index.txt")  # Export search results to Argo standard index file
 
         Misc:
 
