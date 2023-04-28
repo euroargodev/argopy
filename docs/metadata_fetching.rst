@@ -135,8 +135,30 @@ And finally the list of methods and properties for **search results**:
     idx.uri  # List of absolute path to files from the search results table column 'file'
 
 
+.. hint::
+
+    The **argopy** index store supports the Bio-Profile directory file with the list of all individual bio-profile files:
+
+    .. ipython:: python
+        :okwarning:
+
+        idx = indexstore(index_file="argo_bio-profile_index.txt").load()
+        idx
+
+    This specific index store comes with an additional search possibility: by parameters:
+
+    .. ipython:: python
+        :okwarning:
+
+        idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
+
+    .. ipython:: python
+        :okwarning:
+
+        idx.to_dataframe()
+
 .. warning::
-    At this point, **argopy** support access to the Argo GDAC "Profile directory file". Other index files can be added on demand. `Click here to raise an issue if you'd like to access other index files <https://github.com/euroargodev/argopy/issues/new>`_.
+    At this point, **argopy** support access to the Argo GDAC "Profile" and "Bio-Profile" directory files. Other index files can be added on demand. `Click here to raise an issue if you'd like to access other index files <https://github.com/euroargodev/argopy/issues/new>`_.
 
 
 Reference tables

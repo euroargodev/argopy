@@ -48,6 +48,7 @@ class ArgoIndexStoreProto(ABC):
         >>> idx.N_RECORDS  # Shortcut for length of 1st dimension of the index array
         >>> idx.index  # internal storage structure of the full index (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
         >>> idx.shape  # shape of the full index array
+        >>> idx.convention  # What is the expected index format (core vs BGC profile index)
         >>> idx.uri_full_index  # List of absolute path to files from the full index table column 'file'
         >>> idx.to_dataframe(index=True)  # Convert index to user-friendly :class:`pandas.DataFrame`
         >>> idx.to_dataframe(index=True, nrows=2)  # Only returns the first nrows of the index
@@ -60,6 +61,7 @@ class ArgoIndexStoreProto(ABC):
         >>> idx.search_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
         >>> idx.search_lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
         >>> idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
+        >>> idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])  # Take a list of strings, only for BGC index !
         >>> idx.N_MATCH  # Shortcut for length of 1st dimension of the search results array
         >>> idx.search  # Internal table with search results
         >>> idx.uri  # List of absolute path to files from the search results table column 'file'

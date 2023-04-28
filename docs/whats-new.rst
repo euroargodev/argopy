@@ -23,7 +23,7 @@ v0.1.14 (XX Xxx. 2023)
         f = CTDRefDataFetcher(box=[15, 30, -70, -60, 0, 5000.0])
         ds = f.to_xarray()
 
-- **Index store can now export search results to standard Argo index file format**. (:pr:`260`) by `G. Maze <http://www.github.com/gmaze>`_
+- **Index store can now export search results to standard Argo index file format**. See all details in :ref:`Store: Low-level Argo Index access`. (:pr:`260`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -35,7 +35,16 @@ v0.1.14 (XX Xxx. 2023)
     idx.to_indexfile('short_index.txt')  # export search results as standard Argo index csv file
 
 
-- **Index store can now load/search the BGC Argo profile index**.
+- **Index store can now load/search the BGC Argo profile index**. Simply gives the name of the Bio-Profile index file and retrieve the full index. This  store also comes with a new search criteria: by parameters. See all details in :ref:`Store: Low-level Argo Index access`.  (:pr:`261`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy.stores import indexstore_pd as indexstore
+    # or:
+    # from argopy.stores import indexstore_pa as indexstore
+
+    idx = indexstore(index_file="argo_bio-profile_index.txt").load()
+    idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
 
 **Internals**
 
