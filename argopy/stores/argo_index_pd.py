@@ -10,7 +10,7 @@ import logging
 import gzip
 
 from ..errors import DataNotFound, InvalidDatasetStructure
-from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, doc_inherit
+from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, doc_inherit, to_list
 from .argo_index_proto import ArgoIndexStoreProto
 
 
@@ -343,12 +343,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
             raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC profile index)")
         log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
-        # Make sure we deal with a list
-        if not isinstance(PARAMs, list):
-            if isinstance(PARAMs, np.ndarray):
-                PARAMs = list(PARAMs)
-            else:
-                PARAMs = [PARAMs]
+        PARAMs = to_list(PARAMs)  # Make sure we deal with a list
         self.load()
         self.search_type = {"PARAM": PARAMs}
         filt = []
