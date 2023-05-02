@@ -74,6 +74,7 @@ class ArgoIndexStoreProto(ABC):
 
         >>> idx.cname
         >>> idx.read_wmo
+        >>> idx.read_params
         >>> idx.records_per_wmo
 
     """
@@ -173,7 +174,7 @@ class ArgoIndexStoreProto(ABC):
         summary = ["<argoindex.%s>" % self.backend]
         summary.append("Host: %s" % self.host)
         summary.append("Index: %s" % self.index_file)
-        summary.append("Convention: %s" % self.convention)
+        summary.append("Convention: %s (%s)" % (self.convention, self.convention_title))
         if hasattr(self, "index"):
             summary.append("Loaded: True (%i records)" % self.N_RECORDS)
         else:
@@ -336,8 +337,19 @@ class ArgoIndexStoreProto(ABC):
 
     @property
     def convention(self):
-        """Convention of the index, expected csv format"""
+        """Convention of the index (standard csv file name)"""
         return self._convention
+
+    @property
+    def convention_title(self):
+        """Long name for the index convention"""
+        if self.convention == 'ar_index_global_prof':
+            title = 'Profile directory file of the Argo GDAC'
+        elif self.convention == 'argo_bio-profile_index':
+            title = 'Bio-Profile directory file of the Argo GDAC'
+        elif self.convention == 'argo_synthetic-profile_index':
+            title = 'Synthetic-Profile directory file of the Argo GDAC'
+        return title
 
     def _same_origin(self, path):
         """Compare origin of path with current memory fs"""
@@ -520,7 +532,7 @@ class ArgoIndexStoreProto(ABC):
         return df
 
     def to_indexfile(self):
-        """Save search results on file, following the Argo standard index formats"""
+        """Save search results on file, following the Argo standard index format"""
         raise NotImplementedError("Not implemented")
 
     @property
@@ -558,7 +570,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def load(self, nrows=None, force=False):
-        """ Load an Argo-index file content
+        """ Load an Argo-index file content in memory
 
         Fill in self.index internal property
         If store is cached, caching is triggered here
@@ -579,7 +591,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def run(self):
-        """ Filter index with search criteria
+        """ Filter index with search criteria (internal use)
 
         Fill in self.search internal property
         If store is cached, caching is triggered here
@@ -596,7 +608,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def read_wmo(self):
-        """ Return list of unique WMOs in search results
+        """ Return list of unique WMOs in index or search results
 
         Fall back on full index if search not found
 
@@ -607,8 +619,20 @@ class ArgoIndexStoreProto(ABC):
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
+    def read_params(self):
+        """ Return list of unique PARAMETERs in index or search results
+
+        Fall back on full index if search not found
+
+        Returns
+        -------
+        list(str)
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
     def records_per_wmo(self):
-        """ Return the number of records per unique WMOs in search results
+        """ Return the number of records per unique WMOs in index or search results
 
         Fall back on full index if search not found
 

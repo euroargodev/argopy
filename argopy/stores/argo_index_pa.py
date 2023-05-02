@@ -243,6 +243,20 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         wmo = [int(w) for w in wmo]
         return wmo
 
+    def read_params(self, index=False):
+        if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
+            raise InvalidDatasetStructure("Cannot list parameters in this index (not a BGC profile index)")
+        if hasattr(self, "search") and not index:
+            df = pa.compute.split_pattern(self.search["parameters"], pattern=" ").to_pandas()
+        else:
+            df = pa.compute.split_pattern(self.index["parameters"], pattern=" ").to_pandas()
+        plist = set(df[0])
+        def fct(row):
+            [plist.add(v) for v in row]
+            return len(row)
+        df.map(fct)
+        return sorted(list(plist))
+
     def records_per_wmo(self, index=False):
         """ Return the number of records per unique WMOs in search results
 
