@@ -1504,6 +1504,16 @@ def is_list_equal(lst1, lst2):
     )
 
 
+def to_list(obj):
+    """Make sure that an expected list is indeed a list"""
+    if not isinstance(obj, list):
+        if isinstance(obj, np.ndarray):
+            obj = list(obj)
+        else:
+            obj = [obj]
+    return obj
+
+
 def check_wmo(lst, errors="raise"):
     """ Validate a WMO option and returned it as a list of integers
 
@@ -1521,11 +1531,7 @@ def check_wmo(lst, errors="raise"):
     is_wmo(lst, errors=errors)
 
     # Make sure we deal with a list
-    if not isinstance(lst, list):
-        if isinstance(lst, np.ndarray):
-            lst = list(lst)
-        else:
-            lst = [lst]
+    lst = to_list(lst)
 
     # Then cast list elements as integers
     return [abs(int(x)) for x in lst]
@@ -1548,11 +1554,7 @@ def is_wmo(lst, errors="raise"):  # noqa: C901
     """
 
     # Make sure we deal with a list
-    if not isinstance(lst, list):
-        if isinstance(lst, np.ndarray):
-            lst = list(lst)
-        else:
-            lst = [lst]
+    lst = to_list(lst)
 
     # Error message:
     # msg = "WMO must be an integer or an iterable with elements that can be casted as integers"
@@ -1604,11 +1606,7 @@ def check_cyc(lst, errors="raise"):
     is_cyc(lst, errors=errors)
 
     # Make sure we deal with a list
-    if not isinstance(lst, list):
-        if isinstance(lst, np.ndarray):
-            lst = list(lst)
-        else:
-            lst = [lst]
+    lst = to_list(lst)
 
     # Then cast list elements as integers
     return [abs(int(x)) for x in lst]
@@ -1628,11 +1626,7 @@ def is_cyc(lst, errors="raise"):  # noqa: C901
         True if cyc is indeed a list of integers
     """
     # Make sure we deal with a list
-    if not isinstance(lst, list):
-        if isinstance(lst, np.ndarray):
-            lst = list(lst)
-        else:
-            lst = [lst]
+    lst = to_list(lst)
 
     # Error message:
     msg = "CYC must be a single or a list of at most 4 digit positive numbers. Invalid: '{}'".format

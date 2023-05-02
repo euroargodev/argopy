@@ -12,8 +12,8 @@ import io
 import gzip
 from packaging import version
 
-from ..errors import DataNotFound
-from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, doc_inherit
+from ..errors import DataNotFound, InvalidDatasetStructure
+from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, doc_inherit, to_list
 from .argo_index_proto import ArgoIndexStoreProto
 try:
     import pyarrow.csv as csv  # noqa: F401
@@ -89,11 +89,10 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             return this_table
 
         def csv2index(obj, origin):
-            index_file = origin.split(self.fs['src'].fs.sep)[-1]
             index = read_csv(obj, nrows=nrows)
             check_index_cols(
                 index.column_names,
-                convention=index_file.split(".")[0],
+                convention=self.convention,
             )
             log.debug("Argo index file loaded with pyarrow read_csv. src='%s'" % origin)
             return index
@@ -243,6 +242,20 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         wmo = wmo.unique()
         wmo = [int(w) for w in wmo]
         return wmo
+
+    def read_params(self, index=False):
+        if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
+            raise InvalidDatasetStructure("Cannot list parameters in this index (not a BGC profile index)")
+        if hasattr(self, "search") and not index:
+            df = pa.compute.split_pattern(self.search["parameters"], pattern=" ").to_pandas()
+        else:
+            df = pa.compute.split_pattern(self.index["parameters"], pattern=" ").to_pandas()
+        plist = set(df[0])
+        def fct(row):
+            [plist.add(v) for v in row]
+            return len(row)
+        df.map(fct)
+        return sorted(list(plist))
 
     def records_per_wmo(self, index=False):
         """ Return the number of records per unique WMOs in search results
@@ -402,6 +415,25 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
+    def search_params(self, PARAMs, nrows=None):
+        if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
+            raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC profile index)")
+        log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
+        PARAMs = to_list(PARAMs) # Make sure we deal with a list
+        self.load()
+        self.search_type = {"PARAM": PARAMs}
+        filt = []
+        for param in PARAMs:
+            pattern = "%s" % param
+            filt.append(
+                pa.compute.match_substring_regex(
+                    self.index["parameters"], pattern=pattern
+                )
+            )
+        self.search_filter = self._reduce_a_filter_list(filt, op='and')
+        self.run(nrows=nrows)
+        return self
+
     def to_indexfile(self, file):
         """Save search results on file, following the Argo standard index formats
 
@@ -425,7 +457,10 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
 
         s = self.search
         s = s.set_column(1, "date", new_date)
-        s = s.set_column(7, "date_update", new_date_update)
+        if self.convention == "ar_index_global_prof":
+            s = s.set_column(7, "date_update", new_date_update)
+        elif self.convention in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
+            s = s.set_column(9, "date_update", new_date_update)
 
         write_options = csv.WriteOptions(delimiter=",", include_header=False, quoting_style="none")
         csv.write_csv(s, file, write_options=write_options)
