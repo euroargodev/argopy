@@ -46,6 +46,8 @@ v0.1.14 (XX Xxx. 2023)
     idx = indexstore(index_file="argo_bio-profile_index.txt").load()
     idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
 
+- New option to control the expiration time of cache file ``cache_expiration``. 
+
 **Internals**
 
 - Use a mocked server for all http and GDAC ftp requests in CI tests (:pr:`249`, :pr:`252`, :pr:`255`) by `G. Maze <http://www.github.com/gmaze>`_

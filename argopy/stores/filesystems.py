@@ -46,6 +46,7 @@ except ModuleNotFoundError:
 def new_fs(protocol: str = '',
            cache: bool = False,
            cachedir: str = OPTIONS['cachedir'],
+           cache_expiration: int = OPTIONS['cache_expiration'],
            **kwargs):
     """ Create a new fsspec file system
 
@@ -83,7 +84,7 @@ def new_fs(protocol: str = '',
                                target_protocol=protocol,
                                target_options={**fsspec_kwargs},
                                cache_storage=cachedir,
-                               expiry_time=86400, cache_check=10)
+                               expiry_time=cache_expiration, cache_check=10)
         # We use a refresh rate for cache of 1 day,
         # since this is the update frequency of the Ifremer erddap
         cache_registry = Registry(name='Cache')  # Will hold uri cached by this store instance
