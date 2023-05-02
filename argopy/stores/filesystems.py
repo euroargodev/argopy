@@ -43,7 +43,11 @@ except ModuleNotFoundError:
     has_distributed = False
 
 
-def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cachedir'], **kwargs):
+def new_fs(protocol: str = '',
+           cache: bool = False,
+           cachedir: str = OPTIONS['cachedir'],
+           cache_expiration: int = OPTIONS['cache_expiration'],
+           **kwargs):
     """ Create a new fsspec file system
 
     Parameters
@@ -57,32 +61,35 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cac
         Other arguments passed to :class:`fsspec.filesystem`
 
     """
-    default_filesystem_kwargs = {'simple_links': True, "block_size": 0}
+    # Load default FSSPEC kwargs:
+    default_fsspec_kwargs = {'simple_links': True, "block_size": 0}
     if protocol == 'http':
-        default_filesystem_kwargs = {**default_filesystem_kwargs,
+        default_fsspec_kwargs = {**default_fsspec_kwargs,
                                      **{"client_kwargs": {"trust_env": OPTIONS['trust_env']}}}
     elif protocol == 'ftp':
-        default_filesystem_kwargs = {**default_filesystem_kwargs,
+        default_fsspec_kwargs = {**default_fsspec_kwargs,
                                      **{"block_size": 1000 * (2 ** 20)}}
-    filesystem_kwargs = {**default_filesystem_kwargs, **kwargs}
+    # Merge default with user arguments:
+    fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
 
+    # Create filesystem:
     if not cache:
-        fs = fsspec.filesystem(protocol, **filesystem_kwargs)
+        fs = fsspec.filesystem(protocol, **fsspec_kwargs)
         cache_registry = None
         log_msg = "Opening a fsspec [file] system for '%s' protocol with options: %s" % \
-                  (protocol, str(filesystem_kwargs))
+                  (protocol, str(fsspec_kwargs))
     else:
         # https://filesystem-spec.readthedocs.io/en/latest/_modules/fsspec/implementations/cached.html#WholeFileCacheFileSystem
         fs = fsspec.filesystem("filecache",
                                target_protocol=protocol,
-                               target_options={**filesystem_kwargs},
+                               target_options={**fsspec_kwargs},
                                cache_storage=cachedir,
-                               expiry_time=86400, cache_check=10)
+                               expiry_time=cache_expiration, cache_check=10)
         # We use a refresh rate for cache of 1 day,
         # since this is the update frequency of the Ifremer erddap
         cache_registry = Registry(name='Cache')  # Will hold uri cached by this store instance
         log_msg = "Opening a fsspec [filecache, storage='%s'] system for '%s' protocol with options: %s" % \
-                  (cachedir, protocol, str(filesystem_kwargs))
+                  (cachedir, protocol, str(fsspec_kwargs))
 
     if protocol == 'file' and os.path.sep != fs.sep:
         # For some reasons (see https://github.com/fsspec/filesystem_spec/issues/937), the property fs.sep is
@@ -97,8 +104,6 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cac
     log.debug(log_msg)
     # log_argopy_callerstack()
     return fs, cache_registry
-
-
 
 
 class argo_store_proto(ABC):
@@ -127,11 +132,11 @@ class argo_store_proto(ABC):
         """
         self.cache = cache
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        self._filesystem_kwargs = {**kwargs}
+        self._fsspec_kwargs = {**kwargs}
         self.fs, self.cache_registry = new_fs(self.protocol,
                                               self.cache,
                                               self.cachedir,
-                                              **self._filesystem_kwargs)
+                                              **self._fsspec_kwargs)
 
     def open(self, path, *args, **kwargs):
         self.register(path)
@@ -1163,8 +1168,8 @@ class httpstore_erddap_auth(httpstore):
         if "password" in self._login_payload and self._login_payload['password'] is None:
             self._login_payload['password'] = OPTIONS['password']
 
-        filesystem_kwargs = {**kwargs, **{"get_client": self.get_auth_client}}
-        super().__init__(cache=cache, cachedir=cachedir, **filesystem_kwargs)
+        fsspec_kwargs = {**kwargs, **{"get_client": self.get_auth_client}}
+        super().__init__(cache=cache, cachedir=cachedir, **fsspec_kwargs)
 
         if auto:
             assert isinstance(self.connect(), bool)
