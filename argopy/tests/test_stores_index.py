@@ -20,6 +20,7 @@ from argopy.stores import (
 from argopy.errors import (
     FtpPathError,
     OptionValueError,
+    InvalidDatasetStructure,
 )
 from argopy.utilities import (
     is_list_of_strings,
@@ -381,13 +382,14 @@ class IndexStore_test_proto:
 
     @pytest.mark.parametrize("index", [False, True], indirect=False, ids=["index=%s" % i for i in [False, True]])
     def test_read_params(self, index):
+        wmo = [s['wmo'] for s in VALID_SEARCHES if 'wmo' in s.keys()][0]
+        idx = self.new_idx().search_wmo(wmo)
         if self.network == 'bgc':
-            wmo = [s['wmo'] for s in VALID_SEARCHES if 'wmo' in s.keys()][0]
-            idx = self.new_idx().search_wmo(wmo)
             params = idx.read_params(index=index)
             assert is_list_of_strings(params)
         else:
-            pytest.skip("For BGC index only")
+            with pytest.raises(InvalidDatasetStructure):
+                idx.read_params(index=index)
 
     def test_records_per_wmo(self):
         wmo = [s['wmo'] for s in VALID_SEARCHES if 'wmo' in s.keys()][0]
