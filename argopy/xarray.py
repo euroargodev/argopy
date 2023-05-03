@@ -634,7 +634,7 @@ class ArgoAccessor:
         #########
         ds = self._obj
         if "DATA_MODE" not in ds:
-            if errors:
+            if errors == 'raise':
                 raise InvalidDatasetStructure(
                     "Method only available for dataset with a 'DATA_MODE' variable "
                 )
@@ -762,6 +762,10 @@ class ArgoAccessor:
                 "Invalid content for parameter 'QC_fields'. Use 'all' or a list of strings"
             )
 
+        if len(QC_fields) == 0:
+            this.argo._add_history("Variables selected according to QC (but found no QC variables)")
+            return this
+
         log.debug(
             "filter_qc: Filtering dataset to keep points with QC in %s for '%s' fields in %s"
             % (QC_list, mode, ",".join(QC_fields))
@@ -798,7 +802,7 @@ class ArgoAccessor:
     def filter_scalib_pres(self, force: str = "default", inplace: bool = True):
         """ Filter variables according to OWC salinity calibration software requirements
 
-        By default: this filter will return a dataset with raw PRES, PSAL and TEMP; and if PRES is adjusted,
+        By default, this filter will return a dataset with raw PRES, PSAL and TEMP; and if PRES is adjusted,
         PRES variable will be replaced by PRES_ADJUSTED.
 
         With option force='raw', you can force the filter to return a dataset with raw PRES, PSAL and TEMP whether
@@ -890,6 +894,42 @@ class ArgoAccessor:
             return self._obj
         else:
             return this
+
+    def filter_researchmode(self) -> xr.Dataset:
+        """Filter dataset for research user mode
+
+        This filter will select only QC=1 delayed mode data with pressure errors smaller than 20db
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+        """
+        this = self._obj
+
+        # Ensure to work with a collection of points
+        to_profile = False
+        if this.argo._type == "profile":
+            to_profile = True
+            this = this.argo.profile2point()
+
+        # Apply filter
+        this = this.argo.filter_data_mode(errors="ignore")
+        if 'DATA_MODE' in this.data_vars:
+            this = this.where(this['DATA_MODE'] == 'D', drop=True)
+        this = this.argo.filter_qc(QC_list=1)
+        if 'PRES_ERROR' in this.data_vars:  # PRES_ADJUSTED_ERROR was renamed PRES_ERROR by filter_data_mode
+            this = this.where(this['PRES_ERROR'] < 20, drop=True)
+
+        # Manage output:
+        if to_profile:
+            this = this.argo.point2profile()
+        this.argo._add_history("Variables selected for pressure error < 20db")
+        if this.argo.N_POINTS == 0:
+            log.warning("No data left after Research-mode filtering !")
+        else:
+            this = this.argo.cast_types()
+        return this
+
 
     def interp_std_levels(self,
                           std_lev: list or np.array,
