@@ -31,3 +31,21 @@ def test_required_methods():
 
     with pytest.raises(NotImplementedError):
         f.filter_researchmode(xarray.Dataset)
+
+def test_dashboard():
+
+    f = Fetcher()
+    f.WMO = [13857]
+    f.CYC = None
+    assert isinstance(f.dashboard(url_only=True), str)
+
+    f = Fetcher()
+    f.WMO = [13857]
+    f.CYC = [90]
+    assert isinstance(f.dashboard(url_only=True), str)
+
+    with pytest.warns(UserWarning):
+        f = Fetcher()
+        f.WMO = [1901393, 6902746]
+        f.CYC = None
+        f.dashboard(url_only=True)
