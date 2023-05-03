@@ -63,6 +63,11 @@ try:
 except AttributeError:
     collectionsAbc = collections
 
+try:
+    importlib.import_module('matplotlib')  # noqa: E402
+    from matplotlib.colors import to_hex
+except ImportError:
+    pass
 
 path2pkl = pkg_resources.resource_filename("argopy", "assets/")
 
@@ -858,84 +863,115 @@ def badge(label="label", message="message", color="green", insert=False):
         return Image(url=img)
 
 
-def fetch_status(stdout: str = "html", insert: bool = True):
-    """ Fetch and report web API status
+class fetch_status:
+    """Fetch and report web API status"""
 
-    Parameters
-    ----------
-    stdout: str
-        Format of the results, default is 'html'. Otherwise a simple string.
-    insert: bool
-        Print or display results directly in stdout format.
+    def __init__(self, **kwargs):
+        if "stdout" in kwargs or "insert" in kwargs:
+            warnings.warn("'fetch_status' signature has changed")
+        pass
 
-    Returns
-    -------
-    IPython.display.HTML or str
-    """
-    results = {}
-    list_src = list_available_data_src()
-    for api, mod in list_src.items():
-        if getattr(mod, "api_server_check", None):
-            status = isAPIconnected(api)
-            message = "ok" if status else "offline"
-            results[api] = {"value": status, "message": message}
+    def fetch(self):
+        results = {}
+        list_src = list_available_data_src()
+        for api, mod in list_src.items():
+            if getattr(mod, "api_server_check", None):
+                status = isAPIconnected(api)
+                message = "ok" if status else "offline"
+                results[api] = {"value": status, "message": message}
+        return results
 
-    if "IPython" in sys.modules and stdout == "html":
-        cols = []
-        for api in sorted(results.keys()):
-            color = "green" if results[api]["value"] else "orange"
-            if isconnected():
-                img = badge(
-                    label="src %s is" % api,
-                    message="%s" % results[api]["message"],
-                    color=color,
-                    insert=False,
-                )
-                html = ('<td><img src="{}"></td>').format(img)
-            else:
-                # html = "<th>src %s is:</th><td>%s</td>" % (api, results[api]['message'])
-                html = (
-                    "<th><div>src %s is:</div></th><td><div style='color:%s;'>%s</div></td>"
-                    % (api, color, results[api]["message"])
-                )
-            cols.append(html)
-        this_HTML = ("<table><tr>{}</tr></table>").format("".join(cols))
-        if insert:
-            from IPython.display import HTML, display
-
-            return display(HTML(this_HTML))
-        else:
-            return this_HTML
-    else:
+    @property
+    def text(self):
+        results = self.fetch()
         rows = []
         for api in sorted(results.keys()):
-            # rows.append("argopy src %s: %s" % (api, results[api]['message']))
             rows.append("src %s is: %s" % (api, results[api]["message"]))
-        txt = "\n".join(rows)
-        if insert:
-            print(txt)
-        else:
-            return txt
+        txt = " | ".join(rows)
+        return txt
+
+    def __repr__(self):
+        return self.text
+
+    @property
+    def html(self):
+        results = self.fetch()
+
+        fs = 12
+        def td_msg(bgcolor, txtcolor, txt):
+            style = "background-color:%s;" % to_hex(bgcolor, keep_alpha=True)
+            style+= "border-width:0px;"
+            style+= "padding: 2px 5px 2px 5px;"
+            style+= "text-align:left;"
+            style+= "color:%s" % to_hex(txtcolor, keep_alpha=True)
+            return "<td style='%s'>%s</td>" % (style, str(txt))
+        td_empty = "<td style='border-width:0px;padding: 2px 5px 2px 5px;text-align:left'>&nbsp;</td>"
+
+        html = []
+        html.append("<table style='border-collapse:collapse;border-spacing:0;font-size:%ipx'>" % fs)
+        html.append("<tbody><tr>")
+        cols = []
+        for api in sorted(results.keys()):
+            color = "yellowgreen" if results[api]["value"] else "darkorange"
+            cols.append(td_msg('dimgray', 'w', "src %s is" % api))
+            cols.append(td_msg(color, 'w', results[api]["message"]))
+            cols.append(td_empty)
+        html.append("\n".join(cols))
+        html.append("</tr></tbody>")
+        html.append("</table>")
+        html = "\n".join(html)
+        return html
+
+    def _repr_html_(self):
+        return self.html
 
 
 class monitor_status:
     """ Monitor data source status with a refresh rate """
 
     def __init__(self, refresh=60):
-        import ipywidgets as widgets
-
         self.refresh_rate = refresh
-        self.text = widgets.HTML(
-            value=fetch_status(stdout="html", insert=False),
-            placeholder="",
-            description="",
-        )
-        self.start()
+
+        if self.runner == 'notebook':
+            import ipywidgets as widgets
+
+            self.text = widgets.HTML(
+                value=self.content,
+                placeholder="",
+                description="",
+            )
+            self.start()
+
+    def __repr__(self):
+        if self.runner != 'notebook':
+            return self.content
+        else:
+            return ""
+
+    @property
+    def runner(self) -> str:
+        try:
+            shell = get_ipython().__class__.__name__
+            if shell == 'ZMQInteractiveShell':
+                return 'notebook'  # Jupyter notebook or qtconsole
+            elif shell == 'TerminalInteractiveShell':
+                return 'terminal'  # Terminal running IPython
+            else:
+                return False  # Other type (?)
+        except NameError:
+            return 'standard'  # Probably standard Python interpreter
+
+    @property
+    def content(self):
+        if self.runner == 'notebook':
+            return fetch_status().html
+        else:
+            return fetch_status().text
 
     def work(self):
         while True:
             time.sleep(self.refresh_rate)
-            self.text.value = fetch_status(stdout="html", insert=False)
+            self.text.value = self.content
 
     def start(self):
         from IPython.display import display
