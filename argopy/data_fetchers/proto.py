@@ -20,6 +20,10 @@ class ArgoDataFetcherProto(ABC):
     def filter_qc(self, ds: xarray.Dataset, *args, **kwargs) -> xarray.Dataset:
         raise NotImplementedError("Not implemented")
 
+    @abstractmethod
+    def filter_researchmode(self, ds: xarray.Dataset, *args, **kwargs) -> xarray.Dataset:
+        raise NotImplementedError("Not implemented")
+
     def filter_variables(self, ds: xarray.Dataset, mode: str, *args, **kwargs) -> xarray.Dataset:
         """Filter variables according to user mode"""
         if mode == "standard":

@@ -95,7 +95,7 @@ def create_fetcher(fetcher_args, access_point):
         except Exception:
             raise
         return f
-    fetcher = core(fetcher_args, access_point).fetcher
+    fetcher = core(fetcher_args, access_point)
     return fetcher
 
 
@@ -105,15 +105,19 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
         This should be used by all tests asserting a fetcher
     """
     def assert_all(this_fetcher, cacheable):
-        # log.debug(this_fetcher.to_xarray(errors='raise'))
+        # We use the facade to test 'to_xarray' in order to make sure to test all filters required by user mode
         assert isinstance(this_fetcher.to_xarray(errors='raise'), xr.Dataset)
-        assert (this_fetcher.N_POINTS >= 1)
+        #
+        core = this_fetcher.fetcher
+        assert is_list_of_strings(core.uri)
+        assert (core.N_POINTS >= 1)  # Make sure we found results
         if cacheable:
-            assert is_list_of_strings(this_fetcher.cachepath)
+            assert is_list_of_strings(core.cachepath)
+
     try:
         assert_all(this_fetcher, cacheable)
     except:
-        if this_fetcher.dataset_id == 'bgc':
+        if this_fetcher.fetcher.dataset_id == 'bgc':
             pytest.xfail("BGC is not yet fully supported")
         else:
             raise
