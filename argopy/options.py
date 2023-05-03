@@ -50,7 +50,7 @@ OPTIONS = {
 # Define the list of possible values
 _DATA_SOURCE_LIST = frozenset(["erddap", "argovis", "gdac"])
 _DATASET_LIST = frozenset(["phy", "bgc", "ref"])
-_USER_LEVEL_LIST = frozenset(["standard", "expert"])
+_USER_LEVEL_LIST = frozenset(["standard", "expert", "research"])
 
 
 # Define how to validate options:

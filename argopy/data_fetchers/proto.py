@@ -5,7 +5,7 @@ import xarray
 import hashlib
 import warnings
 from ..plot import dashboard
-
+from ..utilities import list_standard_variables
 
 class ArgoDataFetcherProto(ABC):
     @abstractmethod
@@ -20,9 +20,22 @@ class ArgoDataFetcherProto(ABC):
     def filter_qc(self, ds: xarray.Dataset, *args, **kwargs) -> xarray.Dataset:
         raise NotImplementedError("Not implemented")
 
-    @abstractmethod
     def filter_variables(self, ds: xarray.Dataset, mode: str, *args, **kwargs) -> xarray.Dataset:
-        raise NotImplementedError("Not implemented")
+        """Filter variables according to user mode"""
+        if mode == "standard":
+            to_remove = sorted(
+                list(set(list(ds.data_vars)) - set(list_standard_variables()))
+            )
+            return ds.drop_vars(to_remove)
+        elif mode == "research":
+            to_remove = sorted(
+                list(set(list(ds.data_vars)) - set(list_standard_variables()))
+            )
+            to_remove.append('DATA_MODE')
+            [to_remove.append(v) for v in ds.data_vars if "QC" in v]
+            return ds.drop_vars(to_remove)
+        else:
+            return ds
 
     def clear_cache(self):
         """ Remove cache files and entries from resources opened with this fetcher """
