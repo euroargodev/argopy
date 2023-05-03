@@ -1,11 +1,11 @@
 .. _user-mode:
 
-User mode: standard vs expert
-=============================
+User mode: expert, standard or research
+=======================================
 
 **Problem**
 
-For beginners or non-experts of the Argo dataset, it can be quite
+For non-experts of the Argo dataset, it can be quite
 complicated to get access to Argo measurements. Indeed, the Argo data
 set is very complex, with thousands of different variables, tens of
 reference tables and a `user manual <https://doi.org/10.13155/29825>`__
@@ -25,34 +25,60 @@ This is mainly due to:
 
 **Solution**
 
-In order to ease Argo data analysis for the vast majority of standard
+In order to ease Argo data analysis for the vast majority of
 users, we implemented in **argopy** different levels of verbosity and
 data processing to hide or simply remove variables only meaningful to
 experts.
 
-What type of user are you ?
----------------------------
 
-If you don’t know in which user category you would place yourself, try
-to answer the following questions:
+User mode details
+-----------------
 
--  what is a WMO number ?
--  what is the difference between Delayed and Real Time data mode ?
--  what is an adjusted parameter ?
--  what a QC flag of 3 means ?
+**argopy** provides 3 user modes:
 
-If you answered to no more than 1 question, you probably would feel more
-comfortable with the **standard** user mode. Otherwise, you can give a
-try to the **expert** mode.
+- **expert** mode return all the Argo data, without any postprocessing,
+- **standard** mode simplifies the dataset, remove most of its jargon and return *a priori* good data,
+- **research** mode simplifies the dataset to its heart, preserving only data of the highest quality for research studies, including studies sensitive to small pressure and salinity bias (e.g. calculations of global ocean heat content or mixed layer depth).
 
-In **standard** mode, fetched data are automatically filtered to account
-for their quality (only good are retained) and level of processing by
-the data centers (whether they looked at the data briefly or not).
+Hence, in **standard** and **research** modes, fetched data are automatically filtered to account for their quality (using the *quality control flags*) and level of processing by the data centers (using each *parameter data mode* indicating if ADMT human experts carefully looked at the data or not). Both mode return a postprocessed subset of the full Argo dataset.
 
-Setting the user mode
----------------------
+One could conclude that the main difference between the **standard** and **research** modes is in the level of data quality insurance.
+In **standard** mode, only good or probably good data are returned, which includes real time data that have been validated automatically but not by a human expert.
+The **research** mode is the safer choice, with data of the highest quality, carefully checked by a human expert of the ADMT team.
 
-Let's start with standard import:
+Table below summarizes the technical differences between each user modes:
+
+.. list-table:: Table of **argopy** user mode data processing details
+    :header-rows: 1
+    :stub-columns: 1
+
+    * -
+      - ``expert``
+      - ``standard``
+      - ``research``
+    * - Level of quality (QC flags) retained
+      - all
+      - 1 or 2
+      - 1
+    * - Level of assessment (Data mode) retained
+      - all
+      - all, but merged in a single variable
+      - best only
+    * - Pressure error
+      - any
+      - any
+      - smaller than 20db
+    * - Variables returned
+      - all
+      - all but technical
+      - comprehensive minimum
+
+
+
+How to set the user mode ?
+--------------------------
+
+Let's import the **argopy** data fetcher:
 
 .. ipython:: python
     :okwarning:
@@ -67,7 +93,7 @@ By default, all **argopy** data fetchers are set to work with a
 If you want to change the user mode, or simply makes it explicit, you
 can use:
 
--  **argopy** global options:
+-  the **argopy** global option setter:
 
 .. ipython:: python
     :okwarning:
@@ -82,41 +108,21 @@ can use:
     with argopy.set_options(mode='standard'):
         ArgoDataFetcher().profile(6902746, 34)
 
--  option when instantiating the data fetcher:
+-  the option when instantiating the data fetcher:
 
 .. ipython:: python
     :okwarning:
 
     ArgoDataFetcher(mode='standard').profile(6902746, 34)
 
-Differences in user modes
--------------------------
+Example of differences in user modes
+------------------------------------
 
-To highlight that, let’s compare data fetched for one profile with each
-modes.
+To highlight differences in data returned for each user modes, let’s compare data fetched for one profile.
 
-You will note that the **standard** mode has fewer variables to let you
+You will note that the **standard** and **research** modes have fewer variables to let you
 focus on your analysis. For **expert**, all Argo variables for you to
 work with are here.
-
-The difference is the most visible when fetching Argo data from a local
-copy of the GDAC ftp, so let’s use a sample of this provided by
-**argopy** tutorial datasets:
-
-.. ipython:: python
-    :okwarning:
-
-    ftproot, flist = argopy.tutorial.open_dataset('gdac')
-    argopy.set_options(ftp=ftproot)
-
-In **standard** mode:
-
-.. ipython:: python
-    :okwarning:
-
-    with argopy.set_options(mode='standard'):
-        ds = ArgoDataFetcher(src='gdac').profile(6901929, 2).to_xarray()
-        print(ds.data_vars)
 
 In **expert** mode:
 
@@ -124,5 +130,23 @@ In **expert** mode:
     :okwarning:
 
     with argopy.set_options(mode='expert'):
-        ds = ArgoDataFetcher(src='gdac').profile(6901929, 2).to_xarray()
+        ds = ArgoDataFetcher(src='gdac').profile(6902915, 2).to_xarray()
+        print(ds.data_vars)
+
+In **standard** mode:
+
+.. ipython:: python
+    :okwarning:
+
+    with argopy.set_options(mode='standard'):
+        ds = ArgoDataFetcher(src='gdac').profile(6902915, 2).to_xarray()
+        print(ds.data_vars)
+
+In **research** mode:
+
+.. ipython:: python
+    :okwarning:
+
+    with argopy.set_options(mode='research'):
+        ds = ArgoDataFetcher(src='gdac').profile(6902915, 2).to_xarray()
         print(ds.data_vars)
