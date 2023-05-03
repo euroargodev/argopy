@@ -8,10 +8,12 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-v0.1.14 (XX Xxx. 2023)
-----------------------
+Coming up on the next release
+-----------------------------
 
 **Features and front-end API**
+
+- **New 'research' user mode**. This new feature implements automatic filtering of Argo data following international recommendations for research/climate studies. With this user mode, only Delayed Mode with good QC data are returned. Check out the :ref:`user-mode` section for all the details.
 
 - **Argopy now provides authenticated access to the Argo reference database for DMQC**. Using user/password new **argopy** options, it is now possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by `G. Maze <http://www.github.com/gmaze>`_
 
