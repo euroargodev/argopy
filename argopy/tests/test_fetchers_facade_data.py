@@ -182,3 +182,14 @@ class Test_Facade:
     def test_domain(self):
         f, fetcher = self.__get_fetcher(pt='float')
         fetcher.domain
+
+    def test_dashboard(self):
+        f, fetcher = self.__get_fetcher(pt='float')
+        assert isinstance(fetcher.dashboard(url_only=True), str)
+
+        f, fetcher = self.__get_fetcher(pt='profile')
+        assert isinstance(fetcher.dashboard(url_only=True), str)
+
+        with pytest.warns(UserWarning):
+            f, fetcher = self.__get_fetcher(pt='region')
+            fetcher.dashboard(url_only=True)
