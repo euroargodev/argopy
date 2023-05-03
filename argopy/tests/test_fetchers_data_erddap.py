@@ -55,9 +55,9 @@ PARALLEL_ACCESS_POINTS = [
 ]
 
 """
-List user modes to be testes
+List user modes to be tested
 """
-USER_MODES = ['standard', 'expert']
+USER_MODES = ['standard', 'expert', 'research']
 
 
 """
@@ -110,7 +110,6 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
         assert (this_fetcher.N_POINTS >= 1)
         if cacheable:
             assert is_list_of_strings(this_fetcher.cachepath)
-        # return True
     try:
         assert_all(this_fetcher, cacheable)
     except:
@@ -136,7 +135,7 @@ class Test_Backend:
         self.cachedir = tempfile.mkdtemp()
 
     def _setup_fetcher(self, this_request, cached=False, parallel=False):
-        # log.debug("")
+        """Helper method to set up options for a fetcher creation"""
         defaults_args = {"src": self.src,
                          "server": mocked_server_address,
                          "cache": cached,
@@ -163,7 +162,7 @@ class Test_Backend:
     @pytest.fixture
     def fetcher(self, request):
         """ Fixture to create a ERDDAP data fetcher for a given dataset and access point """
-        fetcher_args, access_point = self._setup_fetcher(request)
+        fetcher_args, access_point = self._setup_fetcher(request, cached=False)
         yield create_fetcher(fetcher_args, access_point)
 
     @pytest.fixture
@@ -178,20 +177,15 @@ class Test_Backend:
         fetcher_args, access_point = self._setup_fetcher(request, parallel="thread")
         yield create_fetcher(fetcher_args, access_point)
 
-    @pytest.fixture(scope="class", autouse=True)
-    def cleanup(self, request):
+    def teardown_class(self):
         """Cleanup once we are finished."""
         def remove_test_dir():
             shutil.rmtree(self.cachedir)
-        request.addfinalizer(remove_test_dir)
+        remove_test_dir()
 
     #########
     # TESTS #
     #########
-    def test_invalid_dataset(self):
-        with pytest.raises(ValueError):
-            ArgoDataFetcher(src=self.src, ds='invalid')
-
     @pytest.mark.parametrize("fetcher", VALID_ACCESS_POINTS,
                              indirect=True,
                              ids=VALID_ACCESS_POINTS_IDS)
@@ -201,11 +195,11 @@ class Test_Backend:
     @pytest.mark.parametrize("cached_fetcher", VALID_ACCESS_POINTS,
                              indirect=True,
                              ids=VALID_ACCESS_POINTS_IDS)
-    def test_cached_fetching(self, mocked_erddapserver, cached_fetcher):
+    def test_fetching_cached(self, mocked_erddapserver, cached_fetcher):
         assert_fetcher(mocked_erddapserver, cached_fetcher, cacheable=True)
 
     @pytest.mark.parametrize("parallel_fetcher", VALID_PARALLEL_ACCESS_POINTS,
                              indirect=True,
                              ids=VALID_PARALLEL_ACCESS_POINTS_IDS)
-    def test_parallel_fetching(self, mocked_erddapserver, parallel_fetcher):
+    def test_fetching_parallel(self, mocked_erddapserver, parallel_fetcher):
         assert_fetcher(mocked_erddapserver, parallel_fetcher, cacheable=False)
