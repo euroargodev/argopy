@@ -1,7 +1,8 @@
 .. _user-mode:
 
-User mode: expert, standard or research
-=======================================
+User mode (🏄 🏊 🚣)
+=====================
+
 
 **Problem**
 
@@ -36,17 +37,15 @@ User mode details
 
 **argopy** provides 3 user modes:
 
-- **expert** mode return all the Argo data, without any postprocessing,
-- **standard** mode simplifies the dataset, remove most of its jargon and return *a priori* good data,
-- **research** mode simplifies the dataset to its heart, preserving only data of the highest quality for research studies, including studies sensitive to small pressure and salinity bias (e.g. calculations of global ocean heat content or mixed layer depth).
+- 🏄 **expert** mode return all the Argo data, without any postprocessing,
+- 🏊 **standard** mode simplifies the dataset, remove most of its jargon and return *a priori* good data,
+- 🚣 **research** mode simplifies the dataset to its heart, preserving only data of the highest quality for research studies, including studies sensitive to small pressure and salinity bias (e.g. calculations of global ocean heat content or mixed layer depth).
 
 Hence, in **standard** and **research** modes, fetched data are automatically filtered to account for their quality (using the *quality control flags*) and level of processing by the data centers (using each *parameter data mode* indicating if ADMT human experts carefully looked at the data or not). Both mode return a postprocessed subset of the full Argo dataset.
 
 One could conclude that the main difference between the **standard** and **research** modes is in the level of data quality insurance.
 In **standard** mode, only good or probably good data are returned, which includes real time data that have been validated automatically but not by a human expert.
 The **research** mode is the safer choice, with data of the highest quality, carefully checked by a human expert of the ADMT team.
-
-Table below summarizes the technical differences between each user modes:
 
 .. list-table:: Table of **argopy** user mode data processing details
     :header-rows: 1
@@ -56,6 +55,10 @@ Table below summarizes the technical differences between each user modes:
       - ``expert``
       - ``standard``
       - ``research``
+    * -
+      - 🏄
+      - 🏊
+      - 🚣
     * - Level of quality (QC flags) retained
       - all
       - good or probably good
