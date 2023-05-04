@@ -58,12 +58,12 @@ Table below summarizes the technical differences between each user modes:
       - ``research``
     * - Level of quality (QC flags) retained
       - all
-      - 1 or 2
-      - 1
+      - good or probably good
+      - good
     * - Level of assessment (Data mode) retained
       - all
       - all, but merged in a single variable
-      - best only
+      - best only (delayed)
     * - Pressure error
       - any
       - any
@@ -124,13 +124,21 @@ You will note that the **standard** and **research** modes have fewer variables 
 focus on your analysis. For **expert**, all Argo variables for you to
 work with are here.
 
+.. ipython:: python
+    :okwarning:
+
+    import argopy
+    from argopy import DataFetcher as ArgoDataFetcher
+    from argopy.options import OPTIONS
+    print(OPTIONS)
+
 In **expert** mode:
 
 .. ipython:: python
     :okwarning:
 
     with argopy.set_options(mode='expert'):
-        ds = ArgoDataFetcher(src='gdac').profile(6902915, 2).to_xarray()
+        ds = ArgoDataFetcher(src='gdac').profile(6902755, 12).to_xarray()
         print(ds.data_vars)
 
 In **standard** mode:
@@ -139,7 +147,7 @@ In **standard** mode:
     :okwarning:
 
     with argopy.set_options(mode='standard'):
-        ds = ArgoDataFetcher(src='gdac').profile(6902915, 2).to_xarray()
+        ds = ArgoDataFetcher(src='gdac').profile(6902755, 12).to_xarray()
         print(ds.data_vars)
 
 In **research** mode:
@@ -148,5 +156,5 @@ In **research** mode:
     :okwarning:
 
     with argopy.set_options(mode='research'):
-        ds = ArgoDataFetcher(src='gdac').profile(6902915, 2).to_xarray()
+        ds = ArgoDataFetcher(src='gdac').profile(6902755, 12).to_xarray()
         print(ds.data_vars)
