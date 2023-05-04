@@ -132,29 +132,35 @@ work with are here.
 
     argopy.set_options(ftp='https://data-argo.ifremer.fr')
 
-In **expert** mode:
+.. tabs::
 
-.. ipython:: python
-    :okwarning:
+    .. tab:: In **expert** mode:
 
-    with argopy.set_options(mode='expert'):
-        ds = ArgoDataFetcher(src='gdac').profile(6902755, 12).to_xarray()
-        print(ds.data_vars)
+        .. ipython:: python
+            :okwarning:
 
-In **standard** mode:
+            with argopy.set_options(mode='expert'):
+                ds = ArgoDataFetcher(src='gdac').profile(6902755, 12).to_xarray()
+                print(ds.data_vars)
 
-.. ipython:: python
-    :okwarning:
+    .. tab:: In **standard** mode:
 
-    with argopy.set_options(mode='standard'):
-        ds = ArgoDataFetcher(src='gdac').profile(6902755, 12).to_xarray()
-        print(ds.data_vars)
+        .. ipython:: python
+            :okwarning:
 
-In **research** mode:
+            with argopy.set_options(mode='standard'):
+                ds = ArgoDataFetcher(src='gdac').profile(6902755, 12).to_xarray()
+                print(ds.data_vars)
 
-.. ipython:: python
-    :okwarning:
+    .. tab:: In **research** mode:
 
-    with argopy.set_options(mode='research'):
-        ds = ArgoDataFetcher(src='gdac').profile(6902755, 12).to_xarray()
-        print(ds.data_vars)
+        .. ipython:: python
+            :okwarning:
+
+            with argopy.set_options(mode='research'):
+                ds = ArgoDataFetcher(src='gdac').profile(6902755, 12).to_xarray()
+                print(ds.data_vars)
+
+.. note::
+
+    A note for **expert** users looking at **standard** and **research** mode results: they are no ``PARAM_ADJUSTED`` variables because they've been renamed ``PARAM`` wherever the ``DATA_MODE`` variable was ``ADJUSTED`` or ``DELAYED``.
