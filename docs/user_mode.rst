@@ -127,10 +127,7 @@ work with are here.
 .. ipython:: python
     :okwarning:
 
-    import argopy
-    from argopy import DataFetcher as ArgoDataFetcher
-    from argopy.options import OPTIONS
-    print(OPTIONS)
+    argopy.set_options(ftp='https://data-argo.ifremer.fr')
 
 In **expert** mode:
 
