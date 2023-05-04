@@ -45,7 +45,7 @@ Hence, in **standard** and **research** modes, fetched data are automatically fi
 
 One could conclude that the main difference between the **standard** and **research** modes is in the level of data quality insurance.
 In **standard** mode, only good or probably good data are returned, which includes real time data that have been validated automatically but not by a human expert.
-The **research** mode is the safer choice, with data of the highest quality, carefully checked by a human expert of the ADMT team.
+The **research** mode is the safer choice, with data of the highest quality, carefully checked by a human expert of the `ADMT <http://www.argodatamgt.org>`_.
 
 .. list-table:: Table of **argopy** user mode data processing details
     :header-rows: 1
