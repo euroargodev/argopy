@@ -19,8 +19,6 @@ safe_to_no_cache = pytest.mark.skipif(True, reason="Cache disabled for erddap in
 @requires_connected_erddap_index
 class Test_Backend_WMO:
     """ Test ERDDAP index fetching backend for WMO access point"""
-    # caplog.set_level(logging.DEBUG)
-
     src = "erddap"
     requests = {
         "float": [[2901623], [2901623, 6901929]]

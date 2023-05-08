@@ -1,0 +1,3513 @@
+{
+  "@graph" : [ {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/",
+    "@type" : "skos:Collection",
+    "alternative" : "SENSOR_MODEL",
+    "creator" : "Argo Data Management Team",
+    "date" : "2022-04-28 03:00:03.0",
+    "description" : "Terms describing sensor models in Argo NetCDF arrays",
+    "publisher" : "Natural Environment Research Council",
+    "title" : "Argo sensor models",
+    "RE_RegisterManager" : "British Oceanographic Data Centre",
+    "RE_RegisterOwner" : "Argo Data Management Team",
+    "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+    "seeAlso" : "https://github.com/nvs-vocabs/R27",
+    "versionInfo" : "9",
+    "altLabel" : "SENSOR_MODEL",
+    "member" : [ "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3830/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_2K/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE43I/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FL/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE43_IDO/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_3000PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBBCD/", "http://vocab.nerc.ac.uk/collection/R27/current/CTD_F01/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSWR10W/", "http://vocab.nerc.ac.uk/collection/R27/current/AMETEK_3000PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE43F_IDO/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3/", "http://vocab.nerc.ac.uk/collection/R27/current/OPUS_DS/", "http://vocab.nerc.ac.uk/collection/R27/current/RAFOS/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330F/", "http://vocab.nerc.ac.uk/collection/R27/current/RAMSES_ACC/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1600PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_2900PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/MP40_C_2000_G/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.5/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1500PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2900PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/AMETEK/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.0.1/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE63_OPTODE/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.7/", "http://vocab.nerc.ac.uk/collection/R27/current/PAL_UW/", "http://vocab.nerc.ac.uk/collection/R27/current/ARO_FT/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.1/", "http://vocab.nerc.ac.uk/collection/R27/current/UNKNOWN/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/", "http://vocab.nerc.ac.uk/collection/R27/current/ISUS/", "http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/", "http://vocab.nerc.ac.uk/collection/R27/current/KELLER_PA8/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES_A/", "http://vocab.nerc.ac.uk/collection/R27/current/SEAFET/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/", "http://vocab.nerc.ac.uk/collection/R27/current/SUNA_V2/", "http://vocab.nerc.ac.uk/collection/R27/current/C_ROVER/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/", "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_10153PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0c/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.0/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831F/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES/", "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V3/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2000PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/", "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_2900PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE_STS/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_PAR/", "http://vocab.nerc.ac.uk/collection/R27/current/FSI/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.1/", "http://vocab.nerc.ac.uk/collection/R27/current/EM/", "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBB2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9a/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_R10W/", "http://vocab.nerc.ac.uk/collection/R27/current/SUNA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/", "http://vocab.nerc.ac.uk/collection/R27/current/CYCLOPS_7_FLUOROMETER/", "http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/", "http://vocab.nerc.ac.uk/collection/R27/current/SEAPOINT_TURBIDITY_METER/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.6/", "http://vocab.nerc.ac.uk/collection/R27/current/MENSOR/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/", "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0a/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/", "http://vocab.nerc.ac.uk/collection/R27/current/AROD_FT/", "http://vocab.nerc.ac.uk/collection/R27/current/DURA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.5/", "http://vocab.nerc.ac.uk/collection/R27/current/ISUS_V3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3b/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/", "http://vocab.nerc.ac.uk/collection/R27/current/FLOATCLOCK/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE37/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLNTU/", "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_10153PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.1/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_NTU/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.8/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE/" ],
+    "prefLabel" : "Argo sensor models"
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::AANDERAA_OPTODE",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::AANDERAA_OPTODE",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "AANDERAA_OPTODE",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/AANDERAA/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Unknown oxygen optode model manufactured by Aanderaa."
+    },
+    "notation" : "SDN:R27::AANDERAA_OPTODE",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Aanderaa unknown oxygen optode model"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3830/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::AANDERAA_OPTODE_3830",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::AANDERAA_OPTODE_3830",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3830/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "AANDERAA_OPTODE_3830",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/AANDERAA/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A stand-alone oxygen optode with integrated temperature sensor, manufactured by Aanderaa. This instrument exploits the physio-chemical principle of dynamic fluorescence quenching to measure absolute oxygen concentration and percent saturation. Depth rating: 2000 m or 6000 m; oxygen concentration accuracy of < 8 uM or 5 %, and resolution of < 1 uM; air saturation accuracy of < 5 %, and resolution of 0.4 %; settling time (63 %): < 25 s."
+    },
+    "notation" : "SDN:R27::AANDERAA_OPTODE_3830",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Aanderaa 3830 oxygen optode"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::AANDERAA_OPTODE_3835",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::AANDERAA_OPTODE_3835",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "AANDERAA_OPTODE_3835",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/AANDERAA/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A stand-alone oxygen optode with integrated temperature sensor, manufactured by Aanderaa. This instrument exploits the physio-chemical principle of dynamic fluorescence quenching to measure absolute oxygen concentration and percent saturation. Depth rating: 300 m; oxygen concentration accuracy of < 8 uM or 5 %, and resolution of < 1 uM; air saturation accuracy of < 5 %, and resolution of 0.4 %; settling time (63 %): < 25 s."
+    },
+    "notation" : "SDN:R27::AANDERAA_OPTODE_3835",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Aanderaa 3835 oxygen optode"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::AANDERAA_OPTODE_3930",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::AANDERAA_OPTODE_3930",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "AANDERAA_OPTODE_3930",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/AANDERAA/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A stand-alone oxygen optode with integrated temperature sensor, manufactured by Aanderaa. This instrument exploits the physio-chemical principle of dynamic fluorescence quenching to measure absolute oxygen concentration and percent saturation. Depth rating: 2000 m or 6000 m; oxygen concentration accuracy of < 8 uM or 5 %, and resolution of < 1 uM; air saturation accuracy of < 5 %, and resolution of 0.4 %; settling time (63 %): < 25 s."
+    },
+    "notation" : "SDN:R27::AANDERAA_OPTODE_3930",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Aanderaa 3930 oxygen optode"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::AANDERAA_OPTODE_4330",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::AANDERAA_OPTODE_4330",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "AANDERAA_OPTODE_4330",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/AANDERAA/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A stand-alone oxygen optode with integrated temperature sensor, manufactured by Aanderaa. This instrument exploits the physio-chemical principle of dynamic fluorescence quenching to measure absolute oxygen concentration and percent saturation. Depth rating: 300 m, 3000 m, 6000 m or 12000 m; oxygen concentration accuracy of < 2 uM or 1.5 %, and resolution of < 0.1 uM; air saturation accuracy of < 1.5 %, and resolution of 0.05 %; response time (63 %): < 25 s."
+    },
+    "notation" : "SDN:R27::AANDERAA_OPTODE_4330",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Aanderaa 4330 oxygen optode"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330F/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::AANDERAA_OPTODE_4330F",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::AANDERAA_OPTODE_4330F",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330F/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "AANDERAA_OPTODE_4330F",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/AANDERAA/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A stand-alone oxygen optode with integrated temperature sensor, manufactured by Aanderaa. This instrument exploits the physio-chemical principle of dynamic fluorescence quenching to measure absolute oxygen concentration and percent saturation. Depth rating: 300 m, 3000 m, 6000 m or 12000 m; oxygen concentration accuracy of < 2 uM or 1.5 %, and resolution of < 0.1 uM; air saturation accuracy of < 1.5 %, and resolution of 0.05 %; response time (63 %): < 8 s."
+    },
+    "notation" : "SDN:R27::AANDERAA_OPTODE_4330F",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Aanderaa 4330F (fast-response) oxygen optode"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::AANDERAA_OPTODE_4831",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::AANDERAA_OPTODE_4831",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "AANDERAA_OPTODE_4831",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/AANDERAA/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A stand-alone oxygen optode with integrated temperature sensor, manufactured by Aanderaa. This instrument exploits the physio-chemical principle of dynamic fluorescence quenching to measure absolute oxygen concentration and percent saturation. Depth rating: 300 m, 3000 m or 6000 m; oxygen concentration accuracy of < 8 uM or 5 %, and resolution of < 1 uM; air saturation accuracy of < 5 %, and resolution of 0.4 %; response time (63 %): < 25 s."
+    },
+    "notation" : "SDN:R27::AANDERAA_OPTODE_4831",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Aanderaa 4831 oxygen optode"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831F/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::AANDERAA_OPTODE_4831F",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::AANDERAA_OPTODE_4831F",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831F/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "AANDERAA_OPTODE_4831F",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/AANDERAA/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A stand-alone oxygen optode with integrated temperature sensor, manufactured by Aanderaa. This instrument exploits the physio-chemical principle of dynamic fluorescence quenching to measure absolute oxygen concentration and percent saturation. Depth rating: 300 m, 3000 m or 6000 m; oxygen concentration accuracy of < 8 uM or 5 %, and resolution of < 1 uM; air saturation accuracy of < 5 %, and resolution of 0.4 %; response time (63 %): < 8 s."
+    },
+    "notation" : "SDN:R27::AANDERAA_OPTODE_4831F",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Aanderaa 4831F (fast-response) oxygen optode"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/AMETEK/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::AMETEK",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::AMETEK",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/AMETEK/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "AMETEK",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/AMETEK/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A strain gauge pressure sensor manufactured by Ametek with unknown pressure rating."
+    },
+    "notation" : "SDN:R27::AMETEK",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Ametek pressure sensor with unknown pressure rating"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/AMETEK_3000PSIA/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::AMETEK_3000PSIA",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::AMETEK_3000PSIA",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/AMETEK_3000PSIA/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "AMETEK_3000PSIA",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/AMETEK/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A strain gauge pressure sensor rated to a maximum pressure of 3000 pounds per square inch absolute manufactured by Ametek."
+    },
+    "notation" : "SDN:R27::AMETEK_3000PSIA",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Ametek pressure sensor with 3000 PSIA rating"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/AROD_FT/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::AROD_FT",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::AROD_FT",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/AROD_FT/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "AROD_FT",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/JAC/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "An oxygen optode with integrated temperature sensor, manufactured by JFE Advantech Co. and designed to be mounted on Argo floats. This model is part of the JFE Advantech Co., Ltd. RINKO series of optical dissolved oxygen sensors. The instrument exploits the physio-chemical principle of dynamic fluorescence quenching to measure absolute oxygen concentration and percent saturation. Depth rating: 6700 m; oxygen concentration initial accuracy of 2 % of measured value, and resolution of 0.01 umol/l; response time (63 %): < 1 s."
+    },
+    "notation" : "SDN:R27::AROD_FT",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "JFE Advantech Co. (JAC) AROD-FT oxygen optode"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ARO_FT/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::ARO_FT",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::ARO_FT",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ARO_FT/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ARO_FT",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/JAC/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "An oxygen optode with integrated temperature sensor, manufactured by JFE Advantech Co. and designed to be mounted on Argo floats. This model is part of the JFE Advantech Co., Ltd. RINKO series of optical dissolved oxygen sensors. The instrument exploits the physio-chemical principle of dynamic fluorescence quenching to measure absolute oxygen concentration and percent saturation. Depth rating: 2000 m; dissolved oxygen concentration initial accuracy of 2 %, and resolution of 0.01 umol/l; response time (63 %): < 1 s."
+    },
+    "notation" : "SDN:R27::ARO_FT",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "JFE Advantech Co. (JAC) ARO-FT oxygen optode"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/CTD_F01/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::CTD_F01",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::CTD_F01",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/CTD_F01/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "CTD_F01",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/TSK/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors manufactured by Tsurumi-Seiki, model F01."
+    },
+    "notation" : "SDN:R27::CTD_F01",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Tsurumi-Seiki TSK CTD F01"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/CYCLOPS_7_FLUOROMETER/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::CYCLOPS_7_FLUOROMETER",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::CYCLOPS_7_FLUOROMETER",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/CYCLOPS_7_FLUOROMETER/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "CYCLOPS_7_FLUOROMETER",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/TURNER_DESIGN/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A single-channel optical sensor configurable to detect a wide range of parameters within a 260 nm - 900 nm optical range, including chlorophyll-a, Fluorescent Dissolved Organic Matter (FDOM), and turbidity. The instrument is depth-rated to 600m, and was developed and manufactured by Turner Designs."
+    },
+    "notation" : "SDN:R27::CYCLOPS_7_FLUOROMETER",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Turner Designs Cyclops-7 fluorometer"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/C_ROVER/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::C_ROVER",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::C_ROVER",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/C_ROVER/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "C_ROVER",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/SBE/", "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A neutrally buoyant optical transmissometer, designed for profiling floats applications. Depth rating: 2000 m; available wavelengths: 465 nm, 520 nm and 650 nm; optical pathlength: 25 cm; acceptance angle: 0.9 deg. The instrument was originally developed and manufactured at WET Labs, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+    },
+    "notation" : "SDN:R27::C_ROVER",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "c-Rover Transmissometer"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::DRUCK",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::DRUCK",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "DRUCK",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/DRUCK/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A strain gauge pressure sensor manufactured by Druck with unknown pressure rating."
+    },
+    "notation" : "SDN:R27::DRUCK",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Druck pressure sensor with unknown pressure rating"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_10153PSIA/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::DRUCK_10153PSIA",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::DRUCK_10153PSIA",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_10153PSIA/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_10153PSIA/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "true",
+    "versionInfo" : "2",
+    "altLabel" : "DRUCK_10153PSIA",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A strain gauge pressure sensor rated to a maximum pressure of 10153 pounds per square inch absolute manufactured by Druck."
+    },
+    "notation" : "SDN:R27::DRUCK_10153PSIA",
+    "note" : {
+      "@language" : "en",
+      "@value" : "deprecated"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Druck pressure sensor with 10153 PSIA rating"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_2900PSIA/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::DRUCK_2900PSIA",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::DRUCK_2900PSIA",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_2900PSIA/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "DRUCK_2900PSIA",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/DRUCK/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A strain gauge pressure sensor rated to a maximum pressure of 2900 pounds per square inch absolute manufactured by Druck."
+    },
+    "notation" : "SDN:R27::DRUCK_2900PSIA",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Druck pressure sensor with 2900 PSIA rating"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/DURA/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::DURA",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::DURA",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/DURA/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "DURA",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/MBARI/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "An ion sensitive field effect transistor (ISFET) pH sensor with an AglCl reference electrode and a titanium counter electrode, housed in a pressure tolerant package. The sensor is manufactured at the Monterey Bay Aquarium Research Institute (MBARI), and was developed collaboratively by Dr. Kenneth Johnson at MBARI, Dr. Todd Martz at Scripps Institution of Oceanography (SIO), and Honeywell International. Depth rating: 2000m; pH accuracy: 0.01; pH precision: 0.005 over multiyear periods."
+    },
+    "notation" : "SDN:R27::DURA",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "MBARI Deep-Sea DuraFET pH sensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::ECO_BB",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::ECO_BB",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ECO_BB",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/SBE/", "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "An optical sensor measuring scattering at a single 117 deg angle, configurable to 470 nm, 532 nm or 660 nm wavelength and depth-rated to 600 m. The scattering sensor has an in-water centroid angle of 124 deg. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+    },
+    "notation" : "SDN:R27::ECO_BB",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "ECO BB scattering meter"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB3/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::ECO_BB3",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::ECO_BB3",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB3/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ECO_BB3",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/", "http://vocab.nerc.ac.uk/collection/R26/current/SBE/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A three optical-sensor instrument fitted with three scattering meters measuring at a user-defined combination of 470 nm, 532 nm, 650 nm and 700 nm wavelengths, depth-rated to 600 m. The scattering sensor has an in-water centroid angle of 124 deg. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+    },
+    "notation" : "SDN:R27::ECO_BB3",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "ECO Triplet BB3 sensor package with three scattering meters"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FL/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::ECO_FL",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::ECO_FL",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FL/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ECO_FL",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/", "http://vocab.nerc.ac.uk/collection/R26/current/SBE/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A single-channel fluorometer, configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission), depth-rated to 600 m. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+    },
+    "notation" : "SDN:R27::ECO_FL",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "ECO FL fluorometer"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::ECO_FLBB",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::ECO_FLBB",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ECO_FLBB",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/SBE/", "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A dual-channel optical sensor fitted with a single-wavelength fluorometer and a scattering meter calibrated to determine backscattering, depth-rated to 600 m. The sensor operates by flashing blue (470 nm) and red (700 nm) beams in alternation from two light-emitting diodes (LEDs), to respectively stimulate chlorophyll fluorescence and illuminate the total particle field. The scattering sensor has an in-water centroid angle of 142 deg. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+    },
+    "notation" : "SDN:R27::ECO_FLBB",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "ECO FLbb sensor package with fluorometer and scattering meter"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::ECO_FLBB2",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::ECO_FLBB2",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ECO_FLBB2",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/SBE/", "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A three optical-sensor instrument fitted with one fluorometer and two scattering meters, depth-rated to 600 m. The fluorometer is configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths, whereas the two scattering meters (in-water centroid angle of 124 deg) can be configured to measure backscattering at a user-defined choice of 470 nm, 532 nm, 650 nm or 700 nm each. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+    },
+    "notation" : "SDN:R27::ECO_FLBB2",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "ECO FLBB2 sensor package with one fluorometer and two scattering meters"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::ECO_FLBBCD",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::ECO_FLBBCD",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ECO_FLBBCD",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/SBE/", "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A three-channel optical sensor fitted with two single-wavelength fluorometers and a single-angle scattering meter, depth-rated to 2000 m and designed for float applications. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and Fluorescent Dissolved Organic Matter (FDOM) at 370 nm (excitation) / 460 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 124 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+    },
+    "notation" : "SDN:R27::ECO_FLBBCD",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "ECO FLBBCD sensor package with two fluorometers and one scattering meter"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::ECO_FLBBCD_AP2",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::ECO_FLBBCD_AP2",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ECO_FLBBCD_AP2",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/SBE/", "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A three-channel optical sensor fitted with two single-wavelength fluorometers and a single-angle scattering meter, depth-rated to 2000 m and designed for float applications. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and Fluorescent Dissolved Organic Matter (FDOM) at 370 nm (excitation) / 460 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 124 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+    },
+    "notation" : "SDN:R27::ECO_FLBBCD_AP2",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "ECO FLBBCD-AP2 sensor package with two fluorometers and one scattering meter"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_2K/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::ECO_FLBB_2K",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::ECO_FLBB_2K",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_2K/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ECO_FLBB_2K",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/SBE/", "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A dual-channel optical sensor fitted with a single-wavelength fluorometer and a scattering meter calibrated to determine backscattering, depth-rated to 2000 m and designed for float applications. The sensor operates by flashing blue (470 nm) and red (700 nm) beams in alternation from two light-emitting diodes (LEDs), to respectively stimulate chlorophyll fluorescence and illuminate the total particle field. The scattering sensor has an in-water centroid angle of 142 deg. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+    },
+    "notation" : "SDN:R27::ECO_FLBB_2K",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "ECO FLbb2k sensor package with fluorometer and scattering meter"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::ECO_FLBB_AP2",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::ECO_FLBB_AP2",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ECO_FLBB_AP2",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/", "http://vocab.nerc.ac.uk/collection/R26/current/SBE/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A dual-channel optical sensor fitted with a single-wavelength fluorometer and a scattering meter calibrated to determine backscattering, depth-rated to 2000 m and designed for float applications. The sensor operates by flashing blue (470 nm) and red (700 nm) beams in alternation from two light-emitting diodes (LEDs), to respectively stimulate chlorophyll fluorescence and illuminate the total particle field. The scattering sensor has an in-water centroid angle of 142 deg. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+    },
+    "notation" : "SDN:R27::ECO_FLBB_AP2",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "ECO FLbb-AP2 sensor package with fluorometer and scattering meter"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLNTU/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::ECO_FLNTU",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::ECO_FLNTU",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLNTU/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ECO_FLNTU",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/", "http://vocab.nerc.ac.uk/collection/R26/current/SBE/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A dual-channel optical sensor fitted with a single-wavelength fluorometer and a scattering meter calibrated to determine turbidity, depth-rated to 600 m. The sensor operates by flashing blue (470 nm) and red (700 nm) beams in alternation from two light-emitting diodes (LEDs), to respectively stimulate chlorophyll fluorescence and illuminate the total particle field. The scattering sensor has an in-water centroid angle of 142 deg. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+    },
+    "notation" : "SDN:R27::ECO_FLNTU",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "ECO FLntu sensor package with fluorometer and scattering meter"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_NTU/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::ECO_NTU",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::ECO_NTU",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_NTU/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ECO_NTU",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/SBE/", "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A single-channel optical meter measuring scattering at 700 nm to determine turbidity, depth-rated to 600 m. The scattering sensor has an in-water centroid angle of 124 deg. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+    },
+    "notation" : "SDN:R27::ECO_NTU",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "ECO NTU turbidity sensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/EM/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::EM",
+    "date" : "2021-08-18 14:32:12.0",
+    "identifier" : "SDN:R27::EM",
+    "authoredOn" : "2021-08-18 14:32:12.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/EM/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "EM",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/APL_UW/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "An electromagnetic subsystem designed to measure water velocity, mounted on an APEX electromagnetic float type (EM-APEX). The instrument was developed collaboratively by Webb Research Corp (WRC) and the Applied Physics Laboratory at the University of Washington (APL-UW)."
+    },
+    "notation" : "SDN:R27::EM",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Electromagnetic sensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/FLOATCLOCK/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::FLOATCLOCK",
+    "date" : "2021-08-18 14:32:12.0",
+    "identifier" : "SDN:R27::FLOATCLOCK",
+    "authoredOn" : "2021-08-18 14:32:12.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/FLOATCLOCK/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "FLOATCLOCK",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Inboard Real Time Clock (RTC) of a float."
+    },
+    "notation" : "SDN:R27::FLOATCLOCK",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Float clock"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/FSI/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::FSI",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::FSI",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/FSI/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "FSI",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/FSI/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Unknown CTD sensor model manufactured by Falmouth Scientific, Inc (FSI)."
+    },
+    "notation" : "SDN:R27::FSI",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Falmouth Scientific, Inc (FSI) unknown CTD model"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ISUS/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::ISUS",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::ISUS",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ISUS/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ISUS",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/MBARI/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A sensor using ultraviolet absorption spectroscopy to measure in-situ nitrate (NO3) concentration in real time. A deuterium lamp provides a light source of 1 cm path length in the 200 nm - 400 nm wavelength range. Measurement resolution: +/- 0.05 umol/l; accuracy: +/- 2 umol/l or 2%; range: up to 200 umol/l. The instrument is depth-rated to 1000 m. The MBARI-ISUS-X v.2 was developed by Dr. Kenneth Johnson and Luke Coletti at the Monterey Bay Aquarium Research Institute (MBARI) in 2002, and was made commercially available in collaboration with Satlantic."
+    },
+    "notation" : "SDN:R27::ISUS",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Satlantic MBARI In Situ Ultraviolet Spectrophotometer (ISUS) X v.2 nitrate sensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ISUS_V3/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::ISUS_V3",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::ISUS_V3",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ISUS_V3/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ISUS_V3",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A sensor using ultraviolet absorption spectroscopy to measure in-situ nitrate (NO3) concentration in real time. A deuterium lamp provides a light source of 1 cm path length in the 200 nm - 400 nm wavelength range. Measurement accuracy: +/- 2 umol/l; detection range: 0.5 umol/l to 2000 umol/l. The instrument is depth-rated to 1000 m; it is based on the MBARI-ISUS-X v.2, and was manufactured at Satlantic."
+    },
+    "notation" : "SDN:R27::ISUS_V3",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Satlantic In Situ Ultraviolet Spectrophotometer (ISUS) V3 nitrate sensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/KELLER_PA8/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::KELLER_PA8",
+    "date" : "2021-08-18 14:32:12.0",
+    "identifier" : "SDN:R27::KELLER_PA8",
+    "authoredOn" : "2021-08-18 14:32:12.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/KELLER_PA8/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "KELLER_PA8",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/KELLER/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A sealed gauge pressure transducer part of the Series 8 pressure sensors range manufactured by Keller."
+    },
+    "notation" : "SDN:R27::KELLER_PA8",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Keller PA-8 pressure transducer"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::KISTLER",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::KISTLER",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "KISTLER",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/KISTLER/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A strain gauge pressure sensor manufactured by Kistler with unknown pressure rating."
+    },
+    "notation" : "SDN:R27::KISTLER",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Kistler pressure sensor with unknown pressure rating"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_10153PSIA/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::KISTLER_10153PSIA",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::KISTLER_10153PSIA",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_10153PSIA/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "KISTLER_10153PSIA",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/KISTLER/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A strain gauge pressure sensor rated to a maximum pressure of 10153 pounds per square inch absolute manufactured by Kistler."
+    },
+    "notation" : "SDN:R27::KISTLER_10153PSIA",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Kistler pressure sensor with 10153 PSIA rating"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_2900PSIA/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::KISTLER_2900PSIA",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::KISTLER_2900PSIA",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_2900PSIA/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "KISTLER_2900PSIA",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/KISTLER/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A strain gauge pressure sensor rated to a maximum pressure of 2900 pounds per square inch absolute manufactured by Kistler."
+    },
+    "notation" : "SDN:R27::KISTLER_2900PSIA",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Kistler pressure sensor with 2900 PSIA rating"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBB2/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::MCOMS_FLBB2",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::MCOMS_FLBB2",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBB2/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "MCOMS_FLBB2",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/SBE/", "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A three optical-sensor instrument fitted with one fluorometer and two scattering meters, depth-rated to 600 m. The fluorometer is configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths, whereas the two scattering meters (in-water centroid angle of 150 deg) can be configured to measure backscattering at a user-defined choice of 470 nm, 532 nm, 650 nm or 700 nm each. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+    },
+    "notation" : "SDN:R27::MCOMS_FLBB2",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "MCOMS FLBB2 sensor package with one fluorometer and two scattering meters"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBBCD/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::MCOMS_FLBBCD",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::MCOMS_FLBBCD",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBBCD/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "MCOMS_FLBBCD",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/", "http://vocab.nerc.ac.uk/collection/R26/current/SBE/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A three-channel optical sensor fitted with two single-wavelength fluorometers and a single-angle scattering meter. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and Fluorescent Dissolved Organic Matter (FDOM) at 370 nm (excitation) / 460 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 150 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, originally developed and manufactured at WET Labs and rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2010."
+    },
+    "notation" : "SDN:R27::MCOMS_FLBBCD",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "MCOMS FLBBCD sensor package with two fluorometers and one scattering meter"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/MENSOR/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::MENSOR",
+    "date" : "2021-08-18 15:17:20.0",
+    "identifier" : "SDN:R27::MENSOR",
+    "authoredOn" : "2021-08-18 15:17:20.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/MENSOR/3/",
+    "hasVersion" : [ "http://vocab.nerc.ac.uk/collection/R27/current/MENSOR/2/", "http://vocab.nerc.ac.uk/collection/R27/current/MENSOR/1/" ],
+    "version" : "3",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "3",
+    "altLabel" : "MENSOR",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/MENSOR/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A pressure sensor special-built by Mensor for selected Deep SOLO floats."
+    },
+    "notation" : "SDN:R27::MENSOR",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Mensor special-built pressure sensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/MP40_C_2000_G/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::MP40_C_2000_G",
+    "date" : "2021-08-18 14:32:12.0",
+    "identifier" : "SDN:R27::MP40_C_2000_G",
+    "authoredOn" : "2021-08-18 14:32:12.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/MP40_C_2000_G/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "MP40_C_2000_G",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/MICRON/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A flush mountable pressure transducer MP40 model, configured to performance specification 'C'  and header option 'G' (gage), depth-rated to 2000 psi. The instrument was manufactured by Micron Instruments (also operating as Piezo-Metrics)."
+    },
+    "notation" : "SDN:R27::MP40_C_2000_G",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Micron Instruments MP40C-2000G pressure transducer"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/OPUS_DS/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::OPUS_DS",
+    "date" : "2021-08-18 14:32:12.0",
+    "identifier" : "SDN:R27::OPUS_DS",
+    "authoredOn" : "2021-08-18 14:32:12.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/OPUS_DS/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "OPUS_DS",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/TRIOS/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A spectral sensor designed to measure nitrogen and carbon compounds, with titanium housing and depth-rating of 6000 dbar (Deep-Sea version). A xenon flash lamp provides the light source, and a 256-channel spectrometer covers a wavelength range of 200 nm - 360 nm. The instrument is manufactured by TriOS."
+    },
+    "notation" : "SDN:R27::OPUS_DS",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TriOS OPUS spectral sensor - Deep Sea version"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/PAINE/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::PAINE",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::PAINE",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/PAINE/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "PAINE",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/PAINE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A strain gauge pressure sensor manufactured by Paine with unknown pressure rating."
+    },
+    "notation" : "SDN:R27::PAINE",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Paine pressure sensor with unknown pressure rating"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1500PSIA/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::PAINE_1500PSIA",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::PAINE_1500PSIA",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1500PSIA/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "PAINE_1500PSIA",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/PAINE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A strain gauge pressure sensor rated to a maximum pressure of 1500 pounds per square inch absolute manufactured by Paine."
+    },
+    "notation" : "SDN:R27::PAINE_1500PSIA",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Paine pressure sensor with 1500 PSIA rating"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1600PSIA/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::PAINE_1600PSIA",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::PAINE_1600PSIA",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1600PSIA/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "PAINE_1600PSIA",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/PAINE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A strain gauge pressure sensor rated to a maximum pressure of 1600 pounds per square inch absolute manufactured by Paine."
+    },
+    "notation" : "SDN:R27::PAINE_1600PSIA",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Paine pressure sensor with 1600 PSIA rating"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2000PSIA/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::PAINE_2000PSIA",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::PAINE_2000PSIA",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2000PSIA/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "PAINE_2000PSIA",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/PAINE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A strain gauge pressure sensor rated to a maximum pressure of 2000 pounds per square inch absolute manufactured by Paine."
+    },
+    "notation" : "SDN:R27::PAINE_2000PSIA",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Paine pressure sensor with 2000 PSIA rating"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2900PSIA/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::PAINE_2900PSIA",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::PAINE_2900PSIA",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2900PSIA/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "PAINE_2900PSIA",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/PAINE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A strain gauge pressure sensor rated to a maximum pressure of 2900 pounds per square inch absolute manufactured by Paine."
+    },
+    "notation" : "SDN:R27::PAINE_2900PSIA",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Paine pressure sensor with 2900 PSIA rating"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_3000PSIA/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::PAINE_3000PSIA",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::PAINE_3000PSIA",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_3000PSIA/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "PAINE_3000PSIA",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/PAINE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A strain gauge pressure sensor rated to a maximum pressure of 3000 pounds per square inch absolute manufactured by Paine."
+    },
+    "notation" : "SDN:R27::PAINE_3000PSIA",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Paine pressure sensor with 3000 PSIA rating"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/PAL_UW/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::PAL_UW",
+    "date" : "2021-08-18 14:32:12.0",
+    "identifier" : "SDN:R27::PAL_UW",
+    "authoredOn" : "2021-08-18 14:32:12.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/PAL_UW/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "PAL_UW",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/APL_UW/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A hydrophone designed to measure surface rain rate and wind speed. The instrument was developed by the Applied Physics Laboratory at the University of Washington (APL-UW)."
+    },
+    "notation" : "SDN:R27::PAL_UW",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Passive Aquatic Listener (PAL) acoustic rain gauge"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::QUARTZDYNE_DSB301-10-C85",
+    "date" : "2021-08-18 14:32:12.0",
+    "identifier" : "SDN:R27::QUARTZDYNE_DSB301-10-C85",
+    "authoredOn" : "2021-08-18 14:32:12.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "QUARTZDYNE_DSB301-10-C85",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/QUARTZDYNE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A thickness shear mode quartz resonator pressure sensor manufactured by Quartzdyne. Pressure range: 0 dbar - 6900 dbar; field accuracy: 0.02 % Full Scale (FS) between -40 degC and 85 degC."
+    },
+    "notation" : "SDN:R27::QUARTZDYNE_DSB301-10-C85",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Quartzdyne DSB301-10-C85 pressure sensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/RAFOS/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::RAFOS",
+    "date" : "2021-08-18 14:32:12.0",
+    "identifier" : "SDN:R27::RAFOS",
+    "authoredOn" : "2021-08-18 14:32:12.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/RAFOS/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "RAFOS",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Receiver for geopositioning under ice, working in conjunction with fixed sound sources arrays located within range."
+    },
+    "notation" : "SDN:R27::RAFOS",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Ranging And Fixing Of Sound (RAFOS) receiver"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/RAMSES_ACC/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::RAMSES_ACC",
+    "date" : "2021-07-01 16:48:21.0",
+    "identifier" : "SDN:R27::RAMSES_ACC",
+    "authoredOn" : "2021-07-01 16:48:21.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/RAMSES_ACC/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "RAMSES_ACC",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/TRIOS/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A spectral imaging radiometer with cosine detector which measures radiance, irradiance or scalar irradiance in the Ultraviolet (UV), Vis (Visible) and Ultraviolet-visible (UV-Vis) ranges, manufactured by TriOS. Number of channels: 256."
+    },
+    "notation" : "SDN:R27::RAMSES_ACC",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "TriOS RAMSES ACC spectral imaging radiometer"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/RBR/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::RBR",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::RBR",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/RBR/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "RBR",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/RBR/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Unknown CTD sensor model manufactured by RBR."
+    },
+    "notation" : "SDN:R27::RBR",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "RBR unknown CTD model"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::RBR_ARGO",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::RBR_ARGO",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "RBR_ARGO",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/RBR/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with Computational Fluid Dynamic (CFD) optimised flow path, manufactured by RBR. Salinity is measured by induction of water flushing freely through the conductivity cell, and is accurate to within 10 cm of the air-ocean interface. The unit is designed specifically for profiling floats, including those hosting multiple biogeochemical (BGC) sensors. The system supports both spot and continuous sampling modes, with sampling speeds configurable to up to 12 Hz. The depth rating for a standard profile is 2000 dbar, with energy consumption of approximately 700 J."
+    },
+    "notation" : "SDN:R27::RBR_ARGO",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "RBRargo CTD"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::RBR_ARGO3",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::RBR_ARGO3",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "RBR_ARGO3",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/RBR/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with Computational Fluid Dynamic (CFD) optimised flow path, manufactured by RBR. Salinity is measured by induction of water flushing freely through the conductivity cell, and is accurate to within 10 cm of the air-ocean interface. The unit is designed specifically for profiling floats, including those hosting multiple biogeochemical (BGC) sensors. The system supports both spot and continuous sampling modes, with sampling speeds configurable to up to 8 Hz. The depth rating for a standard profile is 2000 dbar, with energy consumption of approximately 400 J."
+    },
+    "notation" : "SDN:R27::RBR_ARGO3",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "RBRargo3 CTD"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::RBR_ARGO3_DEEP4K",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::RBR_ARGO3_DEEP4K",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "RBR_ARGO3_DEEP4K",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/RBR/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with Computational Fluid Dynamic (CFD) optimised flow path, manufactured by RBR. Salinity is measured by induction of water flushing freely through the conductivity cell, and is accurate to within 10 cm of the air-ocean interface. The unit is built with a compact titanium housing rated to 4000 dbar, and is specifically designed to be integrated with glass sphere profiling floats part of the Deep Argo program. The system supports both spot and continuous sampling modes, with sampling speeds configurable to up to 8 Hz."
+    },
+    "notation" : "SDN:R27::RBR_ARGO3_DEEP4K",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "RBRargo3 CTD deep4k"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::RBR_ARGO3_DEEP6K",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::RBR_ARGO3_DEEP6K",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "RBR_ARGO3_DEEP6K",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/RBR/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with Computational Fluid Dynamic (CFD) optimised flow path, manufactured by RBR. Salinity is measured by induction of water flushing freely through the conductivity cell, and is accurate to within 10 cm of the air-ocean interface. The unit is built with a compact titanium housing rated to 6000 dbar, and is specifically designed to be integrated with glass sphere profiling floats part of the Deep Argo program. The system supports both spot and continuous sampling modes, with sampling speeds configurable to up to 8 Hz."
+    },
+    "notation" : "SDN:R27::RBR_ARGO3_DEEP6K",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "RBRargo3 CTD deep6k"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::RBR_CODA_T_ODO",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::RBR_CODA_T_ODO",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "RBR_CODA_T_ODO",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/RBR/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A stand-alone oxygen optode with integrated temperature sensor, manufactured by RBR. This instrument exploits the physio-chemical principle of dynamic fluorescence quenching to measure absolute oxygen concentration and percent saturation. It is available in three variants based on response times: slow (30 s time constant), standard (8 s time constant) and fast (1 s time constant), the latter being optimal for vertical profiling applications. Depth rating: 6000 m; oxygen concentration accuracy of +/- 8 uM or +/- 5 %, and resolution of < 1 uM; air saturation resolution of 0.4 %."
+    },
+    "notation" : "SDN:R27::RBR_CODA_T_ODO",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "RBRcoda T.ODO Temperature and Dissolved Oxygen sensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::RBR_PRES",
+    "date" : "2021-08-18 14:32:12.0",
+    "identifier" : "SDN:R27::RBR_PRES",
+    "authoredOn" : "2021-08-18 14:32:12.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "RBR_PRES",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/RBR/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Unspecified pressure sensor model used on RBR Argo CTD systems (L2 generation)."
+    },
+    "notation" : "SDN:R27::RBR_PRES",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Pressure sensor for RBR Argo CTD systems"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES_A/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::RBR_PRES_A",
+    "date" : "2021-08-18 14:32:12.0",
+    "identifier" : "SDN:R27::RBR_PRES_A",
+    "authoredOn" : "2021-08-18 14:32:12.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES_A/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "RBR_PRES_A",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/RBR/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Unspecified pressure sensor model used on RBR Argo3 CTD systems (L3 generation)."
+    },
+    "notation" : "SDN:R27::RBR_PRES_A",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Pressure sensor for RBR Argo3 CTD systems"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SATLANTIC_OCR504_ICSW",
+    "date" : "2021-07-01 16:48:21.0",
+    "identifier" : "SDN:R27::SATLANTIC_OCR504_ICSW",
+    "authoredOn" : "2021-07-01 16:48:21.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SATLANTIC_OCR504_ICSW",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/SBE/", "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A cosine-response, multispectral radiometer configured to measure downwelling irradiance in water. Number of channels: 4; bandwidth range: 400 nm to 865 nm (standard), or 305 nm, 325 nm, 340 nm, 380 nm (UV); sampling rate: 7 Hz – 24 Hz; spectral bandwidth: 10 nm or 20 nm. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."
+    },
+    "notation" : "SDN:R27::SATLANTIC_OCR504_ICSW",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "OCR-504 multispectral radiometer (downwelling irradiance)"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SATLANTIC_OCR504_R10W",
+    "date" : "2021-07-01 16:48:21.0",
+    "identifier" : "SDN:R27::SATLANTIC_OCR504_R10W",
+    "authoredOn" : "2021-07-01 16:48:21.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SATLANTIC_OCR504_R10W",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/SBE/", "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A cosine-response, multispectral radiometer configured to measure upwelling radiance in water. Number of channels: 4; field of view: 10 deg (half angle, half maximum); bandwidth range: 400 nm to 865 nm (standard), or 305 nm, 325 nm, 340 nm, 380 nm (UV); sampling rate: 7 Hz – 24 Hz; spectral bandwidth: 10 nm or 20 nm. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."
+    },
+    "notation" : "SDN:R27::SATLANTIC_OCR504_R10W",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "OCR-504 multispectral radiometer (upwelling radiance)"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SATLANTIC_OCR507_ICSW",
+    "date" : "2021-07-01 16:48:21.0",
+    "identifier" : "SDN:R27::SATLANTIC_OCR507_ICSW",
+    "authoredOn" : "2021-07-01 16:48:21.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SATLANTIC_OCR507_ICSW",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/", "http://vocab.nerc.ac.uk/collection/R26/current/SBE/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A cosine-response, multispectral radiometer configured to measure downwelling irradiance in water. Number of channels: 7; bandwidth range: 400 nm to 865 nm (standard), or 305 nm, 325 nm, 340 nm, 380 nm (UV); sampling rate: 7 Hz – 24 Hz; spectral bandwidth: 10 nm or 20 nm. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."
+    },
+    "notation" : "SDN:R27::SATLANTIC_OCR507_ICSW",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "OCR-507 multispectral radiometer (downwelling irradiance)"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSWR10W/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SATLANTIC_OCR507_ICSWR10W",
+    "date" : "2021-07-01 16:48:21.0",
+    "identifier" : "SDN:R27::SATLANTIC_OCR507_ICSWR10W",
+    "authoredOn" : "2021-07-01 16:48:21.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSWR10W/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SATLANTIC_OCR507_ICSWR10W",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/SBE/", "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A cosine-response, multispectral radiometer configured to measure downwelling irradiance and upwelling radiance in water. Number of channels: 7; upwelling radiance field of view: 10 deg (half angle, half maximum); bandwidth range: 400 nm to 865 nm (standard); spectral bandwidth: 10 nm or 20 nm. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."
+    },
+    "notation" : "SDN:R27::SATLANTIC_OCR507_ICSWR10W",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "OCR-507 multispectral radiometer (downwelling irradiance and upwelling radiance)"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_R10W/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SATLANTIC_OCR507_R10W",
+    "date" : "2021-07-01 16:48:21.0",
+    "identifier" : "SDN:R27::SATLANTIC_OCR507_R10W",
+    "authoredOn" : "2021-07-01 16:48:21.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_R10W/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SATLANTIC_OCR507_R10W",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/SBE/", "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A cosine-response, multispectral radiometer configured to measure upwelling radiance in water. Number of channels: 7; field of view: 10 deg (half angle, half maximum); bandwidth range: 400 nm to 865 nm (standard), or 305 nm, 325 nm, 340 nm, 380 nm (UV); sampling rate: 7 Hz – 24 Hz; spectral bandwidth: 10 nm or 20 nm. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."
+    },
+    "notation" : "SDN:R27::SATLANTIC_OCR507_R10W",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "OCR-507 multispectral radiometer (upwelling radiance)"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_PAR/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SATLANTIC_PAR",
+    "date" : "2021-07-01 16:48:21.0",
+    "identifier" : "SDN:R27::SATLANTIC_PAR",
+    "authoredOn" : "2021-07-01 16:48:21.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_PAR/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SATLANTIC_PAR",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/SBE/", "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A Photosynthetically Active Radiation (PAR) sensor that measures quantum irradiance with near flat spectral response and cosine spatial response. Spectrum: 400 nm - 700 nm; PAR range: 0 umol - 5000 umol photons m^-2 s^-1; cosine error: < 3% (0 deg - 60 deg) and < 10% (60 deg - 85 deg); sample rate up to 100 Hz. The instrument was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."
+    },
+    "notation" : "SDN:R27::SATLANTIC_PAR",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Satlantic Photosynthetically Active Radiation (PAR) sensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::SBE",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SBE",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Unknown CTD sensor model manufactured by Sea-Bird Scientific (SBE)."
+    },
+    "notation" : "SDN:R27::SBE",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific (SBE) unknown CTD model"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE37/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE37",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::SBE37",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE37/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SBE37",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A high accuracy conductivity and temperature recorder with an optional pressure sensor."
+    },
+    "notation" : "SDN:R27::SBE37",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 37 MicroCAT"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats. During float ascent, spot samples are taken and transmitted to the float controller."
+    },
+    "notation" : "SDN:R27::SBE41",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41 CTD"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface."
+    },
+    "notation" : "SDN:R27::SBE41CP",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_IDO_V2.0b",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_IDO_V2.0b",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_IDO_V2.0b",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensor, as well as an electrochemical Integrated Dissolved Oxygen sensor with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP IDO model has firmware version 2.0b."
+    },
+    "notation" : "SDN:R27::SBE41CP_IDO_V2.0b",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD with an Integrated Dissolved Oxygen (IDO) sensor V2.0b"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.1/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V1.1",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V1.1",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.1/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.1/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V1.1",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.1."
+    },
+    "notation" : "SDN:R27::SBE41CP_V1.1",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V1.1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V1.2",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V1.2",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V1.2",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.2."
+    },
+    "notation" : "SDN:R27::SBE41CP_V1.2",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V1.2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V1.2a",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V1.2a",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V1.2a",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.2a."
+    },
+    "notation" : "SDN:R27::SBE41CP_V1.2a",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V1.2a"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V1.3",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V1.3",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V1.3",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.3."
+    },
+    "notation" : "SDN:R27::SBE41CP_V1.3",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V1.3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3b/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V1.3b",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V1.3b",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3b/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3b/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V1.3b",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.3b."
+    },
+    "notation" : "SDN:R27::SBE41CP_V1.3b",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V1.3b"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V1.4",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V1.4",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V1.4",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.4."
+    },
+    "notation" : "SDN:R27::SBE41CP_V1.4",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V1.4"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.5/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V1.5",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V1.5",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.5/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.5/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V1.5",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.5."
+    },
+    "notation" : "SDN:R27::SBE41CP_V1.5",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V1.5"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.7/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V1.7",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V1.7",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.7/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.7/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V1.7",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.7."
+    },
+    "notation" : "SDN:R27::SBE41CP_V1.7",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V1.7"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.8/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V1.8",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V1.8",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.8/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.8/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V1.8",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.8."
+    },
+    "notation" : "SDN:R27::SBE41CP_V1.8",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V1.8"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V1.9",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V1.9",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V1.9",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.9."
+    },
+    "notation" : "SDN:R27::SBE41CP_V1.9",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V1.9"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9a/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V1.9a",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V1.9a",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9a/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9a/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V1.9a",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1.9a."
+    },
+    "notation" : "SDN:R27::SBE41CP_V1.9a",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V1.9a"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V1",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V1",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V1",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 1."
+    },
+    "notation" : "SDN:R27::SBE41CP_V1",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V2/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V2",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V2",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V2/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V2/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V2",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 2."
+    },
+    "notation" : "SDN:R27::SBE41CP_V2",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0a/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V3.0a",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V3.0a",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0a/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0a/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V3.0a",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 3.0a."
+    },
+    "notation" : "SDN:R27::SBE41CP_V3.0a",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V3.0a"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0c/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V3.0c",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V3.0c",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0c/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0c/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V3.0c",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 3.0c."
+    },
+    "notation" : "SDN:R27::SBE41CP_V3.0c",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V3.0c"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V3",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V3",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V3",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 3."
+    },
+    "notation" : "SDN:R27::SBE41CP_V3",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V4.4.0",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V4.4.0",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V4.4.0",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 4.4.0."
+    },
+    "notation" : "SDN:R27::SBE41CP_V4.4.0",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V4.4.0"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.0.1/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V5.0.1",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V5.0.1",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.0.1/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.0.1/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V5.0.1",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 5.0.1."
+    },
+    "notation" : "SDN:R27::SBE41CP_V5.0.1",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V5.0.1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.0/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V5.3.0",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V5.3.0",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.0/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.0/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V5.3.0",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 5.3.0."
+    },
+    "notation" : "SDN:R27::SBE41CP_V5.3.0",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V5.3.0"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.1/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V5.3.1",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V5.3.1",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.1/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.1/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V5.3.1",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 5.3.1."
+    },
+    "notation" : "SDN:R27::SBE41CP_V5.3.1",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V5.3.1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.2/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V5.3.2",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V5.3.2",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.2/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.2/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V5.3.2",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 5.3.2."
+    },
+    "notation" : "SDN:R27::SBE41CP_V5.3.2",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V5.3.2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.3/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V7.2.3",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V7.2.3",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.3/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.3/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V7.2.3",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 7.2.3."
+    },
+    "notation" : "SDN:R27::SBE41CP_V7.2.3",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V7.2.3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.5/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41CP_V7.2.5",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41CP_V7.2.5",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.5/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.5/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41CP_V7.2.5",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent, logging the data in internal memory and transmitting to the float controller when the float reaches the surface. This SBE41CP model has firmware version 7.2.5."
+    },
+    "notation" : "SDN:R27::SBE41CP_V7.2.5",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41CP CTD V7.2.5"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41N",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41N",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41N",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats hosting multiple biogeochemical (BGC) sensors. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent. Data from all the float's sensors, including the optional bolt-on ones, are integrated in the data stream and transmitted to the float controller when the float reaches the surface."
+    },
+    "notation" : "SDN:R27::SBE41N",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41N CTD"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41N_V5.3.0",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41N_V5.3.0",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41N_V5.3.0",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats hosting multiple biogeochemical (BGC) sensors. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent. Data from all the float's sensors, including the optional bolt-on ones, are integrated in the data stream and transmitted to the float controller when the float reaches the surface. This SBE41N model has firmware version 5.3.0."
+    },
+    "notation" : "SDN:R27::SBE41N_V5.3.0",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41N CTD V5.3.0"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41N_V5.3.4",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::SBE41N_V5.3.4",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SBE41N_V5.3.4",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow, manufactured by Sea-Bir Scientific. The unit is designed for deployment on profiling floats hosting multiple biogeochemical (BGC) sensors. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent. Data from all the float's sensors, including the optional bolt-on ones, are integrated in the data stream and transmitted to the float controller when the float reaches the surface. This SBE41N model has firmware version 5.3.4."
+    },
+    "notation" : "SDN:R27::SBE41N_V5.3.4",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41N CTD V5.3.4"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41N_V5.4.0",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41N_V5.4.0",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41N_V5.4.0",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats hosting multiple biogeochemical (BGC) sensors. This CTD operates in continuous profiling (CP) mode, thus sampling at 1 Hz during float ascent. Data from all the float's sensors, including the optional bolt-on ones, are integrated in the data stream and transmitted to the float controller when the float reaches the surface. This SBE41N model has firmware version 5.4.0."
+    },
+    "notation" : "SDN:R27::SBE41N_V5.4.0",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41N CTD V5.4.0"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41_IDO_V1.0c",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41_IDO_V1.0c",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41_IDO_V1.0c",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensor, as well as an electrochemical Integrated Dissolved Oxygen sensor with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats. During float ascent, spot samples are taken and transmitted to the float controller. This SBE41 IDO model has firmware version 1.0c."
+    },
+    "notation" : "SDN:R27::SBE41_IDO_V1.0c",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41 CTD with an Integrated Dissolved Oxygen (IDO) sensor V1.0c"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41_IDO_V2.0",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41_IDO_V2.0",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41_IDO_V2.0",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensor, as well as an electrochemical Integrated Dissolved Oxygen sensor with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats. During float ascent, spot samples are taken and transmitted to the float controller. This SBE41 IDO model has firmware version 2.0c."
+    },
+    "notation" : "SDN:R27::SBE41_IDO_V2.0",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41 CTD with an Integrated Dissolved Oxygen (IDO) sensor V2.0"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41_IDO_V3.0",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41_IDO_V3.0",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41_IDO_V3.0",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensor, as well as an electrochemical Integrated Dissolved Oxygen sensor with pump-controlled, T-C ducted flow. The unit is designed for deployment on profiling floats. During float ascent, spot samples are taken and transmitted to the float controller. This SBE41 IDO model has firmware version 3.0."
+    },
+    "notation" : "SDN:R27::SBE41_IDO_V3.0",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41 CTD with an Integrated Dissolved Oxygen (IDO) sensor V3.0"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41_V2.5",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41_V2.5",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41_V2.5",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. During float ascent, spot samples are taken and transmitted to the float controller. This SBE41 model has firmware version 2.5."
+    },
+    "notation" : "SDN:R27::SBE41_V2.5",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41 CTD V2.5"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.6/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41_V2.6",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41_V2.6",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.6/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.6/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41_V2.6",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. During float ascent, spot samples are taken and transmitted to the float controller. This SBE41 model has firmware version 2.6."
+    },
+    "notation" : "SDN:R27::SBE41_V2.6",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41 CTD V2.6"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V3/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE41_V3",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE41_V3",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V3/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V3/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE41_V3",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. During float ascent, spot samples are taken and transmitted to the float controller. This SBE41 model has firmware version 3."
+    },
+    "notation" : "SDN:R27::SBE41_V3",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 41 CTD V3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE43F_IDO/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE43F_IDO",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::SBE43F_IDO",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE43F_IDO/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SBE43F_IDO",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A through-flow, Clark polarographic membrane dissolved oxygen sensor, manufactured by Sea-Bir Scientific and designed to be integrated into a pumped CTD system. Depth rating: 600 m (plastic housing) or 7000 m (titanium housing); oxygen concentration initial accuracy: 2 % saturation; response time (63 %): 2 s - 5 s for 0.5 mil membrane (profiling applications), or 8 s - 20 s for 1.0 mil membrane (moored applications); output signal: frequency."
+    },
+    "notation" : "SDN:R27::SBE43F_IDO",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 43F (frequency output) Integrated Dissolved Oxygen (IDO) sensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE43I/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE43I",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::SBE43I",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE43I/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SBE43I",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A Clark polarographic membrane dissolved oxygen sensor, manufactured by Sea-Bir Scientific and designed to be integrated into the pumped CTD system of an Argo float. Depth rating: 2000 m; oxygen concentration initial accuracy: 1 % saturation; output signal: frequency."
+    },
+    "notation" : "SDN:R27::SBE43I",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 43I (integral) dissolved oxygen sensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE43_IDO/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE43_IDO",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::SBE43_IDO",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE43_IDO/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SBE43_IDO",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A through-flow, Clark polarographic membrane dissolved oxygen sensor, manufactured by Sea-Bir Scientific and designed to be integrated into a pumped CTD system. Depth rating: 600 m (plastic housing) or 7000 m (titanium housing); oxygen concentration initial accuracy: 2 % saturation; response time (63 %): 2 s - 5 s for 0.5 mil membrane (profiling applications), or 8 s - 20 s for 1.0 mil membrane (moored applications); output signal: 0-5 VDC."
+    },
+    "notation" : "SDN:R27::SBE43_IDO",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 43 Integrated Dissolved Oxygen (IDO) sensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE61",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE61",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE61",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth."
+    },
+    "notation" : "SDN:R27::SBE61",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 61 CTD"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE61_V4.5.2",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE61_V4.5.2",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE61_V4.5.2",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 4.5.2."
+    },
+    "notation" : "SDN:R27::SBE61_V4.5.2",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 61 CTD V4.5.2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE61_V4.5.3",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE61_V4.5.3",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE61_V4.5.3",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 4.5.3."
+    },
+    "notation" : "SDN:R27::SBE61_V4.5.3",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 61 CTD V4.5.3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE61_V5.0.0",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE61_V5.0.0",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE61_V5.0.0",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 5.0.0."
+    },
+    "notation" : "SDN:R27::SBE61_V5.0.0",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 61 CTD V5.0.0"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.1/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE61_V5.0.1",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE61_V5.0.1",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.1/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.1/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE61_V5.0.1",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 5.0.1."
+    },
+    "notation" : "SDN:R27::SBE61_V5.0.1",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 61 CTD V5.0.1"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE61_V5.0.2",
+    "date" : "2019-10-16 06:35:48.0",
+    "identifier" : "SDN:R27::SBE61_V5.0.2",
+    "authoredOn" : "2019-10-16 06:35:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE61_V5.0.2",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 5.0.2."
+    },
+    "notation" : "SDN:R27::SBE61_V5.0.2",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 61 CTD V5.0.2"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE61_V5.0.3",
+    "date" : "2022-04-27 16:59:43.0",
+    "identifier" : "SDN:R27::SBE61_V5.0.3",
+    "authoredOn" : "2022-04-27 16:59:43.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SBE61_V5.0.3",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 5.0.3."
+    },
+    "notation" : "SDN:R27::SBE61_V5.0.3",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 61 CTD V5.0.3"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE63_OPTODE/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE63_OPTODE",
+    "date" : "2021-05-26 09:01:46.0",
+    "identifier" : "SDN:R27::SBE63_OPTODE",
+    "authoredOn" : "2021-05-26 09:01:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE63_OPTODE/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SBE63_OPTODE",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "An optical dissolved oxygen sensor, manufactured by Sea-Bir Scientific and designed to be integrated into a pumped CTD system. Depth rating: 600 m (plastic housing) or 7000 m (titanium housing); oxygen concentration initial accuracy: 2 % saturation; response time (63 %): < 6 s; output signal: RS-232."
+    },
+    "notation" : "SDN:R27::SBE63_OPTODE",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 63 oxygen optode"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE_STS/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE_STS",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::SBE_STS",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE_STS/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SBE_STS",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "The SBE Surface Temperature and Salinity (STS) sensor is designed to make near-surface temperature and conductivity measurements from profiling floats. As its conductivity sensor is free-flushed, the SBE STS is designed to be used in conjunction with an SBE 41CP sensor for calibration purposes."
+    },
+    "notation" : "SDN:R27::SBE_STS",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE Surface Temperature and Salinity sensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SEAFET/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SEAFET",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::SEAFET",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SEAFET/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SEAFET",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "An ion sensitive field effect transistor (ISFET) pH sensor with an AglCl reference electrode and a titanium counter electrode, housed in a pressure tolerant package. The sensor is manufactured at Sea-Bird Scientific, and was developed collaboratively by Monterey Bay Aquarium Research Institute (MBARI), Scripps Institution of Oceanography (SIO), and Honeywell International. Depth rating: 2000 dbar; Accuracy: +/- 0.05 pH; stability: 0.036 pH/year."
+    },
+    "notation" : "SDN:R27::SEAFET",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific Deep SeaFET pH sensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SEAPOINT_TURBIDITY_METER/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SEAPOINT_TURBIDITY_METER",
+    "date" : "2021-08-09 12:23:38.0",
+    "identifier" : "SDN:R27::SEAPOINT_TURBIDITY_METER",
+    "authoredOn" : "2021-08-09 12:23:38.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SEAPOINT_TURBIDITY_METER/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SEAPOINT_TURBIDITY_METER",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SEAPOINT/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A single-channel optical meter measuring scattering at 880 nm to determine turbidity, depth-rated to 6000 m. The sensor has four programmable sensitivity options: 2 mV/FTU, 10 mV/FTU, 40 mV/FTU and 200 mV/FTU, each corresponding to a gain of 1x, 5x, 20x and 100x respectively, and range of non-linear, 500 FTU, 125 FTU and 25 FTU respectively. The instrument was developed and manufactured by Seapoint Sensors, inc."
+    },
+    "notation" : "SDN:R27::SEAPOINT_TURBIDITY_METER",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Seapoint Turbidity Meter"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SEASCAN_SSTD",
+    "date" : "2021-08-19 11:24:56.0",
+    "identifier" : "SDN:R27::SEASCAN_SSTD",
+    "authoredOn" : "2021-08-19 11:24:56.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/3/",
+    "hasVersion" : [ "http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/1/", "http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/2/" ],
+    "version" : "3",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "3",
+    "altLabel" : "SEASCAN_SSTD",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SEASCAN/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A temperature and pressure sensor package developed by Seascan, composed of a high-stability, glass-encapsulated thermistor manufactured by YSI (or optionally an ultra-stable thermistor manufactured by Thermometrics), and a mono-crystal silicon strain gage sensor manufactured by Druck. YSI thermistor accuracy: 0.01 degC; YSI thermistor resolution: 0.001 degC; pressure transducer accuracy: 0.1 % of full scale. Instrument's depth rating: either 2000 dbar or 4000 dbar."
+    },
+    "notation" : "SDN:R27::SEASCAN_SSTD",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Seascan Temperature and Depth (SSTD) sensor package"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SUNA/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SUNA",
+    "date" : "2021-08-19 11:47:24.0",
+    "identifier" : "SDN:R27::SUNA",
+    "authoredOn" : "2021-08-19 11:47:24.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SUNA/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SUNA/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SUNA",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/", "http://vocab.nerc.ac.uk/collection/R26/current/SBE/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A sensor using ultraviolet absorption spectroscopy to measure in-situ nitrate (NO3) concentration in real time and over a variety of environments, depth-rated to 100 m. A deuterium lamp provides a light source of 1 cm path length; the measured spectrum falls within the Ultraviolet (UV) 190 nm - 370 nm wavelength range. Measurement accuracy: +/- 2 umol/l or 10 %; detection range: 0.5 umol/l to 2000 umol/l. The instrument is based on the MBARI-ISUS technology; it was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."
+    },
+    "notation" : "SDN:R27::SUNA",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Submersible Ultraviolet Nitrate Analyser (SUNA) nitrate sensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SUNA_V2/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SUNA_V2",
+    "date" : "2021-08-19 11:48:30.0",
+    "identifier" : "SDN:R27::SUNA_V2",
+    "authoredOn" : "2021-08-19 11:48:30.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SUNA_V2/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SUNA_V2/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "SUNA_V2",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R26/current/SATLANTIC/", "http://vocab.nerc.ac.uk/collection/R26/current/SBE/" ],
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A sensor using ultraviolet absorption spectroscopy to measure in-situ nitrate (NO3) concentration in real time and over clear to high turbidity/suspended sedimentation waters, depth-rated to 500 m. A deuterium lamp provides a light source of 10 mm path length (or 5 mm for high turbidity conditions); the measured spectrum falls within the Ultraviolet (UV) 190 nm - 370 nm wavelength range. The instrument is based on the MBARI-ISUS technology; it was originally developed and manufactured at Satlantic, and was rebranded as a Sea-Bird Scientific product following the company's acquisition by Danaher in 2011."
+    },
+    "notation" : "SDN:R27::SUNA_V2",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Submersible Ultraviolet Nitrate Analyser (SUNA) V2 nitrate sensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/UNKNOWN/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::UNKNOWN",
+    "date" : "2019-10-11 14:49:00.0",
+    "identifier" : "SDN:R27::UNKNOWN",
+    "authoredOn" : "2019-10-11 14:49:00.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/UNKNOWN/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "UNKNOWN",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Sensor model is unknown."
+    },
+    "notation" : "SDN:R27::UNKNOWN",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Unknown sensor model"
+    }
+  } ],
+  "@context" : {
+    "hasVersion" : {
+      "@id" : "http://purl.org/pav/hasVersion",
+      "@type" : "@id"
+    },
+    "altLabel" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#altLabel"
+    },
+    "deprecated" : {
+      "@id" : "http://www.w3.org/2002/07/owl#deprecated"
+    },
+    "note" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#note"
+    },
+    "broader" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#broader",
+      "@type" : "@id"
+    },
+    "authoredOn" : {
+      "@id" : "http://purl.org/pav/authoredOn"
+    },
+    "identifier" : {
+      "@id" : "http://purl.org/dc/terms/identifier"
+    },
+    "notation" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#notation"
+    },
+    "inDataset" : {
+      "@id" : "http://rdfs.org/ns/void#inDataset",
+      "@type" : "@id"
+    },
+    "versionInfo" : {
+      "@id" : "http://www.w3.org/2002/07/owl#versionInfo"
+    },
+    "date" : {
+      "@id" : "http://purl.org/dc/terms/date"
+    },
+    "hasCurrentVersion" : {
+      "@id" : "http://purl.org/pav/hasCurrentVersion",
+      "@type" : "@id"
+    },
+    "version" : {
+      "@id" : "http://purl.org/pav/version"
+    },
+    "prefLabel" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+    },
+    "definition" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#definition"
+    },
+    "member" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#member",
+      "@type" : "@id"
+    },
+    "alternative" : {
+      "@id" : "http://purl.org/dc/terms/alternative"
+    },
+    "RE_RegisterManager" : {
+      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
+    },
+    "comment" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"
+    },
+    "seeAlso" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+      "@type" : "@id"
+    },
+    "RE_RegisterOwner" : {
+      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
+    },
+    "title" : {
+      "@id" : "http://purl.org/dc/terms/title"
+    },
+    "publisher" : {
+      "@id" : "http://purl.org/dc/terms/publisher"
+    },
+    "creator" : {
+      "@id" : "http://purl.org/dc/terms/creator"
+    },
+    "qudt" : "https://qudt.org/2.1/schema/qudt#",
+    "owl" : "http://www.w3.org/2002/07/owl#",
+    "dce" : "http://purl.org/dc/elements/1.1/",
+    "skos" : "http://www.w3.org/2004/02/skos/core#",
+    "ns0" : "http://www.w3.org/ns/dx/conneg/altr#",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "iop" : "https://w3id.org/iadopt/ont#",
+    "ns1" : "http://www.w3.org/ns/dx/prof/",
+    "puv" : "https://w3id.org/env/puv#",
+    "dct" : "http://purl.org/dc/terms/",
+    "reg" : "http://purl.org/linked-data/registry#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "grg" : "http://www.isotc211.org/schemas/grg/",
+    "prov" : "https://www.w3.org/ns/prov#",
+    "cpm" : "http://purl.org/voc/cpm#",
+    "void" : "http://rdfs.org/ns/void#",
+    "pav" : "http://purl.org/pav/",
+    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "dc" : "http://purl.org/dc/terms/"
+  }
+}

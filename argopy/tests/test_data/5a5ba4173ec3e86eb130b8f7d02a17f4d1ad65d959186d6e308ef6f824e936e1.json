@@ -1,0 +1,192 @@
+{
+  "@graph" : [ {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R13/current/",
+    "@type" : "skos:Collection",
+    "alternative" : "OCEAN_CODE",
+    "creator" : "Argo Data Management Team",
+    "date" : "2020-04-08 03:00:04.0",
+    "description" : "Ocean area codes assigned to each profile in the profile directory file located at the root of the GDACs ftp servers.",
+    "publisher" : "Natural Environment Research Council",
+    "title" : "Argo ocean area codes and boundary definitions",
+    "RE_RegisterManager" : "British Oceanographic Data Centre",
+    "RE_RegisterOwner" : "Argo Data Management Team",
+    "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+    "seeAlso" : "https://github.com/nvs-vocabs/R13",
+    "versionInfo" : "1",
+    "altLabel" : "OCEAN_CODE",
+    "member" : [ "http://vocab.nerc.ac.uk/collection/R13/current/P/", "http://vocab.nerc.ac.uk/collection/R13/current/A/", "http://vocab.nerc.ac.uk/collection/R13/current/I/" ],
+    "prefLabel" : "Argo ocean area codes and boundary definitions"
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R13/current/A/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R13::A",
+    "date" : "2020-04-07 22:59:46.0",
+    "identifier" : "SDN:R13::A",
+    "authoredOn" : "2020-04-07 22:59:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R13/current/A/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "A",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "The Atlantic/Pacific oceans boundary is at 70 deg W, whereas the Atlantic/Indian oceans boundary is at 20 deg E."
+    },
+    "notation" : "SDN:R13::A",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Atlantic ocean area"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R13/current/I/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R13::I",
+    "date" : "2020-04-07 22:59:46.0",
+    "identifier" : "SDN:R13::I",
+    "authoredOn" : "2020-04-07 22:59:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R13/current/I/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "I",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "The Indian/Atlantic oceans boundary is at 20 deg E, whereas the Indian/Pacific oceans boundary is at 145 deg E."
+    },
+    "notation" : "SDN:R13::I",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Indian ocean area"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R13/current/P/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R13::P",
+    "date" : "2020-04-07 22:59:46.0",
+    "identifier" : "SDN:R13::P",
+    "authoredOn" : "2020-04-07 22:59:46.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R13/current/P/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "P",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "The Pacific/Indian oceans boundary is at 145 deg E, whereas the Pacific/Atlantic oceans boundary is at 70 deg W."
+    },
+    "notation" : "SDN:R13::P",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Pacific ocean area"
+    }
+  } ],
+  "@context" : {
+    "definition" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#definition"
+    },
+    "identifier" : {
+      "@id" : "http://purl.org/dc/terms/identifier"
+    },
+    "date" : {
+      "@id" : "http://purl.org/dc/terms/date"
+    },
+    "notation" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#notation"
+    },
+    "inDataset" : {
+      "@id" : "http://rdfs.org/ns/void#inDataset",
+      "@type" : "@id"
+    },
+    "authoredOn" : {
+      "@id" : "http://purl.org/pav/authoredOn"
+    },
+    "hasCurrentVersion" : {
+      "@id" : "http://purl.org/pav/hasCurrentVersion",
+      "@type" : "@id"
+    },
+    "deprecated" : {
+      "@id" : "http://www.w3.org/2002/07/owl#deprecated"
+    },
+    "note" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#note"
+    },
+    "prefLabel" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+    },
+    "version" : {
+      "@id" : "http://purl.org/pav/version"
+    },
+    "altLabel" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#altLabel"
+    },
+    "versionInfo" : {
+      "@id" : "http://www.w3.org/2002/07/owl#versionInfo"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
+    },
+    "publisher" : {
+      "@id" : "http://purl.org/dc/terms/publisher"
+    },
+    "alternative" : {
+      "@id" : "http://purl.org/dc/terms/alternative"
+    },
+    "creator" : {
+      "@id" : "http://purl.org/dc/terms/creator"
+    },
+    "comment" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"
+    },
+    "member" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#member",
+      "@type" : "@id"
+    },
+    "RE_RegisterManager" : {
+      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
+    },
+    "RE_RegisterOwner" : {
+      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"
+    },
+    "title" : {
+      "@id" : "http://purl.org/dc/terms/title"
+    },
+    "seeAlso" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+      "@type" : "@id"
+    },
+    "qudt" : "https://qudt.org/2.1/schema/qudt#",
+    "owl" : "http://www.w3.org/2002/07/owl#",
+    "dce" : "http://purl.org/dc/elements/1.1/",
+    "skos" : "http://www.w3.org/2004/02/skos/core#",
+    "ns0" : "http://www.w3.org/ns/dx/conneg/altr#",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "iop" : "https://w3id.org/iadopt/ont#",
+    "ns1" : "http://www.w3.org/ns/dx/prof/",
+    "puv" : "https://w3id.org/env/puv#",
+    "dct" : "http://purl.org/dc/terms/",
+    "reg" : "http://purl.org/linked-data/registry#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "grg" : "http://www.isotc211.org/schemas/grg/",
+    "prov" : "https://www.w3.org/ns/prov#",
+    "cpm" : "http://purl.org/voc/cpm#",
+    "void" : "http://rdfs.org/ns/void#",
+    "pav" : "http://purl.org/pav/",
+    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "dc" : "http://purl.org/dc/terms/"
+  }
+}

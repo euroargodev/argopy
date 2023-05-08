@@ -14,11 +14,59 @@ v0.1.XX
 1) expert mode and erddap source
 
 v0.1.13 (xx Feb. 2023)
+
+Coming up on the next release
+-----------------------------
+
+**Features and front-end API**
+
+- **Argopy now provides authenticated access to the Argo reference database for DMQC**. Using user/password new **argopy** options, it is now possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import CTDRefDataFetcher
+
+    with argopy.set_options(user="john_doe", password="***"):
+        f = CTDRefDataFetcher(box=[15, 30, -70, -60, 0, 5000.0])
+        ds = f.to_xarray()
+
+- **Index store can now export search results to standard Argo index file format**. See all details in :ref:`Store: Low-level Argo Index access`. (:pr:`260`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy.stores import indexstore_pd as indexstore
+    # or:
+    # from argopy.stores import indexstore_pa as indexstore
+
+    idx = indexstore().search_wmo(3902131)  # Perform any search
+    idx.to_indexfile('short_index.txt')  # export search results as standard Argo index csv file
+
+
+- **Index store can now load/search the Argo Bio and Synthetic profile index files**. Simply gives the name of the Bio or Synthtetic Profile index file and retrieve the full index. This  store also comes with a new search criteria fro BGC: by parameters. See all details in :ref:`Store: Low-level Argo Index access`.  (:pr:`261`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy.stores import indexstore_pd as indexstore
+    # or:
+    # from argopy.stores import indexstore_pa as indexstore
+
+    idx = indexstore(index_file="argo_bio-profile_index.txt").load()
+    idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
+
+- New option to control the expiration time of cache file ``cache_expiration``. 
+
+**Internals**
+
+- Use a mocked server for all http and GDAC ftp requests in CI tests (:pr:`249`, :pr:`252`, :pr:`255`) by `G. Maze <http://www.github.com/gmaze>`_
+- Removed support for minimal dependency requirements and for python 3.7. (:pr:`252`) by `G. Maze <http://www.github.com/gmaze>`_
+- Changed License from Apache to `EUPL 1.2 <https://opensource.org/license/eupl-1-2>`_
+
+v0.1.13 (28 Mar. 2023)
 ----------------------
 
 **Features and front-end API**
 
-- **New utility class to retrieve the Argo deployment plan from the Ocean-OPS api.** This is the utility class :class:`OceanOPSDeployments` (:pr:`244`) by `G. Maze <http://www.github.com/gmaze>`_
+- **New utility class to retrieve the Argo deployment plan from the Ocean-OPS api.** This is the utility class :class:`OceanOPSDeployments`. See the new documentation section on :ref:`Deployment Plan` for more. (:pr:`244`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -30,6 +78,49 @@ v0.1.13 (xx Feb. 2023)
 
     df = deployment.to_dataframe()
     deployment.status_code
+    fig, ax = deployment.plot_status()
+
+.. image:: _static/scatter_map_deployment_status.png
+
+- **New scatter map utility for easy Argo-related variables plotting.** The new :meth:`argopy.plot.scatter_map` utility function is dedicated to making maps with Argo profiles positions coloured according to specific variables: a scatter map. Profiles colouring is finely tuned for some variables: QC flags, Data Mode and Deployment Status. By default, floats trajectories are always shown, but this can be changed. See the new documentation section on :ref:`Scatter Maps` for more. (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy.plot import scatter_map
+
+    fig, ax = scatter_map(ds_or_df,
+                          x='LONGITUDE', y='LATITUDE', hue='PSAL_QC',
+                          traj_axis='PLATFORM_NUMBER')
+
+.. image:: _static/scatter_map_qcflag.png
+
+- **New Argo colors utility to manage segmented colormaps and pre-defined Argo colors set.** The new :class:`argopy.plot.ArgoColors` utility class aims to easily provide colors for Argo-related variables plot. See the new documentation section on :ref:`Argo colors` for more (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy.plot import ArgoColors
+
+    ArgoColors().list_valid_known_colormaps
+    ArgoColors().known_colormaps.keys()
+
+    ArgoColors('data_mode')
+    ArgoColors('data_mode').cmap
+    ArgoColors('data_mode').definition
+
+    ArgoColors('Set2').cmap
+    ArgoColors('Spectral', N=25).cmap
+
+**Internals**
+
+- Because of the new :class:`argopy.plot.ArgoColors`, the :class:`argopy.plot.discrete_coloring` utility is deprecated in 0.1.13. Calling it will raise an error after argopy 0.1.14. (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
+
+- New method to check status of web API: now allows for a keyword check rather than a simple url ping. This comes with 2 new utilities functions :meth:`utilities.urlhaskeyword` and :meth:`utilities.isalive`. (:pr:`247`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Removed dependency to Scikit-learn LabelEncoder (:pr:`239`) by `G. Maze <http://www.github.com/gmaze>`_
+
+**Breaking changes**
+
+- Data source ``localftp`` is deprecated and removed from **argopy**. It's been replaced by the ``gdac`` data source with the appropriate ``ftp`` option. See :ref:`Data sources`. (:pr:`240`) by `G. Maze <http://www.github.com/gmaze>`_
 
 
 v0.1.12 (16 May 2022)
@@ -65,7 +156,7 @@ v0.1.11 (13 Apr. 2022)
 .. warning::
 
     Since the new ``gdac`` fetcher can use a local copy of the GDAC ftp server, the legacy ``localftp`` fetcher is now deprecated.
-    Using it will raise a warning up to v0.1.12. It will then raise an error in v0.1.13 and will be removed afterward.
+    Using it will raise a error up to v0.1.12. It will then be removed in v0.1.13.
 
 - **New dashboard for profiles and new 3rd party dashboards**. Calling on the data fetcher dashboard method will return the Euro-Argo profile page for a single profile. Very useful to look at the data before load. This comes with 2 new utilities functions to get Coriolis ID of profiles (:meth:`utilities.get_coriolis_profile_id`) and to return the list of profile webpages (:meth:`utilities.get_ea_profile_page`). (:pr:`198`) by `G. Maze <http://www.github.com/gmaze>`_.
 
@@ -573,6 +664,6 @@ v0.1.0 (17 Mar. 2020)
    :target: //pypi.org/project/argopy/
 .. |Conda| image:: https://anaconda.org/conda-forge/argopy/badges/version.svg
    :target: //anaconda.org/conda-forge/argopy
-.. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy
+.. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy?display_date=published_at
    :target: //github.com/euroargodev/argopy/releases
    

@@ -18,20 +18,20 @@ from functools import reduce, wraps
 from packaging import version
 import logging
 from abc import ABC, abstractmethod
-
-import aiohttp
-import asyncio
-from aiohttp.helpers import URL
-
+from urllib.parse import urlparse
+from typing import Union
+import inspect
+import pathlib
 import importlib
 import locale
 import platform
 import struct
-import subprocess # nosec B404 only used without user inputs
+import subprocess  # nosec B404 only used without user inputs
 import contextlib
 from fsspec.core import split_protocol
 import fsspec
 
+import argopy
 import xarray as xr
 import pandas as pd
 import numpy as np
@@ -42,8 +42,10 @@ import pkg_resources
 import shutil
 
 import threading
+from socket import gaierror
 
 import time
+import setuptools  # noqa: F401
 
 from .options import OPTIONS
 from .errors import (
@@ -53,6 +55,7 @@ from .errors import (
     InvalidOption,
     InvalidDatasetStructure,
     FileSystemHasNoCache,
+    DataNotFound,
 )
 
 try:
@@ -60,6 +63,11 @@ try:
 except AttributeError:
     collectionsAbc = collections
 
+try:
+    importlib.import_module('matplotlib')  # noqa: E402
+    from matplotlib.colors import to_hex
+except ImportError:
+    pass
 
 path2pkl = pkg_resources.resource_filename("argopy", "assets/")
 
@@ -202,23 +210,14 @@ def list_available_data_src():
     sources = {}
     try:
         from .data_fetchers import erddap_data as Erddap_Fetchers
+        # Ensure we're loading the erddap data fetcher with the current options:
+        Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(Erddap_Fetchers.api_server, OPTIONS['erddap'])
+        Erddap_Fetchers.api_server = OPTIONS['erddap']
 
         sources["erddap"] = Erddap_Fetchers
     except Exception:
         warnings.warn(
             "An error occurred while loading the ERDDAP data fetcher, "
-            "it will not be available !\n%s\n%s"
-            % (sys.exc_info()[0], sys.exc_info()[1])
-        )
-        pass
-
-    try:
-        from .data_fetchers import localftp_data as LocalFTP_Fetchers
-
-        sources["localftp"] = LocalFTP_Fetchers
-    except Exception:
-        warnings.warn(
-            "An error occurred while loading the local FTP data fetcher, "
             "it will not be available !\n%s\n%s"
             % (sys.exc_info()[0], sys.exc_info()[1])
         )
@@ -238,6 +237,9 @@ def list_available_data_src():
 
     try:
         from .data_fetchers import gdacftp_data as GDAC_Fetchers
+        # Ensure we're loading the gdac data fetcher with the current options:
+        GDAC_Fetchers.api_server_check = OPTIONS['ftp']
+        GDAC_Fetchers.api_server = OPTIONS['ftp']
 
         sources["gdac"] = GDAC_Fetchers
     except Exception:
@@ -254,11 +256,14 @@ def list_available_data_src():
 
 def list_available_index_src():
     """ List all available index sources """
-    AVAILABLE_SOURCES = {}
+    sources = {}
     try:
         from .data_fetchers import erddap_index as Erddap_Fetchers
+        # Ensure we're loading the erddap data fetcher with the current options:
+        Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(Erddap_Fetchers.api_server, OPTIONS['erddap'])
+        Erddap_Fetchers.api_server = OPTIONS['erddap']
 
-        AVAILABLE_SOURCES["erddap"] = Erddap_Fetchers
+        sources["erddap"] = Erddap_Fetchers
     except Exception:
         warnings.warn(
             "An error occurred while loading the ERDDAP index fetcher, "
@@ -268,21 +273,12 @@ def list_available_index_src():
         pass
 
     try:
-        from .data_fetchers import localftp_index as LocalFTP_Fetchers
-
-        AVAILABLE_SOURCES["localftp"] = LocalFTP_Fetchers
-    except Exception:
-        warnings.warn(
-            "An error occurred while loading the local FTP index fetcher, "
-            "it will not be available !\n%s\n%s"
-            % (sys.exc_info()[0], sys.exc_info()[1])
-        )
-        pass
-
-    try:
         from .data_fetchers import gdacftp_index as GDAC_Fetchers
+        # Ensure we're loading the gdac data fetcher with the current options:
+        GDAC_Fetchers.api_server_check = OPTIONS['ftp']
+        GDAC_Fetchers.api_server = OPTIONS['ftp']
 
-        AVAILABLE_SOURCES["gdac"] = GDAC_Fetchers
+        sources["gdac"] = GDAC_Fetchers
     except Exception:
         warnings.warn(
             "An error occurred while loading the GDAC index fetcher, "
@@ -291,7 +287,7 @@ def list_available_index_src():
         )
         pass
 
-    return AVAILABLE_SOURCES
+    return sources
 
 
 def list_standard_variables():
@@ -400,88 +396,6 @@ def list_multiprofile_file_variables():
     ]
 
 
-def check_localftp(path, errors: str = "ignore"):
-    """Check if the path has the expected GDAC ftp structure.
-
-        Check if the path is structured like:
-        .
-        └── dac
-            ├── aoml
-            ├── ...
-            ├── coriolis
-            ├── ...
-            ├── meds
-            └── nmdis
-
-        Parameters
-        ----------
-        path: str
-            Path name to check
-        errors: str, optional
-            "ignore" or "raise" (or "warn")
-
-        Returns
-        -------
-        checked: boolean
-            True if at least one DAC folder is found under path/dac/<dac_name>
-            False otherwise
-    """
-    dacs = [
-        "aoml",
-        "bodc",
-        "coriolis",
-        "csio",
-        "csiro",
-        "incois",
-        "jma",
-        "kma",
-        "kordi",
-        "meds",
-        "nmdis",
-    ]
-
-    # Case 1:
-    check1 = (
-        os.path.isdir(path)
-        and os.path.isdir(os.path.join(path, "dac"))
-        and np.any([os.path.isdir(os.path.join(path, "dac", dac)) for dac in dacs])
-    )
-
-    if check1:
-        return True
-    elif errors == "raise":
-        # This was possible up to v0.1.3:
-        check2 = os.path.isdir(path) and np.any(
-            [os.path.isdir(os.path.join(path, dac)) for dac in dacs]
-        )
-        if check2:
-            raise FtpPathError(
-                "This path is no longer GDAC compliant for argopy.\n"
-                "Please make sure you point toward a path with a 'dac' folder:\n%s"
-                % path
-            )
-        else:
-            raise FtpPathError("This path is not GDAC compliant:\n%s" % path)
-
-    elif errors == "warn":
-        # This was possible up to v0.1.3:
-        check2 = os.path.isdir(path) and np.any(
-            [os.path.isdir(os.path.join(path, dac)) for dac in dacs]
-        )
-        if check2:
-            warnings.warn(
-                "This path is no longer GDAC compliant for argopy. This will raise an error in the future.\n"
-                "Please make sure you point toward a path with a 'dac' folder:\n%s"
-                % path
-            )
-            return False
-        else:
-            warnings.warn("This path is not GDAC compliant:\n%s" % path)
-            return False
-    else:
-        return False
-
-
 def get_sys_info():
     "Returns system information as a dict"
 
@@ -583,11 +497,12 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         'ext.util': sorted([
             ("gsw", lambda mod: mod.__version__),   # Used by xarray accessor to compute new variables
             ("tqdm", lambda mod: mod.__version__),
+            ("zarr", lambda mod: mod.__version__),
         ]),
         'ext.perf': sorted([
             ("dask", lambda mod: mod.__version__),
-            ("pyarrow", lambda mod: mod.__version__),
             ("distributed", lambda mod: mod.__version__),
+            ("pyarrow", lambda mod: mod.__version__),
         ]),
         'ext.plot': sorted([
             ("matplotlib", lambda mod: mod.__version__),
@@ -598,7 +513,6 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
             ("ipykernel", lambda mod: mod.__version__),
         ]),
         'dev': sorted([
-            ("zarr", lambda mod: mod.__version__),
 
             ("bottleneck", lambda mod: mod.__version__),
             ("cftime", lambda mod: mod.__version__),
@@ -608,10 +522,14 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
 
             ("numpy", lambda mod: mod.__version__),  # will come with xarray and pandas
             ("pandas", lambda mod: mod.__version__),  # will come with xarray
-            ("sklearn", lambda mod: mod.__version__),
 
             ("pip", lambda mod: mod.__version__),
+            ("black", lambda mod: mod.__version__),
+            ("flake8", lambda mod: mod.__version__),
             ("pytest", lambda mod: mod.__version__),  # will come with pandas
+            ("pytest_env", lambda mod: mod.__version__),  # will come with pandas
+            ("pytest_cov", lambda mod: mod.__version__),  # will come with pandas
+            ("pytest_localftpserver", lambda mod: mod.__version__),  # will come with pandas
             ("setuptools", lambda mod: mod.__version__),  # Provides: pkg_resources
             ("sphinx", lambda mod: mod.__version__),
         ]),
@@ -652,10 +570,12 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         deps_blob = DEPS_blob[level]
         for k, stat in deps_blob:
             if conda:
-                print(f"  - {k} = {stat}", file=file)  # Format like a conda env line, useful to update ci/requirements
+                if k != 'argopy':
+                    kf = k.replace("_", "-")
+                    comment = ' ' if stat != '-' else '# '
+                    print(f"{comment} - {kf} = {stat}", file=file)  # Format like a conda env line, useful to update ci/requirements
             else:
                 print("{:<12}: {:<12}".format(k, stat), file=file)
-
 
 
 def show_options(file=sys.stdout):  # noqa: C901
@@ -674,8 +594,97 @@ def show_options(file=sys.stdout):  # noqa: C901
         print(f"{k}: {v}", file=file)
 
 
-def isconnected(host="https://www.ifremer.fr", maxtry=10):
-    """ check if we have a live internet connection
+def check_gdac_path(path, errors='ignore'):  # noqa: C901
+    """ Check if a path has the expected GDAC ftp structure
+
+        Expected GDAC ftp structure::
+
+            .
+            └── dac
+                ├── aoml
+                ├── ...
+                ├── coriolis
+                ├── ...
+                ├── meds
+                └── nmdis
+
+        This check will return True if at least one DAC sub-folder is found under path/dac/<dac_name>
+
+        Examples::
+        >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
+        >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
+        >>> check_gdac_path("ftp://usgodae.org/pub/outgoing/argo") # True
+        >>> check_gdac_path("/home/ref-argo/gdac") # True
+        >>> check_gdac_path("https://www.ifremer.fr") # False
+        >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
+
+        Parameters
+        ----------
+        path: str
+            Path name to check, including access protocol
+        errors: str
+            "ignore" or "raise" (or "warn")
+
+        Returns
+        -------
+        checked: boolean
+            True if at least one DAC folder is found under path/dac/<dac_name>
+            False otherwise
+    """
+    # Create a file system for this path
+    if split_protocol(path)[0] is None:
+        fs = fsspec.filesystem('file')
+    elif 'https' in split_protocol(path)[0]:
+        fs = fsspec.filesystem('http')
+    elif 'ftp' in split_protocol(path)[0]:
+        try:
+            host = split_protocol(path)[-1].split('/')[0]
+            fs = fsspec.filesystem('ftp', host=host)
+        except gaierror:
+            if errors == 'raise':
+                raise FtpPathError("Can't get address info (GAIerror) on '%s'" % host)
+            elif errors == "warn":
+                warnings.warn("Can't get address info (GAIerror) on '%s'" % host)
+                return False
+            else:
+                return False
+    else:
+        raise FtpPathError("Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0])
+
+    # dacs = [
+    #     "aoml",
+    #     "bodc",
+    #     "coriolis",
+    #     "csio",
+    #     "csiro",
+    #     "incois",
+    #     "jma",
+    #     "kma",
+    #     "kordi",
+    #     "meds",
+    #     "nmdis",
+    # ]
+
+    # Case 1:
+    check1 = (
+        fs.exists(path)
+        and fs.exists(fs.sep.join([path, "dac"]))
+        # and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
+    )
+    if check1:
+        return True
+    elif errors == "raise":
+        raise FtpPathError("This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s" % path)
+
+    elif errors == "warn":
+        warnings.warn("This path is not GDAC compliant:\n%s" % path)
+        return False
+    else:
+        return False
+
+
+def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
+    """Check if an URL is alive
 
         Parameters
         ----------
@@ -683,14 +692,17 @@ def isconnected(host="https://www.ifremer.fr", maxtry=10):
             URL to use, 'https://www.ifremer.fr' by default
         maxtry: int, default: 10
             Maximum number of host connections to try before
+
         Returns
         -------
         bool
     """
+    # log.debug("isconnected: %s" % host)
     if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
         it = 0
         while it < maxtry:
             try:
+                # log.debug("Checking if %s is connected ..." % host)
                 urllib.request.urlopen(host, timeout=1)  # nosec B310 because host protocol already checked
                 result, it = True, maxtry
             except Exception:
@@ -698,6 +710,59 @@ def isconnected(host="https://www.ifremer.fr", maxtry=10):
         return result
     else:
         return os.path.exists(host)
+
+
+def urlhaskeyword(url: str = "", keyword: str = '', maxtry: int = 10):
+    """ Check if a keyword is in the content of a URL
+
+        Parameters
+        ----------
+        url: str
+        keyword: str
+        maxtry: int, default: 10
+            Maximum number of host connections to try before returning False
+
+        Returns
+        -------
+        bool
+    """
+    it = 0
+    while it < maxtry:
+        try:
+            with fsspec.open(url) as f:
+                data = f.read()
+            result = keyword in str(data)
+            it = maxtry
+        except Exception:
+            result, it = False, it + 1
+    return result
+
+
+def isalive(api_server_check: Union[str, dict] = "") -> bool:
+    """Check if an API is alive or not
+
+        2 methods are available:
+
+        - URL Ping
+        - keyword Check
+
+        Parameters
+        ----------
+        api_server_check
+            Url string or dictionary with [``url``, ``keyword``] keys.
+
+            - For a string, uses: :class:`argopy.utilities.isconnected`
+            - For a dictionary,  uses: :class:`argopy.utilities.urlhaskeyword`
+
+        Returns
+        -------
+        bool
+    """
+    # log.debug("isalive: %s" % api_server_check)
+    if isinstance(api_server_check, dict):
+        return urlhaskeyword(url=api_server_check['url'], keyword=api_server_check['keyword'])
+    else:
+        return isconnected(api_server_check)
 
 
 def isAPIconnected(src="erddap", data=True):
@@ -722,37 +787,46 @@ def isAPIconnected(src="erddap", data=True):
         list_src = list_available_index_src()
 
     if src in list_src and getattr(list_src[src], "api_server_check", None):
-        if "localftp" in src:
-            # This is a special case because the source here is a local folder
-            result = check_localftp(OPTIONS["local_ftp"])
-        else:
-            result = isconnected(list_src[src].api_server_check)
-        return result
+        return isalive(list_src[src].api_server_check)
     else:
         raise InvalidFetcher
 
 
 def erddap_ds_exists(
-    ds: str = "ArgoFloats", erddap: str = "https://www.ifremer.fr/erddap"
+        ds: Union[list, str] = "ArgoFloats",
+        erddap: str = None,
+        maxtry: int = 2
 ) -> bool:
     """ Check if a dataset exists on a remote erddap server
-    return a bool
 
     Parameter
     ---------
-    ds: str
-        Name of the erddap dataset to check (default: 'ArgoFloats')
-    erddap: str
-        Url of the erddap server (default: 'https://www.ifremer.fr/erddap')
+    ds: str, default='ArgoFloats'
+        Name of the erddap dataset to check
+    erddap: str, default=OPTIONS['erddap']
+        Url of the erddap server
+    maxtry: int, default: 2
+        Maximum number of host connections to try
 
     Return
     ------
     bool
     """
+    if erddap is None:
+        erddap = OPTIONS['erddap']
+    # log.debug("from erddap_ds_exists: %s" % erddap)
     from .stores import httpstore
-    with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
-        erddap_index = json.load(of)
-    return ds in [row[-1] for row in erddap_index["table"]["rows"]]
+    if isconnected(erddap, maxtry=maxtry):
+        with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
+            erddap_index = json.load(of)
+        if is_list_of_strings(ds):
+            return [this_ds in [row[-1] for row in erddap_index["table"]["rows"]] for this_ds in ds]
+        else:
+            return ds in [row[-1] for row in erddap_index["table"]["rows"]]
+    else:
+        log.debug("Cannot reach erddap server: %s" % erddap)
+        warnings.warn("Return False because we cannot reach the erddap server %s" % erddap)
+        return False
 
 
 def badge(label="label", message="message", color="green", insert=False):
@@ -789,92 +863,115 @@ def badge(label="label", message="message", color="green", insert=False):
         return Image(url=img)
 
 
-def fetch_status(stdout: str = "html", insert: bool = True):
-    """ Fetch and report web API status
+class fetch_status:
+    """Fetch and report web API status"""
 
-    Parameters
-    ----------
-    stdout: str
-        Format of the results, default is 'html'. Otherwise a simple string.
-    insert: bool
-        Print or display results directly in stdout format.
+    def __init__(self, **kwargs):
+        if "stdout" in kwargs or "insert" in kwargs:
+            warnings.warn("'fetch_status' signature has changed")
+        pass
 
-    Returns
-    -------
-    IPython.display.HTML or str
-    """
-    results = {}
-    list_src = list_available_data_src()
-    for api, mod in list_src.items():
-        if getattr(mod, "api_server_check", None):
-            # status = isconnected(mod.api_server_check)
-            status = isAPIconnected(api)
-            if api == "localftp" and OPTIONS["local_ftp"] == "-":
-                message = "ok" if status else "path undefined !"
-            else:
-                # message = "up" if status else "down"
+    def fetch(self):
+        results = {}
+        list_src = list_available_data_src()
+        for api, mod in list_src.items():
+            if getattr(mod, "api_server_check", None):
+                status = isAPIconnected(api)
                 message = "ok" if status else "offline"
-            results[api] = {"value": status, "message": message}
+                results[api] = {"value": status, "message": message}
+        return results
 
-    if "IPython" in sys.modules and stdout == "html":
-        cols = []
-        for api in sorted(results.keys()):
-            color = "green" if results[api]["value"] else "orange"
-            if isconnected():
-                # img = badge("src='%s'" % api, message=results[api]['message'], color=color, insert=False)
-                # img = badge(label="argopy src", message="%s is %s" %
-                # (api, results[api]['message']), color=color, insert=False)
-                img = badge(
-                    label="src %s is" % api,
-                    message="%s" % results[api]["message"],
-                    color=color,
-                    insert=False,
-                )
-                html = ('<td><img src="{}"></td>').format(img)
-            else:
-                # html = "<th>src %s is:</th><td>%s</td>" % (api, results[api]['message'])
-                html = (
-                    "<th><div>src %s is:</div></th><td><div style='color:%s;'>%s</div></td>"
-                    % (api, color, results[api]["message"])
-                )
-            cols.append(html)
-        this_HTML = ("<table><tr>{}</tr></table>").format("".join(cols))
-        if insert:
-            from IPython.display import HTML, display
-
-            return display(HTML(this_HTML))
-        else:
-            return this_HTML
-    else:
+    @property
+    def text(self):
+        results = self.fetch()
         rows = []
         for api in sorted(results.keys()):
-            # rows.append("argopy src %s: %s" % (api, results[api]['message']))
             rows.append("src %s is: %s" % (api, results[api]["message"]))
-        txt = "\n".join(rows)
-        if insert:
-            print(txt)
-        else:
-            return txt
+        txt = " | ".join(rows)
+        return txt
+
+    def __repr__(self):
+        return self.text
+
+    @property
+    def html(self):
+        results = self.fetch()
+
+        fs = 12
+        def td_msg(bgcolor, txtcolor, txt):
+            style = "background-color:%s;" % to_hex(bgcolor, keep_alpha=True)
+            style+= "border-width:0px;"
+            style+= "padding: 2px 5px 2px 5px;"
+            style+= "text-align:left;"
+            style+= "color:%s" % to_hex(txtcolor, keep_alpha=True)
+            return "<td style='%s'>%s</td>" % (style, str(txt))
+        td_empty = "<td style='border-width:0px;padding: 2px 5px 2px 5px;text-align:left'>&nbsp;</td>"
+
+        html = []
+        html.append("<table style='border-collapse:collapse;border-spacing:0;font-size:%ipx'>" % fs)
+        html.append("<tbody><tr>")
+        cols = []
+        for api in sorted(results.keys()):
+            color = "yellowgreen" if results[api]["value"] else "darkorange"
+            cols.append(td_msg('dimgray', 'w', "src %s is" % api))
+            cols.append(td_msg(color, 'w', results[api]["message"]))
+            cols.append(td_empty)
+        html.append("\n".join(cols))
+        html.append("</tr></tbody>")
+        html.append("</table>")
+        html = "\n".join(html)
+        return html
+
+    def _repr_html_(self):
+        return self.html
 
 
 class monitor_status:
     """ Monitor data source status with a refresh rate """
 
     def __init__(self, refresh=60):
-        import ipywidgets as widgets
-
         self.refresh_rate = refresh
-        self.text = widgets.HTML(
-            value=fetch_status(stdout="html", insert=False),
-            placeholder="",
-            description="",
-        )
-        self.start()
+
+        if self.runner == 'notebook':
+            import ipywidgets as widgets
+
+            self.text = widgets.HTML(
+                value=self.content,
+                placeholder="",
+                description="",
+            )
+            self.start()
+
+    def __repr__(self):
+        if self.runner != 'notebook':
+            return self.content
+        else:
+            return ""
+
+    @property
+    def runner(self) -> str:
+        try:
+            shell = get_ipython().__class__.__name__
+            if shell == 'ZMQInteractiveShell':
+                return 'notebook'  # Jupyter notebook or qtconsole
+            elif shell == 'TerminalInteractiveShell':
+                return 'terminal'  # Terminal running IPython
+            else:
+                return False  # Other type (?)
+        except NameError:
+            return 'standard'  # Probably standard Python interpreter
+
+    @property
+    def content(self):
+        if self.runner == 'notebook':
+            return fetch_status().html
+        else:
+            return fetch_status().text
 
     def work(self):
         while True:
             time.sleep(self.refresh_rate)
-            self.text.value = fetch_status(stdout="html", insert=False)
+            self.text.value = self.content
 
     def start(self):
         from IPython.display import display
@@ -882,40 +979,6 @@ class monitor_status:
         thread = threading.Thread(target=self.work)
         display(self.text)
         thread.start()
-
-
-# def open_etopo1(box, res="l"):
-#     """ Download ETOPO for a box
-#
-#         Parameters
-#         ----------
-#         box: [xmin, xmax, ymin, ymax]
-#
-#         Returns
-#         -------
-#         xarray.Dataset
-#     """
-#     # This function is in utilities to anticipate usage outside of plotting, eg interpolation, grounding detection
-#     resx, resy = 0.1, 0.1
-#     if res == "h":
-#         resx, resy = 0.016, 0.016
-#
-#     uri = (
-#         "https://gis.ngdc.noaa.gov/mapviewer-support/wcs-proxy/wcs.groovy?filename=etopo1.nc"
-#         "&request=getcoverage&version=1.0.0&service=wcs&coverage=etopo1&CRS=EPSG:4326&format=netcdf"
-#         "&resx={}&resy={}"
-#         "&bbox={}"
-#     ).format
-#     thisurl = uri(
-#         resx, resy, ",".join([str(b) for b in [box[0], box[2], box[1], box[3]]])
-#     )
-#     ds = httpstore(cache=True).open_dataset(thisurl)
-#     da = ds["Band1"].rename("topo")
-#     for a in ds.attrs:
-#         da.attrs[a] = ds.attrs[a]
-#     da.attrs["Data source"] = "https://maps.ngdc.noaa.gov/viewers/wcs-client/"
-#     da.attrs["URI"] = thisurl
-#     return da
 
 
 #
@@ -1066,7 +1129,7 @@ class Chunker:
     def _split(self, lst, n=1):
         """Yield successive n-sized chunks from lst"""
         for i in range(0, len(lst), n):
-            yield lst[i : i + n]
+            yield lst[i: i + n]
 
     def _split_list_bychunknb(self, lst, n=1):
         """Split list in n-imposed chunks of similar size
@@ -1077,7 +1140,7 @@ class Chunker:
         for i in self._split(lst, siz):
             res.append(i)
         if len(res) > n:
-            res[n - 1 : :] = [reduce(lambda i, j: i + j, res[n - 1 : :])]
+            res[n-1::] = [reduce(lambda i, j: i + j, res[n-1::])]
         return res
 
     def _split_list_bychunksize(self, lst, max_size=1):
@@ -1113,7 +1176,7 @@ class Chunker:
                     this_box[i_right] = right
                     boxes.append(this_box)
         elif "t" in d:
-            dates = pd.to_datetime(large_box[i_left : i_right + 1])
+            dates = pd.to_datetime(large_box[i_left: i_right + 1])
             date_bounds = [
                 d.strftime("%Y%m%d%H%M%S")
                 for d in pd.date_range(dates[0], dates[1], periods=n + 1)
@@ -1271,20 +1334,26 @@ def format_oneline(s, max_width=65):
         if q == 0:
             return "".join([s[0:n], padding, s[-n:]])
         else:
-            return "".join([s[0 : n + 1], padding, s[-n:]])
+            return "".join([s[0:n+1], padding, s[-n:]])
     else:
         return s
 
 
 def is_indexbox(box: list, errors="raise"):
     """ Check if this array matches a 2d or 3d index box definition
-        box = [lon_min, lon_max, lat_min, lat_max]
-    or:
-        box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
+
+    Argopy expects one of the following 2 format to define an index box:
+
+    - box = [lon_min, lon_max, lat_min, lat_max]
+    - box = [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
+
+    This function check for this format compliance.
+
     Parameters
     ----------
     box: list
-    errors: 'raise'
+    errors: str, default='raise'
+
     Returns
     -------
     bool
@@ -1357,11 +1426,14 @@ def is_indexbox(box: list, errors="raise"):
 
 
 def is_box(box: list, errors="raise"):
-    """ Check if this array matches a 3d or 4d data box definition
+    """Check if this array matches a 3d or 4d data box definition
 
-        box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
-    or:
-        box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
+    Argopy expects one of the following 2 format to define a box:
+
+    - box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
+    - box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
+
+    This function check for this format compliance.
 
     Parameters
     ----------
@@ -1408,11 +1480,11 @@ def is_box(box: list, errors="raise"):
     )
     if len(box) == 8:
         tests[
-            "datetim_min must be a string convertible to a Pandas datetime"
-        ] = lambda b: isinstance(b[-2], str) and is_dateconvertible(b[-2])
+            "datetim_min must be an object convertible to a Pandas datetime"
+        ] = lambda b: is_dateconvertible(b[-2])
         tests[
-            "datetim_max must be a string convertible to a Pandas datetime"
-        ] = lambda b: isinstance(b[-1], str) and is_dateconvertible(b[-1])
+            "datetim_max must be an object convertible to a Pandas datetime"
+        ] = lambda b: is_dateconvertible(b[-1])
 
     # Ranges:
     tests["lon_min must be in [-180;180] or [0;360]"] = (
@@ -1427,13 +1499,13 @@ def is_box(box: list, errors="raise"):
     tests["pres_max must be in [0;10000]"] = lambda b: b[5] >= 0 and b[5] <= 10000
 
     # Orders:
-    tests["lon_max must be larger than lon_min"] = lambda b: b[0] < b[1]
-    tests["lat_max must be larger than lat_min"] = lambda b: b[2] < b[3]
-    tests["pres_max must be larger than pres_min"] = lambda b: b[4] < b[5]
+    tests["lon_max must be larger than lon_min"] = lambda b: b[0] <= b[1]
+    tests["lat_max must be larger than lat_min"] = lambda b: b[2] <= b[3]
+    tests["pres_max must be larger than pres_min"] = lambda b: b[4] <= b[5]
     if len(box) == 8:
         tests["datetim_max must come after datetim_min"] = lambda b: pd.to_datetime(
             b[-2]
-        ) < pd.to_datetime(b[-1])
+        ) <= pd.to_datetime(b[-1])
 
     error = None
     for msg, test in tests.items():
@@ -1468,6 +1540,16 @@ def is_list_equal(lst1, lst2):
     )
 
 
+def to_list(obj):
+    """Make sure that an expected list is indeed a list"""
+    if not isinstance(obj, list):
+        if isinstance(obj, np.ndarray):
+            obj = list(obj)
+        else:
+            obj = [obj]
+    return obj
+
+
 def check_wmo(lst, errors="raise"):
     """ Validate a WMO option and returned it as a list of integers
 
@@ -1485,11 +1567,7 @@ def check_wmo(lst, errors="raise"):
     is_wmo(lst, errors=errors)
 
     # Make sure we deal with a list
-    if not isinstance(lst, list):
-        if isinstance(lst, np.ndarray):
-            lst = list(lst)
-        else:
-            lst = [lst]
+    lst = to_list(lst)
 
     # Then cast list elements as integers
     return [abs(int(x)) for x in lst]
@@ -1512,11 +1590,7 @@ def is_wmo(lst, errors="raise"):  # noqa: C901
     """
 
     # Make sure we deal with a list
-    if not isinstance(lst, list):
-        if isinstance(lst, np.ndarray):
-            lst = list(lst)
-        else:
-            lst = [lst]
+    lst = to_list(lst)
 
     # Error message:
     # msg = "WMO must be an integer or an iterable with elements that can be casted as integers"
@@ -1568,11 +1642,7 @@ def check_cyc(lst, errors="raise"):
     is_cyc(lst, errors=errors)
 
     # Make sure we deal with a list
-    if not isinstance(lst, list):
-        if isinstance(lst, np.ndarray):
-            lst = list(lst)
-        else:
-            lst = [lst]
+    lst = to_list(lst)
 
     # Then cast list elements as integers
     return [abs(int(x)) for x in lst]
@@ -1592,11 +1662,7 @@ def is_cyc(lst, errors="raise"):  # noqa: C901
         True if cyc is indeed a list of integers
     """
     # Make sure we deal with a list
-    if not isinstance(lst, list):
-        if isinstance(lst, np.ndarray):
-            lst = list(lst)
-        else:
-            lst = [lst]
+    lst = to_list(lst)
 
     # Error message:
     msg = "CYC must be a single or a list of at most 4 digit positive numbers. Invalid: '{}'".format
@@ -1655,9 +1721,9 @@ def check_index_cols(column_names: list, convention: str = 'ar_index_global_prof
 
 
 def warnUnless(ok, txt):
-    """ Decorator to raise warning unless condition is True
+    """Function to raise a warning unless condition is True
 
-    This function must be used as a decorator
+    This function IS NOT to be used as a decorator anymore
 
     Parameters
     ----------
@@ -1666,18 +1732,9 @@ def warnUnless(ok, txt):
     txt: str
         Text to display in the warning
     """
-
-    def inner(fct):
-        def wrapper(*args, **kwargs):
-            warnings.warn("%s %s" % (fct.__name__, txt))
-            return fct(*args, **kwargs)
-
-        return wrapper
-
     if not ok:
-        return inner
-    else:
-        return lambda f: f
+        msg = "%s %s" % (inspect.stack()[1].function, txt)
+        warnings.warn(msg)
 
 
 @contextlib.contextmanager
@@ -1984,6 +2041,7 @@ class TopoFetcher:
         cachedir: str = "",
         api_timeout: int = 0,
         stride: list = [1, 1],
+        server: Union[str] = None,
         **kwargs,
     ):
         """ Instantiate an ERDDAP topo data fetcher
@@ -2014,7 +2072,7 @@ class TopoFetcher:
         self.stride = stride
         if ds == "gebco":
             self.definition = "NOAA erddap gebco data fetcher for a space region"
-            self.server = "https://coastwatch.pfeg.noaa.gov/erddap"
+            self.server = server if server is not None else "https://coastwatch.pfeg.noaa.gov/erddap"
             self.server_name = "NOAA"
             self.dataset_id = "gebco"
 
@@ -2185,7 +2243,7 @@ def argo_split_path(this_path):  # noqa C901
     ]
     output = {}
 
-    start_with = lambda f, x: f[0:len(x)] == x if len(x) <= len(f) else False
+    start_with = lambda f, x: f[0:len(x)] == x if len(x) <= len(f) else False  # noqa: E731
 
     def split_path(p, sep='/'):
         """Split a pathname.  Returns tuple "(head, tail)" where "tail" is
@@ -2198,9 +2256,18 @@ def argo_split_path(this_path):  # noqa C901
             head = head.rstrip(sep)
         return head, tail
 
+    def fix_localhost(host):
+        if 'ftp://localhost:' in host:
+            return "ftp://%s" % (urlparse(host).netloc)
+        if 'http://127.0.0.1:' in host:
+            return "http://%s" % (urlparse(host).netloc)
+        else:
+            return ""
+
     known_origins = ['https://data-argo.ifremer.fr',
                      'ftp://ftp.ifremer.fr/ifremer/argo',
                      'ftp://usgodae.org/pub/outgoing/argo',
+                     fix_localhost(this_path),
                      '']
 
     output['origin'] = [origin for origin in known_origins if start_with(this_path, origin)][0]
@@ -2307,32 +2374,26 @@ def argo_split_path(this_path):  # noqa C901
     return dict(sorted(output.items()))
 
 
-"""
-doc_inherit decorator
-
-Usage:
-
-class Foo(object):
-    def foo(self):
-        "Frobber"
-        pass
-
-class Bar(Foo):
-    @doc_inherit
-    def foo(self):
-        pass 
-
-Now, Bar.foo.__doc__ == Bar().foo.__doc__ == Foo.foo.__doc__ == "Frobber"
-
-src: https://code.activestate.com/recipes/576862/
-"""
-
-
 class DocInherit(object):
-    """
-    Docstring inheriting method descriptor
+    """Docstring inheriting method descriptor
 
     The class itself is also used as a decorator
+
+    Usage:
+
+    class Foo(object):
+        def foo(self):
+            "Frobber"
+            pass
+
+    class Bar(Foo):
+        @doc_inherit
+        def foo(self):
+            pass
+
+    Now, Bar.foo.__doc__ == Bar().foo.__doc__ == Foo.foo.__doc__ == "Frobber"
+
+    src: https://code.activestate.com/recipes/576862/
     """
 
     def __init__(self, mthd):
@@ -2349,7 +2410,7 @@ class DocInherit(object):
 
         overridden = getattr(super(cls, obj), self.name, None)
 
-        @wraps(self.mthd, assigned=('__name__','__module__'))
+        @wraps(self.mthd, assigned=('__name__', '__module__'))
         def f(*args, **kwargs):
             return self.mthd(obj, *args, **kwargs)
 
@@ -2359,9 +2420,10 @@ class DocInherit(object):
 
         for parent in cls.__mro__[1:]:
             overridden = getattr(parent, self.name, None)
-            if overridden: break
+            if overridden:
+                break
 
-        @wraps(self.mthd, assigned=('__name__','__module__'))
+        @wraps(self.mthd, assigned=('__name__', '__module__'))
         def f(*args, **kwargs):
             return self.mthd(*args, **kwargs)
 
@@ -2369,9 +2431,10 @@ class DocInherit(object):
 
     def use_parent_doc(self, func, source):
         if source is None:
-            raise NameError("Can't find '%s' in parents"%self.name)
+            raise NameError("Can't find '%s' in parents" % self.name)
         func.__doc__ = source.__doc__
         return func
+
 
 doc_inherit = DocInherit
 
@@ -2484,6 +2547,8 @@ class RegistryItem(ABC):
 
 
 class float_wmo(RegistryItem):
+    """Argo float WMO number object"""
+
     def __init__(self, WMO_number, errors='raise'):
         """Create an Argo float WMO number object
 
@@ -2521,7 +2586,7 @@ class float_wmo(RegistryItem):
         return "%s" % self.item
 
     def __repr__(self):
-        return f"WMO(%s)" % self.item
+        return f"WMO({self.item})"
 
     def __check_other__(self, other):
         return check_wmo(other)[0] if type(other) is not float_wmo else other.item
@@ -2603,6 +2668,12 @@ class Registry(UserList):
             self._complain("%s is not a valid %s" % (str(item), self.dtype))
         return is_valid
 
+    def _dict(self, item):
+        is_valid = isinstance(item, dict)
+        if not is_valid:
+            self._complain("%s is not a valid %s" % (str(item), self.dtype))
+        return is_valid
+
     def _wmo(self, item):
         return item.isvalid
 
@@ -2628,6 +2699,9 @@ class Registry(UserList):
         elif dtype == float_wmo or str(dtype).lower() == 'wmo':
             self._validator = self._wmo
             self.dtype = float_wmo
+        elif repr(dtype) == "<class 'dict'>" or dtype == 'dict':
+            self._validator = self._dict
+            self.dtype = dict
         else:
             raise ValueError("Unrecognised Registry data type '%s'" % dtype)
         if initlist is not None:
@@ -2699,7 +2773,7 @@ class Registry(UserList):
         return self.__copy__()
 
 
-def get_coriolis_profile_id(WMO, CYC=None):
+def get_coriolis_profile_id(WMO, CYC=None, **kwargs):
     """ Return a :class:`pandas.DataFrame` with CORIOLIS ID of WMO/CYC profile pairs
 
         This method get ID by requesting the dataselection.euro-argo.eu trajectory API.
@@ -2719,9 +2793,13 @@ def get_coriolis_profile_id(WMO, CYC=None):
     WMO_list = check_wmo(WMO)
     if CYC is not None:
         CYC_list = check_cyc(CYC)
-    URIs = [
-        "https://dataselection.euro-argo.eu/api/trajectory/%i" % wmo for wmo in WMO_list
-    ]
+    if 'api_server' in kwargs:
+        api_server = kwargs['api_server']
+    elif OPTIONS['server'] is not None:
+        api_server = OPTIONS['server']
+    else:
+        api_server = "https://dataselection.euro-argo.eu/api"
+    URIs = [api_server + "/trajectory/%i" % wmo for wmo in WMO_list]
 
     def prec(data, url):
         # Transform trajectory json to dataframe
@@ -2738,7 +2816,7 @@ def get_coriolis_profile_id(WMO, CYC=None):
         return pd.DataFrame(rows)
 
     from .stores import httpstore
-    fs = httpstore(cache=True)
+    fs = httpstore(cache=True, cachedir=OPTIONS['cachedir'])
     data = fs.open_mfjson(URIs, preprocess=prec, errors="raise", url_follow=True)
 
     # Merge results (list of dataframe):
@@ -2769,7 +2847,7 @@ def get_coriolis_profile_id(WMO, CYC=None):
     ]
 
 
-def get_ea_profile_page(WMO, CYC=None):
+def get_ea_profile_page(WMO, CYC=None, **kwargs):
     """ Return a list of URL
 
         Parameters
@@ -2787,7 +2865,7 @@ def get_ea_profile_page(WMO, CYC=None):
         --------
         get_coriolis_profile_id
     """
-    df = get_coriolis_profile_id(WMO, CYC)
+    df = get_coriolis_profile_id(WMO, CYC, **kwargs)
     url = "https://dataselection.euro-argo.eu/cycle/{}"
     return [url.format(this_id) for this_id in sorted(df["ID"])]
 
@@ -2962,7 +3040,7 @@ class ArgoNVSReferenceTables:
         Returns
         -------
         OrderedDict
-            Dictionary with all table short names as key and table content as :class:`pandas.DataFrame`
+            Dictionary with all table short names as key and table content as class:`pandas.DataFrame`
         """
         URLs = [self.get_url(rtid) for rtid in self.valid_ref]
         df_list = self.fs.open_mfjson(URLs, preprocess=self._jsConcept2df)
@@ -3010,6 +3088,7 @@ class OceanOPSDeployments:
 
     Examples
     --------
+
     Import the utility class:
 
     >>> from argopy.utilities import OceanOPSDeployments
@@ -3032,7 +3111,7 @@ class OceanOPSDeployments:
     >>> df = deployment.to_dataframe()
     >>> data = deployment.to_json()
 
-    Usefull attributes and methods:
+    Useful attributes and methods:
 
     >>> deployment.uri
     >>> deployment.uri_decoded
@@ -3043,8 +3122,11 @@ class OceanOPSDeployments:
     """
     api = "https://www.ocean-ops.org"
     """URL to the API"""
+
     model = "api/1/data/platform"
-    """This model represents a Platform entity and is used to retrieve a platform information (schema model named 'Ptf')."""
+    """This model represents a Platform entity and is used to retrieve a platform information (schema model
+     named 'Ptf')."""
+
     api_server_check = 'https://www.ocean-ops.org/api/1/oceanops-api.yaml'
     """URL to check if the API is alive"""
 
@@ -3054,9 +3136,8 @@ class OceanOPSDeployments:
         Parameters
         ----------
         box: list, optional, default=None
-            Define the domain to load the Argo deployment plan for. By default **box** is set to None to work with the
+            Define the domain to load the Argo deployment plan for. By default, **box** is set to None to work with the
             global deployment plan starting from the current date.
-
             The list expects one of the following format:
 
             - [lon_min, lon_max, lat_min, lat_max]
@@ -3064,7 +3145,6 @@ class OceanOPSDeployments:
             - [lon_min, lon_max, lat_min, lat_max, date_min, date_max]
 
             Longitude and latitude values must be floats. Dates are strings.
-
             If **box** is provided with a regional domain definition (only 4 values given), then ``date_min`` will be
             set to the current date.
 
@@ -3076,10 +3156,10 @@ class OceanOPSDeployments:
         if box is None:
             box = [None, None, None, None, pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"), None]
         elif len(box) == 4:
-            box = box.append(pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"))
-            box = box.append(None)
+            box.append(pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"))
+            box.append(None)
         elif len(box) == 5:
-            box = box.append(None)
+            box.append(None)
 
         if len(box) != 6:
             raise ValueError("The 'box' argument must be: None or of lengths 4 or 5 or 6\n%s" % str(box))
@@ -3090,6 +3170,28 @@ class OceanOPSDeployments:
 
         from .stores import httpstore
         self.fs = httpstore(cache=False)
+
+    def __format(self, x, typ: str) -> str:
+        """ string formatting helper """
+        if typ == "lon":
+            return str(x) if x is not None else "-"
+        elif typ == "lat":
+            return str(x) if x is not None else "-"
+        elif typ == "tim":
+            return pd.to_datetime(x).strftime("%Y-%m-%d") if x is not None else "-"
+        else:
+            return str(x)
+
+    def __repr__(self):
+        summary = ["<argo.deployment_plan>"]
+        summary.append("API: %s/%s" % (self.api, self.model))
+        summary.append("Domain: %s" % self.box_name)
+        summary.append("Deployed only: %s" % self.deployed_only)
+        if self.data is not None:
+            summary.append("Nb of floats in the deployment plan: %s" % self.size)
+        else:
+            summary.append("Nb of floats in the deployment plan: - [Data not retrieved yet]")
+        return '\n'.join(summary)
 
     def __encode_inc(self, inc):
         """Return encoded uri expression for 'include' parameter
@@ -3116,6 +3218,11 @@ class OceanOPSDeployments:
         str
         """
         return exp.replace("\"", "%22").replace("'", "%27").replace(" ", "%20").replace(">", "%3E").replace("<", "%3C")
+
+    def __get_uri(self, encoded=False):
+        uri = "exp=%s&include=%s" % (self.exp(encoded=encoded), self.include(encoded=encoded))
+        url = "%s/%s?%s" % (self.api, self.model, uri)
+        return url
 
     def include(self, encoded=False):
         """Return an Ocean-Ops API 'include' expression
@@ -3178,10 +3285,45 @@ class OceanOPSDeployments:
         exp = "[\"%s\", %s]" % (exp, ", ".join(arg))
         return exp if not encoded else self.__encode_exp(exp)
 
-    def __get_uri(self, encoded=False):
-        uri = "exp=%s&include=%s" % (self.exp(encoded=encoded), self.include(encoded=encoded))
-        url = "%s/%s?%s" % (self.api, self.model, uri)
-        return url
+    @property
+    def size(self):
+        return len(self.data['data']) if self.data is not None else None
+
+    @property
+    def status_code(self):
+        """Return a :class:`pandas.DataFrame` with the definition of status"""
+        status = {'status_code': [0, 1, 2, 6, 4, 5],
+                  'status_name': ['PROBABLE', 'CONFIRMED', 'REGISTERED', 'OPERATIONAL', 'INACTIVE', 'CLOSED'],
+                  'description': [
+                      'Starting status for some platforms, when there is only a few metadata available, like rough deployment location and date. The platform may be deployed',
+                      'Automatically set when a ship is attached to the deployment information. The platform is ready to be deployed, deployment is planned',
+                      'Starting status for most of the networks, when deployment planning is not done. The deployment is certain, and a notification has been sent via the OceanOPS system',
+                      'Automatically set when the platform is emitting a pulse and observations are distributed within a certain time interval',
+                      'The platform is not emitting a pulse since a certain time',
+                      'The platform is not emitting a pulse since a long time, it is considered as dead',
+                  ]}
+        return pd.DataFrame(status).set_index('status_code')
+
+    @property
+    def box_name(self):
+        """Return a string to print the box property"""
+        BOX = self.box
+        cname = ("[lon=%s/%s; lat=%s/%s]") % (
+            self.__format(BOX[0], "lon"),
+            self.__format(BOX[1], "lon"),
+            self.__format(BOX[2], "lat"),
+            self.__format(BOX[3], "lat"),
+        )
+        if len(BOX) == 6:
+            cname = ("[lon=%s/%s; lat=%s/%s; t=%s/%s]") % (
+                self.__format(BOX[0], "lon"),
+                self.__format(BOX[1], "lon"),
+                self.__format(BOX[2], "lat"),
+                self.__format(BOX[3], "lat"),
+                self.__format(BOX[4], "tim"),
+                self.__format(BOX[5], "tim"),
+            )
+        return cname
 
     @property
     def uri(self):
@@ -3203,6 +3345,19 @@ class OceanOPSDeployments:
         """
         return self.__get_uri(encoded=False)
 
+    @property
+    def plan(self):
+        """Return a dictionary to be used as argument in a :class:`virtualargofleet.VirtualFleet`
+
+        This method is for dev, but will be moved to the VirtualFleet software utilities
+        """
+        df = self.to_dataframe()
+        plan = df[['lon', 'lat', 'date']].rename(columns={"date": "time"}).to_dict('series')
+        for key in plan.keys():
+            plan[key] = plan[key].to_list()
+        plan['time'] = np.array(plan['time'], dtype='datetime64')
+        return plan
+
     def to_json(self):
         """Return OceanOPS API request response as a json object"""
         if self.data is None:
@@ -3217,6 +3372,9 @@ class OceanOPSDeployments:
         :class:`pandas.DataFrame`
         """
         data = self.to_json()
+        if data['total'] == 0:
+            raise DataNotFound('Your search matches no results')
+
         # res = {'date': [], 'lat': [], 'lon': [], 'wmo': [], 'status_name': [], 'status_code': []}
         # res = {'date': [], 'lat': [], 'lon': [], 'wmo': [], 'status_name': [], 'status_code': [], 'ship_name': []}
         res = {'date': [], 'lat': [], 'lon': [], 'wmo': [], 'status_name': [], 'status_code': [], 'program': [],
@@ -3248,112 +3406,245 @@ class OceanOPSDeployments:
             #     status[ptf['ptfStatus']['name']] = ptf['ptfStatus']['description']
 
         df = pd.DataFrame(res)
+        df = df.astype({'date': np.datetime64})
         df = df.sort_values(by='date').reset_index(drop=True)
         # df = df[ (df['status_name'] == 'CLOSED') | (df['status_name'] == 'OPERATIONAL')] # Select only floats that have been deployed and returned data
         # print(status)
         return df
 
-    @property
-    def plan(self):
-        """Return a dictionary to be used as argument in a :class:`VirtualFleet`
-
-        This method is for dev, but will be moved to the VirtualFleet software utilities
-        """
-        df = self.to_dataframe()
-        plan = df[['lon', 'lat', 'date']].rename(columns={"date": "time"}).to_dict('series')
-        for key in plan.keys():
-            plan[key] = plan[key].to_list()
-        plan['time'] = np.array(plan['time'], dtype='datetime64')
-        return plan
-
-    @property
-    def status_code(self):
-        """Return a :class:`pandas.DataFrame` with the definition of status"""
-        status = {'status_code': [0, 1, 2, 6, 4, 5],
-                  'status_name': ['PROBABLE', 'CONFIRMED', 'REGISTERED', 'OPERATIONAL', 'INACTIVE', 'CLOSED'],
-                  'description': [
-                      'Starting status for some platforms, when there is only a few metadata available, like rough deployment location and date. The platform may be deployed',
-                      'Automatically set when a ship is attached to the deployment information. The platform is ready to be deployed, deployment is planned',
-                      'Starting status for most of the networks, when deployment planning is not done. The deployment is certain, and a notification has been sent via the OceanOPS system',
-                      'Automatically set when the platform is emitting a pulse and observations are distributed within a certain time interval',
-                      'The platform is not emitting a pulse since a certain time',
-                      'The platform is not emitting a pulse since a long time, it is considered as dead',
-                  ]}
-        return pd.DataFrame(status).set_index('status_code')
-
-    def _format(self, x, typ: str) -> str:
-        """ string formatting helper """
-        if typ == "lon":
-            return str(x) if x is not None else "-"
-        elif typ == "lat":
-            return str(x) if x is not None else "-"
-        elif typ == "tim":
-            return pd.to_datetime(x).strftime("%Y-%m-%d") if x is not None else "-"
-        else:
-            return str(x)
-
-    @property
-    def box_name(self):
-        """Return a string to print the box property"""
-        BOX = self.box
-        cname = ("[lon=%s/%s; lat=%s/%s]") % (
-            self._format(BOX[0], "lon"),
-            self._format(BOX[1], "lon"),
-            self._format(BOX[2], "lat"),
-            self._format(BOX[3], "lat"),
-        )
-        if len(BOX) == 6:
-            cname = ("[lon=%s/%s; lat=%s/%s; t=%s/%s]") % (
-                self._format(BOX[0], "lon"),
-                self._format(BOX[1], "lon"),
-                self._format(BOX[2], "lat"),
-                self._format(BOX[3], "lat"),
-                self._format(BOX[4], "tim"),
-                self._format(BOX[5], "tim"),
-            )
-        return cname
-
-    def __repr__(self):
-        summary = ["<argo.deployment_plan>"]
-        summary.append("API: %s/%s" % (self.api, self.model))
-        summary.append("Domain: %s" % self.box_name)
-        summary.append("Deployed only: %s" % self.deployed_only)
-        if self.data is not None:
-            summary.append("Nb of floats in the deployment plan: %s" % self.data['total'])
-        else:
-            summary.append("Nb of floats in the deployment plan: Data not retrieved yet")
-        return '\n'.join(summary)
-
-    def plot_status(self, **kwargs):
+    def plot_status(self,
+                    **kwargs
+                    ):
         """Quick plot of the deployment plan
 
-        Named arguments are passed to plt.subplots
+        Named arguments are passed to :class:`plot.scatter_map`
+
         Returns
         -------
         fig: :class:`matplotlib.figure.Figure`
         ax: :class:`matplotlib.axes.Axes`
         """
-        from .plot.utils import discrete_coloring, latlongrid, land_feature
-        from .plot.plot import ccrs, plt
-
+        from .plot.plot import scatter_map
         df = self.to_dataframe()
-
-        defaults = {"figsize": (10, 6), "dpi": 90}
-        subplot_kw = {"projection": ccrs.PlateCarree()}
-        fig, ax = plt.subplots(**{**defaults, **kwargs}, subplot_kw=subplot_kw)
-        ax.add_feature(land_feature, edgecolor="black")
-
-        status = self.status_code['status_name'].to_dict()
-        ticklabels = ["%i: %s" % (k, status[k]) for k in status]
-        dc = discrete_coloring(name='Spectral', N=6)
-        ax.scatter(df['lon'], df['lat'], c=df['status_code'], cmap=dc.cmap, vmin=0, vmax=6)
-        dc.cbar(ticklabels=ticklabels, fraction=0.03, label='Status')
-
-        latlongrid(ax, dx="auto", dy="auto", fontsize="auto")
+        fig, ax = scatter_map(df,
+                              x='lon',
+                              y='lat',
+                              hue='status_code',
+                              traj=False,
+                              cmap='deployment_status',
+                              **kwargs)
         ax.set_title("Argo network deployment plan\n%s\nSource: OceanOPS API as of %s" % (
             self.box_name,
             pd.to_datetime('now', utc=True).strftime("%Y-%m-%d %H:%M:%S")),
                      fontsize=12
                      )
-
         return fig, ax
+
+
+def cast_types(ds):  # noqa: C901
+    """ Make sure variables are of the appropriate types according to Argo
+
+    #todo: This is hard coded, but should be retrieved from an API somewhere.
+    Should be able to handle all possible variables encountered in the Argo dataset.
+
+    Parameter
+    ---------
+    :class:`xarray.DataSet`
+
+    Returns
+    -------
+    :class:`xarray.DataSet`
+    """
+
+    list_str = [
+        "PLATFORM_NUMBER",
+        "DATA_MODE",
+        "DIRECTION",
+        "DATA_CENTRE",
+        "DATA_TYPE",
+        "FORMAT_VERSION",
+        "HANDBOOK_VERSION",
+        "PROJECT_NAME",
+        "PI_NAME",
+        "STATION_PARAMETERS",
+        "DATA_CENTER",
+        "DC_REFERENCE",
+        "DATA_STATE_INDICATOR",
+        "PLATFORM_TYPE",
+        "FIRMWARE_VERSION",
+        "POSITIONING_SYSTEM",
+        "PROFILE_PRES_QC",
+        "PROFILE_PSAL_QC",
+        "PROFILE_TEMP_QC",
+        "PARAMETER",
+        "SCIENTIFIC_CALIB_EQUATION",
+        "SCIENTIFIC_CALIB_COEFFICIENT",
+        "SCIENTIFIC_CALIB_COMMENT",
+        "HISTORY_INSTITUTION",
+        "HISTORY_STEP",
+        "HISTORY_SOFTWARE",
+        "HISTORY_SOFTWARE_RELEASE",
+        "HISTORY_REFERENCE",
+        "HISTORY_QCTEST",
+        "HISTORY_ACTION",
+        "HISTORY_PARAMETER",
+        "VERTICAL_SAMPLING_SCHEME",
+        "FLOAT_SERIAL_NO",
+        "SOURCE",
+        "EXPOCODE",
+        "QCLEVEL",
+    ]
+    list_int = [
+        "PLATFORM_NUMBER",
+        "WMO_INST_TYPE",
+        "WMO_INST_TYPE",
+        "CYCLE_NUMBER",
+        "CONFIG_MISSION_NUMBER",
+    ]
+    list_datetime = [
+        "REFERENCE_DATE_TIME",
+        "DATE_CREATION",
+        "DATE_UPDATE",
+        "JULD",
+        "JULD_LOCATION",
+        "SCIENTIFIC_CALIB_DATE",
+        "HISTORY_DATE",
+        "TIME"
+    ]
+
+    def fix_weird_bytes(x):
+        x = x.replace(b"\xb1", b"+/-")
+        return x
+    fix_weird_bytes = np.vectorize(fix_weird_bytes)
+
+    def cast_this(da, type):
+        """ Low-level casting of DataArray values """
+        try:
+            da.values = da.values.astype(type)
+            da.attrs["casted"] = 1
+        except Exception:
+            msg = "Oops! %s occurred. Fail to cast <%s> into %s for: %s. Encountered unique values: %s" % (sys.exc_info()[0], str(da.dtype), type, da.name, str(np.unique(da)))
+            log.debug(msg)
+        return da
+
+    def cast_this_da(da):
+        """ Cast any DataArray """
+        v = da.name
+        da.attrs["casted"] = 0
+        if v in list_str and da.dtype == "O":  # Object
+            if v in ["SCIENTIFIC_CALIB_COEFFICIENT"]:
+                da.values = fix_weird_bytes(da.values)
+            da = cast_this(da, str)
+
+        if v in list_int:  # and da.dtype == 'O':  # Object
+            da = cast_this(da, np.int32)
+
+        if v in list_datetime and da.dtype == "O":  # Object
+            if (
+                "conventions" in da.attrs
+                and da.attrs["conventions"] == "YYYYMMDDHHMISS"
+            ):
+                if da.size != 0:
+                    if len(da.dims) <= 1:
+                        val = da.astype(str).values.astype("U14")
+                        # This should not happen, but still ! That's real world data
+                        val[val == "              "] = "nan"
+                        da.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
+                    else:
+                        s = da.stack(dummy_index=da.dims)
+                        val = s.astype(str).values.astype("U14")
+                        # This should not happen, but still ! That's real world data
+                        val[val == ""] = "nan"
+                        val[val == "              "] = "nan"
+                        #
+                        s.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
+                        da.values = s.unstack("dummy_index")
+                    da = cast_this(da, np.datetime64)
+                else:
+                    da = cast_this(da, np.datetime64)
+
+            elif v == "SCIENTIFIC_CALIB_DATE":
+                da = cast_this(da, str)
+                s = da.stack(dummy_index=da.dims)
+                s.values = pd.to_datetime(s.values, format="%Y%m%d%H%M%S")
+                da.values = (s.unstack("dummy_index")).values
+                da = cast_this(da, np.datetime64)
+
+        if "QC" in v and "PROFILE" not in v and "QCTEST" not in v:
+            if da.dtype == "O":  # convert object to string
+                da = cast_this(da, str)
+
+            # Address weird string values:
+            # (replace missing or nan values by a '0' that will be cast as an integer later
+
+            if da.dtype == "<U3":  # string, len 3 because of a 'nan' somewhere
+                ii = (
+                    da == "   "
+                )  # This should not happen, but still ! That's real world data
+                da = xr.where(ii, "0", da)
+
+                ii = (
+                    da == "nan"
+                )  # This should not happen, but still ! That's real world data
+                da = xr.where(ii, "0", da)
+
+                # Get back to regular U1 string
+                da = cast_this(da, np.dtype("U1"))
+
+            if da.dtype == "<U1":  # string
+                ii = (
+                    da == ""
+                )  # This should not happen, but still ! That's real world data
+                da = xr.where(ii, "0", da)
+
+                ii = (
+                    da == " "
+                )  # This should not happen, but still ! That's real world data
+                da = xr.where(ii, "0", da)
+
+                ii = (
+                    da == "n"
+                )  # This should not happen, but still ! That's real world data
+                da = xr.where(ii, "0", da)
+
+            # finally convert QC strings to integers:
+            da = cast_this(da, np.int32)
+
+        if da.dtype == 'O':
+            # By default, try to cast as float:
+            da = cast_this(da, np.float32)
+
+        if da.dtype != "O":
+            da.attrs["casted"] = 1
+
+        return da
+
+    for v in ds.variables:
+        try:
+            ds[v] = cast_this_da(ds[v])
+        except Exception:
+            print("Oops!", sys.exc_info()[0], "occurred.")
+            print("Fail to cast: %s " % v)
+            print("Encountered unique values:", np.unique(ds[v]))
+            raise
+
+    return ds
+
+
+def log_argopy_callerstack(level='debug'):
+    """log the caller’s stack"""
+    froot = str(pathlib.Path(__file__).parent.resolve())
+    for ideep, frame in enumerate(inspect.stack()[1:]):
+        if os.path.join('argopy', 'argopy') in frame.filename:
+            # msg = ["└─"]
+            # [msg.append("─") for ii in range(ideep)]
+            msg = [""]
+            [msg.append("  ") for ii in range(ideep)]
+            msg.append("└─ %s:%i -> %s" % (frame.filename.replace(froot, ''), frame.lineno, frame.function))
+            msg = "".join(msg)
+            if level == "info":
+                log.info(msg)
+            elif level == "debug":
+                log.debug(msg)
+            elif level == "warning":
+                log.warning(msg)

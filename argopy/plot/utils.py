@@ -1,6 +1,8 @@
 import numpy as np
 from contextlib import contextmanager
 import importlib
+from ..utilities import deprecated
+
 
 def _importorskip(modname):
     try:
@@ -62,12 +64,20 @@ def axes_style(style: str = STYLE["axes"]):
         yield
 
 
+@deprecated("The 'discrete_coloring' plotting utility is deprecated since 0.1.13. It's been replaced by 'ArgoColors'. Calling it will raise an error after argopy 0.1.14")
 class discrete_coloring:
     """ Handy class to manage discrete coloring and the associated colorbar
 
-    Example
-    -------
-    This class can be used like this::
+    Warnings
+    --------
+        This plotting utility is deprecated since 0.1.13. It's been replaced by :class:`argopy.plot.ArgoColors`. Calling
+        it will raise an error after argopy 0.1.14.
+
+    Examples
+    --------
+    This class can be used like this:
+
+    ::
 
         year_range = np.arange(2002,2010)
         dc = discrete_coloring(name='Spectral', N=len(year_range) )
@@ -208,7 +218,7 @@ class discrete_coloring:
         return scalarMap.to_rgba(value)
 
 
-def latlongrid(ax, dx="auto", dy="auto", fontsize="auto", **kwargs):
+def latlongrid(ax, dx="auto", dy="auto", fontsize="auto", label_style_arg={}, **kwargs):
     """ Add latitude/longitude grid line and labels to a cartopy geoaxes
 
     Parameters
@@ -242,7 +252,10 @@ def latlongrid(ax, dx="auto", dy="auto", fontsize="auto", **kwargs):
     # Cartopy >= 0.18:
     gl.top_labels = False
     gl.right_labels = False
+    label_style_arg_defaults = {"fontsize": None}
     if fontsize != "auto":
-        gl.xlabel_style = {"fontsize": fontsize}
-        gl.ylabel_style = {"fontsize": fontsize}
+        label_style_arg_defaults = {"fontsize": fontsize}
+
+    gl.xlabel_style = {**label_style_arg_defaults, **label_style_arg}
+    gl.ylabel_style = {**label_style_arg_defaults, **label_style_arg}
     return gl

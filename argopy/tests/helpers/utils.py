@@ -9,10 +9,19 @@ This module contains:
 import importlib
 import pytest
 import fsspec
-from aiohttp.client_exceptions import ServerDisconnectedError, ClientResponseError, ClientConnectorError
+import asyncio
+from aiohttp.client_exceptions import (
+    ServerDisconnectedError,
+    ClientResponseError,
+    ClientConnectorError,
+    ClientPayloadError
+)
 import ftplib
+import socket
+import asyncio
 from packaging import version
 import warnings
+from argopy.options import set_options
 from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound, FtpPathError
 from argopy.utilities import (
     list_available_data_src,
@@ -23,10 +32,11 @@ from argopy.utilities import (
     OceanOPSDeployments,
 )
 import logging
+from mocked_http import mocked_server_address, serve_mocked_httpserver
 
 
 log = logging.getLogger("argopy.tests.utils")
-
+log.debug("%s TESTS UTILS %s" % ("="*50, "="*50))
 
 def _importorskip(modname):
     try:
@@ -67,21 +77,28 @@ has_connection, requires_connection = _connectskip(
 ##########
 # ERDDAP #
 ##########
+has_erddap, requires_erddap = _connectskip(
+    "erddap" in AVAILABLE_SOURCES, "erddap data fetcher"
+)
+
 if CONNECTED:
-    log.debug("Check which Erddap dataset are available (eg: core, bgc, ref, index)")
-    DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
-    DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-bio")
-    DSEXISTS_ref = erddap_ds_exists(ds="ArgoFloats-ref")
-    DSEXISTS_index = erddap_ds_exists(ds="ArgoFloats-index")
+    log.debug("Checking which Erddap dataset are available (eg: core, bgc, ref, index)")
+    with serve_mocked_httpserver() as s:  # Use the mocked http server
+        with set_options(erddap=mocked_server_address):
+            res = erddap_ds_exists(["ArgoFloats", "ArgoFloats-bio", "ArgoFloats-ref", "ArgoFloats-index"])
+            DSEXISTS = res[0]
+            DSEXISTS_bgc = res[1]
+            DSEXISTS_ref = res[2]
+            DSEXISTS_index = res[3]
+            # DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
+            # DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-bio")
+            # DSEXISTS_ref = erddap_ds_exists(ds="ArgoFloats-ref")
+            # DSEXISTS_index = erddap_ds_exists(ds="ArgoFloats-index")
 else:
     DSEXISTS = False
     DSEXISTS_bgc = False
     DSEXISTS_ref = False
     DSEXISTS_index = False
-
-has_erddap, requires_erddap = _connectskip(
-    "erddap" in AVAILABLE_SOURCES, "erddap data fetcher"
-)
 
 has_erddap_phy, requires_erddap_phy = _connectskip(
     DSEXISTS, "erddap requires a valid core Argo dataset from Ifremer server"
@@ -124,7 +141,7 @@ requires_connected_erddap_index = pytest.mark.skipif(
     reason="Requires a live and valid Argo Index from Ifremer erddap server",
 )
 
-ci_erddap_index = pytest.mark.skipif(True, reason="Tests disabled for erddap index fetcher")
+ci_erddap_index = pytest.mark.skipif(True, reason="Tests disabled for erddap index fetcher (way too long !)")
 
 ###########
 # ARGOVIS #
@@ -138,16 +155,6 @@ requires_connected_argovis = pytest.mark.skipif(
     not has_connected_argovis, reason="Requires a live Argovis server"
 )
 
-
-############
-# LOCALFTP #
-############
-has_localftp, requires_localftp = _connectskip(
-    "localftp" in AVAILABLE_SOURCES, "the localftp data fetcher"
-)
-has_localftp_index, requires_localftp_index = _connectskip(
-    "localftp" in AVAILABLE_INDEX_SOURCES, "the localftp index fetcher"
-)
 
 ############
 # GDAC FTP #
@@ -172,13 +179,15 @@ has_matplotlib, requires_matplotlib = _importorskip("matplotlib")
 has_seaborn, requires_seaborn = _importorskip("seaborn")
 has_cartopy, requires_cartopy = _importorskip("cartopy")
 has_ipython, requires_ipython = _importorskip("IPython")
+has_ipywidgets, requires_ipywidgets = _importorskip("ipywidgets")
 
 #################
 # Ocean-OPS API #
 #################
-has_oops, requires_oops = _connectskip(
-    isconnected(OceanOPSDeployments().api_server_check), "a live Ocean-OPS server"
-)
+# has_oops, requires_oops = _connectskip(
+#     isconnected(OceanOPSDeployments().api_server_check), "a live Ocean-OPS server"
+# )
+has_oops, requires_oops = _connectskip(1, "a live Ocean-OPS server")  # Always ON with the mocked server
 
 ############
 # Fix for issues discussed here:
@@ -188,8 +197,8 @@ safe_to_fsspec_version = pytest.mark.skipif(
     version.parse(fsspec.__version__) > version.parse("0.8.3"),
     reason="fsspec version %s > 0.8.3 (https://github.com/euroargodev/argopy/issues/96)" % fsspec.__version__
 )
-skip_this_for_debug = pytest.mark.skipif(True, reason="Skipped temporarily for debug")
 
+TimeoutError = asyncio.TimeoutError if version.parse(fsspec.__version__) < version.parse("2021.05.0") else fsspec.exceptions.FSTimeoutError
 
 ############
 def fct_safe_to_server_errors(func, *args, **kwargs):
@@ -237,6 +246,10 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
             msg = "\naiohttp cannot connect to host:\n%s" % str(e.args)
             xmsg = "Failing because aiohttp cannot connect to host, but should work"
             pass
+        except ClientPayloadError as e:
+            msg = "\nUnexpected server transfer error\n%s" % str(e.args)
+            xmsg = "Failing because an unexpected error occurred during data transfer, but should work"
+            pass
         except FileNotFoundError as e:
             msg = "\nServer didn't return the data:\n%s" % str(e.args)
             xmsg = "Failing because some file were not found, but should work"
@@ -256,8 +269,18 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
             msg = "\nCannot connect to the FTP server\n%s" % str(e.args)
             xmsg = "Failing because cannot connect to the FTP server, but should work"
             pass
-        except fsspec.exceptions.FSTimeoutError as e:
-            # Sometimes, mostly from FTP, the time out is not long enough !            
+        except ftplib.error_perm as e:
+            # ftplib.error_perm: 550 Failed to open file
+            msg = "\nCannot read file from FTP server\n%s" % str(e.args)
+            xmsg = "Failing because cannot read file from the FTP server, but should work"
+            pass
+        except TimeoutError as e:
+            # Sometimes, mostly from FTP, the timeout is not long enough !
+            msg = "\nUnexpected server time out\n%s" % str(e.args)
+            xmsg = "Failing because the server is temporarily too slow to respond, but should work"
+            pass
+        except socket.timeout as e:
+            # Sometimes, mostly from FTP, the timeout is not long enough !
             msg = "\nUnexpected server time out\n%s" % str(e.args)
             xmsg = "Failing because the server is temporarily too slow to respond, but should work"
             pass
@@ -282,3 +305,4 @@ def safe_to_server_errors(test_func, *args, **kwargs):
         fct_safe_to_server_errors(test_func)(*args, **kwargs)
     return test_wrapper
 
+log.debug("%s TESTS UTILS %s" % ("="*50, "="*50))

@@ -92,7 +92,11 @@ class FTPArgoIndexFetcher(ABC):
             index_file = "argo_synthetic-profile_index.txt"
 
         # Validation of self.server is done by the indexstore:
-        self.indexfs = indexstore(host=self.server, index_file=index_file, cache=cache, cachedir=cachedir, timeout=self.timeout)
+        self.indexfs = indexstore(host=self.server,
+                                  index_file=index_file,
+                                  cache=cache,
+                                  cachedir=cachedir,
+                                  timeout=self.timeout)
         self.fs = self.indexfs.fs['src']
 
         nrows = None
@@ -206,7 +210,7 @@ class Fetch_wmo(FTPArgoIndexFetcher):
         self._nrows = None
         if 'MAX_FILES' in kwargs:
             self._nrows = kwargs['MAX_FILES']
-        self.N_FILES = len(self.uri)  #  Must trigger file index load and search at instantiation
+        self.N_FILES = len(self.uri)  # Must trigger file index load and search at instantiation
         return self
 
     @property
@@ -255,7 +259,7 @@ class Fetch_box(FTPArgoIndexFetcher):
         self._nrows = None
         if 'MAX_FILES' in kwargs:
             self._nrows = kwargs['MAX_FILES']
-        self.N_FILES = len(self.uri)  #  Must trigger file index load and search at instantiation
+        self.N_FILES = len(self.uri)  # Must trigger file index load and search at instantiation
 
         return self
 

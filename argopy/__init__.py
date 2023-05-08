@@ -27,19 +27,21 @@ from . import utilities  # noqa: E402
 from . import stores  # noqa: E402
 from . import errors  # noqa: E402
 from . import plot  # noqa: E402
-from .plot import dashboard  # noqa: E402
-from .utilities import show_versions, show_options, clear_cache, lscache # noqa: E402
+from .plot import dashboard, ArgoColors  # noqa: E402
+from .utilities import show_versions, show_options, clear_cache, lscache  # noqa: E402
 from .utilities import TopoFetcher, ArgoNVSReferenceTables, OceanOPSDeployments  # noqa: E402
 from .utilities import monitor_status as status  # noqa: E402
 from .options import set_options  # noqa: E402
+from .data_fetchers import CTDRefDataFetcher
 
 
 #
 __all__ = (
-    # Classes:
+    # Top-level classes:
     "DataFetcher",
     "IndexFetcher",
     "ArgoAccessor",
+
     # Utilities promoted to top-level functions:
     "set_options",
     "show_versions",
@@ -48,13 +50,17 @@ __all__ = (
     "status",
     "clear_cache",
     "lscache",
+
     "TopoFetcher",  # Class
     "ArgoNVSReferenceTables",  # Class
     "OceanOPSDeployments",  # Class
-    # Sub-packages,
+    "CTDRefDataFetcher",
+
+    # Submodules:
     "utilities",
     "errors",
     "plot",
+    "ArgoColors",  # Class
     # "plotters",  # Deprec, to be removed after 0.1.13
     "stores",
     "tutorial",

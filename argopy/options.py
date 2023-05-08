@@ -5,41 +5,50 @@ This module manage options of the package
 # https://github.com/pydata/xarray/blob/cafab46aac8f7a073a32ec5aa47e213a9810ed54/xarray/core/options.py
 """
 import os
-import numpy as np
-from argopy.errors import OptionValueError, FtpPathError
+from argopy.errors import OptionValueError, FtpPathError, ErddapPathError
 import warnings
 import logging
 import fsspec
 from fsspec.core import split_protocol
 from socket import gaierror
+from urllib.parse import urlparse
+
 
 # Define a logger
 log = logging.getLogger("argopy.options")
 
 # Define option names as seen by users:
 DATA_SOURCE = "src"
-LOCAL_FTP = "local_ftp"
 FTP = "ftp"
+ERDDAP = 'erddap'
 DATASET = "dataset"
-DATA_CACHE = "cachedir"
+CACHE_FOLDER = "cachedir"
+CACHE_EXPIRATION = "cache_expiration"
 USER_LEVEL = "mode"
 API_TIMEOUT = "api_timeout"
 TRUST_ENV = "trust_env"
+SERVER = "server"
+USER = "user"
+PASSWORD = "password"
 
 # Define the list of available options and default values:
 OPTIONS = {
     DATA_SOURCE: "erddap",
-    LOCAL_FTP: "-",  # No default value
     FTP: "https://data-argo.ifremer.fr",
+    ERDDAP: "https://erddap.ifremer.fr/erddap",
     DATASET: "phy",
-    DATA_CACHE: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
+    CACHE_FOLDER: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
+    CACHE_EXPIRATION: 86400,
     USER_LEVEL: "standard",
     API_TIMEOUT: 60,
-    TRUST_ENV: False
+    TRUST_ENV: False,
+    SERVER: None,
+    USER: None,
+    PASSWORD: None,
 }
 
 # Define the list of possible values
-_DATA_SOURCE_LIST = frozenset(["erddap", "localftp", "argovis", "gdac"])
+_DATA_SOURCE_LIST = frozenset(["erddap", "argovis", "gdac"])
 _DATASET_LIST = frozenset(["phy", "bgc", "ref"])
 _USER_LEVEL_LIST = frozenset(["standard", "expert"])
 
@@ -53,19 +62,31 @@ def validate_ftp(this_path):
     if this_path != "-":
         return check_gdac_path(this_path, errors='raise')
     else:
-        log.debug("OPTIONS['%s'] is not defined" % LOCAL_FTP)
+        log.debug("OPTIONS['%s'] is not defined" % FTP)
+        return False
+
+
+def validate_http(this_path):
+    if this_path != "-":
+        return check_erddap_path(this_path, errors='raise')
+    else:
+        log.debug("OPTIONS['%s'] is not defined" % ERDDAP)
         return False
 
 
 _VALIDATORS = {
     DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
-    LOCAL_FTP: validate_ftp,
     FTP: validate_ftp,
+    ERDDAP: validate_http,
     DATASET: _DATASET_LIST.__contains__,
-    DATA_CACHE: os.path.exists,
+    CACHE_FOLDER: os.path.exists,
+    CACHE_EXPIRATION: lambda x: isinstance(x, int) and x > 0,
     USER_LEVEL: _USER_LEVEL_LIST.__contains__,
     API_TIMEOUT: lambda x: isinstance(x, int) and x > 0,
-    TRUST_ENV: lambda x: isinstance(x, bool)
+    TRUST_ENV: lambda x: isinstance(x, bool),
+    SERVER: lambda x: True,
+    USER: lambda x: isinstance(x, str),
+    PASSWORD: lambda x: isinstance(x, str),
 }
 
 
@@ -79,29 +100,31 @@ class set_options:
         Possible values: ``phy``, ``bgc`` or ``ref``.
     - ``src``: Source of fetched data.
         Default: ``erddap``.
-        Possible values: ``erddap``, ``localftp``, ``argovis``
-    - ``local_ftp``: Absolute path to a local GDAC ftp copy.
+        Possible values: ``erddap``, ``gdac``, ``argovis``
+    - ``ftp``: Path to a local or remote GDAC
         Default: None
     - ``cachedir``: Absolute path to a local cache directory.
         Default: ``~/.cache/argopy``
+    - ``cache_expiration``: Expiration delay of cache files in seconds.
+        Default: 86400
     - ``mode``: User mode.
         Default: ``standard``.
         Possible values: ``standard`` or ``expert``.
     - ``api_timeout``: Define the time out of internet requests to web API, in seconds.
         Default: 60
-    - ``trust_env``: Allow for local environment variables to be used by fsspec to connect to the internet.
-        Get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True (
-        False by default). Also can get proxy credentials from ~/.netrc file if present.
+    - ``trust_env``: Allow for local environment variables to be used to connect to the internet.
+        Argopy will get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True (
+        False by default) and it can also get proxy credentials from ~/.netrc file if this file exists.
 
     You can use `set_options` either as a context manager:
 
     >>> import argopy
-    >>> with argopy.set_options(src='localftp'):
+    >>> with argopy.set_options(src='gdac'):
     >>>    ds = argopy.DataFetcher().float(3901530).to_xarray()
 
     Or to set global options:
 
-    >>> argopy.set_options(src='localftp')
+    >>> argopy.set_options(src='gdac')
 
     """
     def __init__(self, **kwargs):
@@ -127,7 +150,23 @@ class set_options:
         self._apply_update(self.old)
 
 
-def check_gdac_path(path, errors='ignore'):
+def check_erddap_path(path, errors='ignore'):
+    """Check if an url points to an ERDDAP server"""
+    fs = fsspec.filesystem('http')
+    check1 = fs.exists(path + "/info/index.json")
+    if check1:
+        return True
+    elif errors == "raise":
+        raise ErddapPathError("This url is not a valid ERDDAP server:\n%s" % path)
+
+    elif errors == "warn":
+        warnings.warn("This url is not a valid ERDDAP server:\n%s" % path)
+        return False
+    else:
+        return False
+
+
+def check_gdac_path(path, errors='ignore'):  # noqa: C901
     """ Check if a path has the expected GDAC ftp structure
 
         Check if a path is structured like:
@@ -161,18 +200,16 @@ def check_gdac_path(path, errors='ignore'):
             True if at least one DAC folder is found under path/dac/<dac_name>
             False otherwise
     """
-#     print(path)#, split_protocol(path))
     # Create a file system for this path
     if split_protocol(path)[0] is None:
-#         fs = filestore()
         fs = fsspec.filesystem('file')
-    elif 'https' in split_protocol(path)[0]:
-#         fs = httpstore()
+    elif split_protocol(path)[0] in ['https', 'http']:
         fs = fsspec.filesystem('http')
     elif 'ftp' in split_protocol(path)[0]:
         try:
-            host = split_protocol(path)[-1].split('/')[0]
-            fs = fsspec.filesystem('ftp', host=host)
+            host = urlparse(path).hostname
+            port = 0 if urlparse(path).port is None else urlparse(path).port
+            fs = fsspec.filesystem('ftp', host=host, port=port)
         except gaierror:
             if errors == 'raise':
                 raise FtpPathError("Can't get address info (GAIerror) on '%s'" % host)
@@ -199,18 +236,21 @@ def check_gdac_path(path, errors='ignore'):
     # ]
 
     # Case 1:
-    check1 = (
-        fs.exists(path)
-        and fs.exists(fs.sep.join([path, "dac"]))
-#         and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
-    )
+    # check1 = (
+    #     fs.exists(path)  # Fails on localhost for the mocked ftp server
+    #     and fs.exists(fs.sep.join([path, "dac"]))
+    #     # and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
+    # )
+    check1 = fs.exists(fs.sep.join([path, "dac"]))
     if check1:
         return True
+
     elif errors == "raise":
         raise FtpPathError("This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s" % path)
 
     elif errors == "warn":
         warnings.warn("This path is not GDAC compliant:\n%s" % path)
         return False
+
     else:
         return False

@@ -20,6 +20,7 @@
     argopy.fetchers.ArgoDataFetcher.uri
     argopy.fetchers.ArgoDataFetcher.data
     argopy.fetchers.ArgoDataFetcher.index
+    argopy.fetchers.ArgoDataFetcher.domain
     argopy.fetchers.ArgoDataFetcher.dashboard
     argopy.fetchers.ArgoDataFetcher.clear_cache
 
@@ -43,13 +44,13 @@
     argopy.data_fetchers.gdacftp_data.Fetch_wmo
     argopy.data_fetchers.gdacftp_data.Fetch_box
 
-    argopy.data_fetchers.localftp_data.LocalFTPArgoDataFetcher
-    argopy.data_fetchers.localftp_data.Fetch_wmo
-    argopy.data_fetchers.localftp_data.Fetch_box
-
     argopy.data_fetchers.argovis_data.ArgovisDataFetcher
     argopy.data_fetchers.argovis_data.Fetch_wmo
     argopy.data_fetchers.argovis_data.Fetch_box
+
+    argopy.data_fetchers.erddap_refdata.ErddapREFDataFetcher
+    argopy.data_fetchers.erddap_refdata.Fetch_box
+    argopy.data_fetchers.CTDRefDataFetcher
 
     argopy.options.set_options
 
@@ -62,6 +63,11 @@
     argopy.utilities.list_available_data_src
     argopy.utilities.list_available_index_src
     argopy.utilities.Chunker
+
+    argopy.utilities.isconnected
+    argopy.utilities.urlhaskeyword
+    argopy.utilities.isalive
+    argopy.utilities.isAPIconnected
 
     argopy.utilities.ArgoNVSReferenceTables
     argopy.utilities.ArgoNVSReferenceTables.valid_ref
@@ -102,15 +108,29 @@
     argopy.utilities.OceanOPSDeployments.to_dataframe
     argopy.utilities.OceanOPSDeployments.status_code
 
+    argopy.plot
     argopy.plot.dashboard
     argopy.plot.bar_plot
+    argopy.plot.scatter_map
     argopy.plot.plot_trajectory
+    argopy.plot.latlongrid
+    argopy.plot.discrete_coloring
     argopy.plot.open_sat_altim_report
+
+    argopy.plot.ArgoColors
+    argopy.plot.ArgoColors.COLORS
+    argopy.plot.ArgoColors.quantitative
+    argopy.plot.ArgoColors.definition
+    argopy.plot.ArgoColors.cmap
+    argopy.plot.ArgoColors.lookup
+    argopy.plot.ArgoColors.ticklabels
+    argopy.plot.ArgoColors.list_valid_known_colormaps
+
+    argopy.stores.filesystems.argo_store_proto
 
     argopy.stores.filesystems.filestore
     argopy.stores.filestore.open_dataset
     argopy.stores.filestore.read_csv
-
     argopy.stores.filestore.open
     argopy.stores.filestore.glob
     argopy.stores.filestore.exists
@@ -157,23 +177,31 @@
     argopy.stores.argo_index_proto.ArgoIndexStoreProto
     argopy.stores.argo_index_pa.indexstore_pyarrow
     argopy.stores.argo_index_pa.indexstore_pyarrow.load
+    argopy.stores.argo_index_pa.indexstore_pyarrow.read_wmo
+    argopy.stores.argo_index_pa.indexstore_pyarrow.read_params
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_wmo
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_cyc
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_wmo_cyc
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_tim
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_lat_lon
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_lat_lon_tim
+    argopy.stores.argo_index_pa.indexstore_pyarrow.search_params
     argopy.stores.argo_index_pa.indexstore_pyarrow.to_dataframe
+    argopy.stores.argo_index_pa.indexstore_pyarrow.to_indexfile
 
     argopy.stores.argo_index_pd.indexstore_pandas
     argopy.stores.argo_index_pd.indexstore_pandas.load
+    argopy.stores.argo_index_pd.indexstore_pandas.read_wmo
+    argopy.stores.argo_index_pd.indexstore_pandas.read_params
     argopy.stores.argo_index_pd.indexstore_pandas.search_wmo
     argopy.stores.argo_index_pd.indexstore_pandas.search_cyc
     argopy.stores.argo_index_pd.indexstore_pandas.search_wmo_cyc
     argopy.stores.argo_index_pd.indexstore_pandas.search_tim
     argopy.stores.argo_index_pd.indexstore_pandas.search_lat_lon
     argopy.stores.argo_index_pd.indexstore_pandas.search_lat_lon_tim
+    argopy.stores.argo_index_pd.indexstore_pandas.search_params
     argopy.stores.argo_index_pd.indexstore_pandas.to_dataframe
+    argopy.stores.argo_index_pd.indexstore_pandas.to_indexfile
 
     argopy.xarray.ArgoAccessor.point2profile
     argopy.xarray.ArgoAccessor.profile2point
@@ -185,3 +213,4 @@
     argopy.xarray.ArgoAccessor.filter_data_mode
     argopy.xarray.ArgoAccessor.filter_scalib_pres
     argopy.xarray.ArgoAccessor.cast_types
+

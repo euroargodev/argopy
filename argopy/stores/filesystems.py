@@ -13,14 +13,17 @@ import warnings
 import logging
 from packaging import version
 import io
+from typing import Union
+from urllib.parse import urlparse, parse_qs
+
 import concurrent.futures
 import multiprocessing
 
 from ..options import OPTIONS
 from ..errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
-    InvalidMethod
+    InvalidMethod, ErddapHTTPUnauthorized, ErddapHTTPNotFound
 from abc import ABC, abstractmethod
-from ..utilities import Registry
+from ..utilities import Registry, log_argopy_callerstack
 
 log = logging.getLogger("argopy.stores")
 
@@ -41,7 +44,11 @@ except ModuleNotFoundError:
     has_distributed = False
 
 
-def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cachedir'], **kwargs):
+def new_fs(protocol: str = '',
+           cache: bool = False,
+           cachedir: str = OPTIONS['cachedir'],
+           cache_expiration: int = OPTIONS['cache_expiration'],
+           **kwargs):
     """ Create a new fsspec file system
 
     Parameters
@@ -55,32 +62,35 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cac
         Other arguments passed to :class:`fsspec.filesystem`
 
     """
-    default_filesystem_kwargs = {'simple_links': True, "block_size": 0}
+    # Load default FSSPEC kwargs:
+    default_fsspec_kwargs = {'simple_links': True, "block_size": 0}
     if protocol == 'http':
-        default_filesystem_kwargs = {**default_filesystem_kwargs,
+        default_fsspec_kwargs = {**default_fsspec_kwargs,
                                      **{"client_kwargs": {"trust_env": OPTIONS['trust_env']}}}
     elif protocol == 'ftp':
-        default_filesystem_kwargs = {**default_filesystem_kwargs,
+        default_fsspec_kwargs = {**default_fsspec_kwargs,
                                      **{"block_size": 1000 * (2 ** 20)}}
-    filesystem_kwargs = {**default_filesystem_kwargs, **kwargs}
+    # Merge default with user arguments:
+    fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
 
+    # Create filesystem:
     if not cache:
-        fs = fsspec.filesystem(protocol, **filesystem_kwargs)
+        fs = fsspec.filesystem(protocol, **fsspec_kwargs)
         cache_registry = None
         log_msg = "Opening a fsspec [file] system for '%s' protocol with options: %s" % \
-                  (protocol, str(filesystem_kwargs))
+                  (protocol, str(fsspec_kwargs))
     else:
         # https://filesystem-spec.readthedocs.io/en/latest/_modules/fsspec/implementations/cached.html#WholeFileCacheFileSystem
         fs = fsspec.filesystem("filecache",
                                target_protocol=protocol,
-                               target_options={**filesystem_kwargs},
+                               target_options={**fsspec_kwargs},
                                cache_storage=cachedir,
-                               expiry_time=86400, cache_check=10)
+                               expiry_time=cache_expiration, cache_check=10)
         # We use a refresh rate for cache of 1 day,
         # since this is the update frequency of the Ifremer erddap
         cache_registry = Registry(name='Cache')  # Will hold uri cached by this store instance
         log_msg = "Opening a fsspec [filecache, storage='%s'] system for '%s' protocol with options: %s" % \
-                  (cachedir, protocol, str(filesystem_kwargs))
+                  (cachedir, protocol, str(fsspec_kwargs))
 
     if protocol == 'file' and os.path.sep != fs.sep:
         # For some reasons (see https://github.com/fsspec/filesystem_spec/issues/937), the property fs.sep is
@@ -88,11 +98,12 @@ def new_fs(protocol: str = '', cache: bool = False, cachedir: str = OPTIONS['cac
         fs.sep = os.path.sep
         # fsspec folks recommend to use posix internally. But I don't see how to handle this. So keeping this fix
         # because it solves issues with failing tests under Windows. Enough at this time.
-        #todo: Revisit this choice in a while
+        # todo: Revisit this choice in a while
 
     # log_msg = "%s\n[sys sep=%s] vs [fs sep=%s]" % (log_msg, os.path.sep, fs.sep)
     # log.warning(log_msg)
     log.debug(log_msg)
+    # log_argopy_callerstack()
     return fs, cache_registry
 
 
@@ -122,11 +133,11 @@ class argo_store_proto(ABC):
         """
         self.cache = cache
         self.cachedir = OPTIONS['cachedir'] if cachedir == '' else cachedir
-        self._filesystem_kwargs = {**kwargs}
+        self._fsspec_kwargs = {**kwargs}
         self.fs, self.cache_registry = new_fs(self.protocol,
                                               self.cache,
                                               self.cachedir,
-                                              **self._filesystem_kwargs)
+                                              **self._fsspec_kwargs)
 
     def open(self, path, *args, **kwargs):
         self.register(path)
@@ -219,8 +230,7 @@ class argo_store_proto(ABC):
 class filestore(argo_store_proto):
     """Argo local file system
 
-        Relies on:
-            https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.local.LocalFileSystem
+        Relies on :class:`fsspec.implementations.local.LocalFileSystem`
     """
     protocol = 'file'
 
@@ -317,7 +327,7 @@ class filestore(argo_store_proto):
                                  for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
-                    futures = tqdm(futures, total=len(urls))
+                    futures = tqdm(futures, total=len(urls), disable='disable' in [progress])
 
                 for future in futures:
                     data = None
@@ -349,7 +359,7 @@ class filestore(argo_store_proto):
 
         elif method in ['seq', 'sequential']:
             if progress:
-                urls = tqdm(urls, total=len(urls))
+                urls = tqdm(urls, total=len(urls), disable='disable' in [progress])
 
             for url in urls:
                 data = None
@@ -398,11 +408,41 @@ class filestore(argo_store_proto):
         return df
 
 
+class memorystore(filestore):
+    """ Argo in-memory file system (global)
+
+        Note that this inherits from :class:`argopy.stores.filestore`, not the:class:`argopy.stores.argo_store_proto`.
+
+        Relies on :class:`fsspec.implementations.memory.MemoryFileSystem`
+    """
+    protocol = 'memory'
+
+    def exists(self, path, *args):
+        """ Check if path can be open or not
+
+            Special handling for memory store
+
+            The fsspec.exists() will return False even if the path is in cache.
+            Here we bypass this in order to return True if the path is in cache.
+            This assumes that the goal of fs.exists is to determine if we can load the path or not.
+            If the path is in cache, it can be loaded.
+        """
+        guess = self.fs.exists(path, *args)
+        if not guess:
+            try:
+                self.cachepath(path)
+                return True
+            except CacheFileNotFound:
+                pass
+            except FileSystemHasNoCache:
+                pass
+        return guess
+
+
 class httpstore(argo_store_proto):
     """Argo http file system
 
-        Relies on:
-            https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.http.HTTPFileSystem
+        Relies on :class:`fsspec.implementations.http.HTTPFileSystem`
 
         This store intends to make argopy: safer to failures from http requests and to provide higher levels methods to
         work with our datasets
@@ -410,6 +450,33 @@ class httpstore(argo_store_proto):
         This store is primarily used by the Erddap/Argovis data/index fetchers
     """
     protocol = "http"
+
+    def curateurl(self, url):
+        """Possibly replace server of a given url by a local argopy option value
+
+        This is intended to be used by tests and dev
+        """
+        return url
+        # if OPTIONS["server"] is not None:
+        #     # log.debug("Replaced '%s' with '%s'" % (urlparse(url).netloc, OPTIONS["netloc"]))
+        #
+        #     if urlparse(url).scheme == "":
+        #         patternA = "//%s" % (urlparse(url).netloc)
+        #     else:
+        #         patternA = "%s://%s" % (urlparse(url).scheme, urlparse(url).netloc)
+        #
+        #     patternB = "%s://%s" % (urlparse(OPTIONS["server"]).scheme, urlparse(OPTIONS["server"]).netloc)
+        #     log.debug(patternA)
+        #     log.debug(patternB)
+        #
+        #     new_url = url.replace(patternA, patternB)
+        #     # log.debug(url)
+        #     # log.debug(new_url)
+        #     return new_url
+        # else:
+        #     # log.debug("'%s' left unchanged" % urlparse(url).netloc)
+        #     log.debug(url)
+        #     return url
 
     def open_dataset(self, url, *args, **kwargs):
         """ Open and decode a xarray dataset from an url
@@ -422,7 +489,11 @@ class httpstore(argo_store_proto):
         -------
         :class:`xarray.Dataset`
         """
+        url = self.curateurl(url)
+        # log.debug("Opening netcdf from: %s" % url)
         try:
+            # log.info("open_dataset('%s')" % url)
+            # log_argopy_callerstack()
             data = self.fs.cat_file(url)
         except aiohttp.ClientResponseError as e:
             if e.status == 413:
@@ -431,14 +502,12 @@ class httpstore(argo_store_proto):
                 log.debug("Error %i (Payload Too Large) raised with %s" % (e.status, url))
             raise
 
-        try:
-            ds = xr.open_dataset(data, *args, **kwargs)
-        except ValueError as e:
-            if str(e) == "can't open netCDF4/HDF5 as bytes try passing a path or file-like object":
-                ds = xr.open_dataset(io.BytesIO(data), *args, **kwargs)
-            else:
-                raise
 
+        if data[0:3] != b'CDF':
+            raise TypeError("We didn't get a CDF binary data as expected ! We get: %s" % data)
+
+        # log.debug('type(data): %s' % type(data))
+        ds = xr.open_dataset(data, *args, **kwargs)
         if "source" not in ds.encoding:
             if isinstance(url, str):
                 ds.encoding["source"] = url
@@ -447,6 +516,7 @@ class httpstore(argo_store_proto):
         return ds
 
     def _mfprocessor_dataset(self, url, preprocess=None, preprocess_opts={}, *args, **kwargs):
+        url = self.curateurl(url)
         # Load data
         ds = self.open_dataset(url, *args, **kwargs)
         # Pre-process
@@ -458,7 +528,7 @@ class httpstore(argo_store_proto):
                        urls,
                        max_workers: int = 112,
                        method: str = 'thread',
-                       progress: bool = False,
+                       progress: Union[bool, str] = False,
                        concat: bool = True,
                        concat_dim='row',
                        preprocess=None,
@@ -526,10 +596,10 @@ class httpstore(argo_store_proto):
                     for iu, u in enumerate(vlist):
                         if v == u:
                             ishere[iu, ir] = 1
-            # List of dataset with missing variables:
-            ir_missing = np.sum(ishere, axis=0) < len(vlist)
-            # List of variables missing in some dataset:
-            iv_missing = np.sum(ishere, axis=1) < len(ds_collection)
+            # # List of dataset with missing variables:
+            # ir_missing = np.sum(ishere, axis=0) < len(vlist)
+            # # List of variables missing in some dataset:
+            # iv_missing = np.sum(ishere, axis=1) < len(ds_collection)
 
             # List of variables to keep
             iv_tokeep = np.sum(ishere, axis=1) == len(ds_collection)
@@ -544,6 +614,8 @@ class httpstore(argo_store_proto):
 
         if not isinstance(urls, list):
             urls = [urls]
+
+        urls = [self.curateurl(url) for url in urls]
 
         results = []
         failed = []
@@ -563,7 +635,7 @@ class httpstore(argo_store_proto):
                                  for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
-                    futures = tqdm(futures, total=len(urls))
+                    futures = tqdm(futures, total=len(urls), disable='disable' in [progress])
 
                 for future in futures:
                     data = None
@@ -600,7 +672,7 @@ class httpstore(argo_store_proto):
 
         elif method in ['seq', 'sequential']:
             if progress:
-                urls = tqdm(urls, total=len(urls))
+                urls = tqdm(urls, total=len(urls), disable='disable' in [progress])
 
             for url in urls:
                 data = None
@@ -655,7 +727,8 @@ class httpstore(argo_store_proto):
             :class:`pandas.DataFrame`
 
         """
-        log.debug("Opening/reading csv from: %s" % url)
+        url = self.curateurl(url)
+        # log.debug("Opening/reading csv from: %s" % url)
         with self.open(url) as of:
             df = pd.read_csv(of, **kwargs)
         return df
@@ -672,7 +745,8 @@ class httpstore(argo_store_proto):
             json
 
         """
-        log.debug("Opening json from: %s" % url)
+        url = self.curateurl(url)
+        # log.debug("Opening json from: %s" % url)
         # try:
         #     with self.open(url) as of:
         #         js = json.load(of, **kwargs)
@@ -705,7 +779,7 @@ class httpstore(argo_store_proto):
                     urls,
                     max_workers=112,
                     method: str = 'thread',
-                    progress: bool = False,
+                    progress: Union[bool, str] = False,
                     preprocess=None,
                     url_follow=False,
                     errors: str = 'ignore',
@@ -743,6 +817,8 @@ class httpstore(argo_store_proto):
         if not isinstance(urls, list):
             urls = [urls]
 
+        urls = [self.curateurl(url) for url in urls]
+
         results = []
         failed = []
         if method in ['thread', 'process']:
@@ -758,7 +834,7 @@ class httpstore(argo_store_proto):
                                                  preprocess=preprocess, url_follow=url_follow, *args, **kwargs): url for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
-                    futures = tqdm(futures, total=len(urls))
+                    futures = tqdm(futures, total=len(urls), disable='disable' in [progress])
 
                 for future in futures:
                     data = None
@@ -784,7 +860,8 @@ class httpstore(argo_store_proto):
 
         elif method in ['seq', 'sequential']:
             if progress:
-                urls = tqdm(urls, total=len(urls))
+                # log.debug("We asked for a progress bar !")
+                urls = tqdm(urls, total=len(urls), disable='disable' in [progress])
 
             for url in urls:
                 data = None
@@ -814,43 +891,10 @@ class httpstore(argo_store_proto):
             raise DataNotFound(urls)
 
 
-class memorystore(filestore):
-    """ Argo in-memory file system (global)
-
-        Note that this inherits from filestore, not argo_store_proto
-
-        Relies on:
-            https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.memory.MemoryFileSystem
-    """
-    protocol = 'memory'
-
-    def exists(self, path, *args):
-        """ Check if path can be open or not
-
-            Special handling for memory store
-
-            The fsspec.exists() will return False even if the path is in cache.
-            Here we bypass this in order to return True if the path is in cache.
-            This assumes that the goal of fs.exists is to determine if we can load the path or not.
-            If the path is in cache, it can be loaded.
-        """
-        guess = self.fs.exists(path, *args)
-        if not guess:
-            try:
-                self.cachepath(path)
-                return True
-            except CacheFileNotFound:
-                pass
-            except FileSystemHasNoCache:
-                pass
-        return guess
-
-
 class ftpstore(httpstore):
     """ Argo ftp file system
 
-        Relies on:
-            https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.implementations.ftp.FTPFileSystem
+        Relies on :class:`fsspec.implementations.ftp.FTPFileSystem`
     """
     protocol = 'ftp'
 
@@ -899,7 +943,7 @@ class ftpstore(httpstore):
     def open_mfdataset(self,  # noqa: C901
                        urls,
                        max_workers: int = 112,
-                       method: str = 'thread',
+                       method: str = 'seq',
                        progress: bool = False,
                        concat: bool = True,
                        concat_dim='row',
@@ -923,10 +967,9 @@ class ftpstore(httpstore):
             method: str, default: ``thread``
                 The parallelization method to execute calls asynchronously:
 
-                    - ``thread`` (default): use a pool of at most ``max_workers`` threads
+                    - ``seq`` (default): open data sequentially, no parallelization applied
                     - ``process``: use a pool of at most ``max_workers`` processes
                     - :class:`distributed.client.Client`: Experimental, expect this method to fail !
-                    - ``seq``: open data sequentially, no parallelization applied
             progress: bool, default: False
                 Display a progress bar
             concat: bool, default: True
@@ -968,10 +1011,10 @@ class ftpstore(httpstore):
                     for iu, u in enumerate(vlist):
                         if v == u:
                             ishere[iu, ir] = 1
-            # List of dataset with missing variables:
-            ir_missing = np.sum(ishere, axis=0) < len(vlist)
-            # List of variables missing in some dataset:
-            iv_missing = np.sum(ishere, axis=1) < len(ds_collection)
+            # # List of dataset with missing variables:
+            # ir_missing = np.sum(ishere, axis=0) < len(vlist)
+            # # List of variables missing in some dataset:
+            # iv_missing = np.sum(ishere, axis=1) < len(ds_collection)
 
             # List of variables to keep
             iv_tokeep = np.sum(ishere, axis=1) == len(ds_collection)
@@ -989,13 +1032,10 @@ class ftpstore(httpstore):
 
         results = []
         failed = []
-        if method in ['thread', 'process']:
-            if method == 'thread':
-                ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
-            else:
-                if max_workers == 112:
-                    max_workers = multiprocessing.cpu_count()
-                ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
+        if method in ['process']:
+            if max_workers == 112:
+                max_workers = multiprocessing.cpu_count()
+            ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
 
             with ConcurrentExecutor as executor:
                 future_to_url = {executor.submit(self._mfprocessor_dataset, url,
@@ -1003,7 +1043,7 @@ class ftpstore(httpstore):
                                                  preprocess_opts=preprocess_opts, *args, **kwargs): url for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
-                    futures = tqdm(futures, total=len(urls))
+                    futures = tqdm(futures, total=len(urls), disable='disable' in [progress])
 
                 for future in futures:
                     data = None
@@ -1042,7 +1082,7 @@ class ftpstore(httpstore):
 
         elif method in ['seq', 'sequential']:
             if progress:
-                urls = tqdm(urls, total=len(urls))
+                urls = tqdm(urls, total=len(urls), disable='disable' in [progress])
 
             for url in urls:
                 data = None
@@ -1082,3 +1122,139 @@ class ftpstore(httpstore):
                 return results
         else:
             raise DataNotFound(urls)
+
+
+class httpstore_erddap_auth(httpstore):
+
+    async def get_auth_client(self, **kwargs):
+        session = aiohttp.ClientSession(**kwargs)
+
+        async with session.post(self._login_page, data=self._login_payload) as resp:
+            resp_query = dict(parse_qs(urlparse(str(resp.url)).query))
+
+            if resp.status == 404:
+                raise ErddapHTTPNotFound(
+                    "Error %s: %s. This erddap server does not support log-in" % (resp.status, resp.reason))
+
+            elif resp.status == 200:
+                has_expected = 'message' in resp_query  # only available when there is a form page response
+                if has_expected:
+                    message = resp_query['message'][0]
+                    if 'failed' in message:
+                        raise ErddapHTTPUnauthorized("Error %i: %s (%s)" % (401, message, self._login_payload))
+                else:
+                    raise ErddapHTTPUnauthorized("This erddap server does not support log-in with a user/password")
+
+            else:
+                log.debug('resp.status', resp.status)
+                log.debug('resp.reason', resp.reason)
+                log.debug('resp.headers', resp.headers)
+                log.debug('resp.url', urlparse(str(resp.url)))
+                log.debug('resp.url.query', resp_query)
+                data = await resp.read()
+                log.debug('data', data)
+
+        return session
+
+    def __init__(self,
+                 cache: bool = False,
+                 cachedir: str = "",
+                 login: str = None,
+                 payload: dict = {"user": None, "password": None},
+                 auto: bool = True,
+                 **kwargs):
+
+        if login is None:
+            raise ValueError("Invalid login url")
+        else:
+            self._login_page = login
+
+        self._login_auto = auto  # Should we try to log-in automatically at instanciation ?
+
+        self._login_payload = payload.copy()
+        if "user" in self._login_payload and self._login_payload['user'] is None:
+            self._login_payload['user'] = OPTIONS['user']
+        if "password" in self._login_payload and self._login_payload['password'] is None:
+            self._login_payload['password'] = OPTIONS['password']
+
+        fsspec_kwargs = {**kwargs, **{"get_client": self.get_auth_client}}
+        super().__init__(cache=cache, cachedir=cachedir, **fsspec_kwargs)
+
+        if auto:
+            assert isinstance(self.connect(), bool)
+
+    # def __repr__(self):
+    #     # summary = ["<httpstore_erddap_auth.%i>" % id(self)]
+    #     summary = ["<httpstore_erddap_auth>"]
+    #     summary.append("login page: %s" % self._login_page)
+    #     summary.append("login data: %s" % (self._login_payload))
+    #     if hasattr(self, '_connected'):
+    #         summary.append("connected: %s" % (self._connected))
+    #     else:
+    #         summary.append("connected: ?")
+    #     return "\n".join(summary)
+
+    def _repr_html_(self):
+        td_title = lambda title: '<td colspan="2"><div style="vertical-align: middle;text-align:left"><strong>%s</strong></div></td>' % title  # noqa: E731
+        tr_title = lambda title: "<thead><tr>%s</tr></thead>" % td_title(title)  # noqa: E731
+        a_link = lambda url, txt: '<a href="%s">%s</a>' % (url, txt)
+        td_key = lambda prop: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % str(prop)  # noqa: E731
+        td_val = lambda label: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % str(label)  # noqa: E731
+        tr_tick = lambda key, value: '<tr>%s%s</tr>' % (td_key(key), td_val(value))  # noqa: E731
+        td_vallink = lambda url, label: '<td style="border-width:0px;padding-left:10px;text-align:left">%s</td>' % a_link(url, label)  # noqa: E731
+        tr_ticklink = lambda key, url, value: '<tr>%s%s</tr>' % (td_key(key), td_vallink(url, value))  # noqa: E731
+
+        html = []
+        html.append("<table style='border-collapse:collapse;border-spacing:0'>")
+        html.append("<thead>")
+        html.append(tr_title("httpstore_erddap_auth"))
+        html.append("</thead>")
+        html.append("<tbody>")
+        html.append(tr_ticklink("login page", self._login_page, self._login_page))
+        html.append(tr_tick("login data", self._login_payload))
+        if hasattr(self, '_connected'):
+            html.append(tr_tick("connected", "✅" if self._connected else "⛔"))
+        else:
+            html.append(tr_tick("connected", "?"))
+        html.append("</tbody>")
+        html.append("</table>")
+
+        html = "\n".join(html)
+        return html
+
+    def connect(self):
+        try:
+            log.info("Try to log-in to '%s' page with %s data ..." % (self._login_page, self._login_payload))
+            self.fs.info(self._login_page)
+            self._connected = True
+        except ErddapHTTPUnauthorized:
+            self._connected = False
+        except:  #noqa: E722
+            raise
+        return self._connected
+
+    @property
+    def connected(self):
+        if not hasattr(self, '_connected'):
+            self.connect()
+        return self._connected
+
+
+def httpstore_erddap(url: str = "",
+                     cache: bool = False,
+                     cachedir: str = "",
+                     **kwargs):
+
+    login_page = "%s/login.html" % url.rstrip("/")
+    login_store = httpstore_erddap_auth(cache=cache, cachedir=cachedir, login=login_page, auto=False, **kwargs)
+    try:
+        login_store.connect()
+        keep = True
+    except ErddapHTTPNotFound:
+        keep = False
+        pass
+
+    if keep:
+        return login_store
+    else:
+        return httpstore(cache=cache, cachedir=cachedir, **kwargs)

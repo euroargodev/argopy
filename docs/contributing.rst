@@ -25,7 +25,7 @@ If you are brand new to *argopy* or open source development, we recommend going
 through the `GitHub "issues" tab <https://github.com/euroargodev/argopy/issues>`_
 to find issues that interest you. There are a number of issues listed under
 `Documentation <https://github.com/euroargodev/argopy/issues?q=is%3Aissue+is%3Aopen+label%3Adocumentation>`_
-and `Good first issue
+and `Good first issues
 <https://github.com/euroargodev/argopy/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22>`_
 where you could start out. Once you've found an interesting issue, you can
 return here to get your development environment setup.
@@ -74,8 +74,6 @@ from others.
 `Click here to open an issue with the specific bug reporting template <https://github.com/euroargodev/argopy/issues/new?template=bug_report.md>`_
 
 
-.. _contributing.documentation:
-
 Contributing to the documentation
 =================================
 
@@ -116,7 +114,7 @@ Some other important things to know about the docs:
   for a detailed explanation, or look at some of the existing functions to
   extend it in a similar manner.
 
-- The tutorials make heavy use of the `ipython directive
+- The tutorials make use of the `ipython directive
   <http://matplotlib.org/sampledoc/ipython_directive.html>`_ sphinx extension.
   This directive lets you put code in the documentation which will be run
   during the doc build. For example:
@@ -152,14 +150,14 @@ How to build the *argopy* documentation
 
 Requirements
 ^^^^^^^^^^^^
-Make sure to follow the instructions on :ref:`creating a development environment below <contributing.dev_env>`, but
-to build the docs you need to use the specific file ``docs/requirements.txt``:
+Make sure to follow the instructions on :ref:`creating a development environment below <contributing.dev_env>` and use
+the specific environment ``argopy-docs``:
 
 .. code-block:: bash
 
-    $ conda create --yes -n argopy-docs python=3.8 xarray dask numpy pytest future gsw sphinx
+    $ ./ci/envs_manager -i argopy-docs
     $ conda activate argopy-docs
-    $ pip install argopy
+    $ pip install -e .
     $ pip install -r docs/requirements.txt
 
 Building the documentation
@@ -266,16 +264,44 @@ incorporated into argopy.
 Virtual environment
 -------------------
 
-This is how to create a virtual environment into which to test-install argopy,
-install it, check the version, and tear down the virtual environment.
+We created a short command line script to help manage argopy virtual environments. It's available in the "ci" folder of the repository.
 
 .. code-block:: bash
 
-    $ conda create -c conda-forge -n argopy-tests python=3.8
-    $ conda env update -f ci/requirements/py3.8-dev.yml
-    $ conda activate argopy-tests
-    $ pip install argopy
-    $ python -c 'import argopy; print(argopy.__version__);'
+    $ ./ci/envs_manager -h
+
+    Manage argopy related Conda environments
+
+    Syntax: manage_ci_envs [-hl] [-d] [-rik]
+    options:
+    h     Print this Help
+    l     List all available environments
+    d     Dry run, just list what the script would do
+
+    r     Remove an environment
+    i     Install an environment (start by removing it if it's already installed)
+    k     Install an environment as a Jupyter kernel
+
+    $ ./ci/envs_manager -l
+
+    Available environments:
+     argopy-docs
+     argopy-py38-core-free
+     argopy-py37-all-free
+     argopy-py38-all-pinned
+     argopy-py37-core-free
+     argopy-py39-all-free
+     argopy-py39-core-free
+     argopy-py39-all-pinned
+     argopy-py38-all-free
+     argopy-py38-core-pinned
+
+Then, you can simply install the default dev environment like this:
+
+    $ ./ci/envs_manager -i argopy-py38-all-pinned
+    $ conda activate argopy-py38-all-pinned
+    $ pip install -e .
+    $ python -c 'import argopy; argopy.show_versions()'
 
 
 Code standards

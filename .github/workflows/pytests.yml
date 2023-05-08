@@ -15,20 +15,20 @@ concurrency:
 
 jobs:
 
-  detect-ci-trigger:
-    name: detect ci trigger
+  detect-ci-skip:
+    name: detect ci skip
     runs-on: ubuntu-latest
     if: |
       github.repository == 'euroargodev/argopy'
       && (github.event_name == 'push' || github.event_name == 'pull_request')
     outputs:
-      triggered: ${{ steps.detect-trigger.outputs.trigger-found }}
+      skipped: ${{ steps.detect-skip.outputs.trigger-found }}
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 2
       - uses: xarray-contrib/ci-trigger@v1.2
-        id: detect-trigger
+        id: detect-skip
         with:
           keyword: "[skip-ci]"
 
@@ -37,19 +37,20 @@ jobs:
     # All commits must pass this
 
     name: Core - Pinned - Py${{matrix.python-version}} - ${{ matrix.os }}
-    needs: detect-ci-trigger
+    needs: detect-ci-skip
     runs-on: ${{ matrix.os }}
-    if: needs.detect-ci-trigger.outputs.triggered == 'false'
+    if: needs.detect-ci-skip.outputs.skipped == 'false'
     defaults:
       run:
         shell: bash -l {0}
     continue-on-error: ${{ matrix.experimental }}
+    timeout-minutes: 45
     strategy:
       max-parallel: 12
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8"]
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        python-version: ["3.8"]
+        os: ["ubuntu-latest", "windows-latest", "macos-latest"]
         experimental: [false]
 
     steps:
@@ -59,6 +60,7 @@ jobs:
         run: |
           echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-core-pinned.yml" >> $GITHUB_ENV
           echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
+          echo "LOG_FILE=argopy-tests-Core-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
 
       - name: Setup micromamba
         uses: mamba-org/provision-with-micromamba@v15
@@ -83,36 +85,45 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}}
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3.1.1
+        uses: codecov/codecov-action@v3.1.3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml
 
-          flags: unittests, Core Pinned Py${{matrix.python-version}} ${{ matrix.os }}
+          flags: unittests, core, pinned, py${{matrix.python-version}}
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
+
+      - name: Save tests log as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Argopy-Tests
+          path: ${{env.LOG_FILE}}
+          retention-days: 90
 
   all-pinned:
     # CI tests for environments with all requirements in pinned versions
     # All commits must pass this
 
     name: All - Pinned - Py${{matrix.python-version}} - ${{ matrix.os }}
-    needs: detect-ci-trigger
+    needs: detect-ci-skip
     runs-on: ${{ matrix.os }}
-    if: needs.detect-ci-trigger.outputs.triggered == 'false'
+    if: needs.detect-ci-skip.outputs.skipped == 'false'
     defaults:
       run:
         shell: bash -l {0}
     continue-on-error: ${{ matrix.experimental }}
+    timeout-minutes: 45
     strategy:
       max-parallel: 12
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8"]
+        python-version: ["3.8"]
+#        os: ["ubuntu-latest"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
         experimental: [false]
 
@@ -122,7 +133,8 @@ jobs:
       - name: Set environment variables
         run: |
           echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-all-pinned.yml" >> $GITHUB_ENV
-          echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
+          echo "PYTHON_VERSION=${{matrix.python-version}}" >> $GITHUB_ENV
+          echo "LOG_FILE=argopy-tests-All-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
 
       - name: Setup micromamba
         uses: mamba-org/provision-with-micromamba@v15
@@ -133,14 +145,7 @@ jobs:
           cache-env-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
           extra-specs: |
             python=${{matrix.python-version}}
-            conda
-
-      # We only want to install this on one run, because otherwise we'll have
-      # duplicate annotations.
-      - name: Install error reporter
-        if: ${{ matrix.os }} == 'ubuntu-latest' and ${{ matrix.python-version }} == '3.8'
-        run: |
-          python -m pip install pytest-github-actions-annotate-failures            
+            conda       
 
       - name: Version info
         run: |
@@ -154,138 +159,21 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}}
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3.1.1
+        uses: codecov/codecov-action@v3.1.3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml
-          flags: unittests, All Pinned Py${{matrix.python-version}} ${{ matrix.os }}
+          flags: unittests, all, pinned, py${{matrix.python-version}}
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
-
-  core-min:
-    # CI tests for environments with core requirements in oldest (min) versions
-
-    name: Core - Min - Py${{matrix.python-version}} - ${{ matrix.os }}
-    needs: detect-ci-trigger
-    runs-on: ${{ matrix.os }}
-    if: needs.detect-ci-trigger.outputs.triggered == 'false'
-    defaults:
-      run:
-        shell: bash -l {0}
-    continue-on-error: ${{ matrix.experimental }}
-    strategy:
-      max-parallel: 12
-      fail-fast: false
-      matrix:
-        python-version: ["3.7", "3.8"]
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        experimental: [false]
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set environment variables
-        run: |
-          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-core-min.yml" >> $GITHUB_ENV
-          echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
-
-      - name: Setup micromamba
-        uses: mamba-org/provision-with-micromamba@v15
+          
+      - name: Upload tests log to GA
+        uses: actions/upload-artifact@v3
         with:
-          environment-file: ${{ env.CONDA_ENV_FILE }}
-          environment-name: argopy-tests
-          cache-env: true
-          cache-env-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
-          extra-specs: |
-            python=${{matrix.python-version}}
-            conda           
-
-      - name: Version info
-        run: |
-          conda info
-          conda list
-
-      - name: Lint with flake8
-        run: |
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
-      - name: Test with pytest
-        run: |
-          pytest -ra -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3.1.1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./cov.xml
-          flags: unittests, Core Min Py${{matrix.python-version}} ${{ matrix.os }}
-          name: codecov-github
-          fail_ci_if_error: false
-          env_vars: RUNNER_OS,PYTHON_VERSION
-
-  all-min:
-    # CI tests for environments with all requirements in oldest (min) versions
-
-    name: All - Min - Py${{matrix.python-version}} - ${{ matrix.os }}
-    needs: detect-ci-trigger
-    runs-on: ${{ matrix.os }}
-    if: needs.detect-ci-trigger.outputs.triggered == 'false'
-    defaults:
-      run:
-        shell: bash -l {0}
-    continue-on-error: ${{ matrix.experimental }}
-    strategy:
-      max-parallel: 12
-      fail-fast: false
-      matrix:
-        python-version: ["3.7", "3.8"]
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        experimental: [false]
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set environment variables
-        run: |
-          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-all-min.yml" >> $GITHUB_ENV
-          echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
-
-      - name: Setup micromamba
-        uses: mamba-org/provision-with-micromamba@v15
-        with:
-          environment-file: ${{ env.CONDA_ENV_FILE }}
-          environment-name: argopy-tests
-          cache-env: true
-          cache-env-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
-          extra-specs: |
-            python=${{matrix.python-version}}
-            conda           
-
-      - name: Version info
-        run: |
-          conda info
-          conda list
-
-      - name: Lint with flake8
-        run: |
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
-      - name: Test with pytest
-        run: |
-          pytest -ra -v -s --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3.1.1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./cov.xml
-          flags: unittests, All Min Py${{matrix.python-version}} ${{ matrix.os }}
-          name: codecov-github
-          fail_ci_if_error: false
-          env_vars: RUNNER_OS,PYTHON_VERSION
+          name: Argopy-Tests
+          path: ${{env.LOG_FILE}}
+          retention-days: 90
