@@ -98,8 +98,6 @@ class ArgoAccessor:
             if "STATION_PARAMETERS" in self._vars:
                 xarray_obj = xarray_obj.drop("STATION_PARAMETERS")
                 self._obj = xarray_obj
-                print(OPTIONS.get('src'), "STATION_PARAMETERS was removed")
-
         else:
             raise InvalidDatasetStructure("Argo dataset structure not recognised (no PARAMETER_DATA_MODE nor DATA_MODE")
 
@@ -520,31 +518,18 @@ class ArgoAccessor:
             log.debug("This dataset has a single vertical level, thus final variables will only have a N_PROF "
                       "dimension and no N_LEVELS")
 
-        cond_src = (OPTIONS.get('src') == "gdac" or OPTIONS.get('src') == "localftp")
 
-        # Take PARAMETER_DATA_MODE and STATION_PARAMETERS in a list in order to remove them from the dataset for now
+        # Store PARAMETER_DATA_MODE and STATION_PARAMETERS in a list in order to remove them from the dataset for now
         # It may be possible to do this with fewer lines of code, but it also depends on the source of the data
-        if self.mode_variable == "PARAMETER_DATA_MODE":
+        if self.mode_variable == "PARAMETER_DATA_MODE" and 'N_PARAM' in self._obj.dims:
             parameter_data_mode = []
-            station_parameters = [] if cond_src else None
+            station_parameters = []
             for uid in np.unique(dummy_argo_uid):
                 # select the first occurrence
                 index = np.where(dummy_argo_uid == uid)[0][0]
                 parameter_data_mode.append(this.PARAMETER_DATA_MODE.isel(N_POINTS=index).data)
-                station_parameters.append(this.STATION_PARAMETERS.isel(N_POINTS=index).data) if OPTIONS.get(
-                    'src') == 'gdac' else None
-            this = this.drop_vars(['PARAMETER_DATA_MODE'])
-            this = this.drop_vars(['STATION_PARAMETERS']) if cond_src else None
-
-        elif self.mode_variable == 'DATA_MODE' and cond_src and "STATION_PARAMETERS" in this: # no STATION_PARAMETERS for standard mode
-            station_parameters = []
-            for uid in np.unique(dummy_argo_uid):
-                index = np.where(dummy_argo_uid == uid)[0][0]
                 station_parameters.append(this.STATION_PARAMETERS.isel(N_POINTS=index).data)
-            this = this.drop_vars(['STATION_PARAMETERS'])
-        else:
-            # other data sources (erddap), no need to keep STATION_PARAMETERS for now
-            pass
+            this = this.drop_vars(['PARAMETER_DATA_MODE', 'STATION_PARAMETERS'])
 
         # Store the initial set of coordinates:
         coords_list = list(this.coords)
@@ -610,7 +595,7 @@ class ArgoAccessor:
                     try:
                         y[i_prof, 0: len(x)] = x
                     except Exception:
-                        print(vname, "input", x.shape, "output", y[i_prof, :].shape, "data src:", OPTIONS.get('src'))
+                        print(vname, "input", x.shape, "output", y[i_prof, :].shape)
                         raise
                     new_ds[vname].values = y
                 else:  # ['N_PROF', ] array:
@@ -627,10 +612,10 @@ class ArgoAccessor:
 
         # Add the removed PARAMETER_DATA_MODE and STATION_PARAMETERS variables with specific dimensions
         def add_nparam_variables(new_ds):
-            if self.mode_variable == "PARAMETER_DATA_MODE":
+            if self.mode_variable == "PARAMETER_DATA_MODE" and "N_PARAM" in self._obj.dims:
                 new_ds = new_ds.assign({self.mode_variable: (('N_PROF', 'N_PARAM'), parameter_data_mode)})
-            if cond_src and "STATION_PARAMETERS" in self._obj:
-                new_ds = new_ds.assign({'STATION_PARAMETERS': (('N_PROF', 'N_PARAM'), station_parameters)})
+                if "STATION_PARAMETERS" in self._obj:
+                    new_ds = new_ds.assign({'STATION_PARAMETERS': (('N_PROF', 'N_PARAM'), station_parameters)})
             return new_ds
 
         new_ds = add_nparam_variables(new_ds)
@@ -763,7 +748,11 @@ class ArgoAccessor:
                         if v.startswith(tuple(plist)):
                             # get the right PARAMETER_DATA_MODE for the variable v
                             ma_liste = [True if var == v else False for var in possible_list]
-                            corresp_data_mode = xds[key][ma_liste].isel(N_PARAM=0)
+                            # TODO this part could be ameliorated.. time consuming and redundant
+                            if 'N_PARAM' in ds.dims:
+                                corresp_data_mode = xds[key][ma_liste].isel(N_PARAM=0)
+                            else:
+                                corresp_data_mode = xds[key]
                             # select the corresponding data mode for variable v
                             xds[v] = xds[v].where(
                                 corresp_data_mode == value,
@@ -907,7 +896,7 @@ class ArgoAccessor:
         if self.mode_variable == "PARAMETER_DATA_MODE":
             if "STATION_PARAMETERS" in ds:
                 possible_list = list(map(lambda x: str.strip(x), ds.STATION_PARAMETERS.isel(N_POINTS=0).data))
-            elif OPTIONS.get('src') == 'erddap':
+            else:
                 # STATION_PARAMETERS is not in ds while loading the data from erddap server, so for erddap
                 possible_list = ["PRES", "TEMP", "DOXY"]
 
