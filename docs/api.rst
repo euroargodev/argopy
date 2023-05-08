@@ -18,8 +18,8 @@ Argo Data Fetchers
     DataFetcher
     IndexFetcher
 
-Data selection
---------------
+Data selection methods
+----------------------
 
 .. autosummary::
    :toctree: generated/
@@ -35,15 +35,13 @@ Data selection
    IndexFetcher.float
    IndexFetcher.profile
 
-Data access
------------
+Data access methods
+-------------------
 
 .. autosummary::
    :toctree: generated/
 
    DataFetcher.load
-   DataFetcher.data
-   DataFetcher.index
    DataFetcher.to_xarray
    DataFetcher.to_dataframe
    DataFetcher.to_index
@@ -52,15 +50,14 @@ Data access
    :toctree: generated/
 
    IndexFetcher.load
-   IndexFetcher.index
    IndexFetcher.to_xarray
    IndexFetcher.to_dataframe
    IndexFetcher.to_csv
 
 .. _Fetcher Data Visualisation:
 
-Data visualisation
-------------------
+Data visualisation methods
+--------------------------
 
 .. autosummary::
    :toctree: generated/
@@ -76,10 +73,14 @@ Properties
 .. autosummary::
    :toctree: generated/
 
+   DataFetcher.data
+   DataFetcher.index
+   DataFetcher.domain
    DataFetcher.uri
+   IndexFetcher.index
 
-Argo related data utilities
-===========================
+Utilities for Argo related data
+===============================
 
 .. autosummary::
    :toctree: generated/
@@ -88,6 +89,8 @@ Argo related data utilities
    TopoFetcher
    ArgoNVSReferenceTables
    OceanOPSDeployments
+   CTDRefDataFetcher
+
 
 .. _Module Visualisation:
 
@@ -246,9 +249,6 @@ Argo index store
 .. autosummary::
     :toctree: generated/
 
-    argopy.stores.indexstore
-    argopy.stores.indexfilter_wmo
-    argopy.stores.indexfilter_box
     argopy.stores.indexstore_pa
     argopy.stores.indexstore_pd
 
@@ -275,15 +275,6 @@ GDAC
     argopy.data_fetchers.gdacftp_data.Fetch_wmo
     argopy.data_fetchers.gdacftp_data.Fetch_box
 
-Local FTP
-^^^^^^^^^
-
-.. autosummary::
-    :toctree: generated/
-
-    argopy.data_fetchers.localftp_data.LocalFTPArgoDataFetcher
-    argopy.data_fetchers.localftp_data.Fetch_wmo
-    argopy.data_fetchers.localftp_data.Fetch_box
 
 Argovis
 ^^^^^^^

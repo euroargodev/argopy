@@ -6,6 +6,7 @@ from .argo_colors import ArgoColors
 from .dashboards import open_dashboard as dashboard
 from .utils import discrete_coloring, latlongrid
 
+
 __all__ = (
     # Also available on the argopy module level:
     "dashboard",

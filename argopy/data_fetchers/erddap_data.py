@@ -9,7 +9,7 @@ This module contains Argo data fetcher for Ifremer ERDDAP.
 This is not intended to be used directly, only by the facade at fetchers.py
 
 """
-
+import xarray as xr
 import pandas as pd
 import numpy as np
 import copy
@@ -23,7 +23,7 @@ from argopy.utilities import list_standard_variables, Chunker, format_oneline
 from argopy.stores import httpstore
 from ..errors import ErddapServerError
 from aiohttp import ClientResponseError
-
+import logging
 
 # Load erddapy according to available version (breaking changes in v0.8.0)
 try:
@@ -34,25 +34,29 @@ except:  # noqa: E722
     from erddapy.erddapy import ERDDAP
     from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
     from erddapy.erddapy import parse_dates
+
     # Soon ! https://github.com/ioos/erddapy
 
 
+log = logging.getLogger("argopy.erddap.data")
 
-access_points = ['wmo', 'box']
-exit_formats = ['xarray']
-dataset_ids = ['phy', 'ref', 'bgc']  # First is default
-api_server = 'https://erddap.ifremer.fr/erddap/'  # API root url
-api_server_check = api_server + '/info/ArgoFloats/index.json'  # URL to check if the API is alive
+access_points = ["wmo", "box"]
+exit_formats = ["xarray"]
+dataset_ids = ["phy", "ref", "bgc"]  # First is default
+api_server = OPTIONS["erddap"]  # API root url
+api_server_check = (
+    OPTIONS["erddap"] + "/info/ArgoFloats/index.json"
+)  # URL to check if the API is alive
 
 #class NewDataFetcher(ArgoDataFetcherProto):
 
 
 class ErddapArgoDataFetcher(ArgoDataFetcherProto):
-    """ Manage access to Argo data through Ifremer ERDDAP
+    """Manage access to Argo data through Ifremer ERDDAP
 
-        ERDDAP transaction are managed with the erddapy library
+    ERDDAP transaction are managed with the erddapy library
 
-        This class is a prototype not meant to be instantiated directly
+    This class is a prototype not meant to be instantiated directly
 
     """
 
@@ -61,18 +65,20 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     ###
     @abstractmethod
     def init(self, *args, **kwargs):
-        """ Initialisation for a specific fetcher """
+        """Initialisation for a specific fetcher"""
         raise NotImplementedError("ErddapArgoDataFetcher.init not implemented")
 
     @abstractmethod
     def define_constraints(self):
-        """ Define erddapy constraints """
-        raise NotImplementedError("ErddapArgoDataFetcher.define_constraints not implemented")
+        """Define erddapy constraints"""
+        raise NotImplementedError(
+            "ErddapArgoDataFetcher.define_constraints not implemented"
+        )
 
     @property
     @abstractmethod
     def uri(self) -> list:
-        """ Return the list of Unique Resource Identifier (URI) to download data """
+        """Return the list of Unique Resource Identifier (URI) to download data"""
         raise NotImplementedError("ErddapArgoDataFetcher.uri not implemented")
 
     @staticmethod
@@ -85,7 +91,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     ###
     # Methods that must not change
     ###
-
     def __init__(
         self,
         ds: str = "",
@@ -99,7 +104,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         api_timeout: int = 0,
         **kwargs,
     ):
-        """ Instantiate an ERDDAP Argo data fetcher
+        """Instantiate an ERDDAP Argo data fetcher
 
         Parameters
         ----------
@@ -126,15 +131,16 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
-        self.fs = httpstore(cache=cache, cachedir=cachedir, timeout=timeout, size_policy='head')
         self.definition = "Ifremer erddap Argo data fetcher"
         self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
-        self.server = api_server
+        self.server = kwargs["server"] if "server" in kwargs else OPTIONS["erddap"]
+        self.store_opts = {'cache': cache, 'cachedir': cachedir, 'timeout': timeout, 'size_policy': 'head'}
+        self.fs = kwargs['fs'] if 'fs' in kwargs else httpstore(**self.store_opts)
 
         if not isinstance(parallel, bool):
             parallel_method = parallel
             parallel = True
-        if parallel_method not in ["thread"]:
+        if parallel_method not in ["thread", "seq"]:
             raise ValueError(
                 "erddap only support multi-threading, use 'thread' instead of '%s'"
                 % parallel_method
@@ -151,14 +157,26 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     def __repr__(self):
         summary = ["<datafetcher.erddap>"]
         summary.append("Name: %s" % self.definition)
-        summary.append("API: %s" % api_server)
+        summary.append("API: %s" % self.server)
         summary.append("Domain: %s" % format_oneline(self.cname()))
         return "\n".join(summary)
 
-    def _add_attributes(self, this):  # noqa: C901
-        """ Add variables attributes not return by erddap requests (csv)
+    @property
+    def server(self):
+        """URL of the Erddap server"""
+        return self._server
 
-            This is hard coded, but should be retrieved from an API somewhere
+    @server.setter
+    def server(self, value):
+        self._server = value
+        if hasattr(self, "erddap") and self.erddap.server != value:
+            log.debug("The erddap server has been modified, updating internal data")
+            self._init_erddapy()
+
+    def _add_attributes(self, this):  # noqa: C901
+        """Add variables attributes not return by erddap requests (csv)
+
+        This is hard coded, but should be retrieved from an API somewhere
         """
         for v in this.data_vars:
             if "TEMP" in v and "_QC" not in v:
@@ -264,7 +282,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     def _init_erddapy(self):
         # Init erddapy
-        self.erddap = ERDDAP(server=self.server, protocol="tabledap")
+        self.erddap = ERDDAP(server=str(self.server), protocol="tabledap")
         self.erddap.response = (
             "nc"  # This is a major change in v0.4, we used to work with csv files
         )
@@ -285,7 +303,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def _minimal_vlist(self):
-        """ Return the minimal list of variables to retrieve measurements for """
+        """Return the minimal list of variables to retrieve measurements for"""
         vlist = list()
         if self.dataset_id == "phy":
             plist = [
@@ -418,7 +436,25 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 #                    "tilt",
 #                    "mtime",
                 ]
-
+                
+            plist = [
+                "pres",
+                "temp",
+                "psal",
+                "cndc",
+                "doxy",
+                "beta_backscattering",
+                "fluorescence_chla",
+                # "fluorescence_cdom",
+                # "side_scattering_turbidity",
+                # "transmittance_particle_beam_attenuation",
+                "bbp",
+                "turbidity",
+                "cp",
+                "chla",
+                "cdom",
+                "nitrate",
+            ]
             [vlist.append(p) for p in plist]
             [vlist.append(p + "_qc") for p in plist]
             [vlist.append(p + "_adjusted") for p in plist]
@@ -480,13 +516,14 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 response[p] = object
         return response
 
+
     def cname(self):
-        """ Return a unique string defining the constraints """
+        """Return a unique string defining the constraints"""
         return self._cname()
 
     @property
     def cachepath(self):
-        """ Return path to cached file(s) for this request
+        """Return path to cached file(s) for this request
 
         Returns
         -------
@@ -495,7 +532,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         return [self.fs.cachepath(uri) for uri in self.uri]
 
     def get_url(self):
-        """ Return the URL to download data requested
+        """Return the URL to download data requested
 
         Returns
         -------
@@ -536,37 +573,45 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def N_POINTS(self) -> int:
-        """ Number of measurements expected to be returned by a request """
+        """Number of measurements expected to be returned by a request"""
+        url = self.get_url().replace("." + self.erddap.response, ".ncHeader")
         try:
-            url = self.get_url().replace("." + self.erddap.response, ".ncHeader")
-            with self.fs.open(url) as of:
-                ncHeader = of.read().decode("utf-8")
+            ncHeader = str(self.fs.fs.cat_file(url))
             lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
             return int(lines.split("=")[1].split(";")[0])
         except Exception:
-            raise ErddapServerError("Erddap server can't return ncHeader for this url. ")
+            raise ErddapServerError(
+                "Erddap server can't return ncHeader for this url. "
+            )
 
-    def to_xarray(self, errors: str = 'ignore'):
-        """ Load Argo data and return a xarray.DataSet """
+    def to_xarray(self, errors: str = "ignore"):  # noqa: C901
+        """Load Argo data and return a xarray.DataSet"""
+
+        URI = self.uri  # Call it once
 
         # Download data
         if not self.parallel:
-            if len(self.uri) == 1:
+            if len(URI) == 1:
                 try:
-                    ds = self.fs.open_dataset(self.uri[0])
+                    # log.debug("to_xarray: %s" % URI[0])
+                    # log_argopy_callerstack()
+                    ds = self.fs.open_dataset(URI[0])
                 except ClientResponseError as e:
                     raise ErddapServerError(e.message)
             else:
                 try:
                     ds = self.fs.open_mfdataset(
-                        self.uri, method="sequential", progress=self.progress, errors=errors
+                        URI, method="sequential", progress=self.progress, errors=errors
                     )
                 except ClientResponseError as e:
                     raise ErddapServerError(e.message)
         else:
             try:
                 ds = self.fs.open_mfdataset(
-                    self.uri, method=self.parallel_method, progress=self.progress, errors=errors
+                    URI,
+                    method=self.parallel_method,
+                    progress=self.progress,
+                    errors=errors,
                 )
             except ClientResponseError as e:
                 raise ErddapServerError(e.message)
@@ -584,45 +629,50 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             ds = ds.rename({v: v.upper()})
         ds = ds.set_coords(coords)
 
+        if self.dataset_id == "ref":
+            ds["DIRECTION"] = xr.full_like(ds["CYCLE_NUMBER"], "A", dtype=str)
+
         # Cast data types and add variable attributes (not available in the csv download):
         ds = self._add_attributes(ds)
         ds = ds.argo.cast_types()
-
-        # More convention:
-        #         ds = ds.rename({'pres': 'pressure'})
 
         # Remove erddap file attributes and replace them with argopy ones:
         ds.attrs = {}
         if self.dataset_id == "phy":
             ds.attrs["DATA_ID"] = "ARGO"
+            ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
         elif self.dataset_id == "ref":
             ds.attrs["DATA_ID"] = "ARGO_Reference"
+            ds.attrs["DOI"] = "-"
         elif self.dataset_id == "bgc":
             ds.attrs["DATA_ID"] = "ARGO-BGC"
-        ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
+            ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
         ds.attrs["Fetched_from"] = self.erddap.server
         ds.attrs["Fetched_by"] = getpass.getuser()
         ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
         ds.attrs["Fetched_constraints"] = self.cname()
-        ds.attrs["Fetched_uri"] = self.uri
+        ds.attrs["Fetched_uri"] = URI
         ds = ds[np.sort(ds.data_vars)]
 
         #
         return ds
 
     def filter_data_mode(self, ds, **kwargs):
+        """Apply xarray argo accessor filter_data_mode method"""
         ds = ds.argo.filter_data_mode(errors="ignore", **kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
     def filter_qc(self, ds, **kwargs):
+        """Apply xarray argo accessor filter_qc method"""
         ds = ds.argo.filter_qc(**kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
     def filter_variables(self, ds, mode="standard"):
+        """Filter variables according to user mode"""
         if mode == "standard":
             to_remove = sorted(
                 list(set(list(ds.data_vars)) - set(list_standard_variables()))
@@ -633,7 +683,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
 
 class Fetch_wmo(ErddapArgoDataFetcher):
-    """ Manage access to Argo data through Ifremer ERDDAP for: a list of WMOs
+    """Manage access to Argo data through Ifremer ERDDAP for: a list of WMOs
 
     This class is instantiated when a call is made to these facade access points:
         - `ArgoDataFetcher(src='erddap').float(**)`
@@ -642,14 +692,14 @@ class Fetch_wmo(ErddapArgoDataFetcher):
     """
 
     def init(self, WMO=[], CYC=None, **kw):
-        """ Create Argo data loader for WMOs
+        """Create Argo data loader for WMOs
 
-            Parameters
-            ----------
-            WMO : list(int)
-                The list of WMOs to load all Argo data for.
-            CYC : int, np.array(int), list(int)
-                The cycle numbers to load.
+        Parameters
+        ----------
+        WMO : list(int)
+            The list of WMOs to load all Argo data for.
+        CYC : int, np.array(int), list(int)
+            The cycle numbers to load.
         """
         self.WMO = WMO
         self.CYC = CYC
@@ -666,7 +716,7 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         return self
 
     def define_constraints(self):
-        """ Define erddap constraints """
+        """Define erddap constraints"""
         self.erddap.constraints = {
             "platform_number=~": "|".join(["%i" % i for i in self.WMO])
         }
@@ -678,7 +728,7 @@ class Fetch_wmo(ErddapArgoDataFetcher):
 
     @property
     def uri(self):
-        """ List of URLs to load for a request
+        """List of URLs to load for a request
 
         Returns
         -------
@@ -686,7 +736,7 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         """
         if not self.parallel:
             chunks = "auto"
-            chunks_maxsize = {'wmo': 5}
+            chunks_maxsize = {"wmo": 5}
         else:
             chunks = self.chunks
             chunks_maxsize = self.chunks_maxsize
@@ -698,26 +748,30 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         for wmos in wmo_grps:
             urls.append(
                 Fetch_wmo(
-                    WMO=wmos, CYC=self.CYC, ds=self.dataset_id, parallel=False
+                    WMO=wmos,
+                    CYC=self.CYC,
+                    ds=self.dataset_id,
+                    parallel=False,
+                    fs=self.fs,
+                    server=self.server,
                 ).get_url()
             )
         return urls
 
 
 class Fetch_box(ErddapArgoDataFetcher):
-    """ Manage access to Argo data through Ifremer ERDDAP for: an ocean rectangle
-    """
+    """Manage access to Argo data through Ifremer ERDDAP for: an ocean rectangle"""
 
     def init(self, box: list, **kw):
-        """ Create Argo data loader
+        """Create Argo data loader
 
-            Parameters
-            ----------
-            box : list(float, float, float, float, float, float, str, str)
-                The box domain to load all Argo data for:
-                    box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
-                    or:
-                    box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
+        Parameters
+        ----------
+        box : list(float, float, float, float, float, float, str, str)
+            The box domain to load all Argo data for:
+                box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
+                or:
+                box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
         self.BOX = box.copy()
 
@@ -735,7 +789,7 @@ class Fetch_box(ErddapArgoDataFetcher):
         return self
 
     def define_constraints(self):
-        """ Define request constraints """
+        """Define request constraints"""
         self.erddap.constraints = {"longitude>=": self.BOX[0]}
         self.erddap.constraints.update({"longitude<=": self.BOX[1]})
         self.erddap.constraints.update({"latitude>=": self.BOX[2]})
@@ -749,7 +803,7 @@ class Fetch_box(ErddapArgoDataFetcher):
 
     @property
     def uri(self):
-        """ List of files to load for a request
+        """List of files to load for a request
 
         Returns
         -------
@@ -764,6 +818,10 @@ class Fetch_box(ErddapArgoDataFetcher):
             boxes = self.Chunker.fit_transform()
             urls = []
             for box in boxes:
-                urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())
+                urls.append(
+                    Fetch_box(
+                        box=box, ds=self.dataset_id, fs=self.fs, server=self.server
+                    ).get_url()
+                )
             return urls
 

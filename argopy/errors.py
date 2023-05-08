@@ -19,6 +19,11 @@ class FtpPathError(ValueError):
     pass
 
 
+class ErddapPathError(ValueError):
+    """Raise when the erddap path is not appropriate."""
+
+    pass
+
 class NetCDF4FileNotFoundError(FileNotFoundError):
     """Raise when NETCDF4 file not found."""
 
@@ -56,6 +61,7 @@ class InvalidDataset(ValueError):
     This is to be used when a dataset or its property is not valid
     """
     pass
+
 
 class InvalidDatasetStructure(ValueError):
     """Raise when the xarray dataset is not as expected."""
@@ -117,5 +123,16 @@ class ErddapServerError(APIServerError):
 
 class ArgovisServerError(APIServerError):
     """Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery."""
+
+    pass
+
+
+class ErddapHTTPUnauthorized(APIServerError):
+    """Raise when login to erddap fails"""
+
+    pass
+
+class ErddapHTTPNotFound(APIServerError):
+    """Raise when erddap ressource is not found"""
 
     pass

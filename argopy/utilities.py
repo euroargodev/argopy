@@ -20,20 +20,18 @@ import logging
 from abc import ABC, abstractmethod
 from urllib.parse import urlparse
 from typing import Union
-
-import aiohttp
-import asyncio
-from aiohttp.helpers import URL
-
+import inspect
+import pathlib
 import importlib
 import locale
 import platform
 import struct
-import subprocess # nosec B404 only used without user inputs
+import subprocess  # nosec B404 only used without user inputs
 import contextlib
 from fsspec.core import split_protocol
 import fsspec
 
+import argopy
 import xarray as xr
 import pandas as pd
 import numpy as np
@@ -44,8 +42,10 @@ import pkg_resources
 import shutil
 
 import threading
+from socket import gaierror
 
 import time
+import setuptools  # noqa: F401
 
 from .options import OPTIONS
 from .errors import (
@@ -63,6 +63,11 @@ try:
 except AttributeError:
     collectionsAbc = collections
 
+try:
+    importlib.import_module('matplotlib')  # noqa: E402
+    from matplotlib.colors import to_hex
+except ImportError:
+    pass
 
 path2pkl = pkg_resources.resource_filename("argopy", "assets/")
 
@@ -205,23 +210,14 @@ def list_available_data_src():
     sources = {}
     try:
         from .data_fetchers import erddap_data as Erddap_Fetchers
+        # Ensure we're loading the erddap data fetcher with the current options:
+        Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(Erddap_Fetchers.api_server, OPTIONS['erddap'])
+        Erddap_Fetchers.api_server = OPTIONS['erddap']
 
         sources["erddap"] = Erddap_Fetchers
     except Exception:
         warnings.warn(
             "An error occurred while loading the ERDDAP data fetcher, "
-            "it will not be available !\n%s\n%s"
-            % (sys.exc_info()[0], sys.exc_info()[1])
-        )
-        pass
-
-    try:
-        from .data_fetchers import localftp_data as LocalFTP_Fetchers
-
-        sources["localftp"] = LocalFTP_Fetchers
-    except Exception:
-        warnings.warn(
-            "An error occurred while loading the local FTP data fetcher, "
             "it will not be available !\n%s\n%s"
             % (sys.exc_info()[0], sys.exc_info()[1])
         )
@@ -241,6 +237,9 @@ def list_available_data_src():
 
     try:
         from .data_fetchers import gdacftp_data as GDAC_Fetchers
+        # Ensure we're loading the gdac data fetcher with the current options:
+        GDAC_Fetchers.api_server_check = OPTIONS['ftp']
+        GDAC_Fetchers.api_server = OPTIONS['ftp']
 
         sources["gdac"] = GDAC_Fetchers
     except Exception:
@@ -257,11 +256,14 @@ def list_available_data_src():
 
 def list_available_index_src():
     """ List all available index sources """
-    AVAILABLE_SOURCES = {}
+    sources = {}
     try:
         from .data_fetchers import erddap_index as Erddap_Fetchers
+        # Ensure we're loading the erddap data fetcher with the current options:
+        Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(Erddap_Fetchers.api_server, OPTIONS['erddap'])
+        Erddap_Fetchers.api_server = OPTIONS['erddap']
 
-        AVAILABLE_SOURCES["erddap"] = Erddap_Fetchers
+        sources["erddap"] = Erddap_Fetchers
     except Exception:
         warnings.warn(
             "An error occurred while loading the ERDDAP index fetcher, "
@@ -271,21 +273,12 @@ def list_available_index_src():
         pass
 
     try:
-        from .data_fetchers import localftp_index as LocalFTP_Fetchers
-
-        AVAILABLE_SOURCES["localftp"] = LocalFTP_Fetchers
-    except Exception:
-        warnings.warn(
-            "An error occurred while loading the local FTP index fetcher, "
-            "it will not be available !\n%s\n%s"
-            % (sys.exc_info()[0], sys.exc_info()[1])
-        )
-        pass
-
-    try:
         from .data_fetchers import gdacftp_index as GDAC_Fetchers
+        # Ensure we're loading the gdac data fetcher with the current options:
+        GDAC_Fetchers.api_server_check = OPTIONS['ftp']
+        GDAC_Fetchers.api_server = OPTIONS['ftp']
 
-        AVAILABLE_SOURCES["gdac"] = GDAC_Fetchers
+        sources["gdac"] = GDAC_Fetchers
     except Exception:
         warnings.warn(
             "An error occurred while loading the GDAC index fetcher, "
@@ -294,7 +287,7 @@ def list_available_index_src():
         )
         pass
 
-    return AVAILABLE_SOURCES
+    return sources
 
 
 def list_standard_variables():
@@ -403,89 +396,6 @@ def list_multiprofile_file_variables():
     ]
 
 
-def check_localftp(path, errors: str = "ignore"):
-    """Return True if a path has the expected GDAC ftp structure.
-
-    Expected GDAC ftp structure::
-
-        .
-        └── dac
-            ├── aoml
-            ├── ...
-            ├── coriolis
-            ├── ...
-            ├── meds
-            └── nmdis
-
-    This check will return True if at least one DAC sub-folder is found under path/dac/<dac_name>
-
-    Parameters
-    ----------
-    path: str
-        Path name to check
-    errors: str, optional
-        "ignore" or "raise" (or "warn")
-
-    Returns
-    -------
-    checked: boolean
-    """
-    dacs = [
-        "aoml",
-        "bodc",
-        "coriolis",
-        "csio",
-        "csiro",
-        "incois",
-        "jma",
-        "kma",
-        "kordi",
-        "meds",
-        "nmdis",
-    ]
-
-    # Case 1:
-    check1 = (
-        os.path.isdir(path)
-        and os.path.isdir(os.path.join(path, "dac"))
-        and np.any([os.path.isdir(os.path.join(path, "dac", dac)) for dac in dacs])
-    )
-
-    if check1:
-        return True
-    elif errors == "raise":
-        # This was possible up to v0.1.3:
-        check2 = os.path.isdir(path) and np.any(
-            [os.path.isdir(os.path.join(path, dac)) for dac in dacs]
-        )
-        if check2:
-            raise FtpPathError(
-                "This path is no longer GDAC compliant for argopy.\n"
-                "Please make sure you point toward a path with a 'dac' folder:\n%s"
-                % path
-            )
-        else:
-            raise FtpPathError("This path is not GDAC compliant:\n%s" % path)
-
-    elif errors == "warn":
-        # This was possible up to v0.1.3:
-        check2 = os.path.isdir(path) and np.any(
-            [os.path.isdir(os.path.join(path, dac)) for dac in dacs]
-        )
-        if check2:
-            warnings.warn(
-                "This path is no longer GDAC compliant for argopy. This will raise an error in the future.\n"
-                "Please make sure you point toward a path with a 'dac' folder:\n%s"
-                % path
-            )
-            return False
-        else:
-            warnings.warn("This path is not GDAC compliant:\n%s" % path)
-            return False
-    else:
-        return False
-
-
 def get_sys_info():
     "Returns system information as a dict"
 
@@ -587,6 +497,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         'ext.util': sorted([
             ("gsw", lambda mod: mod.__version__),   # Used by xarray accessor to compute new variables
             ("tqdm", lambda mod: mod.__version__),
+            ("zarr", lambda mod: mod.__version__),
         ]),
         'ext.perf': sorted([
             ("dask", lambda mod: mod.__version__),
@@ -602,7 +513,6 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
             ("ipykernel", lambda mod: mod.__version__),
         ]),
         'dev': sorted([
-            ("zarr", lambda mod: mod.__version__),
 
             ("bottleneck", lambda mod: mod.__version__),
             ("cftime", lambda mod: mod.__version__),
@@ -612,10 +522,14 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
 
             ("numpy", lambda mod: mod.__version__),  # will come with xarray and pandas
             ("pandas", lambda mod: mod.__version__),  # will come with xarray
-            ("sklearn", lambda mod: mod.__version__),
 
             ("pip", lambda mod: mod.__version__),
+            ("black", lambda mod: mod.__version__),
+            ("flake8", lambda mod: mod.__version__),
             ("pytest", lambda mod: mod.__version__),  # will come with pandas
+            ("pytest_env", lambda mod: mod.__version__),  # will come with pandas
+            ("pytest_cov", lambda mod: mod.__version__),  # will come with pandas
+            ("pytest_localftpserver", lambda mod: mod.__version__),  # will come with pandas
             ("setuptools", lambda mod: mod.__version__),  # Provides: pkg_resources
             ("sphinx", lambda mod: mod.__version__),
         ]),
@@ -656,7 +570,10 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         deps_blob = DEPS_blob[level]
         for k, stat in deps_blob:
             if conda:
-                print(f"  - {k} = {stat}", file=file)  # Format like a conda env line, useful to update ci/requirements
+                if k != 'argopy':
+                    kf = k.replace("_", "-")
+                    comment = ' ' if stat != '-' else '# '
+                    print(f"{comment} - {kf} = {stat}", file=file)  # Format like a conda env line, useful to update ci/requirements
             else:
                 print("{:<12}: {:<12}".format(k, stat), file=file)
 
@@ -677,6 +594,95 @@ def show_options(file=sys.stdout):  # noqa: C901
         print(f"{k}: {v}", file=file)
 
 
+def check_gdac_path(path, errors='ignore'):  # noqa: C901
+    """ Check if a path has the expected GDAC ftp structure
+
+        Expected GDAC ftp structure::
+
+            .
+            └── dac
+                ├── aoml
+                ├── ...
+                ├── coriolis
+                ├── ...
+                ├── meds
+                └── nmdis
+
+        This check will return True if at least one DAC sub-folder is found under path/dac/<dac_name>
+
+        Examples::
+        >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
+        >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
+        >>> check_gdac_path("ftp://usgodae.org/pub/outgoing/argo") # True
+        >>> check_gdac_path("/home/ref-argo/gdac") # True
+        >>> check_gdac_path("https://www.ifremer.fr") # False
+        >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
+
+        Parameters
+        ----------
+        path: str
+            Path name to check, including access protocol
+        errors: str
+            "ignore" or "raise" (or "warn")
+
+        Returns
+        -------
+        checked: boolean
+            True if at least one DAC folder is found under path/dac/<dac_name>
+            False otherwise
+    """
+    # Create a file system for this path
+    if split_protocol(path)[0] is None:
+        fs = fsspec.filesystem('file')
+    elif 'https' in split_protocol(path)[0]:
+        fs = fsspec.filesystem('http')
+    elif 'ftp' in split_protocol(path)[0]:
+        try:
+            host = split_protocol(path)[-1].split('/')[0]
+            fs = fsspec.filesystem('ftp', host=host)
+        except gaierror:
+            if errors == 'raise':
+                raise FtpPathError("Can't get address info (GAIerror) on '%s'" % host)
+            elif errors == "warn":
+                warnings.warn("Can't get address info (GAIerror) on '%s'" % host)
+                return False
+            else:
+                return False
+    else:
+        raise FtpPathError("Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0])
+
+    # dacs = [
+    #     "aoml",
+    #     "bodc",
+    #     "coriolis",
+    #     "csio",
+    #     "csiro",
+    #     "incois",
+    #     "jma",
+    #     "kma",
+    #     "kordi",
+    #     "meds",
+    #     "nmdis",
+    # ]
+
+    # Case 1:
+    check1 = (
+        fs.exists(path)
+        and fs.exists(fs.sep.join([path, "dac"]))
+        # and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
+    )
+    if check1:
+        return True
+    elif errors == "raise":
+        raise FtpPathError("This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s" % path)
+
+    elif errors == "warn":
+        warnings.warn("This path is not GDAC compliant:\n%s" % path)
+        return False
+    else:
+        return False
+
+
 def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
     """Check if an URL is alive
 
@@ -686,14 +692,17 @@ def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
             URL to use, 'https://www.ifremer.fr' by default
         maxtry: int, default: 10
             Maximum number of host connections to try before
+
         Returns
         -------
         bool
     """
+    # log.debug("isconnected: %s" % host)
     if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
         it = 0
         while it < maxtry:
             try:
+                # log.debug("Checking if %s is connected ..." % host)
                 urllib.request.urlopen(host, timeout=1)  # nosec B310 because host protocol already checked
                 result, it = True, maxtry
             except Exception:
@@ -749,6 +758,7 @@ def isalive(api_server_check: Union[str, dict] = "") -> bool:
         -------
         bool
     """
+    # log.debug("isalive: %s" % api_server_check)
     if isinstance(api_server_check, dict):
         return urlhaskeyword(url=api_server_check['url'], keyword=api_server_check['keyword'])
     else:
@@ -777,41 +787,42 @@ def isAPIconnected(src="erddap", data=True):
         list_src = list_available_index_src()
 
     if src in list_src and getattr(list_src[src], "api_server_check", None):
-        if "localftp" in src:
-            # This is a special case because the source here is a local folder
-            result = check_localftp(OPTIONS["local_ftp"])
-        else:
-            result = isalive(list_src[src].api_server_check)
-        return result
+        return isalive(list_src[src].api_server_check)
     else:
         raise InvalidFetcher
 
 
 def erddap_ds_exists(
-        ds: str = "ArgoFloats",
-        erddap: str = "https://erddap.ifremer.fr/erddap",
+        ds: Union[list, str] = "ArgoFloats",
+        erddap: str = None,
         maxtry: int = 2
 ) -> bool:
     """ Check if a dataset exists on a remote erddap server
-    return a bool
 
     Parameter
     ---------
     ds: str, default='ArgoFloats'
         Name of the erddap dataset to check
-    erddap: str, default='https://erddap.ifremer.fr/erddap'
+    erddap: str, default=OPTIONS['erddap']
         Url of the erddap server
     maxtry: int, default: 2
         Maximum number of host connections to try
+
     Return
     ------
     bool
     """
+    if erddap is None:
+        erddap = OPTIONS['erddap']
+    # log.debug("from erddap_ds_exists: %s" % erddap)
     from .stores import httpstore
     if isconnected(erddap, maxtry=maxtry):
         with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
             erddap_index = json.load(of)
-        return ds in [row[-1] for row in erddap_index["table"]["rows"]]
+        if is_list_of_strings(ds):
+            return [this_ds in [row[-1] for row in erddap_index["table"]["rows"]] for this_ds in ds]
+        else:
+            return ds in [row[-1] for row in erddap_index["table"]["rows"]]
     else:
         log.debug("Cannot reach erddap server: %s" % erddap)
         warnings.warn("Return False because we cannot reach the erddap server %s" % erddap)
@@ -852,92 +863,115 @@ def badge(label="label", message="message", color="green", insert=False):
         return Image(url=img)
 
 
-def fetch_status(stdout: str = "html", insert: bool = True):
-    """ Fetch and report web API status
+class fetch_status:
+    """Fetch and report web API status"""
 
-    Parameters
-    ----------
-    stdout: str
-        Format of the results, default is 'html'. Otherwise a simple string.
-    insert: bool
-        Print or display results directly in stdout format.
+    def __init__(self, **kwargs):
+        if "stdout" in kwargs or "insert" in kwargs:
+            warnings.warn("'fetch_status' signature has changed")
+        pass
 
-    Returns
-    -------
-    IPython.display.HTML or str
-    """
-    results = {}
-    list_src = list_available_data_src()
-    for api, mod in list_src.items():
-        if getattr(mod, "api_server_check", None):
-            # status = isconnected(mod.api_server_check)
-            status = isAPIconnected(api)
-            if api == "localftp" and OPTIONS["local_ftp"] == "-":
-                message = "ok" if status else "path undefined !"
-            else:
-                # message = "up" if status else "down"
+    def fetch(self):
+        results = {}
+        list_src = list_available_data_src()
+        for api, mod in list_src.items():
+            if getattr(mod, "api_server_check", None):
+                status = isAPIconnected(api)
                 message = "ok" if status else "offline"
-            results[api] = {"value": status, "message": message}
+                results[api] = {"value": status, "message": message}
+        return results
 
-    if "IPython" in sys.modules and stdout == "html":
-        cols = []
-        for api in sorted(results.keys()):
-            color = "green" if results[api]["value"] else "orange"
-            if isconnected():
-                # img = badge("src='%s'" % api, message=results[api]['message'], color=color, insert=False)
-                # img = badge(label="argopy src", message="%s is %s" %
-                # (api, results[api]['message']), color=color, insert=False)
-                img = badge(
-                    label="src %s is" % api,
-                    message="%s" % results[api]["message"],
-                    color=color,
-                    insert=False,
-                )
-                html = ('<td><img src="{}"></td>').format(img)
-            else:
-                # html = "<th>src %s is:</th><td>%s</td>" % (api, results[api]['message'])
-                html = (
-                    "<th><div>src %s is:</div></th><td><div style='color:%s;'>%s</div></td>"
-                    % (api, color, results[api]["message"])
-                )
-            cols.append(html)
-        this_HTML = ("<table><tr>{}</tr></table>").format("".join(cols))
-        if insert:
-            from IPython.display import HTML, display
-
-            return display(HTML(this_HTML))
-        else:
-            return this_HTML
-    else:
+    @property
+    def text(self):
+        results = self.fetch()
         rows = []
         for api in sorted(results.keys()):
-            # rows.append("argopy src %s: %s" % (api, results[api]['message']))
             rows.append("src %s is: %s" % (api, results[api]["message"]))
-        txt = "\n".join(rows)
-        if insert:
-            print(txt)
-        else:
-            return txt
+        txt = " | ".join(rows)
+        return txt
+
+    def __repr__(self):
+        return self.text
+
+    @property
+    def html(self):
+        results = self.fetch()
+
+        fs = 12
+        def td_msg(bgcolor, txtcolor, txt):
+            style = "background-color:%s;" % to_hex(bgcolor, keep_alpha=True)
+            style+= "border-width:0px;"
+            style+= "padding: 2px 5px 2px 5px;"
+            style+= "text-align:left;"
+            style+= "color:%s" % to_hex(txtcolor, keep_alpha=True)
+            return "<td style='%s'>%s</td>" % (style, str(txt))
+        td_empty = "<td style='border-width:0px;padding: 2px 5px 2px 5px;text-align:left'>&nbsp;</td>"
+
+        html = []
+        html.append("<table style='border-collapse:collapse;border-spacing:0;font-size:%ipx'>" % fs)
+        html.append("<tbody><tr>")
+        cols = []
+        for api in sorted(results.keys()):
+            color = "yellowgreen" if results[api]["value"] else "darkorange"
+            cols.append(td_msg('dimgray', 'w', "src %s is" % api))
+            cols.append(td_msg(color, 'w', results[api]["message"]))
+            cols.append(td_empty)
+        html.append("\n".join(cols))
+        html.append("</tr></tbody>")
+        html.append("</table>")
+        html = "\n".join(html)
+        return html
+
+    def _repr_html_(self):
+        return self.html
 
 
 class monitor_status:
     """ Monitor data source status with a refresh rate """
 
     def __init__(self, refresh=60):
-        import ipywidgets as widgets
-
         self.refresh_rate = refresh
-        self.text = widgets.HTML(
-            value=fetch_status(stdout="html", insert=False),
-            placeholder="",
-            description="",
-        )
-        self.start()
+
+        if self.runner == 'notebook':
+            import ipywidgets as widgets
+
+            self.text = widgets.HTML(
+                value=self.content,
+                placeholder="",
+                description="",
+            )
+            self.start()
+
+    def __repr__(self):
+        if self.runner != 'notebook':
+            return self.content
+        else:
+            return ""
+
+    @property
+    def runner(self) -> str:
+        try:
+            shell = get_ipython().__class__.__name__
+            if shell == 'ZMQInteractiveShell':
+                return 'notebook'  # Jupyter notebook or qtconsole
+            elif shell == 'TerminalInteractiveShell':
+                return 'terminal'  # Terminal running IPython
+            else:
+                return False  # Other type (?)
+        except NameError:
+            return 'standard'  # Probably standard Python interpreter
+
+    @property
+    def content(self):
+        if self.runner == 'notebook':
+            return fetch_status().html
+        else:
+            return fetch_status().text
 
     def work(self):
         while True:
             time.sleep(self.refresh_rate)
-            self.text.value = fetch_status(stdout="html", insert=False)
+            self.text.value = self.content
 
     def start(self):
         from IPython.display import display
@@ -945,40 +979,6 @@ class monitor_status:
         thread = threading.Thread(target=self.work)
         display(self.text)
         thread.start()
-
-
-# def open_etopo1(box, res="l"):
-#     """ Download ETOPO for a box
-#
-#         Parameters
-#         ----------
-#         box: [xmin, xmax, ymin, ymax]
-#
-#         Returns
-#         -------
-#         xarray.Dataset
-#     """
-#     # This function is in utilities to anticipate usage outside of plotting, eg interpolation, grounding detection
-#     resx, resy = 0.1, 0.1
-#     if res == "h":
-#         resx, resy = 0.016, 0.016
-#
-#     uri = (
-#         "https://gis.ngdc.noaa.gov/mapviewer-support/wcs-proxy/wcs.groovy?filename=etopo1.nc"
-#         "&request=getcoverage&version=1.0.0&service=wcs&coverage=etopo1&CRS=EPSG:4326&format=netcdf"
-#         "&resx={}&resy={}"
-#         "&bbox={}"
-#     ).format
-#     thisurl = uri(
-#         resx, resy, ",".join([str(b) for b in [box[0], box[2], box[1], box[3]]])
-#     )
-#     ds = httpstore(cache=True).open_dataset(thisurl)
-#     da = ds["Band1"].rename("topo")
-#     for a in ds.attrs:
-#         da.attrs[a] = ds.attrs[a]
-#     da.attrs["Data source"] = "https://maps.ngdc.noaa.gov/viewers/wcs-client/"
-#     da.attrs["URI"] = thisurl
-#     return da
 
 
 #
@@ -1129,7 +1129,7 @@ class Chunker:
     def _split(self, lst, n=1):
         """Yield successive n-sized chunks from lst"""
         for i in range(0, len(lst), n):
-            yield lst[i : i + n]
+            yield lst[i: i + n]
 
     def _split_list_bychunknb(self, lst, n=1):
         """Split list in n-imposed chunks of similar size
@@ -1140,7 +1140,7 @@ class Chunker:
         for i in self._split(lst, siz):
             res.append(i)
         if len(res) > n:
-            res[n - 1 : :] = [reduce(lambda i, j: i + j, res[n - 1 : :])]
+            res[n-1::] = [reduce(lambda i, j: i + j, res[n-1::])]
         return res
 
     def _split_list_bychunksize(self, lst, max_size=1):
@@ -1176,7 +1176,7 @@ class Chunker:
                     this_box[i_right] = right
                     boxes.append(this_box)
         elif "t" in d:
-            dates = pd.to_datetime(large_box[i_left : i_right + 1])
+            dates = pd.to_datetime(large_box[i_left: i_right + 1])
             date_bounds = [
                 d.strftime("%Y%m%d%H%M%S")
                 for d in pd.date_range(dates[0], dates[1], periods=n + 1)
@@ -1334,7 +1334,7 @@ def format_oneline(s, max_width=65):
         if q == 0:
             return "".join([s[0:n], padding, s[-n:]])
         else:
-            return "".join([s[0 : n + 1], padding, s[-n:]])
+            return "".join([s[0:n+1], padding, s[-n:]])
     else:
         return s
 
@@ -1540,6 +1540,16 @@ def is_list_equal(lst1, lst2):
     )
 
 
+def to_list(obj):
+    """Make sure that an expected list is indeed a list"""
+    if not isinstance(obj, list):
+        if isinstance(obj, np.ndarray):
+            obj = list(obj)
+        else:
+            obj = [obj]
+    return obj
+
+
 def check_wmo(lst, errors="raise"):
     """ Validate a WMO option and returned it as a list of integers
 
@@ -1557,11 +1567,7 @@ def check_wmo(lst, errors="raise"):
     is_wmo(lst, errors=errors)
 
     # Make sure we deal with a list
-    if not isinstance(lst, list):
-        if isinstance(lst, np.ndarray):
-            lst = list(lst)
-        else:
-            lst = [lst]
+    lst = to_list(lst)
 
     # Then cast list elements as integers
     return [abs(int(x)) for x in lst]
@@ -1584,11 +1590,7 @@ def is_wmo(lst, errors="raise"):  # noqa: C901
     """
 
     # Make sure we deal with a list
-    if not isinstance(lst, list):
-        if isinstance(lst, np.ndarray):
-            lst = list(lst)
-        else:
-            lst = [lst]
+    lst = to_list(lst)
 
     # Error message:
     # msg = "WMO must be an integer or an iterable with elements that can be casted as integers"
@@ -1640,11 +1642,7 @@ def check_cyc(lst, errors="raise"):
     is_cyc(lst, errors=errors)
 
     # Make sure we deal with a list
-    if not isinstance(lst, list):
-        if isinstance(lst, np.ndarray):
-            lst = list(lst)
-        else:
-            lst = [lst]
+    lst = to_list(lst)
 
     # Then cast list elements as integers
     return [abs(int(x)) for x in lst]
@@ -1664,11 +1662,7 @@ def is_cyc(lst, errors="raise"):  # noqa: C901
         True if cyc is indeed a list of integers
     """
     # Make sure we deal with a list
-    if not isinstance(lst, list):
-        if isinstance(lst, np.ndarray):
-            lst = list(lst)
-        else:
-            lst = [lst]
+    lst = to_list(lst)
 
     # Error message:
     msg = "CYC must be a single or a list of at most 4 digit positive numbers. Invalid: '{}'".format
@@ -1725,7 +1719,6 @@ def check_index_cols(column_names: list, convention: str = 'ar_index_global_prof
     else:
         return column_names
 
-import inspect
 
 def warnUnless(ok, txt):
     """Function to raise a warning unless condition is True
@@ -1739,12 +1732,9 @@ def warnUnless(ok, txt):
     txt: str
         Text to display in the warning
     """
-    print(inspect.stack()[1].function)
-
     if not ok:
-        # warnings.warn("%s %s" % (fct.__name__, txt))
-        warnings.warn(txt)
-
+        msg = "%s %s" % (inspect.stack()[1].function, txt)
+        warnings.warn(msg)
 
 
 @contextlib.contextmanager
@@ -2051,6 +2041,7 @@ class TopoFetcher:
         cachedir: str = "",
         api_timeout: int = 0,
         stride: list = [1, 1],
+        server: Union[str] = None,
         **kwargs,
     ):
         """ Instantiate an ERDDAP topo data fetcher
@@ -2081,7 +2072,7 @@ class TopoFetcher:
         self.stride = stride
         if ds == "gebco":
             self.definition = "NOAA erddap gebco data fetcher for a space region"
-            self.server = "https://coastwatch.pfeg.noaa.gov/erddap"
+            self.server = server if server is not None else "https://coastwatch.pfeg.noaa.gov/erddap"
             self.server_name = "NOAA"
             self.dataset_id = "gebco"
 
@@ -2252,7 +2243,7 @@ def argo_split_path(this_path):  # noqa C901
     ]
     output = {}
 
-    start_with = lambda f, x: f[0:len(x)] == x if len(x) <= len(f) else False
+    start_with = lambda f, x: f[0:len(x)] == x if len(x) <= len(f) else False  # noqa: E731
 
     def split_path(p, sep='/'):
         """Split a pathname.  Returns tuple "(head, tail)" where "tail" is
@@ -2265,16 +2256,18 @@ def argo_split_path(this_path):  # noqa C901
             head = head.rstrip(sep)
         return head, tail
 
-    def fix_localhostftp(ftp):
-        if 'ftp://localhost:' in ftp:
-            return "ftp://%s" % (urlparse(ftp).netloc)
+    def fix_localhost(host):
+        if 'ftp://localhost:' in host:
+            return "ftp://%s" % (urlparse(host).netloc)
+        if 'http://127.0.0.1:' in host:
+            return "http://%s" % (urlparse(host).netloc)
         else:
             return ""
 
     known_origins = ['https://data-argo.ifremer.fr',
                      'ftp://ftp.ifremer.fr/ifremer/argo',
                      'ftp://usgodae.org/pub/outgoing/argo',
-                     fix_localhostftp(this_path),
+                     fix_localhost(this_path),
                      '']
 
     output['origin'] = [origin for origin in known_origins if start_with(this_path, origin)][0]
@@ -2381,32 +2374,26 @@ def argo_split_path(this_path):  # noqa C901
     return dict(sorted(output.items()))
 
 
-"""
-doc_inherit decorator
-
-Usage:
-
-class Foo(object):
-    def foo(self):
-        "Frobber"
-        pass
-
-class Bar(Foo):
-    @doc_inherit
-    def foo(self):
-        pass 
-
-Now, Bar.foo.__doc__ == Bar().foo.__doc__ == Foo.foo.__doc__ == "Frobber"
-
-src: https://code.activestate.com/recipes/576862/
-"""
-
-
 class DocInherit(object):
-    """
-    Docstring inheriting method descriptor
+    """Docstring inheriting method descriptor
 
     The class itself is also used as a decorator
+
+    Usage:
+
+    class Foo(object):
+        def foo(self):
+            "Frobber"
+            pass
+
+    class Bar(Foo):
+        @doc_inherit
+        def foo(self):
+            pass
+
+    Now, Bar.foo.__doc__ == Bar().foo.__doc__ == Foo.foo.__doc__ == "Frobber"
+
+    src: https://code.activestate.com/recipes/576862/
     """
 
     def __init__(self, mthd):
@@ -2433,9 +2420,10 @@ class DocInherit(object):
 
         for parent in cls.__mro__[1:]:
             overridden = getattr(parent, self.name, None)
-            if overridden: break
+            if overridden:
+                break
 
-        @wraps(self.mthd, assigned=('__name__','__module__'))
+        @wraps(self.mthd, assigned=('__name__', '__module__'))
         def f(*args, **kwargs):
             return self.mthd(*args, **kwargs)
 
@@ -2443,9 +2431,10 @@ class DocInherit(object):
 
     def use_parent_doc(self, func, source):
         if source is None:
-            raise NameError("Can't find '%s' in parents"%self.name)
+            raise NameError("Can't find '%s' in parents" % self.name)
         func.__doc__ = source.__doc__
         return func
+
 
 doc_inherit = DocInherit
 
@@ -2597,7 +2586,7 @@ class float_wmo(RegistryItem):
         return "%s" % self.item
 
     def __repr__(self):
-        return f"WMO(%s)" % self.item
+        return f"WMO({self.item})"
 
     def __check_other__(self, other):
         return check_wmo(other)[0] if type(other) is not float_wmo else other.item
@@ -2784,7 +2773,7 @@ class Registry(UserList):
         return self.__copy__()
 
 
-def get_coriolis_profile_id(WMO, CYC=None):
+def get_coriolis_profile_id(WMO, CYC=None, **kwargs):
     """ Return a :class:`pandas.DataFrame` with CORIOLIS ID of WMO/CYC profile pairs
 
         This method get ID by requesting the dataselection.euro-argo.eu trajectory API.
@@ -2804,9 +2793,13 @@ def get_coriolis_profile_id(WMO, CYC=None):
     WMO_list = check_wmo(WMO)
     if CYC is not None:
         CYC_list = check_cyc(CYC)
-    URIs = [
-        "https://dataselection.euro-argo.eu/api/trajectory/%i" % wmo for wmo in WMO_list
-    ]
+    if 'api_server' in kwargs:
+        api_server = kwargs['api_server']
+    elif OPTIONS['server'] is not None:
+        api_server = OPTIONS['server']
+    else:
+        api_server = "https://dataselection.euro-argo.eu/api"
+    URIs = [api_server + "/trajectory/%i" % wmo for wmo in WMO_list]
 
     def prec(data, url):
         # Transform trajectory json to dataframe
@@ -2823,7 +2816,7 @@ def get_coriolis_profile_id(WMO, CYC=None):
         return pd.DataFrame(rows)
 
     from .stores import httpstore
-    fs = httpstore(cache=True)
+    fs = httpstore(cache=True, cachedir=OPTIONS['cachedir'])
     data = fs.open_mfjson(URIs, preprocess=prec, errors="raise", url_follow=True)
 
     # Merge results (list of dataframe):
@@ -2854,7 +2847,7 @@ def get_coriolis_profile_id(WMO, CYC=None):
     ]
 
 
-def get_ea_profile_page(WMO, CYC=None):
+def get_ea_profile_page(WMO, CYC=None, **kwargs):
     """ Return a list of URL
 
         Parameters
@@ -2872,7 +2865,7 @@ def get_ea_profile_page(WMO, CYC=None):
         --------
         get_coriolis_profile_id
     """
-    df = get_coriolis_profile_id(WMO, CYC)
+    df = get_coriolis_profile_id(WMO, CYC, **kwargs)
     url = "https://dataselection.euro-argo.eu/cycle/{}"
     return [url.format(this_id) for this_id in sorted(df["ID"])]
 
@@ -3118,7 +3111,7 @@ class OceanOPSDeployments:
     >>> df = deployment.to_dataframe()
     >>> data = deployment.to_json()
 
-    Usefull attributes and methods:
+    Useful attributes and methods:
 
     >>> deployment.uri
     >>> deployment.uri_decoded
@@ -3131,8 +3124,8 @@ class OceanOPSDeployments:
     """URL to the API"""
 
     model = "api/1/data/platform"
-    """This model represents a Platform entity and is used to retrieve a platform information (schema model 
-    named 'Ptf')."""
+    """This model represents a Platform entity and is used to retrieve a platform information (schema model
+     named 'Ptf')."""
 
     api_server_check = 'https://www.ocean-ops.org/api/1/oceanops-api.yaml'
     """URL to check if the API is alive"""
@@ -3199,7 +3192,6 @@ class OceanOPSDeployments:
         else:
             summary.append("Nb of floats in the deployment plan: - [Data not retrieved yet]")
         return '\n'.join(summary)
-
 
     def __encode_inc(self, inc):
         """Return encoded uri expression for 'include' parameter
@@ -3420,7 +3412,6 @@ class OceanOPSDeployments:
         # print(status)
         return df
 
-
     def plot_status(self,
                     **kwargs
                     ):
@@ -3499,6 +3490,9 @@ def cast_types(ds):  # noqa: C901
         "HISTORY_PARAMETER",
         "VERTICAL_SAMPLING_SCHEME",
         "FLOAT_SERIAL_NO",
+        "SOURCE",
+        "EXPOCODE",
+        "QCLEVEL",
     ]
     list_int = [
         "PLATFORM_NUMBER",
@@ -3635,3 +3629,22 @@ def cast_types(ds):  # noqa: C901
             raise
 
     return ds
+
+
+def log_argopy_callerstack(level='debug'):
+    """log the caller’s stack"""
+    froot = str(pathlib.Path(__file__).parent.resolve())
+    for ideep, frame in enumerate(inspect.stack()[1:]):
+        if os.path.join('argopy', 'argopy') in frame.filename:
+            # msg = ["└─"]
+            # [msg.append("─") for ii in range(ideep)]
+            msg = [""]
+            [msg.append("  ") for ii in range(ideep)]
+            msg.append("└─ %s:%i -> %s" % (frame.filename.replace(froot, ''), frame.lineno, frame.function))
+            msg = "".join(msg)
+            if level == "info":
+                log.info(msg)
+            elif level == "debug":
+                log.debug(msg)
+            elif level == "warning":
+                log.warning(msg)

@@ -7,8 +7,8 @@
 # Decorator warnUnless is mandatory
 #
 import warnings
+import logging
 
-import numpy as np
 import xarray as xr
 import pandas as pd
 from typing import Union
@@ -37,7 +37,10 @@ if has_ipywidgets:
     import ipywidgets
 
 
-def open_sat_altim_report(WMO: Union[str, list] = None, embed: Union[str, None] = "dropdown"):
+log = logging.getLogger("argopy.plot.plot")
+
+
+def open_sat_altim_report(WMO: Union[str, list] = None, embed: Union[str, None] = "dropdown", **kwargs):
     """ Insert the CLS Satellite Altimeter Report figure in notebook cell
 
         This is the method called when using the facade fetcher methods ``plot``::
@@ -62,15 +65,19 @@ def open_sat_altim_report(WMO: Union[str, list] = None, embed: Union[str, None] 
 
     """
     warnUnless(has_ipython, "requires IPython to work as expected, only URLs are returned otherwise")
+
+    if 'api_server' in kwargs:
+        api_server = kwargs['api_server']
+    else:
+        api_server = "https://data-argo.ifremer.fr"
+
     # Create the list of URLs and put them in a dictionary with WMO as keys:
     WMOs = check_wmo(WMO)
     urls = []
     urls_dict = {}
     for this_wmo in WMOs:
-        url = (
-            "https://data-argo.ifremer.fr/etc/argo-ast9-item13-AltimeterComparison/figures/%i.png"
-            % this_wmo
-        )
+        url = "%s/etc/argo-ast9-item13-AltimeterComparison/figures/%i.png" % (api_server, this_wmo)
+        log.debug(url)
         if has_ipython and embed == "list":
             urls.append(Image(url, embed=True))
         else:
@@ -145,7 +152,6 @@ def plot_trajectory(
     :class:`argopy.plot.scatter_map`.
 
     """
-
     warnUnless(has_mpl, "requires matplotlib installed")
 
     with axes_style(style):
@@ -153,8 +159,8 @@ def plot_trajectory(
         defaults = {"figsize": (10, 6), "dpi": 90}
         if with_cartopy:
             opts = {**defaults, **{'x': 'longitude', 'y': 'latitude', 'hue': 'wmo',
-                        'traj': True, 'legend': add_legend, 'set_global': set_global,
-                        'cmap': palette}}
+                                   'traj': True, 'legend': add_legend, 'set_global': set_global,
+                                   'cmap': palette}}
             opts = {**opts, **kwargs}
             return scatter_map(df, **opts)
         else:
@@ -273,7 +279,8 @@ def bar_plot(
         ax.set_ylabel("")
     return fig, ax
 
-def scatter_map(
+
+def scatter_map(  # noqa: C901
         data: Union[xr.Dataset, pd.core.frame.DataFrame],
         x: Union[str] = None,
         y: Union[str] = None,
@@ -379,7 +386,7 @@ def scatter_map(
         All other arguments are passed to :class:`matplotlib.figure.Figure.subplots`
 
     """
-    warnUnless(has_mpl and False, "requires matplotlib AND cartopy installed")
+    warnUnless(has_mpl and has_cartopy, "requires matplotlib AND cartopy installed")
 
     if isinstance(data, xr.Dataset) and data.argo._type == "point":
         # data = data.argo.point2profile(drop=True)
@@ -430,6 +437,7 @@ def scatter_map(
                     return v
 
         raise ValueError("Can't guess the variable name for longitudes")
+
     def guess_yvar(data):
         for v in ['lat', 'lati', 'latitude', 'y']:
             if v.lower() in data:
@@ -506,10 +514,10 @@ def scatter_map(
     if traj:
         for k, [name, group] in enumerate(data.groupby(traj_axis)):
             ax.plot(group[x], group[y],
-                     color=traj_color,
-                     linewidth=0.5,
-                     label="_nolegend_",
-                     zorder=2,
+                    color=traj_color,
+                    linewidth=0.5,
+                    label="_nolegend_",
+                    zorder=2,
                     )
 
     if set_global:

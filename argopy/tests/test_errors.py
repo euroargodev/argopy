@@ -2,6 +2,7 @@ import pytest
 from argopy.errors import (
     DataNotFound,
     FtpPathError,
+    ErddapPathError,
     NetCDF4FileNotFoundError,
     CacheFileNotFound,
     FileSystemHasNoCache,
@@ -23,6 +24,7 @@ from argopy.errors import (
 @pytest.mark.parametrize("error", [
     DataNotFound,
     FtpPathError,
+    ErddapPathError,
     NetCDF4FileNotFoundError,
     CacheFileNotFound,
     FileSystemHasNoCache,

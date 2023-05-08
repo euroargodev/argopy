@@ -9,8 +9,8 @@ def test_invalid_dataset():
 
 
 @requires_connection
-def test_localftp_dataset():
-    ftproot, flist = argopy.tutorial.open_dataset('localftp')
+def test_gdac_dataset():
+    ftproot, flist = argopy.tutorial.open_dataset('gdac')
     assert isinstance(ftproot, str)
     assert isinstance(flist, list)
 

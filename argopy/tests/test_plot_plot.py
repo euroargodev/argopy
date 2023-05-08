@@ -8,7 +8,6 @@ from typing import Callable
 import argopy
 from utils import (
     requires_gdac,
-    requires_localftp,
     requires_connection,
     requires_matplotlib,
     requires_ipython,
@@ -23,6 +22,7 @@ from utils import (
 from ..plot import bar_plot, plot_trajectory, open_sat_altim_report, scatter_map
 from argopy.errors import InvalidDatasetStructure
 from argopy import DataFetcher as ArgoDataFetcher
+from mocked_http import mocked_server_address
 
 if has_matplotlib:
     import matplotlib as mpl
@@ -38,9 +38,12 @@ log = logging.getLogger("argopy.tests.plot.plot")
 argopy.clear_cache()
 
 
-@requires_connection
 class Test_open_sat_altim_report:
     WMOs = [2901623, [2901623, 6901929]]
+
+    def test_load_mocked_server(self, mocked_httpserver):
+        """This will easily ensure that the module scope fixture is available to all methods !"""
+        assert True
 
     @pytest.mark.parametrize("WMOs", WMOs,
                              ids=['For unique WMO', 'For a list of WMOs'],
@@ -51,7 +54,7 @@ class Test_open_sat_altim_report:
         if has_ipython:
             import IPython
 
-        dsh = open_sat_altim_report(WMO=WMOs, embed=embed)
+        dsh = open_sat_altim_report(WMO=WMOs, embed=embed, api_server=mocked_server_address)
 
         if has_ipython and embed is not None:
 
@@ -73,14 +76,14 @@ class Test_open_sat_altim_report:
     @requires_ipython
     def test_invalid_method(self):
         with pytest.raises(ValueError):
-            open_sat_altim_report(WMO=self.WMOs[0], embed='dummy_method')
+            open_sat_altim_report(WMO=self.WMOs[0], embed='dummy_method', api_server=mocked_server_address)
 
 
 @requires_gdac
 @requires_matplotlib
 class Test_plot_trajectory:
     src = "gdac"
-    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
+    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
     requests = {
         # "float": [[2901623], [2901623, 6901929, 5906072]],
         # "profile": [[2901623, 12], [6901929, [5, 45]]],
@@ -124,7 +127,7 @@ class Test_plot_trajectory:
 @requires_matplotlib
 class Test_bar_plot:
     src = "gdac"
-    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
+    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
     requests = {
         # "float": [[2901623], [2901623, 6901929, 5906072]],
         # "profile": [[2901623, 12], [6901929, [5, 45]]],
@@ -156,7 +159,7 @@ class Test_bar_plot:
 @requires_cartopy
 class Test_scatter_map:
     src = "gdac"
-    local_ftp = argopy.tutorial.open_dataset("localftp")[0]
+    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
     requests = {
         # "float": [[2901623], [2901623, 6901929, 5906072]],
         # "profile": [[2901623, 12], [6901929, [5, 45]]],

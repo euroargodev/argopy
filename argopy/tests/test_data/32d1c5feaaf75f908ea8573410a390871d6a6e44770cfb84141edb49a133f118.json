@@ -1,0 +1,1024 @@
+{
+  "@graph" : [ {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/",
+    "@type" : "skos:Collection",
+    "alternative" : "PLATFORM_TYPE",
+    "creator" : "Argo Data Management Team",
+    "date" : "2022-06-17 03:00:00.0",
+    "description" : "Platform type",
+    "publisher" : "Natural Environment Research Council",
+    "title" : "Argo platform type",
+    "RE_RegisterManager" : "British Oceanographic Data Centre",
+    "RE_RegisterOwner" : "Argo Data Management Team",
+    "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+    "seeAlso" : "https://github.com/nvs-vocabs/R23",
+    "versionInfo" : "2",
+    "altLabel" : "PLATFORM_TYPE",
+    "member" : [ "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/", "http://vocab.nerc.ac.uk/collection/R23/current/XUANWU/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D/", "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/", "http://vocab.nerc.ac.uk/collection/R23/current/S2X/", "http://vocab.nerc.ac.uk/collection/R23/current/FLOAT/", "http://vocab.nerc.ac.uk/collection/R23/current/HM4000/", "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/", "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_EBR/", "http://vocab.nerc.ac.uk/collection/R23/current/NOVA/", "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/", "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_A/", "http://vocab.nerc.ac.uk/collection/R23/current/APEX/", "http://vocab.nerc.ac.uk/collection/R23/current/HM2000/", "http://vocab.nerc.ac.uk/collection/R23/current/ITP/", "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/", "http://vocab.nerc.ac.uk/collection/R23/current/NEMO/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_W/", "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/", "http://vocab.nerc.ac.uk/collection/R23/current/APEX_EM/", "http://vocab.nerc.ac.uk/collection/R23/current/NINJA_D/", "http://vocab.nerc.ac.uk/collection/R23/current/PALACE/", "http://vocab.nerc.ac.uk/collection/R23/current/S2A/", "http://vocab.nerc.ac.uk/collection/R23/current/ALAMO/", "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_II/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D_MRV/", "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO/", "http://vocab.nerc.ac.uk/collection/R23/current/APEX_D/" ],
+    "prefLabel" : "Argo platform type"
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/ALAMO/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::ALAMO",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::ALAMO",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/ALAMO/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ALAMO",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "ALAMO air-launched micro-observer float. PLATFORM_TYPE_KEY = 800"
+    },
+    "notation" : "SDN:R23::ALAMO",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "ALAMO float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::ALTO",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::ALTO",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ALTO",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "ALTO float. PLATFORM_TYPE_KEY = 205"
+    },
+    "notation" : "SDN:R23::ALTO",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "ALTO float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/APEX/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::APEX",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::APEX",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/APEX/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "APEX",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "APEX float. PLATFORM_TYPE_KEY = 001"
+    },
+    "notation" : "SDN:R23::APEX",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "APEX float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/APEX_D/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::APEX_D",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::APEX_D",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/APEX_D/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "APEX_D",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Deep APEX float. PLATFORM_TYPE_KEY = 020"
+    },
+    "notation" : "SDN:R23::APEX_D",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Deep APEX float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/APEX_EM/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::APEX_EM",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::APEX_EM",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/APEX_EM/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "APEX_EM",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "APEX electro-magnetic float, measuring velocity and mixing. PLATFORM_TYPE_KEY = 005"
+    },
+    "notation" : "SDN:R23::APEX_EM",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "APEX electro-magnetic float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::ARVOR",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::ARVOR",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ARVOR",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "ARVOR float. PLATFORM_TYPE_KEY = 102"
+    },
+    "notation" : "SDN:R23::ARVOR",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "ARVOR float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::ARVOR_C",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::ARVOR_C",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ARVOR_C",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Coastal ARVOR float. PLATFORM_TYPE_KEY = 110"
+    },
+    "notation" : "SDN:R23::ARVOR_C",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Coastal ARVOR float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::ARVOR_D",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::ARVOR_D",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ARVOR_D",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Deep ARVOR float. PLATFORM_TYPE_KEY = 120"
+    },
+    "notation" : "SDN:R23::ARVOR_D",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Deep ARVOR float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::COPEX",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::COPEX",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "COPEX",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "COPEX float. PLATFORM_TYPE_KEY = 701"
+    },
+    "notation" : "SDN:R23::COPEX",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "COPEX float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/FLOAT/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::FLOAT",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::FLOAT",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/FLOAT/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "FLOAT",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Generic value when platform type unknown. PLATFORM_TYPE_KEY = 999"
+    },
+    "notation" : "SDN:R23::FLOAT",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Unknown platform type"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/HM2000/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::HM2000",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::HM2000",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/HM2000/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "HM2000",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "HM2000 float. PLATFORM_TYPE_KEY = 700"
+    },
+    "notation" : "SDN:R23::HM2000",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "HM2000 float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/HM4000/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::HM4000",
+    "date" : "2022-06-16 11:36:09.0",
+    "dc:identifier" : "SDN:R23::HM4000",
+    "authoredOn" : "2022-06-16 11:36:09.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/HM4000/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "HM4000",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "HM4000 float."
+    },
+    "notation" : "SDN:R23::HM4000",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "HM4000 float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/ITP/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::ITP",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::ITP",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/ITP/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "ITP",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Ice Tethered Profiler (ITP). PLATFORM_TYPE_KEY = 901"
+    },
+    "notation" : "SDN:R23::ITP",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "ITP float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_A/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::NAVIS_A",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::NAVIS_A",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_A/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "NAVIS_A",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "NAVIS_A float. PLATFORM_TYPE_KEY = 500"
+    },
+    "notation" : "SDN:R23::NAVIS_A",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "NAVIS_A float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_EBR/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::NAVIS_EBR",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::NAVIS_EBR",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_EBR/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "NAVIS_EBR",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "NAVIS_EBR float. PLATFORM_TYPE_KEY = 501"
+    },
+    "notation" : "SDN:R23::NAVIS_EBR",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "NAVIS_EBR float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/NEMO/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::NEMO",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::NEMO",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/NEMO/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "NEMO",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "NEMO float. PLATFORM_TYPE_KEY = 400"
+    },
+    "notation" : "SDN:R23::NEMO",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "NEMO float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::NINJA",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::NINJA",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "NINJA",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "NINJA float. PLATFORM_TYPE_KEY = 300"
+    },
+    "notation" : "SDN:R23::NINJA",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "NINJA float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/NINJA_D/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::NINJA_D",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::NINJA_D",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/NINJA_D/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "NINJA_D",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Deep NINJA float. PLATFORM_TYPE_KEY = 320"
+    },
+    "notation" : "SDN:R23::NINJA_D",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Deep NINJA float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/NOVA/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::NOVA",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::NOVA",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/NOVA/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "NOVA",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "NOVA float. PLATFORM_TYPE_KEY = 600"
+    },
+    "notation" : "SDN:R23::NOVA",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "NOVA float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/PALACE/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::PALACE",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::PALACE",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/PALACE/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "PALACE",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "PALACE float. PLATFORM_TYPE_KEY = 000"
+    },
+    "notation" : "SDN:R23::PALACE",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PALACE float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::POPS_NEMO",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::POPS_NEMO",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "POPS_NEMO",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Polar Ocean Profiling System with a NEMO float. PLATFORM_TYPE_KEY = 430"
+    },
+    "notation" : "SDN:R23::POPS_NEMO",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "POPS with NEMO float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::POPS_PROVOR",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::POPS_PROVOR",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "POPS_PROVOR",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Polar Ocean Profiling System with a PROVOR float. PLATFORM_TYPE_KEY = 130"
+    },
+    "notation" : "SDN:R23::POPS_PROVOR",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Polar Ocean Profiling System with a PROVOR float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::PROVOR",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::PROVOR",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "PROVOR",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "PROVOR float. PLATFORM_TYPE_KEY = 101"
+    },
+    "notation" : "SDN:R23::PROVOR",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PROVOR float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::PROVOR_II",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::PROVOR_II",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "PROVOR_II",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Dual board PROVOR float. PLATFORM_TYPE_KEY = 103"
+    },
+    "notation" : "SDN:R23::PROVOR_II",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Dual board PROVOR float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::PROVOR_III",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::PROVOR_III",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "PROVOR_III",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Dual board PROVOR CTS4 float. PLATFORM_TYPE_KEY = 104"
+    },
+    "notation" : "SDN:R23::PROVOR_III",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Dual board PROVOR CTS4 float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::PROVOR_IV",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::PROVOR_IV",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "PROVOR_IV",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "PROVOR CTS5 float. PLATFORM_TYPE_KEY = 105"
+    },
+    "notation" : "SDN:R23::PROVOR_IV",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PROVOR CTS5 float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::PROVOR_MT",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::PROVOR_MT",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "PROVOR_MT",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Metocean PROVOR float. PLATFORM_TYPE_KEY = 100"
+    },
+    "notation" : "SDN:R23::PROVOR_MT",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Metocean PROVOR float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/S2A/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::S2A",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::S2A",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/S2A/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "S2A",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "S2-A float. PLATFORM_TYPE_KEY = 204"
+    },
+    "notation" : "SDN:R23::S2A",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "S2-A float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/S2X/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::S2X",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::S2X",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/S2X/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "S2X",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "S2X float designed for the US Navy. PLATFORM_TYPE_KEY = 203"
+    },
+    "notation" : "SDN:R23::S2X",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "S2X float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::SOLO",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::SOLO",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SOLO",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "SOLO float manufactured by Scripps Institution of Oceanography (SIO). PLATFORM_TYPE_KEY = 200"
+    },
+    "notation" : "SDN:R23::SOLO",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "SIO SOLO float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::SOLO_D",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::SOLO_D",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SOLO_D",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Deep SOLO float. PLATFORM_TYPE_KEY = 220"
+    },
+    "notation" : "SDN:R23::SOLO_D",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Deep SOLO float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D_MRV/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::SOLO_D_MRV",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::SOLO_D_MRV",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D_MRV/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SOLO_D_MRV",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "DEEPSOLO MRV float. PLATFORM_TYPE_KEY = 221"
+    },
+    "notation" : "SDN:R23::SOLO_D_MRV",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "DEEPSOLO MRV float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_II/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::SOLO_II",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::SOLO_II",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_II/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SOLO_II",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "SOLO-II float manufactured by Scripps Institution of Oceanography (SIO). PLATFORM_TYPE_KEY = 202"
+    },
+    "notation" : "SDN:R23::SOLO_II",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "SIO SOLO-II float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_W/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::SOLO_W",
+    "date" : "2020-05-03 20:30:02.0",
+    "dc:identifier" : "SDN:R23::SOLO_W",
+    "authoredOn" : "2020-05-03 20:30:02.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_W/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SOLO_W",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "SOLO float manufactured by Woods Whole Oceanographic Institution (WHOI). PLATFORM_TYPE_KEY = 201"
+    },
+    "notation" : "SDN:R23::SOLO_W",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "WHOI SOLO float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/XUANWU/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::XUANWU",
+    "date" : "2022-06-16 11:36:09.0",
+    "dc:identifier" : "SDN:R23::XUANWU",
+    "authoredOn" : "2022-06-16 11:36:09.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/XUANWU/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "HM6000",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Xuanwu Deep float, also known as HM6000 float."
+    },
+    "notation" : "SDN:R23::XUANWU",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Xuanwu Deep float"
+    }
+  } ],
+  "@context" : {
+    "identifier" : {
+      "@id" : "http://purl.org/dc/elements/1.1/identifier"
+    },
+    "version" : {
+      "@id" : "http://purl.org/pav/version"
+    },
+    "altLabel" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#altLabel"
+    },
+    "inDataset" : {
+      "@id" : "http://rdfs.org/ns/void#inDataset",
+      "@type" : "@id"
+    },
+    "note" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#note"
+    },
+    "deprecated" : {
+      "@id" : "http://www.w3.org/2002/07/owl#deprecated"
+    },
+    "hasCurrentVersion" : {
+      "@id" : "http://purl.org/pav/hasCurrentVersion",
+      "@type" : "@id"
+    },
+    "versionInfo" : {
+      "@id" : "http://www.w3.org/2002/07/owl#versionInfo"
+    },
+    "date" : {
+      "@id" : "http://purl.org/dc/terms/date"
+    },
+    "notation" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#notation"
+    },
+    "authoredOn" : {
+      "@id" : "http://purl.org/pav/authoredOn"
+    },
+    "definition" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#definition"
+    },
+    "prefLabel" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+    },
+    "member" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#member",
+      "@type" : "@id"
+    },
+    "creator" : {
+      "@id" : "http://purl.org/dc/terms/creator"
+    },
+    "alternative" : {
+      "@id" : "http://purl.org/dc/terms/alternative"
+    },
+    "publisher" : {
+      "@id" : "http://purl.org/dc/terms/publisher"
+    },
+    "seeAlso" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+      "@type" : "@id"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
+    },
+    "title" : {
+      "@id" : "http://purl.org/dc/terms/title"
+    },
+    "RE_RegisterOwner" : {
+      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"
+    },
+    "comment" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"
+    },
+    "RE_RegisterManager" : {
+      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
+    },
+    "qudt" : "https://qudt.org/2.1/schema/qudt#",
+    "owl" : "http://www.w3.org/2002/07/owl#",
+    "dce" : "http://purl.org/dc/elements/1.1/",
+    "skos" : "http://www.w3.org/2004/02/skos/core#",
+    "ns0" : "http://www.w3.org/ns/dx/conneg/altr#",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "iop" : "https://w3id.org/iadopt/ont#",
+    "ns1" : "http://www.w3.org/ns/dx/prof/",
+    "puv" : "https://w3id.org/env/puv#",
+    "dct" : "http://purl.org/dc/terms/",
+    "reg" : "http://purl.org/linked-data/registry#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "grg" : "http://www.isotc211.org/schemas/grg/",
+    "prov" : "https://www.w3.org/ns/prov#",
+    "cpm" : "http://purl.org/voc/cpm#",
+    "void" : "http://rdfs.org/ns/void#",
+    "pav" : "http://purl.org/pav/",
+    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "dc" : "http://purl.org/dc/terms/"
+  }
+}

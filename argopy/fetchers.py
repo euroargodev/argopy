@@ -24,7 +24,6 @@ from .utilities import (
     check_wmo, check_cyc,
     get_coriolis_profile_id
 )
-from argopy.stores import filestore
 from .plot import plot_trajectory, bar_plot, open_sat_altim_report
 
 
@@ -97,6 +96,9 @@ class ArgoDataFetcher:
         _VALIDATORS["dataset"](self._dataset_id)
 
         # Load data source access points:
+        if self._src == 'localftp':
+            raise ValueError("The 'localftp' data source is deprecated. It's been replaced by 'gdac'.")
+
         if self._src not in AVAILABLE_DATA_SOURCES:
             raise InvalidFetcher(
                 "Requested data fetcher '%s' not available ! Please try again with any of: %s"
@@ -155,7 +157,7 @@ class ArgoDataFetcher:
     def __repr__(self):
 
         para = self.fetcher_options['parallel'] if "parallel" in self.fetcher_options else False
-        cach = self.fetcher_options['cache'] if "cache" in self.fetcher_options else False
+        cache = self.fetcher_options['cache'] if "cache" in self.fetcher_options else False
 
         if self.fetcher:
             summary = [self.fetcher.__repr__()]
@@ -163,7 +165,7 @@ class ArgoDataFetcher:
             summary = ["<datafetcher.%s> 'No access point initialised'" % self._src]
             summary.append("Available access points: %s" % ", ".join(self.Fetchers.keys()))
 
-        summary.append("Performances: cache=%s, parallel=%s" % (str(cach), str(para)))
+        summary.append("Performances: cache=%s, parallel=%s" % (str(cache), str(para)))
         summary.append("User mode: %s" % self._mode)
         summary.append("Dataset: %s" % self._dataset_id)
         return "\n".join(summary)
@@ -260,7 +262,7 @@ class ArgoDataFetcher:
                 Argo-like index of fetched data
         """
         if not isinstance(self._index, pd.core.frame.DataFrame):
-            if "gdac" in self._src or "localftp" in self._src:
+            if "gdac" in self._src:
                 self.to_index(full=True)
             else:
                 self.load()
@@ -270,7 +272,7 @@ class ArgoDataFetcher:
     def domain(self):
         """ Domain of the dataset
 
-            This is different from a usual ``box`` because dates are in numpy.datetime64 format.
+            This is different from a usual ``box`` because dates are in :class:`numpy.datetime64` format.
         """
         this_ds = self.data
         if 'PRES_ADJUSTED' in this_ds.data_vars:
@@ -453,7 +455,7 @@ class ArgoDataFetcher:
             )
         return self.load().data.to_dataframe(**kwargs)
 
-    def to_index(self, full: bool = False, coriolis_id = False):
+    def to_index(self, full: bool = False, coriolis_id: bool = False):
         """ Create an index of Argo data, fetch data if necessary
 
             Build an Argo-like index of profiles from fetched data.
@@ -463,6 +465,8 @@ class ArgoDataFetcher:
             full: bool, default: False
                 Should extract a reduced index (only a space/time) from fetched profiles, or a full index,
                 as returned by an IndexFetcher.
+            coriolis_id: bool, default: False
+                Add a column to the index with the Coriolis ID of profiles
 
             Returns
             -------
@@ -490,6 +494,7 @@ class ArgoDataFetcher:
             df = df[["date", "latitude", "longitude", "wmo", "cyc"]]
             if coriolis_id:
                 df['id'] = None
+
                 def fc(row):
                     row['id'] = get_coriolis_profile_id(row['wmo'], row['cyc'])['ID'].values[0]
                     return row
@@ -654,6 +659,9 @@ class ArgoIndexFetcher:
         _VALIDATORS["src"](self._src)
 
         # Load data source access points:
+        if self._src == 'localftp':
+            raise ValueError("The 'localftp' data source is deprecated. It's been replaced by 'gdac'.")
+
         if self._src not in AVAILABLE_INDEX_SOURCES:
             raise InvalidFetcher(
                 "Requested index fetcher '%s' not available ! "

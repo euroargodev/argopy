@@ -21,6 +21,7 @@ import socket
 import asyncio
 from packaging import version
 import warnings
+from argopy.options import set_options
 from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound, FtpPathError
 from argopy.utilities import (
     list_available_data_src,
@@ -31,10 +32,11 @@ from argopy.utilities import (
     OceanOPSDeployments,
 )
 import logging
+from mocked_http import mocked_server_address, serve_mocked_httpserver
 
 
 log = logging.getLogger("argopy.tests.utils")
-
+log.debug("%s TESTS UTILS %s" % ("="*50, "="*50))
 
 def _importorskip(modname):
     try:
@@ -79,15 +81,19 @@ has_erddap, requires_erddap = _connectskip(
     "erddap" in AVAILABLE_SOURCES, "erddap data fetcher"
 )
 
-if CONNECTED and has_erddap:
-    log.debug("Check which Erddap dataset are available (eg: core, bgc, ref, index)")
-    try:
-        DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
-        DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-synthetic-BGC")
-        DSEXISTS_ref = erddap_ds_exists(ds="ArgoFloats-ref")
-        DSEXISTS_index = erddap_ds_exists(ds="ArgoFloats-index")
-    except:
-        log.debug("Cannot determine which erddap dataset are available, will skip corresponding tests.")
+if CONNECTED:
+    log.debug("Checking which Erddap dataset are available (eg: core, bgc, ref, index)")
+    with serve_mocked_httpserver() as s:  # Use the mocked http server
+        with set_options(erddap=mocked_server_address):
+            res = erddap_ds_exists(["ArgoFloats", "ArgoFloats-bio", "ArgoFloats-ref", "ArgoFloats-index"])
+            DSEXISTS = res[0]
+            DSEXISTS_bgc = res[1]
+            DSEXISTS_ref = res[2]
+            DSEXISTS_index = res[3]
+            # DSEXISTS = erddap_ds_exists(ds="ArgoFloats")
+            # DSEXISTS_bgc = erddap_ds_exists(ds="ArgoFloats-bio")
+            # DSEXISTS_ref = erddap_ds_exists(ds="ArgoFloats-ref")
+            # DSEXISTS_index = erddap_ds_exists(ds="ArgoFloats-index")
 else:
     DSEXISTS = False
     DSEXISTS_bgc = False
@@ -151,16 +157,6 @@ requires_connected_argovis = pytest.mark.skipif(
 
 
 ############
-# LOCALFTP #
-############
-has_localftp, requires_localftp = _connectskip(
-    "localftp" in AVAILABLE_SOURCES, "the localftp data fetcher"
-)
-has_localftp_index, requires_localftp_index = _connectskip(
-    "localftp" in AVAILABLE_INDEX_SOURCES, "the localftp index fetcher"
-)
-
-############
 # GDAC FTP #
 ############
 has_pyarrow, requires_pyarrow = _importorskip("pyarrow")
@@ -188,9 +184,10 @@ has_ipywidgets, requires_ipywidgets = _importorskip("ipywidgets")
 #################
 # Ocean-OPS API #
 #################
-has_oops, requires_oops = _connectskip(
-    isconnected(OceanOPSDeployments().api_server_check), "a live Ocean-OPS server"
-)
+# has_oops, requires_oops = _connectskip(
+#     isconnected(OceanOPSDeployments().api_server_check), "a live Ocean-OPS server"
+# )
+has_oops, requires_oops = _connectskip(1, "a live Ocean-OPS server")  # Always ON with the mocked server
 
 ############
 # Fix for issues discussed here:
@@ -251,7 +248,7 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
             pass
         except ClientPayloadError as e:
             msg = "\nUnexpected server transfer error\n%s" % str(e.args)
-            xmsg = "Failing because an unexpected error occured during data transfer, but should work"
+            xmsg = "Failing because an unexpected error occurred during data transfer, but should work"
             pass
         except FileNotFoundError as e:
             msg = "\nServer didn't return the data:\n%s" % str(e.args)
@@ -308,3 +305,4 @@ def safe_to_server_errors(test_func, *args, **kwargs):
         fct_safe_to_server_errors(test_func)(*args, **kwargs)
     return test_wrapper
 
+log.debug("%s TESTS UTILS %s" % ("="*50, "="*50))

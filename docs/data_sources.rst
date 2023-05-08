@@ -41,11 +41,7 @@ Available data sources
     ftp content <http://www.argodatamgt.org/Access-to-data/Argo-GDAC-ftp-and-https-servers>`__.
     You can select this data source with the keyword ``gdac`` and methods described below.
 
-3. your local collection of Argo files, organised as in the `GDAC ftp <http://www.argodatamgt.org/Access-to-data/Argo-GDAC-ftp-and-https-servers>`__.
-    This is how you would use **argopy** with your data, as long as they are formatted and organised the Argo way.
-    You can select this data source with the keyword ``localftp`` and methods described below.
-
-4. the `Argovis server <https://argovis.colorado.edu/>`__.
+3. the `Argovis server <https://argovis.colorado.edu/>`__.
     The Argovis server database is updated daily and only provides access to curated Argo data (QC=1 only).
     You can select this data source with the keyword ``argovis`` and methods described below.
 
@@ -77,21 +73,6 @@ You have several ways to specify which data source you want to use:
 
     loader = ArgoDataFetcher(src='erddap').profile(6902746, 34)
 
-.. warning::
-
-    Since the ``gdac`` fetcher can use a local copy of the GDAC ftp server, the following 2 fetchers are equivalent:
-
-    .. code-block:: python
-
-        # For any local GDAC-compliant folder, for instance:
-        ftproot = argopy.tutorial.open_dataset('localftp')[0]
-
-        # These are similar:
-        DataFetcher(src='gdac', ftp=ftproot)
-        # or
-        DataFetcher(src='localftp', local_ftp=ftproot)
-
-    Hence the ``localftp`` fetcher is deprecated and will be remove in the future.
 
 Comparing data sources
 ----------------------
@@ -102,26 +83,28 @@ Features
 Each of the available data sources have their own features and
 capabilities. Here is a summary:
 
-======================= ====== ==== ============ =======
-Data source:            erddap gdac localftp     argovis
-======================= ====== ==== ============ =======
+======================= ====== ==== =======
+Data source:            erddap gdac argovis
+======================= ====== ==== =======
 **Access Points**
-region                  X      X    X            X
-float                   X      X    X            X
-profile                 X      X    X            X
+region                  X      X    X
+float                   X      X    X
+profile                 X      X    X
 **User mode**
-standard                X      X    X            X
-expert                  X      X    X
+standard                X      X    X
+expert                  X      X
 **Dataset**
-core (T/S)              X      X    X            X
+core (T/S)              X      X    X
 BGC
 Reference data for DMQC X
 **Parallel method**                     
-multi-threading         X      X    X            X
-multi-processes                     X
+multi-threading         X      X    X
+multi-processes                *
 Dask client
-**Offline mode**               x    X
-======================= ====== ==== ============ =======
+**Offline mode**               *
+======================= ====== ==== =======
+
+`*` Only when used with a local copy of the GDAC folder.
 
 Fetched data and variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -137,7 +120,7 @@ Let's retrieve one float data from a local sample of the GDAC ftp (a sample GDAC
     :okwarning:
 
     # Download ftp sample and get the ftp local path:
-    ftproot = argopy.tutorial.open_dataset('localftp')[0]
+    ftproot = argopy.tutorial.open_dataset('gdac')[0]
     
     # then fetch data:
     with argopy.set_options(src='gdac', ftp=ftproot):

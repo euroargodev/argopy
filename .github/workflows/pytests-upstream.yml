@@ -6,12 +6,15 @@ on:
   schedule:
     - cron: "0 0 * * *" # Daily “At 00:00” UTC
   workflow_dispatch: # allows you to trigger the workflow run manually
-
+  pull_request:
+    types: [synchronize]
+    
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+
   detect-ci-trigger:
     name: detect upstream ci trigger
     runs-on: ubuntu-latest
@@ -29,25 +32,45 @@ jobs:
         with:
           keyword: "[test-upstream]"
 
+  detect-ci-skip:
+    name: detect upstream ci skip
+    runs-on: ubuntu-latest
+    if: |
+      github.repository == 'euroargodev/argopy'
+      && (github.event_name == 'push' || github.event_name == 'pull_request')
+    outputs:
+      skipped: ${{ steps.detect-skip.outputs.trigger-found }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+      - uses: xarray-contrib/ci-trigger@v1.2
+        id: detect-skip
+        with:
+          keyword: "[skip-ci]"
+
   core-free:
     # CI tests for environments with core requirements in free versions
 
     name: Core - Free - Py${{matrix.python-version}} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    needs: detect-ci-trigger
+    needs: [detect-ci-trigger, detect-ci-skip]
     if: |
         always()
         && (
             (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
             || needs.detect-ci-trigger.outputs.triggered == 'true'
+            || needs.detect-ci-skip.outputs.skipped == 'false'
+            || contains(github.event.pull_request.labels.*.name, 'release')
         )
     defaults:
       run:
         shell: bash -l {0}
+    timeout-minutes: 45
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
-        python-version: ["3.7", "3.8", "3.9"]
+        python-version: ["3.8", "3.9"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
 
     steps:
@@ -84,7 +107,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s --durations=10 \
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 \
             --report-log output-${{ matrix.python-version }}-log.jsonl
 
       - name: Generate and publish the report
@@ -95,26 +118,36 @@ jobs:
         uses: xarray-contrib/issue-from-pytest-log@v1
         with:
           log-path: output-${{ matrix.python-version }}-log.jsonl
+          
+      - name: 'Save tests log as artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: Argopy-Tests
+          path: output-${{ matrix.python-version }}-log.jsonl
+          retention-days: 90
 
   all-free:
     # CI tests for environments with all possible requirements in free versions
 
     name: All - Free - Py${{matrix.python-version}} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    needs: core-free
+    needs: [detect-ci-trigger, detect-ci-skip]
     if: |
         always()
         && (
             (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
             || needs.detect-ci-trigger.outputs.triggered == 'true'
+            || needs.detect-ci-skip.outputs.skipped == 'false'
+            || contains(github.event.pull_request.labels.*.name, 'release')
         )
     defaults:
       run:
         shell: bash -l {0}
+    timeout-minutes: 45
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
-        python-version: ["3.7", "3.8", "3.9"]
+        python-version: ["3.8", "3.9"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
 
     steps:
@@ -126,6 +159,7 @@ jobs:
         run: |
           echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-all-free.yml" >> $GITHUB_ENV
           echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
+          echo "LOG_FILE=argopy-tests-All-Min-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
 
       - name: Set up conda environment
         uses: mamba-org/provision-with-micromamba@v15
@@ -151,7 +185,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s --durations=10 \
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 \
             --report-log output-${{ matrix.python-version }}-log.jsonl
 
       - name: Generate and publish the report
@@ -162,3 +196,10 @@ jobs:
         uses: xarray-contrib/issue-from-pytest-log@v1
         with:
           log-path: output-${{ matrix.python-version }}-log.jsonl
+          
+      - name: 'Save tests log as artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: Argopy-Tests
+          path: output-${{ matrix.python-version }}-log.jsonl
+          retention-days: 90
