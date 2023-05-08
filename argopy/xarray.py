@@ -95,6 +95,11 @@ class ArgoAccessor:
             self.mode_variable = "PARAMETER_DATA_MODE"
         elif "DATA_MODE" in self._vars:
             self.mode_variable = "DATA_MODE"
+            if "STATION_PARAMETERS" in self._vars:
+                xarray_obj = xarray_obj.drop("STATION_PARAMETERS")
+                self._obj = xarray_obj
+                print(OPTIONS.get('src'), "STATION_PARAMETERS was removed")
+
         else:
             raise InvalidDatasetStructure("Argo dataset structure not recognised (no PARAMETER_DATA_MODE nor DATA_MODE")
 
@@ -538,7 +543,7 @@ class ArgoAccessor:
                 station_parameters.append(this.STATION_PARAMETERS.isel(N_POINTS=index).data)
             this = this.drop_vars(['STATION_PARAMETERS'])
         else:
-            # other data sources, no need to keep STATION_PARAMETERS for now
+            # other data sources (erddap), no need to keep STATION_PARAMETERS for now
             pass
 
         # Store the initial set of coordinates:
@@ -605,7 +610,7 @@ class ArgoAccessor:
                     try:
                         y[i_prof, 0: len(x)] = x
                     except Exception:
-                        print(vname, "input", x.shape, "output", y[i_prof, :].shape)
+                        print(vname, "input", x.shape, "output", y[i_prof, :].shape, "data src:", OPTIONS.get('src'))
                         raise
                     new_ds[vname].values = y
                 else:  # ['N_PROF', ] array:
@@ -624,7 +629,7 @@ class ArgoAccessor:
         def add_nparam_variables(new_ds):
             if self.mode_variable == "PARAMETER_DATA_MODE":
                 new_ds = new_ds.assign({self.mode_variable: (('N_PROF', 'N_PARAM'), parameter_data_mode)})
-            if OPTIONS.get('src') == 'gdac':
+            if cond_src and "STATION_PARAMETERS" in self._obj:
                 new_ds = new_ds.assign({'STATION_PARAMETERS': (('N_PROF', 'N_PARAM'), station_parameters)})
             return new_ds
 
