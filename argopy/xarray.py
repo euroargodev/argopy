@@ -18,7 +18,8 @@ from argopy.utilities import (
     is_list_of_strings,
     toYearFraction,
     groupby_remap,
-    cast_types,
+    cast_Argo_variable_type,
+    to_list,
 )
 from argopy.options import OPTIONS
 from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueError
@@ -219,78 +220,7 @@ class ArgoAccessor:
             #todo: This is hard coded, but should be retrieved from an API somewhere.
             Should be able to handle all possible variables encountered in the Argo dataset.
         """
-
-        ds = self._obj
-
-        list_str = [
-            "PLATFORM_NUMBER",
-            "DATA_MODE",
-            "DIRECTION",
-            "DATA_CENTRE",
-            "DATA_TYPE",
-            "FORMAT_VERSION",
-            "HANDBOOK_VERSION",
-            "PROJECT_NAME",
-            "PI_NAME",
-            "STATION_PARAMETERS",
-            "DATA_CENTER",
-            "DC_REFERENCE",
-            "DATA_STATE_INDICATOR",
-            "PLATFORM_TYPE",
-            "FIRMWARE_VERSION",
-            "POSITIONING_SYSTEM",
-            "PROFILE_PRES_QC",
-            "PROFILE_PSAL_QC",
-            "PROFILE_TEMP_QC",
-            "PROFILE_DOXY_QC", # new variables associated to BGC floats to cast -->
-            "PROFILE_BBP700_QC",
-            "PROFILE_CDOM_QC",
-            "PROFILE_CHLA_QC",
-            "PROFILE_NITRATE_QC",
-            "PROFILE_DOWN_IRRADIANCE380_QC",
-            "PROFILE_DOWN_IRRADIANCE412_QC",
-            "PROFILE_DOWN_IRRADIANCE490_QC",
-            "PROFILE_DOWNWELLING_PAR_QC", # <--
-            "PARAMETER",
-            "PARAMETER_DATA_MODE",
-            "SCIENTIFIC_CALIB_EQUATION",
-            "SCIENTIFIC_CALIB_COEFFICIENT",
-            "SCIENTIFIC_CALIB_COMMENT",
-            "HISTORY_INSTITUTION",
-            "HISTORY_STEP",
-            "HISTORY_SOFTWARE",
-            "HISTORY_SOFTWARE_RELEASE",
-            "HISTORY_REFERENCE",
-            "HISTORY_QCTEST",
-            "HISTORY_ACTION",
-            "HISTORY_PARAMETER",
-            "VERTICAL_SAMPLING_SCHEME",
-            "FLOAT_SERIAL_NO",
-        ]
-
-        list_int = [
-            "PLATFORM_NUMBER",
-            "WMO_INST_TYPE",
-            "WMO_INST_TYPE",
-            "CYCLE_NUMBER",
-            "CONFIG_MISSION_NUMBER",
-        ]
-        list_datetime = [
-            "REFERENCE_DATE_TIME",
-            "DATE_CREATION",
-            "DATE_UPDATE",
-            "JULD",
-            "JULD_LOCATION",
-            "SCIENTIFIC_CALIB_DATE",
-            "HISTORY_DATE",
-            "TIME"
-        ]
-
-        def fix_weird_bytes(x):
-            x = x.replace(b"\xb1", b"+/-")
-            return x
-        fix_weird_bytes = np.vectorize(fix_weird_bytes)
-
+        return cast_Argo_variable_type(self._obj)
 
     @property
     def _dummy_argo_uid(self):
@@ -872,7 +802,7 @@ class ArgoAccessor:
         QC_list: list(int)
             List of QC flag values (integers) to keep
         QC_fields: 'all' or list(str)
-            List of QC fields to consider to apply the filter. By default we use all available QC fields
+            List of QC fields to consider to apply the filter. By default, we use all available QC fields
         drop: bool
             Drop values not matching the QC filter, default is True
         mode: str
@@ -894,11 +824,7 @@ class ArgoAccessor:
             raise ValueError("Mode must be 'all' or 'any'")
 
         # Make sure we deal with a list of integers:
-        if not isinstance(QC_list, list):
-            if isinstance(QC_list, np.ndarray):
-                QC_list = list(QC_list)
-            else:
-                QC_list = [QC_list]
+        QC_list = to_list(QC_list)
         QC_list = [abs(int(qc)) for qc in QC_list]
 
         this = self._obj
@@ -918,7 +844,7 @@ class ArgoAccessor:
                     )
         else:
             raise ValueError(
-                "Invalid content for parameter 'QC_fields'. Use 'all' or a list of strings"
+                "Invalid content for parameter 'QC_fields'. Use keyword 'all' or a list of strings"
             )
 
         log.debug(
@@ -947,7 +873,7 @@ class ArgoAccessor:
 
         if not mask:
             this = this.argo._where(this_mask, drop=drop)
-            this.argo._add_history("Variables selected according to QC")
+            this.argo._add_history("Variables selected according to a selection of QC flag values")
             if this.argo.N_POINTS == 0:
                 log.warning("No data left after QC filtering !")
             return this
