@@ -86,7 +86,7 @@ class ArgoColors:
                 "ticklabels": ['PROBABLE', 'CONFIRMED', 'REGISTERED', 'OPERATIONAL', 'INACTIVE', 'CLOSED'],
             },
             "qc": {
-                "name": "Quality control flag scale",
+                "name": "Quality control flag scale (RR2, RD2)",
                 "aka": ["qc_flag", "quality_control", "quality_control_flag", "quality_control_flag_scale"],
                 "constructor": self._colormap_quality_control_flag,
                 "ticks": np.arange(0, 9 + 1),
@@ -108,6 +108,20 @@ class ArgoColors:
                 "ticks": np.arange(0, 12) + 1,
                 "ticklabels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            },
+            "prof_qc": {
+                "name": "Profile quality control flag scale (RP2)",
+                "aka": ["prof_qc_flag", "prof_quality_control"],
+                "constructor": self._colormap_profile_quality_control_flag,
+                "ticks": ["A", "B", "C", "D", "E", "F", "N", " "],
+                "ticklabels": [ "100% of profile good",
+                                "75% - 100% of profile good",
+                                "50% - 75% of profile good",
+                                "25% - 50% of profile good",
+                                "0% - 25% of profile good",
+                                "0% of profile good",
+                                "No QC",
+                                "FillValue"],
             },
         }
         self.registered = self.name in self.list_valid_known_colormaps
@@ -273,6 +287,20 @@ class ArgoColors:
                  '#000000'
                  ]
         return mcolors.LinearSegmentedColormap.from_list(self.definition['name'], clist, 10)
+
+    def _colormap_profile_quality_control_flag(self):
+        """Return a colormap for profile QC flag"""
+        clist = ['#00DF4E',
+                 '#1DFF88',
+                 '#D8FE00',
+                 '#F9FE00',
+                 '#FF9900',
+                 '#FE0000',
+                 '#000000',
+                 '#FF42A1'
+                 ]
+        return mcolors.LinearSegmentedColormap.from_list(self.definition['name'], clist, 8)
+
 
     @property
     def cmap(self):
