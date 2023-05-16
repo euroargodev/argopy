@@ -490,7 +490,7 @@ class httpstore(argo_store_proto):
         :class:`xarray.Dataset`
         """
         url = self.curateurl(url)
-        # log.debug("Opening netcdf from: %s" % url)
+        log.debug("Opening netcdf from: %s" % url)
         try:
             # log.info("open_dataset('%s')" % url)
             # log_argopy_callerstack()
@@ -502,8 +502,10 @@ class httpstore(argo_store_proto):
                 log.debug("Error %i (Payload Too Large) raised with %s" % (e.status, url))
             raise
 
-
-        if data[0:3] != b'CDF':
+        if data[0:3] == b'\x89HD':
+            # This is netCDF4/HDF5 data (probably from BGC files) that can't be read as binary by xarray, so converting:
+            data = io.BytesIO(data)
+        elif data[0:3] != b'CDF':
             raise TypeError("We didn't get a CDF binary data as expected ! We get: %s" % data)
 
         # log.debug('type(data): %s' % type(data))
@@ -582,14 +584,14 @@ class httpstore(argo_store_proto):
         strUrl = lambda x: x.replace("https://", "").replace("http://", "")  # noqa: E731
 
         def drop_variables_not_in_all_datasets(ds_collection):
-            """Drop variables that are not in all datasets (Lowest common denominator)"""
+            """Drop variables that are not in all datasets (the lowest common denominator)"""
             # List all possible data variables:
             vlist = []
             for res in ds_collection:
                 [vlist.append(v) for v in list(res.data_vars)]
             vlist = np.unique(vlist)
 
-            # Check if all possible variables are in each datasets:
+            # Check if all possible variables are in each dataset:
             ishere = np.zeros((len(vlist), len(ds_collection)))
             for ir, res in enumerate(ds_collection):
                 for iv, v in enumerate(res.data_vars):
@@ -603,13 +605,30 @@ class httpstore(argo_store_proto):
 
             # List of variables to keep
             iv_tokeep = np.sum(ishere, axis=1) == len(ds_collection)
+
+            # Drop missing variables in each ds of the collection:
             for ir, res in enumerate(ds_collection):
                 #         print("\n", res.attrs['Fetched_uri'])
                 v_to_drop = []
                 for iv, v in enumerate(res.data_vars):
                     if v not in vlist[iv_tokeep]:
                         v_to_drop.append(v)
+                if len(v_to_drop) > 0:
+                    log.debug("We dropped these variables in order to concat multiple datasets: %s" % (",".join(v_to_drop)))
                 ds_collection[ir] = ds_collection[ir].drop_vars(v_to_drop)
+
+                # Specific to Argo datasets:
+                # Also remove from N_PARAM index the slice corresponding to dropped variables:
+                r = ds_collection[ir]
+                if len(v_to_drop) > 0 and 'N_PARAM' in r.dims and 'STATION_PARAMETERS' in r.data_vars:
+                    log.debug('Also cleaning up STATION_PARAMETERS and updating N_PARAM dimension')
+                    axis = np.where([d == 'N_POINTS' for d in r['STATION_PARAMETERS'].dims])[0][0]
+                    unique = np.unique(r['STATION_PARAMETERS'], axis=axis)
+                    i_param_to_keep = np.sum(np.array([[v[0].rstrip() == d for v in unique] for d in v_to_drop]),
+                                             axis=0) == 0
+                    r = r.isel(N_PARAM=i_param_to_keep)
+                    ds_collection[ir] = r
+
             return ds_collection
 
         if not isinstance(urls, list):
@@ -700,7 +719,15 @@ class httpstore(argo_store_proto):
         if len(results) > 0:
             if concat:
                 # ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
+                # for r in results:
+                #     print(len(r.data_vars))
+                #     print(r.dims)
+                #     print(np.unique(r['STATION_PARAMETERS']))
                 results = drop_variables_not_in_all_datasets(results)
+                # for r in results:
+                #     print(len(r.data_vars))
+                #     print(r.dims)
+                #     print(np.unique(r['STATION_PARAMETERS']))
                 ds = xr.concat(results,
                                dim=concat_dim,
                                data_vars='minimal',
