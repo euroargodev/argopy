@@ -48,6 +48,8 @@ api_server_check = (
     OPTIONS["erddap"] + "/info/ArgoFloats/index.json"
 )  # URL to check if the API is alive
 
+#class NewDataFetcher(ArgoDataFetcherProto):
+
 
 class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     """Manage access to Argo data through Ifremer ERDDAP
@@ -78,6 +80,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     def uri(self) -> list:
         """Return the list of Unique Resource Identifier (URI) to download data"""
         raise NotImplementedError("ErddapArgoDataFetcher.uri not implemented")
+
+    @staticmethod
+    def test_prise_en_compte_jup(self):
+        print('La modification a été prise en compte')
+
+    def variable_bgc(self):
+        print(self)
 
     ###
     # Methods that must not change
@@ -250,6 +259,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 "convention": "R : real time; D : delayed mode; A : real time with adjustment",
             }
 
+        # BGC variables
+        if "PARAMAMETER_DATA_MODE" in this.data_vars:
+            this["PARAMETER_DATA_MODE"].attrs = {
+                "long_name": "Delayed mode or real time data for BGC variables",
+                "convention": "R : real time; D : delayed mode; A : real time with adjustment",
+            }
+
         if "DIRECTION" in this.data_vars:
             this["DIRECTION"].attrs = {
                 "long_name": "Direction of the station profiles",
@@ -326,7 +342,101 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 "config_mission_number",
             ]
             [vlist.append(p) for p in plist]
+            # TODO : implement two modes (standard/expert) for two lists of possible BGC variables
 
+            if OPTIONS.get('mode')  == "standard":
+                plist = [
+                    "pres",
+                    "temp",
+                    "psal",
+                    "doxy",
+                ]
+
+            elif OPTIONS.get('mode')  == "expert":
+                plist = [
+                    "pres",
+                    "temp",
+                    "psal",
+#                    "cndc",
+                    "doxy",
+#                    "beta_backscattering",
+#                    "fluorescence_chla",
+#                    "fluorescence_cdom",
+#                    "side_scattering_turbidity", #1
+#                    "transmittance_particle_beam_attenuation", #1
+#                    "bbp",
+#                    "turbidity",
+#                    "cp",
+#                    "chla",
+#                    "cdom",
+#                    "nitrate",
+#                    "temp_doxy",
+#                    "temp_voltage_doxy",
+#                    "voltage_doxy",
+#                    "frequency_doxy",
+#                    "count_doxy",
+#                    "bphase_doxy",
+#                    "dphase_doxy",
+#                    "tphase_doxy",
+#                    "c1phase_doxy",
+#                    "c2phase_doxy",
+#                    "molar_doxy",
+#                    "phase_delay_doxy",
+#                    "mlpl_doxy",
+#                    "nb_sample",
+#                    "rphase_doxy",
+#                    "temp_count",
+#                    "led_flashing_count",
+#                    "ppox_doxy",
+#                    "beta_backscattering470",
+#                    "beta_backscattering532",
+#                    "beta_backscattering700",
+#                    "temp_cpu_chla",
+#                    "bbp470",
+#                    "bbp532",
+#                    "bbp700",
+#                    "uv_intensity_nitrate",
+#                    "uv_intensity_dark_nitrate",
+#                    "uv_intensity_dark_sea_water",
+#                    "bisulfide",
+#                    "molar_nitrate",
+#                    "fit_error",
+#                    "temp_nitrate",
+#                    "temp_spectrophotometer_nitrate",
+#                    "humidity_nitrate",
+#                    "vrs_pH",
+#                    "temp_ph",
+#                    "ib_ph",
+#                    "vk_ph",
+#                    "ik_ph",
+#                    "ph_in_situ_total",
+#                    "ph_in_situ_free",
+#                    "raw_downwelling_irradiance",
+#                    "raw_downwelling_irradiance380",
+#                    "raw_downwelling_irradiance412",
+#                    "raw_downwelling_irradiance490",
+#                    "raw_downwelling_irradiance555",
+#                    "down_irradiance",
+#                    "down_irradiance380",
+#                    "down_irradiance412",
+#                    "down_irradiance490",
+#                    "down_irradiance555",
+#                    "raw_upwelling_radiance",
+#                    "raw_upwelling_radiance412",
+#                    "raw_upwelling_radiance443",
+#                    "raw_upwelling_radiance490",
+#                    "raw_upwelling_radiance555",
+#                    "up_radiance",
+#                    "up_radiance412",
+#                    "up_radiance443",
+#                    "up_radiance490",
+#                    "up_radiance555",
+#                    "raw_downwelling_par",
+#                    "downwelling_par",
+#                    "tilt",
+#                    "mtime",
+                ]
+                
             plist = [
                 "pres",
                 "temp",
@@ -358,6 +468,54 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             [vlist.append(p) for p in plist]
 
         return vlist
+
+    @property
+    def _dtype(self):
+        """ Return a dictionary of data types for each variable requested to erddap in the minimal vlist """
+        # not up to date : TODO
+        dref = {
+            "data_mode": object,
+            "latitude": np.float64,
+            "longitude": np.float64,
+            "position_qc": np.int64,
+            "time": object,
+            "time_qc": np.int64,
+            "direction": object,
+            "platform_number": np.int64,
+            "config_mission_number": np.int64,
+            "vertical_sampling_scheme": object,
+            "cycle_number": np.int64,
+            "pres": np.float64,
+            "temp": np.float64,
+            "psal": np.float64,
+            "doxy": np.float64,
+            "pres_qc": np.int64,
+            "temp_qc": object,
+            "psal_qc": object,
+            "doxy_qc": object,
+            "pres_adjusted": np.float64,
+            "temp_adjusted": np.float64,
+            "psal_adjusted": np.float64,
+            "doxy_adjusted": np.float64,
+            "pres_adjusted_qc": object,
+            "temp_adjusted_qc": object,
+            "psal_adjusted_qc": object,
+            "doxy_adjusted_qc": object,
+            "pres_adjusted_error": np.float64,
+            "temp_adjusted_error": np.float64,
+            "psal_adjusted_error": np.float64,
+            "doxy_adjusted_error": np.float64,
+            "ptmp": np.float64,
+        }
+        plist = self._minimal_vlist
+        response = {}
+        for p in plist:
+            if p in dref:
+                response[p] = dref[p]
+            else:
+                response[p] = object
+        return response
+
 
     def cname(self):
         """Return a unique string defining the constraints"""
@@ -555,7 +713,6 @@ class Fetch_wmo(ErddapArgoDataFetcher):
             self.definition = "%s for profiles" % self.definition
         else:
             self.definition = "%s for floats" % self.definition
-
         return self
 
     def define_constraints(self):
@@ -624,6 +781,10 @@ class Fetch_box(ErddapArgoDataFetcher):
             self.definition = (
                 "Ifremer erddap Argo REFERENCE data fetcher for a space/time region"
             )
+        elif self.dataset_id == "bgc":
+            self.definition = (
+                "Ifremer erddap Argo bgc data fetcher for a space/time region"
+            )
 
         return self
 
@@ -663,3 +824,4 @@ class Fetch_box(ErddapArgoDataFetcher):
                     ).get_url()
                 )
             return urls
+

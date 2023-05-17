@@ -18,10 +18,11 @@ from argopy.utilities import (
     is_list_of_strings,
     toYearFraction,
     groupby_remap,
-    cast_types,
+    cast_Argo_variable_type,
+    to_list,
 )
+from argopy.options import OPTIONS
 from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueError
-
 
 log = logging.getLogger("argopy.xarray")
 
@@ -90,6 +91,18 @@ class ArgoAccessor:
             self._mode = "standard"
         else:
             raise InvalidDatasetStructure("Argo dataset structure not recognised (no PRES nor PRES_ADJUSTED")
+
+        if "PARAMETER_DATA_MODE" in self._vars:
+            self.mode_variable = "PARAMETER_DATA_MODE"
+        elif "DATA_MODE" in self._vars:
+            self.mode_variable = "DATA_MODE"
+            if "STATION_PARAMETERS" in self._vars:
+                xarray_obj = xarray_obj.drop("STATION_PARAMETERS")
+                self._obj = xarray_obj
+        else:
+            raise InvalidDatasetStructure("Argo dataset structure not recognised (no PARAMETER_DATA_MODE nor DATA_MODE")
+
+        #self.mode_variable = "PARAMETER_DATA_MODE" if "PARAMETER_DATA_MODE" in self._vars else "DATA_MODE"
 
     def __repr__(self):
         # import xarray.core.formatting as xrf
@@ -207,7 +220,7 @@ class ArgoAccessor:
             #todo: This is hard coded, but should be retrieved from an API somewhere.
             Should be able to handle all possible variables encountered in the Argo dataset.
         """
-        return cast_types(self._obj)
+        return cast_Argo_variable_type(self._obj)
 
     @property
     def _dummy_argo_uid(self):
@@ -339,6 +352,19 @@ class ArgoAccessor:
             log.debug("This dataset has a single vertical level, thus final variables will only have a N_PROF "
                       "dimension and no N_LEVELS")
 
+
+        # Store PARAMETER_DATA_MODE and STATION_PARAMETERS in a list in order to remove them from the dataset for now
+        # It may be possible to do this with fewer lines of code, but it also depends on the source of the data
+        if self.mode_variable == "PARAMETER_DATA_MODE" and 'N_PARAM' in self._obj.dims:
+            parameter_data_mode = []
+            station_parameters = []
+            for uid in np.unique(dummy_argo_uid):
+                # select the first occurrence
+                index = np.where(dummy_argo_uid == uid)[0][0]
+                parameter_data_mode.append(this.PARAMETER_DATA_MODE.isel(N_POINTS=index).data)
+                station_parameters.append(this.STATION_PARAMETERS.isel(N_POINTS=index).data)
+            this = this.drop_vars(['PARAMETER_DATA_MODE', 'STATION_PARAMETERS'])
+
         # Store the initial set of coordinates:
         coords_list = list(this.coords)
         this = this.reset_coords()
@@ -421,9 +447,20 @@ class ArgoAccessor:
             new_ds['LATITUDE'] = new_ds['LATITUDE'].isel(N_LEVELS=0)  # Make sure LAT is (N_PROF) and not (N_PROF, N_LEVELS)
             new_ds['LONGITUDE'] = new_ds['LONGITUDE'].isel(N_LEVELS=0)
 
+        # Add the removed PARAMETER_DATA_MODE and STATION_PARAMETERS variables with specific dimensions
+        def add_nparam_variables(new_ds):
+            if self.mode_variable == "PARAMETER_DATA_MODE" and "N_PARAM" in self._obj.dims:
+                new_ds = new_ds.assign({self.mode_variable: (('N_PROF', 'N_PARAM'), parameter_data_mode)})
+                if "STATION_PARAMETERS" in self._obj:
+                    new_ds = new_ds.assign({'STATION_PARAMETERS': (('N_PROF', 'N_PARAM'), station_parameters)})
+            return new_ds
+
+        new_ds = add_nparam_variables(new_ds)
+
         # Misc formatting
         new_ds = new_ds.sortby("TIME")
-        new_ds = new_ds.argo.cast_types() if not drop else cast_types(new_ds)
+        new_ds['N_PROF'] = np.arange(N_PROF)
+        new_ds = new_ds.argo.cast_types() if not drop else cast_Argo_variable_type(new_ds)
         new_ds = new_ds[np.sort(new_ds.data_vars)]
         new_ds.encoding = self.encoding  # Preserve low-level encoding information
         new_ds.attrs = self.attrs  # Preserve original attributes
@@ -462,19 +499,38 @@ class ArgoAccessor:
         for v in ds:
             dims = list(ds[v].dims)
             dims = ".".join(dims)
-            if dims not in ["N_PROF", "N_PROF.N_LEVELS"]:
+            if dims not in ["N_PROF", "N_PROF.N_LEVELS", "N_PROF.N_PARAM"]:
                 ds = ds.drop_vars(v)
 
+        # Stack the dataset except on the dimension (N_PARAM,) if it exists
+        dim_list = list(ds.dims)
+        if "N_PARAM" in dim_list:
+            dim_list.remove("N_PARAM")
+        #
         (ds,) = xr.broadcast(ds)
-        ds = ds.stack({"N_POINTS": list(ds.dims)})
+        ds = ds.stack({"N_POINTS": dim_list})
         ds = ds.reset_index("N_POINTS").drop_vars(["N_PROF", "N_LEVELS"])
-        possible_coords = ["LATITUDE", "LONGITUDE", "TIME", "JULD", "N_POINTS"]
+        possible_coords = ["LATITUDE", "LONGITUDE", "TIME", "JULD", "N_POINTS", "N_PARAM"]
         for c in [c for c in possible_coords if c in ds.data_vars]:
             ds = ds.set_coords(c)
 
+        # Remove N_PARAM dimension where it is useless for variables, dimensions
+        # TODO: there may be a way to do it cleaner
+        # for variables
+        for v in ds:
+            if 'N_PARAM' in ds[v].dims and v not in ['PARAMETER_DATA_MODE', 'STATION_PARAMETERS']:
+                ds[v] = ds[v].sel(N_PARAM=0) # each variable is repeated along the N_PARAM dimension
+        # for dimensions
+        for c in ds.coords:
+            if 'N_PARAM' in ds[c].dims and len(ds[c].shape) != 1:
+                ds[c] = ds[c].sel(N_PARAM=0)
+
         # Remove index without data (useless points)
         ds = ds.where(~np.isnan(ds["PRES"]), drop=1)
-        ds = ds.sortby("TIME")
+        if "TIME" in ds:
+            ds = ds.sortby("TIME")
+        elif "JULD" in ds:
+            ds = ds.sortby("JULD")
         ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         ds = ds.argo.cast_types()
         ds = ds[np.sort(ds.data_vars)]
@@ -522,7 +578,33 @@ class ArgoAccessor:
         def safe_where_eq(xds, key, value):
             # xds.where(xds[key] == value, drop=True) is not safe to empty time variables, cf issue #64
             try:
-                return xds.where(xds[key] == value, drop=True)
+                if self.mode_variable == "DATA_MODE":
+                    return xds.where(xds[key] == value, drop=True)
+
+                elif self.mode_variable == "PARAMETER_DATA_MODE":
+                    for v in possible_list:
+                        # normally everything will be present in possible list, but it depends how we define it, this is why the following double check
+                        if v.startswith(tuple(plist)):
+                            # get the right PARAMETER_DATA_MODE for the variable v
+                            ma_liste = [True if var == v else False for var in possible_list]
+                            # TODO this part could be ameliorated.. time consuming and redundant
+                            if 'N_PARAM' in ds.dims:
+                                corresp_data_mode = xds[key][ma_liste].isel(N_PARAM=0)
+                            else:
+                                corresp_data_mode = xds[key]
+                            # select the corresponding data mode for variable v
+                            xds[v] = xds[v].where(
+                                corresp_data_mode == value,
+                                drop=True
+                            )
+
+                        else:
+                            xds[v].where(xds[key] == value, drop=True)
+
+                    return xds
+
+                else:
+                    raise ValueError('No corresponding mode variable in the dataset')
             except ValueError as v:
                 if v.args[0] == (
                     "zero-size array to reduction operation "
@@ -551,7 +633,7 @@ class ArgoAccessor:
                 Split full dataset into 3 datasets
             """
             # Real-time:
-            argo_r = safe_where_eq(xds, "DATA_MODE", "R")
+            argo_r = safe_where_eq(xds, self.mode_variable, "R")
             for v in plist:
                 vname = v.upper() + "_ADJUSTED"
                 if vname in argo_r:
@@ -563,7 +645,7 @@ class ArgoAccessor:
                 if vname in argo_r:
                     argo_r = argo_r.drop_vars(vname)
             # Real-time adjusted:
-            argo_a = safe_where_eq(xds, "DATA_MODE", "A")
+            argo_a = safe_where_eq(xds, self.mode_variable, "A")
             for v in plist:
                 vname = v.upper()
                 if vname in argo_a:
@@ -572,7 +654,7 @@ class ArgoAccessor:
                 if vname in argo_a:
                     argo_a = argo_a.drop_vars(vname)
             # Delayed mode:
-            argo_d = safe_where_eq(xds, "DATA_MODE", "D")
+            argo_d = safe_where_eq(xds, self.mode_variable, "D")
 
             return argo_r, argo_a, argo_d
 
@@ -600,7 +682,11 @@ class ArgoAccessor:
             """
 
             def merge_this(a1, a2, a3):
-                return xr.merge((xr.merge((a1, a2)), a3))
+                try:
+                    return xr.merge((xr.merge((a1, a2)), a3))
+                except:
+                    # this will enable to handle some wrong _QC values differing between _ADJUSTED_QC and _QC
+                    return xr.merge((xr.merge((a1, a2), compat='override'), a3), compat='override')
 
             DA = merge_this(
                 this_argo_r[this_vname],
@@ -633,29 +719,33 @@ class ArgoAccessor:
         # filter
         #########
         ds = self._obj
-        if "DATA_MODE" not in ds:
+        if "DATA_MODE" or "PARAMETER_DATA_MODE" in ds:
+            self.mode_variable = "PARAMETER_DATA_MODE" if "PARAMETER_DATA_MODE" in ds else "DATA_MODE"
+
+        else:
             if errors:
-                raise InvalidDatasetStructure(
-                    "Method only available for dataset with a 'DATA_MODE' variable "
+                raise AttributeError(
+                    "Method only available for dataset with a 'DATA_MODE' or 'PARAMETER_DATA_MODE' variable "
                 )
             else:
-                # todo should raise a warning instead ?
+                # TODO should raise a warning instead ?
                 return ds
 
         # Define variables to filter:
-        possible_list = [
-            "PRES",
-            "TEMP",
-            "PSAL",
-            "DOXY",
-            "CHLA",
-            "BBP532",
-            "BBP700",
-            "DOWNWELLING_PAR",
-            "DOWN_IRRADIANCE380",
-            "DOWN_IRRADIANCE412",
-            "DOWN_IRRADIANCE490",
-        ]
+        if self.mode_variable == "PARAMETER_DATA_MODE":
+            if "STATION_PARAMETERS" in ds:
+                possible_list = list(map(lambda x: str.strip(x), ds.STATION_PARAMETERS.isel(N_POINTS=0).data))
+            else:
+                # STATION_PARAMETERS is not in ds while loading the data from erddap server, so for erddap
+                possible_list = ["PRES", "TEMP", "DOXY"]
+
+        elif self.mode_variable == "DATA_MODE":
+            possible_list = [
+                "PRES",
+                "TEMP",
+                "PSAL",
+            ]
+
         plist = [p for p in possible_list if p in ds.data_vars]
 
         # Create one dataset for each of the data_mode:
@@ -713,7 +803,7 @@ class ArgoAccessor:
         QC_list: list(int)
             List of QC flag values (integers) to keep
         QC_fields: 'all' or list(str)
-            List of QC fields to consider to apply the filter. By default we use all available QC fields
+            List of QC fields to consider to apply the filter. By default, we use all available QC fields
         drop: bool
             Drop values not matching the QC filter, default is True
         mode: str
@@ -735,11 +825,7 @@ class ArgoAccessor:
             raise ValueError("Mode must be 'all' or 'any'")
 
         # Make sure we deal with a list of integers:
-        if not isinstance(QC_list, list):
-            if isinstance(QC_list, np.ndarray):
-                QC_list = list(QC_list)
-            else:
-                QC_list = [QC_list]
+        QC_list = to_list(QC_list)
         QC_list = [abs(int(qc)) for qc in QC_list]
 
         this = self._obj
@@ -759,7 +845,7 @@ class ArgoAccessor:
                     )
         else:
             raise ValueError(
-                "Invalid content for parameter 'QC_fields'. Use 'all' or a list of strings"
+                "Invalid content for parameter 'QC_fields'. Use keyword 'all' or a list of strings"
             )
 
         log.debug(
@@ -788,7 +874,7 @@ class ArgoAccessor:
 
         if not mask:
             this = this.argo._where(this_mask, drop=drop)
-            this.argo._add_history("Variables selected according to QC")
+            this.argo._add_history("Variables selected according to a selection of QC flag values")
             if this.argo.N_POINTS == 0:
                 log.warning("No data left after QC filtering !")
             return this

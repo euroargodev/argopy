@@ -43,7 +43,7 @@
       "@language" : "en",
       "@value" : "Particle backscattering at x nanometers"
     },
-    "related" : "http://vocab.nerc.ac.uk/collection/P06/current/PMSR/"
+    "related" : "http://vocab.nerc.ac.uk/collection/P06/current/UPRM/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R03/current/BBP470/",
     "@type" : "skos:Concept",
@@ -71,7 +71,7 @@
       "@language" : "en",
       "@value" : "Particle backscattering at 470 nanometers"
     },
-    "related" : "http://vocab.nerc.ac.uk/collection/P06/current/PMSR/"
+    "related" : "http://vocab.nerc.ac.uk/collection/P06/current/UMNX/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R03/current/BBP532/",
     "@type" : "skos:Concept",
@@ -99,7 +99,7 @@
       "@language" : "en",
       "@value" : "Particle backscattering at 532 nanometers"
     },
-    "related" : "http://vocab.nerc.ac.uk/collection/P06/current/PMSR/"
+    "related" : "http://vocab.nerc.ac.uk/collection/P06/current/UMNX/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R03/current/BBP700/",
     "@type" : "skos:Concept",
@@ -127,7 +127,7 @@
       "@language" : "en",
       "@value" : "Particle backscattering at 700 nanometers"
     },
-    "related" : "http://vocab.nerc.ac.uk/collection/P06/current/PMSR/"
+    "related" : "http://vocab.nerc.ac.uk/collection/P06/current/UMNX/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING/",
     "@type" : "skos:Concept",

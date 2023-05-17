@@ -102,6 +102,10 @@ class ArgoDataFetcherProto(ABC):
 
     def dashboard(self, **kw):
         """Return 3rd party dashboard for the access point"""
+        if 'type' not in kw:
+            if self.dataset_id == 'bgc':
+                kw['type'] = 'bgc'
+
         if self.WMO is not None:
             if len(self.WMO) == 1 and self.CYC is not None and len(self.CYC) == 1:
                 return dashboard(wmo=self.WMO[0], cyc=self.CYC[0], **kw)

@@ -92,6 +92,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml
+
           flags: unittests, core, pinned, py${{matrix.python-version}}
           name: codecov-github
           fail_ci_if_error: false

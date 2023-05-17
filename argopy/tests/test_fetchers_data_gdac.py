@@ -109,6 +109,7 @@ def ftp_shortname(ftp):
 
 @requires_gdac
 class TestBackend:
+    dataset = 'phy'
     src = 'gdac'
 
     # Create list of tests scenarios
@@ -147,7 +148,11 @@ class TestBackend:
             access_point = VALID_ACCESS_POINTS[0]  # Use 1st valid access point
 
         N_RECORDS = None if 'tutorial' in ftp or 'MOCK' in ftp else 100  # Make sure we're not going to load the full index
-        fetcher_args = {"src": self.src, "ftp": self._patch_ftp(ftp), "cache": False, "N_RECORDS": N_RECORDS}
+        fetcher_args = {"src": self.src,
+                        "ftp": self._patch_ftp(ftp),
+                        "cache": False,
+                        "N_RECORDS": N_RECORDS,
+                        "dataset": self.dataset}
 
         if cached:
             fetcher_args = {**fetcher_args, **{"cache": True, "cachedir": self.cachedir}}

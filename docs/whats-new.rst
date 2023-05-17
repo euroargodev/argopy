@@ -7,6 +7,13 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+   
+v0.1.XX
+-------
+- Add variables of BGC-Argo in Argopy
+1) expert mode and erddap source
+
+v0.1.13 (xx Feb. 2023)
 
 Coming up on the next release
 -----------------------------
