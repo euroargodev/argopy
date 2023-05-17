@@ -41,11 +41,11 @@ User mode details
 - 🏊 **standard** mode simplifies the dataset, remove most of its jargon and return *a priori* good data,
 - 🚣 **research** mode simplifies the dataset to its heart, preserving only data of the highest quality for research studies, including studies sensitive to small pressure and salinity bias (e.g. calculations of global ocean heat content or mixed layer depth).
 
-Hence, in **standard** and **research** modes, fetched data are automatically filtered to account for their quality (using the *quality control flags*) and level of processing by the data centers (using each *parameter data mode* indicating if ADMT human experts carefully looked at the data or not). Both mode return a postprocessed subset of the full Argo dataset.
+In **standard** and **research** modes, fetched data are automatically filtered to account for their quality (using the *quality control flags*) and level of processing by the data centers (considering for each parameter the data mode which indicates if a human expert had carefully looked at the data or not). Both mode return a postprocessed subset of the full Argo dataset.
 
-One could conclude that the main difference between the **standard** and **research** modes is in the level of data quality insurance.
+Hence the main difference between the **standard** and **research** modes is in the level of data quality insurance.
 In **standard** mode, only good or probably good data are returned, which includes real time data that have been validated automatically but not by a human expert.
-The **research** mode is the safer choice, with data of the highest quality, carefully checked by a human expert of the `ADMT <http://www.argodatamgt.org>`_.
+The **research** mode is the safer choice, with data of the highest quality, carefully checked by a human expert of the `Argo Data Management Team <http://www.argodatamgt.org>`_.
 
 .. list-table:: Table of **argopy** user mode data processing details
     :header-rows: 1
@@ -93,8 +93,8 @@ Let's import the **argopy** data fetcher:
 By default, all **argopy** data fetchers are set to work with a
 **standard** user mode.
 
-If you want to change the user mode, or simply makes it explicit, you
-can use:
+If you want to change the user mode, or to simply makes it explicit in your code, you
+can use one of the following 3 methods:
 
 -  the **argopy** global option setter:
 
@@ -103,20 +103,20 @@ can use:
 
     argopy.set_options(mode='standard')
 
--  a temporary context:
+-  a temporary **context**:
 
 .. ipython:: python
     :okwarning:
 
-    with argopy.set_options(mode='standard'):
+    with argopy.set_options(mode='expert'):
         ArgoDataFetcher().profile(6902746, 34)
 
--  the option when instantiating the data fetcher:
+-  or the **fetcher option**:
 
 .. ipython:: python
     :okwarning:
 
-    ArgoDataFetcher(mode='standard').profile(6902746, 34)
+    ArgoDataFetcher(mode='research').profile(6902746, 34)
 
 Example of differences in user modes
 ------------------------------------
