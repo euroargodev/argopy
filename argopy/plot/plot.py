@@ -496,12 +496,16 @@ def scatter_map(  # noqa: C901
         }
         if isinstance(data, pd.DataFrame) and not legend:
             scatter_opts['legend'] = False  # otherwise Pandas will add a legend even if we set legend=False
-        sc = group.plot.scatter(
-            x=x, y=y,
-            ax=ax,
-            **scatter_opts
-        )
-        patches.append(sc)
+        try:
+            sc = group.plot.scatter(
+                x=x, y=y,
+                ax=ax,
+                **scatter_opts
+            )
+            patches.append(sc)
+        except:
+            log.debug("Error with scatter plot options: %s" % str(scatter_opts))
+            raise
 
     if cbar:
         if cbarlabels == 'auto':

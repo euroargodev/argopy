@@ -614,7 +614,7 @@ class httpstore(argo_store_proto):
                     if v not in vlist[iv_tokeep]:
                         v_to_drop.append(v)
                 if len(v_to_drop) > 0:
-                    log.debug("We dropped these variables in order to concat multiple datasets: %s" % (",".join(v_to_drop)))
+                    log.debug("We dropped these variables in order to concat multiple datasets because they were not available in all datasets to concat: %s" % (",".join(v_to_drop)))
                 ds_collection[ir] = ds_collection[ir].drop_vars(v_to_drop)
 
                 # Specific to Argo datasets:

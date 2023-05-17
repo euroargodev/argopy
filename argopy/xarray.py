@@ -459,7 +459,8 @@ class ArgoAccessor:
 
         # Misc formatting
         new_ds = new_ds.sortby("TIME")
-        new_ds = new_ds.argo.cast_types() if not drop else cast_types(new_ds)
+        new_ds['N_PROF'] = np.arange(N_PROF)
+        new_ds = new_ds.argo.cast_types() if not drop else cast_Argo_variable_type(new_ds)
         new_ds = new_ds[np.sort(new_ds.data_vars)]
         new_ds.encoding = self.encoding  # Preserve low-level encoding information
         new_ds.attrs = self.attrs  # Preserve original attributes
