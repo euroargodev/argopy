@@ -13,6 +13,23 @@ Coming up on the next release
 
 **Features and front-end API**
 
+- **Easy access to all Argo manuals from the ADMT**. More than 20 pdf manuals have been produced by the Argo Data Management Team. Using the new ``ArgoDocs`` class, it's now easier to navigate this great database for Argo experts.
+
+.. code-block:: python
+
+    from argopy import ArgoDocs
+
+    ArgoDocs().list
+
+    ArgoDocs(35385)
+    ArgoDocs(35385).ris
+    ArgoDocs(35385).abstract
+    ArgoDocs(35385).show()
+    ArgoDocs(35385).open_pdf()
+    ArgoDocs(35385).open_pdf(page=12)
+
+    ArgoDocs().search("CDOM")
+
 - **Argopy now provides authenticated access to the Argo reference database for DMQC**. Using user/password new **argopy** options, it is now possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
