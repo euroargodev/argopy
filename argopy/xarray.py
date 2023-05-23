@@ -1,14 +1,11 @@
 import os
 import warnings
-import sys
 
 import numpy as np
 import pandas as pd
 import xarray as xr
 import logging
 from xarray.backends import BackendEntrypoint  # For xarray > 0.18
-from .utilities import ArgoNVSReferenceTables
-
 
 try:
     import gsw
@@ -22,7 +19,7 @@ from argopy.utilities import (
     is_list_of_strings,
     toYearFraction,
     groupby_remap,
-    cast_types,
+    cast_Argo_variable_type,
 )
 from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
@@ -30,277 +27,32 @@ from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueErro
 log = logging.getLogger("argopy.xarray")
 
 
-def cast_Argo_variable_type(ds):
-    """List of  Argo variable in appropriate type in a DataSet"""
-
-    list_str = [
-        "PLATFORM_NUMBER",
-        "DATA_MODE",
-        "DIRECTION",
-        "DATA_CENTRE",
-        "DATA_TYPE",
-        "FORMAT_VERSION",
-        "HANDBOOK_VERSION",
-        "PROJECT_NAME",
-        "PI_NAME",
-        "STATION_PARAMETERS",
-        "DATA_CENTER",
-        "DC_REFERENCE",
-        "DATA_STATE_INDICATOR",
-        "PLATFORM_TYPE",
-        "FIRMWARE_VERSION",
-        "POSITIONING_SYSTEM",
-        "PARAMETER",
-        "SCIENTIFIC_CALIB_EQUATION",
-        "SCIENTIFIC_CALIB_COEFFICIENT",
-        "SCIENTIFIC_CALIB_COMMENT",
-        "HISTORY_INSTITUTION",
-        "HISTORY_STEP",
-        "HISTORY_SOFTWARE",
-        "HISTORY_SOFTWARE_RELEASE",
-        "HISTORY_REFERENCE",
-        "HISTORY_QCTEST",
-        "HISTORY_ACTION",
-        "HISTORY_PARAMETER",
-        "VERTICAL_SAMPLING_SCHEME",
-        "FLOAT_SERIAL_NO",
-        "PARAMETER_DATA_MODE",
-
-        # Trajectory file variables:
-        'TRAJECTORY_PARAMETERS', 'POSITION_ACCURACY', 'GROUNDED', 'SATELLITE_NAME', 'HISTORY_INDEX_DIMENSION',
-
-        # Technical file variables:
-        'TECHNICAL_PARAMETER_NAME', 'TECHNICAL_PARAMETER_VALUE', 'PTT',
-
-        # Metadata file variables:
-        'END_MISSION_STATUS',
-        'TRANS_SYSTEM',
-         'TRANS_SYSTEM_ID',
-         'TRANS_FREQUENCY',
-         'PLATFORM_FAMILY',
-         'PLATFORM_MAKER',
-         'MANUAL_VERSION',
-         'STANDARD_FORMAT_ID',
-         'DAC_FORMAT_ID',
-         'ANOMALY',
-         'BATTERY_TYPE',
-         'BATTERY_PACKS',
-         'CONTROLLER_BOARD_TYPE_PRIMARY',
-         'CONTROLLER_BOARD_TYPE_SECONDARY',
-         'CONTROLLER_BOARD_SERIAL_NO_PRIMARY',
-         'CONTROLLER_BOARD_SERIAL_NO_SECONDARY',
-         'SPECIAL_FEATURES',
-         'FLOAT_OWNER',
-         'OPERATING_INSTITUTION',
-         'CUSTOMISATION',
-         'DEPLOYMENT_PLATFORM',
-         'DEPLOYMENT_CRUISE_ID',
-         'DEPLOYMENT_REFERENCE_STATION_ID',
-         'LAUNCH_CONFIG_PARAMETER_NAME',
-         'CONFIG_PARAMETER_NAME',
-         'CONFIG_MISSION_COMMENT',
-         'SENSOR',
-         'SENSOR_MAKER',
-         'SENSOR_MODEL',
-         'SENSOR_SERIAL_NO',
-         'PARAMETER_SENSOR',
-         'PARAMETER_UNITS',
-         'PARAMETER_ACCURACY',
-         'PARAMETER_RESOLUTION',
-         'PREDEPLOYMENT_CALIB_EQUATION',
-         'PREDEPLOYMENT_CALIB_COEFFICIENT',
-         'PREDEPLOYMENT_CALIB_COMMENT',
-    ]
-
-    [list_str.append("PROFILE_{}_QC".format(v)) for v in list(ArgoNVSReferenceTables().tbl(3)["altLabel"])]
-
-    list_int = [
-        "PLATFORM_NUMBER",
-        "WMO_INST_TYPE",
-        "WMO_INST_TYPE",
-        "CYCLE_NUMBER",
-        "CONFIG_MISSION_NUMBER",
-
-        # Trajectory file variables:
-        'JULD_STATUS', 'JULD_ADJUSTED_STATUS', 'JULD_DESCENT_START_STATUS',
-        'JULD_FIRST_STABILIZATION_STATUS', 'JULD_DESCENT_END_STATUS', 'JULD_PARK_START_STATUS', 'JULD_PARK_END_STATUS',
-        'JULD_DEEP_DESCENT_END_STATUS', 'JULD_DEEP_PARK_START_STATUS', 'JULD_DEEP_ASCENT_START_STATUS',
-        'JULD_ASCENT_START_STATUS', 'JULD_ASCENT_END_STATUS', 'JULD_TRANSMISSION_START_STATUS',
-        'JULD_FIRST_MESSAGE_STATUS', 'JULD_FIRST_LOCATION_STATUS', 'JULD_LAST_LOCATION_STATUS',
-        'JULD_LAST_MESSAGE_STATUS', 'JULD_TRANSMISSION_END_STATUS', 'REPRESENTATIVE_PARK_PRESSURE_STATUS',
-    ]
-    list_datetime = [
-        "REFERENCE_DATE_TIME",
-        "DATE_CREATION",
-        "DATE_UPDATE",
-        "JULD",
-        "JULD_LOCATION",
-        "SCIENTIFIC_CALIB_DATE",
-        "HISTORY_DATE",
-        "TIME",
-
-        # Metadata file variables:
-        'LAUNCH_DATE', 'START_DATE', 'STARTUP_DATE', 'END_MISSION_DATE',
-    ]
-
-    def cast_this(da, type):
-        """ Low-level casting of DataArray values """
-        try:
-            # da.values = da.values.astype(type)
-            da = da.astype(type)
-            da.attrs["casted"] = 1
-        except Exception:
-            print("Oops!", sys.exc_info()[0], "occurred.")
-            print("Fail to cast %s[%s] from '%s' to %s" % (da.name, da.dims, da.dtype, type))
-            try:
-                print("Unique values:", np.unique(da))
-            except:
-                print("Can't read unique values !")
-                pass
-        return da
-
-    def cast_this_da(da):
-        """ Cast any DataArray """
-        # print("Casting %s ..." % da.name)
-        da.attrs["casted"] = 0
-
-        if v in list_str and da.dtype == "O":  # Object
-            da = cast_this(da, str)
-
-        if v in list_int:  # and da.dtype == 'O':  # Object
-            if (
-                    "conventions" in da.attrs
-                    and da.attrs["conventions"] in ["Argo reference table 19", "Argo reference table 21"]
-            ):
-                # Some values may be missing, and the _FillValue=" " cannot be casted as an integer.
-                # so, we replace missing values with a 999:
-                val = da.astype(str).values
-                val[np.where(val == 'nan')] = '999'
-                da.values = val
-            da = cast_this(da, int)
-
-        if v in list_datetime and da.dtype == "O":  # Object
-            if (
-                    "conventions" in da.attrs
-                    and da.attrs["conventions"] == "YYYYMMDDHHMISS"
-            ):
-                if da.size != 0:
-                    if len(da.dims) <= 1:
-                        val = da.astype(str).values.astype("U14")
-                        # This should not happen, but still ! That's real world data
-                        val[val == "              "] = "nan"
-                        da.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
-                    else:
-                        s = da.stack(dummy_index=da.dims)
-                        val = s.astype(str).values.astype("U14")
-                        # This should not happen, but still ! That's real world data
-                        val[val == "              "] = "nan"
-                        s.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
-                        da.values = s.unstack("dummy_index")
-                    da = cast_this(da, 'datetime64[s]')
-                else:
-                    da = cast_this(da, 'datetime64[s]')
-
-            elif v == "SCIENTIFIC_CALIB_DATE":
-                da = cast_this(da, str)
-                s = da.stack(dummy_index=da.dims)
-                s.values = pd.to_datetime(s.values, format="%Y%m%d%H%M%S")
-                da.values = (s.unstack("dummy_index")).values
-                da = cast_this(da, 'datetime64[s]')
-
-        if "QC" in v and "PROFILE" not in v and "QCTEST" not in v:
-            if da.dtype == "O":  # convert object to string
-                da = cast_this(da, str)
-
-            # Address weird string values:
-            # (replace missing or nan values by a '0' that will be cast as an integer later
-
-            if da.dtype == "<U3":  # string, len 3 because of a 'nan' somewhere
-                ii = (
-                        da == "   "
-                )  # This should not happen, but still ! That's real world data
-                da = xr.where(ii, "0", da)
-
-                ii = (
-                        da == "nan"
-                )  # This should not happen, but still ! That's real world data
-                da = xr.where(ii, "0", da)
-
-                # Get back to regular U1 string
-                da = cast_this(da, np.dtype("U1"))
-
-            if da.dtype == "<U1":  # string
-                ii = (
-                        da == ""
-                )  # This should not happen, but still ! That's real world data
-                da = xr.where(ii, "0", da)
-
-                ii = (
-                        da == " "
-                )  # This should not happen, but still ! That's real world data
-                da = xr.where(ii, "0", da)
-
-                ii = (
-                        da == "n"
-                )  # This should not happen, but still ! That's real world data
-                da = xr.where(ii, "0", da)
-
-            # finally convert QC strings to integers:
-            da = cast_this(da, int)
-
-        if da.dtype != "O":
-            da.attrs["casted"] = 1
-
-        return da
-
-    for v in ds.variables:
-        try:
-            ds[v] = cast_this_da(ds[v])
-        except Exception:
-            print("Oops!", sys.exc_info()[0], "occurred.")
-            print("Fail to cast: %s " % v)
-            print("Encountered unique values:", np.unique(ds[v]))
-            raise
-
-    return ds
-
-
 @xr.register_dataset_accessor("argo")
 class ArgoAccessor:
     """Class registered under scope ``argo`` to access a :class:`xarray.Dataset` object.
 
-        Examples
-        --------
-
-        - Ensure all variables are of the Argo required dtype with:
-        >>> ds.argo.cast_types()
-
-        - Convert a collection of points into a collection of profiles:
-        >>> ds.argo.point2profile()
-
-        - Convert a collection of profiles to a collection of points:
-        >>> ds.argo.profile2point()
-
-        - Filter measurements according to data mode:
-        >>> ds.argo.filter_data_mode()
-
-        - Filter measurements according to QC flag values:
-        >>> ds.argo.filter_qc(QC_list=[1, 2], QC_fields='all')
-
-        - Filter variables according OWC salinity calibration requirements:
-        >>> ds.argo.filter_scalib_pres(force='default')
-
-        - Interpolate measurements on pressure levels:
-        >>> ds.argo.inter_std_levels(std_lev=[10., 500., 1000.])
-
-        - Group and reduce measurements by pressure bins:
-        >>> ds.argo.groupby_pressure_bins(bins=[0, 200., 500., 1000.])
-
-        - Compute and add additional variables to the dataset:
-        >>> ds.argo.teos10(vlist='PV')
-
-        - Preprocess data for OWC salinity calibration:
-        >>> ds.argo.create_float_source("output_folder")
+    Examples
+    --------
+    - Ensure all variables are of the Argo required dtype with:
+    >>> ds.argo.cast_types()
+    - Convert a collection of points into a collection of profiles:
+    >>> ds.argo.point2profile()
+    - Convert a collection of profiles to a collection of points:
+    >>> ds.argo.profile2point()
+    - Filter measurements according to data mode:
+    >>> ds.argo.filter_data_mode()
+    - Filter measurements according to QC flag values:
+    >>> ds.argo.filter_qc(QC_list=[1, 2], QC_fields='all')
+    - Filter variables according OWC salinity calibration requirements:
+    >>> ds.argo.filter_scalib_pres(force='default')
+    - Interpolate measurements on pressure levels:
+    >>> ds.argo.inter_std_levels(std_lev=[10., 500., 1000.])
+    - Group and reduce measurements by pressure bins:
+    >>> ds.argo.groupby_pressure_bins(bins=[0, 200., 500., 1000.])
+    - Compute and add additional variables to the dataset:
+    >>> ds.argo.teos10(vlist='PV')
+    - Preprocess data for OWC salinity calibration:
+    >>> ds.argo.create_float_source("output_folder")
 
      """
 
@@ -443,11 +195,7 @@ class ArgoAccessor:
         return this
 
     def cast_types(self):  # noqa: C901
-        """ Make sure variables are of the appropriate types according to Argo
-
-            #todo: This is hard coded, but should be retrieved from an API somewhere.
-            Should be able to handle all possible variables encountered in the Argo dataset.
-        """
+        """ Make sure variables are of the appropriate types according to Argo """
         ds = self._obj
         return cast_Argo_variable_type(ds)
 
@@ -665,7 +413,7 @@ class ArgoAccessor:
 
         # Misc formatting
         new_ds = new_ds.sortby("TIME")
-        new_ds = new_ds.argo.cast_types() if not drop else cast_types(new_ds)
+        new_ds = new_ds.argo.cast_types() if not drop else cast_Argo_variable_type(new_ds)
         new_ds = new_ds[np.sort(new_ds.data_vars)]
         new_ds.encoding = self.encoding  # Preserve low-level encoding information
         new_ds.attrs = self.attrs  # Preserve original attributes
@@ -1254,7 +1002,7 @@ class ArgoAccessor:
 
         This method can be used to subsample and align an irregular dataset (pressure not being similar in all profiles)
         on a set of pressure bins. The output dataset could then be used to perform statistics along the ``N_PROF`` dimension
-        because ``N_LEVELS`` will corresponds to similar pressure bins, while avoiding to interpolate data.
+        because ``N_LEVELS`` will correspond to similar pressure bins, while avoiding to interpolate data.
 
         Parameters
         ----------
@@ -2142,15 +1890,22 @@ class ArgoAccessor:
             return list_1d, dummy_argo_uid
 
 
-def my_open_dataset(filename_or_obj):
+def open_Argo_dataset(filename_or_obj):
     ds = xr.open_dataset(filename_or_obj, decode_cf=1, use_cftime=0, mask_and_scale=1)
     ds = cast_Argo_variable_type(ds)
     return ds
 
 
 class ArgoEngine(BackendEntrypoint):
+    """ Backend for Argo netCDF files based on the xarray netCDF4 engine
+
+        It can open any Argo ".nc" files with 'Argo' in their global attribute 'Conventions'.
+
+        But it will not be detected as valid backend for netcdf files, so make
+        sure to specify ``engine="argo"`` in :func:`xarray.open_dataset`.
+    """
     description = "Open Argo netCDF files (.nc)"
-    url = "https://argopy.readthedocs.io/"
+    url = "https://argopy.readthedocs.io/en/latest/generated/argopy.xarray.ArgoEngine.html#argopy.xarray.ArgoEngine"
 
     def open_dataset(
         self,
@@ -2160,7 +1915,7 @@ class ArgoEngine(BackendEntrypoint):
         # other backend specific keyword arguments
         # `chunks` and `cache` DO NOT go here, they are handled by xarray
     ):
-        return my_open_dataset(filename_or_obj)
+        return open_Argo_dataset(filename_or_obj)
 
     open_dataset_parameters = ["filename_or_obj"]
 
