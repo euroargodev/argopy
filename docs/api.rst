@@ -249,9 +249,6 @@ Argo index store
 .. autosummary::
     :toctree: generated/
 
-    argopy.stores.indexstore
-    argopy.stores.indexfilter_wmo
-    argopy.stores.indexfilter_box
     argopy.stores.indexstore_pa
     argopy.stores.indexstore_pd
 

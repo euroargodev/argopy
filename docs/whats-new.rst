@@ -8,12 +8,12 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-v0.1.14 (XX Xxx. 2023)
-----------------------
+Coming up on the next release
+-----------------------------
 
 **Features and front-end API**
 
-- **argopy now provides a specific xarray *engine* to properly read Argo netcdf files**. Using the **argo** engine, the :class:`xarray.DataSet` variables are properly casted, i.e. they now have the appropriate data types (which is not the case otherwise).
+- **argopy now provides a specific xarray *engine* to properly read Argo netcdf files**. Using the **argo** engine, the :class:`xarray.DataSet` variables are properly casted, i.e. they now have the appropriate data types (which is not the case otherwise). This works with ALL Argo netcdf file types (as listed in the `Reference table R01 <http://vocab.nerc.ac.uk/collection/R01/current/>`_).
 
 .. code-block:: python
 
@@ -30,11 +30,36 @@ v0.1.14 (XX Xxx. 2023)
         f = CTDRefDataFetcher(box=[15, 30, -70, -60, 0, 5000.0])
         ds = f.to_xarray()
 
+- **Index store can now export search results to standard Argo index file format**. See all details in :ref:`Store: Low-level Argo Index access`. (:pr:`260`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy.stores import indexstore_pd as indexstore
+    # or:
+    # from argopy.stores import indexstore_pa as indexstore
+
+    idx = indexstore().search_wmo(3902131)  # Perform any search
+    idx.to_indexfile('short_index.txt')  # export search results as standard Argo index csv file
+
+
+- **Index store can now load/search the Argo Bio and Synthetic profile index files**. Simply gives the name of the Bio or Synthtetic Profile index file and retrieve the full index. This  store also comes with a new search criteria fro BGC: by parameters. See all details in :ref:`Store: Low-level Argo Index access`.  (:pr:`261`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy.stores import indexstore_pd as indexstore
+    # or:
+    # from argopy.stores import indexstore_pa as indexstore
+
+    idx = indexstore(index_file="argo_bio-profile_index.txt").load()
+    idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
+
+- New option to control the expiration time of cache file ``cache_expiration``. 
+
 **Internals**
 
 - Use a mocked server for all http and GDAC ftp requests in CI tests (:pr:`249`, :pr:`252`, :pr:`255`) by `G. Maze <http://www.github.com/gmaze>`_
 - Removed support for minimal dependency requirements and for python 3.7. (:pr:`252`) by `G. Maze <http://www.github.com/gmaze>`_
-- Changed License from Apache to `CeCILL 2.1 <http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html>`_ (:commit:`3eadce73bab1c4bd1a770af196fc8bd1126e8ad2`)
+- Changed License from Apache to `EUPL 1.2 <https://opensource.org/license/eupl-1-2>`_
 
 v0.1.13 (28 Mar. 2023)
 ----------------------

@@ -22,7 +22,8 @@ DATA_SOURCE = "src"
 FTP = "ftp"
 ERDDAP = 'erddap'
 DATASET = "dataset"
-DATA_CACHE = "cachedir"
+CACHE_FOLDER = "cachedir"
+CACHE_EXPIRATION = "cache_expiration"
 USER_LEVEL = "mode"
 API_TIMEOUT = "api_timeout"
 TRUST_ENV = "trust_env"
@@ -36,7 +37,8 @@ OPTIONS = {
     FTP: "https://data-argo.ifremer.fr",
     ERDDAP: "https://erddap.ifremer.fr/erddap",
     DATASET: "phy",
-    DATA_CACHE: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
+    CACHE_FOLDER: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
+    CACHE_EXPIRATION: 86400,
     USER_LEVEL: "standard",
     API_TIMEOUT: 60,
     TRUST_ENV: False,
@@ -77,7 +79,8 @@ _VALIDATORS = {
     FTP: validate_ftp,
     ERDDAP: validate_http,
     DATASET: _DATASET_LIST.__contains__,
-    DATA_CACHE: os.path.exists,
+    CACHE_FOLDER: os.path.exists,
+    CACHE_EXPIRATION: lambda x: isinstance(x, int) and x > 0,
     USER_LEVEL: _USER_LEVEL_LIST.__contains__,
     API_TIMEOUT: lambda x: isinstance(x, int) and x > 0,
     TRUST_ENV: lambda x: isinstance(x, bool),
@@ -102,6 +105,8 @@ class set_options:
         Default: None
     - ``cachedir``: Absolute path to a local cache directory.
         Default: ``~/.cache/argopy``
+    - ``cache_expiration``: Expiration delay of cache files in seconds.
+        Default: 86400
     - ``mode``: User mode.
         Default: ``standard``.
         Possible values: ``standard`` or ``expert``.

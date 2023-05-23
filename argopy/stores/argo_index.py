@@ -73,7 +73,7 @@ class indexfilter_proto(ABC):
 
 
 class indexfilter_wmo(indexfilter_proto):
-    """ Index filter based on WMO and/or CYCLE_NUMER
+    """ Legacy Index filter based on WMO and/or CYCLE_NUMER. Deprecated soon.
 
     This is intended to be used by instances of an indexstore
 
@@ -287,7 +287,7 @@ class indexfilter_wmo(indexfilter_proto):
 
 
 class indexfilter_box(indexfilter_proto):
-    """ Index filter based on LATITUDE, LONGITUDE, DATE
+    """ Legacy Index filter based on LATITUDE, LONGITUDE, DATE. Deprecated soon.
 
     This is intended to be used by instances of an indexstore
 
@@ -445,7 +445,7 @@ class indexfilter_box(indexfilter_proto):
 
 
 class indexstore():
-    """Legacy Argo index store.
+    """Legacy Argo index store. Deprecated soon.
 
     Examples
     --------

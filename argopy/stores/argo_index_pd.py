@@ -9,8 +9,8 @@ import pandas as pd
 import logging
 import gzip
 
-from ..errors import DataNotFound
-from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, doc_inherit
+from ..errors import DataNotFound, InvalidDatasetStructure
+from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, doc_inherit, to_list
 from .argo_index_proto import ArgoIndexStoreProto
 
 
@@ -46,11 +46,10 @@ class indexstore_pandas(ArgoIndexStoreProto):
             return this_table
 
         def csv2index(obj, origin):
-            index_file = origin.split(self.fs['src'].fs.sep)[-1]
             index = read_csv(obj, nrows=nrows)
             check_index_cols(
                 index.columns.to_list(),
-                convention=index_file.split(".")[0],
+                convention=self.convention,
             )
             log.debug("Argo index file loaded with pandas read_csv. src='%s'" % origin)
             return index
@@ -191,6 +190,21 @@ class indexstore_pandas(ArgoIndexStoreProto):
         wmo = np.unique(results)
         return wmo
 
+    def read_params(self, index=False):
+        if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
+            raise InvalidDatasetStructure("Cannot list parameters in this index (not a BGC profile index)")
+        if hasattr(self, "search") and not index:
+            df = self.search['parameters']
+        else:
+            df = self.index['parameters']
+        plist = set(df[0].split(" "))
+        def fct(row):
+            row = row.split(" ")
+            [plist.add(v) for v in row]
+            return len(row)
+        df.map(fct)
+        return sorted(list(plist))
+
     def records_per_wmo(self, index=False):
         """ Return the number of records per unique WMOs in search results
 
@@ -324,3 +338,46 @@ class indexstore_pandas(ArgoIndexStoreProto):
         self.search_filter = np.logical_and.reduce(filt)
         self.run(nrows=nrows)
         return self
+
+    def search_params(self, PARAMs, nrows=None):
+        if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
+            raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC profile index)")
+        log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
+        PARAMs = to_list(PARAMs)  # Make sure we deal with a list
+        self.load()
+        self.search_type = {"PARAM": PARAMs}
+        filt = []
+        for param in PARAMs:
+            filt.append(
+                self.index["parameters"].str.contains("%s" % param, regex=True, case=False)
+            )
+        self.search_filter = np.logical_and.reduce(filt)
+        self.run(nrows=nrows)
+        return self
+
+    def to_indexfile(self, outputfile):
+        """Save search results on file, following the Argo standard index formats
+
+        Parameters
+        ----------
+        file: str
+            File path to write search results to
+
+        Returns
+        -------
+        str
+        """
+
+        if self.convention == "ar_index_global_prof":
+            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
+                               'date_update']
+        elif self.convention in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
+            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
+                               'parameters', 'parameter_data_mode', 'date_update']
+
+        self.search.to_csv(outputfile, sep=',', index=False, index_label=False,
+                      header=False,
+                      columns=columns)
+        outputfile = self._insert_header(outputfile)
+
+        return outputfile

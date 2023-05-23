@@ -3,6 +3,7 @@ Argo file index store prototype
 
 """
 
+import os
 import numpy as np
 import pandas as pd
 import logging
@@ -12,7 +13,7 @@ from fsspec.core import split_protocol
 from urllib.parse import urlparse
 
 from ..options import OPTIONS
-from ..errors import FtpPathError, InvalidDataset
+from ..errors import FtpPathError, InvalidDataset, OptionValueError
 from ..utilities import Registry, isconnected
 from .filesystems import httpstore, memorystore, filestore, ftpstore
 
@@ -40,13 +41,14 @@ class ArgoIndexStoreProto(ABC):
         >>> idx = indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt")
         >>> idx = indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt", cache=True)
 
-        Index methods and properties:
+        Full index methods and properties:
 
         >>> idx.load()
         >>> idx.load(nrows=12)  # Only load the first N rows of the index
         >>> idx.N_RECORDS  # Shortcut for length of 1st dimension of the index array
         >>> idx.index  # internal storage structure of the full index (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
         >>> idx.shape  # shape of the full index array
+        >>> idx.convention  # What is the expected index format (core vs BGC profile index)
         >>> idx.uri_full_index  # List of absolute path to files from the full index table column 'file'
         >>> idx.to_dataframe(index=True)  # Convert index to user-friendly :class:`pandas.DataFrame`
         >>> idx.to_dataframe(index=True, nrows=2)  # Only returns the first nrows of the index
@@ -59,18 +61,20 @@ class ArgoIndexStoreProto(ABC):
         >>> idx.search_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
         >>> idx.search_lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
         >>> idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
+        >>> idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])  # Take a list of strings, only for BGC index !
         >>> idx.N_MATCH  # Shortcut for length of 1st dimension of the search results array
         >>> idx.search  # Internal table with search results
         >>> idx.uri  # List of absolute path to files from the search results table column 'file'
         >>> idx.run()  # Run the search and save results in cache if necessary
         >>> idx.to_dataframe()  # Convert search results to user-friendly :class:`pandas.DataFrame`
         >>> idx.to_dataframe(nrows=2)  # Only returns the first nrows of the search results
-
+        >>> idx.to_indexfile("search_index.txt")  # Export search results to Argo standard index file
 
         Misc:
 
         >>> idx.cname
         >>> idx.read_wmo
+        >>> idx.read_params
         >>> idx.records_per_wmo
 
     """
@@ -84,6 +88,9 @@ class ArgoIndexStoreProto(ABC):
     ext = None
     """Storage file extension"""
 
+    convention_supported = ["ar_index_global_prof", "argo_bio-profile_index", "argo_synthetic-profile_index"]
+    """List of supported conventions"""
+
     def __init__(
         self,
         host: str = "https://data-argo.ifremer.fr",
@@ -91,6 +98,7 @@ class ArgoIndexStoreProto(ABC):
         cache: bool = False,
         cachedir: str = "",
         timeout: int = 0,
+        convention: str = None,
     ):
         """ Create an Argo index file store
 
@@ -103,8 +111,10 @@ class ArgoIndexStoreProto(ABC):
                 Name of the csv-like text file with the index
             cache : bool, default: False
                 Use cache or not.
-            cachedir : str, default: OPTIONS['cachedir'])
+            cachedir : str, default: OPTIONS['cachedir']
                 Folder where to store cached files
+            convention: str, default: ``ar_index_global_prof``
+                Set the expected format convention of the index file. This is useful when trying to load index file with custom name.
         """
         self.host = host
         self.index_file = index_file
@@ -153,10 +163,18 @@ class ArgoIndexStoreProto(ABC):
         if not index_found:
             raise FtpPathError("Index file does not exist: %s" % self.index_path)
 
+        if convention is None:
+            # Try to infer the convention from the file name:
+            convention = index_file.split(self.fs['src'].fs.sep)[-1].split(".")[0]
+        if convention not in self.convention_supported:
+            raise OptionValueError("Convention '%s' is not supported, it must be one in: %s" % (convention, self.convention_supported))
+        self._convention = convention
+
     def __repr__(self):
         summary = ["<argoindex.%s>" % self.backend]
         summary.append("Host: %s" % self.host)
         summary.append("Index: %s" % self.index_file)
+        summary.append("Convention: %s (%s)" % (self.convention, self.convention_title))
         if hasattr(self, "index"):
             summary.append("Loaded: True (%i records)" % self.N_RECORDS)
         else:
@@ -237,6 +255,10 @@ class ArgoIndexStoreProto(ABC):
                 cname = ";".join(["CYC%i" % cyc for cyc in sorted(CYC)])
             cname = "%s" % cname
 
+        elif "PARAM" in self.search_type:
+            PARAM = self.search_type["PARAM"]
+            cname = "-".join(PARAM)
+
         return cname
 
     def _sha_from(self, path):
@@ -312,6 +334,22 @@ class ArgoIndexStoreProto(ABC):
             return self.search.shape[0]
         else:
             raise InvalidDataset("Initialised search first !")
+
+    @property
+    def convention(self):
+        """Convention of the index (standard csv file name)"""
+        return self._convention
+
+    @property
+    def convention_title(self):
+        """Long name for the index convention"""
+        if self.convention == 'ar_index_global_prof':
+            title = 'Profile directory file of the Argo GDAC'
+        elif self.convention == 'argo_bio-profile_index':
+            title = 'Bio-Profile directory file of the Argo GDAC'
+        elif self.convention == 'argo_synthetic-profile_index':
+            title = 'Synthetic-Profile directory file of the Argo GDAC'
+        return title
 
     def _same_origin(self, path):
         """Compare origin of path with current memory fs"""
@@ -493,6 +531,10 @@ class ArgoIndexStoreProto(ABC):
 
         return df
 
+    def to_indexfile(self):
+        """Save search results on file, following the Argo standard index format"""
+        raise NotImplementedError("Not implemented")
+
     @property
     @abstractmethod
     def search_path(self):
@@ -528,7 +570,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def load(self, nrows=None, force=False):
-        """ Load an Argo-index file content
+        """ Load an Argo-index file content in memory
 
         Fill in self.index internal property
         If store is cached, caching is triggered here
@@ -549,7 +591,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def run(self):
-        """ Filter index with search criteria
+        """ Filter index with search criteria (internal use)
 
         Fill in self.search internal property
         If store is cached, caching is triggered here
@@ -566,7 +608,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def read_wmo(self):
-        """ Return list of unique WMOs in search results
+        """ Return list of unique WMOs in index or search results
 
         Fall back on full index if search not found
 
@@ -577,8 +619,20 @@ class ArgoIndexStoreProto(ABC):
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
+    def read_params(self):
+        """ Return list of unique PARAMETERs in index or search results
+
+        Fall back on full index if search not found
+
+        Returns
+        -------
+        list(str)
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
     def records_per_wmo(self):
-        """ Return the number of records per unique WMOs in search results
+        """ Return the number of records per unique WMOs in index or search results
 
         Fall back on full index if search not found
 
@@ -697,3 +751,71 @@ class ArgoIndexStoreProto(ABC):
 
         """
         raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def search_params(self, PARAMs):
+        """ Search index for a list of parameters
+
+        Parameters
+        ----------
+        PARAMs : list()
+            A list of strings to search Argo records for.
+
+        Examples
+        --------
+        >>> idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
+
+        Warnings
+        --------
+        This method is only available for index following the 'argo_bio-profile_index' convention.
+
+        """
+        raise NotImplementedError("Not implemented")
+
+
+
+    def _insert_header(self, originalfile):
+        if self.convention == "ar_index_global_prof":
+            header = """# Title : Profile directory file of the Argo Global Data Assembly Center
+# Description : The directory file describes all individual profile files of the argo GDAC ftp site.
+# Project : ARGO
+# Format version : 2.0
+# Date of update : %s
+# FTP root number 1 : ftp://ftp.ifremer.fr/ifremer/argo/dac
+# FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
+# GDAC node : CORIOLIS
+file,date,latitude,longitude,ocean,profiler_type,institution,date_update
+""" % pd.to_datetime('now', utc=True).strftime('%Y%m%d%H%M%S')
+
+        elif self.convention == "argo_bio-profile_index":
+            header = """# Title : Bio-Profile directory file of the Argo Global Data Assembly Center
+# Description : The directory file describes all individual bio-profile files of the argo GDAC ftp site.
+# Project : ARGO
+# Format version : 2.2
+# Date of update : %s
+# FTP root number 1 : ftp://ftp.ifremer.fr/ifremer/argo/dac
+# FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
+# GDAC node : CORIOLIS
+file,date,latitude,longitude,ocean,profiler_type,institution,parameters,parameter_data_mode,date_update
+""" % pd.to_datetime('now', utc=True).strftime('%Y%m%d%H%M%S')
+
+        elif self.convention == "argo_synthetic-profile_index":
+            header = """# Title : Synthetic-Profile directory file of the Argo Global Data Assembly Center
+# Description : The directory file describes all individual synthetic-profile files of the argo GDAC ftp site.
+# Project : ARGO
+# Format version : 2.2
+# Date of update : %s
+# FTP root number 1 : ftp://ftp.ifremer.fr/ifremer/argo/dac
+# FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
+# GDAC node : CORIOLIS
+file,date,latitude,longitude,ocean,profiler_type,institution,parameters,parameter_data_mode,date_update
+"""  % pd.to_datetime('now', utc=True).strftime('%Y%m%d%H%M%S')
+
+        with open(originalfile, 'r') as f:
+            data = f.read()
+
+        with open(originalfile, 'w') as f:
+            f.write(header)
+            f.write(data)
+
+        return originalfile
