@@ -36,6 +36,7 @@ Required dependencies
 - scipy
 - toolz
 - xarray
+- requests
 
 Note that Erddapy_ is required because `erddap <https://coastwatch.pfeg.noaa.gov/erddap/information.html>`_ is the default data fetching backend.
 

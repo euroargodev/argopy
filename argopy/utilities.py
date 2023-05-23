@@ -493,6 +493,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
             ("aiohttp", lambda mod: mod.__version__),
             ("packaging", lambda mod: mod.__version__),  # will come with xarray, Using 'version' to make API compatible with several fsspec releases
             ("toolz", lambda mod: mod.__version__),
+            ("requests", lambda mod: mod.__version__),
         ]),
         'ext.util': sorted([
             ("gsw", lambda mod: mod.__version__),   # Used by xarray accessor to compute new variables
