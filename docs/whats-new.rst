@@ -7,7 +7,6 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-
 Coming up on the next release
 -----------------------------
 
