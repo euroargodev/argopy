@@ -13,6 +13,8 @@ Coming up on the next release
 
 **Features and front-end API**
 
+- **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`Store: Low-level Argo Index access`.
+
 - **Argopy now provides authenticated access to the Argo reference database for DMQC**. Using user/password new **argopy** options, it is now possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
