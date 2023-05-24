@@ -82,7 +82,7 @@ class Test_IndexFilter_WMO:
                     assert results is None
 
 
-@skip_this
+@pytest.mark.skipif(True, reason="Deprecated")
 @requires_connection
 class Test_Legacy_IndexStore:
     ftproot, flist = argopy.tutorial.open_dataset("gdac")
