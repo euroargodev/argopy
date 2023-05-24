@@ -409,26 +409,29 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
 
         return ds
 
-    def filter_data_mode(self, ds, **kwargs):
+    def filter_data_mode(self, ds: xr.Dataset, **kwargs):
         ds = ds.argo.filter_data_mode(errors="ignore", **kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
-    def filter_qc(self, ds, **kwargs):
+    def filter_qc(self, ds: xr.Dataset, **kwargs):
         ds = ds.argo.filter_qc(**kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
-    def filter_variables(self, ds, mode="standard"):
-        if mode == "standard":
-            to_remove = sorted(
-                list(set(list(ds.data_vars)) - set(list_standard_variables()))
-            )
-            return ds.drop_vars(to_remove)
-        else:
-            return ds
+    def filter_researchmode(self, ds: xr.Dataset, *args, **kwargs) -> xr.Dataset:
+        """Filter dataset for research user mode
+
+            This filter will select only QC=1 delayed mode data with pressure errors smaller than 20db
+
+            Use this filter instead of filter_data_mode and filter_qc
+        """
+        ds = ds.argo.filter_researchmode()
+        if ds.argo._type == "point":
+            ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
+        return ds
 
 
 class Fetch_wmo(FTPArgoDataFetcher):

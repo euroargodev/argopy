@@ -17,6 +17,8 @@ Then, you can request data for a specific **space/time domain**, for a given **f
 
 If you fetch a lot of data, you may want to look at the :ref:`performances` section.
 
+**argopy** manipulates the raw data to make it easier to work with them. To make sure you understand the data you're getting, please look at the :ref:`user-mode` section.
+
 For a space/time domain
 -----------------------
 
