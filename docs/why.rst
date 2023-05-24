@@ -29,12 +29,10 @@ If you don't know in which category you would place yourself, try to answer the 
 * [ ] what is an adjusted parameter ?
 * [ ] what a QC flag of 3 means ?
 
-If you don't answer to more than 1 question: you probably will feel more comfortable with the *standard* user mode.
+If you don't answer to more than 1 question: you probably will feel more comfortable with the *standard* or *research* user modes.
 
-By default, all **argopy** data fetchers are set to work with a **standard** user mode, the other possible mode is **expert**.
+By default, all **argopy** data fetchers are set to work with a **standard** user mode, the other possible modes are **research** and **expert**.
 
-In *standard* mode, fetched data are automatically filtered to account for their quality (only good are retained) and level of processing by the data centers (whether they looked at the data briefly or not).
-
-Selecting user mode is further explained in the dedicated documentation section: :ref:`user-mode`.
+Each user modes and how to select it are further explained in the dedicated documentation section: :ref:`user-mode`.
 
 .. [ADMT] See all the ADMT documentation here: http://www.argodatamgt.org/Documentation

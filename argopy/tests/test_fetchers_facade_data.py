@@ -7,7 +7,8 @@ import argopy
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import (
     InvalidFetcherAccessPoint,
-    InvalidFetcher
+    InvalidFetcher,
+    OptionValueError,
 )
 from argopy.utilities import is_list_of_strings
 from utils import (
@@ -43,10 +44,8 @@ skip_for_debug = pytest.mark.skipif(True, reason="Taking too long !")
 class Test_Facade:
 
     # Use the first valid data source:
-    # src = list(AVAILABLE_SOURCES.keys())[0]
-    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
     src = 'gdac'
-    src_opts = {'ftp': local_ftp}
+    src_opts = {'ftp': argopy.tutorial.open_dataset("gdac")[0]}
 
     def __get_fetcher(self, empty: bool = False, pt: str = 'profile'):
         f = ArgoDataFetcher(src=self.src, **self.src_opts)
@@ -72,17 +71,21 @@ class Test_Facade:
                 return f, ArgoDataFetcher(src=self.src, **self.src_opts).region([-60, -55, 40.0, 45.0, 99.92, 99.99,
                                                                 "2007-08-01", "2007-08-01"])
 
-    def test_invalid_fetcher(self):
-        with pytest.raises(InvalidFetcher):
-            ArgoDataFetcher(src="invalid_fetcher").to_xarray()
+    def test_invalid_mode(self):
+        with pytest.raises(OptionValueError):
+            ArgoDataFetcher(src=self.src, mode='invalid').to_xarray()
+
+    def test_invalid_source(self):
+        with pytest.raises(OptionValueError):
+            ArgoDataFetcher(src="invalid").to_xarray()
+
+    def test_invalid_dataset(self):
+        with pytest.raises(OptionValueError):
+            ArgoDataFetcher(src=self.src, ds='invalid')
 
     def test_invalid_accesspoint(self):
         with pytest.raises(InvalidFetcherAccessPoint):
             self.__get_fetcher()[0].invalid_accesspoint.to_xarray()
-
-    def test_invalid_dataset(self):
-        with pytest.raises(ValueError):
-            ArgoDataFetcher(src=self.src, ds='dummy_ds')
 
     def test_warnings(self):
         with pytest.warns(UserWarning):
@@ -179,3 +182,14 @@ class Test_Facade:
     def test_domain(self):
         f, fetcher = self.__get_fetcher(pt='float')
         fetcher.domain
+
+    def test_dashboard(self):
+        f, fetcher = self.__get_fetcher(pt='float')
+        assert isinstance(fetcher.dashboard(url_only=True), str)
+
+        f, fetcher = self.__get_fetcher(pt='profile')
+        assert isinstance(fetcher.dashboard(url_only=True), str)
+
+        with pytest.warns(UserWarning):
+            f, fetcher = self.__get_fetcher(pt='region')
+            fetcher.dashboard(url_only=True)

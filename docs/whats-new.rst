@@ -13,6 +13,8 @@ Coming up on the next release
 
 **Features and front-end API**
 
+- **New 'research' user mode**. This new feature implements automatic filtering of Argo data following international recommendations for research/climate studies. With this user mode, only Delayed Mode with good QC data are returned. Check out the :ref:`user-mode` section for all the details. (:pr:`265`) by `G. Maze <http://www.github.com/gmaze>`_
+
 - **argopy now provides a specific xarray engine to properly read Argo netcdf files**. Using ``engine='argo'`` in :func:`xarray.open_dataset`, all variables will properly be casted, i.e. returned with their expected data types, which is not the case otherwise. This works with *ALL* Argo netcdf file types (as listed in the `Reference table R01 <http://vocab.nerc.ac.uk/collection/R01/current/>`_).  (:pr:`208`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
