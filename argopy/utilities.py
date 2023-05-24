@@ -3559,16 +3559,16 @@ def cast_types(ds):  # noqa: C901
                         #
                         s.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
                         da.values = s.unstack("dummy_index")
-                    da = cast_this(da, np.datetime64)
+                    da = cast_this(da, 'datetime64[s]')
                 else:
-                    da = cast_this(da, np.datetime64)
+                    da = cast_this(da, 'datetime64[s]')
 
             elif v == "SCIENTIFIC_CALIB_DATE":
                 da = cast_this(da, str)
                 s = da.stack(dummy_index=da.dims)
                 s.values = pd.to_datetime(s.values, format="%Y%m%d%H%M%S")
                 da.values = (s.unstack("dummy_index")).values
-                da = cast_this(da, np.datetime64)
+                da = cast_this(da, 'datetime64[s]')
 
         if "QC" in v and "PROFILE" not in v and "QCTEST" not in v:
             if da.dtype == "O":  # convert object to string
