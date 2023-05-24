@@ -36,7 +36,7 @@ Coming up on the next release
 
 **Internals**
 
-- Update new argovis dashboard links for floats and profiles.
+- Update new argovis dashboard links for floats and profiles. (:pr:`271`) by `G. Maze <http://www.github.com/gmaze>`_
 
 - **Index store can now export search results to standard Argo index file format**. See all details in :ref:`Store: Low-level Argo Index access`. (:pr:`260`) by `G. Maze <http://www.github.com/gmaze>`_
 
