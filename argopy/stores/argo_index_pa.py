@@ -33,7 +33,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
     With this store, index and search results are saved as pyarrow/parquet files in cache
 
     """
-    __doc__ += ArgoIndexStoreProto.__doc__
+    # __doc__ += ArgoIndexStoreProto.__doc__
 
     backend = "pyarrow"
 

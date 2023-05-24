@@ -86,10 +86,11 @@ Utilities for Argo related data
    :toctree: generated/
 
    status
-   TopoFetcher
+   ArgoIndex
    ArgoNVSReferenceTables
    OceanOPSDeployments
    CTDRefDataFetcher
+   TopoFetcher
 
 
 .. _Module Visualisation:

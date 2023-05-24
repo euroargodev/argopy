@@ -170,10 +170,6 @@
     argopy.stores.ftpstore.open_dataset
     argopy.stores.ftpstore.open_mfdataset
 
-    argopy.stores.argo_index.indexstore
-    argopy.stores.argo_index.indexfilter_wmo
-    argopy.stores.argo_index.indexfilter_box
-
     argopy.stores.argo_index_proto.ArgoIndexStoreProto
     argopy.stores.argo_index_pa.indexstore_pyarrow
     argopy.stores.argo_index_pa.indexstore_pyarrow.load
@@ -202,6 +198,24 @@
     argopy.stores.argo_index_pd.indexstore_pandas.search_params
     argopy.stores.argo_index_pd.indexstore_pandas.to_dataframe
     argopy.stores.argo_index_pd.indexstore_pandas.to_indexfile
+
+    argopy.stores.ArgoIndex
+    argopy.ArgoIndex
+    argopy.ArgoIndex.N_MATCH
+    argopy.ArgoIndex.N_RECORDS
+    argopy.ArgoIndex.convention_supported
+    argopy.ArgoIndex.load
+    argopy.ArgoIndex.read_wmo
+    argopy.ArgoIndex.read_params
+    argopy.ArgoIndex.search_wmo
+    argopy.ArgoIndex.search_cyc
+    argopy.ArgoIndex.search_wmo_cyc
+    argopy.ArgoIndex.search_tim
+    argopy.ArgoIndex.search_lat_lon
+    argopy.ArgoIndex.search_lat_lon_tim
+    argopy.ArgoIndex.search_params
+    argopy.ArgoIndex.to_dataframe
+    argopy.ArgoIndex.to_indexfile
 
     argopy.xarray.ArgoAccessor.point2profile
     argopy.xarray.ArgoAccessor.profile2point
