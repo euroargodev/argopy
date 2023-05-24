@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+OWNER='euroargodev'
+REPO='argopy'
+
+# Get the ID of the workflow you want to clear and set it
+WORKFLOW_ID=$1
+
+# list runs
+gh api -X GET /repos/$OWNER/$REPO/actions/workflows/$WORKFLOW_ID/runs | jq '.workflow_runs[] | .id'
+
+# delete runs (you'll have to run this multiple times if there's many because of pagination)
+gh api -X GET /repos/$OWNER/$REPO/actions/workflows/$WORKFLOW_ID/runs | jq '.workflow_runs[] | .id' | xargs -I{} gh api -X DELETE /repos/$OWNER/$REPO/actions/runs/{}
