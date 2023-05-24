@@ -63,6 +63,11 @@ try:
 except AttributeError:
     collectionsAbc = collections
 
+try:
+    importlib.import_module('matplotlib')  # noqa: E402
+    from matplotlib.colors import to_hex
+except ImportError:
+    pass
 
 path2pkl = pkg_resources.resource_filename("argopy", "assets/")
 
@@ -491,6 +496,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
             ("aiohttp", lambda mod: mod.__version__),
             ("packaging", lambda mod: mod.__version__),  # will come with xarray, Using 'version' to make API compatible with several fsspec releases
             ("toolz", lambda mod: mod.__version__),
+            ("requests", lambda mod: mod.__version__),
         ]),
         'ext.util': sorted([
             ("gsw", lambda mod: mod.__version__),   # Used by xarray accessor to compute new variables
@@ -861,84 +867,115 @@ def badge(label="label", message="message", color="green", insert=False):
         return Image(url=img)
 
 
-def fetch_status(stdout: str = "html", insert: bool = True):
-    """ Fetch and report web API status
+class fetch_status:
+    """Fetch and report web API status"""
 
-    Parameters
-    ----------
-    stdout: str
-        Format of the results, default is 'html'. Otherwise a simple string.
-    insert: bool
-        Print or display results directly in stdout format.
+    def __init__(self, **kwargs):
+        if "stdout" in kwargs or "insert" in kwargs:
+            warnings.warn("'fetch_status' signature has changed")
+        pass
 
-    Returns
-    -------
-    IPython.display.HTML or str
-    """
-    results = {}
-    list_src = list_available_data_src()
-    for api, mod in list_src.items():
-        if getattr(mod, "api_server_check", None):
-            status = isAPIconnected(api)
-            message = "ok" if status else "offline"
-            results[api] = {"value": status, "message": message}
+    def fetch(self):
+        results = {}
+        list_src = list_available_data_src()
+        for api, mod in list_src.items():
+            if getattr(mod, "api_server_check", None):
+                status = isAPIconnected(api)
+                message = "ok" if status else "offline"
+                results[api] = {"value": status, "message": message}
+        return results
 
-    if "IPython" in sys.modules and stdout == "html":
-        cols = []
-        for api in sorted(results.keys()):
-            color = "green" if results[api]["value"] else "orange"
-            if isconnected():
-                img = badge(
-                    label="src %s is" % api,
-                    message="%s" % results[api]["message"],
-                    color=color,
-                    insert=False,
-                )
-                html = ('<td><img src="{}"></td>').format(img)
-            else:
-                # html = "<th>src %s is:</th><td>%s</td>" % (api, results[api]['message'])
-                html = (
-                    "<th><div>src %s is:</div></th><td><div style='color:%s;'>%s</div></td>"
-                    % (api, color, results[api]["message"])
-                )
-            cols.append(html)
-        this_HTML = ("<table><tr>{}</tr></table>").format("".join(cols))
-        if insert:
-            from IPython.display import HTML, display
-
-            return display(HTML(this_HTML))
-        else:
-            return this_HTML
-    else:
+    @property
+    def text(self):
+        results = self.fetch()
         rows = []
         for api in sorted(results.keys()):
-            # rows.append("argopy src %s: %s" % (api, results[api]['message']))
             rows.append("src %s is: %s" % (api, results[api]["message"]))
-        txt = "\n".join(rows)
-        if insert:
-            print(txt)
-        else:
-            return txt
+        txt = " | ".join(rows)
+        return txt
+
+    def __repr__(self):
+        return self.text
+
+    @property
+    def html(self):
+        results = self.fetch()
+
+        fs = 12
+        def td_msg(bgcolor, txtcolor, txt):
+            style = "background-color:%s;" % to_hex(bgcolor, keep_alpha=True)
+            style+= "border-width:0px;"
+            style+= "padding: 2px 5px 2px 5px;"
+            style+= "text-align:left;"
+            style+= "color:%s" % to_hex(txtcolor, keep_alpha=True)
+            return "<td style='%s'>%s</td>" % (style, str(txt))
+        td_empty = "<td style='border-width:0px;padding: 2px 5px 2px 5px;text-align:left'>&nbsp;</td>"
+
+        html = []
+        html.append("<table style='border-collapse:collapse;border-spacing:0;font-size:%ipx'>" % fs)
+        html.append("<tbody><tr>")
+        cols = []
+        for api in sorted(results.keys()):
+            color = "yellowgreen" if results[api]["value"] else "darkorange"
+            cols.append(td_msg('dimgray', 'w', "src %s is" % api))
+            cols.append(td_msg(color, 'w', results[api]["message"]))
+            cols.append(td_empty)
+        html.append("\n".join(cols))
+        html.append("</tr></tbody>")
+        html.append("</table>")
+        html = "\n".join(html)
+        return html
+
+    def _repr_html_(self):
+        return self.html
 
 
 class monitor_status:
     """ Monitor data source status with a refresh rate """
 
     def __init__(self, refresh=60):
-        import ipywidgets as widgets
-
         self.refresh_rate = refresh
-        self.text = widgets.HTML(
-            value=fetch_status(stdout="html", insert=False),
-            placeholder="",
-            description="",
-        )
-        self.start()
+
+        if self.runner == 'notebook':
+            import ipywidgets as widgets
+
+            self.text = widgets.HTML(
+                value=self.content,
+                placeholder="",
+                description="",
+            )
+            self.start()
+
+    def __repr__(self):
+        if self.runner != 'notebook':
+            return self.content
+        else:
+            return ""
+
+    @property
+    def runner(self) -> str:
+        try:
+            shell = get_ipython().__class__.__name__
+            if shell == 'ZMQInteractiveShell':
+                return 'notebook'  # Jupyter notebook or qtconsole
+            elif shell == 'TerminalInteractiveShell':
+                return 'terminal'  # Terminal running IPython
+            else:
+                return False  # Other type (?)
+        except NameError:
+            return 'standard'  # Probably standard Python interpreter
+
+    @property
+    def content(self):
+        if self.runner == 'notebook':
+            return fetch_status().html
+        else:
+            return fetch_status().text
 
     def work(self):
         while True:
             time.sleep(self.refresh_rate)
-            self.text.value = fetch_status(stdout="html", insert=False)
+            self.text.value = self.content
 
     def start(self):
         from IPython.display import display
@@ -3001,6 +3038,7 @@ class ArgoNVSReferenceTables:
         js = self.fs.open_json(self.get_url(rtid))
         return self._jsCollection(js)
 
+    @property
     def all_tbl(self):
         """Return all Argo Reference tables
 
@@ -3016,6 +3054,7 @@ class ArgoNVSReferenceTables:
         all_tables = collections.OrderedDict(sorted(all_tables.items()))
         return all_tables
 
+    @property
     def all_tbl_name(self):
         """Return names of all Argo Reference tables
 
@@ -3408,6 +3447,7 @@ class OceanOPSDeployments:
         return fig, ax
 
 
+@deprecated
 def cast_types(ds):  # noqa: C901
     """ Make sure variables are of the appropriate types according to Argo
 
@@ -3580,6 +3620,250 @@ def cast_types(ds):  # noqa: C901
         if da.dtype == 'O':
             # By default, try to cast as float:
             da = cast_this(da, np.float32)
+
+        if da.dtype != "O":
+            da.attrs["casted"] = 1
+
+        return da
+
+    for v in ds.variables:
+        try:
+            ds[v] = cast_this_da(ds[v])
+        except Exception:
+            print("Oops!", sys.exc_info()[0], "occurred.")
+            print("Fail to cast: %s " % v)
+            print("Encountered unique values:", np.unique(ds[v]))
+            raise
+
+    return ds
+
+
+def cast_Argo_variable_type(ds):
+    """ Ensure that all dataset variables are of the appropriate types according to Argo references
+
+    Parameter
+    ---------
+    :class:`xarray.DataSet`
+
+    Returns
+    -------
+    :class:`xarray.DataSet`
+    """
+
+    list_str = [
+        "PLATFORM_NUMBER",
+        "DATA_MODE",
+        "DIRECTION",
+        "DATA_CENTRE",
+        "DATA_TYPE",
+        "FORMAT_VERSION",
+        "HANDBOOK_VERSION",
+        "PROJECT_NAME",
+        "PI_NAME",
+        "STATION_PARAMETERS",
+        "DATA_CENTER",
+        "DC_REFERENCE",
+        "DATA_STATE_INDICATOR",
+        "PLATFORM_TYPE",
+        "FIRMWARE_VERSION",
+        "POSITIONING_SYSTEM",
+        "PARAMETER",
+        "SCIENTIFIC_CALIB_EQUATION",
+        "SCIENTIFIC_CALIB_COEFFICIENT",
+        "SCIENTIFIC_CALIB_COMMENT",
+        "HISTORY_INSTITUTION",
+        "HISTORY_STEP",
+        "HISTORY_SOFTWARE",
+        "HISTORY_SOFTWARE_RELEASE",
+        "HISTORY_REFERENCE",
+        "HISTORY_QCTEST",
+        "HISTORY_ACTION",
+        "HISTORY_PARAMETER",
+        "VERTICAL_SAMPLING_SCHEME",
+        "FLOAT_SERIAL_NO",
+        "PARAMETER_DATA_MODE",
+
+        # Trajectory file variables:
+        'TRAJECTORY_PARAMETERS', 'POSITION_ACCURACY', 'GROUNDED', 'SATELLITE_NAME', 'HISTORY_INDEX_DIMENSION',
+
+        # Technical file variables:
+        'TECHNICAL_PARAMETER_NAME', 'TECHNICAL_PARAMETER_VALUE', 'PTT',
+
+        # Metadata file variables:
+        'END_MISSION_STATUS',
+        'TRANS_SYSTEM',
+         'TRANS_SYSTEM_ID',
+         'TRANS_FREQUENCY',
+         'PLATFORM_FAMILY',
+         'PLATFORM_MAKER',
+         'MANUAL_VERSION',
+         'STANDARD_FORMAT_ID',
+         'DAC_FORMAT_ID',
+         'ANOMALY',
+         'BATTERY_TYPE',
+         'BATTERY_PACKS',
+         'CONTROLLER_BOARD_TYPE_PRIMARY',
+         'CONTROLLER_BOARD_TYPE_SECONDARY',
+         'CONTROLLER_BOARD_SERIAL_NO_PRIMARY',
+         'CONTROLLER_BOARD_SERIAL_NO_SECONDARY',
+         'SPECIAL_FEATURES',
+         'FLOAT_OWNER',
+         'OPERATING_INSTITUTION',
+         'CUSTOMISATION',
+         'DEPLOYMENT_PLATFORM',
+         'DEPLOYMENT_CRUISE_ID',
+         'DEPLOYMENT_REFERENCE_STATION_ID',
+         'LAUNCH_CONFIG_PARAMETER_NAME',
+         'CONFIG_PARAMETER_NAME',
+         'CONFIG_MISSION_COMMENT',
+         'SENSOR',
+         'SENSOR_MAKER',
+         'SENSOR_MODEL',
+         'SENSOR_SERIAL_NO',
+         'PARAMETER_SENSOR',
+         'PARAMETER_UNITS',
+         'PARAMETER_ACCURACY',
+         'PARAMETER_RESOLUTION',
+         'PREDEPLOYMENT_CALIB_EQUATION',
+         'PREDEPLOYMENT_CALIB_COEFFICIENT',
+         'PREDEPLOYMENT_CALIB_COMMENT',
+    ]
+
+    [list_str.append("PROFILE_{}_QC".format(v)) for v in list(ArgoNVSReferenceTables().tbl(3)["altLabel"])]
+
+    list_int = [
+        "PLATFORM_NUMBER",
+        "WMO_INST_TYPE",
+        "WMO_INST_TYPE",
+        "CYCLE_NUMBER",
+        "CONFIG_MISSION_NUMBER",
+
+        # Trajectory file variables:
+        'JULD_STATUS', 'JULD_ADJUSTED_STATUS', 'JULD_DESCENT_START_STATUS',
+        'JULD_FIRST_STABILIZATION_STATUS', 'JULD_DESCENT_END_STATUS', 'JULD_PARK_START_STATUS', 'JULD_PARK_END_STATUS',
+        'JULD_DEEP_DESCENT_END_STATUS', 'JULD_DEEP_PARK_START_STATUS', 'JULD_DEEP_ASCENT_START_STATUS',
+        'JULD_ASCENT_START_STATUS', 'JULD_ASCENT_END_STATUS', 'JULD_TRANSMISSION_START_STATUS',
+        'JULD_FIRST_MESSAGE_STATUS', 'JULD_FIRST_LOCATION_STATUS', 'JULD_LAST_LOCATION_STATUS',
+        'JULD_LAST_MESSAGE_STATUS', 'JULD_TRANSMISSION_END_STATUS', 'REPRESENTATIVE_PARK_PRESSURE_STATUS',
+    ]
+    list_datetime = [
+        "REFERENCE_DATE_TIME",
+        "DATE_CREATION",
+        "DATE_UPDATE",
+        "JULD",
+        "JULD_LOCATION",
+        "SCIENTIFIC_CALIB_DATE",
+        "HISTORY_DATE",
+        "TIME",
+
+        # Metadata file variables:
+        'LAUNCH_DATE', 'START_DATE', 'STARTUP_DATE', 'END_MISSION_DATE',
+    ]
+
+    def cast_this(da, type):
+        """ Low-level casting of DataArray values """
+        try:
+            # da.values = da.values.astype(type)
+            da = da.astype(type)
+            da.attrs["casted"] = 1
+        except Exception:
+            print("Oops!", sys.exc_info()[0], "occurred.")
+            print("Fail to cast %s[%s] from '%s' to %s" % (da.name, da.dims, da.dtype, type))
+            try:
+                print("Unique values:", np.unique(da))
+            except:
+                print("Can't read unique values !")
+                pass
+        return da
+
+    def cast_this_da(da):
+        """ Cast any DataArray """
+        # print("Casting %s ..." % da.name)
+        da.attrs["casted"] = 0
+
+        if v in list_str and da.dtype == "O":  # Object
+            da = cast_this(da, str)
+
+        if v in list_int:  # and da.dtype == 'O':  # Object
+            if (
+                    "conventions" in da.attrs
+                    and da.attrs["conventions"] in ["Argo reference table 19", "Argo reference table 21"]
+            ):
+                # Some values may be missing, and the _FillValue=" " cannot be casted as an integer.
+                # so, we replace missing values with a 999:
+                val = da.astype(str).values
+                val[np.where(val == 'nan')] = '999'
+                da.values = val
+            da = cast_this(da, int)
+
+        if v in list_datetime and da.dtype == "O":  # Object
+            if (
+                    "conventions" in da.attrs
+                    and da.attrs["conventions"] == "YYYYMMDDHHMISS"
+            ):
+                if da.size != 0:
+                    if len(da.dims) <= 1:
+                        val = da.astype(str).values.astype("U14")
+                        # This should not happen, but still ! That's real world data
+                        val[val == "              "] = "nan"
+                        da.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
+                    else:
+                        s = da.stack(dummy_index=da.dims)
+                        val = s.astype(str).values.astype("U14")
+                        # This should not happen, but still ! That's real world data
+                        val[val == "              "] = "nan"
+                        s.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
+                        da.values = s.unstack("dummy_index")
+                    da = cast_this(da, 'datetime64[s]')
+                else:
+                    da = cast_this(da, 'datetime64[s]')
+
+            elif v == "SCIENTIFIC_CALIB_DATE":
+                da = cast_this(da, str)
+                s = da.stack(dummy_index=da.dims)
+                s.values = pd.to_datetime(s.values, format="%Y%m%d%H%M%S")
+                da.values = (s.unstack("dummy_index")).values
+                da = cast_this(da, 'datetime64[s]')
+
+        if "QC" in v and "PROFILE" not in v and "QCTEST" not in v:
+            if da.dtype == "O":  # convert object to string
+                da = cast_this(da, str)
+
+            # Address weird string values:
+            # (replace missing or nan values by a '0' that will be cast as an integer later
+
+            if da.dtype == "<U3":  # string, len 3 because of a 'nan' somewhere
+                ii = (
+                        da == "   "
+                )  # This should not happen, but still ! That's real world data
+                da = xr.where(ii, "0", da)
+
+                ii = (
+                        da == "nan"
+                )  # This should not happen, but still ! That's real world data
+                da = xr.where(ii, "0", da)
+
+                # Get back to regular U1 string
+                da = cast_this(da, np.dtype("U1"))
+
+            if da.dtype == "<U1":  # string
+                ii = (
+                        da == ""
+                )  # This should not happen, but still ! That's real world data
+                da = xr.where(ii, "0", da)
+
+                ii = (
+                        da == " "
+                )  # This should not happen, but still ! That's real world data
+                da = xr.where(ii, "0", da)
+
+                ii = (
+                        da == "n"
+                )  # This should not happen, but still ! That's real world data
+                da = xr.where(ii, "0", da)
+
+            # finally convert QC strings to integers:
+            da = cast_this(da, int)
 
         if da.dtype != "O":
             da.attrs["casted"] = 1

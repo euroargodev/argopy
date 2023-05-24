@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import logging
+from xarray.backends import BackendEntrypoint  # For xarray > 0.18
 
 try:
     import gsw
@@ -18,7 +19,7 @@ from argopy.utilities import (
     is_list_of_strings,
     toYearFraction,
     groupby_remap,
-    cast_types,
+    cast_Argo_variable_type,
 )
 from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
@@ -32,34 +33,24 @@ class ArgoAccessor:
 
         Examples
         --------
-
         - Ensure all variables are of the Argo required dtype with:
         >>> ds.argo.cast_types()
-
         - Convert a collection of points into a collection of profiles:
         >>> ds.argo.point2profile()
-
         - Convert a collection of profiles to a collection of points:
         >>> ds.argo.profile2point()
-
         - Filter measurements according to data mode:
         >>> ds.argo.filter_data_mode()
-
         - Filter measurements according to QC flag values:
         >>> ds.argo.filter_qc(QC_list=[1, 2], QC_fields='all')
-
         - Filter variables according OWC salinity calibration requirements:
         >>> ds.argo.filter_scalib_pres(force='default')
-
         - Interpolate measurements on pressure levels:
         >>> ds.argo.inter_std_levels(std_lev=[10., 500., 1000.])
-
         - Group and reduce measurements by pressure bins:
         >>> ds.argo.groupby_pressure_bins(bins=[0, 200., 500., 1000.])
-
         - Compute and add additional variables to the dataset:
         >>> ds.argo.teos10(vlist='PV')
-
         - Preprocess data for OWC salinity calibration:
         >>> ds.argo.create_float_source("output_folder")
 
@@ -82,7 +73,9 @@ class ArgoAccessor:
         elif "N_POINTS" in self._dims:
             self._type = "point"
         else:
-            raise InvalidDatasetStructure("Argo dataset structure not recognised (dimensions N_PROF or N_POINTS not found)")
+            raise InvalidDatasetStructure(
+                "Argo dataset structure not recognised (dimensions N_PROF or N_POINTS not found)"
+            )
 
         if "PRES_ADJUSTED" in self._vars:
             self._mode = "expert"
@@ -202,12 +195,9 @@ class ArgoAccessor:
         return this
 
     def cast_types(self):  # noqa: C901
-        """ Make sure variables are of the appropriate types according to Argo
-
-            #todo: This is hard coded, but should be retrieved from an API somewhere.
-            Should be able to handle all possible variables encountered in the Argo dataset.
-        """
-        return cast_types(self._obj)
+        """ Make sure variables are of the appropriate types according to Argo """
+        ds = self._obj
+        return cast_Argo_variable_type(ds)
 
     @property
     def _dummy_argo_uid(self):
@@ -403,7 +393,7 @@ class ArgoAccessor:
                     y = new_ds[vname].values
                     x = prof[vname].values
                     try:
-                        y[i_prof, 0: len(x)] = x
+                        y[i_prof, 0 : len(x)] = x
                     except Exception:
                         print(vname, "input", x.shape, "output", y[i_prof, :].shape)
                         raise
@@ -423,7 +413,7 @@ class ArgoAccessor:
 
         # Misc formatting
         new_ds = new_ds.sortby("TIME")
-        new_ds = new_ds.argo.cast_types() if not drop else cast_types(new_ds)
+        new_ds = new_ds.argo.cast_types() if not drop else cast_Argo_variable_type(new_ds)
         new_ds = new_ds[np.sort(new_ds.data_vars)]
         new_ds.encoding = self.encoding  # Preserve low-level encoding information
         new_ds.attrs = self.attrs  # Preserve original attributes
@@ -484,7 +474,7 @@ class ArgoAccessor:
         ds.argo._type = "point"
         return ds
 
-    def filter_data_mode(   # noqa: C901
+    def filter_data_mode(  # noqa: C901
         self, keep_error: bool = True, errors: str = "raise"
     ):
         """ Filter variables according to their data mode
@@ -698,7 +688,7 @@ class ArgoAccessor:
 
         return final
 
-    def filter_qc(   # noqa: C901
+    def filter_qc(  # noqa: C901
         self, QC_list=[1, 2], QC_fields="all", drop=True, mode="all", mask=False
     ):
         """ Filter data set according to QC values
@@ -898,7 +888,7 @@ class ArgoAccessor:
     def filter_researchmode(self) -> xr.Dataset:
         """Filter dataset for research user mode
 
-        This filter will select only QC=1 delayed mode data with pressure errors smaller than 20db
+        This filter will select only data with QC=1, in delayed mode and with pressure errors smaller than 20db
 
         Returns
         -------
@@ -960,7 +950,7 @@ class ArgoAccessor:
                 "Standard levels must be a list or a numpy array of positive and sorted values"
             )
 
-        if axis not in ['PRES', 'PRES_ADJUSTED']:
+        if axis not in ["PRES", "PRES_ADJUSTED"]:
             raise ValueError("'axis' option must be 'PRES' or 'PRES_ADJUSTED'")
 
         if self._type != "profile":
@@ -1041,18 +1031,20 @@ class ArgoAccessor:
 
         return ds_out
 
-    def groupby_pressure_bins(self,  # noqa: C901
-                              bins: list or np.array,
-                              axis: str = 'PRES',
-                              right: bool = False,
-                              select: str = 'deep',
-                              squeeze: bool = True,
-                              merge: bool = True):
+    def groupby_pressure_bins(
+        self,  # noqa: C901
+        bins: list or np.array,
+        axis: str = "PRES",
+        right: bool = False,
+        select: str = "deep",
+        squeeze: bool = True,
+        merge: bool = True,
+    ):
         """ Group measurements by pressure bins
 
         This method can be used to subsample and align an irregular dataset (pressure not being similar in all profiles)
         on a set of pressure bins. The output dataset could then be used to perform statistics along the ``N_PROF`` dimension
-        because ``N_LEVELS`` will corresponds to similar pressure bins, while avoiding to interpolate data.
+        because ``N_LEVELS`` will correspond to similar pressure bins, while avoiding to interpolate data.
 
         Parameters
         ----------
@@ -1104,7 +1096,7 @@ class ArgoAccessor:
                 "Standard bins must be a list or a numpy array of positive and sorted values"
             )
 
-        if axis not in ['PRES', 'PRES_ADJUSTED']:
+        if axis not in ["PRES", "PRES_ADJUSTED"]:
             raise ValueError("'axis' option must be 'PRES' or 'PRES_ADJUSTED'")
 
         # Will work with a collection of profiles:
@@ -1126,7 +1118,9 @@ class ArgoAccessor:
             return None
         if N_bins_empty > 0 and squeeze:
             log.debug(
-                "bins axis was squeezed to full bins only (%i bins found empty out of %i)" % (N_bins_empty, len(bins)))
+                "bins axis was squeezed to full bins only (%i bins found empty out of %i)"
+                % (N_bins_empty, len(bins))
+            )
             bins = bins[np.where(h > 0)]
 
         def replace_i_level_values(this_da, this_i_level, new_values_along_profiles):
@@ -1152,7 +1146,11 @@ class ArgoAccessor:
                     z[i] = y[i]
             return z
 
-        merged_is_nan = lambda l1, l2: len(np.unique(np.where(np.isnan(l1.values + l2.values)))) == len(l1)  # noqa: E731
+        merged_is_nan = lambda l1, l2: len(
+            np.unique(np.where(np.isnan(l1.values + l2.values)))
+        ) == len(
+            l1
+        )  # noqa: E731
 
         def merge_bin_matching_levels(this_ds: xr.Dataset) -> xr.Dataset:
             """ Levels merger of type 'bins' value
@@ -1178,16 +1176,20 @@ class ArgoAccessor:
                 this_ds_level = this_ds[axis].isel(N_LEVELS=i_level)
                 this_ds_dw = this_ds[axis].isel(N_LEVELS=i_level + 1)
                 pres_dw = np.unique(this_ds_dw[~np.isnan(this_ds_dw)])
-                if len(pres_dw) == 1 \
-                        and pres_dw[0] in this_ds["STD_%s_BINS" % axis] \
-                        and merged_is_nan(this_ds_level, this_ds_dw):
+                if (
+                    len(pres_dw) == 1
+                    and pres_dw[0] in this_ds["STD_%s_BINS" % axis]
+                    and merged_is_nan(this_ds_level, this_ds_dw)
+                ):
                     new_values = nanmerge(this_ds_dw.values, this_ds_level.values)
                     replace_i_level_values(new_ds[axis], i_level, new_values)
                     idel.append(i_level + 1)
 
             ikeep = [i for i in np.arange(0, new_ds.argo.N_LEVELS - 1) if i not in idel]
             new_ds = new_ds.isel(N_LEVELS=ikeep)
-            new_ds = new_ds.assign_coords({'N_LEVELS': np.arange(0, len(new_ds['N_LEVELS']))})
+            new_ds = new_ds.assign_coords(
+                {"N_LEVELS": np.arange(0, len(new_ds["N_LEVELS"]))}
+            )
             val = new_ds[axis].values
             new_ds[axis].values = np.where(val == 0, np.nan, val)
             return new_ds
@@ -1225,7 +1227,9 @@ class ArgoAccessor:
 
             ikeep = [i for i in np.arange(0, new_ds.argo.N_LEVELS - 1) if i not in idel]
             new_ds = new_ds.isel(N_LEVELS=ikeep)
-            new_ds = new_ds.assign_coords({'N_LEVELS': np.arange(0, len(new_ds['N_LEVELS']))})
+            new_ds = new_ds.assign_coords(
+                {"N_LEVELS": np.arange(0, len(new_ds["N_LEVELS"]))}
+            )
             val = new_ds[axis].values
             new_ds[axis].values = np.where(val == 0, np.nan, val)
             return new_ds
@@ -1256,8 +1260,7 @@ class ArgoAccessor:
         othervars = [
             dv
             for dv in list(this_dsp.variables)
-            if dv not in datavars
-            and dv not in this_dsp.coords
+            if dv not in datavars and dv not in this_dsp.coords
         ]
 
         # Sub-sample and align:
@@ -1269,7 +1272,7 @@ class ArgoAccessor:
                 z_dim="N_LEVELS",
                 z_regridded_dim="Z_LEVELS",
                 select=select,
-                right=right
+                right=right,
             )
             v.name = this_dsp[dv].name
             v.attrs = this_dsp[dv].attrs
@@ -1278,14 +1281,17 @@ class ArgoAccessor:
         # Finish
         new_ds = xr.merge(new_ds)
         new_ds = new_ds.rename({"remapped": "N_LEVELS"})
-        new_ds = new_ds.assign_coords({'N_LEVELS': range(0, len(new_ds['N_LEVELS']))})
+        new_ds = new_ds.assign_coords({"N_LEVELS": range(0, len(new_ds["N_LEVELS"]))})
         # new_ds["STD_%s_BINS" % axis] = new_ds['N_LEVELS']
-        new_ds["STD_%s_BINS" % axis] = xr.DataArray(bins,
-                                                    dims=['N_LEVELS'],
-                                                    attrs={"Comment":
-                                                           "Range of bins is: bins[i] <= x < bins[i+1] for i=[0,N_LEVELS-2]\n"
-                                                           "Last bins is bins[N_LEVELS-1] <= x"}
-                                                    )
+        new_ds["STD_%s_BINS" % axis] = xr.DataArray(
+            bins,
+            dims=["N_LEVELS"],
+            attrs={
+                "Comment": "Range of bins is: bins[i] <= x < bins[i+1] for i=[0,N_LEVELS-2]\n"
+                "Last bins is bins[N_LEVELS-1] <= x"
+            },
+        )
+
         new_ds = new_ds.set_coords("STD_%s_BINS" % axis)
         new_ds.attrs = this_ds.attrs
 
@@ -1307,9 +1313,10 @@ class ArgoAccessor:
         return new_ds
 
     def teos10(  # noqa: C901
-                self,
-                vlist: list = ["SA", "CT", "SIG0", "N2", "PV", "PTEMP"],
-                inplace: bool = True):
+        self,
+        vlist: list = ["SA", "CT", "SIG0", "N2", "PV", "PTEMP"],
+        inplace: bool = True,
+    ):
         """ Add TEOS10 variables to the dataset
 
         By default, adds: 'SA', 'CT'
@@ -1518,15 +1525,17 @@ class ArgoAccessor:
             else:
                 return that
 
-    def create_float_source(self,   # noqa: C901
-                            path: str or os.PathLike = None,
-                            force: str = "default",
-                            select: str = 'deep',
-                            file_pref: str = '',
-                            file_suff: str = '',
-                            format: str = '5',
-                            do_compression: bool = True,
-                            debug_output: bool = False):
+    def create_float_source(
+        self,  # noqa: C901
+        path: str or os.PathLike = None,
+        force: str = "default",
+        select: str = "deep",
+        file_pref: str = "",
+        file_suff: str = "",
+        format: str = "5",
+        do_compression: bool = True,
+        debug_output: bool = False,
+    ):
         """ Preprocess data for OWC software calibration
 
         This method can create a FLOAT SOURCE file (i.e. the .mat file that usually goes into /float_source/) for OWC software.
@@ -1633,10 +1642,14 @@ class ArgoAccessor:
                 "force option must be 'default', 'raw' or 'adjusted'."
             )
 
-        log.debug("===================== START create_float_source in '%s' mode" % force)
+        log.debug(
+            "===================== START create_float_source in '%s' mode" % force
+        )
 
-        if len(np.unique(this['PLATFORM_NUMBER'])) > 1:
-            log.debug("Found more than one 1 float in this dataset, will split processing")
+        if len(np.unique(this["PLATFORM_NUMBER"])) > 1:
+            log.debug(
+                "Found more than one 1 float in this dataset, will split processing"
+            )
 
         def ds2mat(this_dsp):
             # Return a Matlab dictionary with dataset data to be used by savemat:
@@ -1673,10 +1686,12 @@ class ArgoAccessor:
             ii = ii[np.where(ii - 1 > 0)] - 1
             return bins[ii]
 
-        def preprocess_one_float(this_one: xr.Dataset,
-                                 this_path: str or os.PathLike = None,
-                                 select: str = 'deep',
-                                 debug_output: bool = False):
+        def preprocess_one_float(
+            this_one: xr.Dataset,
+            this_path: str or os.PathLike = None,
+            select: str = "deep",
+            debug_output: bool = False,
+        ):
             """ Run the entire preprocessing on a given dataset with one float data """
 
             # Add potential temperature:
@@ -1709,7 +1724,9 @@ class ArgoAccessor:
             )  # Matlab says to reject > 3
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L420
             this_one = this_one.argo.filter_qc(
-                QC_list=[v for v in range(10) if v != 3], QC_fields=["PRES_QC"], drop=True
+                QC_list=[v for v in range(10) if v != 3],
+                QC_fields=["PRES_QC"],
+                drop=True,
             )  # Matlab says to keep != 3
             this_one = this_one.argo.filter_qc(
                 QC_list=[v for v in range(10) if v != 4],
@@ -1728,8 +1745,7 @@ class ArgoAccessor:
             # Exclude dummies
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L427
             this_one = (
-                this_one
-                .argo._where(this_one["PSAL"] <= 50, drop=True)
+                this_one.argo._where(this_one["PSAL"] <= 50, drop=True)
                 .argo._where(this_one["PSAL"] >= 0, drop=True)
                 .argo._where(this_one["PTEMP"] <= 50, drop=True)
                 .argo._where(this_one["PTEMP"] >= -10, drop=True)
@@ -1750,8 +1766,14 @@ class ArgoAccessor:
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L208
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L451
             bins = np.arange(0.0, np.max(this_one["PRES"]) + 10.0, 10.0)
-            this_one = this_one.argo.groupby_pressure_bins(bins=bins, select=select, axis='PRES')
-            log.debug(pretty_print_count(this_one, "after vertical levels subsampling and re-alignment"))
+            this_one = this_one.argo.groupby_pressure_bins(
+                bins=bins, select=select, axis="PRES"
+            )
+            log.debug(
+                pretty_print_count(
+                    this_one, "after vertical levels subsampling and re-alignment"
+                )
+            )
 
             # Compute fractional year:
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L334
@@ -1773,25 +1795,37 @@ class ArgoAccessor:
             this_one_dsp_processed = xr.DataArray(
                 PRES,
                 dims=["m", "n"],
-                coords={"m": np.arange(0, PRES.shape[0]), "n": np.arange(0, PRES.shape[1])},
+                coords={
+                    "m": np.arange(0, PRES.shape[0]),
+                    "n": np.arange(0, PRES.shape[1]),
+                },
                 name="PRES",
             ).to_dataset(promote_attrs=False)
             this_one_dsp_processed["TEMP"] = xr.DataArray(
                 TEMP,
                 dims=["m", "n"],
-                coords={"m": np.arange(0, TEMP.shape[0]), "n": np.arange(0, TEMP.shape[1])},
+                coords={
+                    "m": np.arange(0, TEMP.shape[0]),
+                    "n": np.arange(0, TEMP.shape[1]),
+                },
                 name="TEMP",
             )
             this_one_dsp_processed["PTMP"] = xr.DataArray(
                 PTMP,
                 dims=["m", "n"],
-                coords={"m": np.arange(0, PTMP.shape[0]), "n": np.arange(0, PTMP.shape[1])},
+                coords={
+                    "m": np.arange(0, PTMP.shape[0]),
+                    "n": np.arange(0, PTMP.shape[1]),
+                },
                 name="PTMP",
             )
             this_one_dsp_processed["SAL"] = xr.DataArray(
                 SAL,
                 dims=["m", "n"],
-                coords={"m": np.arange(0, SAL.shape[0]), "n": np.arange(0, SAL.shape[1])},
+                coords={
+                    "m": np.arange(0, SAL.shape[0]),
+                    "n": np.arange(0, SAL.shape[1]),
+                },
                 name="SAL",
             )
             this_one_dsp_processed["PROFILE_NO"] = xr.DataArray(
@@ -1807,7 +1841,10 @@ class ArgoAccessor:
                 name="DATES",
             )
             this_one_dsp_processed["LAT"] = xr.DataArray(
-                LAT[0, :], dims=["n"], coords={"n": np.arange(0, LAT.shape[1])}, name="LAT"
+                LAT[0, :],
+                dims=["n"],
+                coords={"n": np.arange(0, LAT.shape[1])},
+                name="LAT",
             )
             this_one_dsp_processed["LONG"] = xr.DataArray(
                 LONG[0, :],
@@ -1830,20 +1867,36 @@ class ArgoAccessor:
                     return this_one_dsp_processed
             else:
                 from scipy.io import savemat
+
                 # Validity check of the path type is delegated to savemat
-                return savemat(this_path, mdata, appendmat=False, format=format, do_compression=do_compression)
+                return savemat(
+                    this_path,
+                    mdata,
+                    appendmat=False,
+                    format=format,
+                    do_compression=do_compression,
+                )
 
         # Run pre-processing for each float data
         output = {}
-        for WMO in np.unique(this['PLATFORM_NUMBER']):
+        for WMO in np.unique(this["PLATFORM_NUMBER"]):
             log.debug("> Preprocessing data for float WMO %i" % WMO)
-            this_float = this.argo._where(this['PLATFORM_NUMBER'] == WMO, drop=True)
+            this_float = this.argo._where(this["PLATFORM_NUMBER"] == WMO, drop=True)
             if path is None:
-                output[WMO] = preprocess_one_float(this_float, this_path=path, select=select, debug_output=debug_output)
+                output[WMO] = preprocess_one_float(
+                    this_float, this_path=path, select=select, debug_output=debug_output
+                )
             else:
                 os.makedirs(path, exist_ok=True)  # Make path exists
-                float_path = os.path.join(path, "%s%i%s.mat" % (file_pref, WMO, file_suff))
-                preprocess_one_float(this_float, this_path=float_path, select=select, debug_output=debug_output)
+                float_path = os.path.join(
+                    path, "%s%i%s.mat" % (file_pref, WMO, file_suff)
+                )
+                preprocess_one_float(
+                    this_float,
+                    this_path=float_path,
+                    select=select,
+                    debug_output=debug_output,
+                )
                 output[WMO] = float_path
         if path is None:
             log.debug("===================== END create_float_source")
@@ -1877,3 +1930,44 @@ class ArgoAccessor:
             return list_1d
         else:
             return list_1d, dummy_argo_uid
+
+
+def open_Argo_dataset(filename_or_obj):
+    ds = xr.open_dataset(filename_or_obj, decode_cf=1, use_cftime=0, mask_and_scale=1)
+    ds = cast_Argo_variable_type(ds)
+    return ds
+
+
+class ArgoEngine(BackendEntrypoint):
+    """ Backend for Argo netCDF files based on the xarray netCDF4 engine
+
+        It can open any Argo ".nc" files with 'Argo' in their global attribute 'Conventions'.
+
+        But it will not be detected as valid backend for netcdf files, so make
+        sure to specify ``engine="argo"`` in :func:`xarray.open_dataset`.
+    """
+    description = "Open Argo netCDF files (.nc)"
+    url = "https://argopy.readthedocs.io/en/latest/generated/argopy.xarray.ArgoEngine.html#argopy.xarray.ArgoEngine"
+
+    def open_dataset(
+        self,
+        filename_or_obj,
+        *,
+        drop_variables=None,
+        # other backend specific keyword arguments
+        # `chunks` and `cache` DO NOT go here, they are handled by xarray
+    ):
+        return open_Argo_dataset(filename_or_obj)
+
+    open_dataset_parameters = ["filename_or_obj"]
+
+    def guess_can_open(self, filename_or_obj):
+        try:
+            _, ext = os.path.splitext(filename_or_obj)
+        except TypeError:
+            return False
+        if ext in {".nc"}:
+            attrs = xr.open_dataset(filename_or_obj, engine='netcdf4').attrs
+            return 'Conventions' in attrs and 'Argo' in attrs['Conventions']
+        else:
+            return False

@@ -227,6 +227,8 @@ Argopy helpers
    clear_cache
    tutorial.open_dataset
    show_versions
+   xarray.ArgoEngine
+
 
 Internals
 =========
