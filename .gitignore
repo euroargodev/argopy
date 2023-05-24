@@ -199,3 +199,4 @@ argopy/tests/test_local.py
 argopy/tests/test_tobeignored*.py
 float_source/
 cli/
+argopy/tests/test_tobeignored.py
