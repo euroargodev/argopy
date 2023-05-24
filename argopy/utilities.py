@@ -3409,7 +3409,7 @@ class OceanOPSDeployments:
             #     status[ptf['ptfStatus']['name']] = ptf['ptfStatus']['description']
 
         df = pd.DataFrame(res)
-        df = df.astype({'date': np.datetime64})
+        df = df.astype({'date': 'datetime64[s]'})
         df = df.sort_values(by='date').reset_index(drop=True)
         # df = df[ (df['status_name'] == 'CLOSED') | (df['status_name'] == 'OPERATIONAL')] # Select only floats that have been deployed and returned data
         # print(status)
