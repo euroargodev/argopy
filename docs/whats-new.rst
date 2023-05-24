@@ -30,7 +30,14 @@ Coming up on the next release
 
     ArgoDocs().search("CDOM")
 
-- **Argopy now provides authenticated access to the Argo reference database for DMQC**. Using user/password new **argopy** options, it is now possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by `G. Maze <http://www.github.com/gmaze>`_
+- **argopy now provides a specific xarray engine to properly read Argo netcdf files**. Using ``engine='argo'`` in :func:`xarray.open_dataset`, all variables will properly be casted, i.e. returned with their expected data types, which is not the case otherwise. This works with *ALL* Argo netcdf file types (as listed in the `Reference table R01 <http://vocab.nerc.ac.uk/collection/R01/current/>`_).  (:pr:`208`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    import xarray as xr
+    ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
+
+- **argopy now provides authenticated access to the Argo reference database for DMQC**. Using user/password new **argopy** options, it is now possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -39,6 +46,10 @@ Coming up on the next release
     with argopy.set_options(user="john_doe", password="***"):
         f = CTDRefDataFetcher(box=[15, 30, -70, -60, 0, 5000.0])
         ds = f.to_xarray()
+
+- New option to control the expiration time of cache file ``cache_expiration``. 
+
+**Internals**
 
 - **Index store can now export search results to standard Argo index file format**. See all details in :ref:`Store: Low-level Argo Index access`. (:pr:`260`) by `G. Maze <http://www.github.com/gmaze>`_
 
@@ -63,10 +74,6 @@ Coming up on the next release
     idx = indexstore(index_file="argo_bio-profile_index.txt").load()
     idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
 
-- New option to control the expiration time of cache file ``cache_expiration``. 
-
-**Internals**
-
 - Use a mocked server for all http and GDAC ftp requests in CI tests (:pr:`249`, :pr:`252`, :pr:`255`) by `G. Maze <http://www.github.com/gmaze>`_
 - Removed support for minimal dependency requirements and for python 3.7. (:pr:`252`) by `G. Maze <http://www.github.com/gmaze>`_
 - Changed License from Apache to `EUPL 1.2 <https://opensource.org/license/eupl-1-2>`_
@@ -77,6 +84,7 @@ v0.1.13 (28 Mar. 2023)
 **Features and front-end API**
 
 - **New utility class to retrieve the Argo deployment plan from the Ocean-OPS api.** This is the utility class :class:`OceanOPSDeployments`. See the new documentation section on :ref:`Deployment Plan` for more. (:pr:`244`) by `G. Maze <http://www.github.com/gmaze>`_
+
 
 .. code-block:: python
 
@@ -131,6 +139,10 @@ v0.1.13 (28 Mar. 2023)
 **Breaking changes**
 
 - Data source ``localftp`` is deprecated and removed from **argopy**. It's been replaced by the ``gdac`` data source with the appropriate ``ftp`` option. See :ref:`Data sources`. (:pr:`240`) by `G. Maze <http://www.github.com/gmaze>`_
+
+**Breaking changes with previous versions**
+
+- :class:`argopy.utilities.ArgoNVSReferenceTables` methods ``all_tbl`` and ``all_tbl_name`` are now properties, not methods.
 
 
 v0.1.12 (16 May 2022)

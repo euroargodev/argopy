@@ -31,5 +31,8 @@ setuptools.setup(
         "Operating System :: MacOS",
         "Operating System :: Microsoft :: Windows",
         "Development Status :: 3 - Alpha"
-    ]
+    ],
+    entry_points = {
+                       "xarray.backends": ["argo=argopy.xarray:ArgoEngine"],
+                   },
 )

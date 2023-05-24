@@ -5,11 +5,9 @@ This module contains:
 - test wrapper to make safe requests to web APIs
 
 """
-
 import importlib
 import pytest
 import fsspec
-import asyncio
 from aiohttp.client_exceptions import (
     ServerDisconnectedError,
     ClientResponseError,
@@ -29,7 +27,6 @@ from argopy.utilities import (
     isconnected,
     erddap_ds_exists,
     isAPIconnected,
-    OceanOPSDeployments,
 )
 import logging
 from mocked_http import mocked_server_address, serve_mocked_httpserver
