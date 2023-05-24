@@ -41,11 +41,11 @@ User mode details
 - 🏊 **standard** mode simplifies the dataset, remove most of its jargon and return *a priori* good data,
 - 🚣 **research** mode simplifies the dataset to its heart, preserving only data of the highest quality for research studies, including studies sensitive to small pressure and salinity bias (e.g. calculations of global ocean heat content or mixed layer depth).
 
-In **standard** and **research** modes, fetched data are automatically filtered to account for their quality (using the *quality control flags*) and level of processing by the data centers (considering for each parameter the data mode which indicates if a human expert had carefully looked at the data or not). Both mode return a postprocessed subset of the full Argo dataset.
+In **standard** and **research** modes, fetched data are automatically filtered to account for their quality (using the *quality control flags*) and level of processing by the data centers (considering for each parameter the data mode which indicates if a human expert has carefully looked at the data or not). Both mode return a postprocessed subset of the full Argo dataset.
 
 Hence the main difference between the **standard** and **research** modes is in the level of data quality insurance.
-In **standard** mode, only good or probably good data are returned, which includes real time data that have been validated automatically but not by a human expert.
-The **research** mode is the safer choice, with data of the highest quality, carefully checked by a human expert of the `Argo Data Management Team <http://www.argodatamgt.org>`_.
+In **standard** mode, only good or probably good data are returned and includes real time data that have been validated automatically but not by a human expert.
+The **research** mode is the safer choice, with data of the highest quality, carefully checked in delayed mode by a human expert of the `Argo Data Management Team <http://www.argodatamgt.org>`_.
 
 .. list-table:: Table of **argopy** user mode data processing details
     :header-rows: 1
@@ -61,25 +61,25 @@ The **research** mode is the safer choice, with data of the highest quality, car
       - 🚣
     * - Level of quality (QC flags) retained
       - all
-      - good or probably good
-      - good
+      - good or probably good (QC=[1,2])
+      - good (QC=1)
     * - Level of assessment (Data mode) retained
-      - all
-      - all, but merged in a single variable
-      - best only (delayed)
+      - all: [R,D,A] modes
+      - all: [R,D,A] modes, but PARAM_ADJUSTED and PARAM are merged in a single variable according to the mode
+      - best only (D mode only)
     * - Pressure error
       - any
       - any
       - smaller than 20db
     * - Variables returned
       - all
-      - all but technical
+      - all without jargon (DATA_MODE and QC_FLAG are retained)
       - comprehensive minimum
 
 
 
-How to set the user mode ?
---------------------------
+How to select a user mode ?
+---------------------------
 
 Let's import the **argopy** data fetcher:
 
