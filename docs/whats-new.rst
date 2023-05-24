@@ -13,7 +13,7 @@ Coming up on the next release
 
 **Features and front-end API**
 
-- **Easy access to all Argo manuals from the ADMT**. More than 20 pdf manuals have been produced by the Argo Data Management Team. Using the new ``ArgoDocs`` class, it's now easier to navigate this great database for Argo experts.
+- **Easy access to all Argo manuals from the ADMT**. More than 20 pdf manuals have been produced by the Argo Data Management Team. Using the new ``ArgoDocs`` class, it's now easier to navigate this great database for Argo experts. All details in :ref:`ADMT Documentation`. (:pr:`268`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 

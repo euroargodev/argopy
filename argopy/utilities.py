@@ -3651,6 +3651,22 @@ def log_argopy_callerstack(level='debug'):
 
 
 class ArgoDocs:
+    """ADMT documentation helper class
+
+    Examples
+    --------
+    >>> ArgoDocs().list
+    >>> ArgoDocs().search("CDOM")
+    >>> ArgoDocs().search("CDOM", where='abstract')
+
+    >>> ArgoDocs(35385)
+    >>> ArgoDocs(35385).ris
+    >>> ArgoDocs(35385).abstract
+    >>> ArgoDocs(35385).show()
+    >>> ArgoDocs(35385).open_pdf()
+    >>> ArgoDocs(35385).open_pdf(page=12)
+
+    """
     _catalogue = [
         {
             "categorie": "Argo data formats",
@@ -3831,6 +3847,7 @@ class ArgoDocs:
             self.record = record
 
     def __init__(self, docid=None):
+
         self.docid = None
         self._ris = None
         from .stores import httpstore
@@ -3860,10 +3877,12 @@ class ArgoDocs:
 
     @property
     def list(self):
+        """List of all available documents as a :class:`pandas.DataFrame`"""
         return pd.DataFrame(self._catalogue)
 
     @property
     def js(self):
+        """Internal json record for a document"""
         if self.docid is not None:
             return [doc for doc in self._catalogue if doc['id'] == self.docid][0]
         else:
@@ -3871,6 +3890,7 @@ class ArgoDocs:
 
     @property
     def ris(self):
+        """RIS record of a document"""
         if self.docid is not None:
             if self._ris is None:
                 # Fetch RIS metadata for this document:
@@ -3886,6 +3906,7 @@ class ArgoDocs:
 
     @property
     def abstract(self):
+        """Abstract of a document"""
         if self.docid is not None:
             return self.ris['AB']
         else:
@@ -3893,12 +3914,20 @@ class ArgoDocs:
 
     @property
     def pdf(self):
+        """Link to the online pdf version of a document"""
         if self.docid is not None:
             return self.ris['UR']
         else:
             raise ValueError("Select a document first !")
 
     def show(self, height=800):
+        """Insert document in pdf in a notebook cell
+
+        Parameters
+        ----------
+        height: int
+            Height in pixels of the cell
+        """
         if self.docid is not None:
             from IPython.core.display import HTML
             return HTML(
@@ -3907,6 +3936,13 @@ class ArgoDocs:
             raise ValueError("Select a document first !")
 
     def open_pdf(self, page=None):
+        """Open document in new browser tab
+
+        Parameters
+        ----------
+        page: int, optional
+            Open directly a specific page number
+        """
         if self.docid is not None:
             import webbrowser
             url = self.pdf
@@ -3918,6 +3954,19 @@ class ArgoDocs:
             raise ValueError("Select a document first !")
 
     def search(self, txt, where='title'):
+        """Search for string in all documents title or abstract
+
+        Parameters
+        ----------
+        txt: str
+        where: str, default='title'
+            Where to search, can be 'title' or 'abstract'
+
+        Returns
+        -------
+        list
+
+        """
         results = []
         for doc in self.list.iterrows():
             docid = doc[1]['id']

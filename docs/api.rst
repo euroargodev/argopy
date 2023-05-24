@@ -90,6 +90,7 @@ Utilities for Argo related data
    ArgoNVSReferenceTables
    OceanOPSDeployments
    CTDRefDataFetcher
+   ArgoDocs
 
 
 .. _Module Visualisation:
