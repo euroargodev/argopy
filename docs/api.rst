@@ -91,6 +91,7 @@ Utilities for Argo related data
    OceanOPSDeployments
    CTDRefDataFetcher
    TopoFetcher
+   ArgoDocs
 
 
 .. _Module Visualisation:

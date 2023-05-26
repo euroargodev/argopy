@@ -12,7 +12,27 @@ Coming up on the next release
 
 **Features and front-end API**
 
-- **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`Store: Low-level Argo Index access`.
+
+- **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`Store: Low-level Argo Index access`. (:pr:`270`) by `G. Maze <http://www.github.com/gmaze>`_
+
+- **Easy access to all Argo manuals from the ADMT**. More than 20 pdf manuals have been produced by the Argo Data Management Team. Using the new ``ArgoDocs`` class, it's now easier to navigate this great database for Argo experts. All details in :ref:`ADMT Documentation`. (:pr:`268`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import ArgoDocs
+
+    ArgoDocs().list
+
+    ArgoDocs(35385)
+    ArgoDocs(35385).ris
+    ArgoDocs(35385).abstract
+    ArgoDocs(35385).show()
+    ArgoDocs(35385).open_pdf()
+    ArgoDocs(35385).open_pdf(page=12)
+
+    ArgoDocs().search("CDOM")
+
+- **New 'research' user mode**. This new feature implements automatic filtering of Argo data following international recommendations for research/climate studies. With this user mode, only Delayed Mode with good QC data are returned. Check out the :ref:`user-mode` section for all the details. (:pr:`265`) by `G. Maze <http://www.github.com/gmaze>`_
 
 - **argopy now provides a specific xarray engine to properly read Argo netcdf files**. Using ``engine='argo'`` in :func:`xarray.open_dataset`, all variables will properly be casted, i.e. returned with their expected data types, which is not the case otherwise. This works with *ALL* Argo netcdf file types (as listed in the `Reference table R01 <http://vocab.nerc.ac.uk/collection/R01/current/>`_).  (:pr:`208`) by `G. Maze <http://www.github.com/gmaze>`_
 

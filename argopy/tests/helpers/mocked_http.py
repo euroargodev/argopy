@@ -31,7 +31,7 @@ import pickle
 
 
 log = logging.getLogger("argopy.tests.mocked_erddap")
-LOG_SERVER_CONTENT = 0  # Also log the list of files/uris available from the mocked server
+LOG_SERVER_CONTENT = 1  # Also log the list of files/uris available from the mocked server
 
 requests = pytest.importorskip("requests")
 port = 9898  # Select the port to run the local server on
@@ -66,7 +66,8 @@ if os.path.exists(DB_FILE):
                 "https://www.ocean-ops.org/api/1",
                 "https://dataselection.euro-argo.eu/api",
                 "https://vocab.nerc.ac.uk/collection",
-            ]
+                "https://argovisbeta02.colorado.edu",
+        ]
         for pattern in patterns:
             if start_with(ressource['uri'], pattern):
                 MOCKED_REQUESTS[ressource['uri'].replace(pattern, "")] = data

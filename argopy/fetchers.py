@@ -16,7 +16,7 @@ import numpy as np
 import logging
 
 from argopy.options import OPTIONS, _VALIDATORS
-from .errors import InvalidFetcherAccessPoint, InvalidFetcher
+from .errors import InvalidFetcherAccessPoint, InvalidFetcher, OptionValueError
 
 from .utilities import (
     list_available_data_src, list_available_index_src,
@@ -86,26 +86,23 @@ class ArgoDataFetcher:
         :class:`argopy.fetchers.ArgoDataFetcher`
         """
 
-        # Facade options:
+        # Facade options :
         self._mode = OPTIONS["mode"] if mode == "" else mode
         self._dataset_id = OPTIONS["dataset"] if ds == "" else ds
         self._src = OPTIONS["src"] if src == "" else src
 
-        _VALIDATORS["mode"](self._mode)
-        _VALIDATORS["src"](self._src)
-        _VALIDATORS["dataset"](self._dataset_id)
+        if not _VALIDATORS["mode"](self._mode):
+            raise OptionValueError(f"option 'mode' given an invalid value: {self._mode}")
+        if not _VALIDATORS["dataset"](self._dataset_id):
+            raise OptionValueError(f"option 'dataset' given an invalid value: {self._dataset_id}")
+        if not _VALIDATORS["src"](self._src):
+            raise OptionValueError(f"option 'src' given an invalid value: {self._src}")
 
         # Load data source access points:
         if self._src == 'localftp':
             raise ValueError("The 'localftp' data source is deprecated. It's been replaced by 'gdac'.")
 
-        if self._src not in AVAILABLE_DATA_SOURCES:
-            raise InvalidFetcher(
-                "Requested data fetcher '%s' not available ! Please try again with any of: %s"
-                % (self._src, "\n".join(AVAILABLE_DATA_SOURCES))
-            )
-        else:
-            Fetchers = AVAILABLE_DATA_SOURCES[self._src]
+        Fetchers = AVAILABLE_DATA_SOURCES[self._src]
 
         # Auto-discovery of access points for this fetcher:
         # rq: Access point names for the facade are not the same as the access point of fetchers
@@ -337,6 +334,14 @@ class ArgoDataFetcher:
 
             self.postproccessor = postprocessing
 
+        elif self._mode == "research" and self._dataset_id != "ref":
+            def postprocessing(xds):
+                xds = self.fetcher.filter_researchmode(xds)
+                xds = self.fetcher.filter_variables(xds, self._mode)
+                return xds
+
+            self.postproccessor = postprocessing
+
         return self
 
     @checkAccessPoint
@@ -368,6 +373,14 @@ class ArgoDataFetcher:
                 xds = self.fetcher.filter_qc(xds)
                 xds = self.fetcher.filter_variables(xds, self._mode)
                 return xds
+            self.postproccessor = postprocessing
+
+        elif self._mode == "research" and self._dataset_id != "ref":
+            def postprocessing(xds):
+                xds = self.fetcher.filter_researchmode(xds)
+                xds = self.fetcher.filter_variables(xds, self._mode)
+                return xds
+
             self.postproccessor = postprocessing
 
         return self
@@ -408,6 +421,14 @@ class ArgoDataFetcher:
                 return xds
             self.postproccessor = postprocessing
 
+        elif self._mode == "research" and self._dataset_id != "ref":
+            def postprocessing(xds):
+                xds = self.fetcher.filter_researchmode(xds)
+                xds = self.fetcher.filter_variables(xds, self._mode)
+                return xds
+
+            self.postproccessor = postprocessing
+
         return self
 
     def to_xarray(self, **kwargs):
@@ -428,14 +449,6 @@ class ArgoDataFetcher:
         xds = self.fetcher.to_xarray(**kwargs)
         xds = self.postproccessor(xds)
 
-        # data_path = self.fetcher.cname() + self._mode + ".zarr"
-        # log.debug(data_path)
-        # if self.cache and self.fs.exists(data_path):
-        #     xds = self._read(data_path)
-        # else:
-        #     xds = self.fetcher.to_xarray(**kwargs)
-        #     xds = self.postproccessor(xds)
-        #     xds = self._write(data_path, xds)._read(data_path)
         return xds
 
     def to_dataframe(self, **kwargs):

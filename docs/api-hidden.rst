@@ -108,6 +108,16 @@
     argopy.utilities.OceanOPSDeployments.to_dataframe
     argopy.utilities.OceanOPSDeployments.status_code
 
+    argopy.utilities.ArgoDocs
+    argopy.utilities.ArgoDocs.list
+    argopy.utilities.ArgoDocs.search
+    argopy.utilities.ArgoDocs.ris
+    argopy.utilities.ArgoDocs.abstract
+    argopy.utilities.ArgoDocs.pdf
+    argopy.utilities.ArgoDocs.open_pdf
+    argopy.utilities.ArgoDocs.show
+    argopy.utilities.ArgoDocs.js
+
     argopy.plot
     argopy.plot.dashboard
     argopy.plot.bar_plot
