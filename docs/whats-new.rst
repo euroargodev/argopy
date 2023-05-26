@@ -7,11 +7,27 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-
 Coming up on the next release
 -----------------------------
 
 **Features and front-end API**
+
+- **Easy access to all Argo manuals from the ADMT**. More than 20 pdf manuals have been produced by the Argo Data Management Team. Using the new ``ArgoDocs`` class, it's now easier to navigate this great database for Argo experts. All details in :ref:`ADMT Documentation`. (:pr:`268`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import ArgoDocs
+
+    ArgoDocs().list
+
+    ArgoDocs(35385)
+    ArgoDocs(35385).ris
+    ArgoDocs(35385).abstract
+    ArgoDocs(35385).show()
+    ArgoDocs(35385).open_pdf()
+    ArgoDocs(35385).open_pdf(page=12)
+
+    ArgoDocs().search("CDOM")
 
 - **New 'research' user mode**. This new feature implements automatic filtering of Argo data following international recommendations for research/climate studies. With this user mode, only Delayed Mode with good QC data are returned. Check out the :ref:`user-mode` section for all the details. (:pr:`265`) by `G. Maze <http://www.github.com/gmaze>`_
 
