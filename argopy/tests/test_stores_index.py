@@ -13,8 +13,8 @@ from urllib.parse import urlparse
 
 import argopy
 from argopy.stores import (
-    # indexfilter_wmo,
-    # indexfilter_box,
+    indexfilter_wmo,
+    indexfilter_box,
     indexstore,
 )
 from argopy.errors import (
