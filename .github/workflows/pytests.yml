@@ -63,7 +63,7 @@ jobs:
           echo "LOG_FILE=argopy-tests-Core-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
 
       - name: Setup micromamba
-        uses: mamba-org/provision-with-micromamba@v15
+        uses: mamba-org/provision-with-micromamba@v16
         with:
           environment-file: ${{ env.CONDA_ENV_FILE }}
           environment-name: argopy-tests
@@ -136,7 +136,7 @@ jobs:
           echo "LOG_FILE=argopy-tests-All-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
 
       - name: Setup micromamba
-        uses: mamba-org/provision-with-micromamba@v15
+        uses: mamba-org/provision-with-micromamba@v16
         with:
           environment-file: ${{ env.CONDA_ENV_FILE }}
           environment-name: argopy-tests
