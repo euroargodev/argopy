@@ -33,7 +33,7 @@ from .utilities import TopoFetcher, ArgoNVSReferenceTables, OceanOPSDeployments,
 from .utilities import monitor_status as status  # noqa: E402
 from .options import set_options  # noqa: E402
 from .data_fetchers import CTDRefDataFetcher
-
+from .stores import ArgoIndex
 
 #
 __all__ = (
@@ -51,11 +51,13 @@ __all__ = (
     "clear_cache",
     "lscache",
 
+    # Meta-data and other related dataset helpers class:
     "ArgoNVSReferenceTables",  # Class
     "OceanOPSDeployments",  # Class
+    "CTDRefDataFetcher",  # Class
+    "ArgoIndex",  # Class
     "ArgoDocs",  # Class
     "TopoFetcher",  # Class
-    "CTDRefDataFetcher",  # Class
 
     # Submodules:
     "utilities",

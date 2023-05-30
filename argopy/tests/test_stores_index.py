@@ -39,6 +39,7 @@ skip_this = pytest.mark.skipif(0, reason="Skipped temporarily")
 skip_for_debug = pytest.mark.skipif(False, reason="Taking too long !")
 
 
+@pytest.mark.skipif(True, reason="Deprecated")
 @skip_this
 class Test_IndexFilter_WMO:
     kwargs = [
