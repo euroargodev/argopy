@@ -30,7 +30,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
     ext = "pd"
     """Storage file extension"""
 
-    @doc_inherit
+    #@doc_inherit
     def load(self, nrows=None, force=False):
         """ Load an Argo-index file content
 

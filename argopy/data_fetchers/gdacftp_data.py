@@ -11,27 +11,14 @@ from abc import abstractmethod
 import warnings
 import getpass
 import logging
-import importlib
 
 from .proto import ArgoDataFetcherProto
-from ..utilities import list_standard_variables, format_oneline, argo_split_path
+from ..utilities import format_oneline, argo_split_path
 from ..options import OPTIONS, check_gdac_path
 from ..errors import DataNotFound
-
+from ..stores import ArgoIndex
 
 log = logging.getLogger("argopy.gdacftp.data")
-
-has_pyarrow = importlib.util.find_spec("pyarrow") is not None
-if has_pyarrow:
-    from ..stores.argo_index_pa import indexstore_pyarrow as indexstore
-
-    log.debug("Using pyarrow indexstore")
-else:
-    from ..stores.argo_index_pd import indexstore_pandas as indexstore
-
-    # log.warning("Consider installing pyarrow in order to improve performances when fetching GDAC data")
-    log.debug("Using pandas indexstore")
-
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
 dataset_ids = ["phy", "bgc"]  # First is default
@@ -116,8 +103,8 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         elif self.dataset_id == "bgc":
             index_file = "argo_synthetic-profile_index.txt"
 
-        # Validation of self.server is done by the indexstore:
-        self.indexfs = indexstore(
+        # Validation of self.server is done by the ArgoIndex:
+        self.indexfs = ArgoIndex(
             host=self.server,
             index_file=index_file,
             cache=cache,

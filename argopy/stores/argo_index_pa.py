@@ -40,7 +40,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
     ext = "pq"
     """Storage file extension"""
 
-    @doc_inherit
+    # @doc_inherit
     def load(self, nrows=None, force=False):  # noqa: C901
         """ Load an Argo-index file content
 
