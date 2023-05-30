@@ -24,6 +24,7 @@ class ErddapPathError(ValueError):
 
     pass
 
+
 class NetCDF4FileNotFoundError(FileNotFoundError):
     """Raise when NETCDF4 file not found."""
 
@@ -131,6 +132,7 @@ class ErddapHTTPUnauthorized(APIServerError):
     """Raise when login to erddap fails"""
 
     pass
+
 
 class ErddapHTTPNotFound(APIServerError):
     """Raise when erddap resource is not found"""

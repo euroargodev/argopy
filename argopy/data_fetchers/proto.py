@@ -7,6 +7,7 @@ import warnings
 from ..plot import dashboard
 from ..utilities import list_standard_variables
 
+
 class ArgoDataFetcherProto(ABC):
     @abstractmethod
     def to_xarray(self, *args, **kwargs) -> xarray.Dataset:

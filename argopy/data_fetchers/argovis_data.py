@@ -15,7 +15,7 @@ import warnings
 
 from argopy.stores import httpstore
 from argopy.options import OPTIONS
-from argopy.utilities import list_standard_variables, format_oneline, Chunker
+from argopy.utilities import format_oneline, Chunker
 from argopy.errors import DataNotFound
 
 
