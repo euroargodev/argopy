@@ -62,21 +62,21 @@ jobs:
           echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
           echo "LOG_FILE=argopy-tests-Core-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
 
-      - name: Setup micromamba
-        uses: mamba-org/provision-with-micromamba@v15
+      - name: Setup Micromamba ${{ matrix.python-version }}
+        uses: mamba-org/setup-micromamba@v1
         with:
-          environment-file: ${{ env.CONDA_ENV_FILE }}
           environment-name: argopy-tests
-          cache-env: true
-          cache-env-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
-          extra-specs: |
+          environment-file: ${{ env.CONDA_ENV_FILE }}
+          init-shell: bash
+          cache-environment: true
+          cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
+          create-args:: |
             python=${{matrix.python-version}}
-            conda
 
       - name: Version info
         run: |
-          conda info
-          conda list
+          micromamba info
+          micromamba list
 
       - name: Lint with flake8
         run: |
@@ -135,21 +135,21 @@ jobs:
           echo "PYTHON_VERSION=${{matrix.python-version}}" >> $GITHUB_ENV
           echo "LOG_FILE=argopy-tests-All-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
 
-      - name: Setup micromamba
-        uses: mamba-org/provision-with-micromamba@v15
+      - name: Setup Micromamba ${{ matrix.python-version }}
+        uses: mamba-org/setup-micromamba@v1
         with:
-          environment-file: ${{ env.CONDA_ENV_FILE }}
           environment-name: argopy-tests
-          cache-env: true
-          cache-env-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
-          extra-specs: |
+          environment-file: ${{ env.CONDA_ENV_FILE }}
+          init-shell: bash
+          cache-environment: true
+          cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
+          create-args:: |
             python=${{matrix.python-version}}
-            conda       
-
+    
       - name: Version info
         run: |
-          conda info
-          conda list
+          micromamba info
+          micromamba list
 
       - name: Lint with flake8
         run: |
