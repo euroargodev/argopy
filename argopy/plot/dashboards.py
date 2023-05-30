@@ -53,9 +53,9 @@ dashboard_definitions = {
     "argovis": {
         "shorts": [],
         "uri": {
-            "base": None,
-            "wmo": "https://argovis.colorado.edu/catalog/platforms/{}/page".format,
-            "cyc": "https://argovis.colorado.edu/catalog/profiles/{}_{}/page".format,
+            "base": "https://argovis.colorado.edu/argo",
+            "wmo": lambda wmo: "https://argovis.colorado.edu/plots/argo?showAll=true&argoPlatform=%i" % wmo,
+            "cyc": lambda wmo, cyc: "https://argovis.colorado.edu/plots/argo?argoPlatform=%i&counterTraces=[%%22%i_%0.3d%%22]" % (wmo, wmo, cyc),
         },
     },
     "ocean-ops": {

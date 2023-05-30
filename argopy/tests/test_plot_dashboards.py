@@ -20,7 +20,7 @@ if has_ipython:
 log = logging.getLogger("argopy.tests.plot.dashboards")
 
 
-@pytest.mark.parametrize("board_type", ["invalid", "argovis", "op", "ocean-ops", "coriolis"], indirect=False)
+@pytest.mark.parametrize("board_type", ["invalid", "op", "ocean-ops", "coriolis"], indirect=False)
 def test_invalid_dashboard(board_type):
     # Test types without 'base'
     with pytest.raises(InvalidDashboard):
@@ -34,7 +34,7 @@ def test_invalid_dashboard_profile(board_type):
         argopy.dashboard(6902755, 12, type=board_type, url_only=True)
 
 
-@pytest.mark.parametrize("board_type", ["data", "meta", "ea", "bgc"], indirect=False)
+@pytest.mark.parametrize("board_type", ["data", "meta", "ea", "argovis", "bgc"], indirect=False)
 def test_valid_dashboard(board_type):
     # Test types with 'base'
     assert isinstance(argopy.dashboard(type=board_type, url_only=True), str)
