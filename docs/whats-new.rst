@@ -59,7 +59,9 @@ Coming up on the next release
 
 .. code-block:: python
 
-    from argopy.stores import indexstore_pd as indexstore
+    from argopy import ArgoIndex as indexstore
+    # or:
+    # from argopy.stores import indexstore_pd as indexstore
     # or:
     # from argopy.stores import indexstore_pa as indexstore
 
@@ -71,7 +73,9 @@ Coming up on the next release
 
 .. code-block:: python
 
-    from argopy.stores import indexstore_pd as indexstore
+    from argopy import ArgoIndex as indexstore
+    # or:
+    # from argopy.stores import indexstore_pd as indexstore
     # or:
     # from argopy.stores import indexstore_pa as indexstore
 
@@ -81,6 +85,11 @@ Coming up on the next release
 - Use a mocked server for all http and GDAC ftp requests in CI tests (:pr:`249`, :pr:`252`, :pr:`255`) by `G. Maze <http://www.github.com/gmaze>`_
 - Removed support for minimal dependency requirements and for python 3.7. (:pr:`252`) by `G. Maze <http://www.github.com/gmaze>`_
 - Changed License from Apache to `EUPL 1.2 <https://opensource.org/license/eupl-1-2>`_
+
+**Breaking changes**
+
+- The legacy index store is deprecated, now available in argopy.stores.argo_index_deprec.py only (:pr:`270`) by `G. Maze <http://www.github.com/gmaze>`_
+
 
 v0.1.13 (28 Mar. 2023)
 ----------------------

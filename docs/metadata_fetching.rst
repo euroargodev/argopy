@@ -56,37 +56,28 @@ The index fetcher has pretty much the same methods than the data fetchers. You c
 Store: Low-level Argo Index access
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The IndexFetcher shown above is a user-friendly layer on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index store.
-At this point, we implemented an index store that can rely on 2 differents internal storage format for the index: one is using :class:`pyarrow.Table` and the other :class:`pandas.DataFrame`.
+The IndexFetcher shown above is a user-friendly layer on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index store :class:`ArgoIndex`.
 
-All index store methods and properties are fully documented in :class:`argopy.stores.indexstore_pa` and :class:`argopy.stores.indexstore_pd`.
+If Pyarrow is installed, this store will rely on :class:`pyarrow.Table` as internal storage format for the index, otherwise it will fall back on :class:`pandas.DataFrame`. Loading the full Argo profile index takes about 2/3 secs with Pyarrow, while it can take up to 6/7 secs with Pandas.
+
+All index store methods and properties are fully documented in :class:`ArgoIndex`.
 
 Usage
 """""
 
-First, you should select which internal storage format you want. Don't worry, they both provide the same user API.
-
-.. note::
-
-    To improve performances, we recommend to use the Pyarrow index store :class:`argopy.stores.indexstore_pa`. Loading the full Argo profile index takes about 2/3 secs with Pyarrow, while it can take up to 6/7 secs with Pandas.
+You create an index store with default or custom options:
 
 .. ipython:: python
     :okwarning:
 
-    from argopy.stores import indexstore_pd as indexstore  # Rely on Pandas
+    from argopy import ArgoIndex
+
+    idx = ArgoIndex()
     # or:
-    # from argopy.stores import indexstore_pa as indexstore  # Rely on Pyarrow
-
-Then, you create the index store with default or custom options:
-
-.. ipython:: python
-    :okwarning:
-
-    idx = indexstore()
-    # or:
-    # indexstore(host="ftp://ftp.ifremer.fr/ifremer/argo")
-    # indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt")
-    # indexstore(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt", cache=True)
+    # ArgoIndex(index_file="argo_bio-profile_index.txt")
+    # ArgoIndex(host="ftp://ftp.ifremer.fr/ifremer/argo")
+    # ArgoIndex(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt")
+    # ArgoIndex(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt", cache=True)
 
 You can then trigger loading of the index content:
 
@@ -145,8 +136,8 @@ And finally the list of methods and properties for **search results**:
     .. ipython:: python
         :okwarning:
 
-        idx = indexstore(index_file="argo_bio-profile_index.txt").load()
-        # idx = indexstore(index_file="argo_synthetic-profile_index.txt").load()
+        idx = ArgoIndex(index_file="argo_bio-profile_index.txt").load()
+        # idx = ArgoIndex(index_file="argo_synthetic-profile_index.txt").load()
         idx
 
     This BGC index store comes with an additional search possibility for parameters:
