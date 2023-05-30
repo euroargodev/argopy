@@ -32,8 +32,8 @@ from .utilities import show_versions, show_options, clear_cache, lscache  # noqa
 from .utilities import TopoFetcher, ArgoNVSReferenceTables, OceanOPSDeployments, ArgoDocs  # noqa: E402
 from .utilities import monitor_status as status  # noqa: E402
 from .options import set_options  # noqa: E402
-from .data_fetchers import CTDRefDataFetcher
-from .stores import ArgoIndex
+from .data_fetchers import CTDRefDataFetcher  # noqa: E402
+from .stores import ArgoIndex  # noqa: E402
 
 #
 __all__ = (

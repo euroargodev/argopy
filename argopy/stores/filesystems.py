@@ -1160,7 +1160,7 @@ class httpstore_erddap_auth(httpstore):
         else:
             self._login_page = login
 
-        self._login_auto = auto  # Should we try to log-in automatically at instanciation ?
+        self._login_auto = auto  # Should we try to log-in automatically at instantiation ?
 
         self._login_payload = payload.copy()
         if "user" in self._login_payload and self._login_payload['user'] is None:

@@ -48,5 +48,6 @@ dependencies:
   - pytest-env
   - pytest-localftpserver
   - pytest-reportlog
+  - aiofiles
   - setuptools
 #  - sphinx

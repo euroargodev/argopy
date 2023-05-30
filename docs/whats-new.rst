@@ -7,8 +7,8 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-Coming up on the next release
------------------------------
+v0.1.14rc1 (30 May 2023)
+------------------------
 
 **Features and front-end API**
 
@@ -71,7 +71,7 @@ Coming up on the next release
     idx.to_indexfile('short_index.txt')  # export search results as standard Argo index csv file
 
 
-- **Index store can now load/search the Argo Bio and Synthetic profile index files**. Simply gives the name of the Bio or Synthtetic Profile index file and retrieve the full index. This  store also comes with a new search criteria fro BGC: by parameters. See all details in :ref:`Store: Low-level Argo Index access`.  (:pr:`261`) by `G. Maze <http://www.github.com/gmaze>`_
+- **Index store can now load/search the Argo Bio and Synthetic profile index files**. Simply gives the name of the Bio or Synthetic Profile index file and retrieve the full index. This  store also comes with a new search criteria for BGC: by parameters. See all details in :ref:`Store: Low-level Argo Index access`.  (:pr:`261`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 

@@ -4,7 +4,7 @@ Fetcher to retrieve CTD reference data from Ifremer erddap
 import xarray as xr
 from .erddap_data import ErddapArgoDataFetcher
 from argopy.options import OPTIONS
-from argopy.utilities import Chunker, doc_inherit
+from argopy.utilities import Chunker
 from argopy.stores import httpstore_erddap_auth
 import logging
 

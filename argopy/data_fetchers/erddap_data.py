@@ -19,7 +19,7 @@ import getpass
 
 from .proto import ArgoDataFetcherProto
 from argopy.options import OPTIONS
-from argopy.utilities import list_standard_variables, Chunker, format_oneline
+from argopy.utilities import Chunker, format_oneline
 from argopy.stores import httpstore
 from ..errors import ErddapServerError
 from aiohttp import ClientResponseError
