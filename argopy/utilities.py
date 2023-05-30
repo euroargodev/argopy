@@ -495,8 +495,8 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
             ("fsspec", lambda mod: mod.__version__),
             ("aiohttp", lambda mod: mod.__version__),
             ("packaging", lambda mod: mod.__version__),  # will come with xarray, Using 'version' to make API compatible with several fsspec releases
-            ("toolz", lambda mod: mod.__version__),
             ("requests", lambda mod: mod.__version__),
+            ("toolz", lambda mod: mod.__version__),
         ]),
         'ext.util': sorted([
             ("gsw", lambda mod: mod.__version__),   # Used by xarray accessor to compute new variables
@@ -534,7 +534,9 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
             ("pytest_env", lambda mod: mod.__version__),  # will come with pandas
             ("pytest_cov", lambda mod: mod.__version__),  # will come with pandas
             ("pytest_localftpserver", lambda mod: mod.__version__),  # will come with pandas
-            ("setuptools", lambda mod: mod.__version__),  # Provides: pkg_resources
+            ("pytest_reportlog", lambda mod: mod.__version__),  # will come with pandas
+            ("setuptools", lambda mod: mod.__version__),
+            ("aiofiles", lambda mod: mod.__version__),
             ("sphinx", lambda mod: mod.__version__),
         ]),
     }
