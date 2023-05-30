@@ -7,8 +7,8 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-Coming up on the next release
------------------------------
+v0.1.14 (30 May 2023)
+---------------------
 
 **Features and front-end API**
 

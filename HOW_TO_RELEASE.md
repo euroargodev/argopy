@@ -1,9 +1,9 @@
 # Setup
 
-- [ ] Create a new branch for this release: ``git checkout -b releasev0.1.14``
-- [ ] Increase release version in ``./setup.py``
-- [ ] Update release version in ``./docs/whats-new.rst``
-- [ ] Create a PR to prepare it, name it with one of the [Nature emoji](https://www.webfx.com/tools/emoji-cheat-sheet/#tabs-3) and make sure it was [never used before](https://github.com/euroargodev/argopy/pulls?q=is%3Apr+label%3Arelease+) 
+- [x] Create a new branch for this release: ``git checkout -b releasev0.1.14``
+- [x] Increase release version in ``./setup.py``
+- [x] Update release version in ``./docs/whats-new.rst``
+- [x] Create a PR to prepare it, name it with one of the [Nature emoji](https://www.webfx.com/tools/emoji-cheat-sheet/#tabs-3) and make sure it was [never used before](https://github.com/euroargodev/argopy/pulls?q=is%3Apr+label%3Arelease+) 
 
 # Prepare code for release
 
