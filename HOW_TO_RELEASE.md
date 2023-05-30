@@ -1,14 +1,11 @@
 # Setup
 
-- [x] Create a new branch for this release: ``git checkout -b releasev0.1.14``
-- [x] Increase release version in ``./setup.py``
-- [x] Update release version in ``./docs/whats-new.rst``
-- [x] Create a PR to prepare it, name it with one of the [Nature emoji](https://www.webfx.com/tools/emoji-cheat-sheet/#tabs-3) and make sure it was [never used before](https://github.com/euroargodev/argopy/pulls?q=is%3Apr+label%3Arelease+) 
+- [ ] Create a new branch for this release: ``git checkout -b releasev0.X.Y``
+- [ ] Increase release version in ``./setup.py``
+- [ ] Update release version in ``./docs/whats-new.rst``
+- [ ] Create a PR to prepare it, name it with one of the [Nature emoji](https://www.webfx.com/tools/emoji-cheat-sheet/#tabs-3) and make sure it was [never used before](https://github.com/euroargodev/argopy/pulls?q=is%3Apr+label%3Arelease+) 
 
 # Prepare code for release
-
-- [ ] Run [codespell](https://github.com/codespell-project/codespell) from repo root and fix errors: ``codespell -q 2``
-- [ ] Run [flake8](https://github.com/PyCQA/flake8) from repo root and fix errors
 
 ## Code clean-up
 - [ ] Run [codespell](https://github.com/codespell-project/codespell) from repo root and fix errors: ``codespell -q 2``
@@ -37,5 +34,6 @@ Choose the release tag v0.X.Y, fill in the release title and click on the `Auto-
 This will trigger the [publish Github action](https://github.com/euroargodev/argopy/blob/master/.github/workflows/pythonpublish.yml) that will push the release on [Pypi](https://pypi.org/project/argopy/#history).
 
 # CI tests / RTD build results
-[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests.yml/badge.svg?branch=releasev0.X.Y)](https://github.com/euroargodev/argopy/actions/workflows/pytests.yml) [![CI tests (MacOs)](https://github.com/euroargodev/argopy/actions/workflows/pytests_mac.yml/badge.svg?branch=releasev0.X.Y)](https://github.com/euroargodev/argopy/actions/workflows/pytests_mac.yml) [![CI tests (Windows)](https://github.com/euroargodev/argopy/actions/workflows/pytests_windows.yml/badge.svg?branch=releasev0.X.Y)](https://github.com/euroargodev/argopy/actions/workflows/pytests_windows.yml) [![CI tests Upstream](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml/badge.svg?branch=releasev0.X.Y)](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml)
+[![CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests.yml/badge.svg?branch=releasev0.X.Y)](https://github.com/euroargodev/argopy/actions/workflows/pytests.yml) 
+[![CI tests Upstream](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml/badge.svg?branch=releasev0.X.Y)](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml)
 [![Documentation Status](https://readthedocs.org/projects/argopy/badge/?version=releasev0.X.Y)](https://argopy.readthedocs.io/en/releasev0.X.Y)
