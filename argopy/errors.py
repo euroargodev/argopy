@@ -133,6 +133,6 @@ class ErddapHTTPUnauthorized(APIServerError):
     pass
 
 class ErddapHTTPNotFound(APIServerError):
-    """Raise when erddap ressource is not found"""
+    """Raise when erddap resource is not found"""
 
     pass

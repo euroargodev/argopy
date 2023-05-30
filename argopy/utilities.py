@@ -3920,133 +3920,133 @@ class ArgoDocs:
     """
     _catalogue = [
         {
-            "categorie": "Argo data formats",
+            "category": "Argo data formats",
             "title": "Argo user's manual",
             "doi": "10.13155/29825",
             "id": 29825
         },
         {
-            "categorie": "Quality control",
+            "category": "Quality control",
             "title": "Argo Quality Control Manual for CTD and Trajectory Data",
             "doi": "10.13155/33951",
             "id": 33951
         },
         {
-            "categorie": "Quality control",
+            "category": "Quality control",
             "title": "Argo quality control manual for dissolved oxygen concentration",
             "doi": "10.13155/46542",
             "id": 46542
         },
         {
-            "categorie": "Quality control",
+            "category": "Quality control",
             "title": "Argo quality control manual for biogeochemical data",
             "doi": "10.13155/40879",
             "id": 40879
         },
         {
-            "categorie": "Quality control",
+            "category": "Quality control",
             "title": "BGC-Argo quality control manual for the Chlorophyll-A concentration",
             "doi": "10.13155/35385",
             "id": 35385
         },
         {
-            "categorie": "Quality control",
+            "category": "Quality control",
             "title": "BGC-Argo quality control manual for nitrate concentration",
             "doi": "10.13155/84370",
             "id": 84370
         },
         {
-            "categorie": "Quality control",
+            "category": "Quality control",
             "title": "Quality control for BGC-Argo radiometry",
             "doi": "10.13155/62466",
             "id": 62466
         },
         {
-            "categorie": "Cookbooks",
+            "category": "Cookbooks",
             "title": "Argo DAC profile cookbook",
             "doi": "10.13155/41151",
             "id": 41151
         },
         {
-            "categorie": "Cookbooks",
+            "category": "Cookbooks",
             "title": "Argo DAC trajectory cookbook",
             "doi": "10.13155/29824",
             "id": 29824
         },
         {
-            "categorie": "Cookbooks",
+            "category": "Cookbooks",
             "title": "DMQC Cookbook for Core Argo parameters",
             "doi": "10.13155/78994",
             "id": 78994
         },
         {
-            "categorie": "Cookbooks",
+            "category": "Cookbooks",
             "title": "Processing Argo oxygen data at the DAC level",
             "doi": "10.13155/39795",
             "id": 39795
         },
         {
-            "categorie": "Cookbooks",
+            "category": "Cookbooks",
             "title": "Processing Bio-Argo particle backscattering at the DAC level",
             "doi": "10.13155/39459",
             "id": 39459
         },
         {
-            "categorie": "Cookbooks",
+            "category": "Cookbooks",
             "title": "Processing BGC-Argo chlorophyll-A concentration at the DAC level",
             "doi": "10.13155/39468",
             "id": 39468
         },
         {
-            "categorie": "Cookbooks",
+            "category": "Cookbooks",
             "title": "Processing Argo measurement timing information at the DAC level",
             "doi": "10.13155/47998",
             "id": 47998
         },
         {
-            "categorie": "Cookbooks",
+            "category": "Cookbooks",
             "title": "Processing BGC-Argo CDOM concentration at the DAC level",
             "doi": "10.13155/54541",
             "id": 54541
         },
         {
-            "categorie": "Cookbooks",
+            "category": "Cookbooks",
             "title": "Processing Bio-Argo nitrate concentration at the DAC Level",
             "doi": "10.13155/46121",
             "id": 46121
         },
         {
-            "categorie": "Cookbooks",
+            "category": "Cookbooks",
             "title": "Processing BGC-Argo Radiometric data at the DAC level",
             "doi": "10.13155/51541",
             "id": 51541
         },
         {
-            "categorie": "Cookbooks",
+            "category": "Cookbooks",
             "title": "Processing BGC-Argo pH data at the DAC level",
             "doi": "10.13155/57195",
             "id": 57195
         },
         {
-            "categorie": "Cookbooks",
+            "category": "Cookbooks",
             "title": "Description of the Argo GDAC File Checks: Data Format and Consistency Checks",
             "doi": "10.13155/46120",
             "id": 46120
         },
         {
-            "categorie": "Cookbooks",
+            "category": "Cookbooks",
             "title": "Description of the Argo GDAC File Merge Process",
             "doi": "10.13155/52154",
             "id": 52154
         },
         {
-            "categorie": "Cookbooks",
+            "category": "Cookbooks",
             "title": "BGC-Argo synthetic profile file processing and format on Coriolis GDAC",
             "doi": "10.13155/55637",
             "id": 55637
         },
         {
-            "categorie": "Cookbooks",
+            "category": "Cookbooks",
             "title": "Argo GDAC cookbook",
             "doi": "10.13155/46202",
             "id": 46202
@@ -4107,7 +4107,7 @@ class ArgoDocs:
             if docid in [doc['id'] for doc in self._catalogue]:
                 self.docid = docid
             else:
-                raise ValueError("Unknow document id")
+                raise ValueError("Unknown document id")
 
     def __repr__(self):
         summary = ["<argopy.ArgoDocs>"]
