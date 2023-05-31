@@ -7,7 +7,7 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-v0.1.14rc1 (30 May 2023)
+v0.1.14rc1 (31 May 2023)
 ------------------------
 
 **Features and front-end API**
@@ -34,14 +34,14 @@ v0.1.14rc1 (30 May 2023)
 
 - **New 'research' user mode**. This new feature implements automatic filtering of Argo data following international recommendations for research/climate studies. With this user mode, only Delayed Mode with good QC data are returned. Check out the :ref:`user-mode` section for all the details. (:pr:`265`) by `G. Maze <http://www.github.com/gmaze>`_
 
-- **argopy now provides a specific xarray engine to properly read Argo netcdf files**. Using ``engine='argo'`` in :func:`xarray.open_dataset`, all variables will properly be casted, i.e. returned with their expected data types, which is not the case otherwise. This works with *ALL* Argo netcdf file types (as listed in the `Reference table R01 <http://vocab.nerc.ac.uk/collection/R01/current/>`_).  (:pr:`208`) by `G. Maze <http://www.github.com/gmaze>`_
+- **argopy now provides a specific xarray engine to properly read Argo netcdf files**. Using ``engine='argo'`` in :func:`xarray.open_dataset`, all variables will properly be casted, i.e. returned with their expected data types, which is not the case otherwise. This works with *ALL* Argo netcdf file types (as listed in the `Reference table R01 <http://vocab.nerc.ac.uk/collection/R01/current/>`_). Some details in here: :class:`argopy.xarray.ArgoEngine` (:pr:`208`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
     import xarray as xr
     ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
 
-- **argopy now provides authenticated access to the Argo reference database for DMQC**. Using user/password new **argopy** options, it is now possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by `G. Maze <http://www.github.com/gmaze>`_
+- **argopy now can provide authenticated access to the Argo CTD reference database for DMQC**. Using user/password new **argopy** options, it is possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -50,6 +50,9 @@ v0.1.14rc1 (30 May 2023)
     with argopy.set_options(user="john_doe", password="***"):
         f = CTDRefDataFetcher(box=[15, 30, -70, -60, 0, 5000.0])
         ds = f.to_xarray()
+
+.. warning::
+    **argopy** is ready but the Argo CTD reference database for DMQC is not fully published on the Ifremer ERDDAP yet. This new feature will thus be fully operational soon, and while it's not, **argopy** should raise an ``ErddapHTTPNotFound`` error when using the new fetcher.
 
 - New option to control the expiration time of cache file ``cache_expiration``. 
 
@@ -91,6 +94,7 @@ v0.1.14rc1 (30 May 2023)
 **Breaking changes**
 
 - The legacy index store is deprecated, now available in argopy.stores.argo_index_deprec.py only (:pr:`270`) by `G. Maze <http://www.github.com/gmaze>`_
+- The :meth:`ArgoNVSReferenceTables.all_tbl` and :meth:`ArgoNVSReferenceTables.all_tbl_name` methods are now properties, hence no longer callable.
 
 
 v0.1.13 (28 Mar. 2023)

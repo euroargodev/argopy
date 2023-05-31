@@ -222,12 +222,12 @@ The reference table is returned as a :class:`pandas.DataFrame`. If you want the 
 
     NVS.tbl_name('R01')
 
-On the other hand, if you want to retrieve all reference tables, you can do it with the :meth:`ArgoNVSReferenceTables.all_tbl` method. It will return a dictionary with table short names as key and :class:`pandas.DataFrame` as values.
+If you're looking the ID to use for a specific reference table, you can check it from the list of all available tables given by the :meth:`ArgoNVSReferenceTables.all_tbl_name` property. It will return a dictionary with table IDs as key and table name, definition and NVS link as values. Use the :meth:`ArgoNVSReferenceTables.all_tbl` property to retrieve all tables.
 
 .. ipython:: python
 
-    all = NVS.all_tbl()
-    all.keys()
+    NVS.all_tbl_name
+
 
 Deployment Plan
 ---------------

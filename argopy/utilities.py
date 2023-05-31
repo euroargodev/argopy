@@ -2887,10 +2887,10 @@ class ArgoNVSReferenceTables:
     --------
     >>> R = ArgoNVSReferenceTables()
     >>> R.valid_ref
-    >>> R.all_tbl_name()
+    >>> R.all_tbl_name
+    >>> R.all_tbl
     >>> R.tbl(3)
     >>> R.tbl('R09')
-    >>> R.all_tbl()
 
     """
     valid_ref = [
