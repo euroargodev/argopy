@@ -232,7 +232,7 @@ html_theme_options = {
     'show_toc_level': 3,  # https://sphinx-book-theme.readthedocs.io/en/stable/customize/sidebar-secondary.html#show-more-levels-of-the-in-page-toc-by-default
     # 'launch_buttons': { "thebe": True}
     "announcement": (
-        "⚠️argopy now has its own cheatsheet ! <a href='https://argopy.readthedocs.io/en/latest/_images/argopy-cheatsheet.pdf'>Check it out here </a>!⚠️"
+        "⚠️ argopy now has its own cheatsheet ! <a href='https://argopy.readthedocs.io/en/latest/_static/argopy-cheatsheet.pdf'>Check it out here </a>! ⚠️"
     )
 }
 

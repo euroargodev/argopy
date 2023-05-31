@@ -12,6 +12,11 @@ v0.1.14rc1 (31 May 2023)
 
 **Features and front-end API**
 
+- **argopy** cheatsheet ! Get most of the argopy API in a 2 pages pdf !
+
+.. image:: _static/argopy-cheatsheet.png
+  :height: 200px
+  :target: _static/argopy-cheatsheet.pdf
 
 - **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`Store: Low-level Argo Index access`. (:pr:`270`) by `G. Maze <http://www.github.com/gmaze>`_
 
