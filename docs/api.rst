@@ -169,6 +169,7 @@ Data Filters
    Dataset.argo.filter_qc
    Dataset.argo.filter_data_mode
    Dataset.argo.filter_scalib_pres
+   Dataset.argo.filter_researchmode
 
 Processing
 ----------
@@ -253,6 +254,7 @@ Argo index store
 .. autosummary::
     :toctree: generated/
 
+    ArgoIndex
     argopy.stores.indexstore_pa
     argopy.stores.indexstore_pd
 

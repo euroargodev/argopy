@@ -236,6 +236,7 @@
     argopy.xarray.ArgoAccessor.filter_qc
     argopy.xarray.ArgoAccessor.filter_data_mode
     argopy.xarray.ArgoAccessor.filter_scalib_pres
+    argopy.xarray.ArgoAccessor.filter_researchmode
     argopy.xarray.ArgoAccessor.cast_types
 
     argopy.xarray.ArgoEngine
