@@ -101,20 +101,25 @@ class set_options:
     - ``src``: Source of fetched data.
         Default: ``erddap``.
         Possible values: ``erddap``, ``gdac``, ``argovis``
-    - ``ftp``: Path to a local or remote GDAC
-        Default: None
+    - ``mode``: User mode.
+        Default: ``standard``.
+        Possible values: ``standard``, ``expert`` or ``research``.
+    - ``ftp``: Default path to be used by the GDAC fetchers and Argo index stores
+        Default: https://data-argo.ifremer.fr
+    - ``erddap``: Default server address to be used by the data and index erddap fetchers
+        Default: https://erddap.ifremer.fr/erddap
     - ``cachedir``: Absolute path to a local cache directory.
         Default: ``~/.cache/argopy``
     - ``cache_expiration``: Expiration delay of cache files in seconds.
         Default: 86400
-    - ``mode``: User mode.
-        Default: ``standard``.
-        Possible values: ``standard`` or ``expert``.
     - ``api_timeout``: Define the time out of internet requests to web API, in seconds.
         Default: 60
     - ``trust_env``: Allow for local environment variables to be used to connect to the internet.
         Argopy will get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True (
         False by default) and it can also get proxy credentials from ~/.netrc file if this file exists.
+    - ``user``/``password``: Username and password to use when a simple authentication is required.
+    - ``server``: Other than expected/default server to be uses by a function/method. This is mostly intended to be used for unit testing
+
 
     You can use `set_options` either as a context manager:
 
