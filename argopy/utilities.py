@@ -69,6 +69,11 @@ try:
 except ImportError:
     pass
 
+try:
+    from IPython.display import display, Markdown
+except:
+    pass
+
 path2pkl = pkg_resources.resource_filename("argopy", "assets/")
 
 log = logging.getLogger("argopy.utilities")
@@ -4230,3 +4235,125 @@ class ArgoDocs:
                 if txt.lower() in ArgoDocs(docid).abstract.lower():
                     results.append(docid)
         return results
+
+
+class Assistant:
+    """AI Argo/Python assistant based on OpenAI chat-GPT-v3
+
+    Examples
+    --------
+    AI = Assistant()
+
+    AI.ask('how do I use the Argo profile index ?')
+    AI.chat()
+    AI.replay()
+
+    """
+    name = "Medea"  # Jason's wife ! Another Argo/Jason mythology character: https://en.wikipedia.org/wiki/Medea
+    import openai
+
+    @property
+    def _prompt(self):
+        with open(os.path.join(path2pkl, "medea_def.pickle"), "rb") as f:
+            p = pickle.load(f)
+        return p.replace('NAME', self.name)
+
+    def __init__(self):
+        self.messages = []
+        self.total_tokens = 0
+        self._started = False
+        if OPTIONS['openai_api_key'] is None:
+            if os.getenv('OPENAI_API_KEY') is None:
+                raise ValueError("You must specify a valid open-ai API key (with the argopy option 'openai_api_key' or \
+environment variable 'OPENAI_API_KEY'. If you don't have an API key, you may get one here: https://platform.openai.com/account/api-keys")
+            else:
+                openai_api_key = os.getenv("OPENAI_API_KEY")
+        else:
+            openai_api_key = OPTIONS['openai_api_key']
+        self._openai_api_key = openai_api_key
+        self.openai.api_key = self._openai_api_key
+        self._validate_key()
+
+    def _validate_key(self):
+        valid = False
+        try:
+            l = self.openai.Model.list()
+            for model in l['data']:
+                if model['id'] == 'gpt-3.5-turbo':
+                    valid = True
+        except:
+            warnings.warn("Something is wrong, probably your OpenAI API key ('%s') ..." % self._openai_api_key)
+        return valid
+
+    def tell(self, prompt=None):
+        if prompt:
+            self.messages.append({"role": "user",
+                                  "content": prompt})
+        chat = self.openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=self.messages
+        )
+        reply = chat.choices[0].message.content
+        self.messages.append({"role": "assistant",
+                              "content": reply})
+
+        self.total_tokens += chat.usage['total_tokens']
+
+        return reply
+
+    def print_line(self, role='', content=''):
+        display(Markdown("**%s**: %s" % (role, content)))
+
+    def start(self, mute=False):
+        if not self._started:
+            self.username = OPTIONS['user'] if OPTIONS['user'] is not None else "You"
+            self.messages = [
+                {"role": "system",
+                 "content": self._prompt},
+                {"role": "user",
+                 "content": "My name is %s" % self.username},
+                {"role": "user",
+                 "content": "I am an %s user in Argo data" % OPTIONS['mode']},
+            ]
+            reply = self.tell()
+            if not mute:
+                self.print_line(self.name, reply)
+            self._started = True
+
+    def chat(self):
+        self.start()
+        self.print_line(self.name, "Just type in 'stop' or 'bye' to stop chatting with me")
+        while True:
+            prompt = input('%s: ' % self.username)
+            if prompt.lower() not in ['stop', 'bye', 'bye-bye', 'ciao', 'quit']:
+                reply = self.tell(prompt)
+                self.print_line(self.name, reply)
+            else:
+                reply = self.tell("I am going to stop this conversation, bye bye %s" % self.name)
+                self.print_line(self.name, reply)
+                break
+
+    def ask(self, question=None):
+        self.start(mute=True)
+        reply = self.tell(question)
+        self.print_line(self.name, reply)
+
+    def __repr__(self):
+        summary = ["<argopy.Assistant>"]
+        if len(self.messages) == 0:
+            summary.append("You're up to start chatting or asking questions to %s, your Argo assistant" % self.name)
+            summary.append("Initiate a chat session with the: chat() method")
+            summary.append("or just ask a question with the: ask('text') method")
+        else:
+            summary.append("You already talked to %s (%i messages)" % (self.name, len(self.messages)))
+            summary.append("You consumed %i tokens" % self.total_tokens)
+        return "\n".join(summary)
+
+    def replay(self):
+        for im, m in enumerate(self.messages):
+            if im > 3:
+                if m['role'] == 'assistant':
+                    role = self.name
+                elif m['role'] == 'user':
+                    role = self.username
+                self.print_line(role, m['content'])
