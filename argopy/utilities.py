@@ -4242,8 +4242,10 @@ class Assistant:
 
     Examples
     --------
-    AI = Assistant()
+    import argopy
+    argopy.set_options(openai_api_key='*****')  # https://platform.openai.com/account/api-keys
 
+    AI = Assistant()
     AI.ask('how do I use the Argo profile index ?')
     AI.chat()
     AI.replay()
