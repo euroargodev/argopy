@@ -30,6 +30,7 @@ TRUST_ENV = "trust_env"
 SERVER = "server"
 USER = "user"
 PASSWORD = "password"
+OPENAI_API_KEY = "openai_api_key"
 
 # Define the list of available options and default values:
 OPTIONS = {
@@ -45,6 +46,7 @@ OPTIONS = {
     SERVER: None,
     USER: None,
     PASSWORD: None,
+    OPENAI_API_KEY: None,
 }
 
 # Define the list of possible values
@@ -87,6 +89,7 @@ _VALIDATORS = {
     SERVER: lambda x: True,
     USER: lambda x: isinstance(x, str),
     PASSWORD: lambda x: isinstance(x, str),
+    OPENAI_API_KEY: lambda x: isinstance(x, str),
 }
 
 
