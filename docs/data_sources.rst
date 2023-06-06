@@ -83,28 +83,27 @@ Features
 Each of the available data sources have their own features and
 capabilities. Here is a summary:
 
-======================= ====== ==== =======
-Data source:            erddap gdac argovis
-======================= ====== ==== =======
+======================= ====== ==== ===== =======
+Data source:            erddap gdac local argovis
+======================= ====== ==== ===== =======
 **Access Points**
-region                  X      X    X
-float                   X      X    X
-profile                 X      X    X
+region                  X      X    X     X
+float                   X      X    X     X
+profile                 X      X    X     X
 **User mode**
-standard                X      X    X
-expert                  X      X
+standard                X      X    X     X
+expert                  X      X    X
+research                X      X    X
 **Dataset**
-core (T/S)              X      X    X
-BGC
+core (T/S)              X      X    X     X
+BGC (experimental)      X      X    X
 Reference data for DMQC X
 **Parallel method**                     
-multi-threading         X      X    X
-multi-processes                *
-Dask client
-**Offline mode**               *
+multi-threading         X      X    X     X
+multi-processes                     X
+Dask client (experimental)
+**Offline mode**                    X
 ======================= ====== ==== =======
-
-`*` Only when used with a local copy of the GDAC folder.
 
 Fetched data and variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
