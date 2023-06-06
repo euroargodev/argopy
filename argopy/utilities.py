@@ -4238,7 +4238,9 @@ class ArgoDocs:
 
 
 class Assistant:
-    """AI Argo/Python assistant based on OpenAI chat-GPT-v3
+    """AI Argo/Python assistant based on OpenAI chat-GPT-v3.5
+
+    You must first sign-up to get an OpenAI API key at: https://platform.openai.com/signup?launch
 
     Examples
     --------
@@ -4246,7 +4248,7 @@ class Assistant:
     argopy.set_options(openai_api_key='*****')  # https://platform.openai.com/account/api-keys
 
     AI = Assistant()
-    AI.ask('how do I use the Argo profile index ?')
+    AI.ask('how to load float 6903456 ?')
     AI.chat()
     AI.replay()
 
