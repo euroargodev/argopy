@@ -98,6 +98,7 @@ research                X      X    X
 core (T/S)              X      X    X     X
 BGC (experimental)      X      X    X
 Reference data for DMQC X
+Trajectories
 **Parallel method**                     
 multi-threading         X      X    X     X
 multi-processes                     X
