@@ -205,10 +205,13 @@ class ArgoIndexStoreProto(ABC):
 
         elif "PARAM" in self.search_type:
             PARAM = self.search_type["PARAM"]
-            if is_list_of_strings(PARAM):
-                cname = "-".join(PARAM)
-            else:
-                cname = "-".join(["%s_%s" % (p, PARAM[p]) for p in PARAM])
+            LOG = self.search_type["logical"]
+            cname = LOG.join(PARAM)
+
+        elif "DMODE" in self.search_type:
+            DMODE = self.search_type["DMODE"]
+            LOG = self.search_type["logical"]
+            cname = LOG.join(["%s_%s" % (p, DMODE[p]) for p in DMODE])
 
         return cname
 
