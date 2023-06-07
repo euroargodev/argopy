@@ -370,9 +370,8 @@ class indexstore_pandas(ArgoIndexStoreProto):
         search_parameter_data_mode({'DOXY': 'R', 'DOXY': 'A'}, logical='or')
 
         """
-
-        if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
-            raise InvalidDatasetStructure("Cannot search for parameter data modes in this index (not a BGC profile index)")
+        # if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
+        #     raise InvalidDatasetStructure("Cannot search for parameter data modes in this index (not a BGC profile index)")
         log.debug("Argo index searching for parameter data modes such as PARAM=%s ..." % PARAMs)
 
         # todo: validate PARAMs argument type
@@ -381,20 +380,28 @@ class indexstore_pandas(ArgoIndexStoreProto):
         self.search_type = {"DMODE": PARAMs, "logical": logical}
         filt = []
 
-        self.index["variables"] = self.index["parameters"].apply(lambda x: x.split())
+        if self.convention in ["ar_index_global_prof"]:
+            for param in PARAMs:
+                data_mode = to_list(PARAMs[param])
+                filt.append(
+                    self.index['file'].apply(lambda x: str(x.split("/")[-1])[0] in data_mode)
+                )
 
-        for param in PARAMs:
-            data_mode = to_list(PARAMs[param])
-            filt.append(
-                self.index.apply(lambda x: (x['parameter_data_mode'][x['variables'].index(param)] if param in x[
-                    'variables'] else '') in data_mode, axis=1)
-            )
+        elif self.convention in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
+            self.index["variables"] = self.index["parameters"].apply(lambda x: x.split())
+            for param in PARAMs:
+                data_mode = to_list(PARAMs[param])
+                filt.append(
+                    self.index.apply(lambda x: (x['parameter_data_mode'][x['variables'].index(param)] if param in x[
+                        'variables'] else '') in data_mode, axis=1)
+                )
+            self.index = self.index.drop('variables', axis=1)
+
         if logical == 'and':
             self.search_filter = np.logical_and.reduce(filt)
         else:
             self.search_filter = np.logical_or.reduce(filt)
         self.run(nrows=nrows)
-        self.index = self.index.drop('variables', axis=1)
         return self
 
     def to_indexfile(self, outputfile):
