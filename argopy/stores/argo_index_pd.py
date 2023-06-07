@@ -349,8 +349,8 @@ class indexstore_pandas(ArgoIndexStoreProto):
         filt = []
         for param in PARAMs:
             filt.append(
-                # self.index["parameters"].str.contains("%s" % param, regex=True, case=False)
-                self.index["parameters"].str.split().contains("%s" % param, regex=True, case=False)
+                self.index["parameters"].str.contains("%s" % param, regex=True, case=False)
+                # self.index["parameters"].str.split().contains("%s" % param, regex=True, case=False)
             )
         self.search_filter = np.logical_and.reduce(filt)
         self.run(nrows=nrows)
