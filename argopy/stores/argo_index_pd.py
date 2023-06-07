@@ -349,9 +349,47 @@ class indexstore_pandas(ArgoIndexStoreProto):
         filt = []
         for param in PARAMs:
             filt.append(
-                self.index["parameters"].str.contains("%s" % param, regex=True, case=False)
+                # self.index["parameters"].str.contains("%s" % param, regex=True, case=False)
+                self.index["parameters"].str.split().contains("%s" % param, regex=True, case=False)
             )
         self.search_filter = np.logical_and.reduce(filt)
+        self.run(nrows=nrows)
+        return self
+
+    def search_parameter_data_mode(self, PARAMs, nrows=None, logical='and'):
+        """Search for profile with a data mode for a specific parameter
+
+        Examples
+        --------
+        search_parameter_data_mode({'BBP700': 'D'})
+        search_parameter_data_mode({'BBP700': 'D', 'DOXY': 'D'})
+        search_parameter_data_mode({'DOXY': 'R', 'DOXY': 'A'}, logical='or')
+
+        """
+
+        if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
+            raise InvalidDatasetStructure("Cannot search for parameter data modes in this index (not a BGC profile index)")
+        log.debug("Argo index searching for parameter data modes such as PARAM=%s ..." % PARAMs)
+
+        # todo: validate PARAMs argument type
+
+        self.load()
+        self.search_type = {"PARAM": PARAMs}
+        filt = []
+
+        self.index["variables"] = self.index["parameters"].apply(lambda x: x.split())
+
+        for param in PARAMs:
+            data_mode = PARAMs[param]
+            filt.append(
+                self.index.apply(lambda x: (x['parameter_data_mode'][x['variables'].index(param)] if param in x[
+                    'variables'] else '') == data_mode, axis=1)
+            )
+        if logical == 'and':
+            self.search_filter = np.logical_and.reduce(filt)
+        else:
+            self.search_filter = np.logical_or.reduce(filt)
+        self.index = self.index.drop('variables', axis=1)
         self.run(nrows=nrows)
         return self
 

@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 
 from ..options import OPTIONS
 from ..errors import FtpPathError, InvalidDataset, OptionValueError
-from ..utilities import Registry, isconnected
+from ..utilities import Registry, isconnected, is_list_of_strings
 from .filesystems import httpstore, memorystore, filestore, ftpstore
 
 try:
@@ -205,7 +205,10 @@ class ArgoIndexStoreProto(ABC):
 
         elif "PARAM" in self.search_type:
             PARAM = self.search_type["PARAM"]
-            cname = "-".join(PARAM)
+            if is_list_of_strings(PARAM):
+                cname = "-".join(PARAM)
+            else:
+                cname = "-".join(["%s_%s" % (p, PARAM[p]) for p in PARAM])
 
         return cname
 
