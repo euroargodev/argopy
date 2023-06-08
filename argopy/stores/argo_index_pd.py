@@ -114,9 +114,9 @@ class indexstore_pandas(ArgoIndexStoreProto):
             this_filter = np.nonzero(self.search_filter)[0]
             n_match = this_filter.shape[0]
             if nrows is not None and n_match > 0:
-                self.search = self.index.head(np.min([nrows, n_match])).reset_index()
+                self.search = self.index.head(np.min([nrows, n_match])).reset_index(drop=True)
             else:
-                self.search = self.index[self.search_filter].reset_index()
+                self.search = self.index[self.search_filter].reset_index(drop=True)
 
             log.debug("Found %i matches" % self.search.shape[0])
             if self.cache and self.search.shape[0] > 0:
