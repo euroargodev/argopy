@@ -375,7 +375,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         # Validate PARAMs argument type
         [PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs]  # Make sure we deal with a list
         if not np.all([v in ['R', 'A', 'D', '', ' '] for vals in PARAMs.values() for v in vals]):
-            raise ValueError("Data mode must be a value in 'R', 'A', 'D', '', ' '")
+            raise ValueError("Data mode must be a value in 'R', 'A', 'D', ' ', ''")
 
         self.load()
         self.search_type = {"DMODE": PARAMs, "logical": logical}
