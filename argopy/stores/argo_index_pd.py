@@ -370,11 +370,12 @@ class indexstore_pandas(ArgoIndexStoreProto):
         search_parameter_data_mode({'DOXY': 'R', 'DOXY': 'A'}, logical='or')
 
         """
-        # if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
-        #     raise InvalidDatasetStructure("Cannot search for parameter data modes in this index (not a BGC profile index)")
         log.debug("Argo index searching for parameter data modes such as PARAM=%s ..." % PARAMs)
 
-        # todo: validate PARAMs argument type
+        # Validate PARAMs argument type
+        [PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs]  # Make sure we deal with a list
+        if not np.all([v in ['R', 'A', 'D', '', ' '] for vals in PARAMs.values() for v in vals]):
+            raise ValueError("Data mode must be a value in 'R', 'A', 'D', '', ' '")
 
         self.load()
         self.search_type = {"DMODE": PARAMs, "logical": logical}
