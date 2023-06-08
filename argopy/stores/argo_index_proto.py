@@ -449,6 +449,7 @@ class ArgoIndexStoreProto(ABC):
             df.reset_index(drop=True, inplace=True)
 
             df["wmo"] = df["file"].apply(lambda x: int(x.split("/")[1]))
+            df["cyc"] = df["file"].apply(lambda x: int(x.split("_")[-1].split('.nc')[0].replace("D", "")))
             df["date"] = pd.to_datetime(df["date"], format="%Y%m%d%H%M%S")
             df["date_update"] = pd.to_datetime(df["date_update"], format="%Y%m%d%H%M%S")
 

@@ -352,12 +352,12 @@ class indexstore_pandas(ArgoIndexStoreProto):
             filt.append(
                 self.index["variables"].apply(lambda x: param in x)
             )
+        self.index = self.index.drop('variables', axis=1)
         if logical == 'and':
             self.search_filter = np.logical_and.reduce(filt)
         else:
             self.search_filter = np.logical_or.reduce(filt)
         self.run(nrows=nrows)
-        self.index = self.index.drop('variables', axis=1)
         return self
 
     def search_parameter_data_mode(self, PARAMs, nrows=None, logical='and'):
