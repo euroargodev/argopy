@@ -415,14 +415,15 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
-    def search_params(self, PARAMs, nrows=None):
+    def search_params(self, PARAMs, nrows=None, logical='and'):
         if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
             raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC profile index)")
         log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
         PARAMs = to_list(PARAMs) # Make sure we deal with a list
         self.load()
-        self.search_type = {"PARAM": PARAMs}
+        self.search_type = {"PARAM": PARAMs, "logical": logical}
         filt = []
+        # variables = pc.utf8_split_whitespace(self.index["parameters"]).to_pandas()
         for param in PARAMs:
             pattern = "%s" % param
             filt.append(
@@ -430,7 +431,10 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                     self.index["parameters"], pattern=pattern
                 )
             )
-        self.search_filter = self._reduce_a_filter_list(filt, op='and')
+            # filt.append(
+            #     variables.apply(lambda x: param in x)
+            # )
+        self.search_filter = self._reduce_a_filter_list(filt, op=logical)
         self.run(nrows=nrows)
         return self
 
