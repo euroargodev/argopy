@@ -118,6 +118,9 @@ class ArgoIndexStoreProto(ABC):
             raise OptionValueError("Convention '%s' is not supported, it must be one in: %s" % (convention, self.convention_supported))
         self._convention = convention
 
+        # # CNAME internal manager to be able to chain search methods:
+        # self._cname = None
+
     def __repr__(self):
         summary = ["<argoindex.%s>" % self.backend]
         summary.append("Host: %s" % self.host)
@@ -212,6 +215,11 @@ class ArgoIndexStoreProto(ABC):
             DMODE = self.search_type["DMODE"]
             LOG = self.search_type["logical"]
             cname = ("_%s_" % LOG).join(["%s_%s" % (p, "".join(DMODE[p])) for p in DMODE])
+
+        # if self._cname is None:
+        #     self._cname = cname
+        # else:
+        #     self._cname = "%s__%s" % (self._cname, cname)
 
         return cname
 
