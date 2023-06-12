@@ -486,22 +486,25 @@ def scatter_map(  # noqa: C901
 
     patches = []
     for k, [name, group] in enumerate(data.groupby(hue)):
-        scatter_opts = {
-            'color': mycolors.lookup[name] if mycolors.registered else mycolors.cmap(k),
-            'label': "%s: %s" % (name, mycolors.ticklabels[name]) if mycolors.registered else name,
-            'zorder': 10,
-            'sizes': [markersize],
-            'edgecolor': markeredgecolor,
-            'linewidths': markeredgesize,
-        }
-        if isinstance(data, pd.DataFrame) and not legend:
-            scatter_opts['legend'] = False  # otherwise Pandas will add a legend even if we set legend=False
-        sc = group.plot.scatter(
-            x=x, y=y,
-            ax=ax,
-            **scatter_opts
-        )
-        patches.append(sc)
+        if mycolors.registered and name not in mycolors.lookup:
+            log.info("Found '%s' values not available in the '%s' colormap" % (name, mycolors.definition['name']))
+        else:
+            scatter_opts = {
+                'color': mycolors.lookup[name] if mycolors.registered else mycolors.cmap(k),
+                'label': "%s: %s" % (name, mycolors.ticklabels[name]) if mycolors.registered else name,
+                'zorder': 10,
+                'sizes': [markersize],
+                'edgecolor': markeredgecolor,
+                'linewidths': markeredgesize,
+            }
+            if isinstance(data, pd.DataFrame) and not legend:
+                scatter_opts['legend'] = False  # otherwise Pandas will add a legend even if we set legend=False
+            sc = group.plot.scatter(
+                x=x, y=y,
+                ax=ax,
+                **scatter_opts
+            )
+            patches.append(sc)
 
     if cbar:
         if cbarlabels == 'auto':
