@@ -187,13 +187,27 @@ def lscache(cache_path: str = "", prt=True):
 
 def load_dict(ptype):
     if ptype == "profilers":
-        with open(os.path.join(path2pkl, "dict_profilers.pickle"), "rb") as f:
-            loaded_dict = pickle.load(f)  # nosec B301 because files controlled internally
-        return loaded_dict
+        try:
+            nvs = ArgoNVSReferenceTables()
+            profilers = {}
+            for row in nvs.tbl(8).iterrows():
+                profilers.update({row[1]['altLabel']: row[1]['prefLabel']})
+            return profilers
+        except:
+            with open(os.path.join(path2pkl, "dict_profilers.pickle"), "rb") as f:
+                loaded_dict = pickle.load(f)  # nosec B301 because files controlled internally
+            return loaded_dict
     elif ptype == "institutions":
-        with open(os.path.join(path2pkl, "dict_institutions.pickle"), "rb") as f:
-            loaded_dict = pickle.load(f)  # nosec B301 because files controlled internally
-        return loaded_dict
+        try:
+            nvs = ArgoNVSReferenceTables()
+            institutions = {}
+            for row in nvs.tbl(4).iterrows():
+                institutions.update({row[1]['altLabel']: row[1]['prefLabel']})
+            return institutions
+        except:
+            with open(os.path.join(path2pkl, "dict_institutions.pickle"), "rb") as f:
+                loaded_dict = pickle.load(f)  # nosec B301 because files controlled internally
+            return loaded_dict
     else:
         raise ValueError("Invalid dictionary pickle file")
 
@@ -3039,6 +3053,34 @@ class ArgoNVSReferenceTables:
         rtid = self._valid_ref(rtid)
         js = self.fs.open_json(self.get_url(rtid))
         return self._jsCollection(js)
+
+    def search(self, txt, where='all'):
+        """Search for string in tables title and/or description
+
+        Parameters
+        ----------
+        txt: str
+        where: str, default='all'
+            Where to search, can be: 'title', 'description', 'all'
+
+        Returns
+        -------
+        list of table id matching the search
+        """
+        results = []
+        for tbl_id in self.all_tbl_name:
+            title = self.tbl_name(tbl_id)[0]
+            description = self.tbl_name(tbl_id)[1]
+            if where == 'title':
+                if txt.lower() in title.lower():
+                    results.append(tbl_id)
+            elif where == 'description':
+                if txt.lower() in description.lower():
+                    results.append(tbl_id)
+            elif where == 'all':
+                if txt.lower() in description.lower() or txt.lower() in title.lower():
+                    results.append(tbl_id)
+        return results
 
     @property
     def all_tbl(self):
