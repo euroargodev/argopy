@@ -194,10 +194,10 @@ class ArgoAccessor:
         # this.argo._add_history("Modified with 'where' statement")
         return this
 
-    def cast_types(self):  # noqa: C901
+    def cast_types(self, **kwargs):  # noqa: C901
         """ Make sure variables are of the appropriate types according to Argo """
         ds = self._obj
-        return cast_Argo_variable_type(ds)
+        return cast_Argo_variable_type(ds, **kwargs)
 
     @property
     def _dummy_argo_uid(self):
@@ -1930,6 +1930,13 @@ class ArgoAccessor:
             return list_1d
         else:
             return list_1d, dummy_argo_uid
+
+    def list_WMO_CYC(self):
+        """Given a dataset, return a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) tupple"""
+        profiles = []
+        for wmo, grp in self._obj.groupby('PLATFORM_NUMBER'):
+            [profiles.append((wmo, cyc)) for cyc in np.unique(grp['CYCLE_NUMBER'])]
+        return profiles
 
 
 def open_Argo_dataset(filename_or_obj):
