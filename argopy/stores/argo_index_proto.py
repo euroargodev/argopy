@@ -56,7 +56,8 @@ class ArgoIndexStoreProto(ABC):
                 Host is a local or remote ftp/http path to a `dac` folder (GDAC structure compliant). This takes values
                 like: ``ftp://ftp.ifremer.fr/ifremer/argo``, ``ftp://usgodae.org/pub/outgoing/argo`` or a local absolute path.
             index_file: str, default: ``ar_index_global_prof.txt``
-                Name of the csv-like text file with the index
+                Name of the csv-like text file with the index. Possible values are: ``ar_index_global_prof.txt``,
+                ``argo_bio-profile_index.txt`` or ``argo_synthetic-profile_index.txt``.
             cache : bool, default: False
                 Use cache or not.
             cachedir : str, default: OPTIONS['cachedir']
