@@ -3640,12 +3640,14 @@ def cast_types(ds):  # noqa: C901
     return ds
 
 
-def cast_Argo_variable_type(ds):
+def cast_Argo_variable_type(ds, overwrite=True):
     """ Ensure that all dataset variables are of the appropriate types according to Argo references
 
     Parameter
     ---------
     :class:`xarray.DataSet`
+    overwrite: bool, default=True
+        Should we force to re-cast a variable we already casted in this dataset ?
 
     Returns
     -------
@@ -3748,6 +3750,7 @@ def cast_Argo_variable_type(ds):
         'JULD_FIRST_MESSAGE_STATUS', 'JULD_FIRST_LOCATION_STATUS', 'JULD_LAST_LOCATION_STATUS',
         'JULD_LAST_MESSAGE_STATUS', 'JULD_TRANSMISSION_END_STATUS', 'REPRESENTATIVE_PARK_PRESSURE_STATUS',
     ]
+
     list_datetime = [
         "REFERENCE_DATE_TIME",
         "DATE_CREATION",
@@ -3873,13 +3876,14 @@ def cast_Argo_variable_type(ds):
         return da
 
     for v in ds.variables:
-        try:
-            ds[v] = cast_this_da(ds[v])
-        except Exception:
-            print("Oops!", sys.exc_info()[0], "occurred.")
-            print("Fail to cast: %s " % v)
-            print("Encountered unique values:", np.unique(ds[v]))
-            raise
+        if overwrite or ('casted' in ds[v].attrs and ds[v].attrs['casted'] == 0):
+            try:
+                ds[v] = cast_this_da(ds[v])
+            except Exception:
+                print("Oops!", sys.exc_info()[0], "occurred.")
+                print("Fail to cast: %s " % v)
+                print("Encountered unique values:", np.unique(ds[v]))
+                raise
 
     return ds
 
