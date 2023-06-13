@@ -156,12 +156,12 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         if self.dataset_id == 'bgc':
             self.indexfs = ArgoIndex(
                 index_file='argo_synthetic-profile_index.txt',  # because that's what is in the erddap
-                cache=cache,
+                cache=True,
                 cachedir=cachedir,
                 timeout=timeout,
             )
 
-            self._bgc_params = params
+            self._bgc_params = to_list(params)
             if isinstance(params, str):
                 if params == 'all':
                     params = self._bgc_vlist_avail
@@ -392,7 +392,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
             # Search in the profile index the list of parameters to load:
             params = self._bgc_vlist_requested
-            log.debug("erddap-bgc parameters to load: %s" % params)
+            # log.debug("erddap-bgc parameters to load: %s" % params)
 
             for p in params:
                 vname = p.lower()
@@ -465,14 +465,12 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         for k, v in _constraints.items():
             if k.startswith("time"):
                 _constraints.update({k: parse_dates(v)})
-        log.debug(_constraints)
         _constraints = quote_string_constraints(_constraints)
         # Remove double-quote around NaN for numerical values:
         for k, v in _constraints.items():
             if v == '"NaN"':
                 _constraints.update({k: 'NaN'})
 
-        log.debug(_constraints)
         _constraints = "".join([f"&{k}{v}" for k, v in _constraints.items()])
         url += f"{_constraints}"
 
@@ -542,12 +540,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         if self.dataset_id == "ref":
             ds["DIRECTION"] = xr.full_like(ds["CYCLE_NUMBER"], "A", dtype=str)
 
-        if self.dataset_id == 'bgc':
-            ds = self._add_parameters_data_mode_ds(ds, self.indexfs)
-
         # Cast data types and add variable attributes (not available in the csv download):
         ds = self._add_attributes(ds)
         ds = ds.argo.cast_types()
+
+        if self.dataset_id == 'bgc':
+            ds = self._add_parameters_data_mode_ds(ds)
+            ds = ds.argo.cast_types(overwrite=False)
 
         # Remove erddap file attributes and replace them with argopy ones:
         ds.attrs = {}
@@ -596,66 +595,63 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
-    def _add_parameters_data_mode_ds(self, this_ds, this_idx):
+    def _add_parameters_data_mode_ds(self, this_ds):
         """Add <PARAM>_DATA_MODE variables to a dataset
 
         This requires an ArgoIndex instance as Pandas Dataframe
 
         This method consume a collection of points
         """
+        def list_WMO_CYC(this_ds):
+            """Given a dataset, return a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) tupple"""
+            profiles = []
+            for wmo, grp in this_ds.groupby('PLATFORM_NUMBER'):
+                [profiles.append((int(wmo), int(cyc))) for cyc in np.unique(grp['CYCLE_NUMBER'])]
+            return profiles
 
-        def read_dmode(this_row, this_param):
-            this_parameters = this_row['parameters'].values[0].split()
-            if this_param in this_parameters:
-                this_parameter_data_mode = this_row['parameter_data_mode'].values[0]
-                value = this_parameter_data_mode[this_parameters.index(param)]
-            else:
-                value = ''
-            return value
+        def list_WMO(this_ds):
+            return to_list(np.unique(this_ds['PLATFORM_NUMBER'].values))
 
-        wmos = np.unique(this_ds['PLATFORM_NUMBER'].values)
-        # print('wmos=', wmos)
+        def read_DM(an_index_row, param):
+            x = an_index_row.iloc[0]
+            parameters = x['parameters'].split()
+            return x['parameter_data_mode'][parameters.index(param)] if param in parameters else ''
 
-        for param in this_idx.search_wmo(wmos).read_params():
-            # print()
+        wmos = list_WMO(this_ds)
+        profiles = list_WMO_CYC(this_ds)
+        log.debug('wmos=%s' % str(wmos))
 
-            this_ds["%s_DATA_MODE" % param] = xr.full_like(this_ds[param], dtype=str, fill_value='')
-            # this_ds["%s_DATA_MODE" % param] = xr.full_like(this_ds[param].isel(N_LEVELS=0, drop=True), dtype=str, fill_value='')  # Work with a collec of prof
-            for wmo in wmos:
-                this_idx.search_wmo(wmo)
-                row = this_idx.search[
-                    ~this_idx.search['parameters'].duplicated()]  # works with Pandas Dataframe, to be checked with pyarrow
-                if row.shape[0] == 1:
-                    # All profiles have the same parameters, so we can get DMODE much faster by scanning only one profile:
-                    param_data_mode = read_dmode(row, param)
-                    i_points = this_ds.where(this_ds['PLATFORM_NUMBER'] == wmo, drop=True).N_POINTS
-                    # i_points = this_ds.where(this_dsp['PLATFORM_NUMBER']==wmo, drop=True).N_PROF  # Work with a collec of prof
+        params = [p for p in self.indexfs.search_wmo(wmos).read_params() if p in this_ds]
+
+        for param in params:
+            log.debug("="*50)
+            log.debug("Filling DATA MODE for %s" % param)
+
+            for prof in profiles:
+                wmo, cyc = prof
+                index_row = self.indexfs.search_wmo_cyc(wmo, cyc).search
+                if param in index_row.iloc[0]['parameters'].split():
+                    if "%s_DATA_MODE" % param not in this_ds:
+                        this_ds["%s_DATA_MODE" % param] = xr.full_like(this_ds[param], dtype=str, fill_value='')
+                    param_data_mode = read_DM(index_row, param)
+                    log.debug("%s, %i, %i, %s" % (param, wmo, cyc, param_data_mode))
+                    log.debug(this_ds["%s_DATA_MODE" % param])
+                    i_points = this_ds.where(
+                        np.logical_and(this_ds['CYCLE_NUMBER'].isin(cyc), this_ds['PLATFORM_NUMBER'].isin(wmo)),
+                        drop=True).N_POINTS
+                    log.debug(i_points)
+                    log.debug(this_ds['CYCLE_NUMBER'].isin(cyc))
+                    log.debug(this_ds['PLATFORM_NUMBER'].isin(wmo))
                     this_ds["%s_DATA_MODE" % param][i_points] = param_data_mode
-                    # print(wmo, param, param_data_mode)
-                else:
-                    # print(idx.read_params(index=False))
-                    # raise ValueError("Not all points have the same parameters for float %i!" % wmo)
-                    df = this_idx.search.copy()
-                    df["cyc"] = df["file"].apply(lambda x: int(x.split("_")[-1].split('.nc')[0].replace("D", "")))
-                    for i, g in this_idx.search.groupby(by='parameters'):
-                        # print(i)
-                        sub_df = df[df['parameters'] == i]
-                        cycs = sub_df['cyc'].values
-                        # print(cycs.shape)
-                        sub_row = sub_df[~sub_df['parameters'].duplicated()]
-
-                        param_data_mode = read_dmode(sub_row, param)
-                        i_points = this_ds.where(
-                            np.logical_and(this_ds['CYCLE_NUMBER'].isin(cycs), this_ds['PLATFORM_NUMBER'].isin(wmo)),
-                            drop=True).N_POINTS
-                        this_ds["%s_DATA_MODE" % param][i_points] = param_data_mode
+                    log.debug(this_ds["%s_DATA_MODE" % param])
 
             # Adjust meta-data for the new variable:
-            this_ds["%s_DATA_MODE" % param].attrs = {
-                # "_FillValue": " ",
-                "long_name": "Delayed mode or real time data",
-                "convention": "R : real time; D : delayed mode; A : real time with adjustment"
-            }
+            if "%s_DATA_MODE" % param in this_ds:
+                this_ds["%s_DATA_MODE" % param].attrs = {
+                    # "_FillValue": " ",
+                    "long_name": "Delayed mode or real time data",
+                    "convention": "R : real time; D : delayed mode; A : real time with adjustment"
+                }
 
         this_ds = this_ds[np.sort(this_ds.data_vars)]
         return this_ds
