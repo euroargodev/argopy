@@ -160,6 +160,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         if self.dataset_id == 'bgc':
             self.indexfs = ArgoIndex(
+                # host='ftp://ftp.ifremer.fr/ifremer/argo',
                 index_file='argo_synthetic-profile_index.txt',  # because that's what is in the erddap
                 cache=True,
                 cachedir=cachedir,
@@ -174,23 +175,22 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     params = to_list(params)
             elif params is None:
                 raise ValueError()
+            elif params[0] == 'all':
+                params = self._bgc_vlist_avail
             elif not argopy.utilities.is_list_of_strings(params):
                 raise ValueError("'params' argument must be a list of strings")
             self._bgc_vlist_requested = [p.upper() for p in params]
+
             for p in ['PRES', 'TEMP', 'PSAL']:
                 if p not in self._bgc_vlist_requested:
                     self._bgc_vlist_requested.append(p)
 
-            self._bgc_measured = measured
-            if isinstance(measured, str):
-                if measured == 'all':
-                    # measured = self._bgc_vlist_avail
-                    measured = self._bgc_vlist_requested
-                else:
-                    measured = to_list(measured)
-            elif measured is None:
+            self._bgc_measured = to_list(measured)
+            if self._bgc_measured[0] == 'all':
+                measured = self._bgc_vlist_requested
+            elif self._bgc_measured[0] is None:
                 measured = []
-            elif not argopy.utilities.is_list_of_strings(measured):
+            elif not argopy.utilities.is_list_of_strings(self._bgc_measured):
                 raise ValueError("'measured' argument must be a list of strings")
             self._bgc_vlist_measured = [m.upper() for m in measured]
 
@@ -624,13 +624,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         wmos = list_WMO(this_ds)
         profiles = list_WMO_CYC(this_ds)
-        log.debug('wmos=%s' % str(wmos))
+        # log.debug('wmos=%s' % str(wmos))
 
         params = [p for p in self.indexfs.search_wmo(wmos).read_params() if p in this_ds]
 
         for param in params:
-            log.debug("="*50)
-            log.debug("Filling DATA MODE for %s" % param)
+            # log.debug("="*50)
+            # log.debug("Filling DATA MODE for %s" % param)
 
             for prof in profiles:
                 wmo, cyc = prof
@@ -639,16 +639,16 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     if "%s_DATA_MODE" % param not in this_ds:
                         this_ds["%s_DATA_MODE" % param] = xr.full_like(this_ds[param], dtype=str, fill_value='')
                     param_data_mode = read_DM(index_row, param)
-                    log.debug("%s, %i, %i, %s" % (param, wmo, cyc, param_data_mode))
-                    log.debug(this_ds["%s_DATA_MODE" % param])
+                    # log.debug("%s, %i, %i, %s" % (param, wmo, cyc, param_data_mode))
+                    # log.debug(this_ds["%s_DATA_MODE" % param])
                     i_points = this_ds.where(
                         np.logical_and(this_ds['CYCLE_NUMBER'].isin(cyc), this_ds['PLATFORM_NUMBER'].isin(wmo)),
                         drop=True).N_POINTS
-                    log.debug(i_points)
-                    log.debug(this_ds['CYCLE_NUMBER'].isin(cyc))
-                    log.debug(this_ds['PLATFORM_NUMBER'].isin(wmo))
+                    # log.debug(i_points)
+                    # log.debug(this_ds['CYCLE_NUMBER'].isin(cyc))
+                    # log.debug(this_ds['PLATFORM_NUMBER'].isin(wmo))
                     this_ds["%s_DATA_MODE" % param][i_points] = param_data_mode
-                    log.debug(this_ds["%s_DATA_MODE" % param])
+                    # log.debug(this_ds["%s_DATA_MODE" % param])
 
             # Adjust meta-data for the new variable:
             if "%s_DATA_MODE" % param in this_ds:
@@ -811,7 +811,6 @@ class Fetch_box(ErddapArgoDataFetcher):
             if self.dataset_id == 'bgc':
                 opts['params'] = self._bgc_params
                 opts['measured'] = self._bgc_measured
-
             for box in boxes:
                 urls.append(
                     Fetch_box(
