@@ -126,8 +126,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             Eg: {'wmo': 5} will create chunks with as many as 5 WMOs each.
         api_timeout: int (optional)
             Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
-        measured:
-        params:
+        params: Union[str, list] (optional, default='all')
+            List of BGC essential variables to retrieve, i.e. that will be in the output :class:`xr.DataSet``.
+            By default, this is set to ``all``, i.e. any variable found in at least of the profile in the data
+            selection will be included in the output.
+        measured: Union[str, list] (optional, default='all')
+            List of BGC essential variables that can't be NaN. This is an easy way to reduce the size of the
+            :class:`xr.DataSet`` to points where all variables have been measured.
         """
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.definition = "Ifremer erddap Argo data fetcher"
