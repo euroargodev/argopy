@@ -98,7 +98,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         chunks_maxsize: dict = {},
         api_timeout: int = 0,
         params: Union[str, list] = 'all',
-        mandatory: Union[str, list] = 'all',
+        measured: Union[str, list] = 'all',
         **kwargs,
     ):
         """Instantiate an ERDDAP Argo data fetcher
@@ -126,7 +126,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             Eg: {'wmo': 5} will create chunks with as many as 5 WMOs each.
         api_timeout: int (optional)
             Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
-        mandatory:
+        measured:
         params:
         """
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
@@ -176,18 +176,18 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 if p not in self._bgc_vlist_requested:
                     self._bgc_vlist_requested.append(p)
 
-            self._bgc_mandatory = mandatory
-            if isinstance(mandatory, str):
-                if mandatory == 'all':
-                    # mandatory = self._bgc_vlist_avail
-                    mandatory = self._bgc_vlist_requested
+            self._bgc_measured = measured
+            if isinstance(measured, str):
+                if measured == 'all':
+                    # measured = self._bgc_vlist_avail
+                    measured = self._bgc_vlist_requested
                 else:
-                    mandatory = to_list(mandatory)
-            elif mandatory is None:
-                mandatory = []
-            elif not argopy.utilities.is_list_of_strings(mandatory):
-                raise ValueError("'mandatory' argument must be a list of strings")
-            self._bgc_vlist_mandatory = [m.upper() for m in mandatory]
+                    measured = to_list(measured)
+            elif measured is None:
+                measured = []
+            elif not argopy.utilities.is_list_of_strings(measured):
+                raise ValueError("'measured' argument must be a list of strings")
+            self._bgc_vlist_measured = [m.upper() for m in measured]
 
     def __repr__(self):
         summary = ["<datafetcher.erddap>"]
@@ -196,7 +196,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         summary.append("Domain: %s" % format_oneline(self.cname()))
         if self.dataset_id == 'bgc':
             summary.append("BGC requested variables: %s" % self._bgc_vlist_requested)
-            summary.append("BGC mandatory variables: %s" % self._bgc_vlist_mandatory)
+            summary.append("BGC measured variables: %s" % self._bgc_vlist_measured)
         return "\n".join(summary)
 
     @property
@@ -455,7 +455,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         # Possibly add more constraints for the BGC dataset:
         if self.dataset_id == "bgc":
-            params = self._bgc_vlist_mandatory
+            params = self._bgc_vlist_measured
             for p in params:
                 self.erddap.constraints.update({"%s!=" % p.lower(): 'NaN'})
 
@@ -734,7 +734,7 @@ class Fetch_wmo(ErddapArgoDataFetcher):
                 'CYC': self.CYC}
         if self.dataset_id == 'bgc':
             opts['params'] = self._bgc_params
-            opts['mandatory'] = self._bgc_mandatory
+            opts['measured'] = self._bgc_measured
         for wmos in wmo_grps:
             urls.append(
                 Fetch_wmo(
@@ -809,7 +809,7 @@ class Fetch_box(ErddapArgoDataFetcher):
                     'server': self.server}
             if self.dataset_id == 'bgc':
                 opts['params'] = self._bgc_params
-                opts['mandatory'] = self._bgc_mandatory
+                opts['measured'] = self._bgc_measured
 
             for box in boxes:
                 urls.append(
