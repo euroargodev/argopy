@@ -500,6 +500,9 @@ class httpstore(argo_store_proto):
                               "chunk parameter with your fetcher")
                 log.debug("Error %i (Payload Too Large) raised with %s" % (e.status, url))
             raise
+        except FileNotFoundError as e:
+            log.debug(f"File not found! %s" % str(e))
+            raise
 
         if data[0:3] != b'CDF':
             raise TypeError("We didn't get a CDF binary data as expected ! We get: %s" % data)
