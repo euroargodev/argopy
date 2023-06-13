@@ -9,6 +9,7 @@ This module contains Argo data fetcher for Ifremer ERDDAP.
 This is not intended to be used directly, only by the facade at fetchers.py
 
 """
+import argopy.utilities
 import xarray as xr
 import pandas as pd
 import numpy as np
@@ -16,12 +17,15 @@ import copy
 
 from abc import abstractmethod
 import getpass
+from typing import Union
 
 from .proto import ArgoDataFetcherProto
 from argopy.options import OPTIONS
-from argopy.utilities import Chunker, format_oneline
+from argopy.utilities import Chunker, format_oneline, to_list
 from argopy.stores import httpstore
 from ..errors import ErddapServerError
+from ..stores import indexstore_pd as ArgoIndex  # make sure to work with the Pandas index store
+
 from aiohttp import ClientResponseError
 import logging
 
@@ -93,6 +97,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         chunks: str = "auto",
         chunks_maxsize: dict = {},
         api_timeout: int = 0,
+        params: Union[str, list] = 'all',
+        mandatory: Union[str, list] = 'all',
         **kwargs,
     ):
         """Instantiate an ERDDAP Argo data fetcher
@@ -120,6 +126,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             Eg: {'wmo': 5} will create chunks with as many as 5 WMOs each.
         api_timeout: int (optional)
             Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
+        mandatory:
+        params:
         """
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.definition = "Ifremer erddap Argo data fetcher"
@@ -145,11 +153,50 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         self.init(**kwargs)
         self._init_erddapy()
 
+        if self.dataset_id == 'bgc':
+            self.indexfs = ArgoIndex(
+                index_file='argo_synthetic-profile_index.txt',  # because that's what is in the erddap
+                cache=cache,
+                cachedir=cachedir,
+                timeout=timeout,
+            )
+
+            self._bgc_params = params
+            if isinstance(params, str):
+                if params == 'all':
+                    params = self._bgc_vlist_avail
+                else:
+                    params = to_list(params)
+            elif params is None:
+                raise ValueError()
+            elif not argopy.utilities.is_list_of_strings(params):
+                raise ValueError("'params' argument must be a list of strings")
+            self._bgc_vlist_requested = [p.upper() for p in params]
+            for p in ['PRES', 'TEMP', 'PSAL']:
+                if p not in self._bgc_vlist_requested:
+                    self._bgc_vlist_requested.append(p)
+
+            self._bgc_mandatory = mandatory
+            if isinstance(mandatory, str):
+                if mandatory == 'all':
+                    # mandatory = self._bgc_vlist_avail
+                    mandatory = self._bgc_vlist_requested
+                else:
+                    mandatory = to_list(mandatory)
+            elif mandatory is None:
+                mandatory = []
+            elif not argopy.utilities.is_list_of_strings(mandatory):
+                raise ValueError("'mandatory' argument must be a list of strings")
+            self._bgc_vlist_mandatory = [m.upper() for m in mandatory]
+
     def __repr__(self):
         summary = ["<datafetcher.erddap>"]
         summary.append("Name: %s" % self.definition)
         summary.append("API: %s" % self.server)
         summary.append("Domain: %s" % format_oneline(self.cname()))
+        if self.dataset_id == 'bgc':
+            summary.append("BGC requested variables: %s" % self._bgc_vlist_requested)
+            summary.append("BGC mandatory variables: %s" % self._bgc_vlist_mandatory)
         return "\n".join(summary)
 
     @property
@@ -286,6 +333,22 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         return self
 
     @property
+    def _bgc_vlist_avail(self):
+        """Return the list parameters available for the BGC dataset"""
+        if hasattr(self, "WMO"):
+            if hasattr(self, "CYC") and self.CYC is not None:
+                self.indexfs.search_wmo_cyc(self.WMO, self.CYC)
+            else:
+                self.indexfs.search_wmo(self.WMO)
+        elif hasattr(self, "BOX"):
+            if len(self.indexBOX) == 4:
+                self.indexfs.search_lat_lon(self.indexBOX)
+            else:
+                self.indexfs.search_lat_lon_tim(self.indexBOX)
+        params = self.indexfs.read_params()
+        return params
+
+    @property
     def _minimal_vlist(self):
         """Return the minimal list of variables to retrieve measurements for"""
         vlist = list()
@@ -314,7 +377,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         if self.dataset_id == "bgc":
             plist = [
-                "parameter_data_mode",
+                # "parameter_data_mode",  # never !!!
                 "latitude",
                 "longitude",
                 "position_qc",
@@ -327,29 +390,17 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             ]
             [vlist.append(p) for p in plist]
 
-            plist = [
-                "pres",
-                "temp",
-                "psal",
-                "cndc",
-                "doxy",
-                "beta_backscattering",
-                "fluorescence_chla",
-                # "fluorescence_cdom",
-                # "side_scattering_turbidity",
-                # "transmittance_particle_beam_attenuation",
-                "bbp",
-                "turbidity",
-                "cp",
-                "chla",
-                "cdom",
-                "nitrate",
-            ]
-            [vlist.append(p) for p in plist]
-            [vlist.append(p + "_qc") for p in plist]
-            [vlist.append(p + "_adjusted") for p in plist]
-            [vlist.append(p + "_adjusted_qc") for p in plist]
-            [vlist.append(p + "_adjusted_error") for p in plist]
+            # Search in the profile index the list of parameters to load:
+            params = self._bgc_vlist_requested
+            log.debug("erddap-bgc parameters to load: %s" % params)
+
+            for p in params:
+                vname = p.lower()
+                vlist.append("%s" % vname)
+                vlist.append("%s_qc" % vname)
+                vlist.append("%s_adjusted" % vname)
+                vlist.append("%s_adjusted_qc" % vname)
+                vlist.append("%s_adjusted_error" % vname)
 
         elif self.dataset_id == "ref":
             plist = ["latitude", "longitude", "time", "platform_number", "cycle_number"]
@@ -374,7 +425,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         return [self.fs.cachepath(uri) for uri in self.uri]
 
     def get_url(self):
-        """Return the URL to download data requested
+        """Return the URL to download requested data
 
         Returns
         -------
@@ -398,19 +449,35 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         variables = ",".join(variables)
         url += f"{variables}"
 
-        # Add constraints:
-        self.define_constraints()  # Define constraint to select this box of data (affect self.erddap.constraints)
+        # Load constraints to implement the access point:
+        self.define_constraints()  # from Fetch_box or Fetch_wmo
+
+        # Possibly add more constraints for the BGC dataset:
+        if self.dataset_id == "bgc":
+            params = self._bgc_vlist_mandatory
+            for p in params:
+                self.erddap.constraints.update({"%s!=" % p.lower(): 'NaN'})
+
+        # Post-process all constraints:
         constraints = self.erddap.constraints
         _constraints = copy.copy(constraints)
         for k, v in _constraints.items():
             if k.startswith("time"):
                 _constraints.update({k: parse_dates(v)})
+        log.debug(_constraints)
         _constraints = quote_string_constraints(_constraints)
+        # Remove double-quote around NaN for numerical values:
+        for k, v in _constraints.items():
+            if v == '"NaN"':
+                _constraints.update({k: 'NaN'})
+
+        log.debug(_constraints)
         _constraints = "".join([f"&{k}{v}" for k, v in _constraints.items()])
         url += f"{_constraints}"
 
         # Last part:
-        url += '&distinct()&orderBy("time,pres")'
+        url += '&distinct()'
+        url += '&orderBy("time,pres")'
         return url
 
     @property
@@ -551,8 +618,11 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         self.definition = "?"
         if self.dataset_id == "phy":
             self.definition = "Ifremer erddap Argo data fetcher"
+        elif self.dataset_id == "bgc":
+            self.definition = "Ifremer erddap Argo BGC data fetcher"
         elif self.dataset_id == "ref":
             self.definition = "Ifremer erddap Argo REFERENCE data fetcher"
+
         if self.CYC is not None:
             self.definition = "%s for profiles" % self.definition
         else:
@@ -590,15 +660,19 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         )
         wmo_grps = self.Chunker.fit_transform()
         urls = []
+        opts = {'ds': self.dataset_id,
+                'fs': self.fs,
+                'server': self.server,
+                'parallel': False,
+                'CYC': self.CYC}
+        if self.dataset_id == 'bgc':
+            opts['params'] = self._bgc_params
+            opts['mandatory'] = self._bgc_mandatory
         for wmos in wmo_grps:
             urls.append(
                 Fetch_wmo(
                     WMO=wmos,
-                    CYC=self.CYC,
-                    ds=self.dataset_id,
-                    parallel=False,
-                    fs=self.fs,
-                    server=self.server,
+                    **opts,
                 ).get_url()
             )
         return urls
@@ -619,9 +693,14 @@ class Fetch_box(ErddapArgoDataFetcher):
                 box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
         self.BOX = box.copy()
+        self.indexBOX = [self.BOX[ii] for ii in [0, 1, 2, 3]]
+        if len(self.BOX) == 8:
+            self.indexBOX = [self.BOX[ii] for ii in [0, 1, 2, 3, 6, 7]]
 
         if self.dataset_id == "phy":
             self.definition = "Ifremer erddap Argo data fetcher for a space/time region"
+        elif self.dataset_id == "bgc":
+            self.definition = "Ifremer erddap Argo BGC data fetcher for a space/time region"
         elif self.dataset_id == "ref":
             self.definition = (
                 "Ifremer erddap Argo REFERENCE data fetcher for a space/time region"
@@ -658,10 +737,18 @@ class Fetch_box(ErddapArgoDataFetcher):
             )
             boxes = self.Chunker.fit_transform()
             urls = []
+            opts = {'ds': self.dataset_id,
+                    'fs': self.fs,
+                    'server': self.server}
+            if self.dataset_id == 'bgc':
+                opts['params'] = self._bgc_params
+                opts['mandatory'] = self._bgc_mandatory
+
             for box in boxes:
                 urls.append(
                     Fetch_box(
-                        box=box, ds=self.dataset_id, fs=self.fs, server=self.server
+                        box=box,
+                        **opts,
                     ).get_url()
                 )
             return urls
