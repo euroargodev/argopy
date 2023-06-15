@@ -159,12 +159,12 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         self._init_erddapy()
 
         if self.dataset_id == 'bgc':
-            self.indexfs = ArgoIndex(
+            self.indexfs = kwargs['indexfs'] if 'indexfs' in kwargs else ArgoIndex(
                 # host='ftp://ftp.ifremer.fr/ifremer/argo',
                 index_file='argo_synthetic-profile_index.txt',  # because that's what is in the erddap
                 cache=True,
                 cachedir=cachedir,
-                timeout=timeout,
+                timeout=5,
             )
 
             self._bgc_params = to_list(params)
@@ -221,38 +221,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         This is hard coded, but should be retrieved from an API somewhere
         """
-        for v in this.data_vars:
-            if "TEMP" in v and "_QC" not in v:
-                this[v].attrs = {
-                    "long_name": "SEA TEMPERATURE IN SITU ITS-90 SCALE",
-                    "standard_name": "sea_water_temperature",
-                    "units": "degree_Celsius",
-                    "valid_min": -2.0,
-                    "valid_max": 40.0,
-                    "resolution": 0.001,
-                }
-                if "ERROR" in v:
-                    this[v].attrs["long_name"] = (
-                        "ERROR IN %s" % this[v].attrs["long_name"]
-                    )
 
         for v in this.data_vars:
-            if "PSAL" in v and "_QC" not in v:
-                this[v].attrs = {
-                    "long_name": "PRACTICAL SALINITY",
-                    "standard_name": "sea_water_salinity",
-                    "units": "psu",
-                    "valid_min": 0.0,
-                    "valid_max": 43.0,
-                    "resolution": 0.001,
-                }
-                if "ERROR" in v:
-                    this[v].attrs["long_name"] = (
-                        "ERROR IN %s" % this[v].attrs["long_name"]
-                    )
-
-        for v in this.data_vars:
-            if "PRES" in v and "_QC" not in v:
+            param = 'PRES'
+            if v in [param, "%s_ADJUSTED" % param, "%s_ADJUSTED_ERROR" % param]:
                 this[v].attrs = {
                     "long_name": "Sea Pressure",
                     "standard_name": "sea_water_pressure",
@@ -268,7 +240,40 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     )
 
         for v in this.data_vars:
-            if "DOXY" in v and "_QC" not in v:
+            param = 'TEMP'
+            if v in [param, "%s_ADJUSTED" % param, "%s_ADJUSTED_ERROR" % param]:
+                this[v].attrs = {
+                    "long_name": "SEA TEMPERATURE IN SITU ITS-90 SCALE",
+                    "standard_name": "sea_water_temperature",
+                    "units": "degree_Celsius",
+                    "valid_min": -2.0,
+                    "valid_max": 40.0,
+                    "resolution": 0.001,
+                }
+                if "ERROR" in v:
+                    this[v].attrs["long_name"] = (
+                        "ERROR IN %s" % this[v].attrs["long_name"]
+                    )
+
+        for v in this.data_vars:
+            param = 'PSAL'
+            if v in [param, "%s_ADJUSTED" % param, "%s_ADJUSTED_ERROR" % param]:
+                this[v].attrs = {
+                    "long_name": "PRACTICAL SALINITY",
+                    "standard_name": "sea_water_salinity",
+                    "units": "psu",
+                    "valid_min": 0.0,
+                    "valid_max": 43.0,
+                    "resolution": 0.001,
+                }
+                if "ERROR" in v:
+                    this[v].attrs["long_name"] = (
+                        "ERROR IN %s" % this[v].attrs["long_name"]
+                    )
+
+        for v in this.data_vars:
+            param = 'DOXY'
+            if v in [param, "%s_ADJUSTED" % param, "%s_ADJUSTED_ERROR" % param]:
                 this[v].attrs = {
                     "long_name": "Dissolved oxygen",
                     "standard_name": "moles_of_oxygen_per_unit_mass_in_sea_water",
@@ -295,13 +300,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 "long_name": "Float cycle number",
                 "convention": "0..N, 0 : launch cycle (if exists), 1 : first complete cycle",
             }
-
-        if "DATA_MODE" in this.data_vars:
-            this["DATA_MODE"].attrs = {
-                "long_name": "Delayed mode or real time data",
-                "convention": "R : real time; D : delayed mode; A : real time with adjustment",
-            }
-
         if "DIRECTION" in this.data_vars:
             this["DIRECTION"].attrs = {
                 "long_name": "Direction of the station profiles",
@@ -313,6 +311,20 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 "long_name": "Float unique identifier",
                 "convention": "WMO float identifier : A9IIIII",
             }
+
+        if "DATA_MODE" in this.data_vars:
+            this["DATA_MODE"].attrs = {
+                "long_name": "Delayed mode or real time data",
+                "convention": "R : real time; D : delayed mode; A : real time with adjustment",
+            }
+
+        if self.dataset_id == 'bgc':
+            for param in self._bgc_vlist_requested:
+                if "%s_DATA_MODE" % param in this.data_vars:
+                    this["%s_DATA_MODE" % param].attrs = {
+                        "long_name": "Delayed mode or real time data",
+                        "convention": "R : real time; D : delayed mode; A : real time with adjustment",
+                    }
 
         return this
 
@@ -546,12 +558,14 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             ds["DIRECTION"] = xr.full_like(ds["CYCLE_NUMBER"], "A", dtype=str)
 
         # Cast data types and add variable attributes (not available in the csv download):
-        ds = self._add_attributes(ds)
         ds = ds.argo.cast_types()
 
         if self.dataset_id == 'bgc' and add_dm:
             ds = self._add_parameters_data_mode_ds(ds)
             ds = ds.argo.cast_types(overwrite=False)
+
+        # Erddap variables come without attributes, so:
+        ds = self._add_attributes(ds)
 
         # Remove erddap file attributes and replace them with argopy ones:
         ds.attrs = {}
@@ -607,6 +621,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         This method consume a collection of points
         """
+        # import time
+
         def list_WMO_CYC(this_ds):
             """Given a dataset, return a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) tupple"""
             profiles = []
@@ -617,50 +633,81 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         def list_WMO(this_ds):
             return to_list(np.unique(this_ds['PLATFORM_NUMBER'].values))
 
-        def read_DM(an_index_row, param):
-            x = an_index_row.iloc[0]
-            parameters = x['parameters'].split()
-            return x['parameter_data_mode'][parameters.index(param)] if param in parameters else ''
+        def complete_df(this_df, params):
+            this_df["wmo"] = this_df["file"].apply(lambda x: int(x.split("/")[1]))
+            this_df["cyc"] = this_df["file"].apply(lambda x: int(x.split("_")[-1].split('.nc')[0].replace("D", "")))
+            this_df["variables"] = df["parameters"].apply(lambda x: x.split())
+            for param in params:
+                df["%s_data_mode" % param] = this_df.apply(
+                    lambda x: x['parameter_data_mode'][x['variables'].index(param)] if param in x['variables'] else '',
+                    axis=1)
+            return this_df
 
-        wmos = list_WMO(this_ds)
+        def read_DM(this_df, wmo, cyc, param):
+            filt = []
+            filt.append(this_df['wmo'].isin([wmo]))
+            filt.append(this_df['cyc'].isin([cyc]))
+            sub_df = df[np.logical_and.reduce(filt)]
+            return sub_df["%s_data_mode" % param].values[-1]
+
+        def print_etime(txt, t0):
+            now = time.process_time()
+            print("⏰ %s: %0.2f seconds" % (txt, now - t0))
+            return now
+
+        # timer = time.process_time()
+
         profiles = list_WMO_CYC(this_ds)
-        # log.debug('wmos=%s' % str(wmos))
+        params = [p for p in self.indexfs.search_wmo(list_WMO(this_ds)).read_params() if p in this_ds]
+        # timer = print_etime('Read profiles and params from ds', timer)
 
-        params = [p for p in self.indexfs.search_wmo(wmos).read_params() if p in this_ds]
+        df = self.indexfs.search_wmo(list_WMO(this_ds)).to_dataframe(completed=False)
+        df = complete_df(df, params)
+        # timer = print_etime('Index search wmo and export to dataframe', timer)
+
+        CYCLE_NUMBER = this_ds['CYCLE_NUMBER'].values
+        PLATFORM_NUMBER = this_ds['PLATFORM_NUMBER'].values
+        N_POINTS = this_ds['N_POINTS'].values
 
         for param in params:
-            # log.debug("="*50)
-            # log.debug("Filling DATA MODE for %s" % param)
+            # print("=" * 50)
+            # print("Filling DATA MODE for %s ..." % param)
+            # tims = {'init': 0, 'read_DM': 0, 'isin': 0, 'where': 0, 'fill': 0}
 
-            # todo: optimise the following loop ! this is too slow !
-            for prof in profiles:
+            for iprof, prof in enumerate(profiles):
                 wmo, cyc = prof
-                index_row = self.indexfs.search_wmo_cyc(wmo, cyc).search
-                if param in index_row.iloc[0]['parameters'].split():
-                    if "%s_DATA_MODE" % param not in this_ds:
-                        this_ds["%s_DATA_MODE" % param] = xr.full_like(this_ds[param], dtype=str, fill_value='')
-                    param_data_mode = read_DM(index_row, param)
-                    # log.debug("%s, %i, %i, %s" % (param, wmo, cyc, param_data_mode))
-                    # log.debug(this_ds["%s_DATA_MODE" % param])
-                    i_points = this_ds.where(
-                        np.logical_and(this_ds['CYCLE_NUMBER'].isin(cyc), this_ds['PLATFORM_NUMBER'].isin(wmo)),
-                        drop=True).N_POINTS
-                    # log.debug(i_points)
-                    # log.debug(this_ds['CYCLE_NUMBER'].isin(cyc))
-                    # log.debug(this_ds['PLATFORM_NUMBER'].isin(wmo))
-                    this_ds["%s_DATA_MODE" % param][i_points] = param_data_mode
-                    # log.debug(this_ds["%s_DATA_MODE" % param])
+                # t0 = time.process_time()
 
-            # Adjust meta-data for the new variable:
-            if "%s_DATA_MODE" % param in this_ds:
-                this_ds["%s_DATA_MODE" % param].attrs = {
-                    # "_FillValue": " ",
-                    "long_name": "Delayed mode or real time data",
-                    "convention": "R : real time; D : delayed mode; A : real time with adjustment"
-                }
+                if "%s_DATA_MODE" % param not in this_ds:
+                    this_ds["%s_DATA_MODE" % param] = xr.full_like(this_ds['CYCLE_NUMBER'], dtype=str, fill_value='')
+                # now = time.process_time()
+                # tims['init'] += now - t0
+                # t0 = now
 
-        this_ds = this_ds[np.sort(this_ds.data_vars)]
+                param_data_mode = read_DM(df, wmo, cyc, param)
+                # now = time.process_time()
+                # tims['read_DM'] += now - t0
+                # t0 = now
+
+                i_cyc = CYCLE_NUMBER == cyc
+                i_wmo = PLATFORM_NUMBER == wmo
+                # now = time.process_time()
+                # tims['isin'] += now - t0
+                # t0 = now
+
+                i_points = N_POINTS[np.logical_and(i_cyc, i_wmo)]
+                # now = time.process_time()
+                # tims['where'] += now - t0
+                # t0 = now
+
+                this_ds["%s_DATA_MODE" % param][i_points] = param_data_mode
+                # now = time.process_time()
+                # tims['fill'] += now - t0
+
+            # timer = print_etime('Processed %s (%i profiles)' % (param, len(profiles)), timer)
+
         return this_ds
+
 
 class Fetch_wmo(ErddapArgoDataFetcher):
     """Manage access to Argo data through Ifremer ERDDAP for: a list of WMOs
@@ -733,7 +780,8 @@ class Fetch_wmo(ErddapArgoDataFetcher):
                 'fs': self.fs,
                 'server': self.server,
                 'parallel': False,
-                'CYC': self.CYC}
+                'CYC': self.CYC,
+                'indexfs': self.indexfs}
         if self.dataset_id == 'bgc':
             opts['params'] = self._bgc_params
             opts['measured'] = self._bgc_measured
@@ -808,7 +856,8 @@ class Fetch_box(ErddapArgoDataFetcher):
             urls = []
             opts = {'ds': self.dataset_id,
                     'fs': self.fs,
-                    'server': self.server}
+                    'server': self.server,
+                    'indexfs': self.indexfs}
             if self.dataset_id == 'bgc':
                 opts['params'] = self._bgc_params
                 opts['measured'] = self._bgc_measured
