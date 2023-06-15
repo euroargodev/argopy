@@ -21,7 +21,7 @@ from ..stores import ArgoIndex
 log = logging.getLogger("argopy.gdacftp.data")
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
-dataset_ids = ["phy", "bgc"]  # First is default
+dataset_ids = ["phy",]  # First is default
 api_server = OPTIONS["ftp"]  # API root url
 api_server_check = (
     api_server  # URL to check if the API is alive, used by isAPIconnected
