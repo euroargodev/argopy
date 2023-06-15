@@ -11,7 +11,10 @@ class ArgoIndex(indexstore):
     If Pyarrow is available, this class will use :class:`pyarrow.Table` as internal storage format; otherwise, a
     :class:`pandas.DataFrame` will be used.
 
-    convention_supported = ["ar_index_global_prof", "argo_bio-profile_index", "argo_synthetic-profile_index"]
+    You can use the exact index file names or keywords:
+    - 'core' for the 'ar_index_global_prof.txt' index file,
+    - 'bgc-b' for the 'argo_bio-profile_index.txt' index file,
+    - 'bgc-s' for the 'argo_synthetic-profile_index.txt' index file.
 
     Examples
     --------
@@ -19,10 +22,11 @@ class ArgoIndex(indexstore):
     An index store is instantiated with the access path (host) and the index file:
 
     >>> idx = ArgoIndex()
-    >>> idx = ArgoIndex(host="ftp://ftp.ifremer.fr/ifremer/argo")
-    >>> idx = ArgoIndex(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt")
-    >>> idx = ArgoIndex(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt", cache=True)
-    >>> idx = ArgoIndex(host=".", index_file="dummy_index.txt", convention="ar_index_global_prof")
+    >>> idx = ArgoIndex(host="https://data-argo.ifremer.fr")  # Default host
+    >>> idx = ArgoIndex(host="ftp://ftp.ifremer.fr/ifremer/argo", index_file="ar_index_global_prof.txt")  # Default index
+    >>> idx = ArgoIndex(index_file="bgc-s")  # Use keywords instead of exact file names
+    >>> idx = ArgoIndex(host="https://data-argo.ifremer.fr", index_file="bgc-b", cache=True)  # Use cache for performances
+    >>> idx = ArgoIndex(host=".", index_file="dummy_index.txt", convention="core")  # Load your own index
 
     Full index methods and properties:
 

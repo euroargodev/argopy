@@ -36,7 +36,8 @@ class ArgoIndexStoreProto(ABC):
     ext = None
     """Storage file extension"""
 
-    convention_supported = ["ar_index_global_prof", "argo_bio-profile_index", "argo_synthetic-profile_index"]
+    convention_supported = ["ar_index_global_prof", "argo_bio-profile_index", "argo_synthetic-profile_index",
+                            "core", "bgc-s", "synth", "bgc-b", "bio"]
     """List of supported conventions"""
 
     def __init__(
@@ -58,15 +59,26 @@ class ArgoIndexStoreProto(ABC):
             index_file: str, default: ``ar_index_global_prof.txt``
                 Name of the csv-like text file with the index. Possible values are: ``ar_index_global_prof.txt``,
                 ``argo_bio-profile_index.txt`` or ``argo_synthetic-profile_index.txt``.
+                You can also use the keyword: ``core``, ``bgc-s``, ``bgc-b``.
             cache : bool, default: False
                 Use cache or not.
             cachedir : str, default: OPTIONS['cachedir']
                 Folder where to store cached files
             convention: str, default: ``ar_index_global_prof``
                 Set the expected format convention of the index file. This is useful when trying to load index file with custom name.
+                You can also use the keyword: ``core``, ``bgc-s``, ``bgc-b``.
         """
         self.host = host
+
+        # Catchup keyword for the main profile index files:
+        if index_file in ["core"]:
+            index_file = 'ar_index_global_prof.txt'
+        elif index_file in ['bgc-s', 'synth']:
+            index_file = 'argo_synthetic-profile_index.txt'
+        elif index_file in ['bgc-b', 'bio']:
+            index_file = 'argo_bio-profile_index.txt'
         self.index_file = index_file
+
         self.cache = cache
         self.cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
         timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
@@ -306,11 +318,11 @@ class ArgoIndexStoreProto(ABC):
     @property
     def convention_title(self):
         """Long name for the index convention"""
-        if self.convention == 'ar_index_global_prof':
+        if self.convention in ['ar_index_global_prof', 'core']:
             title = 'Profile directory file of the Argo GDAC'
-        elif self.convention == 'argo_bio-profile_index':
+        elif self.convention in ['argo_bio-profile_index', 'bgc-b', 'bio']:
             title = 'Bio-Profile directory file of the Argo GDAC'
-        elif self.convention == 'argo_synthetic-profile_index':
+        elif self.convention in ['argo_synthetic-profile_index', 'bgc-s', 'synth']:
             title = 'Synthetic-Profile directory file of the Argo GDAC'
         return title
 
