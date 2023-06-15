@@ -497,7 +497,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 "Erddap server can't return ncHeader for this url. "
             )
 
-    def to_xarray(self, errors: str = "ignore"):  # noqa: C901
+    def to_xarray(self, errors: str = "ignore", add_dm=False):  # noqa: C901
         """Load Argo data and return a xarray.DataSet"""
 
         URI = self.uri  # Call it once
@@ -549,7 +549,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         ds = self._add_attributes(ds)
         ds = ds.argo.cast_types()
 
-        if self.dataset_id == 'bgc':
+        if self.dataset_id == 'bgc' and add_dm:
             ds = self._add_parameters_data_mode_ds(ds)
             ds = ds.argo.cast_types(overwrite=False)
 
@@ -632,6 +632,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             # log.debug("="*50)
             # log.debug("Filling DATA MODE for %s" % param)
 
+            # todo: optimise the following loop ! this is too slow !
             for prof in profiles:
                 wmo, cyc = prof
                 index_row = self.indexfs.search_wmo_cyc(wmo, cyc).search
