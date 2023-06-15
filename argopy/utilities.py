@@ -188,10 +188,10 @@ def lscache(cache_path: str = "", prt=True):
 def load_dict(ptype):
     if ptype == "profilers":
         try:
-            nvs = ArgoNVSReferenceTables()
+            nvs = ArgoNVSReferenceTables(cache=True)
             profilers = {}
             for row in nvs.tbl(8).iterrows():
-                profilers.update({row[1]['altLabel']: row[1]['prefLabel']})
+                profilers.update({int(row[1]['altLabel']): row[1]['prefLabel']})
             return profilers
         except:
             with open(os.path.join(path2pkl, "dict_profilers.pickle"), "rb") as f:
@@ -199,7 +199,7 @@ def load_dict(ptype):
             return loaded_dict
     elif ptype == "institutions":
         try:
-            nvs = ArgoNVSReferenceTables()
+            nvs = ArgoNVSReferenceTables(cache=True)
             institutions = {}
             for row in nvs.tbl(4).iterrows():
                 institutions.update({row[1]['altLabel']: row[1]['prefLabel']})
