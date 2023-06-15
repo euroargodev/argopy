@@ -41,13 +41,13 @@ class ArgoIndexStoreProto(ABC):
 
     def __init__(
         self,
-        host: str = "https://data-argo.ifremer.fr",
-        index_file: str = "ar_index_global_prof.txt",
-        cache: bool = False,
-        cachedir: str = "",
-        timeout: int = 0,
-        convention: str = None,
-    ):
+            host: str = "https://data-argo.ifremer.fr",
+            index_file: str = "ar_index_global_prof.txt",
+            cache: bool = False,
+            cachedir: str = "",
+            timeout: int = 0,
+            convention: str = None,
+    ) -> object:
         """ Create an Argo index file store
 
             Parameters
@@ -407,7 +407,7 @@ class ArgoIndexStoreProto(ABC):
             path = [path]
         return [self.fs["client"].cachepath(p) for p in path]
 
-    def to_dataframe(self, nrows=None, index=False):  # noqa: C901
+    def to_dataframe(self, nrows=None, index=False, completed=True):  # noqa: C901
         """ Return index or search results as :class:`pandas.DataFrame`
 
             If search not triggered, fall back on full index by default. Using index=True force to return the full index.
@@ -418,6 +418,9 @@ class ArgoIndexStoreProto(ABC):
                 Will return only the first `nrows` of search results. None returns all.
             index: bool, default: False
                 Force to return the index, even if a search was performed with this store instance.
+            completed: bool, default: True
+                Complete the raw index columns with: Platform Number (WMO), Cycle Number, Institution and Profiler details
+                This is adding an extra computation, so if you care about performances, you may set this to False.
 
             Returns
             -------
@@ -428,10 +431,17 @@ class ArgoIndexStoreProto(ABC):
                 fname = s.search_path
             else:
                 fname = s.index_path
-            if nrows is not None:
-                fname = fname + "/export" + "#%i.pd" % nrows
+
+            if not completed:
+                suff = "_raw"
             else:
-                fname = fname + "/export.pd"
+                suff = ""
+
+            if nrows is not None:
+                fname = fname + "/export" + suff + "#%i.pd" % nrows
+            else:
+                fname = fname + "/export" + suff + ".pd"
+
             return fname
 
         df, src = self._to_dataframe(nrows=nrows, index=index)
@@ -456,35 +466,36 @@ class ArgoIndexStoreProto(ABC):
                 df.drop("index", axis=1, inplace=True)
 
             df.reset_index(drop=True, inplace=True)
-
-            df["wmo"] = df["file"].apply(lambda x: int(x.split("/")[1]))
-            df["cyc"] = df["file"].apply(lambda x: int(x.split("_")[-1].split('.nc')[0].replace("D", "")))
             df["date"] = pd.to_datetime(df["date"], format="%Y%m%d%H%M%S")
             df["date_update"] = pd.to_datetime(df["date_update"], format="%Y%m%d%H%M%S")
+            df["wmo"] = df["file"].apply(lambda x: int(x.split("/")[1]))
+            df["cyc"] = df["file"].apply(lambda x: int(x.split("_")[-1].split('.nc')[0].replace("D", "")))
 
-            # institution & profiler mapping for all users
-            # todo: may be we need to separate this for standard and expert users
-            institution_dictionnary = load_dict("institutions")
-            df["tmp1"] = df["institution"].apply(
-                lambda x: mapp_dict(institution_dictionnary, x)
-            )
-            df = df.rename(
-                columns={"institution": "institution_code", "tmp1": "institution"}
-            )
+            if completed:
 
-            profiler_dictionnary = load_dict("profilers")
-            profiler_dictionnary["?"] = "?"
+                # institution & profiler mapping for all users
+                # todo: may be we need to separate this for standard and expert users
+                institution_dictionnary = load_dict("institutions")
+                df["tmp1"] = df["institution"].apply(
+                    lambda x: mapp_dict(institution_dictionnary, x)
+                )
+                df = df.rename(
+                    columns={"institution": "institution_code", "tmp1": "institution"}
+                )
 
-            def ev(x):
-                try:
-                    return int(x)
-                except Exception:
-                    return x
+                profiler_dictionnary = load_dict("profilers")
+                profiler_dictionnary["?"] = "?"
 
-            df["profiler"] = df["profiler_type"].apply(
-                lambda x: mapp_dict(profiler_dictionnary, ev(x))
-            )
-            df = df.rename(columns={"profiler_type": "profiler_code"})
+                def ev(x):
+                    try:
+                        return int(x)
+                    except Exception:
+                        return x
+
+                df["profiler"] = df["profiler_type"].apply(
+                    lambda x: mapp_dict(profiler_dictionnary, ev(x))
+                )
+                df = df.rename(columns={"profiler_type": "profiler_code"})
 
             if self.cache:
                 self._write(self.fs["client"], fname, df, fmt="pd")
