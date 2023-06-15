@@ -122,7 +122,7 @@ class ArgoDataFetcher:
         self.fetcher = None
         if self._dataset_id not in Fetchers.dataset_ids:
             raise ValueError(
-                "%s dataset is not available for this data source (%s)"
+                "The '%s' dataset is not available for the '%s' data source"
                 % (self._dataset_id, self._src)
             )
         self.fetcher_kwargs = {**fetcher_kwargs}
@@ -145,10 +145,10 @@ class ArgoDataFetcher:
 
         # Dev warnings
         # Todo Clean-up before each release
-        if self._dataset_id == "bgc" and self._mode == "standard":
+        if self._dataset_id == "bgc" and (self._mode == "standard" or self._mode == "research"):
             warnings.warn(
-                "'BGC' dataset fetching in 'standard' user mode is not yet reliable. "
-                "Try to switch to 'expert' mode if you encounter errors."
+                "The 'bgc' dataset fetching in '%s' user mode is not yet available. "
+                "Try to switch to 'expert' mode." % (self._src)
             )
 
     def __repr__(self):
