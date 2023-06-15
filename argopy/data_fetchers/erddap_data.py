@@ -780,11 +780,12 @@ class Fetch_wmo(ErddapArgoDataFetcher):
                 'fs': self.fs,
                 'server': self.server,
                 'parallel': False,
-                'CYC': self.CYC,
-                'indexfs': self.indexfs}
+                'CYC': self.CYC}
         if self.dataset_id == 'bgc':
             opts['params'] = self._bgc_params
             opts['measured'] = self._bgc_measured
+            opts['indexfs'] = self.indexfs
+
         for wmos in wmo_grps:
             urls.append(
                 Fetch_wmo(
@@ -856,11 +857,11 @@ class Fetch_box(ErddapArgoDataFetcher):
             urls = []
             opts = {'ds': self.dataset_id,
                     'fs': self.fs,
-                    'server': self.server,
-                    'indexfs': self.indexfs}
+                    'server': self.server}
             if self.dataset_id == 'bgc':
                 opts['params'] = self._bgc_params
                 opts['measured'] = self._bgc_measured
+            opts['indexfs'] = self.indexfs
             for box in boxes:
                 urls.append(
                     Fetch_box(
