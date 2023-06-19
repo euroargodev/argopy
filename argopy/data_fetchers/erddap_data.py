@@ -509,7 +509,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 "Erddap server can't return ncHeader for this url. "
             )
 
-    def to_xarray(self, errors: str = "ignore", add_dm=False):  # noqa: C901
+    def to_xarray(self, errors: str = "ignore", add_dm=True):  # noqa: C901
         """Load Argo data and return a xarray.DataSet"""
 
         URI = self.uri  # Call it once

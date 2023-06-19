@@ -249,6 +249,8 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         if hasattr(self, "search") and not index:
             df = pa.compute.split_pattern(self.search["parameters"], pattern=" ").to_pandas()
         else:
+            if not hasattr(self, "index"):
+                self.load()
             df = pa.compute.split_pattern(self.index["parameters"], pattern=" ").to_pandas()
         plist = set(df[0])
         def fct(row):

@@ -196,6 +196,8 @@ class indexstore_pandas(ArgoIndexStoreProto):
         if hasattr(self, "search") and not index:
             df = self.search['parameters']
         else:
+            if not hasattr(self, "index"):
+                self.load()
             df = self.index['parameters']
         plist = set(df[0].split(" "))
         def fct(row):
