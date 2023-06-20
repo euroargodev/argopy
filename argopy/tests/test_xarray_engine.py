@@ -1,3 +1,4 @@
+import os
 import pytest
 import xarray as xr
 import logging
@@ -6,7 +7,7 @@ import argopy
 from argopy.utilities import argo_split_path
 from argopy.xarray import ArgoEngine
 from xarray.backends.common import BACKEND_ENTRYPOINTS
-from mocked_http import mocked_httpserver, mocked_server_address
+# from mocked_http import mocked_httpserver, mocked_server_address
 
 
 BACKEND_ENTRYPOINTS["argo"] = ArgoEngine
@@ -61,6 +62,7 @@ class Test_Argo_Engine:
         src + "/jma/4902252/4902252_meta.nc",  # meta-data
         # src + "/coriolis/1900857/1900857_meta.nc",  # meta-data
     ]
+    list_of_files = [f.replace("/", os.path.sep) for f in list_of_files]
 
     # list_of_files_desc = [print_desc(argo_split_path(f)) for f in list_of_files]
     list_of_files_desc = [f for f in list_of_files]

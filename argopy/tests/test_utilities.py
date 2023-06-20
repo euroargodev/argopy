@@ -690,6 +690,7 @@ class Test_argo_split_path:
         src + "/jma/4902252/4902252_meta.nc",  # meta-data
         # src + "/coriolis/1900857/1900857_meta.nc",  # meta-data
     ]
+    list_of_files = [f.replace("/", os.path.sep) for f in list_of_files]
 
     #########
     # TESTS #
