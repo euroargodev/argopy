@@ -129,7 +129,6 @@ def test_erddap_ds_exists(mocked_httpserver):
 
 
 @requires_gdac
-@pytest.mark.skipif(not isconnected(), reason="Requires a connection to load tutorial data")
 def test_clear_cache():
     ftproot, flist = argopy.tutorial.open_dataset("gdac")
     with tempfile.TemporaryDirectory() as cachedir:
@@ -139,6 +138,21 @@ def test_clear_cache():
             argopy.clear_cache()
             assert os.path.exists(cachedir) is True
             assert len(os.listdir(cachedir)) == 0
+
+
+@requires_gdac
+def test_lscache():
+    ftproot, flist = argopy.tutorial.open_dataset("gdac")
+    with tempfile.TemporaryDirectory() as cachedir:
+        with argopy.set_options(cachedir=cachedir):
+            loader = ArgoDataFetcher(src="gdac", ftp=ftproot, cache=True).profile(2902696, 12)
+            loader.to_xarray()
+            result = argopy.utilities.lscache(cache_path=cachedir, prt=True)
+            assert isinstance(result, str)
+
+            result = argopy.utilities.lscache(cache_path=cachedir, prt=False)
+            assert isinstance(result, pd.DataFrame)
+
 
 
 class Test_linear_interpolation_remap:
