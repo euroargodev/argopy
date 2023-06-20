@@ -92,8 +92,7 @@ def test_check_gdac_path():
                          ids=["conda=%s" % str(p) for p in [False, True]])
 def test_show_versions(conda):
     f = io.StringIO()
-    r = argopy.show_versions(file=f, conda=conda)
-    log.debug(r)
+    argopy.show_versions(file=f, conda=conda)
     assert "SYSTEM" in f.getvalue()
 
 
