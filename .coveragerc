@@ -1,7 +1,8 @@
 [run]
 omit =
     argopy/tests/*
-    setup.py
+    argopy/tests/*
+    *deprec*
     *__init__*
 [report]
 exclude_lines =
