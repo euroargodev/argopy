@@ -961,8 +961,11 @@ class Test_ArgoDocs:
     @pytest.mark.parametrize("an_instance", [None, 35385], indirect=True, ids=["docid=%s" % t for t in [None, 35385]])
     def test_show(self, an_instance):
         if an_instance.docid is not None:
-            assert isinstance(an_instance.show(), IPython.core.display.HTML)
-            assert isinstance(an_instance.show(height=120), IPython.core.display.HTML)
+            if has_ipython:
+                assert isinstance(an_instance.show(), IPython.core.display.HTML)
+                assert isinstance(an_instance.show(height=120), IPython.core.display.HTML)
+            else:
+                pytest.skip("Requires IPython")
         else:
             with pytest.raises(ValueError):
                 an_instance.show()
