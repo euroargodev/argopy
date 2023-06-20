@@ -166,23 +166,28 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason='?')
         Use xfail=True when a test with this is expected to fail
     """
     def core(fargs, apts):
+        # log.debug(apts)
+        if 'nrows' in apts:
+            nrows = apts['nrows']
+        else:
+            nrows = None
         try:
             idx = idx_maker(**fargs)
             if "wmo" in apts:
-                idx.search_wmo(apts['wmo'])
+                idx.search_wmo(apts['wmo'], nrows=nrows)
             if "cyc" in apts:
-                idx.search_cyc(apts['cyc'])
+                idx.search_cyc(apts['cyc'], nrows=nrows)
             if "wmo_cyc" in apts:
-                idx.search_wmo_cyc(apts['wmo_cyc'][0], apts['wmo_cyc'][1])
+                idx.search_wmo_cyc(apts['wmo_cyc'][0], apts['wmo_cyc'][1], nrows=nrows)
             if "tim" in apts:
-                idx.search_tim(apts['tim'])
+                idx.search_tim(apts['tim'], nrows=nrows)
             if "lat_lon" in apts:
-                idx.search_lat_lon(apts['lat_lon'])
+                idx.search_lat_lon(apts['lat_lon'], nrows=nrows)
             if "lat_lon_tim" in apts:
-                idx.search_lat_lon_tim(apts['lat_lon_tim'])
+                idx.search_lat_lon_tim(apts['lat_lon_tim'], nrows=nrows)
             if "params" in apts:
                 if np.any([key in idx.convention_title for key in ["Bio", "Synthetic"]]):
-                    idx.search_params(apts['params'])
+                    idx.search_params(apts['params'], nrows=nrows)
                 else:
                     pytest.skip("For BGC index only")
         except:
@@ -209,8 +214,9 @@ class IndexStore_test_proto:
     host, flist = argopy.tutorial.open_dataset("gdac")
 
     search_scenarios = [(h, ap) for h in VALID_HOSTS for ap in VALID_SEARCHES]
+    search_scenarios = [(h, ap, n) for h in VALID_HOSTS for ap in VALID_SEARCHES for n in [None, 2]]
     search_scenarios_ids = [
-        "%s, %s" % (ftp_shortname(fix[0]), list(fix[1].keys())[0]) for fix
+        "%s, %s, nrows=%s" % (ftp_shortname(fix[0]), list(fix[1].keys())[0], fix[2]) for fix
         in
         search_scenarios]
 
@@ -284,6 +290,8 @@ class IndexStore_test_proto:
         """ Fixture to create an Index fetcher for a given host and access point """
         host = request.param[0]
         srch = request.param[1]
+        nrows = request.param[2]
+        srch['nrows'] = nrows
         # log.debug("a_search: %s, %s, %s" % (self.index_file, srch, xfail))
         yield run_a_search(self.new_idx, {'host': host, 'cache': True}, srch)
 
