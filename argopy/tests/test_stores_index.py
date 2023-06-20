@@ -181,7 +181,7 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason='?')
             if "lat_lon_tim" in apts:
                 idx.search_lat_lon_tim(apts['lat_lon_tim'])
             if "params" in apts:
-                if np.any([key in idx.convention_title for key in ["Bio", "Synthtetic"]]):
+                if np.any([key in idx.convention_title for key in ["Bio", "Synthetic"]]):
                     idx.search_params(apts['params'])
                 else:
                     pytest.skip("For BGC index only")
@@ -281,7 +281,7 @@ class IndexStore_test_proto:
 
     @pytest.fixture
     def a_search(self, request):
-        """ Fixture to create a FTP fetcher for a given host and access point """
+        """ Fixture to create an Index fetcher for a given host and access point """
         host = request.param[0]
         srch = request.param[1]
         # log.debug("a_search: %s, %s, %s" % (self.index_file, srch, xfail))
@@ -376,10 +376,15 @@ class IndexStore_test_proto:
         idx.search_wmo(wmo)
         self.assert_search(idx, cacheable=True)
 
-    def test_read_wmo(self):
+    @pytest.mark.parametrize("index", [False, True], indirect=False, ids=["index=%s" % i for i in [False, True]])
+    def test_read_wmo(self, index):
         wmo = [s['wmo'] for s in VALID_SEARCHES if 'wmo' in s.keys()][0]
         idx = self.new_idx().search_wmo(wmo)
-        assert len(idx.read_wmo()) == len(wmo)
+        WMOs = idx.read_wmo(index=index)
+        if index:
+            assert [str(w).isdigit() for w in WMOs]
+        else:
+            assert len(WMOs) == len(wmo)
 
     @pytest.mark.parametrize("index", [False, True], indirect=False, ids=["index=%s" % i for i in [False, True]])
     def test_read_params(self, index):
@@ -392,10 +397,11 @@ class IndexStore_test_proto:
             with pytest.raises(InvalidDatasetStructure):
                 idx.read_params(index=index)
 
-    def test_records_per_wmo(self):
+    @pytest.mark.parametrize("index", [False, True], indirect=False, ids=["index=%s" % i for i in [False, True]])
+    def test_records_per_wmo(self, index):
         wmo = [s['wmo'] for s in VALID_SEARCHES if 'wmo' in s.keys()][0]
         idx = self.new_idx().search_wmo(wmo)
-        C = idx.records_per_wmo()
+        C = idx.records_per_wmo(index=index)
         for w in C:
             assert str(C[w]).isdigit()
 
@@ -436,7 +442,7 @@ class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto):
 
 
 @skip_this
-class Test_IndexStore_pandas_BGC(IndexStore_test_proto):
+class Test_IndexStore_pandas_BGC_bio(IndexStore_test_proto):
     network = "bgc"
     indexstore = indexstore_pandas
     index_file = "argo_bio-profile_index.txt"
@@ -444,8 +450,24 @@ class Test_IndexStore_pandas_BGC(IndexStore_test_proto):
 
 @skip_this
 @skip_pyarrow
-class Test_IndexStore_pyarrow_BGC(IndexStore_test_proto):
+class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
     network = "bgc"
     from argopy.stores.argo_index_pa import indexstore_pyarrow
     indexstore = indexstore_pyarrow
     index_file = "argo_bio-profile_index.txt"
+
+
+@skip_this
+class Test_IndexStore_pandas_BGC_synthetic(IndexStore_test_proto):
+    network = "bgc"
+    indexstore = indexstore_pandas
+    index_file = "argo_synthetic-profile_index.txt"
+
+
+@skip_this
+@skip_pyarrow
+class Test_IndexStore_pyarrow_BGC_synthetic(IndexStore_test_proto):
+    network = "bgc"
+    from argopy.stores.argo_index_pa import indexstore_pyarrow
+    indexstore = indexstore_pyarrow
+    index_file = "argo_synthetic-profile_index.txt"
