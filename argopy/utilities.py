@@ -4068,7 +4068,7 @@ class ArgoDocs:
             """Parse input file"""
             # log.debug(file)
 
-            with self.fs.open(file, 'r') as f:
+            with self.fs.open(file, 'r', encoding="utf-8") as f:
                 TXTlines = f.readlines()
             lines = []
             # Eliminate blank lines
