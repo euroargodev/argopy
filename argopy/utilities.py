@@ -2355,10 +2355,13 @@ def argo_split_path(this_path):  # noqa C901
         if typ == 'meta':
             output['type'] = 'Metadata file'
         if 'traj' in typ:
-            output['type'] = 'Trajectory file'
-            if typ.split("traj")[0] == 'D':
+            # possible typ = [Rtraj, Dtraj, BRtraj, BDtraj]
+            output['type'], i = 'Trajectory file', 0
+            if typ[0] == 'B':
+                output['type'], i = 'BGC Trajectory file', 1
+            if typ.split("traj")[0][i] == 'D':
                 output['data_mode'] = 'D, Delayed-time data'
-            elif typ.split("traj")[0] == 'R':
+            elif typ.split("traj")[0][i] == 'R':
                 output['data_mode'] = 'R, Real-time data'
             else:
                 output['data_mode'] = 'R, Real-time data (implicit)'
