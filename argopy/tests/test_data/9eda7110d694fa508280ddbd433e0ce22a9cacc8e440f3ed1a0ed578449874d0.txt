@@ -1,0 +1,25 @@
+FN Archimer Export Format
+PT Rapport
+TI Argo quality control manual for dissolved oxygen concentration
+BT 
+AF Thierry, Virginie
+   Bittig, Henry
+AS 1:2;2:1;3:;
+FF 1:PDG-ODE-LPO;2:;3:;
+C1 CNRS, UMR 7093, LOV, Observatoire océanologique, Villefranche-sur-Mer, France
+   Ifremer
+C2 CNRS LOV, FRANCE
+   IFREMER, FRANCE
+SI BREST
+SE PDG-ODE-LPO
+UR https://archimer.ifremer.fr/doc/00354/46542/82301.pdf
+LA English
+DT Report
+AB This document is the Argo quality control manual for Dissolved oxygen concentration. It describes two levels of quality control: 	- The first level is the real-time system that performs a set of agreed automatic checks. Adjustment in real-time can also be performed and the real-time system can evaluate quality flags for adjusted fields. 	- The second level is the delayed-mode quality control system. 
+PY 2021
+PD FEB
+DI 10.13155/46542
+ID 46542
+ER
+
+EF

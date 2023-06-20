@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8">
+	<meta name="citation_title" content="Processing BGC-Argo Radiometric data at the DAC level" />
+<meta name="citation_author" content="Schmechtig, Catherine" />
+<meta name="citation_author" content="Poteau, Antoine" />
+<meta name="citation_author" content="Claustre, Herve" />
+<meta name="citation_author" content="D’ortenzio, Fabrizio" />
+<meta name="citation_publication_date" content="2017/10/09" /><!--yyyy/mm/dd-->
+<meta name="citation_year" content="2017" />
+<meta name="citation_keywords" content="argo; bgc-argo; optic" />
+<meta name="citation_language" content="en" />
+<meta name="citation_abstract_html_url" content="https://archimer.ifremer.fr/doc/00404/51541/" />
+<meta name="citation_pdf_url" content="https://archimer.ifremer.fr/doc/00404/51541/52133.pdf" />
+<meta name="citation_abstract" content="Presently, radiometers can be implemented on profiling floats to estimate some radiometric measurements. Hereafter we briefly describe the principle of this method and several configurations of the OCR500 series instruments. These measurements can be radiance or irradiance at different wavelengths and in different directions (upward or downward). The Photosynthetically Available Radiation (PAR) is also measured as it represents the solar radiation that photosynthetic organisms are able to use in the process of photosynthesis. At the moment all radiometric sensors implemented on floats are developed by the Satlantic Company and are of the OCR serie. These radiometers combine three wavelengths for irradiance measurements together with a measurement of the Photosynthetically Available Radiation. The present document is focused on the management of radiometric data flow acquired by those sensors (section 3). As soon as other sensors are implemented and successfully tested on floats, the present document would be accordingly updated. " />
+
+	<title>Processing BGC&#045;Argo Radiometric data at the DAC level</title>
+	<link rel="canonical" href="https://archimer.ifremer.fr/doc/00404/51541/" />
+	<meta name="description" content="Presently&#044; radiometers can be implemented on profiling floats to estimate some radiometric measurements&#046; Hereafter we briefly describe the principle of this method and several configurations of the&#046;&#046;&#046;" />
+	<meta name="robots" content="index,follow" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="../../../html/medias-resources/css/datatables.min.css" />
+	<link rel="stylesheet" type="text/css" href="../../../html/medias-resources/css/styles.css" />
+	<link rel="stylesheet" type="text/css" href="../../../html/medias-resources/css/theme.css" />
+	<link rel="stylesheet" type="text/css" href="../../../html/medias-resources/css-portal/portal.css" />
+	<link rel="stylesheet" type="text/css" href="../../../html/medias-resources/css/archimer.css">
+	<link rel="stylesheet" type="text/css" href="../../../html/medias-resources/css/archimer.css" />
+</head>
+<body>
+	<div class="container-fluid">
+		<div id="page-wrap">
+			<header class="navbar navbar-static-top">
+				<div class="container container-inside">
+					<div class="navbar-header">
+						<button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse"><span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<h1 class="navbar-brand">
+							<a href="http://www.argodatamgt.org" title="">Argo</a>
+							<span class="hidden-sm">part of the integrated global observation strategy</span>
+						</h1>
+					</div>
+					<div class="container right" style="">
+					<div class="right hidden-xs hidden-sm">
+						<a href="http://www.argodatamgt.org" target="blanck"><img src="https://archimer.ifremer.fr/html/medias-resources/images/argo.gif" alt="Argo"/></a>
+					</div>
+				</div>
+
+				</div>
+			</header>
+			<div class="container dist-table">
+				<section id="landing-page" class="full white bloc-center">
+					<div class="container" style="margin-top: 0px; margin-left: 40px; margin-right: 40px;">
+						<ol class="breadcrumb" style="margin: 10px 0;">
+							<li class="segment"><a id="backtolist" href="http://www.argodatamgt.org"><span class="glyphicon glyphicon-home"></span></a></li>
+							<li id="record-id" class="active">Document n°51541</li>
+						</ol>
+					</div>
+					<section id="main-bloc" class="col-md-9 cell" role="main">
+						<article class="mod-article" style="padding-top: 0px; margin-top: 10px;">
+							<a id="content-top"></a>
+							<h1 id="document-title"><a href="https&#058;&#047;&#047;archimer&#046;ifremer&#046;fr&#047;doc&#047;00404&#047;51541&#047;52133&#046;pdf">Processing BGC&#045;Argo Radiometric data at the DAC level</a></h1>
+					<table class="tab-article table-condensed text-justify">
+						<tbody>
+							<tr>
+								<th>Type</th>
+								<td>Qualification paper &#040;procedure&#044; accreditation support&#041;</td>
+							</tr>
+							<tr>
+								<th>Date							</th>
+								<td id="document-date">2017&#045;10&#045;09</td>
+							</tr>
+							<tr>
+								<th>Language</th>
+								<td>English							</td>
+							</tr>
+							<tr>
+								<th>Author(s)</th>
+								<td><a target="_blank" href="https://orcid.org/0000-0002-1230-164X">Schmechtig Catherine</a><a target="_blank" href="https://orcid.org/0000-0002-1230-164X"><sup><img alt="ORCID" src="https://archimer.ifremer.fr/html/medias-resources/images/orcid.png"></sup></a><sup>1</sup>, <a target="_blank" href="https://orcid.org/0000-0002-0519-5180">Poteau Antoine</a><a target="_blank" href="https://orcid.org/0000-0002-0519-5180"><sup><img alt="ORCID" src="https://archimer.ifremer.fr/html/medias-resources/images/orcid.png"></sup></a><sup>2</sup>, <a target="_blank" href="https://orcid.org/0000-0001-6243-0258">Claustre Herve</a><a target="_blank" href="https://orcid.org/0000-0001-6243-0258"><sup><img alt="ORCID" src="https://archimer.ifremer.fr/html/medias-resources/images/orcid.png"></sup></a><sup>2</sup>, <a target="_blank" href="https://orcid.org/0000-0003-0617-7336">D’ortenzio Fabrizio</a><a target="_blank" href="https://orcid.org/0000-0003-0617-7336"><sup><img alt="ORCID" src="https://archimer.ifremer.fr/html/medias-resources/images/orcid.png"></sup></a><sup>2</sup></td>
+							</tr>
+							<tr>
+								<th>Affiliation(s)</th>
+								<td>1 : Sorbonne Universités, UPMC Univ Paris 06, CNRS, UMS 3455, OSU Ecce-Terra, Paris Cedex 5, France<br />2 : Sorbonne Universités, UPMC Univ Paris 06, CNRS, UMR 7093, Laboratoire d’Océanographie de Villefranche (LOV), Villefranche sur Mer, France</td>
+							</tr>
+							<tr>
+								<th>DOI</th>
+								<td><a href="https://doi.org/10&#046;13155&#047;51541">10&#046;13155&#047;51541</a></td>
+							</tr>
+							<tr>
+								<th>Publisher</th>
+								<td>Ifremer</td>
+							</tr>
+							<tr>
+								<th>Version</th>
+								<td>1&#046;1</td>
+							</tr>
+							<tr>
+								<th>Keyword(s)</th>
+								<td>argo&#044; bgc&#045;argo&#044; optic</td>
+							</tr>
+							<tr>
+								<th>Abstract</th>
+								<td><p>Presently, radiometers can be implemented on profiling floats to estimate some radiometric measurements. Hereafter we briefly describe the principle of this method and several configurations of the OCR500 series instruments. These measurements can be radiance or irradiance at different wavelengths and in different directions (upward or downward). The Photosynthetically Available Radiation (PAR) is also measured as it represents the solar radiation that photosynthetic organisms are able to use in the process of photosynthesis.</p><p style="margin-top:5px"></p><p>At the moment all radiometric sensors implemented on floats are developed by the Satlantic Company and are of the OCR serie. These radiometers combine three wavelengths for irradiance measurements together with a measurement of the Photosynthetically Available Radiation. The present document is focused on the management of radiometric data flow acquired by those sensors (section 3). As soon as other sensors are implemented and successfully tested on floats, the present document would be accordingly updated.</p></td>
+							</tr>
+							<tr>
+								<th>Full Text</th>
+								<td>
+									<table class="table text-left">
+										<thead>
+											<tr>
+												<th>File</th>
+												<th>Pages</th>
+												<th>Size</th>
+												<th>Access</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="col-md-6"><a target="_blank" rel="nofollow" href="https://archimer.ifremer.fr/doc/00404/51541/52133.pdf">Publisher's official version</a></td>
+												<td class="col-md-1">12 </td>
+												<td class="col-md-2">148 KB </td>
+												<td class="col-md-3"><span class="access pull-left">Open access</span></td>
+											</tr>
+										<tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+							<a href="#content-top" title="Top of the page" class="top right rwd-out" accesskey="s">Top of the page</a>
+						</article>
+						<article class="mod-highlight" style="margin: 20px 40px;">
+							<div class="dist-table">
+								<div class="deco-highlight cell"> </div>
+								<article class="cell">
+									<h2>How to cite&nbsp;<a class="main_link" data-original-title="Warning" href="#"  data-toggle="popover" data-placement="right" data-trigger="hover" data-content="This citation has been built automatically according to the APA format. Please check if authors ask for a specific citation."><span class="glyphicon glyphicon-info-sign"></span></a></h2>
+									<p id="document-citation">Schmechtig Catherine, Poteau Antoine, Claustre Herve, D’ortenzio Fabrizio (2017).  <b>Processing BGC-Argo Radiometric data at the DAC level</b>. <a href="https://doi.org/10.13155/51541">https://doi.org/10.13155/51541</a></p>
+								</article>
+							</div>
+						</article>
+
+					</section>
+					<aside class="col-md-3 blue cell">
+										<div class="mod-metadata container">
+					<a id="access-data" href="#" class="accessdata col-xs-6 btn btn-grey btn-default vcenter pull-right" data-toggle="modal" data-target="#datamodal" style="font-size:16px;margin-left:5px">					<span aria-hidden="true" class="glyphicon glyphicon-download"></span>&nbsp;PDF
+				</a>
+					Click<br>to download<br>the PDF
+				</div>
+
+						
+						
+						<div class="mod-relativepages">
+							<h2 class="h2">Download metadata</h2>
+							<div class="mod-content">
+								<a target="_blank" href="https://archimer.ifremer.fr/doc/00404/51541/export.txt" rel="nofollow">TXT</a>, <a target="_blank" href="https://archimer.ifremer.fr/doc/00404/51541/export.ris" rel="nofollow">RIS</a>, <a target="_blank" href="https://archimer.ifremer.fr/doc/00404/51541/export.xls" rel="nofollow">XLS</a>, <a target="_blank" href="https://archimer.ifremer.fr/doc/00404/51541/export.rtf" rel="nofollow">RTF</a>, <a target="_blank" href="https://archimer.ifremer.fr/doc/00404/51541/export.bib" rel="nofollow">BIBTEX</a>
+							</div>
+						</div>
+
+						
+						
+						
+						<div class="mod-relativepages">
+							<h2 class="h2">Equipments</h2>
+							<div class="mod-content">
+								<a href="http://www.coriolis.eu.org/Observing-the-Ocean/ARGO">TGIR Euro-Argo (Argo-France)</a>
+							</div>
+						</div>
+
+						<div class="mod-relativepages">
+							<h2 class="h2">References</h2>
+							<a href="https://archimer.ifremer.fr/doc/00348/45915/" target="_blank" class="thumbnail">Bittig Henry, Körtzinger Arne, Johnson Ken, Claustre Herve, Emerson Steve, Fennel Katja, Garcia Hernan, Gilbert Denis, Gruber Nicolas, Kang Dong-Jin, Naqvi Wajih, Prakash Satya, Riser Steven, Thierry Virginie, Tilbrook Bronte, Uchida Hiroshi, Ulloa Osvaldo, Xing Xiaogang (2018).  SCOR WG 142: Quality Control Procedures for Oxygen and Other Biogeochemical Sensors on Floats and Gliders. Recommendations on the conversion between oxygen quantities for Bio-Argo floats and other autonomous sensor platforms. </a>
+							<a href="https://archimer.ifremer.fr/doc/00354/46542/" target="_blank" class="thumbnail">Thierry Virginie, Bittig Henry, The Argo-Bgc Team  (2021).  Argo quality control manual for dissolved oxygen concentration. </a>
+							<div class="clearfixe">
+								<a target="_blank" href="https://archimer.ifremer.fr/doc/00404/51541/relateddoc.htm" class="pull-right showAll"><span class="glyphicon glyphicon-plus"></span></a>
+							</div>
+						</div>
+
+												<div class="mod-relativepages">
+							<h2 class="h2">Related datasets</h2>
+							<a href="https://doi.org/10.17882/42182" target="_blank" class="thumbnail">Argo (2023). Argo float data and metadata from Global Data Assembly Centre (Argo GDAC). SEANOE. </a>
+						</div>
+
+						
+					</aside>
+				</section>
+			</div>
+		</div>
+		<footer id="footer" class="container footer">
+			<div class="container container-inside">
+				<div class="col-md-9 col-xs-6">
+					<ul>
+						<li style="color:white">
+							<a href="../../../content?page=contact">CONTACT</a>
+						</li>
+					</ul>
+				</div>
+				<div class="col-md-3 col-xs-6" style="text-align: right">
+					<ul>
+						<li>
+							<a href="https://archimer.ifremer.fr/html/policies.htm">LEGAL NOTICE</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</footer>
+		<!-- Modal HTML (popup) -->
+		<div class="modal fade" id="popupData" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+			<div class="vertical-alignment-helper">
+		        <div class="modal-dialog vertical-align-center">
+		            <div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							<h4 id="modal-label" class="modal-title">Files</h4>
+						</div>
+						<div class="modal-body" style="padding: 20px">
+														
+									<table class="table text-left">
+										<thead>
+											<tr>
+												<th>File</th>
+												<th>Pages</th>
+												<th>Size</th>
+												<th>Access</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="col-md-6"><a target="_blank" rel="nofollow" href="https://archimer.ifremer.fr/doc/00404/51541/52133.pdf">Publisher's official version</a></td>
+												<td class="col-md-1">12 </td>
+												<td class="col-md-2">148 KB </td>
+												<td class="col-md-3"><span class="access pull-left">Open access</span></td>
+											</tr>
+										<tbody>
+									</table>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	<script src="../../../html/medias-resources/js/jquery-2.2.4.min.js"></script>
+	<script src="../../../html/medias-resources/js/bootstrap.min.js"></script>
+	<script src="../../../html/medias-resources/js/jquery.dataTables.min.js" type="text/javascript"></script>
+	<script src="../../../html/medias-resources/js/scripts.js" type="text/javascript"></script>
+	<script src="../../../html/medias-resources/js/ol-4.3.3.js" type="text/javascript"></script>
+	<script src="../../../html/medias-resources/js/mapObject.js" type="text/javascript"></script>
+	<script src="../../../html/medias-resources/js/snapshot.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			//définition de la marge pour eviter que le footer empiète sur le bas de la page
+	    	var height = $('footer').outerHeight();
+	    	$('#page-wrap').css('margin-bottom', height + 'px');
+
+
+			$("#htc").popover();
+			
+
+			$('#access-data').on( "click", function() {
+				$("#popupData").modal('show');
+			});
+
+			$(".ckeditor_html table").addClass("table" );
+		});
+	</script>
+</body>
+</html>
