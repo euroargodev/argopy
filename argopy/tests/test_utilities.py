@@ -38,6 +38,7 @@ from argopy.utilities import (
     get_ea_profile_page,
     ArgoNVSReferenceTables,
     OceanOPSDeployments,
+    ArgoDocs,
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
@@ -50,6 +51,7 @@ from utils import (
     requires_oops,
     has_matplotlib,
     has_cartopy,
+    has_ipython,
 )
 from mocked_http import mocked_httpserver, mocked_server_address
 
@@ -59,6 +61,8 @@ if has_matplotlib:
 if has_cartopy:
     import cartopy
 
+if has_ipython:
+    import IPython
 
 def test_invalid_dictionnary():
     with pytest.raises(ValueError):
@@ -746,7 +750,6 @@ def test_get_ea_profile_page(params, mocked_httpserver):
         assert is_list_of_strings(get_ea_profile_page(params[0], params[1], api_server=mocked_server_address))
 
 
-
 class Test_ArgoNVSReferenceTables:
 
     def setup_class(self):
@@ -890,3 +893,85 @@ class Test_OceanOPSDeployments:
         fig, ax = an_instance.plot_status()
         assert isinstance(fig, mpl.figure.Figure)
         assert isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot)
+
+
+class Test_ArgoDocs:
+
+    @pytest.fixture
+    def an_instance(self, request):
+        """ Fixture to create a ArgoDocs instance for a given set of arguments """
+        docid = request.param
+
+        Ad = ArgoDocs(docid=docid)
+
+        # Adjust server info to use the mocked HTTP server:
+        Ad._doiserver = mocked_server_address
+        Ad._archimer = mocked_server_address
+
+        return Ad
+
+    def test_load_mocked_server(self, mocked_httpserver):
+        """This will easily ensure that the module scope fixture is available to all methods !"""
+        assert True
+
+    @pytest.mark.parametrize("an_instance", [None], indirect=True, ids=["docid=%s" % t for t in [None]])
+    def test_list(self, an_instance):
+        assert isinstance(an_instance.list, pd.DataFrame)
+
+    @pytest.mark.parametrize("an_instance", [None, 35385, '10.13155/46202'], indirect=True, ids=["docid=%s" % t for t in [None, 35385, '10.13155/46202']])
+    def test_init(self, an_instance):
+        assert isinstance(an_instance, ArgoDocs)
+        assert isinstance(an_instance.__repr__(), str)
+
+    @pytest.mark.parametrize("docid", [12, 'dummy'], indirect=False, ids=["docid=%s" % t for t in [12, 'dummy']])
+    def test_init_with_error(self, docid):
+        with pytest.raises(ValueError):
+            ArgoDocs(docid)
+
+    @pytest.mark.parametrize("where", ['title', 'abstract'], indirect=False, ids=["where=%s" % t for t in ['title', 'abstract']])
+    @pytest.mark.parametrize("an_instance", [None], indirect=True, ids=["docid=%s" % t for t in [None]])
+    def test_search(self, where, an_instance):
+        txt = "CDOM"
+        results = an_instance.search(txt, where=where)
+        assert isinstance(results, list)
+
+    @pytest.mark.parametrize("an_instance", [None, 35385], indirect=True, ids=["docid=%s" % t for t in [None, 35385]])
+    def test_js(self, an_instance):
+        if an_instance.docid is not None:
+            assert isinstance(an_instance.js, dict)
+        else:
+            with pytest.raises(ValueError):
+                an_instance.js
+
+    @pytest.mark.parametrize("an_instance", [None, 35385], indirect=True, ids=["docid=%s" % t for t in [None, 35385]])
+    def test_properties(self, an_instance):
+        if an_instance.docid is not None:
+            ris = an_instance.ris  # Fetch RIS metadata for this document
+            abstract = an_instance.abstract
+            assert isinstance(ris, dict)
+            assert 'AB' in ris  # must have an abstract
+            assert 'UR' in ris  # must have an url
+            assert isinstance(abstract, str)
+        else:
+            with pytest.raises(ValueError):
+                an_instance.ris
+            with pytest.raises(ValueError):
+                an_instance.abstract
+
+    @pytest.mark.parametrize("an_instance", [None, 35385], indirect=True, ids=["docid=%s" % t for t in [None, 35385]])
+    def test_show(self, an_instance):
+        if an_instance.docid is not None:
+            assert isinstance(an_instance.show(), IPython.core.display.HTML)
+            assert isinstance(an_instance.show(height=120), IPython.core.display.HTML)
+        else:
+            with pytest.raises(ValueError):
+                an_instance.show()
+
+    @pytest.mark.parametrize("page", [None, 12], indirect=False, ids=["page=%s" % t for t in [None, 12]])
+    @pytest.mark.parametrize("an_instance", [None, 35385], indirect=True, ids=["docid=%s" % t for t in [None, 35385]])
+    def test_open_pdf(self, page, an_instance):
+        if an_instance.docid is not None:
+            assert isinstance(an_instance.open_pdf(url_only=True, page=page), str)
+        else:
+            with pytest.raises(ValueError):
+                an_instance.show()
