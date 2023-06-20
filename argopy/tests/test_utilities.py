@@ -87,10 +87,14 @@ def test_check_gdac_path():
         assert check_gdac_path("dummy_path", errors='warn') is False
 
 
-def test_show_versions():
+@pytest.mark.parametrize("conda", [False, True],
+                         indirect=False,
+                         ids=["conda=%s" % str(p) for p in [False, True]])
+def test_show_versions(conda):
     f = io.StringIO()
-    argopy.show_versions(file=f)
-    assert "INSTALLED VERSIONS" in f.getvalue()
+    r = argopy.show_versions(file=f, conda=conda)
+    log.debug(r)
+    assert "SYSTEM" in f.getvalue()
 
 
 def test_isconnected(mocked_httpserver):
