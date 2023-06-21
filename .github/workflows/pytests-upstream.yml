@@ -94,6 +94,10 @@ jobs:
           create-args:: |
             python=${{matrix.python-version}}
 
+      - name: Install argopy
+        run: |
+          python -m pip install --no-deps -e .
+
       - name: Version info
         run: |
           micromamba info
@@ -171,6 +175,10 @@ jobs:
           create-args:: |
             python=${{matrix.python-version}}
             pytest-reportlog
+
+      - name: Install argopy
+        run: |
+          python -m pip install --no-deps -e .
 
       - name: Version info
         run: |
