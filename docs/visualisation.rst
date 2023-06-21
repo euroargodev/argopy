@@ -155,7 +155,7 @@ Let's import the usual suspects and some data to work with.
     from argopy import OceanOPSDeployments
 
     ArgoSet = ArgoDataFetcher(mode='expert').float([6902771, 4903348]).load()
-    ds = ArgoSet.data.argo.point2profiles()
+    ds = ArgoSet.data.argo.point2profile()
     df = ArgoSet.index
 
     df_deployment = OceanOPSDeployments([-90, 0, 0, 90]).to_dataframe()
