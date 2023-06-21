@@ -1,0 +1,31 @@
+FN Archimer Export Format
+PT Rapport
+TI Processing BGC-Argo chlorophyll-A concentration at the DAC level
+BT 
+AF Schmechtig, Catherine
+   Poteau, Antoine
+   Claustre, Hervé
+   D'Ortenzio, Fabrizio
+   Boss, Emmanuel
+AS 1:1,2;2:1,2;3:1,2;4:3;5:4;
+FF 1:;2:;3:;4:;5:;
+C1 Sorbonne Universités, UPMC Université Paris 06, UMR 7093, LOV, Observatoire océanologique, Villefranche-sur-Mer, France
+   CNRS, UMR 7093, LOV, Observatoire océanologique, Villefranche-sur-Mer, France
+   Plymouth Marine Laboratory, UK
+   University of Maine, , USA
+C2 UNIV PARIS 06, FRANCE
+   CNRS, FRANCE
+   PML, UK
+   UNIV MAINE US, USA
+UR https://archimer.ifremer.fr/doc/00283/39468/37945.pdf
+LA English
+DT Report
+AB Ce document ne traite pas le contrôle qualité de la chlorophylle-a (en temps réel ou différé). Il est une étape préliminaire à cet objectif; il est destiné aux équipes qui déploient des flotteurs bio-Argo équipés de capteurs de chlorophylle-a pour qu’elles documentent leurs données et métadonnées correctement. Nous avons produit ce document en réponse à l'action 9 de la première réunion Bio-Argo gestion de données d'Hyderabad (12-13 novembre 2012). Si les recommandations de ce document sont adoptées, la communauté bio-Argo pourra produire un jeu de données de chlorophylle-a de particules homogène, qui permettra l'analyse des données des différentes équipes, dans l'esprit de partage de données Argo. 
+AB This document does NOT address the issue of chlorophyll-a quality control (either real-time or delayed mode). As a preliminary step towards that goal, this document seeks to ensure that all countries deploying floats equipped with chlorophyll-a sensors document the data and metadata related to these floats properly. We produced this document in response to action item 3 from the first Bio-Argo Data Management meeting in Hyderabad (November 12-13, 2012). If the recommendations contained herein are followed, we will end up with a more uniform set of chlorophyll-a data within the Bio-Argo data system, allowing users to begin analyzing not only their own chlorophyll-a data, but also those of others, in the true spirit of Argo data sharing. 
+PY 2015
+PD SEP
+DI 10.13155/39468
+ID 39468
+ER
+
+EF

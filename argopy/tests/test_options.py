@@ -55,6 +55,15 @@ def test_opt_cachedir():
         assert OPTIONS["cachedir"]
 
 
+def test_opt_cache_expiration():
+    with pytest.raises(OptionValueError):
+        argopy.set_options(cache_expiration="dummy")
+    with pytest.raises(OptionValueError):
+        argopy.set_options(cache_expiration=-3600)
+    with argopy.set_options(cache_expiration=60):
+        assert OPTIONS["cache_expiration"]
+
+
 def test_opt_mode():
     with pytest.raises(OptionValueError):
         argopy.set_options(mode="invalid_mode")

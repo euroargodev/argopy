@@ -1,0 +1,36 @@
+FN Archimer Export Format
+PT Rapport
+TI Processing Argo oxygen data at the DAC level
+BT 
+AF THIERRY, Virginie
+   Bittig, Henry
+   GILBERT, Denis
+   KOBAYASHI, Taiyo
+   KANAKO, Sato
+   SCHMID, Claudia
+AS 1:1;2:2;3:3;4:4;5:4;6:5;
+FF 1:PDG-ODE-LOPS-OH;2:;3:;4:;5:;6:;
+C1 Ifremer, LPO, France
+   LOV, France
+   Fisheries and Oceans, Canada
+   Jamstec, Japan
+   AOML, USA
+C2 IFREMER, FRANCE
+   LOV, France
+   FISHERIES & OCEANS, CANADA
+   JAMSTEC, JAPAN
+   AOML, USA
+SI BREST
+SE PDG-ODE-LOPS-OH
+UR https://archimer.ifremer.fr/doc/00287/39795/94062.pdf
+LA English
+DT Report
+DE ;argo;bio-argo;oxygen
+AB This document does NOT address the issue of oxygen data quality control (either real-time or delayed mode). As a preliminary step towards that goal, this document seeks to ensure that all countries deploying floats equipped with oxygen sensors document the data and metadata related to these floats properly. We produced this document in response to action item 14 from the AST-10 meeting in Hangzhou (March 22-23, 2009). Action item 14: Denis Gilbert to work with Taiyo Kobayashi and Virginie Thierry to ensure DACs are processing oxygen data according to recommendations. If the recommendations contained herein are followed, we will end up with a more uniform set of oxygen data within the Argo data system, allowing users to begin analysing not only their own oxygen data, but also those of others, in the true spirit of Argo data sharing. Indications provided in this document are valid as of the date of writing this document. It is very likely that changes in sensors, calibrations and conversions equations will occur in the future. Please contact V. Thierry (vthierry@ifremer.fr) for any inconsistencies or missing information. A dedicated webpage on the Argo Data Management website (www) contains all information regarding Argo oxygen data management : current and previous version of this cookbook, oxygen sensor manuals, calibration sheet examples, examples of matlab code to process oxygen data, test data, etc.. 
+PY 2022
+PD APR
+DI 10.13155/39795
+ID 39795
+ER
+
+EF

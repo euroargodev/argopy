@@ -5,12 +5,12 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-with open('requirements.txt') as f:
+with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
 setuptools.setup(
-    name='argopy',
-    version='0.1.14rc1',
+    name="argopy",
+    version="0.1.14rc1",
     author="argopy Developers",
     author_email="gmaze@ifremer.fr",
     description="A python library for Argo data beginners and experts",
@@ -18,8 +18,8 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/euroargodev/argopy",
     packages=setuptools.find_packages(),
-    package_dir={'argopy': 'argopy'},
-    package_data={'argopy': ['assets/*.pickle']},
+    package_dir={"argopy": "argopy"},
+    package_data={"argopy": ["assets/*.pickle"]},
     install_requires=requirements,
     classifiers=[
         "Programming Language :: Python :: 3.8",
@@ -30,9 +30,9 @@ setuptools.setup(
         "Operating System :: POSIX",
         "Operating System :: MacOS",
         "Operating System :: Microsoft :: Windows",
-        "Development Status :: 3 - Alpha"
+        "Development Status :: 3 - Alpha",
     ],
-    entry_points = {
-                       "xarray.backends": ["argo=argopy.xarray:ArgoEngine"],
-                   },
+    entry_points={
+        "xarray.backends": ["argo=argopy.xarray:ArgoEngine"],
+    },
 )
