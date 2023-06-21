@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8">
+	<meta name="citation_title" content="Processing Bio-Argo particle backscattering at the DAC level" />
+<meta name="citation_author" content="Schmechtig, Catherine" />
+<meta name="citation_author" content="Poteau, Antoine" />
+<meta name="citation_author" content="Claustre, Hervé" />
+<meta name="citation_author" content="D'Ortenzio, Fabrizio" />
+<meta name="citation_author" content="Dall'Olmo, Giorgio" />
+<meta name="citation_author" content="Boss, Emmanuel" />
+<meta name="citation_publication_date" content="2018/03/07" /><!--yyyy/mm/dd-->
+<meta name="citation_year" content="2018" />
+<meta name="citation_language" content="en" />
+<meta name="citation_abstract_html_url" content="https://archimer.ifremer.fr/doc/00283/39459/" />
+<meta name="citation_pdf_url" content="https://archimer.ifremer.fr/doc/00283/39459/56146.pdf" />
+<meta name="citation_abstract" content="This document does NOT address the issue of particle backscattering quality control (either real-time or delayed mode). As a preliminary step towards that goal, this document seeks to ensure that all countries deploying floats equipped with backscattering sensors document the data and metadata related to these floats properly. We produced this document in response to action item 9 from the first Bio-Argo Data Management meeting in Hyderabad (November 12-13, 2012). If the recommendations contained herein are followed, we will end up with a more uniform set of particle backscattering data within the Bio-Argo data system, allowing users to begin analyzing not only their own particle backscattering data, but also those of others, in the true spirit of Argo data sharing." />
+
+	<title>Processing Bio&#045;Argo particle backscattering at the DAC level</title>
+	<link rel="canonical" href="https://archimer.ifremer.fr/doc/00283/39459/" />
+	<meta name="description" content="This document does NOT address the issue of particle backscattering quality control &#040;either real&#045;time or delayed mode&#041;&#046; As a preliminary step towards that goal&#044; this document seeks to ensure that all&#046;&#046;&#046;" />
+	<meta name="robots" content="index,follow" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="../../../html/medias-resources/css/datatables.min.css" />
+	<link rel="stylesheet" type="text/css" href="../../../html/medias-resources/css/styles.css" />
+	<link rel="stylesheet" type="text/css" href="../../../html/medias-resources/css/theme.css" />
+	<link rel="stylesheet" type="text/css" href="../../../html/medias-resources/css-portal/portal.css" />
+	<link rel="stylesheet" type="text/css" href="../../../html/medias-resources/css/archimer.css">
+	<link rel="stylesheet" type="text/css" href="../../../html/medias-resources/css/archimer.css" />
+</head>
+<body>
+	<div class="container-fluid">
+		<div id="page-wrap">
+			<header class="navbar navbar-static-top">
+				<div class="container container-inside">
+					<div class="navbar-header">
+						<button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse"><span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<h1 class="navbar-brand">
+							<a href="http://www.argodatamgt.org" title="">Argo</a>
+							<span class="hidden-sm">part of the integrated global observation strategy</span>
+						</h1>
+					</div>
+					<div class="container right" style="">
+					<div class="right hidden-xs hidden-sm">
+						<a href="http://www.argodatamgt.org" target="blanck"><img src="https://archimer.ifremer.fr/html/medias-resources/images/argo.gif" alt="Argo"/></a>
+					</div>
+				</div>
+
+				</div>
+			</header>
+			<div class="container dist-table">
+				<section id="landing-page" class="full white bloc-center">
+					<div class="container" style="margin-top: 0px; margin-left: 40px; margin-right: 40px;">
+						<ol class="breadcrumb" style="margin: 10px 0;">
+							<li class="segment"><a id="backtolist" href="http://www.argodatamgt.org"><span class="glyphicon glyphicon-home"></span></a></li>
+							<li id="record-id" class="active">Document n°39459</li>
+						</ol>
+					</div>
+					<section id="main-bloc" class="col-md-9 cell" role="main">
+						<article class="mod-article" style="padding-top: 0px; margin-top: 10px;">
+							<a id="content-top"></a>
+							<h1 id="document-title"><a href="https&#058;&#047;&#047;archimer&#046;ifremer&#046;fr&#047;doc&#047;00283&#047;39459&#047;56146&#046;pdf">Processing Bio&#045;Argo particle backscattering at the DAC level</a></h1>
+					<table class="tab-article table-condensed text-justify">
+						<tbody>
+							<tr>
+								<th>Type</th>
+								<td>Normative document &#040;norm&#044; referencial&#044; protocol&#041;</td>
+							</tr>
+							<tr>
+								<th>Date							</th>
+								<td id="document-date">2018&#045;03&#045;07</td>
+							</tr>
+							<tr>
+								<th>Language</th>
+								<td>English							</td>
+							</tr>
+							<tr>
+								<th>Ref.</th>
+								<td>Argo data management</td>
+							</tr>
+							<tr>
+								<th>Author(s)</th>
+								<td><a target="_blank" href="https://orcid.org/0000-0002-1230-164X">Schmechtig Catherine</a><a target="_blank" href="https://orcid.org/0000-0002-1230-164X"><sup><img alt="ORCID" src="https://archimer.ifremer.fr/html/medias-resources/images/orcid.png"></sup></a><sup>2, 5</sup>, <a target="_blank" href="https://orcid.org/0000-0002-0519-5180">Poteau Antoine</a><a target="_blank" href="https://orcid.org/0000-0002-0519-5180"><sup><img alt="ORCID" src="https://archimer.ifremer.fr/html/medias-resources/images/orcid.png"></sup></a><sup>1, 2</sup>, <a target="_blank" href="https://orcid.org/0000-0001-6243-0258">Claustre Hervé</a><a target="_blank" href="https://orcid.org/0000-0001-6243-0258"><sup><img alt="ORCID" src="https://archimer.ifremer.fr/html/medias-resources/images/orcid.png"></sup></a><sup>1, 2</sup>, <a target="_blank" href="https://orcid.org/0000-0003-0617-7336">D&#039;Ortenzio Fabrizio</a><a target="_blank" href="https://orcid.org/0000-0003-0617-7336"><sup><img alt="ORCID" src="https://archimer.ifremer.fr/html/medias-resources/images/orcid.png"></sup></a><sup>1, 2</sup>, <a target="_blank" href="https://orcid.org/0000-0003-3931-4675">Dall&#039;Olmo Giorgio</a><a target="_blank" href="https://orcid.org/0000-0003-3931-4675"><sup><img alt="ORCID" src="https://archimer.ifremer.fr/html/medias-resources/images/orcid.png"></sup></a><sup>1, 3</sup>, <a target="_blank" href="https://orcid.org/0000-0002-8334-9595">Boss Emmanuel</a><a target="_blank" href="https://orcid.org/0000-0002-8334-9595"><sup><img alt="ORCID" src="https://archimer.ifremer.fr/html/medias-resources/images/orcid.png"></sup></a><sup>1, 4</sup></td>
+							</tr>
+							<tr>
+								<th>Affiliation(s)</th>
+								<td>1 : UPMC Université Paris 06, UMR 7093, LOV, Observatoire océanologique, Villefranche-sur-Mer, France<br />2 : CNRS, UMR 7093, LOV, Observatoire océanologique, Villefranche-sur-Mer, France<br />3 : Plymouth Marine Laboratory, United Kingdom<br />4 : The University of Maine, USA<br />5 : OSU Ecce Terra, Unité Mixte de Services 3455, CNRS/UPMC, France</td>
+							</tr>
+							<tr>
+								<th>DOI</th>
+								<td><a href="https://doi.org/10&#046;13155&#047;39459">10&#046;13155&#047;39459</a></td>
+							</tr>
+							<tr>
+								<th>Publisher</th>
+								<td>Ifremer</td>
+							</tr>
+							<tr>
+								<th>Version</th>
+								<td>1&#046;4</td>
+							</tr>
+							<tr>
+								<th>Abstract</th>
+								<td>This document does NOT address the issue of particle backscattering quality control (either real-time or delayed mode). As a preliminary step towards that goal, this document seeks to ensure that all countries deploying floats equipped with backscattering sensors document the data and metadata related to these floats properly. We produced this document in response to action item 9 from the first Bio-Argo Data Management meeting in Hyderabad (November 12-13, 2012).<br />If the recommendations contained herein are followed, we will end up with a more uniform set of particle backscattering data within the Bio-Argo data system, allowing users to begin analyzing not only their own particle backscattering data, but also those of others, in the true spirit of Argo data sharing.</td>
+							</tr>
+							<tr>
+								<th>Full Text</th>
+								<td>
+									<table class="table text-left">
+										<thead>
+											<tr>
+												<th>File</th>
+												<th>Pages</th>
+												<th>Size</th>
+												<th>Access</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="col-md-6"><form action="../../../content" method="post"><input name="page" value="requestrecord" type="hidden"><input name="parameters" value="{'docid':'39459','fileid':'38082' ,'filename':'OBSOLETE version 1.1'}" type="hidden"> <button rel="nofollow" class="request-restricted-file-link">OBSOLETE version 1.1</button></form></td>
+												<td class="col-md-1">13 </td>
+												<td class="col-md-2">676 KB </td>
+												<td class="col-md-3"><span class="restricted-access pull-left">Access on demand</span></td>
+											</tr>
+											<tr>
+												<td class="col-md-6"><form action="../../../content" method="post"><input name="page" value="requestrecord" type="hidden"><input name="parameters" value="{'docid':'39459','fileid':'43340' ,'filename':'OBSOLETE version 1.0'}" type="hidden"> <button rel="nofollow" class="request-restricted-file-link">OBSOLETE version 1.0</button></form></td>
+												<td class="col-md-1">13 </td>
+												<td class="col-md-2">678 KB </td>
+												<td class="col-md-3"><span class="restricted-access pull-left">Access on demand</span></td>
+											</tr>
+											<tr>
+												<td class="col-md-6"><form action="../../../content" method="post"><input name="page" value="requestrecord" type="hidden"><input name="parameters" value="{'docid':'39459','fileid':'45824' ,'filename':'Obsolete version 1.2'}" type="hidden"> <button rel="nofollow" class="request-restricted-file-link">Obsolete version 1.2</button></form></td>
+												<td class="col-md-1">16 </td>
+												<td class="col-md-2">747 KB </td>
+												<td class="col-md-3"><span class="restricted-access pull-left">Access on demand</span></td>
+											</tr>
+											<tr>
+												<td class="col-md-6"><a target="_blank" rel="nofollow" href="https://archimer.ifremer.fr/doc/00283/39459/56146.pdf">Publisher's official version</a></td>
+												<td class="col-md-1">15 </td>
+												<td class="col-md-2">391 KB </td>
+												<td class="col-md-3"><span class="access pull-left">Open access</span></td>
+											</tr>
+										<tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+							<a href="#content-top" title="Top of the page" class="top right rwd-out" accesskey="s">Top of the page</a>
+						</article>
+						<article class="mod-highlight" style="margin: 20px 40px;">
+							<div class="dist-table">
+								<div class="deco-highlight cell"> </div>
+								<article class="cell">
+									<h2>How to cite&nbsp;<a class="main_link" data-original-title="Warning" href="#"  data-toggle="popover" data-placement="right" data-trigger="hover" data-content="This citation has been built automatically according to the APA format. Please check if authors ask for a specific citation."><span class="glyphicon glyphicon-info-sign"></span></a></h2>
+									<p id="document-citation">Schmechtig Catherine, Poteau Antoine, Claustre Hervé, D'Ortenzio Fabrizio, Dall'Olmo Giorgio, Boss Emmanuel (2018).  <b>Processing Bio-Argo particle backscattering at the DAC level</b>. Argo data management. <a href="https://doi.org/10.13155/39459">https://doi.org/10.13155/39459</a></p>
+								</article>
+							</div>
+						</article>
+
+					</section>
+					<aside class="col-md-3 blue cell">
+										<div class="mod-metadata container">
+					<a id="access-data" href="#" class="accessdata col-xs-6 btn btn-grey btn-default vcenter pull-right" data-toggle="modal" data-target="#datamodal" style="font-size:16px;margin-left:5px">					<span aria-hidden="true" class="glyphicon glyphicon-download"></span>&nbsp;PDF
+				</a>
+					Click<br>to download<br>the PDF
+				</div>
+
+						
+						
+						<div class="mod-relativepages">
+							<h2 class="h2">Download metadata</h2>
+							<div class="mod-content">
+								<a target="_blank" href="https://archimer.ifremer.fr/doc/00283/39459/export.txt" rel="nofollow">TXT</a>, <a target="_blank" href="https://archimer.ifremer.fr/doc/00283/39459/export.ris" rel="nofollow">RIS</a>, <a target="_blank" href="https://archimer.ifremer.fr/doc/00283/39459/export.xls" rel="nofollow">XLS</a>, <a target="_blank" href="https://archimer.ifremer.fr/doc/00283/39459/export.rtf" rel="nofollow">RTF</a>, <a target="_blank" href="https://archimer.ifremer.fr/doc/00283/39459/export.bib" rel="nofollow">BIBTEX</a>
+							</div>
+						</div>
+
+						
+						
+						
+						<div class="mod-relativepages">
+							<h2 class="h2">Equipments</h2>
+							<div class="mod-content">
+								<a href="http://www.coriolis.eu.org/Observing-the-Ocean/ARGO">TGIR Euro-Argo (Argo-France)</a>
+							</div>
+						</div>
+
+						<div class="mod-relativepages">
+							<h2 class="h2">References</h2>
+							<a href="https://archimer.ifremer.fr/doc/00499/61055/" target="_blank" class="thumbnail">Kolodziejczyk Nicolas, Cabanes Cecile, D'Ortenzio Fabrizio, Maze Guillaume, Pouliquen Sylvie, Poteau Antoine, Schmechtig Catherine, Thierry Virginie (2019).  Application file for renewal of the 'National Observation Service' label (INSU/CNRS) 2020-2024: SNO Argo-France. AF-2019-LABEL-SNO2019. </a>
+						</div>
+
+												<div class="mod-relativepages">
+							<h2 class="h2">Related datasets</h2>
+							<a href="https://doi.org/10.17882/42182" target="_blank" class="thumbnail">Argo (2023). Argo float data and metadata from Global Data Assembly Centre (Argo GDAC). SEANOE. </a>
+							<a href="https://doi.org/10.17882/54520" target="_blank" class="thumbnail">Barnard Andrew (2021). Correction of scale factors for backscattering channel on ECO sensors mounted on BGC-Argo floats. SEANOE. </a>
+						</div>
+
+						
+					</aside>
+				</section>
+			</div>
+		</div>
+		<footer id="footer" class="container footer">
+			<div class="container container-inside">
+				<div class="col-md-9 col-xs-6">
+					<ul>
+						<li style="color:white">
+							<a href="../../../content?page=contact">CONTACT</a>
+						</li>
+					</ul>
+				</div>
+				<div class="col-md-3 col-xs-6" style="text-align: right">
+					<ul>
+						<li>
+							<a href="https://archimer.ifremer.fr/html/policies.htm">LEGAL NOTICE</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</footer>
+		<!-- Modal HTML (popup) -->
+		<div class="modal fade" id="popupData" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+			<div class="vertical-alignment-helper">
+		        <div class="modal-dialog vertical-align-center">
+		            <div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							<h4 id="modal-label" class="modal-title">Files</h4>
+						</div>
+						<div class="modal-body" style="padding: 20px">
+														
+									<table class="table text-left">
+										<thead>
+											<tr>
+												<th>File</th>
+												<th>Pages</th>
+												<th>Size</th>
+												<th>Access</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="col-md-6"><form action="../../../content" method="post"><input name="page" value="requestrecord" type="hidden"><input name="parameters" value="{'docid':'39459','fileid':'38082' ,'filename':'OBSOLETE version 1.1'}" type="hidden"> <button rel="nofollow" class="request-restricted-file-link">OBSOLETE version 1.1</button></form></td>
+												<td class="col-md-1">13 </td>
+												<td class="col-md-2">676 KB </td>
+												<td class="col-md-3"><span class="restricted-access pull-left">Access on demand</span></td>
+											</tr>
+											<tr>
+												<td class="col-md-6"><form action="../../../content" method="post"><input name="page" value="requestrecord" type="hidden"><input name="parameters" value="{'docid':'39459','fileid':'43340' ,'filename':'OBSOLETE version 1.0'}" type="hidden"> <button rel="nofollow" class="request-restricted-file-link">OBSOLETE version 1.0</button></form></td>
+												<td class="col-md-1">13 </td>
+												<td class="col-md-2">678 KB </td>
+												<td class="col-md-3"><span class="restricted-access pull-left">Access on demand</span></td>
+											</tr>
+											<tr>
+												<td class="col-md-6"><form action="../../../content" method="post"><input name="page" value="requestrecord" type="hidden"><input name="parameters" value="{'docid':'39459','fileid':'45824' ,'filename':'Obsolete version 1.2'}" type="hidden"> <button rel="nofollow" class="request-restricted-file-link">Obsolete version 1.2</button></form></td>
+												<td class="col-md-1">16 </td>
+												<td class="col-md-2">747 KB </td>
+												<td class="col-md-3"><span class="restricted-access pull-left">Access on demand</span></td>
+											</tr>
+											<tr>
+												<td class="col-md-6"><a target="_blank" rel="nofollow" href="https://archimer.ifremer.fr/doc/00283/39459/56146.pdf">Publisher's official version</a></td>
+												<td class="col-md-1">15 </td>
+												<td class="col-md-2">391 KB </td>
+												<td class="col-md-3"><span class="access pull-left">Open access</span></td>
+											</tr>
+										<tbody>
+									</table>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	<script src="../../../html/medias-resources/js/jquery-2.2.4.min.js"></script>
+	<script src="../../../html/medias-resources/js/bootstrap.min.js"></script>
+	<script src="../../../html/medias-resources/js/jquery.dataTables.min.js" type="text/javascript"></script>
+	<script src="../../../html/medias-resources/js/scripts.js" type="text/javascript"></script>
+	<script src="../../../html/medias-resources/js/ol-4.3.3.js" type="text/javascript"></script>
+	<script src="../../../html/medias-resources/js/mapObject.js" type="text/javascript"></script>
+	<script src="../../../html/medias-resources/js/snapshot.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			//définition de la marge pour eviter que le footer empiète sur le bas de la page
+	    	var height = $('footer').outerHeight();
+	    	$('#page-wrap').css('margin-bottom', height + 'px');
+
+
+			$("#htc").popover();
+			
+
+			$('#access-data').on( "click", function() {
+				$("#popupData").modal('show');
+			});
+
+			$(".ckeditor_html table").addClass("table" );
+		});
+	</script>
+</body>
+</html>

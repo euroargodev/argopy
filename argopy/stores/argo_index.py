@@ -11,6 +11,8 @@ class ArgoIndex(indexstore):
     If Pyarrow is available, this class will use :class:`pyarrow.Table` as internal storage format; otherwise, a
     :class:`pandas.DataFrame` will be used.
 
+    convention_supported = ["ar_index_global_prof", "argo_bio-profile_index", "argo_synthetic-profile_index"]
+
     Examples
     --------
 

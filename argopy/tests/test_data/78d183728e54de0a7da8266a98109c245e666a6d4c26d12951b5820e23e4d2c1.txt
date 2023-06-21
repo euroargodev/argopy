@@ -1,0 +1,23 @@
+FN Archimer Export Format
+PT Rapport
+TI BGC-Argo synthetic profile file processing and format on Coriolis GDAC
+BT 
+AF BITTIG, Henry
+   WONG, Annie
+   PLANT, Josh
+AS 1:;2:;3:;
+FF 1:;2:;3:;
+SI BREST
+SE PDG-IMN-IDM-ISI
+   PDG-IRSI-ISI
+UR https://archimer.ifremer.fr/doc/00445/55637/94041.pdf
+LA English
+DT Report
+AB The current V3.1 Argo netCDF format that produces a pair of core- and b- profile files per cycle, with N_PROF > 1, allows storage of all profile information returned from BGC floats, in a manner that is as close to float output as possible. These can include multiple full-depth profiles with different pressure levels, multiple shallow profiles with different pressure levels, and recording of spatial and/or temporal delays between the CTD and various BGC sensor outputs. The advantage of this data management approach is that float outputs are faithfully recorded, so that any reprocessing demands that require access to the raw data can be met with ease. However, when measurements from multiple sensors are not aligned during onboard processing by the floats, they are recorded in their raw pressure locations. This makes it difficult to study these BGC parameters as co-located measurements, since some data manipulation to align them needs to be done before scientific studies can be carried out. Moreover, because the V3.1 format requires that all parameters have dimensions (N_PROF, N_LEVELS), where N_LEVELS = maximum number of vertical levels, the files are large in file size and are mostly filled with white space. The goal of a simplified synthetic profile is to co-locate as many BGC observations as possible while preserving the character of the sampling pattern, i.e., sample interval, number of samples, and approximate pressure locations. Data come from the single-cycle c- and b-files. Only c- and b- parameters are included (with all subfields), which means no intermediate BGC parameters (i-argo params) are included. The synthetic pressure axis is constructed from the BGC sampling levels from each cycle. This means that there is no fixed vertical grid for all floats and all cycles. At the end, each single-cycle synthetic profile will have dimension N_PROF = 1. The co-location takes different vertical attachments of BGC sensors into account by displacing the pressure location (based on the config parameter vertical_pressure_offset), which is not the case in core- or b- profile files. This document details the processing steps used to generate synthetic profile data from Argo profile data. It also describes the format of the NetCDF files produced by the Coriolis GDAC to store the synthetic profile data. 
+PY 2022
+PD MAY
+DI 10.13155/55637
+ID 55637
+ER
+
+EF

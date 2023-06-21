@@ -32,12 +32,14 @@ from argopy.utilities import (
     wrap_longitude,
     toYearFraction, YearFraction_to_datetime,
     TopoFetcher,
+    argo_split_path,
     Registry,
     float_wmo,
     get_coriolis_profile_id,
     get_ea_profile_page,
     ArgoNVSReferenceTables,
     OceanOPSDeployments,
+    ArgoDocs,
 )
 from argopy.errors import InvalidFetcherAccessPoint, FtpPathError
 from argopy import DataFetcher as ArgoDataFetcher
@@ -50,6 +52,7 @@ from utils import (
     requires_oops,
     has_matplotlib,
     has_cartopy,
+    has_ipython,
 )
 from mocked_http import mocked_httpserver, mocked_server_address
 
@@ -59,6 +62,8 @@ if has_matplotlib:
 if has_cartopy:
     import cartopy
 
+if has_ipython:
+    import IPython
 
 def test_invalid_dictionnary():
     with pytest.raises(ValueError):
@@ -82,10 +87,13 @@ def test_check_gdac_path():
         assert check_gdac_path("dummy_path", errors='warn') is False
 
 
-def test_show_versions():
+@pytest.mark.parametrize("conda", [False, True],
+                         indirect=False,
+                         ids=["conda=%s" % str(p) for p in [False, True]])
+def test_show_versions(conda):
     f = io.StringIO()
-    argopy.show_versions(file=f)
-    assert "INSTALLED VERSIONS" in f.getvalue()
+    argopy.show_versions(file=f, conda=conda)
+    assert "SYSTEM" in f.getvalue()
 
 
 def test_isconnected(mocked_httpserver):
@@ -124,7 +132,6 @@ def test_erddap_ds_exists(mocked_httpserver):
 
 
 @requires_gdac
-@pytest.mark.skipif(not isconnected(), reason="Requires a connection to load tutorial data")
 def test_clear_cache():
     ftproot, flist = argopy.tutorial.open_dataset("gdac")
     with tempfile.TemporaryDirectory() as cachedir:
@@ -134,6 +141,21 @@ def test_clear_cache():
             argopy.clear_cache()
             assert os.path.exists(cachedir) is True
             assert len(os.listdir(cachedir)) == 0
+
+
+@requires_gdac
+def test_lscache():
+    ftproot, flist = argopy.tutorial.open_dataset("gdac")
+    with tempfile.TemporaryDirectory() as cachedir:
+        with argopy.set_options(cachedir=cachedir):
+            loader = ArgoDataFetcher(src="gdac", ftp=ftproot, cache=True).profile(2902696, 12)
+            loader.to_xarray()
+            result = argopy.utilities.lscache(cache_path=cachedir, prt=True)
+            assert isinstance(result, str)
+
+            result = argopy.utilities.lscache(cache_path=cachedir, prt=False)
+            assert isinstance(result, pd.DataFrame)
+
 
 
 class Test_linear_interpolation_remap:
@@ -652,6 +674,54 @@ class Test_TopoFetcher():
         self.assert_fetcher(fetcher)
 
 
+class Test_argo_split_path:
+    #############
+    # UTILITIES #
+    #############
+    # src = "https://data-argo.ifremer.fr/dac"
+    src = argopy.tutorial.open_dataset("gdac")[0] + "/dac"
+    list_of_files = [
+        src + "/bodc/6901929/6901929_prof.nc",  # core / multi-profile
+        src + "/coriolis/3902131/3902131_Sprof.nc",  # bgc / synthetic multi-profile
+
+        src + "/meds/4901079/profiles/D4901079_110.nc",  # core / mono-profile / Delayed
+        src + "/aoml/13857/profiles/R13857_001.nc",  # core / mono-profile / Real
+
+        src + "/coriolis/3902131/profiles/SD3902131_001.nc",  # bgc / synthetic mono-profile / Delayed
+        src + "/coriolis/3902131/profiles/SD3902131_001D.nc",  # bgc / synthetic mono-profile / Delayed / Descent
+        src + "/coriolis/6903247/profiles/SR6903247_134.nc",  # bgc / synthetic mono-profile / Real
+        src + "/coriolis/6903247/profiles/SR6903247_134D.nc",  # bgc / synthetic mono-profile / Real / Descent
+
+        src + "/coriolis/3902131/profiles/BR3902131_001.nc",  # bgc / mono-profile / Real
+        src + "/coriolis/3902131/profiles/BR3902131_001D.nc",  # bgc / mono-profile / Real / Descent
+
+        src + "/aoml/5900446/5900446_Dtraj.nc",  # traj / Delayed
+        src + "/csio/2902696/2902696_Rtraj.nc",  # traj / Real
+
+        src + "/coriolis/3902131/3902131_BRtraj.nc",  # bgc / traj / Real
+        # src + "/coriolis/6903247/6903247_BRtraj.nc",  # bgc / traj / Real
+
+        src + "/incois/2902269/2902269_tech.nc",  # technical
+        # src + "/nmdis/2901623/2901623_tech.nc",  # technical
+
+        src + "/jma/4902252/4902252_meta.nc",  # meta-data
+        # src + "/coriolis/1900857/1900857_meta.nc",  # meta-data
+    ]
+    list_of_files = [f.replace("/", os.path.sep) for f in list_of_files]
+
+    #########
+    # TESTS #
+    #########
+
+    @pytest.mark.parametrize("file", list_of_files,
+                             indirect=False)
+    def test_argo_split_path(self, file):
+        desc = argo_split_path(file)
+        assert isinstance(desc, dict)
+        for key in ['origin', 'path', 'name', 'type', 'extension', 'wmo', 'dac']:
+            assert key in desc
+
+
 class Test_float_wmo():
 
     def test_init(self):
@@ -744,7 +814,6 @@ def test_get_coriolis_profile_id(params, mocked_httpserver):
 def test_get_ea_profile_page(params, mocked_httpserver):
     with argopy.set_options(cachedir=tempfile.mkdtemp()):
         assert is_list_of_strings(get_ea_profile_page(params[0], params[1], api_server=mocked_server_address))
-
 
 
 class Test_ArgoNVSReferenceTables:
@@ -890,3 +959,88 @@ class Test_OceanOPSDeployments:
         fig, ax = an_instance.plot_status()
         assert isinstance(fig, mpl.figure.Figure)
         assert isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot)
+
+
+class Test_ArgoDocs:
+
+    @pytest.fixture
+    def an_instance(self, request):
+        """ Fixture to create a ArgoDocs instance for a given set of arguments """
+        docid = request.param
+
+        Ad = ArgoDocs(docid=docid)
+
+        # Adjust server info to use the mocked HTTP server:
+        Ad._doiserver = mocked_server_address
+        Ad._archimer = mocked_server_address
+
+        return Ad
+
+    def test_load_mocked_server(self, mocked_httpserver):
+        """This will easily ensure that the module scope fixture is available to all methods !"""
+        assert True
+
+    @pytest.mark.parametrize("an_instance", [None], indirect=True, ids=["docid=%s" % t for t in [None]])
+    def test_list(self, an_instance):
+        assert isinstance(an_instance.list, pd.DataFrame)
+
+    @pytest.mark.parametrize("an_instance", [None, 35385, '10.13155/46202'], indirect=True, ids=["docid=%s" % t for t in [None, 35385, '10.13155/46202']])
+    def test_init(self, an_instance):
+        assert isinstance(an_instance, ArgoDocs)
+        assert isinstance(an_instance.__repr__(), str)
+
+    @pytest.mark.parametrize("docid", [12, 'dummy'], indirect=False, ids=["docid=%s" % t for t in [12, 'dummy']])
+    def test_init_with_error(self, docid):
+        with pytest.raises(ValueError):
+            ArgoDocs(docid)
+
+    @pytest.mark.parametrize("where", ['title', 'abstract'], indirect=False, ids=["where=%s" % t for t in ['title', 'abstract']])
+    @pytest.mark.parametrize("an_instance", [None], indirect=True, ids=["docid=%s" % t for t in [None]])
+    def test_search(self, where, an_instance):
+        txt = "CDOM"
+        results = an_instance.search(txt, where=where)
+        assert isinstance(results, list)
+
+    @pytest.mark.parametrize("an_instance", [None, 35385], indirect=True, ids=["docid=%s" % t for t in [None, 35385]])
+    def test_js(self, an_instance):
+        if an_instance.docid is not None:
+            assert isinstance(an_instance.js, dict)
+        else:
+            with pytest.raises(ValueError):
+                an_instance.js
+
+    @pytest.mark.parametrize("an_instance", [None, 35385], indirect=True, ids=["docid=%s" % t for t in [None, 35385]])
+    def test_properties(self, an_instance):
+        if an_instance.docid is not None:
+            ris = an_instance.ris  # Fetch RIS metadata for this document
+            abstract = an_instance.abstract
+            assert isinstance(ris, dict)
+            assert 'AB' in ris  # must have an abstract
+            assert 'UR' in ris  # must have an url
+            assert isinstance(abstract, str)
+        else:
+            with pytest.raises(ValueError):
+                an_instance.ris
+            with pytest.raises(ValueError):
+                an_instance.abstract
+
+    @pytest.mark.parametrize("an_instance", [None, 35385], indirect=True, ids=["docid=%s" % t for t in [None, 35385]])
+    def test_show(self, an_instance):
+        if an_instance.docid is not None:
+            if has_ipython:
+                assert isinstance(an_instance.show(), IPython.core.display.HTML)
+                assert isinstance(an_instance.show(height=120), IPython.core.display.HTML)
+            else:
+                pytest.skip("Requires IPython")
+        else:
+            with pytest.raises(ValueError):
+                an_instance.show()
+
+    @pytest.mark.parametrize("page", [None, 12], indirect=False, ids=["page=%s" % t for t in [None, 12]])
+    @pytest.mark.parametrize("an_instance", [None, 35385], indirect=True, ids=["docid=%s" % t for t in [None, 35385]])
+    def test_open_pdf(self, page, an_instance):
+        if an_instance.docid is not None:
+            assert isinstance(an_instance.open_pdf(url_only=True, page=page), str)
+        else:
+            with pytest.raises(ValueError):
+                an_instance.show()
