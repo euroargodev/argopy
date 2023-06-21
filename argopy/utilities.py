@@ -4260,20 +4260,25 @@ class ArgoDocs:
 class Assistant:
     """AI Argo/Python assistant based on OpenAI chat-GPT-v3.5
 
-    You must first sign-up to get an OpenAI API key at: https://platform.openai.com/signup?launch
+    Requirements:
+
+     - You must first sign-up to get an OpenAI API key at: https://platform.openai.com/signup?launch
+     - You must install the openai python package: ``pip install --upgrade openai``
 
     Examples
     --------
     import argopy
-    argopy.set_options(openai_api_key='*****')  # https://platform.openai.com/account/api-keys
+    argopy.set_options(openai_api_key='*****', user='Jane')  # https://platform.openai.com/account/api-keys
 
     AI = Assistant()
     AI.ask('how to load float 6903456 ?')
+    AI.ask('show me how to load the Argo profile index with argopy')
+
     AI.chat()
     AI.replay()
 
     """
-    name = "Medea"  # Jason's wife ! Another Argo/Jason mythology character: https://en.wikipedia.org/wiki/Medea
+    name = "🤖 Medea"  # Jason's wife ! Another Argo/Jason mythology character: https://en.wikipedia.org/wiki/Medea
     import openai
 
     @property
@@ -4281,6 +4286,19 @@ class Assistant:
         with open(os.path.join(path2pkl, "medea_def.pickle"), "rb") as f:
             p = pickle.load(f)
         return p.replace('NAME', self.name)
+
+    @property
+    def runner(self) -> str:
+        try:
+            shell = get_ipython().__class__.__name__
+            if shell == 'ZMQInteractiveShell':
+                return 'notebook'  # Jupyter notebook or qtconsole
+            elif shell == 'TerminalInteractiveShell':
+                return 'terminal'  # Terminal running IPython
+            else:
+                return False  # Other type (?)
+        except NameError:
+            return 'standard'  # Probably standard Python interpreter
 
     def __init__(self):
         self.messages = []
@@ -4325,12 +4343,38 @@ environment variable 'OPENAI_API_KEY'. If you don't have an API key, you may get
 
         return reply
 
+
     def print_line(self, role='', content=''):
-        display(Markdown("**%s**: %s" % (role, content)))
+        if self.runner == 'notebook':
+            display(Markdown("**%s**: %s" % (role, content)))
+        else:
+            PREF = "\033["
+            RESET = f"{PREF}0m"
+
+            class COLORS:
+                black = "30m"
+                red = "31m"
+                green = "32m"
+                yellow = "33m"
+                blue = "34m"
+                magenta = "35m"
+                cyan = "36m"
+                white = "37m"
+
+            txt = f'{PREF}{1};{COLORS.yellow}' + role + ": " + RESET + f'{PREF}{0};{COLORS.cyan}' + content + ":" + RESET
+            print(txt)
 
     def start(self, mute=False):
         if not self._started:
             self.username = OPTIONS['user'] if OPTIONS['user'] is not None else "You"
+            if OPTIONS['mode'] == 'standard':
+                user_icon = '🏊'
+            elif OPTIONS['mode'] == 'expert':
+                user_icon = '🏄'
+            elif OPTIONS['mode'] == 'research':
+                user_icon = '🚣'
+            self.username = "%s %s" % (user_icon, self.username)
+
             self.messages = [
                 {"role": "system",
                  "content": self._prompt},
@@ -4346,9 +4390,10 @@ environment variable 'OPENAI_API_KEY'. If you don't have an API key, you may get
 
     def chat(self):
         self.start()
-        self.print_line(self.name, "Just type in 'stop' or 'bye' to stop chatting with me")
+        self.print_line("ℹ", "*Just type in 'stop' or 'bye' to stop chatting with me*")
         while True:
-            prompt = input('%s: ' % self.username)
+            # prompt = input('%s: ' % self.username)
+            prompt = input(f'\033[1;33m' + self.username + ": " + f"\033[0m")
             if prompt.lower() not in ['stop', 'bye', 'bye-bye', 'ciao', 'quit']:
                 reply = self.tell(prompt)
                 self.print_line(self.name, reply)
@@ -4371,6 +4416,12 @@ environment variable 'OPENAI_API_KEY'. If you don't have an API key, you may get
         else:
             summary.append("You already talked to %s (%i messages)" % (self.name, len(self.messages)))
             summary.append("You consumed %i tokens" % self.total_tokens)
+        summary.append("Check out your API usage at: https://platform.openai.com/account/usage")
+        summary.append("")
+        summary.append("❗❗This is an highly experimental feature, mainly built just for fun ❗❗")
+        summary.append("Use at your own risk and be aware that chatGPT often tends to invent non-existing argopy methods")
+        summary.append("The argopy documentation is the most reliable source of information: https://argopy.readthedocs.io")
+        summary.append("")
         return "\n".join(summary)
 
     def replay(self):
