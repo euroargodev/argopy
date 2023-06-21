@@ -21,7 +21,6 @@ def print_desc(desc):
 
 
 class Test_Argo_Engine:
-    # host = mocked_server_address
     host = argopy.tutorial.open_dataset("gdac")[0]
     src = host + "/dac"
     list_of_files = [
