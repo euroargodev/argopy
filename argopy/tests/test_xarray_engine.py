@@ -5,28 +5,8 @@ import logging
 import warnings
 import argopy
 from argopy.utilities import argo_split_path
-# from argopy.xarray import ArgoEngine
-# from xarray.backends.common import BACKEND_ENTRYPOINTS
-# from mocked_http import mocked_httpserver, mocked_server_address
 
 log = logging.getLogger("argopy.tests.xarray.engine")
-# log.debug(xr.backends.list_engines().keys())
-# log.debug('requires_argoengine: %s' % requires_argoengine)
-
-# BACKEND_ENTRYPOINTS["argo"] = ArgoEngine
-# BACKEND_ENTRYPOINTS["argo"] = ('argo', ArgoEngine)
-
-# import mock
-# EntryPointMock1 = mock.MagicMock()
-# EntryPointMock1.name = "argo"
-# EntryPointMock1.load.return_value = ArgoEngine
-#
-# xr.backends.refresh_engines()
-# log.debug(xr.backends.list_engines().keys())
-
-# requires_argoengine = pytest.mark.skipif(
-#     "argo" not in xr.backends.list_engines().keys(), reason="Requires the 'argo' xarray engine"
-# )
 
 
 def print_desc(desc):
@@ -40,7 +20,6 @@ def print_desc(desc):
     return ", ".join(txt)
 
 
-# @requires_argoengine
 class Test_Argo_Engine:
     # host = mocked_server_address
     host = argopy.tutorial.open_dataset("gdac")[0]
@@ -73,8 +52,8 @@ class Test_Argo_Engine:
     ]
     list_of_files = [f.replace("/", os.path.sep) for f in list_of_files]
 
-    # list_of_files_desc = [print_desc(argo_split_path(f)) for f in list_of_files]
-    list_of_files_desc = [f for f in list_of_files]
+    list_of_files_desc = [print_desc(argo_split_path(f)) for f in list_of_files]
+    # list_of_files_desc = [f for f in list_of_files]
 
     #############
     # UTILITIES #
