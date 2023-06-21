@@ -74,6 +74,12 @@ try:
 except:
     pass
 
+try:
+    importlib.import_module('openai')  # noqa: E402
+    import openai
+except ImportError:
+    pass
+
 path2pkl = pkg_resources.resource_filename("argopy", "assets/")
 
 log = logging.getLogger("argopy.utilities")
@@ -4279,7 +4285,6 @@ class Assistant:
 
     """
     name = "🤖 Medea"  # Jason's wife ! Another Argo/Jason mythology character: https://en.wikipedia.org/wiki/Medea
-    import openai
 
     @property
     def _prompt(self):
@@ -4313,13 +4318,13 @@ environment variable 'OPENAI_API_KEY'. If you don't have an API key, you may get
         else:
             openai_api_key = OPTIONS['openai_api_key']
         self._openai_api_key = openai_api_key
-        self.openai.api_key = self._openai_api_key
+        openai.api_key = self._openai_api_key
         self._validate_key()
 
     def _validate_key(self):
         valid = False
         try:
-            l = self.openai.Model.list()
+            l = openai.Model.list()
             for model in l['data']:
                 if model['id'] == 'gpt-3.5-turbo':
                     valid = True
@@ -4331,7 +4336,7 @@ environment variable 'OPENAI_API_KEY'. If you don't have an API key, you may get
         if prompt:
             self.messages.append({"role": "user",
                                   "content": prompt})
-        chat = self.openai.ChatCompletion.create(
+        chat = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=self.messages
         )
