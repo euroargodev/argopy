@@ -2369,10 +2369,13 @@ def argo_split_path(this_path):  # noqa C901
         if typ == 'meta':
             output['type'] = 'Metadata file'
         if 'traj' in typ:
-            output['type'] = 'Trajectory file'
-            if typ.split("traj")[0] == 'D':
+            # possible typ = [Rtraj, Dtraj, BRtraj, BDtraj]
+            output['type'], i = 'Trajectory file', 0
+            if typ[0] == 'B':
+                output['type'], i = 'BGC Trajectory file', 1
+            if typ.split("traj")[0][i] == 'D':
                 output['data_mode'] = 'D, Delayed-time data'
-            elif typ.split("traj")[0] == 'R':
+            elif typ.split("traj")[0][i] == 'R':
                 output['data_mode'] = 'R, Real-time data'
             else:
                 output['data_mode'] = 'R, Real-time data (implicit)'
@@ -4112,7 +4115,9 @@ class ArgoDocs:
 
         def parse(self, file):
             """Parse input file"""
-            with self.fs.open(file, 'r') as f:
+            # log.debug(file)
+
+            with self.fs.open(file, 'r', encoding="utf-8") as f:
                 TXTlines = f.readlines()
             lines = []
             # Eliminate blank lines
@@ -4145,17 +4150,28 @@ class ArgoDocs:
 
             self.record = record
 
-    def __init__(self, docid=None):
+
+    def __init__(self, docid=None, cache=True):
+        from .stores import httpstore
 
         self.docid = None
         self._ris = None
-        from .stores import httpstore
-        self._fs = httpstore(cache=True, cachedir=OPTIONS['cachedir'])
+        self._risfile = None
+        self._fs = httpstore(cache=cache, cachedir=OPTIONS['cachedir'])
+        self._doiserver = "https://dx.doi.org"
+        self._archimer = "https://archimer.ifremer.fr"
+
         if isinstance(docid, int):
             if docid in [doc['id'] for doc in self._catalogue]:
                 self.docid = docid
             else:
                 raise ValueError("Unknown document id")
+        elif isinstance(docid, str):
+            start_with = lambda f, x: f[0:len(x)] == x if len(x) <= len(f) else False  # noqa: E731
+            if start_with(docid, '10.13155/') and docid in [doc['doi'] for doc in self._catalogue]:
+                self.docid = [doc['id'] for doc in self._catalogue if docid == doc['doi']][0]
+            else:
+                raise ValueError("'docid' must be an integer or a valid Argo DOI")
 
     def __repr__(self):
         summary = ["<argopy.ArgoDocs>"]
@@ -4194,10 +4210,11 @@ class ArgoDocs:
             if self._ris is None:
                 # Fetch RIS metadata for this document:
                 import re
-                file = self._fs.fs.cat_file("https://dx.doi.org/%s" % self.js['doi'])
+                file = self._fs.fs.cat_file("%s/%s" % (self._doiserver, self.js['doi']))
                 x = re.search('<a target="_blank" href="(https?:\/\/([^"]*))"\s+([^>]*)rel="nofollow">TXT<\/a>',
                               str(file))
-                export_txt_url = x[1]
+                export_txt_url = x[1].replace("https://archimer.ifremer.fr", self._archimer)
+                self._risfile = export_txt_url
                 self._ris = self.RIS(export_txt_url, fs=self._fs).record
             return self._ris
         else:
@@ -4234,7 +4251,7 @@ class ArgoDocs:
         else:
             raise ValueError("Select a document first !")
 
-    def open_pdf(self, page=None):
+    def open_pdf(self, page=None, url_only=False):
         """Open document in new browser tab
 
         Parameters
@@ -4242,13 +4259,16 @@ class ArgoDocs:
         page: int, optional
             Open directly a specific page number
         """
+        url = self.pdf
+        url += '#view=FitV&pagemode=thumbs'
+        if page:
+            url += '&page=%i' % page
         if self.docid is not None:
-            import webbrowser
-            url = self.pdf
-            url += '#view=FitV&pagemode=thumbs'
-            if page:
-                url += '&page=%i' % page
-            webbrowser.open_new(url)
+            if not url_only:
+                import webbrowser
+                webbrowser.open_new(url)
+            else:
+                return url
         else:
             raise ValueError("Select a document first !")
 

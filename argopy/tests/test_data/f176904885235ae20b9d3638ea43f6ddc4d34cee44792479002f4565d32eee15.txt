@@ -1,0 +1,33 @@
+FN Archimer Export Format
+PT Rapport
+TI BGC-Argo quality control manual for the Chlorophyll-A concentration
+OT Manuel de contrôle qualité de la concentration en chlorophylle-A Bio-Argo
+BT 
+AF SCHMECHTIG, Catherine
+   CLAUSTRE, Herve
+   POTEAU, Antoine
+   D'ORTENZIO, Fabrizio
+AS 1:1,2,3,4;2:1,2;3:1,2;4:1,2;
+FF 1:;2:;3:;4:;
+C1 Sorbonne Universités, UPMC Université Paris 06, UMR 7093, LOV, Observatoire océanologique, Villefranche-sur-Mer, France
+   CNRS, UMR 7093, LOV, Observatoire océanologique, Villefranche-sur-Mer, France
+   Sorbonne Universités, UPMC Univ Paris 06, UMS 3455, OSU Ecce-Terra, 4 place Jussieu 75252 Paris cedex 05, France
+   CNRS, UMS 3455, OSU Ecce-Terra, 4 place Jussieu 75252 Paris cedex 05, France
+C2 UNIV PARIS 06, FRANCE
+   CNRS, FRANCE
+   UNIV PARIS 06, FRANCE
+   CNRS, FRANCE
+SI AUTRE
+SE AUTRE
+UR https://archimer.ifremer.fr/doc/00243/35385/60181.pdf
+LA English
+DT Report
+DE ;Argo;physical oceanography;in-situ marine data;profiling floats;chlorophyll;operational oceanography;biogeochemistry
+AB This document is the BGC-Argo quality control manual for Chlorophyll A concentration. It describes the method used in real-time to apply quality control flags to Chlorophyll A concentration calculated from specific sensors mounted on Argo profiling floats. 
+PY 2018
+PD MAR
+DI 10.13155/35385
+ID 35385
+ER
+
+EF
