@@ -4271,6 +4271,11 @@ class Assistant:
      - You must first sign-up to get an OpenAI API key at: https://platform.openai.com/signup?launch
      - You must install the openai python package: ``pip install --upgrade openai``
 
+    ⚠️ Limitations
+    Please note that, like any AI, the model may occasionally generate an inaccurate or imprecise answer. Always refer
+    to the provided sources to verify the validity of the information given. If you find any issues with the response,
+    kindly provide feedback to help improve the system.
+
     Examples
     --------
     import argopy
@@ -4424,8 +4429,8 @@ environment variable 'OPENAI_API_KEY'. If you don't have an API key, you may get
         summary.append("Check out your API usage at: https://platform.openai.com/account/usage")
         summary.append("")
         summary.append("❗❗This is an highly experimental feature, mainly built just for fun ❗❗")
-        summary.append("Use at your own risk and be aware that chatGPT often tends to invent non-existing argopy methods")
-        summary.append("The argopy documentation is the most reliable source of information: https://argopy.readthedocs.io")
+        summary.append(" ⚠️ Limitations")
+        summary.append("Please note that, like any AI, the model may occasionally generate an inaccurate or imprecise answer. Always refer to the Argo information sources or argopy documentation https://argopy.readthedocs.io to verify the validity of the information given. If you find any issues with the response, kindly provide feedback to help improve the system.")
         summary.append("")
         return "\n".join(summary)
 
