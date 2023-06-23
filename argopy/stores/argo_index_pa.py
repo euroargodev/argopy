@@ -421,22 +421,81 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
             raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC profile index)")
         log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
-        PARAMs = to_list(PARAMs) # Make sure we deal with a list
+        PARAMs = to_list(PARAMs)  # Make sure we deal with a list
         self.load()
         self.search_type = {"PARAM": PARAMs, "logical": logical}
         filt = []
         # variables = pc.utf8_split_whitespace(self.index["parameters"]).to_pandas()
         for param in PARAMs:
-            pattern = "%s" % param
+            pattern = "^\%s+|\s%s" % (param, param)
             filt.append(
                 pa.compute.match_substring_regex(
                     self.index["parameters"], pattern=pattern
                 )
             )
-            # filt.append(
-            #     variables.apply(lambda x: param in x)
-            # )
         self.search_filter = self._reduce_a_filter_list(filt, op=logical)
+        self.run(nrows=nrows)
+        return self
+
+    def search_parameter_data_mode(self, PARAMs: dict, nrows=None, logical='and'):
+        """Search for profile with a data mode for a specific parameter
+
+        Examples
+        --------
+        search_parameter_data_mode({'TEMP': 'D'})
+        search_parameter_data_mode({'BBP700': 'D'})
+        search_parameter_data_mode({'DOXY': ['R', 'A']})
+        search_parameter_data_mode({'BBP700': 'D', 'DOXY': 'D'}, logical='or')
+
+        """
+        log.debug("Argo index searching for parameter data modes such as PARAM=%s ..." % PARAMs)
+
+        # Validate PARAMs argument type
+        [PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs]  # Make sure we deal with a list
+        if not np.all([v in ['R', 'A', 'D', '', ' '] for vals in PARAMs.values() for v in vals]):
+            raise ValueError("Data mode must be a value in 'R', 'A', 'D', ' ', ''")
+
+        self.load()
+        self.search_type = {"DMODE": PARAMs, "logical": logical}
+        filt = []
+
+        if self.convention in ["ar_index_global_prof"]:
+            def filt_parameter_data_mode(this_idx, this_dm):
+                def fct(this_x):
+                    dm = str(this_x.split("/")[-1])[0]
+                    return dm in this_dm
+                x = this_idx.index["file"].to_numpy()
+                return np.array(list(map(fct, x)))
+            for param in PARAMs:
+                data_mode = to_list(PARAMs[param])
+                filt.append(filt_parameter_data_mode(self, data_mode))
+
+        elif self.convention in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
+
+            # def read_parameter_data_mode(this_idx, this_param):
+            #     def fct(this_x, this_y):
+            #         variables = this_x.split()
+            #         return this_y[variables.index(this_param)] if this_param in variables else ''
+            #     x = this_idx.index['parameters'].to_numpy()
+            #     y = this_idx.index['parameter_data_mode'].to_numpy()
+            #     return np.array(list(map(fct, x, y)))
+
+            def filt_parameter_data_mode(this_idx, this_param, this_dm):
+                def fct(this_x, this_y):
+                    variables = this_x.split()
+                    return (this_y[variables.index(this_param)] if this_param in variables else '') in this_dm
+                x = this_idx.index['parameters'].to_numpy()
+                y = this_idx.index['parameter_data_mode'].to_numpy()
+                return np.array(list(map(fct, x, y)))
+
+            for param in PARAMs:
+                data_mode = to_list(PARAMs[param])
+                filt.append(filt_parameter_data_mode(self, param, data_mode))
+
+        if logical == 'and':
+            self.search_filter = np.logical_and.reduce(filt)
+        else:
+            self.search_filter = np.logical_or.reduce(filt)
         self.run(nrows=nrows)
         return self
 
