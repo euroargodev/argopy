@@ -28,7 +28,7 @@ exit_formats = ["xarray"]
 dataset_ids = ["ref-ctd"]  # First is default
 api_server = OPTIONS["erddap"]  # API root url
 api_server_check = (
-    OPTIONS["erddap"] + "/info/ArgoFloats/index.json"
+    OPTIONS["erddap"] + "/info/Argo-ref-ctd/index.json"
 )  # URL to check if the API is alive
 
 
@@ -113,7 +113,7 @@ class ErddapREFDataFetcher(ErddapArgoDataFetcher):
         # Init erddapy
         self.erddap = ERDDAP(server=str(self.server), protocol="tabledap")
         self.erddap.response = "nc"
-        self.erddap.dataset_id = "Argo-ref-ctd-petit"
+        self.erddap.dataset_id = "Argo-ref-ctd"
         return self
 
     @property
