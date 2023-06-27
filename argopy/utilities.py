@@ -2725,8 +2725,12 @@ class Registry(UserList):
         elif repr(dtype) == "<class 'dict'>" or dtype == 'dict':
             self._validator = self._dict
             self.dtype = dict
+        elif hasattr(dtype, 'isvalid'):
+            self._validator = dtype.isvalid
+            self.dtype = dtype
         else:
             raise ValueError("Unrecognised Registry data type '%s'" % dtype)
+
         if initlist is not None:
             initlist = self._process_items(initlist)
         super().__init__(initlist)
@@ -2738,7 +2742,7 @@ class Registry(UserList):
         msg = "Nitems: %s" % N if N > 1 else "Nitem: %s" % N
         summary.append(msg)
         if N > 0:
-            items = [repr(item) for item in self.data]
+            items = [str(item) for item in self.data]
             # msg = format_oneline("[%s]" % "; ".join(items), max_width=120)
             msg = "[%s]" % "; ".join(items)
             summary.append("Content: %s" % msg)
