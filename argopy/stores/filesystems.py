@@ -233,6 +233,27 @@ class filestore(argo_store_proto):
     """
     protocol = 'file'
 
+    def open_json(self, url, **kwargs):
+        """ Return a json from a path, or verbose errors
+
+        Parameters
+        ----------
+        path: str
+            Path to resources passed to :func:`json.loads`
+        *args, **kwargs:
+            Other arguments passed to :func:`json.loads`
+
+        Returns
+        -------
+        json
+
+        """
+        with self.open(url) as of:
+            js = json.load(of, **kwargs)
+        if len(js) == 0:
+            js = None
+        return js
+
     def open_dataset(self, path, *args, **kwargs):
         """Return a xarray.dataset from a path.
 
@@ -389,20 +410,20 @@ class filestore(argo_store_proto):
         else:
             raise DataNotFound(urls)
 
-    def read_csv(self, url, **kwargs):
-        """ Return a pandas.dataframe from an url that is a csv resource
+    def read_csv(self, path, **kwargs):
+        """ Return a pandas.dataframe from a path that is a csv resource
 
             Parameters
             ----------
             Path: str
-                Path to csv resources passed to pandas.read_csv
+                Path to csv resources passed to :func:`pandas.read_csv`
 
             Returns
             -------
             :class:`pandas.DataFrame`
         """
-        log.debug("Reading csv: %s" % url)
-        with self.open(url) as of:
+        log.debug("Reading csv: %s" % path)
+        with self.open(path) as of:
             df = pd.read_csv(of, **kwargs)
         return df
 
