@@ -714,7 +714,7 @@ class ArgoIndexStoreProto(ABC):
 
         Warnings
         --------
-        Only lat/lon bounds are considered  from the index box.
+        Only lat/lon bounds are considered from the index box.
 
         Examples
         --------
@@ -754,11 +754,29 @@ class ArgoIndexStoreProto(ABC):
 
         Warnings
         --------
-        This method is only available for index following the 'argo_bio-profile_index' convention.
+        This method is only available for index following the 'argo_bio' or 'argo_synthetic' conventions.
 
         """
         raise NotImplementedError("Not implemented")
 
+    @abstractmethod
+    def search_parameter_data_mode(self, PARAMs):
+        """ Search index for profiles with a parameter with a specific data mode
+
+        Parameters
+        ----------
+        PARAMs : dict()
+            A dictionary with parameters as keys, and data mode as one or a list of strings
+
+        Examples
+        --------
+        >>> search_parameter_data_mode({'TEMP': 'D'})
+        >>> search_parameter_data_mode({'BBP700': 'D'})
+        >>> search_parameter_data_mode({'DOXY': ['R', 'A']})
+        >>> search_parameter_data_mode({'BBP700': 'D', 'DOXY': 'D'}, logical='or')
+
+        """
+        raise NotImplementedError("Not implemented")
 
 
     def _insert_header(self, originalfile):

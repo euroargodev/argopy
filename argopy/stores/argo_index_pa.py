@@ -425,8 +425,8 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         self.load()
         self.search_type = {"PARAM": PARAMs, "logical": logical}
         filt = []
-        # variables = pc.utf8_split_whitespace(self.index["parameters"]).to_pandas()
         for param in PARAMs:
+            # pattern = " %s" % param
             pattern = "^\%s+|\s%s" % (param, param)
             filt.append(
                 pa.compute.match_substring_regex(
