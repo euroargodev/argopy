@@ -1,5 +1,7 @@
 from .argo_index_deprec import indexstore, indexfilter_wmo, indexfilter_box
-from .filesystems import filestore, httpstore, memorystore, ftpstore, httpstore_erddap, httpstore_erddap_auth
+from .filesystems import filestore, httpstore, memorystore, ftpstore
+from .filesystems import httpstore_erddap, httpstore_erddap_auth
+from .filesystems import argo_store_proto
 
 from .argo_index_pa import indexstore_pyarrow as indexstore_pa
 from .argo_index_pd import indexstore_pandas as indexstore_pd
