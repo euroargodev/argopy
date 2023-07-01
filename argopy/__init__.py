@@ -29,7 +29,7 @@ from . import errors  # noqa: E402
 from . import plot  # noqa: E402
 from .plot import dashboard, ArgoColors  # noqa: E402
 from .utilities import show_versions, show_options, clear_cache, lscache  # noqa: E402
-from .utilities import TopoFetcher, ArgoNVSReferenceTables, OceanOPSDeployments, ArgoDocs  # noqa: E402
+from .utilities import TopoFetcher, ArgoNVSReferenceTables, OceanOPSDeployments, ArgoDocs, Assistant  # noqa: E402
 from .utilities import monitor_status as status  # noqa: E402
 from .options import set_options  # noqa: E402
 from .data_fetchers import CTDRefDataFetcher  # noqa: E402
@@ -58,15 +58,16 @@ __all__ = (
     "ArgoIndex",  # Class
     "ArgoDocs",  # Class
     "TopoFetcher",  # Class
+    "Assistant",  # class
 
     # Submodules:
     "utilities",
     "errors",
     "plot",
     "ArgoColors",  # Class
-    # "plotters",  # Deprec, to be removed after 0.1.13
     "stores",
     "tutorial",
+
     # Constants
     "__version__"
 )
