@@ -556,7 +556,9 @@ class httpstore(argo_store_proto):
                        preprocess=None,
                        preprocess_opts={},
                        errors: str = 'ignore',
-                       *args, **kwargs):
+                       compute_details: bool = False,
+                       *args,
+                       **kwargs):
         """ Open multiple urls as a single xarray dataset.
 
             This is a version of the :class:`argopy.stores.httpstore.open_dataset` method that is able to
@@ -701,7 +703,9 @@ class httpstore(argo_store_proto):
                 try:
                     data = self._mfprocessor_dataset(url,
                                                      preprocess=preprocess,
-                                                     preprocess_opts=preprocess_opts, *args, **kwargs)
+                                                     preprocess_opts=preprocess_opts,
+                                                     *args,
+                                                     **kwargs)
                 except Exception:
                     failed.append(url)
                     if errors == 'ignore':
@@ -728,7 +732,10 @@ class httpstore(argo_store_proto):
                                data_vars='minimal',
                                coords='minimal',
                                compat='override')
-                return ds
+                if not compute_details:
+                    return ds
+                else:
+                    return ds, failed, len(results)
             else:
                 return results
         elif len(failed) == len(urls):

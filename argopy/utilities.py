@@ -2947,6 +2947,7 @@ class ArgoNVSReferenceTables:
         # "R28",
         # "R29",
         # "R30",
+        "R40",
     ]
     """List of all available Reference Tables"""
 

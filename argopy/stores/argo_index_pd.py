@@ -199,13 +199,16 @@ class indexstore_pandas(ArgoIndexStoreProto):
             if not hasattr(self, "index"):
                 self.load()
             df = self.index['parameters']
-        plist = set(df[0].split(" "))
-        def fct(row):
-            row = row.split(" ")
-            [plist.add(v) for v in row]
-            return len(row)
-        df.map(fct)
-        return sorted(list(plist))
+        if df.shape[0] > 0:
+            plist = set(df[0].split(" "))
+            def fct(row):
+                row = row.split(" ")
+                [plist.add(v) for v in row]
+                return len(row)
+            df.map(fct)
+            return sorted(list(plist))
+        else:
+            raise DataNotFound("This index is empty")
 
     def records_per_wmo(self, index=False):
         """ Return the number of records per unique WMOs in search results
