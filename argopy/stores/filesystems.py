@@ -8,6 +8,7 @@ import aiohttp
 import shutil
 import pickle  # nosec B403 only used with internal files/assets
 import json
+import time
 import tempfile
 import warnings
 import logging
@@ -22,7 +23,7 @@ from ..options import OPTIONS
 from ..errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
     InvalidMethod, ErddapHTTPUnauthorized, ErddapHTTPNotFound
 from abc import ABC, abstractmethod
-from ..utilities import Registry, log_argopy_callerstack
+from ..utilities import Registry, log_argopy_callerstack, drop_variables_not_in_all_datasets
 
 log = logging.getLogger("argopy.stores")
 
@@ -85,6 +86,7 @@ def new_fs(protocol: str = '',
                                target_options={**fsspec_kwargs},
                                cache_storage=cachedir,
                                expiry_time=cache_expiration, cache_check=10)
+
         # We use a refresh rate for cache of 1 day,
         # since this is the update frequency of the Ifremer erddap
         cache_registry = Registry(name='Cache')  # Will hold uri cached by this store instance
@@ -288,7 +290,7 @@ class filestore(argo_store_proto):
     def open_mfdataset(self,  # noqa: C901
                        urls,
                        concat_dim='row',
-                       max_workers: int = 112,
+                       max_workers: int = 6,
                        method: str = 'thread',
                        progress: bool = False,
                        concat: bool = True,
@@ -337,7 +339,7 @@ class filestore(argo_store_proto):
             if method == 'thread':
                 ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
             else:
-                if max_workers == 112:
+                if max_workers == 6:
                     max_workers = multiprocessing.cpu_count()
                 ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
 
@@ -498,6 +500,45 @@ class httpstore(argo_store_proto):
         #     log.debug(url)
         #     return url
 
+    def download_url(self,
+                     url,
+                     n_attempt: int = 1,
+                     max_attempt: int = 5,
+                     *args,
+                     **kwargs):
+
+        def make_request(ffs, url, n_attempt: int = 1, max_attempt: int = 5, *args, **kwargs):
+            data = None
+            if n_attempt <= max_attempt:
+                try:
+                    data = ffs.cat_file(url, *args, **kwargs)
+                except aiohttp.ClientResponseError as e:
+                    if e.status == 413:
+                        log.debug(f"Error %i (Payload Too Large) raised with %s" % (e.status, url))
+                        raise
+                    elif e.status == 429:
+                        retry_after = int(e.headers.get('Retry-After', 5))
+                        log.debug(
+                            f"Error {e.status} (Too many requests). Retry after {retry_after} seconds. Tentative {n_attempt}/{max_attempt}")
+                        time.sleep(retry_after)
+                        n_attempt += 1
+                        make_request(ffs, url, n_attempt=n_attempt, *args, **kwargs)
+                    else:
+                        # Handle other client response errors
+                        print(f"Error: {e}")
+                except aiohttp.ClientError as e:
+                    # Handle other request exceptions
+                    # print(f"Error: {e}")
+                    raise
+            else:
+                raise ValueError(f"Error: All attempts failed to download this url: {url}")
+            return data, n_attempt
+
+        url = self.curateurl(url)
+        data, n = make_request(self.fs, url, n_attempt=n_attempt, max_attempt=max_attempt, *args, **kwargs)
+
+        return data
+
     def open_dataset(self, url, *args, **kwargs):
         """ Open and decode a xarray dataset from an url
 
@@ -509,38 +550,24 @@ class httpstore(argo_store_proto):
         -------
         :class:`xarray.Dataset`
         """
-        url = self.curateurl(url)
-        # log.debug("Opening netcdf from: %s" % url)
-        try:
-            # log.info("open_dataset('%s')" % url)
-            # log_argopy_callerstack()
-            data = self.fs.cat_file(url)
-        except aiohttp.ClientResponseError as e:
-            if e.status == 413:
-                warnings.warn("Server says payload Too Large ! Try to use 'parallel=True' or a smaller "
-                              "chunk parameter with your fetcher")
-                log.debug("Error %i (Payload Too Large) raised with %s" % (e.status, url))
-            raise
-        except FileNotFoundError as e:
-            log.debug(f"File not found! %s" % str(e))
-            raise
+        data = self.download_url(url, *args, **kwargs)
 
         if data[0:3] != b'CDF':
             raise TypeError("We didn't get a CDF binary data as expected ! We get: %s" % data)
 
-        # log.debug('type(data): %s' % type(data))
         ds = xr.open_dataset(data, *args, **kwargs)
+
         if "source" not in ds.encoding:
             if isinstance(url, str):
                 ds.encoding["source"] = url
-        self.register(url)
 
+        self.register(url)
         return ds
 
     def _mfprocessor_dataset(self, url, preprocess=None, preprocess_opts={}, *args, **kwargs):
-        url = self.curateurl(url)
         # Load data
         ds = self.open_dataset(url, *args, **kwargs)
+
         # Pre-process
         if isinstance(preprocess, types.FunctionType) or isinstance(preprocess, types.MethodType):
             ds = preprocess(ds, **preprocess_opts)
@@ -548,7 +575,7 @@ class httpstore(argo_store_proto):
 
     def open_mfdataset(self,  # noqa: C901
                        urls,
-                       max_workers: int = 112,
+                       max_workers: int = 6,
                        method: str = 'thread',
                        progress: Union[bool, str] = False,
                        concat: bool = True,
@@ -570,7 +597,7 @@ class httpstore(argo_store_proto):
             ----------
             urls: list(str)
                 List of url/path to open
-            max_workers: int, default: 112
+            max_workers: int, default: 6
                 Maximum number of threads or processes
             method: str, default: ``thread``
                 The parallelization method to execute calls asynchronously:
@@ -605,37 +632,6 @@ class httpstore(argo_store_proto):
         """
         strUrl = lambda x: x.replace("https://", "").replace("http://", "")  # noqa: E731
 
-        def drop_variables_not_in_all_datasets(ds_collection):
-            """Drop variables that are not in all datasets (Lowest common denominator)"""
-            # List all possible data variables:
-            vlist = []
-            for res in ds_collection:
-                [vlist.append(v) for v in list(res.data_vars)]
-            vlist = np.unique(vlist)
-
-            # Check if all possible variables are in each datasets:
-            ishere = np.zeros((len(vlist), len(ds_collection)))
-            for ir, res in enumerate(ds_collection):
-                for iv, v in enumerate(res.data_vars):
-                    for iu, u in enumerate(vlist):
-                        if v == u:
-                            ishere[iu, ir] = 1
-            # # List of dataset with missing variables:
-            # ir_missing = np.sum(ishere, axis=0) < len(vlist)
-            # # List of variables missing in some dataset:
-            # iv_missing = np.sum(ishere, axis=1) < len(ds_collection)
-
-            # List of variables to keep
-            iv_tokeep = np.sum(ishere, axis=1) == len(ds_collection)
-            for ir, res in enumerate(ds_collection):
-                #         print("\n", res.attrs['Fetched_uri'])
-                v_to_drop = []
-                for iv, v in enumerate(res.data_vars):
-                    if v not in vlist[iv_tokeep]:
-                        v_to_drop.append(v)
-                ds_collection[ir] = ds_collection[ir].drop_vars(v_to_drop)
-            return ds_collection
-
         if not isinstance(urls, list):
             urls = [urls]
 
@@ -647,7 +643,7 @@ class httpstore(argo_store_proto):
             if method == 'thread':
                 ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
             else:
-                if max_workers == 112:
+                if max_workers == 6:
                     max_workers = multiprocessing.cpu_count()
                 ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
 
@@ -774,17 +770,7 @@ class httpstore(argo_store_proto):
             json
 
         """
-        url = self.curateurl(url)
-        # log.debug("Opening json from: %s" % url)
-        # try:
-        #     with self.open(url) as of:
-        #         js = json.load(of, **kwargs)
-        #     return js
-        # except ClientResponseError:
-        #     raise
-        # except json.JSONDecodeError:
-        #     raise
-        data = self.fs.cat_file(url)
+        data = self.download_url(url)
         js = json.loads(data, **kwargs)
         if len(js) == 0:
             js = None
@@ -806,7 +792,7 @@ class httpstore(argo_store_proto):
 
     def open_mfjson(self,  # noqa: C901
                     urls,
-                    max_workers=112,
+                    max_workers: int = 6,
                     method: str = 'thread',
                     progress: Union[bool, str] = False,
                     preprocess=None,
@@ -854,7 +840,7 @@ class httpstore(argo_store_proto):
             if method == 'thread':
                 ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
             else:
-                if max_workers == 112:
+                if max_workers == 6:
                     max_workers = multiprocessing.cpu_count()
                 ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
 
@@ -964,7 +950,7 @@ class ftpstore(httpstore):
 
     def open_mfdataset(self,  # noqa: C901
                        urls,
-                       max_workers: int = 112,
+                       max_workers: int = 6,
                        method: str = 'seq',
                        progress: bool = False,
                        concat: bool = True,
@@ -984,7 +970,7 @@ class ftpstore(httpstore):
             ----------
             urls: list(str)
                 List of url/path to open
-            max_workers: int, default: 112
+            max_workers: int, default: 6
                 Maximum number of threads or processes
             method: str, default: ``thread``
                 The parallelization method to execute calls asynchronously:
@@ -1018,44 +1004,13 @@ class ftpstore(httpstore):
         """
         strUrl = lambda x: x.replace("ftps://", "").replace("ftp://", "")  # noqa: E731
 
-        def drop_variables_not_in_all_datasets(ds_collection):
-            """Drop variables that are not in all datasets (Lowest common denominator)"""
-            # List all possible data variables:
-            vlist = []
-            for res in ds_collection:
-                [vlist.append(v) for v in list(res.data_vars)]
-            vlist = np.unique(vlist)
-
-            # Check if all possible variables are in each datasets:
-            ishere = np.zeros((len(vlist), len(ds_collection)))
-            for ir, res in enumerate(ds_collection):
-                for iv, v in enumerate(res.data_vars):
-                    for iu, u in enumerate(vlist):
-                        if v == u:
-                            ishere[iu, ir] = 1
-            # # List of dataset with missing variables:
-            # ir_missing = np.sum(ishere, axis=0) < len(vlist)
-            # # List of variables missing in some dataset:
-            # iv_missing = np.sum(ishere, axis=1) < len(ds_collection)
-
-            # List of variables to keep
-            iv_tokeep = np.sum(ishere, axis=1) == len(ds_collection)
-            for ir, res in enumerate(ds_collection):
-                #         print("\n", res.attrs['Fetched_uri'])
-                v_to_drop = []
-                for iv, v in enumerate(res.data_vars):
-                    if v not in vlist[iv_tokeep]:
-                        v_to_drop.append(v)
-                ds_collection[ir] = ds_collection[ir].drop_vars(v_to_drop)
-            return ds_collection
-
         if not isinstance(urls, list):
             urls = [urls]
 
         results = []
         failed = []
         if method in ['process']:
-            if max_workers == 112:
+            if max_workers == 6:
                 max_workers = multiprocessing.cpu_count()
             ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(max_workers=max_workers)
 
