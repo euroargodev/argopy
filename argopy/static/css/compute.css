@@ -1,0 +1,104 @@
+/* CSS stylesheet for displaying MultiThreading computation tasks status in jupyterlab
+ *
+ */
+
+.cyan {
+  background-color: #12eae4ff;
+}
+.blue {
+  background-color: #1088b5ff;
+}
+.darkblue {
+  background-color: rgba(10, 89, 161, 1);
+}
+.yellow {
+  background-color: #e4ad29ff;
+}
+.darkyellow {
+  background-color: #df9d25ff;
+}
+
+.red {
+    background-color: rgba(240, 18, 18, 0.75);
+}
+.green {
+  background-color: #32cd32;
+}
+.orange {
+  background-color: orange;
+}
+.black {
+  background-color: black;
+}
+.gray {
+  background-color: rgba(211, 211, 211, 1);
+}
+
+.box {
+  float: left;
+  height: 12px;
+  width: 12px;
+  margin-bottom: 5px;
+  border: 1px solid white;
+  display:inline-block;
+}
+.parent {
+    text-align:left;
+    border: 0px dashed #1c87c9;
+	display:table;
+    background-color: #FFF;
+}
+.legend {
+	text-align:left;
+	vertical-align: middle;
+	margin-bottom: 5px;
+	height:15px;
+	line-height:15px;
+}
+.legend .item {
+	display:inline-block;
+}
+.legend .box {
+  height: 12px;
+  width: 12px;
+  margin-left: 5px;
+}
+.legend .txt {
+  color: #000;
+  vertical-align: middle;
+  display: inline-block;
+  margin-left: 5px;
+}
+.status {
+	text-align:left;
+	vertical-align: middle;
+	margin-bottom: 5px;
+	margin-left: 0px;
+	border: 2px solid rgba(211, 211, 211, 1);
+	padding: 5px;
+	display: table;
+}
+
+.blinking {
+	border: 2px solid #e4ad29ff;
+	animation-name: blinking;
+	animation-duration: 1s;
+	animation-iteration-count: 100;
+}
+@keyframes blinking {
+  50% {
+    border-color: #FFF;
+  }
+}
+.none {
+	border: 0px;
+}
+.queue {
+	border: 2px solid rgba(211, 211, 211, 1);
+}
+.success {
+	border: 2px solid #32cd32;
+}
+.failure {
+	border: 2px solid #f01212;
+}
