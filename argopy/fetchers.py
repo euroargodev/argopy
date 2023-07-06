@@ -14,6 +14,7 @@ import xarray as xr
 import pandas as pd
 import numpy as np
 import logging
+from functools import lru_cache
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher, OptionValueError
@@ -431,6 +432,7 @@ class ArgoDataFetcher:
 
         return self
 
+    @lru_cache
     def to_xarray(self, **kwargs):
         """ Fetch and return data as xarray.DataSet
 
@@ -451,6 +453,7 @@ class ArgoDataFetcher:
 
         return xds
 
+    @lru_cache
     def to_dataframe(self, **kwargs):
         """ Fetch and return data as pandas.Dataframe
 
@@ -468,6 +471,7 @@ class ArgoDataFetcher:
             )
         return self.load().data.to_dataframe(**kwargs)
 
+    @lru_cache
     def to_index(self, full: bool = False, coriolis_id: bool = False):
         """ Create an index of Argo data, fetch data if necessary
 
@@ -539,6 +543,7 @@ class ArgoDataFetcher:
 
         return df
 
+    @lru_cache
     def load(self, force: bool = False, **kwargs):
         """ Fetch data (and compute an index) if not already in memory
 
