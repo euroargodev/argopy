@@ -30,6 +30,7 @@ import subprocess  # nosec B404 only used without user inputs
 import contextlib
 from fsspec.core import split_protocol
 import fsspec
+from functools import lru_cache
 
 import argopy
 import xarray as xr
@@ -3029,6 +3030,7 @@ class ArgoNVSReferenceTables:
         url = "{}/{}/current/{}".format
         return url(self.nvs, rtid, fmt_ext)
 
+    @lru_cache
     def tbl(self, rtid):
         """Return an Argo Reference table
 
@@ -4301,3 +4303,48 @@ class ArgoDocs:
                 if txt.lower() in ArgoDocs(docid).abstract.lower():
                     results.append(docid)
         return results
+
+
+def drop_variables_not_in_all_datasets(ds_collection):
+    """Drop variables that are not in all datasets (the lowest common denominator)
+
+    Parameters
+    ----------
+    list of :class:`xr.DataSet`
+
+    Returns
+    -------
+    list of :class:`xr.DataSet`
+    """
+
+    # List all possible data variables:
+    vlist = []
+    for res in ds_collection:
+        [vlist.append(v) for v in list(res.data_vars)]
+    vlist = np.unique(vlist)
+
+    # Check if all possible variables are in each datasets:
+    ishere = np.zeros((len(vlist), len(ds_collection)))
+    for ir, res in enumerate(ds_collection):
+        for iv, v in enumerate(res.data_vars):
+            for iu, u in enumerate(vlist):
+                if v == u:
+                    ishere[iu, ir] = 1
+
+    # List of dataset with missing variables:
+    # ir_missing = np.sum(ishere, axis=0) < len(vlist)
+    # List of variables missing in some dataset:
+    iv_missing = np.sum(ishere, axis=1) < len(ds_collection)
+    if len(iv_missing) > 0:
+        log.debug("Dropping these variables that are missing from some dataset in this list: %s" % vlist[iv_missing])
+
+    # List of variables to keep
+    iv_tokeep = np.sum(ishere, axis=1) == len(ds_collection)
+    for ir, res in enumerate(ds_collection):
+        #         print("\n", res.attrs['Fetched_uri'])
+        v_to_drop = []
+        for iv, v in enumerate(res.data_vars):
+            if v not in vlist[iv_tokeep]:
+                v_to_drop.append(v)
+        ds_collection[ir] = ds_collection[ir].drop_vars(v_to_drop)
+    return ds_collection
