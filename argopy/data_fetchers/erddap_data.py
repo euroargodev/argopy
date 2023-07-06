@@ -9,6 +9,8 @@ This module contains Argo data fetcher for Ifremer ERDDAP.
 This is not intended to be used directly, only by the facade at fetchers.py
 
 """
+import warnings
+
 import argopy.utilities
 import xarray as xr
 import pandas as pd
@@ -18,12 +20,13 @@ import copy
 from abc import abstractmethod
 import getpass
 from typing import Union
+from functools import lru_cache
 
 from .proto import ArgoDataFetcherProto
 from argopy.options import OPTIONS
 from argopy.utilities import Chunker, format_oneline, to_list
 from argopy.stores import httpstore
-from ..errors import ErddapServerError
+from ..errors import ErddapServerError, DataNotFound
 from ..stores import indexstore_pd as ArgoIndex  # make sure to work with the Pandas index store
 
 from aiohttp import ClientResponseError
@@ -476,6 +479,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             for p in params:
                 self.erddap.constraints.update({"%s!=" % p.lower(): 'NaN'})
 
+            # Possibly add more constraints to make requests smaller:
+            for p in ['latitude', 'longitude']:
+                self.erddap.constraints.update({"%s!=" % p.lower(): 'NaN'})
+
         # Post-process all constraints:
         constraints = self.erddap.constraints
         _constraints = copy.copy(constraints)
@@ -509,7 +516,59 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 "Erddap server can't return ncHeader for this url. "
             )
 
-    def to_xarray(self, errors: str = "ignore", add_dm=True):  # noqa: C901
+    def post_process(self, this_ds, add_dm : bool = True, URI: list = None):
+
+        # Post-process the xarray.DataSet:
+        if 'row' in this_ds.dims:
+            this_ds = this_ds.rename({"row": "N_POINTS"})
+
+        # Set coordinates:
+        coords = ("LATITUDE", "LONGITUDE", "TIME", "N_POINTS")
+        this_ds = this_ds.reset_coords()
+        this_ds["N_POINTS"] = this_ds["N_POINTS"]
+
+        # Convert all coordinate variable names to upper case
+        for v in this_ds.data_vars:
+            this_ds = this_ds.rename({v: v.upper()})
+        this_ds = this_ds.set_coords(coords)
+
+        if self.dataset_id == "ref":
+            this_ds["DIRECTION"] = xr.full_like(this_ds["CYCLE_NUMBER"], "A", dtype=str)
+
+        # Cast data types and add variable attributes (not available in the csv download):
+        this_ds = this_ds.argo.cast_types()
+
+        if self.dataset_id == 'bgc' and add_dm:
+            this_ds = self._add_parameters_data_mode_ds(this_ds)
+            this_ds = this_ds.argo.cast_types(overwrite=False)
+
+        # Overwrite Erddap attributes with those from Argo standards:
+        this_ds = self._add_attributes(this_ds)
+
+        # Also replace erddap attributes with those from argopy ones:
+        this_ds.attrs = {}
+        if self.dataset_id == "phy":
+            this_ds.attrs["DATA_ID"] = "ARGO"
+            this_ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
+        elif self.dataset_id == "ref":
+            this_ds.attrs["DATA_ID"] = "ARGO_Reference"
+            this_ds.attrs["DOI"] = "-"
+        elif self.dataset_id == "bgc":
+            this_ds.attrs["DATA_ID"] = "ARGO-BGC"
+            this_ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
+        this_ds.attrs["Fetched_from"] = self.erddap.server
+        this_ds.attrs["Fetched_by"] = getpass.getuser()
+        this_ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
+        this_ds.attrs["Fetched_constraints"] = self.cname()
+        this_ds.attrs["Fetched_uri"] = URI
+        this_ds = this_ds[np.sort(this_ds.data_vars)]
+
+        n_zero = np.count_nonzero(np.isnan(np.unique(this_ds['PLATFORM_NUMBER'])))
+        log.info('n_zero=%i' % n_zero)
+        return this_ds
+
+    @lru_cache
+    def to_xarray(self, errors: str = "ignore", add_dm=True, concat=True):  # noqa: C901
         """Load Argo data and return a xarray.DataSet"""
 
         URI = self.uri  # Call it once
@@ -520,73 +579,48 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 try:
                     # log.debug("to_xarray: %s" % URI[0])
                     # log_argopy_callerstack()
-                    ds = self.fs.open_dataset(URI[0])
+                    results = self.fs.open_dataset(URI[0])
+                    results = self.post_process(results, add_dm=add_dm, URI=URI)
                 except ClientResponseError as e:
-                    raise ErddapServerError(e.message)
+                    if 'Proxy Error' in e.message:
+                        raise ErddapServerError("Your request is probably taking longer than expected to be handled by the server. "
+                                                "You can try to relaunch you're request or use the 'parallel' option "
+                                                "to chunk it into small requests.")
+                        log.debug(str(e))
+                    else:
+                        raise ErddapServerError(e.message)
             else:
                 try:
-                    ds = self.fs.open_mfdataset(
-                        URI, method="sequential", progress=self.progress, errors=errors
+                    results = self.fs.open_mfdataset(
+                        URI,
+                        method="sequential",
+                        progress=self.progress,
+                        errors=errors,
+                        concat=concat,
+                        preprocess=self.post_process,
+                        preprocess_opts={'add_dm': add_dm, 'URI': URI},
                     )
                 except ClientResponseError as e:
                     raise ErddapServerError(e.message)
         else:
             try:
-                ds = self.fs.open_mfdataset(
+                results = self.fs.open_mfdataset(
                     URI,
                     method=self.parallel_method,
                     progress=self.progress,
                     errors=errors,
+                    concat=concat,
+                    preprocess=self.post_process,
+                    preprocess_opts={'add_dm': add_dm, 'URI': URI},
                 )
             except ClientResponseError as e:
                 raise ErddapServerError(e.message)
 
-        ds = ds.rename({"row": "N_POINTS"})
-
-        # Post-process the xarray.DataSet:
-
-        # Set coordinates:
-        coords = ("LATITUDE", "LONGITUDE", "TIME", "N_POINTS")
-        ds = ds.reset_coords()
-        ds["N_POINTS"] = ds["N_POINTS"]
-        # Convert all coordinate variable names to upper case
-        for v in ds.data_vars:
-            ds = ds.rename({v: v.upper()})
-        ds = ds.set_coords(coords)
-
-        if self.dataset_id == "ref":
-            ds["DIRECTION"] = xr.full_like(ds["CYCLE_NUMBER"], "A", dtype=str)
-
-        # Cast data types and add variable attributes (not available in the csv download):
-        ds = ds.argo.cast_types()
-
-        if self.dataset_id == 'bgc' and add_dm:
-            ds = self._add_parameters_data_mode_ds(ds)
-            ds = ds.argo.cast_types(overwrite=False)
-
-        # Erddap variables come without attributes, so:
-        ds = self._add_attributes(ds)
-
-        # Remove erddap file attributes and replace them with argopy ones:
-        ds.attrs = {}
-        if self.dataset_id == "phy":
-            ds.attrs["DATA_ID"] = "ARGO"
-            ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
-        elif self.dataset_id == "ref":
-            ds.attrs["DATA_ID"] = "ARGO_Reference"
-            ds.attrs["DOI"] = "-"
-        elif self.dataset_id == "bgc":
-            ds.attrs["DATA_ID"] = "ARGO-BGC"
-            ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
-        ds.attrs["Fetched_from"] = self.erddap.server
-        ds.attrs["Fetched_by"] = getpass.getuser()
-        ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
-        ds.attrs["Fetched_constraints"] = self.cname()
-        ds.attrs["Fetched_uri"] = URI
-        ds = ds[np.sort(ds.data_vars)]
-
-        #
-        return ds
+        return results
+        # if concat:
+        #     return self.post_process(results, add_dm=add_dm, URI=URI)
+        # else:
+        #     return [self.post_process(ds, add_dm=add_dm, URI=URI) for ds in results]
 
     def filter_data_mode(self, ds: xr.Dataset, **kwargs):
         """Apply xarray argo accessor filter_data_mode method"""
@@ -648,7 +682,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             filt.append(this_df['wmo'].isin([wmo]))
             filt.append(this_df['cyc'].isin([cyc]))
             sub_df = df[np.logical_and.reduce(filt)]
-            return sub_df["%s_data_mode" % param].values[-1]
+            if sub_df.shape[0] == 0:
+                log.debug("Found a profile in the dataset, but not in the index ! wmo=%i, cyc=%i" % (wmo, cyc))
+                # This can happen if a Synthetic netcdf file was generated from a non-BGC float.
+                # The file exists, but it doesn't have BGC variables. Float is usually not listed in the index.
+                return ''
+            else:
+                return sub_df["%s_data_mode" % param].values[-1]
 
         def print_etime(txt, t0):
             now = time.process_time()
@@ -861,12 +901,14 @@ class Fetch_box(ErddapArgoDataFetcher):
             if self.dataset_id == 'bgc':
                 opts['params'] = self._bgc_params
                 opts['measured'] = self._bgc_measured
-            opts['indexfs'] = self.indexfs
+                opts['indexfs'] = self.indexfs
             for box in boxes:
-                urls.append(
-                    Fetch_box(
-                        box=box,
-                        **opts,
-                    ).get_url()
-                )
+                try:
+                    fb = Fetch_box(
+                            box=box,
+                            **opts,
+                        )
+                    urls.append(fb.get_url())
+                except DataNotFound:
+                    log.debug("This box fetcher will contain no data")
             return urls
