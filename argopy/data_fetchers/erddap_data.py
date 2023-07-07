@@ -236,6 +236,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     "valid_max": 12000.0,
                     "resolution": 0.1,
                     "axis": "Z",
+                    "casted": this[v].attrs['casted'] if 'casted' in this[v].attrs else 0,
                 }
                 if "ERROR" in v:
                     this[v].attrs["long_name"] = (
@@ -252,6 +253,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     "valid_min": -2.0,
                     "valid_max": 40.0,
                     "resolution": 0.001,
+                    "casted": this[v].attrs['casted'] if 'casted' in this[v].attrs else 0,
                 }
                 if "ERROR" in v:
                     this[v].attrs["long_name"] = (
@@ -268,6 +270,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     "valid_min": 0.0,
                     "valid_max": 43.0,
                     "resolution": 0.001,
+                    "casted": this[v].attrs['casted'] if 'casted' in this[v].attrs else 0,
                 }
                 if "ERROR" in v:
                     this[v].attrs["long_name"] = (
@@ -284,6 +287,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     "valid_min": -5.0,
                     "valid_max": 600.0,
                     "resolution": 0.001,
+                    "casted": this[v].attrs['casted'] if 'casted' in this[v].attrs else 0,
                 }
                 if "ERROR" in v:
                     this[v].attrs["long_name"] = (
@@ -294,31 +298,36 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             if "_QC" in v:
                 attrs = {
                     "long_name": "Global quality flag of %s profile" % v,
-                    "convention": "Argo reference table 2a",
+                    "conventions": "Argo reference table 2a",
+                    "casted": this[v].attrs['casted'] if 'casted' in this[v].attrs else 0,
                 }
                 this[v].attrs = attrs
 
         if "CYCLE_NUMBER" in this.data_vars:
             this["CYCLE_NUMBER"].attrs = {
                 "long_name": "Float cycle number",
-                "convention": "0..N, 0 : launch cycle (if exists), 1 : first complete cycle",
+                "conventions": "0..N, 0 : launch cycle (if exists), 1 : first complete cycle",
+                "casted": this["CYCLE_NUMBER"].attrs['casted'] if 'casted' in this["CYCLE_NUMBER"].attrs else 0,
             }
         if "DIRECTION" in this.data_vars:
             this["DIRECTION"].attrs = {
                 "long_name": "Direction of the station profiles",
-                "convention": "A: ascending profiles, D: descending profiles",
+                "conventions": "A: ascending profiles, D: descending profiles",
+                "casted": this["DIRECTION"].attrs['casted'] if 'casted' in this["DIRECTION"].attrs else 0,
             }
 
         if "PLATFORM_NUMBER" in this.data_vars:
             this["PLATFORM_NUMBER"].attrs = {
                 "long_name": "Float unique identifier",
-                "convention": "WMO float identifier : A9IIIII",
+                "conventions": "WMO float identifier : A9IIIII",
+                "casted": this["PLATFORM_NUMBER"].attrs['casted'] if 'casted' in this["PLATFORM_NUMBER"].attrs else 0,
             }
 
         if "DATA_MODE" in this.data_vars:
             this["DATA_MODE"].attrs = {
                 "long_name": "Delayed mode or real time data",
-                "convention": "R : real time; D : delayed mode; A : real time with adjustment",
+                "conventions": "R : real time; D : delayed mode; A : real time with adjustment",
+                "casted": this["DATA_MODE"].attrs['casted'] if 'casted' in this["DATA_MODE"].attrs else 0,
             }
 
         if self.dataset_id == 'bgc':
@@ -326,7 +335,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 if "%s_DATA_MODE" % param in this.data_vars:
                     this["%s_DATA_MODE" % param].attrs = {
                         "long_name": "Delayed mode or real time data",
-                        "convention": "R : real time; D : delayed mode; A : real time with adjustment",
+                        "conventions": "R : real time; D : delayed mode; A : real time with adjustment",
+                        "casted": this["%s_DATA_MODE" % param].attrs['casted'] if 'casted' in this["%s_DATA_MODE" % param].attrs else 0,
                     }
 
         return this
@@ -482,6 +492,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             # Possibly add more constraints to make requests smaller:
             for p in ['latitude', 'longitude']:
                 self.erddap.constraints.update({"%s!=" % p.lower(): 'NaN'})
+            # for p in ['platform_number']:
+            #     self.erddap.constraints.update({"%s!=" % p.lower(): '"NaN"'})
 
         # Post-process all constraints:
         constraints = self.erddap.constraints
@@ -517,8 +529,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             )
 
     def post_process(self, this_ds, add_dm : bool = True, URI: list = None):
+        """Post-process a xarray.DataSet created from a netcdf erddap response
 
-        # Post-process the xarray.DataSet:
+        This method can in fact also be applied on a regular dataset
+        """
         if 'row' in this_ds.dims:
             this_ds = this_ds.rename({"row": "N_POINTS"})
 
@@ -536,11 +550,25 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             this_ds["DIRECTION"] = xr.full_like(this_ds["CYCLE_NUMBER"], "A", dtype=str)
 
         # Cast data types and add variable attributes (not available in the csv download):
+        # log.debug("erddap.post_process WMO=%s" % to_list(np.unique(this_ds['PLATFORM_NUMBER'].values)))
         this_ds = this_ds.argo.cast_types()
+        # log.debug("erddap.post_process WMO=%s" % to_list(np.unique(this_ds['PLATFORM_NUMBER'].values)))
+        # if '999' in to_list(np.unique(this_ds['PLATFORM_NUMBER'].values)):
+        #     log.error(this_ds.attrs)
 
+        # With BGC, some points may not have a PLATFORM_NUMBER !
+        # So, we remove these
+        if '999' in to_list(np.unique(this_ds['PLATFORM_NUMBER'].values)):
+            log.error("Found points without WMO !")
+            this_ds = this_ds.where(this_ds['PLATFORM_NUMBER'] != '999', drop=True)
+            this_ds = this_ds.argo.cast_types(overwrite=True)
+            log.debug("erddap.post_process WMO=%s" % to_list(np.unique(this_ds['PLATFORM_NUMBER'].values)))
+
+        # log.debug("erddap.post_process (add_dm=%s): %s" % (add_dm, str(this_ds)))
         if self.dataset_id == 'bgc' and add_dm:
             this_ds = self._add_parameters_data_mode_ds(this_ds)
             this_ds = this_ds.argo.cast_types(overwrite=False)
+        # log.debug("erddap.post_process (add_dm=%s): %s" % (add_dm, str(this_ds)))
 
         # Overwrite Erddap attributes with those from Argo standards:
         this_ds = self._add_attributes(this_ds)
@@ -564,20 +592,23 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         this_ds = this_ds[np.sort(this_ds.data_vars)]
 
         n_zero = np.count_nonzero(np.isnan(np.unique(this_ds['PLATFORM_NUMBER'])))
-        log.info('n_zero=%i' % n_zero)
+        if n_zero > 0:
+            log.error('Some points (%i) have no PLATFORM_NUMBER !' % n_zero)
+
         return this_ds
 
-    @lru_cache
-    def to_xarray(self, errors: str = "ignore", add_dm=True, concat=True):  # noqa: C901
+    def to_xarray(self, errors: str = "ignore", add_dm: bool = None, concat=True):  # noqa: C901
         """Load Argo data and return a xarray.DataSet"""
 
         URI = self.uri  # Call it once
+
+        # Should we compute and add DATA_MODE of BGC variables:
+        add_dm = self.dataset_id == 'bgc' if add_dm is None else bool(add_dm)
 
         # Download data
         if not self.parallel:
             if len(URI) == 1:
                 try:
-                    # log.debug("to_xarray: %s" % URI[0])
                     # log_argopy_callerstack()
                     results = self.fs.open_dataset(URI[0])
                     results = self.post_process(results, add_dm=add_dm, URI=URI)
@@ -593,12 +624,15 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 try:
                     results = self.fs.open_mfdataset(
                         URI,
-                        method="sequential",
+                        method="thread",
+                        max_workers=1,
                         progress=self.progress,
                         errors=errors,
                         concat=concat,
+                        concat_dim='N_POINTS',
                         preprocess=self.post_process,
-                        preprocess_opts={'add_dm': add_dm, 'URI': URI},
+                        preprocess_opts={'add_dm': False, 'URI': URI},
+                        final_opts={'add_dm': add_dm, 'URI': URI},
                     )
                 except ClientResponseError as e:
                     raise ErddapServerError(e.message)
@@ -610,9 +644,15 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     progress=self.progress,
                     errors=errors,
                     concat=concat,
+                    concat_dim='N_POINTS',
                     preprocess=self.post_process,
-                    preprocess_opts={'add_dm': add_dm, 'URI': URI},
+                    preprocess_opts={'add_dm': False, 'URI': URI},
+                    # final_opts={'add_dm': add_dm, 'URI': URI},
                 )
+                if concat and results is not None:
+                    results = self.post_process(results, **{'add_dm': add_dm, 'URI': URI})
+                # else:
+                #     log.debug(len(results))
             except ClientResponseError as e:
                 raise ErddapServerError(e.message)
 

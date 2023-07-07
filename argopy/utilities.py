@@ -3790,7 +3790,6 @@ def cast_Argo_variable_type(ds, overwrite=True):
     list_int = [
         "PLATFORM_NUMBER",
         "WMO_INST_TYPE",
-        "WMO_INST_TYPE",
         "CYCLE_NUMBER",
         "CONFIG_MISSION_NUMBER",
 
@@ -3842,9 +3841,18 @@ def cast_Argo_variable_type(ds, overwrite=True):
             da = cast_this(da, str)
 
         if v in list_int:  # and da.dtype == 'O':  # Object
+            if "conventions" in da.attrs:
+                convname = "conventions"
+            elif "convention" in da.attrs:
+                convname = "convention"
+            else:
+                convname = None
             if (
-                    "conventions" in da.attrs
-                    and da.attrs["conventions"] in ["Argo reference table 19", "Argo reference table 21"]
+                    convname in da.attrs
+                    and da.attrs[convname] in ["Argo reference table 19",
+                                               "Argo reference table 21",
+                                               "WMO float identifier : A9IIIII",
+                                               ]
             ):
                 # Some values may be missing, and the _FillValue=" " cannot be casted as an integer.
                 # so, we replace missing values with a 999:

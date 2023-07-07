@@ -131,6 +131,7 @@ class proto_MonitoredThreadPoolExecutor(ABC):
 
     def callback(self, future):
         obj_id, data, state = future.result()
+        # self.update_display_status(obj_id, "s" if state else "f")
         self.update_display_status(obj_id, "c")  # Callback
         if self.callback_fct is not None:
             data, state = self.callback_fct(data, **self.callback_fct_kwargs)
@@ -223,12 +224,12 @@ class proto_MonitoredPoolExecutor_monitor(proto_MonitoredThreadPoolExecutor):
     def COLORS(self):
         """task status key to css class and color and label dictionary"""
         return {
-            "?": ("gray", "Queued"),
-            "w": ("yellow", self.task_legend["w"]),
-            "p": ("blue", self.task_legend["p"]),
-            "c": ("cyan", self.task_legend["c"]),
-            "f": ("red", "Failed"),
-            "s": ("green", "Succeed"),
+            "?": ("gray", "Queued", "⏸"),
+            "w": ("yellow", self.task_legend["w"], "⏺"),
+            "p": ("blue", self.task_legend["p"], "🔄"),
+            "c": ("cyan", self.task_legend["c"], "⏯"),
+            "f": ("red", "Failed", "🔴"),
+            "s": ("green", "Succeed", "🟢"),
         }
 
     @property
@@ -262,6 +263,7 @@ class proto_MonitoredPoolExecutor_monitor(proto_MonitoredThreadPoolExecutor):
     def update_display_status_final(self, *args, **kwargs):
         pass
 
+
 class proto_MonitoredPoolExecutor_notebook(proto_MonitoredPoolExecutor_monitor):
     """
     Add HTML jupyter notebook display
@@ -276,7 +278,7 @@ class proto_MonitoredPoolExecutor_notebook(proto_MonitoredPoolExecutor_monitor):
         legend = ["\t<div class='legend'>"]
         # legend.append("\t\t<div style='display:inline-block'><span style='margin-bottom: 5px'>Tasks: </span></div>")
         for key in self.COLORS.keys():
-            color, desc = self.COLORS[key]
+            color, desc, icon = self.COLORS[key]
             legend.append(
                 "\t\t<div class='item'><div class='box %s'></div><span class='txt'>%s</span></div>"
                 % (color, desc)
@@ -352,9 +354,25 @@ class proto_MonitoredPoolExecutor_terminal(proto_MonitoredPoolExecutor_monitor):
             **kwargs,
     ):
         super().__init__(**kwargs)
-        self.reprinter = None
+        self._reprinter = None
 
-    class Reprinter:
+    # @property
+    # def COLORS(self):
+    #     COLORS = super().COLORS
+    #     ICONS = {
+    #         "gray": "⏸",
+    #         "yellow": "⏺",
+    #         "blue": "🔄",
+    #         "cyan": "⏯",
+    #         "red": "🔴",
+    #         "green": "🟢",
+    #     }
+    #     for key in COLORS.keys():
+    #         color, label = COLORS[key]
+    #         COLORS[key] = (color, label, ICONS[color])
+    #     return COLORS
+
+    class _Reprinter:
         def __init__(self, text: str = ""):
             self.text = text
             self.counter = 0
@@ -370,9 +388,10 @@ class proto_MonitoredPoolExecutor_terminal(proto_MonitoredPoolExecutor_monitor):
             self.text = text
             self.counter += 1
 
-    def adjust_for_terminal_width(self, text):
+    def _adjust_for_terminal_width(self, text, max_width=None):
         """Split text if larger than terminal"""
         term_width, _ = os.get_terminal_size()
+        term_width = term_width if max_width is None else int(term_width/max_width)
         lines = []
         if len(text) > term_width:
             i_start, i_end = 0, term_width - 1
@@ -439,27 +458,56 @@ class proto_MonitoredPoolExecutor_terminal(proto_MonitoredPoolExecutor_monitor):
                 else:
                     return f"{PREF}{getattr(C, color)}m" + text + RESET
 
-        # Create a legend:
-        legend = []
-        for key in self.COLORS.keys():
-            color, desc = self.COLORS[key]
-            legend.append(f("%s: %s" % (key, desc), color))
-        legend = " | ".join(legend)
+        text_only = False
 
-        # Create a status bar for tasks:
-        # with colored brackets color for final status:
-        raw_content = f"[%s]" % "".join(self.status)
-        lines = []
-        for status_line in self.adjust_for_terminal_width(raw_content).split("\n"):
-            line_content = []
-            for s in status_line:
-                if s not in ['[', ']']:
-                    line_content.append(f(s, self.COLORS[s][0], negative = s in ['s', 'f']))
-                else:
-                    line_content.append(f(s, self.STATE_COLORS[self.status_final]))
-            line_content = "".join(line_content)
-            lines.append(line_content)
-        content = "\n".join(lines)
+        # Text only:
+        if text_only:
+            # Create a legend:
+            legend = []
+            for key in self.COLORS.keys():
+                color, desc = self.COLORS[key]
+                legend.append(f("%s: %s" % (key, desc), color))
+            legend = " | ".join(legend)
+
+            # Create a status bar for tasks:
+            # with colored brackets color for final status:
+            raw_content = f"[%s]" % "".join(self.status)
+            lines = []
+            for status_line in self._adjust_for_terminal_width(raw_content).split("\n"):
+                line_content = []
+                for s in status_line:
+                    if s not in ['[', ']']:
+                        line_content.append(f(s, self.COLORS[s][0], negative = s in ['f']))
+                    else:
+                        line_content.append(f(s, self.STATE_COLORS[self.status_final]))
+                line_content = "".join(line_content)
+                lines.append(line_content)
+            content = "\n".join(lines)
+
+        # Icons only
+        else:
+            # Create a legend:
+            legend = []
+            for key in self.COLORS.keys():
+                color, desc, icon = self.COLORS[key]
+                legend.append(f"{icon}: %s" % f(desc, color=color))
+            legend = " | ".join(legend)
+
+            # Create a status bar for tasks:
+            # with colored brackets color for final status:
+            # raw_content = f"[%s]" % "".join(self.status)
+            raw_content = f"%s" % "".join(self.status)
+            lines = []
+            for status_line in self._adjust_for_terminal_width(raw_content, max_width=4).split("\n"):
+                line_content = []
+                for s in status_line:
+                    if s not in ['[', ']']:
+                        line_content.append(f"%s " % self.COLORS[s][2])
+                    else:
+                        line_content.append(f(s, self.STATE_COLORS[self.status_final]))
+                line_content = "".join(line_content)
+                lines.append(line_content)
+            content = "\n".join(lines)
 
         # Progress bar:
         val = int(100 * self.progress[0] / self.progress[1])
@@ -488,10 +536,10 @@ class proto_MonitoredPoolExecutor_terminal(proto_MonitoredPoolExecutor_monitor):
         super().display_status()
 
         if self.show and self.runner in ["terminal", "standard"]:
-            if self.reprinter is None:
-                self.reprinter = self.Reprinter(self.status_txt)
+            if self._reprinter is None:
+                self._reprinter = self._Reprinter(self.status_txt)
             # os.system('cls' if os.name == 'nt' else 'clear')
-            self.reprinter.reprint(f"{self.status_txt}")
+            self._reprinter.reprint(f"{self.status_txt}")
             # sys.stdout.flush()
 
 
