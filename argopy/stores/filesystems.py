@@ -591,10 +591,17 @@ class httpstore(argo_store_proto):
                               *args,
                               **kwargs,
                               ):
+        """
+        Method dedicated to handle the case where we need to create a dataset from multiples erddap urls download and
+        need a visual feedback of the procedure
+
+        - Based on a poll of threads
+
+        """
         strUrl = lambda x: x.replace("https://", "").replace("http://", "")  # noqa: E731
 
         @lru_cache
-        def my_task(url):
+        def task_fct(url):
             try:
                 ds = self.open_dataset(url)
                 return ds, True
@@ -605,7 +612,7 @@ class httpstore(argo_store_proto):
                 log.debug("Ignored error with this url: %s" % strUrl(url))
                 return None, False
 
-        def my_postprocess(ds, **kwargs):
+        def postprocessing_fct(ds, **kwargs):
             try:
                 ds = preprocess(ds, **kwargs)
                 return ds, True
@@ -615,7 +622,7 @@ class httpstore(argo_store_proto):
                 else:
                     return None, False
 
-        def my_final(obj_list, **kwargs):
+        def finalize(obj_list, **kwargs):
             try:
                 # Read list of datasets from the list of objects:
                 ds_list = [v for v in dict(sorted(obj_list.items())).values()]
@@ -648,13 +655,13 @@ class httpstore(argo_store_proto):
             task_legend = {'w': 'Working', 'p': 'Post-processing', 'c': 'Callback'}
 
         if concat:
-            finalize_fct = my_final
+            finalize_fct = finalize
         else:
             finalize_fct = None
         run = MyExecutor(
             max_workers=max_workers,
-            task_fct=my_task,
-            postprocessing_fct=my_postprocess,
+            task_fct=task_fct,
+            postprocessing_fct=postprocessing_fct,
             postprocessing_fct_kwargs=preprocess_opts,
             finalize_fct=finalize_fct,
             finalize_fct_kwargs=kwargs['final_opts'] if 'final_opts' in kwargs else {},
