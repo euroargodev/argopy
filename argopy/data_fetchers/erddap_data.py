@@ -196,6 +196,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     measured = to_list(measured)
             elif self._bgc_measured[0] is None:
                 measured = []
+            elif self._bgc_measured[0] == 'all':
+                measured = self._bgc_vlist_requested
             elif not argopy.utilities.is_list_of_strings(self._bgc_measured):
                 raise ValueError("'measured' argument must be a list of strings")
             self._bgc_vlist_measured = [m.upper() for m in measured]
@@ -537,7 +539,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     def post_process(self, this_ds, add_dm : bool = True, URI: list = None):
         """Post-process a xarray.DataSet created from a netcdf erddap response
 
-        This method can in fact also be applied on a regular dataset
+        This method can also be applied on a regular dataset to re-enforce format compliance
         """
         if 'row' in this_ds.dims:
             this_ds = this_ds.rename({"row": "N_POINTS"})
@@ -555,7 +557,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         if self.dataset_id == "ref":
             this_ds["DIRECTION"] = xr.full_like(this_ds["CYCLE_NUMBER"], "A", dtype=str)
 
-        # Cast data types and add variable attributes (not available in the csv download):
+        # Cast data types:
         # log.debug("erddap.post_process WMO=%s" % to_list(np.unique(this_ds['PLATFORM_NUMBER'].values)))
         this_ds = this_ds.argo.cast_types()
         # log.debug("erddap.post_process WMO=%s" % to_list(np.unique(this_ds['PLATFORM_NUMBER'].values)))
@@ -664,7 +666,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 if concat:
                     if results is not None:
                         if self.progress:
-                            print("Final post-processing of your dataset ...")
+                            print("Final post-processing of the merged dataset () ...")
                         results = self.post_process(results, **{'add_dm': add_dm, 'URI': URI})
             except DataNotFound:
                 if self.dataset_id == 'bgc' and len(self._bgc_vlist_measured) > 0:
@@ -731,11 +733,11 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     dims=["N_POINTS"],
                     coords={"N_POINTS": ds["N_POINTS"]},
                 )
-                log.debug("Delete remaining samples with NaN for %s" % self._bgc_vlist_measured)
+                log.debug("Keep samples without NaN in %s" % self._bgc_vlist_measured)
                 for v in self._bgc_vlist_measured:
                     this_mask += ds[v].notnull()
                 this_mask = this_mask == len(self._bgc_vlist_measured)
-                ds = ds.where(this_mask, drop=True)
+                ds = ds.argo._where(this_mask, drop=True)
 
         ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
@@ -836,6 +838,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 # now = time.process_time()
                 # tims['fill'] += now - t0
 
+            this_ds["%s_DATA_MODE" % param] = this_ds["%s_DATA_MODE" % param].astype('<U1')
             # timer = print_etime('Processed %s (%i profiles)' % (param, len(profiles)), timer)
 
         return this_ds
