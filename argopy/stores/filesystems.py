@@ -514,6 +514,11 @@ class httpstore(argo_store_proto):
                      max_attempt: int = 5,
                      *args,
                      **kwargs):
+        """URL data downloader
+
+        This is basically a fsspec.cat_file that is able tho handle a 429 "Too many requests" error from a server, by
+        waiting and sending requests several time.
+        """
 
         def make_request(ffs, url, n_attempt: int = 1, max_attempt: int = 5, *args, **kwargs):
             data = None
@@ -576,6 +581,7 @@ class httpstore(argo_store_proto):
         return ds
 
     def _mfprocessor_dataset(self, url, preprocess=None, preprocess_opts={}, *args, **kwargs):
+        """Used by httpstore.open_mfdataset"""
         # Load data
         ds = self.open_dataset(url, *args, **kwargs)
 
@@ -597,10 +603,10 @@ class httpstore(argo_store_proto):
                               **kwargs,
                               ):
         """
-        Method dedicated to handle the case where we need to create a dataset from multiples erddap urls download and
-        need a visual feedback of the procedure
+        Method used by httpstore.open_mfdataset dedicated to handle the case where we need to create a dataset from
+        multiples erddap urls download/preprocessing and need a visual feedback of the procedure up to the final merge.
 
-        - Based on a poll of threads
+        - httpstore.open_dataset is distributed is handle by a pool of threads
 
         """
         strUrl = lambda x: x.replace("https://", "").replace("http://", "")  # noqa: E731
@@ -613,8 +619,7 @@ class httpstore(argo_store_proto):
             except FileNotFoundError:
                 log.debug("This url returned no data: %s" % strUrl(url))
                 return DataNotFound(url), True
-            except:
-                log.debug("Ignored error with this url: %s" % strUrl(url))
+            except Exception as e:
                 return None, False
 
         def postprocessing_fct(ds, **kwargs):
@@ -687,14 +692,12 @@ class httpstore(argo_store_proto):
 
         if concat:
             # results = Union[xr.DataSet, DataNotFound, None]
-            log.debug(results)
             if isinstance(results, xr.Dataset):
                 if not compute_details:
                     return results
                 else:
                     return results, failed, len(results)
             elif results is None:
-                # log.debug("'results' is None")
                 raise DataNotFound("An error occurred while finalizing the dataset")
             else:
                 raise results
