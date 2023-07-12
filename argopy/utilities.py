@@ -3832,8 +3832,8 @@ def cast_Argo_variable_type(ds, overwrite=True):
                 pass
         return da
 
-    def cast_this_da(da):
-        """ Cast any DataArray """
+    def cast_this_da(da, v):
+        """ Cast any Argo DataArray """
         # print("Casting %s ..." % da.name)
         da.attrs["casted"] = 0
 
@@ -3859,6 +3859,7 @@ def cast_Argo_variable_type(ds, overwrite=True):
                 val = da.astype(str).values
                 val[np.where(val == 'nan')] = '999'
                 da.values = val
+            da = cast_this(da, float)
             da = cast_this(da, int)
 
         if v in list_datetime and da.dtype == "O":  # Object
@@ -3896,6 +3897,11 @@ def cast_Argo_variable_type(ds, overwrite=True):
 
             # Address weird string values:
             # (replace missing or nan values by a '0' that will be cast as an integer later
+            if da.dtype == float:
+                val = da.astype(str).values
+                val[np.where(val == 'nan')] = '0'
+                da.values = val
+                da = cast_this(da, float)
 
             if da.dtype == "<U3":  # string, len 3 because of a 'nan' somewhere
                 ii = (
@@ -3930,6 +3936,9 @@ def cast_Argo_variable_type(ds, overwrite=True):
             # finally convert QC strings to integers:
             da = cast_this(da, int)
 
+        if "DATA_MODE" in v:
+            da = cast_this(da, '<U1')
+
         if da.dtype != "O":
             da.attrs["casted"] = 1
 
@@ -3938,7 +3947,7 @@ def cast_Argo_variable_type(ds, overwrite=True):
     for v in ds.variables:
         if overwrite or ('casted' in ds[v].attrs and ds[v].attrs['casted'] == 0):
             try:
-                ds[v] = cast_this_da(ds[v])
+                ds[v] = cast_this_da(ds[v], v)
             except Exception:
                 print("Oops!", sys.exc_info()[0], "occurred.")
                 print("Fail to cast: %s " % v)
