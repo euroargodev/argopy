@@ -20,6 +20,7 @@ from argopy.utilities import (
     toYearFraction,
     groupby_remap,
     cast_Argo_variable_type,
+    log_argopy_callerstack,
 )
 from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
@@ -323,10 +324,10 @@ class ArgoAccessor:
             .max()
             .values
         )
-        log.debug("New dataset should be [N_PROF=%i, N_LEVELS=%i]" % (N_PROF, N_LEVELS))
+        log.debug("point2profile: New dataset should be [N_PROF=%i, N_LEVELS=%i]" % (N_PROF, N_LEVELS))
         assert N_PROF * N_LEVELS >= len(this["N_POINTS"])
         if N_LEVELS == 1:
-            log.debug("This dataset has a single vertical level, thus final variables will only have a N_PROF "
+            log.debug("point2profile: This dataset has a single vertical level, thus final variables will only have a N_PROF "
                       "dimension and no N_LEVELS")
 
         # Store the initial set of coordinates:
@@ -344,7 +345,7 @@ class ArgoAccessor:
                 try:
                     count[i_prof, iv] = len(np.unique(prof[vname]))
                 except Exception as e:
-                    log.error("An error happened when dealing with the '%s' data variable" % vname)
+                    log.error("point2profile: An error happened when dealing with the '%s' data variable" % vname)
                     raise(e)
 
         # Variables with a unique value for each profiles:
