@@ -21,6 +21,7 @@ from abc import abstractmethod
 import getpass
 from typing import Union
 from functools import lru_cache
+import fnmatch
 
 from .proto import ArgoDataFetcherProto
 from argopy.options import OPTIONS
@@ -186,7 +187,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 params = self._bgc_vlist_avail
             elif not argopy.utilities.is_list_of_strings(params):
                 raise ValueError("'params' argument must be a list of strings")
+                # raise ValueError("'params' argument must be a list of strings (possibly with a * wildcard)")
             self._bgc_vlist_requested = [p.upper() for p in params]
+            # self._bgc_vlist_requested = self._bgc_handle_wildcard(self._bgc_vlist_requested)
 
             for p in ['PRES', 'TEMP', 'PSAL']:
                 if p not in self._bgc_vlist_requested:
@@ -205,7 +208,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 measured = self._bgc_vlist_requested
             elif not argopy.utilities.is_list_of_strings(self._bgc_measured):
                 raise ValueError("'measured' argument must be a list of strings")
+                # raise ValueError("'measured' argument must be a list of strings (possibly with a * wildcard)")
             self._bgc_vlist_measured = [m.upper() for m in measured]
+            # self._bgc_vlist_measured = self._bgc_handle_wildcard(self._bgc_vlist_measured)
 
     def __repr__(self):
         summary = ["<datafetcher.erddap>"]
@@ -374,7 +379,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def _bgc_vlist_avail(self):
-        """Return the list of parameters available for this BGC dataset
+        """Return the list of BGC parameters available for this access point
 
         Apply search criteria in the index, then retrieve the list of parameters
         """
@@ -390,6 +395,22 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 self.indexfs.search_lat_lon_tim(self.indexBOX)
         params = self.indexfs.read_params()
         return params
+
+    def _bgc_handle_wildcard(self, param_list):
+        """In a list, replace item with wildcard by available BGC parameter(s)"""
+        is_valid_param = lambda x: x in list(argopy.ArgoNVSReferenceTables().tbl(3)["altLabel"])
+
+        results = param_list.copy()
+        for p in param_list:
+            if not is_valid_param(p):
+                if '*' not in p:
+                    raise ValueError("Invalid BGC parameter '%s' (not listed in Argo reference table 3)" % p)
+                else:
+                    match = fnmatch.filter(self._bgc_vlist_avail, p)
+                    if len(match) > 0:
+                        [results.append(m) for m in match]
+                        results.remove(p)
+        return results
 
     @property
     def _minimal_vlist(self):
@@ -453,6 +474,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             [vlist.append(p) for p in plist]
 
         return vlist
+
+
 
     def cname(self):
         """Return a unique string defining the constraints"""
