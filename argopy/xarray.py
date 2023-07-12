@@ -274,6 +274,65 @@ class ArgoAccessor:
             cyc = -np.vectorize(int)(offset * wmo - np.abs(wmo_or_uid))
             return wmo, cyc, drc
 
+    @property
+    def index(self):
+        """Basic profile index"""
+        if self._type != "point":
+            raise InvalidDatasetStructure(
+                "Method only available for a collection of points"
+            )
+        this = self._obj
+        dummy_argo_uid = self._dummy_argo_uid
+
+        idx = xr.DataArray(
+            this["TIME"],
+            dims="N_POINTS",
+            coords={"N_POINTS": this["N_POINTS"]},
+        ).groupby(dummy_argo_uid).max().to_dataset()
+
+        for v in ["PLATFORM_NUMBER", "CYCLE_NUMBER", "LONGITUDE", "LATITUDE"]:
+            idx[v] = xr.DataArray(
+                this[v],
+                dims="N_POINTS",
+                coords={"N_POINTS": this["N_POINTS"]},
+            ).groupby(dummy_argo_uid).max()
+
+        df = idx.to_dataframe()
+        df = (
+            df.reset_index()
+            .rename(
+                columns={
+                    "PLATFORM_NUMBER": "wmo",
+                    "CYCLE_NUMBER": "cyc",
+                    "LONGITUDE": "longitude",
+                    "LATITUDE": "latitude",
+                    "TIME": "date",
+                }
+            )
+            .drop(columns="dummy_argo_uid")
+        )
+        df = df[["date", "latitude", "longitude", "wmo", "cyc"]]
+        return df
+
+    @property
+    def domain(self):
+        """Space/time domain of the dataset
+
+            This is different from a usual argopy ``box`` because dates are in :class:`numpy.datetime64` format.
+        """
+        this_ds = self._obj
+        if 'PRES_ADJUSTED' in this_ds.data_vars:
+            Pmin = np.nanmin((np.min(this_ds['PRES'].values), np.min(this_ds['PRES_ADJUSTED'].values)))
+            Pmax = np.nanmax((np.max(this_ds['PRES'].values), np.max(this_ds['PRES_ADJUSTED'].values)))
+        else:
+            Pmin = np.min(this_ds['PRES'].values)
+            Pmax = np.max(this_ds['PRES'].values)
+
+        return [np.min(this_ds['LONGITUDE'].values), np.max(this_ds['LONGITUDE'].values),
+                np.min(this_ds['LATITUDE'].values), np.max(this_ds['LATITUDE'].values),
+                Pmin, Pmax,
+                np.min(this_ds['TIME'].values), np.max(this_ds['TIME'].values)]
+
     def point2profile(self, drop: bool = False):  # noqa: C901
         """ Transform a collection of points into a collection of profiles
 
