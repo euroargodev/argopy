@@ -24,7 +24,12 @@ from ..options import OPTIONS
 from ..errors import FileSystemHasNoCache, CacheFileNotFound, DataNotFound, \
     InvalidMethod, ErddapHTTPUnauthorized, ErddapHTTPNotFound
 from abc import ABC, abstractmethod
-from ..utilities import Registry, log_argopy_callerstack, drop_variables_not_in_all_datasets
+from ..utilities import (
+    Registry,
+    log_argopy_callerstack,
+    drop_variables_not_in_all_datasets,
+    fill_variables_not_in_all_datasets,
+)
 from ..utils.compute import MyThreadPoolExecutor as MyExecutor
 
 
@@ -582,7 +587,7 @@ class httpstore(argo_store_proto):
     def _open_mfdataset_from_erddap(self,
                               urls: list,
                               concat_dim='rows',
-                              max_workers: int=6,
+                              max_workers: int = 6,
                               preprocess=None,
                               preprocess_opts:{}=None,
                               concat:bool=True,
@@ -607,7 +612,7 @@ class httpstore(argo_store_proto):
                 return ds, True
             except FileNotFoundError:
                 log.debug("This url returned no data: %s" % strUrl(url))
-                return 999, True
+                return DataNotFound(url), True
             except:
                 log.debug("Ignored error with this url: %s" % strUrl(url))
                 return None, False
@@ -617,8 +622,8 @@ class httpstore(argo_store_proto):
                 ds = preprocess(ds, **kwargs)
                 return ds, True
             except:
-                if ds == 999:
-                    return None, True
+                if 'DataNotFound' in str(ds):
+                    return ds, True
                 else:
                     return None, False
 
@@ -627,16 +632,20 @@ class httpstore(argo_store_proto):
                 # Read list of datasets from the list of objects:
                 ds_list = [v for v in dict(sorted(obj_list.items())).values()]
                 # Only keep non-empty results:
-                ds_list = [r for r in ds_list if r is not None]
+                ds_list = [r for r in ds_list if (r is not None and r != DataNotFound)]
+                # log.debug(ds_list)
                 if len(ds_list) > 0:
-                    # log.debug("Nb of dataset to filter: %i" % len(ds_list))
-                    ds_list = drop_variables_not_in_all_datasets(ds_list)
+                    if 'data_vars' in kwargs and kwargs['data_vars'] == 'all':
+                        ds_list = fill_variables_not_in_all_datasets(ds_list, concat_dim=concat_dim)
+                    else:
+                        ds_list = drop_variables_not_in_all_datasets(ds_list)
+
                     log.debug("Nb of dataset to concat: %i" % len(ds_list))
                     # log.debug(concat_dim)
                     # for ds in ds_list:
                     #     log.debug(ds[concat_dim])
                     N = [len(ds[concat_dim]) for ds in ds_list]
-                    log.debug("Dataset size before concat: %s" % N)
+                    log.debug("Dataset sizes before concat: %s" % N)
                     ds = xr.concat(ds_list,
                                    dim=concat_dim,
                                    data_vars='minimal',
@@ -644,6 +653,9 @@ class httpstore(argo_store_proto):
                                    compat='override')
                     log.debug("Dataset size after concat: %i" % len(ds[concat_dim]))
                     return ds, True
+                else:
+                    log.debug("All URLs returned DataNotFound !")
+                    return DataNotFound("All URLs returned DataNotFound !"), True
             except:
                 return None, False
 
@@ -658,6 +670,7 @@ class httpstore(argo_store_proto):
             finalize_fct = finalize
         else:
             finalize_fct = None
+
         run = MyExecutor(
             max_workers=max_workers,
             task_fct=task_fct,
@@ -666,23 +679,35 @@ class httpstore(argo_store_proto):
             finalize_fct=finalize_fct,
             finalize_fct_kwargs=kwargs['final_opts'] if 'final_opts' in kwargs else {},
             task_legend=task_legend,
-            final_legend={'task': 'Processing chunks', 'final': 'Finalizing xarray dataset'},
+            final_legend={'task': 'Processing data chunks',
+                          'final': 'Merging chunks of xarray dataset'},
             show=progress,
         )
         results, failed = run.execute(urls, list_failed=True)
-        if results is not None:
-            if concat:
+
+        if concat:
+            # results = Union[xr.DataSet, DataNotFound, None]
+            log.debug(results)
+            if isinstance(results, xr.Dataset):
                 if not compute_details:
                     return results
                 else:
                     return results, failed, len(results)
+            elif results is None:
+                # log.debug("'results' is None")
+                raise DataNotFound("An error occurred while finalizing the dataset")
             else:
-                return results
+                raise results
+
         elif len(failed) == len(urls):
             raise ValueError(
                 "Errors happened with all URLs, this could be due to an internal impossibility to read returned content")
+
         else:
-            raise DataNotFound(urls)
+            if len([r for r in results if r == DataNotFound]) == len(urls):
+                raise DataNotFound("All URLs returned DataNotFound !")
+            else:
+                return results
 
     def open_mfdataset(self,  # noqa: C901
                        urls,

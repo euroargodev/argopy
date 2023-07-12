@@ -189,8 +189,11 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     self._bgc_vlist_requested.append(p)
 
             self._bgc_measured = to_list(measured)
-            if self._bgc_measured[0] == 'all':
-                measured = self._bgc_vlist_requested
+            if isinstance(measured, str):
+                if measured == 'all':
+                    measured = self._bgc_vlist_requested
+                else:
+                    measured = to_list(measured)
             elif self._bgc_measured[0] is None:
                 measured = []
             elif not argopy.utilities.is_list_of_strings(self._bgc_measured):
@@ -364,7 +367,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def _bgc_vlist_avail(self):
-        """Return the list parameters available for the BGC dataset"""
+        """Return the list of parameters available for this BGC dataset
+
+        Apply search criteria in the index, then retrieve the list of parameters
+        """
         if hasattr(self, "WMO"):
             if hasattr(self, "CYC") and self.CYC is not None:
                 self.indexfs.search_wmo_cyc(self.WMO, self.CYC)
@@ -597,12 +603,17 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         return this_ds
 
-    def to_xarray(self, errors: str = "ignore", add_dm: bool = None, concat=True):  # noqa: C901
+    def to_xarray(self,
+                  errors: str = "ignore",
+                  add_dm: bool = None,
+                  concat: bool = True,
+                  max_workers: int = 6,
+                  ):  # noqa: C901
         """Load Argo data and return a xarray.DataSet"""
 
         URI = self.uri  # Call it once
 
-        # Should we compute and add DATA_MODE of BGC variables:
+        # Should we compute (from the index) and add DATA_MODE for BGC variables:
         add_dm = self.dataset_id == 'bgc' if add_dm is None else bool(add_dm)
 
         # Download data
@@ -632,7 +643,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                         concat_dim='N_POINTS',
                         preprocess=self.post_process,
                         preprocess_opts={'add_dm': False, 'URI': URI},
-                        final_opts={'add_dm': add_dm, 'URI': URI},
+                        final_opts={'add_dm': add_dm, 'URI': URI, 'data_vars': 'all'},
                     )
                 except ClientResponseError as e:
                     raise ErddapServerError(e.message)
@@ -642,25 +653,41 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     URI,
                     method=self.parallel_method,
                     progress=self.progress,
+                    max_workers=max_workers,
                     errors=errors,
                     concat=concat,
                     concat_dim='N_POINTS',
                     preprocess=self.post_process,
                     preprocess_opts={'add_dm': False, 'URI': URI},
-                    # final_opts={'add_dm': add_dm, 'URI': URI},
+                    final_opts={'data_vars': 'all'},
                 )
-                if concat and results is not None:
-                    results = self.post_process(results, **{'add_dm': add_dm, 'URI': URI})
-                # else:
-                #     log.debug(len(results))
+                if concat:
+                    if results is not None:
+                        if self.progress:
+                            print("Final post-processing of your dataset ...")
+                        results = self.post_process(results, **{'add_dm': add_dm, 'URI': URI})
+            except DataNotFound:
+                if self.dataset_id == 'bgc' and len(self._bgc_vlist_measured) > 0:
+                    msg = f"Your BGC request returned no data. This may be due to the 'measured' " \
+                          "argument that imposes constraints impossible to fulfill for the " \
+                          "access point defined (%s), i.e. some " \
+                          "variables in 'measured' are not available in some floats in this " \
+                          "access point." % self.cname()
+                    raise DataNotFound(msg)
+                else:
+                    raise
             except ClientResponseError as e:
                 raise ErddapServerError(e.message)
 
+        if concat:
+            results = self.filter_points(results)
+
+        # Final checks
+        if self.dataset_id == 'bgc' and concat:
+            for v in self._bgc_vlist_measured:
+                assert np.count_nonzero(results[v]) == len(results['N_POINTS'])
+
         return results
-        # if concat:
-        #     return self.post_process(results, add_dm=add_dm, URI=URI)
-        # else:
-        #     return [self.post_process(ds, add_dm=add_dm, URI=URI) for ds in results]
 
     def filter_data_mode(self, ds: xr.Dataset, **kwargs):
         """Apply xarray argo accessor filter_data_mode method"""
@@ -686,6 +713,31 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         ds = ds.argo.filter_researchmode()
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
+        return ds
+
+    def filter_points(self, ds):
+        """ Enforce request criteria
+
+        Sometimes, erddap data postprocessing may modify the content wrt user requirements. So we need
+        to adjust for this.
+        """
+        # Enforce the 'measured' argument for BGC:
+        if self.dataset_id == 'bgc':
+            if len(self._bgc_vlist_measured) == 0:
+                return ds
+            else:
+                this_mask = xr.DataArray(
+                    np.zeros_like(ds["N_POINTS"]),
+                    dims=["N_POINTS"],
+                    coords={"N_POINTS": ds["N_POINTS"]},
+                )
+                log.debug("Delete remaining samples with NaN for %s" % self._bgc_vlist_measured)
+                for v in self._bgc_vlist_measured:
+                    this_mask += ds[v].notnull()
+                this_mask = this_mask == len(self._bgc_vlist_measured)
+                ds = ds.where(this_mask, drop=True)
+
+        ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
     def _add_parameters_data_mode_ds(self, this_ds):
@@ -848,6 +900,8 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         if not self.parallel:
             chunks = "auto"
             chunks_maxsize = {"wmo": 5}
+            if self.dataset_id == 'bgc':
+                chunks_maxsize = {"wmo": 1}
         else:
             chunks = self.chunks
             chunks_maxsize = self.chunks_maxsize
