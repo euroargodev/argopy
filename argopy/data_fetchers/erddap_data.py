@@ -162,14 +162,18 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         self._init_erddapy()
 
         if self.dataset_id == 'bgc':
+            # Create an ArgoIndex instance:
+            # This will be used to:
+            # - retrieve the list of BGC variables to ask to the erddap server
+            # - get <param>_data_mode information because we can't get it from the server
             self.indexfs = kwargs['indexfs'] if 'indexfs' in kwargs else ArgoIndex(
-                # host='ftp://ftp.ifremer.fr/ifremer/argo',
                 index_file='argo_synthetic-profile_index.txt',  # because that's what is in the erddap
                 cache=True,
                 cachedir=cachedir,
                 timeout=5,
             )
 
+            # Handle the 'params' argument:
             self._bgc_params = to_list(params)
             if isinstance(params, str):
                 if params == 'all':
@@ -188,6 +192,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 if p not in self._bgc_vlist_requested:
                     self._bgc_vlist_requested.append(p)
 
+            # Handle the 'measured' argument:
             self._bgc_measured = to_list(measured)
             if isinstance(measured, str):
                 if measured == 'all':
@@ -633,6 +638,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                         log.debug(str(e))
                     else:
                         raise ErddapServerError(e.message)
+
             else:
                 try:
                     results = self.fs.open_mfdataset(
@@ -645,8 +651,12 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                         concat_dim='N_POINTS',
                         preprocess=self.post_process,
                         preprocess_opts={'add_dm': False, 'URI': URI},
-                        final_opts={'add_dm': add_dm, 'URI': URI, 'data_vars': 'all'},
+                        final_opts={'data_vars': 'all'},
                     )
+                    if results is not None:
+                        if self.progress:
+                            print("Final post-processing of the merged dataset () ...")
+                        results = self.post_process(results, **{'add_dm': add_dm, 'URI': URI})
                 except ClientResponseError as e:
                     raise ErddapServerError(e.message)
         else:
@@ -743,25 +753,28 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         return ds
 
     def _add_parameters_data_mode_ds(self, this_ds):
-        """Add <PARAM>_DATA_MODE variables to a dataset
+        """Compute and add <PARAM>_DATA_MODE variables to a xarray dataset
 
         This requires an ArgoIndex instance as Pandas Dataframe
+        todo: Code this for the pyarrow index backend
 
         This method consume a collection of points
         """
         # import time
 
         def list_WMO_CYC(this_ds):
-            """Given a dataset, return a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) tupple"""
+            """Given a dataset, return a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) tuple"""
             profiles = []
             for wmo, grp in this_ds.groupby('PLATFORM_NUMBER'):
                 [profiles.append((int(wmo), int(cyc))) for cyc in np.unique(grp['CYCLE_NUMBER'])]
             return profiles
 
         def list_WMO(this_ds):
+            """Return all possible WMO as a list"""
             return to_list(np.unique(this_ds['PLATFORM_NUMBER'].values))
 
         def complete_df(this_df, params):
+            """Addd 'wmo', 'cyc' and '<param>_data_mode' columns to this dataframe"""
             this_df["wmo"] = this_df["file"].apply(lambda x: int(x.split("/")[1]))
             this_df["cyc"] = this_df["file"].apply(lambda x: int(x.split("_")[-1].split('.nc')[0].replace("D", "")))
             this_df["variables"] = df["parameters"].apply(lambda x: x.split())
@@ -772,6 +785,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             return this_df
 
         def read_DM(this_df, wmo, cyc, param):
+            """Return one parameter data mode for a given wmo/cyc and index dataframe"""
             filt = []
             filt.append(this_df['wmo'].isin([wmo]))
             filt.append(this_df['cyc'].isin([cyc]))
