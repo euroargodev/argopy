@@ -351,26 +351,12 @@ class proto_MonitoredPoolExecutor_terminal(proto_MonitoredPoolExecutor_monitor):
 
     def __init__(
             self,
+            icon: bool = False,
             **kwargs,
     ):
         super().__init__(**kwargs)
+        self._text_only = ~bool(icon)
         self._reprinter = None
-
-    # @property
-    # def COLORS(self):
-    #     COLORS = super().COLORS
-    #     ICONS = {
-    #         "gray": "⏸",
-    #         "yellow": "⏺",
-    #         "blue": "🔄",
-    #         "cyan": "⏯",
-    #         "red": "🔴",
-    #         "green": "🟢",
-    #     }
-    #     for key in COLORS.keys():
-    #         color, label = COLORS[key]
-    #         COLORS[key] = (color, label, ICONS[color])
-    #     return COLORS
 
     class _Reprinter:
         def __init__(self, text: str = ""):
@@ -458,14 +444,12 @@ class proto_MonitoredPoolExecutor_terminal(proto_MonitoredPoolExecutor_monitor):
                 else:
                     return f"{PREF}{getattr(C, color)}m" + text + RESET
 
-        text_only = False
-
-        # Text only:
-        if text_only:
+        # Text only (no icons):
+        if self._text_only:
             # Create a legend:
             legend = []
             for key in self.COLORS.keys():
-                color, desc = self.COLORS[key]
+                color, desc, icon = self.COLORS[key]
                 legend.append(f("%s: %s" % (key, desc), color))
             legend = " | ".join(legend)
 
