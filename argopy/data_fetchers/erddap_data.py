@@ -96,13 +96,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         cache: bool = False,
         cachedir: str = "",
         parallel: bool = False,
-        parallel_method: str = "thread",
+        parallel_method: str = "erddap",  # Alternative to 'threads' with a dashboard
         progress: bool = False,
         chunks: str = "auto",
         chunks_maxsize: dict = {},
         api_timeout: int = 0,
         params: Union[str, list] = 'all',
-        measured: Union[str, list] = 'all',
+        measured: Union[str, list] = None,
         **kwargs,
     ):
         """Instantiate an ERDDAP Argo data fetcher
@@ -134,9 +134,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             List of BGC essential variables to retrieve, i.e. that will be in the output :class:`xr.DataSet``.
             By default, this is set to ``all``, i.e. any variable found in at least of the profile in the data
             selection will be included in the output.
-        measured: Union[str, list] (optional, default='all')
-            List of BGC essential variables that can't be NaN. This is an easy way to reduce the size of the
-            :class:`xr.DataSet`` to points where all variables have been measured.
+        measured: Union[str, list] (optional, default=None)
+            List of BGC essential variables that can't be NaN. If set to 'all', this is an easy way to reduce the size of the
+            :class:`xr.DataSet`` to points where all variables have been measured. Otherwise, provide a simple list of
+            variables.
         """
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.definition = "Ifremer erddap Argo data fetcher"
@@ -148,9 +149,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         if not isinstance(parallel, bool):
             parallel_method = parallel
             parallel = True
-        if parallel_method not in ["thread", "seq"]:
+        if parallel_method not in ["thread", "seq", "erddap"]:
             raise ValueError(
-                "erddap only support multi-threading, use 'thread' instead of '%s'"
+                "erddap only support multi-threading, use 'thread' or 'erddap' instead of '%s'"
                 % parallel_method
             )
         self.parallel = parallel
@@ -165,7 +166,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         if self.dataset_id == 'bgc':
             # Create an ArgoIndex instance:
             # This will be used to:
-            # - retrieve the list of BGC variables to ask to the erddap server
+            # - retrieve the list of BGC variables to ask the erddap server
             # - get <param>_data_mode information because we can't get it from the server
             self.indexfs = kwargs['indexfs'] if 'indexfs' in kwargs else ArgoIndex(
                 index_file='argo_synthetic-profile_index.txt',  # because that's what is in the erddap
@@ -173,6 +174,11 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 cachedir=cachedir,
                 timeout=5,
             )
+
+            # To handle bugs in the erddap server, we need the list of parameters on the server:
+            # todo: Remove this when bug fixed
+            data = self.fs.open_json(self.server + "/info/ArgoFloats-synthetic-BGC/index.json")
+            self._bgc_vlist_erddap = [row[1] for row in data['table']['rows'] if row[0] == 'variable']
 
             # Handle the 'params' argument:
             self._bgc_params = to_list(params)
@@ -212,14 +218,15 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             self._bgc_vlist_measured = [m.upper() for m in measured]
             # self._bgc_vlist_measured = self._bgc_handle_wildcard(self._bgc_vlist_measured)
 
+
     def __repr__(self):
         summary = ["<datafetcher.erddap>"]
         summary.append("Name: %s" % self.definition)
         summary.append("API: %s" % self.server)
         summary.append("Domain: %s" % format_oneline(self.cname()))
         if self.dataset_id == 'bgc':
-            summary.append("BGC requested variables: %s" % self._bgc_vlist_requested)
-            summary.append("BGC measured variables: %s" % self._bgc_vlist_measured)
+            summary.append("BGC variables: %s" % self._bgc_vlist_requested)
+            summary.append("BGC 'must be measured' variables: %s" % self._bgc_vlist_measured)
         return "\n".join(summary)
 
     @property
@@ -394,7 +401,17 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             else:
                 self.indexfs.search_lat_lon_tim(self.indexBOX)
         params = self.indexfs.read_params()
-        return params
+
+        # Temporarily remove from params those missing on the erddap server:
+        # params = [p for p in params if p.lower() in self._bgc_vlist_erddap]
+        results = []
+        for p in params:
+            if p.lower() in self._bgc_vlist_erddap:
+                results.append(p)
+            else:
+                log.error("Removed '%s' because it's not available on the erddap, but it must !" % p)
+
+        return results
 
     def _bgc_handle_wildcard(self, param_list):
         """In a list, replace item with wildcard by available BGC parameter(s)"""
@@ -594,7 +611,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         # With BGC, some points may not have a PLATFORM_NUMBER !
         # So, we remove these
-        if '999' in to_list(np.unique(this_ds['PLATFORM_NUMBER'].values)):
+        if self.dataset_id == 'bgc' and '999' in to_list(np.unique(this_ds['PLATFORM_NUMBER'].values)):
             log.error("Found points without WMO !")
             this_ds = this_ds.where(this_ds['PLATFORM_NUMBER'] != '999', drop=True)
             this_ds = this_ds.argo.cast_types(overwrite=True)
@@ -627,9 +644,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         this_ds.attrs["Fetched_uri"] = URI
         this_ds = this_ds[np.sort(this_ds.data_vars)]
 
-        n_zero = np.count_nonzero(np.isnan(np.unique(this_ds['PLATFORM_NUMBER'])))
-        if n_zero > 0:
-            log.error('Some points (%i) have no PLATFORM_NUMBER !' % n_zero)
+        if self.dataset_id == 'bgc':
+            n_zero = np.count_nonzero(np.isnan(np.unique(this_ds['PLATFORM_NUMBER'])))
+            if n_zero > 0:
+                log.error('Some points (%i) have no PLATFORM_NUMBER !' % n_zero)
 
         return this_ds
 
@@ -666,7 +684,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 try:
                     results = self.fs.open_mfdataset(
                         URI,
-                        method="thread",
+                        method="erddap",
                         max_workers=1,
                         progress=self.progress,
                         errors=errors,
@@ -686,7 +704,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             try:
                 results = self.fs.open_mfdataset(
                     URI,
-                    method=self.parallel_method,
+                    method="erddap",
                     progress=self.progress,
                     max_workers=max_workers,
                     errors=errors,
@@ -718,9 +736,18 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             results = self.filter_points(results)
 
         # Final checks
-        if self.dataset_id == 'bgc' and concat:
+        if self.dataset_id == 'bgc' and concat and len(self._bgc_vlist_measured) > 0:
+            empty = []
             for v in self._bgc_vlist_measured:
-                assert np.count_nonzero(results[v]) == len(results['N_POINTS'])
+                if np.count_nonzero(results[v]) != len(results['N_POINTS']):
+                    empty.append(v)
+            if len(empty) > 0:
+                msg = f"After processing, your BGC request still return final data with NaNs (%s). " \
+                      f"This may be due to the 'measured' argument ('%s') that imposes a no-NaN constraint " \
+                      f"impossible to fulfill for the access point defined (%s)]. " \
+                      f"\nUsing the 'measured' argument, you can try to minimize the list of variables to " \
+                      f"return without NaNs, or set it to 'None' to return all samples." % (",".join(to_list(v)), ",".join(self._bgc_measured), self.cname())
+                raise ValueError(msg)
 
         return results
 
@@ -945,6 +972,8 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         else:
             chunks = self.chunks
             chunks_maxsize = self.chunks_maxsize
+            if self.dataset_id == 'bgc':
+                chunks_maxsize['wmo'] = 1
         self.Chunker = Chunker(
             {"wmo": self.WMO}, chunks=chunks, chunksize=chunks_maxsize
         )
