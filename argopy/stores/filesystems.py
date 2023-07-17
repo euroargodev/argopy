@@ -745,6 +745,8 @@ class httpstore(argo_store_proto):
                     - ``process``: use a pool of at most ``max_workers`` processes
                     - :class:`distributed.client.Client`: Experimental, expect this method to fail !
                     - ``seq``: open data sequentially, no parallelization applied
+                    - ``erddap``:  use a pool of at most ``max_workers`` threads, comes with a nice dashboard dedicated
+                    to erddap server requests.
             progress: bool, default: False
                 Display a progress bar
             concat: bool, default: True
@@ -780,53 +782,52 @@ class httpstore(argo_store_proto):
         failed = []
 
         ################################
+        if method == 'erddap':
+
+            return self._open_mfdataset_from_erddap(
+                          urls=urls,
+                          concat_dim=concat_dim,
+                          max_workers=max_workers,
+                          preprocess=preprocess,
+                          preprocess_opts=preprocess_opts,
+                          concat=concat,
+                          progress=progress,
+                          compute_details=compute_details,
+                          *args,
+                          **kwargs,
+            )
+
+        ################################
         if method == 'thread':
 
-            if 'erddap' in urls[0]:
+            ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
 
-                return self._open_mfdataset_from_erddap(
-                              urls=urls,
-                              concat_dim=concat_dim,
-                              max_workers=max_workers,
-                              preprocess=preprocess,
-                              preprocess_opts=preprocess_opts,
-                              concat=concat,
-                              progress=progress,
-                              compute_details=compute_details,
-                              *args,
-                              **kwargs,
-                )
+            with ConcurrentExecutor as executor:
+                future_to_url = {executor.submit(self._mfprocessor_dataset,
+                                                 url,
+                                                 preprocess=preprocess,
+                                                 preprocess_opts=preprocess_opts, *args, **kwargs): url
+                                 for url in urls}
+                futures = concurrent.futures.as_completed(future_to_url)
+                if progress:
+                    futures = tqdm(futures, total=len(urls), disable='disable' in [progress])
 
-            else:
-
-                ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
-
-                with ConcurrentExecutor as executor:
-                    future_to_url = {executor.submit(self._mfprocessor_dataset,
-                                                     url,
-                                                     preprocess=preprocess,
-                                                     preprocess_opts=preprocess_opts, *args, **kwargs): url
-                                     for url in urls}
-                    futures = concurrent.futures.as_completed(future_to_url)
-                    if progress:
-                        futures = tqdm(futures, total=len(urls), disable='disable' in [progress])
-
-                    for future in futures:
-                        data = None
-                        try:
-                            data = future.result()
-                        except Exception:
-                            failed.append(future_to_url[future])
-                            if errors == 'ignore':
-                                log.debug("Ignored error with this url: %s" % strUrl(future_to_url[future]))
-                                # See fsspec.http logger for more
-                                pass
-                            elif errors == 'silent':
-                                pass
-                            else:
-                                raise
-                        finally:
-                            results.append(data)
+                for future in futures:
+                    data = None
+                    try:
+                        data = future.result()
+                    except Exception:
+                        failed.append(future_to_url[future])
+                        if errors == 'ignore':
+                            log.debug("Ignored error with this url: %s" % strUrl(future_to_url[future]))
+                            # See fsspec.http logger for more
+                            pass
+                        elif errors == 'silent':
+                            pass
+                        else:
+                            raise
+                    finally:
+                        results.append(data)
 
         ################################
         elif method == 'process':
