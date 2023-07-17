@@ -1,7 +1,6 @@
 """
 This sub-module provides utilities for miscellaneous computation tasks
 
-
 We construct the MyThreadPoolExecutor class,
 we create a series of classes using multiple inheritance to implement monitoring features
 
@@ -16,6 +15,7 @@ try:
     from importlib.resources import files
 except ImportError:
     from importlib_resources import files
+
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import as_completed
 from threading import Lock
@@ -41,24 +41,6 @@ def _load_static_files():
         files(package).joinpath(resource).read_text(encoding="utf-8")
         for package, resource in STATIC_FILES
     ]
-
-class barebone(ABC):
-    pass
-    # @abstractmethod
-    # def task_fct(self, obj, **kwargs) -> (object, bool):
-    #     raise NotImplementedError("Not implemented")
-    #
-    # @abstractmethod
-    # def postprocessing_fct(self, obj, **kwargs) -> (object, bool):
-    #     raise NotImplementedError("Not implemented")
-    #
-    # @abstractmethod
-    # def callback_fct(self, obj, **kwargs) -> (object, bool):
-    #     raise NotImplementedError("Not implemented")
-    #
-    # @abstractmethod
-    # def finalize_fct(self, obj, **kwargs) -> (list, bool):
-    #     raise NotImplementedError("Not implemented")
 
 
 class proto_MonitoredThreadPoolExecutor(ABC):
