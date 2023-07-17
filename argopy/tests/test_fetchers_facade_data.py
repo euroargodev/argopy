@@ -90,6 +90,8 @@ class Test_Facade:
     def test_warnings(self):
         with pytest.warns(UserWarning):
             ArgoDataFetcher(src='erddap', ds='bgc', mode='standard')
+        with pytest.warns(UserWarning):
+            ArgoDataFetcher(src='erddap', ds='bgc', mode='research')
 
     def test_no_uri(self):
         with pytest.raises(InvalidFetcherAccessPoint):
@@ -104,7 +106,6 @@ class Test_Facade:
         assert isinstance(self.__get_fetcher()[1].to_dataframe(), pd.core.frame.DataFrame)
         with pytest.raises(InvalidFetcher):
             assert self.__get_fetcher()[0].to_dataframe()
-
 
     params = [(p, c) for p in [True, False] for c in [False]]
     ids_params = ["full=%s, coriolis_id=%s" % (p[0], p[1]) for p in params]
