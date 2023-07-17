@@ -278,21 +278,25 @@ class filestore(argo_store_proto):
         -------
         :class:`xarray.DataSet`
         """
+        xr_opts = {}
+        if 'xr_opts' in kwargs:
+            xr_opts.update(kwargs['xr_opts'])
+
         with self.open(path) as of:
             # log.debug("Opening dataset: '%s'" % path)  # Redundant with fsspec logger
-            ds = xr.open_dataset(of, *args, **kwargs)
+            ds = xr.open_dataset(of, *args, **xr_opts)
             ds.load()
         if "source" not in ds.encoding:
             if isinstance(path, str):
                 ds.encoding["source"] = path
         return ds.copy()
 
-    def _mfprocessor(self, url, preprocess=None, *args, **kwargs):
+    def _mfprocessor(self, url, preprocess=None, preprocess_opts={}, open_dataset_opts={}, *args, **kwargs):
         # Load data
-        ds = self.open_dataset(url, *args, **kwargs)
+        ds = self.open_dataset(url, **open_dataset_opts)
         # Pre-process
         if isinstance(preprocess, types.FunctionType) or isinstance(preprocess, types.MethodType):
-            ds = preprocess(ds)
+            ds = preprocess(ds, **preprocess_opts)
         return ds
 
     def open_mfdataset(self,  # noqa: C901
@@ -303,6 +307,8 @@ class filestore(argo_store_proto):
                        progress: bool = False,
                        concat: bool = True,
                        preprocess=None,
+                       preprocess_opts={},
+                       open_dataset_opts={},
                        errors: str = 'ignore',
                        *args, **kwargs):
         """ Open multiple urls as a single xarray dataset.
@@ -353,7 +359,10 @@ class filestore(argo_store_proto):
 
             with ConcurrentExecutor as executor:
                 future_to_url = {executor.submit(self._mfprocessor, url,
-                                                 preprocess=preprocess, *args, **kwargs): url
+                                                 preprocess=preprocess,
+                                                 preprocess_opts=preprocess_opts,
+                                                 open_dataset_opts=open_dataset_opts,
+                                                 *args, **kwargs): url
                                  for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
@@ -381,10 +390,20 @@ class filestore(argo_store_proto):
             if progress:
                 from dask.diagnostics import ProgressBar
                 with ProgressBar():
-                    futures = method.map(self._mfprocessor, urls, preprocess=preprocess, *args, **kwargs)
+                    futures = method.map(self._mfprocessor,
+                                         urls,
+                                         preprocess=preprocess,
+                                         preprocess_opts=preprocess_opts,
+                                         open_dataset_opts=open_dataset_opts,
+                                         *args, **kwargs)
                     results = method.gather(futures)
             else:
-                futures = method.map(self._mfprocessor, urls, preprocess=preprocess, *args, **kwargs)
+                futures = method.map(self._mfprocessor,
+                                     urls,
+                                     preprocess=preprocess,
+                                     preprocess_opts=preprocess_opts,
+                                     open_dataset_opts=open_dataset_opts,
+                                     *args, **kwargs)
                 results = method.gather(futures)
 
         elif method in ['seq', 'sequential']:
@@ -394,7 +413,11 @@ class filestore(argo_store_proto):
             for url in urls:
                 data = None
                 try:
-                    data = self._mfprocessor(url, preprocess=preprocess, *args, **kwargs)
+                    data = self._mfprocessor(url,
+                                             preprocess=preprocess,
+                                             preprocess_opts=preprocess_opts,
+                                             open_dataset_opts=open_dataset_opts,
+                                             *args, **kwargs)
                 except Exception as e:
                     if errors == 'ignore':
                         log.debug(
@@ -852,7 +875,9 @@ class httpstore(argo_store_proto):
                 future_to_url = {executor.submit(self._mfprocessor_dataset,
                                                  url,
                                                  preprocess=preprocess,
-                                                 preprocess_opts=preprocess_opts, *args, **kwargs): url
+                                                 preprocess_opts=preprocess_opts,
+                                                 open_dataset_opts=open_dataset_opts,
+                                                 *args, **kwargs): url
                                  for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
@@ -884,12 +909,18 @@ class httpstore(argo_store_proto):
                 with ProgressBar():
                     futures = method.map(self._mfprocessor_dataset,
                                          urls,
-                                         preprocess=preprocess, *args, **kwargs)
+                                         preprocess=preprocess,
+                                         preprocess_opts=preprocess_opts,
+                                         open_dataset_opts=open_dataset_opts,
+                                         *args, **kwargs)
                     results = method.gather(futures)
             else:
                 futures = method.map(self._mfprocessor_dataset,
                                      urls,
-                                     preprocess=preprocess, *args, **kwargs)
+                                     preprocess=preprocess,
+                                     preprocess_opts=preprocess_opts,
+                                     open_dataset_opts=open_dataset_opts,
+                                     *args, **kwargs)
                 results = method.gather(futures)
 
         ################################
@@ -903,6 +934,7 @@ class httpstore(argo_store_proto):
                     data = self._mfprocessor_dataset(url,
                                                      preprocess=preprocess,
                                                      preprocess_opts=preprocess_opts,
+                                                     open_dataset_opts=open_dataset_opts,
                                                      *args,
                                                      **kwargs)
                 except Exception:
@@ -1137,7 +1169,11 @@ class ftpstore(httpstore):
         # except aiohttp.ClientResponseError as e:
             raise
 
-        ds = xr.open_dataset(data, *args, **kwargs)
+        xr_opts = {}
+        if 'xr_opts' in kwargs:
+            xr_opts.update(kwargs['xr_opts'])
+        ds = xr.open_dataset(data, *args, **xr_opts)
+        
         if "source" not in ds.encoding:
             if isinstance(url, str):
                 ds.encoding["source"] = url
@@ -1145,9 +1181,9 @@ class ftpstore(httpstore):
         self.register(url)
         return ds
 
-    def _mfprocessor_dataset(self, url, preprocess=None, preprocess_opts={}, *args, **kwargs):
+    def _mfprocessor_dataset(self, url, preprocess=None, preprocess_opts={}, open_dataset_opts={}, *args, **kwargs):
         # Load data
-        ds = self.open_dataset(url, *args, **kwargs)
+        ds = self.open_dataset(url, **open_dataset_opts)
         # Pre-process
         if isinstance(preprocess, types.FunctionType) or isinstance(preprocess, types.MethodType):
             ds = preprocess(ds, **preprocess_opts)
@@ -1162,6 +1198,7 @@ class ftpstore(httpstore):
                        concat_dim='row',
                        preprocess=None,
                        preprocess_opts={},
+                       open_dataset_opts={},
                        errors: str = 'ignore',
                        *args, **kwargs):
         """ Open multiple ftp urls as a single xarray dataset.
@@ -1222,7 +1259,9 @@ class ftpstore(httpstore):
             with ConcurrentExecutor as executor:
                 future_to_url = {executor.submit(self._mfprocessor_dataset, url,
                                                  preprocess=preprocess,
-                                                 preprocess_opts=preprocess_opts, *args, **kwargs): url for url in urls}
+                                                 preprocess_opts=preprocess_opts,
+                                                 open_dataset_opts=open_dataset_opts,
+                                                 *args, **kwargs): url for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
                     futures = tqdm(futures, total=len(urls), disable='disable' in [progress])
@@ -1253,6 +1292,8 @@ class ftpstore(httpstore):
                     futures = method.map(self._mfprocessor_dataset,
                                          urls,
                                          preprocess=preprocess,
+                                         preprocess_opts=preprocess_opts,
+                                         open_dataset_opts=open_dataset_opts,
                                          *args, **kwargs)
                     results = method.gather(futures)
             else:
@@ -1272,6 +1313,7 @@ class ftpstore(httpstore):
                     data = self._mfprocessor_dataset(url,
                                                      preprocess=preprocess,
                                                      preprocess_opts=preprocess_opts,
+                                                     open_dataset_opts=open_dataset_opts,
                                                      *args, **kwargs)
                 except Exception:
                     failed.append(url)
