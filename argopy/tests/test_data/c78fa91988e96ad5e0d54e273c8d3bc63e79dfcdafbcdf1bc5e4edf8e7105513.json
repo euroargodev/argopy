@@ -5,7 +5,7 @@
     "alternative" : "HISTORY_STEP",
     "creator" : "Argo Data Management Team",
     "date" : "2020-04-08 03:00:04.0",
-    "description" : "Data processing step codes for history record.",
+    "description" : "Data processing step codes for history record. Argo netCDF variable TRANS_SYSTEM is populated by R12 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo history processing step codes",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -306,6 +306,9 @@
     "creator" : {
       "@id" : "http://purl.org/dc/terms/creator"
     },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
+    },
     "title" : {
       "@id" : "http://purl.org/dc/terms/title"
     },
@@ -314,9 +317,6 @@
     },
     "publisher" : {
       "@id" : "http://purl.org/dc/terms/publisher"
-    },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
     },
     "seeAlso" : {
       "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",

@@ -5,7 +5,7 @@
     "alternative" : "PROF_QC_FLAG",
     "creator" : "Argo Data Management Team",
     "date" : "2020-04-04 15:31:03.0",
-    "description" : "Quality control flag scale for whole profiles.",
+    "description" : "Quality control flag scale for whole profiles. Argo netCDF variables PROFILE_<PARAMETER>_QC are populated by RP2 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo profile quality control flags",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -250,6 +250,9 @@
     "RE_RegisterOwner" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"
     },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
+    },
     "RE_RegisterManager" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
     },
@@ -259,9 +262,6 @@
     },
     "title" : {
       "@id" : "http://purl.org/dc/terms/title"
-    },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
     },
     "seeAlso" : {
       "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",

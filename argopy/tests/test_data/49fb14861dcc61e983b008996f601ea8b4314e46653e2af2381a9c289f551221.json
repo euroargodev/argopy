@@ -5,7 +5,7 @@
     "alternative" : "VERTICAL_SAMPLING_SCHEME",
     "creator" : "Argo Data Management Team",
     "date" : "2020-05-04 03:00:04.0",
-    "description" : "Profile sampling schemes and sampling methods",
+    "description" : "Profile sampling schemes and sampling methods. Argo netCDF variable VERTICAL_SAMPLING_SCHEME is populated by R16 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo vertical sampling schemes",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -456,9 +456,6 @@
     "title" : {
       "@id" : "http://purl.org/dc/terms/title"
     },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
-    },
     "RE_RegisterManager" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
     },
@@ -474,6 +471,9 @@
     "seeAlso" : {
       "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",
       "@type" : "@id"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
     },
     "creator" : {
       "@id" : "http://purl.org/dc/terms/creator"

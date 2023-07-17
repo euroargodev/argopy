@@ -131,6 +131,8 @@ components:
           type: string
         fax:
           type: string
+        grid:
+          type: string
         gtsCcccs:
           $ref: '#/components/schemas/GtsCccc'
         id:
@@ -213,10 +215,10 @@ components:
           $ref: '#/components/schemas/Agency'
         agencyRole:
           $ref: '#/components/schemas/AgencyRole'
-        assemblyTypeId:
-          type: number
         dacType:
           $ref: '#/components/schemas/DacType'
+        id:
+          type: number
         ptf:
           $ref: '#/components/schemas/Ptf'
       type: object
@@ -245,6 +247,8 @@ components:
           type: number
         role:
           $ref: '#/components/schemas/AgencyRole'
+        site:
+          $ref: '#/components/schemas/Site'
         siteId:
           type: number
       type: object
@@ -288,6 +292,8 @@ components:
           type: string
         agency:
           $ref: '#/components/schemas/Agency'
+        betaTester:
+          type: number
         contactPtfRoles:
           $ref: '#/components/schemas/ContactPtfRole'
         contactSiteRoles:
@@ -325,6 +331,8 @@ components:
           $ref: '#/components/schemas/ProgramContact'
         ptfDeployments:
           $ref: '#/components/schemas/PtfDeployment'
+        ptfHistories:
+          $ref: '#/components/schemas/PtfUpdateHistory'
         ptfModels:
           $ref: '#/components/schemas/PtfModel'
         qrCodes:
@@ -348,12 +356,14 @@ components:
       properties:
         contact:
           $ref: '#/components/schemas/Contact'
+        id:
+          type: number
         ptf:
           $ref: '#/components/schemas/Ptf'
         role:
           $ref: '#/components/schemas/Role'
-        sensorModelId:
-          type: number
+        sensorModel:
+          $ref: '#/components/schemas/SensorModel'
       type: object
     ContactSiteRole:
       properties:
@@ -361,6 +371,8 @@ components:
           $ref: '#/components/schemas/Contact'
         role:
           $ref: '#/components/schemas/Role'
+        site:
+          $ref: '#/components/schemas/Site'
         siteId:
           type: number
       type: object
@@ -445,6 +457,8 @@ components:
         arrivalDate:
           format: date-time
           type: string
+        arrivalPort:
+          type: string
         autonomy:
           type: number
         cooperations:
@@ -459,6 +473,8 @@ components:
           $ref: '#/components/schemas/CruiseContact'
         cruiseCountries:
           $ref: '#/components/schemas/CruiseCountry'
+        cruiseParent:
+          $ref: '#/components/schemas/Cruise'
         cruisePrograms:
           $ref: '#/components/schemas/CruiseProgram'
         cruiseSensorModels:
@@ -477,10 +493,14 @@ components:
         departureDate:
           format: date-time
           type: string
+        departurePort:
+          type: string
         description:
           type: string
         embarkCapacity:
           type: number
+        expocode:
+          type: string
         flexibleRoute:
           type: number
         frequency:
@@ -495,6 +515,8 @@ components:
           $ref: '#/components/schemas/Image'
         insertDate:
           format: date-time
+          type: string
+        mfpId:
           type: string
         mobDate:
           format: date-time
@@ -677,6 +699,8 @@ components:
       properties:
         description:
           type: string
+        id:
+          type: number
         name:
           type: string
         ref:
@@ -983,6 +1007,8 @@ components:
       type: object
     Latency:
       properties:
+        id:
+          type: number
         minutes:
           type: number
         name:
@@ -1168,7 +1194,7 @@ components:
           type: string
         nameShort:
           type: string
-        ptfs1:
+        ptfs:
           $ref: '#/components/schemas/Ptf'
         ptfsBackup:
           $ref: '#/components/schemas/Ptf'
@@ -1385,6 +1411,8 @@ components:
           type: number
         originTable:
           type: string
+        ptfs:
+          $ref: '#/components/schemas/Ptf'
       type: object
     Parameter:
       properties:
@@ -1453,6 +1481,8 @@ components:
           $ref: '#/components/schemas/PtfModel'
         description:
           type: string
+        id:
+          type: number
         images:
           $ref: '#/components/schemas/Image'
         linePrograms:
@@ -1544,6 +1574,8 @@ components:
           $ref: '#/components/schemas/ObsLatest'
         lines:
           $ref: '#/components/schemas/Line'
+        locSystem:
+          $ref: '#/components/schemas/LocSystem'
         metadataAvailable:
           type: number
         mzmsPtfCountries:
@@ -1580,8 +1612,12 @@ components:
           $ref: '#/components/schemas/PtfPtfStatus'
         ptfSoftware:
           $ref: '#/components/schemas/PtfSoftware'
+        ptfStatistics:
+          $ref: '#/components/schemas/PtfStatistics'
         ptfStatus:
           $ref: '#/components/schemas/PtfStatus'
+        ptfUpdateHistories:
+          $ref: '#/components/schemas/PtfUpdateHistory'
         ptfVariables:
           $ref: '#/components/schemas/PtfVariable'
         qcFeedbacks:
@@ -1600,8 +1636,6 @@ components:
           $ref: '#/components/schemas/Tag'
         telecom:
           $ref: '#/components/schemas/Telecom'
-        trackingSystem:
-          $ref: '#/components/schemas/LocSystem'
         updateDate:
           format: date-time
           type: string
@@ -1629,6 +1663,8 @@ components:
       properties:
         description:
           type: string
+        id:
+          type: number
         name:
           type: string
         ptfAncillaryDeviceVersions:
@@ -1636,6 +1672,8 @@ components:
       type: object
     PtfAncillaryDeviceVersion:
       properties:
+        id:
+          type: number
         ptfAncillaryDeviceName:
           $ref: '#/components/schemas/PtfAncillaryDeviceName'
         ptfModel:
@@ -1777,6 +1815,8 @@ components:
           $ref: '#/components/schemas/PtfHardware'
         ptfHardwares1:
           $ref: '#/components/schemas/PtfHardware'
+        ptfModelFirmwares:
+          $ref: '#/components/schemas/PtfModelFirmware'
         serialRef:
           type: string
         softwareName:
@@ -1905,8 +1945,6 @@ components:
           type: number
         apiWmoIdType:
           $ref: '#/components/schemas/ApiWmoIdType'
-        apiWmoIdTypeId:
-          type: number
         commercial:
           type: number
         contact:
@@ -1939,6 +1977,12 @@ components:
           type: string
         network:
           $ref: '#/components/schemas/Network'
+        programs:
+          $ref: '#/components/schemas/Program'
+        ptfAncillaryDeviceVersions:
+          $ref: '#/components/schemas/PtfAncillaryDeviceVersion'
+        ptfModelFirmwares:
+          $ref: '#/components/schemas/PtfModelFirmware'
         ptfType:
           $ref: '#/components/schemas/PtfType'
         ptfs:
@@ -1953,6 +1997,13 @@ components:
           type: number
         width:
           type: number
+      type: object
+    PtfModelFirmware:
+      properties:
+        ptfFirmware:
+          $ref: '#/components/schemas/PtfFirmware'
+        ptfModel:
+          $ref: '#/components/schemas/PtfModel'
       type: object
     PtfPtfStatus:
       properties:
@@ -2064,6 +2115,24 @@ components:
         wigosCode:
           type: string
       type: object
+    PtfUpdateHistory:
+      properties:
+        contact:
+          $ref: '#/components/schemas/Contact'
+        fieldName:
+          type: string
+        newValue:
+          type: string
+        prevValue:
+          type: string
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        themeView:
+          type: string
+        updateDate:
+          format: date-time
+          type: string
+      type: object
     PtfVariable:
       properties:
         accuracy:
@@ -2118,6 +2187,10 @@ components:
           $ref: '#/components/schemas/Ptf'
         range:
           type: string
+        rangeMax:
+          type: number
+        rangeMin:
+          type: number
         resolution:
           type: string
         samplingRate:
@@ -2126,6 +2199,8 @@ components:
           type: string
         sensorExposure:
           $ref: '#/components/schemas/SensorExposure'
+        sensorGroup:
+          type: string
         sensorLocation:
           $ref: '#/components/schemas/SensorLocation'
         sensorModel:
@@ -2141,10 +2216,12 @@ components:
           type: string
         timeOffset:
           type: number
+        uncertainty:
+          type: string
+        unit:
+          $ref: '#/components/schemas/Unit'
         variable:
           $ref: '#/components/schemas/Variable'
-        variableId:
-          type: number
         weblink:
           $ref: '#/components/schemas/Weblink'
       type: object
@@ -2469,23 +2546,25 @@ components:
           type: string
         range:
           type: string
-        resolution:
+        rangeMax:
           type: number
+        rangeMin:
+          type: number
+        resolution:
+          type: string
         sensorModel:
           $ref: '#/components/schemas/SensorModel'
-        sensorModelId:
-          type: number
         sensorType:
           $ref: '#/components/schemas/SensorType'
-        sensorTypeId:
-          type: number
         unit:
-          type: string
+          $ref: '#/components/schemas/Unit'
       type: object
     SensorStatus:
       properties:
         description:
           type: string
+        id:
+          type: number
         name:
           type: string
         ptfVariables:
@@ -2529,35 +2608,43 @@ components:
           type: string
         id:
           type: number
-        locationId:
-          type: number
         program:
           $ref: '#/components/schemas/Program'
         ptf:
           $ref: '#/components/schemas/Ptf'
         sensorModel:
           $ref: '#/components/schemas/SensorModel'
+        serviceLocation:
+          $ref: '#/components/schemas/ServiceLocation'
+        serviceType:
+          $ref: '#/components/schemas/ServiceType'
         startDate:
           format: date-time
           type: string
-        typeId:
-          type: number
       type: object
     ServiceLocation:
       properties:
         description:
           type: string
+        id:
+          type: number
         name:
           type: string
         nameShort:
           type: string
+        services:
+          $ref: '#/components/schemas/Service'
       type: object
     ServiceType:
       properties:
+        id:
+          type: number
         name:
           type: string
         nameShort:
           type: string
+        services:
+          $ref: '#/components/schemas/Service'
       type: object
     Ship:
       properties:
@@ -2726,6 +2813,10 @@ components:
       type: object
     Site:
       properties:
+        agencySiteRoles:
+          $ref: '#/components/schemas/AgencySiteRole'
+        contactSiteRoles:
+          $ref: '#/components/schemas/ContactSiteRole'
         description:
           type: string
         geom:
@@ -2932,6 +3023,17 @@ components:
           $ref: '#/components/schemas/QcFeedback'
         weblinks:
           $ref: '#/components/schemas/Weblink'
+      type: object
+    Unit:
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        wigosCode:
+          type: string
       type: object
     UserGroup:
       properties:
@@ -3147,7 +3249,7 @@ info:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   title: OceanOPS API for metadata access
-  version: 1.10
+  version: 1.11
 openapi: 3.0.3
 paths:
   /data/platform:

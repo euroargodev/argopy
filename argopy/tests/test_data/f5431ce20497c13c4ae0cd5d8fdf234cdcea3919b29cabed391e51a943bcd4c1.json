@@ -5,7 +5,7 @@
     "alternative" : "PLATFORM_FAMILY",
     "creator" : "Argo Data Management Team",
     "date" : "2020-05-04 03:00:04.0",
-    "description" : "Platform family/category of instrument",
+    "description" : "List of platform family/category of Argo floats. Argo netCDF variable PLATFORM_FAMILY is populated by R22 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo platform family",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -209,9 +209,6 @@
     "RE_RegisterOwner" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"
     },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
-    },
     "alternative" : {
       "@id" : "http://purl.org/dc/terms/alternative"
     },
@@ -220,6 +217,9 @@
     },
     "comment" : {
       "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
     },
     "qudt" : "https://qudt.org/2.1/schema/qudt#",
     "owl" : "http://www.w3.org/2002/07/owl#",

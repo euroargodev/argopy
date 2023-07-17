@@ -5,7 +5,7 @@
     "alternative" : "STATUS",
     "creator" : "Argo Data Management Team",
     "date" : "2020-05-04 03:00:04.0",
-    "description" : "Flag scale for values in all _STATUS fields",
+    "description" : "Flag scale for values in all Argo netCDF cycle timing variables. Argo netCDF cycle timing variables JULD_<RTV>_STATUS are populated by R19 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo STATUS flags",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -218,6 +218,9 @@
     "publisher" : {
       "@id" : "http://purl.org/dc/terms/publisher"
     },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
+    },
     "member" : {
       "@id" : "http://www.w3.org/2004/02/skos/core#member",
       "@type" : "@id"
@@ -237,9 +240,6 @@
     },
     "title" : {
       "@id" : "http://purl.org/dc/terms/title"
-    },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
     },
     "creator" : {
       "@id" : "http://purl.org/dc/terms/creator"

@@ -43,6 +43,7 @@
     <skos:altLabel>BBP700</skos:altLabel>
     <owl:versionInfo>1</owl:versionInfo>
     <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+    <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/UMNX/"/>
     <owl:sameAs rdf:resource="http://vocab.nerc.ac.uk/collection/P01/current/BB117NIR/"/>
     <dc:identifier>SDN:R03::BBP700</dc:identifier>
     <skos:prefLabel xml:lang="en">Particle backscattering at 700 nanometers</skos:prefLabel>
@@ -53,7 +54,6 @@
     <pav:version>1</pav:version>
     <pav:hasCurrentVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/BBP700/1/"/>
     <skos:note xml:lang="en">accepted</skos:note>
-    <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/PMSR/"/>
     <pav:authoredOn>2020-04-04 15:05:33.0</pav:authoredOn>
   </rdf:Description>
   <rdf:Description rdf:about="http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING532/">
@@ -308,6 +308,7 @@
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE443/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CPU_CHLA/"/>
+    <dc:description>Terms describing individual measured phenomena, used to mark up sets of data in Argo netCDF arrays. Argo netCDF variables PARAMETER and TRAJECTORY_PARAMETERS are populated by R03 altLabel; R03 altLabel is also used to name netCDF profile files parameter variables &lt;PARAMETER&gt;.</dc:description>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660/"/>
     <skos:altLabel>PARAMETER</skos:altLabel>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/HUMIDITY_NITRATE/"/>
@@ -315,7 +316,6 @@
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/BBP/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_ISUS/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_OPTODE/"/>
-    <dc:description>Terms describing individual measured phenomena, used to mark up sets of data in Argo NetCDF arrays</dc:description>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/FLUORESCENCE_CHLA/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/RPHASE_DOXY/"/>
@@ -524,8 +524,8 @@
     <pav:authoredOn>2020-04-04 15:05:33.0</pav:authoredOn>
   </rdf:Description>
   <rdf:Description rdf:about="http://vocab.nerc.ac.uk/collection/R03/current/BBP/">
+    <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/UPRM/"/>
     <skos:notation>SDN:R03::BBP</skos:notation>
-    <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/PMSR/"/>
     <owl:versionInfo>1</owl:versionInfo>
     <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
     <skos:definition xml:lang="en">Particle backscattering (/m) at unspecified wavelength.</skos:definition>
@@ -1062,7 +1062,6 @@
     <skos:note xml:lang="en">accepted</skos:note>
   </rdf:Description>
   <rdf:Description rdf:about="http://vocab.nerc.ac.uk/collection/R03/current/BBP532/">
-    <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/PMSR/"/>
     <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
     <owl:sameAs rdf:resource="http://vocab.nerc.ac.uk/collection/P01/current/BB117G01/"/>
     <skos:notation>SDN:R03::BBP532</skos:notation>
@@ -1073,6 +1072,7 @@
     <skos:note xml:lang="en">accepted</skos:note>
     <owl:deprecated>false</owl:deprecated>
     <skos:prefLabel xml:lang="en">Particle backscattering at 532 nanometers</skos:prefLabel>
+    <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/UMNX/"/>
     <dce:identifier>SDN:R03::BBP532</dce:identifier>
     <owl:versionInfo>1</owl:versionInfo>
     <pav:hasCurrentVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/BBP532/1/"/>
@@ -1380,11 +1380,11 @@
     <dce:identifier>SDN:R03::BBP470</dce:identifier>
     <skos:note xml:lang="en">accepted</skos:note>
     <pav:hasCurrentVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/BBP470/1/"/>
+    <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/UMNX/"/>
     <skos:prefLabel xml:lang="en">Particle backscattering at 470 nanometers</skos:prefLabel>
     <skos:definition xml:lang="en">Particle backscattering (/m) at 470 nm wavelength.</skos:definition>
     <dc:date>2020-04-04 15:05:33.0</dc:date>
     <dc:identifier>SDN:R03::BBP470</dc:identifier>
-    <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/PMSR/"/>
     <skos:altLabel>BBP470</skos:altLabel>
     <void:inDataset rdf:resource="http://vocab.nerc.ac.uk/.well-known/void"/>
     <owl:deprecated>false</owl:deprecated>
