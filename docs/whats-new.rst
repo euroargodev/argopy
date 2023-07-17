@@ -7,6 +7,47 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+
+Coming up in the next release
+-----------------------------
+
+**Features and front-end API**
+
+- **argopy now support `expert` user mode for BGC dataset with the `erddap` data source**. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import DataFetcher
+
+    DataFetcher(ds='bgc')  # All variables found in the access point will be returned
+    DataFetcher(ds='bgc', params='all')  # Default: All variables found in the access point will be returned
+    DataFetcher(ds='bgc', params='DOXY') # Only the DOXY variable will be returned
+    DataFetcher(ds='bgc', params=['DOXY', 'BBP700']) # Only DOXY and BBP700 will be returned
+    DataFetcher(ds='bgc', params=['*DOXY*', '*BBP*']) # All variables with DOXY or BBP in their name will be returned
+
+    DataFetcher(ds='bgc', measured=None)  # Default: all params are allowed to have NaNs
+    DataFetcher(ds='bgc', measured='all')  # All params found in the access point cannot be NaNs
+    DataFetcher(ds='bgc', measured='DOXY') # Only DOXY cannot be NaNs
+    DataFetcher(ds='bgc', measured=['DOXY', 'BBP700']) # Only DOXY and BBP700 cannot be NaNs
+
+    DataFetcher(ds='bgc', params='all', measured=None)  # Return the largest possible dataset
+    DataFetcher(ds='bgc', params='all', measured='all')  # Return the smallest possible dataset
+    DataFetcher(ds='bgc', params='all', measured=['DOXY', 'BBP700'])  # Return all possible params for points where DOXY and BBP700 are not NaN
+
+
+- **New methods in the ArgoIndex to improve BGC support**.
+
+.. code-block:: python
+
+    from argopy import ArgoIndex
+
+    idx = ArgoIndex(index_file="bgc-b")  # Use keywords instead of exact file names: `core`, `bgc-b`, `bgc-s`
+    idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
+    idx.search_parameter_data_mode({'TEMP': 'D'})
+    idx.search_parameter_data_mode({'BBP700': 'D'})
+    idx.search_parameter_data_mode({'DOXY': ['R', 'A']})
+    idx.search_parameter_data_mode({'BBP700': 'D', 'DOXY': 'D'}, logical='or')
+
 v0.1.14rc1 (31 May 2023)
 ------------------------
 
