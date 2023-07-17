@@ -13,17 +13,19 @@ Coming up in the next release
 
 **Features and front-end API**
 
-- **argopy now support `expert` user mode for BGC dataset with the `erddap` data source**. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+- **argopy now support BGC dataset in `expert` user mode for the `erddap` data source**. The Argo-BGC content of synthetic profiles is now available from the Ifremer erddap. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
+    import argopy
     from argopy import DataFetcher
+
+    argopy.set_options(src='erddap', mode='expert')
 
     DataFetcher(ds='bgc')  # All variables found in the access point will be returned
     DataFetcher(ds='bgc', params='all')  # Default: All variables found in the access point will be returned
     DataFetcher(ds='bgc', params='DOXY') # Only the DOXY variable will be returned
     DataFetcher(ds='bgc', params=['DOXY', 'BBP700']) # Only DOXY and BBP700 will be returned
-    DataFetcher(ds='bgc', params=['*DOXY*', '*BBP*']) # All variables with DOXY or BBP in their name will be returned
 
     DataFetcher(ds='bgc', measured=None)  # Default: all params are allowed to have NaNs
     DataFetcher(ds='bgc', measured='all')  # All params found in the access point cannot be NaNs

@@ -36,10 +36,10 @@ try to test them all:
 """
 HOSTS = [argopy.tutorial.open_dataset("gdac")[0],
              #'https://data-argo.ifremer.fr',  # ok, but replaced by the mocked http server
-              mocked_server_address,
+         mocked_server_address,
                # 'ftp://ftp.ifremer.fr/ifremer/argo',
                # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but slow down CI and no need for 2 ftp tests
-             'MOCKFTP',  # keyword to use the fake/mocked ftp server (running on localhost)
+        'MOCKFTP',  # keyword to use the fake/mocked ftp server (running on localhost)
             ]
 
 """
