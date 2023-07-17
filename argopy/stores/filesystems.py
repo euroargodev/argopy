@@ -1,3 +1,24 @@
+"""
+Argo specific layer on top of fsspec
+This allows for file/memory/http/ftp stores with Argo dedicated methods
+
+fs = filestore()
+fs = memorystore()
+fs = httpstore()
+fs = ftpstore()
+fs = httpstore_erddap_auth(payload = {"user": None, "password": None})
+
+
+fs.open_dataset
+fs.open_json
+
+fs.open_mfdataset
+fs.open_mfjson
+
+fs.read_csv
+
+"""
+
 import os
 import types
 import numpy as np
@@ -1173,7 +1194,7 @@ class ftpstore(httpstore):
         if 'xr_opts' in kwargs:
             xr_opts.update(kwargs['xr_opts'])
         ds = xr.open_dataset(data, *args, **xr_opts)
-        
+
         if "source" not in ds.encoding:
             if isinstance(url, str):
                 ds.encoding["source"] = url
