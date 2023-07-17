@@ -3857,7 +3857,8 @@ def cast_Argo_variable_type(ds, overwrite=True):
                 # Some values may be missing, and the _FillValue=" " cannot be casted as an integer.
                 # so, we replace missing values with a 999:
                 val = da.astype(str).values
-                val[np.where(val == 'nan')] = '999'
+                # val[np.where(val == 'nan')] = '999'
+                val[val == 'nan'] = '999'
                 da.values = val
             da = cast_this(da, float)
             da = cast_this(da, int)
