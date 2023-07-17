@@ -3819,8 +3819,14 @@ def cast_Argo_variable_type(ds, overwrite=True):
     def cast_this(da, type):
         """ Low-level casting of DataArray values """
         try:
-            # da.values = da.values.astype(type)
             da = da.astype(type)
+            # with warnings.catch_warnings():
+            #     warnings.filterwarnings('error')
+            #     try:
+            #         da = da.astype(type)
+            #     except Warning:
+            #         log.debug(type)
+            #         log.debug(da.attrs)
             da.attrs["casted"] = 1
         except Exception:
             print("Oops!", sys.exc_info()[0], "occurred.")
@@ -3852,6 +3858,7 @@ def cast_Argo_variable_type(ds, overwrite=True):
                     and da.attrs[convname] in ["Argo reference table 19",
                                                "Argo reference table 21",
                                                "WMO float identifier : A9IIIII",
+                                               "1...N, 1 : first complete mission",
                                                ]
             ):
                 # Some values may be missing, and the _FillValue=" " cannot be casted as an integer.
@@ -3881,16 +3888,16 @@ def cast_Argo_variable_type(ds, overwrite=True):
                         val[val == "              "] = "nan"
                         s.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
                         da.values = s.unstack("dummy_index")
-                    da = cast_this(da, 'datetime64[s]')
+                    da = cast_this(da, 'datetime64[ns]')
                 else:
-                    da = cast_this(da, 'datetime64[s]')
+                    da = cast_this(da, 'datetime64[ns]')
 
             elif v == "SCIENTIFIC_CALIB_DATE":
                 da = cast_this(da, str)
                 s = da.stack(dummy_index=da.dims)
                 s.values = pd.to_datetime(s.values, format="%Y%m%d%H%M%S")
                 da.values = (s.unstack("dummy_index")).values
-                da = cast_this(da, 'datetime64[s]')
+                da = cast_this(da, 'datetime64[ns]')
 
         if "QC" in v and "PROFILE" not in v and "QCTEST" not in v:
             if da.dtype == "O":  # convert object to string
