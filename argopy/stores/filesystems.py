@@ -512,6 +512,7 @@ class httpstore(argo_store_proto):
                      url,
                      n_attempt: int = 1,
                      max_attempt: int = 5,
+                     cat_opts = {},
                      *args,
                      **kwargs):
         """URL data downloader
@@ -520,11 +521,11 @@ class httpstore(argo_store_proto):
         waiting and sending requests several time.
         """
 
-        def make_request(ffs, url, n_attempt: int = 1, max_attempt: int = 5, *args, **kwargs):
+        def make_request(ffs, url, n_attempt: int = 1, max_attempt: int = 5, cat_opts = {}):
             data = None
             if n_attempt <= max_attempt:
                 try:
-                    data = ffs.cat_file(url, *args, **kwargs)
+                    data = ffs.cat_file(url, **cat_opts)
                 except aiohttp.ClientResponseError as e:
                     if e.status == 413:
                         log.debug(f"Error %i (Payload Too Large) raised with %s" % (e.status, url))
@@ -535,7 +536,7 @@ class httpstore(argo_store_proto):
                             f"Error {e.status} (Too many requests). Retry after {retry_after} seconds. Tentative {n_attempt}/{max_attempt}")
                         time.sleep(retry_after)
                         n_attempt += 1
-                        make_request(ffs, url, n_attempt=n_attempt, *args, **kwargs)
+                        make_request(ffs, url, n_attempt=n_attempt, cat_opts=cat_opts)
                     else:
                         # Handle other client response errors
                         print(f"Error: {e}")
@@ -548,30 +549,39 @@ class httpstore(argo_store_proto):
             return data, n_attempt
 
         url = self.curateurl(url)
-        data, n = make_request(self.fs, url, n_attempt=n_attempt, max_attempt=max_attempt, *args, **kwargs)
+        data, n = make_request(self.fs, url, n_attempt=n_attempt, max_attempt=max_attempt, cat_opts=cat_opts)
 
         if data is None:
             raise FileNotFoundError(url)
 
         return data
 
-    def open_dataset(self, url, *args, **kwargs):
+    def open_dataset(self, url, **kwargs):
         """ Open and decode a xarray dataset from an url
 
         Parameters
         ----------
         url: str
+        kwargs: dict
+            The 'dwn_opts' key is passed to self.download_url
+            The 'xr_opts' key is passed to xr.open_dataset
 
         Returns
         -------
         :class:`xarray.Dataset`
         """
-        data = self.download_url(url, *args, **kwargs)
+        dwn_opts = {}
+        if 'download_url_opts' in kwargs:
+            dwn_opts.update(kwargs['download_url_opts'])
+        data = self.download_url(url, **dwn_opts)
 
         if data[0:3] != b'CDF':
             raise TypeError("We didn't get a CDF binary data as expected ! We get: %s" % data)
 
-        ds = xr.open_dataset(data, *args, **kwargs)
+        xr_opts = {}
+        if 'xr_opts' in kwargs:
+            xr_opts.update(kwargs['xr_opts'])
+        ds = xr.open_dataset(data, **xr_opts)
 
         if "source" not in ds.encoding:
             if isinstance(url, str):
@@ -580,10 +590,10 @@ class httpstore(argo_store_proto):
         self.register(url)
         return ds
 
-    def _mfprocessor_dataset(self, url, preprocess=None, preprocess_opts={}, *args, **kwargs):
+    def _mfprocessor_dataset(self, url, preprocess=None, preprocess_opts={}, open_dataset_opts={}, *args, **kwargs):
         """Used by httpstore.open_mfdataset"""
         # Load data
-        ds = self.open_dataset(url, *args, **kwargs)
+        ds = self.open_dataset(url, **open_dataset_opts)
 
         # Pre-process
         if isinstance(preprocess, types.FunctionType) or isinstance(preprocess, types.MethodType):
@@ -649,8 +659,7 @@ class httpstore(argo_store_proto):
                     # log.debug(concat_dim)
                     # for ds in ds_list:
                     #     log.debug(ds[concat_dim])
-                    N = [len(ds[concat_dim]) for ds in ds_list]
-                    log.debug("Dataset sizes before concat: %s" % N)
+                    log.debug("Dataset sizes before concat: %s" % [len(ds[concat_dim]) for ds in ds_list])
                     ds = xr.concat(ds_list,
                                    dim=concat_dim,
                                    data_vars='minimal',
@@ -721,6 +730,7 @@ class httpstore(argo_store_proto):
                        concat_dim='row',
                        preprocess=None,
                        preprocess_opts={},
+                       open_dataset_opts={},
                        errors: str = 'ignore',
                        compute_details: bool = False,
                        *args,
@@ -806,7 +816,9 @@ class httpstore(argo_store_proto):
                 future_to_url = {executor.submit(self._mfprocessor_dataset,
                                                  url,
                                                  preprocess=preprocess,
-                                                 preprocess_opts=preprocess_opts, *args, **kwargs): url
+                                                 preprocess_opts=preprocess_opts,
+                                                 open_dataset_opts=open_dataset_opts,
+                                                 *args, **kwargs): url
                                  for url in urls}
                 futures = concurrent.futures.as_completed(future_to_url)
                 if progress:
