@@ -13,7 +13,7 @@ Coming up in the next release
 
 **Features and front-end API**
 
-- **argopy now support BGC dataset in `expert` user mode for the `erddap` data source**. The Argo-BGC content of synthetic profiles is now available from the Ifremer erddap. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_  
+- **argopy now support BGC dataset in `expert` user mode for the `erddap` data source**. The Argo-BGC content of synthetic profiles is now available from the Ifremer erddap. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 

@@ -11,15 +11,25 @@ import sys
 import os
 import re, sys
 
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import as_completed
+from threading import Lock
+
+import importlib
 try:
     from importlib.resources import files
 except ImportError:
     from importlib_resources import files
 
-from concurrent.futures import ThreadPoolExecutor
-from concurrent.futures import as_completed
-from threading import Lock
-from IPython.display import display, clear_output, HTML
+try:
+    importlib.import_module('IPython')  # noqa: E402
+    has_ipython = True
+except ImportError:
+    has_ipython = False
+
+if has_ipython:
+    from IPython.display import display, clear_output, HTML
+
 import logging
 from typing import Union
 import concurrent.futures
@@ -188,6 +198,7 @@ class proto_MonitoredPoolExecutor_monitor(proto_MonitoredThreadPoolExecutor):
         self.task_legend = task_legend
         self.final_legend = final_legend
         self.show = bool(show)
+        # log.debug(self.runner)
 
     @property
     def runner(self) -> str:
@@ -509,7 +520,15 @@ class proto_MonitoredPoolExecutor_terminal(proto_MonitoredPoolExecutor_monitor):
             # sys.stdout.flush()
 
 
-class MyThreadPoolExecutor(proto_MonitoredPoolExecutor_notebook, proto_MonitoredPoolExecutor_terminal):
+if has_ipython:
+    class c(proto_MonitoredPoolExecutor_notebook, proto_MonitoredPoolExecutor_terminal):
+        pass
+else:
+    class c(proto_MonitoredPoolExecutor_terminal):
+        pass
+
+
+class MyThreadPoolExecutor(c):
     """
     Examples
     --------
@@ -559,6 +578,4 @@ class MyThreadPoolExecutor(proto_MonitoredPoolExecutor_notebook, proto_Monitored
             results, failed = run.execute(range(100), list_failed=True)
             print(results)
     """
-
-
     pass
