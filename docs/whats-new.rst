@@ -13,7 +13,7 @@ Coming up in the next release
 
 **Features and front-end API**
 
-- **argopy now support BGC dataset in `expert` user mode for the `erddap` data source**. The Argo-BGC content of synthetic profiles is now available from the Ifremer erddap. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+- **argopy now support BGC dataset in `expert` user mode for the `erddap` data source**. The Argo-BGC content of synthetic multi-profile files is now available from the Ifremer erddap. Like for the core dataset, you can fetch data for a region, float(s) or profile(s). One novelty wrt to core, is that you can restrict data fetching to some parameters and furthermore impose no-NaNs on some of these parameters. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -37,7 +37,7 @@ Coming up in the next release
     DataFetcher(ds='bgc', params='all', measured=['DOXY', 'BBP700'])  # Return all possible params for points where DOXY and BBP700 are not NaN
 
 
-- **New methods in the ArgoIndex for BGC**. The :class:`argopy.ArgoIndex` has now full support for the BGC profile index files, both bio and synthetic index. In particular(:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+- **New methods in the ArgoIndex for BGC**. The :class:`argopy.ArgoIndex` has now full support for the BGC profile index files, both bio and synthetic index. In particular it is possible to search for profiles with specific data modes on parameters. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -50,9 +50,34 @@ Coming up in the next release
     idx.search_parameter_data_mode({'DOXY': ['R', 'A']})
     idx.search_parameter_data_mode({'DOXY': 'D', 'CDOM': 'D'}, logical='or')
 
+
+- **New xarray argo accessor features**. Easily retrieve an Argo sample index and domain extent with the ``index`` and ``domain`` properties. Get a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) with the ``list_WMO_CYC`` method. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+
+
+- **New search methods for Argo reference tables**. It is now possible to search for a string in tables title and/or description using the :class:`argopy.ArgoNVSReferenceTables`.
+
+.. code-block:: python
+
+    from argopy import ArgoNVSReferenceTables
+
+    id_list = ArgoNVSReferenceTables().search('sensor')
+    [ArgoNVSReferenceTables().tbl_name(id) for id in id_list]
+
+
 **Internals**
 
--
+- New utility class :class:`argopy.utils.compute.MyThreadPoolExecutor` to handle parallelization with a multi-threading Pool that provide a notebook or terminal computation progress dashboard. This class is used by the httpstore open_mfdataset method for erddap requests.
+
+- New utilites to handle a collection of datasets: :func:`argopy.utilities.drop_variables_not_in_all_datasets` will drop variables that are not in all datasets (the lowest common denominator) and :func:`argopy.utilities.fill_variables_not_in_all_datasets` will add empty variables to dataset so that all the collection have the same data_vars and coords. These functions are used by stores to concat/merge a collection of datasets (chunks).
+
+- :func:`argopy.utilities.load_dict` now relies on :class:`argopy.ArgoNVSReferenceTables` instead of static pickle files.
+
+- :class:`argopy.ArgoColors` colormap for Argo Data-Mode has now a fourth value to encount for a white space FillValue.
+
+- And misc. bug and warning fixes all over the code.
+
+**Breaking changes**
+
 
 
 v0.1.14rc1 (31 May 2023)

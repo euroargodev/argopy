@@ -118,6 +118,9 @@
     argopy.utilities.ArgoDocs.show
     argopy.utilities.ArgoDocs.js
 
+    argopy.utilities.drop_variables_not_in_all_datasets
+    argopy.utilities.fill_variables_not_in_all_datasets
+
     argopy.plot
     argopy.plot.dashboard
     argopy.plot.bar_plot
@@ -242,6 +245,9 @@
     argopy.xarray.ArgoAccessor.filter_scalib_pres
     argopy.xarray.ArgoAccessor.filter_researchmode
     argopy.xarray.ArgoAccessor.cast_types
+    argopy.xarray.ArgoAccessor.index
+    argopy.xarray.ArgoAccessor.domain
+    argopy.xarray.ArgoAccessor.list_WMO_CYC
 
     argopy.xarray.ArgoEngine
 
