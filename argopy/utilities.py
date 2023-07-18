@@ -4242,7 +4242,7 @@ class ArgoDocs:
                 # Fetch RIS metadata for this document:
                 import re
                 file = self._fs.fs.cat_file("%s/%s" % (self._doiserver, self.js['doi']))
-                x = re.search('<a target="_blank" href="(https?:\/\/([^"]*))"\s+([^>]*)rel="nofollow">TXT<\/a>',
+                x = re.search(r'<a target="_blank" href="(https?:\/\/([^"]*))"\s+([^>]*)rel="nofollow">TXT<\/a>',
                               str(file))
                 export_txt_url = x[1].replace("https://archimer.ifremer.fr", self._archimer)
                 self._risfile = export_txt_url
