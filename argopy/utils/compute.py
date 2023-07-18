@@ -17,9 +17,11 @@ from threading import Lock
 
 import importlib
 try:
-    from importlib.resources import files
+    from importlib.resources import files  # New in version 3.9
 except ImportError:
-    from importlib_resources import files
+    import Path
+    files = lambda x: Path(importlib.util.find_spec(x).submodule_search_locations[0])
+
 
 try:
     importlib.import_module('IPython')  # noqa: E402
