@@ -7,9 +7,8 @@ we create a series of classes using multiple inheritance to implement monitoring
 """
 
 from functools import lru_cache
-import sys
 import os
-import re, sys
+import sys
 
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import as_completed
@@ -19,16 +18,10 @@ import importlib
 try:
     from importlib.resources import files  # New in version 3.9
 except ImportError:
-    import Path
+    from pathlib import Path
     files = lambda x: Path(importlib.util.find_spec(x).submodule_search_locations[0])
 
-
-try:
-    importlib.import_module('IPython')  # noqa: E402
-    has_ipython = True
-except ImportError:
-    has_ipython = False
-
+has_ipython = (spec := importlib.util.find_spec('IPython')) is not None
 if has_ipython:
     from IPython.display import display, clear_output, HTML
 
