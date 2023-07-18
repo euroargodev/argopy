@@ -39,7 +39,6 @@ import numpy as np
 from scipy import interpolate
 
 import pickle  # nosec B403 only used with internal files/assets
-import pkg_resources
 import shutil
 
 import threading
@@ -70,7 +69,7 @@ try:
 except ImportError:
     pass
 
-path2pkl = pkg_resources.resource_filename("argopy", "assets/")
+path2pkl = importlib.util.find_spec('argopy.assets').submodule_search_locations[0]
 
 log = logging.getLogger("argopy.utilities")
 
