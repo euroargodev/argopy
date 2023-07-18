@@ -30,6 +30,7 @@ from typing import Union
 import concurrent.futures
 from abc import ABC, abstractmethod
 
+
 log = logging.getLogger("argopy.utils.compute")
 
 
