@@ -12,9 +12,10 @@ class ArgoIndex(indexstore):
     :class:`pandas.DataFrame` will be used.
 
     You can use the exact index file names or keywords:
-    - 'core' for the 'ar_index_global_prof.txt' index file,
-    - 'bgc-b' for the 'argo_bio-profile_index.txt' index file,
-    - 'bgc-s' for the 'argo_synthetic-profile_index.txt' index file.
+
+    - ``core`` for the ``ar_index_global_prof.txt`` index file,
+    - ``bgc-b`` for the ``argo_bio-profile_index.txt`` index file,
+    - ``bgc-s`` for the 'argo_synthetic-profile_index.txt`` index file.
 
     Examples
     --------
@@ -32,14 +33,14 @@ class ArgoIndex(indexstore):
 
     >>> idx.load()
     >>> idx.load(nrows=12)  # Only load the first N rows of the index
+    >>> idx.to_dataframe(index=True)  # Convert index to user-friendly :class:`pandas.DataFrame`
+    >>> idx.to_dataframe(index=True, nrows=2)  # Only returns the first nrows of the index
     >>> idx.N_RECORDS  # Shortcut for length of 1st dimension of the index array
     >>> idx.index  # internal storage structure of the full index (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
     >>> idx.shape  # shape of the full index array
     >>> idx.uri_full_index  # List of absolute path to files from the full index table column 'file'
-    >>> idx.to_dataframe(index=True)  # Convert index to user-friendly :class:`pandas.DataFrame`
-    >>> idx.to_dataframe(index=True, nrows=2)  # Only returns the first nrows of the index
 
-    Search methods and properties:
+    Search methods:
 
     >>> idx.search_wmo(1901393)
     >>> idx.search_cyc(1)
@@ -48,9 +49,14 @@ class ArgoIndex(indexstore):
     >>> idx.search_lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
     >>> idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
     >>> idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])  # Take a list of strings, only for BGC index !
+    >>> idx.search_parameter_data_mode({'BBP700': 'D', 'DOXY': ['A', 'D']})  # Take a dict.
+
+    Search result properties and methods:
+
     >>> idx.N_MATCH  # Shortcut for length of 1st dimension of the search results array
     >>> idx.search  # Internal table with search results
     >>> idx.uri  # List of absolute path to files from the search results table column 'file'
+
     >>> idx.run()  # Run the search and save results in cache if necessary
     >>> idx.to_dataframe()  # Convert search results to user-friendly :class:`pandas.DataFrame`
     >>> idx.to_dataframe(nrows=2)  # Only returns the first nrows of the search results

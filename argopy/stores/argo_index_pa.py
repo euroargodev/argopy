@@ -471,15 +471,6 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                 filt.append(filt_parameter_data_mode(self, data_mode))
 
         elif self.convention in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
-
-            # def read_parameter_data_mode(this_idx, this_param):
-            #     def fct(this_x, this_y):
-            #         variables = this_x.split()
-            #         return this_y[variables.index(this_param)] if this_param in variables else ''
-            #     x = this_idx.index['parameters'].to_numpy()
-            #     y = this_idx.index['parameter_data_mode'].to_numpy()
-            #     return np.array(list(map(fct, x, y)))
-
             def filt_parameter_data_mode(this_idx, this_param, this_dm):
                 def fct(this_x, this_y):
                     variables = this_x.split()
@@ -487,7 +478,6 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                 x = this_idx.index['parameters'].to_numpy()
                 y = this_idx.index['parameter_data_mode'].to_numpy()
                 return np.array(list(map(fct, x, y)))
-
             for param in PARAMs:
                 data_mode = to_list(PARAMs[param])
                 filt.append(filt_parameter_data_mode(self, param, data_mode))
