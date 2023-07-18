@@ -4182,7 +4182,8 @@ class ArgoDocs:
             self.record = record
 
 
-    def __init__(self, docid=None, cache=True):
+    @lru_cache
+    def __init__(self, docid=None, cache=False):
         from .stores import httpstore
 
         self.docid = None
