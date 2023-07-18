@@ -15,12 +15,12 @@ class ArgoIndex(indexstore):
 
     - ``core`` for the ``ar_index_global_prof.txt`` index file,
     - ``bgc-b`` for the ``argo_bio-profile_index.txt`` index file,
-    - ``bgc-s`` for the 'argo_synthetic-profile_index.txt`` index file.
+    - ``bgc-s`` for the ``argo_synthetic-profile_index.txt`` index file.
 
     Examples
     --------
 
-    An index store is instantiated with the access path (host) and the index file:
+    An index store is instantiated with a host (any access path, local, http or ftp) and an index file:
 
     >>> idx = ArgoIndex()
     >>> idx = ArgoIndex(host="https://data-argo.ifremer.fr")  # Default host

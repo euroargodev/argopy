@@ -8,7 +8,6 @@ fs = httpstore()
 fs = ftpstore()
 fs = httpstore_erddap_auth(payload = {"user": None, "password": None})
 
-
 fs.open_dataset
 fs.open_json
 

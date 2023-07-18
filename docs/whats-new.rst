@@ -37,18 +37,23 @@ Coming up in the next release
     DataFetcher(ds='bgc', params='all', measured=['DOXY', 'BBP700'])  # Return all possible params for points where DOXY and BBP700 are not NaN
 
 
-- **New methods in the ArgoIndex to improve BGC support**.
+- **New methods in the ArgoIndex for BGC**. The :class:`argopy.ArgoIndex` has now full support for the BGC profile index files, both bio and synthetic index. In particular(:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
     from argopy import ArgoIndex
 
     idx = ArgoIndex(index_file="bgc-b")  # Use keywords instead of exact file names: `core`, `bgc-b`, `bgc-s`
-    idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
-    idx.search_parameter_data_mode({'TEMP': 'D'})
+    idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])  # Search for profiles with parameters
+    idx.search_parameter_data_mode({'TEMP': 'D'})  # Search for profiles with specific data modes
     idx.search_parameter_data_mode({'BBP700': 'D'})
     idx.search_parameter_data_mode({'DOXY': ['R', 'A']})
-    idx.search_parameter_data_mode({'BBP700': 'D', 'DOXY': 'D'}, logical='or')
+    idx.search_parameter_data_mode({'DOXY': 'D', 'CDOM': 'D'}, logical='or')
+
+**Internals**
+
+-
+
 
 v0.1.14rc1 (31 May 2023)
 ------------------------

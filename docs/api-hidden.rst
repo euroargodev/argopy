@@ -185,6 +185,7 @@
     argopy.stores.argo_index_pa.indexstore_pyarrow.load
     argopy.stores.argo_index_pa.indexstore_pyarrow.read_wmo
     argopy.stores.argo_index_pa.indexstore_pyarrow.read_params
+    argopy.stores.argo_index_pa.indexstore_pyarrow.records_per_wmo
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_wmo
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_cyc
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_wmo_cyc
@@ -192,6 +193,7 @@
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_lat_lon
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_lat_lon_tim
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_params
+    argopy.stores.argo_index_pa.indexstore_pyarrow.search_parameter_data_mode
     argopy.stores.argo_index_pa.indexstore_pyarrow.to_dataframe
     argopy.stores.argo_index_pa.indexstore_pyarrow.to_indexfile
 
@@ -199,6 +201,7 @@
     argopy.stores.argo_index_pd.indexstore_pandas.load
     argopy.stores.argo_index_pd.indexstore_pandas.read_wmo
     argopy.stores.argo_index_pd.indexstore_pandas.read_params
+    argopy.stores.argo_index_pd.indexstore_pandas.records_per_wmo
     argopy.stores.argo_index_pd.indexstore_pandas.search_wmo
     argopy.stores.argo_index_pd.indexstore_pandas.search_cyc
     argopy.stores.argo_index_pd.indexstore_pandas.search_wmo_cyc
@@ -206,6 +209,7 @@
     argopy.stores.argo_index_pd.indexstore_pandas.search_lat_lon
     argopy.stores.argo_index_pd.indexstore_pandas.search_lat_lon_tim
     argopy.stores.argo_index_pd.indexstore_pandas.search_params
+    argopy.stores.argo_index_pd.indexstore_pandas.search_parameter_data_mode
     argopy.stores.argo_index_pd.indexstore_pandas.to_dataframe
     argopy.stores.argo_index_pd.indexstore_pandas.to_indexfile
 

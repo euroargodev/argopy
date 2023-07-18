@@ -52,17 +52,17 @@ class ArgoIndexStoreProto(ABC):
         self,
         host: str = "https://data-argo.ifremer.fr",
         index_file: str = "ar_index_global_prof.txt",
+        convention: str = None,
         cache: bool = False,
         cachedir: str = "",
         timeout: int = 0,
-        convention: str = None,
     ) -> object:
         """Create an Argo index file store
 
         Parameters
         ----------
         host: str, default: ``https://data-argo.ifremer.fr``
-            Host is a local or remote ftp/http path to a `dac` folder (GDAC structure compliant). This takes values
+            Local or remote (ftp or http) path to a `dac` folder (GDAC structure compliant). This takes values
             like: ``ftp://ftp.ifremer.fr/ifremer/argo``, ``ftp://usgodae.org/pub/outgoing/argo`` or a local absolute path.
         index_file: str, default: ``ar_index_global_prof.txt``
             Name of the csv-like text file with the index.
@@ -71,15 +71,17 @@ class ArgoIndexStoreProto(ABC):
             ``argo_bio-profile_index.txt`` or ``argo_synthetic-profile_index.txt``.
 
             You can also use the following shortcuts: ``core``, ``bgc-b``, ``bgc-s``, respectively.
-        cache : bool, default: False
-            Use cache or not.
-        cachedir : str, default: OPTIONS['cachedir']
-            Folder where to store cached files
-        convention: str, default: ``ar_index_global_prof``
+        convention: str, default: None
             Set the expected format convention of the index file. This is useful when trying to load index file with custom name. If set to ``None``, we'll try to infer the convention from the ``index_file`` value.
              Possible values: ``ar_index_global_prof``, ``argo_bio-profile_index``, or ``argo_synthetic-profile_index``.
 
             You can also use the keyword: ``core``, ``bgc-s``, ``bgc-b``.
+        cache : bool, default: False
+            Use cache or not.
+        cachedir: str, default: OPTIONS['cachedir']
+            Folder where to store cached files
+        timeout: int,  default: OPTIONS['api_timeout']
+            Time out in seconds to connect to a remote host (ftp or http).
         """
         self.host = host
 
