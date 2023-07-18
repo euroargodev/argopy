@@ -427,7 +427,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         filt = []
         for param in PARAMs:
             # pattern = " %s" % param
-            pattern = "^\%s+|\s%s" % (param, param)
+            pattern = r"^\%s+|\s%s" % (param, param)
             filt.append(
                 pa.compute.match_substring_regex(
                     self.index["parameters"], pattern=pattern
