@@ -32,7 +32,6 @@ Documentation
 
 * :doc:`data_fetching`
 * :doc:`data_sources`
-* :doc:`data_set`
 * :doc:`user_mode`
 * :doc:`data_manipulation`
 * :doc:`visualisation`
@@ -47,7 +46,6 @@ Documentation
 
     data_fetching
     data_sources
-    data_set
     user_mode
     data_manipulation
     visualisation

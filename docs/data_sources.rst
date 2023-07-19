@@ -134,7 +134,7 @@ capabilities. Here is a summary:
       - X
       - X
       -
-    * - :ref:`Dataset: <data_set>`
+    * - Dataset
       -
       -
       -
