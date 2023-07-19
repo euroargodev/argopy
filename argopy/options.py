@@ -85,8 +85,8 @@ _VALIDATORS = {
     API_TIMEOUT: lambda x: isinstance(x, int) and x > 0,
     TRUST_ENV: lambda x: isinstance(x, bool),
     SERVER: lambda x: True,
-    USER: lambda x: isinstance(x, str),
-    PASSWORD: lambda x: isinstance(x, str),
+    USER: lambda x: isinstance(x, str) or x is None,
+    PASSWORD: lambda x: isinstance(x, str) or x is None,
 }
 
 

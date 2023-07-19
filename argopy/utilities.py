@@ -30,6 +30,7 @@ import subprocess  # nosec B404 only used without user inputs
 import contextlib
 from fsspec.core import split_protocol
 import fsspec
+from functools import lru_cache
 
 import argopy
 import xarray as xr
@@ -38,7 +39,6 @@ import numpy as np
 from scipy import interpolate
 
 import pickle  # nosec B403 only used with internal files/assets
-import pkg_resources
 import shutil
 
 import threading
@@ -69,7 +69,7 @@ try:
 except ImportError:
     pass
 
-path2pkl = pkg_resources.resource_filename("argopy", "assets/")
+path2pkl = importlib.util.find_spec('argopy.assets').submodule_search_locations[0]
 
 log = logging.getLogger("argopy.utilities")
 
@@ -187,13 +187,27 @@ def lscache(cache_path: str = "", prt=True):
 
 def load_dict(ptype):
     if ptype == "profilers":
-        with open(os.path.join(path2pkl, "dict_profilers.pickle"), "rb") as f:
-            loaded_dict = pickle.load(f)  # nosec B301 because files controlled internally
-        return loaded_dict
+        try:
+            nvs = ArgoNVSReferenceTables(cache=True)
+            profilers = {}
+            for row in nvs.tbl(8).iterrows():
+                profilers.update({int(row[1]['altLabel']): row[1]['prefLabel']})
+            return profilers
+        except:
+            with open(os.path.join(path2pkl, "dict_profilers.pickle"), "rb") as f:
+                loaded_dict = pickle.load(f)  # nosec B301 because files controlled internally
+            return loaded_dict
     elif ptype == "institutions":
-        with open(os.path.join(path2pkl, "dict_institutions.pickle"), "rb") as f:
-            loaded_dict = pickle.load(f)  # nosec B301 because files controlled internally
-        return loaded_dict
+        try:
+            nvs = ArgoNVSReferenceTables(cache=True)
+            institutions = {}
+            for row in nvs.tbl(4).iterrows():
+                institutions.update({row[1]['altLabel']: row[1]['prefLabel']})
+            return institutions
+        except:
+            with open(os.path.join(path2pkl, "dict_institutions.pickle"), "rb") as f:
+                loaded_dict = pickle.load(f)  # nosec B301 because files controlled internally
+            return loaded_dict
     else:
         raise ValueError("Invalid dictionary pickle file")
 
@@ -2933,6 +2947,7 @@ class ArgoNVSReferenceTables:
         # "R28",
         # "R29",
         # "R30",
+        "R40",
     ]
     """List of all available Reference Tables"""
 
@@ -3014,6 +3029,7 @@ class ArgoNVSReferenceTables:
         url = "{}/{}/current/{}".format
         return url(self.nvs, rtid, fmt_ext)
 
+    @lru_cache
     def tbl(self, rtid):
         """Return an Argo Reference table
 
@@ -3046,6 +3062,34 @@ class ArgoNVSReferenceTables:
         rtid = self._valid_ref(rtid)
         js = self.fs.open_json(self.get_url(rtid))
         return self._jsCollection(js)
+
+    def search(self, txt, where='all'):
+        """Search for string in tables title and/or description
+
+        Parameters
+        ----------
+        txt: str
+        where: str, default='all'
+            Where to search, can be: 'title', 'description', 'all'
+
+        Returns
+        -------
+        list of table id matching the search
+        """
+        results = []
+        for tbl_id in self.all_tbl_name:
+            title = self.tbl_name(tbl_id)[0]
+            description = self.tbl_name(tbl_id)[1]
+            if where == 'title':
+                if txt.lower() in title.lower():
+                    results.append(tbl_id)
+            elif where == 'description':
+                if txt.lower() in description.lower():
+                    results.append(tbl_id)
+            elif where == 'all':
+                if txt.lower() in description.lower() or txt.lower() in title.lower():
+                    results.append(tbl_id)
+        return results
 
     @property
     def all_tbl(self):
@@ -3647,12 +3691,14 @@ def cast_types(ds):  # noqa: C901
     return ds
 
 
-def cast_Argo_variable_type(ds):
+def cast_Argo_variable_type(ds, overwrite=True):
     """ Ensure that all dataset variables are of the appropriate types according to Argo references
 
     Parameter
     ---------
     :class:`xarray.DataSet`
+    overwrite: bool, default=True
+        Should we force to re-cast a variable we already casted in this dataset ?
 
     Returns
     -------
@@ -3743,7 +3789,6 @@ def cast_Argo_variable_type(ds):
     list_int = [
         "PLATFORM_NUMBER",
         "WMO_INST_TYPE",
-        "WMO_INST_TYPE",
         "CYCLE_NUMBER",
         "CONFIG_MISSION_NUMBER",
 
@@ -3755,6 +3800,7 @@ def cast_Argo_variable_type(ds):
         'JULD_FIRST_MESSAGE_STATUS', 'JULD_FIRST_LOCATION_STATUS', 'JULD_LAST_LOCATION_STATUS',
         'JULD_LAST_MESSAGE_STATUS', 'JULD_TRANSMISSION_END_STATUS', 'REPRESENTATIVE_PARK_PRESSURE_STATUS',
     ]
+
     list_datetime = [
         "REFERENCE_DATE_TIME",
         "DATE_CREATION",
@@ -3772,8 +3818,14 @@ def cast_Argo_variable_type(ds):
     def cast_this(da, type):
         """ Low-level casting of DataArray values """
         try:
-            # da.values = da.values.astype(type)
             da = da.astype(type)
+            # with warnings.catch_warnings():
+            #     warnings.filterwarnings('error')
+            #     try:
+            #         da = da.astype(type)
+            #     except Warning:
+            #         log.debug(type)
+            #         log.debug(da.attrs)
             da.attrs["casted"] = 1
         except Exception:
             print("Oops!", sys.exc_info()[0], "occurred.")
@@ -3785,8 +3837,8 @@ def cast_Argo_variable_type(ds):
                 pass
         return da
 
-    def cast_this_da(da):
-        """ Cast any DataArray """
+    def cast_this_da(da, v):
+        """ Cast any Argo DataArray """
         # print("Casting %s ..." % da.name)
         da.attrs["casted"] = 0
 
@@ -3794,15 +3846,27 @@ def cast_Argo_variable_type(ds):
             da = cast_this(da, str)
 
         if v in list_int:  # and da.dtype == 'O':  # Object
+            if "conventions" in da.attrs:
+                convname = "conventions"
+            elif "convention" in da.attrs:
+                convname = "convention"
+            else:
+                convname = None
             if (
-                    "conventions" in da.attrs
-                    and da.attrs["conventions"] in ["Argo reference table 19", "Argo reference table 21"]
+                    convname in da.attrs
+                    and da.attrs[convname] in ["Argo reference table 19",
+                                               "Argo reference table 21",
+                                               "WMO float identifier : A9IIIII",
+                                               "1...N, 1 : first complete mission",
+                                               ]
             ):
                 # Some values may be missing, and the _FillValue=" " cannot be casted as an integer.
                 # so, we replace missing values with a 999:
                 val = da.astype(str).values
-                val[np.where(val == 'nan')] = '999'
+                # val[np.where(val == 'nan')] = '999'
+                val[val == 'nan'] = '999'
                 da.values = val
+            da = cast_this(da, float)
             da = cast_this(da, int)
 
         if v in list_datetime and da.dtype == "O":  # Object
@@ -3823,16 +3887,16 @@ def cast_Argo_variable_type(ds):
                         val[val == "              "] = "nan"
                         s.values = pd.to_datetime(val, format="%Y%m%d%H%M%S")
                         da.values = s.unstack("dummy_index")
-                    da = cast_this(da, 'datetime64[s]')
+                    da = cast_this(da, 'datetime64[ns]')
                 else:
-                    da = cast_this(da, 'datetime64[s]')
+                    da = cast_this(da, 'datetime64[ns]')
 
             elif v == "SCIENTIFIC_CALIB_DATE":
                 da = cast_this(da, str)
                 s = da.stack(dummy_index=da.dims)
                 s.values = pd.to_datetime(s.values, format="%Y%m%d%H%M%S")
                 da.values = (s.unstack("dummy_index")).values
-                da = cast_this(da, 'datetime64[s]')
+                da = cast_this(da, 'datetime64[ns]')
 
         if "QC" in v and "PROFILE" not in v and "QCTEST" not in v:
             if da.dtype == "O":  # convert object to string
@@ -3840,6 +3904,11 @@ def cast_Argo_variable_type(ds):
 
             # Address weird string values:
             # (replace missing or nan values by a '0' that will be cast as an integer later
+            if da.dtype == float:
+                val = da.astype(str).values
+                val[np.where(val == 'nan')] = '0'
+                da.values = val
+                da = cast_this(da, float)
 
             if da.dtype == "<U3":  # string, len 3 because of a 'nan' somewhere
                 ii = (
@@ -3874,19 +3943,23 @@ def cast_Argo_variable_type(ds):
             # finally convert QC strings to integers:
             da = cast_this(da, int)
 
+        if "DATA_MODE" in v:
+            da = cast_this(da, '<U1')
+
         if da.dtype != "O":
             da.attrs["casted"] = 1
 
         return da
 
     for v in ds.variables:
-        try:
-            ds[v] = cast_this_da(ds[v])
-        except Exception:
-            print("Oops!", sys.exc_info()[0], "occurred.")
-            print("Fail to cast: %s " % v)
-            print("Encountered unique values:", np.unique(ds[v]))
-            raise
+        if overwrite or ('casted' in ds[v].attrs and ds[v].attrs['casted'] == 0):
+            try:
+                ds[v] = cast_this_da(ds[v], v)
+            except Exception:
+                print("Oops!", sys.exc_info()[0], "occurred.")
+                print("Fail to cast: %s " % v)
+                print("Encountered unique values:", np.unique(ds[v]))
+                raise
 
     return ds
 
@@ -4109,7 +4182,8 @@ class ArgoDocs:
             self.record = record
 
 
-    def __init__(self, docid=None, cache=True):
+    @lru_cache
+    def __init__(self, docid=None, cache=False):
         from .stores import httpstore
 
         self.docid = None
@@ -4168,8 +4242,8 @@ class ArgoDocs:
             if self._ris is None:
                 # Fetch RIS metadata for this document:
                 import re
-                file = self._fs.fs.cat_file("%s/%s" % (self._doiserver, self.js['doi']))
-                x = re.search('<a target="_blank" href="(https?:\/\/([^"]*))"\s+([^>]*)rel="nofollow">TXT<\/a>',
+                file = self._fs.download_url("%s/%s" % (self._doiserver, self.js['doi']))
+                x = re.search(r'<a target="_blank" href="(https?:\/\/([^"]*))"\s+([^>]*)rel="nofollow">TXT<\/a>',
                               str(file))
                 export_txt_url = x[1].replace("https://archimer.ifremer.fr", self._archimer)
                 self._risfile = export_txt_url
@@ -4254,3 +4328,123 @@ class ArgoDocs:
                 if txt.lower() in ArgoDocs(docid).abstract.lower():
                     results.append(docid)
         return results
+
+
+def drop_variables_not_in_all_datasets(ds_collection):
+    """Drop variables that are not in all datasets (the lowest common denominator)
+
+    Parameters
+    ----------
+    list of :class:`xr.DataSet`
+
+    Returns
+    -------
+    list of :class:`xr.DataSet`
+    """
+
+    # List all possible data variables:
+    vlist = []
+    for res in ds_collection:
+        [vlist.append(v) for v in list(res.data_vars)]
+    vlist = np.unique(vlist)
+
+    # Check if each variables are in each datasets:
+    ishere = np.zeros((len(vlist), len(ds_collection)))
+    for ir, res in enumerate(ds_collection):
+        for iv, v in enumerate(res.data_vars):
+            for iu, u in enumerate(vlist):
+                if v == u:
+                    ishere[iu, ir] = 1
+
+    # List of dataset with missing variables:
+    # ir_missing = np.sum(ishere, axis=0) < len(vlist)
+    # List of variables missing in some dataset:
+    iv_missing = np.sum(ishere, axis=1) < len(ds_collection)
+    if len(iv_missing) > 0:
+        log.debug("Dropping these variables that are missing from some dataset in this list: %s" % vlist[iv_missing])
+
+    # List of variables to keep
+    iv_tokeep = np.sum(ishere, axis=1) == len(ds_collection)
+    for ir, res in enumerate(ds_collection):
+        #         print("\n", res.attrs['Fetched_uri'])
+        v_to_drop = []
+        for iv, v in enumerate(res.data_vars):
+            if v not in vlist[iv_tokeep]:
+                v_to_drop.append(v)
+        ds_collection[ir] = ds_collection[ir].drop_vars(v_to_drop)
+    return ds_collection
+
+
+def fill_variables_not_in_all_datasets(ds_collection, concat_dim='rows'):
+    """Add empty variables to dataset so that all the collection have the same data_vars and coords
+
+    This is to make sure that the collection of dataset can be concatenated
+
+    Parameters
+    ----------
+    list of :class:`xr.DataSet`
+
+    Returns
+    -------
+    list of :class:`xr.DataSet`
+    """
+    def first_variable_with_concat_dim(this_ds, concat_dim='rows'):
+        """Return the 1st variable in the collection that have the concat_dim in dims"""
+        first = None
+        for v in this_ds.data_vars:
+            if concat_dim in this_ds[v].dims:
+                first = v
+                pass
+        return first
+
+    def fillvalue(da):
+        """ Return fillvalue for a dataarray """
+        # https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.kind.html#numpy.dtype.kind
+        if da.dtype.kind in ["U"]:
+            fillvalue = " "
+        elif da.dtype.kind == "i":
+            fillvalue = 99999
+        elif da.dtype.kind == "M":
+            fillvalue = np.datetime64("NaT")
+        else:
+            fillvalue = np.nan
+        return fillvalue
+
+    # List all possible data variables:
+    vlist = []
+    for res in ds_collection:
+        [vlist.append(v) for v in list(res.variables) if concat_dim in res[v].dims]
+    vlist = np.unique(vlist)
+    # log.debug('variables', vlist)
+
+    # List all possible coordinates:
+    clist = []
+    for res in ds_collection:
+        [clist.append(c) for c in list(res.coords) if concat_dim in res[c].dims]
+    clist = np.unique(clist)
+    # log.debu('coordinates', clist)
+
+    # Get the first occurrence of each variable, to be used as a template for attributes and dtype
+    meta = {}
+    for ir, ds in enumerate(ds_collection):
+        for v in vlist:
+            if v in ds.variables:
+                meta[v] = {'attrs': ds[v].attrs, 'dtype': ds[v].dtype, 'fill_value': fillvalue(ds[v])}
+    # [log.debug(meta[m]) for m in meta.keys()]
+
+    # Add missing variables to dataset
+    datasets = [ds.copy() for ds in ds_collection]
+    for ir, ds in enumerate(datasets):
+        for v in vlist:
+            if v not in ds.variables:
+                like = ds[first_variable_with_concat_dim(ds, concat_dim=concat_dim)]
+                datasets[ir][v] = xr.full_like(like, fill_value=meta[v]['fill_value'], dtype=meta[v]['dtype'])
+                datasets[ir][v].attrs = meta[v]['attrs']
+
+    # Make sure that all datasets have the same set of coordinates
+    results = []
+    for ir, ds in enumerate(datasets):
+        results.append(datasets[ir].set_coords(clist))
+
+    #
+    return results

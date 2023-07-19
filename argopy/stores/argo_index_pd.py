@@ -114,9 +114,9 @@ class indexstore_pandas(ArgoIndexStoreProto):
             this_filter = np.nonzero(self.search_filter)[0]
             n_match = this_filter.shape[0]
             if nrows is not None and n_match > 0:
-                self.search = self.index.head(np.min([nrows, n_match])).reset_index()
+                self.search = self.index.head(np.min([nrows, n_match])).reset_index(drop=True)
             else:
-                self.search = self.index[self.search_filter].reset_index()
+                self.search = self.index[self.search_filter].reset_index(drop=True)
 
             log.debug("Found %i matches" % self.search.shape[0])
             if self.cache and self.search.shape[0] > 0:
@@ -196,14 +196,19 @@ class indexstore_pandas(ArgoIndexStoreProto):
         if hasattr(self, "search") and not index:
             df = self.search['parameters']
         else:
+            if not hasattr(self, "index"):
+                self.load()
             df = self.index['parameters']
-        plist = set(df[0].split(" "))
-        def fct(row):
-            row = row.split(" ")
-            [plist.add(v) for v in row]
-            return len(row)
-        df.map(fct)
-        return sorted(list(plist))
+        if df.shape[0] > 0:
+            plist = set(df[0].split(" "))
+            def fct(row):
+                row = row.split(" ")
+                [plist.add(v) for v in row]
+                return len(row)
+            df.map(fct)
+            return sorted(list(plist))
+        else:
+            raise DataNotFound("This index is empty")
 
     def records_per_wmo(self, index=False):
         """ Return the number of records per unique WMOs in search results
@@ -339,19 +344,70 @@ class indexstore_pandas(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
-    def search_params(self, PARAMs, nrows=None):
+    def search_params(self, PARAMs, nrows=None, logical='and'):
         if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
             raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC profile index)")
         log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
         PARAMs = to_list(PARAMs)  # Make sure we deal with a list
         self.load()
-        self.search_type = {"PARAM": PARAMs}
+        self.search_type = {"PARAM": PARAMs, "logical": logical}
         filt = []
+        self.index["variables"] = self.index["parameters"].apply(lambda x: x.split())
         for param in PARAMs:
             filt.append(
-                self.index["parameters"].str.contains("%s" % param, regex=True, case=False)
+                self.index["variables"].apply(lambda x: param in x)
             )
-        self.search_filter = np.logical_and.reduce(filt)
+        self.index = self.index.drop('variables', axis=1)
+        if logical == 'and':
+            self.search_filter = np.logical_and.reduce(filt)
+        else:
+            self.search_filter = np.logical_or.reduce(filt)
+        self.run(nrows=nrows)
+        return self
+
+    def search_parameter_data_mode(self, PARAMs: dict, nrows=None, logical='and'):
+        """Search for profile with a data mode for a specific parameter
+
+        Examples
+        --------
+        search_parameter_data_mode({'TEMP': 'D'})
+        search_parameter_data_mode({'BBP700': 'D'})
+        search_parameter_data_mode({'DOXY': ['R', 'A']})
+        search_parameter_data_mode({'BBP700': 'D', 'DOXY': 'D'}, logical='or')
+
+        """
+        log.debug("Argo index searching for parameter data modes such as PARAM=%s ..." % PARAMs)
+
+        # Validate PARAMs argument type
+        [PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs]  # Make sure we deal with a list
+        if not np.all([v in ['R', 'A', 'D', '', ' '] for vals in PARAMs.values() for v in vals]):
+            raise ValueError("Data mode must be a value in 'R', 'A', 'D', ' ', ''")
+
+        self.load()
+        self.search_type = {"DMODE": PARAMs, "logical": logical}
+        filt = []
+
+        if self.convention in ["ar_index_global_prof"]:
+            for param in PARAMs:
+                data_mode = to_list(PARAMs[param])
+                filt.append(
+                    self.index['file'].apply(lambda x: str(x.split("/")[-1])[0] in data_mode)
+                )
+
+        elif self.convention in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
+            self.index["variables"] = self.index["parameters"].apply(lambda x: x.split())
+            for param in PARAMs:
+                data_mode = to_list(PARAMs[param])
+                filt.append(
+                    self.index.apply(lambda x: (x['parameter_data_mode'][x['variables'].index(param)] if param in x[
+                        'variables'] else '') in data_mode, axis=1)
+                )
+            self.index = self.index.drop('variables', axis=1)
+
+        if logical == 'and':
+            self.search_filter = np.logical_and.reduce(filt)
+        else:
+            self.search_filter = np.logical_or.reduce(filt)
         self.run(nrows=nrows)
         return self
 

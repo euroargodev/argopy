@@ -82,7 +82,7 @@ if CONNECTED:
     log.debug("Checking which Erddap dataset are available (eg: core, bgc, ref, index)")
     with serve_mocked_httpserver() as s:  # Use the mocked http server
         with set_options(erddap=mocked_server_address):
-            res = erddap_ds_exists(["ArgoFloats", "ArgoFloats-bio", "ArgoFloats-ref", "ArgoFloats-index"])
+            res = erddap_ds_exists(["ArgoFloats", "ArgoFloats-synthetic-BGC", "ArgoFloats-ref", "ArgoFloats-index"])
             DSEXISTS = res[0]
             DSEXISTS_bgc = res[1]
             DSEXISTS_ref = res[2]

@@ -9,6 +9,9 @@ This module contains Argo data fetcher for Ifremer ERDDAP.
 This is not intended to be used directly, only by the facade at fetchers.py
 
 """
+import warnings
+
+import argopy.utilities
 import xarray as xr
 import pandas as pd
 import numpy as np
@@ -16,12 +19,17 @@ import copy
 
 from abc import abstractmethod
 import getpass
+from typing import Union
+from functools import lru_cache
+import fnmatch
 
 from .proto import ArgoDataFetcherProto
 from argopy.options import OPTIONS
-from argopy.utilities import Chunker, format_oneline
+from argopy.utilities import Chunker, format_oneline, to_list
 from argopy.stores import httpstore
-from ..errors import ErddapServerError
+from ..errors import ErddapServerError, DataNotFound
+from ..stores import indexstore_pd as ArgoIndex  # make sure to work with the Pandas index store
+
 from aiohttp import ClientResponseError
 import logging
 
@@ -88,11 +96,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         cache: bool = False,
         cachedir: str = "",
         parallel: bool = False,
-        parallel_method: str = "thread",
+        parallel_method: str = "erddap",  # Alternative to 'threads' with a dashboard
         progress: bool = False,
         chunks: str = "auto",
         chunks_maxsize: dict = {},
         api_timeout: int = 0,
+        params: Union[str, list] = 'all',
+        measured: Union[str, list] = None,
         **kwargs,
     ):
         """Instantiate an ERDDAP Argo data fetcher
@@ -120,6 +130,14 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             Eg: {'wmo': 5} will create chunks with as many as 5 WMOs each.
         api_timeout: int (optional)
             Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
+        params: Union[str, list] (optional, default='all')
+            List of BGC essential variables to retrieve, i.e. that will be in the output :class:`xr.DataSet``.
+            By default, this is set to ``all``, i.e. any variable found in at least of the profile in the data
+            selection will be included in the output.
+        measured: Union[str, list] (optional, default=None)
+            List of BGC essential variables that can't be NaN. If set to 'all', this is an easy way to reduce the size of the
+            :class:`xr.DataSet`` to points where all variables have been measured. Otherwise, provide a simple list of
+            variables.
         """
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.definition = "Ifremer erddap Argo data fetcher"
@@ -131,9 +149,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         if not isinstance(parallel, bool):
             parallel_method = parallel
             parallel = True
-        if parallel_method not in ["thread", "seq"]:
+        if parallel_method not in ["thread", "seq", "erddap"]:
             raise ValueError(
-                "erddap only support multi-threading, use 'thread' instead of '%s'"
+                "erddap only support multi-threading, use 'thread' or 'erddap' instead of '%s'"
                 % parallel_method
             )
         self.parallel = parallel
@@ -145,11 +163,70 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         self.init(**kwargs)
         self._init_erddapy()
 
+        if self.dataset_id == 'bgc':
+            # Create an ArgoIndex instance:
+            # This will be used to:
+            # - retrieve the list of BGC variables to ask the erddap server
+            # - get <param>_data_mode information because we can't get it from the server
+            self.indexfs = kwargs['indexfs'] if 'indexfs' in kwargs else ArgoIndex(
+                index_file='argo_synthetic-profile_index.txt',  # because that's what is in the erddap
+                cache=True,
+                cachedir=cachedir,
+                timeout=5,
+            )
+
+            # To handle bugs in the erddap server, we need the list of parameters on the server:
+            # todo: Remove this when bug fixed
+            data = self.fs.open_json(self.server + "/info/ArgoFloats-synthetic-BGC/index.json")
+            self._bgc_vlist_erddap = [row[1] for row in data['table']['rows'] if row[0] == 'variable']
+
+            # Handle the 'params' argument:
+            self._bgc_params = to_list(params)
+            if isinstance(params, str):
+                if params == 'all':
+                    params = self._bgc_vlist_avail
+                else:
+                    params = to_list(params)
+            elif params is None:
+                raise ValueError()
+            elif params[0] == 'all':
+                params = self._bgc_vlist_avail
+            elif not argopy.utilities.is_list_of_strings(params):
+                raise ValueError("'params' argument must be a list of strings")
+                # raise ValueError("'params' argument must be a list of strings (possibly with a * wildcard)")
+            self._bgc_vlist_requested = [p.upper() for p in params]
+            # self._bgc_vlist_requested = self._bgc_handle_wildcard(self._bgc_vlist_requested)
+
+            for p in ['PRES', 'TEMP', 'PSAL']:
+                if p not in self._bgc_vlist_requested:
+                    self._bgc_vlist_requested.append(p)
+
+            # Handle the 'measured' argument:
+            self._bgc_measured = to_list(measured)
+            if isinstance(measured, str):
+                if measured == 'all':
+                    measured = self._bgc_vlist_requested
+                else:
+                    measured = to_list(measured)
+            elif self._bgc_measured[0] is None:
+                measured = []
+            elif self._bgc_measured[0] == 'all':
+                measured = self._bgc_vlist_requested
+            elif not argopy.utilities.is_list_of_strings(self._bgc_measured):
+                raise ValueError("'measured' argument must be a list of strings")
+                # raise ValueError("'measured' argument must be a list of strings (possibly with a * wildcard)")
+            self._bgc_vlist_measured = [m.upper() for m in measured]
+            # self._bgc_vlist_measured = self._bgc_handle_wildcard(self._bgc_vlist_measured)
+
+
     def __repr__(self):
         summary = ["<datafetcher.erddap>"]
         summary.append("Name: %s" % self.definition)
         summary.append("API: %s" % self.server)
         summary.append("Domain: %s" % format_oneline(self.cname()))
+        if self.dataset_id == 'bgc':
+            summary.append("BGC variables: %s" % self._bgc_vlist_requested)
+            summary.append("BGC 'must be measured' variables: %s" % self._bgc_vlist_measured)
         return "\n".join(summary)
 
     @property
@@ -169,38 +246,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         This is hard coded, but should be retrieved from an API somewhere
         """
-        for v in this.data_vars:
-            if "TEMP" in v and "_QC" not in v:
-                this[v].attrs = {
-                    "long_name": "SEA TEMPERATURE IN SITU ITS-90 SCALE",
-                    "standard_name": "sea_water_temperature",
-                    "units": "degree_Celsius",
-                    "valid_min": -2.0,
-                    "valid_max": 40.0,
-                    "resolution": 0.001,
-                }
-                if "ERROR" in v:
-                    this[v].attrs["long_name"] = (
-                        "ERROR IN %s" % this[v].attrs["long_name"]
-                    )
 
         for v in this.data_vars:
-            if "PSAL" in v and "_QC" not in v:
-                this[v].attrs = {
-                    "long_name": "PRACTICAL SALINITY",
-                    "standard_name": "sea_water_salinity",
-                    "units": "psu",
-                    "valid_min": 0.0,
-                    "valid_max": 43.0,
-                    "resolution": 0.001,
-                }
-                if "ERROR" in v:
-                    this[v].attrs["long_name"] = (
-                        "ERROR IN %s" % this[v].attrs["long_name"]
-                    )
-
-        for v in this.data_vars:
-            if "PRES" in v and "_QC" not in v:
+            param = 'PRES'
+            if v in [param, "%s_ADJUSTED" % param, "%s_ADJUSTED_ERROR" % param]:
                 this[v].attrs = {
                     "long_name": "Sea Pressure",
                     "standard_name": "sea_water_pressure",
@@ -209,6 +258,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     "valid_max": 12000.0,
                     "resolution": 0.1,
                     "axis": "Z",
+                    "casted": this[v].attrs['casted'] if 'casted' in this[v].attrs else 0,
                 }
                 if "ERROR" in v:
                     this[v].attrs["long_name"] = (
@@ -216,7 +266,42 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     )
 
         for v in this.data_vars:
-            if "DOXY" in v and "_QC" not in v:
+            param = 'TEMP'
+            if v in [param, "%s_ADJUSTED" % param, "%s_ADJUSTED_ERROR" % param]:
+                this[v].attrs = {
+                    "long_name": "SEA TEMPERATURE IN SITU ITS-90 SCALE",
+                    "standard_name": "sea_water_temperature",
+                    "units": "degree_Celsius",
+                    "valid_min": -2.0,
+                    "valid_max": 40.0,
+                    "resolution": 0.001,
+                    "casted": this[v].attrs['casted'] if 'casted' in this[v].attrs else 0,
+                }
+                if "ERROR" in v:
+                    this[v].attrs["long_name"] = (
+                        "ERROR IN %s" % this[v].attrs["long_name"]
+                    )
+
+        for v in this.data_vars:
+            param = 'PSAL'
+            if v in [param, "%s_ADJUSTED" % param, "%s_ADJUSTED_ERROR" % param]:
+                this[v].attrs = {
+                    "long_name": "PRACTICAL SALINITY",
+                    "standard_name": "sea_water_salinity",
+                    "units": "psu",
+                    "valid_min": 0.0,
+                    "valid_max": 43.0,
+                    "resolution": 0.001,
+                    "casted": this[v].attrs['casted'] if 'casted' in this[v].attrs else 0,
+                }
+                if "ERROR" in v:
+                    this[v].attrs["long_name"] = (
+                        "ERROR IN %s" % this[v].attrs["long_name"]
+                    )
+
+        for v in this.data_vars:
+            param = 'DOXY'
+            if v in [param, "%s_ADJUSTED" % param, "%s_ADJUSTED_ERROR" % param]:
                 this[v].attrs = {
                     "long_name": "Dissolved oxygen",
                     "standard_name": "moles_of_oxygen_per_unit_mass_in_sea_water",
@@ -224,6 +309,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     "valid_min": -5.0,
                     "valid_max": 600.0,
                     "resolution": 0.001,
+                    "casted": this[v].attrs['casted'] if 'casted' in this[v].attrs else 0,
                 }
                 if "ERROR" in v:
                     this[v].attrs["long_name"] = (
@@ -234,33 +320,46 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             if "_QC" in v:
                 attrs = {
                     "long_name": "Global quality flag of %s profile" % v,
-                    "convention": "Argo reference table 2a",
+                    "conventions": "Argo reference table 2a",
+                    "casted": this[v].attrs['casted'] if 'casted' in this[v].attrs else 0,
                 }
                 this[v].attrs = attrs
 
         if "CYCLE_NUMBER" in this.data_vars:
             this["CYCLE_NUMBER"].attrs = {
                 "long_name": "Float cycle number",
-                "convention": "0..N, 0 : launch cycle (if exists), 1 : first complete cycle",
+                "conventions": "0..N, 0 : launch cycle (if exists), 1 : first complete cycle",
+                "casted": this["CYCLE_NUMBER"].attrs['casted'] if 'casted' in this["CYCLE_NUMBER"].attrs else 0,
             }
-
-        if "DATA_MODE" in this.data_vars:
-            this["DATA_MODE"].attrs = {
-                "long_name": "Delayed mode or real time data",
-                "convention": "R : real time; D : delayed mode; A : real time with adjustment",
-            }
-
         if "DIRECTION" in this.data_vars:
             this["DIRECTION"].attrs = {
                 "long_name": "Direction of the station profiles",
-                "convention": "A: ascending profiles, D: descending profiles",
+                "conventions": "A: ascending profiles, D: descending profiles",
+                "casted": this["DIRECTION"].attrs['casted'] if 'casted' in this["DIRECTION"].attrs else 0,
             }
 
         if "PLATFORM_NUMBER" in this.data_vars:
             this["PLATFORM_NUMBER"].attrs = {
                 "long_name": "Float unique identifier",
-                "convention": "WMO float identifier : A9IIIII",
+                "conventions": "WMO float identifier : A9IIIII",
+                "casted": this["PLATFORM_NUMBER"].attrs['casted'] if 'casted' in this["PLATFORM_NUMBER"].attrs else 0,
             }
+
+        if "DATA_MODE" in this.data_vars:
+            this["DATA_MODE"].attrs = {
+                "long_name": "Delayed mode or real time data",
+                "conventions": "R : real time; D : delayed mode; A : real time with adjustment",
+                "casted": this["DATA_MODE"].attrs['casted'] if 'casted' in this["DATA_MODE"].attrs else 0,
+            }
+
+        if self.dataset_id == 'bgc':
+            for param in self._bgc_vlist_requested:
+                if "%s_DATA_MODE" % param in this.data_vars:
+                    this["%s_DATA_MODE" % param].attrs = {
+                        "long_name": "Delayed mode or real time data",
+                        "conventions": "R : real time; D : delayed mode; A : real time with adjustment",
+                        "casted": this["%s_DATA_MODE" % param].attrs['casted'] if 'casted' in this["%s_DATA_MODE" % param].attrs else 0,
+                    }
 
         return this
 
@@ -284,6 +383,51 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 "Invalid database short name for Ifremer erddap (use: 'phy', 'bgc' or 'ref')"
             )
         return self
+
+    @property
+    def _bgc_vlist_avail(self):
+        """Return the list of BGC parameters available for this access point
+
+        Apply search criteria in the index, then retrieve the list of parameters
+        """
+        if hasattr(self, "WMO"):
+            if hasattr(self, "CYC") and self.CYC is not None:
+                self.indexfs.search_wmo_cyc(self.WMO, self.CYC)
+            else:
+                self.indexfs.search_wmo(self.WMO)
+        elif hasattr(self, "BOX"):
+            if len(self.indexBOX) == 4:
+                self.indexfs.search_lat_lon(self.indexBOX)
+            else:
+                self.indexfs.search_lat_lon_tim(self.indexBOX)
+        params = self.indexfs.read_params()
+
+        # Temporarily remove from params those missing on the erddap server:
+        # params = [p for p in params if p.lower() in self._bgc_vlist_erddap]
+        results = []
+        for p in params:
+            if p.lower() in self._bgc_vlist_erddap:
+                results.append(p)
+            else:
+                log.error("Removed '%s' because it's not available on the erddap, but it must !" % p)
+
+        return results
+
+    def _bgc_handle_wildcard(self, param_list):
+        """In a list, replace item with wildcard by available BGC parameter(s)"""
+        is_valid_param = lambda x: x in list(argopy.ArgoNVSReferenceTables().tbl(3)["altLabel"])
+
+        results = param_list.copy()
+        for p in param_list:
+            if not is_valid_param(p):
+                if '*' not in p:
+                    raise ValueError("Invalid BGC parameter '%s' (not listed in Argo reference table 3)" % p)
+                else:
+                    match = fnmatch.filter(self._bgc_vlist_avail, p)
+                    if len(match) > 0:
+                        [results.append(m) for m in match]
+                        results.remove(p)
+        return results
 
     @property
     def _minimal_vlist(self):
@@ -314,7 +458,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         if self.dataset_id == "bgc":
             plist = [
-                "parameter_data_mode",
+                # "parameter_data_mode",  # never !!!
                 "latitude",
                 "longitude",
                 "position_qc",
@@ -327,29 +471,18 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             ]
             [vlist.append(p) for p in plist]
 
-            plist = [
-                "pres",
-                "temp",
-                "psal",
-                "cndc",
-                "doxy",
-                "beta_backscattering",
-                "fluorescence_chla",
-                # "fluorescence_cdom",
-                # "side_scattering_turbidity",
-                # "transmittance_particle_beam_attenuation",
-                "bbp",
-                "turbidity",
-                "cp",
-                "chla",
-                "cdom",
-                "nitrate",
-            ]
-            [vlist.append(p) for p in plist]
-            [vlist.append(p + "_qc") for p in plist]
-            [vlist.append(p + "_adjusted") for p in plist]
-            [vlist.append(p + "_adjusted_qc") for p in plist]
-            [vlist.append(p + "_adjusted_error") for p in plist]
+            # Search in the profile index the list of parameters to load:
+            params = self._bgc_vlist_requested
+            # log.debug("erddap-bgc parameters to load: %s" % params)
+
+            for p in params:
+                vname = p.lower()
+                vlist.append("%s" % vname)
+                vlist.append("%s_qc" % vname)
+                vlist.append("%s_adjusted" % vname)
+                vlist.append("%s_adjusted_qc" % vname)
+                vlist.append("%s_adjusted_error" % vname)
+                # vlist.append("profile_%s_qc" % vname)  # not in the database
 
         elif self.dataset_id == "ref":
             plist = ["latitude", "longitude", "time", "platform_number", "cycle_number"]
@@ -358,6 +491,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             [vlist.append(p) for p in plist]
 
         return vlist
+
+
 
     def cname(self):
         """Return a unique string defining the constraints"""
@@ -374,7 +509,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         return [self.fs.cachepath(uri) for uri in self.uri]
 
     def get_url(self):
-        """Return the URL to download data requested
+        """Return the URL to download requested data
 
         Returns
         -------
@@ -398,19 +533,39 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         variables = ",".join(variables)
         url += f"{variables}"
 
-        # Add constraints:
-        self.define_constraints()  # Define constraint to select this box of data (affect self.erddap.constraints)
+        # Load constraints to implement the access point:
+        self.define_constraints()  # from Fetch_box or Fetch_wmo
+
+        # Possibly add more constraints for the BGC dataset:
+        if self.dataset_id == "bgc":
+            params = self._bgc_vlist_measured
+            for p in params:
+                self.erddap.constraints.update({"%s!=" % p.lower(): 'NaN'})
+
+            # Possibly add more constraints to make requests smaller:
+            for p in ['latitude', 'longitude']:
+                self.erddap.constraints.update({"%s!=" % p.lower(): 'NaN'})
+            # for p in ['platform_number']:
+            #     self.erddap.constraints.update({"%s!=" % p.lower(): '"NaN"'})
+
+        # Post-process all constraints:
         constraints = self.erddap.constraints
         _constraints = copy.copy(constraints)
         for k, v in _constraints.items():
             if k.startswith("time"):
                 _constraints.update({k: parse_dates(v)})
         _constraints = quote_string_constraints(_constraints)
+        # Remove double-quote around NaN for numerical values:
+        for k, v in _constraints.items():
+            if v == '"NaN"':
+                _constraints.update({k: 'NaN'})
+
         _constraints = "".join([f"&{k}{v}" for k, v in _constraints.items()])
         url += f"{_constraints}"
 
         # Last part:
-        url += '&distinct()&orderBy("time,pres")'
+        url += '&distinct()'
+        url += '&orderBy("time,pres")'
         return url
 
     @property
@@ -426,78 +581,175 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 "Erddap server can't return ncHeader for this url. "
             )
 
-    def to_xarray(self, errors: str = "ignore"):  # noqa: C901
+    def post_process(self, this_ds, add_dm : bool = True, URI: list = None):
+        """Post-process a xarray.DataSet created from a netcdf erddap response
+
+        This method can also be applied on a regular dataset to re-enforce format compliance
+        """
+        if 'row' in this_ds.dims:
+            this_ds = this_ds.rename({"row": "N_POINTS"})
+
+        # Set coordinates:
+        coords = ("LATITUDE", "LONGITUDE", "TIME", "N_POINTS")
+        this_ds = this_ds.reset_coords()
+        this_ds["N_POINTS"] = this_ds["N_POINTS"]
+
+        # Convert all coordinate variable names to upper case
+        for v in this_ds.data_vars:
+            this_ds = this_ds.rename({v: v.upper()})
+        this_ds = this_ds.set_coords(coords)
+
+        if self.dataset_id == "ref":
+            this_ds["DIRECTION"] = xr.full_like(this_ds["CYCLE_NUMBER"], "A", dtype=str)
+
+        # Cast data types:
+        # log.debug("erddap.post_process WMO=%s" % to_list(np.unique(this_ds['PLATFORM_NUMBER'].values)))
+        this_ds = this_ds.argo.cast_types()
+        # log.debug("erddap.post_process WMO=%s" % to_list(np.unique(this_ds['PLATFORM_NUMBER'].values)))
+        # if '999' in to_list(np.unique(this_ds['PLATFORM_NUMBER'].values)):
+        #     log.error(this_ds.attrs)
+
+        # With BGC, some points may not have a PLATFORM_NUMBER !
+        # So, we remove these
+        if self.dataset_id == 'bgc' and '999' in to_list(np.unique(this_ds['PLATFORM_NUMBER'].values)):
+            log.error("Found points without WMO !")
+            this_ds = this_ds.where(this_ds['PLATFORM_NUMBER'] != '999', drop=True)
+            this_ds = this_ds.argo.cast_types(overwrite=True)
+            log.debug("erddap.post_process WMO=%s" % to_list(np.unique(this_ds['PLATFORM_NUMBER'].values)))
+
+        # log.debug("erddap.post_process (add_dm=%s): %s" % (add_dm, str(this_ds)))
+        if self.dataset_id == 'bgc' and add_dm:
+            this_ds = self._add_parameters_data_mode_ds(this_ds)
+            this_ds = this_ds.argo.cast_types(overwrite=False)
+        # log.debug("erddap.post_process (add_dm=%s): %s" % (add_dm, str(this_ds)))
+
+        # Overwrite Erddap attributes with those from Argo standards:
+        this_ds = self._add_attributes(this_ds)
+
+        # Also replace erddap attributes with those from argopy ones:
+        this_ds.attrs = {}
+        if self.dataset_id == "phy":
+            this_ds.attrs["DATA_ID"] = "ARGO"
+            this_ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
+        elif self.dataset_id == "ref":
+            this_ds.attrs["DATA_ID"] = "ARGO_Reference"
+            this_ds.attrs["DOI"] = "-"
+        elif self.dataset_id == "bgc":
+            this_ds.attrs["DATA_ID"] = "ARGO-BGC"
+            this_ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
+        this_ds.attrs["Fetched_from"] = self.erddap.server
+        this_ds.attrs["Fetched_by"] = getpass.getuser()
+        this_ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
+        this_ds.attrs["Fetched_constraints"] = self.cname()
+        this_ds.attrs["Fetched_uri"] = URI
+        this_ds = this_ds[np.sort(this_ds.data_vars)]
+
+        if self.dataset_id == 'bgc':
+            n_zero = np.count_nonzero(np.isnan(np.unique(this_ds['PLATFORM_NUMBER'])))
+            if n_zero > 0:
+                log.error('Some points (%i) have no PLATFORM_NUMBER !' % n_zero)
+
+        return this_ds
+
+    def to_xarray(self,
+                  errors: str = "ignore",
+                  add_dm: bool = None,
+                  concat: bool = True,
+                  max_workers: int = 6,
+                  ):  # noqa: C901
         """Load Argo data and return a xarray.DataSet"""
 
         URI = self.uri  # Call it once
+
+        # Should we compute (from the index) and add DATA_MODE for BGC variables:
+        add_dm = self.dataset_id == 'bgc' if add_dm is None else bool(add_dm)
 
         # Download data
         if not self.parallel:
             if len(URI) == 1:
                 try:
-                    # log.debug("to_xarray: %s" % URI[0])
                     # log_argopy_callerstack()
-                    ds = self.fs.open_dataset(URI[0])
+                    results = self.fs.open_dataset(URI[0])
+                    results = self.post_process(results, add_dm=add_dm, URI=URI)
                 except ClientResponseError as e:
-                    raise ErddapServerError(e.message)
+                    if 'Proxy Error' in e.message:
+                        raise ErddapServerError("Your request is probably taking longer than expected to be handled by the server. "
+                                                "You can try to relaunch you're request or use the 'parallel' option "
+                                                "to chunk it into small requests.")
+                        log.debug(str(e))
+                    else:
+                        raise ErddapServerError(e.message)
+
             else:
                 try:
-                    ds = self.fs.open_mfdataset(
-                        URI, method="sequential", progress=self.progress, errors=errors
+                    results = self.fs.open_mfdataset(
+                        URI,
+                        method="erddap",
+                        max_workers=1,
+                        progress=self.progress,
+                        errors=errors,
+                        concat=concat,
+                        concat_dim='N_POINTS',
+                        preprocess=self.post_process,
+                        preprocess_opts={'add_dm': False, 'URI': URI},
+                        final_opts={'data_vars': 'all'},
                     )
+                    if results is not None:
+                        if self.progress:
+                            print("Final post-processing of the merged dataset () ...")
+                        results = self.post_process(results, **{'add_dm': add_dm, 'URI': URI})
                 except ClientResponseError as e:
                     raise ErddapServerError(e.message)
         else:
             try:
-                ds = self.fs.open_mfdataset(
+                results = self.fs.open_mfdataset(
                     URI,
-                    method=self.parallel_method,
+                    method="erddap",
                     progress=self.progress,
+                    max_workers=max_workers,
                     errors=errors,
+                    concat=concat,
+                    concat_dim='N_POINTS',
+                    preprocess=self.post_process,
+                    preprocess_opts={'add_dm': False, 'URI': URI},
+                    final_opts={'data_vars': 'all'},
                 )
+                if concat:
+                    if results is not None:
+                        if self.progress:
+                            print("Final post-processing of the merged dataset () ...")
+                        results = self.post_process(results, **{'add_dm': add_dm, 'URI': URI})
+            except DataNotFound:
+                if self.dataset_id == 'bgc' and len(self._bgc_vlist_measured) > 0:
+                    msg = f"Your BGC request returned no data. This may be due to the 'measured' " \
+                          "argument that imposes constraints impossible to fulfill for the " \
+                          "access point defined (%s), i.e. some " \
+                          "variables in 'measured' are not available in some floats in this " \
+                          "access point." % self.cname()
+                    raise DataNotFound(msg)
+                else:
+                    raise
             except ClientResponseError as e:
                 raise ErddapServerError(e.message)
 
-        ds = ds.rename({"row": "N_POINTS"})
+        if concat:
+            results = self.filter_points(results)
 
-        # Post-process the xarray.DataSet:
+        # Final checks
+        if self.dataset_id == 'bgc' and concat and len(self._bgc_vlist_measured) > 0:
+            empty = []
+            for v in self._bgc_vlist_measured:
+                if np.count_nonzero(results[v]) != len(results['N_POINTS']):
+                    empty.append(v)
+            if len(empty) > 0:
+                msg = f"After processing, your BGC request still return final data with NaNs (%s). " \
+                      f"This may be due to the 'measured' argument ('%s') that imposes a no-NaN constraint " \
+                      f"impossible to fulfill for the access point defined (%s)]. " \
+                      f"\nUsing the 'measured' argument, you can try to minimize the list of variables to " \
+                      f"return without NaNs, or set it to 'None' to return all samples." % (",".join(to_list(v)), ",".join(self._bgc_measured), self.cname())
+                raise ValueError(msg)
 
-        # Set coordinates:
-        coords = ("LATITUDE", "LONGITUDE", "TIME", "N_POINTS")
-        ds = ds.reset_coords()
-        ds["N_POINTS"] = ds["N_POINTS"]
-        # Convert all coordinate variable names to upper case
-        for v in ds.data_vars:
-            ds = ds.rename({v: v.upper()})
-        ds = ds.set_coords(coords)
-
-        if self.dataset_id == "ref":
-            ds["DIRECTION"] = xr.full_like(ds["CYCLE_NUMBER"], "A", dtype=str)
-
-        # Cast data types and add variable attributes (not available in the csv download):
-        ds = self._add_attributes(ds)
-        ds = ds.argo.cast_types()
-
-        # Remove erddap file attributes and replace them with argopy ones:
-        ds.attrs = {}
-        if self.dataset_id == "phy":
-            ds.attrs["DATA_ID"] = "ARGO"
-            ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
-        elif self.dataset_id == "ref":
-            ds.attrs["DATA_ID"] = "ARGO_Reference"
-            ds.attrs["DOI"] = "-"
-        elif self.dataset_id == "bgc":
-            ds.attrs["DATA_ID"] = "ARGO-BGC"
-            ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
-        ds.attrs["Fetched_from"] = self.erddap.server
-        ds.attrs["Fetched_by"] = getpass.getuser()
-        ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
-        ds.attrs["Fetched_constraints"] = self.cname()
-        ds.attrs["Fetched_uri"] = URI
-        ds = ds[np.sort(ds.data_vars)]
-
-        #
-        return ds
+        return results
 
     def filter_data_mode(self, ds: xr.Dataset, **kwargs):
         """Apply xarray argo accessor filter_data_mode method"""
@@ -525,6 +777,136 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
+    def filter_points(self, ds):
+        """ Enforce request criteria
+
+        Sometimes, erddap data postprocessing may modify the content wrt user requirements. So we need
+        to adjust for this.
+        """
+        # Enforce the 'measured' argument for BGC:
+        if self.dataset_id == 'bgc':
+            if len(self._bgc_vlist_measured) == 0:
+                return ds
+            else:
+                this_mask = xr.DataArray(
+                    np.zeros_like(ds["N_POINTS"]),
+                    dims=["N_POINTS"],
+                    coords={"N_POINTS": ds["N_POINTS"]},
+                )
+                log.debug("Keep samples without NaN in %s" % self._bgc_vlist_measured)
+                for v in self._bgc_vlist_measured:
+                    this_mask += ds[v].notnull()
+                this_mask = this_mask == len(self._bgc_vlist_measured)
+                ds = ds.argo._where(this_mask, drop=True)
+
+        ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
+        return ds
+
+    def _add_parameters_data_mode_ds(self, this_ds):
+        """Compute and add <PARAM>_DATA_MODE variables to a xarray dataset
+
+        This requires an ArgoIndex instance as Pandas Dataframe
+        todo: Code this for the pyarrow index backend
+
+        This method consume a collection of points
+        """
+        # import time
+
+        def list_WMO_CYC(this_ds):
+            """Given a dataset, return a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) tuple"""
+            profiles = []
+            for wmo, grp in this_ds.groupby('PLATFORM_NUMBER'):
+                [profiles.append((int(wmo), int(cyc))) for cyc in np.unique(grp['CYCLE_NUMBER'])]
+            return profiles
+
+        def list_WMO(this_ds):
+            """Return all possible WMO as a list"""
+            return to_list(np.unique(this_ds['PLATFORM_NUMBER'].values))
+
+        def complete_df(this_df, params):
+            """Addd 'wmo', 'cyc' and '<param>_data_mode' columns to this dataframe"""
+            this_df["wmo"] = this_df["file"].apply(lambda x: int(x.split("/")[1]))
+            this_df["cyc"] = this_df["file"].apply(lambda x: int(x.split("_")[-1].split('.nc')[0].replace("D", "")))
+            this_df["variables"] = df["parameters"].apply(lambda x: x.split())
+            for param in params:
+                df["%s_data_mode" % param] = this_df.apply(
+                    lambda x: x['parameter_data_mode'][x['variables'].index(param)] if param in x['variables'] else '',
+                    axis=1)
+            return this_df
+
+        def read_DM(this_df, wmo, cyc, param):
+            """Return one parameter data mode for a given wmo/cyc and index dataframe"""
+            filt = []
+            filt.append(this_df['wmo'].isin([wmo]))
+            filt.append(this_df['cyc'].isin([cyc]))
+            sub_df = df[np.logical_and.reduce(filt)]
+            if sub_df.shape[0] == 0:
+                log.debug("Found a profile in the dataset, but not in the index ! wmo=%i, cyc=%i" % (wmo, cyc))
+                # This can happen if a Synthetic netcdf file was generated from a non-BGC float.
+                # The file exists, but it doesn't have BGC variables. Float is usually not listed in the index.
+                return ''
+            else:
+                return sub_df["%s_data_mode" % param].values[-1]
+
+        def print_etime(txt, t0):
+            now = time.process_time()
+            print("⏰ %s: %0.2f seconds" % (txt, now - t0))
+            return now
+
+        # timer = time.process_time()
+
+        profiles = list_WMO_CYC(this_ds)
+        params = [p for p in self.indexfs.search_wmo(list_WMO(this_ds)).read_params() if p in this_ds]
+        # timer = print_etime('Read profiles and params from ds', timer)
+
+        df = self.indexfs.search_wmo(list_WMO(this_ds)).to_dataframe(completed=False)
+        df = complete_df(df, params)
+        # timer = print_etime('Index search wmo and export to dataframe', timer)
+
+        CYCLE_NUMBER = this_ds['CYCLE_NUMBER'].values
+        PLATFORM_NUMBER = this_ds['PLATFORM_NUMBER'].values
+        N_POINTS = this_ds['N_POINTS'].values
+
+        for param in params:
+            # print("=" * 50)
+            # print("Filling DATA MODE for %s ..." % param)
+            # tims = {'init': 0, 'read_DM': 0, 'isin': 0, 'where': 0, 'fill': 0}
+
+            for iprof, prof in enumerate(profiles):
+                wmo, cyc = prof
+                # t0 = time.process_time()
+
+                if "%s_DATA_MODE" % param not in this_ds:
+                    this_ds["%s_DATA_MODE" % param] = xr.full_like(this_ds['CYCLE_NUMBER'], dtype=str, fill_value='')
+                # now = time.process_time()
+                # tims['init'] += now - t0
+                # t0 = now
+
+                param_data_mode = read_DM(df, wmo, cyc, param)
+                # now = time.process_time()
+                # tims['read_DM'] += now - t0
+                # t0 = now
+
+                i_cyc = CYCLE_NUMBER == cyc
+                i_wmo = PLATFORM_NUMBER == wmo
+                # now = time.process_time()
+                # tims['isin'] += now - t0
+                # t0 = now
+
+                i_points = N_POINTS[np.logical_and(i_cyc, i_wmo)]
+                # now = time.process_time()
+                # tims['where'] += now - t0
+                # t0 = now
+
+                this_ds["%s_DATA_MODE" % param][i_points] = param_data_mode
+                # now = time.process_time()
+                # tims['fill'] += now - t0
+
+            this_ds["%s_DATA_MODE" % param] = this_ds["%s_DATA_MODE" % param].astype('<U1')
+            # timer = print_etime('Processed %s (%i profiles)' % (param, len(profiles)), timer)
+
+        return this_ds
+
 
 class Fetch_wmo(ErddapArgoDataFetcher):
     """Manage access to Argo data through Ifremer ERDDAP for: a list of WMOs
@@ -551,8 +933,11 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         self.definition = "?"
         if self.dataset_id == "phy":
             self.definition = "Ifremer erddap Argo data fetcher"
+        elif self.dataset_id == "bgc":
+            self.definition = "Ifremer erddap Argo BGC data fetcher"
         elif self.dataset_id == "ref":
             self.definition = "Ifremer erddap Argo REFERENCE data fetcher"
+
         if self.CYC is not None:
             self.definition = "%s for profiles" % self.definition
         else:
@@ -582,23 +967,33 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         if not self.parallel:
             chunks = "auto"
             chunks_maxsize = {"wmo": 5}
+            if self.dataset_id == 'bgc':
+                chunks_maxsize = {"wmo": 1}
         else:
             chunks = self.chunks
             chunks_maxsize = self.chunks_maxsize
+            if self.dataset_id == 'bgc':
+                chunks_maxsize['wmo'] = 1
         self.Chunker = Chunker(
             {"wmo": self.WMO}, chunks=chunks, chunksize=chunks_maxsize
         )
         wmo_grps = self.Chunker.fit_transform()
         urls = []
+        opts = {'ds': self.dataset_id,
+                'fs': self.fs,
+                'server': self.server,
+                'parallel': False,
+                'CYC': self.CYC}
+        if self.dataset_id == 'bgc':
+            opts['params'] = self._bgc_params
+            opts['measured'] = self._bgc_measured
+            opts['indexfs'] = self.indexfs
+
         for wmos in wmo_grps:
             urls.append(
                 Fetch_wmo(
                     WMO=wmos,
-                    CYC=self.CYC,
-                    ds=self.dataset_id,
-                    parallel=False,
-                    fs=self.fs,
-                    server=self.server,
+                    **opts,
                 ).get_url()
             )
         return urls
@@ -619,9 +1014,14 @@ class Fetch_box(ErddapArgoDataFetcher):
                 box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
         self.BOX = box.copy()
+        self.indexBOX = [self.BOX[ii] for ii in [0, 1, 2, 3]]
+        if len(self.BOX) == 8:
+            self.indexBOX = [self.BOX[ii] for ii in [0, 1, 2, 3, 6, 7]]
 
         if self.dataset_id == "phy":
             self.definition = "Ifremer erddap Argo data fetcher for a space/time region"
+        elif self.dataset_id == "bgc":
+            self.definition = "Ifremer erddap Argo BGC data fetcher for a space/time region"
         elif self.dataset_id == "ref":
             self.definition = (
                 "Ifremer erddap Argo REFERENCE data fetcher for a space/time region"
@@ -658,10 +1058,20 @@ class Fetch_box(ErddapArgoDataFetcher):
             )
             boxes = self.Chunker.fit_transform()
             urls = []
+            opts = {'ds': self.dataset_id,
+                    'fs': self.fs,
+                    'server': self.server}
+            if self.dataset_id == 'bgc':
+                opts['params'] = self._bgc_params
+                opts['measured'] = self._bgc_measured
+                opts['indexfs'] = self.indexfs
             for box in boxes:
-                urls.append(
-                    Fetch_box(
-                        box=box, ds=self.dataset_id, fs=self.fs, server=self.server
-                    ).get_url()
-                )
+                try:
+                    fb = Fetch_box(
+                            box=box,
+                            **opts,
+                        )
+                    urls.append(fb.get_url())
+                except DataNotFound:
+                    log.debug("This box fetcher will contain no data")
             return urls

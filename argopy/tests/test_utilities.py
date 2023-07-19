@@ -968,7 +968,7 @@ class Test_ArgoDocs:
         """ Fixture to create a ArgoDocs instance for a given set of arguments """
         docid = request.param
 
-        Ad = ArgoDocs(docid=docid)
+        Ad = ArgoDocs(docid=docid, cache=False)
 
         # Adjust server info to use the mocked HTTP server:
         Ad._doiserver = mocked_server_address

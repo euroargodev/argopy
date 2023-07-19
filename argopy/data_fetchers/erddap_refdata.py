@@ -28,7 +28,7 @@ exit_formats = ["xarray"]
 dataset_ids = ["ref-ctd"]  # First is default
 api_server = OPTIONS["erddap"]  # API root url
 api_server_check = (
-    OPTIONS["erddap"] + "/info/Argo-ref-ctd/index.json"
+    OPTIONS["erddap"] + "/info/ArgoFloats/index.json"
 )  # URL to check if the API is alive
 
 

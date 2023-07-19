@@ -31,6 +31,7 @@ users, we implemented in **argopy** different levels of verbosity and
 data processing to hide or simply remove variables only meaningful to
 experts.
 
+.. _user-mode-details:
 
 User mode details
 -----------------

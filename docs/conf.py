@@ -220,6 +220,9 @@ html_theme_options = {
     "repository_url": "https://www.github.com/euroargodev/argopy",
     "use_repository_button": True,
     "use_issues_button": True,
+    "use_edit_page_button": True,
+    "use_download_button": True,
+    "repository_branch": "master",
     # "html_logo": "_static/argopy_logo_long.png",
     "logo": {
             "image": html_logo,

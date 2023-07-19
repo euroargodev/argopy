@@ -5,7 +5,7 @@
     "alternative" : "SENSOR",
     "creator" : "Argo Data Management Team",
     "date" : "2021-02-10 02:00:03.0",
-    "description" : "Terms describing sensor types in Argo NetCDF arrays",
+    "description" : "Terms describing sensor types mounted on Argo floats. Argo netCDF variable SENSOR is populated by R25 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo sensor types",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -873,6 +873,9 @@
       "@id" : "http://www.w3.org/2004/02/skos/core#member",
       "@type" : "@id"
     },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
+    },
     "alternative" : {
       "@id" : "http://purl.org/dc/terms/alternative"
     },
@@ -884,9 +887,6 @@
     },
     "creator" : {
       "@id" : "http://purl.org/dc/terms/creator"
-    },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
     },
     "comment" : {
       "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"

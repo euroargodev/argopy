@@ -5,7 +5,7 @@
     "alternative" : "POSITIONING_SYSTEM",
     "creator" : "Argo Data Management Team",
     "date" : "2020-04-08 03:00:04.0",
-    "description" : "Name of the system in charge of measuring the float locations.",
+    "description" : "List of float location measuring systems. Argo netCDF variable POSITIONING_SYSTEM is populated by R09 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo positioning system",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -313,9 +313,6 @@
     "RE_RegisterManager" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
     },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
-    },
     "comment" : {
       "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"
     },
@@ -324,6 +321,9 @@
     },
     "title" : {
       "@id" : "http://purl.org/dc/terms/title"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
     },
     "qudt" : "https://qudt.org/2.1/schema/qudt#",
     "owl" : "http://www.w3.org/2002/07/owl#",

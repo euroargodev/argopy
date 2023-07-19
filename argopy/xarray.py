@@ -20,6 +20,7 @@ from argopy.utilities import (
     toYearFraction,
     groupby_remap,
     cast_Argo_variable_type,
+    log_argopy_callerstack,
 )
 from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
@@ -194,10 +195,10 @@ class ArgoAccessor:
         # this.argo._add_history("Modified with 'where' statement")
         return this
 
-    def cast_types(self):  # noqa: C901
+    def cast_types(self, **kwargs):  # noqa: C901
         """ Make sure variables are of the appropriate types according to Argo """
         ds = self._obj
-        return cast_Argo_variable_type(ds)
+        return cast_Argo_variable_type(ds, **kwargs)
 
     @property
     def _dummy_argo_uid(self):
@@ -273,6 +274,65 @@ class ArgoAccessor:
             cyc = -np.vectorize(int)(offset * wmo - np.abs(wmo_or_uid))
             return wmo, cyc, drc
 
+    @property
+    def index(self):
+        """Basic profile index"""
+        if self._type != "point":
+            raise InvalidDatasetStructure(
+                "Method only available for a collection of points"
+            )
+        this = self._obj
+        dummy_argo_uid = self._dummy_argo_uid
+
+        idx = xr.DataArray(
+            this["TIME"],
+            dims="N_POINTS",
+            coords={"N_POINTS": this["N_POINTS"]},
+        ).groupby(dummy_argo_uid).max().to_dataset()
+
+        for v in ["PLATFORM_NUMBER", "CYCLE_NUMBER", "LONGITUDE", "LATITUDE"]:
+            idx[v] = xr.DataArray(
+                this[v],
+                dims="N_POINTS",
+                coords={"N_POINTS": this["N_POINTS"]},
+            ).groupby(dummy_argo_uid).max()
+
+        df = idx.to_dataframe()
+        df = (
+            df.reset_index()
+            .rename(
+                columns={
+                    "PLATFORM_NUMBER": "wmo",
+                    "CYCLE_NUMBER": "cyc",
+                    "LONGITUDE": "longitude",
+                    "LATITUDE": "latitude",
+                    "TIME": "date",
+                }
+            )
+            .drop(columns="dummy_argo_uid")
+        )
+        df = df[["date", "latitude", "longitude", "wmo", "cyc"]]
+        return df
+
+    @property
+    def domain(self):
+        """Space/time domain of the dataset
+
+            This is different from a usual argopy ``box`` because dates are in :class:`numpy.datetime64` format.
+        """
+        this_ds = self._obj
+        if 'PRES_ADJUSTED' in this_ds.data_vars:
+            Pmin = np.nanmin((np.min(this_ds['PRES'].values), np.min(this_ds['PRES_ADJUSTED'].values)))
+            Pmax = np.nanmax((np.max(this_ds['PRES'].values), np.max(this_ds['PRES_ADJUSTED'].values)))
+        else:
+            Pmin = np.min(this_ds['PRES'].values)
+            Pmax = np.max(this_ds['PRES'].values)
+
+        return [np.min(this_ds['LONGITUDE'].values), np.max(this_ds['LONGITUDE'].values),
+                np.min(this_ds['LATITUDE'].values), np.max(this_ds['LATITUDE'].values),
+                Pmin, Pmax,
+                np.min(this_ds['TIME'].values), np.max(this_ds['TIME'].values)]
+
     def point2profile(self, drop: bool = False):  # noqa: C901
         """ Transform a collection of points into a collection of profiles
 
@@ -323,10 +383,10 @@ class ArgoAccessor:
             .max()
             .values
         )
-        log.debug("New dataset should be [N_PROF=%i, N_LEVELS=%i]" % (N_PROF, N_LEVELS))
+        log.debug("point2profile: New dataset should be [N_PROF=%i, N_LEVELS=%i]" % (N_PROF, N_LEVELS))
         assert N_PROF * N_LEVELS >= len(this["N_POINTS"])
         if N_LEVELS == 1:
-            log.debug("This dataset has a single vertical level, thus final variables will only have a N_PROF "
+            log.debug("point2profile: This dataset has a single vertical level, thus final variables will only have a N_PROF "
                       "dimension and no N_LEVELS")
 
         # Store the initial set of coordinates:
@@ -344,7 +404,7 @@ class ArgoAccessor:
                 try:
                     count[i_prof, iv] = len(np.unique(prof[vname]))
                 except Exception as e:
-                    log.error("An error happened when dealing with the '%s' data variable" % vname)
+                    log.error("point2profile: An error happened when dealing with the '%s' data variable" % vname)
                     raise(e)
 
         # Variables with a unique value for each profiles:
@@ -1930,6 +1990,13 @@ class ArgoAccessor:
             return list_1d
         else:
             return list_1d, dummy_argo_uid
+
+    def list_WMO_CYC(self):
+        """Given a dataset, return a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) tupple"""
+        profiles = []
+        for wmo, grp in self._obj.groupby('PLATFORM_NUMBER'):
+            [profiles.append((wmo, cyc)) for cyc in np.unique(grp['CYCLE_NUMBER'])]
+        return profiles
 
 
 def open_Argo_dataset(filename_or_obj):

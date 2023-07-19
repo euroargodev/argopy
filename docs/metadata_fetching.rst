@@ -222,7 +222,20 @@ The reference table is returned as a :class:`pandas.DataFrame`. If you want the 
 
     NVS.tbl_name('R01')
 
-If you're looking the ID to use for a specific reference table, you can check it from the list of all available tables given by the :meth:`ArgoNVSReferenceTables.all_tbl_name` property. It will return a dictionary with table IDs as key and table name, definition and NVS link as values. Use the :meth:`ArgoNVSReferenceTables.all_tbl` property to retrieve all tables.
+**If you don't know the reference table ID**, you can search for a word in tables title and/or description with the ``search`` method:
+
+.. ipython:: python
+
+    id_list = NVS.search('sensor')
+
+This will return the list of reference table ids matching your search. It can then be used to retrieve table information:
+
+.. ipython:: python
+
+    [NVS.tbl_name(id) for id in id_list]
+
+
+The full list of all available tables is given by the :meth:`ArgoNVSReferenceTables.all_tbl_name` property. It will return a dictionary with table IDs as key and table name, definition and NVS link as values. Use the :meth:`ArgoNVSReferenceTables.all_tbl` property to retrieve all tables.
 
 .. ipython:: python
 

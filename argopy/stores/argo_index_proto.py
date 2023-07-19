@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 
 from ..options import OPTIONS
 from ..errors import FtpPathError, InvalidDataset, OptionValueError
-from ..utilities import Registry, isconnected
+from ..utilities import Registry, isconnected, is_list_of_strings
 from .filesystems import httpstore, memorystore, filestore, ftpstore
 
 try:
@@ -36,36 +36,64 @@ class ArgoIndexStoreProto(ABC):
     ext = None
     """Storage file extension"""
 
-    convention_supported = ["ar_index_global_prof", "argo_bio-profile_index", "argo_synthetic-profile_index"]
+    convention_supported = [
+        "ar_index_global_prof",
+        "core",
+        "argo_bio-profile_index",
+        "bgc-b",
+        "bio",
+        "argo_synthetic-profile_index",
+        "bgc-s",
+        "synth",
+    ]
     """List of supported conventions"""
 
     def __init__(
         self,
         host: str = "https://data-argo.ifremer.fr",
         index_file: str = "ar_index_global_prof.txt",
+        convention: str = None,
         cache: bool = False,
         cachedir: str = "",
         timeout: int = 0,
-        convention: str = None,
-    ):
-        """ Create an Argo index file store
+    ) -> object:
+        """Create an Argo index file store
 
-            Parameters
-            ----------
-            host: str, default: ``https://data-argo.ifremer.fr``
-                Host is a local or remote ftp/http path to a `dac` folder (GDAC structure compliant). This takes values
-                like: ``ftp://ftp.ifremer.fr/ifremer/argo``, ``ftp://usgodae.org/pub/outgoing/argo`` or a local absolute path.
-            index_file: str, default: ``ar_index_global_prof.txt``
-                Name of the csv-like text file with the index
-            cache : bool, default: False
-                Use cache or not.
-            cachedir : str, default: OPTIONS['cachedir']
-                Folder where to store cached files
-            convention: str, default: ``ar_index_global_prof``
-                Set the expected format convention of the index file. This is useful when trying to load index file with custom name.
+        Parameters
+        ----------
+        host: str, default: ``https://data-argo.ifremer.fr``
+            Local or remote (ftp or http) path to a `dac` folder (GDAC structure compliant). This takes values
+            like: ``ftp://ftp.ifremer.fr/ifremer/argo``, ``ftp://usgodae.org/pub/outgoing/argo`` or a local absolute path.
+        index_file: str, default: ``ar_index_global_prof.txt``
+            Name of the csv-like text file with the index.
+
+            Possible values are standard file name: ``ar_index_global_prof.txt``,
+            ``argo_bio-profile_index.txt`` or ``argo_synthetic-profile_index.txt``.
+
+            You can also use the following shortcuts: ``core``, ``bgc-b``, ``bgc-s``, respectively.
+        convention: str, default: None
+            Set the expected format convention of the index file. This is useful when trying to load index file with custom name. If set to ``None``, we'll try to infer the convention from the ``index_file`` value.
+             Possible values: ``ar_index_global_prof``, ``argo_bio-profile_index``, or ``argo_synthetic-profile_index``.
+
+            You can also use the keyword: ``core``, ``bgc-s``, ``bgc-b``.
+        cache : bool, default: False
+            Use cache or not.
+        cachedir: str, default: OPTIONS['cachedir']
+            Folder where to store cached files
+        timeout: int,  default: OPTIONS['api_timeout']
+            Time out in seconds to connect to a remote host (ftp or http).
         """
         self.host = host
+
+        # Catchup keyword for the main profile index files:
+        if index_file in ["core"]:
+            index_file = "ar_index_global_prof.txt"
+        elif index_file in ["bgc-s", "synth"]:
+            index_file = "argo_synthetic-profile_index.txt"
+        elif index_file in ["bgc-b", "bio"]:
+            index_file = "argo_bio-profile_index.txt"
         self.index_file = index_file
+
         self.cache = cache
         self.cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
         timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
@@ -79,7 +107,10 @@ class ArgoIndexStoreProto(ABC):
             )
         elif "ftp" in split_protocol(host)[0]:
             if "ifremer" not in host and "usgodae" not in host:
-                log.info("""Working with a non-official Argo ftp server: %s. Raise on issue if you wish to add your own to the valid list of FTP servers: https://github.com/euroargodev/argopy/issues/new?title=New%%20FTP%%20server""" % host)
+                log.info(
+                    """Working with a non-official Argo ftp server: %s. Raise on issue if you wish to add your own to the valid list of FTP servers: https://github.com/euroargodev/argopy/issues/new?title=New%%20FTP%%20server"""
+                    % host
+                )
             if not isconnected(host):
                 raise FtpPathError("This host (%s) is not alive !" % host)
             self.fs["src"] = ftpstore(
@@ -88,21 +119,27 @@ class ArgoIndexStoreProto(ABC):
                 cache=cache,
                 cachedir=cachedir,
                 timeout=timeout,
-                block_size=1000 * (2 ** 20),
+                block_size=1000 * (2**20),
             )
         else:
             raise FtpPathError(
                 "Unknown protocol for an Argo index store: %s" % split_protocol(host)[0]
             )
         self.fs["client"] = memorystore(cache, cachedir)  # Manage search results
-        self._memory_store_content = Registry(name='memory store')  # Track files opened with this memory store, since it's a global store
-        self.search_path_cache = Registry(name='cached search')  # Track cached files related to search
+        self._memory_store_content = Registry(
+            name="memory store"
+        )  # Track files opened with this memory store, since it's a global store
+        self.search_path_cache = Registry(
+            name="cached search"
+        )  # Track cached files related to search
 
         # Check if the index file exists. Allow for up to 10 try to account for some slow websites
         self.index_path = self.fs["src"].fs.sep.join([self.host, self.index_file])
-        i_try, max_try, index_found = 0, 1 if 'invalid' in host else 10, False
+        i_try, max_try, index_found = 0, 1 if "invalid" in host else 10, False
         while i_try < max_try:
-            if not self.fs["src"].exists(self.index_path) and not self.fs["src"].exists(self.index_path + ".gz"):
+            if not self.fs["src"].exists(self.index_path) and not self.fs["src"].exists(
+                self.index_path + ".gz"
+            ):
                 time.sleep(1)
                 i_try += 1
             else:
@@ -113,10 +150,16 @@ class ArgoIndexStoreProto(ABC):
 
         if convention is None:
             # Try to infer the convention from the file name:
-            convention = index_file.split(self.fs['src'].fs.sep)[-1].split(".")[0]
+            convention = index_file.split(self.fs["src"].fs.sep)[-1].split(".")[0]
         if convention not in self.convention_supported:
-            raise OptionValueError("Convention '%s' is not supported, it must be one in: %s" % (convention, self.convention_supported))
+            raise OptionValueError(
+                "Convention '%s' is not supported, it must be one in: %s"
+                % (convention, self.convention_supported)
+            )
         self._convention = convention
+
+        # # CNAME internal manager to be able to chain search methods:
+        # self._cname = None
 
     def __repr__(self):
         summary = ["<argoindex.%s>" % self.backend]
@@ -138,7 +181,7 @@ class ArgoIndexStoreProto(ABC):
         return "\n".join(summary)
 
     def _format(self, x, typ: str) -> str:
-        """ string formatting helper """
+        """string formatting helper"""
         if typ == "lon":
             if x < 0:
                 x = 360.0 + x
@@ -153,17 +196,22 @@ class ArgoIndexStoreProto(ABC):
 
     @property
     def cname(self) -> str:
-        """ Return the search constraint(s) as a pretty formatted string
+        """Return the search constraint(s) as a pretty formatted string
 
-            Return 'full' if a search was not yet performed on the indexstore instance
+        Return 'full' if a search was not yet performed on the indexstore instance
 
-            This method uses the BOX, WMO, CYC keys of the index instance ``search_type`` property
-         """
+        This method uses the BOX, WMO, CYC keys of the index instance ``search_type`` property
+        """
         cname = "full"
 
         if "BOX" in self.search_type:
             BOX = self.search_type["BOX"]
-            cname = ("x=%0.2f/%0.2f;y=%0.2f/%0.2f") % (BOX[0], BOX[1], BOX[2], BOX[3],)
+            cname = ("x=%0.2f/%0.2f;y=%0.2f/%0.2f") % (
+                BOX[0],
+                BOX[1],
+                BOX[2],
+                BOX[3],
+            )
             if len(BOX) == 6:
                 cname = ("x=%0.2f/%0.2f;y=%0.2f/%0.2f;t=%s/%s") % (
                     BOX[0],
@@ -205,14 +253,27 @@ class ArgoIndexStoreProto(ABC):
 
         elif "PARAM" in self.search_type:
             PARAM = self.search_type["PARAM"]
-            cname = "-".join(PARAM)
+            LOG = self.search_type["logical"]
+            cname = ("_%s_" % LOG).join(PARAM)
+
+        elif "DMODE" in self.search_type:
+            DMODE = self.search_type["DMODE"]
+            LOG = self.search_type["logical"]
+            cname = ("_%s_" % LOG).join(
+                ["%s_%s" % (p, "".join(DMODE[p])) for p in DMODE]
+            )
+
+        # if self._cname is None:
+        #     self._cname = cname
+        # else:
+        #     self._cname = "%s__%s" % (self._cname, cname)
 
         return cname
 
     def _sha_from(self, path):
-        """ Internal post-processing for a sha
+        """Internal post-processing for a sha
 
-            Used by: sha_df, sha_pq, sha_h5
+        Used by: sha_df, sha_pq, sha_h5
         """
         sha = path  # no encoding
         # sha = hashlib.sha256(path.encode()).hexdigest()  # Full encoding
@@ -221,14 +282,14 @@ class ArgoIndexStoreProto(ABC):
 
     @property
     def sha_df(self) -> str:
-        """ Returns a unique SHA for a cname/dataframe """
+        """Returns a unique SHA for a cname/dataframe"""
         cname = "pd-%s" % self.cname
         sha = self._sha_from(cname)
         return sha
 
     @property
     def sha_pq(self) -> str:
-        """ Returns a unique SHA for a cname/parquet """
+        """Returns a unique SHA for a cname/parquet"""
         cname = "pq-%s" % self.cname
         # if cname == "full":
         #     raise ValueError("Search not initialised")
@@ -239,7 +300,7 @@ class ArgoIndexStoreProto(ABC):
 
     @property
     def sha_h5(self) -> str:
-        """ Returns a unique SHA for a cname/hdf5 """
+        """Returns a unique SHA for a cname/hdf5"""
         cname = "h5-%s" % self.cname
         # if cname == "full":
         #     raise ValueError("Search not initialised")
@@ -250,13 +311,13 @@ class ArgoIndexStoreProto(ABC):
 
     @property
     def shape(self):
-        """ Shape of the index array """
+        """Shape of the index array"""
         # Must work for all internal storage type (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
         return self.index.shape
 
     @property
     def N_FILES(self):
-        """ Number of rows in search result or index if search not triggered """
+        """Number of rows in search result or index if search not triggered"""
         # Must work for all internal storage type (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
         if hasattr(self, "search"):
             return self.search.shape[0]
@@ -267,7 +328,7 @@ class ArgoIndexStoreProto(ABC):
 
     @property
     def N_RECORDS(self):
-        """ Number of rows in the full index """
+        """Number of rows in the full index"""
         # Must work for all internal storage type (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
         if hasattr(self, "index"):
             return self.index.shape[0]
@@ -276,7 +337,7 @@ class ArgoIndexStoreProto(ABC):
 
     @property
     def N_MATCH(self):
-        """ Number of rows in search result """
+        """Number of rows in search result"""
         # Must work for all internal storage type (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
         if hasattr(self, "search"):
             return self.search.shape[0]
@@ -291,12 +352,12 @@ class ArgoIndexStoreProto(ABC):
     @property
     def convention_title(self):
         """Long name for the index convention"""
-        if self.convention == 'ar_index_global_prof':
-            title = 'Profile directory file of the Argo GDAC'
-        elif self.convention == 'argo_bio-profile_index':
-            title = 'Bio-Profile directory file of the Argo GDAC'
-        elif self.convention == 'argo_synthetic-profile_index':
-            title = 'Synthetic-Profile directory file of the Argo GDAC'
+        if self.convention in ["ar_index_global_prof", "core"]:
+            title = "Profile directory file of the Argo GDAC"
+        elif self.convention in ["argo_bio-profile_index", "bgc-b", "bio"]:
+            title = "Bio-Profile directory file of the Argo GDAC"
+        elif self.convention in ["argo_synthetic-profile_index", "bgc-s", "synth"]:
+            title = "Synthetic-Profile directory file of the Argo GDAC"
         return title
 
     def _same_origin(self, path):
@@ -307,51 +368,51 @@ class ArgoIndexStoreProto(ABC):
         self._memory_store_content.commit(path)
 
     def _write(self, fs, path, obj, fmt="pq"):
-        """ Write internal array object to file store
+        """Write internal array object to file store
 
-            Parameters
-            ----------
-            fs: filestore
-            obj: :class:`pyarrow.Table` or :class:`pandas.DataFrame`
-            fmt: str
-                File format to use. This is "pq" (default) or "pd"
+        Parameters
+        ----------
+        fs: filestore
+        obj: :class:`pyarrow.Table` or :class:`pandas.DataFrame`
+        fmt: str
+            File format to use. This is "pq" (default) or "pd"
         """
         this_path = path
         write_this = {
-            'pq': lambda o, h: pa.parquet.write_table(o, h),
-            'pd': lambda o, h: o.to_pickle(h)  # obj is a pandas dataframe
+            "pq": lambda o, h: pa.parquet.write_table(o, h),
+            "pd": lambda o, h: o.to_pickle(h),  # obj is a pandas dataframe
         }
-        if fmt == 'parquet':
-            fmt = 'pq'
+        if fmt == "parquet":
+            fmt = "pq"
         with fs.open(this_path, "wb") as handle:
             write_this[fmt](obj, handle)
-            if fs.protocol == 'memory':
+            if fs.protocol == "memory":
                 self._commit(this_path)
 
         return self
 
     def _read(self, fs, path, fmt="pq"):
-        """ Read internal array object from file store
+        """Read internal array object from file store
 
-            Parameters
-            ----------
-            fs: filestore
-            path:
-                Path to readable object
-            fmt: str
-                File format to use. This is "pq" (default) or "pd"
+        Parameters
+        ----------
+        fs: filestore
+        path:
+            Path to readable object
+        fmt: str
+            File format to use. This is "pq" (default) or "pd"
 
-            Returns
-            -------
-            obj: :class:`pyarrow.Table` or :class:`pandas.DataFrame`
+        Returns
+        -------
+        obj: :class:`pyarrow.Table` or :class:`pandas.DataFrame`
         """
         this_path = path
         read_this = {
-            'pq': lambda h: pa.parquet.read_table(h),
-            'pd': lambda h: pd.read_pickle(h)
+            "pq": lambda h: pa.parquet.read_table(h),
+            "pd": lambda h: pd.read_pickle(h),
         }
-        if fmt == 'parquet':
-            fmt = 'pq'
+        if fmt == "parquet":
+            fmt = "pq"
         with fs.open(this_path, "rb") as handle:
             obj = read_this[fmt](handle)
         return obj
@@ -365,7 +426,7 @@ class ArgoIndexStoreProto(ABC):
         return self
 
     def cachepath(self, path):
-        """ Return path to a cached file
+        """Return path to a cached file
 
         Parameters
         ----------
@@ -377,9 +438,9 @@ class ArgoIndexStoreProto(ABC):
         -------
         list(str)
         """
-        if path == 'index' and hasattr(self, 'index_path_cache'):
+        if path == "index" and hasattr(self, "index_path_cache"):
             path = [self.index_path_cache]
-        elif path == 'search':
+        elif path == "search":
             if len(self.search_path_cache) > 0:
                 path = self.search_path_cache.data
             else:
@@ -392,31 +453,42 @@ class ArgoIndexStoreProto(ABC):
             path = [path]
         return [self.fs["client"].cachepath(p) for p in path]
 
-    def to_dataframe(self, nrows=None, index=False):  # noqa: C901
-        """ Return index or search results as :class:`pandas.DataFrame`
+    def to_dataframe(self, nrows=None, index=False, completed=True):  # noqa: C901
+        """Return index or search results as :class:`pandas.DataFrame`
 
-            If search not triggered, fall back on full index by default. Using index=True force to return the full index.
+        If search not triggered, fall back on full index by default. Using index=True force to return the full index.
 
-            Parameters
-            ----------
-            nrows: {int, None}, default: None
-                Will return only the first `nrows` of search results. None returns all.
-            index: bool, default: False
-                Force to return the index, even if a search was performed with this store instance.
+        Parameters
+        ----------
+        nrows: {int, None}, default: None
+            Will return only the first `nrows` of search results. None returns all.
+        index: bool, default: False
+            Force to return the index, even if a search was performed with this store instance.
+        completed: bool, default: True
+            Complete the raw index columns with: Platform Number (WMO), Cycle Number, Institution and Profiler details
+            This is adding an extra computation, so if you care about performances, you may set this to False.
 
-            Returns
-            -------
-            :class:`pandas.DataFrame`
+        Returns
+        -------
+        :class:`pandas.DataFrame`
         """
+
         def get_filename(s, index):
             if hasattr(self, "search") and not index:
                 fname = s.search_path
             else:
                 fname = s.index_path
-            if nrows is not None:
-                fname = fname + "/export" + "#%i.pd" % nrows
+
+            if not completed:
+                suff = "_raw"
             else:
-                fname = fname + "/export.pd"
+                suff = ""
+
+            if nrows is not None:
+                fname = fname + "/export" + suff + "#%i.pd" % nrows
+            else:
+                fname = fname + "/export" + suff + ".pd"
+
             return fname
 
         df, src = self._to_dataframe(nrows=nrows, index=index)
@@ -435,46 +507,51 @@ class ArgoIndexStoreProto(ABC):
             from argopy.utilities import load_dict, mapp_dict
 
             if nrows is not None:
-                df = df.loc[0:nrows-1].copy()
+                df = df.loc[0 : nrows - 1].copy()
 
             if "index" in df:
                 df.drop("index", axis=1, inplace=True)
 
             df.reset_index(drop=True, inplace=True)
-
-            df["wmo"] = df["file"].apply(lambda x: int(x.split("/")[1]))
             df["date"] = pd.to_datetime(df["date"], format="%Y%m%d%H%M%S")
             df["date_update"] = pd.to_datetime(df["date_update"], format="%Y%m%d%H%M%S")
-
-            # institution & profiler mapping for all users
-            # todo: may be we need to separate this for standard and expert users
-            institution_dictionnary = load_dict("institutions")
-            df["tmp1"] = df["institution"].apply(
-                lambda x: mapp_dict(institution_dictionnary, x)
-            )
-            df = df.rename(
-                columns={"institution": "institution_code", "tmp1": "institution"}
+            df["wmo"] = df["file"].apply(lambda x: int(x.split("/")[1]))
+            df["cyc"] = df["file"].apply(
+                lambda x: int(x.split("_")[-1].split(".nc")[0].replace("D", ""))
             )
 
-            profiler_dictionnary = load_dict("profilers")
-            profiler_dictionnary["?"] = "?"
+            if completed:
+                # institution & profiler mapping for all users
+                # todo: may be we need to separate this for standard and expert users
+                institution_dictionnary = load_dict("institutions")
+                df["tmp1"] = df["institution"].apply(
+                    lambda x: mapp_dict(institution_dictionnary, x)
+                )
+                df = df.rename(
+                    columns={"institution": "institution_code", "tmp1": "institution"}
+                )
 
-            def ev(x):
-                try:
-                    return int(x)
-                except Exception:
-                    return x
+                profiler_dictionnary = load_dict("profilers")
+                profiler_dictionnary["?"] = "?"
 
-            df["profiler"] = df["profiler_type"].apply(
-                lambda x: mapp_dict(profiler_dictionnary, ev(x))
-            )
-            df = df.rename(columns={"profiler_type": "profiler_code"})
+                def ev(x):
+                    try:
+                        return int(x)
+                    except Exception:
+                        return x
+
+                df["profiler"] = df["profiler_type"].apply(
+                    lambda x: mapp_dict(profiler_dictionnary, ev(x))
+                )
+                df = df.rename(columns={"profiler_type": "profiler_code"})
 
             if self.cache:
                 self._write(self.fs["client"], fname, df, fmt="pd")
                 df = self._read(self.fs["client"].fs, fname, fmt="pd")
                 if not index:
-                    self.search_path_cache.commit(fname)  # Keep track of files related to search results
+                    self.search_path_cache.commit(
+                        fname
+                    )  # Keep track of files related to search results
                 log.debug("This dataframe saved in cache. dest='%s'" % fname)
 
         return df
@@ -486,7 +563,7 @@ class ArgoIndexStoreProto(ABC):
     @property
     @abstractmethod
     def search_path(self):
-        """ Path to search result uri
+        """Path to search result uri
 
         Returns
         -------
@@ -497,7 +574,7 @@ class ArgoIndexStoreProto(ABC):
     @property
     @abstractmethod
     def uri_full_index(self):
-        """ List of URI from index
+        """List of URI from index
 
         Returns
         -------
@@ -508,7 +585,7 @@ class ArgoIndexStoreProto(ABC):
     @property
     @abstractmethod
     def uri(self):
-        """ List of URI from search results
+        """List of URI from search results
 
         Returns
         -------
@@ -518,7 +595,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def load(self, nrows=None, force=False):
-        """ Load an Argo-index file content in memory
+        """Load an Argo-index file content in memory
 
         Fill in self.index internal property
         If store is cached, caching is triggered here
@@ -539,7 +616,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def run(self):
-        """ Filter index with search criteria (internal use)
+        """Filter index with search criteria (internal use)
 
         Fill in self.search internal property
         If store is cached, caching is triggered here
@@ -548,7 +625,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def _to_dataframe(self) -> pd.DataFrame:
-        """ Return search results as dataframe
+        """Return search results as dataframe
 
         If store is cached, caching is triggered here
         """
@@ -556,7 +633,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def read_wmo(self):
-        """ Return list of unique WMOs in index or search results
+        """Return list of unique WMOs in index or search results
 
         Fall back on full index if search not found
 
@@ -568,7 +645,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def read_params(self):
-        """ Return list of unique PARAMETERs in index or search results
+        """Return list of unique PARAMETERs in index or search results
 
         Fall back on full index if search not found
 
@@ -580,7 +657,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def records_per_wmo(self):
-        """ Return the number of records per unique WMOs in index or search results
+        """Return the number of records per unique WMOs in index or search results
 
         Fall back on full index if search not found
 
@@ -593,7 +670,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def search_wmo(self, WMOs):
-        """ Search index for floats defined by their WMO
+        """Search index for floats defined by their WMO
 
         - Define search method
         - Trigger self.run() to set self.search internal property
@@ -612,7 +689,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def search_cyc(self, CYCs):
-        """ Search index for cycle numbers
+        """Search index for cycle numbers
 
         Parameters
         ----------
@@ -628,7 +705,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def search_wmo_cyc(self, WMOs, CYCs):
-        """ Search index for floats defined by their WMO and specific cycle numbers
+        """Search index for floats defined by their WMO and specific cycle numbers
 
         Parameters
         ----------
@@ -646,7 +723,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def search_tim(self, BOX):
-        """ Search index for a time range
+        """Search index for a time range
 
         Parameters
         ----------
@@ -666,7 +743,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def search_lat_lon(self, BOX):
-        """ Search index for a rectangular latitude/longitude domain
+        """Search index for a rectangular latitude/longitude domain
 
         Parameters
         ----------
@@ -675,7 +752,7 @@ class ArgoIndexStoreProto(ABC):
 
         Warnings
         --------
-        Only lat/lon bounds are considered  from the index box.
+        Only lat/lon bounds are considered from the index box.
 
         Examples
         --------
@@ -686,7 +763,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def search_lat_lon_tim(self, BOX):
-        """ Search index for a rectangular latitude/longitude domain and time range
+        """Search index for a rectangular latitude/longitude domain and time range
 
         Parameters
         ----------
@@ -702,7 +779,7 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def search_params(self, PARAMs):
-        """ Search index for a list of parameters
+        """Search index for a list of parameters
 
         Parameters
         ----------
@@ -715,12 +792,29 @@ class ArgoIndexStoreProto(ABC):
 
         Warnings
         --------
-        This method is only available for index following the 'argo_bio-profile_index' convention.
+        This method is only available for index following the 'argo_bio' or 'argo_synthetic' conventions.
 
         """
         raise NotImplementedError("Not implemented")
 
+    @abstractmethod
+    def search_parameter_data_mode(self, PARAMs):
+        """Search index for profiles with a parameter with a specific data mode
 
+        Parameters
+        ----------
+        PARAMs : dict()
+            A dictionary with parameters as keys, and data mode as one or a list of strings
+
+        Examples
+        --------
+        >>> search_parameter_data_mode({'TEMP': 'D'})
+        >>> search_parameter_data_mode({'BBP700': 'D'})
+        >>> search_parameter_data_mode({'DOXY': ['R', 'A']})
+        >>> search_parameter_data_mode({'BBP700': 'D', 'DOXY': 'D'}, logical='or')
+
+        """
+        raise NotImplementedError("Not implemented")
 
     def _insert_header(self, originalfile):
         if self.convention == "ar_index_global_prof":
@@ -733,7 +827,11 @@ class ArgoIndexStoreProto(ABC):
 # FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
 # GDAC node : CORIOLIS
 file,date,latitude,longitude,ocean,profiler_type,institution,date_update
-""" % pd.to_datetime('now', utc=True).strftime('%Y%m%d%H%M%S')
+""" % pd.to_datetime(
+                "now", utc=True
+            ).strftime(
+                "%Y%m%d%H%M%S"
+            )
 
         elif self.convention == "argo_bio-profile_index":
             header = """# Title : Bio-Profile directory file of the Argo Global Data Assembly Center
@@ -745,7 +843,11 @@ file,date,latitude,longitude,ocean,profiler_type,institution,date_update
 # FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
 # GDAC node : CORIOLIS
 file,date,latitude,longitude,ocean,profiler_type,institution,parameters,parameter_data_mode,date_update
-""" % pd.to_datetime('now', utc=True).strftime('%Y%m%d%H%M%S')
+""" % pd.to_datetime(
+                "now", utc=True
+            ).strftime(
+                "%Y%m%d%H%M%S"
+            )
 
         elif self.convention == "argo_synthetic-profile_index":
             header = """# Title : Synthetic-Profile directory file of the Argo Global Data Assembly Center
@@ -757,12 +859,16 @@ file,date,latitude,longitude,ocean,profiler_type,institution,parameters,paramete
 # FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
 # GDAC node : CORIOLIS
 file,date,latitude,longitude,ocean,profiler_type,institution,parameters,parameter_data_mode,date_update
-"""  % pd.to_datetime('now', utc=True).strftime('%Y%m%d%H%M%S')
+""" % pd.to_datetime(
+                "now", utc=True
+            ).strftime(
+                "%Y%m%d%H%M%S"
+            )
 
-        with open(originalfile, 'r') as f:
+        with open(originalfile, "r") as f:
             data = f.read()
 
-        with open(originalfile, 'w') as f:
+        with open(originalfile, "w") as f:
             f.write(header)
             f.write(data)
 

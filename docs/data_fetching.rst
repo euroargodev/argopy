@@ -19,8 +19,10 @@ If you fetch a lot of data, you may want to look at the :ref:`performances` sect
 
 **argopy** manipulates the raw data to make it easier to work with them. To make sure you understand the data you're getting, please look at the :ref:`user-mode` section.
 
-For a space/time domain
------------------------
+.. _data_fetching_region:
+
+🗺 For a space/time domain
+--------------------------
 
 Use the fetcher access point :meth:`argopy.DataFetcher.region` to specify a domain and chain with the :meth:`argopy.DataFetcher.to_xarray` to get the data returned as :class:`xarray.Dataset`.
 
@@ -38,8 +40,10 @@ Note that:
 
 - the last time bound is exclusive: that's why here we specify June to retrieve data collected in May.
 
-For one or more floats
-----------------------
+.. _data_fetching_float:
+
+🤖 For one or more floats
+-------------------------
 
 If you know the Argo float unique identifier number called a `WMO number <https://www.wmo.int/pages/prog/amp/mmop/wmo-number-rules.html>`_ you can use the fetcher access point :meth:`argopy.DataFetcher.float` to specify the float WMO platform number and chain with the :meth:`argopy.DataFetcher.to_xarray` to get the data returned as :class:`xarray.Dataset`.
 
@@ -59,8 +63,10 @@ To fetch data for a collection of floats, input them in a list:
     ds = argo_loader.float([6902746, 6902755]).to_xarray()
     ds
 
-For one or more profiles
-------------------------
+.. _data_fetching_profile:
+
+⚓ For one or more profiles
+---------------------------
 
 Use the fetcher access point :meth:`argopy.DataFetcher.profile` to specify the float WMO platform number and the profile cycle number to retrieve profiles for, then chain with the :meth:`argopy.DataFetcher.to_xarray` to get the data returned as :class:`xarray.Dataset`.
 

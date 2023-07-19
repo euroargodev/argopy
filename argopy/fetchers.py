@@ -14,6 +14,7 @@ import xarray as xr
 import pandas as pd
 import numpy as np
 import logging
+from functools import lru_cache
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher, OptionValueError
@@ -122,7 +123,7 @@ class ArgoDataFetcher:
         self.fetcher = None
         if self._dataset_id not in Fetchers.dataset_ids:
             raise ValueError(
-                "%s dataset is not available for this data source (%s)"
+                "The '%s' dataset is not available for the '%s' data source"
                 % (self._dataset_id, self._src)
             )
         self.fetcher_kwargs = {**fetcher_kwargs}
@@ -145,10 +146,9 @@ class ArgoDataFetcher:
 
         # Dev warnings
         # Todo Clean-up before each release
-        if self._dataset_id == "bgc" and self._mode == "standard":
+        if self._dataset_id == "bgc" and (self._mode == "standard" or self._mode == "research"):
             warnings.warn(
-                "'BGC' dataset fetching in 'standard' user mode is not yet reliable. "
-                "Try to switch to 'expert' mode if you encounter errors."
+                "The 'bgc' dataset fetching is only available in 'expert' mode at this point."
             )
 
     def __repr__(self):
@@ -267,22 +267,11 @@ class ArgoDataFetcher:
 
     @property
     def domain(self):
-        """ Domain of the dataset
+        """ Space/time domain of the dataset
 
             This is different from a usual ``box`` because dates are in :class:`numpy.datetime64` format.
         """
-        this_ds = self.data
-        if 'PRES_ADJUSTED' in this_ds.data_vars:
-            Pmin = np.nanmin((np.min(this_ds['PRES'].values), np.min(this_ds['PRES_ADJUSTED'].values)))
-            Pmax = np.nanmax((np.max(this_ds['PRES'].values), np.max(this_ds['PRES_ADJUSTED'].values)))
-        else:
-            Pmin = np.min(this_ds['PRES'].values)
-            Pmax = np.max(this_ds['PRES'].values)
-
-        return [np.min(this_ds['LONGITUDE'].values), np.max(this_ds['LONGITUDE'].values),
-                np.min(this_ds['LATITUDE'].values), np.max(this_ds['LATITUDE'].values),
-                Pmin, Pmax,
-                np.min(this_ds['TIME'].values), np.max(this_ds['TIME'].values)]
+        return self.data.argo.domain
 
     def dashboard(self, **kw):
         """Open access point dashboard.
@@ -431,6 +420,7 @@ class ArgoDataFetcher:
 
         return self
 
+    @lru_cache
     def to_xarray(self, **kwargs):
         """ Fetch and return data as xarray.DataSet
 
@@ -451,6 +441,7 @@ class ArgoDataFetcher:
 
         return xds
 
+    @lru_cache
     def to_dataframe(self, **kwargs):
         """ Fetch and return data as pandas.Dataframe
 
@@ -468,8 +459,9 @@ class ArgoDataFetcher:
             )
         return self.load().data.to_dataframe(**kwargs)
 
+    @lru_cache
     def to_index(self, full: bool = False, coriolis_id: bool = False):
-        """ Create an index of Argo data, fetch data if necessary
+        """ Create a profile index of Argo data, fetch data if necessary
 
             Build an Argo-like index of profiles from fetched data.
 
@@ -488,23 +480,8 @@ class ArgoDataFetcher:
         """
         if not full:
             self.load()
-            ds = self.data.argo.point2profile()
-            df = ds[["PLATFORM_NUMBER", "CYCLE_NUMBER", "LONGITUDE", "LATITUDE", "TIME"]].to_dataframe()
-            df = (
-                df.reset_index()
-                .rename(
-                    columns={
-                        "PLATFORM_NUMBER": "wmo",
-                        "CYCLE_NUMBER": "cyc",
-                        "LONGITUDE": "longitude",
-                        "LATITUDE": "latitude",
-                        "TIME": "date",
-                    }
-                )
-                .drop(columns="N_PROF")
-            )
+            df = self.data.argo.index
 
-            df = df[["date", "latitude", "longitude", "wmo", "cyc"]]
             if coriolis_id:
                 df['id'] = None
 
@@ -512,6 +489,7 @@ class ArgoDataFetcher:
                     row['id'] = get_coriolis_profile_id(row['wmo'], row['cyc'])['ID'].values[0]
                     return row
                 df = df.apply(fc, axis=1)
+
         else:
             # Instantiate and load an IndexFetcher:
             index_loader = ArgoIndexFetcher(mode=self._mode,
@@ -539,6 +517,7 @@ class ArgoDataFetcher:
 
         return df
 
+    @lru_cache
     def load(self, force: bool = False, **kwargs):
         """ Fetch data (and compute an index) if not already in memory
 

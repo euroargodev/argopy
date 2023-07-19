@@ -70,7 +70,7 @@ jobs:
           init-shell: bash
           cache-environment: true
           cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
-          create-args:: |
+          create-args: >-
             python=${{matrix.python-version}}
 
       - name: Install argopy
@@ -147,7 +147,7 @@ jobs:
           init-shell: bash
           cache-environment: true
           cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
-          create-args:: |
+          create-args: >-
             python=${{matrix.python-version}}
 
       - name: Install argopy

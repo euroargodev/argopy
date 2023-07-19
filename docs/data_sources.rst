@@ -1,15 +1,11 @@
 Data sources
 ============
 
-|Profile count| |Profile BGC count|
-
 |Erddap status| |GDAC status| |Argovis status| |Statuspage|
 
 .. |Erddap status| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_erddap.json
 .. |GDAC status| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_gdac.json
 .. |Argovis status| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_argovis.json
-.. |Profile count| image:: https://img.shields.io/endpoint?label=Number%20of%20Argo%20profiles%3A&style=social&url=https%3A%2F%2Fapi.ifremer.fr%2Fargopy%2Fdata%2FARGO-FULL.json
-.. |Profile BGC count| image:: https://img.shields.io/endpoint?label=Number%20of%20Argo%20BGC%20profiles%3A&style=social&url=https%3A%2F%2Fapi.ifremer.fr%2Fargopy%2Fdata%2FARGO-BGC.json
 .. |Statuspage| image:: https://img.shields.io/static/v1?label=&message=Check%20all%20Argo%20monitors&color=blue&logo=statuspage&logoColor=white
    :target: https://argopy.statuspage.io
 
@@ -23,25 +19,26 @@ Let's start with standard import:
 
     import argopy
     from argopy import DataFetcher as ArgoDataFetcher
+    argopy.set_options(**argopy.options.OPTIONS)  # Reset options
 
 Available data sources
 ----------------------
 
 **argopy** can get access to Argo data from the following sources:
 
-1. the `Ifremer erddap server <http://www.ifremer.fr/erddap>`__.
+1. ⭐ the `Ifremer erddap server <http://www.ifremer.fr/erddap>`__.
     The erddap server database is updated daily and doesn’t require you to download anymore data than what you need.
     You can select this data source with the keyword ``erddap`` and methods described below.
     The Ifremer erddap dataset is based on mono-profile files of the GDAC.
     Since this is the most efficient method to fetcher Argo data, it's the default data source in **argopy**.
 
-2. an Argo GDAC server or any other GDAC-compliant folders.
+2. 🌐 an Argo GDAC server or any other GDAC-compliant local folder.
     You can fetch data from any of the 3 official GDAC online servers: the Ifremer https and ftp and the US ftp.
     This data source can also point toward your own local copy of the `GDAC
     ftp content <http://www.argodatamgt.org/Access-to-data/Argo-GDAC-ftp-and-https-servers>`__.
     You can select this data source with the keyword ``gdac`` and methods described below.
 
-3. the `Argovis server <https://argovis.colorado.edu/>`__.
+3. 👁 the `Argovis server <https://argovis.colorado.edu/>`__.
     The Argovis server database is updated daily and only provides access to curated Argo data (QC=1 only).
     You can select this data source with the keyword ``argovis`` and methods described below.
 
@@ -80,31 +77,94 @@ Comparing data sources
 Features
 ~~~~~~~~
 
-Each of the available data sources have their own features and
+Each of the data sources have their own features and
 capabilities. Here is a summary:
 
-======================= ====== ==== ===== =======
-Data source:            erddap gdac local argovis
-======================= ====== ==== ===== =======
-**Access Points**
-region                  X      X    X     X
-float                   X      X    X     X
-profile                 X      X    X     X
-**User mode**
-standard                X      X    X     X
-expert                  X      X    X
-research                X      X    X
-**Dataset**
-core (T/S)              X      X    X     X
-BGC (experimental)      X      X    X
-Reference data for DMQC X
-Trajectories
-**Parallel method**                     
-multi-threading         X      X    X     X
-multi-processes                     X
-Dask client (experimental)
-**Offline mode**                    X
-======================= ====== ==== =======
+.. list-table:: Table of **argopy** data sources features
+    :header-rows: 1
+    :stub-columns: 2
+
+    * -
+      -
+      - ``erddap``
+      - ``gdac``
+      - ``argovis``
+    * -
+      -
+      - ⭐
+      - 🌐
+      - 👁
+    * - :ref:`Access Points: <data_fetching>`
+      -
+      -
+      -
+      -
+    * -
+      - 🗺 :ref:`region <data_fetching_region>`
+      - X
+      - X
+      - X
+    * -
+      - 🤖 :ref:`float <data_fetching_float>`
+      - X
+      - X
+      - X
+    * -
+      - ⚓ :ref:`profile <data_fetching_profile>`
+      - X
+      - X
+      - X
+    * - :ref:`User mode: <user-mode-details>`
+      -
+      -
+      -
+      -
+    * -
+      - 🏄 expert
+      - X
+      - X
+      -
+    * -
+      - 🏊 standard
+      - X
+      - X
+      - X
+    * -
+      - 🚣 research
+      - X
+      - X
+      -
+    * - :ref:`Dataset: <data_set>`
+      -
+      -
+      -
+      -
+    * -
+      - 🟡 core (T/S)
+      - X
+      - X
+      - X
+    * -
+      - 🟢 BGC
+      - X
+      - X
+      -
+    * -
+      - 🔵 Deep
+      - X
+      - X
+      - X
+    * -
+      - ⚫ Trajectories
+      -
+      -
+      -
+    * -
+      - 🟣 Reference data for DMQC
+      - X
+      -
+      -
+
 
 Fetched data and variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

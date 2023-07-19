@@ -323,7 +323,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         ds = ds.set_coords(coords)
 
         # Cast data types and add variable attributes (not available in the csv download):
-        ds['TIME'] = ds['TIME'].astype(np.datetime64)
+        ds['TIME'] = ds['TIME'].astype('datetime64[ns]')
         ds = self._add_attributes(ds)
         ds = ds.argo.cast_types()
 
