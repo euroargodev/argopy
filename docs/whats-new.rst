@@ -78,7 +78,7 @@ Coming up in the next release
 
 **Breaking changes**
 
-- Some documentation pages may have moved to new urls.
+- Some documentation pages may have moved to new urls. 
 
 v0.1.14rc1 (31 May 2023)
 ------------------------
