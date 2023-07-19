@@ -53,7 +53,6 @@ Coming up in the next release
 
 - **New xarray argo accessor features**. Easily retrieve an Argo sample index and domain extent with the ``index`` and ``domain`` properties. Get a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) with the ``list_WMO_CYC`` method. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
 
-
 - **New search methods for Argo reference tables**. It is now possible to search for a string in tables title and/or description using the :class:`argopy.ArgoNVSReferenceTables`.
 
 .. code-block:: python
@@ -63,6 +62,7 @@ Coming up in the next release
     id_list = ArgoNVSReferenceTables().search('sensor')
     [ArgoNVSReferenceTables().tbl_name(id) for id in id_list]
 
+- **Updated documentation**. In order to better introduce new features, we updated the documentation structure and content.
 
 **Internals**
 
@@ -78,7 +78,7 @@ Coming up in the next release
 
 **Breaking changes**
 
-
+- Some documentation pages may have moved to new urls.
 
 v0.1.14rc1 (31 May 2023)
 ------------------------
