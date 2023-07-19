@@ -19,6 +19,7 @@ Let's start with standard import:
 
     import argopy
     from argopy import DataFetcher as ArgoDataFetcher
+    argopy.set_options(**argopy.options.OPTIONS)  # Reset options
 
 Available data sources
 ----------------------
