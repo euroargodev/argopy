@@ -46,6 +46,7 @@ OPTIONS = {
     USER: None,
     PASSWORD: None,
 }
+DEFAULT = OPTIONS.copy()
 
 # Define the list of possible values
 _DATA_SOURCE_LIST = frozenset(["erddap", "argovis", "gdac"])
@@ -155,6 +156,11 @@ class set_options:
 
     def __exit__(self, type, value, traceback):
         self._apply_update(self.old)
+
+
+def reset_options():
+    """Reset all options to default values"""
+    set_options(**DEFAULT)
 
 
 def check_erddap_path(path, errors='ignore'):

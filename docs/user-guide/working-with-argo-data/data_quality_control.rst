@@ -16,6 +16,7 @@ Let's start with standard import:
     :okwarning:
 
     from argopy import DataFetcher as ArgoDataFetcher
+    argopy.reset_options()
 
 
 Salinity calibration
@@ -155,7 +156,7 @@ For some QC of trajectories, it can be useful to easily get access to the topogr
     box = [-65, -55, 10, 20]
     ds = TopoFetcher(box, cache=True).to_xarray()
 
-.. image:: _static/topography_sample.png
+.. image:: ../../_static/topography_sample.png
 
 
 Combined with the fetcher property ``domain``, it now becomes easy to superimpose float trajectory with topography:
@@ -170,7 +171,7 @@ Combined with the fetcher property ``domain``, it now becomes easy to superimpos
     fig, ax = loader.plot('trajectory', figsize=(10, 10))
     ds['elevation'].plot.contourf(levels=np.arange(-6000,0,100), ax=ax, add_colorbar=False)
 
-.. image:: _static/trajectory_topography_sample.png
+.. image:: ../../_static/trajectory_topography_sample.png
 
 
 .. note::

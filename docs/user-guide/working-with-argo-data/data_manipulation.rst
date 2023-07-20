@@ -102,7 +102,7 @@ The figure below shows the sub-sampling effect:
     plt.title(ds.attrs['Fetched_constraints'])
     plt.gca().invert_yaxis()
 
-.. image:: _static/groupby_pressure_bins_select_deep.png
+.. image:: ../../_static/groupby_pressure_bins_select_deep.png
 
 The bin limits are shown with horizontal red lines, the original data are in the background colored scatter and the group-by pressure bins values are highlighted in red marks
 
@@ -112,7 +112,7 @@ The ``select`` option can take many different values, see the full documentation
 
     ds_binned = ds.argo.groupby_pressure_bins(bins=bins, select='random')
 
-.. image:: _static/groupby_pressure_bins_select_random.png
+.. image:: ../../_static/groupby_pressure_bins_select_random.png
 
 
 Filters

@@ -1,8 +1,15 @@
+.. currentmodule:: argopy
 .. _user-mode:
 
-User mode (🏄 🏊 🚣)
-=====================
+User mode (🏄, 🏊, 🚣)
+=======================
 
+.. hint::
+
+    **argopy** manipulates the raw data to make them easier to work with. To make sure you understand the data you're getting, have a look to this section.
+
+.. contents:: Contents
+   :local:
 
 **Problem**
 
@@ -48,7 +55,7 @@ Hence the main difference between the **standard** and **research** modes is in 
 In **standard** mode, only good or probably good data are returned and includes real time data that have been validated automatically but not by a human expert.
 The **research** mode is the safer choice, with data of the highest quality, carefully checked in delayed mode by a human expert of the `Argo Data Management Team <http://www.argodatamgt.org>`_.
 
-.. list-table:: Table of **argopy** user mode data processing details
+.. list-table:: Table of **argopy** user mode data processing details for **physical** parameters (``phy`` :ref:`dataset <data-set>`)
     :header-rows: 1
     :stub-columns: 1
 

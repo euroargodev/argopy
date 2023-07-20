@@ -14,7 +14,7 @@ import xarray as xr
 import pandas as pd
 import numpy as np
 import logging
-from functools import lru_cache
+# from functools import lru_cache
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher, OptionValueError
@@ -165,6 +165,7 @@ class ArgoDataFetcher:
         summary.append("Performances: cache=%s, parallel=%s" % (str(cache), str(para)))
         summary.append("User mode: %s" % self._mode)
         summary.append("Dataset: %s" % self._dataset_id)
+        summary.append("Loaded: %s" % self._loaded)
         return "\n".join(summary)
 
     def __empty_processor(self, xds):
@@ -420,7 +421,6 @@ class ArgoDataFetcher:
 
         return self
 
-    @lru_cache
     def to_xarray(self, **kwargs):
         """ Fetch and return data as xarray.DataSet
 
@@ -441,7 +441,6 @@ class ArgoDataFetcher:
 
         return xds
 
-    @lru_cache
     def to_dataframe(self, **kwargs):
         """ Fetch and return data as pandas.Dataframe
 
@@ -459,7 +458,6 @@ class ArgoDataFetcher:
             )
         return self.load().data.to_dataframe(**kwargs)
 
-    @lru_cache
     def to_index(self, full: bool = False, coriolis_id: bool = False):
         """ Create a profile index of Argo data, fetch data if necessary
 
@@ -517,7 +515,6 @@ class ArgoDataFetcher:
 
         return df
 
-    @lru_cache
     def load(self, force: bool = False, **kwargs):
         """ Fetch data (and compute an index) if not already in memory
 
@@ -707,6 +704,7 @@ class ArgoIndexFetcher:
 
         summary.append("User mode: %s" % self._mode)
         summary.append("Dataset: %s" % self._dataset_id)
+        summary.append("Loaded: %s" % self._loaded)
         return "\n".join(summary)
 
     def __empty_processor(self, xds):

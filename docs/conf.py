@@ -93,6 +93,7 @@ extensions = [
     'sphinx_autosummary_accessors',
     'sphinx_tabs.tabs',
     'sphinxcontrib.googleanalytics',
+    'sphinxext.rediraffe',
 ]
 
 # sphinx_gallery_conf = {
@@ -204,6 +205,13 @@ html_theme = 'sphinx_book_theme'
 #
 # html_theme_options = {}
 
+html_context = {
+    "github_user": "euroargodev",
+    "github_repo": "argopy",
+    "github_version": "master",
+    "doc_path": "docs",
+}
+
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
 html_logo = "_static/argopy_logo_long.png"
@@ -232,35 +240,23 @@ html_theme_options = {
     "logo_only": True,
     'show_navbar_depth': 1,  # https://sphinx-book-theme.readthedocs.io/en/stable/customize/sidebar-primary.html?highlight=logo#control-the-depth-of-the-left-sidebar-lists-to-expand
     'collapse_navigation': False,
-    'show_toc_level': 3,  # https://sphinx-book-theme.readthedocs.io/en/stable/customize/sidebar-secondary.html#show-more-levels-of-the-in-page-toc-by-default
+    # 'show_toc_level': 3,  # https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/page-toc.html#show-more-levels-of-the-in-page-toc-by-default
     # 'launch_buttons': { "thebe": True}
     "announcement": (
         "⚠️ argopy now has its own cheatsheet ! <a href='https://argopy.readthedocs.io/en/latest/_static/argopy-cheatsheet.pdf'>Check it out here </a>! ⚠️"
     )
 }
 
-# html_theme_options = {
-#     "repository_url": "https://www.github.com/euroargodev/argopy",
-#     "use_repository_button": True,
-#     "html_logo": "_static/argopy_logo_long.png",
-#     #  'canonical_url': '',
-#     'analytics_id': 'G-C4MWDXYMXQ',
-#     'logo_only': True,
-#     'display_version': False,
-#     'prev_next_buttons_location': 'bottom',
-#     'show_navbar_depth': 1,
-#     'show_toc_level': 3, # https://sphinx-book-theme.readthedocs.io/en/stable/customize/sidebar-secondary.html#show-more-levels-of-the-in-page-toc-by-default
-#     # 'style_external_links': False,
-#     # 'vcs_pageview_mode': '',
-#     # 'style_nav_header_background': 'white',
-#     # # Toc options
-#     'collapse_navigation': False,
-#     # 'sticky_navigation': True,
-#     # 'navigation_depth': 4,
-#     # 'includehidden': True,
-#     # 'titles_only': False
-# #    'launch_buttons': { "thebe": True}
-# }
+# Redirects for pages that were moved to new locations
+
+rediraffe_redirects = {
+    "data_fetching.rst": "user-guide/fetching-argo-data/data_selection.rst",
+    "data_sources.rst": "user-guide/fetching-argo-data/data_sources.rst",
+    "user_mode.rst": "user-guide/fetching-argo-data/user_mode.rst",
+    "data_manipulation.rst": "user-guide/working-with-argo-data/data_manipulation.rst",
+    "data_quality_control.rst": "user-guide/working-with-argo-data/data_quality_control.rst",
+    "visualisation.rst": "user-guide/working-with-argo-data/visualisation.rst",
+}
 
 googleanalytics_id = 'G-C4MWDXYMXQ'
 googleanalytics_enabled = True
@@ -319,6 +315,11 @@ man_pages = [
     (master_doc, 'argopy', u'argopy Documentation',
      ["argopy Developers"], 1)
 ]
+
+# ---------------------------------------
+# configuration for sphinxext.opengraph
+ogp_site_url = "https://github.com/euroargodev/argopy"
+ogp_image = "https://raw.githubusercontent.com/euroargodev/argopy/master/docs/_static/argopy_logo_long.png"
 
 # -- Options for Texinfo output -------------------------------------------
 

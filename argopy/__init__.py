@@ -37,7 +37,7 @@ from .plot import dashboard, ArgoColors  # noqa: E402
 from .utilities import show_versions, show_options, clear_cache, lscache  # noqa: E402
 from .utilities import TopoFetcher, ArgoNVSReferenceTables, OceanOPSDeployments, ArgoDocs  # noqa: E402
 from .utilities import monitor_status as status  # noqa: E402
-from .options import set_options  # noqa: E402
+from .options import set_options, reset_options  # noqa: E402
 from .data_fetchers import CTDRefDataFetcher  # noqa: E402
 from .stores import ArgoIndex  # noqa: E402
 from .utils import compute
@@ -51,6 +51,7 @@ __all__ = (
 
     # Utilities promoted to top-level functions:
     "set_options",
+    "reset_options",
     "show_versions",
     "show_options",
     "dashboard",

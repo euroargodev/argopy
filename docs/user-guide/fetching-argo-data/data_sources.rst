@@ -1,3 +1,6 @@
+.. currentmodule:: argopy
+.. _data-sources:
+
 Data sources
 ============
 
@@ -9,7 +12,11 @@ Data sources
 .. |Statuspage| image:: https://img.shields.io/static/v1?label=&message=Check%20all%20Argo%20monitors&color=blue&logo=statuspage&logoColor=white
    :target: https://argopy.statuspage.io
 
-.. contents::
+.. hint::
+
+    **argopy** can fetch data from several data sources. To make sure you understand where you're getting data from, have a look at this section.
+
+.. contents:: Contents
    :local:
 
 Let's start with standard import:
@@ -19,7 +26,7 @@ Let's start with standard import:
 
     import argopy
     from argopy import DataFetcher as ArgoDataFetcher
-    argopy.set_options(**argopy.options.OPTIONS)  # Reset options
+    argopy.reset_options()
 
 Available data sources
 ----------------------
@@ -94,23 +101,23 @@ capabilities. Here is a summary:
       - ⭐
       - 🌐
       - 👁
-    * - :ref:`Access Points: <data_fetching>`
+    * - :ref:`Access Points: <data-selection>`
       -
       -
       -
       -
     * -
-      - 🗺 :ref:`region <data_fetching_region>`
+      - 🗺 :ref:`region <data-selection-region>`
       - X
       - X
       - X
     * -
-      - 🤖 :ref:`float <data_fetching_float>`
+      - 🤖 :ref:`float <data-selection-float>`
       - X
       - X
       - X
     * -
-      - ⚓ :ref:`profile <data_fetching_profile>`
+      - ⚓ :ref:`profile <data-selection-profile>`
       - X
       - X
       - X
@@ -134,7 +141,7 @@ capabilities. Here is a summary:
       - X
       - X
       -
-    * - :ref:`Dataset: <data_set>`
+    * - :ref:`Dataset: <data-set>`
       -
       -
       -
@@ -220,12 +227,12 @@ If you're running your analysis on a Jupyter notebook, you can use the :meth:`ar
 
     argopy.status()
 
-.. image:: _static/status_monitor.png
+.. image:: ../../_static/status_monitor.png
   :width: 350
   
 If one of the data source become unavailable, you will see the status bar changing to something like:
   
-.. image:: _static/status_monitor_down.png
+.. image:: ../../_static/status_monitor_down.png
   :width: 350  
   
 Note that the :meth:`argopy.status` method has a ``refresh`` option to let you specify the refresh rate in seconds of the monitoring.

@@ -1,4 +1,4 @@
-.. _data_viz:
+.. _data-viz:
 
 Data visualisation
 ##################
@@ -31,7 +31,7 @@ Trajectories
     fig, ax = idx.plot('trajectory')
     fig, ax = idx.plot()  # Trajectory is the default plot
 
-.. image:: _static/trajectory_sample.png
+.. image:: ../../_static/trajectory_sample.png
 
 Histograms on properties
 ========================
@@ -43,7 +43,7 @@ It is also possible to create horizontal bar plots for histograms on some data p
     idx = ArgoIndexFetcher().region([-80,-30,20,50,'2021-01','2021-08']).load()
     fig, ax = idx.plot('dac')
 
-.. image:: _static/bar_dac.png
+.. image:: ../../_static/bar_dac.png
 
 If you have `Seaborn <https://seaborn.pydata.org/>`_ installed, you can change the plot style:
 
@@ -51,7 +51,7 @@ If you have `Seaborn <https://seaborn.pydata.org/>`_ installed, you can change t
 
     fig, ax = idx.plot('profiler', style='whitegrid')
 
-.. image:: _static/bar_profiler.png
+.. image:: ../../_static/bar_profiler.png
 
 
 Dashboards
@@ -87,7 +87,7 @@ Examples:
 
             argopy.dashboard()
 
-        .. image:: _static/dashboard_data.png
+        .. image:: ../../_static/dashboard_data.png
 
     .. tab:: For floats
 
@@ -98,7 +98,7 @@ Examples:
             argopy.dashboard(5904797)
 
 
-        .. image:: _static/dashboard_float.png
+        .. image:: ../../_static/dashboard_float.png
 
     .. tab:: For profiles
 
@@ -108,7 +108,7 @@ Examples:
 
             argopy.dashboard(6902746, 12)
 
-        .. image:: _static/dashboard_profile.png
+        .. image:: ../../_static/dashboard_profile.png
 
     .. tab:: For BGC profiles
 
@@ -119,7 +119,7 @@ Examples:
             argopy.dashboard(5903248, 3, type='bgc')
 
 
-        .. image:: _static/dashboard_profile_bgc.png
+        .. image:: ../../_static/dashboard_profile_bgc.png
 
 
 
@@ -175,7 +175,7 @@ By default, the :func:`argopy.plot.scatter_map` function will try to plot a traj
 
     scatter_map(df)
 
-.. image:: _static/scatter_map_index.png
+.. image:: ../../_static/scatter_map_index.png
 
 Arguments can be passed explicitly as well:
 
@@ -201,7 +201,7 @@ Some options are available to customise the plot, for instance:
                        legend_title='Floats WMO',
                        cmap='Set2')
 
-.. image:: _static/scatter_map_index_opts.png
+.. image:: ../../_static/scatter_map_index_opts.png
 
 
 
@@ -230,7 +230,7 @@ The :class:`argopy.plot.scatter_map` function uses the :class:`argopy.plot.ArgoC
                         cmap='data_mode',
                         traj_axis='PLATFORM_NUMBER')
 
-        .. image:: _static/scatter_map_datamode.png
+        .. image:: ../../_static/scatter_map_datamode.png
 
 
     .. tab:: QC flag
@@ -252,7 +252,7 @@ The :class:`argopy.plot.scatter_map` function uses the :class:`argopy.plot.ArgoC
                         cmap='qc',
                         traj_axis='PLATFORM_NUMBER')
 
-        .. image:: _static/scatter_map_qcflag.png
+        .. image:: ../../_static/scatter_map_qcflag.png
 
     .. tab:: Deployment status
 
@@ -262,7 +262,7 @@ The :class:`argopy.plot.scatter_map` function uses the :class:`argopy.plot.ArgoC
 
             scatter_map(df_deployment, hue='status_code', traj=False)
 
-        .. image:: _static/scatter_map_deployment_status.png
+        .. image:: ../../_static/scatter_map_deployment_status.png
 
 
 Use any colormap
@@ -279,7 +279,7 @@ In the example below, we plot profile years of sampling using the reverse ``Spec
                 cmap='Spectral_r',
                 legend_title='Year of sampling')
 
-.. image:: _static/scatter_map_Spectral.png
+.. image:: ../../_static/scatter_map_Spectral.png
 
 
 Argo colors
@@ -303,7 +303,7 @@ The :ref:`Use predefined Argo Colors` section above gives examples of the availa
 
             ArgoColors('data_mode')
 
-        .. image:: _static/ArgoColors_data_mode.png
+        .. image:: ../../_static/ArgoColors_data_mode.png
 
         .. ipython:: python
 
@@ -315,7 +315,7 @@ The :ref:`Use predefined Argo Colors` section above gives examples of the availa
 
             ArgoColors('qc_flag')
 
-        .. image:: _static/ArgoColors_qc.png
+        .. image:: ../../_static/ArgoColors_qc.png
 
         .. ipython:: python
 
@@ -327,7 +327,7 @@ The :ref:`Use predefined Argo Colors` section above gives examples of the availa
 
             ArgoColors('deployment_status')
 
-        .. image:: _static/ArgoColors_deployment_status.png
+        .. image:: ../../_static/ArgoColors_deployment_status.png
 
         .. ipython:: python
 
@@ -339,7 +339,7 @@ The :ref:`Use predefined Argo Colors` section above gives examples of the availa
 
             ArgoColors('months')
 
-        .. image:: _static/ArgoColors_months.png
+        .. image:: ../../_static/ArgoColors_months.png
 
         .. ipython:: python
 
@@ -352,10 +352,10 @@ Note that :class:`argopy.plot.ArgoColors` can also be used to discretise any col
 
     ArgoColors('Blues')
 
-.. image:: _static/ArgoColors_blues.png
+.. image:: ../../_static/ArgoColors_blues.png
 
 .. code-block:: python
 
     ArgoColors('bwr', N=13)
 
-.. image:: _static/ArgoColors_bwr.png
+.. image:: ../../_static/ArgoColors_bwr.png
