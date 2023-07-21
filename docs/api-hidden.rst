@@ -89,7 +89,6 @@
 
     argopy.utilities.list_standard_variables
     argopy.utilities.list_multiprofile_file_variables
-    argopy.utilities.check_localftp
     argopy.utilities.format_oneline
     argopy.utilities.is_box
     argopy.utilities.is_indexbox
@@ -231,6 +230,7 @@
     argopy.ArgoIndex.search_lat_lon
     argopy.ArgoIndex.search_lat_lon_tim
     argopy.ArgoIndex.search_params
+    argopy.ArgoIndex.search_parameter_data_mode
     argopy.ArgoIndex.to_dataframe
     argopy.ArgoIndex.to_indexfile
 
