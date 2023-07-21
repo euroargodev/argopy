@@ -33,7 +33,7 @@ Available data sources
 
 **argopy** can get access to Argo data from the following sources:
 
-1. ⭐ the `Ifremer erddap server <http://www.ifremer.fr/erddap>`__.
+1. ⭐ the `Ifremer erddap server <http://www.ifremer.fr/erddap>`__ (Default).
     The erddap server database is updated daily and doesn’t require you to download anymore data than what you need.
     You can select this data source with the keyword ``erddap`` and methods described below.
     The Ifremer erddap dataset is based on mono-profile files of the GDAC.

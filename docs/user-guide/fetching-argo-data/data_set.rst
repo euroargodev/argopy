@@ -80,21 +80,25 @@ The 🟢 **bgc** dataset
 .. role:: python(code)
    :language: python
 
-.. versionadded:: v0.1.14
-
-    Rolling out incremental support for Argo-BGC variables.
-
-
 All **argopy** features work with the 🟡+ 🔵 **phy** dataset. However, they are some specific methods dedicated to the 🟢 **bgc** dataset that we now describe.
 
-The `BGC-Argo Mission <https://biogeochemical-argo.org>`_ gathers data from floats that measure temperature, salinity, pressure and oxygen, pH, nitrate, chlorophyll, backscatter, irradiance down to 2000m. However, beyond this short BGC parameter list there exist in the Argo dataset more than 120 BGC-related variables. Therefore, in the :class:`DataFetcher` we implemented 2 specific arguments to handle BGC variables: ``params`` and ``measured``.
+Specifics in :class:`DataFetcher`
+=================================
 
-With a :class:`DataFetcher`, the **params** argument can be used to specify which variables will be returned, *whatever their values or availability in BGC floats found in the data selection*. 
+The `BGC-Argo Mission <https://biogeochemical-argo.org>`_ gathers data from floats that measure temperature, salinity, pressure and oxygen, pH, nitrate, chlorophyll, backscatter, irradiance down to 2000m. However, beyond this short BGC parameter list there exist in the Argo dataset **more than 120 BGC-related variables**. Therefore, in the :class:`DataFetcher` we implemented 2 specific arguments to handle BGC variables: ``params`` and ``measured``.
+
+With a :class:`DataFetcher`, the **params** argument can be used to specify which variables will be returned, *whatever their values or availability in BGC floats found in the data selection*.
 By default, the **params** argument is set to the keyword ``all``  to indicate to return *all* variables found in the data selection. But the **params** argument can also be a single variable or a list of variables, in which case only these will be returned and all the others discarded.
+
+With a :class:`DataFetcher`, the **measured** argument can be used to specify which variables cannot be NaN and must return values. This is very useful to reduce a dataset to points where all variables are available. By default, the **measured** argument is set to ``None`` in order to unconstrained parameter values. To the opposite, the keyword ``all`` requires that all variables found in the data selection cannot be NaNs. In between, you can specific one or more parameters to limit the constrain to a few variables.
+
 
 .. important::
 
-    At this time, BGC parameters are available in ``expert`` :ref:`user mode <user-mode>`.
+    At this time, BGC parameters are only available in ``expert`` :ref:`user mode <user-mode>`.
+
+
+**Examples**
 
 .. tabs::
 
@@ -137,3 +141,10 @@ By default, the **params** argument is set to the keyword ``all``  to indicate t
                 ds = argopy.DataFetcher(params='all').region([-75, -45, 20, 30, 0, 10, '2021-01-01', '2021-06']).data
                 print(ds.data_vars)
 
+
+Specifics in :class:`ArgoIndex`
+===============================
+
+Specific variables are only available with BGC-Argo index files, especially the ``PARAMETER_DATA_MODE``.
+
+When loading an :class:`ArgoIndex` with one of the two BGC-Argo index file, it is possible to search for parameters in a specific data mode with the :meth:`ArgoIndex.search_parameter_data_mode` method.

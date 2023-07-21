@@ -135,10 +135,6 @@ You will note that the **standard** and **research** modes have fewer variables 
 focus on your analysis. For **expert**, all Argo variables for you to
 work with are here.
 
-.. ipython:: python
-    :okwarning:
-
-    argopy.set_options(ftp='https://data-argo.ifremer.fr')
 
 .. tabs::
 

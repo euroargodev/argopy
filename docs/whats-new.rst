@@ -13,7 +13,7 @@ Coming up in the next release
 
 **Features and front-end API**
 
-- **argopy now support BGC dataset in `expert` user mode for the `erddap` data source**. The Argo-BGC content of synthetic multi-profile files is now available from the Ifremer erddap. Like for the core dataset, you can fetch data for a region, float(s) or profile(s). One novelty wrt to core, is that you can restrict data fetching to some parameters and furthermore impose no-NaNs on some of these parameters. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+- **argopy now support BGC dataset in `expert` user mode for the `erddap` data source**. The Argo-BGC content of synthetic multi-profile files is now available from the Ifremer erddap. Like for the core dataset, you can fetch data for a region, float(s) or profile(s). One novelty wrt to core, is that you can restrict data fetching to some parameters and furthermore impose no-NaNs on some of these parameters. Check out the new documentation page for :ref:`data-set`. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
