@@ -34,6 +34,7 @@ dependencies:
   - sphinx-issues
   - sphinx_rtd_theme
   - sphinx-book-theme
+  - pydata-sphinx-theme
   - codespell
   - cfgrib
   - black
@@ -50,3 +51,5 @@ dependencies:
     - sphinxext-rediraffe
     - sphinxext-opengraph
     - git+https://github.com/sphinx-contrib/googleanalytics
+    - sphinx-copybutton
+    - sphinx-design

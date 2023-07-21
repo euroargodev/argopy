@@ -11,12 +11,16 @@ jinja2>=3.0.2
 sphinx_issues>=1.2.0
 gitpython>=3.1.2
 sphinx-autosummary-accessors>=0.1.2
+pydata-sphinx-theme>=0.4.3
 readthedocs-sphinx-ext
 sphinx-rtd-theme
 sphinx-book-theme
 # sphinx-bootstrap-theme
 sphinx-tabs
 git+https://github.com/sphinx-contrib/googleanalytics
+sphinx-copybutton
+sphinx-design
+sphinxext-rediraffe
 
 xarray>=0.16.1
 pandas<3.0

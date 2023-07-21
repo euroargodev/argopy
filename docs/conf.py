@@ -94,6 +94,8 @@ extensions = [
     'sphinx_tabs.tabs',
     'sphinxcontrib.googleanalytics',
     'sphinxext.rediraffe',
+    'sphinx_copybutton',
+    'sphinx_design',
 ]
 
 # sphinx_gallery_conf = {
@@ -137,7 +139,11 @@ release = argopy.__version__
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '_templates',
                     '.ipynb_checkpoints', '_ext', 'tempo_out', '_src',
-                    'offline', 'examples/.ipynb_checkpoints', 'tryit.ipynb']
+                    'offline',
+                    'examples/.ipynb_checkpoints',
+                    'examples/ignore',
+                    'examples/*.ipynb',
+                    'tryit.ipynb']
 
 # Give *lots* of time for notebook cell execution!
 # Note nbsphinx compiles *all* notebooks in docs unless excluded
@@ -151,6 +157,9 @@ nbsphinx_execute = "always"
 # .. |Binder| image:: https://mybinder.org/badge.svg
 #    :target: https://mybinder.org/v2/gh/euroargodev/argopy/master-doc?urlpath=lab/tree/docs/{{ docname }}
 # """
+
+# sphinx-copybutton
+copybutton_exclude = '.linenos, .gp, .go'
 
 
 # The name of the Pygments (syntax highlighting) style to use.
