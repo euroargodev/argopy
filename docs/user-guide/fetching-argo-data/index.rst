@@ -28,16 +28,32 @@ These methods and arguments are all explained in the following sections:
     user_mode
 
 
-General workflow
-****************
+In a nutshell
+*************
 
-To get you started, here is the general workflow for fetching Argo data with **argopy**.
+2 lines to download Argo data: import and fetch !
+
+.. ipython:: python
+    :okwarning:
+
+    import argopy
+    ds = argopy.DataFetcher().region([-75, -45, 20, 30, 0, 10, '2011-01-01', '2011-06']).load().data
+
+.. ipython:: python
+    :okwarning:
+
+    ds
+
+Workflow explained
+******************
+
+Let's explain what happened in the single line Argo data fetching above.
 
 .. tabs::
 
     .. tab:: 1 Create a DataFetcher
 
-        By default, **argopy** will load the ``phy`` :ref:`dataset <data-set>`, in ``standard`` :ref:`user mode <user-mode>` from the ``erddap`` :ref:`data source <data-sources>`.
+        Import **argopy** and create a instance of :class:`DataFetcher`:
 
         .. ipython:: python
             :okwarning:
@@ -46,9 +62,12 @@ To get you started, here is the general workflow for fetching Argo data with **a
             f = argopy.DataFetcher()
             f
 
+        By default, **argopy** will load the ``phy`` :ref:`dataset <data-set>`, in ``standard`` :ref:`user mode <user-mode>` from the ``erddap`` :ref:`data source <data-sources>`.
+
+
     .. tab:: 2 Select data
 
-        As an example, here is a space/time data selection:
+        Once you have a :class:`DataFetcher`, you must select data. As an example, here is a space/time data selection:
 
         .. ipython:: python
             :okwarning:
@@ -56,7 +75,7 @@ To get you started, here is the general workflow for fetching Argo data with **a
             f = f.region([-75, -45, 20, 30, 0, 10, '2011-01-01', '2011-06'])
             f
 
-        See :ref:`all data selection details here <data-selection>`.
+        See :ref:`all data selector methods here <data-selection>`.
 
     .. tab:: 3 Fetch data
 

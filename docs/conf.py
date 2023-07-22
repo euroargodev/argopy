@@ -159,7 +159,7 @@ nbsphinx_execute = "always"
 # """
 
 # sphinx-copybutton
-copybutton_exclude = '.linenos, .gp, .go'
+copybutton_exclude = '.linenos, .gp, .go, .gh'
 
 
 # The name of the Pygments (syntax highlighting) style to use.
@@ -220,6 +220,10 @@ html_context = {
     "github_version": "master",
     "doc_path": "docs",
 }
+
+html_css_files = [
+    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+]
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.

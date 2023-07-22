@@ -6,9 +6,9 @@ Data sources
 
 |Erddap status| |GDAC status| |Argovis status| |Statuspage|
 
-.. |Erddap status| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_erddap.json
-.. |GDAC status| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_gdac.json
-.. |Argovis status| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_api_status_argovis.json
+.. |Erddap status| image:: https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Feuroargodev%2Fargopy-status%2Fmaster%2Fargopy_api_status_erddap.json
+.. |GDAC status| image:: https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Feuroargodev%2Fargopy-status%2Fmaster%2Fargopy_api_status_gdac.json
+.. |Argovis status| image:: https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Feuroargodev%2Fargopy-status%2Fmaster%2Fargopy_api_status_argovis.json
 .. |Statuspage| image:: https://img.shields.io/static/v1?label=&message=Check%20all%20Argo%20monitors&color=blue&logo=statuspage&logoColor=white
    :target: https://argopy.statuspage.io
 

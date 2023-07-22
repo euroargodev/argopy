@@ -12,7 +12,7 @@ for standard users as well as Argo experts.
 
     - Rolling out incremental support for Argo-BGC variables 🎉
     - Gallery of notebook examples
-    - Check out all new features on the :doc:`What's New` page
+    - Check out all new features on the :ref:`What's New` page
 
 
 Documentation
@@ -24,7 +24,7 @@ Documentation
 * :doc:`usage`
 * :doc:`why`
 * :doc:`what_is_argo`
-* :doc:`gallery`
+* :doc:`Gallery of examples <gallery>`
 
 .. toctree::
     :maxdepth: 2

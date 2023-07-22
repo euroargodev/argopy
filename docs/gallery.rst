@@ -10,26 +10,57 @@ Notebook Examples
 -----------------
 
 .. grid:: 1 1 2 2
-    :gutter: 2
+    :gutter: 4
 
     .. grid-item-card:: Scatter map with data mode of one BGC variable
-        :link: https://github.com/euroargodev/argopy/blob/master/docs/examples/scatter_map_BGC_data_mode.ipynb
-        :link-type: url
         :img-top: _static/nbexamples_scatter_map_datamode_bgc.png
 
         |select_region| |select_float| |ds_bgc| |mode_expert| |src_gdac|
         ^^^
         A notebook to plot a map where profile locations are color coded with one BGC parameter data mode
+        +++
+        .. grid:: 2 2 2 2
+
+            .. grid-item::
+
+                .. button-link:: https://nbviewer.org/github/euroargodev/argopy/blob/doc-update/docs/examples/scatter_map_BGC_data_mode.ipynb
+                    :color: primary
+                    :outline:
+
+                    :fas:`eye` Online viewer
+
+            .. grid-item::
+
+                .. button-link:: https://www.github.com/euroargodev/argopy/blob/doc-update/docs/examples/scatter_map_BGC_data_mode.ipynb
+                    :color: primary
+                    :outline:
+
+                    :fas:`file-arrow-down` Download notebook
 
     .. grid-item-card:: BGC data mode census
-        :link: https://github.com/euroargodev/argopy/blob/master/docs/examples/BGC_data_mode_census.ipynb
-        :link-type: url
         :img-top: _static/nbexamples_datamode_bgc_census.png
 
         |select_region| |ds_bgc| |mode_expert| |src_gdac|
         ^^^
         A notebook to make a census of all BGC parameter data mode and a pie plot with results
+        +++
+        .. grid:: 2 2 2 2
 
+            .. grid-item::
+
+                .. button-link:: https://nbviewer.org/github/euroargodev/argopy/blob/doc-update/docs/examples/BGC_data_mode_census.ipynb
+                    :color: primary
+                    :outline:
+
+                    :fas:`eye` Online viewer
+
+            .. grid-item::
+
+                .. button-link:: https://www.github.com/euroargodev/argopy/blob/doc-update/docs/examples/BGC_data_mode_census.ipynb
+                    :color: primary
+                    :outline:
+
+                    :fas:`file-arrow-down` Download notebook
 
 .. dropdown:: Notebook tags Legend
     :open:
@@ -51,4 +82,3 @@ Notebook Examples
 .. |select_region| replace:: 🗺
 .. |select_float| replace:: 🤖
 .. |select_profile| replace:: ⚓
-.. |other| image:: https://img.shields.io/static/v1?label=source&message=erddap&color=blue
