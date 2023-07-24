@@ -1,3 +1,5 @@
+.. currentmodule:: argopy
+
 Usage
 =====
 
@@ -9,7 +11,7 @@ To get access to Argo data, all you need is 2 lines of codes:
     from argopy import DataFetcher as ArgoDataFetcher
     ds = ArgoDataFetcher().region([-75, -45, 20, 30, 0, 100, '2011-01', '2011-06']).to_xarray()
 
-In this example, we used a data fetcher to get data for a given space/time region.
+In this example, we used a :class:`DataFetcher` to get data for a given space/time region.
 We retrieved all Argo data measurements from 75W to 45W, 20N to 30N, 0db to 100db and from January to May 2011 (the max date is exclusive).
 Data are returned as a collection of measurements in a :class:`xarray.Dataset`:
 

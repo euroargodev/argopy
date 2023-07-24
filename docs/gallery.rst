@@ -9,8 +9,33 @@ Contributions are highly welcomed and appreciated. So, if you are interested in 
 Notebook Examples
 -----------------
 
-.. grid:: 1 1 2 2
+.. grid:: 1 1 3 3
     :gutter: 4
+
+    .. grid-item-card:: BGC one float data
+        :img-top: _static/nb_examples_one_float_data.png
+
+        |select_float| |ds_bgc| |mode_expert| |src_erddap|
+        ^^^
+        A notebook to download and plot one BGC float data
+        +++
+        .. grid:: 2 2 2 2
+
+            .. grid-item::
+
+                .. button-link:: https://nbviewer.org/github/euroargodev/argopy/blob/doc-update/docs/examples/BGC_one_float_data.ipynb
+                    :color: primary
+                    :outline:
+
+                    :fas:`eye` Online viewer
+
+            .. grid-item::
+
+                .. button-link:: https://www.github.com/euroargodev/argopy/blob/doc-update/docs/examples/BGC_one_float_data.ipynb
+                    :color: primary
+                    :outline:
+
+                    :fas:`file-arrow-down` Download notebook
 
     .. grid-item-card:: Scatter map with data mode of one BGC variable
         :img-top: _static/nbexamples_scatter_map_datamode_bgc.png
@@ -23,7 +48,7 @@ Notebook Examples
 
             .. grid-item::
 
-                .. button-link:: https://nbviewer.org/github/euroargodev/argopy/blob/doc-update/docs/examples/scatter_map_BGC_data_mode.ipynb
+                .. button-link:: https://nbviewer.org/github/euroargodev/argopy/blob/doc-update/docs/examples/BGC_scatter_map_data_mode.ipynb
                     :color: primary
                     :outline:
 
@@ -31,7 +56,7 @@ Notebook Examples
 
             .. grid-item::
 
-                .. button-link:: https://www.github.com/euroargodev/argopy/blob/doc-update/docs/examples/scatter_map_BGC_data_mode.ipynb
+                .. button-link:: https://www.github.com/euroargodev/argopy/blob/doc-update/docs/examples/BGC_scatter_map_data_mode.ipynb
                     :color: primary
                     :outline:
 
