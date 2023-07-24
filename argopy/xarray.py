@@ -1072,7 +1072,14 @@ class ArgoAccessor:
                 z_dim="N_LEVELS",
                 z_regridded_dim="Z_LEVELS",
             )
+            ds_out[dv].attrs = this_dsp[dv].attrs  # Preserve attributes
+            if 'long_name' in ds_out[dv].attrs:
+                ds_out[dv].attrs['long_name'] = "Interpolated %s" % ds_out[dv].attrs['long_name']
+
         ds_out = ds_out.rename({"remapped": "%s_INTERPOLATED" % axis})
+        ds_out["%s_INTERPOLATED" % axis].attrs = this_dsp[axis].attrs
+        if "long_name" in ds_out["%s_INTERPOLATED" % axis].attrs:
+            ds_out["%s_INTERPOLATED" % axis].attrs['long_name'] = "Standard %s levels" % axis
 
         for sv in solovars:
             ds_out[sv] = this_dsp[sv]

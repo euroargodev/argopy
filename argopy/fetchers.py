@@ -182,6 +182,7 @@ class ArgoDataFetcher:
             "data",
             "index",
             "domain",
+            "mission",
             "_loaded",
             "_request",
             "cache", "cachedir"
@@ -273,6 +274,13 @@ class ArgoDataFetcher:
             This is different from a usual ``box`` because dates are in :class:`numpy.datetime64` format.
         """
         return self.data.argo.domain
+
+    @property
+    def mission(self):
+        if self._dataset_id == 'bgc':
+            return "BGC"
+        else:
+            return "core+deep"
 
     def dashboard(self, **kw):
         """Open access point dashboard.
