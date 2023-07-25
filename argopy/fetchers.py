@@ -527,25 +527,25 @@ class ArgoDataFetcher:
         return df
 
     def load(self, force: bool = False, **kwargs):
-        """ Fetch data (and compute an index) if not already in memory
+        """ Fetch data (and compute a profile index) if not already in memory
 
-            Apply the default to_xarray() and to_index() methods and store results in memory.
-            You can access loaded measurements structure with the `data` and `index` properties.
+        Apply the default to_xarray() and to_index() methods and store results in memory.
+        You can access loaded measurements structure with the `data` and `index` properties.
 
-            Parameters
-            ----------
-            force: bool
-                Force fetching data if not already in memory, default is False.
+        Parameters
+        ----------
+        force: bool
+            Force fetching data even if not already in memory, default is False.
 
-            Returns
-            -------
-            :class:`argopy.fetchers.ArgoDataFetcher.float`
-                Data fetcher with `data` and `index` properties in memory
+        Returns
+        -------
+        :class:`argopy.fetchers.ArgoDataFetcher`
+            Data fetcher with `data` and `index` properties in memory
 
-            Examples
-            --------
-            >>> ds = ArgoDataFetcher().profile(6902746, 34).load().data
-            >>> df = ArgoDataFetcher().float(6902746).load().index
+        Examples
+        --------
+        >>> ds = ArgoDataFetcher().profile(6902746, 34).load().data
+        >>> df = ArgoDataFetcher().float(6902746).load().index
         """
         # Force to load data if the fetcher definition has changed
         if self._loaded and self._request != self.__repr__():
