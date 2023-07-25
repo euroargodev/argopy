@@ -14,7 +14,6 @@ import xarray as xr
 import pandas as pd
 import numpy as np
 import logging
-# from functools import lru_cache
 
 from argopy.options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher, OptionValueError
@@ -247,7 +246,7 @@ class ArgoDataFetcher:
             :class:`xarray.DataArray`
                 Fetched data
         """
-        if not isinstance(self._data, xr.Dataset):
+        if not isinstance(self._data, xr.Dataset) or self._request != self.__repr__():
             self.load()
         return self._data
 
@@ -260,7 +259,7 @@ class ArgoDataFetcher:
             :class:`pandas.DataFrame`
                 Argo-like index of fetched data
         """
-        if not isinstance(self._index, pd.core.frame.DataFrame):
+        if not isinstance(self._index, pd.core.frame.DataFrame) or self._request != self.__repr__():
             if "gdac" in self._src:
                 self.to_index(full=True)
             else:
