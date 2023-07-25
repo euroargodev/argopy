@@ -90,61 +90,104 @@ The `BGC-Argo Mission <https://biogeochemical-argo.org>`_ gathers data from floa
 With a :class:`DataFetcher`, the **params** argument can be used to specify which variables will be returned, *whatever their values or availability in BGC floats found in the data selection*.
 By default, the **params** argument is set to the keyword ``all``  to indicate to return *all* variables found in the data selection. But the **params** argument can also be a single variable or a list of variables, in which case only these will be returned and all the others discarded.
 
-With a :class:`DataFetcher`, the **measured** argument can be used to specify which variables cannot be NaN and must return values. This is very useful to reduce a dataset to points where all variables are available. By default, the **measured** argument is set to ``None`` in order to unconstrained parameter values. To the opposite, the keyword ``all`` requires that all variables found in the data selection cannot be NaNs. In between, you can specific one or more parameters to limit the constrain to a few variables.
+With a :class:`DataFetcher`, the **measured** argument can be used to specify which variables cannot be NaN and must return values. This is very useful to reduce a dataset to points where all or some variables are available. By default, the **measured** argument is set to ``None`` in order to unconstrained parameter values. To the opposite, the keyword ``all`` requires that all variables found in the data selection cannot be NaNs. In between, you can specific one or more parameters to limit the constrain to a few variables.
 
 
 .. important::
 
     At this time, BGC parameters are only available in ``expert`` :ref:`user mode <user-mode>`.
 
+.. dropdown:: Syntax
+    :icon: code
+    :color: light
+    :open:
 
-**Examples**
+    .. tab-set::
 
-.. tabs::
+        .. tab-item:: params
 
-    .. tab:: One BGC parameter
+            - To return data from a single BGC parameter, just add it as a string, for instance ``DOXY``
+            - To return more than one BGC parameter, give them as a list of strings, for instance ``['DOXY', 'BBP700']``
+            - To retrieve all available BGC parameters, you can omit the ``params`` argument (since this is the default value), or give it explicitly as ``all``.
 
-        To return data from a single BGC parameter, just add it as a string, for instance ``DOXY``:
+            .. ipython:: python
+                :okwarning:
 
-        .. ipython:: python
-            :okwarning:
+                import argopy
+                with argopy.set_options(dataset='bgc', src='erddap', mode='expert'):
+                    f = argopy.DataFetcher(params='all')
+                    f = f.region([-75, -45, 20, 30, 0, 10, '2021-01', '2021-06'])
+                    print(f.data.argo, "\n")  # Easy print of N profiles and points
+                    print(list(f.data.data_vars))
 
-            import argopy
-            with argopy.set_options(dataset='bgc', src='erddap', mode='expert'):
-                ds = argopy.DataFetcher(params='DOXY').region([-75, -45, 20, 30, 0, 10, '2021-01-01', '2021-06']).data
-                print(ds.data_vars)
+        .. tab-item:: measured
 
-    .. tab:: More than one BGC parameter
+            Let's now impose that some variables cannot be NaNs, for instance ``DOXY`` and ``BBP700``
 
-        To return more than one BGC parameter, give them as a list of strings, for instance ``['DOXY', 'BBP700']``:
+            .. ipython:: python
+                :okwarning:
 
-        .. ipython:: python
-            :okwarning:
+                import argopy
+                with argopy.set_options(dataset='bgc', src='erddap', mode='expert'):
+                    f = argopy.DataFetcher(params='all', measured=['DOXY', 'BBP700'])
+                    f = f.region([-75, -45, 20, 30, 0, 10, '2021-01', '2021-06'])
+                    print(f.data.argo, "\n")  # Easy print of N profiles and points
+                    print(list(f.data.data_vars))
 
-            import argopy
-            with argopy.set_options(dataset='bgc', src='erddap', mode='expert'):
-                ds = argopy.DataFetcher(params=['DOXY', 'BBP700']).region([-75, -45, 20, 30, 0, 10, '2021-01-01', '2021-06']).data
-                print(ds.data_vars)
-
-    .. tab:: All available BGC parameters
-
-        To retrieve all available BGC parameters, you can omit the ``params`` argument (since this is the default value), or give it explicitly.
-
-        .. note::
-            You will see in the above example that the returned dataset has not all possible BGC parameters, but only those found in the data selection.
-
-        .. ipython:: python
-            :okwarning:
-
-            import argopy
-            with argopy.set_options(dataset='bgc', src='erddap', mode='expert'):
-                ds = argopy.DataFetcher(params='all').region([-75, -45, 20, 30, 0, 10, '2021-01-01', '2021-06']).data
-                print(ds.data_vars)
-
+            We can see from ``f.data.argo.N_POINTS`` that the dataset is reduced compared to the previous version without constraints on variables **measured**.
 
 Specifics in :class:`ArgoIndex`
 ===============================
 
-Specific variables are only available with BGC-Argo index files, especially the ``PARAMETER_DATA_MODE``.
+.. hint::
 
-When loading an :class:`ArgoIndex` with one of the two BGC-Argo index file, it is possible to search for parameters in a specific data mode with the :meth:`ArgoIndex.search_parameter_data_mode` method.
+    In order to load one BGC-Argo profile index, you can use either ``bgc-b`` or ``bgc-s`` keywords to load the ``argo_bio-profile_index.txt`` or ``argo_synthetic-profile_index.txt`` index files.
+
+Since specific variables are only available with BGC-Argo index files, especially the ``PARAMETER_DATA_MODE``, we implemented the :meth:`ArgoIndex.search_parameter_data_mode`. This method allows to search for parameters in one or more specific data modes.
+
+
+.. dropdown:: Syntax
+    :icon: code
+    :color: light
+    :open:
+
+    .. tab-set::
+
+        .. tab-item:: 1. Load a BGC index
+
+            .. ipython:: python
+                :okwarning:
+
+                from argopy import ArgoIndex
+                idx = ArgoIndex(index_file='bgc-b').load()
+                idx
+
+        .. tab-item:: 2. Search for BGC parameter data mode
+
+            You can search one mode for a single parameter:
+
+            .. ipython:: python
+                :okwarning:
+
+                idx.search_parameter_data_mode({'BBP700': 'D'})
+
+            You can search several modes for a single parameter:
+
+            .. ipython:: python
+                :okwarning:
+
+                idx.search_parameter_data_mode({'DOXY': ['R', 'A']})
+
+            You can search several modes for several parameters:
+
+            .. ipython:: python
+                :okwarning:
+
+                idx.search_parameter_data_mode({'BBP700': 'D', 'DOXY': 'D'}, logical='and')
+
+            And mix all of these as you wish:
+
+            .. ipython:: python
+                :okwarning:
+
+                idx.search_parameter_data_mode({'BBP700': ['R', 'A'], 'DOXY': 'D'}, logical='or')

@@ -2906,12 +2906,18 @@ class ArgoNVSReferenceTables:
 
     Examples
     --------
+    Methods:
+
     >>> R = ArgoNVSReferenceTables()
-    >>> R.valid_ref
-    >>> R.all_tbl_name
-    >>> R.all_tbl
+    >>> R.search('sensor')
     >>> R.tbl(3)
     >>> R.tbl('R09')
+
+    Properties:
+
+    >>> R.all_tbl_name
+    >>> R.all_tbl
+    >>> R.valid_ref
 
     """
     valid_ref = [

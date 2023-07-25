@@ -35,8 +35,8 @@ Use the fetcher access point :meth:`argopy.DataFetcher.region` to select data fo
 .. ipython:: python
     :okwarning:
 
-    f = f.region([-75, -45, 20, 30, 0, 10, '2011-01-01', '2011-06'])
-    f
+    f = f.region([-75, -45, 20, 30, 0, 10, '2011-01', '2011-06'])
+    f.data
 
 You can now see that the standard :class:`DataFetcher` print has been updated with information for the data selection.
 
@@ -58,7 +58,7 @@ For instance, to select data for float WMO *6902746*:
     :okwarning:
 
     f = f.float(6902746)
-    f
+    f.data
 
 To fetch data for a collection of floats, input them in a list:
 
@@ -66,7 +66,7 @@ To fetch data for a collection of floats, input them in a list:
     :okwarning:
 
     f = f.float([6902746, 6902755])
-    f
+    f.data
 
 .. _data-selection-profile:
 
@@ -80,14 +80,16 @@ For instance, to retrieve data for the 12th profile of float WMO 6902755:
 .. ipython:: python
     :okwarning:
 
-    f.profile(6902755, 12).data
+    f = f.profile(6902755, 12)
+    f.data
 
 To fetch data for more than one profile, input them in a list:
 
 .. ipython:: python
     :okwarning:
 
-    f.profile(6902755, [3, 12]).data
+    f = f.profile(6902755, [3, 12])
+    f.data
 
 
 .. note::

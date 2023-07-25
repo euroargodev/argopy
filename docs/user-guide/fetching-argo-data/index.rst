@@ -6,9 +6,9 @@ Fetching Argo data
 
 To fetch (i.e. access, download, format) Argo data, **argopy** provides the :class:`DataFetcher` class. In this section of the documentation, we explain how to use it.
 
-You define the selection of data you want to fetch with one of the :class:`DataFetcher` methods: :ref:`region <data-selection-region>`, :ref:`float <data-selection-float>` or :ref:`profile <data-selection-profile>`.
-
 Several :class:`DataFetcher` arguments exist to help you select the :ref:`dataset <data-set>`, the :ref:`data source <data-sources>` and the :ref:`user mode <user-mode>` the most suited for your applications; and also to improve :ref:`performances <performances>`.
+
+You define the selection of data you want to fetch with one of the :class:`DataFetcher` methods: :ref:`region <data-selection-region>`, :ref:`float <data-selection-float>` or :ref:`profile <data-selection-profile>`.
 
 These methods and arguments are all explained in the following sections:
 
@@ -37,7 +37,7 @@ In a nutshell
     :okwarning:
 
     import argopy
-    ds = argopy.DataFetcher().region([-75, -45, 20, 30, 0, 10, '2011-01-01', '2011-06']).load().data
+    ds = argopy.DataFetcher().region([-75, -45, 20, 30, 0, 10, '2011-01', '2011-06']).load().data
 
 .. ipython:: python
     :okwarning:
@@ -72,21 +72,17 @@ Let's explain what happened in the single line Argo data fetching above.
         .. ipython:: python
             :okwarning:
 
-            f = f.region([-75, -45, 20, 30, 0, 10, '2011-01-01', '2011-06'])
+            f = f.region([-75, -45, 20, 30, 0, 10, '2011-01', '2011-06'])
             f
 
         See :ref:`all data selector methods here <data-selection>`.
 
     .. tab:: 3 Fetch data
 
-        Once you selected data, you can trigger data download with the :meth:`DataFetcher.load` method:
+        Once you defined a data selection, data fetching will be triggered if you access one of the :class:`DataFetcher` properties:
 
-        .. ipython:: python
-            :okwarning:
-
-            f.load()
-
-        Then, Argo data and index are available as a :class:`xarray.Dataset` and :class:`pandas.DataFrame` with the ``data`` and ``index`` fetcher properties:
+        - ``data``, this is a :class:`xarray.Dataset` with all Argo data in the selection,
+        - ``index``, this is a :class:`pandas.DataFrame` with a list of profiles in the selection.
 
         .. ipython:: python
             :okwarning:
@@ -98,8 +94,10 @@ Let's explain what happened in the single line Argo data fetching above.
 
             f.index
 
-        Note that the :meth:`DataFetcher.to_xarray` and :meth:`DataFetcher.to_index` will force data download on every call, while the :meth:`DataFetcher.load` method will keep data in memory in the :attr:`DataFetcher.data` property.
+        These fetcher properties call on the :meth:`DataFetcher.load` method, which in turn, calls either :meth:`DataFetcher.to_xarray` or :meth:`DataFetcher.to_index` if data structures are not already in memory.
 
+
+        Note that the :meth:`DataFetcher.to_xarray` and :meth:`DataFetcher.to_index` will force data download on every call, while the :meth:`DataFetcher.load` method will keep data in memory in the :attr:`DataFetcher.data` and :attr:`DataFetcher.index` properties.
 
     .. tab:: 4 Viz data
 
