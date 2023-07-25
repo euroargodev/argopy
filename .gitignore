@@ -73,6 +73,7 @@ docs/generated/
 docs/mycache_folder/
 mycache_folder/
 docs/examples/cache_bgc/
+docs/examples/ignore/
 
 # PyBuilder
 target/
