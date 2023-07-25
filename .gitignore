@@ -72,6 +72,7 @@ docs/_build/doctrees
 docs/generated/
 docs/mycache_folder/
 mycache_folder/
+docs/examples/cache_bgc/
 
 # PyBuilder
 target/

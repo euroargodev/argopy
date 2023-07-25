@@ -143,6 +143,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '_templates',
                     'examples/.ipynb_checkpoints',
                     'examples/ignore',
                     'examples/*.ipynb',
+                    'examples/cache_bgc',
                     'tryit.ipynb']
 
 # Give *lots* of time for notebook cell execution!
