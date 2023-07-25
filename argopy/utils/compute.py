@@ -526,8 +526,11 @@ else:
 
 class MyThreadPoolExecutor(c):
     """
+    This is a low-level helper class not intended to be used directly.
+
     Examples
     --------
+    ::
 
         from argopy.utils.compute import MyThreadPoolExecutor as MyExecutor
         from random import random
