@@ -51,7 +51,7 @@ Let's explain what happened in the single line Argo data fetching above.
 
 .. tabs::
 
-    .. tab:: 1 Create a DataFetcher
+    .. tab:: 1 we create a DataFetcher
 
         Import **argopy** and create a instance of :class:`DataFetcher`:
 
@@ -65,7 +65,7 @@ Let's explain what happened in the single line Argo data fetching above.
         By default, **argopy** will load the ``phy`` :ref:`dataset <data-set>`, in ``standard`` :ref:`user mode <user-mode>` from the ``erddap`` :ref:`data source <data-sources>`.
 
 
-    .. tab:: 2 Select data
+    .. tab:: 2 we select data
 
         Once you have a :class:`DataFetcher`, you must select data. As an example, here is a space/time data selection:
 
@@ -77,7 +77,7 @@ Let's explain what happened in the single line Argo data fetching above.
 
         See :ref:`all data selector methods here <data-selection>`.
 
-    .. tab:: 3 Fetch data
+    .. tab:: 3 then we fetch data
 
         Once you defined a data selection, data fetching will be triggered if you access one of the :class:`DataFetcher` properties:
 

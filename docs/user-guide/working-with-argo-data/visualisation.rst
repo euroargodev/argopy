@@ -1,3 +1,5 @@
+.. currentmodule:: argopy
+
 .. _data-viz:
 
 Data visualisation
@@ -9,7 +11,7 @@ Data visualisation
 From Data or Index fetchers
 ***************************
 
-The :class:`argopy.DataFetcher` and :class:`argopy.IndexFetcher` come with a ``plot`` method to have a quick look to your data. This method can take *trajectory*, *profiler*, *dac* and *qc_altimetry* as arguments. All details are available in the :class:`argopy.fetchers.ArgoDataFetcher.plot` and :class:`argopy.fetchers.ArgoIndexFetcher.plot` class documentation.
+The :class:`DataFetcher` and :class:`IndexFetcher` come with a ``plot`` method to have a quick look to your data. This method can take *trajectory*, *profiler*, *dac* and *qc_altimetry* as arguments. All details are available in the :class:`DataFetcher.plot` and :class:`IndexFetcher.plot` class documentation.
 
 Below we demonstrate major plotting features.
 
@@ -17,8 +19,7 @@ Let's import the usual suspects:
 
 .. code-block:: python
 
-    from argopy import IndexFetcher as ArgoIndexFetcher
-    from argopy import DataFetcher as ArgoDataFetcher
+    from argopy import DataFetcher, IndexFetcher
 
 .. _viz_traj:
 
@@ -27,7 +28,7 @@ Trajectories
 
 .. code-block:: python
 
-    idx = ArgoIndexFetcher().float([6902745, 6902746]).load()
+    idx = IndexFetcher().float([6902745, 6902746]).load()
     fig, ax = idx.plot('trajectory')
     fig, ax = idx.plot()  # Trajectory is the default plot
 
@@ -40,7 +41,7 @@ It is also possible to create horizontal bar plots for histograms on some data p
 
 .. code-block:: python
 
-    idx = ArgoIndexFetcher().region([-80,-30,20,50,'2021-01','2021-08']).load()
+    idx = IndexFetcher().region([-80,-30,20,50,'2021-01','2021-08']).load()
     fig, ax = idx.plot('dac')
 
 .. image:: ../../_static/bar_dac.png
@@ -60,7 +61,7 @@ Dashboards
 We provide shortcuts to third-party online dashboards that can help you visualise float or profile data.
 When working in Jupyter notebooks, you can insert a dashboard in a cell, or if you don't, you can get the url toward the dashboard to open it elsewhere.
 
-We provide access to the Euro-Argo ERIC, Ocean-OPS, Argovis and BGC dashboards with the option ``type``. See :meth:`argopy.plot.dashboard` for all the options.
+We provide access to the Euro-Argo ERIC, Ocean-OPS, Argovis and BGC dashboards with the option ``type``. See :meth:`dashboard` for all the options.
 
 Summary of all available dashboards:
 
@@ -110,7 +111,7 @@ Examples:
 
         .. image:: ../../_static/dashboard_profile.png
 
-    .. tab:: For BGC profiles
+    .. tab:: For 🟢 **bgc** profiles
 
         and for a BGC float, change the ``type`` option to ``bgc``:
 
@@ -129,13 +130,13 @@ Examples:
 
         argopy.dashboard(WMO)
         # similar to:
-        ArgoDataFetcher().float(WMO).dashboard()
+        DataFetcher().float(WMO).dashboard()
 
     and::
 
         argopy.dashboard(WMO, CYC)
         # similar to:
-        ArgoDataFetcher().profile(WMO, CYC).dashboard()
+        DataFetcher().profile(WMO, CYC).dashboard()
 
 Scatter Maps
 ************
@@ -151,10 +152,9 @@ Let's import the usual suspects and some data to work with.
 .. code-block:: python
 
     from argopy.plot import scatter_map
-    from argopy import DataFetcher as ArgoDataFetcher
-    from argopy import OceanOPSDeployments
+    from argopy import DataFetcher, OceanOPSDeployments
 
-    ArgoSet = ArgoDataFetcher(mode='expert').float([6902771, 4903348]).load()
+    ArgoSet = DataFetcher(mode='expert').float([6902771, 4903348]).load()
     ds = ArgoSet.data.argo.point2profile()
     df = ArgoSet.index
 
@@ -169,7 +169,7 @@ By default, the :func:`argopy.plot.scatter_map` function will try to plot a traj
 
 .. note::
 
-    If `Cartopy <https://scitools.org.uk/cartopy/docs/latest/>`_ is installed, the :func:`argopy.plot.plot_trajectory` called by :class:`argopy.fetchers.ArgoDataFetcher.plot` and :class:`argopy.fetchers.ArgoIndexFetcher.plot` with the ``trajectory`` option will rely on the scatter map described here.
+    If `Cartopy <https://scitools.org.uk/cartopy/docs/latest/>`_ is installed, the :func:`argopy.plot.plot_trajectory` called by :class:`DataFetcher.plot` and :class:`IndexFetcher.plot` with the ``trajectory`` option will rely on the scatter map described here.
 
 .. code-block:: python
 
@@ -207,7 +207,7 @@ Some options are available to customise the plot, for instance:
 
 Use predefined Argo Colors
 ==========================
-The :class:`argopy.plot.scatter_map` function uses the :class:`argopy.plot.ArgoColors` utility class to better resolve discrete colormaps of known variables. The colormap is automatically guessed using the ``hue`` argument. Here are some examples.
+The :class:`argopy.plot.scatter_map` function uses the :class:`ArgoColors` utility class to better resolve discrete colormaps of known variables. The colormap is automatically guessed using the ``hue`` argument. Here are some examples.
 
 .. tabs::
 
@@ -239,7 +239,7 @@ The :class:`argopy.plot.scatter_map` function uses the :class:`argopy.plot.ArgoC
 
         .. code-block:: python
 
-            scatter_map(ds.isel(N_LEVELS=0), hue='PSAL_QC')
+            scatter_map(ds, hue='PSAL_QC')
 
         using guess mode for arguments, or more explicitly:
 
@@ -253,6 +253,10 @@ The :class:`argopy.plot.scatter_map` function uses the :class:`argopy.plot.ArgoC
                         traj_axis='PLATFORM_NUMBER')
 
         .. image:: ../../_static/scatter_map_qcflag.png
+
+        .. hint::
+
+            Since the ``PSAL_QC`` variable has more than vertical level, we need to select which one to use for the plot.
 
     .. tab:: Deployment status
 
@@ -274,7 +278,7 @@ In the example below, we plot profile years of sampling using the reverse ``Spec
 .. code-block:: python
 
     ds['year'] = ds['TIME.year']  # Add new variable to the dataset
-    scatter_map(ds.isel(N_LEVELS=0),
+    scatter_map(ds,
                 hue='year',
                 cmap='Spectral_r',
                 legend_title='Year of sampling')
@@ -284,9 +288,9 @@ In the example below, we plot profile years of sampling using the reverse ``Spec
 
 Argo colors
 ***********
-For your own plot methods, **argopy** provides the :class:`argopy.plot.ArgoColors` utility class to better resolve discrete colormaps of known Argo variables.
+For your own plot methods, **argopy** provides the :class:`ArgoColors` utility class to better resolve discrete colormaps of known Argo variables.
 
-The class :class:`argopy.plot.ArgoColors` is used to get a discrete colormap, as a :class:`matplotlib.colors.LinearSegmentedColormap`.
+The class :class:`ArgoColors` is used to get a discrete colormap (available with the ``cmap`` attribute), as a :class:`matplotlib.colors.LinearSegmentedColormap`.
 
 The :ref:`Use predefined Argo Colors` section above gives examples of the available colormaps that are also summarized here:
 
@@ -346,7 +350,7 @@ The :ref:`Use predefined Argo Colors` section above gives examples of the availa
             ArgoColors('months').definition
 
 
-Note that :class:`argopy.plot.ArgoColors` can also be used to discretise any colormap:
+Note that :class:`ArgoColors` can also be used to discretise any colormap:
 
 .. code-block:: python
 

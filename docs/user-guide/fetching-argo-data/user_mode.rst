@@ -84,7 +84,7 @@ The **research** mode is the safer choice, with data of the highest quality, car
       - all without jargon (DATA_MODE and QC_FLAG are retained)
       - comprehensive minimum
 
-.. note:: 🟢 **bgc** dataset
+.. admonition:: About the 🟢 **bgc** dataset
 
     The table of **argopy** user mode data processing details for **biogeochemical** parameters is being defined (:issue:`280`) and will be implemented in a near future release.
 

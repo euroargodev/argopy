@@ -80,6 +80,10 @@ The 🟢 **bgc** dataset
 .. role:: python(code)
    :language: python
 
+.. important::
+
+    At this time, BGC parameters are only available in ``expert`` :ref:`user mode <user-mode>` and with the ``erddap`` :ref:`data source <data-sources>`.
+
 All **argopy** features work with the 🟡+ 🔵 **phy** dataset. However, they are some specific methods dedicated to the 🟢 **bgc** dataset that we now describe.
 
 Specifics in :class:`DataFetcher`
@@ -87,107 +91,67 @@ Specifics in :class:`DataFetcher`
 
 The `BGC-Argo Mission <https://biogeochemical-argo.org>`_ gathers data from floats that measure temperature, salinity, pressure and oxygen, pH, nitrate, chlorophyll, backscatter, irradiance down to 2000m. However, beyond this short BGC parameter list there exist in the Argo dataset **more than 120 BGC-related variables**. Therefore, in the :class:`DataFetcher` we implemented 2 specific arguments to handle BGC variables: ``params`` and ``measured``.
 
-With a :class:`DataFetcher`, the **params** argument can be used to specify which variables will be returned, *whatever their values or availability in BGC floats found in the data selection*.
-By default, the **params** argument is set to the keyword ``all``  to indicate to return *all* variables found in the data selection. But the **params** argument can also be a single variable or a list of variables, in which case only these will be returned and all the others discarded.
+The ``params`` argument
+-----------------------
 
-With a :class:`DataFetcher`, the **measured** argument can be used to specify which variables cannot be NaN and must return values. This is very useful to reduce a dataset to points where all or some variables are available. By default, the **measured** argument is set to ``None`` in order to unconstrained parameter values. To the opposite, the keyword ``all`` requires that all variables found in the data selection cannot be NaNs. In between, you can specific one or more parameters to limit the constrain to a few variables.
+With a :class:`DataFetcher`, the ``params`` argument can be used to specify which variables will be returned, *whatever their values or availability in BGC floats found in the data selection*.
 
+By default, the ``params`` argument is set to the keyword ``all`` to return *all* variables found in the data selection. But the ``params`` argument can also be a single variable or a list of variables, in which case only these will be returned and all the others discarded.
 
-.. important::
-
-    At this time, BGC parameters are only available in ``expert`` :ref:`user mode <user-mode>`.
-
-.. dropdown:: Syntax
+.. dropdown:: Syntax example
     :icon: code
     :color: light
     :open:
 
-    .. tab-set::
+    - To return data from a single BGC parameter, just add it as a string, for instance ``DOXY``
+    - To return more than one BGC parameter, give them as a list of strings, for instance ``['DOXY', 'BBP700']``
+    - To retrieve all available BGC parameters, you can omit the ``params`` argument (since this is the default value), or give it explicitly as ``all``.
 
-        .. tab-item:: params
+    .. ipython:: python
+        :okwarning:
 
-            - To return data from a single BGC parameter, just add it as a string, for instance ``DOXY``
-            - To return more than one BGC parameter, give them as a list of strings, for instance ``['DOXY', 'BBP700']``
-            - To retrieve all available BGC parameters, you can omit the ``params`` argument (since this is the default value), or give it explicitly as ``all``.
+        import argopy
+        with argopy.set_options(dataset='bgc', src='erddap', mode='expert'):
+            params = 'all'  # eg: 'DOXY' or ['DOXY', 'BBP700']
+            f = argopy.DataFetcher(params=params)
+            f = f.region([-75, -45, 20, 30, 0, 10, '2021-01', '2021-06'])
+            f.load()
 
-            .. ipython:: python
-                :okwarning:
+        print(f.data.argo, "\n")  # Easy print of N profiles and points
 
-                import argopy
-                with argopy.set_options(dataset='bgc', src='erddap', mode='expert'):
-                    f = argopy.DataFetcher(params='all')
-                    f = f.region([-75, -45, 20, 30, 0, 10, '2021-01', '2021-06'])
-                    print(f.data.argo, "\n")  # Easy print of N profiles and points
-                    print(list(f.data.data_vars))
+        print(list(f.data.data_vars))  # List of dataset variables
 
-        .. tab-item:: measured
+The ``measured`` argument
+-------------------------
 
-            Let's now impose that some variables cannot be NaNs, for instance ``DOXY`` and ``BBP700``
+With a :class:`DataFetcher`, the ``measured`` argument can be used to specify which variables cannot be NaN and must return values. This is very useful to reduce a dataset to points where all or some variables are available.
 
-            .. ipython:: python
-                :okwarning:
+By default, the ``measured`` argument is set to ``None`` for unconstrained parameter values. To the opposite, the keyword ``all`` requires that all variables found in the data selection cannot be NaNs. In between, you can specific one or more parameters to limit the constrain to a few variables.
 
-                import argopy
-                with argopy.set_options(dataset='bgc', src='erddap', mode='expert'):
-                    f = argopy.DataFetcher(params='all', measured=['DOXY', 'BBP700'])
-                    f = f.region([-75, -45, 20, 30, 0, 10, '2021-01', '2021-06'])
-                    print(f.data.argo, "\n")  # Easy print of N profiles and points
-                    print(list(f.data.data_vars))
+.. dropdown:: Syntax example
+    :icon: code
+    :color: light
+    :open:
 
-            We can see from ``f.data.argo.N_POINTS`` that the dataset is reduced compared to the previous version without constraints on variables **measured**.
+    Let's impose that some variables cannot be NaNs, for instance ``DOXY`` and ``BBP700``:
+
+    .. ipython:: python
+        :okwarning:
+
+        import argopy
+        with argopy.set_options(dataset='bgc', src='erddap', mode='expert'):
+            f = argopy.DataFetcher(params='all', measured=['DOXY', 'BBP700'])
+            f = f.region([-75, -45, 20, 30, 0, 10, '2021-01', '2021-06'])
+            f.load()
+
+        print(f.data.argo, "\n")  # Easy print of N profiles and points
+
+        print(list(f.data.data_vars))  # List of dataset variables
+
+    We can see from ``f.data.argo.N_POINTS`` that the dataset is reduced compared to the previous version without constraints on variables **measured**.
+
 
 Specifics in :class:`ArgoIndex`
 ===============================
 
-.. hint::
-
-    In order to load one BGC-Argo profile index, you can use either ``bgc-b`` or ``bgc-s`` keywords to load the ``argo_bio-profile_index.txt`` or ``argo_synthetic-profile_index.txt`` index files.
-
-Since specific variables are only available with BGC-Argo index files, especially the ``PARAMETER_DATA_MODE``, we implemented the :meth:`ArgoIndex.search_parameter_data_mode`. This method allows to search for parameters in one or more specific data modes.
-
-
-.. dropdown:: Syntax
-    :icon: code
-    :color: light
-    :open:
-
-    .. tab-set::
-
-        .. tab-item:: 1. Load a BGC index
-
-            .. ipython:: python
-                :okwarning:
-
-                from argopy import ArgoIndex
-                idx = ArgoIndex(index_file='bgc-b').load()
-                idx
-
-        .. tab-item:: 2. Search for BGC parameter data mode
-
-            You can search one mode for a single parameter:
-
-            .. ipython:: python
-                :okwarning:
-
-                idx.search_parameter_data_mode({'BBP700': 'D'})
-
-            You can search several modes for a single parameter:
-
-            .. ipython:: python
-                :okwarning:
-
-                idx.search_parameter_data_mode({'DOXY': ['R', 'A']})
-
-            You can search several modes for several parameters:
-
-            .. ipython:: python
-                :okwarning:
-
-                idx.search_parameter_data_mode({'BBP700': 'D', 'DOXY': 'D'}, logical='and')
-
-            And mix all of these as you wish:
-
-            .. ipython:: python
-                :okwarning:
-
-                idx.search_parameter_data_mode({'BBP700': ['R', 'A'], 'DOXY': 'D'}, logical='or')
+All details and examples of the BGC specifics methods for :class:`ArgoIndex` can be found in: :ref:`metadata-index-bgc`.
