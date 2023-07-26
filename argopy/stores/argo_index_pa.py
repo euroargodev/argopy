@@ -438,16 +438,6 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         return self
 
     def search_parameter_data_mode(self, PARAMs: dict, nrows=None, logical='and'):
-        """Search for profile with a data mode for a specific parameter
-
-        Examples
-        --------
-        search_parameter_data_mode({'TEMP': 'D'})
-        search_parameter_data_mode({'BBP700': 'D'})
-        search_parameter_data_mode({'DOXY': ['R', 'A']})
-        search_parameter_data_mode({'BBP700': 'D', 'DOXY': 'D'}, logical='or')
-
-        """
         log.debug("Argo index searching for parameter data modes such as PARAM=%s ..." % PARAMs)
 
         # Validate PARAMs argument type

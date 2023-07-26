@@ -9,6 +9,7 @@ import time
 from abc import ABC, abstractmethod
 from fsspec.core import split_protocol
 from urllib.parse import urlparse
+from typing import Union
 
 from ..options import OPTIONS
 from ..errors import FtpPathError, InvalidDataset, OptionValueError
@@ -778,33 +779,39 @@ class ArgoIndexStoreProto(ABC):
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def search_params(self, PARAMs):
-        """Search index for a list of parameters
+    def search_params(self, PARAMs: Union[str, list], logical: str):
+        """Search index for one or a list of parameters
 
         Parameters
         ----------
-        PARAMs : list()
-            A list of strings to search Argo records for.
+        PARAMs: str or list
+            A string or a list of strings to search Argo records for in the PARAMETERS columns of BGC profiles index.
+        logical: str, default='and'
+            Indicate to search for all (``and``) or any (``or``) of the parameters.
 
         Examples
         --------
         >>> idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
+        >>> idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'], logical='or')
 
         Warnings
         --------
-        This method is only available for index following the 'argo_bio' or 'argo_synthetic' conventions.
+        This method is only available for index following the ``bgc-s`` or ``bgc-b`` conventions.
 
         """
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def search_parameter_data_mode(self, PARAMs):
-        """Search index for profiles with a parameter with a specific data mode
+    def search_parameter_data_mode(self, PARAMs: dict, logical: bool = 'and', nrows=None):
+        """Search index for profiles with a parameter in a specific data mode
 
         Parameters
         ----------
-        PARAMs : dict()
-            A dictionary with parameters as keys, and data mode as one or a list of strings
+        PARAMs: dict
+            A dictionary with parameters as keys, and data mode as a string or a list of strings
+        logical: str, default='and'
+            Indicate to search for all (``and``) or any (``or``) of the parameters data moade. This operator applies
+            between each parameters.
 
         Examples
         --------
