@@ -12,7 +12,6 @@ import fsspec
 from fsspec.core import split_protocol
 from socket import gaierror
 from urllib.parse import urlparse
-from pathlib import Path
 
 
 # Define a logger
@@ -81,7 +80,7 @@ _VALIDATORS = {
     FTP: validate_ftp,
     ERDDAP: validate_http,
     DATASET: _DATASET_LIST.__contains__,
-    CACHE_FOLDER: os.path.exists,
+    CACHE_FOLDER: lambda x: os.access(x, os.W_OK),
     CACHE_EXPIRATION: lambda x: isinstance(x, int) and x > 0,
     USER_LEVEL: _USER_LEVEL_LIST.__contains__,
     API_TIMEOUT: lambda x: isinstance(x, int) and x > 0,
@@ -145,7 +144,7 @@ class set_options:
                     % (k, set(OPTIONS))
                 )
             if k == 'cachedir':
-                Path(v).mkdir(parents=True, exist_ok=True)
+                os.makedirs(v, exist_ok=True)
             if k in _VALIDATORS and not _VALIDATORS[k](v):
                 raise OptionValueError(f"option {k!r} given an invalid value: {v!r}")
             self.old[k] = OPTIONS[k]
