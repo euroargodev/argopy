@@ -13,7 +13,7 @@ Let's start with standard import:
 .. ipython:: python
     :okwarning:
 
-    from argopy import DataFetcher as ArgoDataFetcher
+    from argopy import DataFetcher
 
 Transformation
 --------------
@@ -26,8 +26,8 @@ By default, fetched data are returned as a 1D array collection of measurements:
 .. ipython:: python
     :okwarning:
 
-    argo_loader = ArgoDataFetcher().region([-75,-55,30.,40.,0,100., '2011-01-01', '2011-01-15'])
-    ds_points = argo_loader.to_xarray()
+    f = DataFetcher().region([-75,-55,30.,40.,0,100., '2011-01-01', '2011-01-15'])
+    ds_points = f.data
     ds_points
 
 If you prefer to work with a 2D array collection of vertical profiles, simply transform the dataset with :meth:`Dataset.argo.point2profile`:
@@ -72,8 +72,8 @@ To illustrate this method, let's start by fetching some data from a low vertical
 .. ipython:: python
     :okwarning:
 
-    loader = ArgoDataFetcher(src='erddap', mode='expert').float(2901623)  # Low res float
-    ds = loader.load().data
+    f = DataFetcher(src='erddap', mode='expert').float(2901623)  # Low res float
+    ds = f.data
 
 Let's now sub-sample these measurements along 250db bins, selecting values from the **deepest** pressure levels for each bins:
 
@@ -138,7 +138,7 @@ This can be done using the :meth:`Dataset.argo.teos10` method and indicating the
 .. ipython:: python
     :okwarning:
 
-    ds = ArgoDataFetcher().float(2901623).to_xarray()
+    ds = DataFetcher().float(2901623).to_xarray()
     ds.argo.teos10(['SA', 'CT', 'PV'])
 
 .. ipython:: python
@@ -156,7 +156,7 @@ For your own analysis, you may prefer to switch from one to the other. This is a
 .. ipython:: python
     :okwarning:
 
-    ArgoDataFetcher().profile(6902746, 34).to_dataframe()
+    DataFetcher().profile(6902746, 34).to_dataframe()
 
 
 Saving data

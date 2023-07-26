@@ -3,10 +3,12 @@
 Data quality control
 ====================
 
+.. hint::
+
+    **argopy** comes with methods to help you quality control measurements. This section is probably intended for 🏄  **expert** users.
+
 .. contents::
    :local:
-
-**argopy** comes with methods to help you quality control measurements. This section is probably intended for `expert` users.
 
 Most of these methods are available through the :class:`xarray.Dataset` accessor namespace ``argo``. This means that if your dataset is `ds`, then you can use `ds.argo` to access more **argopy** functionalities.
 

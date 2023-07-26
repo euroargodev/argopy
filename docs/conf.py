@@ -237,6 +237,8 @@ html_favicon = '_static/argopy.ico'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+html_show_sourcelink = True
+
 # For sphinx_book_theme:
 html_theme_options = {
     "repository_url": "https://www.github.com/euroargodev/argopy",
@@ -252,8 +254,10 @@ html_theme_options = {
     },
     # "display_version": True,
     "logo_only": True,
-    'show_navbar_depth': 1,  # https://sphinx-book-theme.readthedocs.io/en/stable/customize/sidebar-primary.html?highlight=logo#control-the-depth-of-the-left-sidebar-lists-to-expand
-    'collapse_navigation': False,
+    # "show_navbar_depth": 2,  # https://sphinx-book-theme.readthedocs.io/en/stable/customize/sidebar-primary.html?highlight=logo#control-the-depth-of-the-left-sidebar-lists-to-expand
+
+    "show_nav_level": 1,  # https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/navigation.html#control-how-many-navigation-levels-are-shown-by-default
+    'collapse_navigation': False,  # https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/navigation.html#remove-reveal-buttons-for-sidebar-items
     # 'show_toc_level': 3,  # https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/page-toc.html#show-more-levels-of-the-in-page-toc-by-default
     # 'launch_buttons': { "thebe": True}
     "announcement": (
