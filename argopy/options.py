@@ -12,6 +12,7 @@ import fsspec
 from fsspec.core import split_protocol
 from socket import gaierror
 from urllib.parse import urlparse
+from pathlib import Path
 
 
 # Define a logger
@@ -143,6 +144,8 @@ class set_options:
                     "argument name %r is not in the set of valid options %r"
                     % (k, set(OPTIONS))
                 )
+            if k == 'cachedir':
+                Path(v).mkdir(parents=True, exist_ok=True)
             if k in _VALIDATORS and not _VALIDATORS[k](v):
                 raise OptionValueError(f"option {k!r} given an invalid value: {v!r}")
             self.old[k] = OPTIONS[k]
