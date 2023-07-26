@@ -40,7 +40,7 @@ from .utilities import monitor_status as status  # noqa: E402
 from .options import set_options  # noqa: E402
 from .data_fetchers import CTDRefDataFetcher  # noqa: E402
 from .stores import ArgoIndex  # noqa: E402
-from .utils import compute
+from .utils import compute  # noqa: E402, F401
 
 #
 __all__ = (

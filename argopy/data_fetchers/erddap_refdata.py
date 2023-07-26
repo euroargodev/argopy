@@ -14,9 +14,9 @@ try:
     from erddapy.utilities import parse_dates, quote_string_constraints
 except:  # noqa: E722
     # >= v0.8.0
-    from erddapy.erddapy import ERDDAP
-    from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
-    from erddapy.erddapy import parse_dates
+    from erddapy.erddapy import ERDDAP  # noqa: F401
+    from erddapy.erddapy import _quote_string_constraints as quote_string_constraints  # noqa: F401
+    from erddapy.erddapy import parse_dates  # noqa: F401
 
     # Soon ! https://github.com/ioos/erddapy
 

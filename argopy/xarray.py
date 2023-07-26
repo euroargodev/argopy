@@ -20,7 +20,7 @@ from argopy.utilities import (
     toYearFraction,
     groupby_remap,
     cast_Argo_variable_type,
-    log_argopy_callerstack,
+    # log_argopy_callerstack,
 )
 from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
@@ -204,15 +204,15 @@ class ArgoAccessor:
     def _dummy_argo_uid(self):
         if self._type == "point":
             return xr.DataArray(
-                        self.uid(
-                            self._obj["PLATFORM_NUMBER"].values,
-                            self._obj["CYCLE_NUMBER"].values,
-                            self._obj["DIRECTION"].values,
-                        ),
-                        dims="N_POINTS",
-                        coords={"N_POINTS": self._obj["N_POINTS"]},
-                        name="dummy_argo_uid",
-                    )
+                                self.uid(
+                                        self._obj["PLATFORM_NUMBER"].values,
+                                        self._obj["CYCLE_NUMBER"].values,
+                                        self._obj["DIRECTION"].values,
+                                ),
+                                dims="N_POINTS",
+                                coords={"N_POINTS": self._obj["N_POINTS"]},
+                                name="dummy_argo_uid",
+            )
         else:
             raise InvalidDatasetStructure(
                 "Property only available for a collection of points"
@@ -403,9 +403,9 @@ class ArgoAccessor:
             for iv, vname in enumerate(this.data_vars):
                 try:
                     count[i_prof, iv] = len(np.unique(prof[vname]))
-                except Exception as e:
+                except Exception:
                     log.error("point2profile: An error happened when dealing with the '%s' data variable" % vname)
-                    raise(e)
+                    raise
 
         # Variables with a unique value for each profiles:
         list_1d = list(np.array(this.data_vars)[count.sum(axis=0) == count.shape[0]])
@@ -453,7 +453,7 @@ class ArgoAccessor:
                     y = new_ds[vname].values
                     x = prof[vname].values
                     try:
-                        y[i_prof, 0 : len(x)] = x
+                        y[i_prof, 0: len(x)] = x
                     except Exception:
                         print(vname, "input", x.shape, "output", y[i_prof, :].shape)
                         raise
@@ -980,7 +980,6 @@ class ArgoAccessor:
             this = this.argo.cast_types()
         return this
 
-
     def interp_std_levels(self,
                           std_lev: list or np.array,
                           axis: str = 'PRES'):
@@ -1206,11 +1205,11 @@ class ArgoAccessor:
                     z[i] = y[i]
             return z
 
-        merged_is_nan = lambda l1, l2: len(
+        merged_is_nan = lambda l1, l2: len(  # noqa: E731
             np.unique(np.where(np.isnan(l1.values + l2.values)))
         ) == len(
             l1
-        )  # noqa: E731
+        )
 
         def merge_bin_matching_levels(this_ds: xr.Dataset) -> xr.Dataset:
             """ Levels merger of type 'bins' value

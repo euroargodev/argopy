@@ -224,10 +224,9 @@ html_theme_options = {
     "use_download_button": True,
     "repository_branch": "master",
     # "html_logo": "_static/argopy_logo_long.png",
-    "logo": {
-            "image": html_logo,
-            "image_dark": "_static/argopy_logo_long_dark.png",
-    },
+    "logo": {"image": html_logo,
+             "image_dark": "_static/argopy_logo_long_dark.png"
+             },
     # "display_version": True,
     "logo_only": True,
     'show_navbar_depth': 1,  # https://sphinx-book-theme.readthedocs.io/en/stable/customize/sidebar-primary.html?highlight=logo#control-the-depth-of-the-left-sidebar-lists-to-expand

@@ -4,7 +4,6 @@ Argo file index store
 Implementation based on pyarrow
 """
 
-import os
 import numpy as np
 import pandas as pd
 import logging
@@ -13,7 +12,7 @@ import gzip
 from packaging import version
 
 from ..errors import DataNotFound, InvalidDatasetStructure
-from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, doc_inherit, to_list
+from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, to_list
 from .argo_index_proto import ArgoIndexStoreProto
 try:
     import pyarrow.csv as csv  # noqa: F401
@@ -253,9 +252,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                 self.load()
             df = pa.compute.split_pattern(self.index["parameters"], pattern=" ").to_pandas()
         plist = set(df[0])
-        def fct(row):
-            [plist.add(v) for v in row]
-            return len(row)
+        fct = lambda row: len([plist.add(v) for v in row])  # noqa: E731
         df.map(fct)
         return sorted(list(plist))
 
@@ -504,7 +501,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         def convert_a_date(row):
             try:
                 return row.strftime('%Y%m%d%H%M%S')
-            except:
+            except Exception:
                 return ""
 
         new_date = pa.array(self.search['date'].to_pandas().apply(convert_a_date))

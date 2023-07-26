@@ -10,7 +10,7 @@ import logging
 import gzip
 
 from ..errors import DataNotFound, InvalidDatasetStructure
-from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, doc_inherit, to_list
+from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, to_list
 from .argo_index_proto import ArgoIndexStoreProto
 
 
@@ -30,7 +30,6 @@ class indexstore_pandas(ArgoIndexStoreProto):
     ext = "pd"
     """Storage file extension"""
 
-    #@doc_inherit
     def load(self, nrows=None, force=False):
         """ Load an Argo-index file content
 
@@ -201,10 +200,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
             df = self.index['parameters']
         if df.shape[0] > 0:
             plist = set(df[0].split(" "))
-            def fct(row):
-                row = row.split(" ")
-                [plist.add(v) for v in row]
-                return len(row)
+            fct = lambda row: len([plist.add(v) for v in row.split(" ")])  # noqa: E731
             df.map(fct)
             return sorted(list(plist))
         else:
@@ -431,9 +427,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
             columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
                                'parameters', 'parameter_data_mode', 'date_update']
 
-        self.search.to_csv(outputfile, sep=',', index=False, index_label=False,
-                      header=False,
-                      columns=columns)
+        self.search.to_csv(outputfile, sep=',', index=False, index_label=False, header=False, columns=columns)
         outputfile = self._insert_header(outputfile)
 
         return outputfile

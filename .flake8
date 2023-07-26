@@ -1,0 +1,23 @@
+[flake8]
+max-complexity = 10
+max-line-length = 127
+statistics = True
+count = True
+ignore =
+    # Too complex
+    C901,
+    # Line too long
+    E501,
+    # line break before binary operator
+    W503
+
+exclude =
+    # No need to traverse our git directory
+    .git,
+    # There's no value in checking cache directories
+    __pycache__,
+    #
+    tests,
+    local_work,
+    build,
+    dist

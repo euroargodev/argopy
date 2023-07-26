@@ -129,11 +129,11 @@ class FTPArgoIndexFetcher(ABC):
         if typ == 'lon':
             if x < 0:
                 x = 360. + x
-            return ("%05d") % (x * 100.)
+            return "%05d" % (x * 100.)
         if typ == 'lat':
-            return ("%05d") % (x * 100.)
+            return "%05d" % (x * 100.)
         if typ == 'prs':
-            return ("%05d") % (np.abs(x)*10.)
+            return "%05d" % (np.abs(x) * 10.)
         if typ == 'tim':
             return pd.to_datetime(x).strftime('%Y-%m-%d')
         return str(x)
