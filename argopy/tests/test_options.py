@@ -8,7 +8,7 @@ from mocked_http import mocked_httpserver, mocked_server_address
 import logging
 
 
-log = logging.getLogger("argopy.tests.options"
+log = logging.getLogger("argopy.tests.options")
 
 
 def test_invalid_option_name():
