@@ -543,13 +543,16 @@ class ArgoDataFetcher:
                 df = df.apply(fc, axis=1)
 
         else:
-
-            if self._src == 'erddap' and self._dataset_id == 'bgc':                
+            if self._src == 'erddap' and self._dataset_id == 'bgc':
+                # Trigger access point search:
+                self.uri
+                # Then export search result to Index dataframe:
                 df = self.fetcher.indexfs.to_dataframe()
-                
             elif self._src == 'gdac':
+                # Trigger access point search:
+                self.uri
+                # Then export search result to Index dataframe:
                 df = self.fetcher.indexfs.to_dataframe()
-                
             else:
                 # Instantiate and load an IndexFetcher:
                 index_loader = ArgoIndexFetcher(
