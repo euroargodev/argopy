@@ -32,7 +32,6 @@ from fsspec.core import split_protocol
 import fsspec
 from functools import lru_cache
 
-import argopy
 import xarray as xr
 import pandas as pd
 import numpy as np
@@ -193,7 +192,7 @@ def load_dict(ptype):
             for row in nvs.tbl(8).iterrows():
                 profilers.update({int(row[1]['altLabel']): row[1]['prefLabel']})
             return profilers
-        except:
+        except Exception:
             with open(os.path.join(path2pkl, "dict_profilers.pickle"), "rb") as f:
                 loaded_dict = pickle.load(f)  # nosec B301 because files controlled internally
             return loaded_dict
@@ -204,7 +203,7 @@ def load_dict(ptype):
             for row in nvs.tbl(4).iterrows():
                 institutions.update({row[1]['altLabel']: row[1]['prefLabel']})
             return institutions
-        except:
+        except Exception:
             with open(os.path.join(path2pkl, "dict_institutions.pickle"), "rb") as f:
                 loaded_dict = pickle.load(f)  # nosec B301 because files controlled internally
             return loaded_dict
@@ -586,7 +585,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         else:
             title = "INSTALLED VERSIONS: %s" % level.upper()
             print("\n%s" % title, file=file)
-            print("-"*len(title), file=file)
+            print("-" * len(title), file=file)
         deps_blob = DEPS_blob[level]
         for k, stat in deps_blob:
             if conda:
@@ -726,7 +725,7 @@ def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
                 urllib.request.urlopen(host, timeout=1)  # nosec B310 because host protocol already checked
                 result, it = True, maxtry
             except Exception:
-                result, it = False, it+1
+                result, it = False, it + 1
         return result
     else:
         return os.path.exists(host)
@@ -918,13 +917,15 @@ class fetch_status:
         results = self.fetch()
 
         fs = 12
+
         def td_msg(bgcolor, txtcolor, txt):
             style = "background-color:%s;" % to_hex(bgcolor, keep_alpha=True)
-            style+= "border-width:0px;"
-            style+= "padding: 2px 5px 2px 5px;"
-            style+= "text-align:left;"
-            style+= "color:%s" % to_hex(txtcolor, keep_alpha=True)
+            style += "border-width:0px;"
+            style += "padding: 2px 5px 2px 5px;"
+            style += "text-align:left;"
+            style += "color:%s" % to_hex(txtcolor, keep_alpha=True)
             return "<td style='%s'>%s</td>" % (style, str(txt))
+
         td_empty = "<td style='border-width:0px;padding: 2px 5px 2px 5px;text-align:left'>&nbsp;</td>"
 
         html = []
@@ -1153,19 +1154,19 @@ class Chunker:
 
     def _split_list_bychunknb(self, lst, n=1):
         """Split list in n-imposed chunks of similar size
-            The last chunk may contain more or less element than the others, depending on the size of the list.
+            The last chunk may contain less element than the others, depending on the size of the list.
         """
         res = []
-        siz = int(np.floor_divide(len(lst), n))
-        for i in self._split(lst, siz):
+        s = int(np.floor_divide(len(lst), n))
+        for i in self._split(lst, s):
             res.append(i)
         if len(res) > n:
-            res[n-1::] = [reduce(lambda i, j: i + j, res[n-1::])]
+            res[n - 1::] = [reduce(lambda i, j: i + j, res[n - 1::])]
         return res
 
     def _split_list_bychunksize(self, lst, max_size=1):
         """Split list in chunks of imposed size
-            The last chunk may contain more or less element than the others, depending on the size of the list.
+            The last chunk may contain less element than the others, depending on the size of the list.
         """
         res = []
         for i in self._split(lst, max_size):
@@ -1352,9 +1353,9 @@ def format_oneline(s, max_width=65):
         n = (max_width - len(padding)) // 2
         q = (max_width - len(padding)) % 2
         if q == 0:
-            return "".join([s[0:n], padding, s[-n:]])
+            return "".join([s[0: n], padding, s[-n:]])
         else:
-            return "".join([s[0:n+1], padding, s[-n:]])
+            return "".join([s[0: n + 1], padding, s[-n:]])
     else:
         return s
 
@@ -3366,7 +3367,8 @@ class OceanOPSDeployments:
                       'Automatically set when the platform is emitting a pulse and observations are distributed within a certain time interval',
                       'The platform is not emitting a pulse since a certain time',
                       'The platform is not emitting a pulse since a long time, it is considered as dead',
-                  ]}
+                    ],
+                  }
         return pd.DataFrame(status).set_index('status_code')
 
     @property
@@ -3498,9 +3500,8 @@ class OceanOPSDeployments:
                               traj=False,
                               cmap='deployment_status',
                               **kwargs)
-        ax.set_title("Argo network deployment plan\n%s\nSource: OceanOPS API as of %s" % (
-            self.box_name,
-            pd.to_datetime('now', utc=True).strftime("%Y-%m-%d %H:%M:%S")),
+        ax.set_title("Argo network deployment plan\n%s\nSource: OceanOPS API as of %s"
+                     % (self.box_name, pd.to_datetime('now', utc=True).strftime("%Y-%m-%d %H:%M:%S")),
                      fontsize=12
                      )
         return fig, ax
@@ -3753,41 +3754,41 @@ def cast_Argo_variable_type(ds, overwrite=True):
         # Metadata file variables:
         'END_MISSION_STATUS',
         'TRANS_SYSTEM',
-         'TRANS_SYSTEM_ID',
-         'TRANS_FREQUENCY',
-         'PLATFORM_FAMILY',
-         'PLATFORM_MAKER',
-         'MANUAL_VERSION',
-         'STANDARD_FORMAT_ID',
-         'DAC_FORMAT_ID',
-         'ANOMALY',
-         'BATTERY_TYPE',
-         'BATTERY_PACKS',
-         'CONTROLLER_BOARD_TYPE_PRIMARY',
-         'CONTROLLER_BOARD_TYPE_SECONDARY',
-         'CONTROLLER_BOARD_SERIAL_NO_PRIMARY',
-         'CONTROLLER_BOARD_SERIAL_NO_SECONDARY',
-         'SPECIAL_FEATURES',
-         'FLOAT_OWNER',
-         'OPERATING_INSTITUTION',
-         'CUSTOMISATION',
-         'DEPLOYMENT_PLATFORM',
-         'DEPLOYMENT_CRUISE_ID',
-         'DEPLOYMENT_REFERENCE_STATION_ID',
-         'LAUNCH_CONFIG_PARAMETER_NAME',
-         'CONFIG_PARAMETER_NAME',
-         'CONFIG_MISSION_COMMENT',
-         'SENSOR',
-         'SENSOR_MAKER',
-         'SENSOR_MODEL',
-         'SENSOR_SERIAL_NO',
-         'PARAMETER_SENSOR',
-         'PARAMETER_UNITS',
-         'PARAMETER_ACCURACY',
-         'PARAMETER_RESOLUTION',
-         'PREDEPLOYMENT_CALIB_EQUATION',
-         'PREDEPLOYMENT_CALIB_COEFFICIENT',
-         'PREDEPLOYMENT_CALIB_COMMENT',
+        'TRANS_SYSTEM_ID',
+        'TRANS_FREQUENCY',
+        'PLATFORM_FAMILY',
+        'PLATFORM_MAKER',
+        'MANUAL_VERSION',
+        'STANDARD_FORMAT_ID',
+        'DAC_FORMAT_ID',
+        'ANOMALY',
+        'BATTERY_TYPE',
+        'BATTERY_PACKS',
+        'CONTROLLER_BOARD_TYPE_PRIMARY',
+        'CONTROLLER_BOARD_TYPE_SECONDARY',
+        'CONTROLLER_BOARD_SERIAL_NO_PRIMARY',
+        'CONTROLLER_BOARD_SERIAL_NO_SECONDARY',
+        'SPECIAL_FEATURES',
+        'FLOAT_OWNER',
+        'OPERATING_INSTITUTION',
+        'CUSTOMISATION',
+        'DEPLOYMENT_PLATFORM',
+        'DEPLOYMENT_CRUISE_ID',
+        'DEPLOYMENT_REFERENCE_STATION_ID',
+        'LAUNCH_CONFIG_PARAMETER_NAME',
+        'CONFIG_PARAMETER_NAME',
+        'CONFIG_MISSION_COMMENT',
+        'SENSOR',
+        'SENSOR_MAKER',
+        'SENSOR_MODEL',
+        'SENSOR_SERIAL_NO',
+        'PARAMETER_SENSOR',
+        'PARAMETER_UNITS',
+        'PARAMETER_ACCURACY',
+        'PARAMETER_RESOLUTION',
+        'PREDEPLOYMENT_CALIB_EQUATION',
+        'PREDEPLOYMENT_CALIB_COEFFICIENT',
+        'PREDEPLOYMENT_CALIB_COMMENT',
     ]
 
     [list_str.append("PROFILE_{}_QC".format(v)) for v in list(ArgoNVSReferenceTables().tbl(3)["altLabel"])]
@@ -3838,7 +3839,7 @@ def cast_Argo_variable_type(ds, overwrite=True):
             print("Fail to cast %s[%s] from '%s' to %s" % (da.name, da.dims, da.dtype, type))
             try:
                 print("Unique values:", np.unique(da))
-            except:
+            except Exception:
                 print("Can't read unique values !")
                 pass
         return da
@@ -4186,7 +4187,6 @@ class ArgoDocs:
                 record[key] = "; ".join(record[key])
 
             self.record = record
-
 
     @lru_cache
     def __init__(self, docid=None, cache=False):

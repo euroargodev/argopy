@@ -5,30 +5,29 @@ We construct the MyThreadPoolExecutor class,
 we create a series of classes using multiple inheritance to implement monitoring features
 
 """
-
 from functools import lru_cache
 import os
 import sys
-
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import as_completed
 from threading import Lock
-
+import logging
+from typing import Union
+from abc import ABC, abstractmethod
 import importlib
+
 try:
     from importlib.resources import files  # New in version 3.9
 except ImportError:
     from pathlib import Path
-    files = lambda x: Path(importlib.util.find_spec(x).submodule_search_locations[0])
 
-has_ipython = (spec := importlib.util.find_spec('IPython')) is not None
+    files = lambda x: Path(  # noqa: E731
+        importlib.util.find_spec(x).submodule_search_locations[0]
+    )
+
+has_ipython = (spec := importlib.util.find_spec("IPython")) is not None
 if has_ipython:
     from IPython.display import display, clear_output, HTML
-
-import logging
-from typing import Union
-import concurrent.futures
-from abc import ABC, abstractmethod
 
 
 log = logging.getLogger("argopy.utils.compute")
@@ -56,6 +55,7 @@ class proto_MonitoredThreadPoolExecutor(ABC):
         - self.status list of characters to describe each task status
         - self.status_final character to describe the final computation status
     """
+
     def __init__(
         self,
         max_workers: int = 10,
@@ -91,15 +91,15 @@ class proto_MonitoredThreadPoolExecutor(ABC):
         return [v for v in dict(sorted(obj_list.items())).values()], True
 
     def init_status(self, bucket):
-        self.status = [f"?" for _ in range(len(bucket))]
+        self.status = ["?" for _ in range(len(bucket))]
         if self.finalize_fct:
-            self.status_final = f"?"
+            self.status_final = "?"
             self.progress = [
                 0,
                 len(bucket) * 4 + 2,
             ]  # Each task goes by 4 status ('w', 'p', 'c', 'f'/'s') and final by 2 states ('w', 'f'/'s')
         else:
-            self.status_final = f"n"
+            self.status_final = "n"
             self.progress = [
                 0,
                 len(bucket) * 4,
@@ -139,9 +139,7 @@ class proto_MonitoredThreadPoolExecutor(ABC):
         # Execute tasks and post-processing:
         self.lock = Lock()
         results = {}
-        with concurrent.futures.ThreadPoolExecutor(
-                max_workers=self.max_workers
-        ) as executor:
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             futures = [
                 executor.submit(self.task, ii, obj) for ii, obj in enumerate(bucket)
             ]
@@ -150,7 +148,7 @@ class proto_MonitoredThreadPoolExecutor(ABC):
                 try:
                     obj_id, data, state = future.result()
                     self.update_display_status(obj_id, "s" if state else "f")
-                except:
+                except Exception:
                     raise
                 finally:
                     results.update({obj_id: data})
@@ -184,11 +182,11 @@ class proto_MonitoredThreadPoolExecutor(ABC):
 
 class proto_MonitoredPoolExecutor_monitor(proto_MonitoredThreadPoolExecutor):
     def __init__(
-            self,
-            show: Union[bool, str] = True,
-            task_legend: dict = {"w": "Working", "p": "Post-processing", "c": "Callback"},
-            final_legend: dict = {"task": "Processing tasks", "final": "Finalizing"},
-            **kwargs,
+        self,
+        show: Union[bool, str] = True,
+        task_legend: dict = {"w": "Working", "p": "Post-processing", "c": "Callback"},
+        final_legend: dict = {"task": "Processing tasks", "final": "Finalizing"},
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.task_legend = task_legend
@@ -257,6 +255,7 @@ class proto_MonitoredPoolExecutor_notebook(proto_MonitoredPoolExecutor_monitor):
     """
     Add HTML jupyter notebook display
     """
+
     @property
     def css_style(self):
         return "\n".join(_load_static_files())
@@ -274,14 +273,14 @@ class proto_MonitoredPoolExecutor_notebook(proto_MonitoredPoolExecutor_monitor):
             )
         legend.append("\t</div>")
         # legend.append("\t\t<div style='display:inline-block; float:right'><span style='margin-bottom: 5px'>Finalized state: </span><div class='item'><div class='box blinking'></div><span class='txt'>Processing</span></div><div class='item'><div class='box failure'></div><span class='txt'>Failure</span></div><div class='item'><div class='box success'></div><span class='txt'>Success</span></div></div>")
-        legend = f"\n".join(legend)
+        legend = "\n".join(legend)
 
         # Create a status bar for tasks:
         content = ["\t<div class='status %s'>" % self.STATE[self.status_final]]
         for s in self.status:
             content.append("\t\t<div class='box %s'></div>" % self.COLORS[s][0])
         content.append("\t</div>")
-        content = f"\n".join(content)
+        content = "\n".join(content)
 
         # Progress bar:
         val = int(100 * self.progress[0] / self.progress[1])
@@ -300,7 +299,7 @@ class proto_MonitoredPoolExecutor_notebook(proto_MonitoredPoolExecutor_monitor):
             % (color, val, txt)
         )
         progress.append("\t</div>")
-        progress = f"\n".join(progress)
+        progress = "\n".join(progress)
 
         # Complete HTML:
         html = (
@@ -322,7 +321,7 @@ class proto_MonitoredPoolExecutor_notebook(proto_MonitoredPoolExecutor_monitor):
     def update_display_status(self, obj_id, status):
         super().update_display_status()
         with self.lock:
-            self.status[obj_id] = f"%s" % status
+            self.status[obj_id] = "%s" % status
             self.progress[0] += 1
             self.display_status()
 
@@ -339,9 +338,9 @@ class proto_MonitoredPoolExecutor_terminal(proto_MonitoredPoolExecutor_monitor):
     """
 
     def __init__(
-            self,
-            icon: bool = False,
-            **kwargs,
+        self,
+        icon: bool = False,
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self._text_only = ~bool(icon)
@@ -366,7 +365,7 @@ class proto_MonitoredPoolExecutor_terminal(proto_MonitoredPoolExecutor_monitor):
     def _adjust_for_terminal_width(self, text, max_width=None):
         """Split text if larger than terminal"""
         term_width, _ = os.get_terminal_size()
-        term_width = term_width if max_width is None else int(term_width/max_width)
+        term_width = term_width if max_width is None else int(term_width / max_width)
         lines = []
         if len(text) > term_width:
             i_start, i_end = 0, term_width - 1
@@ -444,13 +443,15 @@ class proto_MonitoredPoolExecutor_terminal(proto_MonitoredPoolExecutor_monitor):
 
             # Create a status bar for tasks:
             # with colored brackets color for final status:
-            raw_content = f"[%s]" % "".join(self.status)
+            raw_content = "[%s]" % "".join(self.status)
             lines = []
             for status_line in self._adjust_for_terminal_width(raw_content).split("\n"):
                 line_content = []
                 for s in status_line:
-                    if s not in ['[', ']']:
-                        line_content.append(f(s, self.COLORS[s][0], negative = s in ['f']))
+                    if s not in ["[", "]"]:
+                        line_content.append(
+                            f(s, self.COLORS[s][0], negative=s in ["f"])
+                        )
                     else:
                         line_content.append(f(s, self.STATE_COLORS[self.status_final]))
                 line_content = "".join(line_content)
@@ -469,13 +470,15 @@ class proto_MonitoredPoolExecutor_terminal(proto_MonitoredPoolExecutor_monitor):
             # Create a status bar for tasks:
             # with colored brackets color for final status:
             # raw_content = f"[%s]" % "".join(self.status)
-            raw_content = f"%s" % "".join(self.status)
+            raw_content = "%s" % "".join(self.status)
             lines = []
-            for status_line in self._adjust_for_terminal_width(raw_content, max_width=4).split("\n"):
+            for status_line in self._adjust_for_terminal_width(
+                raw_content, max_width=4
+            ).split("\n"):
                 line_content = []
                 for s in status_line:
-                    if s not in ['[', ']']:
-                        line_content.append(f"%s " % self.COLORS[s][2])
+                    if s not in ["[", "]"]:
+                        line_content.append("%s " % self.COLORS[s][2])
                     else:
                         line_content.append(f(s, self.STATE_COLORS[self.status_final]))
                 line_content = "".join(line_content)
@@ -496,12 +499,7 @@ class proto_MonitoredPoolExecutor_terminal(proto_MonitoredPoolExecutor_monitor):
         progress = f("%s ..." % txt, color, negative=0)
 
         # Complete STDOUT:
-        txt = (
-            f"\n"
-            f"{legend}\n"
-            f"{content}\n"
-            f"{progress: <50}\n"
-        )
+        txt = f"\n" f"{legend}\n" f"{content}\n" f"{progress: <50}\n"
 
         return txt
 
@@ -517,9 +515,12 @@ class proto_MonitoredPoolExecutor_terminal(proto_MonitoredPoolExecutor_monitor):
 
 
 if has_ipython:
+
     class c(proto_MonitoredPoolExecutor_notebook, proto_MonitoredPoolExecutor_terminal):
         pass
+
 else:
+
     class c(proto_MonitoredPoolExecutor_terminal):
         pass
 
@@ -577,4 +578,5 @@ class MyThreadPoolExecutor(c):
             results, failed = run.execute(range(100), list_failed=True)
             print(results)
     """
+
     pass

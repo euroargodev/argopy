@@ -5,18 +5,12 @@ import tempfile
 
 import numpy as np
 import pandas as pd
-from fsspec.registry import known_implementations
 import importlib
 import shutil
 import logging
 from urllib.parse import urlparse
 
 import argopy
-from argopy.stores import (
-    indexfilter_wmo,
-    indexfilter_box,
-    indexstore,
-)
 from argopy.errors import (
     FtpPathError,
     OptionValueError,
@@ -26,7 +20,6 @@ from argopy.utilities import (
     is_list_of_strings,
 )
 from argopy.stores.argo_index_pd import indexstore_pandas
-from utils import requires_connection
 from mocked_http import mocked_httpserver, mocked_server_address
 
 

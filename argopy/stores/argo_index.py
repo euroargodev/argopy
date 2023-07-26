@@ -1,9 +1,11 @@
 import importlib
 
+
 if importlib.util.find_spec("pyarrow") is not None:
     from .argo_index_pa import indexstore_pyarrow as indexstore
 else:
     from .argo_index_pd import indexstore_pandas as indexstore
+
 
 class ArgoIndex(indexstore):
     """Argo GDAC index store
