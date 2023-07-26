@@ -1156,8 +1156,8 @@ class Chunker:
             The last chunk may contain more or less element than the others, depending on the size of the list.
         """
         res = []
-        siz = int(np.floor_divide(len(lst), n))
-        for i in self._split(lst, siz):
+        s = int(np.floor_divide(len(lst), n))
+        for i in self._split(lst, s):
             res.append(i)
         if len(res) > n:
             res[n-1::] = [reduce(lambda i, j: i + j, res[n-1::])]

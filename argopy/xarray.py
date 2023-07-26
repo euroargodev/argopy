@@ -1992,7 +1992,7 @@ class ArgoAccessor:
             return list_1d, dummy_argo_uid
 
     def list_WMO_CYC(self):
-        """Given a dataset, return a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) tupple"""
+        """Given a dataset, return a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) tuple"""
         profiles = []
         for wmo, grp in self._obj.groupby('PLATFORM_NUMBER'):
             [profiles.append((wmo, cyc)) for cyc in np.unique(grp['CYCLE_NUMBER'])]

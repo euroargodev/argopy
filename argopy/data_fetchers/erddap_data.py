@@ -824,7 +824,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             return to_list(np.unique(this_ds['PLATFORM_NUMBER'].values))
 
         def complete_df(this_df, params):
-            """Addd 'wmo', 'cyc' and '<param>_data_mode' columns to this dataframe"""
+            """Add 'wmo', 'cyc' and '<param>_data_mode' columns to this dataframe"""
             this_df["wmo"] = this_df["file"].apply(lambda x: int(x.split("/")[1]))
             this_df["cyc"] = this_df["file"].apply(lambda x: int(x.split("_")[-1].split('.nc')[0].replace("D", "")))
             this_df["variables"] = df["parameters"].apply(lambda x: x.split())
