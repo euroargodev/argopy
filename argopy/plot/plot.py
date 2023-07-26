@@ -402,8 +402,8 @@ def scatter_map(  # noqa: C901
         raise ValueError("Can't guess the variable name for default hue/trajectory grouping (WMO)")
     hue = guess_trajvar(data) if hue is None else hue
 
-    if isinstance(data, xr.Dataset) and data.argo.N_LEVELS > 1 and 'N_LEVELS' in data[hue].dims:
-        warnings.warn("More than one level found in this dataset for '%s', scatter_map will use the first level only" % hue)
+    if isinstance(data, xr.Dataset) and data.argo.N_LEVELS > 1:
+        warnings.warn("More than one N_LEVELS found in this dataset, scatter_map will use the first level only")
         data = data.isel(N_LEVELS=0)
 
     # Try to guess the colormap to use as a function of the 'hue' variable:
