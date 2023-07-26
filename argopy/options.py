@@ -143,7 +143,7 @@ class set_options:
                     "argument name %r is not in the set of valid options %r"
                     % (k, set(OPTIONS))
                 )
-            if k == 'cachedir':
+            if k == CACHE_FOLDER:
                 os.makedirs(v, exist_ok=True)
             if k in _VALIDATORS and not _VALIDATORS[k](v):
                 raise OptionValueError(f"option {k!r} given an invalid value: {v!r}")
