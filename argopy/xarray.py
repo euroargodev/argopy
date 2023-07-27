@@ -20,6 +20,7 @@ from argopy.utilities import (
     toYearFraction,
     groupby_remap,
     cast_Argo_variable_type,
+    DATA_TYPES,
     # log_argopy_callerstack,
 )
 from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueError
@@ -1313,7 +1314,7 @@ class ArgoAccessor:
                 dv
                 for dv in list(this_dsp.data_vars)
                 if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
-                and "DATA_MODE" not in dv
+                and dv not in DATA_TYPES['data']['str']
             ]
         else:
             datavars = [
@@ -1322,7 +1323,7 @@ class ArgoAccessor:
                 if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
                 and "QC" not in dv
                 and "ERROR" not in dv
-                and "DATA_MODE" not in dv
+                and dv not in DATA_TYPES['data']['str']
             ]
 
         # All other variables:
