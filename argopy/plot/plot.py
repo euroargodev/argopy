@@ -557,12 +557,16 @@ def scatter_plot(ds: xr.Dataset,
                   this_x='TIME',
                   this_y='PRES',
                   figsize=(18, 6),
-                  cmap=mpl.colormaps['gist_ncar'],
+                  cmap=None,
                   vmin=None,
                   vmax=None,
                   s=4
                   ):
     """A quick-and-dirty parameter scatter plot for one variable"""
+    warnUnless(has_mpl, "requires matplotlib installed")
+
+    if cmap is None:
+        cmap = mpl.colormaps['gist_ncar']
 
     def get_vlabel(this_ds, this_v):
         attrs = this_ds[this_v].attrs
