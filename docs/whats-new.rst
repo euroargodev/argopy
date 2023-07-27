@@ -8,8 +8,8 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-Coming up in the next release
------------------------------
+v0.1.14rc2 (27 Jul. 2023)
+-------------------------
 
 **Features and front-end API**
 
@@ -73,6 +73,14 @@ Check out the new documentation page for :ref:`data-set`. (:pr:`278`) by `G. Maz
 - :func:`utilities.load_dict` now relies on :class:`ArgoNVSReferenceTables` instead of static pickle files.
 
 - :class:`argopy.ArgoColors` colormap for Argo Data-Mode has now a fourth value to account for a white space FillValue.
+
+- New quick and dirty plot method :func:`plot.plot.scatter_plot`
+
+- Refactor pickle files in argopy/assets as json files in argopy/static/assets
+
+- Refactor list of variables by data types used in :func:`utilities.cast_Argo_variable_type` into assets json files in argopy/static/assets
+
+- Change of behaviour: when setting the cachedir option, path it's not tested for existence but for being writable, and is created if doesn't exists (but seems to break CI upstream in Windows)
 
 - And misc. bug and warning fixes all over the code.
 
