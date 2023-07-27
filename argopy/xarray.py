@@ -1050,6 +1050,7 @@ class ArgoAccessor:
             if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
             and "QC" not in dv
             and "ERROR" not in dv
+            and "DATA_MODE" not in dv
         ]
         # coords
         coords = [dv for dv in list(this_dsp.coords)]
@@ -1320,6 +1321,7 @@ class ArgoAccessor:
                 if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
                 and "QC" not in dv
                 and "ERROR" not in dv
+                and "DATA_MODE" not in dv
             ]
 
         # All other variables:
