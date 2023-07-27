@@ -11,6 +11,7 @@ import logging
 
 import xarray as xr
 import pandas as pd
+import numpy as np
 from typing import Union
 
 from .utils import STYLE, has_seaborn, has_mpl, has_cartopy, has_ipython, has_ipywidgets
@@ -22,6 +23,7 @@ from ..errors import InvalidDatasetStructure
 
 if has_mpl:
     import matplotlib.pyplot as plt
+    import matplotlib as mpl
 
 if has_seaborn:
     STYLE["axes"] = "dark"
@@ -546,5 +548,76 @@ def scatter_map(  # noqa: C901
         spine.set_edgecolor(COLORS['DARKBLUE'])
 
     ax.set_title('')
+
+    return fig, ax
+
+
+def scatter_plot(ds: xr.Dataset,
+                  this_param,
+                  this_x='TIME',
+                  this_y='PRES',
+                  figsize=(18, 6),
+                  cmap=mpl.colormaps['gist_ncar'],
+                  vmin=None,
+                  vmax=None,
+                  s=4
+                  ):
+    """A quick-and-dirty parameter scatter plot for one variable"""
+
+    def get_vlabel(this_ds, this_v):
+        attrs = this_ds[this_v].attrs
+        if 'standard_name' in attrs:
+            name = attrs['standard_name']
+        elif 'long_name' in attrs:
+            name = attrs['long_name']
+        else:
+            name = this_v
+        units = attrs['units'] if 'units' in attrs else None
+        return "%s\n[%s]" % (name, units) if units else name
+
+    # Read variables for the plot:
+    x, y = ds[this_x], ds[this_y]
+    if "INTERPOLATED" in this_y:
+        x_bounds, y_bounds = np.meshgrid(x, y, indexing='ij')
+    c = ds[this_param]
+
+    #
+    fig, ax = plt.subplots(dpi=90, figsize=figsize)
+
+    if vmin == 'attrs':
+        vmin = c.attrs['valid_min'] if 'valid_min' in c.attrs else None
+    if vmax == 'attrs':
+        vmax = c.attrs['valid_max'] if 'valid_max' in c.attrs else None
+    if vmin is None:
+        vmin = np.percentile(c, 10)
+    if vmax is None:
+        vmax = np.percentile(c, 90)
+
+    if "INTERPOLATED" in this_y:
+        m = ax.pcolormesh(x_bounds, y_bounds, c, cmap=cmap, vmin=vmin, vmax=vmax)
+    else:
+        m = ax.scatter(x, y, c=c, cmap=cmap, s=s, vmin=vmin, vmax=vmax)
+        ax.set_facecolor('lightgrey')
+
+    cbar = fig.colorbar(m, shrink=0.9, extend='both', ax=ax)
+    cbar.ax.set_ylabel(get_vlabel(ds, this_param), rotation=90)
+
+    ylim = ax.get_ylim()
+    if 'PRES' in this_y:
+        ax.invert_yaxis()
+        y_bottom, y_top = np.max(ylim), np.min(ylim)
+    else:
+        y_bottom, y_top = ylim
+
+    if this_x == 'CYCLE_NUMBER':
+        ax.set_xlim([np.min(ds[this_x]) - 1, np.max(ds[this_x]) + 1])
+    elif this_x == 'TIME':
+        ax.set_xlim([np.min(ds[this_x]), np.max(ds[this_x])])
+    if 'PRES' in this_y:
+        ax.set_ylim([y_bottom, 0])
+
+    #
+    ax.set_xlabel(get_vlabel(ds, this_x))
+    ax.set_ylabel(get_vlabel(ds, this_y))
 
     return fig, ax
