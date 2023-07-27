@@ -23,7 +23,7 @@ Notebook Examples
 
             .. grid-item::
 
-                .. button-link:: https://nbviewer.org/github/euroargodev/argopy/blob/doc-update/docs/examples/BGC_one_float_data.ipynb
+                .. button-link:: https://nbviewer.org/github/euroargodev/argopy/blob/master/docs/examples/BGC_one_float_data.ipynb
                     :color: primary
                     :outline:
 
@@ -31,7 +31,7 @@ Notebook Examples
 
             .. grid-item::
 
-                .. button-link:: https://www.github.com/euroargodev/argopy/blob/doc-update/docs/examples/BGC_one_float_data.ipynb
+                .. button-link:: https://www.github.com/euroargodev/argopy/blob/master/docs/examples/BGC_one_float_data.ipynb
                     :color: primary
                     :outline:
 
@@ -48,7 +48,7 @@ Notebook Examples
 
             .. grid-item::
 
-                .. button-link:: https://nbviewer.org/github/euroargodev/argopy/blob/doc-update/docs/examples/BGC_scatter_map_data_mode.ipynb
+                .. button-link:: https://nbviewer.org/github/euroargodev/argopy/blob/master/docs/examples/BGC_scatter_map_data_mode.ipynb
                     :color: primary
                     :outline:
 
@@ -56,7 +56,7 @@ Notebook Examples
 
             .. grid-item::
 
-                .. button-link:: https://www.github.com/euroargodev/argopy/blob/doc-update/docs/examples/BGC_scatter_map_data_mode.ipynb
+                .. button-link:: https://www.github.com/euroargodev/argopy/blob/master/docs/examples/BGC_scatter_map_data_mode.ipynb
                     :color: primary
                     :outline:
 
@@ -73,7 +73,7 @@ Notebook Examples
 
             .. grid-item::
 
-                .. button-link:: https://nbviewer.org/github/euroargodev/argopy/blob/doc-update/docs/examples/BGC_data_mode_census.ipynb
+                .. button-link:: https://nbviewer.org/github/euroargodev/argopy/blob/master/docs/examples/BGC_data_mode_census.ipynb
                     :color: primary
                     :outline:
 
@@ -81,7 +81,7 @@ Notebook Examples
 
             .. grid-item::
 
-                .. button-link:: https://www.github.com/euroargodev/argopy/blob/doc-update/docs/examples/BGC_data_mode_census.ipynb
+                .. button-link:: https://www.github.com/euroargodev/argopy/blob/master/docs/examples/BGC_data_mode_census.ipynb
                     :color: primary
                     :outline:
 
