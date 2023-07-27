@@ -1947,7 +1947,11 @@ def groupby_remap(z, data, z_regridded,   # noqa C901
     # sub-sampling called in xarray ufunc
     def _subsample_bins(x, y, target_values):
         # remove all nans from input x and y
-        idx = np.logical_or(np.isnan(x), np.isnan(y))
+        try:
+            idx = np.logical_or(np.isnan(x), np.isnan(y))
+        except TypeError:
+            log.debug("Error with this '%s' y data content: %s" % (type(y), str(np.unique(y))))
+            raise
         x = x[~idx]
         y = y[~idx]
 
@@ -2002,7 +2006,7 @@ def groupby_remap(z, data, z_regridded,   # noqa C901
     else:
         dim = z_dim
 
-    # if dataset is passed drop all data_vars that dont contain dim
+    # if dataset is passed drop all data_vars that don't contain dim
     if isinstance(data, xr.Dataset):
         raise ValueError("Dataset input is not supported yet")
         # TODO: for a dataset input just apply the function for each appropriate array
