@@ -187,7 +187,7 @@ class ArgoDataFetcher:
         summary.append("Performances: cache=%s, parallel=%s" % (str(cache), str(para)))
         summary.append("User mode: %s" % self._mode)
         summary.append("Dataset: %s" % self._dataset_id)
-        summary.append("Loaded: %s" % self._loaded)
+        # summary.append("Loaded: %s" % self._loaded)
         return "\n".join(summary)
 
     def __empty_processor(self, xds):
@@ -287,10 +287,7 @@ class ArgoDataFetcher:
             not isinstance(self._index, pd.core.frame.DataFrame)
             or self._request != self.__repr__()
         ):
-            if "gdac" in self._src:
-                self.to_index(full=True)
-            else:
-                self.load()
+            self.load()
         return self._index
 
     @property
@@ -517,7 +514,7 @@ class ArgoDataFetcher:
         Parameters
         ----------
         full: bool, default: False
-            Should extract a reduced index (only a space/time) from fetched profiles, or a full index,
+            If possible, should extract a reduced index (only space/time/wmo/cyc) from fetched profiles, otherwise a full index,
             as returned by an IndexFetcher.
         coriolis_id: bool, default: False
             Add a column to the index with the Coriolis ID of profiles
@@ -527,33 +524,59 @@ class ArgoDataFetcher:
         :class:`pandas.DataFrame`
             Argo-like index of fetched data
         """
-        if not full:
-            self.load()
-            df = self.data.argo.index
+        def prt(txt):
+            msg = [txt]
+            if self._request != self.__repr__():
+                msg.append(self._request)
+            log.debug("\n".join(msg))
 
-            if coriolis_id:
-                df["id"] = None
+        def add_coriolis(this_df):
+            if 'id' not in this_df:
+                this_df["id"] = None
 
                 def fc(row):
-                    row["id"] = get_coriolis_profile_id(row["wmo"], row["cyc"])[
-                        "ID"
-                    ].values[0]
+                    row["id"] = get_coriolis_profile_id(row["wmo"], row["cyc"])["ID"].values[0]
                     return row
 
-                df = df.apply(fc, axis=1)
+                this_df = this_df.apply(fc, axis=1)
+            return this_df
 
+        # With the gdac and erddap+bgc,
+        # we rely on the fetcher ArgoIndex:
+        # (hence we always return a full index)
+        if (self._src == 'erddap' and self._dataset_id == 'bgc') or (self._src == 'gdac'):
+            prt("to_index working with fetcher ArgoIndex instance")
+            idx = self.fetcher.indexfs
+            if self._AccessPoint == "region":
+                # Convert data box to index box (remove depth info):
+                index_box = self._AccessPoint_data["box"].copy()
+                del index_box[4:6]
+                idx.search_lat_lon_tim(index_box)
+            if self._AccessPoint == "float":
+                idx.search_wmo(self._AccessPoint_data["wmo"])
+            if self._AccessPoint == "profile":
+                idx.search_wmo_cyc(self._AccessPoint_data["wmo"], self._AccessPoint_data["cyc"])
+
+            # Then export search result to Index dataframe:
+            df = idx.to_dataframe()
+
+            # Add Coriolis ID if requested:
+            df = add_coriolis(df) if coriolis_id else df
+
+        # For all other data source and dataset, we need to compute the index:
         else:
-            if self._src == 'erddap' and self._dataset_id == 'bgc':
-                # Trigger access point search:
-                self.uri
-                # Then export search result to Index dataframe:
-                df = self.fetcher.indexfs.to_dataframe()
-            elif self._src == 'gdac':
-                # Trigger access point search:
-                self.uri
-                # Then export search result to Index dataframe:
-                df = self.fetcher.indexfs.to_dataframe()
+
+            if not full:
+                prt("to_index working with argo accessor attribute for a light index")
+                # Get a small index from the argo accessor attribute
+                self.load()
+                df = self.data.argo.index
+
+                # Add Coriolis ID if requested:
+                df = add_coriolis(df) if coriolis_id else df
+
             else:
+                prt("to_index working with IndexFetcher for a full index")
                 # Instantiate and load an IndexFetcher:
                 index_loader = ArgoIndexFetcher(
                     mode=self._mode,
@@ -574,9 +597,13 @@ class ArgoDataFetcher:
                     index_loader.region(index_box).load()
                 df = index_loader.index
 
-            # Possibly replace the light index with the full version:
-            if not self._loaded or self._request == self.__repr__():
-                self._index = df
+                # Add Coriolis ID if requested:
+                df = add_coriolis(df) if coriolis_id else df
+
+                # Possibly replace the light index with the full version:
+                if 'profiler_code' not in df or self._request == self.__repr__():
+                    prt("to_index replaced the light index with the full version")
+                    self._index = df
 
         return df
 
