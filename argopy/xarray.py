@@ -1313,6 +1313,7 @@ class ArgoAccessor:
                 dv
                 for dv in list(this_dsp.data_vars)
                 if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
+                and "DATA_MODE" not in dv
             ]
         else:
             datavars = [

@@ -551,7 +551,10 @@ class ArgoDataFetcher:
                 # Convert data box to index box (remove depth info):
                 index_box = self._AccessPoint_data["box"].copy()
                 del index_box[4:6]
-                idx.search_lat_lon_tim(index_box)
+                if len(index_box) == 4:
+                    idx.search_lat_lon(index_box)
+                else:
+                    idx.search_lat_lon_tim(index_box)
             if self._AccessPoint == "float":
                 idx.search_wmo(self._AccessPoint_data["wmo"])
             if self._AccessPoint == "profile":
