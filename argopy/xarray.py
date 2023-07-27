@@ -20,6 +20,7 @@ from argopy.utilities import (
     toYearFraction,
     groupby_remap,
     cast_Argo_variable_type,
+    DATA_TYPES,
     # log_argopy_callerstack,
 )
 from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueError
@@ -1050,6 +1051,7 @@ class ArgoAccessor:
             if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
             and "QC" not in dv
             and "ERROR" not in dv
+            and "DATA_MODE" not in dv
         ]
         # coords
         coords = [dv for dv in list(this_dsp.coords)]
@@ -1071,7 +1073,14 @@ class ArgoAccessor:
                 z_dim="N_LEVELS",
                 z_regridded_dim="Z_LEVELS",
             )
+            ds_out[dv].attrs = this_dsp[dv].attrs  # Preserve attributes
+            if 'long_name' in ds_out[dv].attrs:
+                ds_out[dv].attrs['long_name'] = "Interpolated %s" % ds_out[dv].attrs['long_name']
+
         ds_out = ds_out.rename({"remapped": "%s_INTERPOLATED" % axis})
+        ds_out["%s_INTERPOLATED" % axis].attrs = this_dsp[axis].attrs
+        if "long_name" in ds_out["%s_INTERPOLATED" % axis].attrs:
+            ds_out["%s_INTERPOLATED" % axis].attrs['long_name'] = "Standard %s levels" % axis
 
         for sv in solovars:
             ds_out[sv] = this_dsp[sv]
@@ -1305,6 +1314,7 @@ class ArgoAccessor:
                 dv
                 for dv in list(this_dsp.data_vars)
                 if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
+                and dv not in DATA_TYPES['data']['str']
             ]
         else:
             datavars = [
@@ -1313,6 +1323,7 @@ class ArgoAccessor:
                 if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
                 and "QC" not in dv
                 and "ERROR" not in dv
+                and dv not in DATA_TYPES['data']['str']
             ]
 
         # All other variables:

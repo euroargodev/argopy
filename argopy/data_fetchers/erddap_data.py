@@ -174,15 +174,11 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             # This will be used to:
             # - retrieve the list of BGC variables to ask the erddap server
             # - get <param>_data_mode information because we can't get it from the server
-            self.indexfs = (
-                kwargs["indexfs"]
-                if "indexfs" in kwargs
-                else ArgoIndex(
-                    index_file="argo_synthetic-profile_index.txt",  # because that's what is in the erddap
-                    cache=True,
-                    cachedir=cachedir,
-                    timeout=5,
-                )
+            self.indexfs = kwargs['indexfs'] if 'indexfs' in kwargs else ArgoIndex(
+                index_file='argo_synthetic-profile_index.txt',  # the only available in the erddap
+                cache=kwargs['cache_index'] if 'cache_index' in kwargs else cache,
+                cachedir=cachedir,
+                timeout=timeout,
             )
 
             # To handle bugs in the erddap server, we need the list of parameters on the server:

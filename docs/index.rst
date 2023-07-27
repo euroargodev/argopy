@@ -8,6 +8,14 @@ for standard users as well as Argo experts.
 
 |License| |Python version| |Anaconda-Server Badge|
 
+.. versionadded:: v0.1.14rc2
+
+    - Rolling out incremental support for 🟢 **bgc** variables 🎉
+    - New :ref:`Gallery of notebook examples <Gallery>` for 🟢 **bgc** variables
+    - Follow specific install instructions :ref:`here <bgc-install>` for 🟢 **bgc** support
+    - Check out a brief overview of new features on the :ref:`What's New` page
+
+
 Documentation
 -------------
 
@@ -17,6 +25,7 @@ Documentation
 * :doc:`usage`
 * :doc:`why`
 * :doc:`what_is_argo`
+* :doc:`Gallery of examples <gallery>`
 
 .. toctree::
     :maxdepth: 2
@@ -27,29 +36,22 @@ Documentation
     usage
     why
     what_is_argo
+    Gallery of examples <gallery>
 
 **User Guide**
 
-* :doc:`data_fetching`
-* :doc:`data_sources`
-* :doc:`user_mode`
-* :doc:`data_manipulation`
-* :doc:`visualisation`
+* :doc:`user-guide/fetching-argo-data/index`
+* :doc:`user-guide/working-with-argo-data/index`
 * :doc:`metadata_fetching`
 * :doc:`performances`
-* :doc:`data_quality_control`
 
 .. toctree::
     :maxdepth: 2
     :hidden:
     :caption: User Guide
 
-    data_fetching
-    data_sources
-    user_mode
-    data_manipulation
-    visualisation
-    data_quality_control
+    Fetching Argo data <user-guide/fetching-argo-data/index>
+    user-guide/working-with-argo-data/index
     metadata_fetching
     performances
 
@@ -67,7 +69,6 @@ Documentation
     whats-new
     contributing
     api
-
 
 .. |JOSS| image:: https://img.shields.io/badge/DOI-10.21105%2Fjoss.02425-brightgreen
    :target: //dx.doi.org/10.21105/joss.02425

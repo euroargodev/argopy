@@ -68,9 +68,13 @@ try:
 except ImportError:
     pass
 
-path2pkl = importlib.util.find_spec('argopy.assets').submodule_search_locations[0]
+path2assets = importlib.util.find_spec('argopy.static.assets').submodule_search_locations[0]
 
 log = logging.getLogger("argopy.utilities")
+
+with open(os.path.join(path2assets, "data_types.json"), "r") as f:
+    DATA_TYPES = json.load(f)
+
 
 
 def clear_cache(fs=None):
@@ -193,8 +197,8 @@ def load_dict(ptype):
                 profilers.update({int(row[1]['altLabel']): row[1]['prefLabel']})
             return profilers
         except Exception:
-            with open(os.path.join(path2pkl, "dict_profilers.pickle"), "rb") as f:
-                loaded_dict = pickle.load(f)  # nosec B301 because files controlled internally
+            with open(os.path.join(path2assets, "profilers.json"), "rb") as f:
+                loaded_dict = json.load(f)['data']['profilers']
             return loaded_dict
     elif ptype == "institutions":
         try:
@@ -204,12 +208,11 @@ def load_dict(ptype):
                 institutions.update({row[1]['altLabel']: row[1]['prefLabel']})
             return institutions
         except Exception:
-            with open(os.path.join(path2pkl, "dict_institutions.pickle"), "rb") as f:
-                loaded_dict = pickle.load(f)  # nosec B301 because files controlled internally
+            with open(os.path.join(path2assets, "institutions.json"), "rb") as f:
+                loaded_dict = json.load(f)['data']['institutions']
             return loaded_dict
     else:
-        raise ValueError("Invalid dictionary pickle file")
-
+        raise ValueError("Invalid dictionary name")
 
 def mapp_dict(Adictionnary, Avalue):
     if Avalue not in Adictionnary:
@@ -1947,7 +1950,11 @@ def groupby_remap(z, data, z_regridded,   # noqa C901
     # sub-sampling called in xarray ufunc
     def _subsample_bins(x, y, target_values):
         # remove all nans from input x and y
-        idx = np.logical_or(np.isnan(x), np.isnan(y))
+        try:
+            idx = np.logical_or(np.isnan(x), np.isnan(y))
+        except TypeError:
+            log.debug("Error with this '%s' y data content: %s" % (type(y), str(np.unique(y))))
+            raise
         x = x[~idx]
         y = y[~idx]
 
@@ -2002,7 +2009,7 @@ def groupby_remap(z, data, z_regridded,   # noqa C901
     else:
         dim = z_dim
 
-    # if dataset is passed drop all data_vars that dont contain dim
+    # if dataset is passed drop all data_vars that don't contain dim
     if isinstance(data, xr.Dataset):
         raise ValueError("Dataset input is not supported yet")
         # TODO: for a dataset input just apply the function for each appropriate array
@@ -2907,12 +2914,18 @@ class ArgoNVSReferenceTables:
 
     Examples
     --------
+    Methods:
+
     >>> R = ArgoNVSReferenceTables()
-    >>> R.valid_ref
-    >>> R.all_tbl_name
-    >>> R.all_tbl
+    >>> R.search('sensor')
     >>> R.tbl(3)
     >>> R.tbl('R09')
+
+    Properties:
+
+    >>> R.all_tbl_name
+    >>> R.all_tbl
+    >>> R.valid_ref
 
     """
     valid_ref = [
@@ -3705,117 +3718,6 @@ def cast_Argo_variable_type(ds, overwrite=True):
     -------
     :class:`xarray.DataSet`
     """
-
-    list_str = [
-        "PLATFORM_NUMBER",
-        "DATA_MODE",
-        "DIRECTION",
-        "DATA_CENTRE",
-        "DATA_TYPE",
-        "FORMAT_VERSION",
-        "HANDBOOK_VERSION",
-        "PROJECT_NAME",
-        "PI_NAME",
-        "STATION_PARAMETERS",
-        "DATA_CENTER",
-        "DC_REFERENCE",
-        "DATA_STATE_INDICATOR",
-        "PLATFORM_TYPE",
-        "FIRMWARE_VERSION",
-        "POSITIONING_SYSTEM",
-        "PARAMETER",
-        "SCIENTIFIC_CALIB_EQUATION",
-        "SCIENTIFIC_CALIB_COEFFICIENT",
-        "SCIENTIFIC_CALIB_COMMENT",
-        "HISTORY_INSTITUTION",
-        "HISTORY_STEP",
-        "HISTORY_SOFTWARE",
-        "HISTORY_SOFTWARE_RELEASE",
-        "HISTORY_REFERENCE",
-        "HISTORY_QCTEST",
-        "HISTORY_ACTION",
-        "HISTORY_PARAMETER",
-        "VERTICAL_SAMPLING_SCHEME",
-        "FLOAT_SERIAL_NO",
-        "PARAMETER_DATA_MODE",
-
-        # Trajectory file variables:
-        'TRAJECTORY_PARAMETERS', 'POSITION_ACCURACY', 'GROUNDED', 'SATELLITE_NAME', 'HISTORY_INDEX_DIMENSION',
-
-        # Technical file variables:
-        'TECHNICAL_PARAMETER_NAME', 'TECHNICAL_PARAMETER_VALUE', 'PTT',
-
-        # Metadata file variables:
-        'END_MISSION_STATUS',
-        'TRANS_SYSTEM',
-        'TRANS_SYSTEM_ID',
-        'TRANS_FREQUENCY',
-        'PLATFORM_FAMILY',
-        'PLATFORM_MAKER',
-        'MANUAL_VERSION',
-        'STANDARD_FORMAT_ID',
-        'DAC_FORMAT_ID',
-        'ANOMALY',
-        'BATTERY_TYPE',
-        'BATTERY_PACKS',
-        'CONTROLLER_BOARD_TYPE_PRIMARY',
-        'CONTROLLER_BOARD_TYPE_SECONDARY',
-        'CONTROLLER_BOARD_SERIAL_NO_PRIMARY',
-        'CONTROLLER_BOARD_SERIAL_NO_SECONDARY',
-        'SPECIAL_FEATURES',
-        'FLOAT_OWNER',
-        'OPERATING_INSTITUTION',
-        'CUSTOMISATION',
-        'DEPLOYMENT_PLATFORM',
-        'DEPLOYMENT_CRUISE_ID',
-        'DEPLOYMENT_REFERENCE_STATION_ID',
-        'LAUNCH_CONFIG_PARAMETER_NAME',
-        'CONFIG_PARAMETER_NAME',
-        'CONFIG_MISSION_COMMENT',
-        'SENSOR',
-        'SENSOR_MAKER',
-        'SENSOR_MODEL',
-        'SENSOR_SERIAL_NO',
-        'PARAMETER_SENSOR',
-        'PARAMETER_UNITS',
-        'PARAMETER_ACCURACY',
-        'PARAMETER_RESOLUTION',
-        'PREDEPLOYMENT_CALIB_EQUATION',
-        'PREDEPLOYMENT_CALIB_COEFFICIENT',
-        'PREDEPLOYMENT_CALIB_COMMENT',
-    ]
-
-    [list_str.append("PROFILE_{}_QC".format(v)) for v in list(ArgoNVSReferenceTables().tbl(3)["altLabel"])]
-
-    list_int = [
-        "PLATFORM_NUMBER",
-        "WMO_INST_TYPE",
-        "CYCLE_NUMBER",
-        "CONFIG_MISSION_NUMBER",
-
-        # Trajectory file variables:
-        'JULD_STATUS', 'JULD_ADJUSTED_STATUS', 'JULD_DESCENT_START_STATUS',
-        'JULD_FIRST_STABILIZATION_STATUS', 'JULD_DESCENT_END_STATUS', 'JULD_PARK_START_STATUS', 'JULD_PARK_END_STATUS',
-        'JULD_DEEP_DESCENT_END_STATUS', 'JULD_DEEP_PARK_START_STATUS', 'JULD_DEEP_ASCENT_START_STATUS',
-        'JULD_ASCENT_START_STATUS', 'JULD_ASCENT_END_STATUS', 'JULD_TRANSMISSION_START_STATUS',
-        'JULD_FIRST_MESSAGE_STATUS', 'JULD_FIRST_LOCATION_STATUS', 'JULD_LAST_LOCATION_STATUS',
-        'JULD_LAST_MESSAGE_STATUS', 'JULD_TRANSMISSION_END_STATUS', 'REPRESENTATIVE_PARK_PRESSURE_STATUS',
-    ]
-
-    list_datetime = [
-        "REFERENCE_DATE_TIME",
-        "DATE_CREATION",
-        "DATE_UPDATE",
-        "JULD",
-        "JULD_LOCATION",
-        "SCIENTIFIC_CALIB_DATE",
-        "HISTORY_DATE",
-        "TIME",
-
-        # Metadata file variables:
-        'LAUNCH_DATE', 'START_DATE', 'STARTUP_DATE', 'END_MISSION_DATE',
-    ]
-
     def cast_this(da, type):
         """ Low-level casting of DataArray values """
         try:
@@ -3843,10 +3745,10 @@ def cast_Argo_variable_type(ds, overwrite=True):
         # print("Casting %s ..." % da.name)
         da.attrs["casted"] = 0
 
-        if v in list_str and da.dtype == "O":  # Object
+        if v in DATA_TYPES['data']['str'] and da.dtype == "O":  # Object
             da = cast_this(da, str)
 
-        if v in list_int:  # and da.dtype == 'O':  # Object
+        if v in DATA_TYPES['data']['int']:  # and da.dtype == 'O':  # Object
             if "conventions" in da.attrs:
                 convname = "conventions"
             elif "convention" in da.attrs:
@@ -3870,7 +3772,7 @@ def cast_Argo_variable_type(ds, overwrite=True):
             da = cast_this(da, float)
             da = cast_this(da, int)
 
-        if v in list_datetime and da.dtype == "O":  # Object
+        if v in DATA_TYPES['data']['datetime'] and da.dtype == "O":  # Object
             if (
                     "conventions" in da.attrs
                     and da.attrs["conventions"] == "YYYYMMDDHHMISS"

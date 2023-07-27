@@ -19,11 +19,12 @@ setuptools.setup(
     url="https://github.com/euroargodev/argopy",
     packages=setuptools.find_packages(),
     package_dir={"argopy": "argopy"},
-    package_data={"argopy": ["assets/*.pickle", "static/css/*"]},
+    package_data={"argopy": ["static/assets/*", "static/css/*"]},
     install_requires=requirements,
     classifiers=[
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Topic :: Scientific/Engineering",
         "Intended Audience :: Science/Research",
         "Operating System :: OS Independent",
