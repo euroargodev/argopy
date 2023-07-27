@@ -9,7 +9,7 @@ Contributions are highly welcomed and appreciated. So, if you are interested in 
 Notebook Examples
 -----------------
 
-.. grid:: 1 1 3 3
+.. grid:: 1 1 2 2
     :gutter: 4
 
     .. grid-item-card:: BGC one float data
@@ -37,12 +37,37 @@ Notebook Examples
 
                     :fas:`file-arrow-down` Download notebook
 
+    .. grid-item-card:: BGC regional data
+        :img-top: _static/nbexamples_region_bgc_data.png
+
+        |select_region| |ds_bgc| |mode_expert| |src_erddap|
+        ^^^
+        A notebook to download and plot BGC data in a specific ocean region
+        +++
+        .. grid:: 2 2 2 2
+
+            .. grid-item::
+
+                .. button-link:: https://nbviewer.org/github/euroargodev/argopy/blob/master/docs/examples/BGC_region_float_data.ipynb
+                    :color: primary
+                    :outline:
+
+                    :fas:`eye` Online viewer
+
+            .. grid-item::
+
+                .. button-link:: https://www.github.com/euroargodev/argopy/blob/master/docs/examples/BGC_region_float_data.ipynb
+                    :color: primary
+                    :outline:
+
+                    :fas:`file-arrow-down` Download notebook
+
     .. grid-item-card:: Scatter map with data mode of one BGC variable
         :img-top: _static/nbexamples_scatter_map_datamode_bgc.png
 
         |select_region| |select_float| |ds_bgc| |mode_expert| |src_gdac|
         ^^^
-        A notebook to plot a map where profile locations are color coded with one BGC parameter data mode
+        A notebook to plot a global map where profile locations are color coded with one BGC parameter data mode
         +++
         .. grid:: 2 2 2 2
 
@@ -67,7 +92,7 @@ Notebook Examples
 
         |select_region| |ds_bgc| |mode_expert| |src_gdac|
         ^^^
-        A notebook to make a census of all BGC parameter data mode and a pie plot with results
+        A notebook to make a global census of all BGC parameter data mode and a pie plot with results
         +++
         .. grid:: 2 2 2 2
 
