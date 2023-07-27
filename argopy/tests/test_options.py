@@ -10,6 +10,7 @@ import logging
 
 log = logging.getLogger("argopy.tests.options")
 
+
 def test_invalid_option_name():
     with pytest.raises(ValueError):
         argopy.set_options(not_a_valid_options=True)
