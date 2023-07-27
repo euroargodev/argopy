@@ -560,7 +560,8 @@ def scatter_plot(ds: xr.Dataset,
                   cmap=None,
                   vmin=None,
                   vmax=None,
-                  s=4
+                  s=4,
+                  bgcolor='lightgrey',
                   ):
     """A quick-and-dirty parameter scatter plot for one variable"""
     warnUnless(has_mpl, "requires matplotlib installed")
@@ -601,7 +602,7 @@ def scatter_plot(ds: xr.Dataset,
         m = ax.pcolormesh(x_bounds, y_bounds, c, cmap=cmap, vmin=vmin, vmax=vmax)
     else:
         m = ax.scatter(x, y, c=c, cmap=cmap, s=s, vmin=vmin, vmax=vmax)
-        ax.set_facecolor('lightgrey')
+        ax.set_facecolor(bgcolor)
 
     cbar = fig.colorbar(m, shrink=0.9, extend='both', ax=ax)
     cbar.ax.set_ylabel(get_vlabel(ds, this_param), rotation=90)
