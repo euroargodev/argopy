@@ -1,5 +1,5 @@
 """
-This sub-module provides utilities for miscellaneous computation tasks
+This sub-module provides utilities for miscellaneous computation tasks with multitheading
 
 We construct the MyThreadPoolExecutor class,
 we create a series of classes using multiple inheritance to implement monitoring features
@@ -527,13 +527,13 @@ else:
 
 class MyThreadPoolExecutor(c):
     """
-    This is a low-level helper class not intended to be used directly.
+    This is a low-level helper class not intended to be used directly by users
 
     Examples
     --------
     ::
 
-        from argopy.utils.compute import MyThreadPoolExecutor as MyExecutor
+        from argopy.utils import MyThreadPoolExecutor as MyExecutor
         from random import random
         from time import sleep
         import numpy as np

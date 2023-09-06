@@ -92,7 +92,7 @@
     argopy.utilities.drop_variables_not_in_all_datasets
     argopy.utilities.fill_variables_not_in_all_datasets
 
-    argopy.utils.compute.MyThreadPoolExecutor
+    argopy.utils.MyThreadPoolExecutor
 
     argopy.related.TopoFetcher.cname
     argopy.related.TopoFetcher.define_constraints
