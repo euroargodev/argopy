@@ -5,7 +5,7 @@ from ..utilities import format_oneline
 
 
 class TopoFetcher:
-    """ Fetch topographic data through an ERDDAP server for an ocean rectangle
+    """Fetch topographic data through an ERDDAP server for an ocean rectangle
 
     Example:
         >>> from argopy import TopoFetcher
@@ -34,7 +34,7 @@ class TopoFetcher:
         server: Union[str] = None,
         **kwargs,
     ):
-        """ Instantiate an ERDDAP topo data fetcher
+        """Instantiate an ERDDAP topo data fetcher
 
         Parameters
         ----------
@@ -61,7 +61,11 @@ class TopoFetcher:
         self.stride = stride
         if ds == "gebco":
             self.definition = "NOAA erddap gebco data fetcher for a space region"
-            self.server = server if server is not None else "https://coastwatch.pfeg.noaa.gov/erddap"
+            self.server = (
+                server
+                if server is not None
+                else "https://coastwatch.pfeg.noaa.gov/erddap"
+            )
             self.server_name = "NOAA"
             self.dataset_id = "gebco"
 
@@ -81,7 +85,7 @@ class TopoFetcher:
         return self
 
     def _cname(self) -> str:
-        """ Fetcher one line string definition helper """
+        """Fetcher one line string definition helper"""
         cname = "?"
 
         if hasattr(self, "BOX"):
@@ -102,12 +106,12 @@ class TopoFetcher:
         return "\n".join(summary)
 
     def cname(self):
-        """ Return a unique string defining the constraints """
+        """Return a unique string defining the constraints"""
         return self._cname()
 
     @property
     def cachepath(self):
-        """ Return path to cached file(s) for this request
+        """Return path to cached file(s) for this request
 
         Returns
         -------
@@ -116,7 +120,7 @@ class TopoFetcher:
         return [self.fs.cachepath(uri) for uri in self.uri]
 
     def define_constraints(self):
-        """ Define request constraints """
+        """Define request constraints"""
         #        Eg: https://coastwatch.pfeg.noaa.gov/erddap/griddap/GEBCO_2020.nc?elevation%5B(34):5:(42)%5D%5B(-21):7:(-12)%5D
         self.erddap.constraints = "%s(%0.2f):%i:(%0.2f)%s%s(%0.2f):%i:(%0.2f)%s" % (
             "%5B",
@@ -142,9 +146,9 @@ class TopoFetcher:
     #         return vlist
 
     def url_encode(self, url):
-        """ Return safely encoded list of urls
+        """Return safely encoded list of urls
 
-            This is necessary because fsspec cannot handle in cache paths/urls with a '[' character
+        This is necessary because fsspec cannot handle in cache paths/urls with a '[' character
         """
 
         # return urls
@@ -156,7 +160,7 @@ class TopoFetcher:
         return safe_for_fsspec_cache(url)
 
     def get_url(self):
-        """ Return the URL to download data requested
+        """Return the URL to download data requested
 
         Returns
         -------
@@ -181,7 +185,7 @@ class TopoFetcher:
 
     @property
     def uri(self):
-        """ List of files to load for a request
+        """List of files to load for a request
 
         Returns
         -------
@@ -190,7 +194,7 @@ class TopoFetcher:
         return [self.get_url()]
 
     def to_xarray(self, errors: str = "ignore"):
-        """ Load Topographic data and return a xarray.DataSet """
+        """Load Topographic data and return a xarray.DataSet"""
 
         # Download data
         if len(self.uri) == 1:
@@ -199,5 +203,5 @@ class TopoFetcher:
         return ds
 
     def load(self, errors: str = "ignore"):
-        """ Load Topographic data and return a xarray.DataSet """
+        """Load Topographic data and return a xarray.DataSet"""
         return self.to_xarray(errors=errors)

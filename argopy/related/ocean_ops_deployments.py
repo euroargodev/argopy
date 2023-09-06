@@ -57,6 +57,7 @@ class OceanOPSDeployments:
     >>> plan_virtualfleet = deployment.plan
 
     """
+
     api = "https://www.ocean-ops.org"
     """URL to the API"""
 
@@ -64,7 +65,7 @@ class OceanOPSDeployments:
     """This model represents a Platform entity and is used to retrieve a platform information (schema model
      named 'Ptf')."""
 
-    api_server_check = 'https://www.ocean-ops.org/api/1/oceanops-api.yaml'
+    api_server_check = "https://www.ocean-ops.org/api/1/oceanops-api.yaml"
     """URL to check if the API is alive"""
 
     def __init__(self, box: list = None, deployed_only: bool = False):
@@ -91,15 +92,25 @@ class OceanOPSDeployments:
             following status: ``OPERATIONAL``, ``INACTIVE``, and ``CLOSED``.
         """
         if box is None:
-            box = [None, None, None, None, pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"), None]
+            box = [
+                None,
+                None,
+                None,
+                None,
+                pd.to_datetime("now", utc=True).strftime("%Y-%m-%d"),
+                None,
+            ]
         elif len(box) == 4:
-            box.append(pd.to_datetime('now', utc=True).strftime("%Y-%m-%d"))
+            box.append(pd.to_datetime("now", utc=True).strftime("%Y-%m-%d"))
             box.append(None)
         elif len(box) == 5:
             box.append(None)
 
         if len(box) != 6:
-            raise ValueError("The 'box' argument must be: None or of lengths 4 or 5 or 6\n%s" % str(box))
+            raise ValueError(
+                "The 'box' argument must be: None or of lengths 4 or 5 or 6\n%s"
+                % str(box)
+            )
 
         self.box = box
         self.deployed_only = deployed_only
@@ -108,7 +119,7 @@ class OceanOPSDeployments:
         self.fs = httpstore(cache=False)
 
     def __format(self, x, typ: str) -> str:
-        """ string formatting helper """
+        """string formatting helper"""
         if typ == "lon":
             return str(x) if x is not None else "-"
         elif typ == "lat":
@@ -126,8 +137,10 @@ class OceanOPSDeployments:
         if self.data is not None:
             summary.append("Nb of floats in the deployment plan: %s" % self.size)
         else:
-            summary.append("Nb of floats in the deployment plan: - [Data not retrieved yet]")
-        return '\n'.join(summary)
+            summary.append(
+                "Nb of floats in the deployment plan: - [Data not retrieved yet]"
+            )
+        return "\n".join(summary)
 
     def __encode_inc(self, inc):
         """Return encoded uri expression for 'include' parameter
@@ -140,7 +153,7 @@ class OceanOPSDeployments:
         -------
         str
         """
-        return inc.replace("\"", "%22").replace("[", "%5B").replace("]", "%5D")
+        return inc.replace('"', "%22").replace("[", "%5B").replace("]", "%5D")
 
     def __encode_exp(self, exp):
         """Return encoded uri expression for 'exp' parameter
@@ -153,10 +166,19 @@ class OceanOPSDeployments:
         -------
         str
         """
-        return exp.replace("\"", "%22").replace("'", "%27").replace(" ", "%20").replace(">", "%3E").replace("<", "%3C")
+        return (
+            exp.replace('"', "%22")
+            .replace("'", "%27")
+            .replace(" ", "%20")
+            .replace(">", "%3E")
+            .replace("<", "%3C")
+        )
 
     def __get_uri(self, encoded=False):
-        uri = "exp=%s&include=%s" % (self.exp(encoded=encoded), self.include(encoded=encoded))
+        uri = "exp=%s&include=%s" % (
+            self.exp(encoded=encoded),
+            self.include(encoded=encoded),
+        )
         url = "%s/%s?%s" % (self.api, self.model, uri)
         return url
 
@@ -176,10 +198,20 @@ class OceanOPSDeployments:
         # inc = ["ref", "ptfDepl.lat", "ptfDepl.lon", "ptfDepl.deplDate", "ptfStatus", "wmos"]
         # inc = ["ref", "ptfDepl.lat", "ptfDepl.lon", "ptfDepl.deplDate", "ptfStatus.id", "ptfStatus.name", "wmos"]
         # inc = ["ref", "ptfDepl.lat", "ptfDepl.lon", "ptfDepl.deplDate", "ptfStatus.id", "ptfStatus.name"]
-        inc = ["ref", "ptfDepl.lat", "ptfDepl.lon", "ptfDepl.deplDate", "ptfStatus.id", "ptfStatus.name",
-               "ptfStatus.description",
-               "program.nameShort", "program.country.nameShort", "ptfModel.nameShort", "ptfDepl.noSite"]
-        inc = "[%s]" % ",".join(["\"%s\"" % v for v in inc])
+        inc = [
+            "ref",
+            "ptfDepl.lat",
+            "ptfDepl.lon",
+            "ptfDepl.deplDate",
+            "ptfStatus.id",
+            "ptfStatus.name",
+            "ptfStatus.description",
+            "program.nameShort",
+            "program.country.nameShort",
+            "ptfModel.nameShort",
+            "ptfDepl.noSite",
+        ]
+        inc = "[%s]" % ",".join(['"%s"' % v for v in inc])
         return inc if not encoded else self.__encode_inc(inc)
 
     def exp(self, encoded=False):
@@ -209,37 +241,49 @@ class OceanOPSDeployments:
         if len(self.box) > 4:
             if self.box[4] is not None:
                 exp += " and ptfDepl.deplDate>=$var%i" % (len(arg) + 1)
-                arg.append("\"%s\"" % pd.to_datetime(self.box[4]).strftime("%Y-%m-%d %H:%M:%S"))
+                arg.append(
+                    '"%s"' % pd.to_datetime(self.box[4]).strftime("%Y-%m-%d %H:%M:%S")
+                )
             if self.box[5] is not None:
                 exp += " and ptfDepl.deplDate<=$var%i" % (len(arg) + 1)
-                arg.append("\"%s\"" % pd.to_datetime(self.box[5]).strftime("%Y-%m-%d %H:%M:%S"))
+                arg.append(
+                    '"%s"' % pd.to_datetime(self.box[5]).strftime("%Y-%m-%d %H:%M:%S")
+                )
 
         if self.deployed_only:
             exp += " and ptfStatus>=$var%i" % (len(arg) + 1)
             arg.append(str(4))  # Allow for: 4, 5 or 6
 
-        exp = "[\"%s\", %s]" % (exp, ", ".join(arg))
+        exp = '["%s", %s]' % (exp, ", ".join(arg))
         return exp if not encoded else self.__encode_exp(exp)
 
     @property
     def size(self):
-        return len(self.data['data']) if self.data is not None else None
+        return len(self.data["data"]) if self.data is not None else None
 
     @property
     def status_code(self):
         """Return a :class:`pandas.DataFrame` with the definition of status"""
-        status = {'status_code': [0, 1, 2, 6, 4, 5],
-                  'status_name': ['PROBABLE', 'CONFIRMED', 'REGISTERED', 'OPERATIONAL', 'INACTIVE', 'CLOSED'],
-                  'description': [
-                      'Starting status for some platforms, when there is only a few metadata available, like rough deployment location and date. The platform may be deployed',
-                      'Automatically set when a ship is attached to the deployment information. The platform is ready to be deployed, deployment is planned',
-                      'Starting status for most of the networks, when deployment planning is not done. The deployment is certain, and a notification has been sent via the OceanOPS system',
-                      'Automatically set when the platform is emitting a pulse and observations are distributed within a certain time interval',
-                      'The platform is not emitting a pulse since a certain time',
-                      'The platform is not emitting a pulse since a long time, it is considered as dead',
-                    ],
-                  }
-        return pd.DataFrame(status).set_index('status_code')
+        status = {
+            "status_code": [0, 1, 2, 6, 4, 5],
+            "status_name": [
+                "PROBABLE",
+                "CONFIRMED",
+                "REGISTERED",
+                "OPERATIONAL",
+                "INACTIVE",
+                "CLOSED",
+            ],
+            "description": [
+                "Starting status for some platforms, when there is only a few metadata available, like rough deployment location and date. The platform may be deployed",
+                "Automatically set when a ship is attached to the deployment information. The platform is ready to be deployed, deployment is planned",
+                "Starting status for most of the networks, when deployment planning is not done. The deployment is certain, and a notification has been sent via the OceanOPS system",
+                "Automatically set when the platform is emitting a pulse and observations are distributed within a certain time interval",
+                "The platform is not emitting a pulse since a certain time",
+                "The platform is not emitting a pulse since a long time, it is considered as dead",
+            ],
+        }
+        return pd.DataFrame(status).set_index("status_code")
 
     @property
     def box_name(self):
@@ -289,10 +333,14 @@ class OceanOPSDeployments:
         This method is for dev, but will be moved to the VirtualFleet software utilities
         """
         df = self.to_dataframe()
-        plan = df[['lon', 'lat', 'date']].rename(columns={"date": "time"}).to_dict('series')
+        plan = (
+            df[["lon", "lat", "date"]]
+            .rename(columns={"date": "time"})
+            .to_dict("series")
+        )
         for key in plan.keys():
             plan[key] = plan[key].to_list()
-        plan['time'] = np.array(plan['time'], dtype='datetime64')
+        plan["time"] = np.array(plan["time"], dtype="datetime64")
         return plan
 
     def to_json(self):
@@ -309,49 +357,59 @@ class OceanOPSDeployments:
         :class:`pandas.DataFrame`
         """
         data = self.to_json()
-        if data['total'] == 0:
-            raise DataNotFound('Your search matches no results')
+        if data["total"] == 0:
+            raise DataNotFound("Your search matches no results")
 
         # res = {'date': [], 'lat': [], 'lon': [], 'wmo': [], 'status_name': [], 'status_code': []}
         # res = {'date': [], 'lat': [], 'lon': [], 'wmo': [], 'status_name': [], 'status_code': [], 'ship_name': []}
-        res = {'date': [], 'lat': [], 'lon': [], 'wmo': [], 'status_name': [], 'status_code': [], 'program': [],
-               'country': [], 'model': []}
+        res = {
+            "date": [],
+            "lat": [],
+            "lon": [],
+            "wmo": [],
+            "status_name": [],
+            "status_code": [],
+            "program": [],
+            "country": [],
+            "model": [],
+        }
         # status = {'REGISTERED': None, 'OPERATIONAL': None, 'INACTIVE': None, 'CLOSED': None,
         #           'CONFIRMED': None, 'OPERATIONAL': None, 'PROBABLE': None, 'REGISTERED': None}
 
-        for irow, ptf in enumerate(data['data']):
+        for irow, ptf in enumerate(data["data"]):
             # if irow == 0:
             # print(ptf)
-            res['lat'].append(ptf['ptfDepl']['lat'])
-            res['lon'].append(ptf['ptfDepl']['lon'])
-            res['date'].append(ptf['ptfDepl']['deplDate'])
-            res['wmo'].append(ptf['ref'])
+            res["lat"].append(ptf["ptfDepl"]["lat"])
+            res["lon"].append(ptf["ptfDepl"]["lon"])
+            res["date"].append(ptf["ptfDepl"]["deplDate"])
+            res["wmo"].append(ptf["ref"])
             # res['wmo'].append(ptf['wmos'][-1]['wmo'])
             # res['wmo'].append(float_wmo(ptf['ref'])) # will not work for some CONFIRMED, PROBABLE or REGISTERED floats
             # res['wmo'].append(float_wmo(ptf['wmos'][-1]['wmo']))
-            res['status_code'].append(ptf['ptfStatus']['id'])
-            res['status_name'].append(ptf['ptfStatus']['name'])
+            res["status_code"].append(ptf["ptfStatus"]["id"])
+            res["status_name"].append(ptf["ptfStatus"]["name"])
 
             # res['ship_name'].append(ptf['ptfDepl']['shipName'])
-            program = ptf['program']['nameShort'].replace("_", " ") if ptf['program']['nameShort'] else ptf['program'][
-                'nameShort']
-            res['program'].append(program)
-            res['country'].append(ptf['program']['country']['nameShort'])
-            res['model'].append(ptf['ptfModel']['nameShort'])
+            program = (
+                ptf["program"]["nameShort"].replace("_", " ")
+                if ptf["program"]["nameShort"]
+                else ptf["program"]["nameShort"]
+            )
+            res["program"].append(program)
+            res["country"].append(ptf["program"]["country"]["nameShort"])
+            res["model"].append(ptf["ptfModel"]["nameShort"])
 
             # if status[ptf['ptfStatus']['name']] is None:
             #     status[ptf['ptfStatus']['name']] = ptf['ptfStatus']['description']
 
         df = pd.DataFrame(res)
-        df = df.astype({'date': 'datetime64[s]'})
-        df = df.sort_values(by='date').reset_index(drop=True)
+        df = df.astype({"date": "datetime64[s]"})
+        df = df.sort_values(by="date").reset_index(drop=True)
         # df = df[ (df['status_name'] == 'CLOSED') | (df['status_name'] == 'OPERATIONAL')] # Select only floats that have been deployed and returned data
         # print(status)
         return df
 
-    def plot_status(self,
-                    **kwargs
-                    ):
+    def plot_status(self, **kwargs):
         """Quick plot of the deployment plan
 
         Named arguments are passed to :class:`plot.scatter_map`
@@ -362,16 +420,21 @@ class OceanOPSDeployments:
         ax: :class:`matplotlib.axes.Axes`
         """
         df = self.to_dataframe()
-        fig, ax = scatter_map(df,
-                              x='lon',
-                              y='lat',
-                              hue='status_code',
-                              traj=False,
-                              cmap='deployment_status',
-                              **kwargs)
-        ax.set_title("Argo network deployment plan\n%s\nSource: OceanOPS API as of %s"
-                     % (self.box_name, pd.to_datetime('now', utc=True).strftime("%Y-%m-%d %H:%M:%S")),
-                     fontsize=12
-                     )
+        fig, ax = scatter_map(
+            df,
+            x="lon",
+            y="lat",
+            hue="status_code",
+            traj=False,
+            cmap="deployment_status",
+            **kwargs
+        )
+        ax.set_title(
+            "Argo network deployment plan\n%s\nSource: OceanOPS API as of %s"
+            % (
+                self.box_name,
+                pd.to_datetime("now", utc=True).strftime("%Y-%m-%d %H:%M:%S"),
+            ),
+            fontsize=12,
+        )
         return fig, ax
-
