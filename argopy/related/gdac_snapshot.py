@@ -3,8 +3,8 @@ import numpy as np
 import warnings
 from typing import Union
 
-from matplotlib.colors import to_hex
-from IPython.display import IFrame
+# from matplotlib.colors import to_hex
+# from IPython.display import IFrame
 
 from ..stores import httpstore
 
