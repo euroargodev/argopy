@@ -34,7 +34,7 @@ from .utilities import monitor_status as status  # noqa: E402
 from .options import set_options  # noqa: E402
 from .data_fetchers import CTDRefDataFetcher  # noqa: E402
 from .stores import ArgoIndex  # noqa: E402
-
+from .related import ArgoDOI  # noqa: E402
 #
 __all__ = (
     # Top-level classes:
@@ -58,6 +58,7 @@ __all__ = (
     "ArgoIndex",  # Class
     "ArgoDocs",  # Class
     "TopoFetcher",  # Class
+    "ArgoDOI",  # Class
 
     # Submodules:
     "utilities",

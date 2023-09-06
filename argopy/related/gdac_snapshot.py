@@ -6,7 +6,7 @@ from typing import Union
 from matplotlib.colors import to_hex
 from IPython.display import IFrame
 
-from ..stores import httpstore, argo_store_proto
+from ..stores import httpstore
 
 
 class DOIrecord:
@@ -15,6 +15,8 @@ class DOIrecord:
     Examples
     --------
     d = DOIrecord()
+    d = DOIrecord('42182')
+    d = DOIrecord('42182#103075')
     d = DOIrecord(hashtag='103075')
     d = DOIrecord(hashtag='103088')
 
@@ -27,31 +29,25 @@ class DOIrecord:
     d.file
 
     """
-
-    root = "10.17882"
+    root = ""
 
     def __init__(
         self,
-        doi: str = "42182",
-        hashtag: Union[str, int] = None,
-        fs: argo_store_proto = None,
+        doi: str = "10.17882/42182",
+        hashtag: str = None,
+        fs: httpstore = None,
         autoload: bool = True,
         api_root: str = "https://www.seanoe.org/api/",
     ):
         self.api_root = api_root
-        self._fs = fs  # A httpstore will be created if necessary when self.load() is called
+        self._fs = fs  # A httpstore will be created if necessary if self.load() is called
         self._data = None
 
         self._doi = doi
-        self._hashtag = str(hashtag)
+        self._hashtag = hashtag
         if "#" in doi:
             self._doi = doi.split("#")[0]
             self._hashtag = doi.split("#")[-1]
-        else:
-            self._doi = doi
-
-        if hashtag is not None:
-            self._hashtag = hashtag
 
         if autoload:
             self.load()
@@ -72,7 +68,7 @@ class DOIrecord:
         return "https:/dx.doi.org/%s" % str(self)
 
     def isvalid(self) -> bool:
-        return self.doi == "42182"
+        return "42182" in self.doi
 
     @property
     def data(self) -> dict:
@@ -120,13 +116,14 @@ class DOIrecord:
     def uri(self) -> str:
         """url to API call to retrieve DOI data"""
         if self.hashtag is None:
-            url = "find-by-id/{doi}".format
+            url = "find-by-id/{id}".format
         else:
-            url = "find-by-fragment/{doi}?fragmentId={hashtag}".format
-        return self.api_root + url(doi=self.doi, hashtag=self.hashtag)
+            url = "find-by-fragment/{id}?fragmentId={hashtag}".format
+        return self.api_root + url(id=self.doi.split("/")[-1], hashtag=self.hashtag)
 
     def __str__(self):
-        txt = "%s/%s" % (self.root, self.doi)
+        # txt = "%s/%s" % (self.root, self.doi)
+        txt = "%s" % (self.doi)
         if self.hashtag is not None:
             txt = "%s#%s" % (txt, self._hashtag)
         return txt
@@ -173,6 +170,9 @@ class DOIrecord:
         ):
             self._data = self._process_data(d)
         return self
+
+    def search(self, **kwargs):
+        raise ValueError("")
 
     def _repr_file(self, file, with_label=False) -> str:
         """Return a pretty string from a single file dict"""
@@ -320,20 +320,21 @@ class ArgoDOI:
     doi = ArgoDOI(hashtag='95141')
     doi = ArgoDOI(fs=httpstore(cache=True))
 
-    doi.search('2020-02')  # Search doi closest to a given date
-    doi.search('2020-02', network='BGC')  # Search doi closest to a given date for a specific network
+    doi.search('2020-02')  # Return doi closest to a given date
+    doi.search('2020-02', network='BGC')  # Return doi closest to a given date for a specific network
 
-    doi.file  # Easy to read list of files associated with a DOI
-    doi.dx  # http link toward DOI resource
+    doi.file  # Easy to read list of file(s) associated with a DOI record
+    doi.dx  # http link toward DOI
 
     """
 
     def __init__(self,
                  hashtag=None,
                  fs=None,
-                 network=None,
                  cache=True):
         self._fs = fs if isinstance(fs, httpstore) else httpstore(cache=cache)
+        if hashtag is not None and '42182#' in hashtag:
+            hashtag = hashtag.split('42182#')[-1]
         self._doi = DOIrecord(hashtag=hashtag, fs=self._fs, autoload=True)
 
     @property
