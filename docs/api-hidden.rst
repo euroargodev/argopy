@@ -69,24 +69,8 @@
     argopy.utilities.isalive
     argopy.utilities.isAPIconnected
 
-    argopy.utilities.ArgoNVSReferenceTables
-    argopy.utilities.ArgoNVSReferenceTables.search
-    argopy.utilities.ArgoNVSReferenceTables.valid_ref
-    argopy.utilities.ArgoNVSReferenceTables.all_tbl
-    argopy.utilities.ArgoNVSReferenceTables.all_tbl_name
-    argopy.utilities.ArgoNVSReferenceTables.tbl
-    argopy.utilities.ArgoNVSReferenceTables.tbl_name
-
     argopy.utilities.groupby_remap
     argopy.utilities.linear_interpolation_remap
-
-    argopy.utilities.TopoFetcher.cname
-    argopy.utilities.TopoFetcher.define_constraints
-    argopy.utilities.TopoFetcher.get_url
-    argopy.utilities.TopoFetcher.load
-    argopy.utilities.TopoFetcher.to_xarray
-    argopy.utilities.TopoFetcher.cachepath
-    argopy.utilities.TopoFetcher.uri
 
     argopy.utilities.list_standard_variables
     argopy.utilities.list_multiprofile_file_variables
@@ -105,24 +89,40 @@
     argopy.utilities.get_coriolis_profile_id
     argopy.utilities.get_ea_profile_page
 
-    argopy.utilities.OceanOPSDeployments
-    argopy.utilities.OceanOPSDeployments.to_dataframe
-    argopy.utilities.OceanOPSDeployments.status_code
-
-    argopy.utilities.ArgoDocs
-    argopy.utilities.ArgoDocs.list
-    argopy.utilities.ArgoDocs.search
-    argopy.utilities.ArgoDocs.ris
-    argopy.utilities.ArgoDocs.abstract
-    argopy.utilities.ArgoDocs.pdf
-    argopy.utilities.ArgoDocs.open_pdf
-    argopy.utilities.ArgoDocs.show
-    argopy.utilities.ArgoDocs.js
-
     argopy.utilities.drop_variables_not_in_all_datasets
     argopy.utilities.fill_variables_not_in_all_datasets
 
     argopy.utils.compute.MyThreadPoolExecutor
+
+    argopy.related.TopoFetcher.cname
+    argopy.related.TopoFetcher.define_constraints
+    argopy.related.TopoFetcher.get_url
+    argopy.related.TopoFetcher.load
+    argopy.related.TopoFetcher.to_xarray
+    argopy.related.TopoFetcher.cachepath
+    argopy.related.TopoFetcher.uri
+
+    argopy.related.ArgoNVSReferenceTables
+    argopy.related.ArgoNVSReferenceTables.search
+    argopy.related.ArgoNVSReferenceTables.valid_ref
+    argopy.related.ArgoNVSReferenceTables.all_tbl
+    argopy.related.ArgoNVSReferenceTables.all_tbl_name
+    argopy.related.ArgoNVSReferenceTables.tbl
+    argopy.related.ArgoNVSReferenceTables.tbl_name
+
+    argopy.related.OceanOPSDeployments
+    argopy.related.OceanOPSDeployments.to_dataframe
+    argopy.related.OceanOPSDeployments.status_code
+
+    argopy.related.ArgoDocs
+    argopy.related.ArgoDocs.list
+    argopy.related.ArgoDocs.search
+    argopy.related.ArgoDocs.ris
+    argopy.related.ArgoDocs.abstract
+    argopy.related.ArgoDocs.pdf
+    argopy.related.ArgoDocs.open_pdf
+    argopy.related.ArgoDocs.show
+    argopy.related.ArgoDocs.js
 
 
     argopy.plot
