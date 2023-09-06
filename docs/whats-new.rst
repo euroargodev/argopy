@@ -8,6 +8,13 @@ What's New
 |pypi dwn| |conda dwn|
 
 
+Coming up next
+--------------
+
+**Internals**
+
+- Utilities refactoring. Each class/function have been refactored in more appropriate locations like ``argopy.utils`` or ``argopy.relatec``.
+
 v0.1.14rc2 (27 Jul. 2023)
 -------------------------
 
