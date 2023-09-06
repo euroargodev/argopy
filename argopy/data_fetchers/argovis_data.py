@@ -19,12 +19,15 @@ from argopy.utilities import format_oneline, Chunker
 from argopy.errors import DataNotFound
 
 
-access_points = ['wmo', 'box']
-exit_formats = ['xarray']
-dataset_ids = ['phy']  # First is default
+access_points = ["wmo", "box"]
+exit_formats = ["xarray"]
+dataset_ids = ["phy"]  # First is default
 # api_server = 'https://argovis.colorado.edu'  # API root url
-api_server = "https://argovisbeta02.colorado.edu"   # v1 API, expires on March 31, 2023
-api_server_check = {'url': api_server + "/selection/overview", 'keyword': 'numberOfProfiles'}  # URL to check if the API is alive
+api_server = "https://argovisbeta02.colorado.edu"  # v1 API, expires on March 31, 2023
+api_server_check = {
+    "url": api_server + "/selection/overview",
+    "keyword": "numberOfProfiles",
+}  # URL to check if the API is alive
 
 log = logging.getLogger("argopy.argovis.data")
 
@@ -35,13 +38,13 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
     ###
     @abstractmethod
     def init(self, *args, **kwargs):
-        """ Initialisation for a specific fetcher """
+        """Initialisation for a specific fetcher"""
         raise NotImplementedError("Not implemented")
 
     @property
     @abstractmethod
     def uri(self):
-        """ Return the URL used to download data """
+        """Return the URL used to download data"""
         raise NotImplementedError("Not implemented")
 
     ###
@@ -60,7 +63,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         api_timeout: int = 0,
         **kwargs
     ):
-        """ Instantiate an Argovis Argo data loader
+        """Instantiate an Argovis Argo data loader
 
         Parameters
         ----------
@@ -90,14 +93,22 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
         self.server = kwargs["server"] if "server" in kwargs else api_server
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
-        self.store_opts = {'cache': cache, 'cachedir': cachedir, 'timeout': timeout, 'size_policy': 'head'}
-        self.fs = kwargs['fs'] if 'fs' in kwargs else httpstore(**self.store_opts)
+        self.store_opts = {
+            "cache": cache,
+            "cachedir": cachedir,
+            "timeout": timeout,
+            "size_policy": "head",
+        }
+        self.fs = kwargs["fs"] if "fs" in kwargs else httpstore(**self.store_opts)
 
         if not isinstance(parallel, bool):
             parallel_method = parallel
             parallel = True
         if parallel_method not in ["thread"]:
-            raise ValueError("argovis only support multi-threading, use 'thread' instead of '%s'" % parallel_method)
+            raise ValueError(
+                "argovis only support multi-threading, use 'thread' instead of '%s'"
+                % parallel_method
+            )
         self.parallel = parallel
         self.parallel_method = parallel_method
         self.progress = progress
@@ -136,9 +147,9 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         return this
 
     def _add_attributes(self, this):  # noqa: C901
-        """ Add variables attributes not return by argovis requests
+        """Add variables attributes not return by argovis requests
 
-            #todo: This is hard coded, but should be retrieved from an API somewhere
+        #todo: This is hard coded, but should be retrieved from an API somewhere
         """
         for v in this.data_vars:
             if "TEMP" in v and "_QC" not in v:
@@ -237,29 +248,31 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
 
     @property
     def cachepath(self):
-        """ Return path to cache file for this request """
+        """Return path to cache file for this request"""
         return [self.fs.cachepath(url) for url in self.uri]
 
     def cname(self):
-        """ Return a unique string defining the constraints """
+        """Return a unique string defining the constraints"""
         return self._cname()
 
     def url_encode(self, urls):
-        """ Return safely encoded list of urls
+        """Return safely encoded list of urls
 
-            This was made to debug for fsspec caching system not working with cache of profile and region in argovis
-            Not working yet, see: https://github.com/euroargodev/argopy/issues/101
+        This was made to debug for fsspec caching system not working with cache of profile and region in argovis
+        Not working yet, see: https://github.com/euroargodev/argopy/issues/101
         """
+
         # return urls
         def safe_for_fsspec_cache(url):
             url = url.replace("[", "%5B")  # This is the one really necessary
             url = url.replace("]", "%5D")  # For consistency
             return url
+
         return [safe_for_fsspec_cache(url) for url in urls]
         # return [urllib.parse.quote(url, safe='/:?=[]&') for url in urls]
 
     def json2dataframe(self, profiles):
-        """ convert json data to Pandas DataFrame """
+        """convert json data to Pandas DataFrame"""
         # Make sure we deal with a list
         if isinstance(profiles, list):
             data = profiles
@@ -270,15 +283,19 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         for profile in data:
             keys = [x for x in profile.keys() if x not in ["measurements", "bgcMeas"]]
             meta_row = dict((key, profile[key]) for key in keys)
-            meta_row['date'] = meta_row['date'][0:-2] if meta_row['date'][-1] == 'Z' else meta_row['date']  # Remove timezone #101
+            meta_row["date"] = (
+                meta_row["date"][0:-2]
+                if meta_row["date"][-1] == "Z"
+                else meta_row["date"]
+            )  # Remove timezone #101
             for row in profile["measurements"]:
                 row.update(meta_row)
                 rows.append(row)
         df = pd.DataFrame(rows)
         return df
 
-    def to_dataframe(self, errors: str = 'ignore'):
-        """ Load Argo data and return a Pandas dataframe """
+    def to_dataframe(self, errors: str = "ignore"):
+        """Load Argo data and return a Pandas dataframe"""
 
         # Download data:
         if not self.parallel:
@@ -286,7 +303,11 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         else:
             method = self.parallel_method
         df_list = self.fs.open_mfjson(
-            self.uri, method=method, preprocess=self.json2dataframe, progress=self.progress, errors=errors
+            self.uri,
+            method=method,
+            preprocess=self.json2dataframe,
+            progress=self.progress,
+            errors=errors,
         )
 
         # Merge results (list of dataframe):
@@ -302,8 +323,8 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         df = df.set_index(["N_POINTS"])
         return df
 
-    def to_xarray(self, errors: str = 'ignore'):
-        """ Download and return data as xarray Datasets """
+    def to_xarray(self, errors: str = "ignore"):
+        """Download and return data as xarray Datasets"""
         ds = self.to_dataframe(errors=errors).to_xarray()
         ds = ds.sortby(
             ["TIME", "PRES"]
@@ -323,7 +344,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         ds = ds.set_coords(coords)
 
         # Cast data types and add variable attributes (not available in the csv download):
-        ds['TIME'] = ds['TIME'].astype(np.datetime64)
+        ds["TIME"] = ds["TIME"].astype("datetime64[ns]")
         ds = self._add_attributes(ds)
         ds = ds.argo.cast_types()
 
@@ -362,9 +383,9 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
     def filter_researchmode(self, ds: xr.Dataset, *args, **kwargs) -> xr.Dataset:
         """Filter dataset for research user mode
 
-            This filter will select only QC=1 delayed mode data with pressure errors smaller than 20db
+        This filter will select only QC=1 delayed mode data with pressure errors smaller than 20db
 
-            Use this filter instead of filter_data_mode and filter_qc
+        Use this filter instead of filter_data_mode and filter_qc
         """
         ds = ds.argo.filter_researchmode()
         if ds.argo._type == "point":
@@ -372,13 +393,13 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         return ds
 
     def filter_domain(self, ds):
-        """ Enforce rectangular box shape
+        """Enforce rectangular box shape
 
         This is a temporary fix for https://github.com/euroargodev/argopy/issues/48
         """
-        if hasattr(self, 'BOX'):
-            ds = ds.where(ds['LATITUDE'] >= self.BOX[2], drop=True)
-            ds = ds.where(ds['LATITUDE'] <= self.BOX[3], drop=True)
+        if hasattr(self, "BOX"):
+            ds = ds.where(ds["LATITUDE"] >= self.BOX[2], drop=True)
+            ds = ds.where(ds["LATITUDE"] <= self.BOX[3], drop=True)
             return ds
         else:
             return ds
@@ -386,14 +407,14 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
 
 class Fetch_wmo(ArgovisDataFetcher):
     def init(self, WMO=[], CYC=None, **kwargs):
-        """ Create Argo data loader for WMOs and CYCs
+        """Create Argo data loader for WMOs and CYCs
 
-            Parameters
-            ----------
-            WMO : list(int)
-                The list of WMOs to load all Argo data for.
-            CYC : int, np.array(int), list(int)
-                The cycle numbers to load.
+        Parameters
+        ----------
+        WMO : list(int)
+            The list of WMOs to load all Argo data for.
+        CYC : int, np.array(int), list(int)
+            The cycle numbers to load.
         """
         self.WMO = WMO
         self.CYC = CYC
@@ -409,7 +430,7 @@ class Fetch_wmo(ArgovisDataFetcher):
         return self
 
     def get_url(self, wmo: int, cyc: int = None) -> str:
-        """ Return path toward the source file of a given wmo/cyc pair """
+        """Return path toward the source file of a given wmo/cyc pair"""
         if cyc is None:
             return (self.server + "/catalog/platforms/{}").format(str(wmo))
         else:
@@ -422,12 +443,13 @@ class Fetch_wmo(ArgovisDataFetcher):
 
     @property
     def uri(self):
-        """ List of URLs to load for a request
+        """List of URLs to load for a request
 
         Returns
         -------
         list(str)
         """
+
         def list_bunch(wmos, cycs):
             this = []
             for wmo in wmos:
@@ -442,17 +464,16 @@ class Fetch_wmo(ArgovisDataFetcher):
 
 
 class Fetch_box(ArgovisDataFetcher):
-
     def init(self, box: list, **kwargs):
-        """ Create Argo data loader
+        """Create Argo data loader
 
-            Parameters
-            ----------
-            box : list(float, float, float, float, float, float, str, str)
-                The box domain to load all Argo data for:
-                box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
-                or:
-                box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
+        Parameters
+        ----------
+        box : list(float, float, float, float, float, float, str, str)
+            The box domain to load all Argo data for:
+            box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
+            or:
+            box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max, datim_min, datim_max]
         """
         self.BOX = box.copy()
         if len(self.BOX) == 6:
@@ -468,7 +489,7 @@ class Fetch_box(ArgovisDataFetcher):
         return self
 
     def get_url_shape(self):
-        """ Return the URL used to download data """
+        """Return the URL used to download data"""
         shape = [
             [
                 [self.BOX[0], self.BOX[2]],  # ll
@@ -491,9 +512,14 @@ class Fetch_box(ArgovisDataFetcher):
         return url
 
     def get_url_rect(self):
-        """ Return the URL used to download data """
-        def strCorner(b, i): return str([b[i[0]], b[i[1]]]).replace(" ", "")
-        def strDate(b, i): return pd.to_datetime(b[i]).strftime("%Y-%m-%dT%H:%M:%SZ")
+        """Return the URL used to download data"""
+
+        def strCorner(b, i):
+            return str([b[i[0]], b[i[1]]]).replace(" ", "")
+
+        def strDate(b, i):
+            return pd.to_datetime(b[i]).strftime("%Y-%m-%dT%H:%M:%SZ")
+
         url = self.server + "/selection/box/profiles"
         url += "?startDate={}".format(strDate(self.BOX, 6))
         url += "&endDate={}".format(strDate(self.BOX, 7))
@@ -508,13 +534,15 @@ class Fetch_box(ArgovisDataFetcher):
 
     @property
     def uri(self):
-        """ List of URLs to load for a request
+        """List of URLs to load for a request
 
         Returns
         -------
         list(str)
         """
-        Lt = np.timedelta64(pd.to_datetime(self.BOX[7]) - pd.to_datetime(self.BOX[6]), "D")
+        Lt = np.timedelta64(
+            pd.to_datetime(self.BOX[7]) - pd.to_datetime(self.BOX[6]), "D"
+        )
         MaxLenTime = 90
         MaxLen = np.timedelta64(MaxLenTime, "D")
 
@@ -533,16 +561,24 @@ class Fetch_box(ArgovisDataFetcher):
             else:
                 urls.append(self.get_url())
         else:
-            if 'time' not in self.chunks_maxsize:
-                self.chunks_maxsize['time'] = MaxLenTime
-            elif self.chunks_maxsize['time'] > MaxLenTime:
-                warnings.warn(("argovis only allows requests of %i days interval, "
-                               "modify chunks_maxsize['time'] to %i" % (MaxLenTime, MaxLenTime)))
-                self.chunks_maxsize['time'] = MaxLenTime
+            if "time" not in self.chunks_maxsize:
+                self.chunks_maxsize["time"] = MaxLenTime
+            elif self.chunks_maxsize["time"] > MaxLenTime:
+                warnings.warn(
+                    (
+                        "argovis only allows requests of %i days interval, "
+                        "modify chunks_maxsize['time'] to %i" % (MaxLenTime, MaxLenTime)
+                    )
+                )
+                self.chunks_maxsize["time"] = MaxLenTime
 
             # Ensure time chunks will never exceed what's allowed by argovis:
-            if Lt > MaxLen and 'time' in self.chunks and self.chunks['time'] not in ['auto']:
-                self.chunks['time'] = 'auto'
+            if (
+                Lt > MaxLen
+                and "time" in self.chunks
+                and self.chunks["time"] not in ["auto"]
+            ):
+                self.chunks["time"] = "auto"
 
             self.Chunker = Chunker(
                 {"box": self.BOX}, chunks=self.chunks, chunksize=self.chunks_maxsize

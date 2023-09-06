@@ -90,7 +90,7 @@
         skos:notation          "SDN:R03::BBP" ;
         skos:note              "accepted"@en ;
         skos:prefLabel         "Particle backscattering at x nanometers"@en ;
-        skos:related           <http://vocab.nerc.ac.uk/collection/P06/current/PMSR/> .
+        skos:related           <http://vocab.nerc.ac.uk/collection/P06/current/UPRM/> .
 
 <http://vocab.nerc.ac.uk/collection/R03/current/CHLA/>
         rdf:type               skos:Concept ;
@@ -204,7 +204,7 @@
         skos:notation          "SDN:R03::BBP700" ;
         skos:note              "accepted"@en ;
         skos:prefLabel         "Particle backscattering at 700 nanometers"@en ;
-        skos:related           <http://vocab.nerc.ac.uk/collection/P06/current/PMSR/> .
+        skos:related           <http://vocab.nerc.ac.uk/collection/P06/current/UMNX/> .
 
 <http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_NITRATE/>
         rdf:type               skos:Concept ;
@@ -259,7 +259,7 @@
         skos:notation          "SDN:R03::BBP470" ;
         skos:note              "accepted"@en ;
         skos:prefLabel         "Particle backscattering at 470 nanometers"@en ;
-        skos:related           <http://vocab.nerc.ac.uk/collection/P06/current/PMSR/> .
+        skos:related           <http://vocab.nerc.ac.uk/collection/P06/current/UMNX/> .
 
 <http://vocab.nerc.ac.uk/collection/R03/current/>
         rdf:type                skos:Collection ;
@@ -268,7 +268,7 @@
         dc:alternative          "PARAMETER" ;
         dc:creator              "Argo Data Management Team" ;
         dc:date                 "2021-02-02 02:00:02.0" ;
-        dc:description          "Terms describing individual measured phenomena, used to mark up sets of data in Argo NetCDF arrays" ;
+        dc:description          "Terms describing individual measured phenomena, used to mark up sets of data in Argo netCDF arrays. Argo netCDF variables PARAMETER and TRAJECTORY_PARAMETERS are populated by R03 altLabel; R03 altLabel is also used to name netCDF profile files parameter variables <PARAMETER>." ;
         dc:publisher            "Natural Environment Research Council" ;
         dc:title                "Argo parameter codes" ;
         grg:RE_RegisterManager  "British Oceanographic Data Centre" ;
@@ -555,7 +555,7 @@
         skos:notation          "SDN:R03::BBP532" ;
         skos:note              "accepted"@en ;
         skos:prefLabel         "Particle backscattering at 532 nanometers"@en ;
-        skos:related           <http://vocab.nerc.ac.uk/collection/P06/current/PMSR/> .
+        skos:related           <http://vocab.nerc.ac.uk/collection/P06/current/UMNX/> .
 
 <http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE555/>
         rdf:type               skos:Concept ;

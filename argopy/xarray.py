@@ -20,6 +20,8 @@ from argopy.utilities import (
     toYearFraction,
     groupby_remap,
     cast_Argo_variable_type,
+    DATA_TYPES,
+    # log_argopy_callerstack,
 )
 from argopy.errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
@@ -194,24 +196,24 @@ class ArgoAccessor:
         # this.argo._add_history("Modified with 'where' statement")
         return this
 
-    def cast_types(self):  # noqa: C901
+    def cast_types(self, **kwargs):  # noqa: C901
         """ Make sure variables are of the appropriate types according to Argo """
         ds = self._obj
-        return cast_Argo_variable_type(ds)
+        return cast_Argo_variable_type(ds, **kwargs)
 
     @property
     def _dummy_argo_uid(self):
         if self._type == "point":
             return xr.DataArray(
-                        self.uid(
-                            self._obj["PLATFORM_NUMBER"].values,
-                            self._obj["CYCLE_NUMBER"].values,
-                            self._obj["DIRECTION"].values,
-                        ),
-                        dims="N_POINTS",
-                        coords={"N_POINTS": self._obj["N_POINTS"]},
-                        name="dummy_argo_uid",
-                    )
+                                self.uid(
+                                        self._obj["PLATFORM_NUMBER"].values,
+                                        self._obj["CYCLE_NUMBER"].values,
+                                        self._obj["DIRECTION"].values,
+                                ),
+                                dims="N_POINTS",
+                                coords={"N_POINTS": self._obj["N_POINTS"]},
+                                name="dummy_argo_uid",
+            )
         else:
             raise InvalidDatasetStructure(
                 "Property only available for a collection of points"
@@ -273,6 +275,65 @@ class ArgoAccessor:
             cyc = -np.vectorize(int)(offset * wmo - np.abs(wmo_or_uid))
             return wmo, cyc, drc
 
+    @property
+    def index(self):
+        """Basic profile index"""
+        if self._type != "point":
+            raise InvalidDatasetStructure(
+                "Method only available for a collection of points"
+            )
+        this = self._obj
+        dummy_argo_uid = self._dummy_argo_uid
+
+        idx = xr.DataArray(
+            this["TIME"],
+            dims="N_POINTS",
+            coords={"N_POINTS": this["N_POINTS"]},
+        ).groupby(dummy_argo_uid).max().to_dataset()
+
+        for v in ["PLATFORM_NUMBER", "CYCLE_NUMBER", "LONGITUDE", "LATITUDE"]:
+            idx[v] = xr.DataArray(
+                this[v],
+                dims="N_POINTS",
+                coords={"N_POINTS": this["N_POINTS"]},
+            ).groupby(dummy_argo_uid).max()
+
+        df = idx.to_dataframe()
+        df = (
+            df.reset_index()
+            .rename(
+                columns={
+                    "PLATFORM_NUMBER": "wmo",
+                    "CYCLE_NUMBER": "cyc",
+                    "LONGITUDE": "longitude",
+                    "LATITUDE": "latitude",
+                    "TIME": "date",
+                }
+            )
+            .drop(columns="dummy_argo_uid")
+        )
+        df = df[["date", "latitude", "longitude", "wmo", "cyc"]]
+        return df
+
+    @property
+    def domain(self):
+        """Space/time domain of the dataset
+
+            This is different from a usual argopy ``box`` because dates are in :class:`numpy.datetime64` format.
+        """
+        this_ds = self._obj
+        if 'PRES_ADJUSTED' in this_ds.data_vars:
+            Pmin = np.nanmin((np.min(this_ds['PRES'].values), np.min(this_ds['PRES_ADJUSTED'].values)))
+            Pmax = np.nanmax((np.max(this_ds['PRES'].values), np.max(this_ds['PRES_ADJUSTED'].values)))
+        else:
+            Pmin = np.min(this_ds['PRES'].values)
+            Pmax = np.max(this_ds['PRES'].values)
+
+        return [np.min(this_ds['LONGITUDE'].values), np.max(this_ds['LONGITUDE'].values),
+                np.min(this_ds['LATITUDE'].values), np.max(this_ds['LATITUDE'].values),
+                Pmin, Pmax,
+                np.min(this_ds['TIME'].values), np.max(this_ds['TIME'].values)]
+
     def point2profile(self, drop: bool = False):  # noqa: C901
         """ Transform a collection of points into a collection of profiles
 
@@ -323,10 +384,10 @@ class ArgoAccessor:
             .max()
             .values
         )
-        log.debug("New dataset should be [N_PROF=%i, N_LEVELS=%i]" % (N_PROF, N_LEVELS))
+        log.debug("point2profile: New dataset should be [N_PROF=%i, N_LEVELS=%i]" % (N_PROF, N_LEVELS))
         assert N_PROF * N_LEVELS >= len(this["N_POINTS"])
         if N_LEVELS == 1:
-            log.debug("This dataset has a single vertical level, thus final variables will only have a N_PROF "
+            log.debug("point2profile: This dataset has a single vertical level, thus final variables will only have a N_PROF "
                       "dimension and no N_LEVELS")
 
         # Store the initial set of coordinates:
@@ -343,9 +404,9 @@ class ArgoAccessor:
             for iv, vname in enumerate(this.data_vars):
                 try:
                     count[i_prof, iv] = len(np.unique(prof[vname]))
-                except Exception as e:
-                    log.error("An error happened when dealing with the '%s' data variable" % vname)
-                    raise(e)
+                except Exception:
+                    log.error("point2profile: An error happened when dealing with the '%s' data variable" % vname)
+                    raise
 
         # Variables with a unique value for each profiles:
         list_1d = list(np.array(this.data_vars)[count.sum(axis=0) == count.shape[0]])
@@ -393,7 +454,7 @@ class ArgoAccessor:
                     y = new_ds[vname].values
                     x = prof[vname].values
                     try:
-                        y[i_prof, 0 : len(x)] = x
+                        y[i_prof, 0: len(x)] = x
                     except Exception:
                         print(vname, "input", x.shape, "output", y[i_prof, :].shape)
                         raise
@@ -920,7 +981,6 @@ class ArgoAccessor:
             this = this.argo.cast_types()
         return this
 
-
     def interp_std_levels(self,
                           std_lev: list or np.array,
                           axis: str = 'PRES'):
@@ -991,6 +1051,7 @@ class ArgoAccessor:
             if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
             and "QC" not in dv
             and "ERROR" not in dv
+            and "DATA_MODE" not in dv
         ]
         # coords
         coords = [dv for dv in list(this_dsp.coords)]
@@ -1012,7 +1073,14 @@ class ArgoAccessor:
                 z_dim="N_LEVELS",
                 z_regridded_dim="Z_LEVELS",
             )
+            ds_out[dv].attrs = this_dsp[dv].attrs  # Preserve attributes
+            if 'long_name' in ds_out[dv].attrs:
+                ds_out[dv].attrs['long_name'] = "Interpolated %s" % ds_out[dv].attrs['long_name']
+
         ds_out = ds_out.rename({"remapped": "%s_INTERPOLATED" % axis})
+        ds_out["%s_INTERPOLATED" % axis].attrs = this_dsp[axis].attrs
+        if "long_name" in ds_out["%s_INTERPOLATED" % axis].attrs:
+            ds_out["%s_INTERPOLATED" % axis].attrs['long_name'] = "Standard %s levels" % axis
 
         for sv in solovars:
             ds_out[sv] = this_dsp[sv]
@@ -1146,11 +1214,11 @@ class ArgoAccessor:
                     z[i] = y[i]
             return z
 
-        merged_is_nan = lambda l1, l2: len(
+        merged_is_nan = lambda l1, l2: len(  # noqa: E731
             np.unique(np.where(np.isnan(l1.values + l2.values)))
         ) == len(
             l1
-        )  # noqa: E731
+        )
 
         def merge_bin_matching_levels(this_ds: xr.Dataset) -> xr.Dataset:
             """ Levels merger of type 'bins' value
@@ -1246,6 +1314,7 @@ class ArgoAccessor:
                 dv
                 for dv in list(this_dsp.data_vars)
                 if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
+                and dv not in DATA_TYPES['data']['str']
             ]
         else:
             datavars = [
@@ -1254,6 +1323,7 @@ class ArgoAccessor:
                 if set(["N_LEVELS", "N_PROF"]) == set(this_dsp[dv].dims)
                 and "QC" not in dv
                 and "ERROR" not in dv
+                and dv not in DATA_TYPES['data']['str']
             ]
 
         # All other variables:
@@ -1930,6 +2000,13 @@ class ArgoAccessor:
             return list_1d
         else:
             return list_1d, dummy_argo_uid
+
+    def list_WMO_CYC(self):
+        """Given a dataset, return a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) tuple"""
+        profiles = []
+        for wmo, grp in self._obj.groupby('PLATFORM_NUMBER'):
+            [profiles.append((wmo, cyc)) for cyc in np.unique(grp['CYCLE_NUMBER'])]
+        return profiles
 
 
 def open_Argo_dataset(filename_or_obj):

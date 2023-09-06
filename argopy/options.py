@@ -46,6 +46,7 @@ OPTIONS = {
     USER: None,
     PASSWORD: None,
 }
+DEFAULT = OPTIONS.copy()
 
 # Define the list of possible values
 _DATA_SOURCE_LIST = frozenset(["erddap", "argovis", "gdac"])
@@ -79,14 +80,14 @@ _VALIDATORS = {
     FTP: validate_ftp,
     ERDDAP: validate_http,
     DATASET: _DATASET_LIST.__contains__,
-    CACHE_FOLDER: os.path.exists,
+    CACHE_FOLDER: lambda x: os.access(x, os.W_OK),
     CACHE_EXPIRATION: lambda x: isinstance(x, int) and x > 0,
     USER_LEVEL: _USER_LEVEL_LIST.__contains__,
     API_TIMEOUT: lambda x: isinstance(x, int) and x > 0,
     TRUST_ENV: lambda x: isinstance(x, bool),
     SERVER: lambda x: True,
-    USER: lambda x: isinstance(x, str),
-    PASSWORD: lambda x: isinstance(x, str),
+    USER: lambda x: isinstance(x, str) or x is None,
+    PASSWORD: lambda x: isinstance(x, str) or x is None,
 }
 
 
@@ -142,6 +143,8 @@ class set_options:
                     "argument name %r is not in the set of valid options %r"
                     % (k, set(OPTIONS))
                 )
+            if k == CACHE_FOLDER:
+                os.makedirs(v, exist_ok=True)
             if k in _VALIDATORS and not _VALIDATORS[k](v):
                 raise OptionValueError(f"option {k!r} given an invalid value: {v!r}")
             self.old[k] = OPTIONS[k]
@@ -155,6 +158,11 @@ class set_options:
 
     def __exit__(self, type, value, traceback):
         self._apply_update(self.old)
+
+
+def reset_options():
+    """Reset all options to default values"""
+    set_options(**DEFAULT)
 
 
 def check_erddap_path(path, errors='ignore'):

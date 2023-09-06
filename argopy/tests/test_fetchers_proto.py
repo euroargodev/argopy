@@ -1,9 +1,11 @@
 import pytest
 import xarray
 from argopy.data_fetchers.proto import ArgoDataFetcherProto
+from argopy.utilities import to_list
 
 
 class Fetcher(ArgoDataFetcherProto):
+    dataset_id = 'phy'
 
     def to_xarray(self, *args, **kwargs):
         super(Fetcher, self).to_xarray(*args, **kwargs)
@@ -32,16 +34,16 @@ def test_required_methods():
     with pytest.raises(NotImplementedError):
         f.filter_researchmode(xarray.Dataset)
 
-def test_dashboard():
+
+@pytest.mark.parametrize("profile", [[13857, None], [13857, 90]],
+                         indirect=False,
+                         ids=["%s" % p for p in [[13857, None], [13857, 90]]])
+def test_dashboard(profile):
 
     f = Fetcher()
-    f.WMO = [13857]
-    f.CYC = None
-    assert isinstance(f.dashboard(url_only=True), str)
-
-    f = Fetcher()
-    f.WMO = [13857]
-    f.CYC = [90]
+    f.WMO, f.CYC = profile
+    f.WMO = to_list(f.WMO)
+    f.CYC = to_list(f.CYC)
     assert isinstance(f.dashboard(url_only=True), str)
 
     with pytest.warns(UserWarning):

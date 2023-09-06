@@ -5,7 +5,7 @@
     "alternative" : "MEASUREMENT_CODE_ID",
     "creator" : "Argo Data Management Team",
     "date" : "2021-12-01 02:00:02.0",
-    "description" : "Measurement code IDs used in Argo trajectory NetCDF files",
+    "description" : "Measurement code IDs used in Argo Trajectory netCDF files. Argo netCDF variable MEASUREMENT_CODE is populated by R15 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo trajectory measurement code identifiers",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -4679,11 +4679,11 @@
     "publisher" : {
       "@id" : "http://purl.org/dc/terms/publisher"
     },
-    "RE_RegisterManager" : {
-      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
-    },
     "description" : {
       "@id" : "http://purl.org/dc/terms/description"
+    },
+    "RE_RegisterManager" : {
+      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
     },
     "RE_RegisterOwner" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"

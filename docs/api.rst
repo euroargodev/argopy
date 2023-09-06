@@ -188,6 +188,9 @@ Misc
    :toctree: generated/
    :template: autosummary/accessor_method.rst
 
+    Dataset.argo.index
+    Dataset.argo.domain
+    Dataset.argo.list_WMO_CYC
     Dataset.argo.uid
     Dataset.argo.cast_types
 
@@ -218,6 +221,9 @@ Function under the ``argopy.utilities`` submodule.
     urlhaskeyword
     isalive
     isAPIconnected
+
+    drop_variables_not_in_all_datasets
+    fill_variables_not_in_all_datasets
 
 Argopy helpers
 ==============

@@ -3,12 +3,18 @@ Argopy library
 """
 
 try:
-    import pkg_resources
-    __version__ = pkg_resources.get_distribution("argopy").version
+    from importlib.metadata import version as _version
+except ImportError:
+    # if the fallback library is missing, we are doomed.
+    from importlib_metadata import version as _version
+
+try:
+    __version__ = _version("argopy")
 except Exception:
-    # Local copy, not installed with setuptools, or setuptools is not available.
+    # Local copy or not installed with setuptools.
     # Disable minimum version checks on downstream libraries.
     __version__ = "999"
+
 
 # Loggers
 import logging
@@ -31,10 +37,13 @@ from .plot import dashboard, ArgoColors  # noqa: E402
 from .utilities import show_versions, show_options, clear_cache, lscache  # noqa: E402
 from .utilities import TopoFetcher, ArgoNVSReferenceTables, OceanOPSDeployments, ArgoDocs  # noqa: E402
 from .utilities import monitor_status as status  # noqa: E402
-from .options import set_options  # noqa: E402
+from .options import set_options, reset_options  # noqa: E402
 from .data_fetchers import CTDRefDataFetcher  # noqa: E402
 from .stores import ArgoIndex  # noqa: E402
 from .related import ArgoDOI  # noqa: E402
+from .utils import compute  # noqa: E402, F401
+
+
 #
 __all__ = (
     # Top-level classes:
@@ -44,6 +53,7 @@ __all__ = (
 
     # Utilities promoted to top-level functions:
     "set_options",
+    "reset_options",
     "show_versions",
     "show_options",
     "dashboard",

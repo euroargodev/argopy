@@ -7,6 +7,87 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+
+v0.1.14rc2 (27 Jul. 2023)
+-------------------------
+
+**Features and front-end API**
+
+- **argopy now support BGC dataset in `expert` user mode for the `erddap` data source**. The BGC-Argo content of synthetic multi-profile files is now available from the Ifremer erddap. Like for the core dataset, you can fetch data for a region, float(s) or profile(s). One novelty with regard to core, is that you can restrict data fetching to some parameters and furthermore impose no-NaNs on some of these parameters.
+Check out the new documentation page for :ref:`data-set`. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    import argopy
+    from argopy import DataFetcher
+
+    argopy.set_options(src='erddap', mode='expert')
+
+    DataFetcher(ds='bgc')  # All variables found in the access point will be returned
+    DataFetcher(ds='bgc', params='all')  # Default: All variables found in the access point will be returned
+    DataFetcher(ds='bgc', params='DOXY') # Only the DOXY variable will be returned
+    DataFetcher(ds='bgc', params=['DOXY', 'BBP700']) # Only DOXY and BBP700 will be returned
+
+    DataFetcher(ds='bgc', measured=None)  # Default: all params are allowed to have NaNs
+    DataFetcher(ds='bgc', measured='all')  # All params found in the access point cannot be NaNs
+    DataFetcher(ds='bgc', measured='DOXY') # Only DOXY cannot be NaNs
+    DataFetcher(ds='bgc', measured=['DOXY', 'BBP700']) # Only DOXY and BBP700 cannot be NaNs
+
+    DataFetcher(ds='bgc', params='all', measured=None)  # Return the largest possible dataset
+    DataFetcher(ds='bgc', params='all', measured='all')  # Return the smallest possible dataset
+    DataFetcher(ds='bgc', params='all', measured=['DOXY', 'BBP700'])  # Return all possible params for points where DOXY and BBP700 are not NaN
+
+
+- **New methods in the ArgoIndex for BGC**. The :class:`ArgoIndex` has now full support for the BGC profile index files, both bio and synthetic index. In particular it is possible to search for profiles with specific data modes on parameters. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import ArgoIndex
+
+    idx = ArgoIndex(index_file="bgc-b")  # Use keywords instead of exact file names: `core`, `bgc-b`, `bgc-s`
+    idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])  # Search for profiles with parameters
+    idx.search_parameter_data_mode({'TEMP': 'D'})  # Search for profiles with specific data modes
+    idx.search_parameter_data_mode({'BBP700': 'D'})
+    idx.search_parameter_data_mode({'DOXY': ['R', 'A']})
+    idx.search_parameter_data_mode({'DOXY': 'D', 'CDOM': 'D'}, logical='or')
+
+
+- **New xarray argo accessor features**. Easily retrieve an Argo sample index and domain extent with the ``index`` and ``domain`` properties. Get a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) with the ``list_WMO_CYC`` method. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+
+- **New search methods for Argo reference tables**. It is now possible to search for a string in tables title and/or description using the :meth:`utilities.ArgoNVSReferenceTables.search` method.
+
+.. code-block:: python
+
+    from argopy import ArgoNVSReferenceTables
+
+    id_list = ArgoNVSReferenceTables().search('sensor')
+
+- **Updated documentation**. In order to better introduce new features, we updated the documentation structure and content.
+
+**Internals**
+
+- New utility class :class:`utils.compute.MyThreadPoolExecutor` to handle parallelization with a multi-threading Pool that provide a notebook or terminal computation progress dashboard. This class is used by the httpstore open_mfdataset method for erddap requests.
+
+- New utilites to handle a collection of datasets: :func:`utilities.drop_variables_not_in_all_datasets` will drop variables that are not in all datasets (the lowest common denominator) and :func:`utilities.fill_variables_not_in_all_datasets` will add empty variables to dataset so that all the collection have the same data_vars and coords. These functions are used by stores to concat/merge a collection of datasets (chunks).
+
+- :func:`utilities.load_dict` now relies on :class:`ArgoNVSReferenceTables` instead of static pickle files.
+
+- :class:`argopy.ArgoColors` colormap for Argo Data-Mode has now a fourth value to account for a white space FillValue.
+
+- New quick and dirty plot method :func:`plot.plot.scatter_plot`
+
+- Refactor pickle files in argopy/assets as json files in argopy/static/assets
+
+- Refactor list of variables by data types used in :func:`utilities.cast_Argo_variable_type` into assets json files in argopy/static/assets
+
+- Change of behaviour: when setting the cachedir option, path it's not tested for existence but for being writable, and is created if doesn't exists (but seems to break CI upstream in Windows)
+
+- And misc. bug and warning fixes all over the code.
+
+**Breaking changes**
+
+- Some documentation pages may have moved to new urls.
+
 v0.1.14rc1 (31 May 2023)
 ------------------------
 
@@ -100,7 +181,6 @@ v0.1.14rc1 (31 May 2023)
 **Breaking changes**
 
 - The legacy index store is deprecated, now available in argopy.stores.argo_index_deprec.py only (:pr:`270`) by `G. Maze <http://www.github.com/gmaze>`_
-- The :meth:`ArgoNVSReferenceTables.all_tbl` and :meth:`ArgoNVSReferenceTables.all_tbl_name` methods are now properties, hence no longer callable.
 
 
 v0.1.13 (28 Mar. 2023)
@@ -234,7 +314,7 @@ We added the Ocean-OPS (former JCOMMOPS) dashboard for all floats and the Argo-B
     # or
     argopy.dashboard(5904797, 12, type='bgc')
 
-- **New utility function :class:`argopy.utilities.ArgoNVSReferenceTables` to retrieve Argo Reference Tables**. (:commit:`cc8fdbe132874b71b35203053626cc29ae7d19c4`) by `G. Maze <http://www.github.com/gmaze>`_.
+- **New utility :class:`argopy.utilities.ArgoNVSReferenceTables` to retrieve Argo Reference Tables**. (:commit:`cc8fdbe132874b71b35203053626cc29ae7d19c4`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 
@@ -375,7 +455,7 @@ v0.1.8 (2 Nov. 2021)
 
 **Features and front-end API**
 
-- Improve plotting functions. All functions are now available for both the index and data fetchers. See the :ref:`data_viz` page for more details. Reduced plotting dependencies to `Matplotlib <https://matplotlib.org/>`_ only. **Argopy** will use `Seaborn <seaborn.pydata.org/>`_ and/or `Cartopy <https://scitools.org.uk/cartopy>`_ if available. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Improve plotting functions. All functions are now available for both the index and data fetchers. See the :ref:`data-viz` page for more details. Reduced plotting dependencies to `Matplotlib <https://matplotlib.org/>`_ only. **Argopy** will use `Seaborn <seaborn.pydata.org/>`_ and/or `Cartopy <https://scitools.org.uk/cartopy>`_ if available. (:pr:`56`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. code-block:: python
 

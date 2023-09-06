@@ -70,6 +70,7 @@
     argopy.utilities.isAPIconnected
 
     argopy.utilities.ArgoNVSReferenceTables
+    argopy.utilities.ArgoNVSReferenceTables.search
     argopy.utilities.ArgoNVSReferenceTables.valid_ref
     argopy.utilities.ArgoNVSReferenceTables.all_tbl
     argopy.utilities.ArgoNVSReferenceTables.all_tbl_name
@@ -89,7 +90,7 @@
 
     argopy.utilities.list_standard_variables
     argopy.utilities.list_multiprofile_file_variables
-    argopy.utilities.check_localftp
+    argopy.utilities.load_dict
     argopy.utilities.format_oneline
     argopy.utilities.is_box
     argopy.utilities.is_indexbox
@@ -117,6 +118,12 @@
     argopy.utilities.ArgoDocs.open_pdf
     argopy.utilities.ArgoDocs.show
     argopy.utilities.ArgoDocs.js
+
+    argopy.utilities.drop_variables_not_in_all_datasets
+    argopy.utilities.fill_variables_not_in_all_datasets
+
+    argopy.utils.compute.MyThreadPoolExecutor
+
 
     argopy.plot
     argopy.plot.dashboard
@@ -185,6 +192,7 @@
     argopy.stores.argo_index_pa.indexstore_pyarrow.load
     argopy.stores.argo_index_pa.indexstore_pyarrow.read_wmo
     argopy.stores.argo_index_pa.indexstore_pyarrow.read_params
+    argopy.stores.argo_index_pa.indexstore_pyarrow.records_per_wmo
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_wmo
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_cyc
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_wmo_cyc
@@ -192,6 +200,7 @@
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_lat_lon
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_lat_lon_tim
     argopy.stores.argo_index_pa.indexstore_pyarrow.search_params
+    argopy.stores.argo_index_pa.indexstore_pyarrow.search_parameter_data_mode
     argopy.stores.argo_index_pa.indexstore_pyarrow.to_dataframe
     argopy.stores.argo_index_pa.indexstore_pyarrow.to_indexfile
 
@@ -199,6 +208,7 @@
     argopy.stores.argo_index_pd.indexstore_pandas.load
     argopy.stores.argo_index_pd.indexstore_pandas.read_wmo
     argopy.stores.argo_index_pd.indexstore_pandas.read_params
+    argopy.stores.argo_index_pd.indexstore_pandas.records_per_wmo
     argopy.stores.argo_index_pd.indexstore_pandas.search_wmo
     argopy.stores.argo_index_pd.indexstore_pandas.search_cyc
     argopy.stores.argo_index_pd.indexstore_pandas.search_wmo_cyc
@@ -206,6 +216,7 @@
     argopy.stores.argo_index_pd.indexstore_pandas.search_lat_lon
     argopy.stores.argo_index_pd.indexstore_pandas.search_lat_lon_tim
     argopy.stores.argo_index_pd.indexstore_pandas.search_params
+    argopy.stores.argo_index_pd.indexstore_pandas.search_parameter_data_mode
     argopy.stores.argo_index_pd.indexstore_pandas.to_dataframe
     argopy.stores.argo_index_pd.indexstore_pandas.to_indexfile
 
@@ -224,6 +235,7 @@
     argopy.ArgoIndex.search_lat_lon
     argopy.ArgoIndex.search_lat_lon_tim
     argopy.ArgoIndex.search_params
+    argopy.ArgoIndex.search_parameter_data_mode
     argopy.ArgoIndex.to_dataframe
     argopy.ArgoIndex.to_indexfile
 
@@ -238,6 +250,9 @@
     argopy.xarray.ArgoAccessor.filter_scalib_pres
     argopy.xarray.ArgoAccessor.filter_researchmode
     argopy.xarray.ArgoAccessor.cast_types
+    argopy.xarray.ArgoAccessor.index
+    argopy.xarray.ArgoAccessor.domain
+    argopy.xarray.ArgoAccessor.list_WMO_CYC
 
     argopy.xarray.ArgoEngine
 

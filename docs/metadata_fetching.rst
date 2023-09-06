@@ -60,7 +60,48 @@ The IndexFetcher shown above is a user-friendly layer on top of our internal Arg
 
 If Pyarrow is installed, this store will rely on :class:`pyarrow.Table` as internal storage format for the index, otherwise it will fall back on :class:`pandas.DataFrame`. Loading the full Argo profile index takes about 2/3 secs with Pyarrow, while it can take up to 6/7 secs with Pandas.
 
-All index store methods and properties are fully documented in :class:`ArgoIndex`.
+All index store methods and properties are documented in :class:`ArgoIndex`.
+
+Index file supported
+""""""""""""""""""""
+
+The table below summarize the **argopy** support status of all Argo index files:
+
+.. list-table:: **argopy** GDAC index file support status
+    :header-rows: 1
+    :stub-columns: 1
+
+    * -
+      - Index file
+      - Supported
+    * - Profile
+      - ar_index_global_prof.txt
+      - ✅
+    * - Synthetic-Profile
+      - argo_synthetic-profile_index.txt
+      - ✅
+    * - Bio-Profile
+      - argo_bio-profile_index.txt
+      - ✅
+    * - Trajectory
+      - ar_index_global_traj.txt
+      - ❌
+    * - Bio-Trajectory
+      - argo_bio-traj_index.txt
+      - ❌
+    * - Metadata
+      - ar_index_global_meta.txt
+      - ❌
+    * - Technical
+      - ar_index_global_tech.txt
+      - ❌
+    * - Greylist
+      - ar_greylist.txt
+      - ❌
+
+Index files support can be added on demand. `Click here to raise an issue if you'd like to access other index files <https://github.com/euroargodev/argopy/issues/new>`_.
+
+.. _metadata-index:
 
 Usage
 """""
@@ -75,8 +116,9 @@ You create an index store with default or custom options:
     idx = ArgoIndex()
     # or:
     # ArgoIndex(index_file="argo_bio-profile_index.txt")
+    # ArgoIndex(index_file="bgc-s")  # can use keyword instead of file name: core, bgc-b, bgc-b
     # ArgoIndex(host="ftp://ftp.ifremer.fr/ifremer/argo")
-    # ArgoIndex(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt")
+    # ArgoIndex(host="https://data-argo.ifremer.fr", index_file="core")
     # ArgoIndex(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt", cache=True)
 
 You can then trigger loading of the index content:
@@ -115,7 +157,8 @@ Here the list of all methods to **search** the index:
     idx.search_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only time is used
     idx.search_lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only lat/lon is used
     idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
-
+    idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])  # Only for BGC profile index
+    idx.search_parameter_data_mode({'BBP700': 'D'})  # Only for BGC profile index
 
 And finally the list of methods and properties for **search results**:
 
@@ -129,69 +172,113 @@ And finally the list of methods and properties for **search results**:
     idx.uri  # List of absolute path to files from the search results table column 'file'
 
 
+.. _metadata-index-bgc:
+
+Usage with 🟢 **bgc** index
+"""""""""""""""""""""""""""
+
+The **argopy** index store supports the Bio and Synthetic Profile directory files:
+
+.. ipython:: python
+    :okwarning:
+
+    idx = ArgoIndex(index_file="argo_bio-profile_index.txt").load()
+    # idx = ArgoIndex(index_file="argo_synthetic-profile_index.txt").load()
+    idx
+
 .. hint::
 
-    The **argopy** index store supports the Bio and Synthetic Profile directory files:
+    In order to load one BGC-Argo profile index, you can use either ``bgc-b`` or ``bgc-s`` keywords to load the ``argo_bio-profile_index.txt`` or ``argo_synthetic-profile_index.txt`` index files.
 
-    .. ipython:: python
-        :okwarning:
+All methods presented :ref:`above <metadata-index>` are valid with BGC index, but a BGC index store comes with additional search possibilities for parameters and parameter data modes.
 
-        idx = ArgoIndex(index_file="argo_bio-profile_index.txt").load()
-        # idx = ArgoIndex(index_file="argo_synthetic-profile_index.txt").load()
-        idx
+Two specific index variables are only available with BGC-Argo index files: ``PARAMETERS`` and ``PARAMETER_DATA_MODE``. We thus implemented the :meth:`ArgoIndex.search_params` and :meth:`ArgoIndex.search_parameter_data_mode` methods. These method allow to search for (i) profiles with one or more specific parameters and (ii) profiles with parameters in one or more specific data modes.
 
-    This BGC index store comes with an additional search possibility for parameters:
+.. dropdown:: Syntax for  :meth:`ArgoIndex.search_params`
+    :icon: code
+    :color: light
+    :open:
 
-    .. ipython:: python
-        :okwarning:
+    .. tab-set::
 
-        idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
+        .. tab-item:: 1. Load a BGC index
 
-    .. ipython:: python
-        :okwarning:
+            .. ipython:: python
+                :okwarning:
 
-        idx.to_dataframe()
+                from argopy import ArgoIndex
+                idx = ArgoIndex(index_file='bgc-s').load()
+                idx
+
+        .. tab-item:: 2. Search for BGC parameters
+
+            You can search for one parameter:
+
+            .. ipython:: python
+                :okwarning:
+
+                idx.search_params('DOXY')
+
+            Or you can search for several parameters:
+
+            .. ipython:: python
+                :okwarning:
+
+                idx.search_params(['DOXY', 'CDOM'])
+
+            Note that a multiple parameters search will return profiles with *all* parameters. To search for profiles with *any* of the parameters, use:
+
+            .. ipython:: python
+                :okwarning:
+
+                idx.search_params(['DOXY', 'CDOM'], logical='or')
 
 
-Index file supported
-""""""""""""""""""""
+.. dropdown:: Syntax for  :meth:`ArgoIndex.search_parameter_data_mode`
+    :icon: code
+    :color: light
+    :open:
 
-The table below summarize the **argopy** support status of all Argo index files:
+    .. tab-set::
 
-.. list-table:: **argopy** GDAC index file support status
-    :header-rows: 1
-    :stub-columns: 1
+        .. tab-item:: 1. Load a BGC index
 
-    * -
-      - Index file
-      - Supported
-    * - Profile
-      - ar_index_global_prof.txt
-      - ✅
-    * - Synthetic-Profile
-      - argo_synthetic-profile_index.txt
-      - ✅
-    * - Bio-Profile
-      - argo_bio-profile_index.txt
-      - ✅
-    * - Trajectory
-      - ar_index_global_traj.txt
-      - 🔜
-    * - Bio-Trajectory
-      - argo_bio-traj_index.txt
-      - 🔜
-    * - Metadata
-      - ar_index_global_meta.txt
-      - ❌
-    * - Technical
-      - ar_index_global_tech.txt
-      - ❌
-    * - Greylist
-      - ar_greylist.txt
-      - ❌
+            .. ipython:: python
+                :okwarning:
 
-Index files support can be added on demand. `Click here to raise an issue if you'd like to access other index files <https://github.com/euroargodev/argopy/issues/new>`_.
+                from argopy import ArgoIndex
+                idx = ArgoIndex(index_file='bgc-b').load()
+                idx
 
+        .. tab-item:: 2. Search for BGC parameter data mode
+
+            You can search one mode for a single parameter:
+
+            .. ipython:: python
+                :okwarning:
+
+                idx.search_parameter_data_mode({'BBP700': 'D'})
+
+            You can search several modes for a single parameter:
+
+            .. ipython:: python
+                :okwarning:
+
+                idx.search_parameter_data_mode({'DOXY': ['R', 'A']})
+
+            You can search several modes for several parameters:
+
+            .. ipython:: python
+                :okwarning:
+
+                idx.search_parameter_data_mode({'BBP700': 'D', 'DOXY': 'D'}, logical='and')
+
+            And mix all of these as you wish:
+
+            .. ipython:: python
+                :okwarning:
+
+                idx.search_parameter_data_mode({'BBP700': ['R', 'A'], 'DOXY': 'D'}, logical='or')
 
 Reference tables
 ----------------
@@ -222,7 +309,20 @@ The reference table is returned as a :class:`pandas.DataFrame`. If you want the 
 
     NVS.tbl_name('R01')
 
-If you're looking the ID to use for a specific reference table, you can check it from the list of all available tables given by the :meth:`ArgoNVSReferenceTables.all_tbl_name` property. It will return a dictionary with table IDs as key and table name, definition and NVS link as values. Use the :meth:`ArgoNVSReferenceTables.all_tbl` property to retrieve all tables.
+**If you don't know the reference table ID**, you can search for a word in tables title and/or description with the ``search`` method:
+
+.. ipython:: python
+
+    id_list = NVS.search('sensor')
+
+This will return the list of reference table ids matching your search. It can then be used to retrieve table information:
+
+.. ipython:: python
+
+    [NVS.tbl_name(id) for id in id_list]
+
+
+The full list of all available tables is given by the :meth:`ArgoNVSReferenceTables.all_tbl_name` property. It will return a dictionary with table IDs as key and table name, definition and NVS link as values. Use the :meth:`ArgoNVSReferenceTables.all_tbl` property to retrieve all tables.
 
 .. ipython:: python
 

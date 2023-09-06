@@ -14,5 +14,6 @@ logging.getLogger("pyftpdlib").setLevel(logging.ERROR)
 # log = logging.getLogger("argopy.tests")
 
 argopy.set_options(api_timeout=2 * 60)  # From Github actions, requests can take a while
+# argopy.set_options(api_timeout=30)
 argopy.show_options()
 argopy.show_versions()

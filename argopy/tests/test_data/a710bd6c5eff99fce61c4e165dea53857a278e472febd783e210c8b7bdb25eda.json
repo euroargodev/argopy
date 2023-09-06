@@ -5,7 +5,7 @@
     "alternative" : "DATA_TYPE",
     "creator" : "Argo Data Management Team",
     "date" : "2020-04-05 03:00:03.0",
-    "description" : "Terms describing the type of data contained in an Argo netCDF file.",
+    "description" : "Terms describing the type of data contained in an Argo netCDF file. Argo netCDF variable DATA_TYPE is populated by R01 prefLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo data type",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -306,24 +306,24 @@
       "@id" : "http://www.w3.org/2004/02/skos/core#member",
       "@type" : "@id"
     },
-    "alternative" : {
-      "@id" : "http://purl.org/dc/terms/alternative"
-    },
     "seeAlso" : {
       "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",
       "@type" : "@id"
     },
-    "title" : {
-      "@id" : "http://purl.org/dc/terms/title"
+    "alternative" : {
+      "@id" : "http://purl.org/dc/terms/alternative"
     },
     "RE_RegisterOwner" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"
     },
-    "RE_RegisterManager" : {
-      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
+    "title" : {
+      "@id" : "http://purl.org/dc/terms/title"
     },
     "description" : {
       "@id" : "http://purl.org/dc/terms/description"
+    },
+    "RE_RegisterManager" : {
+      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
     },
     "comment" : {
       "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"

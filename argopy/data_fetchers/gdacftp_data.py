@@ -329,9 +329,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
             preprocess=self._preprocess_multiprof,
             progress=self.progress,
             errors=errors,
-            decode_cf=1,
-            use_cftime=0,
-            mask_and_scale=1,
+            open_dataset_opts={'xr_opts': {'decode_cf': 1, 'use_cftime': 0, 'mask_and_scale': 1}},
         )
 
         # Data post-processing:

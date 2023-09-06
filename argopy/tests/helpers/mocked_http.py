@@ -51,8 +51,8 @@ DB_FILE = os.path.join(DATA_FOLDER, "mocked_file_index.pkl")
 if os.path.exists(DB_FILE):
     with open(DB_FILE, "rb") as f:
         URI = pickle.load(f)
-    for ressource in URI:
-        test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (ressource['sha'], ressource['ext']))
+    for resource in URI:
+        test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (resource['sha'], resource['ext']))
         with open(test_data_file, mode='rb') as file:
             data = file.read()
 
@@ -71,8 +71,8 @@ if os.path.exists(DB_FILE):
                 "https://archimer.ifremer.fr",
         ]
         for pattern in patterns:
-            if start_with(ressource['uri'], pattern):
-                MOCKED_REQUESTS[ressource['uri'].replace(pattern, "")] = data
+            if start_with(resource['uri'], pattern):
+                MOCKED_REQUESTS[resource['uri'].replace(pattern, "")] = data
 
 else:
     log.debug("Loading this sub-module without DB_FILE ! %s" % DB_FILE)

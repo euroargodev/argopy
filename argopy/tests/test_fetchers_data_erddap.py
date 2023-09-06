@@ -1,6 +1,4 @@
 import logging
-import numpy as np
-import pandas as pd
 
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.utilities import is_list_of_strings
@@ -10,8 +8,10 @@ import xarray as xr
 from utils import (
     requires_erddap,
 )
+
 from mocked_http import mocked_server_address
 from mocked_http import mocked_httpserver as mocked_erddapserver
+
 import tempfile
 import shutil
 from collections import ChainMap
@@ -19,9 +19,10 @@ from collections import ChainMap
 
 log = logging.getLogger("argopy.tests.data.erddap")
 
+USE_MOCKED_SERVER = True
 
 """
-List access points to be tested for each datasets: phy, bgc and ref.
+List access points to be tested for each datasets: phy and ref.
 For each access points, we list 1-to-2 scenario to make sure all possibilities are tested
 """
 ACCESS_POINTS = [
@@ -32,14 +33,6 @@ ACCESS_POINTS = [
             {"profile": [6902746, [1, 12]]},
             {"region": [-20, -16., 0, 1, 0, 100.]},
             {"region": [-20, -16., 0, 1, 0, 100., "2004-01-01", "2004-01-31"]},
-    ]},
-    {"bgc": [
-        {"float": 5903248},
-        {"float": [7900596, 2902264]},
-        {"profile": [5903248, 34]},
-        {"profile": [5903248, np.arange(12, 14)]},
-        {"region": [-70, -65, 35.0, 40.0, 0, 10.0]},
-        {"region": [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01-1", "2012-12-31"]},
     ]},
     {"ref": [
         {"region": [-70, -65, 35.0, 40.0, 0, 10.0]},
@@ -106,7 +99,8 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
     """
     def assert_all(this_fetcher, cacheable):
         # We use the facade to test 'to_xarray' in order to make sure to test all filters required by user mode
-        assert isinstance(this_fetcher.to_xarray(errors='raise'), xr.Dataset)
+        ds = this_fetcher.to_xarray(errors='raise')
+        assert isinstance(ds, xr.Dataset)
         #
         core = this_fetcher.fetcher
         assert is_list_of_strings(core.uri)
@@ -114,14 +108,25 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
         if cacheable:
             assert is_list_of_strings(core.cachepath)
 
+        log.debug("In assert, this fetcher is in '%s' user mode" % this_fetcher._mode)
+        if this_fetcher._dataset_id not in ['ref']:
+            if this_fetcher._mode == 'expert':
+                assert 'PRES_ADJUSTED' in ds
+
+            elif this_fetcher._mode == 'standard':
+                assert 'PRES_ADJUSTED' not in ds
+
+            elif this_fetcher._mode == 'research':
+                assert 'PRES_ADJUSTED' not in ds
+                assert 'PRES_QC' not in ds
+        else:
+            assert 'PTMP' in ds
+
     try:
         assert_all(this_fetcher, cacheable)
     except:
-        if this_fetcher.fetcher.dataset_id == 'bgc':
-            pytest.xfail("BGC is not yet fully supported")
-        else:
-            raise
-            assert False
+        raise
+        assert False
 
 
 @requires_erddap
@@ -141,16 +146,18 @@ class Test_Backend:
     def _setup_fetcher(self, this_request, cached=False, parallel=False):
         """Helper method to set up options for a fetcher creation"""
         defaults_args = {"src": self.src,
-                         "server": mocked_server_address,
                          "cache": cached,
                          "cachedir": self.cachedir,
                          "parallel": parallel,
                          }
+        if USE_MOCKED_SERVER:
+            defaults_args['server'] = mocked_server_address
 
         dataset = this_request.param['ds']
+        user_mode = this_request.param['mode']
         access_point = this_request.param['access_point']
 
-        fetcher_args = ChainMap(defaults_args, {"ds": dataset})
+        fetcher_args = ChainMap(defaults_args, {"ds": dataset, 'mode': user_mode})
         if not cached:
             # cache is False by default, so we don't need to clutter the arguments list
             del fetcher_args["cache"]
@@ -177,7 +184,7 @@ class Test_Backend:
 
     @pytest.fixture
     def parallel_fetcher(self, request):
-        """ Fixture to create a ERDDAP data fetcher for a given dataset and access point """
+        """ Fixture to create a parallel ERDDAP data fetcher for a given dataset and access point """
         fetcher_args, access_point = self._setup_fetcher(request, parallel="thread")
         yield create_fetcher(fetcher_args, access_point)
 
