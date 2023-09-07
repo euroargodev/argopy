@@ -21,11 +21,13 @@ from .errors import InvalidFetcherAccessPoint, InvalidFetcher, OptionValueError
 from .utilities import (
     list_available_data_src,
     list_available_index_src,
+    get_coriolis_profile_id,
+)
+from .utils import (
     is_box,
     is_indexbox,
     check_wmo,
     check_cyc,
-    get_coriolis_profile_id,
 )
 from .plot import plot_trajectory, bar_plot, open_sat_altim_report
 
