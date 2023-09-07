@@ -40,7 +40,8 @@ from .options import set_options, reset_options  # noqa: E402
 from .data_fetchers import CTDRefDataFetcher  # noqa: E402
 from .stores import ArgoIndex  # noqa: E402
 from .utils import monitored_threadpool  # noqa: E402, F401
-from .related import TopoFetcher, OceanOPSDeployments, ArgoNVSReferenceTables, ArgoDocs  # noqa: E402
+from .related import TopoFetcher, OceanOPSDeployments, ArgoNVSReferenceTables, ArgoDocs, ArgoDOI  # noqa: E402
+
 
 #
 __all__ = (
@@ -66,6 +67,7 @@ __all__ = (
     "ArgoIndex",  # Class
     "ArgoDocs",  # Class
     "TopoFetcher",  # Class
+    "ArgoDOI",  # Class
 
     # Submodules:
     "utilities",
