@@ -39,7 +39,7 @@ from .utilities import monitor_status as status  # noqa: E402
 from .options import set_options, reset_options  # noqa: E402
 from .data_fetchers import CTDRefDataFetcher  # noqa: E402
 from .stores import ArgoIndex  # noqa: E402
-from .utils import monitored_threadpool  # noqa: E402, F401
+from .utils import MonitoredThreadPoolExecutor  # noqa: E402, F401
 from .related import TopoFetcher, OceanOPSDeployments, ArgoNVSReferenceTables, ArgoDocs, ArgoDOI  # noqa: E402
 
 

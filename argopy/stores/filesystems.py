@@ -54,7 +54,7 @@ from ..utilities import (
     drop_variables_not_in_all_datasets,
     fill_variables_not_in_all_datasets,
 )
-from ..utils import MyThreadPoolExecutor as MyExecutor
+from ..utils import MonitoredThreadPoolExecutor as MyExecutor
 
 
 log = logging.getLogger("argopy.stores")

@@ -1,7 +1,7 @@
-from .monitored_threadpool import MyThreadPoolExecutor
+from .monitored_threadpool import MyThreadPoolExecutor as MonitoredThreadPoolExecutor
 
 
 __all__ = (
     # Classes:
-    "MyThreadPoolExecutor",
+    "MonitoredThreadPoolExecutor",
 )
