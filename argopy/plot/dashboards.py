@@ -11,7 +11,8 @@ import warnings
 from packaging import version
 
 from .utils import has_ipython
-from ..utilities import warnUnless, check_wmo, check_cyc, get_ea_profile_page
+from ..utilities import warnUnless, get_ea_profile_page
+from ..utils import check_wmo, check_cyc
 from ..errors import InvalidDashboard
 from .. import __version__ as argopy_version
 

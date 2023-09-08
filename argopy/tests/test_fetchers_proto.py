@@ -1,7 +1,7 @@
 import pytest
 import xarray
 from argopy.data_fetchers.proto import ArgoDataFetcherProto
-from argopy.utilities import to_list
+from argopy.utils import to_list
 
 
 class Fetcher(ArgoDataFetcherProto):

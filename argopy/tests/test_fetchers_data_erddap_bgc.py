@@ -2,7 +2,7 @@ import logging
 import numpy as np
 
 from argopy import DataFetcher as ArgoDataFetcher
-from argopy.utilities import is_list_of_strings
+from argopy.utils import is_list_of_strings
 from argopy.stores import indexstore_pd as ArgoIndex  # make sure to work with the Pandas index store with erddap-bgc
 
 import pytest

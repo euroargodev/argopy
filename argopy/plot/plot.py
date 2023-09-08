@@ -18,7 +18,8 @@ from .utils import STYLE, has_seaborn, has_mpl, has_cartopy, has_ipython, has_ip
 from .utils import axes_style, latlongrid, land_feature
 from .argo_colors import ArgoColors
 
-from ..utilities import warnUnless, check_wmo
+from ..utilities import warnUnless
+from ..utils import check_wmo
 from ..errors import InvalidDatasetStructure
 
 if has_mpl:

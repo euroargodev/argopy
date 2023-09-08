@@ -12,7 +12,7 @@ import gzip
 from packaging import version
 
 from ..errors import DataNotFound, InvalidDatasetStructure
-from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, to_list
+from ..utils import check_index_cols, is_indexbox, check_wmo, check_cyc, to_list
 from .argo_index_proto import ArgoIndexStoreProto
 try:
     import pyarrow.csv as csv  # noqa: F401

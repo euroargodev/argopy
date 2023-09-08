@@ -2,8 +2,11 @@ import warnings
 import numpy as np
 import pandas as pd
 import xarray as xr
-from ..utilities import to_list
-from ..errors import InvalidDatasetStructure
+from fsspec.core import split_protocol
+import fsspec
+from socket import gaierror
+from ..utils import to_list
+from ..errors import InvalidDatasetStructure, FtpPathError
 
 
 def is_indexbox(box: list, errors="raise"):
@@ -375,3 +378,93 @@ def check_index_cols(column_names: list, convention: str = 'ar_index_global_prof
         raise InvalidDatasetStructure("Unexpected column names in this index !")
     else:
         return column_names
+
+
+def check_gdac_path(path, errors='ignore'):  # noqa: C901
+    """ Check if a path has the expected GDAC ftp structure
+
+        Expected GDAC ftp structure::
+
+            .
+            └── dac
+                ├── aoml
+                ├── ...
+                ├── coriolis
+                ├── ...
+                ├── meds
+                └── nmdis
+
+        This check will return True if at least one DAC sub-folder is found under path/dac/<dac_name>
+
+        Examples::
+        >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
+        >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
+        >>> check_gdac_path("ftp://usgodae.org/pub/outgoing/argo") # True
+        >>> check_gdac_path("/home/ref-argo/gdac") # True
+        >>> check_gdac_path("https://www.ifremer.fr") # False
+        >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
+
+        Parameters
+        ----------
+        path: str
+            Path name to check, including access protocol
+        errors: str
+            "ignore" or "raise" (or "warn")
+
+        Returns
+        -------
+        checked: boolean
+            True if at least one DAC folder is found under path/dac/<dac_name>
+            False otherwise
+    """
+    # Create a file system for this path
+    if split_protocol(path)[0] is None:
+        fs = fsspec.filesystem('file')
+    elif 'https' in split_protocol(path)[0]:
+        fs = fsspec.filesystem('http')
+    elif 'ftp' in split_protocol(path)[0]:
+        try:
+            host = split_protocol(path)[-1].split('/')[0]
+            fs = fsspec.filesystem('ftp', host=host)
+        except gaierror:
+            if errors == 'raise':
+                raise FtpPathError("Can't get address info (GAIerror) on '%s'" % host)
+            elif errors == "warn":
+                warnings.warn("Can't get address info (GAIerror) on '%s'" % host)
+                return False
+            else:
+                return False
+    else:
+        raise FtpPathError("Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0])
+
+    # dacs = [
+    #     "aoml",
+    #     "bodc",
+    #     "coriolis",
+    #     "csio",
+    #     "csiro",
+    #     "incois",
+    #     "jma",
+    #     "kma",
+    #     "kordi",
+    #     "meds",
+    #     "nmdis",
+    # ]
+
+    # Case 1:
+    check1 = (
+        fs.exists(path)
+        and fs.exists(fs.sep.join([path, "dac"]))
+        # and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
+    )
+    if check1:
+        return True
+    elif errors == "raise":
+        raise FtpPathError("This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s" % path)
+
+    elif errors == "warn":
+        warnings.warn("This path is not GDAC compliant:\n%s" % path)
+        return False
+    else:
+        return False
+
