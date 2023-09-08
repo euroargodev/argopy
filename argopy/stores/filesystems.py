@@ -49,12 +49,11 @@ from ..errors import (
 )
 from abc import ABC, abstractmethod
 from ..utilities import (
-    Registry,
-    #    log_argopy_callerstack,
     drop_variables_not_in_all_datasets,
     fill_variables_not_in_all_datasets,
 )
 from ..utils import MonitoredThreadPoolExecutor as MyExecutor
+from ..utils import Registry
 
 
 log = logging.getLogger("argopy.stores")

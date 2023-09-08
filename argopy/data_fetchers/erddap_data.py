@@ -24,13 +24,14 @@ import fnmatch
 from aiohttp import ClientResponseError
 import logging
 
-from .proto import ArgoDataFetcherProto
 from ..options import OPTIONS
-from ..utilities import Chunker, format_oneline
+from ..utilities import format_oneline
 from ..stores import httpstore
 from ..errors import ErddapServerError, DataNotFound
 from ..stores import indexstore_pd as ArgoIndex  # make sure we work with the Pandas index store
-from ..utils import is_list_of_strings, to_list
+from ..utils import is_list_of_strings, to_list,Chunker
+from .proto import ArgoDataFetcherProto
+
 
 # Load erddapy according to available version (breaking changes in v0.8.0)
 try:

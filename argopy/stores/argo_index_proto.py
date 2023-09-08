@@ -13,7 +13,7 @@ from typing import Union
 
 from ..options import OPTIONS
 from ..errors import FtpPathError, InvalidDataset, OptionValueError
-from ..utilities import Registry, isconnected
+from ..utils import Registry, isconnected
 from .filesystems import httpstore, memorystore, filestore, ftpstore
 
 try:

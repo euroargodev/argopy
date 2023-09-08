@@ -5,7 +5,7 @@ import xarray
 import hashlib
 import warnings
 from ..plot import dashboard
-from ..utilities import list_standard_variables
+from ..utils import list_standard_variables
 
 
 class ArgoDataFetcherProto(ABC):

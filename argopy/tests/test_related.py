@@ -14,12 +14,14 @@ from utils import (
     has_cartopy,
     has_ipython,
 )
+import argopy
 from argopy.related import (
     TopoFetcher,
     ArgoNVSReferenceTables,
     OceanOPSDeployments,
     ArgoDocs,
-    load_dict, mapp_dict
+    load_dict, mapp_dict,
+    get_coriolis_profile_id, get_ea_profile_page
 )
 from argopy.utils.checkers import (
     is_list_of_strings,
@@ -304,7 +306,6 @@ class Test_ArgoDocs:
                 an_instance.show()
 
 
-
 def test_invalid_dictionnary():
     with pytest.raises(ValueError):
         load_dict("invalid_dictionnary")
@@ -314,3 +315,13 @@ def test_invalid_dictionnary_key():
     d = load_dict("profilers")
     assert mapp_dict(d, "invalid_key") == "Unknown"
 
+
+@pytest.mark.parametrize("params", [[6901929, None], [6901929, 12]], indirect=False, ids=['float', 'profile'])
+def test_get_coriolis_profile_id(params, mocked_httpserver):
+    with argopy.set_options(cachedir=tempfile.mkdtemp()):
+        assert isinstance(get_coriolis_profile_id(params[0], params[1], api_server=mocked_server_address), pd.core.frame.DataFrame)
+
+@pytest.mark.parametrize("params", [[6901929, None], [6901929, 12]], indirect=False, ids=['float', 'profile'])
+def test_get_ea_profile_page(params, mocked_httpserver):
+    with argopy.set_options(cachedir=tempfile.mkdtemp()):
+        assert is_list_of_strings(get_ea_profile_page(params[0], params[1], api_server=mocked_server_address))

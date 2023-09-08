@@ -1,4 +1,3 @@
-from .monitored_threadpool import MyThreadPoolExecutor as MonitoredThreadPoolExecutor
 from .checkers import (
     is_box, is_indexbox,
     is_list_of_strings, is_list_of_dicts, is_list_of_datasets, is_list_equal,
@@ -17,13 +16,13 @@ from .lists import (
     list_standard_variables,
     list_multiprofile_file_variables
 )
-
+from .caching import clear_cache, lscache
+from .monitored_threadpool import MyThreadPoolExecutor as MonitoredThreadPoolExecutor
+from .chunking import Chunker
+from .accessories import Registry, float_wmo
 
 
 __all__ = (
-    # Classes:
-    "MonitoredThreadPoolExecutor",
-
     # Checkers:
     "is_box", "is_indexbox",
     "is_list_of_strings", "is_list_of_dicts", "is_list_of_datasets", "is_list_equal",
@@ -47,4 +46,14 @@ __all__ = (
     "list_available_index_src",
     "list_standard_variables",
     "list_multiprofile_file_variables",
+
+    # Cache management:
+    "clear_cache", "lscache",
+
+    # Computation and performances:
+    "MonitoredThreadPoolExecutor",
+    "Chunker",
+
+    # Accessories classes (specific objects):
+    "Registry", "float_wmo"
 )

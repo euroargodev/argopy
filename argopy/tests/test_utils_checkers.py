@@ -1,7 +1,9 @@
 import pytest
 import numpy as np
 from mocked_http import mocked_httpserver, mocked_server_address
-
+from utils import (
+    requires_erddap,
+)
 import argopy
 from argopy.errors import FtpPathError
 from argopy.utils.checkers import (
@@ -222,5 +224,3 @@ def test_erddap_ds_exists(mocked_httpserver):
     with argopy.set_options(erddap=mocked_server_address):
         assert isinstance(erddap_ds_exists(ds="ArgoFloats"), bool)
         assert erddap_ds_exists(ds="DummyDS") is False
-
-# todo : Implement tests for utilities functions: badge, fetch_status and monitor_status

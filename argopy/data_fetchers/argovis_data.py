@@ -9,14 +9,15 @@ import pandas as pd
 import xarray as xr
 import getpass
 import logging
-from .proto import ArgoDataFetcherProto
 from abc import abstractmethod
 import warnings
 
-from argopy.stores import httpstore
-from argopy.options import OPTIONS
-from argopy.utilities import format_oneline, Chunker
-from argopy.errors import DataNotFound
+from ..stores import httpstore
+from ..options import OPTIONS
+from ..utilities import format_oneline
+from ..utils import Chunker
+from ..errors import DataNotFound
+from .proto import ArgoDataFetcherProto
 
 
 access_points = ["wmo", "box"]
