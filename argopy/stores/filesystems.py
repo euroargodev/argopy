@@ -48,7 +48,7 @@ from ..errors import (
     ErddapHTTPNotFound,
 )
 from abc import ABC, abstractmethod
-from ..utilities import (
+from ..utils import (
     drop_variables_not_in_all_datasets,
     fill_variables_not_in_all_datasets,
 )

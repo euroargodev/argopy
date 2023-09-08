@@ -14,18 +14,13 @@ try:
 except ModuleNotFoundError:
     with_gsw = False
 
-from .utilities import (
-    linear_interpolation_remap,
-    toYearFraction,
-    groupby_remap,
-    # log_argopy_callerstack,
-)
-
 from .utils import (
     is_list_of_strings,
-    # is_list_equal,
     cast_Argo_variable_type,
     DATA_TYPES,
+    linear_interpolation_remap,
+    groupby_remap,
+    toYearFraction,
 )
 from .errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 

@@ -20,6 +20,12 @@ from .caching import clear_cache, lscache
 from .monitored_threadpool import MyThreadPoolExecutor as MonitoredThreadPoolExecutor
 from .chunking import Chunker
 from .accessories import Registry, float_wmo
+from .locals import show_versions, show_options, modified_environ
+from .monitors import monitor_status
+from .geo import wmo2box, wrap_longitude, toYearFraction, YearFraction_to_datetime
+from .compute import linear_interpolation_remap, groupby_remap
+from .manip import fill_variables_not_in_all_datasets, drop_variables_not_in_all_datasets
+from .format import argo_split_path, format_oneline
 
 
 __all__ = (
@@ -55,5 +61,31 @@ __all__ = (
     "Chunker",
 
     # Accessories classes (specific objects):
-    "Registry", "float_wmo"
+    "Registry", "float_wmo",
+
+    # Locals (environments, versions, systems):
+    "show_versions",
+    "show_options",
+    "modified_environ",
+
+    # Monitors
+    "monitor_status",
+
+    # Geo (space/time data utilities)
+    "wmo2box",
+    "wrap_longitude",
+    "toYearFraction",
+    "YearFraction_to_datetime",
+
+    # Computation with datasets:
+    "linear_interpolation_remap",
+    "groupby_remap",
+
+    # Manipulate datasets:
+    "fill_variables_not_in_all_datasets",
+    "drop_variables_not_in_all_datasets",
+
+    # Formatters:
+    "format_oneline",
+    "argo_split_path",
 )
