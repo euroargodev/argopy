@@ -19,8 +19,9 @@ from argopy.related import (
     ArgoNVSReferenceTables,
     OceanOPSDeployments,
     ArgoDocs,
+    load_dict, mapp_dict
 )
-from argopy.utilities import (
+from argopy.utils.checkers import (
     is_list_of_strings,
 )
 
@@ -301,3 +302,15 @@ class Test_ArgoDocs:
         else:
             with pytest.raises(ValueError):
                 an_instance.show()
+
+
+
+def test_invalid_dictionnary():
+    with pytest.raises(ValueError):
+        load_dict("invalid_dictionnary")
+
+
+def test_invalid_dictionnary_key():
+    d = load_dict("profilers")
+    assert mapp_dict(d, "invalid_key") == "Unknown"
+

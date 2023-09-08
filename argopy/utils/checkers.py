@@ -1,12 +1,24 @@
+import os
 import warnings
 import numpy as np
 import pandas as pd
 import xarray as xr
+from typing import Union
 from fsspec.core import split_protocol
 import fsspec
 from socket import gaierror
+import urllib
+import json
+import logging
+
+from ..options import OPTIONS
+from ..stores import httpstore
 from ..utils import to_list
-from ..errors import InvalidDatasetStructure, FtpPathError
+from ..errors import InvalidDatasetStructure, FtpPathError, InvalidFetcher
+from . import list_available_data_src, list_available_index_src
+
+
+log = logging.getLogger("argopy.utils.checkers")
 
 
 def is_indexbox(box: list, errors="raise"):
@@ -466,5 +478,150 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
         warnings.warn("This path is not GDAC compliant:\n%s" % path)
         return False
     else:
+        return False
+
+
+def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
+    """Check if an URL is alive
+
+        Parameters
+        ----------
+        host: str
+            URL to use, 'https://www.ifremer.fr' by default
+        maxtry: int, default: 10
+            Maximum number of host connections to try before
+
+        Returns
+        -------
+        bool
+    """
+    # log.debug("isconnected: %s" % host)
+    if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
+        it = 0
+        while it < maxtry:
+            try:
+                # log.debug("Checking if %s is connected ..." % host)
+                urllib.request.urlopen(host, timeout=1)  # nosec B310 because host protocol already checked
+                result, it = True, maxtry
+            except Exception:
+                result, it = False, it + 1
+        return result
+    else:
+        return os.path.exists(host)
+
+
+def urlhaskeyword(url: str = "", keyword: str = '', maxtry: int = 10):
+    """ Check if a keyword is in the content of a URL
+
+        Parameters
+        ----------
+        url: str
+        keyword: str
+        maxtry: int, default: 10
+            Maximum number of host connections to try before returning False
+
+        Returns
+        -------
+        bool
+    """
+    it = 0
+    while it < maxtry:
+        try:
+            with fsspec.open(url) as f:
+                data = f.read()
+            result = keyword in str(data)
+            it = maxtry
+        except Exception:
+            result, it = False, it + 1
+    return result
+
+
+def isalive(api_server_check: Union[str, dict] = "") -> bool:
+    """Check if an API is alive or not
+
+        2 methods are available:
+
+        - URL Ping
+        - keyword Check
+
+        Parameters
+        ----------
+        api_server_check
+            Url string or dictionary with [``url``, ``keyword``] keys.
+
+            - For a string, uses: :class:`argopy.utilities.isconnected`
+            - For a dictionary,  uses: :class:`argopy.utilities.urlhaskeyword`
+
+        Returns
+        -------
+        bool
+    """
+    # log.debug("isalive: %s" % api_server_check)
+    if isinstance(api_server_check, dict):
+        return urlhaskeyword(url=api_server_check['url'], keyword=api_server_check['keyword'])
+    else:
+        return isconnected(api_server_check)
+
+
+def isAPIconnected(src="erddap", data=True):
+    """ Check if a source API is alive or not
+
+        The API is connected when it has a live URL or valid folder path.
+
+        Parameters
+        ----------
+        src: str
+            The data or index source name, 'erddap' default
+        data: bool
+            If True check the data fetcher (default), if False, check the index fetcher
+
+        Returns
+        -------
+        bool
+    """
+    if data:
+        list_src = list_available_data_src()
+    else:
+        list_src = list_available_index_src()
+
+    if src in list_src and getattr(list_src[src], "api_server_check", None):
+        return isalive(list_src[src].api_server_check)
+    else:
+        raise InvalidFetcher
+
+
+def erddap_ds_exists(
+        ds: Union[list, str] = "ArgoFloats",
+        erddap: str = None,
+        maxtry: int = 2
+) -> bool:
+    """ Check if a dataset exists on a remote erddap server
+
+    Parameter
+    ---------
+    ds: str, default='ArgoFloats'
+        Name of the erddap dataset to check
+    erddap: str, default=OPTIONS['erddap']
+        Url of the erddap server
+    maxtry: int, default: 2
+        Maximum number of host connections to try
+
+    Return
+    ------
+    bool
+    """
+    if erddap is None:
+        erddap = OPTIONS['erddap']
+    # log.debug("from erddap_ds_exists: %s" % erddap)
+    if isconnected(erddap, maxtry=maxtry):
+        with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
+            erddap_index = json.load(of)
+        if is_list_of_strings(ds):
+            return [this_ds in [row[-1] for row in erddap_index["table"]["rows"]] for this_ds in ds]
+        else:
+            return ds in [row[-1] for row in erddap_index["table"]["rows"]]
+    else:
+        log.debug("Cannot reach erddap server: %s" % erddap)
+        warnings.warn("Return False because we cannot reach the erddap server %s" % erddap)
         return False
 

@@ -6,6 +6,8 @@ from .checkers import (
     is_cyc, check_cyc,
     check_index_cols,
     check_gdac_path,
+    isconnected, urlhaskeyword,
+    isalive, isAPIconnected, erddap_ds_exists,
 )
 from .casting import DATA_TYPES, cast_Argo_variable_type, to_list
 from .decorators import deprecated, doc_inherit
@@ -29,6 +31,7 @@ __all__ = (
     "is_cyc", "check_cyc",
     "check_index_cols",
     "check_gdac_path",
+    "isconnected", "isalive", "isAPIconnected", "erddap_ds_exists",
 
     # Data type casting:
     "DATA_TYPES",

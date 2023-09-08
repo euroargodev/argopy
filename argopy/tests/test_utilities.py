@@ -45,28 +45,6 @@ from utils import (
 from mocked_http import mocked_httpserver, mocked_server_address
 
 
-def test_invalid_dictionnary():
-    with pytest.raises(ValueError):
-        load_dict("invalid_dictionnary")
-
-
-def test_invalid_dictionnary_key():
-    d = load_dict("profilers")
-    assert mapp_dict(d, "invalid_key") == "Unknown"
-
-
-def test_list_multiprofile_file_variables():
-    assert is_list_of_strings(list_multiprofile_file_variables())
-
-
-def test_check_gdac_path():
-    assert check_gdac_path("dummy_path", errors='ignore') is False
-    with pytest.raises(FtpPathError):
-        check_gdac_path("dummy_path", errors='raise')
-    with pytest.warns(UserWarning):
-        assert check_gdac_path("dummy_path", errors='warn') is False
-
-
 @pytest.mark.parametrize("conda", [False, True],
                          indirect=False,
                          ids=["conda=%s" % str(p) for p in [False, True]])
@@ -74,41 +52,6 @@ def test_show_versions(conda):
     f = io.StringIO()
     argopy.show_versions(file=f, conda=conda)
     assert "SYSTEM" in f.getvalue()
-
-
-def test_isconnected(mocked_httpserver):
-    assert isinstance(isconnected(host=mocked_server_address), bool)
-    assert isconnected(host="http://dummyhost") is False
-
-
-def test_urlhaskeyword(mocked_httpserver):
-    url = "https://api.ifremer.fr/argopy/data/ARGO-FULL.json"
-    url.replace("https://api.ifremer.fr", mocked_server_address)
-    assert isinstance(urlhaskeyword(url, "label"), bool)
-
-
-params = [mocked_server_address,
-          {"url": mocked_server_address + "/argopy/data/ARGO-FULL.json", "keyword": "label"}
-          ]
-params_ids = ["url is a %s" % str(type(p)) for p in params]
-@pytest.mark.parametrize("params", params, indirect=False, ids=params_ids)
-def test_isalive(params, mocked_httpserver):
-    assert isinstance(isalive(params), bool)
-
-
-@requires_erddap
-@pytest.mark.parametrize("data", [True, False], indirect=False, ids=["data=%s" % t for t in [True, False]])
-def test_isAPIconnected(data, mocked_httpserver):
-    with argopy.set_options(erddap=mocked_server_address):
-        assert isinstance(isAPIconnected(src="erddap", data=data), bool)
-
-
-def test_erddap_ds_exists(mocked_httpserver):
-    with argopy.set_options(erddap=mocked_server_address):
-        assert isinstance(erddap_ds_exists(ds="ArgoFloats"), bool)
-        assert erddap_ds_exists(ds="DummyDS") is False
-
-# todo : Implement tests for utilities functions: badge, fetch_status and monitor_status
 
 
 @requires_gdac

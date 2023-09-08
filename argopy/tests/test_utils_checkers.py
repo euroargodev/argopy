@@ -1,10 +1,15 @@
 import pytest
 import numpy as np
+from mocked_http import mocked_httpserver, mocked_server_address
 
-from argopy.utils import (
+import argopy
+from argopy.errors import FtpPathError
+from argopy.utils.checkers import (
     is_box, is_indexbox,
     check_wmo, is_wmo,
     check_cyc, is_cyc,
+    check_gdac_path,
+    isconnected, urlhaskeyword, isAPIconnected, erddap_ds_exists, isalive
 )
 
 
@@ -177,3 +182,45 @@ def test_check_cyc():
     assert check_cyc([12, 123]) == [12, 123]
     assert check_cyc(np.array((123, 1234), dtype='int')) == [123, 1234]
 
+
+def test_check_gdac_path():
+    assert check_gdac_path("dummy_path", errors='ignore') is False
+    with pytest.raises(FtpPathError):
+        check_gdac_path("dummy_path", errors='raise')
+    with pytest.warns(UserWarning):
+        assert check_gdac_path("dummy_path", errors='warn') is False
+
+
+def test_isconnected(mocked_httpserver):
+    assert isinstance(isconnected(host=mocked_server_address), bool)
+    assert isconnected(host="http://dummyhost") is False
+
+
+def test_urlhaskeyword(mocked_httpserver):
+    url = "https://api.ifremer.fr/argopy/data/ARGO-FULL.json"
+    url.replace("https://api.ifremer.fr", mocked_server_address)
+    assert isinstance(urlhaskeyword(url, "label"), bool)
+
+
+params = [mocked_server_address,
+          {"url": mocked_server_address + "/argopy/data/ARGO-FULL.json", "keyword": "label"}
+          ]
+params_ids = ["url is a %s" % str(type(p)) for p in params]
+@pytest.mark.parametrize("params", params, indirect=False, ids=params_ids)
+def test_isalive(params, mocked_httpserver):
+    assert isinstance(isalive(params), bool)
+
+
+@requires_erddap
+@pytest.mark.parametrize("data", [True, False], indirect=False, ids=["data=%s" % t for t in [True, False]])
+def test_isAPIconnected(data, mocked_httpserver):
+    with argopy.set_options(erddap=mocked_server_address):
+        assert isinstance(isAPIconnected(src="erddap", data=data), bool)
+
+
+def test_erddap_ds_exists(mocked_httpserver):
+    with argopy.set_options(erddap=mocked_server_address):
+        assert isinstance(erddap_ds_exists(ds="ArgoFloats"), bool)
+        assert erddap_ds_exists(ds="DummyDS") is False
+
+# todo : Implement tests for utilities functions: badge, fetch_status and monitor_status
