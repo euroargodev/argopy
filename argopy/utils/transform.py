@@ -1,3 +1,6 @@
+"""
+Manipulate/transform xarray objects or list of objects
+"""
 import numpy as np
 import xarray as xr
 import logging
