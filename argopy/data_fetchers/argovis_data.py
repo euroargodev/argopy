@@ -14,8 +14,8 @@ import warnings
 
 from ..stores import httpstore
 from ..options import OPTIONS
-from ..utilities import format_oneline
-from ..utils import Chunker
+from ..utils.format import format_oneline
+from ..utils.chunking import Chunker
 from ..errors import DataNotFound
 from .proto import ArgoDataFetcherProto
 

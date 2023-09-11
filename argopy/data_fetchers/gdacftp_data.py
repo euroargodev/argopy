@@ -12,7 +12,7 @@ import warnings
 import getpass
 import logging
 
-from ..utilities import format_oneline, argo_split_path
+from ..utils.format import format_oneline, argo_split_path
 from ..options import OPTIONS, check_gdac_path
 from ..errors import DataNotFound
 from ..stores import ArgoIndex

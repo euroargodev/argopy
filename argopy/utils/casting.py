@@ -6,6 +6,8 @@ import xarray as xr
 import importlib
 import json
 
+from .decorators import deprecated
+
 path2assets = importlib.util.find_spec('argopy.static.assets').submodule_search_locations[0]
 
 with open(os.path.join(path2assets, "data_types.json"), "r") as f:

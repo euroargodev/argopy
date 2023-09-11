@@ -1,3 +1,7 @@
+"""
+Mathematically or statistically compute something output of xarray objects
+"""
+
 import numpy as np
 from scipy import interpolate
 import xarray as xr

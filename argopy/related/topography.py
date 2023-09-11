@@ -1,7 +1,7 @@
 from typing import Union
 from ..options import OPTIONS
 from ..stores import httpstore
-from ..utilities import format_oneline
+from ..utils.format import format_oneline
 
 
 class TopoFetcher:

@@ -12,10 +12,9 @@ import json
 import logging
 
 from ..options import OPTIONS
-from ..stores import httpstore
-from ..utils import to_list
 from ..errors import InvalidDatasetStructure, FtpPathError, InvalidFetcher
-from . import list_available_data_src, list_available_index_src
+from .lists import list_available_data_src, list_available_index_src
+from .casting import to_list
 
 
 log = logging.getLogger("argopy.utils.checkers")
@@ -614,6 +613,7 @@ def erddap_ds_exists(
         erddap = OPTIONS['erddap']
     # log.debug("from erddap_ds_exists: %s" % erddap)
     if isconnected(erddap, maxtry=maxtry):
+        from ..stores import httpstore
         with httpstore(timeout=OPTIONS['api_timeout']).open("".join([erddap, "/info/index.json"])) as of:
             erddap_index = json.load(of)
         if is_list_of_strings(ds):

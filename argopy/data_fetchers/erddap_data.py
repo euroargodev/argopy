@@ -10,7 +10,6 @@ This is not intended to be used directly, only by the facade at fetchers.py
 
 """
 
-import argopy.utilities
 import xarray as xr
 import pandas as pd
 import numpy as np
@@ -25,7 +24,7 @@ from aiohttp import ClientResponseError
 import logging
 
 from ..options import OPTIONS
-from ..utilities import format_oneline
+from ..utils.format import format_oneline
 from ..stores import httpstore
 from ..errors import ErddapServerError, DataNotFound
 from ..stores import indexstore_pd as ArgoIndex  # make sure we work with the Pandas index store

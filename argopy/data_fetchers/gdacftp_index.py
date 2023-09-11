@@ -11,7 +11,7 @@ import warnings
 import logging
 import importlib
 
-from ..utilities import format_oneline
+from ..utils.format import format_oneline
 from ..options import OPTIONS, check_gdac_path
 from ..plot import dashboard
 

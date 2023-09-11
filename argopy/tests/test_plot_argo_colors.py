@@ -4,7 +4,6 @@ We test plotting functions from IndexFetcher and DataFetcher
 """
 import pytest
 import logging
-import warnings
 
 from utils import (
     requires_matplotlib,
@@ -12,7 +11,7 @@ from utils import (
     has_matplotlib,
     has_seaborn,
 )
-from ..plot import ArgoColors
+from argopy.plot import ArgoColors
 
 if has_matplotlib:
     import matplotlib as mpl

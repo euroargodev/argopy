@@ -13,7 +13,7 @@ from argopy.errors import (
     CacheFileNotFound,
     FileSystemHasNoCache,
 )
-from argopy.utils import is_list_of_strings
+from argopy.utils.checkers import is_list_of_strings
 from utils import requires_connected_argovis, safe_to_server_errors
 
 

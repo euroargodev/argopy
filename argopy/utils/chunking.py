@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from functools import reduce
 from ..errors import InvalidFetcherAccessPoint
-from . import is_box
+from .checkers import is_box
 
 import collections
 try:

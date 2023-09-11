@@ -34,7 +34,7 @@ from packaging import version
 from typing import Union
 from urllib.parse import urlparse, parse_qs
 from functools import lru_cache
-
+from abc import ABC, abstractmethod
 import concurrent.futures
 import multiprocessing
 
@@ -47,13 +47,12 @@ from ..errors import (
     ErddapHTTPUnauthorized,
     ErddapHTTPNotFound,
 )
-from abc import ABC, abstractmethod
-from ..utils import (
+from ..utils.transform import (
     drop_variables_not_in_all_datasets,
     fill_variables_not_in_all_datasets,
 )
-from ..utils import MonitoredThreadPoolExecutor as MyExecutor
-from ..utils import Registry
+from ..utils.monitored_threadpool import MyThreadPoolExecutor as MyExecutor
+from ..utils.accessories import Registry
 
 
 log = logging.getLogger("argopy.stores")

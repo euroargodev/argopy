@@ -24,7 +24,7 @@ from .locals import show_versions, show_options, modified_environ
 from .monitors import monitor_status
 from .geo import wmo2box, wrap_longitude, toYearFraction, YearFraction_to_datetime
 from .compute import linear_interpolation_remap, groupby_remap
-from .manip import fill_variables_not_in_all_datasets, drop_variables_not_in_all_datasets
+from .transform import fill_variables_not_in_all_datasets, drop_variables_not_in_all_datasets
 from .format import argo_split_path, format_oneline
 
 

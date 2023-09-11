@@ -16,9 +16,7 @@ from argopy.errors import (
     OptionValueError,
     InvalidDatasetStructure,
 )
-from argopy.utils import (
-    is_list_of_strings,
-)
+from argopy.utils.checkers import is_list_of_strings
 from argopy.stores.argo_index_pd import indexstore_pandas
 from mocked_http import mocked_httpserver, mocked_server_address
 

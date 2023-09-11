@@ -1,11 +1,12 @@
 import os
 import pandas as pd
 import argopy
+import tempfile
 from argopy import DataFetcher as ArgoDataFetcher
 from utils import (
     requires_gdac,
 )
-import tempfile
+from argopy.utils.caching import lscache, clear_cache
 
 
 @requires_gdac
@@ -15,7 +16,7 @@ def test_clear_cache():
         with argopy.set_options(cachedir=cachedir):
             loader = ArgoDataFetcher(src="gdac", ftp=ftproot, cache=True).profile(2902696, 12)
             loader.to_xarray()
-            argopy.clear_cache()
+            clear_cache()
             assert os.path.exists(cachedir) is True
             assert len(os.listdir(cachedir)) == 0
 
@@ -27,9 +28,9 @@ def test_lscache():
         with argopy.set_options(cachedir=cachedir):
             loader = ArgoDataFetcher(src="gdac", ftp=ftproot, cache=True).profile(2902696, 12)
             loader.to_xarray()
-            result = argopy.utilities.lscache(cache_path=cachedir, prt=True)
+            result = lscache(cache_path=cachedir, prt=True)
             assert isinstance(result, str)
 
-            result = argopy.utilities.lscache(cache_path=cachedir, prt=False)
+            result = lscache(cache_path=cachedir, prt=False)
             assert isinstance(result, pd.DataFrame)
 

@@ -14,14 +14,16 @@ try:
 except ModuleNotFoundError:
     with_gsw = False
 
-from .utils import (
-    is_list_of_strings,
+from .utils.checkers import is_list_of_strings
+from .utils.casting import (
     cast_Argo_variable_type,
     DATA_TYPES,
+)
+from .utils.compute import (
     linear_interpolation_remap,
     groupby_remap,
-    toYearFraction,
 )
+from .utils.geo import toYearFraction
 from .errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
 

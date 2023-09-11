@@ -1,6 +1,6 @@
 import pandas as pd
 from ..options import OPTIONS
-from ..utils import check_wmo, check_cyc
+from ..utils.checkers import check_wmo, check_cyc
 from ..stores import httpstore
 
 

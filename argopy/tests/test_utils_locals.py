@@ -2,7 +2,7 @@ import os
 import pytest
 import io
 import argopy
-from ..utils.locals import modified_environ
+from argopy.utils.locals import modified_environ
 
 
 @pytest.mark.parametrize("conda", [False, True],

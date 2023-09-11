@@ -5,13 +5,13 @@ This module manage options of the package
 # https://github.com/pydata/xarray/blob/cafab46aac8f7a073a32ec5aa47e213a9810ed54/xarray/core/options.py
 """
 import os
-from argopy.errors import OptionValueError, FtpPathError, ErddapPathError
 import warnings
 import logging
 import fsspec
 from fsspec.core import split_protocol
 from socket import gaierror
 from urllib.parse import urlparse
+from .errors import OptionValueError, FtpPathError, ErddapPathError
 
 
 # Define a logger

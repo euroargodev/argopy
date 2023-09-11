@@ -71,7 +71,7 @@ __all__ = (
     "ArgoDOI",  # Class
 
     # Submodules:
-    "utilities",
+    "utilities",  # todo: send a deprecation warning when using argopy.utilities
     "errors",
     "plot",
     "ArgoColors",  # Class

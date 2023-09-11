@@ -1,3 +1,6 @@
+"""
+Manipulate Argo formatted string and print/stdout formatters
+"""
 import os
 from urllib.parse import urlparse
 import logging

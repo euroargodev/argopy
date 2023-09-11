@@ -1,4 +1,4 @@
-from .argo_index_deprec import indexstore, indexfilter_wmo, indexfilter_box
+# from .argo_index_deprec import indexstore, indexfilter_wmo, indexfilter_box
 from .filesystems import filestore, httpstore, memorystore, ftpstore
 from .filesystems import httpstore_erddap, httpstore_erddap_auth
 

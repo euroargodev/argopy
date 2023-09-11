@@ -29,10 +29,8 @@ from argopy.errors import (
     InvalidMethod,
     DataNotFound,
 )
-from argopy.utilities import (
-    modified_environ,
-)
-from argopy.utils import (
+from argopy.utils.locals import modified_environ
+from argopy.utils.checkers import (
     is_list_of_datasets,
     is_list_of_dicts,
 )
