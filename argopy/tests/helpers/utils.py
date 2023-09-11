@@ -19,16 +19,19 @@ import socket
 import asyncio
 from packaging import version
 import warnings
+import logging
+
 from argopy.options import set_options
 from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound, FtpPathError
-from argopy.utilities import (
+from argopy.utils.lists import (
     list_available_data_src,
     list_available_index_src,
+)
+from argopy.utils.checkers import (
     isconnected,
     erddap_ds_exists,
     isAPIconnected,
 )
-import logging
 from mocked_http import mocked_server_address, serve_mocked_httpserver
 
 
