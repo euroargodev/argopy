@@ -12,6 +12,7 @@ log = logging.getLogger("argopy.utils.accessories")
 
 class RegistryItem(ABC):
     """Prototype for possible custom items in a Registry"""
+
     @property
     @abstractmethod
     def value(self):
@@ -34,7 +35,7 @@ class RegistryItem(ABC):
 class float_wmo(RegistryItem):
     """Argo float WMO number object"""
 
-    def __init__(self, WMO_number, errors='raise'):
+    def __init__(self, WMO_number, errors="raise"):
         """Create an Argo float WMO number object
 
         Parameters
@@ -52,7 +53,9 @@ class float_wmo(RegistryItem):
         if isinstance(WMO_number, float_wmo):
             item = WMO_number.value
         else:
-            item = check_wmo(WMO_number, errors=self.errors)[0]  # This will automatically validate item
+            item = check_wmo(WMO_number, errors=self.errors)[
+                0
+            ]  # This will automatically validate item
         self.item = item
 
     @property
@@ -140,9 +143,9 @@ class Registry(UserList):
     """
 
     def _complain(self, msg):
-        if self._invalid == 'raise':
+        if self._invalid == "raise":
             raise ValueError(msg)
-        elif self._invalid == 'warn':
+        elif self._invalid == "warn":
             warnings.warn(msg)
         else:
             log.debug(msg)
@@ -162,7 +165,9 @@ class Registry(UserList):
     def _wmo(self, item):
         return item.isvalid
 
-    def __init__(self, initlist=None, name: str = 'unnamed', dtype='str', invalid='raise'):
+    def __init__(
+        self, initlist=None, name: str = "unnamed", dtype="str", invalid="raise"
+    ):
         """Create a registry, i.e. a controlled list
 
         Parameters
@@ -178,16 +183,16 @@ class Registry(UserList):
         """
         self.name = name
         self._invalid = invalid
-        if repr(dtype) == "<class 'str'>" or dtype == 'str':
+        if repr(dtype) == "<class 'str'>" or dtype == "str":
             self._validator = self._str
             self.dtype = str
-        elif dtype == float_wmo or str(dtype).lower() == 'wmo':
+        elif dtype == float_wmo or str(dtype).lower() == "wmo":
             self._validator = self._wmo
             self.dtype = float_wmo
-        elif repr(dtype) == "<class 'dict'>" or dtype == 'dict':
+        elif repr(dtype) == "<class 'dict'>" or dtype == "dict":
             self._validator = self._dict
             self.dtype = dict
-        elif hasattr(dtype, 'isvalid'):
+        elif hasattr(dtype, "isvalid"):
             self._validator = dtype.isvalid
             self.dtype = dtype
         else:

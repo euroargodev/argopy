@@ -4,13 +4,16 @@ from ..options import OPTIONS
 
 
 def list_available_data_src():
-    """ List all available data sources """
+    """List all available data sources"""
     sources = {}
     try:
         from ..data_fetchers import erddap_data as Erddap_Fetchers
+
         # Ensure we're loading the erddap data fetcher with the current options:
-        Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(Erddap_Fetchers.api_server, OPTIONS['erddap'])
-        Erddap_Fetchers.api_server = OPTIONS['erddap']
+        Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(
+            Erddap_Fetchers.api_server, OPTIONS["erddap"]
+        )
+        Erddap_Fetchers.api_server = OPTIONS["erddap"]
 
         sources["erddap"] = Erddap_Fetchers
     except Exception:
@@ -35,9 +38,10 @@ def list_available_data_src():
 
     try:
         from ..data_fetchers import gdacftp_data as GDAC_Fetchers
+
         # Ensure we're loading the gdac data fetcher with the current options:
-        GDAC_Fetchers.api_server_check = OPTIONS['ftp']
-        GDAC_Fetchers.api_server = OPTIONS['ftp']
+        GDAC_Fetchers.api_server_check = OPTIONS["ftp"]
+        GDAC_Fetchers.api_server = OPTIONS["ftp"]
 
         sources["gdac"] = GDAC_Fetchers
     except Exception:
@@ -53,13 +57,16 @@ def list_available_data_src():
 
 
 def list_available_index_src():
-    """ List all available index sources """
+    """List all available index sources"""
     sources = {}
     try:
         from ..data_fetchers import erddap_index as Erddap_Fetchers
+
         # Ensure we're loading the erddap data fetcher with the current options:
-        Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(Erddap_Fetchers.api_server, OPTIONS['erddap'])
-        Erddap_Fetchers.api_server = OPTIONS['erddap']
+        Erddap_Fetchers.api_server_check = Erddap_Fetchers.api_server_check.replace(
+            Erddap_Fetchers.api_server, OPTIONS["erddap"]
+        )
+        Erddap_Fetchers.api_server = OPTIONS["erddap"]
 
         sources["erddap"] = Erddap_Fetchers
     except Exception:
@@ -72,9 +79,10 @@ def list_available_index_src():
 
     try:
         from ..data_fetchers import gdacftp_index as GDAC_Fetchers
+
         # Ensure we're loading the gdac data fetcher with the current options:
-        GDAC_Fetchers.api_server_check = OPTIONS['ftp']
-        GDAC_Fetchers.api_server = OPTIONS['ftp']
+        GDAC_Fetchers.api_server_check = OPTIONS["ftp"]
+        GDAC_Fetchers.api_server = OPTIONS["ftp"]
 
         sources["gdac"] = GDAC_Fetchers
     except Exception:
@@ -89,7 +97,7 @@ def list_available_index_src():
 
 
 def list_standard_variables():
-    """ List of variables for standard users """
+    """List of variables for standard users"""
     return [
         "DATA_MODE",
         "LATITUDE",
@@ -125,9 +133,9 @@ def list_standard_variables():
 
 
 def list_multiprofile_file_variables():
-    """ List of variables in a netcdf multiprofile file.
+    """List of variables in a netcdf multiprofile file.
 
-        This is for files created by GDAC under <DAC>/<WMO>/<WMO>_prof.nc
+    This is for files created by GDAC under <DAC>/<WMO>/<WMO>_prof.nc
     """
     return [
         "CONFIG_MISSION_NUMBER",
@@ -195,4 +203,3 @@ def list_multiprofile_file_variables():
         "VERTICAL_SAMPLING_SCHEME",
         "WMO_INST_TYPE",
     ]
-

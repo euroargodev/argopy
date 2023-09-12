@@ -5,7 +5,7 @@ import time
 import threading
 
 try:
-    importlib.import_module('matplotlib')  # noqa: E402
+    importlib.import_module("matplotlib")  # noqa: E402
     from matplotlib.colors import to_hex
 except ImportError:
     pass
@@ -15,7 +15,7 @@ from .checkers import isAPIconnected
 
 
 def badge(label="label", message="message", color="green", insert=False):
-    """ Return or insert shield.io badge image
+    """Return or insert shield.io badge image
 
         Use the shields.io service to create a badge image
 
@@ -95,13 +95,16 @@ class fetch_status:
         td_empty = "<td style='border-width:0px;padding: 2px 5px 2px 5px;text-align:left'>&nbsp;</td>"
 
         html = []
-        html.append("<table style='border-collapse:collapse;border-spacing:0;font-size:%ipx'>" % fs)
+        html.append(
+            "<table style='border-collapse:collapse;border-spacing:0;font-size:%ipx'>"
+            % fs
+        )
         html.append("<tbody><tr>")
         cols = []
         for api in sorted(results.keys()):
             color = "yellowgreen" if results[api]["value"] else "darkorange"
-            cols.append(td_msg('dimgray', 'w', "src %s is" % api))
-            cols.append(td_msg(color, 'w', results[api]["message"]))
+            cols.append(td_msg("dimgray", "w", "src %s is" % api))
+            cols.append(td_msg(color, "w", results[api]["message"]))
             cols.append(td_empty)
         html.append("\n".join(cols))
         html.append("</tr></tbody>")
@@ -114,12 +117,12 @@ class fetch_status:
 
 
 class monitor_status:
-    """ Monitor data source status with a refresh rate """
+    """Monitor data source status with a refresh rate"""
 
     def __init__(self, refresh=60):
         self.refresh_rate = refresh
 
-        if self.runner == 'notebook':
+        if self.runner == "notebook":
             import ipywidgets as widgets
 
             self.text = widgets.HTML(
@@ -130,7 +133,7 @@ class monitor_status:
             self.start()
 
     def __repr__(self):
-        if self.runner != 'notebook':
+        if self.runner != "notebook":
             return self.content
         else:
             return ""
@@ -139,18 +142,18 @@ class monitor_status:
     def runner(self) -> str:
         try:
             shell = get_ipython().__class__.__name__
-            if shell == 'ZMQInteractiveShell':
-                return 'notebook'  # Jupyter notebook or qtconsole
-            elif shell == 'TerminalInteractiveShell':
-                return 'terminal'  # Terminal running IPython
+            if shell == "ZMQInteractiveShell":
+                return "notebook"  # Jupyter notebook or qtconsole
+            elif shell == "TerminalInteractiveShell":
+                return "terminal"  # Terminal running IPython
             else:
                 return False  # Other type (?)
         except NameError:
-            return 'standard'  # Probably standard Python interpreter
+            return "standard"  # Probably standard Python interpreter
 
     @property
     def content(self):
-        if self.runner == 'notebook':
+        if self.runner == "notebook":
             return fetch_status().html
         else:
             return fetch_status().text
@@ -166,4 +169,3 @@ class monitor_status:
         thread = threading.Thread(target=self.work)
         display(self.text)
         thread.start()
-

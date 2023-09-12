@@ -35,23 +35,21 @@ class DocInherit(object):
             return self.get_no_inst(cls)
 
     def get_with_inst(self, obj, cls):
-
         overridden = getattr(super(cls, obj), self.name, None)
 
-        @wraps(self.mthd, assigned=('__name__', '__module__'))
+        @wraps(self.mthd, assigned=("__name__", "__module__"))
         def f(*args, **kwargs):
             return self.mthd(obj, *args, **kwargs)
 
         return self.use_parent_doc(f, overridden)
 
     def get_no_inst(self, cls):
-
         for parent in cls.__mro__[1:]:
             overridden = getattr(parent, self.name, None)
             if overridden:
                 break
 
-        @wraps(self.mthd, assigned=('__name__', '__module__'))
+        @wraps(self.mthd, assigned=("__name__", "__module__"))
         def f(*args, **kwargs):
             return self.mthd(*args, **kwargs)
 
@@ -106,7 +104,6 @@ def deprecated(reason):
     if isinstance(reason, str):
 
         def decorator(func1):
-
             if inspect.isclass(func1):
                 fmt1 = "Call to deprecated class {name} ({reason})."
             else:
@@ -114,13 +111,13 @@ def deprecated(reason):
 
             @wraps(func1)
             def new_func1(*args, **kwargs):
-                warnings.simplefilter('always', DeprecationWarning)
+                warnings.simplefilter("always", DeprecationWarning)
                 warnings.warn(
                     fmt1.format(name=func1.__name__, reason=reason),
                     category=DeprecationWarning,
-                    stacklevel=2
+                    stacklevel=2,
                 )
-                warnings.simplefilter('default', DeprecationWarning)
+                warnings.simplefilter("default", DeprecationWarning)
                 return func1(*args, **kwargs)
 
             return new_func1
@@ -128,7 +125,6 @@ def deprecated(reason):
         return decorator
 
     elif inspect.isclass(reason) or inspect.isfunction(reason):
-
         func2 = reason
 
         if inspect.isclass(func2):
@@ -138,17 +134,16 @@ def deprecated(reason):
 
         @wraps(func2)
         def new_func2(*args, **kwargs):
-            warnings.simplefilter('always', DeprecationWarning)
+            warnings.simplefilter("always", DeprecationWarning)
             warnings.warn(
                 fmt2.format(name=func2.__name__),
                 category=DeprecationWarning,
-                stacklevel=2
+                stacklevel=2,
             )
-            warnings.simplefilter('default', DeprecationWarning)
+            warnings.simplefilter("default", DeprecationWarning)
             return func2(*args, **kwargs)
 
         return new_func2
 
     else:
         raise TypeError(repr(type(reason)))
-

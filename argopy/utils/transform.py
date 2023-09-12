@@ -40,7 +40,10 @@ def drop_variables_not_in_all_datasets(ds_collection):
     # List of variables missing in some dataset:
     iv_missing = np.sum(ishere, axis=1) < len(ds_collection)
     if len(iv_missing) > 0:
-        log.debug("Dropping these variables that are missing from some dataset in this list: %s" % vlist[iv_missing])
+        log.debug(
+            "Dropping these variables that are missing from some dataset in this list: %s"
+            % vlist[iv_missing]
+        )
 
     # List of variables to keep
     iv_tokeep = np.sum(ishere, axis=1) == len(ds_collection)
@@ -54,7 +57,7 @@ def drop_variables_not_in_all_datasets(ds_collection):
     return ds_collection
 
 
-def fill_variables_not_in_all_datasets(ds_collection, concat_dim='rows'):
+def fill_variables_not_in_all_datasets(ds_collection, concat_dim="rows"):
     """Add empty variables to dataset so that all the collection have the same data_vars and coords
 
     This is to make sure that the collection of dataset can be concatenated
@@ -67,7 +70,8 @@ def fill_variables_not_in_all_datasets(ds_collection, concat_dim='rows'):
     -------
     list of :class:`xr.DataSet`
     """
-    def first_variable_with_concat_dim(this_ds, concat_dim='rows'):
+
+    def first_variable_with_concat_dim(this_ds, concat_dim="rows"):
         """Return the 1st variable in the collection that have the concat_dim in dims"""
         first = None
         for v in this_ds.data_vars:
@@ -77,7 +81,7 @@ def fill_variables_not_in_all_datasets(ds_collection, concat_dim='rows'):
         return first
 
     def fillvalue(da):
-        """ Return fillvalue for a dataarray """
+        """Return fillvalue for a dataarray"""
         # https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.kind.html#numpy.dtype.kind
         if da.dtype.kind in ["U"]:
             fillvalue = " "
@@ -108,7 +112,11 @@ def fill_variables_not_in_all_datasets(ds_collection, concat_dim='rows'):
     for ir, ds in enumerate(ds_collection):
         for v in vlist:
             if v in ds.variables:
-                meta[v] = {'attrs': ds[v].attrs, 'dtype': ds[v].dtype, 'fill_value': fillvalue(ds[v])}
+                meta[v] = {
+                    "attrs": ds[v].attrs,
+                    "dtype": ds[v].dtype,
+                    "fill_value": fillvalue(ds[v]),
+                }
     # [log.debug(meta[m]) for m in meta.keys()]
 
     # Add missing variables to dataset
@@ -117,8 +125,10 @@ def fill_variables_not_in_all_datasets(ds_collection, concat_dim='rows'):
         for v in vlist:
             if v not in ds.variables:
                 like = ds[first_variable_with_concat_dim(ds, concat_dim=concat_dim)]
-                datasets[ir][v] = xr.full_like(like, fill_value=meta[v]['fill_value'], dtype=meta[v]['dtype'])
-                datasets[ir][v].attrs = meta[v]['attrs']
+                datasets[ir][v] = xr.full_like(
+                    like, fill_value=meta[v]["fill_value"], dtype=meta[v]["dtype"]
+                )
+                datasets[ir][v].attrs = meta[v]["attrs"]
 
     # Make sure that all datasets have the same set of coordinates
     results = []

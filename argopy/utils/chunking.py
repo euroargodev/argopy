@@ -5,6 +5,7 @@ from ..errors import InvalidFetcherAccessPoint
 from .checkers import is_box
 
 import collections
+
 try:
     collectionsAbc = collections.abc
 except AttributeError:
@@ -12,7 +13,7 @@ except AttributeError:
 
 
 class Chunker:
-    """ To chunk fetcher requests """
+    """To chunk fetcher requests"""
 
     # Default maximum chunks size for all possible request parameters
     default_chunksize = {
@@ -26,7 +27,7 @@ class Chunker:
     }  # Nb of cycles
 
     def __init__(self, request: dict, chunks: str = "auto", chunksize: dict = {}):
-        """ Create a request Chunker
+        """Create a request Chunker
 
         Allow to easily split an access point request into chunks
 
@@ -86,23 +87,23 @@ class Chunker:
     def _split(self, lst, n=1):
         """Yield successive n-sized chunks from lst"""
         for i in range(0, len(lst), n):
-            yield lst[i: i + n]
+            yield lst[i : i + n]
 
     def _split_list_bychunknb(self, lst, n=1):
         """Split list in n-imposed chunks of similar size
-            The last chunk may contain less element than the others, depending on the size of the list.
+        The last chunk may contain less element than the others, depending on the size of the list.
         """
         res = []
         s = int(np.floor_divide(len(lst), n))
         for i in self._split(lst, s):
             res.append(i)
         if len(res) > n:
-            res[n - 1::] = [reduce(lambda i, j: i + j, res[n - 1::])]
+            res[n - 1 : :] = [reduce(lambda i, j: i + j, res[n - 1 : :])]
         return res
 
     def _split_list_bychunksize(self, lst, max_size=1):
         """Split list in chunks of imposed size
-            The last chunk may contain less element than the others, depending on the size of the list.
+        The last chunk may contain less element than the others, depending on the size of the list.
         """
         res = []
         for i in self._split(lst, max_size):
@@ -110,7 +111,7 @@ class Chunker:
         return res
 
     def _split_box(self, large_box, n=1, d="x"):  # noqa: C901
-        """Split a box domain in one direction in n-imposed equal chunks """
+        """Split a box domain in one direction in n-imposed equal chunks"""
         if d == "x":
             i_left, i_right = 0, 1
         if d == "y":
@@ -133,7 +134,7 @@ class Chunker:
                     this_box[i_right] = right
                     boxes.append(this_box)
         elif "t" in d:
-            dates = pd.to_datetime(large_box[i_left: i_right + 1])
+            dates = pd.to_datetime(large_box[i_left : i_right + 1])
             date_bounds = [
                 d.strftime("%Y%m%d%H%M%S")
                 for d in pd.date_range(dates[0], dates[1], periods=n + 1)
@@ -271,7 +272,7 @@ class Chunker:
         return {"chunks": sorted(n_chunks), "values": wmo_grps}
 
     def fit_transform(self):
-        """ Chunk a fetcher request
+        """Chunk a fetcher request
 
         Returns
         -------

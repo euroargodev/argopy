@@ -12,7 +12,7 @@ log = logging.getLogger("argopy.utils.caching")
 
 
 def clear_cache(fs=None):
-    """ Delete argopy cache folder content """
+    """Delete argopy cache folder content"""
     if os.path.exists(OPTIONS["cachedir"]):
         # shutil.rmtree(OPTIONS["cachedir"])
         for filename in os.listdir(OPTIONS["cachedir"]):
@@ -29,23 +29,24 @@ def clear_cache(fs=None):
 
 
 def lscache(cache_path: str = "", prt=True):
-    """ Decode and list cache folder content
+    """Decode and list cache folder content
 
-        Parameters
-        ----------
-        cache_path: str
-        prt: bool, default=True
-            Return a printable string or a :class:`pandas.DataFrame`
+    Parameters
+    ----------
+    cache_path: str
+    prt: bool, default=True
+        Return a printable string or a :class:`pandas.DataFrame`
 
-        Returns
-        -------
-        str or :class:`pandas.DataFrame`
+    Returns
+    -------
+    str or :class:`pandas.DataFrame`
     """
     from datetime import datetime
     import math
+
     summary = []
 
-    cache_path = OPTIONS['cachedir'] if cache_path == '' else cache_path
+    cache_path = OPTIONS["cachedir"] if cache_path == "" else cache_path
     apath = os.path.abspath(cache_path)
     log.debug("Listing cache content at: %s" % cache_path)
 
@@ -62,7 +63,9 @@ def lscache(cache_path: str = "", prt=True):
     fn = os.path.join(apath, "cache")
     if os.path.exists(fn):
         with open(fn, "rb") as f:
-            loaded_cached_files = pickle.load(f)  # nosec B301 because files controlled internally
+            loaded_cached_files = pickle.load(
+                f
+            )  # nosec B301 because files controlled internally
             for c in loaded_cached_files.values():
                 if isinstance(c["blocks"], list):
                     c["blocks"] = set(c["blocks"])
@@ -76,38 +79,52 @@ def lscache(cache_path: str = "", prt=True):
     N_FILES = len(cached_files)
     TOTAL_SIZE = 0
     for cfile in cached_files:
-        path = os.path.join(apath, cached_files[cfile]['fn'])
+        path = os.path.join(apath, cached_files[cfile]["fn"])
         TOTAL_SIZE += os.path.getsize(path)
 
-    summary.append("%s %s" % ("=" * 20, "%i files in fsspec cache folder (%s)" % (N_FILES, convert_size(TOTAL_SIZE))))
+    summary.append(
+        "%s %s"
+        % (
+            "=" * 20,
+            "%i files in fsspec cache folder (%s)"
+            % (N_FILES, convert_size(TOTAL_SIZE)),
+        )
+    )
     summary.append("lscache %s" % os.path.sep.join([apath, ""]))
     summary.append("=" * 20)
 
-    listing = {'fn': [], 'size': [], 'time': [], 'original': [], 'uid': [], 'blocks': []}
+    listing = {
+        "fn": [],
+        "size": [],
+        "time": [],
+        "original": [],
+        "uid": [],
+        "blocks": [],
+    }
     for cfile in cached_files:
-        summary.append("- %s" % cached_files[cfile]['fn'])
-        listing['fn'].append(cached_files[cfile]['fn'])
+        summary.append("- %s" % cached_files[cfile]["fn"])
+        listing["fn"].append(cached_files[cfile]["fn"])
 
-        path = os.path.join(cache_path, cached_files[cfile]['fn'])
-        summary.append("\t%8s: %s" % ('SIZE', convert_size(os.path.getsize(path))))
-        listing['size'].append(os.path.getsize(path))
+        path = os.path.join(cache_path, cached_files[cfile]["fn"])
+        summary.append("\t%8s: %s" % ("SIZE", convert_size(os.path.getsize(path))))
+        listing["size"].append(os.path.getsize(path))
 
-        key = 'time'
+        key = "time"
         ts = cached_files[cfile][key]
         tsf = pd.to_datetime(datetime.fromtimestamp(ts)).strftime("%c")
         summary.append("\t%8s: %s (%s)" % (key, tsf, ts))
-        listing['time'].append(pd.to_datetime(datetime.fromtimestamp(ts)))
+        listing["time"].append(pd.to_datetime(datetime.fromtimestamp(ts)))
 
         if version.parse(fsspec.__version__) > version.parse("0.8.7"):
-            key = 'original'
+            key = "original"
             summary.append("\t%8s: %s" % (key, cached_files[cfile][key]))
             listing[key].append(cached_files[cfile][key])
 
-        key = 'uid'
+        key = "uid"
         summary.append("\t%8s: %s" % (key, cached_files[cfile][key]))
         listing[key].append(cached_files[cfile][key])
 
-        key = 'blocks'
+        key = "blocks"
         summary.append("\t%8s: %s" % (key, cached_files[cfile][key]))
         listing[key].append(cached_files[cfile][key])
 

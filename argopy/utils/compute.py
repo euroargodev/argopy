@@ -18,12 +18,7 @@ log = logging.getLogger("argopy.utils.compute")
 
 
 def linear_interpolation_remap(
-    z,
-    data,
-    z_regridded,
-    z_dim=None,
-    z_regridded_dim="regridded",
-    output_dim="remapped"
+    z, data, z_regridded, z_dim=None, z_regridded_dim="regridded", output_dim="remapped"
 ):
     # interpolation called in xarray ufunc
     def _regular_interp(x, y, target_values):

@@ -79,7 +79,7 @@ def netcdf_and_hdf5_versions():
 
 
 def show_versions(file=sys.stdout, conda=False):  # noqa: C901
-    """ Print the versions of argopy and its dependencies
+    """Print the versions of argopy and its dependencies
 
     Parameters
     ----------
@@ -96,74 +96,98 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         print(f"Error collecting netcdf / hdf5 version: {e}")
 
     DEPS = {
-        'core': sorted([
-            ("argopy", lambda mod: mod.__version__),
-
-            ("xarray", lambda mod: mod.__version__),
-            ("scipy", lambda mod: mod.__version__),
-            ("netCDF4", lambda mod: mod.__version__),
-            ("erddapy", lambda mod: mod.__version__),  # This could go away from requirements ?
-            ("fsspec", lambda mod: mod.__version__),
-            ("aiohttp", lambda mod: mod.__version__),
-            ("packaging", lambda mod: mod.__version__),  # will come with xarray, Using 'version' to make API compatible with several fsspec releases
-            ("requests", lambda mod: mod.__version__),
-            ("toolz", lambda mod: mod.__version__),
-        ]),
-        'ext.util': sorted([
-            ("gsw", lambda mod: mod.__version__),   # Used by xarray accessor to compute new variables
-            ("tqdm", lambda mod: mod.__version__),
-            ("zarr", lambda mod: mod.__version__),
-        ]),
-        'ext.perf': sorted([
-            ("dask", lambda mod: mod.__version__),
-            ("distributed", lambda mod: mod.__version__),
-            ("pyarrow", lambda mod: mod.__version__),
-        ]),
-        'ext.plot': sorted([
-            ("matplotlib", lambda mod: mod.__version__),
-            ("cartopy", lambda mod: mod.__version__),
-            ("seaborn", lambda mod: mod.__version__),
-            ("IPython", lambda mod: mod.__version__),
-            ("ipywidgets", lambda mod: mod.__version__),
-            ("ipykernel", lambda mod: mod.__version__),
-        ]),
-        'dev': sorted([
-
-            ("bottleneck", lambda mod: mod.__version__),
-            ("cftime", lambda mod: mod.__version__),
-            ("cfgrib", lambda mod: mod.__version__),
-            ("conda", lambda mod: mod.__version__),
-            ("nc_time_axis", lambda mod: mod.__version__),
-
-            ("numpy", lambda mod: mod.__version__),  # will come with xarray and pandas
-            ("pandas", lambda mod: mod.__version__),  # will come with xarray
-
-            ("pip", lambda mod: mod.__version__),
-            ("black", lambda mod: mod.__version__),
-            ("flake8", lambda mod: mod.__version__),
-            ("pytest", lambda mod: mod.__version__),  # will come with pandas
-            ("pytest_env", lambda mod: mod.__version__),  # will come with pandas
-            ("pytest_cov", lambda mod: mod.__version__),  # will come with pandas
-            ("pytest_localftpserver", lambda mod: mod.__version__),  # will come with pandas
-            ("pytest_reportlog", lambda mod: mod.__version__),  # will come with pandas
-            ("setuptools", lambda mod: mod.__version__),
-            ("aiofiles", lambda mod: mod.__version__),
-            ("sphinx", lambda mod: mod.__version__),
-        ]),
+        "core": sorted(
+            [
+                ("argopy", lambda mod: mod.__version__),
+                ("xarray", lambda mod: mod.__version__),
+                ("scipy", lambda mod: mod.__version__),
+                ("netCDF4", lambda mod: mod.__version__),
+                (
+                    "erddapy",
+                    lambda mod: mod.__version__,
+                ),  # This could go away from requirements ?
+                ("fsspec", lambda mod: mod.__version__),
+                ("aiohttp", lambda mod: mod.__version__),
+                (
+                    "packaging",
+                    lambda mod: mod.__version__,
+                ),  # will come with xarray, Using 'version' to make API compatible with several fsspec releases
+                ("requests", lambda mod: mod.__version__),
+                ("toolz", lambda mod: mod.__version__),
+            ]
+        ),
+        "ext.util": sorted(
+            [
+                (
+                    "gsw",
+                    lambda mod: mod.__version__,
+                ),  # Used by xarray accessor to compute new variables
+                ("tqdm", lambda mod: mod.__version__),
+                ("zarr", lambda mod: mod.__version__),
+            ]
+        ),
+        "ext.perf": sorted(
+            [
+                ("dask", lambda mod: mod.__version__),
+                ("distributed", lambda mod: mod.__version__),
+                ("pyarrow", lambda mod: mod.__version__),
+            ]
+        ),
+        "ext.plot": sorted(
+            [
+                ("matplotlib", lambda mod: mod.__version__),
+                ("cartopy", lambda mod: mod.__version__),
+                ("seaborn", lambda mod: mod.__version__),
+                ("IPython", lambda mod: mod.__version__),
+                ("ipywidgets", lambda mod: mod.__version__),
+                ("ipykernel", lambda mod: mod.__version__),
+            ]
+        ),
+        "dev": sorted(
+            [
+                ("bottleneck", lambda mod: mod.__version__),
+                ("cftime", lambda mod: mod.__version__),
+                ("cfgrib", lambda mod: mod.__version__),
+                ("conda", lambda mod: mod.__version__),
+                ("nc_time_axis", lambda mod: mod.__version__),
+                (
+                    "numpy",
+                    lambda mod: mod.__version__,
+                ),  # will come with xarray and pandas
+                ("pandas", lambda mod: mod.__version__),  # will come with xarray
+                ("pip", lambda mod: mod.__version__),
+                ("black", lambda mod: mod.__version__),
+                ("flake8", lambda mod: mod.__version__),
+                ("pytest", lambda mod: mod.__version__),  # will come with pandas
+                ("pytest_env", lambda mod: mod.__version__),  # will come with pandas
+                ("pytest_cov", lambda mod: mod.__version__),  # will come with pandas
+                (
+                    "pytest_localftpserver",
+                    lambda mod: mod.__version__,
+                ),  # will come with pandas
+                (
+                    "pytest_reportlog",
+                    lambda mod: mod.__version__,
+                ),  # will come with pandas
+                ("setuptools", lambda mod: mod.__version__),
+                ("aiofiles", lambda mod: mod.__version__),
+                ("sphinx", lambda mod: mod.__version__),
+            ]
+        ),
     }
 
     DEPS_blob = {}
     for level in DEPS.keys():
         deps = DEPS[level]
         deps_blob = list()
-        for (modname, ver_f) in deps:
+        for modname, ver_f in deps:
             try:
                 if modname in sys.modules:
                     mod = sys.modules[modname]
                 else:
                     mod = importlib.import_module(modname)
             except Exception:
-                deps_blob.append((modname, '-'))
+                deps_blob.append((modname, "-"))
             else:
                 try:
                     ver = ver_f(mod)
@@ -187,10 +211,12 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         deps_blob = DEPS_blob[level]
         for k, stat in deps_blob:
             if conda:
-                if k != 'argopy':
+                if k != "argopy":
                     kf = k.replace("_", "-")
-                    comment = ' ' if stat != '-' else '# '
-                    print(f"{comment} - {kf} = {stat}", file=file)  # Format like a conda env line, useful to update ci/requirements
+                    comment = " " if stat != "-" else "# "
+                    print(
+                        f"{comment} - {kf} = {stat}", file=file
+                    )  # Format like a conda env line, useful to update ci/requirements
             else:
                 print("{:<12}: {:<12}".format(k, stat), file=file)
 
@@ -228,7 +254,7 @@ def modified_environ(*remove, **update):
 
 
 def show_options(file=sys.stdout):  # noqa: C901
-    """ Print options of argopy
+    """Print options of argopy
 
     Parameters
     ----------
@@ -241,4 +267,3 @@ def show_options(file=sys.stdout):  # noqa: C901
     opts = dict(sorted(opts.items()))
     for k, v in opts.items():
         print(f"{k}: {v}", file=file)
-

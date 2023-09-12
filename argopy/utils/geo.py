@@ -3,22 +3,23 @@ import pandas as pd
 
 
 def wrap_longitude(grid_long):
-    """ Allows longitude (0-360) to wrap beyond the 360 mark, for mapping purposes.
-        Makes sure that, if the longitude is near the boundary (0 or 360) that we
-        wrap the values beyond 360 so it appears nicely on a map
-        This is a refactor between get_region_data and get_region_hist_locations to
-        avoid duplicate code
+    """Allows longitude (0-360) to wrap beyond the 360 mark, for mapping purposes.
 
-        source:
-        https://github.com/euroargodev/argodmqc_owc/blob/e174f4538fdae1534c9740491398972b1ffec3ca/pyowc/utilities.py#L80
+    Makes sure that, if the longitude is near the boundary (0 or 360) that we
+    wrap the values beyond 360, so it appears nicely on a map
+    This is a refactor between get_region_data and get_region_hist_locations to
+    avoid duplicate code
 
-        Parameters
-        ----------
-        grid_long: array of longitude values
+    source:
+    https://github.com/euroargodev/argodmqc_owc/blob/e174f4538fdae1534c9740491398972b1ffec3ca/pyowc/utilities.py#L80
 
-        Returns
-        -------
-        array of longitude values that can extend past 360
+    Parameters
+    ----------
+    grid_long: array of longitude values
+
+    Returns
+    -------
+    array of longitude values that can extend past 360
     """
     neg_long = np.argwhere(grid_long < 0)
     grid_long[neg_long] = grid_long[neg_long] + 360
@@ -34,7 +35,7 @@ def wrap_longitude(grid_long):
 
 
 def wmo2box(wmo_id: int):
-    """ Convert WMO square box number into a latitude/longitude box
+    """Convert WMO square box number into a latitude/longitude box
 
     See:
     https://en.wikipedia.org/wiki/World_Meteorological_Organization_squares
@@ -88,7 +89,7 @@ def wmo2box(wmo_id: int):
 def toYearFraction(
     this_date: pd._libs.tslibs.timestamps.Timestamp = pd.to_datetime("now", utc=True)
 ):
-    """ Compute decimal year, robust to leap years, precision to the second
+    """Compute decimal year, robust to leap years, precision to the second
 
     Compute the fraction of the year a given timestamp corresponds to.
     The "fraction of the year" goes:
@@ -109,7 +110,9 @@ def toYearFraction(
     float
     """
     if "UTC" in [this_date.tzname() if this_date.tzinfo is not None else ""]:
-        startOfThisYear = pd.to_datetime("%i-01-01T00:00:00.000" % this_date.year, utc=True)
+        startOfThisYear = pd.to_datetime(
+            "%i-01-01T00:00:00.000" % this_date.year, utc=True
+        )
     else:
         startOfThisYear = pd.to_datetime("%i-01-01T00:00:00.000" % this_date.year)
     yearDuration_sec = (
@@ -123,7 +126,7 @@ def toYearFraction(
 
 
 def YearFraction_to_datetime(yf: float):
-    """ Compute datetime from year fraction
+    """Compute datetime from year fraction
 
     Inverse the toYearFraction() function
 
@@ -145,5 +148,3 @@ def YearFraction_to_datetime(yf: float):
     ).total_seconds()
     yearElapsed_sec = pd.Timedelta(fraction * yearDuration_sec, unit="s")
     return pd.to_datetime(startOfThisYear + yearElapsed_sec, unit="s")
-
-
