@@ -56,43 +56,52 @@
 
     argopy.tutorial.open_dataset
 
-    argopy.utilities.monitor_status
-    argopy.utilities.show_versions
-    argopy.utilities.show_options
-    argopy.utilities.clear_cache
-    argopy.utilities.list_available_data_src
-    argopy.utilities.list_available_index_src
-    argopy.utilities.Chunker
+    argopy.utils.monitor_status
 
-    argopy.utilities.isconnected
-    argopy.utilities.urlhaskeyword
-    argopy.utilities.isalive
-    argopy.utilities.isAPIconnected
+    argopy.utils.show_versions
+    argopy.utils.show_options
 
-    argopy.utilities.groupby_remap
-    argopy.utilities.linear_interpolation_remap
+    argopy.utils.clear_cache
+    argopy.utils.lscache
 
-    argopy.utilities.list_standard_variables
-    argopy.utilities.list_multiprofile_file_variables
-    argopy.utilities.load_dict
-    argopy.utilities.format_oneline
-    argopy.utilities.is_box
-    argopy.utilities.is_indexbox
-    argopy.utilities.is_wmo
-    argopy.utilities.is_cyc
-    argopy.utilities.check_wmo
-    argopy.utilities.check_cyc
-    argopy.utilities.wmo2box
-    argopy.utilities.deprecated
-    argopy.utilities.Registry
-    argopy.utilities.float_wmo
-    argopy.utilities.get_coriolis_profile_id
-    argopy.utilities.get_ea_profile_page
+    argopy.utils.list_available_data_src
+    argopy.utils.list_available_index_src
+    argopy.utils.list_standard_variables
+    argopy.utils.list_multiprofile_file_variables
 
-    argopy.utilities.drop_variables_not_in_all_datasets
-    argopy.utilities.fill_variables_not_in_all_datasets
+    argopy.utils.Chunker
 
-    argopy.utils.MyThreadPoolExecutor
+    argopy.utils.isconnected
+    argopy.utils.urlhaskeyword
+    argopy.utils.isalive
+    argopy.utils.isAPIconnected
+
+    argopy.utils.groupby_remap
+    argopy.utils.linear_interpolation_remap
+
+    argopy.utils.format_oneline
+    argopy.utils.is_box
+    argopy.utils.is_indexbox
+    argopy.utils.is_wmo
+    argopy.utils.is_cyc
+    argopy.utils.check_wmo
+    argopy.utils.check_cyc
+
+    argopy.utils.wmo2box
+
+    argopy.utils.deprecated
+
+    argopy.utils.Registry
+    argopy.utils.float_wmo
+
+    argopy.utils.drop_variables_not_in_all_datasets
+    argopy.utils.fill_variables_not_in_all_datasets
+
+    argopy.utils.MonitoredThreadPoolExecutor
+
+    argopy.related.load_dict
+    argopy.related.get_coriolis_profile_id
+    argopy.related.get_ea_profile_page
 
     argopy.related.TopoFetcher.cname
     argopy.related.TopoFetcher.define_constraints
@@ -123,7 +132,6 @@
     argopy.related.ArgoDocs.open_pdf
     argopy.related.ArgoDocs.show
     argopy.related.ArgoDocs.js
-
 
     argopy.plot
     argopy.plot.dashboard

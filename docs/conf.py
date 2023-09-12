@@ -265,6 +265,7 @@ html_theme_options = {
 }
 
 # Redirects for pages that were moved to new locations
+rediraffe_redirects = "redirects.txt"
 
 rediraffe_redirects = {
     "data_fetching.rst": "user-guide/fetching-argo-data/data_selection.rst",
@@ -273,6 +274,13 @@ rediraffe_redirects = {
     "data_manipulation.rst": "user-guide/working-with-argo-data/data_manipulation.rst",
     "data_quality_control.rst": "user-guide/working-with-argo-data/data_quality_control.rst",
     "visualisation.rst": "user-guide/working-with-argo-data/visualisation.rst",
+
+    "generated/utilities.get_coriolis_profile_id.rst": "related.get_coriolis_profile_id",
+    "generated/utils.compute.MyThreadPoolExecutor": "utils.MonitoredThreadPoolExecutor",
+    "generated/utilities.ArgoNVSReferenceTables": "related.ArgoNVSReferenceTables",
+    "generated/utilities.drop_variables_not_in_all_datasets": "utils.drop_variables_not_in_all_datasets",
+    "generated/utilities.fill_variables_not_in_all_datasets": "utils.fill_variables_not_in_all_datasets",
+    "generated/utilities.load_dict": "related.load_dict",
 }
 
 googleanalytics_id = 'G-C4MWDXYMXQ'
