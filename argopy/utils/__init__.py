@@ -20,13 +20,13 @@ from .caching import clear_cache, lscache
 from .monitored_threadpool import MyThreadPoolExecutor as MonitoredThreadPoolExecutor
 from .chunking import Chunker
 from .accessories import Registry, float_wmo
-from .locals import show_versions, show_options, modified_environ
-from .monitors import monitor_status
+from .locals import show_versions, show_options, modified_environ, get_sys_info, netcdf_and_hdf5_versions
+from .monitors import monitor_status, badge, fetch_status
 from .geo import wmo2box, wrap_longitude, toYearFraction, YearFraction_to_datetime
 from .compute import linear_interpolation_remap, groupby_remap
 from .transform import fill_variables_not_in_all_datasets, drop_variables_not_in_all_datasets
 from .format import argo_split_path, format_oneline
-
+from .loggers import warnUnless, log_argopy_callerstack
 
 __all__ = (
     # Checkers:
@@ -88,4 +88,8 @@ __all__ = (
     # Formatters:
     "format_oneline",
     "argo_split_path",
+
+    # Loggers:
+    "warnUnless", "log_argopy_callerstack",
+
 )
