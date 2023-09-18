@@ -914,7 +914,7 @@ class httpstore(argo_store_proto):
                 - :class:`distributed.client.Client`: Experimental, expect this method to fail !
                 - ``seq``: open data sequentially, no parallelization applied
                 - ``erddap``:  use a pool of at most ``max_workers`` threads, comes with a nice dashboard dedicated
-                to erddap server requests.
+                    to erddap server requests.
         progress: bool, default: False
             Display a progress bar
         concat: bool, default: True
