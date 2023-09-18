@@ -137,6 +137,7 @@
     argopy.plot.dashboard
     argopy.plot.bar_plot
     argopy.plot.scatter_map
+    argopy.plot.scatter_plot
     argopy.plot.plot_trajectory
     argopy.plot.latlongrid
     argopy.plot.discrete_coloring

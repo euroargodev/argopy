@@ -4,21 +4,23 @@ Manipulate/transform xarray objects or list of objects
 import numpy as np
 import xarray as xr
 import logging
+from typing import List
 
 
 log = logging.getLogger("argopy.utils.manip")
 
 
-def drop_variables_not_in_all_datasets(ds_collection):
+def drop_variables_not_in_all_datasets(ds_collection: List[xr.Dataset]) -> List[xr.Dataset]:
     """Drop variables that are not in all datasets (the lowest common denominator)
 
     Parameters
     ----------
-    list of :class:`xr.DataSet`
+    ds_collection: List[xarray.Dataset]
+        A list of :class:`xarray.Dataset`
 
     Returns
     -------
-    list of :class:`xr.DataSet`
+    List[xarray.Dataset]
     """
 
     # List all possible data variables:
@@ -27,7 +29,7 @@ def drop_variables_not_in_all_datasets(ds_collection):
         [vlist.append(v) for v in list(res.data_vars)]
     vlist = np.unique(vlist)
 
-    # Check if each variables are in each datasets:
+    # Check if each variable are in each dataset:
     ishere = np.zeros((len(vlist), len(ds_collection)))
     for ir, res in enumerate(ds_collection):
         for iv, v in enumerate(res.data_vars):
@@ -57,18 +59,24 @@ def drop_variables_not_in_all_datasets(ds_collection):
     return ds_collection
 
 
-def fill_variables_not_in_all_datasets(ds_collection, concat_dim="rows"):
-    """Add empty variables to dataset so that all the collection have the same data_vars and coords
+def fill_variables_not_in_all_datasets(
+    ds_collection: List[xr.Dataset], concat_dim: str = "rows"
+) -> List[xr.Dataset]:
+    """Add empty variables to dataset so that all the collection have the same :attr:`xarray.Dataset.data_vars` and :props:`xarray.Dataset.coords`
 
     This is to make sure that the collection of dataset can be concatenated
 
     Parameters
     ----------
-    list of :class:`xr.DataSet`
+    ds_collection: List[xarray.Dataset]
+        A list of :class:`xarray.Dataset`
+    concat_dim: str, default='rows'
+        Name of the dimension to use to create new variables. Typically, this is the name of the dimension the collection will
+        be concatenated along afterward.
 
     Returns
     -------
-    list of :class:`xr.DataSet`
+    List[xarray.Dataset]
     """
 
     def first_variable_with_concat_dim(this_ds, concat_dim="rows"):
