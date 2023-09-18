@@ -4035,7 +4035,19 @@ class ArgoDocs:
             "title": "Argo GDAC cookbook",
             "doi": "10.13155/46202",
             "id": 46202
-        }
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Processing BGC-Argo pH data at the DAC level",
+            "doi": "10.13155/57195",
+            "id": 57195
+        },
+        {
+            "category": "Cookbooks",
+            "title": "Processing BGC-Argo nitrate concentration at the DAC Level",
+            "doi": "10.13155/46121",
+            "id": 46121
+        },
     ]
 
     class RIS:
