@@ -13,7 +13,7 @@ Coming up next
 
 **Internals**
 
-- Utilities refactoring. Each class/function have been refactored in more appropriate locations like ``argopy.utils`` or ``argopy.relatec``.
+- Utilities refactoring. Each class/function have been refactored in more appropriate locations like ``argopy.utils`` or ``argopy.related``.
 
 v0.1.14rc2 (27 Jul. 2023)
 -------------------------
@@ -21,7 +21,7 @@ v0.1.14rc2 (27 Jul. 2023)
 **Features and front-end API**
 
 - **argopy now support BGC dataset in `expert` user mode for the `erddap` data source**. The BGC-Argo content of synthetic multi-profile files is now available from the Ifremer erddap. Like for the core dataset, you can fetch data for a region, float(s) or profile(s). One novelty with regard to core, is that you can restrict data fetching to some parameters and furthermore impose no-NaNs on some of these parameters.
-Check out the new documentation page for :ref:`data-set`. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+ Check out the new documentation page for :ref:`data-set`. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
