@@ -7,7 +7,7 @@ data_quality_control.rst user-guide/working-with-argo-data/data_quality_control.
 visualisation.rst user-guide/working-with-argo-data/visualisation.rst
 argopy.utilities.get_coriolis_profile_id.rst argopy.related.get_coriolis_profile_id.rst
 # generated/argopy.utils.compute.MyThreadPoolExecutor generated/argopy.utils.MonitoredThreadPoolExecutor.rst
-# generated/argopy.utilities.ArgoNVSReferenceTables generated/argopy.related.ArgoNVSReferenceTables.rst
+generated/argopy.utilities.ArgoNVSReferenceTables.rst generated/argopy.related.ArgoNVSReferenceTables.rst
 # generated/argopy.utilities.drop_variables_not_in_all_datasets generated/argopy.utils.drop_variables_not_in_all_datasets.rst
 # generated/argopy.utilities.fill_variables_not_in_all_datasets generated/argopy.utils.fill_variables_not_in_all_datasets.rst
 # generated/argopy.utilities.load_dict generated/argopy.related.load_dict.rst

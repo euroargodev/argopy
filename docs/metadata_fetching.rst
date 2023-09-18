@@ -282,7 +282,7 @@ Two specific index variables are only available with BGC-Argo index files: ``PAR
 
 Reference tables
 ----------------
-.. currentmodule:: argopy.utilities
+.. currentmodule:: argopy.related
 
 The Argo netcdf format is strict and based on a collection of variables fully documented and conventioned. All reference tables can be found in the `Argo user manual <https://doi.org/10.13155/29825>`_.
 
@@ -331,7 +331,7 @@ The full list of all available tables is given by the :meth:`ArgoNVSReferenceTab
 
 Deployment Plan
 ---------------
-.. currentmodule:: argopy.utilities
+.. currentmodule:: argopy.related
 
 It may be useful to be able to retrieve meta-data from Argo deployments. **argopy** can use the `OceanOPS API for metadata access <https://www.ocean-ops.org/api/swagger/?url=https://www.ocean-ops.org/api/1/oceanops-api.yaml>`_ to retrieve these information. The returned deployment `plan` is a list of all Argo floats ever deployed, together with their deployment location, date, WMO, program, country, float model and current status.
 
@@ -385,7 +385,7 @@ Last, :class:`OceanOPSDeployments` comes with a plotting method:
 
 ADMT Documentation
 ------------------
-.. currentmodule:: argopy.utilities
+.. currentmodule:: argopy.related
 
 More than 20 pdf manuals have been produced by the Argo Data Management Team. Using the :class:`ArgoDocs` class, it's easy to navigate this great database.
 
