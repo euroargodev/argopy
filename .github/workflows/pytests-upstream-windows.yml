@@ -1,4 +1,4 @@
-name: CI tests Upstream
+name: CI tests Upstream for Windows
 # Daily tests with all un-pinned dependencies
 # Allows to be warned when argopy fail tests due to updates in dependencies
 
@@ -71,7 +71,7 @@ jobs:
       fail-fast: true
       matrix:
         python-version: ["3.8", "3.9"]
-        os: ["ubuntu-latest", "macos-latest"]
+        os: ["windows-latest"]
 
     steps:
       - uses: actions/checkout@v4
@@ -151,7 +151,7 @@ jobs:
       fail-fast: true
       matrix:
         python-version: ["3.8", "3.9"]
-        os: ["ubuntu-latest", "macos-latest"]
+        os: ["windows-latest"]
 
     steps:
       - uses: actions/checkout@v4
