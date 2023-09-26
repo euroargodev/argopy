@@ -147,27 +147,27 @@ capabilities. Here is a summary:
       -
       -
     * -
-      - 🟡 core (T/S)
+      - core (T/S)
       - X
       - X
       - X
     * -
-      - 🟢 BGC
+      - BGC
       - X
       - X
       -
     * -
-      - 🔵 Deep
+      - Deep
       - X
       - X
       - X
     * -
-      - ⚫ Trajectories
+      - Trajectories
       -
       -
       -
     * -
-      - 🟣 Reference data for DMQC
+      - Reference data for DMQC
       - X
       -
       -

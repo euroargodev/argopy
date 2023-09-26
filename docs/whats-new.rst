@@ -10,6 +10,9 @@ What's New
 
 Coming up next
 --------------
+**Features and front-end API**
+
+- Rolling out incremental support for BGC variables 🎉 All new features from v0.1.14rc2 and v0.1.14rc1 ! See below ...
 
 **Internals**
 
@@ -84,7 +87,7 @@ v0.1.14rc2 (27 Jul. 2023)
 
 - Refactor pickle files in argopy/assets as json files in argopy/static/assets
 
-- Refactor list of variables by data types used in :func:`utils.cast_Argo_variable_type` into assets json files in argopy/static/assets
+- Refactor list of variables by data types used in :func:`related.cast_Argo_variable_type` into assets json files in argopy/static/assets
 
 - Change of behaviour: when setting the cachedir option, path it's not tested for existence but for being writable, and is created if doesn't exists (but seems to break CI upstream in Windows)
 
@@ -147,7 +150,7 @@ v0.1.14rc1 (31 May 2023)
 .. warning::
     **argopy** is ready but the Argo CTD reference database for DMQC is not fully published on the Ifremer ERDDAP yet. This new feature will thus be fully operational soon, and while it's not, **argopy** should raise an ``ErddapHTTPNotFound`` error when using the new fetcher.
 
-- New option to control the expiration time of cache file ``cache_expiration``. 
+- New option to control the expiration time of cache file: ``cache_expiration``.
 
 **Internals**
 

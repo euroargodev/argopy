@@ -1,8 +1,8 @@
 .. currentmodule:: argopy
 .. _data-set:
 
-Dataset (🟡+🔵 vs 🟢)
-######################
+Dataset
+#######
 
 |Profile count| |Profile BGC count|
 
@@ -21,9 +21,9 @@ Dataset (🟡+🔵 vs 🟢)
 
 But they are several Argo `missions <https://argo.ucsd.edu/about/mission>`_ with specific files and parameters that need special handling by **argopy**, namely:
 
-- 🟡 the core Argo Mission:  from floats that measure temperature, salinity, pressure down to 2000m,
-- 🔵 the `Deep Argo Mission <https://argo.ucsd.edu/expansion/deep-argo-mission>`_:  from floats that measure temperature, salinity, pressure down to 6000m,
-- 🟢 and the `BGC-Argo Mission <https://biogeochemical-argo.org>`_:  from floats that measure temperature, salinity, pressure and oxygen, pH, nitrate, chlorophyll, backscatter, irradiance down to 2000m.
+- the core Argo Mission:  from floats that measure temperature, salinity, pressure down to 2000m,
+- the `Deep Argo Mission <https://argo.ucsd.edu/expansion/deep-argo-mission>`_:  from floats that measure temperature, salinity, pressure down to 6000m,
+- and the `BGC-Argo Mission <https://biogeochemical-argo.org>`_:  from floats that measure temperature, salinity, pressure and oxygen, pH, nitrate, chlorophyll, backscatter, irradiance down to 2000m.
 
 
 Argo dataset available in **argopy**
@@ -33,11 +33,11 @@ In **argopy** we simply make the difference between physical and biogeochemical 
 
 In **argopy** you can thus get access to the following Argo data:
 
-1. 🟡+ 🔵 the **phy** dataset, for *physical* parameters.
+1. the **phy** dataset, for *physical* parameters.
     This dataset provides data from floats that measure temperature, salinity, pressure, without limitation in depth. It is available from all :ref:`Available data sources`.
     Since this is the most common Argo data subset it's selected with the ``phy`` keyword by default in **argopy**.
 
-2. 🟢 the **bgc** dataset, for *biogeochemical* parameters.
+2. the **bgc** dataset, for *biogeochemical* parameters.
     This dataset provides data from floats that measure temperature, salinity, pressure and oxygen, pH, nitrate, chlorophyll, backscatter, irradiance, without limitation in depth.
     You can select this dataset with the keyword ``bgc`` and methods described below.
 
@@ -75,7 +75,7 @@ You have several ways to specify which dataset you want to use:
 
     In the future, we could consider to add more mission specific keywords for the ``dataset`` option and ``ds`` fetcher argument of :class:`DataFetcher`. This could be *deep* for instance. Please `raise an gitHub "issue" <https://github.com/euroargodev/argopy/issues/new>`_ if you may require such a new feature.
 
-The 🟢 **bgc** dataset
+The **bgc** dataset
 **********************
 .. role:: python(code)
    :language: python
@@ -84,7 +84,7 @@ The 🟢 **bgc** dataset
 
     At this time, BGC parameters are only available in ``expert`` :ref:`user mode <user-mode>` and with the ``erddap`` :ref:`data source <data-sources>`.
 
-All **argopy** features work with the 🟡+ 🔵 **phy** dataset. However, they are some specific methods dedicated to the 🟢 **bgc** dataset that we now describe.
+All **argopy** features work with the **phy** dataset. However, they are some specific methods dedicated to the **bgc** dataset that we now describe.
 
 Specifics in :class:`DataFetcher`
 =================================

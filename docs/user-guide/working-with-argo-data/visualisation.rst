@@ -111,7 +111,7 @@ Examples:
 
         .. image:: ../../_static/dashboard_profile.png
 
-    .. tab:: For 🟢 **bgc** profiles
+    .. tab:: For **bgc** profiles
 
         and for a BGC float, change the ``type`` option to ``bgc``:
 
