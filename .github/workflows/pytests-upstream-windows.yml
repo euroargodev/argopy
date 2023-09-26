@@ -108,26 +108,30 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Test with pytest
+      - name: Test with pytest, no report
         run: |
-          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 \
-            --report-log output-${{ matrix.python-version }}-log.jsonl
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10
 
-      - name: Generate and publish the report
-        if: |
-          failure()
-          && steps.status.outcome == 'failure'
-          && github.repository_owner == 'euroargodev'
-        uses: xarray-contrib/issue-from-pytest-log@v1
-        with:
-          log-path: output-${{ matrix.python-version }}-log.jsonl
+      # - name: Test with pytest
+      #   run: |
+      #     pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 \
+      #       --report-log output-${{ matrix.python-version }}-log.jsonl
+
+      # - name: Generate and publish a report on failure
+      #   if: |
+      #     failure()
+      #     && steps.status.outcome == 'failure'
+      #     && github.repository_owner == 'euroargodev'
+      #   uses: xarray-contrib/issue-from-pytest-log@v1
+      #   with:
+      #     log-path: output-${{ matrix.python-version }}-log.jsonl
           
-      - name: 'Save tests log as artifact'
-        uses: actions/upload-artifact@v3
-        with:
-          name: Argopy-Tests
-          path: output-${{ matrix.python-version }}-log.jsonl
-          retention-days: 90
+      # - name: 'Save tests log as artifact'
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: Argopy-Tests
+      #     path: output-${{ matrix.python-version }}-log.jsonl
+      #     retention-days: 90
 
   all-free:
     # CI tests for environments with all possible requirements in free versions
@@ -190,23 +194,27 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Test with pytest
+      - name: Test with pytest, no report
         run: |
-          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 \
-            --report-log output-${{ matrix.python-version }}-log.jsonl
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10
 
-      - name: Generate and publish the report
-        if: |
-          failure()
-          && steps.status.outcome == 'failure'
-          && github.repository_owner == 'euroargodev'
-        uses: xarray-contrib/issue-from-pytest-log@v1
-        with:
-          log-path: output-${{ matrix.python-version }}-log.jsonl
+      # - name: Test with pytest
+      #   run: |
+      #     pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 \
+      #       --report-log output-${{ matrix.python-version }}-log.jsonl
+
+      # - name: Generate and publish the report
+      #   if: |
+      #     failure()
+      #     && steps.status.outcome == 'failure'
+      #     && github.repository_owner == 'euroargodev'
+      #   uses: xarray-contrib/issue-from-pytest-log@v1
+      #   with:
+      #     log-path: output-${{ matrix.python-version }}-log.jsonl
           
-      - name: 'Save tests log as artifact'
-        uses: actions/upload-artifact@v3
-        with:
-          name: Argopy-Tests
-          path: output-${{ matrix.python-version }}-log.jsonl
-          retention-days: 90
+      # - name: 'Save tests log as artifact'
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: Argopy-Tests
+      #     path: output-${{ matrix.python-version }}-log.jsonl
+      #     retention-days: 90
