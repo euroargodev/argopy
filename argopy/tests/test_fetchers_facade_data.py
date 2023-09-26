@@ -10,7 +10,7 @@ from argopy.errors import (
     InvalidFetcher,
     OptionValueError,
 )
-from argopy.utilities import is_list_of_strings
+from argopy.utils import is_list_of_strings
 from utils import (
     requires_fetcher,
     requires_connection,

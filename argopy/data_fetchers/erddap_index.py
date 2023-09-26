@@ -17,9 +17,10 @@ import logging
 
 from abc import ABC, abstractmethod
 
-from argopy.utilities import load_dict, mapp_dict, format_oneline
-from argopy.stores import httpstore
-from argopy.options import OPTIONS
+from ..utils.format import format_oneline
+from ..related import load_dict, mapp_dict
+from ..stores import httpstore
+from ..options import OPTIONS
 
 log = logging.getLogger("argopy.fetchers.erddap_index")
 

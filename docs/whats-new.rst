@@ -8,13 +8,22 @@ What's New
 |pypi dwn| |conda dwn|
 
 
+Coming up next
+--------------
+**Features and front-end API**
+
+- Rolling out incremental support for BGC variables 🎉 All new features from v0.1.14rc2 and v0.1.14rc1 ! See below ...
+
+**Internals**
+
+- Utilities refactoring. All classes and functions have been refactored to more appropriate locations like ``argopy.utils`` or ``argopy.related``. A deprecation warning message will be displayed every time utilities are being used from the former locations. (:pr:`290`) by `G. Maze <http://www.github.com/gmaze>`_
+
 v0.1.14rc2 (27 Jul. 2023)
 -------------------------
 
 **Features and front-end API**
 
-- **argopy now support BGC dataset in `expert` user mode for the `erddap` data source**. The BGC-Argo content of synthetic multi-profile files is now available from the Ifremer erddap. Like for the core dataset, you can fetch data for a region, float(s) or profile(s). One novelty with regard to core, is that you can restrict data fetching to some parameters and furthermore impose no-NaNs on some of these parameters.
-Check out the new documentation page for :ref:`data-set`. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+- **argopy now support BGC dataset in `expert` user mode for the `erddap` data source**. The BGC-Argo content of synthetic multi-profile files is now available from the Ifremer erddap. Like for the core dataset, you can fetch data for a region, float(s) or profile(s). One novelty with regard to core, is that you can restrict data fetching to some parameters and furthermore impose no-NaNs on some of these parameters. Check out the new documentation page for :ref:`data-set`. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -54,7 +63,7 @@ Check out the new documentation page for :ref:`data-set`. (:pr:`278`) by `G. Maz
 
 - **New xarray argo accessor features**. Easily retrieve an Argo sample index and domain extent with the ``index`` and ``domain`` properties. Get a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) with the ``list_WMO_CYC`` method. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
 
-- **New search methods for Argo reference tables**. It is now possible to search for a string in tables title and/or description using the :meth:`utilities.ArgoNVSReferenceTables.search` method.
+- **New search methods for Argo reference tables**. It is now possible to search for a string in tables title and/or description using the :meth:`related.ArgoNVSReferenceTables.search` method.
 
 .. code-block:: python
 
@@ -66,19 +75,19 @@ Check out the new documentation page for :ref:`data-set`. (:pr:`278`) by `G. Maz
 
 **Internals**
 
-- New utility class :class:`utils.compute.MyThreadPoolExecutor` to handle parallelization with a multi-threading Pool that provide a notebook or terminal computation progress dashboard. This class is used by the httpstore open_mfdataset method for erddap requests.
+- New utility class :class:`utils.MonitoredThreadPoolExecutor` to handle parallelization with a multi-threading Pool that provide a notebook or terminal computation progress dashboard. This class is used by the httpstore open_mfdataset method for erddap requests.
 
-- New utilites to handle a collection of datasets: :func:`utilities.drop_variables_not_in_all_datasets` will drop variables that are not in all datasets (the lowest common denominator) and :func:`utilities.fill_variables_not_in_all_datasets` will add empty variables to dataset so that all the collection have the same data_vars and coords. These functions are used by stores to concat/merge a collection of datasets (chunks).
+- New utilites to handle a collection of datasets: :func:`utils.drop_variables_not_in_all_datasets` will drop variables that are not in all datasets (the lowest common denominator) and :func:`utils.fill_variables_not_in_all_datasets` will add empty variables to dataset so that all the collection have the same data_vars and coords. These functions are used by stores to concat/merge a collection of datasets (chunks).
 
-- :func:`utilities.load_dict` now relies on :class:`ArgoNVSReferenceTables` instead of static pickle files.
+- :func:`related.load_dict` now relies on :class:`ArgoNVSReferenceTables` instead of static pickle files.
 
 - :class:`argopy.ArgoColors` colormap for Argo Data-Mode has now a fourth value to account for a white space FillValue.
 
-- New quick and dirty plot method :func:`plot.plot.scatter_plot`
+- New quick and dirty plot method :func:`plot.scatter_plot`
 
 - Refactor pickle files in argopy/assets as json files in argopy/static/assets
 
-- Refactor list of variables by data types used in :func:`utilities.cast_Argo_variable_type` into assets json files in argopy/static/assets
+- Refactor list of variables by data types used in :func:`related.cast_Argo_variable_type` into assets json files in argopy/static/assets
 
 - Change of behaviour: when setting the cachedir option, path it's not tested for existence but for being writable, and is created if doesn't exists (but seems to break CI upstream in Windows)
 
@@ -102,7 +111,7 @@ v0.1.14rc1 (31 May 2023)
 
 - **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`Store: Low-level Argo Index access`. (:pr:`270`) by `G. Maze <http://www.github.com/gmaze>`_
 
-- **Easy access to all Argo manuals from the ADMT**. More than 20 pdf manuals have been produced by the Argo Data Management Team. Using the new ``ArgoDocs`` class, it's now easier to navigate this great database for Argo experts. All details in :ref:`ADMT Documentation`. (:pr:`268`) by `G. Maze <http://www.github.com/gmaze>`_
+- **Easy access to all Argo manuals from the ADMT**. More than 20 pdf manuals have been produced by the Argo Data Management Team. Using the new :class:`ArgoDocs` class, it's now easier to navigate this great database for Argo experts. All details in :ref:`ADMT Documentation`. (:pr:`268`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -141,7 +150,7 @@ v0.1.14rc1 (31 May 2023)
 .. warning::
     **argopy** is ready but the Argo CTD reference database for DMQC is not fully published on the Ifremer ERDDAP yet. This new feature will thus be fully operational soon, and while it's not, **argopy** should raise an ``ErddapHTTPNotFound`` error when using the new fetcher.
 
-- New option to control the expiration time of cache file ``cache_expiration``. 
+- New option to control the expiration time of cache file: ``cache_expiration``.
 
 **Internals**
 

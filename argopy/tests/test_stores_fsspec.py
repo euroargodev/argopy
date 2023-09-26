@@ -29,10 +29,10 @@ from argopy.errors import (
     InvalidMethod,
     DataNotFound,
 )
-from argopy.utilities import (
+from argopy.utils.locals import modified_environ
+from argopy.utils.checkers import (
     is_list_of_datasets,
     is_list_of_dicts,
-    modified_environ,
 )
 from utils import requires_connection, requires_connected_argovis
 from mocked_http import mocked_httpserver, mocked_server_address

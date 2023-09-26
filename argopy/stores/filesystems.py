@@ -34,7 +34,7 @@ from packaging import version
 from typing import Union
 from urllib.parse import urlparse, parse_qs
 from functools import lru_cache
-
+from abc import ABC, abstractmethod
 import concurrent.futures
 import multiprocessing
 
@@ -47,14 +47,12 @@ from ..errors import (
     ErddapHTTPUnauthorized,
     ErddapHTTPNotFound,
 )
-from abc import ABC, abstractmethod
-from ..utilities import (
-    Registry,
-    #    log_argopy_callerstack,
+from ..utils.transform import (
     drop_variables_not_in_all_datasets,
     fill_variables_not_in_all_datasets,
 )
-from ..utils.compute import MyThreadPoolExecutor as MyExecutor
+from ..utils.monitored_threadpool import MyThreadPoolExecutor as MyExecutor
+from ..utils.accessories import Registry
 
 
 log = logging.getLogger("argopy.stores")
@@ -916,7 +914,7 @@ class httpstore(argo_store_proto):
                 - :class:`distributed.client.Client`: Experimental, expect this method to fail !
                 - ``seq``: open data sequentially, no parallelization applied
                 - ``erddap``:  use a pool of at most ``max_workers`` threads, comes with a nice dashboard dedicated
-                to erddap server requests.
+                    to erddap server requests.
         progress: bool, default: False
             Display a progress bar
         concat: bool, default: True

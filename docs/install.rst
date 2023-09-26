@@ -29,14 +29,14 @@ you can also work with the latest version:
 
 .. _bgc-install:
 
-Install release with partial 🟢 **bgc** support
+Install release with partial **bgc** support
 -----------------------------------------------
 
 .. versionadded:: v0.1.14rc2
 
-🟢 **bgc** support is provided as a **release candidate** only. Therefore, it is not available in conda and won't be selected by default with pip.
+**bgc** support is provided as a **release candidate** only. Therefore, it is not available in conda and won't be selected by default with pip.
 
-To install **argopy** with *partial* 🟢 **bgc** support, you need to use:
+To install **argopy** with *partial* **bgc** support, you need to use:
 
 .. code-block:: text
 

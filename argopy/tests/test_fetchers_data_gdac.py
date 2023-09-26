@@ -11,6 +11,7 @@ import tempfile
 import shutil
 from urllib.parse import urlparse
 import logging
+from collections import ChainMap
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
@@ -19,10 +20,9 @@ from argopy.errors import (
     FileSystemHasNoCache,
     FtpPathError,
 )
-from argopy.utilities import is_list_of_strings, isconnected
+from argopy.utils.checkers import isconnected, is_list_of_strings
 from utils import requires_gdac
 from mocked_http import mocked_httpserver, mocked_server_address
-from collections import ChainMap
 
 
 log = logging.getLogger("argopy.tests.data.gdac")

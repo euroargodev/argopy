@@ -2,11 +2,11 @@
 Fetcher to retrieve CTD reference data from Ifremer erddap
 """
 import xarray as xr
-from .erddap_data import ErddapArgoDataFetcher
-from argopy.options import OPTIONS
-from argopy.utilities import Chunker
-from argopy.stores import httpstore_erddap_auth
 import logging
+from ..options import OPTIONS
+from ..utils.chunking import Chunker
+from ..stores import httpstore_erddap_auth
+from .erddap_data import ErddapArgoDataFetcher
 
 # Load erddapy according to available version (breaking changes in v0.8.0)
 try:

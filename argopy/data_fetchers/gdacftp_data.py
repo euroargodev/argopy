@@ -12,11 +12,11 @@ import warnings
 import getpass
 import logging
 
-from .proto import ArgoDataFetcherProto
-from ..utilities import format_oneline, argo_split_path
+from ..utils.format import format_oneline, argo_split_path
 from ..options import OPTIONS, check_gdac_path
 from ..errors import DataNotFound
 from ..stores import ArgoIndex
+from .proto import ArgoDataFetcherProto
 
 log = logging.getLogger("argopy.gdacftp.data")
 access_points = ["wmo", "box"]

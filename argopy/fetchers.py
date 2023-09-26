@@ -15,17 +15,20 @@ import pandas as pd
 import numpy as np
 import logging
 
-from argopy.options import OPTIONS, _VALIDATORS
+from .options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher, OptionValueError
-
-from .utilities import (
-    list_available_data_src,
-    list_available_index_src,
+from .related import (
+    get_coriolis_profile_id,
+)
+from .utils.checkers import (
     is_box,
     is_indexbox,
     check_wmo,
-    check_cyc,
-    get_coriolis_profile_id,
+    check_cyc
+)
+from .utils.lists import (
+    list_available_data_src,
+    list_available_index_src,
 )
 from .plot import plot_trajectory, bar_plot, open_sat_altim_report
 

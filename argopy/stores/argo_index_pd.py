@@ -10,7 +10,8 @@ import logging
 import gzip
 
 from ..errors import DataNotFound, InvalidDatasetStructure
-from ..utilities import check_index_cols, is_indexbox, check_wmo, check_cyc, to_list
+from ..utils.checkers import check_index_cols, is_indexbox, check_wmo, check_cyc
+from ..utils.casting import to_list
 from .argo_index_proto import ArgoIndexStoreProto
 
 

@@ -10,7 +10,6 @@ This is not intended to be used directly, only by the facade at fetchers.py
 
 """
 
-import argopy.utilities
 import xarray as xr
 import pandas as pd
 import numpy as np
@@ -21,18 +20,17 @@ from abc import abstractmethod
 import getpass
 from typing import Union
 import fnmatch
-
-from .proto import ArgoDataFetcherProto
-from argopy.options import OPTIONS
-from argopy.utilities import Chunker, format_oneline, to_list
-from argopy.stores import httpstore
-from ..errors import ErddapServerError, DataNotFound
-from ..stores import (
-    indexstore_pd as ArgoIndex,
-)  # make sure to work with the Pandas index store
-
 from aiohttp import ClientResponseError
 import logging
+
+from ..options import OPTIONS
+from ..utils.format import format_oneline
+from ..stores import httpstore
+from ..errors import ErddapServerError, DataNotFound
+from ..stores import indexstore_pd as ArgoIndex  # make sure we work with the Pandas index store
+from ..utils import is_list_of_strings, to_list,Chunker
+from .proto import ArgoDataFetcherProto
+
 
 # Load erddapy according to available version (breaking changes in v0.8.0)
 try:
@@ -201,7 +199,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 raise ValueError()
             elif params[0] == "all":
                 params = self._bgc_vlist_avail
-            elif not argopy.utilities.is_list_of_strings(params):
+            elif not is_list_of_strings(params):
                 raise ValueError("'params' argument must be a list of strings")
                 # raise ValueError("'params' argument must be a list of strings (possibly with a * wildcard)")
             self._bgc_vlist_requested = [p.upper() for p in params]
@@ -222,7 +220,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 measured = []
             elif self._bgc_measured[0] == "all":
                 measured = self._bgc_vlist_requested
-            elif not argopy.utilities.is_list_of_strings(self._bgc_measured):
+            elif not is_list_of_strings(self._bgc_measured):
                 raise ValueError("'measured' argument must be a list of strings")
                 # raise ValueError("'measured' argument must be a list of strings (possibly with a * wildcard)")
             self._bgc_vlist_measured = [m.upper() for m in measured]

@@ -1,7 +1,7 @@
 import numpy as np
 from contextlib import contextmanager
 import importlib
-from ..utilities import deprecated
+from ..utils.decorators import deprecated
 
 
 def _importorskip(modname):

@@ -13,7 +13,8 @@ from typing import Union
 
 from ..options import OPTIONS
 from ..errors import FtpPathError, InvalidDataset, OptionValueError
-from ..utilities import Registry, isconnected
+from ..utils.checkers import isconnected
+from ..utils.accessories import Registry
 from .filesystems import httpstore, memorystore, filestore, ftpstore
 
 try:
@@ -505,7 +506,7 @@ class ArgoIndexStoreProto(ABC):
         else:
             log.debug("Converting [%s] to dataframe from scratch ..." % src)
             # Post-processing for user:
-            from argopy.utilities import load_dict, mapp_dict
+            from ..related import load_dict, mapp_dict
 
             if nrows is not None:
                 df = df.loc[0: nrows - 1].copy()

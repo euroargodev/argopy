@@ -92,7 +92,8 @@ Utilities for Argo related data
    CTDRefDataFetcher
    TopoFetcher
    ArgoDocs
-
+   related.get_coriolis_profile_id
+   related.get_ea_profile_page
 
 .. _Module Visualisation:
 
@@ -120,6 +121,7 @@ All other visualisation functions are in the :mod:`argopy.plot` submodule:
     open_sat_altim_report
     scatter_map
     bar_plot
+    scatter_plot
     latlongrid
     discrete_coloring
 
@@ -197,24 +199,24 @@ Misc
 Utilities
 =========
 
-Function under the ``argopy.utilities`` submodule.
+Function under the ``argopy.utils`` submodule.
 
-.. currentmodule:: argopy.utilities
+.. currentmodule:: argopy.utils
 
 .. autosummary::
    :toctree: generated/
 
     list_available_data_src
     list_available_index_src
-    get_coriolis_profile_id
-    get_ea_profile_page
+    list_standard_variables
+    list_multiprofile_file_variables
 
     check_wmo
     check_cyc
+
     float_wmo
     Registry
-    list_standard_variables
-    list_multiprofile_file_variables
+
     Chunker
 
     isconnected

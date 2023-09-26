@@ -20,6 +20,7 @@ from zipfile import ZipFile
 from urllib.request import urlretrieve
 import shutil
 
+
 _DEFAULT_CACHE_DIR = os.path.expanduser(os.path.sep.join(["~", ".argopy_tutorial_data"]))
 
 

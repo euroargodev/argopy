@@ -252,7 +252,7 @@ html_theme_options = {
              "image_dark": "_static/argopy_logo_long_dark.png"
              },
     # "display_version": True,
-    "logo_only": True,
+    # "logo_only": True,
     # "show_navbar_depth": 2,  # https://sphinx-book-theme.readthedocs.io/en/stable/customize/sidebar-primary.html?highlight=logo#control-the-depth-of-the-left-sidebar-lists-to-expand
 
     "show_nav_level": 1,  # https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/navigation.html#control-how-many-navigation-levels-are-shown-by-default
@@ -265,6 +265,7 @@ html_theme_options = {
 }
 
 # Redirects for pages that were moved to new locations
+rediraffe_redirects = "redirects.txt"
 
 rediraffe_redirects = {
     "data_fetching.rst": "user-guide/fetching-argo-data/data_selection.rst",

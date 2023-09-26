@@ -1,7 +1,7 @@
 import numpy as np
 from packaging import version
 from .utils import has_mpl, has_seaborn
-from ..utilities import warnUnless
+from ..utils.loggers import warnUnless
 
 if has_mpl:
     from .utils import mpl, cm, mcolors, plt
