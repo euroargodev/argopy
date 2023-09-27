@@ -222,9 +222,8 @@ class argo_store_proto(ABC):
             return self.fs.cached_files
         else:
             # See https://github.com/euroargodev/argopy/issues/294
-            return self._metadata.cached_files
+            return self.fs._metadata.cached_files
         
-
     def cachepath(self, uri: str, errors: str = "raise"):
         """Return path to cached file for a given URI"""
         if not self.cache:
@@ -247,9 +246,7 @@ class argo_store_proto(ABC):
             )
 
     def _clear_cache_item(self, uri):
-        """Open fsspec cache registry (pickle file) and remove entry for uri"""
-        # See the "save_cache()" method in:
-        # https://filesystem-spec.readthedocs.io/en/latest/_modules/fsspec/implementations/cached.html#WholeFileCacheFileSystem
+        """Open fsspec cache registry and remove entry for uri"""
         fn = os.path.join(self.fs.storage[-1], "cache")
         self.fs.load_cache()  # Read set of stored blocks from file and populate self.cached_files
         cache = self.cached_files[-1]
