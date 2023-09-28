@@ -360,7 +360,7 @@ def create_read_only_folder_windows(folder_path):
         os.makedirs(folder_path, exist_ok=True)
 
         # Change permissions
-        check_output(cmd(AccessRight.READ_ONLY))
+        warnings.warn(str(check_output(cmd(AccessRight.READ_ONLY))))
 
     except FileExistsError:
         log.debug(f"Folder '{folder_path}' already exists.")
