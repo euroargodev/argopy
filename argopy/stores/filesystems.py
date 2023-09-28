@@ -246,27 +246,40 @@ class argo_store_proto(ABC):
             )
 
     def _clear_cache_item(self, uri):
-        """Open fsspec cache registry and remove entry for uri"""
+        """Remove medadata and file for fsspec cache uri"""
         fn = os.path.join(self.fs.storage[-1], "cache")
         self.fs.load_cache()  # Read set of stored blocks from file and populate self.cached_files
         cache = self.cached_files[-1]
+
+        # Read cache metadata:
         if os.path.exists(fn):
-            with open(fn, "rb") as f:
-                cached_files = pickle.load(
-                    f
-                )  # nosec B301 because files controlled internally
+            if version.parse(fsspec.__version__) <= version.parse("2023.6.0"):
+                with open(fn, "rb") as f:
+                    cached_files = pickle.load(f)  # nosec B301 because files controlled internally
+            else:
+                with open(fn, "r") as f:
+                    cached_files = json.load(f)
         else:
             cached_files = cache
+            
+        # Build new metadata without uri to delete, and delete corresponding cached file:
         cache = {}
         for k, v in cached_files.items():
             if k != uri:
                 cache[k] = v.copy()
             else:
+                # Delete file:
                 os.remove(os.path.join(self.fs.storage[-1], v["fn"]))
                 # log.debug("Removed %s -> %s" % (uri, v['fn']))
-        with tempfile.NamedTemporaryFile(mode="wb", delete=False) as f:
-            pickle.dump(cache, f)
-        shutil.move(f.name, fn)
+        
+        # Update cache metadata file:
+        if version.parse(fsspec.__version__) <= version.parse("2023.6.0"):
+            with tempfile.NamedTemporaryFile(mode="wb", delete=False) as f:
+                pickle.dump(cache, f)
+            shutil.move(f.name, fn)
+        else:
+            with fsspec.atomic_write(fn, mode="w") as f:
+                json.dump(cache, f)
 
     def clear_cache(self):
         """Remove cache files and entry from uri open with this store instance"""
