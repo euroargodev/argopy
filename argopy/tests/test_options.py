@@ -3,7 +3,7 @@ import pytest
 import argopy
 from argopy.options import OPTIONS
 from argopy.errors import OptionValueError, FtpPathError, ErddapPathError
-from utils import requires_gdac
+from utils import requires_gdac, create_read_only_folder
 from mocked_http import mocked_httpserver, mocked_server_address
 import logging
 
@@ -52,30 +52,10 @@ def test_opt_dataset():
         assert OPTIONS["dataset"] == "ref"
 
 
-@pytest.mark.skipif(True, reason="Need to be debugged for Windows support")
+# @pytest.mark.skipif(True, reason="Need to be debugged for Windows support")
 def test_opt_invalid_cachedir():
     # Cachedir is created if not exist.
     # OptionValueError is raised when it's not writable
-    import stat
-    def create_read_only_folder(folder_path):
-        try:
-            # Create the folder
-            os.makedirs(folder_path, exist_ok=True)
-
-            # Get the current permissions of the folder
-            current_permissions = os.stat(folder_path).st_mode
-
-            # Remove the write access for the owner and group
-            new_permissions = current_permissions & ~(stat.S_IWUSR | stat.S_IWGRP)
-
-            # Set the new permissions
-            os.chmod(folder_path, new_permissions)
-
-        except FileExistsError:
-            log.debug(f"Folder '{folder_path}' already exists.")
-        except PermissionError:
-            log.debug("Error: You do not have sufficient permissions to create the folder.")
-
     folder_name = "read_only_folder"
     create_read_only_folder(folder_name)
     with pytest.raises(OptionValueError):

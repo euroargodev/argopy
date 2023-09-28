@@ -20,6 +20,14 @@ import asyncio
 from packaging import version
 import warnings
 import logging
+import stat
+import platform
+import os
+from contextlib import contextmanager
+from enum import Enum
+from subprocess import check_output
+from pathlib import Path
+from typing import Generator, List
 
 from argopy.options import set_options
 from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound, FtpPathError
@@ -304,5 +312,67 @@ def safe_to_server_errors(test_func, *args, **kwargs):
     def test_wrapper(*args, **kwargs):
         fct_safe_to_server_errors(test_func)(*args, **kwargs)
     return test_wrapper
+
+
+def create_read_only_folder_linux(folder_path):
+    try:
+        # Create the folder
+        os.makedirs(folder_path, exist_ok=True)
+
+        # Get the current permissions of the folder
+        current_permissions = os.stat(folder_path).st_mode
+
+        # Remove the write access for the owner and group
+        new_permissions = current_permissions & ~(stat.S_IWUSR | stat.S_IWGRP)
+
+        # Set the new permissions
+        os.chmod(folder_path, new_permissions)
+
+    except FileExistsError:
+        log.debug(f"Folder '{folder_path}' already exists.")
+    except PermissionError:
+        log.debug("Error: You do not have sufficient permissions to create the folder.")
+
+
+def create_read_only_folder_windows(folder_path):
+    class AccessRight(Enum):
+        """Access Rights for files/folders"""
+
+        DELETE = "D"
+        FULL = "F"  # Edit Permissions + Create + Delete + Read + Write
+        NO_ACCESS = "N"
+        MODIFY = "M"  # Create + Delete + Read + Write
+        READ_EXECUTE = "RX"
+        READ_ONLY = "R"
+        WRITE_ONLY = "W"
+    
+    def cmd(access_right: AccessRight, mode="grant:r") -> List[str]:
+        return [
+            "icacls",
+            str(folder_path),
+            "/inheritance:r",
+            f"/{mode}",
+            f"Everyone:{access_right.value}",
+        ]
+
+    try:
+        # Create the folder
+        os.makedirs(folder_path, exist_ok=True)
+
+        # Change permissions
+        check_output(cmd(AccessRight.READ_EXECUTE))
+
+    except FileExistsError:
+        log.debug(f"Folder '{folder_path}' already exists.")
+    except PermissionError:
+        log.debug("Error: You do not have sufficient permissions to create the folder.")
+
+
+def create_read_only_folder(folder_path):
+    if platform.system() == 'Windows':
+        create_read_only_folder_windows(folder_path)
+    else:
+        create_read_only_folder_linux(folder_path)
+
 
 log.debug("%s TESTS UTILS %s" % ("="*50, "="*50))
