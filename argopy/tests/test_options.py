@@ -1,5 +1,6 @@
 import os
 import pytest
+import warnings
 import argopy
 from argopy.options import OPTIONS
 from argopy.errors import OptionValueError, FtpPathError, ErddapPathError
@@ -58,6 +59,8 @@ def test_opt_invalid_cachedir():
     # OptionValueError is raised when it's not writable
     folder_name = "read_only_folder"
     create_read_only_folder(folder_name)
+    warnings.warn(os.stat(folder_name).st_mode)
+    warnings.warn(os.access(folder_name, os.W_OK))
     with pytest.raises(OptionValueError):
         argopy.set_options(cachedir=folder_name)
     os.rmdir(folder_name)
