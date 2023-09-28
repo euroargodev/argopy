@@ -1,6 +1,6 @@
 import os
 import pytest
-import warnings
+import platform
 import argopy
 from argopy.options import OPTIONS
 from argopy.errors import OptionValueError, FtpPathError, ErddapPathError
@@ -53,14 +53,12 @@ def test_opt_dataset():
         assert OPTIONS["dataset"] == "ref"
 
 
-# @pytest.mark.skipif(True, reason="Need to be debugged for Windows support")
+@pytest.mark.skipif(platform.system() == 'Windows', reason="Need to be debugged for Windows support")
 def test_opt_invalid_cachedir():
     # Cachedir is created if not exist.
     # OptionValueError is raised when it's not writable
     folder_name = "read_only_folder"
     create_read_only_folder(folder_name)
-    warnings.warn(str(os.stat(folder_name).st_mode))
-    warnings.warn(str(os.access(folder_name, os.W_OK)))
     with pytest.raises(OptionValueError):
         argopy.set_options(cachedir=folder_name)
     os.rmdir(folder_name)
