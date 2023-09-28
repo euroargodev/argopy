@@ -168,7 +168,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 (
                     "pytest_reportlog",
                     lambda mod: mod.__version__,
-                ),  # will come with pandas
+                ),
                 ("setuptools", lambda mod: mod.__version__),
                 ("aiofiles", lambda mod: mod.__version__),
                 ("sphinx", lambda mod: mod.__version__),

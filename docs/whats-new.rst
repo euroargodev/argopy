@@ -17,6 +17,7 @@ Coming up next
 **Internals**
 
 - Utilities refactoring. All classes and functions have been refactored to more appropriate locations like ``argopy.utils`` or ``argopy.related``. A deprecation warning message will be displayed every time utilities are being used from the former locations. (:pr:`290`) by `G. Maze <http://www.github.com/gmaze>`_
+- Fix bugs due to fsspec new internal cache handling and Windows specifics. (:pr:`293`) by `G. Maze <http://www.github.com/gmaze>`_
 
 v0.1.14rc2 (27 Jul. 2023)
 -------------------------

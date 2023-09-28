@@ -216,6 +216,14 @@ class argo_store_proto(ABC):
             if path not in self.cache_registry:
                 self.cache_registry.commit(path)
 
+    @property
+    def cached_files(self):
+        if version.parse(fsspec.__version__) <= version.parse("2023.6.0"):
+            return self.fs.cached_files
+        else:
+            # See https://github.com/euroargodev/argopy/issues/294
+            return self.fs._metadata.cached_files
+        
     def cachepath(self, uri: str, errors: str = "raise"):
         """Return path to cached file for a given URI"""
         if not self.cache:
@@ -223,10 +231,10 @@ class argo_store_proto(ABC):
                 raise FileSystemHasNoCache("%s has no cache system" % type(self.fs))
         elif uri is not None:
             store_path = self.store_path(uri)
-            self.fs.load_cache()  # Read set of stored blocks from file and populate self.fs.cached_files
-            if store_path in self.fs.cached_files[-1]:
+            self.fs.load_cache()  # Read set of stored blocks from file and populate self.cached_files
+            if store_path in self.cached_files[-1]:
                 return os.path.sep.join(
-                    [self.cachedir, self.fs.cached_files[-1][store_path]["fn"]]
+                    [self.cachedir, self.cached_files[-1][store_path]["fn"]]
                 )
             elif errors == "raise":
                 raise CacheFileNotFound(
@@ -238,29 +246,40 @@ class argo_store_proto(ABC):
             )
 
     def _clear_cache_item(self, uri):
-        """Open fsspec cache registry (pickle file) and remove entry for uri"""
-        # See the "save_cache()" method in:
-        # https://filesystem-spec.readthedocs.io/en/latest/_modules/fsspec/implementations/cached.html#WholeFileCacheFileSystem
+        """Remove medadata and file for fsspec cache uri"""
         fn = os.path.join(self.fs.storage[-1], "cache")
-        self.fs.load_cache()  # Read set of stored blocks from file and populate self.fs.cached_files
-        cache = self.fs.cached_files[-1]
+        self.fs.load_cache()  # Read set of stored blocks from file and populate self.cached_files
+        cache = self.cached_files[-1]
+
+        # Read cache metadata:
         if os.path.exists(fn):
-            with open(fn, "rb") as f:
-                cached_files = pickle.load(
-                    f
-                )  # nosec B301 because files controlled internally
+            if version.parse(fsspec.__version__) <= version.parse("2023.6.0"):
+                with open(fn, "rb") as f:
+                    cached_files = pickle.load(f)  # nosec B301 because files controlled internally
+            else:
+                with open(fn, "r") as f:
+                    cached_files = json.load(f)
         else:
             cached_files = cache
+            
+        # Build new metadata without uri to delete, and delete corresponding cached file:
         cache = {}
         for k, v in cached_files.items():
             if k != uri:
                 cache[k] = v.copy()
             else:
+                # Delete file:
                 os.remove(os.path.join(self.fs.storage[-1], v["fn"]))
                 # log.debug("Removed %s -> %s" % (uri, v['fn']))
-        with tempfile.NamedTemporaryFile(mode="wb", delete=False) as f:
-            pickle.dump(cache, f)
-        shutil.move(f.name, fn)
+        
+        # Update cache metadata file:
+        if version.parse(fsspec.__version__) <= version.parse("2023.6.0"):
+            with tempfile.NamedTemporaryFile(mode="wb", delete=False) as f:
+                pickle.dump(cache, f)
+            shutil.move(f.name, fn)
+        else:
+            with fsspec.utils.atomic_write(fn, mode="w") as f:
+                json.dump(cache, f)
 
     def clear_cache(self):
         """Remove cache files and entry from uri open with this store instance"""
