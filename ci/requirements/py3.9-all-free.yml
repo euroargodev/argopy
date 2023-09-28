@@ -12,7 +12,7 @@ dependencies:
   - packaging
   - scipy
   - toolz
-  - xarray
+  - xarray  
 
 # EXT.UTIL:
   - gsw
@@ -51,6 +51,7 @@ dependencies:
   - aiofiles
   - setuptools
 #  - sphinx
+  - requests
 
   - pip:
       - pytest-reportlog

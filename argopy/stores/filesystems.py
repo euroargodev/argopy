@@ -278,7 +278,7 @@ class argo_store_proto(ABC):
                 pickle.dump(cache, f)
             shutil.move(f.name, fn)
         else:
-            with fsspec.atomic_write(fn, mode="w") as f:
+            with fsspec.utils.atomic_write(fn, mode="w") as f:
                 json.dump(cache, f)
 
     def clear_cache(self):
