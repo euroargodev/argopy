@@ -98,4 +98,3 @@ def get_ea_profile_page(WMO, CYC=None, **kwargs):
     df = get_coriolis_profile_id(WMO, CYC, **kwargs)
     url = "https://dataselection.euro-argo.eu/cycle/{}"
     return [url.format(this_id) for this_id in sorted(df["ID"])]
-
