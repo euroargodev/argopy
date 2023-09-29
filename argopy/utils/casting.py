@@ -20,7 +20,7 @@ with open(os.path.join(path2assets, "data_types.json"), "r") as f:
     DATA_TYPES = json.load(f)
 
 
-@deprecated("The 'cast_types' utility is deprecated since 0.1.13. It's been replaced by 'cast_Argo_variable_type'. Calling it will raise an error after argopy 0.1.15")
+@deprecated("The 'cast_types' utility is deprecated since 0.1.13. It's been replaced by 'cast_Argo_variable_type'. Calling it will raise an error after argopy 0.1.16")
 def cast_types(ds):  # noqa: C901
     """Make sure variables are of the appropriate types according to Argo
 
