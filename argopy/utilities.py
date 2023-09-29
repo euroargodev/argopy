@@ -24,7 +24,7 @@ def refactored(func1):
     msg = "The 'argopy.utilities.{name}' {ftype} has moved to 'argopy.{where}.{name}'. \
 You're seeing this message because you called '{name}' imported from 'argopy.utilities'. \
 Please update your script to import '{name}' from 'argopy.{where}'. \
-After 0.1.16, importing 'utilities' will raise an error."
+After 0.1.15, importing 'utilities' will raise an error."
 
     @wraps(func1)
     def decorator(*args, **kwargs):

@@ -8,12 +8,12 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-v0.1.15 (29 Sep. 2023)
+v0.1.14 (29 Sep. 2023)
 ----------------------
 
-.. versionadded:: v0.1.15
+.. versionadded:: v0.1.14
 
-    This new release brings to pip and conda default install of argopy all new features introduced in the release candidate v0.1.14rc2 and v0.1.14rc1. For simplicity we merged all novelties to this v0.1.15 changelog.
+    This new release brings to pip and conda default install of argopy all new features introduced in the release candidate v0.1.14rc2 and v0.1.14rc1. For simplicity we merged all novelties to this v0.1.14 changelog.
 
 **Features and front-end API**
 
