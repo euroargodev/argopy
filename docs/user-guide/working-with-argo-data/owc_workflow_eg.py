@@ -2,7 +2,6 @@ import os, shutil
 from pathlib import Path
 
 import pyowc as owc
-import argopy
 from argopy import DataFetcher
 
 # Define float to calibrate:
