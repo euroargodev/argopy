@@ -39,4 +39,3 @@ def mapp_dict(Adictionnary, Avalue):
         return "Unknown"
     else:
         return Adictionnary[Avalue]
-
