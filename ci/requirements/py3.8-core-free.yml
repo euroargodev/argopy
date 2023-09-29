@@ -10,6 +10,7 @@ dependencies:
   - fsspec
   - netCDF4
   - packaging
+  - requests
   - scipy
   - toolz
   - xarray
@@ -33,6 +34,7 @@ dependencies:
   # - seaborn
 
 # DEV:
+  - aiofiles
   - black
   - bottleneck
   - cfgrib
@@ -47,10 +49,7 @@ dependencies:
   - pytest-cov
   - pytest-env
   - pytest-localftpserver
-  # - pytest-reportlog
-  - aiofiles
   - setuptools
-#  - sphinx
 
   - pip:
       - pytest-reportlog

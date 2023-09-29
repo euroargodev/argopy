@@ -223,7 +223,7 @@ class argo_store_proto(ABC):
         else:
             # See https://github.com/euroargodev/argopy/issues/294
             return self.fs._metadata.cached_files
-        
+
     def cachepath(self, uri: str, errors: str = "raise"):
         """Return path to cached file for a given URI"""
         if not self.cache:
@@ -261,7 +261,7 @@ class argo_store_proto(ABC):
                     cached_files = json.load(f)
         else:
             cached_files = cache
-            
+
         # Build new metadata without uri to delete, and delete corresponding cached file:
         cache = {}
         for k, v in cached_files.items():
@@ -271,7 +271,7 @@ class argo_store_proto(ABC):
                 # Delete file:
                 os.remove(os.path.join(self.fs.storage[-1], v["fn"]))
                 # log.debug("Removed %s -> %s" % (uri, v['fn']))
-        
+
         # Update cache metadata file:
         if version.parse(fsspec.__version__) <= version.parse("2023.6.0"):
             with tempfile.NamedTemporaryFile(mode="wb", delete=False) as f:
