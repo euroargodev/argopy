@@ -14,8 +14,7 @@
 ## Software distribution readiness
 - [ ] Manually trigger [upstream CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml) for the release branch and ensure they are passed
 - [ ] Update pinned dependencies versions in ``./ci/requirements/py*-*-pinned.yml`` environment files using [upstream CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml) information
-- [ ] If CI tests with the oldest dependencies versions are not passed, upgrade these versions in ``./ci/requirements/py*-*-min.yml`` files up to the point where CI tests are passed
-- [ ] Possibly update ``./requirements.txt`` and ``./docs/requirements.txt`` if the oldest dependencies versions were upgraded in the previous step
+- [ ] Possibly update ``./requirements.txt`` and ``./docs/requirements.txt`` if the oldest dependencies versions were upgraded
 - [ ] Make sure that all CI tests are passed
 - [ ] [Activate](https://readthedocs.org/projects/argopy/versions/) and make sure the documentation for the release branch is [built on RTD](https://readthedocs.org/projects/argopy/builds/)
 
