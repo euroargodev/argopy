@@ -1,6 +1,18 @@
 |<img src="https://raw.githubusercontent.com/euroargodev/argopy/master/docs/_static/argopy_logo_long.png" alt="argopy logo" width="200"/><br>``argopy`` is a python library dedicated to Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators|
 |:---------:|
-|[![JOSS](https://img.shields.io/badge/DOI-10.21105%2Fjoss.02425-brightgreen)](//dx.doi.org/10.21105/joss.02425) ![CI](https://github.com/euroargodev/argopy/actions/workflows/pytests.yml/badge.svg) [![codecov](https://codecov.io/gh/euroargodev/argopy/branch/master/graph/badge.svg)](https://codecov.io/gh/euroargodev/argopy) [![Documentation Status](https://img.shields.io/readthedocs/argopy?logo=readthedocs)](https://argopy.readthedocs.io/en/latest/?badge=latest) [![PyPI](https://img.shields.io/pypi/v/argopy)](//pypi.org/project/argopy/)|
+|[![DOI][joss-badge]][joss-link] ![CI][ci-badge] [![codecov][cov-badge]][conda-link] [![Documentation][rtd-badge]][rtd-link] [![Pypi][pip-badge]][pip-link] [![Conda][conda-badge]][conda-link]|
+
+[joss-badge]: https://img.shields.io/badge/DOI-10.21105%2Fjoss.02425-brightgreen
+[joss-link]: https://dx.doi.org/10.21105/joss.02425
+[ci-badge]: https://github.com/euroargodev/argopy/actions/workflows/pytests.yml/badge.svg
+[cov-badge]: https://codecov.io/gh/euroargodev/argopy/branch/master/graph/badge.svg
+[cov-link]: https://codecov.io/gh/euroargodev/argopy
+[rtd-badge]: https://img.shields.io/readthedocs/argopy?logo=readthedocs
+[rtd-link]: https://argopy.readthedocs.io/en/latest/?badge=latest
+[pip-badge]: https://img.shields.io/pypi/v/argopy
+[pip-link]: https://pypi.org/project/argopy/
+[conda-badge]: https://img.shields.io/conda/vn/conda-forge/argopy?logo=anaconda
+[conda-link]: https://anaconda.org/conda-forge/argopy
 
 ### Documentation
 
