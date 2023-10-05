@@ -5,6 +5,7 @@ import xarray as xr
 import logging
 from ..options import OPTIONS
 from ..utils.chunking import Chunker
+from ..utils.geo import conv_lon
 from ..stores import httpstore_erddap_auth
 from .erddap_data import ErddapArgoDataFetcher
 
@@ -183,8 +184,9 @@ class Fetch_box(ErddapREFDataFetcher):
 
     def define_constraints(self):
         """Define request constraints"""
-        self.erddap.constraints = {"longitude>=": self.BOX[0]}
-        self.erddap.constraints.update({"longitude<=": self.BOX[1]})
+
+        self.erddap.constraints = {"longitude>=": conv_lon(self.BOX[0], conv='360')}
+        self.erddap.constraints.update({"longitude<=": conv_lon(self.BOX[1], conv='360')})
         self.erddap.constraints.update({"latitude>=": self.BOX[2]})
         self.erddap.constraints.update({"latitude<=": self.BOX[3]})
         self.erddap.constraints.update({"pres>=": self.BOX[4]})
