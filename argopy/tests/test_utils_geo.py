@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 import pandas as pd
-from argopy.utils.geo import wmo2box, wrap_longitude, toYearFraction, YearFraction_to_datetime
+from argopy.utils.geo import wmo2box, wrap_longitude, conv_lon, toYearFraction, YearFraction_to_datetime
 from argopy.utils.checkers import is_box
 
 
@@ -29,6 +29,14 @@ def test_wrap_longitude():
     assert wrap_longitude(np.array([-20])) == 340
     assert wrap_longitude(np.array([40])) == 40
     assert np.all(np.equal(wrap_longitude(np.array([340, 20])), np.array([340, 380])))
+
+
+def test_conv_lon():
+    assert conv_lon(-5, conv='180') == -5
+    assert conv_lon(-5, conv='360') == 355
+    assert conv_lon(355, conv='180') == -5
+    assert conv_lon(355, conv='360') == 355
+    assert conv_lon(12, conv='toto') == 12
 
 
 def test_toYearFraction():
