@@ -37,7 +37,7 @@ from .locals import (
     netcdf_and_hdf5_versions,  # noqa: F401
 )
 from .monitors import monitor_status, badge, fetch_status  # noqa: F401
-from .geo import wmo2box, wrap_longitude, toYearFraction, YearFraction_to_datetime
+from .geo import wmo2box, wrap_longitude, conv_lon, toYearFraction, YearFraction_to_datetime
 from .compute import linear_interpolation_remap, groupby_remap
 from .transform import (
     fill_variables_not_in_all_datasets,
@@ -94,6 +94,7 @@ __all__ = (
     # Geo (space/time data utilities)
     "wmo2box",
     "wrap_longitude",
+    "conv_lon",
     "toYearFraction",
     "YearFraction_to_datetime",
     # Computation with datasets:

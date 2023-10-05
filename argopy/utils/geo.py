@@ -34,6 +34,26 @@ def wrap_longitude(grid_long):
     return grid_long
 
 
+def conv_lon(x, conv: str = '180'):
+    """Apply longitude convention to array x
+
+    Params
+    ------
+    x:
+    conv: str, default='180'
+        Convention to apply, must be '180' or '360'
+    Returns
+    -------
+    Transformed x
+    """
+    if conv == '360':
+        return np.where(x < 0, x + 360, x)
+    elif conv == '180':
+        return np.where(x > 180, x - 360, x)
+    else:
+        return x
+
+
 def wmo2box(wmo_id: int):
     """Convert WMO square box number into a latitude/longitude box
 
