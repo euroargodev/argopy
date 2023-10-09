@@ -8,6 +8,14 @@ What's New
 |pypi dwn| |conda dwn|
 
 
+Coming up next
+--------------
+
+**Internals**
+
+- The :class:`CTDRefDataFetcher` was badly located in the ``data_fetchers`` private sub-module, it's been refactored in the more appropriate ``related`` public sub-module.
+
+
 v0.1.14 (29 Sep. 2023)
 ----------------------
 
