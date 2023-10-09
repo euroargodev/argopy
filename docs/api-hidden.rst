@@ -48,10 +48,6 @@
     argopy.data_fetchers.argovis_data.Fetch_wmo
     argopy.data_fetchers.argovis_data.Fetch_box
 
-    argopy.data_fetchers.erddap_refdata.ErddapREFDataFetcher
-    argopy.data_fetchers.erddap_refdata.Fetch_box
-    argopy.data_fetchers.CTDRefDataFetcher
-
     argopy.options.set_options
 
     argopy.tutorial.open_dataset
@@ -132,6 +128,10 @@
     argopy.related.ArgoDocs.open_pdf
     argopy.related.ArgoDocs.show
     argopy.related.ArgoDocs.js
+
+    argopy.related.erddap_refdata.ErddapREFDataFetcher
+    argopy.related.erddap_refdata.Fetch_box
+    argopy.related.CTDRefDataFetcher
 
     argopy.plot
     argopy.plot.dashboard

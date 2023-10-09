@@ -7,7 +7,7 @@ from ..options import OPTIONS
 from ..utils.chunking import Chunker
 from ..utils.geo import conv_lon
 from ..stores import httpstore_erddap_auth
-from .erddap_data import ErddapArgoDataFetcher
+from ..data_fetchers.erddap_data import ErddapArgoDataFetcher
 
 # Load erddapy according to available version (breaking changes in v0.8.0)
 try:
@@ -34,7 +34,17 @@ api_server_check = (
 
 
 class ErddapREFDataFetcher(ErddapArgoDataFetcher):
-    """Manage access to Argo CTD-reference data through Ifremer ERDDAP"""
+    """Manage access to Argo CTD-reference data through Ifremer ERDDAP
+
+    Examples
+    --------
+    >>> from argopy import CTDRefDataFetcher
+    >>> with argopy.set_options(user="john_doe", password="***"):
+    >>>      f = CTDRefDataFetcher(box=[15, 30, -70, -60, 0, 5000.0])
+    >>>      ds = f.to_xarray()
+
+
+    """
 
     # @doc_inherit
     def __init__(self, **kwargs):

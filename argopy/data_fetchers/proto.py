@@ -4,7 +4,6 @@ import numpy as np
 import xarray
 import hashlib
 import warnings
-from ..plot import dashboard
 from ..utils.lists import list_standard_variables
 
 
@@ -122,6 +121,8 @@ class ArgoDataFetcherProto(ABC):
 
     def dashboard(self, **kw):
         """Return 3rd party dashboard for the access point"""
+        from ..plot import dashboard  # Import here to avoid circular import by :class:`related.CTDRefDataFetcher`
+
         if 'type' not in kw and self.dataset_id == 'bgc':
             kw['type'] = 'bgc'
         if self.WMO is not None:
