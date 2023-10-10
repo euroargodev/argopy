@@ -2023,6 +2023,11 @@ class ArgoEngine(BackendEntrypoint):
 
         But it will not be detected as valid backend for netcdf files, so make
         sure to specify ``engine="argo"`` in :func:`xarray.open_dataset`.
+
+        Examples
+        --------
+        >>> import xarray as xr
+        >>> ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
     """
     description = "Open Argo netCDF files (.nc)"
     url = "https://argopy.readthedocs.io/en/latest/generated/argopy.xarray.ArgoEngine.html#argopy.xarray.ArgoEngine"
