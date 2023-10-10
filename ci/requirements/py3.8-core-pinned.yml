@@ -54,4 +54,4 @@ dependencies:
 #  - sphinx = -
 
   - pip:
-      - pytest-reportlog==0.1.2
+      - pytest-reportlog == 0.4.0
