@@ -29,8 +29,9 @@ dependencies:
   - IPython
   - cartopy
   - ipykernel
-  - ipywidgets
+  - ipywidgets <= 7.8.0
   - matplotlib
+  - pyproj
   - seaborn
 
 # DEV:

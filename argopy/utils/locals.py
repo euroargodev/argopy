@@ -99,6 +99,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         "core": sorted(
             [
                 ("argopy", lambda mod: mod.__version__),
+
                 ("xarray", lambda mod: mod.__version__),
                 ("scipy", lambda mod: mod.__version__),
                 ("netCDF4", lambda mod: mod.__version__),
@@ -135,45 +136,39 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         ),
         "ext.plot": sorted(
             [
-                ("matplotlib", lambda mod: mod.__version__),
                 ("cartopy", lambda mod: mod.__version__),
-                ("seaborn", lambda mod: mod.__version__),
                 ("IPython", lambda mod: mod.__version__),
-                ("ipywidgets", lambda mod: mod.__version__),
                 ("ipykernel", lambda mod: mod.__version__),
+                ("ipywidgets", lambda mod: mod.__version__),
+                ("matplotlib", lambda mod: mod.__version__),
+                ("pyproj", lambda mod: mod.__version__),
+                ("seaborn", lambda mod: mod.__version__),
             ]
         ),
         "dev": sorted(
             [
+                ("aiofiles", lambda mod: mod.__version__),
+                ("black", lambda mod: mod.__version__),
                 ("bottleneck", lambda mod: mod.__version__),
                 ("cftime", lambda mod: mod.__version__),
                 ("cfgrib", lambda mod: mod.__version__),
                 ("conda", lambda mod: mod.__version__),
+                ("flake8", lambda mod: mod.__version__),
                 ("nc_time_axis", lambda mod: mod.__version__),
-                (
-                    "numpy",
-                    lambda mod: mod.__version__,
-                ),  # will come with xarray and pandas
+                ("numpy", lambda mod: mod.__version__),  # will come with xarray and pandas
                 ("pandas", lambda mod: mod.__version__),  # will come with xarray
                 ("pip", lambda mod: mod.__version__),
-                ("black", lambda mod: mod.__version__),
-                ("flake8", lambda mod: mod.__version__),
                 ("pytest", lambda mod: mod.__version__),  # will come with pandas
                 ("pytest_env", lambda mod: mod.__version__),  # will come with pandas
                 ("pytest_cov", lambda mod: mod.__version__),  # will come with pandas
-                (
-                    "pytest_localftpserver",
-                    lambda mod: mod.__version__,
-                ),  # will come with pandas
-                (
-                    "pytest_reportlog",
-                    lambda mod: mod.__version__,
-                ),
-                ("setuptools", lambda mod: mod.__version__),
-                ("aiofiles", lambda mod: mod.__version__),
+                ("pytest_localftpserver", lambda mod: mod.__version__),  # will come with pandas
+                ("setuptools", lambda mod: mod.__version__),  # Provides : pkg_resources
                 ("sphinx", lambda mod: mod.__version__),
             ]
         ),
+        'pip': sorted([
+            ("pytest-reportlog", lambda mod: mod.__version__),
+        ])
     }
 
     DEPS_blob = {}

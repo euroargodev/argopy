@@ -2,7 +2,7 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
-  - python=3.8
+  - python = 3.8
 
 # CORE:
   - aiohttp
@@ -16,22 +16,23 @@ dependencies:
   - xarray
 
 # EXT.UTIL:
-  # - gsw
-  # - tqdm
-  # - zarr
+#  - gsw
+#  - tqdm
+#  - zarr
 
 # EXT.PERF:
-  # - dask
-  # - distributed
-  # - pyarrow
+#  - dask
+#  - distributed
+#  - pyarrow
 
 # EXT.PLOT:
-  # - IPython
-  # - cartopy
-  # - ipykernel
-  # - ipywidgets
-  # - matplotlib
-  # - seaborn
+#  - IPython
+#  - cartopy
+#  - ipykernel
+#  - ipywidgets
+#  - matplotlib
+#  - pyproj
+#  - seaborn
 
 # DEV:
   - aiofiles
@@ -43,13 +44,14 @@ dependencies:
   - flake8
 #  - nc-time-axis
   - numpy
-  - pandas < 2.0
+  - pandas
   - pip
   - pytest
   - pytest-cov
   - pytest-env
   - pytest-localftpserver
   - setuptools
+#  - sphinx
 
   - pip:
       - pytest-reportlog

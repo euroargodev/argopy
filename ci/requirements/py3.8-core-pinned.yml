@@ -5,36 +5,37 @@ dependencies:
   - python = 3.8
 
 # CORE:
-  - aiohttp = 3.8.5
+  - aiohttp = 3.8.6
   - erddapy = 2.2.0
   - fsspec = 2023.9.2
   - netCDF4 = 1.6.4
-  - packaging = 23.1
+  - packaging = 23.2
   - requests = 2.31.0
   - scipy = 1.10.1
   - toolz = 0.12.0
   - xarray = 2023.1.0
 
-# # EXT.UTIL:
-#   - gsw = 3.6.17
-#   - tqdm = 4.66.1
-#   - zarr = 2.16.1
+# EXT.UTIL:
+#  - gsw = 3.6.17
+#  - tqdm = 4.66.1
+#  - zarr = 2.13.3
 
-# # EXT.PERF:
-#   - dask = 2023.5.0
-#   - distributed = 2023.5.0
-#   - pyarrow = 13.0.0
+# EXT.PERF:
+#  - dask = 2023.5.0
+#  - distributed = 2023.5.0
+#  - pyarrow = 13.0.0
 
-# # EXT.PLOT:
-#   - IPython = 8.12.2
-#   - cartopy = 0.21.1
-#   - ipykernel = 6.25.2
-#   - ipywidgets = 8.1.1
-#   - matplotlib = 3.7.3
-#   - seaborn = 0.12.2
+# EXT.PLOT:
+#  - IPython = 8.12.2
+#  - cartopy = 0.21.1
+#  - ipykernel = 6.25.2
+#  - ipywidgets = 7.8.0
+#  - matplotlib = 3.7.3
+#  - pyproj = 3.5.0
+#  - seaborn = 0.13.0
 
 # DEV:
-  - aiofiles=23.1.0
+  - aiofiles = installed
   - black = 23.9.1
   - bottleneck = 1.3.7
   - cfgrib = 0.9.10.4
@@ -49,7 +50,8 @@ dependencies:
   - pytest-cov = 4.1.0
   - pytest-env = 1.0.1
   - pytest-localftpserver = 1.1.4
-  - setuptools = 67.7.2
+  - setuptools = 68.2.2
+#  - sphinx = -
 
   - pip:
       - pytest-reportlog==0.1.2
