@@ -90,6 +90,7 @@ def get_version(module_name):
             pass
     return ver
 
+
 def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa: C901
     """ Print the versions of argopy and its dependencies
 
