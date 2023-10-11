@@ -196,7 +196,7 @@ jobs:
 
       - name: Check outcome values 1
         run: |
-          echo failure()
+#          echo failure()
           echo steps.status.outcome
 
       - name: Check outcome values 2
