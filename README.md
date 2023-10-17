@@ -31,7 +31,7 @@ conda install -c conda-forge argopy
 pip install argopy
 ````
 
-``argopy`` is continuously tested to work under most OS (Linux, Mac, Windows) and with python versions 3.7 and 3.8.
+``argopy`` is continuously tested to work under most OS (Linux, Mac, Windows) and with python versions >= 3.8
 
 ### Usage
 
