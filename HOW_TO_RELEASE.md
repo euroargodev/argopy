@@ -1,8 +1,8 @@
 # Setup
 
 - [ ] Create a new branch for this release: ``git checkout -b releasev0.X.Y``
-- [ ] Increase release version in ``./setup.py``
 - [ ] Update release version in ``./docs/whats-new.rst``
+- [ ] Increase release version in ``./setup.py``
 - [ ] Create a PR to prepare it, name it with one of the [Nature emoji](https://www.webfx.com/tools/emoji-cheat-sheet/#tabs-3) and make sure it was [never used before](https://github.com/euroargodev/argopy/pulls?q=is%3Apr+label%3Arelease+) 
 
 # Prepare code for release
@@ -14,8 +14,7 @@
 ## Software distribution readiness
 - [ ] Manually trigger [upstream CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml) for the release branch and ensure they are passed
 - [ ] Update pinned dependencies versions in ``./ci/requirements/py*-*-pinned.yml`` environment files using [upstream CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml) information
-- [ ] If CI tests with the oldest dependencies versions are not passed, upgrade these versions in ``./ci/requirements/py*-*-min.yml`` files up to the point where CI tests are passed
-- [ ] Possibly update ``./requirements.txt`` and ``./docs/requirements.txt`` if the oldest dependencies versions were upgraded in the previous step
+- [ ] Possibly update ``./requirements.txt`` and ``./docs/requirements.txt`` if the oldest dependencies versions were upgraded
 - [ ] Make sure that all CI tests are passed
 - [ ] [Activate](https://readthedocs.org/projects/argopy/versions/) and make sure the documentation for the release branch is [built on RTD](https://readthedocs.org/projects/argopy/builds/)
 

@@ -12,7 +12,7 @@ from .checkers import (
     check_index_cols,
     check_gdac_path,
     isconnected,
-    urlhaskeyword,
+    urlhaskeyword,  # noqa: F401
     isalive,
     isAPIconnected,
     erddap_ds_exists,
@@ -33,11 +33,11 @@ from .locals import (
     show_versions,
     show_options,
     modified_environ,
-    get_sys_info,
-    netcdf_and_hdf5_versions,
+    get_sys_info,   # noqa: F401
+    netcdf_and_hdf5_versions,  # noqa: F401
 )
-from .monitors import monitor_status, badge, fetch_status
-from .geo import wmo2box, wrap_longitude, toYearFraction, YearFraction_to_datetime
+from .monitors import monitor_status, badge, fetch_status  # noqa: F401
+from .geo import wmo2box, wrap_longitude, conv_lon, toYearFraction, YearFraction_to_datetime
 from .compute import linear_interpolation_remap, groupby_remap
 from .transform import (
     fill_variables_not_in_all_datasets,
@@ -94,6 +94,7 @@ __all__ = (
     # Geo (space/time data utilities)
     "wmo2box",
     "wrap_longitude",
+    "conv_lon",
     "toYearFraction",
     "YearFraction_to_datetime",
     # Computation with datasets:

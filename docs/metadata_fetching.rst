@@ -174,7 +174,7 @@ And finally the list of methods and properties for **search results**:
 
 .. _metadata-index-bgc:
 
-Usage with 🟢 **bgc** index
+Usage with **bgc** index
 """""""""""""""""""""""""""
 
 The **argopy** index store supports the Bio and Synthetic Profile directory files:

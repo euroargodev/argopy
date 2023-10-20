@@ -147,27 +147,27 @@ capabilities. Here is a summary:
       -
       -
     * -
-      - 🟡 core (T/S)
+      - core (T/S)
       - X
       - X
       - X
     * -
-      - 🟢 BGC
+      - BGC
       - X
       - X
       -
     * -
-      - 🔵 Deep
+      - Deep
       - X
       - X
       - X
     * -
-      - ⚫ Trajectories
+      - Trajectories
       -
       -
       -
     * -
-      - 🟣 Reference data for DMQC
+      - Reference data for DMQC
       - X
       -
       -
@@ -181,37 +181,45 @@ Fetched data and variables
 | This will depend on the last update of each data sources and of your
   local data.
 
-Let's retrieve one float data from a local sample of the GDAC ftp (a sample GDAC ftp is downloaded automatically with the method :meth:`argopy.tutorial.open_dataset`):
+.. tabs::
 
-.. ipython:: python
-    :okwarning:
+    .. tab:: **GDAC** ftp
 
-    # Download ftp sample and get the ftp local path:
-    ftproot = argopy.tutorial.open_dataset('gdac')[0]
-    
-    # then fetch data:
-    with argopy.set_options(src='gdac', ftp=ftproot):
-        ds = ArgoDataFetcher().float(1900857).load().data
-        print(ds)
+        Let's retrieve one float data from a local sample of the GDAC ftp (a sample GDAC ftp is downloaded automatically with the method :meth:`argopy.tutorial.open_dataset`):
 
-Let’s now retrieve the latest data for this float from the ``erddap`` and ``argovis`` sources:
+        .. ipython:: python
+            :okwarning:
 
-.. ipython:: python
-    :okwarning:
+            # Download ftp sample and get the ftp local path:
+            ftproot = argopy.tutorial.open_dataset('gdac')[0]
 
-    with argopy.set_options(src='erddap'):
-        ds = ArgoDataFetcher().float(1900857).load().data
-        print(ds)
+            # then fetch data:
+            with argopy.set_options(src='gdac', ftp=ftproot):
+                ds = ArgoDataFetcher().float(1900857).load().data
+                print(ds)
 
-.. ipython:: python
-    :okwarning:
+    .. tab:: **erddap**
 
-    with argopy.set_options(src='argovis'):
-        ds = ArgoDataFetcher().float(1900857).load().data
-        print(ds)
+        Let’s now retrieve the latest data for this float from the ``erddap``:
 
-We can see some minor differences between ``gdac``/``erddap`` vs the
-``argovis`` response.
+        .. ipython:: python
+            :okwarning:
+
+            with argopy.set_options(src='erddap'):
+                ds = ArgoDataFetcher().float(1900857).load().data
+                print(ds)
+
+    .. tab:: **argovis**
+
+        And with ``argovis``:
+
+        .. ipython:: python
+            :okwarning:
+
+            with argopy.set_options(src='argovis'):
+                ds = ArgoDataFetcher().float(1900857).load().data
+                print(ds)
+
 
 .. _api-status:
 

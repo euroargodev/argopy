@@ -118,7 +118,7 @@ jobs:
           failure()
           && steps.status.outcome == 'failure'
           && github.repository_owner == 'euroargodev'
-        uses: xarray-contrib/issue-from-pytest-log@v1
+        uses: xarray-contrib/issue-from-pytest-log@main
         with:
           log-path: output-${{ matrix.python-version }}-log.jsonl
           
@@ -162,7 +162,6 @@ jobs:
         run: |
           echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-all-free.yml" >> $GITHUB_ENV
           echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
-          echo "LOG_FILE=argopy-tests-All-Min-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
 
       - name: Setup Micromamba ${{ matrix.python-version }}
         uses: mamba-org/setup-micromamba@v1
@@ -195,12 +194,20 @@ jobs:
           pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 \
             --report-log output-${{ matrix.python-version }}-log.jsonl
 
+      - name: Check outcome values 1
+        run: |
+          echo steps.status.outcome
+
+      - name: Check outcome values 2
+        run: |
+          echo $GITHUB_REPOSITORY_OWNER
+
       - name: Generate and publish the report
         if: |
           failure()
           && steps.status.outcome == 'failure'
           && github.repository_owner == 'euroargodev'
-        uses: xarray-contrib/issue-from-pytest-log@v1
+        uses: xarray-contrib/issue-from-pytest-log@main
         with:
           log-path: output-${{ matrix.python-version }}-log.jsonl
           

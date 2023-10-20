@@ -69,6 +69,7 @@ List_avail_envs () {
 }
 
 fix_kernel_path (){
+  # Make sure that the kernel.json config file points to the appropriate environment python path
   ENV=${1}
 
   kernelspec="$(jupyter kernelspec list | grep ${ENV})"

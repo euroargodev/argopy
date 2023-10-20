@@ -445,26 +445,26 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         return results
 
-    def _bgc_handle_wildcard(self, param_list):
-        """In a list, replace item with wildcard by available BGC parameter(s)"""
-        is_valid_param = lambda x: x in list(  # noqa: E731
-            argopy.ArgoNVSReferenceTables().tbl(3)["altLabel"]
-        )
+    # def _bgc_handle_wildcard(self, param_list):
+    #     """In a list, replace item with wildcard by available BGC parameter(s)"""
+    #     is_valid_param = lambda x: x in list(  # noqa: E731
+    #         argopy.ArgoNVSReferenceTables().tbl(3)["altLabel"]
+    #     )
 
-        results = param_list.copy()
-        for p in param_list:
-            if not is_valid_param(p):
-                if "*" not in p:
-                    raise ValueError(
-                        "Invalid BGC parameter '%s' (not listed in Argo reference table 3)"
-                        % p
-                    )
-                else:
-                    match = fnmatch.filter(self._bgc_vlist_avail, p)
-                    if len(match) > 0:
-                        [results.append(m) for m in match]
-                        results.remove(p)
-        return results
+    #     results = param_list.copy()
+    #     for p in param_list:
+    #         if not is_valid_param(p):
+    #             if "*" not in p:
+    #                 raise ValueError(
+    #                     "Invalid BGC parameter '%s' (not listed in Argo reference table 3)"
+    #                     % p
+    #                 )
+    #             else:
+    #                 match = fnmatch.filter(self._bgc_vlist_avail, p)
+    #                 if len(match) > 0:
+    #                     [results.append(m) for m in match]
+    #                     results.remove(p)
+    #     return results
 
     @property
     def _minimal_vlist(self):

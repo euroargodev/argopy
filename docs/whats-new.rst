@@ -8,12 +8,177 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-Coming up next
---------------
+v0.1.14 (29 Sep. 2023)
+----------------------
+
+.. versionadded:: v0.1.14
+
+    This new release brings to pip and conda default install of argopy all new features introduced in the release candidate v0.1.14rc2 and v0.1.14rc1. For simplicity we merged all novelties to this v0.1.14 changelog.
+
+**Features and front-end API**
+
+- **argopy now support BGC dataset in `expert` user mode for the `erddap` data source**. The BGC-Argo content of synthetic multi-profile files is now available from the Ifremer erddap. Like for the core dataset, you can fetch data for a region, float(s) or profile(s). One novelty with regard to core, is that you can restrict data fetching to some parameters and furthermore impose no-NaNs on some of these parameters. Check out the new documentation page for :ref:`data-set`. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    import argopy
+    from argopy import DataFetcher
+
+    argopy.set_options(src='erddap', mode='expert')
+
+    DataFetcher(ds='bgc')  # All variables found in the access point will be returned
+    DataFetcher(ds='bgc', params='all')  # Default: All variables found in the access point will be returned
+    DataFetcher(ds='bgc', params='DOXY') # Only the DOXY variable will be returned
+    DataFetcher(ds='bgc', params=['DOXY', 'BBP700']) # Only DOXY and BBP700 will be returned
+
+    DataFetcher(ds='bgc', measured=None)  # Default: all params are allowed to have NaNs
+    DataFetcher(ds='bgc', measured='all')  # All params found in the access point cannot be NaNs
+    DataFetcher(ds='bgc', measured='DOXY') # Only DOXY cannot be NaNs
+    DataFetcher(ds='bgc', measured=['DOXY', 'BBP700']) # Only DOXY and BBP700 cannot be NaNs
+
+    DataFetcher(ds='bgc', params='all', measured=None)  # Return the largest possible dataset
+    DataFetcher(ds='bgc', params='all', measured='all')  # Return the smallest possible dataset
+    DataFetcher(ds='bgc', params='all', measured=['DOXY', 'BBP700'])  # Return all possible params for points where DOXY and BBP700 are not NaN
+
+- **New methods in the ArgoIndex for BGC**. The :class:`ArgoIndex` has now full support for the BGC profile index files, both bio and synthetic index. In particular it is possible to search for profiles with specific data modes on parameters. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import ArgoIndex
+
+    idx = ArgoIndex(index_file="bgc-b")  # Use keywords instead of exact file names: `core`, `bgc-b`, `bgc-s`
+    idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])  # Search for profiles with parameters
+    idx.search_parameter_data_mode({'TEMP': 'D'})  # Search for profiles with specific data modes
+    idx.search_parameter_data_mode({'BBP700': 'D'})
+    idx.search_parameter_data_mode({'DOXY': ['R', 'A']})
+    idx.search_parameter_data_mode({'DOXY': 'D', 'CDOM': 'D'}, logical='or')
+
+- **New xarray argo accessor features**. Easily retrieve an Argo sample index and domain extent with the ``index`` and ``domain`` properties. Get a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) with the ``list_WMO_CYC`` method. (:pr:`278`) by `G. Maze <http://www.github.com/gmaze>`_
+
+- **New search methods for Argo reference tables**. It is now possible to search for a string in tables title and/or description using the :meth:`related.ArgoNVSReferenceTables.search` method.
+
+.. code-block:: python
+
+    from argopy import ArgoNVSReferenceTables
+
+    id_list = ArgoNVSReferenceTables().search('sensor')
+
+- **Updated documentation**. In order to better introduce new features, we updated the documentation structure and content.
+
+- **argopy** cheatsheet ! Get most of the argopy API in a 2 pages pdf !
+
+.. image:: _static/argopy-cheatsheet.png
+  :height: 200px
+  :align: center
+  :target: _static/argopy-cheatsheet.pdf
+
+- **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`Store: Low-level Argo Index access`. (:pr:`270`) by `G. Maze <http://www.github.com/gmaze>`_
+
+- **Easy access to all Argo manuals from the ADMT**. More than 20 pdf manuals have been produced by the Argo Data Management Team. Using the new :class:`ArgoDocs` class, it's now easier to navigate this great database for Argo experts. All details in :ref:`ADMT Documentation`. (:pr:`268`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import ArgoDocs
+
+    ArgoDocs().list
+
+    ArgoDocs(35385)
+    ArgoDocs(35385).ris
+    ArgoDocs(35385).abstract
+    ArgoDocs(35385).show()
+    ArgoDocs(35385).open_pdf()
+    ArgoDocs(35385).open_pdf(page=12)
+
+    ArgoDocs().search("CDOM")
+
+- **New 'research' user mode**. This new feature implements automatic filtering of Argo data following international recommendations for research/climate studies. With this user mode, only Delayed Mode with good QC data are returned. Check out the :ref:`user-mode` section for all the details. (:pr:`265`) by `G. Maze <http://www.github.com/gmaze>`_
+
+- **argopy now provides a specific xarray engine to properly read Argo netcdf files**. Using ``engine='argo'`` in :func:`xarray.open_dataset`, all variables will properly be casted, i.e. returned with their expected data types, which is not the case otherwise. This works with *ALL* Argo netcdf file types (as listed in the `Reference table R01 <http://vocab.nerc.ac.uk/collection/R01/current/>`_). Some details in here: :class:`argopy.xarray.ArgoEngine` (:pr:`208`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    import xarray as xr
+    ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
+
+- **argopy now can provide authenticated access to the Argo CTD reference database for DMQC**. Using user/password new **argopy** options, it is possible to fetch the `Argo CTD reference database <http://www.argodatamgt.org/DMQC/Reference-data-base/Latest-Argo-Reference-DB>`_, with the :class:`CTDRefDataFetcher` class. (:pr:`256`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import CTDRefDataFetcher
+
+    with argopy.set_options(user="john_doe", password="***"):
+        f = CTDRefDataFetcher(box=[15, 30, -70, -60, 0, 5000.0])
+        ds = f.to_xarray()
+
+.. warning::
+    **argopy** is ready but the Argo CTD reference database for DMQC is not fully published on the Ifremer ERDDAP yet. This new feature will thus be fully operational soon, and while it's not, **argopy** should raise an ``ErddapHTTPNotFound`` error when using the new fetcher.
+
+- New option to control the expiration time of cache file: ``cache_expiration``.
+
 
 **Internals**
 
-- Utilities refactoring. All classes and functions have been refactored to more appropriate locations like ``argopy.utils`` or ``argopy.related``. A deprecation warning message will be displayed every time utilities are being used from the former locations. (:pr:`290`) by `G. Maze <http://www.github.com/gmaze>`_
+- Utilities refactoring. All classes and functions have been refactored to more appropriate locations like ``argopy.utils`` or ``argopy.related``. A deprecation warning message should be displayed every time utilities are being used from the deprecated locations. (:pr:`290`) by `G. Maze <http://www.github.com/gmaze>`_
+
+- Fix bugs due to fsspec new internal cache handling and Windows specifics. (:pr:`293`) by `G. Maze <http://www.github.com/gmaze>`_
+
+- New utility class :class:`utils.MonitoredThreadPoolExecutor` to handle parallelization with a multi-threading Pool that provide a notebook or terminal computation progress dashboard. This class is used by the httpstore open_mfdataset method for erddap requests.
+
+- New utilites to handle a collection of datasets: :func:`utils.drop_variables_not_in_all_datasets` will drop variables that are not in all datasets (the lowest common denominator) and :func:`utils.fill_variables_not_in_all_datasets` will add empty variables to dataset so that all the collection have the same data_vars and coords. These functions are used by stores to concat/merge a collection of datasets (chunks).
+
+- :func:`related.load_dict` now relies on :class:`ArgoNVSReferenceTables` instead of static pickle files.
+
+- :class:`argopy.ArgoColors` colormap for Argo Data-Mode has now a fourth value to account for a white space FillValue.
+
+- New quick and dirty plot method :func:`plot.scatter_plot`
+
+- Refactor pickle files in argopy/assets as json files in argopy/static/assets
+
+- Refactor list of variables by data types used in :func:`related.cast_Argo_variable_type` into assets json files in argopy/static/assets
+
+- Change of behaviour: when setting the cachedir option, path it's not tested for existence but for being writable, and is created if doesn't exists (but seems to break CI upstream in Windows)
+
+- And misc. bug and warning fixes all over the code.
+
+- Update new argovis dashboard links for floats and profiles. (:pr:`271`) by `G. Maze <http://www.github.com/gmaze>`_
+
+- **Index store can now export search results to standard Argo index file format**. See all details in :ref:`Store: Low-level Argo Index access`. (:pr:`260`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import ArgoIndex as indexstore
+    # or:
+    # from argopy.stores import indexstore_pd as indexstore
+    # or:
+    # from argopy.stores import indexstore_pa as indexstore
+
+    idx = indexstore().search_wmo(3902131)  # Perform any search
+    idx.to_indexfile('short_index.txt')  # export search results as standard Argo index csv file
+
+
+- **Index store can now load/search the Argo Bio and Synthetic profile index files**. Simply gives the name of the Bio or Synthetic Profile index file and retrieve the full index. This  store also comes with a new search criteria for BGC: by parameters. See all details in :ref:`Store: Low-level Argo Index access`.  (:pr:`261`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import ArgoIndex as indexstore
+    # or:
+    # from argopy.stores import indexstore_pd as indexstore
+    # or:
+    # from argopy.stores import indexstore_pa as indexstore
+
+    idx = indexstore(index_file="argo_bio-profile_index.txt").load()
+    idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
+
+- Use a mocked server for all http and GDAC ftp requests in CI tests (:pr:`249`, :pr:`252`, :pr:`255`) by `G. Maze <http://www.github.com/gmaze>`_
+- Removed support for minimal dependency requirements and for python 3.7. (:pr:`252`) by `G. Maze <http://www.github.com/gmaze>`_
+- Changed License from Apache to `EUPL 1.2 <https://opensource.org/license/eupl-1-2>`_
+
+**Breaking changes**
+
+- Some documentation pages may have moved to new urls.
+
+- The legacy index store is deprecated, now available in argopy.stores.argo_index_deprec.py only (:pr:`270`) by `G. Maze <http://www.github.com/gmaze>`_
+
 
 v0.1.14rc2 (27 Jul. 2023)
 -------------------------
@@ -84,7 +249,7 @@ v0.1.14rc2 (27 Jul. 2023)
 
 - Refactor pickle files in argopy/assets as json files in argopy/static/assets
 
-- Refactor list of variables by data types used in :func:`utils.cast_Argo_variable_type` into assets json files in argopy/static/assets
+- Refactor list of variables by data types used in :func:`related.cast_Argo_variable_type` into assets json files in argopy/static/assets
 
 - Change of behaviour: when setting the cachedir option, path it's not tested for existence but for being writable, and is created if doesn't exists (but seems to break CI upstream in Windows)
 
@@ -147,7 +312,7 @@ v0.1.14rc1 (31 May 2023)
 .. warning::
     **argopy** is ready but the Argo CTD reference database for DMQC is not fully published on the Ifremer ERDDAP yet. This new feature will thus be fully operational soon, and while it's not, **argopy** should raise an ``ErddapHTTPNotFound`` error when using the new fetcher.
 
-- New option to control the expiration time of cache file ``cache_expiration``. 
+- New option to control the expiration time of cache file: ``cache_expiration``.
 
 **Internals**
 

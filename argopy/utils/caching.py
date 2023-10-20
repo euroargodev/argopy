@@ -2,6 +2,7 @@ import os
 import shutil
 import logging
 import pickle
+import json
 import fsspec
 import pandas as pd
 from packaging import version
@@ -62,14 +63,18 @@ def lscache(cache_path: str = "", prt=True):
     cached_files = []
     fn = os.path.join(apath, "cache")
     if os.path.exists(fn):
-        with open(fn, "rb") as f:
-            loaded_cached_files = pickle.load(
-                f
-            )  # nosec B301 because files controlled internally
-            for c in loaded_cached_files.values():
-                if isinstance(c["blocks"], list):
-                    c["blocks"] = set(c["blocks"])
-            cached_files.append(loaded_cached_files)
+        if version.parse(fsspec.__version__) <= version.parse("2023.6.0"):
+            with open(fn, "rb") as f:
+                loaded_cached_files = pickle.load(
+                    f
+                )  # nosec B301 because files controlled internally
+        else:
+            with open(fn, "r") as f:
+                loaded_cached_files = json.load(f)
+        for c in loaded_cached_files.values():
+            if isinstance(c["blocks"], list):
+                c["blocks"] = set(c["blocks"])
+        cached_files.append(loaded_cached_files)
     else:
         raise FileSystemHasNoCache("No fsspec cache system at: %s" % apath)
 

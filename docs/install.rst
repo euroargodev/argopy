@@ -20,27 +20,11 @@ or pip:
 
     pip install argopy
 
-you can also work with the latest version:
+you can also work with the latest dev. version:
 
 .. code-block:: text
 
     pip install git+http://github.com/euroargodev/argopy.git@master
-
-
-.. _bgc-install:
-
-Install release with partial 🟢 **bgc** support
------------------------------------------------
-
-.. versionadded:: v0.1.14rc2
-
-🟢 **bgc** support is provided as a **release candidate** only. Therefore, it is not available in conda and won't be selected by default with pip.
-
-To install **argopy** with *partial* 🟢 **bgc** support, you need to use:
-
-.. code-block:: text
-
-    pip install argopy==0.1.14rc2
 
 
 Required dependencies

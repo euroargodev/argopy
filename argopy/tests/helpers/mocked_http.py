@@ -8,9 +8,17 @@ This requires to download data using fully functional http servers: this is done
 in "argopy/cli"
 
 Servers covered by this fixture:
-https://erddap.ifremer.fr/erddap
-https://github.com/euroargodev/argopy-data/raw/master
-https://api.ifremer.fr/argopy/data
+    "https://github.com/euroargodev/argopy-data/raw/master",
+    "https://erddap.ifremer.fr/erddap",
+    "https://data-argo.ifremer.fr",
+    "https://api.ifremer.fr",
+    "https://coastwatch.pfeg.noaa.gov/erddap",
+    "https://www.ocean-ops.org/api/1",
+    "https://dataselection.euro-argo.eu/api",
+    "https://vocab.nerc.ac.uk/collection",
+    "https://argovisbeta02.colorado.edu",
+    "https://dx.doi.org",
+    "https://archimer.ifremer.fr",
 
 The HTTPTestHandler class below is taken from the fsspec tests suite at:
 https://github.com/fsspec/filesystem_spec/blob/55c5d71e657445cbfbdba15049d660a5c9639ff0/fsspec/tests/conftest.py
