@@ -49,7 +49,7 @@ class ArgoNVSReferenceTables:
         "RMC",
         "RTV",
         "R16",
-        # "R18",
+        "R18",#
         "R19",
         "R20",
         "R21",
@@ -59,9 +59,9 @@ class ArgoNVSReferenceTables:
         "R25",
         "R26",
         "R27",
-        # "R28",
-        # "R29",
-        # "R30",
+        "R28",#
+        "R29",#
+        "R30",#
         "R40",
     ]
     """List of all available Reference Tables"""
