@@ -1,10 +1,13 @@
 {
   "name": "profilers",
   "long_name": "Profiler codes and description from Argo reference table 8",
-  "last_update": "2023-07-27T09:33:25.698534+00:00",
+  "last_update": "2023-10-20T12:57:34.066062+00:00",
   "data": {
     "profilers": {
       "831": "PALACE float",
+      "834": "PROVOR V SBE",
+      "835": "PROVOR IV",
+      "836": "PROVOR III",
       "837": "ARVOR-C float with SBE conductivity sensor",
       "838": "ARVOR-D deep float with SBE conductivity sensor",
       "839": "PROVOR-II float with SBE conductivity sensor",
@@ -39,7 +42,17 @@
       "877": "APEX float with RBR conductivity sensor",
       "878": "ARVOR float with RBR conductivity sensor",
       "879": "SOLO-II with RBR conductivity sensor",
-      "880": "S2A float with RBR conductivity sensor"
+      "880": "S2A float with RBR conductivity sensor",
+      "881": "HM4000",
+      "882": "XUANWU",
+      "884": "SOLO_BGC, SBE",
+      "885": "SOLO_BGC, RBR",
+      "886": "SOLO_BGC_MRV, SBE",
+      "887": "SOLO_BGC_MRV, RBR",
+      "888": "PROVOR_V - Jumbo, SBE",
+      "889": "PROVOR_V - Jumbo, RBR",
+      "890": "PROVOR_III - Jumbo, SBE",
+      "891": "PROVOR_III - Jumbo, RBR"
     }
   }
 }
