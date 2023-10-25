@@ -65,7 +65,7 @@ class DOIrecord:
     @property
     def dx(self) -> str:
         """DOI url"""
-        return "https:/dx.doi.org/%s" % str(self)
+        return "https://dx.doi.org/%s" % str(self)
 
     def isvalid(self) -> bool:
         return "42182" in self.doi

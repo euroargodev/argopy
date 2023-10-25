@@ -1,7 +1,7 @@
 {
   "name": "institutions",
   "long_name": "Institution names from Argo reference table 4",
-  "last_update": "2023-07-27T09:29:50.165546+00:00",
+  "last_update": "2023-10-20T12:57:34.039003+00:00",
   "data": {
     "institutions": {
       "AO": "AOML, USA",
