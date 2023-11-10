@@ -17,9 +17,7 @@ import logging
 
 from .options import OPTIONS, _VALIDATORS
 from .errors import InvalidFetcherAccessPoint, InvalidFetcher, OptionValueError
-from .related import (
-    get_coriolis_profile_id,
-)
+from .related import get_coriolis_profile_id
 from .utils.checkers import (
     is_box,
     is_indexbox,
