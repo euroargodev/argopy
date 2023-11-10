@@ -181,16 +181,25 @@ class proto_MonitoredThreadPoolExecutor(ABC):
 
 
 class proto_MonitoredPoolExecutor_monitor(proto_MonitoredThreadPoolExecutor):
+    default_task_legend = {"w": "Working", "p": "Post-processing", "c": "Callback", "f": "Failed", "s": "Success"}
+    default_final_legend = {"task": "Processing tasks", "final": "Finalizing"}
+
     def __init__(
         self,
         show: Union[bool, str] = True,
-        task_legend: dict = {"w": "Working", "p": "Post-processing", "c": "Callback"},
-        final_legend: dict = {"task": "Processing tasks", "final": "Finalizing"},
+        task_legend: dict = {},
+        final_legend: dict = {},
         **kwargs,
     ):
         super().__init__(**kwargs)
-        self.task_legend = task_legend
-        self.final_legend = final_legend
+        if len(task_legend.keys()) == 0:
+            self.task_legend = self.default_task_legend
+        else:
+            self.task_legend = {**self.default_task_legend, **task_legend}
+        if len(final_legend.keys()) == 0:
+            self.final_legend = self.default_final_legend
+        else:
+            self.final_legend = {**self.default_final_legend, **final_legend}
         self.show = bool(show)
         # log.debug(self.runner)
 
@@ -215,8 +224,8 @@ class proto_MonitoredPoolExecutor_monitor(proto_MonitoredThreadPoolExecutor):
             "w": ("yellow", self.task_legend["w"], "⏺"),
             "p": ("blue", self.task_legend["p"], "🔄"),
             "c": ("cyan", self.task_legend["c"], "⏯"),
-            "f": ("red", "Failed", "🔴"),
-            "s": ("green", "Succeed", "🟢"),
+            "f": ("red", self.task_legend["f"], "🔴"),
+            "s": ("green", self.task_legend["s"], "🟢"),
         }
 
     @property
