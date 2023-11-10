@@ -79,7 +79,10 @@
     argopy.utils.groupby_remap
     argopy.utils.linear_interpolation_remap
 
+    argopy.utils.argo_split_path
     argopy.utils.format_oneline
+    argopy.utils.UriCName
+
     argopy.utils.is_box
     argopy.utils.is_indexbox
     argopy.utils.is_wmo
