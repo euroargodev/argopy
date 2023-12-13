@@ -683,7 +683,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             this_ds.attrs["DATA_ID"] = "ARGO-BGC"
             this_ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
         this_ds.attrs["Fetched_from"] = self.erddap.server
-        this_ds.attrs["Fetched_by"] = getpass.getuser()
+        try:
+            this_ds.attrs["Fetched_by"] = getpass.getuser()
+        except:
+            this_ds.attrs["Fetched_by"] = 'anonymous'
         this_ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime(
             "%Y/%m/%d"
         )

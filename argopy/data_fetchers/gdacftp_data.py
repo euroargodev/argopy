@@ -281,7 +281,10 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
             ds.attrs["DATA_ID"] = "ARGO-BGC"
         ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
         ds.attrs["Fetched_from"] = self.server
-        ds.attrs["Fetched_by"] = getpass.getuser()
+        try:
+            ds.attrs["Fetched_by"] = getpass.getuser()
+        except:
+            ds.attrs["Fetched_by"] = 'anonymous'
         ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
         ds.attrs["Fetched_constraints"] = self.cname()
         ds.attrs["Fetched_uri"] = ds.encoding["source"]
@@ -347,7 +350,10 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
             ds.attrs["DATA_ID"] = "ARGO-BGC"
         ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
         ds.attrs["Fetched_from"] = self.server
-        ds.attrs["Fetched_by"] = getpass.getuser()
+        try:
+            ds.attrs["Fetched_by"] = getpass.getuser()
+        except:
+            ds.attrs["Fetched_by"] = 'anonymous'
         ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
         ds.attrs["Fetched_constraints"] = self.cname()
         if len(self.uri) == 1:
