@@ -23,6 +23,7 @@ dependencies:
 # EXT.PERF:
   - dask
   - distributed
+  - h5netcdf
   - pyarrow
 
 # EXT.PLOT:

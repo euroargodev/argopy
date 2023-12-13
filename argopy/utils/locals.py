@@ -139,6 +139,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
             [
                 ("dask", get_version),
                 ("distributed", get_version),
+                ("h5netcdf", get_version),
                 ("pyarrow", get_version),
             ]
         ),

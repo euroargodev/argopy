@@ -23,6 +23,7 @@ dependencies:
 # # EXT.PERF:
 #   - dask = 2023.9.2
 #   - distributed = 2023.9.2
+#   - h5netcdf = 1.2.0
 #   - pyarrow = 13.0.0
 
 # # EXT.PLOT:
