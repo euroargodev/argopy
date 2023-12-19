@@ -88,7 +88,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v3
         with:
-          name: releases-pypi
+          name: releases
           path: dist
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@v1.5.0
