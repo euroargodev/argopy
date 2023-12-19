@@ -32,7 +32,7 @@ Required dependencies
 
 - aiohttp
 - erddapy
-- fsspec
+- fsspec < 2023.12.0 (more at :issue:`317`)
 - netCDF4
 - scipy
 - toolz
