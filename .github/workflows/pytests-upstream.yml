@@ -123,7 +123,7 @@ jobs:
           log-path: output-${{ matrix.python-version }}-log.jsonl
           
       - name: 'Save tests log as artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Argopy-Tests
           path: output-${{ matrix.python-version }}-log.jsonl
@@ -212,7 +212,7 @@ jobs:
           log-path: output-${{ matrix.python-version }}-log.jsonl
           
       - name: 'Save tests log as artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Argopy-Tests
           path: output-${{ matrix.python-version }}-log.jsonl

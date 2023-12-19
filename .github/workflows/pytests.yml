@@ -102,7 +102,7 @@ jobs:
           env_vars: RUNNER_OS,PYTHON_VERSION
 
       - name: Save tests log as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Argopy-Tests
           path: ${{env.LOG_FILE}}
@@ -179,7 +179,7 @@ jobs:
           env_vars: RUNNER_OS,PYTHON_VERSION
           
       - name: Upload tests log to GA
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Argopy-Tests
           path: ${{env.LOG_FILE}}
