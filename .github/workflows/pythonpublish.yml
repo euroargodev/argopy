@@ -42,7 +42,7 @@ jobs:
           fi
       - uses: actions/upload-artifact@v4
         with:
-          name: releases-dep
+          name: releases
           path: dist
 
   test-built-dist:
@@ -56,7 +56,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: releases-test
+          name: releases
           path: dist
 
       - name: List contents of built dist
