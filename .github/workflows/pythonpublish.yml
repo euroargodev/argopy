@@ -71,7 +71,7 @@ jobs:
           python -m pip install dist/argopy*.whl
 
       - name: Publish package to TestPyPI
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         uses: pypa/gh-action-pypi-publish@v1.5.0
         with:
           user: __token__
