@@ -45,13 +45,9 @@ jobs:
           name: releases
           path: dist
 
-  test-built-dist:
+  test-built:
     needs: build-artifacts
     runs-on: ubuntu-latest
-    environment:
-      name: testpypi
-    permissions:
-      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
       - uses: actions/setup-python@v3
         name: Install Python
@@ -74,26 +70,36 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install dist/argopy*.whl
 
+  upload-to-testpypi:
+    needs: test-build
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: releases
+          path: dist
       - name: Publish package to TestPyPI
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-#          user: __token__
-#          password: ${{ secrets.PYPITEST_TOKEN }}
-          repository_url: https://test.pypi.org/legacy
+          repository-url: https://test.pypi.org/legacy
           verbose: true
-#          verify_metadata: false
-          skip_existing: true
+          skip-existing: true
 
   upload-to-pypi:
     needs: test-built-dist
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
     environment:
-      name: pypi
-      url: https://pypi.org/p/argopy
+      name: release
     permissions:
-      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
     steps:
       - uses: actions/download-artifact@v4
         with:
