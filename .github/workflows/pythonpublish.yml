@@ -71,7 +71,7 @@ jobs:
           python -m pip install dist/argopy*.whl
 
   upload-to-testpypi:
-    needs: test-build
+    needs: test-built
     runs-on: ubuntu-latest
     environment:
       name: testpypi
@@ -92,7 +92,7 @@ jobs:
           skip-existing: true
 
   upload-to-pypi:
-    needs: test-built-dist
+    needs: upload-to-testpypi
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
     environment:
