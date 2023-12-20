@@ -45,7 +45,7 @@ jobs:
           name: releases
           path: dist
 
-  test-built:
+  test-build:
     needs: build-artifacts
     runs-on: ubuntu-latest
     steps:
@@ -71,7 +71,7 @@ jobs:
           python -m pip install dist/argopy*.whl
 
   upload-to-testpypi:
-    needs: test-built
+    needs: test-build
     runs-on: ubuntu-latest
     environment:
       name: testpypi
