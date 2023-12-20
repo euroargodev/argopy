@@ -89,7 +89,7 @@ jobs:
         with:
           repository-url: https://test.pypi.org/legacy/
           verbose: true
-          skip-existing: true
+          skip-existing: false
 
   upload-to-pypi:
     needs: upload-to-testpypi
