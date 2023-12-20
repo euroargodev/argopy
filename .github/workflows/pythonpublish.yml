@@ -50,6 +50,8 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: testpypi
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
       - uses: actions/setup-python@v3
         name: Install Python
