@@ -156,6 +156,12 @@ jobs:
         experimental: [false]
 
     steps:
+      - name: Initialize Energy Estimation
+        uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
+        with:
+          task: start-measurement
+        continue-on-error: true
+
       - uses: actions/checkout@v4
 
       - name: Set environment variables
@@ -184,6 +190,13 @@ jobs:
           micromamba info
           micromamba list
 
+      - name: Setup Measurement
+        uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
+        with:
+          task: get-measurement
+          label: 'setup'
+        continue-on-error: true
+
       - name: Lint with flake8
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
@@ -192,6 +205,13 @@ jobs:
       - name: Test with pytest
         run: |
           pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}}
+
+      - name: Tests measurement
+        uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
+        with:
+          task: get-measurement
+          label: 'pytest'
+        continue-on-error: true
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3.1.4
@@ -209,3 +229,9 @@ jobs:
           name: Argopy-Tests-All-${{matrix.python-version}}-${{matrix.os}}
           path: ${{env.LOG_FILE}}
           retention-days: 90
+
+      - name: Show Energy Results
+        uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
+        with:
+          task: display-results
+        continue-on-error: true
