@@ -91,7 +91,7 @@ jobs:
         uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
         with:
           task: get-measurement
-          label: 'setup'
+          label: 'setup core-pinned'
         continue-on-error: true
 
       - name: Lint with flake8
@@ -107,7 +107,7 @@ jobs:
         uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
         with:
           task: get-measurement
-          label: 'pytest'
+          label: 'pytest core-pinned'
         continue-on-error: true
 
       - name: Upload coverage to Codecov
@@ -194,7 +194,7 @@ jobs:
         uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
         with:
           task: get-measurement
-          label: 'setup'
+          label: 'setup all-pinned'
         continue-on-error: true
 
       - name: Lint with flake8
@@ -210,7 +210,7 @@ jobs:
         uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
         with:
           task: get-measurement
-          label: 'pytest'
+          label: 'pytest all-pinned'
         continue-on-error: true
 
       - name: Upload coverage to Codecov
