@@ -57,6 +57,7 @@ jobs:
         uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
         with:
           task: start-measurement
+        continue-on-error: true
 
       - uses: actions/checkout@v4
 
@@ -91,6 +92,7 @@ jobs:
         with:
           task: get-measurement
           label: 'setup'
+        continue-on-error: true
 
       - name: Lint with flake8
         run: |
@@ -106,6 +108,7 @@ jobs:
         with:
           task: get-measurement
           label: 'pytest'
+        continue-on-error: true
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3.1.4
@@ -128,6 +131,7 @@ jobs:
         uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
         with:
           task: display-results
+        continue-on-error: true
 
   all-pinned:
     # CI tests for environments with all requirements in pinned versions
