@@ -58,7 +58,7 @@ jobs:
         with:
           task: start-measurement
         continue-on-error: true
-        if: ${{matrix.os == "ubuntu-latest"}}
+        if: ${{matrix.os}} == "ubuntu-latest"
 
       - uses: actions/checkout@v4
 
@@ -94,7 +94,7 @@ jobs:
           task: get-measurement
           label: 'setup core-pinned'
         continue-on-error: true
-        if: ${{matrix.os == "ubuntu-latest"}}
+        if: ${{matrix.os}} == "ubuntu-latest"
 
       - name: Lint with flake8
         run: |
@@ -134,7 +134,7 @@ jobs:
         with:
           task: display-results
         continue-on-error: true
-        if: ${{matrix.os == "ubuntu-latest"}}
+        if: ${{matrix.os}} == "ubuntu-latest"
 
   all-pinned:
     # CI tests for environments with all requirements in pinned versions
