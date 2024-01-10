@@ -54,11 +54,11 @@ jobs:
 
     steps:
       - name: Energy Estimation - Initialize
+        if: ${{matrix.os}} == "ubuntu-latest"
         uses: green-coding-berlin/eco-ci-energy-estimation@v2
         with:
           task: start-measurement
         continue-on-error: true
-        if: ${{matrix.os}} == "ubuntu-latest"
 
       - uses: actions/checkout@v4
 
@@ -89,12 +89,12 @@ jobs:
           micromamba list
 
       - name: Energy Estimation - Measure Tests Setup
+        if: ${{matrix.os}} == "ubuntu-latest"
         uses: green-coding-berlin/eco-ci-energy-estimation@v2
         with:
           task: get-measurement
           label: 'setup core-pinned'
         continue-on-error: true
-        if: ${{matrix.os}} == "ubuntu-latest"
 
       - name: Lint with flake8
         run: |
@@ -130,11 +130,11 @@ jobs:
           retention-days: 90
 
       - name: Energy Estimation - Show Results
+        if: ${{matrix.os}} == "ubuntu-latest"
         uses: green-coding-berlin/eco-ci-energy-estimation@v2
         with:
           task: display-results
         continue-on-error: true
-        if: ${{matrix.os}} == "ubuntu-latest"
 
   all-pinned:
     # CI tests for environments with all requirements in pinned versions
