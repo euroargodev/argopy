@@ -54,7 +54,7 @@ jobs:
 
     steps:
       - name: Energy Estimation - Initialize
-        if: ${{matrix.os}} == "ubuntu-latest"
+        if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v2
         with:
           task: start-measurement
@@ -89,7 +89,7 @@ jobs:
           micromamba list
 
       - name: Energy Estimation - Measure Tests Setup
-        if: ${{matrix.os}} == "ubuntu-latest"
+        if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v2
         with:
           task: get-measurement
@@ -106,7 +106,7 @@ jobs:
           pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}}
 
       - name: Energy Estimation - Measure Tests Exec
-        if: ${{matrix.os}} == "ubuntu-latest"
+        if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v2
         with:
           task: get-measurement
@@ -131,7 +131,7 @@ jobs:
           retention-days: 90
 
       - name: Energy Estimation - Show Results
-        if: ${{matrix.os}} == "ubuntu-latest"
+        if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v2
         with:
           task: display-results
