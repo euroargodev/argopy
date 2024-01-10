@@ -53,8 +53,8 @@ jobs:
         experimental: [false]
 
     steps:
-      - name: Initialize Energy Estimation
-        uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
+      - name: Energy Estimation - Initialize
+        uses: green-coding-berlin/eco-ci-energy-estimation@v2
         with:
           task: start-measurement
         continue-on-error: true
@@ -87,8 +87,8 @@ jobs:
           micromamba info
           micromamba list
 
-      - name: Setup Measurement
-        uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
+      - name: Energy Estimation - Measure Tests Setup
+        uses: green-coding-berlin/eco-ci-energy-estimation@v2
         with:
           task: get-measurement
           label: 'setup core-pinned'
@@ -103,8 +103,8 @@ jobs:
         run: |
           pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}}
 
-      - name: Tests measurement
-        uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
+      - name: Energy Estimation - Measure Tests Exec
+        uses: green-coding-berlin/eco-ci-energy-estimation@v2
         with:
           task: get-measurement
           label: 'pytest core-pinned'
@@ -127,8 +127,8 @@ jobs:
           path: ${{env.LOG_FILE}}
           retention-days: 90
 
-      - name: Show Energy Results
-        uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
+      - name: Energy Estimation - Show Results
+        uses: green-coding-berlin/eco-ci-energy-estimation@v2
         with:
           task: display-results
         continue-on-error: true
@@ -156,8 +156,8 @@ jobs:
         experimental: [false]
 
     steps:
-      - name: Initialize Energy Estimation
-        uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
+      - name: Energy Estimation - Initialize
+        uses: green-coding-berlin/eco-ci-energy-estimation@v2
         with:
           task: start-measurement
         continue-on-error: true
@@ -190,8 +190,8 @@ jobs:
           micromamba info
           micromamba list
 
-      - name: Setup Measurement
-        uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
+      - name: Energy Estimation - Measure Tests Setup
+        uses: green-coding-berlin/eco-ci-energy-estimation@v2
         with:
           task: get-measurement
           label: 'setup all-pinned'
@@ -206,8 +206,8 @@ jobs:
         run: |
           pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}}
 
-      - name: Tests measurement
-        uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
+      - name: Energy Estimation - Measure Tests Exec
+        uses: green-coding-berlin/eco-ci-energy-estimation@v2
         with:
           task: get-measurement
           label: 'pytest all-pinned'
@@ -230,8 +230,8 @@ jobs:
           path: ${{env.LOG_FILE}}
           retention-days: 90
 
-      - name: Show Energy Results
-        uses: green-coding-berlin/eco-ci-energy-estimation@v2 # use hash or @vX here (See note below)
+      - name: Energy Estimation - Show Results
+        uses: green-coding-berlin/eco-ci-energy-estimation@v2
         with:
           task: display-results
         continue-on-error: true
