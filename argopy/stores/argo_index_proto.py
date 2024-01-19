@@ -12,10 +12,10 @@ from urllib.parse import urlparse
 from typing import Union
 
 from ..options import OPTIONS
-from ..errors import FtpPathError, InvalidDataset, OptionValueError
+from ..errors import FtpPathError, S3PathError, InvalidDataset, OptionValueError
 from ..utils.checkers import isconnected
 from ..utils.accessories import Registry
-from .filesystems import httpstore, memorystore, filestore, ftpstore
+from .filesystems import httpstore, memorystore, filestore, ftpstore, s3store
 
 try:
     import pyarrow.csv as csv  # noqa: F401
@@ -123,6 +123,19 @@ class ArgoIndexStoreProto(ABC):
                 timeout=timeout,
                 block_size=1000 * (2**20),
             )
+        elif "s3" in split_protocol(host)[0]:
+            if "argo-gdac-sandbox" not in host:
+                log.info(
+                    """Working with a non-official Argo s3 server: %s. Raise on issue if you wish to add your own to the valid list of S3 servers: https://github.com/euroargodev/argopy/issues/new?title=New%%20S3%%20server"""
+                    % host
+                )
+            if not isconnected(host):
+                raise S3PathError("This host (%s) is not alive !" % host)
+
+            self.fs["src"] = s3store(
+                cache=cache, cachedir=cachedir
+            )
+
         else:
             raise FtpPathError(
                 "Unknown protocol for an Argo index store: %s" % split_protocol(host)[0]
