@@ -25,6 +25,12 @@ class ErddapPathError(ValueError):
     pass
 
 
+class S3PathError(ValueError):
+    """Raise when the S3 path is not appropriate."""
+
+    pass
+
+
 class NetCDF4FileNotFoundError(FileNotFoundError):
     """Raise when NETCDF4 file not found."""
 

@@ -108,6 +108,11 @@ def new_fs(
             **default_fsspec_kwargs,
             **{"block_size": 1000 * (2**20)},
         }
+    elif protocol == "s3":
+        default_fsspec_kwargs.pop("simple_links")
+        default_fsspec_kwargs.pop("block_size")
+
+
     # Merge default with user arguments:
     fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
 
@@ -1811,3 +1816,7 @@ def httpstore_erddap(url: str = "", cache: bool = False, cachedir: str = "", **k
         return login_store
     else:
         return httpstore(cache=cache, cachedir=cachedir, **kwargs)
+
+
+class s3store(httpstore):
+    protocol = 's3'
