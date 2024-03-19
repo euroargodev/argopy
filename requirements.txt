@@ -3,7 +3,7 @@ scipy>=1.5
 netCDF4>=1.5.3 #<1.5.9
 toolz>=0.8.2
 erddapy>=0.7
-fsspec>=0.8,<=2023.10.0
+fsspec>=0.8,<=2024.3.1
 aiohttp>=3.7
 packaging>=20.4  # Using 'version' to make API compatible with several fsspec releases
 requests>=2.28
