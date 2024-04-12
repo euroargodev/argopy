@@ -4,7 +4,7 @@
     "@type" : "skos:Collection",
     "alternative" : "PLATFORM_TYPE",
     "creator" : "Argo Data Management Team",
-    "date" : "2023-06-23 03:00:02.0",
+    "date" : "2023-10-06 03:00:02.0",
     "description" : "List of Argo float types. Argo netCDF variable PLATFORM_TYPE is populated by R23 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo platform type",
@@ -12,9 +12,9 @@
     "RE_RegisterOwner" : "Argo Data Management Team",
     "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
     "seeAlso" : "https://github.com/nvs-vocabs/R23",
-    "versionInfo" : "3",
+    "versionInfo" : "5",
     "altLabel" : "PLATFORM_TYPE",
-    "member" : [ "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/", "http://vocab.nerc.ac.uk/collection/R23/current/XUANWU/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D/", "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/", "http://vocab.nerc.ac.uk/collection/R23/current/S2X/", "http://vocab.nerc.ac.uk/collection/R23/current/FLOAT/", "http://vocab.nerc.ac.uk/collection/R23/current/HM4000/", "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/", "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_EBR/", "http://vocab.nerc.ac.uk/collection/R23/current/NOVA/", "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/", "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_A/", "http://vocab.nerc.ac.uk/collection/R23/current/APEX/", "http://vocab.nerc.ac.uk/collection/R23/current/HM2000/", "http://vocab.nerc.ac.uk/collection/R23/current/ITP/", "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/", "http://vocab.nerc.ac.uk/collection/R23/current/NEMO/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_W/", "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/", "http://vocab.nerc.ac.uk/collection/R23/current/APEX_EM/", "http://vocab.nerc.ac.uk/collection/R23/current/NINJA_D/", "http://vocab.nerc.ac.uk/collection/R23/current/PALACE/", "http://vocab.nerc.ac.uk/collection/R23/current/S2A/", "http://vocab.nerc.ac.uk/collection/R23/current/ALAMO/", "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_II/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D_MRV/", "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO/", "http://vocab.nerc.ac.uk/collection/R23/current/APEX_D/" ],
+    "member" : [ "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/", "http://vocab.nerc.ac.uk/collection/R23/current/XUANWU/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D/", "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/", "http://vocab.nerc.ac.uk/collection/R23/current/S2X/", "http://vocab.nerc.ac.uk/collection/R23/current/FLOAT/", "http://vocab.nerc.ac.uk/collection/R23/current/HM4000/", "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/", "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_EBR/", "http://vocab.nerc.ac.uk/collection/R23/current/NOVA/", "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/", "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_A/", "http://vocab.nerc.ac.uk/collection/R23/current/APEX/", "http://vocab.nerc.ac.uk/collection/R23/current/HM2000/", "http://vocab.nerc.ac.uk/collection/R23/current/ITP/", "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/", "http://vocab.nerc.ac.uk/collection/R23/current/NEMO/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_W/", "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/", "http://vocab.nerc.ac.uk/collection/R23/current/APEX_EM/", "http://vocab.nerc.ac.uk/collection/R23/current/NINJA_D/", "http://vocab.nerc.ac.uk/collection/R23/current/PALACE/", "http://vocab.nerc.ac.uk/collection/R23/current/S2A/", "http://vocab.nerc.ac.uk/collection/R23/current/ALAMO/", "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_II/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D_MRV/", "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO/", "http://vocab.nerc.ac.uk/collection/R23/current/APEX_D/" ],
     "prefLabel" : "Argo platform type"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/ALAMO/",
@@ -720,6 +720,60 @@
       "@value" : "Metocean PROVOR float"
     }
   }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::PROVOR_V",
+    "date" : "2023-10-05 14:41:04.0",
+    "dc:identifier" : "SDN:R23::PROVOR_V",
+    "authoredOn" : "2023-10-05 14:41:04.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "PROVOR_V",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "PROVOR CTS5-USEA float, USEA is the controller board type. PLATFORM_ TYPE_ KEY = 106"
+    },
+    "notation" : "SDN:R23::PROVOR_V",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PROVOR_V float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R23::PROVOR_V_JUMBO",
+    "date" : "2023-10-05 14:41:04.0",
+    "dc:identifier" : "SDN:R23::PROVOR_V_JUMBO",
+    "authoredOn" : "2023-10-05 14:41:04.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "PROVOR_V_JUMBO",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "PROVOR CTS5-USEA float with additional battery pack, USEA is the controller board type. PLATFORM_ TYPE_ KEY = 107"
+    },
+    "notation" : "SDN:R23::PROVOR_V_JUMBO",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PROVOR_V_JUMBO float"
+    }
+  }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/S2A/",
     "@type" : "skos:Concept",
     "identifier" : "SDN:R23::S2A",
@@ -970,6 +1024,10 @@
     "prefLabel" : {
       "@id" : "http://www.w3.org/2004/02/skos/core#prefLabel"
     },
+    "hasVersion" : {
+      "@id" : "http://purl.org/pav/hasVersion",
+      "@type" : "@id"
+    },
     "member" : {
       "@id" : "http://www.w3.org/2004/02/skos/core#member",
       "@type" : "@id"
@@ -1002,10 +1060,6 @@
     "RE_RegisterManager" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
     },
-    "hasVersion" : {
-      "@id" : "http://purl.org/pav/hasVersion",
-      "@type" : "@id"
-    },
     "qudt" : "https://qudt.org/2.1/schema/qudt#",
     "owl" : "http://www.w3.org/2002/07/owl#",
     "dce" : "http://purl.org/dc/elements/1.1/",
@@ -1015,6 +1069,7 @@
     "iop" : "https://w3id.org/iadopt/ont#",
     "ns1" : "http://www.w3.org/ns/dx/prof/",
     "puv" : "https://w3id.org/env/puv#",
+    "semapv" : "http://w3id.org/semapv/vocab/",
     "dct" : "http://purl.org/dc/terms/",
     "reg" : "http://purl.org/linked-data/registry#",
     "dcat" : "http://www.w3.org/ns/dcat#",
@@ -1024,6 +1079,7 @@
     "void" : "http://rdfs.org/ns/void#",
     "pav" : "http://purl.org/pav/",
     "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "sssom" : "https://w3id.org/sssom/schema/",
     "dc" : "http://purl.org/dc/terms/"
   }
 }

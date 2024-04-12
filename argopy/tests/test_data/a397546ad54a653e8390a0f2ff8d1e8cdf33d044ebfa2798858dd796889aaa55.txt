@@ -19,8 +19,8 @@ UR https://archimer.ifremer.fr/doc/00228/33951/32470.pdf
 LA English
 DT Report
 AB A CTD (conductivity, temperature, depth) device measures temperature and salinity versus pressure. This document is the Argo quality control manual for CTD and trajectory data. It describes two levels of quality control:  - The first level is the real-time system that performs a set of agreed automatic checks.  - The second level of quality control is the delayed-mode system. These quality control procedures are applied to the parameters JULD, LATITUDE, LONGITUDE, PRES, TEMP, PSAL, and CNDC.
-PY 2023
-PD MAR
+PY 2024
+PD FEB
 DI 10.13155/33951
 ID 33951
 ER

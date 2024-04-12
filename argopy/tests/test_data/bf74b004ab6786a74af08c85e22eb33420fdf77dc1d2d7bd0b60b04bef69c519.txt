@@ -2,8 +2,7 @@ FN Archimer Export Format
 PT Rapport
 TI Argo user’s manual
 BT 
-AS 1:;
-FF 1:;
+AF Argo data management
 SI BREST
 SE PDG-IMN-IDM-ISI
 AC Argo data management
