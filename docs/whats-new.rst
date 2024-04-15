@@ -8,6 +8,14 @@ What's New
 |pypi dwn| |conda dwn|
 
 
+Coming up next
+--------------
+
+**Internals**
+
+- Update Ifremer erddap server information. The Argo reference for DMQC (returned by the :class:`DataFetcher` fetcher with ``ds='ref'`` argument ) and Argo CTD-reference for DQMC (returned by the :class:`CTDRefDataFetcher` fetcher) now indicate the dataset version used.
+
+
 v0.1.15 (12 Dec. 2023)
 ----------------------
 
