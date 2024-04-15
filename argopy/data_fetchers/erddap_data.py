@@ -405,6 +405,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             self.erddap.dataset_id = "ArgoFloats-ref"
         elif self.dataset_id == "bgc":
             self.erddap.dataset_id = "ArgoFloats-synthetic-BGC"
+        elif self.dataset_id == "ref-ctd":
+            self.erddap.dataset_id = "ArgoFloats-reference-CTD"
         elif self.dataset_id == "fail":
             self.erddap.dataset_id = "invalid_db"
         else:
@@ -672,6 +674,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         Fetched_constraints = this_ds.attrs.get('Fetched_constraints', False)
 
         # Finally overwrite erddap attributes with those from argopy:
+        raw_attrs = this_ds.attrs.copy()
         this_ds.attrs = {}
         if self.dataset_id == "phy":
             this_ds.attrs["DATA_ID"] = "ARGO"
@@ -679,9 +682,15 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         elif self.dataset_id == "ref":
             this_ds.attrs["DATA_ID"] = "ARGO_Reference"
             this_ds.attrs["DOI"] = "-"
+            this_ds.attrs["Fetched_version"] = raw_attrs.get('version', '?')
+        elif self.dataset_id == "ref-ctd":
+            this_ds.attrs["DATA_ID"] = "ARGO_Reference_CTD"
+            this_ds.attrs["DOI"] = "-"
+            this_ds.attrs["Fetched_version"] = raw_attrs.get('version', '?')
         elif self.dataset_id == "bgc":
             this_ds.attrs["DATA_ID"] = "ARGO-BGC"
             this_ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
+
         this_ds.attrs["Fetched_from"] = self.erddap.server
         try:
             this_ds.attrs["Fetched_by"] = getpass.getuser()
@@ -690,7 +699,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         this_ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime(
             "%Y/%m/%d"
         )
-        this_ds.attrs["Fetched_constraints"] = self.cname()  if not Fetched_constraints else Fetched_constraints
+        this_ds.attrs["Fetched_constraints"] = self.cname() if not Fetched_constraints else Fetched_constraints
         this_ds.attrs["Fetched_uri"] = URI if not Fetched_url else Fetched_url
         this_ds = this_ds[np.sort(this_ds.data_vars)]
 

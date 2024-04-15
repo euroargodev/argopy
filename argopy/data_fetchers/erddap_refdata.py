@@ -110,12 +110,6 @@ class ErddapREFDataFetcher(ErddapArgoDataFetcher):
 
         return this
 
-    def _init_erddapy(self):
-        # Init erddapy
-        self.erddap = ERDDAP(server=str(self.server), protocol="tabledap")
-        self.erddap.response = "nc"
-        self.erddap.dataset_id = "Argo-ref-ctd"
-        return self
 
     @property
     def _minimal_vlist(self):
@@ -151,9 +145,6 @@ class ErddapREFDataFetcher(ErddapArgoDataFetcher):
         ds = xr.concat(
             g, dim="N_POINTS", data_vars="minimal", coords="minimal", compat="override"
         )
-
-        ds.attrs["DATA_ID"] = "ARGO_Reference_CTD"
-        ds.attrs["DOI"] = "-"
 
         # Cast data types and add variable attributes (not available in the csv download):
         ds = self._add_attributes(ds)
