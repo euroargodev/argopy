@@ -89,46 +89,50 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             # So I removed the option in c0a15ec68013c78d83f2689a8f9c062fdfa160ab
             return this_table
 
-        def csv2index(obj, origin):
+        def csv2index(obj):
             index = read_csv(obj, nrows=nrows)
             check_index_cols(
                 index.column_names,
                 convention=self.convention,
             )
-            log.debug("Argo index file loaded with pyarrow read_csv. src='%s'" % origin)
             return index
 
-        if not hasattr(self, "index") or force:
-            this_path = self.index_path
+        def index2cache_path(path, nrows=None):
             if nrows is not None:
-                this_path = this_path + "/local" + "#%i.%s" % (nrows, self.ext)
+                cache_path = path + "/local" + "#%i.%s" % (nrows, self.ext)
             else:
-                this_path = this_path + "/local.%s" % self.ext
+                cache_path = path + "/local.%s" % self.ext
+            return cache_path
 
-            if self.cache and self.fs["client"].exists(this_path):  # and self._same_origin(this_path):
+        if not hasattr(self, "index") or force:
+            index_path_cache = index2cache_path(self.index_path, nrows=nrows)
+
+            if self.cache and self.fs["client"].exists(index_path_cache):  # and self._same_origin(index_path_cache):
                 log.debug(
-                    "Index already in memory as pyarrow table, loading... src='%s'"
-                    % (this_path)
+                    "Index already in cache as a pyarrow table, loading from '%s'"
+                    % index_path_cache
                 )
-                self.index = self._read(self.fs["client"].fs, this_path, fmt=self.ext)
-                self.index_path_cache = this_path
+                self.index = self._read(self.fs["client"].fs, index_path_cache, fmt=self.ext)
+                self.index_path_cache = index_path_cache
             else:
                 log.debug("Load index from scratch (nrows=%s) ..." % nrows)
                 if self.fs["src"].exists(self.index_path + ".gz"):
                     with self.fs["src"].open(self.index_path + ".gz", "rb") as fg:
                         with gzip.open(fg) as f:
-                            self.index = csv2index(f, self.index_path + ".gz")
+                            self.index = csv2index(f)
+                            log.debug("Argo index file loaded with pyarrow csv.read_csv from '%s'" % (self.index_path + ".gz"))
                 else:
                     with self.fs["src"].open(self.index_path, "rb") as f:
-                        self.index = csv2index(f, self.index_path)
+                        self.index = csv2index(f)
+                        log.debug("Argo index file loaded with pyarrow csv.read_csv from '%s'" % self.index_path)
 
                 if self.cache and self.index.shape[0] > 0:
-                    self._write(self.fs["client"], this_path, self.index, fmt=self.ext)
-                    self.index = self._read(self.fs["client"].fs, this_path)
-                    self.index_path_cache = this_path
+                    self._write(self.fs["client"], index_path_cache, self.index, fmt=self.ext)
+                    self.index = self._read(self.fs["client"].fs, index_path_cache)
+                    self.index_path_cache = index_path_cache
                     log.debug(
-                        "Index saved in cache as pyarrow table. dest='%s'"
-                        % this_path
+                        "Index saved in cache as a pyarrow table at '%s'"
+                        % index_path_cache
                     )
 
         if self.N_RECORDS == 0:
@@ -140,19 +144,23 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
 
     def run(self, nrows=None):
         """ Filter index with search criteria """
-        this_path = self.search_path
-        if nrows is not None:
-            this_path = this_path + "/local" + "#%i.%s" % (nrows, self.ext)
-        else:
-            this_path = this_path + "/local.%s" % self.ext
 
-        if self.cache and self.fs["client"].exists(this_path):  # and self._same_origin(this_path):
+        def search2cache_path(path, nrows=None):
+            if nrows is not None:
+                cache_path = path + "/local" + "#%i.%s" % (nrows, self.ext)
+            else:
+                cache_path = path + "/local.%s" % self.ext
+            return cache_path
+
+        search_path_cache = search2cache_path(self.search_path, nrows=nrows)
+
+        if self.cache and self.fs["client"].exists(search_path_cache):  # and self._same_origin(search_path_cache):
             log.debug(
-                "Search results already in memory as pyarrow table, loading... src='%s'"
-                % (this_path)
+                "Search results already in memory as a pyarrow table, loading from '%s'"
+                % search_path_cache
             )
-            self.search = self._read(self.fs["client"].fs, this_path, fmt=self.ext)
-            self.search_path_cache.commit(this_path)
+            self.search = self._read(self.fs["client"].fs, search_path_cache, fmt=self.ext)
+            self.search_path_cache.commit(search_path_cache)
         else:
             log.debug("Compute search from scratch (nrows=%s) ..." % nrows)
             this_filter = np.nonzero(self.search_filter)[0]
@@ -166,12 +174,12 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
 
             log.debug("Found %i/%i matches" % (self.search.shape[0], self.index.shape[0]))
             if self.cache and self.search.shape[0] > 0:
-                self._write(self.fs["client"], this_path, self.search, fmt=self.ext)
-                self.search = self._read(self.fs["client"].fs, this_path)
-                self.search_path_cache.commit(this_path)
+                self._write(self.fs["client"], search_path_cache, self.search, fmt=self.ext)
+                self.search = self._read(self.fs["client"].fs, search_path_cache)
+                self.search_path_cache.commit(search_path_cache)
                 log.debug(
-                    "Search results saved in cache as pyarrow table. dest='%s'"
-                    % this_path
+                    "Search results saved in cache as a pyarrow table at '%s'"
+                    % search_path_cache
                 )
         return self
 

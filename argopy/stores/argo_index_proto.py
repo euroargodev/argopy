@@ -127,7 +127,7 @@ class ArgoIndexStoreProto(ABC):
             raise FtpPathError(
                 "Unknown protocol for an Argo index store: %s" % split_protocol(host)[0]
             )
-        self.fs["client"] = memorystore(cache, cachedir)  # Manage search results
+        self.fs["client"] = memorystore(cache, cachedir, skip_instance_cache=True)  # Manage search results
         self._memory_store_content = Registry(
             name="memory store"
         )  # Track files opened with this memory store, since it's a global store
@@ -370,7 +370,7 @@ class ArgoIndexStoreProto(ABC):
         self._memory_store_content.commit(path)
 
     def _write(self, fs, path, obj, fmt="pq"):
-        """Write internal array object to file store
+        """Write internal array object to file store, possibly cached
 
         Parameters
         ----------
@@ -386,10 +386,16 @@ class ArgoIndexStoreProto(ABC):
         }
         if fmt == "parquet":
             fmt = "pq"
+        if isinstance(fs, memorystore):
+            fs.fs.touch(this_path)  # Fix for https://github.com/euroargodev/argopy/issues/345
+            fs.fs.touch(this_path)  # Fix for https://github.com/euroargodev/argopy/issues/345
+            # This is an f* mistery to me, why do we need 2 calls to trigger file creation FOR REAL ????
+            # log.debug("memorystore touched this path before open context: '%s'" % this_path)
         with fs.open(this_path, "wb") as handle:
             write_this[fmt](obj, handle)
             if fs.protocol == "memory":
                 self._commit(this_path)
+            # log.debug("_write this path: '%s'" % this_path)
 
         return self
 
@@ -417,6 +423,7 @@ class ArgoIndexStoreProto(ABC):
             fmt = "pq"
         with fs.open(this_path, "rb") as handle:
             obj = read_this[fmt](handle)
+            # log.debug("_read this path: '%s'" % this_path)
         return obj
 
     def clear_cache(self):

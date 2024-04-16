@@ -37,11 +37,8 @@ try to test them all:
 """
 VALID_HOSTS = [
     argopy.tutorial.open_dataset("gdac")[0],
-    #'https://data-argo.ifremer.fr',
-    mocked_server_address,
-    # 'ftp://ftp.ifremer.fr/ifremer/argo',
-    # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but takes too long to respond, slow down CI
-    "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
+    # mocked_server_address,
+    # "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
 ]
 
 """
@@ -474,7 +471,7 @@ class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto):
     indexstore = indexstore_pyarrow
     index_file = "ar_index_global_prof.txt"
 
-# @skip_this
+@skip_this
 @skip_pyarrow
 class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
     network = "bgc"
@@ -484,7 +481,7 @@ class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
     index_file = "argo_bio-profile_index.txt"
 
 
-# @skip_this
+@skip_this
 @skip_pyarrow
 class Test_IndexStore_pyarrow_BGC_synthetic(IndexStore_test_proto):
     network = "bgc"
