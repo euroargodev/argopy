@@ -374,7 +374,7 @@ class ArgoIndexStoreProto(ABC):
 
         Parameters
         ----------
-        fs: filestore
+        fs: Union[filestore, memorystore]
         obj: :class:`pyarrow.Table` or :class:`pandas.DataFrame`
         fmt: str
             File format to use. This is "pq" (default) or "pd"
@@ -388,7 +388,7 @@ class ArgoIndexStoreProto(ABC):
             fmt = "pq"
         if isinstance(fs, memorystore):
             fs.fs.touch(this_path)  # Fix for https://github.com/euroargodev/argopy/issues/345
-            fs.fs.touch(this_path)  # Fix for https://github.com/euroargodev/argopy/issues/345
+            # fs.fs.touch(this_path)  # Fix for https://github.com/euroargodev/argopy/issues/345
             # This is an f* mistery to me, why do we need 2 calls to trigger file creation FOR REAL ????
             # log.debug("memorystore touched this path before open context: '%s'" % this_path)
         with fs.open(this_path, "wb") as handle:
@@ -396,6 +396,9 @@ class ArgoIndexStoreProto(ABC):
             if fs.protocol == "memory":
                 self._commit(this_path)
             # log.debug("_write this path: '%s'" % this_path)
+
+        if self.cache:
+            fs.fs.save_cache()
 
         return self
 
@@ -610,7 +613,6 @@ class ArgoIndexStoreProto(ABC):
         If store is cached, caching is triggered here
 
         Try to load the gzipped file first, and if not found, fall back on the raw .txt file.
-
 
         Parameters
         ----------
