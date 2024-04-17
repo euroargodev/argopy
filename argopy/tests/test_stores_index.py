@@ -471,7 +471,7 @@ class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto):
     indexstore = indexstore_pyarrow
     index_file = "ar_index_global_prof.txt"
 
-@skip_this
+# @skip_this
 @skip_pyarrow
 class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
     network = "bgc"
@@ -481,7 +481,7 @@ class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
     index_file = "argo_bio-profile_index.txt"
 
 
-@skip_this
+# @skip_this
 @skip_pyarrow
 class Test_IndexStore_pyarrow_BGC_synthetic(IndexStore_test_proto):
     network = "bgc"

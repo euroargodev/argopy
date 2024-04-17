@@ -31,8 +31,8 @@ class indexstore_pandas(ArgoIndexStoreProto):
     ext = "pd"
     """Storage file extension"""
 
-    def load(self, nrows=None, force=False):
-        """ Load an Argo-index file content
+    def load(self, nrows=None, force=False):  # noqa: C901
+        """Load an Argo-index file content
 
         Returns
         -------
@@ -60,37 +60,47 @@ class indexstore_pandas(ArgoIndexStoreProto):
                 cache_path = path + "/local.%s" % self.ext
             return cache_path
 
-        if not hasattr(self, "index") or force:
-            index_path_cache = index2cache_path(self.index_path, nrows=nrows)
-
-            if self.cache and self.fs["client"].exists(index_path_cache):
-                log.debug(
-                    "Index already in cache as a Pandas dataframe, loading from '%s'"
-                    % index_path_cache
-                )
-                self.index = self._read(self.fs["client"].fs, index_path_cache, fmt=self.ext)
-                self.index_path_cache = index_path_cache
-            else:
-                log.debug("Load index from scratch (nrows=%s) ..." % nrows)
-                if self.fs["src"].exists(self.index_path + ".gz"):
-                    with self.fs["src"].open(self.index_path + ".gz", "rb") as fg:
-                        with gzip.open(fg) as f:
-                            self.index = csv2index(f)
-                            log.debug("Argo index file loaded with Pandas read_csv from '%s'" % (self.index_path + ".gz"))
-                else:
-                    with self.fs["src"].open(self.index_path, "rb") as f:
+        def download(nrows=None):
+            log.debug("Load Argo index from scratch (nrows=%s) ..." % nrows)
+            if self.fs["src"].exists(self.index_path + ".gz"):
+                with self.fs["src"].open(self.index_path + ".gz", "rb") as fg:
+                    with gzip.open(fg) as f:
                         self.index = csv2index(f)
-                        log.debug("Argo index file loaded with Pandas read_csv from '%s'" % self.index_path)
+                        log.debug("Argo index file loaded with Pandas read_csv from '%s'" % (self.index_path + ".gz"))
+            else:
+                with self.fs["src"].open(self.index_path, "rb") as f:
+                    self.index = csv2index(f)
+                    log.debug("Argo index file loaded with Pandas read_csv from '%s'" % self.index_path)
+            self._nrows_index = nrows
 
-                if self.cache and self.index.shape[0] > 0:
-                    self._write(self.fs["client"], index_path_cache, self.index, fmt=self.ext)
-                    # self._write(self.fs["client"], index_path_cache, self.index, fmt=self.ext)
-                    self.index = self._read(self.fs["client"], index_path_cache, fmt=self.ext)
-                    self.index_path_cache = index_path_cache
-                    log.debug(
-                        "Index saved in cache as a Pandas dataframe at '%s'"
-                        % index_path_cache
-                    )
+        def save2cache(path_in_cache):
+            self._write(self.fs["client"], path_in_cache, self.index, fmt=self.ext)
+            self.index = self._read(self.fs["client"], path_in_cache, fmt=self.ext)
+            self.index_path_cache = path_in_cache
+            log.debug(
+                "Argo index saved in cache as a Pandas dataframe at '%s'"
+                % path_in_cache
+            )
+
+        def loadfromcache(path_in_cache):
+            log.debug(
+                "Argo index already in cache as a Pandas dataframe, loading from '%s'"
+                % path_in_cache
+            )
+            self.index = self._read(self.fs["client"].fs, path_in_cache, fmt=self.ext)
+            self.index_path_cache = path_in_cache
+
+        index_path_cache = index2cache_path(self.index_path, nrows=nrows)
+        if not hasattr(self, "index") or force:
+            download(nrows=nrows)
+            if self.cache:
+                save2cache(index_path_cache)
+        elif self.cache:
+            if self.fs["client"].exists(index_path_cache):
+                loadfromcache(index_path_cache)
+            else:
+                download(nrows=nrows)
+                save2cache(index_path_cache)
 
         if self.N_RECORDS == 0:
             raise DataNotFound("No data found in the index")
@@ -113,7 +123,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
 
         if self.cache and self.fs["client"].exists(search_path_cache):
             log.debug(
-                "Search results already in memory as a Pandas dataframe, loading from '%s'"
+                "Search results already in cache as a Pandas dataframe, loading from '%s'"
                 % search_path_cache
             )
             self.search = self._read(self.fs["client"].fs, search_path_cache, fmt=self.ext)
@@ -246,7 +256,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
             "Argo index searching for WMOs=[%s] ..."
             % ";".join([str(wmo) for wmo in WMOs])
         )
-        self.load()
+        self.load(nrows=self._nrows_index)
         self.search_type = {"WMO": WMOs}
         filt = []
         for wmo in WMOs:
@@ -263,7 +273,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
             "Argo index searching for CYCs=[%s] ..."
             % (";".join([str(cyc) for cyc in CYCs]))
         )
-        self.load()
+        self.load(nrows=self._nrows_index)
         self.search_type = {"CYC": CYCs}
         filt = []
         for cyc in CYCs:
@@ -288,7 +298,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
                 ";".join([str(cyc) for cyc in CYCs]),
             )
         )
-        self.load()
+        self.load(nrows=self._nrows_index)
         self.search_type = {"WMO": WMOs, "CYC": CYCs}
         filt = []
         for wmo in WMOs:
@@ -307,7 +317,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
     def search_tim(self, BOX, nrows=None):
         is_indexbox(BOX)
         log.debug("Argo index searching for time in BOX=%s ..." % BOX)
-        self.load()
+        self.load(nrows=self._nrows_index)
         self.search_type = {"BOX": BOX}
         tim_min = int(pd.to_datetime(BOX[4]).strftime("%Y%m%d%H%M%S"))
         tim_max = int(pd.to_datetime(BOX[5]).strftime("%Y%m%d%H%M%S"))
@@ -321,7 +331,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
     def search_lat_lon(self, BOX, nrows=None):
         is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon in BOX=%s ..." % BOX)
-        self.load()
+        self.load(nrows=self._nrows_index)
         self.search_type = {"BOX": BOX}
         filt = []
         filt.append(self.index["longitude"].ge(BOX[0]))
@@ -335,7 +345,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
     def search_lat_lon_tim(self, BOX, nrows=None):
         is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon/time in BOX=%s ..." % BOX)
-        self.load()
+        self.load(nrows=self._nrows_index)
         self.search_type = {"BOX": BOX}
         tim_min = int(pd.to_datetime(BOX[4]).strftime("%Y%m%d%H%M%S"))
         tim_max = int(pd.to_datetime(BOX[5]).strftime("%Y%m%d%H%M%S"))
@@ -355,7 +365,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
             raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC profile index)")
         log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
         PARAMs = to_list(PARAMs)  # Make sure we deal with a list
-        self.load()
+        self.load(nrows=self._nrows_index)
         self.search_type = {"PARAM": PARAMs, "logical": logical}
         filt = []
         self.index["variables"] = self.index["parameters"].apply(lambda x: x.split())
@@ -379,7 +389,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         if not np.all([v in ['R', 'A', 'D', '', ' '] for vals in PARAMs.values() for v in vals]):
             raise ValueError("Data mode must be a value in 'R', 'A', 'D', ' ', ''")
 
-        self.load()
+        self.load(nrows=self._nrows_index)
         self.search_type = {"DMODE": PARAMs, "logical": logical}
         filt = []
 
