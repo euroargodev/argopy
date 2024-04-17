@@ -61,7 +61,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
             return cache_path
 
         def download(nrows=None):
-            log.debug("Load Argo index from scratch (nrows=%s) ..." % nrows)
+            log.debug("Load Argo index (nrows=%s) ..." % nrows)
             if self.fs["src"].exists(self.index_path + ".gz"):
                 with self.fs["src"].open(self.index_path + ".gz", "rb") as fg:
                     with gzip.open(fg) as f:
@@ -71,35 +71,36 @@ class indexstore_pandas(ArgoIndexStoreProto):
                 with self.fs["src"].open(self.index_path, "rb") as f:
                     self.index = csv2index(f)
                     log.debug("Argo index file loaded with Pandas read_csv from '%s'" % self.index_path)
+            if self.cache:
+                self.fs["src"].fs.save_cache()
             self._nrows_index = nrows
 
         def save2cache(path_in_cache):
             self._write(self.fs["client"], path_in_cache, self.index, fmt=self.ext)
             self.index = self._read(self.fs["client"], path_in_cache, fmt=self.ext)
             self.index_path_cache = path_in_cache
-            log.debug(
-                "Argo index saved in cache as a Pandas dataframe at '%s'"
-                % path_in_cache
-            )
+            log.debug("Argo index saved in cache as a Pandas dataframe at '%s'" % path_in_cache)
 
         def loadfromcache(path_in_cache):
-            log.debug(
-                "Argo index already in cache as a Pandas dataframe, loading from '%s'"
-                % path_in_cache
-            )
+            log.debug("Argo index already in cache as a Pandas dataframe, loading from '%s'" % path_in_cache)
             self.index = self._read(self.fs["client"].fs, path_in_cache, fmt=self.ext)
             self.index_path_cache = path_in_cache
 
         index_path_cache = index2cache_path(self.index_path, nrows=nrows)
-        if not hasattr(self, "index") or force:
+        if not hasattr(self, "index"):
+            if force:
+                download(nrows=nrows)
+                if self.cache:
+                    save2cache(index_path_cache)
+            elif self.cache:
+                if self.fs["client"].exists(index_path_cache):
+                    loadfromcache(index_path_cache)
+                else:
+                    download(nrows=nrows)
+                    save2cache(index_path_cache)
+        elif force:
             download(nrows=nrows)
             if self.cache:
-                save2cache(index_path_cache)
-        elif self.cache:
-            if self.fs["client"].exists(index_path_cache):
-                loadfromcache(index_path_cache)
-            else:
-                download(nrows=nrows)
                 save2cache(index_path_cache)
 
         if self.N_RECORDS == 0:
