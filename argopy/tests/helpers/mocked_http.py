@@ -38,8 +38,8 @@ import socket
 import pickle
 
 
-log = logging.getLogger("argopy.tests.mocked_erddap")
-LOG_SERVER_CONTENT = 0  # Also log the list of files/uris available from the mocked server
+log = logging.getLogger("argopy.tests.mocked_http")
+LOG_SERVER_CONTENT = False  # Also log the list of files/uris available from the mocked server
 
 requests = pytest.importorskip("requests")
 port = 9898  # Select the port to run the local server on
@@ -86,9 +86,22 @@ else:
     log.debug("Loading this sub-module without DB_FILE ! %s" % DB_FILE)
 
 
+def get_html_landing_page():
+    """With a listing of all available files with a href links"""
+    html = ["<html><head></head><body>\n"]
+    html.append("<h1>Mocked HTTP server is up and running, serving %i files</h1>" % len(URI))
+    html.append("<ul>")
+    for key, value in MOCKED_REQUESTS.items():
+        html.append("<li><a href='%s'>%s</a></li>" % (key, key))
+    html.append("</ul>")
+    html.append("</body></html>")
+    return str.encode("\n".join(html))
+
+
 class HTTPTestHandler(BaseHTTPRequestHandler):
     static_files = {
-        "": b"Mocked HTTP server is up and running, serving %i files" % len(URI),  # This is mandatory for the server to respond without content
+        "": get_html_landing_page(),
+        # "": b"Mocked HTTP server is up and running, serving %i files" % len(URI),  # This is mandatory for the server to respond without content
         # "/index/otherfile": data,
         # "/index": index,
         # "/data/20020401": listing,
@@ -99,6 +112,7 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # log.debug("HTTPTestHandler instance created with %i files at %s" % (len(self.files), self.client_address))
 
     def _respond(self, code=200, headers=None, data=b""):
         headers = headers or {}
@@ -124,8 +138,12 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         file_path = unquote(self.path.rstrip("/"))
-        # log.debug("Requesting: %s" % file_path)
-        # [log.debug("└─ %s" % k) for k in self.files.keys()]
+        # log.debug("Requesting: '%s'" % file_path)
+        # log.debug("Found: %s" % (file_path in self.files.keys()))
+        # log.debug("Found B: %s" % (file_path in MOCKED_REQUESTS.keys()))
+
+        # [log.debug("\t└─ '%s'" % k) for k in self.files.keys()]
+
         file_data = self.files.get(file_path)
         if "give_path" in self.headers:
             return self._respond(200, data=json.dumps({"path": self.path}).encode())
@@ -181,6 +199,9 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
             self.rfile.readline()
 
     def do_HEAD(self):
+        self.headers.add_header('head_ok', '')
+        self.headers.add_header('give_length', '')
+
         if "head_not_auth" in self.headers:
             return self._respond(
                 403, {"Content-Length": 123}, b"not authorized for HEAD request"
