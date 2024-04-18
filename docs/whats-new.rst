@@ -8,6 +8,14 @@ What's New
 |pypi dwn| |conda dwn|
 
 
+Upcoming next
+-------------
+
+**Internals**
+
+- Fix bug :issue:`345`. (:pr:`346`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+
 v0.1.15 (12 Dec. 2023)
 ----------------------
 
