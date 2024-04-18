@@ -137,6 +137,7 @@ class ArgoIndexStoreProto(ABC):
 
         # Check if the index file exists. Allow for up to 10 try to account for some slow websites
         self.index_path = self.fs["src"].fs.sep.join([self.host, self.index_file])
+
         i_try, max_try, index_found = 0, 1 if "invalid" in host else 10, False
         while i_try < max_try:
             if not self.fs["src"].exists(self.index_path) and not self.fs["src"].exists(
@@ -149,6 +150,8 @@ class ArgoIndexStoreProto(ABC):
                 break
         if not index_found:
             raise FtpPathError("Index file does not exist: %s" % self.index_path)
+        else:
+            self._nrows_index = None  # Will init search with full index by default
 
         if convention is None:
             # Try to infer the convention from the file name:

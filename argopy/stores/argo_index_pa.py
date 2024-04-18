@@ -129,21 +129,25 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
 
 
         index_path_cache = index2cache_path(self.index_path, nrows=nrows)
-        if not hasattr(self, "index"):
-            if force:
-                download(nrows=nrows)
-                if self.cache:
-                    save2cache(index_path_cache)
-            elif self.cache:
-                if self.fs["client"].exists(index_path_cache):
-                    loadfromcache(index_path_cache)
-                else:
-                    download(nrows=nrows)
-                    save2cache(index_path_cache)
-        elif force:
+
+        if hasattr(self, '_nrows_index') and self._nrows_index != nrows:
+            force = True
+
+        if force:
             download(nrows=nrows)
             if self.cache:
                 save2cache(index_path_cache)
+
+        else:
+            if not hasattr(self, "index"):
+                if self.cache:
+                    if self.fs["client"].exists(index_path_cache):
+                        loadfromcache(index_path_cache)
+                    else:
+                        download(nrows=nrows)
+                        save2cache(index_path_cache)
+                else:
+                    download(nrows=nrows)
 
         if self.N_RECORDS == 0:
             raise DataNotFound("No data found in the index")
