@@ -53,6 +53,7 @@ from ..utils.transform import (
 )
 from ..utils.monitored_threadpool import MyThreadPoolExecutor as MyExecutor
 from ..utils.accessories import Registry
+from ..utils.format import UriCName
 
 
 log = logging.getLogger("argopy.stores")
@@ -134,8 +135,6 @@ def new_fs(
             cache_check=10,
         )
 
-        # We use a refresh rate for cache of 1 day,
-        # since this is the update frequency of the Ifremer erddap
         cache_registry = Registry(
             name="Cache"
         )  # Will hold uri cached by this store instance
@@ -145,7 +144,7 @@ def new_fs(
         )
 
     if protocol == "file" and os.path.sep != fs.sep:
-        # For some reasons (see https://github.com/fsspec/filesystem_spec/issues/937), the property fs.sep is
+        # For some reason (see https://github.com/fsspec/filesystem_spec/issues/937), the property fs.sep is
         # not '\' under Windows. So, using this dirty fix to overwrite it:
         fs.sep = os.path.sep
         # fsspec folks recommend to use posix internally. But I don't see how to handle this. So keeping this fix
@@ -223,10 +222,10 @@ class argo_store_proto(ABC):
 
     @property
     def cached_files(self):
+        # See https://github.com/euroargodev/argopy/issues/294
         if version.parse(fsspec.__version__) <= version.parse("2023.6.0"):
             return self.fs.cached_files
         else:
-            # See https://github.com/euroargodev/argopy/issues/294
             return self.fs._metadata.cached_files
 
     def cachepath(self, uri: str, errors: str = "raise"):
@@ -236,7 +235,7 @@ class argo_store_proto(ABC):
                 raise FileSystemHasNoCache("%s has no cache system" % type(self.fs))
         elif uri is not None:
             store_path = self.store_path(uri)
-            self.fs.load_cache()  # Read set of stored blocks from file and populate self.cached_files
+            self.fs.load_cache()  # Read set of stored blocks from file and populate self.fs.cached_files
             if store_path in self.cached_files[-1]:
                 return os.path.sep.join(
                     [self.cachedir, self.cached_files[-1][store_path]["fn"]]
@@ -793,43 +792,58 @@ class httpstore(argo_store_proto):
         def task_fct(url):
             try:
                 ds = self.open_dataset(url)
+                ds.attrs['Fetched_url'] = url
+                ds.attrs['Fetched_constraints'] = UriCName(url).cname
                 return ds, True
             except FileNotFoundError:
-                log.debug("This url returned no data: %s" % strUrl(url))
+                log.debug("task_fct: This url returned no data: %s" % strUrl(url))
                 return DataNotFound(url), True
-            except Exception:
+            except Exception as e:
+                log.debug("task_fct: Unexpected error when opening a remote dataset: '%s'" % str(e))
                 return None, False
 
-        def postprocessing_fct(ds, **kwargs):
-            try:
-                ds = preprocess(ds, **kwargs)
-                return ds, True
-            except Exception:
-                if "DataNotFound" in str(ds):
+        def postprocessing_fct(obj, **kwargs):
+            if isinstance(obj, xr.Dataset):
+                try:
+                    ds = preprocess(obj, **kwargs)
                     return ds, True
-                else:
+                except Exception as e:
+                    log.debug("postprocessing_fct: Unexpected error when post-processing dataset: '%s'" % str(e))
                     return None, False
+
+            elif isinstance(obj, DataNotFound):
+                return obj, True
+
+            elif obj is None:
+                # This is because some un-expected Exception was raised in task_fct(url)
+                return None, False
+
+            else:
+                log.debug("postprocessing_fct: Unexpected object: '%s'" % type(obj))
+                return None, False
 
         def finalize(obj_list, **kwargs):
             try:
                 # Read list of datasets from the list of objects:
                 ds_list = [v for v in dict(sorted(obj_list.items())).values()]
                 # Only keep non-empty results:
-                ds_list = [r for r in ds_list if (r is not None and r != DataNotFound)]
+                ds_list = [r for r in ds_list if (r is not None and not isinstance(r, DataNotFound))]
                 # log.debug(ds_list)
                 if len(ds_list) > 0:
                     if "data_vars" in kwargs and kwargs["data_vars"] == "all":
+                        # log.info('fill_variables_not_in_all_datasets')
                         ds_list = fill_variables_not_in_all_datasets(
                             ds_list, concat_dim=concat_dim
                         )
                     else:
+                        # log.info('drop_variables_not_in_all_datasets')
                         ds_list = drop_variables_not_in_all_datasets(ds_list)
 
-                    log.debug("Nb of dataset to concat: %i" % len(ds_list))
+                    log.info("Nb of dataset to concat: %i" % len(ds_list))
                     # log.debug(concat_dim)
                     # for ds in ds_list:
                     #     log.debug(ds[concat_dim])
-                    log.debug(
+                    log.info(
                         "Dataset sizes before concat: %s"
                         % [len(ds[concat_dim]) for ds in ds_list]
                     )
@@ -840,12 +854,20 @@ class httpstore(argo_store_proto):
                         coords="minimal",
                         compat="override",
                     )
-                    log.debug("Dataset size after concat: %i" % len(ds[concat_dim]))
+                    log.info("Dataset size after concat: %i" % len(ds[concat_dim]))
                     return ds, True
                 else:
-                    log.debug("All URLs returned DataNotFound !")
-                    return DataNotFound("All URLs returned DataNotFound !"), True
-            except Exception:
+                    ds_list = [v for v in dict(sorted(obj_list.items())).values()]
+                    # Is the ds_list full of None or DataNotFound ?
+                    if len([r for r in ds_list if (r is None)]) == len(ds_list):
+                        log.debug("finalize: An error occurred with all URLs !")
+                        return ValueError("An un-expected error occurred with all URLs, check log file for more "
+                                          "information"), True
+                    elif len([r for r in ds_list if isinstance(r, DataNotFound)]) == len(ds_list):
+                        log.debug("finalize: All URLs returned DataNotFound !")
+                        return DataNotFound("All URLs returned DataNotFound !"), True
+            except Exception as e:
+                log.debug("finalize: Unexpected error when finalize request: '%s'" % str(e))
                 return None, False
 
         if ".nc" in urls[0]:
@@ -853,6 +875,7 @@ class httpstore(argo_store_proto):
                 "w": "Downloading netcdf from the erddap",
                 "p": "Formatting xarray dataset",
                 "c": "Callback",
+                "f": "Failed or No Data",
             }
         else:
             task_legend = {"w": "Working", "p": "Post-processing", "c": "Callback"}
@@ -899,7 +922,10 @@ class httpstore(argo_store_proto):
             if len([r for r in results if r == DataNotFound]) == len(urls):
                 raise DataNotFound("All URLs returned DataNotFound !")
             else:
-                return results
+                if not compute_details:
+                    return results
+                else:
+                    return results, failed, len(results)
 
     def open_mfdataset(
         self,  # noqa: C901

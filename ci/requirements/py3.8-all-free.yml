@@ -2,7 +2,7 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
-  - python=3.8
+  - python = 3.8
 
 # CORE:
   - aiohttp
@@ -44,7 +44,7 @@ dependencies:
   - flake8
 #  - nc-time-axis
   - numpy
-  - pandas < 2.0
+  - pandas
   - pip
   - pytest
   - pytest-cov

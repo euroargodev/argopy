@@ -483,7 +483,7 @@ class Test_FtpStore:
 
     def test_open_dataset_error(self, store):
         uri = "dac/csiro/5900865/5900865_prof_error.nc"
-        with pytest.raises(ftplib.error_perm):
+        with pytest.raises((FileNotFoundError, ftplib.error_perm)):
             assert isinstance(store.open_dataset(uri), xr.Dataset)
 
     params = [

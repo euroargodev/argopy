@@ -666,7 +666,12 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         # Overwrite Erddap attributes with those from Argo standards:
         this_ds = self._add_attributes(this_ds)
 
-        # Also replace erddap attributes with those from argopy ones:
+        # In the case of a parallel download, this is a trick to preserve the chunk uri in the chunk dataset:
+        # (otherwise all chunks have the same list of uri)
+        Fetched_url = this_ds.attrs.get('Fetched_url', False)
+        Fetched_constraints = this_ds.attrs.get('Fetched_constraints', False)
+
+        # Finally overwrite erddap attributes with those from argopy:
         this_ds.attrs = {}
         if self.dataset_id == "phy":
             this_ds.attrs["DATA_ID"] = "ARGO"
@@ -678,12 +683,15 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             this_ds.attrs["DATA_ID"] = "ARGO-BGC"
             this_ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
         this_ds.attrs["Fetched_from"] = self.erddap.server
-        this_ds.attrs["Fetched_by"] = getpass.getuser()
+        try:
+            this_ds.attrs["Fetched_by"] = getpass.getuser()
+        except:
+            this_ds.attrs["Fetched_by"] = 'anonymous'
         this_ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime(
             "%Y/%m/%d"
         )
-        this_ds.attrs["Fetched_constraints"] = self.cname()
-        this_ds.attrs["Fetched_uri"] = URI
+        this_ds.attrs["Fetched_constraints"] = self.cname()  if not Fetched_constraints else Fetched_constraints
+        this_ds.attrs["Fetched_uri"] = URI if not Fetched_url else Fetched_url
         this_ds = this_ds[np.sort(this_ds.data_vars)]
 
         if self.dataset_id == "bgc":

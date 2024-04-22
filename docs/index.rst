@@ -8,12 +8,6 @@ for standard users as well as Argo experts.
 
 |License| |Python version| |Anaconda-Server Badge|
 
-.. versionadded:: v0.1.14
-
-    - Rolling out incremental support for **bgc** variables 🎉
-    - New :ref:`Gallery of notebook examples <Gallery>` for **bgc** variables
-    - Check out a brief overview of new features on the :ref:`What's New` page
-
 
 Documentation
 -------------

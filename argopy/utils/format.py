@@ -2,8 +2,11 @@
 Manipulate Argo formatted string and print/stdout formatters
 """
 import os
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 import logging
+import pandas as pd
+import numpy as np
+from .checkers import check_cyc, check_wmo
 
 
 log = logging.getLogger("argopy.utils.format")
@@ -181,7 +184,7 @@ def argo_split_path(this_path):  # noqa C901
                 output["data_mode"] = "R, Real-time data (implicit)"
 
     # Adjust origin and path for local files:
-    # This ensure that output['path'] is agnostic to users and can be reused on any gdac compliant architecture
+    # This ensures that output['path'] is agnostic to users and can be reused on any gdac compliant architecture
     parts = path.split(sep)
     i, stop = len(parts) - 1, False
     while not stop:
@@ -200,3 +203,126 @@ def argo_split_path(this_path):  # noqa C901
     output["path"] = output["path"].replace(output["origin"], "")
 
     return dict(sorted(output.items()))
+
+
+def erddapuri2fetchobj(uri: str) -> dict:
+    """Given an Ifremer ERDDAP URI, return a dictionary with BOX or WMO or (WMO, CYC) fetcher arguments"""
+    params = parse_qs(uri)
+    result = {}
+    if 'longitude>' in params.keys():
+        # Recreate the box definition:
+        box = [float(params['longitude>'][0]), float(params['longitude<'][0]),
+               float(params['latitude>'][0]), float(params['latitude<'][0]),
+               float(params['pres>'][0]), float(params['pres<'][0])]
+        if "time>" in params.keys():
+            box.append(pd.to_datetime(float(params['time>'][0]), unit='s').strftime("%Y-%m-%d"))
+            box.append(pd.to_datetime(float(params['time<'][0]), unit='s').strftime("%Y-%m-%d"))
+        result['box'] = box
+    elif 'platform_number' in params:
+        wmo = params['platform_number'][0].replace("~","").replace("\"","").split("|")
+        wmo = check_wmo(wmo)
+        result['wmo'] = wmo
+        if 'cycle_number' in params:
+            cyc = params['cycle_number'][0].replace("~","").replace("\"","").split("|")
+            cyc = check_cyc(cyc)
+            result['cyc'] = cyc
+    if len(result.keys())==0:
+        raise ValueError("This is not a typical Argo Ifremer Erddap uri")
+    else:
+        return result
+
+
+class UriCName:
+    """Return a CNAME from an Ifremer ERDDAP fetcher instance or uri string"""
+
+    def _is_url(self, url):
+        parsed = urlparse(url)
+        return parsed.scheme and parsed.netloc
+
+    def __init__(self, obj):
+        if hasattr(obj, 'BOX'):
+            self.BOX = obj.BOX
+        elif hasattr(obj, 'WMO'):
+            self.WMO = obj.WMO
+            if hasattr(obj, 'CYC'):
+                self.CYC = obj.CYC
+        elif self._is_url(obj) and "/tabledap/" in obj:
+            obj = erddapuri2fetchobj(obj)
+            if 'box' in obj.keys():
+                self.BOX = obj['box']
+            elif 'wmo' in obj.keys():
+                self.WMO = obj['wmo']
+                if 'cyc' in obj.keys():
+                    self.CYC = obj['cyc']
+        else:
+            raise ValueError("This class is only available with Erddap uri string requests or an ArgoDataFetcherProto instance")
+
+    def _format(self, x, typ: str) -> str:
+        """ string formatting helper """
+        if typ == "lon":
+            if x < 0:
+                x = 360.0 + x
+            return ("%05d") % (x * 100.0)
+        if typ == "lat":
+            return ("%05d") % (x * 100.0)
+        if typ == "prs":
+            return ("%05d") % (np.abs(x) * 10.0)
+        if typ == "tim":
+            return pd.to_datetime(x).strftime("%Y-%m-%d")
+        return str(x)
+
+    def __repr__(self):
+        return self.cname
+
+    @property
+    def cname(self) -> str:
+        """ Fetcher one line string definition helper """
+        cname = "?"
+
+        if hasattr(self, "BOX"):
+            BOX = self.BOX
+            cname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f]") % (
+                BOX[0],
+                BOX[1],
+                BOX[2],
+                BOX[3],
+            )
+            if len(BOX) == 6:
+                cname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; z=%0.1f/%0.1f]") % (
+                    BOX[0],
+                    BOX[1],
+                    BOX[2],
+                    BOX[3],
+                    BOX[4],
+                    BOX[5],
+                )
+            if len(BOX) == 8:
+                cname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; z=%0.1f/%0.1f; t=%s/%s]") % (
+                    BOX[0],
+                    BOX[1],
+                    BOX[2],
+                    BOX[3],
+                    BOX[4],
+                    BOX[5],
+                    self._format(BOX[6], "tim"),
+                    self._format(BOX[7], "tim"),
+                )
+
+        elif hasattr(self, "WMO"):
+            prtcyc = lambda f, wmo: "WMO%i_%s" % (  # noqa: E731
+                wmo,
+                "_".join(["CYC%i" % (cyc) for cyc in sorted(f.CYC)]),
+            )
+            if len(self.WMO) == 1:
+                if hasattr(self, "CYC") and self.CYC is not None:
+                    cname = prtcyc(self, self.WMO[0])
+                else:
+                    cname = "WMO%i" % (self.WMO[0])
+            else:
+                cname = ";".join(["WMO%i" % wmo for wmo in sorted(self.WMO)])
+                if hasattr(self, "CYC") and self.CYC is not None:
+                    cname = ";".join([prtcyc(self, wmo) for wmo in self.WMO])
+            if hasattr(self, "dataset_id"):
+                cname = self.dataset_id + ";" + cname
+
+        return cname
