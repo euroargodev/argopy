@@ -65,7 +65,11 @@ class ArgoIndexStoreProto(ABC):
         ----------
         host: str, default: ``https://data-argo.ifremer.fr``
             Local or remote (ftp or http) path to a `dac` folder (GDAC structure compliant). This takes values
-            like: ``ftp://ftp.ifremer.fr/ifremer/argo``, ``ftp://usgodae.org/pub/outgoing/argo`` or a local absolute path.
+            like:
+                ``https://data-argo.ifremer.fr``
+                ``ftp://ftp.ifremer.fr/ifremer/argo``
+                ``s3://argo-gdac-sandbox/pub/idx``
+                a local absolute path
         index_file: str, default: ``ar_index_global_prof.txt``
             Name of the csv-like text file with the index.
 
@@ -96,17 +100,21 @@ class ArgoIndexStoreProto(ABC):
             index_file = "argo_bio-profile_index.txt"
         self.index_file = index_file
 
+        self.skip_rows = 8  # Default number of commented lines to skip at the beginning of csv index files
+
         self.cache = cache
         self.cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
         timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
         self.fs = {}
         if split_protocol(host)[0] is None:
             self.fs["src"] = filestore(cache=cache, cachedir=cachedir)
+
         elif split_protocol(host)[0] in ["https", "http"]:
             # Only for https://data-argo.ifremer.fr (much faster than the ftp servers)
             self.fs["src"] = httpstore(
                 cache=cache, cachedir=cachedir, timeout=timeout, size_policy="head"
             )
+
         elif "ftp" in split_protocol(host)[0]:
             if "ifremer" not in host and "usgodae" not in host:
                 log.info(
@@ -123,6 +131,7 @@ class ArgoIndexStoreProto(ABC):
                 timeout=timeout,
                 block_size=1000 * (2**20),
             )
+
         elif "s3" in split_protocol(host)[0]:
             if "argo-gdac-sandbox" not in host:
                 log.info(
@@ -133,8 +142,10 @@ class ArgoIndexStoreProto(ABC):
                 raise S3PathError("This host (%s) is not alive !" % host)
 
             self.fs["src"] = s3store(
-                cache=cache, cachedir=cachedir
+                cache=cache, cachedir=cachedir, compression='gzip'
             )
+
+            self.skip_rows = 10
 
         else:
             raise FtpPathError(

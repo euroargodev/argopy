@@ -72,7 +72,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             # gzip.GzipFile
             this_table = csv.read_csv(
                 input_file,
-                read_options=csv.ReadOptions(use_threads=True, skip_rows=8),
+                read_options=csv.ReadOptions(use_threads=True, skip_rows=self.skip_rows),
                 convert_options=csv.ConvertOptions(
                     column_types={
                         "date": pa.timestamp("s"),  # , tz="utc"

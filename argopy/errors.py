@@ -14,19 +14,19 @@ class DataNotFound(ValueError):
 
 
 class FtpPathError(ValueError):
-    """Raise when the ftp path is not appropriate."""
+    """Raise when a ftp path is not appropriate."""
 
     pass
 
 
 class ErddapPathError(ValueError):
-    """Raise when the erddap path is not appropriate."""
+    """Raise when a erddap path is not appropriate."""
 
     pass
 
 
 class S3PathError(ValueError):
-    """Raise when the S3 path is not appropriate."""
+    """Raise when a S3 path is not appropriate."""
 
     pass
 

@@ -32,14 +32,17 @@ skip_for_debug = pytest.mark.skipif(False, reason="Taking too long !")
 
 """
 List gdac hosts to be tested. 
-Since the fetcher is compatible with host from local, http or ftp protocols, we
-try to test them all:
+Since the fetcher is compatible with host from local, http, ftp or s3 protocols, we try to test them all:
 """
 VALID_HOSTS = [
     argopy.tutorial.open_dataset("gdac")[0],
-    # mocked_server_address,
-    # "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
+    mocked_server_address,
+    "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
 ]
+
+if importlib.util.find_spec("s3fs") is not None:
+    VALID_HOSTS.append("s3://argo-gdac-sandbox/pub/idx")
+
 
 """
 List index searches to be tested.

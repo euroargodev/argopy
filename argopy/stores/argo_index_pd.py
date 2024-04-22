@@ -41,7 +41,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
 
         def read_csv(input_file, nrows=None):
             this_table = pd.read_csv(
-                input_file, sep=",", index_col=None, header=0, skiprows=8, nrows=nrows
+                input_file, sep=",", index_col=None, header=0, skiprows=self.skip_rows, nrows=nrows
             )
             return this_table
 

@@ -556,7 +556,8 @@ def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
             return test_retry(host, check_s3, maxtry)
         else:
             raise ValueError(
-                "Can't check if an S3 server is connected without the 's3fs' library. Please update your environment with this dependency.")
+                "Can't check if an S3 server is connected without the 's3fs' library. Please update your environment "
+                "with this dependency.")
     else:
         return test_retry(host, check_local, 1)
 
