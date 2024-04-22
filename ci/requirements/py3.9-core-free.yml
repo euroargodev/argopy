@@ -7,13 +7,13 @@ dependencies:
 # CORE:
   - aiohttp
   - erddapy
-  - fsspec < 2023.12.0
+  - fsspec > 2023.10.0
   - netCDF4
   - packaging
   - requests
   - scipy
   - toolz
-  - xarray
+  - xarray==2024.2.0
 
 # EXT.UTIL:
 #  - gsw
@@ -44,7 +44,7 @@ dependencies:
   - flake8
 #  - nc-time-axis
   - numpy
-  - pandas < 2.0
+  - pandas
   - pip
   - pytest
   - pytest-cov
