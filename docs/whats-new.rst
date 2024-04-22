@@ -8,12 +8,18 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-Upcoming next
--------------
+Coming up next
+--------------
 
 **Internals**
 
-- Fix bug :issue:`345`. (:pr:`346`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Fix bug with ArgoIndex cache, :issue:`345`. (:pr:`346`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Update :class:`argopy.ArgoDocs` with last BGC cookbooks on pH. (:pr:`321`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Fix for fsspec > 2023.10.0. (:pr:`318`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Keep dependencies up to date. (:pr:`333`, :pr:`337`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 
 v0.1.15 (12 Dec. 2023)
