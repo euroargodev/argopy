@@ -142,7 +142,7 @@ class ArgoIndexStoreProto(ABC):
                 raise S3PathError("This host (%s) is not alive !" % host)
 
             self.fs["src"] = s3store(
-                cache=cache, cachedir=cachedir, compression='gzip'
+                cache=cache, cachedir=cachedir,
             )
 
             self.skip_rows = 10

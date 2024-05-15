@@ -67,6 +67,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
                     with gzip.open(fg) as f:
                         self.index = csv2index(f)
                         log.debug("Argo index file loaded with Pandas read_csv from '%s'" % (self.index_path + ".gz"))
+                self.index_file += ".gz"
             else:
                 with self.fs["src"].open(self.index_path, "rb") as f:
                     self.index = csv2index(f)

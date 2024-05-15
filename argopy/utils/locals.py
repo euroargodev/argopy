@@ -131,6 +131,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                     "gsw",
                     get_version,
                 ),  # Used by xarray accessor to compute new variables
+                ("s3fs", get_version),
                 ("tqdm", get_version),
                 ("zarr", get_version),
             ]
