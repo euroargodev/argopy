@@ -38,11 +38,12 @@ VALID_HOSTS = [
     argopy.tutorial.open_dataset("gdac")[0],
     mocked_server_address,
     "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
+    # "s3://argo-gdac-sandbox/pub/idx",
 ]
 
-if importlib.util.find_spec("s3fs") is not None:
+has_s3 = importlib.util.find_spec("s3fs") is not None
+if has_s3:
     VALID_HOSTS.append("s3://argo-gdac-sandbox/pub/idx")
-
 
 """
 List index searches to be tested.
@@ -141,7 +142,9 @@ class IndexStore_test_proto:
         (h, ap, n) for h in VALID_HOSTS for ap in VALID_SEARCHES for n in [None, 2]
     ]
     search_scenarios_ids = [
-        "%s, %s, nrows=%s" % (ftp_shortname(fix[0]), list(fix[1].keys())[0], fix[2])
+        "%s, %s, nrows=%s" % (ftp_shortname(fix[0]),
+                              "%s[n=%i]" % (list(fix[1].keys())[0], len(fix[1][list(fix[1].keys())[0]])),
+                              str(fix[2]))
         for fix in search_scenarios
     ]
 
@@ -153,8 +156,11 @@ class IndexStore_test_proto:
         for b in ["and", "or"]
     ]
     search_scenarios_bool_ids = [
-        "%s, %s, nrows=%s, logical=%s"
-        % (ftp_shortname(fix[0]), list(fix[1].keys())[0], fix[2], fix[3])
+        "%s, %s, nrows=%s, logical='%s'"
+        % (ftp_shortname(fix[0]),
+           "%s[n=%i]" % (list(fix[1].keys())[0], len(fix[1][list(fix[1].keys())[0]])),
+           str(fix[2]),
+           str(fix[3]))
         for fix in search_scenarios_bool
     ]
 
@@ -182,12 +188,15 @@ class IndexStore_test_proto:
         else:
             return ftp
 
-    def create_store(self, store_args, xfail=False):
+    def create_store(self, store_args, xfail=False, reason="?"):
         def core(fargs):
             try:
                 idx = self.indexstore(**fargs)
             except Exception:
-                raise
+                if xfail:
+                    pytest.xfail(reason)
+                else:
+                    raise
             return idx
 
         return core(store_args)
@@ -242,8 +251,10 @@ class IndexStore_test_proto:
     def a_store(self, request):
         """Fixture to create an index store for a given host."""
         fetcher_args, N_RECORDS = self._setup_store(request)
-        # yield self.indexstore(**fetcher_args).load(nrows=N_RECORDS)
-        yield self.create_store(fetcher_args).load(nrows=N_RECORDS)
+        xfail, reason = False, ""
+        if not has_s3:
+            xfail, reason = True, 's3fs not available'
+        yield self.create_store(fetcher_args, xfail=xfail, reason=reason).load(nrows=N_RECORDS)
 
     @pytest.fixture
     def a_search(self, request):
@@ -256,7 +267,12 @@ class IndexStore_test_proto:
             logical = request.param[3]
             srch["logical"] = logical
         # log.debug("a_search: %s, %s, %s" % (self.index_file, srch, xfail))
-        yield run_a_search(self.new_idx, {"host": host, "cache": True}, srch)
+
+        xfail, reason = False, ""
+        if not has_s3:
+            xfail, reason = True, 's3fs not available'
+
+        yield run_a_search(self.new_idx, {"host": host, "cache": True}, srch, xfail=xfail, reason=reason)
 
     def assert_index(self, this_idx, cacheable=False):
         assert hasattr(this_idx, "index")
@@ -292,7 +308,7 @@ class IndexStore_test_proto:
     def test_hosts(self, mocked_httpserver, a_store):
         self.assert_index(
             a_store
-        )  # assert (this_store.N_RECORDS >= 1)  # Make sure we loaded the index file content
+        )
 
     @pytest.mark.parametrize(
         "ftp_host",
@@ -325,11 +341,11 @@ class IndexStore_test_proto:
                 host=self.host, index_file="ar_greylist.txt", cache=False
             )
 
-    # @pytest.mark.parametrize(
-    #     "a_search", search_scenarios, indirect=True, ids=search_scenarios_ids
-    # )
-    # def test_a_search(self, mocked_httpserver, a_search):
-    #     self.assert_search(a_search, cacheable=False)
+    @pytest.mark.parametrize(
+        "a_search", search_scenarios, indirect=True, ids=search_scenarios_ids
+    )
+    def test_a_search(self, mocked_httpserver, a_search):
+        self.assert_search(a_search, cacheable=False)
 
     @pytest.mark.parametrize(
         "a_search", search_scenarios_bool, indirect=True, ids=search_scenarios_bool_ids
@@ -483,7 +499,6 @@ class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
     indexstore = indexstore_pyarrow
     index_file = "argo_bio-profile_index.txt"
 
-
 # @skip_this
 @skip_pyarrow
 class Test_IndexStore_pyarrow_BGC_synthetic(IndexStore_test_proto):
@@ -492,3 +507,4 @@ class Test_IndexStore_pyarrow_BGC_synthetic(IndexStore_test_proto):
 
     indexstore = indexstore_pyarrow
     index_file = "argo_synthetic-profile_index.txt"
+
