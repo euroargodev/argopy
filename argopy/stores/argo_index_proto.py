@@ -13,7 +13,7 @@ from typing import Union
 
 from ..options import OPTIONS
 from ..errors import FtpPathError, S3PathError, InvalidDataset, OptionValueError
-from ..utils.checkers import isconnected
+from ..utils.checkers import isconnected, has_aws_credentials
 from ..utils.accessories import Registry
 from .filesystems import httpstore, memorystore, filestore, ftpstore, s3store
 
@@ -143,7 +143,7 @@ class ArgoIndexStoreProto(ABC):
 
             self.fs["src"] = s3store(
                 cache=cache, cachedir=cachedir,
-                anon=True,
+                anon=not has_aws_credentials(),
             )
 
             self.skip_rows = 10

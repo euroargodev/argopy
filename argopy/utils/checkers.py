@@ -23,6 +23,7 @@ log = logging.getLogger("argopy.utils.checkers")
 if importlib.util.find_spec("s3fs") is not None:
     HAS_S3 = True
     import s3fs
+    import boto3
 else:
     HAS_S3 = False
 
@@ -685,3 +686,8 @@ def erddap_ds_exists(
             "Return False because we cannot reach the erddap server %s" % erddap
         )
         return False
+
+
+def has_aws_credentials():
+    client = boto3.client('s3')
+    return client._request_signer._credentials is not None
