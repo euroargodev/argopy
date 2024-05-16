@@ -143,6 +143,7 @@ class ArgoIndexStoreProto(ABC):
 
             self.fs["src"] = s3store(
                 cache=cache, cachedir=cachedir,
+                anon=True,
             )
 
             self.skip_rows = 10
