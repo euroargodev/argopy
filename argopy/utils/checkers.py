@@ -23,9 +23,14 @@ log = logging.getLogger("argopy.utils.checkers")
 if importlib.util.find_spec("s3fs") is not None:
     HAS_S3 = True
     import s3fs
-    import boto3
 else:
     HAS_S3 = False
+
+if importlib.util.find_spec("boto3") is not None:
+    HAS_BOTO3 = True
+    import boto3
+else:
+    HAS_BOTO3 = False
 
 
 def is_indexbox(box: list, errors="raise"):
@@ -689,5 +694,8 @@ def erddap_ds_exists(
 
 
 def has_aws_credentials():
-    client = boto3.client('s3')
-    return client._request_signer._credentials is not None
+    if HAS_BOTO3:
+        client = boto3.client('s3')
+        return client._request_signer._credentials is not None
+    else:
+        raise Exception("boto3 is not available !")
