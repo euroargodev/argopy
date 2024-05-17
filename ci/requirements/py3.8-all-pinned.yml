@@ -16,9 +16,9 @@ dependencies:
   - xarray = 2023.1.0
 
 # EXT.UTIL:
+  - boto3 = 1.28.17
   - gsw = 3.6.17
-  - s3fs
-  - boto3
+  - s3fs = 2023.9.2
   - tqdm = 4.66.1
   - zarr = 2.13.3
 
