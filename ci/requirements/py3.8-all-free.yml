@@ -18,6 +18,7 @@ dependencies:
 # EXT.UTIL:
   - gsw
   - s3fs
+  - boto3
   - tqdm
   - zarr
 
