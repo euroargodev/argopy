@@ -13,6 +13,8 @@ dependencies:
   - gsw
   - aiohttp
   - bottleneck
+  - s3fs
+  - boto3
   - cartopy
   - cmocean
   - cftime
