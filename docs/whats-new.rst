@@ -11,6 +11,15 @@ What's New
 Coming up next
 --------------
 
+**Features and front-end API**
+
+- **argopy now support AWS S3 index files**. This primarily for benchmarking purposes, as part of the ADMT working group on Argo cloud format activities. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import ArgoIndex
+    idx = ArgoIndex(host='s3://argo-gdac-sandbox/pub/idx').load()
+
 **Internals**
 
 - Fix bug with ArgoIndex cache, :issue:`345`. (:pr:`346`) by `G. Maze <http://www.github.com/gmaze>`_.
