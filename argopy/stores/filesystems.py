@@ -1817,4 +1817,15 @@ def httpstore_erddap(url: str = "", cache: bool = False, cachedir: str = "", **k
 
 
 class s3store(httpstore):
+    """
+    By default, the s3store will use AWS credentials available in the environment.
+
+    If you want to force an anonymous session, you should use the `anon=True` option.
+
+    In order to avoid a *no credentials found error*, you can use:
+
+    >>> from argopy.utils import has_aws_credentials
+    >>> fs = s3store(anon=not has_aws_credentials())
+
+    """
     protocol = 's3'
