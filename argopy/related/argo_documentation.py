@@ -2,7 +2,9 @@ import os
 import json
 import pandas as pd
 from functools import lru_cache
-from ..stores import httpstore
+import requests
+
+from ..stores import httpstore, memorystore
 from ..options import OPTIONS
 from .utils import path2assets
 
@@ -81,7 +83,6 @@ class ArgoDocs:
     def __init__(self, docid=None, cache=False):
         self.docid = None
         self._ris = None
-        self._risfile = None
         self._fs = httpstore(cache=cache, cachedir=OPTIONS['cachedir'])
         self._doiserver = "https://dx.doi.org"
         self._archimer = "https://archimer.ifremer.fr"
@@ -104,11 +105,12 @@ class ArgoDocs:
             doc = [doc for doc in self._catalogue if doc['id'] == self.docid][0]
             summary.append("Title: %s" % doc['title'])
             summary.append("DOI: %s" % doc['doi'])
-            summary.append("url: https://dx.doi.org/%s" % doc['doi'])
+            summary.append("URL: https://dx.doi.org/%s" % doc['doi'])
             summary.append("last pdf: %s" % self.pdf)
             if 'AF' in self.ris:
                 summary.append("Authors: %s" % self.ris['AF'])
-            summary.append("Abstract: %s" % self.ris['AB'])
+            if 'AB' in self.ris:
+                summary.append("Abstract: %s" % self.ris['AB'])
         else:
             summary.append("- %i documents with a DOI are available in the catalogue" % len(self._catalogue))
             summary.append("- Use the method 'search' to find a document id")
@@ -134,13 +136,14 @@ class ArgoDocs:
         if self.docid is not None:
             if self._ris is None:
                 # Fetch RIS metadata for this document:
-                import re
-                file = self._fs.download_url("%s/%s" % (self._doiserver, self.js['doi']))
-                x = re.search(r'<a target="_blank" href="(https?:\/\/([^"]*))"\s+([^>]*)rel="nofollow">TXT<\/a>',
-                              str(file))
-                export_txt_url = x[1].replace("https://archimer.ifremer.fr", self._archimer)
-                self._risfile = export_txt_url
-                self._ris = self.RIS(export_txt_url, fs=self._fs).record
+                url = 'https://archimer.ifremer.fr/api/download-metadata'
+                myobj = {"fields": [], "fileType": "TXT", "listId": [self.docid], "ldapList": [],
+                         "exportAllAvailableFields": 'true'}
+                x = requests.post(url, json=myobj)
+                fs = memorystore()
+                with fs.open('txt_file_content', 'w') as f:
+                    f.writelines(x.content.decode().replace('\r', '\n'))
+                self._ris = self.RIS('txt_file_content', fs=fs).record
             return self._ris
         else:
             raise ValueError("Select a document first !")
