@@ -146,7 +146,7 @@ class ArgoDocs:
                          "exportAllAvailableFields": 'true'}
                 x = requests.post(url, json=myobj)
                 fs = memorystore()
-                with fs.open('txt_file_content', 'w') as f:
+                with fs.open('txt_file_content', 'w', encoding="utf-8") as f:
                     f.writelines(x.content.decode().replace('\r', '\n'))
                 self._ris = self.RIS('txt_file_content', fs=fs).record
             return self._ris
