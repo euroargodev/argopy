@@ -34,7 +34,7 @@ class ArgoDocs:
     _catalogue = ADMT_CATALOGUE
 
     class RIS:
-        """RIS file structure from TXT file"""
+        """Make a RIS file structure from a TXT file"""
 
         def __init__(self, file=None, fs=None):
             self.record = None
@@ -46,8 +46,13 @@ class ArgoDocs:
             """Parse input file"""
             # log.debug(file)
 
-            with self.fs.open(file, 'r', encoding="utf-8") as f:
-                TXTlines = f.readlines()
+            try:
+                with self.fs.open(file, 'r', encoding="utf-8") as f:
+                    TXTlines = f.readlines()
+            except:
+                with self.fs.open(file, 'r', encoding="latin-1") as f:
+                    TXTlines = f.readlines()
+
             lines = []
             # Eliminate blank lines
             for line in TXTlines:
@@ -113,8 +118,8 @@ class ArgoDocs:
                 summary.append("Abstract: %s" % self.ris['AB'])
         else:
             summary.append("- %i documents with a DOI are available in the catalogue" % len(self._catalogue))
-            summary.append("- Use the method 'search' to find a document id")
-            summary.append("- Use the property 'list' to check out the catalogue")
+            summary.append("> Use the method 'search' to find a document id")
+            summary.append("> Use the property 'list' to check out the catalogue content")
         return "\n".join(summary)
 
     @property
