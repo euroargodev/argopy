@@ -21,6 +21,8 @@ Coming up next
 
 - Keep dependencies up to date. (:pr:`333`, :pr:`337`) by `G. Maze <http://www.github.com/gmaze>`_.
 
+- Fix :class:`argopy.ArgoDocs` that wat not working with new Archimer webpage design, :issue:`351`.
+
 
 v0.1.15 (12 Dec. 2023)
 ----------------------
