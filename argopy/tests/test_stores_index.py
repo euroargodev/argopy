@@ -20,7 +20,6 @@ from argopy.utils.checkers import is_list_of_strings
 from argopy.stores.argo_index_pd import indexstore_pandas
 from mocked_http import mocked_httpserver, mocked_server_address
 
-
 log = logging.getLogger("argopy.tests.indexstores")
 
 has_pyarrow = importlib.util.find_spec("pyarrow") is not None
@@ -31,7 +30,6 @@ skip_pyarrow = pytest.mark.skipif(0, reason="Skipped tests for Pyarrow backend")
 skip_CORE = pytest.mark.skipif(0, reason="Skipped tests for CORE index")
 skip_BGCs = pytest.mark.skipif(0, reason="Skipped tests for BGC synthetic index")
 skip_BGCb = pytest.mark.skipif(0, reason="Skipped tests for BGC bio index")
-
 
 """
 List gdac hosts to be tested. 
@@ -45,9 +43,8 @@ VALID_HOSTS = [
 
 HAS_S3FS = importlib.util.find_spec("s3fs") is not None
 if HAS_S3FS:
-    #todo Create a mocked server for s3 tests
+    # todo Create a mocked server for s3 tests
     VALID_HOSTS.append("s3://argo-gdac-sandbox/pub/idx")
-
 
 """
 List index searches to be tested.
@@ -99,7 +96,7 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason="?")
                 idx.search_lat_lon_tim(apts["lat_lon_tim"], nrows=nrows)
             if "params" in apts:
                 if np.any(
-                    [key in idx.convention_title for key in ["Bio", "Synthetic"]]
+                        [key in idx.convention_title for key in ["Bio", "Synthetic"]]
                 ):
                     if "logical" in apts:
                         logical = apts["logical"]
@@ -110,7 +107,7 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason="?")
                     pytest.skip("For BGC index only")
             if "parameter_data_mode" in apts:
                 if np.any(
-                    [key in idx.convention_title for key in ["Bio", "Synthetic"]]
+                        [key in idx.convention_title for key in ["Bio", "Synthetic"]]
                 ):
                     if "logical" in apts:
                         logical = apts["logical"]
@@ -249,7 +246,7 @@ class IndexStore_test_proto:
             },
             cached=cache,
         )
-        idx = self.create_store(fetcher_args)#.load(nrows=N_RECORDS)
+        idx = self.create_store(fetcher_args)  # .load(nrows=N_RECORDS)
         return idx
 
     @pytest.fixture
@@ -284,8 +281,8 @@ class IndexStore_test_proto:
         assert this_idx.shape[0] == this_idx.index.shape[0]
         assert this_idx.N_RECORDS == this_idx.index.shape[0]
         assert (
-            is_list_of_strings(this_idx.uri_full_index)
-            and len(this_idx.uri_full_index) == this_idx.N_RECORDS
+                is_list_of_strings(this_idx.uri_full_index)
+                and len(this_idx.uri_full_index) == this_idx.N_RECORDS
         )
         if cacheable:
             assert is_list_of_strings(this_idx.cachepath("index"))
@@ -295,7 +292,7 @@ class IndexStore_test_proto:
         assert this_idx.N_MATCH == this_idx.search.shape[0]
         assert this_idx.N_FILES == this_idx.N_MATCH
         assert (
-            is_list_of_strings(this_idx.uri) and len(this_idx.uri) == this_idx.N_MATCH
+                is_list_of_strings(this_idx.uri) and len(this_idx.uri) == this_idx.N_MATCH
         )
         if cacheable:
             assert is_list_of_strings(this_idx.cachepath("search"))
@@ -461,6 +458,7 @@ class IndexStore_test_proto:
         # Cleanup
         tf.close()
 
+
 ############################
 # TESTS FOR PANDAS BACKEND #
 ############################
@@ -472,6 +470,7 @@ class Test_IndexStore_pandas_CORE(IndexStore_test_proto):
     indexstore = indexstore_pandas
     index_file = "ar_index_global_prof.txt"
 
+
 @skip_pandas
 @skip_BGCs
 class Test_IndexStore_pandas_BGC_synthetic(IndexStore_test_proto):
@@ -479,12 +478,14 @@ class Test_IndexStore_pandas_BGC_synthetic(IndexStore_test_proto):
     indexstore = indexstore_pandas
     index_file = "argo_synthetic-profile_index.txt"
 
+
 @skip_pandas
 @skip_BGCb
 class Test_IndexStore_pandas_BGC_bio(IndexStore_test_proto):
     network = "bgc"
     indexstore = indexstore_pandas
     index_file = "argo_bio-profile_index.txt"
+
 
 #############################
 # TESTS FOR PYARROW BACKEND #
@@ -500,6 +501,7 @@ class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto):
     indexstore = indexstore_pyarrow
     index_file = "ar_index_global_prof.txt"
 
+
 @skip_nopyarrow
 @skip_pyarrow
 @skip_BGCs
@@ -510,6 +512,7 @@ class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
     indexstore = indexstore_pyarrow
     index_file = "argo_bio-profile_index.txt"
 
+
 @skip_nopyarrow
 @skip_pyarrow
 @skip_BGCb
@@ -519,14 +522,3 @@ class Test_IndexStore_pyarrow_BGC_synthetic(IndexStore_test_proto):
 
     indexstore = indexstore_pyarrow
     index_file = "argo_synthetic-profile_index.txt"
-
-######################
-# TESTS FOR S3 PATCH #
-######################
-#
-# class Test_IndexStore_S3_CORE(IndexStore_test_proto):
-#     network = "core"
-#     from argopy.stores.argo_index_proto_s3 import ArgoIndexS3
-#
-#     indexstore = ArgoIndexS3
-#     index_file = "ar_index_global_prof.txt"
