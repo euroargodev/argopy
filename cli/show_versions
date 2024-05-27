@@ -121,6 +121,7 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
             ("packaging", get_version),  # will come with xarray, Using 'version' to make API compatible with several fsspec releases
             ("requests", get_version),
             ("toolz", get_version),
+            ("decorator", get_version),
         ]),
         'ext.util': sorted([
             ("gsw", get_version),   # Used by xarray accessor to compute new variables

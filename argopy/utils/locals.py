@@ -123,6 +123,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 # will come with xarray, Using 'version' to make API compatible with several fsspec releases
                 ("requests", get_version),
                 ("toolz", get_version),
+                ("decorator", get_version),
             ]
         ),
         "ext.util": sorted(

@@ -6,6 +6,7 @@ dependencies:
 
 # CORE:
   - aiohttp = 3.8.5
+  - decorator
   - erddapy = 2.2.0
   - fsspec = 2023.9.2
   - netCDF4 = 1.6.4

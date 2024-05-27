@@ -18,6 +18,7 @@ dependencies:
   - cartopy
   - cmocean
   - cftime
+  - decorator
   - distributed
   - ipython
   - matplotlib

@@ -6,6 +6,7 @@ dependencies:
 
 # CORE:
   - aiohttp
+  - decorator
   - erddapy
   - fsspec
   - netCDF4
