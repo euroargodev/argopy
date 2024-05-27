@@ -5,7 +5,7 @@
     "alternative" : "SENSOR_MAKER",
     "creator" : "Argo Data Management Team",
     "date" : "2021-09-15 03:00:07.0",
-    "description" : "Terms describing sensor developers and manufacturers in Argo NetCDF arrays",
+    "description" : "Terms describing developers and manufacturers of sensors mounted on Argo floats. Argo netCDF variable SENSOR_MAKER is populated by R26 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo sensor manufacturers",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -708,14 +708,14 @@
     "RE_RegisterManager" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
     },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
-    },
     "creator" : {
       "@id" : "http://purl.org/dc/terms/creator"
     },
     "title" : {
       "@id" : "http://purl.org/dc/terms/title"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
     },
     "alternative" : {
       "@id" : "http://purl.org/dc/terms/alternative"

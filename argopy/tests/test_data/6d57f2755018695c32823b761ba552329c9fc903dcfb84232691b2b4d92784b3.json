@@ -5,7 +5,7 @@
     "alternative" : "RT_QC_FLAG",
     "creator" : "Argo Data Management Team",
     "date" : "2020-04-04 15:27:59.0",
-    "description" : "Quality flag scale for real-time measurements.",
+    "description" : "Quality flag scale for real-time measurements. Argo netCDF variables <PARAMETER>_QC in 'R' mode and <PARAMETER>_ADJUSTED_QC in 'A' mode are populated by RR2 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo real-time quality control measurement flags",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -200,12 +200,12 @@
     }
   } ],
   "@context" : {
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
-    },
     "member" : {
       "@id" : "http://www.w3.org/2004/02/skos/core#member",
       "@type" : "@id"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
     },
     "creator" : {
       "@id" : "http://purl.org/dc/terms/creator"

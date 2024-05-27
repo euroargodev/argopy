@@ -5,7 +5,7 @@
     "alternative" : "DATA_CENTRE_CODES",
     "creator" : "Argo Data Management Team",
     "date" : "2021-01-08 14:00:02.0",
-    "description" : "Codes for data centres and institutions handling or managing Argo data.",
+    "description" : "Codes for data centres and institutions handling or managing Argo data. Argo netCDF variable DATA_CENTRE is populated by R04 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo data centres and institutions",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -752,9 +752,6 @@
     "comment" : {
       "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"
     },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
-    },
     "creator" : {
       "@id" : "http://purl.org/dc/terms/creator"
     },
@@ -766,6 +763,9 @@
     },
     "title" : {
       "@id" : "http://purl.org/dc/terms/title"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
     },
     "qudt" : "https://qudt.org/2.1/schema/qudt#",
     "owl" : "http://www.w3.org/2002/07/owl#",

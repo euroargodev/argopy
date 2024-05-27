@@ -5,7 +5,7 @@
     "alternative" : "OCEAN_CODE",
     "creator" : "Argo Data Management Team",
     "date" : "2020-04-08 03:00:04.0",
-    "description" : "Ocean area codes assigned to each profile in the profile directory file located at the root of the GDACs ftp servers.",
+    "description" : "Ocean area codes assigned to each profile in the Metadata directory (index) file of the Argo Global Assembly Centre.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo ocean area codes and boundary definitions",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -137,9 +137,6 @@
     "versionInfo" : {
       "@id" : "http://www.w3.org/2002/07/owl#versionInfo"
     },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
-    },
     "publisher" : {
       "@id" : "http://purl.org/dc/terms/publisher"
     },
@@ -158,6 +155,9 @@
     },
     "RE_RegisterManager" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
     },
     "RE_RegisterOwner" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"

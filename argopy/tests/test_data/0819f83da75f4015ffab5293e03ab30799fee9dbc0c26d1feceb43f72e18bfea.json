@@ -5,7 +5,7 @@
     "alternative" : "CYCLE_TIMING_VARIABLE",
     "creator" : "Argo Data Management Team",
     "date" : "2021-12-01 02:00:02.0",
-    "description" : "Timing variables representing stages of an Argo float profiling cycle, most of which are associated with a trajectory measurement code ID listed in NVS collection 'R15'",
+    "description" : "Timing variables representing stages of an Argo float profiling cycle, most of which are associated with a trajectory measurement code ID listed in NVS collection 'R15'. Argo netCDF cycle timing variable names JULD_<RTV>_STATUS are constructed by RTV altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo float cycle timing variables",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -26,6 +26,7 @@
     "version" : "1",
     "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
     "deprecated" : "false",
+    "sameAs" : "http://vocab.nerc.ac.uk/collection/R15/current/600/",
     "versionInfo" : "1",
     "altLabel" : "ASCENT_END",
     "definition" : {
@@ -52,6 +53,7 @@
     "version" : "1",
     "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
     "deprecated" : "false",
+    "sameAs" : "http://vocab.nerc.ac.uk/collection/R15/current/500/",
     "versionInfo" : "1",
     "altLabel" : "ASCENT_START",
     "definition" : {
@@ -78,6 +80,7 @@
     "version" : "1",
     "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
     "deprecated" : "false",
+    "sameAs" : "http://vocab.nerc.ac.uk/collection/R15/current/550/",
     "versionInfo" : "1",
     "altLabel" : "DEEP_ASCENT_START",
     "definition" : {
@@ -104,6 +107,7 @@
     "version" : "1",
     "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
     "deprecated" : "false",
+    "sameAs" : "http://vocab.nerc.ac.uk/collection/R15/current/400/",
     "versionInfo" : "1",
     "altLabel" : "DEEP_DESCENT_END",
     "definition" : {
@@ -130,6 +134,7 @@
     "version" : "1",
     "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
     "deprecated" : "false",
+    "sameAs" : "http://vocab.nerc.ac.uk/collection/R15/current/200/",
     "versionInfo" : "1",
     "altLabel" : "DESCENT_END",
     "definition" : {
@@ -156,6 +161,7 @@
     "version" : "1",
     "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
     "deprecated" : "false",
+    "sameAs" : "http://vocab.nerc.ac.uk/collection/R15/current/450/",
     "versionInfo" : "1",
     "altLabel" : "DEEP_PARK_START",
     "definition" : {
@@ -182,6 +188,7 @@
     "version" : "1",
     "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
     "deprecated" : "false",
+    "sameAs" : "http://vocab.nerc.ac.uk/collection/R15/current/100/",
     "versionInfo" : "1",
     "altLabel" : "DESCENT_START",
     "definition" : {
@@ -222,7 +229,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "First Location Time"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R15/current/703/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/RTV/current/FMT/",
     "@type" : "skos:Concept",
@@ -234,6 +242,7 @@
     "version" : "1",
     "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
     "deprecated" : "false",
+    "sameAs" : "http://vocab.nerc.ac.uk/collection/R15/current/702/",
     "versionInfo" : "1",
     "altLabel" : "FIRST_MESSAGE",
     "definition" : {
@@ -260,6 +269,7 @@
     "version" : "1",
     "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
     "deprecated" : "false",
+    "sameAs" : "http://vocab.nerc.ac.uk/collection/R15/current/150/",
     "versionInfo" : "1",
     "altLabel" : "FIRST_STABILIZATION",
     "definition" : {
@@ -300,7 +310,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Last Location Time"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R15/current/703/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/RTV/current/LMT/",
     "@type" : "skos:Concept",
@@ -312,6 +323,7 @@
     "version" : "1",
     "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
     "deprecated" : "false",
+    "sameAs" : "http://vocab.nerc.ac.uk/collection/R15/current/704/",
     "versionInfo" : "1",
     "altLabel" : "LAST_MESSAGE",
     "definition" : {
@@ -338,6 +350,7 @@
     "version" : "1",
     "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
     "deprecated" : "false",
+    "sameAs" : "http://vocab.nerc.ac.uk/collection/R15/current/300/",
     "versionInfo" : "1",
     "altLabel" : "PARK_END",
     "definition" : {
@@ -364,6 +377,7 @@
     "version" : "1",
     "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
     "deprecated" : "false",
+    "sameAs" : "http://vocab.nerc.ac.uk/collection/R15/current/250/",
     "versionInfo" : "1",
     "altLabel" : "PARK_START",
     "definition" : {
@@ -390,6 +404,7 @@
     "version" : "1",
     "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
     "deprecated" : "false",
+    "sameAs" : "http://vocab.nerc.ac.uk/collection/R15/current/800/",
     "versionInfo" : "1",
     "altLabel" : "TRANSMISSION_END",
     "definition" : {
@@ -416,6 +431,7 @@
     "version" : "1",
     "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
     "deprecated" : "false",
+    "sameAs" : "http://vocab.nerc.ac.uk/collection/R15/current/700/",
     "versionInfo" : "1",
     "altLabel" : "TRANSMISSION_START",
     "definition" : {
@@ -435,6 +451,10 @@
   "@context" : {
     "prefLabel" : {
       "@id" : "http://www.w3.org/2004/02/skos/core#prefLabel"
+    },
+    "sameAs" : {
+      "@id" : "http://www.w3.org/2002/07/owl#sameAs",
+      "@type" : "@id"
     },
     "notation" : {
       "@id" : "http://www.w3.org/2004/02/skos/core#notation"
@@ -474,6 +494,10 @@
     "date" : {
       "@id" : "http://purl.org/dc/terms/date"
     },
+    "related" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#related",
+      "@type" : "@id"
+    },
     "member" : {
       "@id" : "http://www.w3.org/2004/02/skos/core#member",
       "@type" : "@id"
@@ -487,9 +511,6 @@
     "alternative" : {
       "@id" : "http://purl.org/dc/terms/alternative"
     },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
-    },
     "RE_RegisterOwner" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"
     },
@@ -501,6 +522,9 @@
     },
     "comment" : {
       "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
     },
     "qudt" : "https://qudt.org/2.1/schema/qudt#",
     "owl" : "http://www.w3.org/2002/07/owl#",

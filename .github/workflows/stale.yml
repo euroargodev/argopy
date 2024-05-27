@@ -13,16 +13,16 @@ jobs:
       pull-requests: write
 
     steps:
-    - uses: actions/stale@v8
+    - uses: actions/stale@v9
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         days-before-stale: 90
-        exempt-issue-labels: 'argo-BGC'
+        # exempt-issue-labels: 'argo-BGC'
         stale-issue-message: 'This issue was marked as staled automatically because it has not seen any activity in 90 days'
         stale-pr-message: 'This pull request was marked as staled automatically because it has not seen any activity in 90 days'
         stale-issue-label: 'stale'
         stale-pr-label: 'stale'
-        days-before-close: 365
+        days-before-close: 3650
         close-issue-label: 'closed-as-stale'
         close-pr-label: 'closed-as-stale'
         close-issue-message: 'This issue was closed automatically because it has not seen any activity in 365 days'

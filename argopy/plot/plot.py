@@ -11,17 +11,20 @@ import logging
 
 import xarray as xr
 import pandas as pd
+import numpy as np
 from typing import Union
 
 from .utils import STYLE, has_seaborn, has_mpl, has_cartopy, has_ipython, has_ipywidgets
 from .utils import axes_style, latlongrid, land_feature
 from .argo_colors import ArgoColors
 
-from ..utilities import warnUnless, check_wmo
+from ..utils.loggers import warnUnless
+from ..utils.checkers import check_wmo
 from ..errors import InvalidDatasetStructure
 
 if has_mpl:
     import matplotlib.pyplot as plt
+    import matplotlib as mpl
 
 if has_seaborn:
     STYLE["axes"] = "dark"
@@ -402,8 +405,8 @@ def scatter_map(  # noqa: C901
         raise ValueError("Can't guess the variable name for default hue/trajectory grouping (WMO)")
     hue = guess_trajvar(data) if hue is None else hue
 
-    if isinstance(data, xr.Dataset) and data.argo.N_LEVELS > 1 and 'N_LEVELS' in data[hue].dims:
-        warnings.warn("More than one level found in this dataset for '%s', scatter_map will use the first level only" % hue)
+    if isinstance(data, xr.Dataset) and data.argo.N_LEVELS > 1:
+        warnings.warn("More than one N_LEVELS found in this dataset, scatter_map will use the first level only")
         data = data.isel(N_LEVELS=0)
 
     # Try to guess the colormap to use as a function of the 'hue' variable:
@@ -472,7 +475,7 @@ def scatter_map(  # noqa: C901
         traj_color = markeredgecolor
 
     # Try to guess the trajectory grouping variable, i.e. name for WMO
-    traj_axis = guess_trajvar(data) if traj_axis is None else traj_axis
+    traj_axis = guess_trajvar(data) if traj and traj_axis is None else traj_axis
 
     # Set up the figure and axis:
     defaults = {"figsize": (10, 6), "dpi": 90}
@@ -486,22 +489,25 @@ def scatter_map(  # noqa: C901
 
     patches = []
     for k, [name, group] in enumerate(data.groupby(hue)):
-        scatter_opts = {
-            'color': mycolors.lookup[name] if mycolors.registered else mycolors.cmap(k),
-            'label': "%s: %s" % (name, mycolors.ticklabels[name]) if mycolors.registered else name,
-            'zorder': 10,
-            'sizes': [markersize],
-            'edgecolor': markeredgecolor,
-            'linewidths': markeredgesize,
-        }
-        if isinstance(data, pd.DataFrame) and not legend:
-            scatter_opts['legend'] = False  # otherwise Pandas will add a legend even if we set legend=False
-        sc = group.plot.scatter(
-            x=x, y=y,
-            ax=ax,
-            **scatter_opts
-        )
-        patches.append(sc)
+        if mycolors.registered and name not in mycolors.lookup:
+            log.info("Found '%s' values not available in the '%s' colormap" % (name, mycolors.definition['name']))
+        else:
+            scatter_opts = {
+                'color': mycolors.lookup[name] if mycolors.registered else mycolors.cmap(k),
+                'label': "%s: %s" % (name, mycolors.ticklabels[name]) if mycolors.registered else name,
+                'zorder': 10,
+                'sizes': [markersize],
+                'edgecolor': markeredgecolor,
+                'linewidths': markeredgesize,
+            }
+            if isinstance(data, pd.DataFrame) and not legend:
+                scatter_opts['legend'] = False  # otherwise Pandas will add a legend even if we set legend=False
+            sc = group.plot.scatter(
+                x=x, y=y,
+                ax=ax,
+                **scatter_opts
+            )
+            patches.append(sc)
 
     if cbar:
         if cbarlabels == 'auto':
@@ -543,5 +549,81 @@ def scatter_map(  # noqa: C901
         spine.set_edgecolor(COLORS['DARKBLUE'])
 
     ax.set_title('')
+
+    return fig, ax
+
+
+def scatter_plot(ds: xr.Dataset,
+                  this_param,
+                  this_x='TIME',
+                  this_y='PRES',
+                  figsize=(18, 6),
+                  cmap=None,
+                  vmin=None,
+                  vmax=None,
+                  s=4,
+                  bgcolor='lightgrey',
+                  ):
+    """A quick-and-dirty parameter scatter plot for one variable"""
+    warnUnless(has_mpl, "requires matplotlib installed")
+
+    if cmap is None:
+        cmap = mpl.colormaps['gist_ncar']
+
+    def get_vlabel(this_ds, this_v):
+        attrs = this_ds[this_v].attrs
+        if 'standard_name' in attrs:
+            name = attrs['standard_name']
+        elif 'long_name' in attrs:
+            name = attrs['long_name']
+        else:
+            name = this_v
+        units = attrs['units'] if 'units' in attrs else None
+        return "%s\n[%s]" % (name, units) if units else name
+
+    # Read variables for the plot:
+    x, y = ds[this_x], ds[this_y]
+    if "INTERPOLATED" in this_y:
+        x_bounds, y_bounds = np.meshgrid(x, y, indexing='ij')
+    c = ds[this_param]
+
+    #
+    fig, ax = plt.subplots(dpi=90, figsize=figsize)
+
+    if vmin == 'attrs':
+        vmin = c.attrs['valid_min'] if 'valid_min' in c.attrs else None
+    if vmax == 'attrs':
+        vmax = c.attrs['valid_max'] if 'valid_max' in c.attrs else None
+    if vmin is None:
+        vmin = np.percentile(c, 10)
+    if vmax is None:
+        vmax = np.percentile(c, 90)
+
+    if "INTERPOLATED" in this_y:
+        m = ax.pcolormesh(x_bounds, y_bounds, c, cmap=cmap, vmin=vmin, vmax=vmax)
+    else:
+        m = ax.scatter(x, y, c=c, cmap=cmap, s=s, vmin=vmin, vmax=vmax)
+        ax.set_facecolor(bgcolor)
+
+    cbar = fig.colorbar(m, shrink=0.9, extend='both', ax=ax)
+    cbar.ax.set_ylabel(get_vlabel(ds, this_param), rotation=90)
+
+    ylim = ax.get_ylim()
+    if 'PRES' in this_y:
+        ax.invert_yaxis()
+        y_bottom, y_top = np.max(ylim), np.min(ylim)
+    else:
+        y_bottom, y_top = ylim
+
+    if this_x == 'CYCLE_NUMBER':
+        ax.set_xlim([np.min(ds[this_x]) - 1, np.max(ds[this_x]) + 1])
+    elif this_x == 'TIME':
+        ax.set_xlim([np.min(ds[this_x]), np.max(ds[this_x])])
+    if 'PRES' in this_y:
+        ax.set_ylim([y_bottom, 0])
+
+    #
+    ax.set_xlabel(get_vlabel(ds, this_x))
+    ax.set_ylabel(get_vlabel(ds, this_y))
 
     return fig, ax

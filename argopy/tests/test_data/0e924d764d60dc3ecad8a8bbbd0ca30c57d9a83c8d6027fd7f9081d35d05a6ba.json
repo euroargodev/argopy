@@ -5,7 +5,7 @@
     "alternative" : "REPRESENTATIVE_PARK_PRESSURE_STATUS",
     "creator" : "Argo Data Management Team",
     "date" : "2020-05-04 03:00:04.0",
-    "description" : "Status flag on the Representative Park Pressure (RPP)",
+    "description" : "Argo status flag on the Representative Park Pressure (RPP). Argo netCDF variable REPRESENTATIVE_PARK_PRESSURE_STATUS in the Trajectory file is populated by R21 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo status flag on the Representative Park Pressure (RPP)",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -214,14 +214,14 @@
       "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",
       "@type" : "@id"
     },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
+    },
     "date" : {
       "@id" : "http://purl.org/dc/terms/date"
     },
     "RE_RegisterManager" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
-    },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
     },
     "versionInfo" : {
       "@id" : "http://www.w3.org/2002/07/owl#versionInfo"

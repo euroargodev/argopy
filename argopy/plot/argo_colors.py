@@ -1,7 +1,7 @@
 import numpy as np
 from packaging import version
 from .utils import has_mpl, has_seaborn
-from ..utilities import warnUnless
+from ..utils.loggers import warnUnless
 
 if has_mpl:
     from .utils import mpl, cm, mcolors, plt
@@ -75,8 +75,8 @@ class ArgoColors:
                 "name": "Argo Data-Mode",
                 "aka": ["datamode", "dm"],
                 "constructor": self._colormap_datamode,
-                "ticks": ["R", "A", "D"],
-                "ticklabels": ["Real-time", "Adjusted", "Delayed"],
+                "ticks": ["R", "A", "D", " "],
+                "ticklabels": ["Real-time", "Adjusted", "Delayed", "FillValue"],
             },
             "deployment_status": {
                 "name": "Deployment status",
@@ -256,8 +256,9 @@ class ArgoColors:
             "orangered",
             "orange",
             "limegreen",
+            "black",
         ]
-        return mcolors.LinearSegmentedColormap.from_list(self.definition['name'], clist, 3)
+        return mcolors.LinearSegmentedColormap.from_list(self.definition['name'], clist, len(clist))
 
     def _colormap_quality_control_flag(self):
         """Return a colormap for QC flag"""

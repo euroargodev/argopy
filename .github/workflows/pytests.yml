@@ -14,7 +14,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-
   detect-ci-skip:
     name: detect ci skip
     runs-on: ubuntu-latest
@@ -24,7 +23,7 @@ jobs:
     outputs:
       skipped: ${{ steps.detect-skip.outputs.trigger-found }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 2
       - uses: xarray-contrib/ci-trigger@v1.2
@@ -49,12 +48,19 @@ jobs:
       max-parallel: 12
       fail-fast: false
       matrix:
-        python-version: ["3.8"]
+        python-version: ["3.8", "3.9"]
         os: ["ubuntu-latest", "windows-latest", "macos-latest"]
         experimental: [false]
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Energy Estimation - Initialize
+        if: ${{matrix.os == 'ubuntu-latest'}}
+        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        with:
+          task: start-measurement
+        continue-on-error: true
+
+      - uses: actions/checkout@v4
 
       - name: Set environment variables
         run: |
@@ -70,7 +76,7 @@ jobs:
           init-shell: bash
           cache-environment: true
           cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
-          create-args:: |
+          create-args: >-
             python=${{matrix.python-version}}
 
       - name: Install argopy
@@ -82,6 +88,14 @@ jobs:
           micromamba info
           micromamba list
 
+      - name: Energy Estimation - Measure Tests Setup
+        if: ${{matrix.os == 'ubuntu-latest'}}
+        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        with:
+          task: get-measurement
+          label: 'setup core-pinned'
+        continue-on-error: true
+
       - name: Lint with flake8
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
@@ -91,8 +105,16 @@ jobs:
         run: |
           pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}}
 
+      - name: Energy Estimation - Measure Tests Exec
+        if: ${{matrix.os == 'ubuntu-latest'}}
+        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        with:
+          task: get-measurement
+          label: 'pytest core-pinned'
+        continue-on-error: true
+
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3.1.4
+        uses: codecov/codecov-action@v4.4.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml
@@ -102,11 +124,18 @@ jobs:
           env_vars: RUNNER_OS,PYTHON_VERSION
 
       - name: Save tests log as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: Argopy-Tests
+          name: Argopy-Tests-Core-${{matrix.python-version}}-${{matrix.os}}
           path: ${{env.LOG_FILE}}
           retention-days: 90
+
+      - name: Energy Estimation - Show Results
+        if: ${{matrix.os == 'ubuntu-latest'}}
+        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        with:
+          task: display-results
+        continue-on-error: true
 
   all-pinned:
     # CI tests for environments with all requirements in pinned versions
@@ -125,13 +154,19 @@ jobs:
       max-parallel: 12
       fail-fast: false
       matrix:
-        python-version: ["3.8"]
-#        os: ["ubuntu-latest"]
+        python-version: ["3.8", "3.9"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
         experimental: [false]
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Energy Estimation - Initialize
+        if: ${{matrix.os == 'ubuntu-latest'}}
+        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        with:
+          task: start-measurement
+        continue-on-error: true
+
+      - uses: actions/checkout@v4
 
       - name: Set environment variables
         run: |
@@ -147,7 +182,7 @@ jobs:
           init-shell: bash
           cache-environment: true
           cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
-          create-args:: |
+          create-args: >-
             python=${{matrix.python-version}}
 
       - name: Install argopy
@@ -159,6 +194,14 @@ jobs:
           micromamba info
           micromamba list
 
+      - name: Energy Estimation - Measure Tests Setup
+        if: ${{matrix.os == 'ubuntu-latest'}}
+        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        with:
+          task: get-measurement
+          label: 'setup all-pinned'
+        continue-on-error: true
+
       - name: Lint with flake8
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
@@ -168,8 +211,16 @@ jobs:
         run: |
           pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}}
 
+      - name: Energy Estimation - Measure Tests Exec
+        if: ${{matrix.os == 'ubuntu-latest'}}
+        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        with:
+          task: get-measurement
+          label: 'pytest all-pinned'
+        continue-on-error: true
+
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3.1.4
+        uses: codecov/codecov-action@v4.4.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml
@@ -179,8 +230,15 @@ jobs:
           env_vars: RUNNER_OS,PYTHON_VERSION
           
       - name: Upload tests log to GA
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: Argopy-Tests
+          name: Argopy-Tests-All-${{matrix.python-version}}-${{matrix.os}}
           path: ${{env.LOG_FILE}}
           retention-days: 90
+
+      - name: Energy Estimation - Show Results
+        if: ${{matrix.os == 'ubuntu-latest'}}
+        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        with:
+          task: display-results
+        continue-on-error: true

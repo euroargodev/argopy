@@ -20,18 +20,19 @@ or pip:
 
     pip install argopy
 
-you can also work with the latest version:
+you can also work with the latest dev. version:
 
 .. code-block:: text
 
     pip install git+http://github.com/euroargodev/argopy.git@master
+
 
 Required dependencies
 ---------------------
 
 - aiohttp
 - erddapy
-- fsspec
+- fsspec < 2023.12.0 (more at :issue:`317`)
 - netCDF4
 - scipy
 - toolz

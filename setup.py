@@ -10,7 +10,7 @@ with open("requirements.txt") as f:
 
 setuptools.setup(
     name="argopy",
-    version="0.1.14rc1",
+    version="0.1.15",
     author="argopy Developers",
     author_email="gmaze@ifremer.fr",
     description="A python library for Argo data beginners and experts",
@@ -19,11 +19,12 @@ setuptools.setup(
     url="https://github.com/euroargodev/argopy",
     packages=setuptools.find_packages(),
     package_dir={"argopy": "argopy"},
-    package_data={"argopy": ["assets/*.pickle"]},
+    package_data={"argopy": ["static/assets/*", "static/css/*"]},
     install_requires=requirements,
     classifiers=[
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Topic :: Scientific/Engineering",
         "Intended Audience :: Science/Research",
         "Operating System :: OS Independent",

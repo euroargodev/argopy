@@ -5,7 +5,7 @@
     "alternative" : "PLATFORM_MAKER",
     "creator" : "Argo Data Management Team",
     "date" : "2022-06-17 03:00:00.0",
-    "description" : "Name of the platform manufacturer",
+    "description" : "List of Argo float manufacturers. Argo netCDF variable PLATFORM_MAKER is populated by R24 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo platform maker",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -433,9 +433,6 @@
     "RE_RegisterManager" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
     },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
-    },
     "title" : {
       "@id" : "http://purl.org/dc/terms/title"
     },
@@ -454,6 +451,9 @@
     },
     "alternative" : {
       "@id" : "http://purl.org/dc/terms/alternative"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
     },
     "qudt" : "https://qudt.org/2.1/schema/qudt#",
     "owl" : "http://www.w3.org/2002/07/owl#",

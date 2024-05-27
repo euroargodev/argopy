@@ -5,13 +5,13 @@ This module manage options of the package
 # https://github.com/pydata/xarray/blob/cafab46aac8f7a073a32ec5aa47e213a9810ed54/xarray/core/options.py
 """
 import os
-from argopy.errors import OptionValueError, FtpPathError, ErddapPathError
 import warnings
 import logging
 import fsspec
 from fsspec.core import split_protocol
 from socket import gaierror
 from urllib.parse import urlparse
+from .errors import OptionValueError, FtpPathError, ErddapPathError
 
 
 # Define a logger
@@ -48,6 +48,7 @@ OPTIONS = {
     PASSWORD: None,
     OPENAI_API_KEY: None,
 }
+DEFAULT = OPTIONS.copy()
 
 # Define the list of possible values
 _DATA_SOURCE_LIST = frozenset(["erddap", "argovis", "gdac"])
@@ -81,14 +82,14 @@ _VALIDATORS = {
     FTP: validate_ftp,
     ERDDAP: validate_http,
     DATASET: _DATASET_LIST.__contains__,
-    CACHE_FOLDER: os.path.exists,
+    CACHE_FOLDER: lambda x: os.access(x, os.W_OK),
     CACHE_EXPIRATION: lambda x: isinstance(x, int) and x > 0,
     USER_LEVEL: _USER_LEVEL_LIST.__contains__,
     API_TIMEOUT: lambda x: isinstance(x, int) and x > 0,
     TRUST_ENV: lambda x: isinstance(x, bool),
     SERVER: lambda x: True,
-    USER: lambda x: isinstance(x, str),
-    PASSWORD: lambda x: isinstance(x, str),
+    USER: lambda x: isinstance(x, str) or x is None,
+    PASSWORD: lambda x: isinstance(x, str) or x is None,
     OPENAI_API_KEY: lambda x: isinstance(x, str),
 }
 
@@ -145,6 +146,8 @@ class set_options:
                     "argument name %r is not in the set of valid options %r"
                     % (k, set(OPTIONS))
                 )
+            if k == CACHE_FOLDER:
+                os.makedirs(v, exist_ok=True)
             if k in _VALIDATORS and not _VALIDATORS[k](v):
                 raise OptionValueError(f"option {k!r} given an invalid value: {v!r}")
             self.old[k] = OPTIONS[k]
@@ -158,6 +161,11 @@ class set_options:
 
     def __exit__(self, type, value, traceback):
         self._apply_update(self.old)
+
+
+def reset_options():
+    """Reset all options to default values"""
+    set_options(**DEFAULT)
 
 
 def check_erddap_path(path, errors='ignore'):

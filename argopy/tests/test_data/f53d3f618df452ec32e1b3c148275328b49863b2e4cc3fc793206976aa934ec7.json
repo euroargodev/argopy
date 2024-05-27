@@ -85,6 +85,7 @@
       "@language" : "en",
       "@value" : "Measurement codes reserved for unique timing events which are not repeated anywhere else within a float's cycle. If 'MC' is defined as a primary or secondary measurement code, relative specific codes 'RSPEC' generally fall anywhere within the (MC+1) and (MC+25) range; i.e. MC < RSPEC < (MC+26). However, please note that a RSPEC may not be associated with an MC at all. Each relative specific code is unique, and is matched with a trajectory measurement that is generally recorded by a limited number of float types."
     },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R15/current/702/", "http://vocab.nerc.ac.uk/collection/R15/current/704/" ],
     "notation" : "SDN:RMC::RSPEC",
     "note" : {
       "@language" : "en",
@@ -190,6 +191,10 @@
     },
     "alternative" : {
       "@id" : "http://purl.org/dc/terms/alternative"
+    },
+    "narrower" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#narrower",
+      "@type" : "@id"
     },
     "hasVersion" : {
       "@id" : "http://purl.org/pav/hasVersion",

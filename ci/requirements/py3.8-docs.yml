@@ -14,6 +14,7 @@ dependencies:
   - aiohttp
   - bottleneck
   - cartopy
+  - cmocean
   - cftime
   - distributed
   - ipython
@@ -34,6 +35,7 @@ dependencies:
   - sphinx-issues
   - sphinx_rtd_theme
   - sphinx-book-theme
+  - pydata-sphinx-theme
   - codespell
   - cfgrib
   - black
@@ -47,4 +49,8 @@ dependencies:
     - sphinx-autosummary-accessors
     - pydocstyle
     - sphinx-tabs
+    - sphinxext-rediraffe
+    - sphinxext-opengraph
     - git+https://github.com/sphinx-contrib/googleanalytics
+    - sphinx-copybutton
+    - sphinx-design

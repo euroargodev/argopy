@@ -5,7 +5,7 @@
     "alternative" : "DATA_STATE_INDICATOR",
     "creator" : "Argo Data Management Team",
     "date" : "2020-04-04 15:45:13.0",
-    "description" : "Processing stage of the data based on the concatenation of processing level and class indicators.",
+    "description" : "Processing stage of the data based on the concatenation of processing level and class indicators. Argo netCDF variable DATA_STATE_INDICATOR is populated by R06 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo data state indicators",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -271,9 +271,6 @@
       "@id" : "http://www.w3.org/2004/02/skos/core#member",
       "@type" : "@id"
     },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
-    },
     "comment" : {
       "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"
     },
@@ -294,6 +291,9 @@
     },
     "title" : {
       "@id" : "http://purl.org/dc/terms/title"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
     },
     "seeAlso" : {
       "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",

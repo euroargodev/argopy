@@ -4,7 +4,7 @@ import xarray as xr
 import logging
 import warnings
 import argopy
-from argopy.utilities import argo_split_path
+from argopy.utils.format import argo_split_path
 
 log = logging.getLogger("argopy.tests.xarray.engine")
 

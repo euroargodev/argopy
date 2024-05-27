@@ -5,7 +5,8 @@ import xarray
 import hashlib
 import warnings
 from ..plot import dashboard
-from ..utilities import list_standard_variables
+from ..utils.lists import list_standard_variables
+from ..utils.format import UriCName
 
 
 class ArgoDataFetcherProto(ABC):
@@ -62,64 +63,20 @@ class ArgoDataFetcherProto(ABC):
 
     def _cname(self) -> str:
         """ Fetcher one line string definition helper """
-        cname = "?"
-
-        if hasattr(self, "BOX"):
-            BOX = self.BOX
-            cname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f]") % (
-                BOX[0],
-                BOX[1],
-                BOX[2],
-                BOX[3],
-            )
-            if len(BOX) == 6:
-                cname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; z=%0.1f/%0.1f]") % (
-                    BOX[0],
-                    BOX[1],
-                    BOX[2],
-                    BOX[3],
-                    BOX[4],
-                    BOX[5],
-                )
-            if len(BOX) == 8:
-                cname = ("[x=%0.2f/%0.2f; y=%0.2f/%0.2f; z=%0.1f/%0.1f; t=%s/%s]") % (
-                    BOX[0],
-                    BOX[1],
-                    BOX[2],
-                    BOX[3],
-                    BOX[4],
-                    BOX[5],
-                    self._format(BOX[6], "tim"),
-                    self._format(BOX[7], "tim"),
-                )
-
-        elif hasattr(self, "WMO"):
-            prtcyc = lambda f, wmo: "WMO%i_%s" % (  # noqa: E731
-                wmo,
-                "_".join(["CYC%i" % (cyc) for cyc in sorted(f.CYC)]),
-            )
-            if len(self.WMO) == 1:
-                if hasattr(self, "CYC") and self.CYC is not None:
-                    cname = prtcyc(self, self.WMO[0])
-                else:
-                    cname = "WMO%i" % (self.WMO[0])
-            else:
-                cname = ";".join(["WMO%i" % wmo for wmo in sorted(self.WMO)])
-                if hasattr(self, "CYC") and self.CYC is not None:
-                    cname = ";".join([prtcyc(self, wmo) for wmo in self.WMO])
-            if hasattr(self, "dataset_id"):
-                cname = self.dataset_id + ";" + cname
-
-        return cname
+        return UriCName(self).cname
 
     @property
     def sha(self) -> str:
         """ Returns a unique SHA for a specific cname / fetcher implementation"""
         path = "%s-%s" % (self.definition, self.cname())
+        if self.dataset_id == 'bgc':
+            path = "%s-%s-%s" % (path, self._bgc_params, self._bgc_measured)
         return hashlib.sha256(path.encode()).hexdigest()
 
     def dashboard(self, **kw):
         """Return 3rd party dashboard for the access point"""
+        if 'type' not in kw and self.dataset_id == 'bgc':
+            kw['type'] = 'bgc'
         if self.WMO is not None:
             if len(self.WMO) == 1 and self.CYC is not None and len(self.CYC) == 1:
                 return dashboard(wmo=self.WMO[0], cyc=self.CYC[0], **kw)

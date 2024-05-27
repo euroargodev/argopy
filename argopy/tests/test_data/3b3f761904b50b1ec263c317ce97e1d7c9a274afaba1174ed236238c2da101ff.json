@@ -5,7 +5,7 @@
     "alternative" : "ARGO_WMO_INST_TYPE",
     "creator" : "Argo Data Management Team",
     "date" : "2021-02-02 02:00:02.0",
-    "description" : "Subset of instrument type codes from the World Meteorological Organization (WMO) table 1770.",
+    "description" : "Subset of instrument type codes from the World Meteorological Organization (WMO) Common Code Table C-3 (CCT C-3) 1770, named 'Instrument make and type for water temperature profile measurement with fall rate equation coefficients' and available here: https://library.wmo.int/doc_num.php?explnum_id=11283. Argo netCDF variable WMO_INST_TYPE is populated by R08 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo instrument types",
     "RE_RegisterManager" : "British Oceanographic Data Centre",

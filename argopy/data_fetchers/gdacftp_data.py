@@ -12,11 +12,11 @@ import warnings
 import getpass
 import logging
 
-from .proto import ArgoDataFetcherProto
-from ..utilities import format_oneline, argo_split_path
+from ..utils.format import format_oneline, argo_split_path
 from ..options import OPTIONS, check_gdac_path
 from ..errors import DataNotFound
 from ..stores import ArgoIndex
+from .proto import ArgoDataFetcherProto
 
 log = logging.getLogger("argopy.gdacftp.data")
 access_points = ["wmo", "box"]
@@ -281,7 +281,10 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
             ds.attrs["DATA_ID"] = "ARGO-BGC"
         ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
         ds.attrs["Fetched_from"] = self.server
-        ds.attrs["Fetched_by"] = getpass.getuser()
+        try:
+            ds.attrs["Fetched_by"] = getpass.getuser()
+        except:
+            ds.attrs["Fetched_by"] = 'anonymous'
         ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
         ds.attrs["Fetched_constraints"] = self.cname()
         ds.attrs["Fetched_uri"] = ds.encoding["source"]
@@ -329,9 +332,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
             preprocess=self._preprocess_multiprof,
             progress=self.progress,
             errors=errors,
-            decode_cf=1,
-            use_cftime=0,
-            mask_and_scale=1,
+            open_dataset_opts={'xr_opts': {'decode_cf': 1, 'use_cftime': 0, 'mask_and_scale': 1}},
         )
 
         # Data post-processing:
@@ -349,7 +350,10 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
             ds.attrs["DATA_ID"] = "ARGO-BGC"
         ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
         ds.attrs["Fetched_from"] = self.server
-        ds.attrs["Fetched_by"] = getpass.getuser()
+        try:
+            ds.attrs["Fetched_by"] = getpass.getuser()
+        except:
+            ds.attrs["Fetched_by"] = 'anonymous'
         ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
         ds.attrs["Fetched_constraints"] = self.cname()
         if len(self.uri) == 1:
