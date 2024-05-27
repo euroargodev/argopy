@@ -1,7 +1,7 @@
 pip>=23.1
 # pkgconfig
 ipykernel>=6.22
-ipython<=8.14.0
+ipython<=8.24.0
 ipywidgets>=8.0
 urllib3<2
 
@@ -11,12 +11,16 @@ jinja2>=3.0.2
 sphinx_issues>=1.2.0
 gitpython>=3.1.2
 sphinx-autosummary-accessors>=0.1.2
+pydata-sphinx-theme>=0.4.3
 readthedocs-sphinx-ext
 sphinx-rtd-theme
 sphinx-book-theme
 # sphinx-bootstrap-theme
 sphinx-tabs
 git+https://github.com/sphinx-contrib/googleanalytics
+sphinx-copybutton
+sphinx-design
+sphinxext-rediraffe
 
 xarray>=0.16.1
 pandas<3.0
@@ -37,7 +41,7 @@ matplotlib>=3.4.0
 #cartopy>=0.18.0
 #seaborn>=0.11.0
 #geos>=0.2
-#cmocean
+# cmocean
 
 zarr>=2.4.0
 netcdf4>=1.5.4

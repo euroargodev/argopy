@@ -191,17 +191,17 @@ class Test_create_float_source:
         """Validate structure of the output dataset """
         check = []
         # Check for dimensions:
-        check.append(argopy.utilities.is_list_equal(['m', 'n'], list(this_mdata.dims)))
+        check.append(argopy.utils.is_list_equal(['m', 'n'], list(this_mdata.dims)))
         # Check for coordinates:
-        check.append(argopy.utilities.is_list_equal(['m', 'n'], list(this_mdata.coords)))
+        check.append(argopy.utils.is_list_equal(['m', 'n'], list(this_mdata.coords)))
         # Check for data variables:
         check.append(np.all(
             [v in this_mdata.data_vars for v in ['PRES', 'TEMP', 'PTMP', 'SAL', 'DATES', 'LAT', 'LONG', 'PROFILE_NO']]))
         check.append(np.all(
-            [argopy.utilities.is_list_equal(['n'], this_mdata[v].dims) for v in ['LONG', 'LAT', 'DATES', 'PROFILE_NO']
+            [argopy.utils.is_list_equal(['n'], this_mdata[v].dims) for v in ['LONG', 'LAT', 'DATES', 'PROFILE_NO']
              if v in this_mdata.data_vars]))
         check.append(np.all(
-            [argopy.utilities.is_list_equal(['m', 'n'], this_mdata[v].dims) for v in ['PRES', 'TEMP', 'SAL', 'PTMP'] if
+            [argopy.utils.is_list_equal(['m', 'n'], this_mdata[v].dims) for v in ['PRES', 'TEMP', 'SAL', 'PTMP'] if
              v in this_mdata.data_vars]))
         return np.all(check)
 

@@ -10,9 +10,10 @@ dependencies:
   - fsspec
   - netCDF4
   - packaging
+  - requests
   - scipy
   - toolz
-  - xarray
+  - xarray==2024.2.0
 
 # EXT.UTIL:
   - gsw
@@ -22,6 +23,7 @@ dependencies:
 # EXT.PERF:
   - dask
   - distributed
+  - h5netcdf
   - pyarrow
 
 # EXT.PLOT:
@@ -33,6 +35,7 @@ dependencies:
   - seaborn
 
 # DEV:
+  - aiofiles
   - black
   - bottleneck
   - cfgrib
@@ -47,7 +50,7 @@ dependencies:
   - pytest-cov
   - pytest-env
   - pytest-localftpserver
-  - pytest-reportlog
-  - aiofiles
   - setuptools
-#  - sphinx
+
+  - pip:
+      - pytest-reportlog

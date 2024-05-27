@@ -2,7 +2,7 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
-  - python=3.8
+  - python = 3.8
 
 # CORE:
   - aiohttp
@@ -10,6 +10,7 @@ dependencies:
   - fsspec
   - netCDF4
   - packaging
+  - requests
   - scipy
   - toolz
   - xarray
@@ -28,11 +29,13 @@ dependencies:
   - IPython
   - cartopy
   - ipykernel
-  - ipywidgets
+  - ipywidgets <= 7.8.0
   - matplotlib
+  - pyproj
   - seaborn
 
 # DEV:
+  - aiofiles
   - black
   - bottleneck
   - cfgrib
@@ -41,13 +44,13 @@ dependencies:
   - flake8
 #  - nc-time-axis
   - numpy
-  - pandas < 2.0
+  - pandas
   - pip
   - pytest
   - pytest-cov
   - pytest-env
   - pytest-localftpserver
-  - pytest-reportlog
-  - aiofiles
   - setuptools
-#  - sphinx
+
+  - pip:
+      - pytest-reportlog

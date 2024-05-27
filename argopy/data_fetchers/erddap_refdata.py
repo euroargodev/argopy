@@ -2,11 +2,12 @@
 Fetcher to retrieve CTD reference data from Ifremer erddap
 """
 import xarray as xr
-from .erddap_data import ErddapArgoDataFetcher
-from argopy.options import OPTIONS
-from argopy.utilities import Chunker
-from argopy.stores import httpstore_erddap_auth
 import logging
+from ..options import OPTIONS
+from ..utils.chunking import Chunker
+from ..utils.geo import conv_lon
+from ..stores import httpstore_erddap_auth
+from .erddap_data import ErddapArgoDataFetcher
 
 # Load erddapy according to available version (breaking changes in v0.8.0)
 try:
@@ -14,9 +15,9 @@ try:
     from erddapy.utilities import parse_dates, quote_string_constraints
 except:  # noqa: E722
     # >= v0.8.0
-    from erddapy.erddapy import ERDDAP
-    from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
-    from erddapy.erddapy import parse_dates
+    from erddapy.erddapy import ERDDAP  # noqa: F401
+    from erddapy.erddapy import _quote_string_constraints as quote_string_constraints  # noqa: F401
+    from erddapy.erddapy import parse_dates  # noqa: F401
 
     # Soon ! https://github.com/ioos/erddapy
 
@@ -113,7 +114,7 @@ class ErddapREFDataFetcher(ErddapArgoDataFetcher):
         # Init erddapy
         self.erddap = ERDDAP(server=str(self.server), protocol="tabledap")
         self.erddap.response = "nc"
-        self.erddap.dataset_id = "Argo-ref-ctd-petit"
+        self.erddap.dataset_id = "Argo-ref-ctd"
         return self
 
     @property
@@ -183,8 +184,9 @@ class Fetch_box(ErddapREFDataFetcher):
 
     def define_constraints(self):
         """Define request constraints"""
-        self.erddap.constraints = {"longitude>=": self.BOX[0]}
-        self.erddap.constraints.update({"longitude<=": self.BOX[1]})
+
+        self.erddap.constraints = {"longitude>=": conv_lon(self.BOX[0], conv='360')}
+        self.erddap.constraints.update({"longitude<=": conv_lon(self.BOX[1], conv='360')})
         self.erddap.constraints.update({"latitude>=": self.BOX[2]})
         self.erddap.constraints.update({"latitude<=": self.BOX[3]})
         self.erddap.constraints.update({"pres>=": self.BOX[4]})

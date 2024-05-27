@@ -5,7 +5,7 @@
     "alternative" : "DM_QC_FLAG",
     "creator" : "Argo Data Management Team",
     "date" : "2020-04-04 15:29:09.0",
-    "description" : "Quality flag scale for delayed mode measurements.",
+    "description" : "Quality flag scale for delayed-mode measurements. Argo netCDF variables <PARAMETER>_ADJUSTED_QC in 'D' mode are populated by RD2 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo delayed-mode quality control measurement flags",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -267,12 +267,12 @@
     "deprecated" : {
       "@id" : "http://www.w3.org/2002/07/owl#deprecated"
     },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
+    },
     "member" : {
       "@id" : "http://www.w3.org/2004/02/skos/core#member",
       "@type" : "@id"
-    },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
     },
     "publisher" : {
       "@id" : "http://purl.org/dc/terms/publisher"

@@ -11,7 +11,7 @@ import warnings
 import logging
 import importlib
 
-from ..utilities import format_oneline
+from ..utils.format import format_oneline
 from ..options import OPTIONS, check_gdac_path
 from ..plot import dashboard
 
@@ -129,11 +129,11 @@ class FTPArgoIndexFetcher(ABC):
         if typ == 'lon':
             if x < 0:
                 x = 360. + x
-            return ("%05d") % (x * 100.)
+            return "%05d" % (x * 100.)
         if typ == 'lat':
-            return ("%05d") % (x * 100.)
+            return "%05d" % (x * 100.)
         if typ == 'prs':
-            return ("%05d") % (np.abs(x)*10.)
+            return "%05d" % (np.abs(x) * 10.)
         if typ == 'tim':
             return pd.to_datetime(x).strftime('%Y-%m-%d')
         return str(x)
@@ -161,21 +161,6 @@ class FTPArgoIndexFetcher(ABC):
     def to_dataframe(self):
         """ Filter index file and return a pandas dataframe """
         df = self.indexfs.run().to_dataframe()
-
-        # Post-processing of the filtered index is done at the indexstore level
-        # if 'wmo' not in df:
-        #     df['wmo'] = df['file'].apply(lambda x: int(x.split('/')[1]))
-        #
-        # # institution & profiler mapping for all users
-        # # todo: may be we need to separate this for standard and expert users
-        # institution_dictionnary = load_dict('institutions')
-        # df['tmp1'] = df.institution.apply(lambda x: mapp_dict(institution_dictionnary, x))
-        # df = df.rename(columns={"institution": "institution_code", "tmp1": "institution"})
-        #
-        # profiler_dictionnary = load_dict('profilers')
-        # df['profiler'] = df.profiler_type.apply(lambda x: mapp_dict(profiler_dictionnary, int(x)))
-        # df = df.rename(columns={"profiler_type": "profiler_code"})
-
         return df
 
     def to_xarray(self):

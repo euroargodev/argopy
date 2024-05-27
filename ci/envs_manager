@@ -34,6 +34,7 @@ declare -A ENV_LIST=(
 ['argopy-py39-all-free']="requirements/py3.9-all-free.yml"
 ['argopy-py39-all-pinned']="requirements/py3.9-all-pinned.yml"
 
+['argopy-py39-core-pinned']="requirements/py3.9-core-pinned.yml"
 ['argopy-py39-core-free']="requirements/py3.9-core-free.yml"
 )
 
@@ -68,6 +69,7 @@ List_avail_envs () {
 }
 
 fix_kernel_path (){
+  # Make sure that the kernel.json config file points to the appropriate environment python path
   ENV=${1}
 
   kernelspec="$(jupyter kernelspec list | grep ${ENV})"

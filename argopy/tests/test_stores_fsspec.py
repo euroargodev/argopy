@@ -29,10 +29,10 @@ from argopy.errors import (
     InvalidMethod,
     DataNotFound,
 )
-from argopy.utilities import (
+from argopy.utils.locals import modified_environ
+from argopy.utils.checkers import (
     is_list_of_datasets,
     is_list_of_dicts,
-    modified_environ,
 )
 from utils import requires_connection, requires_connected_argovis
 from mocked_http import mocked_httpserver, mocked_server_address
@@ -483,7 +483,7 @@ class Test_FtpStore:
 
     def test_open_dataset_error(self, store):
         uri = "dac/csiro/5900865/5900865_prof_error.nc"
-        with pytest.raises(ftplib.error_perm):
+        with pytest.raises((FileNotFoundError, ftplib.error_perm)):
             assert isinstance(store.open_dataset(uri), xr.Dataset)
 
     params = [

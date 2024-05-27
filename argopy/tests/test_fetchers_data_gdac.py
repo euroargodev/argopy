@@ -11,6 +11,7 @@ import tempfile
 import shutil
 from urllib.parse import urlparse
 import logging
+from collections import ChainMap
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
@@ -19,10 +20,9 @@ from argopy.errors import (
     FileSystemHasNoCache,
     FtpPathError,
 )
-from argopy.utilities import is_list_of_strings, isconnected
+from argopy.utils.checkers import isconnected, is_list_of_strings
 from utils import requires_gdac
 from mocked_http import mocked_httpserver, mocked_server_address
-from collections import ChainMap
 
 
 log = logging.getLogger("argopy.tests.data.gdac")
@@ -36,10 +36,10 @@ try to test them all:
 """
 HOSTS = [argopy.tutorial.open_dataset("gdac")[0],
              #'https://data-argo.ifremer.fr',  # ok, but replaced by the mocked http server
-              mocked_server_address,
+         mocked_server_address,
                # 'ftp://ftp.ifremer.fr/ifremer/argo',
                # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but slow down CI and no need for 2 ftp tests
-             'MOCKFTP',  # keyword to use the fake/mocked ftp server (running on localhost)
+        'MOCKFTP',  # keyword to use the fake/mocked ftp server (running on localhost)
             ]
 
 """

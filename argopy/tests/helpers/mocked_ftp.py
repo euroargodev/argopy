@@ -5,7 +5,7 @@ import tempfile
 from argopy import tutorial
 
 
-log = logging.getLogger("argopy.tests")
+log = logging.getLogger("argopy.tests.mocked_ftp")
 
 
 @pytest.fixture(scope="module", autouse=True)

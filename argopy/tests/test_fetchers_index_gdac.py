@@ -13,7 +13,7 @@ from argopy.errors import (
     FileSystemHasNoCache,
     FtpPathError
 )
-from argopy.utilities import is_list_of_strings, isconnected
+from argopy.utils.checkers import isconnected, is_list_of_strings
 from utils import requires_gdac
 from mocked_http import mocked_httpserver, mocked_server_address
 

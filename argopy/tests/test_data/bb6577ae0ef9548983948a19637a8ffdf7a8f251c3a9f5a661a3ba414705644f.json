@@ -5,7 +5,7 @@
     "alternative" : "RTQC_TESTID",
     "creator" : "Argo Data Management Team",
     "date" : "2022-06-08 03:00:02.0",
-    "description" : "List of real-time quality-control tests and corresponding binary identifiers, used as reference to populate the HISTORY_QCTEST field.",
+    "description" : "List of real-time quality-control tests and corresponding binary identifiers, used as reference to populate the Argo netCDF HISTORY_QCTEST variable.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo real-time quality-control test identifiers",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -726,6 +726,9 @@
     "alternative" : {
       "@id" : "http://purl.org/dc/terms/alternative"
     },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
+    },
     "title" : {
       "@id" : "http://purl.org/dc/terms/title"
     },
@@ -735,9 +738,6 @@
     },
     "RE_RegisterManager" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
-    },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
     },
     "comment" : {
       "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"

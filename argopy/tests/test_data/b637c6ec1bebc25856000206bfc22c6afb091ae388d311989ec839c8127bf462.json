@@ -5,7 +5,7 @@
     "alternative" : "HISTORY_ACTION",
     "creator" : "Argo Data Management Team",
     "date" : "2020-04-08 03:00:04.0",
-    "description" : "Coded history information for each action performed on each profile by a data centre.",
+    "description" : "Coded history information for each action performed on each profile by a data centre. Argo netCDF variable HISTORY_ACTION is populated by R07 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo history action codes",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -14,7 +14,7 @@
     "seeAlso" : "https://github.com/nvs-vocabs/R07",
     "versionInfo" : "1",
     "altLabel" : "HISTORY_ACTION",
-    "member" : [ "http://vocab.nerc.ac.uk/collection/R07/current/PE/", "http://vocab.nerc.ac.uk/collection/R07/current/CR/", "http://vocab.nerc.ac.uk/collection/R07/current/TE/", "http://vocab.nerc.ac.uk/collection/R07/current/CF/", "http://vocab.nerc.ac.uk/collection/R07/current/UP/", "http://vocab.nerc.ac.uk/collection/R07/current/SV/", "http://vocab.nerc.ac.uk/collection/R07/current/ED/", "http://vocab.nerc.ac.uk/collection/R07/current/DC/", "http://vocab.nerc.ac.uk/collection/R07/current/CV/", "http://vocab.nerc.ac.uk/collection/R07/current/IP/", "http://vocab.nerc.ac.uk/collection/R07/current/QCF/", "http://vocab.nerc.ac.uk/collection/R07/current/NG/", "http://vocab.nerc.ac.uk/collection/R07/current/QC/", "http://vocab.nerc.ac.uk/collection/R07/current/QCP/" ],
+    "member" : [ "http://vocab.nerc.ac.uk/collection/R07/current/PE/", "http://vocab.nerc.ac.uk/collection/R07/current/CR/", "http://vocab.nerc.ac.uk/collection/R07/current/TE/", "http://vocab.nerc.ac.uk/collection/R07/current/CF/", "http://vocab.nerc.ac.uk/collection/R07/current/UP/", "http://vocab.nerc.ac.uk/collection/R07/current/SV/", "http://vocab.nerc.ac.uk/collection/R07/current/ED/", "http://vocab.nerc.ac.uk/collection/R07/current/DC/", "http://vocab.nerc.ac.uk/collection/R07/current/IP/", "http://vocab.nerc.ac.uk/collection/R07/current/CV/", "http://vocab.nerc.ac.uk/collection/R07/current/QCF/", "http://vocab.nerc.ac.uk/collection/R07/current/NG/", "http://vocab.nerc.ac.uk/collection/R07/current/QC/", "http://vocab.nerc.ac.uk/collection/R07/current/QCP/" ],
     "prefLabel" : "Argo history action codes"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R07/current/CF/",
@@ -440,14 +440,14 @@
     "title" : {
       "@id" : "http://purl.org/dc/terms/title"
     },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
-    },
     "RE_RegisterManager" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
     },
     "comment" : {
       "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"
+    },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
     },
     "RE_RegisterOwner" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"

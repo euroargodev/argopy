@@ -5,7 +5,7 @@
     "alternative" : "GROUNDED",
     "creator" : "Argo Data Management Team",
     "date" : "2021-02-09 02:00:03.0",
-    "description" : "Codes to indicate the best estimate of whether the float touched the ground during a specific cycle",
+    "description" : "Codes to indicate the best estimate of whether the float touched the ground during a specific cycle. Argo netCDF variable GROUNDED in the Trajectory file is populated by R20 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo GROUNDED flags",
     "RE_RegisterManager" : "British Oceanographic Data Centre",
@@ -265,6 +265,9 @@
     "creator" : {
       "@id" : "http://purl.org/dc/terms/creator"
     },
+    "description" : {
+      "@id" : "http://purl.org/dc/terms/description"
+    },
     "alternative" : {
       "@id" : "http://purl.org/dc/terms/alternative"
     },
@@ -277,9 +280,6 @@
     "seeAlso" : {
       "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",
       "@type" : "@id"
-    },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
     },
     "qudt" : "https://qudt.org/2.1/schema/qudt#",
     "owl" : "http://www.w3.org/2002/07/owl#",
