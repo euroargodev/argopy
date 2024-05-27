@@ -5,7 +5,7 @@ from .argo_documentation import ArgoDocs
 from .doi_snapshot import ArgoDOI
 from .euroargo_api import get_coriolis_profile_id, get_ea_profile_page
 from .utils import load_dict, mapp_dict
-
+from .chatgpt import Assistant
 #
 __all__ = (
     # Classes:
@@ -14,6 +14,7 @@ __all__ = (
     "ArgoNVSReferenceTables",
     "ArgoDocs",
     "ArgoDOI",
+    "Assistant",
 
     # Functions:
     "get_coriolis_profile_id",
