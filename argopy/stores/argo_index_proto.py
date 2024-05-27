@@ -10,12 +10,14 @@ from abc import ABC, abstractmethod
 from fsspec.core import split_protocol
 from urllib.parse import urlparse
 from typing import Union
+from pathlib import Path
 
 from ..options import OPTIONS
 from ..errors import FtpPathError, S3PathError, InvalidDataset, OptionValueError
 from ..utils.checkers import isconnected, has_aws_credentials
 from ..utils.accessories import Registry
 from .filesystems import httpstore, memorystore, filestore, ftpstore, s3store
+from .argo_index_proto_s3 import get_a_s3index
 
 try:
     import pyarrow.csv as csv  # noqa: F401
@@ -24,6 +26,7 @@ try:
 except ModuleNotFoundError:
     pass
 
+from .argo_index_proto_s3 import search_s3
 
 log = logging.getLogger("argopy.stores.index")
 
@@ -58,6 +61,7 @@ class ArgoIndexStoreProto(ABC):
         cache: bool = False,
         cachedir: str = "",
         timeout: int = 0,
+        **kwargs,
     ) -> object:
         """Create an Argo index file store
 
@@ -100,8 +104,11 @@ class ArgoIndexStoreProto(ABC):
             index_file = "argo_bio-profile_index.txt"
         self.index_file = index_file
 
-        self.skip_rows = 8  # Default number of commented lines to skip at the beginning of csv index files
+        # Default number of commented lines to skip at the beginning of csv index files
+        # (this is different for s3 than for ftp/http)
+        self.skip_rows = 8
 
+        # Create a File Store to access index file:
         self.cache = cache
         self.cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
         timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
@@ -145,24 +152,35 @@ class ArgoIndexStoreProto(ABC):
                 cache=cache, cachedir=cachedir,
                 anon=not has_aws_credentials(),
             )
-
             self.skip_rows = 10
 
         else:
             raise FtpPathError(
                 "Unknown protocol for an Argo index store: %s" % split_protocol(host)[0]
             )
-        self.fs["client"] = memorystore(cache, cachedir, skip_instance_cache=True)  # Manage search results
-        self._memory_store_content = Registry(
-            name="memory store"
-        )  # Track files opened with this memory store, since it's a global store
-        self.search_path_cache = Registry(
-            name="cached search"
-        )  # Track cached files related to search
 
-        # Check if the index file exists. Allow for up to 10 try to account for some slow websites
-        self.index_path = self.fs["src"].fs.sep.join([self.host, self.index_file])
+        # Create a File Store to manage search results:
+        self.fs["client"] = memorystore(cache, cachedir, skip_instance_cache=True)
 
+        # Registry to Track files opened with the memory store
+        # (since it's a global store, other instances will access the same fs, we need our registry here)
+        self._memory_store_content = Registry(name="memory store")
+
+        # Registry to Track cached files related to search:
+        self.search_path_cache = Registry(name="cached search")
+
+        # Try to infer index convention from the file name:
+        if convention is None:
+            convention = index_file.split(self.fs["src"].fs.sep)[-1].split(".")[0]
+        if convention not in self.convention_supported:
+            raise OptionValueError(
+                "Convention '%s' is not supported, it must be one in: %s"
+                % (convention, self.convention_supported)
+            )
+        self._convention = convention
+
+        # Check if the index file exists
+        # Allow for up to 10 try to account for some slow servers
         i_try, max_try, index_found = 0, 1 if "invalid" in host else 10, False
         while i_try < max_try:
             if not self.fs["src"].exists(self.index_path) and not self.fs["src"].exists(
@@ -176,17 +194,18 @@ class ArgoIndexStoreProto(ABC):
         if not index_found:
             raise FtpPathError("Index file does not exist: %s" % self.index_path)
         else:
-            self._nrows_index = None  # Will init search with full index by default
+            # Will init search with full index by default:
+            self._nrows_index = None
 
-        if convention is None:
-            # Try to infer the convention from the file name:
-            convention = index_file.split(self.fs["src"].fs.sep)[-1].split(".")[0]
-        if convention not in self.convention_supported:
-            raise OptionValueError(
-                "Convention '%s' is not supported, it must be one in: %s"
-                % (convention, self.convention_supported)
-            )
-        self._convention = convention
+            # Work with the compressed index if available:
+            if self.fs["src"].exists(self.index_path + ".gz"):
+                self.index_file += ".gz"
+
+        if isinstance(self.fs['src'], s3store):
+            self.fs["s3"] = get_a_s3index(self.convention)
+            # Adjust S3 bucket name and key with host and index file names:
+            self.fs["s3"].bucket_name = Path(split_protocol(self.host)[1]).parts[0]
+            self.fs["s3"].key = str(Path(*Path(split_protocol(self.host)[1]).parts[1:]) / self.index_file)
 
         # # CNAME internal manager to be able to chain search methods:
         # self._cname = None
@@ -197,9 +216,12 @@ class ArgoIndexStoreProto(ABC):
         summary.append("Index: %s" % self.index_file)
         summary.append("Convention: %s (%s)" % (self.convention, self.convention_title))
         if hasattr(self, "index"):
-            summary.append("Loaded: True (%i records)" % self.N_RECORDS)
+            summary.append("In memory: True (%i records)" % self.N_RECORDS)
+        elif 's3' in self.host:
+            summary.append("In memory: False [But there's no need to load the full index with a S3 host to make a search]")
         else:
-            summary.append("Loaded: False")
+            summary.append("In memory: False")
+
         if hasattr(self, "search"):
             match = "matches" if self.N_MATCH > 1 else "match"
             summary.append(
@@ -223,6 +245,10 @@ class ArgoIndexStoreProto(ABC):
         if typ == "tim":
             return pd.to_datetime(x).strftime("%Y-%m-%d")
         return str(x)
+
+    @property
+    def index_path(self):
+        return self.fs["src"].fs.sep.join([self.host, self.index_file])
 
     @property
     def cname(self) -> str:
@@ -362,6 +388,8 @@ class ArgoIndexStoreProto(ABC):
         # Must work for all internal storage type (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
         if hasattr(self, "index"):
             return self.index.shape[0]
+        elif 's3' in self.host:
+            return np.Inf
         else:
             raise InvalidDataset("Load the index first !")
 

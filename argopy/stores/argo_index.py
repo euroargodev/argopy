@@ -73,4 +73,6 @@ class ArgoIndex(indexstore):
     >>> idx.records_per_wmo
 
     """
-    pass
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+    # pass

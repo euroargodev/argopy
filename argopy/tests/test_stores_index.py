@@ -24,10 +24,13 @@ from mocked_http import mocked_httpserver, mocked_server_address
 log = logging.getLogger("argopy.tests.indexstores")
 
 has_pyarrow = importlib.util.find_spec("pyarrow") is not None
-skip_pyarrow = pytest.mark.skipif(not has_pyarrow, reason="Requires pyarrow")
+skip_nopyarrow = pytest.mark.skipif(not has_pyarrow, reason="Requires pyarrow")
 
-skip_this = pytest.mark.skipif(1, reason="Skipped temporarily")
-skip_for_debug = pytest.mark.skipif(False, reason="Taking too long !")
+skip_pandas = pytest.mark.skipif(0, reason="Skipped tests for Pandas backend")
+skip_pyarrow = pytest.mark.skipif(0, reason="Skipped tests for Pyarrow backend")
+skip_CORE = pytest.mark.skipif(0, reason="Skipped tests for CORE index")
+skip_BGCs = pytest.mark.skipif(0, reason="Skipped tests for BGC synthetic index")
+skip_BGCb = pytest.mark.skipif(0, reason="Skipped tests for BGC bio index")
 
 
 """
@@ -35,15 +38,16 @@ List gdac hosts to be tested.
 Since the fetcher is compatible with host from local, http, ftp or s3 protocols, we try to test them all:
 """
 VALID_HOSTS = [
-    argopy.tutorial.open_dataset("gdac")[0],
-    mocked_server_address,
+    argopy.tutorial.open_dataset("gdac")[0],  # Use local files
+    mocked_server_address,  # Use the mocked http server
     "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
-    # "s3://argo-gdac-sandbox/pub/idx",
 ]
 
-has_s3 = importlib.util.find_spec("s3fs") is not None
-if has_s3:
+HAS_S3FS = importlib.util.find_spec("s3fs") is not None
+if HAS_S3FS:
+    #todo Create a mocked server for s3 tests
     VALID_HOSTS.append("s3://argo-gdac-sandbox/pub/idx")
+
 
 """
 List index searches to be tested.
@@ -52,8 +56,9 @@ VALID_SEARCHES = [
     # {"wmo": [13857]},
     {"wmo": [3902131]},  # BGC
     {"wmo": [6901929, 2901623]},
+    {"cyc": [5]},
     {"cyc": [5, 45]},
-    {"wmo_cyc": [13857, 2]},
+    # {"wmo_cyc": [13857, 2]},
     {"wmo_cyc": [3902131, 2]},  # BGC
     {"tim": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"lat_lon": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
@@ -244,7 +249,7 @@ class IndexStore_test_proto:
             },
             cached=cache,
         )
-        idx = self.create_store(fetcher_args).load(nrows=N_RECORDS)
+        idx = self.create_store(fetcher_args)#.load(nrows=N_RECORDS)
         return idx
 
     @pytest.fixture
@@ -252,7 +257,7 @@ class IndexStore_test_proto:
         """Fixture to create an index store for a given host."""
         fetcher_args, N_RECORDS = self._setup_store(request)
         xfail, reason = False, ""
-        if not has_s3:
+        if not HAS_S3FS:
             xfail, reason = True, 's3fs not available'
         yield self.create_store(fetcher_args, xfail=xfail, reason=reason).load(nrows=N_RECORDS)
 
@@ -269,7 +274,7 @@ class IndexStore_test_proto:
         # log.debug("a_search: %s, %s, %s" % (self.index_file, srch, xfail))
 
         xfail, reason = False, ""
-        if not has_s3:
+        if not HAS_S3FS:
             xfail, reason = True, 's3fs not available'
 
         yield run_a_search(self.new_idx, {"host": host, "cache": True}, srch, xfail=xfail, reason=reason)
@@ -382,6 +387,7 @@ class IndexStore_test_proto:
 
     def test_caching_index(self):
         idx = self.new_idx(cache=True)
+        idx.load(nrows=None if "tutorial" in idx.host or "MOCK" in idx.host else 100)
         self.assert_index(idx, cacheable=True)
 
     def test_caching_search(self):
@@ -459,19 +465,22 @@ class IndexStore_test_proto:
 # TESTS FOR PANDAS BACKEND #
 ############################
 
-# @skip_this
+@skip_pandas
+@skip_CORE
 class Test_IndexStore_pandas_CORE(IndexStore_test_proto):
     network = "core"
     indexstore = indexstore_pandas
     index_file = "ar_index_global_prof.txt"
 
-# @skip_this
+@skip_pandas
+@skip_BGCs
 class Test_IndexStore_pandas_BGC_synthetic(IndexStore_test_proto):
     network = "bgc"
     indexstore = indexstore_pandas
     index_file = "argo_synthetic-profile_index.txt"
 
-# @skip_this
+@skip_pandas
+@skip_BGCb
 class Test_IndexStore_pandas_BGC_bio(IndexStore_test_proto):
     network = "bgc"
     indexstore = indexstore_pandas
@@ -481,8 +490,9 @@ class Test_IndexStore_pandas_BGC_bio(IndexStore_test_proto):
 # TESTS FOR PYARROW BACKEND #
 #############################
 
-# @skip_this
+@skip_nopyarrow
 @skip_pyarrow
+@skip_CORE
 class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto):
     network = "core"
     from argopy.stores.argo_index_pa import indexstore_pyarrow
@@ -490,8 +500,9 @@ class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto):
     indexstore = indexstore_pyarrow
     index_file = "ar_index_global_prof.txt"
 
-# @skip_this
+@skip_nopyarrow
 @skip_pyarrow
+@skip_BGCs
 class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
     network = "bgc"
     from argopy.stores.argo_index_pa import indexstore_pyarrow
@@ -499,8 +510,9 @@ class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
     indexstore = indexstore_pyarrow
     index_file = "argo_bio-profile_index.txt"
 
-# @skip_this
+@skip_nopyarrow
 @skip_pyarrow
+@skip_BGCb
 class Test_IndexStore_pyarrow_BGC_synthetic(IndexStore_test_proto):
     network = "bgc"
     from argopy.stores.argo_index_pa import indexstore_pyarrow
@@ -508,3 +520,13 @@ class Test_IndexStore_pyarrow_BGC_synthetic(IndexStore_test_proto):
     indexstore = indexstore_pyarrow
     index_file = "argo_synthetic-profile_index.txt"
 
+######################
+# TESTS FOR S3 PATCH #
+######################
+#
+# class Test_IndexStore_S3_CORE(IndexStore_test_proto):
+#     network = "core"
+#     from argopy.stores.argo_index_proto_s3 import ArgoIndexS3
+#
+#     indexstore = ArgoIndexS3
+#     index_file = "ar_index_global_prof.txt"

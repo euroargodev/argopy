@@ -8,11 +8,13 @@ import numpy as np
 import pandas as pd
 import logging
 import gzip
+from pathlib import Path
 
 from ..errors import DataNotFound, InvalidDatasetStructure
 from ..utils.checkers import check_index_cols, is_indexbox, check_wmo, check_cyc
 from ..utils.casting import to_list
 from .argo_index_proto import ArgoIndexStoreProto
+from .argo_index_proto_s3 import search_s3
 
 
 log = logging.getLogger("argopy.stores.index")
@@ -30,6 +32,9 @@ class indexstore_pandas(ArgoIndexStoreProto):
 
     ext = "pd"
     """Storage file extension"""
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def load(self, nrows=None, force=False):  # noqa: C901
         """Load an Argo-index file content
@@ -62,16 +67,14 @@ class indexstore_pandas(ArgoIndexStoreProto):
 
         def download(nrows=None):
             log.debug("Load Argo index (nrows=%s) ..." % nrows)
-            if self.fs["src"].exists(self.index_path + ".gz"):
-                with self.fs["src"].open(self.index_path + ".gz", "rb") as fg:
+            if Path(self.index_path).suffix == ".gz":
+                with self.fs["src"].open(self.index_path, "rb") as fg:
                     with gzip.open(fg) as f:
                         self.index = csv2index(f)
-                        log.debug("Argo index file loaded with Pandas read_csv from '%s'" % (self.index_path + ".gz"))
-                self.index_file += ".gz"
             else:
                 with self.fs["src"].open(self.index_path, "rb") as f:
                     self.index = csv2index(f)
-                    log.debug("Argo index file loaded with Pandas read_csv from '%s'" % self.index_path)
+            log.debug("Argo index file loaded with Pandas read_csv from '%s'" % self.index_path)
             if self.cache:
                 self.fs["src"].fs.save_cache()
             self._nrows_index = nrows
@@ -256,6 +259,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
                 count[wmo] = self.index[search_filter].shape[0]
         return count
 
+    @search_s3
     def search_wmo(self, WMOs, nrows=None):
         WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
         log.debug(
@@ -273,6 +277,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
+    @search_s3
     def search_cyc(self, CYCs, nrows=None):
         CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
         log.debug(
@@ -294,6 +299,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
+    @search_s3
     def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
         WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
         CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs

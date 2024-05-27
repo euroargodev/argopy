@@ -13,7 +13,7 @@ dependencies:
   - requests
   - scipy
   - toolz
-  - xarray==2024.2.0
+  - xarray
 
 # EXT.UTIL:
 #  - boto3

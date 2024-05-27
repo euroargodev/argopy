@@ -1,6 +1,12 @@
 import io
 import pandas as pd
-from ..utils.checkers import check_index_cols, check_wmo, check_cyc, is_list_of_strings
+import numpy as np
+import logging
+import inspect
+from ..errors import InvalidDataset
+from ..utils.checkers import check_index_cols, check_wmo, check_cyc, is_list_of_strings, HAS_BOTO3
+from ..stores import s3store
+from decorator import decorator
 
 try:
     import boto3
@@ -9,13 +15,17 @@ try:
 except ModuleNotFoundError:
     pass
 
-class s3index_for_core:
+log = logging.getLogger("argopy.stores.index.s3")
+
+
+class s3index:
     """
-    A prototype for an Argo index store relying on CSV or PQ index data on S3
-    The index is scanned/searched directly on the s3 server using the boto3 client select_object_content method
+    A prototype for an Argo index store relying on remote CSV or PQ index data on S3.
+
+    The index is scanned/searched directly on the s3 server using the :class:`boto3.select_object_content` boto3 method.
 
     The key limitation here is that we can only search for WMO and CYC.
-    This is due to the fact that I could not manage to convert (CAST) latitude, longitude and time to a more
+    This is due to the fact that GM could not manage to convert (CAST) latitude, longitude and time to a more
     appropriate data type to execute a search. All variables are considered string by default.
 
     Examples
@@ -34,37 +44,14 @@ class s3index_for_core:
     idx.search_wmo_cyc([13857, 6903091], 1)
     idx.search_wmo_cyc([13857, 6903091], [1, 2])
 
-    idx.pd # Return search results as :class:`pd.DataFrame`
+    idx.pd # Return search results as a :class:`pd.DataFrame`
     idx.pq # Return search results as a :class:`pa.Table`
 
     idx.stats # Data processing stats
 
     """
-
     bucket_name = "argo-gdac-sandbox"
     """Name of the S3 bucket"""
-
-    # key, CompressionType = "pub/idx/ar_index_global_prof.txt", "NONE"
-    key = "pub/idx/ar_index_global_prof.txt.gz"
-    """Path to the index source file"""
-
-    CompressionType = "GZIP"
-    """Compression used by the index source file"""
-
-    convention = "ar_index_global_prof"
-    """Argo convention of the index source file"""
-
-    colNames = [
-        "file",
-        "date",
-        "latitude",
-        "longitude",
-        "ocean",
-        "profiler_type",
-        "institution",
-        "date_update",
-    ]
-    """List of the index column names"""
 
     def __init__(self):
         self.fs = boto3.client("s3")  # Create a boto3 client to interface with S3
@@ -93,20 +80,23 @@ class s3index_for_core:
 
     def _sio2pq(self, obj_io: io.StringIO) -> pa.Table:
         input_bytes = io.BytesIO(obj_io.read().encode('utf8'))
-        index = csv.read_csv(
-            input_bytes,
-            read_options=csv.ReadOptions(use_threads=True,
-                                         skip_rows=0,
-                                         column_names=self.colNames
-                                         ),
-            convert_options=csv.ConvertOptions(
-                column_types={
-                    "date": pa.timestamp("s"),  # , tz="utc"
-                    "date_update": pa.timestamp("s"),
-                },
-                timestamp_parsers=["%Y%m%d%H%M%S"],
-            ),
-        )
+        if input_bytes.getbuffer().nbytes > 0:
+            index = csv.read_csv(
+                input_bytes,
+                read_options=csv.ReadOptions(use_threads=True,
+                                             skip_rows=0,
+                                             column_names=self.colNames
+                                             ),
+                convert_options=csv.ConvertOptions(
+                    column_types={
+                        "date": pa.timestamp("s"),  # , tz="utc"
+                        "date_update": pa.timestamp("s"),
+                    },
+                    timestamp_parsers=["%Y%m%d%H%M%S"],
+                ),
+            )
+        else:
+            index = self.empty_pq
         check_index_cols(
             index.column_names,
             convention=self.convention,
@@ -115,7 +105,7 @@ class s3index_for_core:
         return index
 
     def query(self, sql_expression: str) -> str:
-        # Use SelectObjectContent to filter the CSV data before downloading it
+        # Use SelectObjectContent to filter CSV data before downloading it
         s3_object = self.fs.select_object_content(
             Bucket=self.bucket_name,
             Key=self.key,
@@ -206,13 +196,16 @@ class s3index_for_core:
             sql = []
             for wmo in WMOs:
                 for cyc in CYCs:
-                    sql.append("SELECT * FROM s3object s WHERE s._1 LIKE '%/{wmo}/profiles/%_{cyc:03d}.nc'".format(wmo=wmo, cyc=cyc))
+                    sql.append(
+                        "SELECT * FROM s3object s WHERE s._1 LIKE '%/{wmo}/profiles/%_{cyc:03d}.nc'".format(wmo=wmo,
+                                                                                                            cyc=cyc))
         else:
             sql = "SELECT * FROM s3object s WHERE "
             if len(WMOs) > 1:
                 if len(CYCs) > 1:
                     sql += " OR ".join(
-                        ["s._1 LIKE '%/{wmo}/profiles/%_{cyc:03d}.nc'".format(wmo=wmo, cyc=cyc) for wmo in WMOs for cyc in
+                        ["s._1 LIKE '%/{wmo}/profiles/%_{cyc:03d}.nc'".format(wmo=wmo, cyc=cyc) for wmo in WMOs for cyc
+                         in
                          CYCs])
                 else:
                     sql += " OR ".join(
@@ -246,3 +239,174 @@ class s3index_for_core:
             raise Exception('Execute a search first !')
         else:
             return self._sio2pq(self.search)
+
+
+class s3index_core(s3index):
+    # key, CompressionType = "pub/idx/ar_index_global_prof.txt", "NONE"
+    key = "pub/idx/ar_index_global_prof.txt.gz"
+    """Path to the index source file"""
+
+    CompressionType = "GZIP"
+    """Compression used by the index source file"""
+
+    convention = "ar_index_global_prof"
+    """Argo convention of the index source file"""
+
+    colNames = [
+        "file",
+        "date",
+        "latitude",
+        "longitude",
+        "ocean",
+        "profiler_type",
+        "institution",
+        "date_update",
+    ]
+    """List of the index column names"""
+
+    empty_pq = pa.Table.from_pydict({'file': [],
+                                     'date': [],
+                                     'latitude': [],
+                                     'longitude': [],
+                                     'ocean': [],
+                                     'profiler_type': [],
+                                     'institution': [],
+                                     'date_update': [],
+                                     },
+                                    schema=pa.schema([
+                                        ("file", pa.string()),
+                                        ("date", pa.timestamp('s')),
+                                        ("latitude", pa.float64()),
+                                        ("longitude", pa.float64()),
+                                        ("ocean", pa.string()),
+                                        ("profiler_type", pa.int64()),
+                                        ("institution", pa.string()),
+                                        ("date_update", pa.timestamp('s')),
+                                    ]))
+
+
+class s3index_bgc_bio(s3index):
+    key = "pub/idx/argo_bio-profile_index.txt.gz"
+    """Path to the index source file"""
+
+    CompressionType = "GZIP"
+    """Compression used by the index source file"""
+
+    convention = "argo_bio-profile_index"
+    """Argo convention of the index source file"""
+
+    colNames = [
+        "file",
+        "date",
+        "latitude",
+        "longitude",
+        "ocean",
+        "profiler_type",
+        "institution",
+        "parameters",
+        "parameter_data_mode",
+        "date_update",
+    ]
+    """List of the index column names"""
+
+    empty_pq = pa.Table.from_pydict({'file': [],
+                                     'date': [],
+                                     'latitude': [],
+                                     'longitude': [],
+                                     'ocean': [],
+                                     'profiler_type': [],
+                                     'institution': [],
+                                     "parameters": [],
+                                     "parameter_data_mode": [],
+                                     'date_update': [],
+                                     },
+                                    schema=pa.schema([
+                                        ("file", pa.string()),
+                                        ("date", pa.timestamp('s')),
+                                        ("latitude", pa.float64()),
+                                        ("longitude", pa.float64()),
+                                        ("ocean", pa.string()),
+                                        ("profiler_type", pa.int64()),
+                                        ("institution", pa.string()),
+                                        ("parameters", pa.string()),
+                                        ("parameter_data_mode", pa.string()),
+                                        ("date_update", pa.timestamp('s')),
+                                    ]))
+
+
+class s3index_bgc_synthetic(s3index_bgc_bio):
+    key = "pub/idx/argo_synthetic-profile_index.txt.gz"
+    """Path to the index source file"""
+
+    CompressionType = "GZIP"
+    """Compression used by the index source file"""
+
+    convention = "argo_synthetic-profile_index"
+    """Argo convention of the index source file"""
+
+
+def get_a_s3index(convention):
+    if convention == "ar_index_global_prof":
+        return s3index_core()
+    elif convention == "argo_bio-profile_index":
+        return s3index_bgc_bio()
+    elif convention == "argo_synthetic-profile_index":
+        return s3index_bgc_synthetic()
+
+
+@decorator
+def search_s3(func, *args, **kwargs):
+    """Decorator for search methods patched for S3 store
+
+    This decorator will bypass :class:`argopy.stores.indexstore` search methods with a boto3
+    more efficient design when using the S3 Argo index store.
+
+    Note that search methods are bypassed only if the index was not loaded before, otherwise we're using the store
+    original method working with the internal index structure (pandas dataframe or pyarrow table).
+    """
+    idx = args[0]
+
+    if func.__name__ == 'search_wmo' and not hasattr(idx, 'index') and isinstance(idx.fs['src'], s3store):
+        WMOs, nrows = args[1], args[2]
+        WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
+        log.debug(
+            "Argo index searching for WMOs=[%s] using boto3 SQL request ..."
+            % ";".join([str(wmo) for wmo in WMOs])
+        )
+        idx.fs['s3'].search_wmo(WMOs, nrows=nrows)
+        idx.search_type = {"WMO": WMOs}
+        idx.search_filter = idx.fs['s3'].sql_expression
+        idx.search = getattr(idx.fs['s3'], idx.ext)
+        return idx
+
+    if func.__name__ == 'search_cyc' and not hasattr(idx, 'index') and isinstance(idx.fs['src'], s3store):
+        CYCs, nrows = args[1], args[2]
+        CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
+        log.debug(
+            "Argo index searching for CYCs=[%s] using boto3 SQL request ..."
+            % (";".join([str(cyc) for cyc in CYCs]))
+        )
+        idx.fs['s3'].search_cyc(CYCs, nrows=nrows)
+        idx.search_type = {"CYC": CYCs}
+        idx.search_filter = idx.fs['s3'].sql_expression
+        idx.search = getattr(idx.fs['s3'], idx.ext)
+        return idx
+
+    if func.__name__ == 'search_wmo_cyc' and not hasattr(idx, 'index') and isinstance(idx.fs['src'], s3store):
+        WMOs, CYCs, nrows = args[1], args[2], args[3]
+        WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
+        CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
+        log.debug(
+            "Argo index searching for WMOs=[%s] and CYCs=[%s] using boto3 SQL request ..."
+            % (
+                ";".join([str(wmo) for wmo in WMOs]),
+                ";".join([str(cyc) for cyc in CYCs]),
+            )
+        )
+        idx.fs['s3'].search_wmo_cyc(WMOs, CYCs, nrows=nrows)
+        idx.search_type = {"WMO": WMOs, "CYC": CYCs}
+        idx.search_filter = idx.fs['s3'].sql_expression
+        idx.search = getattr(idx.fs['s3'], idx.ext)
+        return idx
+
+    return func(*args, **kwargs)
