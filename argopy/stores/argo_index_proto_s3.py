@@ -3,19 +3,37 @@ import pandas as pd
 import numpy as np
 import logging
 import inspect
+import importlib
+from decorator import decorator
+import warnings
+
 from ..errors import InvalidDataset
 from ..utils.checkers import check_index_cols, check_wmo, check_cyc, is_list_of_strings, HAS_BOTO3
 from ..stores import s3store
-from decorator import decorator
+
 
 try:
     import boto3
     import pyarrow.csv as csv  # noqa: F401
     import pyarrow as pa
+    HAS_PYARROW = True
 except ModuleNotFoundError:
+    HAS_PYARROW = False
+    class pa:
+        @property
+        def Table(self):
+            pass
+
     pass
 
 log = logging.getLogger("argopy.stores.index.s3")
+
+
+@decorator
+def requires_pyarrow(func, *args, **kwargs):
+    if not HAS_PYARROW:
+        warnings.warn("The 'pyarrow' library is not installed. Please install it to ensure full functionality.")
+    return func(*args, **kwargs)
 
 
 class s3index:
@@ -78,6 +96,7 @@ class s3index:
         obj_io.seek(0)  # Rewind
         return index
 
+    @requires_pyarrow
     def _sio2pq(self, obj_io: io.StringIO) -> pa.Table:
         input_bytes = io.BytesIO(obj_io.read().encode('utf8'))
         if input_bytes.getbuffer().nbytes > 0:
@@ -233,6 +252,7 @@ class s3index:
             return self._sio2pd(self.search)
 
     @property
+    @requires_pyarrow
     def pq(self) -> pa.Table:
         """Return search result as a :class:`pa.Table`"""
         if not hasattr(self, 'search'):
@@ -264,7 +284,10 @@ class s3index_core(s3index):
     ]
     """List of the index column names"""
 
-    empty_pq = pa.Table.from_pydict({'file': [],
+    @property
+    @requires_pyarrow
+    def empty_pq(self):
+        return pa.Table.from_pydict({'file': [],
                                      'date': [],
                                      'latitude': [],
                                      'longitude': [],
@@ -309,7 +332,10 @@ class s3index_bgc_bio(s3index):
     ]
     """List of the index column names"""
 
-    empty_pq = pa.Table.from_pydict({'file': [],
+    @property
+    @requires_pyarrow
+    def empty_pq(self):
+        return pa.Table.from_pydict({'file': [],
                                      'date': [],
                                      'latitude': [],
                                      'longitude': [],
