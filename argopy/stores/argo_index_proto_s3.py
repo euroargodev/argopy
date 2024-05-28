@@ -11,7 +11,7 @@ from decorator import decorator
 import warnings
 
 from ..errors import InvalidDataset
-from ..utils.checkers import check_index_cols, check_wmo, check_cyc, is_list_of_strings, has_aws_credentials
+from ..utils.checkers import check_index_cols, check_wmo, check_cyc, is_list_of_strings, has_aws_credentials, HAS_BOTO3
 from ..stores import s3store
 
 
@@ -27,12 +27,11 @@ except ModuleNotFoundError:
             pass
     pass
 
-try:
+if HAS_BOTO3:
     import boto3
     from botocore import UNSIGNED
     from botocore.client import Config
-except ModuleNotFoundError:
-    pass
+
 
 log = logging.getLogger("argopy.stores.index.s3")
 
