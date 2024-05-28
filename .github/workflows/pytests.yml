@@ -53,11 +53,20 @@ jobs:
         experimental: [false]
 
     steps:
+      - name: Init Eco-CI Activity Checker for CarbonDB
+        uses: green-coding-solutions/eco-ci-activity-checker@v1
+        with:
+          branch: 'master'
+          company-uuid: "4f42f511-4d8d-4d30-9c5e-8490f2c68811"
+          project-uuid: "a5c7557d-f668-482b-b740-b87d0bbf5b6d"
+
       - name: Energy Estimation - Initialize
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
         with:
           task: start-measurement
+          company-uuid: "4f42f511-4d8d-4d30-9c5e-8490f2c68811"
+          project-uuid: "a5c7557d-f668-482b-b740-b87d0bbf5b6d"
         continue-on-error: true
 
       - uses: actions/checkout@v4
@@ -94,6 +103,8 @@ jobs:
         with:
           task: get-measurement
           label: 'setup core-pinned'
+          company-uuid: "4f42f511-4d8d-4d30-9c5e-8490f2c68811"
+          project-uuid: "a5c7557d-f668-482b-b740-b87d0bbf5b6d"
         continue-on-error: true
 
       - name: Lint with flake8
@@ -111,6 +122,8 @@ jobs:
         with:
           task: get-measurement
           label: 'pytest core-pinned'
+          company-uuid: "4f42f511-4d8d-4d30-9c5e-8490f2c68811"
+          project-uuid: "a5c7557d-f668-482b-b740-b87d0bbf5b6d"
         continue-on-error: true
 
       - name: Upload coverage to Codecov
@@ -135,6 +148,8 @@ jobs:
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
         with:
           task: display-results
+          company-uuid: "4f42f511-4d8d-4d30-9c5e-8490f2c68811"
+          project-uuid: "a5c7557d-f668-482b-b740-b87d0bbf5b6d"
         continue-on-error: true
 
   all-pinned:
@@ -164,6 +179,8 @@ jobs:
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
         with:
           task: start-measurement
+          company-uuid: "4f42f511-4d8d-4d30-9c5e-8490f2c68811"
+          project-uuid: "a5c7557d-f668-482b-b740-b87d0bbf5b6d"
         continue-on-error: true
 
       - uses: actions/checkout@v4
@@ -200,6 +217,8 @@ jobs:
         with:
           task: get-measurement
           label: 'setup all-pinned'
+          company-uuid: "4f42f511-4d8d-4d30-9c5e-8490f2c68811"
+          project-uuid: "a5c7557d-f668-482b-b740-b87d0bbf5b6d"
         continue-on-error: true
 
       - name: Lint with flake8
@@ -217,6 +236,8 @@ jobs:
         with:
           task: get-measurement
           label: 'pytest all-pinned'
+          company-uuid: "4f42f511-4d8d-4d30-9c5e-8490f2c68811"
+          project-uuid: "a5c7557d-f668-482b-b740-b87d0bbf5b6d"
         continue-on-error: true
 
       - name: Upload coverage to Codecov
@@ -241,4 +262,6 @@ jobs:
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
         with:
           task: display-results
+          company-uuid: "4f42f511-4d8d-4d30-9c5e-8490f2c68811"
+          project-uuid: "a5c7557d-f668-482b-b740-b87d0bbf5b6d"
         continue-on-error: true
