@@ -53,13 +53,6 @@ jobs:
         experimental: [false]
 
     steps:
-      - name: Init Eco-CI Activity Checker for CarbonDB
-        uses: green-coding-solutions/eco-ci-activity-checker@v1
-        with:
-          branch: 'master'
-          company-uuid: "4f42f511-4d8d-4d30-9c5e-8490f2c68811"
-          project-uuid: "a5c7557d-f668-482b-b740-b87d0bbf5b6d"
-
       - name: Energy Estimation - Initialize
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
@@ -100,6 +93,8 @@ jobs:
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'setup core-pinned'
@@ -119,6 +114,8 @@ jobs:
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'pytest core-pinned'
@@ -146,6 +143,8 @@ jobs:
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: display-results
           company-uuid: "4f42f511-4d8d-4d30-9c5e-8490f2c68811"
@@ -214,6 +213,8 @@ jobs:
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'setup all-pinned'
@@ -233,6 +234,8 @@ jobs:
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'pytest all-pinned'
@@ -260,6 +263,8 @@ jobs:
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: display-results
           company-uuid: "4f42f511-4d8d-4d30-9c5e-8490f2c68811"
