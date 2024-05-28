@@ -36,6 +36,7 @@ gsw>=3.4.0
 
 s3fs
 boto3
+decorator
 
 fsspec>=0.7.4 #, <2022.3.1
 aiohttp>=3.7.4

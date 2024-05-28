@@ -212,6 +212,8 @@ class ArgoIndexStoreProto(ABC):
                 self.index_file += ".gz"
 
         if isinstance(self.fs['src'], s3store):
+            # If the index host is on a S3 store, we add another file system that will bypass some
+            # search methods to improve performances.
             self.fs["s3"] = get_a_s3index(self.convention)
             # Adjust S3 bucket name and key with host and index file names:
             self.fs["s3"].bucket_name = Path(split_protocol(self.host)[1]).parts[0]
