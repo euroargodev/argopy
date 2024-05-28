@@ -16,7 +16,6 @@ from ..stores import s3store
 
 
 try:
-    import boto3
     import pyarrow.csv as csv  # noqa: F401
     import pyarrow as pa
     HAS_PYARROW = True
@@ -26,7 +25,13 @@ except ModuleNotFoundError:
         @property
         def Table(self):
             pass
+    pass
 
+try:
+    import boto3
+    from botocore import UNSIGNED
+    from botocore.client import Config
+except ModuleNotFoundError:
     pass
 
 log = logging.getLogger("argopy.stores.index.s3")
@@ -79,8 +84,7 @@ class s3index:
         if has_aws_credentials:
             self.fs = boto3.client("s3")
         else:
-            self.fs = boto3.client('s3', aws_access_key_id='', aws_secret_access_key='')
-            self.fs._request_signer.sign = (lambda *args, **kwargs: None)
+            self.fs = boto3.client('s3', config=Config(signature_version=UNSIGNED))
 
         self.stats = {}
         self._sql_logic = 'unique'
