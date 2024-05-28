@@ -43,7 +43,7 @@ class s3index:
     """
     A prototype for an Argo index store relying on remote CSV or PQ index data on S3.
 
-    The index is scanned/searched directly on the s3 server using the :class:`boto3.select_object_content` boto3 method.
+    The index is scanned/searched directly on the s3 server using the :class:`boto3.client.select_object_content` boto3 method.
 
     The key limitation here is that we can only search for WMO and CYC.
     This is due to the fact that GM could not manage to convert (CAST) latitude, longitude and time to a more
@@ -75,12 +75,13 @@ class s3index:
     """Name of the S3 bucket"""
 
     def __init__(self):
+        # Create a boto3 client to interface with S3
         if has_aws_credentials:
-            self.fs = boto3.client("s3")  # Create a boto3 client to interface with S3
+            self.fs = boto3.client("s3")
         else:
             self.fs = boto3.client('s3', aws_access_key_id='', aws_secret_access_key='')
             self.fs._request_signer.sign = (lambda *args, **kwargs: None)
-        
+
         self.stats = {}
         self._sql_logic = 'unique'
 
