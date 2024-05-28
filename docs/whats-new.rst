@@ -13,14 +13,14 @@ Coming up next
 
 **Features and front-end API**
 
-- **Support for AWS S3 index files**. Note that this support remains experimental and is primarily made available for benchmarking as part of the ADMT working group on Argo cloud format activities. Both CORE and BGC index files are supported. The new :class:`ArgoIndex` not only support access to the AWS S3 index files but also implement improved performances for search methods on WMO and cycle numbers, using :class:`boto3.select_object_content` SQL queries. Indeed, the ``https`` and ``ftp`` default GDAC server index files are downloaded and loaded in memory before being searched. With ``s3``, index files can directly be queried on the server using SQL syntax; the full index is not necessarily downloaded. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
+- **Support for AWS S3 index files**. Note that this support remains experimental and is primarily made available for benchmarking as part of the ADMT working group on Argo cloud format activities. Both CORE and BGC index files are supported. The new :class:`ArgoIndex` not only support access to the AWS S3 index files but also implement improved performances for search methods on WMO and cycle numbers, using :class:`boto3.client.select_object_content` SQL queries. Indeed, the ``https`` and ``ftp`` default GDAC server index files are downloaded and loaded in memory before being searched. With ``s3``, index files can directly be queried on the server using SQL syntax; the full index is not necessarily downloaded. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
     from argopy import ArgoIndex
     idx = ArgoIndex(host='s3')  # you can also use 'aws' as a keyword for 's3://argo-gdac-sandbox/pub/idx'
 
-    # Optimised perf with boto3.select_object_content queries for WMO and cycle numbers:
+    # Optimised perf with boto3.client.select_object_content queries for WMO and cycle numbers:
     idx.search_wmo(6903091)
     idx.search_cyc(12)
     idx.search_wmo_cyc(6903091, 23)
