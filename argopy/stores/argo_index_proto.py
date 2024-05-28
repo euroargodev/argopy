@@ -68,24 +68,26 @@ class ArgoIndexStoreProto(ABC):
         Parameters
         ----------
         host: str, default: ``https://data-argo.ifremer.fr``
-            Local or remote (ftp or http) path to a `dac` folder (GDAC structure compliant). This takes values
+            Local or remote (ftp, https or s3) path to a `dac` folder (GDAC structure compliant). This takes values
             like:
-                ``https://data-argo.ifremer.fr``
-                ``ftp://ftp.ifremer.fr/ifremer/argo``
-                ``s3://argo-gdac-sandbox/pub/idx``
-                a local absolute path
+                - ``https://data-argo.ifremer.fr``
+                - ``ftp://ftp.ifremer.fr/ifremer/argo``
+                - ``s3://argo-gdac-sandbox/pub/idx``
+                - a local absolute path
+
+            You can also use the following keywords: ``http``/``https``, ``ftp`` and ``s3``/``aws``, respectively.
         index_file: str, default: ``ar_index_global_prof.txt``
             Name of the csv-like text file with the index.
 
             Possible values are standard file name: ``ar_index_global_prof.txt``,
             ``argo_bio-profile_index.txt`` or ``argo_synthetic-profile_index.txt``.
 
-            You can also use the following shortcuts: ``core``, ``bgc-b``, ``bgc-s``, respectively.
+            You can also use the following keywords: ``core``, ``bgc-b``, ``bgc-s``.
         convention: str, default: None
             Set the expected format convention of the index file. This is useful when trying to load index file with custom name. If set to ``None``, we'll try to infer the convention from the ``index_file`` value.
              Possible values: ``ar_index_global_prof``, ``argo_bio-profile_index``, or ``argo_synthetic-profile_index``.
 
-            You can also use the keyword: ``core``, ``bgc-s``, ``bgc-b``.
+            You can also use the following keywords: ``core``, ``bgc-s``, ``bgc-b``.
         cache : bool, default: False
             Use cache or not.
         cachedir: str, default: OPTIONS['cachedir']
@@ -93,6 +95,14 @@ class ArgoIndexStoreProto(ABC):
         timeout: int,  default: OPTIONS['api_timeout']
             Time out in seconds to connect to a remote host (ftp or http).
         """
+
+        # Catchup keywords for host:
+        if host.lower() in ["ftp"]:
+            host = "ftp://ftp.ifremer.fr/ifremer/argo"
+        elif host.lower() in ["http", "https"]:
+            host = "https://data-argo.ifremer.fr"
+        elif host.lower() in ["s3", "aws"]:
+            host = "s3://argo-gdac-sandbox/pub/idx"
         self.host = host
 
         # Catchup keyword for the main profile index files:
