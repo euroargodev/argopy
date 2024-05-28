@@ -1,3 +1,6 @@
+"""
+Additionnal index support for S3
+"""
 import io
 import pandas as pd
 import numpy as np
@@ -8,7 +11,7 @@ from decorator import decorator
 import warnings
 
 from ..errors import InvalidDataset
-from ..utils.checkers import check_index_cols, check_wmo, check_cyc, is_list_of_strings, HAS_BOTO3
+from ..utils.checkers import check_index_cols, check_wmo, check_cyc, is_list_of_strings, has_aws_credentials
 from ..stores import s3store
 
 
@@ -48,7 +51,7 @@ class s3index:
 
     Examples
     --------
-    idx = s3index_for_core()
+    idx = s3index()
 
     idx.search_wmo(6903091)
     idx.search_wmo(6903091)
@@ -72,7 +75,12 @@ class s3index:
     """Name of the S3 bucket"""
 
     def __init__(self):
-        self.fs = boto3.client("s3")  # Create a boto3 client to interface with S3
+        if has_aws_credentials:
+            self.fs = boto3.client("s3")  # Create a boto3 client to interface with S3
+        else:
+            self.fs = boto3.client('s3', aws_access_key_id='', aws_secret_access_key='')
+            self.fs._request_signer.sign = (lambda *args, **kwargs: None)
+        
         self.stats = {}
         self._sql_logic = 'unique'
 
