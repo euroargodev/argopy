@@ -13,12 +13,12 @@ Coming up next
 
 **Features and front-end API**
 
-- **argopy now support AWS S3 index files**. This primarily for benchmarking purposes, as part of the ADMT working group on Argo cloud format activities. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
+- **Support for AWS S3 index files**. Note that this support remains experimental and is primarily made available for benchmarking as part of the ADMT working group on Argo cloud format activities. The new :class:`ArgoIndex` not only support access to the AWS S3 index files but also implement improved performances for search methods on WMO and cycle numbers, using :class:`boto3.select_object_content` SQL queries. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
     from argopy import ArgoIndex
-    idx = ArgoIndex(host='s3://argo-gdac-sandbox/pub/idx').load()
+    idx = ArgoIndex(host='s3://argo-gdac-sandbox/pub/idx')
 
 **Internals**
 
