@@ -146,7 +146,7 @@ jobs:
           project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
-      - name: Generate and publish the report
+      - name: Generate and publish a report on failure
         if: |
           failure()
           && steps.status.outcome == 'failure'
@@ -271,7 +271,7 @@ jobs:
           project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
-      - name: Generate and publish the report
+      - name: Generate and publish a report on failure
         if: |
           failure()
           && steps.status.outcome == 'failure'
