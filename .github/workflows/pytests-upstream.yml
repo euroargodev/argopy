@@ -79,6 +79,8 @@ jobs:
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
         with:
           task: start-measurement
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
       - uses: actions/checkout@v4
@@ -113,9 +115,13 @@ jobs:
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'setup core-free'
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
       - name: Lint with flake8
@@ -131,9 +137,13 @@ jobs:
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'pytest core-free'
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
       - name: Generate and publish the report
@@ -155,8 +165,12 @@ jobs:
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: display-results
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
   all-free:
@@ -189,6 +203,8 @@ jobs:
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
         with:
           task: start-measurement
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
       - uses: actions/checkout@v4
@@ -224,9 +240,13 @@ jobs:
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'setup all-free'
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
       - name: Lint with flake8
@@ -242,18 +262,14 @@ jobs:
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'pytest all-free'
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
-
-      - name: Check outcome values 1
-        run: |
-          echo steps.status.outcome
-
-      - name: Check outcome values 2
-        run: |
-          echo $GITHUB_REPOSITORY_OWNER
 
       - name: Generate and publish the report
         if: |
@@ -274,6 +290,10 @@ jobs:
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: display-results
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
