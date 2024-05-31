@@ -19,10 +19,9 @@ source ~/miniconda3/etc/profile.d/conda.sh
 # LIST ALL  AVAILABLE ENVIRONMENTS AND THE ASSOCIATED YAML FILE
 #########################
 declare -A ENV_LIST=(
-['argopy-docs']="requirements/py3.8-docs.yml"
+['argopy-docs']="requirements/py3.9-docs.yml"
 
 ['argopy-py37-all-free']="requirements/py3.7-all-free.yml"
-
 ['argopy-py37-core-free']="requirements/py3.7-core-free.yml"
 
 ['argopy-py38-all-free']="requirements/py3.8-all-free.yml"

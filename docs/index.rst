@@ -51,6 +51,7 @@ Documentation
 **Help & reference**
 
 * :doc:`whats-new`
+* :doc:`energy`
 * :doc:`contributing`
 * :doc:`api`
 
@@ -60,6 +61,7 @@ Documentation
     :caption: Help & reference
 
     whats-new
+    energy
     contributing
     api
 
