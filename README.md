@@ -39,16 +39,16 @@ pip install argopy
 
 ```python
 # Import the main data fetcher:
-from argopy import DataFetcher as ArgoDataFetcher
+from argopy import DataFetcher
 ```
 ```python
 # Define what you want to fetch... 
 # a region:
-ArgoSet = ArgoDataFetcher().region([-85,-45,10.,20.,0,10.])
+ArgoSet = DataFetcher().region([-85,-45,10.,20.,0,10.])
 # floats:
-ArgoSet = ArgoDataFetcher().float([6902746, 6902747, 6902757, 6902766])
+ArgoSet = DataFetcher().float([6902746, 6902747, 6902757, 6902766])
 # or specific profiles:
-ArgoSet = ArgoDataFetcher().profile(6902746, 34)
+ArgoSet = DataFetcher().profile(6902746, 34)
 ```
 ```python
 # then fetch and get data as xarray datasets:
