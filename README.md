@@ -85,8 +85,8 @@ The **argopy** team is concerned about the environmental impact of your favorite
 | Activity                         | Badge                                                              | Green Coding tool                                                                                                                           |
 |----------------------------------|--------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
 | All                              |                                                                    | [Dashboard](https://metrics.green-coding.io/carbondb-lists.html?project_uuid=a5c7557d-f668-482b-b740-b87d0bbf5b6d)                          |
-| CI tests running on each commit  | [![CI Energy][ci-energy-badge]] [ci-energy-link]                   | [Timeline](https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&amp;amp;branch=master&amp;amp;workflow=22344160)                 |
-| Upstream CI tests, running daily | [![CI Energy][ci-energy-badge-upstream]] [ci-energy-link-upstream] | [Timeline](https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&amp;amp;amp;amp;branch=master&amp;amp;amp;amp;workflow=25052179) |
+| CI tests running on each commit  | [![CI Energy][ci-energy-badge]][ci-energy-link]                   | [Timeline](https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&amp;amp;branch=master&amp;amp;workflow=22344160)                 |
+| Upstream CI tests, running daily | [![CI Energy][ci-energy-badge-upstream]][ci-energy-link-upstream] | [Timeline](https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&amp;amp;amp;amp;branch=master&amp;amp;amp;amp;workflow=25052179) |
 
 
 
