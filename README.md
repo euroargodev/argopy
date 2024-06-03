@@ -1,7 +1,8 @@
 | <img src="https://raw.githubusercontent.com/euroargodev/argopy/master/docs/_static/argopy_logo_long.png" alt="argopy logo" width="200"/><br>``argopy`` is a python library dedicated to Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators |
 |:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-|                                                         [![DOI][joss-badge]][joss-link]  [![codecov][cov-badge]][conda-link] [![Documentation][rtd-badge]][rtd-link] [![Pypi][pip-badge]][pip-link] [![Conda][conda-badge]][conda-link]                                                          |
-|                                                                                                                 ![CI][ci-badge] [![CI Energy][ci-energy-badge]][ci-energy-link]                                                                                                                  |
+|                                                         [![DOI][joss-badge]][joss-link] [![Documentation][rtd-badge]][rtd-link] [![Pypi][pip-badge]][pip-link] [![Conda][conda-badge]][conda-link]                                                          |
+|                                                                                                                 [![codecov][cov-badge]][conda-link]  ![CI][ci-badge] [![CI Energy][ci-energy-badge]][ci-energy-link]                                                                                                                  |
+| [![Open-SSF][ossf-badge]][ossf-link] |
 
 [joss-badge]: https://img.shields.io/badge/DOI-10.21105%2Fjoss.02425-brightgreen
 [joss-link]: https://dx.doi.org/10.21105/joss.02425
@@ -14,6 +15,9 @@
 [pip-link]: https://pypi.org/project/argopy/
 [conda-badge]: https://img.shields.io/conda/vn/conda-forge/argopy?logo=anaconda
 [conda-link]: https://anaconda.org/conda-forge/argopy
+
+[ossf-badge]: https://www.bestpractices.dev/projects/5939/badge
+[ossf-link]: https://www.bestpractices.dev/projects/5939
 
 
 ### Documentation
