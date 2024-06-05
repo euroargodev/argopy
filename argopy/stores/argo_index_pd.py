@@ -218,6 +218,11 @@ class indexstore_pandas(ArgoIndexStoreProto):
         if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
             raise InvalidDatasetStructure("Cannot list parameters in this index (not a BGC profile index)")
         if hasattr(self, "search") and not index:
+            if self.N_MATCH == 0:
+                raise DataNotFound(
+                    "No data found in the index corresponding to your search criteria."
+                    " Search definition: %s" % self.cname
+                )
             df = self.search['parameters']
         else:
             if not hasattr(self, "index"):

@@ -270,6 +270,11 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
             raise InvalidDatasetStructure("Cannot list parameters in this index (not a BGC profile index)")
         if hasattr(self, "search") and not index:
+            if self.N_MATCH == 0:
+                raise DataNotFound(
+                    "No data found in the index corresponding to your search criteria."
+                    " Search definition: %s" % self.cname
+                )
             df = pa.compute.split_pattern(self.search["parameters"], pattern=" ").to_pandas()
         else:
             if not hasattr(self, "index"):
@@ -447,11 +452,9 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         self.search_type = {"PARAM": PARAMs, "logical": logical}
         filt = []
         for param in PARAMs:
-            # pattern = " %s" % param
-            pattern = r"^\%s+|\s%s" % (param, param)
             filt.append(
                 pa.compute.match_substring_regex(
-                    self.index["parameters"], pattern=pattern
+                    self.index["parameters"], options=pa.compute.MatchSubstringOptions(param, ignore_case=True)
                 )
             )
         self.search_filter = self._reduce_a_filter_list(filt, op=logical)
