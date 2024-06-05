@@ -67,7 +67,7 @@ class ArgoAccessor:
         # Variables present in the initial dataset
         self._vars = list(xarray_obj.variables.keys())
         # Store the initial list of dimensions
-        self._dims = list(xarray_obj.dims.keys())
+        self._dims = list(xarray_obj.sizes.keys())
         self.encoding = xarray_obj.encoding
         self.attrs = xarray_obj.attrs
 
@@ -755,8 +755,8 @@ class ArgoAccessor:
     ):
         """ Filter data set according to QC values
 
-        Filter the dataset to keep points where ``all`` or ``any`` of the QC fields has a value in the list of
-        integer QC flags.
+        Filter the dataset to keep points where ``all`` or ``any`` of the QC fields has a value in the list
+        of integer QC flags.
 
         This method can return the filtered dataset or the filter mask.
 
@@ -765,7 +765,7 @@ class ArgoAccessor:
         QC_list: list(int)
             List of QC flag values (integers) to keep
         QC_fields: 'all' or list(str)
-            List of QC fields to consider to apply the filter. By default we use all available QC fields
+            List of QC fields to consider to apply the filter. By default, we use all available QC fields
         drop: bool
             Drop values not matching the QC filter, default is True
         mode: str
