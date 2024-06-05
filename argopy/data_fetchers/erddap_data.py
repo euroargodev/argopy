@@ -510,14 +510,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             ]
             [vlist.append(p) for p in plist]
 
-            # # Core/Deep variables:
-            # plist = ["pres", "temp", "psal"]
-            # [vlist.append(p) for p in plist]
-            # [vlist.append(p + "_qc") for p in plist]
-            # [vlist.append(p + "_adjusted") for p in plist]
-            # [vlist.append(p + "_adjusted_qc") for p in plist]
-            # [vlist.append(p + "_adjusted_error") for p in plist]
-
             # Search in the profile index the list of parameters to load:
             params = self._bgc_vlist_requested # rq: include 'core' variables
             # log.debug("erddap-bgc parameters to load: %s" % params)
