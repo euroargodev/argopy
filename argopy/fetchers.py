@@ -143,7 +143,8 @@ class ArgoDataFetcher:
                 % (self._dataset_id, self._src)
             )
         self.fetcher_kwargs = {**fetcher_kwargs}
-        self.fetcher_options = {**{"ds": self._dataset_id}, **fetcher_kwargs}
+        self.fetcher_options = {**{"ds": self._dataset_id, "mode": self._mode}, **fetcher_kwargs}
+
         self.postproccessor = self.__empty_processor
         self._AccessPoint = None
 

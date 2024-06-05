@@ -141,6 +141,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.definition = "Ifremer erddap Argo data fetcher"
         self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
+        self.user_mode =  kwargs["mode"] if "mode" in kwargs else OPTIONS["mode"]
         self.server = kwargs["server"] if "server" in kwargs else OPTIONS["erddap"]
         self.store_opts = {
             "cache": cache,
@@ -468,7 +469,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def _minimal_vlist(self):
-        """Return the minimal list of variables to retrieve measurements for"""
+        """Return the list of variables to retrieve measurements for"""
         vlist = list()
         if self.dataset_id == "phy":
             plist = [
@@ -486,6 +487,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             ]
             [vlist.append(p) for p in plist]
 
+            # Core/Deep variables:
             plist = ["pres", "temp", "psal"]
             [vlist.append(p) for p in plist]
             [vlist.append(p + "_qc") for p in plist]
@@ -508,25 +510,41 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             ]
             [vlist.append(p) for p in plist]
 
+            # # Core/Deep variables:
+            # plist = ["pres", "temp", "psal"]
+            # [vlist.append(p) for p in plist]
+            # [vlist.append(p + "_qc") for p in plist]
+            # [vlist.append(p + "_adjusted") for p in plist]
+            # [vlist.append(p + "_adjusted_qc") for p in plist]
+            # [vlist.append(p + "_adjusted_error") for p in plist]
+
             # Search in the profile index the list of parameters to load:
-            params = self._bgc_vlist_requested
+            params = self._bgc_vlist_requested # rq: include 'core' variables
             # log.debug("erddap-bgc parameters to load: %s" % params)
 
             for p in params:
                 vname = p.lower()
-                vlist.append("%s" % vname)
-                vlist.append("%s_qc" % vname)
+                if vname in ['pres', 'temp', 'psal']:
+                    vlist.append("%s" % vname)
+                    vlist.append("%s_qc" % vname)
+
+                elif self.user_mode in ['expert']:
+                    # (No need for these in standard and research mode for BGC)
+                    vlist.append("%s" % vname)
+                    vlist.append("%s_qc" % vname)
+
                 vlist.append("%s_adjusted" % vname)
                 vlist.append("%s_adjusted_qc" % vname)
                 vlist.append("%s_adjusted_error" % vname)
                 # vlist.append("profile_%s_qc" % vname)  # not in the database
 
-        elif self.dataset_id == "ref":
+        if self.dataset_id == "ref":
             plist = ["latitude", "longitude", "time", "platform_number", "cycle_number"]
             [vlist.append(p) for p in plist]
             plist = ["pres", "temp", "psal", "ptmp"]
             [vlist.append(p) for p in plist]
 
+        vlist.sort()
         return vlist
 
     def cname(self):
@@ -582,6 +600,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 self.erddap.constraints.update({"%s!=" % p.lower(): "NaN"})
             # for p in ['platform_number']:
             #     self.erddap.constraints.update({"%s!=" % p.lower(): '"NaN"'})
+
+            # Update constraints with user mode requirements (make requests even smaller):
+            # self.define_constraints_in_bgc_for_user_mode(self.user_mode)
 
         # Post-process all constraints:
         constraints = self.erddap.constraints
@@ -987,6 +1008,16 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             # timer = print_etime('Processed %s (%i profiles)' % (param, len(profiles)), timer)
 
         return this_ds
+
+    # def define_constraints_in_bgc_for_user_mode(self):
+    #     if self.user_mode == 'standard':
+    #         for p in self._bgc_vlist_avail:
+    #             vname = p.lower()
+    #             if vname not in ['pres', 'temp', 'psal']:
+    #                 self.erddap.constraints.update(
+    #                     {""}
+    #                 )
+
 
 
 class Fetch_wmo(ErddapArgoDataFetcher):
