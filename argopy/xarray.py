@@ -699,14 +699,14 @@ class ArgoAccessor:
             "PRES",
             "TEMP",
             "PSAL",
-            "DOXY",
-            "CHLA",
-            "BBP532",
-            "BBP700",
-            "DOWNWELLING_PAR",
-            "DOWN_IRRADIANCE380",
-            "DOWN_IRRADIANCE412",
-            "DOWN_IRRADIANCE490",
+            # "DOXY",
+            # "CHLA",
+            # "BBP532",
+            # "BBP700",
+            # "DOWNWELLING_PAR",
+            # "DOWN_IRRADIANCE380",
+            # "DOWN_IRRADIANCE412",
+            # "DOWN_IRRADIANCE490",
         ]
         plist = [p for p in possible_list if p in ds.data_vars]
 
