@@ -215,8 +215,10 @@ class indexstore_pandas(ArgoIndexStoreProto):
         return wmo
 
     def read_params(self, index=False):
-        if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
-            raise InvalidDatasetStructure("Cannot list parameters in this index (not a BGC profile index)")
+        if self.convention not in ["argo_bio-profile_index",
+                                   "argo_synthetic-profile_index",
+                                   "argo_aux-profile_index"]:
+            raise InvalidDatasetStructure("Cannot list parameters in this index (not a BGC or AUX profile index)")
         if hasattr(self, "search") and not index:
             if self.N_MATCH == 0:
                 raise DataNotFound(
@@ -371,8 +373,10 @@ class indexstore_pandas(ArgoIndexStoreProto):
         return self
 
     def search_params(self, PARAMs, logical: bool = 'and', nrows=None):
-        if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
-            raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC profile index)")
+        if self.convention not in ["argo_bio-profile_index",
+                                   "argo_synthetic-profile_index",
+                                   "argo_aux-profile_index"]:
+            raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC or AUX profile index)")
         log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
         PARAMs = to_list(PARAMs)  # Make sure we deal with a list
         self.load(nrows=self._nrows_index)
@@ -398,6 +402,8 @@ class indexstore_pandas(ArgoIndexStoreProto):
         [PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs]  # Make sure we deal with a list
         if not np.all([v in ['R', 'A', 'D', '', ' '] for vals in PARAMs.values() for v in vals]):
             raise ValueError("Data mode must be a value in 'R', 'A', 'D', ' ', ''")
+        if self.convention in ["argo_aux-profile_index"]:
+            raise InvalidDatasetStructure("Method not available for this index ('%s')" % self.convention)
 
         self.load(nrows=self._nrows_index)
         self.search_type = {"DMODE": PARAMs, "logical": logical}
@@ -446,6 +452,9 @@ class indexstore_pandas(ArgoIndexStoreProto):
         elif self.convention in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
             columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
                                'parameters', 'parameter_data_mode', 'date_update']
+        elif self.convention in ["argo_aux-profile_index"]:
+            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
+                       'parameters', 'date_update']
 
         self.search.to_csv(outputfile, sep=',', index=False, index_label=False, header=False, columns=columns)
         outputfile = self._insert_header(outputfile)
