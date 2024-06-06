@@ -174,7 +174,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             # - retrieve the list of BGC variables to ask the erddap server
             # - get <param>_data_mode information because we can't get it from the server
             self.indexfs = kwargs['indexfs'] if 'indexfs' in kwargs else ArgoIndex(
-                index_file='argo_synthetic-profile_index.txt',  # the only available in the erddap
+                index_file='argo_synthetic-profile_index.txt',  # corresponds to data available in the erddap
                 cache=kwargs['cache_index'] if 'cache_index' in kwargs else cache,
                 cachedir=cachedir,
                 timeout=timeout,
@@ -209,6 +209,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             for p in ["PRES", "TEMP", "PSAL"]:
                 if p not in self._bgc_vlist_requested:
                     self._bgc_vlist_requested.append(p)
+
+            if self.user_mode in ['standard', 'research'] and 'CDOM' in self._bgc_vlist_requested:
+                self._bgc_vlist_requested.remove('CDOM')
+                log.warning("CDOM was requested but was removed from the fetcher because executed in '%s' user mode" % self.user_mode)
 
             # Handle the 'measured' argument:
             self._bgc_measured = to_list(measured)
@@ -516,18 +520,18 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
             for p in params:
                 vname = p.lower()
-                if vname in ['pres', 'temp', 'psal']:
+                if self.user_mode in ['expert'] or vname in ['pres', 'temp', 'psal']:
                     vlist.append("%s" % vname)
                     vlist.append("%s_qc" % vname)
+                    vlist.append("%s_adjusted" % vname)
+                    vlist.append("%s_adjusted_qc" % vname)
+                    vlist.append("%s_adjusted_error" % vname)
 
-                elif self.user_mode in ['expert']:
-                    # (No need for these in standard and research mode for BGC)
-                    vlist.append("%s" % vname)
-                    vlist.append("%s_qc" % vname)
+                if self.user_mode in ['standard', 'research'] and vname not in ['pres', 'temp', 'psal', 'cdom']:
+                    vlist.append("%s_adjusted" % vname)
+                    vlist.append("%s_adjusted_qc" % vname)
+                    vlist.append("%s_adjusted_error" % vname)
 
-                vlist.append("%s_adjusted" % vname)
-                vlist.append("%s_adjusted_qc" % vname)
-                vlist.append("%s_adjusted_error" % vname)
                 # vlist.append("profile_%s_qc" % vname)  # not in the database
 
         if self.dataset_id == "ref":
@@ -640,7 +644,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         # Set coordinates:
         coords = ("LATITUDE", "LONGITUDE", "TIME", "N_POINTS")
         this_ds = this_ds.reset_coords()
-        this_ds["N_POINTS"] = this_ds["N_POINTS"]
+        this_ds["N_POINTS"] = np.arange(0, len(this_ds["N_POINTS"]))
 
         # Convert all coordinate variable names to upper case
         for v in this_ds.data_vars:
@@ -824,6 +828,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 )
                 raise ValueError(msg)
 
+        if concat and results is not None:
+            results["N_POINTS"] = np.arange(0, len(results["N_POINTS"]))
+
         return results
 
     def filter_data_mode(self, ds: xr.Dataset, **kwargs):
@@ -907,9 +914,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             this_df["cyc"] = this_df["file"].apply(
                 lambda x: int(x.split("_")[-1].split(".nc")[0].replace("D", ""))
             )
-            this_df["variables"] = df["parameters"].apply(lambda x: x.split())
+            this_df["variables"] = this_df["parameters"].apply(lambda x: x.split())
             for param in params:
-                df["%s_data_mode" % param] = this_df.apply(
+                this_df["%s_data_mode" % param] = this_df.apply(
                     lambda x: x["parameter_data_mode"][x["variables"].index(param)]
                     if param in x["variables"]
                     else "",
@@ -922,7 +929,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             filt = []
             filt.append(this_df["wmo"].isin([wmo]))
             filt.append(this_df["cyc"].isin([cyc]))
-            sub_df = df[np.logical_and.reduce(filt)]
+            sub_df = this_df[np.logical_and.reduce(filt)]
             if sub_df.shape[0] == 0:
                 log.debug(
                     "Found a profile in the dataset, but not in the index ! wmo=%i, cyc=%i"
@@ -945,7 +952,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         params = [
             p
             for p in self.indexfs.search_wmo(list_WMO(this_ds)).read_params()
-            if p in this_ds
+            if p in this_ds or "%s_ADJUSTED" % p in this_ds
         ]
         # timer = print_etime('Read profiles and params from ds', timer)
 
@@ -975,6 +982,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 # t0 = now
 
                 param_data_mode = read_DM(df, wmo, cyc, param)
+                # log.debug("data mode='%s' for %s/%i/%i" % (param_data_mode, param, wmo, cyc))
                 # now = time.process_time()
                 # tims['read_DM'] += now - t0
                 # t0 = now
@@ -990,7 +998,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 # tims['where'] += now - t0
                 # t0 = now
 
-                this_ds["%s_DATA_MODE" % param][i_points] = param_data_mode
+                # this_ds["%s_DATA_MODE" % param][i_points] = param_data_mode
+                this_ds["%s_DATA_MODE" % param].loc[dict(N_POINTS=i_points)] = param_data_mode
                 # now = time.process_time()
                 # tims['fill'] += now - t0
 
@@ -1000,16 +1009,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             # timer = print_etime('Processed %s (%i profiles)' % (param, len(profiles)), timer)
 
         return this_ds
-
-    # def define_constraints_in_bgc_for_user_mode(self):
-    #     if self.user_mode == 'standard':
-    #         for p in self._bgc_vlist_avail:
-    #             vname = p.lower()
-    #             if vname not in ['pres', 'temp', 'psal']:
-    #                 self.erddap.constraints.update(
-    #                     {""}
-    #                 )
-
 
 
 class Fetch_wmo(ErddapArgoDataFetcher):
