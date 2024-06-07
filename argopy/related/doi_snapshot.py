@@ -314,18 +314,18 @@ class ArgoDOI:
 
     Examples
     --------
-    from argopy import ArgoDOI
+    >>> from argopy import ArgoDOI
 
-    doi = ArgoDOI()  # If you don't know where to start, just load the primary Argo DOI record
-    doi = ArgoDOI('95141')  # To point directly to a snapshot ID
-    doi = ArgoDOI(hashtag='95141')
-    doi = ArgoDOI(fs=httpstore(cache=True))
+    >>> doi = ArgoDOI()  # If you don't know where to start, just load the primary Argo DOI record
+    >>> doi = ArgoDOI('95141')  # To point directly to a snapshot ID
+    >>> doi = ArgoDOI(hashtag='95141')
+    >>> doi = ArgoDOI(fs=httpstore(cache=True))
 
-    doi.search('2020-02')  # Return doi closest to a given date
-    doi.search('2020-02', network='BGC')  # Return doi closest to a given date for a specific network
+    >>> doi.search('2020-02')  # Return doi closest to a given date
+    >>> doi.search('2020-02', network='BGC')  # Return doi closest to a given date for a specific network
 
-    doi.file  # Easy to read list of file(s) associated with a DOI record
-    doi.dx  # http link toward DOI
+    >>> doi.file  # Easy to read list of file(s) associated with a DOI record
+    >>> doi.dx  # http link toward DOI
 
     """
 
