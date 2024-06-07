@@ -206,6 +206,7 @@ class DOIrecord:
             summary.append("Title: %s" % self.data["title"])
             summary.append("Date: %s" % self.date.strftime("%Y-%m-%d"))
             summary.append("Network: %s" % self.network)
+            summary.append("Link: %s" % self.dx)
 
             if self.data["Nfiles"] == 1:
                 summary.append("File: %s" % self._repr_file(self.data["files"][0]))
