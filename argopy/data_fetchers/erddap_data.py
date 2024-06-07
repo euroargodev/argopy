@@ -28,7 +28,7 @@ from ..utils.format import format_oneline
 from ..stores import httpstore
 from ..errors import ErddapServerError, DataNotFound
 from ..stores import indexstore_pd as ArgoIndex  # make sure we work with the Pandas index store
-from ..utils import is_list_of_strings, to_list,Chunker
+from ..utils import is_list_of_strings, to_list, Chunker
 from .proto import ArgoDataFetcherProto
 
 

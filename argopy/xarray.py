@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import logging
+from typing import Union, List
 from xarray.backends import BackendEntrypoint  # For xarray > 0.18
 
 try:
@@ -18,12 +19,14 @@ from .utils.checkers import is_list_of_strings
 from .utils.casting import (
     cast_Argo_variable_type,
     DATA_TYPES,
+    to_list,
 )
 from .utils.compute import (
     linear_interpolation_remap,
     groupby_remap,
 )
 from .utils.geo import toYearFraction
+from .utils.transform import merge_param_with_param_adjusted
 from .errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
 
@@ -170,10 +173,10 @@ class ArgoAccessor:
         return N_POINTS
 
     def _add_history(self, txt):
-        if "history" in self._obj.attrs:
-            self._obj.attrs["history"] += "; %s" % txt
+        if "Processing_history" in self._obj.attrs:
+            self._obj.attrs["Processing_history"] += "; %s" % txt
         else:
-            self._obj.attrs["history"] = txt
+            self._obj.attrs["Processing_history"] = txt
 
     def _where(self, cond, other=xr.core.dtypes.NA, drop: bool = False):
         """ where that preserve dtypes of Argo fields
@@ -749,6 +752,58 @@ class ArgoAccessor:
         final = final.argo.cast_types()
 
         return final
+
+    def transform_data_mode(self, params: Union[str, List[str]] = 'all', errors: str = 'raise') -> xr.Dataset:
+        """Copy PARAM_ADJUSTED values onto PARAM for points where PARAM_DATA_MODE is 'A' or 'D'
+
+        After values have been copied, all PARAM_ADJUSTED* variables are dropped to avoid confusion.
+
+        Parameters
+        ----------
+        params: str, List[str] (optional, default='all')
+            Name or list of names of the parameter to merge.
+            Use the default keyword ``all`` to merge all available variables in the :class:`xarray.Dataset`.
+        errors: str (optional, default='raise')
+            If ``raise``, raises a InvalidDatasetStructure error if any of the expected variables is
+            not found.
+            If ``ignore``, fails silently and return unmodified dataset.
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+        """
+        if self._type != "point":
+            raise InvalidDatasetStructure(
+                "Method only available to a collection of points"
+            )
+        else:
+            ds = self._obj
+
+        # List of variables to filter:
+        params = to_list(params)
+        if params[0] == 'all':
+            if "DATA_MODE" in ds.variables:
+                params = ['PRES', 'TEMP', 'PSAL']
+            else:
+                params = [p.replace('_DATA_MODE', '') for p in ds.variables if "_DATA_MODE" in p]
+        else:
+            for p in params:
+                if p not in ds.variables:
+                    if errors == 'raise':
+                        raise InvalidDatasetStructure("Parameter '%s' not found in this dataset" % p)
+                    else:
+                        log.debug("Parameter '%s' not found in this dataset" % p)
+                    params.remove(p)
+
+        # Transform data:
+        for param in params:
+            ds = merge_param_with_param_adjusted(ds, param, errors=errors)
+
+        # Finalise:
+        ds = ds[np.sort(ds.data_vars)]
+        ds.argo._add_history("[%s] real-time and adjusted/delayed variables merged according to their data mode" % (",".join(params)))
+
+        return ds
 
     def filter_qc(  # noqa: C901
         self, QC_list=[1, 2], QC_fields="all", drop=True, mode="all", mask=False

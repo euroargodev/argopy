@@ -6,6 +6,8 @@ import xarray as xr
 import logging
 from typing import List
 
+from ..errors import InvalidDatasetStructure
+
 
 log = logging.getLogger("argopy.utils.manip")
 
@@ -145,3 +147,92 @@ def fill_variables_not_in_all_datasets(
 
     #
     return results
+
+
+def merge_param_with_param_adjusted(ds: xr.Dataset, param: str, errors: str = 'raise') -> xr.Dataset:
+    """Copy PARAM_ADJUSTED values onto PARAM for points where PARAMETER DATA_MODE is 'A' or 'D'
+
+    After values have been copied, all PARAM_ADJUSTED* variables are dropped to avoid confusion.
+
+    For core and deep datasets (ds='phy'), we use the ``DATA_MODE`` variable.
+    For the bgc dataset (ds='bgc'), we sue the ``PARAM_DATA_MODE`` variables.
+    The type of dataset is inferred automatically.
+
+    Parameters
+    ----------
+    ds: :class:`xarray.Dataset`
+        Dataset to transform
+    param: str
+        Name of the parameter to merge
+    errors: str, optional, default='raise'
+        If 'raise': raises a InvalidDatasetStructure error if any of the expected dataset variables is
+        not found.
+        If 'ignore', fails silently and return unmodified dataset.
+
+    Returns
+    -------
+    :class:`xarray.Dataset`
+
+    """
+    if "%s_ADJUSTED" % param not in ds:
+        if errors == 'raise':
+            raise InvalidDatasetStructure("Parameter '%s' adjusted values not found in this dataset" % "%s_ADJUSTED" % param)
+        else:
+            return ds
+    if ds.argo._type != "point":
+        raise InvalidDatasetStructure(
+            "Method only available to a collection of points"
+        )
+
+    core_ds = False
+    if "%s_DATA_MODE" % param not in ds and param in ['PRES', 'TEMP', 'PSAL']:
+        if "DATA_MODE" not in ds:
+            if errors == 'raise':
+                    raise InvalidDatasetStructure(
+                    "Parameter '%s' data mode not found in this dataset" % param
+                )
+            else:
+                return ds
+        else:
+            core_ds = True
+            ds["%s_DATA_MODE" % param] = ds["DATA_MODE"].copy()
+
+    if param not in ds:
+        ds[param] = ds["%s_ADJUSTED" % param].copy()
+    if "%s_QC" % param not in ds and "%s_ADJUSTED_QC" % param in ds:
+        ds["%s_QC" % param] = ds["%s_ADJUSTED_QC" % param].copy()
+    if "%s_ERROR" % param not in ds and "%s_ADJUSTED_ERROR" % param in ds:
+        ds["%s_ERROR" % param] = ds["%s_ADJUSTED_ERROR" % param].copy()
+
+    ii_measured = np.logical_or.reduce((ds["%s_DATA_MODE" % param] == 'R',
+                                        ds["%s_DATA_MODE" % param] == 'A',
+                                        ds["%s_DATA_MODE" % param] == 'D'))
+    ii_missing = np.logical_and.reduce((ds["%s_DATA_MODE" % param] != 'R',
+                                        ds["%s_DATA_MODE" % param] != 'A',
+                                        ds["%s_DATA_MODE" % param] != 'D'))
+    assert ii_measured.sum() + ii_missing.sum() == len(ds['N_POINTS']), "Unexpected data mode values !"
+
+    ii_measured_adj = np.logical_and.reduce((ii_measured,
+                                             np.logical_or.reduce((ds["%s_DATA_MODE" % param] == 'A',
+                                                                   ds["%s_DATA_MODE" % param] == 'D'))
+                                             ))
+
+    # Copy param_adjusted values onto param indexes where data_mode is in real-time
+    ds["%s" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds["%s_ADJUSTED" % param].loc[
+        dict(N_POINTS=ii_measured_adj)]
+    ds = ds.drop_vars(["%s_ADJUSTED" % param])
+
+    if "%s_ADJUSTED_QC" % param in ds and "%s_ADJUSTED_QC" % param in ds:
+        ds["%s_QC" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds["%s_ADJUSTED_QC" % param].loc[
+            dict(N_POINTS=ii_measured_adj)]
+        ds = ds.drop_vars(["%s_ADJUSTED_QC" % param])
+
+    if "%s_ERROR" % param in ds and "%s_ADJUSTED_ERROR" % param in ds:
+        ds["%s_ERROR" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds["%s_ADJUSTED_ERROR" % param].loc[
+            dict(N_POINTS=ii_measured_adj)]
+        ds = ds.drop_vars(["%s_ADJUSTED_ERROR" % param])
+
+    if core_ds:
+        ds = ds.drop_vars(["%s_DATA_MODE" % param])
+
+    return ds
