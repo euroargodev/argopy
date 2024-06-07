@@ -170,7 +170,7 @@ Data Filters
    :template: autosummary/accessor_method.rst
 
    Dataset.argo.filter_qc
-   Dataset.argo.filter_data_mode
+   Dataset.argo.transform_data_mode
    Dataset.argo.filter_scalib_pres
    Dataset.argo.filter_researchmode
 

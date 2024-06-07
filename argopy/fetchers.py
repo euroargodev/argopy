@@ -355,7 +355,7 @@ class ArgoDataFetcher:
         if self._mode == "standard" and self._dataset_id != "ref":
 
             def postprocessing(xds):
-                xds = self.fetcher.filter_data_mode(xds)
+                xds = self.fetcher.transform_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
                 xds = self.fetcher.filter_variables(xds, self._mode)
                 return xds
@@ -404,7 +404,7 @@ class ArgoDataFetcher:
         if self._mode == "standard" and self._dataset_id != "ref":
 
             def postprocessing(xds):
-                xds = self.fetcher.filter_data_mode(xds)
+                xds = self.fetcher.transform_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
                 xds = self.fetcher.filter_variables(xds, self._mode)
                 return xds
@@ -455,7 +455,7 @@ class ArgoDataFetcher:
         if self._mode == "standard" and self._dataset_id != "ref":
 
             def postprocessing(xds):
-                xds = self.fetcher.filter_data_mode(xds)
+                xds = self.fetcher.transform_data_mode(xds)
                 xds = self.fetcher.filter_qc(xds)
                 xds = self.fetcher.filter_variables(xds, self._mode)
                 return xds

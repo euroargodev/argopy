@@ -13,13 +13,18 @@ Coming up next
 
 **Features and front-end API**
 
-- Improved support for BGC.
+.. currentmodule:: xarray
+
+- Improved support for BGC:
+    - New :class:`Dataset.argo.transform_data_mode` method
+
+.. currentmodule:: argopy
 
 - **argopy** is concerned about its environmental impact and we'd like to understand and optimize the carbon emissions of our digital activities. Starting June 1st 2024, we use `Green Coding <https://www.green-coding.io>`_ tools to assess energy consumption and CO2eq emissions from our activities on Github infrastructure. All results and data are available on the new dedicated web page: :ref:`Carbon emissions`. (:pr:`354`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 **Internals**
 
-- Fix :class:`argopy.ArgoDocs` that wa not working with new Archimer webpage design, :issue:`351`. (:pr:`352`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Fix :class:`argopy.ArgoDocs` that was not working with new Archimer webpage design, :issue:`351`. (:pr:`352`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 - Fix bug with ArgoIndex cache, :issue:`345`. (:pr:`346`) by `G. Maze <http://www.github.com/gmaze>`_.
 
@@ -29,7 +34,15 @@ Coming up next
 
 - Fix for fsspec > 2023.10.0. (:pr:`318`) by `G. Maze <http://www.github.com/gmaze>`_.
 
+**Breaking changes**
 
+.. currentmodule:: xarray
+
+- In the :class:`Dataset.argo` accessor:
+    - the :meth:`Dataset.filter_data_mode` has been redesigned to actually implement a real filter of data points on data mode values,
+    - new :meth:`Dataset.argo.transform_data_mode` method to merge adjusted and non-adjusted measurements according to their data mode and reduce the number of variables in the dataset.
+
+.. currentmodule:: argopy
 
 v0.1.15 (12 Dec. 2023)
 ----------------------

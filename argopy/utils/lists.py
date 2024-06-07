@@ -121,7 +121,8 @@ def list_standard_variables():
         "PRES_ADJUSTED_ERROR",
         "TEMP_ADJUSTED_ERROR",
         "PSAL_ADJUSTED_ERROR",
-        "PRES_ERROR",  # can be created from PRES_ADJUSTED_ERROR after a filter_data_mode
+        # <PARAM>_ERROR variables can be created from <PARAM>_ADJUSTED_ERROR after a transform_data_mode
+        "PRES_ERROR",
         "TEMP_ERROR",
         "PSAL_ERROR",
         "JULD",

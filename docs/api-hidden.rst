@@ -262,8 +262,8 @@
     argopy.xarray.ArgoAccessor.groupby_pressure_bins
     argopy.xarray.ArgoAccessor.teos10
     argopy.xarray.ArgoAccessor.create_float_source
+    argopy.xarray.ArgoAccessor.transform_data_mode
     argopy.xarray.ArgoAccessor.filter_qc
-    argopy.xarray.ArgoAccessor.filter_data_mode
     argopy.xarray.ArgoAccessor.filter_scalib_pres
     argopy.xarray.ArgoAccessor.filter_researchmode
     argopy.xarray.ArgoAccessor.cast_types

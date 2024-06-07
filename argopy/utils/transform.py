@@ -150,12 +150,14 @@ def fill_variables_not_in_all_datasets(
 
 
 def merge_param_with_param_adjusted(ds: xr.Dataset, param: str, errors: str = 'raise') -> xr.Dataset:
-    """Copy PARAM_ADJUSTED values onto PARAM for points where PARAMETER DATA_MODE is 'A' or 'D'
+    """Copy <PARAM>_ADJUSTED values onto <PARAM> for points where param data mode is 'A' or 'D'
 
-    After values have been copied, all PARAM_ADJUSTED* variables are dropped to avoid confusion.
+    After values have been copied, all <PARAM>_ADJUSTED* variables are dropped to avoid confusion.
 
-    For core and deep datasets (ds='phy'), we use the ``DATA_MODE`` variable.
-    For the bgc dataset (ds='bgc'), we sue the ``PARAM_DATA_MODE`` variables.
+    For core and deep datasets (ds='phy'), we use the ``<DATA>_MODE`` variable.
+
+    For the bgc dataset (ds='bgc'), we use the ``<PARAM>_DATA_MODE`` variables.
+
     The type of dataset is inferred automatically.
 
     Parameters
@@ -176,7 +178,7 @@ def merge_param_with_param_adjusted(ds: xr.Dataset, param: str, errors: str = 'r
     """
     if "%s_ADJUSTED" % param not in ds:
         if errors == 'raise':
-            raise InvalidDatasetStructure("Parameter '%s' adjusted values not found in this dataset" % "%s_ADJUSTED" % param)
+            raise InvalidDatasetStructure("Parameter '%s_ADJUSTED' adjusted values not found in this dataset" % param)
         else:
             return ds
     if ds.argo._type != "point":
@@ -189,13 +191,15 @@ def merge_param_with_param_adjusted(ds: xr.Dataset, param: str, errors: str = 'r
         if "DATA_MODE" not in ds:
             if errors == 'raise':
                     raise InvalidDatasetStructure(
-                    "Parameter '%s' data mode not found in this dataset" % param
+                    "Parameter '%s' data mode not found in this dataset (no 'DATA_MODE')" % param
                 )
             else:
                 return ds
         else:
             core_ds = True
+            # Create a bgc-like parameter data mode variable:
             ds["%s_DATA_MODE" % param] = ds["DATA_MODE"].copy()
+            # that will be dropped at the end of the process
 
     if param not in ds:
         ds[param] = ds["%s_ADJUSTED" % param].copy()
@@ -217,7 +221,7 @@ def merge_param_with_param_adjusted(ds: xr.Dataset, param: str, errors: str = 'r
                                                                    ds["%s_DATA_MODE" % param] == 'D'))
                                              ))
 
-    # Copy param_adjusted values onto param indexes where data_mode is in real-time
+    # Copy param_adjusted values onto param indexes where data_mode is in 'a' or 'd':
     ds["%s" % param].loc[dict(N_POINTS=ii_measured_adj)] = ds["%s_ADJUSTED" % param].loc[
         dict(N_POINTS=ii_measured_adj)]
     ds = ds.drop_vars(["%s_ADJUSTED" % param])

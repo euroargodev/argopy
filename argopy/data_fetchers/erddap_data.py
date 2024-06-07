@@ -833,9 +833,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         return results
 
-    def filter_data_mode(self, ds: xr.Dataset, **kwargs):
-        """Apply xarray argo accessor filter_data_mode method"""
-        ds = ds.argo.filter_data_mode(errors="ignore", **kwargs)
+    def transform_data_mode(self, ds: xr.Dataset, **kwargs):
+        """Apply xarray argo accessor transform_data_mode method"""
+        ds = ds.argo.transform_data_mode(params='all', errors="ignore", **kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
@@ -852,7 +852,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         This filter will select only QC=1 delayed mode data with pressure errors smaller than 20db
 
-        Use this filter instead of filter_data_mode and filter_qc
+        Use this filter instead of transform_data_mode and filter_qc
         """
         ds = ds.argo.filter_researchmode()
         if ds.argo._type == "point":

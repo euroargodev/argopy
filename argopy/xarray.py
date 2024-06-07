@@ -45,8 +45,8 @@ class ArgoAccessor:
         >>> ds.argo.point2profile()
         - Convert a collection of profiles to a collection of points:
         >>> ds.argo.profile2point()
-        - Filter measurements according to data mode:
-        >>> ds.argo.filter_data_mode()
+        - Transform dataset variables according to data mode:
+        >>> ds.argo.transform_data_mode()
         - Filter measurements according to QC flag values:
         >>> ds.argo.filter_qc(QC_list=[1, 2], QC_fields='all')
         - Filter variables according OWC salinity calibration requirements:
@@ -539,7 +539,7 @@ class ArgoAccessor:
         ds.argo._type = "point"
         return ds
 
-    def filter_data_mode(  # noqa: C901
+    def filter_data_mode_deprec(  # noqa: C901
         self, keep_error: bool = True, errors: str = "raise"
     ):
         """ Filter variables according to their data mode
@@ -756,7 +756,12 @@ class ArgoAccessor:
     def transform_data_mode(self, params: Union[str, List[str]] = 'all', errors: str = 'raise') -> xr.Dataset:
         """Copy PARAM_ADJUSTED values onto PARAM for points where PARAM_DATA_MODE is 'A' or 'D'
 
-        After values have been copied, all PARAM_ADJUSTED* variables are dropped to avoid confusion.
+        For data mode 'R': keep <PARAM> (eg: 'PRES', 'TEMP' or 'DOXY')
+
+        For data mode 'D' and 'A': keep <PARAM_ADJUSTED> (eg: 'PRES_ADJUSTED', 'TEMP_ADJUSTED' or 'DOXY_ADJUSTED')
+
+        Since ADJUSTED variables are not required anymore after the transformation, all *ADJUSTED* variables
+        are dropped in order to avoid confusion wrt variable content. Variable DATA_MODE is preserved for the record.
 
         Parameters
         ----------
@@ -779,7 +784,7 @@ class ArgoAccessor:
         else:
             ds = self._obj
 
-        # List of variables to filter:
+        # Determine the list of variables to transform:
         params = to_list(params)
         if params[0] == 'all':
             if "DATA_MODE" in ds.variables:
@@ -1020,11 +1025,12 @@ class ArgoAccessor:
             this = this.argo.profile2point()
 
         # Apply filter
-        this = this.argo.filter_data_mode(errors="ignore")
+        this = this.argo.transform_data_mode(params='all', errors="ignore")
         if 'DATA_MODE' in this.data_vars:
             this = this.where(this['DATA_MODE'] == 'D', drop=True)
+
         this = this.argo.filter_qc(QC_list=1)
-        if 'PRES_ERROR' in this.data_vars:  # PRES_ADJUSTED_ERROR was renamed PRES_ERROR by filter_data_mode
+        if 'PRES_ERROR' in this.data_vars:  # PRES_ADJUSTED_ERROR was renamed PRES_ERROR by transform_data_mode
             this = this.where(this['PRES_ERROR'] < 20, drop=True)
 
         # Manage output:

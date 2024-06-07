@@ -15,7 +15,7 @@ class ArgoDataFetcherProto(ABC):
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def filter_data_mode(self, ds: xarray.Dataset, *args, **kwargs) -> xarray.Dataset:
+    def transform_data_mode(self, ds: xarray.Dataset, *args, **kwargs) -> xarray.Dataset:
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
