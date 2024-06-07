@@ -310,7 +310,7 @@ class DOIrecord:
 
 
 class ArgoDOI:
-    """Helper class for Argo GDAC snapshot DOI access and discovery
+    """Argo GDAC snapshot DOI access and discovery
 
     Examples
     --------
