@@ -4,7 +4,7 @@
     "@type" : "skos:Collection",
     "alternative" : "PARAMETER",
     "creator" : "Argo Data Management Team",
-    "date" : "2021-02-02 02:00:02.0",
+    "date" : "2023-10-06 03:00:02.0",
     "description" : "Terms describing individual measured phenomena, used to mark up sets of data in Argo netCDF arrays. Argo netCDF variables PARAMETER and TRAJECTORY_PARAMETERS are populated by R03 altLabel; R03 altLabel is also used to name netCDF profile files parameter variables <PARAMETER>.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo parameter codes",
@@ -12,9 +12,9 @@
     "RE_RegisterOwner" : "Argo Data Management Team",
     "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
     "seeAlso" : "https://github.com/nvs-vocabs/R03",
-    "versionInfo" : "4",
+    "versionInfo" : "6",
     "altLabel" : "PARAMETER",
-    "member" : [ "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE443/", "http://vocab.nerc.ac.uk/collection/R03/current/PH_IN_SITU_FREE/", "http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING470/", "http://vocab.nerc.ac.uk/collection/R03/current/COUNT_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/CP/", "http://vocab.nerc.ac.uk/collection/R03/current/PSAL/", "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE/", "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE443/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CPU_CHLA/", "http://vocab.nerc.ac.uk/collection/R03/current/TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660/", "http://vocab.nerc.ac.uk/collection/R03/current/HUMIDITY_NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CNDC/", "http://vocab.nerc.ac.uk/collection/R03/current/BBP/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_ISUS/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_OPTODE/", "http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/FLUORESCENCE_CHLA/", "http://vocab.nerc.ac.uk/collection/R03/current/RPHASE_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CTD/", "http://vocab.nerc.ac.uk/collection/R03/current/CP660/", "http://vocab.nerc.ac.uk/collection/R03/current/FIT_ERROR_NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE412/", "http://vocab.nerc.ac.uk/collection/R03/current/FREQUENCY_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/C2PHASE_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/BBP532/", "http://vocab.nerc.ac.uk/collection/R03/current/DOWNWELLING_PAR/", "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_DARK_SEAWATER_NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/C1PHASE_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/LED_FLASHING_COUNT_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/BISULFIDE/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_MCOMS/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_OCR/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE/", "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE443/", "http://vocab.nerc.ac.uk/collection/R03/current/BBP700/", "http://vocab.nerc.ac.uk/collection/R03/current/PHASE_DELAY_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/FLUORESCENCE_CDOM/", "http://vocab.nerc.ac.uk/collection/R03/current/NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/BPHASE_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/PRES/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_ECO/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/TPHASE_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/VOLTAGE_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/PH_IN_SITU_TOTAL/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_SPECTROPHOTOMETER_NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_STM/", "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE555/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/BBP470/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE490/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_PAR/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE555/", "http://vocab.nerc.ac.uk/collection/R03/current/VRS_PH/", "http://vocab.nerc.ac.uk/collection/R03/current/DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/PH_IN_SITU_SEAWATER/", "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE490/", "http://vocab.nerc.ac.uk/collection/R03/current/DPHASE_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING700/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE380/", "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_DARK_NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING532/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE555/", "http://vocab.nerc.ac.uk/collection/R03/current/TURBIDITY/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE412/", "http://vocab.nerc.ac.uk/collection/R03/current/SIDE_SCATTERING_TURBIDITY/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE/", "http://vocab.nerc.ac.uk/collection/R03/current/MLPL_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/VK_PH/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CROVER/", "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE490/", "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE555/", "http://vocab.nerc.ac.uk/collection/R03/current/PPOX_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE412/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_PH/", "http://vocab.nerc.ac.uk/collection/R03/current/TILT/", "http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING/", "http://vocab.nerc.ac.uk/collection/R03/current/CNDC/", "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE412/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CYC/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_SUNA/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_VOLTAGE_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE380/", "http://vocab.nerc.ac.uk/collection/R03/current/IB_PH/", "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE/", "http://vocab.nerc.ac.uk/collection/R03/current/CDOM/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_COUNT_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_DURAFET/", "http://vocab.nerc.ac.uk/collection/R03/current/MTIME/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE443/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE490/", "http://vocab.nerc.ac.uk/collection/R03/current/CHLA/", "http://vocab.nerc.ac.uk/collection/R03/current/IK_PH/", "http://vocab.nerc.ac.uk/collection/R03/current/TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION/" ],
+    "member" : [ "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE443/", "http://vocab.nerc.ac.uk/collection/R03/current/PH_IN_SITU_FREE/", "http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING470/", "http://vocab.nerc.ac.uk/collection/R03/current/COUNT_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/CHLA_FLUORESCENCE/", "http://vocab.nerc.ac.uk/collection/R03/current/CP/", "http://vocab.nerc.ac.uk/collection/R03/current/PSAL/", "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE/", "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE443/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CPU_CHLA/", "http://vocab.nerc.ac.uk/collection/R03/current/TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION660/", "http://vocab.nerc.ac.uk/collection/R03/current/HUMIDITY_NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CNDC/", "http://vocab.nerc.ac.uk/collection/R03/current/BBP/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_ISUS/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_OPTODE/", "http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/FLUORESCENCE_CHLA/", "http://vocab.nerc.ac.uk/collection/R03/current/RPHASE_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CTD/", "http://vocab.nerc.ac.uk/collection/R03/current/CP660/", "http://vocab.nerc.ac.uk/collection/R03/current/FIT_ERROR_NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE412/", "http://vocab.nerc.ac.uk/collection/R03/current/FREQUENCY_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/C2PHASE_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/BBP532/", "http://vocab.nerc.ac.uk/collection/R03/current/DOWNWELLING_PAR/", "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_DARK_SEAWATER_NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/C1PHASE_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/LED_FLASHING_COUNT_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/BISULFIDE/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_MCOMS/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_OCR/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE/", "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE443/", "http://vocab.nerc.ac.uk/collection/R03/current/BBP700/", "http://vocab.nerc.ac.uk/collection/R03/current/PHASE_DELAY_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/FLUORESCENCE_CDOM/", "http://vocab.nerc.ac.uk/collection/R03/current/NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/BPHASE_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/PRES/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_ECO/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/TPHASE_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/PH_IN_SITU_TOTAL/", "http://vocab.nerc.ac.uk/collection/R03/current/VOLTAGE_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_SPECTROPHOTOMETER_NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_STM/", "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE555/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/BBP470/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE490/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_PAR/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE555/", "http://vocab.nerc.ac.uk/collection/R03/current/VRS_PH/", "http://vocab.nerc.ac.uk/collection/R03/current/DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/PH_IN_SITU_SEAWATER/", "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE490/", "http://vocab.nerc.ac.uk/collection/R03/current/DPHASE_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING700/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE380/", "http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_DARK_NITRATE/", "http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING532/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE555/", "http://vocab.nerc.ac.uk/collection/R03/current/TURBIDITY/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE412/", "http://vocab.nerc.ac.uk/collection/R03/current/SIDE_SCATTERING_TURBIDITY/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE/", "http://vocab.nerc.ac.uk/collection/R03/current/MLPL_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/VK_PH/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CROVER/", "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE490/", "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE555/", "http://vocab.nerc.ac.uk/collection/R03/current/PPOX_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE412/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_PH/", "http://vocab.nerc.ac.uk/collection/R03/current/TILT/", "http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING/", "http://vocab.nerc.ac.uk/collection/R03/current/CNDC/", "http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE412/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CYC/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_SUNA/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_VOLTAGE_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE380/", "http://vocab.nerc.ac.uk/collection/R03/current/IB_PH/", "http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE/", "http://vocab.nerc.ac.uk/collection/R03/current/CDOM/", "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_COUNT_DOXY/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE/", "http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_DURAFET/", "http://vocab.nerc.ac.uk/collection/R03/current/MTIME/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE443/", "http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE490/", "http://vocab.nerc.ac.uk/collection/R03/current/CHLA/", "http://vocab.nerc.ac.uk/collection/R03/current/IK_PH/", "http://vocab.nerc.ac.uk/collection/R03/current/TRANSMITTANCE_PARTICLE_BEAM_ATTENUATION/" ],
     "prefLabel" : "Argo parameter codes"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R03/current/BBP/",
@@ -71,7 +71,7 @@
       "@language" : "en",
       "@value" : "Particle backscattering at 470 nanometers"
     },
-    "related" : "http://vocab.nerc.ac.uk/collection/P06/current/UMNX/"
+    "related" : "http://vocab.nerc.ac.uk/collection/P06/current/UPRM/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R03/current/BBP532/",
     "@type" : "skos:Concept",
@@ -99,7 +99,7 @@
       "@language" : "en",
       "@value" : "Particle backscattering at 532 nanometers"
     },
-    "related" : "http://vocab.nerc.ac.uk/collection/P06/current/UMNX/"
+    "related" : "http://vocab.nerc.ac.uk/collection/P06/current/UPRM/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R03/current/BBP700/",
     "@type" : "skos:Concept",
@@ -127,7 +127,7 @@
       "@language" : "en",
       "@value" : "Particle backscattering at 700 nanometers"
     },
-    "related" : "http://vocab.nerc.ac.uk/collection/P06/current/UMNX/"
+    "related" : "http://vocab.nerc.ac.uk/collection/P06/current/UPRM/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING/",
     "@type" : "skos:Concept",
@@ -410,6 +410,32 @@
       "@value" : "Chlorophyll-a concentration"
     },
     "related" : "http://vocab.nerc.ac.uk/collection/P06/current/UMMC/"
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R03/current/CHLA_FLUORESCENCE/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R03::CHLA_FLUORESCENCE",
+    "date" : "2023-08-31 11:21:18.0",
+    "dc:identifier" : "SDN:R03::CHLA_FLUORESCENCE",
+    "authoredOn" : "2023-08-31 11:21:18.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R03/current/CHLA_FLUORESCENCE/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "CHLA_FLUORESCENCE",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Chlorophyll fluorescence in relative unit with factory calibration"
+    },
+    "notation" : "SDN:R03::CHLA_FLUORESCENCE",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Chlorophyll fluorescence with factory calibration"
+    }
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R03/current/CNDC/",
     "@type" : "skos:Concept",
@@ -1049,7 +1075,7 @@
       "@language" : "en",
       "@value" : "Uncompensated (pressure and salinity) oxygen concentration reported\nby the oxygen sensor"
     },
-    "related" : "http://vocab.nerc.ac.uk/collection/P06/current/MMPL/"
+    "related" : "http://vocab.nerc.ac.uk/collection/P06/current/UPOX/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_NITRATE/",
     "@type" : "skos:Concept",
@@ -2253,16 +2279,17 @@
     "@id" : "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_VOLTAGE_DOXY/",
     "@type" : "skos:Concept",
     "identifier" : "SDN:R03::TEMP_VOLTAGE_DOXY",
-    "date" : "2020-04-04 15:05:33.0",
+    "date" : "2023-10-05 14:49:26.0",
     "dc:identifier" : "SDN:R03::TEMP_VOLTAGE_DOXY",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_VOLTAGE_DOXY/1/",
-    "version" : "1",
+    "authoredOn" : "2023-10-05 14:49:26.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_VOLTAGE_DOXY/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_VOLTAGE_DOXY/1/",
+    "version" : "2",
     "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
     "deprecated" : "false",
     "sameAs" : "http://vocab.nerc.ac.uk/collection/P01/current/TCNTOPTT/",
-    "versionInfo" : "1",
-    "altLabel" : "TEMP_VOTLAGE_DOXY",
+    "versionInfo" : "2",
+    "altLabel" : "TEMP_VOLTAGE_DOXY",
     "definition" : {
       "@language" : "en",
       "@value" : "Raw temperature signal (volt) from thermistor on dissolved oxygen sensor."
@@ -2819,6 +2846,7 @@
     "iop" : "https://w3id.org/iadopt/ont#",
     "ns1" : "http://www.w3.org/ns/dx/prof/",
     "puv" : "https://w3id.org/env/puv#",
+    "semapv" : "http://w3id.org/semapv/vocab/",
     "dct" : "http://purl.org/dc/terms/",
     "reg" : "http://purl.org/linked-data/registry#",
     "dcat" : "http://www.w3.org/ns/dcat#",
@@ -2828,6 +2856,7 @@
     "void" : "http://rdfs.org/ns/void#",
     "pav" : "http://purl.org/pav/",
     "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "sssom" : "https://w3id.org/sssom/schema/",
     "dc" : "http://purl.org/dc/terms/"
   }
 }

@@ -4,7 +4,7 @@
     "@type" : "skos:Collection",
     "alternative" : "SENSOR",
     "creator" : "Argo Data Management Team",
-    "date" : "2021-02-10 02:00:03.0",
+    "date" : "2023-11-25 02:00:04.0",
     "description" : "Terms describing sensor types mounted on Argo floats. Argo netCDF variable SENSOR is populated by R25 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo sensor types",
@@ -12,9 +12,9 @@
     "RE_RegisterOwner" : "Argo Data Management Team",
     "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
     "seeAlso" : "https://github.com/nvs-vocabs/R25",
-    "versionInfo" : "2",
+    "versionInfo" : "3",
     "altLabel" : "SENSOR",
-    "member" : [ "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/", "http://vocab.nerc.ac.uk/collection/R25/current/ACOUSTIC_GEOLOCATION/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD555/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR443/", "http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR490/", "http://vocab.nerc.ac.uk/collection/R25/current/IDO_DOXY/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_PAR/", "http://vocab.nerc.ac.uk/collection/R25/current/TRANSMISSOMETER_CP660/", "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CDOM/", "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_TURBIDITY/", "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP532/", "http://vocab.nerc.ac.uk/collection/R25/current/STS_TEMP/", "http://vocab.nerc.ac.uk/collection/R25/current/SPECTROPHOTOMETER_NITRATE/", "http://vocab.nerc.ac.uk/collection/R25/current/TRANSISTOR_PH/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR412/", "http://vocab.nerc.ac.uk/collection/R25/current/FLOATCLOCK_MTIME/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD412/", "http://vocab.nerc.ac.uk/collection/R25/current/SPECTROPHOTOMETER_BISULFIDE/", "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/", "http://vocab.nerc.ac.uk/collection/R25/current/STS_CNDC/", "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP470/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR555/", "http://vocab.nerc.ac.uk/collection/R25/current/EM/", "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD443/", "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/", "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/", "http://vocab.nerc.ac.uk/collection/R25/current/ACOUSTIC/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR380/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD490/" ],
+    "member" : [ "http://vocab.nerc.ac.uk/collection/R25/current/CTD_CNDC/", "http://vocab.nerc.ac.uk/collection/R25/current/ACOUSTIC_GEOLOCATION/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD555/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR443/", "http://vocab.nerc.ac.uk/collection/R25/current/OPTODE_DOXY/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR490/", "http://vocab.nerc.ac.uk/collection/R25/current/IDO_DOXY/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_PAR/", "http://vocab.nerc.ac.uk/collection/R25/current/TRANSMISSOMETER_CP660/", "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CDOM/", "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_TURBIDITY/", "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP532/", "http://vocab.nerc.ac.uk/collection/R25/current/STS_TEMP/", "http://vocab.nerc.ac.uk/collection/R25/current/SPECTROPHOTOMETER_NITRATE/", "http://vocab.nerc.ac.uk/collection/R25/current/TRANSISTOR_PH/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR412/", "http://vocab.nerc.ac.uk/collection/R25/current/FLOATCLOCK_MTIME/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD412/", "http://vocab.nerc.ac.uk/collection/R25/current/SPECTROPHOTOMETER_BISULFIDE/", "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP700/", "http://vocab.nerc.ac.uk/collection/R25/current/STS_CNDC/", "http://vocab.nerc.ac.uk/collection/R25/current/BACKSCATTERINGMETER_BBP470/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR555/", "http://vocab.nerc.ac.uk/collection/R25/current/EM/", "http://vocab.nerc.ac.uk/collection/R25/current/CTD_PRES/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD443/", "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP/", "http://vocab.nerc.ac.uk/collection/R25/current/FLUOROMETER_CHLA/", "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/", "http://vocab.nerc.ac.uk/collection/R25/current/ACOUSTIC/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_DOWN_IRR380/", "http://vocab.nerc.ac.uk/collection/R25/current/RADIOMETER_UP_RAD490/" ],
     "prefLabel" : "Argo sensor types"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R25/current/ACOUSTIC/",
@@ -249,6 +249,32 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Conductivity Temperature Depth (CTD) sensors package measuring temperature"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/",
+    "@type" : "skos:Concept",
+    "identifier" : "SDN:R25::CTD_TEMP_CNDC",
+    "date" : "2023-11-24 09:35:13.0",
+    "dc:identifier" : "SDN:R25::CTD_TEMP_CNDC",
+    "authoredOn" : "2023-11-24 09:35:13.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R25/current/CTD_TEMP_CNDC/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Specific temperature sensor used with conductivity to calculate salinity on a CTD"
+    },
+    "notation" : "SDN:R25::CTD_TEMP_CNDC",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Temperature sensor for conductivity on a CTD"
     }
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R25/current/EM/",
@@ -824,17 +850,31 @@
     }
   } ],
   "@context" : {
-    "date" : {
-      "@id" : "http://purl.org/dc/terms/date"
+    "prefLabel" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#prefLabel"
     },
     "identifier" : {
       "@id" : "http://purl.org/dc/elements/1.1/identifier"
     },
-    "definition" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#definition"
+    "hasCurrentVersion" : {
+      "@id" : "http://purl.org/pav/hasCurrentVersion",
+      "@type" : "@id"
+    },
+    "date" : {
+      "@id" : "http://purl.org/dc/terms/date"
+    },
+    "note" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#note"
     },
     "versionInfo" : {
       "@id" : "http://www.w3.org/2002/07/owl#versionInfo"
+    },
+    "inDataset" : {
+      "@id" : "http://rdfs.org/ns/void#inDataset",
+      "@type" : "@id"
+    },
+    "deprecated" : {
+      "@id" : "http://www.w3.org/2002/07/owl#deprecated"
     },
     "authoredOn" : {
       "@id" : "http://purl.org/pav/authoredOn"
@@ -842,25 +882,11 @@
     "notation" : {
       "@id" : "http://www.w3.org/2004/02/skos/core#notation"
     },
-    "deprecated" : {
-      "@id" : "http://www.w3.org/2002/07/owl#deprecated"
-    },
-    "inDataset" : {
-      "@id" : "http://rdfs.org/ns/void#inDataset",
-      "@type" : "@id"
-    },
     "version" : {
       "@id" : "http://purl.org/pav/version"
     },
-    "note" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#note"
-    },
-    "prefLabel" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#prefLabel"
-    },
-    "hasCurrentVersion" : {
-      "@id" : "http://purl.org/pav/hasCurrentVersion",
-      "@type" : "@id"
+    "definition" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#definition"
     },
     "altLabel" : {
       "@id" : "http://www.w3.org/2004/02/skos/core#altLabel"
@@ -906,6 +932,7 @@
     "iop" : "https://w3id.org/iadopt/ont#",
     "ns1" : "http://www.w3.org/ns/dx/prof/",
     "puv" : "https://w3id.org/env/puv#",
+    "semapv" : "http://w3id.org/semapv/vocab/",
     "dct" : "http://purl.org/dc/terms/",
     "reg" : "http://purl.org/linked-data/registry#",
     "dcat" : "http://www.w3.org/ns/dcat#",
@@ -915,6 +942,7 @@
     "void" : "http://rdfs.org/ns/void#",
     "pav" : "http://purl.org/pav/",
     "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "sssom" : "https://w3id.org/sssom/schema/",
     "dc" : "http://purl.org/dc/terms/"
   }
 }

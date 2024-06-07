@@ -2,6 +2,7 @@
 <rdf:RDF
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:reg="http://purl.org/linked-data/registry#"
+    xmlns:sssom="https://w3id.org/sssom/schema/"
     xmlns:cpm="http://purl.org/voc/cpm#"
     xmlns:qudt="https://qudt.org/2.1/schema/qudt#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
@@ -10,6 +11,7 @@
     xmlns:dc="http://purl.org/dc/terms/"
     xmlns:iop="https://w3id.org/iadopt/ont#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:semapv="http://w3id.org/semapv/vocab/"
     xmlns:grg="http://www.isotc211.org/schemas/grg/"
     xmlns:ns0="http://www.w3.org/ns/dx/conneg/altr#"
     xmlns:pav="http://purl.org/pav/"
@@ -38,12 +40,12 @@
     <dce:identifier>SDN:R03::DPHASE_DOXY</dce:identifier>
   </rdf:Description>
   <rdf:Description rdf:about="http://vocab.nerc.ac.uk/collection/R03/current/BBP700/">
+    <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/UPRM/"/>
     <void:inDataset rdf:resource="http://vocab.nerc.ac.uk/.well-known/void"/>
     <dc:date>2020-04-04 15:05:33.0</dc:date>
     <skos:altLabel>BBP700</skos:altLabel>
     <owl:versionInfo>1</owl:versionInfo>
     <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
-    <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/UMNX/"/>
     <owl:sameAs rdf:resource="http://vocab.nerc.ac.uk/collection/P01/current/BB117NIR/"/>
     <dc:identifier>SDN:R03::BBP700</dc:identifier>
     <skos:prefLabel xml:lang="en">Particle backscattering at 700 nanometers</skos:prefLabel>
@@ -303,6 +305,7 @@
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/PH_IN_SITU_FREE/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING470/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/COUNT_DOXY/"/>
+    <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/CHLA_FLUORESCENCE/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/CP/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/PSAL/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE/"/>
@@ -349,8 +352,8 @@
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/TPHASE_DOXY/"/>
     <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Collection"/>
     <dc:title>Argo parameter codes</dc:title>
-    <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/VOLTAGE_DOXY/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/PH_IN_SITU_TOTAL/"/>
+    <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/VOLTAGE_DOXY/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/TEMP_SPECTROPHOTOMETER_NITRATE/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_STM/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE555/"/>
@@ -367,6 +370,7 @@
     <grg:RE_RegisterOwner>Argo Data Management Team</grg:RE_RegisterOwner>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/DPHASE_DOXY/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING700/"/>
+    <owl:versionInfo>6</owl:versionInfo>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_IRRADIANCE380/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/UV_INTENSITY_DARK_NITRATE/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/BETA_BACKSCATTERING532/"/>
@@ -377,7 +381,6 @@
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/SIDE_SCATTERING_TURBIDITY/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/RAW_UPWELLING_RADIANCE/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/MLPL_DOXY/"/>
-    <dc:date>2021-02-02 02:00:02.0</dc:date>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/VK_PH/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CROVER/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE490/"/>
@@ -393,12 +396,12 @@
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/UP_RADIANCE412/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/TEMP/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_CYC/"/>
-    <owl:versionInfo>4</owl:versionInfo>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE_SUNA/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/TEMP_VOLTAGE_DOXY/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE380/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/IB_PH/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/DOWN_IRRADIANCE/"/>
+    <dc:date>2023-10-06 03:00:02.0</dc:date>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/CDOM/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/TEMP_COUNT_DOXY/"/>
     <skos:member rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/NB_SAMPLE/"/>
@@ -615,6 +618,23 @@
     <owl:deprecated>false</owl:deprecated>
     <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
     <dc:identifier>SDN:R03::SIDE_SCATTERING_TURBIDITY</dc:identifier>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://vocab.nerc.ac.uk/collection/R03/current/CHLA_FLUORESCENCE/">
+    <skos:altLabel>CHLA_FLUORESCENCE</skos:altLabel>
+    <skos:definition xml:lang="en">Chlorophyll fluorescence in relative unit with factory calibration</skos:definition>
+    <owl:versionInfo>1</owl:versionInfo>
+    <owl:deprecated>false</owl:deprecated>
+    <skos:notation>SDN:R03::CHLA_FLUORESCENCE</skos:notation>
+    <skos:note xml:lang="en">accepted</skos:note>
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+    <dce:identifier>SDN:R03::CHLA_FLUORESCENCE</dce:identifier>
+    <pav:version>1</pav:version>
+    <void:inDataset rdf:resource="http://vocab.nerc.ac.uk/.well-known/void"/>
+    <skos:prefLabel xml:lang="en">Chlorophyll fluorescence with factory calibration</skos:prefLabel>
+    <pav:authoredOn>2023-08-31 11:21:18.0</pav:authoredOn>
+    <dc:date>2023-08-31 11:21:18.0</dc:date>
+    <pav:hasCurrentVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/CHLA_FLUORESCENCE/1/"/>
+    <dc:identifier>SDN:R03::CHLA_FLUORESCENCE</dc:identifier>
   </rdf:Description>
   <rdf:Description rdf:about="http://vocab.nerc.ac.uk/collection/R03/current/TEMP_PH/">
     <skos:prefLabel xml:lang="en">Sea temperature from pH sensor</skos:prefLabel>
@@ -1069,10 +1089,10 @@
     <pav:version>1</pav:version>
     <dc:date>2020-04-04 15:05:33.0</dc:date>
     <pav:authoredOn>2020-04-04 15:05:33.0</pav:authoredOn>
+    <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/UPRM/"/>
     <skos:note xml:lang="en">accepted</skos:note>
     <owl:deprecated>false</owl:deprecated>
     <skos:prefLabel xml:lang="en">Particle backscattering at 532 nanometers</skos:prefLabel>
-    <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/UMNX/"/>
     <dce:identifier>SDN:R03::BBP532</dce:identifier>
     <owl:versionInfo>1</owl:versionInfo>
     <pav:hasCurrentVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/BBP532/1/"/>
@@ -1380,8 +1400,8 @@
     <dce:identifier>SDN:R03::BBP470</dce:identifier>
     <skos:note xml:lang="en">accepted</skos:note>
     <pav:hasCurrentVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/BBP470/1/"/>
-    <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/UMNX/"/>
     <skos:prefLabel xml:lang="en">Particle backscattering at 470 nanometers</skos:prefLabel>
+    <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/UPRM/"/>
     <skos:definition xml:lang="en">Particle backscattering (/m) at 470 nm wavelength.</skos:definition>
     <dc:date>2020-04-04 15:05:33.0</dc:date>
     <dc:identifier>SDN:R03::BBP470</dc:identifier>
@@ -1395,23 +1415,24 @@
     <owl:sameAs rdf:resource="http://vocab.nerc.ac.uk/collection/P01/current/BB117B01/"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://vocab.nerc.ac.uk/collection/R03/current/TEMP_VOLTAGE_DOXY/">
-    <owl:versionInfo>1</owl:versionInfo>
+    <dc:date>2023-10-05 14:49:26.0</dc:date>
     <skos:prefLabel xml:lang="en">Thermistor voltage reported by oxygen sensor</skos:prefLabel>
+    <pav:hasVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/TEMP_VOLTAGE_DOXY/1/"/>
     <owl:deprecated>false</owl:deprecated>
     <skos:definition xml:lang="en">Raw temperature signal (volt) from thermistor on dissolved oxygen sensor.</skos:definition>
-    <pav:version>1</pav:version>
+    <pav:hasCurrentVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/TEMP_VOLTAGE_DOXY/2/"/>
+    <pav:authoredOn>2023-10-05 14:49:26.0</pav:authoredOn>
     <dce:identifier>SDN:R03::TEMP_VOLTAGE_DOXY</dce:identifier>
-    <pav:hasCurrentVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/TEMP_VOLTAGE_DOXY/1/"/>
     <void:inDataset rdf:resource="http://vocab.nerc.ac.uk/.well-known/void"/>
-    <dc:date>2020-04-04 15:05:33.0</dc:date>
     <dc:identifier>SDN:R03::TEMP_VOLTAGE_DOXY</dc:identifier>
-    <owl:sameAs rdf:resource="http://vocab.nerc.ac.uk/collection/P01/current/TCNTOPTT/"/>
     <skos:notation>SDN:R03::TEMP_VOLTAGE_DOXY</skos:notation>
-    <skos:altLabel>TEMP_VOTLAGE_DOXY</skos:altLabel>
+    <owl:sameAs rdf:resource="http://vocab.nerc.ac.uk/collection/P01/current/TCNTOPTT/"/>
     <skos:note xml:lang="en">accepted</skos:note>
     <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/UVLT/"/>
     <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
-    <pav:authoredOn>2020-04-04 15:05:33.0</pav:authoredOn>
+    <pav:version>2</pav:version>
+    <skos:altLabel>TEMP_VOLTAGE_DOXY</skos:altLabel>
+    <owl:versionInfo>2</owl:versionInfo>
   </rdf:Description>
   <rdf:Description rdf:about="http://vocab.nerc.ac.uk/collection/R03/current/TEMP_DOXY/">
     <skos:notation>SDN:R03::TEMP_DOXY</skos:notation>
@@ -1720,6 +1741,7 @@
     <pav:version>1</pav:version>
     <skos:altLabel>MOLAR_DOXY</skos:altLabel>
     <dce:identifier>SDN:R03::MOLAR_DOXY</dce:identifier>
+    <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/UPOX/"/>
     <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
     <owl:versionInfo>1</owl:versionInfo>
     <skos:prefLabel xml:lang="en">Uncompensated (pressure and salinity) oxygen concentration reported
@@ -1731,7 +1753,6 @@ by the oxygen sensor</skos:prefLabel>
     <skos:note xml:lang="en">accepted</skos:note>
     <void:inDataset rdf:resource="http://vocab.nerc.ac.uk/.well-known/void"/>
     <owl:deprecated>false</owl:deprecated>
-    <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/MMPL/"/>
     <pav:hasCurrentVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/1/"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://vocab.nerc.ac.uk/collection/R03/current/RAW_DOWNWELLING_PAR/">

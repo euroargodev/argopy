@@ -4,7 +4,7 @@
     "@type" : "skos:Collection",
     "alternative" : "DATA_TYPE",
     "creator" : "Argo Data Management Team",
-    "date" : "2020-04-05 03:00:03.0",
+    "date" : "2023-10-07 03:00:23.0",
     "description" : "Terms describing the type of data contained in an Argo netCDF file. Argo netCDF variable DATA_TYPE is populated by R01 prefLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo data type",
@@ -12,7 +12,7 @@
     "RE_RegisterOwner" : "Argo Data Management Team",
     "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
     "seeAlso" : "https://github.com/nvs-vocabs/R01",
-    "versionInfo" : "1",
+    "versionInfo" : "2",
     "altLabel" : "DATA_TYPE",
     "member" : [ "http://vocab.nerc.ac.uk/collection/R01/current/MPROF/", "http://vocab.nerc.ac.uk/collection/R01/current/BTRAJ/", "http://vocab.nerc.ac.uk/collection/R01/current/TRAJ/", "http://vocab.nerc.ac.uk/collection/R01/current/SPROF/", "http://vocab.nerc.ac.uk/collection/R01/current/META/", "http://vocab.nerc.ac.uk/collection/R01/current/PROF/", "http://vocab.nerc.ac.uk/collection/R01/current/MTRAJ/", "http://vocab.nerc.ac.uk/collection/R01/current/TECH/", "http://vocab.nerc.ac.uk/collection/R01/current/BPROF/" ],
     "prefLabel" : "Argo data type"
@@ -72,14 +72,15 @@
     "@id" : "http://vocab.nerc.ac.uk/collection/R01/current/META/",
     "@type" : "skos:Concept",
     "identifier" : "SDN:R01::META",
-    "date" : "2020-04-04 15:05:33.0",
+    "date" : "2023-10-06 12:38:32.0",
     "dc:identifier" : "SDN:R01::META",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R01/current/META/1/",
-    "version" : "1",
+    "authoredOn" : "2023-10-06 12:38:32.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R01/current/META/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R01/current/META/1/",
+    "version" : "2",
     "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
     "deprecated" : "false",
-    "versionInfo" : "1",
+    "versionInfo" : "2",
     "altLabel" : "META",
     "definition" : {
       "@language" : "en",
@@ -92,7 +93,7 @@
     },
     "prefLabel" : {
       "@language" : "en",
-      "@value" : "Argo metadata"
+      "@value" : "Argo meta-data"
     }
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R01/current/MPROF/",
@@ -299,12 +300,12 @@
       "@id" : "http://purl.org/pav/hasVersion",
       "@type" : "@id"
     },
-    "publisher" : {
-      "@id" : "http://purl.org/dc/terms/publisher"
-    },
     "member" : {
       "@id" : "http://www.w3.org/2004/02/skos/core#member",
       "@type" : "@id"
+    },
+    "publisher" : {
+      "@id" : "http://purl.org/dc/terms/publisher"
     },
     "seeAlso" : {
       "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",
@@ -340,6 +341,7 @@
     "iop" : "https://w3id.org/iadopt/ont#",
     "ns1" : "http://www.w3.org/ns/dx/prof/",
     "puv" : "https://w3id.org/env/puv#",
+    "semapv" : "http://w3id.org/semapv/vocab/",
     "dct" : "http://purl.org/dc/terms/",
     "reg" : "http://purl.org/linked-data/registry#",
     "dcat" : "http://www.w3.org/ns/dcat#",
@@ -349,6 +351,7 @@
     "void" : "http://rdfs.org/ns/void#",
     "pav" : "http://purl.org/pav/",
     "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "sssom" : "https://w3id.org/sssom/schema/",
     "dc" : "http://purl.org/dc/terms/"
   }
 }

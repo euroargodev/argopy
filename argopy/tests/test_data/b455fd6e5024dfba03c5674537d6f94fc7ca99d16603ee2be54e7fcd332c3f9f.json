@@ -4,7 +4,7 @@
     "@type" : "skos:Collection",
     "alternative" : "PLATFORM_MAKER",
     "creator" : "Argo Data Management Team",
-    "date" : "2022-06-17 03:00:00.0",
+    "date" : "2023-10-06 03:00:02.0",
     "description" : "List of Argo float manufacturers. Argo netCDF variable PLATFORM_MAKER is populated by R24 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo platform maker",
@@ -12,9 +12,9 @@
     "RE_RegisterOwner" : "Argo Data Management Team",
     "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
     "seeAlso" : "https://github.com/nvs-vocabs/R24",
-    "versionInfo" : "2",
+    "versionInfo" : "4",
     "altLabel" : "PLATFORM_MAKER",
-    "member" : [ "http://vocab.nerc.ac.uk/collection/R24/current/HSOE/", "http://vocab.nerc.ac.uk/collection/R24/current/METOCEAN/", "http://vocab.nerc.ac.uk/collection/R24/current/SIO_IDG/", "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/", "http://vocab.nerc.ac.uk/collection/R24/current/WRC/", "http://vocab.nerc.ac.uk/collection/R24/current/UNKNOWN/", "http://vocab.nerc.ac.uk/collection/R24/current/WHOI/", "http://vocab.nerc.ac.uk/collection/R24/current/MARTEC/", "http://vocab.nerc.ac.uk/collection/R24/current/SBE/", "http://vocab.nerc.ac.uk/collection/R24/current/NKE/", "http://vocab.nerc.ac.uk/collection/R24/current/TWR/", "http://vocab.nerc.ac.uk/collection/R24/current/TSK/", "http://vocab.nerc.ac.uk/collection/R24/current/MRV/", "http://vocab.nerc.ac.uk/collection/R24/current/OPTIMARE/" ],
+    "member" : [ "http://vocab.nerc.ac.uk/collection/R24/current/HSOE/", "http://vocab.nerc.ac.uk/collection/R24/current/METOCEAN/", "http://vocab.nerc.ac.uk/collection/R24/current/SIO_IDG/", "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/", "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/", "http://vocab.nerc.ac.uk/collection/R24/current/WRC/", "http://vocab.nerc.ac.uk/collection/R24/current/UNKNOWN/", "http://vocab.nerc.ac.uk/collection/R24/current/WHOI/", "http://vocab.nerc.ac.uk/collection/R24/current/MARTEC/", "http://vocab.nerc.ac.uk/collection/R24/current/SBE/", "http://vocab.nerc.ac.uk/collection/R24/current/NKE/", "http://vocab.nerc.ac.uk/collection/R24/current/TWR/", "http://vocab.nerc.ac.uk/collection/R24/current/TSK/", "http://vocab.nerc.ac.uk/collection/R24/current/MRV/", "http://vocab.nerc.ac.uk/collection/R24/current/OPTIMARE/" ],
     "prefLabel" : "Argo platform maker"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/HSOE/",
@@ -43,6 +43,33 @@
       "@value" : "Qingdao Hisun Ocean Equipment Corporation Limited"
     }
   }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R24::LaoshanL",
+    "date" : "2023-10-05 14:42:22.0",
+    "identifier" : "SDN:R24::LaoshanL",
+    "authoredOn" : "2023-10-05 14:42:22.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "LaoshanL",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Laoshan Laboratory"
+    },
+    "notation" : "SDN:R24::LaoshanL",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "LaoshanLaboratory"
+    }
+  }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/MARTEC/",
     "@type" : "skos:Concept",
     "dce:identifier" : "SDN:R24::MARTEC",
@@ -67,7 +94,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Martec"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/METOCEAN/",
     "@type" : "skos:Concept",
@@ -145,7 +173,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "NKE Instrumentation"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/OPTIMARE/",
     "@type" : "skos:Concept",
@@ -423,6 +452,14 @@
       "@id" : "http://purl.org/pav/hasCurrentVersion",
       "@type" : "@id"
     },
+    "related" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#related",
+      "@type" : "@id"
+    },
+    "hasVersion" : {
+      "@id" : "http://purl.org/pav/hasVersion",
+      "@type" : "@id"
+    },
     "RE_RegisterOwner" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"
     },
@@ -464,6 +501,7 @@
     "iop" : "https://w3id.org/iadopt/ont#",
     "ns1" : "http://www.w3.org/ns/dx/prof/",
     "puv" : "https://w3id.org/env/puv#",
+    "semapv" : "http://w3id.org/semapv/vocab/",
     "dct" : "http://purl.org/dc/terms/",
     "reg" : "http://purl.org/linked-data/registry#",
     "dcat" : "http://www.w3.org/ns/dcat#",
@@ -473,6 +511,7 @@
     "void" : "http://rdfs.org/ns/void#",
     "pav" : "http://purl.org/pav/",
     "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "sssom" : "https://w3id.org/sssom/schema/",
     "dc" : "http://purl.org/dc/terms/"
   }
 }
