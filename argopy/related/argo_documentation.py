@@ -15,7 +15,7 @@ with open(os.path.join(path2assets, "admt_documentation_catalogue.json"), "rb") 
 
 
 class ArgoDocs:
-    """ADMT documentation helper class
+    """ADMT documentation access and discovery
 
     Examples
     --------
