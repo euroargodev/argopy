@@ -26,7 +26,7 @@ from .utils.compute import (
     groupby_remap,
 )
 from .utils.geo import toYearFraction
-from .utils.transform import merge_param_with_param_adjusted
+from .utils.transform import merge_param_with_param_adjusted, filter_param_by_data_mode
 from .errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
 
@@ -763,6 +763,10 @@ class ArgoAccessor:
         Since ADJUSTED variables are not required anymore after the transformation, all *ADJUSTED* variables
         are dropped in order to avoid confusion wrt variable content. Variable DATA_MODE is preserved for the record.
 
+        Notes
+        -----
+        - Method compatible with core, deep and BGC datasets
+
         Parameters
         ----------
         params: str, List[str] (optional, default='all')
@@ -787,13 +791,13 @@ class ArgoAccessor:
         # Determine the list of variables to transform:
         params = to_list(params)
         if params[0] == 'all':
-            if "DATA_MODE" in ds.variables:
+            if "DATA_MODE" in ds.data_vars:
                 params = ['PRES', 'TEMP', 'PSAL']
             else:
-                params = [p.replace('_DATA_MODE', '') for p in ds.variables if "_DATA_MODE" in p]
+                params = [p.replace('_DATA_MODE', '') for p in ds.data_vars if "_DATA_MODE" in p]
         else:
             for p in params:
-                if p not in ds.variables:
+                if p not in ds.data_vars:
                     if errors == 'raise':
                         raise InvalidDatasetStructure("Parameter '%s' not found in this dataset" % p)
                     else:
@@ -810,10 +814,119 @@ class ArgoAccessor:
 
         return ds
 
+    def filter_data_mode(self,
+                         dm: Union[str, List[str]] = ['R', 'A', 'D'],
+                         params: Union[str, List[str]] = 'all',
+                         logical: str = 'and',
+                         mask: bool = False,
+                         errors: str = 'raise',
+                         ):
+        """Filter measurements according to variables data mode
+
+        Filter the dataset to keep points where all or some of the variables are in any of the data mode specified.
+
+        This method can return the filtered dataset or the filter mask.
+
+        Notes
+        -----
+        - Method compatible with core, deep and BGC datasets
+        - Can be applied after the :class:`xarray.Dataset.transform_data_mode`
+
+        Parameters
+        ----------
+        dm: str, list(str), optional, default=['R', 'A', 'D']
+            List of DATA_MODE values (string) to keep
+        params: str, list(str), optional, default='all'
+            List of parameters to apply the filter to. By default, we use all parameters for which a DATA_MODE
+            can be found
+        logical: str, optional, default='and'
+            Reduce variable filters with a logical ``and`` or ``or``. With ``and`` the filter shall be True
+            if all variables match the DATA_MODE requested, while with ``or`` it will be True for at least one variable.
+        mask: bool, optional, default=False
+            Determine if we should return the filter mask or the filtered dataset
+        errors: str, optional, default='raise'
+            If ``raise``, raises a InvalidDatasetStructure error if any of the expected variables is
+            not found.
+            If ``ignore``, fails silently and return unmodified dataset.
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+        """
+        if self._type != "point":
+            raise InvalidDatasetStructure(
+                "Method only available to a collection of points"
+            )
+        else:
+            this = self._obj
+
+        # Make sure we deal with a list of strings:
+        if not isinstance(dm, list):
+            dm = to_list(dm)
+        dm = [str(x).upper() for x in dm]
+
+        if logical not in ["and", "or"]:
+            raise ValueError("'logical' must be 'and' or 'or'")
+
+        # Determine the list of variables to filter:
+        params = to_list(params)
+        if params[0] == 'all':
+            if "DATA_MODE" in this.data_vars:
+                params = ['PRES', 'TEMP', 'PSAL']
+            else:
+                params = [p.replace('_DATA_MODE', '') for p in this.data_vars if "_DATA_MODE" in p]
+        elif params[0] == 'core':
+            params = ['PRES', 'TEMP', 'PSAL']
+        else:
+            for p in params:
+                if p not in this.data_vars:
+                    if errors == 'raise':
+                        raise InvalidDatasetStructure("Parameter '%s' not found in this dataset" % p)
+                    else:
+                        log.debug("Parameter '%s' not found in this dataset" % p)
+                    params.remove(p)
+
+        if len(params) == 0:
+            this.argo._add_history("Found no variables to select according to DATA_MODE")
+            return this
+
+        logging.debug(
+            "filter_data_mode: Filtering dataset to keep points with DATA_MODE in %s for '%s' fields in %s"
+            % (dm, logical, ",".join(params))
+        )
+
+        # Get a filter mask for each variables:
+        filter = []
+        for param in params:
+            filter.append(filter_param_by_data_mode(this, param, dm=dm, mask=True))
+
+        # Reduce dataset:
+        if logical == 'and':
+            filter = np.logical_and.reduce(filter)
+        else:
+            filter = np.logical_or.reduce(filter)
+
+        if mask:
+            # Return mask:
+            return filter
+        else:
+            # Apply mask:
+            this = this.loc[dict(N_POINTS=filter)]
+
+            # Finalise:
+            this = this[np.sort(this.data_vars)]
+            this.argo._add_history(
+                "[%s] variables filtered to retain points with data mode in [%s]" % (",".join(params), ",".join(dm)))
+
+            if this.argo.N_POINTS == 0:
+                log.warning("No data left after DATA_MODE filtering !")
+
+            return this
+
     def filter_qc(  # noqa: C901
         self, QC_list=[1, 2], QC_fields="all", drop=True, mode="all", mask=False
     ):
-        """ Filter data set according to QC values
+        """Filter data set according to QC values
 
         Filter the dataset to keep points where ``all`` or ``any`` of the QC fields has a value in the list
         of integer QC flags.
@@ -1014,7 +1127,9 @@ class ArgoAccessor:
     def filter_researchmode(self) -> xr.Dataset:
         """Filter dataset for research user mode
 
-        This filter will select only data with QC=1, in delayed mode and with pressure errors smaller than 20db
+        This depends on the dataset:
+        - For the 'phy' dataset (core/deep): select delayed mode data with QC=1 and with pressure errors smaller than 20db
+        - for the 'bgc' dataset: select delayed mode data with QC=[1,5,8]. Reject CDOM variables.
 
         Returns
         -------
@@ -1028,11 +1143,12 @@ class ArgoAccessor:
             to_profile = True
             this = this.argo.profile2point()
 
-        # Apply filter
+        # Apply transforms
         this = this.argo.transform_data_mode(params='all', errors="ignore")
         if 'DATA_MODE' in this.data_vars:
             this = this.where(this['DATA_MODE'] == 'D', drop=True)
 
+        # Apply filters
         this = this.argo.filter_qc(QC_list=1)
         if 'PRES_ERROR' in this.data_vars:  # PRES_ADJUSTED_ERROR was renamed PRES_ERROR by transform_data_mode
             this = this.where(this['PRES_ERROR'] < 20, drop=True)

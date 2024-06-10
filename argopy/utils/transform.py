@@ -4,7 +4,7 @@ Manipulate/transform xarray objects or list of objects
 import numpy as np
 import xarray as xr
 import logging
-from typing import List
+from typing import List, Union
 
 from ..errors import InvalidDatasetStructure
 
@@ -240,3 +240,68 @@ def merge_param_with_param_adjusted(ds: xr.Dataset, param: str, errors: str = 'r
         ds = ds.drop_vars(["%s_DATA_MODE" % param])
 
     return ds
+
+
+def filter_param_by_data_mode(ds: xr.Dataset,
+                              param: str,
+                              dm: Union[str, List[str]] = ['R', 'A', 'D'],
+                              mask: bool = False,
+                              errors: str = 'raise') -> xr.Dataset:
+    """Filter measurements according to a parameter data mode
+
+    Filter the dataset to keep points where a parameter is in any of the data mode specified.
+
+    This method can return the filtered dataset or the filter mask.
+
+    Notes
+    -----
+    - Method compatible with core, deep and BGC datasets
+    - Can be applied after the :class:`xarray.Dataset.transform_data_mode`
+
+    Parameters
+    ----------
+    ds: :class:`xarray.Dataset`
+        The dataset to work filter
+    param: str
+        Name of parameter to apply the filter to
+    dm: str, list(str), optional, default=['R', 'A', 'D']
+        List of DATA_MODE values (string) to keep
+    mask: bool, optional, default=False
+        Determine if we should return the filter mask or the filtered dataset
+    errors: str, optional, default='raise'
+        If ``raise``, raises a InvalidDatasetStructure error if any of the expected variables is
+        not found.
+        If ``ignore``, fails silently and return unmodified dataset.
+
+    Returns
+    -------
+    :class:`xarray.Dataset`
+    """
+
+    core_ds = False
+    if "%s_DATA_MODE" % param not in ds and param in ['PRES', 'TEMP', 'PSAL']:
+        if "DATA_MODE" not in ds:
+            if errors == 'raise':
+                raise InvalidDatasetStructure(
+                    "Parameter '%s' data mode not found in this dataset (no 'DATA_MODE')" % param
+                )
+            else:
+                return ds
+        else:
+            core_ds = True
+            # Create a bgc-like parameter data mode variable:
+            ds["%s_DATA_MODE" % param] = ds["DATA_MODE"].copy()
+            # that will be dropped at the end of the process
+
+    filter = []
+    for this_dm in dm:
+        filter.append(ds["%s_DATA_MODE" % param] == "%s" % this_dm.upper())
+    filter = np.logical_or.reduce(filter)
+
+    if core_ds:
+        ds = ds.drop_vars(["%s_DATA_MODE" % param])
+
+    if mask:
+        return filter
+    else:
+        return ds.loc[dict(N_POINTS=filter)]
