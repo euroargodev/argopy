@@ -145,7 +145,7 @@ class ArgoDataFetcher:
         self.fetcher_kwargs = {**fetcher_kwargs}
         self.fetcher_options = {**{"ds": self._dataset_id, "mode": self._mode}, **fetcher_kwargs}
 
-        self.postproccessor = self.__empty_processor
+        self.define_postprocessor()
         self._AccessPoint = None
 
         # Init data structure holders:
@@ -191,12 +191,8 @@ class ArgoDataFetcher:
         summary.append("Performances: cache=%s, parallel=%s" % (str(cache), str(para)))
         summary.append("User mode: %s" % self._mode)
         summary.append("Dataset: %s" % self._dataset_id)
-        # summary.append("Loaded: %s" % self._loaded)
+        summary.append("Loaded: %s" % self._loaded)
         return "\n".join(summary)
-
-    def __empty_processor(self, xds):
-        """Do nothing to a dataset"""
-        return xds
 
     def __getattr__(self, key):
         """Validate access points"""
@@ -204,7 +200,8 @@ class ArgoDataFetcher:
             "Fetchers",
             "fetcher",
             "fetcher_options",
-            "postproccessor",
+            "define_postprocessor",
+            "postprocessor",
             "data",
             "index",
             "domain",
@@ -324,6 +321,42 @@ class ArgoDataFetcher:
                 % (self._src, self._AccessPoint)
             )
 
+    def define_postprocessor(self):
+        """Define the post-processor method according to the dataset and user-mode"""
+        if self.fetcher:
+
+            if self._dataset_id == 'phy' and self._mode == "standard":
+                    def postprocessing(xds):
+                        xds = self.fetcher.transform_data_mode(xds)
+                        xds = self.fetcher.filter_qc(xds)
+                        xds = self.fetcher.filter_variables(xds, self._mode)
+                        return xds
+                    self.postprocessor = postprocessing
+
+            elif self._dataset_id == 'phy' and self._mode == "research":
+                    def postprocessing(xds):
+                        xds = self.fetcher.filter_researchmode(xds)
+                        xds = self.fetcher.filter_variables(xds, self._mode)
+                        return xds
+                    self.postprocessor = postprocessing
+
+            elif self._dataset_id == 'bgc' and self._mode == "research":
+                    def postprocessing(xds):
+                        xds = self.fetcher.filter_data_mode(xds, 'D')
+                        # xds = self.fetcher.transform_data_mode(xds)
+                        # xds = self.fetcher.filter_qc(xds, QC_list=[1,5,8])
+                        # xds = self.fetcher.filter_variables(xds, self._mode)
+                        return xds
+                    self.postprocessor = postprocessing
+
+            else:
+                self.postprocessor = lambda x: x  # Empty processor
+
+        else:
+            self.postprocessor = lambda x: x  # Empty processor
+
+        return self
+
     @checkAccessPoint
     def float(self, wmo, **kw):
         """Float data fetcher
@@ -352,24 +385,7 @@ class ArgoDataFetcher:
             "wmo": wmo
         }  # Register the requested access point data
 
-        if self._mode == "standard" and self._dataset_id != "ref":
-
-            def postprocessing(xds):
-                xds = self.fetcher.transform_data_mode(xds)
-                xds = self.fetcher.filter_qc(xds)
-                xds = self.fetcher.filter_variables(xds, self._mode)
-                return xds
-
-            self.postproccessor = postprocessing
-
-        elif self._mode == "research" and self._dataset_id != "ref":
-
-            def postprocessing(xds):
-                xds = self.fetcher.filter_researchmode(xds)
-                xds = self.fetcher.filter_variables(xds, self._mode)
-                return xds
-
-            self.postproccessor = postprocessing
+        self.define_postprocessor()
 
         return self
 
@@ -401,24 +417,7 @@ class ArgoDataFetcher:
             "cyc": cyc,
         }  # Register the requested access point data
 
-        if self._mode == "standard" and self._dataset_id != "ref":
-
-            def postprocessing(xds):
-                xds = self.fetcher.transform_data_mode(xds)
-                xds = self.fetcher.filter_qc(xds)
-                xds = self.fetcher.filter_variables(xds, self._mode)
-                return xds
-
-            self.postproccessor = postprocessing
-
-        elif self._mode == "research" and self._dataset_id != "ref":
-
-            def postprocessing(xds):
-                xds = self.fetcher.filter_researchmode(xds)
-                xds = self.fetcher.filter_variables(xds, self._mode)
-                return xds
-
-            self.postproccessor = postprocessing
+        self.define_postprocessor()
 
         return self
 
@@ -452,29 +451,12 @@ class ArgoDataFetcher:
             "box": box
         }  # Register the requested access point data
 
-        if self._mode == "standard" and self._dataset_id != "ref":
-
-            def postprocessing(xds):
-                xds = self.fetcher.transform_data_mode(xds)
-                xds = self.fetcher.filter_qc(xds)
-                xds = self.fetcher.filter_variables(xds, self._mode)
-                return xds
-
-            self.postproccessor = postprocessing
-
-        elif self._mode == "research" and self._dataset_id != "ref":
-
-            def postprocessing(xds):
-                xds = self.fetcher.filter_researchmode(xds)
-                xds = self.fetcher.filter_variables(xds, self._mode)
-                return xds
-
-            self.postproccessor = postprocessing
+        self.define_postprocessor()
 
         return self
 
-    def to_xarray(self, **kwargs):
-        """Fetch and return data as xarray.DataSet
+    def to_xarray(self, **kwargs) -> xr.Dataset:
+        """Fetch and return data as :class:`xarray.DataSet`
 
         Trigger a fetch of data by the specified source and access point.
 
@@ -489,12 +471,13 @@ class ArgoDataFetcher:
                 % ",".join(self.Fetchers.keys())
             )
         xds = self.fetcher.to_xarray(**kwargs)
-        xds = self.postproccessor(xds)
+        xds = self.postprocessor(xds)
+        xds = xds.load()
 
         return xds
 
-    def to_dataframe(self, **kwargs):
-        """Fetch and return data as pandas.Dataframe
+    def to_dataframe(self, **kwargs) -> pd.DataFrame:
+        """Fetch and return data as :class:`pandas.DataFrame`
 
         Trigger a fetch of data by the specified source and access point.
 
@@ -510,8 +493,8 @@ class ArgoDataFetcher:
             )
         return self.load().data.to_dataframe(**kwargs)
 
-    def to_index(self, full: bool = False, coriolis_id: bool = False):
-        """Create a profile index of Argo data, fetch data if necessary
+    def to_index(self, full: bool = False, coriolis_id: bool = False) -> pd.DataFrame:
+        """Return a profile index of Argo data, fetch data if necessary
 
         Build an Argo-like index of profiles from fetched data.
 
@@ -797,7 +780,6 @@ class ArgoIndexFetcher:
             )
         # self.fetcher_kwargs = {**fetcher_kwargs}
         self.fetcher_options = {**{"ds": self._dataset_id}, **fetcher_kwargs}
-        self.postproccessor = self.__empty_processor
         self._AccessPoint = None
 
         # Init data structure holders:
@@ -832,7 +814,6 @@ class ArgoIndexFetcher:
             "Fetchers",
             "fetcher",
             "fetcher_options",
-            "postproccessor",
             "index",
             "_loaded",
         ]
