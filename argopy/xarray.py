@@ -820,6 +820,10 @@ class ArgoAccessor:
 
         This method can return the filtered dataset or the filter mask.
 
+        Warnings
+        --------
+        This method does not consider PROFILE QC variable(s).
+
         Parameters
         ----------
         QC_list: list(int)
