@@ -520,14 +520,21 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
             for p in params:
                 vname = p.lower()
-                if self.user_mode in ['expert'] or vname in ['pres', 'temp', 'psal']:
+                if self.user_mode in ['expert']:
                     vlist.append("%s" % vname)
                     vlist.append("%s_qc" % vname)
                     vlist.append("%s_adjusted" % vname)
                     vlist.append("%s_adjusted_qc" % vname)
                     vlist.append("%s_adjusted_error" % vname)
 
-                if self.user_mode in ['standard', 'research'] and vname not in ['pres', 'temp', 'psal', 'cdom']:
+                elif self.user_mode in ['standard'] and vname not in ['cdom']:
+                    vlist.append("%s" % vname)
+                    vlist.append("%s_qc" % vname)
+                    vlist.append("%s_adjusted" % vname)
+                    vlist.append("%s_adjusted_qc" % vname)
+                    vlist.append("%s_adjusted_error" % vname)
+
+                elif self.user_mode in ['research'] and vname not in ['cdom']:
                     vlist.append("%s_adjusted" % vname)
                     vlist.append("%s_adjusted_qc" % vname)
                     vlist.append("%s_adjusted_error" % vname)
@@ -588,8 +595,11 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         # Possibly add more constraints for the BGC dataset:
         if self.dataset_id == "bgc":
             params = self._bgc_vlist_measured
-            for p in params:
-                self.erddap.constraints.update({"%s!=" % p.lower(): "NaN"})
+            # For 'expert' and 'standard' user modes, we cannot filter param and param_adjusted
+            # because it depends on the param data mode.
+            if self.user_mode == 'research':
+                for p in params:
+                    self.erddap.constraints.update({"%s_adjusted!=" % p.lower(): "NaN"})
 
             # Possibly add more constraints to make requests smaller:
             for p in ["latitude", "longitude"]:
@@ -808,25 +818,29 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             except ClientResponseError as e:
                 raise ErddapServerError(e.message)
 
-        if concat:
-            results = self.filter_points(results)
-
         # Final checks
         if self.dataset_id == "bgc" and concat and len(self._bgc_vlist_measured) > 0:
-            empty = []
-            for v in self._bgc_vlist_measured:
-                if np.count_nonzero(results[v]) != len(results["N_POINTS"]):
-                    empty.append(v)
-            if len(empty) > 0:
-                msg = (
-                    "After processing, your BGC request still return final data with NaNs (%s). "
-                    "This may be due to the 'measured' argument ('%s') that imposes a no-NaN constraint "
-                    "impossible to fulfill for the access point defined (%s)]. "
-                    "\nUsing the 'measured' argument, you can try to minimize the list of variables to "
-                    "return without NaNs, or set it to 'None' to return all samples."
-                    % (",".join(to_list(v)), ",".join(self._bgc_measured), self.cname())
-                )
-                raise ValueError(msg)
+            if not isinstance(results, list):
+                results = self.filter_measured(results)
+            else:
+                filtered = []
+                [filtered.append(self.filter_measured(r)) for r in results]
+                results = filtered
+
+            # empty = []
+            # for v in self._bgc_vlist_measured:
+            #     if v in results and np.count_nonzero(results[v]) != len(results["N_POINTS"]):
+            #         empty.append(v)
+            # if len(empty) > 0:
+            #     msg = (
+            #         "After processing, your BGC request returned final data with NaNs (%s). "
+            #         "This may be due to the 'measured' argument ('%s') that imposes a no-NaN constraint "
+            #         "impossible to fulfill for the access point defined (%s)]. "
+            #         "\nUsing the 'measured' argument, you can try to minimize the list of variables to "
+            #         "return without NaNs, or set it to 'None' to return all samples."
+            #         % (",".join(to_list(v)), ",".join(self._bgc_measured), self.cname())
+            #     )
+            #     raise ValueError(msg)
 
         if concat and results is not None:
             results["N_POINTS"] = np.arange(0, len(results["N_POINTS"]))
@@ -859,27 +873,35 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
-    def filter_points(self, ds):
-        """Enforce request criteria
+    def filter_measured(self, ds):
+        """Re-enforce the 'measured' criteria for BGC requests
 
-        Sometimes, erddap data postprocessing may modify the content wrt user requirements. So we need
-        to adjust for this.
+        Parameters
+        ----------
+        ds: :class:`xr.Dataset`
+
         """
         # Enforce the 'measured' argument for BGC:
         if self.dataset_id == "bgc":
             if len(self._bgc_vlist_measured) == 0:
                 return ds
-            else:
-                this_mask = xr.DataArray(
-                    np.zeros_like(ds["N_POINTS"]),
-                    dims=["N_POINTS"],
-                    coords={"N_POINTS": ds["N_POINTS"]},
-                )
-                log.debug("Keep samples without NaN in %s" % self._bgc_vlist_measured)
+            elif len(ds["N_POINTS"]) > 0:
+                log.debug("Keep only samples without NaN in %s" % self._bgc_vlist_measured)
                 for v in self._bgc_vlist_measured:
-                    this_mask += ds[v].notnull()
-                this_mask = this_mask == len(self._bgc_vlist_measured)
-                ds = ds.argo._where(this_mask, drop=True)
+                    this_mask = None
+                    if v in ds and "%s_ADJUSTED" % v in ds:
+                        this_mask = np.logical_or.reduce((
+                                ds[v].notnull(),
+                                ds["%s_ADJUSTED" % v].notnull()
+                            ))
+                    elif v in ds:
+                        this_mask = ds[v].notnull()
+                    elif "%s_ADJUSTED" % v in ds:
+                        this_mask = ds["%s_ADJUSTED" % v].notnull()
+                    else:
+                        log.debug("'%s' or '%s_ADJUSTED' not in the dataset to apply the 'filter_measured' method" % (v, v))
+                    if this_mask is not None:
+                        ds = ds.loc[dict(N_POINTS=this_mask)]
 
         ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
