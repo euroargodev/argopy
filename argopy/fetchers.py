@@ -612,6 +612,17 @@ class ArgoDataFetcher:
                     prt("to_index replaced the light index with the full version")
                     self._index = df
 
+        if 'wmo' in df and 'cyc' in df:
+            # Ensure that all profiles reported in the index are indeed in the dataset
+            # This is not necessarily the case when the index is based on an ArgoIndex instance that may come to differ from postprocessed dataset
+            irow_remove = []
+            for irow, row in df.iterrows():
+                i_found = np.logical_and.reduce((self.data['PLATFORM_NUMBER'] == row['wmo'],
+                                                 self.data['CYCLE_NUMBER'] == row['cyc']))
+                if i_found.sum() == 0:
+                    irow_remove.append(irow)  # Remove this profile from the index
+            df = df.drop(irow_remove, axis=0)
+
         return df
 
     def load(self, force: bool = False, **kwargs):
