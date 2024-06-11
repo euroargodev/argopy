@@ -263,7 +263,7 @@ def filter_param_by_data_mode(ds: xr.Dataset,
     ds: :class:`xarray.Dataset`
         The dataset to work filter
     param: str
-        Name of parameter to apply the filter to
+        Name of the parameter to apply the filter to
     dm: str, list(str), optional, default=['R', 'A', 'D']
         List of DATA_MODE values (string) to keep
     mask: bool, optional, default=False
@@ -295,8 +295,14 @@ def filter_param_by_data_mode(ds: xr.Dataset,
 
     filter = []
     for this_dm in dm:
-        filter.append(ds["%s_DATA_MODE" % param] == "%s" % this_dm.upper())
-    filter = np.logical_or.reduce(filter)
+        vname = "%s_DATA_MODE" % param
+        if vname not in ds:
+            log.warning("The parameter '%s' has no associated data mode" % vname)
+        else:
+            filter.append(ds[vname] == "%s" % this_dm.upper())
+
+    if len(filter) > 0:
+        filter = np.logical_or.reduce(filter)
 
     if core_ds:
         ds = ds.drop_vars(["%s_DATA_MODE" % param])
@@ -304,4 +310,4 @@ def filter_param_by_data_mode(ds: xr.Dataset,
     if mask:
         return filter
     else:
-        return ds.loc[dict(N_POINTS=filter)]
+        return ds.loc[dict(N_POINTS=filter)] if len(filter) > 0 else ds

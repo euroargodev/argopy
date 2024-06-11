@@ -898,30 +898,37 @@ class ArgoAccessor:
         # Get a filter mask for each variables:
         filter = []
         for param in params:
-            filter.append(filter_param_by_data_mode(this, param, dm=dm, mask=True))
+            f = filter_param_by_data_mode(this, param, dm=dm, mask=True)
+            [filter.append(f) if len(f) > 0 else None]
 
         # Reduce dataset:
-        if logical == 'and':
-            filter = np.logical_and.reduce(filter)
-        else:
-            filter = np.logical_or.reduce(filter)
+        if len(filter) > 0:
+            if logical == 'and':
+                filter = np.logical_and.reduce(filter)
+            else:
+                filter = np.logical_or.reduce(filter)
 
         if mask:
             # Return mask:
             return filter
-        else:
+        elif len(filter) > 0:
             # Apply mask:
             this = this.loc[dict(N_POINTS=filter)]
 
             # Finalise:
             this = this[np.sort(this.data_vars)]
             this.argo._add_history(
-                "[%s] variables filtered to retain points with data mode in [%s]" % (",".join(params), ",".join(dm)))
+                "[%s] filtered to retain points with data mode in [%s]" % (",".join(params), ",".join(dm)))
 
             if this.argo.N_POINTS == 0:
                 log.warning("No data left after DATA_MODE filtering !")
 
             return this
+
+        else:
+            this.argo._add_history("None of the proposed variables were found, no data mode filtering applied")
+            return this
+
 
     def filter_qc(  # noqa: C901
         self, QC_list=[1, 2], QC_fields="all", drop=True, mode="all", mask=False
@@ -1021,7 +1028,9 @@ class ArgoAccessor:
 
         if not mask:
             this = this.argo._where(this_mask, drop=drop)
-            this.argo._add_history("Variables selected according to QC")
+            this.argo._add_history(
+                "[%s] filtered to retain points with QC in [%s]" % (",".join(list(QC_fields.data_vars)), ",".join([str(qc) for qc in QC_list]))
+            )
             if this.argo.N_POINTS == 0:
                 log.warning("No data left after QC filtering !")
             return this
