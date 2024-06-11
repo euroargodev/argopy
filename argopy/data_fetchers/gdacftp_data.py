@@ -49,18 +49,18 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
     # Methods that must not change
     ###
     def __init__(
-        self,
-        ftp: str = "",
-        ds: str = "",
-        cache: bool = False,
-        cachedir: str = "",
-        dimension: str = "point",
-        errors: str = "raise",
-        parallel: bool = False,
-        parallel_method: str = "thread",
-        progress: bool = False,
-        api_timeout: int = 0,
-        **kwargs
+            self,
+            ftp: str = "",
+            ds: str = "",
+            cache: bool = False,
+            cachedir: str = "",
+            dimension: str = "point",
+            errors: str = "raise",
+            parallel: bool = False,
+            parallel_method: str = "thread",
+            progress: bool = False,
+            api_timeout: int = 0,
+            **kwargs
     ):
         """ Init fetcher
 
@@ -92,7 +92,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         """
         self.timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
-        self.user_mode =  kwargs["mode"] if "mode" in kwargs else OPTIONS["mode"]
+        self.user_mode = kwargs["mode"] if "mode" in kwargs else OPTIONS["mode"]
         self.server = OPTIONS["ftp"] if ftp == "" else ftp
         self.errors = errors
 
@@ -112,7 +112,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
             cachedir=cachedir,
             timeout=self.timeout,
         )
-        self.fs = self.indexfs.fs["src"]
+        self.fs = self.indexfs.fs["src"]  # Re-use the appropriate file system
 
         nrows = None
         if "N_RECORDS" in kwargs:
@@ -141,7 +141,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         summary = ["<datafetcher.ftp>"]
         summary.append("Name: %s" % self.definition)
         summary.append("Index: %s" % self.indexfs.index_file)
-        summary.append("FTP: %s" % self.server)
+        summary.append("Host: %s" % self.server)
         if hasattr(self, "BOX"):
             summary.append("Domain: %s" % self.cname())
         else:
@@ -313,9 +313,9 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         :class:`xarray.Dataset`
         """
         if (
-            len(self.uri) > 50
-            and isinstance(self.method, str)
-            and self.method == "sequential"
+                len(self.uri) > 50
+                and isinstance(self.method, str)
+                and self.method == "sequential"
         ):
             warnings.warn(
                 "Found more than 50 files to load, this may take a while to process sequentially ! "
@@ -378,7 +378,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
                 .where(ds["LONGITUDE"] < self.BOX[1], drop=True)
                 .where(ds["LATITUDE"] >= self.BOX[2], drop=True)
                 .where(ds["LATITUDE"] < self.BOX[3], drop=True)
-                .where(ds["PRES"] >= self.BOX[4], drop=True)
+                .where(ds["PRES"] >= self.BOX[4], drop=True)  # todo what about PRES_ADJUSTED ?
                 .where(ds["PRES"] < self.BOX[5], drop=True)
             )
             if len(self.BOX) == 8:
@@ -402,7 +402,14 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         return ds
 
     def transform_data_mode(self, ds: xr.Dataset, **kwargs):
-        ds = ds.argo.transform_data_mode(params='all', errors="ignore", **kwargs)
+        ds = ds.argo.transform_data_mode(**kwargs)
+        if ds.argo._type == "point":
+            ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
+        return ds
+
+    def filter_data_mode(self, ds: xr.Dataset, **kwargs):
+        """Apply xarray argo accessor filter_data_mode method"""
+        ds = ds.argo.filter_data_mode(**kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
@@ -420,7 +427,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
 
             Use this filter instead of transform_data_mode and filter_qc
         """
-        ds = ds.argo.filter_researchmode()
+        ds = ds.argo.filter_researchmode(**kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds

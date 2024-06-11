@@ -27,6 +27,7 @@ import aiohttp
 import shutil
 import pickle  # nosec B403 only used with internal files/assets
 import json
+import io
 import time
 import tempfile
 import logging
@@ -722,10 +723,12 @@ class httpstore(argo_store_proto):
             dwn_opts.update(kwargs["download_url_opts"])
         data = self.download_url(url, **dwn_opts)
 
-        if data[0:3] != b"CDF":
+        if data[0:3] != b"CDF" and data[0:3] != b'\x89HD':
             raise TypeError(
-                "We didn't get a CDF binary data as expected ! We get: %s" % data
+                "We didn't get a CDF or HDF5 binary data as expected ! We get: %s" % data
             )
+        if data[0:3] == b'\x89HD':
+            data = io.BytesIO(data)
 
         xr_opts = {}
         if "xr_opts" in kwargs:
