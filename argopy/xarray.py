@@ -25,6 +25,7 @@ from .utils.compute import (
     linear_interpolation_remap,
     groupby_remap,
 )
+from .utils.lists import list_core_parameters
 from .utils.geo import toYearFraction
 from .utils.transform import merge_param_with_param_adjusted, filter_param_by_data_mode
 from .errors import InvalidDatasetStructure, DataNotFound, OptionValueError
@@ -926,7 +927,7 @@ class ArgoAccessor:
             return this
 
         else:
-            this.argo._add_history("None of the proposed variables were found, no data mode filtering applied")
+            this.argo._add_history("No data mode found for [%s], no filtering applied" % (",".join(params)))
             return this
 
 
@@ -1134,7 +1135,7 @@ class ArgoAccessor:
             return this
 
     def filter_researchmode(self) -> xr.Dataset:
-        """Filter dataset for research user mode
+        """Filter dataset for research user mode for 'phy' dataset parameters
 
         This depends on the dataset:
         - For the 'phy' dataset (core/deep): select delayed mode data with QC=1 and with pressure errors smaller than 20db
@@ -1152,20 +1153,20 @@ class ArgoAccessor:
             to_profile = True
             this = this.argo.profile2point()
 
-        # Apply transforms
-        this = this.argo.transform_data_mode(params='all', errors="ignore")
-        if 'DATA_MODE' in this.data_vars:
-            this = this.where(this['DATA_MODE'] == 'D', drop=True)
+        # Apply transforms and filters:
+        this = this.argo.filter_qc(QC_list=1,
+                                   QC_fields=['POSITION_QC', 'TIME_QC'])
+        this = this.argo.transform_data_mode(params=list_core_parameters())
+        this = this.argo.filter_data_mode(params=list_core_parameters(), dm='D')
+        this = this.argo.filter_qc(QC_list=1, QC_fields=list_core_parameters())
 
-        # Apply filters
-        this = this.argo.filter_qc(QC_list=1)
         if 'PRES_ERROR' in this.data_vars:  # PRES_ADJUSTED_ERROR was renamed PRES_ERROR by transform_data_mode
             this = this.where(this['PRES_ERROR'] < 20, drop=True)
+        this.argo._add_history("[%s] parameters selected for pressure error < 20db" % (",".join(list_core_parameters())))
 
         # Manage output:
         if to_profile:
             this = this.argo.point2profile()
-        this.argo._add_history("Variables selected for pressure error < 20db")
         if this.argo.N_POINTS == 0:
             log.warning("No data left after Research-mode filtering !")
         else:

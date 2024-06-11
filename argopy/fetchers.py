@@ -33,7 +33,7 @@ from .utils.lists import (
     list_radiometry_parameters,
     list_bgc_s_parameters,
 )
-from .plot import plot_trajectory, bar_plot, open_sat_altim_report
+from .plot import plot_trajectory, bar_plot, open_sat_altim_report, scatter_plot
 
 
 AVAILABLE_DATA_SOURCES = list_available_data_src()
@@ -379,14 +379,14 @@ class ArgoDataFetcher:
                                                             dm=['R', 'A', 'D'],
                                                             logical='and'
                                                             )
-                    # Process all other variables:
+                    # Process all other BGC variables:
                     all_other_bgc_variables = list(set(list_bgc_s_parameters()) - set(list_core_parameters() + params1 + params2 ))
                     all_other_bgc_variables = [p for p in all_other_bgc_variables if p in xds]
-                    # xds = self.fetcher.filter_data_mode(xds,
-                    #                                     params=all_other_variables,
-                    #                                     dm=['A', 'D'],
-                    #                                     logical='or'
-                    #                                     )
+                    xds = self.fetcher.filter_data_mode(xds,
+                                                        params=all_other_bgc_variables,
+                                                        dm=['A', 'D'],
+                                                        logical='or'
+                                                        )
 
                     # Apply QC filter on BGC parameters:
                     xds = self.fetcher.filter_qc(xds,
@@ -395,14 +395,43 @@ class ArgoDataFetcher:
                                                  mode='all',
                                                  )
 
-                    # And adjust list of variables
+                    # And adjust list of variables:
                     xds = self.fetcher.filter_variables(xds)
 
                     return xds
                 self.postprocessor = postprocessing
 
             elif self._dataset_id == 'bgc' and self._mode == "research":
-                raise OptionValueError('Not supported')
+                # https://github.com/euroargodev/argopy/issues/280
+                def postprocessing(xds):
+
+                    # for core/deep parameters
+                    xds = self.fetcher.filter_researchmode(xds)
+
+                    # For BGC:
+                    all_bgc_variables = list(set(list_bgc_s_parameters()) - set(list_core_parameters()))
+                    all_bgc_variables = [p for p in all_bgc_variables if p in xds]
+                    if len(all_bgc_variables) > 0:
+                        xds = self.fetcher.transform_data_mode(xds,
+                                                               params=all_bgc_variables)
+                        xds = self.fetcher.filter_data_mode(xds,
+                                                            params=all_bgc_variables,
+                                                            dm=['D'],
+                                                            logical='or'
+                                                            )
+
+                    # Apply QC filter on BGC parameters:
+                    xds = self.fetcher.filter_qc(xds,
+                                                 QC_list=[1, 5, 8],
+                                                 QC_fields=["%s_QC" % p for p in all_bgc_variables],
+                                                 mode='all',
+                                                 )
+
+                    # And adjust list of variables:
+                    xds = self.fetcher.filter_variables(xds)
+
+                    return xds
+                self.postprocessor = postprocessing
 
             else:
                 self.postprocessor = lambda x: x  # Empty processor
@@ -738,16 +767,23 @@ class ArgoDataFetcher:
             if "institution" not in self.index:
                 self.to_index(full=True)
             return bar_plot(self.index, by="institution", **kwargs)
+
         elif ptype == "profiler":
             if "profiler" not in self.index:
                 self.to_index(full=True)
             return bar_plot(self.index, by="profiler", **kwargs)
+
         elif ptype == "trajectory":
             defaults = {"style": "white"}
             return plot_trajectory(self.index, **{**defaults, **kwargs})
+
         elif ptype == "qc_altimetry":
             WMOs = np.unique(self.data["PLATFORM_NUMBER"])
             return open_sat_altim_report(WMOs, **kwargs)
+
+        elif ptype in self.data.data_vars:
+            return scatter_plot(self.data, ptype, **kwargs)
+
         else:
             raise ValueError(
                 "Type of plot unavailable. Use: 'trajectory', 'dac', 'profiler', 'qc_altimetry'"

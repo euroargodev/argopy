@@ -25,7 +25,7 @@ import logging
 
 from ..options import OPTIONS
 from ..utils.format import format_oneline
-from ..utils.lists import list_bgc_s_variables
+from ..utils.lists import list_bgc_s_variables, list_core_parameters
 from ..stores import httpstore
 from ..errors import ErddapServerError, DataNotFound
 from ..stores import indexstore_pd as ArgoIndex  # make sure we work with the Pandas index store
@@ -202,7 +202,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             self._bgc_vlist_requested = [p.upper() for p in params]
             # self._bgc_vlist_requested = self._bgc_handle_wildcard(self._bgc_vlist_requested)
 
-            for p in ["PRES", "TEMP", "PSAL"]:
+            for p in list_core_parameters():
                 if p not in self._bgc_vlist_requested:
                     self._bgc_vlist_requested.append(p)
 
@@ -488,7 +488,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             [vlist.append(p) for p in plist]
 
             # Core/Deep variables:
-            plist = ["pres", "temp", "psal"]
+            plist = [p.lower() for p in list_core_parameters()]
             [vlist.append(p) for p in plist]
             [vlist.append(p + "_qc") for p in plist]
             [vlist.append(p + "_adjusted") for p in plist]
@@ -523,14 +523,14 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     vlist.append("%s_adjusted_qc" % vname)
                     vlist.append("%s_adjusted_error" % vname)
 
-                elif self.user_mode in ['standard'] and vname not in ['cdom']:
+                elif self.user_mode in ['standard']:
                     vlist.append("%s" % vname)
                     vlist.append("%s_qc" % vname)
                     vlist.append("%s_adjusted" % vname)
                     vlist.append("%s_adjusted_qc" % vname)
                     vlist.append("%s_adjusted_error" % vname)
 
-                elif self.user_mode in ['research'] and vname not in ['cdom']:
+                elif self.user_mode in ['research']:
                     vlist.append("%s_adjusted" % vname)
                     vlist.append("%s_adjusted_qc" % vname)
                     vlist.append("%s_adjusted_error" % vname)
@@ -753,6 +753,11 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                             "to chunk it into small requests."
                         )
                         log.debug(str(e))
+                    elif "Payload Too Large" in e.message:
+                        raise ErddapServerError("Your request is generating too much data on the server"
+                                                "You can try to use the 'parallel' option to chunk it "
+                                                "into smaller requests."
+                                                )
                     else:
                         raise ErddapServerError(e.message)
 
@@ -845,7 +850,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     def transform_data_mode(self, ds: xr.Dataset, **kwargs):
         """Apply xarray argo accessor transform_data_mode method"""
-        ds = ds.argo.transform_data_mode(params='all', errors="ignore", **kwargs)
+        ds = ds.argo.transform_data_mode(**kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
@@ -974,14 +979,15 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         # timer = time.process_time()
 
         profiles = list_WMO_CYC(this_ds)
+        self.indexfs.search_wmo(list_WMO(this_ds))
         params = [
             p
-            for p in self.indexfs.search_wmo(list_WMO(this_ds)).read_params()
+            for p in self.indexfs.read_params()
             if p in this_ds or "%s_ADJUSTED" % p in this_ds
         ]
         # timer = print_etime('Read profiles and params from ds', timer)
 
-        df = self.indexfs.search_wmo(list_WMO(this_ds)).to_dataframe(completed=False)
+        df = self.indexfs.to_dataframe(completed=False)
         df = complete_df(df, params)
         # timer = print_etime('Index search wmo and export to dataframe', timer)
 

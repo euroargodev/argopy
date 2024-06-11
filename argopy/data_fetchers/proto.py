@@ -54,18 +54,12 @@ class ArgoDataFetcherProto(ABC):
         elif self.dataset_id in ['bgc']:
 
             if self.user_mode == "standard":
-                to_keep = list_bgc_s_variables()
-                to_remove = sorted(
-                    list(set(list(ds.data_vars)) - set(to_keep))
-                )
+                to_remove = []
                 [to_remove.append(v) for v in ds.data_vars if 'CDOM' in v]
                 return ds.drop_vars(to_remove)
 
             elif self.user_mode == "research":
-                to_keep = list_bgc_s_variables()
-                to_remove = sorted(
-                    list(set(list(ds.data_vars)) - set(to_keep))
-                )
+                to_remove = []
                 [to_remove.append(v) for v in ds.data_vars if 'CDOM' in v]
                 [to_remove.append(v) for v in ds.data_vars if "DATA_MODE" in v]
                 [to_remove.append(v) for v in ds.data_vars if "QC" in v]
