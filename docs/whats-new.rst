@@ -13,6 +13,8 @@ Coming up next
 
 **Features and front-end API**
 
+- New BGC method to execute CANYON-MED predictions.
+
 .. currentmodule:: xarray
 
 - Improved support for BGC:
