@@ -29,6 +29,9 @@ from .utils.checkers import (
 from .utils.lists import (
     list_available_data_src,
     list_available_index_src,
+    list_core_parameters,
+    list_radiometry_parameters,
+    list_bgc_s_parameters,
 )
 from .plot import plot_trajectory, bar_plot, open_sat_altim_report
 
@@ -326,28 +329,80 @@ class ArgoDataFetcher:
         if self.fetcher:
 
             if self._dataset_id == 'phy' and self._mode == "standard":
-                    def postprocessing(xds):
-                        xds = self.fetcher.transform_data_mode(xds)
-                        xds = self.fetcher.filter_qc(xds)
-                        xds = self.fetcher.filter_variables(xds, self._mode)
-                        return xds
-                    self.postprocessor = postprocessing
+                def postprocessing(xds):
+                    xds = self.fetcher.transform_data_mode(xds)
+                    xds = self.fetcher.filter_qc(xds, QC_list=[1, 2])
+                    xds = self.fetcher.filter_variables(xds)
+                    return xds
+                self.postprocessor = postprocessing
 
             elif self._dataset_id == 'phy' and self._mode == "research":
-                    def postprocessing(xds):
-                        xds = self.fetcher.filter_researchmode(xds)
-                        xds = self.fetcher.filter_variables(xds, self._mode)
-                        return xds
-                    self.postprocessor = postprocessing
+                def postprocessing(xds):
+                    xds = self.fetcher.filter_researchmode(xds)
+                    xds = self.fetcher.filter_variables(xds)
+                    return xds
+                self.postprocessor = postprocessing
+
+            elif self._dataset_id == 'bgc' and self._mode == "standard":
+                # https://github.com/euroargodev/argopy/issues/280
+                def postprocessing(xds):
+                    # Merge parameters according to data mode values:
+                    xds = self.fetcher.transform_data_mode(xds)
+
+                    # Process core variables:
+                    xds = self.fetcher.filter_qc(xds,
+                                                 QC_list=[1, 2],
+                                                 QC_fields=['POSITION_QC', 'TIME_QC'])
+
+                    xds = self.fetcher.filter_data_mode(xds,
+                                                        params=list_core_parameters(),
+                                                        dm=['R', 'A', 'D'],
+                                                        logical='and'
+                                                        )
+                    xds = self.fetcher.filter_qc(xds,
+                                                 QC_list=[1, 2],
+                                                 QC_fields=["%s_QC" % p for p in list_core_parameters()])
+
+                    # Process radiometry variables:
+                    params1 = [v for v in xds if v in list_radiometry_parameters()]
+                    if len(params1) > 0:
+                        xds = self.fetcher.filter_data_mode(xds,
+                                                            params=params1,
+                                                            dm=['R', 'A', 'D'],
+                                                            logical='and'
+                                                            )
+                    # Process BBP700 variables:
+                    params2 = [v for v in xds if 'BBP700' in v and v in list_bgc_s_parameters()]
+                    if len(params2) > 0:
+                        xds = self.fetcher.filter_data_mode(xds,
+                                                            params=params2,
+                                                            dm=['R', 'A', 'D'],
+                                                            logical='and'
+                                                            )
+                    # Process all other variables:
+                    all_other_bgc_variables = list(set(list_bgc_s_parameters()) - set(list_core_parameters() + params1 + params2 ))
+                    all_other_bgc_variables = [p for p in all_other_bgc_variables if p in xds]
+                    # xds = self.fetcher.filter_data_mode(xds,
+                    #                                     params=all_other_variables,
+                    #                                     dm=['A', 'D'],
+                    #                                     logical='or'
+                    #                                     )
+
+                    # Apply QC filter on BGC parameters:
+                    xds = self.fetcher.filter_qc(xds,
+                                                 QC_list=[1, 2, 5, 8],
+                                                 QC_fields=["%s_QC" % p for p in all_other_bgc_variables],
+                                                 mode='all',
+                                                 )
+
+                    # And adjust list of variables
+                    xds = self.fetcher.filter_variables(xds)
+
+                    return xds
+                self.postprocessor = postprocessing
 
             elif self._dataset_id == 'bgc' and self._mode == "research":
-                    def postprocessing(xds):
-                        xds = self.fetcher.filter_data_mode(xds, 'D')
-                        # xds = self.fetcher.transform_data_mode(xds)
-                        # xds = self.fetcher.filter_qc(xds, QC_list=[1,5,8])
-                        # xds = self.fetcher.filter_variables(xds, self._mode)
-                        return xds
-                    self.postprocessor = postprocessing
+                raise OptionValueError('Not supported')
 
             else:
                 self.postprocessor = lambda x: x  # Empty processor
