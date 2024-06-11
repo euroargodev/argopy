@@ -4,9 +4,13 @@ import numpy as np
 import xarray
 import hashlib
 import warnings
+import logging
 from ..plot import dashboard
-from ..utils.lists import list_standard_variables
+from ..utils.lists import list_standard_variables, list_bgc_s_variables
 from ..utils.format import UriCName
+
+
+log = logging.getLogger("argopy.fetcher.proto")
 
 
 class ArgoDataFetcherProto(ABC):
@@ -26,22 +30,52 @@ class ArgoDataFetcherProto(ABC):
     def filter_researchmode(self, ds: xarray.Dataset, *args, **kwargs) -> xarray.Dataset:
         raise NotImplementedError("Not implemented")
 
-    def filter_variables(self, ds: xarray.Dataset, mode: str, *args, **kwargs) -> xarray.Dataset:
-        """Filter variables according to user mode"""
-        if mode == "standard":
-            to_remove = sorted(
-                list(set(list(ds.data_vars)) - set(list_standard_variables()))
-            )
-            return ds.drop_vars(to_remove)
-        elif mode == "research":
-            to_remove = sorted(
-                list(set(list(ds.data_vars)) - set(list_standard_variables()))
-            )
-            to_remove.append('DATA_MODE')
-            [to_remove.append(v) for v in ds.data_vars if "QC" in v]
-            return ds.drop_vars(to_remove)
+    def filter_variables(self, ds: xarray.Dataset, *args, **kwargs) -> xarray.Dataset:
+        """Filter variables according to dataset and user mode"""
+        if self.dataset_id in ['phy']:
+
+            if self.user_mode == "standard":
+                to_remove = sorted(
+                    list(set(list(ds.data_vars)) - set(list_standard_variables()))
+                )
+                return ds.drop_vars(to_remove)
+
+            elif self.user_mode == "research":
+                to_remove = sorted(
+                    list(set(list(ds.data_vars)) - set(list_standard_variables()))
+                )
+                to_remove.append('DATA_MODE')
+                [to_remove.append(v) for v in ds.data_vars if "QC" in v]
+                return ds.drop_vars(to_remove)
+
+            else:
+                return ds
+
+        elif self.dataset_id in ['bgc']:
+
+            if self.user_mode == "standard":
+                to_keep = list_bgc_s_variables()
+                to_remove = sorted(
+                    list(set(list(ds.data_vars)) - set(to_keep))
+                )
+                [to_remove.append(v) for v in ds.data_vars if 'CDOM' in v]
+                return ds.drop_vars(to_remove)
+
+            elif self.user_mode == "research":
+                to_keep = list_bgc_s_variables()
+                to_remove = sorted(
+                    list(set(list(ds.data_vars)) - set(to_keep))
+                )
+                [to_remove.append(v) for v in ds.data_vars if 'CDOM' in v]
+                [to_remove.append(v) for v in ds.data_vars if "DATA_MODE" in v]
+                [to_remove.append(v) for v in ds.data_vars if "QC" in v]
+                return ds.drop_vars(to_remove)
+
+            else:
+                return ds
+
         else:
-            return ds
+            log.debug("No filter_variables support for ds='%s'" % self.dataset_id)
 
     def clear_cache(self):
         """ Remove cache files and entries from resources opened with this fetcher """
