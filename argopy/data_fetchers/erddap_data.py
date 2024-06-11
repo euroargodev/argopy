@@ -25,6 +25,7 @@ import logging
 
 from ..options import OPTIONS
 from ..utils.format import format_oneline
+from ..utils.lists import list_bgc_s_variables
 from ..stores import httpstore
 from ..errors import ErddapServerError, DataNotFound
 from ..stores import indexstore_pd as ArgoIndex  # make sure we work with the Pandas index store
@@ -182,12 +183,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
             # To handle bugs in the erddap server, we need the list of parameters on the server:
             # todo: Remove this when bug fixed
-            data = self.fs.open_json(
-                self.server + "/info/ArgoFloats-synthetic-BGC/index.json"
-            )
-            self._bgc_vlist_erddap = [
-                row[1] for row in data["table"]["rows"] if row[0] == "variable"
-            ]
+            self._bgc_vlist_erddap = [v.lower() for v in list_bgc_s_variables()]
 
             # Handle the 'params' argument:
             self._bgc_params = to_list(params)
@@ -850,6 +846,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     def transform_data_mode(self, ds: xr.Dataset, **kwargs):
         """Apply xarray argo accessor transform_data_mode method"""
         ds = ds.argo.transform_data_mode(params='all', errors="ignore", **kwargs)
+        if ds.argo._type == "point":
+            ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
+        return ds
+
+    def filter_data_mode(self, ds: xr.Dataset, **kwargs):
+        """Apply xarray argo accessor filter_data_mode method"""
+        ds = ds.argo.filter_data_mode(**kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
