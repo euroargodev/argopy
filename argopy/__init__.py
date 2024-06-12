@@ -42,6 +42,7 @@ from .utils import show_versions, show_options  # noqa: E402
 from .utils import clear_cache, lscache  # noqa: E402
 from .utils import MonitoredThreadPoolExecutor  # noqa: E402, F401
 from .utils import monitor_status as status  # noqa: E402
+from .extensions import register_argodataset_accessor
 from .related import TopoFetcher, OceanOPSDeployments, ArgoNVSReferenceTables, ArgoDocs, ArgoDOI  # noqa: E402
 
 
