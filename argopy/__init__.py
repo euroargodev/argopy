@@ -43,7 +43,7 @@ from .utils import clear_cache, lscache  # noqa: E402
 from .utils import MonitoredThreadPoolExecutor  # noqa: E402, F401
 from .utils import monitor_status as status  # noqa: E402
 from .related import TopoFetcher, OceanOPSDeployments, ArgoNVSReferenceTables, ArgoDocs, ArgoDOI  # noqa: E402
-from .extensions import register_argodataset_accessor, CanyonMED
+from .extensions import CanyonMED
 
 
 #
@@ -79,7 +79,6 @@ __all__ = (
     "ArgoColors",  # Class
     "stores",
     "tutorial",
-    "register_argodataset_accessor",
 
     # Argo xarray accessor extensions
     "CanyonMED",

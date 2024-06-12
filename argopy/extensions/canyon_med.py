@@ -5,11 +5,11 @@ import xarray as xr
 from typing import Union, List
 
 from ..utils import path2assets, to_list
-from ..extensions import register_argodataset_accessor
+from . import register_argodataset_accessor, ArgoAccessorExtension
 
 
 @register_argodataset_accessor('canyon_med')
-class CanyonMED:
+class CanyonMED(ArgoAccessorExtension):
     """
     Implementation of the CANYON-MED method.
 
@@ -53,11 +53,9 @@ class CanyonMED:
     output_list = ['PO4', 'NO3', 'DIC', 'SiOH4', 'AT', 'pHT']
     """List of parameters that can be predicted with this Neural Network"""
 
-    def __init__(self, obj):
-        if isinstance(obj, xr.Dataset):
-            self._obj = obj  # Xarray object
-        else:
-            self._obj = obj._obj  # Xarray object from ArgoAccessor
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
         self.n_list = 5
         self.path2coef = Path(path2assets).joinpath('canyon-med')
         self._input = None  # Private CANYON-MED input dataframe
@@ -329,4 +327,7 @@ class CanyonMED:
             self._obj['%s_ERROR' % param].values = std_nn.astype(np.float32).squeeze()
 
         # Return xr.Dataset with predicted variables:
+        if self.argo_accessor:
+            self.argo_accessor._add_history("Added CANYON-MED predictions")
+
         return self._obj
