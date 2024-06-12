@@ -87,14 +87,12 @@ Utilities for Argo related data
 
    status
    ArgoIndex
+   ArgoDocs
+   ArgoDOI
    ArgoNVSReferenceTables
    OceanOPSDeployments
    CTDRefDataFetcher
    TopoFetcher
-   ArgoDocs
-   ArgoDOI
-   related.get_coriolis_profile_id
-   related.get_ea_profile_page
 
 .. _Module Visualisation:
 
@@ -124,7 +122,6 @@ All other visualisation functions are in the :mod:`argopy.plot` submodule:
     bar_plot
     scatter_plot
     latlongrid
-    discrete_coloring
 
 
 Dataset.argo (xarray accessor)
@@ -161,6 +158,8 @@ Data Transformation
    Dataset.argo.profile2point
    Dataset.argo.interp_std_levels
    Dataset.argo.groupby_pressure_bins
+   Dataset.argo.transform_data_mode
+
 
 Data Filters
 ------------
@@ -169,12 +168,12 @@ Data Filters
    :toctree: generated/
    :template: autosummary/accessor_method.rst
 
+   Dataset.argo.filter_data_mode
    Dataset.argo.filter_qc
-   Dataset.argo.transform_data_mode
    Dataset.argo.filter_scalib_pres
    Dataset.argo.filter_researchmode
 
-Processing
+Extensions
 ----------
 
 .. autosummary::
@@ -183,6 +182,7 @@ Processing
 
     Dataset.argo.teos10
     Dataset.argo.create_float_source
+    Dataset.argo.canyon_med
 
 Misc
 ----

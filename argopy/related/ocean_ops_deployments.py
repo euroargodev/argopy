@@ -6,7 +6,9 @@ from ..plot import scatter_map
 
 
 class OceanOPSDeployments:
-    """Use the OceanOPS API for metadata access to retrieve Argo floats deployment information.
+    """Argo floats deployment plans
+
+    Use the OceanOPS API for metadata access to retrieve Argo floats deployment information.
 
     The API is documented here: https://www.ocean-ops.org/api/swagger/?url=https://www.ocean-ops.org/api/1/oceanops-api.yaml
 
