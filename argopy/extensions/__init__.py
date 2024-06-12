@@ -1,5 +1,5 @@
 import warnings
-from .xarray import ArgoAccessor
+from ..xarray import ArgoAccessor
 
 
 class AccessorRegistrationWarning(Warning):
@@ -72,8 +72,8 @@ def register_argodataset_accessor(name):
 
     >>> @xr.register_argodataset_accessor("canyon_med")
     ... class CanyonMED:
-    ...     def __init__(self, xarray_obj):
-    ...         self._obj = xarray_obj
+    ...     def __init__(self, ArgoAccessor_obj):
+    ...         self.xarray_obj = ArgoAccessor_obj._obj
     ...
     ...     def predict(self):
     ...         # Make NN predictions
@@ -90,3 +90,13 @@ def register_argodataset_accessor(name):
     register_dataarray_accessor
     """
     return _register_accessor(name, ArgoAccessor)
+
+
+from .canyon_med import CanyonMED
+
+
+#
+__all__ = (
+    # Classes:
+    "CanyonMED",
+)

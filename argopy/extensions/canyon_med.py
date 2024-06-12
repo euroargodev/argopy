@@ -4,17 +4,53 @@ import pandas as pd
 import xarray as xr
 from typing import Union, List
 
-from ..utils import path2assets, to_list, cast_Argo_variable_type
+from ..utils import path2assets, to_list
 from ..extensions import register_argodataset_accessor
 
 
 @register_argodataset_accessor('canyon_med')
 class CanyonMED:
+    """
+    Implementation of the CANYON-MED method.
+
+    CANYON-MED is a Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations
+    and Carbonate System Variables in the Mediterranean Sea ([1]_, [2]_).
+
+    When using this method, please cite the papers.
+
+    Examples
+    --------
+    Load data, they must contain oxygen measurements:
+
+    >>> from argopy import DataFetcher
+    >>> ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').float(1902605)
+    >>> ds = ArgoSet.to_xarray()
+
+    Once input data are loaded, make all or selected parameters predictions:
+
+    >>> ds.argo.canyon_med.predict()
+    >>> ds.argo.canyon_med.predict('PO4')
+    >>> ds.argo.canyon_med.predict(['PO4', 'NO3'])
+
+
+    Notes
+    -----
+    This Python implementation is largely inspired by work from Marine Fourrier (https://github.com/MarineFou)
+    and Florian Ricour (https://github.com/fricour) from LOV.
+
+    First Python implementation was published here: https://github.com/euroargodev/CANYON-MED
+
+    References
+    ----------
+    .. [1] Fourrier, M., Coppola, L., Claustre, H., D’Ortenzio, F., Sauzède, R., and Gattuso, J.-P. (2020). A Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea: CANYON-MED. Frontiers in Marine Science 7. doi:10.3389/fmars.2020.00620.
+
+    .. [2] Fourrier, M., Coppola, L., Claustre, H., D’Ortenzio, F., Sauzède, R., and Gattuso, J.-P. (2021). Corrigendum: A Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea: CANYON-MED. Frontiers in Marine Science 8. doi:10.3389/fmars.2021.650509.
+    """
 
     ne = 7
     """Number of inputs"""
 
-    output_list = ['PO4', 'NO3', 'CT', 'SiOH4', 'PAT', 'pHT']
+    output_list = ['PO4', 'NO3', 'DIC', 'SiOH4', 'AT', 'pHT']
     """List of parameters that can be predicted with this Neural Network"""
 
     def __init__(self, obj):
@@ -24,7 +60,7 @@ class CanyonMED:
             self._obj = obj._obj  # Xarray object from ArgoAccessor
         self.n_list = 5
         self.path2coef = Path(path2assets).joinpath('canyon-med')
-        self._input = None  # Private NN input dataframe
+        self._input = None  # Private CANYON-MED input dataframe
 
     def get_param_attrs(self, param: str) -> dict:
         """Provides attributes to be added to a given predicted parameter"""
@@ -40,13 +76,13 @@ class CanyonMED:
         if param == 'NO3':
             attrs.update({'long_name': 'Nitrate concentration'})
 
-        if param == 'CT':
+        if param == 'DIC':
             attrs.update({'long_name': 'Total dissolved inorganic carbon'})
 
         if param == 'SiOH4':
             attrs.update({'long_name': 'Silicate concentration'})
 
-        if param == 'PAT':
+        if param == 'AT':
             attrs.update({'long_name': 'Total alkalinity'})
 
         if param == 'pHT':
@@ -63,11 +99,11 @@ class CanyonMED:
             suff = 'phos'
         elif param == 'NO3':
             suff = 'nit'
-        elif param == 'CT':
+        elif param == 'DIC':
             suff = 'CT'
         elif param == 'SiOH4':
             suff = 'sil'
-        elif param == 'PAT':
+        elif param == 'AT':
             suff = 'AT'
         elif param == 'pHT':
             suff = 'ph'
@@ -106,21 +142,32 @@ class CanyonMED:
 
     @property
     def decimal_year(self):
+        """Return the decimal year of the :class:`xr.Dataset` `TIME` variable"""
         return self._obj['TIME'].dt.year + (86400 * self._obj['TIME'].dt.dayofyear
                                                 + 3600 * self._obj['TIME'].dt.hour
                                                 + self._obj['TIME'].dt.second) / (365.0 * 24 * 60 * 60)
 
     def ds2df(self) -> pd.DataFrame:
-        """Create a NN input :class:`pd.DataFrame` from :class:`xr.Dataset`"""
+        """Create a CANYON-MED input :class:`pd.DataFrame` from :class:`xr.Dataset`"""
 
-        df = pd.DataFrame({'lat': self._obj['LATITUDE'],
-                           'lon': self._obj['LONGITUDE'],
-                           'dec_year': self.decimal_year,
-                           'pres': self._obj['PRES'],
-                           'temp': self._obj['TEMP'],
-                           'psal': self._obj['PSAL'],
-                           'doxy': self._obj['DOXY']
-                           })
+        if self._obj.argo.N_POINTS > 1:
+            df = pd.DataFrame({'lat': self._obj['LATITUDE'],
+                               'lon': self._obj['LONGITUDE'],
+                               'dec_year': self.decimal_year,
+                               'temp': self._obj['TEMP'],
+                               'psal': self._obj['PSAL'],
+                               'doxy': self._obj['DOXY'],
+                               'pres': self._obj['PRES'],
+                               })
+        else:  # Handle single point dataset:
+            df = pd.DataFrame.from_dict({'lat': self._obj['LATITUDE'].values,
+                               'lon': self._obj['LONGITUDE'],
+                               'dec_year': self.decimal_year,
+                               'temp': self._obj['TEMP'],
+                               'psal': self._obj['PSAL'],
+                               'doxy': self._obj['DOXY'],
+                               'pres': self._obj['PRES'],
+                               }, orient='index').T
 
         # Modify pressure
         # > The pressure input is transformed according to the combination of a linear
@@ -135,7 +182,7 @@ class CanyonMED:
 
     @property
     def input(self) -> pd.DataFrame:
-        """NN input :class:`pd.DataFrame`
+        """CANYON-MED input :class:`pd.DataFrame`
 
         This :class:`pd.DataFrame` is stored internally to avoid to re-compute it for each prediction
 
@@ -143,11 +190,11 @@ class CanyonMED:
         -------
         :class:`pd.DataFrame`
         """
-        # if self._input is None:
-        #     self._input = self.ds2df()
-        #
-        # return self._input
-        return self.ds2df()
+        if self._input is None:
+            self._input = self.ds2df()
+
+        return self._input
+        # return self.ds2df()
 
     def _predict(self, param: str):
         """Private predictor to be used for a single parameter"""
@@ -231,7 +278,21 @@ class CanyonMED:
         std_nn = np.std(param_outputs_s, axis=1, ddof=1)
 
         #
-        return mean_nn, std_nn
+        lim_inf = mean_nn - std_nn
+        lim_sup = mean_nn + std_nn
+
+        param_t = param_outputs_s.copy()
+
+        for i in range(param_outputs_s.shape[0]):
+            param_t[i, :] = np.where(param_t[i, :] < lim_inf[i], np.nan, param_t[i, :])
+            param_t[i, :] = np.where(param_t[i, :] > lim_sup[i], np.nan, param_t[i, :])
+
+        param_mean = np.nanmean(param_t, axis=1)
+        param_std = np.nanstd(param_t, axis=1)
+
+        #
+        # return mean_nn, std_nn
+        return param_mean, param_std
 
     def predict(self, params: Union[str, List[str]] = None) -> xr.Dataset:
         """Make predictions using the CANYON-MED neural network
@@ -260,12 +321,12 @@ class CanyonMED:
 
             self._obj[param] = xr.zeros_like(self._obj['TEMP'])
             self._obj[param].attrs = self.get_param_attrs(param)
-            self._obj[param].values = mean_nn.astype(np.float32)
+            self._obj[param].values = mean_nn.astype(np.float32).squeeze()
 
             self._obj['%s_ERROR' % param] = xr.zeros_like(self._obj[param])
             self._obj['%s_ERROR' % param].attrs = self.get_param_attrs(param)
             self._obj['%s_ERROR' % param].attrs['long_name'] = "Error on %s" % self.get_param_attrs(param)['long_name']
-            self._obj['%s_ERROR' % param].values = std_nn.astype(np.float32)
+            self._obj['%s_ERROR' % param].values = std_nn.astype(np.float32).squeeze()
 
         # Return xr.Dataset with predicted variables:
         return self._obj
