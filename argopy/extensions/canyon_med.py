@@ -47,6 +47,8 @@ class CanyonMED(ArgoAccessorExtension):
     .. [2] Fourrier, M., Coppola, L., Claustre, H., D’Ortenzio, F., Sauzède, R., and Gattuso, J.-P. (2021). Corrigendum: A Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea: CANYON-MED. Frontiers in Marine Science 8. doi:10.3389/fmars.2021.650509.
     """
 
+    #todo This class work with pandas dataframe, but we should keep xarray dataset internaly for the predictions
+
     ne = 7
     """Number of inputs"""
 
@@ -225,11 +227,13 @@ class CanyonMED(ArgoAccessorExtension):
         # Read/create NN input as a dataframe:
         df = self.input
 
-        # NORMALISATION OF THE PARAMETERS
+        # Load normalisation factors
+        moy_F, std_F = self.load_normalisation_factors(param, 'F')
+
+        # Normalisation
         # See Eq. 2 in 10.3389/fmars.2020.00620
         # (The factor 2/3 brings at least 80% of the data in the range [−1;1])
         data_N = df.iloc[:, :self.ne].copy()
-        moy_F, std_F = self.load_normalisation_factors(param, 'F')
         for i in range(self.ne):
             data_N.iloc[:, i] = (2 / 3) * ((df.iloc[:, i] - moy_F[:, i]) / std_F[:, i])
         data_N = np.array(data_N)
@@ -257,10 +261,10 @@ class CanyonMED(ArgoAccessorExtension):
         # reshape array
         param_outputs_s1 = np.array(param_outputs_s).T
 
-        # load normalisation factors
+        # Load normalisation factors
         moy_G, std_G = self.load_normalisation_factors(param, 'G')
 
-        # NORMALISATION OF THE PARAMETERS
+        # Normalisation
         data_N = df.iloc[:, :self.ne].copy()
         for i in range(self.ne):
             data_N.iloc[:, i] = (2 / 3) * ((df.iloc[:, i] - moy_G[:, i]) / std_G[:, i])
