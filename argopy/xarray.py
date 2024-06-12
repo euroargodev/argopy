@@ -30,7 +30,6 @@ from .utils.geo import toYearFraction
 from .utils.transform import merge_param_with_param_adjusted, filter_param_by_data_mode
 from .errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
-
 log = logging.getLogger("argopy.xarray")
 
 
@@ -2194,7 +2193,7 @@ class ArgoAccessor:
             return list_1d, dummy_argo_uid
 
     def list_WMO_CYC(self):
-        """Given a dataset, return a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) tuple"""
+        """Return a tuple with all (PLATFORM_NUMBER, CYCLE_NUMBER) in the dataset"""
         profiles = []
         for wmo, grp in self._obj.groupby('PLATFORM_NUMBER'):
             [profiles.append((wmo, cyc)) for cyc in np.unique(grp['CYCLE_NUMBER'])]
