@@ -5,6 +5,7 @@ from .argo_documentation import ArgoDocs
 from .doi_snapshot import ArgoDOI
 from .euroargo_api import get_coriolis_profile_id, get_ea_profile_page
 from .utils import load_dict, mapp_dict
+from .canyon_med import CanyonMED
 
 #
 __all__ = (
@@ -14,6 +15,7 @@ __all__ = (
     "ArgoNVSReferenceTables",
     "ArgoDocs",
     "ArgoDOI",
+    "CanyonMED"
 
     # Functions:
     "get_coriolis_profile_id",
