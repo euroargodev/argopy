@@ -107,6 +107,22 @@ class CanyonMED(ArgoAccessorExtension):
             suff = 'ph'
         return suff
 
+    def mask_medsea(self, df):
+        """Mask points not in the Mediterranean Sea"""
+
+        def isin_medsea(row):
+            isin = False
+            if row['lat'] > 34 and row['lat'] < 44 and row['lon'] > -6 and row['lon'] < 10:
+                isin = True
+            if row['lat'] > 30 and row['lat'] < 46 and row['lon'] >= 10 and row['lon'] < 23:
+                isin = True
+            if row['lat'] > 30 and row['lat'] < 41 and row['lon'] >= 23 and row['lon'] < 36:
+                isin = True
+            return isin
+
+        df[~df.apply(isin_medsea, axis=1)] = np.NaN
+        return df
+
     def load_normalisation_factors(self, param, subset='F'):
         suff = self.param2suff(param)
 
@@ -175,6 +191,9 @@ class CanyonMED(ArgoAccessorExtension):
         # within this range
         # See Eq. 3 in 10.3389/fmars.2020.00620
         df['pres'] = df['pres'].apply(lambda x: (x / 2e4) + (1 / ((1 + np.exp(-x / 300)) ** 3)))
+
+        # Mask points not in the Mediterranean Sea:
+        df = self.mask_medsea(df)
 
         return df
 
