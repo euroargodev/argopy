@@ -67,19 +67,21 @@ class ArgoIndexStoreProto(ABC):
         ----------
         host: str, default: ``https://data-argo.ifremer.fr``
             Local or remote (ftp or http) path to a `dac` folder (GDAC structure compliant). This takes values
-            like: ``ftp://ftp.ifremer.fr/ifremer/argo``, ``ftp://usgodae.org/pub/outgoing/argo`` or a local absolute path.
+            like: ``ftp://ftp.ifremer.fr/ifremer/argo``, ``ftp://usgodae.org/pub/outgoing/argo`` or a local
+            absolute path.
         index_file: str, default: ``ar_index_global_prof.txt``
             Name of the csv-like text file with the index.
 
             Possible values are standard file name: ``ar_index_global_prof.txt``,
-            ``argo_bio-profile_index.txt`` or ``argo_synthetic-profile_index.txt``.
+            ``argo_bio-profile_index.txt``, ``argo_synthetic-profile_index.txt``
+            or ``etc/argo-index/argo_aux-profile_index.txt``
 
             You can also use the following shortcuts: ``core``, ``bgc-b``, ``bgc-s``, respectively.
         convention: str, default: None
             Set the expected format convention of the index file. This is useful when trying to load index file with custom name. If set to ``None``, we'll try to infer the convention from the ``index_file`` value.
-             Possible values: ``ar_index_global_prof``, ``argo_bio-profile_index``, or ``argo_synthetic-profile_index``.
+             Possible values: ``ar_index_global_prof``, ``argo_bio-profile_index``, ``argo_synthetic-profile_index`` or ``argo_aux-profile_index``.
 
-            You can also use the keyword: ``core``, ``bgc-s``, ``bgc-b``.
+            You can also use the keyword: ``core``, ``bgc-s``, ``bgc-b`` and ``aux``.
         cache : bool, default: False
             Use cache or not.
         cachedir: str, default: OPTIONS['cachedir']

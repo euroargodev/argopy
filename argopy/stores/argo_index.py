@@ -17,7 +17,8 @@ class ArgoIndex(indexstore):
 
     - ``core`` for the ``ar_index_global_prof.txt`` index file,
     - ``bgc-b`` for the ``argo_bio-profile_index.txt`` index file,
-    - ``bgc-s`` for the ``argo_synthetic-profile_index.txt`` index file.
+    - ``bgc-s`` for the ``argo_synthetic-profile_index.txt`` index file,
+    - ``aux`` for the ``etc/argo-index/argo_aux-profile_index.txt`` index file.
 
     Examples
     --------
