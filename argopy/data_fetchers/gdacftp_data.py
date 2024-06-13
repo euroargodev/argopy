@@ -248,7 +248,12 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         :class:`xarray.Dataset`
 
         """
-        # Replace JULD and JULD_QC by TIME and TIME_QC
+        # Remove raw netcdf file attributes and replace them with argopy ones:
+        raw_attrs = ds.attrs
+        ds.attrs = {}
+        ds.attrs.update({'raw_attrs': raw_attrs})
+
+        # Rename JULD and JULD_QC to TIME and TIME_QC
         ds = ds.rename(
             {"JULD": "TIME", "JULD_QC": "TIME_QC", "JULD_LOCATION": "TIME_LOCATION"}
         )
@@ -256,10 +261,11 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
             "long_name": "Datetime (UTC) of the station",
             "standard_name": "time",
         }
+
         # Cast data types:
         ds = ds.argo.cast_types()
 
-        # Enforce real pressure resolution: 0.1 db
+        # Enforce real pressure resolution : 0.1 db
         for vname in ds.data_vars:
             if "PRES" in vname and "QC" not in vname:
                 ds[vname].values = np.round(ds[vname].values, 1)
@@ -272,10 +278,8 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
 
         ds = (
             ds.argo.profile2point()
-        )  # Default output is a collection of points along N_POINTS
+        )  # Default output is a collection of points, along N_POINTS
 
-        # Remove netcdf file attributes and replace them with argopy ones:
-        ds.attrs = {}
         if self.dataset_id == "phy":
             ds.attrs["DATA_ID"] = "ARGO"
         if self.dataset_id == "bgc":
@@ -313,9 +317,9 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         :class:`xarray.Dataset`
         """
         if (
-                len(self.uri) > 50
-                and isinstance(self.method, str)
-                and self.method == "sequential"
+            len(self.uri) > 50
+            and isinstance(self.method, str)
+            and self.method == "sequential"
         ):
             warnings.warn(
                 "Found more than 50 files to load, this may take a while to process sequentially ! "
@@ -344,18 +348,22 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         ds = ds.sortby("TIME")
 
         # Remove netcdf file attributes and replace them with simplified argopy ones:
-        ds.attrs = {}
-        if self.dataset_id == "phy":
-            ds.attrs["DATA_ID"] = "ARGO"
-        if self.dataset_id == "bgc":
-            ds.attrs["DATA_ID"] = "ARGO-BGC"
-        ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
-        ds.attrs["Fetched_from"] = self.server
-        try:
-            ds.attrs["Fetched_by"] = getpass.getuser()
-        except:
-            ds.attrs["Fetched_by"] = 'anonymous'
-        ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
+        if "Fetched_from" not in ds.attrs:
+            raw_attrs = ds.attrs
+            ds.attrs = {}
+            ds.attrs.update({'raw_attrs': raw_attrs})
+            if self.dataset_id == "phy":
+                ds.attrs["DATA_ID"] = "ARGO"
+            if self.dataset_id == "bgc":
+                ds.attrs["DATA_ID"] = "ARGO-BGC"
+            ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
+            ds.attrs["Fetched_from"] = self.server
+            try:
+                ds.attrs["Fetched_by"] = getpass.getuser()
+            except:
+                ds.attrs["Fetched_by"] = 'anonymous'
+            ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
+
         ds.attrs["Fetched_constraints"] = self.cname()
         if len(self.uri) == 1:
             ds.attrs["Fetched_uri"] = self.uri[0]
