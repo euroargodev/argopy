@@ -47,7 +47,7 @@ class CanyonMED(ArgoAccessorExtension):
     .. [2] Fourrier, M., Coppola, L., Claustre, H., D’Ortenzio, F., Sauzède, R., and Gattuso, J.-P. (2021). Corrigendum: A Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea: CANYON-MED. Frontiers in Marine Science 8. doi:10.3389/fmars.2021.650509.
     """
 
-    #todo This class work with pandas dataframe, but we should keep xarray dataset internaly for the predictions
+    # todo This class work with pandas dataframe, but we should keep xarray dataset internaly for the predictions
 
     ne = 7
     """Number of inputs"""
@@ -129,13 +129,13 @@ class CanyonMED(ArgoAccessorExtension):
         suff = self.param2suff(param)
 
         moy_sub = pd.read_table(self.path2coef.joinpath("moy_%s_%s.txt" % (suff, subset)),
-                              sep=" {3}",
-                              header=None,
-                              engine='python').values
+                                sep=" {3}",
+                                header=None,
+                                engine='python').values
         std_sub = pd.read_table(self.path2coef.joinpath("std_%s_%s.txt" % (suff, subset)),
-                              sep=" {3}",
-                              header=None,
-                              engine='python').values
+                                sep=" {3}",
+                                header=None,
+                                engine='python').values
         return moy_sub, std_sub
 
     def load_weights(self, param, subset, i):
@@ -160,8 +160,8 @@ class CanyonMED(ArgoAccessorExtension):
     def decimal_year(self):
         """Return the decimal year of the :class:`xr.Dataset` `TIME` variable"""
         return self._obj['TIME'].dt.year + (86400 * self._obj['TIME'].dt.dayofyear
-                                                + 3600 * self._obj['TIME'].dt.hour
-                                                + self._obj['TIME'].dt.second) / (365.0 * 24 * 60 * 60)
+                                            + 3600 * self._obj['TIME'].dt.hour
+                                            + self._obj['TIME'].dt.second) / (365.0 * 24 * 60 * 60)
 
     def ds2df(self) -> pd.DataFrame:
         """Create a CANYON-MED input :class:`pd.DataFrame` from :class:`xr.Dataset`"""
@@ -177,13 +177,13 @@ class CanyonMED(ArgoAccessorExtension):
                                })
         else:  # Handle single point dataset:
             df = pd.DataFrame.from_dict({'lat': self._obj['LATITUDE'].values,
-                               'lon': self._obj['LONGITUDE'],
-                               'dec_year': self.decimal_year,
-                               'temp': self._obj['TEMP'],
-                               'psal': self._obj['PSAL'],
-                               'doxy': self._obj['DOXY'],
-                               'pres': self._obj['PRES'],
-                               }, orient='index').T
+                                         'lon': self._obj['LONGITUDE'],
+                                         'dec_year': self.decimal_year,
+                                         'temp': self._obj['TEMP'],
+                                         'psal': self._obj['PSAL'],
+                                         'doxy': self._obj['DOXY'],
+                                         'pres': self._obj['PRES'],
+                                         }, orient='index').T
 
         # Modify pressure
         # > The pressure input is transformed according to the combination of a linear
@@ -334,7 +334,8 @@ class CanyonMED(ArgoAccessorExtension):
             params = to_list(params)
         for p in params:
             if p not in self.output_list:
-                raise ValueError("Invalid parameter ('%s') to predict, must be in [%s]" % (p, ",".join(self.output_list)))
+                raise ValueError(
+                    "Invalid parameter ('%s') to predict, must be in [%s]" % (p, ",".join(self.output_list)))
 
         # Make predictions of each of the requested parameters:
         for param in params:
@@ -351,6 +352,6 @@ class CanyonMED(ArgoAccessorExtension):
 
         # Return xr.Dataset with predicted variables:
         if self.argo_accessor:
-            self.argo_accessor._add_history("Added CANYON-MED predictions")
+            self.argo_accessor.add_history("Added CANYON-MED predictions")
 
         return self._obj
