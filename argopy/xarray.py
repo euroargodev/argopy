@@ -30,7 +30,6 @@ from .utils.geo import toYearFraction
 from .utils.transform import merge_param_with_param_adjusted, filter_param_by_data_mode
 from .errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
-
 log = logging.getLogger("argopy.xarray")
 
 
@@ -41,24 +40,47 @@ class ArgoAccessor:
         Examples
         --------
         - Ensure all variables are of the Argo required dtype with:
+
         >>> ds.argo.cast_types()
+
         - Convert a collection of points into a collection of profiles:
+
         >>> ds.argo.point2profile()
+
         - Convert a collection of profiles to a collection of points:
+
         >>> ds.argo.profile2point()
+
         - Transform dataset variables according to data mode:
+
         >>> ds.argo.transform_data_mode()
+
+        - Filter measurements according to data mode values:
+
+        >>> ds.argo.filter_date_mode(dm=['D'], params='all')
+
         - Filter measurements according to QC flag values:
+
         >>> ds.argo.filter_qc(QC_list=[1, 2], QC_fields='all')
-        - Filter variables according OWC salinity calibration requirements:
+
+        - Filter variables according to OWC salinity calibration requirements:
+
         >>> ds.argo.filter_scalib_pres(force='default')
+
         - Interpolate measurements on pressure levels:
+
         >>> ds.argo.inter_std_levels(std_lev=[10., 500., 1000.])
+
         - Group and reduce measurements by pressure bins:
+
         >>> ds.argo.groupby_pressure_bins(bins=[0, 200., 500., 1000.])
+
         - Compute and add additional variables to the dataset:
+
         >>> ds.argo.teos10(vlist='PV')
+
         - Preprocess data for OWC salinity calibration:
+
         >>> ds.argo.create_float_source("output_folder")
 
      """
@@ -234,7 +256,7 @@ class ArgoAccessor:
         cyc: int, optional
             Cycle number (to encode), not used to decode
         direction: str, optional
-            Direction of the profile, must be 'A' (Ascending) or 'D' (Descending)
+            Direction of the profile, must be ``A`` (Ascending) or ``D`` (Descending)
 
         Returns
         -------
@@ -540,247 +562,38 @@ class ArgoAccessor:
         ds.argo._type = "point"
         return ds
 
-    def filter_data_mode_deprec(  # noqa: C901
-        self, keep_error: bool = True, errors: str = "raise"
-    ):
-        """ Filter variables according to their data mode
-
-        This filter applies to <PARAM> and <PARAM_QC>
-
-        For data mode 'R' and 'A': keep <PARAM> (eg: 'PRES', 'TEMP' and 'PSAL')
-
-        For data mode 'D': keep <PARAM_ADJUSTED> (eg: 'PRES_ADJUSTED', 'TEMP_ADJUSTED' and 'PSAL_ADJUSTED')
-
-        Since ADJUSTED variables are not required anymore after the filter, all *ADJUSTED* variables are dropped in
-        order to avoid confusion wrt variable content. DATA_MODE is preserved for the record.
-
-        Parameters
-        ----------
-        keep_error: bool, optional
-            If true (default) keep the measurements error fields or not.
-
-        errors: {'raise','ignore'}, optional
-            If 'raise' (default), raises a InvalidDatasetStructure error if any of the expected dataset variables is
-            not found. If 'ignore', fails silently and return unmodified dataset.
-
-        Returns
-        -------
-        :class:`xarray.Dataset`
-        """
-        if self._type != "point":
-            raise InvalidDatasetStructure(
-                "Method only available to a collection of points"
-            )
-
-        #########
-        # Sub-functions
-        #########
-        def safe_where_eq(xds, key, value):
-            # xds.where(xds[key] == value, drop=True) is not safe to empty time variables, cf issue #64
-            try:
-                return xds.where(xds[key] == value, drop=True)
-            except ValueError as v:
-                if v.args[0] == (
-                    "zero-size array to reduction operation "
-                    "minimum which has no identity"
-                ):
-                    # A bug in xarray will cause a ValueError if trying to
-                    # decode the times in a NetCDF file with length 0.
-                    # See:
-                    # https://github.com/pydata/xarray/issues/1329
-                    # https://github.com/euroargodev/argopy/issues/64
-                    # Here, we just need to return an empty array
-                    TIME = xds["TIME"]
-                    xds = xds.drop_vars("TIME")
-                    xds = xds.where(xds[key] == value, drop=True)
-                    xds["TIME"] = xr.DataArray(
-                        np.empty((len(xds["N_POINTS"]),), dtype='datetime64[ns]'),
-                        dims="N_POINTS",
-                        attrs=TIME.attrs,
-                    )
-                    xds = xds.set_coords("TIME")
-                    return xds
-
-        def ds_split_datamode(xds):
-            """ Create one dataset for each of the data_mode
-
-                Split full dataset into 3 datasets
-            """
-            # Real-time:
-            argo_r = safe_where_eq(xds, "DATA_MODE", "R")
-            for v in plist:
-                vname = v.upper() + "_ADJUSTED"
-                if vname in argo_r:
-                    argo_r = argo_r.drop_vars(vname)
-                vname = v.upper() + "_ADJUSTED_QC"
-                if vname in argo_r:
-                    argo_r = argo_r.drop_vars(vname)
-                vname = v.upper() + "_ADJUSTED_ERROR"
-                if vname in argo_r:
-                    argo_r = argo_r.drop_vars(vname)
-            # Real-time adjusted:
-            argo_a = safe_where_eq(xds, "DATA_MODE", "A")
-            for v in plist:
-                vname = v.upper()
-                if vname in argo_a:
-                    argo_a = argo_a.drop_vars(vname)
-                vname = v.upper() + "_QC"
-                if vname in argo_a:
-                    argo_a = argo_a.drop_vars(vname)
-            # Delayed mode:
-            argo_d = safe_where_eq(xds, "DATA_MODE", "D")
-
-            return argo_r, argo_a, argo_d
-
-        def fill_adjusted_nan(this_ds, vname):
-            """Fill in the adjusted field with the non-adjusted wherever it is NaN
-
-               Ensure to have values even for bad QC data in delayed mode
-            """
-            ii = this_ds.where(np.isnan(this_ds[vname + "_ADJUSTED"]), drop=1)[
-                "N_POINTS"
-            ]
-            this_ds[vname + "_ADJUSTED"].loc[dict(N_POINTS=ii)] = this_ds[vname].loc[
-                dict(N_POINTS=ii)
-            ]
-            return this_ds
-
-        def merge_arrays(this_argo_r, this_argo_a, this_argo_d, this_vname):
-            """ Merge one variable from 3 DataArrays
-
-                Based on xarray merge function with ’no_conflicts’: only values
-                which are not null in all datasets must be equal. The returned
-                dataset then contains the combination of all non-null values.
-
-                Return a xarray.DataArray
-            """
-
-            def merge_this(a1, a2, a3):
-                return xr.merge((xr.merge((a1, a2)), a3))
-
-            DA = merge_this(
-                this_argo_r[this_vname],
-                this_argo_a[this_vname + "_ADJUSTED"].rename(this_vname),
-                this_argo_d[this_vname + "_ADJUSTED"].rename(this_vname),
-            )
-            DA_QC = merge_this(
-                this_argo_r[this_vname + "_QC"],
-                this_argo_a[this_vname + "_ADJUSTED_QC"].rename(this_vname + "_QC"),
-                this_argo_d[this_vname + "_ADJUSTED_QC"].rename(this_vname + "_QC"),
-            )
-
-            if keep_error:
-                DA_ERROR = xr.merge(
-                    (
-                        this_argo_a[this_vname + "_ADJUSTED_ERROR"].rename(
-                            this_vname + "_ERROR"
-                        ),
-                        this_argo_d[this_vname + "_ADJUSTED_ERROR"].rename(
-                            this_vname + "_ERROR"
-                        ),
-                    )
-                )
-                DA = merge_this(DA, DA_QC, DA_ERROR)
-            else:
-                DA = xr.merge((DA, DA_QC))
-            return DA
-
-        #########
-        # filter
-        #########
-        ds = self._obj
-        if "DATA_MODE" not in ds:
-            if errors == 'raise':
-                raise InvalidDatasetStructure(
-                    "Method only available for dataset with a 'DATA_MODE' variable "
-                )
-            else:
-                # todo should raise a warning instead ?
-                return ds
-
-        # Define variables to filter:
-        possible_list = [
-            "PRES",
-            "TEMP",
-            "PSAL",
-            # "DOXY",
-            # "CHLA",
-            # "BBP532",
-            # "BBP700",
-            # "DOWNWELLING_PAR",
-            # "DOWN_IRRADIANCE380",
-            # "DOWN_IRRADIANCE412",
-            # "DOWN_IRRADIANCE490",
-        ]
-        plist = [p for p in possible_list if p in ds.data_vars]
-
-        # Create one dataset for each of the data_mode:
-        argo_r, argo_a, argo_d = ds_split_datamode(ds)
-
-        # Fill in the adjusted field with the non-adjusted wherever it is NaN
-        for v in plist:
-            argo_d = fill_adjusted_nan(argo_d, v.upper())
-
-        # Drop QC fields in delayed mode dataset:
-        for v in plist:
-            vname = v.upper()
-            if vname in argo_d:
-                argo_d = argo_d.drop_vars(vname)
-            vname = v.upper() + "_QC"
-            if vname in argo_d:
-                argo_d = argo_d.drop_vars(vname)
-
-        # Create new arrays with the appropriate variables:
-        vlist = [merge_arrays(argo_r, argo_a, argo_d, v) for v in plist]
-
-        # Create final dataset by merging all available variables
-        final = xr.merge(vlist)
-
-        # Merge with all other variables:
-        other_variables = list(
-            set([v for v in list(ds.data_vars) if "ADJUSTED" not in v])
-            - set(list(final.data_vars))
-        )
-        # other_variables.remove('DATA_MODE')  # Not necessary anymore
-        for p in other_variables:
-            final = xr.merge((final, ds[p]))
-
-        final.attrs = ds.attrs
-        final.argo._add_history("Variables filtered according to DATA_MODE")
-        final = final[np.sort(final.data_vars)]
-
-        # Cast data types and add attributes:
-        final = final.argo.cast_types()
-
-        return final
-
     def transform_data_mode(self, params: Union[str, List[str]] = 'all', errors: str = 'raise') -> xr.Dataset:
-        """Copy PARAM_ADJUSTED values onto PARAM for points where PARAM_DATA_MODE is 'A' or 'D'
+        """Merge <PARAM> and <PARAM>_ADJUSTED variables according to <PARAM>_DATA_MODE
 
-        For data mode 'R': keep <PARAM> (eg: 'PRES', 'TEMP' or 'DOXY')
+        Merging follows:
+        - For points with data mode ``R``: keep <PARAM> (eg: 'DOXY')
+        - For points with data mode ``D`` and ``A``: keep <PARAM>_ADJUSTED (eg: 'DOXY_ADJUSTED')
 
-        For data mode 'D' and 'A': keep <PARAM_ADJUSTED> (eg: 'PRES_ADJUSTED', 'TEMP_ADJUSTED' or 'DOXY_ADJUSTED')
-
-        Since ADJUSTED variables are not required anymore after the transformation, all *ADJUSTED* variables
-        are dropped in order to avoid confusion wrt variable content. Variable DATA_MODE is preserved for the record.
-
-        Notes
-        -----
-        - Method compatible with core, deep and BGC datasets
+        Since ADJUSTED variables are not required anymore after the transformation, all ADJUSTED variables
+        are dropped in order to avoid confusion with regard to variable content.
+        Variable DATA_MODE or <PARAM>_DATA_MODE are preserved for the record.
 
         Parameters
         ----------
-        params: str, List[str] (optional, default='all')
+        params: str, List[str], optional, default='all'
             Name or list of names of the parameter to merge.
             Use the default keyword ``all`` to merge all available variables in the :class:`xarray.Dataset`.
-        errors: str (optional, default='raise')
-            If ``raise``, raises a InvalidDatasetStructure error if any of the expected variables is
+        errors: str, optional, default='raise'
+            If ``raise``, raises a :class:`argopy.errors.InvalidDatasetStructure` error if any of the expected variables is
             not found.
             If ``ignore``, fails silently and return unmodified dataset.
 
         Returns
         -------
         :class:`xarray.Dataset`
+
+        Notes
+        -----
+        This method is compatible with core, deep and BGC datasets
+
+        See Also
+        --------
+        :meth:`filter_data_mode`
         """
         if self._type != "point":
             raise InvalidDatasetStructure(
@@ -828,16 +641,11 @@ class ArgoAccessor:
 
         This method can return the filtered dataset or the filter mask.
 
-        Notes
-        -----
-        - Method compatible with core, deep and BGC datasets
-        - Can be applied after the :class:`xarray.Dataset.transform_data_mode`
-
         Parameters
         ----------
-        dm: str, list(str), optional, default=['R', 'A', 'D']
+        dm: str, List[str], optional, default=[``R``, ``A``, ``D``]
             List of DATA_MODE values (string) to keep
-        params: str, list(str), optional, default='all'
+        params: str, List[str], optional, default='all'
             List of parameters to apply the filter to. By default, we use all parameters for which a DATA_MODE
             can be found
         logical: str, optional, default='and'
@@ -853,6 +661,16 @@ class ArgoAccessor:
         Returns
         -------
         :class:`xarray.Dataset`
+
+        Notes
+        -----
+        - Method compatible with core, deep and BGC datasets
+        - Can be applied after :meth:`transform_data_mode`
+
+        See Also
+        --------
+        :meth:`transform_data_mode`
+
         """
         if self._type != "point":
             raise InvalidDatasetStructure(
@@ -934,7 +752,7 @@ class ArgoAccessor:
     def filter_qc(  # noqa: C901
         self, QC_list=[1, 2], QC_fields="all", drop=True, mode="all", mask=False
     ):
-        """Filter data set according to QC values
+        """Filter measurements according to QC values
 
         Filter the dataset to keep points where ``all`` or ``any`` of the QC fields has a value in the list
         of integer QC flags.
@@ -2194,7 +2012,7 @@ class ArgoAccessor:
             return list_1d, dummy_argo_uid
 
     def list_WMO_CYC(self):
-        """Given a dataset, return a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) tuple"""
+        """Return a tuple with all (PLATFORM_NUMBER, CYCLE_NUMBER) in the dataset"""
         profiles = []
         for wmo, grp in self._obj.groupby('PLATFORM_NUMBER'):
             [profiles.append((wmo, cyc)) for cyc in np.unique(grp['CYCLE_NUMBER'])]

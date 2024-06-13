@@ -60,7 +60,7 @@ api_server_check = (
 class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     """Manage access to Argo data through Ifremer ERDDAP
 
-    ERDDAP transaction are managed with the erddapy library
+    ERDDAP transaction are managed with the https://github.com/ioos/erddapy library
 
     This class is a prototype not meant to be instantiated directly
 

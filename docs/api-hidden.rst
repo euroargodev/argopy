@@ -141,6 +141,11 @@
     argopy.related.ArgoDOI.file
     argopy.related.ArgoDOI.dx
 
+    argopy.extensions.CanyonMED
+    argopy.extensions.CanyonMED.predict
+    argopy.extensions.CanyonMED.input
+    argopy.extensions.CanyonMED.output_list
+
     argopy.plot
     argopy.plot.dashboard
     argopy.plot.bar_plot
@@ -148,7 +153,6 @@
     argopy.plot.scatter_plot
     argopy.plot.plot_trajectory
     argopy.plot.latlongrid
-    argopy.plot.discrete_coloring
     argopy.plot.open_sat_altim_report
 
     argopy.plot.ArgoColors
@@ -263,6 +267,7 @@
     argopy.xarray.ArgoAccessor.teos10
     argopy.xarray.ArgoAccessor.create_float_source
     argopy.xarray.ArgoAccessor.transform_data_mode
+    argopy.xarray.ArgoAccessor.filter_data_mode
     argopy.xarray.ArgoAccessor.filter_qc
     argopy.xarray.ArgoAccessor.filter_scalib_pres
     argopy.xarray.ArgoAccessor.filter_researchmode
