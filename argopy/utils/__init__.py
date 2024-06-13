@@ -42,6 +42,9 @@ from .compute import linear_interpolation_remap, groupby_remap
 from .transform import (
     fill_variables_not_in_all_datasets,
     drop_variables_not_in_all_datasets,
+    merge_param_with_param_adjusted,
+    filter_param_by_data_mode,
+    split_data_mode,
 )
 from .format import argo_split_path, format_oneline, UriCName
 from .loggers import warnUnless, log_argopy_callerstack
@@ -104,9 +107,12 @@ __all__ = (
     # Computation with datasets:
     "linear_interpolation_remap",
     "groupby_remap",
-    # Manipulate datasets:
+    # Transform datasets:
     "fill_variables_not_in_all_datasets",
     "drop_variables_not_in_all_datasets",
+    "merge_param_with_param_adjusted",
+    "filter_param_by_data_mode",
+    "split_data_mode",
     # Formatters:
     "format_oneline",
     "argo_split_path",

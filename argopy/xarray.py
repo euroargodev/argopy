@@ -27,7 +27,11 @@ from .utils.compute import (
 )
 from .utils.lists import list_core_parameters
 from .utils.geo import toYearFraction
-from .utils.transform import merge_param_with_param_adjusted, filter_param_by_data_mode
+from .utils.transform import (
+    merge_param_with_param_adjusted,
+    filter_param_by_data_mode,
+    split_data_mode,
+)
 from .errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
 log = logging.getLogger("argopy.xarray")
@@ -90,8 +94,10 @@ class ArgoAccessor:
         self._obj = xarray_obj
         self._added = list()  # Will record all new variables added by argo
         # self._register = collections.OrderedDict() # Will register mutable instances of sub-modules like 'plot'
+
         # Variables present in the initial dataset
         self._vars = list(xarray_obj.variables.keys())
+
         # Store the initial list of dimensions
         self._dims = list(xarray_obj.sizes.keys())
         self.encoding = xarray_obj.encoding
@@ -111,7 +117,7 @@ class ArgoAccessor:
         elif "PRES" in self._vars:
             self._mode = "standard"
         else:
-            raise InvalidDatasetStructure("Argo dataset structure not recognised (no PRES nor PRES_ADJUSTED")
+            raise InvalidDatasetStructure("Argo dataset structure not recognised (no PRES nor PRES_ADJUSTED)")
 
     def __repr__(self):
         # import xarray.core.formatting as xrf
@@ -195,7 +201,7 @@ class ArgoAccessor:
             N_POINTS = len(np.unique(self._obj["N_POINTS"]))
         return N_POINTS
 
-    def _add_history(self, txt):
+    def add_history(self, txt):
         if "Processing_history" in self._obj.attrs:
             self._obj.attrs["Processing_history"] += "; %s" % txt
         else:
@@ -220,10 +226,10 @@ class ArgoAccessor:
         this = self._obj.copy(deep=True)
         this = this.where(cond, other=other, drop=drop)
         this = this.argo.cast_types()
-        # this.argo._add_history("Modified with 'where' statement")
+        # this.argo.add_history("Modified with 'where' statement")
         return this
 
-    def cast_types(self, **kwargs):  # noqa: C901
+    def cast_types(self, **kwargs) -> xr.Dataset:  # noqa: C901
         """ Make sure variables are of the appropriate types according to Argo """
         ds = self._obj
         return cast_Argo_variable_type(ds, **kwargs)
@@ -361,17 +367,25 @@ class ArgoAccessor:
                 Pmin, Pmax,
                 np.min(this_ds['TIME'].values), np.max(this_ds['TIME'].values)]
 
-    def point2profile(self, drop: bool = False):  # noqa: C901
+    def point2profile(self, drop: bool = False) -> xr.Dataset:  # noqa: C901
         """ Transform a collection of points into a collection of profiles
 
-        A "point" is a single location for measurements in space and time
-        A "point" is localised as unique UID based on WMO, CYCLE_NUMBER and DIRECTION variable values.
+        - A "point" is a location with unique (N_PROF, N_LEVELS) indexes
+        - A "profile" is a collection of points with an unique UID based on WMO, CYCLE_NUMBER and DIRECTION
 
         Parameters
         ----------
         drop: bool, default=False
             By default will return all variables. But if set to True, then all [N_PROF, N_LEVELS] 2d variables will be
             dropped, and only 1d variables of dimension [N_PROF] will be returned.
+
+        Returns
+        -------
+        :class:`xr.dataset`
+
+        See Also
+        --------
+        :meth:`profile2point`
 
         """
         if self._type != "point":
@@ -506,21 +520,36 @@ class ArgoAccessor:
         new_ds.encoding = self.encoding  # Preserve low-level encoding information
         new_ds.attrs = self.attrs  # Preserve original attributes
         if not drop:
-            new_ds.argo._add_history("Transformed with point2profile")
+            new_ds.argo.add_history("Transformed with 'point2profile'")
             new_ds.argo._type = "profile"
         return new_ds
 
-    def profile2point(self):
-        """ Convert a collection of profiles to a collection of points
+    def profile2point(self) -> xr.Dataset:
+        """ Transform a collection of profiles to a collection of points
 
-        A "point" is a single location for measurements in space and time
-        A "point" is localised as unique UID based on WMO, CYCLE_NUMBER and DIRECTION variable values.
+        - A "point" is a location with unique (N_PROF, N_LEVELS) indexes
+        - A "profile" is a collection of points with an unique UID based on WMO, CYCLE_NUMBER and DIRECTION
+
+        Returns
+        -------
+        :class:`xr.dataset`
+
+        Warnings
+        --------
+        This method will remove any variable that is not with dimensions (N_PROF,) or (N_PROF, N_LEVELS)
+
+        See Also
+        --------
+        :meth:`point2profile`
         """
         if self._type != "profile":
             raise InvalidDatasetStructure(
                 "Method only available for a collection of profiles (N_PROF dimension)"
             )
         ds = self._obj
+        # print(ds.attrs)
+        ds = split_data_mode(ds)  # Otherwise this method will fail with BGC netcdf files
+        # print(ds.attrs)
 
         # Remove all variables for which a dimension is length=0 (eg: N_HISTORY)
         # todo: We should be able to find a way to keep them somewhere in the data structure
@@ -552,15 +581,18 @@ class ArgoAccessor:
 
         # Remove index without data (useless points)
         ds = ds.where(~np.isnan(ds["PRES"]), drop=1)
-        ds = ds.sortby("TIME")
+        ds = ds.sortby("TIME") if "TIME" in ds else ds.sortby("JULD")
         ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
-        ds = ds.argo.cast_types()
+        ds = cast_Argo_variable_type(ds)
         ds = ds[np.sort(ds.data_vars)]
         ds.encoding = self.encoding  # Preserve low-level encoding information
-        ds.attrs = self.attrs  # Preserve original attributes
-        ds.argo._add_history("Transformed with profile2point")
+        ds.argo.add_history("Transformed with 'profile2point'")
         ds.argo._type = "point"
         return ds
+
+    def split_data_mode(self, **kw) -> xr.Dataset:
+        ds = self._obj
+        return split_data_mode(ds, **kw)
 
     def transform_data_mode(self, params: Union[str, List[str]] = 'all', errors: str = 'raise') -> xr.Dataset:
         """Merge <PARAM> and <PARAM>_ADJUSTED variables according to <PARAM>_DATA_MODE
@@ -624,7 +656,7 @@ class ArgoAccessor:
 
         # Finalise:
         ds = ds[np.sort(ds.data_vars)]
-        ds.argo._add_history("[%s] real-time and adjusted/delayed variables merged according to their data mode" % (",".join(params)))
+        ds.argo.add_history("[%s] real-time and adjusted/delayed variables merged according to their data mode" % (",".join(params)))
 
         return ds
 
@@ -706,7 +738,7 @@ class ArgoAccessor:
                     params.remove(p)
 
         if len(params) == 0:
-            this.argo._add_history("Found no variables to select according to DATA_MODE")
+            this.argo.add_history("Found no variables to select according to DATA_MODE")
             return this
 
         logging.debug(
@@ -736,7 +768,7 @@ class ArgoAccessor:
 
             # Finalise:
             this = this[np.sort(this.data_vars)]
-            this.argo._add_history(
+            this.argo.add_history(
                 "[%s] filtered to retain points with data mode in [%s]" % (",".join(params), ",".join(dm)))
 
             if this.argo.N_POINTS == 0:
@@ -745,7 +777,7 @@ class ArgoAccessor:
             return this
 
         else:
-            this.argo._add_history("No data mode found for [%s], no filtering applied" % (",".join(params)))
+            this.argo.add_history("No data mode found for [%s], no filtering applied" % (",".join(params)))
             return this
 
 
@@ -818,7 +850,7 @@ class ArgoAccessor:
             )
 
         if len(QC_fields) == 0:
-            this.argo._add_history("Variables selected according to QC (but found no QC variables)")
+            this.argo.add_history("Variables selected according to QC (but found no QC variables)")
             return this
 
         log.debug(
@@ -847,7 +879,7 @@ class ArgoAccessor:
 
         if not mask:
             this = this.argo._where(this_mask, drop=drop)
-            this.argo._add_history(
+            this.argo.add_history(
                 "[%s] filtered to retain points with QC in [%s]" % (",".join(list(QC_fields.data_vars)), ",".join([str(qc) for qc in QC_list]))
             )
             if this.argo.N_POINTS == 0:
@@ -940,7 +972,7 @@ class ArgoAccessor:
             this = this.drop_vars([v for v in this.data_vars if "ADJUSTED" in v])
 
         # Manage output:
-        this.argo._add_history("Variables filtered according to OWC methodology")
+        this.argo.add_history("Variables filtered according to OWC methodology")
         this = this[np.sort(this.data_vars)]
         if to_profile:
             this = this.argo.point2profile()
@@ -980,7 +1012,7 @@ class ArgoAccessor:
 
         if 'PRES_ERROR' in this.data_vars:  # PRES_ADJUSTED_ERROR was renamed PRES_ERROR by transform_data_mode
             this = this.where(this['PRES_ERROR'] < 20, drop=True)
-        this.argo._add_history("[%s] parameters selected for pressure error < 20db" % (",".join(list_core_parameters())))
+        this.argo.add_history("[%s] parameters selected for pressure error < 20db" % (",".join(list_core_parameters())))
 
         # Manage output:
         if to_profile:
@@ -993,7 +1025,7 @@ class ArgoAccessor:
 
     def interp_std_levels(self,
                           std_lev: list or np.array,
-                          axis: str = 'PRES'):
+                          axis: str = 'PRES') -> xr.Dataset:
         """ Interpolate measurements to standard pressure levels
 
         Parameters
@@ -1102,7 +1134,7 @@ class ArgoAccessor:
         ds_out = ds_out[np.sort(ds_out.data_vars)]
         ds_out = ds_out.argo.cast_types()
         ds_out.attrs = self.attrs  # Preserve original attributes
-        ds_out.argo._add_history("Interpolated on standard %s levels" % axis)
+        ds_out.argo.add_history("Interpolated on standard %s levels" % axis)
 
         # if to_point:
         #     ds_out = ds_out.argo.profile2point()
@@ -1117,7 +1149,7 @@ class ArgoAccessor:
         select: str = "deep",
         squeeze: bool = True,
         merge: bool = True,
-    ):
+    ) -> xr.Dataset:
         """ Group measurements by pressure bins
 
         This method can be used to subsample and align an irregular dataset (pressure not being similar in all profiles)
@@ -1381,7 +1413,7 @@ class ArgoAccessor:
         new_ds = new_ds.argo.cast_types()
         new_ds = new_ds[np.sort(new_ds.data_vars)]
         new_ds.attrs = this_dsp.attrs  # Preserve original attributes
-        new_ds.argo._add_history("Sub-sampled and re-aligned on standard bins")
+        new_ds.argo.add_history("Sub-sampled and re-aligned on standard bins")
 
         if merge:
             new_ds = merge_bin_matching_levels(new_ds)
@@ -1577,7 +1609,7 @@ class ArgoAccessor:
                 k: this[k]
                 for k in [
                     "TIME",
-                    " LATITUDE",
+                    "LATITUDE",
                     "LONGITUDE",
                     "PRES",
                     "PRES_ADJUSTED",

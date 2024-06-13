@@ -311,3 +311,35 @@ def filter_param_by_data_mode(ds: xr.Dataset,
         return filter
     else:
         return ds.loc[dict(N_POINTS=filter)] if len(filter) > 0 else ds
+
+
+def split_data_mode(ds: xr.Dataset) -> xr.Dataset:
+    """Convert PARAMETER_DATA_MODE(N_PROF, N_PARAM) into several <PARAM>_DATA_MODE(N_PROF) variables
+
+    Using the list of *PARAM* found in ``STATION_PARAMETERS``, this method will create ``N_PARAM``
+    new variables in the dataset ``*PARAM*_DATA_MODE(N_PROF)``.
+
+    The variable ``PARAMETER_DATA_MODE`` is drop from the dataset at the end of the process.
+
+    Returns
+    -------
+    :class:`xr.Dataset`
+    """
+    if "STATION_PARAMETERS" in ds and "PARAMETER_DATA_MODE" in ds:
+
+        u64 = lambda s: "%s%s" % (s, " " * (64 - len(s)))
+        params = [p.strip() for p in np.unique(ds['STATION_PARAMETERS'])]
+
+        for param in params:
+            name = "%s_DATA_MODE" % param.replace("_PARAMETER", "").replace("PARAMETER_", "")
+            mask = ds['STATION_PARAMETERS'] == xr.full_like(ds['STATION_PARAMETERS'], u64(param),
+                                                            dtype=ds['STATION_PARAMETERS'].dtype)
+            da = ds['PARAMETER_DATA_MODE'].where(mask, drop=True).isel(N_PARAM=0)
+            da = da.rename(name)
+            da = da.astype(ds['PARAMETER_DATA_MODE'].dtype)
+            ds[name] = da
+
+        ds = ds.drop_vars('PARAMETER_DATA_MODE')
+        ds.argo.add_history("Transformed with 'split_data_mode'")
+
+    return ds
