@@ -50,7 +50,7 @@ DEFAULT = OPTIONS.copy()
 
 # Define the list of possible values
 _DATA_SOURCE_LIST = frozenset(["erddap", "argovis", "gdac"])
-_DATASET_LIST = frozenset(["phy", "bgc", "ref"])
+_DATASET_LIST = frozenset(["phy", "bgc", "ref", "bgc-s", "bgc-b"])
 _USER_LEVEL_LIST = frozenset(["standard", "expert", "research"])
 
 

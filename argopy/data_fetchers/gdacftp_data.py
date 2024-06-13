@@ -21,7 +21,7 @@ from .proto import ArgoDataFetcherProto
 log = logging.getLogger("argopy.gdacftp.data")
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
-dataset_ids = ["phy", "bgc"]  # First is default
+dataset_ids = ["phy", "bgc", "bgc-s", "bgc-b"]  # First is default
 api_server = OPTIONS["ftp"]  # API root url
 api_server_check = (
     api_server  # URL to check if the API is alive, used by isAPIconnected
@@ -99,10 +99,9 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         # Validate server, raise FtpPathError if not valid.
         check_gdac_path(self.server, errors="raise")
 
-        if self.dataset_id == "phy":
-            index_file = "ar_index_global_prof.txt"
-        elif self.dataset_id == "bgc":
-            index_file = "argo_synthetic-profile_index.txt"
+        index_file = "core"
+        if self.dataset_id in ["bgc-s", "bgc-b"]:
+            index_file = self.dataset_id
 
         # Validation of self.server is done by the ArgoIndex:
         self.indexfs = ArgoIndex(

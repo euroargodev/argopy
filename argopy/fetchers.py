@@ -105,6 +105,9 @@ class ArgoDataFetcher:
         self._dataset_id = OPTIONS["dataset"] if ds == "" else ds
         self._src = OPTIONS["src"] if src == "" else src
 
+        if self._dataset_id == "bgc":
+            self._dataset_id = "bgc-s"
+
         if not _VALIDATORS["mode"](self._mode):
             raise OptionValueError(
                 f"option 'mode' given an invalid value: {self._mode}"
