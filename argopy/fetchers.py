@@ -190,7 +190,6 @@ class ArgoDataFetcher:
         summary.append("Performances: cache=%s, parallel=%s" % (str(cache), str(para)))
         summary.append("User mode: %s" % self._mode)
         summary.append("Dataset: %s" % self._dataset_id)
-        # summary.append("Loaded: %s" % self._loaded)
         return "\n".join(summary)
 
     def __empty_processor(self, xds):
@@ -575,8 +574,9 @@ class ArgoDataFetcher:
             if not full:
                 prt("to_index working with argo accessor attribute for a light index")
                 # Get a small index from the argo accessor attribute
-                self.load()
-                df = self.data.argo.index
+                if not self._loaded:
+                    self.load()
+                df = self._data.argo.index
 
                 # Add Coriolis ID if requested:
                 df = add_coriolis(df) if coriolis_id else df
