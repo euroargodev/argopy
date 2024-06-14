@@ -78,8 +78,11 @@ class s3index:
         # Create a boto3 client to interface with S3
         if has_aws_credentials:
             self.fs = boto3.client("s3")
+            access_key = self.fs._request_signer._credentials.get_frozen_credentials().access_key
+            log.debug("Found AWS Credentials for access_key=''" % access_key)
         else:
             self.fs = boto3.client('s3', config=Config(signature_version=UNSIGNED))
+            log.debug("No AWS Credentials found, running UNSIGNED anonymous boto3 requests")
 
         self.stats = {}
         self._sql_logic = 'unique'
@@ -139,7 +142,6 @@ class s3index:
                 Key=self.key,
                 ExpressionType="SQL",
                 Expression=sql_expression,
-                # InputSerialization={"CSV": {"FileHeaderInfo": "USE"}, "CompressionType": "NONE"},
                 InputSerialization={"CSV": {"FileHeaderInfo": "IGNORE",
                                             'Comments': '#',
                                             'QuoteEscapeCharacter': '"',
@@ -152,7 +154,7 @@ class s3index:
                 OutputSerialization={"CSV": {}},
             )
         except:
-            log.debug(boto3.set_stream_logger('botocore', level='DEBUG'))
+            # log.debug(boto3.set_stream_logger('botocore', level='DEBUG'))
             raise
 
         # Iterate over the filtered CSV data
