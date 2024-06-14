@@ -368,4 +368,5 @@ intersphinx_mapping = {
     'pyarrow': ('https://arrow.apache.org/docs/', None),
     'IPython': ('https://ipython.readthedocs.io/en/stable/', None),
     'virtualfleet': ('https://virtualfleet.readthedocs.io/en/latest/', None),
+    'boto3': ('https://boto3.amazonaws.com/v1/documentation/api/latest/', None),
 }
