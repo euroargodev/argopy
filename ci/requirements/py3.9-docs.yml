@@ -2,8 +2,8 @@ name: argopy-docs
 channels:
   - conda-forge
 dependencies:
-  - python=3.8
-  - xarray
+  - python=3.9
+  - xarray=2024.2.0
   - scipy
   - netcdf4
   - dask

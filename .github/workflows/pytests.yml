@@ -58,6 +58,8 @@ jobs:
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
         with:
           task: start-measurement
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
       - uses: actions/checkout@v4
@@ -91,9 +93,13 @@ jobs:
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'setup core-pinned'
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
       - name: Lint with flake8
@@ -108,13 +114,17 @@ jobs:
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'pytest core-pinned'
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.3.1
+        uses: codecov/codecov-action@v4.4.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml
@@ -133,8 +143,12 @@ jobs:
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: display-results
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
   all-pinned:
@@ -164,6 +178,8 @@ jobs:
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
         with:
           task: start-measurement
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
       - uses: actions/checkout@v4
@@ -197,9 +213,13 @@ jobs:
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'setup all-pinned'
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
       - name: Lint with flake8
@@ -214,13 +234,17 @@ jobs:
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'pytest all-pinned'
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.3.1
+        uses: codecov/codecov-action@v4.4.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml
@@ -239,6 +263,10 @@ jobs:
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: display-results
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
