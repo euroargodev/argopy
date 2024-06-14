@@ -1,16 +1,12 @@
 """
-Additionnal index support for S3
+Additional index support for S3
 """
 import io
 import pandas as pd
-import numpy as np
 import logging
-import inspect
-import importlib
 from decorator import decorator
 import warnings
 
-from ..errors import InvalidDataset
 from ..utils.checkers import check_index_cols, check_wmo, check_cyc, is_list_of_strings, has_aws_credentials, HAS_BOTO3
 from ..stores import s3store
 
@@ -137,23 +133,27 @@ class s3index:
 
     def query(self, sql_expression: str) -> str:
         # Use SelectObjectContent to filter CSV data before downloading it
-        s3_object = self.fs.select_object_content(
-            Bucket=self.bucket_name,
-            Key=self.key,
-            ExpressionType="SQL",
-            Expression=sql_expression,
-            # InputSerialization={"CSV": {"FileHeaderInfo": "USE"}, "CompressionType": "NONE"},
-            InputSerialization={"CSV": {"FileHeaderInfo": "IGNORE",
-                                        'Comments': '#',
-                                        'QuoteEscapeCharacter': '"',
-                                        'RecordDelimiter': '\n',
-                                        'FieldDelimiter': ',',
-                                        'QuoteCharacter': '"',
-                                        'AllowQuotedRecordDelimiter': False
-                                        },
-                                "CompressionType": self.CompressionType},
-            OutputSerialization={"CSV": {}},
-        )
+        try:
+            s3_object = self.fs.select_object_content(
+                Bucket=self.bucket_name,
+                Key=self.key,
+                ExpressionType="SQL",
+                Expression=sql_expression,
+                # InputSerialization={"CSV": {"FileHeaderInfo": "USE"}, "CompressionType": "NONE"},
+                InputSerialization={"CSV": {"FileHeaderInfo": "IGNORE",
+                                            'Comments': '#',
+                                            'QuoteEscapeCharacter': '"',
+                                            'RecordDelimiter': '\n',
+                                            'FieldDelimiter': ',',
+                                            'QuoteCharacter': '"',
+                                            'AllowQuotedRecordDelimiter': False
+                                            },
+                                    "CompressionType": self.CompressionType},
+                OutputSerialization={"CSV": {}},
+            )
+        except:
+            log.debug(boto3.set_stream_logger('botocore', level='DEBUG'))
+            raise
 
         # Iterate over the filtered CSV data
         records = []
