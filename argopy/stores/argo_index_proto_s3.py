@@ -76,7 +76,7 @@ class s3index:
 
     def __init__(self):
         # Create a boto3 client to interface with S3
-        if has_aws_credentials:
+        if has_aws_credentials():
             self.fs = boto3.client("s3")
             log.debug("self.fs._request_signer._credentials")
             log.debug(self.fs._request_signer._credentials)
