@@ -197,7 +197,6 @@ class ArgoDataFetcher:
         summary.append("Performances: cache=%s, parallel=%s" % (str(cache), str(para)))
         summary.append("User mode: %s" % self._mode)
         summary.append("Dataset: %s" % self._dataset_id)
-        summary.append("Loaded: %s" % self._loaded)
         return "\n".join(summary)
 
     def __getattr__(self, key):
@@ -618,7 +617,7 @@ class ArgoDataFetcher:
         # With the gdac and erddap+bgc,
         # we rely on the fetcher ArgoIndex:
         # (hence we always return a full index)
-        if (self._src == 'erddap' and self._dataset_id == 'bgc') or (self._src == 'gdac'):
+        if (self._src == 'erddap' and 'bgc' in self._dataset_id) or (self._src == 'gdac'):
             prt("to_index working with fetcher ArgoIndex instance")
             idx = self.fetcher.indexfs
             if self._AccessPoint == "region":
@@ -646,8 +645,9 @@ class ArgoDataFetcher:
             if not full:
                 prt("to_index working with argo accessor attribute for a light index")
                 # Get a small index from the argo accessor attribute
-                self.load()
-                df = self.data.argo.index
+                if not self._loaded:
+                    self.load()
+                df = self._data.argo.index
 
                 # Add Coriolis ID if requested:
                 df = add_coriolis(df) if coriolis_id else df
@@ -682,13 +682,13 @@ class ArgoDataFetcher:
                     prt("to_index replaced the light index with the full version")
                     self._index = df
 
-        if 'wmo' in df and 'cyc' in df:
+        if 'wmo' in df and 'cyc' in df and self._loaded:
             # Ensure that all profiles reported in the index are indeed in the dataset
             # This is not necessarily the case when the index is based on an ArgoIndex instance that may come to differ from postprocessed dataset
             irow_remove = []
             for irow, row in df.iterrows():
-                i_found = np.logical_and.reduce((self.data['PLATFORM_NUMBER'] == row['wmo'],
-                                                 self.data['CYCLE_NUMBER'] == row['cyc']))
+                i_found = np.logical_and.reduce((self._data['PLATFORM_NUMBER'] == row['wmo'],
+                                                 self._data['CYCLE_NUMBER'] == row['cyc']))
                 if i_found.sum() == 0:
                     irow_remove.append(irow)  # Remove this profile from the index
             df = df.drop(irow_remove, axis=0)
