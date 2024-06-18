@@ -83,7 +83,7 @@ jobs:
           task: start-measurement
           company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
           project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
-          machine-uuid: ${{ secrets.CARBONDB_MACHINE_UUID_PYTESTS }}
+          machine-uuid: ${{ secrets.CARBONDB_MACHINE_UUID_PYTESTS_UPSTREAM }}
         continue-on-error: true
 
       - uses: actions/checkout@v4
@@ -206,7 +206,7 @@ jobs:
           task: start-measurement
           company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
           project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
-          machine-uuid: ${{ secrets.CARBONDB_MACHINE_UUID_PYTESTS }}
+          machine-uuid: ${{ secrets.CARBONDB_MACHINE_UUID_PYTESTS_UPSTREAM }}
         continue-on-error: true
 
       - uses: actions/checkout@v4
