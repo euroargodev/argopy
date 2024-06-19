@@ -42,7 +42,7 @@ from .utils import show_versions, show_options  # noqa: E402
 from .utils import clear_cache, lscache  # noqa: E402
 from .utils import MonitoredThreadPoolExecutor  # noqa: E402, F401
 from .utils import monitor_status as status  # noqa: E402
-from .related import TopoFetcher, OceanOPSDeployments, ArgoNVSReferenceTables, ArgoDocs, ArgoDOI  # noqa: E402
+from .related import TopoFetcher, OceanOPSDeployments, ArgoNVSReferenceTables, ArgoDocs, ArgoDOI, Assistant  # noqa: E402
 
 
 #
@@ -70,6 +70,7 @@ __all__ = (
     "ArgoDocs",  # Class
     "TopoFetcher",  # Class
     "ArgoDOI",  # Class
+    "Assistant",  # class
 
     # Submodules:
     "utilities",  # being deprecated until 0.1.15, then remove
@@ -78,6 +79,7 @@ __all__ = (
     "ArgoColors",  # Class
     "stores",
     "tutorial",
+
     # Constants
     "__version__"
 )

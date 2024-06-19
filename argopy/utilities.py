@@ -302,3 +302,4 @@ if __name__ == "argopy.utilities":
         category=DeprecationWarning,
         stacklevel=2,
     )
+
