@@ -4,7 +4,7 @@
     "@type" : "skos:Collection",
     "alternative" : "ARGO_WMO_INST_TYPE",
     "creator" : "Argo Data Management Team",
-    "date" : "2021-02-02 02:00:02.0",
+    "date" : "2024-04-20 03:00:06.0",
     "description" : "Subset of instrument type codes from the World Meteorological Organization (WMO) Common Code Table C-3 (CCT C-3) 1770, named 'Instrument make and type for water temperature profile measurement with fall rate equation coefficients' and available here: https://library.wmo.int/doc_num.php?explnum_id=11283. Argo netCDF variable WMO_INST_TYPE is populated by R08 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo instrument types",
@@ -12,9 +12,9 @@
     "RE_RegisterOwner" : "Argo Data Management Team",
     "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
     "seeAlso" : "https://github.com/nvs-vocabs/R08",
-    "versionInfo" : "2",
+    "versionInfo" : "7",
     "altLabel" : "ARGO_WMO_INST_TYPE",
-    "member" : [ "http://vocab.nerc.ac.uk/collection/R08/current/850/", "http://vocab.nerc.ac.uk/collection/R08/current/861/", "http://vocab.nerc.ac.uk/collection/R08/current/856/", "http://vocab.nerc.ac.uk/collection/R08/current/859/", "http://vocab.nerc.ac.uk/collection/R08/current/860/", "http://vocab.nerc.ac.uk/collection/R08/current/858/", "http://vocab.nerc.ac.uk/collection/R08/current/857/", "http://vocab.nerc.ac.uk/collection/R08/current/862/", "http://vocab.nerc.ac.uk/collection/R08/current/855/", "http://vocab.nerc.ac.uk/collection/R08/current/854/", "http://vocab.nerc.ac.uk/collection/R08/current/853/", "http://vocab.nerc.ac.uk/collection/R08/current/852/", "http://vocab.nerc.ac.uk/collection/R08/current/865/", "http://vocab.nerc.ac.uk/collection/R08/current/879/", "http://vocab.nerc.ac.uk/collection/R08/current/878/", "http://vocab.nerc.ac.uk/collection/R08/current/837/", "http://vocab.nerc.ac.uk/collection/R08/current/848/", "http://vocab.nerc.ac.uk/collection/R08/current/847/", "http://vocab.nerc.ac.uk/collection/R08/current/851/", "http://vocab.nerc.ac.uk/collection/R08/current/864/", "http://vocab.nerc.ac.uk/collection/R08/current/863/", "http://vocab.nerc.ac.uk/collection/R08/current/877/", "http://vocab.nerc.ac.uk/collection/R08/current/876/", "http://vocab.nerc.ac.uk/collection/R08/current/875/", "http://vocab.nerc.ac.uk/collection/R08/current/880/", "http://vocab.nerc.ac.uk/collection/R08/current/831/", "http://vocab.nerc.ac.uk/collection/R08/current/839/", "http://vocab.nerc.ac.uk/collection/R08/current/838/", "http://vocab.nerc.ac.uk/collection/R08/current/846/", "http://vocab.nerc.ac.uk/collection/R08/current/845/", "http://vocab.nerc.ac.uk/collection/R08/current/844/", "http://vocab.nerc.ac.uk/collection/R08/current/843/", "http://vocab.nerc.ac.uk/collection/R08/current/842/", "http://vocab.nerc.ac.uk/collection/R08/current/841/", "http://vocab.nerc.ac.uk/collection/R08/current/840/", "http://vocab.nerc.ac.uk/collection/R08/current/849/" ],
+    "member" : [ "http://vocab.nerc.ac.uk/collection/R08/current/850/", "http://vocab.nerc.ac.uk/collection/R08/current/859/", "http://vocab.nerc.ac.uk/collection/R08/current/861/", "http://vocab.nerc.ac.uk/collection/R08/current/858/", "http://vocab.nerc.ac.uk/collection/R08/current/856/", "http://vocab.nerc.ac.uk/collection/R08/current/860/", "http://vocab.nerc.ac.uk/collection/R08/current/857/", "http://vocab.nerc.ac.uk/collection/R08/current/862/", "http://vocab.nerc.ac.uk/collection/R08/current/855/", "http://vocab.nerc.ac.uk/collection/R08/current/854/", "http://vocab.nerc.ac.uk/collection/R08/current/853/", "http://vocab.nerc.ac.uk/collection/R08/current/852/", "http://vocab.nerc.ac.uk/collection/R08/current/865/", "http://vocab.nerc.ac.uk/collection/R08/current/872/", "http://vocab.nerc.ac.uk/collection/R08/current/879/", "http://vocab.nerc.ac.uk/collection/R08/current/885/", "http://vocab.nerc.ac.uk/collection/R08/current/878/", "http://vocab.nerc.ac.uk/collection/R08/current/884/", "http://vocab.nerc.ac.uk/collection/R08/current/883/", "http://vocab.nerc.ac.uk/collection/R08/current/882/", "http://vocab.nerc.ac.uk/collection/R08/current/837/", "http://vocab.nerc.ac.uk/collection/R08/current/836/", "http://vocab.nerc.ac.uk/collection/R08/current/835/", "http://vocab.nerc.ac.uk/collection/R08/current/834/", "http://vocab.nerc.ac.uk/collection/R08/current/848/", "http://vocab.nerc.ac.uk/collection/R08/current/847/", "http://vocab.nerc.ac.uk/collection/R08/current/851/", "http://vocab.nerc.ac.uk/collection/R08/current/864/", "http://vocab.nerc.ac.uk/collection/R08/current/863/", "http://vocab.nerc.ac.uk/collection/R08/current/877/", "http://vocab.nerc.ac.uk/collection/R08/current/881/", "http://vocab.nerc.ac.uk/collection/R08/current/876/", "http://vocab.nerc.ac.uk/collection/R08/current/875/", "http://vocab.nerc.ac.uk/collection/R08/current/880/", "http://vocab.nerc.ac.uk/collection/R08/current/889/", "http://vocab.nerc.ac.uk/collection/R08/current/888/", "http://vocab.nerc.ac.uk/collection/R08/current/887/", "http://vocab.nerc.ac.uk/collection/R08/current/886/", "http://vocab.nerc.ac.uk/collection/R08/current/831/", "http://vocab.nerc.ac.uk/collection/R08/current/839/", "http://vocab.nerc.ac.uk/collection/R08/current/838/", "http://vocab.nerc.ac.uk/collection/R08/current/846/", "http://vocab.nerc.ac.uk/collection/R08/current/845/", "http://vocab.nerc.ac.uk/collection/R08/current/844/", "http://vocab.nerc.ac.uk/collection/R08/current/843/", "http://vocab.nerc.ac.uk/collection/R08/current/842/", "http://vocab.nerc.ac.uk/collection/R08/current/841/", "http://vocab.nerc.ac.uk/collection/R08/current/840/", "http://vocab.nerc.ac.uk/collection/R08/current/849/", "http://vocab.nerc.ac.uk/collection/R08/current/891/", "http://vocab.nerc.ac.uk/collection/R08/current/890/" ],
     "prefLabel" : "Argo instrument types"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/831/",
@@ -41,6 +41,87 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "PALACE float"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/834/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R08::834",
+    "date" : "2023-10-05 14:39:49.0",
+    "identifier" : "SDN:R08::834",
+    "authoredOn" : "2023-10-05 14:39:49.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/834/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/834/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "834",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "PROVOR V with Seabird CTD sensor"
+    },
+    "notation" : "SDN:R08::834",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PROVOR V SBE"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/835/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R08::835",
+    "date" : "2023-10-05 14:39:49.0",
+    "identifier" : "SDN:R08::835",
+    "authoredOn" : "2023-10-05 14:39:49.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/835/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/835/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "835",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "PROVOR IV"
+    },
+    "notation" : "SDN:R08::835",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PROVOR IV"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/836/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R08::836",
+    "date" : "2023-10-05 14:39:49.0",
+    "identifier" : "SDN:R08::836",
+    "authoredOn" : "2023-10-05 14:39:49.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/836/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/836/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "836",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "PROVOR CTS4 generation with dual board"
+    },
+    "notation" : "SDN:R08::836",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PROVOR III"
     }
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/837/",
@@ -133,6 +214,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "840",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/",
     "definition" : {
       "@language" : "en",
       "@value" : "PROVOR profiling float with no conductivity sensor"
@@ -159,6 +241,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "841",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/",
     "definition" : {
       "@language" : "en",
       "@value" : "PROVOR profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -185,6 +268,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "842",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/",
     "definition" : {
       "@language" : "en",
       "@value" : "PROVOR profiling float with Falmouth Scientific Inc. (FSI) conductivity sensor"
@@ -797,6 +881,32 @@
       "@value" : "NOVA float with SBE conductivity sensor"
     }
   }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/872/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R08::872",
+    "date" : "2024-04-19 16:28:04.0",
+    "identifier" : "SDN:R08::872",
+    "authoredOn" : "2024-04-19 16:28:04.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/872/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "872",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "S2X profiling float"
+    },
+    "notation" : "SDN:R08::872",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "S2X"
+    }
+  }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/875/",
     "@type" : "skos:Concept",
     "dce:identifier" : "SDN:R08::875",
@@ -952,6 +1062,303 @@
       "@language" : "en",
       "@value" : "S2A float with RBR conductivity sensor"
     }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/881/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R08::881",
+    "date" : "2023-10-05 14:39:49.0",
+    "identifier" : "SDN:R08::881",
+    "authoredOn" : "2023-10-05 14:39:49.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/881/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/881/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "881",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "HM4000 float"
+    },
+    "notation" : "SDN:R08::881",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "HM4000"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/882/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R08::882",
+    "date" : "2023-10-05 14:39:49.0",
+    "identifier" : "SDN:R08::882",
+    "authoredOn" : "2023-10-05 14:39:49.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/882/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/882/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "882",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "XUANWU float"
+    },
+    "notation" : "SDN:R08::882",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "XUANWU"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/883/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R08::883",
+    "date" : "2024-04-19 16:29:58.0",
+    "identifier" : "SDN:R08::883",
+    "authoredOn" : "2024-04-19 16:29:58.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/883/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/883/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "883",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "APEX_D deep profiling float with RBR conductivity sensor"
+    },
+    "notation" : "SDN:R08::883",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "APEX_D deep float with RBR conductivity sensor"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/884/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R08::884",
+    "date" : "2023-10-05 14:39:49.0",
+    "identifier" : "SDN:R08::884",
+    "authoredOn" : "2023-10-05 14:39:49.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/884/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/884/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "884",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "SOLO_BGC, SBE float"
+    },
+    "notation" : "SDN:R08::884",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "SOLO_BGC, SBE"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/885/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R08::885",
+    "date" : "2023-10-05 14:39:49.0",
+    "identifier" : "SDN:R08::885",
+    "authoredOn" : "2023-10-05 14:39:49.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/885/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/885/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "885",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "SOLO_BGC, RBR float"
+    },
+    "notation" : "SDN:R08::885",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "SOLO_BGC, RBR"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/886/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R08::886",
+    "date" : "2023-10-05 14:39:49.0",
+    "identifier" : "SDN:R08::886",
+    "authoredOn" : "2023-10-05 14:39:49.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/886/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/886/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "886",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "SOLO_BGC_MRV, SBE float"
+    },
+    "notation" : "SDN:R08::886",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "SOLO_BGC_MRV, SBE"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/887/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R08::887",
+    "date" : "2023-10-05 14:39:49.0",
+    "identifier" : "SDN:R08::887",
+    "authoredOn" : "2023-10-05 14:39:49.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/887/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/887/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "887",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "SOLO_BGC_MRV, RBR float"
+    },
+    "notation" : "SDN:R08::887",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "SOLO_BGC_MRV, RBR"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/888/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R08::888",
+    "date" : "2023-10-05 14:39:49.0",
+    "identifier" : "SDN:R08::888",
+    "authoredOn" : "2023-10-05 14:39:49.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/888/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/888/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "888",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "PROVOR_V - Jumbo, SBE float"
+    },
+    "notation" : "SDN:R08::888",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PROVOR_V - Jumbo, SBE"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/889/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R08::889",
+    "date" : "2023-10-05 14:39:49.0",
+    "identifier" : "SDN:R08::889",
+    "authoredOn" : "2023-10-05 14:39:49.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/889/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/889/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "889",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "PROVOR_V - Jumbo, RBR float"
+    },
+    "notation" : "SDN:R08::889",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PROVOR_V - Jumbo, RBR"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/890/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R08::890",
+    "date" : "2023-10-05 14:39:49.0",
+    "identifier" : "SDN:R08::890",
+    "authoredOn" : "2023-10-05 14:39:49.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/890/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/890/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "890",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "PROVOR_III - Jumbo, SBE float"
+    },
+    "notation" : "SDN:R08::890",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PROVOR_III - Jumbo, SBE"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R08/current/891/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R08::891",
+    "date" : "2023-10-05 14:39:49.0",
+    "identifier" : "SDN:R08::891",
+    "authoredOn" : "2023-10-05 14:39:49.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/891/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R08/current/891/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "891",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "PROVOR_III - Jumbo, RBR float"
+    },
+    "notation" : "SDN:R08::891",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "PROVOR_III - Jumbo, RBR"
+    }
   } ],
   "@context" : {
     "identifier" : {
@@ -960,27 +1367,14 @@
     "notation" : {
       "@id" : "http://www.w3.org/2004/02/skos/core#notation"
     },
-    "date" : {
-      "@id" : "http://purl.org/dc/terms/date"
-    },
     "authoredOn" : {
       "@id" : "http://purl.org/pav/authoredOn"
-    },
-    "definition" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#definition"
-    },
-    "hasCurrentVersion" : {
-      "@id" : "http://purl.org/pav/hasCurrentVersion",
-      "@type" : "@id"
     },
     "versionInfo" : {
       "@id" : "http://www.w3.org/2002/07/owl#versionInfo"
     },
-    "note" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#note"
-    },
-    "altLabel" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#altLabel"
+    "deprecated" : {
+      "@id" : "http://www.w3.org/2002/07/owl#deprecated"
     },
     "version" : {
       "@id" : "http://purl.org/pav/version"
@@ -988,12 +1382,33 @@
     "prefLabel" : {
       "@id" : "http://www.w3.org/2004/02/skos/core#prefLabel"
     },
+    "definition" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#definition"
+    },
     "inDataset" : {
       "@id" : "http://rdfs.org/ns/void#inDataset",
       "@type" : "@id"
     },
-    "deprecated" : {
-      "@id" : "http://www.w3.org/2002/07/owl#deprecated"
+    "hasCurrentVersion" : {
+      "@id" : "http://purl.org/pav/hasCurrentVersion",
+      "@type" : "@id"
+    },
+    "note" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#note"
+    },
+    "date" : {
+      "@id" : "http://purl.org/dc/terms/date"
+    },
+    "altLabel" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#altLabel"
+    },
+    "hasVersion" : {
+      "@id" : "http://purl.org/pav/hasVersion",
+      "@type" : "@id"
+    },
+    "broader" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#broader",
+      "@type" : "@id"
     },
     "member" : {
       "@id" : "http://www.w3.org/2004/02/skos/core#member",
@@ -1036,6 +1451,7 @@
     "iop" : "https://w3id.org/iadopt/ont#",
     "ns1" : "http://www.w3.org/ns/dx/prof/",
     "puv" : "https://w3id.org/env/puv#",
+    "semapv" : "http://w3id.org/semapv/vocab/",
     "dct" : "http://purl.org/dc/terms/",
     "reg" : "http://purl.org/linked-data/registry#",
     "dcat" : "http://www.w3.org/ns/dcat#",
@@ -1045,6 +1461,7 @@
     "void" : "http://rdfs.org/ns/void#",
     "pav" : "http://purl.org/pav/",
     "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "sssom" : "https://w3id.org/sssom/schema/",
     "dc" : "http://purl.org/dc/terms/"
   }
 }

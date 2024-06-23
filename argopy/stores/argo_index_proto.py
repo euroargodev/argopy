@@ -47,6 +47,8 @@ class ArgoIndexStoreProto(ABC):
         "argo_synthetic-profile_index",
         "bgc-s",
         "synth",
+        "argo_aux-profile_index",
+        "aux",
     ]
     """List of supported conventions"""
 
@@ -65,19 +67,21 @@ class ArgoIndexStoreProto(ABC):
         ----------
         host: str, default: ``https://data-argo.ifremer.fr``
             Local or remote (ftp or http) path to a `dac` folder (GDAC structure compliant). This takes values
-            like: ``ftp://ftp.ifremer.fr/ifremer/argo``, ``ftp://usgodae.org/pub/outgoing/argo`` or a local absolute path.
+            like: ``ftp://ftp.ifremer.fr/ifremer/argo``, ``ftp://usgodae.org/pub/outgoing/argo`` or a local
+            absolute path.
         index_file: str, default: ``ar_index_global_prof.txt``
             Name of the csv-like text file with the index.
 
             Possible values are standard file name: ``ar_index_global_prof.txt``,
-            ``argo_bio-profile_index.txt`` or ``argo_synthetic-profile_index.txt``.
+            ``argo_bio-profile_index.txt``, ``argo_synthetic-profile_index.txt``
+            or ``etc/argo-index/argo_aux-profile_index.txt``
 
             You can also use the following shortcuts: ``core``, ``bgc-b``, ``bgc-s``, respectively.
         convention: str, default: None
             Set the expected format convention of the index file. This is useful when trying to load index file with custom name. If set to ``None``, we'll try to infer the convention from the ``index_file`` value.
-             Possible values: ``ar_index_global_prof``, ``argo_bio-profile_index``, or ``argo_synthetic-profile_index``.
+             Possible values: ``ar_index_global_prof``, ``argo_bio-profile_index``, ``argo_synthetic-profile_index`` or ``argo_aux-profile_index``.
 
-            You can also use the keyword: ``core``, ``bgc-s``, ``bgc-b``.
+            You can also use the keyword: ``core``, ``bgc-s``, ``bgc-b`` and ``aux``.
         cache : bool, default: False
             Use cache or not.
         cachedir: str, default: OPTIONS['cachedir']
@@ -94,6 +98,8 @@ class ArgoIndexStoreProto(ABC):
             index_file = "argo_synthetic-profile_index.txt"
         elif index_file in ["bgc-b", "bio"]:
             index_file = "argo_bio-profile_index.txt"
+        elif index_file in ["aux"]:
+            index_file = "etc/argo-index/argo_aux-profile_index.txt"
         self.index_file = index_file
 
         self.cache = cache
@@ -161,6 +167,16 @@ class ArgoIndexStoreProto(ABC):
                 "Convention '%s' is not supported, it must be one in: %s"
                 % (convention, self.convention_supported)
             )
+        else:
+            # Catch shortcuts for convention:
+            if convention in ["core"]:
+                convention = "ar_index_global_prof"
+            elif convention in ["bgc-s", "synth"]:
+                convention = "argo_synthetic-profile_index"
+            elif convention in ["bgc-b", "bio"]:
+                convention = "argo_bio-profile_index"
+            elif convention in ["aux"]:
+                convention = "argo_aux-profile_index"
         self._convention = convention
 
         # # CNAME internal manager to be able to chain search methods:
@@ -363,6 +379,8 @@ class ArgoIndexStoreProto(ABC):
             title = "Bio-Profile directory file of the Argo GDAC"
         elif self.convention in ["argo_synthetic-profile_index", "bgc-s", "synth"]:
             title = "Synthetic-Profile directory file of the Argo GDAC"
+        elif self.convention in ["argo_aux-profile_index", "aux"]:
+            title = "Aux-Profile directory file of the Argo GDAC"
         return title
 
     def _same_origin(self, path):
@@ -532,7 +550,7 @@ class ArgoIndexStoreProto(ABC):
             df["date_update"] = pd.to_datetime(df["date_update"], format="%Y%m%d%H%M%S")
             df["wmo"] = df["file"].apply(lambda x: int(x.split("/")[1]))
             df["cyc"] = df["file"].apply(
-                lambda x: int(x.split("_")[-1].split(".nc")[0].replace("D", ""))
+                lambda x: int(x.split("_")[1].split(".nc")[0].replace("D", ""))
             )
 
             if completed:
@@ -809,7 +827,7 @@ class ArgoIndexStoreProto(ABC):
 
         Warnings
         --------
-        This method is only available for index following the ``bgc-s`` or ``bgc-b`` conventions.
+        This method is only available for index following the ``bgc-s``, ``bgc-b`` and ``aux`` conventions.
 
         """
         raise NotImplementedError("Not implemented")
@@ -879,6 +897,22 @@ file,date,latitude,longitude,ocean,profiler_type,institution,parameters,paramete
 # FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
 # GDAC node : CORIOLIS
 file,date,latitude,longitude,ocean,profiler_type,institution,parameters,parameter_data_mode,date_update
+""" % pd.to_datetime(
+                "now", utc=True
+            ).strftime(
+                "%Y%m%d%H%M%S"
+            )
+
+        elif self.convention == "argo_aux-profile_index":
+            header = """# Title : Aux-Profile directory file of the Argo Global Data Assembly Center
+# Description : The directory file describes all aux-profile files of the argo GDAC ftp site.
+# Project : ARGO
+# Format version : 2.2
+# Date of update : %s
+# FTP root number 1 : ftp://ftp.ifremer.fr/ifremer/argo/dac
+# FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
+# GDAC node : CORIOLIS
+file,date,latitude,longitude,ocean,profiler_type,institution,parameters,date_update
 """ % pd.to_datetime(
                 "now", utc=True
             ).strftime(

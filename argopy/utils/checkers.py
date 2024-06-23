@@ -406,8 +406,23 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
             "date_update",
         ]
 
+    if (
+        convention == "argo_aux-profile_index"
+    ):
+        # ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution', 'parameters', 'date_update']
+        ref = [
+            "file",
+            "date",
+            "latitude",
+            "longitude",
+            "ocean",
+            "profiler_type",
+            "institution",
+            "parameters",
+            "date_update",
+        ]
     if not is_list_equal(column_names, ref):
-        # log.debug("Expected: %s, got: %s" % (";".join(ref), ";".join(column_names)))
+        log.debug("Expected (convention=%s): %s, got: %s" % (convention, ";".join(ref), ";".join(column_names)))
         raise InvalidDatasetStructure("Unexpected column names in this index !")
     else:
         return column_names

@@ -362,16 +362,17 @@ If you want to add your own data fetcher for a new service, then, keep in mind t
     *  ``exit_formats``, eg: ['xarray']
     *  ``dataset_ids``, eg: ['phy', 'ref', 'bgc']
 
-  * provides the facade API (:class:`argopy.fetchers.ArgoDataFetcher`) methods to filter data
+  * provides the facade API (:class:`argopy.fetchers.ArgoDataFetcher`) methods to transform or filter data
     according to user level or requests. These must includes:
 
-    *  :func:`filter_data_mode`
+    *  :func:`transform_data_mode`
     *  :func:`filter_qc`
     *  :func:`filter_variables`
+    *  :func:`filter_researchmode`
 
 
 It is the responsibility of the facade API (:class:`argopy.fetchers.ArgoDataFetcher`) to run
-filters according to user level or requests, not the data fetcher.
+transformers and filters according to user level or requests, not the data fetcher.
 
 Detailed guideline
 ^^^^^^^^^^^^^^^^^^

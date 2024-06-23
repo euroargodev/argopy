@@ -92,6 +92,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         """
         self.definition = "Argovis Argo data fetcher"
         self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
+        self.user_mode =  kwargs["mode"] if "mode" in kwargs else OPTIONS["mode"]
         self.server = kwargs["server"] if "server" in kwargs else api_server
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.store_opts = {
@@ -370,9 +371,8 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         ds = self.filter_domain(ds)  # https://github.com/euroargodev/argopy/issues/48
         return ds
 
-    def filter_data_mode(self, ds: xr.Dataset, **kwargs):
-        # Argovis data already curated !
-        # ds = ds.argo.filter_data_mode(errors='ignore', **kwargs)
+    def transform_data_mode(self, ds: xr.Dataset, **kwargs):
+        # Argovis data are already curated !
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
@@ -389,7 +389,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
 
         This filter will select only QC=1 delayed mode data with pressure errors smaller than 20db
 
-        Use this filter instead of filter_data_mode and filter_qc
+        Use this filter instead of transform_data_mode and filter_qc
         """
         ds = ds.argo.filter_researchmode()
         if ds.argo._type == "point":
