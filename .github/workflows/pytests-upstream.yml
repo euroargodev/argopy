@@ -54,8 +54,6 @@ jobs:
 
     name: Core - Free - Py${{matrix.python-version}} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    permissions:
-      pull-requests: write # this allows to show table and charts in PRs
     needs: [detect-ci-trigger, detect-ci-skip]
     if: |
         always()
@@ -168,7 +166,6 @@ jobs:
           ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: display-results
-          pr-comment: true
           send-data: true
         continue-on-error: true
 
@@ -177,8 +174,6 @@ jobs:
 
     name: All - Free - Py${{matrix.python-version}} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    permissions:
-      pull-requests: write # this allows to show table and charts in PRs
     needs: [detect-ci-trigger, detect-ci-skip]
     if: |
         always()
@@ -292,6 +287,5 @@ jobs:
           ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: display-results
-          pr-comment: true
           send-data: true
         continue-on-error: true

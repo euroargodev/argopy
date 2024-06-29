@@ -38,8 +38,6 @@ jobs:
     name: Core - Pinned - Py${{matrix.python-version}} - ${{ matrix.os }}
     needs: detect-ci-skip
     runs-on: ${{ matrix.os }}
-    permissions:
-      pull-requests: write # this allows to show table and charts in PRs
     if: needs.detect-ci-skip.outputs.skipped == 'false'
     defaults:
       run:
@@ -146,7 +144,6 @@ jobs:
           ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: display-results
-          pr-comment: true
           send-data: true
         continue-on-error: true
 
@@ -157,8 +154,6 @@ jobs:
     name: All - Pinned - Py${{matrix.python-version}} - ${{ matrix.os }}
     needs: detect-ci-skip
     runs-on: ${{ matrix.os }}
-    permissions:
-      pull-requests: write # this allows to show table and charts in PRs
     if: needs.detect-ci-skip.outputs.skipped == 'false'
     defaults:
       run:
@@ -265,6 +260,5 @@ jobs:
           ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: display-results
-          pr-comment: true
           send-data: true
         continue-on-error: true
