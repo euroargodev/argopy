@@ -81,6 +81,7 @@ jobs:
           task: start-measurement
           company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
           project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
+          machine-uuid: ${{ secrets.CARBONDB_MACHINE_UUID_PYTESTS_UPSTREAM }}
         continue-on-error: true
 
       - uses: actions/checkout@v4
@@ -120,8 +121,6 @@ jobs:
         with:
           task: get-measurement
           label: 'setup core-free'
-          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
-          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
       - name: Lint with flake8
@@ -142,8 +141,6 @@ jobs:
         with:
           task: get-measurement
           label: 'pytest core-free'
-          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
-          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
       - name: Generate and publish a report on failure
@@ -169,8 +166,7 @@ jobs:
           ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: display-results
-          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
-          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
+          send-data: true
         continue-on-error: true
 
   all-free:
@@ -205,6 +201,7 @@ jobs:
           task: start-measurement
           company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
           project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
+          machine-uuid: ${{ secrets.CARBONDB_MACHINE_UUID_PYTESTS_UPSTREAM }}
         continue-on-error: true
 
       - uses: actions/checkout@v4
@@ -245,8 +242,6 @@ jobs:
         with:
           task: get-measurement
           label: 'setup all-free'
-          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
-          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
       - name: Lint with flake8
@@ -267,8 +262,6 @@ jobs:
         with:
           task: get-measurement
           label: 'pytest all-free'
-          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
-          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
         continue-on-error: true
 
       - name: Generate and publish a report on failure
@@ -294,6 +287,5 @@ jobs:
           ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: display-results
-          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
-          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
+          send-data: true
         continue-on-error: true
