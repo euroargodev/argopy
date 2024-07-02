@@ -23,8 +23,7 @@ from .proto import ArgoDataFetcherProto
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
 dataset_ids = ["phy"]  # First is default
-# api_server = 'https://argovis.colorado.edu'  # API root url
-api_server = "https://argovisbeta02.colorado.edu"  # v1 API, expires on March 31, 2023
+api_server = "https://argovis-api.colorado.edu" 
 api_server_check = {
     "url": api_server + "/selection/overview",
     "keyword": "numberOfProfiles",
@@ -282,15 +281,27 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         # Transform
         rows = []
         for profile in data:
-            keys = [x for x in profile.keys() if x not in ["measurements", "bgcMeas"]]
-            meta_row = dict((key, profile[key]) for key in keys)
-            meta_row["date"] = (
-                meta_row["date"][0:-2]
-                if meta_row["date"][-1] == "Z"
-                else meta_row["date"]
-            )  # Remove timezone #101
-            for row in profile["measurements"]:
-                row.update(meta_row)
+            # construct metadata dictionary that will be repeated for each level
+            metadict = {
+                'date': profile['timestamp'],
+                'date_qc': profile['timestamp_argoqc'],
+                'lat': profile['geolocation']['coordinates'][1],
+                'lon': profile['geolocation']['coordinates'][0],
+                'cycle_number': profile['cycle_number'],
+                'DATA_MODE': profile['data_info'][2][0][1],
+                'DIRECTION': profile['profile_direction'],
+                'platform_number': profile['_id'].split('_')[0],
+                'position_qc': profile['geolocation_argoqc'],
+                'index': 0
+            }
+            # construct a row for each level in the profile
+            for i in range(len(profile['data'][profile['data_info'][0].index('pressure')])):
+                row = {
+                    'temp': profile['data'][profile['data_info'][0].index('temperature')][i],
+                    'pres': profile['data'][profile['data_info'][0].index('pressure')][i],
+                    'psal': profile['data'][profile['data_info'][0].index('salinity')][i],
+                    **metadict
+                }
                 rows.append(row)
         df = pd.DataFrame(rows)
         return df
@@ -436,14 +447,9 @@ class Fetch_wmo(ArgovisDataFetcher):
     def get_url(self, wmo: int, cyc: int = None) -> str:
         """Return path toward the source file of a given wmo/cyc pair"""
         if cyc is None:
-            return (self.server + "/catalog/platforms/{}").format(str(wmo))
+            return  f'{self.server}/argo?platform={str(wmo)}&data=pressure,temperature,salinity'
         else:
-            profIds = [str(wmo) + "_" + str(c) for c in cyc]
-            return (
-                (self.server + "/catalog/mprofiles/?ids={}")
-                .format(profIds)
-                .replace(" ", "")
-            )
+            return f'{self.server}/argo?id={str(wmo)}_{str(cyc).zfill(3)}&data=pressure,temperature,salinity'
 
     @property
     def uri(self):
@@ -460,7 +466,7 @@ class Fetch_wmo(ArgovisDataFetcher):
                 if cycs is None:
                     this.append(self.get_url(wmo))
                 else:
-                    this.append(self.get_url(wmo, cycs))
+                    this += [self.get_url(wmo, c) for c in cycs]
             return this
 
         urls = list_bunch(self.WMO, self.CYC)
