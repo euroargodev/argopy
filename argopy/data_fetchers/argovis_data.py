@@ -24,10 +24,7 @@ access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
 dataset_ids = ["phy"]  # First is default
 api_server = "https://argovis-api.colorado.edu" 
-api_server_check = {
-    "url": api_server + "/selection/overview",
-    "keyword": "numberOfProfiles",
-}  # URL to check if the API is alive
+api_server_check = "https://argovis-api.colorado.edu/ping"
 
 log = logging.getLogger("argopy.argovis.data")
 
