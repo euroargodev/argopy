@@ -495,49 +495,22 @@ class Fetch_box(ArgovisDataFetcher):
             self.definition = "Argovis Argo data fetcher for a space/time region"
         return self
 
-    def get_url_shape(self):
+    def get_url(self):
         """Return the URL used to download data"""
         shape = [
-            [
-                [self.BOX[0], self.BOX[2]],  # ll
-                [self.BOX[0], self.BOX[3]],  # ul
-                [self.BOX[1], self.BOX[3]],  # ur
-                [self.BOX[1], self.BOX[2]],  # lr
-                [self.BOX[0], self.BOX[2]],  # ll
-            ]
-        ]
+                    [self.BOX[0], self.BOX[2]],  # ll
+                    [self.BOX[1], self.BOX[3]]  # ur
+                ]
         strShape = str(shape).replace(" ", "")
-        url = self.server + "/selection/profiles"
-        url += "?startDate={}".format(
+        url = self.server + "/argo?data=pressure,temperature,salinity&box=" + strShape
+        url += "&startDate={}".format(
             pd.to_datetime(self.BOX[6]).strftime("%Y-%m-%dT%H:%M:%SZ")
         )
         url += "&endDate={}".format(
             pd.to_datetime(self.BOX[7]).strftime("%Y-%m-%dT%H:%M:%SZ")
         )
-        url += "&shape={}".format(strShape)
-        url += "&presRange=[{},{}]".format(self.BOX[4], self.BOX[5])
+        url += "&presRange={},{}".format(self.BOX[4], self.BOX[5])
         return url
-
-    def get_url_rect(self):
-        """Return the URL used to download data"""
-
-        def strCorner(b, i):
-            return str([b[i[0]], b[i[1]]]).replace(" ", "")
-
-        def strDate(b, i):
-            return pd.to_datetime(b[i]).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-        url = self.server + "/selection/box/profiles"
-        url += "?startDate={}".format(strDate(self.BOX, 6))
-        url += "&endDate={}".format(strDate(self.BOX, 7))
-        url += "&presRange=[{},{}]".format(self.BOX[4], self.BOX[5])
-        url += "&llCorner={}".format(strCorner(self.BOX, [0, 2]))
-        url += "&urCorner={}".format(strCorner(self.BOX, [1, 3]))
-        return url
-
-    def get_url(self):
-        return self.get_url_shape()
-        # return self.get_url_rect()
 
     @property
     def uri(self):
@@ -550,7 +523,7 @@ class Fetch_box(ArgovisDataFetcher):
         Lt = np.timedelta64(
             pd.to_datetime(self.BOX[7]) - pd.to_datetime(self.BOX[6]), "D"
         )
-        MaxLenTime = 90
+        MaxLenTime = 60
         MaxLen = np.timedelta64(MaxLenTime, "D")
 
         urls = []
@@ -595,8 +568,3 @@ class Fetch_box(ArgovisDataFetcher):
                 urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())
 
         return self.url_encode(urls)
-
-    @property
-    def url(self):
-        return self.get_url_shape()
-        # return self.get_url_rect()
