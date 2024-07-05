@@ -51,7 +51,7 @@ class ArgoDataFetcherProto(ABC):
             else:
                 return ds
 
-        elif self.dataset_id in ['bgc']:
+        elif self.dataset_id in ['bgc', 'bgc-s']:
 
             if self.user_mode == "standard":
                 to_remove = []
@@ -69,7 +69,7 @@ class ArgoDataFetcherProto(ABC):
                 return ds
 
         else:
-            log.debug("No filter_variables support for ds='%s'" % self.dataset_id)
+            raise ValueError("No filter_variables support for ds='%s'" % self.dataset_id)
 
     def clear_cache(self):
         """ Remove cache files and entries from resources opened with this fetcher """

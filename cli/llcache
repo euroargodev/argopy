@@ -5,7 +5,9 @@ import sys
 import pickle
 import math
 import pandas as pd
-
+import json
+import fsspec
+from packaging import version
 
 def convert_size(size_bytes):
 	if size_bytes == 0:
@@ -60,12 +62,18 @@ def listscache(cache_path: str, file=sys.stdout):
 	cached_files = []
 	fn = os.path.join(apath, "cache")
 	if os.path.exists(fn):
-		with open(fn, "rb") as f:
-			loaded_cached_files = pickle.load(f)
-			for c in loaded_cached_files.values():
-				if isinstance(c["blocks"], list):
-					c["blocks"] = set(c["blocks"])
-			cached_files.append(loaded_cached_files)
+		if version.parse(fsspec.__version__) <= version.parse("2023.6.0"):
+			with open(fn, "rb") as f:
+				loaded_cached_files = pickle.load(
+					f
+				)  # nosec B301 because files controlled internally
+		else:
+			with open(fn, "r") as f:
+				loaded_cached_files = json.load(f)
+		for c in loaded_cached_files.values():
+			if isinstance(c["blocks"], list):
+				c["blocks"] = set(c["blocks"])
+		cached_files.append(loaded_cached_files)
 	else:
 		# raise ValueError("This is not a valid fsspec cache folder (missing 'cache' pickle file)")
 		cached_files.append({})

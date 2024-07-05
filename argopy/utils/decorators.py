@@ -1,5 +1,9 @@
 from functools import wraps
 import warnings
+import xarray as xr
+from decorator import decorator
+
+from ..errors import NoDataLeft
 
 
 class DocInherit(object):
@@ -147,3 +151,12 @@ def deprecated(reason):
 
     else:
         raise TypeError(repr(type(reason)))
+
+
+@decorator
+def raiseNoDataLeft(func, msg='No Data left after post-processing', *args, **kwargs):
+    outputs = func(*args, **kwargs)
+    if isinstance(outputs, xr.Dataset) and 'N_POINTS' in outputs and len(outputs['N_POINTS']) == 0:
+        raise NoDataLeft(msg)
+    else:
+        return outputs

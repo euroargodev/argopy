@@ -73,8 +73,7 @@ def fill_variables_not_in_all_datasets(
     ds_collection: List[xarray.Dataset]
         A list of :class:`xarray.Dataset`
     concat_dim: str, default='rows'
-        Name of the dimension to use to create new variables. Typically, this is the name of the dimension the collection will
-        be concatenated along afterward.
+        Name of the dimension to use to create new variables. Typically, this is the name of the dimension the collection will be concatenated along afterward.
 
     Returns
     -------

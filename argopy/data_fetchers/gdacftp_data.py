@@ -177,7 +177,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
     def uri_mono2multi(self, URIs: list):
         """ Convert mono-profile URI files to multi-profile files
 
-        Multi-profile file name is based on the dataset requested ('phy' or 'bgc')
+        Multi-profile file name is based on the dataset requested ('phy', 'bgc'/'bgc-s')
 
         This method does not ensure that multi-profile files exist !
 
@@ -193,6 +193,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
 
         def mono2multi(mono_path):
             meta = argo_split_path(mono_path)
+
             if self.dataset_id == "phy":
                 return self.indexfs.fs["src"].fs.sep.join(
                     [
@@ -203,7 +204,8 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
                         "%s_prof.nc" % meta["wmo"],
                     ]
                 )
-            elif self.dataset_id == "bgc":
+
+            elif self.dataset_id in ["bgc", "bgc-s"]:
                 return self.indexfs.fs["src"].fs.sep.join(
                     [
                         meta["origin"],
@@ -213,6 +215,9 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
                         "%s_Sprof.nc" % meta["wmo"],
                     ]
                 )
+
+            else:
+                raise ValueError("Dataset '%s' not supported !" % self.dataset_id)
 
         new_uri = [mono2multi(uri) for uri in URIs]
         new_uri = list(set(new_uri))

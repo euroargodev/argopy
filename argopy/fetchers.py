@@ -33,6 +33,7 @@ from .utils.lists import (
     list_radiometry_parameters,
     list_bgc_s_parameters,
 )
+from .utils.decorators import raiseNoDataLeft
 from .plot import plot_trajectory, bar_plot, open_sat_altim_report, scatter_plot
 
 
@@ -206,7 +207,7 @@ class ArgoDataFetcher:
             "fetcher",
             "fetcher_options",
             "define_postprocessor",
-            "postprocessor",
+            "postprocess",
             "data",
             "index",
             "domain",
@@ -326,28 +327,30 @@ class ArgoDataFetcher:
                 % (self._src, self._AccessPoint)
             )
 
+    # @raiseNoDataLeft
+    def postprocess(self, *args, **kwargs):
+        return self._pp_workflow(*args, **kwargs)
+
     def define_postprocessor(self):
-        """Define the post-processor method according to the dataset and user-mode"""
+        """Define the post-processing workflow according to the dataset and user-mode"""
         if self.fetcher:
 
             if self._dataset_id == 'phy' and self._mode == "standard":
-                def postprocessing(xds):
+                def workflow(xds):
                     xds = self.fetcher.transform_data_mode(xds)
                     xds = self.fetcher.filter_qc(xds, QC_list=[1, 2])
                     xds = self.fetcher.filter_variables(xds)
                     return xds
-                self.postprocessor = postprocessing
 
             elif self._dataset_id == 'phy' and self._mode == "research":
-                def postprocessing(xds):
+                def workflow(xds):
                     xds = self.fetcher.filter_researchmode(xds)
                     xds = self.fetcher.filter_variables(xds)
                     return xds
-                self.postprocessor = postprocessing
 
-            elif self._dataset_id == 'bgc' and self._mode == "standard":
+            elif self._dataset_id in ['bgc', 'bgc-s'] and self._mode == "standard":
                 # https://github.com/euroargodev/argopy/issues/280
-                def postprocessing(xds):
+                def workflow(xds):
                     # Merge parameters according to data mode values:
                     xds = self.fetcher.transform_data_mode(xds)
 
@@ -401,11 +404,10 @@ class ArgoDataFetcher:
                     xds = self.fetcher.filter_variables(xds)
 
                     return xds
-                self.postprocessor = postprocessing
 
-            elif self._dataset_id == 'bgc' and self._mode == "research":
+            elif self._dataset_id in ['bgc', 'bgc-s'] and self._mode == "research":
                 # https://github.com/euroargodev/argopy/issues/280
-                def postprocessing(xds):
+                def workflow(xds):
 
                     # for core/deep parameters
                     xds = self.fetcher.filter_researchmode(xds)
@@ -433,13 +435,14 @@ class ArgoDataFetcher:
                     xds = self.fetcher.filter_variables(xds)
 
                     return xds
-                self.postprocessor = postprocessing
 
             else:
-                self.postprocessor = lambda x: x  # Empty processor
+                workflow = lambda x: x  # Empty processor
 
         else:
-            self.postprocessor = lambda x: x  # Empty processor
+            workflow = lambda x: x  # Empty processor
+
+        self._pp_workflow = workflow
 
         return self
 
@@ -557,8 +560,9 @@ class ArgoDataFetcher:
                 % ",".join(self.Fetchers.keys())
             )
         xds = self.fetcher.to_xarray(**kwargs)
-        xds = self.postprocessor(xds)
-        xds = xds.load()
+        xds = self.postprocess(xds)
+        if xds is not None:
+            xds = xds.load()
 
         return xds
 
@@ -682,7 +686,7 @@ class ArgoDataFetcher:
                     prt("to_index replaced the light index with the full version")
                     self._index = df
 
-        if 'wmo' in df and 'cyc' in df and self._loaded:
+        if 'wmo' in df and 'cyc' in df and self._loaded and self._data is not None:
             # Ensure that all profiles reported in the index are indeed in the dataset
             # This is not necessarily the case when the index is based on an ArgoIndex instance that may come to differ from postprocessed dataset
             irow_remove = []
