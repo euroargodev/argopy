@@ -377,9 +377,14 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
+    def filter_data_mode(self, ds: xr.Dataset, **kwargs):
+        # Argovis data are already curated !
+        if ds.argo._type == "point":
+            ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
+        return ds
+
     def filter_qc(self, ds: xr.Dataset, **kwargs):
         # Argovis data already curated !
-        # ds = ds.argo.filter_qc(**kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds

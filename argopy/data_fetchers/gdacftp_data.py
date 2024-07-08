@@ -414,6 +414,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         return ds
 
     def transform_data_mode(self, ds: xr.Dataset, **kwargs):
+        """Apply xarray argo accessor transform_data_mode method"""
         ds = ds.argo.transform_data_mode(**kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
@@ -421,7 +422,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
 
     def filter_data_mode(self, ds: xr.Dataset, **kwargs):
         """Apply xarray argo accessor filter_data_mode method"""
-        ds = ds.argo.filter_data_mode(**kwargs)
+        ds = ds.argo.filter_data_mode_new(**kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
