@@ -33,7 +33,6 @@ from .utils.lists import (
     list_radiometry_parameters,
     list_bgc_s_parameters,
 )
-from .utils.decorators import raiseNoDataLeft
 from .plot import plot_trajectory, bar_plot, open_sat_altim_report, scatter_plot
 
 
@@ -327,7 +326,6 @@ class ArgoDataFetcher:
                 % (self._src, self._AccessPoint)
             )
 
-    # @raiseNoDataLeft
     def postprocess(self, *args, **kwargs):
         return self._pp_workflow(*args, **kwargs)
 
