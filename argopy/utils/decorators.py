@@ -1,9 +1,15 @@
 from functools import wraps
 import warnings
+import logging
+
 import xarray as xr
 from decorator import decorator
+from typing import List
 
 from ..errors import NoDataLeft
+
+
+log = logging.getLogger("argopy.utils.decorators")
 
 
 class DocInherit(object):
@@ -69,8 +75,8 @@ class DocInherit(object):
 doc_inherit = DocInherit
 
 
-def deprecated(reason):
-    """Deprecation warning decorator.
+def deprecated(reason: str = None, version: str = None, ignore_caller: List = []):
+    """Deprecation warning decorator
 
     This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted
@@ -78,16 +84,18 @@ def deprecated(reason):
 
     Parameters
     ----------
-    reason: {str, None}
+    reason: str, optional, default=None
         Text message to send with deprecation warning
+    version: str, optional, default=None
+    ignore_caller: List, optional, default=[]
 
     Examples
     --------
-    The @deprecated can be used with a 'reason'.
+    The @deprecated can be used with a 'reason' and a 'version'
 
         .. code-block:: python
 
-           @deprecated("please, use another function")
+           @deprecated("please, use another function", version='0.2')
            def old_function(x, y):
              pass
 
@@ -99,55 +107,90 @@ def deprecated(reason):
            def old_function(x, y):
              pass
 
+    The @deprecated can also be ignored from specific callers.
+
+        .. code-block:: python
+
+           @deprecated("please, use another function", version='0.2', ignore_caller='postprocessing')
+           def old_function(x, y):
+             pass
+
     References
     ----------
-    https://stackoverflow.com/a/40301488
+    This decorator is largely inspired by https://stackoverflow.com/a/40301488
     """
     import inspect
+    ignore_caller = [ignore_caller]
 
     if isinstance(reason, str):
 
-        def decorator(func1):
-            if inspect.isclass(func1):
-                fmt1 = "Call to deprecated class {name} ({reason})."
+        def decorator(func):
+            if inspect.isclass(func):
+                fmt = "\nCall to deprecated class '{name}' ({reason})"
             else:
-                fmt1 = "Call to deprecated function {name} ({reason})."
+                fmt = "\nCall to deprecated function '{name}' ({reason})"
+            if version is not None:
+                fmt = "%s -- Deprecated since version {version}" % fmt
 
-            @wraps(func1)
-            def new_func1(*args, **kwargs):
-                warnings.simplefilter("always", DeprecationWarning)
-                warnings.warn(
-                    fmt1.format(name=func1.__name__, reason=reason),
-                    category=DeprecationWarning,
-                    stacklevel=2,
-                )
-                warnings.simplefilter("default", DeprecationWarning)
-                return func1(*args, **kwargs)
+            @wraps(func)
+            def new_func(*args, **kwargs):
+                raise_deprec = True
+                stack = inspect.stack()
+                for s in stack:
+                    if "<module>" in s.function:
+                        break
+                    elif s.function in ignore_caller:
+                        raise_deprec = False
 
-            return new_func1
+                if raise_deprec:
+                    warnings.simplefilter("always", DeprecationWarning)
+                    warnings.warn(
+                        fmt.format(name=func.__qualname__, reason=reason, version=version),
+                        category=DeprecationWarning,
+                        stacklevel=2,
+                    )
+                    warnings.simplefilter("default", DeprecationWarning)
+                else:
+                    log.warning(fmt.format(name=func.__qualname__, reason=reason, version=version))
+
+                return func(*args, **kwargs)
+
+            return new_func
 
         return decorator
 
     elif inspect.isclass(reason) or inspect.isfunction(reason):
-        func2 = reason
+        func = reason
 
-        if inspect.isclass(func2):
-            fmt2 = "Call to deprecated class {name}."
+        if inspect.isclass(func):
+            fmt = "\nCall to deprecated class '{name}'."
         else:
-            fmt2 = "Call to deprecated function {name}."
+            fmt = "\nCall to deprecated function '{name}'."
 
-        @wraps(func2)
-        def new_func2(*args, **kwargs):
-            warnings.simplefilter("always", DeprecationWarning)
-            warnings.warn(
-                fmt2.format(name=func2.__name__),
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
-            warnings.simplefilter("default", DeprecationWarning)
-            return func2(*args, **kwargs)
+        @wraps(func)
+        def new_func(*args, **kwargs):
+            raise_deprec = True
+            stack = inspect.stack()
+            for s in stack:
+                if "<module>" in s.function:
+                    break
+                elif s.function in ignore_caller:
+                    raise_deprec = False
 
-        return new_func2
+            if raise_deprec:
+                warnings.simplefilter("always", DeprecationWarning)
+                warnings.warn(
+                    fmt.format(name=func.__qualname__),
+                    category=DeprecationWarning,
+                    stacklevel=2,
+                )
+                warnings.simplefilter("default", DeprecationWarning)
+            else:
+                log.warning(fmt.format(name=func.__qualname__, reason=reason))
+
+            return func(*args, **kwargs)
+
+        return new_func
 
     else:
         raise TypeError(repr(type(reason)))

@@ -19,6 +19,7 @@ Documentation
 * :doc:`why`
 * :doc:`what_is_argo`
 * :doc:`Gallery of examples <gallery>`
+* :doc:`impact`
 
 .. toctree::
     :maxdepth: 2
@@ -30,6 +31,7 @@ Documentation
     why
     what_is_argo
     Gallery of examples <gallery>
+    impact
 
 **User Guide**
 
