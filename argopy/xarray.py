@@ -782,9 +782,10 @@ class ArgoAccessor:
             this.argo.add_history("No data mode found for [%s], no filtering applied" % (",".join(params)))
             return this
 
-    @deprecated("This method has been refactored to really filter measurements according to <PARAM>_DATA_MODE values. "
-                "Legacy behavior is possible with the new `transform_data_mode` method that merge <PARAM> and "
-                "<PARAM>_ADJUSTED variables according to <PARAM>_DATA_MODE values.",
+    @deprecated("This method, as such, is deprecated and will break your code after version 0.1.17. To preserve the "
+                "current behavior, please update your code to use the new `transform_data_mode` method. After 0.1.17, "
+                "'filter_data_mode' will change its behavior to really filter measurements according to "
+                "<PARAM>_DATA_MODE values. Before 0.1.17 the correct filter method is available at 'filter_data_mode_new'.",
                 ignore_caller='postprocessing',
                 version='0.1.16')
     def filter_data_mode(  # noqa: C901
@@ -993,7 +994,7 @@ class ArgoAccessor:
             final = xr.merge((final, ds[p]))
 
         final.attrs = ds.attrs
-        final.argo._add_history("Variables filtered according to DATA_MODE")
+        final.argo.add_history("Variables filtered according to DATA_MODE")
         final = final[np.sort(final.data_vars)]
 
         # Cast data types and add attributes:
@@ -1227,7 +1228,7 @@ class ArgoAccessor:
         this = this.argo.filter_qc(QC_list=1,
                                    QC_fields=['POSITION_QC', 'TIME_QC'])
         this = this.argo.transform_data_mode(params=list_core_parameters())
-        this = this.argo.filter_data_mode(params=list_core_parameters(), dm='D')
+        this = this.argo.filter_data_mode_new(params=list_core_parameters(), dm='D')
         this = this.argo.filter_qc(QC_list=1, QC_fields=list_core_parameters())
 
         if 'PRES_ERROR' in this.data_vars:  # PRES_ADJUSTED_ERROR was renamed PRES_ERROR by transform_data_mode
