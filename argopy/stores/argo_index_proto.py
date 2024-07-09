@@ -610,6 +610,7 @@ class ArgoIndexStoreProto(ABC):
                 df = df.rename(
                     columns={"institution": "institution_code", "tmp1": "institution"}
                 )
+                df["dac"] = df["file"].apply(lambda x: x.split("/")[0])
 
                 profiler_dictionnary = load_dict("profilers")
                 profiler_dictionnary["?"] = "?"

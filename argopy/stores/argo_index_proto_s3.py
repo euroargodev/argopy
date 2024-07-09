@@ -89,6 +89,7 @@ class s3index:
             self.fs = boto3.client('s3', config=Config(signature_version=UNSIGNED))
             log.debug("No AWS Credentials found, running UNSIGNED anonymous boto3 requests")
 
+        self.stats_last = {}
         self.stats = {}
         self._sql_logic = 'unique'
 
@@ -170,6 +171,7 @@ class s3index:
             elif 'Stats' in event:
                 stats = event['Stats']['Details']
 
+        self.stats_last = stats
         self.stats.update({sql_expression: stats})
 
         return ''.join(r for r in records)

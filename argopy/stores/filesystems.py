@@ -655,7 +655,7 @@ class httpstore(argo_store_proto):
     ):
         """URL data downloader
 
-        This is basically a fsspec.cat_file that is able tho handle a 429 "Too many requests" error from a server, by
+        This is basically a fsspec.cat_file that is able to handle a 429 "Too many requests" error from a server, by
         waiting and sending requests several time.
         """
 

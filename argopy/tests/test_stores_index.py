@@ -254,7 +254,7 @@ class IndexStore_test_proto:
         """Fixture to create an index store for a given host."""
         fetcher_args, N_RECORDS = self._setup_store(request)
         xfail, reason = False, ""
-        if not HAS_S3FS:
+        if not HAS_S3FS and 's3' in fetcher_args['host']:
             xfail, reason = True, 's3fs not available'
         yield self.create_store(fetcher_args, xfail=xfail, reason=reason).load(nrows=N_RECORDS)
 
@@ -271,7 +271,7 @@ class IndexStore_test_proto:
         # log.debug("a_search: %s, %s, %s" % (self.index_file, srch, xfail))
 
         xfail, reason = False, ""
-        if not HAS_S3FS:
+        if not HAS_S3FS and 's3' in host:
             xfail, reason = True, 's3fs not available'
 
         yield run_a_search(self.new_idx, {"host": host, "cache": True}, srch, xfail=xfail, reason=reason)
