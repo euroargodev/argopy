@@ -407,10 +407,10 @@ class ArgoDataFetcher:
                 # https://github.com/euroargodev/argopy/issues/280
                 def workflow(xds):
 
-                    # for core/deep parameters
+                    # Apply research mode transform/filter on core/deep params:
                     xds = self.fetcher.filter_researchmode(xds)
 
-                    # For BGC:
+                    # Apply data mode transform and filter on BGC parameters:
                     all_bgc_variables = list(set(list_bgc_s_parameters()) - set(list_core_parameters()))
                     all_bgc_variables = [p for p in all_bgc_variables if p in xds]
                     if len(all_bgc_variables) > 0:

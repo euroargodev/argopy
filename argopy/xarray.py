@@ -1280,11 +1280,15 @@ class ArgoAccessor:
             return this
 
     def filter_researchmode(self) -> xr.Dataset:
-        """Filter dataset for research user mode for 'phy' dataset parameters
+        """Filter dataset for research user mode
 
-        This depends on the dataset:
-        - For the 'phy' dataset (core/deep): select delayed mode data with QC=1 and with pressure errors smaller than 20db
-        - for the 'bgc' dataset: select delayed mode data with QC=[1,5,8]. Reject CDOM variables.
+        This filter depends on the dataset:
+        - For the 'phy' dataset (core/deep missions): select delayed mode data with QC=1 and with pressure errors smaller than 20db
+
+        Warnings
+        --------
+        This accessor filter only apply to core/deep parameters of the 'phy' dataset.
+        Filtering in research user-mode for the BGC parameters is implemented in the fetcher facade.
 
         Returns
         -------
@@ -1301,7 +1305,8 @@ class ArgoAccessor:
         # Apply transforms and filters:
         this = this.argo.filter_qc(QC_list=1, QC_fields=["POSITION_QC", "TIME_QC"])
         this = this.argo.transform_data_mode(params=list_core_parameters())
-        this = this.argo.filter_data_mode_new(params=list_core_parameters(), dm="D")
+        this = this.argo.filter_data_mode_new(params=list_core_parameters(), dm="D")  # todo Update with filter_data_mode for version = v0.1.17
+
         this = this.argo.filter_qc(QC_list=1, QC_fields=list_core_parameters())
 
         if (
