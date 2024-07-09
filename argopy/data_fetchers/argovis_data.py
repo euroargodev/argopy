@@ -96,7 +96,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             "timeout": timeout,
             "size_policy": "head",
         }
-        self.fs = kwargs["fs"] if "fs" in kwargs else httpstore(**self.store_opts)
+        self.fs = kwargs["fs"] if "fs" in kwargs else httpstore(**self.store_opts, client_kwargs={'headers': {'x-argokey': OPTIONS['argovis_api_key']}} )
 
         if not isinstance(parallel, bool):
             parallel_method = parallel

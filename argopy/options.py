@@ -30,6 +30,7 @@ TRUST_ENV = "trust_env"
 SERVER = "server"
 USER = "user"
 PASSWORD = "password"
+ARGOVIS_API_KEY = "argovis_api_key"
 
 # Define the list of available options and default values:
 OPTIONS = {
@@ -45,6 +46,7 @@ OPTIONS = {
     SERVER: None,
     USER: None,
     PASSWORD: None,
+    ARGOVIS_API_KEY: "guest",
 }
 DEFAULT = OPTIONS.copy()
 
