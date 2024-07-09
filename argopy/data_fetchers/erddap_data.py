@@ -202,6 +202,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             self._bgc_vlist_params = [p.upper() for p in params]
             # self._bgc_vlist_params = self._bgc_handle_wildcard(self._bgc_vlist_params)
 
+            for v in self._bgc_vlist_params:
+                if v not in self._bgc_vlist_avail:
+                    raise ValueError("'%s' not available for this access point. The 'params' argument must have values in [%s]" % (v, ",".join(self._bgc_vlist_avail)))
+
             for p in list_core_parameters():
                 if p not in self._bgc_vlist_params:
                     self._bgc_vlist_params.append(p)
@@ -226,6 +230,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 # raise ValueError("'measured' argument must be a list of strings (possibly with a * wildcard)")
             self._bgc_vlist_measured = [m.upper() for m in measured]
             # self._bgc_vlist_measured = self._bgc_handle_wildcard(self._bgc_vlist_measured)
+
+            for v in self._bgc_vlist_measured:
+                if v not in self._bgc_vlist_avail:
+                    raise ValueError("'%s' not available for this access point. The 'measured' argument must have values in [%s]" % (v, ", ".join(self._bgc_vlist_avail)))
 
     def __repr__(self):
         summary = ["<datafetcher.erddap>"]
@@ -416,7 +424,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def _bgc_vlist_avail(self):
-        """Return the list of BGC parameters available for this access point
+        """Return the list of the erddap BGC dataset available for this access point
 
         Apply search criteria in the index, then retrieve the list of parameters
         """
@@ -440,7 +448,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 results.append(p)
             else:
                 log.error(
-                    "Removed '%s' because it's not available on the erddap, but it must !"
+                    "Removed '%s' because it's not available on the erddap, but it should !"
                     % p
                 )
 
@@ -696,13 +704,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         # Finally overwrite erddap attributes with those from argopy:
         # raw_attrs = this_ds.attrs
-        print(len(this_ds.attrs))
+        # print(len(this_ds.attrs))
         if 'Processing_history' in this_ds.attrs:
             this_ds.attrs = {'Processing_history': this_ds.attrs['Processing_history']}
         else:
             this_ds.attrs = {}
         # this_ds.attrs.update({'raw_attrs': raw_attrs})
-        print(len(this_ds.attrs))
+        # print(len(this_ds.attrs))
 
         if self.dataset_id == "phy":
             this_ds.attrs["DATA_ID"] = "ARGO"
@@ -730,7 +738,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             if n_zero > 0:
                 log.error("Some points (%i) have no PLATFORM_NUMBER !" % n_zero)
 
-        print(len(this_ds.attrs))
+        # print(len(this_ds.attrs))
         return this_ds
 
     def to_xarray(  # noqa: C901
