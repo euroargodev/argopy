@@ -613,12 +613,27 @@ class httpstore(argo_store_proto):
 
     protocol = "http"
 
-    def curateurl(self, url):
-        """Possibly replace server of a given url by a local argopy option value
+    def __init__(self, *args, **kwargs):
+        # Create a registry that will be used to keep track of all URLs accessed by this store
+        self._url_registry = Registry(name="Accessed URLs")
+        super().__init__(*args, **kwargs)
 
-        This is intended to be used by tests and dev
+    def open(self, path, *args, **kwargs):
+        path = self.curateurl(path)
+        return super().open(path, *args, **kwargs)
+
+    def exists(self, path, *args, **kwargs):
+        path = self.curateurl(path)
+        return super().exists(path, *args, **kwargs)
+
+    def curateurl(self, url):
+        """Possibly manipulate an url before it's accessed
+
+        This is primarily intended to be used by tests and dev
         """
+        self._url_registry.commit(url)
         return url
+
         # if OPTIONS["server"] is not None:
         #     # log.debug("Replaced '%s' with '%s'" % (urlparse(url).netloc, OPTIONS["netloc"]))
         #

@@ -180,6 +180,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 cachedir=cachedir,
                 timeout=timeout,
             )
+            self.indexfs.fs['src'] = self.fs  # Use only one httpstore instance
 
             # To handle bugs in the erddap server, we need the list of parameters on the server:
             # todo: Remove this when bug fixed
@@ -638,7 +639,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         """Number of measurements expected to be returned by a request"""
         url = self.get_url().replace("." + self.erddap.response, ".ncHeader")
         try:
-            ncHeader = str(self.fs.fs.cat_file(url))
+            ncHeader = str(self.fs.download_url(url))
             lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
             return int(lines.split("=")[1].split(";")[0])
         except Exception:
