@@ -375,19 +375,16 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         ds.attrs["Fetched_constraints"] = self.cname()
         ds.attrs["Fetched_uri"] = self.uri
         ds = ds[np.sort(ds.data_vars)]
-        ds = self.filter_domain(ds)  # https://github.com/euroargodev/argopy/issues/48
         return ds
 
     def filter_data_mode(self, ds: xr.Dataset, **kwargs):
         # Argovis data already curated !
-        # ds = ds.argo.filter_data_mode(errors='ignore', **kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
     def filter_qc(self, ds: xr.Dataset, **kwargs):
         # Argovis data already curated !
-        # ds = ds.argo.filter_qc(**kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
@@ -403,18 +400,6 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
-
-    def filter_domain(self, ds):
-        """Enforce rectangular box shape
-
-        This is a temporary fix for https://github.com/euroargodev/argopy/issues/48
-        """
-        if hasattr(self, "BOX"):
-            ds = ds.where(ds["LATITUDE"] >= self.BOX[2], drop=True)
-            ds = ds.where(ds["LATITUDE"] <= self.BOX[3], drop=True)
-            return ds
-        else:
-            return ds
 
 
 class Fetch_wmo(ArgovisDataFetcher):
@@ -528,7 +513,7 @@ class Fetch_box(ArgovisDataFetcher):
 
         urls = []
         if not self.parallel:
-            # Check if the time range is not larger than allowed (90 days):
+            # Check if the time range is not larger than allowed (MaxLenTime days):
             if Lt > MaxLen:
                 self.Chunker = Chunker(
                     {"box": self.BOX},
