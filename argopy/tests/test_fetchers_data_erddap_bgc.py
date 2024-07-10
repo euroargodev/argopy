@@ -160,11 +160,10 @@ class Test_Backend:
             defaults_args['indexfs'] = ArgoIndex(
                                             host=mocked_server_address,
                                             index_file='argo_synthetic-profile_index.txt',
-                                            cache=True,
+                                            cache=cached,
                                             cachedir=self.cachedir,
                                             timeout=5,
                                         )
-
 
         dataset = this_request.param['ds']
         user_mode = this_request.param['mode']
