@@ -46,7 +46,7 @@ OPTIONS = {
     SERVER: None,
     USER: None,
     PASSWORD: None,
-    ARGOVIS_API_KEY: "guest",
+    ARGOVIS_API_KEY: "guest",  # https://argovis-keygen.colorado.edu
 }
 DEFAULT = OPTIONS.copy()
 
@@ -125,7 +125,7 @@ class set_options:
         Default: None, None
     - ``server``: Other than expected/default server to be uses by a function/method. This is mostly intended to be used for unit testing
         Default: None
-    - ``argovis_api_key``: The API key to use when fetching data from the `argovis` data source.
+    - ``argovis_api_key``: The API key to use when fetching data from the `argovis` data source. You can get a free key at https://argovis-keygen.colorado.edu
         Default: `guest`
 
 
