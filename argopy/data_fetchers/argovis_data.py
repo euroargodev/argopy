@@ -13,7 +13,7 @@ from abc import abstractmethod
 import warnings
 
 from ..stores import httpstore
-from ..options import OPTIONS
+from ..options import OPTIONS, DEFAULT
 from ..utils.format import format_oneline
 from ..utils.chunking import Chunker
 from ..errors import DataNotFound
@@ -134,6 +134,11 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         summary = ["<datafetcher.argovis>"]
         summary.append("Name: %s" % self.definition)
         summary.append("API: %s" % api_server)
+        api_key = self.fs.fs.client_kwargs['headers']['x-argokey']
+        if api_key == DEFAULT['argovis_api_key']:
+            summary.append("API KEY: '%s' (get a free key at https://argovis-keygen.colorado.edu)" % api_key)
+        else:
+            summary.append("API KEY: '%s'" % api_key)
         summary.append("Domain: %s" % format_oneline(self.cname()))
         return "\n".join(summary)
 
