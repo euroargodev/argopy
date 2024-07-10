@@ -13,8 +13,11 @@ Coming up next
 
 **Internals**
 
-- Update Ifremer erddap server information. The Argo reference for DMQC (returned by the :class:`DataFetcher` fetcher with ``ds='ref'`` argument ) and Argo CTD-reference for DQMC (returned by the :class:`CTDRefDataFetcher` fetcher) now indicate the dataset version used.
+- Update Ifremer erddap server information. The Argo reference for DMQC (returned by the :class:`DataFetcher` fetcher with ``ds='ref'`` argument ) and Argo CTD-reference for DQMC (returned by the :class:`CTDRefDataFetcher` fetcher) now indicate the dataset version used. (:pr:`344`) by `G. Maze <http://www.github.com/gmaze>`_.
 
+**Breaking changes**
+
+- Drop support for erddapy < v0.8.0 (:pr:`344`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 v0.1.15 (12 Dec. 2023)
 ----------------------

@@ -1763,7 +1763,7 @@ class httpstore_erddap_auth(httpstore):
         html.append("</thead>")
         html.append("<tbody>")
         html.append(tr_ticklink("login page", self._login_page, self._login_page))
-        payload = self._login_payload
+        payload = self._login_payload.copy()
         payload['password'] = "*" * len(payload['password'])
         html.append(tr_tick("login data", payload))
         if hasattr(self, "_connected"):
@@ -1778,9 +1778,11 @@ class httpstore_erddap_auth(httpstore):
 
     def connect(self):
         try:
+            payload = self._login_payload.copy()
+            payload['password'] = "*" * len(payload['password'])
             log.info(
-                "Try to log-in to '%s' page with %s payload"
-                % (self._login_page, self._login_payload)
+                "Try to log-in to '%s' page with %s"
+                % (self._login_page, payload)
             )
             self.fs.info(self._login_page)
             self._connected = True

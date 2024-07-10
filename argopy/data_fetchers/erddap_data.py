@@ -15,13 +15,13 @@ import pandas as pd
 import numpy as np
 import copy
 import time
-
 from abc import abstractmethod
 import getpass
 from typing import Union
-import fnmatch
 from aiohttp import ClientResponseError
 import logging
+from erddapy.erddapy import ERDDAP, parse_dates
+from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
 
 from ..options import OPTIONS
 from ..utils.format import format_oneline
@@ -30,19 +30,6 @@ from ..errors import ErddapServerError, DataNotFound
 from ..stores import indexstore_pd as ArgoIndex  # make sure we work with the Pandas index store
 from ..utils import is_list_of_strings, to_list,Chunker
 from .proto import ArgoDataFetcherProto
-
-
-# Load erddapy according to available version (breaking changes in v0.8.0)
-try:
-    from erddapy import ERDDAP
-    from erddapy.utilities import parse_dates, quote_string_constraints
-except:  # noqa: E722
-    # >= v0.8.0
-    from erddapy.erddapy import ERDDAP
-    from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
-    from erddapy.erddapy import parse_dates
-
-    # Soon ! https://github.com/ioos/erddapy
 
 
 log = logging.getLogger("argopy.erddap.data")
