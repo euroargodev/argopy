@@ -88,6 +88,7 @@ class s3index:
         else:
             self.fs = boto3.client('s3', config=Config(signature_version=UNSIGNED))
             log.debug("No AWS Credentials found, running UNSIGNED anonymous boto3 requests")
+            # search engines won't be available !
 
         self.stats_last = {}
         self.stats = {}
