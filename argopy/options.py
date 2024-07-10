@@ -30,6 +30,7 @@ TRUST_ENV = "trust_env"
 SERVER = "server"
 USER = "user"
 PASSWORD = "password"
+ARGOVIS_API_KEY = "argovis_api_key"
 
 # Define the list of available options and default values:
 OPTIONS = {
@@ -45,6 +46,7 @@ OPTIONS = {
     SERVER: None,
     USER: None,
     PASSWORD: None,
+    ARGOVIS_API_KEY: "guest",  # https://argovis-keygen.colorado.edu
 }
 DEFAULT = OPTIONS.copy()
 
@@ -88,6 +90,7 @@ _VALIDATORS = {
     SERVER: lambda x: True,
     USER: lambda x: isinstance(x, str) or x is None,
     PASSWORD: lambda x: isinstance(x, str) or x is None,
+    ARGOVIS_API_KEY: lambda x: isinstance(x, str) or x is None,
 }
 
 
@@ -122,6 +125,8 @@ class set_options:
         Default: None, None
     - ``server``: Other than expected/default server to be uses by a function/method. This is mostly intended to be used for unit testing
         Default: None
+    - ``argovis_api_key``: The API key to use when fetching data from the `argovis` data source. You can get a free key at https://argovis-keygen.colorado.edu
+        Default: `guest`
 
 
     You can use ``set_options`` either as a context manager for temporary setting:

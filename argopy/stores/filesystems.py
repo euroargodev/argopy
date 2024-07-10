@@ -96,25 +96,34 @@ def new_fs(
         Other arguments passed to :class:`fsspec.filesystem`
 
     """
-    # Load default FSSPEC kwargs:
+    # Merge default FSSPEC kwargs with user defined kwargs:
     default_fsspec_kwargs = {"simple_links": True, "block_size": 0}
     if protocol == "http":
+        client_kwargs = {"trust_env": OPTIONS["trust_env"]}  # Passed to aiohttp.ClientSession
+        if "client_kwargs" in kwargs:
+            client_kwargs = {**client_kwargs, **kwargs['client_kwargs']}
+            kwargs.pop('client_kwargs')
         default_fsspec_kwargs = {
             **default_fsspec_kwargs,
-            **{"client_kwargs": {"trust_env": OPTIONS["trust_env"]}},
+            **{"client_kwargs": {**client_kwargs}},
         }
+        fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
+
     elif protocol == "ftp":
         default_fsspec_kwargs = {
             **default_fsspec_kwargs,
             **{"block_size": 1000 * (2**20)},
         }
+        fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
+
     elif protocol == "s3":
         default_fsspec_kwargs.pop("simple_links")
         default_fsspec_kwargs.pop("block_size")
+        fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
 
-
-    # Merge default with user arguments:
-    fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
+    else:
+        # Merge default with user arguments:
+        fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
 
     # Create filesystem:
     if not cache:
