@@ -13,6 +13,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   detect-ci-skip:
     name: detect ci skip
@@ -64,6 +68,12 @@ jobs:
         continue-on-error: true
 
       - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          aws-region: us-west-1
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
 
       - name: Set environment variables
         run: |
@@ -180,6 +190,12 @@ jobs:
         continue-on-error: true
 
       - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          aws-region: us-west-1
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
 
       - name: Set environment variables
         run: |
