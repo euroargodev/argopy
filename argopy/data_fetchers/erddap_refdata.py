@@ -37,7 +37,7 @@ class ErddapREFDataFetcher(ErddapArgoDataFetcher):
     """Manage access to Argo CTD-reference data through Ifremer ERDDAP"""
 
     # @doc_inherit
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         """Instantiate an authenticated ERDDAP Argo data fetcher
 
         Parameters
@@ -50,7 +50,7 @@ class ErddapREFDataFetcher(ErddapArgoDataFetcher):
             Erddap request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
         kwargs["ds"] = "ref-ctd"
-        super().__init__(**kwargs)
+        super().__init__(*args, **kwargs)
         kw = kwargs
         [
             kw.pop(p)

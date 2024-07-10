@@ -1777,7 +1777,7 @@ class httpstore_erddap_auth(httpstore):
     def connect(self):
         try:
             log.info(
-                "Try to log-in to '%s' page with %s data ..."
+                "Try to log-in to '%s' page with %s payload"
                 % (self._login_page, self._login_payload)
             )
             self.fs.info(self._login_page)
