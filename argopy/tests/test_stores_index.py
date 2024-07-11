@@ -275,7 +275,7 @@ class IndexStore_test_proto:
         xfail, reason = False, ""
         if not HAS_S3FS and 's3' in host:
             xfail, reason = True, 's3fs not available'
-        elif 's3' in fetcher_args['host']:
+        elif 's3' in host:
             xfail, reason = True, 's3 is experimental'
 
         yield run_a_search(self.new_idx, {"host": host, "cache": True}, srch, xfail=xfail, reason=reason)
