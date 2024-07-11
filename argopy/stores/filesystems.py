@@ -96,20 +96,29 @@ def new_fs(
         Other arguments passed to :class:`fsspec.filesystem`
 
     """
-    # Load default FSSPEC kwargs:
+    # Merge default FSSPEC kwargs with user defined kwargs:
     default_fsspec_kwargs = {"simple_links": True, "block_size": 0}
     if protocol == "http":
+        client_kwargs = {"trust_env": OPTIONS["trust_env"]}  # Passed to aiohttp.ClientSession
+        if "client_kwargs" in kwargs:
+            client_kwargs = {**client_kwargs, **kwargs['client_kwargs']}
+            kwargs.pop('client_kwargs')
         default_fsspec_kwargs = {
             **default_fsspec_kwargs,
-            **{"client_kwargs": {"trust_env": OPTIONS["trust_env"]}},
+            **{"client_kwargs": {**client_kwargs}},
         }
+        fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
+
     elif protocol == "ftp":
         default_fsspec_kwargs = {
             **default_fsspec_kwargs,
             **{"block_size": 1000 * (2**20)},
         }
-    # Merge default with user arguments:
-    fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
+        fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
+
+    else:
+        # Merge default with user arguments:
+        fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
 
     # Create filesystem:
     if not cache:
@@ -130,8 +139,6 @@ def new_fs(
             cache_check=10,
         )
 
-        # We use a refresh rate for cache of 1 day,
-        # since this is the update frequency of the Ifremer erddap
         cache_registry = Registry(
             name="Cache"
         )  # Will hold uri cached by this store instance
@@ -141,7 +148,7 @@ def new_fs(
         )
 
     if protocol == "file" and os.path.sep != fs.sep:
-        # For some reasons (see https://github.com/fsspec/filesystem_spec/issues/937), the property fs.sep is
+        # For some reason (see https://github.com/fsspec/filesystem_spec/issues/937), the property fs.sep is
         # not '\' under Windows. So, using this dirty fix to overwrite it:
         fs.sep = os.path.sep
         # fsspec folks recommend to use posix internally. But I don't see how to handle this. So keeping this fix
@@ -219,10 +226,10 @@ class argo_store_proto(ABC):
 
     @property
     def cached_files(self):
+        # See https://github.com/euroargodev/argopy/issues/294
         if version.parse(fsspec.__version__) <= version.parse("2023.6.0"):
             return self.fs.cached_files
         else:
-            # See https://github.com/euroargodev/argopy/issues/294
             return self.fs._metadata.cached_files
 
     def cachepath(self, uri: str, errors: str = "raise"):
@@ -232,7 +239,7 @@ class argo_store_proto(ABC):
                 raise FileSystemHasNoCache("%s has no cache system" % type(self.fs))
         elif uri is not None:
             store_path = self.store_path(uri)
-            self.fs.load_cache()  # Read set of stored blocks from file and populate self.cached_files
+            self.fs.load_cache()  # Read set of stored blocks from file and populate self.fs.cached_files
             if store_path in self.cached_files[-1]:
                 return os.path.sep.join(
                     [self.cachedir, self.cached_files[-1][store_path]["fn"]]

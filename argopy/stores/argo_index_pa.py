@@ -41,9 +41,8 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
     ext = "pq"
     """Storage file extension"""
 
-    # @doc_inherit
     def load(self, nrows=None, force=False):  # noqa: C901
-        """ Load an Argo-index file content
+        """Load an Argo-index file content
 
         Returns
         -------
@@ -89,47 +88,66 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             # So I removed the option in c0a15ec68013c78d83f2689a8f9c062fdfa160ab
             return this_table
 
-        def csv2index(obj, origin):
+        def csv2index(obj):
             index = read_csv(obj, nrows=nrows)
             check_index_cols(
                 index.column_names,
                 convention=self.convention,
             )
-            log.debug("Argo index file loaded with pyarrow read_csv. src='%s'" % origin)
             return index
 
-        if not hasattr(self, "index") or force:
-            this_path = self.index_path
+        def index2cache_path(path, nrows=None):
             if nrows is not None:
-                this_path = this_path + "/local" + "#%i.%s" % (nrows, self.ext)
+                cache_path = path + "/local" + "#%i.%s" % (nrows, self.ext)
             else:
-                this_path = this_path + "/local.%s" % self.ext
+                cache_path = path + "/local.%s" % self.ext
+            return cache_path
 
-            if self.cache and self.fs["client"].exists(this_path):  # and self._same_origin(this_path):
-                log.debug(
-                    "Index already in memory as pyarrow table, loading... src='%s'"
-                    % (this_path)
-                )
-                self.index = self._read(self.fs["client"].fs, this_path, fmt=self.ext)
-                self.index_path_cache = this_path
+        def download(nrows=None):
+            log.debug("Load Argo index (nrows=%s) ..." % nrows)
+            if self.fs["src"].exists(self.index_path + ".gz"):
+                with self.fs["src"].open(self.index_path + ".gz", "rb") as fg:
+                    with gzip.open(fg) as f:
+                        self.index = csv2index(f)
+                        log.debug("Argo index file loaded with Pyarrow csv.read_csv from '%s'" % (self.index_path + ".gz"))
             else:
-                log.debug("Load index from scratch (nrows=%s) ..." % nrows)
-                if self.fs["src"].exists(self.index_path + ".gz"):
-                    with self.fs["src"].open(self.index_path + ".gz", "rb") as fg:
-                        with gzip.open(fg) as f:
-                            self.index = csv2index(f, self.index_path + ".gz")
+                with self.fs["src"].open(self.index_path, "rb") as f:
+                    self.index = csv2index(f)
+                    log.debug("Argo index file loaded with Pyarrow csv.read_csv from '%s'" % self.index_path)
+            self._nrows_index = nrows
+
+        def save2cache(path_in_cache):
+            self._write(self.fs["client"], path_in_cache, self.index, fmt=self.ext)
+            self.index = self._read(self.fs["client"].fs, path_in_cache)
+            self.index_path_cache = path_in_cache
+            log.debug("Argo index saved in cache as a Pyarrow table at '%s'" % path_in_cache)
+
+        def loadfromcache(path_in_cache):
+            log.debug("Argo index already in cache as a Pyarrow table, loading from '%s'" % path_in_cache)
+            self.index = self._read(self.fs["client"].fs, path_in_cache, fmt=self.ext)
+            self.index_path_cache = path_in_cache
+
+
+        index_path_cache = index2cache_path(self.index_path, nrows=nrows)
+
+        if hasattr(self, '_nrows_index') and self._nrows_index != nrows:
+            force = True
+
+        if force:
+            download(nrows=nrows)
+            if self.cache:
+                save2cache(index_path_cache)
+
+        else:
+            if not hasattr(self, "index"):
+                if self.cache:
+                    if self.fs["client"].exists(index_path_cache):
+                        loadfromcache(index_path_cache)
+                    else:
+                        download(nrows=nrows)
+                        save2cache(index_path_cache)
                 else:
-                    with self.fs["src"].open(self.index_path, "rb") as f:
-                        self.index = csv2index(f, self.index_path)
-
-                if self.cache and self.index.shape[0] > 0:
-                    self._write(self.fs["client"], this_path, self.index, fmt=self.ext)
-                    self.index = self._read(self.fs["client"].fs, this_path)
-                    self.index_path_cache = this_path
-                    log.debug(
-                        "Index saved in cache as pyarrow table. dest='%s'"
-                        % this_path
-                    )
+                    download(nrows=nrows)
 
         if self.N_RECORDS == 0:
             raise DataNotFound("No data found in the index")
@@ -140,19 +158,23 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
 
     def run(self, nrows=None):
         """ Filter index with search criteria """
-        this_path = self.search_path
-        if nrows is not None:
-            this_path = this_path + "/local" + "#%i.%s" % (nrows, self.ext)
-        else:
-            this_path = this_path + "/local.%s" % self.ext
 
-        if self.cache and self.fs["client"].exists(this_path):  # and self._same_origin(this_path):
+        def search2cache_path(path, nrows=None):
+            if nrows is not None:
+                cache_path = path + "/local" + "#%i.%s" % (nrows, self.ext)
+            else:
+                cache_path = path + "/local.%s" % self.ext
+            return cache_path
+
+        search_path_cache = search2cache_path(self.search_path, nrows=nrows)
+
+        if self.cache and self.fs["client"].exists(search_path_cache):  # and self._same_origin(search_path_cache):
             log.debug(
-                "Search results already in memory as pyarrow table, loading... src='%s'"
-                % (this_path)
+                "Search results already in memory as a Pyarrow table, loading from '%s'"
+                % search_path_cache
             )
-            self.search = self._read(self.fs["client"].fs, this_path, fmt=self.ext)
-            self.search_path_cache.commit(this_path)
+            self.search = self._read(self.fs["client"].fs, search_path_cache, fmt=self.ext)
+            self.search_path_cache.commit(search_path_cache)
         else:
             log.debug("Compute search from scratch (nrows=%s) ..." % nrows)
             this_filter = np.nonzero(self.search_filter)[0]
@@ -166,12 +188,12 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
 
             log.debug("Found %i/%i matches" % (self.search.shape[0], self.index.shape[0]))
             if self.cache and self.search.shape[0] > 0:
-                self._write(self.fs["client"], this_path, self.search, fmt=self.ext)
-                self.search = self._read(self.fs["client"].fs, this_path)
-                self.search_path_cache.commit(this_path)
+                self._write(self.fs["client"], search_path_cache, self.search, fmt=self.ext)
+                self.search = self._read(self.fs["client"].fs, search_path_cache)
+                self.search_path_cache.commit(search_path_cache)
                 log.debug(
-                    "Search results saved in cache as pyarrow table. dest='%s'"
-                    % this_path
+                    "Search results saved in cache as a Pyarrow table at '%s'"
+                    % search_path_cache
                 )
         return self
 
@@ -292,7 +314,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             "Argo index searching for WMOs=[%s] ..."
             % ";".join([str(wmo) for wmo in WMOs])
         )
-        self.load()
+        self.load(nrows=self._nrows_index)
         self.search_type = {"WMO": WMOs}
         filt = []
         for wmo in WMOs:
@@ -311,7 +333,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             "Argo index searching for CYCs=[%s] ..."
             % (";".join([str(cyc) for cyc in CYCs]))
         )
-        self.load()
+        self.load(nrows=self._nrows_index)
         self.search_type = {"CYC": CYCs}
         filt = []
         for cyc in CYCs:
@@ -336,7 +358,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
                 ";".join([str(cyc) for cyc in CYCs]),
             )
         )
-        self.load()
+        self.load(nrows=self._nrows_index)
         self.search_type = {"WMO": WMOs, "CYC": CYCs}
         filt = []
         for wmo in WMOs:
@@ -357,7 +379,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
     def search_tim(self, BOX, nrows=None):
         is_indexbox(BOX)
         log.debug("Argo index searching for time in BOX=%s ..." % BOX)
-        self.load()
+        self.load(nrows=self._nrows_index)
         self.search_type = {"BOX": BOX}
         filt = []
         filt.append(
@@ -379,7 +401,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
     def search_lat_lon(self, BOX, nrows=None):
         is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon in BOX=%s ..." % BOX)
-        self.load()
+        self.load(nrows=self._nrows_index)
         self.search_type = {"BOX": BOX}
         filt = []
         filt.append(pa.compute.greater_equal(self.index["longitude"], BOX[0]))
@@ -393,7 +415,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
     def search_lat_lon_tim(self, BOX, nrows=None):
         is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon/time in BOX=%s ..." % BOX)
-        self.load()
+        self.load(nrows=self._nrows_index)
         self.search_type = {"BOX": BOX}
         filt = []
         filt.append(pa.compute.greater_equal(self.index["longitude"], BOX[0]))
@@ -421,7 +443,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC profile index)")
         log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
         PARAMs = to_list(PARAMs)  # Make sure we deal with a list
-        self.load()
+        self.load(nrows=self._nrows_index)
         self.search_type = {"PARAM": PARAMs, "logical": logical}
         filt = []
         for param in PARAMs:
@@ -444,7 +466,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         if not np.all([v in ['R', 'A', 'D', '', ' '] for vals in PARAMs.values() for v in vals]):
             raise ValueError("Data mode must be a value in 'R', 'A', 'D', ' ', ''")
 
-        self.load()
+        self.load(nrows=self._nrows_index)
         self.search_type = {"DMODE": PARAMs, "logical": logical}
         filt = []
 

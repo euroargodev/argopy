@@ -2,12 +2,12 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
-  - python=3.8
+  - python = 3.8
 
 # CORE:
   - aiohttp
   - erddapy
-  - fsspec < 2023.12.0
+  - fsspec
   - netCDF4
   - packaging
   - requests
@@ -44,7 +44,7 @@ dependencies:
   - flake8
 #  - nc-time-axis
   - numpy
-  - pandas < 2.0
+  - pandas
   - pip
   - pytest
   - pytest-cov

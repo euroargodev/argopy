@@ -29,7 +29,7 @@ def clear_cache(fs=None):
             fs.clear_cache()
 
 
-def lscache(cache_path: str = "", prt=True):
+def lscache(cache_path: str = "", prt=True, errors='raise'):
     """Decode and list cache folder content
 
     Parameters
@@ -37,6 +37,12 @@ def lscache(cache_path: str = "", prt=True):
     cache_path: str
     prt: bool, default=True
         Return a printable string or a :class:`pandas.DataFrame`
+    errors: str, default: ``raise``
+            Define how to handle errors raised during listing:
+
+                - ``raise`` (default): Raise any error encountered
+                - ``ignore``: Do not stop processing, simply issue a debug message in logging console
+                - ``silent``:  Do not stop processing and do not issue log message
 
     Returns
     -------
@@ -76,7 +82,12 @@ def lscache(cache_path: str = "", prt=True):
                 c["blocks"] = set(c["blocks"])
         cached_files.append(loaded_cached_files)
     else:
-        raise FileSystemHasNoCache("No fsspec cache system at: %s" % apath)
+        if errors == 'raise':
+            raise FileSystemHasNoCache("No fsspec cache system at: %s" % apath)
+        elif errors == 'ignore':
+            log.debug("No fsspec cache system at: %s" % apath)
+        else:
+            return summary
 
     cached_files = cached_files or [{}]
     cached_files = cached_files[-1]

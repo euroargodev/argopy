@@ -11,13 +11,31 @@ What's New
 Coming up next
 --------------
 
+**Features and front-end API**
+
+- **argovis** data source now support the new `API server <https://argovis-api.colorado.edu/docs>`_. This upgrade comes with a new option to define the optional API KEY to use. You can `get a free key here <https://argovis-keygen.colorado.edu/>`_. (:pr:`371`) by `Bill Katie-Anne Mills <https://github.com/bkatiemills>`_.
+
+- **argopy** is concerned about its environmental impact and we'd like to understand and optimize the carbon emissions of our digital activities. Starting June 1st 2024, we use `Green Coding <https://www.green-coding.io>`_ tools to assess energy consumption and CO2eq emissions from our activities on Github infrastructure. All results and data are available on the new dedicated web page: :ref:`Carbon emissions`. (:pr:`354`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+
 **Internals**
 
 - Update Ifremer erddap server information. The Argo reference for DMQC (returned by the :class:`DataFetcher` fetcher with ``ds='ref'`` argument ) and Argo CTD-reference for DQMC (returned by the :class:`CTDRefDataFetcher` fetcher) now indicate the dataset version used. (:pr:`344`) by `G. Maze <http://www.github.com/gmaze>`_.
 
+- Fix :class:`argopy.ArgoDocs` that was not working with new Archimer webpage design, :issue:`351`. (:pr:`352`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Fix bug with ArgoIndex cache, :issue:`345`. (:pr:`346`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Keep dependencies up to date. (:pr:`333`, :pr:`337`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Update :class:`argopy.ArgoDocs` with last BGC cookbooks on pH. (:pr:`321`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Fix for fsspec > 2023.10.0. (:pr:`318`) by `G. Maze <http://www.github.com/gmaze>`_.
+
 **Breaking changes**
 
 - Drop support for erddapy < v0.8.0 (:pr:`344`) by `G. Maze <http://www.github.com/gmaze>`_.
+
 
 v0.1.15 (12 Dec. 2023)
 ----------------------

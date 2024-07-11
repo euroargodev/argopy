@@ -7,13 +7,13 @@ dependencies:
 # CORE:
   - aiohttp
   - erddapy
-  - fsspec < 2023.12.0
+  - fsspec
   - netCDF4
   - packaging
   - requests
   - scipy
   - toolz
-  - xarray  
+  - xarray==2024.2.0
 
 # EXT.UTIL:
   - gsw

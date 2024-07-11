@@ -84,8 +84,7 @@ Comparing data sources
 Features
 ~~~~~~~~
 
-Each of the data sources have their own features and
-capabilities. Here is a summary:
+Each of the data sources have their own features and capabilities. In the table are summarized the **argopy** support for each data sources. Note that an unchecked dataset does not mean that it is not available in the data source, only that **argopy** does not support it, yet.
 
 .. list-table:: Table of **argopy** data sources features
     :header-rows: 1
@@ -154,7 +153,7 @@ capabilities. Here is a summary:
     * -
       - BGC
       - X
-      - X
+      -
       -
     * -
       - Deep

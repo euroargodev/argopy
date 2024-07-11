@@ -136,6 +136,11 @@
     argopy.related.ArgoDocs.show
     argopy.related.ArgoDocs.js
 
+    argopy.related.ArgoDOI
+    argopy.related.ArgoDOI.search
+    argopy.related.ArgoDOI.file
+    argopy.related.ArgoDOI.dx
+
     argopy.plot
     argopy.plot.dashboard
     argopy.plot.bar_plot
