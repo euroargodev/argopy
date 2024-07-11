@@ -243,8 +243,8 @@ class ArgoAccessor:
 
         """
         def encode_direction(x):
-            y = np.where(x == 'A', 1, x)
-            y = np.where(y == 'D', -1, y)
+            y = np.where(x == 'A', 1, x.astype(object))
+            y = np.where(y == 'D', -1, y.astype(object))
             try:
                 return y.astype(int)
             except ValueError:
