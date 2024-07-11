@@ -388,10 +388,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         if self.dataset_id == "phy":
             self.erddap.dataset_id = "ArgoFloats"
-        elif self.dataset_id == "ref":
-            self.erddap.dataset_id = "ArgoFloats-ref"
         elif self.dataset_id == "bgc":
             self.erddap.dataset_id = "ArgoFloats-synthetic-BGC"
+        elif self.dataset_id == "ref":
+            self.erddap.dataset_id = "ArgoFloats-reference"
         elif self.dataset_id == "ref-ctd":
             self.erddap.dataset_id = "ArgoFloats-reference-CTD"
         elif self.dataset_id == "fail":
