@@ -121,15 +121,19 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
             ("packaging", get_version),  # will come with xarray, Using 'version' to make API compatible with several fsspec releases
             ("requests", get_version),
             ("toolz", get_version),
+            ("decorator", get_version),
         ]),
         'ext.util': sorted([
             ("gsw", get_version),   # Used by xarray accessor to compute new variables
+            ("s3fs", get_version),
+            ("boto3", get_version),
             ("tqdm", get_version),
             ("zarr", get_version),
         ]),
         'ext.perf': sorted([
             ("dask", get_version),
             ("distributed", get_version),
+            ("h5netcdf", get_version),
             ("pyarrow", get_version),
         ]),
         'ext.plot': sorted([
@@ -260,9 +264,9 @@ def setup_args():
 
     return parser
 
+
 if __name__ == '__main__':
     ARGS = setup_args().parse_args()
     show_versions(conda=ARGS.conda if ARGS.conda else False,
                   free=ARGS.free if ARGS.free else False,
                   core=ARGS.core if ARGS.core else False)
-

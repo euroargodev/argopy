@@ -448,7 +448,7 @@ class Fetch_wmo(FTPArgoDataFetcher):
         self.WMO = WMO
         self.CYC = CYC
         # self.N_FILES = len(self.uri)  # Trigger search in the index, should we do this at instantiation or later ???
-        self.N_FILES = np.NaN
+        self.N_FILES = np.nan
         self._nrows = None
         if "MAX_FILES" in kwargs:
             self._nrows = kwargs["MAX_FILES"]
@@ -509,7 +509,7 @@ class Fetch_box(FTPArgoDataFetcher):
         if len(self.BOX) == 8:
             self.indexBOX = [self.BOX[ii] for ii in [0, 1, 2, 3, 6, 7]]
         # self.N_FILES = len(self.uri)  # Trigger search in the index
-        self.N_FILES = np.NaN
+        self.N_FILES = np.nan
         self._nrows = None
         if "MAX_FILES" in kwargs:
             self._nrows = kwargs["MAX_FILES"]
