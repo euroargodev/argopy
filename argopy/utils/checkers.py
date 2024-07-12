@@ -10,6 +10,7 @@ from socket import gaierror
 import urllib
 import json
 import logging
+import importlib
 
 from ..options import OPTIONS
 from ..errors import InvalidDatasetStructure, FtpPathError, InvalidFetcher
@@ -18,6 +19,18 @@ from .casting import to_list
 
 
 log = logging.getLogger("argopy.utils.checkers")
+
+if importlib.util.find_spec("s3fs") is not None:
+    HAS_S3 = True
+    import s3fs
+else:
+    HAS_S3 = False
+
+if importlib.util.find_spec("boto3") is not None:
+    HAS_BOTO3 = True
+    import boto3
+else:
+    HAS_BOTO3 = False
 
 
 def is_indexbox(box: list, errors="raise"):
@@ -536,21 +549,38 @@ def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
     -------
     bool
     """
-    # log.debug("isconnected: %s" % host)
-    if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
+    def test_retry(host, checker, maxtry):
         it = 0
         while it < maxtry:
             try:
-                # log.debug("Checking if %s is connected ..." % host)
-                urllib.request.urlopen(
-                    host, timeout=1
-                )  # nosec B310 because host protocol already checked
+                checker(host)
                 result, it = True, maxtry
             except Exception:
                 result, it = False, it + 1
         return result
-    else:
+
+    def check_local(host):
         return os.path.exists(host)
+
+    def check_remote(host):
+        return urllib.request.urlopen(
+            host, timeout=1
+        )  # nosec B310 because host protocol already checked
+
+    def check_s3(host):
+        return s3fs.S3FileSystem(anon=True).info(host)
+
+    if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
+        return test_retry(host, check_remote, maxtry)
+    elif split_protocol(host)[0] == "s3":
+        if HAS_S3:
+            return test_retry(host, check_s3, maxtry)
+        else:
+            raise ValueError(
+                "Can't check if an S3 server is connected without the 's3fs' library. Please update your environment "
+                "with this dependency.")
+    else:
+        return test_retry(host, check_local, 1)
 
 
 def urlhaskeyword(url: str = "", keyword: str = "", maxtry: int = 10):
@@ -676,3 +706,11 @@ def erddap_ds_exists(
             "Return False because we cannot reach the erddap server %s" % erddap
         )
         return False
+
+
+def has_aws_credentials():
+    if HAS_BOTO3:
+        client = boto3.client('s3')
+        return client._request_signer._credentials is not None
+    else:
+        raise Exception("boto3 is not available !")

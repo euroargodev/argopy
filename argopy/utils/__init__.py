@@ -16,6 +16,7 @@ from .checkers import (
     isalive,
     isAPIconnected,
     erddap_ds_exists,
+    has_aws_credentials,
 )
 from .casting import DATA_TYPES, cast_Argo_variable_type, to_list
 from .decorators import deprecated, doc_inherit
@@ -76,6 +77,7 @@ __all__ = (
     "isalive",
     "isAPIconnected",
     "erddap_ds_exists",
+    "has_aws_credentials",
     # Data type casting:
     "DATA_TYPES",
     "cast_Argo_variable_type",
