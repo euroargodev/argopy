@@ -123,6 +123,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 # will come with xarray, Using 'version' to make API compatible with several fsspec releases
                 ("requests", get_version),
                 ("toolz", get_version),
+                ("decorator", get_version),
             ]
         ),
         "ext.util": sorted(
@@ -131,6 +132,8 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                     "gsw",
                     get_version,
                 ),  # Used by xarray accessor to compute new variables
+                ("s3fs", get_version),
+                ("boto3", get_version),
                 ("tqdm", get_version),
                 ("zarr", get_version),
             ]

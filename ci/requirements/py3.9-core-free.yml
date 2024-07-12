@@ -6,6 +6,7 @@ dependencies:
 
 # CORE:
   - aiohttp
+  - decorator
   - erddapy
   - fsspec
   - netCDF4
@@ -13,10 +14,12 @@ dependencies:
   - requests
   - scipy
   - toolz
-  - xarray==2024.2.0
+  - xarray<2024.3
 
 # EXT.UTIL:
+#  - boto3
 #  - gsw
+#  - s3fs
 #  - tqdm
 #  - zarr
 

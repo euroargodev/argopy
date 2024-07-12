@@ -13,6 +13,21 @@ Coming up next
 
 **Features and front-end API**
 
+- **Support for AWS S3 index files**. This support is experimental and is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. The `ADMT working group discussion items are listed here <https://github.com/OneArgo/ADMT/discussions/categories/wg-on-best-format-to-serve-argo-data-from-the-cloud>`_. Both CORE and BGC index files are supported. The new :class:`ArgoIndex` not only support access to the AWS S3 index files but also implement improved performances for search methods on WMO and cycle numbers, using :class:`boto3.client.select_object_content` SQL queries. Indeed, the ``https`` and ``ftp`` default GDAC server index files are downloaded and loaded in memory before being searched. With ``s3``, index files can directly be queried on the server using SQL syntax; the full index is not necessarily downloaded. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import ArgoIndex
+    idx = ArgoIndex(host='s3')  # you can also use 'aws' as a keyword for 's3://argo-gdac-sandbox/pub/idx'
+
+    # Optimised perf with boto3.client.select_object_content queries for WMO and cycle numbers:
+    idx.search_wmo(6903091)
+    idx.search_cyc(12)
+    idx.search_wmo_cyc(6903091, 23)
+
+    # Other search methods will trigger download of the index file, eg:
+    idx.search_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+
 - **argovis** data source now support the new `API server <https://argovis-api.colorado.edu/docs>`_. This upgrade comes with a new option to define the optional API KEY to use. You can `get a free key here <https://argovis-keygen.colorado.edu/>`_. (:pr:`371`) by `Bill Katie-Anne Mills <https://github.com/bkatiemills>`_.
 
 - **argopy** is concerned about its environmental impact and we'd like to understand and optimize the carbon emissions of our digital activities. Starting June 1st 2024, we use `Green Coding <https://www.green-coding.io>`_ tools to assess energy consumption and CO2eq emissions from our activities on Github infrastructure. All results and data are available on the new dedicated web page: :ref:`Carbon emissions`. (:pr:`354`) by `G. Maze <http://www.github.com/gmaze>`_.

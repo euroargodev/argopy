@@ -116,6 +116,11 @@ def new_fs(
         }
         fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
 
+    elif protocol == "s3":
+        default_fsspec_kwargs.pop("simple_links")
+        default_fsspec_kwargs.pop("block_size")
+        fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
+
     else:
         # Merge default with user arguments:
         fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
@@ -659,7 +664,7 @@ class httpstore(argo_store_proto):
     ):
         """URL data downloader
 
-        This is basically a fsspec.cat_file that is able tho handle a 429 "Too many requests" error from a server, by
+        This is basically a fsspec.cat_file that is able to handle a 429 "Too many requests" error from a server, by
         waiting and sending requests several time.
         """
 
@@ -1823,3 +1828,18 @@ def httpstore_erddap(url: str = "", cache: bool = False, cachedir: str = "", **k
         return login_store
     else:
         return httpstore(cache=cache, cachedir=cachedir, **kwargs)
+
+
+class s3store(httpstore):
+    """
+    By default, the s3store will use AWS credentials available in the environment.
+
+    If you want to force an anonymous session, you should use the `anon=True` option.
+
+    In order to avoid a *no credentials found error*, you can use:
+
+    >>> from argopy.utils import has_aws_credentials
+    >>> fs = s3store(anon=not has_aws_credentials())
+
+    """
+    protocol = 's3'

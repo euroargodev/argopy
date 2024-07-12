@@ -6,6 +6,7 @@ dependencies:
 
 # CORE:
   - aiohttp = 3.8.5
+  - decorator = 5.1.1
   - erddapy = 2.2.0
   - fsspec = 2023.9.2
   - netCDF4 = 1.6.4
@@ -16,7 +17,9 @@ dependencies:
   - xarray = 2023.9.0
 
 # EXT.UTIL:
+  - boto3 = 1.28.17
   - gsw = 3.6.17
+  - s3fs = 2023.9.2
   - tqdm = 4.66.1
   - zarr = 2.16.1
 
