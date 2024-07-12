@@ -629,7 +629,7 @@ class httpstore(argo_store_proto):
 
     def __init__(self, *args, **kwargs):
         # Create a registry that will be used to keep track of all URLs accessed by this store
-        self._url_registry = Registry(name="Accessed URLs")
+        self.urls_registry = Registry(name="Accessed URLs")
         super().__init__(*args, **kwargs)
 
     def open(self, path, *args, **kwargs):
@@ -645,7 +645,7 @@ class httpstore(argo_store_proto):
 
         This is primarily intended to be used by tests and dev
         """
-        self._url_registry.commit(url)
+        self.urls_registry.commit(url)
         return url
 
         # if OPTIONS["server"] is not None:
