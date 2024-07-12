@@ -176,8 +176,8 @@ class Fetch_box(ErddapREFDataFetcher):
     def define_constraints(self):
         """Define request constraints"""
 
-        self.erddap.constraints = {"longitude>=": conv_lon(self.BOX[0], conv='360')}
-        self.erddap.constraints.update({"longitude<=": conv_lon(self.BOX[1], conv='360')})
+        self.erddap.constraints = {"longitude>=": conv_lon(self.BOX[0], conv='180')}
+        self.erddap.constraints.update({"longitude<=": conv_lon(self.BOX[1], conv='180')})
         self.erddap.constraints.update({"latitude>=": self.BOX[2]})
         self.erddap.constraints.update({"latitude<=": self.BOX[3]})
         self.erddap.constraints.update({"pres>=": self.BOX[4]})
