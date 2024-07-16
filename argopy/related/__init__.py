@@ -4,6 +4,7 @@ from .reference_tables import ArgoNVSReferenceTables
 from .argo_documentation import ArgoDocs
 from .doi_snapshot import ArgoDOI
 from .euroargo_api import get_coriolis_profile_id, get_ea_profile_page
+from .erddap_refdata import Fetch_box as CTDRefDataFetcher
 from .utils import load_dict, mapp_dict
 
 #
@@ -14,12 +15,13 @@ __all__ = (
     "ArgoNVSReferenceTables",
     "ArgoDocs",
     "ArgoDOI",
+    "CTDRefDataFetcher",
 
-    # Functions:
+    # Functions :
     "get_coriolis_profile_id",
     "get_ea_profile_page",
 
-    # Utilities:
+    # Utilities :
     "load_dict",
     "mapp_dict",
 )

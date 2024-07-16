@@ -1,25 +1,27 @@
 """
-Fetcher to retrieve CTD reference data from Ifremer erddap
+Fetcher to retrieve R/V CTD reference data for Argo DMQC from Ifremer erddap
+
+This module is not available from the data fetcher facade because it does not provide data from
+Argo floats but from R/V CTD.
+
+This module is not covered by unit tests because it provide a preliminary support only (Ifremer erddap
+data set not yet fully ready).
+
+#todo Add unit tests when Ifremer erddap ready and new feature documented
+
 """
 import xarray as xr
 import logging
+
+from erddapy.erddapy import ERDDAP  # noqa: F401
+from erddapy.erddapy import _quote_string_constraints as quote_string_constraints  # noqa: F401
+from erddapy.erddapy import parse_dates  # noqa: F401
+
 from ..options import OPTIONS
 from ..utils.chunking import Chunker
 from ..utils.geo import conv_lon
 from ..stores import httpstore_erddap_auth
-from .erddap_data import ErddapArgoDataFetcher
-
-# Load erddapy according to available version (breaking changes in v0.8.0)
-try:
-    from erddapy import ERDDAP
-    from erddapy.utilities import parse_dates, quote_string_constraints
-except:  # noqa: E722
-    # >= v0.8.0
-    from erddapy.erddapy import ERDDAP  # noqa: F401
-    from erddapy.erddapy import _quote_string_constraints as quote_string_constraints  # noqa: F401
-    from erddapy.erddapy import parse_dates  # noqa: F401
-
-    # Soon ! https://github.com/ioos/erddapy
+from ..data_fetchers.erddap_data import ErddapArgoDataFetcher
 
 
 log = logging.getLogger("argopy.erddap.refdata")
@@ -34,7 +36,17 @@ api_server_check = (
 
 
 class ErddapREFDataFetcher(ErddapArgoDataFetcher):
-    """Manage access to Argo CTD-reference data through Ifremer ERDDAP"""
+    """Manage access to Argo CTD-reference data through Ifremer ERDDAP
+
+    Examples
+    --------
+    >>> from argopy import CTDRefDataFetcher
+    >>> with argopy.set_options(user="john_doe", password="***"):
+    >>>      f = CTDRefDataFetcher(box=[15, 30, -70, -60, 0, 5000.0])
+    >>>      ds = f.to_xarray()
+
+
+    """
 
     # @doc_inherit
     def __init__(self, **kwargs):
