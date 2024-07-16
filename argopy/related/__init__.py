@@ -17,11 +17,11 @@ __all__ = (
     "ArgoDOI",
     "CTDRefDataFetcher",
 
-    # Functions:
+    # Functions :
     "get_coriolis_profile_id",
     "get_ea_profile_page",
 
-    # Utilities:
+    # Utilities :
     "load_dict",
     "mapp_dict",
 )
