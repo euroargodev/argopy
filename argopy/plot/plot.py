@@ -475,7 +475,7 @@ def scatter_map(  # noqa: C901
         traj_color = markeredgecolor
 
     # Try to guess the trajectory grouping variable, i.e. name for WMO
-    traj_axis = guess_trajvar(data) if traj_axis is None else traj_axis
+    traj_axis = guess_trajvar(data) if traj and traj_axis is None else traj_axis
 
     # Set up the figure and axis:
     defaults = {"figsize": (10, 6), "dpi": 90}

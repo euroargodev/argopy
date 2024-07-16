@@ -8,12 +8,6 @@ for standard users as well as Argo experts.
 
 |License| |Python version| |Anaconda-Server Badge|
 
-.. versionadded:: v0.1.14
-
-    - Rolling out incremental support for **bgc** variables 🎉
-    - New :ref:`Gallery of notebook examples <Gallery>` for **bgc** variables
-    - Check out a brief overview of new features on the :ref:`What's New` page
-
 
 Documentation
 -------------
@@ -25,6 +19,7 @@ Documentation
 * :doc:`why`
 * :doc:`what_is_argo`
 * :doc:`Gallery of examples <gallery>`
+* :doc:`impact`
 
 .. toctree::
     :maxdepth: 2
@@ -36,6 +31,7 @@ Documentation
     why
     what_is_argo
     Gallery of examples <gallery>
+    impact
 
 **User Guide**
 
@@ -57,6 +53,7 @@ Documentation
 **Help & reference**
 
 * :doc:`whats-new`
+* :doc:`energy`
 * :doc:`contributing`
 * :doc:`api`
 
@@ -66,6 +63,7 @@ Documentation
     :caption: Help & reference
 
     whats-new
+    energy
     contributing
     api
 

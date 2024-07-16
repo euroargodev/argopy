@@ -1,7 +1,7 @@
 {
   "name": "parameters",
   "long_name": "All valid requests to https://api-coriolis.ifremer.fr/legacy/parameter?code={code}",
-  "last_update": "2023-07-28T08:37:51.242180+00:00",
+  "last_update": "2023-10-20T12:58:00.620292+00:00",
   "data": {
     "valid_codes": [
       "9",
@@ -518,7 +518,9 @@
       "770",
       "771",
       "772",
-      "773"
+      "773",
+      "774",
+      "775"
     ],
     "valid_params": [
       "DEPH",
@@ -1025,7 +1027,9 @@
       "VM01",
       "PRES_CORE",
       "SIGT",
-      "VMSP"
+      "VMSP",
+      "FLUO_ADJUSTED",
+      "FLUO_ADJUSTED_ERROR"
     ],
     "codes": {
       "9": {
@@ -1215,7 +1219,7 @@
         "gf3_strict_name": "FLUO",
         "gf3_extended_name": "",
         "parent_code": "0",
-        "label": "Fluorescence",
+        "label": "Chlorophyll-a fluorescence",
         "param_type": "P"
       },
       "64": {
@@ -6077,6 +6081,26 @@
         "parent_code": "0",
         "label": "Wave mean directional spreading",
         "param_type": "P"
+      },
+      "774": {
+        "unit": "relative unit",
+        "time_sampling": "",
+        "code": "774",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "FLUO_ADJUSTED",
+        "parent_code": "63",
+        "label": "Chlorophyll-a fluorescence adjusted",
+        "param_type": "D"
+      },
+      "775": {
+        "unit": "relative unit",
+        "time_sampling": "",
+        "code": "775",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "FLUO_ADJUSTED_ERROR",
+        "parent_code": "63",
+        "label": "Chlorophyll-a fluorescence adjusted error",
+        "param_type": "D"
       }
     },
     "params": {
@@ -6267,7 +6291,7 @@
         "gf3_strict_name": "FLUO",
         "gf3_extended_name": "",
         "parent_code": "0",
-        "label": "Fluorescence",
+        "label": "Chlorophyll-a fluorescence",
         "param_type": "P"
       },
       "DOX2": {
@@ -11129,6 +11153,26 @@
         "parent_code": "0",
         "label": "Wave mean directional spreading",
         "param_type": "P"
+      },
+      "FLUO_ADJUSTED": {
+        "unit": "relative unit",
+        "time_sampling": "",
+        "code": "774",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "FLUO_ADJUSTED",
+        "parent_code": "63",
+        "label": "Chlorophyll-a fluorescence adjusted",
+        "param_type": "D"
+      },
+      "FLUO_ADJUSTED_ERROR": {
+        "unit": "relative unit",
+        "time_sampling": "",
+        "code": "775",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "FLUO_ADJUSTED_ERROR",
+        "parent_code": "63",
+        "label": "Chlorophyll-a fluorescence adjusted error",
+        "param_type": "D"
       }
     }
   }

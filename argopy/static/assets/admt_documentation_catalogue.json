@@ -1,7 +1,7 @@
 {
   "name": "ADMT documentation catalogue",
   "long_name": "Titles and DOIs of all the official ADMT documentation",
-  "last_update": "2023-09-18T09:14:50.015167+00:00",
+  "last_update": "2023-12-21T15:21:36.774525+00:00",
   "data": {
     "catalogue": [
       {
@@ -147,6 +147,18 @@
         "title": "Processing BGC-Argo nitrate concentration at the DAC Level",
         "doi": "10.13155/46121",
         "id": 46121
+      },
+      {
+        "category": "Cookbooks",
+        "title": "Processing BGC-Argo pH data at the DAC level",
+        "doi": "10.13155/57195",
+        "id": 57195
+      },
+      {
+        "category": "Quality Control",
+        "title": "BGC-Argo quality control manual for pH",
+        "doi": "10.13155/97828",
+        "id": 97828
       }
     ]
   }

@@ -1,30 +1,109 @@
-# This workflows will upload a Python Package using Twine when a release is created
-# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
-
-name: Publish on pypi
-
+name: Build and Upload to PyPI
 on:
   release:
     types: [created, edited]
+  workflow_dispatch:
+
 
 jobs:
-  deploy:
 
+  build-artifacts:
     runs-on: ubuntu-latest
-
+    if: github.repository == 'euroargodev/argopy'
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.x'
-    - name: Install dependencies with pip
-      run: |
-        python -m pip install --upgrade pip twine build
-    - name: Build and publish
-      env:
-        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      run: |
-        python -m build --sdist --wheel . --outdir dist/
-        twine upload --skip-existing dist/*
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v3
+        name: Install Python
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install setuptools setuptools-scm wheel twine check-manifest
+
+      - name: Build tarball and wheels
+        run: |
+          git clean -xdf
+          git restore -SW .
+          python -m build --sdist --wheel .
+
+      - name: Check built artifacts
+        run: |
+          python -m twine check dist/*
+          pwd
+          if [ -f dist/argopy-0.0.0.tar.gz ]; then
+            echo "❌ INVALID VERSION NUMBER"
+            exit 1
+          else
+            echo "✅ Looks good"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: releases
+          path: dist
+
+  test-build:
+    needs: build-artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v3
+        name: Install Python
+        with:
+          python-version: 3.8
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: releases
+          path: dist
+
+      - name: List contents of built dist
+        run: |
+          ls -ltrh
+          ls -ltrh dist
+
+      - name: Verify the built dist/wheel is valid
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install dist/argopy*.whl
+
+  upload-to-testpypi:
+    needs: test-build
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: releases
+          path: dist
+      - name: Publish package to TestPyPI
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          verbose: true
+          skip-existing: false
+
+  upload-to-pypi:
+    needs: upload-to-testpypi
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    environment:
+      name: release
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: releases
+          path: dist
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

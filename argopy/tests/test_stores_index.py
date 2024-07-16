@@ -20,29 +20,31 @@ from argopy.utils.checkers import is_list_of_strings
 from argopy.stores.argo_index_pd import indexstore_pandas
 from mocked_http import mocked_httpserver, mocked_server_address
 
-
 log = logging.getLogger("argopy.tests.indexstores")
 
 has_pyarrow = importlib.util.find_spec("pyarrow") is not None
-skip_pyarrow = pytest.mark.skipif(not has_pyarrow, reason="Requires pyarrow")
+skip_nopyarrow = pytest.mark.skipif(not has_pyarrow, reason="Requires pyarrow")
 
-skip_this = pytest.mark.skipif(1, reason="Skipped temporarily")
-skip_for_debug = pytest.mark.skipif(False, reason="Taking too long !")
-
+skip_pandas = pytest.mark.skipif(0, reason="Skipped tests for Pandas backend")
+skip_pyarrow = pytest.mark.skipif(0, reason="Skipped tests for Pyarrow backend")
+skip_CORE = pytest.mark.skipif(0, reason="Skipped tests for CORE index")
+skip_BGCs = pytest.mark.skipif(0, reason="Skipped tests for BGC synthetic index")
+skip_BGCb = pytest.mark.skipif(0, reason="Skipped tests for BGC bio index")
 
 """
 List gdac hosts to be tested. 
-Since the fetcher is compatible with host from local, http or ftp protocols, we
-try to test them all:
+Since the fetcher is compatible with host from local, http, ftp or s3 protocols, we try to test them all:
 """
 VALID_HOSTS = [
-    argopy.tutorial.open_dataset("gdac")[0],
-    #'https://data-argo.ifremer.fr',
-    mocked_server_address,
-    # 'ftp://ftp.ifremer.fr/ifremer/argo',
-    # 'ftp://usgodae.org/pub/outgoing/argo',  # ok, but takes too long to respond, slow down CI
+    argopy.tutorial.open_dataset("gdac")[0],  # Use local files
+    mocked_server_address,  # Use the mocked http server
     "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
 ]
+
+HAS_S3FS = importlib.util.find_spec("s3fs") is not None
+if HAS_S3FS:
+    # todo Create a mocked server for s3 tests
+    VALID_HOSTS.append("s3://argo-gdac-sandbox/pub/idx")
 
 """
 List index searches to be tested.
@@ -51,8 +53,9 @@ VALID_SEARCHES = [
     # {"wmo": [13857]},
     {"wmo": [3902131]},  # BGC
     {"wmo": [6901929, 2901623]},
+    {"cyc": [5]},
     {"cyc": [5, 45]},
-    {"wmo_cyc": [13857, 2]},
+    # {"wmo_cyc": [13857, 2]},
     {"wmo_cyc": [3902131, 2]},  # BGC
     {"tim": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"lat_lon": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
@@ -93,7 +96,7 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason="?")
                 idx.search_lat_lon_tim(apts["lat_lon_tim"], nrows=nrows)
             if "params" in apts:
                 if np.any(
-                    [key in idx.convention_title for key in ["Bio", "Synthetic"]]
+                        [key in idx.convention_title for key in ["Bio", "Synthetic"]]
                 ):
                     if "logical" in apts:
                         logical = apts["logical"]
@@ -104,7 +107,7 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason="?")
                     pytest.skip("For BGC index only")
             if "parameter_data_mode" in apts:
                 if np.any(
-                    [key in idx.convention_title for key in ["Bio", "Synthetic"]]
+                        [key in idx.convention_title for key in ["Bio", "Synthetic"]]
                 ):
                     if "logical" in apts:
                         logical = apts["logical"]
@@ -141,7 +144,9 @@ class IndexStore_test_proto:
         (h, ap, n) for h in VALID_HOSTS for ap in VALID_SEARCHES for n in [None, 2]
     ]
     search_scenarios_ids = [
-        "%s, %s, nrows=%s" % (ftp_shortname(fix[0]), list(fix[1].keys())[0], fix[2])
+        "%s, %s, nrows=%s" % (ftp_shortname(fix[0]),
+                              "%s[n=%i]" % (list(fix[1].keys())[0], len(fix[1][list(fix[1].keys())[0]])),
+                              str(fix[2]))
         for fix in search_scenarios
     ]
 
@@ -153,8 +158,11 @@ class IndexStore_test_proto:
         for b in ["and", "or"]
     ]
     search_scenarios_bool_ids = [
-        "%s, %s, nrows=%s, logical=%s"
-        % (ftp_shortname(fix[0]), list(fix[1].keys())[0], fix[2], fix[3])
+        "%s, %s, nrows=%s, logical='%s'"
+        % (ftp_shortname(fix[0]),
+           "%s[n=%i]" % (list(fix[1].keys())[0], len(fix[1][list(fix[1].keys())[0]])),
+           str(fix[2]),
+           str(fix[3]))
         for fix in search_scenarios_bool
     ]
 
@@ -182,12 +190,15 @@ class IndexStore_test_proto:
         else:
             return ftp
 
-    def create_store(self, store_args, xfail=False):
+    def create_store(self, store_args, xfail=False, reason="?"):
         def core(fargs):
             try:
                 idx = self.indexstore(**fargs)
             except Exception:
-                raise
+                if xfail:
+                    pytest.xfail(reason)
+                else:
+                    raise
             return idx
 
         return core(store_args)
@@ -235,15 +246,19 @@ class IndexStore_test_proto:
             },
             cached=cache,
         )
-        idx = self.create_store(fetcher_args).load(nrows=N_RECORDS)
+        idx = self.create_store(fetcher_args)  # .load(nrows=N_RECORDS)
         return idx
 
     @pytest.fixture
     def a_store(self, request):
         """Fixture to create an index store for a given host."""
         fetcher_args, N_RECORDS = self._setup_store(request)
-        # yield self.indexstore(**fetcher_args).load(nrows=N_RECORDS)
-        yield self.create_store(fetcher_args).load(nrows=N_RECORDS)
+        xfail, reason = False, ""
+        if not HAS_S3FS and 's3' in fetcher_args['host']:
+            xfail, reason = True, 's3fs not available'
+        elif 's3' in fetcher_args['host']:
+            xfail, reason = True, 's3 is experimental'
+        yield self.create_store(fetcher_args, xfail=xfail, reason=reason).load(nrows=N_RECORDS)
 
     @pytest.fixture
     def a_search(self, request):
@@ -256,15 +271,22 @@ class IndexStore_test_proto:
             logical = request.param[3]
             srch["logical"] = logical
         # log.debug("a_search: %s, %s, %s" % (self.index_file, srch, xfail))
-        yield run_a_search(self.new_idx, {"host": host, "cache": True}, srch)
+
+        xfail, reason = False, ""
+        if not HAS_S3FS and 's3' in host:
+            xfail, reason = True, 's3fs not available'
+        elif 's3' in host:
+            xfail, reason = True, 's3 is experimental'
+
+        yield run_a_search(self.new_idx, {"host": host, "cache": True}, srch, xfail=xfail, reason=reason)
 
     def assert_index(self, this_idx, cacheable=False):
         assert hasattr(this_idx, "index")
         assert this_idx.shape[0] == this_idx.index.shape[0]
         assert this_idx.N_RECORDS == this_idx.index.shape[0]
         assert (
-            is_list_of_strings(this_idx.uri_full_index)
-            and len(this_idx.uri_full_index) == this_idx.N_RECORDS
+                is_list_of_strings(this_idx.uri_full_index)
+                and len(this_idx.uri_full_index) == this_idx.N_RECORDS
         )
         if cacheable:
             assert is_list_of_strings(this_idx.cachepath("index"))
@@ -274,7 +296,7 @@ class IndexStore_test_proto:
         assert this_idx.N_MATCH == this_idx.search.shape[0]
         assert this_idx.N_FILES == this_idx.N_MATCH
         assert (
-            is_list_of_strings(this_idx.uri) and len(this_idx.uri) == this_idx.N_MATCH
+                is_list_of_strings(this_idx.uri) and len(this_idx.uri) == this_idx.N_MATCH
         )
         if cacheable:
             assert is_list_of_strings(this_idx.cachepath("search"))
@@ -292,7 +314,7 @@ class IndexStore_test_proto:
     def test_hosts(self, mocked_httpserver, a_store):
         self.assert_index(
             a_store
-        )  # assert (this_store.N_RECORDS >= 1)  # Make sure we loaded the index file content
+        )
 
     @pytest.mark.parametrize(
         "ftp_host",
@@ -325,11 +347,11 @@ class IndexStore_test_proto:
                 host=self.host, index_file="ar_greylist.txt", cache=False
             )
 
-    # @pytest.mark.parametrize(
-    #     "a_search", search_scenarios, indirect=True, ids=search_scenarios_ids
-    # )
-    # def test_a_search(self, mocked_httpserver, a_search):
-    #     self.assert_search(a_search, cacheable=False)
+    @pytest.mark.parametrize(
+        "a_search", search_scenarios, indirect=True, ids=search_scenarios_ids
+    )
+    def test_a_search(self, mocked_httpserver, a_search):
+        self.assert_search(a_search, cacheable=False)
 
     @pytest.mark.parametrize(
         "a_search", search_scenarios_bool, indirect=True, ids=search_scenarios_bool_ids
@@ -366,6 +388,7 @@ class IndexStore_test_proto:
 
     def test_caching_index(self):
         idx = self.new_idx(cache=True)
+        idx.load(nrows=None if "tutorial" in idx.host or "MOCK" in idx.host else 100)
         self.assert_index(idx, cacheable=True)
 
     def test_caching_search(self):
@@ -439,34 +462,42 @@ class IndexStore_test_proto:
         # Cleanup
         tf.close()
 
+
 ############################
 # TESTS FOR PANDAS BACKEND #
 ############################
 
-# @skip_this
+@skip_pandas
+@skip_CORE
 class Test_IndexStore_pandas_CORE(IndexStore_test_proto):
     network = "core"
     indexstore = indexstore_pandas
     index_file = "ar_index_global_prof.txt"
 
-# @skip_this
+
+@skip_pandas
+@skip_BGCs
 class Test_IndexStore_pandas_BGC_synthetic(IndexStore_test_proto):
     network = "bgc"
     indexstore = indexstore_pandas
     index_file = "argo_synthetic-profile_index.txt"
 
-# @skip_this
+
+@skip_pandas
+@skip_BGCb
 class Test_IndexStore_pandas_BGC_bio(IndexStore_test_proto):
     network = "bgc"
     indexstore = indexstore_pandas
     index_file = "argo_bio-profile_index.txt"
 
+
 #############################
 # TESTS FOR PYARROW BACKEND #
 #############################
 
-# @skip_this
+@skip_nopyarrow
 @skip_pyarrow
+@skip_CORE
 class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto):
     network = "core"
     from argopy.stores.argo_index_pa import indexstore_pyarrow
@@ -474,8 +505,10 @@ class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto):
     indexstore = indexstore_pyarrow
     index_file = "ar_index_global_prof.txt"
 
-# @skip_this
+
+@skip_nopyarrow
 @skip_pyarrow
+@skip_BGCs
 class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
     network = "bgc"
     from argopy.stores.argo_index_pa import indexstore_pyarrow
@@ -484,8 +517,9 @@ class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
     index_file = "argo_bio-profile_index.txt"
 
 
-# @skip_this
+@skip_nopyarrow
 @skip_pyarrow
+@skip_BGCb
 class Test_IndexStore_pyarrow_BGC_synthetic(IndexStore_test_proto):
     network = "bgc"
     from argopy.stores.argo_index_pa import indexstore_pyarrow

@@ -2,10 +2,11 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
-  - python=3.8
+  - python = 3.8
 
 # CORE:
   - aiohttp
+  - decorator
   - erddapy
   - fsspec
   - netCDF4
@@ -16,7 +17,9 @@ dependencies:
   - xarray
 
 # EXT.UTIL:
+  - boto3
   - gsw
+  - s3fs
   - tqdm
   - zarr
 
@@ -29,8 +32,9 @@ dependencies:
   - IPython
   - cartopy
   - ipykernel
-  - ipywidgets
+  - ipywidgets <= 7.8.0
   - matplotlib
+  - pyproj
   - seaborn
 
 # DEV:
@@ -43,7 +47,7 @@ dependencies:
   - flake8
 #  - nc-time-axis
   - numpy
-  - pandas < 2.0
+  - pandas
   - pip
   - pytest
   - pytest-cov

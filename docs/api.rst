@@ -92,6 +92,7 @@ Utilities for Argo related data
    CTDRefDataFetcher
    TopoFetcher
    ArgoDocs
+   ArgoDOI
    related.get_coriolis_profile_id
    related.get_ea_profile_page
 

@@ -16,6 +16,7 @@ from .checkers import (
     isalive,
     isAPIconnected,
     erddap_ds_exists,
+    has_aws_credentials,
 )
 from .casting import DATA_TYPES, cast_Argo_variable_type, to_list
 from .decorators import deprecated, doc_inherit
@@ -43,7 +44,7 @@ from .transform import (
     fill_variables_not_in_all_datasets,
     drop_variables_not_in_all_datasets,
 )
-from .format import argo_split_path, format_oneline
+from .format import argo_split_path, format_oneline, UriCName
 from .loggers import warnUnless, log_argopy_callerstack
 
 __all__ = (
@@ -64,6 +65,7 @@ __all__ = (
     "isalive",
     "isAPIconnected",
     "erddap_ds_exists",
+    "has_aws_credentials",
     # Data type casting:
     "DATA_TYPES",
     "cast_Argo_variable_type",
@@ -106,6 +108,7 @@ __all__ = (
     # Formatters:
     "format_oneline",
     "argo_split_path",
+    "UriCName",
     # Loggers:
     "warnUnless",
     "log_argopy_callerstack",

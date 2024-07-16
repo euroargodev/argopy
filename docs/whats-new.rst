@@ -11,10 +11,52 @@ What's New
 Coming up next
 --------------
 
+**Features and front-end API**
+
+- **Support for AWS S3 index files**. This support is experimental and is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. The `ADMT working group discussion items are listed here <https://github.com/OneArgo/ADMT/discussions/categories/wg-on-best-format-to-serve-argo-data-from-the-cloud>`_. Both CORE and BGC index files are supported. The new :class:`ArgoIndex` not only support access to the AWS S3 index files but also implement improved performances for search methods on WMO and cycle numbers, using :class:`boto3.client.select_object_content` SQL queries. Indeed, the ``https`` and ``ftp`` default GDAC server index files are downloaded and loaded in memory before being searched. With ``s3``, index files can directly be queried on the server using SQL syntax; the full index is not necessarily downloaded. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
+
+.. code-block:: python
+
+    from argopy import ArgoIndex
+    idx = ArgoIndex(host='s3')  # you can also use 'aws' as a keyword for 's3://argo-gdac-sandbox/pub/idx'
+
+    # Optimised perf with boto3.client.select_object_content queries for WMO and cycle numbers:
+    idx.search_wmo(6903091)
+    idx.search_cyc(12)
+    idx.search_wmo_cyc(6903091, 23)
+
+    # Other search methods will trigger download of the index file, eg:
+    idx.search_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+
+- **argovis** data source now support the new `API server <https://argovis-api.colorado.edu/docs>`_. This upgrade comes with a new option to define the optional API KEY to use. You can `get a free key here <https://argovis-keygen.colorado.edu/>`_. (:pr:`371`) by `Bill Katie-Anne Mills <https://github.com/bkatiemills>`_.
+
+- **argopy** is concerned about its environmental impact and we'd like to understand and optimize the carbon emissions of our digital activities. Starting June 1st 2024, we use `Green Coding <https://www.green-coding.io>`_ tools to assess energy consumption and CO2eq emissions from our activities on Github infrastructure. All results and data are available on the new dedicated web page: :ref:`Carbon emissions`. (:pr:`354`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+
 **Internals**
 
-- The :class:`CTDRefDataFetcher` was badly located in the ``data_fetchers`` private sub-module, it's been refactored in the more appropriate ``related`` public sub-module.
+- The :class:`CTDRefDataFetcher` was badly located in the ``data_fetchers`` private sub-module, it's been refactored in the more appropriate ``related`` public sub-module. (:pr:`300`) by `G. Maze <http://www.github.com/gmaze>`_
 
+- Pin upper bound on xarray < 2024.3 to fix failing upstream tests because of ``AttributeError: 'ScipyArrayWrapper' object has no attribute 'oindex'``, `reported here <https://github.com/pydata/xarray/issues/8909>`_. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
+
+- Fix :class:`argopy.ArgoDocs` that was not working with new Archimer webpage design, :issue:`351`. (:pr:`352`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Fix bug with ArgoIndex cache, :issue:`345`. (:pr:`346`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Keep dependencies up to date. (:pr:`333`, :pr:`337`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Update :class:`argopy.ArgoDocs` with last BGC cookbooks on pH. (:pr:`321`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Fix for fsspec > 2023.10.0. (:pr:`318`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+
+
+v0.1.15 (12 Dec. 2023)
+----------------------
+
+**Internals**
+
+- Fix bug whereby user name could not be retrieved using :func:`getpass.getuser`. This closes :issue:`310` and allows argopy to be integrated into the EU Galaxy tools for `ecology <https://github.com/galaxyecology/tools-ecology/pull/81>`_. (:pr:`311`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 v0.1.14 (29 Sep. 2023)
 ----------------------
@@ -414,7 +456,7 @@ v0.1.13 (28 Mar. 2023)
 
 **Internals**
 
-- Because of the new :class:`argopy.plot.ArgoColors`, the :class:`argopy.plot.discrete_coloring` utility is deprecated in 0.1.13. Calling it will raise an error after argopy 0.1.14. (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
+- Because of the new :class:`argopy.plot.ArgoColors`, the `argopy.plot.discrete_coloring` utility is deprecated in 0.1.13. Calling it will raise an error after argopy 0.1.14. (:pr:`245`) by `G. Maze <http://www.github.com/gmaze>`_
 
 - New method to check status of web API: now allows for a keyword check rather than a simple url ping. This comes with 2 new utilities functions :meth:`utilities.urlhaskeyword` and :meth:`utilities.isalive`. (:pr:`247`) by `G. Maze <http://www.github.com/gmaze>`_.
 

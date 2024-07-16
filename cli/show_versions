@@ -8,6 +8,8 @@ import importlib
 import locale
 import argparse
 import setuptools
+from importlib.metadata import version
+
 
 def get_sys_info():
     """Returns system information as a dict."""
@@ -77,6 +79,18 @@ def netcdf_and_hdf5_versions():
     return [("libhdf5", libhdf5_version), ("libnetcdf", libnetcdf_version)]
 
 
+def get_version(module_name):
+    ver = '-'
+    try:
+        ver = module_name.__version__
+    except AttributeError:
+        try:
+            ver = version(module_name)
+        except importlib.metadata.PackageNotFoundError:
+            pass
+    return ver
+
+
 def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa: C901
     """ Print the versions of argopy and its dependencies
 
@@ -96,58 +110,62 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
 
     DEPS = {
         'core': sorted([
-            ("argopy", lambda mod: mod.__version__),
+            ("argopy", get_version),
 
-            ("xarray", lambda mod: mod.__version__),
-            ("scipy", lambda mod: mod.__version__),
-            ("netCDF4", lambda mod: mod.__version__),
-            ("erddapy", lambda mod: mod.__version__),  # This could go away from requirements ?
-            ("fsspec", lambda mod: mod.__version__),
-            ("aiohttp", lambda mod: mod.__version__),
-            ("packaging", lambda mod: mod.__version__),  # will come with xarray, Using 'version' to make API compatible with several fsspec releases
-            ("toolz", lambda mod: mod.__version__),
+            ("xarray", get_version),
+            ("scipy", get_version),
+            ("netCDF4", get_version),
+            ("erddapy", get_version),  # This could go away from requirements ?
+            ("fsspec", get_version),
+            ("aiohttp", get_version),
+            ("packaging", get_version),  # will come with xarray, Using 'version' to make API compatible with several fsspec releases
+            ("requests", get_version),
+            ("toolz", get_version),
+            ("decorator", get_version),
         ]),
         'ext.util': sorted([
-            ("gsw", lambda mod: mod.__version__),   # Used by xarray accessor to compute new variables
-            ("tqdm", lambda mod: mod.__version__),
-            ("zarr", lambda mod: mod.__version__),
+            ("gsw", get_version),   # Used by xarray accessor to compute new variables
+            ("s3fs", get_version),
+            ("boto3", get_version),
+            ("tqdm", get_version),
+            ("zarr", get_version),
         ]),
         'ext.perf': sorted([
-            ("dask", lambda mod: mod.__version__),
-            ("distributed", lambda mod: mod.__version__),
-            ("pyarrow", lambda mod: mod.__version__),
+            ("dask", get_version),
+            ("distributed", get_version),
+            ("h5netcdf", get_version),
+            ("pyarrow", get_version),
         ]),
         'ext.plot': sorted([
-            ("matplotlib", lambda mod: mod.__version__),
-            ("cartopy", lambda mod: mod.__version__),
-            ("seaborn", lambda mod: mod.__version__),
-            ("IPython", lambda mod: mod.__version__),
-            ("ipywidgets", lambda mod: mod.__version__),
-            ("ipykernel", lambda mod: mod.__version__),
+            ("cartopy", get_version),
+            ("IPython", get_version),
+            ("ipykernel", get_version),
+            ("ipywidgets", get_version),
+            ("matplotlib", get_version),
+            ("pyproj", get_version),
+            ("seaborn", get_version),
         ]),
         'dev': sorted([
-
-            ("bottleneck", lambda mod: mod.__version__),
-            ("cftime", lambda mod: mod.__version__),
-            ("cfgrib", lambda mod: mod.__version__),
-            ("conda", lambda mod: mod.__version__),
-            ("nc_time_axis", lambda mod: mod.__version__),
-
-            ("numpy", lambda mod: mod.__version__),  # will come with xarray and pandas
-            ("pandas", lambda mod: mod.__version__),  # will come with xarray
-
-            ("pip", lambda mod: mod.__version__),
-            ("black", lambda mod: mod.__version__),
-            ("flake8", lambda mod: mod.__version__),
-            ("pytest", lambda mod: mod.__version__),  # will come with pandas
-            ("pytest_env", lambda mod: mod.__version__),  # will come with pandas
-            ("pytest_cov", lambda mod: mod.__version__),  # will come with pandas
-            ("pytest_localftpserver", lambda mod: mod.__version__),  # will come with pandas
-            ("setuptools", lambda mod: mod.__version__),  # Provides: pkg_resources
-            ("sphinx", lambda mod: mod.__version__),
+            ("aiofiles", get_version),
+            ("black", get_version),
+            ("bottleneck", get_version),
+            ("cftime", get_version),
+            ("cfgrib", get_version),
+            ("conda", get_version),
+            ("flake8", get_version),
+            ("nc_time_axis", get_version),
+            ("numpy", get_version),  # will come with xarray and pandas
+            ("pandas", get_version),  # will come with xarray
+            ("pip", get_version),
+            ("pytest", get_version),  # will come with pandas
+            ("pytest_env", get_version),  # will come with pandas
+            ("pytest_cov", get_version),  # will come with pandas
+            ("pytest_localftpserver", get_version),  # will come with pandas
+            ("setuptools", get_version),  # Provides : pkg_resources
+            ("sphinx", get_version),
         ]),
         'pip': sorted([
-            ("aioresponses", lambda mod: mod.__version__),
+            ("pytest_reportlog", get_version),
         ])
     }
 
@@ -166,9 +184,10 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
                 deps_blob.append((modname, '-'))
             else:
                 try:
-                    ver = ver_f(mod)
+                    ver = ver_f(modname)
                     deps_blob.append((modname, ver))
                 except Exception:
+                    # raise ValueError("Can't get version for '%s'" % modname)
                     deps_blob.append((modname, "installed"))
         DEPS_blob[level] = deps_blob
 
@@ -245,9 +264,9 @@ def setup_args():
 
     return parser
 
+
 if __name__ == '__main__':
     ARGS = setup_args().parse_args()
     show_versions(conda=ARGS.conda if ARGS.conda else False,
                   free=ARGS.free if ARGS.free else False,
                   core=ARGS.core if ARGS.core else False)
-

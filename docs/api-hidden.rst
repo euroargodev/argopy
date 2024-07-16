@@ -75,7 +75,10 @@
     argopy.utils.groupby_remap
     argopy.utils.linear_interpolation_remap
 
+    argopy.utils.argo_split_path
     argopy.utils.format_oneline
+    argopy.utils.UriCName
+
     argopy.utils.is_box
     argopy.utils.is_indexbox
     argopy.utils.is_wmo
@@ -132,6 +135,11 @@
     argopy.related.erddap_refdata.ErddapREFDataFetcher
     argopy.related.erddap_refdata.Fetch_box
     argopy.related.CTDRefDataFetcher
+
+    argopy.related.ArgoDOI
+    argopy.related.ArgoDOI.search
+    argopy.related.ArgoDOI.file
+    argopy.related.ArgoDOI.dx
 
     argopy.plot
     argopy.plot.dashboard
@@ -247,6 +255,12 @@
     argopy.ArgoIndex.search_parameter_data_mode
     argopy.ArgoIndex.to_dataframe
     argopy.ArgoIndex.to_indexfile
+
+    argopy.stores.argo_index_proto_s3.s3index
+    argopy.stores.argo_index_proto_s3.s3index_core
+    argopy.stores.argo_index_proto_s3.s3index_bgc_bio
+    argopy.stores.argo_index_proto_s3.s3index_bgc_synthetic
+    argopy.stores.argo_index_proto_s3.search_s3
 
     argopy.xarray.ArgoAccessor.point2profile
     argopy.xarray.ArgoAccessor.profile2point
