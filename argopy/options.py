@@ -172,7 +172,7 @@ def reset_options():
 
 def check_erddap_path(path, errors='ignore'):
     """Check if an url points to an ERDDAP server"""
-    fs = fsspec.filesystem('http')
+    fs = fsspec.filesystem('http', ssl=False)
     check1 = fs.exists(path + "/info/index.json")
     if check1:
         return True

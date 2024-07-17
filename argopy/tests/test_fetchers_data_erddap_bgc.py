@@ -20,7 +20,7 @@ from collections import ChainMap
 
 log = logging.getLogger("argopy.tests.data.erddap")
 
-USE_MOCKED_SERVER = True
+USE_MOCKED_SERVER = False
 
 """
 List access points to be tested for each datasets: bgc.

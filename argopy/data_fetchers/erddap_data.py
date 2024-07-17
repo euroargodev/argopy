@@ -15,13 +15,13 @@ import pandas as pd
 import numpy as np
 import copy
 import time
-
 from abc import abstractmethod
 import getpass
 from typing import Union
-import fnmatch
 from aiohttp import ClientResponseError
 import logging
+from erddapy.erddapy import ERDDAP, parse_dates
+from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
 
 from ..options import OPTIONS
 from ..utils.format import format_oneline
@@ -30,19 +30,6 @@ from ..errors import ErddapServerError, DataNotFound
 from ..stores import indexstore_pd as ArgoIndex  # make sure we work with the Pandas index store
 from ..utils import is_list_of_strings, to_list,Chunker
 from .proto import ArgoDataFetcherProto
-
-
-# Load erddapy according to available version (breaking changes in v0.8.0)
-try:
-    from erddapy import ERDDAP
-    from erddapy.utilities import parse_dates, quote_string_constraints
-except:  # noqa: E722
-    # >= v0.8.0
-    from erddapy.erddapy import ERDDAP
-    from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
-    from erddapy.erddapy import parse_dates
-
-    # Soon ! https://github.com/ioos/erddapy
 
 
 log = logging.getLogger("argopy.erddap.data")
@@ -401,10 +388,12 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         if self.dataset_id == "phy":
             self.erddap.dataset_id = "ArgoFloats"
-        elif self.dataset_id == "ref":
-            self.erddap.dataset_id = "ArgoFloats-ref"
         elif self.dataset_id == "bgc":
             self.erddap.dataset_id = "ArgoFloats-synthetic-BGC"
+        elif self.dataset_id == "ref":
+            self.erddap.dataset_id = "ArgoFloats-reference"
+        elif self.dataset_id == "ref-ctd":
+            self.erddap.dataset_id = "ArgoFloats-reference-CTD"
         elif self.dataset_id == "fail":
             self.erddap.dataset_id = "invalid_db"
         else:
@@ -672,6 +661,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         Fetched_constraints = this_ds.attrs.get('Fetched_constraints', False)
 
         # Finally overwrite erddap attributes with those from argopy:
+        raw_attrs = this_ds.attrs.copy()
         this_ds.attrs = {}
         if self.dataset_id == "phy":
             this_ds.attrs["DATA_ID"] = "ARGO"
@@ -679,9 +669,15 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         elif self.dataset_id == "ref":
             this_ds.attrs["DATA_ID"] = "ARGO_Reference"
             this_ds.attrs["DOI"] = "-"
+            this_ds.attrs["Fetched_version"] = raw_attrs.get('version', '?')
+        elif self.dataset_id == "ref-ctd":
+            this_ds.attrs["DATA_ID"] = "ARGO_Reference_CTD"
+            this_ds.attrs["DOI"] = "-"
+            this_ds.attrs["Fetched_version"] = raw_attrs.get('version', '?')
         elif self.dataset_id == "bgc":
             this_ds.attrs["DATA_ID"] = "ARGO-BGC"
             this_ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
+
         this_ds.attrs["Fetched_from"] = self.erddap.server
         try:
             this_ds.attrs["Fetched_by"] = getpass.getuser()
@@ -690,7 +686,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         this_ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime(
             "%Y/%m/%d"
         )
-        this_ds.attrs["Fetched_constraints"] = self.cname()  if not Fetched_constraints else Fetched_constraints
+        this_ds.attrs["Fetched_constraints"] = self.cname() if not Fetched_constraints else Fetched_constraints
         this_ds.attrs["Fetched_uri"] = URI if not Fetched_url else Fetched_url
         this_ds = this_ds[np.sort(this_ds.data_vars)]
 

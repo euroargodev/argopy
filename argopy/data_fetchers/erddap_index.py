@@ -14,8 +14,9 @@ import pandas as pd
 import numpy as np
 import copy
 import logging
-
 from abc import ABC, abstractmethod
+from erddapy.erddapy import ERDDAP, parse_dates
+from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
 
 from ..utils.format import format_oneline
 from ..related import load_dict, mapp_dict
@@ -23,17 +24,6 @@ from ..stores import httpstore
 from ..options import OPTIONS
 
 log = logging.getLogger("argopy.fetchers.erddap_index")
-
-
-# Load erddapy according to available version (breaking changes in v0.8.0)
-try:
-    from erddapy import ERDDAP
-    from erddapy.utilities import parse_dates, quote_string_constraints
-except Exception:
-    # >= v0.8.0
-    from erddapy.erddapy import ERDDAP
-    from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
-    from erddapy.erddapy import parse_dates
 
 
 access_points = ["wmo", "box"]
