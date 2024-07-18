@@ -100,14 +100,14 @@ class ArgoDataFetcherProto(ABC):
     @property
     def sha(self) -> str:
         """ Returns a unique SHA for a specific cname / fetcher implementation"""
-        path = "%s-%s" % (self.definition, self.cname())
-        if self.dataset_id == 'bgc':
+        path = "%s-%s-%s" % (self.definition, self.cname(), self.user_mode)
+        if self.dataset_id in ['bgc', 'bgc-s']:
             path = "%s-%s-%s" % (path, self._bgc_params, self._bgc_measured)
         return hashlib.sha256(path.encode()).hexdigest()
 
     def dashboard(self, **kw):
         """Return 3rd party dashboard for the access point"""
-        if 'type' not in kw and self.dataset_id == 'bgc':
+        if 'type' not in kw and self.dataset_id in ['bgc', 'bgc-s']:
             kw['type'] = 'bgc'
         if self.WMO is not None:
             if len(self.WMO) == 1 and self.CYC is not None and len(self.CYC) == 1:
