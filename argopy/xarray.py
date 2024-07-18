@@ -1246,10 +1246,16 @@ class ArgoAccessor:
             # All ADJUSTED variables are removed (not required anymore, avoid confusion with variable content):
             this = this.drop_vars([v for v in this.data_vars if "ADJUSTED" in v])
         else:
+            if 'PRES_ADJUSTED' not in this:
+                raise InvalidDatasetStructure(
+                    "%s_ADJUSTED not in this dataset. Tip: fetch data in 'expert' mode"
+                    % 'PRES'
+                )
+
             # In default mode, we just need to do something if PRES_ADJUSTED is different from PRES, meaning
             # pressure was adjusted:
             if np.any(this["PRES_ADJUSTED"] == this["PRES"]):  # Yes
-                # We need to recompute salinity with adjusted pressur, so
+                # We need to recompute salinity with adjusted pressure, so
                 # Compute raw conductivity from raw salinity and raw pressure:
                 cndc = gsw.C_from_SP(
                     this["PSAL"].values, this["TEMP"].values, this["PRES"].values
