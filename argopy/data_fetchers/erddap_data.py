@@ -631,7 +631,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         # Last part:
         url += "&distinct()"
-        url += '&orderBy("time,pres")'
+        if self.user_mode in ['research']:
+            url += '&orderBy("time,pres_adjusted")'
+        else:
+            url += '&orderBy("time,pres")'
         return url
 
     @property
@@ -1191,8 +1194,12 @@ class Fetch_box(ErddapArgoDataFetcher):
         self.erddap.constraints.update({"longitude<=": self.BOX[1]})
         self.erddap.constraints.update({"latitude>=": self.BOX[2]})
         self.erddap.constraints.update({"latitude<=": self.BOX[3]})
-        self.erddap.constraints.update({"pres>=": self.BOX[4]})
-        self.erddap.constraints.update({"pres<=": self.BOX[5]})
+        if self.user_mode in ['research']:
+            self.erddap.constraints.update({"pres_adjusted>=": self.BOX[4]})
+            self.erddap.constraints.update({"pres_adjusted<=": self.BOX[5]})
+        else:
+            self.erddap.constraints.update({"pres>=": self.BOX[4]})
+            self.erddap.constraints.update({"pres<=": self.BOX[5]})
         if len(self.BOX) == 8:
             self.erddap.constraints.update({"time>=": self.BOX[6]})
             self.erddap.constraints.update({"time<=": self.BOX[7]})
