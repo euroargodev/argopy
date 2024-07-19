@@ -598,21 +598,26 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         self.define_constraints()  # from Fetch_box or Fetch_wmo
 
         # Possibly add more constraints for the BGC dataset:
-        if self.dataset_id in ["bgc", "bgc-s"]:
-            params = self._bgc_vlist_measured
-            # For 'expert' and 'standard' user modes, we cannot filter param and param_adjusted
-            # because it depends on the unavailable param data mode.
-            # The only erddap constraints possible is for 'research' user mode because we only request for
-            # adjusted values.
-            if self.user_mode == 'research':
-                for p in params:
-                    self.erddap.constraints.update({"%s_adjusted!=" % p.lower(): "NaN"})
+        # 2024/07/19: In fact, this is not a good idea. After a while we found that it is slower to ask the
+        # erddap to filter parameters (and rather unstable) than to download unfiltered parameters and to
+        # apply the filter_measured
+        # if self.dataset_id in ["bgc", "bgc-s"]:
+        #     params = self._bgc_vlist_measured
+        #     # For 'expert' and 'standard' user modes, we cannot filter param and param_adjusted
+        #     # because it depends on the unavailable param data mode.
+        #     # The only erddap constraints possible is for 'research' user mode because we only request for
+        #     # adjusted values.
+        #     if self.user_mode == 'research':
+        #         for p in params:
+        #             self.erddap.constraints.update({"%s_adjusted!=" % p.lower(): "NaN"})
 
-            # Possibly add more constraints to make requests even smaller:
-            for p in ["latitude", "longitude"]:
-                self.erddap.constraints.update({"%s!=" % p.lower(): "NaN"})
-            # for p in ['platform_number']:
-            #     self.erddap.constraints.update({"%s!=" % p.lower(): '"NaN"'})
+        if self.user_mode == 'research':
+            for p in ['pres', 'temp', 'psal']:
+                self.erddap.constraints.update({"%s_adjusted!=" % p.lower(): "NaN"})
+
+        # Possibly add more constraints to make requests even smaller:
+        for p in ["latitude", "longitude"]:
+            self.erddap.constraints.update({"%s!=" % p.lower(): "NaN"})
 
         # Post-process all constraints:
         constraints = self.erddap.constraints
@@ -621,6 +626,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             if k.startswith("time"):
                 _constraints.update({k: parse_dates(v)})
         _constraints = quote_string_constraints(_constraints)
+
         # Remove double-quote around NaN for numerical values:
         for k, v in _constraints.items():
             if v == '"NaN"':
@@ -639,16 +645,19 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def N_POINTS(self) -> int:
-        """Number of measurements expected to be returned by a request"""
-        url = self.get_url().replace("." + self.erddap.response, ".ncHeader")
-        try:
-            ncHeader = str(self.fs.download_url(url))
-            lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
-            return int(lines.split("=")[1].split(";")[0])
-        except Exception:
-            raise ErddapServerError(
-                "Erddap server can't return ncHeader for this url. "
-            )
+        """Number of expected measurements"""
+        N = 0
+        for uri in self.uri:
+            url = uri.replace("." + self.erddap.response, ".ncHeader")
+            try:
+                ncHeader = str(self.fs.download_url(url))
+                lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
+                N += int(lines.split("=")[1].split(";")[0])
+            except Exception:
+                raise ErddapServerError(
+                    "Erddap server can't return ncHeader for this url: %s" % url
+                )
+        return N
 
     def post_process(self, this_ds, add_dm: bool = True, URI: list = None):  # noqa: C901
         """Post-process a xarray.DataSet created from a netcdf erddap response
