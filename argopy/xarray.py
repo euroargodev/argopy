@@ -1150,7 +1150,7 @@ class ArgoAccessor:
         )
         # log.debug("filter_qc: Filter applied to '%s' of the fields: %s" % (mode, ",".join(QC_fields)))
 
-        QC_fields = this[QC_fields]
+        QC_fields = this[QC_fields]  # QC_fields is now a :class:`xr.Dataset`
         for v in QC_fields.data_vars:
             QC_fields[v] = QC_fields[v].astype(int)
 
@@ -1313,7 +1313,7 @@ class ArgoAccessor:
         this = this.argo.transform_data_mode(params=list_core_parameters())
         this = this.argo.filter_data_mode_new(params=list_core_parameters(), dm="D")  # todo Update with filter_data_mode for version = v0.1.17
 
-        this = this.argo.filter_qc(QC_list=1, QC_fields=list_core_parameters())
+        this = this.argo.filter_qc(QC_list=1, QC_fields=["%s_QC" % p for p in list_core_parameters()])
 
         if (
             "PRES_ERROR" in this.data_vars
