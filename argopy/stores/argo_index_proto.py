@@ -138,7 +138,7 @@ class ArgoIndexStoreProto(ABC):
             )
 
         elif "ftp" in split_protocol(host)[0]:
-            if "ifremer" not in host and "usgodae" not in host:
+            if "ifremer" not in host:
                 log.info(
                     """Working with a non-official Argo ftp server: %s. Raise on issue if you wish to add your own to the valid list of FTP servers: https://github.com/euroargodev/argopy/issues/new?title=New%%20FTP%%20server"""
                     % host

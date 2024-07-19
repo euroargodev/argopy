@@ -72,6 +72,8 @@ Coming up next
 
 .. currentmodule:: argopy
 
+- Pin upper bound on xarray < 2024.3 to fix failing upstream tests because of ``AttributeError: 'ScipyArrayWrapper' object has no attribute 'oindex'``, `reported here <https://github.com/pydata/xarray/issues/8909>`_. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
+
 - Fix :class:`argopy.ArgoDocs` that was not working with new Archimer webpage design, :issue:`351`. (:pr:`352`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 - Fix bug with ArgoIndex cache, :issue:`345`. (:pr:`346`) by `G. Maze <http://www.github.com/gmaze>`_.
