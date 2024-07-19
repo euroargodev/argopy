@@ -611,9 +611,10 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         #         for p in params:
         #             self.erddap.constraints.update({"%s_adjusted!=" % p.lower(): "NaN"})
 
-        if self.user_mode == 'research':
-            for p in ['pres', 'temp', 'psal']:
-                self.erddap.constraints.update({"%s_adjusted!=" % p.lower(): "NaN"})
+        if self.dataset_id not in ['ref']:
+            if self.user_mode == 'research':
+                for p in ['pres', 'temp', 'psal']:
+                    self.erddap.constraints.update({"%s_adjusted!=" % p.lower(): "NaN"})
 
         # Possibly add more constraints to make requests even smaller:
         for p in ["latitude", "longitude"]:
@@ -637,7 +638,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         # Last part:
         url += "&distinct()"
-        if self.user_mode in ['research']:
+        if self.user_mode in ['research'] and self.dataset_id not in ['ref']:
             url += '&orderBy("time,pres_adjusted")'
         else:
             url += '&orderBy("time,pres")'
@@ -1203,7 +1204,7 @@ class Fetch_box(ErddapArgoDataFetcher):
         self.erddap.constraints.update({"longitude<=": self.BOX[1]})
         self.erddap.constraints.update({"latitude>=": self.BOX[2]})
         self.erddap.constraints.update({"latitude<=": self.BOX[3]})
-        if self.user_mode in ['research']:
+        if self.user_mode in ['research'] and self.dataset_id not in ['ref']:
             self.erddap.constraints.update({"pres_adjusted>=": self.BOX[4]})
             self.erddap.constraints.update({"pres_adjusted<=": self.BOX[5]})
         else:
