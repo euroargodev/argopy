@@ -1,5 +1,5 @@
 """
-Mathematically or statistically compute something output of xarray objects
+Mathematically or statistically compute something out of xarray objects
 """
 
 import numpy as np

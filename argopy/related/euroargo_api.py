@@ -4,10 +4,12 @@ from ..utils.checkers import check_wmo, check_cyc
 from ..stores import httpstore
 
 
-def get_coriolis_profile_id(WMO, CYC=None, **kwargs):
-    """ Return a :class:`pandas.DataFrame` with CORIOLIS ID of WMO/CYC profile pairs
+def get_coriolis_profile_id(WMO, CYC=None, **kwargs) -> pd.DataFrame:
+    """Get Coriolis ID of WMO/CYC
 
-        This method get ID by requesting the dataselection.euro-argo.eu trajectory API.
+        Return a :class:`pandas.DataFrame` with CORIOLIS ID for WMO/CYC profile pairs
+
+        This method get ID using the https://dataselection.euro-argo.eu trajectory API.
 
         Parameters
         ----------

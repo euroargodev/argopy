@@ -10,6 +10,9 @@ class Fetcher(ArgoDataFetcherProto):
     def to_xarray(self, *args, **kwargs):
         super(Fetcher, self).to_xarray(*args, **kwargs)
 
+    def transform_data_mode(self, *args, **kwargs):
+        super(Fetcher, self).transform_data_mode(*args, **kwargs)
+
     def filter_data_mode(self, *args, **kwargs):
         super(Fetcher, self).filter_data_mode(*args, **kwargs)
 
@@ -26,7 +29,10 @@ def test_required_methods():
         f.to_xarray()
 
     with pytest.raises(NotImplementedError):
-        f.filter_data_mode(xarray.Dataset, str)
+        f.transform_data_mode(xarray.Dataset)
+
+    with pytest.raises(NotImplementedError):
+        f.filter_data_mode(xarray.Dataset)
 
     with pytest.raises(NotImplementedError):
         f.filter_qc(xarray.Dataset)

@@ -102,7 +102,7 @@ class float_wmo(RegistryItem):
 
 
 class Registry(UserList):
-    """A list manager can that validate item type
+    """A list manager that can validate item type
 
     Examples
     --------

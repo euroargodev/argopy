@@ -11,7 +11,38 @@ What's New
 Coming up next
 --------------
 
+.. versionadded:: v1.0
+
+    This new release is a major celebrating **argopy** 5 years birthday 🎂.
+
+    It comes with improved support for the BGC-Argo dataset but also introduces breaking changes (see below).
+
+
 **Features and front-end API**
+
+.. currentmodule:: xarray
+
+- Improved support for BGC
+    - New BGC method :class:`Dataset.argo.canyon_med` to make CANYON-MED predictions of Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea. This method can be used to predict PO4, NO3, DIC, SiOH4, AT and pHT. (:pr:`364`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+    .. currentmodule:: argopy
+
+    .. code-block:: python
+
+        from argopy import DataFetcher
+        ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').float(1902605)
+        ds = ArgoSet.to_xarray()
+
+        ds.argo.canyon_med.predict()
+        ds.argo.canyon_med.predict('PO4')
+
+    - the :class:`argopy.ArgoIndex` now support the *auxiliary* index file. Simply use the keyword `aux`. (:pr:`356`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+    .. code-block:: python
+
+        from argopy import ArgoIndex
+        ArgoIndex(index_file="aux").load()
+
 
 - **Support for AWS S3 index files**. This support is experimental and is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. The `ADMT working group discussion items are listed here <https://github.com/OneArgo/ADMT/discussions/categories/wg-on-best-format-to-serve-argo-data-from-the-cloud>`_. Both CORE and BGC index files are supported. The new :class:`ArgoIndex` not only support access to the AWS S3 index files but also implement improved performances for search methods on WMO and cycle numbers, using :class:`boto3.client.select_object_content` SQL queries. Indeed, the ``https`` and ``ftp`` default GDAC server index files are downloaded and loaded in memory before being searched. With ``s3``, index files can directly be queried on the server using SQL syntax; the full index is not necessarily downloaded. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
 
@@ -35,6 +66,12 @@ Coming up next
 
 **Internals**
 
+.. currentmodule:: xarray
+
+- New decorator :class:`argopy.register_argodataset_accessor` to register a class as a property to the :class:`Dataset.argo` accessor. (:pr:`364`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. currentmodule:: argopy
+
 - Pin upper bound on xarray < 2024.3 to fix failing upstream tests because of ``AttributeError: 'ScipyArrayWrapper' object has no attribute 'oindex'``, `reported here <https://github.com/pydata/xarray/issues/8909>`_. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
 
 - Fix :class:`argopy.ArgoDocs` that was not working with new Archimer webpage design, :issue:`351`. (:pr:`352`) by `G. Maze <http://www.github.com/gmaze>`_.
@@ -47,7 +84,15 @@ Coming up next
 
 - Fix for fsspec > 2023.10.0. (:pr:`318`) by `G. Maze <http://www.github.com/gmaze>`_.
 
+**Breaking changes**
 
+.. currentmodule:: xarray
+
+- In the :class:`Dataset.argo` accessor (:pr:`356`) by `G. Maze <http://www.github.com/gmaze>`_:
+    - the :meth:`Dataset.argo.filter_data_mode` has been redesigned to actually implement a real filter of data points on data mode values, i.e. to keep points with specific data mode values,
+    - new :meth:`Dataset.argo.transform_data_mode` method must now be used to merge adjusted and non-adjusted measurements according to their data mode and reduce the number of variables in the dataset, which is what was doing the poorly named `filter_data_mode`.
+
+.. currentmodule:: argopy
 
 v0.1.15 (12 Dec. 2023)
 ----------------------
@@ -524,7 +569,7 @@ The new profile dashboard can also be accessed with:
     import argopy
     argopy.dashboard(5904797, 11)
 
-We added the Ocean-OPS (former JCOMMOPS) dashboard for all floats and the Argo-BGC dashboard for BGC floats:
+We added the Ocean-OPS (former JCOMMOPS) dashboard for all floats and the BGC-Argo dashboard for BGC floats:
 
 .. code-block:: python
 

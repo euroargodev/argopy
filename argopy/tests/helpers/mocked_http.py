@@ -35,7 +35,7 @@ import pytest
 import logging
 from urllib.parse import unquote
 import socket
-import pickle
+import json
 
 
 log = logging.getLogger("argopy.tests.mocked_http")
@@ -55,10 +55,10 @@ from argopy.data_fetchers.erddap_data import api_server as erddap_api_server
 # The real address must be made relative
 MOCKED_REQUESTS = {}
 DATA_FOLDER = os.path.dirname(os.path.realpath(__file__)).replace("helpers", "test_data")
-DB_FILE = os.path.join(DATA_FOLDER, "mocked_file_index.pkl")
+DB_FILE = os.path.join(DATA_FOLDER, "httpmocked_uri_index.json")
 if os.path.exists(DB_FILE):
-    with open(DB_FILE, "rb") as f:
-        URI = pickle.load(f)
+    with open(DB_FILE, "r") as f:
+        URI = json.load(f)
     for resource in URI:
         test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (resource['sha'], resource['ext']))
         with open(test_data_file, mode='rb') as file:
@@ -87,7 +87,7 @@ else:
 
 
 def get_html_landing_page():
-    """With a listing of all available files with a href links"""
+    """Return a webpage with a listing of all available files with a href links"""
     html = ["<html><head></head><body>\n"]
     html.append("<h1>Mocked HTTP server is up and running, serving %i files</h1>" % len(URI))
     html.append("<ul>")

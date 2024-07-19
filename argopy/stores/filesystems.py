@@ -27,6 +27,7 @@ import aiohttp
 import shutil
 import pickle  # nosec B403 only used with internal files/assets
 import json
+import io
 import time
 import tempfile
 import logging
@@ -626,12 +627,27 @@ class httpstore(argo_store_proto):
 
     protocol = "http"
 
-    def curateurl(self, url):
-        """Possibly replace server of a given url by a local argopy option value
+    def __init__(self, *args, **kwargs):
+        # Create a registry that will be used to keep track of all URLs accessed by this store
+        self.urls_registry = Registry(name="Accessed URLs")
+        super().__init__(*args, **kwargs)
 
-        This is intended to be used by tests and dev
+    def open(self, path, *args, **kwargs):
+        path = self.curateurl(path)
+        return super().open(path, *args, **kwargs)
+
+    def exists(self, path, *args, **kwargs):
+        path = self.curateurl(path)
+        return super().exists(path, *args, **kwargs)
+
+    def curateurl(self, url):
+        """Possibly manipulate an url before it's accessed
+
+        This is primarily intended to be used by tests and dev
         """
+        self.urls_registry.commit(url)
         return url
+
         # if OPTIONS["server"] is not None:
         #     # log.debug("Replaced '%s' with '%s'" % (urlparse(url).netloc, OPTIONS["netloc"]))
         #
@@ -736,10 +752,12 @@ class httpstore(argo_store_proto):
             dwn_opts.update(kwargs["download_url_opts"])
         data = self.download_url(url, **dwn_opts)
 
-        if data[0:3] != b"CDF":
+        if data[0:3] != b"CDF" and data[0:3] != b'\x89HD':
             raise TypeError(
-                "We didn't get a CDF binary data as expected ! We get: %s" % data
+                "We didn't get a CDF or HDF5 binary data as expected ! We get: %s" % data
             )
+        if data[0:3] == b'\x89HD':
+            data = io.BytesIO(data)
 
         xr_opts = {}
         if "xr_opts" in kwargs:

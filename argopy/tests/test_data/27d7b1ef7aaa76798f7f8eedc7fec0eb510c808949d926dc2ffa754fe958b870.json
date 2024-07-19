@@ -4,7 +4,7 @@
     "@type" : "skos:Collection",
     "alternative" : "SENSOR_MODEL",
     "creator" : "Argo Data Management Team",
-    "date" : "2022-04-28 03:00:03.0",
+    "date" : "2023-11-25 02:00:04.0",
     "description" : "Terms listing models of sensors mounted on Argo floats. Note: avoid using the manufacturer name and sensor firmware version in new entries when possible. Argo netCDF variable SENSOR_MODEL is populated by R27 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo sensor models",
@@ -12,9 +12,9 @@
     "RE_RegisterOwner" : "Argo Data Management Team",
     "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
     "seeAlso" : "https://github.com/nvs-vocabs/R27",
-    "versionInfo" : "9",
+    "versionInfo" : "15",
     "altLabel" : "SENSOR_MODEL",
-    "member" : [ "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3830/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_2K/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE43I/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FL/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE43_IDO/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_3000PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBBCD/", "http://vocab.nerc.ac.uk/collection/R27/current/CTD_F01/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSWR10W/", "http://vocab.nerc.ac.uk/collection/R27/current/AMETEK_3000PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE43F_IDO/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3/", "http://vocab.nerc.ac.uk/collection/R27/current/OPUS_DS/", "http://vocab.nerc.ac.uk/collection/R27/current/RAFOS/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330F/", "http://vocab.nerc.ac.uk/collection/R27/current/RAMSES_ACC/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1600PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_2900PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/MP40_C_2000_G/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.5/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1500PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2900PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/AMETEK/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.0.1/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE63_OPTODE/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.7/", "http://vocab.nerc.ac.uk/collection/R27/current/PAL_UW/", "http://vocab.nerc.ac.uk/collection/R27/current/ARO_FT/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.1/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/", "http://vocab.nerc.ac.uk/collection/R27/current/ISUS/", "http://vocab.nerc.ac.uk/collection/R27/current/UNKNOWN/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/", "http://vocab.nerc.ac.uk/collection/R27/current/KELLER_PA8/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES_A/", "http://vocab.nerc.ac.uk/collection/R27/current/SEAFET/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/", "http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/", "http://vocab.nerc.ac.uk/collection/R27/current/SUNA_V2/", "http://vocab.nerc.ac.uk/collection/R27/current/C_ROVER/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/", "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_10153PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0c/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.0/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831F/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES/", "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V3/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2000PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/", "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_2900PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE_STS/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_PAR/", "http://vocab.nerc.ac.uk/collection/R27/current/FSI/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.1/", "http://vocab.nerc.ac.uk/collection/R27/current/EM/", "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBB2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9a/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_R10W/", "http://vocab.nerc.ac.uk/collection/R27/current/SUNA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/", "http://vocab.nerc.ac.uk/collection/R27/current/CYCLOPS_7_FLUOROMETER/", "http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/", "http://vocab.nerc.ac.uk/collection/R27/current/SEAPOINT_TURBIDITY_METER/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.6/", "http://vocab.nerc.ac.uk/collection/R27/current/MENSOR/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/", "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0a/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/", "http://vocab.nerc.ac.uk/collection/R27/current/AROD_FT/", "http://vocab.nerc.ac.uk/collection/R27/current/DURA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.5/", "http://vocab.nerc.ac.uk/collection/R27/current/ISUS_V3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3b/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/", "http://vocab.nerc.ac.uk/collection/R27/current/FLOATCLOCK/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE37/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLNTU/", "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_10153PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.1/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_NTU/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.8/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE/" ],
+    "member" : [ "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP4K/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3830/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_2K/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.5/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE43I/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V4.4.0/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FL/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE43_IDO/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_3000PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBBCD/", "http://vocab.nerc.ac.uk/collection/R27/current/CTD_F01/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSWR10W/", "http://vocab.nerc.ac.uk/collection/R27/current/AMETEK_3000PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_IDO_V2.0b/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE43F_IDO/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3/", "http://vocab.nerc.ac.uk/collection/R27/current/OPUS_DS/", "http://vocab.nerc.ac.uk/collection/R27/current/RAFOS/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V2.0/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4330F/", "http://vocab.nerc.ac.uk/collection/R27/current/RAMSES_ACC/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.10/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.12/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1600PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_2900PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/MP40_C_2000_G/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.5/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_1500PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2900PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/AMETEK/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.0.1/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE63_OPTODE/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.7/", "http://vocab.nerc.ac.uk/collection/R27/current/PAL_UW/", "http://vocab.nerc.ac.uk/collection/R27/current/ARO_FT/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_CODA_T_ODO/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.1/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3/", "http://vocab.nerc.ac.uk/collection/R27/current/GDF/", "http://vocab.nerc.ac.uk/collection/R27/current/ISUS/", "http://vocab.nerc.ac.uk/collection/R27/current/UNKNOWN/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3835/", "http://vocab.nerc.ac.uk/collection/R27/current/KELLER_PA8/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES_A/", "http://vocab.nerc.ac.uk/collection/R27/current/SEAFET/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.4/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_AP2/", "http://vocab.nerc.ac.uk/collection/R27/current/QUARTZDYNE_DSB301-10-C85/", "http://vocab.nerc.ac.uk/collection/R27/current/SUNA_V2/", "http://vocab.nerc.ac.uk/collection/R27/current/C_ROVER/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N/", "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER_10153PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0c/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V5.3.0/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_4831F/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_PRES/", "http://vocab.nerc.ac.uk/collection/R27/current/KISTLER/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_ICSW/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V3/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB2/", "http://vocab.nerc.ac.uk/collection/R27/current/PAINE_2000PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/", "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_2900PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V1.0c/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE_STS/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.9/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.3/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_PAR/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/", "http://vocab.nerc.ac.uk/collection/R27/current/FSI/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.4.0/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.1/", "http://vocab.nerc.ac.uk/collection/R27/current/EM/", "http://vocab.nerc.ac.uk/collection/R27/current/MCOMS_FLBB2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9a/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR507_R10W/", "http://vocab.nerc.ac.uk/collection/R27/current/SUNA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41N_V5.3.0/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_IDO_V3.0/", "http://vocab.nerc.ac.uk/collection/R27/current/CYCLOPS_7_FLUOROMETER/", "http://vocab.nerc.ac.uk/collection/R27/current/SEASCAN_SSTD/", "http://vocab.nerc.ac.uk/collection/R27/current/SEAPOINT_TURBIDITY_METER/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V4.5.2/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41_V2.6/", "http://vocab.nerc.ac.uk/collection/R27/current/MENSOR/", "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE_3930/", "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_ICSW/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V3.0a/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/", "http://vocab.nerc.ac.uk/collection/R27/current/AROD_FT/", "http://vocab.nerc.ac.uk/collection/R27/current/DURA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V7.2.3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.5/", "http://vocab.nerc.ac.uk/collection/R27/current/ISUS_V3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.3b/", "http://vocab.nerc.ac.uk/collection/R27/current/RBR_ARGO3_DEEP6K/", "http://vocab.nerc.ac.uk/collection/R27/current/FLOATCLOCK/", "http://vocab.nerc.ac.uk/collection/R27/current/SATLANTIC_OCR504_R10W/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB3/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.2a/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE37/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLNTU/", "http://vocab.nerc.ac.uk/collection/R27/current/DRUCK_10153PSIA/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.9/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.1/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_NTU/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/", "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.8/", "http://vocab.nerc.ac.uk/collection/R27/current/SBE/" ],
     "prefLabel" : "Argo sensor models"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/AANDERAA_OPTODE/",
@@ -462,6 +462,7 @@
     "deprecated" : "true",
     "versionInfo" : "2",
     "altLabel" : "DRUCK_10153PSIA",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/DRUCK/",
     "definition" : {
       "@language" : "en",
       "@value" : "A strain gauge pressure sensor rated to a maximum pressure of 10153 pounds per square inch absolute manufactured by Druck."
@@ -719,6 +720,62 @@
       "@value" : "ECO FLBBCD-AP2 sensor package with two fluorometers and one scattering meter"
     }
   }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::ECO_FLBBFL",
+    "date" : "2023-10-05 14:42:48.0",
+    "identifier" : "SDN:R27::ECO_FLBBFL",
+    "authoredOn" : "2023-10-05 14:42:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "ECO_FLBBFL",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A three-channel optical sensor fitted with two single-wavelength chlorophyll fluorometers and a single-angle scattering meter, depth-rated to 2000 m and designed for float applications. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and chlorophyll-a fluorescence at 435 nm (excitation) / 695 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 124 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, manufactured by Sea-Bird Scientific."
+    },
+    "notation" : "SDN:R27::ECO_FLBBFL",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "ECO_FLBBFL"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::ECO_FLBBFL_AP2",
+    "date" : "2023-10-05 14:42:48.0",
+    "identifier" : "SDN:R27::ECO_FLBBFL_AP2",
+    "authoredOn" : "2023-10-05 14:42:48.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "ECO_FLBBFL_AP2",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A three-channel optical sensor fitted with two single-wavelength chlorophyll fluorometers and a single-angle scattering meter, depth-rated to 2000 m and designed for float applications. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and chlorophyll-a fluorescence at 435 nm (excitation) / 695 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 124 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, manufactured by Sea-Bird Scientific. The sensor is fitted on an APEX float."
+    },
+    "notation" : "SDN:R27::ECO_FLBBFL_AP2",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "ECO_FLBBFL_AP2"
+    }
+  }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBB_2K/",
     "@type" : "skos:Concept",
     "dce:identifier" : "SDN:R27::ECO_FLBB_2K",
@@ -905,6 +962,34 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Falmouth Scientific, Inc (FSI) unknown CTD model"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/GDF/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::GDF",
+    "date" : "2023-10-23 16:35:59.0",
+    "identifier" : "SDN:R27::GDF",
+    "authoredOn" : "2023-10-23 16:35:59.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/GDF/3/",
+    "hasVersion" : [ "http://vocab.nerc.ac.uk/collection/R27/current/GDF/2/", "http://vocab.nerc.ac.uk/collection/R27/current/GDF/1/" ],
+    "version" : "3",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "3",
+    "altLabel" : "GDF",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/MBARI/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "pH sensor design : similar root components (DURA), same sensor output and processing chain"
+    },
+    "notation" : "SDN:R27::GDF",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Gasket DuraFET"
     }
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/ISUS/",
@@ -3134,6 +3219,60 @@
       "@value" : "Sea-Bird Scientific SBE 61 CTD V5.0.1"
     }
   }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.10/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE61_V5.0.10",
+    "date" : "2023-08-16 15:38:28.0",
+    "identifier" : "SDN:R27::SBE61_V5.0.10",
+    "authoredOn" : "2023-08-16 15:38:28.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.10/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SBE61_V5.0.10",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 5.0.9."
+    },
+    "notation" : "SDN:R27::SBE61_V5.0.10",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 61 CTD V5.0.10"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.12/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE61_V5.0.12",
+    "date" : "2023-08-16 15:38:28.0",
+    "identifier" : "SDN:R27::SBE61_V5.0.12",
+    "authoredOn" : "2023-08-16 15:38:28.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.12/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SBE61_V5.0.12",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 5.0.9."
+    },
+    "notation" : "SDN:R27::SBE61_V5.0.12",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 61 CTD V5.0.12"
+    }
+  }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.2/",
     "@type" : "skos:Concept",
     "dce:identifier" : "SDN:R27::SBE61_V5.0.2",
@@ -3190,6 +3329,33 @@
       "@value" : "Sea-Bird Scientific SBE 61 CTD V5.0.3"
     }
   }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.9/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE61_V5.0.9",
+    "date" : "2023-08-16 15:38:28.0",
+    "identifier" : "SDN:R27::SBE61_V5.0.9",
+    "authoredOn" : "2023-08-16 15:38:28.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.9/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "SBE61_V5.0.9",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R26/current/SBE/",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "A system comprising temperature, conductivity and pressure sensors with pump-controlled, T-C ducted flow. The unit is designed for deployment on Deep Argo profiling floats reaching 7000 m depth. This SBE61 model has firmware version 5.0.9."
+    },
+    "notation" : "SDN:R27::SBE61_V5.0.9",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE 61 CTD V5.0.9"
+    }
+  }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE63_OPTODE/",
     "@type" : "skos:Concept",
     "dce:identifier" : "SDN:R27::SBE63_OPTODE",
@@ -3215,6 +3381,32 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Sea-Bird Scientific SBE 63 oxygen optode"
+    }
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R27::SBE83_OPTODE",
+    "date" : "2023-11-24 09:35:13.0",
+    "identifier" : "SDN:R27::SBE83_OPTODE",
+    "authoredOn" : "2023-11-24 09:35:13.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE83_OPTODE/1/",
+    "version" : "1",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "1",
+    "altLabel" : "",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "An optical dissolved oxygen sensor, manufactured by Sea-Bird Scientific and designed to be integrated into a pumped CTD system."
+    },
+    "notation" : "SDN:R27::SBE83_OPTODE",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Sea-Bird Scientific SBE83 oxygen optode"
     }
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R27/current/SBE_STS/",
@@ -3499,6 +3691,7 @@
     "iop" : "https://w3id.org/iadopt/ont#",
     "ns1" : "http://www.w3.org/ns/dx/prof/",
     "puv" : "https://w3id.org/env/puv#",
+    "semapv" : "http://w3id.org/semapv/vocab/",
     "dct" : "http://purl.org/dc/terms/",
     "reg" : "http://purl.org/linked-data/registry#",
     "dcat" : "http://www.w3.org/ns/dcat#",
@@ -3508,6 +3701,7 @@
     "void" : "http://rdfs.org/ns/void#",
     "pav" : "http://purl.org/pav/",
     "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "sssom" : "https://w3id.org/sssom/schema/",
     "dc" : "http://purl.org/dc/terms/"
   }
 }

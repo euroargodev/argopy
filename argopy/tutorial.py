@@ -7,8 +7,8 @@ Data files are hosted on companion repository: http://www.github.com/euroargodev
 ```
 import argopy
 ftproot, flist = argopy.tutorial.open_dataset('gdac')
-txtfile = argopy.tutorial.open_dataset('weekly_index_prof')
-txtfile = argopy.tutorial.open_dataset('global_index_prof')
+ftproot, flist = argopy.tutorial.open_dataset('weekly_index_prof')
+ftproot, flist = argopy.tutorial.open_dataset('global_index_prof')
 
 # To force a new download of the data repo:
 argopy.tutorial.repodata().download(overwrite=True)

@@ -4,7 +4,7 @@
     "@type" : "skos:Collection",
     "alternative" : "PLATFORM_MAKER",
     "creator" : "Argo Data Management Team",
-    "date" : "2022-06-17 03:00:00.0",
+    "date" : "2023-10-06 03:00:02.0",
     "description" : "List of Argo float manufacturers. Argo netCDF variable PLATFORM_MAKER is populated by R24 altLabel.",
     "publisher" : "Natural Environment Research Council",
     "title" : "Argo platform maker",
@@ -12,9 +12,9 @@
     "RE_RegisterOwner" : "Argo Data Management Team",
     "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
     "seeAlso" : "https://github.com/nvs-vocabs/R24",
-    "versionInfo" : "2",
+    "versionInfo" : "4",
     "altLabel" : "PLATFORM_MAKER",
-    "member" : [ "http://vocab.nerc.ac.uk/collection/R24/current/HSOE/", "http://vocab.nerc.ac.uk/collection/R24/current/METOCEAN/", "http://vocab.nerc.ac.uk/collection/R24/current/SIO_IDG/", "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/", "http://vocab.nerc.ac.uk/collection/R24/current/WRC/", "http://vocab.nerc.ac.uk/collection/R24/current/UNKNOWN/", "http://vocab.nerc.ac.uk/collection/R24/current/WHOI/", "http://vocab.nerc.ac.uk/collection/R24/current/MARTEC/", "http://vocab.nerc.ac.uk/collection/R24/current/SBE/", "http://vocab.nerc.ac.uk/collection/R24/current/NKE/", "http://vocab.nerc.ac.uk/collection/R24/current/TWR/", "http://vocab.nerc.ac.uk/collection/R24/current/TSK/", "http://vocab.nerc.ac.uk/collection/R24/current/MRV/", "http://vocab.nerc.ac.uk/collection/R24/current/OPTIMARE/" ],
+    "member" : [ "http://vocab.nerc.ac.uk/collection/R24/current/HSOE/", "http://vocab.nerc.ac.uk/collection/R24/current/METOCEAN/", "http://vocab.nerc.ac.uk/collection/R24/current/SIO_IDG/", "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/", "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/", "http://vocab.nerc.ac.uk/collection/R24/current/WRC/", "http://vocab.nerc.ac.uk/collection/R24/current/UNKNOWN/", "http://vocab.nerc.ac.uk/collection/R24/current/WHOI/", "http://vocab.nerc.ac.uk/collection/R24/current/MARTEC/", "http://vocab.nerc.ac.uk/collection/R24/current/SBE/", "http://vocab.nerc.ac.uk/collection/R24/current/NKE/", "http://vocab.nerc.ac.uk/collection/R24/current/TWR/", "http://vocab.nerc.ac.uk/collection/R24/current/TSK/", "http://vocab.nerc.ac.uk/collection/R24/current/MRV/", "http://vocab.nerc.ac.uk/collection/R24/current/OPTIMARE/" ],
     "prefLabel" : "Argo platform maker"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/HSOE/",
@@ -41,6 +41,34 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Qingdao Hisun Ocean Equipment Corporation Limited"
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R23/current/HM2000/"
+  }, {
+    "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/",
+    "@type" : "skos:Concept",
+    "dce:identifier" : "SDN:R24::LaoshanL",
+    "date" : "2023-10-05 14:42:22.0",
+    "identifier" : "SDN:R24::LaoshanL",
+    "authoredOn" : "2023-10-05 14:42:22.0",
+    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/2/",
+    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/1/",
+    "version" : "2",
+    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
+    "deprecated" : "false",
+    "versionInfo" : "2",
+    "altLabel" : "LaoshanL",
+    "definition" : {
+      "@language" : "en",
+      "@value" : "Laoshan Laboratory"
+    },
+    "notation" : "SDN:R24::LaoshanL",
+    "note" : {
+      "@language" : "en",
+      "@value" : "accepted"
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "LaoshanLaboratory"
     }
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/MARTEC/",
@@ -67,7 +95,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Martec"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/METOCEAN/",
     "@type" : "skos:Concept",
@@ -93,7 +122,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Metocean"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/NOVA/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/MRV/",
     "@type" : "skos:Concept",
@@ -119,7 +149,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "MRV Systems"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/", "http://vocab.nerc.ac.uk/collection/R23/current/ALAMO/", "http://vocab.nerc.ac.uk/collection/R23/current/S2A/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D_MRV/", "http://vocab.nerc.ac.uk/collection/R23/current/S2X/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/NKE/",
     "@type" : "skos:Concept",
@@ -145,7 +176,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "NKE Instrumentation"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/", "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/", "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/", "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/", "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/OPTIMARE/",
     "@type" : "skos:Concept",
@@ -171,7 +203,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Optimare"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/NEMO/", "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/",
     "@type" : "skos:Concept",
@@ -223,7 +256,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Sea-Bird Scientific"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_A/", "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_EBR/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/SIO_IDG/",
     "@type" : "skos:Concept",
@@ -249,7 +283,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Scripps Institution of Oceanography - Instrument Development Group"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_II/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/TSK/",
     "@type" : "skos:Concept",
@@ -275,7 +310,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Tsurumi-Seiki Co., Ltd."
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/", "http://vocab.nerc.ac.uk/collection/R23/current/NINJA_D/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/TWR/",
     "@type" : "skos:Concept",
@@ -301,7 +337,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Teledyne Webb Research"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/APEX_D/", "http://vocab.nerc.ac.uk/collection/R23/current/APEX_EM/", "http://vocab.nerc.ac.uk/collection/R23/current/APEX/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/UNKNOWN/",
     "@type" : "skos:Concept",
@@ -353,7 +390,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Woods Hole Oceanographic Institution"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_W/", "http://vocab.nerc.ac.uk/collection/R23/current/ITP/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/WRC/",
     "@type" : "skos:Concept",
@@ -379,9 +417,14 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Webb Research Corporation"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/APEX_EM/", "http://vocab.nerc.ac.uk/collection/R23/current/APEX/", "http://vocab.nerc.ac.uk/collection/R23/current/PALACE/" ]
   } ],
   "@context" : {
+    "related" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#related",
+      "@type" : "@id"
+    },
     "note" : {
       "@id" : "http://www.w3.org/2004/02/skos/core#note"
     },
@@ -421,6 +464,10 @@
     },
     "hasCurrentVersion" : {
       "@id" : "http://purl.org/pav/hasCurrentVersion",
+      "@type" : "@id"
+    },
+    "hasVersion" : {
+      "@id" : "http://purl.org/pav/hasVersion",
       "@type" : "@id"
     },
     "RE_RegisterOwner" : {
@@ -464,6 +511,7 @@
     "iop" : "https://w3id.org/iadopt/ont#",
     "ns1" : "http://www.w3.org/ns/dx/prof/",
     "puv" : "https://w3id.org/env/puv#",
+    "semapv" : "http://w3id.org/semapv/vocab/",
     "dct" : "http://purl.org/dc/terms/",
     "reg" : "http://purl.org/linked-data/registry#",
     "dcat" : "http://www.w3.org/ns/dcat#",
@@ -473,6 +521,7 @@
     "void" : "http://rdfs.org/ns/void#",
     "pav" : "http://purl.org/pav/",
     "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "sssom" : "https://w3id.org/sssom/schema/",
     "dc" : "http://purl.org/dc/terms/"
   }
 }
