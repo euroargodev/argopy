@@ -29,6 +29,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "831",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/PALACE/",
     "definition" : {
       "@language" : "en",
       "@value" : "PALACE profiling float"
@@ -56,6 +57,7 @@
     "deprecated" : "false",
     "versionInfo" : "2",
     "altLabel" : "834",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/" ],
     "definition" : {
       "@language" : "en",
       "@value" : "PROVOR V with Seabird CTD sensor"
@@ -83,6 +85,7 @@
     "deprecated" : "false",
     "versionInfo" : "2",
     "altLabel" : "835",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/",
     "definition" : {
       "@language" : "en",
       "@value" : "PROVOR IV"
@@ -110,6 +113,7 @@
     "deprecated" : "false",
     "versionInfo" : "2",
     "altLabel" : "836",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/",
     "definition" : {
       "@language" : "en",
       "@value" : "PROVOR CTS4 generation with dual board"
@@ -136,6 +140,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "837",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/",
     "definition" : {
       "@language" : "en",
       "@value" : "ARVOR-C profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -162,6 +167,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "838",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/",
     "definition" : {
       "@language" : "en",
       "@value" : "ARVOR-D deep profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -188,6 +194,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "839",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/",
     "definition" : {
       "@language" : "en",
       "@value" : "PROVOR-II profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -214,7 +221,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "840",
-    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/" ],
     "definition" : {
       "@language" : "en",
       "@value" : "PROVOR profiling float with no conductivity sensor"
@@ -241,7 +248,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "841",
-    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/" ],
     "definition" : {
       "@language" : "en",
       "@value" : "PROVOR profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -268,7 +275,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "842",
-    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/" ],
     "definition" : {
       "@language" : "en",
       "@value" : "PROVOR profiling float with Falmouth Scientific Inc. (FSI) conductivity sensor"
@@ -295,6 +302,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "843",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/",
     "definition" : {
       "@language" : "en",
       "@value" : "Polar Ocean Profiling System (POPS) ice platform using PROVOR profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -321,6 +329,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "844",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/",
     "definition" : {
       "@language" : "en",
       "@value" : "ARVOR profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -347,6 +356,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "845",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/APEX/",
     "definition" : {
       "@language" : "en",
       "@value" : "Teledyne Webb Research profiling float with no conductivity sensor"
@@ -373,6 +383,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "846",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/APEX/",
     "definition" : {
       "@language" : "en",
       "@value" : "Teledyne Webb Research profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -399,6 +410,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "847",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/APEX/",
     "definition" : {
       "@language" : "en",
       "@value" : "Teledyne Webb Research profiling float with Falmouth Scientific Inc. (FSI) conductivity sensor"
@@ -425,6 +437,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "848",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/APEX_EM/",
     "definition" : {
       "@language" : "en",
       "@value" : "APEX-EM profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -451,6 +464,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "849",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/APEX_D/",
     "definition" : {
       "@language" : "en",
       "@value" : "APEX-D profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -477,6 +491,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "850",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R23/current/SOLO/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_W/" ],
     "definition" : {
       "@language" : "en",
       "@value" : "SOLO profiling float with no conductivity sensor"
@@ -503,6 +518,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "851",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_W/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO/" ],
     "definition" : {
       "@language" : "en",
       "@value" : "SOLO profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -529,6 +545,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "852",
+    "broader" : [ "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_W/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO/" ],
     "definition" : {
       "@language" : "en",
       "@value" : "SOLO profiling float with Falmouth Scientific Inc. (FSI) conductivity sensor"
@@ -555,6 +572,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "853",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_II/",
     "definition" : {
       "@language" : "en",
       "@value" : "SOLO-II profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -581,6 +599,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "854",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/S2A/",
     "definition" : {
       "@language" : "en",
       "@value" : "S2A profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -607,6 +626,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "855",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/",
     "definition" : {
       "@language" : "en",
       "@value" : "NINJA profiling float with no conductivity sensor"
@@ -633,6 +653,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "856",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/",
     "definition" : {
       "@language" : "en",
       "@value" : "NINJA profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -659,6 +680,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "857",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/",
     "definition" : {
       "@language" : "en",
       "@value" : "NINJA profiling float with Falmouth Scientific Inc. (FSI) conductivity sensor"
@@ -685,6 +707,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "858",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/",
     "definition" : {
       "@language" : "en",
       "@value" : "NINJA profiling float with Tsurumi-Seiki Co., Ltd (TSK) conductivity sensor"
@@ -711,6 +734,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "859",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/NEMO/",
     "definition" : {
       "@language" : "en",
       "@value" : "NEMO profiling float with no conductivity"
@@ -737,6 +761,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "860",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/NEMO/",
     "definition" : {
       "@language" : "en",
       "@value" : "NEMO profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -763,6 +788,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "861",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/NEMO/",
     "definition" : {
       "@language" : "en",
       "@value" : "NEMO profiling float with Falmouth Scientific Inc. (FSI) conductivity sensor"
@@ -789,6 +815,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "862",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D/",
     "definition" : {
       "@language" : "en",
       "@value" : "SOLO-D profiling deep float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -815,6 +842,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "863",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_A/",
     "definition" : {
       "@language" : "en",
       "@value" : "Navis-A profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -841,6 +869,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "864",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/NINJA_D/",
     "definition" : {
       "@language" : "en",
       "@value" : "NINJA-D profiling deep float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -867,6 +896,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "865",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/NOVA/",
     "definition" : {
       "@language" : "en",
       "@value" : "NOVA profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -893,6 +923,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "872",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/S2X/",
     "definition" : {
       "@language" : "en",
       "@value" : "S2X profiling float"
@@ -919,6 +950,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "875",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/",
     "definition" : {
       "@language" : "en",
       "@value" : "ALTO profiling float with RBR conductivity sensor"
@@ -945,6 +977,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "876",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/",
     "definition" : {
       "@language" : "en",
       "@value" : "ALTO profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
@@ -971,6 +1004,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "877",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/APEX/",
     "definition" : {
       "@language" : "en",
       "@value" : "APEX profiling float with RBR conductivity sensor"
@@ -997,6 +1031,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "878",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/",
     "definition" : {
       "@language" : "en",
       "@value" : "ARVOR profiling float with RBR conductivity sensor"
@@ -1023,6 +1058,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "879",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_II/",
     "definition" : {
       "@language" : "en",
       "@value" : "SOLO-II profiling float with RBR conductivity sensor"
@@ -1049,6 +1085,7 @@
     "deprecated" : "false",
     "versionInfo" : "1",
     "altLabel" : "880",
+    "broader" : "http://vocab.nerc.ac.uk/collection/R23/current/S2A/",
     "definition" : {
       "@language" : "en",
       "@value" : "S2A profiling float with RBR conductivity sensor"
@@ -1379,6 +1416,10 @@
     "version" : {
       "@id" : "http://purl.org/pav/version"
     },
+    "broader" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#broader",
+      "@type" : "@id"
+    },
     "prefLabel" : {
       "@id" : "http://www.w3.org/2004/02/skos/core#prefLabel"
     },
@@ -1404,10 +1445,6 @@
     },
     "hasVersion" : {
       "@id" : "http://purl.org/pav/hasVersion",
-      "@type" : "@id"
-    },
-    "broader" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#broader",
       "@type" : "@id"
     },
     "member" : {

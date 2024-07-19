@@ -41,7 +41,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "ALAMO float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/MRV/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/",
     "@type" : "skos:Concept",
@@ -59,6 +60,7 @@
       "@language" : "en",
       "@value" : "ALTO float. PLATFORM_TYPE_KEY = 205"
     },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R08/current/875/", "http://vocab.nerc.ac.uk/collection/R08/current/876/" ],
     "notation" : "SDN:R23::ALTO",
     "note" : {
       "@language" : "en",
@@ -67,7 +69,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "ALTO float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/MRV/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/APEX/",
     "@type" : "skos:Concept",
@@ -85,6 +88,7 @@
       "@language" : "en",
       "@value" : "APEX float. PLATFORM_TYPE_KEY = 001"
     },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R08/current/877/", "http://vocab.nerc.ac.uk/collection/R08/current/847/", "http://vocab.nerc.ac.uk/collection/R08/current/846/", "http://vocab.nerc.ac.uk/collection/R08/current/845/" ],
     "notation" : "SDN:R23::APEX",
     "note" : {
       "@language" : "en",
@@ -93,7 +97,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "APEX float"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R24/current/TWR/", "http://vocab.nerc.ac.uk/collection/R24/current/WRC/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/APEX_D/",
     "@type" : "skos:Concept",
@@ -111,6 +116,7 @@
       "@language" : "en",
       "@value" : "Deep APEX float. PLATFORM_TYPE_KEY = 020"
     },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R08/current/849/",
     "notation" : "SDN:R23::APEX_D",
     "note" : {
       "@language" : "en",
@@ -119,7 +125,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Deep APEX float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/TWR/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/APEX_EM/",
     "@type" : "skos:Concept",
@@ -137,6 +144,7 @@
       "@language" : "en",
       "@value" : "APEX electro-magnetic float, measuring velocity and mixing. PLATFORM_TYPE_KEY = 005"
     },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R08/current/848/",
     "notation" : "SDN:R23::APEX_EM",
     "note" : {
       "@language" : "en",
@@ -145,7 +153,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "APEX electro-magnetic float"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R24/current/TWR/", "http://vocab.nerc.ac.uk/collection/R24/current/WRC/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/",
     "@type" : "skos:Concept",
@@ -163,6 +172,7 @@
       "@language" : "en",
       "@value" : "ARVOR float. PLATFORM_TYPE_KEY = 102"
     },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R08/current/844/", "http://vocab.nerc.ac.uk/collection/R08/current/878/" ],
     "notation" : "SDN:R23::ARVOR",
     "note" : {
       "@language" : "en",
@@ -171,7 +181,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "ARVOR float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/",
     "@type" : "skos:Concept",
@@ -189,6 +200,7 @@
       "@language" : "en",
       "@value" : "Coastal ARVOR float. PLATFORM_TYPE_KEY = 110"
     },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R08/current/837/",
     "notation" : "SDN:R23::ARVOR_C",
     "note" : {
       "@language" : "en",
@@ -197,7 +209,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Coastal ARVOR float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/",
     "@type" : "skos:Concept",
@@ -215,6 +228,7 @@
       "@language" : "en",
       "@value" : "Deep ARVOR float. PLATFORM_TYPE_KEY = 120"
     },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R08/current/838/",
     "notation" : "SDN:R23::ARVOR_D",
     "note" : {
       "@language" : "en",
@@ -223,7 +237,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Deep ARVOR float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/COPEX/",
     "@type" : "skos:Concept",
@@ -301,7 +316,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "HM2000 float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/HSOE/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/HM4000/",
     "@type" : "skos:Concept",
@@ -353,7 +369,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "ITP float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/WHOI/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_A/",
     "@type" : "skos:Concept",
@@ -371,6 +388,7 @@
       "@language" : "en",
       "@value" : "NAVIS_A float. PLATFORM_TYPE_KEY = 500"
     },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R08/current/863/",
     "notation" : "SDN:R23::NAVIS_A",
     "note" : {
       "@language" : "en",
@@ -379,7 +397,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "NAVIS_A float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/SBE/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_EBR/",
     "@type" : "skos:Concept",
@@ -405,7 +424,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "NAVIS_EBR float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/SBE/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/NEMO/",
     "@type" : "skos:Concept",
@@ -423,6 +443,7 @@
       "@language" : "en",
       "@value" : "NEMO float. PLATFORM_TYPE_KEY = 400"
     },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R08/current/859/", "http://vocab.nerc.ac.uk/collection/R08/current/860/", "http://vocab.nerc.ac.uk/collection/R08/current/861/" ],
     "notation" : "SDN:R23::NEMO",
     "note" : {
       "@language" : "en",
@@ -431,7 +452,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "NEMO float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/OPTIMARE/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/",
     "@type" : "skos:Concept",
@@ -449,6 +471,7 @@
       "@language" : "en",
       "@value" : "NINJA float. PLATFORM_TYPE_KEY = 300"
     },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R08/current/858/", "http://vocab.nerc.ac.uk/collection/R08/current/857/", "http://vocab.nerc.ac.uk/collection/R08/current/855/", "http://vocab.nerc.ac.uk/collection/R08/current/856/" ],
     "notation" : "SDN:R23::NINJA",
     "note" : {
       "@language" : "en",
@@ -457,7 +480,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "NINJA float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/TSK/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/NINJA_D/",
     "@type" : "skos:Concept",
@@ -475,6 +499,7 @@
       "@language" : "en",
       "@value" : "Deep NINJA float. PLATFORM_TYPE_KEY = 320"
     },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R08/current/864/",
     "notation" : "SDN:R23::NINJA_D",
     "note" : {
       "@language" : "en",
@@ -483,7 +508,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Deep NINJA float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/TSK/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/NOVA/",
     "@type" : "skos:Concept",
@@ -501,6 +527,7 @@
       "@language" : "en",
       "@value" : "NOVA float. PLATFORM_TYPE_KEY = 600"
     },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R08/current/865/",
     "notation" : "SDN:R23::NOVA",
     "note" : {
       "@language" : "en",
@@ -509,7 +536,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "NOVA float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/METOCEAN/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/PALACE/",
     "@type" : "skos:Concept",
@@ -527,6 +555,7 @@
       "@language" : "en",
       "@value" : "PALACE float. PLATFORM_TYPE_KEY = 000"
     },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R08/current/831/",
     "notation" : "SDN:R23::PALACE",
     "note" : {
       "@language" : "en",
@@ -535,7 +564,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "PALACE float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/WRC/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/",
     "@type" : "skos:Concept",
@@ -553,6 +583,7 @@
       "@language" : "en",
       "@value" : "Polar Ocean Profiling System with a NEMO float. PLATFORM_TYPE_KEY = 430"
     },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R08/current/843/",
     "notation" : "SDN:R23::POPS_NEMO",
     "note" : {
       "@language" : "en",
@@ -561,7 +592,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "POPS with NEMO float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/OPTIMARE/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/",
     "@type" : "skos:Concept",
@@ -579,6 +611,7 @@
       "@language" : "en",
       "@value" : "Polar Ocean Profiling System with a PROVOR float. PLATFORM_TYPE_KEY = 130"
     },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R08/current/834/",
     "notation" : "SDN:R23::POPS_PROVOR",
     "note" : {
       "@language" : "en",
@@ -587,7 +620,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Polar Ocean Profiling System with a PROVOR float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/",
     "@type" : "skos:Concept",
@@ -633,6 +667,7 @@
       "@language" : "en",
       "@value" : "Dual board PROVOR float. PLATFORM_TYPE_KEY = 103"
     },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R08/current/839/",
     "notation" : "SDN:R23::PROVOR_II",
     "note" : {
       "@language" : "en",
@@ -641,7 +676,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Dual board PROVOR float"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R24/current/MARTEC/", "http://vocab.nerc.ac.uk/collection/R24/current/NKE/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/",
     "@type" : "skos:Concept",
@@ -659,6 +695,7 @@
       "@language" : "en",
       "@value" : "Dual board PROVOR CTS4 float. PLATFORM_TYPE_KEY = 104"
     },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R08/current/836/",
     "notation" : "SDN:R23::PROVOR_III",
     "note" : {
       "@language" : "en",
@@ -667,7 +704,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Dual board PROVOR CTS4 float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/",
     "@type" : "skos:Concept",
@@ -686,6 +724,7 @@
       "@language" : "en",
       "@value" : "PROVOR CTS5-Payload float. PLATFORM_TYPE_KEY = 105"
     },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R08/current/835/",
     "notation" : "SDN:R23::PROVOR_IV",
     "note" : {
       "@language" : "en",
@@ -694,7 +733,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "PROVOR CTS5-Payload float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/",
     "@type" : "skos:Concept",
@@ -712,6 +752,7 @@
       "@language" : "en",
       "@value" : "Metocean PROVOR float. PLATFORM_TYPE_KEY = 100"
     },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R08/current/840/", "http://vocab.nerc.ac.uk/collection/R08/current/842/", "http://vocab.nerc.ac.uk/collection/R08/current/841/" ],
     "notation" : "SDN:R23::PROVOR_MT",
     "note" : {
       "@language" : "en",
@@ -720,7 +761,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Metocean PROVOR float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/METOCEAN/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/",
     "@type" : "skos:Concept",
@@ -739,6 +781,7 @@
       "@language" : "en",
       "@value" : "PROVOR CTS5-USEA float, USEA is the controller board type. PLATFORM_ TYPE_ KEY = 106"
     },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R08/current/834/",
     "notation" : "SDN:R23::PROVOR_V",
     "note" : {
       "@language" : "en",
@@ -747,7 +790,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "PROVOR_V float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/",
     "@type" : "skos:Concept",
@@ -766,6 +810,7 @@
       "@language" : "en",
       "@value" : "PROVOR CTS5-USEA float with additional battery pack, USEA is the controller board type. PLATFORM_ TYPE_ KEY = 107"
     },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R08/current/834/",
     "notation" : "SDN:R23::PROVOR_V_JUMBO",
     "note" : {
       "@language" : "en",
@@ -774,7 +819,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "PROVOR_V_JUMBO float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/NKE/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/S2A/",
     "@type" : "skos:Concept",
@@ -792,6 +838,7 @@
       "@language" : "en",
       "@value" : "S2-A float. PLATFORM_TYPE_KEY = 204"
     },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R08/current/854/", "http://vocab.nerc.ac.uk/collection/R08/current/880/" ],
     "notation" : "SDN:R23::S2A",
     "note" : {
       "@language" : "en",
@@ -800,7 +847,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "S2-A float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/MRV/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/S2X/",
     "@type" : "skos:Concept",
@@ -818,6 +866,7 @@
       "@language" : "en",
       "@value" : "S2X float designed for the US Navy. PLATFORM_TYPE_KEY = 203"
     },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R08/current/872/",
     "notation" : "SDN:R23::S2X",
     "note" : {
       "@language" : "en",
@@ -826,7 +875,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "S2X float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/MRV/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO/",
     "@type" : "skos:Concept",
@@ -844,6 +894,7 @@
       "@language" : "en",
       "@value" : "SOLO float manufactured by Scripps Institution of Oceanography (SIO). PLATFORM_TYPE_KEY = 200"
     },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R08/current/851/", "http://vocab.nerc.ac.uk/collection/R08/current/850/", "http://vocab.nerc.ac.uk/collection/R08/current/852/" ],
     "notation" : "SDN:R23::SOLO",
     "note" : {
       "@language" : "en",
@@ -852,7 +903,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "SIO SOLO float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/SIO_IDG/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC/",
     "@type" : "skos:Concept",
@@ -922,6 +974,7 @@
       "@language" : "en",
       "@value" : "Deep SOLO float. PLATFORM_TYPE_KEY = 220"
     },
+    "narrower" : "http://vocab.nerc.ac.uk/collection/R08/current/862/",
     "notation" : "SDN:R23::SOLO_D",
     "note" : {
       "@language" : "en",
@@ -930,7 +983,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Deep SOLO float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/SIO_IDG/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D_MRV/",
     "@type" : "skos:Concept",
@@ -956,7 +1010,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "DEEPSOLO MRV float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/MRV/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_II/",
     "@type" : "skos:Concept",
@@ -974,6 +1029,7 @@
       "@language" : "en",
       "@value" : "SOLO-II float manufactured by Scripps Institution of Oceanography (SIO). PLATFORM_TYPE_KEY = 202"
     },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R08/current/879/", "http://vocab.nerc.ac.uk/collection/R08/current/853/" ],
     "notation" : "SDN:R23::SOLO_II",
     "note" : {
       "@language" : "en",
@@ -982,7 +1038,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "SIO SOLO-II float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/SIO_IDG/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_W/",
     "@type" : "skos:Concept",
@@ -1000,6 +1057,7 @@
       "@language" : "en",
       "@value" : "SOLO float manufactured by Woods Whole Oceanographic Institution (WHOI). PLATFORM_TYPE_KEY = 201"
     },
+    "narrower" : [ "http://vocab.nerc.ac.uk/collection/R08/current/850/", "http://vocab.nerc.ac.uk/collection/R08/current/852/", "http://vocab.nerc.ac.uk/collection/R08/current/851/" ],
     "notation" : "SDN:R23::SOLO_W",
     "note" : {
       "@language" : "en",
@@ -1008,7 +1066,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "WHOI SOLO float"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R24/current/WHOI/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R23/current/XUANWU/",
     "@type" : "skos:Concept",
@@ -1037,6 +1096,10 @@
     }
   } ],
   "@context" : {
+    "narrower" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#narrower",
+      "@type" : "@id"
+    },
     "version" : {
       "@id" : "http://purl.org/pav/version"
     },
@@ -1048,6 +1111,10 @@
     },
     "versionInfo" : {
       "@id" : "http://www.w3.org/2002/07/owl#versionInfo"
+    },
+    "related" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#related",
+      "@type" : "@id"
     },
     "hasCurrentVersion" : {
       "@id" : "http://purl.org/pav/hasCurrentVersion",
@@ -1113,14 +1180,6 @@
     },
     "RE_RegisterManager" : {
       "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
-    },
-    "narrower" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#narrower",
-      "@type" : "@id"
-    },
-    "related" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#related",
-      "@type" : "@id"
     },
     "qudt" : "https://qudt.org/2.1/schema/qudt#",
     "owl" : "http://www.w3.org/2002/07/owl#",

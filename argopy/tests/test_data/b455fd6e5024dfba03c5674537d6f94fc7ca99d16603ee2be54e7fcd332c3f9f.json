@@ -41,7 +41,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Qingdao Hisun Ocean Equipment Corporation Limited"
-    }
+    },
+    "related" : "http://vocab.nerc.ac.uk/collection/R23/current/HM2000/"
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/",
     "@type" : "skos:Concept",
@@ -95,7 +96,7 @@
       "@language" : "en",
       "@value" : "Martec"
     },
-    "related" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/METOCEAN/",
     "@type" : "skos:Concept",
@@ -121,7 +122,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Metocean"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/NOVA/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_MT/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/MRV/",
     "@type" : "skos:Concept",
@@ -147,7 +149,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "MRV Systems"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/", "http://vocab.nerc.ac.uk/collection/R23/current/ALAMO/", "http://vocab.nerc.ac.uk/collection/R23/current/S2A/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D_MRV/", "http://vocab.nerc.ac.uk/collection/R23/current/S2X/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/NKE/",
     "@type" : "skos:Concept",
@@ -174,7 +177,7 @@
       "@language" : "en",
       "@value" : "NKE Instrumentation"
     },
-    "related" : "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/"
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_IV/", "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_C/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/", "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR_D/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR/", "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/", "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/", "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/OPTIMARE/",
     "@type" : "skos:Concept",
@@ -200,7 +203,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Optimare"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/NEMO/", "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/",
     "@type" : "skos:Concept",
@@ -252,7 +256,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Sea-Bird Scientific"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_A/", "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_EBR/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/SIO_IDG/",
     "@type" : "skos:Concept",
@@ -278,7 +283,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Scripps Institution of Oceanography - Instrument Development Group"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_II/", "http://vocab.nerc.ac.uk/collection/R23/current/SOLO/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/TSK/",
     "@type" : "skos:Concept",
@@ -304,7 +310,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Tsurumi-Seiki Co., Ltd."
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/NINJA/", "http://vocab.nerc.ac.uk/collection/R23/current/NINJA_D/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/TWR/",
     "@type" : "skos:Concept",
@@ -330,7 +337,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Teledyne Webb Research"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/APEX_D/", "http://vocab.nerc.ac.uk/collection/R23/current/APEX_EM/", "http://vocab.nerc.ac.uk/collection/R23/current/APEX/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/UNKNOWN/",
     "@type" : "skos:Concept",
@@ -382,7 +390,8 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Woods Hole Oceanographic Institution"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_W/", "http://vocab.nerc.ac.uk/collection/R23/current/ITP/" ]
   }, {
     "@id" : "http://vocab.nerc.ac.uk/collection/R24/current/WRC/",
     "@type" : "skos:Concept",
@@ -408,9 +417,14 @@
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Webb Research Corporation"
-    }
+    },
+    "related" : [ "http://vocab.nerc.ac.uk/collection/R23/current/APEX_EM/", "http://vocab.nerc.ac.uk/collection/R23/current/APEX/", "http://vocab.nerc.ac.uk/collection/R23/current/PALACE/" ]
   } ],
   "@context" : {
+    "related" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#related",
+      "@type" : "@id"
+    },
     "note" : {
       "@id" : "http://www.w3.org/2004/02/skos/core#note"
     },
@@ -450,10 +464,6 @@
     },
     "hasCurrentVersion" : {
       "@id" : "http://purl.org/pav/hasCurrentVersion",
-      "@type" : "@id"
-    },
-    "related" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#related",
       "@type" : "@id"
     },
     "hasVersion" : {
