@@ -22,7 +22,7 @@ sphinx-copybutton
 sphinx-design
 sphinxext-rediraffe
 
-xarray>=0.16.1,<2024.3
+xarray>=0.16.1,<2024.8
 pandas<3.0
 scipy>=1.5
 scikit-learn>=0.23.2
