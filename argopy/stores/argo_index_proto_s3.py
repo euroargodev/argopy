@@ -17,6 +17,7 @@ try:
     HAS_PYARROW = True
 except ModuleNotFoundError:
     HAS_PYARROW = False
+
     class pa:
         @property
         def Table(self):
@@ -83,7 +84,7 @@ class s3index:
             try:
                 access_key = self.fs._request_signer._credentials.get_frozen_credentials().access_key
                 log.debug("Found AWS Credentials for access_key='%s'" % access_key)
-            except:
+            except:  # noqa: E722
                 pass
         else:
             self.fs = boto3.client('s3', config=Config(signature_version=UNSIGNED))
@@ -160,7 +161,7 @@ class s3index:
                                     "CompressionType": self.CompressionType},
                 OutputSerialization={"CSV": {}},
             )
-        except:
+        except:  # noqa: E722
             # log.debug(boto3.set_stream_logger('botocore', level='DEBUG'))
             raise
 

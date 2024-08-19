@@ -1,4 +1,4 @@
-from .checkers import (
+from .checkers import (  # noqa: F401
     is_box,
     is_indexbox,
     is_list_of_strings,
@@ -30,15 +30,21 @@ from .caching import clear_cache, lscache
 from .monitored_threadpool import MyThreadPoolExecutor as MonitoredThreadPoolExecutor
 from .chunking import Chunker
 from .accessories import Registry, float_wmo
-from .locals import (
+from .locals import (  # noqa: F401
     show_versions,
     show_options,
     modified_environ,
-    get_sys_info,   # noqa: F401
+    get_sys_info,  # noqa: F401
     netcdf_and_hdf5_versions,  # noqa: F401
 )
 from .monitors import monitor_status, badge, fetch_status  # noqa: F401
-from .geo import wmo2box, wrap_longitude, conv_lon, toYearFraction, YearFraction_to_datetime
+from .geo import (
+    wmo2box,
+    wrap_longitude,
+    conv_lon,
+    toYearFraction,
+    YearFraction_to_datetime,
+)
 from .compute import linear_interpolation_remap, groupby_remap
 from .transform import (
     fill_variables_not_in_all_datasets,

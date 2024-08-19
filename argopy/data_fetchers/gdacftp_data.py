@@ -283,7 +283,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         ds.attrs["Fetched_from"] = self.server
         try:
             ds.attrs["Fetched_by"] = getpass.getuser()
-        except:
+        except:  # noqa: E722
             ds.attrs["Fetched_by"] = 'anonymous'
         ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
         ds.attrs["Fetched_constraints"] = self.cname()
@@ -352,7 +352,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         ds.attrs["Fetched_from"] = self.server
         try:
             ds.attrs["Fetched_by"] = getpass.getuser()
-        except:
+        except:  # noqa: E722
             ds.attrs["Fetched_by"] = 'anonymous'
         ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
         ds.attrs["Fetched_constraints"] = self.cname()

@@ -80,7 +80,7 @@ def netcdf_and_hdf5_versions():
 
 
 def get_version(module_name):
-    ver = '-'
+    ver = "-"
     try:
         ver = module_name.__version__
     except AttributeError:
@@ -112,7 +112,6 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         "core": sorted(
             [
                 ("argopy", get_version),
-
                 ("xarray", get_version),
                 ("scipy", get_version),
                 ("netCDF4", get_version),
@@ -178,9 +177,11 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 ("sphinx", get_version),
             ]
         ),
-        'pip': sorted([
-            ("pytest-reportlog", get_version),
-        ])
+        "pip": sorted(
+            [
+                ("pytest-reportlog", get_version),
+            ]
+        ),
     }
 
     DEPS_blob = {}
@@ -189,18 +190,10 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         deps_blob = list()
         for modname, ver_f in deps:
             try:
-                if modname in sys.modules:
-                    mod = sys.modules[modname]
-                else:
-                    mod = importlib.import_module(modname)
+                ver = ver_f(modname)
+                deps_blob.append((modname, ver))
             except Exception:
-                deps_blob.append((modname, "-"))
-            else:
-                try:
-                    ver = ver_f(modname)
-                    deps_blob.append((modname, ver))
-                except Exception:
-                    deps_blob.append((modname, "installed"))
+                deps_blob.append((modname, "installed"))
         DEPS_blob[level] = deps_blob
 
     print("\nSYSTEM", file=file)

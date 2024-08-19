@@ -26,7 +26,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-from .argo_index_proto_s3 import search_s3
+# from .argo_index_proto_s3 import search_s3
 
 log = logging.getLogger("argopy.stores.index")
 

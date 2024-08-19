@@ -1,9 +1,3 @@
-#!/bin/env python
-# -*coding: UTF-8 -*-
-#
-# Argo data fetcher for Argovis.
-#
-
 import numpy as np
 import pandas as pd
 import xarray as xr
@@ -23,7 +17,7 @@ from .proto import ArgoDataFetcherProto
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
 dataset_ids = ["phy"]  # First is default
-api_server = "https://argovis-api.colorado.edu" 
+api_server = "https://argovis-api.colorado.edu"
 api_server_check = "https://argovis-api.colorado.edu/ping"
 
 log = logging.getLogger("argopy.argovis.data")
@@ -58,7 +52,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         chunks: str = "auto",
         chunks_maxsize: dict = {},
         api_timeout: int = 0,
-        **kwargs
+        **kwargs,
     ):
         """Instantiate an Argovis Argo data loader
 
@@ -95,7 +89,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             "cachedir": cachedir,
             "timeout": timeout,
             # "size_policy": "head",  # deprecated
-            "client_kwargs": {"headers": {'x-argokey': OPTIONS['argovis_api_key']}},
+            "client_kwargs": {"headers": {"x-argokey": OPTIONS["argovis_api_key"]}},
         }
         self.fs = kwargs["fs"] if "fs" in kwargs else httpstore(**self.store_opts)
 
@@ -134,9 +128,12 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         summary = ["<datafetcher.argovis>"]
         summary.append("Name: %s" % self.definition)
         summary.append("API: %s" % api_server)
-        api_key = self.fs.fs.client_kwargs['headers']['x-argokey']
-        if api_key == DEFAULT['argovis_api_key']:
-            summary.append("API KEY: '%s' (get a free key at https://argovis-keygen.colorado.edu)" % api_key)
+        api_key = self.fs.fs.client_kwargs["headers"]["x-argokey"]
+        if api_key == DEFAULT["argovis_api_key"]:
+            summary.append(
+                "API KEY: '%s' (get a free key at https://argovis-keygen.colorado.edu)"
+                % api_key
+            )
         else:
             summary.append("API KEY: '%s'" % api_key)
         summary.append("Domain: %s" % format_oneline(self.cname()))
@@ -286,24 +283,32 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         for profile in data:
             # construct metadata dictionary that will be repeated for each level
             metadict = {
-                'date': profile['timestamp'],
-                'date_qc': profile['timestamp_argoqc'],
-                'lat': profile['geolocation']['coordinates'][1],
-                'lon': profile['geolocation']['coordinates'][0],
-                'cycle_number': profile['cycle_number'],
-                'DATA_MODE': profile['data_info'][2][0][1],
-                'DIRECTION': profile['profile_direction'],
-                'platform_number': profile['_id'].split('_')[0],
-                'position_qc': profile['geolocation_argoqc'],
-                'index': 0
+                "date": profile["timestamp"],
+                "date_qc": profile["timestamp_argoqc"],
+                "lat": profile["geolocation"]["coordinates"][1],
+                "lon": profile["geolocation"]["coordinates"][0],
+                "cycle_number": profile["cycle_number"],
+                "DATA_MODE": profile["data_info"][2][0][1],
+                "DIRECTION": profile["profile_direction"],
+                "platform_number": profile["_id"].split("_")[0],
+                "position_qc": profile["geolocation_argoqc"],
+                "index": 0,
             }
             # construct a row for each level in the profile
-            for i in range(len(profile['data'][profile['data_info'][0].index('pressure')])):
+            for i in range(
+                len(profile["data"][profile["data_info"][0].index("pressure")])
+            ):
                 row = {
-                    'temp': profile['data'][profile['data_info'][0].index('temperature')][i],
-                    'pres': profile['data'][profile['data_info'][0].index('pressure')][i],
-                    'psal': profile['data'][profile['data_info'][0].index('salinity')][i],
-                    **metadict
+                    "temp": profile["data"][
+                        profile["data_info"][0].index("temperature")
+                    ][i],
+                    "pres": profile["data"][profile["data_info"][0].index("pressure")][
+                        i
+                    ],
+                    "psal": profile["data"][profile["data_info"][0].index("salinity")][
+                        i
+                    ],
+                    **metadict,
                 }
                 rows.append(row)
         df = pd.DataFrame(rows)
@@ -375,8 +380,8 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         ds.attrs["Fetched_from"] = self.server
         try:
             ds.attrs["Fetched_by"] = getpass.getuser()
-        except:
-            ds.attrs["Fetched_by"] = 'anonymous'
+        except:  # noqa: E722
+            ds.attrs["Fetched_by"] = "anonymous"
         ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
         ds.attrs["Fetched_constraints"] = self.cname()
         ds.attrs["Fetched_uri"] = self.uri
@@ -435,9 +440,9 @@ class Fetch_wmo(ArgovisDataFetcher):
     def get_url(self, wmo: int, cyc: int = None) -> str:
         """Return path toward the source file of a given wmo/cyc pair"""
         if cyc is None:
-            return  f'{self.server}/argo?platform={str(wmo)}&data=pressure,temperature,salinity'
+            return f"{self.server}/argo?platform={str(wmo)}&data=pressure,temperature,salinity"
         else:
-            return f'{self.server}/argo?id={str(wmo)}_{str(cyc).zfill(3)}&data=pressure,temperature,salinity'
+            return f"{self.server}/argo?id={str(wmo)}_{str(cyc).zfill(3)}&data=pressure,temperature,salinity"
 
     @property
     def uri(self):
@@ -488,10 +493,7 @@ class Fetch_box(ArgovisDataFetcher):
 
     def get_url(self):
         """Return the URL used to download data"""
-        shape = [
-                    [self.BOX[0], self.BOX[2]],  # ll
-                    [self.BOX[1], self.BOX[3]]  # ur
-                ]
+        shape = [[self.BOX[0], self.BOX[2]], [self.BOX[1], self.BOX[3]]]  # ll  # ur
         strShape = str(shape).replace(" ", "")
         url = self.server + "/argo?data=pressure,temperature,salinity&box=" + strShape
         url += "&startDate={}".format(
