@@ -8,6 +8,7 @@ import importlib
 from importlib.metadata import version
 import contextlib
 import copy
+import shutil
 from ..options import OPTIONS
 
 
@@ -77,6 +78,17 @@ def netcdf_and_hdf5_versions():
         except ImportError:
             pass
     return [("libhdf5", libhdf5_version), ("libnetcdf", libnetcdf_version)]
+
+
+def cli_version(cli_name):
+    try:
+        a = subprocess.run([cli_name, '--version'], capture_output=True)
+        return a.stdout.decode().strip("\n").replace(cli_name, '').strip()
+    except:
+        if shutil.which(cli_name):
+            return "installed"
+        else:
+            return "-"
 
 
 def get_version(module_name):
@@ -163,9 +175,8 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 ("bottleneck", get_version),
                 ("cftime", get_version),
                 ("cfgrib", get_version),
-                ("conda", get_version),
+                ("codespell", cli_version),
                 ("flake8", get_version),
-                ("nc_time_axis", get_version),
                 ("numpy", get_version),  # will come with xarray and pandas
                 ("pandas", get_version),  # will come with xarray
                 ("pip", get_version),

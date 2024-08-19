@@ -22,7 +22,6 @@ setuptools.setup(
     package_data={"argopy": ["static/assets/*", "static/css/*"]},
     install_requires=requirements,
     classifiers=[
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Topic :: Scientific/Engineering",
