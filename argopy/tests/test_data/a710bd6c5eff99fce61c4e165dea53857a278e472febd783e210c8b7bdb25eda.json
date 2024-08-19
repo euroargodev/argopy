@@ -1,354 +1,363 @@
 {
-  "@graph" : [ {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R01/current/",
-    "@type" : "skos:Collection",
-    "alternative" : "DATA_TYPE",
-    "creator" : "Argo Data Management Team",
-    "date" : "2020-04-05 03:00:03.0",
-    "description" : "Terms describing the type of data contained in an Argo netCDF file. Argo netCDF variable DATA_TYPE is populated by R01 prefLabel.",
-    "publisher" : "Natural Environment Research Council",
-    "title" : "Argo data type",
-    "RE_RegisterManager" : "British Oceanographic Data Centre",
-    "RE_RegisterOwner" : "Argo Data Management Team",
-    "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
-    "seeAlso" : "https://github.com/nvs-vocabs/R01",
-    "versionInfo" : "1",
-    "altLabel" : "DATA_TYPE",
-    "member" : [ "http://vocab.nerc.ac.uk/collection/R01/current/MPROF/", "http://vocab.nerc.ac.uk/collection/R01/current/BTRAJ/", "http://vocab.nerc.ac.uk/collection/R01/current/TRAJ/", "http://vocab.nerc.ac.uk/collection/R01/current/SPROF/", "http://vocab.nerc.ac.uk/collection/R01/current/META/", "http://vocab.nerc.ac.uk/collection/R01/current/PROF/", "http://vocab.nerc.ac.uk/collection/R01/current/MTRAJ/", "http://vocab.nerc.ac.uk/collection/R01/current/TECH/", "http://vocab.nerc.ac.uk/collection/R01/current/BPROF/" ],
-    "prefLabel" : "Argo data type"
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R01/current/BPROF/",
-    "@type" : "skos:Concept",
-    "identifier" : "SDN:R01::BPROF",
-    "date" : "2020-04-04 15:05:33.0",
-    "dc:identifier" : "SDN:R01::BPROF",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R01/current/BPROF/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "BPROF",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Argo float vertical profile file containing CTD pressure data and data from one or more biogeochemical (BGC) parameters (dissolved oxygen, nitrate, pH, chlorophyll-a, particle backscatter, irradiance)."
-    },
-    "notation" : "SDN:R01::BPROF",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "B-Argo profile"
+    "@graph": [
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R01/current/BTRAJ/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R01/current/BTRAJ/1/"
+            },
+            "dce:identifier": "SDN:R01::BTRAJ",
+            "pav:version": "1",
+            "skos:notation": "SDN:R01::BTRAJ",
+            "skos:altLabel": "BTRAJ",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "B-Argo trajectory"
+            },
+            "dc:identifier": "SDN:R01::BTRAJ",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Argo float trajectory file containing CTD pressure data and data from one or more biogeochemical (BGC) parameters (dissolved oxygen, nitrate, pH, chlorophyll-a, particle backscatter, irradiance)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R01/current/TRAJ/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R01/current/TRAJ/1/"
+            },
+            "dce:identifier": "SDN:R01::TRAJ",
+            "pav:version": "1",
+            "skos:notation": "SDN:R01::TRAJ",
+            "skos:altLabel": "TRAJ",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Argo trajectory"
+            },
+            "dc:identifier": "SDN:R01::TRAJ",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Argo float trajectory file containing CTD sensors data (pressure, temperature, conductivity, salinity)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R01/current/MTRAJ/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R01/current/MTRAJ/1/"
+            },
+            "pav:authoredOn": "2020-04-04 16:03:12.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R01/current/MTRAJ/2/"
+            },
+            "dce:identifier": "SDN:R01::MTRAJ",
+            "pav:version": "2",
+            "skos:notation": "SDN:R01::MTRAJ",
+            "skos:altLabel": "MTRAJ",
+            "dc:date": "2020-04-04 16:03:12.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Argo trajectory merged"
+            },
+            "dc:identifier": "SDN:R01::MTRAJ",
+            "skos:note": {
+                "@language": "en",
+                "@value": "deprecated"
+            },
+            "owl:deprecated": "true",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Argo float trajectory file containing CTD sensors data (pressure, temperature, conductivity, salinity) and data from one or more biogeochemical (BGC) parameters (dissolved oxygen, nitrate, pH, chlorophyll-a, particle backscatter, irradiance), retaining all temporal sampling schemes."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R01/current/META/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R01/current/META/1/"
+            },
+            "pav:authoredOn": "2023-10-06 12:38:32.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R01/current/META/2/"
+            },
+            "dce:identifier": "SDN:R01::META",
+            "pav:version": "2",
+            "skos:notation": "SDN:R01::META",
+            "skos:altLabel": "META",
+            "dc:date": "2023-10-06 12:38:32.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Argo meta-data"
+            },
+            "dc:identifier": "SDN:R01::META",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "File containing descriptive information about an Argo float."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R01/current/MPROF/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R01/current/MPROF/1/"
+            },
+            "pav:authoredOn": "2020-04-04 16:03:12.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R01/current/MPROF/2/"
+            },
+            "dce:identifier": "SDN:R01::MPROF",
+            "pav:version": "2",
+            "skos:notation": "SDN:R01::MPROF",
+            "skos:altLabel": "MPROF",
+            "dc:date": "2020-04-04 16:03:12.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Argo profile merged"
+            },
+            "dc:identifier": "SDN:R01::MPROF",
+            "skos:note": {
+                "@language": "en",
+                "@value": "deprecated"
+            },
+            "owl:deprecated": "true",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Argo float vertical profile file containing CTD sensors data (pressure, temperature, conductivity, salinity) and data from one or more biogeochemical (BGC) parameters (dissolved oxygen, nitrate, pH, chlorophyll-a, particle backscatter, irradiance), retaining all vertical sampling schemes."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R01/current/SPROF/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R01/current/SPROF/1/"
+            },
+            "dce:identifier": "SDN:R01::SPROF",
+            "pav:version": "1",
+            "skos:notation": "SDN:R01::SPROF",
+            "skos:altLabel": "SPROF",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Argo synthetic profile"
+            },
+            "dc:identifier": "SDN:R01::SPROF",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Argo float vertical profile file containing CTD sensors data (pressure, temperature, conductivity, salinity) and one or more biogeochemical (BGC) parameters data (dissolved oxygen, nitrate, pH, chlorophyll-a, particle backscatter, irradiance), interpolated onto common pressure levels."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R01/current/BPROF/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R01/current/BPROF/1/"
+            },
+            "dce:identifier": "SDN:R01::BPROF",
+            "pav:version": "1",
+            "skos:notation": "SDN:R01::BPROF",
+            "skos:altLabel": "BPROF",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "B-Argo profile"
+            },
+            "dc:identifier": "SDN:R01::BPROF",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Argo float vertical profile file containing CTD pressure data and data from one or more biogeochemical (BGC) parameters (dissolved oxygen, nitrate, pH, chlorophyll-a, particle backscatter, irradiance)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R01/current/TECH/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R01/current/TECH/1/"
+            },
+            "dce:identifier": "SDN:R01::TECH",
+            "pav:version": "1",
+            "skos:notation": "SDN:R01::TECH",
+            "skos:altLabel": "TECH",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Argo technical data"
+            },
+            "dc:identifier": "SDN:R01::TECH",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "File containing technical information about an Argo float."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R01/current/PROF/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R01/current/PROF/1/"
+            },
+            "dce:identifier": "SDN:R01::PROF",
+            "pav:version": "1",
+            "skos:notation": "SDN:R01::PROF",
+            "skos:altLabel": "PROF",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Argo profile"
+            },
+            "dc:identifier": "SDN:R01::PROF",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Argo float vertical profile file containing CTD sensors data (pressure, temperature, conductivity, salinity)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R01/current/",
+            "skos:member": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R01/current/BTRAJ/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R01/current/TRAJ/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R01/current/MTRAJ/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R01/current/META/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R01/current/MPROF/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R01/current/SPROF/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R01/current/BPROF/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R01/current/PROF/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R01/current/TECH/"
+                }
+            ],
+            "@type": "skos:Collection",
+            "dc:publisher": "Natural Environment Research Council",
+            "dc:description": "Terms describing the type of data contained in an Argo netCDF file. Argo netCDF variable DATA_TYPE is populated by R01 prefLabel.",
+            "dc:title": "Argo data type",
+            "skos:prefLabel": "Argo data type",
+            "owl:versionInfo": "2",
+            "dc:date": "2023-10-07 03:00:23.0",
+            "skos:altLabel": "DATA_TYPE",
+            "dc:creator": "Argo Data Management Team",
+            "dc:alternative": "DATA_TYPE",
+            "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+            "grg:RE_RegisterOwner": "Argo Data Management Team",
+            "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+            "rdfs:seeAlso": {
+                "@id": "https://github.com/nvs-vocabs/R01"
+            }
+        }
+    ],
+    "@context": {
+        "cpm": "http://purl.org/voc/cpm#",
+        "qudt": "https://qudt.org/2.1/schema/qudt#",
+        "void": "http://rdfs.org/ns/void#",
+        "pav": "http://purl.org/pav/",
+        "owl": "http://www.w3.org/2002/07/owl#",
+        "dce": "http://purl.org/dc/elements/1.1/",
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "iop": "https://w3id.org/iadopt/ont#",
+        "ns1": "http://www.w3.org/ns/dx/prof/",
+        "puv": "https://w3id.org/env/puv#",
+        "semapv": "http://w3id.org/semapv/vocab/",
+        "dct": "http://purl.org/dc/terms/",
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "reg": "http://purl.org/linked-data/registry#",
+        "sssom": "https://w3id.org/sssom/schema/",
+        "dcat": "http://www.w3.org/ns/dcat#",
+        "grg": "http://www.isotc211.org/schemas/grg/",
+        "prov": "https://www.w3.org/ns/prov#",
+        "dc": "http://purl.org/dc/terms/"
     }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R01/current/BTRAJ/",
-    "@type" : "skos:Concept",
-    "identifier" : "SDN:R01::BTRAJ",
-    "date" : "2020-04-04 15:05:33.0",
-    "dc:identifier" : "SDN:R01::BTRAJ",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R01/current/BTRAJ/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "BTRAJ",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Argo float trajectory file containing CTD pressure data and data from one or more biogeochemical (BGC) parameters (dissolved oxygen, nitrate, pH, chlorophyll-a, particle backscatter, irradiance)."
-    },
-    "notation" : "SDN:R01::BTRAJ",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "B-Argo trajectory"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R01/current/META/",
-    "@type" : "skos:Concept",
-    "identifier" : "SDN:R01::META",
-    "date" : "2020-04-04 15:05:33.0",
-    "dc:identifier" : "SDN:R01::META",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R01/current/META/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "META",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "File containing descriptive information about an Argo float."
-    },
-    "notation" : "SDN:R01::META",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Argo metadata"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R01/current/MPROF/",
-    "@type" : "skos:Concept",
-    "identifier" : "SDN:R01::MPROF",
-    "date" : "2020-04-04 16:03:12.0",
-    "dc:identifier" : "SDN:R01::MPROF",
-    "authoredOn" : "2020-04-04 16:03:12.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R01/current/MPROF/2/",
-    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R01/current/MPROF/1/",
-    "version" : "2",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "true",
-    "versionInfo" : "2",
-    "altLabel" : "MPROF",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Argo float vertical profile file containing CTD sensors data (pressure, temperature, conductivity, salinity) and data from one or more biogeochemical (BGC) parameters (dissolved oxygen, nitrate, pH, chlorophyll-a, particle backscatter, irradiance), retaining all vertical sampling schemes."
-    },
-    "notation" : "SDN:R01::MPROF",
-    "note" : {
-      "@language" : "en",
-      "@value" : "deprecated"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Argo profile merged"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R01/current/MTRAJ/",
-    "@type" : "skos:Concept",
-    "identifier" : "SDN:R01::MTRAJ",
-    "date" : "2020-04-04 16:03:12.0",
-    "dc:identifier" : "SDN:R01::MTRAJ",
-    "authoredOn" : "2020-04-04 16:03:12.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R01/current/MTRAJ/2/",
-    "hasVersion" : "http://vocab.nerc.ac.uk/collection/R01/current/MTRAJ/1/",
-    "version" : "2",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "true",
-    "versionInfo" : "2",
-    "altLabel" : "MTRAJ",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Argo float trajectory file containing CTD sensors data (pressure, temperature, conductivity, salinity) and data from one or more biogeochemical (BGC) parameters (dissolved oxygen, nitrate, pH, chlorophyll-a, particle backscatter, irradiance), retaining all temporal sampling schemes."
-    },
-    "notation" : "SDN:R01::MTRAJ",
-    "note" : {
-      "@language" : "en",
-      "@value" : "deprecated"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Argo trajectory merged"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R01/current/PROF/",
-    "@type" : "skos:Concept",
-    "identifier" : "SDN:R01::PROF",
-    "date" : "2020-04-04 15:05:33.0",
-    "dc:identifier" : "SDN:R01::PROF",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R01/current/PROF/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "PROF",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Argo float vertical profile file containing CTD sensors data (pressure, temperature, conductivity, salinity)."
-    },
-    "notation" : "SDN:R01::PROF",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Argo profile"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R01/current/SPROF/",
-    "@type" : "skos:Concept",
-    "identifier" : "SDN:R01::SPROF",
-    "date" : "2020-04-04 15:05:33.0",
-    "dc:identifier" : "SDN:R01::SPROF",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R01/current/SPROF/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "SPROF",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Argo float vertical profile file containing CTD sensors data (pressure, temperature, conductivity, salinity) and one or more biogeochemical (BGC) parameters data (dissolved oxygen, nitrate, pH, chlorophyll-a, particle backscatter, irradiance), interpolated onto common pressure levels."
-    },
-    "notation" : "SDN:R01::SPROF",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Argo synthetic profile"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R01/current/TECH/",
-    "@type" : "skos:Concept",
-    "identifier" : "SDN:R01::TECH",
-    "date" : "2020-04-04 15:05:33.0",
-    "dc:identifier" : "SDN:R01::TECH",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R01/current/TECH/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "TECH",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "File containing technical information about an Argo float."
-    },
-    "notation" : "SDN:R01::TECH",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Argo technical data"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R01/current/TRAJ/",
-    "@type" : "skos:Concept",
-    "identifier" : "SDN:R01::TRAJ",
-    "date" : "2020-04-04 15:05:33.0",
-    "dc:identifier" : "SDN:R01::TRAJ",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R01/current/TRAJ/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "TRAJ",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Argo float trajectory file containing CTD sensors data (pressure, temperature, conductivity, salinity)."
-    },
-    "notation" : "SDN:R01::TRAJ",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Argo trajectory"
-    }
-  } ],
-  "@context" : {
-    "versionInfo" : {
-      "@id" : "http://www.w3.org/2002/07/owl#versionInfo"
-    },
-    "authoredOn" : {
-      "@id" : "http://purl.org/pav/authoredOn"
-    },
-    "definition" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#definition"
-    },
-    "altLabel" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#altLabel"
-    },
-    "note" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#note"
-    },
-    "inDataset" : {
-      "@id" : "http://rdfs.org/ns/void#inDataset",
-      "@type" : "@id"
-    },
-    "notation" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#notation"
-    },
-    "prefLabel" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#prefLabel"
-    },
-    "identifier" : {
-      "@id" : "http://purl.org/dc/elements/1.1/identifier"
-    },
-    "deprecated" : {
-      "@id" : "http://www.w3.org/2002/07/owl#deprecated"
-    },
-    "hasCurrentVersion" : {
-      "@id" : "http://purl.org/pav/hasCurrentVersion",
-      "@type" : "@id"
-    },
-    "date" : {
-      "@id" : "http://purl.org/dc/terms/date"
-    },
-    "version" : {
-      "@id" : "http://purl.org/pav/version"
-    },
-    "hasVersion" : {
-      "@id" : "http://purl.org/pav/hasVersion",
-      "@type" : "@id"
-    },
-    "publisher" : {
-      "@id" : "http://purl.org/dc/terms/publisher"
-    },
-    "member" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#member",
-      "@type" : "@id"
-    },
-    "seeAlso" : {
-      "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",
-      "@type" : "@id"
-    },
-    "alternative" : {
-      "@id" : "http://purl.org/dc/terms/alternative"
-    },
-    "RE_RegisterOwner" : {
-      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"
-    },
-    "title" : {
-      "@id" : "http://purl.org/dc/terms/title"
-    },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
-    },
-    "RE_RegisterManager" : {
-      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
-    },
-    "comment" : {
-      "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"
-    },
-    "creator" : {
-      "@id" : "http://purl.org/dc/terms/creator"
-    },
-    "qudt" : "https://qudt.org/2.1/schema/qudt#",
-    "owl" : "http://www.w3.org/2002/07/owl#",
-    "dce" : "http://purl.org/dc/elements/1.1/",
-    "skos" : "http://www.w3.org/2004/02/skos/core#",
-    "ns0" : "http://www.w3.org/ns/dx/conneg/altr#",
-    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
-    "iop" : "https://w3id.org/iadopt/ont#",
-    "ns1" : "http://www.w3.org/ns/dx/prof/",
-    "puv" : "https://w3id.org/env/puv#",
-    "dct" : "http://purl.org/dc/terms/",
-    "reg" : "http://purl.org/linked-data/registry#",
-    "dcat" : "http://www.w3.org/ns/dcat#",
-    "grg" : "http://www.isotc211.org/schemas/grg/",
-    "prov" : "https://www.w3.org/ns/prov#",
-    "cpm" : "http://purl.org/voc/cpm#",
-    "void" : "http://rdfs.org/ns/void#",
-    "pav" : "http://purl.org/pav/",
-    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-    "dc" : "http://purl.org/dc/terms/"
-  }
 }

@@ -1,322 +1,335 @@
 {
-  "@graph" : [ {
-    "@id" : "http://vocab.nerc.ac.uk/collection/RD2/current/",
-    "@type" : "skos:Collection",
-    "alternative" : "DM_QC_FLAG",
-    "creator" : "Argo Data Management Team",
-    "date" : "2020-04-04 15:29:09.0",
-    "description" : "Quality flag scale for delayed-mode measurements. Argo netCDF variables <PARAMETER>_ADJUSTED_QC in 'D' mode are populated by RD2 altLabel.",
-    "publisher" : "Natural Environment Research Council",
-    "title" : "Argo delayed-mode quality control measurement flags",
-    "RE_RegisterManager" : "British Oceanographic Data Centre",
-    "RE_RegisterOwner" : "Argo Data Management Team",
-    "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
-    "seeAlso" : "https://github.com/nvs-vocabs/RD2",
-    "versionInfo" : "0",
-    "altLabel" : "DM_QC_FLAG",
-    "member" : [ "http://vocab.nerc.ac.uk/collection/RD2/current/5/", "http://vocab.nerc.ac.uk/collection/RD2/current/4/", "http://vocab.nerc.ac.uk/collection/RD2/current/3/", "http://vocab.nerc.ac.uk/collection/RD2/current/1/", "http://vocab.nerc.ac.uk/collection/RD2/current/2/", "http://vocab.nerc.ac.uk/collection/RD2/current/0/", "http://vocab.nerc.ac.uk/collection/RD2/current/9/", "http://vocab.nerc.ac.uk/collection/RD2/current/8/" ],
-    "prefLabel" : "Argo delayed-mode quality control measurement flags"
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/RD2/current/0/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:RD2::0",
-    "date" : "2020-04-04 15:05:33.0",
-    "identifier" : "SDN:RD2::0",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/RD2/current/0/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "0",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "No delayed-mode quality-control (QC) was performed."
-    },
-    "notation" : "SDN:RD2::0",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "No QC"
+    "@graph": [
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/8/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/8/1/"
+            },
+            "dce:identifier": "SDN:RD2::8",
+            "pav:version": "1",
+            "skos:notation": "SDN:RD2::8",
+            "skos:altLabel": "8",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Estimated value"
+            },
+            "dc:identifier": "SDN:RD2::8",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Estimated value (interpolated, extrapolated or other estimation)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/9/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/9/1/"
+            },
+            "pav:authoredOn": "2024-04-18 10:15:35.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/9/2/"
+            },
+            "dce:identifier": "SDN:RD2::9",
+            "pav:version": "2",
+            "skos:notation": "SDN:RD2::9",
+            "skos:altLabel": "9",
+            "dc:date": "2024-04-18 10:15:35.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Missing Value"
+            },
+            "dc:identifier": "SDN:RD2::9",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Missing value. Data parameter will record FillValue."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/2/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/2/1/"
+            },
+            "pav:authoredOn": "2024-04-18 10:15:35.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/2/2/"
+            },
+            "dce:identifier": "SDN:RD2::2",
+            "pav:version": "2",
+            "skos:notation": "SDN:RD2::2",
+            "skos:altLabel": "2",
+            "dc:date": "2024-04-18 10:15:35.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Probably good data"
+            },
+            "dc:identifier": "SDN:RD2::2",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Delayed-mode evaluation is based on insufficient information. An error estimate is supplied."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/3/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/3/1/"
+            },
+            "pav:authoredOn": "2024-04-18 10:15:35.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/3/2/"
+            },
+            "dce:identifier": "SDN:RD2::3",
+            "pav:version": "2",
+            "skos:notation": "SDN:RD2::3",
+            "skos:altLabel": "3",
+            "dc:date": "2024-04-18 10:15:35.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Probably bad data that are potentially adjustable"
+            },
+            "dc:identifier": "SDN:RD2::3",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "An adjustment may (or may not) have been applied, but the value may still be bad. An error estimate is supplied."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/5/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/5/1/"
+            },
+            "dce:identifier": "SDN:RD2::5",
+            "pav:version": "1",
+            "skos:notation": "SDN:RD2::5",
+            "skos:altLabel": "5",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Value changed"
+            },
+            "dc:identifier": "SDN:RD2::5",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Value changed."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/4/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/4/1/"
+            },
+            "pav:authoredOn": "2024-04-18 10:15:35.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/4/2/"
+            },
+            "dce:identifier": "SDN:RD2::4",
+            "pav:version": "2",
+            "skos:notation": "SDN:RD2::4",
+            "skos:altLabel": "4",
+            "dc:date": "2024-04-18 10:15:35.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Bad data"
+            },
+            "dc:identifier": "SDN:RD2::4",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Not adjustable. Adjusted data are replaced by FillValue."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/1/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/1/1/"
+            },
+            "pav:authoredOn": "2024-04-18 10:15:35.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/1/2/"
+            },
+            "dce:identifier": "SDN:RD2::1",
+            "pav:version": "2",
+            "skos:notation": "SDN:RD2::1",
+            "skos:altLabel": "1",
+            "dc:date": "2024-04-18 10:15:35.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Good data"
+            },
+            "dc:identifier": "SDN:RD2::1",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "No adjustment is needed, or the adjusted value is statistically consistent with good quality reference data. An error estimate is supplied."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/0/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/0/1/"
+            },
+            "dce:identifier": "SDN:RD2::0",
+            "pav:version": "1",
+            "skos:notation": "SDN:RD2::0",
+            "skos:altLabel": "0",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "No QC"
+            },
+            "dc:identifier": "SDN:RD2::0",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "No delayed-mode quality-control (QC) was performed."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/",
+            "skos:member": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/8/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/9/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/2/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/3/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/5/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/4/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/0/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RD2/current/1/"
+                }
+            ],
+            "@type": "skos:Collection",
+            "dc:publisher": "Natural Environment Research Council",
+            "dc:description": "Quality flag scale for delayed-mode measurements. Argo netCDF variables <PARAMETER>_ADJUSTED_QC in 'D' mode are populated by RD2 altLabel.",
+            "dc:title": "Argo delayed-mode quality control measurement flags",
+            "skos:prefLabel": "Argo delayed-mode quality control measurement flags",
+            "owl:versionInfo": "1",
+            "dc:date": "2024-04-19 03:00:08.0",
+            "skos:altLabel": "DM_QC_FLAG",
+            "dc:creator": "Argo Data Management Team",
+            "dc:alternative": "DM_QC_FLAG",
+            "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+            "grg:RE_RegisterOwner": "Argo Data Management Team",
+            "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+            "rdfs:seeAlso": {
+                "@id": "https://github.com/nvs-vocabs/RD2"
+            }
+        }
+    ],
+    "@context": {
+        "cpm": "http://purl.org/voc/cpm#",
+        "qudt": "https://qudt.org/2.1/schema/qudt#",
+        "void": "http://rdfs.org/ns/void#",
+        "pav": "http://purl.org/pav/",
+        "owl": "http://www.w3.org/2002/07/owl#",
+        "dce": "http://purl.org/dc/elements/1.1/",
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "iop": "https://w3id.org/iadopt/ont#",
+        "ns1": "http://www.w3.org/ns/dx/prof/",
+        "puv": "https://w3id.org/env/puv#",
+        "semapv": "http://w3id.org/semapv/vocab/",
+        "dct": "http://purl.org/dc/terms/",
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "reg": "http://purl.org/linked-data/registry#",
+        "sssom": "https://w3id.org/sssom/schema/",
+        "dcat": "http://www.w3.org/ns/dcat#",
+        "grg": "http://www.isotc211.org/schemas/grg/",
+        "prov": "https://www.w3.org/ns/prov#",
+        "dc": "http://purl.org/dc/terms/"
     }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/RD2/current/1/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:RD2::1",
-    "date" : "2020-04-04 15:05:33.0",
-    "identifier" : "SDN:RD2::1",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/RD2/current/1/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "1",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "The adjusted value is statistically consistent, and a statistical error estimate is supplied."
-    },
-    "notation" : "SDN:RD2::1",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Good value"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/RD2/current/2/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:RD2::2",
-    "date" : "2020-04-04 15:05:33.0",
-    "identifier" : "SDN:RD2::2",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/RD2/current/2/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "2",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Probably good data."
-    },
-    "notation" : "SDN:RD2::2",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Probably good value"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/RD2/current/3/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:RD2::3",
-    "date" : "2020-04-04 15:05:33.0",
-    "identifier" : "SDN:RD2::3",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/RD2/current/3/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "3",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "An adjustment has been applied, but the value may still be bad."
-    },
-    "notation" : "SDN:RD2::3",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Probably bad value"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/RD2/current/4/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:RD2::4",
-    "date" : "2020-04-04 15:05:33.0",
-    "identifier" : "SDN:RD2::4",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/RD2/current/4/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "4",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Bad data. Not adjustable."
-    },
-    "notation" : "SDN:RD2::4",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Bad value"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/RD2/current/5/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:RD2::5",
-    "date" : "2020-04-04 15:05:33.0",
-    "identifier" : "SDN:RD2::5",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/RD2/current/5/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "5",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Value changed."
-    },
-    "notation" : "SDN:RD2::5",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Value changed"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/RD2/current/8/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:RD2::8",
-    "date" : "2020-04-04 15:05:33.0",
-    "identifier" : "SDN:RD2::8",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/RD2/current/8/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "8",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Estimated value (interpolated, extrapolated or other estimation)."
-    },
-    "notation" : "SDN:RD2::8",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Estimated value"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/RD2/current/9/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:RD2::9",
-    "date" : "2020-04-04 15:05:33.0",
-    "identifier" : "SDN:RD2::9",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/RD2/current/9/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "9",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Missing value."
-    },
-    "notation" : "SDN:RD2::9",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Missing value"
-    }
-  } ],
-  "@context" : {
-    "note" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#note"
-    },
-    "definition" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#definition"
-    },
-    "inDataset" : {
-      "@id" : "http://rdfs.org/ns/void#inDataset",
-      "@type" : "@id"
-    },
-    "version" : {
-      "@id" : "http://purl.org/pav/version"
-    },
-    "identifier" : {
-      "@id" : "http://purl.org/dc/terms/identifier"
-    },
-    "date" : {
-      "@id" : "http://purl.org/dc/terms/date"
-    },
-    "hasCurrentVersion" : {
-      "@id" : "http://purl.org/pav/hasCurrentVersion",
-      "@type" : "@id"
-    },
-    "versionInfo" : {
-      "@id" : "http://www.w3.org/2002/07/owl#versionInfo"
-    },
-    "authoredOn" : {
-      "@id" : "http://purl.org/pav/authoredOn"
-    },
-    "prefLabel" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#prefLabel"
-    },
-    "notation" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#notation"
-    },
-    "altLabel" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#altLabel"
-    },
-    "deprecated" : {
-      "@id" : "http://www.w3.org/2002/07/owl#deprecated"
-    },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
-    },
-    "member" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#member",
-      "@type" : "@id"
-    },
-    "publisher" : {
-      "@id" : "http://purl.org/dc/terms/publisher"
-    },
-    "RE_RegisterManager" : {
-      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
-    },
-    "alternative" : {
-      "@id" : "http://purl.org/dc/terms/alternative"
-    },
-    "RE_RegisterOwner" : {
-      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"
-    },
-    "comment" : {
-      "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"
-    },
-    "seeAlso" : {
-      "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",
-      "@type" : "@id"
-    },
-    "title" : {
-      "@id" : "http://purl.org/dc/terms/title"
-    },
-    "creator" : {
-      "@id" : "http://purl.org/dc/terms/creator"
-    },
-    "qudt" : "https://qudt.org/2.1/schema/qudt#",
-    "owl" : "http://www.w3.org/2002/07/owl#",
-    "dce" : "http://purl.org/dc/elements/1.1/",
-    "skos" : "http://www.w3.org/2004/02/skos/core#",
-    "ns0" : "http://www.w3.org/ns/dx/conneg/altr#",
-    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
-    "iop" : "https://w3id.org/iadopt/ont#",
-    "ns1" : "http://www.w3.org/ns/dx/prof/",
-    "puv" : "https://w3id.org/env/puv#",
-    "dct" : "http://purl.org/dc/terms/",
-    "reg" : "http://purl.org/linked-data/registry#",
-    "dcat" : "http://www.w3.org/ns/dcat#",
-    "grg" : "http://www.isotc211.org/schemas/grg/",
-    "prov" : "https://www.w3.org/ns/prov#",
-    "cpm" : "http://purl.org/voc/cpm#",
-    "void" : "http://rdfs.org/ns/void#",
-    "pav" : "http://purl.org/pav/",
-    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-    "dc" : "http://purl.org/dc/terms/"
-  }
 }
