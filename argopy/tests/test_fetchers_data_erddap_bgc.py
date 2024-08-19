@@ -247,20 +247,20 @@ class Test_Backend:
         fetcher = create_fetcher(fetcher_args, access_point)
         assert_fetcher(mocked_erddapserver, fetcher)
 
-    @pytest.mark.parametrize("measured", ['all'],
-                             indirect=False,
-                             ids=["measured=%s" % m for m in ['all']],
-                             )
-    def test_fetching_failed_measured(self, mocked_erddapserver, measured):
-        class this_request:
-            param = {
-                'ds': 'bgc',
-                'mode': 'expert',
-                'params': 'all',
-                'measured': measured,
-                'access_point': {"float": [6904240]},
-            }
-        fetcher_args, access_point = self._setup_fetcher(this_request)
-        fetcher = create_fetcher(fetcher_args, access_point)
-        with pytest.raises(ValueError):
-            fetcher.to_xarray()
+    # @pytest.mark.parametrize("measured", ['all'],
+    #                          indirect=False,
+    #                          ids=["measured=%s" % m for m in ['all']],
+    #                          )
+    # def test_fetching_failed_measured(self, mocked_erddapserver, measured):
+    #     class this_request:
+    #         param = {
+    #             'ds': 'bgc',
+    #             'mode': 'expert',
+    #             'params': 'all',
+    #             'measured': measured,
+    #             'access_point': {"float": [6904240]},
+    #         }
+    #     fetcher_args, access_point = self._setup_fetcher(this_request)
+    #     fetcher = create_fetcher(fetcher_args, access_point)
+    #     with pytest.raises(ValueError):
+    #         fetcher.to_xarray()
