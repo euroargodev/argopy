@@ -8,8 +8,8 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-Coming up next
---------------
+v0.1.16 (xx Aug. 2024)
+----------------------
 
 **Features and front-end API**
 
@@ -35,7 +35,7 @@ Coming up next
 
 **Internals**
 
-- Update :class:`argopy.ArgoNVSReferenceTables` to handle new NVS server output format
+- Update :class:`argopy.ArgoNVSReferenceTables` to handle new NVS server output format. (:pr:`378`) by `G. Maze <http://www.github.com/gmaze>`_
 
 - Pin upper bound on xarray < 2024.3 to fix failing upstream tests because of ``AttributeError: 'ScipyArrayWrapper' object has no attribute 'oindex'``, `reported here <https://github.com/pydata/xarray/issues/8909>`_. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
 
@@ -48,7 +48,6 @@ Coming up next
 - Update :class:`argopy.ArgoDocs` with last BGC cookbooks on pH. (:pr:`321`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 - Fix for fsspec > 2023.10.0. (:pr:`318`) by `G. Maze <http://www.github.com/gmaze>`_.
-
 
 
 v0.1.15 (12 Dec. 2023)
