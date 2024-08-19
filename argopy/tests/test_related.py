@@ -132,12 +132,12 @@ class Test_ArgoNVSReferenceTables:
                 data = self.nvs.fs.open_json(url)
                 assert isinstance(data, dict)
             elif "xml" in opts:
-                data = self.nvs.fs.fs.cat_file(url)
+                data = self.nvs.fs.download_url(url)
                 assert data[0:5] == b'<?xml'
             else:
                 # log.debug(self.nvs.fs.fs.info(url))
-                data = self.nvs.fs.fs.cat_file(url)
-                assert data[0:7] == b'@prefix'
+                data = self.nvs.fs.download_url(url)
+                assert data[0:6] == b'PREFIX'
         else:
             with pytest.raises(ValueError):
                 self.nvs.get_url(3, fmt=opts)

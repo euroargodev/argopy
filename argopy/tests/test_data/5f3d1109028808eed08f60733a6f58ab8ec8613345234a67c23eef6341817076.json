@@ -1,322 +1,320 @@
 {
-  "@graph" : [ {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R06/current/",
-    "@type" : "skos:Collection",
-    "alternative" : "DATA_STATE_INDICATOR",
-    "creator" : "Argo Data Management Team",
-    "date" : "2020-04-04 15:45:13.0",
-    "description" : "Processing stage of the data based on the concatenation of processing level and class indicators. Argo netCDF variable DATA_STATE_INDICATOR is populated by R06 altLabel.",
-    "publisher" : "Natural Environment Research Council",
-    "title" : "Argo data state indicators",
-    "RE_RegisterManager" : "British Oceanographic Data Centre",
-    "RE_RegisterOwner" : "Argo Data Management Team",
-    "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
-    "seeAlso" : "https://github.com/nvs-vocabs/R06",
-    "versionInfo" : "0",
-    "altLabel" : "DATA_STATE_INDICATOR",
-    "member" : [ "http://vocab.nerc.ac.uk/collection/R06/current/2B/", "http://vocab.nerc.ac.uk/collection/R06/current/3C/", "http://vocab.nerc.ac.uk/collection/R06/current/2CP/", "http://vocab.nerc.ac.uk/collection/R06/current/3B/", "http://vocab.nerc.ac.uk/collection/R06/current/1A/", "http://vocab.nerc.ac.uk/collection/R06/current/0A/", "http://vocab.nerc.ac.uk/collection/R06/current/2C/", "http://vocab.nerc.ac.uk/collection/R06/current/2BP/" ],
-    "prefLabel" : "Argo data state indicators"
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R06/current/0A/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:R06::0A",
-    "date" : "2020-04-04 15:05:33.0",
-    "identifier" : "SDN:R06::0A",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R06/current/0A/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "0A",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Data are the raw output from instruments, without calibration, and not necessarily converted to engineering units (Level 0). Moreover, no scrutiny, value judgement or intercomparisons were performed on the data; the records are derived directly from the input with no filtering or sub-sampling (Class A)."
-    },
-    "notation" : "SDN:R06::0A",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Level 0, class A processing stage"
+    "@graph": [
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R06/current/3B/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R06/current/3B/1/"
+            },
+            "dce:identifier": "SDN:R06::3B",
+            "pav:version": "1",
+            "skos:notation": "SDN:R06::3B",
+            "skos:altLabel": "3B",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Level 3, class B processing stage"
+            },
+            "dc:identifier": "SDN:R06::3B",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Data have been processed with assumptions about the scales of variability or thermodynamic relationships; the data are normally reduced to regular space, time intervals with enhanced signal to noise (Level 3). Moreover, the data have been scrutinized and evaluated against a defined and documented set of measures; the process is often automated, and the measures are published and widely available (Class B)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R06/current/2C/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R06/current/2C/1/"
+            },
+            "dce:identifier": "SDN:R06::2C",
+            "pav:version": "1",
+            "skos:notation": "SDN:R06::2C",
+            "skos:altLabel": "2C",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Level 2, class C processing stage"
+            },
+            "dc:identifier": "SDN:R06::2C",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Data have complete geospatial and temporal references; information may have been sub-sampled, averaged or compressed in other ways, but no assumptions of scales and variability or thermodynamic relationships have been used in the processing (Level 2). Moreover, the data have been scrutinized fully including intra-record and intra-dataset comparison and consistency checks; scientists have been involved in the evaluation, and brought latest knowledge to bear; the procedures are published, widely available and widely accepted (Class C)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R06/current/1A/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R06/current/1A/1/"
+            },
+            "dce:identifier": "SDN:R06::1A",
+            "pav:version": "1",
+            "skos:notation": "SDN:R06::1A",
+            "skos:altLabel": "1A",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Level 1, class A processing stage"
+            },
+            "dc:identifier": "SDN:R06::1A",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Data have been converted to values independent of detailed instrument knowledge; automated calibrations may have been done; data may not have full geospatial and temporal referencing, but have sufficient information to uniquely reference the data to the point of measurement (Level 1). Moreover, no scrutiny, value judgement or intercomparisons were performed on the data; the records are derived directly from the input with no filtering or sub-sampling (Class A)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R06/current/3C/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R06/current/3C/1/"
+            },
+            "dce:identifier": "SDN:R06::3C",
+            "pav:version": "1",
+            "skos:notation": "SDN:R06::3C",
+            "skos:altLabel": "3C",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Level 3, class C processing stage"
+            },
+            "dc:identifier": "SDN:R06::3C",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Data have been processed with assumptions about the scales of variability or thermodynamic relationships; the data are normally reduced to regular space, time intervals with enhanced signal to noise (Level 3). Moreover, the data have been scrutinized fully including intra-record and intra-dataset comparison and consistency checks; scientists have been involved in the evaluation, and brought latest knowledge to bear; the procedures are published, widely available and widely accepted (Class C)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R06/current/2CP/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R06/current/2CP/1/"
+            },
+            "dce:identifier": "SDN:R06::2CP",
+            "pav:version": "1",
+            "skos:notation": "SDN:R06::2CP",
+            "skos:altLabel": "2C+",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Level 2, class C, subclass + processing stage"
+            },
+            "dc:identifier": "SDN:R06::2CP",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Data have complete geospatial and temporal references; information may have been sub-sampled, averaged or compressed in other ways, but no assumptions of scales and variability or thermodynamic relationships have been used in the processing (Level 2). Moreover, the data have been scrutinized fully including intra-record and intra-dataset comparison and consistency checks; scientists have been involved in the evaluation, and brought latest knowledge to bear; the procedures are published, widely available and widely accepted (Class C). In addition, the data are fully quality controlled and peer-reviewed, and are widely accepted as valid; documentation is complete and widely available."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R06/current/0A/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R06/current/0A/1/"
+            },
+            "dce:identifier": "SDN:R06::0A",
+            "pav:version": "1",
+            "skos:notation": "SDN:R06::0A",
+            "skos:altLabel": "0A",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Level 0, class A processing stage"
+            },
+            "dc:identifier": "SDN:R06::0A",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Data are the raw output from instruments, without calibration, and not necessarily converted to engineering units (Level 0). Moreover, no scrutiny, value judgement or intercomparisons were performed on the data; the records are derived directly from the input with no filtering or sub-sampling (Class A)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R06/current/2BP/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R06/current/2BP/1/"
+            },
+            "dce:identifier": "SDN:R06::2BP",
+            "pav:version": "1",
+            "skos:notation": "SDN:R06::2BP",
+            "skos:altLabel": "2B+",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Level 2, class B, subclass + processing stage"
+            },
+            "dc:identifier": "SDN:R06::2BP",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Data have complete geospatial and temporal references; information may have been sub-sampled, averaged or compressed in other ways, but no assumptions of scales and variability or thermodynamic relationships have been used in the processing (Level 2). Moreover, the data have been scrutinized and evaluated against a defined and documented set of measures; the process is often automated, and the measures are published and widely available (Class B). In addition, the measures have been tested on independent data sets for completeness and robustness, and are widely accepted (Subclass +)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R06/current/2B/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R06/current/2B/1/"
+            },
+            "dce:identifier": "SDN:R06::2B",
+            "pav:version": "1",
+            "skos:notation": "SDN:R06::2B",
+            "skos:altLabel": "2B",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Level 2, class B processing stage"
+            },
+            "dc:identifier": "SDN:R06::2B",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Data have complete geospatial and temporal references; information may have been sub-sampled, averaged or compressed in other ways, but no assumptions of scales and variability or thermodynamic relationships have been used in the processing (Level 2). Moreover, the data have been scrutinized and evaluated against a defined and documented set of measures; the process is often automated, and the measures are published and widely available (Class B)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R06/current/",
+            "skos:member": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R06/current/3B/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R06/current/2C/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R06/current/1A/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R06/current/3C/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R06/current/2CP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R06/current/0A/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R06/current/2B/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R06/current/2BP/"
+                }
+            ],
+            "@type": "skos:Collection",
+            "dc:publisher": "Natural Environment Research Council",
+            "dc:description": "Processing stage of the data based on the concatenation of processing level and class indicators. Argo netCDF variable DATA_STATE_INDICATOR is populated by R06 altLabel.",
+            "dc:title": "Argo data state indicators",
+            "skos:prefLabel": "Argo data state indicators",
+            "owl:versionInfo": "0",
+            "dc:date": "2020-04-04 15:45:13.0",
+            "skos:altLabel": "DATA_STATE_INDICATOR",
+            "dc:creator": "Argo Data Management Team",
+            "dc:alternative": "DATA_STATE_INDICATOR",
+            "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+            "grg:RE_RegisterOwner": "Argo Data Management Team",
+            "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+            "rdfs:seeAlso": {
+                "@id": "https://github.com/nvs-vocabs/R06"
+            }
+        }
+    ],
+    "@context": {
+        "cpm": "http://purl.org/voc/cpm#",
+        "qudt": "https://qudt.org/2.1/schema/qudt#",
+        "void": "http://rdfs.org/ns/void#",
+        "pav": "http://purl.org/pav/",
+        "owl": "http://www.w3.org/2002/07/owl#",
+        "dce": "http://purl.org/dc/elements/1.1/",
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "iop": "https://w3id.org/iadopt/ont#",
+        "ns1": "http://www.w3.org/ns/dx/prof/",
+        "puv": "https://w3id.org/env/puv#",
+        "semapv": "http://w3id.org/semapv/vocab/",
+        "dct": "http://purl.org/dc/terms/",
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "reg": "http://purl.org/linked-data/registry#",
+        "sssom": "https://w3id.org/sssom/schema/",
+        "dcat": "http://www.w3.org/ns/dcat#",
+        "grg": "http://www.isotc211.org/schemas/grg/",
+        "prov": "https://www.w3.org/ns/prov#",
+        "dc": "http://purl.org/dc/terms/"
     }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R06/current/1A/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:R06::1A",
-    "date" : "2020-04-04 15:05:33.0",
-    "identifier" : "SDN:R06::1A",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R06/current/1A/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "1A",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Data have been converted to values independent of detailed instrument knowledge; automated calibrations may have been done; data may not have full geospatial and temporal referencing, but have sufficient information to uniquely reference the data to the point of measurement (Level 1). Moreover, no scrutiny, value judgement or intercomparisons were performed on the data; the records are derived directly from the input with no filtering or sub-sampling (Class A)."
-    },
-    "notation" : "SDN:R06::1A",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Level 1, class A processing stage"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R06/current/2B/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:R06::2B",
-    "date" : "2020-04-04 15:05:33.0",
-    "identifier" : "SDN:R06::2B",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R06/current/2B/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "2B",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Data have complete geospatial and temporal references; information may have been sub-sampled, averaged or compressed in other ways, but no assumptions of scales and variability or thermodynamic relationships have been used in the processing (Level 2). Moreover, the data have been scrutinized and evaluated against a defined and documented set of measures; the process is often automated, and the measures are published and widely available (Class B)."
-    },
-    "notation" : "SDN:R06::2B",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Level 2, class B processing stage"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R06/current/2BP/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:R06::2BP",
-    "date" : "2020-04-04 15:05:33.0",
-    "identifier" : "SDN:R06::2BP",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R06/current/2BP/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "2B+",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Data have complete geospatial and temporal references; information may have been sub-sampled, averaged or compressed in other ways, but no assumptions of scales and variability or thermodynamic relationships have been used in the processing (Level 2). Moreover, the data have been scrutinized and evaluated against a defined and documented set of measures; the process is often automated, and the measures are published and widely available (Class B). In addition, the measures have been tested on independent data sets for completeness and robustness, and are widely accepted (Subclass +)."
-    },
-    "notation" : "SDN:R06::2BP",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Level 2, class B, subclass + processing stage"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R06/current/2C/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:R06::2C",
-    "date" : "2020-04-04 15:05:33.0",
-    "identifier" : "SDN:R06::2C",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R06/current/2C/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "2C",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Data have complete geospatial and temporal references; information may have been sub-sampled, averaged or compressed in other ways, but no assumptions of scales and variability or thermodynamic relationships have been used in the processing (Level 2). Moreover, the data have been scrutinized fully including intra-record and intra-dataset comparison and consistency checks; scientists have been involved in the evaluation, and brought latest knowledge to bear; the procedures are published, widely available and widely accepted (Class C)."
-    },
-    "notation" : "SDN:R06::2C",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Level 2, class C processing stage"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R06/current/2CP/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:R06::2CP",
-    "date" : "2020-04-04 15:05:33.0",
-    "identifier" : "SDN:R06::2CP",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R06/current/2CP/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "2C+",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Data have complete geospatial and temporal references; information may have been sub-sampled, averaged or compressed in other ways, but no assumptions of scales and variability or thermodynamic relationships have been used in the processing (Level 2). Moreover, the data have been scrutinized fully including intra-record and intra-dataset comparison and consistency checks; scientists have been involved in the evaluation, and brought latest knowledge to bear; the procedures are published, widely available and widely accepted (Class C). In addition, the data are fully quality controlled and peer-reviewed, and are widely accepted as valid; documentation is complete and widely available."
-    },
-    "notation" : "SDN:R06::2CP",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Level 2, class C, subclass + processing stage"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R06/current/3B/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:R06::3B",
-    "date" : "2020-04-04 15:05:33.0",
-    "identifier" : "SDN:R06::3B",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R06/current/3B/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "3B",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Data have been processed with assumptions about the scales of variability or thermodynamic relationships; the data are normally reduced to regular space, time intervals with enhanced signal to noise (Level 3). Moreover, the data have been scrutinized and evaluated against a defined and documented set of measures; the process is often automated, and the measures are published and widely available (Class B)."
-    },
-    "notation" : "SDN:R06::3B",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Level 3, class B processing stage"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R06/current/3C/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:R06::3C",
-    "date" : "2020-04-04 15:05:33.0",
-    "identifier" : "SDN:R06::3C",
-    "authoredOn" : "2020-04-04 15:05:33.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R06/current/3C/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "3C",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Data have been processed with assumptions about the scales of variability or thermodynamic relationships; the data are normally reduced to regular space, time intervals with enhanced signal to noise (Level 3). Moreover, the data have been scrutinized fully including intra-record and intra-dataset comparison and consistency checks; scientists have been involved in the evaluation, and brought latest knowledge to bear; the procedures are published, widely available and widely accepted (Class C)."
-    },
-    "notation" : "SDN:R06::3C",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Level 3, class C processing stage"
-    }
-  } ],
-  "@context" : {
-    "deprecated" : {
-      "@id" : "http://www.w3.org/2002/07/owl#deprecated"
-    },
-    "hasCurrentVersion" : {
-      "@id" : "http://purl.org/pav/hasCurrentVersion",
-      "@type" : "@id"
-    },
-    "notation" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#notation"
-    },
-    "note" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#note"
-    },
-    "altLabel" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#altLabel"
-    },
-    "inDataset" : {
-      "@id" : "http://rdfs.org/ns/void#inDataset",
-      "@type" : "@id"
-    },
-    "identifier" : {
-      "@id" : "http://purl.org/dc/terms/identifier"
-    },
-    "versionInfo" : {
-      "@id" : "http://www.w3.org/2002/07/owl#versionInfo"
-    },
-    "prefLabel" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#prefLabel"
-    },
-    "authoredOn" : {
-      "@id" : "http://purl.org/pav/authoredOn"
-    },
-    "date" : {
-      "@id" : "http://purl.org/dc/terms/date"
-    },
-    "definition" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#definition"
-    },
-    "version" : {
-      "@id" : "http://purl.org/pav/version"
-    },
-    "member" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#member",
-      "@type" : "@id"
-    },
-    "comment" : {
-      "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"
-    },
-    "creator" : {
-      "@id" : "http://purl.org/dc/terms/creator"
-    },
-    "RE_RegisterOwner" : {
-      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"
-    },
-    "alternative" : {
-      "@id" : "http://purl.org/dc/terms/alternative"
-    },
-    "RE_RegisterManager" : {
-      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
-    },
-    "publisher" : {
-      "@id" : "http://purl.org/dc/terms/publisher"
-    },
-    "title" : {
-      "@id" : "http://purl.org/dc/terms/title"
-    },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
-    },
-    "seeAlso" : {
-      "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",
-      "@type" : "@id"
-    },
-    "qudt" : "https://qudt.org/2.1/schema/qudt#",
-    "owl" : "http://www.w3.org/2002/07/owl#",
-    "dce" : "http://purl.org/dc/elements/1.1/",
-    "skos" : "http://www.w3.org/2004/02/skos/core#",
-    "ns0" : "http://www.w3.org/ns/dx/conneg/altr#",
-    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
-    "iop" : "https://w3id.org/iadopt/ont#",
-    "ns1" : "http://www.w3.org/ns/dx/prof/",
-    "puv" : "https://w3id.org/env/puv#",
-    "dct" : "http://purl.org/dc/terms/",
-    "reg" : "http://purl.org/linked-data/registry#",
-    "dcat" : "http://www.w3.org/ns/dcat#",
-    "grg" : "http://www.isotc211.org/schemas/grg/",
-    "prov" : "https://www.w3.org/ns/prov#",
-    "cpm" : "http://purl.org/voc/cpm#",
-    "void" : "http://rdfs.org/ns/void#",
-    "pav" : "http://purl.org/pav/",
-    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-    "dc" : "http://purl.org/dc/terms/"
-  }
 }

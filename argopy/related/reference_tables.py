@@ -99,12 +99,12 @@ class ArgoNVSReferenceTables:
         }
         for k in data["@graph"]:
             if k["@type"] == "skos:Collection":
-                Collection_name = k["alternative"]
+                Collection_name = k["dc:alternative"]
             elif k["@type"] == "skos:Concept":
-                content["altLabel"].append(k["altLabel"])
-                content["prefLabel"].append(k["prefLabel"]["@value"])
-                content["definition"].append(k["definition"]["@value"])
-                content["deprecated"].append(k["deprecated"])
+                content["altLabel"].append(k["skos:altLabel"])
+                content["prefLabel"].append(k["skos:prefLabel"]["@value"])
+                content["definition"].append(k["skos:definition"]["@value"])
+                content["deprecated"].append(k["owl:deprecated"])
                 content["id"].append(k["@id"])
         df = pd.DataFrame.from_dict(content)
         df.name = Collection_name
@@ -114,8 +114,8 @@ class ArgoNVSReferenceTables:
         """Return last skos:Collection information as data"""
         for k in data["@graph"]:
             if k["@type"] == "skos:Collection":
-                name = k["alternative"]
-                desc = k["description"]
+                name = k["dc:alternative"]
+                desc = k["dc:description"]
                 rtid = k["@id"]
         return (name, desc, rtid)
 
