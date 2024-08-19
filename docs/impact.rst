@@ -4,19 +4,19 @@ Impact of argopy
 Papers & proceedings mentioning argopy
 --------------------------------------
 
-- Bartlett, Jenna, "An investigation of geostationary satellite imagery to compare developing and non-developing African easterly waves" (2022). Theses and Dissertations. 5600. https://scholarsjunction.msstate.edu/td/5600
+- Bartlett, Jenna, "An investigation of geostationary satellite imagery to compare developing and non-developing African easterly waves" (2022). Thesis and Dissertations. 5600. https://scholarsjunction.msstate.edu/td/5600
 
 - Chafik, et.al, "The Faroe-Shetland Channel Jet: Structure, Variability, and Driving Mechanisms", 2023, JGR Oceans, https://doi.org/10.1029/2022JC019083
 
 - Dan E. Kelley, Jaimie Harbin, Clark Richards, "argoFloats: An R Package for Analyzing Argo Data", 2021 Frontiers in Marine Science, https://doi.org/10.3389/fmars.2021.635922
 
-- de Solo, Sofia M., "What makes a hurricane fall apart? A multi-platform assessment of tropical cyclone weakening By" (2021). Theses and Dissertations. 5274. https://scholarsjunction.msstate.edu/td/5274
+- de Solo, Sofia M., "What makes a hurricane fall apart? A multi-platform assessment of tropical cyclone weakening By" (2021). Thesis and Dissertations. 5274. https://scholarsjunction.msstate.edu/td/5274
 
 - Dunnington et al., (2021). argodata: An R interface to oceanographic data from the International Argo Program. Journal of Open Source Software, 6(68), 3659, https://doi.org/10.21105/joss.03659
 
 - Gonzalez A., "The Argo Online School: An e-learning tool to get started with Argo" (2023), The Journal of Open Source Education (Under review)
 
-- Huda, Md Nurul, "Machine Learning for Improvement of Ocean Data Resolution for Weather Forecasting and Climatological Research" (2023). Theses and Dissertations, Virginia Tech, http://hdl.handle.net/10919/116504
+- Huda, Md Nurul, "Machine Learning for Improvement of Ocean Data Resolution for Weather Forecasting and Climatological Research" (2023). Thesis and Dissertations, Virginia Tech, http://hdl.handle.net/10919/116504
 
 - Steinberg, J. M., Piecuch, C. G., Hamlington, B. D., Thompson, P. R., & Coats, S. (2024). Influence of deep-ocean warming on coastal sea-level decadal trends in the Gulf of Mexico. Journal of Geophysical Research: Oceans, 129, e2023JC019681. https://doi.org/10.1029/2023JC019681
 
