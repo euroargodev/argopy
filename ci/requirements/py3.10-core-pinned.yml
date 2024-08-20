@@ -14,7 +14,7 @@ dependencies:
   - requests = 2.32.3
   - scipy = 1.14.0
   - toolz = 0.12.1
-  - xarray = 2024.7.0
+  - xarray = 2024.2.0
 
 # EXT.UTIL:
 #  - boto3 = 1.35.0
@@ -46,7 +46,7 @@ dependencies:
   - cftime = 1.6.4
   - codespell = 2.3.0
   - flake8 = 7.1.1
-  - numpy = 2.1.0
+  - numpy = 1.26.4
   - pandas = 2.2.2
   - pip = 24.2
   - pytest = 8.3.2
