@@ -1,4 +1,4 @@
-name: argopy-docs
+name: argopy-docs-rtd
 channels:
   - conda-forge
 dependencies:
@@ -7,28 +7,29 @@ dependencies:
   - scipy
   - netcdf4
   - dask
-  - toolz
+#  - toolz
   - erddapy
   - fsspec
   - gsw
   - aiohttp
-  - bottleneck
+#  - bottleneck
   - s3fs
   - boto3
-  - cartopy
-  - cmocean
+#  - cartopy
+#  - cmocean
   - cftime
+  - cfgrib
   - decorator
   - distributed
   - ipython
   - matplotlib
-  - numpy
+#  - numpy
   - pandas
-  - packaging
+#  - packaging
   - pip
-  - pytest
-  - seaborn
-  - setuptools
+#  - pytest
+#  - seaborn
+#  - setuptools
   - zarr
   - tqdm
   - ipykernel
@@ -39,12 +40,11 @@ dependencies:
   - sphinx_rtd_theme
   - sphinx-book-theme
   - pydata-sphinx-theme
-  - codespell
-  - cfgrib
-  - black
-  - flake8
-  - pytest-cov
-  - pytest-env
+#  - codespell
+#  - black
+#  - flake8
+#  - pytest-cov
+#  - pytest-env
   - pip:
     - Sphinx
     - numpydoc
@@ -53,7 +53,7 @@ dependencies:
     - pydocstyle
     - sphinx-tabs
     - sphinxext-rediraffe
-    - sphinxext-opengraph
+#    - sphinxext-opengraph
     - git+https://github.com/sphinx-contrib/googleanalytics
     - sphinx-copybutton
     - sphinx-design
