@@ -9,7 +9,18 @@ from importlib.metadata import version
 import contextlib
 import copy
 import shutil
+import json
 from ..options import OPTIONS
+
+
+PIP_INSTALLED = {}
+try:
+    reqs = subprocess.check_output([sys.executable, '-m', 'pip', 'list', '--format', 'json'])
+    reqs = json.loads(reqs.decode())
+    [PIP_INSTALLED.update({mod['name']: mod['version']}) for mod in reqs]
+except:
+    pass
+
 
 
 def get_sys_info():
@@ -86,21 +97,38 @@ def cli_version(cli_name):
         return a.stdout.decode().strip("\n").replace(cli_name, '').strip()
     except:
         if shutil.which(cli_name):
-            return "installed"
+            return "- # installed"
         else:
             return "-"
 
 
+def pip_version(pip_name):
+    version = '-'
+    for name in [pip_name, pip_name.replace("_", "-"), pip_name.replace("-", "_")]:
+        if name in PIP_INSTALLED:
+            version = PIP_INSTALLED[name]
+    return version
+
+
 def get_version(module_name):
-    ver = "-"
+    ver = '-'
     try:
         ver = module_name.__version__
     except AttributeError:
         try:
             ver = version(module_name)
         except importlib.metadata.PackageNotFoundError:
-            pass
+            try:
+                ver = pip_version(module_name)
+            except:
+                try:
+                    ver = cli_version(module_name)
+                except:
+                    pass
+    if sum([int(v == '0') for v in ver.split(".")]) == len(ver.split(".")):
+        ver = '-'
     return ver
+
 
 
 def show_versions(file=sys.stdout, conda=False):  # noqa: C901
