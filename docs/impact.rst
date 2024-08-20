@@ -14,6 +14,8 @@ Papers & proceedings mentioning argopy
 
 - Dunnington et al., (2021). argodata: An R interface to oceanographic data from the International Argo Program. Journal of Open Source Software, 6(68), 3659, https://doi.org/10.21105/joss.03659
 
+- Elipot S. , P Miron, M Curcic, K Santana, R Lumpkin (2024). Clouddrift: a Python package to accelerate the use of Lagrangian data for atmospheric, oceanic, and climate sciences. Journal of Open Source Software, 9(99), 6742,  https://joss.theoj.org/papers/10.21105/joss.06742
+
 - Gonzalez A., "The Argo Online School: An e-learning tool to get started with Argo" (2023), The Journal of Open Source Education (Under review)
 
 - Huda, Md Nurul, "Machine Learning for Improvement of Ocean Data Resolution for Weather Forecasting and Climatological Research" (2023). Thesis and Dissertations, Virginia Tech, http://hdl.handle.net/10919/116504
@@ -21,6 +23,8 @@ Papers & proceedings mentioning argopy
 - Steinberg, J. M., Piecuch, C. G., Hamlington, B. D., Thompson, P. R., & Coats, S. (2024). Influence of deep-ocean warming on coastal sea-level decadal trends in the Gulf of Mexico. Journal of Geophysical Research: Oceans, 129, e2023JC019681. https://doi.org/10.1029/2023JC019681
 
 - Zhang, Y. (2023). Python Data Analysis Techniques in Administrative Information Integration Management System. In: Atiquzzaman, M., Yen, N.Y., Xu, Z. (eds) Proceedings of the 4th International Conference on Big Data Analytics for Cyber-Physical System in Smart City - Volume 2. BDCPS 2022. Lecture Notes on Data Engineering and Communications Technologies, vol 168. Springer, Singapore. https://doi.org/10.1007/978-981-99-1157-8_35
+
+
 
 Other interesting mentions
 --------------------------
