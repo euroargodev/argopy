@@ -392,7 +392,8 @@ by the oxygen sensor</skos:prefLabel>
     <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CPU_CHLA/">
-    <pav:authoredOn>2020-04-04 15:05:33.0</pav:authoredOn>
+    <pav:hasVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CPU_CHLA/1/"/>
+    <pav:authoredOn>2024-08-20 12:02:47.0</pav:authoredOn>
     <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
     <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"/>
     <skos:definition xml:lang="en">Raw temperature signal (count) from thermistor on backscattering meter and/or fluorometer.</skos:definition>
@@ -400,15 +401,15 @@ by the oxygen sensor</skos:prefLabel>
     <owl:deprecated>false</owl:deprecated>
     <skos:note xml:lang="en">accepted</skos:note>
     <dc:identifier>SDN:R03::TEMP_CPU_CHLA</dc:identifier>
-    <skos:prefLabel xml:lang="en">Thermistor signal from backsacttering meter and/or fluorometer</skos:prefLabel>
-    <owl:versionInfo>1</owl:versionInfo>
-    <dc:date>2020-04-04 15:05:33.0</dc:date>
+    <skos:prefLabel xml:lang="en">Thermistor signal from backscattering meter and/or fluorometer</skos:prefLabel>
+    <owl:versionInfo>2</owl:versionInfo>
+    <dc:date>2024-08-20 12:02:47.0</dc:date>
     <skos:altLabel>TEMP_CPU_CHLA</skos:altLabel>
     <skos:notation>SDN:R03::TEMP_CPU_CHLA</skos:notation>
     <owl:sameAs rdf:resource="http://vocab.nerc.ac.uk/collection/P01/current/TCNTICPU/"/>
-    <pav:version>1</pav:version>
+    <pav:version>2</pav:version>
     <dce:identifier>SDN:R03::TEMP_CPU_CHLA</dce:identifier>
-    <pav:hasCurrentVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CPU_CHLA/1/"/>
+    <pav:hasCurrentVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CPU_CHLA/2/"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://vocab.nerc.ac.uk/collection/R03/current/PSAL/">
     <pav:authoredOn>2019-10-11 15:02:22.0</pav:authoredOn>
@@ -831,8 +832,8 @@ by the oxygen sensor</skos:prefLabel>
     <dc:description>Terms describing individual measured phenomena, used to mark up sets of data in Argo netCDF arrays. Argo netCDF variables PARAMETER and TRAJECTORY_PARAMETERS are populated by R03 altLabel; R03 altLabel is also used to name netCDF profile files parameter variables &lt;PARAMETER&gt;.</dc:description>
     <dc:title>Argo parameter codes</dc:title>
     <skos:prefLabel>Argo parameter codes</skos:prefLabel>
-    <owl:versionInfo>6</owl:versionInfo>
-    <dc:date>2023-10-06 03:00:02.0</dc:date>
+    <owl:versionInfo>7</owl:versionInfo>
+    <dc:date>2024-08-21 03:00:01.0</dc:date>
     <skos:altLabel>PARAMETER</skos:altLabel>
     <dc:creator>Argo Data Management Team</dc:creator>
     <dc:alternative>PARAMETER</dc:alternative>
