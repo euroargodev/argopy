@@ -1793,7 +1793,9 @@ class httpstore_erddap_auth(httpstore):
         html.append("</thead>")
         html.append("<tbody>")
         html.append(tr_ticklink("login page", self._login_page, self._login_page))
-        html.append(tr_tick("login data", self._login_payload))
+        payload = self._login_payload.copy()
+        payload['password'] = "*" * len(payload['password'])
+        html.append(tr_tick("login data", payload))
         if hasattr(self, "_connected"):
             html.append(tr_tick("connected", "✅" if self._connected else "⛔"))
         else:
@@ -1806,9 +1808,11 @@ class httpstore_erddap_auth(httpstore):
 
     def connect(self):
         try:
+            payload = self._login_payload.copy()
+            payload['password'] = "*" * len(payload['password'])
             log.info(
-                "Try to log-in to '%s' page with %s data ..."
-                % (self._login_page, self._login_payload)
+                "Try to log-in to '%s' page with %s"
+                % (self._login_page, payload)
             )
             self.fs.info(self._login_page)
             self._connected = True
@@ -1826,7 +1830,8 @@ class httpstore_erddap_auth(httpstore):
 
 
 def httpstore_erddap(url: str = "", cache: bool = False, cachedir: str = "", **kwargs):
-    login_page = "%s/login.html" % url.rstrip("/")
+    erddap = OPTIONS['erddap'] if url == "" else url
+    login_page = "%s/login.html" % erddap.rstrip("/")
     login_store = httpstore_erddap_auth(
         cache=cache, cachedir=cachedir, login=login_page, auto=False, **kwargs
     )

@@ -72,6 +72,10 @@ Coming up next
 
 .. currentmodule:: argopy
 
+- Update Ifremer erddap server information. The Argo reference for DMQC (returned by the :class:`DataFetcher` fetcher with ``ds='ref'`` argument ) and Argo CTD-reference for DQMC (returned by the :class:`CTDRefDataFetcher` fetcher) now indicate the dataset version used. (:pr:`344`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Update :class:`argopy.ArgoNVSReferenceTables` to handle new NVS server output format. (:pr:`378`) by `G. Maze <http://www.github.com/gmaze>`_.
+
 - Pin upper bound on xarray < 2024.3 to fix failing upstream tests because of ``AttributeError: 'ScipyArrayWrapper' object has no attribute 'oindex'``, `reported here <https://github.com/pydata/xarray/issues/8909>`_. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
 
 - Fix :class:`argopy.ArgoDocs` that was not working with new Archimer webpage design, :issue:`351`. (:pr:`352`) by `G. Maze <http://www.github.com/gmaze>`_.
@@ -85,6 +89,8 @@ Coming up next
 - Fix for fsspec > 2023.10.0. (:pr:`318`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 **Breaking changes**
+
+- Drop support for erddapy < v0.8.0 (:pr:`344`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 .. currentmodule:: xarray
 

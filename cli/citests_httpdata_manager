@@ -315,6 +315,7 @@ class UriRegistry(UserList):
         elif overwrite:
             self.delete(entry)
             super().append(entry)
+        log.debug("commit: %s" % entry['uri'])
         return self
 
     def delete(self, entry):
@@ -435,8 +436,8 @@ class Lister:
         }
         requests_ref = {
             "region": [
-                [-70, -65, 35.0, 40.0, 0, 10.0],
-                [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01-01", "2012-12-31"],
+                [-25, -10, 36, 40, 0, 10.],
+                [-25, -10, 36, 40, 0, 10., '20180101', '20190101'],
             ]
         }
         requests_seq = {"phy": requests_phy, "ref": requests_ref}
@@ -507,7 +508,7 @@ class Lister:
         )
         this_URI.commit(
             self.dfile(
-                "https://erddap.ifremer.fr/erddap/info/ArgoFloats-ref/index.json",
+                "https://erddap.ifremer.fr/erddap/info/ArgoFloats-reference/index.json",
                 "json",
             )
         )
