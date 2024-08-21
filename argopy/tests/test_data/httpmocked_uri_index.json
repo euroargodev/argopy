@@ -1,5 +1,40 @@
 [
     {
+        "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?bbp700,bbp700_adjusted,bbp700_adjusted_error,bbp700_adjusted_qc,bbp700_qc,cdom,cdom_adjusted,cdom_adjusted_error,cdom_adjusted_qc,cdom_qc,chla,chla_adjusted,chla_adjusted_error,chla_adjusted_qc,chla_qc,config_mission_number,cp660,cp660_adjusted,cp660_adjusted_error,cp660_adjusted_qc,cp660_qc,cycle_number,direction,down_irradiance380,down_irradiance380_adjusted,down_irradiance380_adjusted_error,down_irradiance380_adjusted_qc,down_irradiance380_qc,down_irradiance412,down_irradiance412_adjusted,down_irradiance412_adjusted_error,down_irradiance412_adjusted_qc,down_irradiance412_qc,down_irradiance490,down_irradiance490_adjusted,down_irradiance490_adjusted_error,down_irradiance490_adjusted_qc,down_irradiance490_qc,downwelling_par,downwelling_par_adjusted,downwelling_par_adjusted_error,downwelling_par_adjusted_qc,downwelling_par_qc,doxy,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,doxy_qc,latitude,longitude,nitrate,nitrate_adjusted,nitrate_adjusted_error,nitrate_adjusted_qc,nitrate_qc,ph_in_situ_total,ph_in_situ_total_adjusted,ph_in_situ_total_adjusted_error,ph_in_situ_total_adjusted_qc,ph_in_situ_total_qc,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc&longitude>=-55&longitude<=-47&latitude>=55&latitude<=57&pres>=0&pres<=10&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
+        "ext": "nc",
+        "sha": "547fa82ac64b5bc91813230a48416ef6bb92011e4c11be22a93d7dd589d19822",
+        "type": "application/x-netcdf",
+        "ts": "2024-07-19 13:16:54"
+    },
+    {
+        "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?bbp700,bbp700_adjusted,bbp700_adjusted_error,bbp700_adjusted_qc,bbp700_qc,chla,chla_adjusted,chla_adjusted_error,chla_adjusted_qc,chla_qc,config_mission_number,cp660,cp660_adjusted,cp660_adjusted_error,cp660_adjusted_qc,cp660_qc,cycle_number,direction,down_irradiance380,down_irradiance380_adjusted,down_irradiance380_adjusted_error,down_irradiance380_adjusted_qc,down_irradiance380_qc,down_irradiance412,down_irradiance412_adjusted,down_irradiance412_adjusted_error,down_irradiance412_adjusted_qc,down_irradiance412_qc,down_irradiance490,down_irradiance490_adjusted,down_irradiance490_adjusted_error,down_irradiance490_adjusted_qc,down_irradiance490_qc,downwelling_par,downwelling_par_adjusted,downwelling_par_adjusted_error,downwelling_par_adjusted_qc,downwelling_par_qc,doxy,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,doxy_qc,latitude,longitude,nitrate,nitrate_adjusted,nitrate_adjusted_error,nitrate_adjusted_qc,nitrate_qc,ph_in_situ_total,ph_in_situ_total_adjusted,ph_in_situ_total_adjusted_error,ph_in_situ_total_adjusted_qc,ph_in_situ_total_qc,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc&longitude>=-55&longitude<=-47&latitude>=55&latitude<=57&pres>=0&pres<=10&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
+        "ext": "nc",
+        "sha": "5bef8b392db7b081c587402156770890550eba0ffa155c66a9566a7326a06ede",
+        "type": "application/x-netcdf",
+        "ts": "2024-07-19 13:17:07"
+    },
+    {
+        "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?bbp700_adjusted,bbp700_adjusted_error,bbp700_adjusted_qc,chla_adjusted,chla_adjusted_error,chla_adjusted_qc,config_mission_number,cp660_adjusted,cp660_adjusted_error,cp660_adjusted_qc,cycle_number,direction,down_irradiance380_adjusted,down_irradiance380_adjusted_error,down_irradiance380_adjusted_qc,down_irradiance412_adjusted,down_irradiance412_adjusted_error,down_irradiance412_adjusted_qc,down_irradiance490_adjusted,down_irradiance490_adjusted_error,down_irradiance490_adjusted_qc,downwelling_par_adjusted,downwelling_par_adjusted_error,downwelling_par_adjusted_qc,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,latitude,longitude,nitrate_adjusted,nitrate_adjusted_error,nitrate_adjusted_qc,ph_in_situ_total_adjusted,ph_in_situ_total_adjusted_error,ph_in_situ_total_adjusted_qc,platform_number,position_qc,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,time,time_qc&longitude>=-55&longitude<=-47&latitude>=55&latitude<=57&pres_adjusted>=0&pres_adjusted<=10&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
+        "ext": "nc",
+        "sha": "06e127414eaa6b32d9e6fcb381fa4e3c13cd245adeffbbe151c0430df748d267",
+        "type": "application/x-netcdf",
+        "ts": "2024-07-19 13:17:17"
+    },
+    {
+        "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?config_mission_number,cycle_number,direction,doxy,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,doxy_qc,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc&longitude>=-55&longitude<=-47&latitude>=55&latitude<=57&pres>=0&pres<=10&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
+        "ext": "nc",
+        "sha": "2636d64e2d00870fb7375e89b9528bd8115afb30498f44dcaddd50601b14bdf1",
+        "type": "application/x-netcdf",
+        "ts": "2024-07-19 13:18:05"
+    },
+    {
+        "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?config_mission_number,cycle_number,direction,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,latitude,longitude,platform_number,position_qc,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,time,time_qc&longitude>=-55&longitude<=-47&latitude>=55&latitude<=57&pres_adjusted>=0&pres_adjusted<=10&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
+        "ext": "nc",
+        "sha": "18666bf00f9be91b8426d41cb086fc32a88c1c0c6316d52bcd316f53657d51e3",
+        "type": "application/x-netcdf",
+        "ts": "2024-07-19 13:18:12"
+    },
+    {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1901393\"&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "9b628fdfa706e7fefd0751123ff0608e5c20a57e62fdec8107d46b0ed6835566",
@@ -294,13 +329,6 @@
         "ts": "2024-07-19 13:16:54"
     },
     {
-        "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?bbp700,bbp700_adjusted,bbp700_adjusted_error,bbp700_adjusted_qc,bbp700_qc,cdom,cdom_adjusted,cdom_adjusted_error,cdom_adjusted_qc,cdom_qc,chla,chla_adjusted,chla_adjusted_error,chla_adjusted_qc,chla_qc,config_mission_number,cp660,cp660_adjusted,cp660_adjusted_error,cp660_adjusted_qc,cp660_qc,cycle_number,direction,down_irradiance380,down_irradiance380_adjusted,down_irradiance380_adjusted_error,down_irradiance380_adjusted_qc,down_irradiance380_qc,down_irradiance412,down_irradiance412_adjusted,down_irradiance412_adjusted_error,down_irradiance412_adjusted_qc,down_irradiance412_qc,down_irradiance490,down_irradiance490_adjusted,down_irradiance490_adjusted_error,down_irradiance490_adjusted_qc,down_irradiance490_qc,downwelling_par,downwelling_par_adjusted,downwelling_par_adjusted_error,downwelling_par_adjusted_qc,downwelling_par_qc,doxy,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,doxy_qc,latitude,longitude,nitrate,nitrate_adjusted,nitrate_adjusted_error,nitrate_adjusted_qc,nitrate_qc,ph_in_situ_total,ph_in_situ_total_adjusted,ph_in_situ_total_adjusted_error,ph_in_situ_total_adjusted_qc,ph_in_situ_total_qc,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc&longitude>=-55&longitude<=-47&latitude>=55&latitude<=57&pres>=0&pres<=10&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
-        "ext": "nc",
-        "sha": "547fa82ac64b5bc91813230a48416ef6bb92011e4c11be22a93d7dd589d19822",
-        "type": "application/x-netcdf",
-        "ts": "2024-07-19 13:16:54"
-    },
-    {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.ncHeader?bbp700,bbp700_adjusted,bbp700_adjusted_error,bbp700_adjusted_qc,bbp700_qc,cdom,cdom_adjusted,cdom_adjusted_error,cdom_adjusted_qc,cdom_qc,chla,chla_adjusted,chla_adjusted_error,chla_adjusted_qc,chla_qc,config_mission_number,cp660,cp660_adjusted,cp660_adjusted_error,cp660_adjusted_qc,cp660_qc,cycle_number,direction,down_irradiance380,down_irradiance380_adjusted,down_irradiance380_adjusted_error,down_irradiance380_adjusted_qc,down_irradiance380_qc,down_irradiance412,down_irradiance412_adjusted,down_irradiance412_adjusted_error,down_irradiance412_adjusted_qc,down_irradiance412_qc,down_irradiance490,down_irradiance490_adjusted,down_irradiance490_adjusted_error,down_irradiance490_adjusted_qc,down_irradiance490_qc,downwelling_par,downwelling_par_adjusted,downwelling_par_adjusted_error,downwelling_par_adjusted_qc,downwelling_par_qc,doxy,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,doxy_qc,latitude,longitude,nitrate,nitrate_adjusted,nitrate_adjusted_error,nitrate_adjusted_qc,nitrate_qc,ph_in_situ_total,ph_in_situ_total_adjusted,ph_in_situ_total_adjusted_error,ph_in_situ_total_adjusted_qc,ph_in_situ_total_qc,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc&longitude>=-55&longitude<=-47&latitude>=55&latitude<=57&pres>=0&pres<=10&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "ncHeader",
         "sha": "0dff09b865c98d376e650f80954c0d8de288d51dd030262b7085db0eab41a3eb",
@@ -322,13 +350,6 @@
         "ts": "2024-07-19 13:16:56"
     },
     {
-        "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?bbp700,bbp700_adjusted,bbp700_adjusted_error,bbp700_adjusted_qc,bbp700_qc,chla,chla_adjusted,chla_adjusted_error,chla_adjusted_qc,chla_qc,config_mission_number,cp660,cp660_adjusted,cp660_adjusted_error,cp660_adjusted_qc,cp660_qc,cycle_number,direction,down_irradiance380,down_irradiance380_adjusted,down_irradiance380_adjusted_error,down_irradiance380_adjusted_qc,down_irradiance380_qc,down_irradiance412,down_irradiance412_adjusted,down_irradiance412_adjusted_error,down_irradiance412_adjusted_qc,down_irradiance412_qc,down_irradiance490,down_irradiance490_adjusted,down_irradiance490_adjusted_error,down_irradiance490_adjusted_qc,down_irradiance490_qc,downwelling_par,downwelling_par_adjusted,downwelling_par_adjusted_error,downwelling_par_adjusted_qc,downwelling_par_qc,doxy,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,doxy_qc,latitude,longitude,nitrate,nitrate_adjusted,nitrate_adjusted_error,nitrate_adjusted_qc,nitrate_qc,ph_in_situ_total,ph_in_situ_total_adjusted,ph_in_situ_total_adjusted_error,ph_in_situ_total_adjusted_qc,ph_in_situ_total_qc,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc&longitude>=-55&longitude<=-47&latitude>=55&latitude<=57&pres>=0&pres<=10&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
-        "ext": "nc",
-        "sha": "5bef8b392db7b081c587402156770890550eba0ffa155c66a9566a7326a06ede",
-        "type": "application/x-netcdf",
-        "ts": "2024-07-19 13:17:07"
-    },
-    {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.ncHeader?bbp700,bbp700_adjusted,bbp700_adjusted_error,bbp700_adjusted_qc,bbp700_qc,chla,chla_adjusted,chla_adjusted_error,chla_adjusted_qc,chla_qc,config_mission_number,cp660,cp660_adjusted,cp660_adjusted_error,cp660_adjusted_qc,cp660_qc,cycle_number,direction,down_irradiance380,down_irradiance380_adjusted,down_irradiance380_adjusted_error,down_irradiance380_adjusted_qc,down_irradiance380_qc,down_irradiance412,down_irradiance412_adjusted,down_irradiance412_adjusted_error,down_irradiance412_adjusted_qc,down_irradiance412_qc,down_irradiance490,down_irradiance490_adjusted,down_irradiance490_adjusted_error,down_irradiance490_adjusted_qc,down_irradiance490_qc,downwelling_par,downwelling_par_adjusted,downwelling_par_adjusted_error,downwelling_par_adjusted_qc,downwelling_par_qc,doxy,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,doxy_qc,latitude,longitude,nitrate,nitrate_adjusted,nitrate_adjusted_error,nitrate_adjusted_qc,nitrate_qc,ph_in_situ_total,ph_in_situ_total_adjusted,ph_in_situ_total_adjusted_error,ph_in_situ_total_adjusted_qc,ph_in_situ_total_qc,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc&longitude>=-55&longitude<=-47&latitude>=55&latitude<=57&pres>=0&pres<=10&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "ncHeader",
         "sha": "8b6ccd8c2c1bbed33b70d9ef5921ef18bb7d6518c326bde0df404f5e1b4a77f7",
@@ -348,13 +369,6 @@
         "sha": "33499f0838e0d2c8d423e8610590d7e4f9515877454c7fe20dfaf7f70926b0d9",
         "type": "text/plain",
         "ts": "2024-07-19 13:17:08"
-    },
-    {
-        "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?bbp700_adjusted,bbp700_adjusted_error,bbp700_adjusted_qc,chla_adjusted,chla_adjusted_error,chla_adjusted_qc,config_mission_number,cp660_adjusted,cp660_adjusted_error,cp660_adjusted_qc,cycle_number,direction,down_irradiance380_adjusted,down_irradiance380_adjusted_error,down_irradiance380_adjusted_qc,down_irradiance412_adjusted,down_irradiance412_adjusted_error,down_irradiance412_adjusted_qc,down_irradiance490_adjusted,down_irradiance490_adjusted_error,down_irradiance490_adjusted_qc,downwelling_par_adjusted,downwelling_par_adjusted_error,downwelling_par_adjusted_qc,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,latitude,longitude,nitrate_adjusted,nitrate_adjusted_error,nitrate_adjusted_qc,ph_in_situ_total_adjusted,ph_in_situ_total_adjusted_error,ph_in_situ_total_adjusted_qc,platform_number,position_qc,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,time,time_qc&longitude>=-55&longitude<=-47&latitude>=55&latitude<=57&pres_adjusted>=0&pres_adjusted<=10&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
-        "ext": "nc",
-        "sha": "06e127414eaa6b32d9e6fcb381fa4e3c13cd245adeffbbe151c0430df748d267",
-        "type": "application/x-netcdf",
-        "ts": "2024-07-19 13:17:17"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.ncHeader?bbp700_adjusted,bbp700_adjusted_error,bbp700_adjusted_qc,chla_adjusted,chla_adjusted_error,chla_adjusted_qc,config_mission_number,cp660_adjusted,cp660_adjusted_error,cp660_adjusted_qc,cycle_number,direction,down_irradiance380_adjusted,down_irradiance380_adjusted_error,down_irradiance380_adjusted_qc,down_irradiance412_adjusted,down_irradiance412_adjusted_error,down_irradiance412_adjusted_qc,down_irradiance490_adjusted,down_irradiance490_adjusted_error,down_irradiance490_adjusted_qc,downwelling_par_adjusted,downwelling_par_adjusted_error,downwelling_par_adjusted_qc,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,latitude,longitude,nitrate_adjusted,nitrate_adjusted_error,nitrate_adjusted_qc,ph_in_situ_total_adjusted,ph_in_situ_total_adjusted_error,ph_in_situ_total_adjusted_qc,platform_number,position_qc,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,time,time_qc&longitude>=-55&longitude<=-47&latitude>=55&latitude<=57&pres_adjusted>=0&pres_adjusted<=10&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
@@ -406,13 +420,6 @@
         "ts": "2024-07-19 13:18:03"
     },
     {
-        "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?config_mission_number,cycle_number,direction,doxy,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,doxy_qc,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc&longitude>=-55&longitude<=-47&latitude>=55&latitude<=57&pres>=0&pres<=10&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
-        "ext": "nc",
-        "sha": "2636d64e2d00870fb7375e89b9528bd8115afb30498f44dcaddd50601b14bdf1",
-        "type": "application/x-netcdf",
-        "ts": "2024-07-19 13:18:05"
-    },
-    {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.ncHeader?config_mission_number,cycle_number,direction,doxy,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,doxy_qc,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc&longitude>=-55&longitude<=-47&latitude>=55&latitude<=57&pres>=0&pres<=10&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "ncHeader",
         "sha": "4abf41b2d9b1474c4bfe0f608b198b76da1abf4b92d014a37f51ebc28d13a353",
@@ -432,13 +439,6 @@
         "sha": "d852c53da273d758191fabae43d1643af4dff383f0adb91e49297cab388d64d2",
         "type": "text/plain",
         "ts": "2024-07-19 13:18:05"
-    },
-    {
-        "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?config_mission_number,cycle_number,direction,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,latitude,longitude,platform_number,position_qc,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,time,time_qc&longitude>=-55&longitude<=-47&latitude>=55&latitude<=57&pres_adjusted>=0&pres_adjusted<=10&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
-        "ext": "nc",
-        "sha": "18666bf00f9be91b8426d41cb086fc32a88c1c0c6316d52bcd316f53657d51e3",
-        "type": "application/x-netcdf",
-        "ts": "2024-07-19 13:18:12"
     },
     {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.ncHeader?config_mission_number,cycle_number,direction,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,latitude,longitude,platform_number,position_qc,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,time,time_qc&longitude>=-55&longitude<=-47&latitude>=55&latitude<=57&pres_adjusted>=0&pres_adjusted<=10&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
