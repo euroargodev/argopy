@@ -13,7 +13,7 @@ v0.1.16 (xx Aug. 2024)
 
 **Features and front-end API**
 
-- **Support for AWS S3 index files**. This support is experimental and is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. The `ADMT working group discussion items are listed here <https://github.com/OneArgo/ADMT/discussions/categories/wg-on-best-format-to-serve-argo-data-from-the-cloud>`_. Both CORE and BGC index files are supported. The new :class:`ArgoIndex` not only support access to the AWS S3 index files but also implement improved performances for search methods on WMO and cycle numbers, using :class:`boto3.client.select_object_content` SQL queries. Indeed, the ``https`` and ``ftp`` default GDAC server index files are downloaded and loaded in memory before being searched. With ``s3``, index files can directly be queried on the server using SQL syntax; the full index is not necessarily downloaded. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
+- **Support for AWS S3 index files**. This support is experimental and is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. The `ADMT working group discussion items are listed here <https://github.com/OneArgo/ADMT/discussions/categories/wg-on-best-format-to-serve-argo-data-from-the-cloud>`_. Both CORE and BGC index files are supported. The new :class:`ArgoIndex` not only support access to the AWS S3 index files but also implement improved performances for search methods on WMO and cycle numbers, using :class:`boto3.client.select_object_content` SQL queries. Indeed, the ``https`` and ``ftp`` default GDAC server index files are downloaded and loaded in memory before being searched. But with ``s3``, index files can directly be queried on the server using SQL syntax; the full index is not necessarily downloaded. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -34,6 +34,8 @@ v0.1.16 (xx Aug. 2024)
 
 
 **Internals**
+
+- Drop support for Python 3.8, add support for Python 3.10. (:pr:`379`) by `G. Maze <http://www.github.com/gmaze>`_
 
 - Update :class:`argopy.ArgoNVSReferenceTables` to handle new NVS server output format. (:pr:`378`) by `G. Maze <http://www.github.com/gmaze>`_
 
