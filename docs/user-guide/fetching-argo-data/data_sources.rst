@@ -257,10 +257,9 @@ specify the path toward your local copy of the GDAC ftp server with the
 This is not an issue for expert users, but standard users may wonder how
 to set this up. The primary distribution point for Argo data, the only
 one with full support from data centers and with nearly a 100% time
-availability, is the GDAC ftp. Two mirror servers are available:
+availability, is the GDAC ftp. One server is available (the US GODAE mirror has been discontinued in 2024):
 
 -  France Coriolis: ftp://ftp.ifremer.fr/ifremer/argo
--  US GODAE: ftp://usgodae.org/pub/outgoing/argo
 
 If you want to get your own copy of the ftp server content, you have 2 options detailed below.
 
