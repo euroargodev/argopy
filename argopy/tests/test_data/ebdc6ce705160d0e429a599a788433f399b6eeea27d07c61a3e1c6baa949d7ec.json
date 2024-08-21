@@ -3255,7 +3255,10 @@
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CPU_CHLA/",
-            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CPU_CHLA/1/"
+            },
+            "pav:authoredOn": "2024-08-20 12:02:47.0",
             "@type": "skos:Concept",
             "skos:related": {
                 "@id": "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"
@@ -3275,19 +3278,19 @@
             "dc:identifier": "SDN:R03::TEMP_CPU_CHLA",
             "skos:prefLabel": {
                 "@language": "en",
-                "@value": "Thermistor signal from backsacttering meter and/or fluorometer"
+                "@value": "Thermistor signal from backscattering meter and/or fluorometer"
             },
-            "owl:versionInfo": "1",
-            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "2",
+            "dc:date": "2024-08-20 12:02:47.0",
             "skos:altLabel": "TEMP_CPU_CHLA",
             "skos:notation": "SDN:R03::TEMP_CPU_CHLA",
             "owl:sameAs": {
                 "@id": "http://vocab.nerc.ac.uk/collection/P01/current/TCNTICPU/"
             },
-            "pav:version": "1",
+            "pav:version": "2",
             "dce:identifier": "SDN:R03::TEMP_CPU_CHLA",
             "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CPU_CHLA/1/"
+                "@id": "http://vocab.nerc.ac.uk/collection/R03/current/TEMP_CPU_CHLA/2/"
             }
         },
         {
@@ -3855,8 +3858,8 @@
             "dc:description": "Terms describing individual measured phenomena, used to mark up sets of data in Argo netCDF arrays. Argo netCDF variables PARAMETER and TRAJECTORY_PARAMETERS are populated by R03 altLabel; R03 altLabel is also used to name netCDF profile files parameter variables <PARAMETER>.",
             "dc:title": "Argo parameter codes",
             "skos:prefLabel": "Argo parameter codes",
-            "owl:versionInfo": "6",
-            "dc:date": "2023-10-06 03:00:02.0",
+            "owl:versionInfo": "7",
+            "dc:date": "2024-08-21 03:00:01.0",
             "skos:altLabel": "PARAMETER",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "PARAMETER",
