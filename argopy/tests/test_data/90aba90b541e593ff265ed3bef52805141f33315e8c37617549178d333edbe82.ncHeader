@@ -233,8 +233,8 @@ netcdf ArgoFloats-synthetic-BGC_78a9_4717_ef37.nc {
   :geospatial_lon_min = -54.999; // double
   :geospatial_lon_units = "degrees_east";
   :history = "2024-08-20T11:53:17Z creation (software version 1.18 (version 11.01.2024 for ARGO_simplified_profile))
-2024-08-21T14:19:46Z (local files)
-2024-08-21T14:19:46Z https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?config_mission_number,cycle_number,direction,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,latitude,longitude,platform_number,position_qc,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,time,time_qc&longitude%3E=-55&longitude%3C=-47&latitude%3E=55&latitude%3C=57&pres_adjusted%3E=0&pres_adjusted%3C=10&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(%22time,pres_adjusted%22)";
+2024-08-22T08:15:06Z (local files)
+2024-08-22T08:15:06Z https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?config_mission_number,cycle_number,direction,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,latitude,longitude,platform_number,position_qc,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,time,time_qc&longitude%3E=-55&longitude%3C=-47&latitude%3E=55&latitude%3C=57&pres_adjusted%3E=0&pres_adjusted%3C=10&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(%22time,pres_adjusted%22)";
   :id = "https://doi.org/10.17882/42182";
   :infoUrl = "http://www.argodatamgt.org/Documentation";
   :institution = "Argo";

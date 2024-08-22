@@ -1094,6 +1094,9 @@ if __name__ == "__main__":
     OVERWRITE = ARGS.force
     REFRESH = ARGS.refresh
 
+    # Create destination folder if necessary
+    Path(DATA_FOLDER).mkdir(parents=True, exist_ok=True)
+
     if ARGS.destination:
         print("Tests data are stored in:\n%s" % DATA_FOLDER)
 

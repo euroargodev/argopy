@@ -236,7 +236,7 @@ netcdf ArgoFloats-synthetic-BGC_0abd_084b_d559.nc {
     float down_irradiance380_adjusted(row=29650);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
-      :actual_range = 0.003723568f, 0.6381621f; // float
+      :actual_range = -4.40309E-5f, 0.6381621f; // float
       :C_format = "%.6f";
       :FORTRAN_format = "F.6";
       :long_name = "Downwelling irradiance at 380 nanometers";
@@ -246,7 +246,7 @@ netcdf ArgoFloats-synthetic-BGC_0abd_084b_d559.nc {
     float down_irradiance380_adjusted_error(row=29650);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
-      :actual_range = 7.447136E-5f, 0.01276324f; // float
+      :actual_range = 2.5E-5f, 0.01276324f; // float
       :C_format = "%.6f";
       :FORTRAN_format = "F.6";
       :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
@@ -282,7 +282,7 @@ netcdf ArgoFloats-synthetic-BGC_0abd_084b_d559.nc {
     float down_irradiance412_adjusted(row=29650);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
-      :actual_range = 0.01010931f, 1.075224f; // float
+      :actual_range = -1.226209E-5f, 1.075224f; // float
       :C_format = "%.6f";
       :FORTRAN_format = "F.6";
       :long_name = "Downwelling irradiance at 412 nanometers";
@@ -292,7 +292,7 @@ netcdf ArgoFloats-synthetic-BGC_0abd_084b_d559.nc {
     float down_irradiance412_adjusted_error(row=29650);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
-      :actual_range = 2.021862E-4f, 0.02150448f; // float
+      :actual_range = 2.5E-5f, 0.02150448f; // float
       :C_format = "%.6f";
       :FORTRAN_format = "F.6";
       :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
@@ -328,7 +328,7 @@ netcdf ArgoFloats-synthetic-BGC_0abd_084b_d559.nc {
     float down_irradiance490_adjusted(row=29650);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
-      :actual_range = 0.01698261f, 1.310853f; // float
+      :actual_range = -4.264853E-5f, 1.310853f; // float
       :C_format = "%.6f";
       :FORTRAN_format = "F.6";
       :long_name = "Downwelling irradiance at 490 nanometers";
@@ -338,7 +338,7 @@ netcdf ArgoFloats-synthetic-BGC_0abd_084b_d559.nc {
     float down_irradiance490_adjusted_error(row=29650);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
-      :actual_range = 3.396521E-4f, 0.02621705f; // float
+      :actual_range = 2.5E-5f, 0.02621705f; // float
       :C_format = "%.6f";
       :FORTRAN_format = "F.6";
       :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
@@ -375,7 +375,7 @@ netcdf ArgoFloats-synthetic-BGC_0abd_084b_d559.nc {
     float downwelling_par_adjusted(row=29650);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
-      :actual_range = 14.47149f, 1509.441f; // float
+      :actual_range = -0.03640744f, 1509.441f; // float
       :C_format = "%.3f";
       :FORTRAN_format = "F.3";
       :long_name = "Downwelling photosynthetic available radiation";
@@ -386,7 +386,7 @@ netcdf ArgoFloats-synthetic-BGC_0abd_084b_d559.nc {
     float downwelling_par_adjusted_error(row=29650);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
-      :actual_range = 0.7235743f, 75.47203f; // float
+      :actual_range = 0.03f, 75.47203f; // float
       :C_format = "%.3f";
       :FORTRAN_format = "F.3";
       :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
@@ -782,8 +782,8 @@ netcdf ArgoFloats-synthetic-BGC_0abd_084b_d559.nc {
   :geospatial_lon_min = -54.999; // double
   :geospatial_lon_units = "degrees_east";
   :history = "2024-08-20T11:53:17Z creation (software version 1.18 (version 11.01.2024 for ARGO_simplified_profile))
-2024-08-21T14:13:40Z (local files)
-2024-08-21T14:13:40Z https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?bbp700,bbp700_adjusted,bbp700_adjusted_error,bbp700_adjusted_qc,bbp700_qc,cdom,cdom_adjusted,cdom_adjusted_error,cdom_adjusted_qc,cdom_qc,chla,chla_adjusted,chla_adjusted_error,chla_adjusted_qc,chla_qc,config_mission_number,cp660,cp660_adjusted,cp660_adjusted_error,cp660_adjusted_qc,cp660_qc,cycle_number,direction,down_irradiance380,down_irradiance380_adjusted,down_irradiance380_adjusted_error,down_irradiance380_adjusted_qc,down_irradiance380_qc,down_irradiance412,down_irradiance412_adjusted,down_irradiance412_adjusted_error,down_irradiance412_adjusted_qc,down_irradiance412_qc,down_irradiance490,down_irradiance490_adjusted,down_irradiance490_adjusted_error,down_irradiance490_adjusted_qc,down_irradiance490_qc,downwelling_par,downwelling_par_adjusted,downwelling_par_adjusted_error,downwelling_par_adjusted_qc,downwelling_par_qc,doxy,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,doxy_qc,latitude,longitude,nitrate,nitrate_adjusted,nitrate_adjusted_error,nitrate_adjusted_qc,nitrate_qc,ph_in_situ_total,ph_in_situ_total_adjusted,ph_in_situ_total_adjusted_error,ph_in_situ_total_adjusted_qc,ph_in_situ_total_qc,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc&longitude%3E=-55&longitude%3C=-47&latitude%3E=55&latitude%3C=57&pres%3E=0&pres%3C=10&latitude!=NaN&longitude!=NaN&distinct()&orderBy(%22time,pres%22)";
+2024-08-22T08:06:44Z (local files)
+2024-08-22T08:06:44Z https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?bbp700,bbp700_adjusted,bbp700_adjusted_error,bbp700_adjusted_qc,bbp700_qc,cdom,cdom_adjusted,cdom_adjusted_error,cdom_adjusted_qc,cdom_qc,chla,chla_adjusted,chla_adjusted_error,chla_adjusted_qc,chla_qc,config_mission_number,cp660,cp660_adjusted,cp660_adjusted_error,cp660_adjusted_qc,cp660_qc,cycle_number,direction,down_irradiance380,down_irradiance380_adjusted,down_irradiance380_adjusted_error,down_irradiance380_adjusted_qc,down_irradiance380_qc,down_irradiance412,down_irradiance412_adjusted,down_irradiance412_adjusted_error,down_irradiance412_adjusted_qc,down_irradiance412_qc,down_irradiance490,down_irradiance490_adjusted,down_irradiance490_adjusted_error,down_irradiance490_adjusted_qc,down_irradiance490_qc,downwelling_par,downwelling_par_adjusted,downwelling_par_adjusted_error,downwelling_par_adjusted_qc,downwelling_par_qc,doxy,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,doxy_qc,latitude,longitude,nitrate,nitrate_adjusted,nitrate_adjusted_error,nitrate_adjusted_qc,nitrate_qc,ph_in_situ_total,ph_in_situ_total_adjusted,ph_in_situ_total_adjusted_error,ph_in_situ_total_adjusted_qc,ph_in_situ_total_qc,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc&longitude%3E=-55&longitude%3C=-47&latitude%3E=55&latitude%3C=57&pres%3E=0&pres%3C=10&latitude!=NaN&longitude!=NaN&distinct()&orderBy(%22time,pres%22)";
   :id = "https://doi.org/10.17882/42182";
   :infoUrl = "http://www.argodatamgt.org/Documentation";
   :institution = "Argo";
