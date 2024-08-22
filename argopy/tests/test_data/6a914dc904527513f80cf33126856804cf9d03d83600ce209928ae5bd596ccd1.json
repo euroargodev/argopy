@@ -1,4 +1,0 @@
-Error {
-    code=401;
-    message="Unauthorized: loggedInAs= isn't authorized to access datasetID=ArgoFloats-reference-CTD.";
-}
