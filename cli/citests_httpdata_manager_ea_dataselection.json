@@ -1,0 +1,23 @@
+[
+    {
+        "uri": "https://dataselection.euro-argo.eu/api/trajectory/6901929",
+        "ext": "json",
+        "sha": "86fefaa3fd8436f967d9d226765404d7e2542a72b8446ba802211eb9f75def7f",
+        "type": "application/json",
+        "ts": "2024-08-21 13:49:35"
+    },
+    {
+        "uri": "https://dataselection.euro-argo.eu/api/trajectory/5904797",
+        "ext": "json",
+        "sha": "28aa9ecc6cc62f53304aabc5d4514cd7607d986887509485bd0ffe2806f3d1a2",
+        "type": "application/json",
+        "ts": "2024-08-21 13:49:35"
+    },
+    {
+        "uri": "https://dataselection.euro-argo.eu/api/trajectory/6902755",
+        "ext": "json",
+        "sha": "237ec57996b0c89599212910ad056d4977d2391cfd4f6739b5b864450448d0f7",
+        "type": "application/json",
+        "ts": "2024-08-21 13:49:35"
+    }
+]
