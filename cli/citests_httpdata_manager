@@ -143,7 +143,7 @@ def setup_args():
 
     def target_choicesDescriptions():
         return """
-       erddap           - URIs accessed by ErddapArgoDataFetcher with ds='phy'/'ref' from test_fetchers_data_erddap/Test_Backend
+       erddap           - URIs accessed by ErddapArgoDataFetcher with ds='phy'/'ref' from test_fetchers_data_erddap/Test_Backend and test_xarray_accessor/*
        erddap_bgc       - URIs accessed by ErddapArgoDataFetcher with ds='bgc'/'bgc-s' ifromn test_fetchers_data_erddap_bgc/Test_Backend
        ifremer_gdac     - URIs accessed by FTPArgoDataFetcher with ds='phy' from test_fetchers_data_gdac.py/Test_Backend
        ifremer_gdac_bgc - URIs accessed by FTPArgoDataFetcher with ds='bgc'/'bgc-s'/'bgc-b'
