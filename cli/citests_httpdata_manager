@@ -570,10 +570,10 @@ class Lister:
         )
         for params in ["all", "DOXY"]:
             for measured in ["all", "DOXY", None]:
-                for mode in ["expert", "standard", "research"]:
+                for mode in ["expert"]:
                     fetcher = DataFetcher(
                         src="erddap",
-                        ds="bgc-s",
+                        ds="bgc",
                         cache=True,
                         mode=mode,
                         params=params,
@@ -599,10 +599,10 @@ class Lister:
 
         for params in ["all", "DOXY"]:
             for measured in ["all", "DOXY", None]:
-                for mode in ["expert", "standard", "research"]:
+                for mode in ["expert"]:
                     fetcher = DataFetcher(
                         src="erddap",
-                        ds="bgc-s",
+                        ds="bgc",
                         cache=True,
                         parallel=True,
                         parallel_method="erddap",
