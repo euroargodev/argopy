@@ -35,9 +35,12 @@ def ds_pts(mocked_httpserver):
         warnings.warn("Error when fetching tests data: %s" % str(e.args))
         pass
 
-    if "expert" not in data or "standard" not in data:
+    if "expert" not in data:
         # We don't have what we need for testing, skip this test module:
-        pytest.xfail("Could not retrieve erddap data in both standard and expert mode")
+        pytest.xfail("Could not retrieve erddap data in expert mode")
+    elif "standard" not in data:
+        # We don't have what we need for testing, skip this test module:
+        pytest.xfail("Could not retrieve erddap data in standard mode")
     else:
         return data
 
