@@ -1,0 +1,810 @@
+netcdf ArgoFloats-synthetic-BGC_d497_d476_f077.nc {
+  dimensions:
+    row = 3;
+    direction_strlen = 1;
+    platform_number_strlen = 7;
+    bbp700_qc_strlen = 1;
+    bbp700_adjusted_qc_strlen = 1;
+    cdom_qc_strlen = 1;
+    cdom_adjusted_qc_strlen = 1;
+    chla_qc_strlen = 1;
+    chla_adjusted_qc_strlen = 1;
+    cp660_qc_strlen = 1;
+    cp660_adjusted_qc_strlen = 1;
+    downwelling_par_qc_strlen = 1;
+    downwelling_par_adjusted_qc_strlen = 1;
+    down_irradiance380_qc_strlen = 1;
+    down_irradiance380_adjusted_qc_strlen = 1;
+    down_irradiance412_qc_strlen = 1;
+    down_irradiance412_adjusted_qc_strlen = 1;
+    down_irradiance490_qc_strlen = 1;
+    down_irradiance490_adjusted_qc_strlen = 1;
+    doxy_qc_strlen = 1;
+    doxy_adjusted_qc_strlen = 1;
+    nitrate_qc_strlen = 1;
+    nitrate_adjusted_qc_strlen = 1;
+    ph_in_situ_total_qc_strlen = 1;
+    ph_in_situ_total_adjusted_qc_strlen = 1;
+    pres_qc_strlen = 1;
+    pres_adjusted_qc_strlen = 1;
+    psal_qc_strlen = 1;
+    psal_adjusted_qc_strlen = 1;
+    temp_qc_strlen = 1;
+    temp_adjusted_qc_strlen = 1;
+  variables:
+    double latitude(row=3);
+      :_CoordinateAxisType = "Lat";
+      :_FillValue = 99999.0; // double
+      :actual_range = 56.75927466666667, 56.885423499999995; // double
+      :axis = "Y";
+      :colorBarMaximum = 90.0; // double
+      :colorBarMinimum = -90.0; // double
+      :ioos_category = "Location";
+      :long_name = "Latitude of the station, best estimate";
+      :standard_name = "latitude";
+      :units = "degrees_north";
+      :valid_max = 90.0; // double
+      :valid_min = -90.0; // double
+
+    double longitude(row=3);
+      :_CoordinateAxisType = "Lon";
+      :_FillValue = 99999.0; // double
+      :actual_range = -52.355689166666664, -47.178141000000004; // double
+      :axis = "X";
+      :colorBarMaximum = 180.0; // double
+      :colorBarMinimum = -180.0; // double
+      :ioos_category = "Location";
+      :long_name = "Longitude of the station, best estimate";
+      :standard_name = "longitude";
+      :units = "degrees_east";
+      :valid_max = 180.0; // double
+      :valid_min = -180.0; // double
+
+    char position_qc(row=3);
+      :actual_range = "11";
+      :colorBarMaximum = 150.0; // double
+      :colorBarMinimum = 0.0; // double
+      :conventions = "Argo reference table 2";
+      :long_name = "Quality on position (latitude and longitude)";
+
+    double time(row=3);
+      :_CoordinateAxisType = "Time";
+      :actual_range = 1.653888087E9, 1.687773750023E9; // double
+      :axis = "T";
+      :conventions = "Relative julian days with decimal part (as parts of day)";
+      :ioos_category = "Time";
+      :long_name = "Julian day (UTC) of the station relative to REFERENCE_DATE_TIME";
+      :source_name = "JULD";
+      :standard_name = "time";
+      :time_origin = "01-JAN-1970 00:00:00";
+      :units = "seconds since 1970-01-01T00:00:00Z";
+
+    char time_qc(row=3);
+      :actual_range = "11";
+      :colorBarMaximum = 150.0; // double
+      :colorBarMinimum = 0.0; // double
+      :conventions = "Argo reference table 2";
+      :long_name = "Quality on date and time";
+
+    char direction(row=3, direction_strlen=1);
+      :_ChunkSizes = 133; // int
+      :_Encoding = "ISO-8859-1";
+      :colorBarMaximum = 360.0; // double
+      :colorBarMinimum = 0.0; // double
+      :conventions = "A: ascending profiles, D: descending profiles";
+      :ioos_category = "Currents";
+      :long_name = "Direction of the station profiles";
+
+    char platform_number(row=3, platform_number_strlen=7);
+      :_Encoding = "ISO-8859-1";
+      :cf_role = "trajectory_id";
+      :conventions = "WMO float identifier : A9IIIII";
+      :ioos_category = "Identifier";
+      :long_name = "Float unique identifier";
+
+    int cycle_number(row=3);
+      :_FillValue = 99999; // int
+      :actual_range = 1, 41; // int
+      :cf_role = "profile_id";
+      :colorBarMaximum = 100.0; // double
+      :colorBarMinimum = 0.0; // double
+      :conventions = "0...N, 0 : launch cycle (if exists), 1 : first complete cycle";
+      :long_name = "Float cycle number";
+
+    int config_mission_number(row=3);
+      :_ChunkSizes = 133; // int
+      :_FillValue = 99999; // int
+      :actual_range = 1, 10; // int
+      :colorBarMaximum = 100.0; // double
+      :colorBarMinimum = 0.0; // double
+      :conventions = "1...N, 1 : first complete mission";
+      :ioos_category = "Statistics";
+      :long_name = "Unique number denoting the missions performed by the float";
+
+    float bbp700(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 0.002384938f, 0.003944034f; // float
+      :C_format = "%.7f";
+      :cf_standard_name = "-";
+      :FORTRAN_format = "F.7";
+      :long_name = "Particle backscattering at 700 nanometers";
+      :resolution = 1.0E-7f; // float
+      :sdn_parameter_urn = "SDN:P01::BB117NIR";
+      :units = "m-1";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    char bbp700_qc(row=3, bbp700_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float bbp700_adjusted(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 0.002384938f, 0.003944034f; // float
+      :C_format = "%.7f";
+      :FORTRAN_format = "F.7";
+      :long_name = "Particle backscattering at 700 nanometers";
+      :resolution = 1.0E-7f; // float
+      :units = "m-1";
+
+    char bbp700_adjusted_qc(row=3, bbp700_adjusted_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float bbp700_adjusted_error(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :C_format = "%.7f";
+      :FORTRAN_format = "F.7";
+      :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
+      :resolution = 1.0E-7f; // float
+      :units = "m-1";
+
+    float cdom(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 0.6335f, 0.6335f; // float
+      :C_format = "%.3f";
+      :cf_standard_name = "-";
+      :FORTRAN_format = "F.3";
+      :long_name = "Concentration of coloured dissolved organic matter in sea water";
+      :resolution = 0.001f; // float
+      :sdn_parameter_urn = "SDN:P01::CDOMZZ01";
+      :units = "ppb";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    char cdom_qc(row=3, cdom_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float cdom_adjusted(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :C_format = "%.3f";
+      :FORTRAN_format = "F.3";
+      :long_name = "Concentration of coloured dissolved organic matter in sea water";
+      :resolution = 0.001f; // float
+      :units = "ppb";
+
+    char cdom_adjusted_qc(row=3, cdom_adjusted_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float cdom_adjusted_error(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :C_format = "%.3f";
+      :FORTRAN_format = "F.3";
+      :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
+      :resolution = 0.001f; // float
+      :units = "ppb";
+
+    float chla(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 1.289667f, 3.7522f; // float
+      :C_format = "%.4f";
+      :cf_standard_name = "mass_concentration_of_chlorophyll_a_in_sea_water";
+      :FORTRAN_format = "F.4";
+      :long_name = "Chlorophyll-A";
+      :resolution = 0.025f; // float
+      :sdn_parameter_urn = "SDN:P01::CPHLPR01";
+      :standard_name = "mass_concentration_of_chlorophyll_a_in_sea_water";
+      :units = "mg/m3";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    char chla_qc(row=3, chla_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float chla_adjusted(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 0.6411833f, 2.5623f; // float
+      :C_format = "%.4f";
+      :FORTRAN_format = "F.4";
+      :long_name = "Chlorophyll-A";
+      :resolution = 0.025f; // float
+      :standard_name = "mass_concentration_of_chlorophyll_a_in_sea_water";
+      :units = "mg/m3";
+
+    char chla_adjusted_qc(row=3, chla_adjusted_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float chla_adjusted_error(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :C_format = "%.4f";
+      :FORTRAN_format = "F.4";
+      :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
+      :resolution = 0.025f; // float
+      :units = "mg/m3";
+
+    float cp660(row=3);
+      :_FillValue = 99999.0f; // float
+      :actual_range = 0.3436255f, 19.38075f; // float
+      :cf_standard_name = "-";
+      :long_name = "Particle beam attenuation at 660 nanometers";
+      :sdn_parameter_urn = "SDN:P01::ATT650AC";
+      :units = "m-1";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    char cp660_qc(row=3, cp660_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    float cp660_adjusted(row=3);
+      :actual_range = 99999.0f, 99999.0f; // float
+
+    char cp660_adjusted_qc(row=3, cp660_adjusted_qc_strlen=1);
+      :_Encoding = "ISO-8859-1";
+
+    float cp660_adjusted_error(row=3);
+      :actual_range = 99999.0f, 99999.0f; // float
+
+    float downwelling_par(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 0.549602f, 73.07629f; // float
+      :C_format = "%.3f";
+      :cf_standard_name = "downwelling_photosynthetic_photon_flux_in_sea_water";
+      :FORTRAN_format = "F.3";
+      :long_name = "Downwelling photosynthetic available radiation";
+      :resolution = 0.001f; // float
+      :sdn_parameter_urn = "SDN:P01::DWIRRXUD";
+      :standard_name = "downwelling_photosynthetic_photon_flux_in_sea_water";
+      :units = "microMoleQuanta/m^2/sec";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    char downwelling_par_qc(row=3, downwelling_par_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float downwelling_par_adjusted(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 0.001552966f, 72.57328f; // float
+      :C_format = "%.3f";
+      :FORTRAN_format = "F.3";
+      :long_name = "Downwelling photosynthetic available radiation";
+      :resolution = 0.001f; // float
+      :standard_name = "downwelling_photosynthetic_photon_flux_in_sea_water";
+      :units = "microMoleQuanta/m^2/sec";
+
+    char downwelling_par_adjusted_qc(row=3, downwelling_par_adjusted_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float downwelling_par_adjusted_error(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 0.03f, 3.628664f; // float
+      :C_format = "%.3f";
+      :FORTRAN_format = "F.3";
+      :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
+      :resolution = 0.001f; // float
+      :units = "microMoleQuanta/m^2/sec";
+
+    float down_irradiance380(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 2.018019E-4f, 0.02969852f; // float
+      :C_format = "%.6f";
+      :cf_standard_name = "-";
+      :FORTRAN_format = "F.6";
+      :long_name = "Downwelling irradiance at 380 nanometers";
+      :resolution = 1.0E-6f; // float
+      :sdn_parameter_urn = "SDN:P01::RXUD380E";
+      :units = "W/m^2/nm";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    char down_irradiance380_qc(row=3, down_irradiance380_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float down_irradiance380_adjusted(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = -8.968674E-6f, 0.02952597f; // float
+      :C_format = "%.6f";
+      :FORTRAN_format = "F.6";
+      :long_name = "Downwelling irradiance at 380 nanometers";
+      :resolution = 1.0E-6f; // float
+      :units = "W/m^2/nm";
+
+    char down_irradiance380_adjusted_qc(row=3, down_irradiance380_adjusted_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float down_irradiance380_adjusted_error(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 2.5E-5f, 5.905195E-4f; // float
+      :C_format = "%.6f";
+      :FORTRAN_format = "F.6";
+      :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
+      :resolution = 1.0E-6f; // float
+      :units = "W/m^2/nm";
+
+    float down_irradiance412(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 9.396438E-5f, 0.05550002f; // float
+      :C_format = "%.6f";
+      :cf_standard_name = "-";
+      :FORTRAN_format = "F.6";
+      :long_name = "Downwelling irradiance at 412 nanometers";
+      :resolution = 1.0E-6f; // float
+      :sdn_parameter_urn = "SDN:P01::RXUD412E";
+      :units = "W/m^2/nm";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    char down_irradiance412_qc(row=3, down_irradiance412_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float down_irradiance412_adjusted(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 9.439454E-6f, 0.05543612f; // float
+      :C_format = "%.6f";
+      :FORTRAN_format = "F.6";
+      :long_name = "Downwelling irradiance at 412 nanometers";
+      :resolution = 1.0E-6f; // float
+      :units = "W/m^2/nm";
+
+    char down_irradiance412_adjusted_qc(row=3, down_irradiance412_adjusted_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float down_irradiance412_adjusted_error(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 2.5E-5f, 0.001108722f; // float
+      :C_format = "%.6f";
+      :FORTRAN_format = "F.6";
+      :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
+      :resolution = 1.0E-6f; // float
+      :units = "W/m^2/nm";
+
+    float down_irradiance490(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = -6.496038E-5f, 0.09151518f; // float
+      :C_format = "%.6f";
+      :cf_standard_name = "-";
+      :FORTRAN_format = "F.6";
+      :long_name = "Downwelling irradiance at 490 nanometers";
+      :resolution = 1.0E-6f; // float
+      :sdn_parameter_urn = "SDN:P01::RXUD490E";
+      :units = "W/m^2/nm";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    char down_irradiance490_qc(row=3, down_irradiance490_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float down_irradiance490_adjusted(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = -2.68296E-5f, 0.0915398f; // float
+      :C_format = "%.6f";
+      :FORTRAN_format = "F.6";
+      :long_name = "Downwelling irradiance at 490 nanometers";
+      :resolution = 1.0E-6f; // float
+      :units = "W/m^2/nm";
+
+    char down_irradiance490_adjusted_qc(row=3, down_irradiance490_adjusted_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float down_irradiance490_adjusted_error(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 2.5E-5f, 0.001830796f; // float
+      :C_format = "%.6f";
+      :FORTRAN_format = "F.6";
+      :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
+      :resolution = 1.0E-6f; // float
+      :units = "W/m^2/nm";
+
+    float doxy(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 309.3528f, 324.3129f; // float
+      :C_format = "%.3f";
+      :cf_standard_name = "moles_of_oxygen_per_unit_mass_in_sea_water";
+      :FORTRAN_format = "F.3";
+      :long_name = "Dissolved oxygen";
+      :resolution = 0.001f; // float
+      :sdn_parameter_urn = "SDN:P01::DOXMZZXX";
+      :standard_name = "moles_of_oxygen_per_unit_mass_in_sea_water";
+      :units = "micromole/kg";
+      :valid_max = 600.0f; // float
+      :valid_min = -5.0f; // float
+
+    char doxy_qc(row=3, doxy_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float doxy_adjusted(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 314.7974f, 330.0208f; // float
+      :C_format = "%.3f";
+      :FORTRAN_format = "F.3";
+      :long_name = "Dissolved oxygen";
+      :resolution = 0.001f; // float
+      :standard_name = "moles_of_oxygen_per_unit_mass_in_sea_water";
+      :units = "micromole/kg";
+      :valid_max = 600.0f; // float
+      :valid_min = -5.0f; // float
+
+    char doxy_adjusted_qc(row=3, doxy_adjusted_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float doxy_adjusted_error(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 15.04538f, 15.63656f; // float
+      :C_format = "%.3f";
+      :FORTRAN_format = "F.3";
+      :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
+      :resolution = 0.001f; // float
+      :units = "micromole/kg";
+
+    float nitrate(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 7.597777f, 10.41807f; // float
+      :C_format = "%.3f";
+      :cf_standard_name = "moles_of_nitrate_per_unit_mass_in_sea_water";
+      :FORTRAN_format = "F.3";
+      :long_name = "Nitrate";
+      :resolution = 0.001f; // float
+      :sdn_parameter_urn = "SDN:P01::MDMAP005";
+      :standard_name = "moles_of_nitrate_per_unit_mass_in_sea_water";
+      :units = "micromole/kg";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    char nitrate_qc(row=3, nitrate_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float nitrate_adjusted(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 5.109423f, 7.557733f; // float
+      :C_format = "%.3f";
+      :FORTRAN_format = "F.3";
+      :long_name = "Nitrate";
+      :resolution = 0.001f; // float
+      :standard_name = "moles_of_nitrate_per_unit_mass_in_sea_water";
+      :units = "micromole/kg";
+
+    char nitrate_adjusted_qc(row=3, nitrate_adjusted_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float nitrate_adjusted_error(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 5.0f, 5.0f; // float
+      :C_format = "%.3f";
+      :FORTRAN_format = "F.3";
+      :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
+      :resolution = 0.001f; // float
+      :units = "micromole/kg";
+
+    float ph_in_situ_total(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 7.991419f, 8.191917f; // float
+      :C_format = "%.4f";
+      :cf_standard_name = "sea_water_ph_reported_on_total_scale";
+      :FORTRAN_format = "F.4";
+      :long_name = "pH";
+      :resolution = 1.0E-4f; // float
+      :sdn_parameter_urn = "SDN:P01::PHMASSXX";
+      :standard_name = "sea_water_ph_reported_on_total_scale";
+      :units = "dimensionless";
+      :valid_max = NaNf; // float
+      :valid_min = NaNf; // float
+
+    char ph_in_situ_total_qc(row=3, ph_in_situ_total_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float ph_in_situ_total_adjusted(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :C_format = "%.4f";
+      :FORTRAN_format = "F.4";
+      :long_name = "pH";
+      :resolution = 1.0E-4f; // float
+      :standard_name = "sea_water_ph_reported_on_total_scale";
+      :units = "dimensionless";
+
+    char ph_in_situ_total_adjusted_qc(row=3, ph_in_situ_total_adjusted_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float ph_in_situ_total_adjusted_error(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :C_format = "%.4f";
+      :FORTRAN_format = "F.4";
+      :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
+      :resolution = 1.0E-4f; // float
+      :units = "dimensionless";
+
+    float pres(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_CoordinateAxisType = "Height";
+      :_FillValue = 99999.0f; // float
+      :actual_range = 2.035f, 7.435f; // float
+      :axis = "Z";
+      :C_format = "%.3f";
+      :cf_standard_name = "sea_water_pressure";
+      :FORTRAN_format = "F.3";
+      :long_name = "Sea water pressure, equals 0 at sea-level";
+      :resolution = 0.001f; // float
+      :sdn_parameter_urn = "SDN:P01::PRESPR01";
+      :standard_name = "sea_water_pressure";
+      :units = "decibar";
+      :valid_max = 12000.0f; // float
+      :valid_min = 0.0f; // float
+
+    char pres_qc(row=3, pres_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float pres_adjusted(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 0.51f, 7.33f; // float
+      :axis = "Z";
+      :C_format = "%.3f";
+      :FORTRAN_format = "F.3";
+      :long_name = "Sea water pressure, equals 0 at sea-level";
+      :resolution = 0.001f; // float
+      :standard_name = "sea_water_pressure";
+      :units = "decibar";
+      :valid_max = 12000.0f; // float
+      :valid_min = 0.0f; // float
+
+    char pres_adjusted_qc(row=3, pres_adjusted_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float pres_adjusted_error(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :C_format = "%.3f";
+      :FORTRAN_format = "F.3";
+      :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
+      :resolution = 0.001f; // float
+      :units = "decibar";
+
+    float psal(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 34.602f, 34.724f; // float
+      :C_format = "%.4f";
+      :cf_standard_name = "sea_water_salinity";
+      :FORTRAN_format = "F.4";
+      :long_name = "Practical salinity";
+      :resolution = 1.0E-4f; // float
+      :sdn_parameter_urn = "SDN:P01::PSALST01";
+      :standard_name = "sea_water_salinity";
+      :units = "psu";
+      :valid_max = 41.0f; // float
+      :valid_min = 2.0f; // float
+
+    char psal_qc(row=3, psal_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float psal_adjusted(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 34.60173f, 34.724f; // float
+      :C_format = "%.4f";
+      :FORTRAN_format = "F.4";
+      :long_name = "Practical salinity";
+      :resolution = 1.0E-4f; // float
+      :standard_name = "sea_water_salinity";
+      :units = "psu";
+      :valid_max = 41.0f; // float
+      :valid_min = 2.0f; // float
+
+    char psal_adjusted_qc(row=3, psal_adjusted_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float psal_adjusted_error(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :C_format = "%.4f";
+      :FORTRAN_format = "F.4";
+      :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
+      :resolution = 1.0E-4f; // float
+      :units = "psu";
+
+    float temp(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 3.854624f, 6.5618f; // float
+      :C_format = "%.3f";
+      :cf_standard_name = "sea_water_temperature";
+      :FORTRAN_format = "F.3";
+      :long_name = "Sea temperature in-situ ITS-90 scale";
+      :resolution = 0.001f; // float
+      :sdn_parameter_urn = "SDN:P01::TEMPST01";
+      :standard_name = "sea_water_temperature";
+      :units = "degree_Celsius";
+      :valid_max = 40.0f; // float
+      :valid_min = -2.5f; // float
+
+    char temp_qc(row=3, temp_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float temp_adjusted(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :actual_range = 3.853f, 6.56089f; // float
+      :C_format = "%.3f";
+      :FORTRAN_format = "F.3";
+      :long_name = "Sea temperature in-situ ITS-90 scale";
+      :resolution = 0.001f; // float
+      :standard_name = "sea_water_temperature";
+      :units = "degree_Celsius";
+      :valid_max = 40.0f; // float
+      :valid_min = -2.5f; // float
+
+    char temp_adjusted_qc(row=3, temp_adjusted_qc_strlen=1);
+      :_ChunkSizes = 133, 1591; // int
+      :_Encoding = "ISO-8859-1";
+      :conventions = "Argo reference table 2";
+      :long_name = "quality flag";
+
+    float temp_adjusted_error(row=3);
+      :_ChunkSizes = 133, 1591; // int
+      :_FillValue = 99999.0f; // float
+      :C_format = "%.3f";
+      :FORTRAN_format = "F.3";
+      :long_name = "Contains the error on the adjusted values as determined by the delayed mode QC process";
+      :resolution = 0.001f; // float
+      :units = "degree_Celsius";
+
+  // global attributes:
+  :cdm_altitude_proxy = "pres";
+  :cdm_data_type = "TrajectoryProfile";
+  :cdm_profile_variables = "cycle_number, latitude, longitude, time";
+  :cdm_trajectory_variables = "platform_number";
+  :Conventions = "Argo-3.1 CF-1.6, COARDS, ACDD-1.3";
+  :creator_name = "Argo";
+  :creator_type = "institution";
+  :creator_url = "http://www.argodatamgt.org/Documentation";
+  :defaultGraphQuery = "longitude%2Clatitude%2Cph_in_situ_total&time>=now-2days&time<=now&pres<=10&.draw=markers&.marker=5|5&.color=0x000000&.colorBar=|||||&.bgColor=0xffccccff";
+  :Easternmost_Easting = -47.178141000000004; // double
+  :featureType = "TrajectoryProfile";
+  :geospatial_lat_max = 56.885423499999995; // double
+  :geospatial_lat_min = 56.75927466666667; // double
+  :geospatial_lat_units = "degrees_north";
+  :geospatial_lon_max = -47.178141000000004; // double
+  :geospatial_lon_min = -52.355689166666664; // double
+  :geospatial_lon_units = "degrees_east";
+  :history = "2024-08-20T11:53:17Z creation (software version 1.18 (version 11.01.2024 for ARGO_simplified_profile))
+2024-08-22T12:35:01Z (local files)
+2024-08-22T12:35:01Z https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?latitude,longitude,position_qc,time,time_qc,direction,platform_number,cycle_number,config_mission_number,bbp700,bbp700_qc,bbp700_adjusted,bbp700_adjusted_qc,bbp700_adjusted_error,cdom,cdom_qc,cdom_adjusted,cdom_adjusted_qc,cdom_adjusted_error,chla,chla_qc,chla_adjusted,chla_adjusted_qc,chla_adjusted_error,cp660,cp660_qc,cp660_adjusted,cp660_adjusted_qc,cp660_adjusted_error,downwelling_par,downwelling_par_qc,downwelling_par_adjusted,downwelling_par_adjusted_qc,downwelling_par_adjusted_error,down_irradiance380,down_irradiance380_qc,down_irradiance380_adjusted,down_irradiance380_adjusted_qc,down_irradiance380_adjusted_error,down_irradiance412,down_irradiance412_qc,down_irradiance412_adjusted,down_irradiance412_adjusted_qc,down_irradiance412_adjusted_error,down_irradiance490,down_irradiance490_qc,down_irradiance490_adjusted,down_irradiance490_adjusted_qc,down_irradiance490_adjusted_error,doxy,doxy_qc,doxy_adjusted,doxy_adjusted_qc,doxy_adjusted_error,nitrate,nitrate_qc,nitrate_adjusted,nitrate_adjusted_qc,nitrate_adjusted_error,ph_in_situ_total,ph_in_situ_total_qc,ph_in_situ_total_adjusted,ph_in_situ_total_adjusted_qc,ph_in_situ_total_adjusted_error,pres,pres_qc,pres_adjusted,pres_adjusted_qc,pres_adjusted_error,psal,psal_qc,psal_adjusted,psal_adjusted_qc,psal_adjusted_error,temp,temp_qc,temp_adjusted,temp_adjusted_qc,temp_adjusted_error&longitude%3E=-55&longitude%3C=-47&latitude%3E=55&latitude%3C=57&pres%3E=0&pres%3C=10&bbp700!=NaN&cdom!=NaN&chla!=NaN&cp660!=NaN&downwelling_par!=NaN&down_irradiance380!=NaN&down_irradiance412!=NaN&down_irradiance490!=NaN&doxy!=NaN&nitrate!=NaN&ph_in_situ_total!=NaN&pres!=NaN&psal!=NaN&temp!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(%22time,pres%22)";
+  :id = "https://doi.org/10.17882/42182";
+  :infoUrl = "http://www.argodatamgt.org/Documentation";
+  :institution = "Argo";
+  :keywords = "adjusted, argo, array, centre, charge, chemistry, coded, CONFIG_MISSION_NUMBER, contains, coriolis, creation, cycle, CYCLE_NUMBER, data, DATA_CENTRE, DATA_TYPE, date, DATE_CREATION, DATE_UPDATE, day, days, delayed, denoting, density, determined, direction, displacement, dissolved, doxy, DOXY_ADJUSTED, DOXY_ADJUSTED_ERROR, DOXY_ADJUSTED_QC, DOXY_dPRES, DOXY_QC, earth, Earth Science > Oceans > Ocean Chemistry > Oxygen, Earth Science > Oceans > Ocean Pressure > Water Pressure, Earth Science > Oceans > Ocean Temperature > Water Temperature, Earth Science > Oceans > Salinity/Density > Salinity, equals, error, file, firmware, FIRMWARE_VERSION, flag, float, FLOAT_SERIAL_NO, format, FORMAT_VERSION, geostrophic, global, handbook, HANDBOOK_VERSION, identifier, in-situ, instrument, investigator, its, its-90, JULD_LOCATION, JULD_QC, julian, latitude, level, longitude, mass, missions, mode, moles, moles_of_oxygen_per_unit_mass_in_sea_water, name, number, O2, ocean, oceanography, oceans, original, oxygen, per, performed, PI_NAME, PLATFORM_NUMBER, PLATFORM_TYPE, position, POSITION_QC, positioning, POSITIONING_SYSTEM, practical, pres, PRES_ADJUSTED, PRES_ADJUSTED_ERROR, PRES_ADJUSTED_QC, PRES_QC, pressure, principal, process, processing, profile, PROFILE_DOXY_QC, PROFILE_PRES_QC, PROFILE_PSAL_QC, PROFILE_TEMP_QC, profiles, project, PROJECT_NAME, psal, PSAL_ADJUSTED, PSAL_ADJUSTED_ERROR, PSAL_ADJUSTED_QC, PSAL_dPRES, PSAL_QC, quality, real, real time, real-time, realtime, reference, REFERENCE_DATE_TIME, relative, salinity, sampled, scale, science, sea, sea-level, sea_water_practical_salinity, sea_water_pressure, sea_water_temperature, seawater, serial, situ, station, system, TEMP, TEMP_ADJUSTED, TEMP_ADJUSTED_ERROR, TEMP_ADJUSTED_QC, TEMP_dPRES, TEMP_QC, temperature, time, type, unique, unit, update, value, values, version, vertical, water, WMO_INST_TYPE";
+  :keywords_vocabulary = "GCMD Science Keywords";
+  :license = "The data may be used and redistributed for free but is not intended
+for legal use, since it may contain inaccuracies. Neither the data
+Contributor, ERD, NOAA, nor the United States Government, nor any
+of their employees or contractors, makes any warranty, express or
+implied, including warranties of merchantability and fitness for a
+particular purpose, or assumes any legal liability for the accuracy,
+completeness, or usefulness, of this information.";
+  :Northernmost_Northing = 56.885423499999995; // double
+  :references = "http://www.argodatamgt.org/Documentation";
+  :software_version = "1.18 (version 11.01.2024 for ARGO_simplified_profile)";
+  :source = "Argo float";
+  :sourceUrl = "(local files)";
+  :Southernmost_Northing = 56.75927466666667; // double
+  :standard_name_vocabulary = "CF Standard Name Table v55";
+  :subsetVariables = "data_type, data_centre, platform_type, wmo_inst_type, time_qc, position_qc, pres_qc";
+  :summary = "Argo float synthetic vertical profiles : BGC data";
+  :testOutOfDate = "now-5days";
+  :time_coverage_end = "2023-06-26T10:02:30Z";
+  :time_coverage_start = "2022-05-30T05:21:27Z";
+  :title = "Argo float synthetic vertical profiles : BGC data";
+  :user_manual_version = "1.0";
+  :Westernmost_Easting = -52.355689166666664; // double
+}
