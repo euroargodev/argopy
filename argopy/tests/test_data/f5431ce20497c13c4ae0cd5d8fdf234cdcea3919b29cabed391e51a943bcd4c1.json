@@ -1,0 +1,218 @@
+{
+    "@graph": [
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R22/current/FLOAT_COASTAL/",
+            "pav:authoredOn": "2020-05-03 20:29:53.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R22/current/FLOAT_COASTAL/1/"
+            },
+            "dce:identifier": "SDN:R22::FLOAT_COASTAL",
+            "pav:version": "1",
+            "skos:notation": "SDN:R22::FLOAT_COASTAL",
+            "skos:altLabel": "FLOAT_COASTAL",
+            "dc:date": "2020-05-03 20:29:53.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Coastal float"
+            },
+            "dc:identifier": "SDN:R22::FLOAT_COASTAL",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Coastal float, i.e. ARVOR_C"
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R22/current/POLAR_OCEAN_PROFILING_SYSTEM/",
+            "pav:authoredOn": "2020-05-03 20:29:53.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R22/current/POLAR_OCEAN_PROFILING_SYSTEM/1/"
+            },
+            "dce:identifier": "SDN:R22::POLAR_OCEAN_PROFILING_SYSTEM",
+            "pav:version": "1",
+            "skos:notation": "SDN:R22::POLAR_OCEAN_PROFILING_SYSTEM",
+            "skos:altLabel": "POLAR_OCEAN_PROFILING_SYSTEM",
+            "dc:date": "2020-05-03 20:29:53.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Ice platform providing meteorological data paired with tethered subsurface platform using buoyancy to go up and down"
+            },
+            "dc:identifier": "SDN:R22::POLAR_OCEAN_PROFILING_SYSTEM",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Ice platform that provides meteorological data is paired with a subsurface platform, either a PROVOR or NEMO float tethered along a cable that uses buoyancy to go up and down."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R22/current/ICE_TETHERED_PROFILER/",
+            "pav:authoredOn": "2020-05-03 20:29:53.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R22/current/ICE_TETHERED_PROFILER/1/"
+            },
+            "dce:identifier": "SDN:R22::ICE_TETHERED_PROFILER",
+            "pav:version": "1",
+            "skos:notation": "SDN:R22::ICE_TETHERED_PROFILER",
+            "skos:altLabel": "ICE_TETHERED_PROFILER",
+            "dc:date": "2020-05-03 20:29:53.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Ice platform providing meteorological data paired with tethered subsurface profiler using motor to go up and down"
+            },
+            "dc:identifier": "SDN:R22::ICE_TETHERED_PROFILER",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Surface ice-mounted platform that provides meteorological data and subsurface profiler tethered to a cable that uses a motor to go up and down."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R22/current/FLOAT/",
+            "pav:authoredOn": "2020-05-03 20:29:53.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R22/current/FLOAT/1/"
+            },
+            "dce:identifier": "SDN:R22::FLOAT",
+            "pav:version": "1",
+            "skos:notation": "SDN:R22::FLOAT",
+            "skos:altLabel": "FLOAT",
+            "dc:date": "2020-05-03 20:29:53.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Profiling float"
+            },
+            "dc:identifier": "SDN:R22::FLOAT",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Profiling float"
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R22/current/FLOAT_DEEP/",
+            "pav:authoredOn": "2020-05-03 20:29:53.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R22/current/FLOAT_DEEP/1/"
+            },
+            "dce:identifier": "SDN:R22::FLOAT_DEEP",
+            "pav:version": "1",
+            "skos:notation": "SDN:R22::FLOAT_DEEP",
+            "skos:altLabel": "FLOAT_DEEP",
+            "dc:date": "2020-05-03 20:29:53.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Profiling deep float"
+            },
+            "dc:identifier": "SDN:R22::FLOAT_DEEP",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Profiling float that is capable of profiling deeper than 2000dbar"
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R22/current/",
+            "skos:member": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R22/current/FLOAT_COASTAL/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R22/current/POLAR_OCEAN_PROFILING_SYSTEM/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R22/current/ICE_TETHERED_PROFILER/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R22/current/FLOAT_DEEP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R22/current/FLOAT/"
+                }
+            ],
+            "@type": "skos:Collection",
+            "dc:publisher": "Natural Environment Research Council",
+            "dc:description": "List of platform family/category of Argo floats. Argo netCDF variable PLATFORM_FAMILY is populated by R22 altLabel.",
+            "dc:title": "Argo platform family",
+            "skos:prefLabel": "Argo platform family",
+            "owl:versionInfo": "1",
+            "dc:date": "2020-05-04 03:00:04.0",
+            "skos:altLabel": "PLATFORM_FAMILY",
+            "dc:creator": "Argo Data Management Team",
+            "dc:alternative": "PLATFORM_FAMILY",
+            "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+            "grg:RE_RegisterOwner": "Argo Data Management Team",
+            "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+            "rdfs:seeAlso": {
+                "@id": "https://github.com/nvs-vocabs/R22"
+            }
+        }
+    ],
+    "@context": {
+        "cpm": "http://purl.org/voc/cpm#",
+        "qudt": "https://qudt.org/2.1/schema/qudt#",
+        "void": "http://rdfs.org/ns/void#",
+        "pav": "http://purl.org/pav/",
+        "owl": "http://www.w3.org/2002/07/owl#",
+        "dce": "http://purl.org/dc/elements/1.1/",
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "iop": "https://w3id.org/iadopt/ont#",
+        "ns1": "http://www.w3.org/ns/dx/prof/",
+        "puv": "https://w3id.org/env/puv#",
+        "semapv": "http://w3id.org/semapv/vocab/",
+        "dct": "http://purl.org/dc/terms/",
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "reg": "http://purl.org/linked-data/registry#",
+        "sssom": "https://w3id.org/sssom/schema/",
+        "dcat": "http://www.w3.org/ns/dcat#",
+        "grg": "http://www.isotc211.org/schemas/grg/",
+        "prov": "https://www.w3.org/ns/prov#",
+        "dc": "http://purl.org/dc/terms/"
+    }
+}
