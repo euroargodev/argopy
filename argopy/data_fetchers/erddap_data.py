@@ -594,16 +594,26 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     @property
     def N_POINTS(self) -> int:
-        """Number of measurements expected to be returned by a request"""
-        url = self.get_url().replace("." + self.erddap.response, ".ncHeader")
-        try:
-            ncHeader = str(self.fs.fs.cat_file(url))
-            lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
-            return int(lines.split("=")[1].split(";")[0])
-        except Exception:
-            raise ErddapServerError(
-                "Erddap server can't return ncHeader for this url. "
-            )
+        """Number of measurements expected to be returned by a request
+
+        This is an estimate that could be inaccurate with the synthetic BGC dataset
+        """
+        def getNfromncHeader(url):
+            url = url.replace("." + self.erddap.response, ".ncHeader")
+            try:
+                ncHeader = str(self.fs.download_url(url))
+                lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
+                return int(lines.split("=")[1].split(";")[0])
+            except Exception:
+                raise ErddapServerError(
+                    "Erddap server can't return ncHeader for url: %s " % url
+                )
+
+        N = 0
+        for url in self.uri:
+            N += getNfromncHeader(url)
+        return N
+
 
     def post_process(self, this_ds, add_dm: bool = True, URI: list = None):  # noqa: C901
         """Post-process a xarray.DataSet created from a netcdf erddap response
