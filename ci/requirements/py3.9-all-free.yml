@@ -14,7 +14,7 @@ dependencies:
   - requests
   - scipy
   - toolz
-  - xarray
+  - xarray < 2024.3 # while https://github.com/pydata/xarray/issues/8909 is not solved
 
 # EXT.UTIL:
   - boto3
