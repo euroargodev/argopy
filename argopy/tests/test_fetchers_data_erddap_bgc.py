@@ -20,7 +20,7 @@ from collections import ChainMap
 
 log = logging.getLogger("argopy.tests.data.erddap")
 
-USE_MOCKED_SERVER = False
+USE_MOCKED_SERVER = True
 
 """
 List access points to be tested for each datasets: bgc.
@@ -127,11 +127,11 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
 
     try:
         assert_all(this_fetcher, cacheable)
-    except:
+    except Exception as e:
         if this_fetcher._mode not in ['expert']:
             pytest.xfail("BGC is not yet supported in '%s' user mode" % this_fetcher._mode)
         else:
-            raise
+            log.debug("Fetcher instance assert false because: %s" % e)
             assert False
 
 
