@@ -1,6 +1,6 @@
 netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
   dimensions:
-    row = 29650;
+    row = 29677;
     direction_strlen = 1;
     platform_number_strlen = 7;
     doxy_qc_strlen = 1;
@@ -12,7 +12,7 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
     psal_qc_strlen = 1;
     psal_adjusted_qc_strlen = 1;
   variables:
-    double latitude(row=29650);
+    double latitude(row=29677);
       :_CoordinateAxisType = "Lat";
       :_FillValue = 99999.0; // double
       :actual_range = 55.00095666666667, 56.99997; // double
@@ -26,7 +26,7 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
       :valid_max = 90.0; // double
       :valid_min = -90.0; // double
 
-    double longitude(row=29650);
+    double longitude(row=29677);
       :_CoordinateAxisType = "Lon";
       :_FillValue = 99999.0; // double
       :actual_range = -54.999, -47.00874350000001; // double
@@ -40,16 +40,16 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
       :valid_max = 180.0; // double
       :valid_min = -180.0; // double
 
-    char position_qc(row=29650);
+    char position_qc(row=29677);
       :actual_range = "18";
       :colorBarMaximum = 150.0; // double
       :colorBarMinimum = 0.0; // double
       :conventions = "Argo reference table 2";
       :long_name = "Quality on position (latitude and longitude)";
 
-    double time(row=29650);
+    double time(row=29677);
       :_CoordinateAxisType = "Time";
-      :actual_range = 1.063557316224E9, 1.72415286E9; // double
+      :actual_range = 1.063557316224E9, 1.72432578E9; // double
       :axis = "T";
       :conventions = "Relative julian days with decimal part (as parts of day)";
       :ioos_category = "Time";
@@ -59,14 +59,14 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
       :time_origin = "01-JAN-1970 00:00:00";
       :units = "seconds since 1970-01-01T00:00:00Z";
 
-    char time_qc(row=29650);
+    char time_qc(row=29677);
       :actual_range = "11";
       :colorBarMaximum = 150.0; // double
       :colorBarMinimum = 0.0; // double
       :conventions = "Argo reference table 2";
       :long_name = "Quality on date and time";
 
-    char direction(row=29650, direction_strlen=1);
+    char direction(row=29677, direction_strlen=1);
       :_ChunkSizes = 133; // int
       :_Encoding = "ISO-8859-1";
       :colorBarMaximum = 360.0; // double
@@ -75,14 +75,14 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
       :ioos_category = "Currents";
       :long_name = "Direction of the station profiles";
 
-    char platform_number(row=29650, platform_number_strlen=7);
+    char platform_number(row=29677, platform_number_strlen=7);
       :_Encoding = "ISO-8859-1";
       :cf_role = "trajectory_id";
       :conventions = "WMO float identifier : A9IIIII";
       :ioos_category = "Identifier";
       :long_name = "Float unique identifier";
 
-    int cycle_number(row=29650);
+    int cycle_number(row=29677);
       :_FillValue = 99999; // int
       :actual_range = 0, 367; // int
       :cf_role = "profile_id";
@@ -91,7 +91,7 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
       :conventions = "0...N, 0 : launch cycle (if exists), 1 : first complete cycle";
       :long_name = "Float cycle number";
 
-    int config_mission_number(row=29650);
+    int config_mission_number(row=29677);
       :_ChunkSizes = 133; // int
       :_FillValue = 99999; // int
       :actual_range = 0, 65; // int
@@ -101,7 +101,7 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
       :ioos_category = "Statistics";
       :long_name = "Unique number denoting the missions performed by the float";
 
-    float doxy(row=29650);
+    float doxy(row=29677);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
       :actual_range = -1526.135f, 11356.0f; // float
@@ -116,13 +116,13 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
       :valid_max = 600.0f; // float
       :valid_min = -5.0f; // float
 
-    char doxy_qc(row=29650, doxy_qc_strlen=1);
+    char doxy_qc(row=29677, doxy_qc_strlen=1);
       :_ChunkSizes = 133, 1591; // int
       :_Encoding = "ISO-8859-1";
       :conventions = "Argo reference table 2";
       :long_name = "quality flag";
 
-    float doxy_adjusted(row=29650);
+    float doxy_adjusted(row=29677);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
       :actual_range = -1655.856f, 12321.26f; // float
@@ -135,13 +135,13 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
       :valid_max = 600.0f; // float
       :valid_min = -5.0f; // float
 
-    char doxy_adjusted_qc(row=29650, doxy_adjusted_qc_strlen=1);
+    char doxy_adjusted_qc(row=29677, doxy_adjusted_qc_strlen=1);
       :_ChunkSizes = 133, 1591; // int
       :_Encoding = "ISO-8859-1";
       :conventions = "Argo reference table 2";
       :long_name = "quality flag";
 
-    float doxy_adjusted_error(row=29650);
+    float doxy_adjusted_error(row=29677);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
       :actual_range = 2.630909f, 31.84704f; // float
@@ -151,7 +151,7 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
       :resolution = 0.001f; // float
       :units = "micromole/kg";
 
-    float pres(row=29650);
+    float pres(row=29677);
       :_ChunkSizes = 133, 1591; // int
       :_CoordinateAxisType = "Height";
       :_FillValue = 99999.0f; // float
@@ -168,13 +168,13 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
       :valid_max = 12000.0f; // float
       :valid_min = 0.0f; // float
 
-    char pres_qc(row=29650, pres_qc_strlen=1);
+    char pres_qc(row=29677, pres_qc_strlen=1);
       :_ChunkSizes = 133, 1591; // int
       :_Encoding = "ISO-8859-1";
       :conventions = "Argo reference table 2";
       :long_name = "quality flag";
 
-    float pres_adjusted(row=29650);
+    float pres_adjusted(row=29677);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
       :actual_range = -4.768372E-7f, 10.49f; // float
@@ -188,13 +188,13 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
       :valid_max = 12000.0f; // float
       :valid_min = 0.0f; // float
 
-    char pres_adjusted_qc(row=29650, pres_adjusted_qc_strlen=1);
+    char pres_adjusted_qc(row=29677, pres_adjusted_qc_strlen=1);
       :_ChunkSizes = 133, 1591; // int
       :_Encoding = "ISO-8859-1";
       :conventions = "Argo reference table 2";
       :long_name = "quality flag";
 
-    float pres_adjusted_error(row=29650);
+    float pres_adjusted_error(row=29677);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
       :actual_range = 2.0f, 2.4f; // float
@@ -204,7 +204,7 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
       :resolution = 0.001f; // float
       :units = "decibar";
 
-    float temp(row=29650);
+    float temp(row=29677);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
       :actual_range = -1.401f, 15.6335f; // float
@@ -219,13 +219,13 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
       :valid_max = 40.0f; // float
       :valid_min = -2.5f; // float
 
-    char temp_qc(row=29650, temp_qc_strlen=1);
+    char temp_qc(row=29677, temp_qc_strlen=1);
       :_ChunkSizes = 133, 1591; // int
       :_Encoding = "ISO-8859-1";
       :conventions = "Argo reference table 2";
       :long_name = "quality flag";
 
-    float temp_adjusted(row=29650);
+    float temp_adjusted(row=29677);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
       :actual_range = -1.401f, 12.905f; // float
@@ -238,13 +238,13 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
       :valid_max = 40.0f; // float
       :valid_min = -2.5f; // float
 
-    char temp_adjusted_qc(row=29650, temp_adjusted_qc_strlen=1);
+    char temp_adjusted_qc(row=29677, temp_adjusted_qc_strlen=1);
       :_ChunkSizes = 133, 1591; // int
       :_Encoding = "ISO-8859-1";
       :conventions = "Argo reference table 2";
       :long_name = "quality flag";
 
-    float temp_adjusted_error(row=29650);
+    float temp_adjusted_error(row=29677);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
       :actual_range = 0.002f, 0.002f; // float
@@ -254,7 +254,7 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
       :resolution = 0.001f; // float
       :units = "degree_Celsius";
 
-    float psal(row=29650);
+    float psal(row=29677);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
       :actual_range = 0.402f, 35.02467f; // float
@@ -269,13 +269,13 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
       :valid_max = 41.0f; // float
       :valid_min = 2.0f; // float
 
-    char psal_qc(row=29650, psal_qc_strlen=1);
+    char psal_qc(row=29677, psal_qc_strlen=1);
       :_ChunkSizes = 133, 1591; // int
       :_Encoding = "ISO-8859-1";
       :conventions = "Argo reference table 2";
       :long_name = "quality flag";
 
-    float psal_adjusted(row=29650);
+    float psal_adjusted(row=29677);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
       :actual_range = 1.868f, 35.02467f; // float
@@ -288,13 +288,13 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
       :valid_max = 41.0f; // float
       :valid_min = 2.0f; // float
 
-    char psal_adjusted_qc(row=29650, psal_adjusted_qc_strlen=1);
+    char psal_adjusted_qc(row=29677, psal_adjusted_qc_strlen=1);
       :_ChunkSizes = 133, 1591; // int
       :_Encoding = "ISO-8859-1";
       :conventions = "Argo reference table 2";
       :long_name = "quality flag";
 
-    float psal_adjusted_error(row=29650);
+    float psal_adjusted_error(row=29677);
       :_ChunkSizes = 133, 1591; // int
       :_FillValue = 99999.0f; // float
       :actual_range = 0.004f, 1.046394f; // float
@@ -323,8 +323,8 @@ netcdf ArgoFloats-synthetic-BGC_ddb7_5b7e_7f09.nc {
   :geospatial_lon_min = -54.999; // double
   :geospatial_lon_units = "degrees_east";
   :history = "2024-08-20T11:53:17Z creation (software version 1.18 (version 11.01.2024 for ARGO_simplified_profile))
-2024-08-22T13:19:03Z (local files)
-2024-08-22T13:19:03Z https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.ncHeader?latitude,longitude,position_qc,time,time_qc,direction,platform_number,cycle_number,config_mission_number,doxy,doxy_qc,doxy_adjusted,doxy_adjusted_qc,doxy_adjusted_error,pres,pres_qc,pres_adjusted,pres_adjusted_qc,pres_adjusted_error,temp,temp_qc,temp_adjusted,temp_adjusted_qc,temp_adjusted_error,psal,psal_qc,psal_adjusted,psal_adjusted_qc,psal_adjusted_error&longitude%3E=-55&longitude%3C=-47&latitude%3E=55&latitude%3C=57&pres%3E=0&pres%3C=10&latitude!=NaN&longitude!=NaN&distinct()&orderBy(%22time,pres%22)";
+2024-08-23T08:07:19Z (local files)
+2024-08-23T08:07:19Z https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?latitude,longitude,position_qc,time,time_qc,direction,platform_number,cycle_number,config_mission_number,doxy,doxy_qc,doxy_adjusted,doxy_adjusted_qc,doxy_adjusted_error,pres,pres_qc,pres_adjusted,pres_adjusted_qc,pres_adjusted_error,temp,temp_qc,temp_adjusted,temp_adjusted_qc,temp_adjusted_error,psal,psal_qc,psal_adjusted,psal_adjusted_qc,psal_adjusted_error&longitude%3E=-55&longitude%3C=-47&latitude%3E=55&latitude%3C=57&pres%3E=0&pres%3C=10&latitude!=NaN&longitude!=NaN&distinct()&orderBy(%22time,pres%22)";
   :id = "https://doi.org/10.17882/42182";
   :infoUrl = "http://www.argodatamgt.org/Documentation";
   :institution = "Argo";
@@ -347,7 +347,7 @@ completeness, or usefulness, of this information.";
   :subsetVariables = "data_type, data_centre, platform_type, wmo_inst_type, time_qc, position_qc, pres_qc";
   :summary = "Argo float synthetic vertical profiles : BGC data";
   :testOutOfDate = "now-5days";
-  :time_coverage_end = "2024-08-20T11:21:00Z";
+  :time_coverage_end = "2024-08-22T11:23:00Z";
   :time_coverage_start = "2003-09-14T16:35:16Z";
   :title = "Argo float synthetic vertical profiles : BGC data";
   :user_manual_version = "1.0";
