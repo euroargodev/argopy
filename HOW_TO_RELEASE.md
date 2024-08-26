@@ -7,6 +7,12 @@
 
 # Prepare code for release
 
+## Deprecation policy
+- [ ] Check the code for the ``deprecated`` decorator and enforce the deprecation policy:
+  - [ ] If code is marked as deprecated since version = v0.X.Y : do nothing (first version with deprecation warning)
+  - [ ] If code is marked as deprecated since version = v0.X.Y-1 : do nothing (2nd and last version with deprecation warning)
+  - [ ] If code is marked as deprecated since version = v0.X.Y-2 : delete code (code will raise an error)
+
 ## Code clean-up
 - [ ] Run [codespell](https://github.com/codespell-project/codespell) from repo root and fix errors: ``codespell -q 2``
 - [ ] Run [flake8](https://github.com/PyCQA/flake8) from repo root and fix errors
