@@ -49,7 +49,7 @@ class ArgoDocs:
             try:
                 with self.fs.open(file, 'r', encoding="utf-8") as f:
                     TXTlines = f.readlines()
-            except:
+            except:  # noqa: E722
                 with self.fs.open(file, 'r', encoding="latin-1") as f:
                     TXTlines = f.readlines()
 

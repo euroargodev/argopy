@@ -8,12 +8,12 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-Coming up next
---------------
+v0.1.16 (xx Aug. 2024)
+----------------------
 
 **Features and front-end API**
 
-- **Support for AWS S3 index files**. This support is experimental and is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. The `ADMT working group discussion items are listed here <https://github.com/OneArgo/ADMT/discussions/categories/wg-on-best-format-to-serve-argo-data-from-the-cloud>`_. Both CORE and BGC index files are supported. The new :class:`ArgoIndex` not only support access to the AWS S3 index files but also implement improved performances for search methods on WMO and cycle numbers, using :class:`boto3.client.select_object_content` SQL queries. Indeed, the ``https`` and ``ftp`` default GDAC server index files are downloaded and loaded in memory before being searched. With ``s3``, index files can directly be queried on the server using SQL syntax; the full index is not necessarily downloaded. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
+- **Support for AWS S3 index files**. This support is experimental and is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. The `ADMT working group discussion items are listed here <https://github.com/OneArgo/ADMT/discussions/categories/wg-on-best-format-to-serve-argo-data-from-the-cloud>`_. Both CORE and BGC index files are supported. The new :class:`ArgoIndex` not only support access to the AWS S3 index files but also implement improved performances for search methods on WMO and cycle numbers, using :class:`boto3.client.select_object_content` SQL queries. Indeed, the ``https`` and ``ftp`` default GDAC server index files are downloaded and loaded in memory before being searched. But with ``s3``, index files can directly be queried on the server using SQL syntax; the full index is not necessarily downloaded. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
 
 .. code-block:: python
 
@@ -35,9 +35,11 @@ Coming up next
 
 **Internals**
 
-- Update Ifremer erddap server information. The Argo reference for DMQC (returned by the :class:`DataFetcher` fetcher with ``ds='ref'`` argument ) and Argo CTD-reference for DQMC (returned by the :class:`CTDRefDataFetcher` fetcher) now indicate the dataset version used. (:pr:`344`) by `G. Maze <http://www.github.com/gmaze>`_.
+- Drop support for Python 3.8, add support for Python 3.10. (:pr:`379`) by `G. Maze <http://www.github.com/gmaze>`_
 
 - Update :class:`argopy.ArgoNVSReferenceTables` to handle new NVS server output format. (:pr:`378`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+- Update Ifremer erddap server information. The Argo reference for DMQC (returned by the :class:`DataFetcher` fetcher with ``ds='ref'`` argument ) and Argo CTD-reference for DQMC (returned by the :class:`CTDRefDataFetcher` fetcher) now indicate the dataset version used. (:pr:`344`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 - Pin upper bound on xarray < 2024.3 to fix failing upstream tests because of ``AttributeError: 'ScipyArrayWrapper' object has no attribute 'oindex'``, `reported here <https://github.com/pydata/xarray/issues/8909>`_. (:pr:`326`) by `G. Maze <http://www.github.com/gmaze>`_
 
@@ -54,7 +56,6 @@ Coming up next
 **Breaking changes**
 
 - Drop support for erddapy < v0.8.0 (:pr:`344`) by `G. Maze <http://www.github.com/gmaze>`_.
-
 
 v0.1.15 (12 Dec. 2023)
 ----------------------
@@ -179,7 +180,7 @@ v0.1.14 (29 Sep. 2023)
 
 - New utility class :class:`utils.MonitoredThreadPoolExecutor` to handle parallelization with a multi-threading Pool that provide a notebook or terminal computation progress dashboard. This class is used by the httpstore open_mfdataset method for erddap requests.
 
-- New utilites to handle a collection of datasets: :func:`utils.drop_variables_not_in_all_datasets` will drop variables that are not in all datasets (the lowest common denominator) and :func:`utils.fill_variables_not_in_all_datasets` will add empty variables to dataset so that all the collection have the same data_vars and coords. These functions are used by stores to concat/merge a collection of datasets (chunks).
+- New utilities to handle a collection of datasets: :func:`utils.drop_variables_not_in_all_datasets` will drop variables that are not in all datasets (the lowest common denominator) and :func:`utils.fill_variables_not_in_all_datasets` will add empty variables to dataset so that all the collection have the same data_vars and coords. These functions are used by stores to concat/merge a collection of datasets (chunks).
 
 - :func:`related.load_dict` now relies on :class:`ArgoNVSReferenceTables` instead of static pickle files.
 
@@ -294,7 +295,7 @@ v0.1.14rc2 (27 Jul. 2023)
 
 - New utility class :class:`utils.MonitoredThreadPoolExecutor` to handle parallelization with a multi-threading Pool that provide a notebook or terminal computation progress dashboard. This class is used by the httpstore open_mfdataset method for erddap requests.
 
-- New utilites to handle a collection of datasets: :func:`utils.drop_variables_not_in_all_datasets` will drop variables that are not in all datasets (the lowest common denominator) and :func:`utils.fill_variables_not_in_all_datasets` will add empty variables to dataset so that all the collection have the same data_vars and coords. These functions are used by stores to concat/merge a collection of datasets (chunks).
+- New utilities to handle a collection of datasets: :func:`utils.drop_variables_not_in_all_datasets` will drop variables that are not in all datasets (the lowest common denominator) and :func:`utils.fill_variables_not_in_all_datasets` will add empty variables to dataset so that all the collection have the same data_vars and coords. These functions are used by stores to concat/merge a collection of datasets (chunks).
 
 - :func:`related.load_dict` now relies on :class:`ArgoNVSReferenceTables` instead of static pickle files.
 

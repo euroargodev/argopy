@@ -26,7 +26,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-from .argo_index_proto_s3 import search_s3
+# from .argo_index_proto_s3 import search_s3
 
 log = logging.getLogger("argopy.stores.index")
 
@@ -457,7 +457,7 @@ class ArgoIndexStoreProto(ABC):
         if isinstance(fs, memorystore):
             fs.fs.touch(this_path)  # Fix for https://github.com/euroargodev/argopy/issues/345
             # fs.fs.touch(this_path)  # Fix for https://github.com/euroargodev/argopy/issues/345
-            # This is an f* mistery to me, why do we need 2 calls to trigger file creation FOR REAL ????
+            # This is an f* mystery to me, why do we need 2 calls to trigger file creation FOR REAL ????
             # log.debug("memorystore touched this path before open context: '%s'" % this_path)
         with fs.open(this_path, "wb") as handle:
             write_this[fmt](obj, handle)
