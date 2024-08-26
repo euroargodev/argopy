@@ -113,12 +113,6 @@ class ArgoDataFetcher:
         if not _VALIDATORS["src"](self._src):
             raise OptionValueError(f"option 'src' given an invalid value: {self._src}")
 
-        # Load data source access points:
-        if self._src == "localftp":
-            raise ValueError(
-                "The 'localftp' data source is deprecated. It's been replaced by 'gdac'."
-            )
-
         Fetchers = AVAILABLE_DATA_SOURCES[self._src]
 
         # Auto-discovery of access points for this fetcher:
