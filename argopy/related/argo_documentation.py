@@ -66,14 +66,17 @@ class ArgoDocs:
             for line in TXTlines:
                 # print("\n>", line)
                 if len(line) > 2:
-                    if line[2] == " ":
-                        tag = line[0:2]
-                        field = line[3:]
-                        # print("ok", {tag: field})
-                        record[tag] = [field]
-                    else:
-                        # print("-", line)
-                        record[tag].append(line)
+                    try:
+                        if line[2] == " ":
+                            tag = line[0:2]
+                            field = line[3:]
+                            # print("ok", {tag: field})
+                            record[tag] = [field]
+                        else:
+                            # print("-", line)
+                            record[tag].append(line)
+                    except UnboundLocalError as e:
+                        pass
                 elif len(line) == 2:
                     record[line] = []
                 # else:
