@@ -32,11 +32,9 @@
 
 # Publish the release
 
-- [ ] ["Draft a new release"](https://github.com/euroargodev/argopy/releases/new) on GitHub.
-Choose a release tag v0.X.Y, fill in the release title and click on the `Auto-generate release notes` button.  
-This will trigger the [publish Github action](https://github.com/euroargodev/argopy/blob/master/.github/workflows/pythonpublish.yml) that will push the release on [Pypi](https://pypi.org/project/argopy/#history).
 - [ ] Last check the ``./setup.py`` file version of the release and that the [documentation is ready](https://readthedocs.org/projects/argopy/builds/)
-- [ ] Publish !
+- [ ] ["Create a new release"](https://github.com/euroargodev/argopy/releases/new) on GitHub.
+Choose a release tag v0.X.Y, fill in the release title and click on the `Auto-generate release notes` button. Once ready, publish the release. This will trigger the [publish Github action](https://github.com/euroargodev/argopy/blob/master/.github/workflows/pythonpublish.yml) that will push the release on [Pypi](https://pypi.org/project/argopy/#history).
 - [ ] Checkout on [Pypi](https://pypi.org/project/argopy/#history) and [Conda](https://github.com/conda-forge/argopy-feedstock/pulls) that the new release is distributed.
 
 [![Publish on pypi](https://github.com/euroargodev/argopy/actions/workflows/pythonpublish.yml/badge.svg)](https://github.com/euroargodev/argopy/actions/workflows/pythonpublish.yml)
