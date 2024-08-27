@@ -16,7 +16,7 @@ decorator
 distributed>=2.30.0
 ipython<=8.26.0
 matplotlib>=3.4.0
-numpy==1.26.4
+numpy==2.1.0
 pandas<3.0
 # packaging
 pip>=23.1
