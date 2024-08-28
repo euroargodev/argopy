@@ -4,21 +4,21 @@ Fixture for a local HTTP server to be used by all http requests of unit tests
 For this to work, we need to catch all the possible URI sent from unit tests and return some data (eg json or netcdf)
 we downloaded once before tests.
 
-This requires to download data using fully functional http servers: this is done by the "test_data" script located
+This requires to download data using fully functional http servers: this is done by the "citests_httpdata_manager" located
 in "argopy/cli"
 
 Servers covered by this fixture:
-    "https://github.com/euroargodev/argopy-data/raw/master",
-    "https://erddap.ifremer.fr/erddap",
-    "https://data-argo.ifremer.fr",
-    "https://api.ifremer.fr",
-    "https://coastwatch.pfeg.noaa.gov/erddap",
-    "https://www.ocean-ops.org/api/1",
-    "https://dataselection.euro-argo.eu/api",
-    "https://vocab.nerc.ac.uk/collection",
-    "https://argovisbeta02.colorado.edu",
-    "https://dx.doi.org",
-    "https://archimer.ifremer.fr",
+            "https://github.com/euroargodev/argopy-data/raw/master",
+            "https://erddap.ifremer.fr/erddap",
+            "https://data-argo.ifremer.fr",
+            "https://api.ifremer.fr",
+            "https://coastwatch.pfeg.noaa.gov/erddap",
+            "https://www.ocean-ops.org/api/1",
+            "https://dataselection.euro-argo.eu/api",
+            "https://vocab.nerc.ac.uk/collection",
+            "https://argovis-api.colorado.edu",
+            "https://dx.doi.org",
+            "https://archimer.ifremer.fr",
 
 The HTTPTestHandler class below is taken from the fsspec tests suite at:
 https://github.com/fsspec/filesystem_spec/blob/55c5d71e657445cbfbdba15049d660a5c9639ff0/fsspec/tests/conftest.py
@@ -39,7 +39,7 @@ import importlib
 
 log = logging.getLogger("argopy.tests.mocked_http")
 LOG_SERVER_CONTENT = (
-    False  # Should we list files/uris available from the mocked server in the log ?
+    False  # Should we list all files/uris available from the mocked server in the log ?
 )
 
 requests = pytest.importorskip("requests")
@@ -93,7 +93,7 @@ if DB_FILE.exists():
             "https://www.ocean-ops.org/api/1",
             "https://dataselection.euro-argo.eu/api",
             "https://vocab.nerc.ac.uk/collection",
-            "https://argovisbeta02.colorado.edu",
+            "https://argovis-api.colorado.edu",
             "https://dx.doi.org",
             "https://archimer.ifremer.fr",
         ]
