@@ -256,11 +256,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         return self._cname()
 
     def url_encode(self, urls):
-        """Return safely encoded list of urls
-
-        This was made to debug for fsspec caching system not working with cache of profile and region in argovis
-        Not working yet, see: https://github.com/euroargodev/argopy/issues/101
-        """
+        """Return safely encoded list of urls"""
 
         # return urls
         def safe_for_fsspec_cache(url):
@@ -269,7 +265,6 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             return url
 
         return [safe_for_fsspec_cache(url) for url in urls]
-        # return [urllib.parse.quote(url, safe='/:?=[]&') for url in urls]
 
     def json2dataframe(self, profiles):
         """convert json data to Pandas DataFrame"""
@@ -372,10 +367,6 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         ds.attrs = {}
         if self.dataset_id == "phy":
             ds.attrs["DATA_ID"] = "ARGO"
-        elif self.dataset_id == "ref":
-            ds.attrs["DATA_ID"] = "ARGO_Reference"
-        elif self.dataset_id == "bgc":
-            ds.attrs["DATA_ID"] = "ARGO-BGC"
         ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
         ds.attrs["Fetched_from"] = self.server
         try:
