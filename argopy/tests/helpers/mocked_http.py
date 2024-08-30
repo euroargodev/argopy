@@ -168,11 +168,11 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
         if "give_path" in self.headers:
             return self._respond(200, data=json.dumps({"path": self.path}).encode())
         if file_data is None:
-            # log.debug("file data empty, returning 404")
-            return self._respond(404)
-        else:
-            n = len(file_data)
+            file_data = self.files.get(self.path.rstrip("/"))  # try without unquoting
+            if file_data is None:
+                return self._respond(404)
 
+        n = len(file_data)
         status = 200
         content_range = "bytes 0-%i/%i" % (n - 1, n)
         if ("Range" in self.headers) and ("ignore_range" not in self.headers):

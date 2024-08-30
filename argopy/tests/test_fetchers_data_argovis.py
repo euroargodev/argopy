@@ -19,7 +19,7 @@ from collections import ChainMap
 
 log = logging.getLogger("argopy.tests.data.argovis")
 
-USE_MOCKED_SERVER = False
+USE_MOCKED_SERVER = True
 
 """
 List access points to be tested for each datasets: phy and ref.
@@ -38,11 +38,9 @@ ACCESS_POINTS = [
 PARALLEL_ACCESS_POINTS = [
     {"phy": [
         {"float": [1900468, 1900117, 1900386]},
-        {"region": [-60, -55, 40.0, 45.0, 0.0, 10.0]},
-        {"region": [-60, -55, 40.0, 45.0, 0.0, 10.0, "2007-08-01", "2007-09-01"]},
+        {"region": [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-06"]},
     ]},
 ]
-
 
 """
 List user modes to be tested
@@ -104,7 +102,7 @@ def assert_fetcher(mocked_argovisserver, this_fetcher, cacheable=False):
         if cacheable:
             assert is_list_of_strings(core.cachepath)
 
-        log.debug("In assert, this fetcher is in '%s' user mode" % this_fetcher._mode)
+        # log.debug("In assert, this fetcher is in '%s' user mode" % this_fetcher._mode)
         if this_fetcher._mode == 'standard':
             assert 'PRES_ADJUSTED' not in ds
         else:

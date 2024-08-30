@@ -4,97 +4,90 @@
         "ext": "js",
         "sha": "990959c7c9e8d7c4d2530fd09d6bca6fa67c225e677686373fd6d1a2b3229229",
         "type": "application/json",
-        "ts": "2024-08-22 13:00:49"
+        "ts": "2024-08-30 14:14:57"
     },
     {
         "uri": "https://argovis-api.colorado.edu/argo?platform=6902746&data=pressure,temperature,salinity",
         "ext": "js",
         "sha": "1ac285919474b8e5588c10417786fd71f6465604d7003b5c622d8213d9a7ad29",
         "type": "application/json",
-        "ts": "2024-08-22 13:00:49"
+        "ts": "2024-08-30 14:14:57"
+    },
+    {
+        "uri": "https://argovis-api.colorado.edu/argo?id=6902746_034&data=pressure,temperature,salinity",
+        "ext": "js",
+        "sha": "cae04f55309cb1fdcef6cfd3a245b0fc23236b93a0dd87ffa51b57d0d195ae2e",
+        "type": "application/json",
+        "ts": "2024-08-30 14:14:57"
     },
     {
         "uri": "https://argovis-api.colorado.edu/argo?id=6902746_001&data=pressure,temperature,salinity",
         "ext": "js",
         "sha": "4c7f0662242944ffadc6c04a87e9c8312b8070794da337421fb3c5e98ee74067",
         "type": "application/json",
-        "ts": "2024-08-22 13:00:49"
+        "ts": "2024-08-30 14:14:57"
     },
     {
         "uri": "https://argovis-api.colorado.edu/argo?id=6902746_012&data=pressure,temperature,salinity",
         "ext": "js",
         "sha": "d0f2403e46211a2969858266b1c1ecd594ed0d8771f313a0a21e56be6da17d6a",
         "type": "application/json",
-        "ts": "2024-08-22 13:00:49"
+        "ts": "2024-08-30 14:14:57"
     },
     {
         "uri": "https://argovis-api.colorado.edu/argo?data=pressure,temperature,salinity&box=%5B%5B-70,35.0%5D,%5B-65,40.0%5D%5D&startDate=2012-01-01T00:00:00Z&endDate=2012-03-01T00:00:00Z&presRange=0,10.0",
         "ext": "js",
         "sha": "9f048fe71f0edf2d136d419d278a72c0b5df167e945c36556c70802c82253264",
         "type": "application/json",
-        "ts": "2024-08-22 13:00:49"
+        "ts": "2024-08-30 14:14:57"
     },
     {
         "uri": "https://argovis-api.colorado.edu/argo?data=pressure,temperature,salinity&box=%5B%5B-70,35.0%5D,%5B-65,40.0%5D%5D&startDate=2012-01-01T00:00:00Z&endDate=2012-02-20T16:00:00Z&presRange=0,10.0",
         "ext": "js",
         "sha": "92c42c14ebd6b15156e067be012411ff281071a324ad6d82391c6c7765e8397f",
         "type": "application/json",
-        "ts": "2024-08-22 13:00:49"
+        "ts": "2024-08-30 14:14:57"
     },
     {
         "uri": "https://argovis-api.colorado.edu/argo?data=pressure,temperature,salinity&box=%5B%5B-70,35.0%5D,%5B-65,40.0%5D%5D&startDate=2012-02-20T16:00:00Z&endDate=2012-04-11T08:00:00Z&presRange=0,10.0",
         "ext": "js",
         "sha": "63ec40c2aac7113ca9ac4ca572447aafee0c11bce17c5aa5599857f086180677",
         "type": "application/json",
-        "ts": "2024-08-22 13:00:49"
+        "ts": "2024-08-30 14:14:57"
     },
     {
         "uri": "https://argovis-api.colorado.edu/argo?data=pressure,temperature,salinity&box=%5B%5B-70,35.0%5D,%5B-65,40.0%5D%5D&startDate=2012-04-11T08:00:00Z&endDate=2012-06-01T00:00:00Z&presRange=0,10.0",
         "ext": "js",
         "sha": "8ff0d7680d72c8cd969ecea6fcb628f481d5ffa98531e9e1f462a26831d7d0fd",
         "type": "application/json",
-        "ts": "2024-08-22 13:00:49"
+        "ts": "2024-08-30 14:14:57"
     },
     {
-        "uri": "https://argovis-api.colorado.edu/argo?platform=6902766&data=pressure,temperature,salinity",
+        "uri": "https://argovis-api.colorado.edu/argo?platform=1900468&data=pressure,temperature,salinity",
         "ext": "js",
-        "sha": "bdc8756bea8995ba984622d55f06aaa9cdef045132c1d9b46793a5c29c7f8f20",
+        "sha": "eb40b40373f9e49d50e1a9de3d2f53bf71444fd1f0ef9adb41270c05491a96d2",
         "type": "application/json",
-        "ts": "2024-08-22 13:00:49"
+        "ts": "2024-08-30 14:14:57"
     },
     {
-        "uri": "https://argovis-api.colorado.edu/argo?platform=6902772&data=pressure,temperature,salinity",
+        "uri": "https://argovis-api.colorado.edu/argo?platform=1900117&data=pressure,temperature,salinity",
         "ext": "js",
-        "sha": "fdb6765e566823b575b5947863910be07f2247c33bbe3a805d67c704ed08c5db",
+        "sha": "328cecb3db6cbdae1a48f3598045c4709bd1cc2b71b778310336928e6f411ccd",
         "type": "application/json",
-        "ts": "2024-08-22 13:00:49"
+        "ts": "2024-08-30 14:14:57"
     },
     {
-        "uri": "https://argovis-api.colorado.edu/argo?platform=6902914&data=pressure,temperature,salinity",
+        "uri": "https://argovis-api.colorado.edu/argo?platform=1900386&data=pressure,temperature,salinity",
         "ext": "js",
-        "sha": "848677f9c8c919ba361adc3a5c80182cfaa946953d32908536c25fb25fe7be51",
+        "sha": "d4d195e9e6adf1d81a188a454638606d515fb17540993ff403b805abbfecf9a2",
         "type": "application/json",
-        "ts": "2024-08-22 13:00:49"
-    },
-    {
-        "uri": "https://argovis-api.colorado.edu/argo?data=pressure,temperature,salinity&box=%5B%5B-60,40.0%5D,%5B-55,45.0%5D%5D&startDate=2024-07-22T00:00:00Z&endDate=2024-08-22T00:00:00Z&presRange=0.0,10.0",
-        "ext": "js",
-        "sha": "4a153eb95d73de4cdec5b293927b4df2b710dea5531a16f080f69722ee90a40e",
-        "type": "application/json",
-        "ts": "2024-08-22 13:00:49"
-    },
-    {
-        "uri": "https://argovis-api.colorado.edu/argo?data=pressure,temperature,salinity&box=%5B%5B-60,40.0%5D,%5B-55,45.0%5D%5D&startDate=2007-08-01T00:00:00Z&endDate=2007-09-01T00:00:00Z&presRange=0.0,10.0",
-        "ext": "js",
-        "sha": "cff4394138ba6b9e0287fee1a79220abd1c549363c506f9189a3dfc77e75496a",
-        "type": "application/json",
-        "ts": "2024-08-22 13:00:49"
+        "ts": "2024-08-30 14:14:57"
     },
     {
         "uri": "https://argovis-api.colorado.edu/ping",
         "ext": "json",
         "sha": "f0082673deeae58d99e57f1fd92f505fc966466aff4d22c6046d57ead6a52bfa",
         "type": "application/json",
-        "ts": "2024-08-22 13:00:49"
+        "ts": "2024-08-30 14:14:57"
     }
 ]
