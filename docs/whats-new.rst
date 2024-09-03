@@ -8,6 +8,18 @@ What's New
 |pypi dwn| |conda dwn|
 
 
+Coming up next
+--------------
+
+Internals
+^^^^^^^^^
+
+- Refactor Argovis CI tests to use mocked http server (:pr:`383`) by `G. Maze <http://www.github.com/gmaze>`_
+
+- Improve error and warning messages from mocked http server to address :issue:`381` (:pr:`382`) by `G. Maze <http://www.github.com/gmaze>`_
+
+
+
 v0.1.16 (27 Aug. 2024)
 ----------------------
 
