@@ -67,7 +67,7 @@ class ArgoAccessor:
         # Variables present in the initial dataset
         self._vars = list(xarray_obj.variables.keys())
         # Store the initial list of dimensions
-        self._dims = list(xarray_obj.dims.keys())
+        self._dims = list(xarray_obj.sizes.keys())
         self.encoding = xarray_obj.encoding
         self.attrs = xarray_obj.attrs
 
@@ -1196,7 +1196,7 @@ class ArgoAccessor:
 
         See Also
         --------
-        :class:`numpy.digitize`, :class:`argopy.utilities.groupby_remap`
+        :class:`numpy.digitize`, :class:`argopy.utils.groupby_remap`
         """
         this_ds = self._obj
 
