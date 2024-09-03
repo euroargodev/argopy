@@ -3,7 +3,8 @@
 Carbon emissions
 ================
 
-|CItests|
+|energyused_CItests| |energyused_CItests_upstream|
+
 
 Why
 ---
@@ -28,5 +29,8 @@ Results
 - `Energy used by upstream CI tests running daily and on each commit <https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=25052179>`_
 
 
-.. |CItests| image:: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=22344160
-   :target: //metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=22344160
+.. |energyused_CItests| image:: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=22344160
+   :target: https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=22344160
+
+.. |energyused_CItests_upstream| image:: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=25052179
+   :target: https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=25052179

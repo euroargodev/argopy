@@ -124,7 +124,6 @@ All other visualisation functions are in the :mod:`argopy.plot` submodule:
     bar_plot
     scatter_plot
     latlongrid
-    discrete_coloring
 
 
 Dataset.argo (xarray accessor)
@@ -252,10 +251,12 @@ File systems
 .. autosummary::
     :toctree: generated/
 
-    argopy.stores.filestore
-    argopy.stores.httpstore
-    argopy.stores.memorystore
-    argopy.stores.ftpstore
+    stores.filestore
+    stores.httpstore
+    stores.memorystore
+    stores.ftpstore
+    stores.httpstore_erddap_auth
+    stores.s3store
 
 Argo index store
 ----------------
@@ -264,8 +265,8 @@ Argo index store
     :toctree: generated/
 
     ArgoIndex
-    argopy.stores.indexstore_pa
-    argopy.stores.indexstore_pd
+    stores.indexstore_pa
+    stores.indexstore_pd
 
 Fetcher sources
 ---------------
@@ -276,9 +277,9 @@ ERDDAP
 .. autosummary::
     :toctree: generated/
 
-    argopy.data_fetchers.erddap_data.ErddapArgoDataFetcher
-    argopy.data_fetchers.erddap_data.Fetch_wmo
-    argopy.data_fetchers.erddap_data.Fetch_box
+    data_fetchers.erddap_data.ErddapArgoDataFetcher
+    data_fetchers.erddap_data.Fetch_wmo
+    data_fetchers.erddap_data.Fetch_box
 
 GDAC
 ^^^^
@@ -286,9 +287,9 @@ GDAC
 .. autosummary::
     :toctree: generated/
 
-    argopy.data_fetchers.gdacftp_data.FTPArgoDataFetcher
-    argopy.data_fetchers.gdacftp_data.Fetch_wmo
-    argopy.data_fetchers.gdacftp_data.Fetch_box
+    data_fetchers.gdacftp_data.FTPArgoDataFetcher
+    data_fetchers.gdacftp_data.Fetch_wmo
+    data_fetchers.gdacftp_data.Fetch_box
 
 
 Argovis
@@ -297,6 +298,6 @@ Argovis
 .. autosummary::
     :toctree: generated/
 
-    argopy.data_fetchers.argovis_data.ArgovisDataFetcher
-    argopy.data_fetchers.argovis_data.Fetch_wmo
-    argopy.data_fetchers.argovis_data.Fetch_box
+    data_fetchers.argovis_data.ArgovisDataFetcher
+    data_fetchers.argovis_data.Fetch_wmo
+    data_fetchers.argovis_data.Fetch_box

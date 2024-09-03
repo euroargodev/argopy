@@ -266,7 +266,7 @@ Virtual environment
 
 We created a short command line script to help manage argopy virtual environments. It's available in the "ci" folder of the repository.
 
-.. code-block:: bash
+.. code-block::
 
     $ ./ci/envs_manager -h
 
@@ -282,21 +282,25 @@ We created a short command line script to help manage argopy virtual environment
     i     Install an environment (start by removing it if it's already installed)
     k     Install an environment as a Jupyter kernel
 
+.. code-block::
+
     $ ./ci/envs_manager -l
 
     Available environments:
-     argopy-docs
-     argopy-py38-core-free
-     argopy-py37-all-free
-     argopy-py38-all-pinned
-     argopy-py37-core-free
-     argopy-py39-all-free
-     argopy-py39-core-free
-     argopy-py39-all-pinned
-     argopy-py38-all-free
-     argopy-py38-core-pinned
+         argopy-py310-all-free
+         argopy-docs-rtd
+         argopy-py310-all-pinned
+         argopy-py310-core-pinned
+         argopy-docs-dev
+         argopy-py39-all-free
+         argopy-py39-core-free
+         argopy-py39-all-pinned
+         argopy-py39-core-pinned
+         argopy-py310-core-free
 
 Then, you can simply install the default dev environment like this:
+
+.. code-block:: bash
 
     $ ./ci/envs_manager -i argopy-py38-all-pinned
     $ conda activate argopy-py38-all-pinned
@@ -395,6 +399,8 @@ file, e.g.:
     access_points = ['wmo' ,'box']
     exit_formats = ['xarray']
     dataset_ids = ['phy', 'bgc']  # First is default
+    api_server = "https://argovis-api.colorado.edu"
+    api_server_check = "https://argovis-api.colorado.edu/ping"
 
 Values depend on what the new access point can return and what you want to
 implement. A good start is with the ``wmo`` access point and the
