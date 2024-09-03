@@ -91,6 +91,13 @@
         "ts": "2024-08-30 14:14:57"
     },
     {
+        "uri": "https://dataselection.euro-argo.eu/api/trajectory/2901623",
+        "ext": "json",
+        "sha": "d410e6e4cd9b1997eeca96d6c9d63101af097403e0b2d3ed363bc9779af7bf58",
+        "type": "application/json",
+        "ts": "2024-09-02 06:34:44"
+    },
+    {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?latitude,longitude,position_qc,time,time_qc,direction,platform_number,cycle_number,config_mission_number,doxy,doxy_qc,doxy_adjusted,doxy_adjusted_qc,doxy_adjusted_error,pres,pres_qc,pres_adjusted,pres_adjusted_qc,pres_adjusted_error,temp,temp_qc,temp_adjusted,temp_adjusted_qc,temp_adjusted_error,psal,psal_qc,psal_adjusted,psal_adjusted_qc,psal_adjusted_error&longitude>=-55&longitude<=-47&latitude>=55&latitude<=57&pres>=0&pres<=10&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "b3ac5fc7ba0df1ecd8f5ceb4c9499176c4f051f38a3262c8e3dc11d81a00396b",

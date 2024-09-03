@@ -924,6 +924,7 @@ class Lister:
         WMO_list.append(6901929)  # Used by test_related
         WMO_list.append(5904797)  # Used by test_plot_dashboards.py
         WMO_list.append(6902755)  # Used by test_plot_dashboards.py
+        WMO_list.append(2901623)  # Used by test_fetchers_facade_data.py::Test_Facade::test_to_index_coriolis
 
         for uri in [
             "https://dataselection.euro-argo.eu/api/trajectory/%i" % wmo

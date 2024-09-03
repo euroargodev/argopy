@@ -1196,7 +1196,7 @@ class ArgoAccessor:
 
         See Also
         --------
-        :class:`numpy.digitize`, :class:`argopy.utilities.groupby_remap`
+        :class:`numpy.digitize`, :class:`argopy.utils.groupby_remap`
         """
         this_ds = self._obj
 

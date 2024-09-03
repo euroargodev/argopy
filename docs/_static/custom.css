@@ -1,0 +1,8 @@
+.bd-header-announcement a, .bd-header-announcement a:visited, .bd-header-announcement a:link, .bd-header-announcement a:active {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+.bd-header-announcement a:hover {
+    color: #D5FF80;
+    text-decoration: none;
+}
