@@ -8,6 +8,15 @@ What's New
 |pypi dwn| |conda dwn|
 
 
+Coming up next
+--------------
+
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **Support for AWS S3 data files**. This support is experimental and is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_.
+
+
 v0.1.16 (27 Aug. 2024)
 ----------------------
 
