@@ -52,7 +52,7 @@ You have several ways to specify which dataset you want to use:
     :okwarning:
 
     import argopy
-    argopy.set_options(dataset='bgc')
+    argopy.set_options(ds='bgc')
 
 -  **with an option in a temporary context**:
 
@@ -60,7 +60,7 @@ You have several ways to specify which dataset you want to use:
     :okwarning:
 
     import argopy
-    with argopy.set_options(dataset='phy'):
+    with argopy.set_options(ds='phy'):
         argopy.DataFetcher().profile(6904241, 12)
 
 -  **with the `ds` argument in the data fetcher**:
@@ -111,7 +111,7 @@ By default, the ``params`` argument is set to the keyword ``all`` to return *all
         :okwarning:
 
         import argopy
-        with argopy.set_options(dataset='bgc', src='erddap', mode='expert'):
+        with argopy.set_options(ds='bgc', src='erddap', mode='expert'):
             params = 'all'  # eg: 'DOXY' or ['DOXY', 'BBP700']
             f = argopy.DataFetcher(params=params)
             f = f.region([-75, -45, 20, 30, 0, 10, '2021-01', '2021-06'])
@@ -139,7 +139,7 @@ By default, the ``measured`` argument is set to ``None`` for unconstrained param
         :okwarning:
 
         import argopy
-        with argopy.set_options(dataset='bgc', src='erddap', mode='expert'):
+        with argopy.set_options(ds='bgc', src='erddap', mode='expert'):
             f = argopy.DataFetcher(params='all', measured=['DOXY', 'BBP700'])
             f = f.region([-75, -45, 20, 30, 0, 10, '2021-01', '2021-06'])
             f.load()

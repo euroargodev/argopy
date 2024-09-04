@@ -44,12 +44,16 @@ def test_opt_ifremer_erddap(mocked_httpserver):
 
 def test_opt_dataset():
     with pytest.raises(OptionValueError):
-        argopy.set_options(dataset="invalid_ds")
-    with argopy.set_options(dataset="phy"):
+        argopy.set_options(ds="invalid_ds")
+    with argopy.set_options(ds="phy"):
         assert OPTIONS["ds"] == "phy"
-    with argopy.set_options(dataset="bgc"):
+    with argopy.set_options(ds="bgc"):
         assert OPTIONS["ds"] == "bgc"
-    with argopy.set_options(dataset="ref"):
+    with argopy.set_options(ds="bgc-s"):
+        assert OPTIONS["ds"] == "bgc-s"
+    with argopy.set_options(ds="bgc-b"):
+        assert OPTIONS["ds"] == "bgc-b"
+    with argopy.set_options(ds="ref"):
         assert OPTIONS["ds"] == "ref"
 
 
