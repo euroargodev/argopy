@@ -11,8 +11,8 @@ import fsspec
 from fsspec.core import split_protocol
 from socket import gaierror
 from urllib.parse import urlparse
+from typing import List
 from .errors import OptionValueError, FtpPathError, ErddapPathError
-
 
 # Define a logger
 log = logging.getLogger("argopy.options")
@@ -140,6 +140,7 @@ class set_options:
     >>> argopy.set_options(src='gdac')
 
     """
+
     def __init__(self, **kwargs):
         self.old = {}
         for k, v in kwargs.items():
@@ -153,6 +154,13 @@ class set_options:
             if k in _VALIDATORS and not _VALIDATORS[k](v):
                 raise OptionValueError(f"option {k!r} given an invalid value: {v!r}")
             self.old[k] = OPTIONS[k]
+
+            if k == 'dataset':
+                raise_deprecated_opt(reason="The 'dataset' option name is deprecated, it will be replaced by 'ds' in "
+                                            "version >= 1.0.0",
+                                     version="v0.0.17",
+                                     ignore_caller='test_opt_dataset')
+
         self._apply_update(kwargs)
 
     def _apply_update(self, options_dict):
@@ -274,3 +282,49 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
 
     else:
         return False
+
+
+def raise_deprecated_opt(reason: str = None, version: str = None, ignore_caller: List = []):
+    """Option deprecation warning
+
+    This is a function which can be used to mark options
+    as deprecated. It will result in a warning being emitted
+    when the option is used.
+
+    Parameters
+    ----------
+    reason: str, optional, default=None
+        Text message to send with deprecation warning
+    version: str, optional, default=None
+    ignore_caller: List, optional, default=[]
+    """
+    import inspect
+    ignore_caller = [ignore_caller]
+
+    if isinstance(reason, str):
+
+        fmt = "\nCall to deprecated option: {reason}"
+        if version is not None:
+            fmt = "%s -- Deprecated since version {version}" % fmt
+
+        raise_deprec = True
+        stack = inspect.stack()
+        for s in stack:
+            if "<module>" in s.function:
+                break
+            elif s.function in ignore_caller:
+                raise_deprec = False
+
+        if raise_deprec:
+            warnings.simplefilter("always", DeprecationWarning)
+            warnings.warn(
+                fmt.format(reason=reason, version=version),
+                category=DeprecationWarning,
+                stacklevel=2,
+            )
+            warnings.simplefilter("default", DeprecationWarning)
+        else:
+            log.warning(fmt.format(reason=reason, version=version))
+
+    else:
+        raise TypeError(repr(type(reason)))
