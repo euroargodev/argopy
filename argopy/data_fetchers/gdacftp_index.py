@@ -79,7 +79,7 @@ class FTPArgoIndexFetcher(ABC):
         """
         self.timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.definition = "Ifremer GDAC ftp Argo index fetcher"
-        self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
+        self.dataset_id = OPTIONS["ds"] if ds == "" else ds
         self.server = OPTIONS['ftp'] if ftp == "" else ftp
         self.errors = errors
 

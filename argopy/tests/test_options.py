@@ -46,11 +46,11 @@ def test_opt_dataset():
     with pytest.raises(OptionValueError):
         argopy.set_options(dataset="invalid_ds")
     with argopy.set_options(dataset="phy"):
-        assert OPTIONS["dataset"] == "phy"
+        assert OPTIONS["ds"] == "phy"
     with argopy.set_options(dataset="bgc"):
-        assert OPTIONS["dataset"] == "bgc"
+        assert OPTIONS["ds"] == "bgc"
     with argopy.set_options(dataset="ref"):
-        assert OPTIONS["dataset"] == "ref"
+        assert OPTIONS["ds"] == "ref"
 
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Need to be debugged for Windows support")
