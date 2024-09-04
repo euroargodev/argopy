@@ -24,6 +24,7 @@ from .utils.compute import (
     groupby_remap,
 )
 from .utils.geo import toYearFraction
+from .utils.decorators import deprecated
 from .errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
 
