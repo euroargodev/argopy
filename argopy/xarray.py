@@ -576,6 +576,14 @@ class ArgoAccessor:
         ds.argo._type = "point"
         return ds
 
+    @deprecated(
+        "This method action and signature are deprecated and will break your code for versions >= 1.0.0. "
+        "In versions >= 1.0.0, this method action will be available in the new `transform_data_mode` method while " 
+        "this method will change its behavior to really filter measurements according to DATA_MODE "
+        "or <PARAM>_DATA_MODE values.",
+        ignore_caller="postprocessing",
+        version="0.1.17",
+    )
     def filter_data_mode(  # noqa: C901
         self, keep_error: bool = True, errors: str = "raise"
     ):
