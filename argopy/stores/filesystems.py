@@ -260,7 +260,7 @@ class argo_store_proto(ABC):
             )
 
     def _clear_cache_item(self, uri):
-        """Remove medadata and file for fsspec cache uri"""
+        """Remove metadata and file for fsspec cache uri"""
         fn = os.path.join(self.fs.storage[-1], "cache")
         self.fs.load_cache()  # Read set of stored blocks from file and populate self.cached_files
         cache = self.cached_files[-1]

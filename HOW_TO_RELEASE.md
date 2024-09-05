@@ -7,6 +7,13 @@
 
 # Prepare code for release
 
+## Deprecation policy
+- [ ] Check the code for the ``deprecated`` decorator and enforce the deprecation policy:
+  - [ ] If code is marked as deprecated since version = v0.X.Y : do nothing (first version with deprecation warning)
+  - [ ] If code is marked as deprecated since version = v0.X.Y-1 : do nothing (2nd and last version with deprecation warning)
+  - [ ] If code is marked as deprecated since version = v0.X.Y-2 : delete code (code will raise an error)
+- [ ] Update the documentation according to new deprecations
+
 ## Code clean-up
 - [ ] Run [codespell](https://github.com/codespell-project/codespell) from repo root and fix errors: ``codespell -q 2``
 - [ ] Run [flake8](https://github.com/PyCQA/flake8) from repo root and fix errors
@@ -25,11 +32,9 @@
 
 # Publish the release
 
-- [ ] ["Draft a new release"](https://github.com/euroargodev/argopy/releases/new) on GitHub.
-Choose a release tag v0.X.Y, fill in the release title and click on the `Auto-generate release notes` button.  
-This will trigger the [publish Github action](https://github.com/euroargodev/argopy/blob/master/.github/workflows/pythonpublish.yml) that will push the release on [Pypi](https://pypi.org/project/argopy/#history).
 - [ ] Last check the ``./setup.py`` file version of the release and that the [documentation is ready](https://readthedocs.org/projects/argopy/builds/)
-- [ ] Publish !
+- [ ] ["Create a new release"](https://github.com/euroargodev/argopy/releases/new) on GitHub.
+Choose a release tag v0.X.Y, fill in the release title and click on the `Auto-generate release notes` button. Once ready, publish the release. This will trigger the [publish Github action](https://github.com/euroargodev/argopy/blob/master/.github/workflows/pythonpublish.yml) that will push the release on [Pypi](https://pypi.org/project/argopy/#history).
 - [ ] Checkout on [Pypi](https://pypi.org/project/argopy/#history) and [Conda](https://github.com/conda-forge/argopy-feedstock/pulls) that the new release is distributed.
 
 [![Publish on pypi](https://github.com/euroargodev/argopy/actions/workflows/pythonpublish.yml/badge.svg)](https://github.com/euroargodev/argopy/actions/workflows/pythonpublish.yml)

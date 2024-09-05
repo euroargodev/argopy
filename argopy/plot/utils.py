@@ -22,11 +22,11 @@ STYLE = {"axes": "whitegrid", "palette": "Set1"}  # Default styles
 
 
 if has_mpl:
-    import matplotlib as mpl
-    import matplotlib.pyplot as plt
+    import matplotlib as mpl  # noqa: F401
+    import matplotlib.pyplot as plt  # noqa: F401
     import matplotlib.ticker as mticker
-    import matplotlib.cm as cm
-    import matplotlib.colors as mcolors
+    import matplotlib.cm as cm  # noqa: F401
+    import matplotlib.colors as mcolors  # noqa: F401
 
 
 if has_cartopy:

@@ -4,30 +4,28 @@ Fixture for a local HTTP server to be used by all http requests of unit tests
 For this to work, we need to catch all the possible URI sent from unit tests and return some data (eg json or netcdf)
 we downloaded once before tests.
 
-This requires to download data using fully functional http servers: this is done by the "test_data" script located
+This requires to download data using fully functional http servers: this is done by the "citests_httpdata_manager" located
 in "argopy/cli"
 
 Servers covered by this fixture:
-    "https://github.com/euroargodev/argopy-data/raw/master",
-    "https://erddap.ifremer.fr/erddap",
-    "https://data-argo.ifremer.fr",
-    "https://api.ifremer.fr",
-    "https://coastwatch.pfeg.noaa.gov/erddap",
-    "https://www.ocean-ops.org/api/1",
-    "https://dataselection.euro-argo.eu/api",
-    "https://vocab.nerc.ac.uk/collection",
-    "https://argovisbeta02.colorado.edu",
-    "https://dx.doi.org",
-    "https://archimer.ifremer.fr",
+            "https://github.com/euroargodev/argopy-data/raw/master",
+            "https://erddap.ifremer.fr/erddap",
+            "https://data-argo.ifremer.fr",
+            "https://api.ifremer.fr",
+            "https://coastwatch.pfeg.noaa.gov/erddap",
+            "https://www.ocean-ops.org/api/1",
+            "https://dataselection.euro-argo.eu/api",
+            "https://vocab.nerc.ac.uk/collection",
+            "https://argovis-api.colorado.edu",
+            "https://dx.doi.org",
+            "https://archimer.ifremer.fr",
 
 The HTTPTestHandler class below is taken from the fsspec tests suite at:
 https://github.com/fsspec/filesystem_spec/blob/55c5d71e657445cbfbdba15049d660a5c9639ff0/fsspec/tests/conftest.py
 
 """
 import contextlib
-import json
-import os
-import sys
+from pathlib import Path
 import threading
 from collections import ChainMap
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -36,60 +34,87 @@ import logging
 from urllib.parse import unquote
 import socket
 import json
+import importlib
 
 
 log = logging.getLogger("argopy.tests.mocked_http")
-LOG_SERVER_CONTENT = False  # Also log the list of files/uris available from the mocked server
+LOG_SERVER_CONTENT = (
+    False  # Should we list all files/uris available from the mocked server in the log ?
+)
 
 requests = pytest.importorskip("requests")
 port = 9898  # Select the port to run the local server on
 mocked_server_address = "http://127.0.0.1:%i" % port
 
-start_with = lambda f, x: f[0:len(x)] == x if len(x) <= len(f) else False  # noqa: E731
+start_with = (
+    lambda f, x: f[0 : len(x)] == x if len(x) <= len(f) else False
+)  # noqa: E731
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
-from argopy.data_fetchers.erddap_data import api_server as erddap_api_server
+"""
+Load test data and create a dictionary mapping of URL requests as keys, and expected responses as values
 
-# Dictionary mapping of URL requests as keys, and expected responses as values:
-# (this will be filling the mocked http server content)
-# The real address must be made relative
+This will be filling the mocked http server content.
+The uri requested will be made relative, because the server name will be replaced by the mocked server address.
+"""
 MOCKED_REQUESTS = {}
-DATA_FOLDER = os.path.dirname(os.path.realpath(__file__)).replace("helpers", "test_data")
-DB_FILE = os.path.join(DATA_FOLDER, "httpmocked_uri_index.json")
-if os.path.exists(DB_FILE):
+TESTDATA_FOLDER = (
+    Path(importlib.util.find_spec("argopy.tests").submodule_search_locations[0])
+    .resolve()
+    .joinpath("test_data")
+)
+if not TESTDATA_FOLDER.exists():
+    raise RuntimeError(
+        "Can't find tests data folder at: %s\n Note that test data are not included in the pypi distribution. You should fork the repo to get test data."
+        % TESTDATA_FOLDER
+    )
+
+DB_FILE = TESTDATA_FOLDER.joinpath("httpmocked_uri_index.json")
+URI = []
+
+if DB_FILE.exists():
     with open(DB_FILE, "r") as f:
         URI = json.load(f)
     for resource in URI:
-        test_data_file = os.path.join(DATA_FOLDER, "%s.%s" % (resource['sha'], resource['ext']))
-        with open(test_data_file, mode='rb') as file:
+        test_data_file = TESTDATA_FOLDER.joinpath(
+            "%s.%s" % (resource["sha"], resource["ext"])
+        )
+        with open(test_data_file, mode="rb") as file:
             data = file.read()
 
-        # Remove all specific api/server, that will be served by the mocked http server:
+        # Remove all specific api/server names from absolute URIs
+        # Because these are arguments passed to methods that will use mocked_server_address instead
+        # (See for instance the argument 'server' in `argopy.data_fetchers.erddap_data.ErddapArgoDataFetcher`)
         patterns = [
-                "https://github.com/euroargodev/argopy-data/raw/master",
-                "https://erddap.ifremer.fr/erddap",
-                "https://data-argo.ifremer.fr",
-                "https://api.ifremer.fr",
-                "https://coastwatch.pfeg.noaa.gov/erddap",
-                "https://www.ocean-ops.org/api/1",
-                "https://dataselection.euro-argo.eu/api",
-                "https://vocab.nerc.ac.uk/collection",
-                "https://argovisbeta02.colorado.edu",
-                "https://dx.doi.org",
-                "https://archimer.ifremer.fr",
+            "https://github.com/euroargodev/argopy-data/raw/master",
+            "https://erddap.ifremer.fr/erddap",
+            "https://data-argo.ifremer.fr",
+            "https://api.ifremer.fr",
+            "https://coastwatch.pfeg.noaa.gov/erddap",
+            "https://www.ocean-ops.org/api/1",
+            "https://dataselection.euro-argo.eu/api",
+            "https://vocab.nerc.ac.uk/collection",
+            "https://argovis-api.colorado.edu",
+            # "https://argovisbeta02.colorado.edu",
+            "https://dx.doi.org",
+            "https://archimer.ifremer.fr",
         ]
         for pattern in patterns:
-            if start_with(resource['uri'], pattern):
-                MOCKED_REQUESTS[resource['uri'].replace(pattern, "")] = data
+            if start_with(resource["uri"], pattern):
+                MOCKED_REQUESTS[resource["uri"].replace(pattern, "")] = data
 
 else:
-    log.debug("Loading this sub-module without DB_FILE ! %s" % DB_FILE)
+    raise RuntimeError(
+        "Can't find test data index file at: %s.\n Note that test data are not included in the pypi distribution. You should fork the repo to get test data."
+        % DB_FILE
+    )
 
 
 def get_html_landing_page():
     """Return a webpage with a listing of all available files with a href links"""
     html = ["<html><head></head><body>\n"]
-    html.append("<h1>Mocked HTTP server is up and running, serving %i files</h1>" % len(URI))
+    html.append(
+        "<h1>Mocked HTTP server is up and running, serving %i files</h1>" % len(URI)
+    )
     html.append("<ul>")
     for key, value in MOCKED_REQUESTS.items():
         html.append("<li><a href='%s'>%s</a></li>" % (key, key))
@@ -101,10 +126,6 @@ def get_html_landing_page():
 class HTTPTestHandler(BaseHTTPRequestHandler):
     static_files = {
         "": get_html_landing_page(),
-        # "": b"Mocked HTTP server is up and running, serving %i files" % len(URI),  # This is mandatory for the server to respond without content
-        # "/index/otherfile": data,
-        # "/index": index,
-        # "/data/20020401": listing,
     }
     dynamic_files = {}
 
@@ -148,27 +169,28 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
         if "give_path" in self.headers:
             return self._respond(200, data=json.dumps({"path": self.path}).encode())
         if file_data is None:
-            # log.debug("file data empty, returning 404")
-            return self._respond(404)
+            file_data = self.files.get(self.path.rstrip("/"))  # try without unquoting
+            if file_data is None:
+                return self._respond(404)
 
+        n = len(file_data)
         status = 200
-        content_range = "bytes 0-%i/%i" % (len(file_data) - 1, len(file_data))
+        content_range = "bytes 0-%i/%i" % (n - 1, n)
         if ("Range" in self.headers) and ("ignore_range" not in self.headers):
             ran = self.headers["Range"]
             b, ran = ran.split("=")
             start, end = ran.split("-")
             if start:
-                content_range = f"bytes {start}-{end}/{len(file_data)}"
-                file_data = file_data[int(start): (int(end) + 1) if end else None]
+                content_range = f"bytes {start}-{end}/{n}"
+                file_data = file_data[int(start) : (int(end) + 1) if end else None]
             else:
                 # suffix only
-                l = len(file_data)
-                content_range = f"bytes {l - int(end)}-{l - 1}/{l}"
-                file_data = file_data[-int(end):]
+                content_range = f"bytes {n - int(end)}-{n - 1}/{n}"
+                file_data = file_data[-int(end) :]
             if "use_206" in self.headers:
                 status = 206
         if "give_length" in self.headers:
-            response_headers = {"Content-Length": len(file_data)}
+            response_headers = {"Content-Length": n}
             self._respond(status, response_headers, file_data)
         elif "give_range" in self.headers:
             self._respond(status, {"Content-Range": content_range}, file_data)
@@ -199,8 +221,8 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
             self.rfile.readline()
 
     def do_HEAD(self):
-        self.headers.add_header('head_ok', '')
-        self.headers.add_header('give_length', '')
+        self.headers.add_header("head_ok", "")
+        self.headers.add_header("give_length", "")
 
         if "head_not_auth" in self.headers:
             return self._respond(
@@ -213,16 +235,18 @@ class HTTPTestHandler(BaseHTTPRequestHandler):
         file_data = self.files.get(file_path)
         if file_data is None:
             return self._respond(404)
+        else:
+            n = len(file_data)
 
         if ("give_length" in self.headers) or ("head_give_length" in self.headers):
-            response_headers = {"Content-Length": len(file_data)}
+            response_headers = {"Content-Length": n}
             if "zero_length" in self.headers:
                 response_headers["Content-Length"] = 0
 
             self._respond(200, response_headers)
         elif "give_range" in self.headers:
             self._respond(
-                200, {"Content-Range": "0-%i/%i" % (len(file_data) - 1, len(file_data))}
+                200, {"Content-Range": "0-%i/%i" % (n - 1, n)}
             )
         elif "give_etag" in self.headers:
             self._respond(200, {"ETag": "xxx"})
@@ -238,8 +262,10 @@ def serve_mocked_httpserver():
     th.daemon = True
     th.start()
     try:
-        log.info("Mocked HTTP server up and ready at %s, serving %i URI. (id=%s)" %
-                 (mocked_server_address, len(HTTPTestHandler.files), id(httpd)))
+        log.info(
+            "Mocked HTTP server up and ready at %s, serving %i URI. (id=%s)"
+            % (mocked_server_address, len(HTTPTestHandler.files), id(httpd))
+        )
         if LOG_SERVER_CONTENT:
             # Use these lines to log test data name and content
             for f in HTTPTestHandler.files.keys():

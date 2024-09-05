@@ -88,7 +88,6 @@ class ArgoAccessor:
     - Preprocess data for OWC salinity calibration:
 
     >>> ds.argo.create_float_source("output_folder")
-
     """
 
     def __init__(self, xarray_obj):
@@ -280,8 +279,8 @@ class ArgoAccessor:
         """
 
         def encode_direction(x):
-            y = np.where(x == 'A', 1, x.astype(object))
-            y = np.where(y == 'D', -1, y.astype(object))
+            y = np.where(x == "A", 1, x.astype(object))
+            y = np.where(y == "D", -1, y.astype(object))
             try:
                 return y.astype(int)
             except ValueError:
@@ -533,7 +532,7 @@ class ArgoAccessor:
                     y = new_ds[vname].values
                     x = prof[vname].values
                     try:
-                        y[i_prof, 0: len(x)] = x
+                        y[i_prof, 0 : len(x)] = x
                     except Exception:
                         print(vname, "input", x.shape, "output", y[i_prof, :].shape)
                         raise
@@ -639,8 +638,8 @@ class ArgoAccessor:
         return split_data_mode(ds, **kw)
 
     def transform_data_mode(
-        self, params: Union[str, List[str]] = "all", errors: str = "raise"
-    ) -> xr.Dataset:
+            self, params: Union[str, List[str]] = "all", errors: str = "raise"
+        ) -> xr.Dataset:
         """Merge <PARAM> and <PARAM>_ADJUSTED variables according to <PARAM>_DATA_MODE
 
         Merging follows:
@@ -916,7 +915,7 @@ class ArgoAccessor:
             )
 
         if len(QC_fields) == 0:
-            this.argo.add_history(
+            this.argo._add_history(
                 "Variables selected according to QC (but found no QC variables)"
             )
             return this

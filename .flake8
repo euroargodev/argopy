@@ -10,7 +10,8 @@ ignore =
     E501,
     # line break before binary operator
     W503
-
+    # whitespace before ':' (https://black.readthedocs.io/en/stable/guides/using_black_with_other_tools.html#e203)
+    E203
 exclude =
     # No need to traverse our git directory
     .git,

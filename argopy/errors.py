@@ -131,13 +131,13 @@ class APIServerError(ValueError):
 
 
 class ErddapServerError(APIServerError):
-    """Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery."""
+    """Raise this when argopy is disrupted by an error due to the Erddap server, not argopy machinery."""
 
     pass
 
 
 class ArgovisServerError(APIServerError):
-    """Raise this when argopy is disrupted by an error due to the Erddap, not argopy machinery."""
+    """Raise this when argopy is disrupted by an error due to the Argovis server, not argopy machinery."""
 
     pass
 

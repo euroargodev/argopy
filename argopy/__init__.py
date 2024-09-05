@@ -29,7 +29,6 @@ from .xarray import ArgoAccessor  # noqa: E402
 
 # Other Import
 # from . import utils  # noqa: E402
-from . import utilities  # noqa: E402  # being deprecated until 0.1.15, then remove
 from . import stores  # noqa: E402
 from . import errors  # noqa: E402
 from . import plot  # noqa: E402
@@ -73,7 +72,6 @@ __all__ = (
     "ArgoDOI",  # Class
 
     # Submodules:
-    "utilities",  # being deprecated until 0.1.15, then remove
     # "utils",
     "errors",
     "plot",

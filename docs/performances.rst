@@ -209,7 +209,7 @@ specifies the number of chunks in each of the *direction*:
     loader_par = DataFetcher(src='erddap', 
                                  parallel=True, 
                                  chunks={'lon': 5}).region(box)
-    # Check number of chunks:
+    # Check the number of chunks:
     len(loader_par.uri)
 
 This creates 195 chunks, and 5 along the longitudinale direction, as
@@ -227,11 +227,11 @@ other directions to ``1``:
     :okwarning:
 
     # Init a parallel fetcher:
-    loader_par = DataFetcher(src='erddap', 
-                                 parallel=True, 
-                                 chunks={'lon': 5, 'lat':1, 'dpt':1, 'time':1}).region(box)
+    loader_par = DataFetcher(src='erddap',
+                             parallel=True,
+                             chunks={'lon': 5, 'lat':1, 'dpt':1, 'time':1}).region(box)
     
-    # Check number of chunks:
+    # Check the number of chunks:
     len(loader_par.uri)
 
 We now have 5 chunks along longitude, check out the URLs parameter in
@@ -372,42 +372,6 @@ equivalent:
    DataFetcher(parallel=True, parallel_method='thread')
    DataFetcher(parallel='thread')
 
-Comparison of performances
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Note that to compare performances with or without the parallel option,
-we need to make sure that data are not cached on the server side. To do
-this, we use a very small random perturbation on the box definition,
-here on the maximum latitude. This ensures that nearly the same amount of data
-will be requested but not cached by the server.
-
-.. ipython:: python
-    :okwarning:
-
-    def this_box():
-        return [-60, 0, 
-               20.0, 60.0 + np.random.randint(0,100,1)[0]/1000, 
-               0.0, 500.0, 
-               "2007", "2009"]
-
-.. ipython:: python
-    :okwarning:
-
-    %%time
-    b1 = this_box()
-    f1 = DataFetcher(src='argovis', parallel=False).region(b1)
-    ds1 = f1.to_xarray()
-
-.. ipython:: python
-    :okwarning:
-
-    %%time
-    b2 = this_box()
-    f2 = DataFetcher(src='argovis', parallel=True).region(b2)
-    ds2 = f2.to_xarray()
-
-**This simple comparison hopefully shows that parallel request is significantly
-faster than the standard one.**
 
 Warnings
 ~~~~~~~~
