@@ -638,23 +638,24 @@ class ArgoAccessor:
         return split_data_mode(ds, **kw)
 
     def transform_data_mode(
-            self, params: Union[str, List[str]] = "all", errors: str = "raise"
-        ) -> xr.Dataset:
-        """Merge <PARAM> and <PARAM>_ADJUSTED variables according to <PARAM>_DATA_MODE
+        self, params: Union[str, List[str]] = "all", errors: str = "raise"
+    ) -> xr.Dataset:
+        """Merge <PARAM> and <PARAM>_ADJUSTED variables according to DATA_MODE or <PARAM>_DATA_MODE
 
-        Merging follows:
-        - For points with data mode ``R``: keep <PARAM> (eg: 'DOXY')
-        - For points with data mode ``D`` and ``A``: keep <PARAM>_ADJUSTED (eg: 'DOXY_ADJUSTED')
+        Merging is done as follows:
+
+        - For measurements with data mode ``R``: keep <PARAM> (eg: 'DOXY')
+        - For measurements with data mode ``D`` or ``A``: keep <PARAM>_ADJUSTED (eg: 'DOXY_ADJUSTED')
 
         Since ADJUSTED variables are not required anymore after the transformation, all ADJUSTED variables
-        are dropped in order to avoid confusion with regard to variable content.
+        are dropped from the dataset in order to avoid confusion with regard to variable content.
         Variable DATA_MODE or <PARAM>_DATA_MODE are preserved for the record.
 
         Parameters
         ----------
         params: str, List[str], optional, default='all'
             Name or list of names of the parameter to merge.
-            Use the default keyword ``all`` to merge all available variables in the :class:`xarray.Dataset`.
+            Use the default keyword ``all`` to merge all possible parameters in the :class:`xarray.Dataset`.
         errors: str, optional, default='raise'
             If ``raise``, raises a :class:`argopy.errors.InvalidDatasetStructure` error if any of the expected variables is
             not found.
@@ -722,26 +723,26 @@ class ArgoAccessor:
         mask: bool = False,
         errors: str = "raise",
     ):
-        """Filter measurements according to variables data mode
+        """Filter measurements according to parameters data mode
 
-        Filter the dataset to keep points where all or some of the variables are in any of the data mode specified.
+        Filter the dataset to keep points where all or some of the parameters are in any of the data mode specified.
 
         This method can return the filtered dataset or the filter mask.
 
         Parameters
         ----------
         dm: str, List[str], optional, default=[``R``, ``A``, ``D``]
-            List of DATA_MODE values (string) to keep
+            List of data mode values (string) to keep
         params: str, List[str], optional, default='all'
-            List of parameters to apply the filter to. By default, we use all parameters for which a DATA_MODE
+            List of parameters to apply the filter to. By default, we use all parameters for which a data mode
             can be found
         logical: str, optional, default='and'
-            Reduce variable filters with a logical ``and`` or ``or``. With ``and`` the filter shall be True
-            if all variables match the DATA_MODE requested, while with ``or`` it will be True for at least one variable.
+            Reduce parameter filters with a logical ``and`` or ``or``. With ``and`` the filter shall be True
+            if all parameters match the data mode requested, while with ``or`` it will be True for at least one parameter.
         mask: bool, optional, default=False
             Determine if we should return the filter mask or the filtered dataset
         errors: str, optional, default='raise'
-            If ``raise``, raises a InvalidDatasetStructure error if any of the expected variables is
+            If ``raise``, raises a :class:`argopy.errors.InvalidDatasetStructure` error if any of the expected variables is
             not found.
             If ``ignore``, fails silently and return unmodified dataset.
 
@@ -844,7 +845,6 @@ class ArgoAccessor:
                 "No data mode found for [%s], no filtering applied" % (",".join(params))
             )
             return this
-
 
     def filter_qc(  # noqa: C901
         self, QC_list=[1, 2], QC_fields="all", drop=True, mode="all", mask=False
@@ -1022,10 +1022,10 @@ class ArgoAccessor:
             # All ADJUSTED variables are removed (not required anymore, avoid confusion with variable content):
             this = this.drop_vars([v for v in this.data_vars if "ADJUSTED" in v])
         else:
-            if 'PRES_ADJUSTED' not in this:
+            if "PRES_ADJUSTED" not in this:
                 raise InvalidDatasetStructure(
                     "%s_ADJUSTED not in this dataset. Tip: fetch data in 'expert' mode"
-                    % 'PRES'
+                    % "PRES"
                 )
 
             # In default mode, we just need to do something if PRES_ADJUSTED is different from PRES, meaning
@@ -1065,12 +1065,10 @@ class ArgoAccessor:
         """Filter dataset for research user mode
 
         This filter depends on the dataset:
-        - For the 'phy' dataset (core/deep missions): select delayed mode data with QC=1 and with pressure errors smaller than 20db
 
-        Warnings
-        --------
-        This accessor filter only apply to core/deep parameters of the 'phy' dataset.
-        Filtering in research user-mode for the BGC parameters is implemented in the fetcher facade.
+        - For the ``phy`` dataset (core/deep missions): select delayed mode data with QC=1 and with pressure errors smaller than 20db
+        - For the ``bgc`` dataset: do nothing, filtering for the ``research`` user mode is implemented in the fetcher facade
+
 
         Returns
         -------
@@ -1089,7 +1087,9 @@ class ArgoAccessor:
         this = this.argo.transform_data_mode(params=list_core_parameters())
         this = this.argo.filter_data_mode(params=list_core_parameters(), dm="D")
 
-        this = this.argo.filter_qc(QC_list=1, QC_fields=["%s_QC" % p for p in list_core_parameters()])
+        this = this.argo.filter_qc(
+            QC_list=1, QC_fields=["%s_QC" % p for p in list_core_parameters()]
+        )
 
         if (
             "PRES_ERROR" in this.data_vars

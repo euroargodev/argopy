@@ -315,3 +315,5 @@
 
     argopy.xarray.ArgoEngine
 
+    argopy.errors.InvalidDatasetStructure
+
