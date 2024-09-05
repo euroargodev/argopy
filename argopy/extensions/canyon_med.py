@@ -351,7 +351,7 @@ class CanyonMED(ArgoAccessorExtension):
             self._obj['%s_ERROR' % param].values = std_nn.astype(np.float32).squeeze()
 
         # Return xr.Dataset with predicted variables:
-        if self.argo_accessor:
-            self.argo_accessor.add_history("Added CANYON-MED predictions")
+        if self._argo:
+            self._argo.add_history("Added CANYON-MED predictions")
 
         return self._obj

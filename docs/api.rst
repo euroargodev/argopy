@@ -140,7 +140,7 @@ This accessor extends :py:class:`xarray.Dataset`. Proper use of this accessor sh
 .. code-block:: python
 
    >>> import xarray as xr         # first import xarray
-   >>> import argopy               # import argopy (the dataset 'argo' accessor is registered)
+   >>> import argopy               # import argopy (the dataset 'argo' accessor is then registered)
    >>> from argopy import DataFetcher
    >>> ds = DataFetcher().float([6902766, 6902772, 6902914, 6902746]).load().data
    >>> ds.argo
@@ -183,6 +183,12 @@ Extensions
     Dataset.argo.teos10
     Dataset.argo.create_float_source
     Dataset.argo.canyon_med
+
+.. currentmodule:: argopy
+
+You can register your own extension inheriting from :class:`argopy.extensions.ArgoAccessorExtension` and decorated with :class:`argopy.extensions.register_argo_accessor`
+
+.. currentmodule:: xarray
 
 Misc
 ----

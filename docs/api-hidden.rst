@@ -315,5 +315,9 @@
 
     argopy.xarray.ArgoEngine
 
+    argopy.extensions.register_argo_accessor
+    argopy.extensions.ArgoAccessorExtension
+    argopy.extensions.CanyonMED
+
     argopy.errors.InvalidDatasetStructure
 

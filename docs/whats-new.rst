@@ -46,7 +46,32 @@ Features and front-end API
 
 .. currentmodule:: xarray
 
-- A xarray argo accessor plugin mechanism with a new decorator :class:`argopy.register_argodataset_accessor`. It allows to register a class as a property to the :class:`Dataset.argo` accessor. (:pr:`364`) by `G. Maze <http://www.github.com/gmaze>`_.
+- A xarray argo accessor extensions mechanism with a new decorator :class:`argopy.extensions.register_argo_accessor`. It allows to register a class as a property to the :class:`Dataset.argo` accessor. (:pr:`364`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    @register_argo_accessor('floats')
+    class WorkWithWMO(ArgoAccessorExtension):
+        """Example of a new Argo dataset feature"""
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self._uid = argopy.utils.to_list(np.unique(self._obj["PLATFORM_NUMBER"].values))
+
+        @property
+        def wmo(self):
+            return self._uid
+
+        @property
+        def N(self):
+             return len(self.wmo)
+
+This makes syntax like this possible:
+
+.. code-block:: python
+
+    ds.argo.floats.N
+    ds.argo.floats.wmo
 
 .. currentmodule:: argopy
 

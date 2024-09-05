@@ -88,32 +88,59 @@ def register_argo_accessor(name):
 
     Examples
     --------
-    In your library code:
+    Somewhere in your code, you can register a class inheriting from :class:`argopy.extensions.ArgoAccessorExtension` with this decorator::
+        
+        @register_argo_accessor('floats')
+        class WorkWithWMO(ArgoAccessorExtension):
+    
+             def __init__(self, *args, **kwargs):
+                 super().__init__(*args, **kwargs)
+                 self._uid = argopy.utils.to_list(np.unique(self._obj["PLATFORM_NUMBER"].values))
 
-    >>> @xr.register_argo_accessor("canyon_med")
-    ... class CanyonMED:
-    ...     def __init__(self, ArgoAccessor_obj):
-    ...         self.xarray_obj = ArgoAccessor_obj._obj
-    ...
-    ...     def predict(self):
-    ...         # Make NN predictions
-    ...         pass
-    ...
+             @property
+             def wmo(self):
+                 return self._uid
 
-    Back in an interactive IPython session:
+             @property
+             def N(self):
+                  return len(self.wmo)
 
-    >>> ds.argo.canyon_med.predict()
+    It will make it available to an Argo dataset, like this::
+
+        ds.argo.floats.N
+        ds.argo.floats.wmo
+
+    See also
+    --------
+    :class:`argopy.extensions.ArgoAccessorExtension`
 
     """
     return _register_accessor(name, ArgoAccessor)
 
 
 class ArgoAccessorExtension:
-    """All Argo accessors extensions should inherit from this class"""
+    """Prototype for Argo accessor extensions
+
+    All extensions should inherit from this class
+
+    This prototype makes available:
+
+    - the parent :class:`xr.Dataset` instance as `self._obj`
+    - the argo accessor instance as `self._argo`
+
+    See also
+    --------
+    :class:`argopy.extensions.register_argo_accessor`
+
+    Examples
+    --------
+    :class:`argopy.extensions.CanyonMED`
+
+    """
     def __init__(self, obj):
         if isinstance(obj, xr.Dataset):
             self._obj = obj  # Xarray object
-            self.argo_accessor = None
+            self._argo = None
         else:
             self._obj = obj._obj  # Xarray object from ArgoAccessor
-            self.argo_accessor = obj
+            self._argo = obj
