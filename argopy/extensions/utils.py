@@ -2,7 +2,8 @@
 
 Disclosure
 ----------
-The following methods `AccessorRegistrationWarning`, `_CachedAccessor` and `_register_accessor` are sourced from https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py
+The following methods `AccessorRegistrationWarning`, `_CachedAccessor` and `_register_accessor` are
+sourced from https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py
 
 The class `register_argo_accessor` is an adaption of the `register_dataset_accessor` from xarray.
 
@@ -17,7 +18,8 @@ class AccessorRegistrationWarning(Warning):
 
     Disclosure
     ----------
-    This class was copied from [xarray](https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py) under Apache License 2.0
+    This class was copied from [xarray](https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py)
+    under Apache License 2.0
     """
 
 
@@ -26,7 +28,8 @@ class _CachedAccessor:
 
     Disclosure
     ----------
-    This class was copied from [xarray](https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py) under Apache License 2.0
+    This class was copied from [xarray](https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py)
+    under Apache License 2.0
     """
 
     def __init__(self, name, accessor):
@@ -78,7 +81,7 @@ def _register_accessor(name, cls):
 
 
 def register_argo_accessor(name):
-    """Register a custom property on xarray.Dataset.argo objects.
+    """Register a custom property on :class:`xarray.Dataset.argo` objects.
 
     Parameters
     ----------
@@ -88,11 +91,12 @@ def register_argo_accessor(name):
 
     Examples
     --------
-    Somewhere in your code, you can register a class inheriting from :class:`argopy.extensions.ArgoAccessorExtension` with this decorator::
-        
+    Somewhere in your code, you can register a class inheriting from :class:`argopy.extensions.ArgoAccessorExtension`
+    with this decorator::
+
         @register_argo_accessor('floats')
         class WorkWithWMO(ArgoAccessorExtension):
-    
+
              def __init__(self, *args, **kwargs):
                  super().__init__(*args, **kwargs)
                  self._uid = argopy.utils.to_list(np.unique(self._obj["PLATFORM_NUMBER"].values))
@@ -125,18 +129,14 @@ class ArgoAccessorExtension:
 
     This prototype makes available:
 
-    - the parent :class:`xr.Dataset` instance as `self._obj`
-    - the argo accessor instance as `self._argo`
+    - the parent :class:`xarray.Dataset` instance as ``self._obj``
+    - the argo accessor instance as ``self._argo``
 
     See also
     --------
     :class:`argopy.extensions.register_argo_accessor`
-
-    Examples
-    --------
-    :class:`argopy.extensions.CanyonMED`
-
     """
+
     def __init__(self, obj):
         if isinstance(obj, xr.Dataset):
             self._obj = obj  # Xarray object
