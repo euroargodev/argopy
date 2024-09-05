@@ -647,7 +647,7 @@ class ArgoAccessor:
         - For measurements with data mode ``R``: keep <PARAM> (eg: 'DOXY')
         - For measurements with data mode ``D`` or ``A``: keep <PARAM>_ADJUSTED (eg: 'DOXY_ADJUSTED')
 
-        Since ADJUSTED variables are not required anymore after the transformation, all ADJUSTED variables
+        Since adjusted variables are not required anymore after the transformation, all <PARAM>_ADJUSTED variables
         are dropped from the dataset in order to avoid confusion with regard to variable content.
         Variable DATA_MODE or <PARAM>_DATA_MODE are preserved for the record.
 
@@ -678,22 +678,24 @@ class ArgoAccessor:
                 "Method only available to a collection of points"
             )
         else:
-            ds = self._obj
+            this = self._obj
 
         # Determine the list of variables to transform:
         params = to_list(params)
         if params[0] == "all":
-            if "DATA_MODE" in ds.data_vars:
-                params = ["PRES", "TEMP", "PSAL"]
+            if "DATA_MODE" in this.data_vars:
+                params = ["PRES", "TEMP"]
+                if "PSAL" in this.data_vars:
+                    params.append("PSAL")
             else:
                 params = [
                     p.replace("_DATA_MODE", "")
-                    for p in ds.data_vars
+                    for p in this.data_vars
                     if "_DATA_MODE" in p
                 ]
         else:
             for p in params:
-                if p not in ds.data_vars:
+                if p not in this.data_vars:
                     if errors == "raise":
                         raise InvalidDatasetStructure(
                             "Parameter '%s' not found in this dataset" % p
@@ -704,16 +706,16 @@ class ArgoAccessor:
 
         # Transform data:
         for param in params:
-            ds = merge_param_with_param_adjusted(ds, param, errors=errors)
+            this = merge_param_with_param_adjusted(this, param, errors=errors)
 
         # Finalise:
-        ds = ds[np.sort(ds.data_vars)]
-        ds.argo.add_history(
+        this = this[np.sort(this.data_vars)]
+        this.argo.add_history(
             "[%s] real-time and adjusted/delayed variables merged according to their data mode"
             % (",".join(params))
         )
 
-        return ds
+        return this
 
     def filter_data_mode(
         self,  # noqa: C901
@@ -779,7 +781,9 @@ class ArgoAccessor:
         params = to_list(params)
         if params[0] == "all":
             if "DATA_MODE" in this.data_vars:
-                params = ["PRES", "TEMP", "PSAL"]
+                params = ["PRES", "TEMP"]
+                if "PSAL" in this.data_vars:
+                    params.append("PSAL")
             else:
                 params = [
                     p.replace("_DATA_MODE", "")
@@ -1082,13 +1086,17 @@ class ArgoAccessor:
             to_profile = True
             this = this.argo.profile2point()
 
+        core_params = list_core_parameters()
+        if "PSAL" not in this.data_vars:
+            core_params.remove("PSAL")
+
         # Apply transforms and filters:
         this = this.argo.filter_qc(QC_list=1, QC_fields=["POSITION_QC", "TIME_QC"])
-        this = this.argo.transform_data_mode(params=list_core_parameters())
-        this = this.argo.filter_data_mode(params=list_core_parameters(), dm="D")
+        this = this.argo.transform_data_mode(params=core_params)
+        this = this.argo.filter_data_mode(params=core_params, dm="D")
 
         this = this.argo.filter_qc(
-            QC_list=1, QC_fields=["%s_QC" % p for p in list_core_parameters()]
+            QC_list=1, QC_fields=["%s_QC" % p for p in core_params]
         )
 
         if (
@@ -1097,7 +1105,7 @@ class ArgoAccessor:
             this = this.where(this["PRES_ERROR"] < 20, drop=True)
         this.argo.add_history(
             "[%s] parameters selected for pressure error < 20db"
-            % (",".join(list_core_parameters()))
+            % (",".join(core_params))
         )
 
         # Manage output:
