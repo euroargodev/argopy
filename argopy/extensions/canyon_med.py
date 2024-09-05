@@ -5,10 +5,10 @@ import xarray as xr
 from typing import Union, List
 
 from ..utils import path2assets, to_list
-from . import register_argodataset_accessor, ArgoAccessorExtension
+from . import register_argo_accessor, ArgoAccessorExtension
 
 
-@register_argodataset_accessor('canyon_med')
+@register_argo_accessor('canyon_med')
 class CanyonMED(ArgoAccessorExtension):
     """
     Implementation of the CANYON-MED method.

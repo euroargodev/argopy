@@ -4,7 +4,7 @@ Disclosure
 ----------
 The following methods `AccessorRegistrationWarning`, `_CachedAccessor` and `_register_accessor` are sourced from https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py
 
-The class `register_argodataset_accessor` is an adaption of the `register_dataset_accessor` from xarray.
+The class `register_argo_accessor` is an adaption of the `register_dataset_accessor` from xarray.
 
 """
 
@@ -13,11 +13,21 @@ from ..xarray import xr, ArgoAccessor
 
 
 class AccessorRegistrationWarning(Warning):
-    """Warning for conflicts in accessor registration."""
+    """Warning for conflicts in accessor registration.
+
+    Disclosure
+    ----------
+    This class was copied from [xarray](https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py) under Apache License 2.0
+    """
 
 
 class _CachedAccessor:
-    """Custom property-like object (descriptor) for caching accessors."""
+    """Custom property-like object (descriptor) for caching accessors.
+
+    Disclosure
+    ----------
+    This class was copied from [xarray](https://github.com/pydata/xarray/blob/main/xarray/core/extensions.py) under Apache License 2.0
+    """
 
     def __init__(self, name, accessor):
         self._name = name
@@ -67,7 +77,7 @@ def _register_accessor(name, cls):
     return decorator
 
 
-def register_argodataset_accessor(name):
+def register_argo_accessor(name):
     """Register a custom property on xarray.Dataset.argo objects.
 
     Parameters
@@ -80,7 +90,7 @@ def register_argodataset_accessor(name):
     --------
     In your library code:
 
-    >>> @xr.register_argodataset_accessor("canyon_med")
+    >>> @xr.register_argo_accessor("canyon_med")
     ... class CanyonMED:
     ...     def __init__(self, ArgoAccessor_obj):
     ...         self.xarray_obj = ArgoAccessor_obj._obj
@@ -94,10 +104,6 @@ def register_argodataset_accessor(name):
 
     >>> ds.argo.canyon_med.predict()
 
-
-    See Also
-    --------
-    register_dataarray_accessor
     """
     return _register_accessor(name, ArgoAccessor)
 
