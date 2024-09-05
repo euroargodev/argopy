@@ -1,5 +1,19 @@
 [
     {
+        "uri": "https://data-argo.ifremer.fr/etc/argo-ast9-item13-AltimeterComparison/figures/2901623.png",
+        "ext": "png",
+        "sha": "1d08ef19cbfc76909fba6d03c90c5c9d5c17c68e40e3316e8ac41109eb33fe7b",
+        "type": "image/png",
+        "ts": "2024-09-05 14:35:06"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/etc/argo-ast9-item13-AltimeterComparison/figures/6901929.png",
+        "ext": "png",
+        "sha": "8b31f74aba6fe7f7093a5d0d7ebe17a044472e2982bf59c5ce7157597eb8fba5",
+        "type": "image/png",
+        "ts": "2024-09-05 14:35:06"
+    },
+    {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&platform_number=~\"1901393\"&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres\")",
         "ext": "nc",
         "sha": "9b628fdfa706e7fefd0751123ff0608e5c20a57e62fdec8107d46b0ed6835566",
