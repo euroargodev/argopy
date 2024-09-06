@@ -5,10 +5,10 @@ import xarray as xr
 from typing import Union, List
 
 from ..utils import path2assets, to_list
-from . import register_argodataset_accessor, ArgoAccessorExtension
+from . import register_argo_accessor, ArgoAccessorExtension
 
 
-@register_argodataset_accessor('canyon_med')
+@register_argo_accessor('canyon_med')
 class CanyonMED(ArgoAccessorExtension):
     """
     Implementation of the CANYON-MED method.
@@ -351,7 +351,7 @@ class CanyonMED(ArgoAccessorExtension):
             self._obj['%s_ERROR' % param].values = std_nn.astype(np.float32).squeeze()
 
         # Return xr.Dataset with predicted variables:
-        if self.argo_accessor:
-            self.argo_accessor.add_history("Added CANYON-MED predictions")
+        if self._argo:
+            self._argo.add_history("Added CANYON-MED predictions")
 
         return self._obj

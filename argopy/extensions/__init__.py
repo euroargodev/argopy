@@ -1,4 +1,4 @@
-from .utils import register_argodataset_accessor, ArgoAccessorExtension
+from .utils import register_argo_accessor, ArgoAccessorExtension
 from .canyon_med import CanyonMED
 
 #

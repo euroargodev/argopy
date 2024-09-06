@@ -116,7 +116,9 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'argopy'
-copyright = "2020-%s, argopy Developers" % datetime.datetime.now().year
+copyright = "2020-%s, Argopy Developers" % datetime.datetime.now().year
+author = "Argopy Developers"
+language = "en"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -148,7 +150,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '_templates',
 
 # Give *lots* of time for notebook cell execution!
 # Note nbsphinx compiles *all* notebooks in docs unless excluded
-nbsphinx_timeout = 300
+nbsphinx_timeout = 60
 nbsphinx_execute = "always"
 # nbsphinx_prolog = """
 # {% set docname = env.doc2path(env.docname, base=None) %}
@@ -220,10 +222,12 @@ html_context = {
     "github_repo": "argopy",
     "github_version": "master",
     "doc_path": "docs",
+    "default_mode": "light",
 }
 
 html_css_files = [
-    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css",
+    "custom.css"
 ]
 
 # The name of an image file (relative to this directory) to place at the top
@@ -259,9 +263,23 @@ html_theme_options = {
     'collapse_navigation': False,  # https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/navigation.html#remove-reveal-buttons-for-sidebar-items
     # 'show_toc_level': 3,  # https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/page-toc.html#show-more-levels-of-the-in-page-toc-by-default
     # 'launch_buttons': { "thebe": True}
-    "announcement": (
-        "⚠️ argopy now has its own cheatsheet ! <a href='https://argopy.readthedocs.io/en/latest/_static/argopy-cheatsheet.pdf'>Check it out here </a>! ⚠️"
-    )
+    # "announcement": (
+    #     "⚠️ <a href='https://argopy.readthedocs.io/en/latest/_static/argopy-cheatsheet.pdf'>Download argopy cheatsheet last version here !</a> ⚠️"
+    # ),
+    "icon_links": [
+        {
+            "name": "Download Cheat sheet",
+            "url": "https://argopy.readthedocs.io/en/latest/_static/argopy-cheatsheet.pdf",
+            "icon": "fa-solid fa-file-pdf",
+            "type": "fontawesome",
+        },
+        {
+            "name": "Connect to Chat support",
+            "url": "https://gitter.im/Argo-floats/argopy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge",
+            "icon": "fa-solid fa-headset",
+            "type": "fontawesome",
+        },
+    ]
 }
 
 # Redirects for pages that were moved to new locations

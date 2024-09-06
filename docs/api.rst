@@ -140,7 +140,7 @@ This accessor extends :py:class:`xarray.Dataset`. Proper use of this accessor sh
 .. code-block:: python
 
    >>> import xarray as xr         # first import xarray
-   >>> import argopy               # import argopy (the dataset 'argo' accessor is registered)
+   >>> import argopy               # import argopy (the dataset 'argo' accessor is then registered)
    >>> from argopy import DataFetcher
    >>> ds = DataFetcher().float([6902766, 6902772, 6902914, 6902746]).load().data
    >>> ds.argo
@@ -183,6 +183,12 @@ Extensions
     Dataset.argo.teos10
     Dataset.argo.create_float_source
     Dataset.argo.canyon_med
+
+.. currentmodule:: argopy
+
+You can register your own extension inheriting from :class:`argopy.extensions.ArgoAccessorExtension` and decorated with :class:`argopy.extensions.register_argo_accessor`
+
+.. currentmodule:: xarray
 
 Misc
 ----
@@ -252,10 +258,12 @@ File systems
 .. autosummary::
     :toctree: generated/
 
-    argopy.stores.filestore
-    argopy.stores.httpstore
-    argopy.stores.memorystore
-    argopy.stores.ftpstore
+    stores.filestore
+    stores.httpstore
+    stores.memorystore
+    stores.ftpstore
+    stores.httpstore_erddap_auth
+    stores.s3store
 
 Argo index store
 ----------------
@@ -264,8 +272,8 @@ Argo index store
     :toctree: generated/
 
     ArgoIndex
-    argopy.stores.indexstore_pa
-    argopy.stores.indexstore_pd
+    stores.indexstore_pa
+    stores.indexstore_pd
 
 Fetcher sources
 ---------------
@@ -276,9 +284,9 @@ ERDDAP
 .. autosummary::
     :toctree: generated/
 
-    argopy.data_fetchers.erddap_data.ErddapArgoDataFetcher
-    argopy.data_fetchers.erddap_data.Fetch_wmo
-    argopy.data_fetchers.erddap_data.Fetch_box
+    data_fetchers.erddap_data.ErddapArgoDataFetcher
+    data_fetchers.erddap_data.Fetch_wmo
+    data_fetchers.erddap_data.Fetch_box
 
 GDAC
 ^^^^
@@ -286,9 +294,9 @@ GDAC
 .. autosummary::
     :toctree: generated/
 
-    argopy.data_fetchers.gdacftp_data.FTPArgoDataFetcher
-    argopy.data_fetchers.gdacftp_data.Fetch_wmo
-    argopy.data_fetchers.gdacftp_data.Fetch_box
+    data_fetchers.gdacftp_data.FTPArgoDataFetcher
+    data_fetchers.gdacftp_data.Fetch_wmo
+    data_fetchers.gdacftp_data.Fetch_box
 
 
 Argovis
@@ -297,6 +305,6 @@ Argovis
 .. autosummary::
     :toctree: generated/
 
-    argopy.data_fetchers.argovis_data.ArgovisDataFetcher
-    argopy.data_fetchers.argovis_data.Fetch_wmo
-    argopy.data_fetchers.argovis_data.Fetch_box
+    data_fetchers.argovis_data.ArgovisDataFetcher
+    data_fetchers.argovis_data.Fetch_wmo
+    data_fetchers.argovis_data.Fetch_box

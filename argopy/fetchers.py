@@ -119,12 +119,6 @@ class ArgoDataFetcher:
         if not _VALIDATORS["src"](self._src):
             raise OptionValueError(f"option 'src' given an invalid value: {self._src}")
 
-        # Load data source access points:
-        if self._src == "localftp":
-            raise ValueError(
-                "The 'localftp' data source is deprecated. It's been replaced by 'gdac'."
-            )
-
         Fetchers = AVAILABLE_DATA_SOURCES[self._src]
 
         # Auto-discovery of access points for this fetcher:
@@ -173,8 +167,14 @@ class ArgoDataFetcher:
             self._mode == "standard" or self._mode == "research"
         ):
             warnings.warn(
-                "The 'bgc' dataset fetching is only available in 'expert' mode at this point."
+                "The 'bgc' dataset fetching is only available in 'expert' user modes at this point."
             )
+
+        if self._src == "argovis" and (
+            self._mode == "expert" or self._mode == "research"
+        ):
+            raise OptionValueError("The 'argovis' data source fetching is only available in 'standard' user mode")
+
 
     def __repr__(self):
         para = (

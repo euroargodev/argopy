@@ -2,7 +2,7 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
-  - python=3.9
+  - python = 3.9.19
 
 # CORE:
   - aiohttp
@@ -14,7 +14,7 @@ dependencies:
   - requests
   - scipy
   - toolz
-  - xarray<2024.3
+  - xarray < 2024.3 # while https://github.com/pydata/xarray/issues/8909 is not solved
 
 # EXT.UTIL:
 #  - boto3
@@ -35,6 +35,7 @@ dependencies:
 #  - ipykernel
 #  - ipywidgets
 #  - matplotlib
+#  - pyproj
 #  - seaborn
 
 # DEV:
@@ -43,9 +44,8 @@ dependencies:
   - bottleneck
   - cfgrib
   - cftime
-#  - conda
+  - codespell
   - flake8
-#  - nc-time-axis
   - numpy
   - pandas
   - pip
@@ -54,6 +54,8 @@ dependencies:
   - pytest-env
   - pytest-localftpserver
   - setuptools
+#  - sphinx
 
+# PIP:
   - pip:
       - pytest-reportlog

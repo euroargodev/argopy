@@ -157,12 +157,10 @@ ci_erddap_index = pytest.mark.skipif(True, reason="Tests disabled for erddap ind
 has_argovis, requires_argovis = _connectskip(
     "argovis" in AVAILABLE_SOURCES, "argovis data fetcher"
 )
-
 has_connected_argovis = has_connection and has_argovis and isAPIconnected(src='argovis', data=True)
 requires_connected_argovis = pytest.mark.skipif(
     not has_connected_argovis, reason="Requires a live Argovis server"
 )
-
 
 ############
 # GDAC FTP #
@@ -373,6 +371,5 @@ def create_read_only_folder(folder_path):
         create_read_only_folder_windows(folder_path)
     else:
         create_read_only_folder_linux(folder_path)
-
 
 log.debug("%s TESTS UTILS %s" % ("="*50, "="*50))

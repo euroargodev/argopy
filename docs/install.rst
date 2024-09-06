@@ -32,18 +32,20 @@ Required dependencies
 
 - aiohttp
 - erddapy
-- fsspec < 2023.12.0 (more at :issue:`317`)
+- fsspec
 - netCDF4
 - scipy
 - toolz
-- xarray
+- xarray < 2024.3.0 (because of `this issue <https://github.com/pydata/xarray/issues/8909>`_)
 - requests
+- decorator
+- packaging
 
 Note that Erddapy_ is required because `erddap <https://coastwatch.pfeg.noaa.gov/erddap/information.html>`_ is the default data fetching backend.
 
 Requirement dependencies details can be found `here <https://github.com/euroargodev/argopy/network/dependencies#requirements.txt>`_.
 
-The **argopy** software is `continuously tested <https://github.com/euroargodev/argopy/actions?query=workflow%3Atests>`_ under latest OS (Linux, Mac OS and Windows) and with python versions 3.8 and 3.9
+The **argopy** software is `continuously tested <https://github.com/euroargodev/argopy/actions?query=workflow%3Atests>`_ under latest OS (Linux, Mac OS and Windows) and with python versions 3.9 and 3.10
 
 Optional dependencies
 ---------------------

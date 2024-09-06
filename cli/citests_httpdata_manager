@@ -105,10 +105,16 @@ DEFAULT_TARGETS = [
     "oops",
     "nvs",
     "docs",
+    "altim",
     "ea_dataselection",
     "ifremer_api",
     "github",
 ]
+
+
+start_with = (
+    lambda f, x: f[0 : len(x)] == x if len(x) <= len(f) else False
+)  # noqa: E731
 
 
 def setup_args():
@@ -233,9 +239,12 @@ def log_file_desc(file, data, src):
     # elif "github.com/euroargodev/argopy-data" in src['uri']:
     #     msg.append("🤖 GITHUB ARGOPY-DATA: %s" % parse_qs(src["uri"]))
 
-    elif "https://www.ocean-ops.org/api/1" in src["uri"]:
+    elif start_with(src['uri'], "https://www.ocean-ops.org/api/1"):
         # msg.append("🤖 Ocean-OPS API: %s" % unquote(src["uri"]))
         msg.append("🤖 Ocean-OPS API: %s" % parse_qs(src["uri"]))
+
+    elif start_with(src['uri'], "https://argovis-api.colorado.edu"):
+        msg.append("🤖 Argovis API: %s" % unquote(src["uri"]))
 
     else:
         msg.append("🔸 %s" % src["uri"])
@@ -247,33 +256,31 @@ def log_file_desc(file, data, src):
     # return " 🔸 ".join(msg)
 
 
-def ls_files(load=True):
-    """List DB files as would the mocked http server"""
-
-    # Dictionary mapping of URL requests as keys, and expected responses as values:
-    # (this will be filling the mocked http server content)
-    # The real address must be made relative
-    if os.path.exists(DB_FILE):
-        with open(DB_FILE, "r") as f:
-            URI = json.load(f)
-        N = len(URI)
-        for ii, resource in enumerate(URI):
-            test_data_file = os.path.join(
-                DATA_FOLDER, "%s.%s" % (resource["sha"], resource["ext"])
-            )
-            if load:
-                with open(test_data_file, mode="rb") as file:
-                    data = file.read()
-            else:
-                data = "---"
-            print(
-                "%i/%i: %s" % (ii + 1, N, log_file_desc(test_data_file, data, resource))
-            )
+def ls_files(load=True, target=None):
+    if target is None:
+        targets = DEFAULT_TARGETS
     else:
-        print(
-            "😱 There is no '%s' in %s !"
-            % (DB_FILE.replace(DATA_FOLDER, ""), DATA_FOLDER)
-        )
+        targets = [target]
+
+    L = Lister()
+    for t in targets:
+        if Path(DB_FILE).exists():
+            print("Listing data for '%s':" % t)
+            with open(DB_FILE, "r") as f:
+                URIs = json.load(f)
+            for item in L.load(t, refresh=False):
+                test_data_file = Path(DATA_FOLDER).joinpath(
+                    "%s.%s" % (item["sha"], item["ext"])
+                )
+                for db_item in URIs:
+                    if db_item["uri"] == item["uri"]:
+                        if load:
+                            with open(test_data_file, mode="rb") as file:
+                                data = file.read()
+                        else:
+                            data = "---"
+                        print(log_file_desc(str(test_data_file), data, db_item))
+                        break
 
 
 class UriRegistry(UserList):
@@ -755,24 +762,28 @@ class Lister:
 
         requests_phy = {
             "float": [[1901393], [1901393, 6902746]],
-            "profile": [[6902746, [1, 12]]],
+            "profile": [
+                [6902746, 34],
+                [6902746, [1, 12]],
+            ],
             "region": [
                 [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-03"],
                 [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-06"],
             ],
         }
+
         requests_seq = {"phy": requests_phy}
 
         requests_par = {
-            "float": [[6902766, 6902772, 6902914]],
+            "float": [[1900468, 1900117, 1900386]],
             "region": [
-                [-60, -55, 40.0, 45.0, 0.0, 10.0],
-                [-60, -55, 40.0, 45.0, 0.0, 10.0, "2007-08-01", "2007-09-01"],
+                [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-06"],
             ],
         }
 
         def add_to_URI(facade):
-            [this_URI.commit(self.dfile(uri, "js")) for uri in facade.uri]
+            encode = facade.fetcher.url_encode
+            [this_URI.commit(self.dfile(uri, "js")) for uri in encode(facade.uri)]
 
         for ds in requests_seq:
             fetcher = DataFetcher(src="argovis", ds=ds)
@@ -914,6 +925,7 @@ class Lister:
         WMO_list.append(6901929)  # Used by test_related
         WMO_list.append(5904797)  # Used by test_plot_dashboards.py
         WMO_list.append(6902755)  # Used by test_plot_dashboards.py
+        WMO_list.append(2901623)  # Used by test_fetchers_facade_data.py::Test_Facade::test_to_index_coriolis
 
         for uri in [
             "https://dataselection.euro-argo.eu/api/trajectory/%i" % wmo
@@ -1089,7 +1101,7 @@ def search_data(url=None):
         found = False
         results = []
         for item in URIs:
-            if unquote(url) in item['uri']:
+            if unquote(url) in item['uri'] or url in item['uri']:
                 results.append(item)
                 found = True
         if found:
@@ -1191,7 +1203,7 @@ if __name__ == "__main__":
         print("\nSaved %i URIs" % len(URIs))
 
     if ARGS.action == "list":
-        ls_files(load=False)
+        ls_files(load=False, target=ARGS.target)
 
     if ARGS.action == "check":
         consolidate(target=ARGS.target)

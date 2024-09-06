@@ -28,7 +28,9 @@ from ..utils.format import format_oneline
 from ..utils.lists import list_bgc_s_variables, list_core_parameters
 from ..stores import httpstore
 from ..errors import ErddapServerError, DataNotFound
-from ..stores import indexstore_pd as ArgoIndex  # make sure we work with the Pandas index store
+from ..stores import (
+    indexstore_pd as ArgoIndex,
+)  # make sure we work with the Pandas index store
 from ..utils import is_list_of_strings, to_list, Chunker
 from .proto import ArgoDataFetcherProto
 
@@ -160,12 +162,16 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             # Create an internal ArgoIndex instance:
             # This will be used to:
             # - retrieve the list of BGC variables to ask the erddap server
-            # - get <param>_data_mode information because we can't get it from the erddap server
-            self.indexfs = kwargs['indexfs'] if 'indexfs' in kwargs else ArgoIndex(
-                index_file='argo_synthetic-profile_index.txt',  # corresponds to dataset in the erddap
-                cache=kwargs['cache_index'] if 'cache_index' in kwargs else cache,
-                cachedir=cachedir,
-                timeout=timeout,
+            # - get <param>_data_mode information because we can't get it from the server
+            self.indexfs = (
+                kwargs["indexfs"]
+                if "indexfs" in kwargs
+                else ArgoIndex(
+                    index_file="argo_synthetic-profile_index.txt",  # the only available in the erddap
+                    cache=kwargs["cache_index"] if "cache_index" in kwargs else cache,
+                    cachedir=cachedir,
+                    timeout=timeout,
+                )
             )
             self.indexfs.fs['src'] = self.fs  # Use only one httpstore instance
 
@@ -655,7 +661,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             N += getNfromncHeader(url)
         return N
 
-    def post_process(self, this_ds, add_dm: bool = True, URI: list = None):  # noqa: C901
+    def post_process(
+        self, this_ds, add_dm: bool = True, URI: list = None
+    ):  # noqa: C901
         """Post-process a xarray.DataSet created from a netcdf erddap response
 
         This method can also be applied on a regular dataset to re-enforce format compliance
@@ -708,8 +716,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         # In the case of a parallel download, this is a trick to preserve the chunk uri in the chunk dataset:
         # (otherwise all chunks have the same list of uri)
-        Fetched_url = this_ds.attrs.get('Fetched_url', False)
-        Fetched_constraints = this_ds.attrs.get('Fetched_constraints', False)
+        Fetched_url = this_ds.attrs.get("Fetched_url", False)
+        Fetched_constraints = this_ds.attrs.get("Fetched_constraints", False)
 
         # Finally overwrite erddap attributes with those from argopy:
         # raw_attrs = this_ds.attrs
@@ -741,12 +749,14 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         this_ds.attrs["Fetched_from"] = self.erddap.server
         try:
             this_ds.attrs["Fetched_by"] = getpass.getuser()
-        except:
-            this_ds.attrs["Fetched_by"] = 'anonymous'
+        except:  # noqa: E722
+            this_ds.attrs["Fetched_by"] = "anonymous"
         this_ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime(
             "%Y/%m/%d"
         )
-        this_ds.attrs["Fetched_constraints"] = self.cname() if not Fetched_constraints else Fetched_constraints
+        this_ds.attrs["Fetched_constraints"] = (
+            self.cname() if not Fetched_constraints else Fetched_constraints
+        )
         this_ds.attrs["Fetched_uri"] = URI if not Fetched_url else Fetched_url
         this_ds = this_ds[np.sort(this_ds.data_vars)]
 

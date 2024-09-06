@@ -88,7 +88,6 @@ class ArgoAccessor:
     - Preprocess data for OWC salinity calibration:
 
     >>> ds.argo.create_float_source("output_folder")
-
     """
 
     def __init__(self, xarray_obj):
@@ -280,8 +279,8 @@ class ArgoAccessor:
         """
 
         def encode_direction(x):
-            y = np.where(x == 'A', 1, x.astype(object))
-            y = np.where(y == 'D', -1, y.astype(object))
+            y = np.where(x == "A", 1, x.astype(object))
+            y = np.where(y == "D", -1, y.astype(object))
             try:
                 return y.astype(int)
             except ValueError:
@@ -533,7 +532,7 @@ class ArgoAccessor:
                     y = new_ds[vname].values
                     x = prof[vname].values
                     try:
-                        y[i_prof, 0: len(x)] = x
+                        y[i_prof, 0 : len(x)] = x
                     except Exception:
                         print(vname, "input", x.shape, "output", y[i_prof, :].shape)
                         raise
@@ -641,21 +640,22 @@ class ArgoAccessor:
     def transform_data_mode(
         self, params: Union[str, List[str]] = "all", errors: str = "raise"
     ) -> xr.Dataset:
-        """Merge <PARAM> and <PARAM>_ADJUSTED variables according to <PARAM>_DATA_MODE
+        """Merge <PARAM> and <PARAM>_ADJUSTED variables according to DATA_MODE or <PARAM>_DATA_MODE
 
-        Merging follows:
-        - For points with data mode ``R``: keep <PARAM> (eg: 'DOXY')
-        - For points with data mode ``D`` and ``A``: keep <PARAM>_ADJUSTED (eg: 'DOXY_ADJUSTED')
+        Merging is done as follows:
 
-        Since ADJUSTED variables are not required anymore after the transformation, all ADJUSTED variables
-        are dropped in order to avoid confusion with regard to variable content.
+        - For measurements with data mode ``R``: keep <PARAM> (eg: 'DOXY')
+        - For measurements with data mode ``D`` or ``A``: keep <PARAM>_ADJUSTED (eg: 'DOXY_ADJUSTED')
+
+        Since adjusted variables are not required anymore after the transformation, all <PARAM>_ADJUSTED variables
+        are dropped from the dataset in order to avoid confusion with regard to variable content.
         Variable DATA_MODE or <PARAM>_DATA_MODE are preserved for the record.
 
         Parameters
         ----------
         params: str, List[str], optional, default='all'
             Name or list of names of the parameter to merge.
-            Use the default keyword ``all`` to merge all available variables in the :class:`xarray.Dataset`.
+            Use the default keyword ``all`` to merge all possible parameters in the :class:`xarray.Dataset`.
         errors: str, optional, default='raise'
             If ``raise``, raises a :class:`argopy.errors.InvalidDatasetStructure` error if any of the expected variables is
             not found.
@@ -678,22 +678,24 @@ class ArgoAccessor:
                 "Method only available to a collection of points"
             )
         else:
-            ds = self._obj
+            this = self._obj
 
         # Determine the list of variables to transform:
         params = to_list(params)
         if params[0] == "all":
-            if "DATA_MODE" in ds.data_vars:
-                params = ["PRES", "TEMP", "PSAL"]
+            if "DATA_MODE" in this.data_vars:
+                params = ["PRES", "TEMP"]
+                if "PSAL" in this.data_vars:
+                    params.append("PSAL")
             else:
                 params = [
                     p.replace("_DATA_MODE", "")
-                    for p in ds.data_vars
+                    for p in this.data_vars
                     if "_DATA_MODE" in p
                 ]
         else:
             for p in params:
-                if p not in ds.data_vars:
+                if p not in this.data_vars:
                     if errors == "raise":
                         raise InvalidDatasetStructure(
                             "Parameter '%s' not found in this dataset" % p
@@ -704,16 +706,16 @@ class ArgoAccessor:
 
         # Transform data:
         for param in params:
-            ds = merge_param_with_param_adjusted(ds, param, errors=errors)
+            this = merge_param_with_param_adjusted(this, param, errors=errors)
 
         # Finalise:
-        ds = ds[np.sort(ds.data_vars)]
-        ds.argo.add_history(
+        this = this[np.sort(this.data_vars)]
+        this.argo.add_history(
             "[%s] real-time and adjusted/delayed variables merged according to their data mode"
             % (",".join(params))
         )
 
-        return ds
+        return this
 
     def filter_data_mode(
         self,  # noqa: C901
@@ -723,26 +725,26 @@ class ArgoAccessor:
         mask: bool = False,
         errors: str = "raise",
     ):
-        """Filter measurements according to variables data mode
+        """Filter measurements according to parameters data mode
 
-        Filter the dataset to keep points where all or some of the variables are in any of the data mode specified.
+        Filter the dataset to keep points where all or some of the parameters are in any of the data mode specified.
 
         This method can return the filtered dataset or the filter mask.
 
         Parameters
         ----------
         dm: str, List[str], optional, default=[``R``, ``A``, ``D``]
-            List of DATA_MODE values (string) to keep
+            List of data mode values (string) to keep
         params: str, List[str], optional, default='all'
-            List of parameters to apply the filter to. By default, we use all parameters for which a DATA_MODE
+            List of parameters to apply the filter to. By default, we use all parameters for which a data mode
             can be found
         logical: str, optional, default='and'
-            Reduce variable filters with a logical ``and`` or ``or``. With ``and`` the filter shall be True
-            if all variables match the DATA_MODE requested, while with ``or`` it will be True for at least one variable.
+            Reduce parameter filters with a logical ``and`` or ``or``. With ``and`` the filter shall be True
+            if all parameters match the data mode requested, while with ``or`` it will be True for at least one parameter.
         mask: bool, optional, default=False
             Determine if we should return the filter mask or the filtered dataset
         errors: str, optional, default='raise'
-            If ``raise``, raises a InvalidDatasetStructure error if any of the expected variables is
+            If ``raise``, raises a :class:`argopy.errors.InvalidDatasetStructure` error if any of the expected variables is
             not found.
             If ``ignore``, fails silently and return unmodified dataset.
 
@@ -779,7 +781,9 @@ class ArgoAccessor:
         params = to_list(params)
         if params[0] == "all":
             if "DATA_MODE" in this.data_vars:
-                params = ["PRES", "TEMP", "PSAL"]
+                params = ["PRES", "TEMP"]
+                if "PSAL" in this.data_vars:
+                    params.append("PSAL")
             else:
                 params = [
                     p.replace("_DATA_MODE", "")
@@ -845,7 +849,6 @@ class ArgoAccessor:
                 "No data mode found for [%s], no filtering applied" % (",".join(params))
             )
             return this
-
 
     def filter_qc(  # noqa: C901
         self, QC_list=[1, 2], QC_fields="all", drop=True, mode="all", mask=False
@@ -916,7 +919,7 @@ class ArgoAccessor:
             )
 
         if len(QC_fields) == 0:
-            this.argo.add_history(
+            this.argo._add_history(
                 "Variables selected according to QC (but found no QC variables)"
             )
             return this
@@ -1023,10 +1026,10 @@ class ArgoAccessor:
             # All ADJUSTED variables are removed (not required anymore, avoid confusion with variable content):
             this = this.drop_vars([v for v in this.data_vars if "ADJUSTED" in v])
         else:
-            if 'PRES_ADJUSTED' not in this:
+            if "PRES_ADJUSTED" not in this:
                 raise InvalidDatasetStructure(
                     "%s_ADJUSTED not in this dataset. Tip: fetch data in 'expert' mode"
-                    % 'PRES'
+                    % "PRES"
                 )
 
             # In default mode, we just need to do something if PRES_ADJUSTED is different from PRES, meaning
@@ -1066,12 +1069,10 @@ class ArgoAccessor:
         """Filter dataset for research user mode
 
         This filter depends on the dataset:
-        - For the 'phy' dataset (core/deep missions): select delayed mode data with QC=1 and with pressure errors smaller than 20db
 
-        Warnings
-        --------
-        This accessor filter only apply to core/deep parameters of the 'phy' dataset.
-        Filtering in research user-mode for the BGC parameters is implemented in the fetcher facade.
+        - For the ``phy`` dataset (core/deep missions): select delayed mode data with QC=1 and with pressure errors smaller than 20db
+        - For the ``bgc`` dataset: do nothing, filtering for the ``research`` user mode is implemented in the fetcher facade
+
 
         Returns
         -------
@@ -1085,12 +1086,18 @@ class ArgoAccessor:
             to_profile = True
             this = this.argo.profile2point()
 
+        core_params = list_core_parameters()
+        if "PSAL" not in this.data_vars:
+            core_params.remove("PSAL")
+
         # Apply transforms and filters:
         this = this.argo.filter_qc(QC_list=1, QC_fields=["POSITION_QC", "TIME_QC"])
-        this = this.argo.transform_data_mode(params=list_core_parameters())
-        this = this.argo.filter_data_mode(params=list_core_parameters(), dm="D")
+        this = this.argo.transform_data_mode(params=core_params)
+        this = this.argo.filter_data_mode(params=core_params, dm="D")
 
-        this = this.argo.filter_qc(QC_list=1, QC_fields=["%s_QC" % p for p in list_core_parameters()])
+        this = this.argo.filter_qc(
+            QC_list=1, QC_fields=["%s_QC" % p for p in core_params]
+        )
 
         if (
             "PRES_ERROR" in this.data_vars
@@ -1098,7 +1105,7 @@ class ArgoAccessor:
             this = this.where(this["PRES_ERROR"] < 20, drop=True)
         this.argo.add_history(
             "[%s] parameters selected for pressure error < 20db"
-            % (",".join(list_core_parameters()))
+            % (",".join(core_params))
         )
 
         # Manage output:

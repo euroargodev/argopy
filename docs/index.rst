@@ -52,6 +52,7 @@ Documentation
 
 **Help & reference**
 
+* :doc:`Cheat sheet PDF <cheatsheet>`
 * :doc:`whats-new`
 * :doc:`energy`
 * :doc:`contributing`
@@ -62,6 +63,7 @@ Documentation
     :hidden:
     :caption: Help & reference
 
+    Cheat sheet PDF <cheatsheet>
     whats-new
     energy
     contributing

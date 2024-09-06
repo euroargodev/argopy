@@ -126,7 +126,7 @@ The ``measured`` argument
 
 With a :class:`DataFetcher`, the ``measured`` argument can be used to specify which variables cannot be NaN and must return values. This is very useful to reduce a dataset to points where all or some variables are available.
 
-By default, the ``measured`` argument is set to ``None`` for unconstrained parameter values. To the opposite, the keyword ``all`` requires that all variables found in the data selection cannot be NaNs. In between, you can specific one or more parameters to limit the constrain to a few variables.
+By default, the ``measured`` argument is set to ``None`` for unconstrained parameter values. To the opposite, the keyword ``all`` requires that all variables found in the data selection cannot be NaNs. In between, you can specify one or more parameters to limit the constrain to a few variables.
 
 .. dropdown:: Syntax example
     :icon: code
