@@ -112,9 +112,9 @@ class ArgoDataFetcher:
             raise OptionValueError(
                 f"option 'mode' given an invalid value: {self._mode}"
             )
-        if not _VALIDATORS["dataset"](self._dataset_id):
+        if not _VALIDATORS["ds"](self._dataset_id):
             raise OptionValueError(
-                f"option 'dataset' given an invalid value: {self._dataset_id}"
+                f"option 'ds' given an invalid value: {self._dataset_id}"
             )
         if not _VALIDATORS["src"](self._src):
             raise OptionValueError(f"option 'src' given an invalid value: {self._src}")
