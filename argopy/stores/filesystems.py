@@ -826,7 +826,7 @@ class httpstore(argo_store_proto):
                 log.debug("task_fct: This url returned no data: %s" % strUrl(url))
                 return DataNotFound(url), True
             except Exception as e:
-                log.debug("task_fct: Unexpected error when opening a remote dataset: '%s'" % str(e))
+                log.debug("task_fct: Unexpected error when opening the remote dataset '%s':\n'%s'" % (strUrl(url), str(e)))
                 return None, False
 
         def postprocessing_fct(obj, **kwargs):
