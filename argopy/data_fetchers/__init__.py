@@ -6,14 +6,14 @@ from .erddap_refdata import Fetch_box as CTDRefDataFetcher
 from . import erddap_data
 from . import erddap_index
 from . import argovis_data
-from . import gdacftp_data
-from . import gdacftp_index
+from . import gdac_data
+from . import gdac_index
 
 __all__ = (
     "erddap_data",
     "erddap_index",
     "argovis_data",
-    "gdacftp_data",
-    "gdacftp_index",
+    "gdac_data.py",
+    "gdac_index.py",
     "CTDRefDataFetcher",
 )

@@ -40,9 +40,9 @@
     argopy.data_fetchers.erddap_data.Fetch_wmo
     argopy.data_fetchers.erddap_data.Fetch_box
 
-    argopy.data_fetchers.gdacftp_data.FTPArgoDataFetcher
-    argopy.data_fetchers.gdacftp_data.Fetch_wmo
-    argopy.data_fetchers.gdacftp_data.Fetch_box
+    argopy.data_fetchers.gdac_data.FTPArgoDataFetcher
+    argopy.data_fetchers.gdac_data.Fetch_wmo
+    argopy.data_fetchers.gdac_data.Fetch_box
 
     argopy.data_fetchers.argovis_data.ArgovisDataFetcher
     argopy.data_fetchers.argovis_data.Fetch_wmo

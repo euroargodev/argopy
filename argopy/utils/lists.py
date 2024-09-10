@@ -45,7 +45,7 @@ def list_available_data_src() -> dict:
         pass
 
     try:
-        from ..data_fetchers import gdacftp_data as GDAC_Fetchers
+        from ..data_fetchers import gdac_data as GDAC_Fetchers
 
         # Ensure we're loading the gdac data fetcher with the current options:
         GDAC_Fetchers.api_server_check = OPTIONS["ftp"]
@@ -86,7 +86,7 @@ def list_available_index_src() -> dict:
         pass
 
     try:
-        from ..data_fetchers import gdacftp_index as GDAC_Fetchers
+        from ..data_fetchers import gdac_index as GDAC_Fetchers
 
         # Ensure we're loading the gdac data fetcher with the current options:
         GDAC_Fetchers.api_server_check = OPTIONS["ftp"]
@@ -203,7 +203,7 @@ def list_standard_variables(ds: str = 'phy') -> List[str]:
     ----------
     ds: str, default='phy'
 
-        Return variables for one of the argopy ``dataset`` option possible values:
+        Return variables for one of the argopy ``ds`` option possible values:
 
          - ``phy``  is valid for the 🟡 core and 🔵 deep missions variables
          - ``bgc``  is valid for the 🟢 BGC missions variables
