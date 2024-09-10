@@ -83,7 +83,7 @@ class GDACArgoIndexFetcher(ABC):
         self.server = OPTIONS['gdac'] if gdac == "" else gdac
         self.errors = errors
 
-        # Validate server, raise FtpPathError if not valid.
+        # Validate server, raise GdacPathError if not valid.
         check_gdac_path(self.server, errors='raise')
 
         if self.dataset_id == 'phy':

@@ -13,7 +13,7 @@ from typing import Union
 from pathlib import Path
 
 from ..options import OPTIONS
-from ..errors import FtpPathError, S3PathError, InvalidDataset, OptionValueError
+from ..errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError
 from ..utils.checkers import isconnected, has_aws_credentials
 from ..utils.accessories import Registry
 from .filesystems import httpstore, memorystore, filestore, ftpstore, s3store
@@ -144,7 +144,7 @@ class ArgoIndexStoreProto(ABC):
                     % host
                 )
             if not isconnected(host):
-                raise FtpPathError("This host (%s) is not alive !" % host)
+                raise GdacPathError("This host (%s) is not alive !" % host)
             self.fs["src"] = ftpstore(
                 host=urlparse(host).hostname,  # host eg: ftp.ifremer.fr
                 port=0 if urlparse(host).port is None else urlparse(host).port,
@@ -170,7 +170,7 @@ class ArgoIndexStoreProto(ABC):
             self.skip_rows = 10
 
         else:
-            raise FtpPathError(
+            raise GdacPathError(
                 "Unknown protocol for an Argo index store: %s" % split_protocol(host)[0]
             )
 
@@ -217,7 +217,7 @@ class ArgoIndexStoreProto(ABC):
                 index_found = True
                 break
         if not index_found:
-            raise FtpPathError("Index file does not exist: %s" % self.index_path)
+            raise GdacPathError("Index file does not exist: %s" % self.index_path)
         else:
             # Will init search with full index by default:
             self._nrows_index = None

@@ -11,7 +11,7 @@ from argopy import IndexFetcher as ArgoIndexFetcher
 from argopy.errors import (
     CacheFileNotFound,
     FileSystemHasNoCache,
-    FtpPathError
+    GdacPathError
 )
 from argopy.utils.checkers import isconnected, is_list_of_strings
 from utils import requires_gdac
@@ -183,7 +183,7 @@ class TestBackend:
     @pytest.mark.parametrize("ftp_host", ['invalid', 'https://invalid_ftp', 'ftp://invalid_ftp'], indirect=False)
     def test_hosts_invalid(self, ftp_host):
         # Invalid servers:
-        with pytest.raises(FtpPathError):
+        with pytest.raises(GdacPathError):
             create_fetcher({"src": self.src, "ftp": ftp_host}, VALID_ACCESS_POINTS[0])
 
     @pytest.mark.parametrize("_make_a_fetcher", scenarios, indirect=True, ids=scenarios_ids)

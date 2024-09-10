@@ -13,7 +13,7 @@ import logging
 import importlib
 
 from ..options import OPTIONS
-from ..errors import InvalidDatasetStructure, FtpPathError, InvalidFetcher
+from ..errors import InvalidDatasetStructure, GdacPathError, InvalidFetcher
 from .lists import list_available_data_src, list_available_index_src
 from .casting import to_list
 
@@ -489,14 +489,14 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
             fs = fsspec.filesystem("ftp", host=host)
         except gaierror:
             if errors == "raise":
-                raise FtpPathError("Can't get address info (GAIerror) on '%s'" % host)
+                raise GdacPathError("Can't get address info (GAIerror) on '%s'" % host)
             elif errors == "warn":
                 warnings.warn("Can't get address info (GAIerror) on '%s'" % host)
                 return False
             else:
                 return False
     else:
-        raise FtpPathError(
+        raise GdacPathError(
             "Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0]
         )
 
@@ -523,7 +523,7 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
     if check1:
         return True
     elif errors == "raise":
-        raise FtpPathError(
+        raise GdacPathError(
             "This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s"
             % path
         )

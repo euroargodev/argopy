@@ -3,7 +3,7 @@ import pytest
 import platform
 import argopy
 from argopy.options import OPTIONS
-from argopy.errors import OptionValueError, FtpPathError, ErddapPathError
+from argopy.errors import OptionValueError, GdacPathError, ErddapPathError
 from utils import requires_gdac, create_read_only_folder
 from mocked_http import mocked_httpserver, mocked_server_address
 import logging
@@ -26,7 +26,7 @@ def test_opt_src():
 
 @requires_gdac
 def test_opt_gdac_ftp():
-    with pytest.raises(FtpPathError):
+    with pytest.raises(GdacPathError):
         argopy.set_options(ftp="invalid_path")
 
     local_ftp = argopy.tutorial.open_dataset("gdac")[0]

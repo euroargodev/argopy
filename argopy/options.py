@@ -11,7 +11,7 @@ import fsspec
 from fsspec.core import split_protocol
 from socket import gaierror
 from urllib.parse import urlparse
-from .errors import OptionValueError, FtpPathError, ErddapPathError
+from .errors import OptionValueError, GdacPathError, ErddapPathError
 
 
 # Define a logger
@@ -232,14 +232,14 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
             fs = fsspec.filesystem('ftp', host=host, port=port)
         except gaierror:
             if errors == 'raise':
-                raise FtpPathError("Can't get address info (GAIerror) on '%s'" % host)
+                raise GdacPathError("Can't get address info (GAIerror) on '%s'" % host)
             elif errors == "warn":
                 warnings.warn("Can't get address info (GAIerror) on '%s'" % host)
                 return False
             else:
                 return False
     else:
-        raise FtpPathError("Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0])
+        raise GdacPathError("Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0])
 
     # dacs = [
     #     "aoml",
@@ -266,7 +266,7 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
         return True
 
     elif errors == "raise":
-        raise FtpPathError("This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s" % path)
+        raise GdacPathError("This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s" % path)
 
     elif errors == "warn":
         warnings.warn("This path is not GDAC compliant:\n%s" % path)

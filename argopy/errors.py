@@ -21,20 +21,20 @@ class NoDataLeft(NoData):
     pass
 
 
-class FtpPathError(ValueError):
-    """Raise when a ftp path is not appropriate."""
+class GdacPathError(ValueError):
+    """Raise when a GDAC compliant path is not appropriate"""
 
     pass
 
 
 class ErddapPathError(ValueError):
-    """Raise when a erddap path is not appropriate."""
+    """Raise when an erddap path is not appropriate"""
 
     pass
 
 
 class S3PathError(ValueError):
-    """Raise when a S3 path is not appropriate."""
+    """Raise when a S3 path is not appropriate"""
 
     pass
 

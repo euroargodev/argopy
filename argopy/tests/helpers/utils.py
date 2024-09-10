@@ -30,7 +30,7 @@ from pathlib import Path
 from typing import Generator, List
 
 from argopy.options import set_options
-from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound, FtpPathError
+from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound, GdacPathError
 from argopy.utils.lists import (
     list_available_data_src,
     list_available_index_src,
@@ -260,7 +260,7 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
             msg = "\nServer didn't return the data:\n%s" % str(e.args)
             xmsg = "Failing because some file were not found, but should work"
             pass
-        except FtpPathError as e:
+        except GdacPathError as e:
             if 'xfail' in kwargs and kwargs['xfail']:
                 # Some tests will expect this error to be raised, so we make sure it is, for pytest to catch it
                 raise
