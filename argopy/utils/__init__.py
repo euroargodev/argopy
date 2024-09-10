@@ -23,9 +23,9 @@ from .decorators import deprecated, doc_inherit
 from .lists import (
     list_available_data_src,
     list_available_index_src,
+    list_multiprofile_file_variables,
     list_core_parameters,
     list_standard_variables,
-    list_multiprofile_file_variables,
     list_bgc_s_variables,
     list_bgc_s_parameters,
     list_radiometry_variables,

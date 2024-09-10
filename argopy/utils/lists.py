@@ -6,7 +6,10 @@ import json
 from ..options import OPTIONS
 from typing import List
 
-path2assets = importlib.util.find_spec('argopy.static.assets').submodule_search_locations[0]
+path2assets = importlib.util.find_spec(
+    "argopy.static.assets"
+).submodule_search_locations[0]
+
 
 def list_available_data_src() -> dict:
     """List all available data sources"""
@@ -101,45 +104,8 @@ def list_available_index_src() -> dict:
     return sources
 
 
-def list_standard_variables() -> List[str]:
-    """List of 'core' variables for standard users"""
-    return [
-        "DATA_MODE",
-        "LATITUDE",
-        "LONGITUDE",
-        "POSITION_QC",
-        "DIRECTION",
-        "PLATFORM_NUMBER",
-        "CYCLE_NUMBER",
-        "PRES",
-        "TEMP",
-        "PSAL",
-        "PRES_QC",
-        "TEMP_QC",
-        "PSAL_QC",
-        "PRES_ADJUSTED",
-        "TEMP_ADJUSTED",
-        "PSAL_ADJUSTED",
-        "PRES_ADJUSTED_QC",
-        "TEMP_ADJUSTED_QC",
-        "PSAL_ADJUSTED_QC",
-        "PRES_ADJUSTED_ERROR",
-        "TEMP_ADJUSTED_ERROR",
-        "PSAL_ADJUSTED_ERROR",
-        # <PARAM>_ERROR variables can be created from <PARAM>_ADJUSTED_ERROR after a transform_data_mode
-        "PRES_ERROR",
-        "TEMP_ERROR",
-        "PSAL_ERROR",
-        "JULD",
-        "JULD_QC",
-        "TIME",
-        "TIME_QC",
-        # "CONFIG_MISSION_NUMBER",
-    ]
-
-
 def list_multiprofile_file_variables() -> List[str]:
-    """List of variables in a netcdf 'core' multiprofile file.
+    """List of all 🟡 core + 🔵 deep variables that can be found in a multi-profile netcdf file
 
     This is for files created by GDAC under <DAC>/<WMO>/<WMO>_prof.nc
     """
@@ -212,71 +178,90 @@ def list_multiprofile_file_variables() -> List[str]:
 
 
 def list_core_parameters() -> List[str]:
-    """List of all parameters in core netcdf files
+    """List of all 🟡 core + 🔵 deep parameters that can be found in mono and multi-profile netcdf files
 
-    This list is restricted to PARAM for which variables like <PARAM>_DATA_MODE,
-    <PARAM>_QC, <PARAM>_ADJUSTED, <PARAM>_ADJUSTED_QC and <PARAM>_ADJUSTED_ERROR
-    can be found
+    This list is restricted to PARAMETERs for which the following variables can be found:
+
+    - <PARAMETER>_DATA_MODE,
+    - <PARAMETER>_QC,
+    - <PARAMETER>_ADJUSTED,
+    - <PARAMETER>_ADJUSTED_QC
+    - <PARAMETER>_ADJUSTED_ERROR
+
+    Returns
+    -------
+    List[str]
+
+    """
+    return ["PRES", "TEMP", "PSAL"]
+
+
+def list_standard_variables(ds: str = 'phy') -> List[str]:
+    """List of dataset variables possibly return in ``standard`` user mode
+
+    Parameters
+    ----------
+    ds: str, default='phy'
+
+        Use one the argopy 'ds' option possible values:
+
+         - 'phy'  is valid for the 🟡 core and 🔵 deep missions variables
+         - 'bgc'  is valid for the 🟢 BGC missions variables
 
     Returns
     -------
     List[str]
     """
-    return ['PRES', 'TEMP', 'PSAL']
+
+    # List of coordinates and meta-data to preserve in ``standard`` user mode:
+    sv = [
+        "LATITUDE",
+        "LONGITUDE",
+        "POSITION_QC",
+
+        "DIRECTION",
+        "PLATFORM_NUMBER",
+        "CYCLE_NUMBER",
+        # "CONFIG_MISSION_NUMBER",
+
+        "JULD",
+        "JULD_QC",
+        "TIME",
+        "TIME_QC",
+    ]
+
+    if ds == 'phy':
+        parameters = list_core_parameters()
+        sv.append("DATA_MODE")
+    elif ds in ['bgc', 'bgc-s']:
+        parameters = list_bgc_s_parameters()
+
+    for param in parameters:
+        sv.append(param)
+        if ds in ['bgc', 'bgc-s']:
+            sv.append("%s_DATA_MODE" % param)
+        sv.append("%s_QC" % param)
+        sv.append("%s_ERROR" % param)   # <PARAM>_ERROR variables are added by :class:`Dataset.argo.transform_data_mode`
+
+        sv.append("%s_ADJUSTED" % param)
+        sv.append("%s_ADJUSTED_QC" % param)
+        sv.append("%s_ADJUSTED_ERROR" % param)
+
+    return sv
 
 
 def list_bgc_s_variables() -> List[str]:
-    """List of all variables in BGC Synthetic netcdf files
+    """List of all 🟢 BGC mission variables that can be found in a BGC **Synthetic** netcdf files
 
-    This list includes <PARAM>_DATA_MODE, <PARAM>_QC,
-    <PARAM>_ADJUSTED, <PARAM>_ADJUSTED_QC and <PARAM>_ADJUSTED_ERROR variables
+    This list includes (*but is not limited to*) PARAMETERs for which the following variables can be found:
 
-    This list includes coordinates meta-data variables like LATITUDE or CONFIG_MISSION_NUMBER
+    - <PARAMETER>_DATA_MODE,
+    - <PARAMETER>_QC,
+    - <PARAMETER>_ADJUSTED,
+    - <PARAMETER>_ADJUSTED_QC
+    - <PARAMETER>_ADJUSTED_ERROR
 
-    Returns
-    -------
-    List[str]
-    """
-    with open(os.path.join(path2assets, "variables_bgc_synthetic.json"), "r") as f:
-        vlist = json.load(f)
-    return vlist['data']['variables']
-
-
-def list_bgc_s_parameters() -> List[str]:
-    """List of all BGC parameters in BGC Synthetic netcdf files
-
-    This list is restricted to PARAM for which variables like <PARAM>_DATA_MODE,
-    <PARAM>_QC, <PARAM>_ADJUSTED, <PARAM>_ADJUSTED_QC and <PARAM>_ADJUSTED_ERROR
-    can be found
-
-    Returns
-    -------
-    List[str]
-    """
-    misc_meta = [
-            "LATITUDE",
-            "LONGITUDE",
-            "DIRECTION",
-            "PLATFORM_NUMBER",
-            "CYCLE_NUMBER",
-            "JULD",
-            "TIME",
-            "CONFIG_MISSION_NUMBER",
-            "DATA_CENTRE",
-            "DATA_TYPE",
-            "DATE_UPDATE",
-            "PI_NAME",
-            "PLATFORM_TYPE",
-            "WMO_INST_TYPE",
-        ]
-    return [v for v in list_bgc_s_variables() if 'DATA_MODE' not in v and 'QC' not in v and 'ADJUSTED' not in v and v not in misc_meta]
-
-
-def list_radiometry_variables() -> List[str]:
-    """List of all BGC variables related to radiometry
-
-    This list includes <PARAM>_DATA_MODE, <PARAM>_QC,
-    <PARAM>_ADJUSTED, <PARAM>_ADJUSTED_QC and <PARAM>_ADJUSTED_ERROR variables
+    This list also includes coordinates meta-data variables like LATITUDE or CONFIG_MISSION_NUMBER
 
     Returns
     -------
@@ -284,23 +269,109 @@ def list_radiometry_variables() -> List[str]:
 
     See Also
     --------
-    :meth:`argopy.utils.lists.list_radiometry_parameters`
+    :meth:`argopy.utils.list_standard_variables`,
+    :meth:`argopy.utils.list_bgc_s_parameters`,
+    :meth:`argopy.utils.list_radiometry_variables`
+    :meth:`argopy.utils.list_radiometry_parameters`,
+    """
+    with open(os.path.join(path2assets, "variables_bgc_synthetic.json"), "r") as f:
+        vlist = json.load(f)
+    return vlist["data"]["variables"]
+
+
+def list_bgc_s_parameters() -> List[str]:
+    """List of all 🟢 BGC mission parameters that can be found in a BGC **Synthetic** netcdf files
+
+    This list is **restricted** to PARAMETERs for which the following variables can be found:
+
+    - <PARAMETER>_DATA_MODE,
+    - <PARAMETER>_QC,
+    - <PARAMETER>_ADJUSTED,
+    - <PARAMETER>_ADJUSTED_QC
+    - <PARAMETER>_ADJUSTED_ERROR
+
+    Returns
+    -------
+    List[str]
+
+    See Also
+    --------
+    :meth:`argopy.utils.list_standard_variables`,
+    :meth:`argopy.utils.list_bgc_s_variables`,
+    :meth:`argopy.utils.list_radiometry_variables`
+    :meth:`argopy.utils.list_radiometry_parameters`,
+    """
+    misc_meta = [
+        "LATITUDE",
+        "LONGITUDE",
+        "DIRECTION",
+        "PLATFORM_NUMBER",
+        "CYCLE_NUMBER",
+        "JULD",
+        "TIME",
+        "CONFIG_MISSION_NUMBER",
+        "DATA_CENTRE",
+        "DATA_TYPE",
+        "DATE_UPDATE",
+        "PI_NAME",
+        "PLATFORM_TYPE",
+        "WMO_INST_TYPE",
+    ]
+    return [
+        v
+        for v in list_bgc_s_variables()
+        if "DATA_MODE" not in v
+        and "QC" not in v
+        and "ADJUSTED" not in v
+        and v not in misc_meta
+    ]
+
+
+def list_radiometry_variables() -> List[str]:
+    """List of all 🟢 BGC mission variables related to **radiometry** that can be found in a BGC **Synthetic** netcdf files
+
+    This is a subset of the list returned by :meth:`argopy.utils.list_bgc_s_variables`.
+
+    This list includes (but is not limited to) PARAMETERs for which the following variables can be found:
+
+    - <PARAMETER>_DATA_MODE,
+    - <PARAMETER>_QC,
+    - <PARAMETER>_ADJUSTED,
+    - <PARAMETER>_ADJUSTED_QC
+    - <PARAMETER>_ADJUSTED_ERROR
+
+    Returns
+    -------
+    List[str]
+
+    See Also
+    --------
+    :meth:`argopy.utils.list_standard_variables`,
+    :meth:`argopy.utils.list_bgc_s_variables`
+    :meth:`argopy.utils.list_bgc_s_parameters`,
+    :meth:`argopy.utils.list_radiometry_parameters`,
     """
     bgc_vlist_erddap = list_bgc_s_variables()
     vlist = []
-    [vlist.append(v) for v in bgc_vlist_erddap if 'up_radiance' in v.lower()]
-    [vlist.append(v) for v in bgc_vlist_erddap if 'down_irradiance' in v.lower()]
-    [vlist.append(v) for v in bgc_vlist_erddap if 'downwelling_par' in v.lower()]
+    [vlist.append(v) for v in bgc_vlist_erddap if "up_radiance" in v.lower()]
+    [vlist.append(v) for v in bgc_vlist_erddap if "down_irradiance" in v.lower()]
+    [vlist.append(v) for v in bgc_vlist_erddap if "downwelling_par" in v.lower()]
     vlist.sort()
     return vlist
 
 
 def list_radiometry_parameters() -> List[str]:
-    """List of all BGC parameters related to radiometry
+    """List of all 🟢 BGC mission parameters related to **radiometry** that can be found in a BGC **Synthetic** netcdf files
 
-    This list is restricted to PARAM for which variables like <PARAM>_DATA_MODE,
-    <PARAM>_QC, <PARAM>_ADJUSTED, <PARAM>_ADJUSTED_QC and <PARAM>_ADJUSTED_ERROR
-    can be found
+    This is a subset of the list returned by :meth:`argopy.utils.list_radiometry_variables`.
+
+    This list is restricted to PARAMETERs for which the following variables can be found:
+
+    - <PARAMETER>_DATA_MODE,
+    - <PARAMETER>_QC,
+    - <PARAMETER>_ADJUSTED,
+    - <PARAMETER>_ADJUSTED_QC
+    - <PARAMETER>_ADJUSTED_ERROR
 
     Returns
     -------
@@ -308,7 +379,14 @@ def list_radiometry_parameters() -> List[str]:
 
     See Also
     --------
-    :meth:`argopy.utils.lists.list_radiometry_variables`
+    :meth:`argopy.utils.list_standard_variables`,
+    :meth:`argopy.utils.list_bgc_s_variables`,
+    :meth:`argopy.utils.list_bgc_s_parameters`
+    :meth:`argopy.utils.list_radiometry_variables`,
     """
     params = list_radiometry_variables()
-    return [v for v in params if 'DATA_MODE' not in v and 'QC' not in v and 'ADJUSTED' not in v]
+    return [
+        v
+        for v in params
+        if "DATA_MODE" not in v and "QC" not in v and "ADJUSTED" not in v
+    ]

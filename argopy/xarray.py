@@ -654,7 +654,7 @@ class ArgoAccessor:
         Parameters
         ----------
         params: str, List[str], optional, default='all'
-            Name or list of names of the parameter to merge.
+            Name or list of names of the parameter(s) to merge.
             Use the default keyword ``all`` to merge all possible parameters in the :class:`xarray.Dataset`.
         errors: str, optional, default='raise'
             If ``raise``, raises a :class:`argopy.errors.InvalidDatasetStructure` error if any of the expected variables is
@@ -684,25 +684,15 @@ class ArgoAccessor:
         params = to_list(params)
         if params[0] == "all":
             if "DATA_MODE" in this.data_vars:
-                params = ["PRES", "TEMP"]
-                if "PSAL" in this.data_vars:
-                    params.append("PSAL")
+                for p in list_core_parameters():
+                    if p in this.data_vars or "%s_ADJUSTED" % p in this.data_vars:
+                        params.append(p)
             else:
                 params = [
                     p.replace("_DATA_MODE", "")
                     for p in this.data_vars
                     if "_DATA_MODE" in p
                 ]
-        else:
-            for p in params:
-                if p not in this.data_vars:
-                    if errors == "raise":
-                        raise InvalidDatasetStructure(
-                            "Parameter '%s' not found in this dataset" % p
-                        )
-                    else:
-                        log.debug("Parameter '%s' not found in this dataset" % p)
-                    params.remove(p)
 
         # Transform data:
         for param in params:
@@ -1087,7 +1077,7 @@ class ArgoAccessor:
             this = this.argo.profile2point()
 
         core_params = list_core_parameters()
-        if "PSAL" not in this.data_vars:
+        if "PSAL" not in this.data_vars and "PSAL_ADJUSTED" not in this.data_vars:
             core_params.remove("PSAL")
 
         # Apply transforms and filters:
