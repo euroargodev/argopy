@@ -177,7 +177,7 @@ And finally the list of methods and properties for **search results**:
 Usage with **bgc** index
 """""""""""""""""""""""""""
 
-The **argopy** index store supports the Bio and Synthetic Profile directory files:
+The **argopy** index store supports the Bio, Synthetic and Auxiliary Profile directory files:
 
 .. ipython:: python
     :okwarning:

@@ -81,7 +81,7 @@ def _register_accessor(name, cls):
 
 
 def register_argo_accessor(name):
-    """Register a custom property on :class:`xarray.Dataset.argo` objects.
+    """A decorator to register an accessor as a custom property on :class:`xarray.Dataset.argo` objects.
 
     Parameters
     ----------
@@ -109,7 +109,7 @@ def register_argo_accessor(name):
              def N(self):
                   return len(self.wmo)
 
-    It will make it available to an Argo dataset, like this::
+    It will be available to an Argo dataset, like this::
 
         ds.argo.floats.N
         ds.argo.floats.wmo
@@ -130,7 +130,7 @@ class ArgoAccessorExtension:
     This prototype makes available:
 
     - the parent :class:`xarray.Dataset` instance as ``self._obj``
-    - the argo accessor instance as ``self._argo``
+    - the :class:`Dataset.argo` instance as ``self._argo``
 
     See also
     --------

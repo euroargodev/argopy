@@ -229,13 +229,14 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 if v not in self._bgc_vlist_avail:
                     raise ValueError("'%s' not available for this access point. The 'measured' argument must have values in [%s]" % (v, ", ".join(self._bgc_vlist_avail)))
 
+
     def __repr__(self):
         summary = ["<datafetcher.erddap>"]
         summary.append("Name: %s" % self.definition)
         summary.append("API: %s" % self.server)
         summary.append("Domain: %s" % format_oneline(self.cname()))
         if self.dataset_id in ["bgc", "bgc-s"]:
-            summary.append("BGC parameters: %s" % self._bgc_vlist_params)
+            summary.append("Parameters: %s" % self._bgc_vlist_params)
             summary.append(
                 "BGC 'must be measured' parameters: %s" % self._bgc_vlist_measured
             )
@@ -444,8 +445,8 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 results.append(p)
             else:
                 log.error(
-                    "Removed '%s' because it's not available on the erddap, but it should !"
-                    % p
+                    "Removed '%s' because is not available on the erddap server (%s), but it should !"
+                    % (p, self._server)
                 )
 
         return results
@@ -1159,6 +1160,7 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         urls = []
         opts = {
             "ds": self.dataset_id,
+            "mode": self.user_mode,
             "fs": self.fs,
             "server": self.server,
             "parallel": False,
@@ -1244,7 +1246,10 @@ class Fetch_box(ErddapArgoDataFetcher):
             )
             boxes = self.Chunker.fit_transform()
             urls = []
-            opts = {"ds": self.dataset_id, "fs": self.fs, "server": self.server}
+            opts = {"ds": self.dataset_id,
+                    "mode": self.user_mode,
+                    "fs": self.fs,
+                    "server": self.server}
             if self.dataset_id in ["bgc", "bgc-s"]:
                 opts["params"] = self._bgc_params
                 opts["measured"] = self._bgc_measured

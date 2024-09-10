@@ -7,6 +7,7 @@ import logging
 from typing import List, Union
 
 from ..errors import InvalidDatasetStructure
+from .lists import list_core_parameters
 
 
 log = logging.getLogger("argopy.utils.manip")
@@ -186,7 +187,7 @@ def merge_param_with_param_adjusted(ds: xr.Dataset, param: str, errors: str = 'r
         )
 
     core_ds = False
-    if "%s_DATA_MODE" % param not in ds and param in ['PRES', 'TEMP', 'PSAL']:
+    if "%s_DATA_MODE" % param not in ds and param in list_core_parameters():
         if "DATA_MODE" not in ds:
             if errors == 'raise':
                     raise InvalidDatasetStructure(
@@ -278,7 +279,7 @@ def filter_param_by_data_mode(ds: xr.Dataset,
     """
 
     core_ds = False
-    if "%s_DATA_MODE" % param not in ds and param in ['PRES', 'TEMP', 'PSAL']:
+    if "%s_DATA_MODE" % param not in ds and param in list_core_parameters():
         if "DATA_MODE" not in ds:
             if errors == 'raise':
                 raise InvalidDatasetStructure(

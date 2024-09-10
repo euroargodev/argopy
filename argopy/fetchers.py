@@ -163,13 +163,6 @@ class ArgoDataFetcher:
 
         # Dev warnings
         # Todo Clean-up before each release
-        if self._dataset_id == "bgc" and (
-            self._mode == "standard" or self._mode == "research"
-        ):
-            warnings.warn(
-                "The 'bgc' dataset fetching is only available in 'expert' user modes at this point."
-            )
-
         if self._src == "argovis" and (
             self._mode == "expert" or self._mode == "research"
         ):
@@ -411,13 +404,13 @@ class ArgoDataFetcher:
                     xds = self.fetcher.filter_researchmode(xds)
 
                     # Apply data mode transform and filter on BGC parameters:
-                    all_bgc_variables = list(set(list_bgc_s_parameters()) - set(list_core_parameters()))
-                    all_bgc_variables = [p for p in all_bgc_variables if p in xds]
-                    if len(all_bgc_variables) > 0:
+                    all_bgc_parameters = list(set(list_bgc_s_parameters()) - set(list_core_parameters()))
+                    all_bgc_parameters = [p for p in all_bgc_parameters if p in xds or "%s_ADJUSTED" % p in xds]
+                    if len(all_bgc_parameters) > 0:
                         xds = self.fetcher.transform_data_mode(xds,
-                                                               params=all_bgc_variables)
+                                                               params=all_bgc_parameters)
                         xds = self.fetcher.filter_data_mode(xds,
-                                                            params=all_bgc_variables,
+                                                            params=all_bgc_parameters,
                                                             dm=['D'],
                                                             logical='or'
                                                             )
@@ -425,7 +418,7 @@ class ArgoDataFetcher:
                     # Apply QC filter on BGC parameters:
                     xds = self.fetcher.filter_qc(xds,
                                                  QC_list=[1, 5, 8],
-                                                 QC_fields=["%s_QC" % p for p in all_bgc_variables],
+                                                 QC_fields=["%s_QC" % p for p in all_bgc_parameters],
                                                  mode='all',
                                                  )
 

@@ -221,7 +221,6 @@ class ArgoIndexStoreProto(ABC):
         else:
             # Will init search with full index by default:
             self._nrows_index = None
-            
             # Work with the compressed index if available:
             if self.fs["src"].exists(self.index_path + ".gz"):
                 self.index_file += ".gz"
