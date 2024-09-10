@@ -682,27 +682,32 @@ class ArgoAccessor:
 
         # Determine the list of variables to transform:
         params = to_list(params)
+        parameters = []
+        # log.debug(params)
         if params[0] == "all":
             if "DATA_MODE" in this.data_vars:
                 for p in list_core_parameters():
                     if p in this.data_vars or "%s_ADJUSTED" % p in this.data_vars:
-                        params.append(p)
+                        parameters.append(p)
             else:
-                params = [
+                parameters = [
                     p.replace("_DATA_MODE", "")
                     for p in this.data_vars
                     if "_DATA_MODE" in p
                 ]
+        else:
+            [parameters.append(v) for v in params]
+        # log.debug(parameters)
 
         # Transform data:
-        for param in params:
+        for param in parameters:
             this = merge_param_with_param_adjusted(this, param, errors=errors)
 
         # Finalise:
         this = this[np.sort(this.data_vars)]
         this.argo.add_history(
             "[%s] real-time and adjusted/delayed variables merged according to their data mode"
-            % (",".join(params))
+            % (",".join(parameters))
         )
 
         return this
@@ -781,7 +786,7 @@ class ArgoAccessor:
                     if "_DATA_MODE" in p
                 ]
         elif params[0] == "core":
-            params = ["PRES", "TEMP", "PSAL"]
+            params = list_core_parameters()
         else:
             for p in params:
                 if p not in this.data_vars:
