@@ -442,9 +442,9 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
 
 
 def check_gdac_path(path, errors="ignore"):  # noqa: C901
-    """Check if a path has the expected GDAC ftp structure
+    """Check if a path has the expected GDAC structure
 
-    Expected GDAC ftp structure::
+    Expected GDAC structure::
 
         .
         └── dac
@@ -458,9 +458,10 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
     This check will return True if at least one DAC sub-folder is found under path/dac/<dac_name>
 
     Examples::
+
     >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
+    >>> check_gdac_path("https://usgodae.org/pub/outgoing/argo") # True
     >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
-    >>> check_gdac_path("ftp://usgodae.org/pub/outgoing/argo") # True
     >>> check_gdac_path("/home/ref-argo/gdac") # True
     >>> check_gdac_path("https://www.ifremer.fr") # False
     >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
