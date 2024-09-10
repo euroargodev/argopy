@@ -21,7 +21,7 @@
       ["attribute", "NC_GLOBAL", "geospatial_lon_max", "double", "181.706"],
       ["attribute", "NC_GLOBAL", "geospatial_lon_min", "double", "-999.999"],
       ["attribute", "NC_GLOBAL", "geospatial_lon_units", "String", "degrees_east"],
-      ["attribute", "NC_GLOBAL", "history", "String", "2024-09-03T13:13:02Z creation (software version 1.18 (version 11.01.2024 for ARGO_simplified_profile))"],
+      ["attribute", "NC_GLOBAL", "history", "String", "2024-09-06T14:01:31Z creation (software version 1.18 (version 11.01.2024 for ARGO_simplified_profile))"],
       ["attribute", "NC_GLOBAL", "id", "String", "https://doi.org/10.17882/42182"],
       ["attribute", "NC_GLOBAL", "infoUrl", "String", "http://www.argodatamgt.org/Documentation"],
       ["attribute", "NC_GLOBAL", "institution", "String", "Argo"],

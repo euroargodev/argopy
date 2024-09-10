@@ -35,8 +35,6 @@ ACCESS_POINTS = [
             {"region": [-20, -16., 0, 1, 0, 100., "2004-01-01", "2004-01-31"]},
     ]},
     {"ref": [
-        # {"region": [-70, -65, 35.0, 40.0, 0, 10.0]},
-        # {"region": [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01-1", "2012-12-31"]},
         {"region": [-25, -10, 36, 40, 0, 10.]},
         {"region": [-25, -10, 36, 40, 0, 10., '20180101', '20190101']},
     ]},
@@ -53,6 +51,7 @@ PARALLEL_ACCESS_POINTS = [
 List user modes to be tested
 """
 USER_MODES = ['standard', 'expert', 'research']
+# USER_MODES = ['research']
 
 
 """
