@@ -82,7 +82,7 @@ The **research** mode is the safer choice, with data of the highest quality, car
       - real time, adjusted and delayed mode data: [R,A,D] modes
       - good or probably good values (QC=[1,2])
       - *not used*
-      - |ds_phy|: all without jargon [a]_
+      - all without jargon [a]_
     * - Radiometry parameters [b]_ and BBP700 [c]_
       - |ds_bgc|
       - real time only: [R] mode
@@ -103,7 +103,7 @@ The **research** mode is the safer choice, with data of the highest quality, car
       - all without jargon [a]_
 
 
-.. [a] DATA_MODE/PARAM_DATA_MODE and QC_FLAG are retained, PARAM_ADJUSTED and PARAM variables are merged in a single variable: the complete list is available with :class:`utils.list_standard_variables`
+.. [a] The complete list is available with :class:`utils.list_standard_variables`. Note that DATA_MODE/PARAM_DATA_MODE and QC flags variables are retained while PARAM_ADJUSTED and PARAM variables are merged (i.e. PARAM_ADJUSTED is removed).
 .. [b] The list of radiometry parameters is available with :class:`utils.list_radiometry_parameters`.
 .. [c] Particle backscattering at 700 nanometers
 .. [d] Concentration of coloured dissolved organic matter in seawater
@@ -112,7 +112,7 @@ The **research** mode is the safer choice, with data of the highest quality, car
 
 .. tabs::
 
-    .. tab:: Example |ds_phy| : core+deep missions
+    .. tab:: |mode_standard| Example with |ds_phy| : core+deep missions
 
         .. ipython:: python
             :okwarning:
@@ -123,7 +123,7 @@ The **research** mode is the safer choice, with data of the highest quality, car
                 print(ds.data_vars)
 
 
-    .. tab:: Example |ds_bgc| : BGC mission
+    .. tab:: |mode_standard| Example with |ds_bgc| : BGC mission
 
         .. ipython:: python
             :okwarning:
@@ -177,7 +177,7 @@ The **research** mode is the safer choice, with data of the highest quality, car
 
 .. tabs::
 
-    .. tab:: Example |ds_phy| : core+deep missions
+    .. tab:: |mode_research| Example with |ds_phy| : core+deep missions
 
         .. ipython:: python
             :okwarning:
@@ -188,7 +188,7 @@ The **research** mode is the safer choice, with data of the highest quality, car
                 print(ds.data_vars)
 
 
-    .. tab:: Example |ds_bgc| : BGC mission
+    .. tab:: |mode_research| Example with |ds_bgc| : BGC mission
 
         .. ipython:: python
             :okwarning:
@@ -207,7 +207,7 @@ No pre or post processing is performed, this user mode returns all the Argo data
 
 .. tabs::
 
-    .. tab:: Example |ds_phy| : core+deep missions
+    .. tab:: |mode_expert| Example with |ds_phy| : core+deep missions
 
         .. ipython:: python
             :okwarning:
@@ -218,7 +218,7 @@ No pre or post processing is performed, this user mode returns all the Argo data
                 print(ds.data_vars)
 
 
-    .. tab:: Example |ds_bgc| : BGC mission
+    .. tab:: |mode_expert| Example with |ds_bgc| : BGC mission
 
         .. ipython:: python
             :okwarning:

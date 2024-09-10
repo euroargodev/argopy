@@ -203,10 +203,10 @@ def list_standard_variables(ds: str = 'phy') -> List[str]:
     ----------
     ds: str, default='phy'
 
-        Use one the argopy 'ds' option possible values:
+        Return variables for one of the argopy ``dataset`` option possible values:
 
-         - 'phy'  is valid for the 🟡 core and 🔵 deep missions variables
-         - 'bgc'  is valid for the 🟢 BGC missions variables
+         - ``phy``  is valid for the 🟡 core and 🔵 deep missions variables
+         - ``bgc``  is valid for the 🟢 BGC missions variables
 
     Returns
     -------
