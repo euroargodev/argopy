@@ -19,7 +19,7 @@ dependencies:
 # EXT.UTIL:
   - boto3 = 1.35.0
   - gsw = 3.6.19
-  - s3fs = 0.4.2
+  - s3fs = 2024.6.1
   - tqdm = 4.66.5
   - zarr = 2.18.2
 
@@ -44,7 +44,7 @@ dependencies:
   - bottleneck = 1.4.0
   - cfgrib = 0.9.14.0
   - cftime = 1.6.4
-  - codespell
+  - codespell = 2.3.0
   - flake8 = 7.1.1
   - numpy = 1.26.4
   - pandas = 2.2.2
