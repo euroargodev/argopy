@@ -68,6 +68,11 @@
     argopy.utils.list_available_index_src
     argopy.utils.list_standard_variables
     argopy.utils.list_multiprofile_file_variables
+    argopy.utils.list_core_parameters
+    argopy.utils.list_bgc_s_variables
+    argopy.utils.list_bgc_s_parameters
+    argopy.utils.list_radiometry_variables
+    argopy.utils.list_radiometry_parameters
 
     argopy.utils.Chunker
 

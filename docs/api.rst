@@ -217,6 +217,11 @@ Function under the ``argopy.utils`` submodule.
     list_available_index_src
     list_standard_variables
     list_multiprofile_file_variables
+    list_core_parameters
+    list_bgc_s_variables
+    list_bgc_s_parameters
+    list_radiometry_variables
+    list_radiometry_parameters
 
     check_wmo
     check_cyc

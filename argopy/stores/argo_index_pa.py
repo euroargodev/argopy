@@ -33,7 +33,7 @@ log = logging.getLogger("argopy.stores.index.pa")
 class indexstore_pyarrow(ArgoIndexStoreProto):
     """Argo GDAC index store using :class:`pyarrow.Table` as internal storage format.
 
-    With this store, index and search results are saved as pyarrow/parquet files in cache
+        With this store, index and search results are saved as pyarrow/parquet files in cache
 
     """
     # __doc__ += ArgoIndexStoreProto.__doc__
