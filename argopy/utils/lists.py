@@ -48,8 +48,8 @@ def list_available_data_src() -> dict:
         from ..data_fetchers import gdac_data as GDAC_Fetchers
 
         # Ensure we're loading the gdac data fetcher with the current options:
-        GDAC_Fetchers.api_server_check = OPTIONS["ftp"]
-        GDAC_Fetchers.api_server = OPTIONS["ftp"]
+        GDAC_Fetchers.api_server_check = OPTIONS["gdac"]
+        GDAC_Fetchers.api_server = OPTIONS["gdac"]
 
         sources["gdac"] = GDAC_Fetchers
     except Exception:
@@ -89,8 +89,8 @@ def list_available_index_src() -> dict:
         from ..data_fetchers import gdac_index as GDAC_Fetchers
 
         # Ensure we're loading the gdac data fetcher with the current options:
-        GDAC_Fetchers.api_server_check = OPTIONS["ftp"]
-        GDAC_Fetchers.api_server = OPTIONS["ftp"]
+        GDAC_Fetchers.api_server_check = OPTIONS["gdac"]
+        GDAC_Fetchers.api_server = OPTIONS["gdac"]
 
         sources["gdac"] = GDAC_Fetchers
     except Exception:
