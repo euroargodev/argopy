@@ -19,7 +19,7 @@ log = logging.getLogger("argopy.options")
 
 # Define option names as seen by users:
 DATA_SOURCE = "src"
-FTP = "ftp"
+GDAC = "gdac"
 ERDDAP = 'erddap'
 DATASET = "ds"
 CACHE_FOLDER = "cachedir"
@@ -35,7 +35,7 @@ ARGOVIS_API_KEY = "argovis_api_key"
 # Define the list of available options and default values:
 OPTIONS = {
     DATA_SOURCE: "erddap",
-    FTP: "https://data-argo.ifremer.fr",
+    GDAC: "https://data-argo.ifremer.fr",
     ERDDAP: "https://erddap.ifremer.fr/erddap",
     DATASET: "phy",
     CACHE_FOLDER: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
@@ -61,11 +61,11 @@ def _positive_integer(value):
     return isinstance(value, int) and value > 0
 
 
-def validate_ftp(this_path):
+def validate_gdac(this_path):
     if this_path != "-":
         return check_gdac_path(this_path, errors='raise')
     else:
-        log.debug("OPTIONS['%s'] is not defined" % FTP)
+        log.debug("OPTIONS['%s'] is not defined" % GDAC)
         return False
 
 
@@ -79,7 +79,7 @@ def validate_http(this_path):
 
 _VALIDATORS = {
     DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
-    FTP: validate_ftp,
+    GDAC: validate_gdac,
     ERDDAP: validate_http,
     DATASET: _DATASET_LIST.__contains__,
     CACHE_FOLDER: lambda x: os.access(x, os.W_OK),
@@ -108,7 +108,7 @@ class set_options:
     - ``mode``: User mode.
         Default: ``standard``.
         Possible values: ``standard``, ``expert`` or ``research``.
-    - ``ftp``: Default path to be used by the GDAC fetchers and Argo index stores
+    - ``gdac``: Default path to be used by the GDAC fetchers and Argo index stores
         Default: https://data-argo.ifremer.fr
     - ``erddap``: Default server address to be used by the data and index erddap fetchers
         Default: https://erddap.ifremer.fr/erddap
@@ -187,7 +187,7 @@ def check_erddap_path(path, errors='ignore'):
 
 
 def check_gdac_path(path, errors='ignore'):  # noqa: C901
-    """ Check if a path has the expected GDAC ftp structure
+    """ Check if a path has the expected GDAC server structure
 
         Check if a path is structured like:
         .
