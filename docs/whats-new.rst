@@ -26,8 +26,6 @@ Features and front-end API
 - **Improved support for BGC**
     - **argopy** now support `standard` and `research` user modes for the `erddap` data source with the `bgc` dataset. These new user modes follows the last available ADMT recommendations to bring users a finely tuned set of BGC parameters.
 
-
-
     - New BGC method :class:`Dataset.argo.canyon_med` to make CANYON-MED predictions of Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea. This method can be used to predict PO4, NO3, DIC, SiOH4, AT and pHT. (:pr:`364`) by `G. Maze <http://www.github.com/gmaze>`_.
 
     .. currentmodule:: argopy
@@ -89,6 +87,10 @@ Breaking changes
     - new :meth:`Dataset.argo.transform_data_mode` method must now be used to merge adjusted and non-adjusted measurements according to their data mode and reduce the number of variables in the dataset, which is what was doing in previous versions the poorly named `filter_data_mode`.
 
 .. currentmodule:: argopy
+
+- The option name "ftp" is now renamed "gdac" (:pr:`389`) by `G. Maze <http://www.github.com/gmaze>`_
+
+- The option name "dataset" is now renamed "ds" (:pr:`389`) by `G. Maze <http://www.github.com/gmaze>`_
 
 
 Coming up next in v0.1.17
