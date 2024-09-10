@@ -85,7 +85,7 @@ class ArgoIndexStoreProto(ABC):
             ``argo_bio-profile_index.txt``, ``argo_synthetic-profile_index.txt``
             or ``etc/argo-index/argo_aux-profile_index.txt``
 
-            You can also use the following keywords: ``core``, ``bgc-b``, ``bgc-s``.
+            You can also use the following keywords: ``core``, ``bgc-b``, ``bgc-s`` and ``aux``.
         convention: str, default: None
             Set the expected format convention of the index file. This is useful when trying to load index file with custom name. If set to ``None``, we'll try to infer the convention from the ``index_file`` value.
              Possible values: ``ar_index_global_prof``, ``argo_bio-profile_index``, ``argo_synthetic-profile_index`` or ``argo_aux-profile_index``.
