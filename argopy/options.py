@@ -99,7 +99,7 @@ class set_options:
 
     List of options:
 
-    - ``dataset``: Define the Dataset to work with.
+    - ``ds``: Define the Dataset to work with.
         Default: ``phy``.
         Possible values: ``phy``, ``bgc`` or ``ref``.
     - ``src``: Source of fetched data.

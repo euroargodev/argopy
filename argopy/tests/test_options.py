@@ -25,13 +25,13 @@ def test_opt_src():
 
 
 @requires_gdac
-def test_opt_gdac_ftp():
+def test_opt_gdac():
     with pytest.raises(GdacPathError):
-        argopy.set_options(ftp="invalid_path")
+        argopy.set_options(gdac="invalid_path")
 
-    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
-    with argopy.set_options(ftp=local_ftp):
-        assert OPTIONS["ftp"] == local_ftp
+    local_gdac = argopy.tutorial.open_dataset("gdac")[0]
+    with argopy.set_options(gdac=local_gdac):
+        assert OPTIONS["gdac"] == local_gdac
 
 
 def test_opt_ifremer_erddap(mocked_httpserver):
