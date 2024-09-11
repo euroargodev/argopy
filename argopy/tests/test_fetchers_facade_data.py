@@ -45,7 +45,7 @@ class Test_Facade:
 
     # Use the first valid data source:
     src = 'gdac'
-    src_opts = {'ftp': argopy.tutorial.open_dataset("gdac")[0]}
+    src_opts = {'gdac': argopy.tutorial.open_dataset("gdac")[0]}
 
     def __get_fetcher(self, empty: bool = False, pt: str = 'profile'):
         f = ArgoDataFetcher(src=self.src, **self.src_opts)
