@@ -32,11 +32,11 @@ log = logging.getLogger("argopy.tests.data.gdac")
 List GDAC hosts to be tested. 
 Since the fetcher is compatible with host from local, http or ftp protocols, we try to test them all:
 """
-HOSTS = [#argopy.tutorial.open_dataset("gdac")[0],
-         #mocked_server_address,
-         #'MOCKFTP',  # keyword to use the fake/mocked ftp server (running on localhost)
-        's3://argo-gdac-sandbox/pub',
-            ]
+HOSTS = [argopy.tutorial.open_dataset("gdac")[0],
+         mocked_server_address,
+         'MOCKFTP',  # keyword to use the fake/mocked ftp server (running on localhost)
+         #'s3://argo-gdac-sandbox/pub',
+        ]
 
 """
 List access points to be tested.
