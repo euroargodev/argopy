@@ -1,5 +1,5 @@
 """
-Test the "GDAC ftp" data fetcher backend
+Test the GDAC data fetcher backend
 
 Here we try an approach based on fixtures and pytest parametrization
 to make more explicit the full list of scenario tested.
@@ -18,7 +18,7 @@ from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import (
     CacheFileNotFound,
     FileSystemHasNoCache,
-    FtpPathError,
+    GdacPathError,
 )
 from argopy.utils.checkers import isconnected, is_list_of_strings
 from utils import requires_gdac
@@ -99,14 +99,14 @@ def assert_fetcher(server, this_fetcher, cacheable=False):
         assert is_list_of_strings(core.cachepath)
 
 
-def ftp_shortname(ftp):
+def gdac_shortname(gdac):
     """Get a short name for scenarios IDs, given a FTP host"""
-    if ftp == 'MOCKFTP':
+    if gdac == 'MOCKFTP':
         return 'ftp_mocked'
-    elif 'localhost' in ftp or '127.0.0.1' in ftp:
+    elif 'localhost' in gdac or '127.0.0.1' in gdac:
         return 'http_mocked'
     else:
-        return (lambda x: 'file' if x == "" else x)(urlparse(ftp).scheme)
+        return (lambda x: 'file' if x == "" else x)(urlparse(gdac).scheme)
 
 """
 Make a list of VALID host/dataset/access_points to be tested
@@ -116,7 +116,7 @@ for host in HOSTS:
     for mode in USER_MODES:
         for ap in ACCESS_POINTS:
             VALID_ACCESS_POINTS.append({'host': host, 'ds': 'phy', 'mode': mode, 'access_point': ap})
-            VALID_ACCESS_POINTS_IDS.append("host='%s', ds='%s', mode='%s', %s" % (ftp_shortname(host), 'phy', mode, ap))
+            VALID_ACCESS_POINTS_IDS.append("host='%s', ds='%s', mode='%s', %s" % (gdac_shortname(host), 'phy', mode, ap))
 
 
 
@@ -133,21 +133,21 @@ class TestBackend:
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
         self.cachedir = tempfile.mkdtemp()
 
-    def _patch_ftp(self, ftp):
+    def _patch_gdac(self, gdac):
         """Patch Mocked FTP server keyword"""
-        if ftp == 'MOCKFTP':
+        if gdac == 'MOCKFTP':
             return pytest.MOCKFTP  # this was set in conftest.py
         else:
-            return ftp
+            return gdac
 
     def _setup_fetcher(self, this_request, cached=False, parallel=False):
         """Helper method to set up options for a fetcher creation"""
-        ftp = this_request.param['host']
+        gdac = this_request.param['host']
         access_point = this_request.param['access_point']
-        N_RECORDS = None if 'tutorial' in ftp or 'MOCK' in ftp else 100  # Make sure we're not going to load the full index
+        N_RECORDS = None if 'tutorial' in gdac or 'MOCK' in gdac else 100  # Make sure we're not going to load the full index
 
         fetcher_args = {"src": self.src,
-                         "ftp": self._patch_ftp(ftp),
+                         "gdac": self._patch_gdac(gdac),
                          "ds": this_request.param['ds'],
                          "mode": this_request.param['mode'],
                          "cache": cached,
@@ -164,8 +164,8 @@ class TestBackend:
             # parallel is False by default, so we don't need to clutter the arguments list
             del fetcher_args["parallel"]
 
-        if not isconnected(fetcher_args['ftp']):
-            pytest.xfail("Fails because %s not available" % fetcher_args['ftp'])
+        if not isconnected(fetcher_args['gdac']):
+            pytest.xfail("Fails because %s not available" % fetcher_args['gdac'])
         else:
             return fetcher_args, access_point
 
@@ -205,5 +205,5 @@ class TestBackend:
 
     def test_uri_mono2multi(self, mocked_httpserver):
         ap = [v for v in ACCESS_POINTS if 'region' in v.keys()][0]
-        f = create_fetcher({"src": self.src, "ftp": HOSTS[0], "N_RECORDS": 100}, ap).fetcher
+        f = create_fetcher({"src": self.src, "gdac": HOSTS[0], "N_RECORDS": 100}, ap).fetcher
         assert is_list_of_strings(f.uri_mono2multi(f.uri))

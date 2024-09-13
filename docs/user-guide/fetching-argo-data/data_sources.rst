@@ -40,9 +40,9 @@ Available data sources
     Since this is the most efficient method to fetcher Argo data, it's the default data source in **argopy**.
 
 2. 🌐 an Argo GDAC server or any other GDAC-compliant local folder.
-    You can fetch data from any of the 3 official GDAC online servers: the Ifremer https and ftp and the US ftp.
-    This data source can also point toward your own local copy of the `GDAC
-    ftp content <http://www.argodatamgt.org/Access-to-data/Argo-GDAC-ftp-and-https-servers>`__.
+    You can fetch data from any of the 3 official GDAC online servers: the Ifremer https and ftp and the US https.
+    This data source can also point toward your own local copy of a `GDAC
+    server content <http://www.argodatamgt.org/Access-to-data/Argo-GDAC-ftp-https-and-s3-servers>`__.
     You can select this data source with the keyword ``gdac`` and methods described below.
 
 3. 👁 the `Argovis server <https://argovis.colorado.edu/>`__.
@@ -182,22 +182,22 @@ Fetched data and variables
 
 .. tabs::
 
-    .. tab:: **GDAC** ftp
+    .. tab:: **GDAC** servers
 
-        Let's retrieve one float data from a local sample of the GDAC ftp (a sample GDAC ftp is downloaded automatically with the method :meth:`argopy.tutorial.open_dataset`):
+        Let's retrieve one float data from a local sample of the GDAC (a GDAC sample can be downloaded automatically with the method :meth:`argopy.tutorial.open_dataset`):
 
         .. ipython:: python
             :okwarning:
 
-            # Download ftp sample and get the ftp local path:
-            ftproot = argopy.tutorial.open_dataset('gdac')[0]
+            # Download a GDAC sample and get the corresponding local path:
+            gdacroot = argopy.tutorial.open_dataset('gdac')[0]
 
             # then fetch data:
-            with argopy.set_options(src='gdac', ftp=ftproot):
+            with argopy.set_options(src='gdac', gdac=gdacroot):
                 ds = ArgoDataFetcher().float(1900857).load().data
                 print(ds)
 
-    .. tab:: **erddap**
+    .. tab:: **erddap** API
 
         Let’s now retrieve the latest data for this float from the ``erddap``:
 
@@ -208,7 +208,7 @@ Fetched data and variables
                 ds = ArgoDataFetcher().float(1900857).load().data
                 print(ds)
 
-    .. tab:: **argovis**
+    .. tab:: **argovis** API
 
         And with ``argovis``:
 
@@ -247,21 +247,22 @@ Note that the :meth:`argopy.status` method has a ``refresh`` option to let you s
 Last, you can check out `the following argopy status webpage that monitors all important resources to the software <https://argopy.statuspage.io>`_.
 
 
-Setting-up your own local copy of the GDAC ftp
-----------------------------------------------
+Setting-up your own local copy of the GDAC https server
+-------------------------------------------------------
 
 Data fetching with the ``gdac`` data source will require you to
-specify the path toward your local copy of the GDAC ftp server with the
-``ftp`` option.
+specify the path toward your local copy of the GDAC server with the
+``gdac`` option.
 
 This is not an issue for expert users, but standard users may wonder how
 to set this up. The primary distribution point for Argo data, the only
 one with full support from data centers and with nearly a 100% time
-availability, is the GDAC ftp. One server is available (the US GODAE mirror has been discontinued in 2024):
+availability, is a GDAC https server. Two servers are available:
 
--  France Coriolis: ftp://ftp.ifremer.fr/ifremer/argo
+-  France Coriolis: https://data-argo.ifremer.fr
+-  USA GODAE: https://usgodae.org/pub/outgoing/argo
 
-If you want to get your own copy of the ftp server content, you have 2 options detailed below.
+If you want to get your own copy of the GDAC server content, you have 2 options detailed below.
 
 
 Copy with DOI reference

@@ -30,7 +30,7 @@ from pathlib import Path
 from typing import Generator, List
 
 from argopy.options import set_options
-from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound, FtpPathError
+from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound, GdacPathError
 from argopy.utils.lists import (
     list_available_data_src,
     list_available_index_src,
@@ -157,12 +157,10 @@ ci_erddap_index = pytest.mark.skipif(True, reason="Tests disabled for erddap ind
 has_argovis, requires_argovis = _connectskip(
     "argovis" in AVAILABLE_SOURCES, "argovis data fetcher"
 )
-
 has_connected_argovis = has_connection and has_argovis and isAPIconnected(src='argovis', data=True)
 requires_connected_argovis = pytest.mark.skipif(
     not has_connected_argovis, reason="Requires a live Argovis server"
 )
-
 
 ############
 # GDAC FTP #
@@ -262,7 +260,7 @@ def fct_safe_to_server_errors(func, *args, **kwargs):
             msg = "\nServer didn't return the data:\n%s" % str(e.args)
             xmsg = "Failing because some file were not found, but should work"
             pass
-        except FtpPathError as e:
+        except GdacPathError as e:
             if 'xfail' in kwargs and kwargs['xfail']:
                 # Some tests will expect this error to be raised, so we make sure it is, for pytest to catch it
                 raise
@@ -373,6 +371,5 @@ def create_read_only_folder(folder_path):
         create_read_only_folder_windows(folder_path)
     else:
         create_read_only_folder_linux(folder_path)
-
 
 log.debug("%s TESTS UTILS %s" % ("="*50, "="*50))

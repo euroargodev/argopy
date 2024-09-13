@@ -83,7 +83,7 @@ class Test_open_sat_altim_report:
 @requires_matplotlib
 class Test_plot_trajectory:
     src = "gdac"
-    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
+    local_gdac = argopy.tutorial.open_dataset("gdac")[0]
     requests = {
         # "float": [[2901623], [2901623, 6901929, 5906072]],
         # "profile": [[2901623, 12], [6901929, [5, 45]]],
@@ -117,7 +117,7 @@ class Test_plot_trajectory:
 
     @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
     def test_with_a_region(self, opts):
-        with argopy.set_options(src=self.src, ftp=self.local_ftp):
+        with argopy.set_options(src=self.src, gdac=self.local_gdac):
             for arg in self.requests["region"]:
                 loader = ArgoDataFetcher(cache=True).region(arg).load()
                 self.__test_traj_plot(loader.index, opts)
@@ -127,7 +127,7 @@ class Test_plot_trajectory:
 @requires_matplotlib
 class Test_bar_plot:
     src = "gdac"
-    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
+    local_gdac = argopy.tutorial.open_dataset("gdac")[0]
     requests = {
         # "float": [[2901623], [2901623, 6901929, 5906072]],
         # "profile": [[2901623, 12], [6901929, [5, 45]]],
@@ -148,7 +148,7 @@ class Test_bar_plot:
 
     @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
     def test_with_a_region(self, opts):
-        with argopy.set_options(src=self.src, ftp=self.local_ftp):
+        with argopy.set_options(src=self.src, gdac=self.local_gdac):
             for arg in self.requests["region"]:
                 loader = ArgoDataFetcher().region(arg)
                 self.__test_bar_plot(loader.to_index(full=True), opts)
@@ -159,7 +159,7 @@ class Test_bar_plot:
 @requires_cartopy
 class Test_scatter_map:
     src = "gdac"
-    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
+    local_gdac = argopy.tutorial.open_dataset("gdac")[0]
     requests = {
         # "float": [[2901623], [2901623, 6901929, 5906072]],
         # "profile": [[2901623, 12], [6901929, [5, 45]]],
@@ -188,7 +188,7 @@ class Test_scatter_map:
 
     @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
     def test_with_a_dataset_of_points(self, opts):
-        with argopy.set_options(src=self.src, ftp=self.local_ftp):
+        with argopy.set_options(src=self.src, gdac=self.local_gdac):
             for arg in self.requests["region"]:
                 loader = ArgoDataFetcher(cache=True).region(arg).load()
                 with pytest.raises(InvalidDatasetStructure):
@@ -196,7 +196,7 @@ class Test_scatter_map:
 
     @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
     def test_with_a_dataset_of_profiles(self, opts):
-        with argopy.set_options(src=self.src, ftp=self.local_ftp):
+        with argopy.set_options(src=self.src, gdac=self.local_gdac):
             for arg in self.requests["region"]:
                 loader = ArgoDataFetcher(cache=True).region(arg).load()
                 dsp = loader.data.argo.point2profile()
@@ -206,7 +206,7 @@ class Test_scatter_map:
 
     @pytest.mark.parametrize("opts", opts, indirect=False, ids=opts_ids)
     def test_with_a_dataframe_of_index(self, opts):
-        with argopy.set_options(src=self.src, ftp=self.local_ftp):
+        with argopy.set_options(src=self.src, gdac=self.local_gdac):
             for arg in self.requests["region"]:
                 loader = ArgoDataFetcher(cache=True).region(arg).load()
                 self.__test(loader.index, (None, None, None), opts)

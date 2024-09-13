@@ -19,7 +19,7 @@ dependencies:
 # EXT.UTIL:
   - boto3 = 1.35.0
   - gsw = 3.6.19
-  - s3fs = 0.4.2
+  - s3fs = 2024.6.1
   - tqdm = 4.66.5
   - zarr = 2.18.2
 
@@ -59,4 +59,4 @@ dependencies:
 
 # PIP:
   - pip:
-      - pytest-reportlog == 0.4.0
+    - pytest-reportlog == 0.4.0

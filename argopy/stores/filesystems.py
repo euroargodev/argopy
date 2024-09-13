@@ -27,6 +27,7 @@ import aiohttp
 import shutil
 import pickle  # nosec B403 only used with internal files/assets
 import json
+import io
 import time
 import tempfile
 import logging
@@ -643,12 +644,13 @@ class httpstore(argo_store_proto):
         return super().exists(path, *args, **kwargs)
 
     def curateurl(self, url):
-        """Possibly replace server of a given url by a local argopy option value
+        """Possibly manipulate an url before it's accessed
 
-        This is intended to be used by tests and dev
+        This is primarily intended to be used by tests and dev
         """
         self.urls_registry.commit(url)
         return url
+
         # if OPTIONS["server"] is not None:
         #     # log.debug("Replaced '%s' with '%s'" % (urlparse(url).netloc, OPTIONS["netloc"]))
         #
@@ -753,10 +755,12 @@ class httpstore(argo_store_proto):
             dwn_opts.update(kwargs["download_url_opts"])
         data = self.download_url(url, **dwn_opts)
 
-        if data[0:3] != b"CDF":
+        if data[0:3] != b"CDF" and data[0:3] != b'\x89HD':
             raise TypeError(
-                "We didn't get a CDF binary data as expected ! We get: %s" % data
+                "We didn't get a CDF or HDF5 binary data as expected ! We get: %s" % data
             )
+        if data[0:3] == b'\x89HD':
+            data = io.BytesIO(data)
 
         xr_opts = {}
         if "xr_opts" in kwargs:
@@ -825,7 +829,7 @@ class httpstore(argo_store_proto):
                 log.debug("task_fct: This url returned no data: %s" % strUrl(url))
                 return DataNotFound(url), True
             except Exception as e:
-                log.debug("task_fct: Unexpected error when opening a remote dataset: '%s'" % str(e))
+                log.debug("task_fct: Unexpected error when opening the remote dataset '%s':\n'%s'" % (strUrl(url), str(e)))
                 return None, False
 
         def postprocessing_fct(obj, **kwargs):

@@ -45,7 +45,7 @@ class Test_Facade:
 
     # Use the first valid data source:
     src = 'gdac'
-    src_opts = {'ftp': argopy.tutorial.open_dataset("gdac")[0]}
+    src_opts = {'gdac': argopy.tutorial.open_dataset("gdac")[0]}
 
     def __get_fetcher(self, empty: bool = False, pt: str = 'profile'):
         f = ArgoDataFetcher(src=self.src, **self.src_opts)
@@ -86,12 +86,6 @@ class Test_Facade:
     def test_invalid_accesspoint(self):
         with pytest.raises(InvalidFetcherAccessPoint):
             self.__get_fetcher()[0].invalid_accesspoint.to_xarray()
-
-    def test_warnings(self):
-        with pytest.warns(UserWarning):
-            ArgoDataFetcher(src='erddap', ds='bgc', mode='standard')
-        with pytest.warns(UserWarning):
-            ArgoDataFetcher(src='erddap', ds='bgc', mode='research')
 
     def test_no_uri(self):
         with pytest.raises(InvalidFetcherAccessPoint):

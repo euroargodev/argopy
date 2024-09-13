@@ -81,7 +81,8 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             Argovis API request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
         self.definition = "Argovis Argo data fetcher"
-        self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
+        self.dataset_id = OPTIONS["ds"] if ds == "" else ds
+        self.user_mode =  kwargs["mode"] if "mode" in kwargs else OPTIONS["mode"]
         self.server = kwargs["server"] if "server" in kwargs else api_server
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.store_opts = {
@@ -256,11 +257,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         return self._cname()
 
     def url_encode(self, urls):
-        """Return safely encoded list of urls
-
-        This was made to debug for fsspec caching system not working with cache of profile and region in argovis
-        Not working yet, see: https://github.com/euroargodev/argopy/issues/101
-        """
+        """Return safely encoded list of urls"""
 
         # return urls
         def safe_for_fsspec_cache(url):
@@ -269,7 +266,6 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             return url
 
         return [safe_for_fsspec_cache(url) for url in urls]
-        # return [urllib.parse.quote(url, safe='/:?=[]&') for url in urls]
 
     def json2dataframe(self, profiles):
         """convert json data to Pandas DataFrame"""
@@ -364,7 +360,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         ds = ds.set_coords(coords)
 
         # Cast data types and add variable attributes (not available in the csv download):
-        ds["TIME"] = ds["TIME"].astype("datetime64[ns]")
+        ds["TIME"] = pd.to_datetime(ds["TIME"], utc=True)
         ds = self._add_attributes(ds)
         ds = ds.argo.cast_types()
 
@@ -372,10 +368,6 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         ds.attrs = {}
         if self.dataset_id == "phy":
             ds.attrs["DATA_ID"] = "ARGO"
-        elif self.dataset_id == "ref":
-            ds.attrs["DATA_ID"] = "ARGO_Reference"
-        elif self.dataset_id == "bgc":
-            ds.attrs["DATA_ID"] = "ARGO-BGC"
         ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
         ds.attrs["Fetched_from"] = self.server
         try:
@@ -388,14 +380,20 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         ds = ds[np.sort(ds.data_vars)]
         return ds
 
+    def transform_data_mode(self, ds: xr.Dataset, **kwargs):
+        # Argovis data are already curated !
+        if ds.argo._type == "point":
+            ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
+        return ds
+
     def filter_data_mode(self, ds: xr.Dataset, **kwargs):
-        # Argovis data already curated !
+        # Argovis data are already curated !
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
     def filter_qc(self, ds: xr.Dataset, **kwargs):
-        # Argovis data already curated !
+        # Argovis data are already curated !
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
@@ -405,7 +403,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
 
         This filter will select only QC=1 delayed mode data with pressure errors smaller than 20db
 
-        Use this filter instead of filter_data_mode and filter_qc
+        Use this filter instead of transform_data_mode and filter_qc
         """
         ds = ds.argo.filter_researchmode()
         if ds.argo._type == "point":

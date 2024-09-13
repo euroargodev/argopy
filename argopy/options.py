@@ -11,7 +11,7 @@ import fsspec
 from fsspec.core import split_protocol
 from socket import gaierror
 from urllib.parse import urlparse
-from .errors import OptionValueError, FtpPathError, ErddapPathError
+from .errors import OptionValueError, GdacPathError, ErddapPathError
 
 
 # Define a logger
@@ -19,9 +19,9 @@ log = logging.getLogger("argopy.options")
 
 # Define option names as seen by users:
 DATA_SOURCE = "src"
-FTP = "ftp"
+GDAC = "gdac"
 ERDDAP = 'erddap'
-DATASET = "dataset"
+DATASET = "ds"
 CACHE_FOLDER = "cachedir"
 CACHE_EXPIRATION = "cache_expiration"
 USER_LEVEL = "mode"
@@ -35,7 +35,7 @@ ARGOVIS_API_KEY = "argovis_api_key"
 # Define the list of available options and default values:
 OPTIONS = {
     DATA_SOURCE: "erddap",
-    FTP: "https://data-argo.ifremer.fr",
+    GDAC: "https://data-argo.ifremer.fr",
     ERDDAP: "https://erddap.ifremer.fr/erddap",
     DATASET: "phy",
     CACHE_FOLDER: os.path.expanduser(os.path.sep.join(["~", ".cache", "argopy"])),
@@ -52,7 +52,7 @@ DEFAULT = OPTIONS.copy()
 
 # Define the list of possible values
 _DATA_SOURCE_LIST = frozenset(["erddap", "argovis", "gdac"])
-_DATASET_LIST = frozenset(["phy", "bgc", "ref"])
+_DATASET_LIST = frozenset(["phy", "bgc", "ref", "bgc-s", "bgc-b"])
 _USER_LEVEL_LIST = frozenset(["standard", "expert", "research"])
 
 
@@ -61,11 +61,11 @@ def _positive_integer(value):
     return isinstance(value, int) and value > 0
 
 
-def validate_ftp(this_path):
+def validate_gdac(this_path):
     if this_path != "-":
         return check_gdac_path(this_path, errors='raise')
     else:
-        log.debug("OPTIONS['%s'] is not defined" % FTP)
+        log.debug("OPTIONS['%s'] is not defined" % GDAC)
         return False
 
 
@@ -79,7 +79,7 @@ def validate_http(this_path):
 
 _VALIDATORS = {
     DATA_SOURCE: _DATA_SOURCE_LIST.__contains__,
-    FTP: validate_ftp,
+    GDAC: validate_gdac,
     ERDDAP: validate_http,
     DATASET: _DATASET_LIST.__contains__,
     CACHE_FOLDER: lambda x: os.access(x, os.W_OK),
@@ -97,37 +97,58 @@ _VALIDATORS = {
 class set_options:
     """Set options for argopy
 
-    List of options:
+    Parameters
+    ----------
 
-    - ``dataset``: Define the Dataset to work with.
-        Default: ``phy``.
-        Possible values: ``phy``, ``bgc`` or ``ref``.
-    - ``src``: Source of fetched data.
-        Default: ``erddap``.
-        Possible values: ``erddap``, ``gdac``, ``argovis``
-    - ``mode``: User mode.
-        Default: ``standard``.
-        Possible values: ``standard``, ``expert`` or ``research``.
-    - ``ftp``: Default path to be used by the GDAC fetchers and Argo index stores
-        Default: https://data-argo.ifremer.fr
-    - ``erddap``: Default server address to be used by the data and index erddap fetchers
-        Default: https://erddap.ifremer.fr/erddap
-    - ``cachedir``: Absolute path to a local cache directory.
-        Default: ``~/.cache/argopy``
-    - ``cache_expiration``: Expiration delay of cache files in seconds.
-        Default: 86400
-    - ``api_timeout``: Define the time out of internet requests to web API, in seconds.
-        Default: 60
-    - ``trust_env``: Allow for local environment variables to be used to connect to the internet.
-        Default: False.
-        Argopy will get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True and it can also get proxy credentials from ~/.netrc file if this file exists.
-    - ``user``/``password``: Username and password to use when a simple authentication is required.
-        Default: None, None
-    - ``server``: Other than expected/default server to be uses by a function/method. This is mostly intended to be used for unit testing
-        Default: None
-    - ``argovis_api_key``: The API key to use when fetching data from the `argovis` data source. You can get a free key at https://argovis-keygen.colorado.edu
-        Default: `guest`
+    ds: str, default: 'phy'
+        Define the Dataset to work with: ``phy``, ``bgc`` or ``ref``
 
+    src: str, default: 'erddap'
+        Source of fetched data: ``erddap``, ``gdac``, ``argovis``
+
+    mode: str, default: 'standard'
+        User mode: ``standard``, ``expert`` or ``research``
+
+    gdac: str, default: 'https://data-argo.ifremer.fr'
+        Default path to be used by the GDAC fetchers and Argo index stores
+
+    erddap: str, default: 'https://erddap.ifremer.fr/erddap'
+        Default server address to be used by the data and index erddap fetchers
+
+    cachedir: str, default: '~/.cache/argopy'
+        Absolute path to a local cache directory
+
+    cache_expiration: int, default: 86400
+        Expiration delay of cache files in seconds
+
+    api_timeout: int, default: 60
+        Time out for internet requests to web API, in seconds
+
+    trust_env: bool, default: False
+        Allow for local environment variables to be used to connect to the internet.
+
+        Argopy will get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True and it can also get proxy credentials from ~/.netrc file if this file exists
+
+    user: str, default: None
+        Username to use when a simple authentication is required
+
+    password: str, default: None
+        Password to use when a simple authentication is required
+
+    argovis_api_key: str, default:'guest'
+        The API key to use when fetching data from the `argovis` data source
+
+        You can get a free key at https://argovis-keygen.colorado.edu
+
+    Other Parameters
+    ----------------
+    server: : str, default: None
+        Other than expected/default server to be uses by a function/method
+
+        This is mostly intended to be used for unit testing
+
+    Examples
+    --------
 
     You can use ``set_options`` either as a context manager for temporary setting:
 
@@ -138,6 +159,10 @@ class set_options:
     or to set global options (at the beginning of a script for instance):
 
     >>> argopy.set_options(src='gdac')
+
+    Warns
+    -----
+    A DeprecationWarning can be raised when a deprecated option is set
 
     """
     def __init__(self, **kwargs):
@@ -187,7 +212,7 @@ def check_erddap_path(path, errors='ignore'):
 
 
 def check_gdac_path(path, errors='ignore'):  # noqa: C901
-    """ Check if a path has the expected GDAC ftp structure
+    """ Check if a path has the expected GDAC server structure
 
         Check if a path is structured like:
         .
@@ -235,7 +260,7 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
             fs = fsspec.filesystem('ftp', host=host, port=port)
         except gaierror:
             if errors == 'raise':
-                raise FtpPathError("Can't get address info (GAIerror) on '%s'" % host)
+                raise GdacPathError("Can't get address info (GAIerror) on '%s'" % host)
             elif errors == "warn":
                 warnings.warn("Can't get address info (GAIerror) on '%s'" % host)
                 return False
@@ -244,7 +269,7 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
     elif "s3" in split_protocol(path)[0]:
         fs = fsspec.filesystem("s3")
     else:
-        raise FtpPathError("Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0])
+        raise GdacPathError("Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0])
 
     # dacs = [
     #     "aoml",
@@ -272,7 +297,7 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
         return True
 
     elif errors == "raise":
-        raise FtpPathError("This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s" % path)
+        raise GdacPathError("This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s" % path)
 
     elif errors == "warn":
         warnings.warn("This path is not GDAC compliant:\n%s" % path)

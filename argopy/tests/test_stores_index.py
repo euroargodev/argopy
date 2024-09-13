@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 
 import argopy
 from argopy.errors import (
-    FtpPathError,
+    GdacPathError,
     OptionValueError,
     InvalidDatasetStructure,
 )
@@ -323,7 +323,7 @@ class IndexStore_test_proto:
     )
     def test_hosts_invalid(self, ftp_host):
         # Invalid servers:
-        with pytest.raises(FtpPathError):
+        with pytest.raises(GdacPathError):
             self.indexstore(host=ftp_host)
 
     def test_index(self):
