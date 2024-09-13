@@ -183,6 +183,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 ("distributed", get_version),
                 ("h5netcdf", get_version),
                 ("pyarrow", get_version),
+                ("s3fs", get_version),
             ]
         ),
         "ext.plot": sorted(

@@ -221,6 +221,8 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
             True if at least one DAC folder is found under path/dac/<dac_name>
             False otherwise
     """
+    pathname_to_be_checked = 'dac'
+
     # Create a file system for this path
     if split_protocol(path)[0] is None:
         fs = fsspec.filesystem('file')
@@ -264,7 +266,8 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
     #     and fs.exists(fs.sep.join([path, "dac"]))
     #     # and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
     # )
-    check1 = fs.exists(fs.sep.join([path, "dac"]))
+    check1 = fs.exists(fs.sep.join([path, pathname_to_be_checked]))
+
     if check1:
         return True
 
