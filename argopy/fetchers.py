@@ -16,7 +16,7 @@ import numpy as np
 import logging
 
 from .options import OPTIONS, _VALIDATORS
-from .errors import InvalidFetcherAccessPoint, InvalidFetcher, OptionValueError
+from .errors import InvalidFetcherAccessPoint, InvalidFetcher, OptionValueError, OptionDeprecatedWarning
 from .related import (
     get_coriolis_profile_id,
 )
@@ -167,6 +167,10 @@ class ArgoDataFetcher:
             self._mode == "expert" or self._mode == "research"
         ):
             raise OptionValueError("The 'argovis' data source fetching is only available in 'standard' user mode")
+
+        if self._src == "gdac" and "ftp" in self.fetcher_kwargs:
+            OptionDeprecatedWarning(reason="The GDAC 'ftp' argument is deprecated, it will be replaced by 'gdac' in versions >= 0.1.18",
+                                   version="v0.0.17")
 
 
     def __repr__(self):

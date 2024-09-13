@@ -11,8 +11,7 @@ import fsspec
 from fsspec.core import split_protocol
 from socket import gaierror
 from urllib.parse import urlparse
-from typing import List
-from .errors import OptionValueError, FtpPathError, ErddapPathError
+from .errors import OptionValueError, FtpPathError, ErddapPathError, OptionDeprecatedWarning
 
 # Define a logger
 log = logging.getLogger("argopy.options")
@@ -97,37 +96,58 @@ _VALIDATORS = {
 class set_options:
     """Set options for argopy
 
-    List of options:
+    Parameters
+    ----------
 
-    - ``dataset``: Define the Dataset to work with.
-        Default: ``phy``.
-        Possible values: ``phy``, ``bgc`` or ``ref``.
-    - ``src``: Source of fetched data.
-        Default: ``erddap``.
-        Possible values: ``erddap``, ``gdac``, ``argovis``
-    - ``mode``: User mode.
-        Default: ``standard``.
-        Possible values: ``standard``, ``expert`` or ``research``.
-    - ``ftp``: Default path to be used by the GDAC fetchers and Argo index stores
-        Default: https://data-argo.ifremer.fr
-    - ``erddap``: Default server address to be used by the data and index erddap fetchers
-        Default: https://erddap.ifremer.fr/erddap
-    - ``cachedir``: Absolute path to a local cache directory.
-        Default: ``~/.cache/argopy``
-    - ``cache_expiration``: Expiration delay of cache files in seconds.
-        Default: 86400
-    - ``api_timeout``: Define the time out of internet requests to web API, in seconds.
-        Default: 60
-    - ``trust_env``: Allow for local environment variables to be used to connect to the internet.
-        Default: False.
-        Argopy will get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True and it can also get proxy credentials from ~/.netrc file if this file exists.
-    - ``user``/``password``: Username and password to use when a simple authentication is required.
-        Default: None, None
-    - ``server``: Other than expected/default server to be uses by a function/method. This is mostly intended to be used for unit testing
-        Default: None
-    - ``argovis_api_key``: The API key to use when fetching data from the `argovis` data source. You can get a free key at https://argovis-keygen.colorado.edu
-        Default: `guest`
+    dataset: str, default: 'phy'
+        Define the Dataset to work with: ``phy``, ``bgc`` or ``ref``
 
+    src: str, default: 'erddap'
+        Source of fetched data: ``erddap``, ``gdac``, ``argovis``
+
+    mode: str, default: 'standard'
+        User mode: ``standard``, ``expert`` or ``research``
+
+    ftp: str, default: 'https://data-argo.ifremer.fr'
+        Default path to be used by the GDAC fetchers and Argo index stores
+
+    erddap: str, default: 'https://erddap.ifremer.fr/erddap'
+        Default server address to be used by the data and index erddap fetchers
+
+    cachedir: str, default: '~/.cache/argopy'
+        Absolute path to a local cache directory
+
+    cache_expiration: int, default: 86400
+        Expiration delay of cache files in seconds
+
+    api_timeout: int, default: 60
+        Time out for internet requests to web API, in seconds
+
+    trust_env: bool, default: False
+        Allow for local environment variables to be used to connect to the internet.
+
+        Argopy will get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True and it can also get proxy credentials from ~/.netrc file if this file exists
+
+    user: str, default: None
+        Username to use when a simple authentication is required
+
+    password: str, default: None
+        Password to use when a simple authentication is required
+
+    argovis_api_key: str, default:'guest'
+        The API key to use when fetching data from the `argovis` data source
+
+        You can get a free key at https://argovis-keygen.colorado.edu
+
+    Other Parameters
+    ----------------
+    server: : str, default: None
+        Other than expected/default server to be uses by a function/method
+
+        This is mostly intended to be used for unit testing
+
+    Examples
+    --------
 
     You can use ``set_options`` either as a context manager for temporary setting:
 
@@ -138,6 +158,16 @@ class set_options:
     or to set global options (at the beginning of a script for instance):
 
     >>> argopy.set_options(src='gdac')
+
+    Warns
+    -----
+    A DeprecationWarning can be raised when a deprecated option is set.
+
+
+    .. deprecated:: 0.1.7
+
+        - ``dataset`` will be removed in 1.0.0, it is replaced by ``ds``
+        - ``ftp`` will be removed in 1.0.0, it is replaced by ``gdac``
 
     """
 
@@ -156,10 +186,15 @@ class set_options:
             self.old[k] = OPTIONS[k]
 
             if k == 'dataset':
-                raise_deprecated_opt(reason="The 'dataset' option name is deprecated, it will be replaced by 'ds' in "
-                                            "version >= 1.0.0",
+                OptionDeprecatedWarning(reason="The 'dataset' option is deprecated, it will be replaced by 'ds' in "
+                                            "versions >= 0.1.18",
                                      version="v0.0.17",
                                      ignore_caller='test_opt_dataset')
+
+            if k == 'ftp':
+                OptionDeprecatedWarning(reason="The 'ftp' option is deprecated, it will be replaced by 'gdac' in "
+                                            "versions >= 0.1.18",
+                                     version="v0.0.17")
 
         self._apply_update(kwargs)
 
@@ -282,49 +317,3 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
 
     else:
         return False
-
-
-def raise_deprecated_opt(reason: str = None, version: str = None, ignore_caller: List = []):
-    """Option deprecation warning
-
-    This is a function which can be used to mark options
-    as deprecated. It will result in a warning being emitted
-    when the option is used.
-
-    Parameters
-    ----------
-    reason: str, optional, default=None
-        Text message to send with deprecation warning
-    version: str, optional, default=None
-    ignore_caller: List, optional, default=[]
-    """
-    import inspect
-    ignore_caller = [ignore_caller]
-
-    if isinstance(reason, str):
-
-        fmt = "\nCall to deprecated option: {reason}"
-        if version is not None:
-            fmt = "%s -- Deprecated since version {version}" % fmt
-
-        raise_deprec = True
-        stack = inspect.stack()
-        for s in stack:
-            if "<module>" in s.function:
-                break
-            elif s.function in ignore_caller:
-                raise_deprec = False
-
-        if raise_deprec:
-            warnings.simplefilter("always", DeprecationWarning)
-            warnings.warn(
-                fmt.format(reason=reason, version=version),
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
-            warnings.simplefilter("default", DeprecationWarning)
-        else:
-            log.warning(fmt.format(reason=reason, version=version))
-
-    else:
-        raise TypeError(repr(type(reason)))
