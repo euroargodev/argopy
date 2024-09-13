@@ -26,19 +26,16 @@ from mocked_http import mocked_httpserver, mocked_server_address
 
 
 log = logging.getLogger("argopy.tests.data.gdac")
-skip_for_debug = pytest.mark.skipif(False, reason="Taking too long !")
 
 
 """
-List ftp hosts to be tested. 
-Since the fetcher is compatible with host from local, http or ftp protocols, we
-try to test them all:
+List GDAC hosts to be tested. 
+Since the fetcher is compatible with host from local, http or ftp protocols, we try to test them all:
 """
-HOSTS = [argopy.tutorial.open_dataset("gdac")[0],
-             #'https://data-argo.ifremer.fr',  # ok, but replaced by the mocked http server
-         mocked_server_address,
-               # 'ftp://ftp.ifremer.fr/ifremer/argo',
-        'MOCKFTP',  # keyword to use the fake/mocked ftp server (running on localhost)
+HOSTS = [#argopy.tutorial.open_dataset("gdac")[0],
+         #mocked_server_address,
+         #'MOCKFTP',  # keyword to use the fake/mocked ftp server (running on localhost)
+        's3://argo-gdac-sandbox/pub',
             ]
 
 """
@@ -88,7 +85,7 @@ def create_fetcher(fetcher_args, access_point):
     return fetcher
 
 
-def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
+def assert_fetcher(server, this_fetcher, cacheable=False):
     """Assert a data fetcher.
 
         This should be used by all tests
@@ -193,23 +190,6 @@ class TestBackend:
     #########
     # TESTS #
     #########
-    # def test_nocache(self, mocked_httpserver):
-    #     this_fetcher = create_fetcher({"src": self.src, "ftp": self._patch_ftp(VALID_HOSTS[0]), "N_RECORDS": 10}, VALID_ACCESS_POINTS[0])
-    #     with pytest.raises(FileSystemHasNoCache):
-    #         this_fetcher.cachepath
-
-    # @pytest.mark.parametrize("fetcher", VALID_HOSTS,
-    #                          indirect=True,
-    #                          ids=["%s" % ftp_shortname(ftp) for ftp in VALID_HOSTS])
-    # def test_hosts(self, mocked_httpserver, fetcher):
-    #     assert (fetcher.N_RECORDS >= 1)
-
-    # @pytest.mark.parametrize("ftp_host", ['invalid', 'https://invalid_ftp', 'ftp://invalid_ftp'], indirect=False)
-    # def test_hosts_invalid(self, ftp_host):
-    #     # Invalid servers:
-    #     with pytest.raises(FtpPathError):
-    #         create_fetcher({"src": self.src, "ftp": ftp_host}, VALID_ACCESS_POINTS[0])
-
     @pytest.mark.parametrize("fetcher", VALID_ACCESS_POINTS, indirect=True, ids=VALID_ACCESS_POINTS_IDS)
     def test_fetching(self, mocked_httpserver, fetcher):
         assert_fetcher(mocked_httpserver, fetcher, cacheable=False)

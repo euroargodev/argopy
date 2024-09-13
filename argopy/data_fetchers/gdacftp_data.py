@@ -103,7 +103,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         elif self.dataset_id == "bgc":
             index_file = "argo_synthetic-profile_index.txt"
 
-        # Validation of self.server is done by the ArgoIndex:
+        # Validation of self.server is done by the ArgoIndex instance:
         self.indexfs = ArgoIndex(
             host=self.server,
             index_file=index_file,
@@ -452,8 +452,7 @@ class Fetch_wmo(FTPArgoDataFetcher):
         self._nrows = None
         if "MAX_FILES" in kwargs:
             self._nrows = kwargs["MAX_FILES"]
-
-        self.definition = "Ifremer GDAC ftp Argo data fetcher"
+        self.definition = "GDAC Argo data fetcher"
         if self.CYC is not None:
             self.definition = "%s for profiles" % self.definition
         else:
@@ -514,7 +513,7 @@ class Fetch_box(FTPArgoDataFetcher):
         if "MAX_FILES" in kwargs:
             self._nrows = kwargs["MAX_FILES"]
 
-        self.definition = "Ifremer GDAC ftp Argo data fetcher for a space/time region"
+        self.definition = "GDAC Argo data fetcher for a space/time region"
         return self
 
     @property
