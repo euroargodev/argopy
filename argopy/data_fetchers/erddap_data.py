@@ -22,10 +22,11 @@ from aiohttp import ClientResponseError
 import logging
 from erddapy.erddapy import ERDDAP, parse_dates
 from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
+import warnings
 
 from ..options import OPTIONS
 from ..utils.format import format_oneline
-from ..stores import httpstore
+from ..stores import httpstore, has_distributed, distributed
 from ..errors import ErddapServerError, DataNotFound
 from ..stores import (
     indexstore_pd as ArgoIndex,
@@ -142,11 +143,14 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         if not isinstance(parallel, bool):
             parallel_method = parallel
             parallel = True
-        if parallel_method not in ["thread", "seq", "erddap"]:
-            raise ValueError(
-                "erddap only support multi-threading, use 'thread' or 'erddap' instead of '%s'"
-                % parallel_method
-            )
+        if parallel:
+            if has_distributed and isinstance(parallel_method, distributed.client.Client):
+                warnings.warn("Using experimental Dask client as a parallelization method")
+            elif parallel_method not in ["thread", "seq", "erddap"]:
+                raise ValueError(
+                    "erddap only support multi-threading, use 'thread' or 'erddap' instead of '%s'"
+                    % parallel_method
+                )
         self.parallel = parallel
         self.parallel_method = parallel_method
         self.progress = progress
@@ -773,18 +777,33 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     raise ErddapServerError(e.message)
         else:
             try:
-                results = self.fs.open_mfdataset(
-                    URI,
-                    method="erddap",
-                    progress=self.progress,
-                    max_workers=max_workers,
-                    errors=errors,
-                    concat=concat,
-                    concat_dim="N_POINTS",
-                    preprocess=self.post_process,
-                    preprocess_opts={"add_dm": False, "URI": URI},
-                    final_opts={"data_vars": "all"},
-                )
+                if self.parallel_method in ["erddap"]:
+                    results = self.fs.open_mfdataset(
+                        URI,
+                        method="erddap",
+                        progress=self.progress,
+                        max_workers=max_workers,
+                        errors=errors,
+                        concat=concat,
+                        concat_dim="N_POINTS",
+                        preprocess=self.post_process,
+                        preprocess_opts={"add_dm": False, "URI": URI},
+                        final_opts={"data_vars": "all"},
+                    )
+                elif has_distributed and isinstance(self.parallel_method, distributed.client.Client):
+                    results = self.fs.open_mfdataset(
+                        URI,
+                        method=self.parallel_method,
+                        progress=self.progress,
+                        max_workers=max_workers,
+                        errors=errors,
+                        concat=concat,
+                        concat_dim="N_POINTS",
+                        preprocess=self.post_process,
+                        preprocess_opts={"add_dm": False, "URI": URI},
+                        final_opts={"data_vars": "all"},
+                    )
+
                 if concat:
                     if results is not None:
                         if self.progress:

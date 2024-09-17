@@ -74,6 +74,7 @@ try:
 except ModuleNotFoundError:
     log.debug("argopy needs distributed to use Dask cluster/client")
     has_distributed = False
+    distributed = None
 
 
 def new_fs(
