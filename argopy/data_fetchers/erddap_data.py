@@ -432,11 +432,11 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         for p in params:
             if p.lower() in self._bgc_vlist_erddap:
                 results.append(p)
-            else:
-                log.error(
-                    "Removed '%s' because it's not available on the erddap, but it must !"
-                    % p
-                )
+            # else:
+            #     log.error(
+            #         "Removed '%s' because it is not available on the erddap server (%s), but it should !"
+            #         % (p, self._server)
+            #     )
 
         return results
 
