@@ -33,7 +33,7 @@ log = logging.getLogger("argopy.stores.index.pa")
 class indexstore_pyarrow(ArgoIndexStoreProto):
     """Argo GDAC index store using :class:`pyarrow.Table` as internal storage format.
 
-    With this store, index and search results are saved as pyarrow/parquet files in cache
+        With this store, index and search results are saved as pyarrow/parquet files in cache
 
     """
     # __doc__ += ArgoIndexStoreProto.__doc__
@@ -94,6 +94,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
 
         def csv2index(obj):
             index = read_csv(obj, nrows=nrows)
+            log.debug(index.column_names)
             check_index_cols(
                 index.column_names,
                 convention=self.convention,
@@ -274,9 +275,16 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         return wmo
 
     def read_params(self, index=False):
-        if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
-            raise InvalidDatasetStructure("Cannot list parameters in this index (not a BGC profile index)")
+        if self.convention not in ["argo_bio-profile_index",
+                                   "argo_synthetic-profile_index",
+                                   "argo_aux-profile_index"]:
+            raise InvalidDatasetStructure("Cannot list parameters in this index (not a BGC or AUX profile index)")
         if hasattr(self, "search") and not index:
+            if self.N_MATCH == 0:
+                raise DataNotFound(
+                    "No data found in the index corresponding to your search criteria."
+                    " Search definition: %s" % self.cname
+                )
             df = pa.compute.split_pattern(self.search["parameters"], pattern=" ").to_pandas()
         else:
             if not hasattr(self, "index"):
@@ -451,19 +459,19 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         return self
 
     def search_params(self, PARAMs, nrows=None, logical='and'):
-        if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
-            raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC profile index)")
+        if self.convention not in ["argo_bio-profile_index",
+                                   "argo_synthetic-profile_index",
+                                   "argo_aux-profile_index"]:
+            raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC or AUX profile index)")
         log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
         PARAMs = to_list(PARAMs)  # Make sure we deal with a list
         self.load(nrows=self._nrows_index)
         self.search_type = {"PARAM": PARAMs, "logical": logical}
         filt = []
         for param in PARAMs:
-            # pattern = " %s" % param
-            pattern = r"^\%s+|\s%s" % (param, param)
             filt.append(
                 pa.compute.match_substring_regex(
-                    self.index["parameters"], pattern=pattern
+                    self.index["parameters"], options=pa.compute.MatchSubstringOptions(param, ignore_case=True)
                 )
             )
         self.search_filter = self._reduce_a_filter_list(filt, op=logical)
@@ -477,6 +485,8 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         [PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs]  # Make sure we deal with a list
         if not np.all([v in ['R', 'A', 'D', '', ' '] for vals in PARAMs.values() for v in vals]):
             raise ValueError("Data mode must be a value in 'R', 'A', 'D', ' ', ''")
+        if self.convention in ["argo_aux-profile_index"]:
+            raise InvalidDatasetStructure("Method not available for this index ('%s')" % self.convention)
 
         self.load(nrows=self._nrows_index)
         self.search_type = {"DMODE": PARAMs, "logical": logical}
@@ -539,6 +549,8 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
             s = s.set_column(7, "date_update", new_date_update)
         elif self.convention in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
             s = s.set_column(9, "date_update", new_date_update)
+        elif self.convention in ["argo_aux-profile_index"]:
+            s = s.set_column(8, "date_update", new_date_update)
 
         write_options = csv.WriteOptions(delimiter=",", include_header=False, quoting_style="none")
         csv.write_csv(s, file, write_options=write_options)

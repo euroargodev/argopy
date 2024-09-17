@@ -1,9 +1,7 @@
 """A bunch of custom errors used in argopy."""
 
-
-class DataNotFound(ValueError):
-    """Raise when a data selection returns nothing."""
-
+class NoData(ValueError):
+    """Raise for no data"""
     def __init__(self, path: str = "?"):
         self.value = "%s" % path
         self.path = path
@@ -13,20 +11,30 @@ class DataNotFound(ValueError):
         return repr(self.value)
 
 
-class FtpPathError(ValueError):
-    """Raise when a ftp path is not appropriate."""
+class DataNotFound(NoData):
+    """Raise when a data fetching returns nothing"""
+    pass
+
+
+class NoDataLeft(NoData):
+    """Raise when a data post-processing returns an empty dataset or dataframe"""
+    pass
+
+
+class GdacPathError(ValueError):
+    """Raise when a GDAC compliant path is not appropriate"""
 
     pass
 
 
 class ErddapPathError(ValueError):
-    """Raise when a erddap path is not appropriate."""
+    """Raise when an erddap path is not appropriate"""
 
     pass
 
 
 class S3PathError(ValueError):
-    """Raise when a S3 path is not appropriate."""
+    """Raise when a S3 path is not appropriate"""
 
     pass
 

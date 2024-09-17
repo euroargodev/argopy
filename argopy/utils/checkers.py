@@ -13,7 +13,7 @@ import logging
 import importlib
 
 from ..options import OPTIONS
-from ..errors import InvalidDatasetStructure, FtpPathError, InvalidFetcher
+from ..errors import InvalidDatasetStructure, GdacPathError, InvalidFetcher
 from .lists import list_available_data_src, list_available_index_src
 from .casting import to_list
 
@@ -419,17 +419,32 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
             "date_update",
         ]
 
+    if (
+        convention == "argo_aux-profile_index"
+    ):
+        # ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution', 'parameters', 'date_update']
+        ref = [
+            "file",
+            "date",
+            "latitude",
+            "longitude",
+            "ocean",
+            "profiler_type",
+            "institution",
+            "parameters",
+            "date_update",
+        ]
     if not is_list_equal(column_names, ref):
-        # log.debug("Expected: %s, got: %s" % (";".join(ref), ";".join(column_names)))
+        log.debug("Expected (convention=%s): %s, got: %s" % (convention, ";".join(ref), ";".join(column_names)))
         raise InvalidDatasetStructure("Unexpected column names in this index !")
     else:
         return column_names
 
 
 def check_gdac_path(path, errors="ignore"):  # noqa: C901
-    """Check if a path has the expected GDAC ftp structure
+    """Check if a path has the expected GDAC structure
 
-    Expected GDAC ftp structure::
+    Expected GDAC structure::
 
         .
         └── dac
@@ -443,9 +458,10 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
     This check will return True if at least one DAC sub-folder is found under path/dac/<dac_name>
 
     Examples::
+
     >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
+    >>> check_gdac_path("https://usgodae.org/pub/outgoing/argo") # True
     >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
-    >>> check_gdac_path("ftp://usgodae.org/pub/outgoing/argo") # True
     >>> check_gdac_path("/home/ref-argo/gdac") # True
     >>> check_gdac_path("https://www.ifremer.fr") # False
     >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
@@ -474,14 +490,14 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
             fs = fsspec.filesystem("ftp", host=host)
         except gaierror:
             if errors == "raise":
-                raise FtpPathError("Can't get address info (GAIerror) on '%s'" % host)
+                raise GdacPathError("Can't get address info (GAIerror) on '%s'" % host)
             elif errors == "warn":
                 warnings.warn("Can't get address info (GAIerror) on '%s'" % host)
                 return False
             else:
                 return False
     else:
-        raise FtpPathError(
+        raise GdacPathError(
             "Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0]
         )
 
@@ -508,7 +524,7 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
     if check1:
         return True
     elif errors == "raise":
-        raise FtpPathError(
+        raise GdacPathError(
             "This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s"
             % path
         )

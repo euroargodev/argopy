@@ -105,6 +105,7 @@ DEFAULT_TARGETS = [
     "oops",
     "nvs",
     "docs",
+    "altim",
     "ea_dataselection",
     "ifremer_api",
     "github",

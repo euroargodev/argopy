@@ -1,8 +1,14 @@
 .. currentmodule:: argopy
 .. _user-mode:
 
-User mode (🏄, 🏊, 🚣)
-=======================
+.. |ds_phy| replace:: 🟡+🔵
+.. |ds_bgc| replace:: 🟢
+.. |mode_expert| replace:: 🏄
+.. |mode_standard| replace:: 🏊
+.. |mode_research| replace:: 🚣
+
+User modes (🏄, 🏊, 🚣)
+========================
 
 .. hint::
 
@@ -11,7 +17,7 @@ User mode (🏄, 🏊, 🚣)
 .. contents:: Contents
    :local:
 
-**Problem**
+**The problem we're trying to solve**
 
 For non-experts of the Argo dataset, it can be quite
 complicated to get access to Argo measurements. Indeed, the Argo data
@@ -31,17 +37,17 @@ This is mainly due to:
    principle of functioning, is a rather complex robot that needs a lot
    of data to be monitored and logged.
 
-**Solution**
+**The solution proposed by argopy**
 
 In order to ease Argo data analysis for the vast majority of
 users, we implemented in **argopy** different levels of verbosity and
 data processing to hide or simply remove variables only meaningful to
 experts.
 
-.. _user-mode-details:
+.. _user-mode-definition:
 
-User mode details
------------------
+Definitions
+-----------
 
 **argopy** provides 3 user modes:
 
@@ -49,44 +55,180 @@ User mode details
 - 🏊 **standard** mode simplifies the dataset, remove most of its jargon and return *a priori* good data,
 - 🚣 **research** mode simplifies the dataset to its heart, preserving only data of the highest quality for research studies, including studies sensitive to small pressure and salinity bias (e.g. calculations of global ocean heat content or mixed layer depth).
 
-In **standard** and **research** modes, fetched data are automatically filtered to account for their quality (using the *quality control flags*) and level of processing by the data centers (considering for each parameter the data mode which indicates if a human expert has carefully looked at the data or not). Both mode return a postprocessed subset of the full Argo dataset.
+In **standard** and **research** modes, fetched data are automatically filtered to account for their quality (using the *quality control flags*) and level of processing by the data centers (considering for each parameter the data mode which indicates if a human expert has carefully looked at the data or not). Both modes return a postprocessed subset of the full Argo dataset.
 
 Hence the main difference between the **standard** and **research** modes is in the level of data quality insurance.
-In **standard** mode, only good or probably good data are returned and includes real time data that have been validated automatically but not by a human expert.
+In **standard** mode, only good or probably good data are returned and these may include real time data that have been validated automatically but not by a human expert.
 The **research** mode is the safer choice, with data of the highest quality, carefully checked in delayed mode by a human expert of the `Argo Data Management Team <http://www.argodatamgt.org>`_.
 
-.. list-table:: Table of **argopy** user mode data processing details for **physical** parameters (``phy`` :ref:`dataset <data-set>`)
+
+.. _user-mode-standard:
+
+|mode_standard| Standard mode (default)
+---------------------------------------
+
+.. list-table:: Table of **argopy** data processing details in ``standard`` user mode |mode_standard|
     :header-rows: 1
     :stub-columns: 1
 
-    * -
-      - ``expert``
-      - ``standard``
-      - ``research``
-    * -
-      - 🏄
-      - 🏊
-      - 🚣
-    * - Level of quality (QC flags) retained
-      - all
-      - good or probably good (QC=[1,2])
-      - good (QC=1)
-    * - Level of assessment (Data mode) retained
-      - all: [R,D,A] modes
-      - all: [R,D,A] modes, but PARAM_ADJUSTED and PARAM are merged in a single variable according to the mode
-      - best only (D mode only)
-    * - Pressure error
-      - any
-      - any
+    * - Parameters
+      - Dataset
+      - Level of assessment (data mode)
+      - Level of quality (QC flags)
+      - Pressure error
+      - Return variables
+    * - Pressure, temperature, salinity
+      - |ds_phy| + |ds_bgc|
+      - real time, adjusted and delayed mode data: [R,A,D] modes
+      - good or probably good values (QC=[1,2])
+      - *not used*
+      - all without jargon [a]_
+    * - Radiometry parameters [b]_ and BBP700 [c]_
+      - |ds_bgc|
+      - real time only: [R] mode
+      - good or probably good values, estimated or changed values (QC=[1,2,5,8])
+      - *not used*
+      - all without jargon [a]_
+    * - CDOM [d]_
+      - |ds_bgc|
+      - None allowed
+      - None allowed
+      - *not used*
+      - all without jargon [a]_
+    * - All other BGC parameters [e]_
+      - |ds_bgc|
+      - real time data with adjusted values, delayed mode data: [A,D] modes
+      - good or probably good data, estimated or changed values (QC=[1,2,5,8])
+      - *not used*
+      - all without jargon [a]_
+
+
+.. [a] The complete list is available with :class:`utils.list_standard_variables`. Note that DATA_MODE/PARAM_DATA_MODE and QC flags variables are retained while PARAM_ADJUSTED and PARAM variables are merged (i.e. PARAM_ADJUSTED is removed).
+.. [b] The list of radiometry parameters is available with :class:`utils.list_radiometry_parameters`.
+.. [c] Particle backscattering at 700 nanometers
+.. [d] Concentration of coloured dissolved organic matter in seawater
+.. [e] The complete list of BGC parameters is available with :class:`utils.list_bgc_s_parameters`.
+
+
+.. tabs::
+
+    .. tab:: |mode_standard| Example with |ds_phy| : core+deep missions
+
+        .. ipython:: python
+            :okwarning:
+
+            import argopy
+            with argopy.set_options(mode='standard'):
+                ds = argopy.DataFetcher(src='gdac').profile(6902746, 12).to_xarray()
+                print(ds.data_vars)
+
+
+    .. tab:: |mode_standard| Example with |ds_bgc| : BGC mission
+
+        .. ipython:: python
+            :okwarning:
+
+            import argopy
+            with argopy.set_options(mode='standard'):
+                ds = argopy.DataFetcher(src='erddap', ds='bgc').profile(5903248, 34).to_xarray()
+                print(ds.data_vars)
+
+
+
+|mode_research| Research mode
+-----------------------------
+
+.. list-table:: Table of **argopy** data processing details in ``research`` user mode |mode_research|
+    :header-rows: 1
+    :stub-columns: 1
+
+    * - Parameters
+      - Dataset
+      - Level of assessment (data mode)
+      - Level of quality (QC flags)
+      - Pressure error
+      - Return variables
+    * - Pressure, temperature, salinity
+      - |ds_phy| + |ds_bgc|
+      - delayed mode data only: [D] mode
+      - good values (QC=[1])
       - smaller than 20db
-    * - Variables returned
-      - all
-      - all without jargon (DATA_MODE and QC_FLAG are retained)
-      - comprehensive minimum
+      - comprehensive minimum [a]_
+    * - CDOM [d]_
+      - |ds_bgc|
+      - None allowed
+      - None allowed
+      - *not used*
+      - comprehensive minimum [a]_
+    * - All other BGC parameters [e]_
+      - |ds_bgc|
+      - delayed mode data only: [D] mode
+      - good data, estimated or changed values (QC=[1,5,8])
+      - *not used*
+      - comprehensive minimum [a]_
 
-.. admonition:: About the **bgc** dataset
 
-    The table of **argopy** user mode data processing details for **biogeochemical** parameters is being defined (:issue:`280`) and will be implemented in a near future release.
+.. [a] i.e.: float ID, profile number and direction and all parameter values, including error estimates
+.. [b] The list of radiometry parameters is available with :class:`utils.list_radiometry_parameters`
+.. [c] Particle backscattering at 700 nanometers
+.. [d] Concentration of coloured dissolved organic matter in seawater
+.. [e] The complete list of BGC parameters is available with :class:`utils.list_bgc_s_parameters`.
+
+
+.. tabs::
+
+    .. tab:: |mode_research| Example with |ds_phy| : core+deep missions
+
+        .. ipython:: python
+            :okwarning:
+
+            import argopy
+            with argopy.set_options(mode='research'):
+                ds = argopy.DataFetcher(src='gdac').profile(6902746, 12).to_xarray()
+                print(ds.data_vars)
+
+
+    .. tab:: |mode_research| Example with |ds_bgc| : BGC mission
+
+        .. ipython:: python
+            :okwarning:
+
+            import argopy
+            with argopy.set_options(mode='research'):
+                ds = argopy.DataFetcher(src='erddap', ds='bgc').profile(5903248, 34).to_xarray()
+                print(ds.data_vars)
+
+
+|mode_expert| Expert mode
+-------------------------
+
+No pre or post processing is performed, this user mode returns all the Argo data as they are in data source.
+
+
+.. tabs::
+
+    .. tab:: |mode_expert| Example with |ds_phy| : core+deep missions
+
+        .. ipython:: python
+            :okwarning:
+
+            import argopy
+            with argopy.set_options(mode='expert'):
+                ds = argopy.DataFetcher(src='gdac').profile(6902746, 12).to_xarray()
+                print(ds.data_vars)
+
+
+    .. tab:: |mode_expert| Example with |ds_bgc| : BGC mission
+
+        .. ipython:: python
+            :okwarning:
+
+            import argopy
+            with argopy.set_options(mode='expert'):
+                ds = argopy.DataFetcher(src='gdac', ds='bgc').profile(5903248, 34).to_xarray()
+                print(ds.data_vars)
+
+
 
 How to select a user mode ?
 ---------------------------
@@ -127,46 +269,3 @@ can use one of the following 3 methods:
     :okwarning:
 
     ArgoDataFetcher(mode='research').profile(6902746, 34)
-
-Example of differences in user modes
-------------------------------------
-
-To highlight differences in data returned for each user modes, let’s compare data fetched for one profile.
-
-You will note that the **standard** and **research** modes have fewer variables to let you
-focus on your analysis. For **expert**, all Argo variables for you to
-work with are here.
-
-
-.. tabs::
-
-    .. tab:: In **expert** mode:
-
-        .. ipython:: python
-            :okwarning:
-
-            with argopy.set_options(mode='expert'):
-                ds = ArgoDataFetcher(src='gdac').profile(6902755, 12).to_xarray()
-                print(ds.data_vars)
-
-    .. tab:: In **standard** mode:
-
-        .. ipython:: python
-            :okwarning:
-
-            with argopy.set_options(mode='standard'):
-                ds = ArgoDataFetcher(src='gdac').profile(6902755, 12).to_xarray()
-                print(ds.data_vars)
-
-    .. tab:: In **research** mode:
-
-        .. ipython:: python
-            :okwarning:
-
-            with argopy.set_options(mode='research'):
-                ds = ArgoDataFetcher(src='gdac').profile(6902755, 12).to_xarray()
-                print(ds.data_vars)
-
-.. note::
-
-    A note for **expert** users looking at **standard** and **research** mode results: they are no ``PARAM_ADJUSTED`` variables because they've been renamed ``PARAM`` wherever the ``DATA_MODE`` variable was ``ADJUSTED`` or ``DELAYED``.

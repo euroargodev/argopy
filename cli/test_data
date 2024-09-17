@@ -1,0 +1,880 @@
+#!/usr/bin/env python
+"""
+Tests data manager
+
+Use this script to download all possible tests data to be used by the local http server fixture
+
+It is possible to add more urls in the 'fetch_download_links' function
+
+If you add more urls, don't forget to update the 'patterns' list in: tests/helpers/mocked_http.py
+
+>>> test_data --help
+"""
+import os
+import sys
+import argparse
+import aiohttp
+import asyncio
+import aiofiles
+import xarray as xr
+import pickle
+from urllib.parse import urlparse, parse_qs, unquote
+import logging
+import hashlib
+import numpy as np
+# from tqdm.asyncio import tqdm_asyncio
+from pathlib import Path
+
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+from argopy import DataFetcher
+from argopy.related import TopoFetcher, OceanOPSDeployments, ArgoNVSReferenceTables, ArgoDocs
+
+
+log = logging.getLogger("argopy.cli.test_data")
+
+# Where to save remote data to:
+DATA_FOLDER = os.path.dirname(os.path.realpath(__file__)).replace("cli", "argopy/tests/test_data")
+DB_FILE = os.path.join(DATA_FOLDER, "mocked_file_index.pkl")
+
+# Dictionary mapping of file extension with http data content type
+CONTENT_TYPE = {
+    "js": "application/json",
+    "json": "application/json",
+    "yaml": "text/yaml",
+    "ld+json": "application/ld+json",
+    "rdf+xml": "application/rdf+xml",
+    "xml": "application/rdf+xml",
+    "text/turtle": "text/turtle",
+    "turtle": "text/turtle",
+    "nc": "application/x-netcdf",
+    "ncHeader": "text/plain",
+    "txt": "text/plain",
+    "html": "text/html",
+    "png": "image/png",
+    "gz": "application/x-gzip",
+}
+
+# Dictionary mapping of URL requests as keys, and expected responses as values
+MOCKED_REQUESTS = {}
+
+start_with = (
+    lambda f, x: f[0 : len(x)] == x if len(x) <= len(f) else False
+)  # noqa: E731
+
+
+
+def list_files(load=True):
+    # Dictionary mapping of URL requests as keys, and expected responses as values:
+    # (this will be filling the mocked http server content)
+    # The real address must be made relative
+    if os.path.exists(DB_FILE):
+        with open(DB_FILE, "rb") as f:
+            URI = pickle.load(f)
+        for resource in URI:
+            test_data_file = os.path.join(
+                DATA_FOLDER, "%s.%s" % (resource["sha"], resource["ext"])
+            )
+            if load:
+                with open(test_data_file, mode="rb") as file:
+                    data = file.read()
+            else:
+                data = "---"
+            print(log_file_desc(test_data_file, data, resource))
+    else:
+        print("😱 There is no '%s' in %s !" % (DB_FILE.replace(DATA_FOLDER,""), DATA_FOLDER))
+
+
+def can_be_xr_opened(src, file):
+    try:
+        xr.open_dataset(file)
+        return src
+    except:
+        # print("This source can't be opened with xarray: %s" % src)
+        return src
+
+
+def log_file_desc(file, data, src):
+    size = float(os.stat(file).st_size / (1024 * 1024))
+    prt_size = lambda x: "Size < 1Mb" if x < 1 else "Size = %0.2dMb" % x
+    msg = []
+    # msg.append("- %s, %s" % (file.replace(DATA_FOLDER, '<DATA_FOLDER>'), data[0:3]))
+    if "erddap.ifremer.fr" in src["uri"]:
+        if src['ext'] != 'json':
+            msg.append("\n🤖 ERDDAP: %s" % parse_qs(src["uri"]))
+        else:
+            msg.append("\n🤖 ERDDAP: %s" % src["uri"])
+
+    elif "coastwatch.pfeg.noaa.gov/erddap" in src['uri']:
+        # msg.append("\n🤖 NOAA ERDDAP: %s" % urlparse(unquote(src["uri"])).query)
+        msg.append("\n🤖 NOAA ERDDAP: %s" % unquote(src["uri"]))
+    # elif "github.com/euroargodev/argopy-data" in src['uri']:
+    #     msg.append("\n🤖 GITHUB ARGOPY-DATA: %s" % parse_qs(src["uri"]))
+
+    elif "https://www.ocean-ops.org/api/1" in src['uri']:
+        msg.append("\n🤖 Ocean-OPS API: %s" % unquote(src["uri"]))
+
+    else:
+        msg.append("\n🤖 %s" % src["uri"])
+
+    msg.append(
+        "%s, %s, %s"
+        % (file.replace(DATA_FOLDER, ""), data[0:3], prt_size(size))
+    )
+    return " 🔸 ".join(msg)
+
+
+def list_erddap_links(session: aiohttp.ClientSession):
+    this_URI = []
+
+    # This should correspond to all the possible erddap requests made during CI tests.
+    # And because of the erddap fetcher N_POINT attribute, we also need to fetch ".ncHeader" on top of ".nc" files
+    requests_phy = {
+        "float": [[1901393], [1901393, 6902746]],
+        "profile": [[6902746, 34], [6902746, np.arange(12, 13)], [6902746, [1, 12]]],
+        "region": [
+            [-20, -16.0, 0, 1, 0, 100.0],
+            # [-20, -16., 0, 1, 0, 100., "1997-07-01", "1997-09-01"]
+            [-20, -16.0, 0, 1, 0, 100.0, "2004-01-01", "2004-01-31"],
+            [
+                -75,
+                -55,
+                30.0,
+                40.0,
+                0,
+                100.0,
+                "2011-01-01",
+                "2011-01-15",
+            ],  # used by test_xarray
+        ],
+    }
+    requests_ref = {
+        "region": [
+            [-70, -65, 35.0, 40.0, 0, 10.0],
+            [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01-01", "2012-12-31"],
+        ]
+    }
+    requests_seq = {"phy": requests_phy, "ref": requests_ref}
+
+    requests_par = {
+        # "float": [[6902766, 6902772, 6902914]],  # >128Mb file !
+        "float": [[1900468, 1900117, 1900386]],
+        "region": [
+            [-60, -55, 40.0, 45.0, 0.0, 20.0],
+            [-60, -55, 40.0, 45.0, 0.0, 20.0, "2007-08-01", "2007-09-01"],
+        ],
+    }
+
+
+    def nc_file(url, sha, iter):
+        return {
+            "uri": url,
+            "ext": "nc",
+            "sha": "%s_%03.d" % (sha, iter),
+            "type": CONTENT_TYPE["nc"],
+        }
+
+    def ncHeader_file(url, sha, iter):
+        return {
+            "uri": url,
+            "ext": "ncHeader",
+            "sha": "%s_%03.d" % (sha, iter),
+            "type": CONTENT_TYPE["ncHeader"],
+        }
+
+    def add_to_URI(facade):
+        uri = facade.uri
+        for ii, url in enumerate(uri):
+            this_URI.append(nc_file(url, facade.fetcher.sha, ii))
+            this_URI.append(ncHeader_file(url.replace("." + facade.fetcher.erddap.response, ".ncHeader"), facade.fetcher.sha, ii))
+
+    for ds in requests_seq:
+        fetcher = DataFetcher(src="erddap", ds=ds)
+        for access_point in requests_seq[ds]:
+            [add_to_URI(fetcher.profile(*cfg)) for cfg in requests_seq[ds][access_point] if access_point == "profile"]
+            [add_to_URI(fetcher.float(cfg)) for cfg in requests_seq[ds][access_point] if access_point == "float"]
+            [add_to_URI(fetcher.region(cfg)) for cfg in requests_seq[ds][access_point] if access_point == "region"]
+
+    fetcher = DataFetcher(src="erddap", ds="phy", parallel=True)
+    for access_point in requests_par:
+        [add_to_URI(fetcher.profile(*cfg)) for cfg in requests_par[access_point] if access_point == "profile"]
+        [add_to_URI(fetcher.float(cfg)) for cfg in requests_par[access_point] if access_point == "float"]
+        [add_to_URI(fetcher.region(cfg)) for cfg in requests_par[access_point] if access_point == "region"]
+
+    # Add more URI from the erddap:
+    this_URI.append(
+        {
+            "uri": "https://erddap.ifremer.fr/erddap/info/ArgoFloats/index.json",
+            "ext": "json",
+            "sha": hashlib.sha256(
+                "https://erddap.ifremer.fr/erddap/info/ArgoFloats/index.json".encode()
+            ).hexdigest(),
+            "type": CONTENT_TYPE["json"],
+        }
+    )
+    this_URI.append(
+        {
+            "uri": "https://erddap.ifremer.fr/erddap/info/ArgoFloats-ref/index.json",
+            "ext": "json",
+            "sha": hashlib.sha256(
+                "https://erddap.ifremer.fr/erddap/info/ArgoFloats-ref/index.json".encode()
+            ).hexdigest(),
+            "type": CONTENT_TYPE["json"],
+        }
+    )
+    this_URI.append(
+        {
+            "uri": "https://erddap.ifremer.fr/erddap/info/index.json",
+            "ext": "json",
+            "sha": hashlib.sha256(
+                "https://erddap.ifremer.fr/erddap/info/index.json".encode()
+            ).hexdigest(),
+            "type": CONTENT_TYPE["json"],
+        }
+    )
+
+    return this_URI
+
+
+def list_erddap_links_bgc(session: aiohttp.ClientSession):
+    this_URI = []
+
+    # This should correspond to all the possible erddap requests made during CI tests.
+    # And because of the erddap fetcher N_POINT attribute, we also need to fetch ".ncHeader" on top of ".nc" files
+    requests_seq = {
+        "float": [[5903248], [6904240], [5903248, 6904241]],
+        "profile": [[5903248, 34], [5903248, np.arange(12, 14)], [5903248, [1, 12]]],
+        "region": [
+            [-55, -47, 55, 57, 0, 10],
+            [-55, -47, 55, 57, 0, 10, "2022-05-1", "2023-07-01"],
+        ],
+    }
+
+    requests_par = {
+        "float": [[5903248, 6904241]],
+        "region": [
+            [-55, -47, 55, 57, 0, 10, "2022-05-1", "2023-07-01"],
+        ],
+    }
+
+    def nc_file(url, sha, iter):
+        return {
+            "uri": url,
+            "ext": "nc",
+            "sha": "%s_%03.d" % (sha, iter),
+            "type": CONTENT_TYPE["nc"],
+        }
+
+    def ncHeader_file(url, sha, iter):
+        return {
+            "uri": url,
+            "ext": "ncHeader",
+            "sha": "%s_%03.d" % (sha, iter),
+            "type": CONTENT_TYPE["ncHeader"],
+        }
+
+    def gzip_file(url):
+        return {
+            "uri": url,
+            "ext": "gz",
+            "sha": hashlib.sha256(url.encode()).hexdigest(),
+            "type": CONTENT_TYPE['gz'],  # but we should also modify the header: Content-Encoding: gzip
+        }
+
+    def add_to_URI(facade):
+        uri = facade.uri
+        for ii, url in enumerate(uri):
+            this_URI.append(nc_file(url, facade.fetcher.sha, ii))
+            this_URI.append(ncHeader_file(url.replace("." + facade.fetcher.erddap.response, ".ncHeader"), facade.fetcher.sha, ii))
+
+        uri = facade.fetcher.fs.urls_registry
+        for ii, url in enumerate(uri):
+            suffix = Path(urlparse(url).path).suffix
+            if suffix == '.gz':
+                this_URI.append(gzip_file(url))
+
+
+    for params in ['all', 'DOXY']:
+        for measured in ['all', 'DOXY', None]:
+            for mode in ['expert', 'standard', 'research']:
+                fetcher = DataFetcher(src="erddap", ds='bgc-s', cache=True,
+                                      mode=mode, params=params, measured=measured)
+                for access_point in requests_seq:
+                    [add_to_URI(fetcher.profile(*cfg)) for cfg in requests_seq[access_point] if access_point == "profile"]
+                    [add_to_URI(fetcher.float(cfg)) for cfg in requests_seq[access_point] if access_point == "float"]
+                    [add_to_URI(fetcher.region(cfg)) for cfg in requests_seq[access_point] if access_point == "region"]
+
+    for params in ['all', 'DOXY']:
+        for measured in ['all', 'DOXY', None]:
+            for mode in ['expert', 'standard', 'research']:
+                fetcher = DataFetcher(src="erddap", ds='bgc-s', cache=True,
+                                      parallel=True, parallel_method='erddap',
+                                      mode=mode, params=params, measured=measured)
+                for access_point in requests_par:
+                    [add_to_URI(fetcher.profile(*cfg)) for cfg in requests_par[access_point] if access_point == "profile"]
+                    [add_to_URI(fetcher.float(cfg)) for cfg in requests_par[access_point] if access_point == "float"]
+                    [add_to_URI(fetcher.region(cfg)) for cfg in requests_par[access_point] if access_point == "region"]
+
+    # Add more URI from the erddap:
+    this_URI.append(
+        {
+            "uri": "https://erddap.ifremer.fr/erddap/info/ArgoFloats-synthetic-BGC/index.json",
+            "ext": "json",
+            "sha": hashlib.sha256(
+                "https://erddap.ifremer.fr/erddap/info/ArgoFloats-synthetic-BGC/index.json".encode()
+            ).hexdigest(),
+            "type": CONTENT_TYPE["json"],
+        }
+    )
+
+    return this_URI
+
+
+def list_github_links(session: aiohttp.ClientSession):
+    this_URI = []
+    repo = "https://github.com/euroargodev/argopy-data/raw/master"
+    uris = [
+        "ftp/dac/csiro/5900865/5900865_prof.nc",
+        "ftp/ar_index_global_prof.txt",
+        "ftp/dac/csiro/5900865/profiles/D5900865_001.nc",
+        "ftp/dac/csiro/5900865/profiles/D5900865_002.nc",
+    ]
+    for uri in uris:
+        file_extension = uri.split(".")[-1]
+        this_URI.append(
+            {
+                "uri": repo + "/" + uri,
+                "ext": file_extension,
+                "sha": hashlib.sha256(("%s/%s" % (repo, uri)).encode()).hexdigest(),
+                "type": CONTENT_TYPE[file_extension],
+            }
+        )
+    return this_URI
+
+
+def list_api_ifremer_links(session: aiohttp.ClientSession):
+    this_URI = []
+    repo = "https://api.ifremer.fr"
+    uris = ["argopy/data/ARGO-FULL.json", "argopy/data/ARGO-BGC.json"]
+    for uri in uris:
+        file_extension = uri.split(".")[-1]
+        this_URI.append(
+            {
+                "uri": repo + "/" + uri,
+                "ext": file_extension,
+                "sha": hashlib.sha256(("%s/%s" % (repo, uri)).encode()).hexdigest(),
+                "type": CONTENT_TYPE[file_extension],
+            }
+        )
+    return this_URI
+
+
+def list_gdac_links_core(session: aiohttp.ClientSession):
+    this_URI = []
+    server = "https://data-argo.ifremer.fr"
+
+    requests = {
+        "float": [[13857]],
+        "profile": [[13857, 90]],
+        "region": [
+            [-20, -16.0, 0, 1, 0, 100.0],
+            [-20, -16.0, 0, 1, 0, 100.0, "1997-07-01", "1997-09-01"],
+        ],
+    }
+
+    def nc_file(url, sha, iter):
+        return {
+            "uri": url,
+            "ext": "nc",
+            "sha": "%s_%03.d" % (sha, iter),
+            "type": CONTENT_TYPE["nc"],
+        }
+
+    def add_to_URI(this, this_fetcher):
+        uri = this_fetcher.uri
+        for ii, url in enumerate(uri):
+            this.append(nc_file(url, this_fetcher.fetcher.sha, ii))
+        return this
+
+    fetcher = DataFetcher(src="gdac", ftp=server, ds="phy", N_RECORDS=100)
+    for access_point in requests:
+        if access_point == "profile":
+            for cfg in requests[access_point]:
+                this_URI = add_to_URI(this_URI, fetcher.profile(*cfg))
+        if access_point == "float":
+            for cfg in requests[access_point]:
+                this_URI = add_to_URI(this_URI, fetcher.float(cfg))
+        if access_point == "region":
+            for cfg in requests[access_point]:
+                this_URI = add_to_URI(this_URI, fetcher.region(cfg))
+
+    # Add more URI from the IFREMER GDAC:
+    this_URI.append(
+        {
+            "uri": "%s/ar_index_global_prof.txt.gz" % server,
+            "ext": "gz",
+            "sha": hashlib.sha256(
+                ("%s/ar_index_global_prof.txt.gz" % server).encode()
+            ).hexdigest(),
+            "type": CONTENT_TYPE['gz'],  # but we should also modify the header: Content-Encoding: gzip
+        }
+    )
+    this_URI.append(
+        {
+            "uri": "%s/dac" % server,  # This uri is used by to check if the server is GDAC compliant !
+            "ext": "html",
+            "sha": hashlib.sha256(("%s/dac" % server).encode()).hexdigest(),
+            "type": CONTENT_TYPE['html'],
+        }
+    )
+
+    # Used by Test_open_sat_altim_report:
+    def dfile(url, fmt):
+        return {
+            "uri": url,
+            "ext": fmt,
+            "sha": hashlib.sha256(url.encode()).hexdigest(),
+            "type": CONTENT_TYPE[fmt],
+        }
+    for scenario in [[2901623], [2901623, 6901929]]:
+        for wmo in scenario:
+            url = "%s/etc/argo-ast9-item13-AltimeterComparison/figures/%i.png" % (server, wmo)
+            this_URI.append(dfile(url, 'png'))
+
+    return this_URI
+
+
+def list_gdac_links_bgc(session: aiohttp.ClientSession):
+    this_URI = []
+    server = "https://data-argo.ifremer.fr"
+
+    requests = {
+        "float": [[5904989],[3902131],[6903247]],
+        "profile": [[5904989, 12]],
+    }
+
+    def nc_file(url, sha, iter):
+        return {
+            "uri": url,
+            "ext": "nc",
+            "sha": "%s_%03.d" % (sha, iter),
+            "type": CONTENT_TYPE["nc"],
+        }
+
+    def add_to_URI(this, this_fetcher):
+        uri = this_fetcher.uri
+        for ii, url in enumerate(uri):
+            this.append(nc_file(url, this_fetcher.fetcher.sha, ii))
+        return this
+
+    fetcher = DataFetcher(src="gdac", ftp=server, ds="bgc", mode='expert', N_RECORDS=100)
+    for access_point in requests:
+        if access_point == "profile":
+            for cfg in requests[access_point]:
+                this_URI = add_to_URI(this_URI, fetcher.profile(*cfg))
+        if access_point == "float":
+            for cfg in requests[access_point]:
+                this_URI = add_to_URI(this_URI, fetcher.float(cfg))
+        if access_point == "region":
+            for cfg in requests[access_point]:
+                this_URI = add_to_URI(this_URI, fetcher.region(cfg))
+
+    this_URI.append(
+        {
+            "uri": "%s/argo_bio-profile_index.txt.gz" % server,
+            "ext": "gz",
+            "sha": hashlib.sha256(
+                ("%s/argo_bio-profile_index.txt.gz" % server).encode()
+            ).hexdigest(),
+            "type": CONTENT_TYPE['gz'],  # but we should also modify the header: Content-Encoding: gzip
+        }
+    )
+    #
+    # this_URI.append(
+    #     {
+    #         "uri": "%s/argo_synthetic-profile_index.txt" % server,
+    #         "ext": "txt",
+    #         "sha": hashlib.sha256(
+    #             ("%s/argo_synthetic-profile_index.txt" % server).encode()
+    #         ).hexdigest(),
+    #         "type": CONTENT_TYPE['txt'],
+    #     }
+    # )
+    this_URI.append(
+        {
+            "uri": "%s/argo_synthetic-profile_index.txt.gz" % server,
+            "ext": "gz",
+            "sha": hashlib.sha256(
+                ("%s/argo_synthetic-profile_index.txt.gz" % server).encode()
+            ).hexdigest(),
+            "type": CONTENT_TYPE['gz'],  # but we should also modify the header: Content-Encoding: gzip
+        }
+    )
+
+    return this_URI
+
+
+def list_topo_links(session: aiohttp.ClientSession):
+    """ https://coastwatch.pfeg.noaa.gov/erddap """
+    this_URI = []
+
+    box = [81, 123, -67, -54]
+    fetcher = TopoFetcher(box, ds='gebco', stride=[10, 10], cache=True)
+
+    this_URI.append(
+        {
+            "uri": unquote(fetcher.uri[0]),
+            "ext": "nc",
+            "sha": hashlib.sha256(fetcher.uri[0].encode()).hexdigest(),
+            "type": CONTENT_TYPE["nc"],
+        }
+    )
+
+    return this_URI
+
+
+def list_oops_links(session: aiohttp.ClientSession):
+    this_URI = []
+
+    scenarios = [
+        # (None, False),  # Can't be handled by the mocked server (test date is surely different from the test data date)
+        # ([-90, 0, 0, 90], False),  # Can't be handled by the mocked server (test date is surely different from the test data date)
+        ([-90, 0, 0, 90, '2022-01'], True),
+        ([-90, 0, 0, 90, '2022-01'], False),
+        ([None, 0, 0, 90, '2022-01-01', '2023-01-01'], True),
+        ([None, 0, 0, 90, '2022-01-01', '2023-01-01'], False),
+        ([-90, None, 0, 90, '2022-01-01', '2023-01-01'], True),
+        ([-90, None, 0, 90, '2022-01-01', '2023-01-01'], False),
+        ([-90, 0, None, 90, '2022-01-01', '2023-01-01'], True),
+        ([-90, 0, None, 90, '2022-01-01', '2023-01-01'], False),
+        ([-90, 0, 0, None, '2022-01-01', '2023-01-01'], True),
+        ([-90, 0, 0, None, '2022-01-01', '2023-01-01'], False),
+        ([-90, 0, 0, 90, None, '2023-01-01'], True),
+        ([-90, 0, 0, 90, None, '2023-01-01'], False),
+        ([-90, 0, 0, 90, '2022-01-01', None], True),
+        ([-90, 0, 0, 90, '2022-01-01', None], False)]
+
+    def dfile(url, fmt='json'):
+        return {
+            "uri": unquote(url),
+            "ext": fmt,
+            "sha": hashlib.sha256(url.encode()).hexdigest(),
+            "type": CONTENT_TYPE[fmt],
+        }
+
+    for sc in scenarios:
+        box, deployed_only = sc
+        oops = OceanOPSDeployments(box, deployed_only=deployed_only)
+        this_URI.append(dfile(oops.uri))
+
+    this_URI.append(dfile('https://www.ocean-ops.org/api/1/oceanops-api.yaml', fmt='yaml'))
+
+    return this_URI
+
+
+def list_dataselection_links(session: aiohttp.ClientSession):
+    this_URI = []
+    WMO_list = [6901929, 5904797, 6902755]
+
+    def dfile(url):
+        return {
+            "uri": unquote(url),
+            "ext": "json",
+            "sha": hashlib.sha256(url.encode()).hexdigest(),
+            "type": CONTENT_TYPE["json"],
+        }
+
+    for uri in ["https://dataselection.euro-argo.eu/api/trajectory/%i" % wmo for wmo in WMO_list]:
+        this_URI.append(dfile(uri))
+
+    return this_URI
+
+
+def list_nvs_links(session: aiohttp.ClientSession):
+    this_URI = []
+    nvs = ArgoNVSReferenceTables()
+
+    def dfile(url, fmt):
+        return {
+            "uri": unquote(url),
+            "ext": fmt,
+            "sha": hashlib.sha256(url.encode()).hexdigest(),
+            "type": CONTENT_TYPE[fmt],
+        }
+
+    for rtid in nvs.valid_ref:
+        url = nvs.get_url(rtid)
+        this_URI.append(dfile(url, "json"))
+
+    fmts = {"ld+json": "json", "rdf+xml": "xml", "text/turtle": "txt"}
+    for fmt in fmts.keys():
+        url = nvs.get_url(3, fmt=fmt)
+        this_URI.append(dfile(url, fmts[fmt]))
+
+    return this_URI
+
+
+def list_argovis_links(session: aiohttp.ClientSession):
+    this_URI = []
+
+    requests_phy = {
+        "float": [[1901393], [1901393, 6902746]],
+        "profile": [[6902746, [1, 12]]],
+        "region": [
+            [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-03"],
+            [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-06"],
+        ],
+    }
+    requests = {"phy": requests_phy}
+
+    requests_par = {
+        "float": [[6902766, 6902772, 6902914]],
+        "region": [
+            [-60, -55, 40.0, 45.0, 0.0, 10.0],
+            [-60, -55, 40.0, 45.0, 0.0, 10.0, "2007-08-01", "2007-09-01"],
+        ],
+    }
+
+    def js_file(url, sha, iter):
+        return {
+            "uri": url,
+            "ext": "js",
+            "sha": "%s_%03.d" % (sha, iter),
+            "type": CONTENT_TYPE["js"],
+        }
+
+    def add_to_URI(this, this_fetcher):
+        uri = this_fetcher.uri
+        for ii, url in enumerate(uri):
+            this.append(js_file(url, this_fetcher.fetcher.sha, ii))
+        return this
+
+    for ds in requests:
+        fetcher = DataFetcher(src="argovis", ds=ds)
+        for access_point in requests[ds]:
+            if access_point == "profile":
+                for cfg in requests[ds][access_point]:
+                    this_URI = add_to_URI(this_URI, fetcher.profile(*cfg))
+            if access_point == "float":
+                for cfg in requests[ds][access_point]:
+                    this_URI = add_to_URI(this_URI, fetcher.float(cfg))
+            if access_point == "region":
+                for cfg in requests[ds][access_point]:
+                    this_URI = add_to_URI(this_URI, fetcher.region(cfg))
+
+    fetcher = DataFetcher(src="argovis", parallel=True)
+    for access_point in requests_par:
+        if access_point == "profile":
+            for cfg in requests_par[access_point]:
+                this_URI = add_to_URI(this_URI, fetcher.profile(*cfg))
+        if access_point == "float":
+            for cfg in requests_par[access_point]:
+                this_URI = add_to_URI(this_URI, fetcher.float(cfg))
+        if access_point == "region":
+            for cfg in requests_par[access_point]:
+                this_URI = add_to_URI(this_URI, fetcher.region(cfg))
+
+    return this_URI
+
+
+def list_ArgoDocs(session: aiohttp.ClientSession):
+    this_URI = []
+
+    def dfile(url, fmt):
+        return {
+            "uri": unquote(url),
+            "ext": fmt,
+            "sha": hashlib.sha256(url.encode()).hexdigest(),
+            "type": CONTENT_TYPE[fmt],
+        }
+
+    docs = ArgoDocs().list
+    for ii, doc in docs.iterrows():
+
+        Ad = ArgoDocs(doc['id'])
+
+        doi = "https://dx.doi.org/%s" % Ad.js['doi']
+        this_URI.append(dfile(doi, 'html'))
+
+        Ad.ris  # Load RIS file and populate internal fields
+        # pdf = Ad.ris['UR']
+        # url = Ad._risfile
+        # this_URI.append(dfile(url, 'txt'))
+
+    return this_URI
+
+
+async def fetch_download_links(session: aiohttp.ClientSession):
+    """Gather the list of all remote resources to download
+
+    The return list is a list of dictionaries with all the necessary keys to save and retrieve requests offline using
+    the fixture of the local HTTP server
+    """
+    URI = []
+
+    # REQUESTS to: https://erddap.ifremer.fr/erddap
+    [URI.append(link) for link in list_erddap_links(session)]
+    [URI.append(link) for link in list_erddap_links_bgc(session)]
+
+    # REQUESTS to: https://github.com/euroargodev/argopy-data/raw/master
+    [URI.append(link) for link in list_github_links(session)]
+
+    # REQUESTS to: https://api.ifremer.fr
+    [URI.append(link) for link in list_api_ifremer_links(session)]
+
+    # REQUESTS to: https://data-argo.ifremer.fr
+    [URI.append(link) for link in list_gdac_links_core(session)]
+    [URI.append(link) for link in list_gdac_links_bgc(session)]
+
+    # REQUESTS to: https://coastwatch.pfeg.noaa.gov/erddap
+    [URI.append(link) for link in list_topo_links(session)]
+
+    # REQUESTS to: https://www.ocean-ops.org/api/1
+    [URI.append(link) for link in list_oops_links(session)]
+
+    # REQUESTS to: https://dataselection.euro-argo.eu/api
+    [URI.append(link) for link in list_dataselection_links(session)]
+
+    # REQUESTS to: https://vocab.nerc.ac.uk/collection
+    [URI.append(link) for link in list_nvs_links(session)]
+
+    # REQUESTS to: https://argovisbeta02.colorado.edu
+    [URI.append(link) for link in list_argovis_links(session)]
+
+    # REQUESTS to:
+    # https://dx.doi.org/10.13155/
+    # https://archimer.ifremer.fr/doc/00187/29825/export.txt
+    [URI.append(link) for link in list_ArgoDocs(session)]
+
+    # Return the list of dictionaries
+    log.debug("Found %i uri to download" % len(URI))
+    return URI
+
+
+async def place_file(session: aiohttp.ClientSession, source: dict) -> None:
+    """Download remote file and save it locally"""
+    test_data_file = os.path.join(
+        DATA_FOLDER, "%s.%s" % (source["sha"], source["ext"])
+    )
+    if OVERWRITE or not os.path.exists(test_data_file):
+        async with session.get(source["uri"], ssl=False, timeout=60*10) as r:
+            if r.content_type not in CONTENT_TYPE.values():
+                print(
+                    "Unexpected content type (%s) with this GET request: %s (%s extension)"
+                    % (
+                        r.content_type,
+                        source["uri"],
+                        os.path.splitext(urlparse(source["uri"]).path)[1],
+                    )
+                )
+
+            async with aiofiles.open(test_data_file, "wb") as f:
+                data = await r.content.read(n=-1)  # load all read bytes !
+                await f.write(data)
+                print(log_file_desc(f.name, data, source))
+                return can_be_xr_opened(source, test_data_file)
+    else:
+        # print("%s already exists !" % test_data_file)
+        return can_be_xr_opened(source, test_data_file)
+
+
+async def download():
+    connector = aiohttp.TCPConnector(limit=1, force_close=True)
+    async with aiohttp.ClientSession(connector=connector, timeout=aiohttp.ClientTimeout(total=60*10)) as session:
+        urls = await fetch_download_links(session)
+        return await asyncio.gather(*[place_file(session, url) for url in urls])
+
+
+async def dry_download():
+    connector = aiohttp.TCPConnector(limit=1, force_close=True)
+    async with aiohttp.ClientSession(connector=connector, timeout=aiohttp.ClientTimeout(total=60*10)) as session:
+        return await fetch_download_links(session)
+
+
+def data_cleanup():
+    for filename in os.listdir(DATA_FOLDER):
+        file_path = os.path.join(DATA_FOLDER, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                os.rmdir(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+
+def setup_args():
+    icons_help_string = """This script aims to ease test data management."""
+
+    parser = argparse.ArgumentParser(
+        description="argopy test data manager",
+        formatter_class=argparse.RawTextHelpFormatter,
+        epilog="%s\n(c) Argo-France/Ifremer/LOPS, 2023-2024" % icons_help_string,
+    )
+
+    def choicesDescriptions():
+        return """
+       destination  - return absolute path to test data storage folder 
+       download     - download all test data
+       list         - list available test data
+       clean        - delete all test data and associated files
+       dry          - list URI to be accessed and stored
+    """
+
+    def getChoices():
+        return ["list", "destination", "download", "clean", "dry"]
+
+    parser.add_argument(
+        "-a",
+        "--action",
+        choices=getChoices(),
+        help="action to perform among: %s" % choicesDescriptions(),
+        metavar="",
+    )
+    parser.add_argument("-f", "--force", help="Force write on data files even if they already exist", action='store_true')
+
+    return parser
+
+
+if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.DEBUG,
+        datefmt='%m/%d/%Y %I:%M:%S %p',
+        handlers=[logging.FileHandler("test_data.log", mode='w')]
+    )
+
+    ARGS = setup_args().parse_args()
+    OVERWRITE = ARGS.force
+
+    if ARGS.action == "destination" or ARGS.action == "dest":
+        print("Tests data are stored in:\n%s" % DATA_FOLDER)
+
+    if ARGS.action == "list":
+        list_files(load=False)
+
+    if ARGS.action == "download":
+        # print("Trigger download")
+        # Async download of all remote resources:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        URLS = loop.run_until_complete(download())
+
+        # Save the URI list in a pickle file to be loaded and used by the HTTP server fixture:
+        with open(DB_FILE, "wb") as f:
+            pickle.dump(URLS, f)
+
+        # URLS = [url for url in URLS if url is not None]
+        print("\nSaved %i urls" % len(URLS))
+
+    if ARGS.action == "clean":
+        data_cleanup()
+
+    if ARGS.action == "dry":
+        # Dry download of all remote resources (just list urls):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        URLS = loop.run_until_complete(fetch_download_links(None))
+        for url in URLS:
+            url.pop('ext')
+            url.pop('sha')
+            print("\n-", url)
+        print("\nFound %i uri to download to populate mocked servers" % len(URLS))

@@ -31,8 +31,7 @@ You can use the Index fetcher with the ``region`` or ``float`` access points, si
     :suppress:
 
     import argopy
-    ftproot = argopy.tutorial.open_dataset('gdac')[0]
-    argopy.set_options(ftp=ftproot)
+    argopy.set_options(gdac=argopy.tutorial.open_dataset('gdac')[0])
 
 .. ipython:: python
     :okwarning:
@@ -177,7 +176,7 @@ And finally the list of methods and properties for **search results**:
 Usage with **bgc** index
 """""""""""""""""""""""""""
 
-The **argopy** index store supports the Bio and Synthetic Profile directory files:
+The **argopy** index store supports the Bio, Synthetic and Auxiliary Profile directory files:
 
 .. ipython:: python
     :okwarning:

@@ -1,7 +1,7 @@
 {
   "name": "parameters",
   "long_name": "All valid requests to https://api-coriolis.ifremer.fr/legacy/parameter?code={code}",
-  "last_update": "2023-10-20T12:58:00.620292+00:00",
+  "last_update": "2024-09-12T14:13:10.597080+00:00",
   "data": {
     "valid_codes": [
       "9",
@@ -520,7 +520,15 @@
       "772",
       "773",
       "774",
-      "775"
+      "775",
+      "776",
+      "777",
+      "778",
+      "779",
+      "780",
+      "781",
+      "782",
+      "783"
     ],
     "valid_params": [
       "DEPH",
@@ -1029,7 +1037,15 @@
       "SIGT",
       "VMSP",
       "FLUO_ADJUSTED",
-      "FLUO_ADJUSTED_ERROR"
+      "FLUO_ADJUSTED_ERROR",
+      "EWCT_WS",
+      "NSCT_WS",
+      "WS_TYPE_OF_PROCESSING",
+      "EXT_779",
+      "EXT_780",
+      "EXT_781",
+      "EXT_782",
+      "EXT_783"
     ],
     "codes": {
       "9": {
@@ -6101,6 +6117,86 @@
         "parent_code": "63",
         "label": "Chlorophyll-a fluorescence adjusted error",
         "param_type": "D"
+      },
+      "776": {
+        "unit": "meter/second",
+        "time_sampling": "",
+        "code": "776",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "EWCT_WS",
+        "parent_code": "13",
+        "label": "West-east current wind slippage correction at the drogue depth",
+        "param_type": "D"
+      },
+      "777": {
+        "unit": "meter/second",
+        "time_sampling": "",
+        "code": "777",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "NSCT_WS",
+        "parent_code": "20",
+        "label": "South-north current wind slippage correction at the drogue depth",
+        "param_type": "D"
+      },
+      "778": {
+        "unit": "none",
+        "time_sampling": "",
+        "code": "778",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "WS_TYPE_OF_PROCESSING",
+        "parent_code": "0",
+        "label": "Wind slippage correction method",
+        "param_type": "T"
+      },
+      "779": {
+        "unit": "count",
+        "time_sampling": "",
+        "code": "779",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "EXT_779",
+        "parent_code": "0",
+        "label": "Drifting buoy drogue sensor count",
+        "param_type": "T"
+      },
+      "780": {
+        "unit": "count",
+        "time_sampling": "",
+        "code": "780",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "EXT_780",
+        "parent_code": "0",
+        "label": "Drifting buoy sensor 4 count",
+        "param_type": "T"
+      },
+      "781": {
+        "unit": "count",
+        "time_sampling": "",
+        "code": "781",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "EXT_781",
+        "parent_code": "0",
+        "label": "Drifting buoy sensor 5 count",
+        "param_type": "T"
+      },
+      "782": {
+        "unit": "count",
+        "time_sampling": "",
+        "code": "782",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "EXT_782",
+        "parent_code": "0",
+        "label": "Drifting buoy sensor 6 count",
+        "param_type": "T"
+      },
+      "783": {
+        "unit": "count",
+        "time_sampling": "",
+        "code": "783",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "EXT_783",
+        "parent_code": "0",
+        "label": "Biodiversity phytoplankton count",
+        "param_type": "E"
       }
     },
     "params": {
@@ -11173,6 +11269,86 @@
         "parent_code": "63",
         "label": "Chlorophyll-a fluorescence adjusted error",
         "param_type": "D"
+      },
+      "EWCT_WS": {
+        "unit": "meter/second",
+        "time_sampling": "",
+        "code": "776",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "EWCT_WS",
+        "parent_code": "13",
+        "label": "West-east current wind slippage correction at the drogue depth",
+        "param_type": "D"
+      },
+      "NSCT_WS": {
+        "unit": "meter/second",
+        "time_sampling": "",
+        "code": "777",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "NSCT_WS",
+        "parent_code": "20",
+        "label": "South-north current wind slippage correction at the drogue depth",
+        "param_type": "D"
+      },
+      "WS_TYPE_OF_PROCESSING": {
+        "unit": "none",
+        "time_sampling": "",
+        "code": "778",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "WS_TYPE_OF_PROCESSING",
+        "parent_code": "0",
+        "label": "Wind slippage correction method",
+        "param_type": "T"
+      },
+      "EXT_779": {
+        "unit": "count",
+        "time_sampling": "",
+        "code": "779",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "EXT_779",
+        "parent_code": "0",
+        "label": "Drifting buoy drogue sensor count",
+        "param_type": "T"
+      },
+      "EXT_780": {
+        "unit": "count",
+        "time_sampling": "",
+        "code": "780",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "EXT_780",
+        "parent_code": "0",
+        "label": "Drifting buoy sensor 4 count",
+        "param_type": "T"
+      },
+      "EXT_781": {
+        "unit": "count",
+        "time_sampling": "",
+        "code": "781",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "EXT_781",
+        "parent_code": "0",
+        "label": "Drifting buoy sensor 5 count",
+        "param_type": "T"
+      },
+      "EXT_782": {
+        "unit": "count",
+        "time_sampling": "",
+        "code": "782",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "EXT_782",
+        "parent_code": "0",
+        "label": "Drifting buoy sensor 6 count",
+        "param_type": "T"
+      },
+      "EXT_783": {
+        "unit": "count",
+        "time_sampling": "",
+        "code": "783",
+        "gf3_strict_name": "",
+        "gf3_extended_name": "EXT_783",
+        "parent_code": "0",
+        "label": "Biodiversity phytoplankton count",
+        "param_type": "E"
       }
     }
   }

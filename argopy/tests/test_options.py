@@ -3,7 +3,7 @@ import pytest
 import platform
 import argopy
 from argopy.options import OPTIONS
-from argopy.errors import OptionValueError, FtpPathError, ErddapPathError
+from argopy.errors import OptionValueError, GdacPathError, ErddapPathError
 from utils import requires_gdac, create_read_only_folder
 from mocked_http import mocked_httpserver, mocked_server_address
 import logging
@@ -25,13 +25,13 @@ def test_opt_src():
 
 
 @requires_gdac
-def test_opt_gdac_ftp():
-    with pytest.raises(FtpPathError):
-        argopy.set_options(ftp="invalid_path")
+def test_opt_gdac():
+    with pytest.raises(GdacPathError):
+        argopy.set_options(gdac="invalid_path")
 
-    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
-    with argopy.set_options(ftp=local_ftp):
-        assert OPTIONS["ftp"] == local_ftp
+    local_gdac = argopy.tutorial.open_dataset("gdac")[0]
+    with argopy.set_options(gdac=local_gdac):
+        assert OPTIONS["gdac"] == local_gdac
 
 
 def test_opt_ifremer_erddap(mocked_httpserver):
@@ -44,13 +44,17 @@ def test_opt_ifremer_erddap(mocked_httpserver):
 
 def test_opt_dataset():
     with pytest.raises(OptionValueError):
-        argopy.set_options(dataset="invalid_ds")
-    with argopy.set_options(dataset="phy"):
-        assert OPTIONS["dataset"] == "phy"
-    with argopy.set_options(dataset="bgc"):
-        assert OPTIONS["dataset"] == "bgc"
-    with argopy.set_options(dataset="ref"):
-        assert OPTIONS["dataset"] == "ref"
+        argopy.set_options(ds="invalid_ds")
+    with argopy.set_options(ds="phy"):
+        assert OPTIONS["ds"] == "phy"
+    with argopy.set_options(ds="bgc"):
+        assert OPTIONS["ds"] == "bgc"
+    with argopy.set_options(ds="bgc-s"):
+        assert OPTIONS["ds"] == "bgc-s"
+    with argopy.set_options(ds="bgc-b"):
+        assert OPTIONS["ds"] == "bgc-b"
+    with argopy.set_options(ds="ref"):
+        assert OPTIONS["ds"] == "ref"
 
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="Need to be debugged for Windows support")
