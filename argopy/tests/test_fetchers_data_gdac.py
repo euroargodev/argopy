@@ -11,14 +11,11 @@ import tempfile
 import shutil
 from urllib.parse import urlparse
 import logging
-from collections import ChainMap
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import (
     CacheFileNotFound,
-    FileSystemHasNoCache,
-    GdacPathError,
 )
 from argopy.utils.checkers import isconnected, is_list_of_strings
 from utils import requires_gdac

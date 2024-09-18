@@ -139,8 +139,8 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
     def __repr__(self):
         summary = ["<datafetcher.gdac>"]
         summary.append("Name: %s" % self.definition)
-        summary.append("Index: %s" % self.indexfs.index_file)
-        summary.append("Server: %s" % self.server)
+        summary.append("Index: %s (%s)" % (self.indexfs.index_file, self.indexfs.convention_title))
+        summary.append("Host: %s" % self.server)
         if hasattr(self, "BOX"):
             summary.append("Domain: %s" % self.cname())
         else:
