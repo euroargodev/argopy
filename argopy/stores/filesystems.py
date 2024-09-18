@@ -678,6 +678,7 @@ class httpstore(argo_store_proto):
         n_attempt: int = 1,
         max_attempt: int = 5,
         cat_opts: dict = {},
+        errors: str = 'raise',
         *args,
         **kwargs,
     ):
@@ -688,19 +689,27 @@ class httpstore(argo_store_proto):
         """
 
         def make_request(
-            ffs, url, n_attempt: int = 1, max_attempt: int = 5, cat_opts: dict = {}
+            ffs, url, n_attempt: int = 1, max_attempt: int = 5, cat_opts: dict = {}, errors: str = 'raise',
         ):
             data = None
             if n_attempt <= max_attempt:
                 try:
                     data = ffs.cat_file(url, **cat_opts)
+                except FileNotFoundError as e:
+                    if errors == 'raise':
+                        raise e
+                    elif errors == 'ignore':
+                        log.error('FileNotFoundError raised from: %s' % url)
                 except aiohttp.ClientResponseError as e:
                     if e.status == 413:
-                        log.debug(
-                            "Error %i (Payload Too Large) raised with %s"
-                            % (e.status, url)
-                        )
-                        raise
+                        if errors == 'raise':
+                            raise e
+                        elif errors == 'ignore':
+                            log.error(
+                                "Error %i (Payload Too Large) raised with %s"
+                                % (e.status, url)
+                            )
+
                     elif e.status == 429:
                         retry_after = int(e.headers.get("Retry-After", 5))
                         log.debug(
@@ -712,14 +721,26 @@ class httpstore(argo_store_proto):
                     else:
                         # Handle other client response errors
                         print(f"Error: {e}")
-                except aiohttp.ClientError:
-                    # Handle other request exceptions
-                    # print(f"Error: {e}")
-                    raise
+
+                except aiohttp.ClientError as e:
+                    if errors == 'raise':
+                        raise e
+                    elif errors == 'ignore':
+                        log.error("Error: {e}")
+
+                except fsspec.FSTimeoutError as e:
+                    if errors == 'raise':
+                        raise e
+                    elif errors == 'ignore':
+                        log.error("Error: {e}")
             else:
-                raise ValueError(
-                    f"Error: All attempts failed to download this url: {url}"
-                )
+                if errors == 'raise':
+                    raise ValueError(
+                        f"Error: All attempts failed to download this url: {url}"
+                    )
+                elif errors == 'ignore':
+                    log.error("Error: All attempts failed to download this url: {url}")
+
             return data, n_attempt
 
         url = self.curateurl(url)
@@ -729,14 +750,18 @@ class httpstore(argo_store_proto):
             n_attempt=n_attempt,
             max_attempt=max_attempt,
             cat_opts=cat_opts,
+            errors=errors,
         )
 
         if data is None:
-            raise FileNotFoundError(url)
+            if errors == 'raise':
+                raise FileNotFoundError(url)
+            elif errors == 'ignore':
+                log.error("FileNotFoundError: %s" % url)
 
         return data
 
-    def open_dataset(self, url, **kwargs):
+    def open_dataset(self, url, errors: str = 'raise', **kwargs):
         """Open and decode a xarray dataset from an url
 
         Parameters
@@ -754,6 +779,14 @@ class httpstore(argo_store_proto):
         if "download_url_opts" in kwargs:
             dwn_opts.update(kwargs["download_url_opts"])
         data = self.download_url(url, **dwn_opts)
+        log.info(dwn_opts)
+
+        if data is None:
+            if errors == 'raise':
+                raise DataNotFound(url)
+            elif errors == 'ignore':
+                log.error("DataNotFound: %s" % url)
+            return None
 
         if data[0:3] != b"CDF" and data[0:3] != b'\x89HD':
             raise TypeError(
