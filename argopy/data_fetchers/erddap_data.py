@@ -711,9 +711,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             )
 
         # log.debug("erddap.post_process (add_dm=%s): %s" % (add_dm, str(this_ds)))
-        if self.dataset_id in ["bgc", "bgc-s"] and add_dm:
-            this_ds = self._add_parameters_data_mode_ds(this_ds)
-            this_ds = this_ds.argo.cast_types(overwrite=False)
+        # if self.dataset_id in ["bgc", "bgc-s"] and add_dm:
+        #     this_ds = self._add_parameters_data_mode_ds(this_ds)
+        #     this_ds = this_ds.argo.cast_types(overwrite=False)
         # log.debug("erddap.post_process (add_dm=%s): %s" % (add_dm, str(this_ds)))
 
         # Overwrite Erddap variables attributes with those from Argo standards:
@@ -978,132 +978,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
-    def _add_parameters_data_mode_ds(self, this_ds):  # noqa: C901
-        """Compute and add <PARAM>_DATA_MODE variables to a xarray dataset
-
-        This requires an ArgoIndex instance as Pandas Dataframe
-        todo: Code this for the pyarrow index backend
-
-        This method consume a collection of points
-        """
-        # import time
-
-        def list_WMO_CYC(this_ds):
-            """Given a dataset, return a list with all possible (PLATFORM_NUMBER, CYCLE_NUMBER) tuple"""
-            profiles = []
-            for wmo, grp in this_ds.groupby("PLATFORM_NUMBER"):
-                [
-                    profiles.append((int(wmo), int(cyc)))
-                    for cyc in np.unique(grp["CYCLE_NUMBER"])
-                ]
-            return profiles
-
-        def list_WMO(this_ds):
-            """Return all possible WMO as a list"""
-            return to_list(np.unique(this_ds["PLATFORM_NUMBER"].values))
-
-        def complete_df(this_df, params):
-            """Add 'wmo', 'cyc' and '<param>_data_mode' columns to this dataframe"""
-            this_df["wmo"] = this_df["file"].apply(lambda x: int(x.split("/")[1]))
-            this_df["cyc"] = this_df["file"].apply(
-                lambda x: int(x.split("_")[-1].split(".nc")[0].replace("D", ""))
-            )
-            this_df["variables"] = this_df["parameters"].apply(lambda x: x.split())
-            for param in params:
-                this_df["%s_data_mode" % param] = this_df.apply(
-                    lambda x: x["parameter_data_mode"][x["variables"].index(param)]
-                    if param in x["variables"]
-                    else "",
-                    axis=1,
-                )
-            return this_df
-
-        def read_DM(this_df, wmo, cyc, param):
-            """Return one parameter data mode for a given wmo/cyc and index dataframe"""
-            filt = []
-            filt.append(this_df["wmo"].isin([wmo]))
-            filt.append(this_df["cyc"].isin([cyc]))
-            sub_df = this_df[np.logical_and.reduce(filt)]
-            if sub_df.shape[0] == 0:
-                log.debug(
-                    "Found a profile in the dataset, but not in the index ! wmo=%i, cyc=%i"
-                    % (wmo, cyc)
-                )
-                # This can happen if a Synthetic netcdf file was generated from a non-BGC float.
-                # The file exists, but it doesn't have BGC variables. Float is usually not listed in the index.
-                return ""
-            else:
-                return sub_df["%s_data_mode" % param].values[-1]
-
-        def print_etime(txt, t0):
-            now = time.process_time()
-            print("⏰ %s: %0.2f seconds" % (txt, now - t0))
-            return now
-
-        # timer = time.process_time()
-
-        profiles = list_WMO_CYC(this_ds)
-        self.indexfs.search_wmo(list_WMO(this_ds))
-        params = [
-            p
-            for p in self.indexfs.read_params()
-            if p in this_ds or "%s_ADJUSTED" % p in this_ds
-        ]
-        # timer = print_etime('Read profiles and params from ds', timer)
-
-        df = self.indexfs.to_dataframe(completed=False)
-        df = complete_df(df, params)
-        # timer = print_etime('Index search wmo and export to dataframe', timer)
-
-        CYCLE_NUMBER = this_ds["CYCLE_NUMBER"].values
-        PLATFORM_NUMBER = this_ds["PLATFORM_NUMBER"].values
-        N_POINTS = this_ds["N_POINTS"].values
-
-        for param in params:
-            # print("=" * 50)
-            # print("Filling DATA MODE for %s ..." % param)
-            # tims = {'init': 0, 'read_DM': 0, 'isin': 0, 'where': 0, 'fill': 0}
-
-            for iprof, prof in enumerate(profiles):
-                wmo, cyc = prof
-                # t0 = time.process_time()
-
-                if "%s_DATA_MODE" % param not in this_ds:
-                    this_ds["%s_DATA_MODE" % param] = xr.full_like(
-                        this_ds["CYCLE_NUMBER"], dtype=str, fill_value=""
-                    )
-                # now = time.process_time()
-                # tims['init'] += now - t0
-                # t0 = now
-
-                param_data_mode = read_DM(df, wmo, cyc, param)
-                # log.debug("data mode='%s' for %s/%i/%i" % (param_data_mode, param, wmo, cyc))
-                # now = time.process_time()
-                # tims['read_DM'] += now - t0
-                # t0 = now
-
-                i_cyc = CYCLE_NUMBER == cyc
-                i_wmo = PLATFORM_NUMBER == wmo
-                # now = time.process_time()
-                # tims['isin'] += now - t0
-                # t0 = now
-
-                i_points = N_POINTS[np.logical_and(i_cyc, i_wmo)]
-                # now = time.process_time()
-                # tims['where'] += now - t0
-                # t0 = now
-
-                # this_ds["%s_DATA_MODE" % param][i_points] = param_data_mode
-                this_ds["%s_DATA_MODE" % param].loc[dict(N_POINTS=i_points)] = param_data_mode
-                # now = time.process_time()
-                # tims['fill'] += now - t0
-
-            this_ds["%s_DATA_MODE" % param] = this_ds["%s_DATA_MODE" % param].astype(
-                "<U1"
-            )
-            # timer = print_etime('Processed %s (%i profiles)' % (param, len(profiles)), timer)
-
-        return this_ds
 
 
 class Fetch_wmo(ErddapArgoDataFetcher):

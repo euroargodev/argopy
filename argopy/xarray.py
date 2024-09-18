@@ -2137,12 +2137,18 @@ class ArgoAccessor:
         else:
             return list_1d, dummy_argo_uid
 
+    @property
     def list_WMO_CYC(self):
         """Return a tuple with all (PLATFORM_NUMBER, CYCLE_NUMBER) in the dataset"""
         profiles = []
         for wmo, grp in self._obj.groupby("PLATFORM_NUMBER"):
             [profiles.append((wmo, cyc)) for cyc in np.unique(grp["CYCLE_NUMBER"])]
         return profiles
+
+    @property
+    def list_WMO(self):
+        """Return all possible WMO as a list"""
+        return to_list(np.unique(self._obj["PLATFORM_NUMBER"].values))
 
 
 def open_Argo_dataset(filename_or_obj):
