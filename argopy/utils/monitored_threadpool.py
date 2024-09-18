@@ -1,5 +1,5 @@
 """
-This sub-module provides utilities for miscellaneous computation tasks with multitheading
+This submodule provides utilities for miscellaneous computation tasks with multithreading
 
 We construct the MyThreadPoolExecutor class,
 we create a series of classes using multiple inheritance to implement monitoring features
