@@ -7,7 +7,7 @@ dependencies:
 # CORE:
   - aiohttp
   - decorator
-  - erddapy
+  - erddapy < 2.2.1 # higher versions not compatible with python < 3.10 (https://github.com/ioos/erddapy/issues/359)
   - fsspec
   - netCDF4
   - packaging
