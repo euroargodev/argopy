@@ -7,8 +7,6 @@ import importlib
 import json
 import logging
 
-from .decorators import deprecated
-
 
 log = logging.getLogger("argopy.utils.casting")
 

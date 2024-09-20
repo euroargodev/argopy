@@ -194,4 +194,3 @@ class OptionDeprecatedWarning(DeprecationWarning):
 
         else:
             raise TypeError(repr(type(reason)))
-

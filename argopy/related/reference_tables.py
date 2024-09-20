@@ -55,10 +55,7 @@ class ArgoNVSReferenceTables:
         "R26",
         "R27",
         "R28",
-#        "R29",
-#        "R30",
         "R40",
-
         "RD2",
         "RMC",
         "RP2",

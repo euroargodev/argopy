@@ -4,6 +4,7 @@ This module manage options of the package
 # Like always, largely inspired by xarray code:
 # https://github.com/pydata/xarray/blob/cafab46aac8f7a073a32ec5aa47e213a9810ed54/xarray/core/options.py
 """
+
 import os
 import warnings
 import logging
@@ -11,7 +12,12 @@ import fsspec
 from fsspec.core import split_protocol
 from socket import gaierror
 from urllib.parse import urlparse
-from .errors import OptionValueError, FtpPathError, ErddapPathError, OptionDeprecatedWarning
+from .errors import (
+    OptionValueError,
+    FtpPathError,
+    ErddapPathError,
+    OptionDeprecatedWarning,
+)
 
 # Define a logger
 log = logging.getLogger("argopy.options")
@@ -19,7 +25,7 @@ log = logging.getLogger("argopy.options")
 # Define option names as seen by users:
 DATA_SOURCE = "src"
 FTP = "ftp"
-ERDDAP = 'erddap'
+ERDDAP = "erddap"
 DATASET = "dataset"
 CACHE_FOLDER = "cachedir"
 CACHE_EXPIRATION = "cache_expiration"
@@ -62,7 +68,7 @@ def _positive_integer(value):
 
 def validate_ftp(this_path):
     if this_path != "-":
-        return check_gdac_path(this_path, errors='raise')
+        return check_gdac_path(this_path, errors="raise")
     else:
         log.debug("OPTIONS['%s'] is not defined" % FTP)
         return False
@@ -70,7 +76,7 @@ def validate_ftp(this_path):
 
 def validate_http(this_path):
     if this_path != "-":
-        return check_erddap_path(this_path, errors='raise')
+        return check_erddap_path(this_path, errors="raise")
     else:
         log.debug("OPTIONS['%s'] is not defined" % ERDDAP)
         return False
@@ -186,16 +192,20 @@ class set_options:
                 raise OptionValueError(f"option {k!r} given an invalid value: {v!r}")
             self.old[k] = OPTIONS[k]
 
-            if k == 'dataset':
-                OptionDeprecatedWarning(reason="The 'dataset' option is deprecated, it will be replaced by 'ds' in "
-                                            "versions >= 0.1.18",
-                                     version="v0.0.17",
-                                     ignore_caller='test_opt_dataset')
+            if k == "dataset":
+                OptionDeprecatedWarning(
+                    reason="The 'dataset' option is deprecated, it will be replaced by 'ds' in "
+                    "versions >= 0.1.18",
+                    version="v0.0.17",
+                    ignore_caller="test_opt_dataset",
+                )
 
-            if k == 'ftp':
-                OptionDeprecatedWarning(reason="The 'ftp' option is deprecated, it will be replaced by 'gdac' in "
-                                            "versions >= 0.1.18",
-                                     version="v0.0.17")
+            if k == "ftp":
+                OptionDeprecatedWarning(
+                    reason="The 'ftp' option is deprecated, it will be replaced by 'gdac' in "
+                    "versions >= 0.1.18",
+                    version="v0.0.17",
+                )
 
         self._apply_update(kwargs)
 
@@ -214,9 +224,9 @@ def reset_options():
     set_options(**DEFAULT)
 
 
-def check_erddap_path(path, errors='ignore'):
+def check_erddap_path(path, errors="ignore"):
     """Check if an url points to an ERDDAP server"""
-    fs = fsspec.filesystem('http', ssl=False)
+    fs = fsspec.filesystem("http", ssl=False)
     check1 = fs.exists(path + "/info/index.json")
     if check1:
         return True
@@ -230,52 +240,52 @@ def check_erddap_path(path, errors='ignore'):
         return False
 
 
-def check_gdac_path(path, errors='ignore'):  # noqa: C901
-    """ Check if a path has the expected GDAC ftp structure
+def check_gdac_path(path, errors="ignore"):  # noqa: C901
+    """Check if a path has the expected GDAC ftp structure
 
-        Check if a path is structured like:
-        .
-        └── dac
-            ├── aoml
-            ├── ...
-            ├── coriolis
-            ├── ...
-            ├── meds
-            └── nmdis
+    Check if a path is structured like:
+    .
+    └── dac
+        ├── aoml
+        ├── ...
+        ├── coriolis
+        ├── ...
+        ├── meds
+        └── nmdis
 
-        Examples:
-        >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
-        >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
-        >>> check_gdac_path("ftp://usgodae.org/pub/outgoing/argo") # True
-        >>> check_gdac_path("/home/ref-argo/gdac") # True
-        >>> check_gdac_path("https://www.ifremer.fr") # False
-        >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
+    Examples:
+    >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
+    >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
+    >>> check_gdac_path("ftp://usgodae.org/pub/outgoing/argo") # True
+    >>> check_gdac_path("/home/ref-argo/gdac") # True
+    >>> check_gdac_path("https://www.ifremer.fr") # False
+    >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
 
-        Parameters
-        ----------
-        path: str
-            Path name to check, including access protocol
-        errors: str
-            "ignore" or "raise" (or "warn")
+    Parameters
+    ----------
+    path: str
+        Path name to check, including access protocol
+    errors: str
+        "ignore" or "raise" (or "warn")
 
-        Returns
-        -------
-        checked: boolean
-            True if at least one DAC folder is found under path/dac/<dac_name>
-            False otherwise
+    Returns
+    -------
+    checked: boolean
+        True if at least one DAC folder is found under path/dac/<dac_name>
+        False otherwise
     """
     # Create a file system for this path
     if split_protocol(path)[0] is None:
-        fs = fsspec.filesystem('file')
-    elif split_protocol(path)[0] in ['https', 'http']:
-        fs = fsspec.filesystem('http')
-    elif 'ftp' in split_protocol(path)[0]:
+        fs = fsspec.filesystem("file")
+    elif split_protocol(path)[0] in ["https", "http"]:
+        fs = fsspec.filesystem("http")
+    elif "ftp" in split_protocol(path)[0]:
         try:
             host = urlparse(path).hostname
             port = 0 if urlparse(path).port is None else urlparse(path).port
-            fs = fsspec.filesystem('ftp', host=host, port=port)
+            fs = fsspec.filesystem("ftp", host=host, port=port)
         except gaierror:
-            if errors == 'raise':
+            if errors == "raise":
                 raise FtpPathError("Can't get address info (GAIerror) on '%s'" % host)
             elif errors == "warn":
                 warnings.warn("Can't get address info (GAIerror) on '%s'" % host)
@@ -283,7 +293,9 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
             else:
                 return False
     else:
-        raise FtpPathError("Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0])
+        raise FtpPathError(
+            "Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0]
+        )
 
     # dacs = [
     #     "aoml",
@@ -310,7 +322,10 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
         return True
 
     elif errors == "raise":
-        raise FtpPathError("This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s" % path)
+        raise FtpPathError(
+            "This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s"
+            % path
+        )
 
     elif errors == "warn":
         warnings.warn("This path is not GDAC compliant:\n%s" % path)
