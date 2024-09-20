@@ -337,7 +337,7 @@ PARAMS = pd.DataFrame(PARAMS)
 # In[17]:
 
 
-# Make usefull dict to go from code to param and from param to code:
+# Make useful dict to go from code to param and from param to code:
 # (we also update the list of valid_codes to retain only those with a non empty name)
 code_to_param = {}
 param_to_code = {}
