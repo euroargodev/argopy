@@ -11,10 +11,13 @@ What's New
 v0.1.17 (20 Sep. 2024)
 ----------------------
 
-Features and front-end API
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. admonition:: This is the last minor version release
 
-.. important:: Introduces deprecation warnings before the upcoming major release v1.0.0. (:pr:`389`) by `G. Maze <http://www.github.com/gmaze>`_.
+    We're very happy to announce that this v0.1.17 is the last of the minor version releases. Its main role is to introduce deprecation warnings before things break in the major version release.
+
+    Comping up soon by the end of October the first **major argopy release: v1.0.0**
+
+.. important:: List of deprecations before the upcoming major release v1.0.0. (:pr:`389`) by `G. Maze <http://www.github.com/gmaze>`_.
 
     .. currentmodule:: xarray
 
