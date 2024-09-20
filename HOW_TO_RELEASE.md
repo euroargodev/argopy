@@ -3,7 +3,8 @@
 - [ ] Create a new branch for this release: ``git checkout -b releasev0.X.Y``
 - [ ] Update release version in ``./docs/whats-new.rst``
 - [ ] Increase release version in ``./setup.py``
-- [ ] Create a PR to prepare it, name it with one of the [Nature emoji](https://www.webfx.com/tools/emoji-cheat-sheet/#tabs-3) and make sure it was [never used before](https://github.com/euroargodev/argopy/pulls?q=is%3Apr+label%3Arelease+) 
+- [ ] Create a PR to prepare it, name it with one of the [Nature emoji](https://www.webfx.com/tools/emoji-cheat-sheet/#tabs-3) and make sure it was [never used before](https://github.com/euroargodev/argopy/pulls?q=is%3Apr+label%3Arelease+)
+- [ ] [Activate RTD build for this branch](https://app.readthedocs.org/dashboard/argopy/version/create/)
 
 # Prepare code for release
 
@@ -35,7 +36,7 @@
 - [ ] Update pinned dependencies versions in ``./ci/requirements/py*-*-pinned.yml`` environment files using [upstream CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml) information
 - [ ] Possibly update ``./requirements.txt`` and ``./docs/requirements.txt`` if the oldest dependencies versions were upgraded
 - [ ] Make sure that all CI tests are passed
-- [ ] [Activate](https://readthedocs.org/projects/argopy/versions/) and make sure the documentation for the release branch is [built on RTD](https://readthedocs.org/projects/argopy/builds/)
+- [ ] Make sure the documentation for this release branch is [built on RTD](https://readthedocs.org/projects/argopy/builds/)
 
 ## Preparation conclusion
 - [ ] Merge this PR to master
