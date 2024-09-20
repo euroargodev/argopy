@@ -578,10 +578,7 @@ class ArgoAccessor:
         return ds
 
     @deprecated(
-        "This method action and signature are deprecated and will break your code for versions >= 0.1.18. "
-        "In versions >= 0.1.18, this method action will be available in the new `transform_data_mode` method while " 
-        "this method will change its signature and behavior to really filter measurements according to DATA_MODE "
-        "or <PARAM>_DATA_MODE values.",
+        "This method is deprecated and will break your code for versions >= 0.1.18. ",
         ignore_caller="postprocessing",
         version="0.1.17",
     )

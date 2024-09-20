@@ -14,7 +14,16 @@ Coming up next
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- Introduces deprecation warnings for the upcoming major release v1.0.0.
+.. important:: Introduces deprecation warnings before the upcoming major release v1.0.0. (:pr:`389`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+    .. currentmodule:: xarray
+
+    - Change of signature and action with xarray Argo accessor :meth:`Dataset.argo.filter_data_mode`
+
+    .. currentmodule:: argopy
+
+    - Refactor option "dataset" into "ds", see :class:`argopy.set_options`
+    - Refactor option "ftp" into "gdac", see :class:`argopy.set_options`
 
 Internals
 ^^^^^^^^^

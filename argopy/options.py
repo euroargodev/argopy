@@ -98,9 +98,12 @@ class set_options:
 
     Parameters
     ----------
-
     dataset: str, default: 'phy'
         Define the Dataset to work with: ``phy``, ``bgc`` or ``ref``
+
+        .. deprecated:: 0.1.17
+
+            - Replaced by ``ds`` in versions >= v0.1.18
 
     src: str, default: 'erddap'
         Source of fetched data: ``erddap``, ``gdac``, ``argovis``
@@ -110,6 +113,10 @@ class set_options:
 
     ftp: str, default: 'https://data-argo.ifremer.fr'
         Default path to be used by the GDAC fetchers and Argo index stores
+
+        .. deprecated:: 0.1.17
+
+            - Replaced by ``gdac`` in versions >= v0.1.18
 
     erddap: str, default: 'https://erddap.ifremer.fr/erddap'
         Default server address to be used by the data and index erddap fetchers
@@ -161,13 +168,7 @@ class set_options:
 
     Warns
     -----
-    A DeprecationWarning can be raised when a deprecated option is set.
-
-
-    .. deprecated:: 0.1.7
-
-        - ``dataset`` will be removed in 1.0.0, it is replaced by ``ds``
-        - ``ftp`` will be removed in 1.0.0, it is replaced by ``gdac``
+    A DeprecationWarning can be raised when a deprecated option is set
 
     """
 
