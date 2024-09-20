@@ -14,7 +14,12 @@
   - [ ] If code is marked as deprecated since version = v0.X.Y-2 : delete code (code will raise an error)
 - [ ] Update the documentation according to new deprecations
 
-## Code clean-up
+## Update static content
+- [ ] Update CI tests data used by mocked ftp and http servers. Use CLI [citests_httpdata_manager](https://github.com/euroargodev/argopy/blob/master/cli/citests_httpdata_manager)
+- [ ] Update [static assets files](https://github.com/euroargodev/argopy/tree/master/argopy/static/assets)
+- [ ] Update the [cheatsheet PDF](https://github.com/euroargodev/argopy/blob/master/docs/_static/argopy-cheatsheet.pdf) with all new release features
+
+## Code clean-up and update
 - [ ] Run [codespell](https://github.com/codespell-project/codespell) from repo root and fix errors: ``codespell -q 2``
 - [ ] Run [flake8](https://github.com/PyCQA/flake8) from repo root and fix errors
 
