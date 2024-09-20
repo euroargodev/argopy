@@ -31,9 +31,6 @@ class ArgoNVSReferenceTables:
 
     valid_ref = [
         "R01",
-        "RR2",
-        "RD2",
-        "RP2",
         "R03",
         "R04",
         "R05",
@@ -46,8 +43,6 @@ class ArgoNVSReferenceTables:
         "R12",
         "R13",
         "R15",
-        "RMC",
-        "RTV",
         "R16",
         "R18",
         "R19",
@@ -60,9 +55,15 @@ class ArgoNVSReferenceTables:
         "R26",
         "R27",
         "R28",
-        "R29",
-        "R30",
+#        "R29",
+#        "R30",
         "R40",
+
+        "RD2",
+        "RMC",
+        "RP2",
+        "RR2",
+        "RTV",
     ]
     """List of all available Reference Tables"""
 
