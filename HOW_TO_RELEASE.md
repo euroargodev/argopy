@@ -15,7 +15,14 @@
 - [ ] Update the documentation according to new deprecations
 
 ## Update static content
-- [ ] Update CI tests data used by mocked ftp and http servers. Use CLI [citests_httpdata_manager](https://github.com/euroargodev/argopy/blob/master/cli/citests_httpdata_manager)
+- [ ] Update CI tests data used by mocked ftp and http servers. Use CLI [citests_httpdata_manager](https://github.com/euroargodev/argopy/blob/master/cli/citests_httpdata_manager):
+  ```bash
+  cd cli
+  ./citests_httpdata_manager -a clear --force --refresh
+  ./citests_httpdata_manager -a download
+  ./citests_httpdata_manager -a check
+  ```
+- [ ] Update list of valid Reference tables from the [NVS server](https://vocab.nerc.ac.uk/collection/?filter=Argo)
 - [ ] Update [static assets files](https://github.com/euroargodev/argopy/tree/master/argopy/static/assets)
 - [ ] Update the [cheatsheet PDF](https://github.com/euroargodev/argopy/blob/master/docs/_static/argopy-cheatsheet.pdf) with all new release features
 
