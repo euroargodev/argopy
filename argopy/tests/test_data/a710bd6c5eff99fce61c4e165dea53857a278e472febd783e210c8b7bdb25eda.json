@@ -2,16 +2,19 @@
     "@graph": [
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R01/current/BTRAJ/",
-            "pav:authoredOn": "2020-04-04 15:05:33.0",
-            "pav:hasCurrentVersion": {
+            "pav:hasVersion": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R01/current/BTRAJ/1/"
             },
+            "pav:authoredOn": "2024-09-12 10:07:08.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R01/current/BTRAJ/2/"
+            },
             "dce:identifier": "SDN:R01::BTRAJ",
-            "pav:version": "1",
+            "pav:version": "2",
             "skos:notation": "SDN:R01::BTRAJ",
             "skos:altLabel": "BTRAJ",
-            "dc:date": "2020-04-04 15:05:33.0",
-            "owl:versionInfo": "1",
+            "dc:date": "2024-09-12 10:07:08.0",
+            "owl:versionInfo": "2",
             "skos:prefLabel": {
                 "@language": "en",
                 "@value": "B-Argo trajectory"
@@ -19,9 +22,9 @@
             "dc:identifier": "SDN:R01::BTRAJ",
             "skos:note": {
                 "@language": "en",
-                "@value": "accepted"
+                "@value": "deprecated"
             },
-            "owl:deprecated": "false",
+            "owl:deprecated": "true",
             "void:inDataset": {
                 "@id": "http://vocab.nerc.ac.uk/.well-known/void"
             },
@@ -258,6 +261,37 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R01/current/METAAUX/",
+            "pav:authoredOn": "2024-09-11 11:40:41.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R01/current/METAAUX/1/"
+            },
+            "dce:identifier": "SDN:R01::METAAUX",
+            "pav:version": "1",
+            "skos:notation": "SDN:R01::METAAUX",
+            "skos:altLabel": "",
+            "dc:date": "2024-09-11 11:40:41.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Argo auxiliary meta-data"
+            },
+            "dc:identifier": "SDN:R01::METAAUX",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "File containing descriptive information about an Argo float, for floats reporting non standard auxiliary features."
+            },
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R01/current/PROF/",
             "pav:authoredOn": "2020-04-04 15:05:33.0",
             "pav:hasCurrentVersion": {
@@ -313,10 +347,13 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R01/current/BPROF/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R01/current/TECH/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R01/current/PROF/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R01/current/TECH/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R01/current/METAAUX/"
                 }
             ],
             "@type": "skos:Collection",
@@ -324,8 +361,8 @@
             "dc:description": "Terms describing the type of data contained in an Argo netCDF file. Argo netCDF variable DATA_TYPE is populated by R01 prefLabel.",
             "dc:title": "Argo data type",
             "skos:prefLabel": "Argo data type",
-            "owl:versionInfo": "2",
-            "dc:date": "2023-10-07 03:00:23.0",
+            "owl:versionInfo": "4",
+            "dc:date": "2024-09-13 03:00:00.0",
             "skos:altLabel": "DATA_TYPE",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "DATA_TYPE",

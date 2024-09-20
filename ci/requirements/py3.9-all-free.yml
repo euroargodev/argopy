@@ -2,7 +2,7 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
-  - python = 3.9.19
+  - python = 3.9
 
 # CORE:
   - aiohttp

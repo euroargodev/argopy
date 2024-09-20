@@ -18,9 +18,8 @@ try:
     reqs = subprocess.check_output([sys.executable, '-m', 'pip', 'list', '--format', 'json'])
     reqs = json.loads(reqs.decode())
     [PIP_INSTALLED.update({mod['name']: mod['version']}) for mod in reqs]
-except:
+except:  # noqa E722
     pass
-
 
 
 def get_sys_info():
@@ -95,7 +94,7 @@ def cli_version(cli_name):
     try:
         a = subprocess.run([cli_name, '--version'], capture_output=True)
         return a.stdout.decode().strip("\n").replace(cli_name, '').strip()
-    except:
+    except:  # noqa E722
         if shutil.which(cli_name):
             return "- # installed"
         else:
@@ -120,15 +119,14 @@ def get_version(module_name):
         except importlib.metadata.PackageNotFoundError:
             try:
                 ver = pip_version(module_name)
-            except:
+            except:  # noqa E722
                 try:
                     ver = cli_version(module_name)
-                except:
+                except:  # noqa E722
                     pass
     if sum([int(v == '0') for v in ver.split(".")]) == len(ver.split(".")):
         ver = '-'
     return ver
-
 
 
 def show_versions(file=sys.stdout, conda=False):  # noqa: C901
