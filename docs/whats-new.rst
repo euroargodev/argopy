@@ -8,8 +8,8 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-Coming up next
---------------
+v0.1.17 (20 Sep. 2024)
+----------------------
 
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
