@@ -752,11 +752,6 @@ class ArgoIndexFetcher:
         _VALIDATORS["src"](self._src)
 
         # Load data source access points:
-        if self._src == "localftp":
-            raise ValueError(
-                "The 'localftp' data source is deprecated. It's been replaced by 'gdac'."
-            )
-
         if self._src not in AVAILABLE_INDEX_SOURCES:
             raise InvalidFetcher(
                 "Requested index fetcher '%s' not available ! "
