@@ -292,6 +292,37 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III_JUMBO/",
+            "pav:authoredOn": "2024-09-11 11:40:41.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III_JUMBO/1/"
+            },
+            "dce:identifier": "SDN:R23::PROVOR_III_JUMBO",
+            "pav:version": "1",
+            "skos:notation": "SDN:R23::PROVOR_III_JUMBO",
+            "skos:altLabel": "",
+            "dc:date": "2024-09-11 11:40:41.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "PROVOR_III_JUMBO float"
+            },
+            "dc:identifier": "SDN:R23::PROVOR_III_JUMBO",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "PROVOR float with additional battery pack. PLATFORM_ TYPE_ KEY = 108."
+            },
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R23/current/FLOAT/",
             "pav:authoredOn": "2020-05-03 20:30:02.0",
             "pav:hasCurrentVersion": {
@@ -1539,6 +1570,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC_MRV/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III_JUMBO/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/FLOAT/"
                 },
                 {
@@ -1634,8 +1668,8 @@
             "dc:description": "List of Argo float types. Argo netCDF variable PLATFORM_TYPE is populated by R23 altLabel.",
             "dc:title": "Argo platform type",
             "skos:prefLabel": "Argo platform type",
-            "owl:versionInfo": "7",
-            "dc:date": "2024-04-26 03:00:10.0",
+            "owl:versionInfo": "8",
+            "dc:date": "2024-09-12 03:00:00.0",
             "skos:altLabel": "PLATFORM_TYPE",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "PLATFORM_TYPE",

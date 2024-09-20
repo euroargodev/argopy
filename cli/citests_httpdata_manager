@@ -108,6 +108,7 @@ DEFAULT_TARGETS = [
     "ea_dataselection",
     "ifremer_api",
     "github",
+    "altim",
 ]
 
 
