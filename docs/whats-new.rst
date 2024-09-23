@@ -35,6 +35,11 @@ Internals
 
 - Improve error and warning messages from mocked http server to address :issue:`381` (:pr:`382`) by `G. Maze <http://www.github.com/gmaze>`_
 
+Energy
+^^^^^^
+
+Considering `energy used by CI tests <https://argopy.readthedocs.io/en/latest/energy.html>`_, this release has required about 75.4kJ of energy to produce 6h11s39 of computation time.
+
 
 v0.1.16 (27 Aug. 2024)
 ----------------------
