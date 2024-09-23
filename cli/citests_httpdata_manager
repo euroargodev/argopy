@@ -109,6 +109,7 @@ DEFAULT_TARGETS = [
     "ea_dataselection",
     "ifremer_api",
     "github",
+    "altim",
 ]
 
 
@@ -358,7 +359,7 @@ class UriRegistry(UserList):
             for item in obj.data:
                 self.delete(item)
         else:
-            raise TypeError("Can only substract a UriRegistry from another UriRegistry")
+            raise TypeError("Can only subtract a UriRegistry from another UriRegistry")
         return self
 
 

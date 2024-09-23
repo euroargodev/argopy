@@ -16,16 +16,16 @@ import numpy as np
 import logging
 
 from .options import OPTIONS, _VALIDATORS
-from .errors import InvalidFetcherAccessPoint, InvalidFetcher, OptionValueError
+from .errors import (
+    InvalidFetcherAccessPoint,
+    InvalidFetcher,
+    OptionValueError,
+    OptionDeprecatedWarning,
+)
 from .related import (
     get_coriolis_profile_id,
 )
-from .utils.checkers import (
-    is_box,
-    is_indexbox,
-    check_wmo,
-    check_cyc
-)
+from .utils.checkers import is_box, is_indexbox, check_wmo, check_cyc
 from .utils.lists import (
     list_available_data_src,
     list_available_index_src,
@@ -166,8 +166,15 @@ class ArgoDataFetcher:
         if self._src == "argovis" and (
             self._mode == "expert" or self._mode == "research"
         ):
-            raise OptionValueError("The 'argovis' data source fetching is only available in 'standard' user mode")
+            raise OptionValueError(
+                "The 'argovis' data source fetching is only available in 'standard' user mode"
+            )
 
+        if self._src == "gdac" and "ftp" in self.fetcher_kwargs:
+            OptionDeprecatedWarning(
+                reason="The GDAC 'ftp' argument is deprecated, it will be replaced by 'gdac' in versions >= 0.1.18",
+                version="v0.0.17",
+            )
 
     def __repr__(self):
         para = (
@@ -299,7 +306,7 @@ class ArgoDataFetcher:
 
     @property
     def mission(self):
-        if self._dataset_id == 'bgc':
+        if self._dataset_id == "bgc":
             return "BGC"
         else:
             return "core+deep"
@@ -592,6 +599,7 @@ class ArgoDataFetcher:
         :class:`pandas.DataFrame`
             Argo-like index of fetched data
         """
+
         def prt(txt):
             msg = [txt]
             if self._request != self.__repr__():
@@ -599,11 +607,13 @@ class ArgoDataFetcher:
             log.debug("\n".join(msg))
 
         def add_coriolis(this_df):
-            if 'id' not in this_df:
+            if "id" not in this_df:
                 this_df["id"] = None
 
                 def fc(row):
-                    row["id"] = get_coriolis_profile_id(row["wmo"], row["cyc"])["ID"].values[0]
+                    row["id"] = get_coriolis_profile_id(row["wmo"], row["cyc"])[
+                        "ID"
+                    ].values[0]
                     return row
 
                 this_df = this_df.apply(fc, axis=1)
@@ -626,7 +636,9 @@ class ArgoDataFetcher:
             if self._AccessPoint == "float":
                 idx.search_wmo(self._AccessPoint_data["wmo"])
             if self._AccessPoint == "profile":
-                idx.search_wmo_cyc(self._AccessPoint_data["wmo"], self._AccessPoint_data["cyc"])
+                idx.search_wmo_cyc(
+                    self._AccessPoint_data["wmo"], self._AccessPoint_data["cyc"]
+                )
 
             # Then export search result to Index dataframe:
             df = idx.to_dataframe()
@@ -673,7 +685,7 @@ class ArgoDataFetcher:
                 df = add_coriolis(df) if coriolis_id else df
 
                 # Possibly replace the light index with the full version:
-                if 'profiler_code' not in df or self._request == self.__repr__():
+                if "profiler_code" not in df or self._request == self.__repr__():
                     prt("to_index replaced the light index with the full version")
                     self._index = df
 
@@ -691,7 +703,7 @@ class ArgoDataFetcher:
         return df
 
     def load(self, force: bool = False, **kwargs):
-        """ Fetch data (and compute a profile index) if not already in memory
+        """Fetch data (and compute a profile index) if not already in memory
 
         Apply the default to_xarray() and to_index() methods and store results in memory.
         You can access loaded measurements structure with the `data` and `index` properties.

@@ -91,13 +91,25 @@ Breaking changes
 .. currentmodule:: argopy
 
 
-Coming up next in v0.1.17
--------------------------
+v0.1.17 (20 Sep. 2024)
+----------------------
 
-Features and front-end API
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. admonition:: This is the last minor version release
 
-- This version primarily introduces deprecation warnings ahead of the upcoming major v1.0.0 release
+    We're very happy to announce that this v0.1.17 is the last of the minor version releases. Its main role is to introduce deprecation warnings before things break in the major version release.
+
+    Comping up soon by the end of October the first **major argopy release: v1.0.0**
+
+.. important:: List of deprecations before the upcoming major release v1.0.0. (:pr:`389`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+    .. currentmodule:: xarray
+
+    - Change of signature and action with xarray Argo accessor :meth:`Dataset.argo.filter_data_mode`
+
+    .. currentmodule:: argopy
+
+    - Refactor option "dataset" into "ds", see :class:`argopy.set_options`
+    - Refactor option "ftp" into "gdac", see :class:`argopy.set_options`
 
 Internals
 ^^^^^^^^^
@@ -106,6 +118,10 @@ Internals
 
 - Improve error and warning messages from mocked http server to address :issue:`381` (:pr:`382`) by `G. Maze <http://www.github.com/gmaze>`_
 
+Energy
+^^^^^^
+
+Considering `energy used by CI tests <https://argopy.readthedocs.io/en/latest/energy.html>`_, this release has required about 75.4kJ of energy to produce 6h11s39 of computation time.
 
 v0.1.16 (27 Aug. 2024)
 ----------------------
@@ -166,6 +182,7 @@ Internals
 ^^^^^^^^^
 
 - Fix bug whereby user name could not be retrieved using :func:`getpass.getuser`. This closes :issue:`310` and allows argopy to be integrated into the EU Galaxy tools for `ecology <https://github.com/galaxyecology/tools-ecology/pull/81>`_. (:pr:`311`) by `G. Maze <http://www.github.com/gmaze>`_.
+
 
 v0.1.14 (29 Sep. 2023)
 ----------------------
@@ -423,6 +440,7 @@ Breaking changes
 ^^^^^^^^^^^^^^^^
 
 - Some documentation pages may have moved to new urls.
+
 
 v0.1.14rc1 (31 May 2023)
 ------------------------
@@ -710,6 +728,7 @@ Internals
 
 - Update and clean up requirements. Remove upper bound on all dependencies (:pr:`182`) by `R. Abernathey <http://www.github.com/rabernat>`_.
 
+
 v0.1.9 (19 Jan. 2022)
 ---------------------
 
@@ -879,6 +898,7 @@ Internals
         handlers=[logging.FileHandler("argopy.log", mode='w')]
     )
 
+
 v0.1.7 (4 Jan. 2021)
 -----------------------
 
@@ -1015,6 +1035,7 @@ Internals
 
 - Erddap fetcher now uses netcdf format to retrieve data (:pr:`19`).
 
+
 v0.1.3 (15 May 2020)
 --------------------
 
@@ -1064,10 +1085,12 @@ Internals
 
 - Improved unit testing (:commit:`e9555d1e6e90d3d1e75183cec0c4e14f7f19c17c`, :commit:`4b60ede844e37df86b32e4e2a2008335472a8cc1`, :commit:`34abf4913cb8bec027f88301c5504ebe594b3eae`)
 
+
 v0.1.2 (15 May 2020)
 --------------------
 
 We didn't like this one this morning, so we move one to the next one !
+
 
 v0.1.1 (3 Apr. 2020)
 ---------------------

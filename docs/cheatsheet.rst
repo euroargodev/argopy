@@ -3,7 +3,7 @@
 Cheat sheet
 ===========
 
-.. admonition:: Last version available: v0.1.16
+.. admonition:: Last version available v0.1.17
 
     .. centered::
         :download:`Get most of the argopy API in a small pdf <_static/argopy-cheatsheet.pdf>`

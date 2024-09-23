@@ -3,7 +3,8 @@
 - [ ] Create a new branch for this release: ``git checkout -b releasev0.X.Y``
 - [ ] Update release version in ``./docs/whats-new.rst``
 - [ ] Increase release version in ``./setup.py``
-- [ ] Create a PR to prepare it, name it with one of the [Nature emoji](https://www.webfx.com/tools/emoji-cheat-sheet/#tabs-3) and make sure it was [never used before](https://github.com/euroargodev/argopy/pulls?q=is%3Apr+label%3Arelease+) 
+- [ ] Create a PR to prepare it, name it with one of the [Nature emoji](https://www.webfx.com/tools/emoji-cheat-sheet/#tabs-3) and make sure it was [never used before](https://github.com/euroargodev/argopy/pulls?q=is%3Apr+label%3Arelease+)
+- [ ] [Activate RTD build for this branch](https://app.readthedocs.org/dashboard/argopy/version/create/)
 
 # Prepare code for release
 
@@ -14,7 +15,19 @@
   - [ ] If code is marked as deprecated since version = v0.X.Y-2 : delete code (code will raise an error)
 - [ ] Update the documentation according to new deprecations
 
-## Code clean-up
+## Update static content
+- [ ] Update CI tests data used by mocked ftp and http servers. Use CLI [citests_httpdata_manager](https://github.com/euroargodev/argopy/blob/master/cli/citests_httpdata_manager):
+  ```bash
+  cd cli
+  ./citests_httpdata_manager -a clear --force --refresh
+  ./citests_httpdata_manager -a download
+  ./citests_httpdata_manager -a check
+  ```
+- [ ] Update list of valid Reference tables from the [NVS server](https://vocab.nerc.ac.uk/collection/?filter=Argo)
+- [ ] Update [static assets files](https://github.com/euroargodev/argopy/tree/master/argopy/static/assets)
+- [ ] Update the [cheatsheet PDF](https://github.com/euroargodev/argopy/blob/master/docs/_static/argopy-cheatsheet.pdf) with all new release features
+
+## Code clean-up and update
 - [ ] Run [codespell](https://github.com/codespell-project/codespell) from repo root and fix errors: ``codespell -q 2``
 - [ ] Run [flake8](https://github.com/PyCQA/flake8) from repo root and fix errors
 
@@ -23,7 +36,7 @@
 - [ ] Update pinned dependencies versions in ``./ci/requirements/py*-*-pinned.yml`` environment files using [upstream CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml) information
 - [ ] Possibly update ``./requirements.txt`` and ``./docs/requirements.txt`` if the oldest dependencies versions were upgraded
 - [ ] Make sure that all CI tests are passed
-- [ ] [Activate](https://readthedocs.org/projects/argopy/versions/) and make sure the documentation for the release branch is [built on RTD](https://readthedocs.org/projects/argopy/builds/)
+- [ ] Make sure the documentation for this release branch is [built on RTD](https://readthedocs.org/projects/argopy/builds/)
 
 ## Preparation conclusion
 - [ ] Merge this PR to master
