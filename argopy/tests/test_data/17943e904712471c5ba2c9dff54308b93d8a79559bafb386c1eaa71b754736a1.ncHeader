@@ -1,0 +1,4 @@
+Error {
+    code=500;
+    message="Internal Server Error: java.io.IOException: No space left on device";
+}

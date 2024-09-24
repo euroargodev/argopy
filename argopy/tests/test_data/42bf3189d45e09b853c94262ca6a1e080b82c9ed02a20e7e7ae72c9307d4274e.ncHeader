@@ -1,0 +1,4 @@
+Error {
+    code=500;
+    message="Internal Server Error: FileNotFoundException: /erddapData/cache/ce/ArgoFloats-reference/ArgoFloats-reference_84d3_9208_e08c.970158355.cycle_number.temp (No space left on device)";
+}

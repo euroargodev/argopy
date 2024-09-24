@@ -1,0 +1,16 @@
+[
+    {
+        "uri": "https://data-argo.ifremer.fr/etc/argo-ast9-item13-AltimeterComparison/figures/2901623.png",
+        "ext": "png",
+        "sha": "1d08ef19cbfc76909fba6d03c90c5c9d5c17c68e40e3316e8ac41109eb33fe7b",
+        "type": "image/png",
+        "ts": "2024-09-23 13:41:56"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/etc/argo-ast9-item13-AltimeterComparison/figures/6901929.png",
+        "ext": "png",
+        "sha": "8b31f74aba6fe7f7093a5d0d7ebe17a044472e2982bf59c5ce7157597eb8fba5",
+        "type": "image/png",
+        "ts": "2024-09-23 13:41:56"
+    }
+]

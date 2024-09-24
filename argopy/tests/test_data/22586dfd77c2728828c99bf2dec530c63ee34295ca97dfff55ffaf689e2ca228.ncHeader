@@ -1,0 +1,4 @@
+Error {
+    code=500;
+    message="Internal Server Error: FileNotFoundException: /erddapData/cache/GC/ArgoFloats-synthetic-BGC/ArgoFloats-synthetic-BGC_318a_3dbd_afc7.428815938.bbp700.temp (No space left on device)";
+}

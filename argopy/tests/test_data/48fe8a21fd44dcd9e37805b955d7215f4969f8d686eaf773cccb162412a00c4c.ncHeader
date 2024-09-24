@@ -1,0 +1,4 @@
+Error {
+    code=500;
+    message="Internal Server Error: FileNotFoundException: /erddapData/cache/ts/ArgoFloats/ArgoFloats_caa2_9b8d_2a92.301833607.config_mission_number.temp (No space left on device)";
+}
