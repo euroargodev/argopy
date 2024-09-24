@@ -82,7 +82,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         """
         self.definition = "Argovis Argo data fetcher"
         self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
-        self.user_mode =  kwargs["mode"] if "mode" in kwargs else OPTIONS["mode"]
+        self.user_mode = kwargs["mode"] if "mode" in kwargs else OPTIONS["mode"]
         self.server = kwargs["server"] if "server" in kwargs else api_server
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.store_opts = {
@@ -528,7 +528,12 @@ class Fetch_box(ArgovisDataFetcher):
                 )
                 boxes = self.Chunker.fit_transform()
                 for box in boxes:
-                    urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())
+                    opts = {
+                        "ds": self.dataset_id,
+                        "fs": self.fs,
+                        "server": self.server,
+                    }
+                    urls.append(Fetch_box(box=box, **opts).get_url())
             else:
                 urls.append(self.get_url())
         else:
@@ -556,6 +561,16 @@ class Fetch_box(ArgovisDataFetcher):
             )
             boxes = self.Chunker.fit_transform()
             for box in boxes:
-                urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())
+                opts = {
+                    "ds": self.dataset_id,
+                    "fs": self.fs,
+                    "server": self.server,
+                }
+                urls.append(
+                    Fetch_box(
+                        box=box,
+                        **opts,
+                    ).get_url()
+                )
 
         return self.url_encode(urls)
