@@ -103,7 +103,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         if self.dataset_id in ["bgc-s", "bgc-b"]:
             index_file = self.dataset_id
 
-        # Validation of self.server is done by the ArgoIndex:
+        # Validation of self.server is done by the ArgoIndex instance:
         self.indexfs = ArgoIndex(
             host=self.server,
             index_file=index_file,
@@ -139,8 +139,8 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
     def __repr__(self):
         summary = ["<datafetcher.gdac>"]
         summary.append("Name: %s" % self.definition)
-        summary.append("Index: %s" % self.indexfs.index_file)
-        summary.append("Server: %s" % self.server)
+        summary.append("Index: %s (%s)" % (self.indexfs.index_file, self.indexfs.convention_title))
+        summary.append("Host: %s" % self.server)
         if hasattr(self, "BOX"):
             summary.append("Domain: %s" % self.cname())
         else:
@@ -473,8 +473,7 @@ class Fetch_wmo(GDACArgoDataFetcher):
         self._nrows = None
         if "MAX_FILES" in kwargs:
             self._nrows = kwargs["MAX_FILES"]
-
-        self.definition = "Ifremer GDAC Argo data fetcher"
+        self.definition = "GDAC Argo data fetcher"
         if self.CYC is not None:
             self.definition = "%s for profiles" % self.definition
         else:
@@ -534,8 +533,7 @@ class Fetch_box(GDACArgoDataFetcher):
         self._nrows = None
         if "MAX_FILES" in kwargs:
             self._nrows = kwargs["MAX_FILES"]
-
-        self.definition = "Ifremer GDAC Argo data fetcher for a space/time region"
+        self.definition = "GDAC Argo data fetcher for a space/time region"
         return self
 
     @property

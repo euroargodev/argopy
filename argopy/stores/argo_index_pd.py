@@ -192,7 +192,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
     def uri_full_index(self):
         # return ["/".join([self.host, "dac", f]) for f in self.index["file"]]
         sep = self.fs["src"].fs.sep
-        return [sep.join([self.host, "dac", f.replace('/', sep)]) for f in self.index["file"]]
+        return [sep.join([self.root, "dac", f.replace('/', sep)]) for f in self.index["file"]]
 
     @property
     def uri(self):
@@ -200,7 +200,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         # todo Should also modify separator from "f" because it's "/" on the index file,
         # but should be turned to "\" for local file index on Windows. Remains "/" in all others (linux, mac, ftp. http)
         sep = self.fs["src"].fs.sep
-        return [sep.join([self.host, "dac", f.replace('/', sep)]) for f in self.search["file"]]
+        return [sep.join([self.root, "dac", f.replace('/', sep)]) for f in self.search["file"]]
 
     def read_wmo(self, index=False):
         """ Return list of unique WMOs in search results

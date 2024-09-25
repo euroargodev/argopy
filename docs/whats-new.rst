@@ -21,6 +21,8 @@ Coming up next in v1.0
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+- **Support for AWS S3 data files**. This support is experimental and is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_.
+
 .. currentmodule:: xarray
 
 - **Improved support for BGC**
@@ -88,9 +90,9 @@ Breaking changes
 
 .. currentmodule:: argopy
 
-- The option name "ftp" is now renamed "gdac" (:pr:`389`) by `G. Maze <http://www.github.com/gmaze>`_
+- The option name "ftp" is now replaced by "gdac" (:pr:`389`) by `G. Maze <http://www.github.com/gmaze>`_
 
-- The option name "dataset" is now renamed "ds" (:pr:`389`) by `G. Maze <http://www.github.com/gmaze>`_
+- The option name "dataset" is now replaced by "ds" (:pr:`389`) by `G. Maze <http://www.github.com/gmaze>`_
 
 
 v0.1.17 (20 Sep. 2024)
