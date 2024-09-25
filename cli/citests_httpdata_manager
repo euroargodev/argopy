@@ -5,7 +5,7 @@ CI Tests data manager
 Use this script to download all possible tests data to be used by the local http server fixture
 
 >>> citests_httpdata_manager --help
->>> citests_httpdata_manager --destinatio
+>>> citests_httpdata_manager --destination
 
 >>> citests_httpdata_manager -a check
 
@@ -29,13 +29,17 @@ Use this script to download all possible tests data to be used by the local http
 >>> citests_httpdata_manager -a download -t ea_dataselection
 >>> citests_httpdata_manager -a download -t ifremer_api
 >>> citests_httpdata_manager -a download -t github
+>>> citests_httpdata_manager -a download -t altim
 
 
 If some downloads (eg erddap) are difficult:
->>> citests_httpdata_manager -t erddap_bgc -a dry
->>> citests_httpdata_manager -t erddap_bgc -a download
->>> citests_httpdata_manager -t erddap_bgc -a check
->>> citests_httpdata_manager -t erddap_bgc -a download
+>>> citests_httpdata_manager -t erddap_bgc -a check  # Delete files raising errors
+>>> citests_httpdata_manager -t erddap_bgc -a download  # Try another download
+>>> citests_httpdata_manager -t erddap_bgc -a check  # Delete files raising errors, then trying again download
+
+Clean up all data for a fresh start:
+>>> citests_httpdata_manager -a clear --refresh
+
 
 
 """
@@ -109,6 +113,7 @@ DEFAULT_TARGETS = [
     "ea_dataselection",
     "ifremer_api",
     "github",
+    "altim",
 ]
 
 
@@ -358,7 +363,7 @@ class UriRegistry(UserList):
             for item in obj.data:
                 self.delete(item)
         else:
-            raise TypeError("Can only substract a UriRegistry from another UriRegistry")
+            raise TypeError("Can only subtract a UriRegistry from another UriRegistry")
         return self
 
 
@@ -576,33 +581,33 @@ class Lister:
             cache=True,
         )
         measured = None
-        mode = "expert"
-        for params in ["all", "DOXY"]:
-            fetcher = DataFetcher(
-                src="erddap",
-                ds="bgc",
-                cache=True,
-                mode=mode,
-                params=params,
-                measured=measured,
-                indexfs=indexfs,
-            )
-            for access_point in requests_seq:
-                [
-                    add_to_URI(fetcher.profile(*cfg))
-                    for cfg in requests_seq[access_point]
-                    if access_point == "profile"
-                ]
-                [
-                    add_to_URI(fetcher.float(cfg))
-                    for cfg in requests_seq[access_point]
-                    if access_point == "float"
-                ]
-                [
-                    add_to_URI(fetcher.region(cfg))
-                    for cfg in requests_seq[access_point]
-                    if access_point == "region"
-                ]
+        for mode in ['expert', 'standard', 'research']:
+            for params in ["all", "DOXY"]:
+                fetcher = DataFetcher(
+                    src="erddap",
+                    ds="bgc",
+                    cache=True,
+                    mode=mode,
+                    params=params,
+                    measured=measured,
+                    indexfs=indexfs,
+                )
+                for access_point in requests_seq:
+                    [
+                        add_to_URI(fetcher.profile(*cfg))
+                        for cfg in requests_seq[access_point]
+                        if access_point == "profile"
+                    ]
+                    [
+                        add_to_URI(fetcher.float(cfg))
+                        for cfg in requests_seq[access_point]
+                        if access_point == "float"
+                    ]
+                    [
+                        add_to_URI(fetcher.region(cfg))
+                        for cfg in requests_seq[access_point]
+                        if access_point == "region"
+                    ]
 
         for measured in [None, "all", "DOXY"]:
             for params in ["all"]:
@@ -691,7 +696,7 @@ class Lister:
         def add_to_URI(facade):
             [this_URI.commit(self.dfile(uri, "nc")) for uri in facade.uri]
 
-        fetcher = DataFetcher(src="gdac", ftp=server, ds="phy", MAX_FILES=100)
+        fetcher = DataFetcher(src="gdac", gdac=server, ds="phy", MAX_FILES=100)
         for access_point in requests_seq:
             [
                 add_to_URI(fetcher.profile(*cfg))
@@ -729,7 +734,7 @@ class Lister:
             [this_URI.commit(self.dfile(uri, "nc")) for uri in facade.uri]
 
         fetcher = DataFetcher(
-            src="gdac", ftp=server, ds="bgc", mode="expert", MAX_FILES=100
+            src="gdac", gdac=server, ds="bgc", mode="expert", MAX_FILES=100
         )
         for access_point in requests_seq:
             [
@@ -1078,8 +1083,8 @@ def consolidate(target=None):
                     print("▶ Content:", data[0:100])
                     txt = ""
                     while txt.lower() not in ["y", "n"]:
-                        txt = input("Do you confirm to suppress this record [y/n] ? ")
-                    if txt == "y":
+                        txt = input("Do you confirm to suppress this record ? [y]/n")
+                    if txt == "y" or txt == "":
                         n_delete += 1
                         file_path.unlink()
                         URIs.remove(item)

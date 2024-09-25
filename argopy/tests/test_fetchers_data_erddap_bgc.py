@@ -46,8 +46,8 @@ PARALLEL_ACCESS_POINTS = [
 """
 List user modes to be tested
 """
-# USER_MODES = ['standard', 'expert', 'research']
-USER_MODES = ['expert']
+USER_MODES = ['standard', 'expert', 'research']
+# USER_MODES = ['expert']
 
 """
 List of 'params' fetcher arguments to be tested

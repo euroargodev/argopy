@@ -75,7 +75,7 @@ class ArgoDocs:
                         else:
                             # print("-", line)
                             record[tag].append(line)
-                    except UnboundLocalError as e:
+                    except UnboundLocalError:
                         pass
                 elif len(line) == 2:
                     record[line] = []

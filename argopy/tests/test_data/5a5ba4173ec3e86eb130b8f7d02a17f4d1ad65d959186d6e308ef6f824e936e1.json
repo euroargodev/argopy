@@ -2,16 +2,19 @@
     "@graph": [
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R13/current/I/",
-            "pav:authoredOn": "2020-04-07 22:59:46.0",
-            "pav:hasCurrentVersion": {
+            "pav:hasVersion": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R13/current/I/1/"
             },
+            "pav:authoredOn": "2024-09-11 11:40:41.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R13/current/I/2/"
+            },
             "dce:identifier": "SDN:R13::I",
-            "pav:version": "1",
+            "pav:version": "2",
             "skos:notation": "SDN:R13::I",
             "skos:altLabel": "I",
-            "dc:date": "2020-04-07 22:59:46.0",
-            "owl:versionInfo": "1",
+            "dc:date": "2024-09-11 11:40:41.0",
+            "owl:versionInfo": "2",
             "skos:prefLabel": {
                 "@language": "en",
                 "@value": "Indian ocean area"
@@ -27,22 +30,25 @@
             },
             "skos:definition": {
                 "@language": "en",
-                "@value": "The Indian/Atlantic oceans boundary is at 20 deg E, whereas the Indian/Pacific oceans boundary is at 145 deg E."
+                "@value": "Below 30 degrees south, the Indian/Atlantic oceans boundary is at 20 degrees east, whereas the Indian/Pacific oceans boundary is at 145 degrees east. The Red Sea is part of the Indian ocean area."
             },
             "@type": "skos:Concept"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R13/current/A/",
-            "pav:authoredOn": "2020-04-07 22:59:46.0",
-            "pav:hasCurrentVersion": {
+            "pav:hasVersion": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R13/current/A/1/"
             },
+            "pav:authoredOn": "2024-09-11 11:40:41.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R13/current/A/2/"
+            },
             "dce:identifier": "SDN:R13::A",
-            "pav:version": "1",
+            "pav:version": "2",
             "skos:notation": "SDN:R13::A",
             "skos:altLabel": "A",
-            "dc:date": "2020-04-07 22:59:46.0",
-            "owl:versionInfo": "1",
+            "dc:date": "2024-09-11 11:40:41.0",
+            "owl:versionInfo": "2",
             "skos:prefLabel": {
                 "@language": "en",
                 "@value": "Atlantic ocean area"
@@ -58,22 +64,25 @@
             },
             "skos:definition": {
                 "@language": "en",
-                "@value": "The Atlantic/Pacific oceans boundary is at 70 deg W, whereas the Atlantic/Indian oceans boundary is at 20 deg E."
+                "@value": "Below 30 degrees south, the Atlantic/Pacific oceans boundary is at 70 degrees west, whereas the Atlantic/Indian oceans boundary is at 20 degrees east. The Caribbean Sea, the Mexico Gulf, the Mediterranean Sea, the Black Sea, the Baltic Sea, the Labrador Sea, the Baffin Bay and the Nordic seas (Greenland, Norwegian, Barents and Kara seas) are part of the Atlantic ocean area."
             },
             "@type": "skos:Concept"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R13/current/P/",
-            "pav:authoredOn": "2020-04-07 22:59:46.0",
-            "pav:hasCurrentVersion": {
+            "pav:hasVersion": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R13/current/P/1/"
             },
+            "pav:authoredOn": "2024-09-11 11:40:41.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R13/current/P/2/"
+            },
             "dce:identifier": "SDN:R13::P",
-            "pav:version": "1",
+            "pav:version": "2",
             "skos:notation": "SDN:R13::P",
             "skos:altLabel": "P",
-            "dc:date": "2020-04-07 22:59:46.0",
-            "owl:versionInfo": "1",
+            "dc:date": "2024-09-11 11:40:41.0",
+            "owl:versionInfo": "2",
             "skos:prefLabel": {
                 "@language": "en",
                 "@value": "Pacific ocean area"
@@ -89,7 +98,7 @@
             },
             "skos:definition": {
                 "@language": "en",
-                "@value": "The Pacific/Indian oceans boundary is at 145 deg E, whereas the Pacific/Atlantic oceans boundary is at 70 deg W."
+                "@value": "Below 30 degrees south, the Pacific/Indian oceans boundary is at 145 degrees east, whereas the Pacific/Atlantic oceans boundary is at 70 degrees west. The South China Sea, the Indonesian seas, the Laptev, Beaufort, East Siberian and Chukchi seas are part of the Pacific ocean area."
             },
             "@type": "skos:Concept"
         },
@@ -111,8 +120,8 @@
             "dc:description": "Ocean area codes assigned to each profile in the Metadata directory (index) file of the Argo Global Assembly Centre.",
             "dc:title": "Argo ocean area codes and boundary definitions",
             "skos:prefLabel": "Argo ocean area codes and boundary definitions",
-            "owl:versionInfo": "1",
-            "dc:date": "2020-04-08 03:00:04.0",
+            "owl:versionInfo": "2",
+            "dc:date": "2024-09-12 03:00:00.0",
             "skos:altLabel": "OCEAN_CODE",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "OCEAN_CODE",

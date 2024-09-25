@@ -2,19 +2,22 @@
     "@graph": [
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R05/current/G/",
-            "pav:authoredOn": "2020-04-04 15:05:33.0",
-            "pav:hasCurrentVersion": {
+            "pav:hasVersion": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R05/current/G/1/"
             },
+            "pav:authoredOn": "2024-09-12 10:07:08.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/G/2/"
+            },
             "dce:identifier": "SDN:R05::G",
-            "pav:version": "1",
+            "pav:version": "2",
             "skos:notation": "SDN:R05::G",
             "skos:altLabel": "G",
-            "dc:date": "2020-04-04 15:05:33.0",
-            "owl:versionInfo": "1",
+            "dc:date": "2024-09-12 10:07:08.0",
+            "owl:versionInfo": "2",
             "skos:prefLabel": {
                 "@language": "en",
-                "@value": "GPS location accuracy (<10m radius)"
+                "@value": "GPS positioning accuracy (not better than 10 m)"
             },
             "dc:identifier": "SDN:R05::G",
             "skos:note": {
@@ -27,38 +30,7 @@
             },
             "skos:definition": {
                 "@language": "en",
-                "@value": "Estimated location accuracy radius from Global Positioning System (GPS) of less than 10m"
-            },
-            "@type": "skos:Concept"
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R05/current/H/",
-            "pav:authoredOn": "2020-04-04 15:05:33.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/H/1/"
-            },
-            "dce:identifier": "SDN:R05::H",
-            "pav:version": "1",
-            "skos:notation": "SDN:R05::H",
-            "skos:altLabel": "H",
-            "dc:date": "2020-04-04 15:05:33.0",
-            "owl:versionInfo": "1",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "GNSS location accuracy (<10m radius)"
-            },
-            "dc:identifier": "SDN:R05::H",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "Estimated location accuracy radius from Global Navigation Satellite System (GNSS) of less than 10m"
+                "@value": "Estimated location accuracy radius from Global Positioning System (GPS) of less than 10m."
             },
             "@type": "skos:Concept"
         },
@@ -156,37 +128,6 @@
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R05/current/E/",
-            "pav:authoredOn": "2020-04-04 15:05:33.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/E/1/"
-            },
-            "dce:identifier": "SDN:R05::E",
-            "pav:version": "1",
-            "skos:notation": "SDN:R05::E",
-            "skos:altLabel": "E",
-            "dc:date": "2020-04-04 15:05:33.0",
-            "owl:versionInfo": "1",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "GLONASS location accuracy (<10m radius)"
-            },
-            "dc:identifier": "SDN:R05::E",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "Estimated location accuracy radius from GLObal NAvigation Satellite System (GLONASS) of less than 10m"
-            },
-            "@type": "skos:Concept"
-        },
-        {
             "@id": "http://vocab.nerc.ac.uk/collection/R05/current/1/",
             "pav:authoredOn": "2020-04-04 15:05:33.0",
             "pav:hasCurrentVersion": {
@@ -218,22 +159,25 @@
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R05/current/U/",
-            "pav:authoredOn": "2020-04-04 15:05:33.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/U/1/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R05/current/H/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/H/1/"
             },
-            "dce:identifier": "SDN:R05::U",
-            "pav:version": "1",
-            "skos:notation": "SDN:R05::U",
-            "skos:altLabel": "U",
-            "dc:date": "2020-04-04 15:05:33.0",
-            "owl:versionInfo": "1",
+            "pav:authoredOn": "2024-09-12 10:07:08.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/H/2/"
+            },
+            "dce:identifier": "SDN:R05::H",
+            "pav:version": "2",
+            "skos:notation": "SDN:R05::H",
+            "skos:altLabel": "H",
+            "dc:date": "2024-09-12 10:07:08.0",
+            "owl:versionInfo": "2",
             "skos:prefLabel": {
                 "@language": "en",
-                "@value": "Estimated location accuracy"
+                "@value": "GNSS accuracy (not better than 10 m)"
             },
-            "dc:identifier": "SDN:R05::U",
+            "dc:identifier": "SDN:R05::H",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
@@ -244,7 +188,41 @@
             },
             "skos:definition": {
                 "@language": "en",
-                "@value": "Estimated location accuracy radius from manual computation as not received by the float."
+                "@value": "Estimated location accuracy radius from Global Navigation Satellite System (GNSS) of less than 10m."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R05/current/E/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/E/1/"
+            },
+            "pav:authoredOn": "2024-09-12 10:07:08.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/E/2/"
+            },
+            "dce:identifier": "SDN:R05::E",
+            "pav:version": "2",
+            "skos:notation": "SDN:R05::E",
+            "skos:altLabel": "E",
+            "dc:date": "2024-09-12 10:07:08.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "GLONASS accuracy (not better than 10 m)"
+            },
+            "dc:identifier": "SDN:R05::E",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Estimated location accuracy radius from GLObal NAvigation Satellite System (GLONASS) of less than 10m."
             },
             "@type": "skos:Concept"
         },
@@ -280,6 +258,37 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R05/current/U/",
+            "pav:authoredOn": "2020-04-04 15:05:33.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/U/1/"
+            },
+            "dce:identifier": "SDN:R05::U",
+            "pav:version": "1",
+            "skos:notation": "SDN:R05::U",
+            "skos:altLabel": "U",
+            "dc:date": "2020-04-04 15:05:33.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Estimated location accuracy"
+            },
+            "dc:identifier": "SDN:R05::U",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Estimated location accuracy radius from manual computation as not received by the float."
+            },
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R05/current/B/",
             "pav:authoredOn": "2020-04-04 15:05:33.0",
             "pav:hasCurrentVersion": {
@@ -307,68 +316,6 @@
             "skos:definition": {
                 "@language": "en",
                 "@value": "The location accuracy radius from Argos positioning system cannot be estimated as only one or two messages were received."
-            },
-            "@type": "skos:Concept"
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R05/current/I/",
-            "pav:authoredOn": "2020-04-04 15:05:33.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/I/1/"
-            },
-            "dce:identifier": "SDN:R05::I",
-            "pav:version": "1",
-            "skos:notation": "SDN:R05::I",
-            "skos:altLabel": "I",
-            "dc:date": "2020-04-04 15:05:33.0",
-            "owl:versionInfo": "1",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "Iridium location accuracy (<5000m radius)"
-            },
-            "dc:identifier": "SDN:R05::I",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "Estimated location accuracy radius from Iridium positioning system of less than 5000m"
-            },
-            "@type": "skos:Concept"
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R05/current/F/",
-            "pav:authoredOn": "2020-04-04 15:05:33.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/F/1/"
-            },
-            "dce:identifier": "SDN:R05::F",
-            "pav:version": "1",
-            "skos:notation": "SDN:R05::F",
-            "skos:altLabel": "F",
-            "dc:date": "2020-04-04 15:05:33.0",
-            "owl:versionInfo": "1",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "GALILEO location accuracy (<10m radius)"
-            },
-            "dc:identifier": "SDN:R05::F",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "Estimated location accuracy radius from Galileo positioning system of less than 10m"
             },
             "@type": "skos:Concept"
         },
@@ -404,20 +351,57 @@
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R05/current/D/",
-            "pav:authoredOn": "2020-04-04 15:05:33.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/D/1/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R05/current/I/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/I/1/"
             },
-            "dce:identifier": "SDN:R05::D",
-            "pav:version": "1",
-            "skos:notation": "SDN:R05::D",
-            "skos:altLabel": "D",
-            "dc:date": "2020-04-04 15:05:33.0",
-            "owl:versionInfo": "1",
+            "pav:authoredOn": "2024-09-12 10:07:08.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/I/2/"
+            },
+            "dce:identifier": "SDN:R05::I",
+            "pav:version": "2",
+            "skos:notation": "SDN:R05::I",
+            "skos:altLabel": "I",
+            "dc:date": "2024-09-12 10:07:08.0",
+            "owl:versionInfo": "2",
             "skos:prefLabel": {
                 "@language": "en",
-                "@value": "Beidou location accuracy (<10m radius)"
+                "@value": "Iridium accuracy (not better than 5 km)"
+            },
+            "dc:identifier": "SDN:R05::I",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Estimated location accuracy radius from Iridium positioning system of less than 5000m."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R05/current/D/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/D/1/"
+            },
+            "pav:authoredOn": "2024-09-12 10:07:08.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/D/2/"
+            },
+            "dce:identifier": "SDN:R05::D",
+            "pav:version": "2",
+            "skos:notation": "SDN:R05::D",
+            "skos:altLabel": "D",
+            "dc:date": "2024-09-12 10:07:08.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Beidou accuracy (not better than 10 m)"
             },
             "dc:identifier": "SDN:R05::D",
             "skos:note": {
@@ -430,7 +414,7 @@
             },
             "skos:definition": {
                 "@language": "en",
-                "@value": "Estimated location accuracy radius from BeiDou Navigation Satellite System (BDS) of less than 10m"
+                "@value": "Estimated location accuracy radius from BeiDou Navigation Satellite System (BDS) of less than 10m."
             },
             "@type": "skos:Concept"
         },
@@ -466,13 +450,44 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R05/current/F/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/F/1/"
+            },
+            "pav:authoredOn": "2024-09-12 10:07:08.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R05/current/F/2/"
+            },
+            "dce:identifier": "SDN:R05::F",
+            "pav:version": "2",
+            "skos:notation": "SDN:R05::F",
+            "skos:altLabel": "F",
+            "dc:date": "2024-09-12 10:07:08.0",
+            "owl:versionInfo": "2",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "GALILEO accuracy (not better than 10 m)"
+            },
+            "dc:identifier": "SDN:R05::F",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Estimated location accuracy radius from Galileo positioning system of less than 10m."
+            },
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R05/current/",
             "skos:member": [
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R05/current/G/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R05/current/H/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R05/current/2/"
@@ -484,34 +499,37 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R05/current/3/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R05/current/E/"
-                },
-                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R05/current/1/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R05/current/U/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R05/current/H/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R05/current/E/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R05/current/R/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R05/current/U/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R05/current/B/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R05/current/I/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R05/current/F/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R05/current/0/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R05/current/A/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R05/current/I/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R05/current/D/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R05/current/F/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R05/current/A/"
                 }
             ],
             "@type": "skos:Collection",
@@ -519,8 +537,8 @@
             "dc:description": "Accuracy in latitude and longitude measurements received from the positioning system, grouped by location accuracy classes.",
             "dc:title": "Argo position accuracy",
             "skos:prefLabel": "Argo position accuracy",
-            "owl:versionInfo": "0",
-            "dc:date": "2020-04-04 15:47:54.0",
+            "owl:versionInfo": "1",
+            "dc:date": "2024-09-13 03:00:00.0",
             "skos:altLabel": "POSITION_ACCURACY",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "POSITION_ACCURACY",
