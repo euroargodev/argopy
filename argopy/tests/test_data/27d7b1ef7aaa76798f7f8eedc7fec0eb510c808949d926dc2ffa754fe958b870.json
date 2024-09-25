@@ -1012,43 +1012,6 @@
             "pav:authoredOn": "2023-10-05 14:42:48.0"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/",
-            "pav:hasVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/1/"
-            },
-            "@type": "skos:Concept",
-            "skos:definition": {
-                "@language": "en",
-                "@value": "A three-channel optical sensor fitted with two single-wavelength chlorophyll fluorometers and a single-angle scattering meter, depth-rated to 2000 m and designed for float applications. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and chlorophyll-a fluorescence at 435 nm (excitation) / 695 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 124 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, manufactured by Sea-Bird Scientific."
-            },
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "owl:deprecated": "false",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "dc:identifier": "SDN:R27::ECO_FLBBFL",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "ECO_FLBBFL"
-            },
-            "owl:versionInfo": "2",
-            "dc:date": "2023-10-05 14:42:48.0",
-            "skos:altLabel": "ECO_FLBBFL",
-            "skos:notation": "SDN:R27::ECO_FLBBFL",
-            "skos:broader": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
-            },
-            "pav:version": "2",
-            "dce:identifier": "SDN:R27::ECO_FLBBFL",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/2/"
-            },
-            "pav:authoredOn": "2023-10-05 14:42:48.0"
-        },
-        {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MP40_C_2000_G/",
             "pav:authoredOn": "2021-08-18 14:32:12.0",
             "pav:hasCurrentVersion": {
@@ -2442,6 +2405,48 @@
                 "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/2/"
             },
             "pav:authoredOn": "2019-10-16 06:35:48.0"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/1/"
+            },
+            "pav:authoredOn": "2023-10-05 14:42:48.0",
+            "@type": "skos:Concept",
+            "skos:definition": {
+                "@language": "en",
+                "@value": "A three-channel optical sensor fitted with two single-wavelength chlorophyll fluorometers and a single-angle scattering meter, depth-rated to 2000 m and designed for float applications. The two fluorometers are configured to detect chlorophyll-a fluorescence at 470 nm (excitation) / 695 nm (emission) wavelengths and chlorophyll-a fluorescence at 435 nm (excitation) / 695 nm (emission) wavelengths respectively, whereas the scattering meter (in-water centroid angle of 124 deg) is configured to measure backscattering at 700 nm wavelength. The instrument is part of the Environmental Characterization Optics (ECO) series tools, manufactured by Sea-Bird Scientific."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R27::ECO_FLBBFL",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "ECO_FLBBFL"
+            },
+            "owl:versionInfo": "2",
+            "dc:date": "2023-10-05 14:42:48.0",
+            "skos:altLabel": "ECO_FLBBFL",
+            "skos:notation": "SDN:R27::ECO_FLBBFL",
+            "skos:broader": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/SBE/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R26/current/WETLABS/"
+                }
+            ],
+            "pav:version": "2",
+            "dce:identifier": "SDN:R27::ECO_FLBBFL",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/2/"
+            }
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/",
@@ -4811,9 +4816,6 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/"
-                },
-                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/MP40_C_2000_G/"
                 },
                 {
@@ -4929,6 +4931,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/"

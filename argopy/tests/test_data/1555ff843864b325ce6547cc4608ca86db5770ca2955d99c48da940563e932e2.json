@@ -406,13 +406,13 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL_AP2/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/"
-                },
-                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD_AP2/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_BB3/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBCD/"
@@ -953,6 +953,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE41CP_V1.4/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R27/current/ECO_FLBBFL/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R27/current/SBE61_V5.0.0/"

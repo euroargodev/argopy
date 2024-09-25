@@ -348,6 +348,37 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R11/current/26/",
+            "pav:authoredOn": "2024-09-11 11:40:41.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R11/current/26/1/"
+            },
+            "dce:identifier": "SDN:R11::26",
+            "pav:version": "1",
+            "skos:notation": "SDN:R11::26",
+            "skos:altLabel": "Test 26",
+            "dc:date": "2024-09-11 11:40:41.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "TEMP_CNDC test applied to RBRargo3 2K"
+            },
+            "dc:identifier": "SDN:R11::26",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "TEMP_CNDC test applied to RBRargo3|2K, test added in July 2022. CTD data (< 2000 dbar) (TEMP_CNDC is used in the long timescale thermal inertia correction for RBR salinity data. This test aims to identify vertical profiles where TEMP_CNDC is of bad quality and thus unsuitable for use in the real-time adjustment of RBR salinity data.) Test 26 binary id = 67 108 864."
+            },
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R11/current/3/",
             "pav:authoredOn": "2020-04-07 22:59:46.0",
             "pav:hasCurrentVersion": {
@@ -821,6 +852,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R11/current/17/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R11/current/26/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R11/current/3/"
                 },
                 {
@@ -868,8 +902,8 @@
             "dc:description": "List of real-time quality-control tests and corresponding binary identifiers, used as reference to populate the Argo netCDF HISTORY_QCTEST variable.",
             "dc:title": "Argo real-time quality-control test identifiers",
             "skos:prefLabel": "Argo real-time quality-control test identifiers",
-            "owl:versionInfo": "2",
-            "dc:date": "2022-06-08 03:00:02.0",
+            "owl:versionInfo": "3",
+            "dc:date": "2024-09-12 03:00:00.0",
             "skos:altLabel": "RTQC_TESTID",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "RTQC_TESTID",
