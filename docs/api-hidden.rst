@@ -68,6 +68,11 @@
     argopy.utils.list_available_index_src
     argopy.utils.list_standard_variables
     argopy.utils.list_multiprofile_file_variables
+    argopy.utils.list_core_parameters
+    argopy.utils.list_bgc_s_variables
+    argopy.utils.list_bgc_s_parameters
+    argopy.utils.list_radiometry_variables
+    argopy.utils.list_radiometry_parameters
 
     argopy.utils.Chunker
 
@@ -140,6 +145,11 @@
     argopy.related.ArgoDOI.search
     argopy.related.ArgoDOI.file
     argopy.related.ArgoDOI.dx
+
+    argopy.extensions.CanyonMED
+    argopy.extensions.CanyonMED.predict
+    argopy.extensions.CanyonMED.input
+    argopy.extensions.CanyonMED.output_list
 
     argopy.plot
     argopy.plot.dashboard
@@ -298,8 +308,9 @@
     argopy.xarray.ArgoAccessor.groupby_pressure_bins
     argopy.xarray.ArgoAccessor.teos10
     argopy.xarray.ArgoAccessor.create_float_source
-    argopy.xarray.ArgoAccessor.filter_qc
+    argopy.xarray.ArgoAccessor.transform_data_mode
     argopy.xarray.ArgoAccessor.filter_data_mode
+    argopy.xarray.ArgoAccessor.filter_qc
     argopy.xarray.ArgoAccessor.filter_scalib_pres
     argopy.xarray.ArgoAccessor.filter_researchmode
     argopy.xarray.ArgoAccessor.cast_types
@@ -308,4 +319,10 @@
     argopy.xarray.ArgoAccessor.list_WMO_CYC
 
     argopy.xarray.ArgoEngine
+
+    argopy.extensions.register_argo_accessor
+    argopy.extensions.ArgoAccessorExtension
+    argopy.extensions.CanyonMED
+
+    argopy.errors.InvalidDatasetStructure
 

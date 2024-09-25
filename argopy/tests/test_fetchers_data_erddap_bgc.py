@@ -46,8 +46,8 @@ PARALLEL_ACCESS_POINTS = [
 """
 List user modes to be tested
 """
-# USER_MODES = ['standard', 'expert', 'research']
-USER_MODES = ['expert']
+USER_MODES = ['standard', 'expert', 'research']
+# USER_MODES = ['expert']
 
 """
 List of 'params' fetcher arguments to be tested
@@ -101,8 +101,9 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
         This should be used by all tests asserting a fetcher
     """
     def assert_all(this_fetcher, cacheable):
+        # `this_fetcher` is a facade instance not a :class:`argopy.data_fetchers.ArgoDataFetcherProto`
 
-        # We use the facade to test 'to_xarray' in order to make sure to test all filters required by user mode
+        # We use the facade to test 'to_xarray' in order to make sure to test all transforms/filters required by user mode
         ds = this_fetcher.to_xarray(errors='raise')
         assert isinstance(ds, xr.Dataset)
 

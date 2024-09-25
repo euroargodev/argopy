@@ -8,6 +8,89 @@ What's New
 |pypi dwn| |conda dwn|
 
 
+Coming up next in v1.0
+----------------------
+
+.. versionadded:: v1.0
+
+    This new release is a major !
+
+    It comes with improved support for the BGC-Argo dataset but also introduces breaking changes (see below).
+
+
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. currentmodule:: xarray
+
+- **Improved support for BGC**
+    - **argopy** now support `standard` and `research` user modes for the `erddap` data source with the `bgc` dataset. These new user modes follows the last available ADMT recommendations to bring users a finely tuned set of BGC parameters.
+
+
+
+    - New BGC method :class:`Dataset.argo.canyon_med` to make CANYON-MED predictions of Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea. This method can be used to predict PO4, NO3, DIC, SiOH4, AT and pHT. (:pr:`364`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+    .. currentmodule:: argopy
+
+    .. code-block:: python
+
+        from argopy import DataFetcher
+        ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').float(1902605)
+        ds = ArgoSet.to_xarray()
+
+        ds.argo.canyon_med.predict()
+        ds.argo.canyon_med.predict('PO4')
+
+    - the :class:`argopy.ArgoIndex` now support the *auxiliary* index file. Simply use the keyword `aux`. (:pr:`356`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+    .. code-block:: python
+
+        from argopy import ArgoIndex
+        ArgoIndex(index_file="aux").load()
+
+.. currentmodule:: xarray
+
+- A xarray argo accessor extensions mechanism with a new decorator :class:`argopy.extensions.register_argo_accessor`. It allows to register a class as a property to the :class:`Dataset.argo` accessor. (:pr:`364`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+.. code-block:: python
+
+    @register_argo_accessor('floats')
+    class WorkWithWMO(ArgoAccessorExtension):
+        """Example of a new Argo dataset feature"""
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self._uid = argopy.utils.to_list(np.unique(self._obj["PLATFORM_NUMBER"].values))
+
+        @property
+        def wmo(self):
+            return self._uid
+
+        @property
+        def N(self):
+             return len(self.wmo)
+
+This makes syntax like this possible:
+
+.. code-block:: python
+
+    ds.argo.floats.N
+    ds.argo.floats.wmo
+
+.. currentmodule:: argopy
+
+Breaking changes
+^^^^^^^^^^^^^^^^
+
+.. currentmodule:: xarray
+
+- In the :class:`Dataset.argo` accessor (:pr:`356`) by `G. Maze <http://www.github.com/gmaze>`_:
+    - the :meth:`Dataset.argo.filter_data_mode` has been redesigned to actually implement a real filter of data points on data mode values, i.e. to keep points with specific data mode values,
+    - new :meth:`Dataset.argo.transform_data_mode` method must now be used to merge adjusted and non-adjusted measurements according to their data mode and reduce the number of variables in the dataset, which is what was doing in previous versions the poorly named `filter_data_mode`.
+
+.. currentmodule:: argopy
+
+
 v0.1.17 (20 Sep. 2024)
 ----------------------
 
@@ -39,7 +122,6 @@ Energy
 ^^^^^^
 
 Considering `energy used by CI tests <https://argopy.readthedocs.io/en/latest/energy.html>`_, this release has required about 75.4kJ of energy to produce 6h11s39 of computation time.
-
 
 v0.1.16 (27 Aug. 2024)
 ----------------------
@@ -583,7 +665,7 @@ The new profile dashboard can also be accessed with:
     import argopy
     argopy.dashboard(5904797, 11)
 
-We added the Ocean-OPS (former JCOMMOPS) dashboard for all floats and the Argo-BGC dashboard for BGC floats:
+We added the Ocean-OPS (former JCOMMOPS) dashboard for all floats and the BGC-Argo dashboard for BGC floats:
 
 .. code-block:: python
 

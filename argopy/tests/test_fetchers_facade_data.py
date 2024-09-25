@@ -87,12 +87,6 @@ class Test_Facade:
         with pytest.raises(InvalidFetcherAccessPoint):
             self.__get_fetcher()[0].invalid_accesspoint.to_xarray()
 
-    def test_warnings(self):
-        with pytest.warns(UserWarning):
-            ArgoDataFetcher(src='erddap', ds='bgc', mode='standard')
-        with pytest.warns(UserWarning):
-            ArgoDataFetcher(src='erddap', ds='bgc', mode='research')
-
     def test_no_uri(self):
         with pytest.raises(InvalidFetcherAccessPoint):
             self.__get_fetcher()[0].uri

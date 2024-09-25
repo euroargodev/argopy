@@ -216,9 +216,16 @@ def erddapuri2fetchobj(uri: str) -> dict:
             float(params["longitude<"][0]),
             float(params["latitude>"][0]),
             float(params["latitude<"][0]),
-            float(params["pres>"][0]),
-            float(params["pres<"][0]),
         ]
+        if "pres>" in params:
+            box.append(float(params["pres>"][0]))
+            box.append(float(params["pres<"][0]))
+        elif "pres_adjusted>" in params:
+            box.append(float(params["pres_adjusted>"][0]))
+            box.append(float(params["pres_adjusted<"][0]))
+        else:
+            raise ValueError("This erddap uri is invalid, it must have pressure constraints with coordinates constraints: %s" % uri)
+
         if "time>" in params.keys():
             box.append(
                 pd.to_datetime(float(params["time>"][0]), unit="s").strftime("%Y-%m-%d")
@@ -226,6 +233,7 @@ def erddapuri2fetchobj(uri: str) -> dict:
             box.append(
                 pd.to_datetime(float(params["time<"][0]), unit="s").strftime("%Y-%m-%d")
             )
+
         result["box"] = box
     elif "platform_number" in params:
         wmo = params["platform_number"][0].replace("~", "").replace('"', "").split("|")

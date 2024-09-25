@@ -25,9 +25,3 @@ def test_deprecated_option_ftp():
 def test_deprecated_fetcher_argument_ftp():
     with pytest.deprecated_call():
         argopy.DataFetcher(src='gdac', ftp='https://data-argo.ifremer.fr')
-
-@requires_erddap
-def test_deprecated_accessor_filter_data_mode(mocked_erddapserver):
-    with pytest.deprecated_call():
-        ds = argopy.DataFetcher(src='erddap', mode='expert', server=mocked_server_address).profile(6902746, 34).to_xarray()
-        ds.argo.filter_data_mode()

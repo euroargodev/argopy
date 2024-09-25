@@ -1,0 +1,150 @@
+{
+    "@graph": [
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R10/current/ARGOS/",
+            "pav:authoredOn": "2020-04-07 22:59:46.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R10/current/ARGOS/1/"
+            },
+            "dce:identifier": "SDN:R10::ARGOS",
+            "pav:version": "1",
+            "skos:notation": "SDN:R10::ARGOS",
+            "skos:altLabel": "ARGOS",
+            "dc:date": "2020-04-07 22:59:46.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Argos transmission system"
+            },
+            "dc:identifier": "SDN:R10::ARGOS",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Argos transmission system"
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R10/current/ORBCOMM/",
+            "pav:authoredOn": "2020-04-07 22:59:46.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R10/current/ORBCOMM/1/"
+            },
+            "dce:identifier": "SDN:R10::ORBCOMM",
+            "pav:version": "1",
+            "skos:notation": "SDN:R10::ORBCOMM",
+            "skos:altLabel": "ORBCOMM",
+            "dc:date": "2020-04-07 22:59:46.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Orbcomm transmission system"
+            },
+            "dc:identifier": "SDN:R10::ORBCOMM",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Orbcomm transmission system"
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R10/current/IRIDIUM/",
+            "pav:authoredOn": "2020-04-07 22:59:46.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R10/current/IRIDIUM/1/"
+            },
+            "dce:identifier": "SDN:R10::IRIDIUM",
+            "pav:version": "1",
+            "skos:notation": "SDN:R10::IRIDIUM",
+            "skos:altLabel": "IRIDIUM",
+            "dc:date": "2020-04-07 22:59:46.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Iridium transmission system"
+            },
+            "dc:identifier": "SDN:R10::IRIDIUM",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Iridium transmission system"
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R10/current/",
+            "skos:member": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R10/current/ARGOS/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R10/current/IRIDIUM/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R10/current/ORBCOMM/"
+                }
+            ],
+            "@type": "skos:Collection",
+            "dc:publisher": "Natural Environment Research Council",
+            "dc:description": "List of telecommunication systems. Argo netCDF variable TRANS_SYSTEM is populated by R10 altLabel.",
+            "dc:title": "Argo transmission systems",
+            "skos:prefLabel": "Argo transmission systems",
+            "owl:versionInfo": "1",
+            "dc:date": "2020-04-08 03:00:04.0",
+            "skos:altLabel": "TRANS_SYSTEM",
+            "dc:creator": "Argo Data Management Team",
+            "dc:alternative": "TRANS_SYSTEM",
+            "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+            "grg:RE_RegisterOwner": "Argo Data Management Team",
+            "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+            "rdfs:seeAlso": {
+                "@id": "https://github.com/nvs-vocabs/R10"
+            }
+        }
+    ],
+    "@context": {
+        "cpm": "http://purl.org/voc/cpm#",
+        "qudt": "https://qudt.org/2.1/schema/qudt#",
+        "void": "http://rdfs.org/ns/void#",
+        "pav": "http://purl.org/pav/",
+        "owl": "http://www.w3.org/2002/07/owl#",
+        "dce": "http://purl.org/dc/elements/1.1/",
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "iop": "https://w3id.org/iadopt/ont#",
+        "ns1": "http://www.w3.org/ns/dx/prof/",
+        "puv": "https://w3id.org/env/puv#",
+        "semapv": "http://w3id.org/semapv/vocab/",
+        "dct": "http://purl.org/dc/terms/",
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "reg": "http://purl.org/linked-data/registry#",
+        "sssom": "https://w3id.org/sssom/schema/",
+        "dcat": "http://www.w3.org/ns/dcat#",
+        "grg": "http://www.isotc211.org/schemas/grg/",
+        "prov": "https://www.w3.org/ns/prov#",
+        "dc": "http://purl.org/dc/terms/"
+    }
+}

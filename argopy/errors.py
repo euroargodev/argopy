@@ -5,10 +5,8 @@ import logging
 
 log = logging.getLogger("argopy.errors")
 
-
-class DataNotFound(ValueError):
-    """Raise when a data selection returns nothing."""
-
+class NoData(ValueError):
+    """Raise for no data"""
     def __init__(self, path: str = "?"):
         self.value = "%s" % path
         self.path = path
@@ -16,6 +14,16 @@ class DataNotFound(ValueError):
     def __str__(self):
         """Print error."""
         return repr(self.value)
+
+
+class DataNotFound(NoData):
+    """Raise when a data fetching returns nothing"""
+    pass
+
+
+class NoDataLeft(NoData):
+    """Raise when a data post-processing returns an empty dataset or dataframe"""
+    pass
 
 
 class FtpPathError(ValueError):

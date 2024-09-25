@@ -21,7 +21,7 @@ from .proto import ArgoDataFetcherProto
 log = logging.getLogger("argopy.gdacftp.data")
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
-dataset_ids = ["phy", "bgc"]  # First is default
+dataset_ids = ["phy", "bgc", "bgc-s", "bgc-b"]  # First is default
 api_server = OPTIONS["ftp"]  # API root url
 api_server_check = (
     api_server  # URL to check if the API is alive, used by isAPIconnected
@@ -49,18 +49,18 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
     # Methods that must not change
     ###
     def __init__(
-        self,
-        ftp: str = "",
-        ds: str = "",
-        cache: bool = False,
-        cachedir: str = "",
-        dimension: str = "point",
-        errors: str = "raise",
-        parallel: bool = False,
-        parallel_method: str = "thread",
-        progress: bool = False,
-        api_timeout: int = 0,
-        **kwargs
+            self,
+            ftp: str = "",
+            ds: str = "",
+            cache: bool = False,
+            cachedir: str = "",
+            dimension: str = "point",
+            errors: str = "raise",
+            parallel: bool = False,
+            parallel_method: str = "thread",
+            progress: bool = False,
+            api_timeout: int = 0,
+            **kwargs
     ):
         """ Init fetcher
 
@@ -92,16 +92,16 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         """
         self.timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
+        self.user_mode = kwargs["mode"] if "mode" in kwargs else OPTIONS["mode"]
         self.server = OPTIONS["ftp"] if ftp == "" else ftp
         self.errors = errors
 
         # Validate server, raise FtpPathError if not valid.
         check_gdac_path(self.server, errors="raise")
 
-        if self.dataset_id == "phy":
-            index_file = "ar_index_global_prof.txt"
-        elif self.dataset_id == "bgc":
-            index_file = "argo_synthetic-profile_index.txt"
+        index_file = "core"
+        if self.dataset_id in ["bgc-s", "bgc-b"]:
+            index_file = self.dataset_id
 
         # Validation of self.server is done by the ArgoIndex:
         self.indexfs = ArgoIndex(
@@ -111,7 +111,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
             cachedir=cachedir,
             timeout=self.timeout,
         )
-        self.fs = self.indexfs.fs["src"]
+        self.fs = self.indexfs.fs["src"]  # Re-use the appropriate file system
 
         nrows = None
         if "N_RECORDS" in kwargs:
@@ -140,7 +140,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         summary = ["<datafetcher.ftp>"]
         summary.append("Name: %s" % self.definition)
         summary.append("Index: %s" % self.indexfs.index_file)
-        summary.append("FTP: %s" % self.server)
+        summary.append("Host: %s" % self.server)
         if hasattr(self, "BOX"):
             summary.append("Domain: %s" % self.cname())
         else:
@@ -177,7 +177,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
     def uri_mono2multi(self, URIs: list):
         """ Convert mono-profile URI files to multi-profile files
 
-        Multi-profile file name is based on the dataset requested ('phy' or 'bgc')
+        Multi-profile file name is based on the dataset requested ('phy', 'bgc'/'bgc-s')
 
         This method does not ensure that multi-profile files exist !
 
@@ -193,6 +193,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
 
         def mono2multi(mono_path):
             meta = argo_split_path(mono_path)
+
             if self.dataset_id == "phy":
                 return self.indexfs.fs["src"].fs.sep.join(
                     [
@@ -203,7 +204,8 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
                         "%s_prof.nc" % meta["wmo"],
                     ]
                 )
-            elif self.dataset_id == "bgc":
+
+            elif self.dataset_id in ["bgc", "bgc-s"]:
                 return self.indexfs.fs["src"].fs.sep.join(
                     [
                         meta["origin"],
@@ -213,6 +215,9 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
                         "%s_Sprof.nc" % meta["wmo"],
                     ]
                 )
+
+            else:
+                raise ValueError("Dataset '%s' not supported !" % self.dataset_id)
 
         new_uri = [mono2multi(uri) for uri in URIs]
         new_uri = list(set(new_uri))
@@ -247,7 +252,12 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         :class:`xarray.Dataset`
 
         """
-        # Replace JULD and JULD_QC by TIME and TIME_QC
+        # Remove raw netcdf file attributes and replace them with argopy ones:
+        raw_attrs = ds.attrs
+        ds.attrs = {}
+        ds.attrs.update({'raw_attrs': raw_attrs})
+
+        # Rename JULD and JULD_QC to TIME and TIME_QC
         ds = ds.rename(
             {"JULD": "TIME", "JULD_QC": "TIME_QC", "JULD_LOCATION": "TIME_LOCATION"}
         )
@@ -255,10 +265,11 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
             "long_name": "Datetime (UTC) of the station",
             "standard_name": "time",
         }
+
         # Cast data types:
         ds = ds.argo.cast_types()
 
-        # Enforce real pressure resolution: 0.1 db
+        # Enforce real pressure resolution : 0.1 db
         for vname in ds.data_vars:
             if "PRES" in vname and "QC" not in vname:
                 ds[vname].values = np.round(ds[vname].values, 1)
@@ -271,10 +282,8 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
 
         ds = (
             ds.argo.profile2point()
-        )  # Default output is a collection of points along N_POINTS
+        )  # Default output is a collection of points, along N_POINTS
 
-        # Remove netcdf file attributes and replace them with argopy ones:
-        ds.attrs = {}
         if self.dataset_id == "phy":
             ds.attrs["DATA_ID"] = "ARGO"
         if self.dataset_id == "bgc":
@@ -343,18 +352,22 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         ds = ds.sortby("TIME")
 
         # Remove netcdf file attributes and replace them with simplified argopy ones:
-        ds.attrs = {}
-        if self.dataset_id == "phy":
-            ds.attrs["DATA_ID"] = "ARGO"
-        if self.dataset_id == "bgc":
-            ds.attrs["DATA_ID"] = "ARGO-BGC"
-        ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
-        ds.attrs["Fetched_from"] = self.server
-        try:
-            ds.attrs["Fetched_by"] = getpass.getuser()
-        except:  # noqa: E722
-            ds.attrs["Fetched_by"] = 'anonymous'
-        ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
+        if "Fetched_from" not in ds.attrs:
+            raw_attrs = ds.attrs
+            ds.attrs = {}
+            ds.attrs.update({'raw_attrs': raw_attrs})
+            if self.dataset_id == "phy":
+                ds.attrs["DATA_ID"] = "ARGO"
+            if self.dataset_id == "bgc":
+                ds.attrs["DATA_ID"] = "ARGO-BGC"
+            ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
+            ds.attrs["Fetched_from"] = self.server
+            try:
+                ds.attrs["Fetched_by"] = getpass.getuser()
+            except:
+                ds.attrs["Fetched_by"] = 'anonymous'
+            ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
+
         ds.attrs["Fetched_constraints"] = self.cname()
         if len(self.uri) == 1:
             ds.attrs["Fetched_uri"] = self.uri[0]
@@ -377,7 +390,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
                 .where(ds["LONGITUDE"] < self.BOX[1], drop=True)
                 .where(ds["LATITUDE"] >= self.BOX[2], drop=True)
                 .where(ds["LATITUDE"] < self.BOX[3], drop=True)
-                .where(ds["PRES"] >= self.BOX[4], drop=True)
+                .where(ds["PRES"] >= self.BOX[4], drop=True)  # todo what about PRES_ADJUSTED ?
                 .where(ds["PRES"] < self.BOX[5], drop=True)
             )
             if len(self.BOX) == 8:
@@ -400,8 +413,16 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
 
         return ds
 
+    def transform_data_mode(self, ds: xr.Dataset, **kwargs):
+        """Apply xarray argo accessor transform_data_mode method"""
+        ds = ds.argo.transform_data_mode(**kwargs)
+        if ds.argo._type == "point":
+            ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
+        return ds
+
     def filter_data_mode(self, ds: xr.Dataset, **kwargs):
-        ds = ds.argo.filter_data_mode(errors="ignore", **kwargs)
+        """Apply xarray argo accessor filter_data_mode method"""
+        ds = ds.argo.filter_data_mode(**kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
@@ -417,9 +438,9 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
 
             This filter will select only QC=1 delayed mode data with pressure errors smaller than 20db
 
-            Use this filter instead of filter_data_mode and filter_qc
+            Use this filter instead of transform_data_mode and filter_qc
         """
-        ds = ds.argo.filter_researchmode()
+        ds = ds.argo.filter_researchmode(**kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds

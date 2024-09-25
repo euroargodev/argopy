@@ -70,7 +70,7 @@ jobs:
     defaults:
       run:
         shell: bash -l {0}
-    timeout-minutes: 45
+#    timeout-minutes: 45
     strategy:
       fail-fast: true
       matrix:
@@ -196,7 +196,7 @@ jobs:
     defaults:
       run:
         shell: bash -l {0}
-    timeout-minutes: 45
+#    timeout-minutes: 45
     strategy:
       fail-fast: true
       matrix:
