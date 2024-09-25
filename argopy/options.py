@@ -92,7 +92,7 @@ _VALIDATORS = {
     SERVER: lambda x: True,
     USER: lambda x: isinstance(x, str) or x is None,
     PASSWORD: lambda x: isinstance(x, str) or x is None,
-    OPENAI_API_KEY: lambda x: isinstance(x, str),
+    OPENAI_API_KEY: lambda x: isinstance(x, str) or x is None,
     ARGOVIS_API_KEY: lambda x: isinstance(x, str) or x is None,
 }
 
