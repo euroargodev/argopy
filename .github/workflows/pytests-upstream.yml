@@ -13,6 +13,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
 
   detect-ci-trigger:
@@ -66,11 +70,11 @@ jobs:
     defaults:
       run:
         shell: bash -l {0}
-    timeout-minutes: 45
+#    timeout-minutes: 45
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.8", "3.9"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
 
     steps:
@@ -79,11 +83,20 @@ jobs:
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
         with:
           task: start-measurement
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
+          machine-uuid: ${{ secrets.CARBONDB_MACHINE_UUID_PYTESTS_UPSTREAM }}
         continue-on-error: true
 
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags.
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          aws-region: us-west-1
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
 
       - name: Set environment variables
         run: |
@@ -113,6 +126,8 @@ jobs:
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'setup core-free'
@@ -131,12 +146,14 @@ jobs:
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'pytest core-free'
         continue-on-error: true
 
-      - name: Generate and publish the report
+      - name: Generate and publish a report on failure
         if: |
           failure()
           && steps.status.outcome == 'failure'
@@ -155,8 +172,11 @@ jobs:
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: display-results
+          send-data: true
         continue-on-error: true
 
   all-free:
@@ -176,11 +196,11 @@ jobs:
     defaults:
       run:
         shell: bash -l {0}
-    timeout-minutes: 45
+#    timeout-minutes: 45
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.8", "3.9"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
 
     steps:
@@ -189,11 +209,20 @@ jobs:
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
         with:
           task: start-measurement
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
+          machine-uuid: ${{ secrets.CARBONDB_MACHINE_UUID_PYTESTS_UPSTREAM }}
         continue-on-error: true
 
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags.
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          aws-region: us-west-1
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
 
       - name: Set environment variables
         run: |
@@ -224,6 +253,8 @@ jobs:
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'setup all-free'
@@ -242,20 +273,14 @@ jobs:
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'pytest all-free'
         continue-on-error: true
 
-      - name: Check outcome values 1
-        run: |
-          echo steps.status.outcome
-
-      - name: Check outcome values 2
-        run: |
-          echo $GITHUB_REPOSITORY_OWNER
-
-      - name: Generate and publish the report
+      - name: Generate and publish a report on failure
         if: |
           failure()
           && steps.status.outcome == 'failure'
@@ -274,6 +299,9 @@ jobs:
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
         uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: display-results
+          send-data: true
         continue-on-error: true

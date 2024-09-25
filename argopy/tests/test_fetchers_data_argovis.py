@@ -1,235 +1,201 @@
-import warnings
+import logging
 
-import numpy as np
-import xarray as xr
-import pandas as pd
+from argopy import DataFetcher as ArgoDataFetcher
+from argopy.utils.checkers import is_list_of_strings
 
 import pytest
-import tempfile
-
-import argopy
-from argopy import DataFetcher as ArgoDataFetcher
-from argopy.errors import (
-    CacheFileNotFound,
-    FileSystemHasNoCache,
+import xarray as xr
+from utils import (
+    requires_argovis,
 )
-from argopy.utils.checkers import is_list_of_strings
-from utils import requires_connected_argovis, safe_to_server_errors
+
+from mocked_http import mocked_server_address
+from mocked_http import mocked_httpserver as mocked_argovisserver
+
+import tempfile
+import shutil
+from collections import ChainMap
 
 
-skip_this_for_debug = pytest.mark.skipif(False, reason="Skipped temporarily for debug")
+log = logging.getLogger("argopy.tests.data.argovis")
+
+USE_MOCKED_SERVER = True
+
+"""
+List access points to be tested for each datasets: phy and ref.
+For each access points, we list 1-to-2 scenario to make sure all possibilities are tested
+"""
+ACCESS_POINTS = [
+    {"phy": [
+            {"float": 1901393},
+            {"float": [1901393, 6902746]},
+            {"profile": [6902746, 34]},
+            {"profile": [6902746, [1, 12]]},
+            {"region": [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-03"]},
+            {"region": [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-06"]},
+    ]},
+]
+PARALLEL_ACCESS_POINTS = [
+    {"phy": [
+        {"float": [1900468, 1900117, 1900386]},
+        {"region": [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-06"]},
+    ]},
+]
+
+"""
+List user modes to be tested
+"""
+USER_MODES = ['standard']
 
 
-@requires_connected_argovis
+"""
+Make a list of VALID dataset/access_points to be tested
+"""
+VALID_ACCESS_POINTS, VALID_ACCESS_POINTS_IDS = [], []
+for entry in ACCESS_POINTS:
+    for ds in entry:
+        for mode in USER_MODES:
+            for ap in entry[ds]:
+                VALID_ACCESS_POINTS.append({'ds': ds, 'mode': mode, 'access_point': ap})
+                VALID_ACCESS_POINTS_IDS.append("ds='%s', mode='%s', %s" % (ds, mode, ap))
+
+
+VALID_PARALLEL_ACCESS_POINTS, VALID_PARALLEL_ACCESS_POINTS_IDS = [], []
+for entry in PARALLEL_ACCESS_POINTS:
+    for ds in entry:
+        for mode in USER_MODES:
+            for ap in entry[ds]:
+                VALID_PARALLEL_ACCESS_POINTS.append({'ds': ds, 'mode': mode, 'access_point': ap})
+                VALID_PARALLEL_ACCESS_POINTS_IDS.append("ds='%s', mode='%s', %s" % (ds, mode, ap))
+
+
+def create_fetcher(fetcher_args, access_point):
+    """ Create a fetcher for a given set of facade options and access point """
+    def core(fargs, apts):
+        try:
+            f = ArgoDataFetcher(**fargs)
+            if "float" in apts:
+                f = f.float(apts['float'])
+            elif "profile" in apts:
+                f = f.profile(*apts['profile'])
+            elif "region" in apts:
+                f = f.region(apts['region'])
+        except Exception:
+            raise
+        return f
+    fetcher = core(fetcher_args, access_point)
+    return fetcher
+
+
+def assert_fetcher(mocked_argovisserver, this_fetcher, cacheable=False):
+    """Assert a data fetcher.
+
+        This should be used by all tests asserting a fetcher
+    """
+    def assert_all(this_fetcher, cacheable):
+        # We use the facade to test 'to_xarray' in order to make sure to test all filters required by user mode
+        ds = this_fetcher.to_xarray(errors='raise')
+        assert isinstance(ds, xr.Dataset)
+        #
+        core = this_fetcher.fetcher
+        assert is_list_of_strings(core.uri)
+        if cacheable:
+            assert is_list_of_strings(core.cachepath)
+
+        # log.debug("In assert, this fetcher is in '%s' user mode" % this_fetcher._mode)
+        if this_fetcher._mode == 'standard':
+            assert 'PRES_ADJUSTED' not in ds
+        else:
+            raise ValueError("Un-expected user mode for argovis, only support 'standard'")
+
+    try:
+        assert_all(this_fetcher, cacheable)
+    except:
+        raise
+
+
+@requires_argovis
 class Test_Backend:
-    """ Test main API facade for all available dataset and access points of the ARGOVIS data fetching backend """
+    """ Test ERDDAP data fetching backend """
+    src = 'argovis'
 
-    src = "argovis"
-    requests = {
-        "float": [[1901393], [1901393, 6902746]],
-        # "profile": [[6902746, 12], [6902746, np.arange(12, 13)], [6902746, [1, 12]]],
-        "profile": [[6902746, 12]],
-        "region": [
-            [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-03"],
-            [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-06"],
-        ],
-    }
+    #############
+    # UTILITIES #
+    #############
 
-    @skip_this_for_debug
-    def test_cachepath_notfound(self):
-        with tempfile.TemporaryDirectory() as testcachedir:
-            with argopy.set_options(cachedir=testcachedir):
-                fetcher = ArgoDataFetcher(src=self.src, cache=True).profile(*self.requests['profile'][0]).fetcher
-                with pytest.raises(CacheFileNotFound):
-                    fetcher.cachepath
+    def setup_class(self):
+        """setup any state specific to the execution of the given class"""
+        # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
+        self.cachedir = tempfile.mkdtemp()
 
-    @skip_this_for_debug
-    @safe_to_server_errors
-    def test_nocache(self):
-        with tempfile.TemporaryDirectory() as testcachedir:
-            with argopy.set_options(cachedir=testcachedir):
-                fetcher = ArgoDataFetcher(src=self.src, cache=False).profile(*self.requests['profile'][0]).fetcher
-                with pytest.raises(FileSystemHasNoCache):
-                    fetcher.cachepath
+    def _setup_fetcher(self, this_request, cached=False, parallel=False):
+        """Helper method to set up options for a fetcher creation"""
+        defaults_args = {"src": self.src,
+                         "cache": cached,
+                         "cachedir": self.cachedir,
+                         "parallel": parallel,
+                         }
+        if USE_MOCKED_SERVER:
+            defaults_args['server'] = mocked_server_address
 
-    @skip_this_for_debug
-    @safe_to_server_errors
-    def test_clearcache(self):
-        with tempfile.TemporaryDirectory() as testcachedir:
-            with argopy.set_options(cachedir=testcachedir):
-                fetcher = ArgoDataFetcher(src=self.src, cache=True).float(self.requests['float'][0]).fetcher
-                fetcher.to_xarray()
-                fetcher.clear_cache()
-                with pytest.raises(CacheFileNotFound):
-                    fetcher.cachepath
+        dataset = this_request.param['ds']
+        user_mode = this_request.param['mode']
+        access_point = this_request.param['access_point']
 
-    @skip_this_for_debug
-    @safe_to_server_errors
-    def test_caching_float(self):
-        with tempfile.TemporaryDirectory() as testcachedir:
-            with argopy.set_options(cachedir=testcachedir):
-                fetcher = (
-                    ArgoDataFetcher(src=self.src, cache=True).float(self.requests['float'][0]).fetcher
-                )
-                ds = fetcher.to_xarray()
-                assert isinstance(ds, xr.Dataset)
-                assert is_list_of_strings(fetcher.uri)
-                assert is_list_of_strings(fetcher.cachepath)
+        fetcher_args = ChainMap(defaults_args, {"ds": dataset, 'mode': user_mode})
+        if not cached:
+            # cache is False by default, so we don't need to clutter the arguments list
+            del fetcher_args["cache"]
+            del fetcher_args["cachedir"]
+        if not parallel:
+            # parallel is False by default, so we don't need to clutter the arguments list
+            del fetcher_args["parallel"]
 
-    @skip_this_for_debug
-    @safe_to_server_errors
-    def test_caching_profile(self):
-        with tempfile.TemporaryDirectory() as testcachedir:
-            with argopy.set_options(cachedir=testcachedir):
-                fetcher = ArgoDataFetcher(src=self.src, cache=True).profile(*self.requests['profile'][0]).fetcher
-                ds = fetcher.to_xarray()
-                assert isinstance(ds, xr.Dataset)
-                assert is_list_of_strings(fetcher.uri)
-                assert is_list_of_strings(fetcher.cachepath)
+        # log.debug("Setting up a new fetcher with the following arguments:")
+        # log.debug(fetcher_args)
+        return fetcher_args, access_point
 
-    @skip_this_for_debug
-    @safe_to_server_errors
-    def test_caching_region(self):
-        with tempfile.TemporaryDirectory() as testcachedir:
-            with argopy.set_options(cachedir=testcachedir):
-                fetcher = (
-                    ArgoDataFetcher(src=self.src, cache=True)
-                    .region(self.requests['region'][1])
-                    .fetcher
-                )
-                ds = fetcher.to_xarray()
-                assert isinstance(ds, xr.Dataset)
-                assert is_list_of_strings(fetcher.uri)
-                assert is_list_of_strings(fetcher.cachepath)
+    @pytest.fixture
+    def fetcher(self, request):
+        """ Fixture to create a ERDDAP data fetcher for a given dataset and access point """
+        fetcher_args, access_point = self._setup_fetcher(request, cached=False)
+        yield create_fetcher(fetcher_args, access_point)
 
-    def __testthis_profile(self, dataset):
-        fetcher_args = {"src": self.src, "ds": dataset}
-        for arg in self.args["profile"]:
-            f = ArgoDataFetcher(**fetcher_args).profile(*arg).fetcher
-            assert isinstance(f.to_xarray(), xr.Dataset)
-            # assert isinstance(f.to_dataframe(), pd.core.frame.DataFrame)
-            # ds = xr.Dataset.from_dataframe(f.to_dataframe())
-            # ds = ds.sortby(
-            #     ["TIME", "PRES"]
-            # )  # should already be sorted by date in descending order
-            # ds["N_POINTS"] = np.arange(
-            #     0, len(ds["N_POINTS"])
-            # )  # Re-index to avoid duplicate values
-            #
-            # # Set coordinates:
-            # # ds = ds.set_coords('N_POINTS')
-            # coords = ("LATITUDE", "LONGITUDE", "TIME", "N_POINTS")
-            # ds = ds.reset_coords()
-            # ds["N_POINTS"] = ds["N_POINTS"]
-            # # Convert all coordinate variable names to upper case
-            # for v in ds.data_vars:
-            #     ds = ds.rename({v: v.upper()})
-            # ds = ds.set_coords(coords)
-            #
-            # # Cast data types and add variable attributes (not available in the csv download):
-            # warnings.warn(type(ds['TIME'].data))
-            # warnings.warn(ds['TIME'].data[0])
-            # ds['TIME'] = ds['TIME'].astype(np.datetime64)
-            # assert isinstance(ds, xr.Dataset)
-            assert is_list_of_strings(f.uri)
+    @pytest.fixture
+    def cached_fetcher(self, request):
+        """ Fixture to create a cached ERDDAP data fetcher for a given dataset and access point """
+        fetcher_args, access_point = self._setup_fetcher(request, cached=True)
+        yield create_fetcher(fetcher_args, access_point)
 
-    def __testthis_float(self, dataset):
-        fetcher_args = {"src": self.src, "ds": dataset}
-        for arg in self.args["float"]:
-            f = ArgoDataFetcher(**fetcher_args).float(arg).fetcher
-            assert isinstance(f.to_xarray(), xr.Dataset)
-            assert is_list_of_strings(f.uri)
+    @pytest.fixture
+    def parallel_fetcher(self, request):
+        """ Fixture to create a parallel ERDDAP data fetcher for a given dataset and access point """
+        fetcher_args, access_point = self._setup_fetcher(request, parallel="thread")
+        yield create_fetcher(fetcher_args, access_point)
 
-    def __testthis_region(self, dataset):
-        fetcher_args = {"src": self.src, "ds": dataset}
-        for arg in self.args["region"]:
-            f = ArgoDataFetcher(**fetcher_args).region(arg).fetcher
-            assert isinstance(f.to_xarray(), xr.Dataset)
-            assert is_list_of_strings(f.uri)
+    def teardown_class(self):
+        """Cleanup once we are finished."""
+        def remove_test_dir():
+            shutil.rmtree(self.cachedir)
+        remove_test_dir()
 
-    def __testthis(self, dataset):
-        for access_point in self.args:
-            if access_point == "profile":
-                self.__testthis_profile(dataset)
-            elif access_point == "float":
-                self.__testthis_float(dataset)
-            elif access_point == "region":
-                self.__testthis_region(dataset)
+    #########
+    # TESTS #
+    #########
+    @pytest.mark.parametrize("fetcher", VALID_ACCESS_POINTS,
+                             indirect=True,
+                             ids=VALID_ACCESS_POINTS_IDS)
+    def test_fetching(self, mocked_argovisserver, fetcher):
+        assert_fetcher(mocked_argovisserver, fetcher, cacheable=False)
 
-    @skip_this_for_debug
-    @safe_to_server_errors
-    def test_phy_float(self):
-        self.args = {"float": self.requests['float']}
-        self.__testthis("phy")
+    @pytest.mark.parametrize("cached_fetcher", VALID_ACCESS_POINTS,
+                             indirect=True,
+                             ids=VALID_ACCESS_POINTS_IDS)
+    def test_fetching_cached(self, mocked_argovisserver, cached_fetcher):
+        assert_fetcher(mocked_argovisserver, cached_fetcher, cacheable=True)
 
-    @safe_to_server_errors
-    def test_phy_profile(self):
-        self.args = {"profile": self.requests['profile']}
-        self.__testthis("phy")
-
-    @skip_this_for_debug
-    @safe_to_server_errors
-    def test_phy_region(self):
-        self.args = {"region": self.requests['region']}
-        self.__testthis("phy")
-
-
-@skip_this_for_debug
-@requires_connected_argovis
-class Test_BackendParallel:
-    """ This test backend for parallel requests """
-
-    src = "argovis"
-    requests = {
-        "region": [
-            [-60, -55, 40.0, 45.0, 0.0, 10.0],
-            [-60, -55, 40.0, 45.0, 0.0, 10.0, "2007-08-01", "2007-09-01"],
-        ],
-        "wmo": [[6902766, 6902772, 6902914]],
-    }
-
-    def test_methods(self):
-        args_list = [
-            {"src": self.src, "parallel": "thread"},
-            {"src": self.src, "parallel": True, "parallel_method": "thread"},
-        ]
-        for fetcher_args in args_list:
-            loader = ArgoDataFetcher(**fetcher_args).float(self.requests["wmo"][0])
-            assert isinstance(loader, argopy.fetchers.ArgoDataFetcher)
-
-        args_list = [
-            {"src": self.src, "parallel": True, "parallel_method": "toto"},
-            {"src": self.src, "parallel": "process"},
-            {"src": self.src, "parallel": True, "parallel_method": "process"},
-        ]
-        for fetcher_args in args_list:
-            with pytest.raises(ValueError):
-                ArgoDataFetcher(**fetcher_args).float(self.requests["wmo"][0])
-
-    @safe_to_server_errors
-    def test_chunks_region(self):
-        for access_arg in self.requests["region"]:
-            fetcher_args = {
-                "src": self.src,
-                "parallel": True,
-                "chunks": {"lon": 1, "lat": 2, "dpt": 1, "time": 2},
-            }
-            f = ArgoDataFetcher(**fetcher_args).region(access_arg).fetcher
-            assert isinstance(f.to_xarray(), xr.Dataset)
-            assert is_list_of_strings(f.uri)
-            assert len(f.uri) == np.prod(
-                [v for k, v in fetcher_args["chunks"].items()]
-            )
-
-    @safe_to_server_errors
-    def test_chunks_wmo(self):
-        for access_arg in self.requests["wmo"]:
-            fetcher_args = {
-                "src": self.src,
-                "parallel": True,
-                "chunks_maxsize": {"wmo": 1},
-            }
-            f = ArgoDataFetcher(**fetcher_args).profile(access_arg, 12).fetcher
-            assert isinstance(f.to_xarray(), xr.Dataset)
-            assert is_list_of_strings(f.uri)
-            assert len(f.uri) == len(access_arg)
+    @pytest.mark.parametrize("parallel_fetcher", VALID_PARALLEL_ACCESS_POINTS,
+                             indirect=True,
+                             ids=VALID_PARALLEL_ACCESS_POINTS_IDS)
+    def test_fetching_parallel(self, mocked_argovisserver, parallel_fetcher):
+        assert_fetcher(mocked_argovisserver, parallel_fetcher, cacheable=False)

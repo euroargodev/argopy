@@ -10,14 +10,27 @@ from socket import gaierror
 import urllib
 import json
 import logging
+import importlib
 
 from ..options import OPTIONS
-from ..errors import InvalidDatasetStructure, FtpPathError, InvalidFetcher
+from ..errors import InvalidDatasetStructure, GdacPathError, InvalidFetcher
 from .lists import list_available_data_src, list_available_index_src
 from .casting import to_list
 
 
 log = logging.getLogger("argopy.utils.checkers")
+
+if importlib.util.find_spec("s3fs") is not None:
+    HAS_S3 = True
+    import s3fs
+else:
+    HAS_S3 = False
+
+if importlib.util.find_spec("boto3") is not None:
+    HAS_BOTO3 = True
+    import boto3
+else:
+    HAS_BOTO3 = False
 
 
 def is_indexbox(box: list, errors="raise"):
@@ -406,17 +419,32 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
             "date_update",
         ]
 
+    if (
+        convention == "argo_aux-profile_index"
+    ):
+        # ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution', 'parameters', 'date_update']
+        ref = [
+            "file",
+            "date",
+            "latitude",
+            "longitude",
+            "ocean",
+            "profiler_type",
+            "institution",
+            "parameters",
+            "date_update",
+        ]
     if not is_list_equal(column_names, ref):
-        # log.debug("Expected: %s, got: %s" % (";".join(ref), ";".join(column_names)))
+        log.debug("Expected (convention=%s): %s, got: %s" % (convention, ";".join(ref), ";".join(column_names)))
         raise InvalidDatasetStructure("Unexpected column names in this index !")
     else:
         return column_names
 
 
 def check_gdac_path(path, errors="ignore"):  # noqa: C901
-    """Check if a path has the expected GDAC ftp structure
+    """Check if a path has the expected GDAC structure
 
-    Expected GDAC ftp structure::
+    Expected GDAC structure::
 
         .
         └── dac
@@ -430,9 +458,10 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
     This check will return True if at least one DAC sub-folder is found under path/dac/<dac_name>
 
     Examples::
+
     >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
+    >>> check_gdac_path("https://usgodae.org/pub/outgoing/argo") # True
     >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
-    >>> check_gdac_path("ftp://usgodae.org/pub/outgoing/argo") # True
     >>> check_gdac_path("/home/ref-argo/gdac") # True
     >>> check_gdac_path("https://www.ifremer.fr") # False
     >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
@@ -461,14 +490,14 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
             fs = fsspec.filesystem("ftp", host=host)
         except gaierror:
             if errors == "raise":
-                raise FtpPathError("Can't get address info (GAIerror) on '%s'" % host)
+                raise GdacPathError("Can't get address info (GAIerror) on '%s'" % host)
             elif errors == "warn":
                 warnings.warn("Can't get address info (GAIerror) on '%s'" % host)
                 return False
             else:
                 return False
     else:
-        raise FtpPathError(
+        raise GdacPathError(
             "Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0]
         )
 
@@ -495,7 +524,7 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
     if check1:
         return True
     elif errors == "raise":
-        raise FtpPathError(
+        raise GdacPathError(
             "This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s"
             % path
         )
@@ -521,21 +550,38 @@ def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
     -------
     bool
     """
-    # log.debug("isconnected: %s" % host)
-    if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
+    def test_retry(host, checker, maxtry):
         it = 0
         while it < maxtry:
             try:
-                # log.debug("Checking if %s is connected ..." % host)
-                urllib.request.urlopen(
-                    host, timeout=1
-                )  # nosec B310 because host protocol already checked
+                checker(host)
                 result, it = True, maxtry
             except Exception:
                 result, it = False, it + 1
         return result
-    else:
+
+    def check_local(host):
         return os.path.exists(host)
+
+    def check_remote(host):
+        return urllib.request.urlopen(
+            host, timeout=1
+        )  # nosec B310 because host protocol already checked
+
+    def check_s3(host):
+        return s3fs.S3FileSystem(anon=True).info(host)
+
+    if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
+        return test_retry(host, check_remote, maxtry)
+    elif split_protocol(host)[0] == "s3":
+        if HAS_S3:
+            return test_retry(host, check_s3, maxtry)
+        else:
+            raise ValueError(
+                "Can't check if an S3 server is connected without the 's3fs' library. Please update your environment "
+                "with this dependency.")
+    else:
+        return test_retry(host, check_local, 1)
 
 
 def urlhaskeyword(url: str = "", keyword: str = "", maxtry: int = 10):
@@ -661,3 +707,11 @@ def erddap_ds_exists(
             "Return False because we cannot reach the erddap server %s" % erddap
         )
         return False
+
+
+def has_aws_credentials():
+    if HAS_BOTO3:
+        client = boto3.client('s3')
+        return client._request_signer._credentials is not None
+    else:
+        raise Exception("boto3 is not available !")

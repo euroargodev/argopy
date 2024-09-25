@@ -1,9 +1,10 @@
-xarray>=0.18
+xarray>=0.18,<2024.3
 scipy>=1.5
 netCDF4>=1.5.3 #<1.5.9
 toolz>=0.8.2
-erddapy>=0.7
+erddapy>0.8  # erddapy >= 2.2.1 only compatible with python >= 3.10
 fsspec>=0.8
 aiohttp>=3.7
 packaging>=20.4  # Using 'version' to make API compatible with several fsspec releases
 requests>=2.28
+decorator>=5.1

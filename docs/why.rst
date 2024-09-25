@@ -6,7 +6,7 @@ Why argopy ?
 Surprisingly, the Argo community never provided its user base with a Python software to easily access and manipulate Argo measurements:
 **argopy** aims to fill this gap.
 
-Despite, or because, its tremendous success in data management and in developping good practices and well calibrated procedures [ADMT]_, the Argo dataset is very complex: with thousands of different variables, tens of reference tables and a `user manual <http://dx.doi.org/10.13155/29825>`_ more than 100 pages long:
+Despite, or because, its tremendous success in data management and in developing good practices and well calibrated procedures [ADMT]_, the Argo dataset is very complex: with thousands of different variables, tens of reference tables and a `user manual <http://dx.doi.org/10.13155/29825>`_ more than 100 pages long:
 **argopy** aims to help you navigate this complex realm.
 
 For non-experts of the Argo dataset, it has become rather complicated to get access to Argo measurements.

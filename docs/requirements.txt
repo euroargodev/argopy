@@ -1,50 +1,60 @@
+xarray==2024.2.0
+scipy>=1.5
+netcdf4>=1.5.4
+dask>=2021.9.1
+# toolz>=0.8.2
+erddapy>=0.7.2
+fsspec>=0.7.4 #, <2022.3.1
+gsw>=3.4.0
+aiohttp>=3.7.4
+# bottleneck>=1.3.2
+s3fs
+boto3
+cftime # >=1.5.1
+cfgrib # >=0.9.9.1
+decorator
+distributed>=2.30.0
+ipython<=8.27.0
+matplotlib>=3.4.0
+numpy==1.26.4
+pandas<3.0
+# packaging
 pip>=23.1
-# pkgconfig
+# pytest
+# seaborn>=0.11.0
+# setuptools
+zarr>=2.4.0
+tqdm>=4.50.2
 ipykernel>=6.22
-ipython<=8.24.0
 ipywidgets>=8.0
-urllib3<2
-
 nbsphinx>=0.9
-numpydoc>=1.1.0
 jinja2>=3.0.2
 sphinx_issues>=1.2.0
-gitpython>=3.1.2
-sphinx-autosummary-accessors>=0.1.2
-pydata-sphinx-theme>=0.4.3
-readthedocs-sphinx-ext
 sphinx-rtd-theme
 sphinx-book-theme
 # sphinx-bootstrap-theme
+pydata-sphinx-theme>=0.4.3
+Sphinx
+numpydoc>=1.1.0
+readthedocs-sphinx-ext
+sphinx-autosummary-accessors>=0.1.2
+pydocstyle
 sphinx-tabs
+sphinxext-rediraffe
+# sphinxext-opengraph
 git+https://github.com/sphinx-contrib/googleanalytics
 sphinx-copybutton
 sphinx-design
-sphinxext-rediraffe
 
-xarray>=0.16.1
-pandas<3.0
-scipy>=1.5
-scikit-learn>=0.23.2
-dask>=2021.9.1
-distributed>=2.30.0
-# bottleneck>=1.3.2
-# toolz>=0.8.2
 
-erddapy>=0.7.2
-gsw>=3.4.0
+# pkgconfig
+# urllib3<2
 
-fsspec>=0.7.4 #, <2022.3.1
-aiohttp>=3.7.4
+# gitpython>=3.1.2
 
-matplotlib>=3.4.0
+# scikit-learn>=0.23.2
+
 #cartopy>=0.18.0
-#seaborn>=0.11.0
 #geos>=0.2
 # cmocean
 
-zarr>=2.4.0
-netcdf4>=1.5.4
-cftime>=1.5.1
-cfgrib>=0.9.9.1
-tqdm>=4.50.2

@@ -31,9 +31,6 @@ class ArgoNVSReferenceTables:
 
     valid_ref = [
         "R01",
-        "RR2",
-        "RD2",
-        "RP2",
         "R03",
         "R04",
         "R05",
@@ -46,8 +43,6 @@ class ArgoNVSReferenceTables:
         "R12",
         "R13",
         "R15",
-        "RMC",
-        "RTV",
         "R16",
         "R18",
         "R19",
@@ -60,9 +55,12 @@ class ArgoNVSReferenceTables:
         "R26",
         "R27",
         "R28",
-        "R29",
-        "R30",
         "R40",
+        "RD2",
+        "RMC",
+        "RP2",
+        "RR2",
+        "RTV",
     ]
     """List of all available Reference Tables"""
 
@@ -99,12 +97,12 @@ class ArgoNVSReferenceTables:
         }
         for k in data["@graph"]:
             if k["@type"] == "skos:Collection":
-                Collection_name = k["alternative"]
+                Collection_name = k["dc:alternative"]
             elif k["@type"] == "skos:Concept":
-                content["altLabel"].append(k["altLabel"])
-                content["prefLabel"].append(k["prefLabel"]["@value"])
-                content["definition"].append(k["definition"]["@value"])
-                content["deprecated"].append(k["deprecated"])
+                content["altLabel"].append(k["skos:altLabel"])
+                content["prefLabel"].append(k["skos:prefLabel"]["@value"])
+                content["definition"].append(k["skos:definition"]["@value"])
+                content["deprecated"].append(k["owl:deprecated"])
                 content["id"].append(k["@id"])
         df = pd.DataFrame.from_dict(content)
         df.name = Collection_name
@@ -114,8 +112,8 @@ class ArgoNVSReferenceTables:
         """Return last skos:Collection information as data"""
         for k in data["@graph"]:
             if k["@type"] == "skos:Collection":
-                name = k["alternative"]
-                desc = k["description"]
+                name = k["dc:alternative"]
+                desc = k["dc:description"]
                 rtid = k["@id"]
         return (name, desc, rtid)
 

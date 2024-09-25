@@ -87,13 +87,12 @@ Utilities for Argo related data
 
    status
    ArgoIndex
+   ArgoDocs
+   ArgoDOI
    ArgoNVSReferenceTables
    OceanOPSDeployments
    CTDRefDataFetcher
    TopoFetcher
-   ArgoDocs
-   related.get_coriolis_profile_id
-   related.get_ea_profile_page
 
 .. _Module Visualisation:
 
@@ -123,7 +122,6 @@ All other visualisation functions are in the :mod:`argopy.plot` submodule:
     bar_plot
     scatter_plot
     latlongrid
-    discrete_coloring
 
 
 Dataset.argo (xarray accessor)
@@ -142,7 +140,7 @@ This accessor extends :py:class:`xarray.Dataset`. Proper use of this accessor sh
 .. code-block:: python
 
    >>> import xarray as xr         # first import xarray
-   >>> import argopy               # import argopy (the dataset 'argo' accessor is registered)
+   >>> import argopy               # import argopy (the dataset 'argo' accessor is then registered)
    >>> from argopy import DataFetcher
    >>> ds = DataFetcher().float([6902766, 6902772, 6902914, 6902746]).load().data
    >>> ds.argo
@@ -160,6 +158,8 @@ Data Transformation
    Dataset.argo.profile2point
    Dataset.argo.interp_std_levels
    Dataset.argo.groupby_pressure_bins
+   Dataset.argo.transform_data_mode
+
 
 Data Filters
 ------------
@@ -168,12 +168,12 @@ Data Filters
    :toctree: generated/
    :template: autosummary/accessor_method.rst
 
-   Dataset.argo.filter_qc
    Dataset.argo.filter_data_mode
+   Dataset.argo.filter_qc
    Dataset.argo.filter_scalib_pres
    Dataset.argo.filter_researchmode
 
-Processing
+Extensions
 ----------
 
 .. autosummary::
@@ -182,6 +182,13 @@ Processing
 
     Dataset.argo.teos10
     Dataset.argo.create_float_source
+    Dataset.argo.canyon_med
+
+.. currentmodule:: argopy
+
+You can register your own extension inheriting from :class:`argopy.extensions.ArgoAccessorExtension` and decorated with :class:`argopy.extensions.register_argo_accessor`
+
+.. currentmodule:: xarray
 
 Misc
 ----
@@ -210,6 +217,11 @@ Function under the ``argopy.utils`` submodule.
     list_available_index_src
     list_standard_variables
     list_multiprofile_file_variables
+    list_core_parameters
+    list_bgc_s_variables
+    list_bgc_s_parameters
+    list_radiometry_variables
+    list_radiometry_parameters
 
     check_wmo
     check_cyc
@@ -251,10 +263,12 @@ File systems
 .. autosummary::
     :toctree: generated/
 
-    argopy.stores.filestore
-    argopy.stores.httpstore
-    argopy.stores.memorystore
-    argopy.stores.ftpstore
+    stores.filestore
+    stores.httpstore
+    stores.memorystore
+    stores.ftpstore
+    stores.httpstore_erddap_auth
+    stores.s3store
 
 Argo index store
 ----------------
@@ -263,8 +277,8 @@ Argo index store
     :toctree: generated/
 
     ArgoIndex
-    argopy.stores.indexstore_pa
-    argopy.stores.indexstore_pd
+    stores.indexstore_pa
+    stores.indexstore_pd
 
 Fetcher sources
 ---------------
@@ -275,9 +289,9 @@ ERDDAP
 .. autosummary::
     :toctree: generated/
 
-    argopy.data_fetchers.erddap_data.ErddapArgoDataFetcher
-    argopy.data_fetchers.erddap_data.Fetch_wmo
-    argopy.data_fetchers.erddap_data.Fetch_box
+    data_fetchers.erddap_data.ErddapArgoDataFetcher
+    data_fetchers.erddap_data.Fetch_wmo
+    data_fetchers.erddap_data.Fetch_box
 
 GDAC
 ^^^^
@@ -285,9 +299,9 @@ GDAC
 .. autosummary::
     :toctree: generated/
 
-    argopy.data_fetchers.gdacftp_data.FTPArgoDataFetcher
-    argopy.data_fetchers.gdacftp_data.Fetch_wmo
-    argopy.data_fetchers.gdacftp_data.Fetch_box
+    data_fetchers.gdac_data.FTPArgoDataFetcher
+    data_fetchers.gdac_data.Fetch_wmo
+    data_fetchers.gdac_data.Fetch_box
 
 
 Argovis
@@ -296,6 +310,6 @@ Argovis
 .. autosummary::
     :toctree: generated/
 
-    argopy.data_fetchers.argovis_data.ArgovisDataFetcher
-    argopy.data_fetchers.argovis_data.Fetch_wmo
-    argopy.data_fetchers.argovis_data.Fetch_box
+    data_fetchers.argovis_data.ArgovisDataFetcher
+    data_fetchers.argovis_data.Fetch_wmo
+    data_fetchers.argovis_data.Fetch_box

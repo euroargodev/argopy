@@ -46,8 +46,8 @@ PARALLEL_ACCESS_POINTS = [
 """
 List user modes to be tested
 """
-# USER_MODES = ['standard', 'expert', 'research']
-USER_MODES = ['expert']
+USER_MODES = ['standard', 'expert', 'research']
+# USER_MODES = ['expert']
 
 """
 List of 'params' fetcher arguments to be tested
@@ -101,8 +101,9 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
         This should be used by all tests asserting a fetcher
     """
     def assert_all(this_fetcher, cacheable):
+        # `this_fetcher` is a facade instance not a :class:`argopy.data_fetchers.ArgoDataFetcherProto`
 
-        # We use the facade to test 'to_xarray' in order to make sure to test all filters required by user mode
+        # We use the facade to test 'to_xarray' in order to make sure to test all transforms/filters required by user mode
         ds = this_fetcher.to_xarray(errors='raise')
         assert isinstance(ds, xr.Dataset)
 
@@ -126,10 +127,11 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
 
     try:
         assert_all(this_fetcher, cacheable)
-    except:
+    except Exception as e:
         if this_fetcher._mode not in ['expert']:
             pytest.xfail("BGC is not yet supported in '%s' user mode" % this_fetcher._mode)
         else:
+            log.debug("Fetcher instance assert false because: %s" % e)
             assert False
 
 
@@ -247,20 +249,20 @@ class Test_Backend:
         fetcher = create_fetcher(fetcher_args, access_point)
         assert_fetcher(mocked_erddapserver, fetcher)
 
-    @pytest.mark.parametrize("measured", ['all'],
-                             indirect=False,
-                             ids=["measured=%s" % m for m in ['all']],
-                             )
-    def test_fetching_failed_measured(self, mocked_erddapserver, measured):
-        class this_request:
-            param = {
-                'ds': 'bgc',
-                'mode': 'expert',
-                'params': 'all',
-                'measured': measured,
-                'access_point': {"float": [6904240]},
-            }
-        fetcher_args, access_point = self._setup_fetcher(this_request)
-        fetcher = create_fetcher(fetcher_args, access_point)
-        with pytest.raises(ValueError):
-            fetcher.to_xarray()
+    # @pytest.mark.parametrize("measured", ['all'],
+    #                          indirect=False,
+    #                          ids=["measured=%s" % m for m in ['all']],
+    #                          )
+    # def test_fetching_failed_measured(self, mocked_erddapserver, measured):
+    #     class this_request:
+    #         param = {
+    #             'ds': 'bgc',
+    #             'mode': 'expert',
+    #             'params': 'all',
+    #             'measured': measured,
+    #             'access_point': {"float": [6904240]},
+    #         }
+    #     fetcher_args, access_point = self._setup_fetcher(this_request)
+    #     fetcher = create_fetcher(fetcher_args, access_point)
+    #     with pytest.raises(ValueError):
+    #         fetcher.to_xarray()

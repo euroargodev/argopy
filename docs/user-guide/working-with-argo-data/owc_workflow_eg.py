@@ -1,4 +1,5 @@
-import os, shutil
+import os
+import shutil
 from pathlib import Path
 
 import pyowc as owc
@@ -31,8 +32,8 @@ USER_CONFIG['HISTORICAL_CTD_PREFIX'] = 'CTD_for_DMQC_2021V01/ctd_'
 print(owc.configuration.print_cfg(USER_CONFIG))
 
 # Create float source data with argopy:
-fetcher_for_real = DataFetcher(src='localftp', cache=True, mode='expert').float(FLOAT_NAME)
-fetcher_sample = DataFetcher(src='localftp', cache=True, mode='expert').profile(FLOAT_NAME, [1,
+fetcher_for_real = DataFetcher(src='gdac', cache=True, mode='expert').float(FLOAT_NAME)
+fetcher_sample = DataFetcher(src='gdac', cache=True, mode='expert').profile(FLOAT_NAME, [1,
                                                                                              2])  # To reduce execution time for demo
 ds = fetcher_sample.load().data
 ds.argo.create_float_source(path=USER_CONFIG['FLOAT_SOURCE_DIRECTORY'], force='default')

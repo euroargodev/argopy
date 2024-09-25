@@ -5,7 +5,7 @@ from utils import (
     requires_erddap,
 )
 import argopy
-from argopy.errors import FtpPathError
+from argopy.errors import GdacPathError
 from argopy.utils.checkers import (
     is_box, is_indexbox,
     check_wmo, is_wmo,
@@ -187,7 +187,7 @@ def test_check_cyc():
 
 def test_check_gdac_path():
     assert check_gdac_path("dummy_path", errors='ignore') is False
-    with pytest.raises(FtpPathError):
+    with pytest.raises(GdacPathError):
         check_gdac_path("dummy_path", errors='raise')
     with pytest.warns(UserWarning):
         assert check_gdac_path("dummy_path", errors='warn') is False

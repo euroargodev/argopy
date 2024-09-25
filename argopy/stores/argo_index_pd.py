@@ -8,11 +8,13 @@ import numpy as np
 import pandas as pd
 import logging
 import gzip
+from pathlib import Path
 
 from ..errors import DataNotFound, InvalidDatasetStructure
 from ..utils.checkers import check_index_cols, is_indexbox, check_wmo, check_cyc
 from ..utils.casting import to_list
 from .argo_index_proto import ArgoIndexStoreProto
+from .argo_index_proto_s3 import search_s3
 
 
 log = logging.getLogger("argopy.stores.index")
@@ -31,6 +33,9 @@ class indexstore_pandas(ArgoIndexStoreProto):
     ext = "pd"
     """Storage file extension"""
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def load(self, nrows=None, force=False):  # noqa: C901
         """Load an Argo-index file content
 
@@ -41,7 +46,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
 
         def read_csv(input_file, nrows=None):
             this_table = pd.read_csv(
-                input_file, sep=",", index_col=None, header=0, skiprows=8, nrows=nrows
+                input_file, sep=",", index_col=None, header=0, skiprows=self.skip_rows, nrows=nrows
             )
             return this_table
 
@@ -62,15 +67,14 @@ class indexstore_pandas(ArgoIndexStoreProto):
 
         def download(nrows=None):
             log.debug("Load Argo index (nrows=%s) ..." % nrows)
-            if self.fs["src"].exists(self.index_path + ".gz"):
-                with self.fs["src"].open(self.index_path + ".gz", "rb") as fg:
+            if Path(self.index_path).suffix == ".gz":
+                with self.fs["src"].open(self.index_path, "rb") as fg:
                     with gzip.open(fg) as f:
                         self.index = csv2index(f)
-                        log.debug("Argo index file loaded with Pandas read_csv from '%s'" % (self.index_path + ".gz"))
             else:
                 with self.fs["src"].open(self.index_path, "rb") as f:
                     self.index = csv2index(f)
-                    log.debug("Argo index file loaded with Pandas read_csv from '%s'" % self.index_path)
+            log.debug("Argo index file loaded with Pandas read_csv from '%s'" % self.index_path)
             if self.cache:
                 self.fs["src"].fs.save_cache()
             self._nrows_index = nrows
@@ -215,9 +219,16 @@ class indexstore_pandas(ArgoIndexStoreProto):
         return wmo
 
     def read_params(self, index=False):
-        if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
-            raise InvalidDatasetStructure("Cannot list parameters in this index (not a BGC profile index)")
+        if self.convention not in ["argo_bio-profile_index",
+                                   "argo_synthetic-profile_index",
+                                   "argo_aux-profile_index"]:
+            raise InvalidDatasetStructure("Cannot list parameters in this index (not a BGC or AUX profile index)")
         if hasattr(self, "search") and not index:
+            if self.N_MATCH == 0:
+                raise DataNotFound(
+                    "No data found in the index corresponding to your search criteria."
+                    " Search definition: %s" % self.cname
+                )
             df = self.search['parameters']
         else:
             if not hasattr(self, "index"):
@@ -255,6 +266,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
                 count[wmo] = self.index[search_filter].shape[0]
         return count
 
+    @search_s3
     def search_wmo(self, WMOs, nrows=None):
         WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
         log.debug(
@@ -272,6 +284,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
+    @search_s3
     def search_cyc(self, CYCs, nrows=None):
         CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
         log.debug(
@@ -293,6 +306,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
+    @search_s3
     def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
         WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
         CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
@@ -366,8 +380,10 @@ class indexstore_pandas(ArgoIndexStoreProto):
         return self
 
     def search_params(self, PARAMs, logical: bool = 'and', nrows=None):
-        if self.convention not in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
-            raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC profile index)")
+        if self.convention not in ["argo_bio-profile_index",
+                                   "argo_synthetic-profile_index",
+                                   "argo_aux-profile_index"]:
+            raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC or AUX profile index)")
         log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
         PARAMs = to_list(PARAMs)  # Make sure we deal with a list
         self.load(nrows=self._nrows_index)
@@ -393,6 +409,8 @@ class indexstore_pandas(ArgoIndexStoreProto):
         [PARAMs.update({p: to_list(PARAMs[p])}) for p in PARAMs]  # Make sure we deal with a list
         if not np.all([v in ['R', 'A', 'D', '', ' '] for vals in PARAMs.values() for v in vals]):
             raise ValueError("Data mode must be a value in 'R', 'A', 'D', ' ', ''")
+        if self.convention in ["argo_aux-profile_index"]:
+            raise InvalidDatasetStructure("Method not available for this index ('%s')" % self.convention)
 
         self.load(nrows=self._nrows_index)
         self.search_type = {"DMODE": PARAMs, "logical": logical}
@@ -441,6 +459,9 @@ class indexstore_pandas(ArgoIndexStoreProto):
         elif self.convention in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
             columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
                                'parameters', 'parameter_data_mode', 'date_update']
+        elif self.convention in ["argo_aux-profile_index"]:
+            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
+                       'parameters', 'date_update']
 
         self.search.to_csv(outputfile, sep=',', index=False, index_label=False, header=False, columns=columns)
         outputfile = self._insert_header(outputfile)

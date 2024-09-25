@@ -3,16 +3,17 @@
 
 # You can set these variables from the command line.
 #SPHINXOPTS      = -T -E
-SPHINXOPTS      = -T
+SPHINXOPTS      = --show-traceback
+#SPHINXOPTS      = --show-traceback --verbose --verbose
 SPHINXBUILD     = sphinx-build
-SPHINXATUOBUILD = sphinx-autobuild
+SPHINXAUTOBUILD = sphinx-autobuild
 PAPER           =
 BUILDDIR        = _build
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
-ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
+ALLSPHINXOPTS   = --jobs auto --verbose --warning-file make.log --doctree-dir $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 # the i18n builder cannot share the environment and doctrees with the others
 I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 
@@ -56,14 +57,14 @@ clean:
 
 .PHONY: html
 html:
-	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	$(SPHINXBUILD) --builder html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
 .PHONY: livehtml
 livehtml:
-	# @echo "$(SPHINXATUOBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html"
-	$(SPHINXATUOBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	# @echo "$(SPHINXAUTOBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html"
+	$(SPHINXAUTOBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 
 .PHONY: dirhtml
 dirhtml:
@@ -243,6 +244,6 @@ dummy:
 
 .PHONY: rtdhtml
 rtdhtml:
-	$(SPHINXBUILD) -T -j auto -E -W --keep-going -b html -d $(BUILDDIR)/doctrees -D language=en . $(BUILDDIR)/html
+	$(SPHINXBUILD) --show-traceback --verbose --jobs 4 --fresh-env --warning-file make.log --keep-going --builder html --doctree-dir $(BUILDDIR)/doctrees --define language=en . $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."

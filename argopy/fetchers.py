@@ -16,21 +16,24 @@ import numpy as np
 import logging
 
 from .options import OPTIONS, _VALIDATORS
-from .errors import InvalidFetcherAccessPoint, InvalidFetcher, OptionValueError
+from .errors import (
+    InvalidFetcherAccessPoint,
+    InvalidFetcher,
+    OptionValueError,
+    OptionDeprecatedWarning,
+)
 from .related import (
     get_coriolis_profile_id,
 )
-from .utils.checkers import (
-    is_box,
-    is_indexbox,
-    check_wmo,
-    check_cyc
-)
+from .utils.checkers import is_box, is_indexbox, check_wmo, check_cyc
 from .utils.lists import (
     list_available_data_src,
     list_available_index_src,
+    list_core_parameters,
+    list_radiometry_parameters,
+    list_bgc_s_parameters,
 )
-from .plot import plot_trajectory, bar_plot, open_sat_altim_report
+from .plot import plot_trajectory, bar_plot, open_sat_altim_report, scatter_plot
 
 
 AVAILABLE_DATA_SOURCES = list_available_data_src()
@@ -75,7 +78,7 @@ class ArgoDataFetcher:
     src: str, optional
          Source of the data to use. Eg: ``erddap``. Set to OPTIONS['src'] by default if empty.
     ds: str, optional
-        Name of the dataset to load. Eg: ``phy``. Set to OPTIONS['dataset'] by default if empty.
+        Name of the dataset to load. Eg: ``phy``. Set to OPTIONS['ds'] by default if empty.
     **fetcher_kwargs: optional
         Additional arguments passed on data source fetcher creation of each access points.
 
@@ -99,25 +102,22 @@ class ArgoDataFetcher:
 
         # Facade options :
         self._mode = OPTIONS["mode"] if mode == "" else mode
-        self._dataset_id = OPTIONS["dataset"] if ds == "" else ds
+        self._dataset_id = OPTIONS["ds"] if ds == "" else ds
         self._src = OPTIONS["src"] if src == "" else src
+
+        if self._dataset_id == "bgc":
+            self._dataset_id = "bgc-s"
 
         if not _VALIDATORS["mode"](self._mode):
             raise OptionValueError(
                 f"option 'mode' given an invalid value: {self._mode}"
             )
-        if not _VALIDATORS["dataset"](self._dataset_id):
+        if not _VALIDATORS["ds"](self._dataset_id):
             raise OptionValueError(
-                f"option 'dataset' given an invalid value: {self._dataset_id}"
+                f"option 'ds' given an invalid value: {self._dataset_id}"
             )
         if not _VALIDATORS["src"](self._src):
             raise OptionValueError(f"option 'src' given an invalid value: {self._src}")
-
-        # Load data source access points:
-        if self._src == "localftp":
-            raise ValueError(
-                "The 'localftp' data source is deprecated. It's been replaced by 'gdac'."
-            )
 
         Fetchers = AVAILABLE_DATA_SOURCES[self._src]
 
@@ -143,8 +143,9 @@ class ArgoDataFetcher:
                 % (self._dataset_id, self._src)
             )
         self.fetcher_kwargs = {**fetcher_kwargs}
-        self.fetcher_options = {**{"ds": self._dataset_id}, **fetcher_kwargs}
-        self.postproccessor = self.__empty_processor
+        self.fetcher_options = {**{"ds": self._dataset_id, "mode": self._mode}, **fetcher_kwargs}
+
+        self.define_postprocessor()
         self._AccessPoint = None
 
         # Init data structure holders:
@@ -162,11 +163,17 @@ class ArgoDataFetcher:
 
         # Dev warnings
         # Todo Clean-up before each release
-        if self._dataset_id == "bgc" and (
-            self._mode == "standard" or self._mode == "research"
+        if self._src == "argovis" and (
+            self._mode == "expert" or self._mode == "research"
         ):
-            warnings.warn(
-                "The 'bgc' dataset fetching is only available in 'expert' mode at this point."
+            raise OptionValueError(
+                "The 'argovis' data source fetching is only available in 'standard' user mode"
+            )
+
+        if self._src == "gdac" and "ftp" in self.fetcher_kwargs:
+            OptionDeprecatedWarning(
+                reason="The GDAC 'ftp' argument is deprecated, it will be replaced by 'gdac' in versions >= 0.1.18",
+                version="v0.0.17",
             )
 
     def __repr__(self):
@@ -190,12 +197,7 @@ class ArgoDataFetcher:
         summary.append("Performances: cache=%s, parallel=%s" % (str(cache), str(para)))
         summary.append("User mode: %s" % self._mode)
         summary.append("Dataset: %s" % self._dataset_id)
-        # summary.append("Loaded: %s" % self._loaded)
         return "\n".join(summary)
-
-    def __empty_processor(self, xds):
-        """Do nothing to a dataset"""
-        return xds
 
     def __getattr__(self, key):
         """Validate access points"""
@@ -203,7 +205,8 @@ class ArgoDataFetcher:
             "Fetchers",
             "fetcher",
             "fetcher_options",
-            "postproccessor",
+            "define_postprocessor",
+            "postprocess",
             "data",
             "index",
             "domain",
@@ -303,7 +306,7 @@ class ArgoDataFetcher:
 
     @property
     def mission(self):
-        if self._dataset_id == 'bgc':
+        if self._dataset_id == "bgc":
             return "BGC"
         else:
             return "core+deep"
@@ -322,6 +325,124 @@ class ArgoDataFetcher:
                 "dashboard not available for this fetcher access point (%s/%s)"
                 % (self._src, self._AccessPoint)
             )
+
+    def postprocess(self, *args, **kwargs):
+        return self._pp_workflow(*args, **kwargs)
+
+    def define_postprocessor(self):
+        """Define the post-processing workflow according to the dataset and user-mode"""
+        if self.fetcher:
+
+            if self._dataset_id == 'phy' and self._mode == "standard":
+                def workflow(xds):
+                    xds = self.fetcher.transform_data_mode(xds)
+                    xds = self.fetcher.filter_qc(xds, QC_list=[1, 2])
+                    xds = self.fetcher.filter_variables(xds)
+                    return xds
+
+            elif self._dataset_id == 'phy' and self._mode == "research":
+                def workflow(xds):
+                    xds = self.fetcher.filter_researchmode(xds)
+                    xds = self.fetcher.filter_variables(xds)
+                    return xds
+
+            elif self._dataset_id in ['bgc', 'bgc-s'] and self._mode == "standard":
+                # https://github.com/euroargodev/argopy/issues/280
+                def workflow(xds):
+                    # Merge parameters according to data mode values:
+                    xds = self.fetcher.transform_data_mode(xds)
+
+                    # Process core variables:
+                    xds = self.fetcher.filter_qc(xds,
+                                                 QC_list=[1, 2],
+                                                 QC_fields=['POSITION_QC', 'TIME_QC'])
+
+                    xds = self.fetcher.filter_data_mode(xds,
+                                                        params=list_core_parameters(),
+                                                        dm=['R', 'A', 'D'],
+                                                        logical='and'
+                                                        )
+                    xds = self.fetcher.filter_qc(xds,
+                                                 QC_list=[1, 2],
+                                                 QC_fields=["%s_QC" % p for p in list_core_parameters()])
+
+                    # Process radiometry variables:
+                    params1 = [v for v in xds if v in list_radiometry_parameters()]
+                    if len(params1) > 0:
+                        xds = self.fetcher.filter_data_mode(xds,
+                                                            params=params1,
+                                                            dm=['R', 'A', 'D'],
+                                                            logical='and'
+                                                            )
+                    # Process BBP700 variables:
+                    params2 = [v for v in xds if 'BBP700' in v and v in list_bgc_s_parameters()]
+                    if len(params2) > 0:
+                        xds = self.fetcher.filter_data_mode(xds,
+                                                            params=params2,
+                                                            dm=['R', 'A', 'D'],
+                                                            logical='and'
+                                                            )
+                    # Process all other BGC variables:
+                    all_other_bgc_variables = list(set(list_bgc_s_parameters()) - set(list_core_parameters() + params1 + params2 ))
+                    all_other_bgc_variables = [p for p in all_other_bgc_variables if p in xds]
+                    xds = self.fetcher.filter_data_mode(xds,
+                                                        params=all_other_bgc_variables,
+                                                        dm=['A', 'D'],
+                                                        logical='or'
+                                                        )
+
+                    # Apply QC filter on BGC parameters:
+                    xds = self.fetcher.filter_qc(xds,
+                                                 QC_list=[1, 2, 5, 8],
+                                                 QC_fields=["%s_QC" % p for p in all_other_bgc_variables],
+                                                 mode='all',
+                                                 )
+
+                    # And adjust list of variables:
+                    xds = self.fetcher.filter_variables(xds)
+
+                    return xds
+
+            elif self._dataset_id in ['bgc', 'bgc-s'] and self._mode == "research":
+                # https://github.com/euroargodev/argopy/issues/280
+                def workflow(xds):
+
+                    # Apply research mode transform/filter on core/deep params:
+                    xds = self.fetcher.filter_researchmode(xds)
+
+                    # Apply data mode transform and filter on BGC parameters:
+                    all_bgc_parameters = list(set(list_bgc_s_parameters()) - set(list_core_parameters()))
+                    all_bgc_parameters = [p for p in all_bgc_parameters if p in xds or "%s_ADJUSTED" % p in xds]
+                    if len(all_bgc_parameters) > 0:
+                        xds = self.fetcher.transform_data_mode(xds,
+                                                               params=all_bgc_parameters)
+                        xds = self.fetcher.filter_data_mode(xds,
+                                                            params=all_bgc_parameters,
+                                                            dm=['D'],
+                                                            logical='or'
+                                                            )
+
+                    # Apply QC filter on BGC parameters:
+                    xds = self.fetcher.filter_qc(xds,
+                                                 QC_list=[1, 5, 8],
+                                                 QC_fields=["%s_QC" % p for p in all_bgc_parameters],
+                                                 mode='all',
+                                                 )
+
+                    # And adjust list of variables:
+                    xds = self.fetcher.filter_variables(xds)
+
+                    return xds
+
+            else:
+                workflow = lambda x: x  # Empty processor
+
+        else:
+            workflow = lambda x: x  # Empty processor
+
+        self._pp_workflow = workflow
+
+        return self
 
     @checkAccessPoint
     def float(self, wmo, **kw):
@@ -351,24 +472,7 @@ class ArgoDataFetcher:
             "wmo": wmo
         }  # Register the requested access point data
 
-        if self._mode == "standard" and self._dataset_id != "ref":
-
-            def postprocessing(xds):
-                xds = self.fetcher.filter_data_mode(xds)
-                xds = self.fetcher.filter_qc(xds)
-                xds = self.fetcher.filter_variables(xds, self._mode)
-                return xds
-
-            self.postproccessor = postprocessing
-
-        elif self._mode == "research" and self._dataset_id != "ref":
-
-            def postprocessing(xds):
-                xds = self.fetcher.filter_researchmode(xds)
-                xds = self.fetcher.filter_variables(xds, self._mode)
-                return xds
-
-            self.postproccessor = postprocessing
+        self.define_postprocessor()
 
         return self
 
@@ -400,24 +504,7 @@ class ArgoDataFetcher:
             "cyc": cyc,
         }  # Register the requested access point data
 
-        if self._mode == "standard" and self._dataset_id != "ref":
-
-            def postprocessing(xds):
-                xds = self.fetcher.filter_data_mode(xds)
-                xds = self.fetcher.filter_qc(xds)
-                xds = self.fetcher.filter_variables(xds, self._mode)
-                return xds
-
-            self.postproccessor = postprocessing
-
-        elif self._mode == "research" and self._dataset_id != "ref":
-
-            def postprocessing(xds):
-                xds = self.fetcher.filter_researchmode(xds)
-                xds = self.fetcher.filter_variables(xds, self._mode)
-                return xds
-
-            self.postproccessor = postprocessing
+        self.define_postprocessor()
 
         return self
 
@@ -451,29 +538,12 @@ class ArgoDataFetcher:
             "box": box
         }  # Register the requested access point data
 
-        if self._mode == "standard" and self._dataset_id != "ref":
-
-            def postprocessing(xds):
-                xds = self.fetcher.filter_data_mode(xds)
-                xds = self.fetcher.filter_qc(xds)
-                xds = self.fetcher.filter_variables(xds, self._mode)
-                return xds
-
-            self.postproccessor = postprocessing
-
-        elif self._mode == "research" and self._dataset_id != "ref":
-
-            def postprocessing(xds):
-                xds = self.fetcher.filter_researchmode(xds)
-                xds = self.fetcher.filter_variables(xds, self._mode)
-                return xds
-
-            self.postproccessor = postprocessing
+        self.define_postprocessor()
 
         return self
 
-    def to_xarray(self, **kwargs):
-        """Fetch and return data as xarray.DataSet
+    def to_xarray(self, **kwargs) -> xr.Dataset:
+        """Fetch and return data as :class:`xarray.DataSet`
 
         Trigger a fetch of data by the specified source and access point.
 
@@ -488,12 +558,14 @@ class ArgoDataFetcher:
                 % ",".join(self.Fetchers.keys())
             )
         xds = self.fetcher.to_xarray(**kwargs)
-        xds = self.postproccessor(xds)
+        xds = self.postprocess(xds)
+        if xds is not None:
+            xds = xds.load()
 
         return xds
 
-    def to_dataframe(self, **kwargs):
-        """Fetch and return data as pandas.Dataframe
+    def to_dataframe(self, **kwargs) -> pd.DataFrame:
+        """Fetch and return data as :class:`pandas.DataFrame`
 
         Trigger a fetch of data by the specified source and access point.
 
@@ -509,8 +581,8 @@ class ArgoDataFetcher:
             )
         return self.load().data.to_dataframe(**kwargs)
 
-    def to_index(self, full: bool = False, coriolis_id: bool = False):
-        """Create a profile index of Argo data, fetch data if necessary
+    def to_index(self, full: bool = False, coriolis_id: bool = False) -> pd.DataFrame:
+        """Return a profile index of Argo data, fetch data if necessary
 
         Build an Argo-like index of profiles from fetched data.
 
@@ -527,6 +599,7 @@ class ArgoDataFetcher:
         :class:`pandas.DataFrame`
             Argo-like index of fetched data
         """
+
         def prt(txt):
             msg = [txt]
             if self._request != self.__repr__():
@@ -534,11 +607,13 @@ class ArgoDataFetcher:
             log.debug("\n".join(msg))
 
         def add_coriolis(this_df):
-            if 'id' not in this_df:
+            if "id" not in this_df:
                 this_df["id"] = None
 
                 def fc(row):
-                    row["id"] = get_coriolis_profile_id(row["wmo"], row["cyc"])["ID"].values[0]
+                    row["id"] = get_coriolis_profile_id(row["wmo"], row["cyc"])[
+                        "ID"
+                    ].values[0]
                     return row
 
                 this_df = this_df.apply(fc, axis=1)
@@ -547,7 +622,7 @@ class ArgoDataFetcher:
         # With the gdac and erddap+bgc,
         # we rely on the fetcher ArgoIndex:
         # (hence we always return a full index)
-        if (self._src == 'erddap' and self._dataset_id == 'bgc') or (self._src == 'gdac'):
+        if (self._src == 'erddap' and 'bgc' in self._dataset_id) or (self._src == 'gdac'):
             prt("to_index working with fetcher ArgoIndex instance")
             idx = self.fetcher.indexfs
             if self._AccessPoint == "region":
@@ -561,7 +636,9 @@ class ArgoDataFetcher:
             if self._AccessPoint == "float":
                 idx.search_wmo(self._AccessPoint_data["wmo"])
             if self._AccessPoint == "profile":
-                idx.search_wmo_cyc(self._AccessPoint_data["wmo"], self._AccessPoint_data["cyc"])
+                idx.search_wmo_cyc(
+                    self._AccessPoint_data["wmo"], self._AccessPoint_data["cyc"]
+                )
 
             # Then export search result to Index dataframe:
             df = idx.to_dataframe()
@@ -575,8 +652,9 @@ class ArgoDataFetcher:
             if not full:
                 prt("to_index working with argo accessor attribute for a light index")
                 # Get a small index from the argo accessor attribute
-                self.load()
-                df = self.data.argo.index
+                if not self._loaded:
+                    self.load()
+                df = self._data.argo.index
 
                 # Add Coriolis ID if requested:
                 df = add_coriolis(df) if coriolis_id else df
@@ -607,14 +685,25 @@ class ArgoDataFetcher:
                 df = add_coriolis(df) if coriolis_id else df
 
                 # Possibly replace the light index with the full version:
-                if 'profiler_code' not in df or self._request == self.__repr__():
+                if "profiler_code" not in df or self._request == self.__repr__():
                     prt("to_index replaced the light index with the full version")
                     self._index = df
+
+        if 'wmo' in df and 'cyc' in df and self._loaded and self._data is not None:
+            # Ensure that all profiles reported in the index are indeed in the dataset
+            # This is not necessarily the case when the index is based on an ArgoIndex instance that may come to differ from postprocessed dataset
+            irow_remove = []
+            for irow, row in df.iterrows():
+                i_found = np.logical_and.reduce((self._data['PLATFORM_NUMBER'] == row['wmo'],
+                                                 self._data['CYCLE_NUMBER'] == row['cyc']))
+                if i_found.sum() == 0:
+                    irow_remove.append(irow)  # Remove this profile from the index
+            df = df.drop(irow_remove, axis=0)
 
         return df
 
     def load(self, force: bool = False, **kwargs):
-        """ Fetch data (and compute a profile index) if not already in memory
+        """Fetch data (and compute a profile index) if not already in memory
 
         Apply the default to_xarray() and to_index() methods and store results in memory.
         You can access loaded measurements structure with the `data` and `index` properties.
@@ -688,16 +777,23 @@ class ArgoDataFetcher:
             if "institution" not in self.index:
                 self.to_index(full=True)
             return bar_plot(self.index, by="institution", **kwargs)
+
         elif ptype == "profiler":
             if "profiler" not in self.index:
                 self.to_index(full=True)
             return bar_plot(self.index, by="profiler", **kwargs)
+
         elif ptype == "trajectory":
             defaults = {"style": "white"}
             return plot_trajectory(self.index, **{**defaults, **kwargs})
+
         elif ptype == "qc_altimetry":
             WMOs = np.unique(self.data["PLATFORM_NUMBER"])
             return open_sat_altim_report(WMOs, **kwargs)
+
+        elif ptype in self.data.data_vars:
+            return scatter_plot(self.data, ptype, **kwargs)
+
         else:
             raise ValueError(
                 "Type of plot unavailable. Use: 'trajectory', 'dac', 'profiler', 'qc_altimetry'"
@@ -721,7 +817,7 @@ class ArgoIndexFetcher:
         self,
         mode: str = OPTIONS["mode"],
         src: str = OPTIONS["src"],
-        ds: str = OPTIONS["dataset"],
+        ds: str = OPTIONS["ds"],
         **fetcher_kwargs,
     ):
         """Facade for Argo index fetchers
@@ -748,11 +844,6 @@ class ArgoIndexFetcher:
         _VALIDATORS["src"](self._src)
 
         # Load data source access points:
-        if self._src == "localftp":
-            raise ValueError(
-                "The 'localftp' data source is deprecated. It's been replaced by 'gdac'."
-            )
-
         if self._src not in AVAILABLE_INDEX_SOURCES:
             raise InvalidFetcher(
                 "Requested index fetcher '%s' not available ! "
@@ -785,7 +876,6 @@ class ArgoIndexFetcher:
             )
         # self.fetcher_kwargs = {**fetcher_kwargs}
         self.fetcher_options = {**{"ds": self._dataset_id}, **fetcher_kwargs}
-        self.postproccessor = self.__empty_processor
         self._AccessPoint = None
 
         # Init data structure holders:
@@ -820,7 +910,6 @@ class ArgoIndexFetcher:
             "Fetchers",
             "fetcher",
             "fetcher_options",
-            "postproccessor",
             "index",
             "_loaded",
         ]

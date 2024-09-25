@@ -117,12 +117,12 @@ Combined with the fetcher property ``domain``, it now becomes easy to superimpos
 
 .. code-block:: python
 
-    fetcher = ArgoDataFetcher().float(2901623)
+    fetcher = DataFetcher().float(2901623)
     ds = TopoFetcher(fetcher.domain[0:4], cache=True).to_xarray()
 
 .. code-block:: python
 
-    fig, ax = loader.plot('trajectory', figsize=(10, 10))
+    fig, ax = fetcher.plot('trajectory', figsize=(10, 10))
     ds['elevation'].plot.contourf(levels=np.arange(-6000,0,100), ax=ax, add_colorbar=False)
 
 .. image:: ../../_static/trajectory_topography_sample.png
@@ -143,7 +143,7 @@ Satellite altimeter measurements can be used to check the quality of the Argo pr
 
 .. code-block:: python
 
-    fetcher = ArgoDataFetcher().float(6902745)
+    fetcher = DataFetcher().float(6902745)
     fetcher.plot('qc_altimetry', embed='list')
 
 .. image:: https://data-argo.ifremer.fr/etc/argo-ast9-item13-AltimeterComparison/figures/6902745.png

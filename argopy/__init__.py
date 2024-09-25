@@ -28,8 +28,7 @@ from .fetchers import ArgoIndexFetcher as IndexFetcher  # noqa: E402
 from .xarray import ArgoAccessor  # noqa: E402
 
 # Other Import
-# from . import utils as utilities  # noqa: E402
-from . import utilities  # noqa: E402  # being deprecated until 0.1.15, then remove
+# from . import utils  # noqa: E402
 from . import stores  # noqa: E402
 from . import errors  # noqa: E402
 from . import plot  # noqa: E402
@@ -43,6 +42,7 @@ from .utils import clear_cache, lscache  # noqa: E402
 from .utils import MonitoredThreadPoolExecutor  # noqa: E402, F401
 from .utils import monitor_status as status  # noqa: E402
 from .related import TopoFetcher, OceanOPSDeployments, ArgoNVSReferenceTables, ArgoDocs, ArgoDOI, Assistant  # noqa: E402
+from .extensions import CanyonMED
 
 
 #
@@ -73,12 +73,15 @@ __all__ = (
     "Assistant",  # class
 
     # Submodules:
-    "utilities",  # being deprecated until 0.1.15, then remove
+    # "utils",
     "errors",
     "plot",
     "ArgoColors",  # Class
     "stores",
     "tutorial",
+
+    # Argo xarray accessor extensions
+    "CanyonMED",
 
     # Constants
     "__version__"

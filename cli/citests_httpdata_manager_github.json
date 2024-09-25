@@ -1,0 +1,30 @@
+[
+    {
+        "uri": "https://github.com/euroargodev/argopy-data/raw/master/ftp/dac/csiro/5900865/5900865_prof.nc",
+        "ext": "nc",
+        "sha": "dff6f7de714ad05a4d6c09ef07377c6263bfe54fa99f8d1dc0b5313e3b909316",
+        "type": "application/x-netcdf",
+        "ts": "2024-09-23 13:41:56"
+    },
+    {
+        "uri": "https://github.com/euroargodev/argopy-data/raw/master/ftp/ar_index_global_prof.txt",
+        "ext": "txt",
+        "sha": "332692d1bf34e66520aac05841ef45a1fdb1eb0bacb96dcecaf1f963d9c4e34f",
+        "type": "text/plain",
+        "ts": "2024-09-23 13:41:56"
+    },
+    {
+        "uri": "https://github.com/euroargodev/argopy-data/raw/master/ftp/dac/csiro/5900865/profiles/D5900865_001.nc",
+        "ext": "nc",
+        "sha": "9155e85ef1b48c01d44a24dd080959d7464f698e005269a94acd20beb46a0b1a",
+        "type": "application/x-netcdf",
+        "ts": "2024-09-23 13:41:56"
+    },
+    {
+        "uri": "https://github.com/euroargodev/argopy-data/raw/master/ftp/dac/csiro/5900865/profiles/D5900865_002.nc",
+        "ext": "nc",
+        "sha": "c65eb1888699965bcda9f215fccac07b11d5f86cd9cdf798c97c0fa39054e090",
+        "type": "application/x-netcdf",
+        "ts": "2024-09-23 13:41:56"
+    }
+]

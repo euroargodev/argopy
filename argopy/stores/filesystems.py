@@ -27,6 +27,7 @@ import aiohttp
 import shutil
 import pickle  # nosec B403 only used with internal files/assets
 import json
+import io
 import time
 import tempfile
 import logging
@@ -96,20 +97,34 @@ def new_fs(
         Other arguments passed to :class:`fsspec.filesystem`
 
     """
-    # Load default FSSPEC kwargs:
+    # Merge default FSSPEC kwargs with user defined kwargs:
     default_fsspec_kwargs = {"simple_links": True, "block_size": 0}
     if protocol == "http":
+        client_kwargs = {"trust_env": OPTIONS["trust_env"]}  # Passed to aiohttp.ClientSession
+        if "client_kwargs" in kwargs:
+            client_kwargs = {**client_kwargs, **kwargs['client_kwargs']}
+            kwargs.pop('client_kwargs')
         default_fsspec_kwargs = {
             **default_fsspec_kwargs,
-            **{"client_kwargs": {"trust_env": OPTIONS["trust_env"]}},
+            **{"client_kwargs": {**client_kwargs}},
         }
+        fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
+
     elif protocol == "ftp":
         default_fsspec_kwargs = {
             **default_fsspec_kwargs,
             **{"block_size": 1000 * (2**20)},
         }
-    # Merge default with user arguments:
-    fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
+        fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
+
+    elif protocol == "s3":
+        default_fsspec_kwargs.pop("simple_links")
+        default_fsspec_kwargs.pop("block_size")
+        fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
+
+    else:
+        # Merge default with user arguments:
+        fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
 
     # Create filesystem:
     if not cache:
@@ -245,7 +260,7 @@ class argo_store_proto(ABC):
             )
 
     def _clear_cache_item(self, uri):
-        """Remove medadata and file for fsspec cache uri"""
+        """Remove metadata and file for fsspec cache uri"""
         fn = os.path.join(self.fs.storage[-1], "cache")
         self.fs.load_cache()  # Read set of stored blocks from file and populate self.cached_files
         cache = self.cached_files[-1]
@@ -612,12 +627,27 @@ class httpstore(argo_store_proto):
 
     protocol = "http"
 
-    def curateurl(self, url):
-        """Possibly replace server of a given url by a local argopy option value
+    def __init__(self, *args, **kwargs):
+        # Create a registry that will be used to keep track of all URLs accessed by this store
+        self.urls_registry = Registry(name="Accessed URLs")
+        super().__init__(*args, **kwargs)
 
-        This is intended to be used by tests and dev
+    def open(self, path, *args, **kwargs):
+        path = self.curateurl(path)
+        return super().open(path, *args, **kwargs)
+
+    def exists(self, path, *args, **kwargs):
+        path = self.curateurl(path)
+        return super().exists(path, *args, **kwargs)
+
+    def curateurl(self, url):
+        """Possibly manipulate an url before it's accessed
+
+        This is primarily intended to be used by tests and dev
         """
+        self.urls_registry.commit(url)
         return url
+
         # if OPTIONS["server"] is not None:
         #     # log.debug("Replaced '%s' with '%s'" % (urlparse(url).netloc, OPTIONS["netloc"]))
         #
@@ -645,29 +675,38 @@ class httpstore(argo_store_proto):
         n_attempt: int = 1,
         max_attempt: int = 5,
         cat_opts: dict = {},
+        errors: str = 'raise',
         *args,
         **kwargs,
     ):
         """URL data downloader
 
-        This is basically a fsspec.cat_file that is able tho handle a 429 "Too many requests" error from a server, by
+        This is basically a fsspec.cat_file that is able to handle a 429 "Too many requests" error from a server, by
         waiting and sending requests several time.
         """
 
         def make_request(
-            ffs, url, n_attempt: int = 1, max_attempt: int = 5, cat_opts: dict = {}
+            ffs, url, n_attempt: int = 1, max_attempt: int = 5, cat_opts: dict = {}, errors: str = 'raise',
         ):
             data = None
             if n_attempt <= max_attempt:
                 try:
                     data = ffs.cat_file(url, **cat_opts)
+                except FileNotFoundError as e:
+                    if errors == 'raise':
+                        raise e
+                    elif errors == 'ignore':
+                        log.error('FileNotFoundError raised from: %s' % url)
                 except aiohttp.ClientResponseError as e:
                     if e.status == 413:
-                        log.debug(
-                            "Error %i (Payload Too Large) raised with %s"
-                            % (e.status, url)
-                        )
-                        raise
+                        if errors == 'raise':
+                            raise e
+                        elif errors == 'ignore':
+                            log.error(
+                                "Error %i (Payload Too Large) raised with %s"
+                                % (e.status, url)
+                            )
+
                     elif e.status == 429:
                         retry_after = int(e.headers.get("Retry-After", 5))
                         log.debug(
@@ -679,14 +718,26 @@ class httpstore(argo_store_proto):
                     else:
                         # Handle other client response errors
                         print(f"Error: {e}")
-                except aiohttp.ClientError:
-                    # Handle other request exceptions
-                    # print(f"Error: {e}")
-                    raise
+
+                except aiohttp.ClientError as e:
+                    if errors == 'raise':
+                        raise e
+                    elif errors == 'ignore':
+                        log.error("Error: {e}")
+
+                except fsspec.FSTimeoutError as e:
+                    if errors == 'raise':
+                        raise e
+                    elif errors == 'ignore':
+                        log.error("Error: {e}")
             else:
-                raise ValueError(
-                    f"Error: All attempts failed to download this url: {url}"
-                )
+                if errors == 'raise':
+                    raise ValueError(
+                        f"Error: All attempts failed to download this url: {url}"
+                    )
+                elif errors == 'ignore':
+                    log.error("Error: All attempts failed to download this url: {url}")
+
             return data, n_attempt
 
         url = self.curateurl(url)
@@ -696,14 +747,18 @@ class httpstore(argo_store_proto):
             n_attempt=n_attempt,
             max_attempt=max_attempt,
             cat_opts=cat_opts,
+            errors=errors,
         )
 
         if data is None:
-            raise FileNotFoundError(url)
+            if errors == 'raise':
+                raise FileNotFoundError(url)
+            elif errors == 'ignore':
+                log.error("FileNotFoundError: %s" % url)
 
         return data
 
-    def open_dataset(self, url, **kwargs):
+    def open_dataset(self, url, errors: str = 'raise', **kwargs):
         """Open and decode a xarray dataset from an url
 
         Parameters
@@ -721,11 +776,21 @@ class httpstore(argo_store_proto):
         if "download_url_opts" in kwargs:
             dwn_opts.update(kwargs["download_url_opts"])
         data = self.download_url(url, **dwn_opts)
+        log.info(dwn_opts)
 
-        if data[0:3] != b"CDF":
+        if data is None:
+            if errors == 'raise':
+                raise DataNotFound(url)
+            elif errors == 'ignore':
+                log.error("DataNotFound: %s" % url)
+            return None
+
+        if data[0:3] != b"CDF" and data[0:3] != b'\x89HD':
             raise TypeError(
-                "We didn't get a CDF binary data as expected ! We get: %s" % data
+                "We didn't get a CDF or HDF5 binary data as expected ! We get: %s" % data
             )
+        if data[0:3] == b'\x89HD':
+            data = io.BytesIO(data)
 
         xr_opts = {}
         if "xr_opts" in kwargs:
@@ -794,7 +859,7 @@ class httpstore(argo_store_proto):
                 log.debug("task_fct: This url returned no data: %s" % strUrl(url))
                 return DataNotFound(url), True
             except Exception as e:
-                log.debug("task_fct: Unexpected error when opening a remote dataset: '%s'" % str(e))
+                log.debug("task_fct: Unexpected error when opening the remote dataset '%s':\n'%s'" % (strUrl(url), str(e)))
                 return None, False
 
         def postprocessing_fct(obj, **kwargs):
@@ -1761,7 +1826,9 @@ class httpstore_erddap_auth(httpstore):
         html.append("</thead>")
         html.append("<tbody>")
         html.append(tr_ticklink("login page", self._login_page, self._login_page))
-        html.append(tr_tick("login data", self._login_payload))
+        payload = self._login_payload.copy()
+        payload['password'] = "*" * len(payload['password'])
+        html.append(tr_tick("login data", payload))
         if hasattr(self, "_connected"):
             html.append(tr_tick("connected", "✅" if self._connected else "⛔"))
         else:
@@ -1774,9 +1841,11 @@ class httpstore_erddap_auth(httpstore):
 
     def connect(self):
         try:
+            payload = self._login_payload.copy()
+            payload['password'] = "*" * len(payload['password'])
             log.info(
-                "Try to log-in to '%s' page with %s data ..."
-                % (self._login_page, self._login_payload)
+                "Try to log-in to '%s' page with %s"
+                % (self._login_page, payload)
             )
             self.fs.info(self._login_page)
             self._connected = True
@@ -1794,7 +1863,8 @@ class httpstore_erddap_auth(httpstore):
 
 
 def httpstore_erddap(url: str = "", cache: bool = False, cachedir: str = "", **kwargs):
-    login_page = "%s/login.html" % url.rstrip("/")
+    erddap = OPTIONS['erddap'] if url == "" else url
+    login_page = "%s/login.html" % erddap.rstrip("/")
     login_store = httpstore_erddap_auth(
         cache=cache, cachedir=cachedir, login=login_page, auto=False, **kwargs
     )
@@ -1809,3 +1879,18 @@ def httpstore_erddap(url: str = "", cache: bool = False, cachedir: str = "", **k
         return login_store
     else:
         return httpstore(cache=cache, cachedir=cachedir, **kwargs)
+
+
+class s3store(httpstore):
+    """
+    By default, the s3store will use AWS credentials available in the environment.
+
+    If you want to force an anonymous session, you should use the `anon=True` option.
+
+    In order to avoid a *no credentials found error*, you can use:
+
+    >>> from argopy.utils import has_aws_credentials
+    >>> fs = s3store(anon=not has_aws_credentials())
+
+    """
+    protocol = 's3'

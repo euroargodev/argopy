@@ -40,9 +40,9 @@
     argopy.data_fetchers.erddap_data.Fetch_wmo
     argopy.data_fetchers.erddap_data.Fetch_box
 
-    argopy.data_fetchers.gdacftp_data.FTPArgoDataFetcher
-    argopy.data_fetchers.gdacftp_data.Fetch_wmo
-    argopy.data_fetchers.gdacftp_data.Fetch_box
+    argopy.data_fetchers.gdac_data.FTPArgoDataFetcher
+    argopy.data_fetchers.gdac_data.Fetch_wmo
+    argopy.data_fetchers.gdac_data.Fetch_box
 
     argopy.data_fetchers.argovis_data.ArgovisDataFetcher
     argopy.data_fetchers.argovis_data.Fetch_wmo
@@ -68,6 +68,11 @@
     argopy.utils.list_available_index_src
     argopy.utils.list_standard_variables
     argopy.utils.list_multiprofile_file_variables
+    argopy.utils.list_core_parameters
+    argopy.utils.list_bgc_s_variables
+    argopy.utils.list_bgc_s_parameters
+    argopy.utils.list_radiometry_variables
+    argopy.utils.list_radiometry_parameters
 
     argopy.utils.Chunker
 
@@ -136,6 +141,16 @@
     argopy.related.ArgoDocs.show
     argopy.related.ArgoDocs.js
 
+    argopy.related.ArgoDOI
+    argopy.related.ArgoDOI.search
+    argopy.related.ArgoDOI.file
+    argopy.related.ArgoDOI.dx
+
+    argopy.extensions.CanyonMED
+    argopy.extensions.CanyonMED.predict
+    argopy.extensions.CanyonMED.input
+    argopy.extensions.CanyonMED.output_list
+
     argopy.plot
     argopy.plot.dashboard
     argopy.plot.bar_plot
@@ -143,7 +158,6 @@
     argopy.plot.scatter_plot
     argopy.plot.plot_trajectory
     argopy.plot.latlongrid
-    argopy.plot.discrete_coloring
     argopy.plot.open_sat_altim_report
 
     argopy.plot.ArgoColors
@@ -199,7 +213,38 @@
     argopy.stores.ftpstore.open_dataset
     argopy.stores.ftpstore.open_mfdataset
 
+    argopy.stores.filesystems.httpstore_erddap_auth
+    argopy.stores.httpstore_erddap_auth.get_auth_client
+    argopy.stores.httpstore_erddap_auth.connect
+    argopy.stores.httpstore_erddap_auth.connected
+    argopy.stores.httpstore_erddap_auth.open
+    argopy.stores.httpstore_erddap_auth.glob
+    argopy.stores.httpstore_erddap_auth.exists
+    argopy.stores.httpstore_erddap_auth.store_path
+    argopy.stores.httpstore_erddap_auth.register
+    argopy.stores.httpstore_erddap_auth.cachepath
+    argopy.stores.httpstore_erddap_auth.clear_cache
+    argopy.stores.httpstore_erddap_auth.open_mfdataset
+    argopy.stores.httpstore_erddap_auth.open_mfjson
+
+    argopy.stores.filesystems.httpstore_erddap
+
+    argopy.stores.filesystems.s3store
+    argopy.stores.s3store.open_json
+    argopy.stores.s3store.open_dataset
+    argopy.stores.s3store.read_csv
+    argopy.stores.s3store.open
+    argopy.stores.s3store.glob
+    argopy.stores.s3store.exists
+    argopy.stores.s3store.store_path
+    argopy.stores.s3store.register
+    argopy.stores.s3store.cachepath
+    argopy.stores.s3store.clear_cache
+    argopy.stores.s3store.open_mfdataset
+    argopy.stores.s3store.open_mfjson
+
     argopy.stores.argo_index_proto.ArgoIndexStoreProto
+
     argopy.stores.argo_index_pa.indexstore_pyarrow
     argopy.stores.argo_index_pa.indexstore_pyarrow.load
     argopy.stores.argo_index_pa.indexstore_pyarrow.read_wmo
@@ -251,14 +296,21 @@
     argopy.ArgoIndex.to_dataframe
     argopy.ArgoIndex.to_indexfile
 
+    argopy.stores.argo_index_proto_s3.s3index
+    argopy.stores.argo_index_proto_s3.s3index_core
+    argopy.stores.argo_index_proto_s3.s3index_bgc_bio
+    argopy.stores.argo_index_proto_s3.s3index_bgc_synthetic
+    argopy.stores.argo_index_proto_s3.search_s3
+
     argopy.xarray.ArgoAccessor.point2profile
     argopy.xarray.ArgoAccessor.profile2point
     argopy.xarray.ArgoAccessor.interp_std_levels
     argopy.xarray.ArgoAccessor.groupby_pressure_bins
     argopy.xarray.ArgoAccessor.teos10
     argopy.xarray.ArgoAccessor.create_float_source
-    argopy.xarray.ArgoAccessor.filter_qc
+    argopy.xarray.ArgoAccessor.transform_data_mode
     argopy.xarray.ArgoAccessor.filter_data_mode
+    argopy.xarray.ArgoAccessor.filter_qc
     argopy.xarray.ArgoAccessor.filter_scalib_pres
     argopy.xarray.ArgoAccessor.filter_researchmode
     argopy.xarray.ArgoAccessor.cast_types
@@ -267,4 +319,10 @@
     argopy.xarray.ArgoAccessor.list_WMO_CYC
 
     argopy.xarray.ArgoEngine
+
+    argopy.extensions.register_argo_accessor
+    argopy.extensions.ArgoAccessorExtension
+    argopy.extensions.CanyonMED
+
+    argopy.errors.InvalidDatasetStructure
 

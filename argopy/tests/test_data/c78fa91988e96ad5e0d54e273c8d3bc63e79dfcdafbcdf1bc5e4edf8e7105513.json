@@ -1,348 +1,354 @@
 {
-  "@graph" : [ {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R12/current/",
-    "@type" : "skos:Collection",
-    "alternative" : "HISTORY_STEP",
-    "creator" : "Argo Data Management Team",
-    "date" : "2020-04-08 03:00:04.0",
-    "description" : "Data processing step codes for history record. Argo netCDF variable TRANS_SYSTEM is populated by R12 altLabel.",
-    "publisher" : "Natural Environment Research Council",
-    "title" : "Argo history processing step codes",
-    "RE_RegisterManager" : "British Oceanographic Data Centre",
-    "RE_RegisterOwner" : "Argo Data Management Team",
-    "comment" : "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
-    "seeAlso" : "https://github.com/nvs-vocabs/R12",
-    "versionInfo" : "1",
-    "altLabel" : "HISTORY_STEP",
-    "member" : [ "http://vocab.nerc.ac.uk/collection/R12/current/ARCA/", "http://vocab.nerc.ac.uk/collection/R12/current/ARFM/", "http://vocab.nerc.ac.uk/collection/R12/current/ARSQ/", "http://vocab.nerc.ac.uk/collection/R12/current/ARGQ/", "http://vocab.nerc.ac.uk/collection/R12/current/ARUP/", "http://vocab.nerc.ac.uk/collection/R12/current/RFMT/", "http://vocab.nerc.ac.uk/collection/R12/current/COOA/", "http://vocab.nerc.ac.uk/collection/R12/current/IGO3/", "http://vocab.nerc.ac.uk/collection/R12/current/ARDU/" ],
-    "prefLabel" : "Argo history processing step codes"
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R12/current/ARCA/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:R12::ARCA",
-    "date" : "2020-04-07 22:59:46.0",
-    "identifier" : "SDN:R12::ARCA",
-    "authoredOn" : "2020-04-07 22:59:46.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R12/current/ARCA/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "ARCA",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Calibration has been performed."
-    },
-    "notation" : "SDN:R12::ARCA",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Calibration performed"
+    "@graph": [
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARDU/",
+            "pav:authoredOn": "2020-04-07 22:59:46.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARDU/1/"
+            },
+            "dce:identifier": "SDN:R12::ARDU",
+            "pav:version": "1",
+            "skos:notation": "SDN:R12::ARDU",
+            "skos:altLabel": "ARDU",
+            "dc:date": "2020-04-07 22:59:46.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Delayed-mode data archived locally and sent to GDACs"
+            },
+            "dc:identifier": "SDN:R12::ARDU",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Delayed-data have been archived locally and sent to the Global Data Assembly Centres (GDACs)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARGQ/",
+            "pav:authoredOn": "2020-04-07 22:59:46.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARGQ/1/"
+            },
+            "dce:identifier": "SDN:R12::ARGQ",
+            "pav:version": "1",
+            "skos:notation": "SDN:R12::ARGQ",
+            "skos:altLabel": "ARGQ",
+            "dc:date": "2020-04-07 22:59:46.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Automatic QC of real-time data performed"
+            },
+            "dc:identifier": "SDN:R12::ARGQ",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Automatic quality-control (QC) of data reported in real-time has been performed."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R12/current/IGO3/",
+            "pav:authoredOn": "2020-04-07 22:59:46.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R12/current/IGO3/1/"
+            },
+            "dce:identifier": "SDN:R12::IGO3",
+            "pav:version": "1",
+            "skos:notation": "SDN:R12::IGO3",
+            "skos:altLabel": "IGO3",
+            "dc:date": "2020-04-07 22:59:46.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Duplicates checking performed"
+            },
+            "dc:identifier": "SDN:R12::IGO3",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Checking for duplicates has been performed."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R12/current/COOA/",
+            "pav:authoredOn": "2020-04-07 22:59:46.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R12/current/COOA/1/"
+            },
+            "dce:identifier": "SDN:R12::COOA",
+            "pav:version": "1",
+            "skos:notation": "SDN:R12::COOA",
+            "skos:altLabel": "COOA",
+            "dc:date": "2020-04-07 22:59:46.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Coriolis objective analysis performed"
+            },
+            "dc:identifier": "SDN:R12::COOA",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Coriolis objective analysis performed."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARCA/",
+            "pav:authoredOn": "2020-04-07 22:59:46.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARCA/1/"
+            },
+            "dce:identifier": "SDN:R12::ARCA",
+            "pav:version": "1",
+            "skos:notation": "SDN:R12::ARCA",
+            "skos:altLabel": "ARCA",
+            "dc:date": "2020-04-07 22:59:46.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Calibration performed"
+            },
+            "dc:identifier": "SDN:R12::ARCA",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Calibration has been performed."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARFM/",
+            "pav:authoredOn": "2020-04-07 22:59:46.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARFM/1/"
+            },
+            "dce:identifier": "SDN:R12::ARFM",
+            "pav:version": "1",
+            "skos:notation": "SDN:R12::ARFM",
+            "skos:altLabel": "ARFM",
+            "dc:date": "2020-04-07 22:59:46.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Raw data converted to a processing format"
+            },
+            "dc:identifier": "SDN:R12::ARFM",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Raw data from telecommunications system has been converted to a processing format."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARUP/",
+            "pav:authoredOn": "2020-04-07 22:59:46.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARUP/1/"
+            },
+            "dce:identifier": "SDN:R12::ARUP",
+            "pav:version": "1",
+            "skos:notation": "SDN:R12::ARUP",
+            "skos:altLabel": "ARUP",
+            "dc:date": "2020-04-07 22:59:46.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Real-time data archived locally and sent to GDACs"
+            },
+            "dc:identifier": "SDN:R12::ARUP",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Real-time data have been archived locally and sent to the Global Data Assembly Centres (GDACs)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R12/current/RFMT/",
+            "pav:authoredOn": "2020-04-07 22:59:46.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R12/current/RFMT/1/"
+            },
+            "dce:identifier": "SDN:R12::RFMT",
+            "pav:version": "1",
+            "skos:notation": "SDN:R12::RFMT",
+            "skos:altLabel": "RFMT",
+            "dc:date": "2020-04-07 22:59:46.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Hexadecimal format reported by the buoy converted to our standard format using reformat software"
+            },
+            "dc:identifier": "SDN:R12::RFMT",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Reformat software to convert hexadecimal format reported by the buoy to our standard format."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARSQ/",
+            "pav:authoredOn": "2020-04-07 22:59:46.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARSQ/1/"
+            },
+            "dce:identifier": "SDN:R12::ARSQ",
+            "pav:version": "1",
+            "skos:notation": "SDN:R12::ARSQ",
+            "skos:altLabel": "ARSQ",
+            "dc:date": "2020-04-07 22:59:46.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Delayed-mode QC performed"
+            },
+            "dc:identifier": "SDN:R12::ARSQ",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Delayed-mode quality-control (QC) has been performed."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R12/current/",
+            "skos:member": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARDU/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARGQ/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R12/current/IGO3/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R12/current/COOA/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARCA/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARFM/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARUP/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R12/current/ARSQ/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R12/current/RFMT/"
+                }
+            ],
+            "@type": "skos:Collection",
+            "dc:publisher": "Natural Environment Research Council",
+            "dc:description": "Data processing step codes for history record. Argo netCDF variable TRANS_SYSTEM is populated by R12 altLabel.",
+            "dc:title": "Argo history processing step codes",
+            "skos:prefLabel": "Argo history processing step codes",
+            "owl:versionInfo": "1",
+            "dc:date": "2020-04-08 03:00:04.0",
+            "skos:altLabel": "HISTORY_STEP",
+            "dc:creator": "Argo Data Management Team",
+            "dc:alternative": "HISTORY_STEP",
+            "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+            "grg:RE_RegisterOwner": "Argo Data Management Team",
+            "grg:RE_RegisterManager": "British Oceanographic Data Centre",
+            "rdfs:seeAlso": {
+                "@id": "https://github.com/nvs-vocabs/R12"
+            }
+        }
+    ],
+    "@context": {
+        "cpm": "http://purl.org/voc/cpm#",
+        "qudt": "https://qudt.org/2.1/schema/qudt#",
+        "void": "http://rdfs.org/ns/void#",
+        "pav": "http://purl.org/pav/",
+        "owl": "http://www.w3.org/2002/07/owl#",
+        "dce": "http://purl.org/dc/elements/1.1/",
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "iop": "https://w3id.org/iadopt/ont#",
+        "ns1": "http://www.w3.org/ns/dx/prof/",
+        "puv": "https://w3id.org/env/puv#",
+        "semapv": "http://w3id.org/semapv/vocab/",
+        "dct": "http://purl.org/dc/terms/",
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "reg": "http://purl.org/linked-data/registry#",
+        "sssom": "https://w3id.org/sssom/schema/",
+        "dcat": "http://www.w3.org/ns/dcat#",
+        "grg": "http://www.isotc211.org/schemas/grg/",
+        "prov": "https://www.w3.org/ns/prov#",
+        "dc": "http://purl.org/dc/terms/"
     }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R12/current/ARDU/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:R12::ARDU",
-    "date" : "2020-04-07 22:59:46.0",
-    "identifier" : "SDN:R12::ARDU",
-    "authoredOn" : "2020-04-07 22:59:46.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R12/current/ARDU/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "ARDU",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Delayed-data have been archived locally and sent to the Global Data Assembly Centres (GDACs)."
-    },
-    "notation" : "SDN:R12::ARDU",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Delayed-mode data archived locally and sent to GDACs"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R12/current/ARFM/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:R12::ARFM",
-    "date" : "2020-04-07 22:59:46.0",
-    "identifier" : "SDN:R12::ARFM",
-    "authoredOn" : "2020-04-07 22:59:46.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R12/current/ARFM/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "ARFM",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Raw data from telecommunications system has been converted to a processing format."
-    },
-    "notation" : "SDN:R12::ARFM",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Raw data converted to a processing format"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R12/current/ARGQ/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:R12::ARGQ",
-    "date" : "2020-04-07 22:59:46.0",
-    "identifier" : "SDN:R12::ARGQ",
-    "authoredOn" : "2020-04-07 22:59:46.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R12/current/ARGQ/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "ARGQ",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Automatic quality-control (QC) of data reported in real-time has been performed."
-    },
-    "notation" : "SDN:R12::ARGQ",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Automatic QC of real-time data performed"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R12/current/ARSQ/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:R12::ARSQ",
-    "date" : "2020-04-07 22:59:46.0",
-    "identifier" : "SDN:R12::ARSQ",
-    "authoredOn" : "2020-04-07 22:59:46.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R12/current/ARSQ/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "ARSQ",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Delayed-mode quality-control (QC) has been performed."
-    },
-    "notation" : "SDN:R12::ARSQ",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Delayed-mode QC performed"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R12/current/ARUP/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:R12::ARUP",
-    "date" : "2020-04-07 22:59:46.0",
-    "identifier" : "SDN:R12::ARUP",
-    "authoredOn" : "2020-04-07 22:59:46.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R12/current/ARUP/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "ARUP",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Real-time data have been archived locally and sent to the Global Data Assembly Centres (GDACs)."
-    },
-    "notation" : "SDN:R12::ARUP",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Real-time data archived locally and sent to GDACs"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R12/current/COOA/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:R12::COOA",
-    "date" : "2020-04-07 22:59:46.0",
-    "identifier" : "SDN:R12::COOA",
-    "authoredOn" : "2020-04-07 22:59:46.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R12/current/COOA/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "COOA",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Coriolis objective analysis performed."
-    },
-    "notation" : "SDN:R12::COOA",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Coriolis objective analysis performed"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R12/current/IGO3/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:R12::IGO3",
-    "date" : "2020-04-07 22:59:46.0",
-    "identifier" : "SDN:R12::IGO3",
-    "authoredOn" : "2020-04-07 22:59:46.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R12/current/IGO3/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "IGO3",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Checking for duplicates has been performed."
-    },
-    "notation" : "SDN:R12::IGO3",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Duplicates checking performed"
-    }
-  }, {
-    "@id" : "http://vocab.nerc.ac.uk/collection/R12/current/RFMT/",
-    "@type" : "skos:Concept",
-    "dce:identifier" : "SDN:R12::RFMT",
-    "date" : "2020-04-07 22:59:46.0",
-    "identifier" : "SDN:R12::RFMT",
-    "authoredOn" : "2020-04-07 22:59:46.0",
-    "hasCurrentVersion" : "http://vocab.nerc.ac.uk/collection/R12/current/RFMT/1/",
-    "version" : "1",
-    "inDataset" : "http://vocab.nerc.ac.uk/.well-known/void",
-    "deprecated" : "false",
-    "versionInfo" : "1",
-    "altLabel" : "RFMT",
-    "definition" : {
-      "@language" : "en",
-      "@value" : "Reformat software to convert hexadecimal format reported by the buoy to our standard format."
-    },
-    "notation" : "SDN:R12::RFMT",
-    "note" : {
-      "@language" : "en",
-      "@value" : "accepted"
-    },
-    "prefLabel" : {
-      "@language" : "en",
-      "@value" : "Hexadecimal format reported by the buoy converted to our standard format using reformat software"
-    }
-  } ],
-  "@context" : {
-    "inDataset" : {
-      "@id" : "http://rdfs.org/ns/void#inDataset",
-      "@type" : "@id"
-    },
-    "definition" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#definition"
-    },
-    "hasCurrentVersion" : {
-      "@id" : "http://purl.org/pav/hasCurrentVersion",
-      "@type" : "@id"
-    },
-    "identifier" : {
-      "@id" : "http://purl.org/dc/terms/identifier"
-    },
-    "altLabel" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#altLabel"
-    },
-    "date" : {
-      "@id" : "http://purl.org/dc/terms/date"
-    },
-    "authoredOn" : {
-      "@id" : "http://purl.org/pav/authoredOn"
-    },
-    "deprecated" : {
-      "@id" : "http://www.w3.org/2002/07/owl#deprecated"
-    },
-    "version" : {
-      "@id" : "http://purl.org/pav/version"
-    },
-    "prefLabel" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#prefLabel"
-    },
-    "note" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#note"
-    },
-    "versionInfo" : {
-      "@id" : "http://www.w3.org/2002/07/owl#versionInfo"
-    },
-    "notation" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#notation"
-    },
-    "RE_RegisterManager" : {
-      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterManager"
-    },
-    "member" : {
-      "@id" : "http://www.w3.org/2004/02/skos/core#member",
-      "@type" : "@id"
-    },
-    "RE_RegisterOwner" : {
-      "@id" : "http://www.isotc211.org/schemas/grg/RE_RegisterOwner"
-    },
-    "creator" : {
-      "@id" : "http://purl.org/dc/terms/creator"
-    },
-    "description" : {
-      "@id" : "http://purl.org/dc/terms/description"
-    },
-    "title" : {
-      "@id" : "http://purl.org/dc/terms/title"
-    },
-    "comment" : {
-      "@id" : "http://www.w3.org/2000/01/rdf-schema#comment"
-    },
-    "publisher" : {
-      "@id" : "http://purl.org/dc/terms/publisher"
-    },
-    "seeAlso" : {
-      "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",
-      "@type" : "@id"
-    },
-    "alternative" : {
-      "@id" : "http://purl.org/dc/terms/alternative"
-    },
-    "qudt" : "https://qudt.org/2.1/schema/qudt#",
-    "owl" : "http://www.w3.org/2002/07/owl#",
-    "dce" : "http://purl.org/dc/elements/1.1/",
-    "skos" : "http://www.w3.org/2004/02/skos/core#",
-    "ns0" : "http://www.w3.org/ns/dx/conneg/altr#",
-    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
-    "iop" : "https://w3id.org/iadopt/ont#",
-    "ns1" : "http://www.w3.org/ns/dx/prof/",
-    "puv" : "https://w3id.org/env/puv#",
-    "dct" : "http://purl.org/dc/terms/",
-    "reg" : "http://purl.org/linked-data/registry#",
-    "dcat" : "http://www.w3.org/ns/dcat#",
-    "grg" : "http://www.isotc211.org/schemas/grg/",
-    "prov" : "https://www.w3.org/ns/prov#",
-    "cpm" : "http://purl.org/voc/cpm#",
-    "void" : "http://rdfs.org/ns/void#",
-    "pav" : "http://purl.org/pav/",
-    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-    "dc" : "http://purl.org/dc/terms/"
-  }
 }

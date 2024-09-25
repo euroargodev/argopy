@@ -13,6 +13,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   detect-ci-skip:
     name: detect ci skip
@@ -43,24 +47,33 @@ jobs:
       run:
         shell: bash -l {0}
     continue-on-error: ${{ matrix.experimental }}
-    timeout-minutes: 45
+#    timeout-minutes: 45
     strategy:
       max-parallel: 12
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9"]
+        python-version: ["3.9", "3.10"]
         os: ["ubuntu-latest", "windows-latest", "macos-latest"]
         experimental: [false]
 
     steps:
       - name: Energy Estimation - Initialize
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4.0-rc3
         with:
           task: start-measurement
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
+          machine-uuid: ${{ secrets.CARBONDB_MACHINE_UUID_PYTESTS }}
         continue-on-error: true
 
       - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          aws-region: us-west-1
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
 
       - name: Set environment variables
         run: |
@@ -90,7 +103,9 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4.0-rc3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'setup core-pinned'
@@ -107,14 +122,16 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4.0-rc3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'pytest core-pinned'
         continue-on-error: true
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.4.1
+        uses: codecov/codecov-action@v4.5.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml
@@ -132,9 +149,12 @@ jobs:
 
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4.0-rc3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: display-results
+          send-data: true
         continue-on-error: true
 
   all-pinned:
@@ -149,24 +169,33 @@ jobs:
       run:
         shell: bash -l {0}
     continue-on-error: ${{ matrix.experimental }}
-    timeout-minutes: 45
+#    timeout-minutes: 45
     strategy:
       max-parallel: 12
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9"]
+        python-version: ["3.9", "3.10"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
         experimental: [false]
 
     steps:
       - name: Energy Estimation - Initialize
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4.0-rc3
         with:
           task: start-measurement
+          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
+          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
+          machine-uuid: ${{ secrets.CARBONDB_MACHINE_UUID_PYTESTS }}
         continue-on-error: true
 
       - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          aws-region: us-west-1
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
 
       - name: Set environment variables
         run: |
@@ -196,7 +225,9 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4.0-rc3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'setup all-pinned'
@@ -213,14 +244,16 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4.0-rc3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: get-measurement
           label: 'pytest all-pinned'
         continue-on-error: true
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.4.1
+        uses: codecov/codecov-action@v4.5.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml
@@ -238,7 +271,10 @@ jobs:
 
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4.0-rc3
+        env:
+          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
           task: display-results
+          send-data: true
         continue-on-error: true

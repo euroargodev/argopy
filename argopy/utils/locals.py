@@ -8,7 +8,18 @@ import importlib
 from importlib.metadata import version
 import contextlib
 import copy
+import shutil
+import json
 from ..options import OPTIONS
+
+
+PIP_INSTALLED = {}
+try:
+    reqs = subprocess.check_output([sys.executable, '-m', 'pip', 'list', '--format', 'json'])
+    reqs = json.loads(reqs.decode())
+    [PIP_INSTALLED.update({mod['name']: mod['version']}) for mod in reqs]
+except:  # noqa E722
+    pass
 
 
 def get_sys_info():
@@ -79,6 +90,25 @@ def netcdf_and_hdf5_versions():
     return [("libhdf5", libhdf5_version), ("libnetcdf", libnetcdf_version)]
 
 
+def cli_version(cli_name):
+    try:
+        a = subprocess.run([cli_name, '--version'], capture_output=True)
+        return a.stdout.decode().strip("\n").replace(cli_name, '').strip()
+    except:  # noqa E722
+        if shutil.which(cli_name):
+            return "- # installed"
+        else:
+            return "-"
+
+
+def pip_version(pip_name):
+    version = '-'
+    for name in [pip_name, pip_name.replace("_", "-"), pip_name.replace("-", "_")]:
+        if name in PIP_INSTALLED:
+            version = PIP_INSTALLED[name]
+    return version
+
+
 def get_version(module_name):
     ver = '-'
     try:
@@ -87,7 +117,15 @@ def get_version(module_name):
         try:
             ver = version(module_name)
         except importlib.metadata.PackageNotFoundError:
-            pass
+            try:
+                ver = pip_version(module_name)
+            except:  # noqa E722
+                try:
+                    ver = cli_version(module_name)
+                except:  # noqa E722
+                    pass
+    if sum([int(v == '0') for v in ver.split(".")]) == len(ver.split(".")):
+        ver = '-'
     return ver
 
 
@@ -112,7 +150,6 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         "core": sorted(
             [
                 ("argopy", get_version),
-
                 ("xarray", get_version),
                 ("scipy", get_version),
                 ("netCDF4", get_version),
@@ -123,6 +160,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 # will come with xarray, Using 'version' to make API compatible with several fsspec releases
                 ("requests", get_version),
                 ("toolz", get_version),
+                ("decorator", get_version),
             ]
         ),
         "ext.util": sorted(
@@ -131,6 +169,8 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                     "gsw",
                     get_version,
                 ),  # Used by xarray accessor to compute new variables
+                ("s3fs", get_version),
+                ("boto3", get_version),
                 ("tqdm", get_version),
                 ("zarr", get_version),
             ]
@@ -161,9 +201,8 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 ("bottleneck", get_version),
                 ("cftime", get_version),
                 ("cfgrib", get_version),
-                ("conda", get_version),
+                ("codespell", cli_version),
                 ("flake8", get_version),
-                ("nc_time_axis", get_version),
                 ("numpy", get_version),  # will come with xarray and pandas
                 ("pandas", get_version),  # will come with xarray
                 ("pip", get_version),
@@ -175,9 +214,11 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 ("sphinx", get_version),
             ]
         ),
-        'pip': sorted([
-            ("pytest-reportlog", get_version),
-        ])
+        "pip": sorted(
+            [
+                ("pytest-reportlog", get_version),
+            ]
+        ),
     }
 
     DEPS_blob = {}
@@ -186,18 +227,10 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
         deps_blob = list()
         for modname, ver_f in deps:
             try:
-                if modname in sys.modules:
-                    mod = sys.modules[modname]
-                else:
-                    mod = importlib.import_module(modname)
+                ver = ver_f(modname)
+                deps_blob.append((modname, ver))
             except Exception:
-                deps_blob.append((modname, "-"))
-            else:
-                try:
-                    ver = ver_f(modname)
-                    deps_blob.append((modname, ver))
-                except Exception:
-                    deps_blob.append((modname, "installed"))
+                deps_blob.append((modname, "installed"))
         DEPS_blob[level] = deps_blob
 
     print("\nSYSTEM", file=file)

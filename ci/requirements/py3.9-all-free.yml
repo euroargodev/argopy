@@ -2,21 +2,24 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
-  - python=3.9
+  - python = 3.9
 
 # CORE:
   - aiohttp
-  - erddapy
+  - decorator
+  - erddapy < 2.2.1 # higher versions not compatible with python < 3.10 (https://github.com/ioos/erddapy/issues/359)
   - fsspec
   - netCDF4
   - packaging
   - requests
   - scipy
   - toolz
-  - xarray==2024.2.0
+  - xarray < 2024.3 # while https://github.com/pydata/xarray/issues/8909 is not solved
 
 # EXT.UTIL:
+  - boto3
   - gsw
+  - s3fs
   - tqdm
   - zarr
 
@@ -32,6 +35,7 @@ dependencies:
   - ipykernel
   - ipywidgets
   - matplotlib
+  - pyproj
   - seaborn
 
 # DEV:
@@ -40,9 +44,8 @@ dependencies:
   - bottleneck
   - cfgrib
   - cftime
-#  - conda
+  - codespell
   - flake8
-#  - nc-time-axis
   - numpy
   - pandas
   - pip
@@ -51,6 +54,8 @@ dependencies:
   - pytest-env
   - pytest-localftpserver
   - setuptools
+#  - sphinx
 
+# PIP:
   - pip:
       - pytest-reportlog

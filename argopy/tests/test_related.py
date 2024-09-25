@@ -132,12 +132,12 @@ class Test_ArgoNVSReferenceTables:
                 data = self.nvs.fs.open_json(url)
                 assert isinstance(data, dict)
             elif "xml" in opts:
-                data = self.nvs.fs.fs.cat_file(url)
+                data = self.nvs.fs.download_url(url)
                 assert data[0:5] == b'<?xml'
             else:
                 # log.debug(self.nvs.fs.fs.info(url))
-                data = self.nvs.fs.fs.cat_file(url)
-                assert data[0:7] == b'@prefix'
+                data = self.nvs.fs.download_url(url)
+                assert data[0:6] == b'PREFIX'
         else:
             with pytest.raises(ValueError):
                 self.nvs.get_url(3, fmt=opts)
@@ -318,8 +318,8 @@ def test_invalid_dictionnary_key():
 
 @pytest.mark.parametrize("params", [[6901929, None], [6901929, 12]], indirect=False, ids=['float', 'profile'])
 def test_get_coriolis_profile_id(params, mocked_httpserver):
-    with argopy.set_options(cachedir=tempfile.mkdtemp()):
-        assert isinstance(get_coriolis_profile_id(params[0], params[1], api_server=mocked_server_address), pd.core.frame.DataFrame)
+    with argopy.set_options(cachedir=tempfile.mkdtemp(), server=mocked_server_address):
+        assert isinstance(get_coriolis_profile_id(params[0], params[1]), pd.core.frame.DataFrame)
 
 @pytest.mark.parametrize("params", [[6901929, None], [6901929, 12]], indirect=False, ids=['float', 'profile'])
 def test_get_ea_profile_page(params, mocked_httpserver):
