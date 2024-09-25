@@ -581,33 +581,33 @@ class Lister:
             cache=True,
         )
         measured = None
-        mode = "expert"
-        for params in ["all", "DOXY"]:
-            fetcher = DataFetcher(
-                src="erddap",
-                ds="bgc",
-                cache=True,
-                mode=mode,
-                params=params,
-                measured=measured,
-                indexfs=indexfs,
-            )
-            for access_point in requests_seq:
-                [
-                    add_to_URI(fetcher.profile(*cfg))
-                    for cfg in requests_seq[access_point]
-                    if access_point == "profile"
-                ]
-                [
-                    add_to_URI(fetcher.float(cfg))
-                    for cfg in requests_seq[access_point]
-                    if access_point == "float"
-                ]
-                [
-                    add_to_URI(fetcher.region(cfg))
-                    for cfg in requests_seq[access_point]
-                    if access_point == "region"
-                ]
+        for mode in ['expert', 'standard', 'research']:
+            for params in ["all", "DOXY"]:
+                fetcher = DataFetcher(
+                    src="erddap",
+                    ds="bgc",
+                    cache=True,
+                    mode=mode,
+                    params=params,
+                    measured=measured,
+                    indexfs=indexfs,
+                )
+                for access_point in requests_seq:
+                    [
+                        add_to_URI(fetcher.profile(*cfg))
+                        for cfg in requests_seq[access_point]
+                        if access_point == "profile"
+                    ]
+                    [
+                        add_to_URI(fetcher.float(cfg))
+                        for cfg in requests_seq[access_point]
+                        if access_point == "float"
+                    ]
+                    [
+                        add_to_URI(fetcher.region(cfg))
+                        for cfg in requests_seq[access_point]
+                        if access_point == "region"
+                    ]
 
         for measured in [None, "all", "DOXY"]:
             for params in ["all"]:
