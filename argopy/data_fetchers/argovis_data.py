@@ -81,8 +81,8 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             Argovis API request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
         self.definition = "Argovis Argo data fetcher"
-        self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
-        self.user_mode = kwargs["mode"] if "mode" in kwargs else OPTIONS["mode"]
+        self.dataset_id = OPTIONS["ds"] if ds == "" else ds
+        self.user_mode =  kwargs["mode"] if "mode" in kwargs else OPTIONS["mode"]
         self.server = kwargs["server"] if "server" in kwargs else api_server
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.store_opts = {
@@ -360,7 +360,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         ds = ds.set_coords(coords)
 
         # Cast data types and add variable attributes (not available in the csv download):
-        ds["TIME"] = ds["TIME"].astype("datetime64[ns]")
+        ds["TIME"] = pd.to_datetime(ds["TIME"], utc=True)
         ds = self._add_attributes(ds)
         ds = ds.argo.cast_types()
 

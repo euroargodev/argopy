@@ -78,7 +78,7 @@ class ArgoDataFetcher:
     src: str, optional
          Source of the data to use. Eg: ``erddap``. Set to OPTIONS['src'] by default if empty.
     ds: str, optional
-        Name of the dataset to load. Eg: ``phy``. Set to OPTIONS['dataset'] by default if empty.
+        Name of the dataset to load. Eg: ``phy``. Set to OPTIONS['ds'] by default if empty.
     **fetcher_kwargs: optional
         Additional arguments passed on data source fetcher creation of each access points.
 
@@ -102,7 +102,7 @@ class ArgoDataFetcher:
 
         # Facade options :
         self._mode = OPTIONS["mode"] if mode == "" else mode
-        self._dataset_id = OPTIONS["dataset"] if ds == "" else ds
+        self._dataset_id = OPTIONS["ds"] if ds == "" else ds
         self._src = OPTIONS["src"] if src == "" else src
 
         if self._dataset_id == "bgc":
@@ -112,9 +112,9 @@ class ArgoDataFetcher:
             raise OptionValueError(
                 f"option 'mode' given an invalid value: {self._mode}"
             )
-        if not _VALIDATORS["dataset"](self._dataset_id):
+        if not _VALIDATORS["ds"](self._dataset_id):
             raise OptionValueError(
-                f"option 'dataset' given an invalid value: {self._dataset_id}"
+                f"option 'ds' given an invalid value: {self._dataset_id}"
             )
         if not _VALIDATORS["src"](self._src):
             raise OptionValueError(f"option 'src' given an invalid value: {self._src}")
@@ -817,7 +817,7 @@ class ArgoIndexFetcher:
         self,
         mode: str = OPTIONS["mode"],
         src: str = OPTIONS["src"],
-        ds: str = OPTIONS["dataset"],
+        ds: str = OPTIONS["ds"],
         **fetcher_kwargs,
     ):
         """Facade for Argo index fetchers

@@ -1,5 +1,5 @@
 """
-Argo data fetcher for remote GDAC FTP
+Argo data fetcher for remote GDAC servers
 
 This is not intended to be used directly, only by the facade at fetchers.py
 
@@ -18,18 +18,18 @@ from ..errors import DataNotFound
 from ..stores import ArgoIndex
 from .proto import ArgoDataFetcherProto
 
-log = logging.getLogger("argopy.gdacftp.data")
+log = logging.getLogger("argopy.gdac.data")
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
 dataset_ids = ["phy", "bgc", "bgc-s", "bgc-b"]  # First is default
-api_server = OPTIONS["ftp"]  # API root url
+api_server = OPTIONS["gdac"]  # API root url
 api_server_check = (
     api_server  # URL to check if the API is alive, used by isAPIconnected
 )
 
 
-class FTPArgoDataFetcher(ArgoDataFetcherProto):
-    """Manage access to Argo data from a remote GDAC FTP.
+class GDACArgoDataFetcher(ArgoDataFetcherProto):
+    """Manage access to Argo data from a GDAC server
 
     Warnings
     --------
@@ -50,7 +50,7 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
     ###
     def __init__(
             self,
-            ftp: str = "",
+            gdac: str = "",
             ds: str = "",
             cache: bool = False,
             cachedir: str = "",
@@ -66,8 +66,8 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
 
         Parameters
         ----------
-        ftp: str (optional)
-            Path to the remote FTP directory where the 'dac' folder is located.
+        gdac: str (optional)
+            Path to the local or remote directory where the 'dac' folder is located
         ds: str (optional)
             Dataset to load: 'phy' or 'bgc'
         cache: bool (optional)
@@ -88,15 +88,15 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         progress: bool (optional)
             Show a progress bar or not when fetching data.
         api_timeout: int (optional)
-            FTP request time out in seconds. Set to OPTIONS['api_timeout'] by default.
+            Server request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
         self.timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
-        self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
+        self.dataset_id = OPTIONS["ds"] if ds == "" else ds
         self.user_mode = kwargs["mode"] if "mode" in kwargs else OPTIONS["mode"]
-        self.server = OPTIONS["ftp"] if ftp == "" else ftp
+        self.server = OPTIONS["gdac"] if gdac == "" else gdac
         self.errors = errors
 
-        # Validate server, raise FtpPathError if not valid.
+        # Validate server, raise GdacPathError if not valid.
         check_gdac_path(self.server, errors="raise")
 
         index_file = "core"
@@ -137,10 +137,10 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         self.init(**kwargs)
 
     def __repr__(self):
-        summary = ["<datafetcher.ftp>"]
+        summary = ["<datafetcher.gdac>"]
         summary.append("Name: %s" % self.definition)
         summary.append("Index: %s" % self.indexfs.index_file)
-        summary.append("Host: %s" % self.server)
+        summary.append("Server: %s" % self.server)
         if hasattr(self, "BOX"):
             summary.append("Domain: %s" % self.cname())
         else:
@@ -446,8 +446,8 @@ class FTPArgoDataFetcher(ArgoDataFetcherProto):
         return ds
 
 
-class Fetch_wmo(FTPArgoDataFetcher):
-    """Manage access to GDAC ftp Argo data for: a list of WMOs.
+class Fetch_wmo(GDACArgoDataFetcher):
+    """Manage access to GDAC Argo data for: a list of WMOs.
 
     This class is instantiated when a call is made to these facade access points:
 
@@ -474,7 +474,7 @@ class Fetch_wmo(FTPArgoDataFetcher):
         if "MAX_FILES" in kwargs:
             self._nrows = kwargs["MAX_FILES"]
 
-        self.definition = "Ifremer GDAC ftp Argo data fetcher"
+        self.definition = "Ifremer GDAC Argo data fetcher"
         if self.CYC is not None:
             self.definition = "%s for profiles" % self.definition
         else:
@@ -503,8 +503,8 @@ class Fetch_wmo(FTPArgoDataFetcher):
         return self._list_of_argo_files
 
 
-class Fetch_box(FTPArgoDataFetcher):
-    """Manage access to GDAC ftp Argo data for: a rectangular space/time domain.
+class Fetch_box(GDACArgoDataFetcher):
+    """Manage access to GDAC Argo data for: a rectangular space/time domain.
 
     This class is instantiated when a call is made to these facade access points:
 
@@ -535,7 +535,7 @@ class Fetch_box(FTPArgoDataFetcher):
         if "MAX_FILES" in kwargs:
             self._nrows = kwargs["MAX_FILES"]
 
-        self.definition = "Ifremer GDAC ftp Argo data fetcher for a space/time region"
+        self.definition = "Ifremer GDAC Argo data fetcher for a space/time region"
         return self
 
     @property

@@ -19,7 +19,7 @@ dependencies:
 # EXT.UTIL:
 #  - boto3 = 1.35.22
 #  - gsw = 3.6.19
-#  - s3fs > 2023.12.12
+#  - s3fs = 2024.6.1
 #  - tqdm = 4.66.5
 #  - zarr = 2.18.2
 

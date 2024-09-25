@@ -188,7 +188,7 @@ class Test_teos10:
 @requires_gsw
 @requires_gdac
 class Test_create_float_source:
-    local_ftp = argopy.tutorial.open_dataset("gdac")[0]
+    local_gdac = argopy.tutorial.open_dataset("gdac")[0]
 
     def is_valid_mdata(self, this_mdata):
         """Validate structure of the output dataset """
@@ -209,13 +209,13 @@ class Test_create_float_source:
         return np.all(check)
 
     def test_error_user_mode(self):
-        with argopy.set_options(ftp=self.local_ftp):
+        with argopy.set_options(gdac=self.local_gdac):
             with pytest.raises(InvalidDatasetStructure):
                 ds = ArgoDataFetcher(src="gdac", mode='standard').float([6901929, 2901623]).load().data
                 ds.argo.create_float_source()
 
     def test_opt_force(self):
-        with argopy.set_options(ftp=self.local_ftp):
+        with argopy.set_options(gdac=self.local_gdac):
             expert_ds = ArgoDataFetcher(src="gdac", mode='expert').float([2901623]).load().data
 
             with pytest.raises(OptionValueError):
@@ -232,7 +232,7 @@ class Test_create_float_source:
             assert np.all([self.is_valid_mdata(ds_float_source[k]) for k in ds_float_source.keys()])
 
     def test_filecreate(self):
-        with argopy.set_options(ftp=self.local_ftp):
+        with argopy.set_options(gdac=self.local_gdac):
             expert_ds = ArgoDataFetcher(src="gdac", mode='expert').float([6901929, 2901623]).load().data
 
             N_file = len(np.unique(expert_ds['PLATFORM_NUMBER']))

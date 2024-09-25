@@ -299,9 +299,9 @@ GDAC
 .. autosummary::
     :toctree: generated/
 
-    data_fetchers.gdacftp_data.FTPArgoDataFetcher
-    data_fetchers.gdacftp_data.Fetch_wmo
-    data_fetchers.gdacftp_data.Fetch_box
+    data_fetchers.gdac_data.FTPArgoDataFetcher
+    data_fetchers.gdac_data.Fetch_wmo
+    data_fetchers.gdac_data.Fetch_box
 
 
 Argovis

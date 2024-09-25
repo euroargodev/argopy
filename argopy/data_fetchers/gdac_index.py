@@ -1,5 +1,5 @@
 """
-Argo index fetcher for remote GDAC FTP
+Argo index fetcher for remote GDAC server
 
 This is not intended to be used directly, only by the facade at fetchers.py
 
@@ -16,7 +16,7 @@ from ..options import OPTIONS, check_gdac_path
 from ..plot import dashboard
 
 
-log = logging.getLogger("argopy.gdacftp.index")
+log = logging.getLogger("argopy.gdac.index")
 
 has_pyarrow = importlib.util.find_spec('pyarrow') is not None
 if has_pyarrow:
@@ -30,12 +30,12 @@ else:
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
 dataset_ids = ["phy", "bgc"]  # First is default
-api_server = OPTIONS['ftp']  # API root url
+api_server = OPTIONS['gdac']  # API root url
 api_server_check = api_server  # URL to check if the API is alive, used by isAPIconnected
 
 
-class FTPArgoIndexFetcher(ABC):
-    """ Manage access to Argo index from a remote GDAC FTP """
+class GDACArgoIndexFetcher(ABC):
+    """Manage access to Argo index from a GDAC server"""
     # N_FILES = None
 
     ###
@@ -51,7 +51,7 @@ class FTPArgoIndexFetcher(ABC):
     ###
     def __init__(
         self,
-        ftp: str = "",
+        gdac: str = "",
         ds: str = "",
         cache: bool = False,
         cachedir: str = "",
@@ -63,8 +63,8 @@ class FTPArgoIndexFetcher(ABC):
 
         Parameters
         ----------
-        ftp: str (optional)
-            Path to the remote FTP directory where the 'dac' folder is located.
+        gdac: str (optional)
+            Path to the local or remote directory where the 'dac' folder is located
         ds: str (optional)
             Dataset to load: 'phy' or 'ref' or 'bgc'
         errors: str (optional)
@@ -75,15 +75,15 @@ class FTPArgoIndexFetcher(ABC):
         cachedir: str (optional)
             Path to cache folder
         api_timeout: int (optional)
-            FTP request time out in seconds. Set to OPTIONS['api_timeout'] by default.
+            Server request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
         self.timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
-        self.definition = "Ifremer GDAC ftp Argo index fetcher"
-        self.dataset_id = OPTIONS["dataset"] if ds == "" else ds
-        self.server = OPTIONS['ftp'] if ftp == "" else ftp
+        self.definition = "Ifremer GDAC Argo index fetcher"
+        self.dataset_id = OPTIONS["ds"] if ds == "" else ds
+        self.server = OPTIONS['gdac'] if gdac == "" else gdac
         self.errors = errors
 
-        # Validate server, raise FtpPathError if not valid.
+        # Validate server, raise GdacPathError if not valid.
         check_gdac_path(self.server, errors='raise')
 
         if self.dataset_id == 'phy':
@@ -107,10 +107,10 @@ class FTPArgoIndexFetcher(ABC):
         self.init(**kwargs)
 
     def __repr__(self):
-        summary = ["<indexfetcher.ftp>"]
+        summary = ["<indexfetcher.gdac>"]
         summary.append("Name: %s" % self.definition)
         summary.append("Index: %s" % self.indexfs.index_file)
-        summary.append("FTP: %s" % self.server)
+        summary.append("Server: %s" % self.server)
         summary.append("Domain: %s" % format_oneline(self.cname()))
         if hasattr(self.indexfs, 'index'):
             summary.append("Index loaded: True (%i records)" % self.N_RECORDS)
@@ -177,8 +177,8 @@ class FTPArgoIndexFetcher(ABC):
                 warnings.warn("Dashboard only available for a single float or profile request")
 
 
-class Fetch_wmo(FTPArgoIndexFetcher):
-    """ Manage access to GDAC ftp Argo index for: a list of WMOs, CYCs  """
+class Fetch_wmo(GDACArgoIndexFetcher):
+    """ Manage access to GDAC Argo index for: a list of WMOs, CYCs  """
 
     def init(self, WMO: list = [], CYC=None, **kwargs):
         """ Create Argo index fetcher for WMOs
@@ -217,8 +217,8 @@ class Fetch_wmo(FTPArgoIndexFetcher):
         return self._list_of_argo_files
 
 
-class Fetch_box(FTPArgoIndexFetcher):
-    """ Manage access to GDAC ftp Argo index for: a rectangular space/time domain  """
+class Fetch_box(GDACArgoIndexFetcher):
+    """ Manage access to GDAC Argo index for: a rectangular space/time domain  """
 
     def init(self, box: list, **kwargs):
         """ Create Argo index fetcher
@@ -238,7 +238,7 @@ class Fetch_box(FTPArgoIndexFetcher):
         """
         # We use a full domain definition (x, y, z, t) as argument for compatibility with the other fetchers
         # but at this point, we internally work only with x, y and t.
-        # log.debug("Create FTPArgoIndexFetcher.Fetch_box instance with index BOX: %s" % box)
+        # log.debug("Create GDACArgoIndexFetcher.Fetch_box instance with index BOX: %s" % box)
         self.indexBOX = box.copy()
 
         self._nrows = None
