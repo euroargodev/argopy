@@ -1,7 +1,7 @@
 {
   "name": "parameters",
   "long_name": "All valid requests to https://api-coriolis.ifremer.fr/legacy/parameter?code={code}",
-  "last_update": "2024-09-12T14:13:10.597080+00:00",
+  "last_update": "2024-09-20T09:27:55.145057+00:00",
   "data": {
     "valid_codes": [
       "9",

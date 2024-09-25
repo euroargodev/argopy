@@ -110,7 +110,6 @@ class ErddapREFDataFetcher(ErddapArgoDataFetcher):
 
         return this
 
-
     @property
     def _minimal_vlist(self):
         """Return the minimal list of variables to retrieve measurements for"""

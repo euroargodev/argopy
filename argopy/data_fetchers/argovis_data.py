@@ -528,7 +528,12 @@ class Fetch_box(ArgovisDataFetcher):
                 )
                 boxes = self.Chunker.fit_transform()
                 for box in boxes:
-                    urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())
+                    opts = {
+                        "ds": self.dataset_id,
+                        "fs": self.fs,
+                        "server": self.server,
+                    }
+                    urls.append(Fetch_box(box=box, **opts).get_url())
             else:
                 urls.append(self.get_url())
         else:
@@ -556,6 +561,16 @@ class Fetch_box(ArgovisDataFetcher):
             )
             boxes = self.Chunker.fit_transform()
             for box in boxes:
-                urls.append(Fetch_box(box=box, ds=self.dataset_id).get_url())
+                opts = {
+                    "ds": self.dataset_id,
+                    "fs": self.fs,
+                    "server": self.server,
+                }
+                urls.append(
+                    Fetch_box(
+                        box=box,
+                        **opts,
+                    ).get_url()
+                )
 
         return self.url_encode(urls)

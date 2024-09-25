@@ -2,12 +2,12 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
-  - python = 3.9
+  - python = 3.12
 
 # CORE:
   - aiohttp
   - decorator
-  - erddapy < 2.2.1 # higher versions not compatible with python < 3.10 (https://github.com/ioos/erddapy/issues/359)
+  - erddapy
   - fsspec
   - netCDF4
   - packaging
