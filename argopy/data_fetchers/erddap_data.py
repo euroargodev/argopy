@@ -705,7 +705,21 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         concat: bool = True,
         max_workers: int = 6,
     ):
-        """Load Argo data and return a xarray.DataSet"""
+        """Load Argo data and return a xarray.DataSet
+
+        Parameters
+        ----------
+        errors: str, default='ignore'
+            Define how to handle errors raised during data URIs fetching:
+
+                - 'ignore' (default): Do not stop processing, simply issue a debug message in logging console
+                - 'silent':  Do not stop processing and do not issue log message
+                - 'raise': Raise any error encountered
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+        """
 
         URI = self.uri  # Call it once
 
