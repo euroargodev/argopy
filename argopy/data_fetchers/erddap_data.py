@@ -27,6 +27,7 @@ import warnings
 from ..options import OPTIONS
 from ..utils.format import format_oneline
 from ..utils.lists import list_bgc_s_variables, list_core_parameters
+from ..utils.decorators import deprecated
 from ..errors import ErddapServerError, DataNotFound
 from ..stores import httpstore, has_distributed, distributed
 from ..stores import (
@@ -34,6 +35,7 @@ from ..stores import (
 )  # make sure we work with the Pandas index store
 from ..utils import is_list_of_strings, to_list, Chunker
 from .proto import ArgoDataFetcherProto
+from .erddap_data_proprocessor import post_process
 
 
 log = logging.getLogger("argopy.erddap.data")
@@ -148,11 +150,11 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         if parallel:
             if has_distributed and isinstance(parallel_method, distributed.client.Client):
                 warnings.warn("Using experimental Dask client as a parallelization method")
-            elif parallel_method not in ["thread", "seq", "erddap"]:
-                raise ValueError(
-                    "erddap only support multi-threading, use 'thread' or 'erddap' instead of '%s'"
-                    % parallel_method
-                )
+            # elif parallel_method not in ["thread", "seq", "erddap"]:
+            #     raise ValueError(
+            #         "erddap only support multi-threading, use 'thread' or 'erddap' instead of '%s'"
+            #         % parallel_method
+            #     )
         self.parallel = parallel
         self.parallel_method = parallel_method
         self.progress = progress
@@ -258,6 +260,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             log.debug("The erddap server has been modified, updating internal data")
             self._init_erddapy()
 
+    @deprecated('Not serializable')
     def _add_attributes(self, this):  # noqa: C901
         """Add variables attributes not return by erddap requests (csv)
 
@@ -666,6 +669,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             N += getNfromncHeader(url)
         return N
 
+    @deprecated("Not serializable !")
     def post_process(
         self, this_ds, add_dm: bool = True, URI: list = None
     ):  # noqa: C901
@@ -788,12 +792,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         add_dm = self.dataset_id in ["bgc", "bgc-s"] if add_dm is None else bool(add_dm)
 
         # Download data
+        results = []
         if not self.parallel:
             if len(URI) == 1:
                 try:
                     # log_argopy_callerstack()
                     results = self.fs.open_dataset(URI[0])
-                    results = self.post_process(results, add_dm=add_dm, URI=URI)
+                    results = post_process(results, add_dm=add_dm, URI=URI)
                 except ClientResponseError as e:
                     if "Proxy Error" in e.message:
                         raise ErddapServerError(
@@ -820,14 +825,14 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                         errors=errors,
                         concat=concat,
                         concat_dim="N_POINTS",
-                        preprocess=self.post_process,
+                        preprocess=post_process,
                         preprocess_opts={"add_dm": False, "URI": URI},
                         final_opts={"data_vars": "all"},
                     )
                     if results is not None:
                         if self.progress:
                             print("Final post-processing of the merged dataset () ...")
-                        results = self.post_process(
+                        results = post_process(
                             results, **{"add_dm": add_dm, "URI": URI}
                         )
                 except ClientResponseError as e:
@@ -843,30 +848,53 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                         errors=errors,
                         concat=concat,
                         concat_dim="N_POINTS",
-                        preprocess=self.post_process,
-                        preprocess_opts={"add_dm": False, "URI": URI},
-                        final_opts={"data_vars": "all"},
-                    )
-                elif has_distributed and isinstance(self.parallel_method, distributed.client.Client):
-                    results = self.fs.open_mfdataset(
-                        URI,
-                        method=self.parallel_method,
-                        progress=self.progress,
-                        max_workers=max_workers,
-                        errors=errors,
-                        concat=concat,
-                        concat_dim="N_POINTS",
-                        preprocess=self.post_process,
+                        preprocess=post_process,
                         preprocess_opts={"add_dm": False, "URI": URI},
                         final_opts={"data_vars": "all"},
                     )
 
+                elif has_distributed and isinstance(self.parallel_method, distributed.client.Client):
+                    preprocess_opts = {'add_dm': False, 'dataset_id': self.dataset_id}
+                    results = self.fs.open_mfdataset(
+                        URI,
+                        method=self.parallel_method,
+                        open_dataset_opts={'errors': 'ignore', 'download_url_opts': {'errors': 'ignore'}},
+                        progress=False,
+                        errors=errors,
+                        concat=concat,
+                        concat_dim="N_POINTS",
+                        preprocess=post_process,
+                        preprocess_opts=preprocess_opts,
+                        final_opts={"data_vars": "all"},
+                    )
+
+                else:
+                    preprocess_opts = {'add_dm': False, 'dataset_id': self.dataset_id}
+                    results = self.fs.open_mfdataset(
+                        URI,
+                        method=self.parallel_method,
+                        open_dataset_opts={'errors': 'ignore', 'download_url_opts': {'errors': 'ignore'}},
+                        progress=False,
+                        errors=errors,
+                        concat=concat,
+                        concat_dim="N_POINTS",
+                        preprocess=post_process,
+                        preprocess_opts=preprocess_opts,
+                        final_opts={"data_vars": "all"},
+                    )
+
+
                 if concat:
                     if results is not None:
                         if self.progress:
-                            print("Final post-processing of the merged dataset () ...")
-                        results = self.post_process(
-                            results, **{"add_dm": add_dm, "URI": URI}
+                            print("Final post-processing of the merged dataset ...")
+                        preprocess_opts = {'add_dm': False, 'dataset_id': self.dataset_id}
+                        if self.dataset_id in ['bgc', 'bgc-s']:
+                            preprocess_opts = {'add_dm': True,
+                                               'dataset_id': self.dataset_id,
+                                               'indexfs': self.indexfs}
+                        results = post_process(
+                            results, **preprocess_opts
                         )
             except DataNotFound:
                 if self.dataset_id in ["bgc", "bgc-s"] and len(self._bgc_vlist_measured) > 0:
