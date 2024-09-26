@@ -20,6 +20,15 @@ def pre_process(
         >>> from distributed.protocol.serialize import ToPickle
         >>> serialize(ToPickle(post_process))
 
+
+    Parameters
+    ----------
+    ds: :class:`xarray.Dataset`
+        Dataset to process
+
+    Returns
+    -------
+    :class:`xarray.Dataset`
     """
     if this_ds is None:
         return None
@@ -44,8 +53,6 @@ def pre_process(
 
     # Cast data types:
     this_ds = this_ds.argo.cast_types()
-    # if '999' in to_list(np.unique(this_ds['PLATFORM_NUMBER'].values)):
-    #     log.error(this_ds.attrs)
 
     # With BGC, some points may not have a PLATFORM_NUMBER !
     # So, we remove these
