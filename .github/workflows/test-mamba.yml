@@ -1,5 +1,4 @@
 name: Debug libmamba
-# CI tests ran every time new code is pushed to the repo
 
 on:
   workflow_dispatch: # allows you to trigger the workflow run manually
