@@ -7,10 +7,10 @@ from ..utils import to_list, UriCName
 from ..utils import list_bgc_s_parameters
 
 
-def post_process(
+def pre_process(
         this_ds, add_dm: bool = True, dataset_id: str = 'phy', **kwargs
 ):  # noqa: C901
-    """Post-processor of a xarray.DataSet created from a netcdf erddap response
+    """Pre-processor of a xarray.DataSet created from a netcdf erddap response
 
     This method can also be applied on a regular dataset to re-enforce format compliance
 
