@@ -559,8 +559,6 @@ class ArgoDataFetcher:
             )
         xds = self.fetcher.to_xarray(**kwargs)
         xds = self.postprocess(xds)
-        if xds is not None:
-            xds = xds.load()
 
         return xds
 
