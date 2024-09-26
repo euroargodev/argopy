@@ -102,6 +102,7 @@ jobs:
         run: |
           echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-core-free.yml" >> $GITHUB_ENV
           echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
+          echo "LOG_FILE=argopy-tests-Core-Free-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
 
       - name: Setup Micromamba ${{ matrix.python-version }}
         uses: mamba-org/setup-micromamba@v1
@@ -109,7 +110,7 @@ jobs:
           environment-name: argopy-tests
           environment-file: ${{ env.CONDA_ENV_FILE }}
           init-shell: bash
-          cache-environment: true
+          cache-environment: false
           cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
           create-args: >-
             python=${{matrix.python-version}}
@@ -235,7 +236,7 @@ jobs:
           environment-name: argopy-tests
           environment-file: ${{ env.CONDA_ENV_FILE }}
           init-shell: bash
-          cache-environment: true
+          cache-environment: false
           cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
           create-args: >-
             python=${{matrix.python-version}}
