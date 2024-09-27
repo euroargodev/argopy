@@ -1112,7 +1112,8 @@ class httpstore(argo_store_proto):
         For the :class:`distributed.client.Client` and :class:`concurrent.futures.ProcessPoolExecutor` to work appropriately, the pre-processing :class:`collections.abc.Callable` must be serializable. This can be checked with:
 
         >>> from distributed.protocol import serialize
-        >>> serialize(serialize.ToPickle(preprocess_function))
+        >>> from distributed.protocol.serialize import ToPickle
+        >>> serialize(ToPickle(preprocess_function))
         """
         strUrl = lambda x: x.replace("https://", "").replace(  # noqa: E731
             "http://", ""
@@ -1477,7 +1478,8 @@ class httpstore(argo_store_proto):
         For the :class:`distributed.client.Client` and :class:`concurrent.futures.ProcessPoolExecutor` to work appropriately, the pre-processing :class:`collections.abc.Callable` must be serializable. This can be checked with:
 
         >>> from distributed.protocol import serialize
-        >>> serialize(serialize.ToPickle(preprocess_function))
+        >>> from distributed.protocol.serialize import ToPickle
+        >>> serialize(ToPickle(preprocess_function))
         """
         strUrl = lambda x: x.replace("https://", "").replace(  # noqa: E731
             "http://", ""
