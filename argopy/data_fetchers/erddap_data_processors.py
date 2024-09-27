@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import getpass
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse
 from ..utils import to_list, UriCName
 from ..utils import list_bgc_s_parameters
 
@@ -117,7 +117,7 @@ def pre_process(
 
 
 def _add_attributes(this):  # noqa: C901
-    """Add variables attributes not return by erddap requests (csv)
+    """Add variables attributes not return by erddap requests
 
     This is hard coded, but should be retrieved from an API somewhere
     """
@@ -254,5 +254,29 @@ def _add_attributes(this):  # noqa: C901
                 if "casted" in this["%s_DATA_MODE" % param].attrs
                 else 0,
             }
+
+    if "LATITUDE" in this.data_vars or "LATITUDE" in this.coords:
+        this["LATITUDE"].attrs = {
+            "long_name": "Latitude of the station, best estimate",
+            "standard_name": "latitude",
+            "axis": "Y",
+            "valid_min": -90.0,
+            "valid_max": 90.0,
+            "casted": this["LATITUDE"].attrs["casted"]
+            if "casted" in this["LATITUDE"].attrs
+            else 0,
+        }
+
+    if "LONGITUDE" in this.data_vars or "LONGITUDE" in this.coords:
+        this["LONGITUDE"].attrs = {
+            "long_name": "Longitude of the station, best estimate",
+            "standard_name": "longitude",
+            "axis": "X",
+            "valid_min": -180.0,
+            "valid_max": 180.0,
+            "casted": this["LONGITUDE"].attrs["casted"]
+            if "casted" in this["LONGITUDE"].attrs
+            else 0,
+        }
 
     return this
