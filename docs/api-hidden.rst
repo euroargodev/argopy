@@ -40,7 +40,7 @@
     argopy.data_fetchers.erddap_data.Fetch_wmo
     argopy.data_fetchers.erddap_data.Fetch_box
 
-    argopy.data_fetchers.gdac_data.FTPArgoDataFetcher
+    argopy.data_fetchers.gdac_data.GDACArgoDataFetcher
     argopy.data_fetchers.gdac_data.Fetch_wmo
     argopy.data_fetchers.gdac_data.Fetch_box
 
@@ -184,8 +184,11 @@
     argopy.stores.filestore.open_mfdataset
 
     argopy.stores.filesystems.httpstore
+    argopy.stores.httpstore.download_url
     argopy.stores.httpstore.open_json
+    argopy.stores.httpstore.open_mfjson
     argopy.stores.httpstore.open_dataset
+    argopy.stores.httpstore.open_mfdataset
     argopy.stores.httpstore.read_csv
     argopy.stores.httpstore.open
     argopy.stores.httpstore.glob
@@ -194,8 +197,6 @@
     argopy.stores.httpstore.register
     argopy.stores.httpstore.cachepath
     argopy.stores.httpstore.clear_cache
-    argopy.stores.httpstore.open_mfdataset
-    argopy.stores.httpstore.open_mfjson
 
     argopy.stores.filesystems.memorystore
     argopy.stores.memorystore.open

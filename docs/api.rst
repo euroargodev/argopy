@@ -299,7 +299,7 @@ GDAC
 .. autosummary::
     :toctree: generated/
 
-    data_fetchers.gdac_data.FTPArgoDataFetcher
+    data_fetchers.gdac_data.GDACArgoDataFetcher
     data_fetchers.gdac_data.Fetch_wmo
     data_fetchers.gdac_data.Fetch_box
 
