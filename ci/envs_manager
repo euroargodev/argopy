@@ -19,6 +19,8 @@ source ~/miniconda3/etc/profile.d/conda.sh
 # LIST ALL  AVAILABLE ENVIRONMENTS AND THE ASSOCIATED YAML FILE
 #########################
 declare -A ENV_LIST=(
+['argopy-base']="requirements/py3.11-all-free.yml"
+
 ['argopy-docs-dev']="requirements/py3.9-docs-dev.yml"
 ['argopy-docs-rtd']="requirements/py3.9-docs-rtd.yml"
 
@@ -142,6 +144,11 @@ install_conda_env () {
 	# Clean-up
 	/bin/rm tmp.json > /dev/null 2>&1
 	/bin/rm temp_env.yml > /dev/null 2>&1
+
+	# Installing argopy
+	printf "Installing argopy ...\n"
+	pip install -e ..
+
 }
 
 remove_conda_env () {
