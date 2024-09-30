@@ -263,9 +263,10 @@ html_theme_options = {
     'collapse_navigation': False,  # https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/navigation.html#remove-reveal-buttons-for-sidebar-items
     # 'show_toc_level': 3,  # https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/page-toc.html#show-more-levels-of-the-in-page-toc-by-default
     # 'launch_buttons': { "thebe": True}
-    # "announcement": (
+    "announcement": (
     #     "⚠️ <a href='https://argopy.readthedocs.io/en/latest/_static/argopy-cheatsheet.pdf'>Download argopy cheatsheet last version here !</a> ⚠️"
-    # ),
+        "⚠️ This is the last minor version documentation, first major v1.0.0 coming up soon ⚠️"
+    ),
     "icon_links": [
         {
             "name": "Download Cheat sheet",
