@@ -265,7 +265,7 @@ html_theme_options = {
     # 'launch_buttons': { "thebe": True}
     "announcement": (
     #     "⚠️ <a href='https://argopy.readthedocs.io/en/latest/_static/argopy-cheatsheet.pdf'>Download argopy cheatsheet last version here !</a> ⚠️"
-        "⚠️ This is the last minor version documentation, first major v1.0.0 coming up soon ⚠️"
+        "⚠️ v0.1.17 is the last minor version, first major v1.0.0 coming up soon ⚠️"
     ),
     "icon_links": [
         {
