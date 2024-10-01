@@ -346,7 +346,7 @@ Parallelization methods
 2. `multi-processing <https://en.wikipedia.org/wiki/Multiprocessing>`_ with a :class:`concurrent.futures.ProcessPoolExecutor`,
 3. A `Dask Cluster <https://docs.dask.org/en/stable/deploying.html>`_ identified by its `client <https://distributed.dask.org/en/latest/client.html>`_.
 
-The **argopy** parallelization method is set with the ``parallel_method`` option (global or of the fetcher), which can take one of the 3 values: string ``thread``, string ``process`` or the Dask ``client`` object.
+The **argopy** parallelization method is set with the ``parallel`` option (global or of the fetcher), which can take one of the following values: a boolean ``True`` or ``False``, a string: ``thread`` or ``process``, or a Dask ``client`` object. In the case of setting a ``parallel=True`` boolean value, **argopy** will rely on using the default parallelization method defined by the option ``parallel_default_method``.
 
 You have several ways to specify which parallelization methods you want to use:
 
@@ -355,7 +355,7 @@ You have several ways to specify which parallelization methods you want to use:
 .. ipython:: python
     :okwarning:
 
-    argopy.set_options(parallel=True, parallel_method='thread')
+    argopy.set_options(parallel=True)  # Rq: Fall back on using: parallel_default_method='thread'
 
 -  **in a temporary context**:
 
@@ -371,20 +371,6 @@ You have several ways to specify which parallelization methods you want to use:
     :okwarning:
 
     fetcher = DataFetcher(parallel='process')
-
-
-
-.. hint::
-
-    You can pass the method directly with the ``parallel`` option, so that in practice, the following two formulations are equivalent:
-
-    .. ipython:: python
-        :okwarning:
-
-       DataFetcher(parallel=True, parallel_method='thread')
-       DataFetcher(parallel='thread')
-
-
 
 
 
