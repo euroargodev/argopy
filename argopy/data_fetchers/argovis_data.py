@@ -7,7 +7,7 @@ from abc import abstractmethod
 import warnings
 
 from ..stores import httpstore
-from ..options import OPTIONS, DEFAULT
+from ..options import OPTIONS, DEFAULT, VALIDATE, PARALLEL_SETUP
 from ..utils.format import format_oneline
 from ..utils.chunking import Chunker
 from ..utils.decorators import deprecated
@@ -48,7 +48,6 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         cache: bool = False,
         cachedir: str = "",
         parallel: bool = False,
-        parallel_method: str = "thread",
         progress: bool = False,
         chunks: str = "auto",
         chunks_maxsize: dict = {},
@@ -65,10 +64,13 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             Cache data or not (default: False)
         cachedir: str (optional)
             Path to cache folder
-        parallel: bool (optional)
-            Chunk request to use parallel fetching (default: False)
-        parallel_method: str (optional)
-            Define the parallelization method: ``thread``, ``process`` or a :class:`dask.distributed.client.Client`.
+        parallel: bool, str, :class:`distributed.Client`, default: False
+            Set whether to use parallelization or not, and possibly which method to use.
+
+                Possible values:
+                    - ``False``: no parallelization is used
+                    - ``True``: use default method specified by the ``parallel_default_method`` option
+                    - any other values accepted by the ``parallel_default_method`` option
         progress: bool (optional)
             Show a progress bar or not when ``parallel`` is set to True.
         chunks: 'auto' or dict of integers (optional)
@@ -95,12 +97,8 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         }
         self.fs = kwargs["fs"] if "fs" in kwargs else httpstore(**self.store_opts)
 
-        if not isinstance(parallel, bool):
-            parallel_method = parallel
-            parallel = True
+        self.parallelize, self.parallel_method = PARALLEL_SETUP(parallel)
 
-        self.parallel = parallel
-        self.parallel_method = parallel_method
         self.progress = progress
         self.chunks = chunks
         self.chunks_maxsize = chunks_maxsize
@@ -213,15 +211,10 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         """Load Argo data and return a Pandas dataframe"""
 
         # Download data:
-        if not self.parallel:
-            method = "sequential"
-        else:
-            method = self.parallel_method
-
         preprocess_opts = {'key_map': self.key_map}
         df_list = self.fs.open_mfjson(
             self.uri,
-            method=method,
+            method=self.parallel_method,
             preprocess=pre_process,
             preprocess_opts=preprocess_opts,
             progress=self.progress,
@@ -416,7 +409,7 @@ class Fetch_box(ArgovisDataFetcher):
         MaxLen = np.timedelta64(MaxLenTime, "D")
 
         urls = []
-        if not self.parallel:
+        if not self.parallelize:
             # Check if the time range is not larger than allowed (MaxLenTime days):
             if Lt > MaxLen:
                 self.Chunker = Chunker(

@@ -15,7 +15,7 @@ import logging
 
 from ..utils.format import format_oneline, argo_split_path
 from ..utils.decorators import deprecated
-from ..options import OPTIONS, check_gdac_path
+from ..options import OPTIONS, check_gdac_path, PARALLEL_SETUP
 from ..errors import DataNotFound
 from ..stores import ArgoIndex
 from .proto import ArgoDataFetcherProto
@@ -61,7 +61,6 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         dimension: str = "point",
         errors: str = "raise",
         parallel: bool = False,
-        parallel_method: str = "thread",
         progress: bool = False,
         api_timeout: int = 0,
         **kwargs
@@ -85,10 +84,13 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         errors: str (optional)
             If set to 'raise' (default), will raise a NetCDF4FileNotFoundError error if any of the requested
             files cannot be found. If set to 'ignore', the file not found is skipped when fetching data.
-        parallel: bool (optional)
-            Chunk request to use parallel fetching (default: False)
-        parallel_method: str (optional)
-            Define the parallelization method: ``thread``, ``process`` or a :class:`dask.distributed.client.Client`.
+        parallel: bool, str, :class:`distributed.Client`, default: False
+            Set whether to use parallelization or not, and possibly which method to use.
+
+                Possible values:
+                    - ``False``: no parallelization is used
+                    - ``True``: use default method specified by the ``parallel_default_method`` option
+                    - any other values accepted by the ``parallel_default_method`` option
         progress: bool (optional)
             Show a progress bar or not when fetching data.
         api_timeout: int (optional)
@@ -125,15 +127,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         self._post_filter_points = False
 
         # Set method to download data:
-        if not isinstance(parallel, bool):
-            method = parallel
-            parallel = True
-        elif not parallel:
-            method = "sequential"
-        else:
-            method = parallel_method
-        self.parallel = parallel
-        self.method = method
+        self.parallelize, self.parallel_method = PARALLEL_SETUP(parallel)
         self.progress = progress
 
         self.init(**kwargs)
@@ -328,8 +322,8 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         """
         if (
             len(self.uri) > 50
-            and isinstance(self.method, str)
-            and self.method == "sequential"
+            and not self.parallelize
+            and self.parallel_method == "sequential"
         ):
             warnings.warn(
                 "Found more than 50 files to load, this may take a while to process sequentially ! "
@@ -351,7 +345,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         # Download and pre-process data:
         ds = self.fs.open_mfdataset(
             self.uri,
-            method=self.method,
+            method=self.parallel_method,
             concat_dim="N_POINTS",
             concat=True,
             preprocess=pre_process_multiprof,

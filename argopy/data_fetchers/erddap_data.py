@@ -24,7 +24,7 @@ from erddapy.erddapy import ERDDAP, parse_dates
 from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
 import warnings
 
-from ..options import OPTIONS
+from ..options import OPTIONS, PARALLEL_SETUP
 from ..utils.format import format_oneline
 from ..utils.lists import list_bgc_s_variables, list_core_parameters
 from ..utils.decorators import deprecated
@@ -88,7 +88,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         cache: bool = False,
         cachedir: str = "",
         parallel: bool = False,
-        parallel_method: str = "erddap",  # Alternative to 'thread' with a dashboard
         progress: bool = False,
         chunks: str = "auto",
         chunks_maxsize: dict = {},
@@ -107,10 +106,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             Cache data or not (default: False)
         cachedir: str (optional)
             Path to cache folder
-        parallel: bool (optional)
-            Chunk request to use parallel fetching (default: False)
-        parallel_method: str (optional)
-            Define the parallelization method: ``thread``, ``process`` or a :class:`dask.distributed.client.Client`.
+        parallel: bool, str, :class:`distributed.Client`, default: False
+            Set whether to use parallelization or not, and possibly which method to use.
+
+                Possible values:
+                    - ``False``: no parallelization is used
+                    - ``True``: use default method specified by the ``parallel_default_method`` option
+                    - any other values accepted by the ``parallel_default_method`` option
         progress: bool (optional)
             Show a progress bar or not when ``parallel`` is set to True.
         chunks: 'auto' or dict of integers (optional)
@@ -144,23 +146,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         }
         self.fs = kwargs["fs"] if "fs" in kwargs else httpstore(**self.store_opts)
 
-        if not isinstance(parallel, bool):
-            parallel_method = parallel
-            parallel = True
-        if parallel:
-            if has_distributed and isinstance(
-                parallel_method, distributed.client.Client
-            ):
-                warnings.warn(
-                    "Using experimental Dask client as a parallelization method"
-                )
-            # elif parallel_method not in ["thread", "seq", "erddap"]:
-            #     raise ValueError(
-            #         "erddap only support multi-threading, use 'thread' or 'erddap' instead of '%s'"
-            #         % parallel_method
-            #     )
-        self.parallel = parallel
-        self.parallel_method = parallel_method
+        self.parallelize, self.parallel_method = PARALLEL_SETUP(parallel)
+        if self.parallelize and self.parallel_method == 'thread':
+            self.parallel_method = 'erddap'  # Use our custom filestore
         self.progress = progress
         self.chunks = chunks
         self.chunks_maxsize = chunks_maxsize
@@ -728,7 +716,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         # Download data
         results = []
-        if not self.parallel:
+        if not self.parallelize:
             if len(URI) == 1:
                 try:
                     # log_argopy_callerstack()
@@ -1001,7 +989,7 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         -------
         list(str)
         """
-        if not self.parallel:
+        if not self.parallelize:
             chunks = "auto"
             chunks_maxsize = {"wmo": 5}
             if self.dataset_id in ["bgc", "bgc-s"]:
@@ -1096,7 +1084,7 @@ class Fetch_box(ErddapArgoDataFetcher):
         -------
         list(str)
         """
-        if not self.parallel:
+        if not self.parallelize:
             return [self.get_url()]
         else:
             self.Chunker = Chunker(
