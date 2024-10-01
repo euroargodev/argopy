@@ -1080,7 +1080,7 @@ class httpstore(argo_store_proto):
                 - ``thread`` (default): based on :class:`concurrent.futures.ThreadPoolExecutor` with a pool of at most ``max_workers`` threads
                 - ``process``: based on :class:`concurrent.futures.ProcessPoolExecutor` with a pool of at most ``max_workers`` processes
                 - :class:`distributed.client.Client`: use a Dask client
-                - ``seq``: open data sequentially in a simple loop, no parallelization applied
+                - ``sequential``/``seq``: open data sequentially in a simple loop, no parallelization applied
                 - ``erddap``: provides a detailed progress bar for erddap URLs, otherwise based on a :class:`concurrent.futures.ThreadPoolExecutor` with a pool of at most ``max_workers``
         progress: bool, default: False
             Display a progress bar
@@ -1454,7 +1454,7 @@ class httpstore(argo_store_proto):
                 - ``thread`` (default): based on :class:`concurrent.futures.ThreadPoolExecutor` with a pool of at most ``max_workers`` threads
                 - ``process``: based on :class:`concurrent.futures.ProcessPoolExecutor` with a pool of at most ``max_workers`` processes
                 - :class:`distributed.client.Client`: use a Dask client
-                - ``seq``: open data sequentially in a simple loop, no parallelization applied
+                - ``sequential``/``seq``: open data sequentially in a simple loop, no parallelization applied
         progress: bool, default: False
             Display a progress bar if possible
         preprocess: :class:`collections.abc.Callable` (optional)
@@ -1722,7 +1722,7 @@ class ftpstore(httpstore):
         self,  # noqa: C901
         urls,
         max_workers: int = 6,
-        method: str = "seq",
+        method: str = "sequential",
         progress: bool = False,
         concat: bool = True,
         concat_dim="row",
