@@ -4,6 +4,7 @@ This module manage options of the package
 # Like always, largely inspired by xarray code:
 # https://github.com/pydata/xarray/blob/cafab46aac8f7a073a32ec5aa47e213a9810ed54/xarray/core/options.py
 """
+
 import os
 import warnings
 import logging
@@ -11,6 +12,16 @@ import fsspec
 from fsspec.core import split_protocol
 from socket import gaierror
 from urllib.parse import urlparse
+
+try:
+    import distributed
+
+    has_distributed = True
+except ModuleNotFoundError:
+    has_distributed = False
+    distributed = None
+
+
 from .errors import OptionValueError, GdacPathError, ErddapPathError
 
 
@@ -20,7 +31,7 @@ log = logging.getLogger("argopy.options")
 # Define option names as seen by users:
 DATA_SOURCE = "src"
 GDAC = "gdac"
-ERDDAP = 'erddap'
+ERDDAP = "erddap"
 DATASET = "ds"
 CACHE_FOLDER = "cachedir"
 CACHE_EXPIRATION = "cache_expiration"
@@ -31,6 +42,8 @@ SERVER = "server"
 USER = "user"
 PASSWORD = "password"
 ARGOVIS_API_KEY = "argovis_api_key"
+PARALLEL = "parallel"
+PARALLEL_DEFAULT_METHOD = "parallel_default_method"
 
 # Define the list of available options and default values:
 OPTIONS = {
@@ -47,6 +60,8 @@ OPTIONS = {
     USER: None,
     PASSWORD: None,
     ARGOVIS_API_KEY: "guest",  # https://argovis-keygen.colorado.edu
+    PARALLEL: False,
+    PARALLEL_DEFAULT_METHOD: "thread",
 }
 DEFAULT = OPTIONS.copy()
 
@@ -63,7 +78,7 @@ def _positive_integer(value):
 
 def validate_gdac(this_path):
     if this_path != "-":
-        return check_gdac_path(this_path, errors='raise')
+        return check_gdac_path(this_path, errors="raise")
     else:
         log.debug("OPTIONS['%s'] is not defined" % GDAC)
         return False
@@ -71,9 +86,27 @@ def validate_gdac(this_path):
 
 def validate_http(this_path):
     if this_path != "-":
-        return check_erddap_path(this_path, errors='raise')
+        return check_erddap_path(this_path, errors="raise")
     else:
         log.debug("OPTIONS['%s'] is not defined" % ERDDAP)
+        return False
+
+
+def validate_parallel(method):
+    """Possible values: True, False, 'thread', 'process', distributed.client.Client"""
+    if isinstance(method, bool):
+        return True
+    else:
+        return validate_parallel_method(method)
+
+
+def validate_parallel_method(method):
+    """Possible values: 'thread', 'process', distributed.client.Client"""
+    if method in ["thread", "process"]:
+        return True
+    elif has_distributed and isinstance(method, distributed.client.Client):
+        return True
+    else:
         return False
 
 
@@ -91,7 +124,22 @@ _VALIDATORS = {
     USER: lambda x: isinstance(x, str) or x is None,
     PASSWORD: lambda x: isinstance(x, str) or x is None,
     ARGOVIS_API_KEY: lambda x: isinstance(x, str) or x is None,
+    PARALLEL: validate_parallel,
+    PARALLEL_DEFAULT_METHOD: validate_parallel_method,
 }
+
+
+def VALIDATE(key, val):
+    """Return option value if validated otherwise raise an OptionValueError"""
+    if key in _VALIDATORS:
+        if not _VALIDATORS[key](val):
+            raise OptionValueError(
+                f"option '%s' given an invalid value: %s" % (key, val)
+            )
+        else:
+            return val
+    else:
+        raise ValueError(f"option '%s' has no validation method" % key)
 
 
 class set_options:
@@ -100,22 +148,22 @@ class set_options:
     Parameters
     ----------
 
-    ds: str, default: 'phy'
+    ds: str, default: ``phy``
         Define the Dataset to work with: ``phy``, ``bgc`` or ``ref``
 
-    src: str, default: 'erddap'
+    src: str, default: ``erddap``
         Source of fetched data: ``erddap``, ``gdac``, ``argovis``
 
-    mode: str, default: 'standard'
+    mode: str, default: ``standard``
         User mode: ``standard``, ``expert`` or ``research``
 
-    gdac: str, default: 'https://data-argo.ifremer.fr'
+    gdac: str, default: https://data-argo.ifremer.fr
         Default path to be used by the GDAC fetchers and Argo index stores
 
-    erddap: str, default: 'https://erddap.ifremer.fr/erddap'
+    erddap: str, default: https://erddap.ifremer.fr/erddap
         Default server address to be used by the data and index erddap fetchers
 
-    cachedir: str, default: '~/.cache/argopy'
+    cachedir: str, default: ``~/.cache/argopy``
         Absolute path to a local cache directory
 
     cache_expiration: int, default: 86400
@@ -127,7 +175,8 @@ class set_options:
     trust_env: bool, default: False
         Allow for local environment variables to be used to connect to the internet.
 
-        Argopy will get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True and it can also get proxy credentials from ~/.netrc file if this file exists
+        Argopy will get proxies information from HTTP_PROXY / HTTPS_PROXY environment variables if this option is True
+        and it can also get proxy credentials from ~/.netrc file if this file exists
 
     user: str, default: None
         Username to use when a simple authentication is required
@@ -135,17 +184,33 @@ class set_options:
     password: str, default: None
         Password to use when a simple authentication is required
 
-    argovis_api_key: str, default:'guest'
+    argovis_api_key: str, default: ``guest``
         The API key to use when fetching data from the `argovis` data source
 
         You can get a free key at https://argovis-keygen.colorado.edu
+
+    parallel: bool, str, :class:`distributed.Client`, default: False
+        Set whether to use parallelisation or not, and possibly which method to use.
+
+            Possible values:
+                - ``False``: no parallelisation is used
+                - ``True``: use default method specified by the ``parallel_default_method`` option (see below)
+                - any other values accepted by the ``parallel_default_method`` option (see below)
+
+    parallel_default_method: str, :class:`distributed.Client`, default: ``thread``
+        The default parallelisation method to use if the option ``parallel`` is simply set to ``True``.
+
+            Possible values:
+                - ``thread``: use `multi-threading <https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)>`_ with a :class:`concurrent.futures.ThreadPoolExecutor`
+                - ``process``: use `multi-processing <https://en.wikipedia.org/wiki/Multiprocessing>`_ with a :class:`concurrent.futures.ProcessPoolExecutor`
+                -  :class:`distributed.Client`: Use a `Dask Cluster <https://docs.dask.org/en/stable/deploying.html>`_ `client <https://distributed.dask.org/en/latest/client.html>`_.
 
     Other Parameters
     ----------------
     server: : str, default: None
         Other than expected/default server to be uses by a function/method
 
-        This is mostly intended to be used for unit testing
+        This is mostly intended to be used by unit tests.
 
     Examples
     --------
@@ -165,6 +230,7 @@ class set_options:
     A DeprecationWarning can be raised when a deprecated option is set
 
     """
+
     def __init__(self, **kwargs):
         self.old = {}
         for k, v in kwargs.items():
@@ -173,10 +239,12 @@ class set_options:
                     "argument name %r is not in the set of valid options %r"
                     % (k, set(OPTIONS))
                 )
+
             if k == CACHE_FOLDER:
                 os.makedirs(v, exist_ok=True)
-            if k in _VALIDATORS and not _VALIDATORS[k](v):
-                raise OptionValueError(f"option {k!r} given an invalid value: {v!r}")
+
+            VALIDATE(k, v)
+
             self.old[k] = OPTIONS[k]
         self._apply_update(kwargs)
 
@@ -195,9 +263,9 @@ def reset_options():
     set_options(**DEFAULT)
 
 
-def check_erddap_path(path, errors='ignore'):
+def check_erddap_path(path, errors="ignore"):
     """Check if an url points to an ERDDAP server"""
-    fs = fsspec.filesystem('http', ssl=False)
+    fs = fsspec.filesystem("http", ssl=False)
     check1 = fs.exists(path + "/info/index.json")
     if check1:
         return True
@@ -211,52 +279,52 @@ def check_erddap_path(path, errors='ignore'):
         return False
 
 
-def check_gdac_path(path, errors='ignore'):  # noqa: C901
-    """ Check if a path has the expected GDAC server structure
+def check_gdac_path(path, errors="ignore"):  # noqa: C901
+    """Check if a path has the expected GDAC server structure
 
-        Check if a path is structured like:
-        .
-        └── dac
-            ├── aoml
-            ├── ...
-            ├── coriolis
-            ├── ...
-            ├── meds
-            └── nmdis
+    Check if a path is structured like:
+    .
+    └── dac
+        ├── aoml
+        ├── ...
+        ├── coriolis
+        ├── ...
+        ├── meds
+        └── nmdis
 
-        Examples:
-        >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
-        >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
-        >>> check_gdac_path("ftp://usgodae.org/pub/outgoing/argo") # True
-        >>> check_gdac_path("/home/ref-argo/gdac") # True
-        >>> check_gdac_path("https://www.ifremer.fr") # False
-        >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
+    Examples:
+    >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
+    >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
+    >>> check_gdac_path("ftp://usgodae.org/pub/outgoing/argo") # True
+    >>> check_gdac_path("/home/ref-argo/gdac") # True
+    >>> check_gdac_path("https://www.ifremer.fr") # False
+    >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
 
-        Parameters
-        ----------
-        path: str
-            Path name to check, including access protocol
-        errors: str
-            "ignore" or "raise" (or "warn")
+    Parameters
+    ----------
+    path: str
+        Path name to check, including access protocol
+    errors: str
+        "ignore" or "raise" (or "warn")
 
-        Returns
-        -------
-        checked: boolean
-            True if at least one DAC folder is found under path/dac/<dac_name>
-            False otherwise
+    Returns
+    -------
+    checked: boolean
+        True if at least one DAC folder is found under path/dac/<dac_name>
+        False otherwise
     """
     # Create a file system for this path
     if split_protocol(path)[0] is None:
-        fs = fsspec.filesystem('file')
-    elif split_protocol(path)[0] in ['https', 'http']:
-        fs = fsspec.filesystem('http')
-    elif 'ftp' in split_protocol(path)[0]:
+        fs = fsspec.filesystem("file")
+    elif split_protocol(path)[0] in ["https", "http"]:
+        fs = fsspec.filesystem("http")
+    elif "ftp" in split_protocol(path)[0]:
         try:
             host = urlparse(path).hostname
             port = 0 if urlparse(path).port is None else urlparse(path).port
-            fs = fsspec.filesystem('ftp', host=host, port=port)
+            fs = fsspec.filesystem("ftp", host=host, port=port)
         except gaierror:
-            if errors == 'raise':
+            if errors == "raise":
                 raise GdacPathError("Can't get address info (GAIerror) on '%s'" % host)
             elif errors == "warn":
                 warnings.warn("Can't get address info (GAIerror) on '%s'" % host)
@@ -264,7 +332,9 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
             else:
                 return False
     else:
-        raise GdacPathError("Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0])
+        raise GdacPathError(
+            "Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0]
+        )
 
     # dacs = [
     #     "aoml",
@@ -291,7 +361,10 @@ def check_gdac_path(path, errors='ignore'):  # noqa: C901
         return True
 
     elif errors == "raise":
-        raise GdacPathError("This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s" % path)
+        raise GdacPathError(
+            "This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s"
+            % path
+        )
 
     elif errors == "warn":
         warnings.warn("This path is not GDAC compliant:\n%s" % path)
