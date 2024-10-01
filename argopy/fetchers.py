@@ -15,7 +15,7 @@ import pandas as pd
 import numpy as np
 import logging
 
-from .options import OPTIONS, VALIDATE
+from .options import OPTIONS, VALIDATE, PARALLEL_SETUP
 from .errors import (
     InvalidFetcherAccessPoint,
     InvalidFetcher,
@@ -192,10 +192,11 @@ class ArgoDataFetcher:
         summary.append("User mode: %s" % self._mode)
         summary.append("Dataset: %s" % self._dataset_id)
 
-        if isinstance(self._parallel, bool) and self._parallel:
-            parallel_txt = "True [%s]" % OPTIONS['parallel_default_method']
+        do_parallel, parallel_method = PARALLEL_SETUP(self._parallel)
+        if do_parallel:
+            parallel_txt = "True [%s]" % parallel_method
         else:
-            parallel_txt = "%s" % self._parallel
+            parallel_txt = "False"
         summary.append(
             "Performances: cache=%s, parallel=%s"
             % (str(self._cache), parallel_txt)

@@ -142,6 +142,17 @@ def VALIDATE(key, val):
         raise ValueError(f"option '%s' has no validation method" % key)
 
 
+def PARALLEL_SETUP(parallel):
+    parallel = VALIDATE('parallel', parallel)
+    if isinstance(parallel, bool):
+        if parallel:
+            return True, OPTIONS['parallel_default_method']
+        else:
+            return False, 'sequential'
+    else:
+        return True, parallel
+
+
 class set_options:
     """Set options for argopy
 
