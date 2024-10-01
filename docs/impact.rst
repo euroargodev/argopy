@@ -8,6 +8,8 @@ Papers & proceedings mentioning argopy
 
 - Chafik, et.al, "The Faroe-Shetland Channel Jet: Structure, Variability, and Driving Mechanisms", 2023, JGR Oceans, https://doi.org/10.1029/2022JC019083
 
+- Chevillard C, Juza M, Dıaz-Barroso L, Reyes E, Escudier R and Tintore J (2024) Capability of the Mediterranean Argo network to monitor sub-regional climate change indicators. Front. Mar. Sci. 11:1416486. https://doi.org/10.3389/fmars.2024.1416486
+
 - Dan E. Kelley, Jaimie Harbin, Clark Richards, "argoFloats: An R Package for Analyzing Argo Data", 2021 Frontiers in Marine Science, https://doi.org/10.3389/fmars.2021.635922
 
 - de Solo, Sofia M., "What makes a hurricane fall apart? A multi-platform assessment of tropical cyclone weakening By" (2021). Thesis and Dissertations. 5274. https://scholarsjunction.msstate.edu/td/5274
