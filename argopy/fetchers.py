@@ -857,12 +857,9 @@ class ArgoIndexFetcher:
         **fetcher_kwargs: optional
             Additional arguments passed on data source fetcher of each access points.
         """
-        self._mode = mode
-        self._dataset_id = ds
-        self._src = src
-
-        _VALIDATORS["mode"](self._mode)
-        _VALIDATORS["src"](self._src)
+        self._mode = OPTIONS["mode"] if mode == "" else VALIDATE("mode", mode)
+        self._dataset_id = OPTIONS["ds"] if ds == "" else VALIDATE("ds", ds)
+        self._src = OPTIONS["src"] if src == "" else VALIDATE("src", src)
 
         # Load data source access points:
         if self._src not in AVAILABLE_INDEX_SOURCES:
