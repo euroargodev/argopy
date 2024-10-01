@@ -180,8 +180,8 @@ Then, you can fetch data as usual:
     %%time
     ds = loader_par.to_xarray()
 
-Number of chunks
-~~~~~~~~~~~~~~~~
+Number of chunks / ``chunks``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To see how many chunks your request has been split into, you can look at
 the ``uri`` property of the fetcher, it gives you the list of paths
@@ -193,8 +193,7 @@ toward data:
     for uri in loader_par.uri:
         print("http: ... ", "&".join(uri.split("&")[1:-2]))  # Display only the relevant part of each URLs of URI:
 
-To control chunking, you can use the **``chunks``** option that
-specifies the number of chunks in each of the *direction*:
+To control chunking, you can use the ``chunks`` option that specifies the number of chunks in each of the *direction*:
 
 -  ``lon``, ``lat``, ``dpt`` and ``time`` for a **region** fetching,
 -  ``wmo`` for a **float** and **profile** fetching.
@@ -248,22 +247,22 @@ the list of URIs:
     You may notice that if you run the last command with the `argovis` fetcher, you will still have more than 5 chunks (i.e. 65). This is because `argovis` is limited to 3 months length requests. So, for this request that is 3 years long, argopy ends up with 13 chunks along time, times 5 chunks in longitude, leading to 65 chunks in total.
 
 .. warning::
-    The `gdac` fetcher and the `float` and `profile` access points of the `argovis` fetcher use a list of resources than are not chunked but fetched in parallel using a batch queue.
+    The ``gdac`` fetcher and the ``float`` and ``profile`` access points of the ``argovis`` fetcher use a list of resources than are not chunked but fetched in parallel using a batch queue.
 
-Size of chunks
-~~~~~~~~~~~~~~
+Size of chunks / ``chunks_maxsize``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The default chunk size for each access point dimensions are:
 
 ====================== ==================
 Access point dimension Maximum chunk size
 ====================== ==================
-region / **lon**       20 deg
-region / **lat**       20 deg
-region / **dpt**       500 m or db
-region / **time**      90 days
-float / **wmo**        5
-profile / **wmo**      5
+🗺 region / **lon**       20 deg
+🗺 region / **lat**       20 deg
+🗺 region / **dpt**       500 m or db
+🗺 region / **time**      90 days
+🤖 float / **wmo**        5
+⚓ profile / **wmo**      5
 ====================== ==================
 
 These default values are used to chunk data when the ``chunks``
@@ -271,7 +270,7 @@ parameter key is set to ``auto``.
 
 But you can modify the maximum chunk size allowed in each of the
 possible directions. This is done with the option
-**``chunks_maxsize``**.
+``chunks_maxsize``.
 
 For instance if you want to make sure that your chunks are not larger
 then 100 meters (db) in depth (pressure), you can use:
@@ -330,47 +329,63 @@ more that 3 floats each.
 
 .. warning::
 
-    At this point, there is no mechanism to chunk requests along cycle numbers for the ``profile`` access point.
+    At this point, there is no mechanism to chunk requests along cycle numbers for the ``profile`` access point. See :issue:`362`.
+
 
 Parallelization methods
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-They are 2 methods available to set-up your data fetching requests in
-parallel:
+.. versionadded:: v1.0.0
 
-1. `Multi-threading <https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)>`__
-   for all data sources,
-2. `Multi-processing <https://en.wikipedia.org/wiki/Multiprocessing>`__
-   for *gdac* with a local host.
+    All data sources are now compatible with each parallelization methods !
 
-Both options use a pool of
-`threads <https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor>`__
-or
-`processes <https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ProcessPoolExecutor>`__
-managed with the `concurrent futures
-module <https://docs.python.org/3/library/concurrent.futures.html#module-concurrent.futures>`__.
 
-The parallelization method is set with the ``parallel_method`` option of
-the fetcher, which can take as values ``thread`` or ``process``.
+3 methods are available to set-up your data fetching requests in parallel:
 
-Methods available for data sources:
+1. `multi-threading <https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)>`_ with a :class:`concurrent.futures.ThreadPoolExecutor`,
+2. `multi-processing <https://en.wikipedia.org/wiki/Multiprocessing>`_ with a :class:`concurrent.futures.ProcessPoolExecutor`,
+3. A `Dask Cluster <https://docs.dask.org/en/stable/deploying.html>`_ identified by its `client <https://distributed.dask.org/en/latest/client.html>`_.
 
-=================== ====== ==== =======
-**Parallel method** erddap gdac argovis
-=================== ====== ==== =======
-Multi-threading     X      X    X
-Multi-processes            X
-=================== ====== ==== =======
+The **argopy** parallelization method is set with the ``parallel_method`` option (global or of the fetcher), which can take one of the 3 values: string ``thread``, string ``process`` or the Dask ``client`` object.
 
-Note that you can in fact pass the method directly with the ``parallel``
-option, so that in practice, the following two formulations are
-equivalent:
+You have several ways to specify which parallelization methods you want to use:
+
+-  **using argopy global options**:
 
 .. ipython:: python
     :okwarning:
 
-   DataFetcher(parallel=True, parallel_method='thread')
-   DataFetcher(parallel='thread')
+    argopy.set_options(parallel=True, parallel_method='thread')
+
+-  **in a temporary context**:
+
+.. ipython:: python
+    :okwarning:
+
+    with argopy.set_options(parallel='process'):
+        fetcher = DataFetcher()
+
+-  **with an argument in the data fetcher**:
+
+.. ipython:: python
+    :okwarning:
+
+    fetcher = DataFetcher(parallel='process')
+
+
+
+.. hint::
+
+    You can pass the method directly with the ``parallel`` option, so that in practice, the following two formulations are equivalent:
+
+    .. ipython:: python
+        :okwarning:
+
+       DataFetcher(parallel=True, parallel_method='thread')
+       DataFetcher(parallel='thread')
+
+
+
 
 
 Warnings
