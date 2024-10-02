@@ -183,6 +183,57 @@ class ArgoDataFetcher:
                 version="v0.0.17",
             )
 
+    @property
+    def _icon_user_mode(self):
+        if self._mode == "standard":
+            return "🏊"
+        elif self._mode == "research":
+            return "🚣"
+        elif self._mode == "expert":
+            return "🏄"
+
+    @property
+    def _icon_dataset(self):
+        if self._dataset_id in ['bgc', 'bgc-s']:
+            return "🟢"
+        elif self._dataset_id in ['phy']:
+            return "🟡+🔵"
+
+    @property
+    def _icon_performances(self):
+        para = (
+            self.fetcher_options["parallel"]
+            if "parallel" in self.fetcher_options
+            else False
+        )
+        cache = (
+            self.fetcher_options["cache"] if "cache" in self.fetcher_options else False
+        )
+        if not para and not cache:
+            return "🪫"
+        else:
+            return "🔋"
+
+    @property
+    def _repr_user_mode(self):
+        return "%s User mode: %s" % (self._icon_user_mode, self._mode)
+
+    @property
+    def _repr_dataset(self):
+        return "%s Dataset: %s" % (self._icon_dataset, self._dataset_id)
+
+    @property
+    def _repr_performances(self):
+        para = (
+            self.fetcher_options["parallel"]
+            if "parallel" in self.fetcher_options
+            else False
+        )
+        cache = (
+            self.fetcher_options["cache"] if "cache" in self.fetcher_options else False
+        )
+        return "%s Performances: cache=%s, parallel=%s" % (self._icon_performances, str(cache), str(para))
+
     def __repr__(self):
         if self.fetcher:
             summary = [self.fetcher.__repr__()]
@@ -201,6 +252,10 @@ class ArgoDataFetcher:
             "Performances: cache=%s, parallel=%s"
             % (str(self._cache), parallel_txt)
         )
+        summary.append(self._repr_user_mode)
+        summary.append(self._repr_dataset)
+        summary.append(self._repr_performances)
+
         return "\n".join(summary)
 
     def __getattr__(self, key):

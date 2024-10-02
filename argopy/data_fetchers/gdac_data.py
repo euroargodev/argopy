@@ -40,6 +40,8 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
     This class is a prototype not meant to be instantiated directly
 
     """
+    data_source = "gdac"
+
 
     ###
     # Methods to be customised for a specific request
@@ -134,25 +136,21 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
 
     def __repr__(self):
         summary = ["<datafetcher.gdac>"]
-        summary.append("Name: %s" % self.definition)
-        summary.append("Index: %s" % self.indexfs.index_file)
-        summary.append("Server: %s" % self.server)
-        if hasattr(self, "BOX"):
-            summary.append("Domain: %s" % self.cname())
-        else:
-            summary.append("Domain: %s" % format_oneline(self.cname()))
+        summary.append(self._repr_data_source)
+        summary.append(self._repr_access_point)
+        summary.append(self._repr_server)
         if hasattr(self.indexfs, "index"):
-            summary.append("Index loaded: True (%i records)" % self.N_RECORDS)
+            summary.append("📗 Index: %s (%i records)" % (self.indexfs.index_file, self.N_RECORDS))
         else:
-            summary.append("Index loaded: False")
+            summary.append("📕 Index: %s (not loaded)" % self.indexfs.index_file)
         if hasattr(self.indexfs, "search"):
             match = "matches" if self.N_FILES > 1 else "match"
             summary.append(
-                "Index searched: True (%i %s, %0.4f%%)"
+                "📸 Index searched: True (%i %s, %0.4f%%)"
                 % (self.N_FILES, match, self.N_FILES * 100 / self.N_RECORDS)
             )
         else:
-            summary.append("Index searched: False")
+            summary.append("📷 Index searched: False")
         return "\n".join(summary)
 
     def cname(self):
