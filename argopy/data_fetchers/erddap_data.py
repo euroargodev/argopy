@@ -54,6 +54,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
     This class is a prototype not meant to be instantiated directly
 
     """
+    data_source = "erddap"
 
     ###
     # Methods to be customised for a specific erddap request
@@ -232,13 +233,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     def __repr__(self):
         summary = ["<datafetcher.erddap>"]
-        summary.append("Name: %s" % self.definition)
-        summary.append("API: %s" % self.server)
-        summary.append("Domain: %s" % format_oneline(self.cname()))
+        summary.append(self._repr_data_source)
+        summary.append(self._repr_access_point)
+        summary.append(self._repr_server)
         if self.dataset_id in ["bgc", "bgc-s"]:
-            summary.append("Parameters: %s" % self._bgc_vlist_params)
+            summary.append("📗 Parameters: %s" % self._bgc_vlist_params)
             summary.append(
-                "BGC 'must be measured' parameters: %s" % self._bgc_vlist_measured
+                "📕 BGC 'must be measured' parameters: %s" % self._bgc_vlist_measured
             )
         return "\n".join(summary)
 

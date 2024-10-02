@@ -24,6 +24,8 @@ log = logging.getLogger("argopy.argovis.data")
 
 
 class ArgovisDataFetcher(ArgoDataFetcherProto):
+    data_source = "argovis"
+
     ###
     # Methods to be customised for a specific Argovis request
     ###
@@ -127,17 +129,17 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
 
     def __repr__(self):
         summary = ["<datafetcher.argovis>"]
-        summary.append("Name: %s" % self.definition)
-        summary.append("API: %s" % api_server)
+        summary.append(self._repr_data_source)
+        summary.append(self._repr_access_point)
+        summary.append(self._repr_server)
         api_key = self.fs.fs.client_kwargs["headers"]["x-argokey"]
         if api_key == DEFAULT["argovis_api_key"]:
             summary.append(
-                "API KEY: '%s' (get a free key at https://argovis-keygen.colorado.edu)"
+                "🗝 API KEY: '%s' (get a free key at https://argovis-keygen.colorado.edu)"
                 % api_key
             )
         else:
-            summary.append("API KEY: '%s'" % api_key)
-        summary.append("Domain: %s" % format_oneline(self.cname()))
+            summary.append("🗝 API KEY: '%s'" % api_key)
         return "\n".join(summary)
 
     def _add_history(self, this, txt):
