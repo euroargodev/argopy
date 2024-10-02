@@ -865,14 +865,14 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
     def transform_data_mode(self, ds: xr.Dataset, **kwargs):
         """Apply xarray argo accessor transform_data_mode method"""
-        ds = ds.argo.transform_data_mode(**kwargs)
+        ds = ds.argo.datamode.merge(**kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
 
     def filter_data_mode(self, ds: xr.Dataset, **kwargs):
         """Apply xarray argo accessor filter_data_mode method"""
-        ds = ds.argo.filter_data_mode(**kwargs)
+        ds = ds.argo.datamode.filter(**kwargs)
         if ds.argo._type == "point":
             ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         return ds
