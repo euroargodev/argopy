@@ -609,64 +609,64 @@ class Lister:
                         if access_point == "region"
                     ]
 
-        for measured in [None, "all", "DOXY"]:
-            for params in ["all"]:
+        for mode in ['expert', 'standard', 'research']:
+            for measured in ["all", "DOXY"]:
+                for params in ["all"]:
+                    fetcher = DataFetcher(
+                        src="erddap",
+                        ds="bgc",
+                        cache=True,
+                        mode=mode,
+                        params=params,
+                        measured=measured,
+                        indexfs=indexfs,
+                    )
+                    for access_point in requests_seq:
+                        [
+                            add_to_URI(fetcher.profile(*cfg))
+                            for cfg in requests_seq[access_point]
+                            if access_point == "profile"
+                        ]
+                        [
+                            add_to_URI(fetcher.float(cfg))
+                            for cfg in requests_seq[access_point]
+                            if access_point == "float"
+                        ]
+                        [
+                            add_to_URI(fetcher.region(cfg))
+                            for cfg in requests_seq[access_point]
+                            if access_point == "region"
+                        ]
+
+        measured = None
+        for mode in ['expert', 'standard', 'research']:
+            for params in ["all", "DOXY"]:
                 fetcher = DataFetcher(
                     src="erddap",
                     ds="bgc",
                     cache=True,
+                    parallel=True,
                     mode=mode,
                     params=params,
                     measured=measured,
                     indexfs=indexfs,
                 )
-                for access_point in requests_seq:
+                for access_point in requests_par:
                     [
                         add_to_URI(fetcher.profile(*cfg))
-                        for cfg in requests_seq[access_point]
+                        for cfg in requests_par[access_point]
                         if access_point == "profile"
                     ]
                     [
                         add_to_URI(fetcher.float(cfg))
-                        for cfg in requests_seq[access_point]
+                        for cfg in requests_par[access_point]
                         if access_point == "float"
                     ]
                     [
                         add_to_URI(fetcher.region(cfg))
-                        for cfg in requests_seq[access_point]
+                        for cfg in requests_par[access_point]
                         if access_point == "region"
                     ]
-
-        measured = None
-        mode = "expert"
-        for params in ["all", "DOXY"]:
-            fetcher = DataFetcher(
-                src="erddap",
-                ds="bgc",
-                cache=True,
-                parallel=True,
-                parallel_method="erddap",
-                mode=mode,
-                params=params,
-                measured=measured,
-                indexfs=indexfs,
-            )
-            for access_point in requests_par:
-                [
-                    add_to_URI(fetcher.profile(*cfg))
-                    for cfg in requests_par[access_point]
-                    if access_point == "profile"
-                ]
-                [
-                    add_to_URI(fetcher.float(cfg))
-                    for cfg in requests_par[access_point]
-                    if access_point == "float"
-                ]
-                [
-                    add_to_URI(fetcher.region(cfg))
-                    for cfg in requests_par[access_point]
-                    if access_point == "region"
-                ]
 
         # Add more URI from the erddap:
         this_URI.commit(
