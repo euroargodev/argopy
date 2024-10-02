@@ -257,9 +257,7 @@ toward data:
     # Init a parallel fetcher:
     fetcher = DataFetcher(parallel=True).region(box)
 
-    # Display only the relevant part of each URLs of URI:
-    for uri in fetcher.uri:
-        print("http: ... ", "&".join(uri.split("&")[1:-2]))
+    print(len(fetcher.uri))
 
 To control chunking, you can use the ``chunks`` option that specifies the number of chunks in each of the *direction*:
 
@@ -413,22 +411,7 @@ This can go like this:
 
     %%time
     with argopy.set_options(parallel=client):
-        # f = DataFetcher(src='argovis').region([-75, -70, 15, 40, 0, 2000, '2020-01-01', '2021-01-01'])
-        f = DataFetcher(src='argovis').region(this_box())
-        print("%i chunks to process" % len(f.uri))
-        print(f)
-        ds = f.load().data
-        print(ds)
-
-
-On the other hand without parallelisation:
-
-.. ipython:: python
-    :okwarning:
-
-    %%time
-    with argopy.set_options(parallel=False):
-        # f = DataFetcher(src='argovis').region([-75, -70, 15, 40, 0, 2000, '2020-01-01', '2021-01-01'])
+        # f = DataFetcher(src='argovis').region([-75, -70, 25, 40, 0, 1000, '2020-01-01', '2021-01-01'])
         f = DataFetcher(src='argovis').region(this_box())
         print("%i chunks to process" % len(f.uri))
         print(f)
