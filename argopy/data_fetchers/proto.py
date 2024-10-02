@@ -123,13 +123,13 @@ class ArgoDataFetcherProto(ABC):
 
     @property
     def _icon_access_point(self):
-        if self.WMO is not None:
+        if hasattr(self, "WMO"):
             if self.CYC is not None:
                 return "⚓"
             else:
                 return "🤖"
         else:
-            return "🗺"
+            return "🗺 "
 
     @property
     def _icon_data_source(self):
