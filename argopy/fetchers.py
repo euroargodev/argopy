@@ -201,18 +201,20 @@ class ArgoDataFetcher:
 
     @property
     def _icon_performances(self):
-        para = (
-            self.fetcher_options["parallel"]
-            if "parallel" in self.fetcher_options
-            else False
-        )
-        cache = (
-            self.fetcher_options["cache"] if "cache" in self.fetcher_options else False
-        )
-        if not para and not cache:
-            return "🪫"
-        else:
-            return "🔋"
+        score = 0
+        if self._cache:
+            score += 1
+
+        do_parallel, parallel_method = PARALLEL_SETUP(self._parallel)
+        if do_parallel:
+            score += 1
+
+        if score == 0:
+            return "🌥 "
+        elif score == 1:
+            return "🌤 "
+        elif score == 2:
+            return "🌞"
 
     @property
     def _repr_user_mode(self):
@@ -224,15 +226,12 @@ class ArgoDataFetcher:
 
     @property
     def _repr_performances(self):
-        para = (
-            self.fetcher_options["parallel"]
-            if "parallel" in self.fetcher_options
-            else False
-        )
-        cache = (
-            self.fetcher_options["cache"] if "cache" in self.fetcher_options else False
-        )
-        return "%s Performances: cache=%s, parallel=%s" % (self._icon_performances, str(cache), str(para))
+        do_parallel, parallel_method = PARALLEL_SETUP(self._parallel)
+        if do_parallel:
+            parallel_txt = "True [%s]" % parallel_method
+        else:
+            parallel_txt = "False"
+        return "%s Performances: cache=%s, parallel=%s" % (self._icon_performances, str(self._cache), parallel_txt)
 
     def __repr__(self):
         if self.fetcher:
@@ -240,18 +239,7 @@ class ArgoDataFetcher:
         else:
             summary = ["<datafetcher.%s> 'No access point initialised'" % self._src,
                        "Available access points: %s" % ", ".join(self.Fetchers.keys())]
-        summary.append("User mode: %s" % self._mode)
-        summary.append("Dataset: %s" % self._dataset_id)
 
-        do_parallel, parallel_method = PARALLEL_SETUP(self._parallel)
-        if do_parallel:
-            parallel_txt = "True [%s]" % parallel_method
-        else:
-            parallel_txt = "False"
-        summary.append(
-            "Performances: cache=%s, parallel=%s"
-            % (str(self._cache), parallel_txt)
-        )
         summary.append(self._repr_user_mode)
         summary.append(self._repr_dataset)
         summary.append(self._repr_performances)
