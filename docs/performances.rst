@@ -147,10 +147,11 @@ Sometimes you may find that your request takes a long time to fetch, or
 simply does not even succeed. This is probably because you’re trying to
 fetch a large amount of data.
 
-In this case, you can try to let argopy chunks your request into smaller
+In this case, you can try to let **argopy** chunks your request into smaller
 pieces and have them fetched in parallel for you. This is done with the
-argument ``parallel`` of the data fetcher and can be tuned using options
-``chunks`` and ``chunksize``.
+data fetcher argument, or global option, ``parallell`.
+
+Parallelization can futher be tuned using arguments ``chunks`` and ``chunksize``.
 
 This goes by default like this:
 
@@ -163,22 +164,80 @@ This goes by default like this:
     # Instantiate a parallel fetcher:
     loader_par = DataFetcher(src='erddap', parallel=True).region(box)
 
-you can also use the option ``progress`` to display a progress bar
-during fetching:
+Note that you can also use the option ``progress`` to display a progress bar during fetching.
 
-.. ipython:: python
-    :okwarning:
-
-    loader_par = DataFetcher(src='erddap', parallel=True, progress=True).region(box)
-    loader_par
-
-Then, you can fetch data as usual:
+Then, simply trigger data fetching as usual:
 
 .. ipython:: python
     :okwarning:
 
     %%time
-    ds = loader_par.to_xarray()
+    ds = loader_par.to_xarray()  # or .load().data
+
+
+Parallelization methods
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. versionadded:: v1.0.0
+
+    All data sources are now compatible with each parallelization methods !
+
+
+3 methods are available to set-up your data fetching requests in parallel:
+
+1. `multi-threading <https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)>`_ with a :class:`concurrent.futures.ThreadPoolExecutor`,
+2. `multi-processing <https://en.wikipedia.org/wiki/Multiprocessing>`_ with a :class:`concurrent.futures.ProcessPoolExecutor`,
+3. A `Dask Cluster <https://docs.dask.org/en/stable/deploying.html>`_ identified by its `client <https://distributed.dask.org/en/latest/client.html>`_.
+
+The **argopy** parallelization method is set with the ``parallel`` option (global or of the fetcher), which can take one of the following values: a boolean ``True`` or ``False``, a string: ``thread`` or ``process``, or a Dask ``client`` object. In the case of setting a ``parallel=True`` boolean value, **argopy** will rely on using the default parallelization method defined by the option ``parallel_default_method``.
+
+You have several ways to specify which parallelization methods you want to use:
+
+-  **using argopy global options**:
+
+.. ipython:: python
+    :okwarning:
+
+    argopy.set_options(parallel=True)  # Rq: Fall back on using: parallel_default_method='thread'
+
+-  **in a temporary context**:
+
+.. ipython:: python
+    :okwarning:
+
+    with argopy.set_options(parallel='process'):
+        fetcher = DataFetcher()
+
+-  **with an argument in the data fetcher**:
+
+.. ipython:: python
+    :okwarning:
+
+    fetcher = DataFetcher(parallel='process')
+
+
+.. caution::
+
+    Parallelizing your fetcher is useful to handle large region of data,
+    but it can also add a significant overhead on *reasonable* size
+    requests that may lead to degraded performances. So, we do not
+    recommend for you to use the parallel option systematically.
+
+.. caution::
+
+    You may have different dataset sizes with and without the
+    ``parallel`` option. This may happen if one of the chunk data
+    fetching fails. By default, data fetching of multiple resources fails
+    with a warning. You can change this behaviour with the option
+    ``errors`` of the ``to_xarray()`` fetcher methods, just set it to
+    ``raise`` like this:
+
+       .. code:: python
+
+          DataFetcher(parallel=True).region(BOX).to_xarray(errors='raise')
+
+    You can also use ``silent`` to simply hide all messages during fetching.
+
 
 Number of chunks / ``chunks``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -331,66 +390,3 @@ more that 3 floats each.
 
     At this point, there is no mechanism to chunk requests along cycle numbers for the ``profile`` access point. See :issue:`362`.
 
-
-Parallelization methods
-~~~~~~~~~~~~~~~~~~~~~~~
-
-.. versionadded:: v1.0.0
-
-    All data sources are now compatible with each parallelization methods !
-
-
-3 methods are available to set-up your data fetching requests in parallel:
-
-1. `multi-threading <https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)>`_ with a :class:`concurrent.futures.ThreadPoolExecutor`,
-2. `multi-processing <https://en.wikipedia.org/wiki/Multiprocessing>`_ with a :class:`concurrent.futures.ProcessPoolExecutor`,
-3. A `Dask Cluster <https://docs.dask.org/en/stable/deploying.html>`_ identified by its `client <https://distributed.dask.org/en/latest/client.html>`_.
-
-The **argopy** parallelization method is set with the ``parallel`` option (global or of the fetcher), which can take one of the following values: a boolean ``True`` or ``False``, a string: ``thread`` or ``process``, or a Dask ``client`` object. In the case of setting a ``parallel=True`` boolean value, **argopy** will rely on using the default parallelization method defined by the option ``parallel_default_method``.
-
-You have several ways to specify which parallelization methods you want to use:
-
--  **using argopy global options**:
-
-.. ipython:: python
-    :okwarning:
-
-    argopy.set_options(parallel=True)  # Rq: Fall back on using: parallel_default_method='thread'
-
--  **in a temporary context**:
-
-.. ipython:: python
-    :okwarning:
-
-    with argopy.set_options(parallel='process'):
-        fetcher = DataFetcher()
-
--  **with an argument in the data fetcher**:
-
-.. ipython:: python
-    :okwarning:
-
-    fetcher = DataFetcher(parallel='process')
-
-
-
-Warnings
-~~~~~~~~
-
--  Parallelizing your fetcher is useful to handle large region of data,
-   but it can also add a significant overhead on *reasonable* size
-   requests that may lead to degraded performances. So, we do not
-   recommend for you to use the parallel option systematically.
-
--  You may have different dataset sizes with and without the
-   ``parallel`` option. This may happen if one of the chunk data
-   fetching fails. By default, data fetching of multiple resources fails
-   with a warning. You can change this behaviour with the option
-   ``errors`` of the ``to_xarray()`` fetcher methods, just set it to
-   ``raise`` like this:
-
-   .. code:: python
-
-      DataFetcher(parallel=True).region(this_box()).to_xarray(errors='raise');
-
-You can also use ``silent`` to simply hide all messages during fetching.
