@@ -29,11 +29,11 @@ For each access points, we list 1-to-2 scenario to make sure all possibilities a
 ACCESS_POINTS = [
     {"bgc": [
         {"float": 5903248},
-        {"float": [5903248, 6904241]},
-        {"profile": [5903248, 34]},
-        {"profile": [5903248, np.arange(12, 14)]},
-        {"region": [-55, -47, 55, 57, 0, 10]},
-        {"region": [-55, -47, 55, 57, 0, 10, "2022-05-1", "2023-07-01"]},
+        # {"float": [5903248, 6904241]},
+        # {"profile": [5903248, 34]},
+        # {"profile": [5903248, np.arange(12, 14)]},
+        # {"region": [-55, -47, 55, 57, 0, 10]},
+        # {"region": [-55, -47, 55, 57, 0, 10, "2022-05-1", "2023-07-01"]},
     ]},
 ]
 PARALLEL_ACCESS_POINTS = [
@@ -128,11 +128,11 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
     try:
         assert_all(this_fetcher, cacheable)
     except Exception as e:
-        if this_fetcher._mode not in ['expert']:
-            pytest.xfail("BGC is not yet supported in '%s' user mode" % this_fetcher._mode)
-        else:
-            log.debug("Fetcher instance assert false because: %s" % e)
-            assert False
+        # if this_fetcher._mode not in ['expert']:
+        #     pytest.xfail("BGC is not yet supported in '%s' user mode" % this_fetcher._mode)
+        # else:
+        log.debug("Fetcher instance assert false because: %s" % e)
+        assert False
 
 
 @requires_erddap

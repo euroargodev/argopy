@@ -143,15 +143,13 @@ do it at the package level with:
 Parallel data fetching
 ----------------------
 
-Sometimes you may find that your request takes a long time to fetch, or
-simply does not even succeed. This is probably because you’re trying to
-fetch a large amount of data.
+Sometimes you may find that your request takes a long time to fetch, or simply does not even succeed. This is probably
+because you’re trying to fetch a large amount of data.
 
-In this case, you can try to let **argopy** chunks your request into smaller
-pieces and have them fetched in parallel for you. This is done with the
-data fetcher argument, or global option, ``parallell`.
+In this case, you can try to let **argopy** chunks your request into smaller pieces and have them fetched in parallel
+for you. This is done with the data fetcher argument, or global option, ``parallel``.
 
-Parallelization can futher be tuned using arguments ``chunks`` and ``chunksize``.
+Parallelization can be tuned using arguments ``chunks`` and ``chunks_maxsize``.
 
 This goes by default like this:
 
@@ -162,7 +160,7 @@ This goes by default like this:
     box = [-60, -30, 40.0, 60.0, 0.0, 100.0, "2007-01-01", "2007-04-01"]
     
     # Instantiate a parallel fetcher:
-    loader_par = DataFetcher(src='erddap', parallel=True).region(box)
+    f = DataFetcher(parallel=True).region(box)
 
 Note that you can also use the option ``progress`` to display a progress bar during fetching.
 
@@ -172,7 +170,8 @@ Then, simply trigger data fetching as usual:
     :okwarning:
 
     %%time
-    ds = loader_par.to_xarray()  # or .load().data
+    ds = f.to_xarray()  # or .load().data
+
 
 
 Parallelization methods
@@ -217,14 +216,16 @@ You have several ways to specify which parallelization methods you want to use:
 
 
 .. caution::
-
-    Parallelizing your fetcher is useful to handle large region of data,
+    To parallelize your fetcher is useful to handle large region of data,
     but it can also add a significant overhead on *reasonable* size
-    requests that may lead to degraded performances. So, we do not
-    recommend for you to use the parallel option systematically.
+    requests that may lead to degraded performances. So, **we do not
+    recommend for you to use the parallel option systematically**.
+
+    Benchmarking the current **argopy** processing chain has shown that most of the time necessary to fetch data is
+    spent in waiting response for the data server and in merging chunks of data. There is currently no possibility
+    to avoid chunks merging and the data server response time is out of scope for **argopy**.
 
 .. caution::
-
     You may have different dataset sizes with and without the
     ``parallel`` option. This may happen if one of the chunk data
     fetching fails. By default, data fetching of multiple resources fails
@@ -232,9 +233,10 @@ You have several ways to specify which parallelization methods you want to use:
     ``errors`` of the ``to_xarray()`` fetcher methods, just set it to
     ``raise`` like this:
 
-       .. code:: python
+    .. code:: python
 
-          DataFetcher(parallel=True).region(BOX).to_xarray(errors='raise')
+      DataFetcher(parallel=True).region(BOX).to_xarray(errors='raise')
+
 
     You can also use ``silent`` to simply hide all messages during fetching.
 
@@ -249,26 +251,28 @@ toward data:
 .. ipython:: python
     :okwarning:
 
-    for uri in loader_par.uri:
-        print("http: ... ", "&".join(uri.split("&")[1:-2]))  # Display only the relevant part of each URLs of URI:
+    # Create a large box:
+    box = [-60, 0, 0.0, 60.0, 0.0, 500.0, "2007", "2010"]
+
+    # Init a parallel fetcher:
+    fetcher = DataFetcher(parallel=True).region(box)
+
+    # Display only the relevant part of each URLs of URI:
+    for uri in fetcher.uri:
+        print("http: ... ", "&".join(uri.split("&")[1:-2]))
 
 To control chunking, you can use the ``chunks`` option that specifies the number of chunks in each of the *direction*:
 
 -  ``lon``, ``lat``, ``dpt`` and ``time`` for a **region** fetching,
 -  ``wmo`` for a **float** and **profile** fetching.
 
+Example:
+
 .. ipython:: python
     :okwarning:
 
-    # Create a large box:
-    box = [-60, 0, 0.0, 60.0, 0.0, 500.0, "2007", "2010"]
-    
-    # Init a parallel fetcher:
-    loader_par = DataFetcher(src='erddap', 
-                                 parallel=True, 
-                                 chunks={'lon': 5}).region(box)
-    # Check the number of chunks:
-    len(loader_par.uri)
+    fetcher = DataFetcher(parallel=True, chunks={'lon': 5}).region(box)
+    len(fetcher.uri) # Check the number of chunks
 
 This creates 195 chunks, and 5 along the longitudinale direction, as
 requested.
@@ -285,12 +289,11 @@ other directions to ``1``:
     :okwarning:
 
     # Init a parallel fetcher:
-    loader_par = DataFetcher(src='erddap',
-                             parallel=True,
-                             chunks={'lon': 5, 'lat':1, 'dpt':1, 'time':1}).region(box)
+    fetcher = DataFetcher(parallel=True,
+                          chunks={'lon': 5, 'lat':1, 'dpt':1, 'time':1}).region(box)
     
     # Check the number of chunks:
-    len(loader_par.uri)
+    len(fetcher.uri)
 
 We now have 5 chunks along longitude, check out the URLs parameter in
 the list of URIs:
@@ -298,11 +301,10 @@ the list of URIs:
 .. ipython:: python
     :okwarning:
 
-    for uri in loader_par.uri:
+    for uri in fetcher.uri:
         print("&".join(uri.split("&")[1:-2])) # Display only the relevant URL part
 
 .. note::
-
     You may notice that if you run the last command with the `argovis` fetcher, you will still have more than 5 chunks (i.e. 65). This is because `argovis` is limited to 3 months length requests. So, for this request that is 3 years long, argopy ends up with 13 chunks along time, times 5 chunks in longitude, leading to 65 chunks in total.
 
 .. warning::
@@ -341,11 +343,11 @@ then 100 meters (db) in depth (pressure), you can use:
     box = [-60, -10, 40.0, 60.0, 0.0, 500.0, "2007", "2010"]
     
     # Init a parallel fetcher:
-    loader_par = DataFetcher(src='erddap', 
-                                 parallel=True, 
-                                 chunks_maxsize={'dpt': 100}).region(box)
+    fetcher = DataFetcher(parallel=True,
+                          chunks_maxsize={'dpt': 100}).region(box)
+
     # Check number of chunks:
-    len(loader_par.uri)
+    len(fetcher.uri)
 
 Since this creates a large number of chunks, let’s do this again and
 combine with the option ``chunks`` to see easily what’s going on:
@@ -354,12 +356,11 @@ combine with the option ``chunks`` to see easily what’s going on:
     :okwarning:
 
     # Init a parallel fetcher with chunking along the vertical axis alone:
-    loader_par = DataFetcher(src='erddap', 
-                                 parallel=True, 
-                                 chunks_maxsize={'dpt': 100},
-                                 chunks={'lon':1, 'lat':1, 'dpt':'auto', 'time':1}).region(box)
+    fetcher = DataFetcher(parallel=True,
+                          chunks_maxsize={'dpt': 100},
+                          chunks={'lon':1, 'lat':1, 'dpt':'auto', 'time':1}).region(box)
     
-    for uri in loader_par.uri:
+    for uri in fetcher.uri:
         print("http: ... ", "&".join(uri.split("&")[1:-2])) # Display only the relevant URL part
 
 
@@ -375,11 +376,10 @@ With the ``profile`` and ``float`` access points, you can use the
     WMO_list = [6902766, 6902772, 6902914, 6902746, 6902916, 6902915, 6902757, 6902771]
     
     # Init a parallel fetcher with chunking along the list of WMOs:
-    loader_par = DataFetcher(src='erddap', 
-                                 parallel=True, 
-                                 chunks_maxsize={'wmo': 3}).float(WMO_list)
+    fetcher = DataFetcher(parallel=True,
+                          chunks_maxsize={'wmo': 3}).float(WMO_list)
     
-    for uri in loader_par.uri:
+    for uri in fetcher.uri:
         print("http: ... ", "&".join(uri.split("&")[1:-2])) # Display only the relevant URL part
 
 
@@ -390,3 +390,47 @@ more that 3 floats each.
 
     At this point, there is no mechanism to chunk requests along cycle numbers for the ``profile`` access point. See :issue:`362`.
 
+
+Dask Cluster example
+~~~~~~~~~~~~~~~~~~~~
+
+The ``parallel`` option/argument can directly takes a `Dask Cluster <https://docs.dask.org/en/stable/deploying.html>`_ `client <https://distributed.dask.org/en/latest/client.html>`_ object.
+
+This can go like this:
+
+.. ipython:: python
+    :okwarning:
+
+    from dask.distributed import Client
+    client = Client(processes=True)
+    print(client)
+
+    def this_box():
+        return [-60, 0,
+               20.0, 60.0 + np.random.randint(0,100,1)[0]/1000,
+               0.0, 500.0,
+               "2007", "2009"]
+
+    %%time
+    with argopy.set_options(parallel=client):
+        # f = DataFetcher(src='argovis').region([-75, -70, 15, 40, 0, 2000, '2020-01-01', '2021-01-01'])
+        f = DataFetcher(src='argovis').region(this_box())
+        print("%i chunks to process" % len(f.uri))
+        print(f)
+        ds = f.load().data
+        print(ds)
+
+
+On the other hand without parallelisation:
+
+.. ipython:: python
+    :okwarning:
+
+    %%time
+    with argopy.set_options(parallel=False):
+        # f = DataFetcher(src='argovis').region([-75, -70, 15, 40, 0, 2000, '2020-01-01', '2021-01-01'])
+        f = DataFetcher(src='argovis').region(this_box())
+        print("%i chunks to process" % len(f.uri))
+        print(f)
+        ds = f.load().data
+        print(ds)
