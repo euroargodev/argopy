@@ -85,14 +85,15 @@ Breaking changes
 .. currentmodule:: xarray
 
 - In the :class:`Dataset.argo` accessor (:pr:`356`) by `G. Maze <http://www.github.com/gmaze>`_:
-    - the :meth:`Dataset.argo.filter_data_mode` has been redesigned to actually implement a real filter of data points on data mode values, i.e. to keep points with specific data mode values,
-    - new :meth:`Dataset.argo.transform_data_mode` method must now be used to merge adjusted and non-adjusted measurements according to their data mode and reduce the number of variables in the dataset, which is what was doing in previous versions the poorly named `filter_data_mode`.
+    - the :meth:`Dataset.argo.filter_data_mode` has been deprecated and replaced by :meth:`Dataset.argo.datamode.merge` method. To actually implement a real filter of data points on data mode values, i.e. to keep points with specific data mode values, use the :meth:`Dataset.argo.datamode.filter` method.
 
 .. currentmodule:: argopy
 
 - The option name "ftp" is now renamed "gdac" (:pr:`389`) by `G. Maze <http://www.github.com/gmaze>`_
 
 - The option name "dataset" is now renamed "ds" (:pr:`389`) by `G. Maze <http://www.github.com/gmaze>`_
+
+- It is highly probable that more changes in this major v1.0.0 lead to breaking changes not listed here. Don't hesitate to `report them on the reposiotry issue section <https://github.com/euroargodev/argopy/issues>`_. 
 
 
 v0.1.17 (20 Sep. 2024)

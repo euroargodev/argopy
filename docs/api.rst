@@ -183,6 +183,7 @@ Extensions
     Dataset.argo.teos10
     Dataset.argo.create_float_source
     Dataset.argo.canyon_med
+    Dataset.argo.datamode
 
 .. currentmodule:: argopy
 

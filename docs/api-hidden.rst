@@ -324,6 +324,11 @@
     argopy.extensions.register_argo_accessor
     argopy.extensions.ArgoAccessorExtension
     argopy.extensions.CanyonMED
+    argopy.extensions.CanyonMED.predict
+    argopy.extensions.ParamsDataMode.compute
+    argopy.extensions.ParamsDataMode.merge
+    argopy.extensions.ParamsDataMode.filter
+    argopy.extensions.ParamsDataMode.split
 
     argopy.errors.InvalidDatasetStructure
 
