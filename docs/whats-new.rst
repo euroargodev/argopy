@@ -46,6 +46,8 @@ Features and front-end API
         from argopy import ArgoIndex
         ArgoIndex(index_file="aux").load()
 
+- Support for a scallable data fetching using multi-processing or a Dask Cluster. It is possible to provide a Dask client object directly to a data fetcher with the ``parallel`` option. In doing so, the Argo data pre-processing steps (download and conformation to internal conventions) will be distributed to all the available computing resources, significantly improving performances for fetching large selection of Argo data. (:pr:`392`) by `G. Maze <http://www.github.com/gmaze>`_.
+
 .. currentmodule:: xarray
 
 - A xarray argo accessor extensions mechanism with a new decorator :class:`argopy.extensions.register_argo_accessor`. It allows to register a class as a property to the :class:`Dataset.argo` accessor. (:pr:`364`) by `G. Maze <http://www.github.com/gmaze>`_.
