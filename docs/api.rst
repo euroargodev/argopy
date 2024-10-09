@@ -158,7 +158,7 @@ Data Transformation
    Dataset.argo.profile2point
    Dataset.argo.interp_std_levels
    Dataset.argo.groupby_pressure_bins
-   Dataset.argo.transform_data_mode
+   Dataset.argo.datamode.merge
 
 
 Data Filters
@@ -168,10 +168,11 @@ Data Filters
    :toctree: generated/
    :template: autosummary/accessor_method.rst
 
-   Dataset.argo.filter_data_mode
    Dataset.argo.filter_qc
    Dataset.argo.filter_scalib_pres
    Dataset.argo.filter_researchmode
+   Dataset.argo.datamode.filter
+
 
 Extensions
 ----------
@@ -203,6 +204,8 @@ Misc
     Dataset.argo.list_WMO_CYC
     Dataset.argo.uid
     Dataset.argo.cast_types
+    Dataset.argo.N_POINTS
+
 
 Utilities
 =========

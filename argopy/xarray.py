@@ -43,51 +43,55 @@ log = logging.getLogger("argopy.xarray")
 class ArgoAccessor:
     """Class registered under scope ``argo`` to access a :class:`xarray.Dataset` object.
 
+
+
     Examples
     --------
-    - Ensure all variables are of the Argo required dtype with:
+    .. code-block:: python
+        :caption: Conformity
 
-    >>> ds.argo.cast_types()
+        >>> ds.argo.cast_types()
 
-    - Convert a collection of points into a collection of profiles:
+    .. code-block:: python
+        :caption: Transformation
 
-    >>> ds.argo.point2profile()
+        >>> ds.argo.point2profile()
+        >>> ds.argo.profile2point()
+        >>> ds.argo.inter_std_levels(std_lev=[10., 500., 1000.])
+        >>> ds.argo.groupby_pressure_bins(bins=[0, 200., 500., 1000.])
 
-    - Convert a collection of profiles to a collection of points:
+    .. code-block:: python
+        :caption: Extensions - `datamode`
 
-    >>> ds.argo.profile2point()
+        >>> ds.argo.datamode.compute()
+        >>> ds.argo.datamode.merge()
+        >>> ds.argo.datamode.filter()
+        >>> ds.argo.datamode.filter(dm=['D'], params='all')
+        >>> ds.argo.datamode.split()
 
-    - Transform dataset variables according to data mode:
+    .. code-block:: python
+        :caption: Extension - QC flags
 
-    >>> ds.argo.transform_data_mode()
+        >>> ds.argo.filter_qc(QC_list=[1, 2], QC_fields='all')
 
-    - Filter measurements according to data mode values:
+    .. code-block:: python
+        :caption: Extensions - TEOS10
 
-    >>> ds.argo.filter_date_mode(dm=['D'], params='all')
+        >>> ds.argo.teos10(vlist='PV')
 
-    - Filter measurements according to QC flag values:
+    .. code-block:: python
+        :caption: Extensions - QC methods
 
-    >>> ds.argo.filter_qc(QC_list=[1, 2], QC_fields='all')
+        >>> ds.argo.filter_scalib_pres(force='default')
+        >>> ds.argo.create_float_source("output_folder")
 
-    - Filter variables according to OWC salinity calibration requirements:
+    .. code-block:: python
+        :caption: Extensions - CANYON-MED
 
-    >>> ds.argo.filter_scalib_pres(force='default')
+        >>> ds.argo.canyon_med.fit()
+        >>> ds.argo.canyon_med.predict()
+        >>> ds.argo.canyon_med.predict('PO4')
 
-    - Interpolate measurements on pressure levels:
-
-    >>> ds.argo.inter_std_levels(std_lev=[10., 500., 1000.])
-
-    - Group and reduce measurements by pressure bins:
-
-    >>> ds.argo.groupby_pressure_bins(bins=[0, 200., 500., 1000.])
-
-    - Compute and add additional variables to the dataset:
-
-    >>> ds.argo.teos10(vlist='PV')
-
-    - Preprocess data for OWC salinity calibration:
-
-    >>> ds.argo.create_float_source("output_folder")
     """
 
     def __init__(self, xarray_obj):
@@ -645,7 +649,7 @@ class ArgoAccessor:
 
         Parameters
         ----------
-        QC_list: list(int)
+        QC_list: list of int
             List of QC flag values (integers) to keep
         QC_fields: 'all' or list(str)
             List of QC fields to consider to apply the filter. By default, we use all available QC fields
@@ -871,8 +875,8 @@ class ArgoAccessor:
 
         # Apply transforms and filters:
         this = this.argo.filter_qc(QC_list=1, QC_fields=["POSITION_QC", "TIME_QC"])
-        this = this.argo.transform_data_mode(params=core_params)
-        this = this.argo.filter_data_mode(params=core_params, dm="D")
+        this = this.argo.datamode.merge(params=core_params)
+        this = this.argo.datamode.filter(params=core_params, dm="D")
 
         this = this.argo.filter_qc(
             QC_list=1, QC_fields=["%s_QC" % p for p in core_params]

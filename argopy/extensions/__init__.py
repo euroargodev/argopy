@@ -4,6 +4,8 @@ from .params_data_mode import ParamsDataMode
 
 #
 __all__ = (
+    "register_argo_accessor",
+    "ArgoAccessorExtension",
     "CanyonMED",
     "ParamsDataMode",
 )

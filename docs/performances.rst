@@ -188,7 +188,13 @@ Parallelization methods
 2. `multi-processing <https://en.wikipedia.org/wiki/Multiprocessing>`_ with a :class:`concurrent.futures.ProcessPoolExecutor`,
 3. A `Dask Cluster <https://docs.dask.org/en/stable/deploying.html>`_ identified by its `client <https://distributed.dask.org/en/latest/client.html>`_.
 
-The **argopy** parallelization method is set with the ``parallel`` option (global or of the fetcher), which can take one of the following values: a boolean ``True`` or ``False``, a string: ``thread`` or ``process``, or a Dask ``client`` object. In the case of setting a ``parallel=True`` boolean value, **argopy** will rely on using the default parallelization method defined by the option ``parallel_default_method``.
+The **argopy** parallelization method is set with the ``parallel`` option (global or of the fetcher), which can take one of the following values:
+
+- a boolean ``True`` or ``False``,
+- a string: ``thread`` or ``process``,
+- or a Dask ``client`` object.
+
+In the case of setting a ``parallel=True`` boolean value, **argopy** will rely on using the default parallelization method defined by the option ``parallel_default_method``.
 
 You have several ways to specify which parallelization methods you want to use:
 
@@ -241,8 +247,8 @@ You have several ways to specify which parallelization methods you want to use:
     You can also use ``silent`` to simply hide all messages during fetching.
 
 
-Number of chunks / ``chunks``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Number of chunks: ``chunks``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To see how many chunks your request has been split into, you can look at
 the ``uri`` property of the fetcher, it gives you the list of paths
@@ -308,8 +314,8 @@ the list of URIs:
 .. warning::
     The ``gdac`` fetcher and the ``float`` and ``profile`` access points of the ``argovis`` fetcher use a list of resources than are not chunked but fetched in parallel using a batch queue.
 
-Size of chunks / ``chunks_maxsize``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Size of chunks: ``chunks_maxsize``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The default chunk size for each access point dimensions are:
 
@@ -403,16 +409,9 @@ This can go like this:
     client = Client(processes=True)
     print(client)
 
-    def this_box():
-        return [-60, 0,
-               20.0, 60.0 + np.random.randint(0,100,1)[0]/1000,
-               0.0, 500.0,
-               "2007", "2009"]
-
     %%time
     with argopy.set_options(parallel=client):
-        # f = DataFetcher(src='argovis').region([-75, -70, 25, 40, 0, 1000, '2020-01-01', '2021-01-01'])
-        f = DataFetcher(src='argovis').region(this_box())
+        f = DataFetcher(src='argovis').region([-75, -70, 25, 40, 0, 1000, '2020-01-01', '2021-01-01'])
         print("%i chunks to process" % len(f.uri))
         print(f)
         ds = f.load().data

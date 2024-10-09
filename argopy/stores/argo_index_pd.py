@@ -9,6 +9,7 @@ import pandas as pd
 import logging
 import gzip
 from pathlib import Path
+from typing import List
 
 from ..errors import DataNotFound, InvalidDatasetStructure
 from ..utils.checkers import check_index_cols, is_indexbox, check_wmo, check_cyc
@@ -189,16 +190,14 @@ class indexstore_pandas(ArgoIndexStoreProto):
         return self.fs["client"].fs.sep.join([self.host, "%s.%s" % (self.index_file, self.sha_df)])
 
     @property
-    def uri_full_index(self):
-        # return ["/".join([self.host, "dac", f]) for f in self.index["file"]]
+    def uri_full_index(self) -> List[str]:
+        """File paths listed in the index"""
         sep = self.fs["src"].fs.sep
         return [sep.join([self.host, "dac", f.replace('/', sep)]) for f in self.index["file"]]
 
     @property
-    def uri(self):
-        # return ["/".join([self.host, "dac", f]) for f in self.search["file"]]
-        # todo Should also modify separator from "f" because it's "/" on the index file,
-        # but should be turned to "\" for local file index on Windows. Remains "/" in all others (linux, mac, ftp. http)
+    def uri(self) -> List[str]:
+        """File paths listed in search results"""
         sep = self.fs["src"].fs.sep
         return [sep.join([self.host, "dac", f.replace('/', sep)]) for f in self.search["file"]]
 

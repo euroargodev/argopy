@@ -20,17 +20,42 @@ log = logging.getLogger("argopy.xtensions.datamode")
 
 @register_argo_accessor("datamode")
 class ParamsDataMode(ArgoAccessorExtension):
+    """
+    Utilities for Argo parameters data mode
+
+    See Also
+    --------
+    :meth:`datamode.compute`
+    :meth:`datamode.merge`
+    :meth:`datamode.filter`
+    :meth:`datamode.split`
+
+    Examples
+    --------    
+    >>> from argopy import DataFetcher
+    >>> ArgoSet = DataFetcher(mode='expert').float(1902605)
+    >>> ds = ArgoSet.to_xarray()
+    >>> ds.argo.datamode.merge()
+
+
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def compute(self, *args, **kwargs):  # noqa: C901
+    def compute(self, indexfs: Union[None, ArgoIndex], **kwargs) -> xr.Dataset:  # noqa: C901
         """Compute and add <PARAM>_DATA_MODE variables to a xarray dataset
 
-        This requires an ArgoIndex instance as Pandas Dataframe
-        todo: Code this for the pyarrow index backend
+        This method consume a collection of points.
 
-        This method consume a collection of points
+        Parameters
+        ----------
+        indexfs: :class:`argopy.ArgoIndex`, optional
+            An :class:`argopy.ArgoIndex` instance with a :class:`pandas.DataFrame` backend to look for data modes.
+
+        Returns
+        -------
+        :class:`xr.Dataset`
         """
         indexfs = kwargs["indexfs"] if "indexfs" in kwargs else ArgoIndex()
 
@@ -160,7 +185,7 @@ class ParamsDataMode(ArgoAccessorExtension):
         Parameters
         ----------
         params: str, List[str], optional, default='all'
-            Name or list of names of the parameter(s) to merge.
+            Parameter or list of parameters to merge.
             Use the default keyword ``all`` to merge all possible parameters in the :class:`xarray.Dataset`.
         errors: str, optional, default='raise'
             If ``raise``, raises a :class:`argopy.errors.InvalidDatasetStructure` error if any of the expected variables is
@@ -177,7 +202,7 @@ class ParamsDataMode(ArgoAccessorExtension):
 
         See Also
         --------
-        :meth:`filter_data_mode`
+        :meth:`filter`
         """
         if self._argo._type != "point":
             raise InvalidDatasetStructure(

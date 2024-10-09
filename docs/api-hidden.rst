@@ -309,8 +309,6 @@
     argopy.xarray.ArgoAccessor.groupby_pressure_bins
     argopy.xarray.ArgoAccessor.teos10
     argopy.xarray.ArgoAccessor.create_float_source
-    argopy.xarray.ArgoAccessor.transform_data_mode
-    argopy.xarray.ArgoAccessor.filter_data_mode
     argopy.xarray.ArgoAccessor.filter_qc
     argopy.xarray.ArgoAccessor.filter_scalib_pres
     argopy.xarray.ArgoAccessor.filter_researchmode
@@ -318,6 +316,8 @@
     argopy.xarray.ArgoAccessor.index
     argopy.xarray.ArgoAccessor.domain
     argopy.xarray.ArgoAccessor.list_WMO_CYC
+    argopy.xarray.ArgoAccessor.N_POINTS
+    argopy.xarray.ArgoAccessor.N_PROF
 
     argopy.xarray.ArgoEngine
 
