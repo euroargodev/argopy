@@ -3,7 +3,7 @@ import importlib
 
 import argopy
 from argopy import IndexFetcher as ArgoIndexFetcher
-from argopy.errors import InvalidFetcherAccessPoint, InvalidFetcher
+from argopy.errors import InvalidFetcherAccessPoint, OptionValueError
 from utils import (
     # AVAILABLE_INDEX_SOURCES,
     requires_fetcher_index,
@@ -59,7 +59,7 @@ class Test_Facade:
                                                                 "2007-08-01", "2007-08-01"])
 
     def test_invalid_fetcher(self):
-        with pytest.raises(InvalidFetcher):
+        with pytest.raises(OptionValueError):
             ArgoIndexFetcher(src="invalid_fetcher").to_xarray()
 
     @requires_fetcher_index

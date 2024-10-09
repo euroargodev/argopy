@@ -278,7 +278,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         ]
 
     def read_wmo(self, index=False):
-        """Return list of unique WMOs in search results
+        """Return list of unique WMOs from the index or search results
 
         Fall back on full index if search not triggered
 

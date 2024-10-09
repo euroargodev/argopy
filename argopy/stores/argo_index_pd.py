@@ -202,9 +202,9 @@ class indexstore_pandas(ArgoIndexStoreProto):
         return [sep.join([self.host, "dac", f.replace('/', sep)]) for f in self.search["file"]]
 
     def read_wmo(self, index=False):
-        """ Return list of unique WMOs in search results
+        """Return list of unique WMOs from the index or search results
 
-        Fall back on full index if search not found
+        Fall back on full index if search not triggered
 
         Returns
         -------
@@ -264,7 +264,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
     def records_per_wmo(self, index=False):
         """ Return the number of records per unique WMOs in search results
 
-            Fall back on full index if search not found
+            Fall back on full index if search not triggered
 
         Returns
         -------
