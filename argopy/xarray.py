@@ -61,7 +61,19 @@ class ArgoAccessor:
         >>> ds.argo.groupby_pressure_bins(bins=[0, 200., 500., 1000.])
 
     .. code-block:: python
-        :caption: Extensions - `datamode`
+        :caption: QC flags and methods
+
+        >>> ds.argo.filter_qc(QC_list=[1, 2], QC_fields='all')
+        >>> ds.argo.filter_scalib_pres(force='default')
+        >>> ds.argo.create_float_source("output_folder")
+
+    .. code-block:: python
+        :caption: TEOS10
+
+        >>> ds.argo.teos10(vlist='PV')
+
+    .. code-block:: python
+        :caption: Extensions: Data Mode
 
         >>> ds.argo.datamode.compute()
         >>> ds.argo.datamode.merge()
@@ -70,23 +82,7 @@ class ArgoAccessor:
         >>> ds.argo.datamode.split()
 
     .. code-block:: python
-        :caption: Extension - QC flags
-
-        >>> ds.argo.filter_qc(QC_list=[1, 2], QC_fields='all')
-
-    .. code-block:: python
-        :caption: Extensions - TEOS10
-
-        >>> ds.argo.teos10(vlist='PV')
-
-    .. code-block:: python
-        :caption: Extensions - QC methods
-
-        >>> ds.argo.filter_scalib_pres(force='default')
-        >>> ds.argo.create_float_source("output_folder")
-
-    .. code-block:: python
-        :caption: Extensions - CANYON-MED
+        :caption: Extensions: CANYON-MED
 
         >>> ds.argo.canyon_med.fit()
         >>> ds.argo.canyon_med.predict()
