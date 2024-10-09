@@ -217,6 +217,26 @@ class indexstore_pandas(ArgoIndexStoreProto):
         wmo = np.unique(results)
         return wmo
 
+    def read_dac_wmo(self, index=False):
+        """Return a tuple of unique [DAC, WMO] pairs from the index or search results
+
+        Fall back on full index if search not triggered
+
+        Returns
+        -------
+        tuple
+        """
+        if hasattr(self, "search") and not index:
+            results = self.search["file"].apply(lambda x: (x.split("/")[0:2]))
+        else:
+            results = self.index["file"].apply(lambda x: (x.split("/")[0:2]))
+        results = tuple(results.drop_duplicates())
+        for ifloat, (dac, wmo) in enumerate(results):
+            results[ifloat][1] = int(wmo)
+
+        return results
+
+
     def read_params(self, index=False):
         if self.convention not in ["argo_bio-profile_index",
                                    "argo_synthetic-profile_index",
