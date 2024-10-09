@@ -30,6 +30,7 @@ TRUST_ENV = "trust_env"
 SERVER = "server"
 USER = "user"
 PASSWORD = "password"
+OPENAI_API_KEY = "openai_api_key"
 ARGOVIS_API_KEY = "argovis_api_key"
 
 # Define the list of available options and default values:
@@ -46,6 +47,7 @@ OPTIONS = {
     SERVER: None,
     USER: None,
     PASSWORD: None,
+    OPENAI_API_KEY: None,
     ARGOVIS_API_KEY: "guest",  # https://argovis-keygen.colorado.edu
 }
 DEFAULT = OPTIONS.copy()
@@ -90,6 +92,7 @@ _VALIDATORS = {
     SERVER: lambda x: True,
     USER: lambda x: isinstance(x, str) or x is None,
     PASSWORD: lambda x: isinstance(x, str) or x is None,
+    OPENAI_API_KEY: lambda x: isinstance(x, str) or x is None,
     ARGOVIS_API_KEY: lambda x: isinstance(x, str) or x is None,
 }
 
