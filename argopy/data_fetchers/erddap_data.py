@@ -714,6 +714,18 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         # Should we compute (from the index) and add DATA_MODE for BGC variables:
         add_dm = self.dataset_id in ["bgc", "bgc-s"] if add_dm is None else bool(add_dm)
+        preprocess_opts = {
+            "add_dm": False,
+            "URI": URI,
+            "dataset_id": self.dataset_id,
+        }
+        if self.dataset_id in ["bgc", "bgc-s"]:
+            preprocess_opts = {
+                "add_dm": True,
+                "URI": URI,
+                "dataset_id": self.dataset_id,
+                "indexfs": self.indexfs,
+            }
 
         # Download data
         results = []
@@ -722,7 +734,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 try:
                     # log_argopy_callerstack()
                     results = self.fs.open_dataset(URI[0])
-                    results = pre_process(results, add_dm=add_dm, URI=URI)
+                    results = pre_process(results, **preprocess_opts)
                 except ClientResponseError as e:
                     if "Proxy Error" in e.message:
                         raise ErddapServerError(
@@ -751,13 +763,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                         concat=concat,
                         concat_dim="N_POINTS",
                         preprocess=pre_process,
-                        preprocess_opts={"add_dm": False, "URI": URI},
+                        preprocess_opts=preprocess_opts,
                         final_opts={"data_vars": "all"},
                     )
                     if results is not None:
                         if self.progress:
                             print("Final post-processing of the merged dataset () ...")
-                        results = pre_process(results, **{"add_dm": add_dm, "URI": URI})
+                        results = pre_process(results, **preprocess_opts)
                 except ClientResponseError as e:
                     raise ErddapServerError(e.message)
         else:
@@ -769,7 +781,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     "concat": concat,
                     "concat_dim": "N_POINTS",
                     "preprocess": pre_process,
-                    "preprocess_opts": {"add_dm": False, "URI": URI},
+                    "preprocess_opts": preprocess_opts,
                 }
 
                 if self.parallel_method in ["erddap"]:
@@ -784,10 +796,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     and isinstance(self.parallel_method, distributed.client.Client)
                 ):
                     opts["method"] = self.parallel_method
-                    opts["preprocess_opts"] = {
-                        "add_dm": False,
-                        "dataset_id": self.dataset_id,
-                    }
+                    opts["preprocess_opts"] = preprocess_opts
                     opts["open_dataset_opts"] = {
                         "errors": "ignore",
                         "download_url_opts": {"errors": "ignore"},
@@ -800,16 +809,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                     if results is not None:
                         if self.progress:
                             print("Final post-processing of the merged dataset ...")
-                        preprocess_opts = {
-                            "add_dm": False,
-                            "dataset_id": self.dataset_id,
-                        }
-                        if self.dataset_id in ["bgc", "bgc-s"]:
-                            preprocess_opts = {
-                                "add_dm": True,
-                                "dataset_id": self.dataset_id,
-                                "indexfs": self.indexfs,
-                            }
                         results = pre_process(results, **preprocess_opts)
 
             except DataNotFound:

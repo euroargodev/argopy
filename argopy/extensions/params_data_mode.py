@@ -4,6 +4,7 @@ import xarray as xr
 import logging
 import time
 from typing import Union, List
+import copy
 
 from ..utils import to_list, list_core_parameters
 from ..utils.transform import split_data_mode, merge_param_with_param_adjusted, filter_param_by_data_mode
@@ -43,7 +44,7 @@ class ParamsDataMode(ArgoAccessorExtension):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def compute(self, indexfs: Union[None, ArgoIndex], **kwargs) -> xr.Dataset:  # noqa: C901
+    def compute(self, indexfs: Union[None, ArgoIndex]) -> xr.Dataset:  # noqa: C901
         """Compute and add <PARAM>_DATA_MODE variables to a xarray dataset
 
         This method consume a collection of points.
@@ -57,7 +58,7 @@ class ParamsDataMode(ArgoAccessorExtension):
         -------
         :class:`xr.Dataset`
         """
-        indexfs = kwargs["indexfs"] if "indexfs" in kwargs else ArgoIndex()
+        idx = copy.copy(indexfs) if isinstance(indexfs, ArgoIndex) else ArgoIndex()
 
         def complete_df(this_df, params):
             """Add 'wmo', 'cyc' and '<param>_data_mode' columns to this dataframe"""
@@ -102,15 +103,15 @@ class ParamsDataMode(ArgoAccessorExtension):
         # timer = time.process_time()
 
         profiles = self._argo.list_WMO_CYC
-        indexfs.search_wmo(self._argo.list_WMO)
+        idx.search_wmo(self._argo.list_WMO)
         params = [
             p
-            for p in indexfs.read_params()
+            for p in idx.read_params()
             if p in self._obj or "%s_ADJUSTED" % p in self._obj
         ]
         # timer = print_etime('Read profiles and params from ds', timer)
 
-        df = indexfs.to_dataframe(completed=False)
+        df = idx.to_dataframe(completed=False)
         df = complete_df(df, params)
         # timer = print_etime('Index search wmo and export to dataframe', timer)
 
@@ -164,8 +165,9 @@ class ParamsDataMode(ArgoAccessorExtension):
             ].astype("<U1")
             # timer = print_etime('Processed %s (%i profiles)' % (param, len(profiles)), timer)
 
-        # return dataset with sorted variables:
-        return self._obj[np.sort(self._obj.data_vars)]
+        # Finalise:
+        self._obj = self._obj[np.sort(self._obj.data_vars)]
+        return self._obj
 
     def split(self):
         return split_data_mode(self._obj)
