@@ -119,7 +119,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}}
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}} --junitxml=junit.xml -o junit_family=legacy
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
@@ -140,6 +140,12 @@ jobs:
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Save tests log as artifact
         uses: actions/upload-artifact@v4
@@ -242,7 +248,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}}
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}} --junitxml=junit.xml -o junit_family=legacy
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
@@ -263,7 +269,13 @@ jobs:
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
-          
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Upload tests log to GA
         uses: actions/upload-artifact@v4
         with:
