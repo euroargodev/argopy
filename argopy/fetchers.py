@@ -9,6 +9,7 @@ Validity of access points parameters (eg: wmo) is made here, not at the data/ind
 
 """
 
+import os
 import warnings
 import xarray as xr
 import pandas as pd
@@ -134,6 +135,7 @@ class ArgoDataFetcher:
                 )
             self._cache = self.fetcher_kwargs["cache"]
 
+        os.makedirs(self.fetcher_kwargs.get("cachedir", OPTIONS["cachedir"]), exist_ok=True)
         self._cachedir = VALIDATE("cachedir", self.fetcher_kwargs.get("cachedir", OPTIONS["cachedir"]))
         self._parallel = VALIDATE("parallel", self.fetcher_kwargs.get("parallel", OPTIONS["parallel"]))
 

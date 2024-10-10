@@ -134,7 +134,7 @@ def VALIDATE(key, val):
     if key in _VALIDATORS:
         if not _VALIDATORS[key](val):
             raise OptionValueError(
-                f"option '%s' given an invalid value: %s" % (key, val)
+                f"option '%s' given an invalid value: '%s'" % (key, val)
             )
         else:
             return val
