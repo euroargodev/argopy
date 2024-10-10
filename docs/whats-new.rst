@@ -8,15 +8,15 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-Coming up next in v1.0
-----------------------
+Coming up next in v1.0.0
+------------------------
 
-.. versionadded:: v1.0
+.. versionadded:: v1.0.0
 
     The team proudly assumes that **argopy** is all grown up !
 
-    This version comes with improved support for the BGC-Argo dataset and large dataset fetching using Dask. 	
-	But since this is a major, we also introduces breaking changes and significant internal refactoring possibly with un-expected side effects ! So don't hesitate to `report issues on the source code repository <https://github.com/euroargodev/argopy/issues>`_.
+    This version comes with improved performances and support for the BGC-Argo dataset.
+    But since this is a major, we also introduces breaking changes and significant internal refactoring possibly with un-expected side effects ! So don't hesitate to `report issues on the source code repository <https://github.com/euroargodev/argopy/issues>`_.
 	
 
 
@@ -48,9 +48,9 @@ Features and front-end API
         from argopy import ArgoIndex
         ArgoIndex(index_file="aux").load()
 
-- **Scallable data fetching using multi-processing or a Dask Cluster**. 
+- **More scalable data fetching using multi-processing or a Dask Cluster**.
 
-It is now possible to provide a Dask client object directly to a data fetcher with the ``parallel`` option. In doing so, the Argo data pre-processing steps (download and conformation to internal conventions) will be distributed to all the available computing resources, significantly improving performances for fetching large selection of Argo data. (:pr:`392`) by `G. Maze <http://www.github.com/gmaze>`_. 
+It is now possible to use multi-processing with all data fetchers and even possibly a Dask client object. This is set with the ``parallel`` option. In doing so, the Argo data pre-processing steps (download and conformation to internal conventions) will be distributed to all available resources, significantly improving performances for fetching large selection of Argo data. (:pr:`392`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 Check the documentation on :ref:`Parallelization methods` for all the details.
 
@@ -62,7 +62,7 @@ Check the documentation on :ref:`Parallelization methods` for all the details.
     client = Client(processes=True)
 
     from argopy import DataFetcher
-    DataFetcher(src='argovis', parallel=client).region([-75, -70, 25, 40, 0, 1000, '2020-01-01', '2021-01-01']).to_xarray()
+    DataFetcher(parallel=client, src='argovis').region([-75, -65, 25, 40, 0, 250, '2020-01-01', '2021-01-01']).to_xarray()
 
 
 
