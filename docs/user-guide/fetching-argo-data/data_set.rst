@@ -82,7 +82,7 @@ The **bgc** dataset
 
 .. important::
 
-    At this time, BGC parameters are only available in ``expert`` :ref:`user mode <user-mode>` and with the ``erddap`` :ref:`data source <data-sources>`.
+    At this time, BGC parameters from synthetic files are available with the ``erddap`` and ``gdac`` :ref:`data source <data-sources>`.
 
 All **argopy** features work with the **phy** dataset. However, they are some specific methods dedicated to the **bgc** dataset that we now describe.
 

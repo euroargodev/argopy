@@ -129,7 +129,7 @@ class ArgoDataFetcherProto(ABC):
             else:
                 return "🤖"
         else:
-            return "🗺"
+            return "🗺 "
 
     @property
     def _icon_data_source(self):

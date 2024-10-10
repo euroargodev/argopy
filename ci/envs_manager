@@ -37,8 +37,19 @@ declare -A ENV_LIST=(
 ['argopy-py310-core-free']="requirements/py3.10-core-free.yml"
 ['argopy-py310-core-pinned']="requirements/py3.10-core-pinned.yml"
 
+['argopy-py311-all-free']="requirements/py3.11-all-free.yml"
+['argopy-py311-core-free']="requirements/py3.11-core-free.yml"
+
+['argopy-py312-all-free']="requirements/py3.12-all-free.yml"
+['argopy-py312-core-free']="requirements/py3.12-core-free.yml"
+
 )
 
+#for k in "${!ENV_LIST[@]}"
+#do
+#    echo $k ' - ' ${ENV_LIST["$k"]}
+#done |
+#sort | xargs -n3
 
 #########################
 # FUNCTIONS
@@ -64,9 +75,10 @@ List_avail_envs () {
   for NAME in "${!ENV_LIST[@]}"
   do
     :
-    FILE=${ENV_LIST[$NAME]}
+#    FILE=${ENV_LIST[$NAME]}
     echo " ${NAME}"
-  done
+  done |
+  sort | xargs -n1
 }
 
 fix_kernel_path (){
