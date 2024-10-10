@@ -264,7 +264,6 @@ html_theme_options = {
     # 'show_toc_level': 3,  # https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/page-toc.html#show-more-levels-of-the-in-page-toc-by-default
     # 'launch_buttons': { "thebe": True}
     "announcement": (
-    #     "⚠️ <a href='https://argopy.readthedocs.io/en/latest/_static/argopy-cheatsheet.pdf'>Download argopy cheatsheet last version here !</a> ⚠️"
         "⚠️ v0.1.17 is the last minor version, first major v1.0.0 coming up soon ⚠️"
     ),
     "icon_links": [

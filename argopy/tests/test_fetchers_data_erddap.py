@@ -213,5 +213,5 @@ class Test_Backend:
     @pytest.mark.parametrize("parallel_fetcher", VALID_PARALLEL_ACCESS_POINTS,
                              indirect=True,
                              ids=VALID_PARALLEL_ACCESS_POINTS_IDS)
-    def test_fetching_parallel(self, mocked_erddapserver, parallel_fetcher):
+    def test_fetching_parallel_thread(self, mocked_erddapserver, parallel_fetcher):
         assert_fetcher(mocked_erddapserver, parallel_fetcher, cacheable=False)

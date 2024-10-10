@@ -59,7 +59,6 @@ class ErddapREFDataFetcher(ErddapArgoDataFetcher):
                 "cache",
                 "cachedir",
                 "parallel",
-                "parallel_method",
                 "progress",
                 "chunks",
                 "chunks_maxsize",
@@ -75,10 +74,6 @@ class ErddapREFDataFetcher(ErddapArgoDataFetcher):
 
     def __repr__(self):
         summary = [super().__repr__()]
-        summary.append(
-            "Performances: cache=%s, parallel=%s"
-            % (str(self.fs.cache), str(self.parallel_method))
-        )
         summary.append("User mode: %s" % "expert")
         summary.append("Dataset: %s" % self.dataset_id)
         return "\n".join(summary)
@@ -194,7 +189,7 @@ class Fetch_box(ErddapREFDataFetcher):
         -------
         list(str)
         """
-        if not self.parallel:
+        if not self.parallelize:
             return [self.get_url()]
         else:
             self.Chunker = Chunker(

@@ -13,7 +13,7 @@ __all__ = (
     "erddap_data",
     "erddap_index",
     "argovis_data",
-    "gdac_data.py",
-    "gdac_index.py",
+    "gdac_data",
+    "gdac_index",
     "CTDRefDataFetcher",
 )

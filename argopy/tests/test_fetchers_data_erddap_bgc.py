@@ -21,6 +21,7 @@ from collections import ChainMap
 log = logging.getLogger("argopy.tests.data.erddap")
 
 USE_MOCKED_SERVER = True
+# USE_MOCKED_SERVER = False
 
 """
 List access points to be tested for each datasets: bgc.
@@ -47,7 +48,7 @@ PARALLEL_ACCESS_POINTS = [
 List user modes to be tested
 """
 USER_MODES = ['standard', 'expert', 'research']
-# USER_MODES = ['expert']
+# USER_MODES = ['standard']
 
 """
 List of 'params' fetcher arguments to be tested
@@ -128,11 +129,11 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
     try:
         assert_all(this_fetcher, cacheable)
     except Exception as e:
-        if this_fetcher._mode not in ['expert']:
-            pytest.xfail("BGC is not yet supported in '%s' user mode" % this_fetcher._mode)
-        else:
-            log.debug("Fetcher instance assert false because: %s" % e)
-            assert False
+        # if this_fetcher._mode not in ['expert']:
+        #     pytest.xfail("BGC is not yet supported in '%s' user mode" % this_fetcher._mode)
+        # else:
+        log.debug("Fetcher instance assert false because: %s" % e)
+        assert False
 
 
 @requires_erddap
@@ -202,7 +203,7 @@ class Test_Backend:
     @pytest.fixture
     def parallel_fetcher(self, request):
         """ Fixture to create a parallel ERDDAP data fetcher for a given dataset and access point """
-        fetcher_args, access_point = self._setup_fetcher(request, parallel="erddap")
+        fetcher_args, access_point = self._setup_fetcher(request, parallel="thread")
         yield create_fetcher(fetcher_args, access_point)
 
     def teardown_class(self):
@@ -229,7 +230,7 @@ class Test_Backend:
     @pytest.mark.parametrize("parallel_fetcher", VALID_PARALLEL_ACCESS_POINTS,
                              indirect=True,
                              ids=VALID_PARALLEL_ACCESS_POINTS_IDS)
-    def test_fetching_parallel(self, mocked_erddapserver, parallel_fetcher):
+    def test_fetching_parallel_thread(self, mocked_erddapserver, parallel_fetcher):
         assert_fetcher(mocked_erddapserver, parallel_fetcher, cacheable=False)
 
     @pytest.mark.parametrize("measured", [None, 'all', 'DOXY'],
