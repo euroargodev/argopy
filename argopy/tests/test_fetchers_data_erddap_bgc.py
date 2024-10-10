@@ -21,6 +21,7 @@ from collections import ChainMap
 log = logging.getLogger("argopy.tests.data.erddap")
 
 USE_MOCKED_SERVER = True
+# USE_MOCKED_SERVER = False
 
 """
 List access points to be tested for each datasets: bgc.
@@ -47,7 +48,7 @@ PARALLEL_ACCESS_POINTS = [
 List user modes to be tested
 """
 USER_MODES = ['standard', 'expert', 'research']
-# USER_MODES = ['expert']
+# USER_MODES = ['standard']
 
 """
 List of 'params' fetcher arguments to be tested

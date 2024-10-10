@@ -478,7 +478,7 @@ class ArgoAccessor:
             i_uid, prof = grp
             for iv, vname in enumerate(this.data_vars):
                 try:
-                    count[i_prof, iv] = len(np.unique(prof[vname]))
+                    count[i_prof, iv] = len(np.unique(prof[vname]))  # This is very long because it must read all the data !
                 except Exception:
                     log.error(
                         "point2profile: An error happened when dealing with the '%s' data variable"
@@ -619,6 +619,7 @@ class ArgoAccessor:
             ds = ds.set_coords(c)
 
         # Remove index without data (useless points)
+        ds["PRES"].load()
         ds = ds.where(~np.isnan(ds["PRES"]), drop=1)
         ds = ds.sortby("TIME") if "TIME" in ds else ds.sortby("JULD")
         ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
