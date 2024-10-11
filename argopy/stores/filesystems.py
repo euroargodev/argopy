@@ -45,6 +45,7 @@ from ..errors import (
     FileSystemHasNoCache,
     CacheFileNotFound,
     DataNotFound,
+    NoDataLeft,
     InvalidMethod,
     ErddapHTTPUnauthorized,
     ErddapHTTPNotFound,
@@ -787,6 +788,8 @@ class httpstore(argo_store_proto):
         ------
         :class:`TypeError` if data returned by ``url`` are not CDF or HDF5 binary data.
 
+        :class:`DataNotFound` if ``errors`` is set to ``raise`` and url returns no data.
+
         See Also
         --------
         :class:`httpstore.open_mfdataset`
@@ -801,6 +804,13 @@ class httpstore(argo_store_proto):
                 raise DataNotFound(url)
             elif errors == "ignore":
                 log.error("DataNotFound: %s" % url)
+            return None
+
+        if b'Not Found: Your query produced no matching results' in data:
+            if errors == "raise":
+                raise DataNotFound(url)
+            elif errors == "ignore":
+                log.error("DataNotFound from [%s]: %s" % (url, data))
             return None
 
         if data[0:3] != b"CDF" and data[0:3] != b"\x89HD":
@@ -1411,9 +1421,7 @@ class httpstore(argo_store_proto):
         data = self.open_json(url, **open_json_opts)
 
         # Pre-process
-        if data is None:
-            raise DataNotFound(url)
-        elif isinstance(preprocess, types.FunctionType) or isinstance(
+        if isinstance(preprocess, types.FunctionType) or isinstance(
             preprocess, types.MethodType
         ):
             if url_follow:

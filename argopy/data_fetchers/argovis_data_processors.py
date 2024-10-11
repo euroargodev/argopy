@@ -7,6 +7,9 @@ from ..utils import list_bgc_s_parameters
 def pre_process(profiles: Any, key_map: dict = None) -> pd.DataFrame:
     """convert json data to Pandas DataFrame"""
 
+    if profiles is None:
+        return None
+
     # Make sure we deal with a list
     if isinstance(profiles, list):
         data = profiles

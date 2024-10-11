@@ -23,6 +23,9 @@ def pre_process_multiprof(
     -------
     :class:`xarray.Dataset`
     """
+    if ds is None:
+        return None
+
     # Remove raw netcdf file attributes and replace them with argopy ones:
     raw_attrs = ds.attrs
     ds.attrs = {}

@@ -99,7 +99,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
 
         def csv2index(obj):
             index = read_csv(obj, nrows=nrows)
-            log.debug(index.column_names)
+            # log.debug(index.column_names)
             check_index_cols(
                 index.column_names,
                 convention=self.convention,
