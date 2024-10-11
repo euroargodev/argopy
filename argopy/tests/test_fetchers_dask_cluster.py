@@ -1,13 +1,22 @@
 import pytest
-import logging
 
+dask = pytest.importorskip("dask", reason="Requires 'Dask' and 'distributed'")
+distributed = pytest.importorskip("distributed", reason="Requires 'Dask' and 'distributed'")
 from dask.distributed import Client
+
+
+import logging
 from argopy import DataFetcher
 from collections import ChainMap
 import xarray as xr
 
 from mocked_http import mocked_server_address, mocked_httpserver
-
+from utils import (
+    requires_argovis,
+    requires_erddap,
+    requires_gdac,
+    has_dask, has_distributed,
+)
 
 log = logging.getLogger("argopy.tests.dask")
 USE_MOCKED_SERVER = True
@@ -72,6 +81,9 @@ def create_fetcher(fetcher_args, access_point):
     return fetcher
 
 
+@requires_erddap
+@requires_gdac
+@requires_argovis
 class Test_Backend:
     """Test Dask cluster parallelization"""
 
@@ -129,10 +141,7 @@ class Test_Backend:
         indirect=True,
         ids=VALID_PARALLEL_ACCESS_POINTS_IDS,
     )
-    def test_fetching_erddap(self, mocked_httpserver, fetcher):
-        # log.debug(fetcher)
-        # log.debug(len(fetcher.uri))
-        # log.debug(fetcher.uri)
+    def test_data_fetching(self, mocked_httpserver, fetcher):
         assert len(fetcher.uri) > 1
 
         ds = fetcher.to_xarray()
