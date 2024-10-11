@@ -47,12 +47,13 @@ PARALLEL_ACCESS_POINTS = [
 List user modes to be tested
 """
 USER_MODES = ['standard', 'expert', 'research']
-# USER_MODES = ['expert']
+# USER_MODES = ['research']
 
 """
 List of 'params' fetcher arguments to be tested
 """
 PARAMS = ['all', 'DOXY']
+# PARAMS = ['all']
 
 """
 Make a list of VALID dataset/access_points to be tested
