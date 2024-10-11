@@ -494,7 +494,12 @@ class Lister:
                     ]
 
         for mode in ["expert", "standard", "research"]:
-            fetcher = DataFetcher(src="erddap", ds="phy", mode=mode, parallel=True)
+            fetcher = DataFetcher(src="erddap",
+                                  ds="phy",
+                                  mode=mode,
+                                  parallel=True,
+                                  chunks_maxsize={'lon': 2.5, 'lat': 2.5},
+                                  )
             for access_point in requests_par:
                 [
                     add_to_URI(fetcher.profile(*cfg))
@@ -617,7 +622,8 @@ class Lister:
                     ds="bgc",
                     cache=True,
                     parallel=True,
-                    parallel_method="erddap",
+                    parallel_method="thread",
+                    chunks_maxsize={'lon': 2.5, 'lat': 2.5},
                     mode=mode,
                     params=params,
                     measured=measured,
@@ -754,7 +760,8 @@ class Lister:
         requests_par = {
             "float": [[1900468, 1900117, 1900386]],
             "region": [
-                [-70, -65, 35.0, 40.0, 0, 10.0, "2012-01", "2012-06"],
+                [-70, -65, 35.0, 40.0, 0.0, 10.0, "2012-01", "2012-06"],
+                [-60, -55, 40.0, 45.0, 0.0, 20.0, "2007-08-01", "2007-09-01"],
             ],
         }
 
@@ -781,7 +788,9 @@ class Lister:
                     if access_point == "region"
                 ]
 
-        fetcher = DataFetcher(src="argovis", parallel=True)
+        fetcher = DataFetcher(src="argovis",
+                              parallel=True,
+                              chunks_maxsize={'lon': 2.5, 'lat': 2.5})
         for access_point in requests_par:
             [
                 add_to_URI(fetcher.profile(*cfg))
