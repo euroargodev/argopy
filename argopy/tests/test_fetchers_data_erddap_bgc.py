@@ -128,11 +128,11 @@ def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
     try:
         assert_all(this_fetcher, cacheable)
     except Exception as e:
-        if this_fetcher._mode not in ['expert']:
-            pytest.xfail("BGC is not yet supported in '%s' user mode" % this_fetcher._mode)
-        else:
-            log.debug("Fetcher instance assert false because: %s" % e)
-            assert False
+        # if this_fetcher._mode not in ['expert']:
+        #     pytest.xfail("BGC is not yet supported in '%s' user mode" % this_fetcher._mode)
+        # else:
+        log.debug("Fetcher instance assert false because: %s" % e)
+        assert False
 
 
 @requires_erddap
