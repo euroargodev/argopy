@@ -150,9 +150,9 @@ class CanyonMED(ArgoAccessorExtension):
 
         # Using float128 arrays avoid the error or warning "overflow encountered in exp" raised by the
         # activation function
-        b1 = np.array(b1, dtype=np.float128)
-        b2 = np.array(b2, dtype=np.float128)
-        b3 = np.array(b3, dtype=np.float128)
+        b1 = np.array(b1, dtype=np.float64)
+        b2 = np.array(b2, dtype=np.float64)
+        b3 = np.array(b3, dtype=np.float64)
 
         return b1, b2, b3, IW, LW1, LW2
 
