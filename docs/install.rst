@@ -45,7 +45,7 @@ Note that Erddapy_ is required because `erddap <https://coastwatch.pfeg.noaa.gov
 
 Requirement dependencies details can be found `here <https://github.com/euroargodev/argopy/network/dependencies#requirements.txt>`_.
 
-The **argopy** software is `continuously tested <https://github.com/euroargodev/argopy/actions?query=workflow%3Atests>`_ under latest OS (Linux, Mac OS and Windows) and with python versions 3.9 and 3.10
+The **argopy** software is `continuously tested <https://github.com/euroargodev/argopy/actions?query=workflow%3Atests>`_ under latest OS (Linux, Mac OS and Windows) and with python versions 3.10 and 3.11
 
 Optional dependencies
 ---------------------
