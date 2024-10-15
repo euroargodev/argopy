@@ -24,4 +24,6 @@ def test_fetch_status():
 
 @requires_ipywidgets
 def test_monitor_status():
-    monitor_status()
+    ms = monitor_status()
+    assert ms.runner in ['notebook', 'terminal', 'standard', False]
+    assert isinstance(ms.content, str)
