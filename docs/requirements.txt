@@ -14,7 +14,7 @@ cftime # >=1.5.1
 cfgrib # >=0.9.9.1
 decorator
 distributed>=2.30.0
-ipython<=8.27.0
+ipython#<=8.27.0
 matplotlib>=3.4.0
 numpy==1.26.4
 pandas<3.0
