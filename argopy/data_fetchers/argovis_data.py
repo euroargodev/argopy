@@ -165,7 +165,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
 
         return [safe_for_fsspec_cache(url) for url in urls]
 
-    @deprecated('Not serializable')
+    @deprecated("Not serializable, please use 'argovis_data_processors.pre_process'", version="1.0.0")
     def json2dataframe(self, profiles):
         """convert json data to Pandas DataFrame"""
         # Make sure we deal with a list

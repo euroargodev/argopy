@@ -264,7 +264,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             log.debug("The erddap server has been modified, updating internal data")
             self._init_erddapy()
 
-    @deprecated("Not serializable")
+    @deprecated("Not serializable, please use 'erddap_data_processors._add_attributes'", version="1.0.0")
     def _add_attributes(self, this):  # noqa: C901
         """Add variables attributes not return by erddap requests (csv)
 

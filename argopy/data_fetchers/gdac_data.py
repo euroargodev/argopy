@@ -233,7 +233,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         self.fs.clear_cache()
         return self
 
-    @deprecated("Not serializable")
+    @deprecated("Not serializable, please use 'gdac_data_processors.pre_process_multiprof'", version="1.0.0")
     def _preprocess_multiprof(self, ds):
         """Pre-process one Argo multi-profile file as a collection of points
 
@@ -393,7 +393,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
 
         return ds
 
-    @deprecated("Refactored to GDAC pre-processor submodule")
+    @deprecated("Not serializable, please use 'gdac_data_processors.filter_points'", version="1.0.0")
     def filter_points(self, ds):
         if hasattr(self, "BOX"):
             access_point = "BOX"
