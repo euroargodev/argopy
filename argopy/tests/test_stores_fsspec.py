@@ -96,7 +96,7 @@ class Test_FileStore:
         ncfile = os.path.sep.join([self.ftproot, "dac/aoml/5900446/5900446_prof.nc"])
         assert isinstance(self.fs.open_dataset(ncfile), xr.Dataset)
 
-    params = [(m, p, c) for m in ["seq", "thread", "process"] for p in [True, False] for c in [True, False]]
+    params = [(m, p, c) for m in ["sequential", "thread", "process"] for p in [True, False] for c in [True, False]]
     ids_params = ["method=%s, progress=%s, concat=%s" % (p[0], p[1], p[2]) for p in params]
     @pytest.mark.parametrize("params", params, indirect=False, ids=ids_params)
     def test_open_mfdataset(self, params):
@@ -114,7 +114,7 @@ class Test_FileStore:
         else:
             assert is_list_of_datasets(ds)
 
-    params = [(m) for m in ["seq", "thread", "invalid"]]
+    params = [(m) for m in ["sequential", "thread", "invalid"]]
     ids_params = ["method=%s" % (p) for p in params]
     @pytest.mark.parametrize("params", params, indirect=False, ids=ids_params)
     def test_open_mfdataset_error(self, params):
@@ -190,7 +190,7 @@ class Test_HttpStore:
     # Parameters for multiple files opening
     mf_params_nc = [
         (m, p, c)
-        for m in ["seq", "thread", "process"]
+        for m in ["sequential", "thread", "process"]
         for p in [True, False]
         for c in [True, False]
     ]
@@ -202,7 +202,7 @@ class Test_HttpStore:
         repo + "ftp/dac/csiro/5900865/profiles/D5900865_002.nc",
     ]
 
-    mf_params_js = [(m, p) for m in ["seq", "thread", "process"] for p in [True, False]]
+    mf_params_js = [(m, p) for m in ["sequential", "thread", "process"] for p in [True, False]]
     mf_params_js_ids = ["method=%s, progress=%s" % (p[0], p[1]) for p in mf_params_js]
     mf_js = [
         "https://api.ifremer.fr/argopy/data/ARGO-FULL.json",
@@ -316,7 +316,7 @@ class Test_HttpStore:
         else:
             assert is_list_of_datasets(ds)
 
-    params = [(m) for m in ["seq", "thread", "invalid"]]
+    params = [(m) for m in ["sequential", "thread", "invalid"]]
     ids_params = ["method=%s" % (p) for p in params]
 
     @pytest.mark.parametrize("params", params, indirect=False, ids=ids_params)
@@ -372,7 +372,7 @@ class Test_HttpStore:
         )
         assert is_list_of_dicts(lst)
 
-    params = [(m) for m in ["seq", "thread", "invalid"]]
+    params = [(m) for m in ["sequential", "thread", "invalid"]]
     ids_params = ["method=%s" % (p) for p in params]
 
     @pytest.mark.parametrize("params", params, indirect=False, ids=ids_params)
@@ -488,7 +488,7 @@ class Test_FtpStore:
 
     params = [
         (m, p, c)
-        for m in ["seq", "process"]
+        for m in ["sequential", "process"]
         for p in [True, False]
         for c in [True, False]
     ]
@@ -522,7 +522,7 @@ class Test_FtpStore:
 
         test(params)
 
-    params = [(m) for m in ["seq", "process", "invalid"]]
+    params = [(m) for m in ["sequential", "process", "invalid"]]
     ids_params = ["method=%s" % (p) for p in params]
 
     @pytest.mark.parametrize("params", params, indirect=False, ids=ids_params)

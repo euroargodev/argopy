@@ -109,6 +109,13 @@ def cast_Argo_variable_type(ds, overwrite=True):
                 else:
                     da = cast_this(da, "datetime64[ns]")
 
+            elif (
+                "conventions" in da.attrs
+                and da.attrs["conventions"] == "ISO8601"
+            ):
+                da.values = pd.to_datetime(da.values, utc=True)
+                da = cast_this(da, "datetime64[ns]")
+
             elif v == "SCIENTIFIC_CALIB_DATE":
                 da = cast_this(da, str)
                 s = da.stack(dummy_index=da.dims)

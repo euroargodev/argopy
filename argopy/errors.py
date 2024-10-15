@@ -22,7 +22,7 @@ class DataNotFound(NoData):
 
 
 class NoDataLeft(NoData):
-    """Raise when a data post-processing returns an empty dataset or dataframe"""
+    """Raise when data processing returns an empty dataset or dataframe"""
     pass
 
 
