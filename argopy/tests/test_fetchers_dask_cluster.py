@@ -15,7 +15,6 @@ from utils import (
     requires_argovis,
     requires_erddap,
     requires_gdac,
-    has_dask, has_distributed,
 )
 
 log = logging.getLogger("argopy.tests.dask")
