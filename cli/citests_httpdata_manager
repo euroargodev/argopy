@@ -1062,9 +1062,9 @@ def consolidate(target=None):
                     print("🚨 Bad %s in %s" % (item["type"], file_path))
                     print("▶ Record: ", item)
                     print("▶ Content:", data[0:100])
-                    txt = ""
-                    while txt.lower() not in ["y", "n"]:
-                        txt = input("Do you confirm to suppress this record ? [y]/n")
+                    txt = "?"
+                    while txt.lower() not in ["y", "n", ""]:
+                        txt = input("Do you confirm to suppress this record ? [y]/n ")
                     if txt == "y" or txt == "":
                         n_delete += 1
                         file_path.unlink()

@@ -3249,7 +3249,7 @@ info:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   title: OceanOPS API for metadata access
-  version: 1.14.1
+  version: 1.14.2
 openapi: 3.0.3
 paths:
   /data/platform:
