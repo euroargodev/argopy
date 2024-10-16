@@ -22,7 +22,6 @@ jobs:
 
     name: All - Free - Py${{matrix.python-version}} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    needs: [detect-ci-trigger, detect-ci-skip]
     if: |
         always()
         && (
