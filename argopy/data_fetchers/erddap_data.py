@@ -11,21 +11,16 @@ This is not intended to be used directly, only by the facade at fetchers.py
 """
 
 import xarray as xr
-import pandas as pd
 import numpy as np
 import copy
-import time
 from abc import abstractmethod
-import getpass
 from typing import Union
 from aiohttp import ClientResponseError
 import logging
 from erddapy.erddapy import ERDDAP, parse_dates
 from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
-import warnings
 
 from ..options import OPTIONS, PARALLEL_SETUP
-from ..utils.format import format_oneline
 from ..utils.lists import list_bgc_s_variables, list_core_parameters
 from ..utils.decorators import deprecated
 from ..errors import ErddapServerError, DataNotFound
@@ -264,7 +259,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             log.debug("The erddap server has been modified, updating internal data")
             self._init_erddapy()
 
-    @deprecated("Not serializable")
+    @deprecated("Not serializable, please use 'erddap_data_processors._add_attributes'", version="1.0.0")
     def _add_attributes(self, this):  # noqa: C901
         """Add variables attributes not return by erddap requests (csv)
 
@@ -672,9 +667,12 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             url = url.replace("." + self.erddap.response, ".ncHeader")
             try:
                 ncHeader = str(self.fs.download_url(url))
-                lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
-                return int(lines.split("=")[1].split(";")[0])
-            except Exception:
+                if "Your query produced no matching results. (nRows = 0)" in ncHeader:
+                    return 0
+                else:
+                    lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
+                    return int(lines.split("=")[1].split(";")[0])
+            except Exception as e:
                 raise ErddapServerError(
                     "Erddap server can't return ncHeader for url: %s " % url
                 )

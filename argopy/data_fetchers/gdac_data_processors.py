@@ -1,7 +1,5 @@
 import numpy as np
-import pandas as pd
 import xarray as xr
-import getpass
 
 
 def pre_process_multiprof(
@@ -58,24 +56,6 @@ def pre_process_multiprof(
         ds.argo.profile2point()
     )  # Default output is a collection of points, along N_POINTS
 
-
-    # Attributes are added by the caller
-
-    # if dataset_id == "phy":
-    #     ds.attrs["DATA_ID"] = "ARGO"
-    # if dataset_id in ["bgc", "bgc-s"]:
-    #     ds.attrs["DATA_ID"] = "ARGO-BGC"
-    #
-    # ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
-    #
-    # # ds.attrs["Fetched_from"] = server
-    # ds.attrs["Fetched_constraints"] = cname
-    # try:
-    #     ds.attrs["Fetched_by"] = getpass.getuser()
-    # except:  # noqa: E722
-    #     ds.attrs["Fetched_by"] = "anonymous"
-    # ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
-    # ds.attrs["Fetched_uri"] = ds.encoding["source"]
     ds = ds[np.sort(ds.data_vars)]
 
     if pre_filter_points:

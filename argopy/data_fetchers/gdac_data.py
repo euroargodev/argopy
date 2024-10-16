@@ -13,7 +13,7 @@ import warnings
 import getpass
 import logging
 
-from ..utils.format import format_oneline, argo_split_path
+from ..utils.format import argo_split_path
 from ..utils.decorators import deprecated
 from ..options import OPTIONS, check_gdac_path, PARALLEL_SETUP
 from ..errors import DataNotFound
@@ -40,8 +40,8 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
     This class is a prototype not meant to be instantiated directly
 
     """
-    data_source = "gdac"
 
+    data_source = "gdac"
 
     ###
     # Methods to be customised for a specific request
@@ -119,7 +119,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             cachedir=cachedir,
             timeout=self.timeout,
         )
-        self.fs = self.indexfs.fs["src"]  # Re-use the appropriate file system
+        self.fs = self.indexfs.fs["src"]  # Reuse the appropriate file system
 
         nrows = None
         if "N_RECORDS" in kwargs:
@@ -140,7 +140,9 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         summary.append(self._repr_access_point)
         summary.append(self._repr_server)
         if hasattr(self.indexfs, "index"):
-            summary.append("📗 Index: %s (%i records)" % (self.indexfs.index_file, self.N_RECORDS))
+            summary.append(
+                "📗 Index: %s (%i records)" % (self.indexfs.index_file, self.N_RECORDS)
+            )
         else:
             summary.append("📕 Index: %s (not loaded)" % self.indexfs.index_file)
         if hasattr(self.indexfs, "search"):
@@ -233,7 +235,10 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         self.fs.clear_cache()
         return self
 
-    @deprecated("Not serializable")
+    @deprecated(
+        "Not serializable, please use 'gdac_data_processors.pre_process_multiprof'",
+        version="1.0.0",
+    )
     def _preprocess_multiprof(self, ds):
         """Pre-process one Argo multi-profile file as a collection of points
 
@@ -332,13 +337,13 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
 
         if hasattr(self, "BOX"):
             access_point = "BOX"
-            access_point_opts = {'BOX': self.BOX}
+            access_point_opts = {"BOX": self.BOX}
         elif hasattr(self, "CYC"):
             access_point = "CYC"
-            access_point_opts = {'CYC': self.CYC}
+            access_point_opts = {"CYC": self.CYC}
         elif hasattr(self, "WMO"):
             access_point = "WMO"
-            access_point_opts = {'WMO': self.WMO}
+            access_point_opts = {"WMO": self.WMO}
 
         # Download and pre-process data:
         ds = self.fs.open_mfdataset(
@@ -379,7 +384,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             ds.attrs["Fetched_from"] = self.server
             try:
                 ds.attrs["Fetched_by"] = getpass.getuser()
-            except:
+            except:  # noqa: E722
                 ds.attrs["Fetched_by"] = "anonymous"
             ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime(
                 "%Y/%m/%d"
@@ -393,17 +398,20 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
 
         return ds
 
-    @deprecated("Refactored to GDAC pre-processor submodule")
+    @deprecated(
+        "Not serializable, please use 'gdac_data_processors.filter_points'",
+        version="1.0.0",
+    )
     def filter_points(self, ds):
         if hasattr(self, "BOX"):
             access_point = "BOX"
-            access_point_opts = {'BOX': self.BOX}
+            access_point_opts = {"BOX": self.BOX}
         elif hasattr(self, "CYC"):
             access_point = "CYC"
-            access_point_opts = {'CYC': self.CYC}
+            access_point_opts = {"CYC": self.CYC}
         elif hasattr(self, "WMO"):
             access_point = "WMO"
-            access_point_opts = {'WMO': self.WMO}
+            access_point_opts = {"WMO": self.WMO}
         return filter_points(ds, access_point=access_point, **access_point_opts)
 
     def transform_data_mode(self, ds: xr.Dataset, **kwargs):

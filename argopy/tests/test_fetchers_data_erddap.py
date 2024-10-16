@@ -166,6 +166,9 @@ class Test_Backend:
         if not parallel:
             # parallel is False by default, so we don't need to clutter the arguments list
             del fetcher_args["parallel"]
+        else:
+            # Use small chunks for the small test domain (ensure we're producing more than 1 uri to handle):
+            fetcher_args['chunks_maxsize'] = {'lon': 2.5, 'lat': 2.5, 'wmo': 1}
 
         # log.debug("Setting up a new fetcher with the following arguments:")
         # log.debug(fetcher_args)
@@ -186,7 +189,8 @@ class Test_Backend:
     @pytest.fixture
     def parallel_fetcher(self, request):
         """ Fixture to create a parallel ERDDAP data fetcher for a given dataset and access point """
-        fetcher_args, access_point = self._setup_fetcher(request, parallel="thread")
+        fetcher_args, access_point = self._setup_fetcher(request,
+                                                         parallel="thread")
         yield create_fetcher(fetcher_args, access_point)
 
     def teardown_class(self):

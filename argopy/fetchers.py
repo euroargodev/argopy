@@ -21,7 +21,6 @@ from .errors import (
     InvalidFetcherAccessPoint,
     InvalidFetcher,
     OptionValueError,
-    OptionDeprecatedWarning,
 )
 from .related import (
     get_coriolis_profile_id,
@@ -170,19 +169,13 @@ class ArgoDataFetcher:
         self._loaded = False
         self._request = ""
 
-        # Dev warnings
+        # Warnings
         # Todo Clean-up before each release
         if self._src == "argovis" and (
             self._mode == "expert" or self._mode == "research"
         ):
             raise OptionValueError(
                 "The 'argovis' data source fetching is only available in 'standard' user mode"
-            )
-
-        if self._src == "gdac" and "ftp" in self.fetcher_options:
-            OptionDeprecatedWarning(
-                reason="The GDAC 'ftp' argument is deprecated, it will be replaced by 'gdac' in versions >= 0.1.18",
-                version="v0.0.17",
             )
 
     @property
@@ -498,10 +491,10 @@ class ArgoDataFetcher:
                     return xds
 
             else:
-                workflow = lambda x: x  # Empty processor
+                workflow = lambda x: x  # noqa: E731
 
         else:
-            workflow = lambda x: x  # Empty processor
+            workflow = lambda x: x  # noqa: E731
 
         self._pp_workflow = workflow
 

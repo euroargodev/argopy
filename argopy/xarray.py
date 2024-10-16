@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import logging
-from typing import Union, List
 from xarray.backends import BackendEntrypoint  # For xarray > 0.18
 
 try:
@@ -27,13 +26,6 @@ from .utils import (
 )
 from .utils import list_core_parameters
 from .utils import toYearFraction
-from .utils import (
-    merge_param_with_param_adjusted,
-    filter_param_by_data_mode,
-    split_data_mode,
-)
-from .utils import deprecated
-
 from .errors import InvalidDatasetStructure, DataNotFound, OptionValueError
 
 log = logging.getLogger("argopy.xarray")

@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 import xarray as xr
 import logging
 import time
@@ -32,7 +31,7 @@ class ParamsDataMode(ArgoAccessorExtension):
     :meth:`datamode.split`
 
     Examples
-    --------    
+    --------
     >>> from argopy import DataFetcher
     >>> ArgoSet = DataFetcher(mode='expert').float(1902605)
     >>> ds = ArgoSet.to_xarray()

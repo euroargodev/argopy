@@ -7,8 +7,7 @@ from abc import abstractmethod
 import warnings
 
 from ..stores import httpstore
-from ..options import OPTIONS, DEFAULT, VALIDATE, PARALLEL_SETUP
-from ..utils.format import format_oneline
+from ..options import OPTIONS, DEFAULT, PARALLEL_SETUP
 from ..utils.chunking import Chunker
 from ..utils.decorators import deprecated
 from ..errors import DataNotFound
@@ -87,7 +86,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         """
         self.definition = "Argovis Argo data fetcher"
         self.dataset_id = OPTIONS["ds"] if ds == "" else ds
-        self.user_mode =  kwargs["mode"] if "mode" in kwargs else OPTIONS["mode"]
+        self.user_mode = kwargs["mode"] if "mode" in kwargs else OPTIONS["mode"]
         self.server = kwargs["server"] if "server" in kwargs else api_server
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.store_opts = {
@@ -144,7 +143,6 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             this.attrs["history"] = txt
         return this
 
-
     @property
     def cachepath(self):
         """Return path to cache file for this request"""
@@ -165,7 +163,10 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
 
         return [safe_for_fsspec_cache(url) for url in urls]
 
-    @deprecated('Not serializable')
+    @deprecated(
+        "Not serializable, please use 'argovis_data_processors.pre_process'",
+        version="1.0.0",
+    )
     def json2dataframe(self, profiles):
         """convert json data to Pandas DataFrame"""
         # Make sure we deal with a list
@@ -213,7 +214,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
         """Load Argo data and return a Pandas dataframe"""
 
         # Download data:
-        preprocess_opts = {'key_map': self.key_map}
+        preprocess_opts = {"key_map": self.key_map}
         df_list = self.fs.open_mfjson(
             self.uri,
             method=self.parallel_method,
