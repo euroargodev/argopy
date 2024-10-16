@@ -82,14 +82,14 @@ jobs:
           echo "LOG_FILE=argopy-tests-Core-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
 
       - name: Setup Micromamba ${{ matrix.python-version }}
-        uses: mamba-org/setup-micromamba@v1
+        uses: mamba-org/setup-micromamba@v2
         with:
           micromamba-version: '1.5.10-0'
           environment-name: argopy-tests
           environment-file: ${{ env.CONDA_ENV_FILE }}
           init-shell: bash
-          cache-environment: false
-#          cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
+          cache-environment: true
+          cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
           create-args: >-
             python=${{matrix.python-version}}
 
@@ -132,7 +132,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.5.0
+        uses: codecov/codecov-action@v4.6.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml
@@ -211,14 +211,14 @@ jobs:
           echo "LOG_FILE=argopy-tests-All-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
 
       - name: Setup Micromamba ${{ matrix.python-version }}
-        uses: mamba-org/setup-micromamba@v1
+        uses: mamba-org/setup-micromamba@v2
         with:
           micromamba-version: '1.5.10-0'
           environment-name: argopy-tests
           environment-file: ${{ env.CONDA_ENV_FILE }}
           init-shell: bash
-          cache-environment: false
-#          cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
+          cache-environment: true
+          cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
           create-args: >-
             python=${{matrix.python-version}}
 
@@ -261,7 +261,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.5.0
+        uses: codecov/codecov-action@v4.6.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml

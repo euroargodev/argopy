@@ -22,7 +22,6 @@ jobs:
 
     name: All - Free - Py${{matrix.python-version}} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    needs: [detect-ci-trigger, detect-ci-skip]
     if: |
         always()
         && (
@@ -61,6 +60,7 @@ jobs:
           environment-name: argopy-tests
           environment-file: ${{ env.CONDA_ENV_FILE }}
           init-shell: bash
+          cache-environment: true
           cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
           create-args: >-
             python=${{matrix.python-version}}
