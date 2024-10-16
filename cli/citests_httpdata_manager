@@ -117,8 +117,8 @@ DEFAULT_TARGETS = [
 ]
 
 
-start_with = (
-    lambda f, x: f[0 : len(x)] == x if len(x) <= len(f) else False
+start_with = lambda f, x: (
+    f[0 : len(x)] == x if len(x) <= len(f) else False
 )  # noqa: E731
 
 
@@ -213,7 +213,7 @@ def setup_args():
         help="Return absolute path to test data storage folder",
         action="store_true",
     )
-    parser.add_argument('--url', nargs='?', help='Url to search in database')
+    parser.add_argument("--url", nargs="?", help="Url to search in database")
     return parser
 
 
@@ -244,11 +244,11 @@ def log_file_desc(file, data, src):
     # elif "github.com/euroargodev/argopy-data" in src['uri']:
     #     msg.append("🤖 GITHUB ARGOPY-DATA: %s" % parse_qs(src["uri"]))
 
-    elif start_with(src['uri'], "https://www.ocean-ops.org/api/1"):
+    elif start_with(src["uri"], "https://www.ocean-ops.org/api/1"):
         # msg.append("🤖 Ocean-OPS API: %s" % unquote(src["uri"]))
         msg.append("🤖 Ocean-OPS API: %s" % parse_qs(src["uri"]))
 
-    elif start_with(src['uri'], "https://argovis-api.colorado.edu"):
+    elif start_with(src["uri"], "https://argovis-api.colorado.edu"):
         msg.append("🤖 Argovis API: %s" % unquote(src["uri"]))
 
     else:
@@ -327,7 +327,7 @@ class UriRegistry(UserList):
         elif overwrite:
             self.delete(entry)
             super().append(entry)
-        log.debug("commit: %s" % entry['uri'])
+        log.debug("commit: %s" % entry["uri"])
         return self
 
     def delete(self, entry):
@@ -448,8 +448,8 @@ class Lister:
         }
         requests_ref = {
             "region": [
-                [-25, -10, 36, 40, 0, 10.],
-                [-25, -10, 36, 40, 0, 10., '20180101', '20190101'],
+                [-25, -10, 36, 40, 0, 10.0],
+                [-25, -10, 36, 40, 0, 10.0, "20180101", "20190101"],
             ]
         }
         requests_seq = {"phy": requests_phy, "ref": requests_ref}
@@ -494,12 +494,14 @@ class Lister:
                     ]
 
         for mode in ["expert", "standard", "research"]:
-            fetcher = DataFetcher(src="erddap",
-                                  ds="phy",
-                                  mode=mode,
-                                  parallel=True,
-                                  chunks_maxsize={'lon': 2.5, 'lat': 2.5},
-                                  )
+            fetcher = DataFetcher(
+                src="erddap",
+                ds="phy",
+                mode=mode,
+                parallel=True,
+                parallel_method="thread",
+                chunks_maxsize={"lon": 2.5, "lat": 2.5, "wmo": 1},
+            )
             for access_point in requests_par:
                 [
                     add_to_URI(fetcher.profile(*cfg))
@@ -585,7 +587,7 @@ class Lister:
             index_file="argo_synthetic-profile_index.txt",  # corresponds to dataset in the erddap
             cache=True,
         )
-        for mode in ['expert', 'standard', 'research']:
+        for mode in ["expert", "standard", "research"]:
             for measured in [None, "all", "DOXY"]:
                 for params in ["all", "DOXY"]:
                     fetcher = DataFetcher(
@@ -615,7 +617,7 @@ class Lister:
                         ]
 
         measured = None
-        for mode in ['expert', 'standard', 'research']:
+        for mode in ["expert", "standard", "research"]:
             for params in ["all", "DOXY"]:
                 fetcher = DataFetcher(
                     src="erddap",
@@ -623,7 +625,7 @@ class Lister:
                     cache=True,
                     parallel=True,
                     parallel_method="thread",
-                    chunks_maxsize={'lon': 2.5, 'lat': 2.5},
+                    chunks_maxsize={"lon": 2.5, "lat": 2.5, "wmo": 1},
                     mode=mode,
                     params=params,
                     measured=measured,
@@ -788,9 +790,9 @@ class Lister:
                     if access_point == "region"
                 ]
 
-        fetcher = DataFetcher(src="argovis",
-                              parallel=True,
-                              chunks_maxsize={'lon': 2.5, 'lat': 2.5})
+        fetcher = DataFetcher(
+            src="argovis", parallel=True, chunks_maxsize={"lon": 2.5, "lat": 2.5}
+        )
         for access_point in requests_par:
             [
                 add_to_URI(fetcher.profile(*cfg))
@@ -911,7 +913,9 @@ class Lister:
         WMO_list.append(6901929)  # Used by test_related
         WMO_list.append(5904797)  # Used by test_plot_dashboards.py
         WMO_list.append(6902755)  # Used by test_plot_dashboards.py
-        WMO_list.append(2901623)  # Used by test_fetchers_facade_data.py::Test_Facade::test_to_index_coriolis
+        WMO_list.append(
+            2901623
+        )  # Used by test_fetchers_facade_data.py::Test_Facade::test_to_index_coriolis
 
         for uri in [
             "https://dataselection.euro-argo.eu/api/trajectory/%i" % wmo
@@ -1087,7 +1091,7 @@ def search_data(url=None):
         found = False
         results = []
         for item in URIs:
-            if unquote(url) in item['uri'] or url in item['uri']:
+            if unquote(url) in item["uri"] or url in item["uri"]:
                 results.append(item)
                 found = True
         if found:
@@ -1096,7 +1100,6 @@ def search_data(url=None):
                 print("▶ ", r)
         else:
             print("\n❌ No items correspond to your search")
-
 
 
 if __name__ == "__main__":

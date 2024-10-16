@@ -184,6 +184,9 @@ class Test_Backend:
         if not parallel:
             # parallel is False by default, so we don't need to clutter the arguments list
             del fetcher_args["parallel"]
+        else:
+            # Use small chunks for the small test domain (ensure we're producing more than 1 uri to handle):
+            fetcher_args['chunks_maxsize'] = {'lon': 2.5, 'lat': 2.5, 'wmo': 1}
 
         # log.debug("Setting up a new fetcher with the following arguments:")
         # log.debug(fetcher_args)
@@ -228,12 +231,6 @@ class Test_Backend:
     def test_fetching_cached(self, mocked_erddapserver, cached_fetcher):
         assert_fetcher(mocked_erddapserver, cached_fetcher, cacheable=True)
 
-    @pytest.mark.parametrize("parallel_fetcher", VALID_PARALLEL_ACCESS_POINTS,
-                             indirect=True,
-                             ids=VALID_PARALLEL_ACCESS_POINTS_IDS)
-    def test_fetching_parallel_thread(self, mocked_erddapserver, parallel_fetcher):
-        assert_fetcher(mocked_erddapserver, parallel_fetcher, cacheable=False)
-
     @pytest.mark.parametrize("measured", [None, 'all', 'DOXY'],
                              indirect=False,
                              ids=["measured=%s" % m for m in [None, 'all', 'DOXY']]
@@ -251,20 +248,8 @@ class Test_Backend:
         fetcher = create_fetcher(fetcher_args, access_point)
         assert_fetcher(mocked_erddapserver, fetcher)
 
-    # @pytest.mark.parametrize("measured", ['all'],
-    #                          indirect=False,
-    #                          ids=["measured=%s" % m for m in ['all']],
-    #                          )
-    # def test_fetching_failed_measured(self, mocked_erddapserver, measured):
-    #     class this_request:
-    #         param = {
-    #             'ds': 'bgc',
-    #             'mode': 'expert',
-    #             'params': 'all',
-    #             'measured': measured,
-    #             'access_point': {"float": [6904240]},
-    #         }
-    #     fetcher_args, access_point = self._setup_fetcher(this_request)
-    #     fetcher = create_fetcher(fetcher_args, access_point)
-    #     with pytest.raises(ValueError):
-    #         fetcher.to_xarray()
+    @pytest.mark.parametrize("parallel_fetcher", VALID_PARALLEL_ACCESS_POINTS,
+                             indirect=True,
+                             ids=VALID_PARALLEL_ACCESS_POINTS_IDS)
+    def test_fetching_parallel_thread(self, mocked_erddapserver, parallel_fetcher):
+        assert_fetcher(mocked_erddapserver, parallel_fetcher, cacheable=False)
