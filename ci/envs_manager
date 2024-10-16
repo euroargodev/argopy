@@ -21,6 +21,7 @@ source ~/miniconda3/etc/profile.d/conda.sh
 declare -A ENV_LIST=(
 ['argopy-base']="requirements/py3.11-all-free.yml"
 ['argopy-coiled']="requirements/py3.11-coiled-free.yml"
+['argopy-xr-check']="requirements/py3.12-all-free-xarray-check.yml"
 
 ['argopy-docs-dev']="requirements/py3.9-docs-dev.yml"
 ['argopy-docs-rtd']="requirements/py3.9-docs-rtd.yml"
