@@ -1,5 +1,4 @@
 import urllib
-import warnings
 import importlib
 import time
 import threading
@@ -50,11 +49,6 @@ def badge(label="label", message="message", color="green", insert=False):
 
 class fetch_status:
     """Fetch and report web API status"""
-
-    # def __init__(self, **kwargs):
-        # if "stdout" in kwargs or "insert" in kwargs:
-        #     warnings.warn("'fetch_status' signature has changed")
-        # pass
 
     def fetch(self):
         results = {}

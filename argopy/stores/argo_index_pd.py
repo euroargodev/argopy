@@ -236,7 +236,6 @@ class indexstore_pandas(ArgoIndexStoreProto):
 
         return results
 
-
     def read_params(self, index=False):
         if self.convention not in ["argo_bio-profile_index",
                                    "argo_synthetic-profile_index",

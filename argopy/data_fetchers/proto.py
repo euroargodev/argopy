@@ -6,7 +6,7 @@ import hashlib
 import warnings
 import logging
 from ..plot import dashboard
-from ..utils.lists import list_standard_variables, list_bgc_s_variables
+from ..utils.lists import list_standard_variables
 from ..utils.format import UriCName, format_oneline
 
 

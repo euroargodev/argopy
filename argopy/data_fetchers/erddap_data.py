@@ -11,21 +11,16 @@ This is not intended to be used directly, only by the facade at fetchers.py
 """
 
 import xarray as xr
-import pandas as pd
 import numpy as np
 import copy
-import time
 from abc import abstractmethod
-import getpass
 from typing import Union
 from aiohttp import ClientResponseError
 import logging
 from erddapy.erddapy import ERDDAP, parse_dates
 from erddapy.erddapy import _quote_string_constraints as quote_string_constraints
-import warnings
 
 from ..options import OPTIONS, PARALLEL_SETUP
-from ..utils.format import format_oneline
 from ..utils.lists import list_bgc_s_variables, list_core_parameters
 from ..utils.decorators import deprecated
 from ..errors import ErddapServerError, DataNotFound

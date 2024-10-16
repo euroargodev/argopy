@@ -47,7 +47,7 @@ class CanyonMED(ArgoAccessorExtension):
     .. [2] Fourrier, M., Coppola, L., Claustre, H., D’Ortenzio, F., Sauzède, R., and Gattuso, J.-P. (2021). Corrigendum: A Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea: CANYON-MED. Frontiers in Marine Science 8. doi:10.3389/fmars.2021.650509.
     """
 
-    # todo This class work with pandas dataframe, but we should keep xarray dataset internaly for the predictions
+    # todo This class work with pandas dataframe, but we should keep xarray dataset internally for the predictions
 
     ne = 7
     """Number of inputs"""

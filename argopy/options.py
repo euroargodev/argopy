@@ -134,12 +134,12 @@ def VALIDATE(key, val):
     if key in _VALIDATORS:
         if not _VALIDATORS[key](val):
             raise OptionValueError(
-                f"option '%s' given an invalid value: '%s'" % (key, val)
+                f"option '{key}' given an invalid value: '{val}'"
             )
         else:
             return val
     else:
-        raise ValueError(f"option '%s' has no validation method" % key)
+        raise ValueError(f"option '{key}' has no validation method")
 
 
 def PARALLEL_SETUP(parallel):

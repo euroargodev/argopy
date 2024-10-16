@@ -45,7 +45,6 @@ from ..errors import (
     FileSystemHasNoCache,
     CacheFileNotFound,
     DataNotFound,
-    NoDataLeft,
     InvalidMethod,
     ErddapHTTPUnauthorized,
     ErddapHTTPNotFound,

@@ -5,6 +5,7 @@ import logging
 
 log = logging.getLogger("argopy.errors")
 
+
 class NoData(ValueError):
     """Raise for no data"""
     def __init__(self, path: str = "?"):
