@@ -667,9 +667,12 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             url = url.replace("." + self.erddap.response, ".ncHeader")
             try:
                 ncHeader = str(self.fs.download_url(url))
-                lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
-                return int(lines.split("=")[1].split(";")[0])
-            except Exception:
+                if "Your query produced no matching results. (nRows = 0)" in ncHeader:
+                    return 0
+                else:
+                    lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
+                    return int(lines.split("=")[1].split(";")[0])
+            except Exception as e:
                 raise ErddapServerError(
                     "Erddap server can't return ncHeader for url: %s " % url
                 )
