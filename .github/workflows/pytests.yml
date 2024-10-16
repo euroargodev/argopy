@@ -88,8 +88,8 @@ jobs:
           environment-name: argopy-tests
           environment-file: ${{ env.CONDA_ENV_FILE }}
           init-shell: bash
-          cache-environment: false
-#          cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
+          cache-environment: true
+          cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
           create-args: >-
             python=${{matrix.python-version}}
 
@@ -217,8 +217,8 @@ jobs:
           environment-name: argopy-tests
           environment-file: ${{ env.CONDA_ENV_FILE }}
           init-shell: bash
-          cache-environment: false
-#          cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
+          cache-environment: true
+          cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
           create-args: >-
             python=${{matrix.python-version}}
 
