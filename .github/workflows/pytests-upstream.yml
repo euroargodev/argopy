@@ -283,16 +283,6 @@ jobs:
           label: 'pytest all-free'
         continue-on-error: true
 
-      - name: Generate and publish a report on failure
-        if: |
-          failure()
-          && steps.status.outcome == 'failure'
-          && github.repository_owner == 'euroargodev'
-        uses: xarray-contrib/issue-from-pytest-log@main
-        with:
-          log-path: output-${{ matrix.python-version }}-log.jsonl
-          issue-title: "Upstream CI tests failed: All - Free - Py${{matrix.python-version}} - ${{ matrix.os }}"
-
       - name: Save tests log as artifact
         uses: actions/upload-artifact@v4
         with:
