@@ -85,7 +85,7 @@ The **research** mode is the safer choice, with data of the highest quality, car
       - all without jargon [a]_
     * - Radiometry parameters [b]_ and BBP700 [c]_
       - |ds_bgc|
-      - real time only: [R] mode
+      - real time, adjusted and delayed mode data: [R,A,D] modes
       - good or probably good values, estimated or changed values (QC=[1,2,5,8])
       - *not used*
       - all without jargon [a]_
