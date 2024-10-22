@@ -137,6 +137,9 @@ class ArgoIndexStoreProto(ABC):
                 cache=cache, cachedir=cachedir, timeout=timeout, size_policy="head"
             )
 
+            if host == "https://argo-gdac-sandbox.s3-eu-west-3.amazonaws.com/pub/idx":
+                self.skip_rows = 10
+
         elif "ftp" in split_protocol(host)[0]:
             if "ifremer" not in host:
                 log.info(
