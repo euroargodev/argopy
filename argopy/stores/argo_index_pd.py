@@ -193,13 +193,13 @@ class indexstore_pandas(ArgoIndexStoreProto):
     def uri_full_index(self) -> List[str]:
         """File paths listed in the index"""
         sep = self.fs["src"].fs.sep
-        return [sep.join([self.host, "dac", f.replace('/', sep)]) for f in self.index["file"]]
+        return [sep.join([self.host.replace('/idx', ''), "dac", f.replace('/', sep)]) for f in self.index["file"]]
 
     @property
     def uri(self) -> List[str]:
         """File paths listed in search results"""
         sep = self.fs["src"].fs.sep
-        return [sep.join([self.host, "dac", f.replace('/', sep)]) for f in self.search["file"]]
+        return [sep.join([self.host.replace('/idx', ''), "dac", f.replace('/', sep)]) for f in self.search["file"]]
 
     def read_wmo(self, index=False):
         """Return list of unique WMOs from the index or search results

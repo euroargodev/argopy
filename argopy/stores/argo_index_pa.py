@@ -264,7 +264,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         """File paths listed in the index"""
         sep = self.fs["src"].fs.sep
         return [
-            sep.join([self.host, "dac", f.as_py().replace("/", sep)])
+            sep.join([self.host.replace('/idx', ''), "dac", f.as_py().replace("/", sep)])
             for f in self.index["file"]
         ]
 
@@ -273,7 +273,7 @@ class indexstore_pyarrow(ArgoIndexStoreProto):
         """File paths listed in search results"""
         sep = self.fs["src"].fs.sep
         return [
-            sep.join([self.host, "dac", f.as_py().replace("/", sep)])
+            sep.join([self.host.replace('/idx', ''), "dac", f.as_py().replace("/", sep)])
             for f in self.search["file"]
         ]
 
