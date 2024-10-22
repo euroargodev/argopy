@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from collections import UserList
+from pathlib import Path
 import warnings
 import logging
 import copy
@@ -150,14 +151,8 @@ class Registry(UserList):
         else:
             log.debug(msg)
 
-    def _str(self, item):
-        is_valid = isinstance(item, str)
-        if not is_valid:
-            self._complain("%s is not a valid %s" % (str(item), self.dtype))
-        return is_valid
-
-    def _dict(self, item):
-        is_valid = isinstance(item, dict)
+    def _isinstance(self, item):
+        is_valid = isinstance(item, self.dtype)
         if not is_valid:
             self._complain("%s is not a valid %s" % (str(item), self.dtype))
         return is_valid
@@ -166,7 +161,7 @@ class Registry(UserList):
         return item.isvalid
 
     def __init__(
-        self, initlist=None, name: str = "unnamed", dtype="str", invalid="raise"
+        self, initlist=None, name: str = "unnamed", dtype=str, invalid="raise"
     ):
         """Create a registry, i.e. a controlled list
 
@@ -177,26 +172,23 @@ class Registry(UserList):
         name: str, default: 'unnamed'
             Name of the Registry
         dtype: :class:`str` or dtype, default: :class:`str`
-            Data type of registry content. Supported values are: 'str', 'wmo', float_wmo
+            Data type of registry content. Can be any data type, including 'wmo' or :class:`float_wmo`
         invalid: str, default: 'raise'
             Define what do to when a new item is not valid. Can be 'raise' or 'ignore'
         """
         self.name = name
         self._invalid = invalid
-        if repr(dtype) == "<class 'str'>" or dtype == "str":
-            self._validator = self._str
-            self.dtype = str
-        elif dtype == float_wmo or str(dtype).lower() == "wmo":
+        if dtype == float_wmo or str(dtype).lower() == "wmo":
             self._validator = self._wmo
             self.dtype = float_wmo
-        elif repr(dtype) == "<class 'dict'>" or dtype == "dict":
-            self._validator = self._dict
-            self.dtype = dict
         elif hasattr(dtype, "isvalid"):
             self._validator = dtype.isvalid
             self.dtype = dtype
         else:
-            raise ValueError("Unrecognised Registry data type '%s'" % dtype)
+            self._validator = self._isinstance
+            self.dtype = dtype
+        # else:
+        #     raise ValueError("Unrecognised Registry data type '%s'" % dtype)
 
         if initlist is not None:
             initlist = self._process_items(initlist)
