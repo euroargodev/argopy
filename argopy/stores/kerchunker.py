@@ -30,7 +30,7 @@ class ArgoKerchunker:
         >>> ak = ArgoKerchunker(store='memory')  # default
 
         >>> ak.supported(ncfile)
-        >>> ak.translate(ncfile)
+        >>> ak.translate(ncfile)  # takes 1 or a list of uris
         >>> ak.pprint(ncfile)
 
         >>> ak.open_dataset(ncfile)
