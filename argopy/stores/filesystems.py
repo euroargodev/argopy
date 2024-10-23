@@ -32,7 +32,8 @@ import time
 import tempfile
 import logging
 from packaging import version
-from typing import Union
+from typing import Union, Any, List
+from collections.abc import Callable
 from urllib.parse import urlparse, parse_qs
 from functools import lru_cache
 from abc import ABC, abstractmethod
@@ -75,6 +76,7 @@ try:
 except ModuleNotFoundError:
     log.debug("argopy needs distributed to use Dask cluster/client")
     has_distributed = False
+    distributed = None
 
 
 def new_fs(
@@ -94,16 +96,18 @@ def new_fs(
     cachedir: str
         Define path to cache directory.
     **kwargs: (optional)
-        Other arguments passed to :class:`fsspec.filesystem`
+        Other arguments passed to :func:`fsspec.filesystem`
 
     """
     # Merge default FSSPEC kwargs with user defined kwargs:
     default_fsspec_kwargs = {"simple_links": True, "block_size": 0}
     if protocol == "http":
-        client_kwargs = {"trust_env": OPTIONS["trust_env"]}  # Passed to aiohttp.ClientSession
+        client_kwargs = {
+            "trust_env": OPTIONS["trust_env"]
+        }  # Passed to aiohttp.ClientSession
         if "client_kwargs" in kwargs:
-            client_kwargs = {**client_kwargs, **kwargs['client_kwargs']}
-            kwargs.pop('client_kwargs')
+            client_kwargs = {**client_kwargs, **kwargs["client_kwargs"]}
+            kwargs.pop("client_kwargs")
         default_fsspec_kwargs = {
             **default_fsspec_kwargs,
             **{"client_kwargs": {**client_kwargs}},
@@ -173,7 +177,7 @@ class argo_store_proto(ABC):
 
     Provide a prototype for Argo file systems
 
-    Should this class inherits from fsspec.spec.AbstractFileSystem ?
+    Should this class inherits from :class:`fsspec.spec.AbstractFileSystem` ?
     """
 
     protocol = ""
@@ -187,7 +191,7 @@ class argo_store_proto(ABC):
         cache: bool (False)
         cachedir: str (from OPTIONS)
         **kwargs: (optional)
-            Other arguments passed to :class:`fsspec.filesystem`
+            Other arguments are passed to :func:`fsspec.filesystem`
 
         """
         self.cache = cache
@@ -272,7 +276,9 @@ class argo_store_proto(ABC):
         if os.path.exists(fn):
             if version.parse(fsspec.__version__) <= version.parse("2023.6.0"):
                 with open(fn, "rb") as f:
-                    cached_files = pickle.load(f)  # nosec B301 because files controlled internally
+                    cached_files = pickle.load(
+                        f
+                    )  # nosec B301 because files controlled internally
             else:
                 with open(fn, "r") as f:
                     cached_files = json.load(f)
@@ -622,10 +628,9 @@ class httpstore(argo_store_proto):
 
     Relies on :class:`fsspec.implementations.http.HTTPFileSystem`
 
-    This store intends to make argopy: safer to failures from http requests and to provide higher levels methods to
-    work with our datasets
+    This store intends to make argopy safer to failures from http requests and to provide higher levels methods to
+    work with our datasets such as: :class:`httpstore.open_mfdataset` and :class:`httpstore.open_mfjson`.
 
-    This store is primarily used by the Erddap/Argovis data/index fetchers
     """
 
     protocol = "http"
@@ -643,68 +648,69 @@ class httpstore(argo_store_proto):
         path = self.curateurl(path)
         return super().exists(path, *args, **kwargs)
 
-    def curateurl(self, url):
-        """Possibly manipulate an url before it's accessed
+    def curateurl(self, url) -> str:
+        """Register and possibly manipulate an url before it's accessed
 
-        This is primarily intended to be used by tests and dev
+        This method should be called anytime an url is accessed
+
+        Parameters
+        ----------
+        url: str
+            URL to register and curate
+
+        Returns
+        -------
+        url: str
+            Registered and curated URL
         """
         self.urls_registry.commit(url)
         return url
 
-        # if OPTIONS["server"] is not None:
-        #     # log.debug("Replaced '%s' with '%s'" % (urlparse(url).netloc, OPTIONS["netloc"]))
-        #
-        #     if urlparse(url).scheme == "":
-        #         patternA = "//%s" % (urlparse(url).netloc)
-        #     else:
-        #         patternA = "%s://%s" % (urlparse(url).scheme, urlparse(url).netloc)
-        #
-        #     patternB = "%s://%s" % (urlparse(OPTIONS["server"]).scheme, urlparse(OPTIONS["server"]).netloc)
-        #     log.debug(patternA)
-        #     log.debug(patternB)
-        #
-        #     new_url = url.replace(patternA, patternB)
-        #     # log.debug(url)
-        #     # log.debug(new_url)
-        #     return new_url
-        # else:
-        #     # log.debug("'%s' left unchanged" % urlparse(url).netloc)
-        #     log.debug(url)
-        #     return url
-
     def download_url(
-        self,
-        url,
-        n_attempt: int = 1,
-        max_attempt: int = 5,
-        cat_opts: dict = {},
-        errors: str = 'raise',
-        *args,
-        **kwargs,
-    ):
-        """URL data downloader
+        self, url, max_attempt: int = 5, cat_opts: dict = {}, errors: str = "raise"
+    ) -> Any:
+        """Resilient URL data downloader
 
-        This is basically a fsspec.cat_file that is able to handle a 429 "Too many requests" error from a server, by
-        waiting and sending requests several time.
+        This is basically a :func:`fsspec.implementations.http.HTTPFileSystem.cat_file` that is able to handle a 429 "Too many requests" error from a server, by waiting and sending requests several time.
+
+        Parameters
+        ----------
+        url: str
+            URL to download
+        max_attempt: int, default = 5
+            Maximum number of attempts to perform before failing
+        cat_opts: dict, default = {}
+            Options to be passed to the HTTPFileSystem cat_file method
+        errors: str, default: ``raise``
+            Define how to handle errors:
+                - ``raise`` (default): Raise any error encountered
+                - ``ignore``: Do not stop processing, simply issue a debug message in logging console
+                - ``silent``:  Do not stop processing and do not issue log message
+
         """
 
         def make_request(
-            ffs, url, n_attempt: int = 1, max_attempt: int = 5, cat_opts: dict = {}, errors: str = 'raise',
+            ffs,
+            url,
+            n_attempt: int = 1,
+            max_attempt: int = 5,
+            cat_opts: dict = {},
+            errors: str = "raise",
         ):
             data = None
             if n_attempt <= max_attempt:
                 try:
                     data = ffs.cat_file(url, **cat_opts)
                 except FileNotFoundError as e:
-                    if errors == 'raise':
+                    if errors == "raise":
                         raise e
-                    elif errors == 'ignore':
-                        log.error('FileNotFoundError raised from: %s' % url)
+                    elif errors == "ignore":
+                        log.error("FileNotFoundError raised from: %s" % url)
                 except aiohttp.ClientResponseError as e:
                     if e.status == 413:
-                        if errors == 'raise':
+                        if errors == "raise":
                             raise e
-                        elif errors == 'ignore':
+                        elif errors == "ignore":
                             log.error(
                                 "Error %i (Payload Too Large) raised with %s"
                                 % (e.status, url)
@@ -721,24 +727,22 @@ class httpstore(argo_store_proto):
                     else:
                         # Handle other client response errors
                         print(f"Error: {e}")
-
                 except aiohttp.ClientError as e:
-                    if errors == 'raise':
+                    if errors == "raise":
                         raise e
-                    elif errors == 'ignore':
+                    elif errors == "ignore":
                         log.error("Error: {e}")
-
                 except fsspec.FSTimeoutError as e:
-                    if errors == 'raise':
+                    if errors == "raise":
                         raise e
-                    elif errors == 'ignore':
+                    elif errors == "ignore":
                         log.error("Error: {e}")
             else:
-                if errors == 'raise':
+                if errors == "raise":
                     raise ValueError(
                         f"Error: All attempts failed to download this url: {url}"
                     )
-                elif errors == 'ignore':
+                elif errors == "ignore":
                     log.error("Error: All attempts failed to download this url: {url}")
 
             return data, n_attempt
@@ -747,52 +751,76 @@ class httpstore(argo_store_proto):
         data, n = make_request(
             self.fs,
             url,
-            n_attempt=n_attempt,
             max_attempt=max_attempt,
             cat_opts=cat_opts,
             errors=errors,
         )
 
         if data is None:
-            if errors == 'raise':
+            if errors == "raise":
                 raise FileNotFoundError(url)
-            elif errors == 'ignore':
+            elif errors == "ignore":
                 log.error("FileNotFoundError: %s" % url)
 
         return data
 
-    def open_dataset(self, url, errors: str = 'raise', **kwargs):
-        """Open and decode a xarray dataset from an url
+    def open_dataset(self, url, errors: str = "raise", **kwargs) -> xr.Dataset:
+        """Download and process a :class:`xarray.Dataset` from an url
+
+        Steps performed:
+
+        1. Download from ``url`` raw binary data with :class:`httpstore.download_url` and then
+        2. Create a :class:`xarray.Dataset` with :func:`xarray.open_dataset`.
+
+        Each functions can be passed specifics arguments (see Parameters below).
 
         Parameters
         ----------
         url: str
         kwargs: dict
-            The 'dwn_opts' key is passed to self.download_url
-            The 'xr_opts' key is passed to xr.open_dataset
+            Use to possibly pass arguments to:
+                - ``dwn_opts`` key is passed to :class:`httpstore.download_url`
+                - ``xr_opts`` key is passed to :func:`xarray.open_dataset`
 
         Returns
         -------
         :class:`xarray.Dataset`
+
+        Raises
+        ------
+        :class:`TypeError` if data returned by ``url`` are not CDF or HDF5 binary data.
+
+        :class:`DataNotFound` if ``errors`` is set to ``raise`` and url returns no data.
+
+        See Also
+        --------
+        :class:`httpstore.open_mfdataset`
         """
         dwn_opts = {}
-        if "download_url_opts" in kwargs:
-            dwn_opts.update(kwargs["download_url_opts"])
+        if "dwn_opts" in kwargs:
+            dwn_opts.update(kwargs["dwn_opts"])
         data = self.download_url(url, **dwn_opts)
-        log.info(dwn_opts)
 
         if data is None:
-            if errors == 'raise':
+            if errors == "raise":
                 raise DataNotFound(url)
-            elif errors == 'ignore':
+            elif errors == "ignore":
                 log.error("DataNotFound: %s" % url)
             return None
 
-        if data[0:3] != b"CDF" and data[0:3] != b'\x89HD':
+        if b'Not Found: Your query produced no matching results' in data:
+            if errors == "raise":
+                raise DataNotFound(url)
+            elif errors == "ignore":
+                log.error("DataNotFound from [%s]: %s" % (url, data))
+            return None
+
+        if data[0:3] != b"CDF" and data[0:3] != b"\x89HD":
             raise TypeError(
-                "We didn't get a CDF or HDF5 binary data as expected ! We get: %s" % data
+                "We didn't get a CDF or HDF5 binary data as expected ! We get: %s"
+                % data
             )
-        if data[0:3] == b'\x89HD':
+        if data[0:3] == b"\x89HD":
             data = io.BytesIO(data)
 
         xr_opts = {}
@@ -810,13 +838,32 @@ class httpstore(argo_store_proto):
     def _mfprocessor_dataset(
         self,
         url,
-        preprocess=None,
-        preprocess_opts={},
-        open_dataset_opts={},
-        *args,
-        **kwargs,
-    ):
-        """Used by httpstore.open_mfdataset"""
+        open_dataset_opts: dict = {},
+        preprocess: Callable = None,
+        preprocess_opts: dict = {},
+    ) -> xr.Dataset:
+        """Single URL dataset processor
+
+        Internal method sent to a worker by :class:`httpstore.open_mfdataset` and responsible for dealing with a single URL.
+
+        1. Open the dataset with :class:`httpstore.open_dataset`
+        2. Pre-process the dataset with the ``preprocess`` function given in arguments
+
+        Parameters
+        ----------
+        url: str
+            URI to process
+        open_dataset_opts: dict, default: {}
+            Set of arguments passed to :class:`httpstore.open_dataset`
+        preprocess: :class:`Typing.Callable`, default: None
+            Pre-processing function
+        preprocess_opts: dict, default: {}
+            Options to be passed to the pre-processing function
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+        """
         # Load data
         ds = self.open_dataset(url, **open_dataset_opts)
 
@@ -830,10 +877,10 @@ class httpstore(argo_store_proto):
     def _open_mfdataset_from_erddap(
         self,
         urls: list,
-        concat_dim="rows",
+        concat_dim: str = "rows",
         max_workers: int = 6,
-        preprocess=None,
-        preprocess_opts: {} = None,
+        preprocess: Callable = None,
+        preprocess_opts: dict = None,
         concat: bool = True,
         progress: bool = True,
         compute_details: bool = False,
@@ -841,8 +888,9 @@ class httpstore(argo_store_proto):
         **kwargs,
     ):
         """
-        Method used by httpstore.open_mfdataset dedicated to handle the case where we need to create a dataset from
-        multiples erddap urls download/preprocessing and need a visual feedback of the procedure up to the final merge.
+        Method used by :class:`httpstore.open_mfdataset` dedicated to handle the case where we need to
+        create a dataset from multiples erddap urls download/preprocessing and need a visual feedback of the
+        procedure up to the final merge.
 
         - httpstore.open_dataset is distributed is handle by a pool of threads
 
@@ -855,14 +903,17 @@ class httpstore(argo_store_proto):
         def task_fct(url):
             try:
                 ds = self.open_dataset(url)
-                ds.attrs['Fetched_url'] = url
-                ds.attrs['Fetched_constraints'] = UriCName(url).cname
+                ds.attrs["Fetched_url"] = url
+                ds.attrs["Fetched_constraints"] = UriCName(url).cname
                 return ds, True
             except FileNotFoundError:
                 log.debug("task_fct: This url returned no data: %s" % strUrl(url))
                 return DataNotFound(url), True
             except Exception as e:
-                log.debug("task_fct: Unexpected error when opening the remote dataset '%s':\n'%s'" % (strUrl(url), str(e)))
+                log.debug(
+                    "task_fct: Unexpected error when opening the remote dataset '%s':\n'%s'"
+                    % (strUrl(url), str(e))
+                )
                 return None, False
 
         def postprocessing_fct(obj, **kwargs):
@@ -871,7 +922,10 @@ class httpstore(argo_store_proto):
                     ds = preprocess(obj, **kwargs)
                     return ds, True
                 except Exception as e:
-                    log.debug("postprocessing_fct: Unexpected error when post-processing dataset: '%s'" % str(e))
+                    log.debug(
+                        "postprocessing_fct: Unexpected error when post-processing dataset: '%s'"
+                        % str(e)
+                    )
                     return None, False
 
             elif isinstance(obj, DataNotFound):
@@ -890,7 +944,11 @@ class httpstore(argo_store_proto):
                 # Read list of datasets from the list of objects:
                 ds_list = [v for v in dict(sorted(obj_list.items())).values()]
                 # Only keep non-empty results:
-                ds_list = [r for r in ds_list if (r is not None and not isinstance(r, DataNotFound))]
+                ds_list = [
+                    r
+                    for r in ds_list
+                    if (r is not None and not isinstance(r, DataNotFound))
+                ]
                 # log.debug(ds_list)
                 if len(ds_list) > 0:
                     if "data_vars" in kwargs and kwargs["data_vars"] == "all":
@@ -924,13 +982,22 @@ class httpstore(argo_store_proto):
                     # Is the ds_list full of None or DataNotFound ?
                     if len([r for r in ds_list if (r is None)]) == len(ds_list):
                         log.debug("finalize: An error occurred with all URLs !")
-                        return ValueError("An un-expected error occurred with all URLs, check log file for more "
-                                          "information"), True
-                    elif len([r for r in ds_list if isinstance(r, DataNotFound)]) == len(ds_list):
+                        return (
+                            ValueError(
+                                "An un-expected error occurred with all URLs, check log file for more "
+                                "information"
+                            ),
+                            True,
+                        )
+                    elif len(
+                        [r for r in ds_list if isinstance(r, DataNotFound)]
+                    ) == len(ds_list):
                         log.debug("finalize: All URLs returned DataNotFound !")
                         return DataNotFound("All URLs returned DataNotFound !"), True
             except Exception as e:
-                log.debug("finalize: Unexpected error when finalize request: '%s'" % str(e))
+                log.debug(
+                    "finalize: Unexpected error when finalize request: '%s'" % str(e)
+                )
                 return None, False
 
         if ".nc" in urls[0]:
@@ -997,21 +1064,22 @@ class httpstore(argo_store_proto):
         method: str = "thread",
         progress: Union[bool, str] = False,
         concat: bool = True,
-        concat_dim="row",
-        preprocess=None,
-        preprocess_opts={},
-        open_dataset_opts={},
+        concat_dim: str = "row",
+        preprocess: Callable = None,
+        preprocess_opts: dict = {},
+        open_dataset_opts: dict = {},
         errors: str = "ignore",
         compute_details: bool = False,
         *args,
         **kwargs,
-    ):
-        """Open multiple urls as a single xarray dataset.
+    ) -> Union[xr.Dataset, List[xr.Dataset]]:
+        """Download and process multiple urls as a single or a collection of :class:`xarray.Dataset`
 
-        This is a version of the :class:`argopy.stores.httpstore.open_dataset` method that is able to
-        handle a list of urls/paths sequentially or in parallel.
+        This is a version of the :class:`httpstore.open_dataset` method that is able to
+        handle a list of urls sequentially or in parallel.
 
-        Use a Threads Pool by default for parallelization.
+        This method uses a :class:`concurrent.futures.ThreadPoolExecutor` by default for parallelization. See
+        ``method`` parameters below for more options.
 
         Parameters
         ----------
@@ -1020,37 +1088,44 @@ class httpstore(argo_store_proto):
         max_workers: int, default: 6
             Maximum number of threads or processes
         method: str, default: ``thread``
-            The parallelization method to execute calls asynchronously:
-
-                - ``thread`` (default): use a pool of at most ``max_workers`` threads
-                - ``process``: use a pool of at most ``max_workers`` processes
-                - :class:`distributed.client.Client`: Experimental, expect this method to fail !
-                - ``seq``: open data sequentially, no parallelization applied
-                - ``erddap``:  use a pool of at most ``max_workers`` threads, comes with a nice dashboard dedicated
-                    to erddap server requests.
+            Define the parallelization method:
+                - ``thread`` (default): based on :class:`concurrent.futures.ThreadPoolExecutor` with a pool of at most ``max_workers`` threads
+                - ``process``: based on :class:`concurrent.futures.ProcessPoolExecutor` with a pool of at most ``max_workers`` processes
+                - :class:`distributed.client.Client`: use a Dask client
+                - ``sequential``/``seq``: open data sequentially in a simple loop, no parallelization applied
+                - ``erddap``: provides a detailed progress bar for erddap URLs, otherwise based on a :class:`concurrent.futures.ThreadPoolExecutor` with a pool of at most ``max_workers``
         progress: bool, default: False
             Display a progress bar
         concat: bool, default: True
             Concatenate results in a single :class:`xarray.Dataset` or not (in this case, function will return a
             list of :class:`xarray.Dataset`)
         concat_dim: str, default: ``row``
-            Name of the dimension to use to concatenate all datasets (passed to :class:`xarray.concat`)
-        preprocess: callable (optional)
+            Name of the dimension to use to concatenate all datasets (passed to :func:`xarray.concat`)
+        preprocess: :class:`collections.abc.Callable` (optional)
             If provided, call this function on each dataset prior to concatenation
         preprocess_opts: dict (optional)
-            If ``preprocess`` is provided, pass this as options
+            Options passed to the ``preprocess`` :class:`collections.abc.Callable`, if any.
         errors: str, default: ``ignore``
             Define how to handle errors raised during data URIs fetching:
-
-                - ``raise``: Raise any error encountered
                 - ``ignore`` (default): Do not stop processing, simply issue a debug message in logging console
+                - ``raise``: Raise any error encountered
                 - ``silent``:  Do not stop processing and do not issue log message
-        Other args and kwargs: other options passed to :class:`argopy.stores.httpstore.open_dataset`.
 
         Returns
         -------
-        output: :class:`xarray.Dataset` or list of :class:`xarray.Dataset`
+        :class:`xarray.Dataset` or list of :class:`xarray.Dataset`
 
+        See Also
+        --------
+        :class:`httpstore.open_dataset`
+
+        Notes
+        -----
+        For the :class:`distributed.client.Client` and :class:`concurrent.futures.ProcessPoolExecutor` to work appropriately, the pre-processing :class:`collections.abc.Callable` must be serializable. This can be checked with:
+
+        >>> from distributed.protocol import serialize
+        >>> from distributed.protocol.serialize import ToPickle
+        >>> serialize(ToPickle(preprocess_function))
         """
         strUrl = lambda x: x.replace("https://", "").replace(  # noqa: E731
             "http://", ""
@@ -1080,7 +1155,7 @@ class httpstore(argo_store_proto):
             )
 
         ################################
-        if method == "thread":
+        elif method == "thread":
             ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(
                 max_workers=max_workers
             )
@@ -1093,8 +1168,6 @@ class httpstore(argo_store_proto):
                         preprocess=preprocess,
                         preprocess_opts=preprocess_opts,
                         open_dataset_opts=open_dataset_opts,
-                        *args,
-                        **kwargs,
                     ): url
                     for url in urls
                 }
@@ -1140,8 +1213,6 @@ class httpstore(argo_store_proto):
                         preprocess=preprocess,
                         preprocess_opts=preprocess_opts,
                         open_dataset_opts=open_dataset_opts,
-                        *args,
-                        **kwargs,
                     ): url
                     for url in urls
                 }
@@ -1185,8 +1256,6 @@ class httpstore(argo_store_proto):
                         preprocess=preprocess,
                         preprocess_opts=preprocess_opts,
                         open_dataset_opts=open_dataset_opts,
-                        *args,
-                        **kwargs,
                     )
                     results = method.gather(futures)
             else:
@@ -1196,8 +1265,6 @@ class httpstore(argo_store_proto):
                     preprocess=preprocess,
                     preprocess_opts=preprocess_opts,
                     open_dataset_opts=open_dataset_opts,
-                    *args,
-                    **kwargs,
                 )
                 results = method.gather(futures)
 
@@ -1214,8 +1281,6 @@ class httpstore(argo_store_proto):
                         preprocess=preprocess,
                         preprocess_opts=preprocess_opts,
                         open_dataset_opts=open_dataset_opts,
-                        *args,
-                        **kwargs,
                     )
                 except Exception:
                     failed.append(url)
@@ -1281,40 +1346,90 @@ class httpstore(argo_store_proto):
             df = pd.read_csv(of, **kwargs)
         return df
 
-    def open_json(self, url, **kwargs):
-        """Return a json from an url, or verbose errors
+    def open_json(self, url: str, **kwargs) -> Any:
+        """Download and process a json document from an url
+
+        Steps performed:
+
+        1. Download from ``url`` raw data with :class:`httpstore.download_url` and then
+        2. Create a JSON with :func:`json.loads`.
+
+        Each functions can be passed specifics arguments (see Parameters below).
 
         Parameters
         ----------
         url: str
+        kwargs: dict
+
+            - ``dwn_opts`` key is passed to :class:`httpstore.download_url`
+            - ``js_opts`` key is passed to :func:`json.loads`
 
         Returns
         -------
-        json
+        Any
 
+        See Also
+        --------
+        :class:`httpstore.open_mfjson`
         """
-        data = self.download_url(url)
-        js = json.loads(data, **kwargs)
+        dwn_opts = {}
+        if "dwn_opts" in kwargs:
+            dwn_opts.update(kwargs["dwn_opts"])
+        data = self.download_url(url, **dwn_opts)
+
+        js_opts = {}
+        if "js_opts" in kwargs:
+            js_opts.update(kwargs["js_opts"])
+        js = json.loads(data, **js_opts)
         if len(js) == 0:
             js = None
+
         self.register(url)
         return js
 
     def _mfprocessor_json(
-        self, url, preprocess=None, url_follow=False, *args, **kwargs
+        self,
+        url,
+        open_json_opts: dict = {},
+        preprocess: Callable = None,
+        preprocess_opts: dict = {},
+        url_follow: bool = False,
+        *args,
+        **kwargs,
     ):
+        """Single URL json processor
+
+        Internal method sent to a worker by :class:`httpstore.open_mfjson` and responsible for dealing with a single URL.
+
+        1. Open the json with :class:`httpstore.open_json`
+        2. Pre-process the json with the ``preprocess`` function given in arguments
+
+        Parameters
+        ----------
+        url: str
+            URI to process
+        open_json_opts: dict, default: {}
+            Set of arguments passed to :class:`httpstore.open_json`
+        preprocess: :class:`collections.abc.Callable`, default: None
+            Pre-processing function
+        preprocess_opts: dict, default: {}
+            Options to be passed to the pre-processing function
+
+        Returns
+        -------
+        Anything as returned by the ``preprocess`` :class:`collections.abc.Callable`
+        """
         # Load data
-        data = self.open_json(url, **kwargs)
+        data = self.open_json(url, **open_json_opts)
+
         # Pre-process
-        if data is None:
-            raise DataNotFound(url)
-        elif isinstance(preprocess, types.FunctionType) or isinstance(
+        if isinstance(preprocess, types.FunctionType) or isinstance(
             preprocess, types.MethodType
         ):
             if url_follow:
-                data = preprocess(data, url=url, **kwargs)
+                data = preprocess(data, url=url, **preprocess_opts)
             else:
-                data = preprocess(data)
+                data = preprocess(data, **preprocess_opts)
         return data
 
     def open_mfjson(
@@ -1324,38 +1439,57 @@ class httpstore(argo_store_proto):
         method: str = "thread",
         progress: Union[bool, str] = False,
         preprocess=None,
+        preprocess_opts={},
+        open_json_opts={},
         url_follow=False,
         errors: str = "ignore",
         *args,
         **kwargs,
     ):
-        """Open multiple json urls
+        """Download and process a collection of JSON documents from urls
 
-        This is a parallelized version of ``open_json``.
-        Use a Threads Pool by default for parallelization.
+        This is a version of the :class:`httpstore.open_json` method that is able to
+        handle a list of urls sequentially or in parallel.
+
+        This method uses a :class:`concurrent.futures.ThreadPoolExecutor` by default for parallelization. See
+        ``method`` parameters below for more options.
 
         Parameters
         ----------
         urls: list(str)
         max_workers: int
             Maximum number of threads or processes.
-        method:
-            The parallelization method to execute calls asynchronously:
-                - 'thread' (Default): use a pool of at most ``max_workers`` threads
-                - 'process': use a pool of at most ``max_workers`` processes
-                - (XFAIL) Dask client object: use a Dask distributed client object
-
-            Use 'seq' to simply open data sequentially
-        progress: bool
-            Display a progress bar (True by default, not for dask client method)
-        preprocess: (callable, optional)
-            If provided, call this function on each json set
+        method: str, default: ``thread``
+            Define the parallelization method:
+                - ``thread`` (default): based on :class:`concurrent.futures.ThreadPoolExecutor` with a pool of at most ``max_workers`` threads
+                - ``process``: based on :class:`concurrent.futures.ProcessPoolExecutor` with a pool of at most ``max_workers`` processes
+                - :class:`distributed.client.Client`: use a Dask client
+                - ``sequential``/``seq``: open data sequentially in a simple loop, no parallelization applied
+        progress: bool, default: False
+            Display a progress bar if possible
+        preprocess: :class:`collections.abc.Callable` (optional)
+            If provided, call this function on each dataset prior to concatenation
+        preprocess_opts: dict (optional)
+            Options passed to the ``preprocess`` :class:`collections.abc.Callable`, if any.
         url_follow: bool, False
             Follow the URL to the preprocess method as ``url`` argument.
+        errors: str, default: ``ignore``
+            Define how to handle errors raised during data URIs fetching:
+                - ``ignore`` (default): Do not stop processing, simply issue a debug message in logging console
+                - ``raise``: Raise any error encountered
+                - ``silent``:  Do not stop processing and do not issue log message
 
         Returns
         -------
         list()
+
+        Notes
+        -----
+        For the :class:`distributed.client.Client` and :class:`concurrent.futures.ProcessPoolExecutor` to work appropriately, the pre-processing :class:`collections.abc.Callable` must be serializable. This can be checked with:
+
+        >>> from distributed.protocol import serialize
+        >>> from distributed.protocol.serialize import ToPickle
+        >>> serialize(ToPickle(preprocess_function))
         """
         strUrl = lambda x: x.replace("https://", "").replace(  # noqa: E731
             "http://", ""
@@ -1368,17 +1502,11 @@ class httpstore(argo_store_proto):
 
         results = []
         failed = []
-        if method in ["thread", "process"]:
-            if method == "thread":
-                ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(
-                    max_workers=max_workers
-                )
-            else:
-                if max_workers == 6:
-                    max_workers = multiprocessing.cpu_count()
-                ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(
-                    max_workers=max_workers
-                )
+        ################################
+        if method == "thread":
+            ConcurrentExecutor = concurrent.futures.ThreadPoolExecutor(
+                max_workers=max_workers
+            )
 
             with ConcurrentExecutor as executor:
                 future_to_url = {
@@ -1386,6 +1514,8 @@ class httpstore(argo_store_proto):
                         self._mfprocessor_json,
                         url,
                         preprocess=preprocess,
+                        preprocess_opts=preprocess_opts,
+                        open_json_opts=open_json_opts,
                         url_follow=url_follow,
                         *args,
                         **kwargs,
@@ -1418,11 +1548,86 @@ class httpstore(argo_store_proto):
                     finally:
                         results.append(data)
 
-        # elif type(method) == distributed.client.Client:
-        #     # Use a dask client:
-        #     futures = method.map(self._mfprocessor_json, urls, preprocess=preprocess, *args, **kwargs)
-        #     results = method.gather(futures)
+        ################################
+        elif method == "process":
+            if max_workers == 6:
+                max_workers = multiprocessing.cpu_count()
+            ConcurrentExecutor = concurrent.futures.ProcessPoolExecutor(
+                max_workers=max_workers
+            )
 
+            with ConcurrentExecutor as executor:
+                future_to_url = {
+                    executor.submit(
+                        self._mfprocessor_json,
+                        url,
+                        preprocess=preprocess,
+                        preprocess_opts=preprocess_opts,
+                        open_json_opts=open_json_opts,
+                        url_follow=url_follow,
+                        *args,
+                        **kwargs,
+                    ): url
+                    for url in urls
+                }
+                futures = concurrent.futures.as_completed(future_to_url)
+                if progress:
+                    futures = tqdm(
+                        futures, total=len(urls), disable="disable" in [progress]
+                    )
+
+                for future in futures:
+                    data = None
+                    try:
+                        data = future.result()
+                    except Exception:
+                        failed.append(future_to_url[future])
+                        if errors == "ignore":
+                            log.debug(
+                                "Ignored error with this url: %s"
+                                % strUrl(future_to_url[future])
+                            )
+                            # See fsspec.http logger for more
+                            pass
+                        elif errors == "silent":
+                            pass
+                        else:
+                            raise
+                    finally:
+                        results.append(data)
+
+        ################################
+        elif has_distributed and isinstance(method, distributed.client.Client):
+
+            if progress:
+                from dask.diagnostics import ProgressBar
+
+                with ProgressBar():
+                    futures = method.map(
+                        self._mfprocessor_json,
+                        urls,
+                        preprocess=preprocess,
+                        preprocess_opts=preprocess_opts,
+                        open_json_opts=open_json_opts,
+                        url_follow=url_follow,
+                        *args,
+                        **kwargs,
+                    )
+                    results = method.gather(futures)
+            else:
+                futures = method.map(
+                    self._mfprocessor_json,
+                    urls,
+                    preprocess=preprocess,
+                    preprocess_opts=preprocess_opts,
+                    open_json_opts=open_json_opts,
+                    url_follow=url_follow,
+                    *args,
+                    **kwargs,
+                )
+                results = method.gather(futures)
+
+        ################################
         elif method in ["seq", "sequential"]:
             if progress:
                 # log.debug("We asked for a progress bar !")
@@ -1434,6 +1639,8 @@ class httpstore(argo_store_proto):
                     data = self._mfprocessor_json(
                         url,
                         preprocess=preprocess,
+                        preprocess_opts=preprocess_opts,
+                        open_json_opts=open_json_opts,
                         url_follow=url_follow,
                         *args,
                         **kwargs,
@@ -1451,9 +1658,11 @@ class httpstore(argo_store_proto):
                 finally:
                     results.append(data)
 
+        ################################
         else:
             raise InvalidMethod(method)
 
+        ################################
         # Post-process results
         results = [r for r in results if r is not None]  # Only keep non-empty results
         if len(results) > 0:
@@ -1523,7 +1732,7 @@ class ftpstore(httpstore):
         self,  # noqa: C901
         urls,
         max_workers: int = 6,
-        method: str = "seq",
+        method: str = "sequential",
         progress: bool = False,
         concat: bool = True,
         concat_dim="row",
@@ -1830,7 +2039,7 @@ class httpstore_erddap_auth(httpstore):
         html.append("<tbody>")
         html.append(tr_ticklink("login page", self._login_page, self._login_page))
         payload = self._login_payload.copy()
-        payload['password'] = "*" * len(payload['password'])
+        payload["password"] = "*" * len(payload["password"])
         html.append(tr_tick("login data", payload))
         if hasattr(self, "_connected"):
             html.append(tr_tick("connected", "✅" if self._connected else "⛔"))
@@ -1845,11 +2054,8 @@ class httpstore_erddap_auth(httpstore):
     def connect(self):
         try:
             payload = self._login_payload.copy()
-            payload['password'] = "*" * len(payload['password'])
-            log.info(
-                "Try to log-in to '%s' page with %s"
-                % (self._login_page, payload)
-            )
+            payload["password"] = "*" * len(payload["password"])
+            log.info("Try to log-in to '%s' page with %s" % (self._login_page, payload))
             self.fs.info(self._login_page)
             self._connected = True
         except ErddapHTTPUnauthorized:
@@ -1866,7 +2072,7 @@ class httpstore_erddap_auth(httpstore):
 
 
 def httpstore_erddap(url: str = "", cache: bool = False, cachedir: str = "", **kwargs):
-    erddap = OPTIONS['erddap'] if url == "" else url
+    erddap = OPTIONS["erddap"] if url == "" else url
     login_page = "%s/login.html" % erddap.rstrip("/")
     login_store = httpstore_erddap_auth(
         cache=cache, cachedir=cachedir, login=login_page, auto=False, **kwargs
@@ -1885,8 +2091,11 @@ def httpstore_erddap(url: str = "", cache: bool = False, cachedir: str = "", **k
 
 
 class s3store(httpstore):
-    """
-    By default, the s3store will use AWS credentials available in the environment.
+    """Argo s3 file system
+
+    Relies on :class:`fsspec.implementations.http.HTTPFileSystem` by inherits from :class:`httpstore`
+
+    By default, this store will use AWS credentials available in the environment.
 
     If you want to force an anonymous session, you should use the `anon=True` option.
 
@@ -1896,4 +2105,5 @@ class s3store(httpstore):
     >>> fs = s3store(anon=not has_aws_credentials())
 
     """
-    protocol = 's3'
+
+    protocol = "s3"

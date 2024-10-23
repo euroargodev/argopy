@@ -52,7 +52,7 @@ jobs:
       max-parallel: 12
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10"]
+        python-version: ["3.10", "3.11"]
         os: ["ubuntu-latest", "windows-latest", "macos-latest"]
         experimental: [false]
 
@@ -82,8 +82,9 @@ jobs:
           echo "LOG_FILE=argopy-tests-Core-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
 
       - name: Setup Micromamba ${{ matrix.python-version }}
-        uses: mamba-org/setup-micromamba@v1
+        uses: mamba-org/setup-micromamba@v2
         with:
+          micromamba-version: '1.5.10-0'
           environment-name: argopy-tests
           environment-file: ${{ env.CONDA_ENV_FILE }}
           init-shell: bash
@@ -118,7 +119,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}}
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}} --junitxml=junit.xml -o junit_family=legacy
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
@@ -131,7 +132,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.5.0
+        uses: codecov/codecov-action@v4.6.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml
@@ -139,6 +140,12 @@ jobs:
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Save tests log as artifact
         uses: actions/upload-artifact@v4
@@ -174,7 +181,7 @@ jobs:
       max-parallel: 12
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10"]
+        python-version: ["3.10", "3.11"]
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
         experimental: [false]
 
@@ -204,8 +211,9 @@ jobs:
           echo "LOG_FILE=argopy-tests-All-Pinned-Py${{matrix.python-version}}-${{matrix.os}}.log" >> $GITHUB_ENV
 
       - name: Setup Micromamba ${{ matrix.python-version }}
-        uses: mamba-org/setup-micromamba@v1
+        uses: mamba-org/setup-micromamba@v2
         with:
+          micromamba-version: '1.5.10-0'
           environment-name: argopy-tests
           environment-file: ${{ env.CONDA_ENV_FILE }}
           init-shell: bash
@@ -240,7 +248,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}}
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 --cov=./ --cov-config=.coveragerc --cov-report xml:cov.xml --cov-report term-missing --log-file=${{env.LOG_FILE}} --junitxml=junit.xml -o junit_family=legacy
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
@@ -253,7 +261,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.5.0
+        uses: codecov/codecov-action@v4.6.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cov.xml
@@ -261,7 +269,13 @@ jobs:
           name: codecov-github
           fail_ci_if_error: false
           env_vars: RUNNER_OS,PYTHON_VERSION
-          
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Upload tests log to GA
         uses: actions/upload-artifact@v4
         with:

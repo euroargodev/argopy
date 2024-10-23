@@ -32,29 +32,24 @@ def cast_Argo_variable_type(ds, overwrite=True):
     :class:`xarray.DataSet`
     """
 
-    def cast_this(da, type):
+    def cast_this(da, type, exception_to_raise=None):
         """Low-level casting of DataArray values"""
         try:
             da = da.astype(type)
-            # with warnings.catch_warnings():
-            #     warnings.filterwarnings('error')
-            #     try:
-            #         da = da.astype(type)
-            #     except Warning:
-            #         log.debug(type)
-            #         log.debug(da.attrs)
             da.attrs["casted"] = 1
-        except Exception:
-            print("Oops!", sys.exc_info()[0], "occurred.")
-            print(
-                "Fail to cast %s[%s] from '%s' to %s"
-                % (da.name, da.dims, da.dtype, type)
-            )
-            try:
-                print("Unique values:", np.unique(da))
-            except Exception:
-                print("Can't read unique values !")
-                pass
+        except Exception as e:
+            if exception_to_raise is not None:
+                if isinstance(e, exception_to_raise):
+                    raise
+            else:
+                msg = ["Oops! %s occurred" % sys.exc_info()[0]]
+                msg.append("Fail to cast %s[%s] from '%s' to %s" % (da.name, da.dims, da.dtype, type))
+                try:
+                    msg.append("Unique values:", np.unique(da))
+                except Exception:
+                    msg.append("Can't read unique values !")
+                    pass
+                log.debug("\n".join(msg))
         return da
 
     def cast_this_da(da, v):
@@ -63,7 +58,11 @@ def cast_Argo_variable_type(ds, overwrite=True):
         da.attrs["casted"] = 0
 
         if v in DATA_TYPES["data"]["str"] and da.dtype == "O":  # Object
-            da = cast_this(da, str)
+            try:
+                da = cast_this(da, str, exception_to_raise=UnicodeDecodeError)
+            except UnicodeDecodeError:
+                da = da.str.decode(encoding='unicode_escape')
+                da = cast_this(da, str)
 
         if v in DATA_TYPES["data"]["int"]:  # and da.dtype == 'O':  # Object
             if "conventions" in da.attrs:
@@ -108,6 +107,13 @@ def cast_Argo_variable_type(ds, overwrite=True):
                     da = cast_this(da, "datetime64[ns]")
                 else:
                     da = cast_this(da, "datetime64[ns]")
+
+            elif (
+                "conventions" in da.attrs
+                and da.attrs["conventions"] == "ISO8601"
+            ):
+                da.values = pd.to_datetime(da.values, utc=True)
+                da = cast_this(da, "datetime64[ns]")
 
             elif v == "SCIENTIFIC_CALIB_DATE":
                 da = cast_this(da, str)

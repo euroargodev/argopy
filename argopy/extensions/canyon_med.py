@@ -47,7 +47,7 @@ class CanyonMED(ArgoAccessorExtension):
     .. [2] Fourrier, M., Coppola, L., Claustre, H., D’Ortenzio, F., Sauzède, R., and Gattuso, J.-P. (2021). Corrigendum: A Regional Neural Network Approach to Estimate Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea: CANYON-MED. Frontiers in Marine Science 8. doi:10.3389/fmars.2021.650509.
     """
 
-    # todo This class work with pandas dataframe, but we should keep xarray dataset internaly for the predictions
+    # todo This class work with pandas dataframe, but we should keep xarray dataset internally for the predictions
 
     ne = 7
     """Number of inputs"""
@@ -150,9 +150,9 @@ class CanyonMED(ArgoAccessorExtension):
 
         # Using float128 arrays avoid the error or warning "overflow encountered in exp" raised by the
         # activation function
-        b1 = np.array(b1, dtype=np.float128)
-        b2 = np.array(b2, dtype=np.float128)
-        b3 = np.array(b3, dtype=np.float128)
+        b1 = np.array(b1, dtype=np.float64)
+        b2 = np.array(b2, dtype=np.float64)
+        b3 = np.array(b3, dtype=np.float64)
 
         return b1, b2, b3, IW, LW1, LW2
 

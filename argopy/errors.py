@@ -5,6 +5,7 @@ import logging
 
 log = logging.getLogger("argopy.errors")
 
+
 class NoData(ValueError):
     """Raise for no data"""
     def __init__(self, path: str = "?"):
@@ -22,7 +23,7 @@ class DataNotFound(NoData):
 
 
 class NoDataLeft(NoData):
-    """Raise when a data post-processing returns an empty dataset or dataframe"""
+    """Raise when data processing returns an empty dataset or dataframe"""
     pass
 
 

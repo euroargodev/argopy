@@ -59,3 +59,4 @@ dependencies:
 # PIP:
   - pip:
       - pytest-reportlog
+#      - git+https://github.com/umr-lops/dask-hpcconfig.git#egg=dask-hpcconfig

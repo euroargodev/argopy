@@ -8,14 +8,16 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-Coming up next in v1.0
-----------------------
+v1.0.0 (16 Oct. 2024)
+---------------------
 
-.. versionadded:: v1.0
+.. versionadded:: v1.0.0
 
-    This new release is a major !
+    The team proudly assumes that **argopy** is all grown up !
 
-    It comes with improved support for the BGC-Argo dataset but also introduces breaking changes (see below).
+    This version comes with improved performances and support for the BGC-Argo dataset.
+    But since this is a major, we also introduces breaking changes and significant internal refactoring possibly with un-expected side effects ! So don't hesitate to `report issues on the source code repository <https://github.com/euroargodev/argopy/issues>`_.
+	
 
 
 Features and front-end API
@@ -26,9 +28,9 @@ Features and front-end API
 .. currentmodule:: xarray
 
 - **Improved support for BGC**
-    - **argopy** now support `standard` and `research` user modes for the `erddap` data source with the `bgc` dataset. These new user modes follows the last available ADMT recommendations to bring users a finely tuned set of BGC parameters.
+    - **argopy now support `standard` and `research` user modes** with the `bgc` dataset. These new user modes follows the last available ADMT recommendations to bring users a finely tuned set of BGC parameters. Details of the BGC data processing chain for each user modes can be found in the :ref:`user-mode-definition` section.
 
-    - New BGC method :class:`Dataset.argo.canyon_med` to make CANYON-MED predictions of Water-Column Nutrient Concentrations and Carbonate System Variables in the Mediterranean Sea. This method can be used to predict PO4, NO3, DIC, SiOH4, AT and pHT. (:pr:`364`) by `G. Maze <http://www.github.com/gmaze>`_.
+    - **Predict nutrients and carbonates in the Mediterranean Sea** with the new BGC method :class:`Dataset.argo.canyon_med`. The new method allows to make predictions of the water-Column nutrient concentrations and carbonate system variables in the Mediterranean Sea with the CANYON-MED model. This model can be used to predict PO4, NO3, DIC, SiOH4, AT and pHT. (:pr:`364`) by `G. Maze <http://www.github.com/gmaze>`_.
 
     .. currentmodule:: argopy
 
@@ -41,16 +43,38 @@ Features and front-end API
         ds.argo.canyon_med.predict()
         ds.argo.canyon_med.predict('PO4')
 
-    - the :class:`argopy.ArgoIndex` now support the *auxiliary* index file. Simply use the keyword `aux`. (:pr:`356`) by `G. Maze <http://www.github.com/gmaze>`_.
+    - **More BGC expert features** with support for the *auxiliary* index file with :class:`argopy.ArgoIndex`. Simply use the keyword `aux`. (:pr:`356`) by `G. Maze <http://www.github.com/gmaze>`_.
 
     .. code-block:: python
 
         from argopy import ArgoIndex
         ArgoIndex(index_file="aux").load()
 
+- **More scalable data fetching using multi-processing or a Dask Cluster**.
+
+It is now possible to use multi-processing with all data fetchers and even possibly a Dask client object. This is set with the ``parallel`` option. In doing so, the Argo data pre-processing steps (download and conformation to internal conventions) will be distributed to all available resources, significantly improving performances for fetching large selection of Argo data. (:pr:`392`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+Check the documentation on :ref:`Parallelization methods` for all the details.
+
+.. currentmodule:: argopy
+
+.. code-block:: python
+
+    from dask.distributed import Client
+    client = Client(processes=True)
+
+    from argopy import DataFetcher
+    DataFetcher(parallel=client, src='argovis').region([-75, -65, 25, 40, 0, 250, '2020-01-01', '2021-01-01']).to_xarray()
+
+
+
 .. currentmodule:: xarray
 
-- A xarray argo accessor extensions mechanism with a new decorator :class:`argopy.extensions.register_argo_accessor`. It allows to register a class as a property to the :class:`Dataset.argo` accessor. (:pr:`364`) by `G. Maze <http://www.github.com/gmaze>`_.
+- **Xarray argo accessor extensions mechanism**.
+
+This should allows users to easily develop their own Argo dataset methods. This is possible thanks to a new class decorator :class:`argopy.extensions.register_argo_accessor` that allows to register a class as a property to the :class:`Dataset.argo` accessor. (:pr:`364`) by `G. Maze <http://www.github.com/gmaze>`_.
+
+Example:
 
 .. code-block:: python
 
@@ -85,14 +109,15 @@ Breaking changes
 .. currentmodule:: xarray
 
 - In the :class:`Dataset.argo` accessor (:pr:`356`) by `G. Maze <http://www.github.com/gmaze>`_:
-    - the :meth:`Dataset.argo.filter_data_mode` has been redesigned to actually implement a real filter of data points on data mode values, i.e. to keep points with specific data mode values,
-    - new :meth:`Dataset.argo.transform_data_mode` method must now be used to merge adjusted and non-adjusted measurements according to their data mode and reduce the number of variables in the dataset, which is what was doing in previous versions the poorly named `filter_data_mode`.
+    - the :meth:`Dataset.argo.filter_data_mode` has been deprecated and replaced by :meth:`Dataset.argo.datamode.merge` method. To actually implement a real filter of data points on data mode values, i.e. to keep points with specific data mode values, use the :meth:`Dataset.argo.datamode.filter` method.
 
 .. currentmodule:: argopy
 
 - The option name "ftp" is now replaced by "gdac" (:pr:`389`) by `G. Maze <http://www.github.com/gmaze>`_
 
 - The option name "dataset" is now replaced by "ds" (:pr:`389`) by `G. Maze <http://www.github.com/gmaze>`_
+
+- It is highly probable that more changes in this major v1.0.0 lead to breaking changes not listed here. Don't hesitate to `report them on the repository issue section <https://github.com/euroargodev/argopy/issues>`_. 
 
 
 v0.1.17 (20 Sep. 2024)
