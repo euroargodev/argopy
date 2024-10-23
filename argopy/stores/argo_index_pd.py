@@ -9,6 +9,7 @@ import pandas as pd
 import logging
 import gzip
 from pathlib import Path
+from typing import List
 
 from ..errors import DataNotFound, InvalidDatasetStructure
 from ..utils.checkers import check_index_cols, is_indexbox, check_wmo, check_cyc
@@ -189,23 +190,21 @@ class indexstore_pandas(ArgoIndexStoreProto):
         return self.fs["client"].fs.sep.join([self.host, "%s.%s" % (self.index_file, self.sha_df)])
 
     @property
-    def uri_full_index(self):
-        # return ["/".join([self.host, "dac", f]) for f in self.index["file"]]
+    def uri_full_index(self) -> List[str]:
+        """File paths listed in the index"""
         sep = self.fs["src"].fs.sep
-        return [sep.join([self.root, "dac", f.replace('/', sep)]) for f in self.index["file"]]
+        return [sep.join([self.host.replace('/idx', ''), "dac", f.replace('/', sep)]) for f in self.index["file"]]
 
     @property
-    def uri(self):
-        # return ["/".join([self.host, "dac", f]) for f in self.search["file"]]
-        # todo Should also modify separator from "f" because it's "/" on the index file,
-        # but should be turned to "\" for local file index on Windows. Remains "/" in all others (linux, mac, ftp. http)
+    def uri(self) -> List[str]:
+        """File paths listed in search results"""
         sep = self.fs["src"].fs.sep
-        return [sep.join([self.root, "dac", f.replace('/', sep)]) for f in self.search["file"]]
+        return [sep.join([self.host.replace('/idx', ''), "dac", f.replace('/', sep)]) for f in self.search["file"]]
 
     def read_wmo(self, index=False):
-        """ Return list of unique WMOs in search results
+        """Return list of unique WMOs from the index or search results
 
-        Fall back on full index if search not found
+        Fall back on full index if search not triggered
 
         Returns
         -------
@@ -217,6 +216,25 @@ class indexstore_pandas(ArgoIndexStoreProto):
             results = self.index["file"].apply(lambda x: int(x.split("/")[1]))
         wmo = np.unique(results)
         return wmo
+
+    def read_dac_wmo(self, index=False):
+        """Return a tuple of unique [DAC, WMO] pairs from the index or search results
+
+        Fall back on full index if search not triggered
+
+        Returns
+        -------
+        tuple
+        """
+        if hasattr(self, "search") and not index:
+            results = self.search["file"].apply(lambda x: (x.split("/")[0:2]))
+        else:
+            results = self.index["file"].apply(lambda x: (x.split("/")[0:2]))
+        results = tuple(results.drop_duplicates())
+        for ifloat, (dac, wmo) in enumerate(results):
+            results[ifloat][1] = int(wmo)
+
+        return results
 
     def read_params(self, index=False):
         if self.convention not in ["argo_bio-profile_index",
@@ -245,7 +263,7 @@ class indexstore_pandas(ArgoIndexStoreProto):
     def records_per_wmo(self, index=False):
         """ Return the number of records per unique WMOs in search results
 
-            Fall back on full index if search not found
+            Fall back on full index if search not triggered
 
         Returns
         -------

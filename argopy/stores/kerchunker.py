@@ -4,12 +4,35 @@ from typing import List, Union
 from pathlib import Path
 from fsspec.core import split_protocol
 import json
-import dask
-from kerchunk.hdf import SingleHdf5ToZarr
-from kerchunk.netCDF3 import NetCDF3ToZarr
+import logging
 
 # from tempfile import TemporaryDirectory
 # from fsspec.implementations.dirfs import DirFileSystem
+
+log = logging.getLogger("argopy.stores.kerchunk")
+
+
+try:
+    from kerchunk.hdf import SingleHdf5ToZarr
+    from kerchunk.netCDF3 import NetCDF3ToZarr
+
+    HAS_KERCHUNK = True
+except ModuleNotFoundError:
+    log.debug("argopy missing 'kerchunk' to translate netcdf file")
+    HAS_KERCHUNK = False
+    SingleHdf5ToZarr, NetCDF3ToZarr = None, None
+
+
+try:
+    import dask
+
+    HAS_DASK = True
+except ModuleNotFoundError:
+    log.debug("argopy missing 'dask' to improve performances of 'ArgoKerchunker' ")
+    HAS_DASK = False
+    dask = None
+    import concurrent.futures
+
 
 from ..stores import memorystore, filestore
 from ..utils import to_list
@@ -18,6 +41,9 @@ from ..utils import to_list
 class ArgoKerchunker:
     """
     Argo netcdf file kerchunk helper
+
+    Note that the 'kerchunk' library is required if you need to extract
+    zarr data from netcdf file(s).
 
     Examples
     --------
@@ -43,11 +69,13 @@ class ArgoKerchunker:
         inline_threshold: int = 0,
         max_chunk_size: int = 0,
     ):
-        # File system to save kerchunk json files
+        # File system to load/save kerchunk json files
         if store == "memory":
             self.fs = memorystore()
         elif store == "local":
             self.fs = filestore()
+        elif isinstance(store, fsspec.AbstractFileSystem):
+            self.fs = store
 
         # List of processed files register:
         self.kerchunk_references = {}
@@ -67,6 +95,9 @@ class ArgoKerchunker:
         """
 
     def _tojson(self, ncfile: Union[str, Path]):
+        if not HAS_KERCHUNK:
+            raise ModuleNotFoundError("Requires the 'kerchunk' library")
+
         ncfile = str(ncfile)
 
         magic = self._magic(ncfile)[0:3]
@@ -98,18 +129,47 @@ class ArgoKerchunker:
         for i, f in enumerate(ncfiles):
             ncfiles[i] = str(f)
 
-        # results = []
-        # for ncfile in ncfiles:
-        #     results.append(self._tojson(ncfile))
+        if HAS_DASK:
+            tasks = [dask.delayed(self._tojson)(uri) for uri in ncfiles]
+            results = dask.compute(tasks)
+            results = results[0]  # ?
+        else:
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future_to_url = {
+                    executor.submit(
+                        self._tojson,
+                        uri,
+                    ): uri
+                    for uri in ncfiles
+                }
+                futures = concurrent.futures.as_completed(future_to_url)
 
-        tasks = [dask.delayed(self._tojson)(u) for u in ncfiles]
-        results = dask.compute(tasks)
+                results = []
+                for future in futures:
+                    results.append(future.result())
 
-        for result in results[0]:
+        for result in results:
             ncfile, single_kerchunk_reference, _ = result
             self.kerchunk_references.update({ncfile: single_kerchunk_reference})
 
         return results
+
+    def load_kerchunk(self, ncfile):
+        """Return json kerchunk data for a given netcdf file"""
+
+        if ncfile not in self.kerchunk_references:
+            if self.fs.exists(ncfile):
+                single_kerchunk_reference = self.fs.cat(ncfile)
+                self.kerchunk_references.update({ncfile: single_kerchunk_reference})
+            else:
+                self.translate(ncfile)
+
+        # Read and load the kerchunk JSON file:
+        single_kerchunk_reference = self.kerchunk_references[ncfile]
+        with self.fs.open(single_kerchunk_reference, "r") as file:
+            data = json.load(file)
+
+        return data
 
     def pprint(self, ncfile: Union[str, Path], params: List[str] = None):
         """Pretty print kerchunk json data for a netcdf file"""
