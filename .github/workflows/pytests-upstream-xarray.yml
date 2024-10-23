@@ -1,6 +1,4 @@
-name: CI tests Upstream with Xarray > 2024.3
-# Daily tests with all un-pinned dependencies
-# Allows to be warned when argopy fail tests due to updates in dependencies
+name: CI tests Upstream with Xarray >= 2024.3
 
 on:
   schedule:
