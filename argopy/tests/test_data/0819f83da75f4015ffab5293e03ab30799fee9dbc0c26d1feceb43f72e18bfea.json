@@ -1,0 +1,637 @@
+{
+    "@graph": [
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/PET/",
+            "pav:authoredOn": "2021-11-30 12:47:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/PET/1/"
+            },
+            "dce:identifier": "SDN:RTV::PET",
+            "pav:version": "1",
+            "owl:sameAs": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/300/"
+            },
+            "skos:notation": "SDN:RTV::PET",
+            "skos:altLabel": "PARK_END",
+            "dc:date": "2021-11-30 12:47:38.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Park End Time"
+            },
+            "dc:identifier": "SDN:RTV::PET",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Time at which the float exists from its Park or Drift mission. The float may then rise to the surface or sink to profile depth."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DDET/",
+            "pav:authoredOn": "2021-11-30 12:47:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DDET/1/"
+            },
+            "dce:identifier": "SDN:RTV::DDET",
+            "pav:version": "1",
+            "owl:sameAs": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/400/"
+            },
+            "skos:notation": "SDN:RTV::DDET",
+            "skos:altLabel": "DEEP_DESCENT_END",
+            "dc:date": "2021-11-30 12:47:38.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Deep Descent End Time"
+            },
+            "dc:identifier": "SDN:RTV::DDET",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Time at which the float first approaches within 3% of the eventual deep drift or profile pressure. This variable is based on pressure only, and can be measured or estimated by fall-rate."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/AST/",
+            "pav:authoredOn": "2021-11-30 12:47:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/AST/1/"
+            },
+            "dce:identifier": "SDN:RTV::AST",
+            "pav:version": "1",
+            "owl:sameAs": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/500/"
+            },
+            "skos:notation": "SDN:RTV::AST",
+            "skos:altLabel": "ASCENT_START",
+            "dc:date": "2021-11-30 12:47:38.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Ascent Start Time"
+            },
+            "dc:identifier": "SDN:RTV::AST",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Time at which the float begins its return to the surface."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DST/",
+            "pav:authoredOn": "2021-11-30 12:47:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DST/1/"
+            },
+            "dce:identifier": "SDN:RTV::DST",
+            "pav:version": "1",
+            "owl:sameAs": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/100/"
+            },
+            "skos:notation": "SDN:RTV::DST",
+            "skos:altLabel": "DESCENT_START",
+            "dc:date": "2021-11-30 12:47:38.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Descent Start Time"
+            },
+            "dc:identifier": "SDN:RTV::DST",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Time at which the float leaves the surface and begins the descent."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DET/",
+            "pav:authoredOn": "2021-11-30 12:47:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DET/1/"
+            },
+            "dce:identifier": "SDN:RTV::DET",
+            "pav:version": "1",
+            "owl:sameAs": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/200/"
+            },
+            "skos:notation": "SDN:RTV::DET",
+            "skos:altLabel": "DESCENT_END",
+            "dc:date": "2021-11-30 12:47:38.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Descent End Time"
+            },
+            "dc:identifier": "SDN:RTV::DET",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Time at which the float first approaches within 3% of the eventual drift pressure, whether it is transitioning from the surface or from a deep profile. In case the float overshoots the drift pressure on descent, the Descent End Time (DET) corresponds to the time of the overshoot. This variable is based on pressure only, and can be measured or estimated by fall-rate."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/AET/",
+            "pav:authoredOn": "2021-11-30 12:47:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/AET/1/"
+            },
+            "dce:identifier": "SDN:RTV::AET",
+            "pav:version": "1",
+            "owl:sameAs": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/600/"
+            },
+            "skos:notation": "SDN:RTV::AET",
+            "skos:altLabel": "ASCENT_END",
+            "dc:date": "2021-11-30 12:47:38.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Ascent End Time"
+            },
+            "dc:identifier": "SDN:RTV::AET",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Time at which the float reaches the surface."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DPST/",
+            "pav:authoredOn": "2021-11-30 12:47:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DPST/1/"
+            },
+            "dce:identifier": "SDN:RTV::DPST",
+            "pav:version": "1",
+            "owl:sameAs": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/450/"
+            },
+            "skos:notation": "SDN:RTV::DPST",
+            "skos:altLabel": "DEEP_PARK_START",
+            "dc:date": "2021-11-30 12:47:38.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Deep Park Start Time"
+            },
+            "dc:identifier": "SDN:RTV::DPST",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Time at which the float transitions to a deep park drift mission. This variable is only defined if the float is expected to enter a deep drift phase; it does not apply to cases of accidental drift at deep pressure, caused by bottom hits or buoyancy issues for example."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/FMT/",
+            "pav:authoredOn": "2021-11-30 12:47:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/FMT/1/"
+            },
+            "dce:identifier": "SDN:RTV::FMT",
+            "pav:version": "1",
+            "owl:sameAs": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/702/"
+            },
+            "skos:notation": "SDN:RTV::FMT",
+            "skos:altLabel": "FIRST_MESSAGE",
+            "dc:date": "2021-11-30 12:47:38.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "First Message Time"
+            },
+            "dc:identifier": "SDN:RTV::FMT",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Time of the first message received."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DAST/",
+            "pav:authoredOn": "2021-11-30 12:47:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DAST/1/"
+            },
+            "dce:identifier": "SDN:RTV::DAST",
+            "pav:version": "1",
+            "owl:sameAs": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/550/"
+            },
+            "skos:notation": "SDN:RTV::DAST",
+            "skos:altLabel": "DEEP_ASCENT_START",
+            "dc:date": "2021-11-30 12:47:38.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Deep Ascent Start Time"
+            },
+            "dc:identifier": "SDN:RTV::DAST",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Time at which the float begins its rise to drift pressure. This variable is typically used for floats that profile on descent."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/TST/",
+            "pav:authoredOn": "2021-11-30 12:47:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/TST/1/"
+            },
+            "dce:identifier": "SDN:RTV::TST",
+            "pav:version": "1",
+            "owl:sameAs": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/700/"
+            },
+            "skos:notation": "SDN:RTV::TST",
+            "skos:altLabel": "TRANSMISSION_START",
+            "dc:date": "2021-11-30 12:47:38.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Transmission Start Time"
+            },
+            "dc:identifier": "SDN:RTV::TST",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Time at which the float begins transmitting."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/LLT/",
+            "pav:authoredOn": "2021-11-30 12:47:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/LLT/1/"
+            },
+            "dce:identifier": "SDN:RTV::LLT",
+            "pav:version": "1",
+            "skos:notation": "SDN:RTV::LLT",
+            "skos:altLabel": "LAST_LOCATION",
+            "dc:date": "2021-11-30 12:47:38.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Last Location Time"
+            },
+            "dc:identifier": "SDN:RTV::LLT",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Time of the last location received."
+            },
+            "skos:related": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/703/"
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/TET/",
+            "pav:authoredOn": "2021-11-30 12:47:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/TET/1/"
+            },
+            "dce:identifier": "SDN:RTV::TET",
+            "pav:version": "1",
+            "owl:sameAs": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/800/"
+            },
+            "skos:notation": "SDN:RTV::TET",
+            "skos:altLabel": "TRANSMISSION_END",
+            "dc:date": "2021-11-30 12:47:38.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Transmission End Time"
+            },
+            "dc:identifier": "SDN:RTV::TET",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Time at which the float stops transmitting."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/PST/",
+            "pav:authoredOn": "2021-11-30 12:47:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/PST/1/"
+            },
+            "dce:identifier": "SDN:RTV::PST",
+            "pav:version": "1",
+            "owl:sameAs": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/250/"
+            },
+            "skos:notation": "SDN:RTV::PST",
+            "skos:altLabel": "PARK_START",
+            "dc:date": "2021-11-30 12:47:38.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Park Start Time"
+            },
+            "dc:identifier": "SDN:RTV::PST",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Time at which the float transitions to its Park or Drift mission. This variable is estimated either by an onboard descent timer (e.g. SOLO floats) or by pressure measurements (e.g. PROVOR floats)."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/FST/",
+            "pav:authoredOn": "2021-11-30 12:47:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/FST/1/"
+            },
+            "dce:identifier": "SDN:RTV::FST",
+            "pav:version": "1",
+            "owl:sameAs": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/150/"
+            },
+            "skos:notation": "SDN:RTV::FST",
+            "skos:altLabel": "FIRST_STABILIZATION",
+            "dc:date": "2021-11-30 12:47:38.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "First Stabilization Time"
+            },
+            "dc:identifier": "SDN:RTV::FST",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Time at which the float first becomes water-neutral."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/FLT/",
+            "pav:authoredOn": "2021-11-30 12:47:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/FLT/1/"
+            },
+            "dce:identifier": "SDN:RTV::FLT",
+            "pav:version": "1",
+            "skos:notation": "SDN:RTV::FLT",
+            "skos:altLabel": "FIRST_LOCATION",
+            "dc:date": "2021-11-30 12:47:38.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "First Location Time"
+            },
+            "dc:identifier": "SDN:RTV::FLT",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Time of the first location received."
+            },
+            "skos:related": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/703/"
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/LMT/",
+            "pav:authoredOn": "2021-11-30 12:47:38.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/LMT/1/"
+            },
+            "dce:identifier": "SDN:RTV::LMT",
+            "pav:version": "1",
+            "owl:sameAs": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R15/current/704/"
+            },
+            "skos:notation": "SDN:RTV::LMT",
+            "skos:altLabel": "LAST_MESSAGE",
+            "dc:date": "2021-11-30 12:47:38.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Last Message Time"
+            },
+            "dc:identifier": "SDN:RTV::LMT",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Time of the last message received."
+            },
+            "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/",
+            "skos:member": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/PET/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DDET/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/AST/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DST/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DET/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/AET/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DPST/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/FMT/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/DAST/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/TST/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/LLT/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/TET/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/PST/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/LMT/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/FLT/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/RTV/current/FST/"
+                }
+            ],
+            "@type": "skos:Collection",
+            "dc:publisher": "Natural Environment Research Council",
+            "dc:description": "Timing variables representing stages of an Argo float profiling cycle, most of which are associated with a trajectory measurement code ID listed in NVS collection 'R15'. Argo netCDF cycle timing variable names JULD_<RTV>_STATUS are constructed by RTV altLabel.",
+            "dc:title": "Argo float cycle timing variables",
+            "skos:prefLabel": "Argo float cycle timing variables",
+            "owl:versionInfo": "1",
+            "dc:date": "2021-12-01 02:00:02.0",
+            "skos:altLabel": "CYCLE_TIMING_VARIABLE",
+            "dc:creator": "Argo Data Management Team",
+            "dc:alternative": "CYCLE_TIMING_VARIABLE",
+            "rdfs:comment": "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server.",
+            "grg:RE_RegisterOwner": "Argo Data Management Team",
+            "grg:RE_RegisterManager": "British Oceanographic Data Centre"
+        }
+    ],
+    "@context": {
+        "cpm": "http://purl.org/voc/cpm#",
+        "qudt": "https://qudt.org/2.1/schema/qudt#",
+        "void": "http://rdfs.org/ns/void#",
+        "pav": "http://purl.org/pav/",
+        "owl": "http://www.w3.org/2002/07/owl#",
+        "dce": "http://purl.org/dc/elements/1.1/",
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "ns0": "http://www.w3.org/ns/dx/conneg/altr#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "iop": "https://w3id.org/iadopt/ont#",
+        "ns1": "http://www.w3.org/ns/dx/prof/",
+        "puv": "https://w3id.org/env/puv#",
+        "semapv": "http://w3id.org/semapv/vocab/",
+        "dct": "http://purl.org/dc/terms/",
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "reg": "http://purl.org/linked-data/registry#",
+        "sssom": "https://w3id.org/sssom/schema/",
+        "dcat": "http://www.w3.org/ns/dcat#",
+        "grg": "http://www.isotc211.org/schemas/grg/",
+        "prov": "https://www.w3.org/ns/prov#",
+        "dc": "http://purl.org/dc/terms/"
+    }
+}

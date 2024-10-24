@@ -1,0 +1,3480 @@
+components:
+  parameters:
+    Dir:
+      description: sorting direction. More details [here](https://agrest.io/protocol/#ordering-collection-with-sort-dir).
+      explode: false
+      in: query
+      name: dir
+      required: false
+      schema:
+        enum:
+        - ASC
+        - DESC
+        type: string
+      style: form
+    Excludes:
+      description: a list of excludes (either simple paths or JSON structures). More
+        details [here](https://agrest.io/protocol/#shaping-collection-with-include-exclude).
+      explode: true
+      in: query
+      name: exclude
+      required: false
+      schema:
+        items:
+          type: string
+        type: array
+      style: form
+    Exp:
+      description: condition applied to data in the format of Cayenne expression with
+        parameters. More details [here](https://agrest.io/protocol/#filtering-collection-with-exp).
+      explode: false
+      in: query
+      name: exp
+      required: false
+      schema:
+        type: string
+      style: form
+    Includes:
+      description: a list of includes (either simple paths or JSON structures). More
+        details [here](https://agrest.io/protocol/#shaping-collection-with-include-exclude).
+      explode: true
+      in: query
+      name: include
+      required: false
+      schema:
+        items:
+          type: string
+        type: array
+      style: form
+    Limit:
+      description: limit query parameter. Used for pagination. More details [here](https://agrest.io/protocol/#Pagination).
+      explode: false
+      in: query
+      name: limit
+      required: false
+      schema:
+        format: int32
+        type: integer
+      style: form
+    MapBy:
+      description: map by query parameter to structure results. More details [here](https://agrest.io/protocol/#structuring-collection-with-mapby).
+      explode: false
+      in: query
+      name: mapBy
+      required: false
+      schema:
+        type: string
+      style: form
+    Sort:
+      description: sorting query parameter. More details [here](https://agrest.io/protocol/#ordering-collection-with-sort-dir).
+      explode: false
+      in: query
+      name: sort
+      required: false
+      schema:
+        type: string
+      style: form
+    Start:
+      description: start query parameter. Used for pagination. More details [here](https://agrest.io/protocol/#Pagination).
+      explode: false
+      in: query
+      name: start
+      required: false
+      schema:
+        format: int32
+        type: integer
+      style: form
+    ptfId:
+      description: ID of Platform to fetch
+      in: path
+      name: ptfId
+      required: true
+      schema:
+        format: int32
+        type: integer
+    ptfRef:
+      description: Reference of Platform to fetch
+      in: path
+      name: ptfRef
+      required: true
+      schema:
+        type: string
+    ptfWigosId:
+      description: Reference of Platform to fetch
+      in: path
+      name: ptfWigosId
+      required: true
+      schema:
+        type: string
+  schemas:
+    Agency:
+      properties:
+        address:
+          type: string
+        agencyDacTypes:
+          $ref: '#/components/schemas/AgencyDacType'
+        agencyPtfs:
+          $ref: '#/components/schemas/AgencyPtf'
+        agencySiteRoles:
+          $ref: '#/components/schemas/AgencySiteRole'
+        contacts:
+          $ref: '#/components/schemas/Contact'
+        country:
+          $ref: '#/components/schemas/Country'
+        cruises:
+          $ref: '#/components/schemas/Cruise'
+        deployer:
+          type: number
+        description:
+          type: string
+        email:
+          type: string
+        fax:
+          type: string
+        grid:
+          type: string
+        gtsCcccs:
+          $ref: '#/components/schemas/GtsCccc'
+        id:
+          type: number
+        image:
+          $ref: '#/components/schemas/Image'
+        images:
+          $ref: '#/components/schemas/Image'
+        lat:
+          type: number
+        lon:
+          type: number
+        manuf:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        pogoMember:
+          type: number
+        programAgencies:
+          $ref: '#/components/schemas/ProgramAgency'
+        ptfFirmwares:
+          $ref: '#/components/schemas/PtfFirmware'
+        ptfHullTypes:
+          $ref: '#/components/schemas/PtfHullType'
+        ptfModels:
+          $ref: '#/components/schemas/PtfModel'
+        purchaser:
+          type: number
+        qcFeedbacks:
+          $ref: '#/components/schemas/QcFeedback'
+        ref:
+          type: string
+        sensorModels:
+          $ref: '#/components/schemas/SensorModel'
+        services:
+          $ref: '#/components/schemas/Service'
+        tel:
+          type: string
+        userGroupAgencies:
+          $ref: '#/components/schemas/UserGroupAgency'
+        weblink:
+          $ref: '#/components/schemas/Weblink'
+      type: object
+    AgencyDacType:
+      properties:
+        agency:
+          $ref: '#/components/schemas/Agency'
+        agencyId:
+          type: number
+        dacType:
+          $ref: '#/components/schemas/DacType'
+        dacTypeId:
+          type: number
+        dataPath:
+          type: string
+        description:
+          type: string
+        masterProgramId:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        network:
+          $ref: '#/components/schemas/Network'
+        networkId:
+          type: number
+        oldDacId:
+          type: number
+        opMail:
+          type: string
+        weblink:
+          $ref: '#/components/schemas/Weblink'
+      type: object
+    AgencyPtf:
+      properties:
+        agency:
+          $ref: '#/components/schemas/Agency'
+        agencyRole:
+          $ref: '#/components/schemas/AgencyRole'
+        dacType:
+          $ref: '#/components/schemas/DacType'
+        id:
+          type: number
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+      type: object
+    AgencyRole:
+      properties:
+        agencyPtfs:
+          $ref: '#/components/schemas/AgencyPtf'
+        agencySiteRoles:
+          $ref: '#/components/schemas/AgencySiteRole'
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        programAgencies:
+          $ref: '#/components/schemas/ProgramAgency'
+      type: object
+    AgencySiteRole:
+      properties:
+        agency:
+          $ref: '#/components/schemas/Agency'
+        id:
+          type: number
+        role:
+          $ref: '#/components/schemas/AgencyRole'
+        site:
+          $ref: '#/components/schemas/Site'
+        siteId:
+          type: number
+      type: object
+    ApiWmoIdType:
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        name:
+          type: string
+      type: object
+    Config:
+      properties:
+        cycleTime:
+          type: number
+        driftPress:
+          type: number
+        iceDetection:
+          type: number
+        id:
+          type: number
+        nLevels:
+          type: number
+        obsSchedule:
+          type: string
+        pnp:
+          type: number
+        profilePress:
+          type: number
+        ptfConfigs:
+          $ref: '#/components/schemas/PtfConfig'
+        surfaceTime:
+          type: number
+        watchCircle:
+          type: number
+      type: object
+    Contact:
+      properties:
+        address:
+          type: string
+        agency:
+          $ref: '#/components/schemas/Agency'
+        betaTester:
+          type: number
+        contactPtfRoles:
+          $ref: '#/components/schemas/ContactPtfRole'
+        contactSiteRoles:
+          $ref: '#/components/schemas/ContactSiteRole'
+        country:
+          $ref: '#/components/schemas/Country'
+        cruiseContacts:
+          $ref: '#/components/schemas/CruiseContact'
+        email:
+          type: string
+        email2:
+          type: string
+        emailPublic:
+          type: string
+        fax:
+          type: string
+        firstName:
+          type: string
+        gdprApproved:
+          type: number
+        id:
+          type: number
+        image:
+          $ref: '#/components/schemas/Image'
+        lastName:
+          type: string
+        lastUpdate:
+          format: date-time
+          type: string
+        networkContacts:
+          $ref: '#/components/schemas/NetworkContact'
+        orcid:
+          type: string
+        programContacts:
+          $ref: '#/components/schemas/ProgramContact'
+        ptfDeployments:
+          $ref: '#/components/schemas/PtfDeployment'
+        ptfHistories:
+          $ref: '#/components/schemas/PtfUpdateHistory'
+        ptfModels:
+          $ref: '#/components/schemas/PtfModel'
+        qrCodes:
+          $ref: '#/components/schemas/QrCode'
+        services:
+          $ref: '#/components/schemas/Service'
+        tel:
+          type: string
+        tel2:
+          type: string
+        telecomFormats:
+          $ref: '#/components/schemas/TelecomFormat'
+        title:
+          type: string
+        userGroupContacts:
+          $ref: '#/components/schemas/UserGroupContact'
+        weblink:
+          $ref: '#/components/schemas/Weblink'
+      type: object
+    ContactPtfRole:
+      properties:
+        contact:
+          $ref: '#/components/schemas/Contact'
+        id:
+          type: number
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        role:
+          $ref: '#/components/schemas/Role'
+        sensorModel:
+          $ref: '#/components/schemas/SensorModel'
+      type: object
+    ContactSiteRole:
+      properties:
+        contact:
+          $ref: '#/components/schemas/Contact'
+        role:
+          $ref: '#/components/schemas/Role'
+        site:
+          $ref: '#/components/schemas/Site'
+        siteId:
+          type: number
+      type: object
+    Country:
+      properties:
+        active:
+          type: number
+        agencies:
+          $ref: '#/components/schemas/Agency'
+        code2:
+          type: string
+        code3:
+          type: string
+        color:
+          type: string
+        contacts:
+          $ref: '#/components/schemas/Contact'
+        countryCommitments:
+          $ref: '#/components/schemas/CountryCommitment'
+        cruiseCountries:
+          $ref: '#/components/schemas/CruiseCountry'
+        eez:
+          type: number
+        gtsCcccs:
+          $ref: '#/components/schemas/GtsCccc'
+        id:
+          type: number
+        iocMember:
+          type: number
+        mzmsPtfCountries:
+          $ref: '#/components/schemas/MzmsPtfCountry'
+        name:
+          type: string
+        nameLong:
+          type: string
+        nameShort:
+          type: string
+        networkCountries:
+          $ref: '#/components/schemas/NetworkCountry'
+        numcode:
+          type: number
+        programs:
+          $ref: '#/components/schemas/Program'
+        ptfDeployments:
+          $ref: '#/components/schemas/PtfDeployment'
+        ptfHardwares:
+          $ref: '#/components/schemas/PtfHardware'
+        retrievals:
+          $ref: '#/components/schemas/Retrieval'
+        shipHistories:
+          $ref: '#/components/schemas/ShipHistory'
+        ships:
+          $ref: '#/components/schemas/Ship'
+        toNotify:
+          type: number
+        userGroupContacts:
+          $ref: '#/components/schemas/UserGroupContact'
+        weblinks:
+          $ref: '#/components/schemas/Weblink'
+        wmoMember:
+          type: number
+      type: object
+    CountryCommitment:
+      properties:
+        country:
+          $ref: '#/components/schemas/Country'
+        description:
+          type: string
+        id:
+          type: number
+        nbFunded:
+          type: number
+        network:
+          $ref: '#/components/schemas/Network'
+        year:
+          type: number
+      type: object
+    Cruise:
+      properties:
+        agency:
+          $ref: '#/components/schemas/Agency'
+        arrivalDate:
+          format: date-time
+          type: string
+        arrivalPort:
+          type: string
+        autonomy:
+          type: number
+        cooperations:
+          type: number
+        costMonth:
+          type: number
+        costUnit:
+          type: number
+        cruiseClass:
+          $ref: '#/components/schemas/CruiseClass'
+        cruiseContacts:
+          $ref: '#/components/schemas/CruiseContact'
+        cruiseCountries:
+          $ref: '#/components/schemas/CruiseCountry'
+        cruiseParent:
+          $ref: '#/components/schemas/Cruise'
+        cruisePrograms:
+          $ref: '#/components/schemas/CruiseProgram'
+        cruiseSensorModels:
+          $ref: '#/components/schemas/CruiseSensorModel'
+        cruiseStatus:
+          $ref: '#/components/schemas/CruiseStatus'
+        cruiseType:
+          $ref: '#/components/schemas/CruiseType'
+        cruiseVariables:
+          $ref: '#/components/schemas/CruiseVariable'
+        datesPending:
+          type: number
+        demobDate:
+          format: date-time
+          type: string
+        departureDate:
+          format: date-time
+          type: string
+        departurePort:
+          type: string
+        description:
+          type: string
+        embarkCapacity:
+          type: number
+        expocode:
+          type: string
+        flexibleRoute:
+          type: number
+        frequency:
+          $ref: '#/components/schemas/Frequency'
+        geom:
+          type: string
+        id:
+          type: number
+        iioe2Id:
+          type: string
+        image:
+          $ref: '#/components/schemas/Image'
+        insertDate:
+          format: date-time
+          type: string
+        mfpId:
+          type: string
+        mobDate:
+          format: date-time
+          type: string
+        modifDate:
+          format: date-time
+          type: string
+        nameLong:
+          type: string
+        operationDate:
+          format: date-time
+          type: string
+        performanceComment:
+          type: string
+        performanceIndex:
+          type: number
+        projectName:
+          type: string
+        ptfDeployments:
+          $ref: '#/components/schemas/PtfDeployment'
+        ref:
+          type: string
+        refTmp:
+          type: string
+        retrievals:
+          $ref: '#/components/schemas/Retrieval'
+        routePending:
+          type: number
+        routePrivate:
+          type: number
+        services:
+          $ref: '#/components/schemas/Service'
+        ship:
+          $ref: '#/components/schemas/Ship'
+        shipStop:
+          type: number
+        storageCapacity:
+          type: number
+        survey:
+          $ref: '#/components/schemas/Survey'
+        unolsId:
+          type: number
+        updateDate:
+          format: date-time
+          type: string
+        validated:
+          type: number
+        weblink:
+          $ref: '#/components/schemas/Weblink'
+      type: object
+    CruiseClass:
+      properties:
+        cruises:
+          $ref: '#/components/schemas/Cruise'
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+      type: object
+    CruiseContact:
+      properties:
+        contact:
+          $ref: '#/components/schemas/Contact'
+        contactId:
+          type: number
+        cruise:
+          $ref: '#/components/schemas/Cruise'
+        cruiseId:
+          type: number
+        role:
+          $ref: '#/components/schemas/Role'
+        roleId:
+          type: number
+      type: object
+    CruiseCountry:
+      properties:
+        country:
+          $ref: '#/components/schemas/Country'
+        countryId:
+          type: number
+        cruise:
+          $ref: '#/components/schemas/Cruise'
+        cruiseId:
+          type: number
+      type: object
+    CruiseProgram:
+      properties:
+        cruise:
+          $ref: '#/components/schemas/Cruise'
+        cruiseId:
+          type: number
+        lead:
+          type: number
+        program:
+          $ref: '#/components/schemas/Program'
+        programId:
+          type: number
+      type: object
+    CruiseSensorModel:
+      properties:
+        cruise:
+          $ref: '#/components/schemas/Cruise'
+        cruiseId:
+          type: number
+        sensorModel:
+          $ref: '#/components/schemas/SensorModel'
+        sensorModelId:
+          type: number
+      type: object
+    CruiseStatus:
+      properties:
+        cruises:
+          $ref: '#/components/schemas/Cruise'
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameLong:
+          type: string
+        nameShort:
+          type: string
+      type: object
+    CruiseType:
+      properties:
+        cruises:
+          $ref: '#/components/schemas/Cruise'
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameLong:
+          type: string
+        nameShort:
+          type: string
+      type: object
+    CruiseVariable:
+      properties:
+        cruise:
+          $ref: '#/components/schemas/Cruise'
+        cruiseId:
+          type: number
+        variable:
+          $ref: '#/components/schemas/Variable'
+        variableId:
+          type: number
+      type: object
+    DacType:
+      properties:
+        agencyDacTypes:
+          $ref: '#/components/schemas/AgencyDacType'
+        agencyPtfs:
+          $ref: '#/components/schemas/AgencyPtf'
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+      type: object
+    DataFormat:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+      type: object
+    DataProcessingMethod:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        ref:
+          type: string
+      type: object
+    DataStatus:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        ptfs:
+          $ref: '#/components/schemas/Ptf'
+      type: object
+    DeplMethod:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        ptfDeployments:
+          $ref: '#/components/schemas/PtfDeployment'
+      type: object
+    DeplType:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        ptfDeployments:
+          $ref: '#/components/schemas/PtfDeployment'
+      type: object
+    EndingCause:
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        networkEndingCauses:
+          $ref: '#/components/schemas/NetworkEndingCause'
+        ptfs:
+          $ref: '#/components/schemas/Ptf'
+      type: object
+    Frequency:
+      properties:
+        cruises:
+          $ref: '#/components/schemas/Cruise'
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+      type: object
+    GtsCccc:
+      properties:
+        agency:
+          $ref: '#/components/schemas/Agency'
+        cccc:
+          type: string
+        center:
+          type: string
+        city:
+          type: string
+        country:
+          $ref: '#/components/schemas/Country'
+        gtsCcccHeaders:
+          $ref: '#/components/schemas/GtsCcccHeader'
+        id:
+          type: number
+        insertMarine:
+          type: number
+        location:
+          type: string
+        qcFeedbacks:
+          $ref: '#/components/schemas/QcFeedback'
+        tag:
+          type: string
+        tmp:
+          type: string
+      type: object
+    GtsCcccHeader:
+      properties:
+        gtsCccc:
+          $ref: '#/components/schemas/GtsCccc'
+        gtsCcccId:
+          type: number
+        gtsHeader:
+          $ref: '#/components/schemas/GtsHeader'
+        gtsHeaderId:
+          type: number
+      type: object
+    GtsCode:
+      properties:
+        active:
+          type: number
+        codeLetters:
+          type: string
+        codeName:
+          type: string
+        codeName2:
+          type: string
+        comments:
+          type: string
+        formalCode:
+          type: string
+        id:
+          type: number
+        mainPtfType:
+          type: string
+        tag:
+          type: string
+      type: object
+    GtsHeader:
+      properties:
+        endDate:
+          format: date-time
+          type: string
+        gtsCcccHeaders:
+          $ref: '#/components/schemas/GtsCcccHeader'
+        header:
+          type: string
+        id:
+          type: number
+        qcFeedbacks:
+          $ref: '#/components/schemas/QcFeedback'
+        startDate:
+          format: date-time
+          type: string
+        text:
+          type: string
+      type: object
+    GtsInstrumentType:
+      properties:
+        code:
+          type: string
+        details:
+          type: string
+        fallrateA:
+          type: number
+        fallrateB:
+          type: number
+        id:
+          type: number
+        ptfModels:
+          $ref: '#/components/schemas/PtfModel'
+        type:
+          type: string
+      type: object
+    GtsRecorderType:
+      properties:
+        code:
+          type: string
+        details:
+          type: string
+        id:
+          type: number
+        type:
+          type: string
+      type: object
+    Image:
+      properties:
+        agencies:
+          $ref: '#/components/schemas/Agency'
+        agency:
+          $ref: '#/components/schemas/Agency'
+        contacts:
+          $ref: '#/components/schemas/Contact'
+        creationDate:
+          format: date-time
+          type: string
+        credits:
+          type: string
+        cruises:
+          $ref: '#/components/schemas/Cruise'
+        data:
+          type: string
+        description:
+          type: string
+        filename:
+          type: string
+        htmlAlt:
+          type: string
+        id:
+          type: number
+        imageType:
+          $ref: '#/components/schemas/ImageType'
+        name:
+          type: string
+        network:
+          $ref: '#/components/schemas/Network'
+        program:
+          $ref: '#/components/schemas/Program'
+        ptfModels:
+          $ref: '#/components/schemas/PtfModel'
+        ptfTypes:
+          $ref: '#/components/schemas/PtfType'
+        sensorModels:
+          $ref: '#/components/schemas/SensorModel'
+        ship:
+          $ref: '#/components/schemas/Ship'
+        storyId:
+          type: number
+        tags:
+          type: string
+        url:
+          type: string
+      type: object
+    ImageType:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        images:
+          $ref: '#/components/schemas/Image'
+        name:
+          type: string
+        nameLong:
+          type: string
+        nameShort:
+          type: string
+      type: object
+    Indicator:
+      properties:
+        basinId:
+          type: number
+        core:
+          type: number
+        description:
+          type: string
+        explanation:
+          type: string
+        id:
+          type: number
+        indicatorCategory:
+          $ref: '#/components/schemas/IndicatorCategory'
+        indicatorValues:
+          $ref: '#/components/schemas/IndicatorValue'
+        legendMax:
+          type: number
+        legendMin:
+          type: number
+        masterNetwork:
+          $ref: '#/components/schemas/Network'
+        name:
+          type: string
+        network:
+          $ref: '#/components/schemas/Network'
+        nondefault:
+          type: number
+        percentage:
+          type: number
+        rank:
+          type: number
+        targetText:
+          type: string
+        targetValue:
+          type: number
+        variable:
+          $ref: '#/components/schemas/Variable'
+      type: object
+    IndicatorCategory:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        indicators:
+          $ref: '#/components/schemas/Indicator'
+        name:
+          type: string
+        rank:
+          type: number
+      type: object
+    IndicatorValue:
+      properties:
+        endDate:
+          format: date-time
+          type: string
+        id:
+          type: number
+        indicator:
+          $ref: '#/components/schemas/Indicator'
+        startDate:
+          format: date-time
+          type: string
+        value:
+          type: number
+        valueRaw:
+          type: number
+      type: object
+    Latency:
+      properties:
+        id:
+          type: number
+        minutes:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+      type: object
+    Line:
+      properties:
+        fromTo:
+          type: string
+        geom:
+          type: string
+        id:
+          type: number
+        lineDecadalStatus:
+          $ref: '#/components/schemas/LineDecadalStatus'
+        lineFamily:
+          $ref: '#/components/schemas/LineFamily'
+        linePrograms:
+          $ref: '#/components/schemas/LineProgram'
+        lineSurveys:
+          $ref: '#/components/schemas/LineSurvey'
+        name:
+          type: string
+        ptfs:
+          $ref: '#/components/schemas/Ptf'
+        weblink:
+          $ref: '#/components/schemas/Weblink'
+      type: object
+    LineDecadalStatus:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        lines:
+          $ref: '#/components/schemas/Line'
+        name:
+          type: string
+      type: object
+    LineFamily:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        lines:
+          $ref: '#/components/schemas/Line'
+        name:
+          type: string
+        nameShort:
+          type: string
+      type: object
+    LinePerformance:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        lineSurveys:
+          $ref: '#/components/schemas/LineSurvey'
+        name:
+          type: string
+      type: object
+    LineProgram:
+      properties:
+        lead:
+          type: number
+        line:
+          $ref: '#/components/schemas/Line'
+        lineId:
+          type: number
+        program:
+          $ref: '#/components/schemas/Program'
+        programId:
+          type: number
+      type: object
+    LinePtf:
+      properties:
+        line:
+          $ref: '#/components/schemas/Line'
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+      type: object
+    LineStatus:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        lineSurveys:
+          $ref: '#/components/schemas/LineSurvey'
+        name:
+          type: string
+      type: object
+    LineSurvey:
+      properties:
+        line:
+          $ref: '#/components/schemas/Line'
+        lineId:
+          type: number
+        linePerformance:
+          $ref: '#/components/schemas/LinePerformance'
+        lineStatus:
+          $ref: '#/components/schemas/LineStatus'
+        lineType:
+          $ref: '#/components/schemas/LineType'
+        survey:
+          $ref: '#/components/schemas/Survey'
+        surveyId:
+          type: number
+      type: object
+    LineType:
+      properties:
+        comments:
+          type: string
+        drops:
+          type: number
+        horizResBoxes:
+          type: number
+        horizResolDeg:
+          type: number
+        horizResolHr:
+          type: number
+        horizResolKm:
+          type: number
+        id:
+          type: number
+        lineSurveys:
+          $ref: '#/components/schemas/LineSurvey'
+        maxHorizRes:
+          type: number
+        maxHorizResI4:
+          type: number
+        maxNbTrans12:
+          type: number
+        maxNbTrans6:
+          type: number
+        maxSdHorizRes:
+          type: number
+        maxSdPeriod:
+          type: number
+        minHorizRes:
+          type: number
+        minHorizResI4:
+          type: number
+        minNbTrans12:
+          type: number
+        minNbTrans6:
+          type: number
+        name:
+          type: string
+        nameLong:
+          type: string
+        nameShort:
+          type: string
+        percentBoxes:
+          type: number
+        percentGoodTr:
+          type: number
+        periodTolerance:
+          type: number
+        transects:
+          type: number
+      type: object
+    LocStatus:
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        ptfLocStatuses:
+          $ref: '#/components/schemas/PtfLocStatus'
+      type: object
+    LocSystem:
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        ptfs:
+          $ref: '#/components/schemas/Ptf'
+        ptfsBackup:
+          $ref: '#/components/schemas/Ptf'
+        wigosCode:
+          type: string
+      type: object
+    MapType:
+      properties:
+        freq:
+          type: number
+        id:
+          type: number
+        mapTypeNetworks:
+          $ref: '#/components/schemas/MapTypeNetwork'
+        name:
+          type: string
+        nameLong:
+          type: string
+        nameShort:
+          type: string
+        urlPath:
+          type: string
+      type: object
+    MapTypeNetwork:
+      properties:
+        mapType:
+          $ref: '#/components/schemas/MapType'
+        network:
+          $ref: '#/components/schemas/Network'
+        rank:
+          type: number
+      type: object
+    MzmsPtfCountry:
+      properties:
+        checked:
+          type: number
+        comments:
+          type: string
+        country:
+          $ref: '#/components/schemas/Country'
+        countryId:
+          type: number
+        formalNotificationDate:
+          format: date-time
+          type: string
+        latestReportDate:
+          format: date-time
+          type: string
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        ptfId:
+          type: number
+        warningDate:
+          format: date-time
+          type: string
+      type: object
+    Network:
+      properties:
+        agencyDacTypes:
+          $ref: '#/components/schemas/AgencyDacType'
+        countryCommitments:
+          $ref: '#/components/schemas/CountryCommitment'
+        description:
+          type: string
+        id:
+          type: number
+        images:
+          $ref: '#/components/schemas/Image'
+        mapTypeNetworks:
+          $ref: '#/components/schemas/MapTypeNetwork'
+        name:
+          type: string
+        nameShort:
+          type: string
+        networkContacts:
+          $ref: '#/components/schemas/NetworkContact'
+        networkCountries:
+          $ref: '#/components/schemas/NetworkCountry'
+        networkEndingCauses:
+          $ref: '#/components/schemas/NetworkEndingCause'
+        networkPtfs:
+          $ref: '#/components/schemas/NetworkPtf'
+        networkSites:
+          $ref: '#/components/schemas/NetworkSite'
+        networkType:
+          $ref: '#/components/schemas/NetworkType'
+        parentNetworkId:
+          type: number
+        programs:
+          $ref: '#/components/schemas/Program'
+        ptfModels:
+          $ref: '#/components/schemas/PtfModel'
+        rank:
+          type: number
+        sensorModelNetworks:
+          $ref: '#/components/schemas/SensorModelNetwork'
+        surveys:
+          $ref: '#/components/schemas/Survey'
+        userGroups:
+          $ref: '#/components/schemas/UserGroup'
+        weblinks:
+          $ref: '#/components/schemas/Weblink'
+        wigosCode:
+          type: string
+      type: object
+    NetworkContact:
+      properties:
+        contact:
+          $ref: '#/components/schemas/Contact'
+        contactId:
+          type: number
+        network:
+          $ref: '#/components/schemas/Network'
+        networkId:
+          type: number
+        role:
+          $ref: '#/components/schemas/Role'
+        roleId:
+          type: number
+      type: object
+    NetworkCountry:
+      properties:
+        country:
+          $ref: '#/components/schemas/Country'
+        countryId:
+          type: number
+        network:
+          $ref: '#/components/schemas/Network'
+        networkId:
+          type: number
+      type: object
+    NetworkEndingCause:
+      properties:
+        endingCause:
+          $ref: '#/components/schemas/EndingCause'
+        endingCauseId:
+          type: number
+        network:
+          $ref: '#/components/schemas/Network'
+        networkId:
+          type: number
+      type: object
+    NetworkInformation:
+      properties:
+        data:
+          type: string
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        objectives:
+          type: string
+        oldSiteHomepage:
+          type: string
+        origins:
+          type: string
+        overview:
+          type: string
+        people:
+          type: string
+        tech:
+          type: string
+      type: object
+    NetworkPtf:
+      properties:
+        network:
+          $ref: '#/components/schemas/Network'
+        networkId:
+          type: number
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        ptfId:
+          type: number
+      type: object
+    NetworkSite:
+      properties:
+        network:
+          $ref: '#/components/schemas/Network'
+        networkId:
+          type: number
+        site:
+          $ref: '#/components/schemas/Site'
+        siteId:
+          type: number
+      type: object
+    NetworkType:
+      properties:
+        name:
+          type: string
+        nameShort:
+          type: string
+      type: object
+    ObsFishingvesselFdVariable:
+      properties:
+        variable:
+          $ref: '#/components/schemas/Variable'
+      type: object
+    ObsLatest:
+      properties:
+        id:
+          type: number
+        lat:
+          type: number
+        lon:
+          type: number
+        obsDate:
+          format: date-time
+          type: string
+        originId:
+          type: number
+        originTable:
+          type: string
+        ptfs:
+          $ref: '#/components/schemas/Ptf'
+      type: object
+    Parameter:
+      properties:
+        altLabel:
+          type: string
+        definition:
+          type: string
+        identifier:
+          type: string
+        parameterPtfs:
+          $ref: '#/components/schemas/ParameterPtf'
+        parameterVariables:
+          $ref: '#/components/schemas/ParameterVariable'
+        prefLabel:
+          type: string
+        updateDate:
+          format: date-time
+          type: string
+        uri:
+          type: string
+      type: object
+    ParameterPtf:
+      properties:
+        firstMeasured:
+          format: date-time
+          type: string
+        lastMeasured:
+          format: date-time
+          type: string
+        nbObs:
+          type: string
+        parameter:
+          $ref: '#/components/schemas/Parameter'
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+      type: object
+    ParameterVariable:
+      properties:
+        parameter:
+          $ref: '#/components/schemas/Parameter'
+        variable:
+          $ref: '#/components/schemas/Variable'
+      type: object
+    PostRetrievalStatus:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        retrievals:
+          $ref: '#/components/schemas/Retrieval'
+      type: object
+    Program:
+      properties:
+        active:
+          type: number
+        country:
+          $ref: '#/components/schemas/Country'
+        cruisePrograms:
+          $ref: '#/components/schemas/CruiseProgram'
+        defaultPtfModel:
+          $ref: '#/components/schemas/PtfModel'
+        description:
+          type: string
+        id:
+          type: number
+        images:
+          $ref: '#/components/schemas/Image'
+        linePrograms:
+          $ref: '#/components/schemas/LineProgram'
+        name:
+          type: string
+        nameShort:
+          type: string
+        network:
+          $ref: '#/components/schemas/Network'
+        programAgencies:
+          $ref: '#/components/schemas/ProgramAgency'
+        programContacts:
+          $ref: '#/components/schemas/ProgramContact'
+        ptfVariables:
+          $ref: '#/components/schemas/PtfVariable'
+        ptfs:
+          $ref: '#/components/schemas/Ptf'
+        services:
+          $ref: '#/components/schemas/Service'
+        weblinks:
+          $ref: '#/components/schemas/Weblink'
+        wigosCode:
+          type: string
+      type: object
+    ProgramAgency:
+      properties:
+        agency:
+          $ref: '#/components/schemas/Agency'
+        lead:
+          type: number
+        program:
+          $ref: '#/components/schemas/Program'
+        role:
+          $ref: '#/components/schemas/AgencyRole'
+      type: object
+    ProgramContact:
+      properties:
+        contact:
+          $ref: '#/components/schemas/Contact'
+        program:
+          $ref: '#/components/schemas/Program'
+        role:
+          $ref: '#/components/schemas/Role'
+      type: object
+    Ptf:
+      properties:
+        activityCriterion:
+          type: number
+        agencyPtfs:
+          $ref: '#/components/schemas/AgencyPtf'
+        backupTelecom:
+          $ref: '#/components/schemas/Telecom'
+        backupTrackingSystem:
+          $ref: '#/components/schemas/LocSystem'
+        batchRequestRef:
+          type: string
+        closureCriterion:
+          type: number
+        contactPtfRoles:
+          $ref: '#/components/schemas/ContactPtfRole'
+        dataStatus:
+          $ref: '#/components/schemas/DataStatus'
+        dataUrl:
+          type: string
+        deleteTag:
+          type: number
+        description:
+          type: string
+        eNotificationDate:
+          format: date-time
+          type: string
+        endingCause:
+          $ref: '#/components/schemas/EndingCause'
+        endingDate:
+          format: date-time
+          type: string
+        id:
+          type: number
+        insertDate:
+          format: date-time
+          type: string
+        lastLocId:
+          type: string
+        lastUpdate:
+          format: date-time
+          type: string
+        latestObs:
+          $ref: '#/components/schemas/ObsLatest'
+        lines:
+          $ref: '#/components/schemas/Line'
+        locSystem:
+          $ref: '#/components/schemas/LocSystem'
+        metadataAvailable:
+          type: number
+        mzmsPtfCountries:
+          $ref: '#/components/schemas/MzmsPtfCountry'
+        name:
+          type: string
+        networkPtfs:
+          $ref: '#/components/schemas/NetworkPtf'
+        nokReason:
+          type: string
+        parameterPtfs:
+          $ref: '#/components/schemas/ParameterPtf'
+        program:
+          $ref: '#/components/schemas/Program'
+        ptfAncillaryDevices:
+          $ref: '#/components/schemas/PtfAncillaryDevice'
+        ptfAutomation:
+          $ref: '#/components/schemas/PtfAutomation'
+        ptfBatchStatus:
+          $ref: '#/components/schemas/PtfBatchStatus'
+        ptfConfigs:
+          $ref: '#/components/schemas/PtfConfig'
+        ptfDepl:
+          $ref: '#/components/schemas/PtfDeployment'
+        ptfHardware:
+          $ref: '#/components/schemas/PtfHardware'
+        ptfIdentifiers:
+          $ref: '#/components/schemas/PtfIdentifiers'
+        ptfLocStatuses:
+          $ref: '#/components/schemas/PtfLocStatus'
+        ptfModel:
+          $ref: '#/components/schemas/PtfModel'
+        ptfPtfStatuses:
+          $ref: '#/components/schemas/PtfPtfStatus'
+        ptfSoftware:
+          $ref: '#/components/schemas/PtfSoftware'
+        ptfStatistics:
+          $ref: '#/components/schemas/PtfStatistics'
+        ptfStatus:
+          $ref: '#/components/schemas/PtfStatus'
+        ptfUpdateHistories:
+          $ref: '#/components/schemas/PtfUpdateHistory'
+        ptfVariables:
+          $ref: '#/components/schemas/PtfVariable'
+        qcFeedbacks:
+          $ref: '#/components/schemas/QcFeedback'
+        ref:
+          type: string
+        refParent:
+          type: string
+        retrieval:
+          $ref: '#/components/schemas/Retrieval'
+        services:
+          $ref: '#/components/schemas/Service'
+        sitePtfs:
+          $ref: '#/components/schemas/SitePtf'
+        tags:
+          $ref: '#/components/schemas/Tag'
+        telecom:
+          $ref: '#/components/schemas/Telecom'
+        updateDate:
+          format: date-time
+          type: string
+        validated:
+          type: number
+        weblinks:
+          $ref: '#/components/schemas/Weblink'
+        wigosSynchronised:
+          type: number
+        wmos:
+          $ref: '#/components/schemas/Wmo'
+      type: object
+    PtfAncillaryDevice:
+      properties:
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        ptfAncillaryDeviceName:
+          $ref: '#/components/schemas/PtfAncillaryDeviceName'
+        ptfAncillaryDeviceVersion:
+          $ref: '#/components/schemas/PtfAncillaryDeviceVersion'
+        serialRef:
+          type: string
+      type: object
+    PtfAncillaryDeviceName:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        ptfAncillaryDeviceVersions:
+          $ref: '#/components/schemas/PtfAncillaryDeviceVersion'
+      type: object
+    PtfAncillaryDeviceVersion:
+      properties:
+        id:
+          type: number
+        ptfAncillaryDeviceName:
+          $ref: '#/components/schemas/PtfAncillaryDeviceName'
+        ptfModel:
+          $ref: '#/components/schemas/PtfModel'
+        version:
+          type: string
+      type: object
+    PtfAutomation:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        pub47Ref:
+          type: string
+        ref:
+          type: string
+      type: object
+    PtfBatchStatus:
+      properties:
+        description:
+          type: string
+        name:
+          type: string
+      type: object
+    PtfBattery:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        iniVoltage:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        ptfHardwares:
+          $ref: '#/components/schemas/PtfHardware'
+      type: object
+    PtfConfig:
+      properties:
+        config:
+          $ref: '#/components/schemas/Config'
+        cycle:
+          type: number
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        ptfId:
+          type: number
+      type: object
+    PtfDeployment:
+      properties:
+        contact:
+          $ref: '#/components/schemas/Contact'
+        country:
+          $ref: '#/components/schemas/Country'
+        cruise:
+          $ref: '#/components/schemas/Cruise'
+        cruiseName:
+          type: string
+        ctd:
+          type: number
+        ctdRef:
+          type: string
+        ctdo2:
+          type: number
+        density:
+          type: number
+        deplDate:
+          format: date-time
+          type: string
+        deplHeight:
+          type: number
+        deplMethod:
+          $ref: '#/components/schemas/DeplMethod'
+        deplSpeed:
+          type: number
+        deplType:
+          $ref: '#/components/schemas/DeplType'
+        id:
+          type: number
+        label:
+          type: number
+        lat:
+          type: number
+        lon:
+          type: number
+        maxMooringDepth:
+          type: number
+        noSite:
+          type: number
+        ptfs:
+          $ref: '#/components/schemas/Ptf'
+        refStationId:
+          type: string
+        score:
+          type: number
+        seaStateId:
+          type: number
+        ship:
+          $ref: '#/components/schemas/Ship'
+        shipName:
+          type: string
+        weatherId:
+          type: number
+        windSpeed:
+          type: number
+      type: object
+    PtfFamily:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        ptfTypes:
+          $ref: '#/components/schemas/PtfType'
+      type: object
+    PtfFirmware:
+      properties:
+        agency:
+          $ref: '#/components/schemas/Agency'
+        bluetoothId:
+          type: string
+        formatRef:
+          type: string
+        id:
+          type: number
+        manufDate:
+          format: date-time
+          type: string
+        name:
+          type: string
+        ptfHardwares:
+          $ref: '#/components/schemas/PtfHardware'
+        ptfHardwares1:
+          $ref: '#/components/schemas/PtfHardware'
+        ptfModelFirmwares:
+          $ref: '#/components/schemas/PtfModelFirmware'
+        serialRef:
+          type: string
+        softwareName:
+          type: string
+        softwareVersion:
+          type: string
+      type: object
+    PtfHardware:
+      properties:
+        balloonSize:
+          type: number
+        batchRef:
+          type: string
+        battery:
+          $ref: '#/components/schemas/PtfBattery'
+        batteryPack:
+          type: string
+        drogue:
+          type: number
+        firmware:
+          $ref: '#/components/schemas/PtfFirmware'
+        firmwareAdd:
+          $ref: '#/components/schemas/PtfFirmware'
+        hullType:
+          $ref: '#/components/schemas/PtfHullType'
+        id:
+          type: number
+        manufDate:
+          format: date-time
+          type: string
+        mooringDepth:
+          type: number
+        mooringWeight:
+          type: number
+        ptfs:
+          $ref: '#/components/schemas/Ptf'
+        sensorUpgradeCountry:
+          $ref: '#/components/schemas/Country'
+        serialRef:
+          type: string
+        spec:
+          type: string
+        specialFeature:
+          type: string
+      type: object
+    PtfHullType:
+      properties:
+        agency:
+          $ref: '#/components/schemas/Agency'
+        description:
+          type: string
+        id:
+          type: number
+        manufDate:
+          format: date-time
+          type: string
+        name:
+          type: string
+        ptfHardwares:
+          $ref: '#/components/schemas/PtfHardware'
+        ptfModels:
+          $ref: '#/components/schemas/PtfModel'
+      type: object
+    PtfIdentifiers:
+      properties:
+        datacenterRef:
+          type: string
+        esurfmarRef:
+          type: string
+        glossRef:
+          type: string
+        id:
+          type: number
+        imoRef:
+          type: string
+        internalRef:
+          type: string
+        oceansitesRef:
+          type: string
+        odasRef:
+          type: string
+        operatorRef:
+          type: string
+        ptfs:
+          $ref: '#/components/schemas/Ptf'
+        qrCode:
+          type: string
+        seadatanetRef:
+          type: string
+        wigosRef:
+          type: string
+      type: object
+    PtfInspection:
+      properties:
+        description:
+          type: string
+        frequency:
+          type: number
+        id:
+          type: number
+      type: object
+    PtfLocStatus:
+      properties:
+        endDate:
+          format: date-time
+          type: string
+        locStatus:
+          $ref: '#/components/schemas/LocStatus'
+        locStatusId:
+          type: number
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        ptfId:
+          type: number
+        source:
+          type: string
+        startDate:
+          format: date-time
+          type: string
+      type: object
+    PtfModel:
+      properties:
+        agency:
+          $ref: '#/components/schemas/Agency'
+        airDeplCertif:
+          type: number
+        apiWmoIdType:
+          $ref: '#/components/schemas/ApiWmoIdType'
+        commercial:
+          type: number
+        contact:
+          $ref: '#/components/schemas/Contact'
+        description:
+          type: string
+        gtsInstrumentType:
+          $ref: '#/components/schemas/GtsInstrumentType'
+        height:
+          type: number
+        heightAbove:
+          type: number
+        hullDepth:
+          type: number
+        hullType:
+          $ref: '#/components/schemas/PtfHullType'
+        id:
+          type: number
+        image:
+          $ref: '#/components/schemas/Image'
+        key:
+          type: string
+        length:
+          type: number
+        lifeTime:
+          type: string
+        name:
+          type: string
+        nameShort:
+          type: string
+        network:
+          $ref: '#/components/schemas/Network'
+        programs:
+          $ref: '#/components/schemas/Program'
+        ptfAncillaryDeviceVersions:
+          $ref: '#/components/schemas/PtfAncillaryDeviceVersion'
+        ptfModelFirmwares:
+          $ref: '#/components/schemas/PtfModelFirmware'
+        ptfType:
+          $ref: '#/components/schemas/PtfType'
+        ptfs:
+          $ref: '#/components/schemas/Ptf'
+        telecomFormats:
+          $ref: '#/components/schemas/TelecomFormat'
+        totalHeight:
+          type: number
+        weblink:
+          $ref: '#/components/schemas/Weblink'
+        weight:
+          type: number
+        width:
+          type: number
+      type: object
+    PtfModelFirmware:
+      properties:
+        ptfFirmware:
+          $ref: '#/components/schemas/PtfFirmware'
+        ptfModel:
+          $ref: '#/components/schemas/PtfModel'
+      type: object
+    PtfPtfStatus:
+      properties:
+        changingDate:
+          format: date-time
+          type: string
+        id:
+          type: number
+        insertDate:
+          format: date-time
+          type: string
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        ptfStatus:
+          $ref: '#/components/schemas/PtfStatus'
+      type: object
+    PtfSoftware:
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        ptfSoftwareType:
+          $ref: '#/components/schemas/PtfSoftwareType'
+        version:
+          type: string
+      type: object
+    PtfSoftwareType:
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        ptfSoftwares:
+          $ref: '#/components/schemas/PtfSoftware'
+      type: object
+    PtfStatistics:
+      properties:
+        delayAvg:
+          type: number
+        delayAvgGdac1:
+          type: number
+        delayAvgGdac2:
+          type: number
+        delayMedian:
+          type: number
+        delayMedianGdac1:
+          type: number
+        delayMedianGdac2:
+          type: number
+        nbObs:
+          type: number
+        nbObsDm:
+          type: number
+        nbObsDmEligible:
+          type: number
+        nbObsDmEligibleGdac1:
+          type: number
+        nbObsDmEligibleGdac2:
+          type: number
+        nbObsDmGdac1:
+          type: number
+        nbObsDmGdac2:
+          type: number
+        nbObsGdac1:
+          type: number
+        nbObsGdac2:
+          type: number
+        nbObsGts:
+          type: number
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        ptfId:
+          type: number
+      type: object
+    PtfStatus:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        ptfs:
+          $ref: '#/components/schemas/Ptf'
+        rank:
+          type: number
+        wigosCode:
+          type: string
+      type: object
+    PtfType:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        image:
+          $ref: '#/components/schemas/Image'
+        name:
+          type: string
+        nameShort:
+          type: string
+        ptfFamily:
+          $ref: '#/components/schemas/PtfFamily'
+        ptfModels:
+          $ref: '#/components/schemas/PtfModel'
+        wigosCode:
+          type: string
+      type: object
+    PtfUpdateHistory:
+      properties:
+        contact:
+          $ref: '#/components/schemas/Contact'
+        fieldName:
+          type: string
+        newValue:
+          type: string
+        prevValue:
+          type: string
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        themeView:
+          type: string
+        updateDate:
+          format: date-time
+          type: string
+      type: object
+    PtfVariable:
+      properties:
+        accuracy:
+          type: string
+        calibDate:
+          format: date-time
+          type: string
+        calibDateNext:
+          format: date-time
+          type: string
+        comments:
+          type: string
+        controlSchedule:
+          type: string
+        dataProcessingMethod:
+          $ref: '#/components/schemas/DataProcessingMethod'
+        distanceX:
+          type: number
+        distanceY:
+          type: number
+        endDate:
+          format: date-time
+          type: string
+        firstMeasured:
+          format: date-time
+          type: string
+        height:
+          type: number
+        heightSecondaryRefLevel:
+          type: number
+        id:
+          type: number
+        lastMeasured:
+          format: date-time
+          type: string
+        manufDate:
+          format: date-time
+          type: string
+        manufWeblink:
+          $ref: '#/components/schemas/Weblink'
+        nbObs:
+          type: number
+        ownership:
+          type: string
+        packageN:
+          type: number
+        precision:
+          type: string
+        program:
+          $ref: '#/components/schemas/Program'
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        range:
+          type: string
+        rangeMax:
+          type: number
+        rangeMin:
+          type: number
+        resolution:
+          type: string
+        samplingRate:
+          type: string
+        samplingRateTotal:
+          type: string
+        sensorExposure:
+          $ref: '#/components/schemas/SensorExposure'
+        sensorGroup:
+          type: string
+        sensorLocation:
+          $ref: '#/components/schemas/SensorLocation'
+        sensorModel:
+          $ref: '#/components/schemas/SensorModel'
+        sensorStatus:
+          $ref: '#/components/schemas/SensorStatus'
+        serialNo:
+          type: string
+        sideIndicator:
+          type: string
+        startDate:
+          format: date-time
+          type: string
+        timeOffset:
+          type: number
+        uncertainty:
+          type: string
+        unit:
+          $ref: '#/components/schemas/Unit'
+        variable:
+          $ref: '#/components/schemas/Variable'
+        weblink:
+          $ref: '#/components/schemas/Weblink'
+      type: object
+    QcFeedback:
+      properties:
+        agency:
+          $ref: '#/components/schemas/Agency'
+        answer:
+          type: string
+        answerContact:
+          $ref: '#/components/schemas/Contact'
+        contact:
+          $ref: '#/components/schemas/Contact'
+        correctionType:
+          type: string
+        correctionValue:
+          type: number
+        done:
+          type: number
+        email:
+          type: string
+        endDate:
+          format: date-time
+          type: string
+        gtsCccc:
+          $ref: '#/components/schemas/GtsCccc'
+        gtsHeader:
+          $ref: '#/components/schemas/GtsHeader'
+        id:
+          type: number
+        message:
+          type: string
+        origin:
+          type: string
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        qcFeedbackAction:
+          $ref: '#/components/schemas/QcFeedbackAction'
+        qcFeedbackErrorType:
+          $ref: '#/components/schemas/QcFeedbackErrorType'
+        qcFeedbackObss:
+          $ref: '#/components/schemas/QcFeedbackObs'
+        qcFeedbackType:
+          $ref: '#/components/schemas/QcFeedbackType'
+        qcFeedbackVariables:
+          $ref: '#/components/schemas/QcFeedbackVariable'
+        recipients:
+          type: string
+        sent:
+          type: number
+        startDate:
+          format: date-time
+          type: string
+        subject:
+          type: string
+        topic:
+          $ref: '#/components/schemas/Topic'
+        variable:
+          $ref: '#/components/schemas/Variable'
+        weblink:
+          $ref: '#/components/schemas/Weblink'
+        wmo:
+          type: string
+      type: object
+    QcFeedbackAction:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        qcFeedbacks:
+          $ref: '#/components/schemas/QcFeedback'
+      type: object
+    QcFeedbackErrorType:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        qcFeedbacks:
+          $ref: '#/components/schemas/QcFeedback'
+      type: object
+    QcFeedbackObs:
+      properties:
+        obsId:
+          type: number
+        qcFeedback:
+          $ref: '#/components/schemas/QcFeedback'
+        qcFeedbackId:
+          type: number
+      type: object
+    QcFeedbackType:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameLong:
+          type: string
+        nameShort:
+          type: string
+        qcFeedbacks:
+          $ref: '#/components/schemas/QcFeedback'
+      type: object
+    QcFeedbackVariable:
+      properties:
+        qcFeedback:
+          $ref: '#/components/schemas/QcFeedback'
+        qcFeedbackId:
+          type: number
+        variable:
+          $ref: '#/components/schemas/Variable'
+        variableId:
+          type: number
+      type: object
+    QrCode:
+      properties:
+        code:
+          type: string
+        contact:
+          $ref: '#/components/schemas/Contact'
+        creationDate:
+          format: date-time
+          type: string
+        requestId:
+          type: string
+      type: object
+    Retrieval:
+      properties:
+        contact:
+          type: string
+        country:
+          $ref: '#/components/schemas/Country'
+        cruise:
+          $ref: '#/components/schemas/Cruise'
+        cruiseName:
+          type: string
+        description:
+          type: string
+        email:
+          type: string
+        endDate:
+          format: date-time
+          type: string
+        id:
+          type: number
+        lat:
+          type: number
+        localContactInfo:
+          type: string
+        lon:
+          type: number
+        postRetrievalStatus:
+          $ref: '#/components/schemas/PostRetrievalStatus'
+        ptfs:
+          $ref: '#/components/schemas/Ptf'
+        refStationId:
+          type: string
+        region:
+          type: string
+        retrievalStatus:
+          $ref: '#/components/schemas/RetrievalStatus'
+        ship:
+          $ref: '#/components/schemas/Ship'
+        startDate:
+          format: date-time
+          type: string
+        tel:
+          type: string
+      type: object
+    RetrievalStatus:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        retrievals:
+          $ref: '#/components/schemas/Retrieval'
+      type: object
+    Role:
+      properties:
+        contactPtfRoles:
+          $ref: '#/components/schemas/ContactPtfRole'
+        contactSiteRoles:
+          $ref: '#/components/schemas/ContactSiteRole'
+        cruiseContacts:
+          $ref: '#/components/schemas/CruiseContact'
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameAlter:
+          type: string
+        nameShort:
+          type: string
+        networkContacts:
+          $ref: '#/components/schemas/NetworkContact'
+        programContacts:
+          $ref: '#/components/schemas/ProgramContact'
+        rank:
+          type: number
+        userGroupContacts:
+          $ref: '#/components/schemas/UserGroupContact'
+      type: object
+    Schedule:
+      properties:
+        name:
+          type: string
+        nameShort:
+          type: string
+      type: object
+    SensorExposure:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        ptfVariables:
+          $ref: '#/components/schemas/PtfVariable'
+        pub47Ref:
+          type: string
+        ref:
+          type: string
+      type: object
+    SensorFamily:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        sensorTypes:
+          $ref: '#/components/schemas/SensorType'
+      type: object
+    SensorLocation:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        ptfVariables:
+          $ref: '#/components/schemas/PtfVariable'
+        pub47Ref:
+          type: string
+        ref:
+          type: string
+      type: object
+    SensorModel:
+      properties:
+        agency:
+          $ref: '#/components/schemas/Agency'
+        axesNo:
+          type: number
+        bodcId:
+          type: string
+        calibFrequency:
+          type: number
+        cruiseSensorModels:
+          $ref: '#/components/schemas/CruiseSensorModel'
+        description:
+          type: string
+        id:
+          type: number
+        image:
+          $ref: '#/components/schemas/Image'
+        name:
+          type: string
+        nameLong:
+          type: string
+        nameShort:
+          type: string
+        originalDataset:
+          type: string
+        ptfVariables:
+          $ref: '#/components/schemas/PtfVariable'
+        sensorModelNetworks:
+          $ref: '#/components/schemas/SensorModelNetwork'
+        sensorModelSensorTypes:
+          $ref: '#/components/schemas/SensorModelSensorType'
+        services:
+          $ref: '#/components/schemas/Service'
+        spec:
+          type: string
+        weblink:
+          $ref: '#/components/schemas/Weblink'
+        yearlyDrift:
+          type: number
+      type: object
+    SensorModelNetwork:
+      properties:
+        network:
+          $ref: '#/components/schemas/Network'
+        networkId:
+          type: number
+        sensorModel:
+          $ref: '#/components/schemas/SensorModel'
+        sensorModelId:
+          type: number
+      type: object
+    SensorModelSensorType:
+      properties:
+        accuracy:
+          type: string
+        precision:
+          type: string
+        range:
+          type: string
+        rangeMax:
+          type: number
+        rangeMin:
+          type: number
+        resolution:
+          type: string
+        sensorModel:
+          $ref: '#/components/schemas/SensorModel'
+        sensorType:
+          $ref: '#/components/schemas/SensorType'
+        unit:
+          $ref: '#/components/schemas/Unit'
+      type: object
+    SensorStatus:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        ptfVariables:
+          $ref: '#/components/schemas/PtfVariable'
+        ref:
+          type: string
+      type: object
+    SensorType:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        pub47Ref:
+          type: string
+        sensorFamily:
+          $ref: '#/components/schemas/SensorFamily'
+        sensorModelSensorTypes:
+          $ref: '#/components/schemas/SensorModelSensorType'
+        variable:
+          $ref: '#/components/schemas/Variable'
+        wigosCode:
+          type: string
+      type: object
+    Service:
+      properties:
+        agency:
+          $ref: '#/components/schemas/Agency'
+        contact:
+          $ref: '#/components/schemas/Contact'
+        cruise:
+          $ref: '#/components/schemas/Cruise'
+        description:
+          type: string
+        endDate:
+          format: date-time
+          type: string
+        id:
+          type: number
+        program:
+          $ref: '#/components/schemas/Program'
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        sensorModel:
+          $ref: '#/components/schemas/SensorModel'
+        serviceLocation:
+          $ref: '#/components/schemas/ServiceLocation'
+        serviceType:
+          $ref: '#/components/schemas/ServiceType'
+        startDate:
+          format: date-time
+          type: string
+      type: object
+    ServiceLocation:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        services:
+          $ref: '#/components/schemas/Service'
+      type: object
+    ServiceType:
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        services:
+          $ref: '#/components/schemas/Service'
+      type: object
+    Ship:
+      properties:
+        autonomy:
+          type: number
+        breadth:
+          type: number
+        bridge:
+          type: number
+        buoyCapacity:
+          type: number
+        callSign:
+          type: string
+        commissionedDate:
+          format: date-time
+          type: string
+        contactSeaEmail:
+          type: string
+        contactSeaEmail2:
+          type: string
+        contactSeaEmail3:
+          type: string
+        contactShoreEmail:
+          type: string
+        contactShoreEmail2:
+          type: string
+        contactShoreEmail3:
+          type: string
+        contactShoreName:
+          type: string
+        country:
+          $ref: '#/components/schemas/Country'
+        cruises:
+          $ref: '#/components/schemas/Cruise'
+        decommissionedDate:
+          format: date-time
+          type: string
+        description:
+          type: string
+        draught:
+          type: number
+        extUpdate:
+          format: date-time
+          type: string
+        floatCapacity:
+          type: number
+        freeboard:
+          type: number
+        height:
+          type: number
+        hideMetadata:
+          type: number
+        homePort:
+          type: string
+        id:
+          type: number
+        images:
+          $ref: '#/components/schemas/Image'
+        imo:
+          type: string
+        insertDate:
+          format: date-time
+          type: string
+        length:
+          type: number
+        mmsi:
+          type: string
+        name:
+          type: string
+        originalDataset:
+          type: string
+        passengerCapacity:
+          type: number
+        ptfDeployments:
+          $ref: '#/components/schemas/PtfDeployment'
+        ref:
+          type: string
+        refParent:
+          type: number
+        refTmp:
+          type: string
+        retrievals:
+          $ref: '#/components/schemas/Retrieval'
+        shipHistories:
+          $ref: '#/components/schemas/ShipHistory'
+        shipStatus:
+          $ref: '#/components/schemas/ShipStatus'
+        shipType:
+          $ref: '#/components/schemas/ShipType'
+        shippingAgency:
+          type: string
+        speed:
+          type: number
+        trackingSystemId:
+          type: number
+        updateDate:
+          format: date-time
+          type: string
+        validated:
+          type: number
+        weblink:
+          $ref: '#/components/schemas/Weblink'
+      type: object
+    ShipHistory:
+      properties:
+        callSign:
+          type: string
+        country:
+          $ref: '#/components/schemas/Country'
+        description:
+          type: string
+        endDate:
+          format: date-time
+          type: string
+        icesCode:
+          type: string
+        id:
+          type: number
+        insertDate:
+          format: date-time
+          type: string
+        mmsi:
+          type: string
+        name:
+          type: string
+        oldId:
+          type: number
+        ship:
+          $ref: '#/components/schemas/Ship'
+        startDate:
+          format: date-time
+          type: string
+        updateDate:
+          format: date-time
+          type: string
+      type: object
+    ShipStatus:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameLong:
+          type: string
+        nameShort:
+          type: string
+        ships:
+          $ref: '#/components/schemas/Ship'
+      type: object
+    ShipType:
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        originalDataset:
+          type: string
+        ships:
+          $ref: '#/components/schemas/Ship'
+      type: object
+    Site:
+      properties:
+        agencySiteRoles:
+          $ref: '#/components/schemas/AgencySiteRole'
+        contactSiteRoles:
+          $ref: '#/components/schemas/ContactSiteRole'
+        description:
+          type: string
+        geom:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        networkSites:
+          $ref: '#/components/schemas/NetworkSite'
+        siteFamily:
+          $ref: '#/components/schemas/SiteFamily'
+        sitePtfs:
+          $ref: '#/components/schemas/SitePtf'
+        status:
+          $ref: '#/components/schemas/SiteStatus'
+        targetedOccupation:
+          type: number
+      type: object
+    SiteFamily:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        sites:
+          $ref: '#/components/schemas/Site'
+      type: object
+    SitePtf:
+      properties:
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        ptfId:
+          type: number
+        site:
+          $ref: '#/components/schemas/Site'
+        siteId:
+          type: number
+      type: object
+    SiteStatus:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        sites:
+          $ref: '#/components/schemas/Site'
+      type: object
+    Survey:
+      properties:
+        cruises:
+          $ref: '#/components/schemas/Cruise'
+        description:
+          type: string
+        endDate:
+          format: date-time
+          type: string
+        id:
+          type: number
+        lineSurveys:
+          $ref: '#/components/schemas/LineSurvey'
+        name:
+          type: string
+        nameShort:
+          type: string
+        network:
+          $ref: '#/components/schemas/Network'
+        startDate:
+          format: date-time
+          type: string
+      type: object
+    Tag:
+      properties:
+        colour:
+          type: string
+        description:
+          type: string
+        name:
+          type: string
+        tagPtfs:
+          $ref: '#/components/schemas/TagPtf'
+      type: object
+    TagPtf:
+      properties:
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        tag:
+          $ref: '#/components/schemas/Tag'
+      type: object
+    Telecom:
+      properties:
+        endDate:
+          format: date-time
+          type: string
+        frequency:
+          type: string
+        id:
+          type: number
+        imei:
+          type: string
+        latency:
+          $ref: '#/components/schemas/Latency'
+        num:
+          type: string
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        ptfBackup:
+          $ref: '#/components/schemas/Ptf'
+        refProg:
+          type: string
+        startDate:
+          format: date-time
+          type: string
+        telecomFormat:
+          $ref: '#/components/schemas/TelecomFormat'
+        telecomService:
+          $ref: '#/components/schemas/TelecomService'
+        telecomType:
+          $ref: '#/components/schemas/TelecomType'
+      type: object
+    TelecomFormat:
+      properties:
+        contact:
+          $ref: '#/components/schemas/Contact'
+        description:
+          type: string
+        endDate:
+          format: date-time
+          type: string
+        id:
+          type: number
+        key:
+          type: string
+        name:
+          type: string
+        nameLong:
+          type: string
+        nameShort:
+          type: string
+        nbBits:
+          type: number
+        ptfModel:
+          $ref: '#/components/schemas/PtfModel'
+        startDate:
+          format: date-time
+          type: string
+        telecomFormatDocs:
+          $ref: '#/components/schemas/TelecomFormatDoc'
+        telecoms:
+          $ref: '#/components/schemas/Telecom'
+        version:
+          type: string
+      type: object
+    TelecomFormatDoc:
+      properties:
+        docId:
+          type: number
+        telecomFormat:
+          $ref: '#/components/schemas/TelecomFormat'
+        telecomFormatId:
+          type: number
+      type: object
+    TelecomService:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        telecoms:
+          $ref: '#/components/schemas/Telecom'
+      type: object
+    TelecomType:
+      properties:
+        description:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        pub47Ref:
+          type: string
+        telecoms:
+          $ref: '#/components/schemas/Telecom'
+      type: object
+    Topic:
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        qcFeedbacks:
+          $ref: '#/components/schemas/QcFeedback'
+        weblinks:
+          $ref: '#/components/schemas/Weblink'
+      type: object
+    Unit:
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        wigosCode:
+          type: string
+      type: object
+    UserGroup:
+      properties:
+        description:
+          type: string
+        email:
+          type: string
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        network:
+          $ref: '#/components/schemas/Network'
+        userGroupAgencies:
+          $ref: '#/components/schemas/UserGroupAgency'
+        userGroupContacts:
+          $ref: '#/components/schemas/UserGroupContact'
+        weblinks:
+          $ref: '#/components/schemas/Weblink'
+      type: object
+    UserGroupAgency:
+      properties:
+        agency:
+          $ref: '#/components/schemas/Agency'
+        agencyId:
+          type: number
+        userGroup:
+          $ref: '#/components/schemas/UserGroup'
+        userGroupId:
+          type: number
+      type: object
+    UserGroupContact:
+      properties:
+        contact:
+          $ref: '#/components/schemas/Contact'
+        contactId:
+          type: number
+        country:
+          $ref: '#/components/schemas/Country'
+        role:
+          $ref: '#/components/schemas/Role'
+        userGroup:
+          $ref: '#/components/schemas/UserGroup'
+        userGroupId:
+          type: number
+      type: object
+    Variable:
+      properties:
+        canonicalName:
+          type: string
+        canonicalUnit:
+          type: string
+        cruiseVariables:
+          $ref: '#/components/schemas/CruiseVariable'
+        dataSource:
+          type: string
+        description:
+          type: string
+        id:
+          type: number
+        imosRef:
+          type: string
+        indicators:
+          $ref: '#/components/schemas/Indicator'
+        name:
+          type: string
+        nameAlter:
+          type: string
+        nameShort:
+          type: string
+        p02Ref:
+          type: string
+        parameterVariables:
+          $ref: '#/components/schemas/ParameterVariable'
+        ptfVariables:
+          $ref: '#/components/schemas/PtfVariable'
+        qcFeedbackVariables:
+          $ref: '#/components/schemas/QcFeedbackVariable'
+        qcFeedbacks:
+          $ref: '#/components/schemas/QcFeedback'
+        qcRef:
+          type: string
+        sensorTypes:
+          $ref: '#/components/schemas/SensorType'
+        variableVariableFamilies:
+          $ref: '#/components/schemas/VariableVariableFamily'
+        wigosCode:
+          type: string
+      type: object
+    VariableFamily:
+      properties:
+        description:
+          type: string
+        ecv:
+          type: number
+        eov:
+          type: number
+        id:
+          type: number
+        name:
+          type: string
+        nameShort:
+          type: string
+        variableVariableFamilies:
+          $ref: '#/components/schemas/VariableVariableFamily'
+      type: object
+    VariableVariableFamily:
+      properties:
+        variable:
+          $ref: '#/components/schemas/Variable'
+        variableFamily:
+          $ref: '#/components/schemas/VariableFamily'
+        variableFamilyId:
+          type: number
+        variableId:
+          type: number
+      type: object
+    Weblink:
+      properties:
+        agencies:
+          $ref: '#/components/schemas/Agency'
+        agencyDacTypes:
+          $ref: '#/components/schemas/AgencyDacType'
+        contacts:
+          $ref: '#/components/schemas/Contact'
+        country:
+          $ref: '#/components/schemas/Country'
+        cruises:
+          $ref: '#/components/schemas/Cruise'
+        description:
+          type: string
+        id:
+          type: number
+        lines:
+          $ref: '#/components/schemas/Line'
+        name:
+          type: string
+        network:
+          $ref: '#/components/schemas/Network'
+        program:
+          $ref: '#/components/schemas/Program'
+        ptfModels:
+          $ref: '#/components/schemas/PtfModel'
+        ptfVariables:
+          $ref: '#/components/schemas/PtfVariable'
+        qcFeedbacks:
+          $ref: '#/components/schemas/QcFeedback'
+        rank:
+          type: number
+        sensorModels:
+          $ref: '#/components/schemas/SensorModel'
+        ships:
+          $ref: '#/components/schemas/Ship'
+        storyId:
+          type: number
+        topic:
+          $ref: '#/components/schemas/Topic'
+        url:
+          type: string
+        userGroup:
+          $ref: '#/components/schemas/UserGroup'
+        weblinkPtfs:
+          $ref: '#/components/schemas/WeblinkPtf'
+      type: object
+    WeblinkPtf:
+      properties:
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        ptfId:
+          type: number
+        weblink:
+          $ref: '#/components/schemas/Weblink'
+        weblinkId:
+          type: number
+      type: object
+    Wmo:
+      properties:
+        endDate:
+          format: date-time
+          type: string
+        fivedigitDuplExists:
+          type: number
+        id:
+          type: number
+        mask:
+          type: number
+        ptf:
+          $ref: '#/components/schemas/Ptf'
+        startDate:
+          format: date-time
+          type: string
+        wmo:
+          type: string
+      type: object
+  securitySchemes:
+    apiKeyId:
+      in: header
+      name: X-OceanOPS-Metadata-ID
+      type: apiKey
+    apiKeyToken:
+      in: header
+      name: X-OceanOPS-Metadata-Token
+      type: apiKey
+info:
+  contact:
+    email: dev@ocean-ops.org
+    name: API Support
+    url: https://ocean-ops.org/api
+  description: An API for interacting with OceanOPS metadata
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  title: OceanOPS API for metadata access
+  version: 1.14.2
+openapi: 3.0.3
+paths:
+  /data/platform:
+    get:
+      parameters:
+      - $ref: '#/components/parameters/Includes'
+      - $ref: '#/components/parameters/Excludes'
+      - $ref: '#/components/parameters/Exp'
+      - $ref: '#/components/parameters/MapBy'
+      - $ref: '#/components/parameters/Start'
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Sort'
+      - $ref: '#/components/parameters/Dir'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    items:
+                      type: object
+                    type: array
+                  total:
+                    type: number
+                type: object
+          description: Success response.
+      security:
+      - X-OceanOPS-Metadata-ID: []
+        X-OceanOPS-Metadata-Token: []
+      summary: Get list of all platforms
+      tags:
+      - Platform
+  /data/platform/ref/{ptfRef}:
+    get:
+      description: Returns a particular Platform through its OceanOPS reference
+      parameters:
+      - $ref: '#/components/parameters/ptfRef'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    items:
+                      type: object
+                    type: array
+                  total:
+                    type: number
+                type: object
+          description: Success responce
+      security:
+      - X-OceanOPS-Metadata-ID: []
+        X-OceanOPS-Metadata-Token: []
+      summary: Returns a particular Platform through its OceanOPS reference
+      tags:
+      - Platform
+  /data/platform/wigosid/{ptfWigosId}:
+    get:
+      description: Returns a particular Platform through its WIGOS ID
+      parameters:
+      - $ref: '#/components/parameters/ptfWigosId'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    items:
+                      type: object
+                    type: array
+                  total:
+                    type: number
+                type: object
+          description: Success responce
+      security:
+      - X-OceanOPS-Metadata-ID: []
+        X-OceanOPS-Metadata-Token: []
+      summary: Returns a particular Platform through its WIGOS ID
+      tags:
+      - Platform
+  /data/platform/wmdr/ref/{ptfRef}:
+    get:
+      description: Returns a particular Platform, in a WIGOS XML compliant format,
+        through its OceanOPS reference
+      parameters:
+      - $ref: '#/components/parameters/ptfRef'
+      responses:
+        '200':
+          content:
+            application/xml:
+              example: TBD
+          description: Success responce
+      summary: Returns a particular WMDR Platform through its OceanOPS reference
+      tags:
+      - Platform
+  /data/platform/wmdr/wigosid/{ptfWigosId}:
+    get:
+      description: Returns a particular Platform, in a WIGOS XML compliant format,
+        through its WIGOS ID
+      parameters:
+      - $ref: '#/components/parameters/ptfWigosId'
+      responses:
+        '200':
+          content:
+            application/json:
+              example: TBD
+          description: Success responce
+      summary: Returns a particular WMDR Platform through its WIGOS ID
+      tags:
+      - Platform
+  /data/platform/wmdr/{ptfId}:
+    get:
+      description: Returns a particular Platform, in a WIGOS XML compliant format,
+        through its database identifier
+      parameters:
+      - $ref: '#/components/parameters/ptfId'
+      responses:
+        '200':
+          content:
+            application/xml:
+              example: TBD
+          description: Success responce
+      summary: Returns a particular WMDR Platform through its database identifier
+      tags:
+      - Platform
+  /data/platform/{ptfId}:
+    get:
+      description: Returns a particular Platform through its database identifier
+      parameters:
+      - $ref: '#/components/parameters/ptfId'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    items:
+                      type: object
+                    type: array
+                  total:
+                    type: number
+                type: object
+          description: Success responce
+      security:
+      - X-OceanOPS-Metadata-ID: []
+        X-OceanOPS-Metadata-Token: []
+      summary: Returns a particular Platform through its database identifier
+      tags:
+      - Platform
+  /data/ship:
+    get:
+      parameters:
+      - $ref: '#/components/parameters/Includes'
+      - $ref: '#/components/parameters/Excludes'
+      - $ref: '#/components/parameters/Exp'
+      - $ref: '#/components/parameters/MapBy'
+      - $ref: '#/components/parameters/Start'
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Sort'
+      - $ref: '#/components/parameters/Dir'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    items:
+                      type: object
+                    type: array
+                  total:
+                    type: number
+                type: object
+          description: Success response.
+      security:
+      - X-OceanOPS-Metadata-ID: []
+        X-OceanOPS-Metadata-Token: []
+      summary: Get list of all ships
+      tags:
+      - Ship
+  /data/ship/{shipId}:
+    get:
+      description: Returns a particular Ship through its database identifier
+      parameters:
+      - description: ID of Ship to fetch
+        in: path
+        name: shipId
+        required: true
+        schema:
+          format: int32
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    items:
+                      type: object
+                    type: array
+                  total:
+                    type: number
+                type: object
+          description: Success responce
+      security:
+      - X-OceanOPS-Metadata-ID: []
+        X-OceanOPS-Metadata-Token: []
+      summary: Returns a particular Ship through its database identifier
+      tags:
+      - Ship
+servers:
+- url: https://www.ocean-ops.org/api
+tags:
+- description: 'This model represents a Platform entity and is used to retrieve a
+    platform information (schema model named ''Ptf'').
+
+    '
+  name: Platform
+- description: 'This model represents a Ship entity and is used to retrieve a ship
+    information (schema model named ''Ship'').
+
+    '
+  name: Ship
