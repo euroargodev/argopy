@@ -39,13 +39,13 @@ class ArgoKerchunker:
     """
     Argo netcdf file kerchunk helper
 
-    Note that the 'kerchunk' library is required if you need to extract
-    zarr data from netcdf file(s), a.k.a. ``translate``
+    Note that the `kerchunk <https://fsspec.github.io/kerchunk/>`_ library is required if you need to extract
+    zarr data from netcdf file(s), a.k.a. :meth:`argopy.stores.ArgoKerchunker.translate`.
 
     Examples
     --------
     .. code-block:: python
-        :caption:
+        :caption: API examples
 
         >>> ncfile = "s3://argo-gdac-sandbox/pub/dac/coriolis/6903090/6903090_prof.nc"
 

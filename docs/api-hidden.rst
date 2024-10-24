@@ -303,6 +303,13 @@
     argopy.stores.argo_index_proto_s3.s3index_bgc_synthetic
     argopy.stores.argo_index_proto_s3.search_s3
 
+    argopy.stores.ArgoKerchunker
+    argopy.stores.ArgoKerchunker.supported
+    argopy.stores.ArgoKerchunker.translate
+    argopy.stores.ArgoKerchunker.to_kerchunk
+    argopy.stores.ArgoKerchunker.pprint
+    argopy.stores.ArgoKerchunker.open_dataset
+
     argopy.xarray.ArgoAccessor.point2profile
     argopy.xarray.ArgoAccessor.profile2point
     argopy.xarray.ArgoAccessor.interp_std_levels

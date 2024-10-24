@@ -387,4 +387,6 @@ intersphinx_mapping = {
     'IPython': ('https://ipython.readthedocs.io/en/stable/', None),
     'virtualfleet': ('https://virtualfleet.readthedocs.io/en/latest/', None),
     'boto3': ('https://boto3.amazonaws.com/v1/documentation/api/latest/', None),
+    's3fs': ('https://s3fs.readthedocs.io/en/latest/', None),
+    'kerchunk': ('https://fsspec.github.io/kerchunk/', None),
 }

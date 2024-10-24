@@ -629,7 +629,14 @@ class httpstore(argo_store_proto):
     Relies on :class:`fsspec.implementations.http.HTTPFileSystem`
 
     This store intends to make argopy safer to failures from http requests and to provide higher levels methods to
-    work with our datasets such as: :class:`httpstore.open_mfdataset` and :class:`httpstore.open_mfjson`.
+    work with our datasets. Key methods are:
+
+    - :class:`httpstore.download_url`
+    - :class:`httpstore.open_dataset`
+    - :class:`httpstore.open_json`
+    - :class:`httpstore.open_mfdataset`
+    - :class:`httpstore.open_mfjson`
+    - :class:`httpstore.read_csv`
 
     """
 
@@ -2093,7 +2100,8 @@ def httpstore_erddap(url: str = "", cache: bool = False, cachedir: str = "", **k
 class s3store(httpstore):
     """Argo s3 file system
 
-    Relies on :class:`fsspec.implementations.http.HTTPFileSystem` by inherits from :class:`httpstore`
+    Inherits from :class:`httpstore` but will rely on :class:`s3fs.S3FileSystem` through
+    the fsspec 's3' protocol specification.
 
     By default, this store will use AWS credentials available in the environment.
 
