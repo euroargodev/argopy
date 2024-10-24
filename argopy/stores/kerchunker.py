@@ -42,10 +42,8 @@ class ArgoKerchunker:
     Note that the `kerchunk <https://fsspec.github.io/kerchunk/>`_ library is required if you need to extract
     zarr data from netcdf file(s), a.k.a. :meth:`argopy.stores.ArgoKerchunker.translate`.
 
-    Examples
-    --------
     .. code-block:: python
-        :caption: API examples
+        :caption: Examples
 
         >>> ncfile = "s3://argo-gdac-sandbox/pub/dac/coriolis/6903090/6903090_prof.nc"
 
@@ -94,7 +92,7 @@ class ArgoKerchunker:
             Options passed to fsspec when opening netcdf file
 
             This argument is passed to :class:`kerchunk.netCDF3.NetCDF3ToZarr` or :class:`kerchunk.hdf.SingleHdf5ToZarr`
-            during translation, and in `backend_kwargs` of :class:`xarray.open_dataset`.
+            during translation, and in `backend_kwargs` of :class:`xr.open_dataset`.
 
         """
         # Instance file system to load/save kerchunk json files
@@ -173,12 +171,22 @@ class ArgoKerchunker:
 
         return ncfile, kerchunk_jsfile, kerchunk_data
 
-    def translate(self, ncfiles: List):
+    def translate(self, ncfiles: Union[str, Path, List]):
         """Compute kerchunk data for one or a list of netcdf files
 
         Kerchunk data are saved with the instance file store
 
-        Once translated, netcdf file reference data are internally registered in ``kerchunk_references``
+        Once translated, netcdf file reference data are internally registered in the :attr:`ArgoKerchunker.kerchunk_references` attribute
+
+        If more than 1 netcdf file is provided, the translation is executed in parallel:
+
+        - if `Dask <https://www.dask.org>`_ is available we use :meth:`dask.delayed`/:meth:`dask.compute`,
+        - otherwise we use a :class:`concurrent.futures.ThreadPoolExecutor`.
+
+        See Also
+        --------
+        :meth:`ArgoKerchunker.to_kerchunk`
+
         """
         if not HAS_KERCHUNK:
             raise ModuleNotFoundError("This method requires the 'kerchunk' library")
@@ -216,6 +224,10 @@ class ArgoKerchunker:
         """Return json kerchunk data for a given netcdf file
 
         Load data from instance file store, translate if necessary
+
+        See Also
+        --------
+        :meth:`ArgoKerchunker.translate`
         """
         if overwrite:
             self.translate(ncfile)
