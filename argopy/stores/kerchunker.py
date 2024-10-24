@@ -5,6 +5,8 @@ from pathlib import Path
 from fsspec.core import split_protocol
 import json
 import logging
+import aiohttp
+
 
 # from tempfile import TemporaryDirectory
 # from fsspec.implementations.dirfs import DirFileSystem
@@ -37,9 +39,9 @@ except ModuleNotFoundError:
 
 class ArgoKerchunker:
     """
-    Argo netcdf file kerchunk helper
+    Argo netcdf file kerchunk-ing helper
 
-    Note that the `kerchunk <https://fsspec.github.io/kerchunk/>`_ library is required if you need to extract
+    The `kerchunk <https://fsspec.github.io/kerchunk/>`_ library is required if you need to extract
     zarr data from netcdf file(s), a.k.a. :meth:`argopy.stores.ArgoKerchunker.translate`.
 
     .. code-block:: python
@@ -102,7 +104,9 @@ class ArgoKerchunker:
             if Path(root).name == "":
                 self.fs = filestore()
             else:
+                Path(root).mkdir(parents=True, exist_ok=True)
                 self.fs = fsspec.filesystem("dir", path=root, target_protocol="local")
+
         elif isinstance(store, fsspec.AbstractFileSystem):
             self.fs = store
 
@@ -242,6 +246,17 @@ class ArgoKerchunker:
         with self.fs.open(kerchunk_jsfile, "r") as file:
             kerchunk_data = json.load(file)
 
+        # Ensure that the loaded kerchunk data corresponds to the ncfile target
+        if not overwrite:
+            target_ok = False
+            for key, value in kerchunk_data["refs"].items():
+                if key not in [".zgroup", ".zattrs"] and "0." in key:
+                    if value[0] == ncfile:
+                        target_ok = True
+                        break
+            if not target_ok:
+                kerchunk_data = self.to_kerchunk(ncfile, overwrite=True)
+
         return kerchunk_data
 
     def pprint(self, ncfile: Union[str, Path], params: List[str] = None):
@@ -300,11 +315,28 @@ class ArgoKerchunker:
         Parameters
         ----------
         ncfile: str, Path
+
+        Raises
+        ------
+        :class:`aiohttp.ClientResponseError`
         """
         fs = fsspec.filesystem(split_protocol(str(ncfile))[0])
-        try:
-            return fs.open(str(ncfile)).read(4)
-        except:  # noqa: E722
+
+        def is_read(fs, uri):
+            try:
+                fs.ls(uri)
+                return True
+            except aiohttp.ClientResponseError:
+                raise
+            except:
+                return False
+
+        if is_read(fs, str(ncfile)):
+            try:
+                return fs.open(str(ncfile)).read(4)
+            except:  # noqa: E722
+                return None
+        else:
             return None
 
     def supported(self, ncfile: Union[str, Path]) -> bool:

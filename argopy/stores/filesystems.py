@@ -20,6 +20,8 @@ fs.read_csv
 
 import os
 import types
+import warnings
+
 import xarray as xr
 import pandas as pd
 import fsspec
@@ -28,6 +30,7 @@ import shutil
 import pickle  # nosec B403 only used with internal files/assets
 import json
 import io
+from pathlib import Path
 import time
 import tempfile
 import logging
@@ -771,23 +774,39 @@ class httpstore(argo_store_proto):
 
         return data
 
-    def open_dataset(self, url, errors: str = "raise", **kwargs) -> xr.Dataset:
-        """Download and process a :class:`xarray.Dataset` from an url
-
-        Steps performed:
-
-        1. Download from ``url`` raw binary data with :class:`httpstore.download_url` and then
-        2. Create a :class:`xarray.Dataset` with :func:`xarray.open_dataset`.
-
-        Each functions can be passed specifics arguments (see Parameters below).
+    def open_dataset(
+        self, url, errors: str = "raise", lazy: bool = False, dwn_opts: dict = {}, xr_opts: dict = {}, **kwargs
+    ) -> xr.Dataset:
+        """Create a :class:`xarray.Dataset` from an url pointing to a netcdf file
 
         Parameters
         ----------
         url: str
-        kwargs: dict
-            Use to possibly pass arguments to:
-                - ``dwn_opts`` key is passed to :class:`httpstore.download_url`
-                - ``xr_opts`` key is passed to :func:`xarray.open_dataset`
+            The remote URL of the netcdf file to open
+
+        errors: str, default: ``raise``
+            Define how to handle errors raised during data fetching:
+                - ``raise`` (default): Raise any error encountered
+                - ``ignore``: Do not stop processing, simply issue a debug message in logging console
+                - ``silent``:  Do not stop processing and do not issue log message
+
+        lazy: bool, default=False
+            Define if we should try to load netcdf file lazily or not.
+
+            **If this is set to False (default)** opening is done in 2 steps:
+                1. Download from ``url`` raw binary data with :class:`httpstore.download_url`,
+                2. Create a :class:`xarray.Dataset` with :func:`xarray.open_dataset`.
+
+            Each functions can be passed specifics arguments with ``dwn_opts`` and  ``xr_opts`` (see below).
+
+            **If this is set to True**, we'll try to use a :class:`argopy.stores.ArgoKerchunker` to access
+            the netcdf file using zarr data from it.
+
+        dwn_opts: dict, default={}
+             Options passed to :func:`httpstore.download_url` if not in lazy mode.
+
+        xr_opts: dict, default={}
+             Options passed to :func:`xarray.open_dataset` if not in lazy mode.
 
         Returns
         -------
@@ -801,39 +820,68 @@ class httpstore(argo_store_proto):
 
         See Also
         --------
-        :class:`httpstore.open_mfdataset`
+        :func:`httpstore.open_mfdataset`
         """
-        dwn_opts = {}
-        if "dwn_opts" in kwargs:
-            dwn_opts.update(kwargs["dwn_opts"])
-        data = self.download_url(url, **dwn_opts)
+        def load_in_memory(url, errors, dwn_opts, xr_opts):
+            data = self.download_url(url, **dwn_opts)
+            if data is None:
+                if errors == "raise":
+                    raise DataNotFound(url)
+                elif errors == "ignore":
+                    log.error("DataNotFound: %s" % url)
+                return None
 
-        if data is None:
-            if errors == "raise":
-                raise DataNotFound(url)
-            elif errors == "ignore":
-                log.error("DataNotFound: %s" % url)
-            return None
+            if b"Not Found: Your query produced no matching results" in data:
+                if errors == "raise":
+                    raise DataNotFound(url)
+                elif errors == "ignore":
+                    log.error("DataNotFound from [%s]: %s" % (url, data))
+                return None
 
-        if b'Not Found: Your query produced no matching results' in data:
-            if errors == "raise":
-                raise DataNotFound(url)
-            elif errors == "ignore":
-                log.error("DataNotFound from [%s]: %s" % (url, data))
-            return None
+            if data[0:3] != b"CDF" and data[0:3] != b"\x89HD":
+                raise TypeError(
+                    "We didn't get a CDF or HDF5 binary data as expected ! We get: %s"
+                    % data
+                )
+            if data[0:3] == b"\x89HD":
+                data = io.BytesIO(data)
 
-        if data[0:3] != b"CDF" and data[0:3] != b"\x89HD":
-            raise TypeError(
-                "We didn't get a CDF or HDF5 binary data as expected ! We get: %s"
-                % data
-            )
-        if data[0:3] == b"\x89HD":
-            data = io.BytesIO(data)
+            return data, xr_opts
 
-        xr_opts = {}
-        if "xr_opts" in kwargs:
-            xr_opts.update(kwargs["xr_opts"])
-        ds = xr.open_dataset(data, **xr_opts)
+        def load_lazily(url, errors, dwn_opts, xr_opts):
+            from . import ArgoKerchunker
+
+            if "ak" not in kwargs:
+                self.ak = ArgoKerchunker(
+                    store="local", root=Path(OPTIONS["cachedir"]).joinpath("kerchunk")
+                )
+            else:
+                self.ak = kwargs["ak"]
+
+            if self.ak.supported(url):
+                xr_opts = {
+                    "engine": "zarr",
+                    "backend_kwargs": {
+                        "consolidated": False,
+                        "storage_options": {
+                            "fo": self.ak.to_kerchunk(url),
+                            "remote_protocol": fsspec.core.split_protocol(url)[0],
+                        },
+                    },
+                }
+                return "reference://", xr_opts
+            else:
+                warnings.warn(
+                    "This url does not support byte range requests so we cannot load lazily, hence falling back on loading in memory"
+                )
+                return load_in_memory(url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts)
+
+        if not lazy:
+            target = load_in_memory(url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts)
+        else:
+            target, xr_opts = load_lazily(url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts)
+
+        ds = xr.open_dataset(target, **xr_opts)
 
         if "source" not in ds.encoding:
             if isinstance(url, str):
