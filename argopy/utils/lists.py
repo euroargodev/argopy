@@ -241,7 +241,7 @@ def list_standard_variables(ds: str = 'phy') -> List[str]:
         if ds in ['bgc', 'bgc-s']:
             sv.append("%s_DATA_MODE" % param)
         sv.append("%s_QC" % param)
-        sv.append("%s_ERROR" % param)   # <PARAM>_ERROR variables are added by :class:`Dataset.argo.transform_data_mode`
+        sv.append("%s_ERROR" % param)   # <PARAM>_ERROR variables are added by :class:`Dataset.argo.datamode.merge`
 
         sv.append("%s_ADJUSTED" % param)
         sv.append("%s_ADJUSTED_QC" % param)

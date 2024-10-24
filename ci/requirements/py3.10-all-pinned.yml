@@ -28,6 +28,7 @@ dependencies:
   - distributed = 2024.9.1
   - h5netcdf = 1.4.0
   - pyarrow = 17.0.0
+  - s3fs = 2024.3.1
 
 # EXT.PLOT:
   - IPython = 8.28.0

@@ -273,6 +273,7 @@ File systems
     stores.ftpstore
     stores.httpstore_erddap_auth
     stores.s3store
+    stores.ArgoKerchunker
 
 Argo index store
 ----------------

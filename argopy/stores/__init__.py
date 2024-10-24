@@ -8,6 +8,8 @@ from .argo_index_pd import indexstore_pandas as indexstore_pd
 
 from .argo_index import ArgoIndex
 
+from .kerchunker import ArgoKerchunker
+
 #
 __all__ = (
     # Classes:
@@ -21,4 +23,5 @@ __all__ = (
     "ftpstore",
     "memorystore",
     "s3store",
+    "ArgoKerchunker",
 )
