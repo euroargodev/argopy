@@ -775,7 +775,13 @@ class httpstore(argo_store_proto):
         return data
 
     def open_dataset(
-        self, url, errors: str = "raise", lazy: bool = False, dwn_opts: dict = {}, xr_opts: dict = {}, **kwargs
+        self,
+        url,
+        errors: str = "raise",
+        lazy: bool = False,
+        dwn_opts: dict = {},
+        xr_opts: dict = {},
+        **kwargs,
     ) -> xr.Dataset:
         """Create a :class:`xarray.Dataset` from an url pointing to a netcdf file
 
@@ -822,7 +828,8 @@ class httpstore(argo_store_proto):
         --------
         :func:`httpstore.open_mfdataset`
         """
-        def load_in_memory(url, errors='raise', dwn_opts={}, xr_opts={}):
+
+        def load_in_memory(url, errors="raise", dwn_opts={}, xr_opts={}):
             data = self.download_url(url, **dwn_opts)
             if data is None:
                 if errors == "raise":
@@ -848,7 +855,7 @@ class httpstore(argo_store_proto):
 
             return data, xr_opts
 
-        def load_lazily(url, errors='raise', dwn_opts={}, xr_opts={}):
+        def load_lazily(url, errors="raise", dwn_opts={}, xr_opts={}):
             from . import ArgoKerchunker
 
             if "ak" not in kwargs:
@@ -874,12 +881,18 @@ class httpstore(argo_store_proto):
                 warnings.warn(
                     "This url does not support byte range requests so we cannot load lazily, hence falling back on loading in memory"
                 )
-                return load_in_memory(url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts)
+                return load_in_memory(
+                    url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts
+                )
 
         if not lazy:
-            target, _ = load_in_memory(url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts)
+            target, _ = load_in_memory(
+                url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts
+            )
         else:
-            target, xr_opts = load_lazily(url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts)
+            target, xr_opts = load_lazily(
+                url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts
+            )
 
         ds = xr.open_dataset(target, **xr_opts)
 
@@ -1190,6 +1203,12 @@ class httpstore(argo_store_proto):
             urls = [urls]
 
         urls = [self.curateurl(url) for url in urls]
+
+        if "lazy" in open_dataset_opts and open_dataset_opts["lazy"] and concat:
+            warnings.warn(
+                "Lazy openning and concatenate multiple netcdf files is not yet supported. Ignoring the 'lazy' option."
+            )
+            open_dataset_opts["lazy"] = False
 
         results = []
         failed = []
