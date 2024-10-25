@@ -822,7 +822,7 @@ class httpstore(argo_store_proto):
         --------
         :func:`httpstore.open_mfdataset`
         """
-        def load_in_memory(url, errors, dwn_opts, xr_opts):
+        def load_in_memory(url, errors='raise', dwn_opts={}, xr_opts={}):
             data = self.download_url(url, **dwn_opts)
             if data is None:
                 if errors == "raise":
@@ -848,7 +848,7 @@ class httpstore(argo_store_proto):
 
             return data, xr_opts
 
-        def load_lazily(url, errors, dwn_opts, xr_opts):
+        def load_lazily(url, errors='raise', dwn_opts={}, xr_opts={}):
             from . import ArgoKerchunker
 
             if "ak" not in kwargs:
@@ -877,7 +877,7 @@ class httpstore(argo_store_proto):
                 return load_in_memory(url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts)
 
         if not lazy:
-            target = load_in_memory(url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts)
+            target, _ = load_in_memory(url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts)
         else:
             target, xr_opts = load_lazily(url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts)
 
