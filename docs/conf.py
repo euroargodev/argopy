@@ -264,7 +264,7 @@ html_theme_options = {
     # 'show_toc_level': 3,  # https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/page-toc.html#show-more-levels-of-the-in-page-toc-by-default
     # 'launch_buttons': { "thebe": True}
     "announcement": (
-        "⚠️ First major v1.0.0 is out ⚠️"
+        "🎓 2025 argopy training camps are open: <a href='https://forms.gle/d8xPbrWu7aZcvMut9' target='blank'>pre-register here</a> 🎓"
     ),
     "icon_links": [
         {
@@ -277,6 +277,12 @@ html_theme_options = {
             "name": "Connect to Chat support",
             "url": "https://gitter.im/Argo-floats/argopy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge",
             "icon": "fa-solid fa-headset",
+            "type": "fontawesome",
+        },
+        {
+            "name": "Pre-registration for 2025 training-camps",
+            "url": "https://forms.gle/d8xPbrWu7aZcvMut9",
+            "icon": "fa-solid fa-graduation-cap",
             "type": "fontawesome",
         },
     ]

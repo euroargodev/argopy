@@ -9,6 +9,27 @@ for standard users as well as Argo experts.
 |License| |Python version| |Anaconda-Server Badge|
 
 
+.. admonition:: 2025 argopy training camps 🎓
+
+    The argopy team is contemplating to organise "training camps" in 2025:
+
+    At  least one event would be in-person and anoter online.
+
+    Overall, a training camp should be about 1 day long.
+
+    The goal of these events is to train users with all the argopy features.
+    Whether you're a standard, research or expert users, argopy has features for you !
+
+    `You can pre-register here <https://forms.gle/d8xPbrWu7aZcvMut9>`_
+
+.. versionadded:: v1.0.0
+
+    The team proudly assumes that **argopy** is all grown up !
+
+    This version comes with improved performances and support for the BGC-Argo dataset.
+    But since this is a major, we also introduces breaking changes and significant internal refactoring possibly with un-expected side effects ! So don't hesitate to `report issues on the source code repository <https://github.com/euroargodev/argopy/issues>`_.
+
+
 Documentation
 -------------
 
