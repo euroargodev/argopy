@@ -1,5 +1,6 @@
 import numpy as np
 import xarray as xr
+from typing import Literal
 
 
 def pre_process_multiprof(
@@ -7,6 +8,7 @@ def pre_process_multiprof(
     access_point: str,
     access_point_opts: {},
     pre_filter_points: bool = False,
+    dimension: Literal['point', 'profile'] = 'point',
     # dataset_id: str = "phy",
     # cname: str = '?',
 ) -> xr.Dataset:
@@ -24,10 +26,10 @@ def pre_process_multiprof(
     if ds is None:
         return None
 
-    # Remove raw netcdf file attributes and replace them with argopy ones:
-    raw_attrs = ds.attrs
-    ds.attrs = {}
-    ds.attrs.update({"raw_attrs": raw_attrs})
+    # # Remove raw netcdf file attributes and replace them with argopy ones:
+    # raw_attrs = ds.attrs
+    # ds.attrs = {}
+    # ds.attrs.update({"raw_attrs": raw_attrs})
 
     # Rename JULD and JULD_QC to TIME and TIME_QC
     ds = ds.rename(
@@ -37,6 +39,13 @@ def pre_process_multiprof(
         "long_name": "Datetime (UTC) of the station",
         "standard_name": "time",
     }
+
+    # Ensure N_PROF is a coordinate
+    # ds = ds.assign_coords(N_PROF=np.arange(0, len(ds["N_PROF"])))
+    ds = ds.reset_coords()
+    coords = ("LATITUDE", "LONGITUDE", "TIME", "N_PROF")
+    ds = ds.assign_coords({'N_PROF': np.arange(0, len(ds['N_PROF']))})
+    ds = ds.set_coords(coords)
 
     # Cast data types:
     ds = ds.argo.cast_types()
@@ -52,9 +61,10 @@ def pre_process_multiprof(
         if len(list(ds[v].dims)) == 0:
             ds = ds.drop_vars(v)
 
-    ds = (
-        ds.argo.profile2point()
-    )  # Default output is a collection of points, along N_POINTS
+    if dimension == 'point':
+        ds = (
+            ds.argo.profile2point()
+        )  # Default output is a collection of points, along N_POINTS
 
     ds = ds[np.sort(ds.data_vars)]
 
@@ -70,6 +80,11 @@ def filter_points(ds: xr.Dataset, access_point: str = None, **kwargs) -> xr.Data
     This may be necessary if for download performance improvement we had to work with multi instead of mono profile
     files: we loaded and merged multi-profile files, and then we need to make sure to retain only profiles requested.
     """
+    dim = "N_PROF" if "N_PROF" in ds.dims else "N_POINTS"
+    ds = ds.assign_coords({dim: np.arange(0, len(ds[dim]))})
+    if 'N_LEVELS' in ds.dims:
+        ds = ds.assign_coords({'N_LEVELS': np.arange(0, len(ds['N_LEVELS']))})
+
     if access_point == "BOX":
         BOX = kwargs["BOX"]
         # - box = [lon_min, lon_max, lat_min, lat_max, pres_min, pres_max]
@@ -89,15 +104,14 @@ def filter_points(ds: xr.Dataset, access_point: str = None, **kwargs) -> xr.Data
 
     if access_point == "CYC":
         this_mask = xr.DataArray(
-            np.zeros_like(ds["N_POINTS"]),
-            dims=["N_POINTS"],
-            coords={"N_POINTS": ds["N_POINTS"]},
+            np.zeros_like(ds[dim]),
+            dims=[dim],
+            coords={dim: ds[dim]},
         )
         for cyc in kwargs["CYC"]:
             this_mask += ds["CYCLE_NUMBER"] == cyc
         this_mask = this_mask >= 1  # any
         ds = ds.where(this_mask, drop=True)
 
-    ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
-
+    ds = ds.assign_coords({dim: np.arange(0, len(ds[dim]))})
     return ds

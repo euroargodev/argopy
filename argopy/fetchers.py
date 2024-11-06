@@ -336,7 +336,7 @@ class ArgoDataFetcher:
             not isinstance(self._index, pd.core.frame.DataFrame)
             or self._request != self.__repr__()
         ):
-            self.load()
+            self._index = self.to_index()
         return self._index
 
     @property

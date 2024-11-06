@@ -35,7 +35,7 @@ import time
 import tempfile
 import logging
 from packaging import version
-from typing import Union, Any, List
+from typing import Union, Any, List, Literal
 from collections.abc import Callable
 from urllib.parse import urlparse, parse_qs
 from functools import lru_cache
@@ -1133,10 +1133,11 @@ class httpstore(argo_store_proto):
         progress: Union[bool, str] = False,
         concat: bool = True,
         concat_dim: str = "row",
+        concat_method: Literal["drop", "fill"] = "drop",
         preprocess: Callable = None,
         preprocess_opts: dict = {},
         open_dataset_opts: dict = {},
-        errors: str = "ignore",
+        errors: Literal['ignore', 'raise', 'silent'] = "ignore",
         compute_details: bool = False,
         *args,
         **kwargs,
@@ -1380,7 +1381,10 @@ class httpstore(argo_store_proto):
         if len(results) > 0:
             if concat:
                 # ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
-                results = drop_variables_not_in_all_datasets(results)
+                if concat_method == 'drop':
+                    results = drop_variables_not_in_all_datasets(results)
+                elif concat_method == 'fill':
+                    results = fill_variables_not_in_all_datasets(results)
                 ds = xr.concat(
                     results,
                     dim=concat_dim,

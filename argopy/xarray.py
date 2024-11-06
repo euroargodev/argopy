@@ -615,7 +615,7 @@ class ArgoAccessor:
         ds = ds.where(~np.isnan(ds["PRES"]), drop=1)
         ds = ds.sortby("TIME") if "TIME" in ds else ds.sortby("JULD")
         ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
-        ds = cast_Argo_variable_type(ds)
+        ds = cast_Argo_variable_type(ds, overwrite=False)
         ds = ds[np.sort(ds.data_vars)]
         ds.encoding = self.encoding  # Preserve low-level encoding information
         ds.argo.add_history("Transformed with 'profile2point'")
@@ -691,7 +691,7 @@ class ArgoAccessor:
             )
 
         if len(QC_fields) == 0:
-            this.argo._add_history(
+            this.argo.add_history(
                 "Variables selected according to QC (but found no QC variables)"
             )
             return this

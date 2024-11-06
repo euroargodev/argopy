@@ -176,7 +176,10 @@ def cast_Argo_variable_type(ds, overwrite=True):
         return da
 
     for v in ds.variables:
-        if overwrite or ("casted" in ds[v].attrs and ds[v].attrs["casted"] == 0):
+        if (overwrite or
+            ("casted" in ds[v].attrs and ds[v].attrs["casted"] == 0) or
+            (not overwrite and "casted" in ds[v].attrs and ds[v].attrs["casted"] == 1 and ds[v].dtype == 'O')
+        ):
             try:
                 ds[v] = cast_this_da(ds[v], v)
             except Exception:
