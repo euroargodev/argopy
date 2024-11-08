@@ -8,6 +8,15 @@ What's New
 |pypi dwn| |conda dwn|
 
 
+Coming up next
+--------------
+
+Internals
+^^^^^^^^^
+
+- When argopy is sending a http request to a data server, add a custom http header ``X-argopy`` to ease server log analysis.
+
+
 v1.0.0 (16 Oct. 2024)
 ---------------------
 
