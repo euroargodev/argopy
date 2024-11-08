@@ -14,7 +14,7 @@ Coming up next
 Internals
 ^^^^^^^^^
 
-- When argopy is sending a http request to a data server, add a custom http header ``X-argopy`` to ease server log analysis.
+- When argopy is sending a http request to a data server, add a custom http header ``Argopy-Version`` to ease server log analysis. (:pr:`407`) by `G. Maze <http://www.github.com/gmaze>`_.
 
 
 v1.0.0 (16 Oct. 2024)
