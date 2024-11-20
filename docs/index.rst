@@ -13,9 +13,9 @@ for standard users as well as Argo experts.
 
     The argopy team is contemplating to organise "training camps" in 2025:
 
-    At  least one event would be in-person and anoter online.
+    At  least one event would be in-person and another online.
 
-    Overall, a training camp should be about 1 day long.
+    Overall, a training camp should be no more than 1 day long.
 
     The goal of these events is to train users with all the argopy features.
     Whether you're a standard, research or expert users, argopy has features for you !
