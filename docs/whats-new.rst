@@ -8,6 +8,16 @@ What's New
 |pypi dwn| |conda dwn|
 
 
+
+Coming up next
+--------------
+
+Internals
+^^^^^^^^^
+
+- Fix bug raising when exporting a dataset to netcdf after erddap fetch, :issue:`412`. (:pr:``) by `G. Maze <http://www.github.com/gmaze>`_.
+
+
 v1.0.0 (16 Oct. 2024)
 ---------------------
 
