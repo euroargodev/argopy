@@ -232,7 +232,7 @@ html_css_files = [
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = "_static/argopy_logo_long.png"
+html_logo = "_static/argopy_logo_long_5years.png"
 html_favicon = '_static/argopy.ico'
 # html_title = "My site title"
 
@@ -263,8 +263,11 @@ html_theme_options = {
     'collapse_navigation': False,  # https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/navigation.html#remove-reveal-buttons-for-sidebar-items
     # 'show_toc_level': 3,  # https://pydata-sphinx-theme.readthedocs.io/en/latest/user_guide/page-toc.html#show-more-levels-of-the-in-page-toc-by-default
     # 'launch_buttons': { "thebe": True}
+    # "announcement": (
+    #     "🎓 2025 argopy training camps are open: <a href='https://forms.gle/d8xPbrWu7aZcvMut9' target='blank'>pre-register here</a> 🎓"
+    # ),
     "announcement": (
-        "🎓 2025 argopy training camps are open: <a href='https://forms.gle/d8xPbrWu7aZcvMut9' target='blank'>pre-register here</a> 🎓"
+        "🎉 argopy turns 5! <a href='https://euroargodev.github.io/argopy-5years' target='blank'>Check full details here</a> 🎊"
     ),
     "icon_links": [
         {
@@ -283,6 +286,12 @@ html_theme_options = {
             "name": "Pre-registration for 2025 training-camps",
             "url": "https://forms.gle/d8xPbrWu7aZcvMut9",
             "icon": "fa-solid fa-graduation-cap",
+            "type": "fontawesome",
+        },
+        {
+            "name": "5 years anniversary events",
+            "url": "https://euroargodev.github.io/argopy-5years",
+            "icon": "fa-solid fa-cake-candles",
             "type": "fontawesome",
         },
     ]

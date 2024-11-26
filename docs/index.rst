@@ -9,9 +9,26 @@ for standard users as well as Argo experts.
 |License| |Python version| |Anaconda-Server Badge|
 
 
+.. admonition:: 🎉 argopy turns 5! 🎉
+
+    Join us as we celebrate this milestone with exciting activities:
+
+    - 🚀 `Coding Challenges <https://euroargodev.github.io/argopy-5years/challenges/index.html#coding-challenges>`_. Test your skills and creativity with a set of exciting Argo related challenges designed for all levels. Compete for bragging rights and prizes!
+    - 🎮 `Online Game Contest <https://argopy.pythonanywhere.com/>`_. Join the community for a fun-filled competition that blends tech and play. Perfect for taking a break and get a special price if you make it to the top 3.
+    - 📋 `User Survey <https://forms.gle/v8NnXkXCEYwRfePp8>`_. Share your feedback and ideas to help shape the future of argopy. Your input means the world to us.
+    - 📚 `Free Training Camp <https://forms.gle/d8xPbrWu7aZcvMut9>`_. Expand your knowledge with expert-led sessions on making the most of argopy. Perfect for new and experienced users alike!
+
+    We’d love to have you join us in celebrating this milestone. Whether you’ve been with us since day one or just started using argopy, your involvement makes a difference
+
+    👉 `<https://euroargodev.github.io/argopy-5years>`_
+
+    **Thank you for your support and for being an essential part of our journey. Here’s to the next five years of innovation, learning, and collaboration!**
+
+
+
 .. admonition:: 2025 argopy training camps 🎓
 
-    The argopy team is contemplating to organise "training camps" in 2025:
+    The argopy team will organise "training camps" in 2025:
 
     At  least one event would be in-person and another online.
 
