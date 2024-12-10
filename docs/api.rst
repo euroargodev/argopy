@@ -159,6 +159,7 @@ Data Transformation
    Dataset.argo.interp_std_levels
    Dataset.argo.groupby_pressure_bins
    Dataset.argo.datamode.merge
+   Dataset.argo.datamode.split
 
 
 Data Filters
