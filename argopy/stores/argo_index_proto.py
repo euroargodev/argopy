@@ -2,6 +2,8 @@
 Argo file index store prototype
 
 """
+
+import copy
 import numpy as np
 import pandas as pd
 import logging
@@ -11,6 +13,13 @@ from fsspec.core import split_protocol
 from urllib.parse import urlparse
 from typing import Union
 from pathlib import Path
+import sys
+
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 from ..options import OPTIONS
 from ..errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError
@@ -126,7 +135,7 @@ class ArgoIndexStoreProto(ABC):
         # Create a File Store to access index file:
         self.cache = cache
         self.cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
-        timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
+        self.timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
         self.fs = {}
         if split_protocol(host)[0] is None:
             self.fs["src"] = filestore(cache=cache, cachedir=cachedir)
@@ -167,7 +176,8 @@ class ArgoIndexStoreProto(ABC):
                 raise S3PathError("This host (%s) is not alive !" % host)
 
             self.fs["src"] = s3store(
-                cache=cache, cachedir=cachedir,
+                cache=cache,
+                cachedir=cachedir,
                 anon=not has_aws_credentials(),
             )
             self.skip_rows = 10
@@ -228,13 +238,15 @@ class ArgoIndexStoreProto(ABC):
             if self.fs["src"].exists(self.index_path + ".gz"):
                 self.index_file += ".gz"
 
-        if isinstance(self.fs['src'], s3store):
+        if isinstance(self.fs["src"], s3store):
             # If the index host is on a S3 store, we add another file system that will bypass some
             # search methods to improve performances.
             self.fs["s3"] = get_a_s3index(self.convention)
             # Adjust S3 bucket name and key with host and index file names:
             self.fs["s3"].bucket_name = Path(split_protocol(self.host)[1]).parts[0]
-            self.fs["s3"].key = str(Path(*Path(split_protocol(self.host)[1]).parts[1:]) / self.index_file)
+            self.fs["s3"].key = str(
+                Path(*Path(split_protocol(self.host)[1]).parts[1:]) / self.index_file
+            )
 
         # # CNAME internal manager to be able to chain search methods:
         # self._cname = None
@@ -246,8 +258,10 @@ class ArgoIndexStoreProto(ABC):
         summary.append("Convention: %s (%s)" % (self.convention, self.convention_title))
         if hasattr(self, "index"):
             summary.append("In memory: True (%i records)" % self.N_RECORDS)
-        elif 's3' in self.host:
-            summary.append("In memory: False [But there's no need to load the full index with a S3 host to make a search]")
+        elif "s3" in self.host:
+            summary.append(
+                "In memory: False [But there's no need to load the full index with a S3 host to make a search]"
+            )
         else:
             summary.append("In memory: False")
 
@@ -417,7 +431,7 @@ class ArgoIndexStoreProto(ABC):
         # Must work for all internal storage type (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
         if hasattr(self, "index"):
             return self.index.shape[0]
-        elif 's3' in self.host:
+        elif "s3" in self.host:
             return np.Inf
         else:
             raise InvalidDataset("Load the index first !")
@@ -474,7 +488,9 @@ class ArgoIndexStoreProto(ABC):
         if fmt == "parquet":
             fmt = "pq"
         if isinstance(fs, memorystore):
-            fs.fs.touch(this_path)  # Fix for https://github.com/euroargodev/argopy/issues/345
+            fs.fs.touch(
+                this_path
+            )  # Fix for https://github.com/euroargodev/argopy/issues/345
             # fs.fs.touch(this_path)  # Fix for https://github.com/euroargodev/argopy/issues/345
             # This is an f* mystery to me, why do we need 2 calls to trigger file creation FOR REAL ????
             # log.debug("memorystore touched this path before open context: '%s'" % this_path)
@@ -606,7 +622,7 @@ class ArgoIndexStoreProto(ABC):
             from ..related import load_dict, mapp_dict
 
             if nrows is not None:
-                df = df.loc[0: nrows - 1].copy()
+                df = df.loc[0 : nrows - 1].copy()
 
             if "index" in df:
                 df.drop("index", axis=1, inplace=True)
@@ -900,7 +916,9 @@ class ArgoIndexStoreProto(ABC):
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def search_parameter_data_mode(self, PARAMs: dict, logical: bool = 'and', nrows=None):
+    def search_parameter_data_mode(
+        self, PARAMs: dict, logical: bool = "and", nrows=None
+    ):
         """Search index for profiles with a parameter in a specific data mode
 
         Parameters
@@ -994,3 +1012,62 @@ file,date,latitude,longitude,ocean,profiler_type,institution,parameters,date_upd
             f.write(data)
 
         return originalfile
+
+    def _copy(
+        self,
+        deep: bool = True,
+    ) -> Self:
+        cls = self.__class__
+
+        if deep:
+            # Ensure complete independence between the original and the copied index:
+            obj = cls.__new__(cls)
+            obj.__init__(
+                host=copy.deepcopy(self.host),
+                index_file=copy.deepcopy(self.index_file),
+                timeout=copy.deepcopy(self.timeout),
+                cache=copy.deepcopy(self.cache),
+                cachedir=copy.deepcopy(self.cachedir),
+            )
+            if hasattr(self, "index"):
+                obj._nrows_index = copy.deepcopy(self._nrows_index)
+                obj.index = copy.deepcopy(self.index)
+                if self.cache:
+                    obj.index_path_cache = copy.deepcopy(self.index_path_cache)
+
+        else:
+            obj = cls.__new__(cls)
+            obj.__init__(
+                host=copy.copy(self.host),
+                index_file=copy.copy(self.index_file),
+                timeout=copy.copy(self.timeout),
+                cache=copy.copy(self.cache),
+                cachedir=copy.copy(self.cachedir),
+            )
+            if hasattr(self, "index"):
+                obj._nrows_index = copy.copy(self._nrows_index)
+                obj.index = copy.copy(self.index)
+                if self.cache:
+                    obj.index_path_cache = copy.copy(self.index_path_cache)
+
+            if hasattr(self, "search"):
+                obj.search_type = copy.copy(self.search_type)
+                obj.search_filter = copy.copy(self.search_filter)
+                obj.search = copy.copy(self.search)
+                if obj.cache:
+                    obj.search_path_cache = copy.copy(self.search_path_cache)
+
+        return obj
+
+    def __copy__(self) -> Self:
+        return self._copy(deep=False)
+
+    def __deepcopy__(self) -> Self:
+        return self._copy(deep=True)
+
+    def copy(
+        self,
+        deep: bool = True,
+    ) -> Self:
+        """Returns a copy of this object."""
+        return self._copy(deep=deep)
