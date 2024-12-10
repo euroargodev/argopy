@@ -43,7 +43,7 @@ class ParamsDataMode(ArgoAccessorExtension):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def _infer_from_ArgoIndex(self, indexfs: Union[None, ArgoIndex]) -> xr.Dataset:  # noqa: C901
+    def _compute_from_ArgoIndex(self, indexfs: Union[None, ArgoIndex]) -> xr.Dataset:  # noqa: C901
         """Compute <PARAM>_DATA_MODE variables from ArgoIndex
 
         This method consumes a collection of points.
@@ -174,7 +174,7 @@ class ParamsDataMode(ArgoAccessorExtension):
         if "STATION_PARAMETERS" in self._obj and "PARAMETER_DATA_MODE" in self._obj:
             return split_data_mode(self._obj)
         else:
-            return self._infer_from_ArgoIndex(indexfs=indexfs)
+            return self._compute_from_ArgoIndex(indexfs=indexfs)
 
     def split(self):
         return split_data_mode(self._obj)
