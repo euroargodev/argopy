@@ -361,15 +361,18 @@ def split_data_mode(ds: xr.Dataset) -> xr.Dataset:
             name = "%s_DATA_MODE" % param.replace("_PARAMETER", "").replace(
                 "PARAMETER_", ""
             )
-            mask = ds["STATION_PARAMETERS"] == xr.full_like(
-                ds["STATION_PARAMETERS"],
-                u64(param),
-                dtype=ds["STATION_PARAMETERS"].dtype,
-            )
-            da = ds["PARAMETER_DATA_MODE"].where(mask, drop=True).isel(N_PARAM=0)
-            da = da.rename(name)
-            da = da.astype(ds["PARAMETER_DATA_MODE"].dtype)
-            ds[name] = da
+            if name == "_DATA_MODE":
+                log.error("This dataset has an error in 'STATION_PARAMETERS': it contains an empty string")
+            else:
+                mask = ds["STATION_PARAMETERS"] == xr.full_like(
+                    ds["STATION_PARAMETERS"],
+                    u64(param),
+                    dtype=ds["STATION_PARAMETERS"].dtype,
+                )
+                da = ds["PARAMETER_DATA_MODE"].where(mask, drop=True).isel(N_PARAM=0)
+                da = da.rename(name)
+                da = da.astype(ds["PARAMETER_DATA_MODE"].dtype)
+                ds[name] = da
 
         ds = ds.drop_vars("PARAMETER_DATA_MODE")
         ds.argo.add_history("Transformed with 'split_data_mode'")
