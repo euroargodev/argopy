@@ -177,6 +177,8 @@ class ArgoDataFetcher:
             raise OptionValueError(
                 "The 'argovis' data source fetching is only available in 'standard' user mode"
             )
+        if self._src == "gdac" and "bgc" in self._dataset_id:
+            warnings.warn("BGC data support with the 'gdac' data source is still in Work In Progress")
 
     @property
     def _icon_user_mode(self):
