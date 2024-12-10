@@ -354,6 +354,11 @@ def split_data_mode(ds: xr.Dataset) -> xr.Dataset:
     -------
     :class:`xr.Dataset`
     """
+    if ds.argo._type != "profile":
+        raise InvalidDatasetStructure(
+            "Method only available to a collection of profiles"
+        )
+
     if "STATION_PARAMETERS" in ds and "PARAMETER_DATA_MODE" in ds:
 
         u64 = lambda s: "%s%s" % (s, " " * (64 - len(s)))  # noqa: E731
