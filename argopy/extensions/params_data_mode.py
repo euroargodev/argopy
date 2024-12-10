@@ -25,10 +25,10 @@ class ParamsDataMode(ArgoAccessorExtension):
 
     See Also
     --------
-    :meth:`datamode.compute`
-    :meth:`datamode.merge`
+    :meth:`datamode.compute` # Compute <PARAM>_DATA_MODE(N_PROF)
+    :meth:`datamode.merge`   # Merge <PARAM> and <PARAM>_ADJUSTED variables according to DATA_MODE or <PARAM>_DATA_MODE
     :meth:`datamode.filter`
-    :meth:`datamode.split`
+    :meth:`datamode.split`   # Split PARAMETER_DATA_MODE(N_PROF, N_PARAM) into several <PARAM>_DATA_MODE(N_PROF)
 
     Examples
     --------
@@ -43,10 +43,10 @@ class ParamsDataMode(ArgoAccessorExtension):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def compute(self, indexfs: Union[None, ArgoIndex]) -> xr.Dataset:  # noqa: C901
-        """Compute and add <PARAM>_DATA_MODE variables to a xarray dataset
+    def _infer_from_ArgoIndex(self, indexfs: Union[None, ArgoIndex]) -> xr.Dataset:  # noqa: C901
+        """Compute <PARAM>_DATA_MODE variables from ArgoIndex
 
-        This method consume a collection of points.
+        This method consumes a collection of points.
 
         Parameters
         ----------
@@ -57,7 +57,7 @@ class ParamsDataMode(ArgoAccessorExtension):
         -------
         :class:`xr.Dataset`
         """
-        idx = copy.copy(indexfs) if isinstance(indexfs, ArgoIndex) else ArgoIndex()
+        idx = indexfs.copy(deep=True) if isinstance(indexfs, ArgoIndex) else ArgoIndex()
 
         def complete_df(this_df, params):
             """Add 'wmo', 'cyc' and '<param>_data_mode' columns to this dataframe"""
@@ -103,6 +103,7 @@ class ParamsDataMode(ArgoAccessorExtension):
 
         profiles = self._argo.list_WMO_CYC
         idx.search_wmo(self._argo.list_WMO)
+
         params = [
             p
             for p in idx.read_params()
@@ -167,6 +168,13 @@ class ParamsDataMode(ArgoAccessorExtension):
         # Finalise:
         self._obj = self._obj[np.sort(self._obj.data_vars)]
         return self._obj
+
+    def compute(self, indexfs: Union[None, ArgoIndex]) -> xr.Dataset:
+        """Compute <PARAM>_DATA_MODE variables"""
+        if "STATION_PARAMETERS" in self._obj and "PARAMETER_DATA_MODE" in self._obj:
+            return split_data_mode(self._obj)
+        else:
+            return self._infer_from_ArgoIndex(indexfs=indexfs)
 
     def split(self):
         return split_data_mode(self._obj)
