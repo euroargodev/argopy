@@ -162,7 +162,7 @@ class ArgoIndexStoreProto(ABC):
                 port=0 if urlparse(host).port is None else urlparse(host).port,
                 cache=cache,
                 cachedir=cachedir,
-                timeout=timeout,
+                timeout=self.timeout,
                 block_size=1000 * (2**20),
             )
 
