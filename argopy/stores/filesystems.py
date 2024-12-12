@@ -2050,7 +2050,6 @@ class httpstore_erddap_auth(httpstore):
         try:
             payload = self._login_payload.copy()
             payload["password"] = "*" * len(payload["password"])
-            log.info("Try to log-in to '%s' page with %s" % (self._login_page, payload))
             self.fs.info(self._login_page)
             self._connected = True
         except ErddapHTTPUnauthorized:
