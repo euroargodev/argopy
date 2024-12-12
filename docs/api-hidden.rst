@@ -296,6 +296,8 @@
     argopy.ArgoIndex.search_parameter_data_mode
     argopy.ArgoIndex.to_dataframe
     argopy.ArgoIndex.to_indexfile
+    argopy.ArgoIndex.copy
+
 
     argopy.stores.argo_index_proto_s3.s3index
     argopy.stores.argo_index_proto_s3.s3index_core

@@ -73,37 +73,44 @@ class ArgoIndexStoreProto(ABC):
         cachedir: str = "",
         timeout: int = 0,
         **kwargs,
-    ) -> object:
+    ):
         """Create an Argo index file store
 
         Parameters
         ----------
         host: str, default: ``https://data-argo.ifremer.fr``
-            Local or remote (ftp, https or s3) path to a `dac` folder (GDAC structure compliant). This takes values
-            like:
-                - ``https://data-argo.ifremer.fr``
-                - ``ftp://ftp.ifremer.fr/ifremer/argo``
-                - ``s3://argo-gdac-sandbox/pub/idx``
-                - a local absolute path
+            Local or remote (ftp, https or s3) path to a `dac` folder (GDAC structure compliant).
+
+            This parameter takes values like:
+
+            - ``https://data-argo.ifremer.fr``
+            - ``ftp://ftp.ifremer.fr/ifremer/argo``
+            - ``s3://argo-gdac-sandbox/pub/idx``
+            - a local absolute path
 
             You can also use the following keywords: ``http``/``https``, ``ftp`` and ``s3``/``aws``, respectively.
         index_file: str, default: ``ar_index_global_prof.txt``
             Name of the csv-like text file with the index.
 
-            Possible values are standard file name: ``ar_index_global_prof.txt``,
+            Possible values are the standard file names: ``ar_index_global_prof.txt``,
             ``argo_bio-profile_index.txt``, ``argo_synthetic-profile_index.txt``
-            or ``etc/argo-index/argo_aux-profile_index.txt``
+            or ``etc/argo-index/argo_aux-profile_index.txt``.
 
             You can also use the following keywords: ``core``, ``bgc-b``, ``bgc-s`` and ``aux``.
         convention: str, default: None
-            Set the expected format convention of the index file. This is useful when trying to load index file with custom name. If set to ``None``, we'll try to infer the convention from the ``index_file`` value.
-             Possible values: ``ar_index_global_prof``, ``argo_bio-profile_index``, ``argo_synthetic-profile_index`` or ``argo_aux-profile_index``.
+            Set the expected format convention of the index file.
+
+            This is useful when trying to load an index file with a custom name.
+            If set to ``None``, we'll try to infer the convention from the ``index_file`` value.
+
+            Possible values: ``ar_index_global_prof``, ``argo_bio-profile_index``, ``argo_synthetic-profile_index``
+            or ``argo_aux-profile_index``.
 
             You can also use the following keywords: ``core``, ``bgc-s``, ``bgc-b`` and ``aux``.
         cache : bool, default: False
             Use cache or not.
         cachedir: str, default: OPTIONS['cachedir']
-            Folder where to store cached files
+            Folder where to store cached files.
         timeout: int,  default: OPTIONS['api_timeout']
             Time out in seconds to connect to a remote host (ftp or http).
         """
@@ -532,7 +539,7 @@ class ArgoIndexStoreProto(ABC):
             # log.debug("_read this path: '%s'" % this_path)
         return obj
 
-    def clear_cache(self):
+    def clear_cache(self) -> Self:
         """Clear cache registry and files associated with this store instance."""
         self.fs["src"].clear_cache()
         self.fs["client"].clear_cache()
@@ -1069,5 +1076,23 @@ file,date,latitude,longitude,ocean,profiler_type,institution,parameters,date_upd
         self,
         deep: bool = True,
     ) -> Self:
-        """Returns a copy of this object."""
+        """Returns a copy of this :class:`ArgoIndex` instance
+
+        A copy is a new instance based on similar parameters (e.g. ``host`` and ``index_file``).
+
+        A deep copy ensure complete independence between the original and the copied index.
+        If the index was loaded, a new view is returned with the copied index, but search parameters and results are lost.
+
+        A shallow copy preserves the index array, search parameters and results.
+
+        Parameters
+        ----------
+        deep: bool, optional, default=True
+
+            Whether the search parameters and results are copied onto the new ArgoIndex instance.
+
+        Returns
+        -------
+        :class:`ArgoIndex`
+        """
         return self._copy(deep=deep)

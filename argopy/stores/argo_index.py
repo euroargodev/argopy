@@ -76,6 +76,8 @@ class ArgoIndex(indexstore):
         >>> idx.read_wmo
         >>> idx.read_params
         >>> idx.records_per_wmo
+        >>> idx.copy(deep=False)
+
 
     """
 
