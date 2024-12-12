@@ -56,6 +56,7 @@ from ..utils.transform import (
 from ..utils.monitored_threadpool import MyThreadPoolExecutor as MyExecutor
 from ..utils.accessories import Registry
 from ..utils.format import UriCName
+from .. import __version__
 
 
 log = logging.getLogger("argopy.stores")
@@ -103,7 +104,8 @@ def new_fs(
     default_fsspec_kwargs = {"simple_links": True, "block_size": 0}
     if protocol == "http":
         client_kwargs = {
-            "trust_env": OPTIONS["trust_env"]
+            "trust_env": OPTIONS["trust_env"],
+            "headers": {"Argopy-Version": __version__},
         }  # Passed to aiohttp.ClientSession
         if "client_kwargs" in kwargs:
             client_kwargs = {**client_kwargs, **kwargs["client_kwargs"]}
@@ -1962,7 +1964,6 @@ class httpstore_erddap_auth(httpstore):
         cache: bool = False,
         cachedir: str = "",
         login: str = None,
-        payload: dict = {"user": None, "password": None},
         auto: bool = True,
         **kwargs,
     ):
@@ -1975,14 +1976,8 @@ class httpstore_erddap_auth(httpstore):
             auto  # Should we try to log-in automatically at instantiation ?
         )
 
+        payload = kwargs.get("payload", {"user": OPTIONS["user"], "password": OPTIONS["password"]})
         self._login_payload = payload.copy()
-        if "user" in self._login_payload and self._login_payload["user"] is None:
-            self._login_payload["user"] = OPTIONS["user"]
-        if (
-            "password" in self._login_payload
-            and self._login_payload["password"] is None
-        ):
-            self._login_payload["password"] = OPTIONS["password"]
 
         fsspec_kwargs = {**kwargs, **{"get_client": self.get_auth_client}}
         super().__init__(cache=cache, cachedir=cachedir, **fsspec_kwargs)

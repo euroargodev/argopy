@@ -57,8 +57,8 @@ OPTIONS = {
     API_TIMEOUT: 60,
     TRUST_ENV: False,
     SERVER: None,
-    USER: None,
-    PASSWORD: None,
+    USER: os.environ.get("ERDDAP_USERNAME"),
+    PASSWORD: os.environ.get("ERDDAP_PASSWORD"),
     ARGOVIS_API_KEY: "guest",  # https://argovis-keygen.colorado.edu
     PARALLEL: False,
     PARALLEL_DEFAULT_METHOD: "thread",

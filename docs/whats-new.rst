@@ -14,6 +14,7 @@ Coming up next
 Internals
 ^^^^^^^^^
 
+- When argopy is sending a http request to a data server, add a custom http header ``Argopy-Version`` to ease server log analysis. (:pr:`407`) by |gmaze|.
 
 - New :meth:`ArgoIndex.copy` method (:pr:`418`) by |gmaze|. This copy allows for a:
 

@@ -11,6 +11,7 @@ from ..options import OPTIONS, DEFAULT, PARALLEL_SETUP
 from ..utils.chunking import Chunker
 from ..utils.decorators import deprecated
 from ..errors import DataNotFound
+from .. import __version__
 from .proto import ArgoDataFetcherProto
 from .argovis_data_processors import pre_process, add_attributes
 
@@ -94,7 +95,7 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
             "cachedir": cachedir,
             "timeout": timeout,
             # "size_policy": "head",  # deprecated
-            "client_kwargs": {"headers": {"x-argokey": OPTIONS["argovis_api_key"]}},
+            "client_kwargs": {"headers": {"x-argokey": OPTIONS["argovis_api_key"], "Argopy-Version": __version__}},
         }
         self.fs = kwargs["fs"] if "fs" in kwargs else httpstore(**self.store_opts)
 
