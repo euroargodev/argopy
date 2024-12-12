@@ -76,7 +76,6 @@ def pre_process(
         Fetched_url = this_ds.attrs.get("Fetched_uri")
     else:
         Fetched_url = this_ds.attrs.get("history", "").split('\n')[-1].split(' ')[-1]
-    Fetched_constraints = UriCName(Fetched_url)
 
     # Finally overwrite erddap attributes with those from argopy:
     raw_attrs = this_ds.attrs.copy()
@@ -104,7 +103,7 @@ def pre_process(
     this_ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime(
         "%Y/%m/%d"
     )
-    this_ds.attrs["Fetched_constraints"] = Fetched_constraints
+    this_ds.attrs["Fetched_constraints"] = UriCName(Fetched_url).cname
     this_ds.attrs["Fetched_uri"] = Fetched_url
     this_ds = this_ds[np.sort(this_ds.data_vars)]
 

@@ -6,7 +6,11 @@ from typing import Union, List
 import copy
 
 from ..utils import to_list, list_core_parameters
-from ..utils.transform import split_data_mode, merge_param_with_param_adjusted, filter_param_by_data_mode
+from ..utils.transform import (
+    split_data_mode,
+    merge_param_with_param_adjusted,
+    filter_param_by_data_mode,
+)
 from ..stores import (
     indexstore_pd as ArgoIndex,
 )  # make sure we work with a Pandas index store
@@ -43,10 +47,12 @@ class ParamsDataMode(ArgoAccessorExtension):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def compute(self, indexfs: Union[None, ArgoIndex]) -> xr.Dataset:  # noqa: C901
-        """Compute and add <PARAM>_DATA_MODE variables to a xarray dataset
+    def _compute_from_ArgoIndex(
+        self, indexfs: Union[None, ArgoIndex]
+    ) -> xr.Dataset:  # noqa: C901
+        """Compute <PARAM>_DATA_MODE variables from ArgoIndex
 
-        This method consume a collection of points.
+        This method consumes a collection of points.
 
         Parameters
         ----------
@@ -55,9 +61,9 @@ class ParamsDataMode(ArgoAccessorExtension):
 
         Returns
         -------
-        :class:`xr.Dataset`
+        :class:`xarray.Dataset`
         """
-        idx = copy.copy(indexfs) if isinstance(indexfs, ArgoIndex) else ArgoIndex()
+        idx = indexfs.copy(deep=True) if isinstance(indexfs, ArgoIndex) else ArgoIndex()
 
         def complete_df(this_df, params):
             """Add 'wmo', 'cyc' and '<param>_data_mode' columns to this dataframe"""
@@ -103,6 +109,7 @@ class ParamsDataMode(ArgoAccessorExtension):
 
         profiles = self._argo.list_WMO_CYC
         idx.search_wmo(self._argo.list_WMO)
+
         params = [
             p
             for p in idx.read_params()
@@ -168,10 +175,30 @@ class ParamsDataMode(ArgoAccessorExtension):
         self._obj = self._obj[np.sort(self._obj.data_vars)]
         return self._obj
 
-    def split(self):
+    def compute(self, indexfs: Union[None, ArgoIndex]) -> xr.Dataset:
+        """Compute <PARAM>_DATA_MODE variables"""
+        if "STATION_PARAMETERS" in self._obj and "PARAMETER_DATA_MODE" in self._obj:
+            return split_data_mode(self._obj)
+        else:
+            return self._compute_from_ArgoIndex(indexfs=indexfs)
+
+    def split(self) -> xr.Dataset:
+        """Convert PARAMETER_DATA_MODE(N_PROF, N_PARAM) into several <PARAM>_DATA_MODE(N_PROF) variables
+
+        Using the list of *PARAM* found in ``STATION_PARAMETERS``, this method will create ``N_PARAM``
+        new variables in the dataset ``<PARAM>_DATA_MODE(N_PROF)``.
+
+        The variable ``PARAMETER_DATA_MODE`` is drop from the dataset at the end of the process.
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+        """
         return split_data_mode(self._obj)
 
-    def merge(self, params: Union[str, List[str]] = "all", errors: str = "raise") -> xr.Dataset:
+    def merge(
+        self, params: Union[str, List[str]] = "all", errors: str = "raise"
+    ) -> xr.Dataset:
         """Merge <PARAM> and <PARAM>_ADJUSTED variables according to DATA_MODE or <PARAM>_DATA_MODE
 
         Merging is done as follows:
@@ -251,7 +278,7 @@ class ParamsDataMode(ArgoAccessorExtension):
         logical: str = "and",
         mask: bool = False,
         errors: str = "raise",
-    ):
+    ) -> xr.Dataset:
         """Filter measurements according to parameters data mode
 
         Filter the dataset to keep points where all or some of the parameters are in any of the data mode specified.
