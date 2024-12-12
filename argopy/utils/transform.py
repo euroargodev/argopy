@@ -4,6 +4,7 @@ Manipulate/transform xarray objects or list of objects
 
 import numpy as np
 import xarray as xr
+import pandas as pd
 import logging
 from typing import List, Union
 
@@ -349,6 +350,7 @@ def filter_param_by_data_mode(
         return ds.loc[dict(N_POINTS=filter)] if len(filter) > 0 else ds
 
 
+
 def split_data_mode(ds: xr.Dataset) -> xr.Dataset:
     """Convert PARAMETER_DATA_MODE(N_PROF, N_PARAM) into several <PARAM>_DATA_MODE(N_PROF) variables
 
@@ -361,6 +363,11 @@ def split_data_mode(ds: xr.Dataset) -> xr.Dataset:
     -------
     :class:`xr.Dataset`
     """
+    if ds.argo._type != "profile":
+        raise InvalidDatasetStructure(
+            "Method only available to a collection of profiles"
+        )
+
     if "STATION_PARAMETERS" in ds and "PARAMETER_DATA_MODE" in ds:
 
         # Ensure N_PROF is a coordinate
@@ -372,19 +379,38 @@ def split_data_mode(ds: xr.Dataset) -> xr.Dataset:
         u64 = lambda s: "%s%s" % (s, " " * (64 - len(s)))  # noqa: E731
         params = [p.strip() for p in np.unique(ds["STATION_PARAMETERS"])]
 
+        def read_data_mode_for(ds: xr.Dataset, param: str) -> xr.DataArray:
+            """Return data mode of a given parameter"""
+            da_masked = ds['PARAMETER_DATA_MODE'].where(ds['STATION_PARAMETERS'] == u64(param))
+
+            def _dropna(x):
+                # x('N_PARAM') is reduced to the first non nan value, a scalar, no dimension
+                y = pd.Series(x).dropna().tolist()
+                if len(y) == 0:
+                    return ""
+                else:
+                    return y[0]
+
+            kwargs = dict(
+                dask="parallelized",
+                input_core_dims=[["N_PARAM"]],  # Function takes N_PARAM as input
+                output_core_dims=[[]],  # Function reduces to a scalar (no dimension)
+                vectorize=True  # Apply function element-wise along the other dimensions
+            )
+
+            dm = xr.apply_ufunc(_dropna, da_masked, **kwargs)
+            dm = dm.rename("%s_DATA_MODE" % param)
+            dm.attrs = ds['PARAMETER_DATA_MODE'].attrs
+            return dm
+
         for param in params:
             name = "%s_DATA_MODE" % param.replace("_PARAMETER", "").replace(
                 "PARAMETER_", ""
             )
-            mask = ds["STATION_PARAMETERS"] == xr.full_like(
-                ds["STATION_PARAMETERS"],
-                u64(param),
-                dtype=ds["STATION_PARAMETERS"].dtype,
-            )
-            da = ds["PARAMETER_DATA_MODE"].where(mask, drop=True).isel(N_PARAM=0)
-            da = da.rename(name)
-            da = da.astype(ds["PARAMETER_DATA_MODE"].dtype)
-            ds[name] = da
+            if name == "_DATA_MODE":
+                log.error("This dataset has an error in 'STATION_PARAMETERS': it contains an empty string")
+            else:
+                ds[name] = read_data_mode_for(ds, param)
 
         ds = ds.drop_vars("PARAMETER_DATA_MODE")
         ds.argo.add_history("Transformed with 'split_data_mode'")

@@ -402,7 +402,7 @@ class ArgoAccessor:
 
         Returns
         -------
-        :class:`xr.dataset`
+        :class:`xr.Dataset`
 
         See Also
         --------
@@ -563,9 +563,11 @@ class ArgoAccessor:
         - A "point" is a location with unique (N_PROF, N_LEVELS) indexes
         - A "profile" is a collection of points with an unique UID based on WMO, CYCLE_NUMBER and DIRECTION
 
+        Note that this method will systematically apply the :meth:`datamode.split` method.
+
         Returns
         -------
-        :class:`xr.dataset`
+        :class:`xr.Dataset`
 
         Warnings
         --------

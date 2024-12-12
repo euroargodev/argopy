@@ -1,6 +1,10 @@
 import numpy as np
 import xarray as xr
 from typing import Literal
+import logging
+
+
+log = logging.getLogger("argopy.gdac.data")
 
 
 def pre_process_multiprof(

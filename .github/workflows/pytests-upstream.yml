@@ -80,7 +80,7 @@ jobs:
     steps:
       - name: Energy Estimation - Initialize
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4
         with:
           task: start-measurement
           company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
@@ -127,7 +127,7 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4
         env:
           ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
@@ -147,7 +147,7 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4
         env:
           ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
@@ -173,7 +173,7 @@ jobs:
 
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4
         env:
           ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
@@ -208,7 +208,7 @@ jobs:
     steps:
       - name: Energy Estimation - Initialize
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4
         with:
           task: start-measurement
           company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
@@ -255,7 +255,7 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4
         env:
           ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
@@ -275,7 +275,7 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4
         env:
           ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
@@ -292,7 +292,7 @@ jobs:
 
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v3
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4
         env:
           ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
         with:
