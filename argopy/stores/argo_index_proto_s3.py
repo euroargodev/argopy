@@ -47,7 +47,7 @@ class s3index:
     The index is scanned/searched directly on the s3 server using the :class:`boto3.client.select_object_content` boto3 method.
 
     The key limitation here is that we can only search for WMO and CYC.
-    This is due to the fact that GM could not manage to convert (CAST) latitude, longitude and time to a more
+    This is due to the fact that G. MAZE could not manage to convert (CAST) latitude, longitude and time to a more
     appropriate data type to execute a search. All variables are considered string by default.
 
     Examples
