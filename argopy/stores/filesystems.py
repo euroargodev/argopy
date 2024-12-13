@@ -59,6 +59,7 @@ from ..utils.transform import (
 from ..utils.monitored_threadpool import MyThreadPoolExecutor as MyExecutor
 from ..utils.accessories import Registry
 from ..utils.format import UriCName
+from ..utils.checkers import has_aws_credentials
 
 
 log = logging.getLogger("argopy.stores")
@@ -127,6 +128,7 @@ def new_fs(
     elif protocol == "s3":
         default_fsspec_kwargs.pop("simple_links")
         default_fsspec_kwargs.pop("block_size")
+        default_fsspec_kwargs['anon'] = not has_aws_credentials()
         fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
 
     else:
