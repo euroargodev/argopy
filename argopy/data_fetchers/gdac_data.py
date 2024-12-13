@@ -16,7 +16,7 @@ from typing import Literal
 
 from ..utils.format import argo_split_path
 from ..utils.decorators import deprecated
-from ..options import OPTIONS, check_gdac_path, PARALLEL_SETUP
+from ..options import OPTIONS, check_gdac_option, PARALLEL_SETUP
 from ..errors import DataNotFound
 from ..stores import ArgoIndex, has_distributed, distributed
 from .proto import ArgoDataFetcherProto
@@ -110,7 +110,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         self.dimension = dimension
 
         # Validate server, raise GdacPathError if not valid.
-        check_gdac_path(self.server, errors="raise")
+        check_gdac_option(self.server, errors="raise")
 
         index_file = "core"
         if self.dataset_id in ["bgc-s", "bgc-b"]:

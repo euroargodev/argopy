@@ -12,7 +12,7 @@ import logging
 import importlib
 
 from ..utils.format import format_oneline
-from ..options import OPTIONS, check_gdac_path
+from ..options import OPTIONS, check_gdac_option
 from ..plot import dashboard
 
 
@@ -84,7 +84,7 @@ class GDACArgoIndexFetcher(ABC):
         self.errors = errors
 
         # Validate server, raise GdacPathError if not valid.
-        check_gdac_path(self.server, errors='raise')
+        check_gdac_option(self.server, errors='raise')
 
         if self.dataset_id == 'phy':
             index_file = "ar_index_global_prof.txt"

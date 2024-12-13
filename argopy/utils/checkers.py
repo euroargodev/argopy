@@ -455,8 +455,6 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
             ├── meds
             └── nmdis
 
-    This check will return True if at least one DAC sub-folder is found under path/dac/<dac_name>
-
     Examples::
 
     >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
@@ -477,8 +475,6 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
     Returns
     -------
     checked: boolean
-        True if at least one DAC folder is found under path/dac/<dac_name>
-        False otherwise
     """
     # Create a file system for this path
     if split_protocol(path)[0] is None:
@@ -498,7 +494,11 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
             else:
                 return False
     elif "s3" in split_protocol(path)[0]:
-        fs = fsspec.filesystem("s3")
+        anon = True
+        if HAS_BOTO3:
+            anon = boto3.client('s3')._request_signer._credentials is not None
+        log.debug('check_gdac_path anon s3: %s' % anon)
+        fs = fsspec.filesystem("s3", anon=anon)
     else:
         raise GdacPathError(
             "Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0]
@@ -518,23 +518,20 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
     #     "nmdis",
     # ]
 
-    # Case 1:
-    check1 = (
-        fs.exists(path)
-        and fs.exists(fs.sep.join([path, "dac"]))
-        # and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
-    )
+    check1 = fs.exists(fs.sep.join([path, "dac"]))
     if check1:
         return True
+
     elif errors == "raise":
         raise GdacPathError(
-            "This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s"
+            "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
             % path
         )
 
     elif errors == "warn":
-        warnings.warn("This path is not GDAC compliant:\n%s" % path)
+        warnings.warn("This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s" % path)
         return False
+
     else:
         return False
 
