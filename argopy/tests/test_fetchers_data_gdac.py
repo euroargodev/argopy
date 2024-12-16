@@ -17,7 +17,7 @@ from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import (
     CacheFileNotFound,
 )
-from argopy.utils.checkers import isconnected, is_list_of_strings
+from argopy.utils.checkers import is_list_of_strings, check_gdac_path
 from utils import requires_gdac
 from mocked_http import mocked_httpserver, mocked_server_address
 
@@ -29,10 +29,11 @@ log = logging.getLogger("argopy.tests.data.gdac")
 List GDAC hosts to be tested. 
 Since the fetcher is compatible with host from local, http or ftp protocols, we try to test them all:
 """
-HOSTS = [argopy.tutorial.open_dataset("gdac")[0],
+HOSTS = [
+         argopy.tutorial.open_dataset("gdac")[0],
          mocked_server_address,
          'MOCKFTP',  # keyword to use the fake/mocked ftp server (running on localhost)
-         #'s3://argo-gdac-sandbox/pub',
+         's3://argo-gdac-sandbox/pub',  # todo: How do we mock a s3 server ?
         ]
 
 """
@@ -161,8 +162,8 @@ class TestBackend:
             # parallel is False by default, so we don't need to clutter the arguments list
             del fetcher_args["parallel"]
 
-        if not isconnected(fetcher_args['gdac']):
-            pytest.xfail("Fails because %s not available" % fetcher_args['gdac'])
+        if not check_gdac_path(fetcher_args['gdac']):
+            pytest.xfail("Fails because %s cannot be reached" % fetcher_args['gdac'])
         else:
             return fetcher_args, access_point
 
