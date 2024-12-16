@@ -17,7 +17,7 @@ fs.open_mfjson
 fs.read_csv
 
 """
-
+import copy
 import os
 import types
 import warnings
@@ -25,7 +25,9 @@ import warnings
 import xarray as xr
 import pandas as pd
 import fsspec
+from fsspec.core import split_protocol
 import aiohttp
+from socket import gaierror
 import shutil
 import pickle  # nosec B403 only used with internal files/assets
 import json
@@ -42,6 +44,8 @@ from functools import lru_cache
 from abc import ABC, abstractmethod
 import concurrent.futures
 import multiprocessing
+import importlib
+
 
 from ..options import OPTIONS
 from ..errors import (
@@ -51,6 +55,7 @@ from ..errors import (
     InvalidMethod,
     ErddapHTTPUnauthorized,
     ErddapHTTPNotFound,
+    GdacPathError,
 )
 from ..utils.transform import (
     drop_variables_not_in_all_datasets,
@@ -59,7 +64,13 @@ from ..utils.transform import (
 from ..utils.monitored_threadpool import MyThreadPoolExecutor as MyExecutor
 from ..utils.accessories import Registry
 from ..utils.format import UriCName
-from ..utils.checkers import has_aws_credentials
+
+
+if importlib.util.find_spec("boto3") is not None:
+    HAS_BOTO3 = True
+    import boto3
+else:
+    HAS_BOTO3 = False
 
 
 log = logging.getLogger("argopy.stores")
@@ -128,7 +139,8 @@ def new_fs(
     elif protocol == "s3":
         default_fsspec_kwargs.pop("simple_links")
         default_fsspec_kwargs.pop("block_size")
-        default_fsspec_kwargs['anon'] = not has_aws_credentials()
+        if 'anon' not in kwargs:
+            default_fsspec_kwargs['anon'] = boto3.client('s3')._request_signer._credentials is None if HAS_BOTO3 else True
         fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
 
     else:
@@ -213,6 +225,10 @@ class argo_store_proto(ABC):
 
     def glob(self, path, **kwargs):
         return self.fs.glob(path, **kwargs)
+
+    @property
+    def sep(self):
+        return self.fs.sep
 
     def exists(self, path, *args):
         return self.fs.exists(path, *args)
@@ -2187,3 +2203,40 @@ class s3store(httpstore):
     """
 
     protocol = "s3"
+
+
+class gdacfs:
+    """
+
+    >>> gdacfs("https://data-argo.ifremer.fr")
+
+    """
+    protocol2fs = {'file': filestore, 'http': httpstore, 'ftp': ftpstore, 's3': s3store}
+
+    @staticmethod
+    def _read_protocol(split: Union[str, None]) -> str:
+        if split is None:
+            return 'file'
+        elif "https" in split:
+            return 'http'
+        elif "ftp" in split:
+            return 'ftp'
+        elif "s3" in split:
+            return 's3'
+        else:
+            raise GdacPathError(
+                "Unknown protocol for an Argo GDAC host: %s" % split
+            )
+
+    def __new__(cls, host):
+        split = split_protocol(host)[0]
+        protocol = cls._read_protocol(split)
+        fs = cls.protocol2fs[protocol]
+        if protocol == 'ftp':
+            ftp_host = split_protocol(host)[-1].split("/")[0]
+            try:
+                return fs(host=ftp_host)
+            except gaierror:
+                raise GdacPathError("Can't get address info (GAIerror) on '%s'" % host)
+        else:
+            return fs()

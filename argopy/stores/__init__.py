@@ -1,5 +1,5 @@
 # from .argo_index_deprec import indexstore, indexfilter_wmo, indexfilter_box
-from .filesystems import filestore, httpstore, memorystore, ftpstore, s3store
+from .filesystems import filestore, httpstore, memorystore, ftpstore, s3store, gdacfs
 from .filesystems import httpstore_erddap, httpstore_erddap_auth
 from .filesystems import has_distributed, distributed  # noqa: F401
 
