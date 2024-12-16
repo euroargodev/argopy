@@ -476,47 +476,18 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
     -------
     checked: boolean
     """
-    # Create a file system for this path
-    if split_protocol(path)[0] is None:
-        fs = fsspec.filesystem("file")
-    elif "https" in split_protocol(path)[0]:
-        fs = fsspec.filesystem("http")
-    elif "ftp" in split_protocol(path)[0]:
-        try:
-            host = split_protocol(path)[-1].split("/")[0]
-            fs = fsspec.filesystem("ftp", host=host)
-        except gaierror:
-            if errors == "raise":
-                raise GdacPathError("Can't get address info (GAIerror) on '%s'" % host)
-            elif errors == "warn":
-                warnings.warn("Can't get address info (GAIerror) on '%s'" % host)
-                return False
-            else:
-                return False
-    elif "s3" in split_protocol(path)[0]:
-        anon = True
-        if HAS_BOTO3:
-            anon = boto3.client('s3')._request_signer._credentials is not None
-        log.debug('check_gdac_path anon s3: %s' % anon)
-        fs = fsspec.filesystem("s3", anon=anon)
-    else:
-        raise GdacPathError(
-            "Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0]
-        )
+    from ..stores import gdacfs  # Otherwise raises circular import
 
-    # dacs = [
-    #     "aoml",
-    #     "bodc",
-    #     "coriolis",
-    #     "csio",
-    #     "csiro",
-    #     "incois",
-    #     "jma",
-    #     "kma",
-    #     "kordi",
-    #     "meds",
-    #     "nmdis",
-    # ]
+    try:
+        fs = gdacfs(path)
+    except GdacPathError:
+        if errors == "raise":
+            raise
+        elif errors == "warn":
+            warnings.warn("Can't get address info (GAIerror) on '%s'" % path)
+            return False
+        else:
+            return False
 
     check1 = fs.exists(fs.sep.join([path, "dac"]))
     if check1:
@@ -569,7 +540,9 @@ def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
         )  # nosec B310 because host protocol already checked
 
     def check_s3(host):
-        return s3fs.S3FileSystem(anon=True).info(host)
+        anon = boto3.client('s3')._request_signer._credentials is None if HAS_BOTO3 else True
+        fs = fsspec.filesystem("s3", anon=anon)
+        return fs.exists(host)
 
     if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
         return test_retry(host, check_remote, maxtry)
@@ -661,7 +634,10 @@ def isAPIconnected(src="erddap", data=True):
         list_src = list_available_index_src()
 
     if src in list_src and getattr(list_src[src], "api_server_check", None):
-        return isalive(list_src[src].api_server_check)
+        if src == 'gdac':
+            return check_gdac_path(list_src[src].api_server_check)
+        else:
+            return isalive(list_src[src].api_server_check)
     else:
         raise InvalidFetcher
 

@@ -332,48 +332,18 @@ def check_gdac_option(path, errors="ignore"):  # noqa: C901
     -------
     checked: boolean
     """
-    # Create a file system for this path
-    if split_protocol(path)[0] is None:
-        fs = fsspec.filesystem("file")
-    elif split_protocol(path)[0] in ["https", "http"]:
-        fs = fsspec.filesystem("http")
-    elif "ftp" in split_protocol(path)[0]:
-        try:
-            host = urlparse(path).hostname
-            port = 0 if urlparse(path).port is None else urlparse(path).port
-            fs = fsspec.filesystem("ftp", host=host, port=port)
-        except gaierror:
-            if errors == "raise":
-                raise GdacPathError("Can't get address info (GAIerror) on '%s'" % host)
-            elif errors == "warn":
-                warnings.warn("Can't get address info (GAIerror) on '%s'" % host)
-                return False
-            else:
-                return False
-    elif "s3" in split_protocol(path)[0]:
-        anon = True
-        if HAS_BOTO3:
-            anon = boto3.client("s3")._request_signer._credentials is not None
-        log.debug("check_gdac_option anon s3: %s" % anon)
-        fs = fsspec.filesystem("s3", anon=anon)
-    else:
-        raise GdacPathError(
-            "Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0]
-        )
+    from .stores import gdacfs  # Otherwise raises circular import
 
-    # dacs = [
-    #     "aoml",
-    #     "bodc",
-    #     "coriolis",
-    #     "csio",
-    #     "csiro",
-    #     "incois",
-    #     "jma",
-    #     "kma",
-    #     "kordi",
-    #     "meds",
-    #     "nmdis",
-    # ]
+    try:
+        fs = gdacfs(path)
+    except GdacPathError:
+        if errors == "raise":
+            raise
+        elif errors == "warn":
+            warnings.warn("Can't get address info (GAIerror) on '%s'" % path)
+            return False
+        else:
+            return False
 
     check1 = fs.exists(fs.sep.join([path, "dac"]))
     if check1:
