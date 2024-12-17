@@ -19,7 +19,8 @@ from argopy.errors import (
 )
 from argopy.utils.checkers import is_list_of_strings, check_gdac_path
 from utils import requires_gdac
-from mocked_http import mocked_httpserver, mocked_server_address
+from mocked_http import mocked_httpserver
+from mocked_http import mocked_server_address as MOCKHTTP
 
 
 log = logging.getLogger("argopy.tests.data.gdac")
@@ -31,8 +32,8 @@ Since the fetcher is compatible with host from local, http or ftp protocols, we 
 """
 HOSTS = [
          argopy.tutorial.open_dataset("gdac")[0],
-         mocked_server_address,
-         'MOCKFTP',  # keyword to use the fake/mocked ftp server (running on localhost)
+         MOCKHTTP,
+         'MOCKFTP',
          's3://argo-gdac-sandbox/pub',  # todo: How do we mock a s3 server ?
         ]
 

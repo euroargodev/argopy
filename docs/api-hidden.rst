@@ -244,6 +244,16 @@
     argopy.stores.s3store.open_mfdataset
     argopy.stores.s3store.open_mfjson
 
+    argopy.stores.filesystems.gdacfs
+    argopy.stores.gdacfs
+
+    argopy.stores.ArgoKerchunker
+    argopy.stores.ArgoKerchunker.supported
+    argopy.stores.ArgoKerchunker.translate
+    argopy.stores.ArgoKerchunker.to_kerchunk
+    argopy.stores.ArgoKerchunker.pprint
+    argopy.stores.ArgoKerchunker.open_dataset
+
     argopy.stores.argo_index_proto.ArgoIndexStoreProto
 
     argopy.stores.argo_index_pa.indexstore_pyarrow
@@ -298,19 +308,11 @@
     argopy.ArgoIndex.to_indexfile
     argopy.ArgoIndex.copy
 
-
     argopy.stores.argo_index_proto_s3.s3index
     argopy.stores.argo_index_proto_s3.s3index_core
     argopy.stores.argo_index_proto_s3.s3index_bgc_bio
     argopy.stores.argo_index_proto_s3.s3index_bgc_synthetic
     argopy.stores.argo_index_proto_s3.search_s3
-
-    argopy.stores.ArgoKerchunker
-    argopy.stores.ArgoKerchunker.supported
-    argopy.stores.ArgoKerchunker.translate
-    argopy.stores.ArgoKerchunker.to_kerchunk
-    argopy.stores.ArgoKerchunker.pprint
-    argopy.stores.ArgoKerchunker.open_dataset
 
     argopy.xarray.ArgoAccessor.point2profile
     argopy.xarray.ArgoAccessor.profile2point

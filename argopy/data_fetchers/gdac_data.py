@@ -103,8 +103,8 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         """
         self.timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.dataset_id = OPTIONS["ds"] if ds == "" else ds
-        self.user_mode = kwargs["mode"] if "mode" in kwargs else OPTIONS["mode"]
         self.server = kwargs["gdac"] if "gdac" in kwargs else OPTIONS["gdac"]
+        self.user_mode = kwargs["mode"] if "mode" in kwargs else OPTIONS["mode"]
 
         self.errors = errors
         self.dimension = dimension

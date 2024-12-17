@@ -461,7 +461,7 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
     >>> check_gdac_path("https://usgodae.org/pub/outgoing/argo") # True
     >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
     >>> check_gdac_path("/home/ref-argo/gdac") # True
-    >>> check_gdac_path("s3://argo-gdac-sandbox/") # True
+    >>> check_gdac_path("s3://argo-gdac-sandbox/pub") # True
     >>> check_gdac_path("https://www.ifremer.fr") # False
     >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
 

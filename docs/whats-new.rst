@@ -11,6 +11,25 @@ What's New
 Coming up next
 --------------
 
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **Support for AWS S3 netcdf files**. This support is experimental and is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. (:pr:`385`) by |gmaze|. In order to use the experimental S3 GDAC, you can point toward to appropriate bucket:
+
+.. code-block:: python
+
+    with argopy.set_options(gdac='s3://argo-gdac-sandbox/pub'):
+        ds = DataFetcher(src='gdac').float(6903091).to_xarray()
+
+- **Expert new feature: lazy remote netcdf opening**. We now provide support for opening a remote netcdf Argo dataset lazily with `kerchunk <https://fsspec.github.io/kerchunk/>`_. Simply use the new option ``lazy=True`` with a :class:`stores.httpstore.open_dataset` or :class:`stores.s3store.open_dataset`. For expert users we expose the :class:`stores.ArgoKerchunker` to finely tune how to handle json zarr data. (:pr:`385`) by |gmaze|.
+
+.. code-block:: python
+
+    with argopy.set_options(gdac='s3://argo-gdac-sandbox/pub'):
+        f = DataFetcher(src='gdac').float(6903091)
+        ds = f.fetcher.fs.open_data(fetcher.uri[0], lazy=True)
+
+
 Internals
 ^^^^^^^^^
 
