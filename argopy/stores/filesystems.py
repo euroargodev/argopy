@@ -17,6 +17,7 @@ fs.open_mfjson
 fs.read_csv
 
 """
+
 import copy
 import os
 import types
@@ -141,8 +142,12 @@ def new_fs(
     elif protocol == "s3":
         default_fsspec_kwargs.pop("simple_links")
         default_fsspec_kwargs.pop("block_size")
-        if 'anon' not in kwargs:
-            default_fsspec_kwargs['anon'] = boto3.client('s3')._request_signer._credentials is None if HAS_BOTO3 else True
+        if "anon" not in kwargs:
+            default_fsspec_kwargs["anon"] = (
+                boto3.client("s3")._request_signer._credentials is None
+                if HAS_BOTO3
+                else True
+            )
         fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
 
     else:
@@ -846,7 +851,7 @@ class httpstore(argo_store_proto):
 
         See Also
         --------
-        :func:`httpstore.open_mfdataset`
+        :func:`httpstore.open_mfdataset`, :class:`ArgoKerchunker`
         """
 
         def load_in_memory(url, errors="raise", dwn_opts={}, xr_opts={}):
@@ -875,7 +880,9 @@ class httpstore(argo_store_proto):
 
             return data, xr_opts
 
-        def load_lazily(url, errors="raise", dwn_opts={}, xr_opts={}):
+        def load_lazily(
+            url, errors="raise", dwn_opts={}, xr_opts={}, overwrite: bool = False
+        ):
             from . import ArgoKerchunker
 
             if "ak" not in kwargs:
@@ -891,7 +898,7 @@ class httpstore(argo_store_proto):
                     "backend_kwargs": {
                         "consolidated": False,
                         "storage_options": {
-                            "fo": self.ak.to_kerchunk(url),
+                            "fo": self.ak.to_kerchunk(url, overwrite=overwrite),
                             "remote_protocol": fsspec.core.split_protocol(url)[0],
                         },
                     },
@@ -899,7 +906,7 @@ class httpstore(argo_store_proto):
                 return "reference://", xr_opts
             else:
                 warnings.warn(
-                    "This url does not support byte range requests so we cannot load lazily, hence falling back on loading in memory"
+                    "This url does not support byte range requests so we cannot load it lazily, hence falling back on loading in memory."
                 )
                 return load_in_memory(
                     url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts
@@ -911,7 +918,11 @@ class httpstore(argo_store_proto):
             )
         else:
             target, xr_opts = load_lazily(
-                url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts
+                url,
+                errors=errors,
+                dwn_opts=dwn_opts,
+                xr_opts=xr_opts,
+                overwrite=kwargs.get("overwrite", False),
             )
 
         ds = xr.open_dataset(target, **xr_opts)
@@ -1157,7 +1168,7 @@ class httpstore(argo_store_proto):
         preprocess: Callable = None,
         preprocess_opts: dict = {},
         open_dataset_opts: dict = {},
-        errors: Literal['ignore', 'raise', 'silent'] = "ignore",
+        errors: Literal["ignore", "raise", "silent"] = "ignore",
         compute_details: bool = False,
         *args,
         **kwargs,
@@ -1401,9 +1412,9 @@ class httpstore(argo_store_proto):
         if len(results) > 0:
             if concat:
                 # ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
-                if concat_method == 'drop':
+                if concat_method == "drop":
                     results = drop_variables_not_in_all_datasets(results)
-                elif concat_method == 'fill':
+                elif concat_method == "fill":
                     results = fill_variables_not_in_all_datasets(results)
                 ds = xr.concat(
                     results,
@@ -2072,7 +2083,9 @@ class httpstore_erddap_auth(httpstore):
             auto  # Should we try to log-in automatically at instantiation ?
         )
 
-        payload = kwargs.get("payload", {"user": OPTIONS["user"], "password": OPTIONS["password"]})
+        payload = kwargs.get(
+            "payload", {"user": OPTIONS["user"], "password": OPTIONS["password"]}
+        )
         self._login_payload = payload.copy()
 
         fsspec_kwargs = {**kwargs, **{"get_client": self.get_auth_client}}
@@ -2203,35 +2216,65 @@ class s3store(httpstore):
 class gdacfs:
     """
 
+    Create a file system for any Argo GDAC compliant path
+
+    Parameters
+    ----------
+    path: str, optional
+        GDAC path to create a file system for. Support any GDAC compliant path.
+        If not specified, option ``gdac`` will be used.
+
+    Returns
+    -------
+    A file system based on :class:`argopy.stores.argo_store_proto`
+
+    Examples
+    --------
+
     >>> gdacfs("https://data-argo.ifremer.fr")
+    >>> gdacfs("https://usgodae.org/pub/outgoing/argo")
+    >>> gdacfs("ftp://ftp.ifremer.fr/ifremer/argo")
+    >>> gdacfs("/home/ref-argo/gdac")
+    >>> gdacfs("s3://argo-gdac-sandbox/pub")
+
+    >>> with argopy.set_options(gdac="s3://argo-gdac-sandbox/pub"):
+    >>>     fs = gdacfs()
 
     """
-    protocol2fs = {'file': filestore, 'http': httpstore, 'ftp': ftpstore, 's3': s3store}
+
+    protocol2fs = {"file": filestore, "http": httpstore, "ftp": ftpstore, "s3": s3store}
 
     @staticmethod
-    def _read_protocol(split: Union[str, None]) -> str:
+    def path2protocol(path: str) -> str:
+        """Narrow down any path to a supported protocols"""
+        split = split_protocol(path)[0]
         if split is None:
-            return 'file'
-        elif "https" in split:
-            return 'http'
+            return "file"
+        elif "http" in split:  # will also catch "https"
+            return "http"
         elif "ftp" in split:
-            return 'ftp'
+            return "ftp"
         elif "s3" in split:
-            return 's3'
+            return "s3"
         else:
-            raise GdacPathError(
-                "Unknown protocol for an Argo GDAC host: %s" % split
-            )
+            raise GdacPathError("Unknown protocol for an Argo GDAC host: %s" % split)
 
-    def __new__(cls, host):
-        split = split_protocol(host)[0]
-        protocol = cls._read_protocol(split)
+    def __new__(cls, path: Union[str, Path, None] = None):
+        """Create a file system for any Argo GDAC compliant path"""
+        if path is None:
+            path = OPTIONS["gdac"]
+        protocol = cls.path2protocol(path)
         fs = cls.protocol2fs[protocol]
-        if protocol == 'ftp':
-            ftp_host = split_protocol(host)[-1].split("/")[0]
+
+        if protocol == "ftp":
+            ftp_host = urlparse(path).hostname
+            ftp_port = 0 if urlparse(path).port is None else urlparse(path).port
             try:
-                return fs(host=ftp_host)
-            except gaierror:
-                raise GdacPathError("Can't get address info (GAIerror) on '%s'" % host)
+                return fs(host=ftp_host, port=ftp_port)
+            except gaierror as e:
+                raise GdacPathError(
+                    "Can't get address info from FTP host: %s:%i\nGAIerror: %s"
+                    % (ftp_host, ftp_port, str(e))
+                )
         else:
             return fs()

@@ -24,4 +24,5 @@ __all__ = (
     "memorystore",
     "s3store",
     "ArgoKerchunker",
+    "gdacfs",
 )

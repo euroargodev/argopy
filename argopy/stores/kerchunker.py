@@ -39,27 +39,47 @@ except ModuleNotFoundError:
 
 class ArgoKerchunker:
     """
-    Argo netcdf file kerchunk-ing helper
+    Argo netcdf file kerchunk helper
 
-    The `kerchunk <https://fsspec.github.io/kerchunk/>`_ library is required if you need to extract
-    zarr data from netcdf file(s), a.k.a. :meth:`argopy.stores.ArgoKerchunker.translate`.
+    This class is for expert users who wish to test lazy access to remote netcdf files. If you need to compute kerchunk
+    zarr data, we don't recommand to use this method as it shows poor performances on mono or multi profile files.
+
+    The `kerchunk <https://fsspec.github.io/kerchunk/>`_ library is required only if you start from scratch and
+    need to extract zarr data from a netcdf file, (i.e. execute :meth:`argopy.stores.ArgoKerchunker.translate`).
+
+    .. code-block:: python
+        :caption: API
+
+        # Default store to manage zarr kerchunk data
+        ak = ArgoKerchunker(store='memory')
+        # Custom local storage folder:
+        ak = ArgoKerchunker(store='local', root='kerchunk_data_folder')
+        # or remote:
+        ak = ArgoKerchunker(store=fsspec.filesystem('dir', path='s3://.../kerchunk_data_folder/', target_protocol='s3'))
+
+        # Methods:
+        ak.supported(ncfile)
+        ak.translate(ncfile)  # takes 1 or a list of uris, requires the kerchunk library
+        ak.to_kerchunk(ncfile)  # Take 1 netcdf file uri, return kerchunk json data (translate or load from store)
+        ak.pprint(ncfile)
+
+        # Return lazy xarray dataset of a netcdf file, using zarr engine from kerchunk data
+        ak.open_dataset(ncfile)
 
     .. code-block:: python
         :caption: Examples
 
-        >>> ncfile = "s3://argo-gdac-sandbox/pub/dac/coriolis/6903090/6903090_prof.nc"
+        # Let's take a remote Argo netcdf file from a server supporting lazy access
+        # (i.e. support byte range requests):
+        ncfile = "s3://argo-gdac-sandbox/pub/dac/coriolis/6903090/6903090_prof.nc"
 
-        >>> ak = ArgoKerchunker(store='memory')  # default
-        >>> ak = ArgoKerchunker(store='local', root='.')
-        >>> ak = ArgoKerchunker(store='local', root='/kerchunk_data_folder')  # Custom local storage folder
-        >>> ak = ArgoKerchunker(store=fsspec.filesystem('dir', path='s3://.../kerchunk_data_folder/', target_protocol='s3'))
+        # Make an instance that will save netcdf to zarr translation data on a local folder "kerchunk_data_folder":
+        ak = ArgoKerchunker(store='local', root='kerchunk_data_folder')
 
-        >>> ak.supported(ncfile)
-        >>> ak.translate(ncfile)  # takes 1 or a list of uris, requires the kerchunk library
-        >>> ak.to_kerchunk(ncfile)  # Take 1 netcdf file uri, return kerchunk json data (translate or load from store)
-        >>> ak.pprint(ncfile)
+        # then simply open the netcdf file:
+        # (ArgoKerchunker will handle zarr data generation and xarray syntax)
+        ak.open_dataset(ncfile)
 
-        >>> ak.open_dataset(ncfile)  #  Return xarray dataset of the netcdf file using zarr engine from kerchunk data
 
     """
 
@@ -94,7 +114,7 @@ class ArgoKerchunker:
             Options passed to fsspec when opening netcdf file
 
             This argument is passed to :class:`kerchunk.netCDF3.NetCDF3ToZarr` or :class:`kerchunk.hdf.SingleHdf5ToZarr`
-            during translation, and in `backend_kwargs` of :class:`xr.open_dataset`.
+            during translation, and in `backend_kwargs` of :class:`xarray.open_dataset`.
 
         """
         # Instance file system to load/save kerchunk json files
@@ -282,16 +302,20 @@ class ArgoKerchunker:
 
         print(json.dumps(data_to_print, indent=4))
 
-    def open_dataset(self, ncfile: Union[str, Path]) -> xr.Dataset:
-        """Open a netcdf file using zarr engine from kerchunk data
+    def open_dataset(self, ncfile: Union[str, Path], **kwargs) -> xr.Dataset:
+        """Open a netcdf file lazily using zarr engine and kerchunk data
 
         Parameters
         ----------
         ncfile: str, Path
+            Netcdf file to open lazily
+
+        **kwargs:
+            Other kwargs are passed to :meth:`ArgoKerchunker.to_kerchunk`
 
         Returns
         -------
-        :class:`xr.Dataset`
+        :class:`xarray.Dataset`
         """
         remote_protocol = split_protocol(ncfile)[0]
         return xr.open_dataset(
@@ -300,7 +324,7 @@ class ArgoKerchunker:
             backend_kwargs={
                 "consolidated": False,
                 "storage_options": {
-                    "fo": self.to_kerchunk(ncfile),
+                    "fo": self.to_kerchunk(ncfile, **kwargs),
                     "remote_protocol": remote_protocol,
                     "remote_options": self.remote_options,
                 },
@@ -343,8 +367,8 @@ class ArgoKerchunker:
         """Check if a netcdf file can be accessed through byte ranges
 
         Argo GDAC supporting byte ranges:
-        - s3://argo-gdac-sandbox/pub/idx
-        - https://argo-gdac-sandbox.s3-eu-west-3.amazonaws.com/pub/idx
+        - s3://argo-gdac-sandbox/pub
+        - https://argo-gdac-sandbox.s3-eu-west-3.amazonaws.com/pub
 
         Not supporting:
         - https://data-argo.ifremer.fr
