@@ -65,6 +65,7 @@ from ..utils.transform import (
 from ..utils.monitored_threadpool import MyThreadPoolExecutor as MyExecutor
 from ..utils.accessories import Registry
 from ..utils.format import UriCName
+from ..utils.lists import list_gdac_servers
 from .. import __version__
 
 
@@ -2216,12 +2217,12 @@ class s3store(httpstore):
 class gdacfs:
     """
 
-    Create a file system for any Argo GDAC compliant path
+    Create a file system for any Argo GDAC possible path
 
     Parameters
     ----------
     path: str, optional
-        GDAC path to create a file system for. Support any GDAC compliant path.
+        GDAC path to create a file system for. Support any GDAC possible path.
         If not specified, option ``gdac`` will be used.
 
     Returns
@@ -2240,29 +2241,41 @@ class gdacfs:
     >>> with argopy.set_options(gdac="s3://argo-gdac-sandbox/pub"):
     >>>     fs = gdacfs()
 
+    Warnings
+    --------
+    This class does not check if the path is Argo GDAC compliant
+
+    See Also
+    --------
+    :meth:`argopy.utils.check_gdac_path`, :meth:`argopy.utils.list_gdac_servers`
+
     """
 
     protocol2fs = {"file": filestore, "http": httpstore, "ftp": ftpstore, "s3": s3store}
 
     @staticmethod
-    def path2protocol(path: str) -> str:
+    def path2protocol(path: Union[str, Path]) -> str:
         """Narrow down any path to a supported protocols"""
-        split = split_protocol(path)[0]
-        if split is None:
+        if isinstance(path, Path):
             return "file"
-        elif "http" in split:  # will also catch "https"
-            return "http"
-        elif "ftp" in split:
-            return "ftp"
-        elif "s3" in split:
-            return "s3"
         else:
-            raise GdacPathError("Unknown protocol for an Argo GDAC host: %s" % split)
+            split = split_protocol(path)[0]
+            if split is None:
+                return "file"
+            if "http" in split:  # will also catch "https"
+                return "http"
+            elif "ftp" in split:
+                return "ftp"
+            elif "s3" in split:
+                return "s3"
+            else:
+                raise GdacPathError("Unknown protocol for an Argo GDAC host: %s" % split)
 
     def __new__(cls, path: Union[str, Path, None] = None):
         """Create a file system for any Argo GDAC compliant path"""
         if path is None:
             path = OPTIONS["gdac"]
+
         protocol = cls.path2protocol(path)
         fs = cls.protocol2fs[protocol]
 

@@ -73,6 +73,7 @@
     argopy.utils.list_bgc_s_parameters
     argopy.utils.list_radiometry_variables
     argopy.utils.list_radiometry_parameters
+    argopy.utils.list_gdac_servers
 
     argopy.utils.Chunker
 

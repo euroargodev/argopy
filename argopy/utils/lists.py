@@ -390,3 +390,20 @@ def list_radiometry_parameters() -> List[str]:
         for v in params
         if "DATA_MODE" not in v and "QC" not in v and "ADJUSTED" not in v
     ]
+
+
+def list_gdac_servers() -> List[str]:
+    """List of official Argo GDAC servers
+
+    Returns
+    -------
+    List[str]
+
+    See also
+    --------
+    :class:`argopy.stores.gdacfs`, :meth:`argopy.utils.check_gdac_path`
+
+    """
+    with open(os.path.join(path2assets, "gdac_servers.json"), "r") as f:
+        vlist = json.load(f)
+    return vlist["data"]["path"]

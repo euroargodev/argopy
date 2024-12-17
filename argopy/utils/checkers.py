@@ -14,7 +14,7 @@ import importlib
 
 from ..options import OPTIONS
 from ..errors import InvalidDatasetStructure, GdacPathError, InvalidFetcher
-from .lists import list_available_data_src, list_available_index_src
+from .lists import list_available_data_src, list_available_index_src, list_gdac_servers
 from .casting import to_list
 
 
@@ -475,36 +475,45 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
     Returns
     -------
     checked: boolean
-    """
-    from ..stores import gdacfs  # Otherwise raises circular import
 
-    try:
-        fs = gdacfs(path)
-    except GdacPathError:
-        if errors == "raise":
-            raise
+    See also
+    --------
+    :class:`argopy.stores.gdacfs`, :meth:`argopy.utils.list_gdac_servers`
+
+    """
+    if path in list_gdac_servers():
+        return True
+    else:
+
+        from ..stores import gdacfs  # import here, otherwise raises circular import
+
+        try:
+            fs = gdacfs(path)
+        except GdacPathError:
+            if errors == "raise":
+                raise
+            elif errors == "warn":
+                warnings.warn("Can't get address info (GAIerror) on '%s'" % path)
+                return False
+            else:
+                return False
+
+        check1 = fs.exists(fs.sep.join([path, "dac"]))
+        if check1:
+            return True
+
+        elif errors == "raise":
+            raise GdacPathError(
+                "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
+                % path
+            )
+
         elif errors == "warn":
-            warnings.warn("Can't get address info (GAIerror) on '%s'" % path)
+            warnings.warn("This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s" % path)
             return False
+
         else:
             return False
-
-    check1 = fs.exists(fs.sep.join([path, "dac"]))
-    if check1:
-        return True
-
-    elif errors == "raise":
-        raise GdacPathError(
-            "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
-            % path
-        )
-
-    elif errors == "warn":
-        warnings.warn("This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s" % path)
-        return False
-
-    else:
-        return False
 
 
 def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):

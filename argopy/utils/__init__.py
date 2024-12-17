@@ -30,6 +30,7 @@ from .lists import (
     list_bgc_s_parameters,
     list_radiometry_variables,
     list_radiometry_parameters,
+    list_gdac_servers,
 )
 from .caching import clear_cache, lscache
 from .monitored_threadpool import MyThreadPoolExecutor as MonitoredThreadPoolExecutor
@@ -101,6 +102,7 @@ __all__ = (
     "list_bgc_s_parameters",
     "list_radiometry_variables",
     "list_radiometry_parameters",
+    "list_gdac_servers",
     # Cache management:
     "clear_cache",
     "lscache",
