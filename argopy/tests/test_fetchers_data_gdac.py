@@ -11,6 +11,7 @@ import tempfile
 import shutil
 from urllib.parse import urlparse
 import logging
+import importlib
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
@@ -34,8 +35,13 @@ HOSTS = [
          argopy.tutorial.open_dataset("gdac")[0],
          MOCKHTTP,
          'MOCKFTP',
-         's3://argo-gdac-sandbox/pub',  # todo: How do we mock a s3 server ?
         ]
+
+HAS_S3FS = importlib.util.find_spec("s3fs") is not None
+if HAS_S3FS:
+    # todo Create a mocked server for s3 tests
+    HOSTS.append("s3://argo-gdac-sandbox/pub")  # todo: How do we mock a s3 server ?
+
 
 """
 List access points to be tested.
