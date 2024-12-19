@@ -2229,13 +2229,13 @@ class s3store(httpstore):
 
 
 class gdacfs:
-    """Create a file system with for any Argo GDAC compliant path
+    """Create a file system for any Argo GDAC compliant path
 
     Parameters
     ----------
     path: str, optional
-        GDAC path to create a file system for. Support any GDAC possible path.
-        If not specified, option ``gdac`` will be used.
+        GDAC path to create a file system for. Support any possible GDAC path.
+        If not specified, value from global option ``gdac`` will be used.
 
     Returns
     -------
