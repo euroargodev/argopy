@@ -1929,6 +1929,31 @@ class ArgoAccessor:
         """Return all possible WMO as a list"""
         return to_list(np.unique(self._obj["PLATFORM_NUMBER"].values))
 
+    def to_zarr(self, *args, **kwargs):
+        """Write Argo dataset content to a zarr group
+
+        All arguments are passed to :meth:`xarray.to_zarr`.
+
+        If encoding is not specified, we automatically add a ``Blosc(cname="zstd", clevel=3, shuffle=2)`` compression on
+        all variables of the dataset.
+
+        """
+
+        # Re-ensure all variables are cast properly:
+        self._obj = self.cast_types()
+
+        # Define zarr compression:
+        if "encoding" not in kwargs:
+            from numcodecs import Blosc
+            compressor = Blosc(cname="zstd", clevel=3, shuffle=2)
+            encoding = {}
+            for v in self._obj:
+              encoding.update({v: {"compressor": compressor}})
+            kwargs.update({'encoding': encoding})
+
+        # Convert to a zarr file using compression:
+        return self._obj.to_zarr(*args, **kwargs)
+
 
 def open_Argo_dataset(filename_or_obj):
     ds = xr.open_dataset(filename_or_obj, decode_cf=1, use_cftime=0, mask_and_scale=1)
