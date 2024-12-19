@@ -7,14 +7,11 @@ import json
 import logging
 import aiohttp
 
-
-# from tempfile import TemporaryDirectory
-# from fsspec.implementations.dirfs import DirFileSystem
-
-from ..stores import memorystore, filestore
 from ..utils import to_list
+from . import memorystore, filestore
 
 log = logging.getLogger("argopy.stores.kerchunk")
+
 
 try:
     from kerchunk.hdf import SingleHdf5ToZarr

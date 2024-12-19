@@ -1,8 +1,3 @@
-"""
-Argo file index store prototype
-
-"""
-
 import copy
 import numpy as np
 import pandas as pd
@@ -21,11 +16,11 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import Self
 
-from ..options import OPTIONS
-from ..errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError
-from ..utils.checkers import isconnected, has_aws_credentials
-from ..utils.accessories import Registry
-from .filesystems import httpstore, memorystore, filestore, ftpstore, s3store
+from ...options import OPTIONS
+from ...errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError
+from ...utils.checkers import isconnected, has_aws_credentials
+from ...utils.accessories import Registry
+from .. import httpstore, memorystore, filestore, ftpstore, s3store
 from .argo_index_proto_s3 import get_a_s3index
 
 try:

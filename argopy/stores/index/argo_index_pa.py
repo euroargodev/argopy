@@ -1,10 +1,3 @@
-
-"""
-Argo file index store
-
-Implementation based on pyarrow
-"""
-
 import numpy as np
 import pandas as pd
 import logging
@@ -22,9 +15,9 @@ try:
 except ModuleNotFoundError:
     pass
 
-from ..errors import DataNotFound, InvalidDatasetStructure
-from ..utils.checkers import check_index_cols, is_indexbox, check_wmo, check_cyc
-from ..utils.casting import to_list
+from ...errors import DataNotFound, InvalidDatasetStructure
+from ...utils.checkers import check_index_cols, is_indexbox, check_wmo, check_cyc
+from ...utils.casting import to_list
 from .argo_index_proto import ArgoIndexStoreProto
 from .argo_index_proto_s3 import search_s3
 

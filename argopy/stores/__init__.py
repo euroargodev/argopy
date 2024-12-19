@@ -1,16 +1,20 @@
-# from .argo_index_deprec import indexstore, indexfilter_wmo, indexfilter_box
-
 from .filesystems import argo_store_proto
-from .filesystems import filestore, httpstore, memorystore, ftpstore, s3store, gdacfs
-from .filesystems import httpstore_erddap, httpstore_erddap_auth
 from .filesystems import has_distributed, distributed  # noqa: F401
 
-from .argo_index_pa import indexstore_pyarrow as indexstore_pa
-from .argo_index_pd import indexstore_pandas as indexstore_pd
+from .implementations.local import filestore
+from .implementations.memory import memorystore
+from .implementations.http import httpstore
+from .implementations.http_erddap import httpstore_erddap, httpstore_erddap_auth
+from .implementations.ftp import ftpstore
+from .implementations.s3 import s3store
+from .implementations.gdac import gdacfs
 
-from .argo_index import ArgoIndex
+from .index.argo_index import ArgoIndex
+from .index.argo_index_pa import indexstore_pyarrow as indexstore_pa
+from .index.argo_index_pd import indexstore_pandas as indexstore_pd
 
 from .kerchunker import ArgoKerchunker
+
 
 #
 __all__ = (

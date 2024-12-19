@@ -1,9 +1,3 @@
-"""
-Argo file index store
-
-Implementations based on pandas
-"""
-
 import numpy as np
 import pandas as pd
 import logging
@@ -11,14 +5,14 @@ import gzip
 from pathlib import Path
 from typing import List
 
-from ..errors import DataNotFound, InvalidDatasetStructure
-from ..utils.checkers import check_index_cols, is_indexbox, check_wmo, check_cyc
-from ..utils.casting import to_list
+from ...errors import DataNotFound, InvalidDatasetStructure
+from ...utils.checkers import check_index_cols, is_indexbox, check_wmo, check_cyc
+from ...utils.casting import to_list
 from .argo_index_proto import ArgoIndexStoreProto
 from .argo_index_proto_s3 import search_s3
 
 
-log = logging.getLogger("argopy.stores.index")
+log = logging.getLogger("argopy.stores.index.pd")
 
 
 class indexstore_pandas(ArgoIndexStoreProto):
