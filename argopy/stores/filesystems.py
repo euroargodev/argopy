@@ -238,6 +238,18 @@ class argo_store_proto(ABC):
     def sep(self):
         return self.fs.sep
 
+    @property
+    def async_impl(self):
+        return self.fs.async_impl
+
+    @property
+    def asynchronous(self):
+        return getattr(self.fs, 'asynchronous', False)
+
+    @property
+    def target_protocol(self):
+        return getattr(self.fs, 'target_protocol', self.protocol)
+
     def exists(self, path, *args):
         return self.fs.exists(path, *args)
 
@@ -245,6 +257,9 @@ class argo_store_proto(ABC):
         return self.fs.info(path, *args, **kwargs)
 
     def expand_path(self, path):
+        if isinstance(self.fs, fsspec.implementations.dirfs.DirFileSystem):
+            if not path.startswith(self.fs.path):
+                path = self.fs.path + self.sep + path
         if self.protocol != "http" and self.protocol != "https":
             return self.fs.expand_path(path)
         else:
@@ -253,10 +268,10 @@ class argo_store_proto(ABC):
     def store_path(self, uri):
         path = uri
         path = self.expand_path(path)[0]
-        if not path.startswith(self.fs.target_protocol) and version.parse(
+        if not path.startswith(self.target_protocol) and version.parse(
             fsspec.__version__
         ) <= version.parse("0.8.3"):
-            path = self.fs.target_protocol + "://" + path
+            path = self.target_protocol + "://" + path
         return path
 
     def register(self, uri):
@@ -2229,17 +2244,17 @@ class s3store(httpstore):
 
 
 class gdacfs:
-    """Create a file system for any Argo GDAC compliant path
+    """Create a file system with a directory prefix for any Argo GDAC compliant path
 
     Parameters
     ----------
     path: str, optional
         GDAC path to create a file system for. Support any possible GDAC path.
-        If not specified, value from global option ``gdac`` will be used.
+        If not specified, option ``gdac`` will be used.
 
     Returns
     -------
-    A file system based on :class:`argopy.stores.argo_store_proto`
+    A file system based on :class:`argopy.stores.argo_store_proto` with a directory prefix
 
     Examples
     --------
@@ -2252,6 +2267,7 @@ class gdacfs:
 
     >>> with argopy.set_options(gdac="s3://argo-gdac-sandbox/pub"):
     >>>     fs = gdacfs()
+    >>> fs.open_dataset("dac/coriolis/6903091/profiles/R6903091_001.nc")
 
     Warnings
     --------
@@ -2263,6 +2279,8 @@ class gdacfs:
 
     """
     protocol2fs = {"file": filestore, "http": httpstore, "ftp": ftpstore, "s3": s3store}
+    protocol = None
+    root = None
 
     @staticmethod
     def path2protocol(path: Union[str, Path]) -> str:
@@ -2283,12 +2301,15 @@ class gdacfs:
                 raise GdacPathError("Unknown protocol for an Argo GDAC host: %s" % split)
 
     def __new__(cls, path: Union[str, Path, None] = None):
-        """Create a file system for any Argo GDAC compliant path"""
+        """Create a file system with a directory prefix for any Argo GDAC compliant path"""
         if path is None:
             path = OPTIONS["gdac"]
 
         protocol = cls.path2protocol(path)
-        fs = cls.protocol2fs[protocol]
+        cls.root = path
+        cls.target_protocol = protocol
+
+        fs = cls.protocol2fs[cls.target_protocol]
         fs_args = {}
 
         if protocol == "ftp":
@@ -2301,7 +2322,8 @@ class gdacfs:
             fs = fs(**fs_args)
         except gaierror as e:
             raise GdacPathError(
-                "Can't get address info from FTP host: %s:%i\nGAIerror: %s"
+                "Can't get address info from host: %s:%i\nGAIerror: %s"
                 % (fs_args, str(e))
             )
+        fs.fs = fsspec.filesystem("dir", fs=fs.fs, path=path)
         return fs
