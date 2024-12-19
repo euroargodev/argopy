@@ -169,10 +169,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                     "gsw",
                     get_version,
                 ),  # Used by xarray accessor to compute new variables
-                ("s3fs", get_version),
-                ("boto3", get_version),
                 ("tqdm", get_version),
-                ("zarr", get_version),
             ]
         ),
         "ext.perf": sorted(
@@ -181,7 +178,14 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 ("distributed", get_version),
                 ("h5netcdf", get_version),
                 ("pyarrow", get_version),
+            ]
+        ),
+        "ext.files": sorted(
+            [
+                ("zarr", get_version),
+                ("boto3", get_version),
                 ("s3fs", get_version),
+                ("kerchunk", get_version),
             ]
         ),
         "ext.plot": sorted(

@@ -12,6 +12,9 @@ from .checkers import check_cyc, check_wmo
 log = logging.getLogger("argopy.utils.format")
 
 
+redact = lambda s, n: s[:n] + '*' * max(0, len(s) - n)
+
+
 def format_oneline(s, max_width=65):
     """Return a string formatted for a line print"""
     if len(s) > max_width:

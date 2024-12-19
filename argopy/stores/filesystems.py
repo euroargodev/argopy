@@ -856,20 +856,25 @@ class httpstore(argo_store_proto):
         """
 
         def load_in_memory(url, errors="raise", dwn_opts={}, xr_opts={}):
+            """
+            Returns
+            -------
+            tuple: (data, xr_opts) or (None, None) if errors == "ignore"
+            """
             data = self.download_url(url, **dwn_opts)
             if data is None:
                 if errors == "raise":
                     raise DataNotFound(url)
                 elif errors == "ignore":
                     log.error("DataNotFound: %s" % url)
-                return None
+                return None, None
 
             if b"Not Found: Your query produced no matching results" in data:
                 if errors == "raise":
                     raise DataNotFound(url)
                 elif errors == "ignore":
                     log.error("DataNotFound from [%s]: %s" % (url, data))
-                return None
+                return None, None
 
             if data[0:3] != b"CDF" and data[0:3] != b"\x89HD":
                 raise TypeError(
@@ -909,6 +914,7 @@ class httpstore(argo_store_proto):
                 warnings.warn(
                     "This url does not support byte range requests so we cannot load it lazily, hence falling back on loading in memory."
                 )
+                log.debug("This url does not support byte range requests: %s" % url)
                 return load_in_memory(
                     url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts
                 )
@@ -926,14 +932,22 @@ class httpstore(argo_store_proto):
                 overwrite=kwargs.get("overwrite", False),
             )
 
-        ds = xr.open_dataset(target, **xr_opts)
+        if target is not None:
+            ds = xr.open_dataset(target, **xr_opts)
 
-        if "source" not in ds.encoding:
-            if isinstance(url, str):
-                ds.encoding["source"] = url
+            if "source" not in ds.encoding:
+                if isinstance(url, str):
+                    ds.encoding["source"] = url
 
-        self.register(url)
-        return ds
+            self.register(url)
+            return ds
+
+        elif errors == "raise":
+            raise DataNotFound(url)
+
+        elif errors == "ignore":
+            log.error("DataNotFound from: %s" % url)
+            return None
 
     def _mfprocessor_dataset(
         self,
@@ -2215,9 +2229,7 @@ class s3store(httpstore):
 
 
 class gdacfs:
-    """
-
-    Create a file system for any Argo GDAC possible path
+    """Create a file system with for any Argo GDAC compliant path
 
     Parameters
     ----------
@@ -2232,25 +2244,24 @@ class gdacfs:
     Examples
     --------
 
-    >>> gdacfs("https://data-argo.ifremer.fr")
-    >>> gdacfs("https://usgodae.org/pub/outgoing/argo")
-    >>> gdacfs("ftp://ftp.ifremer.fr/ifremer/argo")
-    >>> gdacfs("/home/ref-argo/gdac")
-    >>> gdacfs("s3://argo-gdac-sandbox/pub")
+    >>> fs = gdacfs("https://data-argo.ifremer.fr")
+    >>> fs = gdacfs("https://usgodae.org/pub/outgoing/argo")
+    >>> fs = gdacfs("ftp://ftp.ifremer.fr/ifremer/argo")
+    >>> fs = gdacfs("/home/ref-argo/gdac")
+    >>> fs = gdacfs("s3://argo-gdac-sandbox/pub")
 
     >>> with argopy.set_options(gdac="s3://argo-gdac-sandbox/pub"):
     >>>     fs = gdacfs()
 
     Warnings
     --------
-    This class does not check if the path is Argo GDAC compliant
+    This class does not check if the path is a valid Argo GDAC
 
     See Also
     --------
     :meth:`argopy.utils.check_gdac_path`, :meth:`argopy.utils.list_gdac_servers`
 
     """
-
     protocol2fs = {"file": filestore, "http": httpstore, "ftp": ftpstore, "s3": s3store}
 
     @staticmethod
@@ -2278,16 +2289,19 @@ class gdacfs:
 
         protocol = cls.path2protocol(path)
         fs = cls.protocol2fs[protocol]
+        fs_args = {}
 
         if protocol == "ftp":
             ftp_host = urlparse(path).hostname
             ftp_port = 0 if urlparse(path).port is None else urlparse(path).port
-            try:
-                return fs(host=ftp_host, port=ftp_port)
-            except gaierror as e:
-                raise GdacPathError(
-                    "Can't get address info from FTP host: %s:%i\nGAIerror: %s"
-                    % (ftp_host, ftp_port, str(e))
-                )
-        else:
-            return fs()
+            fs_args['host'] = ftp_host
+            fs_args['port'] = ftp_port
+
+        try:
+            fs = fs(**fs_args)
+        except gaierror as e:
+            raise GdacPathError(
+                "Can't get address info from FTP host: %s:%i\nGAIerror: %s"
+                % (fs_args, str(e))
+            )
+        return fs

@@ -22,7 +22,7 @@ try:
 
     HAS_KERCHUNK = True
 except ModuleNotFoundError:
-    log.debug("argopy missing 'kerchunk' to translate netcdf file")
+    # log.debug("argopy missing 'kerchunk' to translate netcdf file")
     HAS_KERCHUNK = False
     SingleHdf5ToZarr, NetCDF3ToZarr = None, None
 
@@ -31,7 +31,7 @@ try:
 
     HAS_DASK = True
 except ModuleNotFoundError:
-    log.debug("argopy missing 'dask' to improve performances of 'ArgoKerchunker'")
+    # log.debug("argopy missing 'dask' to improve performances of 'ArgoKerchunker'")
     HAS_DASK = False
     dask = None
     import concurrent.futures
