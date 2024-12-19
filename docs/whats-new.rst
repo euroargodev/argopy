@@ -14,24 +14,51 @@ Coming up next
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **Support for AWS S3 netcdf files**. This support is experimental and is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. (:pr:`385`) by |gmaze|. In order to use the experimental S3 GDAC, you can point toward to appropriate bucket:
+- **Experimental new data source: AWS S3 netcdf files**. This support is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. (:pr:`385`) by |gmaze|. In order to use the experimental S3 GDAC, you can point the ``gdac`` option to the appropriate bucket:
 
 .. code-block:: python
+    :caption: AWS S3 example
 
     with argopy.set_options(gdac='s3://argo-gdac-sandbox/pub'):
         ds = DataFetcher(src='gdac').float(6903091).to_xarray()
 
-- **Expert new feature: lazy remote netcdf opening**. We now provide low-level support for opening a remote netcdf Argo dataset lazily with `kerchunk <https://fsspec.github.io/kerchunk/>`_. Simply use the new option ``lazy=True`` with a :class:`stores.httpstore.open_dataset` or :class:`stores.s3store.open_dataset`. For expert users we expose the :class:`stores.ArgoKerchunker` to finely tune how to handle json zarr data. (:pr:`385`) by |gmaze|.
+
+
+Internals
+^^^^^^^^^
+
+- **Open netcdf files lazily**. We now provide low-level support for opening a remote netcdf Argo dataset lazily with `kerchunk <https://fsspec.github.io/kerchunk/>`_. Simply use the new option ``lazy=True`` with a :class:`stores.httpstore.open_dataset` or :class:`stores.s3store.open_dataset`. (:pr:`385`) by |gmaze|.
 
 .. code-block:: python
+    :caption: Example
 
     with argopy.set_options(gdac='s3://argo-gdac-sandbox/pub'):
         f = DataFetcher(src='gdac').float(6903091)
         ds = f.fetcher.fs.open_data(fetcher.uri[0], lazy=True)
 
+- For easy handling of lazy access to remote netcdf files, we introduce :class:`stores.ArgoKerchunker` to finely tune how to handle json kerchunk data. (:pr:`385`) by |gmaze|.
 
-Internals
-^^^^^^^^^
+.. code-block:: python
+    :caption: ArgoKerchunker example
+
+    # Let's take a remote Argo netcdf file from a server supporting lazy access
+    # (i.e. support byte range requests):
+    ncfile = "s3://argo-gdac-sandbox/pub/dac/coriolis/6903090/6903090_prof.nc"
+
+    # Make an instance that will save netcdf to zarr translation data on a local folder "kerchunk_data_folder":
+    ak = ArgoKerchunker(store='local', root='kerchunk_data_folder')
+
+    # then simply open the netcdf file:
+    # (ArgoKerchunker will handle zarr data generation and xarray syntax)
+    ak.open_dataset(ncfile)
+
+- **New file system helper class for GDAC paths** :class:`stores.gdacfs`. This class allows to easily creates a file system for any of the possible GDAC paths. At this point, the class returns one of the argopy file systems (file, http, ftp or s3), but in the future, this class shall return a prefix directory file system, so that we don't have to include the GDAC path in resources to open. (:pr:`385`) by |gmaze|.
+
+.. code-block:: python
+    :caption: Example
+
+    from argopy.stores import gdacfs
+    fs = gdacfs("https://data-argo.ifremer.fr")
 
 - Fix bug raised when the Argo reference table 8 return by the NVS server has a missing altLabel. ID of platform types are now extracted from the NVS url ID property. :issue:`420`, (:pr:`421`) by |gmaze|.
 

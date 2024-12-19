@@ -42,7 +42,7 @@ class ArgoKerchunker:
     Argo netcdf file kerchunk helper
 
     This class is for expert users who wish to test lazy access to remote netcdf files. If you need to compute kerchunk
-    zarr data, we don't recommand to use this method as it shows poor performances on mono or multi profile files.
+    zarr data, we don't recommend to use this method as it shows poor performances on mono or multi profile files.
 
     The `kerchunk <https://fsspec.github.io/kerchunk/>`_ library is required only if you start from scratch and
     need to extract zarr data from a netcdf file, (i.e. execute :meth:`argopy.stores.ArgoKerchunker.translate`).
@@ -69,23 +69,23 @@ class ArgoKerchunker:
     .. code-block:: python
         :caption: Examples
 
-        # Let's take a remote Argo netcdf file from a server supporting lazy access
+        # Create an instance that will save netcdf to zarr translation data on a local folder "kerchunk_data_folder" for later re-use (or sharing):
+        ak = ArgoKerchunker(store='local', root='kerchunk_data_folder')
+
+        # Let's consider a remote Argo netcdf file from a server supporting lazy access
         # (i.e. support byte range requests):
         ncfile = "s3://argo-gdac-sandbox/pub/dac/coriolis/6903090/6903090_prof.nc"
 
-        # Make an instance that will save netcdf to zarr translation data on a local folder "kerchunk_data_folder":
-        ak = ArgoKerchunker(store='local', root='kerchunk_data_folder')
-
-        # then simply open the netcdf file:
+        # Simply open the netcdf file lazily:
         # (ArgoKerchunker will handle zarr data generation and xarray syntax)
-        ak.open_dataset(ncfile)
+        ds = ak.open_dataset(ncfile)
 
 
     """
 
     def __init__(
         self,
-        store: Literal["memory", "local"] = "memory",
+        store: Union[Literal["memory", "local"], fsspec.AbstractFileSystem] = "memory",
         root: Union[Path, str] = ".",
         inline_threshold: int = 0,
         max_chunk_size: int = 0,
@@ -114,7 +114,7 @@ class ArgoKerchunker:
             Options passed to fsspec when opening netcdf file
 
             This argument is passed to :class:`kerchunk.netCDF3.NetCDF3ToZarr` or :class:`kerchunk.hdf.SingleHdf5ToZarr`
-            during translation, and in `backend_kwargs` of :class:`xarray.open_dataset`.
+            during translation, and in `backend_kwargs` of :meth:`xarray.open_dataset`.
 
         """
         # Instance file system to load/save kerchunk json files

@@ -286,6 +286,7 @@ File systems
 .. autosummary::
     :toctree: generated/
 
+    stores.argo_store_proto
     stores.filestore
     stores.httpstore
     stores.memorystore
