@@ -802,8 +802,8 @@ class httpstore(argo_store_proto):
 
     def open_dataset(
         self,
-        url,
-        errors: str = "raise",
+        url: str,
+        errors: Literal['raise', 'ignore', 'silent'] = "raise",
         lazy: bool = False,
         dwn_opts: dict = {},
         xr_opts: dict = {},
@@ -816,14 +816,14 @@ class httpstore(argo_store_proto):
         url: str
             The remote URL of the netcdf file to open
 
-        errors: str, default: ``raise``
+        errors: Literal, default: ``raise``
             Define how to handle errors raised during data fetching:
                 - ``raise`` (default): Raise any error encountered
                 - ``ignore``: Do not stop processing, simply issue a debug message in logging console
                 - ``silent``:  Do not stop processing and do not issue log message
 
         lazy: bool, default=False
-            Define if we should try to load netcdf file lazily or not.
+            Define if we should try to load netcdf file lazily or not
 
             **If this is set to False (default)** opening is done in 2 steps:
                 1. Download from ``url`` raw binary data with :class:`httpstore.download_url`,
@@ -831,14 +831,22 @@ class httpstore(argo_store_proto):
 
             Each functions can be passed specifics arguments with ``dwn_opts`` and  ``xr_opts`` (see below).
 
-            **If this is set to True**, we'll try to use a :class:`argopy.stores.ArgoKerchunker` to access
-            the netcdf file using zarr data from it.
+            **If this is set to True**, use a :class:`ArgoKerchunker` instance to access
+            the netcdf file lazily. You can provide a specific :class:`ArgoKerchunker` instance with the ``ak`` argument (see below).
 
         dwn_opts: dict, default={}
-             Options passed to :func:`httpstore.download_url` if not in lazy mode.
+             Options passed to :func:`httpstore.download_url`
 
         xr_opts: dict, default={}
-             Options passed to :func:`xarray.open_dataset` if not in lazy mode.
+             Options passed to :func:`xarray.open_dataset`
+
+        Other Parameters
+        ----------------
+        ak: :class:`ArgoKerchunker`, optional
+            :class:`ArgoKerchunker` instance to use if ``lazy=True``.
+
+        akoverwrite: bool, optional
+            Determine if kerchunk data should be overwritten or not. This is passed to :meth:`ArgoKerchunker.to_kerchunk`.
 
         Returns
         -------
@@ -846,9 +854,11 @@ class httpstore(argo_store_proto):
 
         Raises
         ------
-        :class:`TypeError` if data returned by ``url`` are not CDF or HDF5 binary data.
+        :class:`TypeError`
+            Raised if data returned by ``url`` are not CDF or HDF5 binary data.
 
-        :class:`DataNotFound` if ``errors`` is set to ``raise`` and url returns no data.
+        :class:`DataNotFound`
+            Raised if ``errors`` is set to ``raise`` and url returns no data.
 
         See Also
         --------
@@ -887,7 +897,7 @@ class httpstore(argo_store_proto):
             return data, xr_opts
 
         def load_lazily(
-            url, errors="raise", dwn_opts={}, xr_opts={}, overwrite: bool = False
+            url, errors="raise", dwn_opts={}, xr_opts={}, akoverwrite: bool = False
         ):
             from . import ArgoKerchunker
 
@@ -904,7 +914,7 @@ class httpstore(argo_store_proto):
                     "backend_kwargs": {
                         "consolidated": False,
                         "storage_options": {
-                            "fo": self.ak.to_kerchunk(url, overwrite=overwrite),
+                            "fo": self.ak.to_kerchunk(url, overwrite=akoverwrite),
                             "remote_protocol": fsspec.core.split_protocol(url)[0],
                         },
                     },
@@ -912,7 +922,7 @@ class httpstore(argo_store_proto):
                 return "reference://", xr_opts
             else:
                 warnings.warn(
-                    "This url does not support byte range requests so we cannot load it lazily, hence falling back on loading in memory."
+                    "This url does not support byte range requests so we cannot load it lazily, falling back on loading in memory."
                 )
                 log.debug("This url does not support byte range requests: %s" % url)
                 return load_in_memory(
@@ -929,7 +939,7 @@ class httpstore(argo_store_proto):
                 errors=errors,
                 dwn_opts=dwn_opts,
                 xr_opts=xr_opts,
-                overwrite=kwargs.get("overwrite", False),
+                akoverwrite=kwargs.get("akoverwrite", False),
             )
 
         if target is not None:
@@ -2043,6 +2053,9 @@ class ftpstore(httpstore):
 
 
 class httpstore_erddap_auth(httpstore):
+    """Argo http file system """
+
+
     async def get_auth_client(self, **kwargs):
         session = aiohttp.ClientSession(**kwargs)
 
@@ -2190,6 +2203,7 @@ class httpstore_erddap_auth(httpstore):
 
 
 def httpstore_erddap(url: str = "", cache: bool = False, cachedir: str = "", **kwargs):
+    """Argo http file system that is able to authenticate on an Erddap server"""
     erddap = OPTIONS["erddap"] if url == "" else url
     login_page = "%s/login.html" % erddap.rstrip("/")
     login_store = httpstore_erddap_auth(
@@ -2229,7 +2243,7 @@ class s3store(httpstore):
 
 
 class gdacfs:
-    """Create a file system for any Argo GDAC compliant path
+    """Argo file system for any GDAC path
 
     Parameters
     ----------

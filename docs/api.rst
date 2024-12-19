@@ -289,9 +289,9 @@ File systems
     stores.argo_store_proto
     stores.filestore
     stores.httpstore
+    stores.httpstore_erddap
     stores.memorystore
     stores.ftpstore
-    stores.httpstore_erddap_auth
     stores.s3store
     stores.ArgoKerchunker
     stores.gdacfs

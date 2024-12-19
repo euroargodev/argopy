@@ -45,7 +45,7 @@ class ArgoKerchunker:
     zarr data, we don't recommend to use this method as it shows poor performances on mono or multi profile files.
 
     The `kerchunk <https://fsspec.github.io/kerchunk/>`_ library is required only if you start from scratch and
-    need to extract zarr data from a netcdf file, (i.e. execute :meth:`argopy.stores.ArgoKerchunker.translate`).
+    need to extract zarr data from a netcdf file, i.e. execute :meth:`ArgoKerchunker.translate`.
 
     .. code-block:: python
         :caption: API
@@ -198,13 +198,13 @@ class ArgoKerchunker:
     def translate(self, ncfiles: Union[str, Path, List]):
         """Compute kerchunk data for one or a list of netcdf files
 
-        Kerchunk data are saved with the instance file store
+        Kerchunk data are saved with the instance file store.
 
-        Once translated, netcdf file reference data are internally registered in the :attr:`ArgoKerchunker.kerchunk_references` attribute
+        Once translated, netcdf file reference data are internally registered in the :attr:`ArgoKerchunker.kerchunk_references` attribute.
 
         If more than 1 netcdf file is provided, the translation is executed in parallel:
 
-        - if `Dask <https://www.dask.org>`_ is available we use :meth:`dask.delayed`/:meth:`dask.compute`,
+        - if `Dask <https://www.dask.org>`_ is available we use :class:`dask.delayed`/:meth:`dask.compute`,
         - otherwise we use a :class:`concurrent.futures.ThreadPoolExecutor`.
 
         See Also
@@ -247,7 +247,8 @@ class ArgoKerchunker:
     def to_kerchunk(self, ncfile: Union[str, Path], overwrite: bool = False):
         """Return json kerchunk data for a given netcdf file
 
-        Load data from instance file store, translate if necessary
+        If data are found on the instance file store, load it, otherwise triggers :meth:`ArgoKerchunker.translate` and
+        save data on instance file store.
 
         See Also
         --------

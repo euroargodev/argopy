@@ -42,8 +42,9 @@ Available data sources
 2. 🌐 an Argo GDAC server or any other GDAC-compliant local folder.
     You can fetch data from any of the 3 official GDAC online servers: the Ifremer https and ftp and the US https.
     This data source can also point toward your own local copy of a `GDAC
-    server content <http://www.argodatamgt.org/Access-to-data/Argo-GDAC-ftp-https-and-s3-servers>`__.
-    You can select this data source with the keyword ``gdac`` and methods described below.
+    server content <http://www.argodatamgt.org/Access-to-data/Argo-GDAC-ftp-https-and-s3-servers>`__. You can list
+    all available GDAC servers from :meth:`utils.list_gdac_servers` and you can select this data source with the keyword
+    ``gdac`` and methods described below.
 
 3. 👁 the `Argovis server <https://argovis.colorado.edu/>`__.
     The Argovis server database is updated daily and only provides access to curated Argo data (QC=1 only).

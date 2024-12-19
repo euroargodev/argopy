@@ -14,7 +14,7 @@ Coming up next
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **Experimental new data source: AWS S3 netcdf files**. This support is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. (:pr:`385`) by |gmaze|. In order to use the experimental S3 GDAC, you can point the ``gdac`` option to the appropriate bucket:
+- **Experimental new data source: AWS S3 netcdf files**. This support is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. (:pr:`385`) by |gmaze|. In order to use the experimental S3 GDAC, you can point the ``gdac`` option to the `appropriate bucket <https://registry.opendata.aws/argo-gdac-marinedata/>`_:
 
 .. code-block:: python
     :caption: AWS S3 example
@@ -22,34 +22,38 @@ Features and front-end API
     with argopy.set_options(gdac='s3://argo-gdac-sandbox/pub'):
         ds = DataFetcher(src='gdac').float(6903091).to_xarray()
 
-
-
 Internals
 ^^^^^^^^^
 
-- **Open netcdf files lazily**. We now provide low-level support for opening a remote netcdf Argo dataset lazily with `kerchunk <https://fsspec.github.io/kerchunk/>`_. Simply use the new option ``lazy=True`` with a :class:`stores.httpstore.open_dataset` or :class:`stores.s3store.open_dataset`. (:pr:`385`) by |gmaze|.
+- **Open netcdf files lazily**. We now provide low-level support for opening a netcdf Argo dataset lazily with `kerchunk <https://fsspec.github.io/kerchunk/>`_. Simply use the new option ``lazy=True`` with a :class:`stores.httpstore.open_dataset` or :class:`stores.s3store.open_dataset`. (:pr:`385`) by |gmaze|.
 
 .. code-block:: python
     :caption: Example
 
-    with argopy.set_options(gdac='s3://argo-gdac-sandbox/pub'):
-        f = DataFetcher(src='gdac').float(6903091)
-        ds = f.fetcher.fs.open_data(fetcher.uri[0], lazy=True)
+    import argopy
+    uri = argopy.ArgoIndex(host='s3://argo-gdac-sandbox/pub').search_wmo(6903091).uri
+    ds = argopy.stores.s3store().open_dataset(uri[0], lazy=True)
 
-- For easy handling of lazy access to remote netcdf files, we introduce :class:`stores.ArgoKerchunker` to finely tune how to handle json kerchunk data. (:pr:`385`) by |gmaze|.
+.. warning::
+    You will need to install the `kerchunk <https://fsspec.github.io/kerchunk/>`_ library if you don't have access to
+    kerchunk zarr data for the netcdf files to open.
+
+- For easy handling of lazy access to netcdf files with `kerchunk <https://fsspec.github.io/kerchunk/>`_, we introduce a :class:`stores.ArgoKerchunker` to finely tune how to handle json kerchunk data. (:pr:`385`) by |gmaze|.
 
 .. code-block:: python
     :caption: ArgoKerchunker example
+
+    from argopy.stores import ArgoKerchunker
+
+    # Create an instance that will save netcdf to zarr translation data on a local folder "kerchunk_data_folder":
+    ak = ArgoKerchunker(store='local', root='kerchunk_data_folder')
 
     # Let's take a remote Argo netcdf file from a server supporting lazy access
     # (i.e. support byte range requests):
     ncfile = "s3://argo-gdac-sandbox/pub/dac/coriolis/6903090/6903090_prof.nc"
 
-    # Make an instance that will save netcdf to zarr translation data on a local folder "kerchunk_data_folder":
-    ak = ArgoKerchunker(store='local', root='kerchunk_data_folder')
-
-    # then simply open the netcdf file:
-    # (ArgoKerchunker will handle zarr data generation and xarray syntax)
+    # Simply open the netcdf file lazily:
+    # (ArgoKerchunker will handle zarr data generation and xarray syntax to use it)
     ak.open_dataset(ncfile)
 
 - **New file system helper class for GDAC paths** :class:`stores.gdacfs`. This class allows to easily creates a file system for any of the possible GDAC paths. At this point, the class returns one of the argopy file systems (file, http, ftp or s3), but in the future, this class shall return a prefix directory file system, so that we don't have to include the GDAC path in resources to open. (:pr:`385`) by |gmaze|.
@@ -1283,7 +1287,7 @@ v0.1.0 (17 Mar. 2020)
 
 .. |pypi dwn| image:: https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads
    :target: //pypi.org/project/argopy/
-.. |conda dwn| image:: https://img.shields.io/conda/dn/conda-forge/argopy?label=Conda%20downloads
+.. |conda dwn| image:: https://img.shields.io/conda/d/conda-forge/argopy
    :target: //anaconda.org/conda-forge/argopy
 .. |PyPI| image:: https://img.shields.io/pypi/v/argopy
    :target: //pypi.org/project/argopy/
