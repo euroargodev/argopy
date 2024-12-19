@@ -25,6 +25,8 @@ Features and front-end API
 Internals
 ^^^^^^^^^
 
+- **Support netcdf to/from zarr conversion**. Provide low-level support to export Argo datasets to zarr files and to open zarr archive (local or remote).
+
 - **Open netcdf files lazily**. We now provide low-level support for opening a netcdf Argo dataset lazily with `kerchunk <https://fsspec.github.io/kerchunk/>`_. Simply use the new option ``lazy=True`` with a :class:`stores.httpstore.open_dataset` or :class:`stores.s3store.open_dataset`. (:pr:`385`) by |gmaze|.
 
 .. code-block:: python
