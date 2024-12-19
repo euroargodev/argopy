@@ -20,7 +20,7 @@ log = logging.getLogger("argopy.stores")
 try:
     from tqdm import tqdm
 except ModuleNotFoundError:
-    log.debug("argopy needs tqdm installed to display progress bars")
+    log.debug("argopy needs 'tqdm' to display progress bars")
 
     def tqdm(fct, **kw):
         return fct
@@ -31,7 +31,7 @@ try:
 
     has_distributed = True
 except ModuleNotFoundError:
-    log.debug("argopy needs distributed to use Dask cluster/client")
+    log.debug("argopy needs 'distributed' to use Dask cluster/client")
     has_distributed = False
     distributed = None
 

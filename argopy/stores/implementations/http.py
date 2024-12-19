@@ -23,7 +23,7 @@ from ...utils.transform import (
     fill_variables_not_in_all_datasets,
 )
 from ...utils.monitored_threadpool import MyThreadPoolExecutor as MyExecutor
-from ..filesystems import argo_store_proto
+from ..spec import ArgoStoreProto
 from ..filesystems import has_distributed, distributed
 from ..filesystems import tqdm
 
@@ -31,7 +31,7 @@ from ..filesystems import tqdm
 log = logging.getLogger("argopy.stores.implementation.http")
 
 
-class httpstore(argo_store_proto):
+class httpstore(ArgoStoreProto):
     """Argo http file system
 
     Relies on :class:`fsspec.implementations.http.HTTPFileSystem`

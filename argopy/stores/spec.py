@@ -16,7 +16,7 @@ from ..errors import (
 from .filesystems import new_fs
 
 
-class argo_store_proto(ABC):
+class ArgoStoreProto(ABC):
     """Argo Abstract File System
 
     Provide a prototype for Argo file systems

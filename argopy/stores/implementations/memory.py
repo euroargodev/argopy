@@ -5,7 +5,7 @@ from ...errors import CacheFileNotFound, FileSystemHasNoCache
 class memorystore(filestore):
     """Argo in-memory file system (global)
 
-    Note that this inherits from :class:`argopy.stores.filestore`, not the:class:`argopy.stores.argo_store_proto`.
+    Note that this inherits from :class:`argopy.stores.filestore`, not the:class:`argopy.stores.ArgoStoreProto`.
 
     Relies on :class:`fsspec.implementations.memory.MemoryFileSystem`
     """

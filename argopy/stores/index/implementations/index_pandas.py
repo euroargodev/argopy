@@ -5,17 +5,17 @@ import gzip
 from pathlib import Path
 from typing import List
 
-from ...errors import DataNotFound, InvalidDatasetStructure
-from ...utils.checkers import check_index_cols, is_indexbox, check_wmo, check_cyc
-from ...utils.casting import to_list
-from .argo_index_proto import ArgoIndexStoreProto
-from .argo_index_proto_s3 import search_s3
+from ....errors import DataNotFound, InvalidDatasetStructure
+from ....utils.checkers import check_index_cols, is_indexbox, check_wmo, check_cyc
+from ....utils.casting import to_list
+from ..spec import ArgoIndexStoreProto
+from .index_s3 import search_s3
 
 
 log = logging.getLogger("argopy.stores.index.pd")
 
 
-class indexstore_pandas(ArgoIndexStoreProto):
+class indexstore(ArgoIndexStoreProto):
     """Argo GDAC index store using :class:`pandas.DataFrame` as internal storage format.
 
     With this store, index and search results are saved as pickle files in cache

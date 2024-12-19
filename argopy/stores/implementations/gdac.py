@@ -1,3 +1,12 @@
+from typing import Union
+from pathlib import Path
+from fsspec.core import split_protocol
+from urllib.parse import urlparse
+from socket import gaierror
+
+from ...options import OPTIONS
+from ...errors import GdacPathError
+from .. import filestore, httpstore, ftpstore, s3store
 
 
 class gdacfs:
@@ -11,7 +20,7 @@ class gdacfs:
 
     Returns
     -------
-    A file system based on :class:`argopy.stores.argo_store_proto`
+    A file system based on :class:`argopy.stores.ArgoStoreProto`
 
     Examples
     --------

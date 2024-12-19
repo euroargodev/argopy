@@ -7,7 +7,7 @@ import multiprocessing
 import logging
 
 
-from ..filesystems import argo_store_proto
+from ..spec import ArgoStoreProto
 from ..filesystems import has_distributed, distributed
 from ..filesystems import tqdm
 from ...errors import InvalidMethod, DataNotFound
@@ -16,7 +16,7 @@ from ...errors import InvalidMethod, DataNotFound
 log = logging.getLogger("argopy.stores.implementation.local")
 
 
-class filestore(argo_store_proto):
+class filestore(ArgoStoreProto):
     """Argo local file system
 
     Relies on :class:`fsspec.implementations.local.LocalFileSystem`

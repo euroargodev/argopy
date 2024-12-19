@@ -1,6 +1,4 @@
-from .filesystems import argo_store_proto
-from .filesystems import has_distributed, distributed  # noqa: F401
-
+from .spec import ArgoStoreProto
 from .implementations.local import filestore
 from .implementations.memory import memorystore
 from .implementations.http import httpstore
@@ -10,9 +8,10 @@ from .implementations.s3 import s3store
 from .implementations.gdac import gdacfs
 
 from .index.argo_index import ArgoIndex
-from .index.argo_index_pa import indexstore_pyarrow as indexstore_pa
-from .index.argo_index_pd import indexstore_pandas as indexstore_pd
+from .index.implementations.index_pyarrow import indexstore as indexstore_pa
+from .index.implementations.index_pandas import indexstore as indexstore_pd
 
+from .filesystems import has_distributed, distributed  # noqa: F401
 from .kerchunker import ArgoKerchunker
 
 

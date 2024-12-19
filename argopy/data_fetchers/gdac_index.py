@@ -9,7 +9,6 @@ import pandas as pd
 from abc import ABC, abstractmethod
 import warnings
 import logging
-import importlib
 
 from ..utils.format import format_oneline
 from ..options import OPTIONS, check_gdac_option
@@ -18,15 +17,6 @@ from ..stores import ArgoIndex
 
 
 log = logging.getLogger("argopy.gdac.index")
-
-# has_pyarrow = importlib.util.find_spec('pyarrow') is not None
-# if has_pyarrow:
-#     from argopy.stores.argo_index_pa import indexstore_pyarrow as indexstore
-#     log.debug("Using pyarrow indexstore")
-# else:
-#     from argopy.stores.argo_index_pd import indexstore_pandas as indexstore
-#     # warnings.warn("Consider installing pyarrow in order to improve performances when fetching GDAC data")
-#     log.debug("Using pandas indexstore")
 
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]

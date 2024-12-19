@@ -4,7 +4,7 @@ import logging
 from decorator import decorator
 import warnings
 
-from ...utils.checkers import (
+from ....utils.checkers import (
     check_index_cols,
     check_wmo,
     check_cyc,
@@ -12,8 +12,8 @@ from ...utils.checkers import (
     has_aws_credentials,
     HAS_BOTO3,
 )
-from ...utils.format import redact
-from .. import s3store
+from ....utils.format import redact
+from ... import s3store
 
 
 try:
