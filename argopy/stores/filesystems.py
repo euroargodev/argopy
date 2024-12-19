@@ -2263,10 +2263,11 @@ class gdacfs:
 
     """
     protocol2fs = {"file": filestore, "http": httpstore, "ftp": ftpstore, "s3": s3store}
+    """Dictionary mapping path protocol to Argo file system to instantiate"""
 
     @staticmethod
     def path2protocol(path: Union[str, Path]) -> str:
-        """Narrow down any path to a supported protocols"""
+        """Narrow down any path to a supported protocols, raise GdacPathError if protocol not supported"""
         if isinstance(path, Path):
             return "file"
         else:
@@ -2301,7 +2302,7 @@ class gdacfs:
             fs = fs(**fs_args)
         except gaierror as e:
             raise GdacPathError(
-                "Can't get address info from FTP host: %s:%i\nGAIerror: %s"
+                "Can't get address info from FTP host: %s\nGAIerror: %s"
                 % (fs_args, str(e))
             )
         return fs
