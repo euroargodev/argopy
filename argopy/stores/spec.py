@@ -17,15 +17,15 @@ from .filesystems import new_fs
 
 
 class ArgoStoreProto(ABC):
-    """Argo Abstract File System
+    """Argo File System Prototype
 
-    Provide a prototype for Argo file systems
+    All argopy file systems must inherit, directly or not, from this prototype.
 
     Should this class inherits from :class:`fsspec.spec.AbstractFileSystem` ?
     """
 
     protocol = ""
-    """str: File system name, one in fsspec.registry.known_implementations"""
+    """str: File system name, one in :class:`fsspec.registry.known_implementations`"""
 
     def __init__(self, cache: bool = False, cachedir: str = "", **kwargs):
         """Create a file storage system for Argo data

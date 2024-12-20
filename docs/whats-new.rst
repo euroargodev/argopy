@@ -25,6 +25,8 @@ Features and front-end API
 Internals
 ^^^^^^^^^
 
+- **argopy file systems refactoring**. Long due internal refactoring of :ref:`File systems`. The submodule now adopt a more readable specification vs implementation design.(:pr:`425`) by |gmaze|.
+
 - **Open netcdf files lazily**. We now provide low-level support for opening a netcdf Argo dataset lazily with `kerchunk <https://fsspec.github.io/kerchunk/>`_. Simply use the new option ``lazy=True`` with a :class:`stores.httpstore.open_dataset` or :class:`stores.s3store.open_dataset`. (:pr:`385`) by |gmaze|.
 
 .. code-block:: python
