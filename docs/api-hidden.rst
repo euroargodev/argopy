@@ -170,7 +170,7 @@
     argopy.plot.ArgoColors.ticklabels
     argopy.plot.ArgoColors.list_valid_known_colormaps
 
-    argopy.stores.spec.argo_store_proto
+    argopy.stores.spec.ArgoStoreProto
 
     argopy.stores.implementations.local.filestore
     argopy.stores.filestore.open_dataset
