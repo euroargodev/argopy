@@ -1886,7 +1886,7 @@ class ftpstore(httpstore):
     protocol = "ftp"
 
     def open_dataset(self, url, *args, **kwargs):
-        """Open and decode a xarray dataset from an ftp url
+        """Open and decode a xarray dataset from a ftp url
 
         Parameters
         ----------
@@ -1896,6 +1896,9 @@ class ftpstore(httpstore):
         -------
         :class:`xarray.Dataset`
         """
+        if 'lazy' in kwargs and kwargs['lazy']:
+            warnings.warn("FTP store does not support lazy dataset opening")
+
         try:
             this_url = self.fs._strip_protocol(url)
             data = self.fs.cat_file(this_url)
