@@ -80,8 +80,10 @@ def argo_split_path(this_path):  # noqa C901
 
     known_origins = [
         "https://data-argo.ifremer.fr",
+        "https://usgodae.org/pub/outgoing/argo",
         "ftp://ftp.ifremer.fr/ifremer/argo",
         "ftp://usgodae.org/pub/outgoing/argo",
+        "s3://argo-gdac-sandbox/pub",
         fix_localhost(this_path),
         "",
     ]
