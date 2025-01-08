@@ -11,6 +11,33 @@ What's New
 Coming up next
 --------------
 
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- New **float store** to delegate to argopy all Argo netcdf files access/read methods, for local and remote GDAC content. This new data store, :class:`ArgoFloat`, aims to provide methods for third party libraries, or operator and expert workflow, to access local, or remote, Argo GDAC netcdf files without the burden of transfer protocol and GDAC paths handling.
+
+.. code-block:: python
+
+    from argopy import ArgoFloat
+    WMO = 6903091
+
+    af = ArgoFloat(WMO)  # Use argopy 'gdac' option by default
+    af = ArgoFloat(WMO, host='https')  # Shortcut for https://data-argo.ifremer.fr
+    af = ArgoFloat(WMO, host='ftp')    # shortcut for ftp://ftp.ifremer.fr/ifremer/argo
+    af = ArgoFloat(WMO, host='s3')     # Shortcut for s3://argo-gdac-sandbox/pub
+    af = ArgoFloat(WMO, host='/home/ref-argo/gdac')  # Use your local GDAC copy
+
+    # Access GDAC netcdf files content from dac folder for core-deep floats:
+    af.meta # Return xarray dataset with data from: <WMO>_meta.nc
+    af.prof # Return xarray dataset with data from: <WMO>_prof.nc
+    af.tech # Return xarray dataset with data from: <WMO>_tech.nc
+    af.Rtraj # Return xarray dataset with data from: <WMO>_Rtraj.nc
+
+    # Access GDAC netcdf files content from dac folder for BGC floats:
+    af.BRtraj # Return xarray dataset with data from: <WMO>_BRtraj.nc
+    af.Sprof # Return xarray dataset with data from: <WMO>_Sprof.nc
+
+
 Internals
 ^^^^^^^^^
 
