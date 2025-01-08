@@ -118,8 +118,10 @@ class ArgoIndexStoreProto(ABC):
         # Catchup keywords for host:
         if str(host).lower() in ["ftp"]:
             host = "ftp://ftp.ifremer.fr/ifremer/argo"
-        elif str(host).lower() in ["http", "https"]:
+        elif str(host).lower() in ["http", "https", "fr-http", "fr-https"]:
             host = "https://data-argo.ifremer.fr"
+        elif str(host).lower() in ["us-http", "us-https"]:
+            host = "https://usgodae.org/pub/outgoing/argo"
         elif str(host).lower() in ["s3", "aws"]:
             host = "s3://argo-gdac-sandbox/pub/idx"
         self.host = host
