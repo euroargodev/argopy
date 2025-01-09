@@ -198,7 +198,7 @@ class ArgoFloatProto(ABC):
         name: str, optional, default = "prof"
             Name of the dataset to open. It can be any key from the dictionary returned by :class:`ArgoFloat.list_dataset`.
         cast: bool, optional, default = True
-            Determine if the dataset variables should be cast or not. This is similar to opening the dataset directly with the :meth:`xr.open_dataset` using the ``engine=`argo``` option.
+            Determine if the dataset variables should be cast or not. This is similar to opening the dataset directly with :class:`xr.open_dataset` using the ``engine=`argo``` option.
 
         Returns
         -------

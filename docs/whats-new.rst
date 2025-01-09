@@ -14,7 +14,16 @@ Coming up next
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- New **float store** to delegate to argopy all Argo netcdf files access/read methods, for local and remote GDAC content. This new data store, :class:`ArgoFloat`, aims to provide methods for third party libraries, or operator and expert workflow, to access local, or remote, Argo GDAC netcdf files without the burden of transfer protocol and GDAC paths handling.
+- **New** :class:`ArgoFloat` **store for Argo netcdf file load/read operation**. Whatever the Argo netcdf file location, local or remote, you can now delegate to argopy the burden of transfer protocol and GDAC paths handling. This store is primarily intended to be used by third party libraries or in workflow by operators and experts. (:pr:`429`) by |gmaze|.
+
+Just kick in the float WMO and trigger :class:`ArgoFloat.open_dataset` !
+
+.. code-block:: python
+
+    from argopy import ArgoFloat
+    ds = ArgoFloat(6903091).open_dataset('prof')
+
+With more details:
 
 .. code-block:: python
 
@@ -27,12 +36,14 @@ Features and front-end API
     af = ArgoFloat(WMO, host='ftp')    # shortcut for ftp://ftp.ifremer.fr/ifremer/argo
     af = ArgoFloat(WMO, host='s3')     # Shortcut for s3://argo-gdac-sandbox/pub
 
-    # List or load any netcdf files from this float:
-    af.list_dataset() # Return a dictionary with all available datasets for this float
-    af.open_dataset('meta') # Return xarray dataset with data from: <WMO>_meta.nc
-    af.open_dataset('prof') # Return xarray dataset with data from: <WMO>_prof.nc
-    af.open_dataset('tech') # Return xarray dataset with data from: <WMO>_tech.nc
-    af.open_dataset('Rtraj') # Return xarray dataset with data from: <WMO>_Rtraj.nc
+    # Load any netcdf files from this float:
+    ds = af.open_dataset('meta') # load <WMO>_meta.nc
+    ds = af.open_dataset('prof') # load <WMO>_prof.nc
+    ds = af.open_dataset('tech') # load <WMO>_tech.nc
+    ds = af.open_dataset('Rtraj') # load <WMO>_Rtraj.nc
+
+    # List all available datasets for this float:
+    af.list_dataset()
 
 Internals
 ^^^^^^^^^
