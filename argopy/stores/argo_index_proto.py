@@ -66,7 +66,7 @@ class ArgoIndexStoreProto(ABC):
 
     def __init__(
         self,
-        host: str = "https://data-argo.ifremer.fr",
+        host: str = None,
         index_file: str = "ar_index_global_prof.txt",
         convention: str = None,
         cache: bool = False,
@@ -74,19 +74,20 @@ class ArgoIndexStoreProto(ABC):
         timeout: int = 0,
         **kwargs,
     ):
-        """Create an Argo index file store
+        """Create an Argo index store
 
         Parameters
         ----------
-        host: str, default: ``https://data-argo.ifremer.fr``
-            Local or remote (ftp, https or s3) path to a `dac` folder (GDAC structure compliant).
+        host: str, optional, default=OPTIONS["gdac"]
+            Local or remote (http, ftp or s3) path to a `dac` folder (compliant with GDAC structure).
 
             This parameter takes values like:
 
-            - ``https://data-argo.ifremer.fr``
-            - ``ftp://ftp.ifremer.fr/ifremer/argo``
-            - ``s3://argo-gdac-sandbox/pub/idx``
             - a local absolute path
+            - ``https://data-argo.ifremer.fr``, shortcut=``http``/``https``
+            - ``https://usgodae.org/pub/outgoing/argo``, shortcut=``us-http``/``us-https``
+            - ``ftp://ftp.ifremer.fr/ifremer/argo``, shortcut=``ftp``
+            - ``s3://argo-gdac-sandbox/pub/idx``, shortcut=``s3``/``aws``
 
             You can also use the following keywords: ``http``/``https``, ``ftp`` and ``s3``/``aws``, respectively.
         index_file: str, default: ``ar_index_global_prof.txt``
@@ -114,6 +115,7 @@ class ArgoIndexStoreProto(ABC):
         timeout: int,  default: OPTIONS['api_timeout']
             Time out in seconds to connect to a remote host (ftp or http).
         """
+        host = OPTIONS["gdac"] if host is None else host
 
         # Catchup keywords for host:
         if str(host).lower() in ["ftp"]:
