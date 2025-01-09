@@ -32,17 +32,16 @@ class ArgoFloatOnline(ArgoFloatProto):
             )  # Fix s3 anomaly whereby index files are not at the 'dac' level
 
         # Load some data (in a perfect world, this should be done asynchronously):
-        # self.load_index()
-        self.load_metadata() # must come before load_dac
+        self.load_metadata()  # must come before load_dac
         self.load_dac()
 
     def load_metadata(self):
         """Load float meta data from Euro-Argo fleet-monitoring API"""
         # api_point = f"{self._eafleetmonitoring_server}/floats/basic/{self.WMO}"
         api_point = f"{self._eafleetmonitoring_server}/floats/{self.WMO}"
-        self._metadata = httpstore(
-            cache=self.cache, cachedir=self.cachedir
-        ).open_json(api_point)
+        self._metadata = httpstore(cache=self.cache, cachedir=self.cachedir).open_json(
+            api_point
+        )
 
         # Fix data type for some useful keys:
         self._metadata["deployment"]["launchDate"] = pd.to_datetime(
@@ -59,8 +58,7 @@ class ArgoFloatOnline(ArgoFloatProto):
 
     @property
     def technicaldata(self) -> dict:
-        """A dictionary holding float technical-data, based on the EA fleet-monitoring API json schema
-        """
+        """A dictionary holding float technical-data, based on the EA fleet-monitoring API json schema"""
         if self._technicaldata is None:
             self.load_technicaldata()
         return self._technicaldata

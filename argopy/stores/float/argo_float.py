@@ -6,16 +6,22 @@ The choice is really meaningfull when the client is using a local host. In this 
 we don't know if client intends to be online or offline, so we check and implement.
 
 """
+
 import logging
-log = logging.getLogger("argopy.stores.ArgoFloat")
 
 from ...utils import isconnected
 
+
+log = logging.getLogger("argopy.stores.ArgoFloat")
+
+
 if isconnected():
     from .implementations.argo_float_online import ArgoFloatOnline as FloatStore
+
     log.info("Using ONLINE Argo Float implementation")
 else:
     from .implementations.argo_float_offline import ArgoFloatOffline as FloatStore
+
     log.info("Using OFFLINE Argo Float implementation")
 
 
@@ -23,5 +29,6 @@ class ArgoFloat(FloatStore):
     """
     Main docstring for ArgoFloat
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

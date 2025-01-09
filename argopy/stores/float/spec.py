@@ -49,8 +49,13 @@ class ArgoFloatProto(ABC):
         self.fs = self.idx.fs["src"]
 
         if not self._online and self.host_protocol != "file":
-            raise InvalidOption("Trying to work with remote host '%s' without a web connection. Check your connection parameters or try to work with a local GDAC path." % self.host)
+            raise InvalidOption(
+                "Trying to work with remote host '%s' without a web connection. Check your connection parameters or try to work with a local GDAC path."
+                % self.host
+            )
 
+        # Load some data (in a perfect world, this should be done asynchronously):
+        # self.load_index()
 
     def load_index(self):
         """Load the Argo full index in memory and trigger search for this float"""
@@ -145,7 +150,7 @@ class ArgoFloatProto(ABC):
 
         If the float is still active, this is the current value.
         """
-        return len(self.metadata['cycles'])
+        return len(self.metadata["cycles"])
 
     def describe_profiles(self) -> pd.DataFrame:
         """Return a :class:`pd.DataFrame` describing profile files"""
@@ -153,22 +158,27 @@ class ArgoFloatProto(ABC):
             prof = []
             for file in self.lsprofiles():
                 desc = {}
-                desc['stem'] = Path(file).stem
+                desc["stem"] = Path(file).stem
                 desc = {**desc, **argo_split_path(file)}
-                for v in ['dac', 'wmo', 'extension', 'name', 'origin', 'path']:
+                for v in ["dac", "wmo", "extension", "name", "origin", "path"]:
                     desc.pop(v)
-                desc['path'] = file
+                desc["path"] = file
                 prof.append(desc)
             df = pd.DataFrame(data=prof)
-            stem2cyc = lambda s: int(s.split("_")[-1][0:-1]) if s.split("_")[-1][-1] == 'D' else int(s.split("_")[-1][:])
-            row2cyc = lambda row: stem2cyc(row['stem'])
-            df['cyc'] = df.apply(row2cyc, axis=1)
-            df['long_type'] = df.apply(lambda row: row['type'].split(',')[-1].lstrip(), axis=1)
-            df['type'] = df.apply(lambda row: row['type'][0], axis=1)
-            df['data_mode'] = df.apply(lambda row: row['data_mode'][0], axis=1)
+            stem2cyc = lambda s: (
+                int(s.split("_")[-1][0:-1])
+                if s.split("_")[-1][-1] == "D"
+                else int(s.split("_")[-1][:])
+            )
+            row2cyc = lambda row: stem2cyc(row["stem"])
+            df["cyc"] = df.apply(row2cyc, axis=1)
+            df["long_type"] = df.apply(
+                lambda row: row["type"].split(",")[-1].lstrip(), axis=1
+            )
+            df["type"] = df.apply(lambda row: row["type"][0], axis=1)
+            df["data_mode"] = df.apply(lambda row: row["data_mode"][0], axis=1)
             self._df_profiles = df
         return self._df_profiles
-
 
     def __repr__(self):
         summary = ["<argofloat.%i.%s>" % (self.WMO, self.host_protocol)]
@@ -176,13 +186,13 @@ class ArgoFloatProto(ABC):
         # summary.append("GDAC host: %s [%s]" % (self.host, status))
         summary.append("GDAC host: %s" % self.host)
         summary.append("DAC name: %s" % self.dac)
-        summary.append("Network(s): %s" % self.metadata['networks'])
+        summary.append("Network(s): %s" % self.metadata["networks"])
 
         launchDate = self.metadata["deployment"]["launchDate"]
-        today = pd.to_datetime('now', utc=True)
+        today = pd.to_datetime("now", utc=True)
         summary.append(
             "Deployment date: %s [%s days ago]"
-            % (launchDate.strftime("%Y-%m-%d %H:%M"), (today-launchDate).days)
+            % (launchDate.strftime("%Y-%m-%d %H:%M"), (today - launchDate).days)
         )
         summary.append(
             "Float type and manufacturer: %s [%s]"
@@ -194,6 +204,8 @@ class ArgoFloatProto(ABC):
         summary.append("Number of cycles: %s" % self.N_CYCLES)
         if self._online:
             summary.append("Dashboard: %s" % dashboard(wmo=self.WMO, url_only=True))
-        summary.append("Netcdf dataset available: %s" % list(self.avail_dataset().keys()))
+        summary.append(
+            "Netcdf dataset available: %s" % list(self.avail_dataset().keys())
+        )
 
         return "\n".join(summary)
