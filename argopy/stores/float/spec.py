@@ -28,6 +28,7 @@ class ArgoFloatProto(ABC):
         cache: bool = False,
         cachedir: str = "",
         timeout: int = 0,
+        **kwargs,
     ):
 
         self.WMO = check_wmo(wmo)[0]
@@ -51,6 +52,10 @@ class ArgoFloatProto(ABC):
             raise InvalidOption("Trying to work with remote host '%s' without a web connection. Check your connection parameters or try to work with a local GDAC path." % self.host)
 
 
+    def load_index(self):
+        """Load the Argo full index in memory and trigger search for this float"""
+        self.idx.load().search_wmo(self.WMO)
+
     @property
     def metadata(self) -> dict:
         """A dictionary holding float meta-data, based on the EA fleet-monitoring API json schema
@@ -59,7 +64,7 @@ class ArgoFloatProto(ABC):
         self._metadata["deployment"]["launchDate"]  # pd.Datetime
         self._metadata['cycles']  # list
         self.metadata['networks']  # list of str
-        self.metadata["platform"]["type"]  #
+        self.metadata["platform"]["type"]  # from Reference table 23
         self.metadata["maker"]  #
         """
         if self._metadata is None:
@@ -71,14 +76,15 @@ class ArgoFloatProto(ABC):
         """Method to load float meta-data"""
         raise NotImplementedError("Not implemented")
 
-    def load_index(self):
-        """Load the Argo full index in memory and trigger search for this float"""
-        self.idx.load().search_wmo(self.WMO)
-
     @abstractmethod
     def load_dac(self):
         """Load the DAC short name for this float"""
         raise NotImplementedError("Not implemented")
+
+    @property
+    def dac(self) -> str:
+        """Name of the DAC responsible for this float"""
+        return self._dac
 
     @property
     def host_protocol(self) -> str:
@@ -89,11 +95,6 @@ class ArgoFloatProto(ABC):
     def host_sep(self) -> str:
         """Host path separator"""
         return self.fs.fs.sep
-
-    @property
-    def dac(self) -> str:
-        """Name of the DAC responsible for this float"""
-        return self._dac
 
     @property
     def path(self) -> str:
@@ -144,7 +145,7 @@ class ArgoFloatProto(ABC):
 
         If the float is still active, this is the current value.
         """
-        return len(self.fleetmonitoring_metadata['cycles'])
+        return len(self.metadata['cycles'])
 
     def describe_profiles(self) -> pd.DataFrame:
         """Return a :class:`pd.DataFrame` describing profile files"""
@@ -171,16 +172,17 @@ class ArgoFloatProto(ABC):
 
     def __repr__(self):
         summary = ["<argofloat.%i.%s>" % (self.WMO, self.host_protocol)]
-        status = "online ✅" if isconnected(self.path, maxtry=1) else "offline 🚫"
-        summary.append("GDAC host: %s [%s]" % (self.host, status))
+        # status = "online ✅" if isconnected(self.path, maxtry=1) else "offline 🚫"
+        # summary.append("GDAC host: %s [%s]" % (self.host, status))
+        summary.append("GDAC host: %s" % self.host)
         summary.append("DAC name: %s" % self.dac)
         summary.append("Network(s): %s" % self.metadata['networks'])
 
         launchDate = self.metadata["deployment"]["launchDate"]
         today = pd.to_datetime('now', utc=True)
         summary.append(
-            "Deployment date: %s [%s ago]"
-            % (launchDate, (today-launchDate).days)
+            "Deployment date: %s [%s days ago]"
+            % (launchDate.strftime("%Y-%m-%d %H:%M"), (today-launchDate).days)
         )
         summary.append(
             "Float type and manufacturer: %s [%s]"
@@ -190,7 +192,8 @@ class ArgoFloatProto(ABC):
             )
         )
         summary.append("Number of cycles: %s" % self.N_CYCLES)
-        summary.append("Dashboard: %s" % dashboard(wmo=self.WMO, url_only=True))
+        if self._online:
+            summary.append("Dashboard: %s" % dashboard(wmo=self.WMO, url_only=True))
         summary.append("Netcdf dataset available: %s" % list(self.avail_dataset().keys()))
 
         return "\n".join(summary)

@@ -1,7 +1,9 @@
-from errors import InvalidOption
+import pandas as pd
+import numpy as np
 from pathlib import Path
 import logging
 
+from ....errors import InvalidOption
 from ..spec import ArgoFloatProto
 
 
@@ -13,29 +15,63 @@ class ArgoFloatOffline(ArgoFloatProto):
 
     def __init__(
         self,
+        *args,
         **kwargs,
     ):
-        super().__init__(**kwargs)
+        super().__init__(*args, **kwargs)
 
         if self.host_protocol != "file":
-            raise InvalidOption("Trying to work with the offline store using a remote host !")
+            raise InvalidOption(
+                "Trying to work with the offline store using a remote host !"
+            )
 
         # Load some data (in a perfect world, this should be done asynchronously):
         # self.load_index()
+        self.load_dac()  # must come before metadata
         self.load_metadata()
-        self.load_dac()
 
     def load_metadata(self):
         """Method to load float meta-data"""
         data = {}
-        data.update({"deployment": {"launchDate": "?"}})
-        data.update({"cycles": []})
-        data.update({"networks": ['?']})
-        data.update({"platform": {'type': '?'}})
-        data.update({"maker": '?'})
+        # data.update({"cycles": []})
+
+        ds = self.open_dataset("meta")
+        data.update(
+            {
+                "deployment": {
+                    "launchDate": pd.to_datetime(ds["LAUNCH_DATE"].values, utc=True)
+                }
+            }
+        )
+        data.update(
+            {"platform": {"type": ds["PLATFORM_TYPE"].values[np.newaxis][0].strip()}}
+        )
+        data.update(
+            {"maker": ds["PLATFORM_MAKER"].values[np.newaxis][0].strip()}
+        )
+
+        def infer_network(this_ds):
+            if this_ds['PLATFORM_FAMILY'].values[np.newaxis][0].strip() == 'FLOAT_DEEP':
+                network = ['DEEP']
+                if len(this_ds['SENSOR'].values) > 4:
+                    network.append('BGC')
+
+            elif this_ds['PLATFORM_FAMILY'].values[np.newaxis][0].strip() == 'FLOAT':
+                if len(this_ds['SENSOR'].values) > 4:
+                    network = ['BGC']
+                else:
+                    network = ['CORE']
+
+            else:
+                network = ['?']
+
+            return network
+
+        data.update({"networks": infer_network(ds)})
+
+        data.update({"cycles": np.unique(self.open_dataset("prof")['CYCLE_NUMBER'])})
 
         self._metadata = data
-        return self._metadata
 
     def load_dac(self):
         """Load the DAC short name for this float"""

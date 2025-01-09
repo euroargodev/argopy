@@ -16,12 +16,15 @@ log = logging.getLogger("argopy.stores.ArgoFloat")
 
 class ArgoFloatOnline(ArgoFloatProto):
     _online = True
+    _eafleetmonitoring_server = "https://fleetmonitoring.euro-argo.eu"
+    _technicaldata = None
 
     def __init__(
         self,
+        *args,
         **kwargs,
     ):
-        super().__init__(**kwargs)
+        super().__init__(*args, **kwargs)
 
         if self.host_protocol == "s3":
             self.host = self.host.replace(
@@ -30,14 +33,13 @@ class ArgoFloatOnline(ArgoFloatProto):
 
         # Load some data (in a perfect world, this should be done asynchronously):
         # self.load_index()
-        self.load_metadata()
+        self.load_metadata() # must come before load_dac
         self.load_dac()
 
     def load_metadata(self):
         """Load float meta data from Euro-Argo fleet-monitoring API"""
-        api_server = "https://fleetmonitoring.euro-argo.eu"
-        # api_point = f"{api_server}/floats/basic/{self.WMO}"
-        api_point = f"{api_server}/floats/{self.WMO}"
+        # api_point = f"{self._eafleetmonitoring_server}/floats/basic/{self.WMO}"
+        api_point = f"{self._eafleetmonitoring_server}/floats/{self.WMO}"
         self._metadata = httpstore(
             cache=self.cache, cachedir=self.cachedir
         ).open_json(api_point)
@@ -46,6 +48,22 @@ class ArgoFloatOnline(ArgoFloatProto):
         self._metadata["deployment"]["launchDate"] = pd.to_datetime(
             self._metadata["deployment"]["launchDate"]
         )
+
+    def load_technicaldata(self):
+        """Load float meta data from Euro-Argo fleet-monitoring API"""
+        # api_point = f"{self._eafleetmonitoring_server}/technical-data/basic/{self.WMO}"
+        api_point = f"{self._eafleetmonitoring_server}/technical-data/{self.WMO}"
+        self._technicaldata = httpstore(
+            cache=self.cache, cachedir=self.cachedir
+        ).open_json(api_point)
+
+    @property
+    def technicaldata(self) -> dict:
+        """A dictionary holding float technical-data, based on the EA fleet-monitoring API json schema
+        """
+        if self._technicaldata is None:
+            self.load_technicaldata()
+        return self._technicaldata
 
     def load_dac(self):
         """Load the DAC short name for this float"""
@@ -59,29 +77,3 @@ class ArgoFloatOnline(ArgoFloatProto):
 
         # For the record, another method to get the DAC name, based on the profile index
         # self._dac = self.idx.search_wmo(self.WMO).read_dac_wmo()[0][0] # Get DAC from Argo index
-
-    def __repr__(self):
-        summary = ["<argofloat.%i.%s>" % (self.WMO, self.host_protocol)]
-        status = "online ✅" if isconnected(self.path, maxtry=1) else "offline 🚫"
-        summary.append("GDAC host: %s [%s]" % (self.host, status))
-        summary.append("DAC name: %s" % self.dac)
-        summary.append("Network(s): %s" % self.metadata['networks'])
-
-        launchDate = self.metadata["deployment"]["launchDate"]
-        today = pd.to_datetime('now', utc=True)
-        summary.append(
-            "Deployment date: %s [%s ago]"
-            % (launchDate, (today-launchDate).days)
-        )
-        summary.append(
-            "Float type and manufacturer: %s [%s]"
-            % (
-                self.metadata["platform"]["type"],
-                self.metadata["maker"],
-            )
-        )
-        summary.append("Number of cycles: %s" % self.N_CYCLES)
-        summary.append("Dashboard: %s" % dashboard(wmo=self.WMO, url_only=True))
-        summary.append("Netcdf dataset available: %s" % list(self.avail_dataset().keys()))
-
-        return "\n".join(summary)
