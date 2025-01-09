@@ -22,21 +22,17 @@ Features and front-end API
     WMO = 6903091
 
     af = ArgoFloat(WMO)  # Use argopy 'gdac' option by default
+    af = ArgoFloat(WMO, host='/home/ref-argo/gdac')  # Use your local GDAC copy
     af = ArgoFloat(WMO, host='https')  # Shortcut for https://data-argo.ifremer.fr
     af = ArgoFloat(WMO, host='ftp')    # shortcut for ftp://ftp.ifremer.fr/ifremer/argo
     af = ArgoFloat(WMO, host='s3')     # Shortcut for s3://argo-gdac-sandbox/pub
-    af = ArgoFloat(WMO, host='/home/ref-argo/gdac')  # Use your local GDAC copy
 
-    # Access GDAC netcdf files content from dac folder for core-deep floats:
-    af.meta # Return xarray dataset with data from: <WMO>_meta.nc
-    af.prof # Return xarray dataset with data from: <WMO>_prof.nc
-    af.tech # Return xarray dataset with data from: <WMO>_tech.nc
-    af.Rtraj # Return xarray dataset with data from: <WMO>_Rtraj.nc
-
-    # Access GDAC netcdf files content from dac folder for BGC floats:
-    af.BRtraj # Return xarray dataset with data from: <WMO>_BRtraj.nc
-    af.Sprof # Return xarray dataset with data from: <WMO>_Sprof.nc
-
+    # List or load any netcdf files from this float:
+    af.list_dataset() # Return a dictionary with all available datasets for this float
+    af.open_dataset('meta') # Return xarray dataset with data from: <WMO>_meta.nc
+    af.open_dataset('prof') # Return xarray dataset with data from: <WMO>_prof.nc
+    af.open_dataset('tech') # Return xarray dataset with data from: <WMO>_tech.nc
+    af.open_dataset('Rtraj') # Return xarray dataset with data from: <WMO>_Rtraj.nc
 
 Internals
 ^^^^^^^^^

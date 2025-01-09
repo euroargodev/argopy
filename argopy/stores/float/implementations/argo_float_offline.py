@@ -11,6 +11,7 @@ log = logging.getLogger("argopy.stores.ArgoFloat")
 
 
 class ArgoFloatOffline(ArgoFloatProto):
+    """Offline :class:`ArgoFloat` implementation"""
     _online = False
 
     def __init__(

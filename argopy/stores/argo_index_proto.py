@@ -84,12 +84,10 @@ class ArgoIndexStoreProto(ABC):
             This parameter takes values like:
 
             - a local absolute path
-            - ``https://data-argo.ifremer.fr``, shortcut=``http``/``https``
-            - ``https://usgodae.org/pub/outgoing/argo``, shortcut=``us-http``/``us-https``
-            - ``ftp://ftp.ifremer.fr/ifremer/argo``, shortcut=``ftp``
-            - ``s3://argo-gdac-sandbox/pub/idx``, shortcut=``s3``/``aws``
-
-            You can also use the following keywords: ``http``/``https``, ``ftp`` and ``s3``/``aws``, respectively.
+            - ``https://data-argo.ifremer.fr``, shortcut with ``http`` or ``https``
+            - ``https://usgodae.org/pub/outgoing/argo``, shortcut with ``us-http`` or ``us-https``
+            - ``ftp://ftp.ifremer.fr/ifremer/argo``, shortcut with ``ftp``
+            - ``s3://argo-gdac-sandbox/pub/idx``, shortcut with ``s3`` or ``aws``
         index_file: str, default: ``ar_index_global_prof.txt``
             Name of the csv-like text file with the index.
 

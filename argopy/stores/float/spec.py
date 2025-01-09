@@ -30,7 +30,29 @@ class ArgoFloatProto(ABC):
         timeout: int = 0,
         **kwargs,
     ):
+        """Create an Argo float store
 
+        Parameters
+        ----------
+        wmo: int or str
+            The float WMO number. It will be validated against the Argo convention and raise an :class:`ValueError` if not compliant.
+        host: str, optional, default: OPTIONS['gdac']
+            Local or remote (http, ftp or s3) path where a ``dac`` folder is to be found (compliant with GDAC structure).
+
+            This parameter takes values like:
+
+            - a local absolute path
+            - ``https://data-argo.ifremer.fr``, shortcut with ``http`` or ``https``
+            - ``https://usgodae.org/pub/outgoing/argo``, shortcut with ``us-http`` or ``us-https``
+            - ``ftp://ftp.ifremer.fr/ifremer/argo``, shortcut with ``ftp``
+            - ``s3://argo-gdac-sandbox/pub``, shortcut with ``s3`` or ``aws``
+        cache : bool, optional, default: False
+            Use cache or not.
+        cachedir: str, optional, default: OPTIONS['cachedir']
+            Folder where to store cached files.
+        timeout: int, optional, default: OPTIONS['api_timeout']
+            Time out in seconds to connect to a remote host (ftp or http).
+        """
         self.WMO = check_wmo(wmo)[0]
         self.host = OPTIONS["gdac"] if host is None else host
         self.cache = bool(cache)
@@ -63,14 +85,16 @@ class ArgoFloatProto(ABC):
 
     @property
     def metadata(self) -> dict:
-        """A dictionary holding float meta-data, based on the EA fleet-monitoring API json schema
+        """A dictionary holding float meta-data
 
         Must return a dict with:
-        self._metadata["deployment"]["launchDate"]  # pd.Datetime
-        self._metadata['cycles']  # list
-        self.metadata['networks']  # list of str
-        self.metadata["platform"]["type"]  # from Reference table 23
-        self.metadata["maker"]  #
+        ```
+            metadata["deployment"]["launchDate"]  # pd.Datetime
+            metadata['cycles']  # list
+            metadata['networks']  # list of str
+            metadata["platform"]["type"]  # str from Reference table 23
+            metadata["maker"]  # str from Reference table 24
+        ```
         """
         if self._metadata is None:
             self.load_metadata()
@@ -103,28 +127,61 @@ class ArgoFloatProto(ABC):
 
     @property
     def path(self) -> str:
-        """Return float path
+        """Return root path for all float datasets
 
         Since path type depends on the host protocol, this property is always a string
         """
         return self.host_sep.join([self.host, "dac", self.dac, "%i" % self.WMO])
 
     def ls(self) -> list:
-        """Return the list of files in float path"""
+        """Return the list of files in float path
+
+        Examples
+        --------
+        >>> ArgoFloat(4902640).ls()
+        ['https://data-argo.ifremer.fr/dac/meds/4902640/4902640_Sprof.nc',
+         'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_meta.nc',
+         'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_prof.nc',
+         'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_tech.nc']
+
+        See Also
+        --------
+        :class:`ArgoFloat.lsprofiles`
+        """
         paths = self.fs.glob(self.host_sep.join([self.path, "*"]))
         paths = [p for p in paths if Path(p).suffix != ""]
         paths.sort()
         return paths
 
     def lsprofiles(self) -> list:
-        """Return the list of files in float profiles path"""
+        """Return the list of files in float profiles path
+
+        See Also
+        --------
+        :class:`ArgoFloat.ls`
+        """
         paths = self.fs.glob(self.host_sep.join([self.path, "profiles", "*"]))
         paths = [p for p in paths if Path(p).suffix != ""]
         paths.sort()
         return paths
 
-    def avail_dataset(self) -> dict:
-        """Dictionary of available dataset for this float"""
+    def list_dataset(self) -> dict:
+        """List all available dataset for this float in a dictionary
+
+        Note that:
+
+        - Dictionary keys are dataset short name to be used with :class:`ArgoFloat.open_dataset`.
+        - Dictionary values hold absolute path toward the dataset file.
+
+        Examples
+        --------
+        >>> ArgoFloat(4902640).list_dataset()
+        {'Sprof': 'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_Sprof.nc',
+         'meta': 'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_meta.nc',
+         'prof': 'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_prof.nc',
+         'tech': 'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_tech.nc'}
+
+        """
         avail = {}
         for file in self.ls():
             filename = file.split(self.host_sep)[-1]
@@ -133,15 +190,28 @@ class ArgoFloatProto(ABC):
                 avail.update({name: file})
         return dict(sorted(avail.items()))
 
-    def open_dataset(self, name: str = "prof", casted: bool = True) -> xr.Dataset:
-        if name not in self.avail_dataset():
+    def open_dataset(self, name: str = "prof", cast: bool = True) -> xr.Dataset:
+        """Open and decode a dataset
+
+        Parameters
+        ----------
+        name: str, optional, default = "prof"
+            Name of the dataset to open. It can be any key from the dictionary returned by :class:`ArgoFloat.list_dataset`.
+        cast: bool, optional, default = True
+            Determine if the dataset variables should be cast or not. This is similar to opening the dataset directly with the :meth:`xr.open_dataset` using the ``engine=`argo``` option.
+
+        Returns
+        -------
+        :class:`xarray.Dataset`
+        """
+        if name not in self.list_dataset():
             raise ValueError(
                 "Dataset '%s' not found. Available dataset for this float are: %s"
-                % (name, self.avail_dataset().keys())
+                % (name, self.list_dataset().keys())
             )
         else:
-            file = self.avail_dataset()[name]
-            xr_opts = {"engine": "argo"} if casted else {}
+            file = self.list_dataset()[name]
+            xr_opts = {"engine": "argo"} if cast else {}
             return self.fs.open_dataset(file, xr_opts=xr_opts)
 
     @property
@@ -153,7 +223,7 @@ class ArgoFloatProto(ABC):
         return len(self.metadata["cycles"])
 
     def describe_profiles(self) -> pd.DataFrame:
-        """Return a :class:`pd.DataFrame` describing profile files"""
+        """Return a :class:`pandas.DataFrame` describing profile files"""
         if self._df_profiles is None:
             prof = []
             for file in self.lsprofiles():
@@ -205,7 +275,7 @@ class ArgoFloatProto(ABC):
         if self._online:
             summary.append("Dashboard: %s" % dashboard(wmo=self.WMO, url_only=True))
         summary.append(
-            "Netcdf dataset available: %s" % list(self.avail_dataset().keys())
+            "Netcdf dataset available: %s" % list(self.list_dataset().keys())
         )
 
         return "\n".join(summary)

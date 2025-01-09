@@ -15,6 +15,7 @@ log = logging.getLogger("argopy.stores.ArgoFloat")
 
 
 class ArgoFloatOnline(ArgoFloatProto):
+    """:class:`ArgoFloat` implementation using web access"""
     _online = True
     _eafleetmonitoring_server = "https://fleetmonitoring.euro-argo.eu"
     _technicaldata = None
@@ -49,7 +50,7 @@ class ArgoFloatOnline(ArgoFloatProto):
         )
 
     def load_technicaldata(self):
-        """Load float meta data from Euro-Argo fleet-monitoring API"""
+        """Load float technical data from Euro-Argo fleet-monitoring API"""
         # api_point = f"{self._eafleetmonitoring_server}/technical-data/basic/{self.WMO}"
         api_point = f"{self._eafleetmonitoring_server}/technical-data/{self.WMO}"
         self._technicaldata = httpstore(
@@ -58,7 +59,7 @@ class ArgoFloatOnline(ArgoFloatProto):
 
     @property
     def technicaldata(self) -> dict:
-        """A dictionary holding float technical-data, based on the EA fleet-monitoring API json schema"""
+        """A dictionary holding float technical data"""
         if self._technicaldata is None:
             self.load_technicaldata()
         return self._technicaldata
