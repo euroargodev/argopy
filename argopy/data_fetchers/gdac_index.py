@@ -21,11 +21,11 @@ log = logging.getLogger("argopy.gdac.index")
 has_pyarrow = importlib.util.find_spec('pyarrow') is not None
 if has_pyarrow:
     from argopy.stores.argo_index_pa import indexstore_pyarrow as indexstore
-    log.debug("Using pyarrow indexstore")
+    # log.debug("Using pyarrow indexstore")
 else:
     from argopy.stores.argo_index_pd import indexstore_pandas as indexstore
     # warnings.warn("Consider installing pyarrow in order to improve performances when fetching GDAC data")
-    log.debug("Using pandas indexstore")
+    # log.debug("Using pandas indexstore")
 
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
