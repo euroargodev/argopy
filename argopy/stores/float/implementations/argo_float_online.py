@@ -33,15 +33,35 @@ class ArgoFloatOnline(ArgoFloatProto):
             )  # Fix s3 anomaly whereby index files are not at the 'dac' level
 
         # Load some data (in a perfect world, this should be done asynchronously):
-        self.load_metadata()  # must come before load_dac
+        self.load_metadata()  # must come before load_dac because DAC is read from eafleetmonitoring metadata
         self.load_dac()
 
+    @property
+    def api_point(self):
+        """Euro-Argo fleet-monitoring API points"""
+        points = {}
+
+        # points['meta'] = f"{self._eafleetmonitoring_server}/floats/basic/{self.WMO}"
+        points['meta'] = f"{self._eafleetmonitoring_server}/floats/{self.WMO}"
+
+        # points['technical'] = f"{self._eafleetmonitoring_server}/technical-data/basic/{self.WMO}"
+        points['technical'] = f"{self._eafleetmonitoring_server}/technical-data/{self.WMO}"
+
+        return points
+
     def load_metadata(self):
-        """Load float meta data from Euro-Argo fleet-monitoring API"""
-        # api_point = f"{self._eafleetmonitoring_server}/floats/basic/{self.WMO}"
-        api_point = f"{self._eafleetmonitoring_server}/floats/{self.WMO}"
+        """Load float meta data from Euro-Argo fleet-monitoring API
+
+        Note
+        ----
+        API point is stored in the :class:`ArgoFloat.api_point` attribute.
+
+        See Also
+        --------
+        :class:`ArgoFloat.load_technicaldata`
+        """
         self._metadata = httpstore(cache=self.cache, cachedir=self.cachedir).open_json(
-            api_point
+            self.api_point['meta']
         )
 
         # Fix data type for some useful keys:
@@ -50,12 +70,19 @@ class ArgoFloatOnline(ArgoFloatProto):
         )
 
     def load_technicaldata(self):
-        """Load float technical data from Euro-Argo fleet-monitoring API"""
-        # api_point = f"{self._eafleetmonitoring_server}/technical-data/basic/{self.WMO}"
-        api_point = f"{self._eafleetmonitoring_server}/technical-data/{self.WMO}"
+        """Load float technical data from Euro-Argo fleet-monitoring API
+
+        Note
+        ----
+        API point is stored in the :class:`ArgoFloat.api_point` attribute.
+
+        See Also
+        --------
+        :class:`ArgoFloat.load_metadata`
+        """
         self._technicaldata = httpstore(
             cache=self.cache, cachedir=self.cachedir
-        ).open_json(api_point)
+        ).open_json(self.api_point['technical'])
 
     @property
     def technicaldata(self) -> dict:

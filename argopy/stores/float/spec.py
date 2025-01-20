@@ -82,6 +82,7 @@ class ArgoFloatProto(ABC):
     def load_index(self):
         """Load the Argo full index in memory and trigger search for this float"""
         self.idx.load().search_wmo(self.WMO)
+        return self
 
     @property
     def metadata(self) -> dict:
@@ -251,7 +252,8 @@ class ArgoFloatProto(ABC):
         return self._df_profiles
 
     def __repr__(self):
-        summary = ["<argofloat.%i.%s>" % (self.WMO, self.host_protocol)]
+        backend = "online" if self._online else "offline"
+        summary = ["<argofloat.%i.%s.%s>" % (self.WMO, self.host_protocol, backend)]
         # status = "online ✅" if isconnected(self.path, maxtry=1) else "offline 🚫"
         # summary.append("GDAC host: %s [%s]" % (self.host, status))
         summary.append("GDAC host: %s" % self.host)

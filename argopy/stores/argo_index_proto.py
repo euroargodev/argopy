@@ -124,6 +124,8 @@ class ArgoIndexStoreProto(ABC):
             host = "https://usgodae.org/pub/outgoing/argo"
         elif str(host).lower() in ["s3", "aws"]:
             host = "s3://argo-gdac-sandbox/pub/idx"
+        elif str(host).lower() in ["s3://argo-gdac-sandbox/pub", "s3://argo-gdac-sandbox/pub/"]:
+            host = "s3://argo-gdac-sandbox/pub/idx"  # Fix s3 anomaly whereby index files are not at the 'dac' level
         self.host = host
 
         # Catchup keyword for the main profile index files:
