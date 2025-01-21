@@ -135,7 +135,7 @@ jobs:
         uses: codecov/codecov-action@v5.1.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./cov.xml
+          files: ./cov.xml
           flags: unittests, core, pinned, py${{matrix.python-version}}
           name: codecov-github
           fail_ci_if_error: false
@@ -264,7 +264,7 @@ jobs:
         uses: codecov/codecov-action@v5.1.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./cov.xml
+          files: ./cov.xml
           flags: unittests, all, pinned, py${{matrix.python-version}}
           name: codecov-github
           fail_ci_if_error: false
