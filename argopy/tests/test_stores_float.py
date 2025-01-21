@@ -2,6 +2,7 @@ import pytest
 import tempfile
 
 import xarray as xr
+import pandas as pd
 import importlib
 import shutil
 import logging
@@ -50,6 +51,10 @@ class Test_FloatStore_Offline():
     @pytest.mark.parametrize("wmo", VALID_WMO, indirect=False)
     def test_init(self, wmo):
         ArgoFloatOffline(wmo, host=self.host)
+
+    def test_dac_notfound(self):
+        with pytest.raises(ValueError):
+            ArgoFloatOffline(123456, host=self.host)
 
 
 def id_for_host(host):
@@ -137,11 +142,19 @@ class Test_FloatStore_Online():
         yield self.get_a_floatstore(wmo, host=host, cache=cache, xfail=xfail, reason=reason)
 
     def assert_float(self, this_af):
+        assert isinstance(this_af.load_index(), ArgoFloatOnline)
+
         assert hasattr(this_af, "dac")
         assert isinstance(this_af.dac, str)
 
         assert hasattr(this_af, "metadata")
         assert isinstance(this_af.metadata, dict)
+
+        assert hasattr(this_af, "technicaldata")
+        assert isinstance(this_af.technicaldata, dict)
+
+        assert hasattr(this_af, "api_point")
+        assert isinstance(this_af.api_point, dict)
 
         assert isinstance(this_af.N_CYCLES, int)
         assert isinstance(this_af.path, str)
@@ -150,20 +163,17 @@ class Test_FloatStore_Online():
 
         assert isinstance(this_af.list_dataset(), dict)
         assert is_list_of_strings(this_af.ls())
+
         assert is_list_of_strings(this_af.lsprofiles())
+        assert isinstance(this_af.describe_profiles(), pd.DataFrame)
 
     def assert_open_dataset(self, this_af):
         lds = this_af.list_dataset()
-        log.debug(lds)
         dsname, _ = random.choice(list(lds.items()))
-        log.info(dsname)
         assert isinstance(this_af.open_dataset(dsname), xr.Dataset)
 
         with pytest.raises(ValueError):
             this_af.open_dataset('dummy_dsname')
-
-        log.debug(this_af.ls())
-
 
     #########
     # TESTS #
