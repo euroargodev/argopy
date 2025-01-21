@@ -353,12 +353,12 @@ class filestore(argo_store_proto):
         return js
 
     def open_dataset(self, path, *args, **kwargs):
-        """Return a xarray.dataset from a path.
+        """Return a :class:`xarray.Dataset` from a path.
 
         Parameters
         ----------
         path: str
-            Path to resources passed to xarray.open_dataset
+            Path to resources passed to :func:`xarray.open_dataset`
         *args, **kwargs:
             Other arguments are passed to :func:`xarray.open_dataset`
 
