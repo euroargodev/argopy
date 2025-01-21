@@ -966,12 +966,14 @@ class Lister:
             af = ArgoFloat(wmo, host='https')
             this_URI.commit(self.dfile(af.path, "html"))
 
+            uri = af.host_sep.join([af.path, "profiles"])
+            this_URI.commit(self.dfile(uri, "html"))
+
             for key, uri in af.list_dataset().items():
                 this_URI.commit(self.dfile(uri, "nc"))
 
             for key, uri in af.api_point.items():
                 this_URI.commit(self.dfile(uri, "json"))
-
 
         return self.respond(this_URI)
 

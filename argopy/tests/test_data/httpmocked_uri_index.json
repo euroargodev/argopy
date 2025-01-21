@@ -1,5 +1,33 @@
 [
     {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles",
+        "ext": "html",
+        "sha": "544c5df84f127374f13fb2a59021c0ddc9bedf1b2b907e18d6aefc700985e5a2",
+        "type": "text/html",
+        "ts": "2025-01-21 14:17:52"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles",
+        "ext": "html",
+        "sha": "d35e61aaf352b2f52b0e44d85870fe699c85fc95d1e352ccdb2fc6f24ea441c6",
+        "type": "text/html",
+        "ts": "2025-01-21 14:17:54"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/*",
+        "ext": "html",
+        "sha": "8f1567bf9c0f6048c62e352e57cade754feff0d2045de01294cb6e1d81bd8687",
+        "type": "text/html",
+        "ts": "2025-01-21 13:47:23"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/*",
+        "ext": "html",
+        "sha": "bb5a9fd818ef19db095fa517897eeef5e3819f21fccfdb57d4c662d951c8c84f",
+        "type": "text/html",
+        "ts": "2025-01-21 13:47:30"
+    },
+    {
         "uri": "https://data-argo.ifremer.fr/dac/aoml/13857",
         "ext": "html",
         "sha": "d7acaf5803ffb65742b99b73ac298305caae3af24128a851578871d394cbdb4f",
