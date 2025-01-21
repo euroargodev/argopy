@@ -1700,6 +1700,14 @@ class ftpstore(httpstore):
             # except aiohttp.ClientResponseError as e:
             raise
 
+        if data[0:3] != b"CDF" and data[0:3] != b"\x89HD":
+            raise TypeError(
+                "We didn't get a CDF or HDF5 binary data as expected ! We get: %s"
+                % data
+            )
+        if data[0:3] == b"\x89HD":
+            data = io.BytesIO(data)
+
         xr_opts = {}
         if "xr_opts" in kwargs:
             xr_opts.update(kwargs["xr_opts"])
