@@ -9,11 +9,11 @@ import pytest
 import xarray as xr
 from utils import (
     requires_erddap,
+    create_temp_folder,
 )
 from mocked_http import mocked_server_address
 from mocked_http import mocked_httpserver as mocked_erddapserver
 
-import tempfile
 import shutil
 from collections import ChainMap
 
@@ -149,7 +149,7 @@ class Test_Backend:
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
-        self.cachedir = tempfile.mkdtemp()
+        self.cachedir = create_temp_folder().folder
 
     def _setup_fetcher(self, this_request, cached=False, parallel=False):
         """Helper method to set up options for a fetcher creation"""

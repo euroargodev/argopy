@@ -136,7 +136,7 @@ class TestBackend:
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
-        self.cachedir = tempfile.mkdtemp()
+        self.cachedir = create_temp_folder().folder
 
     def _patch_gdac(self, gdac):
         """Patch Mocked FTP server keyword"""
