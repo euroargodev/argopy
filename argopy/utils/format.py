@@ -29,7 +29,7 @@ def format_oneline(s, max_width=65):
 def argo_split_path(this_path):  # noqa C901
     """Split path from a GDAC ftp style Argo netcdf file and return information
 
-    >>> argo_split_path('coriolis/6901035/profiles/D6901035_001D.nc')
+    >>> argo_split_path('/dac/coriolis/6901035/profiles/D6901035_001D.nc')
     >>> argo_split_path('https://data-argo.ifremer.fr/dac/csiro/5903939/profiles/D5903939_103.nc')
 
     Parameters
@@ -112,13 +112,8 @@ def argo_split_path(this_path):  # noqa C901
     output["origin"] = [
         origin for origin in known_origins if start_with(this_path, origin)
     ][0]
-    print(output["origin"])
-
     output["origin"] = "." if output["origin"] == "" else output["origin"] + "/"
-    print(output["origin"])
-
     sep = "/" if output["origin"] != "." else detect_path_separator(this_path)
-    print(sep)
 
     (path, file) = split_path(this_path, sep=sep)
 
@@ -130,20 +125,14 @@ def argo_split_path(this_path):  # noqa C901
     # dac/<DAC>/<FloatWmoID>/profiles
     path_parts = path.split(sep)
 
-    print("this_path:", this_path)
-    print("path:", path)
-    print("sep:", sep)
-    print("path_parts:", path_parts)
-    print("output:", output)
-
     try:
+        # Adjust origin and path for local files:
+        # This ensures that output['path'] is agnostic to users and can be reused on any gdac compliant architecture
         output["origin"] = sep.join(path_parts[0:path_parts.index('dac')])
-        print(output["origin"])
         output["origin"] = sep if output["origin"] == "" else output['origin']
-        print(output["origin"])
-
         output["path"] = sep.join(path_parts[path_parts.index('dac'):])
 
+        # Extract file information
         if path_parts[-1] == "profiles":
             output["type"] = "Mono-cycle profile file"
             output["wmo"] = path_parts[-2]
@@ -158,7 +147,6 @@ def argo_split_path(this_path):  # noqa C901
         log.warning(sep)
         log.warning(path_parts)
         log.warning(output)
-        print("output:", output)
         raise
 
     if output["dac"] not in dacs:
