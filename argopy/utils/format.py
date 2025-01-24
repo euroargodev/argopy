@@ -59,6 +59,25 @@ def argo_split_path(this_path):  # noqa C901
         lambda f, x: f[0 : len(x)] == x if len(x) <= len(f) else False
     )  # noqa: E731
 
+    def detect_path_separator(path):
+        """
+        Determines the file path separator used in a given path string.
+
+        Args:
+            path (str): The path string to analyze.
+
+        Returns:
+            str: The detected file path separator, or None if no valid separator is found.
+        """
+        # Check for the default OS separator
+        if os.sep in path:
+            return os.sep
+        # Check for the alternative separator, if it exists (e.g., '/' on Windows)
+        if os.altsep and os.altsep in path:
+            return os.altsep
+        # No separator detected
+        return None
+
     def split_path(p, sep="/"):
         """Split a pathname.  Returns tuple "(head, tail)" where "tail" is
         everything after the final slash.  Either part may be empty."""
@@ -98,9 +117,8 @@ def argo_split_path(this_path):  # noqa C901
     output["origin"] = "." if output["origin"] == "" else output["origin"] + "/"
     print(output["origin"])
 
-    sep = "/" if output["origin"] != "." else os.path.sep
+    sep = "/" if output["origin"] != "." else detect_path_separator(this_path)
     print(sep)
-    print('os.path.sep', os.path.sep)
 
     (path, file) = split_path(this_path, sep=sep)
 
