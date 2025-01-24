@@ -50,7 +50,7 @@ class ArgoFloatOnline(ArgoFloatProto):
         return points
 
     def load_metadata(self):
-        """Load float meta data from Euro-Argo fleet-monitoring API
+        """Load float metadata from Euro-Argo fleet-monitoring API
 
         Note
         ----
