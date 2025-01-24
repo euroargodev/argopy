@@ -68,13 +68,16 @@ jobs:
           micromamba list
 
       - name: Test 1
+        continue-on-error: true
         run: |
           python -c "import argopy; print(argopy.utils.format.argo_split_path('/dac/coriolis/3902131/profiles/BD3902131_001.nc'))"
 
       - name: Test 2
+        continue-on-error: true
         run: |
           python -c "import argopy; print(argopy.utils.format.argo_split_path('C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/profiles/R13857_001.nc'))"
 
       - name: Test 3
+        continue-on-error: true
         run: |
           python -c "import argopy; print(argopy.utils.format.argo_split_path('s3://argo-gdac-sandbox/pub/dac/aoml/13857/profiles/R13857_001.nc'))"
