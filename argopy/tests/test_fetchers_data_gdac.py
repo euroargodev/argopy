@@ -7,7 +7,6 @@ to make more explicit the full list of scenario tested.
 import xarray as xr
 
 import pytest
-import tempfile
 import shutil
 from urllib.parse import urlparse
 import logging
@@ -19,7 +18,7 @@ from argopy.errors import (
     CacheFileNotFound,
 )
 from argopy.utils.checkers import is_list_of_strings, check_gdac_path
-from utils import requires_gdac
+from utils import requires_gdac, create_temp_folder
 from mocked_http import mocked_httpserver
 from mocked_http import mocked_server_address as MOCKHTTP
 
