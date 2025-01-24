@@ -88,14 +88,19 @@ def argo_split_path(this_path):  # noqa C901
         "",
     ]
 
+    # Check if this is a path with a known "origin":
+    # If not, fills value with an empty string ""
     output["origin"] = [
         origin for origin in known_origins if start_with(this_path, origin)
     ][0]
     print(output["origin"])
+
     output["origin"] = "." if output["origin"] == "" else output["origin"] + "/"
     print(output["origin"])
+
     sep = "/" if output["origin"] != "." else os.path.sep
     print(sep)
+    print('os.path.sep', os.path.sep)
 
     (path, file) = split_path(this_path, sep=sep)
 
