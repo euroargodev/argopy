@@ -415,6 +415,15 @@ class filestore(argo_store_proto):
             """
             try:
                 data = self.fs.cat_file(path)
+
+                if data[0:3] != b"CDF" and data[0:3] != b"\x89HD":
+                    raise TypeError(
+                        "We didn't get a CDF or HDF5 binary data as expected ! We get: %s"
+                        % data
+                    )
+                if data[0:3] == b"\x89HD":
+                    data = io.BytesIO(data)
+
                 return data, None
             except FileNotFoundError as e:
                 if errors == "raise":
