@@ -153,6 +153,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 ("xarray", get_version),
                 ("scipy", get_version),
                 ("netCDF4", get_version),
+                ("h5netcdf", get_version),
                 ("erddapy", get_version),
                 ("fsspec", get_version),
                 ("aiohttp", get_version),
@@ -179,7 +180,6 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
             [
                 ("dask", get_version),
                 ("distributed", get_version),
-                ("h5netcdf", get_version),
                 ("pyarrow", get_version),
             ]
         ),

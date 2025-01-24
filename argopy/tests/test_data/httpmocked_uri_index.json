@@ -1,5 +1,124 @@
 [
     {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles",
+        "ext": "html",
+        "sha": "544c5df84f127374f13fb2a59021c0ddc9bedf1b2b907e18d6aefc700985e5a2",
+        "type": "text/html",
+        "ts": "2025-01-21 14:17:52"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles",
+        "ext": "html",
+        "sha": "d35e61aaf352b2f52b0e44d85870fe699c85fc95d1e352ccdb2fc6f24ea441c6",
+        "type": "text/html",
+        "ts": "2025-01-21 14:17:54"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/profiles/*",
+        "ext": "html",
+        "sha": "8f1567bf9c0f6048c62e352e57cade754feff0d2045de01294cb6e1d81bd8687",
+        "type": "text/html",
+        "ts": "2025-01-21 13:47:23"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/profiles/*",
+        "ext": "html",
+        "sha": "bb5a9fd818ef19db095fa517897eeef5e3819f21fccfdb57d4c662d951c8c84f",
+        "type": "text/html",
+        "ts": "2025-01-21 13:47:30"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857",
+        "ext": "html",
+        "sha": "d7acaf5803ffb65742b99b73ac298305caae3af24128a851578871d394cbdb4f",
+        "type": "text/html",
+        "ts": "2025-01-20 15:28:52"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131",
+        "ext": "html",
+        "sha": "18681071592841fa62164a559a91a17c16477cf90d2c4691f6f20fa5a5e02eb7",
+        "type": "text/html",
+        "ts": "2025-01-20 15:28:52"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/13857_Rtraj.nc",
+        "ext": "nc",
+        "sha": "d1c110689797cd038cd0945393b4141c915560942904e0eb94e227c28a2a9404",
+        "type": "application/x-netcdf",
+        "ts": "2025-01-20 15:17:22"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/13857_meta.nc",
+        "ext": "nc",
+        "sha": "21b7a7ec279fb24d3c8c9aa190bc898b73e370075a7553d65733651a81b574af",
+        "type": "application/x-netcdf",
+        "ts": "2025-01-20 15:17:22"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/aoml/13857/13857_tech.nc",
+        "ext": "nc",
+        "sha": "b637505d3747c02ac9545ee4d05b0bcc2c4debaa04a57577ba49976e6c2ab8a4",
+        "type": "application/x-netcdf",
+        "ts": "2025-01-20 15:17:22"
+    },
+    {
+        "uri": "https://fleetmonitoring.euro-argo.eu/floats/13857",
+        "ext": "json",
+        "sha": "1f471549c84b8db67081b8d8c997590ce1331b24ea16583c2ccd0ddfe1c585bc",
+        "type": "application/json",
+        "ts": "2025-01-20 15:17:22"
+    },
+    {
+        "uri": "https://fleetmonitoring.euro-argo.eu/technical-data/13857",
+        "ext": "json",
+        "sha": "0c67facbeddab9ddaaf05054a1295c1f15c860e790f0fad83d25a7dd56f9cd58",
+        "type": "application/json",
+        "ts": "2025-01-20 15:17:22"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/3902131_Rtraj.nc",
+        "ext": "nc",
+        "sha": "e01267a37bd0c920e27f82ac22fea1205fd03dc394a51f4e080d767751480ac6",
+        "type": "application/x-netcdf",
+        "ts": "2025-01-20 15:17:23"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/3902131_meta.nc",
+        "ext": "nc",
+        "sha": "b3bb4cea2154595b78802f773418cc997b3d947f14dfcf0db3ebdcb5ca2ef57f",
+        "type": "application/x-netcdf",
+        "ts": "2025-01-20 15:17:23"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/3902131_prof.nc",
+        "ext": "nc",
+        "sha": "599048cf23aff02aa11ff30ed26204bb1cb0754fda914c7a936203289756c414",
+        "type": "application/x-netcdf",
+        "ts": "2025-01-20 15:17:23"
+    },
+    {
+        "uri": "https://data-argo.ifremer.fr/dac/coriolis/3902131/3902131_tech.nc",
+        "ext": "nc",
+        "sha": "d1e615fa5d2e52b4e0442ff008775a5a141eae5ae31313df8d690569d0a8f66c",
+        "type": "application/x-netcdf",
+        "ts": "2025-01-20 15:17:23"
+    },
+    {
+        "uri": "https://fleetmonitoring.euro-argo.eu/floats/3902131",
+        "ext": "json",
+        "sha": "8b63c8b6ff2237dd247aad286e488c3cfdbb61bda01dc484cfea3f75e30c4394",
+        "type": "application/json",
+        "ts": "2025-01-20 15:17:23"
+    },
+    {
+        "uri": "https://fleetmonitoring.euro-argo.eu/technical-data/3902131",
+        "ext": "json",
+        "sha": "822b054a42bbcc46d2e05d0c94c019ca105cab470733eff36d62740abc130c02",
+        "type": "application/json",
+        "ts": "2025-01-20 15:17:23"
+    },
+    {
         "uri": "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-synthetic-BGC.nc?config_mission_number,cycle_number,direction,doxy_adjusted,doxy_adjusted_error,doxy_adjusted_qc,latitude,longitude,platform_number,position_qc,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,time,time_qc&longitude>=-55.0&longitude<=-53.0&latitude>=55&latitude<=57&pres_adjusted>=0&pres_adjusted<=10&time>=1666085760.0&time<=1673447040.0&pres_adjusted!=NaN&temp_adjusted!=NaN&psal_adjusted!=NaN&latitude!=NaN&longitude!=NaN&distinct()&orderBy(\"time,pres_adjusted\")",
         "ext": "nc",
         "sha": "9e04eda9627b0b696b8c13b7c6104a20c1355eebe5c2bd63850f9e920a00ede4",

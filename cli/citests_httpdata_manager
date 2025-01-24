@@ -31,6 +31,8 @@ Use this script to download all possible tests data to be used by the local http
 >>> citests_httpdata_manager -a download -t github
 >>> citests_httpdata_manager -a download -t altim
 
+>>> citests_httpdata_manager -a download -t argofloat
+
 
 If some downloads (eg erddap) are difficult:
 >>> citests_httpdata_manager -t erddap_bgc -a check  # Delete files raising errors
@@ -62,7 +64,7 @@ import glob
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import argopy
-from argopy import DataFetcher, clear_cache
+from argopy import DataFetcher, clear_cache, ArgoFloat
 from argopy.related import (
     TopoFetcher,
     OceanOPSDeployments,
@@ -114,6 +116,7 @@ DEFAULT_TARGETS = [
     "ifremer_api",
     "github",
     "altim",
+    "argofloat",
 ]
 
 
@@ -186,6 +189,7 @@ def setup_args():
             "ea_dataselection",
             "ifremer_api",
             "github",
+            "argofloat",
         ]
 
     parser.add_argument(
@@ -951,6 +955,25 @@ class Lister:
         for uri in uris:
             file_extension = uri.split(".")[-1]
             this_URI.commit(self.dfile("%s/%s" % (repo, uri), file_extension))
+
+        return self.respond(this_URI)
+
+    @property
+    def argofloat(self):
+        this_URI = UriRegistry(name="argofloat")
+
+        for wmo in [13857, 3902131]:
+            af = ArgoFloat(wmo, host='https')
+            this_URI.commit(self.dfile(af.path, "html"))
+
+            uri = af.host_sep.join([af.path, "profiles"])
+            this_URI.commit(self.dfile(uri, "html"))
+
+            for key, uri in af.list_dataset().items():
+                this_URI.commit(self.dfile(uri, "nc"))
+
+            for key, uri in af.api_point.items():
+                this_URI.commit(self.dfile(uri, "json"))
 
         return self.respond(this_URI)
 

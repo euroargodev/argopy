@@ -6,6 +6,7 @@ import xarray as xr
 import importlib
 import json
 import logging
+from copy import deepcopy
 
 
 log = logging.getLogger("argopy.utils.casting")
@@ -178,7 +179,11 @@ def cast_Argo_variable_type(ds, overwrite=True):
     for v in ds.variables:
         if overwrite or ("casted" in ds[v].attrs and ds[v].attrs["casted"] == 0):
             try:
+                attrs = deepcopy(ds[v].attrs)
                 ds[v] = cast_this_da(ds[v], v)
+                casted_result = ds[v].attrs['casted']
+                ds[v].attrs = attrs
+                ds[v].attrs.update({'casted': casted_result})
             except Exception:
                 print("Oops!", sys.exc_info()[0], "occurred.")
                 print("Fail to cast: %s " % v)

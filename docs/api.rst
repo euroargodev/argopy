@@ -87,6 +87,7 @@ Utilities for Argo related data
 
    status
    ArgoIndex
+   ArgoFloat
    ArgoDocs
    ArgoDOI
    ArgoNVSReferenceTables
@@ -275,8 +276,8 @@ File systems
     stores.httpstore_erddap_auth
     stores.s3store
 
-Argo index store
-----------------
+Argo index and float stores
+---------------------------
 
 .. autosummary::
     :toctree: generated/
@@ -284,6 +285,7 @@ Argo index store
     ArgoIndex
     stores.indexstore_pa
     stores.indexstore_pd
+    ArgoFloat
 
 Fetcher sources
 ---------------
