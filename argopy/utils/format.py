@@ -104,6 +104,12 @@ def argo_split_path(this_path):  # noqa C901
     # dac/<DAC>/<FloatWmoID>/profiles
     path_parts = path.split(sep)
 
+    print("this_path:", this_path)
+    print("path:", path)
+    print("sep:", sep)
+    print("path_parts:", path_parts)
+    print("output:", output)
+
     try:
         if path_parts[-1] == "profiles":
             output["type"] = "Mono-cycle profile file"
@@ -119,10 +125,6 @@ def argo_split_path(this_path):  # noqa C901
         log.warning(sep)
         log.warning(path_parts)
         log.warning(output)
-        print("this_path:", this_path)
-        print("path:", path)
-        print("sep:", sep)
-        print("path_parts:", path_parts)
         print("output:", output)
         raise
 
