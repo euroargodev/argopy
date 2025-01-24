@@ -1,12 +1,9 @@
 name: Debug windows
 
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch: # allows you to trigger the workflow run manually
   pull_request:
-    branches-ignore:
-      - 'dependabot*'
+    types: [synchronize]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -19,9 +16,8 @@ permissions:
 jobs:
   core-pinned:
 
-    name: Core - Pinned - Py${{matrix.python-version}} - ${{ matrix.os }}
+    name: Core - Pinned - Py${{matrix.python-version}}
     runs-on: ${{ matrix.os }}
-    if: needs.detect-ci-skip.outputs.skipped == 'false'
     defaults:
       run:
         shell: bash -l {0}
