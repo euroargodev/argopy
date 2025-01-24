@@ -86,16 +86,19 @@ class ArgoFloatProto(ABC):
 
     @property
     def metadata(self) -> dict:
-        """A dictionary holding float meta-data
+        """A dictionary of float meta-data
 
-        Must return a dict with:
-        ```
+        The meta-data dictionary will have at least the following keys:
+
+        .. code-block:: python
             metadata["deployment"]["launchDate"]  # pd.Datetime
             metadata['cycles']  # list
-            metadata['networks']  # list of str
+            metadata['networks']  # list of str, eg ['BGC', 'DEEP']
             metadata["platform"]["type"]  # str from Reference table 23
             metadata["maker"]  # str from Reference table 24
-        ```
+
+        The exact dictionary content depends on the :class:`ArgoFloat` backend (online vs offline) providing meta-data.
+
         """
         if self._metadata is None:
             self.load_metadata()
