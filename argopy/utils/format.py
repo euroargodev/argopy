@@ -213,25 +213,6 @@ def argo_split_path(this_path):  # noqa C901
             else:
                 output["data_mode"] = "R, Real-time data (implicit)"
 
-    # Adjust origin and path for local files:
-    # This ensures that output['path'] is agnostic to users and can be reused on any gdac compliant architecture
-    # parts = path.split(sep)
-    # i, stop = len(parts) - 1, False
-    # while not stop:
-    #     if (
-    #         parts[i] == "profiles"
-    #         or parts[i] == output["wmo"]
-    #         or parts[i] == output["dac"]
-    #         or parts[i] == "dac"
-    #     ):
-    #         i = i - 1
-    #         if i < 0:
-    #             stop = True
-    #     else:
-    #         stop = True
-    # output["origin"] = sep.join(parts[0 : i + 1])
-    # output["path"] = output["path"].replace(output["origin"], "")
-
     return dict(sorted(output.items()))
 
 
