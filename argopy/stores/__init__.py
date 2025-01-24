@@ -9,6 +9,8 @@ from .argo_index_pa import indexstore_pyarrow as indexstore_pa
 from .argo_index_pd import indexstore_pandas as indexstore_pd
 
 from .argo_index import ArgoIndex
+from .float.argo_float import ArgoFloat
+
 
 from .kerchunker import ArgoKerchunker
 
@@ -16,6 +18,7 @@ from .kerchunker import ArgoKerchunker
 __all__ = (
     # Classes:
     "ArgoIndex",
+    "ArgoFloat",
     "indexstore_pa",
     "indexstore_pd",
     "filestore",

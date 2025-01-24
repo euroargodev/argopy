@@ -22,6 +22,37 @@ Features and front-end API
     with argopy.set_options(gdac='s3://argo-gdac-sandbox/pub'):
         ds = DataFetcher(src='gdac').float(6903091).to_xarray()
 
+- **New** :class:`ArgoFloat` **store for Argo netcdf file load/read operation**. Whatever the Argo netcdf file location, local or remote, you can now delegate to argopy the burden of transfer protocol and GDAC paths handling. This store is primarily intended to be used by third party libraries or in workflow by operators and experts. (:pr:`429`) by |gmaze|.
+
+Just kick in the float WMO and trigger :class:`ArgoFloat.open_dataset` !
+
+.. code-block:: python
+
+    from argopy import ArgoFloat
+    ds = ArgoFloat(6903091).open_dataset('prof')
+
+With more details:
+
+.. code-block:: python
+
+    from argopy import ArgoFloat
+    WMO = 6903091
+
+    af = ArgoFloat(WMO)  # Use argopy 'gdac' option by default
+    af = ArgoFloat(WMO, host='/home/ref-argo/gdac')  # Use your local GDAC copy
+    af = ArgoFloat(WMO, host='https')  # Shortcut for https://data-argo.ifremer.fr
+    af = ArgoFloat(WMO, host='ftp')    # shortcut for ftp://ftp.ifremer.fr/ifremer/argo
+    af = ArgoFloat(WMO, host='s3')     # Shortcut for s3://argo-gdac-sandbox/pub
+
+    # Load any netcdf files from this float:
+    ds = af.open_dataset('meta') # load <WMO>_meta.nc
+    ds = af.open_dataset('prof') # load <WMO>_prof.nc
+    ds = af.open_dataset('tech') # load <WMO>_tech.nc
+    ds = af.open_dataset('Rtraj') # load <WMO>_Rtraj.nc
+
+    # List all available datasets for this float:
+    af.list_dataset()
+
 Internals
 ^^^^^^^^^
 

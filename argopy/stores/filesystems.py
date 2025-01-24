@@ -394,11 +394,13 @@ class filestore(argo_store_proto):
         path: str
             The local path of the netcdf file to open
 
+        errors:
+    
         lazy: bool, default=False
             Define if we should try to open the netcdf dataset lazily or not
 
-        *args, **kwargs:
-            Other arguments are passed to :func:`xarray.open_dataset`
+        xr_opts:
+            Arguments to be passed to :func:`xarray.open_dataset`
 
         Returns
         -------
@@ -1906,6 +1908,14 @@ class ftpstore(httpstore):
             log.debug("Error with: %s" % url)
             # except aiohttp.ClientResponseError as e:
             raise
+
+        if data[0:3] != b"CDF" and data[0:3] != b"\x89HD":
+            raise TypeError(
+                "We didn't get a CDF or HDF5 binary data as expected ! We get: %s"
+                % data
+            )
+        if data[0:3] == b"\x89HD":
+            data = io.BytesIO(data)
 
         xr_opts = {}
         if "xr_opts" in kwargs:

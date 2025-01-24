@@ -66,7 +66,7 @@ class ArgoIndexStoreProto(ABC):
 
     def __init__(
         self,
-        host: str = "https://data-argo.ifremer.fr",
+        host: str = None,
         index_file: str = "ar_index_global_prof.txt",
         convention: str = None,
         cache: bool = False,
@@ -74,21 +74,20 @@ class ArgoIndexStoreProto(ABC):
         timeout: int = 0,
         **kwargs,
     ):
-        """Create an Argo index file store
+        """Create an Argo index store
 
         Parameters
         ----------
-        host: str, default: ``https://data-argo.ifremer.fr``
-            Local or remote (ftp, https or s3) path to a `dac` folder (GDAC structure compliant).
+        host: str, optional, default=OPTIONS["gdac"]
+            Local or remote (http, ftp or s3) path to a `dac` folder (compliant with GDAC structure).
 
             This parameter takes values like:
 
-            - ``https://data-argo.ifremer.fr``
-            - ``ftp://ftp.ifremer.fr/ifremer/argo``
-            - ``s3://argo-gdac-sandbox/pub/idx``
             - a local absolute path
-
-            You can also use the following keywords: ``http``/``https``, ``ftp`` and ``s3``/``aws``, respectively.
+            - ``https://data-argo.ifremer.fr``, shortcut with ``http`` or ``https``
+            - ``https://usgodae.org/pub/outgoing/argo``, shortcut with ``us-http`` or ``us-https``
+            - ``ftp://ftp.ifremer.fr/ifremer/argo``, shortcut with ``ftp``
+            - ``s3://argo-gdac-sandbox/pub/idx``, shortcut with ``s3`` or ``aws``
         index_file: str, default: ``ar_index_global_prof.txt``
             Name of the csv-like text file with the index.
 
@@ -114,14 +113,19 @@ class ArgoIndexStoreProto(ABC):
         timeout: int,  default: OPTIONS['api_timeout']
             Time out in seconds to connect to a remote host (ftp or http).
         """
+        host = OPTIONS["gdac"] if host is None else host
 
         # Catchup keywords for host:
         if host.lower() in ["ftp"]:
             host = "ftp://ftp.ifremer.fr/ifremer/argo"
-        elif host.lower() in ["http", "https"]:
+        elif str(host).lower() in ["http", "https", "fr-http", "fr-https"]:
             host = "https://data-argo.ifremer.fr"
-        elif host.lower() in ["s3", "aws"]:
+        elif str(host).lower() in ["us-http", "us-https"]:
+            host = "https://usgodae.org/pub/outgoing/argo"
+        elif str(host).lower() in ["s3", "aws"]:
             host = "s3://argo-gdac-sandbox/pub/idx"
+        elif str(host).lower() in ["s3://argo-gdac-sandbox/pub", "s3://argo-gdac-sandbox/pub/"]:
+            host = "s3://argo-gdac-sandbox/pub/idx"  # Fix s3 anomaly whereby index files are not at the 'dac' level
         self.host = host
         self.root = host  # Will be used by the .uri properties, this is introduced to deal with index files not on the same root as DAC folders
 

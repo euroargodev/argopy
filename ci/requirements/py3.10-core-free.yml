@@ -9,6 +9,7 @@ dependencies:
   - decorator
   - erddapy
   - fsspec
+  - h5netcdf
   - netCDF4
   - packaging
   - requests
