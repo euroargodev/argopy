@@ -18,6 +18,7 @@ from argopy.errors import (
 )
 from argopy.utils.checkers import is_list_of_strings
 from argopy.stores.argo_index_pd import indexstore_pandas
+from utils import create_temp_folder
 from mocked_http import mocked_httpserver, mocked_server_address
 
 log = logging.getLogger("argopy.tests.indexstores")
@@ -173,7 +174,7 @@ class IndexStore_test_proto:
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
-        self.cachedir = tempfile.mkdtemp()
+        self.cachedir = create_temp_folder().folder
 
     def teardown_class(self):
         """Cleanup once we are finished."""

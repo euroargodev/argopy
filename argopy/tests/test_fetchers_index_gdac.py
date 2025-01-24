@@ -1,7 +1,6 @@
 import pandas as pd
 
 import pytest
-import tempfile
 import shutil
 from urllib.parse import urlparse
 import logging
@@ -14,7 +13,7 @@ from argopy.errors import (
     GdacPathError
 )
 from argopy.utils.checkers import isconnected, is_list_of_strings
-from utils import requires_gdac
+from utils import requires_gdac, create_temp_folder
 from mocked_http import mocked_httpserver, mocked_server_address
 
 
@@ -120,7 +119,7 @@ class TestBackend:
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
-        self.cachedir = tempfile.mkdtemp()
+        self.cachedir = create_temp_folder().folder
 
     def _patch_gdac(self, gdac):
         """Patch Mocked FTP server keyword"""
