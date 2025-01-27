@@ -59,13 +59,16 @@ class ArgoFloatProto(ABC):
         self.cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
         self.timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
 
-        self.idx = ArgoIndex(
-            index_file="core",
-            host=self.host,
-            cache=self.cache,
-            cachedir=self.cachedir,
-            timeout=self.timeout,
-        )
+        if "idx" not in kwargs:
+            self.idx = ArgoIndex(
+                index_file="core",
+                host=self.host,
+                cache=self.cache,
+                cachedir=self.cachedir,
+                timeout=self.timeout,
+            )
+        else:
+            self.idx = kwargs["idx"]
 
         self.host = self.idx.host  # Fix host shortcuts with correct values
         self.fs = self.idx.fs["src"]
@@ -91,6 +94,7 @@ class ArgoFloatProto(ABC):
         The meta-data dictionary will have at least the following keys:
 
         .. code-block:: python
+
             metadata["deployment"]["launchDate"]  # pd.Datetime
             metadata['cycles']  # list
             metadata['networks']  # list of str, eg ['BGC', 'DEEP']
@@ -117,6 +121,8 @@ class ArgoFloatProto(ABC):
     @property
     def dac(self) -> str:
         """Name of the DAC responsible for this float"""
+        if self._dac is None:
+            self.load_dac()
         return self._dac
 
     @property

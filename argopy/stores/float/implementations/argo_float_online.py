@@ -33,8 +33,8 @@ class ArgoFloatOnline(ArgoFloatProto):
             )  # Fix s3 anomaly whereby index files are not at the 'dac' level
 
         # Load some data (in a perfect world, this should be done asynchronously):
-        self.load_metadata()  # must come before load_dac because DAC is read from eafleetmonitoring metadata
-        self.load_dac()
+        # self.load_metadata()  # must come before load_dac because DAC is read from eafleetmonitoring metadata
+        # self.load_dac()
 
     @property
     def api_point(self):
@@ -95,7 +95,7 @@ class ArgoFloatOnline(ArgoFloatProto):
         """Load the DAC short name for this float"""
         try:
             # Get DAC from EA-Metadata API:
-            self._dac = self._metadata["dataCenter"]["name"].lower()
+            self._dac = self.metadata["dataCenter"]["name"].lower()
         except:
             raise ValueError(
                 f"DAC name for Float {self.WMO} cannot be found from {self.host}"
