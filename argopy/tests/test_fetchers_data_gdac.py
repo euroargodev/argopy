@@ -4,6 +4,8 @@ Test the GDAC data fetcher backend
 Here we try an approach based on fixtures and pytest parametrization
 to make more explicit the full list of scenario tested.
 """
+import sys
+
 import xarray as xr
 
 import pytest
@@ -94,7 +96,14 @@ def assert_fetcher(server, this_fetcher, cacheable=False):
 
         This should be used by all tests
     """
-    assert isinstance(this_fetcher.to_xarray(errors='raise'), xr.Dataset)
+    try:
+        assert isinstance(this_fetcher.to_xarray(errors='raise'), xr.Dataset)
+    except PermissionError:
+        if sys.platform.startswith('win32') or sys.platform.startswith('cygwin'):
+            pytest.xfail("Fails because of Windows permissions error that can't be fixed (e.g. https://github.com/python/cpython/issues/66305)")
+        else:
+            raise
+
     core = this_fetcher.fetcher
     assert is_list_of_strings(core.uri)
     assert (core.N_RECORDS >= 1)  # Make sure we loaded the index file content
