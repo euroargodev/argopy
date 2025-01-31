@@ -9,6 +9,7 @@ dependencies:
   - decorator = 5.1.1
   - erddapy = 2.2.3
   - fsspec = 2024.3.1
+  - h5netcdf = 1.4.0
   - netCDF4 = 1.7.1
   - packaging = 24.1
   - requests = 2.32.3
@@ -27,7 +28,6 @@ dependencies:
 
 # EXT.FILES:
   - boto3 = 1.35.23
-  - h5netcdf = 1.4.0
   - kerchunk = 0.2.6
   - s3fs = 2024.3.1
   - zarr = 2.18.3

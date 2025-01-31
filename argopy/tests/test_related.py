@@ -1,5 +1,4 @@
 import pytest
-import tempfile
 import xarray as xr
 import pandas as pd
 from collections import ChainMap, OrderedDict
@@ -13,6 +12,7 @@ from utils import (
     has_matplotlib,
     has_cartopy,
     has_ipython,
+    create_temp_folder,
 )
 import argopy
 from argopy.related import (
@@ -43,7 +43,7 @@ class Test_TopoFetcher():
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
-        self.cachedir = tempfile.mkdtemp()
+        self.cachedir = create_temp_folder().folder
 
     def teardown_class(self):
         """Cleanup once we are finished."""
@@ -79,7 +79,7 @@ class Test_ArgoNVSReferenceTables:
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
-        self.cachedir = tempfile.mkdtemp()
+        self.cachedir = create_temp_folder().folder
         self.nvs = ArgoNVSReferenceTables(cache=True, cachedir=self.cachedir, nvs=mocked_server_address)
 
     def teardown_class(self):
@@ -318,10 +318,12 @@ def test_invalid_dictionnary_key():
 
 @pytest.mark.parametrize("params", [[6901929, None], [6901929, 12]], indirect=False, ids=['float', 'profile'])
 def test_get_coriolis_profile_id(params, mocked_httpserver):
-    with argopy.set_options(cachedir=tempfile.mkdtemp(), server=mocked_server_address):
-        assert isinstance(get_coriolis_profile_id(params[0], params[1]), pd.core.frame.DataFrame)
+    with create_temp_folder() as temp_folder:
+        with argopy.set_options(cachedir=temp_folder, server=mocked_server_address):
+            assert isinstance(get_coriolis_profile_id(params[0], params[1]), pd.core.frame.DataFrame)
 
 @pytest.mark.parametrize("params", [[6901929, None], [6901929, 12]], indirect=False, ids=['float', 'profile'])
 def test_get_ea_profile_page(params, mocked_httpserver):
-    with argopy.set_options(cachedir=tempfile.mkdtemp()):
-        assert is_list_of_strings(get_ea_profile_page(params[0], params[1], api_server=mocked_server_address))
+    with create_temp_folder() as temp_folder:
+        with argopy.set_options(cachedir=temp_folder):
+            assert is_list_of_strings(get_ea_profile_page(params[0], params[1], api_server=mocked_server_address))

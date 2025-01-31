@@ -4,10 +4,11 @@ Test the GDAC data fetcher backend
 Here we try an approach based on fixtures and pytest parametrization
 to make more explicit the full list of scenario tested.
 """
+import sys
+
 import xarray as xr
 
 import pytest
-import tempfile
 import shutil
 from urllib.parse import urlparse
 import logging
@@ -19,7 +20,7 @@ from argopy.errors import (
     CacheFileNotFound,
 )
 from argopy.utils.checkers import is_list_of_strings, check_gdac_path
-from utils import requires_gdac
+from utils import requires_gdac, create_temp_folder
 from mocked_http import mocked_httpserver
 from mocked_http import mocked_server_address as MOCKHTTP
 
@@ -95,7 +96,14 @@ def assert_fetcher(server, this_fetcher, cacheable=False):
 
         This should be used by all tests
     """
-    assert isinstance(this_fetcher.to_xarray(errors='raise'), xr.Dataset)
+    try:
+        assert isinstance(this_fetcher.to_xarray(errors='raise'), xr.Dataset)
+    except PermissionError:
+        if sys.platform.startswith('win32') or sys.platform.startswith('cygwin'):
+            pytest.xfail("Fails because of Windows permissions error that can't be fixed (e.g. https://github.com/python/cpython/issues/66305)")
+        else:
+            raise
+
     core = this_fetcher.fetcher
     assert is_list_of_strings(core.uri)
     assert (core.N_RECORDS >= 1)  # Make sure we loaded the index file content
@@ -136,7 +144,7 @@ class TestBackend:
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
-        self.cachedir = tempfile.mkdtemp()
+        self.cachedir = create_temp_folder().folder
 
     def _patch_gdac(self, gdac):
         """Patch Mocked FTP server keyword"""

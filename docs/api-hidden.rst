@@ -344,3 +344,14 @@
 
     argopy.errors.InvalidDatasetStructure
 
+    argopy.stores.float.spec.ArgoFloatProto
+    argopy.stores.ArgoFloat
+    argopy.ArgoFloat.open_dataset
+    argopy.ArgoFloat.list_dataset
+    argopy.ArgoFloat.path
+    argopy.ArgoFloat.ls
+    argopy.ArgoFloat.lsprofiles
+    argopy.ArgoFloat.describe_profiles
+    argopy.ArgoFloat.metadata
+    argopy.ArgoFloat.N_CYCLES
+    argopy.ArgoFloat.dac
