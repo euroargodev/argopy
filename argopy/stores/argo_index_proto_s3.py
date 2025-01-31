@@ -8,6 +8,7 @@ from decorator import decorator
 import warnings
 
 from ..utils.checkers import check_index_cols, check_wmo, check_cyc, is_list_of_strings, has_aws_credentials, HAS_BOTO3
+from ..utils.format import redact
 from ..stores import s3store
 
 
@@ -47,7 +48,7 @@ class s3index:
     The index is scanned/searched directly on the s3 server using the :class:`boto3.client.select_object_content` boto3 method.
 
     The key limitation here is that we can only search for WMO and CYC.
-    This is due to the fact that GM could not manage to convert (CAST) latitude, longitude and time to a more
+    This is due to the fact that G. MAZE could not manage to convert (CAST) latitude, longitude and time to a more
     appropriate data type to execute a search. All variables are considered string by default.
 
     Examples
@@ -79,11 +80,9 @@ class s3index:
         # Create a boto3 client to interface with S3
         if has_aws_credentials():
             self.fs = boto3.client("s3")
-            log.debug("self.fs._request_signer._credentials")
-            log.debug(self.fs._request_signer._credentials)
             try:
                 access_key = self.fs._request_signer._credentials.get_frozen_credentials().access_key
-                log.debug("Found AWS Credentials for access_key='%s'" % access_key)
+                log.debug("Found AWS Credentials for access_key='%s'" % redact(access_key, 4))
             except:  # noqa: E722
                 pass
         else:

@@ -12,6 +12,8 @@ import fsspec
 from fsspec.core import split_protocol
 from socket import gaierror
 from urllib.parse import urlparse
+import importlib
+
 
 try:
     import distributed
@@ -20,6 +22,13 @@ try:
 except ModuleNotFoundError:
     has_distributed = False
     distributed = None
+
+
+if importlib.util.find_spec("boto3") is not None:
+    HAS_BOTO3 = True
+    import boto3
+else:
+    HAS_BOTO3 = False
 
 
 from .errors import OptionValueError, GdacPathError, ErddapPathError
@@ -78,7 +87,7 @@ def _positive_integer(value):
 
 def validate_gdac(this_path):
     if this_path != "-":
-        return check_gdac_path(this_path, errors="raise")
+        return check_gdac_option(this_path, errors="raise")
     else:
         log.debug("OPTIONS['%s'] is not defined" % GDAC)
         return False
@@ -133,9 +142,7 @@ def VALIDATE(key, val):
     """Return option value if validated otherwise raise an OptionValueError"""
     if key in _VALIDATORS:
         if not _VALIDATORS[key](val):
-            raise OptionValueError(
-                f"option '{key}' given an invalid value: '{val}'"
-            )
+            raise OptionValueError(f"option '{key}' given an invalid value: '{val}'")
         else:
             return val
     else:
@@ -143,12 +150,12 @@ def VALIDATE(key, val):
 
 
 def PARALLEL_SETUP(parallel):
-    parallel = VALIDATE('parallel', parallel)
+    parallel = VALIDATE("parallel", parallel)
     if isinstance(parallel, bool):
         if parallel:
-            return True, OPTIONS['parallel_default_method']
+            return True, OPTIONS["parallel_default_method"]
         else:
-            return False, 'sequential'
+            return False, "sequential"
     else:
         return True, parallel
 
@@ -290,26 +297,29 @@ def check_erddap_path(path, errors="ignore"):
         return False
 
 
-def check_gdac_path(path, errors="ignore"):  # noqa: C901
+def check_gdac_option(path, errors="ignore"):  # noqa: C901
     """Check if a path has the expected GDAC server structure
 
-    Check if a path is structured like:
-    .
-    └── dac
-        ├── aoml
-        ├── ...
-        ├── coriolis
-        ├── ...
-        ├── meds
-        └── nmdis
+    Expected GDAC structure::
 
-    Examples:
-    >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
-    >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
-    >>> check_gdac_path("ftp://usgodae.org/pub/outgoing/argo") # True
-    >>> check_gdac_path("/home/ref-argo/gdac") # True
-    >>> check_gdac_path("https://www.ifremer.fr") # False
-    >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
+        .
+        └── dac
+            ├── aoml
+            ├── ...
+            ├── coriolis
+            ├── ...
+            ├── meds
+            └── nmdis
+
+    Examples::
+
+    >>> check_gdac_option("https://data-argo.ifremer.fr")  # True
+    >>> check_gdac_option("ftp://ftp.ifremer.fr/ifremer/argo") # True
+    >>> check_gdac_option("ftp://usgodae.org/pub/outgoing/argo") # True
+    >>> check_gdac_option("/home/ref-argo/gdac") # True
+    >>> check_gdac_path("s3://argo-gdac-sandbox/") # True
+    >>> check_gdac_option("https://www.ifremer.fr") # False
+    >>> check_gdac_option("ftp://usgodae.org/pub/outgoing") # False
 
     Parameters
     ----------
@@ -321,64 +331,35 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
     Returns
     -------
     checked: boolean
-        True if at least one DAC folder is found under path/dac/<dac_name>
-        False otherwise
     """
-    # Create a file system for this path
-    if split_protocol(path)[0] is None:
-        fs = fsspec.filesystem("file")
-    elif split_protocol(path)[0] in ["https", "http"]:
-        fs = fsspec.filesystem("http")
-    elif "ftp" in split_protocol(path)[0]:
-        try:
-            host = urlparse(path).hostname
-            port = 0 if urlparse(path).port is None else urlparse(path).port
-            fs = fsspec.filesystem("ftp", host=host, port=port)
-        except gaierror:
-            if errors == "raise":
-                raise GdacPathError("Can't get address info (GAIerror) on '%s'" % host)
-            elif errors == "warn":
-                warnings.warn("Can't get address info (GAIerror) on '%s'" % host)
-                return False
-            else:
-                return False
-    else:
-        raise GdacPathError(
-            "Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0]
-        )
+    from .stores import gdacfs  # Otherwise raises circular import
 
-    # dacs = [
-    #     "aoml",
-    #     "bodc",
-    #     "coriolis",
-    #     "csio",
-    #     "csiro",
-    #     "incois",
-    #     "jma",
-    #     "kma",
-    #     "kordi",
-    #     "meds",
-    #     "nmdis",
-    # ]
+    try:
+        fs = gdacfs(path)
+    except GdacPathError:
+        if errors == "raise":
+            raise
+        elif errors == "warn":
+            warnings.warn("Can't get address info (GAIerror) on '%s'" % path)
+            return False
+        else:
+            return False
 
-    # Case 1:
-    # check1 = (
-    #     fs.exists(path)  # Fails on localhost for the mocked ftp server
-    #     and fs.exists(fs.sep.join([path, "dac"]))
-    #     # and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
-    # )
     check1 = fs.exists(fs.sep.join([path, "dac"]))
     if check1:
         return True
 
     elif errors == "raise":
         raise GdacPathError(
-            "This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s"
+            "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
             % path
         )
 
     elif errors == "warn":
-        warnings.warn("This path is not GDAC compliant:\n%s" % path)
+        warnings.warn(
+            "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
+            % path
+        )
         return False
 
     else:

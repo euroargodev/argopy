@@ -18,27 +18,35 @@ fs.read_csv
 
 """
 
+import copy
 import os
 import types
+import warnings
+
 import xarray as xr
 import pandas as pd
 import fsspec
+from fsspec.core import split_protocol
 import aiohttp
+from socket import gaierror
 import shutil
 import pickle  # nosec B403 only used with internal files/assets
 import json
 import io
+from pathlib import Path
 import time
 import tempfile
 import logging
 from packaging import version
-from typing import Union, Any, List
+from typing import Union, Any, List, Literal
 from collections.abc import Callable
 from urllib.parse import urlparse, parse_qs
 from functools import lru_cache
 from abc import ABC, abstractmethod
 import concurrent.futures
 import multiprocessing
+import importlib
+
 
 from ..options import OPTIONS
 from ..errors import (
@@ -48,6 +56,7 @@ from ..errors import (
     InvalidMethod,
     ErddapHTTPUnauthorized,
     ErddapHTTPNotFound,
+    GdacPathError,
 )
 from ..utils.transform import (
     drop_variables_not_in_all_datasets,
@@ -56,7 +65,15 @@ from ..utils.transform import (
 from ..utils.monitored_threadpool import MyThreadPoolExecutor as MyExecutor
 from ..utils.accessories import Registry
 from ..utils.format import UriCName
+from ..utils.lists import list_gdac_servers
 from .. import __version__
+
+
+if importlib.util.find_spec("boto3") is not None:
+    HAS_BOTO3 = True
+    import boto3
+else:
+    HAS_BOTO3 = False
 
 
 log = logging.getLogger("argopy.stores")
@@ -126,6 +143,12 @@ def new_fs(
     elif protocol == "s3":
         default_fsspec_kwargs.pop("simple_links")
         default_fsspec_kwargs.pop("block_size")
+        if "anon" not in kwargs:
+            default_fsspec_kwargs["anon"] = (
+                boto3.client("s3")._request_signer._credentials is None
+                if HAS_BOTO3
+                else True
+            )
         fsspec_kwargs = {**default_fsspec_kwargs, **kwargs}
 
     else:
@@ -210,6 +233,10 @@ class argo_store_proto(ABC):
 
     def glob(self, path, **kwargs):
         return self.fs.glob(path, **kwargs)
+
+    @property
+    def sep(self):
+        return self.fs.sep
 
     def exists(self, path, *args):
         return self.fs.exists(path, *args)
@@ -352,32 +379,115 @@ class filestore(argo_store_proto):
             js = None
         return js
 
-    def open_dataset(self, path, *args, **kwargs):
-        """Return a :class:`xarray.Dataset` from a path.
+    def open_dataset(
+        self,
+        path,
+        errors: Literal["raise", "ignore", "silent"] = "raise",
+        lazy: bool = False,
+        xr_opts: dict = {},
+        **kwargs,
+    ) -> xr.Dataset:
+        """Create a :class:`xarray.Dataset` from a local path pointing to a netcdf file
 
         Parameters
         ----------
         path: str
-            Path to resources passed to :func:`xarray.open_dataset`
-        *args, **kwargs:
-            Other arguments are passed to :func:`xarray.open_dataset`
+            The local path of the netcdf file to open
+
+        errors:
+    
+        lazy: bool, default=False
+            Define if we should try to open the netcdf dataset lazily or not
+
+        xr_opts:
+            Arguments to be passed to :func:`xarray.open_dataset`
 
         Returns
         -------
-        :class:`xarray.DataSet`
+        :class:`xarray.Dataset`
         """
-        xr_opts = {}
-        if "xr_opts" in kwargs:
-            xr_opts.update(kwargs["xr_opts"])
 
-        with self.open(path) as of:
-            # log.debug("Opening dataset: '%s'" % path)  # Redundant with fsspec logger
-            ds = xr.open_dataset(of, *args, **xr_opts)
-            ds.load()
-        if "source" not in ds.encoding:
-            if isinstance(path, str):
-                ds.encoding["source"] = path
-        return ds.copy()
+        def load_in_memory(path, errors="raise", xr_opts={}):
+            """
+            Returns
+            -------
+            tuple: (data, _) or (None, _) if errors == "ignore"
+            """
+            try:
+                data = self.fs.cat_file(path)
+
+                if data[0:3] != b"CDF" and data[0:3] != b"\x89HD":
+                    raise TypeError(
+                        "We didn't get a CDF or HDF5 binary data as expected ! We get: %s"
+                        % data
+                    )
+                if data[0:3] == b"\x89HD":
+                    data = io.BytesIO(data)
+
+                return data, None
+            except FileNotFoundError as e:
+                if errors == "raise":
+                    raise e
+                elif errors == "ignore":
+                    log.error("FileNotFoundError raised from: %s" % path)
+            return None, None
+
+        def load_lazily(path, errors="raise", xr_opts={}, akoverwrite: bool = False):
+            from . import ArgoKerchunker
+
+            if "ak" not in kwargs:
+                self.ak = ArgoKerchunker(
+                    store="local", root=Path(OPTIONS["cachedir"]).joinpath("kerchunk")
+                )
+            else:
+                self.ak = kwargs["ak"]
+
+            if self.ak.supported(path):
+                xr_opts = {
+                    "engine": "zarr",
+                    "backend_kwargs": {
+                        "consolidated": False,
+                        "storage_options": {
+                            "fo": self.ak.to_kerchunk(path, overwrite=akoverwrite),
+                            "remote_protocol": fsspec.core.split_protocol(path)[0],
+                        },
+                    },
+                }
+                return "reference://", xr_opts
+            else:
+                warnings.warn(
+                    "This path does not support byte range requests so we cannot load it lazily, falling back on "
+                    "loading in memory."
+                )
+                log.debug("This path does not support byte range requests: %s" % path)
+                return load_in_memory(path, errors=errors, xr_opts=xr_opts)
+
+        if not lazy:
+            target, _ = load_in_memory(path, errors=errors, xr_opts=xr_opts)
+        else:
+            target, xr_opts = load_lazily(
+                path,
+                errors=errors,
+                xr_opts=xr_opts,
+                akoverwrite=kwargs.get("akoverwrite", False),
+            )
+
+        if target is not None:
+            ds = xr.open_dataset(target, **xr_opts)
+
+            if "source" not in ds.encoding:
+                if isinstance(path, str):
+                    ds.encoding["source"] = path
+
+            self.register(path)
+            return ds
+
+        elif errors == "raise":
+            raise DataNotFound(path)
+
+        elif errors == "ignore":
+            log.error("DataNotFound from: %s" % path)
+            return None
 
     def _mfprocessor(
         self,
@@ -631,7 +741,14 @@ class httpstore(argo_store_proto):
     Relies on :class:`fsspec.implementations.http.HTTPFileSystem`
 
     This store intends to make argopy safer to failures from http requests and to provide higher levels methods to
-    work with our datasets such as: :class:`httpstore.open_mfdataset` and :class:`httpstore.open_mfjson`.
+    work with our datasets. Key methods are:
+
+    - :class:`httpstore.download_url`
+    - :class:`httpstore.open_dataset`
+    - :class:`httpstore.open_json`
+    - :class:`httpstore.open_mfdataset`
+    - :class:`httpstore.open_mfjson`
+    - :class:`httpstore.read_csv`
 
     """
 
@@ -766,23 +883,53 @@ class httpstore(argo_store_proto):
 
         return data
 
-    def open_dataset(self, url, errors: str = "raise", **kwargs) -> xr.Dataset:
-        """Download and process a :class:`xarray.Dataset` from an url
-
-        Steps performed:
-
-        1. Download from ``url`` raw binary data with :class:`httpstore.download_url` and then
-        2. Create a :class:`xarray.Dataset` with :func:`xarray.open_dataset`.
-
-        Each functions can be passed specifics arguments (see Parameters below).
+    def open_dataset(
+        self,
+        url: str,
+        errors: Literal["raise", "ignore", "silent"] = "raise",
+        lazy: bool = False,
+        dwn_opts: dict = {},
+        xr_opts: dict = {},
+        **kwargs,
+    ) -> xr.Dataset:
+        """Create a :class:`xarray.Dataset` from an url pointing to a netcdf file
 
         Parameters
         ----------
         url: str
-        kwargs: dict
-            Use to possibly pass arguments to:
-                - ``dwn_opts`` key is passed to :class:`httpstore.download_url`
-                - ``xr_opts`` key is passed to :func:`xarray.open_dataset`
+            The remote URL of the netcdf file to open
+
+        errors: Literal, default: ``raise``
+            Define how to handle errors raised during data fetching:
+                - ``raise`` (default): Raise any error encountered
+                - ``ignore``: Do not stop processing, simply issue a debug message in logging console
+                - ``silent``:  Do not stop processing and do not issue log message
+
+        lazy: bool, default=False
+            Define if we should try to load netcdf file lazily or not
+
+            **If this is set to False (default)** opening is done in 2 steps:
+                1. Download from ``url`` raw binary data with :class:`httpstore.download_url`,
+                2. Create a :class:`xarray.Dataset` with :func:`xarray.open_dataset`.
+
+            Each functions can be passed specifics arguments with ``dwn_opts`` and  ``xr_opts`` (see below).
+
+            **If this is set to True**, use a :class:`ArgoKerchunker` instance to access
+            the netcdf file lazily. You can provide a specific :class:`ArgoKerchunker` instance with the ``ak`` argument (see below).
+
+        dwn_opts: dict, default={}
+             Options passed to :func:`httpstore.download_url`
+
+        xr_opts: dict, default={}
+             Options passed to :func:`xarray.open_dataset`
+
+        Other Parameters
+        ----------------
+        ak: :class:`ArgoKerchunker`, optional
+            :class:`ArgoKerchunker` instance to use if ``lazy=True``.
+
+        akoverwrite: bool, optional
+            Determine if kerchunk data should be overwritten or not. This is passed to :meth:`ArgoKerchunker.to_kerchunk`.
 
         Returns
         -------
@@ -790,52 +937,110 @@ class httpstore(argo_store_proto):
 
         Raises
         ------
-        :class:`TypeError` if data returned by ``url`` are not CDF or HDF5 binary data.
+        :class:`TypeError`
+            Raised if data returned by ``url`` are not CDF or HDF5 binary data.
 
-        :class:`DataNotFound` if ``errors`` is set to ``raise`` and url returns no data.
+        :class:`DataNotFound`
+            Raised if ``errors`` is set to ``raise`` and url returns no data.
 
         See Also
         --------
-        :class:`httpstore.open_mfdataset`
+        :func:`httpstore.open_mfdataset`, :class:`ArgoKerchunker`
         """
-        dwn_opts = {}
-        if "dwn_opts" in kwargs:
-            dwn_opts.update(kwargs["dwn_opts"])
-        data = self.download_url(url, **dwn_opts)
 
-        if data is None:
-            if errors == "raise":
-                raise DataNotFound(url)
-            elif errors == "ignore":
-                log.error("DataNotFound: %s" % url)
-            return None
+        def load_in_memory(url, errors="raise", dwn_opts={}, xr_opts={}):
+            """
+            Returns
+            -------
+            tuple: (data, xr_opts) or (None, None) if errors == "ignore"
+            """
+            data = self.download_url(url, **dwn_opts)
+            if data is None:
+                if errors == "raise":
+                    raise DataNotFound(url)
+                elif errors == "ignore":
+                    log.error("DataNotFound: %s" % url)
+                return None, None
 
-        if b'Not Found: Your query produced no matching results' in data:
-            if errors == "raise":
-                raise DataNotFound(url)
-            elif errors == "ignore":
-                log.error("DataNotFound from [%s]: %s" % (url, data))
-            return None
+            if b"Not Found: Your query produced no matching results" in data:
+                if errors == "raise":
+                    raise DataNotFound(url)
+                elif errors == "ignore":
+                    log.error("DataNotFound from [%s]: %s" % (url, data))
+                return None, None
 
-        if data[0:3] != b"CDF" and data[0:3] != b"\x89HD":
-            raise TypeError(
-                "We didn't get a CDF or HDF5 binary data as expected ! We get: %s"
-                % data
+            if data[0:3] != b"CDF" and data[0:3] != b"\x89HD":
+                raise TypeError(
+                    "We didn't get a CDF or HDF5 binary data as expected ! We get: %s"
+                    % data
+                )
+            if data[0:3] == b"\x89HD":
+                data = io.BytesIO(data)
+
+            return data, xr_opts
+
+        def load_lazily(
+            url, errors="raise", dwn_opts={}, xr_opts={}, akoverwrite: bool = False
+        ):
+            from . import ArgoKerchunker
+
+            if "ak" not in kwargs:
+                self.ak = ArgoKerchunker(
+                    store="local", root=Path(OPTIONS["cachedir"]).joinpath("kerchunk")
+                )
+            else:
+                self.ak = kwargs["ak"]
+
+            if self.ak.supported(url):
+                xr_opts = {
+                    "engine": "zarr",
+                    "backend_kwargs": {
+                        "consolidated": False,
+                        "storage_options": {
+                            "fo": self.ak.to_kerchunk(url, overwrite=akoverwrite),
+                            "remote_protocol": fsspec.core.split_protocol(url)[0],
+                        },
+                    },
+                }
+                return "reference://", xr_opts
+            else:
+                warnings.warn(
+                    "This url does not support byte range requests so we cannot load it lazily, falling back on loading in memory."
+                )
+                log.debug("This url does not support byte range requests: %s" % url)
+                return load_in_memory(
+                    url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts
+                )
+
+        if not lazy:
+            target, _ = load_in_memory(
+                url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts
             )
-        if data[0:3] == b"\x89HD":
-            data = io.BytesIO(data)
+        else:
+            target, xr_opts = load_lazily(
+                url,
+                errors=errors,
+                dwn_opts=dwn_opts,
+                xr_opts=xr_opts,
+                akoverwrite=kwargs.get("akoverwrite", False),
+            )
 
-        xr_opts = {}
-        if "xr_opts" in kwargs:
-            xr_opts.update(kwargs["xr_opts"])
-        ds = xr.open_dataset(data, **xr_opts)
+        if target is not None:
+            ds = xr.open_dataset(target, **xr_opts)
 
-        if "source" not in ds.encoding:
-            if isinstance(url, str):
-                ds.encoding["source"] = url
+            if "source" not in ds.encoding:
+                if isinstance(url, str):
+                    ds.encoding["source"] = url
 
-        self.register(url)
-        return ds
+            self.register(url)
+            return ds
+
+        elif errors == "raise":
+            raise DataNotFound(url)
+
+        elif errors == "ignore":
+            log.error("DataNotFound from: %s" % url)
+            return None
 
     def _mfprocessor_dataset(
         self,
@@ -1067,10 +1272,11 @@ class httpstore(argo_store_proto):
         progress: Union[bool, str] = False,
         concat: bool = True,
         concat_dim: str = "row",
+        concat_method: Literal["drop", "fill"] = "drop",
         preprocess: Callable = None,
         preprocess_opts: dict = {},
         open_dataset_opts: dict = {},
-        errors: str = "ignore",
+        errors: Literal["ignore", "raise", "silent"] = "ignore",
         compute_details: bool = False,
         *args,
         **kwargs,
@@ -1137,6 +1343,12 @@ class httpstore(argo_store_proto):
             urls = [urls]
 
         urls = [self.curateurl(url) for url in urls]
+
+        if "lazy" in open_dataset_opts and open_dataset_opts["lazy"] and concat:
+            warnings.warn(
+                "Lazy openning and concatenate multiple netcdf files is not yet supported. Ignoring the 'lazy' option."
+            )
+            open_dataset_opts["lazy"] = False
 
         results = []
         failed = []
@@ -1308,7 +1520,10 @@ class httpstore(argo_store_proto):
         if len(results) > 0:
             if concat:
                 # ds = xr.concat(results, dim=concat_dim, data_vars='all', coords='all', compat='override')
-                results = drop_variables_not_in_all_datasets(results)
+                if concat_method == "drop":
+                    results = drop_variables_not_in_all_datasets(results)
+                elif concat_method == "fill":
+                    results = fill_variables_not_in_all_datasets(results)
                 ds = xr.concat(
                     results,
                     dim=concat_dim,
@@ -1682,7 +1897,7 @@ class ftpstore(httpstore):
     protocol = "ftp"
 
     def open_dataset(self, url, *args, **kwargs):
-        """Open and decode a xarray dataset from an ftp url
+        """Open and decode a xarray dataset from a ftp url
 
         Parameters
         ----------
@@ -1692,6 +1907,9 @@ class ftpstore(httpstore):
         -------
         :class:`xarray.Dataset`
         """
+        if 'lazy' in kwargs and kwargs['lazy']:
+            warnings.warn("FTP store does not support lazy dataset opening")
+
         try:
             this_url = self.fs._strip_protocol(url)
             data = self.fs.cat_file(this_url)
@@ -1929,6 +2147,8 @@ class ftpstore(httpstore):
 
 
 class httpstore_erddap_auth(httpstore):
+    """Argo http file system"""
+
     async def get_auth_client(self, **kwargs):
         session = aiohttp.ClientSession(**kwargs)
 
@@ -1984,7 +2204,9 @@ class httpstore_erddap_auth(httpstore):
             auto  # Should we try to log-in automatically at instantiation ?
         )
 
-        payload = kwargs.get("payload", {"user": OPTIONS["user"], "password": OPTIONS["password"]})
+        payload = kwargs.get(
+            "payload", {"user": OPTIONS["user"], "password": OPTIONS["password"]}
+        )
         self._login_payload = payload.copy()
 
         fsspec_kwargs = {**kwargs, **{"get_client": self.get_auth_client}}
@@ -2074,6 +2296,7 @@ class httpstore_erddap_auth(httpstore):
 
 
 def httpstore_erddap(url: str = "", cache: bool = False, cachedir: str = "", **kwargs):
+    """Argo http file system that is able to authenticate on an Erddap server"""
     erddap = OPTIONS["erddap"] if url == "" else url
     login_page = "%s/login.html" % erddap.rstrip("/")
     login_store = httpstore_erddap_auth(
@@ -2095,7 +2318,8 @@ def httpstore_erddap(url: str = "", cache: bool = False, cachedir: str = "", **k
 class s3store(httpstore):
     """Argo s3 file system
 
-    Relies on :class:`fsspec.implementations.http.HTTPFileSystem` by inherits from :class:`httpstore`
+    Inherits from :class:`httpstore` but will rely on :class:`s3fs.S3FileSystem` through
+    the fsspec 's3' protocol specification.
 
     By default, this store will use AWS credentials available in the environment.
 
@@ -2109,3 +2333,86 @@ class s3store(httpstore):
     """
 
     protocol = "s3"
+
+
+class gdacfs:
+    """Argo file system for any GDAC path
+
+    Parameters
+    ----------
+    path: str, optional
+        GDAC path to create a file system for. Support any possible GDAC path.
+        If not specified, value from global option ``gdac`` will be used.
+
+    Returns
+    -------
+    A file system based on :class:`argopy.stores.argo_store_proto`
+
+    Examples
+    --------
+
+    >>> fs = gdacfs("https://data-argo.ifremer.fr")
+    >>> fs = gdacfs("https://usgodae.org/pub/outgoing/argo")
+    >>> fs = gdacfs("ftp://ftp.ifremer.fr/ifremer/argo")
+    >>> fs = gdacfs("/home/ref-argo/gdac")
+    >>> fs = gdacfs("s3://argo-gdac-sandbox/pub")
+
+    >>> with argopy.set_options(gdac="s3://argo-gdac-sandbox/pub"):
+    >>>     fs = gdacfs()
+
+    Warnings
+    --------
+    This class does not check if the path is a valid Argo GDAC
+
+    See Also
+    --------
+    :meth:`argopy.utils.check_gdac_path`, :meth:`argopy.utils.list_gdac_servers`
+
+    """
+
+    protocol2fs = {"file": filestore, "http": httpstore, "ftp": ftpstore, "s3": s3store}
+    """Dictionary mapping path protocol to Argo file system to instantiate"""
+
+    @staticmethod
+    def path2protocol(path: Union[str, Path]) -> str:
+        """Narrow down any path to a supported protocols, raise GdacPathError if protocol not supported"""
+        if isinstance(path, Path):
+            return "file"
+        else:
+            split = split_protocol(path)[0]
+            if split is None:
+                return "file"
+            if "http" in split:  # will also catch "https"
+                return "http"
+            elif "ftp" in split:
+                return "ftp"
+            elif "s3" in split:
+                return "s3"
+            else:
+                raise GdacPathError(
+                    "Unknown protocol for an Argo GDAC host: %s" % split
+                )
+
+    def __new__(cls, path: Union[str, Path, None] = None):
+        """Create a file system for any Argo GDAC compliant path"""
+        if path is None:
+            path = OPTIONS["gdac"]
+
+        protocol = cls.path2protocol(path)
+        fs = cls.protocol2fs[protocol]
+        fs_args = {}
+
+        if protocol == "ftp":
+            ftp_host = urlparse(path).hostname
+            ftp_port = 0 if urlparse(path).port is None else urlparse(path).port
+            fs_args["host"] = ftp_host
+            fs_args["port"] = ftp_port
+
+        try:
+            fs = fs(**fs_args)
+        except gaierror as e:
+            raise GdacPathError(
+                "Can't get address info from FTP host: %s\nGAIerror: %s"
+                % (fs_args, str(e))
+            )
+        return fs

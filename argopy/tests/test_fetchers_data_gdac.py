@@ -4,42 +4,45 @@ Test the GDAC data fetcher backend
 Here we try an approach based on fixtures and pytest parametrization
 to make more explicit the full list of scenario tested.
 """
+import sys
+
 import xarray as xr
 
 import pytest
-import tempfile
 import shutil
 from urllib.parse import urlparse
 import logging
-from collections import ChainMap
+import importlib
 
 import argopy
 from argopy import DataFetcher as ArgoDataFetcher
 from argopy.errors import (
     CacheFileNotFound,
-    FileSystemHasNoCache,
-    GdacPathError,
 )
-from argopy.utils.checkers import isconnected, is_list_of_strings
+from argopy.utils.checkers import is_list_of_strings, check_gdac_path
 from utils import requires_gdac, create_temp_folder
-from mocked_http import mocked_httpserver, mocked_server_address
+from mocked_http import mocked_httpserver
+from mocked_http import mocked_server_address as MOCKHTTP
 
 
 log = logging.getLogger("argopy.tests.data.gdac")
-skip_for_debug = pytest.mark.skipif(False, reason="Taking too long !")
 
 
 """
 List GDAC hosts to be tested. 
-Since the fetcher is compatible with host from local, http or ftp protocols, we
-try to test them all:
+Since the fetcher is compatible with host from local, http or ftp protocols, we try to test them all:
 """
-HOSTS = [argopy.tutorial.open_dataset("gdac")[0],
-             #'https://data-argo.ifremer.fr',  # ok, but replaced by the mocked http server
-         mocked_server_address,
-               # 'ftp://ftp.ifremer.fr/ifremer/argo',
-        'MOCKFTP',  # keyword to use the fake/mocked ftp server (running on localhost)
-            ]
+HOSTS = [
+         argopy.tutorial.open_dataset("gdac")[0],
+         MOCKHTTP,
+         'MOCKFTP',
+        ]
+
+HAS_S3FS = importlib.util.find_spec("s3fs") is not None
+if HAS_S3FS:
+    # todo Create a mocked server for s3 tests
+    HOSTS.append("s3://argo-gdac-sandbox/pub")  # todo: How do we mock a s3 server ?
+
 
 """
 List access points to be tested.
@@ -88,12 +91,19 @@ def create_fetcher(fetcher_args, access_point):
     return fetcher
 
 
-def assert_fetcher(mocked_erddapserver, this_fetcher, cacheable=False):
+def assert_fetcher(server, this_fetcher, cacheable=False):
     """Assert a data fetcher.
 
         This should be used by all tests
     """
-    assert isinstance(this_fetcher.to_xarray(errors='raise'), xr.Dataset)
+    try:
+        assert isinstance(this_fetcher.to_xarray(errors='raise'), xr.Dataset)
+    except PermissionError:
+        if sys.platform.startswith('win32') or sys.platform.startswith('cygwin'):
+            pytest.xfail("Fails because of Windows permissions error that can't be fixed (e.g. https://github.com/python/cpython/issues/66305)")
+        else:
+            raise
+
     core = this_fetcher.fetcher
     assert is_list_of_strings(core.uri)
     assert (core.N_RECORDS >= 1)  # Make sure we loaded the index file content
@@ -167,8 +177,8 @@ class TestBackend:
             # parallel is False by default, so we don't need to clutter the arguments list
             del fetcher_args["parallel"]
 
-        if not isconnected(fetcher_args['gdac']):
-            pytest.xfail("Fails because %s not available" % fetcher_args['gdac'])
+        if not check_gdac_path(fetcher_args['gdac']):
+            pytest.xfail("Fails because %s cannot be reached" % fetcher_args['gdac'])
         else:
             return fetcher_args, access_point
 
@@ -193,23 +203,6 @@ class TestBackend:
     #########
     # TESTS #
     #########
-    # def test_nocache(self, mocked_httpserver):
-    #     this_fetcher = create_fetcher({"src": self.src, "gdac": self._patch_gdac(VALID_HOSTS[0]), "N_RECORDS": 10}, VALID_ACCESS_POINTS[0])
-    #     with pytest.raises(FileSystemHasNoCache):
-    #         this_fetcher.cachepath
-
-    # @pytest.mark.parametrize("fetcher", VALID_HOSTS,
-    #                          indirect=True,
-    #                          ids=["%s" % gdac_shortname(gdac) for gdac in VALID_HOSTS])
-    # def test_hosts(self, mocked_httpserver, fetcher):
-    #     assert (fetcher.N_RECORDS >= 1)
-
-    # @pytest.mark.parametrize("gdac_host", ['invalid', 'https://invalid_gdac', 'ftp://invalid_ftp'], indirect=False)
-    # def test_hosts_invalid(self, gdac_host):
-    #     # Invalid servers:
-    #     with pytest.raises(GdacPathError):
-    #         create_fetcher({"src": self.src, "gdac": gdac_host}, VALID_ACCESS_POINTS[0])
-
     @pytest.mark.parametrize("fetcher", VALID_ACCESS_POINTS, indirect=True, ids=VALID_ACCESS_POINTS_IDS)
     def test_fetching(self, mocked_httpserver, fetcher):
         assert_fetcher(mocked_httpserver, fetcher, cacheable=False)

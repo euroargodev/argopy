@@ -28,6 +28,10 @@ def drop_variables_not_in_all_datasets(
     Returns
     -------
     List[xarray.Dataset]
+
+    See Also
+    --------
+    :func:`argopy.utils.fill_variables_not_in_all_datasets`
     """
 
     # List all possible data variables:
@@ -46,6 +50,7 @@ def drop_variables_not_in_all_datasets(
 
     # List of dataset with missing variables:
     # ir_missing = np.sum(ishere, axis=0) < len(vlist)
+
     # List of variables missing in some dataset:
     iv_missing = np.sum(ishere, axis=1) < len(ds_collection)
     if len(iv_missing) > 0:
@@ -83,6 +88,10 @@ def fill_variables_not_in_all_datasets(
     Returns
     -------
     List[xarray.Dataset]
+
+    See Also
+    --------
+    :func:`argopy.utils.drop_variables_not_in_all_datasets`
     """
 
     def first_variable_with_concat_dim(this_ds, concat_dim="rows"):
@@ -112,14 +121,14 @@ def fill_variables_not_in_all_datasets(
     for res in ds_collection:
         [vlist.append(v) for v in list(res.variables) if concat_dim in res[v].dims]
     vlist = np.unique(vlist)
-    # log.debug('variables', vlist)
+    log.debug("variables: %s" % vlist)
 
     # List all possible coordinates:
     clist = []
     for res in ds_collection:
         [clist.append(c) for c in list(res.coords) if concat_dim in res[c].dims]
     clist = np.unique(clist)
-    # log.debu('coordinates', clist)
+    log.debug("coordinates: %s" % clist)
 
     # Get the first occurrence of each variable, to be used as a template for attributes and dtype
     meta = {}
@@ -131,7 +140,7 @@ def fill_variables_not_in_all_datasets(
                     "dtype": ds[v].dtype,
                     "fill_value": fillvalue(ds[v]),
                 }
-    # [log.debug(meta[m]) for m in meta.keys()]
+    [log.debug(meta[m]) for m in meta.keys()]
 
     # Add missing variables to dataset
     datasets = [ds.copy() for ds in ds_collection]
@@ -360,6 +369,12 @@ def split_data_mode(ds: xr.Dataset) -> xr.Dataset:
         )
 
     if "STATION_PARAMETERS" in ds and "PARAMETER_DATA_MODE" in ds:
+
+        # Ensure N_PROF is a coordinate
+        # otherwise, the ``ds[name] = da`` line below will fail when a PARAMETER is not
+        # available in all profiles, hence da['N_PROF'] != ds['N_PROF']
+        if "N_PROF" in ds.dims and "N_PROF" not in ds.coords:
+            ds = ds.assign_coords(N_PROF=np.arange(0, len(ds["N_PROF"])))
 
         u64 = lambda s: "%s%s" % (s, " " * (64 - len(s)))  # noqa: E731
         params = [p.strip() for p in np.unique(ds["STATION_PARAMETERS"])]

@@ -14,6 +14,14 @@ Coming up next
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+- **Experimental new data source: AWS S3 netcdf files**. This support is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. (:pr:`385`) by |gmaze|. In order to use the experimental S3 GDAC, you can point the ``gdac`` option to the `appropriate bucket <https://registry.opendata.aws/argo-gdac-marinedata/>`_:
+
+.. code-block:: python
+    :caption: AWS S3 example
+
+    with argopy.set_options(gdac='s3://argo-gdac-sandbox/pub'):
+        ds = DataFetcher(src='gdac').float(6903091).to_xarray()
+
 - **New** :class:`ArgoFloat` **store for Argo netcdf file load/read operation**. Whatever the Argo netcdf file location, local or remote, you can now delegate to argopy the burden of transfer protocol and GDAC paths handling. This store is primarily intended to be used by third party libraries or in workflow by operators and experts. (:pr:`429`) by |gmaze|.
 
 Just kick in the float WMO and trigger :class:`ArgoFloat.open_dataset` !
@@ -48,6 +56,45 @@ With more details:
 Internals
 ^^^^^^^^^
 
+- **Open netcdf files lazily**. We now provide low-level support for opening a netcdf Argo dataset lazily with `kerchunk <https://fsspec.github.io/kerchunk/>`_. Simply use the new option ``lazy=True`` with a :class:`stores.httpstore.open_dataset` or :class:`stores.s3store.open_dataset`. (:pr:`385`) by |gmaze|.
+
+.. code-block:: python
+    :caption: Example
+
+    import argopy
+    uri = argopy.ArgoIndex(host='s3://argo-gdac-sandbox/pub').search_wmo(6903091).uri
+    ds = argopy.stores.s3store().open_dataset(uri[0], lazy=True)
+
+.. warning::
+    You will need to install the `kerchunk <https://fsspec.github.io/kerchunk/>`_ library if you don't have access to
+    kerchunk zarr data for the netcdf files to open.
+
+- For easy handling of lazy access to netcdf files with `kerchunk <https://fsspec.github.io/kerchunk/>`_, we introduce a :class:`stores.ArgoKerchunker` to finely tune how to handle json kerchunk data. (:pr:`385`) by |gmaze|.
+
+.. code-block:: python
+    :caption: ArgoKerchunker example
+
+    from argopy.stores import ArgoKerchunker
+
+    # Create an instance that will save netcdf to zarr translation data on a local folder "kerchunk_data_folder":
+    ak = ArgoKerchunker(store='local', root='kerchunk_data_folder')
+
+    # Let's take a remote Argo netcdf file from a server supporting lazy access
+    # (i.e. support byte range requests):
+    ncfile = "s3://argo-gdac-sandbox/pub/dac/coriolis/6903090/6903090_prof.nc"
+
+    # Simply open the netcdf file lazily:
+    # (ArgoKerchunker will handle zarr data generation and xarray syntax to use it)
+    ak.open_dataset(ncfile)
+
+- **New file system helper class for GDAC paths** :class:`stores.gdacfs`. This class allows to easily creates a file system for any of the possible GDAC paths. At this point, the class returns one of the argopy file systems (file, http, ftp or s3), but in the future, this class shall return a prefix directory file system, so that we don't have to include the GDAC path in resources to open. (:pr:`385`) by |gmaze|.
+
+.. code-block:: python
+    :caption: Example
+
+    from argopy.stores import gdacfs
+    fs = gdacfs("https://data-argo.ifremer.fr")
+
 - Fix bug raised when the Argo reference table 8 return by the NVS server has a missing altLabel. ID of platform types are now extracted from the NVS url ID property. :issue:`420`, (:pr:`421`) by |gmaze|.
 
 - When argopy is sending a http request to a data server, add a custom http header ``Argopy-Version`` to ease server log analysis. (:pr:`407`) by |gmaze|.
@@ -76,6 +123,8 @@ v1.0.0 (16 Oct. 2024)
 
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **Support for AWS S3 data files**. This support is experimental and is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_.
 
 .. currentmodule:: xarray
 
@@ -167,9 +216,9 @@ Breaking changes
 
 .. currentmodule:: argopy
 
-- The option name "ftp" is now renamed "gdac" (:pr:`389`) by |gmaze|
+- The option name "ftp" is now renamed "gdac" (:pr:`389`) by |gmaze|.
 
-- The option name "dataset" is now renamed "ds" (:pr:`389`) by |gmaze|
+- The option name "dataset" is now renamed "ds" (:pr:`389`) by |gmaze|.
 
 - It is highly probable that more changes in this major v1.0.0 lead to breaking changes not listed here. Don't hesitate to `report them on the repository issue section <https://github.com/euroargodev/argopy/issues>`_. 
 
@@ -1269,7 +1318,7 @@ v0.1.0 (17 Mar. 2020)
 
 .. |pypi dwn| image:: https://img.shields.io/pypi/dm/argopy?label=Pypi%20downloads
    :target: //pypi.org/project/argopy/
-.. |conda dwn| image:: https://img.shields.io/conda/dn/conda-forge/argopy?label=Conda%20downloads
+.. |conda dwn| image:: https://img.shields.io/conda/d/conda-forge/argopy
    :target: //anaconda.org/conda-forge/argopy
 .. |PyPI| image:: https://img.shields.io/pypi/v/argopy
    :target: //pypi.org/project/argopy/

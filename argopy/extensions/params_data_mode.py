@@ -333,6 +333,11 @@ class ParamsDataMode(ArgoAccessorExtension):
 
         # Determine the list of variables to filter:
         params = to_list(params)
+
+        if len(params) == 0:
+            this.argo.add_history("Found no variables to select according to DATA_MODE")
+            return this
+
         if params[0] == "all":
             if "DATA_MODE" in this.data_vars:
                 params = ["PRES", "TEMP"]

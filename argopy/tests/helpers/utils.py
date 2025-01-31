@@ -382,7 +382,7 @@ class create_temp_folder:
     # folder is not deleted:
     folder = create_temp_folder().folder
 
-    # folder is deleted at the end of the with:
+    # folder is deleted at the end of the "with" statement:
     with create_temp_folder() as folder:
         print(folder)
 
@@ -391,6 +391,7 @@ class create_temp_folder:
     def __init__(self):
         """Initialize the class and create a temporary folder."""
         self._temp_dir = tempfile.mkdtemp(dir=OPTIONS['cachedir'])
+        os.chmod(self._temp_dir, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
 
     @property
     def folder(self):
