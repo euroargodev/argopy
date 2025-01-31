@@ -5,7 +5,10 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import logging
+from typing import Union
 from xarray.backends import BackendEntrypoint  # For xarray > 0.18
+from xarray.backends import ZarrStore
+from dask.delayed import Delayed
 
 try:
     import gsw
@@ -1929,20 +1932,33 @@ class ArgoAccessor:
         """Return all possible WMO as a list"""
         return to_list(np.unique(self._obj["PLATFORM_NUMBER"].values))
 
-    def to_zarr(self, *args, **kwargs):
+    def to_zarr(self, *args, **kwargs) -> Union[ZarrStore, Delayed]:
         """Write Argo dataset content to a zarr group
 
-        All arguments are passed to :meth:`xarray.to_zarr`.
+        Before write operation is delegated to :class:`xarray.Dataset.to_zarr`, we perform the following:
 
-        If encoding is not specified, we automatically add a ``Blosc(cname="zstd", clevel=3, shuffle=2)`` compression on
-        all variables of the dataset.
+        - Ensure all variables are appropriately cast.
+        - If the ``encoding`` argument is not specified, we automatically add a ``Blosc(cname="zstd", clevel=3, shuffle=2)`` compression to all variables. Set `encoding=None` for no compression.
 
+        Parameters
+        ----------
+        *args, **kwargs:
+            Passed to :class:`xarray.Dataset.to_zarr`.
+
+        Returns
+        -------
+        The output from :class:`xarray.Dataset.to_zarr` call
+
+        See Also
+        --------
+        :class:`xarray.Dataset.to_zarr`, :class:`numcodecs.blosc.Blosc`
         """
 
-        # Re-ensure all variables are cast properly:
+        # Ensure that all variables are cast appropriately
+        # (those already cast are not changed)
         self._obj = self.cast_types()
 
-        # Define zarr compression:
+        # Add zarr compression to encoding:
         if "encoding" not in kwargs:
             from numcodecs import Blosc
             compressor = Blosc(cname="zstd", clevel=3, shuffle=2)
