@@ -8,7 +8,6 @@ import logging
 from typing import Union
 from xarray.backends import BackendEntrypoint  # For xarray > 0.18
 from xarray.backends import ZarrStore
-from dask.delayed import Delayed
 
 try:
     import gsw
@@ -16,6 +15,15 @@ try:
     with_gsw = True
 except ModuleNotFoundError:
     with_gsw = False
+
+try:
+    from dask.delayed import Delayed
+
+    with_dask = True
+except ModuleNotFoundError:
+    with_dask = False
+    Delayed = lambda x: x
+
 
 from .utils import is_list_of_strings
 from .utils import (
