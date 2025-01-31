@@ -36,3 +36,4 @@
 argopy/tests/test_data/*.* linguist-generated=true
 cli/*.log linguist-generated=true
 cli/*.json linguist-generated=true
+docs/_static/pygments/* linguist-generated=true
