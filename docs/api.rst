@@ -216,6 +216,9 @@ Function under the ``argopy.utils`` submodule.
 
 .. currentmodule:: argopy.utils
 
+Lists
+-----
+
 .. autosummary::
    :toctree: generated/
 
@@ -228,19 +231,34 @@ Function under the ``argopy.utils`` submodule.
     list_bgc_s_parameters
     list_radiometry_variables
     list_radiometry_parameters
+    list_gdac_servers
+
+Checkers
+--------
+
+.. autosummary::
+   :toctree: generated/
 
     check_wmo
     check_cyc
-
-    float_wmo
-    Registry
-
-    Chunker
+    check_gdac_path
 
     isconnected
     urlhaskeyword
     isalive
     isAPIconnected
+
+
+Misc
+--------
+
+.. autosummary::
+   :toctree: generated/
+
+    float_wmo
+    Registry
+
+    Chunker
 
     drop_variables_not_in_all_datasets
     fill_variables_not_in_all_datasets
@@ -269,12 +287,15 @@ File systems
 .. autosummary::
     :toctree: generated/
 
+    stores.argo_store_proto
     stores.filestore
     stores.httpstore
+    stores.httpstore_erddap
     stores.memorystore
     stores.ftpstore
-    stores.httpstore_erddap_auth
     stores.s3store
+    stores.ArgoKerchunker
+    stores.gdacfs
 
 Argo index and float stores
 ---------------------------

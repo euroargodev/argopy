@@ -116,7 +116,7 @@ class ArgoIndexStoreProto(ABC):
         host = OPTIONS["gdac"] if host is None else host
 
         # Catchup keywords for host:
-        if str(host).lower() in ["ftp"]:
+        if host.lower() in ["ftp"]:
             host = "ftp://ftp.ifremer.fr/ifremer/argo"
         elif str(host).lower() in ["http", "https", "fr-http", "fr-https"]:
             host = "https://data-argo.ifremer.fr"
@@ -127,6 +127,7 @@ class ArgoIndexStoreProto(ABC):
         elif str(host).lower() in ["s3://argo-gdac-sandbox/pub", "s3://argo-gdac-sandbox/pub/"]:
             host = "s3://argo-gdac-sandbox/pub/idx"  # Fix s3 anomaly whereby index files are not at the 'dac' level
         self.host = host
+        self.root = host  # Will be used by the .uri properties, this is introduced to deal with index files not on the same root as DAC folders
 
         # Catchup keyword for the main profile index files:
         if index_file in ["core"]:
@@ -151,16 +152,13 @@ class ArgoIndexStoreProto(ABC):
         if split_protocol(host)[0] is None:
             self.fs["src"] = filestore(cache=cache, cachedir=cachedir)
 
-        elif split_protocol(host)[0] in ["https", "http"]:
+        elif split_protocol(self.host)[0] in ["https", "http"]:
             # Only for https://data-argo.ifremer.fr (much faster than the ftp servers)
             self.fs["src"] = httpstore(
                 cache=cache, cachedir=cachedir, timeout=timeout, size_policy="head"
             )
 
-            if host == "https://argo-gdac-sandbox.s3-eu-west-3.amazonaws.com/pub/idx":
-                self.skip_rows = 10
-
-        elif "ftp" in split_protocol(host)[0]:
+        elif "ftp" in split_protocol(self.host)[0]:
             if "ifremer" not in host:
                 log.info(
                     """Working with a non-official Argo ftp server: %s. Raise on issue if you wish to add your own to the valid list of FTP servers: https://github.com/euroargodev/argopy/issues/new?title=New%%20FTP%%20server"""
@@ -168,23 +166,28 @@ class ArgoIndexStoreProto(ABC):
                 )
             if not isconnected(host):
                 raise GdacPathError("This host (%s) is not alive !" % host)
+
             self.fs["src"] = ftpstore(
-                host=urlparse(host).hostname,  # host eg: ftp.ifremer.fr
-                port=0 if urlparse(host).port is None else urlparse(host).port,
+                host=urlparse(self.host).hostname,  # host eg: ftp.ifremer.fr
+                port=0 if urlparse(self.host).port is None else urlparse(self.host).port,
                 cache=cache,
                 cachedir=cachedir,
                 timeout=self.timeout,
                 block_size=1000 * (2**20),
             )
 
-        elif "s3" in split_protocol(host)[0]:
-            if "argo-gdac-sandbox" not in host:
+        elif "s3" in split_protocol(self.host)[0]:
+            if self.host == 's3://argo-gdac-sandbox/pub':
+                self.host = 's3://argo-gdac-sandbox/pub/idx'  # On AWS S3, index files are not under DAC root
+                self.root = 's3://argo-gdac-sandbox/pub'
+
+            if "argo-gdac-sandbox/pub/idx" not in self.host:
                 log.info(
                     """Working with a non-official Argo s3 server: %s. Raise on issue if you wish to add your own to the valid list of S3 servers: https://github.com/euroargodev/argopy/issues/new?title=New%%20S3%%20server"""
-                    % host
+                    % self.host
                 )
-            if not isconnected(host):
-                raise S3PathError("This host (%s) is not alive !" % host)
+            if not isconnected(self.host):
+                raise S3PathError("This host (%s) is not alive !" % self.host)
 
             self.fs["src"] = s3store(
                 cache=cache,
@@ -230,7 +233,7 @@ class ArgoIndexStoreProto(ABC):
 
         # Check if the index file exists
         # Allow for up to 10 try to account for some slow servers
-        i_try, max_try, index_found = 0, 1 if "invalid" in host else 10, False
+        i_try, max_try, index_found = 0, 1 if "invalid" in self.host else 10, False
         while i_try < max_try:
             if not self.fs["src"].exists(self.index_path) and not self.fs["src"].exists(
                 self.index_path + ".gz"

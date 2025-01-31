@@ -1,5 +1,7 @@
 # from .argo_index_deprec import indexstore, indexfilter_wmo, indexfilter_box
-from .filesystems import filestore, httpstore, memorystore, ftpstore, s3store
+
+from .filesystems import argo_store_proto
+from .filesystems import filestore, httpstore, memorystore, ftpstore, s3store, gdacfs
 from .filesystems import httpstore_erddap, httpstore_erddap_auth
 from .filesystems import has_distributed, distributed  # noqa: F401
 
@@ -9,6 +11,8 @@ from .argo_index_pd import indexstore_pandas as indexstore_pd
 from .argo_index import ArgoIndex
 from .float.argo_float import ArgoFloat
 
+
+from .kerchunker import ArgoKerchunker
 
 #
 __all__ = (
@@ -24,4 +28,6 @@ __all__ = (
     "ftpstore",
     "memorystore",
     "s3store",
+    "ArgoKerchunker",
+    "gdacfs",
 )

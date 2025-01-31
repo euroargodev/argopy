@@ -73,6 +73,7 @@
     argopy.utils.list_bgc_s_parameters
     argopy.utils.list_radiometry_variables
     argopy.utils.list_radiometry_parameters
+    argopy.utils.list_gdac_servers
 
     argopy.utils.Chunker
 
@@ -243,6 +244,16 @@
     argopy.stores.s3store.clear_cache
     argopy.stores.s3store.open_mfdataset
     argopy.stores.s3store.open_mfjson
+
+    argopy.stores.filesystems.gdacfs
+    argopy.stores.gdacfs
+
+    argopy.stores.ArgoKerchunker
+    argopy.stores.ArgoKerchunker.supported
+    argopy.stores.ArgoKerchunker.translate
+    argopy.stores.ArgoKerchunker.to_kerchunk
+    argopy.stores.ArgoKerchunker.pprint
+    argopy.stores.ArgoKerchunker.open_dataset
 
     argopy.stores.argo_index_proto.ArgoIndexStoreProto
 
