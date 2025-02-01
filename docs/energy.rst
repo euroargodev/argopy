@@ -32,6 +32,7 @@ All branches are also monitored. Their metrics can be summed to compute each new
 
 - `Energy used by upstream CI tests running daily and on each commit in the master branch<https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=25052179>`_
 
+
 .. |energyused_CItests| image:: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=22344160&mode=totals
    :target: https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=22344160
 

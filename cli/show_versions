@@ -169,6 +169,7 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
             [
                 ("zarr", get_version),
                 ("boto3", get_version),
+                ("numcodecs", get_version),
                 ("s3fs", get_version),
                 ("kerchunk", get_version),
             ]

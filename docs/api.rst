@@ -207,6 +207,7 @@ Misc
     Dataset.argo.uid
     Dataset.argo.cast_types
     Dataset.argo.N_POINTS
+    Dataset.argo.to_zarr
 
 
 Utilities

@@ -330,6 +330,7 @@
     argopy.xarray.ArgoAccessor.list_WMO_CYC
     argopy.xarray.ArgoAccessor.N_POINTS
     argopy.xarray.ArgoAccessor.N_PROF
+    argopy.xarray.ArgoAccessor.to_zarr
 
     argopy.xarray.ArgoEngine
 

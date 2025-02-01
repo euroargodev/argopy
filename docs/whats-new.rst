@@ -56,6 +56,18 @@ With more details:
 Internals
 ^^^^^^^^^
 
+- **Support Argo dataset export to zarr**. Provide preliminary support to export Argo datasets to zarr files (local or remote). (:pr:`423`) by |gmaze|.
+
+.. code-block:: python
+    :caption: Export to zarr
+
+    from argopy import DataFetcher
+    ds = DataFetcher(src='gdac').float(6903091).to_xarray()
+    # then:
+    ds.argo.to_zarr("6903091_prof.zarr")
+    # or:
+    ds.argo.to_zarr("s3://argopy/sample-data/6903091_prof.zarr")
+
 - **Open netcdf files lazily**. We now provide low-level support for opening a netcdf Argo dataset lazily with `kerchunk <https://fsspec.github.io/kerchunk/>`_. Simply use the new option ``lazy=True`` with a :class:`stores.httpstore.open_dataset` or :class:`stores.s3store.open_dataset`. (:pr:`385`) by |gmaze|.
 
 .. code-block:: python
