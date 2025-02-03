@@ -278,6 +278,23 @@ class httpstore(ArgoStoreProto):
         def load_lazily(
             url, errors="raise", dwn_opts={}, xr_opts={}, akoverwrite: bool = False
         ):
+            """
+            Parameters
+            ----------
+            url
+            errors
+            dwn_opts
+            xr_opts
+            akoverwrite
+
+            Returns
+            -------
+            tuple:
+                If the url support lazy access:
+                    ("reference://", xr_opts)
+                else:
+                    (data, xr_opts) or (None, None) if errors == "ignore"
+            """
             from .. import ArgoKerchunker
 
             if "ak" not in kwargs:

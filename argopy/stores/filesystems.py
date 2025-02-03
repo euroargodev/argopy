@@ -2,6 +2,7 @@ import os
 import fsspec
 import logging
 import importlib
+from typing import Union
 
 from ..options import OPTIONS
 from ..utils.accessories import Registry
@@ -42,7 +43,7 @@ def new_fs(
     cachedir: str = OPTIONS["cachedir"],
     cache_expiration: int = OPTIONS["cache_expiration"],
     **kwargs,
-):
+) -> (fsspec.spec.AbstractFileSystem, Union[Registry, None]) :
     """Create a new fsspec file system for argopy higher level stores
 
     Parameters
