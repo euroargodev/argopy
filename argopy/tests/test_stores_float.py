@@ -161,14 +161,14 @@ class Test_FloatStore_Online():
         assert isinstance(this_af.host_sep, str)
         assert isinstance(this_af.host_protocol, str)
 
-        assert isinstance(this_af.list_dataset(), dict)
+        assert isinstance(this_af.ls_dataset(), dict)
         assert is_list_of_strings(this_af.ls())
 
         assert is_list_of_strings(this_af.lsprofiles())
         assert isinstance(this_af.describe_profiles(), pd.DataFrame)
 
     def assert_open_dataset(self, this_af):
-        lds = this_af.list_dataset()
+        lds = this_af.ls_dataset()
         dsname, _ = random.choice(list(lds.items()))
         assert isinstance(this_af.open_dataset(dsname), xr.Dataset)
 

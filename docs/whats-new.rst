@@ -22,18 +22,33 @@ Features and front-end API
     with argopy.set_options(gdac='s3://argo-gdac-sandbox/pub'):
         ds = DataFetcher(src='gdac').float(6903091).to_xarray()
 
-- **New** :class:`ArgoFloat` **store for Argo netcdf file load/read operation**. Whatever the Argo netcdf file location, local or remote, you can now delegate to argopy the burden of transfer protocol and GDAC paths handling. This store is primarily intended to be used by third party libraries or in workflow by operators and experts. (:pr:`429`) by |gmaze|.
+- **New** :class:`ArgoFloat` **store for Argo netcdf file load/read operations**. Whatever the Argo netcdf file location, local or remote, you can now delegate to argopy the burden of transfer protocol and GDAC paths handling. This store is primarily intended to be used by third party libraries or in workflow by operators and experts. (:pr:`429`) by |gmaze|.
 
-Just kick in the float WMO and trigger :class:`ArgoFloat.open_dataset` !
+This also comes with a new iterator on the :class:`ArgoIndex` (:pr:`432`) by |gmaze|.
 
 .. code-block:: python
+    :caption: Just kick in the float WMO and trigger :class:`ArgoFloat.open_dataset` !
 
     from argopy import ArgoFloat
     ds = ArgoFloat(6903091).open_dataset('prof')
 
-With more details:
+.. code-block:: python
+    :caption: Combine :class:`ArgoFloat` with a :class:`ArgoIndex`:
+
+    from argopy import ArgoIndex, ArgoFloat
+
+    # Make a search on Argo index of profiles:
+    idx = ArgoIndex().search_lat_lon([-70, -55, 20, 30])
+
+    # Then iterate over floats matching the results:
+    for float in idx.iterfloats():
+        # 'float' is an ArgoFloat instance
+        print(float.WMO)
+        ds = float.open_dataset('prof')
+
 
 .. code-block:: python
+    :caption: More details of the API
 
     from argopy import ArgoFloat
     WMO = 6903091
@@ -51,7 +66,7 @@ With more details:
     ds = af.open_dataset('Rtraj') # load <WMO>_Rtraj.nc
 
     # List all available datasets for this float:
-    af.list_dataset()
+    af.ls_dataset()
 
 Internals
 ^^^^^^^^^

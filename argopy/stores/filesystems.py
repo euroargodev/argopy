@@ -140,5 +140,3 @@ def new_fs(
     log.debug(log_msg)
     # log_argopy_callerstack()
     return fs, cache_registry
-
-
