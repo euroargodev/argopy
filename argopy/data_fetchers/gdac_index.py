@@ -9,23 +9,14 @@ import pandas as pd
 from abc import ABC, abstractmethod
 import warnings
 import logging
-import importlib
 
 from ..utils.format import format_oneline
-from ..options import OPTIONS, check_gdac_path
+from ..options import OPTIONS, check_gdac_option
 from ..plot import dashboard
+from ..stores import ArgoIndex
 
 
 log = logging.getLogger("argopy.gdac.index")
-
-has_pyarrow = importlib.util.find_spec('pyarrow') is not None
-if has_pyarrow:
-    from argopy.stores.argo_index_pa import indexstore_pyarrow as indexstore
-    # log.debug("Using pyarrow indexstore")
-else:
-    from argopy.stores.argo_index_pd import indexstore_pandas as indexstore
-    # warnings.warn("Consider installing pyarrow in order to improve performances when fetching GDAC data")
-    # log.debug("Using pandas indexstore")
 
 access_points = ["wmo", "box"]
 exit_formats = ["xarray"]
@@ -78,21 +69,20 @@ class GDACArgoIndexFetcher(ABC):
             Server request time out in seconds. Set to OPTIONS['api_timeout'] by default.
         """
         self.timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
-        self.definition = "Ifremer GDAC Argo index fetcher"
         self.dataset_id = OPTIONS["ds"] if ds == "" else ds
         self.server = OPTIONS['gdac'] if gdac == "" else gdac
+        self.definition = "Ifremer GDAC Argo index fetcher"
         self.errors = errors
 
         # Validate server, raise GdacPathError if not valid.
-        check_gdac_path(self.server, errors='raise')
+        check_gdac_option(self.server, errors='raise')
 
-        if self.dataset_id == 'phy':
-            index_file = "ar_index_global_prof.txt"
-        elif self.dataset_id == 'bgc':
-            index_file = "argo_synthetic-profile_index.txt"
+        index_file = "core"
+        if self.dataset_id in ["bgc-s", "bgc-b"]:
+            index_file = self.dataset_id
 
         # Validation of self.server is done by the indexstore:
-        self.indexfs = indexstore(host=self.server,
+        self.indexfs = ArgoIndex(host=self.server,
                                   index_file=index_file,
                                   cache=cache,
                                   cachedir=cachedir,
@@ -102,7 +92,8 @@ class GDACArgoIndexFetcher(ABC):
         nrows = None
         if 'N_RECORDS' in kwargs:
             nrows = kwargs['N_RECORDS']
-        self.N_RECORDS = self.indexfs.load(nrows=nrows).N_RECORDS  # Number of records in the index
+        # Number of records in the index, this will force to load the index file:
+        self.N_RECORDS = self.indexfs.load(nrows=nrows).N_RECORDS
 
         self.init(**kwargs)
 

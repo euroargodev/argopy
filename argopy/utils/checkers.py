@@ -14,7 +14,7 @@ import importlib
 
 from ..options import OPTIONS
 from ..errors import InvalidDatasetStructure, GdacPathError, InvalidFetcher
-from .lists import list_available_data_src, list_available_index_src
+from .lists import list_available_data_src, list_available_index_src, list_gdac_servers
 from .casting import to_list
 
 
@@ -441,7 +441,7 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
         return column_names
 
 
-def check_gdac_path(path, errors="ignore"):  # noqa: C901
+def check_gdac_path(path, errors:str="ignore", ignore_knowns:bool=False):  # noqa: C901
     """Check if a path has the expected GDAC structure
 
     Expected GDAC structure::
@@ -455,14 +455,13 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
             ├── meds
             └── nmdis
 
-    This check will return True if at least one DAC sub-folder is found under path/dac/<dac_name>
-
     Examples::
 
     >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
     >>> check_gdac_path("https://usgodae.org/pub/outgoing/argo") # True
     >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
     >>> check_gdac_path("/home/ref-argo/gdac") # True
+    >>> check_gdac_path("s3://argo-gdac-sandbox/pub") # True
     >>> check_gdac_path("https://www.ifremer.fr") # False
     >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
 
@@ -470,70 +469,54 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
     ----------
     path: str
         Path name to check, including access protocol
-    errors: str
-        "ignore" or "raise" (or "warn")
+    errors: str, default="ignore"
+        Determine how check procedure error are handled: "ignore", "raise" or "warn"
+    ignore_knowns: bool, default=False
+        Should the checking procedure be by-passed for the internal list of known GDACs.
+        Set this to True to check if a known GDACs is connected or not.
 
     Returns
     -------
     checked: boolean
-        True if at least one DAC folder is found under path/dac/<dac_name>
-        False otherwise
+
+    See also
+    --------
+    :class:`argopy.stores.gdacfs`, :meth:`argopy.utils.list_gdac_servers`
+
     """
-    # Create a file system for this path
-    if split_protocol(path)[0] is None:
-        fs = fsspec.filesystem("file")
-    elif "https" in split_protocol(path)[0]:
-        fs = fsspec.filesystem("http")
-    elif "ftp" in split_protocol(path)[0]:
+    if path in list_gdac_servers() and ignore_knowns:
+        return True
+    else:
+
+        from ..stores import gdacfs  # import here, otherwise raises circular import
+
         try:
-            host = split_protocol(path)[-1].split("/")[0]
-            fs = fsspec.filesystem("ftp", host=host)
-        except gaierror:
+            fs = gdacfs(path)
+        except GdacPathError:
             if errors == "raise":
-                raise GdacPathError("Can't get address info (GAIerror) on '%s'" % host)
+                raise
             elif errors == "warn":
-                warnings.warn("Can't get address info (GAIerror) on '%s'" % host)
+                warnings.warn("Can't get address info (GAIerror) on '%s'" % path)
                 return False
             else:
                 return False
-    else:
-        raise GdacPathError(
-            "Unknown protocol for an Argo GDAC host: %s" % split_protocol(path)[0]
-        )
 
-    # dacs = [
-    #     "aoml",
-    #     "bodc",
-    #     "coriolis",
-    #     "csio",
-    #     "csiro",
-    #     "incois",
-    #     "jma",
-    #     "kma",
-    #     "kordi",
-    #     "meds",
-    #     "nmdis",
-    # ]
+        check1 = fs.exists(fs.sep.join([path, "dac"]))
+        if check1:
+            return True
 
-    # Case 1:
-    check1 = (
-        fs.exists(path)
-        and fs.exists(fs.sep.join([path, "dac"]))
-        # and np.any([fs.exists(fs.sep.join([path, "dac", dac])) for dac in dacs])  # Take too much time on http/ftp GDAC server
-    )
-    if check1:
-        return True
-    elif errors == "raise":
-        raise GdacPathError(
-            "This path is not GDAC compliant (no `dac` folder with legitimate sub-folder):\n%s"
-            % path
-        )
+        elif errors == "raise":
+            raise GdacPathError(
+                "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
+                % path
+            )
 
-    elif errors == "warn":
-        warnings.warn("This path is not GDAC compliant:\n%s" % path)
-        return False
-    else:
-        return False
+        elif errors == "warn":
+            warnings.warn("This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s" % path)
+            return False
+
+        else:
+            return False
 
 
 def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
@@ -569,7 +552,9 @@ def isconnected(host: str = "https://www.ifremer.fr", maxtry: int = 10):
         )  # nosec B310 because host protocol already checked
 
     def check_s3(host):
-        return s3fs.S3FileSystem(anon=True).info(host)
+        anon = boto3.client('s3')._request_signer._credentials is None if HAS_BOTO3 else True
+        fs = fsspec.filesystem("s3", anon=anon)
+        return fs.exists(host)
 
     if split_protocol(host)[0] in ["http", "https", "ftp", "sftp"]:
         return test_retry(host, check_remote, maxtry)
@@ -661,7 +646,10 @@ def isAPIconnected(src="erddap", data=True):
         list_src = list_available_index_src()
 
     if src in list_src and getattr(list_src[src], "api_server_check", None):
-        return isalive(list_src[src].api_server_check)
+        if src == 'gdac':
+            return check_gdac_path(list_src[src].api_server_check, ignore_knowns=True)
+        else:
+            return isalive(list_src[src].api_server_check)
     else:
         raise InvalidFetcher
 

@@ -30,6 +30,7 @@ from .lists import (
     list_bgc_s_parameters,
     list_radiometry_variables,
     list_radiometry_parameters,
+    list_gdac_servers,
 )
 from .caching import clear_cache, lscache
 from .monitored_threadpool import MyThreadPoolExecutor as MonitoredThreadPoolExecutor
@@ -58,7 +59,7 @@ from .transform import (
     filter_param_by_data_mode,
     split_data_mode,
 )
-from .format import argo_split_path, format_oneline, UriCName
+from .format import argo_split_path, format_oneline, UriCName, redact
 from .loggers import warnUnless, log_argopy_callerstack
 
 import importlib
@@ -101,6 +102,7 @@ __all__ = (
     "list_bgc_s_parameters",
     "list_radiometry_variables",
     "list_radiometry_parameters",
+    "list_gdac_servers",
     # Cache management:
     "clear_cache",
     "lscache",
@@ -135,6 +137,7 @@ __all__ = (
     "format_oneline",
     "argo_split_path",
     "UriCName",
+    "redact",
     # Loggers:
     "warnUnless",
     "log_argopy_callerstack",

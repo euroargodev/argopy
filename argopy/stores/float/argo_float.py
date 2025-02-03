@@ -35,37 +35,37 @@ class ArgoFloat(FloatStore):
     .. code-block:: python
         :caption: A float store is instantiated with float WMO number and a host (any access path: local, http, ftp or s3) where float files are to be found.
 
-        >>> from argopy import ArgoFloat
-        >>> af = ArgoFloat(WMO)  # Use argopy 'gdac' option by default
-        >>> af = ArgoFloat(WMO, host='/home/ref-argo/gdac')  # Use your local GDAC copy
-        >>> af = ArgoFloat(WMO, host='http')   # Shortcut for https://data-argo.ifremer.fr
-        >>> af = ArgoFloat(WMO, host='ftp')    # shortcut for ftp://ftp.ifremer.fr/ifremer/argo
-        >>> af = ArgoFloat(WMO, host='s3')     # Shortcut for s3://argo-gdac-sandbox/pub
+        from argopy import ArgoFloat
+        af = ArgoFloat(WMO)  # Use argopy 'gdac' option by default
+        af = ArgoFloat(WMO, host='/home/ref-argo/gdac')  # Use your local GDAC copy
+        af = ArgoFloat(WMO, host='http')   # Shortcut for https://data-argo.ifremer.fr
+        af = ArgoFloat(WMO, host='ftp')    # shortcut for ftp://ftp.ifremer.fr/ifremer/argo
+        af = ArgoFloat(WMO, host='s3')     # Shortcut for s3://argo-gdac-sandbox/pub
 
     .. code-block:: python
         :caption: Load/read GDAC netcdf files as a :class:`xarray.Dataset`
 
-        >>> af.list_dataset() # Return a dictionary with all available datasets for this float
-        >>> ds = af.open_dataset('prof') # Use keys from the available datasets dictionary
-        >>> ds = af.open_dataset('meta')
-        >>> ds = af.open_dataset('tech')
-        >>> ds = af.open_dataset('Rtraj')
-        >>> ds = af.open_dataset('Sprof')
+        af.list_dataset() # Return a dictionary with all available datasets for this float
+        ds = af.open_dataset('prof') # Use keys from the available datasets dictionary
+        ds = af.open_dataset('meta')
+        ds = af.open_dataset('tech')
+        ds = af.open_dataset('Rtraj')
+        ds = af.open_dataset('Sprof')
 
     .. code-block:: python
         :caption: Other attributes and methods
 
-        >>> af.N_CYCLES  # Number of cycles (estimated)
-        >>> af.path  # root path for all float datasets
-        >>> af.dac   # name of the DAC this float belongs to
-        >>> af.metadata  # a dictionary with all available metadata for this file (from netcdf or fleetmonitoring API)
-        >>> af.ls()  # list af.path folder content
+        af.N_CYCLES  # Number of cycles (estimated)
+        af.path  # root path for all float datasets
+        af.dac   # name of the DAC this float belongs to
+        af.metadata  # a dictionary with all available metadata for this file (from netcdf or fleetmonitoring API)
+        af.ls()  # list af.path folder content
 
     .. code-block:: python
         :caption: Working with float profiles
 
-        >>> af.lsprofiles() # list float "profiles" folder content
-        >>> af.describe_profiles()  # Pandas DataFrame describing all available float profile files
+        af.lsprofiles() # list float "profiles" folder content
+        af.describe_profiles()  # Pandas DataFrame describing all available float profile files
 
     """
 

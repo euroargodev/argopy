@@ -3,7 +3,9 @@
 Carbon emissions
 ================
 
-|energyused_CItests| |energyused_CItests_upstream|
+|eqco2_CItests| |eqco2_CItests_upstream|
+
+|eqco2_CItests_30days| |eqco2_CItests_upstream_30days|
 
 
 Why
@@ -22,15 +24,29 @@ Our continuous integration pipeline works with Github Actions that operate on Mi
 Results
 -------
 
-- `Dashboard of all argopy energy consumption and CO2eq emission <https://metrics.green-coding.io/carbondb-lists.html?project_uuid=a5c7557d-f668-482b-b740-b87d0bbf5b6d>`_
+These metrics are for activities in the `master` branch.
 
-- `Energy used by CI tests running on each commit <https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=22344160>`_
+All branches are also monitored. Their metrics can be summed to compute each new release specific impact.
 
-- `Energy used by upstream CI tests running daily and on each commit <https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=25052179>`_
+- `Energy used by CI tests running on each commit in the master branch<https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=22344160>`_
+
+- `Energy used by upstream CI tests running daily and on each commit in the master branch<https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=25052179>`_
 
 
-.. |energyused_CItests| image:: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=22344160
+.. |energyused_CItests| image:: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=22344160&mode=totals
    :target: https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=22344160
 
-.. |energyused_CItests_upstream| image:: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=25052179
+.. |energyused_CItests_upstream| image:: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=25052179&mode=totals
+   :target: https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=25052179
+
+.. |eqco2_CItests| image:: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=22344160&mode=totals&metric=carbon
+   :target: https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=22344160
+
+.. |eqco2_CItests_upstream| image:: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=25052179&mode=totals&metric=carbon
+   :target: https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=25052179
+
+.. |eqco2_CItests_30days| image:: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=22344160&mode=totals&metric=carbon&duration_days=30
+   :target: https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=22344160
+
+.. |eqco2_CItests_upstream_30days| image:: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=25052179&mode=totals&metric=carbon&duration_days=30
    :target: https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=25052179

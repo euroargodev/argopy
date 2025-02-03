@@ -93,7 +93,7 @@ class Test_Backend:
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
         self.client = Client(processes=True)
-        log.debug(self.client.dashboard_link)
+        log.debug("Dask dashboard: %s" % self.client.dashboard_link)
 
     def _test2fetcherargs(self, this_request):
         """Helper method to set up options for a fetcher creation"""

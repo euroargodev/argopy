@@ -96,7 +96,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
 
         Parameters
         ----------
-        ds: str (optional)
+        ds: str, default = OPTIONS['ds']
             Dataset to load: 'phy' or 'ref' or 'bgc-s'
         cache: bool (optional)
             Cache data or not (default: False)
@@ -128,6 +128,13 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
             List of BGC essential variables that can't be NaN. If set to 'all', this is an easy way to reduce the size of the
             :class:`xr.DataSet`` to points where all variables have been measured. Otherwise, provide a simple list of
             variables.
+
+        Other parameters
+        ----------------
+        server: str, default = OPTIONS['erddap']
+            URL to erddap server
+        mode: str, default = OPTIONS['mode']
+
         """
         timeout = OPTIONS["api_timeout"] if api_timeout == 0 else api_timeout
         self.definition = "Ifremer erddap Argo data fetcher"
@@ -707,11 +714,9 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         -------
         :class:`xarray.Dataset`
         """
-
         URI = self.uri  # Call it once
 
-        # Should we compute (from the index) and add DATA_MODE for BGC variables:
-        add_dm = self.dataset_id in ["bgc", "bgc-s"] if add_dm is None else bool(add_dm)
+        # Pre-processor options:
         preprocess_opts = {
             "add_dm": False,
             "URI": URI,
@@ -725,7 +730,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 "indexfs": self.indexfs,
             }
 
-        # Download data
+        # Download and pre-process data:
         results = []
         if not self.parallelize:
             if len(URI) == 1:
@@ -839,21 +844,6 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 filtered = []
                 [filtered.append(self.filter_measured(r)) for r in results]
                 results = filtered
-
-            # empty = []
-            # for v in self._bgc_vlist_measured:
-            #     if v in results and np.count_nonzero(results[v]) != len(results["N_POINTS"]):
-            #         empty.append(v)
-            # if len(empty) > 0:
-            #     msg = (
-            #         "After processing, your BGC request returned final data with NaNs (%s). "
-            #         "This may be due to the 'measured' argument ('%s') that imposes a no-NaN constraint "
-            #         "impossible to fulfill for the access point defined (%s)]. "
-            #         "\nUsing the 'measured' argument, you can try to minimize the list of variables to "
-            #         "return without NaNs, or set it to 'None' to return all samples."
-            #         % (",".join(to_list(v)), ",".join(self._bgc_measured), self.cname())
-            #     )
-            #     raise ValueError(msg)
 
         if concat and results is not None:
             results["N_POINTS"] = np.arange(0, len(results["N_POINTS"]))

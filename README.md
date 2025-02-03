@@ -1,8 +1,8 @@
 | <img src="https://raw.githubusercontent.com/euroargodev/argopy/master/docs/_static/argopy_logo_long.png" alt="argopy logo" width="200"/><br>``argopy`` is a python library dedicated to Argo data access, visualisation and manipulation for regular users as well as Argo experts and operators |
 |:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-|                                                         [![DOI][joss-badge]][joss-link] [![Documentation][rtd-badge]][rtd-link] [![Pypi][pip-badge]][pip-link] [![Conda][conda-badge]][conda-link]                                                          |
-|                                                                                                                 [![codecov][cov-badge]][conda-link]  ![CI][ci-badge] [![CI Energy][ci-energy-badge]][ci-energy-link]                                                                                                                  |
-| [![Open-SSF][ossf-badge]][ossf-link] |
+|                                                                            [![DOI][joss-badge]][joss-link] [![Documentation][rtd-badge]][rtd-link] [![Pypi][pip-badge]][pip-link] [![Conda][conda-badge]][conda-link]                                                                            |
+|                                                                                             [![codecov][cov-badge]][conda-link]  ![CI][ci-badge] [![CI Energy][ci-energy-badge-co2]][ci-energy-link]                                                                                             |
+|                                                                                                                               [![Open-SSF][ossf-badge]][ossf-link]                                                                                                                               |
 
 [joss-badge]: https://img.shields.io/badge/DOI-10.21105%2Fjoss.02425-brightgreen
 [joss-link]: https://dx.doi.org/10.21105/joss.02425
@@ -77,19 +77,20 @@ Just check out [the documentation for more](https://argopy.readthedocs.io) !
 
 ## 🌿 Energy impact of **argopy** development
 
-[ci-energy-badge]: https://api.green-coding.berlin/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=22344160
 [ci-energy-link]: https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=22344160
+[ci-energy-badge]: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=22344160&mode=totals&duration_days=30
+[ci-energy-badge-co2]: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=22344160&mode=totals&duration_days=30&metric=carbon
 
-[ci-energy-badge-upstream]: https://api.green-coding.berlin/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=25052179
 [ci-energy-link-upstream]: https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=25052179
+[ci-energy-badge-upstream]: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=25052179&mode=totals&duration_days=30
+[ci-energy-badge-upstream-co2]: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=25052179&mode=totals&duration_days=30&metric=carbon
 
 The **argopy** team is concerned about the environmental impact of your favorite software development. Starting June 1st 2024, we're experimenting with the [Green Metrics Tools](https://metrics.green-coding.io) from [Green Coding](https://www.green-coding.io/) to get an estimate of the energy used and CO2eq emitted by our development activities on Github infrastructure. Results:
 
-| Activity                         | Green Coding tool                                                                                                                           |
-|----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
-| All                              | [Dashboard](https://metrics.green-coding.io/carbondb-lists.html?project_uuid=a5c7557d-f668-482b-b740-b87d0bbf5b6d)                          |
-| CI tests running on each commit  | [![CI Energy][ci-energy-badge]][ci-energy-link] |
-| Upstream CI tests, running daily | [![CI Energy][ci-energy-badge-upstream]][ci-energy-link-upstream]|
+| Activity                         | Green Coding tool                                                                                                                       |
+|----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| CI tests running on each commit  | [![CI Energy][ci-energy-badge]][ci-energy-link] [![CI Energy][ci-energy-badge-co2]][ci-energy-link]                                     |
+| Upstream CI tests, running daily | [![CI Energy][ci-energy-badge-upstream]][ci-energy-link-upstream] [![CI Energy][ci-energy-badge-upstream-co2]][ci-energy-link-upstream] |
 
 
 

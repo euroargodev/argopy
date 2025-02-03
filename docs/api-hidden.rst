@@ -73,6 +73,7 @@
     argopy.utils.list_bgc_s_parameters
     argopy.utils.list_radiometry_variables
     argopy.utils.list_radiometry_parameters
+    argopy.utils.list_gdac_servers
 
     argopy.utils.Chunker
 
@@ -169,9 +170,9 @@
     argopy.plot.ArgoColors.ticklabels
     argopy.plot.ArgoColors.list_valid_known_colormaps
 
-    argopy.stores.filesystems.argo_store_proto
+    argopy.stores.spec.ArgoStoreProto
 
-    argopy.stores.filesystems.filestore
+    argopy.stores.implementations.local.filestore
     argopy.stores.filestore.open_dataset
     argopy.stores.filestore.read_csv
     argopy.stores.filestore.open
@@ -183,7 +184,7 @@
     argopy.stores.filestore.clear_cache
     argopy.stores.filestore.open_mfdataset
 
-    argopy.stores.filesystems.httpstore
+    argopy.stores.implementations.http.httpstore
     argopy.stores.httpstore.download_url
     argopy.stores.httpstore.open_json
     argopy.stores.httpstore.open_mfjson
@@ -198,7 +199,7 @@
     argopy.stores.httpstore.cachepath
     argopy.stores.httpstore.clear_cache
 
-    argopy.stores.filesystems.memorystore
+    argopy.stores.implementations.memory.memorystore
     argopy.stores.memorystore.open
     argopy.stores.memorystore.glob
     argopy.stores.memorystore.exists
@@ -210,11 +211,11 @@
     argopy.stores.memorystore.open_mfdataset
     argopy.stores.memorystore.read_csv
 
-    argopy.stores.filesystems.ftpstore
+    argopy.stores.implementations.ftp.ftpstore
     argopy.stores.ftpstore.open_dataset
     argopy.stores.ftpstore.open_mfdataset
 
-    argopy.stores.filesystems.httpstore_erddap_auth
+    argopy.stores.implementations.http_erddap.httpstore_erddap_auth
     argopy.stores.httpstore_erddap_auth.get_auth_client
     argopy.stores.httpstore_erddap_auth.connect
     argopy.stores.httpstore_erddap_auth.connected
@@ -228,9 +229,9 @@
     argopy.stores.httpstore_erddap_auth.open_mfdataset
     argopy.stores.httpstore_erddap_auth.open_mfjson
 
-    argopy.stores.filesystems.httpstore_erddap
+    argopy.stores.implementations.http_erddap.httpstore_erddap
 
-    argopy.stores.filesystems.s3store
+    argopy.stores.implementations.s3.s3store
     argopy.stores.s3store.open_json
     argopy.stores.s3store.open_dataset
     argopy.stores.s3store.read_csv
@@ -244,39 +245,17 @@
     argopy.stores.s3store.open_mfdataset
     argopy.stores.s3store.open_mfjson
 
-    argopy.stores.argo_index_proto.ArgoIndexStoreProto
+    argopy.stores.implementations.gdac.gdacfs
+    argopy.stores.gdacfs
 
-    argopy.stores.argo_index_pa.indexstore_pyarrow
-    argopy.stores.argo_index_pa.indexstore_pyarrow.load
-    argopy.stores.argo_index_pa.indexstore_pyarrow.read_wmo
-    argopy.stores.argo_index_pa.indexstore_pyarrow.read_params
-    argopy.stores.argo_index_pa.indexstore_pyarrow.records_per_wmo
-    argopy.stores.argo_index_pa.indexstore_pyarrow.search_wmo
-    argopy.stores.argo_index_pa.indexstore_pyarrow.search_cyc
-    argopy.stores.argo_index_pa.indexstore_pyarrow.search_wmo_cyc
-    argopy.stores.argo_index_pa.indexstore_pyarrow.search_tim
-    argopy.stores.argo_index_pa.indexstore_pyarrow.search_lat_lon
-    argopy.stores.argo_index_pa.indexstore_pyarrow.search_lat_lon_tim
-    argopy.stores.argo_index_pa.indexstore_pyarrow.search_params
-    argopy.stores.argo_index_pa.indexstore_pyarrow.search_parameter_data_mode
-    argopy.stores.argo_index_pa.indexstore_pyarrow.to_dataframe
-    argopy.stores.argo_index_pa.indexstore_pyarrow.to_indexfile
+    argopy.stores.ArgoKerchunker
+    argopy.stores.ArgoKerchunker.supported
+    argopy.stores.ArgoKerchunker.translate
+    argopy.stores.ArgoKerchunker.to_kerchunk
+    argopy.stores.ArgoKerchunker.pprint
+    argopy.stores.ArgoKerchunker.open_dataset
 
-    argopy.stores.argo_index_pd.indexstore_pandas
-    argopy.stores.argo_index_pd.indexstore_pandas.load
-    argopy.stores.argo_index_pd.indexstore_pandas.read_wmo
-    argopy.stores.argo_index_pd.indexstore_pandas.read_params
-    argopy.stores.argo_index_pd.indexstore_pandas.records_per_wmo
-    argopy.stores.argo_index_pd.indexstore_pandas.search_wmo
-    argopy.stores.argo_index_pd.indexstore_pandas.search_cyc
-    argopy.stores.argo_index_pd.indexstore_pandas.search_wmo_cyc
-    argopy.stores.argo_index_pd.indexstore_pandas.search_tim
-    argopy.stores.argo_index_pd.indexstore_pandas.search_lat_lon
-    argopy.stores.argo_index_pd.indexstore_pandas.search_lat_lon_tim
-    argopy.stores.argo_index_pd.indexstore_pandas.search_params
-    argopy.stores.argo_index_pd.indexstore_pandas.search_parameter_data_mode
-    argopy.stores.argo_index_pd.indexstore_pandas.to_dataframe
-    argopy.stores.argo_index_pd.indexstore_pandas.to_indexfile
+    argopy.stores.index.spec.ArgoIndexStoreProto
 
     argopy.stores.ArgoIndex
     argopy.ArgoIndex
@@ -285,6 +264,7 @@
     argopy.ArgoIndex.convention_supported
     argopy.ArgoIndex.load
     argopy.ArgoIndex.read_wmo
+    argopy.ArgoIndex.records_per_wmo
     argopy.ArgoIndex.read_params
     argopy.ArgoIndex.search_wmo
     argopy.ArgoIndex.search_cyc
@@ -298,11 +278,11 @@
     argopy.ArgoIndex.to_indexfile
     argopy.ArgoIndex.copy
 
-    argopy.stores.argo_index_proto_s3.s3index
-    argopy.stores.argo_index_proto_s3.s3index_core
-    argopy.stores.argo_index_proto_s3.s3index_bgc_bio
-    argopy.stores.argo_index_proto_s3.s3index_bgc_synthetic
-    argopy.stores.argo_index_proto_s3.search_s3
+    argopy.stores.index.implementations.index_s3.s3index
+    argopy.stores.index.implementations.index_s3.s3index_core
+    argopy.stores.index.implementations.index_s3.s3index_bgc_bio
+    argopy.stores.index.implementations.index_s3.s3index_bgc_synthetic
+    argopy.stores.index.implementations.index_s3.search_s3
 
     argopy.xarray.ArgoAccessor.point2profile
     argopy.xarray.ArgoAccessor.profile2point
@@ -319,6 +299,7 @@
     argopy.xarray.ArgoAccessor.list_WMO_CYC
     argopy.xarray.ArgoAccessor.N_POINTS
     argopy.xarray.ArgoAccessor.N_PROF
+    argopy.xarray.ArgoAccessor.to_zarr
 
     argopy.xarray.ArgoEngine
 

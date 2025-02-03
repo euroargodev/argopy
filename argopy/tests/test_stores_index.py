@@ -17,7 +17,7 @@ from argopy.errors import (
     InvalidDatasetStructure,
 )
 from argopy.utils.checkers import is_list_of_strings
-from argopy.stores.argo_index_pd import indexstore_pandas
+from argopy.stores import indexstore_pd
 from utils import create_temp_folder
 from mocked_http import mocked_httpserver, mocked_server_address
 
@@ -472,7 +472,7 @@ class IndexStore_test_proto:
 @skip_CORE
 class Test_IndexStore_pandas_CORE(IndexStore_test_proto):
     network = "core"
-    indexstore = indexstore_pandas
+    indexstore = indexstore_pd
     index_file = "ar_index_global_prof.txt"
 
 
@@ -480,7 +480,7 @@ class Test_IndexStore_pandas_CORE(IndexStore_test_proto):
 @skip_BGCs
 class Test_IndexStore_pandas_BGC_synthetic(IndexStore_test_proto):
     network = "bgc"
-    indexstore = indexstore_pandas
+    indexstore = indexstore_pd
     index_file = "argo_synthetic-profile_index.txt"
 
 
@@ -488,7 +488,7 @@ class Test_IndexStore_pandas_BGC_synthetic(IndexStore_test_proto):
 @skip_BGCb
 class Test_IndexStore_pandas_BGC_bio(IndexStore_test_proto):
     network = "bgc"
-    indexstore = indexstore_pandas
+    indexstore = indexstore_pd
     index_file = "argo_bio-profile_index.txt"
 
 
@@ -501,9 +501,9 @@ class Test_IndexStore_pandas_BGC_bio(IndexStore_test_proto):
 @skip_CORE
 class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto):
     network = "core"
-    from argopy.stores.argo_index_pa import indexstore_pyarrow
+    from argopy.stores import indexstore_pa
 
-    indexstore = indexstore_pyarrow
+    indexstore = indexstore_pa
     index_file = "ar_index_global_prof.txt"
 
 
@@ -512,9 +512,9 @@ class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto):
 @skip_BGCs
 class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
     network = "bgc"
-    from argopy.stores.argo_index_pa import indexstore_pyarrow
+    from argopy.stores import indexstore_pa
 
-    indexstore = indexstore_pyarrow
+    indexstore = indexstore_pa
     index_file = "argo_bio-profile_index.txt"
 
 
@@ -523,7 +523,7 @@ class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
 @skip_BGCb
 class Test_IndexStore_pyarrow_BGC_synthetic(IndexStore_test_proto):
     network = "bgc"
-    from argopy.stores.argo_index_pa import indexstore_pyarrow
+    from argopy.stores import indexstore_pa
 
-    indexstore = indexstore_pyarrow
+    indexstore = indexstore_pa
     index_file = "argo_synthetic-profile_index.txt"

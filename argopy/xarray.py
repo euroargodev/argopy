@@ -5,7 +5,9 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import logging
+from typing import Union
 from xarray.backends import BackendEntrypoint  # For xarray > 0.18
+from xarray.backends import ZarrStore
 
 try:
     import gsw
@@ -13,6 +15,15 @@ try:
     with_gsw = True
 except ModuleNotFoundError:
     with_gsw = False
+
+try:
+    from dask.delayed import Delayed
+
+    with_dask = True
+except ModuleNotFoundError:
+    with_dask = False
+    Delayed = lambda x: x
+
 
 from .utils import is_list_of_strings
 from .utils import (
@@ -617,7 +628,7 @@ class ArgoAccessor:
         ds = ds.where(~np.isnan(ds["PRES"]), drop=1)
         ds = ds.sortby("TIME") if "TIME" in ds else ds.sortby("JULD")
         ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
-        ds = cast_Argo_variable_type(ds)
+        ds = cast_Argo_variable_type(ds, overwrite=False)
         ds = ds[np.sort(ds.data_vars)]
         ds.encoding = self.encoding  # Preserve low-level encoding information
         ds.argo.add_history("Transformed with 'profile2point'")
@@ -693,7 +704,7 @@ class ArgoAccessor:
             )
 
         if len(QC_fields) == 0:
-            this.argo._add_history(
+            this.argo.add_history(
                 "Variables selected according to QC (but found no QC variables)"
             )
             return this
@@ -1928,6 +1939,44 @@ class ArgoAccessor:
     def list_WMO(self):
         """Return all possible WMO as a list"""
         return to_list(np.unique(self._obj["PLATFORM_NUMBER"].values))
+
+    def to_zarr(self, *args, **kwargs) -> Union[ZarrStore, Delayed]:
+        """Write Argo dataset content to a zarr group
+
+        Before write operation is delegated to :class:`xarray.Dataset.to_zarr`, we perform the following:
+
+        - Ensure all variables are appropriately cast.
+        - If the ``encoding`` argument is not specified, we automatically add a ``Blosc(cname="zstd", clevel=3, shuffle=2)`` compression to all variables. Set `encoding=None` for no compression.
+
+        Parameters
+        ----------
+        *args, **kwargs:
+            Passed to :class:`xarray.Dataset.to_zarr`.
+
+        Returns
+        -------
+        The output from :class:`xarray.Dataset.to_zarr` call
+
+        See Also
+        --------
+        :class:`xarray.Dataset.to_zarr`, :class:`numcodecs.blosc.Blosc`
+        """
+
+        # Ensure that all variables are cast appropriately
+        # (those already cast are not changed)
+        self._obj = self.cast_types()
+
+        # Add zarr compression to encoding:
+        if "encoding" not in kwargs:
+            from numcodecs import Blosc
+            compressor = Blosc(cname="zstd", clevel=3, shuffle=2)
+            encoding = {}
+            for v in self._obj:
+              encoding.update({v: {"compressor": compressor}})
+            kwargs.update({'encoding': encoding})
+
+        # Convert to a zarr file using compression:
+        return self._obj.to_zarr(*args, **kwargs)
 
 
 def open_Argo_dataset(filename_or_obj):
