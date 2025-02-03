@@ -305,8 +305,6 @@ Argo index and float stores
     :toctree: generated/
 
     ArgoIndex
-    stores.indexstore_pa
-    stores.indexstore_pd
     ArgoFloat
 
 Fetcher sources

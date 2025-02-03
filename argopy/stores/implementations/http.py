@@ -245,7 +245,8 @@ class httpstore(ArgoStoreProto):
         """
 
         def load_in_memory(url, errors="raise", dwn_opts={}, xr_opts={}):
-            """
+            """Download url content and return data along with xarray option to open it
+
             Returns
             -------
             tuple: (data, xr_opts) or (None, None) if errors == "ignore"
@@ -278,14 +279,9 @@ class httpstore(ArgoStoreProto):
         def load_lazily(
             url, errors="raise", dwn_opts={}, xr_opts={}, akoverwrite: bool = False
         ):
-            """
-            Parameters
-            ----------
-            url
-            errors
-            dwn_opts
-            xr_opts
-            akoverwrite
+            """Check if url support lazy access and return kerchunk data along with xarray option to open it lazily
+
+            Otherwise download url content and return data along with xarray option to open it.
 
             Returns
             -------
