@@ -299,6 +299,7 @@
     argopy.xarray.ArgoAccessor.list_WMO_CYC
     argopy.xarray.ArgoAccessor.N_POINTS
     argopy.xarray.ArgoAccessor.N_PROF
+    argopy.xarray.ArgoAccessor.to_zarr
 
     argopy.xarray.ArgoEngine
 
@@ -313,3 +314,14 @@
 
     argopy.errors.InvalidDatasetStructure
 
+    argopy.stores.float.spec.ArgoFloatProto
+    argopy.stores.ArgoFloat
+    argopy.ArgoFloat.open_dataset
+    argopy.ArgoFloat.list_dataset
+    argopy.ArgoFloat.path
+    argopy.ArgoFloat.ls
+    argopy.ArgoFloat.lsprofiles
+    argopy.ArgoFloat.describe_profiles
+    argopy.ArgoFloat.metadata
+    argopy.ArgoFloat.N_CYCLES
+    argopy.ArgoFloat.dac

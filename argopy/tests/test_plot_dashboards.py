@@ -3,7 +3,6 @@ This file covers the argopy.plot.dashboards submodule
 """
 import pytest
 import logging
-import tempfile
 
 import argopy
 from argopy.errors import InvalidDashboard
@@ -11,6 +10,7 @@ from utils import (
     requires_connection,
     requires_ipython,
     has_ipython,
+    create_temp_folder,
 )
 from mocked_http import mocked_httpserver, mocked_server_address
 
@@ -50,8 +50,9 @@ def test_valid_dashboard_float(board_type, mocked_httpserver):
 @pytest.mark.parametrize("board_type", ["data", "meta", "ea", "argovis", "bgc"], indirect=False)
 def test_valid_dashboard_profile(board_type, mocked_httpserver):
     # Test types with 'cyc'
-    with argopy.set_options(cachedir=tempfile.mkdtemp(), server=mocked_server_address):
-        assert isinstance(argopy.dashboard(5904797, 12, type=board_type, url_only=True), str)
+    with create_temp_folder() as cachedir:
+        with argopy.set_options(cachedir=cachedir, server=mocked_server_address):
+            assert isinstance(argopy.dashboard(5904797, 12, type=board_type, url_only=True), str)
 
 
 @requires_ipython
@@ -59,8 +60,7 @@ def test_valid_dashboard_profile(board_type, mocked_httpserver):
                          ids=['', 'WMO', 'WMO, CYC'],
                          indirect=False)
 def test_valid_dashboard_ipython_output(opts, mocked_httpserver):
-    with argopy.set_options(cachedir=tempfile.mkdtemp(), server=mocked_server_address):
-        dsh = argopy.dashboard(**opts)
-        assert isinstance(dsh, IPython.lib.display.IFrame)
-
-
+    with create_temp_folder() as cachedir:
+        with argopy.set_options(cachedir=cachedir, server=mocked_server_address):
+            dsh = argopy.dashboard(**opts)
+            assert isinstance(dsh, IPython.lib.display.IFrame)

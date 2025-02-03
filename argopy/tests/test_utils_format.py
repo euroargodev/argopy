@@ -16,7 +16,6 @@ class Test_argo_split_path:
     #############
     # UTILITIES #
     #############
-    # src = "https://data-argo.ifremer.fr/dac"
     src = argopy.tutorial.open_dataset("gdac")[0] + "/dac"
     list_of_files = [
         src + "/bodc/6901929/6901929_prof.nc",  # core / multi-profile
@@ -47,14 +46,40 @@ class Test_argo_split_path:
     ]
     list_of_files = [f.replace("/", os.path.sep) for f in list_of_files]
 
+    other_scenarios = [
+        '/dac/coriolis/6901035/profiles/D6901035_001D.nc',
+        'dac/coriolis/6901035/profiles/D6901035_001D.nc',
+        'https://data-argo.ifremer.fr/dac/csiro/5903939/profiles/D5903939_103.nc',
+        'C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/profiles/R13857_001.nc',
+        's3://argo-gdac-sandbox/pub/dac/aoml/13857/profiles/R13857_001.nc',
+    ]
+
+    invalid_scenarios = [
+        'coriolis/6901035/profiles/D6901035_001D.nc',
+        'dac/invalid_dacname/6901035/profiles/D6901035_001D.nc',
+    ]
     #########
     # TESTS #
     #########
 
     @pytest.mark.parametrize("file", list_of_files,
                              indirect=False)
-    def test_argo_split_path(self, file):
+    def test_AllFileTypes(self, file):
         desc = argo_split_path(file)
         assert isinstance(desc, dict)
         for key in ['origin', 'path', 'name', 'type', 'extension', 'wmo', 'dac']:
             assert key in desc
+
+    @pytest.mark.parametrize("file", other_scenarios,
+                             indirect=False)
+    def test_OtherScenarios(self, file):
+        desc = argo_split_path(file)
+        assert isinstance(desc, dict)
+        for key in ['origin', 'path', 'name', 'type', 'extension', 'wmo', 'dac']:
+            assert key in desc
+
+    @pytest.mark.parametrize("file", invalid_scenarios,
+                             indirect=False)
+    def test_Invalid(self, file):
+        with pytest.raises(ValueError):
+            desc = argo_split_path(file)

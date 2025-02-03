@@ -1,0 +1,105 @@
+from typing import Union
+import xarray as xr
+from pathlib import Path
+import pandas as pd
+import logging
+
+from ....plot import dashboard
+from ....utils import check_wmo, isconnected, argo_split_path
+from ....options import OPTIONS
+from ... import ArgoIndex, httpstore
+from ..spec import ArgoFloatProto
+
+
+log = logging.getLogger("argopy.stores.ArgoFloat")
+
+
+class ArgoFloatOnline(ArgoFloatProto):
+    """:class:`ArgoFloat` implementation using web access"""
+    _online = True
+    _eafleetmonitoring_server = "https://fleetmonitoring.euro-argo.eu"
+    _technicaldata = None
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+        if self.host_protocol == "s3":
+            self.host = self.host.replace(
+                "/idx", ""
+            )  # Fix s3 anomaly whereby index files are not at the 'dac' level
+
+        # Load some data (in a perfect world, this should be done asynchronously):
+        self.load_metadata()  # must come before load_dac because DAC is read from eafleetmonitoring metadata
+        self.load_dac()
+
+    @property
+    def api_point(self):
+        """Euro-Argo fleet-monitoring API points"""
+        points = {}
+
+        # points['meta'] = f"{self._eafleetmonitoring_server}/floats/basic/{self.WMO}"
+        points['meta'] = f"{self._eafleetmonitoring_server}/floats/{self.WMO}"
+
+        # points['technical'] = f"{self._eafleetmonitoring_server}/technical-data/basic/{self.WMO}"
+        points['technical'] = f"{self._eafleetmonitoring_server}/technical-data/{self.WMO}"
+
+        return points
+
+    def load_metadata(self):
+        """Load float metadata from Euro-Argo fleet-monitoring API
+
+        Note
+        ----
+        API point is stored in the :class:`ArgoFloat.api_point` attribute.
+
+        See Also
+        --------
+        :class:`ArgoFloat.load_technicaldata`
+        """
+        self._metadata = httpstore(cache=self.cache, cachedir=self.cachedir).open_json(
+            self.api_point['meta']
+        )
+
+        # Fix data type for some useful keys:
+        self._metadata["deployment"]["launchDate"] = pd.to_datetime(
+            self._metadata["deployment"]["launchDate"]
+        )
+
+    def load_technicaldata(self):
+        """Load float technical data from Euro-Argo fleet-monitoring API
+
+        Note
+        ----
+        API point is stored in the :class:`ArgoFloat.api_point` attribute.
+
+        See Also
+        --------
+        :class:`ArgoFloat.load_metadata`
+        """
+        self._technicaldata = httpstore(
+            cache=self.cache, cachedir=self.cachedir
+        ).open_json(self.api_point['technical'])
+
+    @property
+    def technicaldata(self) -> dict:
+        """A dictionary holding float technical data"""
+        if self._technicaldata is None:
+            self.load_technicaldata()
+        return self._technicaldata
+
+    def load_dac(self):
+        """Load the DAC short name for this float"""
+        try:
+            # Get DAC from EA-Metadata API:
+            self._dac = self._metadata["dataCenter"]["name"].lower()
+        except:
+            raise ValueError(
+                f"DAC name for Float {self.WMO} cannot be found from {self.host}"
+            )
+
+        # For the record, another method to get the DAC name, based on the profile index
+        # self._dac = self.idx.search_wmo(self.WMO).read_dac_wmo()[0][0] # Get DAC from Argo index

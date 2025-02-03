@@ -9,6 +9,7 @@ dependencies:
   - decorator
   - erddapy
   - fsspec
+  - h5netcdf
   - netCDF4
   - packaging
   - requests
@@ -26,7 +27,6 @@ dependencies:
 # EXT.PERF:
 #  - dask
 #  - distributed
-#  - h5netcdf
 #  - pyarrow
 
 # EXT.PLOT:

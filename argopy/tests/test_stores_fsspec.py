@@ -34,7 +34,7 @@ from argopy.utils.checkers import (
     is_list_of_datasets,
     is_list_of_dicts,
 )
-from utils import requires_connection, requires_connected_argovis
+from utils import requires_connection, requires_connected_argovis, create_temp_folder
 from mocked_http import mocked_httpserver, mocked_server_address
 
 
@@ -215,7 +215,7 @@ class Test_HttpStore:
     def setup_class(self):
         """setup any state specific to the execution of the given class"""
         # Create the cache folder here, so that it's not the same for the pandas and pyarrow tests
-        self.cachedir = tempfile.mkdtemp()
+        self.cachedir = create_temp_folder().folder
 
     def teardown_class(self):
         """Cleanup once we are finished."""

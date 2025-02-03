@@ -441,7 +441,7 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
         return column_names
 
 
-def check_gdac_path(path, errors="ignore"):  # noqa: C901
+def check_gdac_path(path, errors:str="ignore", ignore_knowns:bool=False):  # noqa: C901
     """Check if a path has the expected GDAC structure
 
     Expected GDAC structure::
@@ -469,8 +469,11 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
     ----------
     path: str
         Path name to check, including access protocol
-    errors: str
-        "ignore" or "raise" (or "warn")
+    errors: str, default="ignore"
+        Determine how check procedure error are handled: "ignore", "raise" or "warn"
+    ignore_knowns: bool, default=False
+        Should the checking procedure be by-passed for the internal list of known GDACs.
+        Set this to True to check if a known GDACs is connected or not.
 
     Returns
     -------
@@ -481,7 +484,7 @@ def check_gdac_path(path, errors="ignore"):  # noqa: C901
     :class:`argopy.stores.gdacfs`, :meth:`argopy.utils.list_gdac_servers`
 
     """
-    if path in list_gdac_servers():
+    if path in list_gdac_servers() and ignore_knowns:
         return True
     else:
 
@@ -644,7 +647,7 @@ def isAPIconnected(src="erddap", data=True):
 
     if src in list_src and getattr(list_src[src], "api_server_check", None):
         if src == 'gdac':
-            return check_gdac_path(list_src[src].api_server_check)
+            return check_gdac_path(list_src[src].api_server_check, ignore_knowns=True)
         else:
             return isalive(list_src[src].api_server_check)
     else:

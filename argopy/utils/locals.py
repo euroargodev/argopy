@@ -153,6 +153,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
                 ("xarray", get_version),
                 ("scipy", get_version),
                 ("netCDF4", get_version),
+                ("h5netcdf", get_version),
                 ("erddapy", get_version),
                 ("fsspec", get_version),
                 ("aiohttp", get_version),
@@ -183,6 +184,7 @@ def show_versions(file=sys.stdout, conda=False):  # noqa: C901
             [
                 ("boto3", get_version),
                 ("h5netcdf", get_version),
+                ("numcodecs", get_version),
                 ("s3fs", get_version),
                 ("kerchunk", get_version),
                 ("zarr", get_version),

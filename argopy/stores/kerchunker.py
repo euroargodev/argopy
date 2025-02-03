@@ -255,12 +255,12 @@ class ArgoKerchunker:
             self.translate(ncfile)
         elif str(ncfile) not in self.kerchunk_references:
             if self.fs.exists(self._ncfile2jsfile(ncfile)):
-                self.kerchunk_references.update({ncfile: self._ncfile2jsfile(ncfile)})
+                self.kerchunk_references.update({str(ncfile): self._ncfile2jsfile(ncfile)})
             else:
                 self.translate(ncfile)
 
         # Read and load the kerchunk JSON file:
-        kerchunk_jsfile = self.kerchunk_references[ncfile]
+        kerchunk_jsfile = self.kerchunk_references[str(ncfile)]
         with self.fs.open(kerchunk_jsfile, "r") as file:
             kerchunk_data = json.load(file)
 

@@ -87,6 +87,7 @@ Utilities for Argo related data
 
    status
    ArgoIndex
+   ArgoFloat
    ArgoDocs
    ArgoDOI
    ArgoNVSReferenceTables
@@ -206,6 +207,7 @@ Misc
     Dataset.argo.uid
     Dataset.argo.cast_types
     Dataset.argo.N_POINTS
+    Dataset.argo.to_zarr
 
 
 Utilities
@@ -296,13 +298,16 @@ File systems
     stores.gdacfs
     stores.ArgoKerchunker
 
-Argo index store
-----------------
+Argo index and float stores
+---------------------------
 
 .. autosummary::
     :toctree: generated/
 
     ArgoIndex
+    stores.indexstore_pa
+    stores.indexstore_pd
+    ArgoFloat
 
 Fetcher sources
 ---------------
