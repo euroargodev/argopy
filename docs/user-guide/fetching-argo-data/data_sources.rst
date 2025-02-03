@@ -121,7 +121,7 @@ Each of the data sources have their own features and capabilities. In the table 
       - X
       - X
       - X
-    * - :ref:`User mode: <user-mode-details>`
+    * - :ref:`User mode: <user-mode>`
       -
       -
       -

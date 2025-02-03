@@ -7,14 +7,11 @@ import json
 import logging
 import aiohttp
 
-
-# from tempfile import TemporaryDirectory
-# from fsspec.implementations.dirfs import DirFileSystem
-
-from ..stores import memorystore, filestore
 from ..utils import to_list
+from . import memorystore, filestore
 
 log = logging.getLogger("argopy.stores.kerchunk")
+
 
 try:
     from kerchunk.hdf import SingleHdf5ToZarr
@@ -42,7 +39,8 @@ class ArgoKerchunker:
     Argo netcdf file kerchunk helper
 
     This class is for expert users who wish to test lazy access to remote netcdf files. If you need to compute kerchunk
-    zarr data, we don't recommend to use this method as it shows poor performances on mono or multi profile files.
+    zarr data on-demand, we don't recommend to use this method as it shows poor performances on mono or multi profile files.
+    It is more efficient to compute kerchunk zarr data in batch, and then to provide these data to users.
 
     The `kerchunk <https://fsspec.github.io/kerchunk/>`_ library is required only if you start from scratch and
     need to extract zarr data from a netcdf file, i.e. execute :meth:`ArgoKerchunker.translate`.

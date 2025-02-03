@@ -288,15 +288,15 @@ File systems
 .. autosummary::
     :toctree: generated/
 
-    stores.argo_store_proto
+    stores.ArgoStoreProto
     stores.filestore
     stores.httpstore
     stores.httpstore_erddap
     stores.memorystore
     stores.ftpstore
     stores.s3store
-    stores.ArgoKerchunker
     stores.gdacfs
+    stores.ArgoKerchunker
 
 Argo index and float stores
 ---------------------------
@@ -305,8 +305,6 @@ Argo index and float stores
     :toctree: generated/
 
     ArgoIndex
-    stores.indexstore_pa
-    stores.indexstore_pd
     ArgoFloat
 
 Fetcher sources

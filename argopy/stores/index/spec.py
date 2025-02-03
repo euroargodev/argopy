@@ -1,8 +1,3 @@
-"""
-Argo file index store prototype
-
-"""
-
 import copy
 import numpy as np
 import pandas as pd
@@ -21,12 +16,12 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import Self
 
-from ..options import OPTIONS
-from ..errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError
-from ..utils.checkers import isconnected, has_aws_credentials
-from ..utils.accessories import Registry
-from .filesystems import httpstore, memorystore, filestore, ftpstore, s3store
-from .argo_index_proto_s3 import get_a_s3index
+from ...options import OPTIONS
+from ...errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError
+from ...utils.checkers import isconnected, has_aws_credentials
+from ...utils.accessories import Registry
+from .. import httpstore, memorystore, filestore, ftpstore, s3store
+from .implementations.index_s3 import get_a_s3index
 
 try:
     import pyarrow.csv as csv  # noqa: F401
@@ -305,11 +300,12 @@ class ArgoIndexStoreProto(ABC):
 
     @property
     def index_path(self):
+        """Absolute path to the index file"""
         return self.fs["src"].fs.sep.join([self.host, self.index_file])
 
     @property
     def cname(self) -> str:
-        """Return the search constraint(s) as a pretty formatted string
+        """Search constraint(s) as a pretty formatted string
 
         Return 'full' if a search was not yet performed on the indexstore instance
 
@@ -633,7 +629,7 @@ class ArgoIndexStoreProto(ABC):
         else:
             log.debug("Converting [%s] to dataframe from scratch ..." % src)
             # Post-processing for user:
-            from ..related import load_dict, mapp_dict
+            from ...related import load_dict, mapp_dict
 
             if nrows is not None:
                 df = df.loc[0 : nrows - 1].copy()

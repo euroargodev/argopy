@@ -56,6 +56,8 @@ With more details:
 Internals
 ^^^^^^^^^
 
+- **argopy file systems refactoring**. Long due internal refactoring of :ref:`File systems`. The submodule now adopt a more readable specification vs implementation design. This should not break or change high level APIs.(:pr:`425`) by |gmaze|.
+
 - **Support Argo dataset export to zarr**. Provide preliminary support to export Argo datasets to zarr files (local or remote). (:pr:`423`) by |gmaze|.
 
 .. code-block:: python
@@ -78,8 +80,7 @@ Internals
     ds = argopy.stores.s3store().open_dataset(uri[0], lazy=True)
 
 .. warning::
-    You will need to install the `kerchunk <https://fsspec.github.io/kerchunk/>`_ library if you don't have access to
-    kerchunk zarr data for the netcdf files to open.
+    You will need to install the `kerchunk <https://fsspec.github.io/kerchunk/>`_ library if you don't have access to kerchunk zarr data for the netcdf files to open.
 
 - For easy handling of lazy access to netcdf files with `kerchunk <https://fsspec.github.io/kerchunk/>`_, we introduce a :class:`stores.ArgoKerchunker` to finely tune how to handle json kerchunk data. (:pr:`385`) by |gmaze|.
 
