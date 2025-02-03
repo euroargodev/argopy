@@ -3,6 +3,7 @@ import types
 import xarray as xr
 import concurrent.futures
 import multiprocessing
+import io
 
 from ...errors import InvalidMethod, DataNotFound
 from ...utils.transform import drop_variables_not_in_all_datasets
@@ -40,6 +41,14 @@ class ftpstore(httpstore):
             log.debug("Error with: %s" % url)
             # except aiohttp.ClientResponseError as e:
             raise
+
+        if data[0:3] != b"CDF" and data[0:3] != b"\x89HD":
+            raise TypeError(
+                "We didn't get a CDF or HDF5 binary data as expected ! We get: %s"
+                % data
+            )
+        if data[0:3] == b"\x89HD":
+            data = io.BytesIO(data)
 
         xr_opts = {}
         if "xr_opts" in kwargs:
