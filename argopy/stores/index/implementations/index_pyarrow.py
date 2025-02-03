@@ -359,6 +359,25 @@ class indexstore(ArgoIndexStoreProto):
         df.map(fct)
         return sorted(list(plist))
 
+    def read_domain(self, index=False):
+        max = lambda x: pa.compute.max(x).as_py()
+        min = lambda x: pa.compute.min(x).as_py()
+        tmin = lambda x: pd.to_datetime(min(x)).to_numpy()
+        tmax = lambda x: pd.to_datetime(max(x)).to_numpy()
+
+        if hasattr(self, "search") and not index:
+            return [
+                min(self.search['longitude']), max(self.search['longitude']),
+                min(self.search['latitude']), max(self.search['latitude']),
+                tmin(self.search['date']), tmax(self.search['date'])]
+        else:
+            if not hasattr(self, "index"):
+                self.load()
+            return [
+                min(self.index['longitude']), max(self.index['longitude']),
+                min(self.index['latitude']), max(self.index['latitude']),
+                tmin(self.index['date']), tmax(self.index['date'])]
+
     def records_per_wmo(self, index=False):
         """Return the number of records per unique WMOs in search results
 

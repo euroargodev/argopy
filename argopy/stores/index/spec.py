@@ -1148,3 +1148,12 @@ file,date,latitude,longitude,ocean,profiler_type,institution,parameters,date_upd
         else:
             for wmo in wmos:
                 yield ArgoFloat(wmo, idx=self)
+
+
+    @property
+    def domain(self):
+        """Space/time domain of the index
+
+        This is different from a usual argopy ``box`` because dates are in :class:`numpy.datetime64` format.
+        """
+        return self.read_domain()
