@@ -8,11 +8,9 @@ on:
   pull_request:
     branches-ignore:
       - 'dependabot*'
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
 permissions:
   id-token: write
   contents: read
@@ -63,7 +61,7 @@ jobs:
         with:
           task: start-measurement
           project: ${{ secrets.CARBONDB_PROJECT_UUID }}
-          tags: 'CI tests', 'core', OS_${{matrix.os}}, Company_${{ secrets.CARBONDB_COMPANY_UUID }}, Py_${{matrix.python-version}}
+          tags: ["{{github.job}}","core","OS_${{matrix.os}}","Company_${{ secrets.CARBONDB_COMPANY_UUID }}","Py_${{matrix.python-version}}"]
           electricitymaps-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
           send-data: true
         continue-on-error: true
@@ -178,7 +176,7 @@ jobs:
         with:
           task: start-measurement
           project: ${{ secrets.CARBONDB_PROJECT_UUID }}
-          tags: 'CI tests', 'all', OS_${{matrix.os}}, Company_${{ secrets.CARBONDB_COMPANY_UUID }}, Py_${{matrix.python-version}}
+          tags: ["{{github.job}}","all","OS_${{matrix.os}}","Company_${{ secrets.CARBONDB_COMPANY_UUID }}","Py_${{matrix.python-version}}"]
           electricitymaps-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
           send-data: true
         continue-on-error: true
