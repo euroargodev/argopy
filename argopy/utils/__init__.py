@@ -43,7 +43,7 @@ from .locals import (  # noqa: F401
     get_sys_info,  # noqa: F401
     netcdf_and_hdf5_versions,  # noqa: F401
 )
-from .monitors import monitor_status, badge, fetch_status  # noqa: F401
+from .monitors import monitor_status, badge, fetch_status, ArgopyCarbon  # noqa: F401
 from .geo import (
     wmo2box,
     wrap_longitude,
@@ -118,6 +118,7 @@ __all__ = (
     "modified_environ",
     # Monitors
     "monitor_status",
+    "ArgopyCarbon",
     # Geo (space/time data utilities)
     "wmo2box",
     "wrap_longitude",
