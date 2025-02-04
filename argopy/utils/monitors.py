@@ -175,20 +175,20 @@ class monitor_status:
 
 
 class ArgopyCarbon:
-    """Compute argopy carbon footprint since last release
+    """argopy carbon footprint helper class
 
-    Use the Green-Coding Solutions API to retrieve energy consumption data.
+    This class uses the `Green-Coding Solutions API <https://api.green-coding.io>`_ to retrieve CI tests energy consumption data.
 
-    Combined with the github API, this class aims to provide an easy method to retrieve the
-    CI activities of argopy.
+    This class also uses the `Github API <https://docs.github.com/en/rest>`_, to get PRs and release information.
 
     Examples
     --------
-    .. coding::python
+    .. code-block:: python
+        :caption: ArgopyCarbon API
 
         ArgopyCarbon().workflows
-        ArgopyCarbon().measurements(branch='master', start_date='2024-01-01')
-        ArgopyCarbon().measurements(branch='385/merge', start_date='2024-01-01')
+        ArgopyCarbon().measurements(branch='master', start_date='2025-01-01')
+        ArgopyCarbon().measurements(branch='385/merge', start_date='2025-01-01')
         ArgopyCarbon().total_measurements(branches=['master', '385/merge'])
 
         ArgopyCarbon().releases
@@ -199,14 +199,27 @@ class ArgopyCarbon:
 
         ArgopyCarbon().footprint_since_last_release()
 
+    .. code-block:: python
+        :caption: Get metrics for another repo
+
+        ac = ArgopyCarbon()
+        ac.repo = 'argopy-status'
+        ac.workflows = [{'ID': '2724029', 'Name': 'API status'}]
+        ac.total_measurements()
+
     """
 
     owner = "euroargodev"
+    """Github owner parameter, default to 'euroargodev'"""
+
     repo = "argopy"
+    """Github repo parameter, default to 'argopy'"""
+
     workflows = [
         {"ID": "22344160", "Name": "CI tests"},
         {"ID": "25052179", "Name": "CI tests upstream"},
     ]
+    """List of github actions workflow parameters"""
 
     def __init__(self):
         from ..stores import httpstore
@@ -227,9 +240,9 @@ class ArgopyCarbon:
         ----------
         branch : str, default='master'
             Name of the branch to retrieve measurements for
-        start_date : str, :class:`pd.Timestamp`, default=None
+        start_date : str, :class:`pandas.Timestamp`, default=None
             Measurements starting date, default to 1 year before today
-        end_date : str, :class:`pd.Timestamp`, default=None
+        end_date : str, :class:`pandas.Timestamp`, default=None
             Measurements ending date, default to today
         errors: Literal, default: ``ignore``
             Define how to handle errors raised during data fetching:
@@ -239,7 +252,12 @@ class ArgopyCarbon:
 
         Returns
         -------
-        List[Dict] with workflows name, ID and measurements as :class:`pandas.DataFrame`
+        List[Dict] :
+            List of workflows name, ID and measurements as :class:`pandas.DataFrame`
+
+        See Also
+        --------
+        :class:`ArgopyCarbon.workflows`
         """
         if end_date is None:
             end_date = pd.to_datetime("now", utc=True)
@@ -332,14 +350,14 @@ class ArgopyCarbon:
 
         return results
 
-    def total_measurements(self, branches: List[str], **kwargs) -> float:
-        """Compute the cumulated measurements of gCO2eq for a list of branches
+    def total_measurements(self, branches: List[str] = ['master'], **kwargs) -> float:
+        """Compute the cumulated measurements of gCO2eq for a list of branches and workflows
 
         Parameters
         ----------
-        branches : List[str]
+        branches : List[str], default = ['master']
             List of branches to retrieve measurements for.
-            For a given merged PR number, the branche name is '<PR>/merged'.
+            Note that for a given merged PR number, the branche name is ``<PR>/merged``.
         **kwargs:
             Other Parameters are passed to :class:`ArgopyCarbon.measurements`
 
@@ -410,7 +428,7 @@ class ArgopyCarbon:
 
         Parameters
         ----------
-        start_date : pd.Timestamp
+        start_date : :class:`pandas.Timestamp`
 
         Returns
         -------
@@ -463,7 +481,7 @@ class ArgopyCarbon:
         Parameters
         ----------
         with_master : bool, default=True
-            Should we consider also the 'master' footprint or not.
+            Should we consider also the 'master' branch footprint or not.
         errors: Literal, default: ``ignore``
             Define how to handle errors raised during data fetching:
                 - ``raise`` (default): Raise any error encountered

@@ -53,6 +53,25 @@ With more details:
     # List all available datasets for this float:
     af.list_dataset()
 
+- **New class** :class:`utils.ArgopyCarbon` **to compute argopy carbon footprint**. Use the Green-Coding Solutions API to retrieve energy consumption data combined with the Github API to get PR history since the last release. This class is primarily used for argopy monitoring. (:pr:`437`) by |gmaze|.
+
+.. code-block:: python
+    :caption: Argopy carbon footprint metrics
+
+    ArgopyCarbon().workflows
+    ArgopyCarbon().measurements(branch='master', start_date='2024-01-01')
+    ArgopyCarbon().measurements(branch='385/merge', start_date='2024-01-01')
+    ArgopyCarbon().total_measurements(branches=['master', '385/merge'])
+
+    ArgopyCarbon().releases
+    ArgopyCarbon().lastreleasedate
+    ArgopyCarbon().lastPRs
+    ArgopyCarbon().get_PRtitle(385)
+    ArgopyCarbon().get_PRmerged_since('2025-01-01')
+
+    ArgopyCarbon().footprint_since_last_release()
+
+
 Internals
 ^^^^^^^^^
 

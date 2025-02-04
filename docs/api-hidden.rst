@@ -57,6 +57,11 @@
     argopy.tutorial.open_dataset
 
     argopy.utils.monitor_status
+    argopy.utils.ArgopyCarbon.footprint_since_last_release
+    argopy.utils.ArgopyCarbon.get_PRmerged_since
+    argopy.utils.ArgopyCarbon.get_PRtitle
+    argopy.utils.ArgopyCarbon.measurements
+    argopy.utils.ArgopyCarbon.total_measurements
 
     argopy.utils.show_versions
     argopy.utils.show_options
