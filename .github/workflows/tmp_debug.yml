@@ -1,4 +1,5 @@
-name: Windows debug action
+name: Debugging for Windows
+# Use this action to debug specific CI tests components on Windows
 
 on:
   workflow_dispatch: # allows you to trigger the workflow run manually
@@ -68,11 +69,6 @@ jobs:
         run: |
           micromamba info
           micromamba list
-
-      - name: Test 0
-        continue-on-error: true
-        run: |          
-          echo "${{ github.workflow }}-${{ github.ref }}"
 
       - name: Test 1
         continue-on-error: true
