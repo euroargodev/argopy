@@ -80,24 +80,22 @@ jobs:
     steps:
       - name: Energy Estimation - Initialize
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4.4
         with:
           task: start-measurement
-          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
-          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
-          machine-uuid: ${{ secrets.CARBONDB_MACHINE_UUID_PYTESTS_UPSTREAM }}
+          project: ${{ secrets.CARBONDB_PROJECT_UUID }}
+          tags: 'CI tests Upstream', 'core', OS_${{matrix.os}}, Company_${{ secrets.CARBONDB_COMPANY_UUID }}, Py_${{matrix.python-version}}
+          electricitymaps-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
+          send-data: true
         continue-on-error: true
-
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags.
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.0.3
         with:
           aws-region: us-west-1
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
-
       - name: Set environment variables
         run: |
           echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-core-free.yml" >> $GITHUB_ENV
@@ -127,14 +125,11 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
-        env:
-          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4.4
         with:
           task: get-measurement
           label: 'setup core-free'
         continue-on-error: true
-
       - name: Lint with flake8
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
@@ -147,14 +142,11 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
-        env:
-          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4.4
         with:
           task: get-measurement
           label: 'pytest core-free'
         continue-on-error: true
-
       - name: Generate and publish a report on failure
         if: |
           failure()
@@ -163,22 +155,17 @@ jobs:
         with:
           log-path: output-${{ matrix.python-version }}-log.jsonl
           issue-title: "Upstream CI tests failed: Core - Free - Py${{matrix.python-version}} - ${{ matrix.os }}"
-
       - name: Save tests log as artifact
         uses: actions/upload-artifact@v4
         with:
           name: Argopy-Tests-Core-${{matrix.python-version}}-${{matrix.os}}
           path: output-${{ matrix.python-version }}-log.jsonl
           retention-days: 90
-
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
-        env:
-          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4.4
         with:
           task: display-results
-          send-data: true
         continue-on-error: true
 
   all-free:
@@ -208,24 +195,22 @@ jobs:
     steps:
       - name: Energy Estimation - Initialize
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4.4
         with:
           task: start-measurement
-          company-uuid: ${{ secrets.CARBONDB_COMPANY_UUID }}
-          project-uuid: ${{ secrets.CARBONDB_PROJECT_UUID }}
-          machine-uuid: ${{ secrets.CARBONDB_MACHINE_UUID_PYTESTS_UPSTREAM }}
+          project: ${{ secrets.CARBONDB_PROJECT_UUID }}
+          tags: 'CI tests Upstream', 'all', OS_${{matrix.os}}, Company_${{ secrets.CARBONDB_COMPANY_UUID }}, Py_${{matrix.python-version}}
+          electricitymaps-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
+          send-data: true
         continue-on-error: true
-
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Fetch all history for all branches and tags.
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.0.3
         with:
           aws-region: us-west-1
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
-
       - name: Set environment variables
         run: |
           echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-all-free.yml" >> $GITHUB_ENV
@@ -255,14 +240,11 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
-        env:
-          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4.4
         with:
           task: get-measurement
           label: 'setup all-free'
         continue-on-error: true
-
       - name: Lint with flake8
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
@@ -275,27 +257,20 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
-        env:
-          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4.4
         with:
           task: get-measurement
           label: 'pytest all-free'
         continue-on-error: true
-
       - name: Save tests log as artifact
         uses: actions/upload-artifact@v4
         with:
           name: Argopy-Tests-All-${{matrix.python-version}}-${{matrix.os}}
           path: output-${{ matrix.python-version }}-log.jsonl
           retention-days: 90
-
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4
-        env:
-          ELECTRICITY_MAPS_TOKEN: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4.4
         with:
           task: display-results
-          send-data: true
         continue-on-error: true
