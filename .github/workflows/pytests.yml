@@ -61,7 +61,7 @@ jobs:
         with:
           task: start-measurement
           project: ${{ secrets.CARBONDB_PROJECT_UUID }}
-          tags: "${{github.workflow}},OS-${{matrix.os}},Company-${{ secrets.CARBONDB_COMPANY_UUID }},Py-${{matrix.python-version}}"
+          tags: "${{github.workflow}},core-pinned,OS-${{matrix.os}},Company-${{ secrets.CARBONDB_COMPANY_UUID }},Py-${{matrix.python-version}}"
           electricitymaps-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
           send-data: true
         continue-on-error: true
@@ -176,7 +176,7 @@ jobs:
         with:
           task: start-measurement
           project: ${{ secrets.CARBONDB_PROJECT_UUID }}
-          tags: "${{github.workflow}},OS-${{matrix.os}},Company-${{ secrets.CARBONDB_COMPANY_UUID }},Py-${{matrix.python-version}}"
+          tags: "${{github.workflow}},all-pinned,OS-${{matrix.os}},Company-${{ secrets.CARBONDB_COMPANY_UUID }},Py-${{matrix.python-version}}"
           electricitymaps-api-token: ${{ secrets.ELECTRICITY_MAPS_TOKEN }}
           send-data: true
         continue-on-error: true
