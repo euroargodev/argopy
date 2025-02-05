@@ -7,6 +7,7 @@ import pandas as pd
 import copy
 from typing import Union, List, Dict, Literal
 import logging
+from pathlib import Path
 
 
 log = logging.getLogger("argopy.utils.monitors")
@@ -232,7 +233,6 @@ class ArgopyCarbon:
         start_date: Union[str, pd.Timestamp] = None,
         end_date: Union[str, pd.Timestamp] = None,
         errors: Literal["raise", "ignore", "silent"] = "ignore",
-
     ) -> List[Dict]:
         """Return measurements for a given branch and date period
 
@@ -246,8 +246,8 @@ class ArgopyCarbon:
             Measurements ending date, default to today
         errors: Literal, default: ``ignore``
             Define how to handle errors raised during data fetching:
-                - ``raise`` (default): Raise any error encountered
-                - ``ignore``: Do not stop processing, simply issue a debug message in logging console
+                - ``ignore`` (default): Do not stop processing, simply issue a debug message in logging console
+                - ``raise``: Raise any error encountered
                 - ``silent``:  Do not stop processing and do not issue log message
 
         Returns
@@ -334,23 +334,26 @@ class ArgopyCarbon:
                 results[irow]["measurements"] = df2
 
             except json.JSONDecodeError:
-                msg = "No data returned, probably because the branch '%s' was not found at %s" % (branch, uri)
-                if errors == 'raise':
+                msg = (
+                    "No data returned, probably because the branch '%s' was not found at %s"
+                    % (branch, uri)
+                )
+                if errors == "raise":
                     from ..errors import DataNotFound
 
                     raise DataNotFound(msg)
-                elif errors == 'ignore':
+                elif errors == "ignore":
                     log.debug(msg)
 
             except Exception as e:
-                if errors == 'raise':
+                if errors == "raise":
                     raise
-                elif errors == 'ignore':
+                elif errors == "ignore":
                     log.error("Error: {e}")
 
         return results
 
-    def total_measurements(self, branches: List[str] = ['master'], **kwargs) -> float:
+    def total_measurements(self, branches: List[str] = ["master"], **kwargs) -> float:
         """Compute the cumulated measurements of gCO2eq for a list of branches and workflows
 
         Parameters
@@ -475,7 +478,9 @@ class ArgopyCarbon:
         """
         return self.get_PRmerged_since(self.lastreleasedate)
 
-    def footprint_since_last_release(self, with_master: bool = True, errors='ignore') -> float:
+    def footprint_since_last_release(
+        self, with_master: bool = True, errors="ignore"
+    ) -> float:
         """Compute total carbon footprint since the last release
 
         Parameters
@@ -501,7 +506,9 @@ class ArgopyCarbon:
         branches = ["%i/merge" % pr for pr in df["ID"]]
         if with_master:
             branches.append("master")
-        return self.total_measurements(branches, start_date=self.lastreleasedate, errors=errors)
+        return self.total_measurements(
+            branches, start_date=self.lastreleasedate, errors=errors
+        )
 
     def __repr__(self):
         summary = ["<ArgopyCarbon>"]
@@ -514,7 +521,72 @@ class ArgopyCarbon:
             )
         )
         summary.append(
-            "gCO2eq since last release (including 'master' branch'): %0.2f gCO2eq"
-            % self.footprint_since_last_release(errors='ignore')
+            "gCO2eq since last release (including 'master' branch'): %0.2f"
+            % self.footprint_since_last_release(errors="ignore")
         )
         return "\n- ".join(summary)
+
+    @staticmethod
+    def shieldsio_badge(value: float, label: str = "Total carbon emitted [gCO2eq]") -> str:
+        """Insert value in a Shields.io badge and return url
+
+        Insert total measurement value into a shields.io badge url
+
+        Parameters
+        ----------
+        value : float
+            The carbon footprint value in gCO2eq
+        label: str, default: 'Total carbon emitted'
+            The badge label to use
+
+        Returns
+        -------
+        str
+        """
+        payload = {
+            "style": "plastic",
+            "labelColor": "grey",
+        }
+        t = lambda t: urllib.parse.quote(t)
+        uri = "https://img.shields.io/badge/%s-%s-%s?" % (
+            t(label),
+            t("%0.2f gCO2eq" % value),
+            "black",
+        ) + urllib.parse.urlencode(payload)
+        return uri
+
+    @staticmethod
+    def shieldsio_endpoint(value: float, outfile: Path = None, label: str = "Total carbon emitted [gCO2eq]") -> Path:
+        """Insert value in a Shields.io json endpoint file
+
+        Parameters
+        ----------
+        value : float
+            The carbon footprint value in gCO2eq
+        outfile: :class:`pathlib.Path`, default: None
+            Path toward json file
+        label: str, default: 'Total carbon emitted'
+            The badge label to use
+
+        Returns
+        -------
+        :class:`pathlib.Path`
+        """
+
+        def save_to_json(label, message, outfile):
+            """Save a shields.io badge endpoint to a json file"""
+            data = {}
+            data["schemaVersion"] = 1
+            data["label"] = label
+            data["labelColor"] = "grey"
+            data["message"] = message
+            data["color"] = "black"
+            with open(outfile, "w") as f:
+                json.dump(data, f)
+            return outfile
+
+        return save_to_json(
+            label=label,
+            message="%0.2f gCO2eq" % value,
+            outfile=Path(outfile),
+        )
