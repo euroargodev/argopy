@@ -264,7 +264,8 @@ Misc
     drop_variables_not_in_all_datasets
     fill_variables_not_in_all_datasets
 
-    ArgopyCarbon
+    GreenCoding
+    Github
 
 Argopy helpers
 ==============

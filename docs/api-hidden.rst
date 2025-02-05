@@ -57,11 +57,22 @@
     argopy.tutorial.open_dataset
 
     argopy.utils.monitor_status
-    argopy.utils.ArgopyCarbon.footprint_since_last_release
-    argopy.utils.ArgopyCarbon.get_PRmerged_since
-    argopy.utils.ArgopyCarbon.get_PRtitle
-    argopy.utils.ArgopyCarbon.measurements
-    argopy.utils.ArgopyCarbon.total_measurements
+
+    argopy.utils.GreenCoding.measurements
+    argopy.utils.GreenCoding.total_measurements
+    argopy.utils.GreenCoding.footprint_since_last_release
+    argopy.utils.GreenCoding.footprint_for_release
+    argopy.utils.GreenCoding.shieldsio_badge
+    argopy.utils.GreenCoding.shieldsio_endpoint
+
+    argopy.utils.Github.releases
+    argopy.utils.Github.release2PRs
+    argopy.utils.Github.lastrelease_date
+    argopy.utils.Github.lastrelease_tag
+    argopy.utils.Github.get_PRtitle
+    argopy.utils.Github.get_PRmerged
+    argopy.utils.Github.get_PRmerged_since
+    argopy.utils.Github.lastPRs
 
     argopy.utils.show_versions
     argopy.utils.show_options
