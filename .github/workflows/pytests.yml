@@ -57,7 +57,7 @@ jobs:
     steps:
       - name: Energy Estimation - Initialize
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-solutions/eco-ci-energy-estimation@v4.4
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
         with:
           task: start-measurement
           project: ${{ secrets.CARBONDB_PROJECT_UUID }}
