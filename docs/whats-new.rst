@@ -32,20 +32,6 @@ This also comes with a new iterator on the :class:`ArgoIndex` (:pr:`432`) by |gm
     from argopy import ArgoFloat
     ds = ArgoFloat(6903091).open_dataset('prof')
 
-.. code-block:: python
-    :caption: Combine :class:`ArgoFloat` with a :class:`ArgoIndex`:
-
-    from argopy import ArgoIndex, ArgoFloat
-
-    # Make a search on Argo index of profiles:
-    idx = ArgoIndex().search_lat_lon([-70, -55, 20, 30])
-
-    # Then iterate over floats matching the results:
-    for float in idx.iterfloats():
-        # 'float' is an ArgoFloat instance
-        print(float.WMO)
-        ds = float.open_dataset('prof')
-
 
 .. code-block:: python
     :caption: More details of the API
@@ -68,6 +54,20 @@ This also comes with a new iterator on the :class:`ArgoIndex` (:pr:`432`) by |gm
     # List all available datasets for this float:
     af.ls_dataset()
 
+
+.. code-block:: python
+    :caption: Combine :class:`ArgoFloat` with a :class:`ArgoIndex`:
+
+    from argopy import ArgoIndex, ArgoFloat
+
+    # Make a search on Argo index of profiles:
+    idx = ArgoIndex().search_lat_lon([-70, -55, 20, 30])
+
+    # Then iterate over floats matching the results:
+    for float in idx.iterfloats():
+        # 'float' is an ArgoFloat instance
+        print(float.WMO)
+        ds = float.open_dataset('prof')
 Internals
 ^^^^^^^^^
 
