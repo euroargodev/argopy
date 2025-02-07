@@ -32,10 +32,6 @@ class ArgoFloatOnline(ArgoFloatProto):
                 "/idx", ""
             )  # Fix s3 anomaly whereby index files are not at the 'dac' level
 
-        # Load some data (in a perfect world, this should be done asynchronously):
-        # self.load_metadata()  # must come before load_dac because DAC is read from eafleetmonitoring metadata
-        # self.load_dac()
-
     @property
     def api_point(self):
         """Euro-Argo fleet-monitoring API points"""
