@@ -53,6 +53,20 @@ With more details:
     # List all available datasets for this float:
     af.list_dataset()
 
+- **New class** :class:`utils.GreenCoding` **to compute argopy carbon footprint**. This class makes it easy to use the Green-Coding Solutions API to retrieve argopy energy consumption data. This class is primarily used for reporting. (:pr:`437`) by |gmaze|.
+
+.. code-block:: python
+    :caption: Argopy carbon footprint metrics
+
+    from argopy.utils import GreenCoding
+
+    GreenCoding().measurements(branch='master', start_date='2025-01-01')
+    GreenCoding().total_measurements(branches=['385/merge', '437/merge'])
+
+    GreenCoding().footprint_since_last_release()
+    GreenCoding().footprint_for_release('v1.0.0')
+
+
 Internals
 ^^^^^^^^^
 
