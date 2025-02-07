@@ -1103,13 +1103,13 @@ file,date,latitude,longitude,ocean,profiler_type,institution,parameters,date_upd
     def iterfloats(self, index=False, chunksize: int = None):
         """Iterate over unique Argo floats in the full index or search results
 
-        By default, iterate over a single float, use the `chunksize` argument to iterate over chunk of floats.
+        By default, iterate over a single float, otherwise use the `chunksize` argument to iterate over chunk of floats.
 
         Parameters
         ----------
         index: bool, optional, default=False
-            Passed to :class:`ArgoIndex.read_wmo` in order to choose wether we iterate over all WMOs of the index or
-            only those mathching the search results.
+            Passed to :class:`ArgoIndex.read_wmo` in order to choose if we iterate over all WMOs of the index or
+            only those matching search results.
 
         chunksize: int, optional
             Maximum chunk size
@@ -1123,7 +1123,7 @@ file,date,latitude,longitude,ocean,profiler_type,institution,parameters,date_upd
         Examples
         --------
         .. code-block:: python
-            :caption: An index store is instantiated with a host (any access path, local, http or ftp) and an index file
+            :caption: Example of iteration
 
             # Make a search on Argo index of profiles:
             idx = ArgoIndex().search_lat_lon([lon_min, lon_max, lat_min, lat_max])

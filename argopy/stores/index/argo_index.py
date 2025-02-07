@@ -78,6 +78,13 @@ class ArgoIndex(indexstore):
         >>> idx.records_per_wmo
         >>> idx.copy(deep=False)
 
+    .. code-block:: python
+        :caption: Float iterator
+
+        for float in idx.iterfloats():
+            # 'float' is an :class:`argopy.ArgoFloat` instance
+            print(float.WMO)
+            ds = float.open_dataset('prof')
 
     """
 
