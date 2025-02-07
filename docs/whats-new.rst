@@ -54,7 +54,6 @@ This also comes with a new iterator on the :class:`ArgoIndex` (:pr:`432`) by |gm
     # List all available datasets for this float:
     af.ls_dataset()
 
-
 .. code-block:: python
     :caption: Combine :class:`ArgoFloat` with a :class:`ArgoIndex`:
 
@@ -68,6 +67,20 @@ This also comes with a new iterator on the :class:`ArgoIndex` (:pr:`432`) by |gm
         # 'float' is an ArgoFloat instance
         print(float.WMO)
         ds = float.open_dataset('prof')
+
+- **New class** :class:`utils.GreenCoding` **to compute argopy carbon footprint**. This class makes it easy to use the Green-Coding Solutions API to retrieve argopy energy consumption data. This class is primarily used for reporting. (:pr:`437`) by |gmaze|.
+
+.. code-block:: python
+    :caption: Argopy carbon footprint metrics
+
+    from argopy.utils import GreenCoding
+
+    GreenCoding().measurements(branch='master', start_date='2025-01-01')
+    GreenCoding().total_measurements(branches=['385/merge', '437/merge'])
+
+    GreenCoding().footprint_since_last_release()
+    GreenCoding().footprint_for_release('v1.0.0')
+
 Internals
 ^^^^^^^^^
 

@@ -24,13 +24,29 @@ Our continuous integration pipeline works with Github Actions that operate on Mi
 Results
 -------
 
-These metrics are for activities in the `master` branch.
+All data are public and can be obtained with the Green Coding API or with the :class:`argopy.utils.GreenCoding` class.
 
-All branches are also monitored. Their metrics can be summed to compute each new release specific impact.
+You can check the Green-Coding Monitoring website in here:
 
-- `Energy used by CI tests running on each commit in the master branch<https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=22344160>`_
+- `For CI tests running on each commit in the master branch <https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=22344160&metric=carbon>`_
 
-- `Energy used by upstream CI tests running daily and on each commit in the master branch<https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=25052179>`_
+- `For upstream CI tests running daily and on each commit in the master branch <https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=25052179&metric=carbon>`_
+
+
+Note that these metrics are for activities in the `master` branch. But all branches are monitored as well.
+
+Branch metrics can be summed to compute each new release specific impact. We make it easy to access this information with the :class:`argopy.utils.GreenCoding` class. It is currently used in the `monitoring framework of Argo API in here <https://github.com/euroargodev/argopy-status?tab=readme-ov-file#energy-impact>`_.
+
+.. code-block:: python
+    :caption: Argopy carbon footprint metrics
+
+    from argopy.utils import GreenCoding
+
+    GreenCoding().measurements(branch='master', start_date='2025-01-01', end_date='2025-01-31')
+    GreenCoding().total_measurements(branches=['385/merge', '437/merge'])
+
+    GreenCoding().footprint_since_last_release()
+    GreenCoding().footprint_for_release('v1.0.0')
 
 
 .. |energyused_CItests| image:: https://api.green-coding.io/v1/ci/badge/get?repo=euroargodev/argopy&branch=master&workflow=22344160&mode=totals

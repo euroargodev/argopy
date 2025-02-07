@@ -1,9 +1,12 @@
-name: Debug windows
+name: Debugging for Windows
+# Use this action to debug specific CI tests components on Windows
 
 on:
   workflow_dispatch: # allows you to trigger the workflow run manually
   pull_request:
     types: [synchronize]
+    branches-ignore:
+      - 'dependabot*'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

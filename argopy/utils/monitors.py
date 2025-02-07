@@ -2,6 +2,11 @@ import urllib
 import importlib
 import time
 import threading
+import logging
+
+
+log = logging.getLogger("argopy.utils.monitors")
+
 
 try:
     importlib.import_module("matplotlib")  # noqa: E402
