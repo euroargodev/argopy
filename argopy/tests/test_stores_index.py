@@ -38,14 +38,14 @@ Since the fetcher is compatible with host from local, http, ftp or s3 protocols,
 """
 VALID_HOSTS = [
     argopy.tutorial.open_dataset("gdac")[0],  # Use local files
-    # mocked_server_address,  # Use the mocked http server
-    # "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
+    mocked_server_address,  # Use the mocked http server
+    "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
 ]
 
 HAS_S3FS = importlib.util.find_spec("s3fs") is not None
-# if HAS_S3FS:
+if HAS_S3FS:
     # todo Create a mocked server for s3 tests
-    # VALID_HOSTS.append("s3://argo-gdac-sandbox/pub/idx")
+    VALID_HOSTS.append("s3://argo-gdac-sandbox/pub/idx")
 
 """
 List index searches to be tested.
@@ -61,6 +61,8 @@ VALID_SEARCHES = [
     {"tim": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"lat_lon": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"lat_lon_tim": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
+    {"profiler_type": [845]},
+    {"profiler_label": 'ARVOR'},
 ]
 VALID_SEARCHES_LOGICAL = [
     {"params": ["C1PHASE_DOXY", "DOWNWELLING_PAR"]},
@@ -117,6 +119,10 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason="?")
                     idx.search_parameter_data_mode(apts["parameter_data_mode"], nrows=nrows, logical=logical)
                 else:
                     pytest.skip("For BGC index only")
+            if "profiler_type" in apts:
+                idx.search_profiler_type(apts["profiler_type"], nrows=nrows)
+            if "profiler_label" in apts:
+                idx.search_profiler_label(apts["profiler_label"], nrows=nrows)
         except:
             if xfail:
                 pytest.xfail(reason)
