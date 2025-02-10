@@ -980,6 +980,25 @@ class ArgoIndexStoreProto(ABC):
         """
         raise NotImplementedError("Not implemented")
 
+    @abstractmethod
+    def search_profiler_type(self, profiler_type: List[int]):
+        """Search index for profiler types
+
+        Parameters
+        ----------
+        profiler_type: list
+            List of profiler types to search for. Valid types are given by integers with values from the R08 Argo Reference table
+
+        Examples
+        --------
+        .. code-block:: python
+
+            R8 = ArgoNVSReferenceTables().tbl(8)
+            profiler_type = R8[R8['prefLabel'].str.contains('NINJA')]['altLabel'].astype(int).to_list()
+            idx.search_profiler_type(profiler_type)
+        """
+        raise NotImplementedError("Not implemented")
+
     def _insert_header(self, originalfile):
         if self.convention == "ar_index_global_prof":
             header = """# Title : Profile directory file of the Argo Global Data Assembly Center

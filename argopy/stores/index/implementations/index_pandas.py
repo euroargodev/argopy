@@ -478,6 +478,17 @@ class indexstore(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
+    def search_profiler_type(self, profiler_type: List[int], nrows=None):
+        if 'profiler_type' not in self.convention_columns:
+            raise InvalidDatasetStructure("Cannot search for profilers in this index)")
+        profiler_type = to_list(profiler_type)  # Make sure we deal with a list
+        log.debug("Argo index searching for profiler type in %s ..." % profiler_type)
+        self.load(nrows=self._nrows_index)
+        self.search_type = {"PTYPE": profiler_type}
+        self.search_filter = self.index['profiler_type'].fillna(99999).astype(int).isin(profiler_type)
+        self.run(nrows=nrows)
+        return self
+
     def to_indexfile(self, outputfile):
         """Save search results on file, following the Argo standard index formats
 
