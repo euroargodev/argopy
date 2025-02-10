@@ -19,6 +19,7 @@ class ArgoIndex(indexstore):
     - ``bgc-b`` for the ``argo_bio-profile_index.txt`` index file,
     - ``bgc-s`` for the ``argo_synthetic-profile_index.txt`` index file,
     - ``aux`` for the ``etc/argo-index/argo_aux-profile_index.txt`` index file.
+    - ``meta`` for the ``ar_index_global_meta.txt`` index file.
 
     Examples
     --------
@@ -55,6 +56,8 @@ class ArgoIndex(indexstore):
         >>> idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
         >>> idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])  # Take a list of strings, only for BGC index !
         >>> idx.search_parameter_data_mode({'BBP700': 'D', 'DOXY': ['A', 'D']})  # Take a dict.
+        >>> idx.search_profiler_type(845)
+        >>> idx.search_profiler_label('NINJA')
 
     .. code-block:: python
         :caption: Search result properties and methods
@@ -74,8 +77,10 @@ class ArgoIndex(indexstore):
         >>> idx.convention  # What is the expected index format (core vs BGC profile index)
         >>> idx.cname
         >>> idx.read_wmo
+        >>> idx.read_dac_wmo
         >>> idx.read_params
         >>> idx.records_per_wmo
+        >>> idx.domains
         >>> idx.copy(deep=False)
 
     .. code-block:: python

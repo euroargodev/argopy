@@ -819,6 +819,18 @@ class ArgoIndexStoreProto(ABC):
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
+    def read_dac_wmo(self, index=False):
+        """Return a tuple of unique [DAC, WMO] pairs from the index or search results
+
+        Fall back on full index if search not triggered
+
+        Returns
+        -------
+        tuple
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
     def read_params(self):
         """Return list of unique PARAMETERs in index or search results
 

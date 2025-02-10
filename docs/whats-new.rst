@@ -81,6 +81,17 @@ This also comes with a new iterator on the :class:`ArgoIndex` (:pr:`432`) by |gm
     GreenCoding().footprint_since_last_release()
     GreenCoding().footprint_for_release('v1.0.0')
 
+- :class:`ArgoIndex` **support meta index file**. We now offer support for the index of meta dataset files. This support brings two new methods to search the profiler type index column: one method based on the profiler type number and another method based on a string match in the profile type label, as described in the `Argo Reference table 8 <https://vocab.nerc.ac.uk/collection/R08/current/>`_.
+
+.. code-block:: python
+    :caption: ArgoIndex support for the meta file index
+
+    from argopy import ArgoIndex
+
+    idx = ArgoIndex(index_file='meta').load()
+    idx.search_profiler_type([838, 878])
+    idx.search_profiler_label('ARVOR')
+
 Internals
 ^^^^^^^^^
 
