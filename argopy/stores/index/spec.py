@@ -675,6 +675,9 @@ class ArgoIndexStoreProto(ABC):
                     lambda x: int(x.split("_")[1].split(".nc")[0].replace("D", ""))
                 )
 
+            if 'profiler_type' in self.convention_columns:
+                df['profiler_type'] = df['profiler_type'].fillna(9999).astype(int)
+
             if completed:
                 # institution & profiler mapping for all users
                 # todo: may be we need to separate this for standard and expert users
