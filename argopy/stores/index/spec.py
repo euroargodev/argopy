@@ -17,7 +17,7 @@ else:
     from typing_extensions import Self
 
 from ...options import OPTIONS
-from ...errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError
+from ...errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError, InvalidDatasetStructure
 from ...utils.checkers import isconnected, has_aws_credentials
 from ...utils.accessories import Registry
 from ...utils.chunking import Chunker
@@ -61,6 +61,9 @@ class ArgoIndexStoreProto(ABC):
         "meta",
     ]
     """List of supported conventions"""
+
+    _load_dict = None
+    """Place holder for load_dict method"""
 
     def __init__(
         self,
@@ -426,6 +429,22 @@ class ArgoIndexStoreProto(ABC):
         return sha
 
     @property
+    def _r4(self):
+        """Reference table 4 "Argo data centres and institutions" as a dictionary"""
+        if self._load_dict is None:
+            from ...related import load_dict
+            self._load_dict = load_dict
+        return self._load_dict('institutions')
+
+    @property
+    def _r8(self):
+        """Reference table 8 "Argo instrument types" as a dictionary"""
+        if self._load_dict is None:
+            from ...related import load_dict
+            self._load_dict = load_dict
+        return self._load_dict('profilers')
+
+    @property
     def shape(self):
         """Shape of the index array"""
         # Must work for all internal storage type (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
@@ -655,7 +674,7 @@ class ArgoIndexStoreProto(ABC):
         else:
             log.debug("Converting [%s] to dataframe from scratch ..." % src)
             # Post-processing for user:
-            from ...related import load_dict, mapp_dict
+            from ...related import mapp_dict
 
             if nrows is not None:
                 df = df.loc[0 : nrows - 1].copy()
@@ -681,16 +700,16 @@ class ArgoIndexStoreProto(ABC):
             if completed:
                 # institution & profiler mapping for all users
                 # todo: may be we need to separate this for standard and expert users
-                institution_dictionnary = load_dict("institutions")
+                institution_dictionary = self._r4
                 df["tmp1"] = df["institution"].apply(
-                    lambda x: mapp_dict(institution_dictionnary, x)
+                    lambda x: mapp_dict(institution_dictionary, x)
                 )
                 df = df.rename(
                     columns={"institution": "institution_code", "tmp1": "institution"}
                 )
                 df["dac"] = df["file"].apply(lambda x: x.split("/")[0])
 
-                profiler_dictionnary = load_dict("profilers")
+                profiler_dictionary = self._r8
                 def ev(x):
                     try:
                         return int(x)
@@ -698,7 +717,7 @@ class ArgoIndexStoreProto(ABC):
                         return x
 
                 df["profiler"] = df["profiler_type"].apply(
-                    lambda x: mapp_dict(profiler_dictionnary, ev(x))
+                    lambda x: mapp_dict(profiler_dictionary, ev(x))
                 )
                 df = df.rename(columns={"profiler_type": "profiler_code"})
 
@@ -987,17 +1006,47 @@ class ArgoIndexStoreProto(ABC):
         Parameters
         ----------
         profiler_type: list
-            List of profiler types to search for. Valid types are given by integers with values from the R08 Argo Reference table
+            List of profiler types to search for. Valid types are given by integers with values from the R8 Argo Reference table
 
         Examples
         --------
         .. code-block:: python
 
-            R8 = ArgoNVSReferenceTables().tbl(8)
-            profiler_type = R8[R8['prefLabel'].str.contains('NINJA')]['altLabel'].astype(int).to_list()
+            valid_types = ArgoNVSReferenceTables().tbl(8)['altLabel']
+            profiler_type = 845
             idx.search_profiler_type(profiler_type)
+
+        See Also
+        --------
+        :class:`ArgoIndex.search_profiler_label`
         """
         raise NotImplementedError("Not implemented")
+
+    def search_profiler_label(self, profiler_label: str, nrows=None):
+        """Search index for profiler types with a given string in their label
+
+        Parameters
+        ----------
+        profiler_label: str
+            The string to be found in the R8 Argo Reference table label
+
+        Examples
+        --------
+        .. code-block:: python
+
+            idx.search_profiler_label('ARVOR')
+
+        See Also
+        --------
+        :class:`ArgoIndex.search_profiler_type`
+        """
+        if "profiler_type" not in self.convention_columns:
+            raise InvalidDatasetStructure("Cannot search for profilers in this index)")
+        log.debug("Argo index searching for profiler label '%s' ..." % profiler_label)
+        type_contains = lambda x: [key for key, value in self._r8.items() if x in str(value)]
+        self.load(nrows=self._nrows_index)
+        self.search_type = {"PLABEL": profiler_label}
+        return self.search_profiler_type(type_contains(profiler_label))
 
     def _insert_header(self, originalfile):
         if self.convention == "ar_index_global_prof":
