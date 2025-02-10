@@ -258,7 +258,9 @@ class indexstore(ArgoIndexStoreProto):
         """File paths listed in the index"""
         sep = self.fs["src"].fs.sep
         return [
-            sep.join([self.host.replace('/idx', ''), "dac", f.as_py().replace("/", sep)])
+            sep.join(
+                [self.host.replace("/idx", ""), "dac", f.as_py().replace("/", sep)]
+            )
             for f in self.index["file"]
         ]
 
@@ -267,7 +269,9 @@ class indexstore(ArgoIndexStoreProto):
         """File paths listed in search results"""
         sep = self.fs["src"].fs.sep
         return [
-            sep.join([self.host.replace('/idx', ''), "dac", f.as_py().replace("/", sep)])
+            sep.join(
+                [self.host.replace("/idx", ""), "dac", f.as_py().replace("/", sep)]
+            )
             for f in self.search["file"]
         ]
 
@@ -332,9 +336,7 @@ class indexstore(ArgoIndexStoreProto):
 
     def read_params(self, index=False):
         if "parameters" not in self.convention_columns:
-            raise InvalidDatasetStructure(
-                "Cannot list parameters in this index"
-            )
+            raise InvalidDatasetStructure("Cannot list parameters in this index")
         if hasattr(self, "search") and not index:
             if self.N_MATCH == 0:
                 raise DataNotFound(
@@ -356,7 +358,7 @@ class indexstore(ArgoIndexStoreProto):
         return sorted(list(plist))
 
     def read_domain(self, index=False):
-        if 'longitude' not in self.convention_columns:
+        if "longitude" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot search for coordinates in this index")
         max = lambda x: pa.compute.max(x).as_py()
         min = lambda x: pa.compute.min(x).as_py()
@@ -365,16 +367,24 @@ class indexstore(ArgoIndexStoreProto):
 
         if hasattr(self, "search") and not index:
             return [
-                min(self.search['longitude']), max(self.search['longitude']),
-                min(self.search['latitude']), max(self.search['latitude']),
-                tmin(self.search['date']), tmax(self.search['date'])]
+                min(self.search["longitude"]),
+                max(self.search["longitude"]),
+                min(self.search["latitude"]),
+                max(self.search["latitude"]),
+                tmin(self.search["date"]),
+                tmax(self.search["date"]),
+            ]
         else:
             if not hasattr(self, "index"):
                 self.load()
             return [
-                min(self.index['longitude']), max(self.index['longitude']),
-                min(self.index['latitude']), max(self.index['latitude']),
-                tmin(self.index['date']), tmax(self.index['date'])]
+                min(self.index["longitude"]),
+                max(self.index["longitude"]),
+                min(self.index["latitude"]),
+                max(self.index["latitude"]),
+                tmin(self.index["date"]),
+                tmax(self.index["date"]),
+            ]
 
     def records_per_wmo(self, index=False):
         """Return the number of records per unique WMOs in search results
@@ -429,7 +439,9 @@ class indexstore(ArgoIndexStoreProto):
     @search_s3
     def search_cyc(self, CYCs, nrows=None):
         if self.convention in ["ar_index_global_meta"]:
-            raise InvalidDatasetStructure("Cannot search for cycle number in this index)")
+            raise InvalidDatasetStructure(
+                "Cannot search for cycle number in this index)"
+            )
         CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
         log.debug(
             "Argo index searching for CYCs=[%s] ..."
@@ -453,7 +465,9 @@ class indexstore(ArgoIndexStoreProto):
     @search_s3
     def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
         if self.convention in ["ar_index_global_meta"]:
-            raise InvalidDatasetStructure("Cannot search for cycle number in this index)")
+            raise InvalidDatasetStructure(
+                "Cannot search for cycle number in this index)"
+            )
         WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
         CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
         log.debug(
@@ -482,8 +496,8 @@ class indexstore(ArgoIndexStoreProto):
         return self
 
     def search_tim(self, BOX, nrows=None):
-        key = 'date'
-        if 'longitude' not in self.convention_columns:
+        key = "date"
+        if "longitude" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot search for coordinates in this index")
         is_indexbox(BOX)
         log.debug("Argo index searching for %s in BOX=%s ..." % (key, BOX))
@@ -507,7 +521,7 @@ class indexstore(ArgoIndexStoreProto):
         return self
 
     def search_lat_lon(self, BOX, nrows=None):
-        if 'longitude' not in self.convention_columns:
+        if "longitude" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot search for coordinates in this index")
         is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon in BOX=%s ..." % BOX)
@@ -523,7 +537,7 @@ class indexstore(ArgoIndexStoreProto):
         return self
 
     def search_lat_lon_tim(self, BOX, nrows=None):
-        if 'longitude' not in self.convention_columns:
+        if "longitude" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot search for coordinates in this index")
         is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon/time in BOX=%s ..." % BOX)
@@ -551,10 +565,8 @@ class indexstore(ArgoIndexStoreProto):
         return self
 
     def search_params(self, PARAMs, nrows=None, logical="and"):
-        if 'parameters' not in self.convention_columns:
-            raise InvalidDatasetStructure(
-                "Cannot search for parameters in this index"
-            )
+        if "parameters" not in self.convention_columns:
+            raise InvalidDatasetStructure("Cannot search for parameters in this index")
         log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
         PARAMs = to_list(PARAMs)  # Make sure we deal with a list
         self.load(nrows=self._nrows_index)
@@ -572,8 +584,14 @@ class indexstore(ArgoIndexStoreProto):
         return self
 
     def search_parameter_data_mode(self, PARAMs: dict, nrows=None, logical="and"):
-        if self.convention not in ["ar_index_global_prof", "argo_synthetic-profile_index", "argo_bio-profile_index"]:
-            raise InvalidDatasetStructure("Cannot search for parameter data mode in this index)")
+        if self.convention not in [
+            "ar_index_global_prof",
+            "argo_synthetic-profile_index",
+            "argo_bio-profile_index",
+        ]:
+            raise InvalidDatasetStructure(
+                "Cannot search for parameter data mode in this index)"
+            )
         log.debug(
             "Argo index searching for parameter data modes such as PARAM=%s ..."
             % PARAMs
@@ -640,13 +658,15 @@ class indexstore(ArgoIndexStoreProto):
         return self
 
     def search_profiler_type(self, profiler_type: List[int], nrows=None):
-        if 'profiler_type' not in self.convention_columns:
+        if "profiler_type" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot search for profilers in this index)")
         profiler_type = to_list(profiler_type)  # Make sure we deal with a list
         log.debug("Argo index searching for profiler type in %s ..." % profiler_type)
         self.load(nrows=self._nrows_index)
         self.search_type = {"PTYPE": profiler_type}
-        self.search_filter = pa.compute.is_in(self.index['profiler_type'], pa.array(profiler_type))
+        self.search_filter = pa.compute.is_in(
+            self.index["profiler_type"], pa.array(profiler_type)
+        )
         self.run(nrows=nrows)
         return self
 
