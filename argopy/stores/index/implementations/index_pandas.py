@@ -231,10 +231,8 @@ class indexstore(ArgoIndexStoreProto):
         return results
 
     def read_params(self, index=False):
-        if self.convention not in ["argo_bio-profile_index",
-                                   "argo_synthetic-profile_index",
-                                   "argo_aux-profile_index"]:
-            raise InvalidDatasetStructure("Cannot list parameters in this index (not a BGC or AUX profile index)")
+        if "parameters" not in self.convention_columns:
+            raise InvalidDatasetStructure("Cannot list parameters in this index")
         if hasattr(self, "search") and not index:
             if self.N_MATCH == 0:
                 raise DataNotFound(
@@ -255,6 +253,8 @@ class indexstore(ArgoIndexStoreProto):
             raise DataNotFound("This index is empty")
 
     def read_domain(self, index=False):
+        if "longitude" not in self.convention_columns:
+            raise InvalidDatasetStructure("Cannot list parameters in this index")
         tmin = lambda x: pd.to_datetime(str(int(x.min()))).to_numpy()
         tmax = lambda x: pd.to_datetime(str(int(x.max()))).to_numpy()
 
@@ -268,7 +268,6 @@ class indexstore(ArgoIndexStoreProto):
             return [self.index['longitude'].min(), self.index['longitude'].max(),
             self.index['latitude'].min(), self.index['latitude'].max(),
             tmin(self.index['date']), tmax(self.index['date'])]
-
 
     def records_per_wmo(self, index=False):
         """ Return the number of records per unique WMOs in search results
@@ -314,6 +313,8 @@ class indexstore(ArgoIndexStoreProto):
 
     @search_s3
     def search_cyc(self, CYCs, nrows=None):
+        if self.convention in ["ar_index_global_meta"]:
+            raise InvalidDatasetStructure("Cannot search for cycle number in this index)")
         CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
         log.debug(
             "Argo index searching for CYCs=[%s] ..."
@@ -336,6 +337,8 @@ class indexstore(ArgoIndexStoreProto):
 
     @search_s3
     def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
+        if self.convention in ["ar_index_global_meta"]:
+            raise InvalidDatasetStructure("Cannot search for cycle number in this index)")
         WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
         CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
         log.debug(
@@ -362,20 +365,25 @@ class indexstore(ArgoIndexStoreProto):
         return self
 
     def search_tim(self, BOX, nrows=None):
+        key = 'date'
+        if "longitude" not in self.convention_columns:
+            raise InvalidDatasetStructure("Cannot search coordinates in this index")
         is_indexbox(BOX)
-        log.debug("Argo index searching for time in BOX=%s ..." % BOX)
+        log.debug("Argo index searching for %s in BOX=%s ..." % (key, BOX))
         self.load(nrows=self._nrows_index)
         self.search_type = {"BOX": BOX}
         tim_min = int(pd.to_datetime(BOX[4]).strftime("%Y%m%d%H%M%S"))
         tim_max = int(pd.to_datetime(BOX[5]).strftime("%Y%m%d%H%M%S"))
         filt = []
-        filt.append(self.index["date"].ge(tim_min))
-        filt.append(self.index["date"].le(tim_max))
+        filt.append(self.index[key].ge(tim_min))
+        filt.append(self.index[key].le(tim_max))
         self.search_filter = np.logical_and.reduce(filt)
         self.run(nrows=nrows)
         return self
 
     def search_lat_lon(self, BOX, nrows=None):
+        if "longitude" not in self.convention_columns:
+            raise InvalidDatasetStructure("Cannot search coordinates in this index")
         is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon in BOX=%s ..." % BOX)
         self.load(nrows=self._nrows_index)
@@ -390,6 +398,8 @@ class indexstore(ArgoIndexStoreProto):
         return self
 
     def search_lat_lon_tim(self, BOX, nrows=None):
+        if "longitude" not in self.convention_columns:
+            raise InvalidDatasetStructure("Cannot search coordinates in this index")
         is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon/time in BOX=%s ..." % BOX)
         self.load(nrows=self._nrows_index)
@@ -408,10 +418,8 @@ class indexstore(ArgoIndexStoreProto):
         return self
 
     def search_params(self, PARAMs, logical: bool = 'and', nrows=None):
-        if self.convention not in ["argo_bio-profile_index",
-                                   "argo_synthetic-profile_index",
-                                   "argo_aux-profile_index"]:
-            raise InvalidDatasetStructure("Cannot search for parameters in this index (not a BGC or AUX profile index)")
+        if "parameters" not in self.convention_columns:
+            raise InvalidDatasetStructure("Cannot search for parameters in this index")
         log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
         PARAMs = to_list(PARAMs)  # Make sure we deal with a list
         self.load(nrows=self._nrows_index)
@@ -431,6 +439,8 @@ class indexstore(ArgoIndexStoreProto):
         return self
 
     def search_parameter_data_mode(self, PARAMs: dict, logical: bool = 'and', nrows=None):
+        if self.convention not in ["ar_index_global_prof", "argo_synthetic-profile_index", "argo_bio-profile_index"]:
+            raise InvalidDatasetStructure("Cannot search for parameter data mode in this index)")
         log.debug("Argo index searching for parameter data modes such as PARAM=%s ..." % PARAMs)
 
         # Validate PARAMs argument type
@@ -480,17 +490,7 @@ class indexstore(ArgoIndexStoreProto):
         -------
         str
         """
-
-        if self.convention == "ar_index_global_prof":
-            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
-                               'date_update']
-        elif self.convention in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
-            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
-                               'parameters', 'parameter_data_mode', 'date_update']
-        elif self.convention in ["argo_aux-profile_index"]:
-            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
-                       'parameters', 'date_update']
-
+        columns = self.convention_columns
         self.search.to_csv(outputfile, sep=',', index=False, index_label=False, header=False, columns=columns)
         outputfile = self._insert_header(outputfile)
 

@@ -6,7 +6,7 @@ import time
 from abc import ABC, abstractmethod
 from fsspec.core import split_protocol
 from urllib.parse import urlparse
-from typing import Union
+from typing import Union, List
 from pathlib import Path
 import sys
 
@@ -57,6 +57,8 @@ class ArgoIndexStoreProto(ABC):
         "synth",
         "argo_aux-profile_index",
         "aux",
+        "ar_index_global_meta",
+        "meta",
     ]
     """List of supported conventions"""
 
@@ -134,6 +136,8 @@ class ArgoIndexStoreProto(ABC):
             index_file = "argo_bio-profile_index.txt"
         elif index_file in ["aux"]:
             index_file = "etc/argo-index/argo_aux-profile_index.txt"
+        elif index_file in ["meta"]:
+            index_file = "ar_index_global_meta.txt"
         self.index_file = index_file
 
         # Default number of commented lines to skip at the beginning of csv index files
@@ -225,6 +229,8 @@ class ArgoIndexStoreProto(ABC):
                 convention = "argo_bio-profile_index"
             elif convention in ["aux"]:
                 convention = "argo_aux-profile_index"
+            elif convention in ["meta"]:
+                convention = "ar_index_global_meta"
         self._convention = convention
 
         # Check if the index file exists
@@ -472,7 +478,26 @@ class ArgoIndexStoreProto(ABC):
             title = "Synthetic-Profile directory file of the Argo GDAC"
         elif self.convention in ["argo_aux-profile_index", "aux"]:
             title = "Aux-Profile directory file of the Argo GDAC"
+        elif self.convention in ["ar_index_global_meta", "meta"]:
+            title = "Metadata directory file of the Argo GDAC"
         return title
+
+    @property
+    def convention_columns(self) -> List[str]:
+        """CSV file column names for the index convention"""
+        if self.convention == "ar_index_global_prof":
+            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
+                               'date_update']
+        elif self.convention in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
+            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
+                               'parameters', 'parameter_data_mode', 'date_update']
+        elif self.convention in ["argo_aux-profile_index"]:
+            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
+                       'parameters', 'date_update']
+        elif self.convention in ["ar_index_global_meta"]:
+            columns = ['file', 'profiler_type', 'institution', 'date_update']
+
+        return columns
 
     def _same_origin(self, path):
         """Compare origin of path with current memory fs"""
@@ -639,12 +664,16 @@ class ArgoIndexStoreProto(ABC):
                 df.drop("index", axis=1, inplace=True)
 
             df.reset_index(drop=True, inplace=True)
-            df["date"] = pd.to_datetime(df["date"], format="%Y%m%d%H%M%S")
+            if "date" in df:
+                df["date"] = pd.to_datetime(df["date"], format="%Y%m%d%H%M%S")
             df["date_update"] = pd.to_datetime(df["date_update"], format="%Y%m%d%H%M%S")
             df["wmo"] = df["file"].apply(lambda x: int(x.split("/")[1]))
-            df["cyc"] = df["file"].apply(
-                lambda x: int(x.split("_")[1].split(".nc")[0].replace("D", ""))
-            )
+            if self.convention not in [
+                "ar_index_global_meta",
+            ]:
+                df["cyc"] = df["file"].apply(
+                    lambda x: int(x.split("_")[1].split(".nc")[0].replace("D", ""))
+                )
 
             if completed:
                 # institution & profiler mapping for all users
@@ -1007,6 +1036,22 @@ file,date,latitude,longitude,ocean,profiler_type,institution,parameters,paramete
 # FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
 # GDAC node : CORIOLIS
 file,date,latitude,longitude,ocean,profiler_type,institution,parameters,date_update
+""" % pd.to_datetime(
+                "now", utc=True
+            ).strftime(
+                "%Y%m%d%H%M%S"
+            )
+
+        elif self.convention == "ar_index_global_meta":
+            header = """# Title : Metadata directory file of the Argo Global Data Assembly Center
+# Description : The directory file describes all metadata files of the argo GDAC ftp site.
+# Project : ARGO
+# Format version : 2.0
+# Date of update : %s
+# FTP root number 1 : ftp://ftp.ifremer.fr/ifremer/argo/dac
+# FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
+# GDAC node : CORIOLIS
+file,profiler_type,institution,date_update
 """ % pd.to_datetime(
                 "now", utc=True
             ).strftime(

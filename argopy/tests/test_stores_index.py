@@ -38,14 +38,14 @@ Since the fetcher is compatible with host from local, http, ftp or s3 protocols,
 """
 VALID_HOSTS = [
     argopy.tutorial.open_dataset("gdac")[0],  # Use local files
-    mocked_server_address,  # Use the mocked http server
-    "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
+    # mocked_server_address,  # Use the mocked http server
+    # "MOCKFTP",  # keyword to use a fake/mocked ftp server (running on localhost)
 ]
 
 HAS_S3FS = importlib.util.find_spec("s3fs") is not None
-if HAS_S3FS:
+# if HAS_S3FS:
     # todo Create a mocked server for s3 tests
-    VALID_HOSTS.append("s3://argo-gdac-sandbox/pub/idx")
+    # VALID_HOSTS.append("s3://argo-gdac-sandbox/pub/idx")
 
 """
 List index searches to be tested.

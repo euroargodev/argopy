@@ -390,6 +390,11 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
     argo_bio-profile_index.txt: bgc Argo profiles index file
     The directory file describes all individual bio-profile files of the argo GDAC ftp site.
     file,date,latitude,longitude,ocean,profiler_type,institution,parameters,parameter_data_mode,date_update
+
+    ar_index_global_meta.txt: Index of float meta files
+    Metadata directory file of the Argo Global Data Assembly Center
+    file,profiler_type,institution,date_update
+
     """
     # Default for 'ar_index_global_prof'
     ref = [
@@ -434,6 +439,20 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
             "parameters",
             "date_update",
         ]
+
+
+
+    if (
+        convention == "ar_index_global_meta"
+    ):
+        # ['file', 'profiler_type', 'institution', 'date_update']
+        ref = [
+            "file",
+            "profiler_type",
+            "institution",
+            "date_update",
+        ]
+
     if not is_list_equal(column_names, ref):
         log.debug("Expected (convention=%s): %s, got: %s" % (convention, ";".join(ref), ";".join(column_names)))
         raise InvalidDatasetStructure("Unexpected column names in this index !")
