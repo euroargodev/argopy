@@ -1,4 +1,4 @@
-name: argopy-tests
+name: argopy-np
 channels:
   - conda-forge
 dependencies:
@@ -16,6 +16,8 @@ dependencies:
   - scipy
   - toolz
   - xarray < 2024.3 # while https://github.com/pydata/xarray/issues/8909 is not solved
+
+  - numpy >= 2
 
 
 # EXT.UTIL:

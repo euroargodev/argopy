@@ -161,6 +161,8 @@ nbsphinx_execute = "always"
 #    :target: https://mybinder.org/v2/gh/euroargodev/argopy/master-doc?urlpath=lab/tree/docs/{{ docname }}
 # """
 
+numfig = True
+
 # sphinx-copybutton
 copybutton_exclude = '.linenos, .gp, .go, .gh'
 
