@@ -254,6 +254,22 @@ class indexstore(ArgoIndexStoreProto):
         else:
             raise DataNotFound("This index is empty")
 
+    def read_domain(self, index=False):
+        tmin = lambda x: pd.to_datetime(str(int(x.min()))).to_numpy()
+        tmax = lambda x: pd.to_datetime(str(int(x.max()))).to_numpy()
+
+        if hasattr(self, "search") and not index:
+            return [self.search['longitude'].min(), self.search['longitude'].max(),
+            self.search['latitude'].min(), self.search['latitude'].max(),
+            tmin(self.search['date']), tmax(self.search['date'])]
+        else:
+            if not hasattr(self, "index"):
+                self.load()
+            return [self.index['longitude'].min(), self.index['longitude'].max(),
+            self.index['latitude'].min(), self.index['latitude'].max(),
+            tmin(self.index['date']), tmax(self.index['date'])]
+
+
     def records_per_wmo(self, index=False):
         """ Return the number of records per unique WMOs in search results
 

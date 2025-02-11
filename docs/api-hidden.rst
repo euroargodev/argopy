@@ -296,6 +296,7 @@
     argopy.ArgoIndex.to_dataframe
     argopy.ArgoIndex.to_indexfile
     argopy.ArgoIndex.copy
+    argopy.ArgoIndex.iterfloats
 
     argopy.stores.index.implementations.index_s3.s3index
     argopy.stores.index.implementations.index_s3.s3index_core
@@ -336,7 +337,7 @@
     argopy.stores.float.spec.ArgoFloatProto
     argopy.stores.ArgoFloat
     argopy.ArgoFloat.open_dataset
-    argopy.ArgoFloat.list_dataset
+    argopy.ArgoFloat.ls_dataset
     argopy.ArgoFloat.path
     argopy.ArgoFloat.ls
     argopy.ArgoFloat.lsprofiles

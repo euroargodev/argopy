@@ -183,10 +183,12 @@ def cast_Argo_variable_type(ds, overwrite=True):
         ):
             try:
                 attrs = deepcopy(ds[v].attrs)
+                encoding = deepcopy(ds[v].encoding)
                 ds[v] = cast_this_da(ds[v], v)
                 casted_result = ds[v].attrs['casted']
                 ds[v].attrs = attrs
                 ds[v].attrs.update({'casted': casted_result})
+                ds[v].encoding = encoding
             except Exception:
                 print("Oops!", sys.exc_info()[0], "occurred.")
                 print("Fail to cast: %s " % v)

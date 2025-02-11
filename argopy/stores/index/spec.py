@@ -20,6 +20,7 @@ from ...options import OPTIONS
 from ...errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError
 from ...utils.checkers import isconnected, has_aws_credentials
 from ...utils.accessories import Registry
+from ...utils.chunking import Chunker
 from .. import httpstore, memorystore, filestore, ftpstore, s3store
 from .implementations.index_s3 import get_a_s3index
 
@@ -1097,3 +1098,62 @@ file,date,latitude,longitude,ocean,profiler_type,institution,parameters,date_upd
         :class:`ArgoIndex`
         """
         return self._copy(deep=deep)
+
+
+    def iterfloats(self, index=False, chunksize: int = None):
+        """Iterate over unique Argo floats in the full index or search results
+
+        By default, iterate over a single float, otherwise use the `chunksize` argument to iterate over chunk of floats.
+
+        Parameters
+        ----------
+        index: bool, optional, default=False
+            Passed to :class:`ArgoIndex.read_wmo` in order to choose if we iterate over all WMOs of the index or
+            only those matching search results.
+
+        chunksize: int, optional
+            Maximum chunk size
+
+            Eg: A value of 5 will create chunks with as many as 5 WMOs each.
+
+        Returns
+        -------
+        Iterator of :class:`ArgoFloat`
+
+        Examples
+        --------
+        .. code-block:: python
+            :caption: Example of iteration
+
+            # Make a search on Argo index of profiles:
+            idx = ArgoIndex().search_lat_lon([lon_min, lon_max, lat_min, lat_max])
+
+            # Then iterate over float matching the results:
+            for float in idx.iterfloats():
+                float # is a ArgoFloat instance
+
+        """
+        from .. import ArgoFloat  # Prevent circular import
+
+        wmos = self.read_wmo(index=index)
+
+        if chunksize is not None:
+            chk_opts = {}
+            chk_opts.update({'chunks': {'wmo': 'auto'}})
+            chk_opts.update({'chunksize': {'wmo': chunksize}})
+            chunked = Chunker({'wmo': self.read_wmo(index=index)}, **chk_opts).fit_transform()
+            for grp in chunked:
+                yield [ArgoFloat(wmo, idx=self) for wmo in grp]
+
+        else:
+            for wmo in wmos:
+                yield ArgoFloat(wmo, idx=self)
+
+
+    @property
+    def domain(self):
+        """Space/time domain of the index
+
+        This is different from a usual argopy ``box`` because dates are in :class:`numpy.datetime64` format.
+        """
+        return self.read_domain()

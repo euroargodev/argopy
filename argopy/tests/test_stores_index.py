@@ -16,8 +16,8 @@ from argopy.errors import (
     OptionValueError,
     InvalidDatasetStructure,
 )
-from argopy.utils.checkers import is_list_of_strings
-from argopy.stores import indexstore_pd
+from argopy.utils.checkers import is_list_of_strings, is_wmo
+from argopy.stores import indexstore_pd, ArgoFloat
 from utils import create_temp_folder
 from mocked_http import mocked_httpserver, mocked_server_address
 
@@ -419,6 +419,21 @@ class IndexStore_test_proto:
         indirect=False,
         ids=["index=%s" % i for i in [False, True]],
     )
+    def test_read_dac_wmo(self, index):
+        wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
+        idx = self.new_idx().search_wmo(wmo)
+        DAC_WMOs = idx.read_dac_wmo(index=index)
+        assert isinstance(DAC_WMOs, tuple)
+        for row in DAC_WMOs:
+            assert isinstance(row[0], str)
+            assert is_wmo(row[1])
+
+    @pytest.mark.parametrize(
+        "index",
+        [False, True],
+        indirect=False,
+        ids=["index=%s" % i for i in [False, True]],
+    )
     def test_read_params(self, index):
         wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
         idx = self.new_idx().search_wmo(wmo)
@@ -462,6 +477,24 @@ class IndexStore_test_proto:
 
         # Cleanup
         tf.close()
+
+    @pytest.mark.parametrize(
+        "chunksize",
+        [None, 1],
+        indirect=False,
+        ids=["chunksize=%s" % i for i in [None, 1]],
+    )
+    def test_iterfloats(self, chunksize):
+        # Create a store and make a simple float search:
+        idx0 = self.new_idx()
+        wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
+        idx0 = idx0.search_wmo(wmo)
+        if chunksize is None:
+            assert all([isinstance(float, ArgoFloat) for float in idx0.iterfloats(chunksize=chunksize)])
+        else:
+            for chunk in idx0.iterfloats(chunksize=chunksize):
+                assert len(chunk) == chunksize
+                assert all([isinstance(float, ArgoFloat) for float in chunk])
 
 
 ############################

@@ -59,13 +59,16 @@ class ArgoFloatProto(ABC):
         self.cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
         self.timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
 
-        self.idx = ArgoIndex(
-            index_file="core",
-            host=self.host,
-            cache=self.cache,
-            cachedir=self.cachedir,
-            timeout=self.timeout,
-        )
+        if "idx" not in kwargs:
+            self.idx = ArgoIndex(
+                index_file="core",
+                host=self.host,
+                cache=self.cache,
+                cachedir=self.cachedir,
+                timeout=self.timeout,
+            )
+        else:
+            self.idx = kwargs["idx"]
 
         self.host = self.idx.host  # Fix host shortcuts with correct values
         self.fs = self.idx.fs["src"]
@@ -91,6 +94,7 @@ class ArgoFloatProto(ABC):
         The meta-data dictionary will have at least the following keys:
 
         .. code-block:: python
+
             metadata["deployment"]["launchDate"]  # pd.Datetime
             metadata['cycles']  # list
             metadata['networks']  # list of str, eg ['BGC', 'DEEP']
@@ -117,6 +121,8 @@ class ArgoFloatProto(ABC):
     @property
     def dac(self) -> str:
         """Name of the DAC responsible for this float"""
+        if self._dac is None:
+            self.load_dac()
         return self._dac
 
     @property
@@ -169,7 +175,7 @@ class ArgoFloatProto(ABC):
         paths.sort()
         return paths
 
-    def list_dataset(self) -> dict:
+    def ls_dataset(self) -> dict:
         """List all available dataset for this float in a dictionary
 
         Note that:
@@ -179,7 +185,7 @@ class ArgoFloatProto(ABC):
 
         Examples
         --------
-        >>> ArgoFloat(4902640).list_dataset()
+        >>> ArgoFloat(4902640).ls_dataset()
         {'Sprof': 'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_Sprof.nc',
          'meta': 'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_meta.nc',
          'prof': 'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_prof.nc',
@@ -200,7 +206,7 @@ class ArgoFloatProto(ABC):
         Parameters
         ----------
         name: str, optional, default = "prof"
-            Name of the dataset to open. It can be any key from the dictionary returned by :class:`ArgoFloat.list_dataset`.
+            Name of the dataset to open. It can be any key from the dictionary returned by :class:`ArgoFloat.ls_dataset`.
         cast: bool, optional, default = True
             Determine if the dataset variables should be cast or not. This is similar to opening the dataset directly with :class:`xr.open_dataset` using the ``engine=`argo``` option.
 
@@ -208,13 +214,13 @@ class ArgoFloatProto(ABC):
         -------
         :class:`xarray.Dataset`
         """
-        if name not in self.list_dataset():
+        if name not in self.ls_dataset():
             raise ValueError(
                 "Dataset '%s' not found. Available dataset for this float are: %s"
-                % (name, self.list_dataset().keys())
+                % (name, self.ls_dataset().keys())
             )
         else:
-            file = self.list_dataset()[name]
+            file = self.ls_dataset()[name]
             xr_opts = {"engine": "argo"} if cast else {}
             return self.fs.open_dataset(file, xr_opts=xr_opts)
 
@@ -280,7 +286,7 @@ class ArgoFloatProto(ABC):
         if self._online:
             summary.append("Dashboard: %s" % dashboard(wmo=self.WMO, url_only=True))
         summary.append(
-            "Netcdf dataset available: %s" % list(self.list_dataset().keys())
+            "Netcdf dataset available: %s" % list(self.ls_dataset().keys())
         )
 
         return "\n".join(summary)

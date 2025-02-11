@@ -26,10 +26,6 @@ class ArgoFloatOffline(ArgoFloatProto):
                 "Trying to work with the offline store using a remote host !"
             )
 
-        # Load some data (in a perfect world, this should be done asynchronously):
-        self.load_dac()
-        self.load_metadata()  # must come after dac because metadata are read from netcdf files requiring dac folder name
-
     def load_metadata(self):
         """Method to load float meta-data"""
         data = {}

@@ -346,8 +346,36 @@ class ArgoDataFetcher:
         """Space/time domain of the dataset
 
         This is different from a usual ``box`` because dates are in :class:`numpy.datetime64` format.
+
+        If data are not loaded yet, and if dataset+backend allows, we read the domain extension from the index. Therefore,
+        they may not be the depth limits. If you need depth limits, you need to load the data first.
+
         """
-        return self.data.argo.domain
+        # If data are not loaded yet, with the gdac and erddap+bgc,
+        # we can rely on the fetcher ArgoIndex to make an answer faster
+        if (self._src == "erddap" and "bgc" in self._dataset_id) or (
+            self._src == "gdac") and (not isinstance(self._data, xr.Dataset)):
+            idx = self.fetcher.indexfs
+            if self._AccessPoint == "region":
+                # Convert data box to index box (remove depth info):
+                index_box = self._AccessPoint_data["box"].copy()
+                del index_box[4:6]
+                if len(index_box) == 4:
+                    idx.search_lat_lon(index_box)
+                else:
+                    idx.search_lat_lon_tim(index_box)
+            if self._AccessPoint == "float":
+                idx.search_wmo(self._AccessPoint_data["wmo"])
+            if self._AccessPoint == "profile":
+                idx.search_wmo_cyc(
+                    self._AccessPoint_data["wmo"], self._AccessPoint_data["cyc"]
+                )
+            domain = idx.domain.copy()
+            domain.insert(4, None)  # no max depth
+            domain.insert(5, None)  # no min depth
+            return domain
+        else:
+            return self.data.argo.domain
 
     @property
     def mission(self):
