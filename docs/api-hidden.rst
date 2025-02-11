@@ -293,6 +293,8 @@
     argopy.ArgoIndex.search_lat_lon_tim
     argopy.ArgoIndex.search_params
     argopy.ArgoIndex.search_parameter_data_mode
+    argopy.ArgoIndex.search_profiler_type
+    argopy.ArgoIndex.search_profiler_label
     argopy.ArgoIndex.to_dataframe
     argopy.ArgoIndex.to_indexfile
     argopy.ArgoIndex.copy

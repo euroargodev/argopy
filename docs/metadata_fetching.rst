@@ -90,7 +90,7 @@ The table below summarize the **argopy** support status of all Argo index files:
       - ❌
     * - Metadata
       - ar_index_global_meta.txt
-      - ❌
+      - ✅
     * - Technical
       - ar_index_global_tech.txt
       - ❌
@@ -158,6 +158,8 @@ Here the list of all methods to **search** the index:
     idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
     idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])  # Only for BGC profile index
     idx.search_parameter_data_mode({'BBP700': 'D'})  # Only for BGC profile index
+    idx.search_profiler_type(845)
+    idx.search_profiler_label('NINJA')
 
 And finally the list of methods and properties for **search results**:
 

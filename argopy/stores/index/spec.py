@@ -6,7 +6,7 @@ import time
 from abc import ABC, abstractmethod
 from fsspec.core import split_protocol
 from urllib.parse import urlparse
-from typing import Union
+from typing import Union, List
 from pathlib import Path
 import sys
 
@@ -17,7 +17,7 @@ else:
     from typing_extensions import Self
 
 from ...options import OPTIONS
-from ...errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError
+from ...errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError, InvalidDatasetStructure
 from ...utils.checkers import isconnected, has_aws_credentials
 from ...utils.accessories import Registry
 from ...utils.chunking import Chunker
@@ -57,8 +57,13 @@ class ArgoIndexStoreProto(ABC):
         "synth",
         "argo_aux-profile_index",
         "aux",
+        "ar_index_global_meta",
+        "meta",
     ]
     """List of supported conventions"""
+
+    _load_dict = None
+    """Place holder for load_dict method"""
 
     def __init__(
         self,
@@ -134,6 +139,8 @@ class ArgoIndexStoreProto(ABC):
             index_file = "argo_bio-profile_index.txt"
         elif index_file in ["aux"]:
             index_file = "etc/argo-index/argo_aux-profile_index.txt"
+        elif index_file in ["meta"]:
+            index_file = "ar_index_global_meta.txt"
         self.index_file = index_file
 
         # Default number of commented lines to skip at the beginning of csv index files
@@ -225,6 +232,8 @@ class ArgoIndexStoreProto(ABC):
                 convention = "argo_bio-profile_index"
             elif convention in ["aux"]:
                 convention = "argo_aux-profile_index"
+            elif convention in ["meta"]:
+                convention = "ar_index_global_meta"
         self._convention = convention
 
         # Check if the index file exists
@@ -420,6 +429,22 @@ class ArgoIndexStoreProto(ABC):
         return sha
 
     @property
+    def _r4(self):
+        """Reference table 4 "Argo data centres and institutions" as a dictionary"""
+        if self._load_dict is None:
+            from ...related import load_dict
+            self._load_dict = load_dict
+        return self._load_dict('institutions')
+
+    @property
+    def _r8(self):
+        """Reference table 8 "Argo instrument types" as a dictionary"""
+        if self._load_dict is None:
+            from ...related import load_dict
+            self._load_dict = load_dict
+        return self._load_dict('profilers')
+
+    @property
     def shape(self):
         """Shape of the index array"""
         # Must work for all internal storage type (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
@@ -472,7 +497,26 @@ class ArgoIndexStoreProto(ABC):
             title = "Synthetic-Profile directory file of the Argo GDAC"
         elif self.convention in ["argo_aux-profile_index", "aux"]:
             title = "Aux-Profile directory file of the Argo GDAC"
+        elif self.convention in ["ar_index_global_meta", "meta"]:
+            title = "Metadata directory file of the Argo GDAC"
         return title
+
+    @property
+    def convention_columns(self) -> List[str]:
+        """CSV file column names for the index convention"""
+        if self.convention == "ar_index_global_prof":
+            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
+                               'date_update']
+        elif self.convention in ["argo_bio-profile_index", "argo_synthetic-profile_index"]:
+            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
+                               'parameters', 'parameter_data_mode', 'date_update']
+        elif self.convention in ["argo_aux-profile_index"]:
+            columns = ['file', 'date', 'latitude', 'longitude', 'ocean', 'profiler_type', 'institution',
+                       'parameters', 'date_update']
+        elif self.convention in ["ar_index_global_meta"]:
+            columns = ['file', 'profiler_type', 'institution', 'date_update']
+
+        return columns
 
     def _same_origin(self, path):
         """Compare origin of path with current memory fs"""
@@ -630,7 +674,7 @@ class ArgoIndexStoreProto(ABC):
         else:
             log.debug("Converting [%s] to dataframe from scratch ..." % src)
             # Post-processing for user:
-            from ...related import load_dict, mapp_dict
+            from ...related import mapp_dict
 
             if nrows is not None:
                 df = df.loc[0 : nrows - 1].copy()
@@ -639,26 +683,33 @@ class ArgoIndexStoreProto(ABC):
                 df.drop("index", axis=1, inplace=True)
 
             df.reset_index(drop=True, inplace=True)
-            df["date"] = pd.to_datetime(df["date"], format="%Y%m%d%H%M%S")
+            if "date" in df:
+                df["date"] = pd.to_datetime(df["date"], format="%Y%m%d%H%M%S")
             df["date_update"] = pd.to_datetime(df["date_update"], format="%Y%m%d%H%M%S")
             df["wmo"] = df["file"].apply(lambda x: int(x.split("/")[1]))
-            df["cyc"] = df["file"].apply(
-                lambda x: int(x.split("_")[1].split(".nc")[0].replace("D", ""))
-            )
+            if self.convention not in [
+                "ar_index_global_meta",
+            ]:
+                df["cyc"] = df["file"].apply(
+                    lambda x: int(x.split("_")[1].split(".nc")[0].replace("D", ""))
+                )
+
+            if 'profiler_type' in self.convention_columns:
+                df['profiler_type'] = df['profiler_type'].fillna(9999).astype(int)
 
             if completed:
                 # institution & profiler mapping for all users
                 # todo: may be we need to separate this for standard and expert users
-                institution_dictionnary = load_dict("institutions")
+                institution_dictionary = self._r4
                 df["tmp1"] = df["institution"].apply(
-                    lambda x: mapp_dict(institution_dictionnary, x)
+                    lambda x: mapp_dict(institution_dictionary, x)
                 )
                 df = df.rename(
                     columns={"institution": "institution_code", "tmp1": "institution"}
                 )
                 df["dac"] = df["file"].apply(lambda x: x.split("/")[0])
 
-                profiler_dictionnary = load_dict("profilers")
+                profiler_dictionary = self._r8
                 def ev(x):
                     try:
                         return int(x)
@@ -666,7 +717,7 @@ class ArgoIndexStoreProto(ABC):
                         return x
 
                 df["profiler"] = df["profiler_type"].apply(
-                    lambda x: mapp_dict(profiler_dictionnary, ev(x))
+                    lambda x: mapp_dict(profiler_dictionary, ev(x))
                 )
                 df = df.rename(columns={"profiler_type": "profiler_code"})
 
@@ -764,6 +815,18 @@ class ArgoIndexStoreProto(ABC):
         Returns
         -------
         list(int)
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def read_dac_wmo(self, index=False):
+        """Return a tuple of unique [DAC, WMO] pairs from the index or search results
+
+        Fall back on full index if search not triggered
+
+        Returns
+        -------
+        tuple
         """
         raise NotImplementedError("Not implemented")
 
@@ -948,6 +1011,55 @@ class ArgoIndexStoreProto(ABC):
         """
         raise NotImplementedError("Not implemented")
 
+    @abstractmethod
+    def search_profiler_type(self, profiler_type: List[int]):
+        """Search index for profiler types
+
+        Parameters
+        ----------
+        profiler_type: list
+            List of profiler types to search for. Valid types are given by integers with values from the R8 Argo Reference table
+
+        Examples
+        --------
+        .. code-block:: python
+
+            valid_types = ArgoNVSReferenceTables().tbl(8)['altLabel']
+            profiler_type = 845
+            idx.search_profiler_type(profiler_type)
+
+        See Also
+        --------
+        :class:`ArgoIndex.search_profiler_label`
+        """
+        raise NotImplementedError("Not implemented")
+
+    def search_profiler_label(self, profiler_label: str, nrows=None):
+        """Search index for profiler types with a given string in their label
+
+        Parameters
+        ----------
+        profiler_label: str
+            The string to be found in the R8 Argo Reference table label
+
+        Examples
+        --------
+        .. code-block:: python
+
+            idx.search_profiler_label('ARVOR')
+
+        See Also
+        --------
+        :class:`ArgoIndex.search_profiler_type`
+        """
+        if "profiler_type" not in self.convention_columns:
+            raise InvalidDatasetStructure("Cannot search for profilers in this index)")
+        log.debug("Argo index searching for profiler label '%s' ..." % profiler_label)
+        type_contains = lambda x: [key for key, value in self._r8.items() if x in str(value)]
+        self.load(nrows=self._nrows_index)
+        self.search_type = {"PLABEL": profiler_label}
+        return self.search_profiler_type(type_contains(profiler_label))
+
     def _insert_header(self, originalfile):
         if self.convention == "ar_index_global_prof":
             header = """# Title : Profile directory file of the Argo Global Data Assembly Center
@@ -1007,6 +1119,22 @@ file,date,latitude,longitude,ocean,profiler_type,institution,parameters,paramete
 # FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
 # GDAC node : CORIOLIS
 file,date,latitude,longitude,ocean,profiler_type,institution,parameters,date_update
+""" % pd.to_datetime(
+                "now", utc=True
+            ).strftime(
+                "%Y%m%d%H%M%S"
+            )
+
+        elif self.convention == "ar_index_global_meta":
+            header = """# Title : Metadata directory file of the Argo Global Data Assembly Center
+# Description : The directory file describes all metadata files of the argo GDAC ftp site.
+# Project : ARGO
+# Format version : 2.0
+# Date of update : %s
+# FTP root number 1 : ftp://ftp.ifremer.fr/ifremer/argo/dac
+# FTP root number 2 : ftp://usgodae.org/pub/outgoing/argo/dac
+# GDAC node : CORIOLIS
+file,profiler_type,institution,date_update
 """ % pd.to_datetime(
                 "now", utc=True
             ).strftime(

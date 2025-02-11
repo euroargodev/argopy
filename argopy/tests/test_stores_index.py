@@ -61,6 +61,8 @@ VALID_SEARCHES = [
     {"tim": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"lat_lon": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"lat_lon_tim": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
+    {"profiler_type": [845]},
+    {"profiler_label": 'ARVOR'},
 ]
 VALID_SEARCHES_LOGICAL = [
     {"params": ["C1PHASE_DOXY", "DOWNWELLING_PAR"]},
@@ -117,6 +119,10 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason="?")
                     idx.search_parameter_data_mode(apts["parameter_data_mode"], nrows=nrows, logical=logical)
                 else:
                     pytest.skip("For BGC index only")
+            if "profiler_type" in apts:
+                idx.search_profiler_type(apts["profiler_type"], nrows=nrows)
+            if "profiler_label" in apts:
+                idx.search_profiler_label(apts["profiler_label"], nrows=nrows)
         except:
             if xfail:
                 pytest.xfail(reason)
@@ -409,7 +415,7 @@ class IndexStore_test_proto:
         idx = self.new_idx().search_wmo(wmo)
         WMOs = idx.read_wmo(index=index)
         if index:
-            assert [str(w).isdigit() for w in WMOs]
+            assert all([is_wmo(w) for w in WMOs])
         else:
             assert len(WMOs) == len(wmo)
 
