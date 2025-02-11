@@ -79,7 +79,7 @@ jobs:
     steps:
       - name: Energy Estimation - Initialize
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4.4
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4
         with:
           task: start-measurement
           project: ${{ secrets.CARBONDB_PROJECT_UUID }}
@@ -124,7 +124,7 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4.4
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4
         with:
           task: get-measurement
           label: 'setup core-free'
@@ -141,7 +141,7 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4.4
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4
         with:
           task: get-measurement
           label: 'pytest core-free'
@@ -162,7 +162,7 @@ jobs:
           retention-days: 90
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4.4
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4
         with:
           task: display-results
         continue-on-error: true
@@ -194,7 +194,7 @@ jobs:
     steps:
       - name: Energy Estimation - Initialize
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4.4
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4
         with:
           task: start-measurement
           project: ${{ secrets.CARBONDB_PROJECT_UUID }}
@@ -239,7 +239,7 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Setup
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4.4
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4
         with:
           task: get-measurement
           label: 'setup all-free'
@@ -256,7 +256,7 @@ jobs:
 
       - name: Energy Estimation - Measure Tests Exec
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4.4
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4
         with:
           task: get-measurement
           label: 'pytest all-free'
@@ -269,7 +269,7 @@ jobs:
           retention-days: 90
       - name: Energy Estimation - Show Results
         if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: green-coding-berlin/eco-ci-energy-estimation@v4.4
+        uses: green-coding-berlin/eco-ci-energy-estimation@v4
         with:
           task: display-results
         continue-on-error: true
