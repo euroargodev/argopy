@@ -80,6 +80,8 @@ This also comes with a new iterator on the :class:`ArgoIndex` (:pr:`432`) by |gm
 
     GreenCoding().footprint_since_last_release()
     GreenCoding().footprint_for_release('v1.0.0')
+    GreenCoding().footprint_all_releases()
+    GreenCoding().footprint_baseline()
 
 - :class:`ArgoIndex` **support meta index file**. We now offer support for the index of meta dataset files. This support brings two new methods to search the profiler type index column: one method based on the profiler type number and another method based on a string match in the profile type label, as described in the `Argo Reference table 8 <https://vocab.nerc.ac.uk/collection/R08/current/>`_.
 
