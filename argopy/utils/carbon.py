@@ -5,7 +5,7 @@ import copy
 from typing import Union, List, Dict, Literal
 import logging
 from pathlib import Path
-
+import numpy as np
 
 from ..errors import DataNotFound
 
@@ -13,7 +13,7 @@ log = logging.getLogger("argopy.utils.monitors")
 
 
 class GreenCoding:
-    """GreenCoding API helper class for argopy carbon footprint 
+    """GreenCoding API helper class for argopy carbon footprint
 
     This class uses the `Green-Coding Solutions API <https://api.green-coding.io>`_ to retrieve CI tests energy consumption data.
 
@@ -43,6 +43,7 @@ class GreenCoding:
         ac.total_measurements()
 
     """
+
     owner = "euroargodev"
     """Github owner parameter, default to 'euroargodev'"""
 
@@ -64,7 +65,7 @@ class GreenCoding:
     def measurements(
         self,
         branch: str = "master",
-        start_date: Union[str, pd.Timestamp] = None,
+        start_date: Union[str, pd.Timestamp] = "2024-06-01",
         end_date: Union[str, pd.Timestamp] = None,
         errors: Literal["raise", "ignore", "silent"] = "ignore",
     ) -> List[Dict]:
@@ -74,8 +75,8 @@ class GreenCoding:
         ----------
         branch : str, default='master'
             Name of the branch to retrieve measurements for
-        start_date : str, :class:`pandas.Timestamp`, default=None
-            Measurements starting date, default to 1 year before today
+        start_date : str, :class:`pandas.Timestamp`, default="2024-06-01"
+            Measurements starting date, default to the beginning of measurements.
         end_date : str, :class:`pandas.Timestamp`, default=None
             Measurements ending date, default to today
         errors: Literal, default: ``ignore``
@@ -98,7 +99,7 @@ class GreenCoding:
         else:
             end_date = pd.to_datetime(end_date)
         if start_date is None:
-            start_date = end_date - pd.Timedelta(365, unit="D")
+            start_date = pd.to_datetime("2020-03-17", utc=True)  # 1st argopy release
         else:
             start_date = pd.to_datetime(start_date)
 
@@ -113,9 +114,9 @@ class GreenCoding:
             "Platform",
             "Avg. CPU Utilization",
             "Workflow",
-            "?",
-            "??",
-            "???",
+            "Latitude",
+            "Longitude",
+            "City",
             "Grid Intensity [gCOE2/kWh]",
             "gCO2eq of run []",
         ]
@@ -131,9 +132,9 @@ class GreenCoding:
             "platform",
             "Avg. CPU_utilization",
             "Workflow",
-            "?",
-            "??",
-            "???",
+            "Latitude",
+            "Longitude",
+            "City",
             "GridIntensity",
             "gCO2eq",
         ]
@@ -210,9 +211,7 @@ class GreenCoding:
         return gCO2eq
 
     def footprint_for_release(
-        self,
-            release: str = None,
-            with_master: bool = True
+        self, release: str = None, with_master: bool = True
     ) -> pd.DataFrame:
         """Compute total carbon footprint for a given release
 
@@ -230,7 +229,7 @@ class GreenCoding:
 
         """
         release = self.gh.lastrelease_tag if release is None else release
-        df = self.gh.release2PRs(release=release)
+        df = self.gh.ls_PRmerged_in_release(release=release)
         value = 0
         for ipr, pr in df.iterrows():
             branches = ["%i/merge" % pr["ID"]]
@@ -266,9 +265,9 @@ class GreenCoding:
 
         See Also
         --------
-        :class:`GreenCoding.total_measurements`, :class:`Github.lastrelease_date`, :class:`Github.lastPRs`
+        :class:`GreenCoding.total_measurements`, :class:`Github.lastrelease_date`, :class:`Github.ls_PRmerged_since_last_release`
         """
-        df = self.gh.lastPRs
+        df = self.gh.ls_PRmerged_since_last_release
         branches = ["%i/merge" % pr for pr in df["ID"]]
         if with_master:
             branches.append("master")
@@ -276,10 +275,60 @@ class GreenCoding:
             branches, start_date=self.gh.lastrelease_date, errors=errors
         )
 
+    def footprint_all_releases(self):
+        """Footprint for all releases"""
+        releases = self.gh.releases
+        footprint = []
+        for ii, release in releases.iterrows():
+            try:
+                footprint.append(self.footprint_for_release(release['tag']))
+            except:
+                footprint.append(0.0)
+                pass
+        releases['gCO2eq'] = footprint
+        # releases['gCO2eq'].fillna(0.0, inplace=True)
+        return releases
+
+    def footprint_baseline(self,
+                           start_date: Union[str, pd.Timestamp] = None,
+                           end_date: Union[str, pd.Timestamp] = None,
+                           errors="ignore"):
+        """Compute the 'baseline' footprint
+
+        The 'baseline' footprint is from PRs that are not merged. PRs status can be 'open' or 'closed'.
+        All details are available on the `documentation page <https://argopy.readthedocs.io/en/latest/energy.html>`_.
+
+        Parameters
+        ----------
+        start_date : str, :class:`pandas.Timestamp`, default=None
+            Measurements starting date, default to start of measurements
+        end_date : str, :class:`pandas.Timestamp`, default=None
+            Measurements ending date, default to today
+        errors: Literal, default: ``ignore``
+            Define how to handle errors raised during data fetching:
+                - ``raise`` (default): Raise any error encountered
+                - ``ignore``: Do not stop processing, simply issue a debug message in logging console
+                - ``silent``:  Do not stop processing and do not issue log message
+
+        Returns
+        -------
+        float
+            Total carbon footprint in gCO2eq, considering all workflows
+
+        See Also
+        --------
+        :class:`GreenCoding.for_release`, :class:`GreenCoding.total_measurements`
+        """
+        df = self.gh.ls_PRbaseline(start_date=start_date, end_date=end_date)
+        branches = ["%i/merge" % pr for pr in df["ID"]]
+        return self.total_measurements(
+            branches, start_date=start_date, end_date=end_date, errors=errors
+        )
+
     def __repr__(self):
         summary = [f"<GreenCoding.{self.owner}.{self.repo}>"]
         summary.append("Last release date: %s" % self.gh.lastrelease_date)
-        summary.append("%i PRs merged since the last release" % len(self.gh.lastPRs))
+        summary.append("%i PRs merged since the last release" % len(self.gh.ls_PRmerged_since_last_release))
         summary.append(
             "Workflows analysed: %s"
             % ", ".join(
@@ -373,7 +422,7 @@ class Github:
 
     This class uses the `Github API <https://docs.github.com/en/rest>`_, to get PRs and release information.
 
-    It is primarily meant to be used by :class:`GreenCoding`. 
+    It is primarily meant to be used by :class:`GreenCoding`.
 
     Examples
     --------
@@ -386,16 +435,22 @@ class Github:
         Github().lastrelease_date
         Github().lastrelease_tag
         Github().get_PRtitle(385)
-        Github().get_PRmerged('2024-01-01', '2025-01-01')
-        Github().get_PRmerged_since('2025-01-01')
-        Github().lastPRs
-        Github().release2PRs('v0.1.17')
+        Github().ls_PRs()
+        Github().ls_PRs('2025-01-01')
+        Github().ls_PRmerged('2025-01-01')
+        Github().ls_PRmerged('2024-01-01', '2025-01-01')
+        Github().ls_PRmerged_since_last_release
+        Github().ls_PRmerged_in_release('v1.0.0')
     """
+
     owner = "euroargodev"
     """Github owner parameter, default to 'euroargodev'"""
 
     repo = "argopy"
     """Github repo parameter, default to 'argopy'"""
+
+    _js_data_pulls = None
+    """Place holder for json data returned from the Github API pulls endpoint"""
 
     def __init__(self, repo: str = "argopy", owner: str = "euroargodev"):
         from ..stores import httpstore
@@ -466,10 +521,145 @@ class Github:
         )
         return js["title"]
 
-    def get_PRmerged(
-        self, start_date: Union[str, pd.Timestamp], end_date: Union[str, pd.Timestamp]
+    @property
+    def _json_pulls(self):
+        """Return json data from Github API pulls endpoint
+
+        All results are returned, i.e. from all pages
+
+        https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#list-pull-requests
+        """
+        def list_uri(max_page=5):
+            uri = []
+            for page in range(1, max_page):
+                payload = {
+                    "state": "all",  # open/closed
+                    "per_page": 100,
+                    "page": page,
+                    "sort": "update",
+                    "direction": "asc",
+                }
+                url = (
+                    f"https://api.github.com/repos/{self.owner}/{self.repo}/pulls?"
+                    + urllib.parse.urlencode(payload)
+                )
+                uri.append(url)
+            return uri
+
+        # [print(u) for u in list_uri()]
+        if self._js_data_pulls is None:
+            pages = self.fs.open_mfjson(list_uri())
+            self._js_data_pulls = []
+            for page in pages:
+                for rec in page:
+                    self._js_data_pulls.append(rec)
+
+        return self._js_data_pulls
+
+    def ls_PRs(
+        self,
+        start_date: Union[str, pd.Timestamp] = None,
+        end_date: Union[str, pd.Timestamp] = None,
+        date: Literal["created", "updated", "merged"] = "created",
     ) -> pd.DataFrame:
-        """List merged PRs between 2 dates
+        """List all PRs, possibly between 2 dates
+
+        Parameters
+        ----------
+        start_date : :class:`pandas.Timestamp`, default = None
+        end_date : :class:`pandas.Timestamp`, default = None
+        date: Literal['created', 'updated', 'merged'], default = 'created'
+            Date filter key, use to apply bounds set by start_date and/or end_date
+
+        Returns
+        -------
+        :class:`pandas.DataFrame`
+        """
+        start_date = (
+            pd.to_datetime(start_date, utc=True)
+            if start_date is not None
+            else pd.to_datetime(start_date, utc=True)
+        )
+        end_date = (
+            pd.to_datetime(end_date, utc=True)
+            if end_date is not None
+            else pd.to_datetime(end_date, utc=True)
+        )
+
+        results = []
+        for j in self._json_pulls:
+            merged = pd.to_datetime(j["merged_at"])
+            ismerged = merged is not None
+            created = pd.to_datetime(j["created_at"])
+            updated = pd.to_datetime(j["updated_at"])
+
+            sorting_key = "ID"
+            date_filter = False
+            if start_date is not None and end_date is not None:
+                if date == "created":
+                    sorting_key = "created"
+                    if created >= start_date and created <= end_date:
+                        date_filter = True
+                elif date == "updated":
+                    sorting_key = "updated"
+                    if updated >= start_date and updated <= end_date:
+                        date_filter = True
+                elif date == "merged" and ismerged:
+                    sorting_key = "merged"
+                    if merged >= start_date and merged <= end_date:
+                        date_filter = True
+            elif start_date is not None:
+                if date == "created":
+                    sorting_key = "created"
+                    if created >= start_date:
+                        date_filter = True
+                elif date == "updated":
+                    sorting_key = "updated"
+                    if updated >= start_date:
+                        date_filter = True
+                elif date == "merged" and ismerged:
+                    sorting_key = "merged"
+                    if merged >= start_date:
+                        date_filter = True
+            elif end_date is not None:
+                if date == "created":
+                    sorting_key = "created"
+                    if created >= end_date:
+                        date_filter = True
+                elif date == "updated":
+                    sorting_key = "updated"
+                    if updated >= end_date:
+                        date_filter = True
+                elif date == "merged" and ismerged:
+                    sorting_key = "merged"
+                    if merged >= end_date:
+                        date_filter = True
+            else:
+                date_filter = True
+
+            if date_filter:
+                results.append(
+                    {
+                        "ID": j["number"],
+                        "title": j["title"],
+                        "created": created,
+                        "updated": updated,
+                        "merged": merged,
+                        "state": j["state"],
+                    }
+                )
+        if len(results) == 0:
+            raise DataNotFound()
+        else:
+            df = pd.DataFrame(results).sort_values(sorting_key).reset_index(drop=1)
+            return df
+
+    def ls_PRmerged(
+        self,
+        start_date: Union[str, pd.Timestamp] = None,
+        end_date: Union[str, pd.Timestamp] = None,
+    ) -> pd.DataFrame:
+        """List merged PRs
 
         Parameters
         ----------
@@ -479,72 +669,18 @@ class Github:
         Returns
         -------
         :class:`pandas.DataFrame`
+
+        See Also
+        --------
+        :class:`Github.ls_PRs`
         """
-
-        def list_uri(max_page=5):
-            uri = []
-            for page in range(1, max_page):
-                payload = {
-                    "state": "closed",
-                    "sort": "created",
-                    "per_page": 100,
-                    "page": page,
-                    "direction": "desc",
-                }
-                url = (
-                    f"https://api.github.com/repos/{self.owner}/{self.repo}/pulls?"
-                    + urllib.parse.urlencode(payload)
-                )
-                uri.append(url)
-            return uri
-
-        pages = self.fs.open_mfjson(list_uri())
-        js = []
-        for page in pages:
-            for rec in page:
-                js.append(rec)
-
-        results = []
-        for j in js:
-            PRmerged = pd.to_datetime(j["merged_at"])
-            if (
-                PRmerged is not None
-                and PRmerged >= pd.to_datetime(start_date, utc=1)
-                and PRmerged <= pd.to_datetime(end_date, utc=1)
-            ):
-                results.append(
-                    {
-                        "ID": j["number"],
-                        "title": j["title"],
-                        "created": pd.to_datetime(j["created_at"]),
-                        "merged": pd.to_datetime(j["merged_at"]),
-                    }
-                )
-        if len(results) == 0:
-            raise DataNotFound(
-                "No merged PRs found between %s and %s" % (start_date, end_date)
-            )
-        else:
-            df = pd.DataFrame(results).sort_values("merged").reset_index(drop=1)
-            return df
-
-    def get_PRmerged_since(self, start_date: Union[str, pd.Timestamp]) -> pd.DataFrame:
-        """List PRs merged since a given date
-
-        Parameters
-        ----------
-        start_date : :class:`pandas.Timestamp`
-
-        Returns
-        -------
-        :class:`pandas.DataFrame`
-        """
-        return self.get_PRmerged(
-            start_date=start_date, end_date=pd.to_datetime("now", utc=True)
-        )
+        df = self.ls_PRs(start_date=start_date, end_date=end_date, date='merged')
+        df = df[np.logical_and(df['merged'].notnull(), df['state'] == 'closed')]
+        df = df.sort_values("merged").reset_index(drop=1)
+        return df
 
     @property
-    def lastPRs(self) -> pd.DataFrame:
+    def ls_PRmerged_since_last_release(self) -> pd.DataFrame:
         """List PRs merged since the last release
 
         Returns
@@ -553,11 +689,11 @@ class Github:
 
         See Also
         --------
-        :class:`GreenCoding.get_PRmerged_since`, :class:`GreenCoding.lastrelease_date`
+        :class:`Github.ls_PRmerged`, :class:`Github.ls_PRmerged_in_release`, :class:`GreenCoding.lastrelease_date`
         """
-        return self.get_PRmerged_since(self.lastrelease_date)
+        return self.ls_PRmerged(start_date=self.lastrelease_date)
 
-    def release2PRs(self, release: str) -> pd.DataFrame:
+    def ls_PRmerged_in_release(self, release: str) -> pd.DataFrame:
         """List PRs included in a given release
 
         Parameters
@@ -568,6 +704,10 @@ class Github:
         Returns
         -------
         :class:`pandas.DataFrame`
+
+        See Also
+        --------
+        :class:`Github.ls_PRmerged`, :class:`Github.ls_PRmerged_since_last_release`
         """
         df_rel = self.releases
 
@@ -580,7 +720,32 @@ class Github:
         # Get the previous release publication date:
         start_date = df_rel.iloc[df_rel[df_rel["tag"] == release].index[0] - 1]["date"]
 
-        if release == df_rel['tag'].iloc[0]:
+        if release == df_rel["tag"].iloc[0]:
             raise ValueError("No PRs for the initial release !")
 
-        return self.get_PRmerged(start_date=start_date, end_date=end_date)
+        return self.ls_PRmerged(start_date=start_date, end_date=end_date)
+
+    def ls_PRbaseline(self,
+        start_date: Union[str, pd.Timestamp] = None,
+        end_date: Union[str, pd.Timestamp] = None
+    ) -> pd.DataFrame:
+        """List all PRs in the baseline
+
+        A *baseline* PR is a PR is not merged back to the master branch, hence such a PR is not included in any release.
+
+        Parameters
+        ----------
+        start_date : :class:`pandas.Timestamp`, default = None
+        end_date : :class:`pandas.Timestamp`, default = None
+
+        Returns
+        -------
+        :class:`pandas.DataFrame`
+
+        See Also
+        --------
+        :class:`Github.ls_PRs`
+        """
+        df = self.ls_PRs(start_date=start_date, end_date=end_date, date='updated')
+        df = df[~df['merged'].notnull()]
+        return df
