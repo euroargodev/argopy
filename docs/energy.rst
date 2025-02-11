@@ -15,10 +15,11 @@ Results
 -------
 
 |eqco2_since_last_release|
+|eqco2_baseline|
 
-All data are public and can be obtained with the Green Coding API or with simply the argopy :class:`argopy.utils.GreenCoding` class.
+All data are public and can be obtained with the Green Coding API or simply with the argopy :class:`argopy.utils.GreenCoding` class.
 
-You can also check the Green-Coding Monitoring dashboards in here:
+You can also check the detailed Green-Coding Monitoring dashboards in here:
 
 - `For CI tests running on each commit in the master branch <https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=22344160&metric=carbon>`_
 
@@ -38,6 +39,7 @@ Branch metrics can be summed to compute each new release specific impact. We mak
 
     GreenCoding().footprint_since_last_release()
     GreenCoding().footprint_for_release('v1.0.0')
+    GreenCoding().footprint_baseline()
 
 This class is currently used in the `monitoring framework of Argo APIs in here <https://github.com/euroargodev/argopy-status?tab=readme-ov-file#energy-impact>`_.
 
@@ -75,3 +77,5 @@ In argopy we furthermore categorise each Github Actions run, in order to get an 
    :target: https://metrics.green-coding.io/ci.html?repo=euroargodev/argopy&branch=master&workflow=25052179
 
 .. |eqco2_since_last_release| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_since_last_release.json
+
+.. |eqco2_baseline| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_baseline.json

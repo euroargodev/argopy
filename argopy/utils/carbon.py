@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 
 from ..errors import DataNotFound
+from . import Registry
 
 log = logging.getLogger("argopy.utils.monitors")
 
@@ -61,6 +62,7 @@ class GreenCoding:
 
         self.fs = httpstore(cache=True)
         self.gh = Github()
+        self.URI = Registry(name='GreenCoding API calls')
 
     def measurements(
         self,
@@ -154,9 +156,17 @@ class GreenCoding:
                 "https://api.green-coding.io/v1/ci/measurements?"
                 + urllib.parse.urlencode(payload)
             )
+            self.URI.commit(uri)
 
             try:
                 data = self.fs.open_json(uri)
+
+                # Remove out of range values:
+                for ii, item in enumerate(data["data"]):
+                    if item[names.index('Energy')]/1e6 > 20000:
+                        data['data'].pop(ii)
+                    elif item[names.index('gCO2eq')]/1e6 > 1000:
+                        data['data'].pop(ii)
 
                 df = pd.DataFrame(data["data"], columns=names)
                 df["Duration"] = df["Duration"] / 1e6  # seconds
