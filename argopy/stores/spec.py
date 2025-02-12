@@ -57,6 +57,18 @@ class ArgoStoreProto(ABC):
     def sep(self):
         return self.fs.sep
 
+    @property
+    def async_impl(self):
+        return self.fs.async_impl
+
+    @property
+    def asynchronous(self):
+        return getattr(self.fs, 'asynchronous', False)
+
+    @property
+    def target_protocol(self):
+        return getattr(self.fs, 'target_protocol', self.protocol)
+
     def exists(self, path, *args):
         return self.fs.exists(path, *args)
 
