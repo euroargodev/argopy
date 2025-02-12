@@ -53,6 +53,9 @@ class ArgoStoreProto(ABC):
     def glob(self, path, **kwargs):
         return self.fs.glob(path, **kwargs)
 
+    def ls(self, path, **kwargs):
+        return self.fs.ls(path, **kwargs)
+
     @property
     def sep(self):
         return self.fs.sep
@@ -84,7 +87,7 @@ class ArgoStoreProto(ABC):
     def store_path(self, uri):
         path = uri
         path = self.expand_path(path)[0]
-        if not path.startswith(self.fs.target_protocol) and version.parse(
+        if not path.startswith(self.target_protocol) and version.parse(
             fsspec.__version__
         ) <= version.parse("0.8.3"):
             path = self.fs.target_protocol + "://" + path

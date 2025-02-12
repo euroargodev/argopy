@@ -318,6 +318,7 @@ def check_gdac_option(path, errors="ignore"):  # noqa: C901
     >>> check_gdac_option("ftp://usgodae.org/pub/outgoing/argo") # True
     >>> check_gdac_option("/home/ref-argo/gdac") # True
     >>> check_gdac_path("s3://argo-gdac-sandbox/") # True
+
     >>> check_gdac_option("https://www.ifremer.fr") # False
     >>> check_gdac_option("ftp://usgodae.org/pub/outgoing") # False
 
@@ -345,7 +346,7 @@ def check_gdac_option(path, errors="ignore"):  # noqa: C901
         else:
             return False
 
-    check1 = fs.exists(fs.sep.join([path, "dac"]))
+    check1 = fs.exists('dac')
     if check1:
         return True
 
