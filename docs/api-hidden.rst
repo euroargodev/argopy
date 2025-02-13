@@ -299,6 +299,10 @@
     argopy.ArgoIndex.to_indexfile
     argopy.ArgoIndex.copy
     argopy.ArgoIndex.iterfloats
+    argopy.ArgoIndex.uri
+    argopy.ArgoIndex.uri_full_index
+    argopy.ArgoIndex.files
+    argopy.ArgoIndex.files_full_index
 
     argopy.stores.index.implementations.index_s3.s3index
     argopy.stores.index.implementations.index_s3.s3index_core

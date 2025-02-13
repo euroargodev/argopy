@@ -749,7 +749,7 @@ class ArgoIndexStoreProto(ABC):
 
     @property
     @abstractmethod
-    def uri_full_index(self):
+    def uri_full_index(self) -> List[str]:
         """List of URI from index
 
         Returns
@@ -760,13 +760,25 @@ class ArgoIndexStoreProto(ABC):
 
     @property
     @abstractmethod
-    def uri(self):
+    def uri(self) -> List[str]:
         """List of URI from search results
 
         Returns
         -------
         list(str)
         """
+        raise NotImplementedError("Not implemented")
+
+    @property
+    @abstractmethod
+    def files(self) -> List[str]:
+        """File paths listed in search results"""
+        raise NotImplementedError("Not implemented")
+
+    @property
+    @abstractmethod
+    def files_full_index(self) -> List[str]:
+        """File paths listed in the index"""
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
@@ -784,8 +796,6 @@ class ArgoIndexStoreProto(ABC):
             Force to refresh the index stored with this store instance
         nrows: {int, None}, default: None
             Maximum number of index rows to load
-
-
         """
         raise NotImplementedError("Not implemented")
 

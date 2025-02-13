@@ -230,6 +230,24 @@ class indexstore(ArgoIndexStoreProto):
             for f in self.search["file"]
         ]
 
+    @property
+    def files(self) -> List[str]:
+        """File paths listed in search results"""
+        sep = self.fs["src"].fs.sep
+        return [
+            sep.join(["dac", f.replace("/", sep)])
+            for f in self.search["file"]
+        ]
+
+    @property
+    def files_full_index(self) -> List[str]:
+        """File paths listed in the index"""
+        sep = self.fs["src"].fs.sep
+        return [
+            sep.join(["dac", f.replace("/", sep)])
+            for f in self.index["file"]
+        ]
+
     def read_wmo(self, index=False):
         """Return list of unique WMOs from the index or search results
 

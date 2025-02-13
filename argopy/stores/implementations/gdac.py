@@ -21,12 +21,12 @@ class gdacfs:
     Parameters
     ----------
     path: str, optional
-        GDAC path to create a file system for. Support any possible GDAC path.
-        If not specified, value from global option ``gdac`` will be used.
+        GDAC path to create a file system for. Support any possible GDAC protocol.
+        If not specified, value from the global option ``gdac`` will be used.
 
     Returns
     -------
-    A file system based on :class:`argopy.stores.ArgoStoreProto`
+    A directory baswd file system based on :class:`argopy.stores.ArgoStoreProto`
 
     Examples
     --------
