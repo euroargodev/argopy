@@ -1,12 +1,18 @@
+import logging
 from typing import Union
 from pathlib import Path
 from fsspec.core import split_protocol
 from urllib.parse import urlparse
 from socket import gaierror
+import fsspec
+
 
 from ...options import OPTIONS
 from ...errors import GdacPathError
 from .. import filestore, httpstore, ftpstore, s3store
+
+
+log = logging.getLogger("argopy.stores.gdac")
 
 
 class gdacfs:
@@ -15,12 +21,12 @@ class gdacfs:
     Parameters
     ----------
     path: str, optional
-        GDAC path to create a file system for. Support any possible GDAC path.
-        If not specified, value from global option ``gdac`` will be used.
+        GDAC path to create a file system for. Support any possible GDAC protocol.
+        If not specified, value from the global option ``gdac`` will be used.
 
     Returns
     -------
-    A file system based on :class:`argopy.stores.ArgoStoreProto`
+    A directory baswd file system based on :class:`argopy.stores.ArgoStoreProto`
 
     Examples
     --------
@@ -70,7 +76,10 @@ class gdacfs:
             path = OPTIONS["gdac"]
 
         protocol = cls.path2protocol(path)
-        fs = cls.protocol2fs[protocol]
+        cls.root = path
+        cls.target_protocol = protocol
+
+        fs = cls.protocol2fs[cls.target_protocol]
         fs_args = {}
 
         if protocol == "ftp":
@@ -86,4 +95,5 @@ class gdacfs:
                 "Can't get address info from FTP host: %s\nGAIerror: %s"
                 % (fs_args, str(e))
             )
+        fs.fs = fsspec.filesystem("dir", fs=fs.fs, path=path)
         return fs

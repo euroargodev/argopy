@@ -297,8 +297,8 @@ def check_erddap_path(path, errors="ignore"):
         return False
 
 
-def check_gdac_option(path, errors="ignore"):  # noqa: C901
-    """Check if a path has the expected GDAC server structure
+def check_gdac_option(path, errors:str="ignore", ignore_knowns:bool=True):  # noqa: C901
+    """Check if a path has the expected GDAC structure
 
     Expected GDAC structure::
 
@@ -313,54 +313,67 @@ def check_gdac_option(path, errors="ignore"):  # noqa: C901
 
     Examples::
 
-    >>> check_gdac_option("https://data-argo.ifremer.fr")  # True
-    >>> check_gdac_option("ftp://ftp.ifremer.fr/ifremer/argo") # True
-    >>> check_gdac_option("ftp://usgodae.org/pub/outgoing/argo") # True
-    >>> check_gdac_option("/home/ref-argo/gdac") # True
-    >>> check_gdac_path("s3://argo-gdac-sandbox/") # True
-    >>> check_gdac_option("https://www.ifremer.fr") # False
-    >>> check_gdac_option("ftp://usgodae.org/pub/outgoing") # False
+    >>> check_gdac_path("https://data-argo.ifremer.fr")  # True
+    >>> check_gdac_path("https://usgodae.org/pub/outgoing/argo") # True
+    >>> check_gdac_path("ftp://ftp.ifremer.fr/ifremer/argo") # True
+    >>> check_gdac_path("/home/ref-argo/gdac") # True
+    >>> check_gdac_path("s3://argo-gdac-sandbox/pub") # True
+
+    >>> check_gdac_path("https://www.ifremer.fr") # False
+    >>> check_gdac_path("ftp://usgodae.org/pub/outgoing") # False
 
     Parameters
     ----------
     path: str
         Path name to check, including access protocol
-    errors: str
-        "ignore" or "raise" (or "warn")
+    errors: str, default="ignore"
+        Determine how check procedure error are handled: "ignore", "raise" or "warn"
+    ignore_knowns: bool, default=False
+        Should the checking procedure be by-passed for the internal list of known GDACs.
+        Set this to True to check if a known GDACs is connected or not.
 
     Returns
     -------
     checked: boolean
-    """
-    from .stores import gdacfs  # Otherwise raises circular import
 
-    try:
-        fs = gdacfs(path)
-    except GdacPathError:
-        if errors == "raise":
-            raise
+    See also
+    --------
+    :class:`argopy.stores.gdacfs`, :meth:`argopy.utils.list_gdac_servers`
+
+    """
+    from .utils import list_gdac_servers  # import here, otherwise raises circular import
+
+    if path in list_gdac_servers() and ignore_knowns:
+        return True
+    else:
+
+        from .stores import gdacfs  # import here, otherwise raises circular import
+
+        try:
+            fs = gdacfs(path)
+        except GdacPathError:
+            if errors == "raise":
+                raise
+            elif errors == "warn":
+                warnings.warn("Can't get address info (GAIerror) on '%s'" % path)
+                return False
+            else:
+                return False
+
+        check1 = fs.exists('dac')
+        if check1:
+            return True
+
+        elif errors == "raise":
+            raise GdacPathError(
+                "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
+                % path
+            )
+
         elif errors == "warn":
-            warnings.warn("Can't get address info (GAIerror) on '%s'" % path)
+            warnings.warn("This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s" % path)
             return False
+
         else:
             return False
 
-    check1 = fs.exists(fs.sep.join([path, "dac"]))
-    if check1:
-        return True
-
-    elif errors == "raise":
-        raise GdacPathError(
-            "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
-            % path
-        )
-
-    elif errors == "warn":
-        warnings.warn(
-            "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
-            % path
-        )
-        return False
-
-    else:
-        return False
