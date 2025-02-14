@@ -883,11 +883,12 @@ class httpstore(ArgoStoreProto):
         1. Download from ``url`` raw data with :class:`httpstore.download_url` and then
         2. Create a JSON with :func:`json.loads`.
 
-        Each functions can be passed specifics arguments (see Parameters below).
+        Each steps can be passed specifics arguments (see Parameters below).
 
         Parameters
         ----------
         url: str
+            Path to resources passed to :class:`httpstore.download_url`
         errors: str, default: ``raise``
             Define how to handle errors:
                 - ``raise`` (default): Raise any error encountered
@@ -896,8 +897,8 @@ class httpstore(ArgoStoreProto):
 
         kwargs: dict
 
-            - ``dwn_opts`` key is passed to :class:`httpstore.download_url`
-            - ``js_opts`` key is passed to :func:`json.loads`
+            - ``dwn_opts`` key dictionary is passed to :class:`httpstore.download_url`
+            - ``js_opts`` key dictionary is passed to :func:`json.loads`
 
         Returns
         -------
@@ -937,8 +938,6 @@ class httpstore(ArgoStoreProto):
 
             else:
                 return None
-        else:
-            self.register(url)
 
         return js
 
