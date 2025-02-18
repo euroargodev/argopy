@@ -621,6 +621,7 @@ def scatter_plot(
     vmin=None,
     vmax=None,
     s=4,
+    cbar: bool = False,
     bgcolor="lightgrey",
 ):
     """A quick-and-dirty parameter scatter plot for one variable"""
@@ -664,8 +665,9 @@ def scatter_plot(
         m = ax.scatter(x, y, c=c, cmap=cmap, s=s, vmin=vmin, vmax=vmax)
         ax.set_facecolor(bgcolor)
 
-    cbar = fig.colorbar(m, shrink=0.9, extend="both", ax=ax)
-    cbar.ax.set_ylabel(get_vlabel(ds, this_param), rotation=90)
+    if cbar:
+        cbar = fig.colorbar(m, shrink=0.9, extend="both", ax=ax)
+        cbar.ax.set_ylabel(get_vlabel(ds, this_param), rotation=90)
 
     ylim = ax.get_ylim()
     if "PRES" in this_y:
@@ -685,4 +687,8 @@ def scatter_plot(
     ax.set_xlabel(get_vlabel(ds, this_x))
     ax.set_ylabel(get_vlabel(ds, this_y))
 
-    return fig, ax
+    if cbar:
+        return fig, ax, m, cbar
+    else:
+        return fig, ax, m
+
