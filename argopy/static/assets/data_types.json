@@ -1,7 +1,7 @@
 {
   "name": "data_types",
   "long_name": "Expected data types of Argo variables",
-  "last_update": "2024-10-16T08:36:34.900290+00:00",
+  "last_update": "2025-02-18T13:14:40.439128+00:00",
   "data": {
     "str": [
       "PLATFORM_NUMBER",
@@ -43,6 +43,9 @@
       "TECHNICAL_PARAMETER_NAME",
       "TECHNICAL_PARAMETER_VALUE",
       "PTT",
+      "TECHNICAL_MEASUREMENT_PARAMETERS",
+      "TECH_AUX_PARAM_LABEL",
+      "TECH_AUX_PARAM_DESCRIPTION",
       "END_MISSION_STATUS",
       "TRANS_SYSTEM",
       "TRANS_SYSTEM_ID",
