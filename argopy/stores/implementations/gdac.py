@@ -23,10 +23,14 @@ class gdacfs:
     path: str, optional
         GDAC path to create a file system for. Support any possible GDAC protocol.
         If not specified, value from the global option ``gdac`` will be used.
+    cache: bool (False)
+    cachedir: str (from OPTIONS)
+    **kwargs: (optional)
+            Other arguments are passed to :func:`fsspec.filesystem`
 
     Returns
     -------
-    A directory baswd file system based on :class:`argopy.stores.ArgoStoreProto`
+    A directory based file system based on :class:`argopy.stores.ArgoStoreProto`
 
     Examples
     --------
@@ -70,7 +74,7 @@ class gdacfs:
             else:
                 raise GdacPathError("Unknown protocol for an Argo GDAC host: %s" % split)
 
-    def __new__(cls, path: Union[str, Path, None] = None):
+    def __new__(cls, path: Union[str, Path, None] = None, cache: bool = False, cachedir: str = "", **kwargs):
         """Create a file system for any Argo GDAC compliant path"""
         if path is None:
             path = OPTIONS["gdac"]
@@ -80,7 +84,7 @@ class gdacfs:
         cls.target_protocol = protocol
 
         fs = cls.protocol2fs[cls.target_protocol]
-        fs_args = {}
+        fs_args = {'cache': cache, 'cachedir': cachedir}
 
         if protocol == "ftp":
             ftp_host = urlparse(path).hostname
@@ -89,7 +93,7 @@ class gdacfs:
             fs_args['port'] = ftp_port
 
         try:
-            fs = fs(**fs_args)
+            fs = fs(**fs_args, **kwargs)
         except gaierror as e:
             raise GdacPathError(
                 "Can't get address info from FTP host: %s\nGAIerror: %s"
