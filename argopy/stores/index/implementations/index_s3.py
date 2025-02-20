@@ -12,9 +12,9 @@ from ....utils.checkers import (
     has_aws_credentials,
     HAS_BOTO3,
 )
-from ....utils.format import redact
+from ....utils import redact
+from ....errors import InvalidDatasetStructure
 from ... import s3store
-
 
 try:
     import pyarrow.csv as csv  # noqa: F401
@@ -85,6 +85,22 @@ class s3index:
     bucket_name = "argo-gdac-sandbox"
     """Name of the S3 bucket"""
 
+    sql_formaters = {
+        "search_wmo": {
+            "split": "SELECT * FROM s3object s WHERE s._1 LIKE '%/{wmo}/profiles/%'".format,
+            "single": "s._1 LIKE '%/{wmo}/profiles/%'".format,
+        },
+        "search_cyc": {
+            "split": "SELECT * FROM s3object s WHERE s._1 LIKE '%/%/profiles/%_{cyc:03d}.nc'".format,
+            "single": "s._1 LIKE '%/%/profiles/%_{cyc:03d}.nc'".format,
+        },
+        "search_wmo_cyc": {
+            "split": "SELECT * FROM s3object s WHERE s._1 LIKE '%/{wmo}/profiles/%_{cyc:03d}.nc'".format,
+            "single": "s._1 LIKE '%/{wmo}/profiles/%_{cyc:03d}.nc'".format,
+        },
+    }
+    """SQL syntax formatters for all search methods and for each strategy"""
+
     def __init__(self):
         # Create a boto3 client to interface with S3
         if has_aws_credentials():
@@ -107,7 +123,7 @@ class s3index:
 
         self.stats_last = {}
         self.stats = {}
-        self._sql_logic = "unique"
+        self._sql_logic = "single"  # 'single' or 'split'
 
     def _sio2pd(self, obj_io: io.StringIO) -> pd.DataFrame:
         def _pd(input_io):
@@ -211,19 +227,15 @@ class s3index:
         if self._sql_logic == "split":
             sql = []
             for wmo in WMOs:
-                sql.append(
-                    "SELECT * FROM s3object s WHERE s._1 LIKE '%/{wmo}/profiles/%'".format(
-                        wmo=wmo
-                    )
-                )
-        else:
+                sql.append(self.sql_formaters['search_wmo']['split'](wmo=wmo))
+
+        elif self._sql_logic == "single":
             sql = "SELECT * FROM s3object s WHERE "
             if len(WMOs) > 1:
-                sql += " OR ".join(
-                    ["s._1 LIKE '%/{wmo}/profiles/%'".format(wmo=wmo) for wmo in WMOs]
-                )
+                sql += " OR ".join([self.sql_formaters['search_wmo']['single'](wmo=wmo) for wmo in WMOs])
+
             else:
-                sql += "s._1 LIKE '%/{wmo}/profiles/%'".format(wmo=WMOs[0])
+                sql += self.sql_formaters['search_wmo']['single'](wmo=WMOs[0])
 
         if nrows is not None:
             sql += " LIMIT %i" % nrows
@@ -233,27 +245,28 @@ class s3index:
         return self
 
     def search_cyc(self, CYCs, nrows=None):
+        if self.convention in ["ar_index_global_meta"]:
+            raise InvalidDatasetStructure(
+                "Cannot search for cycle number in this index"
+            )
         CYCs = check_cyc(CYCs)
 
         if self._sql_logic == "split":
             sql = []
             for cyc in CYCs:
-                sql.append(
-                    "SELECT * FROM s3object s WHERE s._1 LIKE '%/%/profiles/%_{cyc:03d}.nc'".format(
-                        cyc=cyc
-                    )
-                )
-        else:
+                sql.append(self.sql_formaters['search_cyc']['split'](cyc=cyc))
+
+        elif self._sql_logic == "single":
             sql = "SELECT * FROM s3object s WHERE "
             if len(CYCs) > 1:
                 sql += " OR ".join(
                     [
-                        "s._1 LIKE '%/%/profiles/%_{cyc:03d}.nc'".format(cyc=cyc)
+                        self.sql_formaters['search_cyc']['single'](cyc=cyc)
                         for cyc in CYCs
                     ]
                 )
             else:
-                sql += "s._1 LIKE '%/%/profiles/%_{cyc:03d}.nc'".format(cyc=CYCs[0])
+                sql += self.sql_formaters['search_cyc']['single'](cyc=CYCs[0])
 
         if nrows is not None:
             sql += " LIMIT %i" % nrows
@@ -263,6 +276,10 @@ class s3index:
         return self
 
     def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
+        if self.convention in ["ar_index_global_meta"]:
+            raise InvalidDatasetStructure(
+                "Cannot search for cycle number in this index"
+            )
         WMOs = check_wmo(WMOs)
         CYCs = check_cyc(CYCs)
 
@@ -270,20 +287,15 @@ class s3index:
             sql = []
             for wmo in WMOs:
                 for cyc in CYCs:
-                    sql.append(
-                        "SELECT * FROM s3object s WHERE s._1 LIKE '%/{wmo}/profiles/%_{cyc:03d}.nc'".format(
-                            wmo=wmo, cyc=cyc
-                        )
-                    )
-        else:
+                    sql.append(self.sql_formaters['search_wmo_cyc']['split'](wmo=wmo, cyc=cyc))
+
+        elif self._sql_logic == "single":
             sql = "SELECT * FROM s3object s WHERE "
             if len(WMOs) > 1:
                 if len(CYCs) > 1:
                     sql += " OR ".join(
                         [
-                            "s._1 LIKE '%/{wmo}/profiles/%_{cyc:03d}.nc'".format(
-                                wmo=wmo, cyc=cyc
-                            )
+                            self.sql_formaters['search_wmo_cyc']['single'](wmo=wmo, cyc=cyc)
                             for wmo in WMOs
                             for cyc in CYCs
                         ]
@@ -291,9 +303,7 @@ class s3index:
                 else:
                     sql += " OR ".join(
                         [
-                            "s._1 LIKE '%/{wmo}/profiles/%_{cyc:03d}.nc'".format(
-                                wmo=wmo, cyc=CYCs[0]
-                            )
+                            self.sql_formaters['search_wmo_cyc']['single'](wmo=wmo, cyc=CYCs[0])
                             for wmo in WMOs
                         ]
                     )
@@ -301,16 +311,12 @@ class s3index:
                 if len(CYCs) > 1:
                     sql += " OR ".join(
                         [
-                            "s._1 LIKE '%/{wmo}/profiles/%_{cyc:03d}.nc'".format(
-                                wmo=WMOs[0], cyc=cyc
-                            )
+                            self.sql_formaters['search_wmo_cyc']['single'](wmo=WMOs[0], cyc=cyc)
                             for cyc in CYCs
                         ]
                     )
                 else:
-                    sql += "s._1 LIKE '%/{wmo}/profiles/%_{cyc:03d}.nc'".format(
-                        wmo=WMOs[0], cyc=CYCs[0]
-                    )
+                    sql += self.sql_formaters['search_wmo_cyc']['single'](wmo=WMOs[0], cyc=CYCs[0])
 
         if nrows is not None:
             sql += " LIMIT %i" % nrows
@@ -457,6 +463,54 @@ class s3index_bgc_synthetic(s3index_bgc_bio):
     """Argo convention of the index source file"""
 
 
+class s3index_meta(s3index):
+    key = "pub/idx/ar_index_global_meta.txt.gz"
+    """Path to the index source file"""
+
+    CompressionType = "GZIP"
+    """Compression used by the index source file"""
+
+    convention = "ar_index_global_meta"
+    """Argo convention of the index source file"""
+
+    colNames = [
+        "file",
+        "profiler_type",
+        "institution",
+        "date_update",
+    ]
+    """List of the index column names"""
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.sql_formaters.update({
+            "search_wmo": {
+                "split": "SELECT * FROM s3object s WHERE s._1 LIKE '%/{wmo}/{wmo}_meta.nc'".format,
+                "single": "s._1 LIKE '%/{wmo}/{wmo}_meta.nc'".format,
+            },
+        })
+
+    @property
+    @requires_pyarrow
+    def empty_pq(self):
+        return pa.Table.from_pydict(
+            {
+                "file": [],
+                "profiler_type": [],
+                "institution": [],
+                "date_update": [],
+            },
+            schema=pa.schema(
+                [
+                    ("file", pa.string()),
+                    ("profiler_type", pa.int64()),
+                    ("institution", pa.string()),
+                    ("date_update", pa.timestamp("s")),
+                ]
+            ),
+        )
+
+
 def get_a_s3index(convention):
     if convention == "ar_index_global_prof":
         return s3index_core()
@@ -464,6 +518,8 @@ def get_a_s3index(convention):
         return s3index_bgc_bio()
     elif convention == "argo_synthetic-profile_index":
         return s3index_bgc_synthetic()
+    elif convention == "ar_index_global_meta":
+        return s3index_meta()
 
 
 @decorator

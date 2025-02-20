@@ -28,43 +28,8 @@ class ArgoFloatOffline(ArgoFloatProto):
 
     def load_metadata(self):
         """Method to load float meta-data"""
-        data = {}
+        return self.load_metadata_from_meta_file()
 
-        ds = self.open_dataset("meta")
-        data.update(
-            {
-                "deployment": {
-                    "launchDate": pd.to_datetime(ds["LAUNCH_DATE"].values, utc=True)
-                }
-            }
-        )
-        data.update(
-            {"platform": {"type": ds["PLATFORM_TYPE"].values[np.newaxis][0].strip()}}
-        )
-        data.update({"maker": ds["PLATFORM_MAKER"].values[np.newaxis][0].strip()})
-
-        def infer_network(this_ds):
-            if this_ds["PLATFORM_FAMILY"].values[np.newaxis][0].strip() == "FLOAT_DEEP":
-                network = ["DEEP"]
-                if len(this_ds["SENSOR"].values) > 4:
-                    network.append("BGC")
-
-            elif this_ds["PLATFORM_FAMILY"].values[np.newaxis][0].strip() == "FLOAT":
-                if len(this_ds["SENSOR"].values) > 4:
-                    network = ["BGC"]
-                else:
-                    network = ["CORE"]
-
-            else:
-                network = ["?"]
-
-            return network
-
-        data.update({"networks": infer_network(ds)})
-
-        data.update({"cycles": np.unique(self.open_dataset("prof")["CYCLE_NUMBER"])})
-
-        self._metadata = data
 
     def load_dac(self):
         """Load the DAC short name for this float"""
@@ -85,3 +50,4 @@ class ArgoFloatOffline(ArgoFloatProto):
 
         # For the record, another method to get the DAC name, based on the profile index:
         # self._dac = self.idx.search_wmo(self.WMO).read_dac_wmo()[0][0] # Get DAC from Argo index
+        return self

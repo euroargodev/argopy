@@ -4,6 +4,8 @@ from pathlib import Path
 import pandas as pd
 from abc import ABC, abstractmethod
 import logging
+import numpy as np
+
 
 from ...errors import InvalidOption
 from ...plot import dashboard
@@ -116,6 +118,49 @@ class ArgoFloatProto(ABC):
     def load_metadata(self):
         """Method to load float meta-data"""
         raise NotImplementedError("Not implemented")
+
+    def load_metadata_from_meta_file(self):
+        """Method to load float meta-data"""
+        data = {}
+
+        ds = self.open_dataset("meta")
+        data.update(
+            {
+                "deployment": {
+                    "launchDate": pd.to_datetime(ds["LAUNCH_DATE"].values, utc=True)
+                }
+            }
+        )
+        data.update(
+            {"platform": {"type": ds["PLATFORM_TYPE"].values[np.newaxis][0].strip()}}
+        )
+        data.update({"maker": ds["PLATFORM_MAKER"].values[np.newaxis][0].strip()})
+
+        def infer_network(this_ds):
+            if this_ds["PLATFORM_FAMILY"].values[np.newaxis][0].strip() == "FLOAT_DEEP":
+                network = ["DEEP"]
+                if len(this_ds["SENSOR"].values) > 4:
+                    network.append("BGC")
+
+            elif this_ds["PLATFORM_FAMILY"].values[np.newaxis][0].strip() == "FLOAT":
+                if len(this_ds["SENSOR"].values) > 4:
+                    network = ["BGC"]
+                else:
+                    network = ["CORE"]
+
+            else:
+                network = ["?"]
+
+            return network
+
+        data.update({"networks": infer_network(ds)})
+
+        data.update({"cycles": np.unique(self.open_dataset("prof")["CYCLE_NUMBER"])})
+
+        self._metadata = data
+
+        return self
+
 
     @abstractmethod
     def load_dac(self):

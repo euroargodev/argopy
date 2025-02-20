@@ -22,6 +22,13 @@ USE_MOCKED_SERVER = True
 
 """
 List data sources to be tested
+
+We use these 3 data sources in order to test the 3 dask client implementation of the corresponding file store methods:
+
+erddap : httpstore.open_mfdataset
+argovis: httstore.open_mfjson
+gdac: filestore.open_mfdataset
+
 """
 SRC_LIST = ["erddap", "argovis", "gdac"]
 
@@ -140,7 +147,7 @@ class Test_Backend:
         indirect=True,
         ids=VALID_PARALLEL_ACCESS_POINTS_IDS,
     )
-    def test_data_fetching(self, mocked_httpserver, fetcher):
+    def test_parallel_data_fetching(self, mocked_httpserver, fetcher):
         assert len(fetcher.uri) > 1
 
         ds = fetcher.to_xarray()
