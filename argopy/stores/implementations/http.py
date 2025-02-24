@@ -930,7 +930,7 @@ class httpstore(ArgoStoreProto):
         js = json.loads(data, **js_opts)
         if len(js) == 0:
             if errors == "raise":
-                raise DataNotFound("No data loaded from %s, although the url return some data" % url)
+                raise DataNotFound("No data loadable from %s, although the url return some data: '%s'" % (url, data))
 
             elif errors == "ignore":
                 log.debug("No data loaded from %s, although the url return some data" % url)
