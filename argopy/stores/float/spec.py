@@ -27,6 +27,7 @@ class ArgoFloatProto(ABC):
         self,
         wmo: Union[int, str],
         host: str = None,
+        aux: bool = False,
         cache: bool = False,
         cachedir: str = "",
         timeout: int = 0,
@@ -48,6 +49,8 @@ class ArgoFloatProto(ABC):
             - ``https://usgodae.org/pub/outgoing/argo``, shortcut with ``us-http`` or ``us-https``
             - ``ftp://ftp.ifremer.fr/ifremer/argo``, shortcut with ``ftp``
             - ``s3://argo-gdac-sandbox/pub``, shortcut with ``s3`` or ``aws``
+        aux: bool, default = False
+            Should we include dataset from the auxiliary data folder. The 'aux' folder is expected to be at the same path level as the 'dac' folder on the GDAC host.
         cache : bool, optional, default: False
             Use cache or not.
         cachedir: str, optional, default: OPTIONS['cachedir']
@@ -60,6 +63,7 @@ class ArgoFloatProto(ABC):
         self.cache = bool(cache)
         self.cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
         self.timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
+        self._aux = bool(aux)
 
         if "idx" not in kwargs:
             self.idx = ArgoIndex(
@@ -199,11 +203,24 @@ class ArgoFloatProto(ABC):
          'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_prof.nc',
          'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_tech.nc']
 
+        >>> ArgoFloat(3901682, aux=True).ls()
+        ['https://data-argo.ifremer.fr/aux/coriolis/3901682/3901682_Rtraj_aux.nc',
+         'https://data-argo.ifremer.fr/aux/coriolis/3901682/3901682_meta_aux.nc',
+         'https://data-argo.ifremer.fr/aux/coriolis/3901682/3901682_tech_aux.nc',
+         'https://data-argo.ifremer.fr/dac/coriolis/3901682/3901682_Rtraj.nc',
+         'https://data-argo.ifremer.fr/dac/coriolis/3901682/3901682_meta.nc',
+         'https://data-argo.ifremer.fr/dac/coriolis/3901682/3901682_prof.nc',
+         'https://data-argo.ifremer.fr/dac/coriolis/3901682/3901682_tech.nc']
+
         See Also
         --------
-        :class:`ArgoFloat.lsprofiles`
+        :class:`ArgoFloat.ls_dataset`
         """
         paths = self.fs.glob(self.host_sep.join([self.path, "*"]))
+
+        if self._aux:
+            paths += self.fs.glob(self.host_sep.join([self.path.replace('dac', 'aux'), "*"]))
+
         paths = [p for p in paths if Path(p).suffix != ""]
         paths.sort()
         return paths
@@ -236,13 +253,24 @@ class ArgoFloatProto(ABC):
          'prof': 'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_prof.nc',
          'tech': 'https://data-argo.ifremer.fr/dac/meds/4902640/4902640_tech.nc'}
 
+        >>> ArgoFloat(4902640, aux=True).ls_dataset()
+        {'Rtraj': 'https://data-argo.ifremer.fr/dac/coriolis/3901682/3901682_Rtraj.nc',
+         'Rtraj_aux': 'https://data-argo.ifremer.fr/aux/coriolis/3901682/3901682_Rtraj_aux.nc',
+         'meta': 'https://data-argo.ifremer.fr/dac/coriolis/3901682/3901682_meta.nc',
+         'meta_aux': 'https://data-argo.ifremer.fr/aux/coriolis/3901682/3901682_meta_aux.nc',
+         'prof': 'https://data-argo.ifremer.fr/dac/coriolis/3901682/3901682_prof.nc',
+         'tech': 'https://data-argo.ifremer.fr/dac/coriolis/3901682/3901682_tech.nc',
+         'tech_aux': 'https://data-argo.ifremer.fr/aux/coriolis/3901682/3901682_tech_aux.nc'}
+
         """
         avail = {}
         for file in self.ls():
             filename = file.split(self.host_sep)[-1]
             if Path(filename).suffix == ".nc":
-                name = Path(filename).stem.split("_")[-1]
-                avail.update({name: file})
+                split = Path(filename).stem.split("_")
+                if split[0] == str(self.WMO):
+                    name = "_".join(split[1:])
+                    avail.update({name: file})
         return dict(sorted(avail.items()))
 
     def open_dataset(self, name: str = "prof", cast: bool = True) -> xr.Dataset:
