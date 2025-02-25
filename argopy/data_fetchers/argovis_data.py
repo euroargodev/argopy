@@ -213,20 +213,49 @@ class ArgovisDataFetcher(ArgoDataFetcherProto):
 
     def to_dataframe(self, errors: str = "ignore") -> pd.DataFrame:
         """Load Argo data and return a Pandas dataframe"""
+        URI = self.uri  # Call it once
 
         # Download data:
         preprocess_opts = {"key_map": self.key_map}
-        df_list = self.fs.open_mfjson(
-            self.uri,
-            method=self.parallel_method,
-            preprocess=pre_process,
-            preprocess_opts=preprocess_opts,
-            progress=self.progress,
-            errors=errors,
-        )
+
+        if not self.parallelize:
+            if len(URI) == 1:
+                data = self.fs.open_json(
+                    URI[0],
+                    errors=errors,
+                    dwn_opts={'errors': errors},
+                )
+                df = pre_process(data, **preprocess_opts)
+
+            else:
+                df_list = self.fs.open_mfjson(
+                    URI,
+                    method=self.parallel_method,
+                    preprocess=pre_process,
+                    preprocess_opts=preprocess_opts,
+                    open_json_opts={'errors': 'ignore',
+                                    "download_url_opts": {"errors": "ignore"}
+                                    },
+                    progress=self.progress,
+                    errors=errors,
+                )
+                df = pd.concat(df_list, ignore_index=True)
+
+        else:
+            df_list = self.fs.open_mfjson(
+                URI,
+                method=self.parallel_method,
+                preprocess=pre_process,
+                preprocess_opts=preprocess_opts,
+                open_json_opts={'errors': 'ignore',
+                                "download_url_opts": {"errors": "ignore"}
+                                },
+                progress=self.progress,
+                errors=errors,
+            )
+            df = pd.concat(df_list, ignore_index=True)
 
         # Merge results (list of dataframe):
-        df = pd.concat(df_list, ignore_index=True)
         if df.shape[0] == 0:
             raise DataNotFound("No data found for: %s" % self.cname())
 

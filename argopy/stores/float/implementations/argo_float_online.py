@@ -1,14 +1,10 @@
-from typing import Union
-import xarray as xr
-from pathlib import Path
 import pandas as pd
 import logging
 
-from ....plot import dashboard
-from ....utils import check_wmo, isconnected, argo_split_path
-from ....options import OPTIONS
-from ... import ArgoIndex, httpstore
+from ....errors import DataNotFound
+from ... import httpstore
 from ..spec import ArgoFloatProto
+from .argo_float_offline import ArgoFloatOffline
 
 
 log = logging.getLogger("argopy.stores.ArgoFloat")
@@ -56,14 +52,22 @@ class ArgoFloatOnline(ArgoFloatProto):
         --------
         :class:`ArgoFloat.load_technicaldata`
         """
-        self._metadata = httpstore(cache=self.cache, cachedir=self.cachedir).open_json(
-            self.api_point['meta']
-        )
+        try:
+            self._metadata = httpstore(cache=self.cache, cachedir=self.cachedir).open_json(
+                self.api_point['meta'], errors='raise'
+            )
+        except DataNotFound:
+            # Try to load metadata from the meta file
+            # to so, we first need the DAC name
+            self._dac = self.idx.search_wmo(self.WMO).read_dac_wmo()[0][0]
+            self.load_metadata_from_meta_file()
 
         # Fix data type for some useful keys:
         self._metadata["deployment"]["launchDate"] = pd.to_datetime(
             self._metadata["deployment"]["launchDate"]
         )
+
+        return self
 
     def load_technicaldata(self):
         """Load float technical data from Euro-Argo fleet-monitoring API
@@ -80,6 +84,8 @@ class ArgoFloatOnline(ArgoFloatProto):
             cache=self.cache, cachedir=self.cachedir
         ).open_json(self.api_point['technical'])
 
+        return self
+
     @property
     def technicaldata(self) -> dict:
         """A dictionary holding float technical data"""
@@ -93,9 +99,10 @@ class ArgoFloatOnline(ArgoFloatProto):
             # Get DAC from EA-Metadata API:
             self._dac = self.metadata["dataCenter"]["name"].lower()
         except:
-            raise ValueError(
-                f"DAC name for Float {self.WMO} cannot be found from {self.host}"
-            )
-
-        # For the record, another method to get the DAC name, based on the profile index
-        # self._dac = self.idx.search_wmo(self.WMO).read_dac_wmo()[0][0] # Get DAC from Argo index
+            try:
+                self._dac = self.idx.search_wmo(self.WMO).read_dac_wmo()[0][0] # Get DAC from Argo index
+            except:
+                raise ValueError(
+                    f"DAC name for Float {self.WMO} cannot be found from {self.host}"
+                )
+        return self
