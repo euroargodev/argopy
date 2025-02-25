@@ -228,7 +228,7 @@ class ArgoFloatProto(ABC):
                     avail.update({name: file})
         return dict(sorted(avail.items()))
 
-    def open_dataset(self, name: str = "prof", cast: bool = True) -> xr.Dataset:
+    def open_dataset(self, name: str = "prof", cast: bool = True, **kwargs) -> xr.Dataset:
         """Open and decode a dataset
 
         Parameters
@@ -237,6 +237,8 @@ class ArgoFloatProto(ABC):
             Name of the dataset to open. It can be any key from the dictionary returned by :class:`ArgoFloat.ls_dataset`.
         cast: bool, optional, default = True
             Determine if the dataset variables should be cast or not. This is similar to opening the dataset directly with :class:`xr.open_dataset` using the ``engine=`argo``` option.
+        **kwargs
+            All the other parameters are passed to the GDAC store `open_dataset` method.
 
         Returns
         -------
@@ -249,8 +251,11 @@ class ArgoFloatProto(ABC):
             )
         else:
             file = self.ls_dataset()[name]
-            xr_opts = {"engine": "argo"} if cast else {}
-            return self.fs.open_dataset(file, xr_opts=xr_opts)
+
+            if 'xr_opts' not in kwargs:
+                kwargs.update({'xr_opts': {"engine": "argo"}})
+
+            return self.fs.open_dataset(file, **kwargs)
 
     @property
     def N_CYCLES(self) -> int:
