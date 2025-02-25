@@ -1,4 +1,5 @@
 import json
+
 import xarray as xr
 import pandas as pd
 import types
@@ -176,7 +177,8 @@ class httpstore(ArgoStoreProto):
                 raise FileNotFoundError(url)
             elif errors == "ignore":
                 log.error("FileNotFoundError: %s" % url)
-
+        else:
+            self.register(url)
         return data
 
     def open_dataset(
@@ -869,9 +871,11 @@ class httpstore(ArgoStoreProto):
         # log.debug("Opening/reading csv from: %s" % url)
         with self.open(url) as of:
             df = pd.read_csv(of, **kwargs)
+
+        self.register(url)
         return df
 
-    def open_json(self, url: str, **kwargs) -> Any:
+    def open_json(self, url: str, errors: Literal['raise', 'silent', 'ignore'] = 'raise', **kwargs) -> Any:
         """Download and process a json document from an url
 
         Steps performed:
@@ -879,15 +883,22 @@ class httpstore(ArgoStoreProto):
         1. Download from ``url`` raw data with :class:`httpstore.download_url` and then
         2. Create a JSON with :func:`json.loads`.
 
-        Each functions can be passed specifics arguments (see Parameters below).
+        Each steps can be passed specifics arguments (see Parameters below).
 
         Parameters
         ----------
         url: str
+            Path to resources passed to :class:`httpstore.download_url`
+        errors: str, default: ``raise``
+            Define how to handle errors:
+                - ``raise`` (default): Raise any error encountered
+                - ``ignore``: Do not stop processing, simply issue a debug message in logging console and return None
+                - ``silent``:  Do not stop processing and do not issue log message, return None
+
         kwargs: dict
 
-            - ``dwn_opts`` key is passed to :class:`httpstore.download_url`
-            - ``js_opts`` key is passed to :func:`json.loads`
+            - ``dwn_opts`` key dictionary is passed to :class:`httpstore.download_url`
+            - ``js_opts`` key dictionary is passed to :func:`json.loads`
 
         Returns
         -------
@@ -902,14 +913,32 @@ class httpstore(ArgoStoreProto):
             dwn_opts.update(kwargs["dwn_opts"])
         data = self.download_url(url, **dwn_opts)
 
+        if len(data) == 0:
+            if errors == "raise":
+                raise DataNotFound("No data return by %s" % url)
+
+            elif errors == "ignore":
+                log.debug("No data return by %s" % url)
+                return None
+
+            else:
+                return None
+
         js_opts = {}
         if "js_opts" in kwargs:
             js_opts.update(kwargs["js_opts"])
         js = json.loads(data, **js_opts)
         if len(js) == 0:
-            js = None
+            if errors == "raise":
+                raise DataNotFound("No data loadable from %s, although the url return some data: '%s'" % (url, data))
 
-        self.register(url)
+            elif errors == "ignore":
+                log.debug("No data loaded from %s, although the url return some data" % url)
+                return None
+
+            else:
+                return None
+
         return js
 
     def _mfprocessor_json(

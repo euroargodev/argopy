@@ -6,7 +6,7 @@ import concurrent.futures
 import multiprocessing
 import logging
 import io
-from typing import Literal
+from typing import Literal, Any
 import fsspec
 from pathlib import Path
 import warnings
@@ -30,25 +30,61 @@ class filestore(ArgoStoreProto):
 
     protocol = "file"
 
-    def open_json(self, url, **kwargs):
-        """Return a json from a path, or verbose errors
+    def open_json(self, url, errors: Literal['raise', 'silent', 'ignore'] = 'raise', **kwargs) -> Any:
+        """Open and process a json document from a path
+
+        Steps performed:
+
+        1. Path is open from ``url`` with :class:`filestore.open` and then
+        2. Create a JSON with :func:`json.loads`.
+
+        Each steps can be passed specifics arguments (see Parameters below).
 
         Parameters
         ----------
         path: str
             Path to resources passed to :func:`json.loads`
-        *args, **kwargs:
-            Other arguments passed to :func:`json.loads`
+        errors: str, default: ``raise``
+            Define how to handle errors:
+                - ``raise`` (default): Raise any error encountered
+                - ``ignore``: Do not stop processing, simply issue a debug message in logging console and return None
+                - ``silent``:  Do not stop processing and do not issue log message, return None
+
+        kwargs: dict
+
+            - ``open_opts`` key dictionary is passed to :class:`filestore.open`
+            - ``js_opts`` key dictionary is passed to :func:`json.loads`
 
         Returns
         -------
-        json
+        Any
 
+        See Also
+        --------
+        :class:`filestore.open_mfjson`
         """
-        with self.open(url) as of:
-            js = json.load(of, **kwargs)
+        open_opts = {}
+        if "open_opts" in kwargs:
+            open_opts.update(kwargs["open_opts"])
+
+        js_opts = {}
+        if "js_opts" in kwargs:
+            js_opts.update(kwargs["js_opts"])
+
+        with self.open(url, **open_opts) as of:
+            js = json.load(of, **js_opts)
+
         if len(js) == 0:
-            js = None
+            if errors == "raise":
+                raise DataNotFound("No data return by %s" % url)
+
+            elif errors == "ignore":
+                log.debug("No data return by %s" % url)
+                return None
+
+            else:
+                return None
+
         return js
 
     def open_dataset(
