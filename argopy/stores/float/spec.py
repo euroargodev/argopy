@@ -1,4 +1,7 @@
 from typing import Union
+
+import fsspec.core
+
 import xarray as xr
 from pathlib import Path
 import pandas as pd
@@ -195,6 +198,8 @@ class ArgoFloatProto(ABC):
     def ls(self) -> list:
         """Return the list of files in float path
 
+        Protocol is included
+
         Examples
         --------
         >>> ArgoFloat(4902640).ls()
@@ -222,6 +227,14 @@ class ArgoFloatProto(ABC):
             paths += self.fs.glob(self.host_sep.join([self.path.replace('dac', 'aux'), "*"]))
 
         paths = [p for p in paths if Path(p).suffix != ""]
+
+        # Ensure the protocol is included for non-local files on FTP server:
+        for ip, p in enumerate(paths):
+            if self.host_protocol == 'ftp':
+                paths[ip] = "ftp://" + self.fs.fs.host + fsspec.core.split_protocol(p)[-1]
+            if self.host_protocol == 's3':
+                paths[ip] = "s3://" + fsspec.core.split_protocol(p)[-1]
+
         paths.sort()
         return paths
 
