@@ -2,6 +2,7 @@ import fsspec
 import xarray as xr
 from typing import List, Union, Dict, Literal
 from pathlib import Path
+from urllib.parse import urlparse
 from fsspec.core import split_protocol
 import json
 import logging
@@ -343,7 +344,13 @@ class ArgoKerchunker:
         ------
         :class:`aiohttp.ClientResponseError`
         """
-        fs = fsspec.filesystem(split_protocol(str(ncfile))[0])
+        protocol = split_protocol(str(ncfile))[0]
+        if protocol == 'ftp':
+            opts = {'host': urlparse(ncfile).hostname,  # host eg: ftp.ifremer.fr
+                    'port': 0 if urlparse(ncfile).port is None else urlparse(ncfile).port}
+        else:
+            opts = {}
+        fs = fsspec.filesystem(protocol, **opts)
 
         def is_read(fs, uri):
             try:
