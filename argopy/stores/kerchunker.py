@@ -164,6 +164,16 @@ class ArgoKerchunker:
         summary.append("- %i reference%s loaded" % (n, "s" if n > 0 else ""))
         return "\n".join(summary)
 
+    @property
+    def store_path(self):
+        p = getattr(self.fs, 'path', str(Path('.').absolute()))
+        # Ensure the protocol is included for non-local files:
+        if self.fs.fs.protocol[0] == 'ftp':
+            p = "ftp://" + self.fs.fs.host + fsspec.core.split_protocol(p)[-1]
+        if self.fs.fs.protocol[0] == 's3':
+            p = "s3://" + fsspec.core.split_protocol(p)[-1]
+        return p
+
     def _ncfile2jsfile(self, ncfile):
         return Path(ncfile).name.replace(".nc", ".json")
 
