@@ -9,43 +9,18 @@ for standard users as well as Argo experts.
 |License| |Python version| |Anaconda-Server Badge|
 
 
-.. admonition:: 🎉 argopy turns 5! 🎉
-
-    Join us as we celebrate this milestone with exciting activities:
-
-    - 🚀 `Coding Challenges <https://euroargodev.github.io/argopy-5years/challenges/index.html#coding-challenges>`_. Test your skills and creativity with a set of exciting Argo related challenges designed for all levels. Compete for bragging rights and prizes!
-    - 🎮 `Online Game Contest <https://argopy.pythonanywhere.com/>`_. Join the community for a fun-filled competition that blends tech and play. Perfect for taking a break and get a special price if you make it to the top 3.
-    - 📋 `User Survey <https://forms.gle/v8NnXkXCEYwRfePp8>`_. Share your feedback and ideas to help shape the future of argopy. Your input means the world to us.
-    - 📚 `Free Training Camp <https://forms.gle/d8xPbrWu7aZcvMut9>`_. Expand your knowledge with expert-led sessions on making the most of argopy. Perfect for new and experienced users alike!
-
-    We’d love to have you join us in celebrating this milestone. Whether you’ve been with us since day one or just started using argopy, your involvement makes a difference
-
-    👉 `<https://euroargodev.github.io/argopy-5years>`_
-
-    **Thank you for your support and for being an essential part of our journey. Here’s to the next five years of innovation, learning, and collaboration!**
-
-
-
 .. admonition:: 2025 argopy training camps 🎓
 
     The argopy team will organise "training camps" in 2025:
 
-    At  least one event would be in-person and another online.
+    - **in person** training (half a day) during the Euro-Argo User Meeting at Heraklion, Crete (Sept. 22-25th 2025)
 
-    Overall, a training camp should be no more than 1 day long.
+    - **online** training, to be organised sometime this spring
 
     The goal of these events is to train users with all the argopy features.
     Whether you're a standard, research or expert users, argopy has features for you !
 
     `You can pre-register here <https://forms.gle/d8xPbrWu7aZcvMut9>`_
-
-.. versionadded:: v1.0.0
-
-    The team proudly assumes that **argopy** is all grown up !
-
-    This version comes with improved performances and support for the BGC-Argo dataset.
-    But since this is a major, we also introduces breaking changes and significant internal refactoring possibly with un-expected side effects ! So don't hesitate to `report issues on the source code repository <https://github.com/euroargodev/argopy/issues>`_.
-
 
 Documentation
 -------------
