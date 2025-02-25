@@ -4,18 +4,18 @@ Performances
 .. contents::
    :local:
 
-To improve **argopy** data fetching performances (in terms of time of
-retrieval), 2 solutions are available:
+To improve **argopy** data fetching performances, several solutions are available:
 
--  :ref:`cache` fetched data, i.e. save your request locally so that you don’t have to fetch it again,
--  Use :ref:`parallel`, i.e. fetch chunks of independent data simultaneously.
+-  :ref:`cache` your fetched data, i.e. save your request locally so that you don’t have to fetch it again,
+-  Use the :ref:`parallel` argument, i.e. fetch chunks of independent data simultaneously (e.g. to be used with a Dask cluster),
+-  Load data lazily with the :ref:`lazy` argument and using `kerchunk <https://fsspec.github.io/kerchunk/>`_.
 
-These solutions are explained below.
+These solutions are explained in details below.
 
-Note that another solution from standard big data strategies would be to
-fetch data lazily. But since (i) **argopy** post-processes raw Argo data
-on the client side and (ii) none of the data sources are cloud/lazy
-compatible, this solution is not possible (yet).
+.. _cache:
+
+Caching
+-------
 
 Let's start with standard import:
 
@@ -25,8 +25,6 @@ Let's start with standard import:
     import argopy
     from argopy import DataFetcher
 
-Cache
------
 
 Caching data
 ~~~~~~~~~~~~
@@ -155,6 +153,9 @@ This goes by default like this:
 
 .. ipython:: python
     :okwarning:
+
+    import argopy
+    from argopy import DataFetcher
 
     # Define a box to load (large enough to trigger chunking):
     box = [-60, -30, 40.0, 60.0, 0.0, 100.0, "2007-01-01", "2007-04-01"]
@@ -416,3 +417,47 @@ This can go like this:
         print(f)
         ds = f.load().data
         print(ds)
+
+
+Lazy dataset access
+-------------------
+
+This **argopy** feature is probably for expert users since it is based on using the http and s3 argopy stores
+
+If you are fetching data for one or a collection of floats, it is not always necessary to download, or load in memory the full dataset.
+If the server hosting the dataset support range requests (see synthesis below), you
+can use a lazy approach whereby you will only load in memory the metadata of the dataset, i.e. dimensions and list of variables along with attributes. This will
+limit data transfert and improve performances: for a large dataset for which you only wish to work with a single parameters, this may proove very efficient.
+
+The table below synthesises lazy support for all possible GDAC hosts:
+
+
+.. list-table:: GDAC hosts support for lazy access to float dataset
+    :header-rows: 1
+    :stub-columns: 1
+
+    * -
+      - Supported
+    * - https://data-argo.ifremer.fr
+      - ❌
+    * - https://usgodae.org/pub/outgoing/argo
+      - ❌
+    * - ftp://ftp.ifremer.fr/ifremer/argo
+      - ❌
+    * - s3://argo-gdac-sandbox/pub
+      - ✅
+    * - a local GDAC copy
+      - ✅
+
+
+High level laziness
+~~~~~~~~~~~~
+
+Low level
+~~~~~~~~~~~~
+
+Argo netcdf file kerchunk helper
+
+This class is for expert users who wish to test lazy access to remote netcdf files. If you need to compute kerchunk zarr data on-demand, we don’t recommend to use this method as it shows poor performances on mono or multi profile files. It is more efficient to compute kerchunk zarr data in batch, and then to provide these data to users.
+
+The kerchunk library is required only if you start from scratch and need to extract zarr data from a netcdf file, i.e. execute ArgoKerchunker.translate().
