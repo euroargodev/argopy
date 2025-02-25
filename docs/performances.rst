@@ -4,18 +4,18 @@ Performances
 .. contents::
    :local:
 
-To improve **argopy** data fetching performances (in terms of time of
-retrieval), 2 solutions are available:
+To improve **argopy** data fetching performances, several solutions are available:
 
--  :ref:`cache` fetched data, i.e. save your request locally so that you don’t have to fetch it again,
--  Use :ref:`parallel`, i.e. fetch chunks of independent data simultaneously.
+-  :ref:`cache` your fetched data, i.e. save your request locally so that you don’t have to fetch it again,
+-  Use the :ref:`parallel` argument, i.e. fetch chunks of independent data simultaneously (e.g. to be used with a Dask cluster),
+-  Load data lazily with the :ref:`lazy` argument and using `kerchunk <https://fsspec.github.io/kerchunk/>`_.
 
-These solutions are explained below.
+These solutions are explained in details below.
 
-Note that another solution from standard big data strategies would be to
-fetch data lazily. But since (i) **argopy** post-processes raw Argo data
-on the client side and (ii) none of the data sources are cloud/lazy
-compatible, this solution is not possible (yet).
+.. _cache:
+
+Caching
+-------
 
 Let's start with standard import:
 
@@ -25,8 +25,6 @@ Let's start with standard import:
     import argopy
     from argopy import DataFetcher
 
-Cache
------
 
 Caching data
 ~~~~~~~~~~~~
@@ -155,6 +153,9 @@ This goes by default like this:
 
 .. ipython:: python
     :okwarning:
+
+    import argopy
+    from argopy import DataFetcher
 
     # Define a box to load (large enough to trigger chunking):
     box = [-60, -30, 40.0, 60.0, 0.0, 100.0, "2007-01-01", "2007-04-01"]
@@ -416,3 +417,112 @@ This can go like this:
         print(f)
         ds = f.load().data
         print(ds)
+
+
+Lazy dataset access
+-------------------
+
+.. warning:
+    As of February 2025, this feature is considered experimental and could change without any deprecation warnings from
+    one release to another. This is part of a wider effort to prepare **argopy** for evolutions of the Argo dataset in
+    the cloud (cf the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_).
+
+This **argopy** feature is implemented with `open_dataset` methods from argopy stores (file, http and s3) and the
+class:`ArgoFloat` class. Since this is somehow a low-level implementation whereby users need to work with float data
+directly, it is probably targetting users with operator or expert knowledge of Argo.
+
+Contrary to the other performance improvement methods, this one is not accessible with a :class:`DataFetcher`.
+
+**What is a lazy access to a dataset ?**
+
+Lazyness in our use case, relates to limiting data transfert/load to what is really needed for an operation. For instance:
+
+- if you want to work with a single Argo parameter for a given float, you don't need to download from the GDAC server all
+ the other parameters,
+- if you only are interested in assessing a file content (e.g. number of profiles or vertical levels), you also don't
+ need to load anything else than the dimensions of the netcdf files.
+
+Since a regular Argo netcdf is not intendeed to be accessed partially, it is rather tricky to access Argo data lazily.
+Hopefully, the `kerchunk <https://fsspec.github.io/kerchunk/>`_ library has been developped precisely for this case.
+
+**Accessing Argo dataset lazilly**
+
+First, not all file access protocols support a range request that is mandatory to access lazilly a netcdf file.
+The table below synthesises lazy support for all possible GDAC hosts:
+
+.. list-table:: GDAC hosts support for lazy access to float dataset
+    :header-rows: 1
+    :stub-columns: 1
+
+    * -
+      - Supported
+    * - https://data-argo.ifremer.fr
+      - ❌
+    * - https://usgodae.org/pub/outgoing/argo
+      - ❌
+    * - ftp://ftp.ifremer.fr/ifremer/argo
+      - ❌
+    * - s3://argo-gdac-sandbox/pub
+      - ✅
+    * - a local GDAC copy
+      - ✅
+
+
+**argopy** kerchunk helper
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In order to access lazily an Argo netcdf files, localy or remotely with a server supporting range requests, the netcdf
+content has to be curated in order to make a byte range *catalogue* of its content. To do so, you need to have the
+`kerchunk <https://fsspec.github.io/kerchunk/>`_ library installed in your working environment.
+
+We developped a specific class to make this netdf file curation easy for **argopy** users: :class:`stores.ArgoKerchunker`.
+
+A typical use case will be to curate one or a collection of netcdf files and then save byte range *catalogues* (these are
+json files with zarr data allowing to directly access part of the netcdf file content) in a specific store.
+
+This can be done on the fly, but it can be time consuming with regard to the size of Argo netcdf datasets (the overhead
+of using kerchunk is not worth the download time). On the other hand, it may be interesting to save kerchunk data in a
+shared store (local or remote), so that other users will be able to use it. From the user perspective, this has the huge
+advantage of not requiring the kerchunk library anymore, since opening lazily a dataset will be done with the zarr engine.
+
+This is demonstrated below
+
+.. ipython:: python
+    :okwarning:
+
+    from argopy.stores import ArgoKerchunker
+
+    # Create an instance that will save netcdf byte range *catalogues* on a local folder:
+    ak = ArgoKerchunker(store='local', root='~/myshared_kerchunk_data_folder')
+
+    # Let's consider a remote Argo netcdf file from a server supporting lazy access:
+    ncfile = "s3://argo-gdac-sandbox/pub/dac/coriolis/6903090/6903090_prof.nc"
+
+    # Compute and save this netcdf byte range *catalogue* for later lazy access:
+    js = ak.to_kerchunk(ncfile)
+
+
+Now, for any user with read access to the `~/myshared_kerchunk_data_folder` folder, lazy access is possible without kerchunk
+
+.. ipython:: python
+    :okwarning:
+
+    from argopy import s3store
+
+    # Create an instance where to find netcdf byte range *catalogues*:
+    ak = ArgoKerchunker(store='local', root='~/myshared_kerchunk_data_folder')
+
+    # Simply open the netcdf file lazily, giving the appropriate ArgoKerchunker:
+    s3store().open_dataset(ncfile, lazy=True, ak=ak)
+
+Laziness with an :class:`ArgoFloat`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Low level laziness
+~~~~~~~~~~~~~~~~~~
+
+Argo netcdf file kerchunk helper
+
+This class is for expert users who wish to test lazy access to remote netcdf files. If you need to compute kerchunk zarr data on-demand, we don’t recommend to use this method as it shows poor performances on mono or multi profile files. It is more efficient to compute kerchunk zarr data in batch, and then to provide these data to users.
+
+The kerchunk library is required only if you start from scratch and need to extract zarr data from a netcdf file, i.e. execute ArgoKerchunker.translate().
