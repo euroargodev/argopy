@@ -372,7 +372,8 @@ class ArgoKerchunker:
     def supported(self, ncfile: Union[str, Path]) -> bool:
         """Check if a netcdf file can be accessed through byte ranges
 
-        The absolute path toward the netcdf file must include the file protocol to return a correct answer.
+        For non-local files, the absolute path toward the netcdf file must include the file protocol to return
+        a correct answer.
 
         Argo GDAC supporting byte ranges:
         - ftp://ftp.ifremer.fr/ifremer/argo
@@ -386,6 +387,6 @@ class ArgoKerchunker:
         Parameters
         ----------
         ncfile: str, Path
-            Absolute path toward the netcdf file to assess for lazy support.
+            Absolute path toward the netcdf file to assess for lazy support, must include protocol for non-local files.
         """
         return self._magic(ncfile) is not None
