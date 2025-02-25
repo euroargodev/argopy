@@ -234,7 +234,7 @@ html_css_files = [
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = "_static/argopy_logo_long_5years.png"
+html_logo = "_static/argopy_logo_long.png"
 html_favicon = '_static/argopy.ico'
 # html_title = "My site title"
 
@@ -268,9 +268,9 @@ html_theme_options = {
     # "announcement": (
     #     "🎓 2025 argopy training camps are open: <a href='https://forms.gle/d8xPbrWu7aZcvMut9' target='blank'>pre-register here</a> 🎓"
     # ),
-    "announcement": (
-        "🎉 argopy turns 5! <a href='https://euroargodev.github.io/argopy-5years' target='blank'>Check full details here</a> 🎊"
-    ),
+    # "announcement": (
+    #     "🎉 argopy turns 5! <a href='https://euroargodev.github.io/argopy-5years' target='blank'>Check full details here</a> 🎊"
+    # ),
     "icon_links": [
         {
             "name": "Download Cheat sheet",
