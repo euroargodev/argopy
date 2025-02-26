@@ -218,7 +218,6 @@ class ArgoKerchunker:
                 for k, v in kerchunk_data['refs'].items():
                     if k != '.zgroup' and '/0' in k:
                         if Path(v[0]).suffix == ".nc":
-                            print(v[0])
                             self.kerchunk_references.update({v[0]: f})
                             break
 
