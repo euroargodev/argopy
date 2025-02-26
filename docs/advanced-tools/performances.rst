@@ -416,9 +416,10 @@ This can go like this:
     with argopy.set_options(parallel=client):
         f = DataFetcher(src='argovis').region([-75, -70, 25, 40, 0, 1000, '2020-01-01', '2021-01-01'])
         print("%i chunks to process" % len(f.uri))
-        print(f)
+        print("\n", f)
+
         ds = f.load().data
-        print(ds)
+        print("\n", ds)
 
 
 .. _lazy:
@@ -526,14 +527,31 @@ Now, for any user with read access to the `~/myshared_kerchunk_data_folder` fold
     # Simply open the netcdf file lazily, giving the appropriate ArgoKerchunker:
     s3store().open_dataset(ncfile, lazy=True, ak=ak)
 
+.. _lazy-argofloat:
+
 Laziness with an :class:`ArgoFloat`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Low level laziness
-~~~~~~~~~~~~~~~~~~
+When opening an Argo dataset from the :class:`ArgoFloat`, you can simply add the `lazy` argument to apply laziness:
 
-Argo netcdf file kerchunk helper
+.. ipython:: python
+    :okwarning:
 
-This class is for expert users who wish to test lazy access to remote netcdf files. If you need to compute kerchunk zarr data on-demand, we don’t recommend to use this method as it shows poor performances on mono or multi profile files. It is more efficient to compute kerchunk zarr data in batch, and then to provide these data to users.
+    from argopy import ArgoFloat
 
-The kerchunk library is required only if you start from scratch and need to extract zarr data from a netcdf file, i.e. execute ArgoKerchunker.translate().
+    ds = ArgoFloat(6903091, host='s3').open_dataset('prof', lazy=True)
+
+without additional argument, the kerchunk store will be located in memory and the netcdf byte range *catalogues* computed on the fly using the kerchunk library.
+
+If you want to specify a kerchunk data store, you can provide a :class:`stores.ArgoKerchunker` instance:
+
+.. ipython:: python
+    :okwarning:
+
+    ak = ArgoKerchunker(store='local', root='~/myshared_kerchunk_data_folder')
+    ds = ArgoFloat(6903091, host='s3').open_dataset('prof', lazy=True, ak=ak)
+
+
+In this scenario, if the dataset has already been processed by the :class:`stores.ArgoKerchunker` instance, the kerchunk library is not required to load lazily the dataset.
+
+If the dataset has not been processed, then the kerchunk library is required.

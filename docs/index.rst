@@ -50,18 +50,36 @@ Documentation
 
 * :doc:`user-guide/fetching-argo-data/index`
 * :doc:`user-guide/working-with-argo-data/index`
-* :doc:`metadata_fetching`
-* :doc:`performances`
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
     :hidden:
     :caption: User Guide
 
     Fetching Argo data <user-guide/fetching-argo-data/index>
     user-guide/working-with-argo-data/index
-    metadata_fetching
-    performances
+
+**Advanced Tools**
+
+* :doc:`advanced-tools/argoindex`
+* :doc:`advanced-tools/argofloat`
+* :doc:`advanced-tools/gdac_filesystem`
+* :doc:`advanced-tools/metadata_fetching`
+* :doc:`advanced-tools/data_quality_control`
+* :doc:`advanced-tools/performances`
+
+.. toctree::
+    :maxdepth: 2
+    :hidden:
+    :caption: Advanced Tools
+
+    Argo index <advanced-tools/argoindex>
+    Argo float <advanced-tools/argofloat>
+    advanced-tools/gdac_filesystem
+    advanced-tools/metadata_fetching
+    advanced-tools/data_quality_control
+    Improving performances <advanced-tools/performances>
+
 
 **Help & reference**
 

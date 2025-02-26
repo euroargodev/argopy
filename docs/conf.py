@@ -300,15 +300,18 @@ html_theme_options = {
 }
 
 # Redirects for pages that were moved to new locations
-rediraffe_redirects = "redirects.txt"
+# rediraffe_redirects = "redirects.txt"
 
 rediraffe_redirects = {
     "data_fetching.rst": "user-guide/fetching-argo-data/data_selection.rst",
     "data_sources.rst": "user-guide/fetching-argo-data/data_sources.rst",
     "user_mode.rst": "user-guide/fetching-argo-data/user_mode.rst",
     "data_manipulation.rst": "user-guide/working-with-argo-data/data_manipulation.rst",
-    "data_quality_control.rst": "user-guide/working-with-argo-data/data_quality_control.rst",
     "visualisation.rst": "user-guide/working-with-argo-data/visualisation.rst",
+
+    "user-guide/working-with-argo-data/data_quality_control.rst": "advanced-tools/data_quality_control.rst",
+    "metadata_fetching.rst": "advanced-tools/metadata_fetching.rst",
+    "performances.rst": "advanced-tools/performances.rst",
 }
 
 googleanalytics_id = 'G-C4MWDXYMXQ'

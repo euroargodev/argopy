@@ -7,7 +7,7 @@
 .. |mode_standard| replace:: 🏊
 .. |mode_research| replace:: 🚣
 
-User modes (🏄, 🏊, 🚣)
+User modes (|mode_expert|, |mode_standard|, |mode_research|)
 ========================
 
 .. hint::

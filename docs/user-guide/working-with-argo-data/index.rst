@@ -8,7 +8,8 @@ In the following documentation sections, you will see how to:
 
 - :ref:`manipulate <Manipulating data>` a :class:`xarray.Dataset` with the ``argo`` accessor methods,
 - :ref:`visualize <data-viz>` Argo data, weather it is a :class:`xarray.Dataset` or :class:`pandas.DataFrame` profile index,
-- use **argopy** helper methods for :ref:`Argo quality control <data_qc>`.
+
+You can also refer to the documentation on :ref:`expert-tools`.
 
 .. toctree::
     :maxdepth: 2
@@ -17,4 +18,3 @@ In the following documentation sections, you will see how to:
 
     data_manipulation
     visualisation
-    data_quality_control

@@ -149,9 +149,9 @@ This can be done using the :meth:`Dataset.argo.teos10` method and indicating the
 Data models
 -----------
 
-By default **argopy** works with :class:`xarray.Dataset` for Argo data fetcher, and with :class:`pandas.DataFrame` for Argo index fetcher.
+By default **argopy** will provide users with :class:`xarray.Dataset` or :class:`pandas.DataFrame`.
 
-For your own analysis, you may prefer to switch from one to the other. This is all built in **argopy**, with the :meth:`argopy.DataFetcher.to_dataframe` and :meth:`argopy.IndexFetcher.to_xarray` methods.
+For your own analysis, you may prefer to switch from one to the other. This is all built in **argopy**, with the :meth:`argopy.DataFetcher.to_dataframe` and :meth:`argopy.DataFetcher.to_xarray` methods.
 
 .. ipython:: python
     :okwarning:
@@ -159,7 +159,22 @@ For your own analysis, you may prefer to switch from one to the other. This is a
     DataFetcher().profile(6902746, 34).to_dataframe()
 
 
+Note that internally, **argopy** also work with :class:`pyarrow.Table`.
+
 Saving data
 ===========
 
-Once you have your Argo data as :class:`xarray.Dataset`, simply use the awesome possibilities of `xarray <http://xarray.pydata.org>`_ like :meth:`xarray.Dataset.to_netcdf` or :meth:`xarray.Dataset.to_zarr`.
+Once you have your Argo data as a :class:`xarray.Dataset`, you can simply use the awesome export possibilities of `xarray <http://xarray.pydata.org>`_ like :meth:`xarray.Dataset.to_netcdf` or :meth:`xarray.Dataset.to_zarr`.
+
+Note that we provide a dedicated method to export an Argo :class:`xarray.Dataset` to zarr that will handle data type casting and compression easily, the :meth:`Dataset.argo.to_zarr` method:
+
+.. code-block:: python
+    :caption: Dataset export to zarr
+
+    from argopy import DataFetcher
+    ds = DataFetcher(src='gdac').float(6903091).to_xarray()
+    # then:
+    ds.argo.to_zarr("6903091_prof.zarr")
+    # or:
+    ds.argo.to_zarr("s3://argopy/sample-data/6903091_prof.zarr")
+
