@@ -97,7 +97,7 @@ This also comes with a new iterator on the :class:`ArgoIndex` (:pr:`432`) by |gm
 - **New generic file system for any GDAC host** :class:`stores.gdacfs`. This class allows to easily creates a file system for any of the possible GDAC paths. This class returns one of the argopy file systems (file, http, ftp or s3) with a prefixed directory, so that you don't have to include the GDAC path in resources to open. The goal of this class is to separate the data source from the data processing in your workflow. (:pr:`385`, :pr:`440`) by |gmaze|.
 
 .. code-block:: python
-    :caption: GDAC file system Example
+    :caption: GDAC file system examples
 
     from argopy.stores import gdacfs
 
@@ -108,7 +108,7 @@ This also comes with a new iterator on the :class:`ArgoIndex` (:pr:`432`) by |gm
     fs = gdacfs("s3://argo-gdac-sandbox/pub")  # s3 GDAC
     fs = gdacfs("/home/ref-argo/gdac")         # local GDAC copy
 
-    # then
+    # then work with dataset, whatever the GDAC of origin:
     fs.info("dac/aoml/13857/13857_meta.nc")
     ds = fs.open_dataset("dac/coriolis/6903091/profiles/R6903091_001.nc")
 
