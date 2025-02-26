@@ -310,7 +310,7 @@ class ArgoFloatProto(ABC):
         else:
             file = self.ls_dataset()[name]
 
-            if 'xr_opts' not in kwargs:
+            if 'xr_opts' not in kwargs and cast == True:
                 kwargs.update({'xr_opts': {"engine": "argo"}})
 
             return self.fs.open_dataset(file, **kwargs)
