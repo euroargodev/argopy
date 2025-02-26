@@ -86,6 +86,7 @@ class ArgoKerchunker:
         self,
         store: Union[Literal["memory", "local"], fsspec.AbstractFileSystem] = "memory",
         root: Union[Path, str] = ".",
+        preload: bool = True,
         inline_threshold: int = 0,
         max_chunk_size: int = 0,
         remote_options: Dict = None,
@@ -98,6 +99,8 @@ class ArgoKerchunker:
             Kerchunk data store, i.e. the file system to use to load from and/or save to kerchunk json files
         root: Path, str, default='.'
             Use to specify a local folder to base the store
+        preload: bool, default=True
+            Indicate if kerchunk data found as pre-existing in the store should be loaded or not.
         inline_threshold: int, default=0
             Byte size below which an array will be embedded in the output. Use 0 to disable inlining.
 
@@ -120,10 +123,11 @@ class ArgoKerchunker:
         if store == "memory":
             self.fs = memorystore()
         elif store == "local":
-            if Path(root).name == "":
+            root = Path(root).expanduser()
+            if root.name == "":
                 self.fs = filestore()
             else:
-                Path(root).mkdir(parents=True, exist_ok=True)
+                root.mkdir(parents=True, exist_ok=True)
                 self.fs = fsspec.filesystem("dir", path=root, target_protocol="local")
 
         elif isinstance(store, fsspec.AbstractFileSystem):
@@ -134,6 +138,8 @@ class ArgoKerchunker:
 
         # List of processed files register:
         self.kerchunk_references = {}
+        if preload:
+            self.update_kerchunk_references_from_store()
 
         self.inline_threshold = inline_threshold
         """inline_threshold: int
@@ -161,7 +167,7 @@ class ArgoKerchunker:
             % self.max_chunk_size
         )
         n = len(self.kerchunk_references)
-        summary.append("- %i reference%s loaded" % (n, "s" if n > 0 else ""))
+        summary.append("- %i dataset%s listed in %s" % (n, "s" if n > 1 else "", self.store_path))
         return "\n".join(summary)
 
     @property
@@ -175,7 +181,7 @@ class ArgoKerchunker:
         return p
 
     def _ncfile2jsfile(self, ncfile):
-        return Path(ncfile).name.replace(".nc", ".json")
+        return Path(ncfile).name.replace(".nc", "_kerchunk.json")
 
     def _tojson(self, ncfile: Union[str, Path]):
         ncfile = str(ncfile)
@@ -203,6 +209,18 @@ class ArgoKerchunker:
             f.write(json.dumps(kerchunk_data).encode())
 
         return ncfile, kerchunk_jsfile, kerchunk_data
+
+    def update_kerchunk_references_from_store(self):
+        """Load kerchunk data already on store"""
+        for f in self.fs.glob("*_kerchunk.json"):
+            with self.fs.open(f, "r") as file:
+                kerchunk_data = json.load(file)
+                for k, v in kerchunk_data['refs'].items():
+                    if k != '.zgroup' and '/0' in k:
+                        if Path(v[0]).suffix == ".nc":
+                            print(v[0])
+                            self.kerchunk_references.update({v[0]: f})
+                            break
 
     def translate(self, ncfiles: Union[str, Path, List]):
         """Compute kerchunk data for one or a list of netcdf files
