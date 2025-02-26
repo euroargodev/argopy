@@ -5,6 +5,7 @@ dependencies:
   - python=3.9
   - xarray=2024.2.0
   - scipy
+  - h5netcdf
   - netcdf4
   - dask
   - toolz
@@ -12,6 +13,7 @@ dependencies:
   - fsspec
   - gsw
   - aiohttp
+  - kerchunk
   - bottleneck
   - s3fs
   - boto3
