@@ -8,9 +8,9 @@ Solutions
 
 To improve **argopy** data fetching performances, several solutions are available:
 
--  :ref:`cache` your fetched data, i.e. save your request locally so that you don’t have to fetch it again,
--  Use the :ref:`parallel` argument, i.e. fetch chunks of independent data simultaneously (e.g. to be used with a Dask cluster),
--  Load data :ref:`lazily <lazy>`.
+* :ref:`cache` your fetched data, i.e. save your request locally so that you don’t have to fetch it again,
+* Use the :ref:`parallel` argument, i.e. fetch chunks of independent data simultaneously (e.g. to be used with a Dask cluster),
+* Load data :ref:`lazily <lazy>`.
 
 .. toctree::
     :maxdepth: 2

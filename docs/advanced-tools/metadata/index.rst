@@ -9,16 +9,19 @@ The **argopy** approach to meta-data is not limited to the traditional `meta` ne
 In **argopy** we consider Argo meta-data any *related* data that can complement the analysis, description or curation of Argo data.
 Here we document **argopy** tools related to:
 
-* :doc:`Argo reference tables <nvs_ref_tables>`
-* :doc:`ADMT collection of documentation manuals <admt_documentation>`
+* :doc:`Argo reference tables (NVS) <nvs_ref_tables>`
+* :doc:`the ADMT collection of documentation manuals <admt_documentation>`
 * :doc:`the global deployment plan from Ocean-OPS <deployment_plan>`
 * :doc:`GDAC snapshot with DOIs <gdac_doi>`
+
+Note that data more specifically used in quality control are described in the dedicated :ref:`data_qc` documentation section (e.g.
+topography, altimetry, in-situ reference data from Argo float and GOSHIP, etc ...).
 
 .. toctree::
     :maxdepth: 2
     :hidden:
 
-    nvs_ref_tables
+    Argo reference tables (NVS) <nvs_ref_tables>
     admt_documentation
     deployment_plan
     gdac_doi

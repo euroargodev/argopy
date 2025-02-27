@@ -33,7 +33,7 @@ Last, :class:`OceanOPSDeployments` comes with a plotting method:
 
     fig, ax = deployment.plot_status()
 
-.. image:: ../_static/scatter_map_deployment_status.png
+.. image:: ../../_static/scatter_map_deployment_status.png
 
 
 .. note:: The list of possible deployment status name/code is given by:

@@ -1,7 +1,7 @@
 .. currentmodule:: argopy.related
 
-Reference tables and vocabulary server
---------------------------------------
+Reference tables and NVS vocabulary server
+------------------------------------------
 
 The Argo netcdf format is strict and based on a collection of variables fully documented and conventioned. All reference tables can be found in the `Argo user manual <https://doi.org/10.13155/29825>`_.
 
