@@ -311,7 +311,7 @@ rediraffe_redirects = {
 
     "user-guide/working-with-argo-data/data_quality_control.rst": "advanced-tools/data_quality_control.rst",
     "metadata_fetching.rst": "advanced-tools/metadata_fetching.rst",
-    "performances.rst": "advanced-tools/performances.rst",
+    "performances.rst": "advanced-tools/performances/index.rst",
     "why.rst": "what_why.rst",
     "what_is_argo.rst": "what_why.rst",
 }

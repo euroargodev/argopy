@@ -62,17 +62,17 @@ Documentation
 * :doc:`advanced-tools/stores/index`
 * :doc:`advanced-tools/metadata_fetching`
 * :doc:`advanced-tools/data_quality_control`
-* :doc:`advanced-tools/performances`
+* :doc:`advanced-tools/performances/index`
 
 .. toctree::
     :maxdepth: 2
     :hidden:
     :caption: Advanced Tools
 
-    advanced-tools/stores/index
+    Argo file stores <advanced-tools/stores/index>
     advanced-tools/metadata_fetching
     advanced-tools/data_quality_control
-    Improving performances <advanced-tools/performances>
+    Improving performances <advanced-tools/performances/index>
 
 
 **Help & reference**
