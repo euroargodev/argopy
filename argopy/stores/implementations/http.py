@@ -283,7 +283,7 @@ class httpstore(ArgoStoreProto):
         ):
             """Check if url support lazy access and return kerchunk data along with xarray option to open it lazily
 
-            Otherwise download url content and return data along with xarray option to open it.
+            Otherwise, download url content and return data along with xarray option to open it.
 
             Returns
             -------

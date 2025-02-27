@@ -100,7 +100,7 @@ class ArgoKerchunker:
         root: Path, str, default='.'
             Use to specify a local folder to base the store
         preload: bool, default=True
-            Indicate if kerchunk data found as pre-existing in the store should be loaded or not.
+            Indicate if kerchunk references already on the store should be loaded or not.
         inline_threshold: int, default=0
             Byte size below which an array will be embedded in the output. Use 0 to disable inlining.
 
