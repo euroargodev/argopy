@@ -16,8 +16,8 @@ Note that given the rather low-level implementation of these API, Argo file stor
 These classes are all explained in the following sections:
 
 * :doc:`Store for float files <argofloat>`
-* :doc:`argoindex`
-* :doc:`gdac_filesystem`
+* :doc:`Store for index files <argoindex>`
+* :doc:`Store for GDAC files <gdac_filesystem>`
 
 .. toctree::
     :maxdepth: 2

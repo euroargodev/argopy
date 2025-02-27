@@ -60,7 +60,7 @@ Documentation
 **Advanced Tools**
 
 * :doc:`advanced-tools/stores/index`
-* :doc:`advanced-tools/metadata_fetching`
+* :doc:`advanced-tools/metadata/index`
 * :doc:`advanced-tools/data_quality_control`
 * :doc:`advanced-tools/performances/index`
 
@@ -70,7 +70,7 @@ Documentation
     :caption: Advanced Tools
 
     Argo file stores <advanced-tools/stores/index>
-    advanced-tools/metadata_fetching
+    advanced-tools/metadata/index
     advanced-tools/data_quality_control
     Improving performances <advanced-tools/performances/index>
 
