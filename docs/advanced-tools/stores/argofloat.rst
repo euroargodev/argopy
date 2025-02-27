@@ -2,8 +2,8 @@
 
 .. _tools-argofloat:
 
-Argo Float
-==========
+Argo Float store
+================
 
 If you are familiar with Argo float WMO numbers, you may be interested in using directly the Argo float store :class:`ArgoFloat`.
 

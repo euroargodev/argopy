@@ -265,7 +265,7 @@
     argopy.stores.s3store.open_mfjson
 
     argopy.stores.implementations.gdac.gdacfs
-    argopy.stores.gdacfs
+    argopy.gdacfs
 
     argopy.stores.ArgoKerchunker
     argopy.stores.ArgoKerchunker.supported

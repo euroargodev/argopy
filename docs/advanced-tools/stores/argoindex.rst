@@ -2,8 +2,8 @@
 
 .. _tools-argoindex:
 
-Argo Index
-==========
+Argo Index store
+================
 
 If you are familiar with Argo index csv files, you may be interested in using directly the Argo index store :class:`ArgoIndex`.
 

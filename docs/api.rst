@@ -274,6 +274,7 @@ File systems
 .. autosummary::
     :toctree: generated/
 
+    gdacfs
     stores.ArgoStoreProto
     stores.filestore
     stores.httpstore
@@ -281,7 +282,6 @@ File systems
     stores.memorystore
     stores.ftpstore
     stores.s3store
-    stores.gdacfs
     stores.ArgoKerchunker
 
 Argo index and float stores

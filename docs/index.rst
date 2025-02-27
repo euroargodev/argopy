@@ -29,9 +29,8 @@ Documentation
 
 * :doc:`install`
 * :doc:`usage`
-* :doc:`why`
-* :doc:`what_is_argo`
 * :doc:`Gallery of examples <gallery>`
+* :doc:`what_why`
 * :doc:`impact`
 
 .. toctree::
@@ -41,9 +40,8 @@ Documentation
 
     install
     usage
-    why
-    what_is_argo
     Gallery of examples <gallery>
+    What is Argo ? Why argopy ? <what_why>
     impact
 
 **User Guide**
@@ -61,9 +59,7 @@ Documentation
 
 **Advanced Tools**
 
-* :doc:`advanced-tools/argoindex`
-* :doc:`advanced-tools/argofloat`
-* :doc:`advanced-tools/gdac_filesystem`
+* :doc:`advanced-tools/stores/index`
 * :doc:`advanced-tools/metadata_fetching`
 * :doc:`advanced-tools/data_quality_control`
 * :doc:`advanced-tools/performances`
@@ -73,9 +69,7 @@ Documentation
     :hidden:
     :caption: Advanced Tools
 
-    Argo index <advanced-tools/argoindex>
-    Argo float <advanced-tools/argofloat>
-    advanced-tools/gdac_filesystem
+    advanced-tools/stores/index
     advanced-tools/metadata_fetching
     advanced-tools/data_quality_control
     Improving performances <advanced-tools/performances>
