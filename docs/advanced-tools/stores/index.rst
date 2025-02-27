@@ -15,7 +15,7 @@ Note that given the rather low-level implementation of these API, Argo file stor
 
 These classes are all explained in the following sections:
 
-* :doc:`argofloat`
+* :doc:`Store for float files <argofloat>`
 * :doc:`argoindex`
 * :doc:`gdac_filesystem`
 

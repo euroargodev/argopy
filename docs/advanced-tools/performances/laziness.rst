@@ -86,7 +86,7 @@ This is demonstrated below:
     ak = ArgoKerchunker(store='local', root='~/myshared_kerchunk_data_folder')
 
     # Let's consider a remote Argo netcdf file from a server supporting lazy access:
-    ncfile = "s3://argo-gdac-sandbox/pub/dac/coriolis/6903090/6903090_prof.nc"
+    ncfile = "https://usgodae.org/pub/outgoing/argo/dac/coriolis/6903090/6903090_prof.nc"
 
     # Compute and save this netcdf byte range *catalogue* for later lazy access:
     js = ak.to_kerchunk(ncfile)
@@ -97,13 +97,13 @@ Now, for any user with read access to the `~/myshared_kerchunk_data_folder` fold
 .. ipython:: python
     :okwarning:
 
-    from argopy.stores import s3store
+    from argopy.stores import httpstore
 
     # Create an instance where to find netcdf byte range *catalogues*:
     ak = ArgoKerchunker(store='local', root='~/myshared_kerchunk_data_folder')
 
     # Simply open the netcdf file lazily, giving the appropriate ArgoKerchunker:
-    s3store().open_dataset(ncfile, lazy=True, ak=ak)
+    httpstore().open_dataset(ncfile, lazy=True, ak=ak)
 
 .. _lazy-argofloat:
 
@@ -117,7 +117,7 @@ When opening an Argo dataset from the :class:`ArgoFloat`, you can simply add the
 
     from argopy import ArgoFloat
 
-    ds = ArgoFloat(6903091, host='s3').open_dataset('prof', lazy=True)
+    ds = ArgoFloat(6903091, host='us-http').open_dataset('prof', lazy=True)
 
 without additional argument, the kerchunk store will be located in memory and the netcdf byte range *catalogues* computed on the fly using the kerchunk library.
 
@@ -127,7 +127,7 @@ If you want to specify a kerchunk data store, you can provide a :class:`stores.A
     :okwarning:
 
     ak = ArgoKerchunker(store='local', root='~/myshared_kerchunk_data_folder')
-    ds = ArgoFloat(6903091, host='s3').open_dataset('prof', lazy=True, ak=ak)
+    ds = ArgoFloat(6903091, host='us-http').open_dataset('prof', lazy=True, ak=ak)
 
 
 In this scenario, if the dataset has already been processed by the :class:`stores.ArgoKerchunker` instance, the kerchunk library is not required to load lazily the dataset.

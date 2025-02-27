@@ -30,7 +30,7 @@ Documentation
 * :doc:`install`
 * :doc:`usage`
 * :doc:`Gallery of examples <gallery>`
-* :doc:`what_why`
+* :doc:`What is Argo ? Why argopy ? <what_why>`
 * :doc:`impact`
 
 .. toctree::

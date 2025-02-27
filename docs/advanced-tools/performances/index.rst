@@ -44,7 +44,7 @@ of the GDAC is further accentuated by the current **argopy** internal design, se
 Internals
 ~~~~~~~~~
 
-The schematic below describes how **argopy** is organized internally to handle an user requests through the data fetching
+The schematic below describes how **argopy** is organized internally to handle an user request through the data fetching
 facade :class:`DataFetcher`. We clearly see from this schematic that only the pre-processing component of the internal
 workflow is parallelized.
 
