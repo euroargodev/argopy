@@ -41,7 +41,7 @@ where they are processed in real time and made freely available on the web in le
 .. _why:
 
 So why argopy ?
-===============
+##############
 
 Surprisingly, the Argo community never provided its user base with a Python software to easily access and manipulate Argo measurements:
 **argopy** aims to fill this gap.
@@ -57,7 +57,7 @@ This is mainly due to:
 * the Argo data management workflow being distributed between more than 10 Data Assembly Centers all around the world.
 
 Less data wrangling, more scientific analysis
----------------------------------------------
+=============================================
 
 In order to ease Argo data analysis for the vast majority of **standard** users, we implemented in **argopy** different levels of verbosity and data processing to hide or simply remove variables only meaningful to **experts**.
 Let **argopy** manage data wrangling, and focus on your scientific analysis.

@@ -8,8 +8,7 @@ Argo Float store
 If you are familiar with Argo float WMO numbers, you may be interested in using directly the Argo float store :class:`ArgoFloat`.
 
 This store aims to facilitate all Argo netcdf file load/read operations for a specific float. Whatever the Argo netcdf file location,
-local or remote, you can now delegate to **argopy** the burden of transfer protocol and GDAC paths handling. This store is primarily
-intended to be used by third party libraries or in workflow by operators and experts.
+local or remote, you can now delegate to **argopy** the burden of transfer protocol and GDAC paths handling.
 
 All float store methods and properties are documented in the :class:`ArgoFloat` API page.
 

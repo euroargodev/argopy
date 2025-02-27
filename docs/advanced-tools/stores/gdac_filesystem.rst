@@ -21,7 +21,6 @@ Just provide a valid GDAC path, local or remote:
     from argopy import gdacfs
 
     fs = gdacfs("https://data-argo.ifremer.fr")
-
     # or:
     # fs = gdacfs("https://usgodae.org/pub/outgoing/argo")
     # fs = gdacfs("ftp://ftp.ifremer.fr/ifremer/argo")
@@ -34,6 +33,8 @@ Usage
 -----
 
 The file system instance will provide most of the required methods to work with any file on the GDAC, without the burden of handling access protocols and paths construction: paths must be made relative to the GDAC root folder (which is natively the case in Argo index files).
+
+Here are a few examples of what can be down:
 
 .. ipython:: python
     :okwarning:
