@@ -11,6 +11,12 @@ What's New
 Coming up next
 --------------
 
+.. versionadded:: v1.1.0
+
+    Most new features in this version can be considered *advanced tools*, since they require a more intimate knowledge
+    of the Argo dataset. Therefore, we re-organised and completed the **argopy** documentation to give them more visibility.
+
+
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -84,6 +90,12 @@ Internals
 - Fix bug raising an error for ``STATION_PARAMETERS`` with a blank entry, with ``bgc`` dataset and ``gdac`` data source (well spotted |quai20|). (:pr:`418`) by |gmaze|.
 
 - Fix bug raising an error when exporting a dataset to netcdf after erddap fetch, :issue:`412`. (:pr:`413`) by |gmaze|.
+
+
+Energy
+^^^^^^
+
+|eqco2_since_last_release|
 
 
 v1.0.0 (16 Oct. 2024)
@@ -199,6 +211,12 @@ Breaking changes
 
 - It is highly probable that more changes in this major v1.0.0 lead to breaking changes not listed here. Don't hesitate to `report them on the repository issue section <https://github.com/euroargodev/argopy/issues>`_. 
 
+.. _v1.0.0-energy:
+
+Energy
+^^^^^^
+
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.0.0%20%5BgCO2eq%5D-1328.99-black?style=plastic&labelColor=grey
 
 v0.1.17 (20 Sep. 2024)
 ----------------------
@@ -234,7 +252,7 @@ Internals
 Energy
 ^^^^^^
 
-Considering `energy used by CI tests <https://argopy.readthedocs.io/en/latest/energy.html>`_, this release has required about 75.4kJ of energy to produce 6h11s39 of computation time.
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v0.1.17%20%5BgCO2eq%5D-234.30-black?style=plastic&labelColor=grey
 
 v0.1.16 (27 Aug. 2024)
 ----------------------
@@ -293,6 +311,12 @@ Breaking changes
 
 - Drop support for erddapy < v0.8.0 (:pr:`344`) by |gmaze|.
 
+.. _v0.1.16-energy:
+
+Energy
+^^^^^^
+
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v0.1.16%20%5BgCO2eq%5D-561.76-black?style=plastic&labelColor=grey
 
 v0.1.15 (12 Dec. 2023)
 ----------------------
@@ -1303,4 +1327,5 @@ v0.1.0 (17 Mar. 2020)
    :target: //anaconda.org/conda-forge/argopy
 .. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy?display_date=published_at
    :target: //github.com/euroargodev/argopy/releases
-   
+.. |eqco2_since_last_release| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_since_last_release.json
+
