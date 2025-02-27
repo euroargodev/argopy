@@ -309,7 +309,7 @@ rediraffe_redirects = {
     "data_manipulation.rst": "user-guide/working-with-argo-data/data_manipulation.rst",
     "visualisation.rst": "user-guide/working-with-argo-data/visualisation.rst",
 
-    "user-guide/working-with-argo-data/data_quality_control.rst": "advanced-tools/data_quality_control.rst",
+    "user-guide/working-with-argo-data/data_quality_control.rst": "advanced-tools/quality_control/index.rst",
     "metadata_fetching.rst": "advanced-tools/metadata/index.rst",
     "performances.rst": "advanced-tools/performances/index.rst",
     "why.rst": "what_why.rst",
