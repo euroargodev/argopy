@@ -84,11 +84,11 @@ def pre_process(
         this_ds.attrs["DATA_ID"] = "ARGO"
         this_ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
     elif dataset_id == "ref":
-        this_ds.attrs["DATA_ID"] = "ARGO_Reference"
+        this_ds.attrs["DATA_ID"] = "Reference_ARGO_CTD"
         this_ds.attrs["DOI"] = "-"
         this_ds.attrs["Fetched_version"] = raw_attrs.get('version', '?')
     elif dataset_id == "ref-ctd":
-        this_ds.attrs["DATA_ID"] = "ARGO_Reference_CTD"
+        this_ds.attrs["DATA_ID"] = "Reference_SHIP_CTD"
         this_ds.attrs["DOI"] = "-"
         this_ds.attrs["Fetched_version"] = raw_attrs.get('version', '?')
     elif dataset_id in ["bgc", "bgc-s"]:
