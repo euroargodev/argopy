@@ -59,10 +59,10 @@ Documentation
 
 **Advanced Tools**
 
-* :doc:`advanced-tools/stores/index`
+* :doc:`Argo file stores <advanced-tools/stores/index>`
 * :doc:`advanced-tools/metadata/index`
-* :doc:`advanced-tools/data_quality_control`
-* :doc:`advanced-tools/performances/index`
+* :doc:`advanced-tools/quality_control/index`
+* :doc:`Improving performances  <advanced-tools/performances/index>`
 
 .. toctree::
     :maxdepth: 2
@@ -71,7 +71,7 @@ Documentation
 
     Argo file stores <advanced-tools/stores/index>
     advanced-tools/metadata/index
-    advanced-tools/data_quality_control
+    advanced-tools/quality_control/index
     Improving performances <advanced-tools/performances/index>
 
 

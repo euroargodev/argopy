@@ -10,7 +10,7 @@ Tools for experts and operators
 
 * :doc:`stores/index`
 * :doc:`metadata/index`
-* :doc:`data_quality_control`
+* :doc:`quality_control/index`
 * :doc:`performances/index`
 
 .. toctree::
@@ -19,5 +19,5 @@ Tools for experts and operators
 
     stores/index
     metadata/index
-    data_quality_control
-    Improve performances <performances>
+    quality_control/index
+    Improve performances <performances/index>
