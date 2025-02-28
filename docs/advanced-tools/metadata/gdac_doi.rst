@@ -1,7 +1,7 @@
 .. currentmodule:: argopy.related
 
-GDAC snapshot and DOI
----------------------
+GDAC snapshot DOI
+=================
 
 The Argo Data Management Team maintain an exemplary DOI system to support science reproducibility and `FAIRness <https://en.wikipedia.org/wiki/FAIR_data>`_. On a monthly basis, the ADMT zip the entire Argo GDAC, archive it and assign it a specific DOI.
 
@@ -10,7 +10,11 @@ a hashtag.
 
 **argopy** provides the :class:`ArgoDOI` class to help you access, search and retrieve a DOI for Argo.
 
-If you don't know where to start, just load the major Argo DOI record, it will point toward the latest snapshots:
+
+DOI discovery
+-------------
+
+If you don't know where to start, just load the major Argo DOI record, it will point toward the latest snapshots and list the most recent associated files:
 
 .. ipython:: python
     :okwarning:
@@ -28,10 +32,18 @@ this case, the :class:`ArgoDOI` will get handy with its search method that will 
     :okwarning:
 
     doi.search('2020-02')
-    # or
-    # doi.search('2020-02', network='BGC')
 
-Once you have a specific hashtag for you snapshot of interest, you can point directly to it:
+You can also specify the BGC network in order to select DOI with synthetic profiles only:
+
+.. ipython:: python
+    :okwarning:
+
+    doi.search('2020-02', network='BGC')
+
+DOI data
+--------
+
+Once you have identified a specific hashtag for you snapshot of interest, you can point directly to it:
 
 .. ipython:: python
     :okwarning:
@@ -39,4 +51,6 @@ Once you have a specific hashtag for you snapshot of interest, you can point dir
     doi = ArgoDOI('109847')
     doi
 
-The :class:`ArgoDOI` class also provide DOI properties like the list of files and the link toward the webpage. See the API documentation for all methods and properties.
+The later ``doi`` object holds attributes such as ``dx`` and ``file``.
+
+You can also trigger the tar.gz archive download with the :class:`ArgoDOI.download` method.

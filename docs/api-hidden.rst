@@ -163,8 +163,12 @@
 
     argopy.related.ArgoDOI
     argopy.related.ArgoDOI.search
+    argopy.related.ArgoDOI.download
+    argopy.related.ArgoDOI.dates
     argopy.related.ArgoDOI.file
     argopy.related.ArgoDOI.dx
+    argopy.related.ArgoDOI.doi
+    argopy.related.doi_snapshot.DOIrecord
 
     argopy.extensions.CanyonMED
     argopy.extensions.CanyonMED.predict
