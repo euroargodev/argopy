@@ -100,7 +100,7 @@ class ArgoKerchunker:
         root: Path, str, default='.'
             Use to specify a local folder to base the store
         preload: bool, default=True
-            Indicate if kerchunk data found as pre-existing in the store should be loaded or not.
+            Indicate if kerchunk references already on the store should be loaded or not.
         inline_threshold: int, default=0
             Byte size below which an array will be embedded in the output. Use 0 to disable inlining.
 
@@ -218,7 +218,6 @@ class ArgoKerchunker:
                 for k, v in kerchunk_data['refs'].items():
                     if k != '.zgroup' and '/0' in k:
                         if Path(v[0]).suffix == ".nc":
-                            print(v[0])
                             self.kerchunk_references.update({v[0]: f})
                             break
 

@@ -16,7 +16,6 @@ Argo Data Fetchers
     :toctree: generated/
 
     DataFetcher
-    IndexFetcher
 
 Data selection methods
 ----------------------
@@ -28,13 +27,6 @@ Data selection methods
    DataFetcher.float
    DataFetcher.profile
 
-.. autosummary::
-   :toctree: generated/
-
-   IndexFetcher.region
-   IndexFetcher.float
-   IndexFetcher.profile
-
 Data access methods
 -------------------
 
@@ -45,14 +37,6 @@ Data access methods
    DataFetcher.to_xarray
    DataFetcher.to_dataframe
    DataFetcher.to_index
-
-.. autosummary::
-   :toctree: generated/
-
-   IndexFetcher.load
-   IndexFetcher.to_xarray
-   IndexFetcher.to_dataframe
-   IndexFetcher.to_csv
 
 .. _Fetcher Data Visualisation:
 
@@ -77,7 +61,6 @@ Properties
    DataFetcher.index
    DataFetcher.domain
    DataFetcher.uri
-   IndexFetcher.index
 
 Utilities for Argo related data
 ===============================
@@ -291,6 +274,7 @@ File systems
 .. autosummary::
     :toctree: generated/
 
+    gdacfs
     stores.ArgoStoreProto
     stores.filestore
     stores.httpstore
@@ -298,7 +282,6 @@ File systems
     stores.memorystore
     stores.ftpstore
     stores.s3store
-    stores.gdacfs
     stores.ArgoKerchunker
 
 Argo index and float stores

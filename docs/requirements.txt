@@ -25,6 +25,7 @@ pip>=23.1
 # seaborn>=0.11.0
 # setuptools
 zarr>=2.4.0
+kerchunk>=0.2.7
 tqdm>=4.50.2
 ipykernel>=6.22
 ipywidgets>=8.0

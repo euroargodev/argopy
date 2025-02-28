@@ -36,7 +36,7 @@ from . import tutorial  # noqa: E402
 from .plot import dashboard, ArgoColors  # noqa: E402
 from .options import set_options, reset_options  # noqa: E402
 from .data_fetchers import CTDRefDataFetcher  # noqa: E402
-from .stores import ArgoIndex, ArgoFloat  # noqa: E402
+from .stores import ArgoIndex, ArgoFloat, gdacfs  # noqa: E402
 from .utils import show_versions, show_options  # noqa: E402
 from .utils import clear_cache, lscache  # noqa: E402
 from .utils import MonitoredThreadPoolExecutor  # noqa: E402, F401
@@ -66,11 +66,14 @@ __all__ = (
     "ArgoNVSReferenceTables",  # Class
     "OceanOPSDeployments",  # Class
     "CTDRefDataFetcher",  # Class
-    "ArgoIndex",  # Class
-    "ArgoFloat",  # Class
     "ArgoDocs",  # Class
     "TopoFetcher",  # Class
     "ArgoDOI",  # Class
+
+    # Advanced Argo data stores:
+    "ArgoFloat",  # Class
+    "ArgoIndex",  # Class
+    "gdacfs", # Class
 
     # Submodules:
     # "utils",

@@ -234,7 +234,7 @@ html_css_files = [
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = "_static/argopy_logo_long_5years.png"
+html_logo = "_static/argopy_logo_long.png"
 html_favicon = '_static/argopy.ico'
 # html_title = "My site title"
 
@@ -268,9 +268,9 @@ html_theme_options = {
     # "announcement": (
     #     "🎓 2025 argopy training camps are open: <a href='https://forms.gle/d8xPbrWu7aZcvMut9' target='blank'>pre-register here</a> 🎓"
     # ),
-    "announcement": (
-        "🎉 argopy turns 5! <a href='https://euroargodev.github.io/argopy-5years' target='blank'>Check full details here</a> 🎊"
-    ),
+    # "announcement": (
+    #     "🎉 argopy turns 5! <a href='https://euroargodev.github.io/argopy-5years' target='blank'>Check full details here</a> 🎊"
+    # ),
     "icon_links": [
         {
             "name": "Download Cheat sheet",
@@ -300,15 +300,20 @@ html_theme_options = {
 }
 
 # Redirects for pages that were moved to new locations
-rediraffe_redirects = "redirects.txt"
+# rediraffe_redirects = "redirects.txt"
 
 rediraffe_redirects = {
     "data_fetching.rst": "user-guide/fetching-argo-data/data_selection.rst",
     "data_sources.rst": "user-guide/fetching-argo-data/data_sources.rst",
     "user_mode.rst": "user-guide/fetching-argo-data/user_mode.rst",
     "data_manipulation.rst": "user-guide/working-with-argo-data/data_manipulation.rst",
-    "data_quality_control.rst": "user-guide/working-with-argo-data/data_quality_control.rst",
     "visualisation.rst": "user-guide/working-with-argo-data/visualisation.rst",
+
+    "user-guide/working-with-argo-data/data_quality_control.rst": "advanced-tools/quality_control/index.rst",
+    "metadata_fetching.rst": "advanced-tools/metadata/index.rst",
+    "performances.rst": "advanced-tools/performances/index.rst",
+    "why.rst": "what_why.rst",
+    "what_is_argo.rst": "what_why.rst",
 }
 
 googleanalytics_id = 'G-C4MWDXYMXQ'

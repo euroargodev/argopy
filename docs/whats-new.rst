@@ -11,10 +11,20 @@ What's New
 Coming up next
 --------------
 
+.. versionadded:: v1.1.0
+
+    Most new features in this version can be considered *advanced tools*, since they require a more intimate knowledge
+    of the Argo dataset. Therefore, we re-organised and completed the **argopy** documentation to give them more visibility.
+
+
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **Experimental new data source: AWS S3 netcdf files**. This support is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. (:pr:`385`) by |gmaze|. In order to use the experimental S3 GDAC, you can point the ``gdac`` option to the `appropriate bucket <https://registry.opendata.aws/argo-gdac-marinedata/>`_:
+- **New** :class:`ArgoFloat` **store for Argo netcdf file load/read operations**. Whatever the Argo netcdf file location, local or remote, you can now delegate to argopy the burden of transfer protocol and GDAC paths handling. This store is primarily intended to be used by third party libraries or in workflow by operators and experts. Checkout the dedicated :ref:`tools-argofloat` documentation page. (:pr:`429`) by |gmaze|.
+
+- **New generic file system for any GDAC host** :class:`gdacfs`. This class allows to easily creates a file system for any of the possible GDAC paths. This class returns one of the argopy file systems (file, http, ftp or s3) with a prefixed directory, so that you don't have to include the GDAC path in resources to open. The goal of this class is to separate the data source from the data processing in your workflow. Checkout the dedicated :ref:`tools-gdacfs` documentation page. (:pr:`385`, :pr:`440`) by |gmaze|.
+
+- **Experimental new data source: AWS S3 netcdf files**. This support is primarily made available for benchmarking as part of the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_. (:pr:`385`) by |gmaze|. In order to use the experimental S3 GDAC, you can point the ``gdac`` option to the `appropriate s3 bucket <https://registry.opendata.aws/argo-gdac-marinedata/>`_:
 
 .. code-block:: python
     :caption: AWS S3 example
@@ -22,53 +32,7 @@ Features and front-end API
     with argopy.set_options(gdac='s3://argo-gdac-sandbox/pub'):
         ds = DataFetcher(src='gdac').float(6903091).to_xarray()
 
-- **New** :class:`ArgoFloat` **store for Argo netcdf file load/read operations**. Whatever the Argo netcdf file location, local or remote, you can now delegate to argopy the burden of transfer protocol and GDAC paths handling. This store is primarily intended to be used by third party libraries or in workflow by operators and experts. (:pr:`429`) by |gmaze|.
-
-This also comes with a new iterator on the :class:`ArgoIndex` (:pr:`432`) by |gmaze|.
-
-.. code-block:: python
-    :caption: Just kick in the float WMO and trigger :class:`ArgoFloat.open_dataset` !
-
-    from argopy import ArgoFloat
-    ds = ArgoFloat(6903091).open_dataset('prof')
-
-
-.. code-block:: python
-    :caption: More details of the API
-
-    from argopy import ArgoFloat
-    WMO = 6903091
-
-    af = ArgoFloat(WMO)  # Use argopy 'gdac' option by default
-    af = ArgoFloat(WMO, host='/home/ref-argo/gdac')  # Use your local GDAC copy
-    af = ArgoFloat(WMO, host='https')  # Shortcut for https://data-argo.ifremer.fr
-    af = ArgoFloat(WMO, host='ftp')    # shortcut for ftp://ftp.ifremer.fr/ifremer/argo
-    af = ArgoFloat(WMO, host='s3')     # Shortcut for s3://argo-gdac-sandbox/pub
-
-    # Load any netcdf files from this float:
-    ds = af.open_dataset('meta') # load <WMO>_meta.nc
-    ds = af.open_dataset('prof') # load <WMO>_prof.nc
-    ds = af.open_dataset('tech') # load <WMO>_tech.nc
-    ds = af.open_dataset('Rtraj') # load <WMO>_Rtraj.nc
-
-    # List all available datasets for this float:
-    af.ls_dataset()
-
-.. code-block:: python
-    :caption: Combine :class:`ArgoFloat` with a :class:`ArgoIndex`:
-
-    from argopy import ArgoIndex, ArgoFloat
-
-    # Make a search on Argo index of profiles:
-    idx = ArgoIndex().search_lat_lon([-70, -55, 20, 30])
-
-    # Then iterate over floats matching the results:
-    for float in idx.iterfloats():
-        # 'float' is an ArgoFloat instance
-        print(float.WMO)
-        ds = float.open_dataset('prof')
-
-- **New class** :class:`utils.GreenCoding` **to compute argopy carbon footprint**. This class makes it easy to use the Green-Coding Solutions API to retrieve argopy energy consumption data. This class is primarily used for reporting. (:pr:`437`) by |gmaze|.
+- **New class** :class:`utils.GreenCoding` **to compute argopy carbon footprint**. This class makes it easy to use the Green-Coding Solutions API to retrieve argopy energy consumption data. This class is primarily used for reporting. Checkout the dedicated :ref:`energy` documentation page. (:pr:`437`) by |gmaze|.
 
 .. code-block:: python
     :caption: Argopy carbon footprint metrics
@@ -83,7 +47,7 @@ This also comes with a new iterator on the :class:`ArgoIndex` (:pr:`432`) by |gm
     GreenCoding().footprint_all_releases()
     GreenCoding().footprint_baseline()
 
-- :class:`ArgoIndex` **support meta index file**. We now offer support for the index of meta dataset files. This support brings two new methods to search the profiler type index column: one method based on the profiler type number and another method based on a string match in the profile type label, as described in the `Argo Reference table 8 <https://vocab.nerc.ac.uk/collection/R08/current/>`_.
+- :class:`ArgoIndex` **support meta index file**. We now offer support for the index of meta dataset files. This support brings two new methods to search the profiler type index column: one method based on the profiler type number and another method based on a string match in the profile type label, as described in the `Argo Reference table 8 <https://vocab.nerc.ac.uk/collection/R08/current/>`_. Checkout the dedicated :ref:`tools-argoindex` documentation page.
 
 .. code-block:: python
     :caption: ArgoIndex support for the meta file index
@@ -93,24 +57,6 @@ This also comes with a new iterator on the :class:`ArgoIndex` (:pr:`432`) by |gm
     idx = ArgoIndex(index_file='meta').load()
     idx.search_profiler_type([838, 878])
     idx.search_profiler_label('ARVOR')
-
-- **New generic file system for any GDAC host** :class:`stores.gdacfs`. This class allows to easily creates a file system for any of the possible GDAC paths. This class returns one of the argopy file systems (file, http, ftp or s3) with a prefixed directory, so that you don't have to include the GDAC path in resources to open. The goal of this class is to separate the data source from the data processing in your workflow. (:pr:`385`, :pr:`440`) by |gmaze|.
-
-.. code-block:: python
-    :caption: GDAC file system Example
-
-    from argopy.stores import gdacfs
-
-    # Create a file system instance with any valid GDAC path:
-    fs = gdacfs("https://data-argo.ifremer.fr")           # http GDAC
-    fs = gdacfs("https://usgodae.org/pub/outgoing/argo")  # http GDAC
-    fs = gdacfs("ftp://ftp.ifremer.fr/ifremer/argo")      # ftp GDAC
-    fs = gdacfs("s3://argo-gdac-sandbox/pub")  # s3 GDAC
-    fs = gdacfs("/home/ref-argo/gdac")         # local GDAC copy
-
-    # then
-    fs.info("dac/aoml/13857/13857_meta.nc")
-    ds = fs.open_dataset("dac/coriolis/6903091/profiles/R6903091_001.nc")
 
 
 Internals
@@ -130,35 +76,7 @@ Internals
     # or:
     ds.argo.to_zarr("s3://argopy/sample-data/6903091_prof.zarr")
 
-- **Open netcdf files lazily**. We now provide low-level support for opening a netcdf Argo dataset lazily with `kerchunk <https://fsspec.github.io/kerchunk/>`_. Simply use the new option ``lazy=True`` with a :class:`stores.httpstore.open_dataset` or :class:`stores.s3store.open_dataset`. (:pr:`385`) by |gmaze|.
-
-.. code-block:: python
-    :caption: Example
-
-    import argopy
-    uri = argopy.ArgoIndex(host='s3://argo-gdac-sandbox/pub').search_wmo(6903091).uri
-    ds = argopy.stores.s3store().open_dataset(uri[0], lazy=True)
-
-.. warning::
-    You will need to install the `kerchunk <https://fsspec.github.io/kerchunk/>`_ library if you don't have access to kerchunk zarr data for the netcdf files to open.
-
-- For easy handling of lazy access to netcdf files with `kerchunk <https://fsspec.github.io/kerchunk/>`_, we introduce a :class:`stores.ArgoKerchunker` to finely tune how to handle json kerchunk data. (:pr:`385`) by |gmaze|.
-
-.. code-block:: python
-    :caption: ArgoKerchunker example
-
-    from argopy.stores import ArgoKerchunker
-
-    # Create an instance that will save netcdf to zarr translation data on a local folder "kerchunk_data_folder":
-    ak = ArgoKerchunker(store='local', root='kerchunk_data_folder')
-
-    # Let's take a remote Argo netcdf file from a server supporting lazy access
-    # (i.e. support byte range requests):
-    ncfile = "s3://argo-gdac-sandbox/pub/dac/coriolis/6903090/6903090_prof.nc"
-
-    # Simply open the netcdf file lazily:
-    # (ArgoKerchunker will handle zarr data generation and xarray syntax to use it)
-    ak.open_dataset(ncfile)
+- **Open netcdf files lazily**. We now provide low-level support for opening a netcdf Argo dataset lazily with `kerchunk <https://fsspec.github.io/kerchunk/>`_. Checkout the dedication :ref:`lazy` section of the documentation. (:pr:`385`) by |gmaze|.
 
 - Fix bug raised when the Argo reference table 8 return by the NVS server has a missing altLabel. ID of platform types are now extracted from the NVS url ID property. :issue:`420`, (:pr:`421`) by |gmaze|.
 
@@ -172,6 +90,12 @@ Internals
 - Fix bug raising an error for ``STATION_PARAMETERS`` with a blank entry, with ``bgc`` dataset and ``gdac`` data source (well spotted |quai20|). (:pr:`418`) by |gmaze|.
 
 - Fix bug raising an error when exporting a dataset to netcdf after erddap fetch, :issue:`412`. (:pr:`413`) by |gmaze|.
+
+
+Energy
+^^^^^^
+
+|eqco2_since_last_release|
 
 
 v1.0.0 (16 Oct. 2024)
@@ -287,6 +211,12 @@ Breaking changes
 
 - It is highly probable that more changes in this major v1.0.0 lead to breaking changes not listed here. Don't hesitate to `report them on the repository issue section <https://github.com/euroargodev/argopy/issues>`_. 
 
+.. _v1.0.0-energy:
+
+Energy
+^^^^^^
+
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.0.0%20%5BgCO2eq%5D-1328.99-black?style=plastic&labelColor=grey
 
 v0.1.17 (20 Sep. 2024)
 ----------------------
@@ -322,7 +252,7 @@ Internals
 Energy
 ^^^^^^
 
-Considering `energy used by CI tests <https://argopy.readthedocs.io/en/latest/energy.html>`_, this release has required about 75.4kJ of energy to produce 6h11s39 of computation time.
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v0.1.17%20%5BgCO2eq%5D-234.30-black?style=plastic&labelColor=grey
 
 v0.1.16 (27 Aug. 2024)
 ----------------------
@@ -381,6 +311,12 @@ Breaking changes
 
 - Drop support for erddapy < v0.8.0 (:pr:`344`) by |gmaze|.
 
+.. _v0.1.16-energy:
+
+Energy
+^^^^^^
+
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v0.1.16%20%5BgCO2eq%5D-561.76-black?style=plastic&labelColor=grey
 
 v0.1.15 (12 Dec. 2023)
 ----------------------
@@ -1391,4 +1327,5 @@ v0.1.0 (17 Mar. 2020)
    :target: //anaconda.org/conda-forge/argopy
 .. |release date| image:: https://img.shields.io/github/release-date/euroargodev/argopy?display_date=published_at
    :target: //github.com/euroargodev/argopy/releases
-   
+.. |eqco2_since_last_release| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/euroargodev/argopy-status/master/argopy_carbonfootprint_since_last_release.json
+
