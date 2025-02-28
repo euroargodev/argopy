@@ -324,6 +324,8 @@ class ArgoDOI:
     >>> doi.search('2020-02')  # Return doi closest to a given date
     >>> doi.search('2020-02', network='BGC')  # Return doi closest to a given date for a specific network
 
+    >>> doi.download()  # Trigger download of the DOI file
+
     >>> doi.file  # Easy to read list of file(s) associated with a DOI record
     >>> doi.dx  # http link toward DOI
 
@@ -388,3 +390,16 @@ class ArgoDOI:
     def dx(self) -> str:
         """DOI url"""
         return self._doi.dx
+
+    def download(self):
+        """Trigger download of a DOI file
+
+        This will simply make the web browser to open the DOI file.
+        """
+        flist = self.file
+        if len(flist) > 1:
+            warnings.warn("For safety reasons, we dont' trigger download of a DOI when it has more than one file. This is probably happening because you did not specified a hashtag to your ArgoDOI instance.")
+        else:
+            import webbrowser
+            webbrowser.open_new(self.file[0]['path'])
+
