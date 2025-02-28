@@ -10,23 +10,30 @@ from ..stores import httpstore
 
 
 class DOIrecord:
-    """Helper class for an Argo GDAC snapshot DOI record
+    """Meta-data holder for an Argo GDAC snapshot DOI record
+
+    This is a low-level class that is not intended to be instantiated directly.
+
+    Please use the :class:`ArgoDOI` instead.
 
     Examples
     --------
-    d = DOIrecord()
-    d = DOIrecord('42182')
-    d = DOIrecord('42182#103075')
-    d = DOIrecord(hashtag='103075')
-    d = DOIrecord(hashtag='103088')
+    .. code-block:: python
+        :caption: API description
 
-    d.doi
-    d.dx
-    d.isvalid
-    d.date
-    d.network
-    d.data
-    d.file
+        d = DOIrecord()
+        d = DOIrecord('42182')
+        d = DOIrecord('42182#103075')
+        d = DOIrecord(hashtag='103075')
+        d = DOIrecord(hashtag='103088')
+
+        d.doi
+        d.dx
+        d.isvalid
+        d.date
+        d.network
+        d.data
+        d.file
 
     """
     root = ""
@@ -72,7 +79,7 @@ class DOIrecord:
 
     @property
     def data(self) -> dict:
-        """ "Internal DOI record data
+        """DOI record meta-data holder
 
         Trigger data (down)load if not available
         """
@@ -200,7 +207,7 @@ class DOIrecord:
         return " ".join(summary)
 
     def __repr__(self):
-        summary = ["<argopy.DOIrecord>"]
+        summary = ["<argopy.DOI.record>"]
         summary.append("DOI: %s" % self.__str__())
         if self._data is not None:
             summary.append("Title: %s" % self.data["title"])
@@ -314,20 +321,33 @@ class ArgoDOI:
 
     Examples
     --------
-    >>> from argopy import ArgoDOI
+    .. code-block:: python
+        :caption: Load DOI meta-data
 
-    >>> doi = ArgoDOI()  # If you don't know where to start, just load the primary Argo DOI record
-    >>> doi = ArgoDOI('95141')  # To point directly to a snapshot ID
-    >>> doi = ArgoDOI(hashtag='95141')
-    >>> doi = ArgoDOI(fs=httpstore(cache=True))
+        from argopy import ArgoDOI
 
-    >>> doi.search('2020-02')  # Return doi closest to a given date
-    >>> doi.search('2020-02', network='BGC')  # Return doi closest to a given date for a specific network
+        doi = ArgoDOI()  # If you don't know where to start, just load the primary Argo DOI record
+        doi = ArgoDOI('95141')  # To point directly to a snapshot ID
+        doi = ArgoDOI(hashtag='95141')
+        doi = ArgoDOI(fs=httpstore(cache=True))
 
-    >>> doi.download()  # Trigger download of the DOI file
+    .. code-block:: python
+        :caption: Searching for a specific DOI snapshot
 
-    >>> doi.file  # Easy to read list of file(s) associated with a DOI record
-    >>> doi.dx  # http link toward DOI
+        # Return doi closest to a given date:
+        ArgoDOI().search('2020-02')
+
+        # Return doi closest to a given date for a specific network:
+        ArgoDOI().search('2020-02', network='BGC')
+
+    .. code-block:: python
+        :caption: Working with DOIs
+
+        doi = ArgoDOI('95141')
+
+        doi.download()  # Trigger download of the DOI file
+        doi.file  # Easy to read list of file(s) associated with a DOI record
+        doi.dx  # http link toward the DOI snapshot webpage
 
     """
 
@@ -346,10 +366,25 @@ class ArgoDOI:
         return str(self._doi)
 
     def __repr__(self):
-        return self._doi.__repr__()
+        summary = self._doi.__repr__().split("\n")
+        summary[0] = '<argopy.DOI>'
+        return "\n".join(summary)
 
     def dates(self, network: str = None) -> dict:
+        """Mapping of DOI snapshot hashtag(s) to their publication date(s)
+
+        Parameters
+        ----------
+        network: str, optional
+            Allows to specify a network, like 'BGC'.
+
+        Returns
+        -------
+        dict
+            Dictionary where keys are DOI hashtag and values are publication dates as :class:`pandas.Timestamp`
+        """
         d = {}
+        network = self._doi.network if network is None else network
         if network == "BGC":
             for f in self._doi.data["files"]:
                 if "BGC" in f["fragment"]["title"]:
@@ -361,7 +396,19 @@ class ArgoDOI:
         return d
 
     def search(self, date: Union[str, pd.Timestamp], network: str = None) -> DOIrecord:
-        """Search DOI closest to a given date"""
+        """Search the DOI record the closest to a given date
+
+        Parameters
+        ----------
+        date: str, :class:`pandas.Timestamp`
+            Date to search a DOI for
+        network: str, optional
+            Allows to specify a network, like 'BGC'
+
+        Returns
+        -------
+        :class:`argopy.related.doi_snapshot.DOIrecord`
+        """
         dates = self.dates(network=network)
         target = pd.to_datetime(date, utc=True)
         close = list(dates.values())[
@@ -383,7 +430,7 @@ class ArgoDOI:
 
     @property
     def file(self) -> list:
-        """Return a pretty list of files properties associated with this DOI"""
+        """DOI tar.gz file properties"""
         return self._doi.file
 
     @property
@@ -392,7 +439,7 @@ class ArgoDOI:
         return self._doi.dx
 
     def download(self):
-        """Trigger download of a DOI file
+        """Trigger download of a DOI tar.gz file
 
         This will simply make the web browser to open the DOI file.
         """
