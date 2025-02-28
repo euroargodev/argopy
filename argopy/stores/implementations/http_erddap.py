@@ -1,6 +1,7 @@
 import aiohttp
 import logging
 from urllib.parse import urlparse, parse_qs
+import copy
 
 from ...options import OPTIONS
 from ...errors import ErddapHTTPNotFound, ErddapHTTPUnauthorized
@@ -40,8 +41,11 @@ class httpstore_erddap_auth(httpstore):
                 if has_expected:
                     message = resp_query["message"][0]
                     if "failed" in message:
+                        caviard = copy(self._login_payload)
+                        if 'password' in caviard:
+                            caviard['password'] = '******'
                         raise ErddapHTTPUnauthorized(
-                            "Error %i: %s (%s)" % (401, message, self._login_payload)
+                            "Error %i: %s (%s)" % (401, message, caviard)
                         )
                 else:
                     raise ErddapHTTPUnauthorized(

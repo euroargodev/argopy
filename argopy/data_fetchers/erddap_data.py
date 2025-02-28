@@ -949,7 +949,7 @@ class Fetch_wmo(ErddapArgoDataFetcher):
         elif self.dataset_id in ["bgc", "bgc-s"]:
             self.definition = "Ifremer erddap Argo BGC data fetcher"
         elif self.dataset_id == "ref":
-            self.definition = "Ifremer erddap Argo REFERENCE data fetcher"
+            self.definition = "Ifremer erddap Argo-based CTD-REFERENCE data fetcher"
 
         if self.CYC is not None:
             self.definition = "%s for profiles" % self.definition

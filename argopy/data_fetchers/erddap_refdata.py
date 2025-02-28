@@ -1,5 +1,5 @@
 """
-Fetcher to retrieve CTD reference data from Ifremer erddap
+Fetcher to retrieve ship-based CTD reference data from Ifremer erddap
 """
 import xarray as xr
 import logging
@@ -8,6 +8,7 @@ from ..utils.chunking import Chunker
 from ..utils.geo import conv_lon
 from ..stores import httpstore_erddap_auth
 from .erddap_data import ErddapArgoDataFetcher
+from .erddap_data_processors import _add_attributes
 
 # Load erddapy according to available version (breaking changes in v0.8.0)
 try:
@@ -83,7 +84,7 @@ class ErddapREFDataFetcher(ErddapArgoDataFetcher):
 
         This is hard coded, but should be retrieved from an API somewhere
         """
-        this = super()._add_attributes(this)
+        this = _add_attributes(this)
 
         if "DIRECTION" in this.data_vars:
             this["DIRECTION"].attrs[
@@ -163,7 +164,7 @@ class Fetch_box(ErddapREFDataFetcher):
         """
         self.BOX = box.copy()
         self.definition = (
-            "Ifremer erddap Argo CTD-REFERENCE data fetcher for a space/time region"
+            "Ifremer erddap ship-based CTD-REFERENCE data fetcher for a space/time region"
         )
         return self
 
