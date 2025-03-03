@@ -144,9 +144,9 @@ class CanyonMED(ArgoAccessorExtension):
         b1 = pd.read_csv(self.path2coef.joinpath("poids_%s_b1_%s_%i.txt" % (suff, subset, i)), header=None)
         b2 = pd.read_csv(self.path2coef.joinpath("poids_%s_b2_%s_%i.txt" % (suff, subset, i)), header=None)
         b3 = pd.read_csv(self.path2coef.joinpath("poids_%s_b3_%s_%i.txt" % (suff, subset, i)), header=None)
-        IW = pd.read_csv(self.path2coef.joinpath("poids_%s_IW_%s_%i.txt" % (suff, subset, i)), sep="\s+", header=None)
-        LW1 = pd.read_csv(self.path2coef.joinpath("poids_%s_LW1_%s_%i.txt" % (suff, subset, i)), sep="\s+", header=None)
-        LW2 = pd.read_csv(self.path2coef.joinpath("poids_%s_LW2_%s_%i.txt" % (suff, subset, i)), sep="\s+", header=None)
+        IW = pd.read_csv(self.path2coef.joinpath("poids_%s_IW_%s_%i.txt" % (suff, subset, i)), sep=r"\s+", header=None)
+        LW1 = pd.read_csv(self.path2coef.joinpath("poids_%s_LW1_%s_%i.txt" % (suff, subset, i)), sep=r"\s+", header=None)
+        LW2 = pd.read_csv(self.path2coef.joinpath("poids_%s_LW2_%s_%i.txt" % (suff, subset, i)), sep=r"\s+", header=None)
 
         # Using float128 arrays avoid the error or warning "overflow encountered in exp" raised by the
         # activation function
