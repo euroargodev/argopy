@@ -29,6 +29,19 @@ Just provide a valid GDAC path, local or remote:
 
     fs
 
+You can also use shortcut for all remote GDACs:
+
+.. ipython:: python
+    :okwarning:
+
+    fs = gdacfs("http")    # or "https"    > https://data-argo.ifremer.fr
+    # or:
+    # fs = gdacfs("us-http") # or "us-https" > https://usgodae.org/pub/outgoing/argo
+    # fs = gdacfs("ftp")     #            > ftp://ftp.ifremer.fr/ifremer/argo
+    # fs = gdacfs("s3")      # or "aws"   > s3://argo-gdac-sandbox/pub
+
+
+
 Usage
 -----
 
