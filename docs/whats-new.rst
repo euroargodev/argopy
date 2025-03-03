@@ -32,6 +32,18 @@ Features and front-end API
     with argopy.set_options(gdac='s3://argo-gdac-sandbox/pub'):
         ds = DataFetcher(src='gdac').float(6903091).to_xarray()
 
+- :class:`ArgoIndex` **support meta index file**. We now offer support for the index of meta dataset files. This support brings two new methods to search the profiler type index column: one method based on the profiler type number and another method based on a string match in the profile type label, as described in the `Argo Reference table 8 <https://vocab.nerc.ac.uk/collection/R08/current/>`_. Checkout the dedicated :ref:`tools-argoindex` documentation page.
+
+.. code-block:: python
+    :caption: ArgoIndex support for the meta file index
+
+    from argopy import ArgoIndex
+
+    idx = ArgoIndex(index_file='meta').load()
+    idx.search_profiler_type([838, 878])
+    idx.search_profiler_label('ARVOR')
+
+
 - **New class** :class:`utils.GreenCoding` **to compute argopy carbon footprint**. This class makes it easy to use the Green-Coding Solutions API to retrieve argopy energy consumption data. This class is primarily used for reporting. Checkout the dedicated :ref:`energy` documentation page. (:pr:`437`) by |gmaze|.
 
 .. code-block:: python
@@ -46,18 +58,6 @@ Features and front-end API
     GreenCoding().footprint_for_release('v1.0.0')
     GreenCoding().footprint_all_releases()
     GreenCoding().footprint_baseline()
-
-- :class:`ArgoIndex` **support meta index file**. We now offer support for the index of meta dataset files. This support brings two new methods to search the profiler type index column: one method based on the profiler type number and another method based on a string match in the profile type label, as described in the `Argo Reference table 8 <https://vocab.nerc.ac.uk/collection/R08/current/>`_. Checkout the dedicated :ref:`tools-argoindex` documentation page.
-
-.. code-block:: python
-    :caption: ArgoIndex support for the meta file index
-
-    from argopy import ArgoIndex
-
-    idx = ArgoIndex(index_file='meta').load()
-    idx.search_profiler_type([838, 878])
-    idx.search_profiler_label('ARVOR')
-
 
 Internals
 ^^^^^^^^^
@@ -76,7 +76,7 @@ Internals
     # or:
     ds.argo.to_zarr("s3://argopy/sample-data/6903091_prof.zarr")
 
-- **Open netcdf files lazily**. We now provide low-level support for opening a netcdf Argo dataset lazily with `kerchunk <https://fsspec.github.io/kerchunk/>`_. Checkout the dedication :ref:`lazy` section of the documentation. (:pr:`385`) by |gmaze|.
+- **Open netcdf files lazily**. We now provide low-level support for opening a netcdf Argo dataset lazily with `kerchunk <https://fsspec.github.io/kerchunk/>`_. Checkout the dedicated :ref:`lazy` section of the documentation. (:pr:`385`) by |gmaze|.
 
 - Fix bug raised when the Argo reference table 8 return by the NVS server has a missing altLabel. ID of platform types are now extracted from the NVS url ID property. :issue:`420`, (:pr:`421`) by |gmaze|.
 

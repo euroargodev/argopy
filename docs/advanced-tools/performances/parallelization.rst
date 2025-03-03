@@ -40,11 +40,6 @@ Then, simply trigger data fetching as usual:
 Parallelization methods
 -----------------------
 
-.. versionadded:: v1.0.0
-
-    All data sources are now compatible with each parallelization methods !
-
-
 3 methods are available to set-up your data fetching requests in parallel:
 
 1. `multi-threading <https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)>`_ with a :class:`concurrent.futures.ThreadPoolExecutor`,
