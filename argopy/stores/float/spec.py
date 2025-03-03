@@ -12,7 +12,7 @@ import numpy as np
 
 from ...errors import InvalidOption
 from ...plot import dashboard
-from ...utils import check_wmo, isconnected, argo_split_path
+from ...utils import check_wmo, isconnected, argo_split_path, shortcut2gdac
 from ...options import OPTIONS
 from .. import ArgoIndex, httpstore
 
@@ -62,7 +62,7 @@ class ArgoFloatProto(ABC):
             Time out in seconds to connect to a remote host (ftp or http).
         """
         self.WMO = check_wmo(wmo)[0]
-        self.host = OPTIONS["gdac"] if host is None else host
+        self.host = OPTIONS["gdac"] if host is None else shortcut2gdac(host)
         self.cache = bool(cache)
         self.cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
         self.timeout = OPTIONS["api_timeout"] if timeout == 0 else timeout
