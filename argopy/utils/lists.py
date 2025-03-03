@@ -4,7 +4,7 @@ import importlib
 import os
 import json
 from ..options import OPTIONS
-from typing import List
+from typing import List, Union
 
 path2assets = importlib.util.find_spec(
     "argopy.static.assets"
@@ -401,9 +401,44 @@ def list_gdac_servers() -> List[str]:
 
     See also
     --------
-    :class:`argopy.stores.gdacfs`, :meth:`argopy.utils.check_gdac_path`
+    :class:`argopy.gdacfs`, :meth:`argopy.utils.check_gdac_path`, :meth:`argopy.utils.shortcut2gdac`
 
     """
     with open(os.path.join(path2assets, "gdac_servers.json"), "r") as f:
         vlist = json.load(f)
-    return vlist["data"]["path"]
+    return vlist["data"]["paths"]
+
+
+def shortcut2gdac(short: str = None) -> Union[str, dict]:
+    """Shortcut to GDAC server host mapping
+
+    Parameters
+    ----------
+    short : str, optional
+        Return GDAC host for a given shortcut, otherwise return the complete dictionary mapping. If the
+        shortcut is unknown, return string unchanged.
+
+    Returns
+    -------
+    str or dict
+
+    See also
+    --------
+    :func:`argopy.utils.list_gdac_servers`, :class:`argopy.gdacfs`, :meth:`argopy.utils.check_gdac_path`
+
+    """
+    with open(os.path.join(path2assets, "gdac_servers.json"), "r") as f:
+        vlist = json.load(f)
+    shortcuts = vlist["data"]["shortcuts"]
+
+    if short is not None:
+        if short.lower().strip() in shortcuts.keys():
+            return shortcuts[short.lower().strip()]
+        else:
+            return short
+        # elif short in shortcuts.values():
+        #     return short
+        # else:
+        #     raise ValueError("This shortcut '%s' does not exist. Must be one in [%s]" % (short, shortcuts.keys()))
+    else:
+        return shortcuts

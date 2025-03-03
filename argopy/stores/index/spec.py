@@ -21,6 +21,7 @@ from ...errors import GdacPathError, S3PathError, InvalidDataset, OptionValueErr
 from ...utils.checkers import isconnected, has_aws_credentials
 from ...utils.accessories import Registry
 from ...utils.chunking import Chunker
+from ...utils.lists import shortcut2gdac
 from .. import httpstore, memorystore, filestore, ftpstore, s3store
 from .implementations.index_s3 import get_a_s3index
 
@@ -114,17 +115,8 @@ class ArgoIndexStoreProto(ABC):
         timeout: int,  default: OPTIONS['api_timeout']
             Time out in seconds to connect to a remote host (ftp or http).
         """
-        host = OPTIONS["gdac"] if host is None else host
+        host = OPTIONS["gdac"] if host is None else shortcut2gdac(host)
 
-        # Catchup keywords for host:
-        if host.lower() in ["ftp"]:
-            host = "ftp://ftp.ifremer.fr/ifremer/argo"
-        elif str(host).lower() in ["http", "https", "fr-http", "fr-https"]:
-            host = "https://data-argo.ifremer.fr"
-        elif str(host).lower() in ["us-http", "us-https"]:
-            host = "https://usgodae.org/pub/outgoing/argo"
-        elif str(host).lower() in ["s3", "aws"]:
-            host = "s3://argo-gdac-sandbox/pub/idx"
         self.host = host
         self.root = host  # Will be used by the .uri properties, this is introduced to deal with index files not on the same root as DAC folders
 
@@ -178,11 +170,11 @@ class ArgoIndexStoreProto(ABC):
             )
 
         elif "s3" in split_protocol(self.host)[0]:
+            # On AWS S3, index files are not under DAC root:
             if self.host == 's3://argo-gdac-sandbox/pub/idx':
-                self.root = 's3://argo-gdac-sandbox/pub' # On AWS S3, index files are not under DAC root
-
+                self.root = 's3://argo-gdac-sandbox/pub'
             if self.host == 's3://argo-gdac-sandbox/pub':
-                self.host = 's3://argo-gdac-sandbox/pub/idx'  # On AWS S3, index files are not under DAC root
+                self.host = 's3://argo-gdac-sandbox/pub/idx'
                 self.root = 's3://argo-gdac-sandbox/pub'
 
             if "argo-gdac-sandbox/pub/idx" not in self.host:
