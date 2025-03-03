@@ -27,9 +27,16 @@ Lazyness in our use case, relates to limiting data transfert/load to what is rea
 Since a regular Argo netcdf is not intendeed to be accessed partially, it is rather tricky to access Argo data lazily.
 Hopefully, the `kerchunk <https://fsspec.github.io/kerchunk/>`_ library has been developped precisely for this use-case.
 
+.. currentmodule:: xarray
+
 .. warning::
     Since variable content is not loaded, one limitation of the lazy approach, is that variables are not necessarily
     cast appropriately, and are often returned as simple *object*.
+
+    You can use the :func:`Dataset.argo.cast_types` method to cast Argo variables correctly.
+
+.. currentmodule:: argopy
+
 
 Compatible data sources
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,7 +56,7 @@ The table below synthesises lazy support status for all possible GDAC hosts:
       - ✅
     * - ftp://ftp.ifremer.fr/ifremer/argo
       - ✅
-    * - s3://argo-gdac-sandbox/pub
+    * - `s3://argo-gdac-sandbox/pub <https://argo-gdac-sandbox.s3.eu-west-3.amazonaws.com/pub/index.html#pub/>`_
       - ✅
     * - a local GDAC copy
       - ✅
@@ -64,7 +71,7 @@ content has to be curated in order to make a byte range *catalogue* of its conte
 
 `kerchunk <https://fsspec.github.io/kerchunk/>`_ will analyse a netcdf file content (e.g. dimensions, list of variables)
 and store these metadata in a json file compatible with zarr. With a specific syntax, these metadata can then be given
-to :class:`xarray.open_dataset` to open a netcdf file lazily.
+to :func:`xarray.open_dataset` to open a netcdf file lazily.
 
 We developped a specific class to make this process easy for **argopy** users: :class:`stores.ArgoKerchunker`.
 
@@ -86,7 +93,10 @@ This is demonstrated below:
     ak = ArgoKerchunker(store='local', root='~/myshared_kerchunk_data_folder')
 
     # Let's consider a remote Argo netcdf file from a server supporting lazy access:
-    ncfile = "https://usgodae.org/pub/outgoing/argo/dac/coriolis/6903090/6903090_prof.nc"
+    ncfile = "ftp://ftp.ifremer.fr/ifremer/argo/dac/coriolis/6903090/6903090_prof.nc"
+    # or
+    #ncfile = "https://usgodae.org/pub/outgoing/argo/dac/coriolis/6903090/6903090_prof.nc"
+    #ncfile = "s3://argo-gdac-sandbox/pub/dac/coriolis/6903090/6903090_prof.nc"
 
     # Compute and save this netcdf byte range *catalogue* for later lazy access:
     js = ak.to_kerchunk(ncfile)
@@ -97,13 +107,13 @@ Now, for any user with read access to the `~/myshared_kerchunk_data_folder` fold
 .. ipython:: python
     :okwarning:
 
-    from argopy.stores import httpstore
+    from argopy.stores import gdacfs
 
     # Create an instance where to find netcdf byte range *catalogues*:
     ak = ArgoKerchunker(store='local', root='~/myshared_kerchunk_data_folder')
 
     # Simply open the netcdf file lazily, giving the appropriate ArgoKerchunker:
-    httpstore().open_dataset(ncfile, lazy=True, ak=ak)
+    gdacfs('ftp://ftp.ifremer.fr/ifremer/argo').open_dataset("dac/coriolis/6903090/6903090_prof.nc", lazy=True, ak=ak)
 
 .. _lazy-argofloat:
 
@@ -117,7 +127,7 @@ When opening an Argo dataset from the :class:`ArgoFloat`, you can simply add the
 
     from argopy import ArgoFloat
 
-    ds = ArgoFloat(6903091, host='us-http').open_dataset('prof', lazy=True)
+    ds = ArgoFloat(6903091, host='ftp').open_dataset('prof', lazy=True)
 
 without additional argument, the kerchunk store will be located in memory and the netcdf byte range *catalogues* computed on the fly using the kerchunk library.
 
@@ -127,7 +137,7 @@ If you want to specify a kerchunk data store, you can provide a :class:`stores.A
     :okwarning:
 
     ak = ArgoKerchunker(store='local', root='~/myshared_kerchunk_data_folder')
-    ds = ArgoFloat(6903091, host='us-http').open_dataset('prof', lazy=True, ak=ak)
+    ds = ArgoFloat(6903090, host='ftp').open_dataset('prof', lazy=True, ak=ak)
 
 
 In this scenario, if the dataset has already been processed by the :class:`stores.ArgoKerchunker` instance, the kerchunk library is not required to load lazily the dataset.
