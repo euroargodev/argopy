@@ -24,7 +24,7 @@ and NODC/USA.
 
 To access ship-based CTD reference measurements, we provide the :class:`CTDRefDataFetcher` class.
 
-You can use the ``box`` argument to specify the rectangular space/domain to fetch reference data for. Note that this is
+You can use the ``box`` argument to specify a rectangular space/domain to fetch reference data for. Note that this is
 a list with minimum/maximum for longitude, then latitude, then pressure and finally time. The constraint on time is not
 mandatory.
 

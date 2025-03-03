@@ -27,9 +27,16 @@ Lazyness in our use case, relates to limiting data transfert/load to what is rea
 Since a regular Argo netcdf is not intendeed to be accessed partially, it is rather tricky to access Argo data lazily.
 Hopefully, the `kerchunk <https://fsspec.github.io/kerchunk/>`_ library has been developped precisely for this use-case.
 
+.. currentmodule:: xarray
+
 .. warning::
     Since variable content is not loaded, one limitation of the lazy approach, is that variables are not necessarily
     cast appropriately, and are often returned as simple *object*.
+
+    You can use the :func:`Dataset.argo.cast_types` method to cast Argo variables correctly.
+
+.. currentmodule:: argopy
+
 
 Compatible data sources
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,7 +56,7 @@ The table below synthesises lazy support status for all possible GDAC hosts:
       - ✅
     * - ftp://ftp.ifremer.fr/ifremer/argo
       - ✅
-    * - s3://argo-gdac-sandbox/pub
+    * - `s3://argo-gdac-sandbox/pub <https://argo-gdac-sandbox.s3.eu-west-3.amazonaws.com/pub/index.html#pub/>`_
       - ✅
     * - a local GDAC copy
       - ✅
@@ -64,7 +71,7 @@ content has to be curated in order to make a byte range *catalogue* of its conte
 
 `kerchunk <https://fsspec.github.io/kerchunk/>`_ will analyse a netcdf file content (e.g. dimensions, list of variables)
 and store these metadata in a json file compatible with zarr. With a specific syntax, these metadata can then be given
-to :class:`xarray.open_dataset` to open a netcdf file lazily.
+to :func:`xarray.open_dataset` to open a netcdf file lazily.
 
 We developped a specific class to make this process easy for **argopy** users: :class:`stores.ArgoKerchunker`.
 
