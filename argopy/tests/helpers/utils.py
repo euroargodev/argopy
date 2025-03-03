@@ -29,7 +29,7 @@ from subprocess import check_output
 from typing import List
 import tempfile
 import shutil
-
+from pathlib import Path
 
 from argopy.options import set_options
 from argopy.errors import ErddapServerError, ArgovisServerError, DataNotFound, GdacPathError
@@ -390,6 +390,7 @@ class create_temp_folder:
 
     def __init__(self):
         """Initialize the class and create a temporary folder."""
+        Path(OPTIONS['cachedir']).mkdir(parents=True, exist_ok=True)
         self._temp_dir = tempfile.mkdtemp(dir=OPTIONS['cachedir'])
         os.chmod(self._temp_dir, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
 
