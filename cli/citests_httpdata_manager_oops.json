@@ -4,90 +4,90 @@
         "ext": "json",
         "sha": "2dd1ce221e25128b947dacb8ea904de17ce1b12384f8aef909396aa8ae4c5957",
         "type": "application/json",
-        "ts": "2024-10-16 08:32:13"
+        "ts": "2025-03-04 09:34:54"
     },
     {
         "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lon<=$var2 and ptfDepl.lat>=$var3 and ptfDepl.lat<=$var4 and ptfDepl.deplDate>=$var5\", -90, 0, 0, 90, \"2022-01-01 00:00:00\"]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
         "ext": "json",
         "sha": "e46a16b17affadcd7fbaee0e7028f1030d5ff90a81694c833da7adaa428c400e",
         "type": "application/json",
-        "ts": "2024-10-16 08:32:13"
+        "ts": "2025-03-04 09:34:54"
     },
     {
         "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon<=$var1 and ptfDepl.lat>=$var2 and ptfDepl.lat<=$var3 and ptfDepl.deplDate>=$var4 and ptfDepl.deplDate<=$var5 and ptfStatus>=$var6\", 0, 0, 90, \"2022-01-01 00:00:00\", \"2023-01-01 00:00:00\", 4]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
         "ext": "json",
         "sha": "a3dfd8ac41e22763e0020a8bea50535ec41cff15fc65ad64abde4c8aa096e580",
         "type": "application/json",
-        "ts": "2024-10-16 08:32:13"
+        "ts": "2025-03-04 09:34:54"
     },
     {
         "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon<=$var1 and ptfDepl.lat>=$var2 and ptfDepl.lat<=$var3 and ptfDepl.deplDate>=$var4 and ptfDepl.deplDate<=$var5\", 0, 0, 90, \"2022-01-01 00:00:00\", \"2023-01-01 00:00:00\"]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
         "ext": "json",
         "sha": "6270b81ef4a5a8e19ae77f895c77fdd0bd71f7596505911d329618eb8ee27d82",
         "type": "application/json",
-        "ts": "2024-10-16 08:32:13"
+        "ts": "2025-03-04 09:34:54"
     },
     {
         "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lat>=$var2 and ptfDepl.lat<=$var3 and ptfDepl.deplDate>=$var4 and ptfDepl.deplDate<=$var5 and ptfStatus>=$var6\", -90, 0, 90, \"2022-01-01 00:00:00\", \"2023-01-01 00:00:00\", 4]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
         "ext": "json",
         "sha": "7321fca614893c8ec8cc62bc2179f4a5bcbc82970bf3948a5d22c770d2371b3c",
         "type": "application/json",
-        "ts": "2024-10-16 08:32:13"
+        "ts": "2025-03-04 09:34:54"
     },
     {
         "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lat>=$var2 and ptfDepl.lat<=$var3 and ptfDepl.deplDate>=$var4 and ptfDepl.deplDate<=$var5\", -90, 0, 90, \"2022-01-01 00:00:00\", \"2023-01-01 00:00:00\"]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
         "ext": "json",
         "sha": "dfc6582dc67e6003d8add1b74bce6b8da7104315dffa4cecfc384aa5cd9b661a",
         "type": "application/json",
-        "ts": "2024-10-16 08:32:13"
+        "ts": "2025-03-04 09:34:54"
     },
     {
         "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lon<=$var2 and ptfDepl.lat<=$var3 and ptfDepl.deplDate>=$var4 and ptfDepl.deplDate<=$var5 and ptfStatus>=$var6\", -90, 0, 90, \"2022-01-01 00:00:00\", \"2023-01-01 00:00:00\", 4]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
         "ext": "json",
         "sha": "5923f2965a8cf88a261e179203ab1699fe4fed43d8cd8767304633614c07a61f",
         "type": "application/json",
-        "ts": "2024-10-16 08:32:13"
+        "ts": "2025-03-04 09:34:54"
     },
     {
         "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lon<=$var2 and ptfDepl.lat<=$var3 and ptfDepl.deplDate>=$var4 and ptfDepl.deplDate<=$var5\", -90, 0, 90, \"2022-01-01 00:00:00\", \"2023-01-01 00:00:00\"]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
         "ext": "json",
         "sha": "b525af3619e549419bc25d16bf2ad88650f97d8f6cef5e6b1110181ade4f1f76",
         "type": "application/json",
-        "ts": "2024-10-16 08:32:13"
+        "ts": "2025-03-04 09:34:54"
     },
     {
         "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lon<=$var2 and ptfDepl.lat>=$var3 and ptfDepl.deplDate>=$var4 and ptfDepl.deplDate<=$var5 and ptfStatus>=$var6\", -90, 0, 0, \"2022-01-01 00:00:00\", \"2023-01-01 00:00:00\", 4]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
         "ext": "json",
         "sha": "f99dcbdb28e5fda186604deafaf0a7f2857c9d4a15a4fa583660f3b770caf604",
         "type": "application/json",
-        "ts": "2024-10-16 08:32:13"
+        "ts": "2025-03-04 09:34:54"
     },
     {
         "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lon<=$var2 and ptfDepl.lat>=$var3 and ptfDepl.deplDate>=$var4 and ptfDepl.deplDate<=$var5\", -90, 0, 0, \"2022-01-01 00:00:00\", \"2023-01-01 00:00:00\"]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
         "ext": "json",
         "sha": "0a6b66400575b6b32fb4d029770c70ba4ff0b973e79237e41beea72a624aef06",
         "type": "application/json",
-        "ts": "2024-10-16 08:32:13"
+        "ts": "2025-03-04 09:34:54"
     },
     {
         "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lon<=$var2 and ptfDepl.lat>=$var3 and ptfDepl.lat<=$var4 and ptfDepl.deplDate<=$var5 and ptfStatus>=$var6\", -90, 0, 0, 90, \"2023-01-01 00:00:00\", 4]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
         "ext": "json",
         "sha": "4a9e3960df6073af92d2ceb35525c5c2b656726fc92e66851c903c7cf5ac2eda",
         "type": "application/json",
-        "ts": "2024-10-16 08:32:13"
+        "ts": "2025-03-04 09:34:54"
     },
     {
         "uri": "https://www.ocean-ops.org/api/1/data/platform?exp=[\"networkPtfs.network.name='Argo' and ptfDepl.lon>=$var1 and ptfDepl.lon<=$var2 and ptfDepl.lat>=$var3 and ptfDepl.lat<=$var4 and ptfDepl.deplDate<=$var5\", -90, 0, 0, 90, \"2023-01-01 00:00:00\"]&include=[\"ref\",\"ptfDepl.lat\",\"ptfDepl.lon\",\"ptfDepl.deplDate\",\"ptfStatus.id\",\"ptfStatus.name\",\"ptfStatus.description\",\"program.nameShort\",\"program.country.nameShort\",\"ptfModel.nameShort\",\"ptfDepl.noSite\"]",
         "ext": "json",
         "sha": "e2d3f37e53b7486e7e5eed35d3992e03572ddabd25077f108a5f0574787b43c0",
         "type": "application/json",
-        "ts": "2024-10-16 08:32:13"
+        "ts": "2025-03-04 09:34:54"
     },
     {
         "uri": "https://www.ocean-ops.org/api/1/oceanops-api.yaml",
         "ext": "yaml",
         "sha": "4e2f9e17a10cdf4b1e9cb06c33e9927948fb229c3f10e63b46a6eef51910970b",
         "type": "text/yaml",
-        "ts": "2024-10-16 08:32:13"
+        "ts": "2025-03-04 09:34:54"
     }
 ]
