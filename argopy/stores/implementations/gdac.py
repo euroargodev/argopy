@@ -9,6 +9,7 @@ import fsspec
 
 from ...options import OPTIONS
 from ...errors import GdacPathError
+from ...utils.lists import shortcut2gdac
 from .. import filestore, httpstore, ftpstore, s3store
 
 
@@ -34,15 +35,25 @@ class gdacfs:
 
     Examples
     --------
+    .. code-block:: python
+        :caption: Explicit GDAC stores
 
-    >>> fs = gdacfs("https://data-argo.ifremer.fr")
-    >>> fs = gdacfs("https://usgodae.org/pub/outgoing/argo")
-    >>> fs = gdacfs("ftp://ftp.ifremer.fr/ifremer/argo")
-    >>> fs = gdacfs("/home/ref-argo/gdac")
-    >>> fs = gdacfs("s3://argo-gdac-sandbox/pub")
+        fs = gdacfs("https://data-argo.ifremer.fr")
+        fs = gdacfs("https://usgodae.org/pub/outgoing/argo")
+        fs = gdacfs("ftp://ftp.ifremer.fr/ifremer/argo")
+        fs = gdacfs("/home/ref-argo/gdac")
+        fs = gdacfs("s3://argo-gdac-sandbox/pub")
 
-    >>> with argopy.set_options(gdac="s3://argo-gdac-sandbox/pub"):
-    >>>     fs = gdacfs()
+        with argopy.set_options(gdac="s3://argo-gdac-sandbox/pub"):
+            fs = gdacfs()
+
+    .. code-block:: python
+        :caption: GDAC stores by shortcut name
+
+        fs = gdacfs("http")    # "https"    > https://data-argo.ifremer.fr
+        fs = gdacfs("us-http") # "us-https" > https://usgodae.org/pub/outgoing/argo
+        fs = gdacfs("ftp")     #            > ftp://ftp.ifremer.fr/ifremer/argo
+        fs = gdacfs("s3")      # or "aws"   > s3://argo-gdac-sandbox/pub
 
     Warnings
     --------
@@ -50,7 +61,7 @@ class gdacfs:
 
     See Also
     --------
-    :meth:`argopy.utils.check_gdac_path`, :meth:`argopy.utils.list_gdac_servers`
+    :meth:`argopy.utils.check_gdac_path`, :meth:`argopy.utils.list_gdac_servers`, :meth:`argopy.utils.shortcut2gdac`
 
     """
     protocol2fs = {"file": filestore, "http": httpstore, "ftp": ftpstore, "s3": s3store}
@@ -76,8 +87,7 @@ class gdacfs:
 
     def __new__(cls, path: Union[str, Path, None] = None, cache: bool = False, cachedir: str = "", **kwargs):
         """Create a file system for any Argo GDAC compliant path"""
-        if path is None:
-            path = OPTIONS["gdac"]
+        path = OPTIONS["gdac"] if path is None else shortcut2gdac(path)
 
         protocol = cls.path2protocol(path)
         cls.root = path

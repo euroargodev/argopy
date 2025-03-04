@@ -66,9 +66,17 @@ You create an index store with default or custom options:
     # or:
     # ArgoIndex(index_file="argo_bio-profile_index.txt")
     # ArgoIndex(index_file="bgc-s")  # can use keyword instead of file name: core, bgc-b, bgc-b
+
     # ArgoIndex(host="ftp://ftp.ifremer.fr/ifremer/argo")
     # ArgoIndex(host="https://data-argo.ifremer.fr", index_file="core")
     # ArgoIndex(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt", cache=True)
+
+Note that you can use GDAC host shortcut names:
+
+- ``https://data-argo.ifremer.fr``, shortcut with ``http`` or ``https``
+- ``https://usgodae.org/pub/outgoing/argo``, shortcut with ``us-http`` or ``us-https``
+- ``ftp://ftp.ifremer.fr/ifremer/argo``, shortcut with ``ftp``
+- ``s3://argo-gdac-sandbox/pub/idx``, shortcut with ``s3`` or ``aws``
 
 You can then trigger loading of the index content:
 

@@ -31,6 +31,7 @@ from .lists import (
     list_radiometry_variables,
     list_radiometry_parameters,
     list_gdac_servers,
+    shortcut2gdac,
 )
 from .caching import clear_cache, lscache
 from .monitored_threadpool import MyThreadPoolExecutor as MonitoredThreadPoolExecutor
