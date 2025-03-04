@@ -205,7 +205,7 @@ class GreenCoding:
         ----------
         branches : List[str], default = ['master']
             List of branches to retrieve measurements for.
-            Note that for a given merged PR number, the branche name is ``<PR>/merged``.
+            Note that for a given merged PR number, the branch name is ``<PR>/merged``.
         **kwargs:
             Other Parameters are passed to :class:`GreenCoding.measurements`
 
