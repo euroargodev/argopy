@@ -445,7 +445,7 @@ class ArgoDOI:
         """
         flist = self.file
         if len(flist) > 1:
-            warnings.warn("For safety reasons, we dont' trigger download of a DOI when it has more than one file. This is probably happening because you did not specified a hashtag to your ArgoDOI instance.")
+            warnings.warn("For safety reasons, we don't trigger download of a DOI when it has more than one file. This is probably happening because you did not specified a hashtag to your ArgoDOI instance.")
         else:
             import webbrowser
             webbrowser.open_new(self.file[0]['path'])

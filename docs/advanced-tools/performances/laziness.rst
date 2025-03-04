@@ -12,20 +12,20 @@ Lazy dataset access
 
 This **argopy** feature is implemented with ``open_dataset`` methods from: compatible argopy file stores (local, http, ftp and s3)
 and the :class:`ArgoFloat` class. Since this is somehow a low-level implementation whereby users need to work with float data
-directly, it is probably targetting users with operator or expert knowledge of Argo.
+directly, it is probably targeting users with operator or expert knowledge of Argo.
 
 Contrary to the other performance improvement methods, this one is not accessible with a :class:`DataFetcher`.
 
 What is it ?
 ~~~~~~~~~~~~
 
-Lazyness in our use case, relates to limiting data transfert/load to what is really needed for an operation. For instance:
+Laziness in our use case, relates to limiting data transfer/load to what is really needed for an operation. For instance:
 
 - if you want to work with a single Argo parameter for a given float, you don't need to download from the GDAC server all the other parameters,
 - if you only are interested in assessing a file content (e.g. number of profiles or vertical levels), you also don't need to load anything else than the dimensions of the netcdf files.
 
 Since a regular Argo netcdf is not intendeed to be accessed partially, it is rather tricky to access Argo data lazily.
-Hopefully, the `kerchunk <https://fsspec.github.io/kerchunk/>`_ library has been developped precisely for this use-case.
+Hopefully, the `kerchunk <https://fsspec.github.io/kerchunk/>`_ library has been developed precisely for this use-case.
 
 .. currentmodule:: xarray
 
@@ -65,7 +65,7 @@ The table below synthesises lazy support status for all possible GDAC hosts:
 **argopy** kerchunk helper
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to access lazily an Argo netcdf files, localy or remotely with a server supporting range requests, the netcdf
+In order to access lazily an Argo netcdf files, locally or remotely with a server supporting range requests, the netcdf
 content has to be curated in order to make a byte range *catalogue* of its content. To do so, you need to have the
 `kerchunk <https://fsspec.github.io/kerchunk/>`_ library installed in your working environment.
 
@@ -73,7 +73,7 @@ content has to be curated in order to make a byte range *catalogue* of its conte
 and store these metadata in a json file compatible with zarr. With a specific syntax, these metadata can then be given
 to :func:`xarray.open_dataset` to open a netcdf file lazily.
 
-We developped a specific class to make this process easy for **argopy** users: :class:`stores.ArgoKerchunker`.
+We developed a specific class to make this process easy for **argopy** users: :class:`stores.ArgoKerchunker`.
 
 A typical use case will be to curate one or a collection of netcdf files and then save byte range *catalogues* in a specific store.
 

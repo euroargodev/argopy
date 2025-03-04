@@ -308,7 +308,7 @@ class httpstore(ArgoStoreProto):
                     "backend_kwargs": {
                         "consolidated": False,
                         "storage_options": {
-                            "fo": self.ak.to_kerchunk(url, overwrite=akoverwrite),
+                            "fo": self.ak.to_kerchunk(url, overwrite=akoverwrite),  # codespell:ignore
                             "remote_protocol": fsspec.core.split_protocol(url)[0],
                         },
                     },
@@ -656,7 +656,7 @@ class httpstore(ArgoStoreProto):
 
         if "lazy" in open_dataset_opts and open_dataset_opts["lazy"] and concat:
             warnings.warn(
-                "Lazy openning and concatenate multiple netcdf files is not yet supported. Ignoring the 'lazy' option."
+                "Lazy opening and concatenate multiple netcdf files is not yet supported. Ignoring the 'lazy' option."
             )
             open_dataset_opts["lazy"] = False
 

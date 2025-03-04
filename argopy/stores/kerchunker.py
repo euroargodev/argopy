@@ -68,7 +68,7 @@ class ArgoKerchunker:
     .. code-block:: python
         :caption: Examples
 
-        # Create an instance that will save netcdf to zarr translation data on a local folder "kerchunk_data_folder" for later re-use (or sharing):
+        # Create an instance that will save netcdf to zarr translation data on a local folder "kerchunk_data_folder" for later reuse (or sharing):
         ak = ArgoKerchunker(store='local', root='kerchunk_data_folder')
 
         # Let's consider a remote Argo netcdf file from a server supporting lazy access
@@ -351,7 +351,7 @@ class ArgoKerchunker:
             backend_kwargs={
                 "consolidated": False,
                 "storage_options": {
-                    "fo": self.to_kerchunk(ncfile, **kwargs),
+                    "fo": self.to_kerchunk(ncfile, **kwargs),  # codespell:ignore
                     "remote_protocol": remote_protocol,
                     "remote_options": self.remote_options,
                 },
