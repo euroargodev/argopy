@@ -91,6 +91,9 @@ Internals
 
 - Fix bug raising an error when exporting a dataset to netcdf after erddap fetch, :issue:`412`. (:pr:`413`) by |gmaze|.
 
+- The :class:`Dataset.argo.canyon_med` predictor raises errors if not dealing with a collection of Argo points. (:pr:`450`) by |gmaze|.
+
+- Make the :class:`Dataset.argo` accessor and its extensions able to work with dataset from a :class:`DataFetcher` and from a :class:`ArgoFloat`. This was necessary because the time variable does not have the same name in these dataset (``TIME`` vs ``JULD``). But this point should be addressed later. (:pr:`450`) by |gmaze|.
 
 Energy
 ^^^^^^
