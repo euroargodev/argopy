@@ -8,8 +8,8 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-Coming up next
---------------
+v1.1.0 (XX March 2025)
+----------------------
 
 .. versionadded:: v1.1.0
 
