@@ -691,4 +691,3 @@ def scatter_plot(
         return fig, ax, m, cbar
     else:
         return fig, ax, m
-

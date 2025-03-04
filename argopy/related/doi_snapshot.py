@@ -449,4 +449,3 @@ class ArgoDOI:
         else:
             import webbrowser
             webbrowser.open_new(self.file[0]['path'])
-

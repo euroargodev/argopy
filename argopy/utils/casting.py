@@ -44,7 +44,10 @@ def cast_Argo_variable_type(ds, overwrite=True):
                     raise
             else:
                 msg = ["Oops! %s occurred" % sys.exc_info()[0]]
-                msg.append("Fail to cast %s[%s] from '%s' to %s" % (da.name, da.dims, da.dtype, type))
+                msg.append(
+                    "Fail to cast %s[%s] from '%s' to %s"
+                    % (da.name, da.dims, da.dtype, type)
+                )
                 try:
                     msg.append("Unique values:", np.unique(da))
                 except Exception:
@@ -62,7 +65,7 @@ def cast_Argo_variable_type(ds, overwrite=True):
             try:
                 da = cast_this(da, str, exception_to_raise=UnicodeDecodeError)
             except UnicodeDecodeError:
-                da = da.str.decode(encoding='unicode_escape')
+                da = da.str.decode(encoding="unicode_escape")
                 da = cast_this(da, str)
 
         if v in DATA_TYPES["data"]["int"]:  # and da.dtype == 'O':  # Object
@@ -109,10 +112,7 @@ def cast_Argo_variable_type(ds, overwrite=True):
                 else:
                     da = cast_this(da, "datetime64[ns]")
 
-            elif (
-                "conventions" in da.attrs
-                and da.attrs["conventions"] == "ISO8601"
-            ):
+            elif "conventions" in da.attrs and da.attrs["conventions"] == "ISO8601":
                 da.values = pd.to_datetime(da.values, utc=True)
                 da = cast_this(da, "datetime64[ns]")
 
@@ -177,17 +177,23 @@ def cast_Argo_variable_type(ds, overwrite=True):
         return da
 
     for v in ds.variables:
-        if (overwrite or
-            ("casted" in ds[v].attrs and ds[v].attrs["casted"] == 0) or
-            (not overwrite and "casted" in ds[v].attrs and ds[v].attrs["casted"] == 1 and ds[v].dtype == 'O')
+        if (
+            overwrite
+            or ("casted" in ds[v].attrs and ds[v].attrs["casted"] == 0)
+            or (
+                not overwrite
+                and "casted" in ds[v].attrs
+                and ds[v].attrs["casted"] == 1
+                and ds[v].dtype == "O"
+            )
         ):
             try:
                 attrs = deepcopy(ds[v].attrs)
                 encoding = deepcopy(ds[v].encoding)
                 ds[v] = cast_this_da(ds[v], v)
-                casted_result = ds[v].attrs['casted']
+                casted_result = ds[v].attrs["casted"]
                 ds[v].attrs = attrs
-                ds[v].attrs.update({'casted': casted_result})
+                ds[v].attrs.update({"casted": casted_result})
                 ds[v].encoding = encoding
             except Exception:
                 print("Oops!", sys.exc_info()[0], "occurred.")

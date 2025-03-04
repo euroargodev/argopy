@@ -382,10 +382,10 @@ class indexstore(ArgoIndexStoreProto):
     def read_domain(self, index=False):
         if "longitude" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot search for coordinates in this index")
-        max = lambda x: pa.compute.max(x).as_py()
-        min = lambda x: pa.compute.min(x).as_py()
-        tmin = lambda x: pd.to_datetime(min(x)).to_numpy()
-        tmax = lambda x: pd.to_datetime(max(x)).to_numpy()
+        max = lambda x: pa.compute.max(x).as_py()  # noqa: E731
+        min = lambda x: pa.compute.min(x).as_py()  # noqa: E731
+        tmin = lambda x: pd.to_datetime(min(x)).to_numpy()  # noqa: E731
+        tmax = lambda x: pd.to_datetime(max(x)).to_numpy()  # noqa: E731
 
         if hasattr(self, "search") and not index:
             return [

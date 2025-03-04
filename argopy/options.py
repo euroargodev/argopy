@@ -9,9 +9,6 @@ import os
 import warnings
 import logging
 import fsspec
-from fsspec.core import split_protocol
-from socket import gaierror
-from urllib.parse import urlparse
 import importlib
 
 
@@ -26,7 +23,6 @@ except ModuleNotFoundError:
 
 if importlib.util.find_spec("boto3") is not None:
     HAS_BOTO3 = True
-    import boto3
 else:
     HAS_BOTO3 = False
 
@@ -297,7 +293,9 @@ def check_erddap_path(path, errors="ignore"):
         return False
 
 
-def check_gdac_option(path, errors:str="ignore", ignore_knowns:bool=True):  # noqa: C901
+def check_gdac_option(
+    path, errors: str = "ignore", ignore_knowns: bool = True
+):  # noqa: C901
     """Check if a path has the expected GDAC structure
 
     Expected GDAC structure::
@@ -341,7 +339,9 @@ def check_gdac_option(path, errors:str="ignore", ignore_knowns:bool=True):  # no
     :class:`argopy.stores.gdacfs`, :meth:`argopy.utils.list_gdac_servers`
 
     """
-    from .utils import list_gdac_servers  # import here, otherwise raises circular import
+    from .utils import (
+        list_gdac_servers,
+    )  # import here, otherwise raises circular import
 
     if path in list_gdac_servers() and ignore_knowns:
         return True
@@ -360,7 +360,7 @@ def check_gdac_option(path, errors:str="ignore", ignore_knowns:bool=True):  # no
             else:
                 return False
 
-        check1 = fs.exists('dac')
+        check1 = fs.exists("dac")
         if check1:
             return True
 
@@ -371,9 +371,11 @@ def check_gdac_option(path, errors:str="ignore", ignore_knowns:bool=True):  # no
             )
 
         elif errors == "warn":
-            warnings.warn("This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s" % path)
+            warnings.warn(
+                "This path is not GDAC compliant (no legitimate sub-folder `dac`):\n%s"
+                % path
+            )
             return False
 
         else:
             return False
-

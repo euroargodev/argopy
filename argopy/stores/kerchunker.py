@@ -385,7 +385,7 @@ class ArgoKerchunker:
                 return True
             except aiohttp.ClientResponseError:
                 raise
-            except:
+            except Exception:
                 return False
 
         if is_read(fs, str(ncfile)):

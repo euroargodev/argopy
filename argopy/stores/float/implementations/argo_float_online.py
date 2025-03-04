@@ -4,7 +4,6 @@ import logging
 from ....errors import DataNotFound
 from ... import httpstore
 from ..spec import ArgoFloatProto
-from .argo_float_offline import ArgoFloatOffline
 
 
 log = logging.getLogger("argopy.stores.ArgoFloat")
@@ -12,6 +11,7 @@ log = logging.getLogger("argopy.stores.ArgoFloat")
 
 class ArgoFloatOnline(ArgoFloatProto):
     """:class:`ArgoFloat` implementation using web access"""
+
     _online = True
     _eafleetmonitoring_server = "https://fleetmonitoring.euro-argo.eu"
     _technicaldata = None
@@ -34,10 +34,12 @@ class ArgoFloatOnline(ArgoFloatProto):
         points = {}
 
         # points['meta'] = f"{self._eafleetmonitoring_server}/floats/basic/{self.WMO}"
-        points['meta'] = f"{self._eafleetmonitoring_server}/floats/{self.WMO}"
+        points["meta"] = f"{self._eafleetmonitoring_server}/floats/{self.WMO}"
 
         # points['technical'] = f"{self._eafleetmonitoring_server}/technical-data/basic/{self.WMO}"
-        points['technical'] = f"{self._eafleetmonitoring_server}/technical-data/{self.WMO}"
+        points["technical"] = (
+            f"{self._eafleetmonitoring_server}/technical-data/{self.WMO}"
+        )
 
         return points
 
@@ -53,9 +55,9 @@ class ArgoFloatOnline(ArgoFloatProto):
         :class:`ArgoFloat.load_technicaldata`
         """
         try:
-            self._metadata = httpstore(cache=self.cache, cachedir=self.cachedir).open_json(
-                self.api_point['meta'], errors='raise'
-            )
+            self._metadata = httpstore(
+                cache=self.cache, cachedir=self.cachedir
+            ).open_json(self.api_point["meta"], errors="raise")
         except DataNotFound:
             # Try to load metadata from the meta file
             # to so, we first need the DAC name
@@ -82,7 +84,7 @@ class ArgoFloatOnline(ArgoFloatProto):
         """
         self._technicaldata = httpstore(
             cache=self.cache, cachedir=self.cachedir
-        ).open_json(self.api_point['technical'])
+        ).open_json(self.api_point["technical"])
 
         return self
 
@@ -98,10 +100,12 @@ class ArgoFloatOnline(ArgoFloatProto):
         try:
             # Get DAC from EA-Metadata API:
             self._dac = self.metadata["dataCenter"]["name"].lower()
-        except:
+        except Exception:
             try:
-                self._dac = self.idx.search_wmo(self.WMO).read_dac_wmo()[0][0] # Get DAC from Argo index
-            except:
+                self._dac = self.idx.search_wmo(self.WMO).read_dac_wmo()[0][
+                    0
+                ]  # Get DAC from Argo index
+            except Exception:
                 raise ValueError(
                     f"DAC name for Float {self.WMO} cannot be found from {self.host}"
                 )

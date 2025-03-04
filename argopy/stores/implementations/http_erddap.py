@@ -20,8 +20,6 @@ class httpstore_erddap_auth(httpstore):
     >>> fs.connect()
 
     """
-
-
     async def get_auth_client(self, **kwargs):
         session = aiohttp.ClientSession(**kwargs)
 
@@ -190,4 +188,3 @@ def httpstore_erddap(url: str = "", cache: bool = False, cachedir: str = "", **k
         return login_store
     else:
         return httpstore(cache=cache, cachedir=cachedir, **kwargs)
-

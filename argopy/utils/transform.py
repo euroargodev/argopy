@@ -350,7 +350,6 @@ def filter_param_by_data_mode(
         return ds.loc[dict(N_POINTS=filter)] if len(filter) > 0 else ds
 
 
-
 def split_data_mode(ds: xr.Dataset) -> xr.Dataset:
     """Convert PARAMETER_DATA_MODE(N_PROF, N_PARAM) into several <PARAM>_DATA_MODE(N_PROF) variables
 

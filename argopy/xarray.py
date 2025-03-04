@@ -22,7 +22,7 @@ try:
     with_dask = True
 except ModuleNotFoundError:
     with_dask = False
-    Delayed = lambda x: x
+    Delayed = lambda x: x  # noqa: E731
 
 
 from .utils import is_list_of_strings
@@ -1972,7 +1972,7 @@ class ArgoAccessor:
             compressor = Blosc(cname="zstd", clevel=3, shuffle=2)
             encoding = {}
             for v in self._obj:
-              encoding.update({v: {"compressor": compressor}})
+                encoding.update({v: {"compressor": compressor}})
             kwargs.update({'encoding': encoding})
 
         # Convert to a zarr file using compression:
