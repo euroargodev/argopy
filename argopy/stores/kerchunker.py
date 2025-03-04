@@ -51,8 +51,10 @@ class ArgoKerchunker:
 
         # Default store to manage zarr kerchunk data
         ak = ArgoKerchunker(store='memory')
+
         # Custom local storage folder:
         ak = ArgoKerchunker(store='local', root='kerchunk_data_folder')
+
         # or remote:
         ak = ArgoKerchunker(store=fsspec.filesystem('dir', path='s3://.../kerchunk_data_folder/', target_protocol='s3'))
 
@@ -111,7 +113,7 @@ class ArgoKerchunker:
             E.g., if an array contains 10,000bytes, and this value is 6000, there will
             be two output chunks, split on the biggest available dimension.
 
-            This argument is passed to :class:`kerchunk.netCDF3.NetCDF3ToZarr`.
+            This argument is passed to :class:`kerchunk.netCDF3.NetCDF3ToZarr` only.
         remote_options: dict, default=None
             Options passed to fsspec when opening netcdf file
 
