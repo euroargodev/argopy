@@ -167,9 +167,10 @@ class CanyonMED(ArgoAccessorExtension):
     @property
     def decimal_year(self):
         """Return the decimal year of the :class:`xr.Dataset` `TIME` variable"""
-        return self._obj['TIME'].dt.year + (86400 * self._obj['TIME'].dt.dayofyear
-                                            + 3600 * self._obj['TIME'].dt.hour
-                                            + self._obj['TIME'].dt.second) / (365.0 * 24 * 60 * 60)
+        time_array = self._obj[self._argo._TNAME]
+        return time_array.dt.year + (86400 * time_array.dt.dayofyear
+                                            + 3600 * time_array.dt.hour
+                                            + time_array.dt.second) / (365.0 * 24 * 60 * 60)
 
     def ds2df(self) -> pd.DataFrame:
         """Create a CANYON-MED input :class:`pd.DataFrame` from :class:`xr.Dataset`"""
