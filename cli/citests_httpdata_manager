@@ -1065,6 +1065,8 @@ def clear_data(target=None):
 def consolidate(target=None):
     """
     Check file content, if not what is expected, or some known errors, delete file and record in DB
+
+    todo: target is not used !
     """
     log.debug("Consolidate ...")
 
@@ -1073,36 +1075,49 @@ def consolidate(target=None):
     else:
         targets = [target]
 
-    L = Lister()
-    for t in targets:
-        n_delete = 0
-        if Path(DB_FILE).exists():
-            with open(DB_FILE, "r") as f:
-                URIs = json.load(f)
-            for item in URIs:
-                file_path = Path(DATA_FOLDER).joinpath(
-                    "%s.%s" % (item["sha"], item["ext"])
-                )
-                with open(file_path, mode="rb") as file:
-                    data = file.read()
-                if data[0:3] in [b"Err", b"<!D"] and item["ext"] in ["nc"]:
-                    print("🚨 Bad %s in %s" % (item["type"], file_path))
-                    print("▶ Record: ", item)
-                    print("▶ Content:", data[0:100])
-                    txt = "?"
-                    while txt.lower() not in ["y", "n", ""]:
-                        txt = input("Do you confirm to suppress this record ? [y]/n ")
-                    if txt == "y" or txt == "":
-                        n_delete += 1
-                        file_path.unlink()
-                        URIs.remove(item)
-            if n_delete > 0:
-                with open(DB_FILE, "w") as f:
-                    json.dump(URIs, f, indent=4)
-                print(
-                    "\tCleared %i files on disk and from registry because of bad content"
-                    % n_delete
-                )
+    n_delete = 0
+    if Path(DB_FILE).exists():
+        with open(DB_FILE, "r") as f:
+            URIs = json.load(f)
+        for item in URIs:
+            file_path = Path(DATA_FOLDER).joinpath(
+                "%s.%s" % (item["sha"], item["ext"])
+            )
+            with open(file_path, mode="rb") as file:
+                data = file.read()
+            # if data[0:3] in [b"Err", b"<!D"] and item["ext"] in ["nc"]:
+
+            if item["ext"] in ["nc"] and data[0:3] not in [b"CDF", b"\x89HD"]:
+                recommended = 'r'
+
+                if b"<title>502 Proxy Error</title>" in data:
+                    recommended = 'r'
+
+                if b"Not Found: Your query produced no matching results. (nRows = 0)" in data:
+                    recommended = 'k'
+
+                print("🚨 Unexpected %s content in: %s" % (item["type"], file_path))
+                print("▶ Record: ", item)
+                print("▶ Content[0:100] = ", data[0:100])
+                txt = "?"
+                while txt.lower() not in ["k", "r", ""]:
+                    txt = input("What do you want to do with this record ? [k]eep or [r]emove (we recommend '%s')" % recommended)
+                if txt == "" and recommended == 'r':
+                    txt = "r"
+
+                if txt == 'r':
+                    n_delete += 1
+                    file_path.unlink()
+                    URIs.remove(item)
+
+        if n_delete > 0:
+            with open(DB_FILE, "w") as f:
+                json.dump(URIs, f, indent=4)
+            print(
+                "\tCleared %i files on disk and from registry because of bad content"
+                % n_delete
+            )
+
     if n_delete == 0:
         print("Everything looks good so far !")
 
