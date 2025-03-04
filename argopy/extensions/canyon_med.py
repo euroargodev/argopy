@@ -4,6 +4,7 @@ import pandas as pd
 import xarray as xr
 from typing import Union, List
 
+from ..errors import InvalidDatasetStructure, DataNotFound
 from ..utils import path2assets, to_list
 from . import register_argo_accessor, ArgoAccessorExtension
 
@@ -57,6 +58,13 @@ class CanyonMED(ArgoAccessorExtension):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        if self._argo._type != "point":
+            raise InvalidDatasetStructure(
+                "Method only available for a collection of points"
+            )
+        if self._argo.N_POINTS == 0:
+            raise DataNotFound("Empty dataset, no data to transform !")
 
         self.n_list = 5
         self.path2coef = Path(path2assets).joinpath('canyon-med')
@@ -352,6 +360,6 @@ class CanyonMED(ArgoAccessorExtension):
 
         # Return xr.Dataset with predicted variables:
         if self._argo:
-            self._argo.add_history("Added CANYON-MED predictions")
+            self._argo.add_history("Added CANYON-MED predictions for [%s]" % (",".join(params)))
 
         return self._obj
