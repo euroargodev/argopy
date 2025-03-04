@@ -30,18 +30,13 @@ you can also work with the latest dev. version:
 Required dependencies
 ---------------------
 
-- aiohttp
+- xarray < 2024.3.0 This is because of `this issue <https://github.com/pydata/xarray/issues/8909>`_ (see also :issue:`390` and :issue:`404`). As of March 2025, a fix is on the way at `xarray <https://github.com/pydata/xarray/pull/9273>`_ but not yet available.
+- scipy and numpy < 2 because of the xarray limitation.
 - erddapy
-- fsspec
-- netCDF4
-- scipy
-- toolz
-- xarray < 2024.3.0 (because of `this issue <https://github.com/pydata/xarray/issues/8909>`_)
-- requests
-- decorator
-- packaging
-
-Note that Erddapy_ is required because `erddap <https://coastwatch.pfeg.noaa.gov/erddap/information.html>`_ is the default data fetching backend.
+- netCDF4 and h5netcdf
+- fsspec and toolz
+- requests and aiohttp
+- decorator and packaging
 
 Requirement dependencies details can be found `here <https://github.com/euroargodev/argopy/network/dependencies#requirements.txt>`_.
 
@@ -56,7 +51,6 @@ For a complete **argopy** experience, you may also consider to install the follo
 
 - gsw
 - tqdm
-- zarr
 
 **Performances**
 
@@ -64,15 +58,30 @@ For a complete **argopy** experience, you may also consider to install the follo
 - distributed
 - pyarrow
 
+**Files handling**
+
+- boto3 / s3fs
+- zarr
+- numcodecs
+- kerchunk
+
 **Visualisation**
 
-- IPython
 - cartopy
+- IPython
 - ipykernel
 - ipywidgets
 - matplotlib
+- pyproj
 - seaborn
 
+
+Environments
+------------
+
+You can simply use one of the **argopy** testing conda environments:
+
+https://github.com/euroargodev/argopy/tree/master/ci/requirements
 
 
 .. _Erddapy: https://github.com/ioos/erddapy
