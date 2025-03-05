@@ -28,7 +28,6 @@ dependencies:
 
 # EXT.FILES:
   - boto3
-  - h5netcdf
   - kerchunk
   - s3fs > 2023.12.12
   - zarr
