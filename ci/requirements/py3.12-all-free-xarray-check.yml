@@ -15,7 +15,7 @@ dependencies:
   - requests
   - scipy
   - toolz
-  - xarray > 2024.3 # to test if https://github.com/pydata/xarray/issues/8909 is solved
+#  - xarray > 2024.3 # to test if https://github.com/pydata/xarray/issues/8909 is solved
 
 # EXT.UTIL:
   - boto3
@@ -59,3 +59,4 @@ dependencies:
 # PIP:
   - pip:
       - pytest-reportlog
+      - git+https://github.com/pydata/xarray.git@backend-indexing

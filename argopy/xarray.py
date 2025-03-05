@@ -241,6 +241,20 @@ class ArgoAccessor:
         return cast_Argo_variable_type(ds, **kwargs)
 
     @property
+    def _TNAME(self):
+        """Internal handling of the time variable names
+
+        This allows the accessor to work with a dataset:
+        - post-processed internally by a datafetcher (where JULD has been renamed TIME)
+        - loaded from a raw netcdf
+
+        """
+        if "TIME" in self._obj:
+            return "TIME"
+        elif "JULD" in self._obj:
+            return "JULD"
+
+    @property
     def _dummy_argo_uid(self):
         if self._type == "point":
             return xr.DataArray(
@@ -327,7 +341,7 @@ class ArgoAccessor:
 
         idx = (
             xr.DataArray(
-                this["TIME"],
+                this[self._TNAME],
                 dims="N_POINTS",
                 coords={"N_POINTS": this["N_POINTS"]},
             )
@@ -356,7 +370,7 @@ class ArgoAccessor:
                     "CYCLE_NUMBER": "cyc",
                     "LONGITUDE": "longitude",
                     "LATITUDE": "latitude",
-                    "TIME": "date",
+                    self._TNAME: "date",
                 }
             )
             .drop(columns="dummy_argo_uid")
@@ -395,8 +409,8 @@ class ArgoAccessor:
             np.max(this_ds["LATITUDE"].values),
             Pmin,
             Pmax,
-            np.min(this_ds["TIME"].values),
-            np.max(this_ds["TIME"].values),
+            np.min(this_ds[self._TNAME].values),
+            np.max(this_ds[self._TNAME].values),
         ]
 
     def point2profile(self, drop: bool = False) -> xr.Dataset:  # noqa: C901
@@ -556,7 +570,7 @@ class ArgoAccessor:
             new_ds["LONGITUDE"] = new_ds["LONGITUDE"].isel(N_LEVELS=0)
 
         # Misc formatting
-        new_ds = new_ds.sortby("TIME")
+        new_ds = new_ds.sortby(self._TNAME)
         new_ds = (
             new_ds.argo.cast_types() if not drop else cast_Argo_variable_type(new_ds)
         )
@@ -619,14 +633,14 @@ class ArgoAccessor:
         (ds,) = xr.broadcast(ds)
         ds = ds.stack({"N_POINTS": list(ds.dims)})
         ds = ds.reset_index("N_POINTS").drop_vars(["N_PROF", "N_LEVELS"])
-        possible_coords = ["LATITUDE", "LONGITUDE", "TIME", "JULD", "N_POINTS"]
+        possible_coords = ["LATITUDE", "LONGITUDE", self._TNAME, "N_POINTS"]
         for c in [c for c in possible_coords if c in ds.data_vars]:
             ds = ds.set_coords(c)
 
         # Remove index without data (useless points)
         ds["PRES"].load()
         ds = ds.where(~np.isnan(ds["PRES"]), drop=1)
-        ds = ds.sortby("TIME") if "TIME" in ds else ds.sortby("JULD")
+        ds = ds.sortby(self._TNAME)
         ds["N_POINTS"] = np.arange(0, len(ds["N_POINTS"]))
         ds = cast_Argo_variable_type(ds, overwrite=False)
         ds = ds[np.sort(ds.data_vars)]
@@ -1489,7 +1503,7 @@ class ArgoAccessor:
             {
                 k: this[k]
                 for k in [
-                    "TIME",
+                    self._TNAME,
                     "LATITUDE",
                     "LONGITUDE",
                     "PRES",
@@ -1771,7 +1785,7 @@ class ArgoAccessor:
             # Compute fractional year:
             # https://github.com/euroargodev/dm_floats/blob/c580b15202facaa0848ebe109103abe508d0dd5b/src/ow_source/create_float_source.m#L334
             DATES = np.array(
-                [toYearFraction(d) for d in pd.to_datetime(this_one["TIME"].values)]
+                [toYearFraction(d) for d in pd.to_datetime(this_one[self._TNAME].values)]
             )[np.newaxis, :]
 
             # Read measurements:
