@@ -456,7 +456,7 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
         return column_names
 
 
-def check_gdac_path(path, errors:str="ignore", ignore_knowns:bool=False):  # noqa: C901
+def check_gdac_path(path, errors: str = "ignore", ignore_knowns: bool = False):  # noqa: C901
     """Check if a path has the expected GDAC structure
 
     Expected GDAC structure::
