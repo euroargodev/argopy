@@ -4,6 +4,7 @@ import pandas as pd
 import xarray as xr
 from typing import Union, List
 
+from ..errors import InvalidDatasetStructure, DataNotFound
 from ..utils import path2assets, to_list
 from . import register_argo_accessor, ArgoAccessorExtension
 
@@ -57,6 +58,13 @@ class CanyonMED(ArgoAccessorExtension):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        if self._argo._type != "point":
+            raise InvalidDatasetStructure(
+                "Method only available for a collection of points"
+            )
+        if self._argo.N_POINTS == 0:
+            raise DataNotFound("Empty dataset, no data to transform !")
 
         self.n_list = 5
         self.path2coef = Path(path2assets).joinpath('canyon-med')
@@ -159,9 +167,10 @@ class CanyonMED(ArgoAccessorExtension):
     @property
     def decimal_year(self):
         """Return the decimal year of the :class:`xr.Dataset` `TIME` variable"""
-        return self._obj['TIME'].dt.year + (86400 * self._obj['TIME'].dt.dayofyear
-                                            + 3600 * self._obj['TIME'].dt.hour
-                                            + self._obj['TIME'].dt.second) / (365.0 * 24 * 60 * 60)
+        time_array = self._obj[self._argo._TNAME]
+        return time_array.dt.year + (86400 * time_array.dt.dayofyear
+                                            + 3600 * time_array.dt.hour
+                                            + time_array.dt.second) / (365.0 * 24 * 60 * 60)
 
     def ds2df(self) -> pd.DataFrame:
         """Create a CANYON-MED input :class:`pd.DataFrame` from :class:`xr.Dataset`"""
@@ -352,6 +361,6 @@ class CanyonMED(ArgoAccessorExtension):
 
         # Return xr.Dataset with predicted variables:
         if self._argo:
-            self._argo.add_history("Added CANYON-MED predictions")
+            self._argo.add_history("Added CANYON-MED predictions for [%s]" % (",".join(params)))
 
         return self._obj
