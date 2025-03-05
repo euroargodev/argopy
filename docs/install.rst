@@ -20,7 +20,7 @@ or pip:
 
     pip install argopy
 
-you can also work with the latest dev. version:
+you can also work with the ongoing development version:
 
 .. code-block:: text
 
@@ -30,13 +30,18 @@ you can also work with the latest dev. version:
 Required dependencies
 ---------------------
 
-- xarray < 2024.3.0 This is because of `this issue <https://github.com/pydata/xarray/issues/8909>`_ (see also :issue:`390` and :issue:`404`). As of March 2025, a fix is on the way at `xarray <https://github.com/pydata/xarray/pull/9273>`_ but not yet available.
-- scipy and numpy < 2 because of the xarray limitation.
+- xarray < 2024.3.0 : because of `this issue <https://github.com/pydata/xarray/issues/8909>`_ (see also :issue:`390` and :issue:`404`). As of March 2025, a fix is on the way at `xarray <https://github.com/pydata/xarray/pull/9273>`_ but not yet available.
+- scipy
+- numpy < 2 : because of the xarray limitation above
 - erddapy
-- netCDF4 and h5netcdf
-- fsspec and toolz
-- requests and aiohttp
-- decorator and packaging
+- netCDF4
+- h5netcdf
+- fsspec
+- toolz
+- requests
+- aiohttp
+- decorator
+- packaging
 
 Requirement dependencies details can be found `here <https://github.com/euroargodev/argopy/network/dependencies#requirements.txt>`_.
 
