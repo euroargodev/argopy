@@ -8,14 +8,15 @@ What's New
 |pypi dwn| |conda dwn|
 
 
-Coming up next
---------------
+v1.1.0 (XX March 2025)
+----------------------
 
 .. versionadded:: v1.1.0
 
     Most new features in this version can be considered *advanced tools*, since they require a more intimate knowledge
     of the Argo dataset. Therefore, we re-organised and completed the **argopy** documentation to give them more visibility.
 
+.. _v1.1.0-features:
 
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -59,6 +60,8 @@ Features and front-end API
     GreenCoding().footprint_all_releases()
     GreenCoding().footprint_baseline()
 
+.. _v1.1.0-internals:
+
 Internals
 ^^^^^^^^^
 
@@ -94,6 +97,8 @@ Internals
 - The :class:`Dataset.argo.canyon_med` predictor raises errors if not dealing with a collection of Argo points. (:pr:`450`) by |gmaze|.
 
 - Make the :class:`Dataset.argo` accessor and its extensions able to work with dataset from a :class:`DataFetcher` and from a :class:`ArgoFloat`. This was necessary because the time variable does not have the same name in these dataset (``TIME`` vs ``JULD``). But this point should be addressed later. (:pr:`450`) by |gmaze|.
+
+.. _v1.1.0-energy:
 
 Energy
 ^^^^^^

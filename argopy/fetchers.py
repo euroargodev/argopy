@@ -134,9 +134,15 @@ class ArgoDataFetcher:
                 )
             self._cache = self.fetcher_kwargs["cache"]
 
-        os.makedirs(self.fetcher_kwargs.get("cachedir", OPTIONS["cachedir"]), exist_ok=True)
-        self._cachedir = VALIDATE("cachedir", self.fetcher_kwargs.get("cachedir", OPTIONS["cachedir"]))
-        self._parallel = VALIDATE("parallel", self.fetcher_kwargs.get("parallel", OPTIONS["parallel"]))
+        os.makedirs(
+            self.fetcher_kwargs.get("cachedir", OPTIONS["cachedir"]), exist_ok=True
+        )
+        self._cachedir = VALIDATE(
+            "cachedir", self.fetcher_kwargs.get("cachedir", OPTIONS["cachedir"])
+        )
+        self._parallel = VALIDATE(
+            "parallel", self.fetcher_kwargs.get("parallel", OPTIONS["parallel"])
+        )
 
         # Init sub-methods:
         self.fetcher = None
@@ -145,7 +151,10 @@ class ArgoDataFetcher:
                 "The '%s' dataset is not available for the '%s' data source"
                 % (self._dataset_id, self._src)
             )
-        [fetcher_kwargs.pop(k, None) for k in ['ds', 'mode', 'cache', 'cachedir', 'parallel']]
+        [
+            fetcher_kwargs.pop(k, None)
+            for k in ["ds", "mode", "cache", "cachedir", "parallel"]
+        ]
         self.fetcher_options = {
             **{
                 "ds": self._dataset_id,
@@ -156,7 +165,7 @@ class ArgoDataFetcher:
             },
             **fetcher_kwargs,
         }
-        delattr(self, 'fetcher_kwargs')
+        delattr(self, "fetcher_kwargs")
 
         self.define_postprocessor()
         self._AccessPoint = None
@@ -178,7 +187,9 @@ class ArgoDataFetcher:
                 "The 'argovis' data source fetching is only available in 'standard' user mode"
             )
         if self._src == "gdac" and "bgc" in self._dataset_id:
-            warnings.warn("BGC data support with the 'gdac' data source is still in Work In Progress")
+            warnings.warn(
+                "BGC data support with the 'gdac' data source is still in Work In Progress"
+            )
 
     @property
     def _icon_user_mode(self):
@@ -191,9 +202,9 @@ class ArgoDataFetcher:
 
     @property
     def _icon_dataset(self):
-        if self._dataset_id in ['bgc', 'bgc-s']:
+        if self._dataset_id in ["bgc", "bgc-s"]:
             return "🟢"
-        elif self._dataset_id in ['phy']:
+        elif self._dataset_id in ["phy"]:
             return "🟡+🔵"
 
     @property
@@ -228,14 +239,20 @@ class ArgoDataFetcher:
             parallel_txt = "True [%s]" % parallel_method
         else:
             parallel_txt = "False"
-        return "%s Performances: cache=%s, parallel=%s" % (self._icon_performances, str(self._cache), parallel_txt)
+        return "%s Performances: cache=%s, parallel=%s" % (
+            self._icon_performances,
+            str(self._cache),
+            parallel_txt,
+        )
 
     def __repr__(self):
         if self.fetcher:
             summary = [self.fetcher.__repr__()]
         else:
-            summary = ["<datafetcher.%s> 'No access point initialised'" % self._src,
-                       "Available access points: %s" % ", ".join(self.Fetchers.keys())]
+            summary = [
+                "<datafetcher.%s> 'No access point initialised'" % self._src,
+                "Available access points: %s" % ", ".join(self.Fetchers.keys()),
+            ]
 
         summary.append(self._repr_user_mode)
         summary.append(self._repr_dataset)
@@ -353,8 +370,11 @@ class ArgoDataFetcher:
         """
         # If data are not loaded yet, with the gdac and erddap+bgc,
         # we can rely on the fetcher ArgoIndex to make an answer faster
-        if (self._src == "erddap" and "bgc" in self._dataset_id) or (
-            self._src == "gdac") and (not isinstance(self._data, xr.Dataset)):
+        if (
+            (self._src == "erddap" and "bgc" in self._dataset_id)
+            or (self._src == "gdac")
+            and (not isinstance(self._data, xr.Dataset))
+        ):
             idx = self.fetcher.indexfs
             if self._AccessPoint == "region":
                 # Convert data box to index box (remove depth info):

@@ -12,7 +12,7 @@ from .checkers import check_cyc, check_wmo
 log = logging.getLogger("argopy.utils.format")
 
 
-redact = lambda s, n: s[:n] + '*' * max(0, len(s) - n)
+redact = lambda s, n: s[:n] + '*' * max(0, len(s) - n)  # noqa: E731
 
 
 def format_oneline(s, max_width=65):

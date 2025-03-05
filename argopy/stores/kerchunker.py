@@ -51,8 +51,10 @@ class ArgoKerchunker:
 
         # Default store to manage zarr kerchunk data
         ak = ArgoKerchunker(store='memory')
+
         # Custom local storage folder:
         ak = ArgoKerchunker(store='local', root='kerchunk_data_folder')
+
         # or remote:
         ak = ArgoKerchunker(store=fsspec.filesystem('dir', path='s3://.../kerchunk_data_folder/', target_protocol='s3'))
 
@@ -68,7 +70,7 @@ class ArgoKerchunker:
     .. code-block:: python
         :caption: Examples
 
-        # Create an instance that will save netcdf to zarr translation data on a local folder "kerchunk_data_folder" for later re-use (or sharing):
+        # Create an instance that will save netcdf to zarr translation data on a local folder "kerchunk_data_folder" for later reuse (or sharing):
         ak = ArgoKerchunker(store='local', root='kerchunk_data_folder')
 
         # Let's consider a remote Argo netcdf file from a server supporting lazy access
@@ -111,7 +113,7 @@ class ArgoKerchunker:
             E.g., if an array contains 10,000bytes, and this value is 6000, there will
             be two output chunks, split on the biggest available dimension.
 
-            This argument is passed to :class:`kerchunk.netCDF3.NetCDF3ToZarr`.
+            This argument is passed to :class:`kerchunk.netCDF3.NetCDF3ToZarr` only.
         remote_options: dict, default=None
             Options passed to fsspec when opening netcdf file
 
@@ -351,7 +353,7 @@ class ArgoKerchunker:
             backend_kwargs={
                 "consolidated": False,
                 "storage_options": {
-                    "fo": self.to_kerchunk(ncfile, **kwargs),
+                    "fo": self.to_kerchunk(ncfile, **kwargs),  # codespell:ignore
                     "remote_protocol": remote_protocol,
                     "remote_options": self.remote_options,
                 },
@@ -385,7 +387,7 @@ class ArgoKerchunker:
                 return True
             except aiohttp.ClientResponseError:
                 raise
-            except:
+            except Exception:
                 return False
 
         if is_read(fs, str(ncfile)):
