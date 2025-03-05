@@ -43,7 +43,7 @@ Required dependencies
 - decorator
 - packaging
 
-Requirement dependencies details can be found `here <https://github.com/euroargodev/argopy/network/dependencies#requirements.txt>`_.
+Requirement dependencies details can be found `here <https://github.com/euroargodev/argopy/blob/master/requirements.txt>`_.
 
 The **argopy** software is `continuously tested <https://github.com/euroargodev/argopy/actions?query=workflow%3Atests>`_ under latest OS (Linux, Mac OS and Windows) and with python versions 3.10 and 3.11
 
@@ -84,9 +84,9 @@ For a complete **argopy** experience, you may also consider to install the follo
 Environments
 ------------
 
-You can simply use one of the **argopy** testing conda environments:
+You can simply use one of the **argopy** testing conda environments listed here: https://github.com/euroargodev/argopy/tree/master/ci/requirements
 
-https://github.com/euroargodev/argopy/tree/master/ci/requirements
+You can also look at this section of the documentation :ref:`contributing.dev_envc`
 
 
 .. _Erddapy: https://github.com/ioos/erddapy
