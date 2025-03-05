@@ -16,6 +16,7 @@ v1.1.0 (XX March 2025)
     Most new features in this version can be considered *advanced tools*, since they require a more intimate knowledge
     of the Argo dataset. Therefore, we re-organised and completed the **argopy** documentation to give them more visibility.
 
+.. _v1.1.0-features:
 
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -59,6 +60,8 @@ Features and front-end API
     GreenCoding().footprint_all_releases()
     GreenCoding().footprint_baseline()
 
+.. _v1.1.0-internals:
+
 Internals
 ^^^^^^^^^
 
@@ -91,6 +94,7 @@ Internals
 
 - Fix bug raising an error when exporting a dataset to netcdf after erddap fetch, :issue:`412`. (:pr:`413`) by |gmaze|.
 
+.. _v1.1.0-energy:
 
 Energy
 ^^^^^^
