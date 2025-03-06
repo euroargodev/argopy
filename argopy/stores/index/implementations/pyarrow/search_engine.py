@@ -15,7 +15,7 @@ from .....errors import InvalidDatasetStructure
 from .....utils import is_indexbox, check_wmo, check_cyc, to_list
 from .....utils import register_accessor
 from ...spec import ArgoIndexSearchEngine
-# from ..index_s3 import search_s3
+from ..index_s3 import search_s3
 from .index import indexstore
 
 log = logging.getLogger("argopy.stores.index.pa")
@@ -53,7 +53,7 @@ def register_ArgoIndex_accessor(name):
 @register_ArgoIndex_accessor('query')
 class SearchEngine(ArgoIndexSearchEngine):
 
-    # @search_s3
+    @search_s3
     def wmo(self, WMOs, nrows=None, composed=False):
         def checker(WMOs):
             WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
@@ -88,7 +88,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             self._obj.search_type.update(namer(WMOs))
             return search_filter
 
-    # @search_s3
+    @search_s3
     def cyc(self, CYCs, nrows=None, composed=False):
         def checker(CYCs):
             if self._obj.convention in ["ar_index_global_meta"]:
@@ -129,7 +129,7 @@ class SearchEngine(ArgoIndexSearchEngine):
             self._obj.search_type.update(namer(CYCs))
             return search_filter
 
-    # @search_s3
+    @search_s3
     def wmo_cyc(self, WMOs, CYCs, nrows=None, composed=False):
         def chercker(WMOs, CYCs):
             if self._obj.convention in ["ar_index_global_meta"]:
@@ -449,10 +449,7 @@ class SearchEngine(ArgoIndexSearchEngine):
                     data_mode = to_list(PARAMs[param])
                     filt.append(filt_parameter_data_mode(self._obj, param, data_mode))
 
-            if logical == "and":
-                return np.logical_and.reduce(filt)
-            else:
-                return np.logical_or.reduce(filt)
+            return self._obj._reduce_a_filter_list(filt, op=logical)
 
         PARAMs = checker(PARAMs)
         self._obj.load(nrows=self._obj._nrows_index)
