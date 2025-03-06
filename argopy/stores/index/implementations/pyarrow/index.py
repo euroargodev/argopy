@@ -1,34 +1,42 @@
-from abc import abstractmethod
-
 import numpy as np
 import pandas as pd
 import logging
+import io
 import gzip
+from packaging import version
 from pathlib import Path
 from typing import List
 
-from ....errors import DataNotFound, InvalidDatasetStructure
-from ....utils.checkers import check_index_cols, is_indexbox, check_wmo, check_cyc
-from ....utils.casting import to_list
-from ..spec import ArgoIndexStoreProto
-from .index_s3 import search_s3
+try:
+    import pyarrow.csv as csv  # noqa: F401
+    import pyarrow as pa
+    import pyarrow.parquet as pq  # noqa: F401
+    import pyarrow.compute as pc  # noqa: F401
+except ModuleNotFoundError:
+    pass
+
+from .....errors import DataNotFound, InvalidDatasetStructure
+from .....utils import check_index_cols, is_indexbox, check_wmo, check_cyc
+from .....utils import to_list
+from .....utils import deprecated
+from ...spec import ArgoIndexStoreProto
 
 
-log = logging.getLogger("argopy.stores.index.pd")
+log = logging.getLogger("argopy.stores.index.pa")
 
 
 class indexstore(ArgoIndexStoreProto):
-    """Argo GDAC index store using :class:`pandas.DataFrame` as internal storage format.
+    """Argo GDAC index store using :class:`pyarrow.Table` as internal storage format.
 
-    With this store, index and search results are saved as pickle files in cache
+    With this store, index and search results are saved as pyarrow/parquet files in cache
 
     """
 
     # __doc__ += ArgoIndexStoreProto.__doc__
 
-    backend = "pandas"
+    backend = "pyarrow"
 
-    ext = "pd"
+    ext = "pq"
     """Storage file extension"""
 
     def __init__(self, **kwargs):
@@ -39,24 +47,55 @@ class indexstore(ArgoIndexStoreProto):
 
         Returns
         -------
-        :class:`pandas.DataFrame`
+        self
         """
 
         def read_csv(input_file, nrows=None):
-            this_table = pd.read_csv(
+            # pyarrow doesn't have a concept of 'nrows' but it's really important
+            # for partial downloading of the giant prof index
+            # This is totally copied from: https://github.com/ArgoCanada/argopandas/blob/master/argopandas/global_index.py#L20
+            if nrows is not None:
+                buf = io.BytesIO()
+                n = 0
+                for line in input_file:
+                    n += 1
+                    buf.write(line)
+                    if n >= (nrows + 8 + 1):
+                        break
+
+                buf.seek(0)
+                return read_csv(buf, nrows=None)
+
+            # log.debug("Index source file: %s (%s bytes)" % (type(input_file), sys.getsizeof(input_file)))
+            # Possible input_file type:
+            # _io.BufferedReader
+            # _io.BytesIO
+            # gzip.GzipFile
+            this_table = csv.read_csv(
                 input_file,
-                sep=",",
-                index_col=None,
-                header=0,
-                skiprows=self.skip_rows,
-                nrows=nrows,
+                read_options=csv.ReadOptions(
+                    use_threads=True, skip_rows=self.skip_rows
+                ),
+                convert_options=csv.ConvertOptions(
+                    column_types={
+                        "date": pa.timestamp("s"),  # , tz="utc"
+                        "date_update": pa.timestamp("s"),
+                    },
+                    timestamp_parsers=["%Y%m%d%H%M%S"],
+                ),
             )
+            # Using tz="utc" was raising this error:
+            # pyarrow.lib.ArrowInvalid: In CSV column  # 7: CSV conversion error to timestamp[s, tz=utc]: expected a
+            # zone offset in '20181011180520'. If these timestamps are in local time, parse them as timestamps without
+            # timezone, then call assume_timezone. If using strptime, ensure '%z' is in the format string.
+            # So I removed the option in c0a15ec68013c78d83f2689a8f9c062fdfa160ab
             return this_table
 
         def csv2index(obj):
             index = read_csv(obj, nrows=nrows)
+            # log.debug(index.column_names)
             check_index_cols(
-                index.columns.to_list(),
+                index.column_names,
                 convention=self.convention,
             )
             return index
@@ -78,25 +117,22 @@ class indexstore(ArgoIndexStoreProto):
                 with self.fs["src"].open(self.index_path, "rb") as f:
                     self.index = csv2index(f)
             log.debug(
-                "Argo index file loaded with Pandas read_csv from '%s'"
+                "Argo index file loaded with Pyarrow csv.read_csv from '%s'"
                 % self.index_path
             )
-            if self.cache:
-                self.fs["src"].fs.save_cache()
             self._nrows_index = nrows
 
         def save2cache(path_in_cache):
             self._write(self.fs["client"], path_in_cache, self.index, fmt=self.ext)
-            self.index = self._read(self.fs["client"], path_in_cache, fmt=self.ext)
+            self.index = self._read(self.fs["client"].fs, path_in_cache)
             self.index_path_cache = path_in_cache
             log.debug(
-                "Argo index saved in cache as a Pandas dataframe at '%s'"
-                % path_in_cache
+                "Argo index saved in cache as a Pyarrow table at '%s'" % path_in_cache
             )
 
         def loadfromcache(path_in_cache):
             log.debug(
-                "Argo index already in cache as a Pandas dataframe, loading from '%s'"
+                "Argo index already in cache as a Pyarrow table, loading from '%s'"
                 % path_in_cache
             )
             self.index = self._read(self.fs["client"].fs, path_in_cache, fmt=self.ext)
@@ -113,14 +149,19 @@ class indexstore(ArgoIndexStoreProto):
                 save2cache(index_path_cache)
 
         else:
-            if not hasattr(self, "index"):
+            if not hasattr(self, "index") or (
+                hasattr(self, "index") and getattr(self, "index") is None
+            ):
                 if self.cache:
                     if self.fs["client"].exists(index_path_cache):
+                        log.debug("Loading index from cache")
                         loadfromcache(index_path_cache)
                     else:
+                        log.debug("Loading index from scratch and saving to cache")
                         download(nrows=nrows)
                         save2cache(index_path_cache)
                 else:
+                    log.debug("Loading index from scratch")
                     download(nrows=nrows)
 
         if self.N_RECORDS == 0:
@@ -142,9 +183,11 @@ class indexstore(ArgoIndexStoreProto):
 
         search_path_cache = search2cache_path(self.search_path, nrows=nrows)
 
-        if self.cache and self.fs["client"].exists(search_path_cache):
+        if self.cache and self.fs["client"].exists(
+            search_path_cache
+        ):  # and self._same_origin(search_path_cache):
             log.debug(
-                "Search results already in cache as a Pandas dataframe, loading from '%s'"
+                "Search results already in memory as a Pyarrow table, loading from '%s'"
                 % search_path_cache
             )
             self.search = self._read(
@@ -156,11 +199,11 @@ class indexstore(ArgoIndexStoreProto):
             this_filter = np.nonzero(self.search_filter)[0]
             n_match = this_filter.shape[0]
             if nrows is not None and n_match > 0:
-                self.search = self.index.head(np.min([nrows, n_match])).reset_index(
-                    drop=True
+                self.search = self.index.take(
+                    this_filter.take(range(np.min([nrows, n_match])))
                 )
             else:
-                self.search = self.index[self.search_filter].reset_index(drop=True)
+                self.search = self.index.filter(self.search_filter)
 
             log.debug(
                 "Found %i/%i matches" % (self.search.shape[0], self.index.shape[0])
@@ -169,12 +212,10 @@ class indexstore(ArgoIndexStoreProto):
                 self._write(
                     self.fs["client"], search_path_cache, self.search, fmt=self.ext
                 )
-                self.search = self._read(
-                    self.fs["client"].fs, search_path_cache, fmt=self.ext
-                )
+                self.search = self._read(self.fs["client"].fs, search_path_cache)
                 self.search_path_cache.commit(search_path_cache)
                 log.debug(
-                    "Search results saved in cache as a Pandas dataframe at '%s'"
+                    "Search results saved in cache as a Pyarrow table at '%s'"
                     % search_path_cache
                 )
         return self
@@ -195,21 +236,21 @@ class indexstore(ArgoIndexStoreProto):
                 )
             else:
                 src = "search results"
-                df = self.search.copy()
+                df = self.search.to_pandas()
         else:
             src = "full index"
             if not hasattr(self, "index"):
                 self.load(nrows=nrows)
-            df = self.index.copy()
+            df = self.index.to_pandas()
 
         return df, src
 
     @property
     def search_path(self):
         """Path to search result uri"""
-        # return self.host + "/" + self.index_file + "." + self.sha_df
+        # return self.host + "/" + self.index_file + "." + self.sha_pq
         return self.fs["client"].fs.sep.join(
-            [self.host, "%s.%s" % (self.index_file, self.sha_df)]
+            [self.host, "%s.%s" % (self.index_file, self.sha_pq)]
         )
 
     @property
@@ -217,7 +258,9 @@ class indexstore(ArgoIndexStoreProto):
         """File paths listed in the index"""
         sep = self.fs["src"].fs.sep
         return [
-            sep.join([self.host.replace("/idx", ""), "dac", f.replace("/", sep)])
+            sep.join(
+                [self.host.replace("/idx", ""), "dac", f.as_py().replace("/", sep)]
+            )
             for f in self.index["file"]
         ]
 
@@ -226,7 +269,9 @@ class indexstore(ArgoIndexStoreProto):
         """File paths listed in search results"""
         sep = self.fs["src"].fs.sep
         return [
-            sep.join([self.host.replace("/idx", ""), "dac", f.replace("/", sep)])
+            sep.join(
+                [self.host.replace("/idx", ""), "dac", f.as_py().replace("/", sep)]
+            )
             for f in self.search["file"]
         ]
 
@@ -235,7 +280,9 @@ class indexstore(ArgoIndexStoreProto):
         """File paths listed in search results"""
         sep = self.fs["src"].fs.sep
         return [
-            sep.join(["dac", f.replace("/", sep)])
+            sep.join(
+                ["dac", f.as_py().replace("/", sep)]
+            )
             for f in self.search["file"]
         ]
 
@@ -244,7 +291,9 @@ class indexstore(ArgoIndexStoreProto):
         """File paths listed in the index"""
         sep = self.fs["src"].fs.sep
         return [
-            sep.join(["dac", f.replace("/", sep)])
+            sep.join(
+                ["dac", f.as_py().replace("/", sep)]
+            )
             for f in self.index["file"]
         ]
 
@@ -258,10 +307,19 @@ class indexstore(ArgoIndexStoreProto):
         list(int)
         """
         if hasattr(self, "search") and not index:
-            results = self.search["file"].apply(lambda x: int(x.split("/")[1]))
+            results = pa.compute.split_pattern(self.search["file"], pattern="/")
         else:
-            results = self.index["file"].apply(lambda x: int(x.split("/")[1]))
-        wmo = np.unique(results)
+            if not hasattr(self, "index"):
+                self.load(nrows=self._nrows_index)
+            results = pa.compute.split_pattern(self.index["file"], pattern="/")
+        df = results.to_pandas()
+
+        def fct(row):
+            return row[1]
+
+        wmo = df.map(fct)
+        wmo = wmo.unique()
+        wmo = [int(w) for w in wmo]
         return wmo
 
     def read_dac_wmo(self, index=False):
@@ -274,10 +332,25 @@ class indexstore(ArgoIndexStoreProto):
         tuple
         """
         if hasattr(self, "search") and not index:
-            results = self.search["file"].apply(lambda x: (x.split("/")[0:2]))
+            results = pa.compute.split_pattern(
+                self.search["file"], pattern="/", max_splits=2
+            )
         else:
-            results = self.index["file"].apply(lambda x: (x.split("/")[0:2]))
-        results = tuple(results.drop_duplicates())
+            if not hasattr(self, "index"):
+                self.load(nrows=self._nrows_index)
+            results = pa.compute.split_pattern(
+                self.index["file"], pattern="/", max_splits=2
+            )
+
+        results = pa.compute.split_pattern(
+            pa.compute.binary_join(
+                pa.compute.list_slice(results, start=0, stop=2), "/"
+            ).unique(),
+            pattern="/",
+            max_splits=2,
+        ).to_pylist()
+
+        results = tuple(results)
         for ifloat, (dac, wmo) in enumerate(results):
             results[ifloat][1] = int(wmo)
 
@@ -292,31 +365,34 @@ class indexstore(ArgoIndexStoreProto):
                     "No data found in the index corresponding to your search criteria."
                     " Search definition: %s" % self.cname
                 )
-            df = self.search["parameters"]
+            df = pa.compute.split_pattern(
+                self.search["parameters"], pattern=" "
+            ).to_pandas()
         else:
             if not hasattr(self, "index"):
-                self.load()
-            df = self.index["parameters"]
-        if df.shape[0] > 0:
-            plist = set(df[0].split(" "))
-            fct = lambda row: len([plist.add(v) for v in row.split(" ")])  # noqa: E731
-            df.map(fct)
-            return sorted(list(plist))
-        else:
-            raise DataNotFound("This index is empty")
+                self.load(nrows=self._nrows_index)
+            df = pa.compute.split_pattern(
+                self.index["parameters"], pattern=" "
+            ).to_pandas()
+        plist = set(df[0])
+        fct = lambda row: len([plist.add(v) for v in row])  # noqa: E731
+        df.map(fct)
+        return sorted(list(plist))
 
     def read_domain(self, index=False):
         if "longitude" not in self.convention_columns:
-            raise InvalidDatasetStructure("Cannot list parameters in this index")
-        tmin = lambda x: pd.to_datetime(str(int(x.min()))).to_numpy()
-        tmax = lambda x: pd.to_datetime(str(int(x.max()))).to_numpy()
+            raise InvalidDatasetStructure("Cannot search for coordinates in this index")
+        max = lambda x: pa.compute.max(x).as_py()
+        min = lambda x: pa.compute.min(x).as_py()
+        tmin = lambda x: pd.to_datetime(min(x)).to_numpy()
+        tmax = lambda x: pd.to_datetime(max(x)).to_numpy()
 
         if hasattr(self, "search") and not index:
             return [
-                self.search["longitude"].min(),
-                self.search["longitude"].max(),
-                self.search["latitude"].min(),
-                self.search["latitude"].max(),
+                min(self.search["longitude"]),
+                max(self.search["longitude"]),
+                min(self.search["latitude"]),
+                max(self.search["latitude"]),
                 tmin(self.search["date"]),
                 tmax(self.search["date"]),
             ]
@@ -324,10 +400,10 @@ class indexstore(ArgoIndexStoreProto):
             if not hasattr(self, "index"):
                 self.load()
             return [
-                self.index["longitude"].min(),
-                self.index["longitude"].max(),
-                self.index["latitude"].min(),
-                self.index["latitude"].max(),
+                min(self.index["longitude"]),
+                max(self.index["longitude"]),
+                min(self.index["latitude"]),
+                max(self.index["latitude"]),
                 tmin(self.index["date"]),
                 tmax(self.index["date"]),
             ]
@@ -335,28 +411,34 @@ class indexstore(ArgoIndexStoreProto):
     def records_per_wmo(self, index=False):
         """Return the number of records per unique WMOs in search results
 
-            Fall back on full index if search not triggered
-
-        Returns
-        -------
-        dict
+        Fall back on full index if search not triggered
         """
         ulist = self.read_wmo()
         count = {}
         for wmo in ulist:
             if hasattr(self, "search") and not index:
-                search_filter = self.search["file"].str.contains(
-                    "/%i/" % wmo, regex=True, case=False
+                search_filter = pa.compute.match_substring_regex(
+                    self.search["file"], pattern="/%i/" % wmo
                 )
-                count[wmo] = self.search[search_filter].shape[0]
+                count[wmo] = self.search.filter(search_filter).shape[0]
             else:
-                search_filter = self.index["file"].str.contains(
-                    "/%i/" % wmo, regex=True, case=False
+                if not hasattr(self, "index"):
+                    self.load(nrows=self._nrows_index)
+                search_filter = pa.compute.match_substring_regex(
+                    self.index["file"], pattern="/%i/" % wmo
                 )
-                count[wmo] = self.index[search_filter].shape[0]
+                count[wmo] = self.index.filter(search_filter).shape[0]
         return count
 
-    @search_s3
+    def _reduce_a_filter_list(self, filters, op="or"):
+        if version.parse(pa.__version__) < version.parse("7.0"):
+            filters = [i.to_pylist() for i in filters]
+        if op == "or":
+            return np.logical_or.reduce(filters)
+        elif op == "and":
+            return np.logical_and.reduce(filters)
+
+    @deprecated("this method is replaced by the `ArgoIndex().query.wmo()`", version="1.1.0")
     def search_wmo(self, WMOs, nrows=None):
         WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
         log.debug(
@@ -368,13 +450,15 @@ class indexstore(ArgoIndexStoreProto):
         filt = []
         for wmo in WMOs:
             filt.append(
-                self.index["file"].str.contains("/%i/" % wmo, regex=True, case=False)
+                pa.compute.match_substring_regex(
+                    self.index["file"], pattern="/%i/" % wmo
+                )
             )
-        self.search_filter = np.logical_or.reduce(filt)
+        self.search_filter = self._reduce_a_filter_list(filt)
         self.run(nrows=nrows)
         return self
 
-    @search_s3
+    @deprecated("this method is replaced by the `ArgoIndex().query.cyc()`", version="1.1.0")
     def search_cyc(self, CYCs, nrows=None):
         if self.convention in ["ar_index_global_meta"]:
             raise InvalidDatasetStructure(
@@ -394,13 +478,13 @@ class indexstore(ArgoIndexStoreProto):
             else:
                 pattern = "_%0.4d.nc" % (cyc)
             filt.append(
-                self.index["file"].str.contains(pattern, regex=True, case=False)
+                pa.compute.match_substring_regex(self.index["file"], pattern=pattern)
             )
-        self.search_filter = np.logical_or.reduce(filt)
+        self.search_filter = self._reduce_a_filter_list(filt)
         self.run(nrows=nrows)
         return self
 
-    @search_s3
+    @deprecated("this method is replaced by the `ArgoIndex().query.compose()`", version="1.1.0")
     def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
         if self.convention in ["ar_index_global_meta"]:
             raise InvalidDatasetStructure(
@@ -425,66 +509,87 @@ class indexstore(ArgoIndexStoreProto):
                 else:
                     pattern = "%i_%0.4d.nc" % (wmo, cyc)
                 filt.append(
-                    self.index["file"].str.contains(pattern, regex=True, case=False)
+                    pa.compute.match_substring_regex(
+                        self.index["file"], pattern=pattern
+                    )
                 )
-        self.search_filter = np.logical_or.reduce(filt)
+        self.search_filter = self._reduce_a_filter_list(filt)
         self.run(nrows=nrows)
         return self
 
+    @deprecated("this method is replaced by the `ArgoIndex().query.date()`", version="1.1.0")
     def search_tim(self, BOX, nrows=None):
         key = "date"
         if "longitude" not in self.convention_columns:
-            raise InvalidDatasetStructure("Cannot search coordinates in this index")
+            raise InvalidDatasetStructure("Cannot search for coordinates in this index")
         is_indexbox(BOX)
         log.debug("Argo index searching for %s in BOX=%s ..." % (key, BOX))
         self.load(nrows=self._nrows_index)
         self.search_type = {"BOX": BOX}
-        tim_min = int(pd.to_datetime(BOX[4]).strftime("%Y%m%d%H%M%S"))
-        tim_max = int(pd.to_datetime(BOX[5]).strftime("%Y%m%d%H%M%S"))
         filt = []
-        filt.append(self.index[key].ge(tim_min))
-        filt.append(self.index[key].le(tim_max))
-        self.search_filter = np.logical_and.reduce(filt)
+        filt.append(
+            pa.compute.greater_equal(
+                pa.compute.cast(self.index[key], pa.timestamp("ms")),
+                pa.array([pd.to_datetime(BOX[4])], pa.timestamp("ms"))[0],
+            )
+        )
+        filt.append(
+            pa.compute.less_equal(
+                pa.compute.cast(self.index[key], pa.timestamp("ms")),
+                pa.array([pd.to_datetime(BOX[5])], pa.timestamp("ms"))[0],
+            )
+        )
+        self.search_filter = self._reduce_a_filter_list(filt, op="and")
         self.run(nrows=nrows)
         return self
 
+    @deprecated("this method is replaced by the `ArgoIndex().query.compose()`", version="1.1.0")
     def search_lat_lon(self, BOX, nrows=None):
         if "longitude" not in self.convention_columns:
-            raise InvalidDatasetStructure("Cannot search coordinates in this index")
+            raise InvalidDatasetStructure("Cannot search for coordinates in this index")
         is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon in BOX=%s ..." % BOX)
         self.load(nrows=self._nrows_index)
         self.search_type = {"BOX": BOX}
         filt = []
-        filt.append(self.index["longitude"].ge(BOX[0]))
-        filt.append(self.index["longitude"].le(BOX[1]))
-        filt.append(self.index["latitude"].ge(BOX[2]))
-        filt.append(self.index["latitude"].le(BOX[3]))
-        self.search_filter = np.logical_and.reduce(filt)
+        filt.append(pa.compute.greater_equal(self.index["longitude"], BOX[0]))
+        filt.append(pa.compute.less_equal(self.index["longitude"], BOX[1]))
+        filt.append(pa.compute.greater_equal(self.index["latitude"], BOX[2]))
+        filt.append(pa.compute.less_equal(self.index["latitude"], BOX[3]))
+        self.search_filter = self._reduce_a_filter_list(filt, op="and")
         self.run(nrows=nrows)
         return self
 
+    @deprecated("this method is replaced by the `ArgoIndex().query.compose()`", version="1.1.0")
     def search_lat_lon_tim(self, BOX, nrows=None):
         if "longitude" not in self.convention_columns:
-            raise InvalidDatasetStructure("Cannot search coordinates in this index")
+            raise InvalidDatasetStructure("Cannot search for coordinates in this index")
         is_indexbox(BOX)
         log.debug("Argo index searching for lat/lon/time in BOX=%s ..." % BOX)
         self.load(nrows=self._nrows_index)
         self.search_type = {"BOX": BOX}
-        tim_min = int(pd.to_datetime(BOX[4]).strftime("%Y%m%d%H%M%S"))
-        tim_max = int(pd.to_datetime(BOX[5]).strftime("%Y%m%d%H%M%S"))
         filt = []
-        filt.append(self.index["date"].ge(tim_min))
-        filt.append(self.index["date"].le(tim_max))
-        filt.append(self.index["longitude"].ge(BOX[0]))
-        filt.append(self.index["longitude"].le(BOX[1]))
-        filt.append(self.index["latitude"].ge(BOX[2]))
-        filt.append(self.index["latitude"].le(BOX[3]))
-        self.search_filter = np.logical_and.reduce(filt)
+        filt.append(pa.compute.greater_equal(self.index["longitude"], BOX[0]))
+        filt.append(pa.compute.less_equal(self.index["longitude"], BOX[1]))
+        filt.append(pa.compute.greater_equal(self.index["latitude"], BOX[2]))
+        filt.append(pa.compute.less_equal(self.index["latitude"], BOX[3]))
+        filt.append(
+            pa.compute.greater_equal(
+                pa.compute.cast(self.index["date"], pa.timestamp("ms")),
+                pa.array([pd.to_datetime(BOX[4])], pa.timestamp("ms"))[0],
+            )
+        )
+        filt.append(
+            pa.compute.less_equal(
+                pa.compute.cast(self.index["date"], pa.timestamp("ms")),
+                pa.array([pd.to_datetime(BOX[5])], pa.timestamp("ms"))[0],
+            )
+        )
+        self.search_filter = self._reduce_a_filter_list(filt, op="and")
         self.run(nrows=nrows)
         return self
 
-    def search_params(self, PARAMs, logical: bool = "and", nrows=None):
+    def search_params(self, PARAMs, nrows=None, logical="and"):
         if "parameters" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot search for parameters in this index")
         log.debug("Argo index searching for parameters in PARAM=%s ..." % PARAMs)
@@ -492,20 +597,18 @@ class indexstore(ArgoIndexStoreProto):
         self.load(nrows=self._nrows_index)
         self.search_type = {"PARAM": PARAMs, "logical": logical}
         filt = []
-        self.index["variables"] = self.index["parameters"].apply(lambda x: x.split())
         for param in PARAMs:
-            filt.append(self.index["variables"].apply(lambda x: param in x))
-        self.index = self.index.drop("variables", axis=1)
-        if logical == "and":
-            self.search_filter = np.logical_and.reduce(filt)
-        else:
-            self.search_filter = np.logical_or.reduce(filt)
+            filt.append(
+                pa.compute.match_substring_regex(
+                    self.index["parameters"],
+                    options=pa.compute.MatchSubstringOptions(param, ignore_case=True),
+                )
+            )
+        self.search_filter = self._reduce_a_filter_list(filt, op=logical)
         self.run(nrows=nrows)
         return self
 
-    def search_parameter_data_mode(
-        self, PARAMs: dict, logical: bool = "and", nrows=None
-    ):
+    def search_parameter_data_mode(self, PARAMs: dict, nrows=None, logical="and"):
         if self.convention not in [
             "ar_index_global_prof",
             "argo_synthetic-profile_index",
@@ -537,35 +640,40 @@ class indexstore(ArgoIndexStoreProto):
         filt = []
 
         if self.convention in ["ar_index_global_prof"]:
+
+            def filt_parameter_data_mode(this_idx, this_dm):
+                def fct(this_x):
+                    dm = str(this_x.split("/")[-1])[0]
+                    return dm in this_dm
+
+                x = this_idx.index["file"].to_numpy()
+                return np.array(list(map(fct, x)))
+
             for param in PARAMs:
                 data_mode = to_list(PARAMs[param])
-                filt.append(
-                    self.index["file"].apply(
-                        lambda x: str(x.split("/")[-1])[0] in data_mode
-                    )
-                )
+                filt.append(filt_parameter_data_mode(self, data_mode))
 
         elif self.convention in [
             "argo_bio-profile_index",
             "argo_synthetic-profile_index",
         ]:
-            self.index["variables"] = self.index["parameters"].apply(
-                lambda x: x.split()
-            )
+
+            def filt_parameter_data_mode(this_idx, this_param, this_dm):
+                def fct(this_x, this_y):
+                    variables = this_x.split()
+                    return (
+                        this_y[variables.index(this_param)]
+                        if this_param in variables
+                        else ""
+                    ) in this_dm
+
+                x = this_idx.index["parameters"].to_numpy()
+                y = this_idx.index["parameter_data_mode"].to_numpy()
+                return np.array(list(map(fct, x, y)))
+
             for param in PARAMs:
                 data_mode = to_list(PARAMs[param])
-                filt.append(
-                    self.index.apply(
-                        lambda x: (
-                            x["parameter_data_mode"][x["variables"].index(param)]
-                            if param in x["variables"]
-                            else ""
-                        )
-                        in data_mode,
-                        axis=1,
-                    )
-                )
-            self.index = self.index.drop("variables", axis=1)
+                filt.append(filt_parameter_data_mode(self, param, data_mode))
 
         if logical == "and":
             self.search_filter = np.logical_and.reduce(filt)
@@ -581,22 +689,13 @@ class indexstore(ArgoIndexStoreProto):
         log.debug("Argo index searching for profiler type in %s ..." % profiler_type)
         self.load(nrows=self._nrows_index)
         self.search_type = {"PTYPE": profiler_type}
-        self.search_filter = (
-            self.index["profiler_type"].fillna(99999).astype(int).isin(profiler_type)
+        self.search_filter = pa.compute.is_in(
+            self.index["profiler_type"], pa.array(profiler_type)
         )
         self.run(nrows=nrows)
         return self
 
-    def search_profiler_label(self, profiler_label: str, nrows=None):
-        if "profiler_type" not in self.convention_columns:
-            raise InvalidDatasetStructure("Cannot search for profilers in this index)")
-        log.debug("Argo index searching for profiler label '%s' ..." % profiler_label)
-        type_contains = lambda x: [key for key, value in self._r8.items() if x in str(value)]
-        self.load(nrows=self._nrows_index)
-        self.search_type = {"PLABEL": profiler_label}
-        return self.search_profiler_type(type_contains(profiler_label))
-
-    def to_indexfile(self, outputfile):
+    def to_indexfile(self, file):
         """Save search results on file, following the Argo standard index formats
 
         Parameters
@@ -608,15 +707,45 @@ class indexstore(ArgoIndexStoreProto):
         -------
         str
         """
-        columns = self.convention_columns
-        self.search.to_csv(
-            outputfile,
-            sep=",",
-            index=False,
-            index_label=False,
-            header=False,
-            columns=columns,
-        )
-        outputfile = self._insert_header(outputfile)
 
-        return outputfile
+        def convert_a_date(row):
+            try:
+                return row.strftime("%Y%m%d%H%M%S")
+            except Exception:
+                return ""
+
+        s = self.search
+
+        if self.convention not in [
+            "ar_index_global_meta",
+        ]:
+            new_date = pa.array(self.search["date"].to_pandas().apply(convert_a_date))
+
+        new_date_update = pa.array(
+            self.search["date_update"].to_pandas().apply(convert_a_date)
+        )
+
+        if self.convention not in [
+            "ar_index_global_meta",
+        ]:
+            s = s.set_column(1, "date", new_date)
+
+        if self.convention == "ar_index_global_prof":
+            s = s.set_column(7, "date_update", new_date_update)
+        elif self.convention in [
+            "argo_bio-profile_index",
+            "argo_synthetic-profile_index",
+        ]:
+            s = s.set_column(9, "date_update", new_date_update)
+        elif self.convention in ["argo_aux-profile_index"]:
+            s = s.set_column(8, "date_update", new_date_update)
+        elif self.convention in ["ar_index_global_meta"]:
+            s = s.set_column(3, "date_update", new_date_update)
+
+        write_options = csv.WriteOptions(
+            delimiter=",", include_header=False, quoting_style="none"
+        )
+        csv.write_csv(s, file, write_options=write_options)
+        file = self._insert_header(file)
+
+        return file
