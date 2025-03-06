@@ -1302,6 +1302,12 @@ class ArgoIndexExtension:
     def __init__(self, obj):
         self._obj = obj
 
+
+class ArgoIndexSearchEngine:
+    """Prototype for SearchEngine extensions
+
+    All SearchEngine extensions should inherit from this class
+    """
     def compose(self, query: dict, nrows=None):
         search_filters = []
         for entry, arg in query.items():
