@@ -560,7 +560,7 @@ class indexstore(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
-    @deprecated("this method is replaced by the `ArgoIndex().query.compose()`", version="1.1.0")
+    @deprecated("this method is replaced by the `ArgoIndex().query.box()`", version="1.1.0")
     def search_lat_lon_tim(self, BOX, nrows=None):
         if "longitude" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot search for coordinates in this index")
@@ -589,6 +589,7 @@ class indexstore(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
+    @deprecated("this method is replaced by the `ArgoIndex().query.params()`", version="1.1.0")
     def search_params(self, PARAMs, nrows=None, logical="and"):
         if "parameters" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot search for parameters in this index")
@@ -608,6 +609,7 @@ class indexstore(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
+    @deprecated("this method is replaced by the `ArgoIndex().query.parameter_data_mode()`", version="1.1.0")
     def search_parameter_data_mode(self, PARAMs: dict, nrows=None, logical="and"):
         if self.convention not in [
             "ar_index_global_prof",
@@ -682,6 +684,7 @@ class indexstore(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
+    @deprecated("this method is replaced by the `ArgoIndex().query.profiler_type()`", version="1.1.0")
     def search_profiler_type(self, profiler_type: List[int], nrows=None):
         if "profiler_type" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot search for profilers in this index)")
