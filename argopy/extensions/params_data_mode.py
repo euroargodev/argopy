@@ -3,17 +3,14 @@ import xarray as xr
 import logging
 import time
 from typing import Union, List
-import copy
 
 from ..utils import to_list, list_core_parameters
-from ..utils.transform import (
+from ..utils import (
     split_data_mode,
     merge_param_with_param_adjusted,
     filter_param_by_data_mode,
 )
-from ..stores import (
-    indexstore_pd as ArgoIndex,
-)  # make sure we work with a Pandas index store
+from ..stores import ArgoIndex
 from ..errors import InvalidDatasetStructure
 
 from . import register_argo_accessor, ArgoAccessorExtension
