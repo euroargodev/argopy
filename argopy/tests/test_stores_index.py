@@ -17,7 +17,8 @@ from argopy.errors import (
     InvalidDatasetStructure,
 )
 from argopy.utils.checkers import is_list_of_strings, is_wmo
-from argopy.stores import indexstore_pd, ArgoFloat
+from argopy.stores.index import indexstore_pd
+from argopy.stores import ArgoFloat
 from utils import create_temp_folder
 from mocked_http import mocked_httpserver, mocked_server_address
 
@@ -540,7 +541,7 @@ class Test_IndexStore_pandas_BGC_bio(IndexStore_test_proto):
 @skip_CORE
 class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto):
     network = "core"
-    from argopy.stores import indexstore_pa
+    from argopy.stores.index import indexstore_pa
 
     indexstore = indexstore_pa
     index_file = "ar_index_global_prof.txt"
@@ -551,7 +552,7 @@ class Test_IndexStore_pyarrow_CORE(IndexStore_test_proto):
 @skip_BGCs
 class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
     network = "bgc"
-    from argopy.stores import indexstore_pa
+    from argopy.stores.index import indexstore_pa
 
     indexstore = indexstore_pa
     index_file = "argo_bio-profile_index.txt"
@@ -562,7 +563,7 @@ class Test_IndexStore_pyarrow_BGC_bio(IndexStore_test_proto):
 @skip_BGCb
 class Test_IndexStore_pyarrow_BGC_synthetic(IndexStore_test_proto):
     network = "bgc"
-    from argopy.stores import indexstore_pa
+    from argopy.stores.index import indexstore_pa
 
     indexstore = indexstore_pa
     index_file = "argo_synthetic-profile_index.txt"
