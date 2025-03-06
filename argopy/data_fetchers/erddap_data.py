@@ -24,10 +24,7 @@ from ..options import OPTIONS, PARALLEL_SETUP
 from ..utils.lists import list_bgc_s_variables, list_core_parameters
 from ..utils.decorators import deprecated
 from ..errors import ErddapServerError, DataNotFound
-from ..stores import httpstore, has_distributed, distributed
-from ..stores import (
-    indexstore_pd as ArgoIndex,
-)  # make sure we work with the Pandas index store
+from ..stores import ArgoIndex, httpstore, has_distributed, distributed
 from ..utils import is_list_of_strings, to_list, Chunker
 from .proto import ArgoDataFetcherProto
 from .erddap_data_processors import pre_process
