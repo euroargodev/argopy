@@ -1,7 +1,7 @@
-from .index.implementations.pyarrow.index import (
+from .implementations.pyarrow.index import (
     indexstore as indexstore_pa,
 )  # noqa: F401
-from .index.implementations.pandas.index import (
+from .implementations.pandas.index import (
     indexstore as indexstore_pd,
 )  # noqa: F401
 
