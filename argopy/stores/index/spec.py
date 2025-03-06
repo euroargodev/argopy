@@ -272,7 +272,7 @@ class ArgoIndexStoreProto(ABC):
             summary.append("In memory: True (%i records)" % self.N_RECORDS)
         elif "s3" in self.host:
             summary.append(
-                "In memory: False [But there's no need to load the full index with a S3 host to make a search]"
+                "In memory: False [But there's no need to load the full index with a S3 host to make wmo/cycles searches]"
             )
         else:
             summary.append("In memory: False")
