@@ -1,5 +1,3 @@
-from abc import abstractmethod
-
 import numpy as np
 import pandas as pd
 import logging
@@ -7,12 +5,12 @@ import gzip
 from pathlib import Path
 from typing import List
 
-from ....errors import DataNotFound, InvalidDatasetStructure
-from ....utils import check_index_cols, is_indexbox, check_wmo, check_cyc
-from ....utils import to_list
-from ....utils import register_accessor, deprecated
-from ..spec import ArgoIndexStoreProto, ArgoIndexExtension
-from .index_s3 import search_s3
+from .....errors import DataNotFound, InvalidDatasetStructure
+from .....utils import check_index_cols, is_indexbox, check_wmo, check_cyc
+from .....utils import to_list
+from .....utils import deprecated
+from ...spec import ArgoIndexStoreProto
+from ..index_s3 import search_s3
 
 
 log = logging.getLogger("argopy.stores.index.pd")
@@ -357,6 +355,13 @@ class indexstore(ArgoIndexStoreProto):
                 count[wmo] = self.index[search_filter].shape[0]
         return count
 
+    def _reduce_a_filter_list(self, filters, op="or"):
+        if op == "or":
+            return np.logical_or.reduce(filters)
+        elif op == "and":
+            return np.logical_and.reduce(filters)
+
+
     @deprecated("this method is replaced by the `ArgoIndex().query.wmo()`", version="1.1.0")
     def search_wmo(self, WMOs, nrows=None):
         WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
@@ -375,7 +380,7 @@ class indexstore(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
-    @search_s3
+    @deprecated("this method is replaced by the `ArgoIndex().query.cyc()`", version="1.1.0")
     def search_cyc(self, CYCs, nrows=None):
         if self.convention in ["ar_index_global_meta"]:
             raise InvalidDatasetStructure(
@@ -401,7 +406,7 @@ class indexstore(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
-    @search_s3
+    @deprecated("this method is replaced by the `ArgoIndex().query.compose()`", version="1.1.0")
     def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
         if self.convention in ["ar_index_global_meta"]:
             raise InvalidDatasetStructure(
@@ -432,6 +437,7 @@ class indexstore(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
+    @deprecated("this method is replaced by the `ArgoIndex().query.date()`", version="1.1.0")
     def search_tim(self, BOX, nrows=None):
         key = "date"
         if "longitude" not in self.convention_columns:
@@ -449,6 +455,7 @@ class indexstore(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
+    @deprecated("this method is replaced by the `ArgoIndex().query.compose()`", version="1.1.0")
     def search_lat_lon(self, BOX, nrows=None):
         if "longitude" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot search coordinates in this index")
@@ -465,6 +472,7 @@ class indexstore(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
+    @deprecated("this method is replaced by the `ArgoIndex().query.box()`", version="1.1.0")
     def search_lat_lon_tim(self, BOX, nrows=None):
         if "longitude" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot search coordinates in this index")
@@ -485,6 +493,7 @@ class indexstore(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
+    @deprecated("this method is replaced by the `ArgoIndex().query.params()`", version="1.1.0")
     def search_params(self, PARAMs, logical: bool = "and", nrows=None):
         if "parameters" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot search for parameters in this index")
@@ -504,6 +513,7 @@ class indexstore(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
+    @deprecated("this method is replaced by the `ArgoIndex().query.parameter_data_mode()`", version="1.1.0")
     def search_parameter_data_mode(
         self, PARAMs: dict, logical: bool = "and", nrows=None
     ):
@@ -575,6 +585,7 @@ class indexstore(ArgoIndexStoreProto):
         self.run(nrows=nrows)
         return self
 
+    @deprecated("this method is replaced by the `ArgoIndex().query.profiler_type()`", version="1.1.0")
     def search_profiler_type(self, profiler_type: List[int], nrows=None):
         if "profiler_type" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot search for profilers in this index)")
@@ -587,15 +598,6 @@ class indexstore(ArgoIndexStoreProto):
         )
         self.run(nrows=nrows)
         return self
-
-    def search_profiler_label(self, profiler_label: str, nrows=None):
-        if "profiler_type" not in self.convention_columns:
-            raise InvalidDatasetStructure("Cannot search for profilers in this index)")
-        log.debug("Argo index searching for profiler label '%s' ..." % profiler_label)
-        type_contains = lambda x: [key for key, value in self._r8.items() if x in str(value)]
-        self.load(nrows=self._nrows_index)
-        self.search_type = {"PLABEL": profiler_label}
-        return self.search_profiler_type(type_contains(profiler_label))
 
     def to_indexfile(self, outputfile):
         """Save search results on file, following the Argo standard index formats
@@ -621,61 +623,3 @@ class indexstore(ArgoIndexStoreProto):
         outputfile = self._insert_header(outputfile)
 
         return outputfile
-
-
-def register_ArgoIndex_accessor(name):
-    """A decorator to register an accessor as a custom property on :class:`ArgoIndex` objects.
-
-    Parameters
-    ----------
-    name : str
-        Name under which the accessor should be registered. A warning is issued
-        if this name conflicts with a preexisting attribute.
-
-    Examples
-    --------
-    .. code-block:: python
-
-        @register_ArgoIndex_accessor('query')
-        class SearchEngine(ArgoIndexExtension):
-
-             def __init__(self, *args, **kwargs):
-                 super().__init__(*args, **kwargs)
-
-             def wmo(self, WMOs):
-                 return WMOs
-
-    It will be available to an ArgoIndex object, like this::
-
-        ArgoIndex().query.wmo(WMOs)
-    """
-    return register_accessor(name, indexstore)
-
-
-@register_ArgoIndex_accessor('query')
-class SearchEngine(ArgoIndexExtension):
-
-    # @search_s3
-    def wmo(self, WMOs, nrows=None, composed=False):
-        WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
-        log.debug(
-            "Argo index searching for WMOs=[%s] ..."
-            % ";".join([str(wmo) for wmo in WMOs])
-        )
-        self._obj.load(nrows=self._obj._nrows_index)
-        if not composed:
-            self._obj.search_type = {"WMO": WMOs}
-        else:
-            self._obj.search_type.update({"WMO": WMOs})
-        filt = []
-        for wmo in WMOs:
-            filt.append(
-                self._obj.index["file"].str.contains("/%i/" % wmo, regex=True, case=False)
-            )
-        search_filter = self._obj._reduce_a_filter_list(filt)
-        if not composed:
-            self._obj.search_filter = search_filter
-            self._obj.run(nrows=nrows)
-            return self._obj
-        else:
-            return search_filter
