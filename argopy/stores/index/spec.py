@@ -18,10 +18,10 @@ else:
 
 from ...options import OPTIONS
 from ...errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError, InvalidDatasetStructure
-from ...utils.checkers import isconnected, has_aws_credentials
-from ...utils.accessories import Registry
-from ...utils.chunking import Chunker
-from ...utils.lists import shortcut2gdac
+from ...utils import isconnected, has_aws_credentials, to_list
+from ...utils import Registry
+from ...utils import Chunker
+from ...utils import shortcut2gdac
 from .. import httpstore, memorystore, filestore, ftpstore, s3store
 from .implementations.index_s3 import get_a_s3index
 
@@ -1303,15 +1303,69 @@ class ArgoIndexExtension:
         self._obj = obj
 
 
-class ArgoIndexSearchEngine:
-    """Prototype for SearchEngine extensions
+class ArgoIndexSearchEngine(ArgoIndexExtension):
+    """Prototype for a SearchEngine extension for any backend"""
+    def profiler_label(self, profiler_label: str, nrows=None, composed=False):
+        """Search index for profiler types with a given string in their label
 
-    All SearchEngine extensions should inherit from this class
-    """
+        Parameters
+        ----------
+        profiler_label: str
+            The string to be found in the R8 Argo Reference table label
+
+        Examples
+        --------
+        .. code-block:: python
+
+            idx.query.profiler_label('ARVOR')
+
+        See Also
+        --------
+        :class:`ArgoIndex.query.profiler_type`
+        """
+        def checker(profiler_label):
+            if "profiler_type" not in self._obj.convention_columns:
+                raise InvalidDatasetStructure("Cannot search for profiler labels in this index)")
+            log.debug("Argo index searching for profiler label '%s' ..." % profiler_label)
+            profiler_label = to_list(profiler_label)
+            profiler_type = []
+            for ptype, long_name in self._obj._r8.items():
+                for label in profiler_label:
+                    if label in long_name:
+                        profiler_type.append(ptype)
+            return profiler_type
+
+        def namer(profiler_label):
+            self._obj.search_type.pop('PTYPE')
+            return {"PLABEL": profiler_label}
+
+        def composer(profiler_type):
+            return self.profiler_type(profiler_type, nrows=nrows, composed=True)
+
+        profiler_type = checker(profiler_label)
+        self._obj.load(nrows=self._obj._nrows_index)
+        search_filter = composer(profiler_type)
+        if not composed:
+            self._obj.search_type = namer(profiler_label)
+            self._obj.search_filter = search_filter
+            self._obj.run(nrows=nrows)
+            return self._obj
+        else:
+            self._obj.search_type.update(namer(profiler_label))
+            return search_filter
+
     def compose(self, query: dict, nrows=None):
-        search_filters = []
+        self._obj.search_type = {}
+        filters = []
         for entry, arg in query.items():
-            search_filters.append(getattr(self, entry)(arg, nrows=nrows, composed=True))
-        self._obj.search_filter = self._obj._reduce_a_filter_list(search_filters, op='and')
+            searcher = getattr(self, entry)
+            if not isinstance(arg, tuple):
+                filter = searcher(arg, composed=True)
+            else:
+                kw = arg[1]
+                kw.update({'composed': True})
+                filter = searcher(arg[0], **kw)
+            filters.append(filter)
+        self._obj.search_filter = self._obj._reduce_a_filter_list(filters, op='and')
         self._obj.run(nrows=nrows)
         return self._obj
