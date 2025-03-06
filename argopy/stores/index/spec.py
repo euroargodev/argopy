@@ -251,8 +251,8 @@ class ArgoIndexStoreProto(ABC):
                 self.index_file += ".gz"
 
         if isinstance(self.fs["src"], s3store):
-            # If the index host is on a S3 store, we add another file system that will bypass some
-            # search methods to improve performances.
+            # If the index host is on a S3 store, we add another file system that will be called to
+            # bypass some search methods to improve performances.
             self.fs["s3"] = get_a_s3index(self.convention)
             # Adjust S3 bucket name and key with host and index file names:
             self.fs["s3"].bucket_name = Path(split_protocol(self.host)[1]).parts[0]
@@ -1288,3 +1288,24 @@ file,profiler_type,institution,date_update
         This is different from a usual argopy ``box`` because dates are in :class:`numpy.datetime64` format.
         """
         return self.read_domain()
+
+
+class ArgoIndexExtension:
+    """Prototype for ArgoIndex extensions
+
+    All extensions should inherit from this class
+
+    This prototype makes available:
+
+    - the :class:`ArgoIndex` instance as ``self._obj``
+    """
+    def __init__(self, obj):
+        self._obj = obj
+
+    def compose(self, query: dict, nrows=None):
+        search_filters = []
+        for entry, arg in query.items():
+            search_filters.append(getattr(self, entry)(arg, nrows=nrows, composed=True))
+        self._obj.search_filter = self._obj._reduce_a_filter_list(search_filters, op='and')
+        self._obj.run(nrows=nrows)
+        return self._obj
