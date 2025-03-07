@@ -73,7 +73,7 @@ __all__ = (
     # Advanced Argo data stores:
     "ArgoFloat",  # Class
     "ArgoIndex",  # Class
-    "gdacfs", # Class
+    "gdacfs",  # Class
 
     # Submodules:
     # "utils",

@@ -703,6 +703,7 @@ class ArgoIndexStoreProto(ABC):
                 df["dac"] = df["file"].apply(lambda x: x.split("/")[0])
 
                 profiler_dictionary = self._r8
+
                 def ev(x):
                     try:
                         return int(x)
@@ -1058,7 +1059,7 @@ class ArgoIndexStoreProto(ABC):
         if "profiler_type" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot search for profilers in this index)")
         log.debug("Argo index searching for profiler label '%s' ..." % profiler_label)
-        type_contains = lambda x: [key for key, value in self._r8.items() if x in str(value)]
+        type_contains = lambda x: [key for key, value in self._r8.items() if x in str(value)]  # noqa: E731
         self.load(nrows=self._nrows_index)
         self.search_type = {"PLABEL": profiler_label}
         return self.search_profiler_type(type_contains(profiler_label))
@@ -1230,7 +1231,6 @@ file,profiler_type,institution,date_update
         """
         return self._copy(deep=deep)
 
-
     def iterfloats(self, index=False, chunksize: int = None):
         """Iterate over unique Argo floats in the full index or search results
 
@@ -1279,7 +1279,6 @@ file,profiler_type,institution,date_update
         else:
             for wmo in wmos:
                 yield ArgoFloat(wmo, idx=self)
-
 
     @property
     def domain(self):

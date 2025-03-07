@@ -3,7 +3,6 @@ import xarray as xr
 import logging
 import time
 from typing import Union, List
-import copy
 
 from ..utils import to_list, list_core_parameters
 from ..utils.transform import (

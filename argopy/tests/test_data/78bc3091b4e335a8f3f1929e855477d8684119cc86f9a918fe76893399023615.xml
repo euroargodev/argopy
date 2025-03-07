@@ -264,7 +264,8 @@
     <pav:hasCurrentVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/CP/1/"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/">
-    <pav:authoredOn>2020-04-04 15:05:33.0</pav:authoredOn>
+    <pav:hasVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/1/"/>
+    <pav:authoredOn>2024-12-11 11:08:38.0</pav:authoredOn>
     <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
     <skos:related rdf:resource="http://vocab.nerc.ac.uk/collection/P06/current/UPOX/"/>
     <skos:definition xml:lang="en">Dissolved oxygen concentration (umol/l) uncorrected for salinity and pressure effects.</skos:definition>
@@ -272,16 +273,15 @@
     <owl:deprecated>false</owl:deprecated>
     <skos:note xml:lang="en">accepted</skos:note>
     <dc:identifier>SDN:R03::MOLAR_DOXY</dc:identifier>
-    <skos:prefLabel xml:lang="en">Uncompensated (pressure and salinity) oxygen concentration reported
-by the oxygen sensor</skos:prefLabel>
-    <owl:versionInfo>1</owl:versionInfo>
-    <dc:date>2020-04-04 15:05:33.0</dc:date>
+    <skos:prefLabel xml:lang="en">Uncompensated (pressure and salinity) oxygen concentration reported by the oxygen sensor</skos:prefLabel>
+    <owl:versionInfo>2</owl:versionInfo>
+    <dc:date>2024-12-11 11:08:38.0</dc:date>
     <skos:altLabel>MOLAR_DOXY</skos:altLabel>
     <skos:notation>SDN:R03::MOLAR_DOXY</skos:notation>
     <owl:sameAs rdf:resource="http://vocab.nerc.ac.uk/collection/P01/current/DOXYMMOP/"/>
-    <pav:version>1</pav:version>
+    <pav:version>2</pav:version>
     <dce:identifier>SDN:R03::MOLAR_DOXY</dce:identifier>
-    <pav:hasCurrentVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/1/"/>
+    <pav:hasCurrentVersion rdf:resource="http://vocab.nerc.ac.uk/collection/R03/current/MOLAR_DOXY/2/"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://vocab.nerc.ac.uk/collection/R03/current/TEMP_NITRATE/">
     <pav:authoredOn>2020-04-04 15:05:33.0</pav:authoredOn>
@@ -832,8 +832,8 @@ by the oxygen sensor</skos:prefLabel>
     <dc:description>Terms describing individual measured phenomena, used to mark up sets of data in Argo netCDF arrays. Argo netCDF variables PARAMETER and TRAJECTORY_PARAMETERS are populated by R03 altLabel; R03 altLabel is also used to name netCDF profile files parameter variables &lt;PARAMETER&gt;.</dc:description>
     <dc:title>Argo parameter codes</dc:title>
     <skos:prefLabel>Argo parameter codes</skos:prefLabel>
-    <owl:versionInfo>7</owl:versionInfo>
-    <dc:date>2024-08-21 03:00:01.0</dc:date>
+    <owl:versionInfo>8</owl:versionInfo>
+    <dc:date>2024-12-12 02:00:01.0</dc:date>
     <skos:altLabel>PARAMETER</skos:altLabel>
     <dc:creator>Argo Data Management Team</dc:creator>
     <dc:alternative>PARAMETER</dc:alternative>

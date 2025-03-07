@@ -19,4 +19,3 @@ class s3store(httpstore):
     """
 
     protocol = "s3"
-

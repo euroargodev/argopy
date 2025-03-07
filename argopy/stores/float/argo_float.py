@@ -2,7 +2,7 @@
 If client is online (connected to the web) we work with the 'online' implementation
 otherwise we fall back on an offline implementation.
 
-The choice is really meaningfull when the client is using a local host. In this case
+The choice is really meaningful when the client is using a local host. In this case
 we don't know if client intends to be online or offline, so we check and implement.
 
 """

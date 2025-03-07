@@ -182,4 +182,3 @@ class ArgoStoreProto(ABC):
     @abstractmethod
     def read_csv(self):
         raise NotImplementedError("Not implemented")
-
