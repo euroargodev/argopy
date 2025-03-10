@@ -308,7 +308,7 @@ class httpstore(ArgoStoreProto):
                     "backend_kwargs": {
                         "consolidated": False,
                         "storage_options": {
-                            "fo": self.ak.to_kerchunk(url, overwrite=akoverwrite),
+                            "fo": self.ak.to_kerchunk(url, overwrite=akoverwrite),  # codespell:ignore
                             "remote_protocol": fsspec.core.split_protocol(url)[0],
                         },
                     },
@@ -318,7 +318,7 @@ class httpstore(ArgoStoreProto):
                 warnings.warn(
                     "This url does not support byte range requests so we cannot load it lazily, falling back on loading in memory."
                 )
-                log.debug("This url does not support byte range requests: %s" % url)
+                log.debug("This url does not support byte range requests: %s" % self.full_path(url))
                 return load_in_memory(
                     url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts
                 )
@@ -656,7 +656,7 @@ class httpstore(ArgoStoreProto):
 
         if "lazy" in open_dataset_opts and open_dataset_opts["lazy"] and concat:
             warnings.warn(
-                "Lazy openning and concatenate multiple netcdf files is not yet supported. Ignoring the 'lazy' option."
+                "Lazy opening and concatenate multiple netcdf files is not yet supported. Ignoring the 'lazy' option."
             )
             open_dataset_opts["lazy"] = False
 

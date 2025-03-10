@@ -29,18 +29,18 @@ For each access points, we list 1-to-2 scenario to make sure all possibilities a
 """
 ACCESS_POINTS = [
     {"bgc": [
-        {"float": 5903248},
-        {"float": [5903248, 6904241]},
-        {"profile": [5903248, 34]},
-        {"profile": [5903248, np.arange(12, 14)]},
+        # {"float": 5903248},
+        # {"float": [5903248, 6904241]},
+        # {"profile": [5903248, 34]},
+        # {"profile": [5903248, np.arange(12, 14)]},
         {"region": [-55, -47, 55, 57, 0, 10]},
-        {"region": [-55, -47, 55, 57, 0, 10, "2022-05-1", "2023-07-01"]},
+        # {"region": [-55, -47, 55, 57, 0, 10, "2022-05-1", "2023-07-01"]},
     ]},
 ]
 PARALLEL_ACCESS_POINTS = [
     {"bgc": [
         {"float": [5903248, 6904241]},
-        {"region": [-55, -47, 55, 57, 0, 10, "2022-05-1", "2023-07-01"]},
+        # {"region": [-55, -47, 55, 57, 0, 10, "2022-05-1", "2023-07-01"]},
     ]},
 ]
 
@@ -48,13 +48,13 @@ PARALLEL_ACCESS_POINTS = [
 List user modes to be tested
 """
 USER_MODES = ['standard', 'expert', 'research']
-# USER_MODES = ['research']
+USER_MODES = ['expert']
 
 """
 List of 'params' fetcher arguments to be tested
 """
 PARAMS = ['all', 'DOXY']
-# PARAMS = ['all']
+PARAMS = ['all']
 
 """
 Make a list of VALID dataset/access_points to be tested

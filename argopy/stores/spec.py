@@ -93,6 +93,9 @@ class ArgoStoreProto(ABC):
             path = self.fs.target_protocol + "://" + path
         return path
 
+    def full_path(self, uri):
+        return getattr(self.fs, '_join', lambda x: x)(uri)
+
     def register(self, uri):
         """Keep track of files open with this instance"""
         if self.cache:
@@ -182,4 +185,3 @@ class ArgoStoreProto(ABC):
     @abstractmethod
     def read_csv(self):
         raise NotImplementedError("Not implemented")
-

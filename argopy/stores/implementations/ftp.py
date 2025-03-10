@@ -4,7 +4,13 @@ import xarray as xr
 import concurrent.futures
 import multiprocessing
 import io
+from pathlib import Path
+import fsspec
+import warnings
+from typing import Literal
 
+
+from ...options import OPTIONS
 from ...errors import InvalidMethod, DataNotFound
 from ...utils.transform import drop_variables_not_in_all_datasets
 from ..filesystems import has_distributed, distributed
@@ -23,44 +29,172 @@ class ftpstore(httpstore):
 
     protocol = "ftp"
 
-    def open_dataset(self, url, *args, **kwargs):
-        """Open and decode a xarray dataset from an ftp url
+    def open_dataset(self, url: str,
+        errors: Literal["raise", "ignore", "silent"] = "raise",
+        lazy: bool = False,
+        xr_opts: dict = {},
+        **kwargs):
+        """Create a :class:`xarray.Dataset` from an url pointing to a netcdf file
 
         Parameters
         ----------
         url: str
+            The remote URL of the netcdf file to open
+
+        errors: Literal, default: ``raise``
+            Define how to handle errors raised during data fetching:
+                - ``raise`` (default): Raise any error encountered
+                - ``ignore``: Do not stop processing, simply issue a debug message in logging console
+                - ``silent``:  Do not stop processing and do not issue log message
+
+        lazy: bool, default=False
+            Define if we should try to load netcdf file lazily or not
+
+            **If this is set to False (default)** opening is done in 2 steps:
+                1. Download from ``url`` raw binary data with :class:`ftpstore.fs.cat_file`,
+                2. Create a :class:`xarray.Dataset` with :func:`xarray.open_dataset`.
+
+            Each functions can be passed specifics arguments with ``dwn_opts`` and  ``xr_opts`` (see below).
+
+            **If this is set to True**, use a :class:`ArgoKerchunker` instance to access
+            the netcdf file lazily. You can provide a specific :class:`ArgoKerchunker` instance with the ``ak`` argument (see below).
+
+        xr_opts: dict, default={}
+             Options passed to :func:`xarray.open_dataset`
+
+        Other Parameters
+        ----------------
+        ak: :class:`ArgoKerchunker`, optional
+            :class:`ArgoKerchunker` instance to use if ``lazy=True``.
+
+        akoverwrite: bool, optional
+            Determine if kerchunk data should be overwritten or not. This is passed to :meth:`ArgoKerchunker.to_kerchunk`.
 
         Returns
         -------
         :class:`xarray.Dataset`
+
+        Raises
+        ------
+        :class:`TypeError`
+            Raised if data returned by ``url`` are not CDF or HDF5 binary data.
+
+        :class:`DataNotFound`
+            Raised if ``errors`` is set to ``raise`` and url returns no data.
+
+        See Also
+        --------
+        :func:`httpstore.open_mfdataset`, :class:`ArgoKerchunker`
+
         """
-        try:
-            this_url = self.fs._strip_protocol(url)
-            data = self.fs.cat_file(this_url)
-        except Exception:
-            log.debug("Error with: %s" % url)
-            # except aiohttp.ClientResponseError as e:
-            raise
 
-        if data[0:3] != b"CDF" and data[0:3] != b"\x89HD":
-            raise TypeError(
-                "We didn't get a CDF or HDF5 binary data as expected ! We get: %s"
-                % data
+        def load_in_memory(url, errors="raise", xr_opts={}):
+            """Download url content and return data along with xarray option to open it
+
+            Returns
+            -------
+            tuple: (data, xr_opts) or (None, None) if errors == "ignore"
+            """
+
+
+            try:
+                this_url = self.fs._strip_protocol(url)
+                data = self.fs.cat_file(this_url)
+                if data is None:
+                    if errors == "raise":
+                        raise DataNotFound(url)
+                    elif errors == "ignore":
+                        log.error("DataNotFound: %s" % url)
+                    return None, None
+            except Exception:
+                log.debug("Error with: %s" % url)
+                # except aiohttp.ClientResponseError as e:
+                raise
+
+            if data[0:3] != b"CDF" and data[0:3] != b"\x89HD":
+                raise TypeError(
+                    "We didn't get a CDF or HDF5 binary data as expected ! We get: %s"
+                    % data
+                )
+            if data[0:3] == b"\x89HD":
+                data = io.BytesIO(data)
+
+            return data, xr_opts
+
+        def load_lazily(
+            url, errors="raise", xr_opts={}, akoverwrite: bool = False
+        ):
+            """Check if url support lazy access and return kerchunk data along with xarray option to open it lazily
+
+            Otherwise, download url content and return data along with xarray option to open it.
+
+            Returns
+            -------
+            tuple:
+                If the url support lazy access:
+                    ("reference://", xr_opts)
+                else:
+                    (data, xr_opts) or (None, None) if errors == "ignore"
+            """
+            from .. import ArgoKerchunker
+
+            if "ak" not in kwargs:
+                self.ak = ArgoKerchunker(
+                    store="local", root=Path(OPTIONS["cachedir"]).joinpath("kerchunk")
+                )
+            else:
+                self.ak = kwargs["ak"]
+
+            if self.ak.supported(url):
+                xr_opts = {
+                    "engine": "zarr",
+                    "backend_kwargs": {
+                        "consolidated": False,
+                        "storage_options": {
+                            "fo": self.ak.to_kerchunk(url, overwrite=akoverwrite),  # codespell:ignore
+                            "remote_protocol": fsspec.core.split_protocol(url)[0],
+                            "remote_options": {"host": self.fs.host, "port": self.fs.port},
+                        },
+                    },
+                }
+                return "reference://", xr_opts
+            else:
+                warnings.warn(
+                    "This url does not support byte range requests so we cannot load it lazily, falling back on loading in memory."
+                )
+                log.debug("This url does not support byte range requests: %s" % self.full_path(url))
+                return load_in_memory(
+                    url, errors=errors, xr_opts=xr_opts
+                )
+
+        if not lazy:
+            target, _ = load_in_memory(
+                url, errors=errors, xr_opts=xr_opts
             )
-        if data[0:3] == b"\x89HD":
-            data = io.BytesIO(data)
+        else:
+            target, xr_opts = load_lazily(
+                url,
+                errors=errors,
+                xr_opts=xr_opts,
+                akoverwrite=kwargs.get("akoverwrite", False),
+            )
 
-        xr_opts = {}
-        if "xr_opts" in kwargs:
-            xr_opts.update(kwargs["xr_opts"])
-        ds = xr.open_dataset(data, *args, **xr_opts)
+        if target is not None:
+            ds = xr.open_dataset(target, **xr_opts)
 
-        if "source" not in ds.encoding:
-            if isinstance(url, str):
-                ds.encoding["source"] = url
-        self.register(this_url)
-        self.register(url)
-        return ds
+            if "source" not in ds.encoding:
+                if isinstance(url, str):
+                    ds.encoding["source"] = url
+
+            self.register(url)
+            return ds
+
+        elif errors == "raise":
+            raise DataNotFound(url)
+
+        elif errors == "ignore":
+            log.error("DataNotFound from: %s" % url)
+            return None
 
     def _mfprocessor_dataset(
         self,
