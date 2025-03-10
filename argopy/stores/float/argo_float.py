@@ -45,7 +45,7 @@ class ArgoFloat(FloatStore):
     .. code-block:: python
         :caption: Load/read GDAC netcdf files as a :class:`xarray.Dataset`
 
-        af.list_dataset() # Return a dictionary with all available datasets for this float
+        af.ls_dataset() # Return a dictionary with all available datasets for this float
         ds = af.open_dataset('prof') # Use keys from the available datasets dictionary
         ds = af.open_dataset('meta')
         ds = af.open_dataset('tech')
