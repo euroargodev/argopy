@@ -318,7 +318,7 @@ class httpstore(ArgoStoreProto):
                 warnings.warn(
                     "This url does not support byte range requests so we cannot load it lazily, falling back on loading in memory."
                 )
-                log.debug("This url does not support byte range requests: %s" % url)
+                log.debug("This url does not support byte range requests: %s" % self.full_path(url))
                 return load_in_memory(
                     url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts
                 )

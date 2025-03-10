@@ -169,7 +169,7 @@ class ArgoKerchunker:
             % self.max_chunk_size
         )
         n = len(self.kerchunk_references)
-        summary.append("- %i dataset%s listed in %s" % (n, "s" if n > 1 else "", self.store_path))
+        summary.append("- %i dataset%s listed in store" % (n, "s" if n > 1 else ""))
         return "\n".join(summary)
 
     @property
