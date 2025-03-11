@@ -6,8 +6,7 @@ Lazy dataset access
 -------------------
 
 .. warning::
-    As of February 2025, this feature is considered experimental and can change without any deprecation warnings from
-    one release to another. This is part of a wider effort to prepare **argopy** for evolutions of the Argo dataset in
+    As of February 2025, this feature is considered experimental so that there is no guarantee that it is fully functional and it can change without any deprecation warnings from one release to another. This is part of a wider effort to prepare **argopy** for evolutions of the Argo dataset in
     the cloud (cf the `ADMT working group on Argo cloud format activities <https://github.com/OneArgo/ADMT/issues/5>`_).
 
 This **argopy** feature is implemented with ``open_dataset`` methods from: compatible argopy file stores (local, http, ftp and s3)
@@ -53,9 +52,9 @@ The table below synthesises lazy support status for all possible GDAC hosts:
     * - https://data-argo.ifremer.fr
       - ❌
     * - https://usgodae.org/pub/outgoing/argo
-      - ✅
+      - 🛠
     * - ftp://ftp.ifremer.fr/ifremer/argo
-      - ✅
+      - 🛠
     * - `s3://argo-gdac-sandbox/pub <https://argo-gdac-sandbox.s3.eu-west-3.amazonaws.com/pub/index.html#pub/>`_
       - ✅
     * - a local GDAC copy

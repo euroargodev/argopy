@@ -46,8 +46,8 @@ class ArgoFloatOnline(ArgoFloatProto):
     def load_metadata(self):
         """Load float metadata from Euro-Argo fleet-monitoring API
 
-        Note
-        ----
+        Notes
+        -----
         API point is stored in the :class:`ArgoFloat.api_point` attribute.
 
         See Also
@@ -74,8 +74,8 @@ class ArgoFloatOnline(ArgoFloatProto):
     def load_technicaldata(self):
         """Load float technical data from Euro-Argo fleet-monitoring API
 
-        Note
-        ----
+        Notes
+        -----
         API point is stored in the :class:`ArgoFloat.api_point` attribute.
 
         See Also
