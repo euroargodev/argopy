@@ -13,7 +13,7 @@ for standard users as well as Argo experts.
 
     The argopy team will organise "training camps" in 2025:
 
-    - **in person** training Monday Sept. 22nd afternoon, during the `Euro-Argo Science Meeting at Heraklion, Crete (Sept. 22-25th 2025)<https://www.euro-argo.eu/News-Meetings/News/News-archives/2025/8th-Euro-Argo-Science-Meeting>`_
+    - **in person** training Monday Sept. 22nd afternoon, during the `Euro-Argo Science Meeting at Heraklion, Crete (Sept. 22-25th 2025) <https://www.euro-argo.eu/News-Meetings/News/News-archives/2025/8th-Euro-Argo-Science-Meeting>`_
 
     - **online** training, to be organised sometime during the year
 
