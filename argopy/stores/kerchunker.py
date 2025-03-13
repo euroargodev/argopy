@@ -9,6 +9,7 @@ import logging
 import aiohttp
 
 from ..utils import to_list
+from .filesystems import new_fs
 from . import memorystore, filestore
 
 log = logging.getLogger("argopy.stores.kerchunk")
@@ -185,20 +186,26 @@ class ArgoKerchunker:
     def _ncfile2jsfile(self, ncfile):
         return Path(ncfile).name.replace(".nc", "_kerchunk.json")
 
-    def _tojson(self, ncfile: Union[str, Path]):
-        ncfile = str(ncfile)
+    def _tojson(self, ncfile: Union[str, Path], fs = None):
+        ncfile_raw = str(ncfile)
 
-        magic = self._magic(ncfile)[0:3]
+        fs = self._get_ncfile_fs(ncfile_raw) if fs is None else fs
+        magic = fs.open(ncfile_raw).read(3)
+
+        ncfile_with_protocol = fs.unstrip_protocol(ncfile_raw)
+        if ncfile_with_protocol.startswith("dir://"):
+            ncfile_with_protocol = fs.fs.fs.unstrip_protocol(fs.full_path(ncfile_raw))
+
         if magic == b"CDF":
             chunks = NetCDF3ToZarr(
-                ncfile,
+                ncfile_with_protocol,
                 inline_threshold=self.inline_threshold,
                 max_chunk_size=self.max_chunk_size,
                 storage_options=self.remote_options,
             )
         elif magic == b"\x89HD":
             chunks = SingleHdf5ToZarr(
-                ncfile,
+                ncfile_with_protocol,
                 inline_threshold=self.inline_threshold,
                 storage_options=self.remote_options,
             )
@@ -223,7 +230,7 @@ class ArgoKerchunker:
                             self.kerchunk_references.update({v[0]: f})
                             break
 
-    def translate(self, ncfiles: Union[str, Path, List]):
+    def translate(self, ncfiles: Union[str, Path, List], fs = None):
         """Compute kerchunk data for one or a list of netcdf files
 
         Kerchunk data are saved with the instance file store.
@@ -248,7 +255,9 @@ class ArgoKerchunker:
             ncfiles[i] = str(f)
 
         if HAS_DASK:
-            tasks = [dask.delayed(self._tojson)(uri) for uri in ncfiles]
+            tasks = [dask.delayed(self._tojson)(uri,
+                                                fs=self._get_ncfile_fs(uri) if fs is None else fs)
+                     for uri in ncfiles]
             results = dask.compute(tasks)
             results = results[0]  # ?
         else:
@@ -257,6 +266,7 @@ class ArgoKerchunker:
                     executor.submit(
                         self._tojson,
                         uri,
+                        fs=self._get_ncfile_fs(uri) if fs is None else fs
                     ): uri
                     for uri in ncfiles
                 }
@@ -272,7 +282,7 @@ class ArgoKerchunker:
 
         return results
 
-    def to_kerchunk(self, ncfile: Union[str, Path], overwrite: bool = False):
+    def to_kerchunk(self, ncfile: Union[str, Path], overwrite: bool = False, fs = None):
         """Return json kerchunk data for a given netcdf file
 
         If data are found on the instance file store, load it, otherwise triggers :meth:`ArgoKerchunker.translate` and
@@ -282,13 +292,15 @@ class ArgoKerchunker:
         --------
         :meth:`ArgoKerchunker.translate`
         """
+        fs = self._get_ncfile_fs(ncfile) if fs is None else fs
+
         if overwrite:
-            self.translate(ncfile)
+            self.translate(ncfile, fs=fs)
         elif str(ncfile) not in self.kerchunk_references:
             if self.fs.exists(self._ncfile2jsfile(ncfile)):
                 self.kerchunk_references.update({str(ncfile): self._ncfile2jsfile(ncfile)})
             else:
-                self.translate(ncfile)
+                self.translate(ncfile, fs=fs)
 
         # Read and load the kerchunk JSON file:
         kerchunk_jsfile = self.kerchunk_references[str(ncfile)]
@@ -304,7 +316,7 @@ class ArgoKerchunker:
                         target_ok = True
                         break
             if not target_ok:
-                kerchunk_data = self.to_kerchunk(ncfile, overwrite=True)
+                kerchunk_data = self.to_kerchunk(ncfile, overwrite=True, fs=fs)
 
         return kerchunk_data
 
@@ -331,74 +343,20 @@ class ArgoKerchunker:
 
         print(json.dumps(data_to_print, indent=4))
 
-    def open_dataset(self, ncfile: Union[str, Path], **kwargs) -> xr.Dataset:
-        """Open a netcdf file lazily using zarr engine and kerchunk data
-
-        Parameters
-        ----------
-        ncfile: str, Path
-            Netcdf file to open lazily
-
-        **kwargs:
-            Other kwargs are passed to :meth:`ArgoKerchunker.to_kerchunk`
-
-        Returns
-        -------
-        :class:`xarray.Dataset`
-        """
-        remote_protocol = split_protocol(ncfile)[0]
-        return xr.open_dataset(
-            "reference://",
-            engine="zarr",
-            backend_kwargs={
-                "consolidated": False,
-                "storage_options": {
-                    "fo": self.to_kerchunk(ncfile, **kwargs),  # codespell:ignore
-                    "remote_protocol": remote_protocol,
-                    "remote_options": self.remote_options,
-                },
-            },
-        )
-
-    def _magic(self, ncfile: Union[str, Path]) -> str:
-        """Read first 4 bytes of a netcdf file
-
-        Return None if the netcdf file cannot be open
-
-        Parameters
-        ----------
-        ncfile: str, Path
-
-        Raises
-        ------
-        :class:`aiohttp.ClientResponseError`
-        """
+    def _get_ncfile_fs(self, ncfile: Union[str, Path]):
+        """Get a fsspec file system to access a netcdf file"""
         protocol = split_protocol(str(ncfile))[0]
+        if protocol is None:
+            raise ValueError("For non-local files, the absolute path toward the netcdf file must include the file access protocol to return a correct answer.")
         if protocol == 'ftp':
             opts = {'host': urlparse(ncfile).hostname,  # host eg: ftp.ifremer.fr
                     'port': 0 if urlparse(ncfile).port is None else urlparse(ncfile).port}
+            # self._storage_options_ftp = opts.copy()
         else:
             opts = {}
-        fs = fsspec.filesystem(protocol, **opts)
+        return new_fs(protocol, **opts)[0]
 
-        def is_read(fs, uri):
-            try:
-                fs.ls(uri)
-                return True
-            except aiohttp.ClientResponseError:
-                raise
-            except Exception:
-                return False
-
-        if is_read(fs, str(ncfile)):
-            try:
-                return fs.open(str(ncfile)).read(4)
-            except:  # noqa: E722
-                return None
-        else:
-            return None
-
-    def supported(self, ncfile: Union[str, Path]) -> bool:
+    def supported(self, ncfile: Union[str, Path], fs = None) -> bool:
         """Check if a netcdf file can be accessed through byte ranges
 
         For non-local files, the absolute path toward the netcdf file must include the file protocol to return
@@ -418,4 +376,10 @@ class ArgoKerchunker:
         ncfile: str, Path
             Absolute path toward the netcdf file to assess for lazy support, must include protocol for non-local files.
         """
-        return self._magic(ncfile) is not None
+        fs = self._get_ncfile_fs(ncfile) if fs is None else fs
+
+        try:
+            return fs.first(ncfile, N=4) is not None
+        except Exception:
+            log.debug(f"Could not read {ncfile} with {fs}")
+            return False
