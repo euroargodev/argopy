@@ -6,6 +6,9 @@ import shutil
 import pickle  # nosec B403 only used with internal files/assets
 import json
 import tempfile
+from typing import Union
+from pathlib import Path
+import aiohttp
 
 
 from ..options import OPTIONS
@@ -77,6 +80,36 @@ class ArgoStoreProto(ABC):
 
     def info(self, path, *args, **kwargs):
         return self.fs.info(path, *args, **kwargs)
+
+    def first(self, path: Union[str, Path], N: int = 4) -> str:
+        """Read first N bytes of a path
+
+        Return None if path cannot be open
+
+        Parameters
+        ----------
+        path: str, Path
+
+        Raises
+        ------
+        :class:`aiohttp.ClientResponseError`
+        """
+        def is_read(uri):
+            try:
+                self.ls(uri)
+                return True
+            except aiohttp.ClientResponseError:
+                raise
+            except Exception:
+                return False
+
+        if is_read(str(path)):
+            try:
+                return self.fs.open(str(path)).read(N)
+            except:  # noqa: E722
+                return None
+        else:
+            return None
 
     def expand_path(self, path):
         if self.protocol != "http" and self.protocol != "https":
