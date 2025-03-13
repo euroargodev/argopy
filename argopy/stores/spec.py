@@ -75,6 +75,9 @@ class ArgoStoreProto(ABC):
     def target_protocol(self):
         return getattr(self.fs, 'target_protocol', self.protocol)
 
+    def unstrip_protocol(self, path, **kwargs):
+        return self.fs.unstrip_protocol(path, **kwargs)
+
     def exists(self, path, *args):
         return self.fs.exists(path, *args)
 
