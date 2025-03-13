@@ -296,9 +296,7 @@ class httpstore(ArgoStoreProto):
             from .. import ArgoKerchunker
 
             if "ak" not in kwargs:
-                self.ak = ArgoKerchunker(
-                    store="local", root=Path(OPTIONS["cachedir"]).joinpath("kerchunk")
-                )
+                self.ak = ArgoKerchunker()
             else:
                 self.ak = kwargs["ak"]
 
