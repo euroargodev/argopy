@@ -70,10 +70,15 @@ jobs:
           micromamba info
           micromamba list
 
+      - name: Load argopy tutorial data
+        continue-on-error: true
+        run: |
+          python -c "import argopy; argopy.tutorial.open_dataset()"
+
       - name: Test 1
         continue-on-error: true
         run: |
-          python -c "import fsspec; print(fsspec.filesystem("dir", fs=fsspec.filesystem('file'), path='~/.argopy_tutorial_data/ftp').info('dac/aoml/13857/13857_meta.nc'))"
+          python -c "import fsspec; print(fsspec.filesystem("dir", fs=fsspec.filesystem('local'), path='~/.argopy_tutorial_data/ftp').info('dac/aoml/13857/13857_meta.nc'))"
 
 #      - name: Test 2
 #        continue-on-error: true
