@@ -134,7 +134,7 @@ remove_ipykernel(){
 
 install_conda_env () {
 	# $1 is the name of the environment to install
-	# $2 is path to the environment yaml file to use
+	# $2 is the path to the environment yaml file to use
 	# (we replace the yaml file 'name' with the value from $1)
 
 	# Overwrite name of the environment set in the file
@@ -156,9 +156,12 @@ install_conda_env () {
 	/bin/rm tmp.json > /dev/null 2>&1
 	/bin/rm temp_env.yml > /dev/null 2>&1
 
+	# Activate the new environment
+	conda activate $1
+
 	# Installing argopy
 	printf "Installing argopy ...\n"
-	pip install -e ..
+	python -m pip install --no-deps -e ..
 
 }
 
