@@ -73,7 +73,7 @@ jobs:
       - name: Load argopy tutorial data
         continue-on-error: true
         run: |
-          python -c "import argopy; argopy.tutorial.open_dataset()"
+          python -c "import argopy; argopy.tutorial.open_dataset('gdac')"
 
       - name: Test 1
         continue-on-error: true
