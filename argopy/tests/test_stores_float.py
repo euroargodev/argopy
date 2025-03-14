@@ -16,6 +16,8 @@ from argopy.stores.float.implementations.argo_float_offline import ArgoFloatOffl
 from argopy.stores.float.implementations.argo_float_online import ArgoFloatOnline
 
 from mocked_http import mocked_httpserver, mocked_server_address
+from utils import patch_ftp
+
 
 log = logging.getLogger("argopy.tests.floatstore")
 
@@ -94,11 +96,7 @@ class Test_FloatStore_Online():
         remove_test_dir()
 
     def _patch_ftp(self, ftp):
-        """Patch Mocked FTP server keyword"""
-        if ftp == "MOCKFTP":
-            return pytest.MOCKFTP  # this was set in conftest.py
-        else:
-            return ftp
+        return patch_ftp(ftp)
 
     def call_floatstore(self, WMO, store_args, xfail=False, reason="?"):
         def core(WMO, fargs):

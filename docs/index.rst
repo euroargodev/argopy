@@ -13,9 +13,9 @@ for standard users as well as Argo experts.
 
     The argopy team will organise "training camps" in 2025:
 
-    - **in person** training (half a day) during the Euro-Argo User Meeting at Heraklion, Crete (Sept. 22-25th 2025)
+    - **in person** training Monday Sept. 22nd afternoon, during the `Euro-Argo Science Meeting at Heraklion, Crete (Sept. 22-25th 2025) <https://www.euro-argo.eu/News-Meetings/News/News-archives/2025/8th-Euro-Argo-Science-Meeting>`_
 
-    - **online** training, to be organised sometime this spring
+    - **online** training, to be organised sometime during the year
 
     The goal of these events is to train users with all the argopy features.
     Whether you're a standard, research or expert users, argopy has features for you !
