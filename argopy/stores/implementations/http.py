@@ -19,7 +19,8 @@ from functools import lru_cache
 from ...options import OPTIONS
 from ...errors import InvalidMethod, DataNotFound
 from ...utils import Registry, UriCName
-from ...utils.transform import (
+from ...utils import has_aws_credentials
+from ...utils import (
     drop_variables_not_in_all_datasets,
     fill_variables_not_in_all_datasets,
 )
@@ -301,6 +302,12 @@ class httpstore(ArgoStoreProto):
                 self.ak = kwargs["ak"]
 
             if self.ak.supported(url, fs=self):
+                if self.protocol == 's3':
+                    storage_options = {'anon': not has_aws_credentials()}
+                else:
+                    storage_options = {}
+                self.ak.storage_options = storage_options
+
                 xr_opts = {
                     "engine": "zarr",
                     "backend_kwargs": {

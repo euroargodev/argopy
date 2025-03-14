@@ -142,10 +142,8 @@ class ArgoKerchunker:
 
             This argument is passed to :class:`kerchunk.netCDF3.NetCDF3ToZarr` only.
         storage_options: dict, default=None
-            Options passed to fsspec when opening netcdf file
-
             This argument is passed to :class:`kerchunk.netCDF3.NetCDF3ToZarr` or :class:`kerchunk.hdf.SingleHdf5ToZarr`
-            during translation.
+            during translation. These in turn, will pass options to fsspec when opening netcdf file.
 
         """
         # Instance file system to load/save kerchunk json files
@@ -251,7 +249,8 @@ class ArgoKerchunker:
         chunker = self._magic2chunker(ncfile, fs) if chunker == "auto" else chunker
 
         ncfile_full = fs.full_path(ncfile_raw, protocol=True)
-        log.debug(f"Computing kerchunk json zarr references for: {ncfile_full}")
+        # log.debug(f"Computing kerchunk json zarr references for: {ncfile_full}")
+        # log.debug(self.storage_options)
         if chunker == "cdf3":
             chunks = NetCDF3ToZarr(
                 ncfile_full,
