@@ -43,7 +43,7 @@ If a specific host is not provided, :class:`ArgoFloat` will fetch float data fro
 
 
 Note that in order to include dataset from the auxiliary GDAC folder, you need to specify it with the ``aux`` argument at
-the instanciation of the class:
+the instantiation of the class:
 
 .. ipython:: python
     :okwarning:

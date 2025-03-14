@@ -1,7 +1,7 @@
 {
   "name": "data_types",
   "long_name": "Expected data types of Argo variables",
-  "last_update": "2025-02-18T13:14:40.439128+00:00",
+  "last_update": "2025-03-04T09:36:04.943964+00:00",
   "data": {
     "str": [
       "PLATFORM_NUMBER",

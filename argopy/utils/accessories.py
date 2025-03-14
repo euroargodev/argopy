@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from collections import UserList
-from pathlib import Path
 import warnings
 import logging
 import copy
