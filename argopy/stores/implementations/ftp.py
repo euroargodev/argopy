@@ -139,21 +139,19 @@ class ftpstore(httpstore):
             from .. import ArgoKerchunker
 
             if "ak" not in kwargs:
-                self.ak = ArgoKerchunker(
-                    store="local", root=Path(OPTIONS["cachedir"]).joinpath("kerchunk")
-                )
+                self.ak = ArgoKerchunker()
             else:
                 self.ak = kwargs["ak"]
 
-            if self.ak.supported(url):
+            if self.ak.supported(url, fs=self):
                 xr_opts = {
                     "engine": "zarr",
                     "backend_kwargs": {
                         "consolidated": False,
                         "storage_options": {
-                            "fo": self.ak.to_kerchunk(url, overwrite=akoverwrite),  # codespell:ignore
+                            "fo": self.ak.to_reference(url, overwrite=akoverwrite, fs=self),  # codespell:ignore
                             "remote_protocol": fsspec.core.split_protocol(url)[0],
-                            "remote_options": {"host": self.fs.host, "port": self.fs.port},
+                            "storage_options": {"host": self.fs.host, "port": self.fs.port},
                         },
                     },
                 }

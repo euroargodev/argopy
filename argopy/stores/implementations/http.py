@@ -300,13 +300,15 @@ class httpstore(ArgoStoreProto):
             else:
                 self.ak = kwargs["ak"]
 
-            if self.ak.supported(url):
+            if self.ak.supported(url, fs=self):
                 xr_opts = {
                     "engine": "zarr",
                     "backend_kwargs": {
                         "consolidated": False,
                         "storage_options": {
-                            "fo": self.ak.to_kerchunk(url, overwrite=akoverwrite),  # codespell:ignore
+                            "fo": self.ak.to_reference(url,
+                                                       overwrite=akoverwrite,
+                                                       fs=self),  # codespell:ignore
                             "remote_protocol": fsspec.core.split_protocol(url)[0],
                         },
                     },
