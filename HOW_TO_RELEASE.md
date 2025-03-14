@@ -36,7 +36,7 @@
 - [ ] Update pinned dependencies versions in ``./ci/requirements/py*-*-pinned.yml`` environment files using [upstream CI tests](https://github.com/euroargodev/argopy/actions/workflows/pytests-upstream.yml) information
 - [ ] Possibly update ``./requirements.txt`` and ``./docs/requirements.txt`` if the oldest dependencies versions were upgraded
 - [ ] Make sure that all CI tests are passed
-- [ ] Make sure the documentation for this release branch is [built on RTD](https://readthedocs.org/projects/argopy/builds/)
+- [ ] Make sure the documentation for this release branch is [built on RTD](https://app.readthedocs.org/projects/argopy/builds/)
 
 ## Preparation conclusion
 - [ ] Merge this PR to master
