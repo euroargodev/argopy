@@ -20,6 +20,8 @@ from argopy.utils.checkers import is_list_of_strings, is_wmo
 from argopy.stores import indexstore_pd, ArgoFloat
 from utils import create_temp_folder
 from mocked_http import mocked_httpserver, mocked_server_address
+from utils import patch_ftp
+
 
 log = logging.getLogger("argopy.tests.indexstores")
 
@@ -191,11 +193,7 @@ class IndexStore_test_proto:
         remove_test_dir()
 
     def _patch_ftp(self, ftp):
-        """Patch Mocked FTP server keyword"""
-        if ftp == "MOCKFTP":
-            return pytest.MOCKFTP  # this was set in conftest.py
-        else:
-            return ftp
+        return patch_ftp(ftp)
 
     def create_store(self, store_args, xfail=False, reason="?"):
         def core(fargs):

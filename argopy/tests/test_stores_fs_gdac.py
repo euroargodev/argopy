@@ -9,6 +9,7 @@ import logging
 import argopy
 from argopy.stores import gdacfs
 from mocked_http import mocked_httpserver, mocked_server_address
+from utils import patch_ftp
 
 
 log = logging.getLogger("argopy.tests.gdacfs")
@@ -63,11 +64,7 @@ class Test_Gdacfs:
         remove_test_dir()
 
     def _patch_ftp(self, ftp):
-        """Patch Mocked FTP server keyword"""
-        if ftp == "MOCKFTP":
-            return pytest.MOCKFTP  # this was set in conftest.py
-        else:
-            return ftp
+        return patch_ftp(ftp)
 
     def call_gdacfs(self, host, xfail=False, reason="?"):
         def core(host):

@@ -20,7 +20,7 @@ from argopy.errors import (
     CacheFileNotFound,
 )
 from argopy.utils.checkers import is_list_of_strings, check_gdac_path
-from utils import requires_gdac, create_temp_folder
+from utils import requires_gdac, create_temp_folder, patch_ftp
 from mocked_http import mocked_httpserver
 from mocked_http import mocked_server_address as MOCKHTTP
 
@@ -147,11 +147,7 @@ class TestBackend:
         self.cachedir = create_temp_folder().folder
 
     def _patch_gdac(self, gdac):
-        """Patch Mocked FTP server keyword"""
-        if gdac == 'MOCKFTP':
-            return pytest.MOCKFTP  # this was set in conftest.py
-        else:
-            return gdac
+        return patch_ftp(gdac)
 
     def _setup_fetcher(self, this_request, cached=False, parallel=False):
         """Helper method to set up options for a fetcher creation"""
