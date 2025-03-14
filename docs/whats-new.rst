@@ -79,7 +79,7 @@ Internals
     # or:
     ds.argo.to_zarr("s3://argopy/sample-data/6903091_prof.zarr")
 
-- **Open netcdf files lazily**. We provide an experimental low-level support for opening a netcdf Argo dataset lazily with `kerchunk <https://fsspec.github.io/kerchunk/>`_. Checkout the dedicated :ref:`lazy` section of the documentation. (:pr:`385`) by |gmaze|.
+- **Open netcdf files lazily**. We provide an experimental low-level support for opening a netcdf Argo dataset lazily using `kerchunk <https://fsspec.github.io/kerchunk/>`_. Checkout the dedicated :ref:`lazy` section of the documentation. (:pr:`385`) by |gmaze|.
 
 - Fix bug raised when the Argo reference table 8 return by the NVS server has a missing altLabel. ID of platform types are now extracted from the NVS url ID property. :issue:`420`, (:pr:`421`) by |gmaze|.
 
