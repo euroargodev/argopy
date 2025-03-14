@@ -4,10 +4,16 @@ import pytest
 import tempfile
 import shutil
 import xarray as xr
+import logging
 
 import argopy
 from argopy.stores import gdacfs
 from mocked_http import mocked_httpserver, mocked_server_address
+
+
+log = logging.getLogger("argopy.tests.gdacfs")
+
+
 
 """
 List gdac hosts to be tested. 
@@ -83,6 +89,7 @@ class Test_Gdacfs:
     def store_maker(self, request):
         """Fixture to create a GDAC store instance for a given host"""
         host = self._patch_ftp(VALID_HOSTS[request.param[0]])
+        log.debug(host)
         # cache = request.param[1]
 
         xfail, reason = False, ""
@@ -94,6 +101,9 @@ class Test_Gdacfs:
         yield self.get_a_gdacfs(host=host, xfail=xfail, reason=reason)
 
     def assert_fs(self, fs):
+        log.debug(fs.fs)
+        # log.debug(fs.ls("/"))
+        log.debug(fs.glob("*"))
         assert isinstance(fs.open_dataset("dac/aoml/13857/13857_meta.nc"), xr.Dataset)
         assert fs.info("dac/aoml/13857/13857_meta.nc")['size'] == 25352
 
