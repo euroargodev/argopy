@@ -1,12 +1,8 @@
 import fsspec
-import xarray as xr
 from typing import List, Union, Dict, Literal
 from pathlib import Path
-from urllib.parse import urlparse
-from fsspec.core import split_protocol
 import json
 import logging
-import aiohttp
 
 from ..utils import to_list
 from . import memorystore, filestore
@@ -20,7 +16,6 @@ try:
 
     HAS_KERCHUNK = True
 except ModuleNotFoundError:
-    # log.debug("argopy missing 'kerchunk' to translate netcdf file")
     HAS_KERCHUNK = False
     SingleHdf5ToZarr, NetCDF3ToZarr = None, None
 
@@ -29,7 +24,6 @@ try:
 
     HAS_DASK = True
 except ModuleNotFoundError:
-    # log.debug("argopy missing 'dask' to improve performances of 'ArgoKerchunker'")
     HAS_DASK = False
     dask = None
     import concurrent.futures
@@ -39,46 +33,81 @@ class ArgoKerchunker:
     """
     Argo netcdf file kerchunk helper
 
-    This class is for expert users who wish to test lazy access to remote netcdf files. If you need to compute kerchunk
-    zarr data on-demand, we don't recommend to use this method as it shows poor performances on mono or multi profile files.
-    It is more efficient to compute kerchunk zarr data in batch, and then to provide these data to users.
+    This class is for expert users who wish to test lazy access to remote netcdf files.
+    It is designed to be used through one of the **argopy** stores inheriting from :class:`ArgoStoreProto`.
 
-    The `kerchunk <https://fsspec.github.io/kerchunk/>`_ library is required only if you start from scratch and
+    The `kerchunk <https://fsspec.github.io/kerchunk/>`_ library is required only if you
     need to extract zarr data from a netcdf file, i.e. execute :meth:`ArgoKerchunker.translate`.
 
-    .. code-block:: python
-        :caption: API
+    Notes
+    -----
+    According to `AWS <https://docs.aws.amazon.com/whitepapers/latest/s3-optimizing-performance-best-practices/use-byte-range-fetches.html>`_,
+    typical sizes for byte-range requests are 8 MB or 16 MB.
 
-        # Default store to manage zarr kerchunk data
+    If you intend to compute kerchunk zarr data on-demand, we don't recommend to use this method on mono or multi
+    profile files that are only a few MB in size, because (ker)-chunking creates a significant performance overhead.
+
+    Warnings
+    --------
+    We noticed that kerchunk zarr data for Rtraj files can be insanely larger than the netcdf file itself.
+    This could go from 10Mb to 228Mb !
+
+    Examples
+    --------
+    .. code-block:: python
+        :caption: :class:`ArgoKerchunker` API
+
+        # Use default memory store to manage kerchunk zarr data:
         ak = ArgoKerchunker(store='memory')
-        # Custom local storage folder:
+
+        # Use a local file store to keep track of zarr kerchunk data (for later
+        # re-use or sharing):
         ak = ArgoKerchunker(store='local', root='kerchunk_data_folder')
-        # or remote:
-        ak = ArgoKerchunker(store=fsspec.filesystem('dir', path='s3://.../kerchunk_data_folder/', target_protocol='s3'))
+
+        # Use a remote file store to keep track of zarr kerchunk data (for later
+        # re-use or sharing):
+        fs = fsspec.filesystem('dir',
+                               path='s3://.../kerchunk_data_folder/',
+                               target_protocol='s3')
+        ak = ArgoKerchunker(store=fs)
 
         # Methods:
         ak.supported(ncfile)
-        ak.translate(ncfile)  # takes 1 or a list of uris, requires the kerchunk library
-        ak.to_kerchunk(ncfile)  # Take 1 netcdf file uri, return kerchunk json data (translate or load from store)
+        ak.translate(ncfiles)
+        ak.to_reference(ncfile)
         ak.pprint(ncfile)
 
-        # Return lazy xarray dataset of a netcdf file, using zarr engine from kerchunk data
-        ak.open_dataset(ncfile)
-
     .. code-block:: python
-        :caption: Examples
+        :caption: Loading one file lazily
 
-        # Create an instance that will save netcdf to zarr translation data on a local folder "kerchunk_data_folder" for later re-use (or sharing):
-        ak = ArgoKerchunker(store='local', root='kerchunk_data_folder')
-
-        # Let's consider a remote Argo netcdf file from a server supporting lazy access
+        # Let's consider a remote Argo netcdf file from a s3 server supporting lazy access
         # (i.e. support byte range requests):
-        ncfile = "s3://argo-gdac-sandbox/pub/dac/coriolis/6903090/6903090_prof.nc"
+        ncfile = "argo-gdac-sandbox/pub/dac/coriolis/6903090/6903090_prof.nc"
 
         # Simply open the netcdf file lazily:
-        # (ArgoKerchunker will handle zarr data generation and xarray syntax)
-        ds = ak.open_dataset(ncfile)
+        from argopy.stores import s3store
+        ds = s3store().open_dataset(ncfile, lazy=True)
 
+        # You can also do it with the GDAC fs:
+        from argopy.stores import gdacfs
+        ds = gdacfs('s3').open_dataset("dac/coriolis/6903090/6903090_prof.nc", lazy=True)
+
+    .. code-block:: python
+        :caption: Translate and save references for a batch of netcdf files
+
+        # Create an instance that will save netcdf to zarr references on a local
+        # folder at "~/kerchunk_data_folder":
+        ak = ArgoKerchunker(store='local', root='~/kerchunk_data_folder')
+
+        # Get a dummy list of netcdf files:
+        from argopy import ArgoIndex
+        idx = ArgoIndex(host='s3').search_lat_lon_tim([-70, -55, 30, 45,
+                                                       '2025-01-01', '2025-02-01'])
+        ncfiles = [af.ls_dataset()['prof'] for af in idx.iterfloats()]
+
+        # Translate and save references for this batch of netcdf files:
+        # (done in parallel, possibly using a Dask client if available)
+        ak.translate(ncfiles, fs=idx.fs['src'], chunker='auto')
 
     """
 
@@ -89,18 +118,18 @@ class ArgoKerchunker:
         preload: bool = True,
         inline_threshold: int = 0,
         max_chunk_size: int = 0,
-        remote_options: Dict = None,
+        storage_options: Dict = None,
     ):
         """
 
         Parameters
         ----------
         store: str, default='memory'
-            Kerchunk data store, i.e. the file system to use to load from and/or save to kerchunk json files
+            Kerchunk data store, i.e. the file system used to load from and/or save to kerchunk json files
         root: Path, str, default='.'
             Use to specify a local folder to base the store
         preload: bool, default=True
-            Indicate if kerchunk references already on the store should be loaded or not.
+            Indicate if kerchunk references already on the store should be preloaded or not.
         inline_threshold: int, default=0
             Byte size below which an array will be embedded in the output. Use 0 to disable inlining.
 
@@ -111,12 +140,10 @@ class ArgoKerchunker:
             E.g., if an array contains 10,000bytes, and this value is 6000, there will
             be two output chunks, split on the biggest available dimension.
 
-            This argument is passed to :class:`kerchunk.netCDF3.NetCDF3ToZarr`.
-        remote_options: dict, default=None
-            Options passed to fsspec when opening netcdf file
-
+            This argument is passed to :class:`kerchunk.netCDF3.NetCDF3ToZarr` only.
+        storage_options: dict, default=None
             This argument is passed to :class:`kerchunk.netCDF3.NetCDF3ToZarr` or :class:`kerchunk.hdf.SingleHdf5ToZarr`
-            during translation, and in `backend_kwargs` of :meth:`xarray.open_dataset`.
+            during translation. These in turn, will pass options to fsspec when opening netcdf file.
 
         """
         # Instance file system to load/save kerchunk json files
@@ -134,7 +161,7 @@ class ArgoKerchunker:
             self.fs = store
 
         # Passed to fsspec when opening netcdf file:
-        self.remote_options = remote_options if remote_options is not None else {}
+        self.storage_options = storage_options if storage_options is not None else {}
 
         # List of processed files register:
         self.kerchunk_references = {}
@@ -167,38 +194,75 @@ class ArgoKerchunker:
             % self.max_chunk_size
         )
         n = len(self.kerchunk_references)
-        summary.append("- %i dataset%s listed in %s" % (n, "s" if n > 1 else "", self.store_path))
+        summary.append("- %i dataset%s listed in store" % (n, "s" if n > 1 else ""))
         return "\n".join(summary)
 
     @property
     def store_path(self):
-        p = getattr(self.fs, 'path', str(Path('.').absolute()))
+        """Path to the reference store, including protocol"""
+        p = getattr(self.fs, "path", str(Path(".").absolute()))
         # Ensure the protocol is included for non-local files:
-        if self.fs.fs.protocol[0] == 'ftp':
+        if self.fs.fs.protocol[0] == "ftp":
             p = "ftp://" + self.fs.fs.host + fsspec.core.split_protocol(p)[-1]
-        if self.fs.fs.protocol[0] == 's3':
+        if self.fs.fs.protocol[0] == "s3":
             p = "s3://" + fsspec.core.split_protocol(p)[-1]
         return p
 
     def _ncfile2jsfile(self, ncfile):
         return Path(ncfile).name.replace(".nc", "_kerchunk.json")
 
-    def _tojson(self, ncfile: Union[str, Path]):
-        ncfile = str(ncfile)
-
-        magic = self._magic(ncfile)[0:3]
+    def _magic2chunker(self, ncfile, fs):
+        magic = fs.open(ncfile).read(3)
         if magic == b"CDF":
+            return "cdf3"
+        elif magic == b"\x89HD":
+            return "hdf5"
+        else:
+            raise ValueError("No chunker for this magic: '%s')" % magic)
+
+    def nc2reference(
+        self,
+        ncfile: Union[str, Path],
+        fs=None,
+        chunker: Literal["auto", "cdf3", "hdf5"] = "auto",
+    ):
+        """Compute reference data for a netcdf file (kerchunk json data)
+
+        Parameters
+        ----------
+        ncfile : Union[str, Path]
+            Path to a netcdf file to process
+        fs: None
+            An **argopy** file store, inheriting from :class:`ArgoStoreProto`.
+        chunker : Literal['auto', 'cdf3', 'hdf5'] = 'auto'
+            Define the kerchunker formater to use. Two formater are available: :class:`kerchunk.netCDF3.NetCDF3ToZarr` or :class:`kerchunk.hdf.SingleHdf5ToZarr`:
+
+            - 'auto': detect and select formater for each netcdf of the ncfiles
+            - 'cdf3': impose use of :class:`kerchunk.netCDF3.NetCDF3ToZarr`
+            - 'hdf5': impose use of :class:`kerchunk.hdf.SingleHdf5ToZarr`
+
+        Returns
+        -------
+        dict
+        """
+        ncfile_raw = str(ncfile)
+        chunker = self._magic2chunker(ncfile, fs) if chunker == "auto" else chunker
+
+        ncfile_full = fs.full_path(ncfile_raw, protocol=True)
+        # log.debug(f"Computing kerchunk json zarr references for: {ncfile_full}")
+        # log.debug(self.storage_options)
+        if chunker == "cdf3":
             chunks = NetCDF3ToZarr(
-                ncfile,
+                ncfile_full,
                 inline_threshold=self.inline_threshold,
                 max_chunk_size=self.max_chunk_size,
-                storage_options=self.remote_options,
+                storage_options=self.storage_options,
             )
-        elif magic == b"\x89HD":
+        elif chunker == "hdf5":
             chunks = SingleHdf5ToZarr(
-                ncfile,
+                ncfile_full,
                 inline_threshold=self.inline_threshold,
-                storage_options=self.remote_options,
+                storage_options=self.storage_options,
             )
 
         kerchunk_data = chunks.translate()
@@ -215,16 +279,21 @@ class ArgoKerchunker:
         for f in self.fs.glob("*_kerchunk.json"):
             with self.fs.open(f, "r") as file:
                 kerchunk_data = json.load(file)
-                for k, v in kerchunk_data['refs'].items():
-                    if k != '.zgroup' and '/0' in k:
+                for k, v in kerchunk_data["refs"].items():
+                    if k != ".zgroup" and "/0" in k:
                         if Path(v[0]).suffix == ".nc":
                             self.kerchunk_references.update({v[0]: f})
                             break
 
-    def translate(self, ncfiles: Union[str, Path, List]):
-        """Compute kerchunk data for one or a list of netcdf files
+    def translate(
+        self,
+        ncfiles: Union[str, Path, List],
+        fs=None,
+        chunker: Literal["first", "auto", "cdf3", "hdf5"] = "first",
+    ):
+        """Translate netcdf file(s) into kerchunk reference data
 
-        Kerchunk data are saved with the instance file store.
+        Kerchunk data are saved on the :class:`ArgoKerchunker` instance store.
 
         Once translated, netcdf file reference data are internally registered in the :attr:`ArgoKerchunker.kerchunk_references` attribute.
 
@@ -233,9 +302,27 @@ class ArgoKerchunker:
         - if `Dask <https://www.dask.org>`_ is available we use :class:`dask.delayed`/:meth:`dask.compute`,
         - otherwise we use a :class:`concurrent.futures.ThreadPoolExecutor`.
 
+        Parameters
+        ----------
+        ncfiles : Union[str, Path, List]
+            One or more netcdf files to translate
+        fs: None
+            An **argopy** file store, inheriting from :class:`ArgoStoreProto`.
+        chunker : Literal['first', 'auto', 'cdf3', 'hdf5'] = 'first'
+            Define the kerchunker formater to use. Two formater are available: :class:`kerchunk.netCDF3.NetCDF3ToZarr` or :class:`kerchunk.hdf.SingleHdf5ToZarr`:
+
+            - 'first': detect and select formater from the first netcdf file type
+            - 'auto': detect and select formater for each netcdf of the nc files
+            - 'cdf3': impose use of :class:`kerchunk.netCDF3.NetCDF3ToZarr` for all nc files
+            - 'hdf5': impose use of :class:`kerchunk.hdf.SingleHdf5ToZarr` for all nc files
+
+        Returns
+        -------
+        List(dict)
+
         See Also
         --------
-        :meth:`ArgoKerchunker.to_kerchunk`
+        :meth:`ArgoKerchunker.to_reference`
 
         """
         if not HAS_KERCHUNK:
@@ -245,17 +332,21 @@ class ArgoKerchunker:
         for i, f in enumerate(ncfiles):
             ncfiles[i] = str(f)
 
+        #
+        chunker = self._magic2chunker(ncfiles[0], fs) if chunker == "first" else chunker
+
+        #
         if HAS_DASK:
-            tasks = [dask.delayed(self._tojson)(uri) for uri in ncfiles]
+            tasks = [
+                dask.delayed(self.nc2reference)(uri, fs=fs, chunker=chunker)
+                for uri in ncfiles
+            ]
             results = dask.compute(tasks)
             results = results[0]  # ?
         else:
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 future_to_url = {
-                    executor.submit(
-                        self._tojson,
-                        uri,
-                    ): uri
+                    executor.submit(self.nc2reference, uri, fs=fs, chunker=chunker): uri
                     for uri in ncfiles
                 }
                 futures = concurrent.futures.as_completed(future_to_url)
@@ -270,30 +361,47 @@ class ArgoKerchunker:
 
         return results
 
-    def to_kerchunk(self, ncfile: Union[str, Path], overwrite: bool = False):
-        """Return json kerchunk data for a given netcdf file
+    def to_reference(self, ncfile: Union[str, Path], fs=None, overwrite: bool = False):
+        """Return zarr reference data for a given netcdf file
 
-        If data are found on the instance file store, load it, otherwise triggers :meth:`ArgoKerchunker.translate` and
+        If data are found on the instance file store, load them, otherwise triggers :meth:`ArgoKerchunker.translate` and
         save data on instance file store.
+
+        This is basically similar to :meth:`ArgoKerchunker.translate` but for a single file and **possibly using pre-computed references**.
+
+        This is the method to use in **argopy** file store method :meth:`ArgoStoreProto.open_dataset` to implement laziness.
+
+        Parameters
+        ----------
+        ncfile : Union[str, Path]
+            Path to netcdf file to process
+        fs: None
+            An **argopy** file store, inheriting from :class:`ArgoStoreProto`.
+
+        Returns
+        -------
+        dict
 
         See Also
         --------
         :meth:`ArgoKerchunker.translate`
         """
         if overwrite:
-            self.translate(ncfile)
+            self.translate(ncfile, fs=fs)
         elif str(ncfile) not in self.kerchunk_references:
             if self.fs.exists(self._ncfile2jsfile(ncfile)):
-                self.kerchunk_references.update({str(ncfile): self._ncfile2jsfile(ncfile)})
+                self.kerchunk_references.update(
+                    {str(ncfile): self._ncfile2jsfile(ncfile)}
+                )
             else:
-                self.translate(ncfile)
+                self.translate(ncfile, fs=fs)
 
         # Read and load the kerchunk JSON file:
         kerchunk_jsfile = self.kerchunk_references[str(ncfile)]
         with self.fs.open(kerchunk_jsfile, "r") as file:
             kerchunk_data = json.load(file)
 
-        # Ensure that the loaded kerchunk data corresponds to the ncfile target
+        # Ensure that reference data corresponds to the target netcdf file:
         if not overwrite:
             target_ok = False
             for key, value in kerchunk_data["refs"].items():
@@ -302,14 +410,14 @@ class ArgoKerchunker:
                         target_ok = True
                         break
             if not target_ok:
-                kerchunk_data = self.to_kerchunk(ncfile, overwrite=True)
+                kerchunk_data = self.to_reference(ncfile, overwrite=True, fs=fs)
 
         return kerchunk_data
 
     def pprint(self, ncfile: Union[str, Path], params: List[str] = None):
         """Pretty print kerchunk json data for a netcdf file"""
         params = to_list(params) if params is not None else []
-        kerchunk_data = self.to_kerchunk(ncfile)
+        kerchunk_data = self.to_reference(ncfile)
 
         # Pretty print JSON data
         keys_to_select = [".zgroup", ".zattrs", ".zmetadata"]
@@ -329,86 +437,21 @@ class ArgoKerchunker:
 
         print(json.dumps(data_to_print, indent=4))
 
-    def open_dataset(self, ncfile: Union[str, Path], **kwargs) -> xr.Dataset:
-        """Open a netcdf file lazily using zarr engine and kerchunk data
-
-        Parameters
-        ----------
-        ncfile: str, Path
-            Netcdf file to open lazily
-
-        **kwargs:
-            Other kwargs are passed to :meth:`ArgoKerchunker.to_kerchunk`
-
-        Returns
-        -------
-        :class:`xarray.Dataset`
-        """
-        remote_protocol = split_protocol(ncfile)[0]
-        return xr.open_dataset(
-            "reference://",
-            engine="zarr",
-            backend_kwargs={
-                "consolidated": False,
-                "storage_options": {
-                    "fo": self.to_kerchunk(ncfile, **kwargs),
-                    "remote_protocol": remote_protocol,
-                    "remote_options": self.remote_options,
-                },
-            },
-        )
-
-    def _magic(self, ncfile: Union[str, Path]) -> str:
-        """Read first 4 bytes of a netcdf file
-
-        Return None if the netcdf file cannot be open
-
-        Parameters
-        ----------
-        ncfile: str, Path
-
-        Raises
-        ------
-        :class:`aiohttp.ClientResponseError`
-        """
-        protocol = split_protocol(str(ncfile))[0]
-        if protocol == 'ftp':
-            opts = {'host': urlparse(ncfile).hostname,  # host eg: ftp.ifremer.fr
-                    'port': 0 if urlparse(ncfile).port is None else urlparse(ncfile).port}
-        else:
-            opts = {}
-        fs = fsspec.filesystem(protocol, **opts)
-
-        def is_read(fs, uri):
-            try:
-                fs.ls(uri)
-                return True
-            except aiohttp.ClientResponseError:
-                raise
-            except:
-                return False
-
-        if is_read(fs, str(ncfile)):
-            try:
-                return fs.open(str(ncfile)).read(4)
-            except:  # noqa: E722
-                return None
-        else:
-            return None
-
-    def supported(self, ncfile: Union[str, Path]) -> bool:
+    def supported(self, ncfile: Union[str, Path], fs=None) -> bool:
         """Check if a netcdf file can be accessed through byte ranges
 
         For non-local files, the absolute path toward the netcdf file must include the file protocol to return
         a correct answer.
 
-        Argo GDAC supporting byte ranges:
+        Known Argo GDAC supporting byte ranges:
+
         - ftp://ftp.ifremer.fr/ifremer/argo
         - s3://argo-gdac-sandbox/pub
         - https://usgodae.org/pub/outgoing/argo
         - https://argo-gdac-sandbox.s3-eu-west-3.amazonaws.com/pub
 
         Not supporting:
+
         - https://data-argo.ifremer.fr
 
         Parameters
@@ -416,4 +459,8 @@ class ArgoKerchunker:
         ncfile: str, Path
             Absolute path toward the netcdf file to assess for lazy support, must include protocol for non-local files.
         """
-        return self._magic(ncfile) is not None
+        try:
+            return fs.first(ncfile) is not None
+        except Exception:
+            log.debug(f"Could not read {ncfile} with {fs}")
+            return False

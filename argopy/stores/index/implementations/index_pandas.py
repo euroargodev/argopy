@@ -1,5 +1,3 @@
-from abc import abstractmethod
-
 import numpy as np
 import pandas as pd
 import logging
@@ -308,8 +306,8 @@ class indexstore(ArgoIndexStoreProto):
     def read_domain(self, index=False):
         if "longitude" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot list parameters in this index")
-        tmin = lambda x: pd.to_datetime(str(int(x.min()))).to_numpy()
-        tmax = lambda x: pd.to_datetime(str(int(x.max()))).to_numpy()
+        tmin = lambda x: pd.to_datetime(str(int(x.min()))).to_numpy()  # noqa: E731
+        tmax = lambda x: pd.to_datetime(str(int(x.max()))).to_numpy()  # noqa: E731
 
         if hasattr(self, "search") and not index:
             return [
@@ -591,7 +589,7 @@ class indexstore(ArgoIndexStoreProto):
         if "profiler_type" not in self.convention_columns:
             raise InvalidDatasetStructure("Cannot search for profilers in this index)")
         log.debug("Argo index searching for profiler label '%s' ..." % profiler_label)
-        type_contains = lambda x: [key for key, value in self._r8.items() if x in str(value)]
+        type_contains = lambda x: [key for key, value in self._r8.items() if x in str(value)]  # noqa: E731
         self.load(nrows=self._nrows_index)
         self.search_type = {"PLABEL": profiler_label}
         return self.search_profiler_type(type_contains(profiler_label))

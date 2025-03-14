@@ -1,6 +1,37 @@
 {
     "@graph": [
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R10/current/BEIDOU/",
+            "pav:authoredOn": "2024-11-11 09:32:23.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R10/current/BEIDOU/1/"
+            },
+            "dce:identifier": "SDN:R10::BEIDOU",
+            "pav:version": "1",
+            "skos:notation": "SDN:R10::BEIDOU",
+            "skos:altLabel": "",
+            "dc:date": "2024-11-11 09:32:23.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "BEIDOU"
+            },
+            "dc:identifier": "SDN:R10::BEIDOU",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Beidou transmission system."
+            },
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R10/current/ARGOS/",
             "pav:authoredOn": "2020-04-07 22:59:46.0",
             "pav:hasCurrentVersion": {
@@ -97,6 +128,9 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R10/current/",
             "skos:member": [
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R10/current/BEIDOU/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R10/current/ARGOS/"
                 },
                 {
@@ -111,8 +145,8 @@
             "dc:description": "List of telecommunication systems. Argo netCDF variable TRANS_SYSTEM is populated by R10 altLabel.",
             "dc:title": "Argo transmission systems",
             "skos:prefLabel": "Argo transmission systems",
-            "owl:versionInfo": "1",
-            "dc:date": "2020-04-08 03:00:04.0",
+            "owl:versionInfo": "2",
+            "dc:date": "2024-11-12 02:00:00.0",
             "skos:altLabel": "TRANS_SYSTEM",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "TRANS_SYSTEM",

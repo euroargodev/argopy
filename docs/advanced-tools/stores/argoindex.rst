@@ -32,15 +32,18 @@ The table below summarize the **argopy** support status of all Argo index files:
     * - Bio-Profile
       - argo_bio-profile_index.txt
       - ✅
+    * - Metadata
+      - ar_index_global_meta.txt
+      - ✅
+    * - Auxiliary
+      - etc/argo-index/argo_aux-profile_index.txt
+      - ✅
     * - Trajectory
       - ar_index_global_traj.txt
       - ❌
     * - Bio-Trajectory
       - argo_bio-traj_index.txt
       - ❌
-    * - Metadata
-      - ar_index_global_meta.txt
-      - ✅
     * - Technical
       - ar_index_global_tech.txt
       - ❌

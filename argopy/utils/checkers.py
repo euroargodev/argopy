@@ -6,7 +6,6 @@ import xarray as xr
 from typing import Union
 from fsspec.core import split_protocol
 import fsspec
-from socket import gaierror
 import urllib
 import json
 import logging
@@ -22,7 +21,6 @@ log = logging.getLogger("argopy.utils.checkers")
 
 if importlib.util.find_spec("s3fs") is not None:
     HAS_S3 = True
-    import s3fs
 else:
     HAS_S3 = False
 
@@ -440,8 +438,6 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
             "date_update",
         ]
 
-
-
     if (
         convention == "ar_index_global_meta"
     ):
@@ -460,7 +456,7 @@ def check_index_cols(column_names: list, convention: str = "ar_index_global_prof
         return column_names
 
 
-def check_gdac_path(path, errors:str="ignore", ignore_knowns:bool=False):  # noqa: C901
+def check_gdac_path(path, errors: str = "ignore", ignore_knowns: bool = False):  # noqa: C901
     """Check if a path has the expected GDAC structure
 
     Expected GDAC structure::
