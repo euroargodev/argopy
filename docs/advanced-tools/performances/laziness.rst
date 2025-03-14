@@ -18,13 +18,29 @@ Contrary to the other performance improvement methods, this one is not accessibl
 What is laziness ?
 ~~~~~~~~~~~~~~~~~~
 
-Laziness in our use case, relates to limiting data transfer/load to what is really needed for an operation. For instance:
+Laziness in our use case, relates to limiting remote data transfer/load to what is really needed for an operation. For instance:
 
 - if you want to work with a single Argo parameter for a given float, you don't need to download from the GDAC server all the other parameters,
 - if you only are interested in assessing a file content (e.g. number of profiles or vertical levels), you also don't need to load anything else than the dimensions of the netcdf files.
 
-Since a regular Argo netcdf is not intended to be accessed partially, it is rather tricky to access Argo data lazily.
+Remote laziness is natively supported by some file formats like `zarr <https://zarr.dev/>`_ and `parquet <https://parquet.apache.org/>`_. However, netcdf was not designed for this use case.
+
+How it works ?
+~~~~~~~~~~~~~~
+
+Since a regular Argo netcdf is not intended to be accessed partially from a remote server, it is rather tricky to access Argo data lazily.
 Hopefully, the `kerchunk <https://fsspec.github.io/kerchunk/>`_ library has been developed precisely for this use-case.
+
+In order to access lazily a remote Argo netcdf file with a server supporting byte range requests, the netcdf
+content has to be analysed in order to make a byte range *catalogue* of its content: this is called a *reference*.
+To do so, you need to have the `kerchunk <https://fsspec.github.io/kerchunk/>`_ library installed in your working environment.
+
+If someone or some party has created the netcdf *reference* and makes it accessible, you don't need the `kerchunk <https://fsspec.github.io/kerchunk/>`_ library installed.
+
+`kerchunk <https://fsspec.github.io/kerchunk/>`_ will analyse a netcdf file content (e.g. dimensions, list of variables)
+and store these metadata in a json file compatible with zarr. With a specific syntax, these metadata can then be given
+to :func:`xarray.open_dataset` or :func:`xarray.open_zarr` to open a netcdf file lazily.
+
 
 .. currentmodule:: xarray
 
@@ -36,16 +52,6 @@ Hopefully, the `kerchunk <https://fsspec.github.io/kerchunk/>`_ library has been
 
 .. currentmodule:: argopy
 
-How it works ?
-~~~~~~~~~~~~~~
-
-In order to access lazily an Argo netcdf files, locally or remotely with a server supporting byte range requests, the netcdf
-content has to be curated in order to make a byte range *catalogue* of its content, or *reference*. To do so, you need to have the
-`kerchunk <https://fsspec.github.io/kerchunk/>`_ library installed in your working environment.
-
-`kerchunk <https://fsspec.github.io/kerchunk/>`_ will analyse a netcdf file content (e.g. dimensions, list of variables)
-and store these metadata in a json file compatible with zarr. With a specific syntax, these metadata can then be given
-to :func:`xarray.open_dataset` or :func:`xarray.open_zarr` to open a netcdf file lazily.
 
 Laziness support status
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -155,7 +161,7 @@ Now we can get a dummy list of netcdf files:
     ncfiles = [af.ls_dataset()['prof'] for af in idx.iterfloats()]
     print(len(ncfiles))
 
-and compute zarr references that will be saved by the :class:`stores.ArgoKerchunker` instance. Note that this computation is done using Dask delayed when available otherwise using multithreading:
+and compute zarr references that will be saved by the :class:`stores.ArgoKerchunker` instance. Note that this computation is done using Dask delayed when available, otherwise using multithreading:
 
 .. ipython:: python
     :okwarning:
@@ -165,7 +171,7 @@ and compute zarr references that will be saved by the :class:`stores.ArgoKerchun
 The ``chunker`` option determines which chunker to use, which is different for netcdf 3 and netcdf4/hdf5 files. Checkout the API documentation for more details.
 
 To later re-use such references to open lazily one of these netcdf files, an operation that does not require the
-`kerchunk <https://fsspec.github.io/kerchunk/>` library, you can provide the appropriate :class:`stores.ArgoKerchunker`
+`kerchunk <https://fsspec.github.io/kerchunk/>`_ library, you can provide the appropriate :class:`stores.ArgoKerchunker`
 instance to a :class:`ArgoFloat` or :class:`gdacfs`:
 
 .. ipython:: python

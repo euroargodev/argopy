@@ -36,13 +36,16 @@ class ArgoKerchunker:
     This class is for expert users who wish to test lazy access to remote netcdf files.
     It is designed to be used through one of the **argopy** stores inheriting from :class:`ArgoStoreProto`.
 
-    If you need to compute kerchunk zarr data on-demand, we don't recommend to use this method because it
-    creates a significant overhead for mono or multi profile files that are few Mb.
-
-    It is more efficient to compute kerchunk zarr data in batch, and then to call on these static zarr data (see example below).
-
-    The `kerchunk <https://fsspec.github.io/kerchunk/>`_ library is required only if you start from scratch and
+    The `kerchunk <https://fsspec.github.io/kerchunk/>`_ library is required only if you
     need to extract zarr data from a netcdf file, i.e. execute :meth:`ArgoKerchunker.translate`.
+
+    Notes
+    -----
+    According to `AWS <https://docs.aws.amazon.com/whitepapers/latest/s3-optimizing-performance-best-practices/use-byte-range-fetches.html>`_,
+    typical sizes for byte-range requests are 8 MB or 16 MB.
+
+    If you intend to compute kerchunk zarr data on-demand, we don't recommend to use this method on mono or multi
+    profile files that are only a few MB in size, because (ker)-chunking creates a significant performance overhead.
 
     Warnings
     --------
