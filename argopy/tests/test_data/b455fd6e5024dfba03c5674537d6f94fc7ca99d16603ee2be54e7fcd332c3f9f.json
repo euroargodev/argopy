@@ -1,6 +1,37 @@
 {
     "@graph": [
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NOTC/",
+            "pav:authoredOn": "2024-11-11 09:32:23.0",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NOTC/1/"
+            },
+            "dce:identifier": "SDN:R24::NOTC",
+            "pav:version": "1",
+            "skos:notation": "SDN:R24::NOTC",
+            "skos:altLabel": "",
+            "dc:date": "2024-11-11 09:32:23.0",
+            "owl:versionInfo": "1",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "National Ocean Technology Center"
+            },
+            "dc:identifier": "SDN:R24::NOTC",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "owl:deprecated": "false",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "skos:definition": {
+                "@language": "en",
+                "@value": "National Ocean Technology Center, China."
+            },
+            "@type": "skos:Concept"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R24/current/UNKNOWN/",
             "pav:authoredOn": "2020-05-03 20:30:12.0",
             "pav:hasCurrentVersion": {
@@ -28,71 +59,6 @@
             "skos:definition": {
                 "@language": "en",
                 "@value": "Unknown platform maker. The platform maker should not be unknown, the use of this value should be exceptional"
-            },
-            "@type": "skos:Concept"
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/",
-            "pav:authoredOn": "2022-06-16 11:36:09.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/1/"
-            },
-            "dce:identifier": "SDN:R24::QNLM",
-            "pav:version": "1",
-            "skos:notation": "SDN:R24::QNLM",
-            "skos:altLabel": "QNLM",
-            "dc:date": "2022-06-16 11:36:09.0",
-            "owl:versionInfo": "1",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "Qingdao National Laboratory for Marine Science and Technology"
-            },
-            "dc:identifier": "SDN:R24::QNLM",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "Qingdao National Laboratory for Marine Science and Technology"
-            },
-            "@type": "skos:Concept"
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/",
-            "pav:hasVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/1/"
-            },
-            "pav:authoredOn": "2023-10-05 14:42:22.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/2/"
-            },
-            "dce:identifier": "SDN:R24::LaoshanL",
-            "pav:version": "2",
-            "skos:notation": "SDN:R24::LaoshanL",
-            "skos:altLabel": "LaoshanL",
-            "dc:date": "2023-10-05 14:42:22.0",
-            "owl:versionInfo": "2",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "LaoshanLaboratory"
-            },
-            "dc:identifier": "SDN:R24::LaoshanL",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "Laoshan Laboratory"
             },
             "@type": "skos:Concept"
         },
@@ -337,6 +303,95 @@
             }
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/",
+            "pav:hasVersion": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/1/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/2/"
+                }
+            ],
+            "pav:authoredOn": "2024-10-24 14:51:27.0",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/XUANWU/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/HM4000/"
+                }
+            ],
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Laoshan Laboratory (was named QNLM before May 2023)"
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R24::LaoshanL",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "LaoshanLaboratory"
+            },
+            "owl:versionInfo": "3",
+            "dc:date": "2024-10-24 14:51:27.0",
+            "skos:altLabel": "LaoshanLaboratory",
+            "skos:notation": "SDN:R24::LaoshanL",
+            "pav:version": "3",
+            "dce:identifier": "SDN:R24::LaoshanL",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/3/"
+            }
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/1/"
+            },
+            "pav:authoredOn": "2024-10-24 14:51:27.0",
+            "@type": "skos:Concept",
+            "skos:related": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/XUANWU/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/HM4000/"
+                }
+            ],
+            "skos:definition": {
+                "@language": "en",
+                "@value": "Qingdao National Laboratory for Marine Science and Technology, renamed LaoshanLaboratory since May 2023"
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R24::QNLM",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "Qingdao National Laboratory for Marine Science and Technology"
+            },
+            "owl:versionInfo": "2",
+            "dc:date": "2024-10-24 14:51:27.0",
+            "skos:altLabel": "QNLM",
+            "skos:notation": "SDN:R24::QNLM",
+            "pav:version": "2",
+            "dce:identifier": "SDN:R24::QNLM",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/2/"
+            }
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R24/current/METOCEAN/",
             "pav:authoredOn": "2020-05-03 20:30:12.0",
             "@type": "skos:Concept",
@@ -381,6 +436,7 @@
             "pav:hasCurrentVersion": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R24/current/SIO_IDG/1/"
             },
+            "dce:identifier": "SDN:R24::SIO_IDG",
             "@type": "skos:Concept",
             "skos:related": [
                 {
@@ -388,6 +444,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_II/"
@@ -414,8 +473,7 @@
             "dc:date": "2020-05-03 20:30:12.0",
             "skos:altLabel": "SIO_IDG",
             "skos:notation": "SDN:R24::SIO_IDG",
-            "pav:version": "1",
-            "dce:identifier": "SDN:R24::SIO_IDG"
+            "pav:version": "1"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NKE/",
@@ -436,6 +494,9 @@
             "@type": "skos:Concept",
             "skos:related": [
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_II/"
                 },
                 {
@@ -445,13 +506,10 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/"
-                },
-                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_III/"
@@ -520,10 +578,10 @@
             "@type": "skos:Concept",
             "skos:related": [
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_A/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_EBR/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_EBR/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_A/"
                 }
             ],
             "skos:definition": {
@@ -561,11 +619,9 @@
             },
             "dce:identifier": "SDN:R24::MRV",
             "pav:version": "1",
+            "skos:notation": "SDN:R24::MRV",
             "@type": "skos:Concept",
             "skos:related": [
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/"
-                },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/S2X/"
                 },
@@ -573,7 +629,13 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/S2A/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC_MRV/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D_MRV/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ALAMO/"
@@ -598,20 +660,16 @@
             },
             "owl:versionInfo": "1",
             "dc:date": "2020-05-03 20:30:12.0",
-            "skos:altLabel": "MRV",
-            "skos:notation": "SDN:R24::MRV"
+            "skos:altLabel": "MRV"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R24/current/",
             "skos:member": [
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R24/current/NOTC/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R24/current/UNKNOWN/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R24/current/TSK/"
@@ -630,6 +688,12 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R24/current/MARTEC/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R24/current/LaoshanL/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R24/current/QNLM/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R24/current/METOCEAN/"
@@ -655,8 +719,8 @@
             "dc:description": "List of Argo float manufacturers. Argo netCDF variable PLATFORM_MAKER is populated by R24 altLabel.",
             "dc:title": "Argo platform maker",
             "skos:prefLabel": "Argo platform maker",
-            "owl:versionInfo": "4",
-            "dc:date": "2023-10-06 03:00:02.0",
+            "owl:versionInfo": "6",
+            "dc:date": "2024-11-12 02:00:00.0",
             "skos:altLabel": "PLATFORM_MAKER",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "PLATFORM_MAKER",

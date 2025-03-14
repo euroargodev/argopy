@@ -6,7 +6,7 @@ Reference dataset
 Since Argo floats are not recovered systematically, the quality control procedure requires historical measurements to
 assess float data.
 
-Historical CTD measurements have been curated and formated by the ADMT for years, and are usually distributed as a
+Historical CTD measurements have been curated and formatted by the ADMT for years, and are usually distributed as a
 collection of Matlab binary files. This approach has the disadvantage of requiring QC operators to download the entire
 reference dataset to start QC procedures, hence with the burden of having to keep the local version up to date with
 the last available (and most accurate and exhaustive content) version.

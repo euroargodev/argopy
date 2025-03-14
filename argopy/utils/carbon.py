@@ -62,7 +62,7 @@ class GreenCoding:
 
         self.fs = httpstore(cache=True)
         self.gh = Github()
-        self.URI = Registry(name='GreenCoding API calls')
+        self.URI = Registry(name="GreenCoding API calls")
 
     def measurements(
         self,
@@ -163,10 +163,10 @@ class GreenCoding:
 
                 # Remove out of range values:
                 for ii, item in enumerate(data["data"]):
-                    if item[names.index('Energy')]/1e6 > 20000:
-                        data['data'].pop(ii)
-                    elif item[names.index('gCO2eq')]/1e6 > 1000:
-                        data['data'].pop(ii)
+                    if item[names.index("Energy")] / 1e6 > 20000:
+                        data["data"].pop(ii)
+                    elif item[names.index("gCO2eq")] / 1e6 > 1000:
+                        data["data"].pop(ii)
 
                 df = pd.DataFrame(data["data"], columns=names)
                 df["Duration"] = df["Duration"] / 1e6  # seconds
@@ -190,7 +190,7 @@ class GreenCoding:
                 elif errors == "ignore":
                     log.debug(msg)
 
-            except Exception as e:
+            except Exception:
                 if errors == "raise":
                     raise
                 elif errors == "ignore":
@@ -205,7 +205,7 @@ class GreenCoding:
         ----------
         branches : List[str], default = ['master']
             List of branches to retrieve measurements for.
-            Note that for a given merged PR number, the branche name is ``<PR>/merged``.
+            Note that for a given merged PR number, the branch name is ``<PR>/merged``.
         **kwargs:
             Other Parameters are passed to :class:`GreenCoding.measurements`
 
@@ -291,18 +291,20 @@ class GreenCoding:
         footprint = []
         for ii, release in releases.iterrows():
             try:
-                footprint.append(self.footprint_for_release(release['tag']))
-            except:
+                footprint.append(self.footprint_for_release(release["tag"]))
+            except Exception:
                 footprint.append(0.0)
                 pass
-        releases['gCO2eq'] = footprint
+        releases["gCO2eq"] = footprint
         # releases['gCO2eq'].fillna(0.0, inplace=True)
         return releases
 
-    def footprint_baseline(self,
-                           start_date: Union[str, pd.Timestamp] = None,
-                           end_date: Union[str, pd.Timestamp] = None,
-                           errors="ignore"):
+    def footprint_baseline(
+        self,
+        start_date: Union[str, pd.Timestamp] = None,
+        end_date: Union[str, pd.Timestamp] = None,
+        errors="ignore",
+    ):
         """Compute the 'baseline' footprint
 
         The 'baseline' footprint is from PRs that are not merged. PRs status can be 'open' or 'closed'.
@@ -338,7 +340,10 @@ class GreenCoding:
     def __repr__(self):
         summary = [f"<GreenCoding.{self.owner}.{self.repo}>"]
         summary.append("Last release date: %s" % self.gh.lastrelease_date)
-        summary.append("%i PRs merged since the last release" % len(self.gh.ls_PRmerged_since_last_release))
+        summary.append(
+            "%i PRs merged since the last release"
+            % len(self.gh.ls_PRmerged_since_last_release)
+        )
         summary.append(
             "Workflows analysed: %s"
             % ", ".join(
@@ -374,7 +379,7 @@ class GreenCoding:
             "style": "plastic",
             "labelColor": "grey",
         }
-        t = lambda t: urllib.parse.quote(t)
+        t = lambda t: urllib.parse.quote(t)  # noqa: E731
         uri = "https://img.shields.io/badge/%s-%s-%s?" % (
             t(label),
             t("%0.2f" % value),
@@ -539,6 +544,7 @@ class Github:
 
         https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#list-pull-requests
         """
+
         def list_uri(max_page=5):
             uri = []
             for page in range(1, max_page):
@@ -684,8 +690,8 @@ class Github:
         --------
         :class:`Github.ls_PRs`
         """
-        df = self.ls_PRs(start_date=start_date, end_date=end_date, date='merged')
-        df = df[np.logical_and(df['merged'].notnull(), df['state'] == 'closed')]
+        df = self.ls_PRs(start_date=start_date, end_date=end_date, date="merged")
+        df = df[np.logical_and(df["merged"].notnull(), df["state"] == "closed")]
         df = df.sort_values("merged").reset_index(drop=1)
         return df
 
@@ -735,9 +741,10 @@ class Github:
 
         return self.ls_PRmerged(start_date=start_date, end_date=end_date)
 
-    def ls_PRbaseline(self,
+    def ls_PRbaseline(
+        self,
         start_date: Union[str, pd.Timestamp] = None,
-        end_date: Union[str, pd.Timestamp] = None
+        end_date: Union[str, pd.Timestamp] = None,
     ) -> pd.DataFrame:
         """List all PRs in the baseline
 
@@ -756,6 +763,6 @@ class Github:
         --------
         :class:`Github.ls_PRs`
         """
-        df = self.ls_PRs(start_date=start_date, end_date=end_date, date='updated')
-        df = df[~df['merged'].notnull()]
+        df = self.ls_PRs(start_date=start_date, end_date=end_date, date="updated")
+        df = df[~df["merged"].notnull()]
         return df

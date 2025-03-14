@@ -26,19 +26,16 @@ declare -A ENV_LIST=(
 ['argopy-docs-dev']="requirements/py3.9-docs-dev.yml"
 ['argopy-docs-rtd']="requirements/py3.9-docs-rtd.yml"
 
-['argopy-py39-all-free']="requirements/py3.9-all-free.yml"
-['argopy-py39-all-pinned']="requirements/py3.9-all-pinned.yml"
-
-['argopy-py39-core-pinned']="requirements/py3.9-core-pinned.yml"
-['argopy-py39-core-free']="requirements/py3.9-core-free.yml"
-
 ['argopy-py310-all-free']="requirements/py3.10-all-free.yml"
 ['argopy-py310-all-pinned']="requirements/py3.10-all-pinned.yml"
 
 ['argopy-py310-core-free']="requirements/py3.10-core-free.yml"
 ['argopy-py310-core-pinned']="requirements/py3.10-core-pinned.yml"
 
+['argopy-py311-all-pinned']="requirements/py3.11-all-pinned.yml"
 ['argopy-py311-all-free']="requirements/py3.11-all-free.yml"
+
+['argopy-py311-core-pinned']="requirements/py3.11-core-pinned.yml"
 ['argopy-py311-core-free']="requirements/py3.11-core-free.yml"
 
 ['argopy-py312-all-free']="requirements/py3.12-all-free.yml"
