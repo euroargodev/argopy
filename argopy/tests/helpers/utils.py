@@ -413,4 +413,13 @@ class create_temp_folder:
             shutil.rmtree(self.folder)
 
 
+def patch_ftp(ftp):
+    """Patch Mocked FTP server keyword"""
+    if ftp == "MOCKFTP":
+        # the MOCKFTP attribute to pytest is defined in mocked_ftp.py
+        return pytest.MOCKFTP + "/."
+    else:
+        return ftp
+
+
 log.debug("%s TESTS UTILS %s" % ("="*50, "="*50))
