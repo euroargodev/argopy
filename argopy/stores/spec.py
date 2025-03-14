@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import fsspec
+from fsspec.core import split_protocol
 from packaging import version
 import os
 import shutil
@@ -129,8 +130,22 @@ class ArgoStoreProto(ABC):
             path = self.fs.target_protocol + "://" + path
         return path
 
-    def full_path(self, uri):
-        return getattr(self.fs, '_join', lambda x: x)(uri)
+    def full_path(self, path, protocol: bool = False):
+        """Return fully developed path
+
+        Examples
+        --------
+        full_path('')
+
+        """
+        fp = getattr(self.fs, '_join', lambda x: x)(path)
+        if not protocol:
+            return fp
+        else:
+            if self.fs.protocol == "dir":
+                return self.fs.fs.unstrip_protocol(fp)
+            else:
+                return self.unstrip_protocol(fp)
 
     def register(self, uri):
         """Keep track of files open with this instance"""
