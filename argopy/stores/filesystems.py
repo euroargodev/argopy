@@ -44,7 +44,7 @@ def new_fs(
     cachedir: str = OPTIONS["cachedir"],
     cache_expiration: int = OPTIONS["cache_expiration"],
     **kwargs,
-) -> (fsspec.spec.AbstractFileSystem, Union[Registry, None]) :
+) -> (fsspec.spec.AbstractFileSystem, Union[Registry, None]):
     """Create a new fsspec file system for argopy higher level stores
 
     Parameters
@@ -128,9 +128,15 @@ def new_fs(
             % (cachedir, protocol, str(fsspec_kwargs))
         )
 
-    if protocol == "file" and os.path.sep != fs.sep and version.parse(fsspec.__version__) < version.parse("2025.2.0") and os.name == 'nt':
+    if (
+        protocol == "file"
+        and os.path.sep != fs.sep
+        and version.parse(fsspec.__version__) < version.parse("2025.2.0")
+        and os.name == "nt"
+    ):
         # For some reason (see https://github.com/fsspec/filesystem_spec/issues/937), the property fs.sep is
         # not '\' under Windows. So, using this dirty fix to overwrite it:
+        log.debug("Found os.path.sep ('%s') != fs.sep ('%s')" % (os.path.sep, fs.sep))
         fs.sep = os.path.sep
         # fsspec folks recommend to use posix internally. But I don't see how to handle this. So keeping this fix
         # because it solves issues with failing tests under Windows. Enough at this time.
