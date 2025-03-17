@@ -103,6 +103,7 @@ class Test_Gdacfs:
         log.debug(fs.fs)
         log.debug(fs.sep)
         log.debug(fs.fs.sep)
+        log.debug(fs.ls("."))
         # log.debug(fs.glob("."))
         assert isinstance(fs.open_dataset("dac/aoml/13857/13857_meta.nc"), xr.Dataset)
         assert fs.info("dac/aoml/13857/13857_meta.nc")['size'] == 25352
