@@ -83,4 +83,4 @@ jobs:
       - name: Test 2
         continue-on-error: true
         run: |
-          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 test_stores_fs_gdac.py
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_stores_fs_gdac.py
