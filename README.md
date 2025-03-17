@@ -65,12 +65,12 @@ ArgoSet.plot('trajectory')
 ```
 
 They are many more usages and fine-tuning to allow you to access and manipulate Argo data:
-- [filters at fetch time](https://argopy.readthedocs.io/en/latest/user_mode.html) (standard vs expert users, automatically select QC flags or data mode, ...)
-- [select data sources](https://argopy.readthedocs.io/en/latest/data_sources.html) (erddap, ftp, local, argovis, ...)
-- [manipulate data](https://argopy.readthedocs.io/en/latest/data_manipulation.html) (points, profiles, interpolations, binning, ...)
-- [visualisation](https://argopy.readthedocs.io/en/latest/visualisation.html) (trajectories, topography, histograms, ...)
-- [tools for Quality Control](https://argopy.readthedocs.io/en/latest/data_quality_control.html) (OWC, figures, ...)
-- [access meta-data and other Argo-related datasets](https://argopy.readthedocs.io/en/latest/metadata_fetching.html) (index, reference tables, deployment plans, topography, ...)
+- [filters at fetch time](https://argopy.readthedocs.io/en/latest/user-guide/fetching-argo-data/user_mode.html) (standard vs expert users, automatically select QC flags or data mode, ...)
+- [select data sources](https://argopy.readthedocs.io/en/latest/user-guide/fetching-argo-data/data_sources.html) (erddap, ftp, local, argovis, ...)
+- [manipulate data](https://argopy.readthedocs.io/en/latest/user-guide/working-with-argo-data/data_manipulation.html) (points, profiles, interpolations, binning, ...)
+- [visualisation](https://argopy.readthedocs.io/en/latest/user-guide/working-with-argo-data/visualisation.html) (trajectories, topography, histograms, ...)
+- [tools for Quality Control](https://argopy.readthedocs.io/en/latest/advanced-tools/quality_control/index.html) (OWC, figures, ...)
+- [access meta-data and other Argo-related datasets](https://argopy.readthedocs.io/en/latest/advanced-tools/metadata/index.html) (reference tables, deployment plans, topography, DOIs, ...)
 - [improve performances](https://argopy.readthedocs.io/en/latest/performances.html) (caching, parallel data fetching)
 
 Just check out [the documentation for more](https://argopy.readthedocs.io) ! 
