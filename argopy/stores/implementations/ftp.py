@@ -150,7 +150,7 @@ class ftpstore(httpstore):
                         "consolidated": False,
                         "storage_options": {
                             "fo": self.ak.to_reference(url, overwrite=akoverwrite, fs=self),  # codespell:ignore
-                            "remote_protocol": fsspec.core.split_protocol(url)[0],
+                            # "remote_protocol": fsspec.core.split_protocol(url)[0],
                             "storage_options": {"host": self.fs.host, "port": self.fs.port},
                         },
                     },
@@ -158,7 +158,7 @@ class ftpstore(httpstore):
                 return "reference://", xr_opts
             else:
                 warnings.warn(
-                    "This url does not support byte range requests so we cannot load it lazily, falling back on loading in memory."
+                    "This url does not support byte range requests so we cannot load it lazily, falling back on loading in memory.\n(url='%s')" % url
                 )
                 log.debug("This url does not support byte range requests: %s" % self.full_path(url))
                 return load_in_memory(
@@ -182,7 +182,7 @@ class ftpstore(httpstore):
 
             if "source" not in ds.encoding:
                 if isinstance(url, str):
-                    ds.encoding["source"] = url
+                    ds.encoding["source"] = self.full_path(url)
 
             self.register(url)
             return ds

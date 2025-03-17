@@ -69,7 +69,7 @@ class gdacfs:
 
     @staticmethod
     def path2protocol(path: Union[str, Path]) -> str:
-        """Narrow down any path to a supported protocols, raise GdacPathError if protocol not supported"""
+        """Narrow down any path to a supported protocol, raise GdacPathError if protocol not supported"""
         if isinstance(path, Path):
             return "file"
         else:
