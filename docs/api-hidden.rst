@@ -275,9 +275,9 @@
     argopy.stores.ArgoKerchunker
     argopy.stores.ArgoKerchunker.supported
     argopy.stores.ArgoKerchunker.translate
-    argopy.stores.ArgoKerchunker.to_kerchunk
+    argopy.stores.ArgoKerchunker.nc2reference
+    argopy.stores.ArgoKerchunker.to_reference
     argopy.stores.ArgoKerchunker.pprint
-    argopy.stores.ArgoKerchunker.open_dataset
 
     argopy.stores.index.spec.ArgoIndexStoreProto
 

@@ -679,7 +679,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 else:
                     lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
                     return int(lines.split("=")[1].split(";")[0])
-            except Exception as e:
+            except Exception:
                 raise ErddapServerError(
                     "Erddap server can't return ncHeader for url: %s " % url
                 )

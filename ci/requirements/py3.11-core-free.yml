@@ -8,7 +8,7 @@ dependencies:
   - aiohttp
   - decorator
   - erddapy
-  - fsspec
+  - fsspec < 2025.3.0
   - h5netcdf
   - netCDF4
   - packaging
@@ -18,16 +18,19 @@ dependencies:
   - xarray < 2024.3 # while https://github.com/pydata/xarray/issues/8909 is not solved
 
 # EXT.UTIL:
-#  - boto3
 #  - gsw
-#  - s3fs
 #  - tqdm
-#  - zarr
 
 # EXT.PERF:
 #  - dask
 #  - distributed
 #  - pyarrow
+
+# EXT.FILES:
+#  - boto3
+#  - kerchunk
+#  - s3fs > 2023.12.12
+#  - zarr
 
 # EXT.PLOT:
 #  - IPython
@@ -59,3 +62,4 @@ dependencies:
 # PIP:
   - pip:
       - pytest-reportlog
+#      - git+https://github.com/umr-lops/dask-hpcconfig.git#egg=dask-hpcconfig

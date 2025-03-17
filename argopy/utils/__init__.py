@@ -105,6 +105,7 @@ __all__ = (
     "list_radiometry_variables",
     "list_radiometry_parameters",
     "list_gdac_servers",
+    "shortcut2gdac",
     # Cache management:
     "clear_cache",
     "lscache",

@@ -155,7 +155,7 @@ class filestore(ArgoStoreProto):
                     "backend_kwargs": {
                         "consolidated": False,
                         "storage_options": {
-                            "fo": self.ak.to_kerchunk(path, overwrite=akoverwrite),
+                            "fo": self.ak.to_kerchunk(path, overwrite=akoverwrite),  # codespell:ignore
                             "remote_protocol": fsspec.core.split_protocol(path)[0],
                         },
                     },

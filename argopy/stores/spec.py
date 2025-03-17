@@ -1,11 +1,15 @@
 from abc import ABC, abstractmethod
 import fsspec
+from fsspec.core import split_protocol
 from packaging import version
 import os
 import shutil
 import pickle  # nosec B403 only used with internal files/assets
 import json
 import tempfile
+from typing import Union
+from pathlib import Path
+import aiohttp
 
 
 from ..options import OPTIONS
@@ -72,11 +76,44 @@ class ArgoStoreProto(ABC):
     def target_protocol(self):
         return getattr(self.fs, 'target_protocol', self.protocol)
 
+    def unstrip_protocol(self, path, **kwargs):
+        return self.fs.unstrip_protocol(path, **kwargs)
+
     def exists(self, path, *args):
         return self.fs.exists(path, *args)
 
     def info(self, path, *args, **kwargs):
         return self.fs.info(path, *args, **kwargs)
+
+    def first(self, path: Union[str, Path], N: int = 4) -> str:
+        """Read first N bytes of a path
+
+        Return None if path cannot be open
+
+        Parameters
+        ----------
+        path: str, Path
+
+        Raises
+        ------
+        :class:`aiohttp.ClientResponseError`
+        """
+        def is_read(uri):
+            try:
+                self.ls(uri)
+                return True
+            except aiohttp.ClientResponseError:
+                raise
+            except Exception:
+                return False
+
+        if is_read(str(path)):
+            try:
+                return self.fs.open(str(path)).read(N)
+            except:  # noqa: E722
+                return None
+        else:
+            return None
 
     def expand_path(self, path):
         if self.protocol != "http" and self.protocol != "https":
@@ -92,6 +129,23 @@ class ArgoStoreProto(ABC):
         ) <= version.parse("0.8.3"):
             path = self.fs.target_protocol + "://" + path
         return path
+
+    def full_path(self, path, protocol: bool = False):
+        """Return fully developed path
+
+        Examples
+        --------
+        full_path('')
+
+        """
+        fp = getattr(self.fs, '_join', lambda x: x)(path)
+        if not protocol:
+            return fp
+        else:
+            if self.fs.protocol == "dir":
+                return self.fs.fs.unstrip_protocol(fp)
+            else:
+                return self.unstrip_protocol(fp)
 
     def register(self, uri):
         """Keep track of files open with this instance"""
@@ -182,4 +236,3 @@ class ArgoStoreProto(ABC):
     @abstractmethod
     def read_csv(self):
         raise NotImplementedError("Not implemented")
-

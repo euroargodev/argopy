@@ -144,7 +144,7 @@ def open_dashboard(
             >>> DataFetcher().float(6902745).dashboard()
 
     """
-    warnUnless(has_ipython, "requires IPython to work as expected, otherwise this will just return URLs")
+    warnUnless(has_ipython, "IPython not available, this will fail silently and return URLs to dashboards")
     # This function is 'generic', it consumes the dashboard_definitions dictionary defined above
 
     if type == "eric":
