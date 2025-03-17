@@ -130,7 +130,7 @@ def new_fs(
     if protocol == "file" and os.path.sep != fs.sep:
         # For some reason (see https://github.com/fsspec/filesystem_spec/issues/937), the property fs.sep is
         # not '\' under Windows. So, using this dirty fix to overwrite it:
-        fs.sep = os.path.sep
+        # fs.sep = os.path.sep
         # fsspec folks recommend to use posix internally. But I don't see how to handle this. So keeping this fix
         # because it solves issues with failing tests under Windows. Enough at this time.
         # todo: Revisit this choice in a while
