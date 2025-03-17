@@ -64,6 +64,7 @@ class Test_Gdacfs:
         remove_test_dir()
 
     def _patch_ftp(self, ftp):
+        log.debug(ftp)
         return patch_ftp(ftp)
 
     def call_gdacfs(self, host, xfail=False, reason="?"):
@@ -99,8 +100,9 @@ class Test_Gdacfs:
 
     def assert_fs(self, fs):
         log.debug(fs.fs)
-        # log.debug(fs.ls("/"))
-        log.debug(fs.glob("*"))
+        log.debug(fs.ls("."))
+        log.debug(fs.ls("dac/aoml/13857/13857_meta.nc"))
+        # log.debug(fs.glob("."))
         assert isinstance(fs.open_dataset("dac/aoml/13857/13857_meta.nc"), xr.Dataset)
         assert fs.info("dac/aoml/13857/13857_meta.nc")['size'] == 25352
 
