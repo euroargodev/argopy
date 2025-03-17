@@ -316,7 +316,8 @@ class httpstore(ArgoStoreProto):
                             "fo": self.ak.to_reference(url,
                                                        overwrite=akoverwrite,
                                                        fs=self),  # codespell:ignore
-                            "remote_protocol": fsspec.core.split_protocol(url)[0],
+                            # "remote_protocol": fsspec.core.split_protocol(url)[0],
+                            "fo": self.ak.to_kerchunk(url, overwrite=akoverwrite, fs=self),  # codespell:ignores
                         },
                     },
                 }
@@ -348,7 +349,7 @@ class httpstore(ArgoStoreProto):
 
             if "source" not in ds.encoding:
                 if isinstance(url, str):
-                    ds.encoding["source"] = url
+                    ds.encoding["source"] = self.full_path(url)
 
             self.register(url)
             return ds
