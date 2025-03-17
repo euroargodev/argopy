@@ -8,7 +8,7 @@ dependencies:
   - aiohttp
   - decorator
   - erddapy
-  - fsspec
+  - fsspec < 2025.3.0
   - h5netcdf
   - netCDF4
   - packaging
