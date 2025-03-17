@@ -80,12 +80,7 @@ jobs:
         run: |
           python -c "import fsspec; print(fsspec.filesystem('dir', fs=fsspec.filesystem('file'), path='~/.argopy_tutorial_data/ftp').info('dac/aoml/13857/13857_meta.nc'))"
 
-#      - name: Test 2
-#        continue-on-error: true
-#        run: |
-#          python -c "import argopy; print(argopy.utils.format.argo_split_path('C:/Users/runneradmin/.argopy_tutorial_data/ftp/dac/aoml/13857/profiles/R13857_001.nc'))"
-#
-#      - name: Test 3
-#        continue-on-error: true
-#        run: |
-#          python -c "import argopy; print(argopy.utils.format.argo_split_path('s3://argo-gdac-sandbox/pub/dac/aoml/13857/profiles/R13857_001.nc'))"
+      - name: Test 2
+        continue-on-error: true
+        run: |
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 test_stores_fs_gdac.py
