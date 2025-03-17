@@ -127,7 +127,7 @@ def new_fs(
             % (cachedir, protocol, str(fsspec_kwargs))
         )
 
-    if protocol == "file" and os.path.sep != fs.sep:
+    # if protocol == "file" and os.path.sep != fs.sep:
         # For some reason (see https://github.com/fsspec/filesystem_spec/issues/937), the property fs.sep is
         # not '\' under Windows. So, using this dirty fix to overwrite it:
         # fs.sep = os.path.sep
