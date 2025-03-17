@@ -140,8 +140,6 @@ def new_fs(
         fs.sep = os.path.sep
         # fsspec folks recommend to use posix internally. But I don't see how to handle this. So keeping this fix
         # because it solves issues with failing tests under Windows. Enough at this time.
-        # Not needed anymore after fsspec 2025.2
-        # todo: remove this in a while
 
     # log_msg = "%s\n[sys sep=%s] vs [fs sep=%s]" % (log_msg, os.path.sep, fs.sep)
     # log.warning(log_msg)
