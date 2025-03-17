@@ -71,7 +71,7 @@ They are many more usages and fine-tuning to allow you to access and manipulate 
 - [visualisation](https://argopy.readthedocs.io/en/latest/user-guide/working-with-argo-data/visualisation.html) (trajectories, topography, histograms, ...)
 - [tools for Quality Control](https://argopy.readthedocs.io/en/latest/advanced-tools/quality_control/index.html) (OWC, figures, ...)
 - [access meta-data and other Argo-related datasets](https://argopy.readthedocs.io/en/latest/advanced-tools/metadata/index.html) (reference tables, deployment plans, topography, DOIs, ...)
-- [improve performances](https://argopy.readthedocs.io/en/latest/performances.html) (caching, parallel data fetching)
+- [improve performances](https://argopy.readthedocs.io/en/latest/advanced-tools/performances/index.html) (caching, parallel data fetching)
 
 Just check out [the documentation for more](https://argopy.readthedocs.io) ! 
 
