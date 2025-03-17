@@ -5,7 +5,7 @@ from fsspec.core import split_protocol
 from urllib.parse import urlparse
 from socket import gaierror
 import fsspec
-
+import os
 
 from ...options import OPTIONS
 from ...errors import GdacPathError
@@ -110,4 +110,20 @@ class gdacfs:
                 % (fs_args, str(e))
             )
         fs.fs = fsspec.filesystem("dir", fs=fs.fs, path=path)
+
+        if (
+                protocol == "file"
+                and os.path.sep != fs.fs.sep
+                # and version.parse(fsspec.__version__) < version.parse("2025.3.0")
+                # and os.name == "nt"
+        ):
+            # For some reason (see https://github.com/fsspec/filesystem_spec/issues/937), the property fs.sep is
+            # not '\' under Windows. So, using this dirty fix to overwrite it:
+            log.debug("Found os.path.sep ('%s') != fs.sep ('%s')" % (os.path.sep, fs.fs.sep))
+            fs.fs.sep = os.path.sep
+            # fsspec folks recommend to use posix internally. But I don't see how to handle this. So keeping this fix
+            # because it solves issues with failing tests under Windows. Enough at this time.
+            # Not needed anymore after fsspec 2025.2
+            # todo: remove this in a while
+
         return fs
