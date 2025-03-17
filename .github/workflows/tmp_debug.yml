@@ -83,24 +83,17 @@ jobs:
       - name: Test 2
         continue-on-error: true
         run: |
+          python -c "import argopy; p=argopy.tutorial.open_dataset('gdac')[0]; print(p); print(argopy.utils.argo_split_path(ArgoIndex(host=p).search_wmo(13857).uri[0]))"
+
+      - name: PyTest
+        continue-on-error: true
+        run: |
           pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_stores_fs_gdac.py
 
-      - name: Test 3
+      - name: PyTest
         continue-on-error: true
         run: |
-          python -c "import fsspec; fs=fsspec.filesystem('dir', fs=fsspec.filesystem('file'), path='C:/Users/runneradmin/.argopy_tutorial_data/ftp'); print(fs); print(fs.sep); print(fs.fs.sep); print(fs.info('dac/aoml/13857/13857_meta.nc'))"
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 argopy/tests/test_fetchers_data_gdac.py
 
-      - name: Test 4
-        continue-on-error: true
-        run: |
-          python -c "import argopy; print(argopy.utils.argo_split_path('C:\Users\runneradmin\.argopy_tutorial_data\ftp/dac/nmdis/2901623/profiles/R2901623_000.nc'))"
-
-      - name: Test 5
-        continue-on-error: true
-        run: |
-          python -c "import argopy; from fsspec.implementations.local import make_path_posix; print(make_path_posix('C:\Users\runneradmin\.argopy_tutorial_data\ftp/dac/nmdis/2901623/profiles/R2901623_000.nc'))"
-                    
-          
-          
           
 
