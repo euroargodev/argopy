@@ -93,7 +93,7 @@ jobs:
       - name: Test 4
         continue-on-error: true
         run: |
-          python -c "import argopy; fs=argopy.stores.gdacfs(argopy.tutorial.open_dataset("gdac")[0]); print(fs); print(fs.sep); print(fs.fs.sep); print(fs.ls('.'))"
+          python -c "import argopy; fs=argopy.stores.gdacfs(argopy.tutorial.open_dataset('gdac')[0]); print(fs); print(fs.sep); print(fs.fs.sep); print(fs.ls('.'))"
           
           
           
