@@ -4,7 +4,7 @@ netcdf4>=1.5.4
 dask>=2021.9.1
 # toolz>=0.8.2
 erddapy>=2.2.1  # only compatible with python >= 3.10
-fsspec>=0.7.4 #, <2022.3.1
+fsspec>=0.7.4,<2025.3.0
 gsw>=3.4.0
 h5netcdf>=1.4.0
 aiohttp>=3.7.4

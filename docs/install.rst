@@ -36,7 +36,7 @@ Required dependencies
 - erddapy
 - netCDF4
 - h5netcdf
-- fsspec
+- fsspec < 2025.3 : because of `this issue <https://github.com/euroargodev/argopy/issues/459>`_.
 - toolz
 - requests
 - aiohttp
