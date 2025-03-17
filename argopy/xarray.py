@@ -1662,7 +1662,7 @@ class ArgoAccessor:
             # Return a Matlab dictionary with dataset data to be used by savemat:
             mdata = {}
             mdata["PROFILE_NO"] = (
-                this_dsp["PROFILE_NO"].astype("uint8").values.T[np.newaxis, :]
+                this_dsp["PROFILE_NO"].astype("uint16").values.T[np.newaxis, :]
             )  # 1-based index in Matlab
             mdata["DATES"] = this_dsp["DATES"].values.T[np.newaxis, :]
             mdata["LAT"] = this_dsp["LAT"].values.T[np.newaxis, :]
