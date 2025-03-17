@@ -93,12 +93,12 @@ jobs:
       - name: Test 4
         continue-on-error: true
         run: |
-          python -c "import argopy; print(argopy.utils.argo_split_path('C:\\Users\\runneradmin\\.argopy_tutorial_data\\ftp/dac/nmdis/2901623/profiles/R2901623_000.nc'))"
+          python -c "import argopy; print(argopy.utils.argo_split_path('C:\Users\runneradmin\.argopy_tutorial_data\ftp/dac/nmdis/2901623/profiles/R2901623_000.nc'))"
 
       - name: Test 5
         continue-on-error: true
         run: |
-          python -c "import argopy; from fsspec.implementations.local import make_path_posix; print(make_path_posix('C:\\Users\\runneradmin\\.argopy_tutorial_data\\ftp/dac/nmdis/2901623/profiles/R2901623_000.nc'))"
+          python -c "import argopy; from fsspec.implementations.local import make_path_posix; print(make_path_posix('C:\Users\runneradmin\.argopy_tutorial_data\ftp/dac/nmdis/2901623/profiles/R2901623_000.nc'))"
                     
           
           
