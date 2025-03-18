@@ -140,6 +140,9 @@ class ftpstore(httpstore):
 
             if "ak" not in kwargs:
                 self.ak = ArgoKerchunker()
+                storage_options = {"host": self.fs.fs.host if self.fs.protocol == 'dir' else self.fs.host,
+                                   "port": self.fs.fs.port if self.fs.protocol == 'dir' else self.fs.port}
+                self.ak.storage_options = storage_options
             else:
                 self.ak = kwargs["ak"]
 
@@ -149,9 +152,11 @@ class ftpstore(httpstore):
                     "backend_kwargs": {
                         "consolidated": False,
                         "storage_options": {
-                            "fo": self.ak.to_reference(url, overwrite=akoverwrite, fs=self),  # codespell:ignore
+                            "fo": self.ak.to_reference(url,
+                                                       overwrite=akoverwrite,
+                                                       fs=self),  # codespell:ignore
                             "remote_protocol": fsspec.core.split_protocol(url)[0],
-                            "storage_options": {"host": self.fs.host, "port": self.fs.port},
+                            "remote_options": self.ak.storage_options
                         },
                     },
                 }
