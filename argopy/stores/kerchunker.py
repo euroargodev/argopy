@@ -250,7 +250,7 @@ class ArgoKerchunker:
 
         ncfile_full = fs.full_path(ncfile_raw, protocol=True)
         # log.debug(f"Computing kerchunk json zarr references for: {ncfile_full}")
-        # log.debug(self.storage_options)
+        # log.debug(f"Kerchunker storage options: {self.storage_options}")
         if chunker == "cdf3":
             chunks = NetCDF3ToZarr(
                 ncfile_full,

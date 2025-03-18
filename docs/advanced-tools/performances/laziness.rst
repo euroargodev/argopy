@@ -90,6 +90,7 @@ The table below syntheses lazy support status for all possible GDAC hosts:
       - 🛠
       - ❌
 
+
 .. _lazy-argofloat:
 
 Laziness with an :class:`ArgoFloat` or :class:`gdacfs`
@@ -142,7 +143,10 @@ It could go like this:
 
     # Create an instance that will save netcdf to zarr references on a local
     # folder at "~/kerchunk_data_folder":
-    ak = ArgoKerchunker(store='local', root='~/kerchunk_data_folder')
+    ak = ArgoKerchunker(store='local',
+                        root='~/kerchunk_data_folder',
+                        storage_options={'anon': True}, # so that AWS credentials are not required
+                        )
 
     # Note that you could also use a remote reference store, for instance:
     #ak = ArgoKerchunker(store=fsspec.filesystem('dir',
@@ -155,7 +159,7 @@ Now we can get a dummy list of netcdf files:
     :okwarning:
 
     from argopy import ArgoIndex
-    idx = ArgoIndex(host='s3').search_lat_lon_tim([-70, -55, 30, 45,
+    idx = ArgoIndex(host='s3').search_lat_lon_tim([-65, -55, 30, 40,
                                                    '2025-01-01', '2025-02-01'])
 
     ncfiles = [af.ls_dataset()['prof'] for af in idx.iterfloats()]
@@ -168,7 +172,7 @@ and compute zarr references that will be saved by the :class:`stores.ArgoKerchun
 
     ak.translate(ncfiles, fs=idx.fs['src'], chunker='auto');
 
-The ``chunker`` option determines which chunker to use, which is different for netcdf 3 and netcdf4/hdf5 files. Checkout the API documentation for more details.
+The ``chunker`` option determines which chunker to use, which is different for netcdf 3 and netcdf4/hdf5 files. Checkout the API documentation for more details here :meth:`stores.ArgoKerchunker.translate`.
 
 To later re-use such references to open lazily one of these netcdf files, an operation that does not require the
 `kerchunk <https://fsspec.github.io/kerchunk/>`_ library, you can provide the appropriate :class:`stores.ArgoKerchunker`
@@ -177,7 +181,13 @@ instance to a :class:`ArgoFloat` or :class:`gdacfs`:
 .. ipython:: python
     :okwarning:
 
-    shared_ak = ArgoKerchunker(store='local', root='~/kerchunk_data_folder')
+    ak = ArgoKerchunker(store='local',
+                        root='~/kerchunk_data_folder',
+                        storage_options={'anon': True}, # so that AWS credentials are not required
+                        )
 
-    ds = ArgoFloat(6903090, host='s3').open_dataset('prof', lazy=True, ak=shared_ak)
+    wmo = idx.read_wmo()[0]  # Select one float from the index search above
+
+    ds = ArgoFloat(wmo, host='s3').open_dataset('prof', lazy=True, ak=ak)
+
     ds.encoding['source'] == 'reference://'

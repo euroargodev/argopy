@@ -298,16 +298,16 @@ class httpstore(ArgoStoreProto):
 
             if "ak" not in kwargs:
                 self.ak = ArgoKerchunker()
+                if self.protocol == 's3':
+                    storage_options = {'anon': not has_aws_credentials()}
+                    # log.debug(f"AWS credentials: {has_aws_credentials()}")
+                else:
+                    storage_options = {}
+                self.ak.storage_options = storage_options
             else:
                 self.ak = kwargs["ak"]
 
             if self.ak.supported(url, fs=self):
-                if self.protocol == 's3':
-                    storage_options = {'anon': not has_aws_credentials()}
-                else:
-                    storage_options = {}
-                self.ak.storage_options = storage_options
-
                 xr_opts = {
                     "engine": "zarr",
                     "backend_kwargs": {
@@ -316,8 +316,8 @@ class httpstore(ArgoStoreProto):
                             "fo": self.ak.to_reference(url,
                                                        overwrite=akoverwrite,
                                                        fs=self),  # codespell:ignore
-                            # "remote_protocol": fsspec.core.split_protocol(url)[0],
-                            "fo": self.ak.to_kerchunk(url, overwrite=akoverwrite, fs=self),  # codespell:ignores
+                            "remote_protocol": fsspec.core.split_protocol(url)[0],
+                            "remote_options": self.ak.storage_options
                         },
                     },
                 }

@@ -142,6 +142,8 @@ Data Transformation
    Dataset.argo.profile2point
    Dataset.argo.interp_std_levels
    Dataset.argo.groupby_pressure_bins
+   Dataset.argo.datamode.compute
+   Dataset.argo.datamode.filter
    Dataset.argo.datamode.merge
    Dataset.argo.datamode.split
 
