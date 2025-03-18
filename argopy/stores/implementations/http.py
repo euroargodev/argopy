@@ -298,17 +298,16 @@ class httpstore(ArgoStoreProto):
 
             if "ak" not in kwargs:
                 self.ak = ArgoKerchunker()
-            else:
-                self.ak = kwargs["ak"]
-
-            if self.ak.supported(url, fs=self):
                 if self.protocol == 's3':
                     storage_options = {'anon': not has_aws_credentials()}
                     # log.debug(f"AWS credentials: {has_aws_credentials()}")
                 else:
                     storage_options = {}
                 self.ak.storage_options = storage_options
+            else:
+                self.ak = kwargs["ak"]
 
+            if self.ak.supported(url, fs=self):
                 xr_opts = {
                     "engine": "zarr",
                     "backend_kwargs": {
