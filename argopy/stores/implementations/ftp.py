@@ -29,6 +29,14 @@ class ftpstore(httpstore):
 
     protocol = "ftp"
 
+    @property
+    def host(self):
+        return self.fs.fs.host if self.fs.protocol == 'dir' else self.fs.host
+
+    @property
+    def port(self):
+        return self.fs.fs.port if self.fs.protocol == 'dir' else self.fs.port
+
     def open_dataset(self, url: str,
         errors: Literal["raise", "ignore", "silent"] = "raise",
         lazy: bool = False,
@@ -139,12 +147,8 @@ class ftpstore(httpstore):
             from .. import ArgoKerchunker
 
             if "ak" not in kwargs:
-                log.debug('create ArgoKerchunker from scratch')
                 self.ak = ArgoKerchunker()
-                log.debug('done create ArgoKerchunker from scratch')
-                storage_options = {"host": self.fs.fs.host if self.fs.protocol == 'dir' else self.fs.host,
-                                   "port": self.fs.fs.port if self.fs.protocol == 'dir' else self.fs.port}
-                self.ak.storage_options = storage_options
+                self.ak.storage_options = {"host": self.host, "port": self.port}
             else:
                 self.ak = kwargs["ak"]
 
