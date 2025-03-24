@@ -139,7 +139,9 @@ class ftpstore(httpstore):
             from .. import ArgoKerchunker
 
             if "ak" not in kwargs:
+                log.debug('create ArgoKerchunker from scratch')
                 self.ak = ArgoKerchunker()
+                log.debug('done create ArgoKerchunker from scratch')
                 storage_options = {"host": self.fs.fs.host if self.fs.protocol == 'dir' else self.fs.host,
                                    "port": self.fs.fs.port if self.fs.protocol == 'dir' else self.fs.port}
                 self.ak.storage_options = storage_options
@@ -147,6 +149,7 @@ class ftpstore(httpstore):
                 self.ak = kwargs["ak"]
 
             if self.ak.supported(url, fs=self):
+                log.debug("computing xr_opts")
                 xr_opts = {
                     "engine": "zarr",
                     "backend_kwargs": {
@@ -160,6 +163,7 @@ class ftpstore(httpstore):
                         },
                     },
                 }
+                log.debug('done computing xr_opts')
                 return "reference://", xr_opts
             else:
                 warnings.warn(
@@ -183,6 +187,7 @@ class ftpstore(httpstore):
             )
 
         if target is not None:
+            log.debug('xr.open_dataset')
             ds = xr.open_dataset(target, **xr_opts)
 
             if "source" not in ds.encoding:
