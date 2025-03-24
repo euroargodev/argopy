@@ -199,19 +199,31 @@ class ArgoKerchunker:
 
     @property
     def store_path(self):
-        """Path to the reference store, including protocol"""
+        """Absolute path to the reference store, including protocol"""
         p = getattr(self.fs, "path", str(Path(".").absolute()))
         # Ensure the protocol is included for non-local files:
-        if self.fs.fs.protocol[0] == "ftp":
-            p = "ftp://" + self.fs.fs.host + fsspec.core.split_protocol(p)[-1]
         if self.fs.fs.protocol[0] == "s3":
             p = "s3://" + fsspec.core.split_protocol(p)[-1]
         return p
 
     def _ncfile2jsfile(self, ncfile):
+        """Convert a netcdf file path to a data store file path for kerchunk zarr reference (json data)"""
         return Path(ncfile).name.replace(".nc", "_kerchunk.json")
 
+    def _ncfile2ncref(self, ncfile: Union[str, Path], fs=None):
+        """Convert a netcdf file path to a key used in internal kerchunk_references"""
+        # return fs.full_path(fs.info(str(ncfile))['name'], protocol=True)
+        return fs.full_path(str(ncfile), protocol=True)
+
     def _magic2chunker(self, ncfile, fs):
+        """Get a netcdf file path chunker alias: 'cdf3' or 'hdf5'
+
+        This is based on the file binary magic value.
+
+        Raises
+        ------
+        :class:`ValueError` if file not recognized
+        """
         magic = fs.open(ncfile).read(3)
         if magic == b"CDF":
             return "cdf3"
@@ -220,9 +232,6 @@ class ArgoKerchunker:
         else:
             raise ValueError("No chunker for this magic: '%s')" % magic)
 
-    def _ncfile2ncref(self, ncfile: Union[str, Path], fs=None):
-        return fs.full_path(fs.info(str(ncfile))['name'], protocol=True)
-
     def nc2reference(
         self,
         ncfile: Union[str, Path],
@@ -230,6 +239,11 @@ class ArgoKerchunker:
         chunker: Literal["auto", "cdf3", "hdf5"] = "auto",
     ):
         """Compute reference data for a netcdf file (kerchunk json data)
+
+        This method is intended to be used internally, since it's not using the kerchunk reference store.
+
+        Users should rather use the :meth:`to_reference` method to avoid to recompute reference data
+        when available on the :class:`ArgoKerchunker` instance.
 
         Parameters
         ----------
@@ -365,14 +379,12 @@ class ArgoKerchunker:
         return results
 
     def to_reference(self, ncfile: Union[str, Path], fs=None, overwrite: bool = False):
-        """Return zarr reference data for a given netcdf file
+        """Return zarr reference data for a given netcdf file path
 
-        If data are found on the instance file store, load them, otherwise triggers :meth:`ArgoKerchunker.translate` and
-        save data on instance file store.
+        Return data from the instance store if available, otherwise trigger :meth:`ArgoKerchunker.translate` (which save
+        data on the instance data store).
 
-        This is basically similar to :meth:`ArgoKerchunker.translate` but for a single file and **possibly using pre-computed references**.
-
-        This is the method to use in **argopy** file store method :meth:`ArgoStoreProto.open_dataset` to implement laziness.
+        This is the method to use in **argopy** file store methods :meth:`ArgoStoreProto.open_dataset` to implement laziness.
 
         Parameters
         ----------
