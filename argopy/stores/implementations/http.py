@@ -300,7 +300,6 @@ class httpstore(ArgoStoreProto):
                 self.ak = ArgoKerchunker()
                 if self.protocol == 's3':
                     storage_options = {'anon': not has_aws_credentials()}
-                    # log.debug(f"AWS credentials: {has_aws_credentials()}")
                 else:
                     storage_options = {}
                 self.ak.storage_options = storage_options
