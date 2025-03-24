@@ -120,10 +120,18 @@ class ArgoStoreProto(ABC):
             return None
 
     def expand_path(self, path, **kwargs):
-        if self.protocol != "http" and self.protocol != "https" and self.protocol != "ftp":
+        """Turn one or more globs or directories into a list of all matching paths to files or directories.
+
+        For http store, return path unchanged (not implemented).
+
+        kwargs are passed to fsspec expand_path which call ``glob`` or ``find``, which may in turn call ``ls``.
+
+        Returns
+        -------
+        list
+        """
+        if self.protocol != "http" and self.protocol != "https":
             return self.fs.expand_path(path, **kwargs)
-        elif self.protocol == "ftp":
-            return [f"{self.fs.host}:{self.fs.port}{self.fs.expand_path(path, **kwargs)[0]}"]
         else:
             return [path]
 
@@ -145,6 +153,8 @@ class ArgoStoreProto(ABC):
 
         """
         fp = getattr(self.fs, '_join', lambda x: x)(path)
+        if self.protocol == 'ftp':
+            fp = f"{self.host}:{self.port}{self.fs._strip_protocol(fp)}"
         if not protocol:
             return fp
         else:
