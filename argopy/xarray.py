@@ -1992,6 +1992,19 @@ class ArgoAccessor:
         # Convert to a zarr file using compression:
         return self._obj.to_zarr(*args, **kwargs)
 
+    def reduce_profile(self, reducer, param, axis='PRES'):
+        reduced = xr.apply_ufunc(
+            reducer,  # function used to reduce one profile to a single value
+            self._obj[axis],    # 1st argument of the reducer
+            self._obj[param],   # 2nd argument of the reducer
+            input_core_dims=[["N_LEVELS"], ["N_LEVELS"]],  # one for each argument of the reducer
+            exclude_dims=set(("N_LEVELS",)),
+            # dimensions allowed to change size. Must be set! must also appear in ``input_core_dims`` for at least one argument
+            vectorize=True,  # loop over non-core dims
+            dask="parallelized",
+        )
+        return reduced
+
 
 def open_Argo_dataset(filename_or_obj):
     ds = xr.open_dataset(filename_or_obj, decode_cf=1, use_cftime=0, mask_and_scale=1)
