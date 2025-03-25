@@ -1,0 +1,87 @@
+name: CI tests with fsspec >= 2025.3
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # Daily “At 00:00” UTC
+  workflow_dispatch: # allows you to trigger the workflow run manually
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+
+  all-pinned-but-fs:
+    # CI tests for environments with all possible requirements in free versions
+
+    name: All - Pinned - Py${{matrix.python-version}} - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    if: |
+        always()
+        && (
+            (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        )
+    defaults:
+      run:
+        shell: bash -l {0}
+#    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10"]
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for all branches and tags.
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        with:
+          aws-region: us-west-1
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ga-ci-tests-argopy-01
+
+      - name: Set environment variables
+        run: |
+          echo "CONDA_ENV_FILE=ci/requirements/py${{matrix.python-version}}-all-pinned-fsspec-check.yml" >> $GITHUB_ENV
+          echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
+
+      - name: Setup Micromamba ${{ matrix.python-version }}
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          micromamba-version: '1.5.10-0'
+          environment-name: argopy-tests
+          environment-file: ${{ env.CONDA_ENV_FILE }}
+          init-shell: bash
+          cache-environment: true
+          cache-environment-key: "${{runner.os}}-${{runner.arch}}-py${{matrix.python-version}}-${{env.TODAY}}-${{hashFiles(env.CONDA_ENV_FILE)}}"
+          create-args: >-
+            python=${{matrix.python-version}}
+            pytest-reportlog
+
+      - name: Install argopy
+        run: |
+          python -m pip install --no-deps -e .
+
+      - name: Version info
+        run: |
+          micromamba info
+          micromamba list
+
+      - name: Test with pytest
+        run: |
+          pytest -ra -v -s -c argopy/tests/pytest.ini --durations=10 \
+            --report-log output-${{ matrix.python-version }}-log.jsonl \
+            argopy/tests/test_fetchers_data_erddap.py
+
+      - name: Save tests log as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Argopy-Tests-All-${{matrix.python-version}}-${{matrix.os}}
+          path: output-${{ matrix.python-version }}-log.jsonl
+          retention-days: 90
