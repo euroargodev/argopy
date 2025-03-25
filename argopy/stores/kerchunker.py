@@ -398,7 +398,6 @@ class ArgoKerchunker:
         --------
         :meth:`ArgoKerchunker.translate`
         """
-        log.debug(f"entering to_reference ({overwrite})")
         if overwrite:
             self.translate(ncfile, fs=fs)
         elif self._ncfile2ncref(ncfile, fs=fs) not in self.kerchunk_references:
@@ -410,7 +409,6 @@ class ArgoKerchunker:
                 self.translate(ncfile, fs=fs)
 
         # Read and load the kerchunk JSON file:
-        log.debug('Read and load the kerchunk JSON file')
         kerchunk_jsfile = self.kerchunk_references[self._ncfile2ncref(ncfile, fs=fs)]
         with self.fs.open(kerchunk_jsfile, "r") as file:
             kerchunk_data = json.load(file)
@@ -424,7 +422,6 @@ class ArgoKerchunker:
                         target_ok = True
                         break
             if not target_ok:
-                log.debug('NOT target_ok, recompute reference data')
                 kerchunk_data = self.to_reference(ncfile, overwrite=True, fs=fs)
 
         return kerchunk_data
