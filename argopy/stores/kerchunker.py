@@ -262,12 +262,9 @@ class ArgoKerchunker:
         -------
         dict
         """
-        ncfile_raw = str(ncfile)
         chunker = self._magic2chunker(ncfile, fs) if chunker == "auto" else chunker
 
         ncfile_full = self._ncfile2ncref(ncfile, fs=fs)
-        log.debug(f"Computing kerchunk json zarr references for: {ncfile_full}")
-        log.debug(f"Kerchunker storage options: {self.storage_options}")
         if chunker == "cdf3":
             chunks = NetCDF3ToZarr(
                 ncfile_full,
