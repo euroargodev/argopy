@@ -19,6 +19,7 @@ else:
 
 log = logging.getLogger("argopy.stores")
 
+
 try:
     from tqdm import tqdm
 except ModuleNotFoundError:
@@ -145,4 +146,4 @@ def new_fs(
     # log.warning(log_msg)
     log.debug(log_msg)
     # log_argopy_callerstack()
-    return fs, cache_registry
+    return fs, cache_registry, fsspec_kwargs

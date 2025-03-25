@@ -7,9 +7,10 @@ import shutil
 import pickle  # nosec B403 only used with internal files/assets
 import json
 import tempfile
+import aiohttp
 from typing import Union
 from pathlib import Path
-import aiohttp
+import logging
 
 
 from ..options import OPTIONS
@@ -18,6 +19,9 @@ from ..errors import (
     CacheFileNotFound,
 )
 from .filesystems import new_fs
+
+
+log = logging.getLogger("argopy.stores.spec")
 
 
 class ArgoStoreProto(ABC):
@@ -45,7 +49,7 @@ class ArgoStoreProto(ABC):
         self.cache = cache
         self.cachedir = OPTIONS["cachedir"] if cachedir == "" else cachedir
         self._fsspec_kwargs = {**kwargs}
-        self.fs, self.cache_registry = new_fs(
+        self.fs, self.cache_registry, self._fsspec_kwargs = new_fs(
             self.protocol, self.cache, self.cachedir, **self._fsspec_kwargs
         )
 
@@ -115,9 +119,19 @@ class ArgoStoreProto(ABC):
         else:
             return None
 
-    def expand_path(self, path):
+    def expand_path(self, path, **kwargs):
+        """Turn one or more globs or directories into a list of all matching paths to files or directories.
+
+        For http store, return path unchanged (not implemented).
+
+        kwargs are passed to fsspec expand_path which call ``glob`` or ``find``, which may in turn call ``ls``.
+
+        Returns
+        -------
+        list
+        """
         if self.protocol != "http" and self.protocol != "https":
-            return self.fs.expand_path(path)
+            return self.fs.expand_path(path, **kwargs)
         else:
             return [path]
 
@@ -139,6 +153,8 @@ class ArgoStoreProto(ABC):
 
         """
         fp = getattr(self.fs, '_join', lambda x: x)(path)
+        if self.protocol == 'ftp':
+            fp = f"{self.host}:{self.port}{self.fs._strip_protocol(fp)}"
         if not protocol:
             return fp
         else:

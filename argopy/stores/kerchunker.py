@@ -3,6 +3,7 @@ from typing import List, Union, Dict, Literal
 from pathlib import Path
 import json
 import logging
+from packaging import version
 
 from ..utils import to_list
 from . import memorystore, filestore
@@ -199,19 +200,31 @@ class ArgoKerchunker:
 
     @property
     def store_path(self):
-        """Path to the reference store, including protocol"""
+        """Absolute path to the reference store, including protocol"""
         p = getattr(self.fs, "path", str(Path(".").absolute()))
         # Ensure the protocol is included for non-local files:
-        if self.fs.fs.protocol[0] == "ftp":
-            p = "ftp://" + self.fs.fs.host + fsspec.core.split_protocol(p)[-1]
         if self.fs.fs.protocol[0] == "s3":
             p = "s3://" + fsspec.core.split_protocol(p)[-1]
         return p
 
     def _ncfile2jsfile(self, ncfile):
+        """Convert a netcdf file path to a data store file path for kerchunk zarr reference (json data)"""
         return Path(ncfile).name.replace(".nc", "_kerchunk.json")
 
+    def _ncfile2ncref(self, ncfile: Union[str, Path], fs=None):
+        """Convert a netcdf file path to a key used in internal kerchunk_references"""
+        # return fs.full_path(fs.info(str(ncfile))['name'], protocol=True)
+        return fs.full_path(str(ncfile), protocol=True)
+
     def _magic2chunker(self, ncfile, fs):
+        """Get a netcdf file path chunker alias: 'cdf3' or 'hdf5'
+
+        This is based on the file binary magic value.
+
+        Raises
+        ------
+        :class:`ValueError` if file not recognized
+        """
         magic = fs.open(ncfile).read(3)
         if magic == b"CDF":
             return "cdf3"
@@ -227,6 +240,11 @@ class ArgoKerchunker:
         chunker: Literal["auto", "cdf3", "hdf5"] = "auto",
     ):
         """Compute reference data for a netcdf file (kerchunk json data)
+
+        This method is intended to be used internally, since it's not using the kerchunk reference store.
+
+        Users should rather use the :meth:`to_reference` method to avoid to recompute reference data
+        when available on the :class:`ArgoKerchunker` instance.
 
         Parameters
         ----------
@@ -245,24 +263,27 @@ class ArgoKerchunker:
         -------
         dict
         """
-        ncfile_raw = str(ncfile)
         chunker = self._magic2chunker(ncfile, fs) if chunker == "auto" else chunker
+        ncfile_full = self._ncfile2ncref(ncfile, fs=fs)
 
-        ncfile_full = fs.full_path(ncfile_raw, protocol=True)
-        # log.debug(f"Computing kerchunk json zarr references for: {ncfile_full}")
-        # log.debug(f"Kerchunker storage options: {self.storage_options}")
+        storage_options = self.storage_options.copy()
+        if fs.protocol == 'ftp' and version.parse(fsspec.__version__) < version.parse("2024.10.0"):
+            # We need https://github.com/fsspec/filesystem_spec/pull/1673
+            storage_options.pop('host', None)
+            storage_options.pop('port', None)
+
         if chunker == "cdf3":
             chunks = NetCDF3ToZarr(
                 ncfile_full,
                 inline_threshold=self.inline_threshold,
                 max_chunk_size=self.max_chunk_size,
-                storage_options=self.storage_options,
+                storage_options=storage_options,
             )
         elif chunker == "hdf5":
             chunks = SingleHdf5ToZarr(
                 ncfile_full,
                 inline_threshold=self.inline_threshold,
-                storage_options=self.storage_options,
+                storage_options=storage_options,
             )
 
         kerchunk_data = chunks.translate()
@@ -272,7 +293,7 @@ class ArgoKerchunker:
         with self.fs.open(kerchunk_jsfile, "wb") as f:
             f.write(json.dumps(kerchunk_data).encode())
 
-        return ncfile, kerchunk_jsfile, kerchunk_data
+        return ncfile_full, kerchunk_jsfile, kerchunk_data
 
     def update_kerchunk_references_from_store(self):
         """Load kerchunk data already on store"""
@@ -362,14 +383,12 @@ class ArgoKerchunker:
         return results
 
     def to_reference(self, ncfile: Union[str, Path], fs=None, overwrite: bool = False):
-        """Return zarr reference data for a given netcdf file
+        """Return zarr reference data for a given netcdf file path
 
-        If data are found on the instance file store, load them, otherwise triggers :meth:`ArgoKerchunker.translate` and
-        save data on instance file store.
+        Return data from the instance store if available, otherwise trigger :meth:`ArgoKerchunker.translate` (which save
+        data on the instance data store).
 
-        This is basically similar to :meth:`ArgoKerchunker.translate` but for a single file and **possibly using pre-computed references**.
-
-        This is the method to use in **argopy** file store method :meth:`ArgoStoreProto.open_dataset` to implement laziness.
+        This is the method to use in **argopy** file store methods :meth:`ArgoStoreProto.open_dataset` to implement laziness.
 
         Parameters
         ----------
@@ -388,16 +407,16 @@ class ArgoKerchunker:
         """
         if overwrite:
             self.translate(ncfile, fs=fs)
-        elif str(ncfile) not in self.kerchunk_references:
+        elif self._ncfile2ncref(ncfile, fs=fs) not in self.kerchunk_references:
             if self.fs.exists(self._ncfile2jsfile(ncfile)):
                 self.kerchunk_references.update(
-                    {str(ncfile): self._ncfile2jsfile(ncfile)}
+                    {self._ncfile2ncref(ncfile, fs=fs): self._ncfile2jsfile(ncfile)}
                 )
             else:
                 self.translate(ncfile, fs=fs)
 
         # Read and load the kerchunk JSON file:
-        kerchunk_jsfile = self.kerchunk_references[str(ncfile)]
+        kerchunk_jsfile = self.kerchunk_references[self._ncfile2ncref(ncfile, fs=fs)]
         with self.fs.open(kerchunk_jsfile, "r") as file:
             kerchunk_data = json.load(file)
 
@@ -406,7 +425,7 @@ class ArgoKerchunker:
             target_ok = False
             for key, value in kerchunk_data["refs"].items():
                 if key not in [".zgroup", ".zattrs"] and "0." in key:
-                    if value[0] == ncfile:
+                    if value[0] == self._ncfile2ncref(ncfile, fs=fs):
                         target_ok = True
                         break
             if not target_ok:
@@ -414,10 +433,10 @@ class ArgoKerchunker:
 
         return kerchunk_data
 
-    def pprint(self, ncfile: Union[str, Path], params: List[str] = None):
+    def pprint(self, ncfile: Union[str, Path], params: List[str] = None, fs=None):
         """Pretty print kerchunk json data for a netcdf file"""
         params = to_list(params) if params is not None else []
-        kerchunk_data = self.to_reference(ncfile)
+        kerchunk_data = self.to_reference(ncfile, fs=fs)
 
         # Pretty print JSON data
         keys_to_select = [".zgroup", ".zattrs", ".zmetadata"]

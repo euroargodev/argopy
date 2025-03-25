@@ -29,6 +29,14 @@ class ftpstore(httpstore):
 
     protocol = "ftp"
 
+    @property
+    def host(self):
+        return self.fs.fs.host if self.fs.protocol == 'dir' else self.fs.host
+
+    @property
+    def port(self):
+        return self.fs.fs.port if self.fs.protocol == 'dir' else self.fs.port
+
     def open_dataset(self, url: str,
         errors: Literal["raise", "ignore", "silent"] = "raise",
         lazy: bool = False,
@@ -140,9 +148,7 @@ class ftpstore(httpstore):
 
             if "ak" not in kwargs:
                 self.ak = ArgoKerchunker()
-                storage_options = {"host": self.fs.fs.host if self.fs.protocol == 'dir' else self.fs.host,
-                                   "port": self.fs.fs.port if self.fs.protocol == 'dir' else self.fs.port}
-                self.ak.storage_options = storage_options
+                self.ak.storage_options = {"host": self.host, "port": self.port}
             else:
                 self.ak = kwargs["ak"]
 
@@ -163,7 +169,7 @@ class ftpstore(httpstore):
                 return "reference://", xr_opts
             else:
                 warnings.warn(
-                    "This url does not support byte range requests so we cannot load it lazily, falling back on loading in memory."
+                    "This url does not support byte range requests so we cannot load it lazily, falling back on loading in memory.\n(url='%s')" % url
                 )
                 log.debug("This url does not support byte range requests: %s" % self.full_path(url))
                 return load_in_memory(
@@ -187,7 +193,7 @@ class ftpstore(httpstore):
 
             if "source" not in ds.encoding:
                 if isinstance(url, str):
-                    ds.encoding["source"] = url
+                    ds.encoding["source"] = self.full_path(url)
 
             self.register(url)
             return ds
