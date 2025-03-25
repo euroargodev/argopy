@@ -7,6 +7,19 @@ What's New
 
 |pypi dwn| |conda dwn|
 
+Coming up next
+--------------
+
+Internals
+^^^^^^^^^
+
+- **Open netcdf files lazily with a ftp server**. Adding to s3 and http, we now support laziness with ftp using `kerchunk <https://fsspec.github.io/kerchunk/>`_. Checkout the dedicated :ref:`lazy` section of the documentation. (:pr:`460`) by |gmaze|.
+
+Energy
+^^^^^^
+
+|eqco2_since_last_release|
+
 
 v1.1.0 (18 March 2025)
 ----------------------
@@ -103,7 +116,7 @@ Internals
 Energy
 ^^^^^^
 
-|eqco2_since_last_release|
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.1.0%20%5BgCO2eq%5D-1328.99-black?style=plastic&labelColor=grey
 
 
 v1.0.0 (16 Oct. 2024)
