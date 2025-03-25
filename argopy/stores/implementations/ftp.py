@@ -153,7 +153,6 @@ class ftpstore(httpstore):
                 self.ak = kwargs["ak"]
 
             if self.ak.supported(url, fs=self):
-                log.debug("computing xr_opts")
                 xr_opts = {
                     "engine": "zarr",
                     "backend_kwargs": {
@@ -167,7 +166,6 @@ class ftpstore(httpstore):
                         },
                     },
                 }
-                log.debug('done computing xr_opts')
                 return "reference://", xr_opts
             else:
                 warnings.warn(
@@ -191,7 +189,6 @@ class ftpstore(httpstore):
             )
 
         if target is not None:
-            log.debug('xr.open_dataset')
             ds = xr.open_dataset(target, **xr_opts)
 
             if "source" not in ds.encoding:
