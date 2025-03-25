@@ -35,7 +35,6 @@ class Test_FtpStore:
 
     @property
     def port(self):
-        # p = 0
         p = int(urlparse(pytest.MOCKFTP).port)
         log.debug("Using FTP port: %i" % p)
         return p
@@ -107,6 +106,7 @@ class Test_FtpStore:
 
         def preprocess(ds):
             """Fake preprocessor raising an error"""
+            log.debug("Simulate a preprocessing error...")
             raise ValueError
 
         if method == "process":

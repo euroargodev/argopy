@@ -29,6 +29,7 @@ HAS_S3FS = importlib.util.find_spec("s3fs") is not None
 if HAS_S3FS:
     VALID_HOSTS.update({'s3': 's3://argo-gdac-sandbox/pub'})
 
+
 def id_for_host(host):
     """Get a short name for scenarios IDs, given a FTP host"""
     if host == "MOCKFTP":

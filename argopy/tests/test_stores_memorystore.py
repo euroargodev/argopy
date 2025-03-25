@@ -12,6 +12,7 @@ log = logging.getLogger("argopy.tests.stores")
 
 
 class Test_MemoryStore:
+
     def test_implementation(self):
         fs = memorystore(cache=False)
         assert isinstance(fs.fs, fsspec.implementations.memory.MemoryFileSystem)
