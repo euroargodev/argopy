@@ -3,6 +3,7 @@ from typing import List, Union, Dict, Literal
 from pathlib import Path
 import json
 import logging
+from packaging import version
 
 from ..utils import to_list
 from . import memorystore, filestore
@@ -263,20 +264,26 @@ class ArgoKerchunker:
         dict
         """
         chunker = self._magic2chunker(ncfile, fs) if chunker == "auto" else chunker
-
         ncfile_full = self._ncfile2ncref(ncfile, fs=fs)
+
+        storage_options = self.storage_options.copy()
+        if fs.protocol == 'ftp' and version.parse(fsspec.__version__) < version.parse("2024.10.0"):
+            # We need https://github.com/fsspec/filesystem_spec/pull/1673
+            storage_options.pop('host', None)
+            storage_options.pop('port', None)
+
         if chunker == "cdf3":
             chunks = NetCDF3ToZarr(
                 ncfile_full,
                 inline_threshold=self.inline_threshold,
                 max_chunk_size=self.max_chunk_size,
-                storage_options=self.storage_options,
+                storage_options=storage_options,
             )
         elif chunker == "hdf5":
             chunks = SingleHdf5ToZarr(
                 ncfile_full,
                 inline_threshold=self.inline_threshold,
-                storage_options=self.storage_options,
+                storage_options=storage_options,
             )
 
         kerchunk_data = chunks.translate()
