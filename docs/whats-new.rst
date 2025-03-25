@@ -13,7 +13,7 @@ Coming up next
 Internals
 ^^^^^^^^^
 
-- **Open netcdf files lazily with a ftp server**. Adding to s3 and http, we now support laziness with ftp using `kerchunk <https://fsspec.github.io/kerchunk/>`_. Checkout the dedicated :ref:`lazy` section of the documentation. (:pr:`460`) by |gmaze|.
+- **Open netcdf files lazily from ftp server**. Adding to s3 and http, we now support laziness with ftp using `kerchunk <https://fsspec.github.io/kerchunk/>`_. Checkout the dedicated :ref:`lazy` section of the documentation. (:pr:`460`) by |gmaze|.
 
 Energy
 ^^^^^^
