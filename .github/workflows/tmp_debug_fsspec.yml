@@ -6,6 +6,8 @@ on:
   workflow_dispatch: # allows you to trigger the workflow run manually
   pull_request:
     types: [synchronize]
+    branches-ignore:
+      - 'dependabot*'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
