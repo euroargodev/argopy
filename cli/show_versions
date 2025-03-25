@@ -165,20 +165,20 @@ def show_versions(file=sys.stdout, conda=False, free=False, core=False):  # noqa
             ("gsw", get_version),   # Used by xarray accessor to compute new variables
             ("tqdm", get_version),
         ]),
-        "ext.files": sorted(
-            [
-                ("zarr", get_version),
-                ("boto3", get_version),
-                ("numcodecs", get_version),
-                ("s3fs", get_version),
-                ("kerchunk", get_version),
-            ]
-        ),
         'ext.perf': sorted([
             ("dask", get_version),
             ("distributed", get_version),
             ("pyarrow", get_version),
         ]),
+        "ext.files": sorted(
+            [
+                ("boto3", get_version),
+                ("numcodecs", get_version),
+                ("s3fs", get_version),
+                ("kerchunk", get_version),
+                ("zarr", get_version),
+            ]
+        ),
         'ext.plot': sorted([
             ("cartopy", get_version),
             ("IPython", get_version),
