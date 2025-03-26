@@ -12,16 +12,20 @@ def Z_euphotic(depth: np.array, PAR: np.array, max_surface: float = 5.) -> float
 
     Parameters
     ----------
-    depth :
-    PAR :
+    depth: np.array
+        Vertical axis values, pressure or depth.
+    PAR: np.array
+        Photosynthetically available radiation: PAR.
+    max_surface: float, optional, default: 5.
+        Maximum value of the vertical axis above which the maximum PAR value is considered surface values.
 
     Returns
     -------
     Euphotic layer depth estimate
     """
-    idx = np.logical_or(np.isnan(depth), np.isnan(PAR))
-    depth = depth[~idx]
-    PAR = PAR[~idx]
+    idx = ~np.logical_or(np.isnan(depth), np.isnan(PAR))
+    depth = depth[idx]
+    PAR = PAR[idx]
 
     try:
         Surface_levels = np.where(depth <= max_surface)[0]
