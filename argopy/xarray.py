@@ -1992,16 +1992,119 @@ class ArgoAccessor:
         # Convert to a zarr file using compression:
         return self._obj.to_zarr(*args, **kwargs)
 
-    def reduce_profile(self, reducer, param, axis='PRES'):
-        reduced = xr.apply_ufunc(
-            reducer,  # function used to reduce one profile to a single value
-            self._obj[axis],    # 1st argument of the reducer
-            self._obj[param],   # 2nd argument of the reducer
-            input_core_dims=[["N_LEVELS"], ["N_LEVELS"]],  # one for each argument of the reducer
+    def reduce_profile(self, func, params=[], **kwargs) -> xr.DataArray:
+        """Apply a vectorized function for unlabeled arrays along Argo profiles
+
+        This method allows to execute a per profile diagnostic function very efficiently. Such a diagnostic function
+        takes vertical profiles as input and return a single value as output (see examples below).
+
+        Typical usage example would include mixed layer depth or euphotic layer depth computation.
+
+        Parameters
+        ----------
+        func: callable
+            A function that takes one or more profile parameters as input, and return a single value as output.
+
+        params: [List, str]
+            Name, or list of names, of the dataset parameters expected by `func`. All of these parameters
+            must have 'N_LEVELS' as a dimension.
+
+        **kwargs: dict, optional
+            Keyword arguments to be passed to `func`
+
+        Returns
+        -------
+        :class:`xarray.DataArray`
+
+        Examples
+        --------
+        .. code-block:: python
+            :caption: Example 1
+
+            from argopy import ArgoFloat
+            dsp = ArgoFloat(6901864).open_dataset('Sprof')
+
+            def max_salinity_depth(pres, psal):
+                # A dummy function returning depth of the maximum salinity
+                idx = ~np.logical_or(np.isnan(pres), np.isnan(psal))
+                return pres[idx][np.argmax(psal[idx])]
+
+            # Apply reduce function on all profiles:
+            dsp.argo.reduce_profile(max_salinity_depth, params=['PRES', 'PSAL'])
+
+        .. code-block:: python
+            :caption: Example 2: with keyword arguments
+
+            from argopy import ArgoFloat
+            dsp = ArgoFloat(6901864).open_dataset('Sprof')
+
+            def max_salinity_depth(pres, psal, max_layer=1000.):
+                # A dummy function returning depth of the maximum salinity above max_layer:
+                idx = ~np.logical_or(np.isnan(pres), np.isnan(psal))
+                idx = np.logical_and(idx, pres<=max_layer)
+                if np.any(idx):
+                    return pres[idx][np.argmax(psal[idx])]
+                else:
+                    return np.NaN
+
+            # Apply reduce function on all profiles:
+            dsp.argo.reduce_profile(max_salinity_depth, params=['PRES', 'PSAL'], max_layer=700)
+
+        .. code-block:: python
+            :caption: Example 3: automatically parallelize func with Dask
+
+            from argopy import ArgoFloat
+            dsp = ArgoFloat(6901864).open_dataset('Sprof')
+
+            # Make sure we're working with dask arrays
+            dsp = dsp.chunk({'N_PROF': 10})
+
+            def max_salinity_depth(pres, psal):
+                # A dummy function returning depth of the maximum salinity
+                idx = ~np.logical_or(np.isnan(pres), np.isnan(psal))
+                return pres[idx][np.argmax(psal[idx])]
+
+            # Apply reduce function on all profiles:
+            da = dsp.argo.reduce_profile(max_salinity_depth, params=['PRES', 'PSAL'])  # Return a dask array
+            da.compute()
+        """
+        if self._type != "profile":
+            raise InvalidDatasetStructure(
+                "Method only available for a collection of profiles (with N_PROF dimension)"
+            )
+
+        # plist holds the list of dataset variable(s) required by the reducer with a N_PROF dimension:
+        # eg: ['PRES', 'TEMP']
+        plist = to_list(params)
+        for param in plist:
+            if param not in self._obj:
+                raise ValueError(f"Parameter {param} not in dataset")
+            if 'N_LEVELS' not in self._obj[param].dims:
+                raise ValueError(f"Parameter {param} must have the 'N_LEVELS' dimension")
+
+        # There should be one input core dimension 'N_LEVELS' for each argument of the reduce function
+        input_core_dims = [["N_LEVELS"] for _ in plist]
+
+        # Create the reduce function list of arguments:
+        ufunc_args = []
+        [ufunc_args.append(self._obj[param]) for param in plist]
+
+        # Create the xr.apply_ufunc list of keywords arguments:
+        ufunc_kwargs = dict(
+            kwargs=kwargs, # Keywords arguments to be passed to the reduce function
+            input_core_dims=input_core_dims,
+
+            # dimensions allowed to change size. Must be set!
+            # must also appear in ``input_core_dims`` for at least one argument
             exclude_dims=set(("N_LEVELS",)),
-            # dimensions allowed to change size. Must be set! must also appear in ``input_core_dims`` for at least one argument
+
             vectorize=True,  # loop over non-core dims
             dask="parallelized",
+        )
+        reduced = xr.apply_ufunc(
+            func,
+            *ufunc_args,
+            **ufunc_kwargs,
         )
         return reduced
 
