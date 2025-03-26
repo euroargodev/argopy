@@ -91,6 +91,13 @@ class ArgoAccessor:
         >>> ds.argo.canyon_med.predict()
         >>> ds.argo.canyon_med.predict('PO4')
 
+    .. code-block:: python
+        :caption: Extensions: Optical modeling
+
+        >>> ds.argo.optic.Zeu()
+        >>> ds.argo.optic.Zeu(method='percentage')
+        >>> ds.argo.optic.Zeu(method='KdPAR')
+
     """
 
     def __init__(self, xarray_obj):
@@ -2006,11 +2013,11 @@ class ArgoAccessor:
             A function that takes one or more profile parameters as input, and return a single value as output.
 
         params: [List, str]
-            Name, or list of names, of the dataset parameters expected by `func`. All of these parameters
-            must have 'N_LEVELS' as a dimension.
+            Name, or list of names, of the dataset parameters expected by ``func``. All of these parameters
+            must have ``N_LEVELS`` as a dimension.
 
         **kwargs: dict, optional
-            Keyword arguments to be passed to `func`
+            Keyword arguments to be passed to ``func``
 
         Returns
         -------

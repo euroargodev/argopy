@@ -10,6 +10,14 @@ What's New
 Coming up next
 --------------
 
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. currentmodule:: xarray
+
+- **Optical modeling diagnostics for BGC data**. We introduce a preliminary implementation of standard diagnostics from optical modeling. These are available through the new :class:`Dataset.argo.optic` extension. (:pr:`463`) by |gmaze|.
+
+.. currentmodule:: argopy
+
 Internals
 ^^^^^^^^^
 
@@ -107,7 +115,11 @@ Internals
 
 - Fix bug raising an error when exporting a dataset to netcdf after erddap fetch, :issue:`412`. (:pr:`413`) by |gmaze|.
 
+.. currentmodule:: xarray
+
 - The :class:`Dataset.argo.canyon_med` predictor raises errors if not dealing with a collection of Argo points. (:pr:`450`) by |gmaze|.
+
+.. currentmodule:: argopy
 
 - Make the :class:`Dataset.argo` accessor and its extensions able to work with dataset from a :class:`DataFetcher` and from a :class:`ArgoFloat`. This was necessary because the time variable does not have the same name in these dataset (``TIME`` vs ``JULD``). But this point should be addressed later. (:pr:`450`) by |gmaze|.
 
