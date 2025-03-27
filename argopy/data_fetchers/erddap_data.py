@@ -1099,4 +1099,7 @@ class Fetch_box(ErddapArgoDataFetcher):
                     urls.append(fb.get_url())
                 except DataNotFound:
                     log.debug("This box fetcher will contain no data")
+                except ValueError as e:
+                    if 'not available for this access point' in str(e):
+                        log.debug("This box fetcher does not contained required data")
             return urls
