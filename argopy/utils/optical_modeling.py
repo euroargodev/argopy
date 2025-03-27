@@ -83,6 +83,23 @@ def Z_euphotic(axis: np.array,
     return np.array(result)
 
 
+def Zpd(*args, **kwargs):
+    """
+    Parameters
+    ----------
+    From Z_euphotic
+
+    Returns
+    -------
+    Zpd or Zopt
+    The "first optical depth", which is approximately the layer that is seen by the satellite.
+    Morel 1988
+
+    """
+    Zeu = Z_euphotic(*args, **kwargs)
+
+    return Zeu / 4.6
+
 def MLD_Func(PRES, PSAL, TEMP, LAT, LON):
     """
     Parameters
@@ -119,23 +136,6 @@ def time_UTC_tolocal(time_64, longitude):
 
     return local
 
-
-def Zpd(depth, PAR, choice='percentage'):
-    """
-    Parameters
-    ----------
-    Frm Z_euphotic
-
-    Returns
-    -------
-    Zpd or Zopt
-    The "first optical depth", which is approximately the layer that is seen by the satellite.
-    Morel 1988
-
-    """
-    Zeu = Z_euphotic(depth, PAR, choice)
-
-    return Zeu / 4.6
 
 
 def Z_iPAR_tresh(depth, PAR, tresh=15):
