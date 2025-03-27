@@ -95,8 +95,12 @@ class ArgoAccessor:
         :caption: Extensions: Optical modeling
 
         >>> ds.argo.optic.Zeu()
+        >>> ds.argo.optic.Zeu(inplace=True)
         >>> ds.argo.optic.Zeu(method='percentage')
         >>> ds.argo.optic.Zeu(method='KdPAR')
+
+        >>> ds.argo.optic.Zpd()
+        >>> ds.argo.optic.Zpd(inplace=True)
 
     """
 

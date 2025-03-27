@@ -27,6 +27,8 @@ class OpticalModeling(ArgoAccessorExtension):
         dsp.argo.optic.Zeu(method='percentage', max_surface=5.)
         dsp.argo.optic.Zeu(method='KdPAR', layer_min=10., layer_maz=50.)
 
+        dsp.argo.optic.Zpd()
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -69,6 +71,14 @@ class OpticalModeling(ArgoAccessorExtension):
         layer_max: float, optional, default: 50.
             Used only with the ``KdPAR`` method.
             Minimum and maximum values of the vertical axis over which to compute the PAR attenuation coefficient.
+
+        inplace: bool, optional, default: False
+            Should we return the new variable (False) or the dataset with the new variable added to it (True).
+
+        Returns
+        -------
+        :class:`xarray.DataArray` or :class:`xarray.Dataset`
+            If the ``inplace`` argument is True, dataset is modified in-place with new variable ``Zeu``.
 
         Examples
         --------
@@ -157,16 +167,7 @@ class OpticalModeling(ArgoAccessorExtension):
         return self.Zpd(*args, **kwargs)
 
     def Zpd(self, *args, **kwargs):
-        """Compute first optical depth
-
-        The "first optical depth", which is approximately the layer that is seen by the satellite is given by [1]_:
-
-        .. math::
-            Zpd = \\frac{Zeu}{4.6}
-
-        References
-        ----------
-        .. [1] Morel, A. (1988), Optical modeling of the upper ocean in relation to its biogenous matter content (case I waters), J. Geophys. Res., 93(C9), 10749–10768, doi:10.1029/JC093iC09p10749.
+        """Compute first optical depth from depth of the euphotic zone
 
         Parameters
         ----------
@@ -178,15 +179,41 @@ class OpticalModeling(ArgoAccessorExtension):
         :class:`xarray.DataArray` or :class:`xarray.Dataset`
             If the ``inplace`` argument is True, dataset is modified in-place with new variables Zpd and Zeu.
 
+        Notes
+        -----
+        The "first optical depth", which is approximately the layer that is seen by a satellite, is given by [1]_:
+
+        .. math::
+            Z_{pd} = \\frac{Z_{eu}}{4.6}
+
+        References
+        ----------
+        .. [1] Morel, A. (1988), Optical modeling of the upper ocean in relation to its biogenous matter content (case
+            I waters), J. Geophys. Res., 93(C9), 10749–10768, doi:10.1029/JC093iC09p10749.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            from argopy import ArgoFloat
+            dsp = ArgoFloat(6901864).open_dataset('Sprof')
+
+            dsp.argo.optic.Zpd()
+            dsp.argo.optic.Zpd(method='KdPAR', layer_min=10., layer_maz=50.) # Modify how Zeu is computed
+
         See Also
         --------
         :class:`Dataset.argo.optic`, :class:`Dataset.argo.optic.Zeu`,
         """
-        if getattr(kwargs, 'inplace', False):
-            Zeu = self.Zeu(*args, **kwargs)
+        inplace = kwargs.get("inplace", False)
+        if 'Zeu' in self._obj:
+            Zeu = self._obj["Zeu"]
         else:
-            Zeu = self._obj['Zeu']
-        da = Zeu/4.6
+            if inplace:
+                Zeu = self.Zeu(*args, **kwargs)["Zeu"]
+            else:
+                Zeu = self.Zeu(*args, **kwargs)
+        da = Zeu / 4.6
 
         # Attributes
         da.name = "Zpd"
@@ -195,16 +222,16 @@ class OpticalModeling(ArgoAccessorExtension):
             "units": Zeu.attrs.get("units", "?"),
             "definition": "Depth given by Zeu/4.6",
         }
-        if getattr(kwargs, 'inplace', False) is False:
-            if getattr(Zeu.attrs, 'max_surface', False):
-                da.attrs['Zeu_method'] = Zeu.attrs["percentage"]
-                da.attrs['Zeu_max_surface'] = Zeu.attrs["max_surface"]
-            if getattr(Zeu.attrs, 'layer_min', False):
-                da.attrs['Zeu_method'] = Zeu.attrs["KdPAR"]
-                da.attrs['Zeu_layer_min'] = Zeu.attrs["layer_min"]
-                da.attrs['Zeu_layer_max'] = Zeu.attrs["layer_max"]
+        if not inplace:
+            if Zeu.attrs.get("max_surface", False):
+                da.attrs["Zeu_method"] = "percentage"
+                da.attrs["Zeu_max_surface"] = Zeu.attrs["max_surface"]
+            if Zeu.attrs.get("layer_min", False):
+                da.attrs["Zeu_method"] = "KdPAR"
+                da.attrs["Zeu_layer_min"] = Zeu.attrs["layer_min"]
+                da.attrs["Zeu_layer_max"] = Zeu.attrs["layer_max"]
 
-        if getattr(kwargs, 'inplace', False):
+        if inplace:
             self._obj["Zpd"] = da
             return self._obj
         else:
