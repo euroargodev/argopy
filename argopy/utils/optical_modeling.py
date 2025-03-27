@@ -1,10 +1,15 @@
 import numpy as np
-import pandas as pd
-import xarray as xr
 from typing import Literal
-import gsw
+
 from scipy.ndimage import median_filter
 from scipy.ndimage import uniform_filter1d
+
+try:
+    import gsw
+
+    with_gsw = True
+except ModuleNotFoundError:
+    with_gsw = False
 
 
 def Z_euphotic(axis: np.array,
@@ -76,39 +81,6 @@ def Z_euphotic(axis: np.array,
             result = -np.log(0.01) / Kd_layer
 
     return np.array(result)
-
-
-# def Z_euphotic(depth, PAR, choice='percentage'):
-#     """
-#     Parameters
-#     ----------
-#     depth :
-#     PAR : not nan array
-#     choice : TYPE, optional
-#         DESCRIPTION. The default is 'percentage' else 'KdPAR'
-#
-#     Returns
-#     -------
-#     Zeu :
-#     """
-#
-#     depth = depth[~np.isnan(PAR)]
-#     PAR = PAR[~np.isnan(PAR)]
-#
-#     if choice == 'percentage':
-#         # Zeu as the depth at which the PAR value is the closest to the 1% of PAR value at the surface
-#         Surface_value = np.max(PAR[np.where(depth <= 5)[0]])
-#         if np.any(PAR > (Surface_value / 100)):
-#             index_1_percent = np.argmin(np.abs(PAR - (Surface_value / 100)))
-#             return depth[index_1_percent]
-#         else:
-#             return np.nan
-#
-#     elif choice == 'KdPAR':
-#         # Zeu from it's definition using the KdPAR obtained between 10 and 50m
-#         layer_index = (depth >= 10) & (depth <= 50)
-#         layer_size = depth[layer_index].max() - depth[layer_index].min()
-#         return -np.log(0.01) / (np.abs(np.log(PAR[layer_index][-1]) - np.log(PAR[layer_index][0])) / layer_size)
 
 
 def MLD_Func(PRES, PSAL, TEMP, LAT, LON):
