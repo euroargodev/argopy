@@ -174,6 +174,7 @@ Extensions
     Dataset.argo.datamode
     Dataset.argo.optic
     Dataset.argo.optic.Zeu
+    Dataset.argo.optic.Zpd
 
 .. currentmodule:: argopy
 

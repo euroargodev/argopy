@@ -347,6 +347,7 @@
 
     argopy.extensions.OpticalModeling
     argopy.extensions.OpticalModeling.Zeu
+    argopy.extensions.OpticalModeling.Zpd
 
     argopy.errors.InvalidDatasetStructure
 
