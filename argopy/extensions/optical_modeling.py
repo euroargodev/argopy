@@ -68,6 +68,17 @@ class OpticalModeling(ArgoAccessorExtension):
             Used only with the ``KdPAR`` method.
             Minimum and maximum values of the vertical axis over which to compute the PAR attenuation coefficient.
 
+        Examples
+        --------
+        .. code-block:: python
+
+            from argopy import ArgoFloat
+            dsp = ArgoFloat(6901864).open_dataset('Sprof')
+
+            dsp.argo.optic.Zeu()
+            dsp.argo.optic.Zeu(method='percentage', max_surface=5.)
+            dsp.argo.optic.Zeu(method='KdPAR', layer_min=10., layer_maz=50.)
+
         Notes
         -----
         The euphotic depth is estimated using the first method **percentage** directly from the vertical PAR profile
@@ -102,7 +113,7 @@ class OpticalModeling(ArgoAccessorExtension):
 
         See Also
         --------
-        :meth:`argopy.utils.Z_euphotic`
+        :class:`optic`, :meth:`argopy.utils.Z_euphotic`
         """
         if axis not in self._obj:
             raise ValueError(f"Missing '{axis}' in this dataset")

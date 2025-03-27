@@ -76,7 +76,7 @@ def Z_euphotic(axis: np.array,
         result = np.nan
         layer_index = (axis >= layer_min) & (axis <= layer_max)
         if np.any(layer_index):
-            layer_size = axis[layer_index][0] - axis[layer_index][-1]
+            layer_size = axis[layer_index][0] - axis[layer_index][-1]  # 0 index is below (higher value) the -1 index
             Kd_layer = - 1/layer_size * (np.log(par[layer_index][0]) - np.log(par[layer_index][-1]))
             result = -np.log(0.01) / Kd_layer
 
