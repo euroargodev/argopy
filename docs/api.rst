@@ -175,6 +175,7 @@ Extensions
     Dataset.argo.optic
     Dataset.argo.optic.Zeu
     Dataset.argo.optic.Zpd
+    Dataset.argo.optic.Z_iPAR_threshold
 
 .. currentmodule:: argopy
 

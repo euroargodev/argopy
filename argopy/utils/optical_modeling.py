@@ -83,22 +83,68 @@ def Z_euphotic(axis: np.array,
     return np.array(result)
 
 
-def Zpd(*args, **kwargs):
-    """
+def Z_firstoptic(*args, **kwargs):
+    """Compute first optical depth from depth of the euphotic zone
+
     Parameters
     ----------
-    From Z_euphotic
+    args, kwargs:
+        All arguments are passed to :class:`Dataset.argo.optic.Zeu`
 
     Returns
     -------
-    Zpd or Zopt
-    The "first optical depth", which is approximately the layer that is seen by the satellite.
-    Morel 1988
+    :class:`xarray.DataArray` or :class:`xarray.Dataset`
+        If the ``inplace`` argument is True, dataset is modified in-place with new variables Zpd and Zeu.
 
+    See Also
+    --------
+    :class:`xarray.Dataset.argo.optic.Zpd`
     """
     Zeu = Z_euphotic(*args, **kwargs)
-
     return Zeu / 4.6
+
+
+def Z_iPAR_threshold(axis, par, threshold=15., tolerance=5.):
+    """Depth where PAR value == threshold (closest)
+
+    The closest level in the vertical axis for which PAR is about a ``threshold`` value, with some tolerance.
+
+    Parameters
+    ----------
+    axis: np.array
+        Vertical axis values, pressure or depth, positive, increasing downward, typically from the ``PRESS``
+        parameter of an Argo float.
+    par: np.array
+        Photosynthetically available radiation, typically from the ``DOWNWELLING_PAR`` parameter of an Argo float.
+    threshold: float, optional, default: 15.
+        Target value for ``par``. We use 15 as the default because it is the theorical value below which
+        the Fchla is no longer quenched (For correction of NPQ purposes).
+    tolerance: float, optional, default: 5.
+        PAR value tolerance with regard to the target threshold. If the closest PAR value to ``threshold`` is distant by more than ``tolerance``, consider result invalid and return NaN.
+
+    Returns
+    -------
+    float
+
+    See Also
+    --------
+    :class:`xarray.Dataset.argo.optic.Z_iPAR_threshold`
+    """
+    # index = np.argmin(np.abs(par - 15))
+    # Z_iPAR = axis[index]
+    #
+    # if not par[index] > 10 or not par[index] < 20:
+    #     return np.nan
+    # else:
+    #     return Z_iPAR
+    iz = np.argmin(np.abs(par - threshold))
+    par_z = par[iz]
+    result = axis[iz]
+    if np.abs(par_z - threshold) >= tolerance:
+        return np.nan
+    else:
+        return np.array(result)
+
 
 def MLD_Func(PRES, PSAL, TEMP, LAT, LON):
     """
@@ -135,29 +181,6 @@ def time_UTC_tolocal(time_64, longitude):
     local = time_64 + np.timedelta64(int(delta), 'm')
 
     return local
-
-
-
-def Z_iPAR_tresh(depth, PAR, tresh=15):
-    """
-    Parameters
-    ----------
-    depth :
-    PAR : any(PAR<15) must be True
-
-    Returns
-    -------
-    Closest depth where PAR value == treshold
-    DEFAULT : 15 µmol photons m −2 s −1
-    => the theorical value below which the Fchla is no longer quenched (For correction of NPQ purposes)
-    """
-    index = np.argmin(np.abs(PAR - 15))
-    Z_iPAR = depth[index]
-
-    if not PAR[index] > 10 or not PAR[index] < 20:
-        return np.nan
-    else:
-        return Z_iPAR
 
 
 def get_solar_angle(LATITUDE, LONGITUDE, JULD):

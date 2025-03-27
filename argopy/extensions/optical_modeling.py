@@ -1,6 +1,6 @@
 from typing import Literal
 
-from ..utils.optical_modeling import Z_euphotic
+from ..utils.optical_modeling import Z_euphotic, Z_iPAR_threshold
 from . import register_argo_accessor, ArgoAccessorExtension
 
 
@@ -28,6 +28,8 @@ class OpticalModeling(ArgoAccessorExtension):
         dsp.argo.optic.Zeu(method='KdPAR', layer_min=10., layer_maz=50.)
 
         dsp.argo.optic.Zpd()
+
+        dsp.argo.optic.Z_iPAR_threshold(threshold=15.)
 
     """
 
@@ -166,7 +168,7 @@ class OpticalModeling(ArgoAccessorExtension):
     def Zopt(self, *args, **kwargs):
         return self.Zpd(*args, **kwargs)
 
-    def Zpd(self, *args, **kwargs):
+    def Zpd(self, axis="PRES", par="DOWNWELLING_PAR", *args, **kwargs):
         """Compute first optical depth from depth of the euphotic zone
 
         Parameters
@@ -206,14 +208,15 @@ class OpticalModeling(ArgoAccessorExtension):
         :class:`Dataset.argo.optic`, :class:`Dataset.argo.optic.Zeu`,
         """
         inplace = kwargs.get("inplace", False)
-        if 'Zeu' in self._obj:
+        if "Zeu" in self._obj:
             Zeu = self._obj["Zeu"]
         else:
             if inplace:
                 Zeu = self.Zeu(*args, **kwargs)["Zeu"]
             else:
                 Zeu = self.Zeu(*args, **kwargs)
-        da = Zeu / 4.6
+        # da = self._argo.reduce_profile(Z_firstoptic, params=[axis, par], **kwargs)
+        da = Zeu / 4.6  # This is too simple to call on the reduce function
 
         # Attributes
         da.name = "Zpd"
@@ -233,6 +236,44 @@ class OpticalModeling(ArgoAccessorExtension):
 
         if inplace:
             self._obj["Zpd"] = da
+            return self._obj
+        else:
+            return da
+
+    def Z_iPAR_threshold(
+        self,
+        axis="PRES",
+        par="DOWNWELLING_PAR",
+        threshold=15.0,
+        tolerance=5.0,
+        inplace=False,
+    ):
+        """Depth where PAR reaches some threshold value (closest)
+
+        This is the closest level in the vertical axis for which PAR is about a ``threshold`` value, with some tolerance.
+
+        .. math::
+
+            z | abs(PAR(z) - threshold) < tolerance
+
+        """
+        if axis not in self._obj:
+            raise ValueError(f"Missing '{axis}' in this dataset")
+        if par not in self._obj:
+            raise ValueError(f"Missing '{par}' in this dataset")
+        kw = {"threshold": threshold, "tolerance": tolerance}
+        da = self._argo.reduce_profile(Z_iPAR_threshold, params=[axis, par], **kw)
+
+        # Attributes
+        da.name = "Z_iPAR"
+        da.attrs = {
+            "long_name": "Depth where PAR=%0.2f" % threshold,
+            "units": self._obj[axis].attrs.get("units", "?"),
+            "threshold": threshold,
+            "tolerance": tolerance,
+        }
+        if inplace:
+            self._obj["Z_iPAR"] = da
             return self._obj
         else:
             return da

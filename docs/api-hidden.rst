@@ -348,6 +348,7 @@
     argopy.extensions.OpticalModeling
     argopy.extensions.OpticalModeling.Zeu
     argopy.extensions.OpticalModeling.Zpd
+    argopy.extensions.OpticalModeling.Z_iPAR_threshold
 
     argopy.errors.InvalidDatasetStructure
 
