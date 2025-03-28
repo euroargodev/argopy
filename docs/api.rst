@@ -172,6 +172,10 @@ Extensions
     Dataset.argo.create_float_source
     Dataset.argo.canyon_med
     Dataset.argo.datamode
+    Dataset.argo.optic
+    Dataset.argo.optic.Zeu
+    Dataset.argo.optic.Zpd
+    Dataset.argo.optic.Z_iPAR_threshold
 
 .. currentmodule:: argopy
 
@@ -193,6 +197,7 @@ Misc
     Dataset.argo.cast_types
     Dataset.argo.N_POINTS
     Dataset.argo.to_zarr
+    Dataset.argo.reduce_profile
 
 
 Utilities
@@ -251,6 +256,8 @@ Misc
 
     GreenCoding
     Github
+
+    Z_euphotic
 
 Argopy helpers
 ==============
