@@ -2004,12 +2004,12 @@ class ArgoAccessor:
         return self._obj.to_zarr(*args, **kwargs)
 
     def reduce_profile(self, func, params=[], **kwargs) -> xr.DataArray:
-        """Apply a vectorized function for unlabeled arrays along Argo profiles
+        """Apply a vectorized function for unlabeled arrays for each Argo profiles
 
         This method allows to execute a per profile diagnostic function very efficiently. Such a diagnostic function
         takes vertical profiles as input and return a single value as output (see examples below).
 
-        Typical usage example would include mixed layer depth or euphotic layer depth computation.
+        Typical usage example would include computation of mixed layer depth or euphotic layer depth.
 
         Parameters
         ----------
@@ -2021,7 +2021,7 @@ class ArgoAccessor:
             must have ``N_LEVELS`` as a dimension.
 
         **kwargs: dict, optional
-            Keyword arguments to be passed to ``func``
+            Keyword arguments to be passed to ``func``.
 
         Returns
         -------

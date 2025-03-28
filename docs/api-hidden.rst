@@ -129,6 +129,8 @@
     argopy.utils.MonitoredThreadPoolExecutor
 
     argopy.utils.Z_euphotic
+    argopy.utils.Z_firstoptic
+    argopy.utils.Z_iPAR_threshold
 
     argopy.related.load_dict
     argopy.related.get_coriolis_profile_id

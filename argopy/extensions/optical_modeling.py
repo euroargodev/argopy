@@ -1,4 +1,5 @@
-from typing import Literal
+from typing import Literal, Union
+import xarray as xr
 
 from ..utils.optical_modeling import Z_euphotic, Z_iPAR_threshold
 from . import register_argo_accessor, ArgoAccessorExtension
@@ -12,7 +13,7 @@ class OpticalModeling(ArgoAccessorExtension):
 
     See Also
     --------
-    :class:`optic.Zeu`, :class:`optic.Zpd`
+    :class:`optic.Zeu`, :class:`optic.Zpd`, :class:`optic.Z_iPAR_threshold`
 
     Examples
     --------
@@ -38,13 +39,13 @@ class OpticalModeling(ArgoAccessorExtension):
 
     def Zeu(
         self,
-        axis="PRES",
-        par="DOWNWELLING_PAR",
+        axis: str = "PRES",
+        par: str = "DOWNWELLING_PAR",
         method: Literal["percentage", "KdPAR"] = "percentage",
         max_surface: float = 5.0,
         layer_min: float = 10.0,
         layer_max: float = 50.0,
-        inplace=False,
+        inplace: bool = False,
     ):
         """Compute depth of the euphotic zone from PAR
 
@@ -166,9 +167,16 @@ class OpticalModeling(ArgoAccessorExtension):
             return da
 
     def Zopt(self, *args, **kwargs):
+        """Compute first optical depth from depth of the euphotic zone, points to Zpd method"""
         return self.Zpd(*args, **kwargs)
 
-    def Zpd(self, axis="PRES", par="DOWNWELLING_PAR", *args, **kwargs):
+    def Zpd(
+        self,
+        axis: str = "PRES",
+        par: str = "DOWNWELLING_PAR",
+        *args,
+        **kwargs
+    ):
         """Compute first optical depth from depth of the euphotic zone
 
         Parameters
@@ -242,20 +250,44 @@ class OpticalModeling(ArgoAccessorExtension):
 
     def Z_iPAR_threshold(
         self,
-        axis="PRES",
-        par="DOWNWELLING_PAR",
-        threshold=15.0,
-        tolerance=5.0,
-        inplace=False,
-    ):
-        """Depth where PAR reaches some threshold value (closest)
+        axis: str = "PRES",
+        par: str = "DOWNWELLING_PAR",
+        threshold: float = 15.0,
+        tolerance: float = 5.0,
+        inplace: bool = False,
+    ) -> Union[xr.DataArray, xr.Dataset]:
+        """Depth where PAR reaches some threshold value (closest point)
 
-        This is the closest level in the vertical axis for which PAR is about a ``threshold`` value, with some tolerance.
+        This is the closest level $z$ in the vertical axis for which PAR is about a threshold value $t$, with some tolerance $\\epsilon$:
 
         .. math::
 
-            z | abs(PAR(z) - threshold) < tolerance
+            z | abs(PAR(z) - t) < \epsilon
 
+        A default value of 15 is used because it is the theorical value below which the Fchla is no longer
+        quenched (For correction of NPQ purposes).
+
+        Parameters
+        ----------
+        axis: str, optional, default='PRES'
+            Name of the pressure axis to use.
+        par: str, optional, default='DOWNWELLING_PAR'
+            Name of the PAR variable to use.
+        threshold: float, optional, default: 15.
+            Target value for ``par``.
+        tolerance: float, optional, default: 5.
+            PAR value tolerance with regard to the target threshold. If the closest PAR value to ``threshold`` is distant by more than ``tolerance``, consider result invalid and return NaN.
+        inplace: bool, optional, default: False
+            Should we return the new variable (False) or the dataset with the new variable added to it (True).
+
+        Returns
+        -------
+        :class:`xarray.DataArray` or :class:`xarray.Dataset`
+            If the ``inplace`` argument is True, dataset is modified in-place with new variable ``Z_iPAR``.
+
+        See Also
+        --------
+        :class:`Dataset.argo.optic`, :class:`argopy.utils.Z_iPAR_threshold`
         """
         if axis not in self._obj:
             raise ValueError(f"Missing '{axis}' in this dataset")
