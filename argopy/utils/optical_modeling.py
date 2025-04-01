@@ -34,6 +34,8 @@ def Z_euphotic(
     - **percentage**: Depth for which PAR is 1% that of the surface value, defined as the maximum above ``max_surface``
     - **KdPAR**: -log(0.01) times the PAR attenuation coefficient over the layer between ``layer_min`` and ``layer_max``
 
+    See :class:`xarray.Dataset.argo.optic.Zeu` for more details on the methodology.
+
     Parameters
     ----------
     axis: numpy.ndarray, 1 dimensional
@@ -97,7 +99,7 @@ def Z_euphotic(
     return np.array(result)
 
 
-def Z_firstoptic(*args, **kwargs):
+def Z_firstoptic(*args, **kwargs) -> float:
     """Compute first optical depth from depth of the euphotic zone
 
     Parameters
@@ -119,11 +121,11 @@ def Z_firstoptic(*args, **kwargs):
 
 
 def Z_iPAR_threshold(
-        axis: np.ndarray,
-        par: np.ndarray,
-        threshold: float = 15.0,
-        tolerance: float = 5.0
-):
+    axis: np.ndarray,
+    par: np.ndarray,
+    threshold: float = 15.0,
+    tolerance: float = 5.0
+) -> float:
     """Depth where PAR value = threshold (closest point)
 
     The closest level in the vertical axis for which PAR is about a ``threshold`` value, with some tolerance.
@@ -165,6 +167,102 @@ def Z_iPAR_threshold(
         return np.array(result)
 
 
+def get_DCM(
+    CHLA: np.ndarray,
+    depth_CHLA: np.ndarray,
+    BBP:np.ndarray,
+    depth_BBP: np.ndarray,
+    max_depth: float = 300.,
+    resolution_threshold: float = 3.0,
+    smoother_size: int = 5,
+    surface_layer: float = 15.0,
+) -> Literal['NO', 'DBM', 'DAM']:
+    """Identify DCM type and properties
+
+    See :class:`xarray.Dataset.argo.optic.DCM` for more details on the methodology.
+
+    Parameters
+    ----------
+    CHLA:
+    BBP:
+    depth_CHLA:
+    depth_BBP:
+    max_depth: float, optional, default: 300.
+        Maximum depth allowed for a deep CHLA maximum to be found
+    resolution_threshold: float, optional, default: 3.
+        CHLA vertical axis resolution threshold below which a smoother is applied.
+    smoother_size: int, optional, default: 5
+        Size of the :meth:`scipy.ndimage.median_filter` filter.
+    surface_layer: float, optional, default: 15.
+        Depth value defining the surface layer above which twice the median CHLA value may qualify a DCM as such.
+
+    Returns
+    -------
+    str: Literal['NO', 'DBM', 'DAM']
+        The type of Deep Chlorophyll Maxima (DCM). Possible values are:
+
+        - 'NO': No DCM found above ``max_depth``
+        - 'DBM' : DCM associated with a biomass maximum
+        - 'DAM' : DCM due to photo-acclimation
+    float:
+        Depth of the DCM
+    float:
+        Amplitude the DCM, i.e. CHLA value
+    """
+
+    # Possibly smooth the profile:
+    if np.diff(depth_CHLA[depth_CHLA <= max_depth]).mean().round() < resolution_threshold:
+        # Rolling median window 5
+        CHLA_smooth = median_filter(CHLA, smoother_size, mode="nearest")
+    else:
+        CHLA_smooth = np.copy(CHLA)
+
+    # Identify the CHLA maximum in the appropriate layer:
+    layer_CHLA = depth_CHLA <= max_depth
+    if ~np.any(layer_CHLA):
+        return 'NO', np.nan, np.nan
+    Max_CHLA_depth = depth_CHLA[layer_CHLA][np.argmax(CHLA_smooth[layer_CHLA])]
+    Max_CHLA = CHLA[layer_CHLA][np.argmax(CHLA_smooth[layer_CHLA])]
+
+    # Qualify CHLA maximum as a DCM:
+    if np.any(depth_CHLA <= surface_layer) and Max_CHLA > 2 * np.median(CHLA[depth_CHLA <= surface_layer]):
+        DCM_type = "DCM"
+    else:
+        return 'NO', np.nan, np.nan
+
+    # Check for a potential cooccurrence of the DCM depth with any deep peak of BBP:
+    if DCM_type == "DCM":
+
+        if np.diff(depth_BBP[depth_BBP <= max_depth]).mean().round() < resolution_threshold:
+            # Rolling median window 5, Rolling mean 7
+            BBP_smooth = median_filter(BBP, 7, mode="nearest")
+            BBP_smooth = uniform_filter1d(BBP_smooth, 5, mode="nearest")
+        else:
+            BBP_smooth = np.copy(BBP)
+
+        # BBP maximum was searched for from the smoothed BBP profile in a layer of 20 meters around the DCM
+        layer_bbp = (depth_BBP >= Max_CHLA_depth - 20) & (
+            depth_BBP <= Max_CHLA_depth + 20
+        )
+        # once the bbp maximum and depth were identified on the smoothed profile,
+        # closest bbp measurements on the unsmoothed profile were accordingly identified.
+        Max_bbp = BBP[layer_bbp][np.argmax(BBP_smooth[layer_bbp])]
+
+        # The profile was defined as a DBM if the BBP maximum was more than 1.3
+        # times the BBP minimum within the top 15 meters.
+        if Max_bbp > 1.3 * np.min(BBP[depth_BBP <= surface_layer]):
+            DCM_type = "DBM"  # Deep Biomass Maximum
+        else:
+            DCM_type = "DAM"  # Deep photoAcclimation Maximum
+
+    if DCM_type == 'NO':
+        return DCM_type, np.nan, np.nan
+    else:
+        return DCM_type, Max_CHLA_depth, Max_CHLA
+
+
+
+
 def MLD_Func(PRES, PSAL, TEMP, LAT, LON):
     """
     Parameters
@@ -204,16 +302,6 @@ def time_UTC_tolocal(time_64, longitude):
     return local
 
 
-def get_solar_angle(LATITUDE, LONGITUDE, JULD):
-    import pvlib
-
-    location = pvlib.location.Location(LATITUDE, LONGITUDE)
-
-    solar_position = location.get_solarposition(JULD)
-
-    return solar_position["apparent_elevation"].values
-
-
 def time_UTC_to_offset(time_64, longitude):
     if abs(longitude) <= 7.5:
         # return time_64
@@ -231,58 +319,13 @@ def time_UTC_to_offset(time_64, longitude):
         return offset_hours * np.sign(longitude)
 
 
-def get_DCM(CHLA, depth_CHLA, BBP, depth_BBP):
-    """
-    Cornec 2021 (https://doi. org/10.1029/2020GB006759) Section 2.4
-    Parameters
-    ----------
-    CHLA, BBP, associated depth arrays :
+def get_solar_angle(LATITUDE, LONGITUDE, JULD):
+    import pvlib
 
-    Returns
-    -------
-    DCM type (Deep Chlorophyll Maxima)
-        'NO'
-        'DBM' : Associated with a biomass maximum
-        'DAM' : Due to photoacclimation
-    """
+    location = pvlib.location.Location(LATITUDE, LONGITUDE)
 
-    # Rolling median window 5
-    CHLA_smooth = median_filter(CHLA, 5, mode="nearest")
+    solar_position = location.get_solarposition(JULD)
 
-    # The depth of the [Chla] maximum was then searched for between 0 and 300 m,
-    # assuming that no phyto- plankton [Chla] can develop below 300 m
-    layer_CHLA = depth_CHLA <= 300
-    Max_CHLA_depth = depth_CHLA[layer_CHLA][np.argmax(CHLA_smooth[layer_CHLA])]
-    # the closest [Chla] measurements on the unsmoothed profile were accordingly identified.
-    Max_CHLA = CHLA[layer_CHLA][np.argmax(CHLA_smooth[layer_CHLA])]
+    return solar_position["apparent_elevation"].values
 
-    # The profile was definitively qualified as a DCM if the maximum [Chla] value of
-    # the unsmoothed profile was greater than twice the median of the [Chla] values in the 15 first meters
-    if Max_CHLA > 2 * np.median(CHLA[depth_CHLA <= 15]):
-        DCM_type = "DCM"
-    else:
-        # Otherwise, it was qualified as NO.
-        DCM_type = "NO"
 
-    # potential cooccurrence of the DCM depth with any deep peak of b bp
-    if DCM_type == "DCM":
-        # Rolling median window 5, Rolling mean 7
-        BBP_smooth = median_filter(BBP, 7, mode="nearest")
-        BBP_smooth = uniform_filter1d(BBP_smooth, 5, mode="nearest")
-
-        # bbp maximum was searched for from the smoothed b bp profile in a layer of 20 meters around the DCM
-        layer_bbp = (depth_BBP >= Max_CHLA_depth - 20) & (
-            depth_BBP <= Max_CHLA_depth + 20
-        )
-        # once the bbp maximum and depth were identified on the smoothed profile,
-        # closest bbp measurements on the unsmoothed profile were accordingly identified.
-        Max_bbp = BBP[layer_bbp][np.argmax(BBP_smooth[layer_bbp])]
-
-        # The profile was de- fined as a DBM if the bbp maximum was more than 1.3
-        # times the bbp minimum within the top 15 meters.
-        if Max_bbp > 1.3 * np.min(BBP[depth_BBP <= 15]):
-            DCM_type = "DBM"  # Deep Biomass Maximum
-        else:
-            DCM_type = "DAM"  # Deep photoAcclimation Maximum
-
-    return DCM_type
