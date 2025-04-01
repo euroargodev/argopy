@@ -309,3 +309,21 @@ class OpticalModeling(ArgoAccessorExtension):
             return self._obj
         else:
             return da
+
+    def DCM(self):
+        """
+
+        The depth of the [Chla] maximum is searched between the first vertical level and ``max_depth``,
+        300m by default, assuming that no phytoplankton [Chla] can develop below 300 m.
+
+        A [Chla] profile is definitively qualified as a DCM if the maximum [Chla] value of the un-smoothed profile is
+        greater than twice the median of the [Chla] values at depths above ``surface_layer`` (15. by default).
+
+        References
+        ----------
+        .. [1] Cornec 2021 (https://doi. org/10.1029/2020GB006759) Section 2.4
+
+        Returns
+        -------
+
+        """
