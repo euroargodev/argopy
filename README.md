@@ -96,6 +96,6 @@ The **argopy** team is concerned about the environmental impact of your favorite
 
 ## Development and contributions 
 
-See our development roadmap here: https://github.com/euroargodev/argopy/milestone/3
+See our software management dashboard here: https://github.com/orgs/euroargodev/projects/19
 
-Checkout [the contribution page](https://argopy.readthedocs.io/en/latest/contributing.html) if you want to get involved and help maintain or develop ``argopy``.
+And if you want to get involved and help maintain or develop ``argopy``, please checkout [the contribution page](https://argopy.readthedocs.io/en/latest/contributing.html).
