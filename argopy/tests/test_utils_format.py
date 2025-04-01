@@ -1,7 +1,16 @@
 import os
+import warnings
+
 import pytest
 import argopy
+import pandas as pd
+from unittest import mock
+import logging
+
+
 from argopy.utils.format import format_oneline, argo_split_path
+
+log = logging.getLogger("argopy.tests.utils.format")
 
 
 def test_format_oneline():
@@ -82,4 +91,18 @@ class Test_argo_split_path:
                              indirect=False)
     def test_Invalid(self, file):
         with pytest.raises(ValueError):
-            desc = argo_split_path(file)
+            argo_split_path(file)
+
+    def test_KORDI_renaming(self):
+        original_to_datetime = pd.to_datetime  # Save the real function
+
+        def mock_to_datetime(arg, *args, **kwargs):
+            """Simulate that we're after KORDI deprecation of 2025/06/30"""
+            if arg == "now" and kwargs.get("utc", False):
+                return pd.Timestamp("2025-07-01 12:00:00", tz="UTC")
+            return original_to_datetime(arg, *args, **kwargs)  # Default behavior for other inputs
+
+        with mock.patch.object(pd, "to_datetime", side_effect=mock_to_datetime) as mock_to_datetime_func:
+            with pytest.warns():
+                src = argopy.tutorial.open_dataset("gdac")[0] + "/dac"
+                argo_split_path(src + "/kordi/2901780/profiles/R2901780_060.nc")
