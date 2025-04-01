@@ -105,4 +105,8 @@ class Test_argo_split_path:
         with mock.patch.object(pd, "to_datetime", side_effect=mock_to_datetime) as mock_to_datetime_func:
             with pytest.warns():
                 src = argopy.tutorial.open_dataset("gdac")[0] + "/dac"
-                argo_split_path(src + "/kordi/2901780/profiles/R2901780_060.nc")
+                ncfile = src + "/kordi/2901780/profiles/R2901780_060.nc"
+                ncfile = ncfile.replace("/", os.path.sep)
+                argo_split_path(ncfile)
+
+
