@@ -317,16 +317,33 @@ class ArgoIndexStoreProto(ABC):
         This method uses the BOX, WMO, CYC keys of the index instance ``search_type`` property
         """
         cname = "full"
+        C = []
 
-        if "BOX" in self.search_type:
-            BOX = self.search_type["BOX"]
-            cname = ("x=%0.2f/%0.2f;y=%0.2f/%0.2f") % (
-                BOX[0],
-                BOX[1],
-                BOX[2],
-                BOX[3],
-            )
-            if len(BOX) == 6:
+        for key in self.search_type.keys():
+
+            if key == "LAT":
+                LAT = self.search_type["LAT"]
+                cname = ("y=%0.2f/%0.2f") % (
+                    LAT[0],
+                    LAT[1],
+                )
+
+            elif key == "LON":
+                LON = self.search_type["LON"]
+                cname = ("x=%0.2f/%0.2f") % (
+                    LON[0],
+                    LON[1],
+                )
+
+            elif key == "DATE":
+                DATE = self.search_type["DATE"]
+                cname = ("x=%0.2f/%0.2f") % (
+                    self._format(DATE[0], "tim"),
+                    self._format(DATE[1], "tim"),
+                )
+
+            elif "BOX" == key:
+                BOX = self.search_type["BOX"]
                 cname = ("x=%0.2f/%0.2f;y=%0.2f/%0.2f;t=%s/%s") % (
                     BOX[0],
                     BOX[1],
@@ -336,64 +353,47 @@ class ArgoIndexStoreProto(ABC):
                     self._format(BOX[5], "tim"),
                 )
 
-        elif "WMO" in self.search_type:
-            WMO = self.search_type["WMO"]
-            if "CYC" in self.search_type:
-                CYC = self.search_type["CYC"]
-
-            prtcyc = lambda CYC, wmo: "WMO%i_%s" % (  # noqa: E731
-                wmo,
-                "_".join(["CYC%i" % (cyc) for cyc in sorted(CYC)]),
-            )
-
-            if len(WMO) == 1:
-                if "CYC" in self.search_type:
-                    cname = "%s" % prtcyc(CYC, WMO[0])
-                else:
+            elif "WMO" == key:
+                WMO = self.search_type["WMO"]
+                if len(WMO) == 1:
                     cname = "WMO%i" % (WMO[0])
-            else:
-                cname = ";".join(["WMO%i" % wmo for wmo in sorted(WMO)])
-                if "CYC" in self.search_type:
-                    cname = ";".join([prtcyc(CYC, wmo) for wmo in WMO])
+                else:
+                    cname = ";".join(["WMO%i" % wmo for wmo in sorted(WMO)])
+
+            elif "CYC" == key:
+                CYC = self.search_type["CYC"]
+                if len(CYC) == 1:
+                    cname = "CYC%i" % (CYC[0])
+                else:
+                    cname = ";".join(["CYC%i" % cyc for cyc in sorted(CYC)])
                 cname = "%s" % cname
 
-        elif "CYC" in self.search_type and "WMO" not in self.search_type:
-            CYC = self.search_type["CYC"]
-            if len(CYC) == 1:
-                cname = "CYC%i" % (CYC[0])
-            else:
-                cname = ";".join(["CYC%i" % cyc for cyc in sorted(CYC)])
-            cname = "%s" % cname
+            elif "PARAMS" == key:
+                PARAM, LOG = self.search_type["PARAMS"]
+                cname = ("_%s_" % LOG).join(PARAM)
 
-        elif "PARAMS" in self.search_type:
-            PARAM, LOG = self.search_type["PARAMS"]
-            cname = ("_%s_" % LOG).join(PARAM)
+            elif "DMODE" == key:
+                DMODE, LOG = self.search_type["DMODE"]
+                cname = ("_%s_" % LOG).join(
+                    ["%s_%s" % (p, "".join(DMODE[p])) for p in DMODE]
+                )
 
-        elif "DMODE" in self.search_type:
-            DMODE, LOG = self.search_type["DMODE"]
-            cname = ("_%s_" % LOG).join(
-                ["%s_%s" % (p, "".join(DMODE[p])) for p in DMODE]
-            )
+            elif "PTYPE" == key:
+                PTYPE = self.search_type["PTYPE"]
+                if len(PTYPE) == 1:
+                    cname = "PTYPE%i" % (PTYPE[0])
+                else:
+                    cname = ";".join(["PTYPE%i" % pt for pt in sorted(PTYPE)])
+                cname = "%s" % cname
 
-        elif "PTYPE" in self.search_type:
-            PTYPE = self.search_type["PTYPE"]
-            if len(PTYPE) == 1:
-                cname = "PTYPE%i" % (PTYPE[0])
-            else:
-                cname = ";".join(["PTYPE%i" % pt for pt in sorted(PTYPE)])
-            cname = "%s" % cname
+            elif "PLABEL" == key:
+                PLABEL = self.search_type["PLABEL"]
+                LOG = 'or'
+                cname = ("_%s_" % LOG).join(PLABEL)
 
-        elif "PLABEL" in self.search_type:
-            PLABEL = self.search_type["PLABEL"]
-            LOG = 'or'
-            cname = ("_%s_" % LOG).join(PLABEL)
+            C.append(cname)
 
-        # if self._cname is None:
-        #     self._cname = cname
-        # else:
-        #     self._cname = "%s__%s" % (self._cname, cname)
-
-        return cname
+        return "_and_".join(C)
 
     def _sha_from(self, path):
         """Internal post-processing for a sha
