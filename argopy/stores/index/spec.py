@@ -1070,7 +1070,6 @@ file,profiler_type,institution,date_update
         """
         return self._copy(deep=deep)
 
-
     def iterfloats(self, index=False, chunksize: int = None):
         """Iterate over unique Argo floats in the full index or search results
 
@@ -1120,7 +1119,6 @@ file,profiler_type,institution,date_update
             for wmo in wmos:
                 yield ArgoFloat(wmo, idx=self)
 
-
     @property
     def domain(self):
         """Space/time domain of the index
@@ -1144,7 +1142,53 @@ class ArgoIndexExtension:
 
 
 class ArgoIndexSearchEngine(ArgoIndexExtension):
-    """Prototype for a SearchEngine extension for any backend"""
+    """ArgoIndex extension providing query methods to search index entries
+
+    All query methods can be composed with the `compose` method, see examples.
+
+    Examples
+    --------
+    .. code-block:: python
+        :caption: List of query methods
+
+        from argopy import ArgoIndex
+        idx = ArgoIndex()
+
+        idx.query.wmo
+        idx.query.cyc
+        idx.query.wmo_cyc
+
+        idx.query.date
+        idx.query.lon
+        idx.query.lat
+        idx.query.lat_lon
+        idx.query.box
+
+        idx.query.params
+        idx.query.parameter_data_mode
+
+        idx.query.profiler_type
+        idx.query.profiler_label
+
+    .. code-block:: python
+        :caption: Composition of queries
+
+        from argopy import ArgoIndex
+        idx = ArgoIndex(index_file='bgc-s')
+
+        idx.query.compose({'box': BOX, 'wmo': WMOs})
+        idx.query.compose({'box': BOX, 'params': 'DOXY'})
+        idx.query.compose({'box': BOX, 'params': 'DOXY'})
+        idx.query.compose({'box': BOX, 'params': (['DOXY', 'DOXY2'], {'logical': 'and'})})
+        idx.query.compose({'params': 'DOXY', 'profiler_label': 'ARVOR'})
+
+    Note that composing query with:
+
+    - `wmo` and `cyc` is slower than using the `wmo_cyc` method
+    - `lon` and `lat` is slower than using the `lat_lon` method
+    - `lon`, `lat` and `date` is slower than using the `box` method
+
+    """
 
     @abstractmethod
     def wmo(self):
@@ -1316,7 +1360,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def search_profiler_type(self, profiler_type: List[int]):
+    def profiler_type(self, profiler_type: List[int]):
         """Search index for profiler types
 
         Parameters
