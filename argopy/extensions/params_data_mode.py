@@ -105,7 +105,7 @@ class ParamsDataMode(ArgoAccessorExtension):
         # timer = time.process_time()
 
         profiles = self._argo.list_WMO_CYC
-        idx.search_wmo(self._argo.list_WMO)
+        idx.query.wmo(self._argo.list_WMO)
 
         params = [
             p
