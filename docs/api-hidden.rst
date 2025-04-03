@@ -128,9 +128,10 @@
 
     argopy.utils.MonitoredThreadPoolExecutor
 
-    argopy.utils.Z_euphotic
-    argopy.utils.Z_firstoptic
-    argopy.utils.Z_iPAR_threshold
+    argopy.utils.optical_modeling.Z_euphotic
+    argopy.utils.optical_modeling.Z_firstoptic
+    argopy.utils.optical_modeling.Z_iPAR_threshold
+    argopy.utils.optical_modeling.DCM
 
     argopy.related.load_dict
     argopy.related.get_coriolis_profile_id
@@ -351,6 +352,7 @@
     argopy.extensions.OpticalModeling.Zeu
     argopy.extensions.OpticalModeling.Zpd
     argopy.extensions.OpticalModeling.Z_iPAR_threshold
+    argopy.extensions.OpticalModeling.DCM
 
     argopy.errors.InvalidDatasetStructure
 

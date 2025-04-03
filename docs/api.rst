@@ -163,6 +163,13 @@ Data Filters
 
 Extensions
 ----------
+.. currentmodule:: argopy
+
+You can create your own extension to an Argo dataset for specific features. It should be registered by inheriting from :class:`argopy.extensions.ArgoAccessorExtension` and decorated with :class:`argopy.extensions.register_argo_accessor`.
+
+**argopy** comes with the following extensions:
+
+.. currentmodule:: xarray
 
 .. autosummary::
    :toctree: generated/
@@ -176,12 +183,8 @@ Extensions
     Dataset.argo.optic.Zeu
     Dataset.argo.optic.Zpd
     Dataset.argo.optic.Z_iPAR_threshold
+    Dataset.argo.optic.DCM
 
-.. currentmodule:: argopy
-
-You can register your own extension inheriting from :class:`argopy.extensions.ArgoAccessorExtension` and decorated with :class:`argopy.extensions.register_argo_accessor`
-
-.. currentmodule:: xarray
 
 Misc
 ----
@@ -257,7 +260,7 @@ Misc
     GreenCoding
     Github
 
-    Z_euphotic
+    optical_modeling
 
 Argopy helpers
 ==============
