@@ -365,17 +365,28 @@ class ArgoIndexStoreProto(ABC):
                 cname = ";".join(["CYC%i" % cyc for cyc in sorted(CYC)])
             cname = "%s" % cname
 
-        elif "PARAM" in self.search_type:
-            PARAM = self.search_type["PARAM"]
-            LOG = self.search_type["logical"]
+        elif "PARAMS" in self.search_type:
+            PARAM, LOG = self.search_type["PARAMS"]
             cname = ("_%s_" % LOG).join(PARAM)
 
         elif "DMODE" in self.search_type:
-            DMODE = self.search_type["DMODE"]
-            LOG = self.search_type["logical"]
+            DMODE, LOG = self.search_type["DMODE"]
             cname = ("_%s_" % LOG).join(
                 ["%s_%s" % (p, "".join(DMODE[p])) for p in DMODE]
             )
+
+        elif "PTYPE" in self.search_type:
+            PTYPE = self.search_type["PTYPE"]
+            if len(PTYPE) == 1:
+                cname = "PTYPE%i" % (PTYPE[0])
+            else:
+                cname = ";".join(["PTYPE%i" % pt for pt in sorted(PTYPE)])
+            cname = "%s" % cname
+
+        elif "PLABEL" in self.search_type:
+            PLABEL = self.search_type["PLABEL"]
+            LOG = 'or'
+            cname = ("_%s_" % LOG).join(PLABEL)
 
         # if self._cname is None:
         #     self._cname = cname
@@ -861,46 +872,46 @@ class ArgoIndexStoreProto(ABC):
         """
         raise NotImplementedError("Not implemented")
 
-    @deprecated("this method is replaced by the `ArgoIndex().query.wmo()`", version="1.1.0")
+    @deprecated("this method is replaced by `ArgoIndex().query.wmo()`", version="1.1.0")
     def search_wmo(self, WMOs, nrows=None):
         return self.query.wmo(WMOs, nrows=nrows)
 
-    @deprecated("this method is replaced by the `ArgoIndex().query.cyc()`", version="1.1.0")
+    @deprecated("this method is replaced by `ArgoIndex().query.cyc()`", version="1.1.0")
     def search_cyc(self, CYCs, nrows=None):
         return self.query.cyc(CYCs, nrows=nrows)
 
-    @deprecated("this method is replaced by the `ArgoIndex().query.compose()`", version="1.1.0")
+    @deprecated("this method is replaced by `ArgoIndex().query.compose()`", version="1.1.0")
     def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
         return self.query.wmo_cyc(WMOs, CYCs, nrows=nrows)
 
-    @deprecated("this method is replaced by the `ArgoIndex().query.date()`", version="1.1.0")
+    @deprecated("this method is replaced by `ArgoIndex().query.date()`", version="1.1.0")
     def search_tim(self, BOX, nrows=None):
         return self.query.date(BOX, nrows=nrows)
 
-    @deprecated("this method is replaced by the `ArgoIndex().query.compose()`", version="1.1.0")
+    @deprecated("this method is replaced by `ArgoIndex().query.compose()`", version="1.1.0")
     def search_lat_lon(self, BOX, nrows=None):
         return self.query.lat_lon(BOX, nrows=nrows)  # Faster than .compose()
         # return self.query.compose({'lon': BOX, 'lat': BOX}, nrows=nrows)
 
-    @deprecated("this method is replaced by the `ArgoIndex().query.box()`", version="1.1.0")
+    @deprecated("this method is replaced by `ArgoIndex().query.box()`", version="1.1.0")
     def search_lat_lon_tim(self, BOX, nrows=None):
         return self.query.box(BOX, nrows=nrows)
 
-    @deprecated("this method is replaced by the `ArgoIndex().query.params()`", version="1.1.0")
+    @deprecated("this method is replaced by `ArgoIndex().query.params()`", version="1.1.0")
     def search_params(self, PARAMs, logical: bool = "and", nrows=None):
         return self.query.params(PARAMs, logical=logical, nrows=nrows)
 
-    @deprecated("this method is replaced by the `ArgoIndex().query.parameter_data_mode()`", version="1.1.0")
+    @deprecated("this method is replaced by `ArgoIndex().query.parameter_data_mode()`", version="1.1.0")
     def search_parameter_data_mode(
         self, PARAMs: dict, logical: bool = "and", nrows=None
     ):
         return self.query.parameter_data_mode(PARAMs, logical=logical, nrows=nrows)
 
-    @deprecated("this method is replaced by the `ArgoIndex().query.profiler_type()`", version="1.1.0")
+    @deprecated("this method is replaced by `ArgoIndex().query.profiler_type()`", version="1.1.0")
     def search_profiler_type(self, profiler_type: List[int], nrows=None):
         return self.query.profiler_type(profiler_type, nrows=nrows)
 
-    @deprecated("this method is replaced by the `ArgoIndex().query.profiler_label()`", version="1.1.0")
+    @deprecated("this method is replaced by `ArgoIndex().query.profiler_label()`", version="1.1.0")
     def search_profiler_label(self, profiler_label: str, nrows=None):
         return self.query.profiler_label(profiler_label, nrows=nrows)
 
