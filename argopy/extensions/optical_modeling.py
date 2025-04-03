@@ -1,7 +1,7 @@
 from typing import Literal, Union
 import xarray as xr
 
-from ..utils.optical_modeling import Z_euphotic, Z_iPAR_threshold
+from ..utils import optical_modeling as om
 from . import register_argo_accessor, ArgoAccessorExtension
 
 
@@ -13,7 +13,7 @@ class OpticalModeling(ArgoAccessorExtension):
 
     See Also
     --------
-    :class:`optic.Zeu`, :class:`optic.Zpd`, :class:`optic.Z_iPAR_threshold`
+    :class:`optic.Zeu`, :class:`optic.Zpd`, :class:`optic.Z_iPAR_threshold`, :class:`optic.DCM`
 
     Examples
     --------
@@ -21,8 +21,11 @@ class OpticalModeling(ArgoAccessorExtension):
         :caption: Example
 
         from argopy import DataFetcher
-        ds = Datafetcher(ds='bgc', mode='expert', params='DOWNWELLING_PAR').float(6901864).data
-        dsp = ds.argo.point2profile()
+        dsp = DataFetcher(ds='bgc', mode='expert', params='DOWNWELLING_PAR').float(6901864).data.argo.point2profile()
+
+        # or:
+        # from argopy import ArgoFloat
+        # dsp = ArgoFloat(6901864).open_dataset('Sprof')
 
         dsp.argo.optic.Zeu()
         dsp.argo.optic.Zeu(method='percentage', max_surface=5.)
@@ -32,6 +35,7 @@ class OpticalModeling(ArgoAccessorExtension):
 
         dsp.argo.optic.Z_iPAR_threshold(threshold=15.)
 
+        dsp.argo.optic.DCM()
     """
 
     def __init__(self, *args, **kwargs):
@@ -81,7 +85,7 @@ class OpticalModeling(ArgoAccessorExtension):
         Returns
         -------
         :class:`xarray.DataArray` or :class:`xarray.Dataset`
-            If the ``inplace`` argument is True, dataset is modified in-place with new variable ``Zeu``.
+            Zeu as :class:`xarray.DataArray` or, if the ``inplace`` argument is True, dataset is modified in-place with new variable ``Zeu``.
 
         Examples
         --------
@@ -128,7 +132,7 @@ class OpticalModeling(ArgoAccessorExtension):
 
         See Also
         --------
-        :class:`Dataset.argo.optic`, :meth:`argopy.utils.Z_euphotic`
+        :class:`Dataset.argo.optic`, :meth:`argopy.utils.optical_modeling.Z_euphotic`
         """
         if axis not in self._obj:
             raise ValueError(f"Missing '{axis}' in this dataset")
@@ -149,7 +153,7 @@ class OpticalModeling(ArgoAccessorExtension):
                 "layer_min": layer_min,
                 "layer_max": layer_max,
             }
-        da = self._argo.reduce_profile(Z_euphotic, params=[axis, par], **kw)
+        da = self._argo.reduce_profile(om.Z_euphotic, params=[axis, par], **kw)
 
         # Attributes
         da.name = "Zeu"
@@ -170,24 +174,18 @@ class OpticalModeling(ArgoAccessorExtension):
         """Compute first optical depth from depth of the euphotic zone, points to Zpd method"""
         return self.Zpd(*args, **kwargs)
 
-    def Zpd(
-        self,
-        axis: str = "PRES",
-        par: str = "DOWNWELLING_PAR",
-        *args,
-        **kwargs
-    ):
+    def Zpd(self, *args, **kwargs):
         """Compute first optical depth from depth of the euphotic zone
 
         Parameters
         ----------
         args, kwargs:
-            All arguments are passed to :class:`Dataset.argo.optic.Zeu`
+            Since Zpd is a simple scaling of the euphotic depth, all arguments are directly passed to :class:`Dataset.argo.optic.Zeu`.
 
         Returns
         -------
         :class:`xarray.DataArray` or :class:`xarray.Dataset`
-            If the ``inplace`` argument is True, dataset is modified in-place with new variables Zpd and Zeu.
+            Zpd as a :class:`xarray.DataArray` or, if the ``inplace`` argument is True, dataset is modified in-place with new variables Zpd and Zeu.
 
         Notes
         -----
@@ -198,8 +196,7 @@ class OpticalModeling(ArgoAccessorExtension):
 
         References
         ----------
-        .. [1] Morel, A. (1988), Optical modeling of the upper ocean in relation to its biogenous matter content (case
-            I waters), J. Geophys. Res., 93(C9), 10749–10768, doi:10.1029/JC093iC09p10749.
+        .. [1] Morel, A. (1988), Optical modeling of the upper ocean in relation to its biogenous matter content (case I waters), J. Geophys. Res., 93(C9), 10749–10768, doi:10.1029/JC093iC09p10749.
 
         Examples
         --------
@@ -213,7 +210,7 @@ class OpticalModeling(ArgoAccessorExtension):
 
         See Also
         --------
-        :class:`Dataset.argo.optic`, :class:`Dataset.argo.optic.Zeu`,
+        :class:`Dataset.argo.optic`, :class:`Dataset.argo.optic.Zeu`, :meth:`argopy.utils.optical_modeling.Z_firstoptic`
         """
         inplace = kwargs.get("inplace", False)
         if "Zeu" in self._obj:
@@ -258,13 +255,13 @@ class OpticalModeling(ArgoAccessorExtension):
     ) -> Union[xr.DataArray, xr.Dataset]:
         """Depth where PAR reaches some threshold value (closest point)
 
-        This is the closest level $z$ in the vertical axis for which PAR is about a threshold value $t$, with some tolerance $\\epsilon$:
+        This is the closest level $z$ in the vertical axis for which PAR is about a threshold value $t$, with some tolerance $\epsilon$:
 
         .. math::
 
             z | abs(PAR(z) - t) < \epsilon
 
-        A default value of 15 is used because it is the theorical value below which the Fchla is no longer
+        A default value of 15 is used because it is the theoretical value below which the Fchla is no longer
         quenched (For correction of NPQ purposes).
 
         Parameters
@@ -283,18 +280,18 @@ class OpticalModeling(ArgoAccessorExtension):
         Returns
         -------
         :class:`xarray.DataArray` or :class:`xarray.Dataset`
-            If the ``inplace`` argument is True, dataset is modified in-place with new variable ``Z_iPAR``.
+            Z_iPAR as a :class:`xarray.DataArray` or, if the ``inplace`` argument is True, dataset is modified in-place with new variable ``Z_iPAR``.
 
         See Also
         --------
-        :class:`Dataset.argo.optic`, :class:`argopy.utils.Z_iPAR_threshold`
+        :class:`Dataset.argo.optic`, :class:`argopy.utils.optical_modeling.Z_iPAR_threshold`
         """
         if axis not in self._obj:
             raise ValueError(f"Missing '{axis}' in this dataset")
         if par not in self._obj:
             raise ValueError(f"Missing '{par}' in this dataset")
         kw = {"threshold": threshold, "tolerance": tolerance}
-        da = self._argo.reduce_profile(Z_iPAR_threshold, params=[axis, par], **kw)
+        da = self._argo.reduce_profile(om.Z_iPAR_threshold, params=[axis, par], **kw)
 
         # Attributes
         da.name = "Z_iPAR"
@@ -310,20 +307,105 @@ class OpticalModeling(ArgoAccessorExtension):
         else:
             return da
 
-    def DCM(self):
-        """
+    def DCM(
+        self,
+        axis: str = "PRES",
+        chla: str = "CHLA",
+        bbp: str = "BBP700",
+        max_depth: float = 300.0,
+        resolution_threshold: float = 3.0,
+        smoother_size: int = 5,
+        surface_layer: float = 15.0,
+        inplace: bool = False,
+        axis_bbp: str = "PRES",
+    ) -> Union[xr.DataArray, xr.Dataset]:
+        """Search and qualify Deep Chlorophyll Maxima
 
-        The depth of the [Chla] maximum is searched between the first vertical level and ``max_depth``,
-        300m by default, assuming that no phytoplankton [Chla] can develop below 300 m.
+        This method return the main characteristics and drivers of Deep Chlorophyll Maxima (DCM). Different drivers are possible because DCMs result from photo-acclimation or biomass accumulation, depending on the availability of light and nitrate. See method below.
 
-        A [Chla] profile is definitively qualified as a DCM if the maximum [Chla] value of the un-smoothed profile is
-        greater than twice the median of the [Chla] values at depths above ``surface_layer`` (15. by default).
-
-        References
+        Parameters
         ----------
-        .. [1] Cornec 2021 (https://doi. org/10.1029/2020GB006759) Section 2.4
+        axis: str, optional, default='PRES'
+            Name of the pressure axis to use for CHLA and BBP. If BBP is not on the same vertical axis as CHLA, you can specify which variable to use with the optional parameter ``axis_bbp``.
+        chla: str, optional, default='CHLA'
+            Name of the Chl-a concentration variable to use.
+        bbp: str, optional, default='BBP700'
+            Name of the particulate backscattering coefficient variable to use.
+
+        Other Parameters
+        ----------------
+        max_depth: float, optional, default: 300.
+            Maximum depth allowed for a deep CHLA maximum to be found.
+        resolution_threshold: float, optional, default: 3.
+            CHLA vertical axis resolution threshold below which a smoother is applied.
+        median_filter_size: int, optional, default: 5
+            Size of the :func:`scipy.ndimage.median_filter` filter used with CHLA.
+        surface_layer: float, optional, default: 15.
+            Depth value defining the surface layer above which twice the median CHLA value may qualify a DCM as such.
 
         Returns
         -------
+        :class:`xarray.DataArray` or :class:`xarray.Dataset`
+            DCM driver as a :class:`xarray.DataArray` or, if the ``inplace`` argument is True, dataset is modified in-place with new variable ``DCM``.
 
+        Notes
+        -----
+        Following [1]_ Section 2.4 "Identification and Classification of Deep Maxima Profiles", a DCM is
+        identified and then qualified along this procedure:
+
+        - the depth of the Chla maximum is searched between the first vertical level and ``max_depth``, 300m by default, assuming that no phytoplankton Chla can develop below 300 m.
+        - A Chla profile is definitively qualified as a DCM if the maximum Chla value of the un-smoothed profile is greater than twice the median of the Chla values at depths above ``surface_layer`` (15. by default).
+
+        If the vertical resolution is less than 3 db or meters, the Chla profile is smoothed using a :func:`scipy.ndimage.median_filter` filter.
+
+        If the vertical resolution is less than 3 db or meters, the BBP profile is smoothed using a :func:`scipy.ndimage.median_filter` and a :func:`scipy.ndimage.uniform_filter1d` filters.
+
+        References
+        ----------
+        .. [1] Cornec, M., Claustre, H., Mignot, A., Guidi, L., Lacour, L., Poteau, A., et al. (2021). Deep
+        chlorophyll maxima in the global ocean: Occurrences, drivers and characteristics. Global Biogeochemical
+        Cycles, 35, e2020GB006759. https://doi.org/10.1029/2020GB006759
+
+        See Also
+        --------
+        :class:`Dataset.argo.optic`, :class:`argopy.utils.optical_modeling.DCM`
         """
+
+        def f(*args, **kwargs):
+            typ, dpt, amp = om.DCM(*args, **kwargs)
+            return "%3s" % typ
+
+        if axis not in self._obj:
+            raise ValueError(f"Missing '{axis}' in this dataset")
+        if chla not in self._obj:
+            raise ValueError(f"Missing '{chla}' in this dataset")
+        if bbp not in self._obj:
+            raise ValueError(f"Missing '{bbp}' in this dataset")
+
+        kw = {
+            "max_depth": max_depth,
+            "resolution_threshold": max_depth,
+            "smoother_size": smoother_size,
+            "surface_layer": surface_layer,
+        }
+        da = self._argo.reduce_profile(f, params=[chla, axis, bbp, axis], **kw)
+
+        # Attributes
+        da.name = "DCM"
+        da.attrs = {
+            "long_name": "Deep Chlorophyll Maximum",
+            "definition": {
+                "NO ": f"No DCM found in {axis}<={max_depth}",
+                "DBM": f"DCM is associated with a biomass maximum in {bbp}",
+                "DAM": "DCM is due to photo-acclimation",
+            },
+            "max_depth": max_depth,
+            "resolution_threshold": max_depth,
+            "smoother_size": smoother_size,
+            "surface_layer": surface_layer,
+        }
+        if inplace:
+            self._obj["DCM"] = da
+            return self._obj
+        else:
+            return da

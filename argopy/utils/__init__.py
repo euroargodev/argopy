@@ -63,7 +63,7 @@ from .transform import (
 from .format import argo_split_path, format_oneline, UriCName, redact
 from .loggers import warnUnless, log_argopy_callerstack
 from .carbon import GreenCoding, Github
-from .optical_modeling import Z_euphotic, Z_firstoptic, Z_iPAR_threshold
+from . import optical_modeling
 
 import importlib
 path2assets = importlib.util.find_spec('argopy.static.assets').submodule_search_locations[0]
@@ -149,7 +149,5 @@ __all__ = (
     "GreenCoding",
     "Github",
     # Optical modeling
-    "Z_euphotic",
-    "Z_firstoptic",
-    "Z_iPAR_threshold",
+    "optical_modeling",
 )
