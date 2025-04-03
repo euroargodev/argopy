@@ -19,7 +19,8 @@ from functools import lru_cache
 from ...options import OPTIONS
 from ...errors import InvalidMethod, DataNotFound
 from ...utils import Registry, UriCName
-from ...utils.transform import (
+from ...utils import has_aws_credentials
+from ...utils import (
     drop_variables_not_in_all_datasets,
     fill_variables_not_in_all_datasets,
 )
@@ -296,20 +297,26 @@ class httpstore(ArgoStoreProto):
             from .. import ArgoKerchunker
 
             if "ak" not in kwargs:
-                self.ak = ArgoKerchunker(
-                    store="local", root=Path(OPTIONS["cachedir"]).joinpath("kerchunk")
-                )
+                self.ak = ArgoKerchunker()
+                if self.protocol == 's3':
+                    storage_options = {'anon': not has_aws_credentials()}
+                else:
+                    storage_options = {}
+                self.ak.storage_options = storage_options
             else:
                 self.ak = kwargs["ak"]
 
-            if self.ak.supported(url):
+            if self.ak.supported(url, fs=self):
                 xr_opts = {
                     "engine": "zarr",
                     "backend_kwargs": {
                         "consolidated": False,
                         "storage_options": {
-                            "fo": self.ak.to_kerchunk(url, overwrite=akoverwrite),
+                            "fo": self.ak.to_reference(url,
+                                                       overwrite=akoverwrite,
+                                                       fs=self),  # codespell:ignore
                             "remote_protocol": fsspec.core.split_protocol(url)[0],
+                            "remote_options": self.ak.storage_options
                         },
                     },
                 }
@@ -318,7 +325,7 @@ class httpstore(ArgoStoreProto):
                 warnings.warn(
                     "This url does not support byte range requests so we cannot load it lazily, falling back on loading in memory."
                 )
-                log.debug("This url does not support byte range requests: %s" % url)
+                log.debug("This url does not support byte range requests: %s" % self.full_path(url))
                 return load_in_memory(
                     url, errors=errors, dwn_opts=dwn_opts, xr_opts=xr_opts
                 )
@@ -341,7 +348,7 @@ class httpstore(ArgoStoreProto):
 
             if "source" not in ds.encoding:
                 if isinstance(url, str):
-                    ds.encoding["source"] = url
+                    ds.encoding["source"] = self.full_path(url)
 
             self.register(url)
             return ds
@@ -656,7 +663,7 @@ class httpstore(ArgoStoreProto):
 
         if "lazy" in open_dataset_opts and open_dataset_opts["lazy"] and concat:
             warnings.warn(
-                "Lazy openning and concatenate multiple netcdf files is not yet supported. Ignoring the 'lazy' option."
+                "Lazy opening and concatenate multiple netcdf files is not yet supported. Ignoring the 'lazy' option."
             )
             open_dataset_opts["lazy"] = False
 

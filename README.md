@@ -65,13 +65,13 @@ ArgoSet.plot('trajectory')
 ```
 
 They are many more usages and fine-tuning to allow you to access and manipulate Argo data:
-- [filters at fetch time](https://argopy.readthedocs.io/en/latest/user_mode.html) (standard vs expert users, automatically select QC flags or data mode, ...)
-- [select data sources](https://argopy.readthedocs.io/en/latest/data_sources.html) (erddap, ftp, local, argovis, ...)
-- [manipulate data](https://argopy.readthedocs.io/en/latest/data_manipulation.html) (points, profiles, interpolations, binning, ...)
-- [visualisation](https://argopy.readthedocs.io/en/latest/visualisation.html) (trajectories, topography, histograms, ...)
-- [tools for Quality Control](https://argopy.readthedocs.io/en/latest/data_quality_control.html) (OWC, figures, ...)
-- [access meta-data and other Argo-related datasets](https://argopy.readthedocs.io/en/latest/metadata_fetching.html) (index, reference tables, deployment plans, topography, ...)
-- [improve performances](https://argopy.readthedocs.io/en/latest/performances.html) (caching, parallel data fetching)
+- [filters at fetch time](https://argopy.readthedocs.io/en/latest/user-guide/fetching-argo-data/user_mode.html) (standard vs expert users, automatically select QC flags or data mode, ...)
+- [select data sources](https://argopy.readthedocs.io/en/latest/user-guide/fetching-argo-data/data_sources.html) (erddap, ftp, local, argovis, ...)
+- [manipulate data](https://argopy.readthedocs.io/en/latest/user-guide/working-with-argo-data/data_manipulation.html) (points, profiles, interpolations, binning, ...)
+- [visualisation](https://argopy.readthedocs.io/en/latest/user-guide/working-with-argo-data/visualisation.html) (trajectories, topography, histograms, ...)
+- [tools for Quality Control](https://argopy.readthedocs.io/en/latest/advanced-tools/quality_control/index.html) (OWC, figures, ...)
+- [access meta-data and other Argo-related datasets](https://argopy.readthedocs.io/en/latest/advanced-tools/metadata/index.html) (reference tables, deployment plans, topography, DOIs, ...)
+- [improve performances](https://argopy.readthedocs.io/en/latest/advanced-tools/performances/index.html) (caching, parallel data fetching)
 
 Just check out [the documentation for more](https://argopy.readthedocs.io) ! 
 
@@ -96,6 +96,6 @@ The **argopy** team is concerned about the environmental impact of your favorite
 
 ## Development and contributions 
 
-See our development roadmap here: https://github.com/euroargodev/argopy/milestone/3
+See our software management dashboard here: https://github.com/orgs/euroargodev/projects/19
 
-Checkout [the contribution page](https://argopy.readthedocs.io/en/latest/contributing.html) if you want to get involved and help maintain or develop ``argopy``.
+And if you want to get involved and help maintain or develop ``argopy``, please checkout [the contribution page](https://argopy.readthedocs.io/en/latest/contributing.html).

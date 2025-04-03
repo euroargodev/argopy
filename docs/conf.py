@@ -314,6 +314,8 @@ rediraffe_redirects = {
     "performances.rst": "advanced-tools/performances/index.rst",
     "why.rst": "what_why.rst",
     "what_is_argo.rst": "what_why.rst",
+
+    "data_quality_control.rst": "advanced-tools/quality_control/index.rst",
 }
 
 googleanalytics_id = 'G-C4MWDXYMXQ'

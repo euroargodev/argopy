@@ -55,12 +55,12 @@ is_initialised = lambda x: ((x is None) or (x == []))  # noqa: E731
 class Test_new_fs:
 
     def test_default(self):
-        fs, cache_registry = new_fs()
+        fs, cache_registry, fsspec_kwargs = new_fs()
         assert id_implementation(fs) is not None
         assert is_initialised(cache_registry)
 
     def test_cache_type(self):
-        fs, cache_registry = new_fs(cache=True)
+        fs, cache_registry, fsspec_kwargs = new_fs(cache=True)
         assert id_implementation(fs) == ['filecache']
 
 

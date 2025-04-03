@@ -22,7 +22,7 @@ try:
     with_dask = True
 except ModuleNotFoundError:
     with_dask = False
-    Delayed = lambda x: x
+    Delayed = lambda x: x  # noqa: E731
 
 
 from .utils import is_list_of_strings
@@ -1662,7 +1662,7 @@ class ArgoAccessor:
             # Return a Matlab dictionary with dataset data to be used by savemat:
             mdata = {}
             mdata["PROFILE_NO"] = (
-                this_dsp["PROFILE_NO"].astype("uint8").values.T[np.newaxis, :]
+                this_dsp["PROFILE_NO"].astype("uint16").values.T[np.newaxis, :]
             )  # 1-based index in Matlab
             mdata["DATES"] = this_dsp["DATES"].values.T[np.newaxis, :]
             mdata["LAT"] = this_dsp["LAT"].values.T[np.newaxis, :]
@@ -1986,7 +1986,7 @@ class ArgoAccessor:
             compressor = Blosc(cname="zstd", clevel=3, shuffle=2)
             encoding = {}
             for v in self._obj:
-              encoding.update({v: {"compressor": compressor}})
+                encoding.update({v: {"compressor": compressor}})
             kwargs.update({'encoding': encoding})
 
         # Convert to a zarr file using compression:

@@ -1,6 +1,84 @@
 {
     "@graph": [
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/890/",
+            "pav:hasVersion": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/890/2/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/890/1/"
+                }
+            ],
+            "@type": "skos:Concept",
+            "skos:definition": {
+                "@language": "en",
+                "@value": "PROVOR_III - Jumbo, SBE float (Code marked as 'Reserved' in WMO 1770 table)."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R08::890",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "PROVOR_III - Jumbo, SBE"
+            },
+            "owl:versionInfo": "3",
+            "dc:date": "2024-11-11 09:32:23.0",
+            "skos:altLabel": "890",
+            "skos:notation": "SDN:R08::890",
+            "pav:version": "3",
+            "dce:identifier": "SDN:R08::890",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/890/3/"
+            },
+            "pav:authoredOn": "2024-11-11 09:32:23.0"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/891/",
+            "pav:hasVersion": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/891/1/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/891/2/"
+                }
+            ],
+            "@type": "skos:Concept",
+            "skos:definition": {
+                "@language": "en",
+                "@value": "PROVOR_III - Jumbo, RBR float (Code marked as 'Reserved' in WMO 1770 table)."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R08::891",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "PROVOR_III - Jumbo, RBR"
+            },
+            "owl:versionInfo": "3",
+            "dc:date": "2024-11-11 09:32:23.0",
+            "skos:altLabel": "891",
+            "skos:notation": "SDN:R08::891",
+            "pav:version": "3",
+            "dce:identifier": "SDN:R08::891",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/891/3/"
+            },
+            "pav:authoredOn": "2024-11-11 09:32:23.0"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R08/current/841/",
             "pav:authoredOn": "2020-05-03 20:28:54.0",
             "@type": "skos:Concept",
@@ -108,140 +186,162 @@
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/887/",
-            "pav:hasVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/887/1/"
-            },
-            "pav:authoredOn": "2023-10-05 14:39:49.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/887/2/"
-            },
-            "dce:identifier": "SDN:R08::887",
-            "pav:version": "2",
-            "skos:notation": "SDN:R08::887",
-            "skos:altLabel": "887",
-            "dc:date": "2023-10-05 14:39:49.0",
-            "owl:versionInfo": "2",
-            "skos:prefLabel": {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/889/",
+            "pav:hasVersion": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/889/1/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/889/2/"
+                }
+            ],
+            "@type": "skos:Concept",
+            "skos:definition": {
                 "@language": "en",
-                "@value": "SOLO_BGC_MRV, RBR"
+                "@value": "PROVOR_V - Jumbo, RBR float (Code marked as 'Reserved' in WMO 1770 table)."
             },
-            "dc:identifier": "SDN:R08::887",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
             },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
+            "dc:identifier": "SDN:R08::889",
+            "skos:prefLabel": {
                 "@language": "en",
-                "@value": "SOLO_BGC_MRV, RBR float"
+                "@value": "PROVOR_V - Jumbo, RBR"
             },
-            "@type": "skos:Concept"
+            "owl:versionInfo": "3",
+            "dc:date": "2024-11-11 09:32:23.0",
+            "skos:altLabel": "889",
+            "skos:notation": "SDN:R08::889",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/"
+            },
+            "pav:version": "3",
+            "dce:identifier": "SDN:R08::889",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/889/3/"
+            },
+            "pav:authoredOn": "2024-11-11 09:32:23.0"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/880/",
-            "pav:authoredOn": "2021-02-01 14:29:14.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/880/1/"
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/875/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/875/1/"
             },
-            "dce:identifier": "SDN:R08::880",
-            "pav:version": "1",
-            "skos:broader": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/S2A/"
-            },
-            "skos:notation": "SDN:R08::880",
-            "skos:altLabel": "880",
-            "dc:date": "2021-02-01 14:29:14.0",
-            "owl:versionInfo": "1",
-            "skos:prefLabel": {
+            "@type": "skos:Concept",
+            "skos:definition": {
                 "@language": "en",
-                "@value": "S2A float with RBR conductivity sensor"
+                "@value": "ALTO profiling float with RBR conductivity sensor (Code marked as 'Reserved' in WMO 1770 table)."
             },
-            "dc:identifier": "SDN:R08::880",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
             },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
+            "dc:identifier": "SDN:R08::875",
+            "skos:prefLabel": {
                 "@language": "en",
-                "@value": "S2A profiling float with RBR conductivity sensor"
+                "@value": "ALTO float with RBR conductivity sensor"
             },
-            "@type": "skos:Concept"
+            "owl:versionInfo": "2",
+            "dc:date": "2024-11-11 09:32:23.0",
+            "skos:altLabel": "875",
+            "skos:notation": "SDN:R08::875",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/"
+            },
+            "pav:version": "2",
+            "dce:identifier": "SDN:R08::875",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/875/2/"
+            },
+            "pav:authoredOn": "2024-11-11 09:32:23.0"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R08/current/877/",
-            "pav:authoredOn": "2021-02-01 14:29:14.0",
-            "pav:hasCurrentVersion": {
+            "pav:hasVersion": {
                 "@id": "http://vocab.nerc.ac.uk/collection/R08/current/877/1/"
             },
-            "dce:identifier": "SDN:R08::877",
-            "pav:version": "1",
-            "skos:broader": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/APEX/"
+            "@type": "skos:Concept",
+            "skos:definition": {
+                "@language": "en",
+                "@value": "APEX profiling float with RBR conductivity sensor (Code marked as 'Reserved' in WMO 1770 table)."
             },
-            "skos:notation": "SDN:R08::877",
-            "skos:altLabel": "877",
-            "dc:date": "2021-02-01 14:29:14.0",
-            "owl:versionInfo": "1",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R08::877",
             "skos:prefLabel": {
                 "@language": "en",
                 "@value": "APEX float with RBR conductivity sensor"
             },
-            "dc:identifier": "SDN:R08::877",
+            "owl:versionInfo": "2",
+            "dc:date": "2024-11-11 09:32:23.0",
+            "skos:altLabel": "877",
+            "skos:notation": "SDN:R08::877",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/APEX/"
+            },
+            "pav:version": "2",
+            "dce:identifier": "SDN:R08::877",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/877/2/"
+            },
+            "pav:authoredOn": "2024-11-11 09:32:23.0"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/881/",
+            "pav:hasVersion": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/881/2/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/881/1/"
+                }
+            ],
+            "@type": "skos:Concept",
+            "skos:definition": {
+                "@language": "en",
+                "@value": "HM4000 float (Code marked as 'Reserved' in WMO 1770 table)."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
             },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "APEX profiling float with RBR conductivity sensor"
-            },
-            "@type": "skos:Concept"
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/881/",
-            "pav:hasVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/881/1/"
-            },
-            "pav:authoredOn": "2023-10-05 14:39:49.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/881/2/"
-            },
-            "dce:identifier": "SDN:R08::881",
-            "pav:version": "2",
-            "skos:notation": "SDN:R08::881",
-            "skos:altLabel": "881",
-            "dc:date": "2023-10-05 14:39:49.0",
-            "owl:versionInfo": "2",
+            "dc:identifier": "SDN:R08::881",
             "skos:prefLabel": {
                 "@language": "en",
                 "@value": "HM4000"
             },
-            "dc:identifier": "SDN:R08::881",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
+            "owl:versionInfo": "3",
+            "dc:date": "2024-11-11 09:32:24.0",
+            "skos:altLabel": "881",
+            "skos:notation": "SDN:R08::881",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/HM4000/"
             },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            "pav:version": "3",
+            "dce:identifier": "SDN:R08::881",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/881/3/"
             },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "HM4000 float"
-            },
-            "@type": "skos:Concept"
+            "pav:authoredOn": "2024-11-11 09:32:24.0"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R08/current/851/",
@@ -422,59 +522,25 @@
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/883/",
-            "pav:hasVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/883/1/"
-            },
-            "pav:authoredOn": "2024-04-19 16:29:58.0",
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/870/",
+            "pav:authoredOn": "2024-10-24 14:51:27.0",
             "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/883/2/"
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/870/1/"
             },
-            "dce:identifier": "SDN:R08::883",
-            "pav:version": "2",
-            "skos:notation": "SDN:R08::883",
-            "skos:altLabel": "883",
-            "dc:date": "2024-04-19 16:29:58.0",
-            "owl:versionInfo": "2",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "APEX_D deep float with RBR conductivity sensor"
-            },
-            "dc:identifier": "SDN:R08::883",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "APEX_D deep profiling float with RBR conductivity sensor"
-            },
-            "@type": "skos:Concept"
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/879/",
-            "pav:authoredOn": "2021-02-01 14:29:14.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/879/1/"
-            },
-            "dce:identifier": "SDN:R08::879",
+            "dce:identifier": "SDN:R08::870",
             "pav:version": "1",
             "skos:broader": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_II/"
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/HM2000/"
             },
-            "skos:notation": "SDN:R08::879",
-            "skos:altLabel": "879",
-            "dc:date": "2021-02-01 14:29:14.0",
+            "skos:notation": "SDN:R08::870",
+            "skos:altLabel": "870",
+            "dc:date": "2024-10-24 14:51:27.0",
             "owl:versionInfo": "1",
             "skos:prefLabel": {
                 "@language": "en",
-                "@value": "SOLO-II with RBR conductivity sensor"
+                "@value": "HM2000"
             },
-            "dc:identifier": "SDN:R08::879",
+            "dc:identifier": "SDN:R08::870",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
@@ -485,41 +551,7 @@
             },
             "skos:definition": {
                 "@language": "en",
-                "@value": "SOLO-II profiling float with RBR conductivity sensor"
-            },
-            "@type": "skos:Concept"
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/885/",
-            "pav:hasVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/885/1/"
-            },
-            "pav:authoredOn": "2023-10-05 14:39:49.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/885/2/"
-            },
-            "dce:identifier": "SDN:R08::885",
-            "pav:version": "2",
-            "skos:notation": "SDN:R08::885",
-            "skos:altLabel": "885",
-            "dc:date": "2023-10-05 14:39:49.0",
-            "owl:versionInfo": "2",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "SOLO_BGC, RBR"
-            },
-            "dc:identifier": "SDN:R08::885",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "SOLO_BGC, RBR float"
+                "@value": "HM2000 profiling float"
             },
             "@type": "skos:Concept"
         },
@@ -671,7 +703,7 @@
             "dce:identifier": "SDN:R08::843",
             "pav:version": "1",
             "skos:broader": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_NEMO/"
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/"
             },
             "skos:notation": "SDN:R08::843",
             "skos:altLabel": "843",
@@ -697,25 +729,25 @@
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/878/",
-            "pav:authoredOn": "2021-02-01 14:29:14.0",
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/873/",
+            "pav:authoredOn": "2024-10-24 14:51:27.0",
             "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/878/1/"
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/873/1/"
             },
-            "dce:identifier": "SDN:R08::878",
+            "dce:identifier": "SDN:R08::873",
             "pav:version": "1",
             "skos:broader": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/"
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/"
             },
-            "skos:notation": "SDN:R08::878",
-            "skos:altLabel": "878",
-            "dc:date": "2021-02-01 14:29:14.0",
+            "skos:notation": "SDN:R08::873",
+            "skos:altLabel": "873",
+            "dc:date": "2024-10-24 14:51:27.0",
             "owl:versionInfo": "1",
             "skos:prefLabel": {
                 "@language": "en",
-                "@value": "ARVOR float with RBR conductivity sensor"
+                "@value": "ALTO"
             },
-            "dc:identifier": "SDN:R08::878",
+            "dc:identifier": "SDN:R08::873",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
@@ -726,91 +758,143 @@
             },
             "skos:definition": {
                 "@language": "en",
-                "@value": "ARVOR profiling float with RBR conductivity sensor"
+                "@value": "ALTO profiling float"
             },
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/889/",
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/878/",
             "pav:hasVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/889/1/"
-            },
-            "pav:authoredOn": "2023-10-05 14:39:49.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/889/2/"
-            },
-            "dce:identifier": "SDN:R08::889",
-            "pav:version": "2",
-            "skos:notation": "SDN:R08::889",
-            "skos:altLabel": "889",
-            "dc:date": "2023-10-05 14:39:49.0",
-            "owl:versionInfo": "2",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "PROVOR_V - Jumbo, RBR"
-            },
-            "dc:identifier": "SDN:R08::889",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "PROVOR_V - Jumbo, RBR float"
-            },
-            "@type": "skos:Concept"
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/888/",
-            "pav:hasVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/888/1/"
-            },
-            "pav:authoredOn": "2023-10-05 14:39:49.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/888/2/"
-            },
-            "dce:identifier": "SDN:R08::888",
-            "pav:version": "2",
-            "skos:notation": "SDN:R08::888",
-            "skos:altLabel": "888",
-            "dc:date": "2023-10-05 14:39:49.0",
-            "owl:versionInfo": "2",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "PROVOR_V - Jumbo, SBE"
-            },
-            "dc:identifier": "SDN:R08::888",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "PROVOR_V - Jumbo, SBE float"
-            },
-            "@type": "skos:Concept"
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/834/",
-            "pav:hasVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/834/1/"
-            },
-            "pav:authoredOn": "2023-10-05 14:39:49.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/834/2/"
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/878/1/"
             },
             "@type": "skos:Concept",
             "skos:definition": {
                 "@language": "en",
-                "@value": "PROVOR V with Seabird CTD sensor"
+                "@value": "ARVOR profiling float with RBR conductivity sensor (Code marked as 'Reserved' in WMO 1770 table)."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R08::878",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "ARVOR float with RBR conductivity sensor"
+            },
+            "owl:versionInfo": "2",
+            "dc:date": "2024-11-11 09:32:23.0",
+            "skos:altLabel": "878",
+            "skos:notation": "SDN:R08::878",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ARVOR/"
+            },
+            "pav:version": "2",
+            "dce:identifier": "SDN:R08::878",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/878/2/"
+            },
+            "pav:authoredOn": "2024-11-11 09:32:23.0"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/885/",
+            "pav:hasVersion": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/885/2/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/885/1/"
+                }
+            ],
+            "@type": "skos:Concept",
+            "skos:definition": {
+                "@language": "en",
+                "@value": "SOLO_BGC, RBR float (Code marked as 'Reserved' in WMO 1770 table)."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R08::885",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "SOLO_BGC, RBR"
+            },
+            "owl:versionInfo": "3",
+            "dc:date": "2024-11-11 09:32:24.0",
+            "skos:altLabel": "885",
+            "skos:notation": "SDN:R08::885",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC/"
+            },
+            "pav:version": "3",
+            "dce:identifier": "SDN:R08::885",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/885/3/"
+            },
+            "pav:authoredOn": "2024-11-11 09:32:24.0"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/883/",
+            "pav:hasVersion": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/883/2/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/883/1/"
+                }
+            ],
+            "@type": "skos:Concept",
+            "skos:definition": {
+                "@language": "en",
+                "@value": "APEX_D deep profiling float with RBR conductivity sensor (Code marked as 'Reserved' in WMO 1770 table)."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R08::883",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "APEX_D deep float with RBR conductivity sensor"
+            },
+            "owl:versionInfo": "3",
+            "dc:date": "2024-11-11 09:32:23.0",
+            "skos:altLabel": "883",
+            "skos:notation": "SDN:R08::883",
+            "pav:version": "3",
+            "dce:identifier": "SDN:R08::883",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/883/3/"
+            },
+            "pav:authoredOn": "2024-11-11 09:32:23.0"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/834/",
+            "pav:hasVersion": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/834/2/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/834/1/"
+                }
+            ],
+            "pav:authoredOn": "2024-11-11 09:32:23.0",
+            "@type": "skos:Concept",
+            "skos:definition": {
+                "@language": "en",
+                "@value": "PROVOR V with Seabird CTD sensor (code not used in WMO 1770 table)."
             },
             "void:inDataset": {
                 "@id": "http://vocab.nerc.ac.uk/.well-known/void"
@@ -825,14 +909,11 @@
                 "@language": "en",
                 "@value": "PROVOR V SBE"
             },
-            "owl:versionInfo": "2",
-            "dc:date": "2023-10-05 14:39:49.0",
+            "owl:versionInfo": "3",
+            "dc:date": "2024-11-11 09:32:23.0",
             "skos:altLabel": "834",
             "skos:notation": "SDN:R08::834",
             "skos:broader": [
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/POPS_PROVOR/"
-                },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/"
                 },
@@ -840,8 +921,11 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V/"
                 }
             ],
-            "pav:version": "2",
-            "dce:identifier": "SDN:R08::834"
+            "pav:version": "3",
+            "dce:identifier": "SDN:R08::834",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/834/3/"
+            }
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R08/current/863/",
@@ -912,38 +996,125 @@
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/886/",
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/879/",
             "pav:hasVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/886/1/"
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/879/1/"
             },
-            "pav:authoredOn": "2023-10-05 14:39:49.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/886/2/"
-            },
-            "dce:identifier": "SDN:R08::886",
-            "pav:version": "2",
-            "skos:notation": "SDN:R08::886",
-            "skos:altLabel": "886",
-            "dc:date": "2023-10-05 14:39:49.0",
-            "owl:versionInfo": "2",
-            "skos:prefLabel": {
+            "@type": "skos:Concept",
+            "skos:definition": {
                 "@language": "en",
-                "@value": "SOLO_BGC_MRV, SBE"
+                "@value": "SOLO-II profiling float with RBR conductivity sensor (Code marked as 'Reserved' in WMO 1770 table)."
             },
-            "dc:identifier": "SDN:R08::886",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
             },
-            "owl:deprecated": "false",
+            "dc:identifier": "SDN:R08::879",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "SOLO-II with RBR conductivity sensor"
+            },
+            "owl:versionInfo": "2",
+            "dc:date": "2024-11-11 09:32:24.0",
+            "skos:altLabel": "879",
+            "skos:notation": "SDN:R08::879",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_II/"
+            },
+            "pav:version": "2",
+            "dce:identifier": "SDN:R08::879",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/879/2/"
+            },
+            "pav:authoredOn": "2024-11-11 09:32:24.0"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/876/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/876/1/"
+            },
+            "@type": "skos:Concept",
+            "skos:definition": {
+                "@language": "en",
+                "@value": "ALTO profiling float with Sea-Bird Scientific (SBE) conductivity sensor (Code marked as 'Reserved' in WMO 1770 table)."
+            },
             "void:inDataset": {
                 "@id": "http://vocab.nerc.ac.uk/.well-known/void"
             },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R08::876",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "ALTO float with SBE conductivity sensor"
+            },
+            "owl:versionInfo": "2",
+            "dc:date": "2024-11-11 09:32:23.0",
+            "skos:altLabel": "876",
+            "skos:notation": "SDN:R08::876",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/"
+            },
+            "pav:version": "2",
+            "dce:identifier": "SDN:R08::876",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/876/2/"
+            },
+            "pav:authoredOn": "2024-11-11 09:32:23.0"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/886/",
+            "pav:hasVersion": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/886/1/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/886/2/"
+                }
+            ],
+            "pav:authoredOn": "2024-11-11 09:32:24.0",
+            "@type": "skos:Concept",
             "skos:definition": {
                 "@language": "en",
-                "@value": "SOLO_BGC_MRV, SBE float"
+                "@value": "SOLO_BGC_MRV, SBE float (Code marked as 'Reserved' in WMO 1770 table)."
             },
-            "@type": "skos:Concept"
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R08::886",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "SOLO_BGC_MRV, SBE"
+            },
+            "owl:versionInfo": "3",
+            "dc:date": "2024-11-11 09:32:24.0",
+            "skos:altLabel": "886",
+            "skos:notation": "SDN:R08::886",
+            "skos:broader": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC_MRV/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC/"
+                }
+            ],
+            "pav:version": "3",
+            "dce:identifier": "SDN:R08::886",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/886/3/"
+            }
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R08/current/853/",
@@ -1012,6 +1183,43 @@
                 "@value": "NINJA-D profiling deep float with Sea-Bird Scientific (SBE) conductivity sensor"
             },
             "@type": "skos:Concept"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/869/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/869/1/"
+            },
+            "@type": "skos:Concept",
+            "skos:definition": {
+                "@language": "en",
+                "@value": "NAVIS_EBR profiling float (Code marked as 'Reserved' in WMO 1770 table)."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R08::869",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "NAVIS_EBR"
+            },
+            "owl:versionInfo": "2",
+            "dc:date": "2024-11-11 09:32:23.0",
+            "skos:altLabel": "869",
+            "skos:notation": "SDN:R08::869",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/NAVIS_EBR/"
+            },
+            "pav:version": "2",
+            "dce:identifier": "SDN:R08::869",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/869/2/"
+            },
+            "pav:authoredOn": "2024-11-11 09:32:23.0"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R08/current/842/",
@@ -1087,25 +1295,25 @@
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/890/",
-            "pav:hasVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/890/1/"
-            },
-            "pav:authoredOn": "2023-10-05 14:39:49.0",
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/874/",
+            "pav:authoredOn": "2024-10-24 14:51:27.0",
             "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/890/2/"
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/874/1/"
             },
-            "dce:identifier": "SDN:R08::890",
-            "pav:version": "2",
-            "skos:notation": "SDN:R08::890",
-            "skos:altLabel": "890",
-            "dc:date": "2023-10-05 14:39:49.0",
-            "owl:versionInfo": "2",
+            "dce:identifier": "SDN:R08::874",
+            "pav:version": "1",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_D_MRV/"
+            },
+            "skos:notation": "SDN:R08::874",
+            "skos:altLabel": "874",
+            "dc:date": "2024-10-24 14:51:27.0",
+            "owl:versionInfo": "1",
             "skos:prefLabel": {
                 "@language": "en",
-                "@value": "PROVOR_III - Jumbo, SBE"
+                "@value": "SOLO_D_MRV"
             },
-            "dc:identifier": "SDN:R08::890",
+            "dc:identifier": "SDN:R08::874",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
@@ -1116,30 +1324,30 @@
             },
             "skos:definition": {
                 "@language": "en",
-                "@value": "PROVOR_III - Jumbo, SBE float"
+                "@value": "SOLO_D_MRV profiling float"
             },
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/875/",
-            "pav:authoredOn": "2021-02-01 14:29:14.0",
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/871/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/871/1/"
+            },
+            "pav:authoredOn": "2024-12-16 16:23:22.0",
             "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/875/1/"
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/871/2/"
             },
-            "dce:identifier": "SDN:R08::875",
-            "pav:version": "1",
-            "skos:broader": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/"
-            },
-            "skos:notation": "SDN:R08::875",
-            "skos:altLabel": "875",
-            "dc:date": "2021-02-01 14:29:14.0",
-            "owl:versionInfo": "1",
+            "dce:identifier": "SDN:R08::871",
+            "pav:version": "2",
+            "skos:notation": "SDN:R08::871",
+            "skos:altLabel": "871",
+            "dc:date": "2024-12-16 16:23:22.0",
+            "owl:versionInfo": "2",
             "skos:prefLabel": {
                 "@language": "en",
-                "@value": "ALTO float with RBR conductivity sensor"
+                "@value": "COPEX"
             },
-            "dc:identifier": "SDN:R08::875",
+            "dc:identifier": "SDN:R08::871",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
@@ -1150,7 +1358,7 @@
             },
             "skos:definition": {
                 "@language": "en",
-                "@value": "ALTO profiling float with RBR conductivity sensor"
+                "@value": "Copex float."
             },
             "@type": "skos:Concept"
         },
@@ -1229,37 +1437,92 @@
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R08/current/884/",
-            "pav:hasVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/884/1/"
-            },
-            "pav:authoredOn": "2023-10-05 14:39:49.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/884/2/"
-            },
-            "dce:identifier": "SDN:R08::884",
-            "pav:version": "2",
-            "skos:notation": "SDN:R08::884",
-            "skos:altLabel": "884",
-            "dc:date": "2023-10-05 14:39:49.0",
-            "owl:versionInfo": "2",
-            "skos:prefLabel": {
+            "pav:hasVersion": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/884/2/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/884/1/"
+                }
+            ],
+            "@type": "skos:Concept",
+            "skos:definition": {
                 "@language": "en",
-                "@value": "SOLO_BGC, SBE"
+                "@value": "SOLO_BGC, SBE float (Code marked as 'Reserved' in WMO 1770 table)."
             },
-            "dc:identifier": "SDN:R08::884",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
             },
-            "owl:deprecated": "false",
+            "dc:identifier": "SDN:R08::884",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "SOLO_BGC, SBE"
+            },
+            "owl:versionInfo": "3",
+            "dc:date": "2024-11-11 09:32:24.0",
+            "skos:altLabel": "884",
+            "skos:notation": "SDN:R08::884",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC/"
+            },
+            "pav:version": "3",
+            "dce:identifier": "SDN:R08::884",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/884/3/"
+            },
+            "pav:authoredOn": "2024-11-11 09:32:24.0"
+        },
+        {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/887/",
+            "pav:hasVersion": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/887/1/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/887/2/"
+                }
+            ],
+            "pav:authoredOn": "2024-11-11 09:32:24.0",
+            "@type": "skos:Concept",
+            "skos:definition": {
+                "@language": "en",
+                "@value": "SOLO_BGC_MRV, RBR float (Code marked as 'Reserved' in WMO 1770 table)."
+            },
             "void:inDataset": {
                 "@id": "http://vocab.nerc.ac.uk/.well-known/void"
             },
-            "skos:definition": {
+            "owl:deprecated": "false",
+            "skos:note": {
                 "@language": "en",
-                "@value": "SOLO_BGC, SBE float"
+                "@value": "accepted"
             },
-            "@type": "skos:Concept"
+            "dc:identifier": "SDN:R08::887",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "SOLO_BGC_MRV, RBR"
+            },
+            "owl:versionInfo": "3",
+            "dc:date": "2024-11-11 09:32:24.0",
+            "skos:altLabel": "887",
+            "skos:notation": "SDN:R08::887",
+            "skos:broader": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC_MRV/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R23/current/SOLO_BGC/"
+                }
+            ],
+            "pav:version": "3",
+            "dce:identifier": "SDN:R08::887",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/887/3/"
+            }
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R08/current/862/",
@@ -1369,6 +1632,43 @@
             }
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/880/",
+            "pav:hasVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/880/1/"
+            },
+            "@type": "skos:Concept",
+            "skos:definition": {
+                "@language": "en",
+                "@value": "S2A profiling float with RBR conductivity sensor (Code marked as 'Reserved' in WMO 1770 table)."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R08::880",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "S2A float with RBR conductivity sensor"
+            },
+            "owl:versionInfo": "2",
+            "dc:date": "2024-11-11 09:32:24.0",
+            "skos:altLabel": "880",
+            "skos:notation": "SDN:R08::880",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/S2A/"
+            },
+            "pav:version": "2",
+            "dce:identifier": "SDN:R08::880",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/880/2/"
+            },
+            "pav:authoredOn": "2024-11-11 09:32:24.0"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R08/current/865/",
             "pav:authoredOn": "2020-05-03 20:28:54.0",
             "pav:hasCurrentVersion": {
@@ -1471,40 +1771,6 @@
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/891/",
-            "pav:hasVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/891/1/"
-            },
-            "pav:authoredOn": "2023-10-05 14:39:49.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/891/2/"
-            },
-            "dce:identifier": "SDN:R08::891",
-            "pav:version": "2",
-            "skos:notation": "SDN:R08::891",
-            "skos:altLabel": "891",
-            "dc:date": "2023-10-05 14:39:49.0",
-            "owl:versionInfo": "2",
-            "skos:prefLabel": {
-                "@language": "en",
-                "@value": "PROVOR_III - Jumbo, RBR"
-            },
-            "dc:identifier": "SDN:R08::891",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
-            },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "PROVOR_III - Jumbo, RBR float"
-            },
-            "@type": "skos:Concept"
-        },
-        {
             "@id": "http://vocab.nerc.ac.uk/collection/R08/current/850/",
             "pav:authoredOn": "2020-05-03 20:28:54.0",
             "@type": "skos:Concept",
@@ -1578,72 +1844,46 @@
             "@type": "skos:Concept"
         },
         {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/876/",
-            "pav:authoredOn": "2021-02-01 14:29:14.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/876/1/"
-            },
-            "dce:identifier": "SDN:R08::876",
-            "pav:version": "1",
-            "skos:broader": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/ALTO/"
-            },
-            "skos:notation": "SDN:R08::876",
-            "skos:altLabel": "876",
-            "dc:date": "2021-02-01 14:29:14.0",
-            "owl:versionInfo": "1",
-            "skos:prefLabel": {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/882/",
+            "pav:hasVersion": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/882/2/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/882/1/"
+                }
+            ],
+            "@type": "skos:Concept",
+            "skos:definition": {
                 "@language": "en",
-                "@value": "ALTO float with SBE conductivity sensor"
+                "@value": "XUANWU float (Code marked as 'Reserved' in WMO 1770 table)."
             },
-            "dc:identifier": "SDN:R08::876",
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
             "skos:note": {
                 "@language": "en",
                 "@value": "accepted"
             },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
-            },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "ALTO profiling float with Sea-Bird Scientific (SBE) conductivity sensor"
-            },
-            "@type": "skos:Concept"
-        },
-        {
-            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/882/",
-            "pav:hasVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/882/1/"
-            },
-            "pav:authoredOn": "2023-10-05 14:39:49.0",
-            "pav:hasCurrentVersion": {
-                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/882/2/"
-            },
-            "dce:identifier": "SDN:R08::882",
-            "pav:version": "2",
-            "skos:notation": "SDN:R08::882",
-            "skos:altLabel": "882",
-            "dc:date": "2023-10-05 14:39:49.0",
-            "owl:versionInfo": "2",
+            "dc:identifier": "SDN:R08::882",
             "skos:prefLabel": {
                 "@language": "en",
                 "@value": "XUANWU"
             },
-            "dc:identifier": "SDN:R08::882",
-            "skos:note": {
-                "@language": "en",
-                "@value": "accepted"
+            "owl:versionInfo": "3",
+            "dc:date": "2024-11-11 09:32:24.0",
+            "skos:altLabel": "882",
+            "skos:notation": "SDN:R08::882",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/XUANWU/"
             },
-            "owl:deprecated": "false",
-            "void:inDataset": {
-                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            "pav:version": "3",
+            "dce:identifier": "SDN:R08::882",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/882/3/"
             },
-            "skos:definition": {
-                "@language": "en",
-                "@value": "XUANWU float"
-            },
-            "@type": "skos:Concept"
+            "pav:authoredOn": "2024-11-11 09:32:24.0"
         },
         {
             "@id": "http://vocab.nerc.ac.uk/collection/R08/current/857/",
@@ -1748,6 +1988,48 @@
             "@type": "skos:Concept"
         },
         {
+            "@id": "http://vocab.nerc.ac.uk/collection/R08/current/888/",
+            "pav:hasVersion": [
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/888/1/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/888/2/"
+                }
+            ],
+            "@type": "skos:Concept",
+            "skos:definition": {
+                "@language": "en",
+                "@value": "PROVOR_V - Jumbo, SBE float (Code marked as 'Reserved' in WMO 1770 table)."
+            },
+            "void:inDataset": {
+                "@id": "http://vocab.nerc.ac.uk/.well-known/void"
+            },
+            "owl:deprecated": "false",
+            "skos:note": {
+                "@language": "en",
+                "@value": "accepted"
+            },
+            "dc:identifier": "SDN:R08::888",
+            "skos:prefLabel": {
+                "@language": "en",
+                "@value": "PROVOR_V - Jumbo, SBE"
+            },
+            "owl:versionInfo": "3",
+            "dc:date": "2024-11-11 09:32:24.0",
+            "skos:altLabel": "888",
+            "skos:notation": "SDN:R08::888",
+            "skos:broader": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R23/current/PROVOR_V_JUMBO/"
+            },
+            "pav:version": "3",
+            "dce:identifier": "SDN:R08::888",
+            "pav:hasCurrentVersion": {
+                "@id": "http://vocab.nerc.ac.uk/collection/R08/current/888/3/"
+            },
+            "pav:authoredOn": "2024-11-11 09:32:24.0"
+        },
+        {
             "@id": "http://vocab.nerc.ac.uk/collection/R08/current/855/",
             "pav:authoredOn": "2020-05-03 20:28:54.0",
             "pav:hasCurrentVersion": {
@@ -1785,6 +2067,12 @@
             "@id": "http://vocab.nerc.ac.uk/collection/R08/current/",
             "skos:member": [
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/890/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/891/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/841/"
                 },
                 {
@@ -1794,10 +2082,10 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/831/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/887/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/889/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/880/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/875/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/877/"
@@ -1821,13 +2109,7 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/837/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/883/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/879/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/885/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/870/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/859/"
@@ -1845,13 +2127,16 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/843/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/873/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/878/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/889/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/885/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/888/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/883/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/834/"
@@ -1863,6 +2148,12 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/844/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/879/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/876/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/886/"
                 },
                 {
@@ -1872,16 +2163,19 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/864/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/869/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/842/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/845/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/890/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/874/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/875/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/871/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/852/"
@@ -1893,6 +2187,9 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/884/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/887/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/862/"
                 },
                 {
@@ -1900,6 +2197,9 @@
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/840/"
+                },
+                {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/880/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/865/"
@@ -1911,16 +2211,10 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/846/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/891/"
-                },
-                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/850/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/839/"
-                },
-                {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/876/"
                 },
                 {
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/882/"
@@ -1932,10 +2226,13 @@
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/860/"
                 },
                 {
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/849/"
+                },
+                {
                     "@id": "http://vocab.nerc.ac.uk/collection/R08/current/855/"
                 },
                 {
-                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/849/"
+                    "@id": "http://vocab.nerc.ac.uk/collection/R08/current/888/"
                 }
             ],
             "@type": "skos:Collection",
@@ -1943,8 +2240,8 @@
             "dc:description": "Subset of instrument type codes from the World Meteorological Organization (WMO) Common Code Table C-3 (CCT C-3) 1770, named 'Instrument make and type for water temperature profile measurement with fall rate equation coefficients' and available here: https://library.wmo.int/doc_num.php?explnum_id=11283. Argo netCDF variable WMO_INST_TYPE is populated by R08 altLabel.",
             "dc:title": "Argo instrument types",
             "skos:prefLabel": "Argo instrument types",
-            "owl:versionInfo": "7",
-            "dc:date": "2024-04-20 03:00:06.0",
+            "owl:versionInfo": "10",
+            "dc:date": "2024-12-17 02:00:00.0",
             "skos:altLabel": "ARGO_WMO_INST_TYPE",
             "dc:creator": "Argo Data Management Team",
             "dc:alternative": "ARGO_WMO_INST_TYPE",

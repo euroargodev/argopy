@@ -1,5 +1,3 @@
-import pandas as pd
-import numpy as np
 from pathlib import Path
 import logging
 
@@ -12,6 +10,7 @@ log = logging.getLogger("argopy.stores.ArgoFloat")
 
 class ArgoFloatOffline(ArgoFloatProto):
     """Offline :class:`ArgoFloat` implementation"""
+
     _online = False
 
     def __init__(
@@ -30,7 +29,6 @@ class ArgoFloatOffline(ArgoFloatProto):
         """Method to load float meta-data"""
         return self.load_metadata_from_meta_file()
 
-
     def load_dac(self):
         """Load the DAC short name for this float"""
         try:
@@ -43,7 +41,7 @@ class ArgoFloatOffline(ArgoFloatProto):
             if len(dac) > 0:
                 self._dac = dac[0]
 
-        except:
+        except Exception:
             raise ValueError(
                 f"DAC name for Float {self.WMO} cannot be found from {self.host}"
             )

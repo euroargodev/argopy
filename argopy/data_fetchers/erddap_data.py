@@ -676,7 +676,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 else:
                     lines = [line for line in ncHeader.splitlines() if "row = " in line][0]
                     return int(lines.split("=")[1].split(";")[0])
-            except Exception as e:
+            except Exception:
                 raise ErddapServerError(
                     "Erddap server can't return ncHeader for url: %s " % url
                 )
@@ -1096,4 +1096,7 @@ class Fetch_box(ErddapArgoDataFetcher):
                     urls.append(fb.get_url())
                 except DataNotFound:
                     log.debug("This box fetcher will contain no data")
+                except ValueError as e:
+                    if 'not available for this access point' in str(e):
+                        log.debug("This box fetcher does not contained required data")
             return urls

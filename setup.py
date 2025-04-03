@@ -10,7 +10,7 @@ with open("requirements.txt") as f:
 
 setuptools.setup(
     name="argopy",
-    version="1.0.0",
+    version="1.1.0",
     author="argopy Developers",
     author_email="gmaze@ifremer.fr",
     description="A python library for Argo data beginners and experts",
@@ -30,7 +30,7 @@ setuptools.setup(
         "Operating System :: POSIX",
         "Operating System :: MacOS",
         "Operating System :: Microsoft :: Windows",
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
     ],
     entry_points={
         "xarray.backends": ["argo=argopy.xarray:ArgoEngine"],

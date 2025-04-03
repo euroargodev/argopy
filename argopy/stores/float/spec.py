@@ -12,9 +12,9 @@ import numpy as np
 
 from ...errors import InvalidOption
 from ...plot import dashboard
-from ...utils import check_wmo, isconnected, argo_split_path, shortcut2gdac
+from ...utils import check_wmo, argo_split_path, shortcut2gdac
 from ...options import OPTIONS
-from .. import ArgoIndex, httpstore
+from .. import ArgoIndex
 
 
 log = logging.getLogger("argopy.stores.ArgoFloat")
@@ -164,7 +164,6 @@ class ArgoFloatProto(ABC):
 
         return self
 
-
     @abstractmethod
     def load_dac(self):
         """Load the DAC short name for this float"""
@@ -310,7 +309,7 @@ class ArgoFloatProto(ABC):
         else:
             file = self.ls_dataset()[name]
 
-            if 'xr_opts' not in kwargs and cast == True:
+            if 'xr_opts' not in kwargs and cast is True:
                 kwargs.update({'xr_opts': {"engine": "argo"}})
 
             return self.fs.open_dataset(file, **kwargs)
@@ -336,12 +335,12 @@ class ArgoFloatProto(ABC):
                 desc["path"] = file
                 prof.append(desc)
             df = pd.DataFrame(data=prof)
-            stem2cyc = lambda s: (
+            stem2cyc = lambda s: (  # noqa: E731
                 int(s.split("_")[-1][0:-1])
                 if s.split("_")[-1][-1] == "D"
                 else int(s.split("_")[-1][:])
             )
-            row2cyc = lambda row: stem2cyc(row["stem"])
+            row2cyc = lambda row: stem2cyc(row["stem"])  # noqa: E731
             df["cyc"] = df.apply(row2cyc, axis=1)
             df["long_type"] = df.apply(
                 lambda row: row["type"].split(",")[-1].lstrip(), axis=1

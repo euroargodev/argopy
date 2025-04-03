@@ -121,7 +121,7 @@ Filters
 If you fetched data with the ``expert`` mode, you may want to use *filters* to help you curate the data.
 
 - **QC flag filter**: :meth:`Dataset.argo.filter_qc`. This method allows you to filter measurements according to QC flag values. This filter modifies all variables of the dataset.
-- **Data mode filter**: :meth:`Dataset.argo.filter_data_mode`. This method allows you to filter variables according to their data mode. This filter modifies the <PARAM> and <PARAM_QC> variables of the dataset.
+- **Data mode filter**: :meth:`Dataset.argo.datamode.filter`. This method allows you to filter variables according to their data mode.
 - **OWC variables filter**: :meth:`Dataset.argo.filter_scalib_pres`. This method allows you to filter variables according to OWC salinity calibration software requirements. This filter modifies pressure, temperature and salinity related variables of the dataset.
 
 

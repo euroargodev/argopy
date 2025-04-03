@@ -7,15 +7,29 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-
 Coming up next
 --------------
+
+Internals
+^^^^^^^^^
+
+- **Open netcdf files lazily from ftp server**. Adding to s3 and http, we now support laziness with ftp using `kerchunk <https://fsspec.github.io/kerchunk/>`_. Checkout the dedicated :ref:`lazy` section of the documentation. (:pr:`460`) by |gmaze|.
+
+Energy
+^^^^^^
+
+|eqco2_since_last_release|
+
+
+v1.1.0 (18 March 2025)
+----------------------
 
 .. versionadded:: v1.1.0
 
     Most new features in this version can be considered *advanced tools*, since they require a more intimate knowledge
     of the Argo dataset. Therefore, we re-organised and completed the **argopy** documentation to give them more visibility.
 
+.. _v1.1.0-features:
 
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -59,6 +73,8 @@ Features and front-end API
     GreenCoding().footprint_all_releases()
     GreenCoding().footprint_baseline()
 
+.. _v1.1.0-internals:
+
 Internals
 ^^^^^^^^^
 
@@ -76,7 +92,7 @@ Internals
     # or:
     ds.argo.to_zarr("s3://argopy/sample-data/6903091_prof.zarr")
 
-- **Open netcdf files lazily**. We now provide low-level support for opening a netcdf Argo dataset lazily with `kerchunk <https://fsspec.github.io/kerchunk/>`_. Checkout the dedicated :ref:`lazy` section of the documentation. (:pr:`385`) by |gmaze|.
+- **Open netcdf files lazily**. We provide an experimental low-level support for opening a netcdf Argo dataset lazily using `kerchunk <https://fsspec.github.io/kerchunk/>`_. Checkout the dedicated :ref:`lazy` section of the documentation. (:pr:`385`) by |gmaze|.
 
 - Fix bug raised when the Argo reference table 8 return by the NVS server has a missing altLabel. ID of platform types are now extracted from the NVS url ID property. :issue:`420`, (:pr:`421`) by |gmaze|.
 
@@ -95,10 +111,12 @@ Internals
 
 - Make the :class:`Dataset.argo` accessor and its extensions able to work with dataset from a :class:`DataFetcher` and from a :class:`ArgoFloat`. This was necessary because the time variable does not have the same name in these dataset (``TIME`` vs ``JULD``). But this point should be addressed later. (:pr:`450`) by |gmaze|.
 
+.. _v1.1.0-energy:
+
 Energy
 ^^^^^^
 
-|eqco2_since_last_release|
+.. image:: https://img.shields.io/badge/Total%20carbon%20emitted%20by%20release%20v1.1.0%20%5BgCO2eq%5D-1328.99-black?style=plastic&labelColor=grey
 
 
 v1.0.0 (16 Oct. 2024)

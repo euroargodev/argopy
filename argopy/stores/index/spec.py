@@ -705,6 +705,7 @@ class ArgoIndexStoreProto(ABC):
                 df["dac"] = df["file"].apply(lambda x: x.split("/")[0])
 
                 profiler_dictionary = self._r8
+
                 def ev(x):
                     try:
                         return int(x)

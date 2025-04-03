@@ -5,7 +5,7 @@ from fsspec.core import split_protocol
 from urllib.parse import urlparse
 from socket import gaierror
 import fsspec
-
+import os
 
 from ...options import OPTIONS
 from ...errors import GdacPathError
@@ -69,7 +69,7 @@ class gdacfs:
 
     @staticmethod
     def path2protocol(path: Union[str, Path]) -> str:
-        """Narrow down any path to a supported protocols, raise GdacPathError if protocol not supported"""
+        """Narrow down any path to a supported protocol, raise GdacPathError if protocol not supported"""
         if isinstance(path, Path):
             return "file"
         else:
@@ -110,4 +110,5 @@ class gdacfs:
                 % (fs_args, str(e))
             )
         fs.fs = fsspec.filesystem("dir", fs=fs.fs, path=path)
+
         return fs
