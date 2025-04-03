@@ -94,6 +94,7 @@ __all__ = (
     # Decorators:
     "deprecated",
     "doc_inherit",
+    "register_accessor",
     # Lists:
     "list_available_data_src",
     "list_available_index_src",
