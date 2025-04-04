@@ -337,12 +337,12 @@ class ArgoIndexStoreProto(ABC):
 
             elif key == "DATE":
                 DATE = self.search_type["DATE"]
-                cname = ("x=%0.2f/%0.2f") % (
+                cname = ("t=%s/%s") % (
                     self._format(DATE[0], "tim"),
                     self._format(DATE[1], "tim"),
                 )
 
-            elif "BOX" == key:
+            elif key == "BOX":
                 BOX = self.search_type["BOX"]
                 cname = ("x=%0.2f/%0.2f;y=%0.2f/%0.2f;t=%s/%s") % (
                     BOX[0],
