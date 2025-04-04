@@ -212,11 +212,11 @@ class Fetch_wmo(GDACArgoIndexFetcher):
         # Get list of files to load:
         if not hasattr(self, "_list_of_argo_files"):
             if self.CYC is None:
-                self._list_of_argo_files = self.indexfs.search_wmo(
+                self._list_of_argo_files = self.indexfs.query.wmo(
                     self.WMO, nrows=self._nrows
                 ).uri
             else:
-                self._list_of_argo_files = self.indexfs.search_wmo_cyc(
+                self._list_of_argo_files = self.indexfs.query.wmo_cyc(
                     self.WMO, self.CYC, nrows=self._nrows
                 ).uri
 
@@ -268,11 +268,11 @@ class Fetch_box(GDACArgoIndexFetcher):
         # Get list of files to load:
         if not hasattr(self, "_list_of_argo_files"):
             if len(self.indexBOX) == 4:
-                self._list_of_argo_files = self.indexfs.search_lat_lon(
+                self._list_of_argo_files = self.indexfs.query.lat_lon(
                     self.indexBOX, nrows=self._nrows
                 ).uri
             else:
-                self._list_of_argo_files = self.indexfs.search_lat_lon_tim(
+                self._list_of_argo_files = self.indexfs.query.box(
                     self.indexBOX, nrows=self._nrows
                 ).uri
 

@@ -18,10 +18,12 @@ else:
 
 from ...options import OPTIONS
 from ...errors import GdacPathError, S3PathError, InvalidDataset, OptionValueError, InvalidDatasetStructure
-from ...utils.checkers import isconnected, has_aws_credentials
-from ...utils.accessories import Registry
-from ...utils.chunking import Chunker
-from ...utils.lists import shortcut2gdac
+from ...utils import isconnected, has_aws_credentials, to_list
+from ...utils import Registry
+from ...utils import Chunker
+from ...utils import shortcut2gdac
+from ...utils import deprecated
+
 from .. import httpstore, memorystore, filestore, ftpstore, s3store
 from .implementations.index_s3 import get_a_s3index
 
@@ -251,8 +253,8 @@ class ArgoIndexStoreProto(ABC):
                 self.index_file += ".gz"
 
         if isinstance(self.fs["src"], s3store):
-            # If the index host is on a S3 store, we add another file system that will bypass some
-            # search methods to improve performances.
+            # If the index host is on a S3 store, we add another file system that will be called to
+            # bypass some search methods to improve performances.
             self.fs["s3"] = get_a_s3index(self.convention)
             # Adjust S3 bucket name and key with host and index file names:
             self.fs["s3"].bucket_name = Path(split_protocol(self.host)[1]).parts[0]
@@ -272,7 +274,7 @@ class ArgoIndexStoreProto(ABC):
             summary.append("In memory: True (%i records)" % self.N_RECORDS)
         elif "s3" in self.host:
             summary.append(
-                "In memory: False [But there's no need to load the full index with a S3 host to make a search]"
+                "In memory: False [But there's no need to load the full index with a S3 host to make wmo/cycles searches]"
             )
         else:
             summary.append("In memory: False")
@@ -315,16 +317,33 @@ class ArgoIndexStoreProto(ABC):
         This method uses the BOX, WMO, CYC keys of the index instance ``search_type`` property
         """
         cname = "full"
+        C = []
 
-        if "BOX" in self.search_type:
-            BOX = self.search_type["BOX"]
-            cname = ("x=%0.2f/%0.2f;y=%0.2f/%0.2f") % (
-                BOX[0],
-                BOX[1],
-                BOX[2],
-                BOX[3],
-            )
-            if len(BOX) == 6:
+        for key in self.search_type.keys():
+
+            if key == "LAT":
+                LAT = self.search_type["LAT"]
+                cname = ("y=%0.2f/%0.2f") % (
+                    LAT[0],
+                    LAT[1],
+                )
+
+            elif key == "LON":
+                LON = self.search_type["LON"]
+                cname = ("x=%0.2f/%0.2f") % (
+                    LON[0],
+                    LON[1],
+                )
+
+            elif key == "DATE":
+                DATE = self.search_type["DATE"]
+                cname = ("t=%s/%s") % (
+                    self._format(DATE[0], "tim"),
+                    self._format(DATE[1], "tim"),
+                )
+
+            elif key == "BOX":
+                BOX = self.search_type["BOX"]
                 cname = ("x=%0.2f/%0.2f;y=%0.2f/%0.2f;t=%s/%s") % (
                     BOX[0],
                     BOX[1],
@@ -334,53 +353,47 @@ class ArgoIndexStoreProto(ABC):
                     self._format(BOX[5], "tim"),
                 )
 
-        elif "WMO" in self.search_type:
-            WMO = self.search_type["WMO"]
-            if "CYC" in self.search_type:
-                CYC = self.search_type["CYC"]
-
-            prtcyc = lambda CYC, wmo: "WMO%i_%s" % (  # noqa: E731
-                wmo,
-                "_".join(["CYC%i" % (cyc) for cyc in sorted(CYC)]),
-            )
-
-            if len(WMO) == 1:
-                if "CYC" in self.search_type:
-                    cname = "%s" % prtcyc(CYC, WMO[0])
-                else:
+            elif "WMO" == key:
+                WMO = self.search_type["WMO"]
+                if len(WMO) == 1:
                     cname = "WMO%i" % (WMO[0])
-            else:
-                cname = ";".join(["WMO%i" % wmo for wmo in sorted(WMO)])
-                if "CYC" in self.search_type:
-                    cname = ";".join([prtcyc(CYC, wmo) for wmo in WMO])
+                else:
+                    cname = ";".join(["WMO%i" % wmo for wmo in sorted(WMO)])
+
+            elif "CYC" == key:
+                CYC = self.search_type["CYC"]
+                if len(CYC) == 1:
+                    cname = "CYC%i" % (CYC[0])
+                else:
+                    cname = ";".join(["CYC%i" % cyc for cyc in sorted(CYC)])
                 cname = "%s" % cname
 
-        elif "CYC" in self.search_type and "WMO" not in self.search_type:
-            CYC = self.search_type["CYC"]
-            if len(CYC) == 1:
-                cname = "CYC%i" % (CYC[0])
-            else:
-                cname = ";".join(["CYC%i" % cyc for cyc in sorted(CYC)])
-            cname = "%s" % cname
+            elif "PARAMS" == key:
+                PARAM, LOG = self.search_type["PARAMS"]
+                cname = ("_%s_" % LOG).join(PARAM)
 
-        elif "PARAM" in self.search_type:
-            PARAM = self.search_type["PARAM"]
-            LOG = self.search_type["logical"]
-            cname = ("_%s_" % LOG).join(PARAM)
+            elif "DMODE" == key:
+                DMODE, LOG = self.search_type["DMODE"]
+                cname = ("_%s_" % LOG).join(
+                    ["%s_%s" % (p, "".join(DMODE[p])) for p in DMODE]
+                )
 
-        elif "DMODE" in self.search_type:
-            DMODE = self.search_type["DMODE"]
-            LOG = self.search_type["logical"]
-            cname = ("_%s_" % LOG).join(
-                ["%s_%s" % (p, "".join(DMODE[p])) for p in DMODE]
-            )
+            elif "PTYPE" == key:
+                PTYPE = self.search_type["PTYPE"]
+                if len(PTYPE) == 1:
+                    cname = "PTYPE%i" % (PTYPE[0])
+                else:
+                    cname = ";".join(["PTYPE%i" % pt for pt in sorted(PTYPE)])
+                cname = "%s" % cname
 
-        # if self._cname is None:
-        #     self._cname = cname
-        # else:
-        #     self._cname = "%s__%s" % (self._cname, cname)
+            elif "PLABEL" == key:
+                PLABEL = self.search_type["PLABEL"]
+                LOG = 'or'
+                cname = ("_%s_" % LOG).join(PLABEL)
 
-        return cname
+            C.append(cname)
+
+        return "_and_".join(C)
 
     def _sha_from(self, path):
         """Internal post-processing for a sha
@@ -859,210 +872,48 @@ class ArgoIndexStoreProto(ABC):
         """
         raise NotImplementedError("Not implemented")
 
-    @abstractmethod
-    def search_wmo(self, WMOs):
-        """Search index for floats defined by their WMO
+    @deprecated("this method is replaced by `ArgoIndex().query.wmo()`", version="1.1.0")
+    def search_wmo(self, WMOs, nrows=None):
+        return self.query.wmo(WMOs, nrows=nrows)
 
-        - Define search method
-        - Trigger self.run() to set self.search internal property
+    @deprecated("this method is replaced by `ArgoIndex().query.cyc()`", version="1.1.0")
+    def search_cyc(self, CYCs, nrows=None):
+        return self.query.cyc(CYCs, nrows=nrows)
 
-        Parameters
-        ----------
-        list(int)
-            List of WMOs to search
+    @deprecated("this method is replaced by `ArgoIndex().query.compose()`", version="1.1.0")
+    def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
+        return self.query.wmo_cyc(WMOs, CYCs, nrows=nrows)
 
-        Examples
-        --------
-        >>> idx.search_wmo(2901746)
-        >>> idx.search_wmo([2901746, 4902252])
-        """
-        raise NotImplementedError("Not implemented")
+    @deprecated("this method is replaced by `ArgoIndex().query.date()`", version="1.1.0")
+    def search_tim(self, BOX, nrows=None):
+        return self.query.date(BOX, nrows=nrows)
 
-    @abstractmethod
-    def search_cyc(self, CYCs):
-        """Search index for cycle numbers
+    @deprecated("this method is replaced by `ArgoIndex().query.compose()`", version="1.1.0")
+    def search_lat_lon(self, BOX, nrows=None):
+        return self.query.lat_lon(BOX, nrows=nrows)  # Faster than .compose()
+        # return self.query.compose({'lon': BOX, 'lat': BOX}, nrows=nrows)
 
-        Parameters
-        ----------
-        list(int)
-            List of CYCs to search
+    @deprecated("this method is replaced by `ArgoIndex().query.box()`", version="1.1.0")
+    def search_lat_lon_tim(self, BOX, nrows=None):
+        return self.query.box(BOX, nrows=nrows)
 
-        Examples
-        --------
-        >>> idx.search_cyc(1)
-        >>> idx.search_cyc([1,2])
-        """
-        raise NotImplementedError("Not implemented")
+    @deprecated("this method is replaced by `ArgoIndex().query.params()`", version="1.1.0")
+    def search_params(self, PARAMs, logical: bool = "and", nrows=None):
+        return self.query.params(PARAMs, logical=logical, nrows=nrows)
 
-    @abstractmethod
-    def search_wmo_cyc(self, WMOs, CYCs):
-        """Search index for floats defined by their WMO and specific cycle numbers
-
-        Parameters
-        ----------
-        list(int)
-            List of WMOs to search
-        list(int)
-            List of CYCs to search
-
-        Examples
-        --------
-        >>> idx.search_wmo_cyc(2901746, 12)
-        >>> idx.search_wmo_cyc([2901746, 4902252], [1,2])
-        """
-        raise NotImplementedError("Not implemented")
-
-    @abstractmethod
-    def search_tim(self, BOX):
-        """Search index for a time range
-
-        Parameters
-        ----------
-        box : list()
-            An index box to search Argo records for.
-
-        Warnings
-        --------
-        Only date bounds are considered from the index box.
-
-        Examples
-        --------
-        >>> idx.search_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
-
-        """
-        raise NotImplementedError("Not implemented")
-
-    @abstractmethod
-    def search_lat_lon(self, BOX):
-        """Search index for a rectangular latitude/longitude domain
-
-        Parameters
-        ----------
-        box : list()
-            An index box to search Argo records for.
-
-        Warnings
-        --------
-        Only lat/lon bounds are considered from the index box.
-
-        Examples
-        --------
-        >>> idx.search_lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
-
-        """
-        raise NotImplementedError("Not implemented")
-
-    @abstractmethod
-    def search_lat_lon_tim(self, BOX):
-        """Search index for a rectangular latitude/longitude domain and time range
-
-        Parameters
-        ----------
-        box : list()
-            An index box to search Argo records for.
-
-        Examples
-        --------
-        >>> idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
-
-        """
-        raise NotImplementedError("Not implemented")
-
-    @abstractmethod
-    def search_params(self, PARAMs: Union[str, list], logical: str):
-        """Search index for one or a list of parameters
-
-        Parameters
-        ----------
-        PARAMs: str or list
-            A string or a list of strings to search Argo records for in the PARAMETERS columns of BGC profiles index.
-        logical: str, default='and'
-            Indicate to search for all (``and``) or any (``or``) of the parameters.
-
-        Examples
-        --------
-        >>> idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
-        >>> idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'], logical='or')
-
-        Warnings
-        --------
-        This method is only available for index following the ``bgc-s``, ``bgc-b`` and ``aux`` conventions.
-
-        """
-        raise NotImplementedError("Not implemented")
-
-    @abstractmethod
+    @deprecated("this method is replaced by `ArgoIndex().query.parameter_data_mode()`", version="1.1.0")
     def search_parameter_data_mode(
         self, PARAMs: dict, logical: bool = "and", nrows=None
     ):
-        """Search index for profiles with a parameter in a specific data mode
+        return self.query.parameter_data_mode(PARAMs, logical=logical, nrows=nrows)
 
-        Parameters
-        ----------
-        PARAMs: dict
-            A dictionary with parameters as keys, and data mode as a string or a list of strings
-        logical: str, default='and'
-            Indicate to search for all (``and``) or any (``or``) of the parameters data moade. This operator applies
-            between each parameters.
+    @deprecated("this method is replaced by `ArgoIndex().query.profiler_type()`", version="1.1.0")
+    def search_profiler_type(self, profiler_type: List[int], nrows=None):
+        return self.query.profiler_type(profiler_type, nrows=nrows)
 
-        Examples
-        --------
-        >>> search_parameter_data_mode({'TEMP': 'D'})
-        >>> search_parameter_data_mode({'BBP700': 'D'})
-        >>> search_parameter_data_mode({'DOXY': ['R', 'A']})
-        >>> search_parameter_data_mode({'BBP700': 'D', 'DOXY': 'D'}, logical='or')
-
-        """
-        raise NotImplementedError("Not implemented")
-
-    @abstractmethod
-    def search_profiler_type(self, profiler_type: List[int]):
-        """Search index for profiler types
-
-        Parameters
-        ----------
-        profiler_type: list
-            List of profiler types to search for. Valid types are given by integers with values from the R8 Argo Reference table
-
-        Examples
-        --------
-        .. code-block:: python
-
-            valid_types = ArgoNVSReferenceTables().tbl(8)['altLabel']
-            profiler_type = 845
-            idx.search_profiler_type(profiler_type)
-
-        See Also
-        --------
-        :class:`ArgoIndex.search_profiler_label`
-        """
-        raise NotImplementedError("Not implemented")
-
+    @deprecated("this method is replaced by `ArgoIndex().query.profiler_label()`", version="1.1.0")
     def search_profiler_label(self, profiler_label: str, nrows=None):
-        """Search index for profiler types with a given string in their label
-
-        Parameters
-        ----------
-        profiler_label: str
-            The string to be found in the R8 Argo Reference table label
-
-        Examples
-        --------
-        .. code-block:: python
-
-            idx.search_profiler_label('ARVOR')
-
-        See Also
-        --------
-        :class:`ArgoIndex.search_profiler_type`
-        """
-        if "profiler_type" not in self.convention_columns:
-            raise InvalidDatasetStructure("Cannot search for profilers in this index)")
-        log.debug("Argo index searching for profiler label '%s' ..." % profiler_label)
-        type_contains = lambda x: [key for key, value in self._r8.items() if x in str(value)]  # noqa: E731
-        self.load(nrows=self._nrows_index)
-        self.search_type = {"PLABEL": profiler_label}
-        return self.search_profiler_type(type_contains(profiler_label))
+        return self.query.profiler_label(profiler_label, nrows=nrows)
 
     def _insert_header(self, originalfile):
         if self.convention == "ar_index_global_prof":
@@ -1287,3 +1138,323 @@ file,profiler_type,institution,date_update
         This is different from a usual argopy ``box`` because dates are in :class:`numpy.datetime64` format.
         """
         return self.read_domain()
+
+
+class ArgoIndexExtension:
+    """Prototype for ArgoIndex extensions
+
+    All extensions should inherit from this class
+
+    This prototype makes available:
+
+    - the :class:`ArgoIndex` instance as ``self._obj``
+    """
+    def __init__(self, obj):
+        self._obj = obj
+
+
+class ArgoIndexSearchEngine(ArgoIndexExtension):
+    """ArgoIndex extension providing query methods to search index entries
+
+    All query methods can be composed with the `compose` method, see examples.
+
+    Examples
+    --------
+    .. code-block:: python
+        :caption: List of query methods
+
+        from argopy import ArgoIndex
+        idx = ArgoIndex()
+
+        idx.query.wmo
+        idx.query.cyc
+        idx.query.wmo_cyc
+
+        idx.query.date
+        idx.query.lon
+        idx.query.lat
+        idx.query.lat_lon
+        idx.query.box
+
+        idx.query.params
+        idx.query.parameter_data_mode
+
+        idx.query.profiler_type
+        idx.query.profiler_label
+
+    .. code-block:: python
+        :caption: Composition of queries
+
+        from argopy import ArgoIndex
+        idx = ArgoIndex(index_file='bgc-s')
+
+        idx.query.compose({'box': BOX, 'wmo': WMOs})
+        idx.query.compose({'box': BOX, 'params': 'DOXY'})
+        idx.query.compose({'box': BOX, 'params': 'DOXY'})
+        idx.query.compose({'box': BOX, 'params': (['DOXY', 'DOXY2'], {'logical': 'and'})})
+        idx.query.compose({'params': 'DOXY', 'profiler_label': 'ARVOR'})
+
+    Note that composing query with:
+
+    - `wmo` and `cyc` is slower than using the `wmo_cyc` method
+    - `lon` and `lat` is slower than using the `lat_lon` method
+    - `lon`, `lat` and `date` is slower than using the `box` method
+
+    """
+
+    @abstractmethod
+    def wmo(self):
+        """Search index for floats defined by their WMO
+
+        Parameters
+        ----------
+        list(int)
+            List of WMOs (as integers) to search
+
+        Examples
+        --------
+        .. code-block:: python
+
+            idx.query.wmo(2901746)
+            idx.query.wmo([2901746, 4902252])
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def cyc(self):
+        """Search index for cycle numbers
+
+        Parameters
+        ----------
+        list(int)
+            List of CYCs to search
+
+        Examples
+        --------
+        .. code-block:: python
+
+            idx.query.cyc(1)
+            idx.query.cyc([1,2])
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def wmo_cyc(self):
+        """Search index for floats defined by their WMO and specific cycle numbers
+
+        Parameters
+        ----------
+        list(int)
+            List of WMOs to search
+        list(int)
+            List of CYCs to search
+
+        Examples
+        --------
+        .. code-block:: python
+
+            idx.search_wmo_cyc(2901746, 12)
+            idx.search_wmo_cyc([2901746, 4902252], [1,2])
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def date(self):
+        """Search index for a date range
+
+        Parameters
+        ----------
+        box : list()
+            An index box to search Argo records for.
+
+        Warnings
+        --------
+        Only date bounds are used from the index box.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            idx.query.date([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def lat_lon(self):
+        """Search index for a rectangular latitude/longitude domain
+
+        Parameters
+        ----------
+        box : list()
+            An index box to search Argo records for.
+
+        Warnings
+        --------
+        Only lat/lon bounds are used from the index box.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            idx.query.lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def box(self, BOX):
+        """Search index for a box: a rectangular latitude/longitude domain and time range
+
+        Parameters
+        ----------
+        box : list()
+            An index box to search Argo records for.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            idx.query.box([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def params(self, PARAMs: Union[str, list], logical: str):
+        """Search index for one or a list of parameters
+
+        Parameters
+        ----------
+        PARAMs: str or list
+            A string or a list of strings to search Argo records for in the PARAMETERS columns of BGC profiles index.
+        logical: str, default='and'
+            Indicate to search for all (``and``) or any (``or``) of the parameters.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            idx.query.params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
+            idx.query.params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'], logical='or')
+
+        Warnings
+        --------
+        This method is only available for index following the ``bgc-s``, ``bgc-b`` and ``aux`` conventions.
+
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def parameter_data_mode(
+        self, PARAMs: dict, logical: bool = "and", nrows=None
+    ):
+        """Search index for profiles with a parameter in a specific data mode
+
+        Parameters
+        ----------
+        PARAMs: dict
+            A dictionary with parameters as keys, and data mode as a string or a list of strings
+        logical: str, default='and'
+            Indicate to search for all (``and``) or any (``or``) of the parameters data moade. This operator applies
+            between each parameters.
+
+        Examples
+        --------
+        .. code-block:: python
+
+        >>> idx.query.parameter_data_mode({'TEMP': 'D'})
+        >>> idx.query.parameter_data_mode({'BBP700': 'D'})
+        >>> idx.query.parameter_data_mode({'DOXY': ['R', 'A']})
+        >>> idx.query.parameter_data_mode({'BBP700': 'D', 'DOXY': 'D'}, logical='or')
+
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def profiler_type(self, profiler_type: List[int]):
+        """Search index for profiler types
+
+        Parameters
+        ----------
+        profiler_type: list
+            List of profiler types to search for. Valid types are given by integers with values from the R8 Argo Reference table
+
+        Examples
+        --------
+        .. code-block:: python
+
+            valid_types = ArgoNVSReferenceTables().tbl(8)['altLabel']
+            profiler_type = 845
+            idx.query.profiler_type(profiler_type)
+
+        See Also
+        --------
+        :class:`ArgoIndex.query.profiler_label`
+        """
+        raise NotImplementedError("Not implemented")
+
+    def profiler_label(self, profiler_label: str, nrows=None, composed=False):
+        """Search index for profiler types with a given string in their label
+
+        Parameters
+        ----------
+        profiler_label: str
+            The string to be found in the R8 Argo Reference table label
+
+        Examples
+        --------
+        .. code-block:: python
+
+            idx.query.profiler_label('ARVOR')
+
+        See Also
+        --------
+        :class:`ArgoIndex.query.profiler_type`
+        """
+        def checker(profiler_label):
+            if "profiler_type" not in self._obj.convention_columns:
+                raise InvalidDatasetStructure("Cannot search for profiler labels in this index)")
+            log.debug("Argo index searching for profiler label '%s' ..." % profiler_label)
+            profiler_label = to_list(profiler_label)
+            profiler_type = []
+            for ptype, long_name in self._obj._r8.items():
+                for label in profiler_label:
+                    if label in long_name:
+                        profiler_type.append(ptype)
+            return profiler_type
+
+        def namer(profiler_label):
+            self._obj.search_type.pop('PTYPE')
+            return {"PLABEL": profiler_label}
+
+        def composer(profiler_type):
+            return self.profiler_type(profiler_type, nrows=nrows, composed=True)
+
+        profiler_type = checker(profiler_label)
+        self._obj.load(nrows=self._obj._nrows_index)
+        search_filter = composer(profiler_type)
+        if not composed:
+            self._obj.search_type = namer(profiler_label)
+            self._obj.search_filter = search_filter
+            self._obj.run(nrows=nrows)
+            return self._obj
+        else:
+            self._obj.search_type.update(namer(profiler_label))
+            return search_filter
+
+    def compose(self, query: dict, nrows=None):
+        self._obj.search_type = {}
+        filters = []
+        for entry, arg in query.items():
+            searcher = getattr(self, entry)
+            if not isinstance(arg, tuple):
+                filter = searcher(arg, composed=True)
+            else:
+                kw = arg[1]
+                kw.update({'composed': True})
+                filter = searcher(arg[0], **kw)
+            filters.append(filter)
+        self._obj.search_filter = self._obj._reduce_a_filter_list(filters, op='and')
+        self._obj.run(nrows=nrows)
+        return self._obj
