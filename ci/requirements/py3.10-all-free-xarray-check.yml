@@ -2,13 +2,13 @@ name: argopy-tests
 channels:
   - conda-forge
 dependencies:
-  - python = 3.12
+  - python = 3.10
 
 # CORE:
   - aiohttp
   - decorator
   - erddapy
-  - fsspec
+  - fsspec < 2025.3
   - h5netcdf
   - netCDF4
   - packaging
