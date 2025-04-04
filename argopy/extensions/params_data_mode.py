@@ -13,7 +13,6 @@ from ..utils import (
 from ..stores import ArgoIndex
 from ..stores.index.spec import ArgoIndexStoreProto
 from ..errors import InvalidDatasetStructure
-
 from . import register_argo_accessor, ArgoAccessorExtension
 
 
