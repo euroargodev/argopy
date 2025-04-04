@@ -51,7 +51,7 @@ class OpticalModeling(ArgoAccessorExtension):
         layer_max: float = 50.0,
         inplace: bool = False,
     ):
-        """Compute depth of the euphotic zone from PAR
+        """Depth of the euphotic zone from PAR
 
         PAR is the photosynthetically available radiation
 
@@ -87,16 +87,9 @@ class OpticalModeling(ArgoAccessorExtension):
         :class:`xarray.DataArray` or :class:`xarray.Dataset`
             Zeu as :class:`xarray.DataArray` or, if the ``inplace`` argument is True, dataset is modified in-place with new variable ``Zeu``.
 
-        Examples
+        See Also
         --------
-        .. code-block:: python
-
-            from argopy import ArgoFloat
-            dsp = ArgoFloat(6901864).open_dataset('Sprof')
-
-            dsp.argo.optic.Zeu()
-            dsp.argo.optic.Zeu(method='percentage', max_surface=5.)
-            dsp.argo.optic.Zeu(method='KdPAR', layer_min=10., layer_maz=50.)
+        :class:`Dataset.argo.optic`, :meth:`argopy.utils.optical_modeling.Z_euphotic`
 
         Notes
         -----
@@ -130,9 +123,18 @@ class OpticalModeling(ArgoAccessorExtension):
         .. [1] Kirk, J.T., 1994. Light and photosynthesis in aquatic ecosystems. Cambridge university press.
         .. [2] Kpar: An optical property associated with ambiguous values. J. Lake Sci., 21 (2009), pp. 159-164
 
-        See Also
+
+        Examples
         --------
-        :class:`Dataset.argo.optic`, :meth:`argopy.utils.optical_modeling.Z_euphotic`
+        .. code-block:: python
+
+            from argopy import ArgoFloat
+            dsp = ArgoFloat(6901864).open_dataset('Sprof')
+
+            dsp.argo.optic.Zeu()
+            dsp.argo.optic.Zeu(method='percentage', max_surface=5.)
+            dsp.argo.optic.Zeu(method='KdPAR', layer_min=10., layer_maz=50.)
+
         """
         if axis not in self._obj:
             raise ValueError(f"Missing '{axis}' in this dataset")
@@ -171,11 +173,11 @@ class OpticalModeling(ArgoAccessorExtension):
             return da
 
     def Zopt(self, *args, **kwargs):
-        """Compute first optical depth from depth of the euphotic zone, points to Zpd method"""
+        """First optical depth from depth of the euphotic zone, points to Zpd method"""
         return self.Zpd(*args, **kwargs)
 
     def Zpd(self, *args, **kwargs):
-        """Compute first optical depth from depth of the euphotic zone
+        """First optical depth from depth of the euphotic zone
 
         Parameters
         ----------
@@ -186,6 +188,10 @@ class OpticalModeling(ArgoAccessorExtension):
         -------
         :class:`xarray.DataArray` or :class:`xarray.Dataset`
             Zpd as a :class:`xarray.DataArray` or, if the ``inplace`` argument is True, dataset is modified in-place with new variables Zpd and Zeu.
+
+        See Also
+        --------
+        :class:`Dataset.argo.optic`, :class:`Dataset.argo.optic.Zeu`, :meth:`argopy.utils.optical_modeling.Z_firstoptic`
 
         Notes
         -----
@@ -207,10 +213,6 @@ class OpticalModeling(ArgoAccessorExtension):
 
             dsp.argo.optic.Zpd()
             dsp.argo.optic.Zpd(method='KdPAR', layer_min=10., layer_maz=50.) # Modify how Zeu is computed
-
-        See Also
-        --------
-        :class:`Dataset.argo.optic`, :class:`Dataset.argo.optic.Zeu`, :meth:`argopy.utils.optical_modeling.Z_firstoptic`
         """
         inplace = kwargs.get("inplace", False)
         if "Zeu" in self._obj:
@@ -255,15 +257,6 @@ class OpticalModeling(ArgoAccessorExtension):
     ) -> Union[xr.DataArray, xr.Dataset]:
         """Depth where PAR reaches some threshold value (closest point)
 
-        This is the closest level $z$ in the vertical axis for which PAR is about a threshold value $t$, with some tolerance $\epsilon$:
-
-        .. math::
-
-            z | abs(PAR(z) - t) < \epsilon
-
-        A default value of 15 is used because it is the theoretical value below which the Fchla is no longer
-        quenched (For correction of NPQ purposes).
-
         Parameters
         ----------
         axis: str, optional, default='PRES'
@@ -285,6 +278,17 @@ class OpticalModeling(ArgoAccessorExtension):
         See Also
         --------
         :class:`Dataset.argo.optic`, :class:`argopy.utils.optical_modeling.Z_iPAR_threshold`
+
+        Notes
+        -----
+        This is the closest level $z$ in the vertical axis for which PAR is about a threshold value $t$, with some tolerance $\epsilon$:
+
+        .. math::
+
+            z | abs(PAR(z) - t) < \epsilon
+
+        A default value of 15 is used because it is the theoretical value below which the Fchla is no longer
+        quenched (For correction of NPQ purposes).
         """
         if axis not in self._obj:
             raise ValueError(f"Missing '{axis}' in this dataset")
@@ -321,7 +325,7 @@ class OpticalModeling(ArgoAccessorExtension):
     ) -> Union[xr.DataArray, xr.Dataset]:
         """Search and qualify Deep Chlorophyll Maxima
 
-        This method return the main characteristics and drivers of Deep Chlorophyll Maxima (DCM). Different drivers are possible because DCMs result from photo-acclimation or biomass accumulation, depending on the availability of light and nitrate. See method below.
+        This method return the main characteristics and drivers of Deep Chlorophyll Maxima (DCM). Different drivers are possible because DCMs result from photo-acclimation or biomass accumulation, depending on the availability of light and nitrate. See notes below.
 
         Parameters
         ----------
@@ -331,6 +335,11 @@ class OpticalModeling(ArgoAccessorExtension):
             Name of the Chl-a concentration variable to use.
         bbp: str, optional, default='BBP700'
             Name of the particulate backscattering coefficient variable to use.
+
+        Returns
+        -------
+        :class:`xarray.DataArray` or :class:`xarray.Dataset`
+            DCM driver as a :class:`xarray.DataArray` or, if the ``inplace`` argument is True, dataset is modified in-place with new variable ``DCM``.
 
         Other Parameters
         ----------------
@@ -343,10 +352,9 @@ class OpticalModeling(ArgoAccessorExtension):
         surface_layer: float, optional, default: 15.
             Depth value defining the surface layer above which twice the median CHLA value may qualify a DCM as such.
 
-        Returns
-        -------
-        :class:`xarray.DataArray` or :class:`xarray.Dataset`
-            DCM driver as a :class:`xarray.DataArray` or, if the ``inplace`` argument is True, dataset is modified in-place with new variable ``DCM``.
+        See Also
+        --------
+        :class:`Dataset.argo.optic`, :class:`argopy.utils.optical_modeling.DCM`
 
         Notes
         -----
@@ -365,10 +373,6 @@ class OpticalModeling(ArgoAccessorExtension):
         .. [1] Cornec, M., Claustre, H., Mignot, A., Guidi, L., Lacour, L., Poteau, A., et al. (2021). Deep
         chlorophyll maxima in the global ocean: Occurrences, drivers and characteristics. Global Biogeochemical
         Cycles, 35, e2020GB006759. https://doi.org/10.1029/2020GB006759
-
-        See Also
-        --------
-        :class:`Dataset.argo.optic`, :class:`argopy.utils.optical_modeling.DCM`
         """
 
         def f(*args, **kwargs):

@@ -49,7 +49,7 @@ def Z_euphotic(
     ----------
     axis: numpy.ndarray, 1 dimensional
         Vertical axis values, pressure or depth, positive, increasing downward, typically from the ``PRES`` parameter of an Argo float.
-    par: np.ndarray, 1 dimensional
+    par: array_like, 1 dimensional
         Photosynthetically available radiation, typically from the ``DOWNWELLING_PAR`` parameter of an Argo float.
     method: Literal['percentage', 'KdPAR'] = 'percentage'
         Computation method to use.
@@ -66,7 +66,7 @@ def Z_euphotic(
 
     Returns
     -------
-    float:
+    float
         Estimate of the euphotic layer depth
 
     See Also
@@ -111,6 +111,8 @@ def Z_euphotic(
 def Z_firstoptic(*args, **kwargs) -> float:
     """First optical depth from unlabeled arrays of pressure and PAR
 
+    See :class:`xarray.Dataset.argo.optic.Zpd` for more details on the methodology.
+
     Parameters
     ----------
     args, kwargs:
@@ -118,7 +120,7 @@ def Z_firstoptic(*args, **kwargs) -> float:
 
     Returns
     -------
-    float:
+    float
         Estimate of the first optical depth
 
     See Also
@@ -139,12 +141,14 @@ def Z_iPAR_threshold(
 
     The closest level in the vertical axis for which PAR is about a ``threshold`` value, with some tolerance.
 
+    See :class:`xarray.Dataset.argo.optic.Z_iPAR_threshold` for more details on the methodology.
+
     Parameters
     ----------
-    axis: np.ndarray, 1 dimensional
+    axis: array_like, 1 dimensional
         Vertical axis values, pressure or depth, positive, increasing downward, typically from the ``PRES``
         parameter of an Argo float.
-    par: np.ndarray, 1 dimensional
+    par: array_like, 1 dimensional
         Photosynthetically available radiation, typically from the ``DOWNWELLING_PAR`` parameter of an Argo float.
     threshold: float, optional, default: 15.
         Target value for ``par``. We use 15 as the default because it is the theorical value below which
@@ -190,16 +194,18 @@ def DCM(
 ) -> Tuple[Literal['NO ', 'DBM', 'DAM'], float, float]:
     """Search and qualify Deep Chlorophyll Maxima from unlabeled arrays of pressure and CHLA/BBP
 
+    See :class:`xarray.Dataset.argo.optic.DCM` for more details on the methodology.
+
     Parameters
     ----------
-    CHLA: np.ndarray, 1 dimensional
+    CHLA: array_like, 1 dimensional
         Chlorophyl-a concentration profile data.
-    CHLA_axis: np.ndarray, 1 dimensional
+    CHLA_axis: array_like, 1 dimensional
         Vertical axis values, pressure or depth, positive, increasing downward, for CHLA. Typically, from the ``PRES``
         parameter of an Argo float.
-    BBP: np.ndarray, 1 dimensional
+    BBP: array_like, 1 dimensional
         Particulate backscattering coefficient profile data.
-    BBP_axis: np.ndarray, 1 dimensional
+    BBP_axis: array_like, 1 dimensional
         Vertical axis values, pressure or depth, positive, increasing downward, for BBP. Typically, from the ``PRES``
         parameter of an Argo float.
     max_depth: float, optional, default: 300.
@@ -220,15 +226,15 @@ def DCM(
 
     Returns
     -------
-    str: str[3], Literal['NO ', 'DBM', 'DAM']
+    str[3], Literal['NO ', 'DBM', 'DAM']
         The type of Deep Chlorophyll Maxima (DCM). Possible values are:
 
         - 'NO ': No DCM found above ``max_depth``
         - 'DBM' : Deep Biomass Maximum
         - 'DAM' : Deep photoAcclimation Maximum
-    float:
+    float
         Depth of the DCM, from the un-smoothed profile
-    float:
+    float
         Amplitude the DCM: CHLA value, from the un-smoothed profile.
 
     See Also
