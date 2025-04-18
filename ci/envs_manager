@@ -6,9 +6,9 @@
 # manager -h
 # manager -l
 #
-# manager -r py37-all-free
-# manager -i py37-all-free
-# manager -k py37-all-free
+# manager -r py310-all-free
+# manager -i py310-all-free
+# manager -k py310-all-free
 #
 # manager -d -i all-free
 #
@@ -43,7 +43,7 @@ declare -A ENV_LIST=(
 
 # Debug envs:
 ['argopy-xr-check']="requirements/py3.10-all-free-xarray-check.yml"
-['argopy-fs-check']="requirements/py3.10-all-free-fsspec-check.yml"
+['argopy-fs-check']="requirements/py3.10-all-pinned-fsspec-check.yml"
 
 )
 
