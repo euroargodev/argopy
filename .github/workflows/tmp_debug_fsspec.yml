@@ -19,7 +19,7 @@ permissions:
 
 jobs:
 
-  all-pinned-but-fs:
+  all-pinned:
     # CI tests for environments with all possible requirements in free versions
 
     name: All - Pinned - Py${{matrix.python-version}} - ${{ matrix.os }}
