@@ -13,6 +13,8 @@ from ..utils.transform import (
 from ..stores import (
     indexstore_pd as ArgoIndex,
 )  # make sure we work with a Pandas index store
+from ..stores.index.spec import ArgoIndexStoreProto
+
 from ..errors import InvalidDatasetStructure
 
 from . import register_argo_accessor, ArgoAccessorExtension
@@ -62,7 +64,7 @@ class ParamsDataMode(ArgoAccessorExtension):
         -------
         :class:`xarray.Dataset`
         """
-        idx = indexfs.copy(deep=True) if isinstance(indexfs, ArgoIndex) else ArgoIndex()
+        idx = indexfs.copy(deep=True) if isinstance(indexfs, ArgoIndexStoreProto) else ArgoIndex()
 
         def complete_df(this_df, params):
             """Add 'wmo', 'cyc' and '<param>_data_mode' columns to this dataframe"""
