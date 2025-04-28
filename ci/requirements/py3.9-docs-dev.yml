@@ -2,7 +2,7 @@ name: argopy-docs-dev
 channels:
   - conda-forge
 dependencies:
-  - python=3.9
+  - python=3.10
   - xarray=2024.2.0
   - scipy
   - h5netcdf
@@ -10,7 +10,7 @@ dependencies:
   - dask
   - toolz
   - erddapy
-  - fsspec
+  - fsspec<2025.3.0
   - gsw
   - aiohttp
   - kerchunk
