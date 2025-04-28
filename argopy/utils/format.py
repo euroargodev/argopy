@@ -6,6 +6,7 @@ from urllib.parse import urlparse, parse_qs
 import logging
 import pandas as pd
 import numpy as np
+import warnings
 from .checkers import check_cyc, check_wmo
 
 
@@ -52,7 +53,8 @@ def argo_split_path(this_path):  # noqa C901
         "incois",
         "jma",
         "kma",
-        "kordi",
+        "kordi",  # todo: remove this entry after some time, it will not be valid after 2025/06/30
+        "kiost",
         "meds",
         "nmdis",
     ]
@@ -163,6 +165,8 @@ def argo_split_path(this_path):  # noqa C901
             "This is not a Argo GDAC compliant file path (invalid DAC name: '%s')"
             % output["dac"]
         )
+    elif output["dac"] == 'kordi' and pd.to_datetime('now', utc=True) > pd.to_datetime('2025-06-30', utc=True):
+        warnings.warn("DAC 'kordi' has been deprecated by ADMT. Use 'kiost' instead.")
 
     # Deal with the file name:
     filename, file_extension = os.path.splitext(output["name"])
