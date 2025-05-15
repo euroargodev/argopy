@@ -524,69 +524,78 @@ def get_a_s3index(convention):
 
 @decorator
 def search_s3(func, *args, **kwargs):
-    """Decorator for search methods patched for S3 store
+    """Decorator for ArgoIndexSearchEngine instance methods patched for S3 store
 
     This decorator will bypass :class:`argopy.stores.indexstore` search methods with a boto3
-    more efficient design when using the S3 Argo index store.
+    sql request design when using the S3 Argo index store.
 
     Note that search methods are bypassed only if the index was not loaded before, otherwise we're using the store
     original method working with the internal index structure (pandas dataframe or pyarrow table).
     """
-    idx = args[0]
+    idx = args[0]._obj
 
     if (
-        func.__name__ == "search_wmo"
+        func.__name__ == "wmo"
         and not hasattr(idx, "index")
         and isinstance(idx.fs["src"], s3store)
     ):
-        WMOs, nrows = args[1], args[2]
-        WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
-        log.debug(
-            "Argo index searching for WMOs=[%s] using boto3 SQL request ..."
-            % ";".join([str(wmo) for wmo in WMOs])
-        )
-        idx.fs["s3"].search_wmo(WMOs, nrows=nrows)
-        idx.search_type = {"WMO": WMOs}
-        idx.search_filter = idx.fs["s3"].sql_expression
-        idx.search = getattr(idx.fs["s3"], idx.ext)
-        return idx
-
-    if (
-        func.__name__ == "search_cyc"
-        and not hasattr(idx, "index")
-        and isinstance(idx.fs["src"], s3store)
-    ):
-        CYCs, nrows = args[1], args[2]
-        CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
-        log.debug(
-            "Argo index searching for CYCs=[%s] using boto3 SQL request ..."
-            % (";".join([str(cyc) for cyc in CYCs]))
-        )
-        idx.fs["s3"].search_cyc(CYCs, nrows=nrows)
-        idx.search_type = {"CYC": CYCs}
-        idx.search_filter = idx.fs["s3"].sql_expression
-        idx.search = getattr(idx.fs["s3"], idx.ext)
-        return idx
-
-    if (
-        func.__name__ == "search_wmo_cyc"
-        and not hasattr(idx, "index")
-        and isinstance(idx.fs["src"], s3store)
-    ):
-        WMOs, CYCs, nrows = args[1], args[2], args[3]
-        WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
-        CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
-        log.debug(
-            "Argo index searching for WMOs=[%s] and CYCs=[%s] using boto3 SQL request ..."
-            % (
-                ";".join([str(wmo) for wmo in WMOs]),
-                ";".join([str(cyc) for cyc in CYCs]),
+        WMOs, nrows, composed = args[1], args[2], args[3]
+        if not composed:
+            WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
+            log.debug(
+                "Argo index searching for WMOs=[%s] using boto3 SQL request ..."
+                % ";".join([str(wmo) for wmo in WMOs])
             )
-        )
-        idx.fs["s3"].search_wmo_cyc(WMOs, CYCs, nrows=nrows)
-        idx.search_type = {"WMO": WMOs, "CYC": CYCs}
-        idx.search_filter = idx.fs["s3"].sql_expression
-        idx.search = getattr(idx.fs["s3"], idx.ext)
-        return idx
+            idx.fs["s3"].search_wmo(WMOs, nrows=nrows)
+            idx.search_type = {"WMO": WMOs}
+            idx.search_filter = idx.fs["s3"].sql_expression
+            idx.search = getattr(idx.fs["s3"], idx.ext)
+            return idx
+        else:
+            log.debug("Argo index searching using boto3 SQL request not available for composition")
+
+    if (
+        func.__name__ == "cyc"
+        and not hasattr(idx, "index")
+        and isinstance(idx.fs["src"], s3store)
+    ):
+        CYCs, nrows, composed = args[1], args[2], args[3]
+        if not composed:
+            CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
+            log.debug(
+                "Argo index searching for CYCs=[%s] using boto3 SQL request ..."
+                % (";".join([str(cyc) for cyc in CYCs]))
+            )
+            idx.fs["s3"].search_cyc(CYCs, nrows=nrows)
+            idx.search_type = {"CYC": CYCs}
+            idx.search_filter = idx.fs["s3"].sql_expression
+            idx.search = getattr(idx.fs["s3"], idx.ext)
+            return idx
+        else:
+            log.debug("Argo index searching using boto3 SQL request not available for composition")
+
+    if (
+        func.__name__ == "wmo_cyc"
+        and not hasattr(idx, "index")
+        and isinstance(idx.fs["src"], s3store)
+    ):
+        WMOs, CYCs, nrows, composed = args[1], args[2], args[3], args[4]
+        if not composed:
+            WMOs = check_wmo(WMOs)  # Check and return a valid list of WMOs
+            CYCs = check_cyc(CYCs)  # Check and return a valid list of CYCs
+            log.debug(
+                "Argo index searching for WMOs=[%s] and CYCs=[%s] using boto3 SQL request ..."
+                % (
+                    ";".join([str(wmo) for wmo in WMOs]),
+                    ";".join([str(cyc) for cyc in CYCs]),
+                )
+            )
+            idx.fs["s3"].search_wmo_cyc(WMOs, CYCs, nrows=nrows)
+            idx.search_type = {"WMO": WMOs, "CYC": CYCs}
+            idx.search_filter = idx.fs["s3"].sql_expression
+            idx.search = getattr(idx.fs["s3"], idx.ext)
+            return idx
+        else:
+            log.debug("Argo index searching using boto3 SQL request not available for composition")
 
     return func(*args, **kwargs)
