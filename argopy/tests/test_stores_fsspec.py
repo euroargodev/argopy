@@ -13,6 +13,7 @@ import shutil
 import logging
 from urllib.parse import urlparse
 import ftplib
+import netCDF4
 
 import argopy
 from argopy.stores import (
@@ -92,9 +93,14 @@ class Test_FileStore:
     def test_glob(self):
         assert isinstance(self.fs.glob(os.path.sep.join([self.ftproot, "dac/*"])), list)
 
-    def test_open_dataset(self):
+    params = [False, True]
+    ids_params = ["netCDF4=%s" % p for p in params]
+    @pytest.mark.parametrize("CDF4_options", params, indirect=False, ids=ids_params)
+    def test_open_dataset(self, CDF4_options):
         ncfile = os.path.sep.join([self.ftproot, "dac/aoml/5900446/5900446_prof.nc"])
-        assert isinstance(self.fs.open_dataset(ncfile), xr.Dataset)
+        ds = self.fs.open_dataset(ncfile, netCDF4=CDF4_options)
+        instance = {False: xr.Dataset, True: netCDF4.Dataset}
+        assert isinstance(ds, instance[CDF4_options])
 
     params = [(m, p, c) for m in ["sequential", "thread", "process"] for p in [True, False] for c in [True, False]]
     ids_params = ["method=%s, progress=%s, concat=%s" % (p[0], p[1], p[2]) for p in params]
@@ -136,7 +142,6 @@ class Test_FileStore:
 
         with pytest.raises(ValueError):
             self.fs.open_mfdataset(uri, method=method, preprocess=preprocess, errors="ignore")
-
 
     def test_open_mfdataset_DataNotFound(self):
         uri = self.fs.glob(
@@ -293,9 +298,14 @@ class Test_HttpStore:
         with pytest.raises(CacheFileNotFound):
             fs.cachepath(uri)
 
-    def test_open_dataset(self):
+    params = [False, True]
+    ids_params = ["netCDF4=%s" % p for p in params]
+    @pytest.mark.parametrize("CDF4_options", params, indirect=False, ids=ids_params)
+    def test_open_dataset(self, CDF4_options):
         uri = self._mockeduri(self.repo + "ftp/dac/csiro/5900865/5900865_prof.nc")
-        assert isinstance(self.fs.open_dataset(uri), xr.Dataset)
+        ds = self.fs.open_dataset(uri, netCDF4=CDF4_options)
+        instance = {False: xr.Dataset, True: netCDF4.Dataset}
+        assert isinstance(ds, instance[CDF4_options])
 
     @pytest.mark.parametrize(
         "params", mf_params_nc, indirect=False, ids=mf_params_nc_ids
@@ -318,7 +328,6 @@ class Test_HttpStore:
 
     params = [(m) for m in ["sequential", "thread", "invalid"]]
     ids_params = ["method=%s" % (p) for p in params]
-
     @pytest.mark.parametrize("params", params, indirect=False, ids=ids_params)
     def test_open_mfdataset_error(self, params):
         uri = [self._mockeduri(u) for u in self.mf_nc]
@@ -477,9 +486,18 @@ class Test_FtpStore:
     def test_implementation(self, store):
         assert isinstance(store.fs, fsspec.implementations.ftp.FTPFileSystem)
 
-    def test_open_dataset(self, store):
+    # def test_open_dataset(self, store):
+    #     uri = "dac/csiro/5900865/5900865_prof.nc"
+    #     assert isinstance(store.open_dataset(uri), xr.Dataset)
+
+    params = [False, True]
+    ids_params = ["netCDF4=%s" % p for p in params]
+    @pytest.mark.parametrize("CDF4_options", params, indirect=False, ids=ids_params)
+    def test_open_dataset(self, store, CDF4_options):
         uri = "dac/csiro/5900865/5900865_prof.nc"
-        assert isinstance(store.open_dataset(uri), xr.Dataset)
+        ds = store.open_dataset(uri, netCDF4=CDF4_options)
+        instance = {False: xr.Dataset, True: netCDF4.Dataset}
+        assert isinstance(ds, instance[CDF4_options])
 
     def test_open_dataset_error(self, store):
         uri = "dac/csiro/5900865/5900865_prof_error.nc"

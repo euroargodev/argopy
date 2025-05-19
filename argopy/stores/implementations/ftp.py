@@ -8,7 +8,7 @@ from pathlib import Path
 import fsspec
 import warnings
 from typing import Literal
-
+from netCDF4 import Dataset
 
 from ...options import OPTIONS
 from ...errors import InvalidMethod, DataNotFound
@@ -68,7 +68,7 @@ class ftpstore(httpstore):
             the netcdf file lazily. You can provide a specific :class:`ArgoKerchunker` instance with the ``ak`` argument (see below).
 
         xr_opts: dict, default={}
-             Options passed to :func:`xarray.open_dataset`
+             Options passed to :func:`xarray.open_dataset`. This will be ignored if the ``netCDF4` option is set to True.
 
         Other Parameters
         ----------------
@@ -78,9 +78,12 @@ class ftpstore(httpstore):
         akoverwrite: bool, optional
             Determine if kerchunk data should be overwritten or not. This is passed to :meth:`ArgoKerchunker.to_kerchunk`.
 
+        netCDF4: bool, optional, default=False
+            Return a :class:`netCDF4.Dataset` object instead of a :class:`xarray.Dataset`
+
         Returns
         -------
-        :class:`xarray.Dataset`
+        :class:`xarray.Dataset` or :class:`netCDF4.Dataset`
 
         Raises
         ------
@@ -176,6 +179,14 @@ class ftpstore(httpstore):
                     url, errors=errors, xr_opts=xr_opts
                 )
 
+        netCDF4 = kwargs.get("netCDF4", False)
+        if lazy and netCDF4:
+            if errors == "raise":
+                raise ValueError("Cannot return a netCDF4.Dataset object in lazy mode")
+            elif errors == "ignore":
+                log.error("Cannot return a netCDF4.Dataset object in lazy mode")
+                return None
+
         if not lazy:
             target, _ = load_in_memory(
                 url, errors=errors, xr_opts=xr_opts
@@ -189,11 +200,16 @@ class ftpstore(httpstore):
             )
 
         if target is not None:
-            ds = xr.open_dataset(target, **xr_opts)
+            if not netCDF4:
+                ds = xr.open_dataset(target, **xr_opts)
 
-            if "source" not in ds.encoding:
-                if isinstance(url, str):
-                    ds.encoding["source"] = self.full_path(url)
+                if "source" not in ds.encoding:
+                    if isinstance(url, str):
+                        ds.encoding["source"] = self.full_path(url)
+
+            else:
+                target = target if isinstance(target, bytes) else target.getbuffer()
+                ds = Dataset(None, memory=target, diskless=True, mode='r')
 
             self.register(url)
             return ds
