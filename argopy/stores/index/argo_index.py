@@ -48,16 +48,24 @@ class ArgoIndex(indexstore):
     .. code-block:: python
         :caption: Search methods
 
-        >>> idx.search_wmo(1901393)
-        >>> idx.search_cyc(1)
-        >>> idx.search_wmo_cyc(1901393, [1,12])
-        >>> idx.search_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
-        >>> idx.search_lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
-        >>> idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
-        >>> idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])  # Take a list of strings, only for BGC index !
-        >>> idx.search_parameter_data_mode({'BBP700': 'D', 'DOXY': ['A', 'D']})  # Take a dict.
-        >>> idx.search_profiler_type(845)
-        >>> idx.search_profiler_label('NINJA')
+        >>> idx.query.wmo(1901393)
+        >>> idx.query.cyc(1)
+        >>> idx.query.wmo_cyc(1901393, [1,12])
+        >>> idx.query.date([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
+        >>> idx.query.lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
+        >>> idx.query.box([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
+        >>> idx.query.params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])  # Take a list of strings, only for BGC index !
+        >>> idx.query.parameter_data_mode({'BBP700': 'D', 'DOXY': ['A', 'D']})  # Take a dict.
+        >>> idx.query.profiler_type(845)
+        >>> idx.query.profiler_label('NINJA')
+
+    .. code-block:: python
+        :caption: Composing search methods
+
+        >>> idx.query.compose({'box': BOX, 'wmo': WMOs})
+        >>> idx.query.compose({'box': BOX, 'params': 'DOXY'})
+        >>> idx.query.compose({'box': BOX, 'params': (['DOXY', 'DOXY2'], {'logical': 'and'})})
+        >>> idx.query.compose({'params': 'DOXY', 'profiler_label': 'ARVOR'})
 
     .. code-block:: python
         :caption: Search result properties and methods

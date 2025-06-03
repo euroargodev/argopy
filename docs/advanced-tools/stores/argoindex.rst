@@ -105,24 +105,34 @@ They are several methods to **search** the index, for instance:
 .. ipython:: python
     :okwarning:
 
-    idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+    idx.query.box([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
 
 Here the list of all methods to **search** the index:
 
 .. code-block:: python
 
-    idx.search_wmo(1901393)
-    idx.search_cyc(1)
-    idx.search_wmo_cyc(1901393, [1,12])
-    idx.search_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only time is used
-    idx.search_lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only lat/lon is used
-    idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
-    idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])  # Only for BGC profile index
-    idx.search_parameter_data_mode({'BBP700': 'D'})  # Only for BGC profile index
-    idx.search_profiler_type(845)
-    idx.search_profiler_label('NINJA')
+    idx.query.wmo(1901393)
+    idx.query.cyc(1)
+    idx.query.wmo_cyc(1901393, [1,12])
+    idx.query.date([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only time is used
+    idx.query.lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only lat/lon is used
+    idx.query.box([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
+    idx.query.params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])  # Only for BGC profile index
+    idx.query.parameter_data_mode({'BBP700': 'D'})  # Only for BGC profile index
+    idx.query.profiler_type(845)
+    idx.query.profiler_label('NINJA')
 
-And finally the list of methods and properties for **search results**:
+and this is how to compose several search criteria:
+
+.. code-block:: python
+
+    idx.query.compose({'box': BOX, 'wmo': WMOs})
+    idx.query.compose({'box': BOX, 'params': 'DOXY'})
+    idx.query.compose({'box': BOX, 'params': (['DOXY', 'DOXY2'], {'logical': 'and'})})
+    idx.query.compose({'params': 'DOXY', 'profiler_label': 'ARVOR'})
+
+
+At last, here is the list of methods and properties for **search results**:
 
 .. code-block:: python
 
@@ -154,9 +164,9 @@ The **argopy** index store supports the Bio, Synthetic and Auxiliary Profile dir
 
 All methods presented :ref:`above <metadata-index>` are valid with BGC index, but a BGC index store comes with additional search possibilities for parameters and parameter data modes.
 
-Two specific index variables are only available with BGC-Argo index files: ``PARAMETERS`` and ``PARAMETER_DATA_MODE``. We thus implemented the :meth:`ArgoIndex.search_params` and :meth:`ArgoIndex.search_parameter_data_mode` methods. These method allow to search for (i) profiles with one or more specific parameters and (ii) profiles with parameters in one or more specific data modes.
+Two specific index variables are only available with BGC-Argo index files: ``PARAMETERS`` and ``PARAMETER_DATA_MODE``. We thus implemented the :meth:`ArgoIndex.query.params` and :meth:`ArgoIndex.query.parameter_data_mode` methods. These method allow to search for (i) profiles with one or more specific parameters and (ii) profiles with parameters in one or more specific data modes.
 
-.. dropdown:: Syntax for  :meth:`ArgoIndex.search_params`
+.. dropdown:: Syntax for  :meth:`ArgoIndex.query.params`
     :icon: code
     :color: light
     :open:
@@ -179,24 +189,24 @@ Two specific index variables are only available with BGC-Argo index files: ``PAR
             .. ipython:: python
                 :okwarning:
 
-                idx.search_params('DOXY')
+                idx.query.params('DOXY')
 
             Or you can search for several parameters:
 
             .. ipython:: python
                 :okwarning:
 
-                idx.search_params(['DOXY', 'CDOM'])
+                idx.query.params(['DOXY', 'CDOM'])
 
             Note that a multiple parameters search will return profiles with *all* parameters. To search for profiles with *any* of the parameters, use:
 
             .. ipython:: python
                 :okwarning:
 
-                idx.search_params(['DOXY', 'CDOM'], logical='or')
+                idx.query.params(['DOXY', 'CDOM'], logical='or')
 
 
-.. dropdown:: Syntax for  :meth:`ArgoIndex.search_parameter_data_mode`
+.. dropdown:: Syntax for  :meth:`ArgoIndex.query.parameter_data_mode`
     :icon: code
     :color: light
     :open:
@@ -219,25 +229,25 @@ Two specific index variables are only available with BGC-Argo index files: ``PAR
             .. ipython:: python
                 :okwarning:
 
-                idx.search_parameter_data_mode({'BBP700': 'D'})
+                idx.query.parameter_data_mode({'BBP700': 'D'})
 
             You can search several modes for a single parameter:
 
             .. ipython:: python
                 :okwarning:
 
-                idx.search_parameter_data_mode({'DOXY': ['R', 'A']})
+                idx.query.parameter_data_mode({'DOXY': ['R', 'A']})
 
             You can search several modes for several parameters:
 
             .. ipython:: python
                 :okwarning:
 
-                idx.search_parameter_data_mode({'BBP700': 'D', 'DOXY': 'D'}, logical='and')
+                idx.query.parameter_data_mode({'BBP700': 'D', 'DOXY': 'D'}, logical='and')
 
             And mix all of these as you wish:
 
             .. ipython:: python
                 :okwarning:
 
-                idx.search_parameter_data_mode({'BBP700': ['R', 'A'], 'DOXY': 'D'}, logical='or')
+                idx.query.parameter_data_mode({'BBP700': ['R', 'A'], 'DOXY': 'D'}, logical='or')
