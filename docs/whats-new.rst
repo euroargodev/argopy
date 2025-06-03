@@ -10,6 +10,11 @@ What's New
 Coming up next
 --------------
 
+Features and front-end API
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **Fetch Argo data as** :class:`netCDF4.Dataset`. For the sake of compatibility with legacy codes and to encourage **argopy** adoption for all loading/reading operations, we now support for data output as a `netCDF4 Dataset object <https://unidata.github.io/netcdf4-python/#netCDF4.Dataset>`_. This new feature is available at high level with the DataFetcher and lower-level with the ArgoFloat and gdacfs classes.
+
 Internals
 ^^^^^^^^^
 

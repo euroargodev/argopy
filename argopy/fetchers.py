@@ -680,8 +680,6 @@ class ArgoDataFetcher:
         -----
         This method will fetch data with :meth:`to_xarray` and then convert the **argopy** post-processed :class:`xarray.DataSet` into a :class:`netCDF4.Dataset`.
 
-        Notes
-        -----
         If you want to open an Argo netcdf file directly as a :class:`netCDF4.Dataset`, you should rely on the :class:`argopy.ArgoFloat.open_dataset` or :class:`argopy.gdacfs.open_dataset` lower-level methods.
 
         Returns

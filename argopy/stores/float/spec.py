@@ -301,6 +301,11 @@ class ArgoFloatProto(ABC):
         Returns
         -------
         :class:`xarray.Dataset`
+
+        Notes
+        -----
+        Use the ``netCDF4=True`` option to return a :class:`netCDF4.Dataset` object instead of a :class:`xarray.Dataset`.
+
         """
         if name not in self.ls_dataset():
             raise ValueError(
