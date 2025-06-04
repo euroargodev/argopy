@@ -272,12 +272,12 @@ class SearchEngine(ArgoIndexSearchEngine):
             self._obj.search_type.update(namer(BOX))
             return search_filter
 
-    def lat_lon(self, BOX, nrows=None, composed=False):
+    def lon_lat(self, BOX, nrows=None, composed=False):
         def checker(BOX):
             if "longitude" not in self._obj.convention_columns:
-                raise InvalidDatasetStructure("Cannot search for lat/lon in this index")
+                raise InvalidDatasetStructure("Cannot search for lon/lat in this index")
             is_indexbox(BOX)
-            log.debug("Argo index searching for lat/lon in BOX=%s ..." % BOX)
+            log.debug("Argo index searching for lon/lat in BOX=%s ..." % BOX)
 
         def namer(BOX):
             return {"LON": BOX[0:2], "LAT": BOX[2:4]}

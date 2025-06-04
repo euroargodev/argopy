@@ -41,7 +41,7 @@ log = logging.getLogger("argopy.stores.index")
 
 class ArgoIndexStoreProto(ABC):
     backend = "?"
-    """Name of store backend"""  # Pandas or Parquet
+    """Name of store backend (pandas or pyarrow)"""  # Pandas or Pyarrow
 
     search_type = {}
     """Dictionary with search meta-data"""
@@ -87,29 +87,38 @@ class ArgoIndexStoreProto(ABC):
 
             This parameter takes values like:
 
+            - ``http`` or ``https`` for ``https://data-argo.ifremer.fr``
+            - ``us-http`` or ``us-https`` for ``https://usgodae.org/pub/outgoing/argo``
+            - ``ftp`` for ``ftp://ftp.ifremer.fr/ifremer/argo``
+            - ``s3`` or ``aws`` for ``s3://argo-gdac-sandbox/pub/idx``
             - a local absolute path
-            - ``https://data-argo.ifremer.fr``, shortcut with ``http`` or ``https``
-            - ``https://usgodae.org/pub/outgoing/argo``, shortcut with ``us-http`` or ``us-https``
-            - ``ftp://ftp.ifremer.fr/ifremer/argo``, shortcut with ``ftp``
-            - ``s3://argo-gdac-sandbox/pub/idx``, shortcut with ``s3`` or ``aws``
+
         index_file: str, default: ``ar_index_global_prof.txt``
             Name of the csv-like text file with the index.
 
-            Possible values are the standard file names: ``ar_index_global_prof.txt``,
-            ``argo_bio-profile_index.txt``, ``argo_synthetic-profile_index.txt``
-            or ``etc/argo-index/argo_aux-profile_index.txt``.
+            This parameter takes values like:
 
-            You can also use the following keywords: ``core``, ``bgc-b``, ``bgc-s`` and ``aux``.
+            - ``core``  or ``ar_index_global_prof.txt``
+            - ``bgc-b`` or ``argo_bio-profile_index.txt``
+            - ``bgc-s`` or ``argo_synthetic-profile_index.txt``
+            - ``aux``   or ``etc/argo-index/argo_aux-profile_index.txt``
+            - ``meta``  or ``ar_index_global_meta.txt``
+            - a local absolute path toward a file following an Argo index convention. When using a local file, you need to set the ``convention`` followed by the file.
+
         convention: str, default: None
             Set the expected format convention of the index file.
 
             This is useful when trying to load an index file with a custom name.
             If set to ``None``, we'll try to infer the convention from the ``index_file`` value.
 
-            Possible values: ``ar_index_global_prof``, ``argo_bio-profile_index``, ``argo_synthetic-profile_index``
-            or ``argo_aux-profile_index``.
+            This parameter takes values like:
 
-            You can also use the following keywords: ``core``, ``bgc-s``, ``bgc-b`` and ``aux``.
+            - ``core``  or ``ar_index_global_prof``
+            - ``bgc-b`` or ``argo_bio-profile_index``
+            - ``bgc-s`` or ``argo_synthetic-profile_index``
+            - ``aux``   or ``argo_aux-profile_index``
+            - ``meta``  or ``ar_index_global_meta``
+
         cache : bool, default: False
             Use cache or not.
         cachedir: str, default: OPTIONS['cachedir']
@@ -310,9 +319,9 @@ class ArgoIndexStoreProto(ABC):
 
     @property
     def cname(self) -> str:
-        """Search constraint(s) as a pretty formatted string
+        """Search query as a pretty formatted string
 
-        Return 'full' if a search was not yet performed on the indexstore instance
+        Return 'full' if a search was not yet performed on the :class:`ArgoIndex` instance
 
         This method uses the BOX, WMO, CYC keys of the index instance ``search_type`` property
         """
@@ -777,16 +786,22 @@ class ArgoIndexStoreProto(ABC):
         raise NotImplementedError("Not implemented")
 
     @property
-    @abstractmethod
     def files(self) -> List[str]:
         """File paths listed in search results"""
-        raise NotImplementedError("Not implemented")
+        return self.read_files(index=False)
 
     @property
-    @abstractmethod
     def files_full_index(self) -> List[str]:
         """File paths listed in the index"""
-        raise NotImplementedError("Not implemented")
+        return self.read_files(index=True)
+
+    @property
+    def domain(self):
+        """Space/time domain of the index
+
+        This is different from a usual argopy ``box`` because dates are in :class:`numpy.datetime64` format.
+        """
+        return self.read_domain()
 
     @abstractmethod
     def load(self, nrows=None, force=False):
@@ -808,9 +823,10 @@ class ArgoIndexStoreProto(ABC):
 
     @abstractmethod
     def run(self):
-        """Filter index with search criteria (internal use)
+        """Execute index search query (internal use)
 
-        Fill in self.search internal property
+        This method will populate the self.search internal property
+
         If store is cached, caching is triggered here
         """
         raise NotImplementedError("Not implemented")
@@ -860,6 +876,33 @@ class ArgoIndexStoreProto(ABC):
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
+    def read_files(self, index=False):
+        """Return file paths listed in index or search results
+
+        Fall back on full index if search not triggered
+
+        Returns
+        -------
+        list(str)
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def read_domain(self):
+        """Read the space/time domain of the index
+
+        This is different from a usual argopy ``box`` because dates are in :class:`numpy.datetime64` format.
+
+        Fall back on full index if search not found
+
+        Returns
+        -------
+        list
+            [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max]
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
     def records_per_wmo(self):
         """Return the number of records per unique WMOs in index or search results
 
@@ -878,41 +921,50 @@ class ArgoIndexStoreProto(ABC):
 
     @deprecated("this method is replaced by `ArgoIndex().query.cyc()`", version="1.1.0")
     def search_cyc(self, CYCs, nrows=None):
+        """Deprecated: this method is replaced by `ArgoIndex().query.cyc()`"""
         return self.query.cyc(CYCs, nrows=nrows)
 
     @deprecated("this method is replaced by `ArgoIndex().query.compose()`", version="1.1.0")
     def search_wmo_cyc(self, WMOs, CYCs, nrows=None):
+        """Deprecated: this method is replaced by `ArgoIndex().query.wmo_cyc()`"""
         return self.query.wmo_cyc(WMOs, CYCs, nrows=nrows)
 
     @deprecated("this method is replaced by `ArgoIndex().query.date()`", version="1.1.0")
     def search_tim(self, BOX, nrows=None):
+        """Deprecated: this method is replaced by `ArgoIndex().query.date()`"""
         return self.query.date(BOX, nrows=nrows)
 
-    @deprecated("this method is replaced by `ArgoIndex().query.compose()`", version="1.1.0")
+    @deprecated("this method is replaced by `ArgoIndex().query.lon_lat()`", version="1.1.0")
     def search_lat_lon(self, BOX, nrows=None):
+        """Deprecated: this method is replaced by ``ArgoIndex().query.lon_lat()``"""
         return self.query.lat_lon(BOX, nrows=nrows)  # Faster than .compose()
         # return self.query.compose({'lon': BOX, 'lat': BOX}, nrows=nrows)
 
     @deprecated("this method is replaced by `ArgoIndex().query.box()`", version="1.1.0")
     def search_lat_lon_tim(self, BOX, nrows=None):
+        """Deprecated: this method is replaced by ``ArgoIndex().query.box()``"""
         return self.query.box(BOX, nrows=nrows)
 
     @deprecated("this method is replaced by `ArgoIndex().query.params()`", version="1.1.0")
     def search_params(self, PARAMs, logical: bool = "and", nrows=None):
+        """Deprecated: this method is replaced by ``ArgoIndex().query.params()``"""
         return self.query.params(PARAMs, logical=logical, nrows=nrows)
 
     @deprecated("this method is replaced by `ArgoIndex().query.parameter_data_mode()`", version="1.1.0")
     def search_parameter_data_mode(
         self, PARAMs: dict, logical: bool = "and", nrows=None
     ):
+        """Deprecated: this method is replaced by ``ArgoIndex().query.parameter_data_mode()``"""
         return self.query.parameter_data_mode(PARAMs, logical=logical, nrows=nrows)
 
     @deprecated("this method is replaced by `ArgoIndex().query.profiler_type()`", version="1.1.0")
     def search_profiler_type(self, profiler_type: List[int], nrows=None):
+        """Deprecated: this method is replaced by ``ArgoIndex().query.profiler_type()``"""
         return self.query.profiler_type(profiler_type, nrows=nrows)
 
     @deprecated("this method is replaced by `ArgoIndex().query.profiler_label()`", version="1.1.0")
     def search_profiler_label(self, profiler_label: str, nrows=None):
+        """Deprecated: this method is replaced by ``ArgoIndex().query.profiler_label()``"""
         return self.query.profiler_label(profiler_label, nrows=nrows)
 
     def _insert_header(self, originalfile):
@@ -1131,13 +1183,6 @@ file,profiler_type,institution,date_update
             for wmo in wmos:
                 yield ArgoFloat(wmo, idx=self)
 
-    @property
-    def domain(self):
-        """Space/time domain of the index
-
-        This is different from a usual argopy ``box`` because dates are in :class:`numpy.datetime64` format.
-        """
-        return self.read_domain()
 
 
 class ArgoIndexExtension:
@@ -1154,14 +1199,14 @@ class ArgoIndexExtension:
 
 
 class ArgoIndexSearchEngine(ArgoIndexExtension):
-    """ArgoIndex extension providing query methods to search index entries
+    """:class:`argopy.ArgoIndex` extension providing search methods to query index entries
 
-    All query methods can be composed with the `compose` method, see examples.
+    All search methods can be combined with the :meth:`argopy.ArgoIndex.compose` method, see examples.
 
     Examples
     --------
     .. code-block:: python
-        :caption: List of query methods
+        :caption: List of search methods
 
         from argopy import ArgoIndex
         idx = ArgoIndex()
@@ -1170,9 +1215,9 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         idx.query.cyc
         idx.query.wmo_cyc
 
-        idx.query.date
         idx.query.lon
         idx.query.lat
+        idx.query.date
         idx.query.lat_lon
         idx.query.box
 
@@ -1281,8 +1326,8 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def lat_lon(self):
-        """Search index for a rectangular latitude/longitude domain
+    def lon_lat(self):
+        """Search index for a rectangular longitude/latitude domain
 
         Parameters
         ----------
@@ -1297,7 +1342,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         --------
         .. code-block:: python
 
-            idx.query.lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+            idx.query.lon_lat([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
 
         """
         raise NotImplementedError("Not implemented")

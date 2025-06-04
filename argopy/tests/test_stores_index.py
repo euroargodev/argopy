@@ -62,7 +62,7 @@ VALID_SEARCHES = [
     # {"wmo_cyc": [13857, 2]},
     {"wmo_cyc": [3902131, 2]},  # BGC
     {"date": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
-    {"lat_lon": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
+    {"lon_lat": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"box": [-60, -40, 40.0, 60.0, "2007-08-01", "2007-09-01"]},
     {"profiler_type": [845]},
     {"profiler_label": 'ARVOR'},
@@ -96,8 +96,8 @@ def run_a_search(idx_maker, fetcher_args, search_point, xfail=False, reason="?")
                 idx.query.wmo_cyc(apts["wmo_cyc"][0], apts["wmo_cyc"][1], nrows=nrows)
             if "date" in apts:
                 idx.query.date(apts["date"], nrows=nrows)
-            if "lat_lon" in apts:
-                idx.query.lat_lon(apts["lat_lon"], nrows=nrows)
+            if "lon_lat" in apts:
+                idx.query.lon_lat(apts["lon_lat"], nrows=nrows)
             if "box" in apts:
                 idx.query.box(apts["box"], nrows=nrows)
             if "params" in apts:
@@ -448,6 +448,35 @@ class IndexStore_test_proto:
         else:
             with pytest.raises(InvalidDatasetStructure):
                 idx.read_params(index=index)
+
+    @pytest.mark.parametrize(
+        "index",
+        [False, True],
+        indirect=False,
+        ids=["index=%s" % i for i in [False, True]],
+    )
+    def test_read_domain(self, index):
+        wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
+        idx = self.new_idx().query.wmo(wmo)
+        domain = idx.read_domain(index=index)
+        assert isinstance(domain, list)
+        assert len(domain) == 6
+        assert domain[1]>domain[0]
+        assert domain[3]>domain[2]
+        assert domain[5]>domain[4]
+
+    @pytest.mark.parametrize(
+        "index",
+        [False, True],
+        indirect=False,
+        ids=["index=%s" % i for i in [False, True]],
+    )
+    def test_read_files(self, index):
+        wmo = [s["wmo"] for s in VALID_SEARCHES if "wmo" in s.keys()][0]
+        idx = self.new_idx().query.wmo(wmo)
+        files = idx.read_files(index=index)
+        assert isinstance(files, list)
+        assert len(files) == idx.N_FILES
 
     @pytest.mark.parametrize(
         "index",

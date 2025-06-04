@@ -283,28 +283,6 @@ class indexstore(ArgoIndexStoreProto):
             for f in self.search["file"]
         ]
 
-    @property
-    def files(self) -> List[str]:
-        """File paths listed in search results"""
-        sep = self.fs["src"].fs.sep
-        return [
-            sep.join(
-                ["dac", f.as_py().replace("/", sep)]
-            )
-            for f in self.search["file"]
-        ]
-
-    @property
-    def files_full_index(self) -> List[str]:
-        """File paths listed in the index"""
-        sep = self.fs["src"].fs.sep
-        return [
-            sep.join(
-                ["dac", f.as_py().replace("/", sep)]
-            )
-            for f in self.index["file"]
-        ]
-
     def read_wmo(self, index=False):
         """Return list of unique WMOs from the index or search results
 
@@ -414,6 +392,23 @@ class indexstore(ArgoIndexStoreProto):
                 max(self.index["latitude"]),
                 tmin(self.index["date"]),
                 tmax(self.index["date"]),
+            ]
+
+    def read_files(self, index=False) -> List[str]:
+        sep = self.fs["src"].fs.sep
+        if hasattr(self, "search") and not index:
+            return [
+                sep.join(
+                    ["dac", f.as_py().replace("/", sep)]
+                )
+                for f in self.search["file"]
+            ]
+        else:
+            return [
+                sep.join(
+                    ["dac", f.as_py().replace("/", sep)]
+                )
+                for f in self.index["file"]
             ]
 
     def records_per_wmo(self, index=False):
