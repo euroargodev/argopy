@@ -10,6 +10,11 @@ What's New
 Coming up next
 --------------
 
+Feature
+^^^^^^^
+
+- :class:`ArgoIndex` **now support composition of several search criteria**. Thanks to a re-design of the Argo index search engine, it is now easy to use multiple search criteria to query an Argo files index. Checkout the dedicated :ref:`tools-argoindex` documentation page.
+
 Internals
 ^^^^^^^^^
 

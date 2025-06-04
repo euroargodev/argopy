@@ -58,7 +58,7 @@ Index files support can be added on demand. `Click here to raise an issue if you
 Usage
 -----
 
-You create an index store with default or custom options:
+You create an index store with arguments on a GDAC host (local or remote) and an index file name. Both arguments have default values to the http Ifremer GDAC and core index.
 
 .. ipython:: python
     :okwarning:
@@ -74,46 +74,68 @@ You create an index store with default or custom options:
     # ArgoIndex(host="https://data-argo.ifremer.fr", index_file="core")
     # ArgoIndex(host="https://data-argo.ifremer.fr", index_file="ar_index_global_prof.txt", cache=True)
 
-Note that you can use GDAC host shortcut names:
+You can also use the following shortcuts:
 
-- ``https://data-argo.ifremer.fr``, shortcut with ``http`` or ``https``
-- ``https://usgodae.org/pub/outgoing/argo``, shortcut with ``us-http`` or ``us-https``
-- ``ftp://ftp.ifremer.fr/ifremer/argo``, shortcut with ``ftp``
-- ``s3://argo-gdac-sandbox/pub/idx``, shortcut with ``s3`` or ``aws``
+Shortcuts for the ``host`` argument:
 
-You can then trigger loading of the index content:
+- ``http`` or ``https`` for `https://data-argo.ifremer.fr``
+- ``us-http`` or ``us-https`` for ``https://usgodae.org/pub/outgoing/argo``
+- ``ftp`` for ``ftp://ftp.ifremer.fr/ifremer/argo``
+- ``s3`` or ``aws`` for ``s3://argo-gdac-sandbox/pub/idx``
+
+Shortcuts for the ``index_file`` argument:
+
+- ``core`` for the ``ar_index_global_prof.txt`` index file,
+- ``bgc-b`` for the ``argo_bio-profile_index.txt`` index file,
+- ``bgc-s`` for the ``argo_synthetic-profile_index.txt`` index file,
+- ``aux`` for the ``etc/argo-index/argo_aux-profile_index.txt`` index file.
+- ``meta`` for the ``ar_index_global_meta.txt`` index file.
+
+You can then trigger loading in memory of the index content:
 
 .. ipython:: python
     :okwarning:
 
     idx.load()  # Load the full index in memory
 
-Here is the list of methods and properties of the **full index**:
+    # or
+    # idx.load(nrows=1000)  # Only load the first N rows of the index
+
+
+Once you loaded data to a :class:`ArgoIndex` instance, the following attributed and methods are available:
 
 .. code-block:: python
 
-    idx.load(nrows=12)  # Only load the first N rows of the index
     idx.N_RECORDS  # Shortcut for length of 1st dimension of the index array
-    idx.to_dataframe(index=True)  # Convert index to user-friendly :class:`pandas.DataFrame`
+    idx.to_dataframe(index=True)  # Convert index to a user-friendly Argo csv-like :class:`pandas.DataFrame`
     idx.to_dataframe(index=True, nrows=2)  # Only returns the first nrows of the index
     idx.index  # internal storage structure of the full index (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
     idx.uri_full_index  # List of absolute path to files from the full index table column 'file'
 
 
-They are several methods to **search** the index, for instance:
+Search a file index
+^^^^^^^^^^^^^^^^^^^
+
+.. currentmodule:: argopy
+
+If you need to reduce the list of files from an index, notably those matching a set of search criteria, you can use the :class:`ArgoIndex.query` extension.
+
+For instance, to reduce the list of files to those with latitude, longitude and date within a rectangular box:
 
 .. ipython:: python
     :okwarning:
 
     idx.query.box([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
 
-Here the list of all methods to **search** the index:
+Here is the list of methods available to search an index:
 
 .. code-block:: python
 
     idx.query.wmo(1901393)
     idx.query.cyc(1)
     idx.query.wmo_cyc(1901393, [1,12])
+    idx.query.lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only lat/lon is used
+    idx.query.lat([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only lat/lon is used
     idx.query.date([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only time is used
     idx.query.lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only lat/lon is used
     idx.query.box([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
@@ -122,7 +144,9 @@ Here the list of all methods to **search** the index:
     idx.query.profiler_type(845)
     idx.query.profiler_label('NINJA')
 
-and this is how to compose several search criteria:
+You will note that the space/time search methods ``lon``, ``lat``, ``date``, ``lon_lat`` and ``box`` all take the same argument that is a list with [lon_min, lon_max, lat_min, lat_max, datim_min, datim_max] values.
+
+If you need to compose a query with several search criteria, you can use the :meth:`ArgoIndex.query.compose` method like this:
 
 .. code-block:: python
 
@@ -132,17 +156,33 @@ and this is how to compose several search criteria:
     idx.query.compose({'params': 'DOXY', 'profiler_label': 'ARVOR'})
 
 
-At last, here is the list of methods and properties for **search results**:
+Once you performed a query on a :class:`ArgoIndex` instance, the following attributes and methods are available:
 
 .. code-block:: python
 
     idx.N_MATCH  # Shortcut for length of 1st dimension of the search results array
-    idx.to_dataframe()  # Convert search results to user-friendly :class:`pandas.DataFrame`
+    idx.to_dataframe()  # Convert search results to a user-friendly Argo csv-like :class:`pandas.DataFrame`
     idx.to_dataframe(nrows=2)  # Only returns the first nrows of the search results
-    idx.to_indexfile("search_index.txt")  # Export search results to Argo standard index file
-    idx.search  # Internal table with search results
+    idx.to_indexfile("search_index.txt")  # Export search results to Argo standard index file format
+    idx.search  #  internal storage structure of the search-reduced index (:class:`pyarrow.Table` or :class:`pandas.DataFrame`)
     idx.uri  # List of absolute path to files from the search results table column 'file'
 
+Read/list of properties
+^^^^^^^^^^^^^^^^^^^^^^^
+
+It is often useful to be able to list unique occurrences of some index properties. These are available:
+
+.. code-block:: python
+
+    idx.read_wmo()
+    idx.read_dac_wmo()
+    idx.read_params()
+    idx.read_domain()
+    idx.read_files()
+
+    idx.records_per_wmo()
+
+Each of these methods will use the search result by default, and if no search was ran, will fall back on using the full index.
 
 .. _metadata-index-bgc:
 
