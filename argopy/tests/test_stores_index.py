@@ -476,7 +476,10 @@ class IndexStore_test_proto:
         idx = self.new_idx().query.wmo(wmo)
         files = idx.read_files(index=index)
         assert isinstance(files, list)
-        assert len(files) == idx.N_FILES
+        if index==True:
+            assert len(files) == idx.N_RECORDS
+        else:
+            assert len(files) == idx.N_MATCH
 
     @pytest.mark.parametrize(
         "index",
