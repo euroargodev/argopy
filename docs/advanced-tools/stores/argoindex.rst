@@ -11,6 +11,9 @@ If Pyarrow is installed, this store will rely on :class:`pyarrow.Table` as inter
 
 All index store methods and properties are documented in the :class:`ArgoIndex` API page.
 
+.. contents::
+   :local:
+
 Index file supported
 --------------------
 
@@ -78,7 +81,7 @@ You can also use the following shortcuts:
 
 Shortcuts for the ``host`` argument:
 
-- ``http`` or ``https`` for `https://data-argo.ifremer.fr``
+- ``http`` or ``https`` for ``https://data-argo.ifremer.fr``
 - ``us-http`` or ``us-https`` for ``https://usgodae.org/pub/outgoing/argo``
 - ``ftp`` for ``ftp://ftp.ifremer.fr/ifremer/argo``
 - ``s3`` or ``aws`` for ``s3://argo-gdac-sandbox/pub/idx``
@@ -133,12 +136,14 @@ Here is the list of methods available to search an index:
 
     idx.query.wmo(1901393)
     idx.query.cyc(1)
-    idx.query.wmo_cyc(1901393, [1,12])
     idx.query.lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only lat/lon is used
     idx.query.lat([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only lat/lon is used
     idx.query.date([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only time is used
-    idx.query.lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only lat/lon is used
+
+    idx.query.wmo_cyc(1901393, [1,12])
+    idx.query.lon_lat([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition, only lat/lon is used
     idx.query.box([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
+
     idx.query.params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])  # Only for BGC profile index
     idx.query.parameter_data_mode({'BBP700': 'D'})  # Only for BGC profile index
     idx.query.profiler_type(845)

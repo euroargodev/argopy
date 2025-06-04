@@ -10,7 +10,6 @@ from typing import Union, List
 from pathlib import Path
 import sys
 
-
 if sys.version_info >= (3, 11):
     from typing import Self
 else:
@@ -1201,7 +1200,7 @@ class ArgoIndexExtension:
 class ArgoIndexSearchEngine(ArgoIndexExtension):
     """:class:`argopy.ArgoIndex` extension providing search methods to query index entries
 
-    All search methods can be combined with the :meth:`argopy.ArgoIndex.compose` method, see examples.
+    All search methods can be combined with the :meth:`ArgoIndex.query.compose` method, see examples.
 
     Examples
     --------
@@ -1241,24 +1240,31 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
 
     Note that composing query with:
 
-    - `wmo` and `cyc` is slower than using the `wmo_cyc` method
-    - `lon` and `lat` is slower than using the `lat_lon` method
-    - `lon`, `lat` and `date` is slower than using the `box` method
+    - ``wmo`` and ``cyc`` is slower than using the ``wmo_cyc`` method
+    - ``lon`` and ``lat`` is slower than using the ``lon_lat`` method
+    - ``lon``, ``lat`` and ``date`` is slower than using the ``box`` method
 
     """
 
     @abstractmethod
     def wmo(self):
-        """Search index for floats defined by their WMO
+        """Search index for floats defined by WMO
 
         Parameters
         ----------
-        list(int)
-            List of WMOs (as integers) to search
+        WMOs: list(int) or list(str)
+            List of WMOs to search
+
+        Returns
+        -------
+        :class:`ArgoIndex`
 
         Examples
         --------
         .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='core')
 
             idx.query.wmo(2901746)
             idx.query.wmo([2901746, 4902252])
@@ -1271,12 +1277,19 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
 
         Parameters
         ----------
-        list(int)
-            List of CYCs to search
+        CYCs: list(int) or list(str)
+            List of cycle number to search
+
+        Returns
+        -------
+        :class:`ArgoIndex`
 
         Examples
         --------
         .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='core')
 
             idx.query.cyc(1)
             idx.query.cyc([1,2])
@@ -1289,17 +1302,83 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
 
         Parameters
         ----------
-        list(int)
+        WMOs: list(int) or list(str)
             List of WMOs to search
-        list(int)
-            List of CYCs to search
+
+        CYCs: list(int) or list(str)
+            List of cycle number to search
+
+        Returns
+        -------
+        :class:`ArgoIndex`
 
         Examples
         --------
         .. code-block:: python
 
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='core')
+
             idx.search_wmo_cyc(2901746, 12)
             idx.search_wmo_cyc([2901746, 4902252], [1,2])
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def lon(self):
+        """Search index for a meridional band
+
+        Parameters
+        ----------
+        BOX : list()
+            An index box to search Argo records for.
+
+        Returns
+        -------
+        :class:`ArgoIndex`
+
+        Warnings
+        --------
+        Only longitude bounds are used from the index box.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='core')
+
+            idx.query.lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+
+        """
+        raise NotImplementedError("Not implemented")
+
+    @abstractmethod
+    def lat(self):
+        """Search index for a zonal band
+
+        Parameters
+        ----------
+        BOX : list()
+            An index box to search Argo records for.
+
+        Returns
+        -------
+        :class:`ArgoIndex`
+
+        Warnings
+        --------
+        Only latitude bounds are used from the index box.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='core')
+
+            idx.query.lat([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
+
         """
         raise NotImplementedError("Not implemented")
 
@@ -1309,8 +1388,12 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
 
         Parameters
         ----------
-        box : list()
+        BOX : list()
             An index box to search Argo records for.
+
+        Returns
+        -------
+        :class:`ArgoIndex`
 
         Warnings
         --------
@@ -1319,6 +1402,9 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         Examples
         --------
         .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='core')
 
             idx.query.date([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
 
@@ -1331,8 +1417,12 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
 
         Parameters
         ----------
-        box : list()
+        BOX : list()
             An index box to search Argo records for.
+
+        Returns
+        -------
+        :class:`ArgoIndex`
 
         Warnings
         --------
@@ -1342,23 +1432,33 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         --------
         .. code-block:: python
 
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='core')
+
             idx.query.lon_lat([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
 
         """
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def box(self, BOX):
+    def box(self):
         """Search index for a box: a rectangular latitude/longitude domain and time range
 
         Parameters
         ----------
-        box : list()
+        BOX : list()
             An index box to search Argo records for.
+
+        Returns
+        -------
+        :class:`ArgoIndex`
 
         Examples
         --------
         .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='core')
 
             idx.query.box([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])
 
@@ -1366,19 +1466,26 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def params(self, PARAMs: Union[str, list], logical: str):
+    def params(self):
         """Search index for one or a list of parameters
 
         Parameters
         ----------
-        PARAMs: str or list
+        PARAMs: str or list(str)
             A string or a list of strings to search Argo records for in the PARAMETERS columns of BGC profiles index.
         logical: str, default='and'
             Indicate to search for all (``and``) or any (``or``) of the parameters.
 
+        Returns
+        -------
+        :class:`ArgoIndex`
+
         Examples
         --------
         .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='bgc-s')
 
             idx.query.params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])
             idx.query.params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'], logical='or')
@@ -1391,9 +1498,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def parameter_data_mode(
-        self, PARAMs: dict, logical: bool = "and", nrows=None
-    ):
+    def parameter_data_mode(self):
         """Search index for profiles with a parameter in a specific data mode
 
         Parameters
@@ -1402,36 +1507,51 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
             A dictionary with parameters as keys, and data mode as a string or a list of strings
         logical: str, default='and'
             Indicate to search for all (``and``) or any (``or``) of the parameters data moade. This operator applies
-            between each parameters.
+            between each parameter.
+
+        Returns
+        -------
+        :class:`ArgoIndex`
 
         Examples
         --------
         .. code-block:: python
 
-        >>> idx.query.parameter_data_mode({'TEMP': 'D'})
-        >>> idx.query.parameter_data_mode({'BBP700': 'D'})
-        >>> idx.query.parameter_data_mode({'DOXY': ['R', 'A']})
-        >>> idx.query.parameter_data_mode({'BBP700': 'D', 'DOXY': 'D'}, logical='or')
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='bgc-s')
+
+            idx.query.parameter_data_mode({'TEMP': 'D'})
+            idx.query.parameter_data_mode({'BBP700': 'D'})
+            idx.query.parameter_data_mode({'DOXY': ['R', 'A']})
+            idx.query.parameter_data_mode({'BBP700': 'D', 'DOXY': 'D'}, logical='or')
 
         """
         raise NotImplementedError("Not implemented")
 
     @abstractmethod
-    def profiler_type(self, profiler_type: List[int]):
+    def profiler_type(self):
         """Search index for profiler types
 
         Parameters
         ----------
-        profiler_type: list
+        profiler_type: list(str)
             List of profiler types to search for. Valid types are given by integers with values from the R8 Argo Reference table
+
+        Returns
+        -------
+        :class:`ArgoIndex`
 
         Examples
         --------
         .. code-block:: python
 
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='core')
+
+            idx.query.profiler_type(845)
+
+            from argopy import ArgoNVSReferenceTables
             valid_types = ArgoNVSReferenceTables().tbl(8)['altLabel']
-            profiler_type = 845
-            idx.query.profiler_type(profiler_type)
 
         See Also
         --------
@@ -1447,9 +1567,16 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         profiler_label: str
             The string to be found in the R8 Argo Reference table label
 
+        Returns
+        -------
+        :class:`ArgoIndex`
+
         Examples
         --------
         .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='bgc-s')
 
             idx.query.profiler_label('ARVOR')
 
@@ -1489,6 +1616,31 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
             return search_filter
 
     def compose(self, query: dict, nrows=None):
+        """Compose query with multiple search methods
+
+        Parameters
+        ----------
+        query: dict
+            A dictionary with search method as keys and search criteria as values
+
+        Returns
+        -------
+        :class:`ArgoIndex`
+
+        Examples
+        --------
+        .. code-block:: python
+
+            from argopy import ArgoIndex
+            idx = ArgoIndex(index_file='bgc-s')
+
+            idx.query.compose({'box': BOX, 'wmo': WMOs})
+            idx.query.compose({'box': BOX, 'params': 'DOXY'})
+            idx.query.compose({'box': BOX, 'params': 'DOXY'})
+            idx.query.compose({'box': BOX, 'params': (['DOXY', 'DOXY2'], {'logical': 'and'})})
+            idx.query.compose({'params': 'DOXY', 'profiler_label': 'ARVOR'})
+
+        """
         self._obj.search_type = {}
         filters = []
         for entry, arg in query.items():

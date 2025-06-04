@@ -97,7 +97,7 @@ Extensions
 
    ArgoIndex.query
 
-Search on a single property of a file record:
+**Search on a single property** of a file record:
 
 .. autosummary::
    :toctree: generated/
@@ -113,7 +113,7 @@ Search on a single property of a file record:
    ArgoIndex.query.profiler_type
    ArgoIndex.query.profiler_label
 
-Search on at least two properties of a file record:
+**Search on at least two properties** of a file record:
 
 .. autosummary::
    :toctree: generated/
