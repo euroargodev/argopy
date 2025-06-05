@@ -381,7 +381,7 @@ class ArgoDataFetcher:
                 index_box = self._AccessPoint_data["box"].copy()
                 del index_box[4:6]
                 if len(index_box) == 4:
-                    idx.query.lat_lon(index_box)
+                    idx.query.lon_lat(index_box)
                 else:
                     idx.query.box(index_box)
             if self._AccessPoint == "float":
@@ -736,7 +736,7 @@ class ArgoDataFetcher:
                 index_box = self._AccessPoint_data["box"].copy()
                 del index_box[4:6]
                 if len(index_box) == 4:
-                    idx.query.lat_lon(index_box)
+                    idx.query.lon_lat(index_box)
                 else:
                     idx.query.box(index_box)
             if self._AccessPoint == "float":

@@ -453,7 +453,7 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
                 self.indexfs.query.wmo(self.WMO)
         elif hasattr(self, "BOX"):
             if len(self.indexBOX) == 4:
-                self.indexfs.query.lat_lon(self.indexBOX)
+                self.indexfs.query.lon_lat(self.indexBOX)
             else:
                 self.indexfs.query.box(self.indexBOX)
         params = self.indexfs.read_params()

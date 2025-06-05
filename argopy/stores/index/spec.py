@@ -936,7 +936,7 @@ class ArgoIndexStoreProto(ABC):
     @deprecated("this method is replaced by `ArgoIndex().query.lon_lat()`", version="1.1.0")
     def search_lat_lon(self, BOX, nrows=None):
         """Deprecated: this method is replaced by ``ArgoIndex().query.lon_lat()``"""
-        return self.query.lat_lon(BOX, nrows=nrows)  # Faster than .compose()
+        return self.query.lon_lat(BOX, nrows=nrows)  # Faster than .compose()
         # return self.query.compose({'lon': BOX, 'lat': BOX}, nrows=nrows)
 
     @deprecated("this method is replaced by `ArgoIndex().query.box()`", version="1.1.0")

@@ -602,7 +602,7 @@ class Fetch_box(GDACArgoDataFetcher):
         # Get list of files to load:
         if not hasattr(self, "_list_of_argo_files"):
             if len(self.indexBOX) == 4:
-                URIs = self.indexfs.query.lat_lon(self.indexBOX, nrows=self._nrows).uri
+                URIs = self.indexfs.query.lon_lat(self.indexBOX, nrows=self._nrows).uri
             else:
                 URIs = self.indexfs.query.box(self.indexBOX, nrows=self._nrows).uri
 
