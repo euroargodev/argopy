@@ -25,9 +25,7 @@ from ..utils.lists import list_bgc_s_variables, list_core_parameters
 from ..utils.decorators import deprecated
 from ..errors import ErddapServerError, DataNotFound
 from ..stores import httpstore, has_distributed, distributed
-from ..stores import (
-    indexstore_pd as ArgoIndex,
-)  # make sure we work with the Pandas index store
+from ..stores.index import indexstore_pd as ArgoIndex
 from ..utils import is_list_of_strings, to_list, Chunker
 from .proto import ArgoDataFetcherProto
 from .erddap_data_processors import pre_process
@@ -450,14 +448,14 @@ class ErddapArgoDataFetcher(ArgoDataFetcherProto):
         """
         if hasattr(self, "WMO"):
             if hasattr(self, "CYC") and self.CYC is not None:
-                self.indexfs.search_wmo_cyc(self.WMO, self.CYC)
+                self.indexfs.query.wmo_cyc(self.WMO, self.CYC)
             else:
-                self.indexfs.search_wmo(self.WMO)
+                self.indexfs.query.wmo(self.WMO)
         elif hasattr(self, "BOX"):
             if len(self.indexBOX) == 4:
-                self.indexfs.search_lat_lon(self.indexBOX)
+                self.indexfs.query.lon_lat(self.indexBOX)
             else:
-                self.indexfs.search_lat_lon_tim(self.indexBOX)
+                self.indexfs.query.box(self.indexBOX)
         params = self.indexfs.read_params()
 
         # Temporarily remove from params those missing on the erddap server:

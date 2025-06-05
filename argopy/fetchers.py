@@ -381,13 +381,13 @@ class ArgoDataFetcher:
                 index_box = self._AccessPoint_data["box"].copy()
                 del index_box[4:6]
                 if len(index_box) == 4:
-                    idx.search_lat_lon(index_box)
+                    idx.query.lon_lat(index_box)
                 else:
-                    idx.search_lat_lon_tim(index_box)
+                    idx.query.box(index_box)
             if self._AccessPoint == "float":
-                idx.search_wmo(self._AccessPoint_data["wmo"])
+                idx.query.wmo(self._AccessPoint_data["wmo"])
             if self._AccessPoint == "profile":
-                idx.search_wmo_cyc(
+                idx.query.wmo_cyc(
                     self._AccessPoint_data["wmo"], self._AccessPoint_data["cyc"]
                 )
             domain = idx.domain.copy()
@@ -736,13 +736,13 @@ class ArgoDataFetcher:
                 index_box = self._AccessPoint_data["box"].copy()
                 del index_box[4:6]
                 if len(index_box) == 4:
-                    idx.search_lat_lon(index_box)
+                    idx.query.lon_lat(index_box)
                 else:
-                    idx.search_lat_lon_tim(index_box)
+                    idx.query.box(index_box)
             if self._AccessPoint == "float":
-                idx.search_wmo(self._AccessPoint_data["wmo"])
+                idx.query.wmo(self._AccessPoint_data["wmo"])
             if self._AccessPoint == "profile":
-                idx.search_wmo_cyc(
+                idx.query.wmo_cyc(
                     self._AccessPoint_data["wmo"], self._AccessPoint_data["cyc"]
                 )
 

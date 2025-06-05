@@ -62,7 +62,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         cachedir: str = "",
         parallel: bool = False,
         progress: bool = False,
-        dimension: Literal['point', 'profile'] = "point",
+        dimension: Literal["point", "profile"] = "point",
         errors: str = "raise",
         api_timeout: int = 0,
         **kwargs
@@ -321,7 +321,7 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         errors: str = "ignore",
         concat: bool = True,
         concat_method: Literal["drop", "fill"] = "fill",
-        dimension: Literal['point', 'profile'] = "",
+        dimension: Literal["point", "profile"] = "",
     ):
         """Load Argo data and return a :class:`xarray.Dataset`
 
@@ -405,7 +405,9 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             results = results.argo.cast_types(overwrite=False)
 
             # Meta-data processing for a single merged dataset:
-            results = results.assign_coords({'N_POINTS': np.arange(0, len(results['N_POINTS']))})
+            results = results.assign_coords(
+                {"N_POINTS": np.arange(0, len(results["N_POINTS"]))}
+            )
             results = results.sortby("TIME")
 
             # Remove netcdf file attributes and replace them with simplified argopy ones:
@@ -414,7 +416,9 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
 
                 results.attrs = {}
                 if "Processing_history" in raw_attrs:
-                    results.attrs.update({"Processing_history": raw_attrs["Processing_history"]})
+                    results.attrs.update(
+                        {"Processing_history": raw_attrs["Processing_history"]}
+                    )
                     raw_attrs.pop("Processing_history")
                 results.argo.add_history("URI merged with '%s'" % concat_method)
 
@@ -541,10 +545,10 @@ class Fetch_wmo(GDACArgoDataFetcher):
         # Get list of files to load:
         if not hasattr(self, "_list_of_argo_files"):
             if self.CYC is None:
-                URIs = self.indexfs.search_wmo(self.WMO, nrows=self._nrows).uri
+                URIs = self.indexfs.query.wmo(self.WMO, nrows=self._nrows).uri
                 self._list_of_argo_files = self.uri_mono2multi(URIs)
             else:
-                self._list_of_argo_files = self.indexfs.search_wmo_cyc(
+                self._list_of_argo_files = self.indexfs.query.wmo_cyc(
                     self.WMO, self.CYC, nrows=self._nrows
                 ).uri
 
@@ -598,11 +602,9 @@ class Fetch_box(GDACArgoDataFetcher):
         # Get list of files to load:
         if not hasattr(self, "_list_of_argo_files"):
             if len(self.indexBOX) == 4:
-                URIs = self.indexfs.search_lat_lon(self.indexBOX, nrows=self._nrows).uri
+                URIs = self.indexfs.query.lon_lat(self.indexBOX, nrows=self._nrows).uri
             else:
-                URIs = self.indexfs.search_lat_lon_tim(
-                    self.indexBOX, nrows=self._nrows
-                ).uri
+                URIs = self.indexfs.query.box(self.indexBOX, nrows=self._nrows).uri
 
             if len(URIs) > 25:
                 self._list_of_argo_files = self.uri_mono2multi(URIs)

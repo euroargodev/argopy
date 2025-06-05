@@ -62,15 +62,75 @@ Properties
    DataFetcher.domain
    DataFetcher.uri
 
-Utilities for Argo related data
-===============================
+
+Argo file stores
+================
+
+.. autosummary::
+    :toctree: generated/
+
+    gdacfs
+
+ArgoFloat
+---------
+.. autosummary::
+    :toctree: generated/
+
+    ArgoFloat
+
+ArgoIndex
+---------
+
+.. autosummary::
+    :toctree: generated/
+
+    ArgoIndex
+
+List of extensions:
+
+.. currentmodule:: argopy
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor.rst
+
+   ArgoIndex.query
+
+**Search on a single property** of a file record:
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   ArgoIndex.query.wmo
+   ArgoIndex.query.cyc
+   ArgoIndex.query.lon
+   ArgoIndex.query.lat
+   ArgoIndex.query.date
+   ArgoIndex.query.params
+   ArgoIndex.query.parameter_data_mode
+   ArgoIndex.query.profiler_type
+   ArgoIndex.query.profiler_label
+
+**Search on at least two properties** of a file record:
+
+.. autosummary::
+   :toctree: generated/
+   :template: autosummary/accessor_method.rst
+
+   ArgoIndex.query.wmo_cyc
+   ArgoIndex.query.lon_lat
+   ArgoIndex.query.box
+   ArgoIndex.query.compose
+
+
+Argo meta/related data
+======================
 
 .. autosummary::
    :toctree: generated/
 
    status
-   ArgoIndex
-   ArgoFloat
    ArgoDocs
    ArgoDOI
    ArgoNVSReferenceTables
@@ -285,15 +345,6 @@ File systems
     stores.ftpstore
     stores.s3store
     stores.ArgoKerchunker
-
-Argo index and float stores
----------------------------
-
-.. autosummary::
-    :toctree: generated/
-
-    ArgoIndex
-    ArgoFloat
 
 Fetcher sources
 ---------------
