@@ -86,8 +86,7 @@ ArgoIndex
 
     ArgoIndex
 
-Extensions
-^^^^^^^^^^
+List of extensions:
 
 .. currentmodule:: argopy
 

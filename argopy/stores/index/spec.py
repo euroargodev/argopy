@@ -1506,7 +1506,7 @@ class ArgoIndexSearchEngine(ArgoIndexExtension):
         PARAMs: dict
             A dictionary with parameters as keys, and data mode as a string or a list of strings
         logical: str, default='and'
-            Indicate to search for all (``and``) or any (``or``) of the parameters data moade. This operator applies
+            Indicate to search for all (``and``) or any (``or``) of the parameters data mode. This operator applies
             between each parameter.
 
         Returns

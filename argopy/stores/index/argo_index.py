@@ -15,7 +15,7 @@ class ArgoIndex(indexstore):
 
     Shortcuts for ``host`` argument:
 
-    - ``http`` or ``https`` for `https://data-argo.ifremer.fr``
+    - ``http`` or ``https`` for ``https://data-argo.ifremer.fr``
     - ``us-http`` or ``us-https`` for ``https://usgodae.org/pub/outgoing/argo``
     - ``ftp`` for ``ftp://ftp.ifremer.fr/ifremer/argo``
     - ``s3`` or ``aws`` for ``s3://argo-gdac-sandbox/pub/idx``
