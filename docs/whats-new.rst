@@ -12,12 +12,15 @@ Coming up next
 
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 .. currentmodule:: xarray
 
 - **Optical modeling diagnostics for BGC data**. We introduce a preliminary implementation of standard diagnostics from optical modeling. These are available through the new :class:`Dataset.argo.optic` extension. (:pr:`463`) by |gmaze|.
 
 .. currentmodule:: argopy
 
+- :class:`ArgoIndex` **now support composition of several search criteria**. Thanks to a re-design of the Argo index search engine, it is now easy to use multiple search criteria to query an Argo files index. Checkout the dedicated :ref:`tools-argoindex` documentation page. (:pr:`470`) by |gmaze|.
+ 
 Internals
 ^^^^^^^^^
 

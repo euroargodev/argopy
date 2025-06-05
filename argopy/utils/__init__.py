@@ -19,7 +19,7 @@ from .checkers import (  # noqa: F401
     has_aws_credentials,
 )
 from .casting import DATA_TYPES, cast_Argo_variable_type, to_list
-from .decorators import deprecated, doc_inherit
+from .decorators import deprecated, doc_inherit, register_accessor
 from .lists import (
     list_available_data_src,
     list_available_index_src,
@@ -95,6 +95,7 @@ __all__ = (
     # Decorators:
     "deprecated",
     "doc_inherit",
+    "register_accessor",
     # Lists:
     "list_available_data_src",
     "list_available_index_src",

@@ -7,7 +7,7 @@ Working with Argo data
 In the following documentation sections, you will see how to:
 
 - :ref:`manipulate <Manipulating data>` a :class:`xarray.Dataset` with the ``argo`` accessor methods,
-- :ref:`visualize <data-viz>` Argo data, weather it is a :class:`xarray.Dataset` or :class:`pandas.DataFrame` profile index,
+- :ref:`visualize <data-viz>` Argo data, whether it is a :class:`xarray.Dataset` or :class:`pandas.DataFrame` profile index,
 
 You can also refer to the documentation on :ref:`expert-tools`.
 

@@ -93,7 +93,7 @@ class ArgoFloatProto(ABC):
 
     def load_index(self):
         """Load the Argo full index in memory and trigger search for this float"""
-        self.idx.load().search_wmo(self.WMO)
+        self.idx.load().query.wmo(self.WMO)
         return self
 
     @property
