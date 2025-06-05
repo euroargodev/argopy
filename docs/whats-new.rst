@@ -15,7 +15,9 @@ Features and front-end API
 
 .. currentmodule:: xarray
 
-- **Optical modeling diagnostics for BGC data**. We introduce a preliminary implementation of standard diagnostics from optical modeling. These are available through the new :class:`Dataset.argo.optic` extension. All details in the dedicated :ref:`complement-optical-modeling` documentation page. (:pr:`463`) by |gmaze|.
+- **Optical modeling diagnostics for BGC data**. We introduce a preliminary implementation of standard diagnostics from optical modeling. These are available through the new :class:`Dataset.argo.optic` extension. All details are in the dedicated :ref:`complement-optical-modeling` documentation page and on the API reference. (:pr:`463`) by |gmaze|.
+
+- **Optimized diagnostic per profile**. If you want to execute your own diagnostic method on a collection of Argo profiles, **argopy** now provides an efficient method to do so: :meth:`Dataset.argo.reduce_profile` that is based on the :meth:`xarray.apply_ufunc` method. Typical usage example would include computation of mixed layer depth or euphotic layer depth. All details are in the dedicated :ref:`perprofile-diag` documentation page and on the API reference of the method. (:pr:`463`) by |gmaze|.
 
 .. currentmodule:: argopy
 
