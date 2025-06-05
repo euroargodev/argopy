@@ -318,7 +318,7 @@ class OpticalModeling(ArgoAccessorExtension):
         bbp: str = "BBP700",
         max_depth: float = 300.0,
         resolution_threshold: float = 3.0,
-        smoother_size: int = 5,
+        median_filter_size: int = 5,
         surface_layer: float = 15.0,
         inplace: bool = False,
         axis_bbp: str = "PRES",
@@ -389,7 +389,7 @@ class OpticalModeling(ArgoAccessorExtension):
         kw = {
             "max_depth": max_depth,
             "resolution_threshold": max_depth,
-            "smoother_size": smoother_size,
+            "median_filter_size": median_filter_size,
             "surface_layer": surface_layer,
         }
         da = self._argo.reduce_profile(f, params=[chla, axis, bbp, axis], **kw)
@@ -405,7 +405,7 @@ class OpticalModeling(ArgoAccessorExtension):
             },
             "max_depth": max_depth,
             "resolution_threshold": max_depth,
-            "smoother_size": smoother_size,
+            "median_filter_size": median_filter_size,
             "surface_layer": surface_layer,
         }
         if inplace:
