@@ -49,7 +49,7 @@ class OpticalModeling(ArgoAccessorExtension):
         max_surface: float = 5.0,
         layer_min: float = 10.0,
         layer_max: float = 50.0,
-        inplace: bool = False,
+        inplace: bool = True,
     ):
         """Depth of the euphotic zone from PAR
 
@@ -79,7 +79,7 @@ class OpticalModeling(ArgoAccessorExtension):
             Used only with the ``KdPAR`` method.
             Minimum and maximum values of the vertical axis over which to compute the PAR attenuation coefficient.
 
-        inplace: bool, optional, default: False
+        inplace: bool, optional, default: True
             Should we return the new variable (False) or the dataset with the new variable added to it (True).
 
         Returns
@@ -168,6 +168,8 @@ class OpticalModeling(ArgoAccessorExtension):
         }
         if inplace:
             self._obj["Zeu"] = da
+            if self._argo:
+                self._argo.add_history("Added Zeu prediction")
             return self._obj
         else:
             return da
@@ -183,6 +185,9 @@ class OpticalModeling(ArgoAccessorExtension):
         ----------
         args, kwargs:
             Since Zpd is a simple scaling of the euphotic depth, all arguments are directly passed to :class:`Dataset.argo.optic.Zeu`.
+
+        inplace: bool, optional, default: True
+            Should we return the new variable (False) or the dataset with the new variable added to it (True).
 
         Returns
         -------
@@ -243,6 +248,8 @@ class OpticalModeling(ArgoAccessorExtension):
 
         if inplace:
             self._obj["Zpd"] = da
+            if self._argo:
+                self._argo.add_history("Added Zeu prediction")
             return self._obj
         else:
             return da
@@ -253,7 +260,7 @@ class OpticalModeling(ArgoAccessorExtension):
         par: str = "DOWNWELLING_PAR",
         threshold: float = 15.0,
         tolerance: float = 5.0,
-        inplace: bool = False,
+        inplace: bool = True,
     ) -> Union[xr.DataArray, xr.Dataset]:
         """Depth where PAR reaches some threshold value (closest point)
 
@@ -267,7 +274,7 @@ class OpticalModeling(ArgoAccessorExtension):
             Target value for ``par``.
         tolerance: float, optional, default: 5.
             PAR value tolerance with regard to the target threshold. If the closest PAR value to ``threshold`` is distant by more than ``tolerance``, consider result invalid and return NaN.
-        inplace: bool, optional, default: False
+        inplace: bool, optional, default: True
             Should we return the new variable (False) or the dataset with the new variable added to it (True).
 
         Returns
@@ -307,6 +314,8 @@ class OpticalModeling(ArgoAccessorExtension):
         }
         if inplace:
             self._obj["Z_iPAR"] = da
+            if self._argo:
+                self._argo.add_history("Added Z_iPAR prediction")
             return self._obj
         else:
             return da
@@ -320,7 +329,7 @@ class OpticalModeling(ArgoAccessorExtension):
         resolution_threshold: float = 3.0,
         median_filter_size: int = 5,
         surface_layer: float = 15.0,
-        inplace: bool = False,
+        inplace: bool = True,
         axis_bbp: str = "PRES",
     ) -> Union[xr.DataArray, xr.Dataset]:
         """Search and qualify Deep Chlorophyll Maxima
@@ -335,6 +344,8 @@ class OpticalModeling(ArgoAccessorExtension):
             Name of the Chl-a concentration variable to use.
         bbp: str, optional, default='BBP700'
             Name of the particulate backscattering coefficient variable to use.
+        inplace: bool, optional, default: True
+            Should we return the new variable (False) or the dataset with the new variable added to it (True).
 
         Returns
         -------
@@ -410,6 +421,8 @@ class OpticalModeling(ArgoAccessorExtension):
         }
         if inplace:
             self._obj["DCM"] = da
+            if self._argo:
+                self._argo.add_history("Added DCM prediction")
             return self._obj
         else:
             return da
