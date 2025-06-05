@@ -286,11 +286,17 @@
     argopy.ArgoIndex
     argopy.ArgoIndex.N_MATCH
     argopy.ArgoIndex.N_RECORDS
+    argopy.ArgoIndex.N_FILES
     argopy.ArgoIndex.convention_supported
     argopy.ArgoIndex.load
+
     argopy.ArgoIndex.read_wmo
-    argopy.ArgoIndex.records_per_wmo
+    argopy.ArgoIndex.read_dac_wmo
+    argopy.ArgoIndex.read_domain
     argopy.ArgoIndex.read_params
+    argopy.ArgoIndex.read_files
+    argopy.ArgoIndex.records_per_wmo
+
     argopy.ArgoIndex.search_wmo
     argopy.ArgoIndex.search_cyc
     argopy.ArgoIndex.search_wmo_cyc
@@ -301,6 +307,7 @@
     argopy.ArgoIndex.search_parameter_data_mode
     argopy.ArgoIndex.search_profiler_type
     argopy.ArgoIndex.search_profiler_label
+
     argopy.ArgoIndex.to_dataframe
     argopy.ArgoIndex.to_indexfile
     argopy.ArgoIndex.copy
@@ -309,6 +316,22 @@
     argopy.ArgoIndex.uri_full_index
     argopy.ArgoIndex.files
     argopy.ArgoIndex.files_full_index
+
+    argopy.ArgoIndex.query
+    argopy.ArgoIndex.query.wmo
+    argopy.ArgoIndex.query.cyc
+    argopy.ArgoIndex.query.lon
+    argopy.ArgoIndex.query.lat
+    argopy.ArgoIndex.query.date
+    argopy.ArgoIndex.query.params
+    argopy.ArgoIndex.query.parameter_data_mode
+    argopy.ArgoIndex.query.profiler_type
+    argopy.ArgoIndex.query.profiler_label
+
+    argopy.ArgoIndex.query.wmo_cyc
+    argopy.ArgoIndex.query.lon_lat
+    argopy.ArgoIndex.query.box
+    argopy.ArgoIndex.query.compose
 
     argopy.stores.index.implementations.index_s3.s3index
     argopy.stores.index.implementations.index_s3.s3index_core

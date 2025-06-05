@@ -2,9 +2,9 @@ import importlib
 
 
 if importlib.util.find_spec("pyarrow") is not None:
-    from .implementations.index_pyarrow import indexstore
+    from .implementations.pyarrow.index import indexstore
 else:
-    from .implementations.index_pandas import indexstore
+    from .implementations.pandas.index import indexstore
 
 
 class ArgoIndex(indexstore):
@@ -13,7 +13,14 @@ class ArgoIndex(indexstore):
     If Pyarrow is available, this class will use :class:`pyarrow.Table` as internal storage format; otherwise, a
     :class:`pandas.DataFrame` will be used.
 
-    You can use the exact index file names or keywords:
+    Shortcuts for ``host`` argument:
+
+    - ``http`` or ``https`` for ``https://data-argo.ifremer.fr``
+    - ``us-http`` or ``us-https`` for ``https://usgodae.org/pub/outgoing/argo``
+    - ``ftp`` for ``ftp://ftp.ifremer.fr/ifremer/argo``
+    - ``s3`` or ``aws`` for ``s3://argo-gdac-sandbox/pub/idx``
+
+    Shortcuts for ``index_file`` argument:
 
     - ``core`` for the ``ar_index_global_prof.txt`` index file,
     - ``bgc-b`` for the ``argo_bio-profile_index.txt`` index file,
@@ -48,16 +55,29 @@ class ArgoIndex(indexstore):
     .. code-block:: python
         :caption: Search methods
 
-        >>> idx.search_wmo(1901393)
-        >>> idx.search_cyc(1)
-        >>> idx.search_wmo_cyc(1901393, [1,12])
-        >>> idx.search_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
-        >>> idx.search_lat_lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
-        >>> idx.search_lat_lon_tim([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
-        >>> idx.search_params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])  # Take a list of strings, only for BGC index !
-        >>> idx.search_parameter_data_mode({'BBP700': 'D', 'DOXY': ['A', 'D']})  # Take a dict.
-        >>> idx.search_profiler_type(845)
-        >>> idx.search_profiler_label('NINJA')
+        >>> idx.query.wmo(1901393)
+        >>> idx.query.cyc(1)
+        >>> idx.query.wmo_cyc(1901393, [1,12])
+
+        >>> idx.query.lat([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
+        >>> idx.query.lon([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
+        >>> idx.query.date([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
+        >>> idx.query.lon_lat([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
+        >>> idx.query.box([-60, -55, 40., 45., '2007-08-01', '2007-09-01'])  # Take an index BOX definition
+
+        >>> idx.query.params(['C1PHASE_DOXY', 'DOWNWELLING_PAR'])  # Take a list of strings, only for BGC index !
+        >>> idx.query.parameter_data_mode({'BBP700': 'D', 'DOXY': ['A', 'D']})  # Take a dict.
+
+        >>> idx.query.profiler_type(845)
+        >>> idx.query.profiler_label('NINJA')
+
+    .. code-block:: python
+        :caption: Composing search methods
+
+        >>> idx.query.compose({'box': BOX, 'wmo': WMOs})
+        >>> idx.query.compose({'box': BOX, 'params': 'DOXY'})
+        >>> idx.query.compose({'box': BOX, 'params': (['DOXY', 'DOXY2'], {'logical': 'and'})})
+        >>> idx.query.compose({'params': 'DOXY', 'profiler_label': 'ARVOR'})
 
     .. code-block:: python
         :caption: Search result properties and methods
@@ -72,24 +92,30 @@ class ArgoIndex(indexstore):
         >>> idx.to_indexfile("search_index.txt")  # Export search results to Argo standard index file
 
     .. code-block:: python
+        :caption: List of file properties
+
+        >>> idx.read_wmo()
+        >>> idx.read_dac_wmo()
+        >>> idx.read_params()
+        >>> idx.read_domain()
+        >>> idx.read_files()
+
+        >>> idx.records_per_wmo()
+
+    .. code-block:: python
         :caption: Misc
 
         >>> idx.convention  # What is the expected index format (core vs BGC profile index)
         >>> idx.cname
-        >>> idx.read_wmo
-        >>> idx.read_dac_wmo
-        >>> idx.read_params
-        >>> idx.records_per_wmo
-        >>> idx.domains
+        >>> idx.domain # the default read_domain() output, as a property
         >>> idx.copy(deep=False)
 
     .. code-block:: python
-        :caption: Float iterator
+        :caption: Iterate on :class:`argopy.ArgoFloat` instance
 
-        for float in idx.iterfloats():
-            # 'float' is an :class:`argopy.ArgoFloat` instance
-            print(float.WMO)
-            ds = float.open_dataset('prof')
+        >>> for a_float in idx.iterfloats():
+        >>>     print(a_float.WMO)
+        >>>     ds = a_float.open_dataset('prof')
 
     """
 
