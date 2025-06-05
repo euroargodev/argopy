@@ -15,7 +15,7 @@ Features and front-end API
 
 .. currentmodule:: xarray
 
-- **Optical modeling diagnostics for BGC data**. We introduce a preliminary implementation of standard diagnostics from optical modeling. These are available through the new :class:`Dataset.argo.optic` extension. (:pr:`463`) by |gmaze|.
+- **Optical modeling diagnostics for BGC data**. We introduce a preliminary implementation of standard diagnostics from optical modeling. These are available through the new :class:`Dataset.argo.optic` extension. All details in the dedicated :ref:`complement-optical-modeling` documentation page. (:pr:`463`) by |gmaze|.
 
 .. currentmodule:: argopy
 
