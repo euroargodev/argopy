@@ -1,0 +1,81 @@
+name: argopy-docs-rtd
+channels:
+  - conda-forge
+dependencies:
+  - python = 3.10
+
+# CORE:
+  - aiohttp = 3.11.13
+  - decorator = 5.2.1
+  - erddapy = 2.2.3
+  - fsspec = 2025.2.0
+  - h5netcdf = 1.5.0
+  - netCDF4 = 1.7.2
+  - packaging = 24.2
+  - requests = 2.32.3
+  - scipy = 1.15.2
+  - toolz = 1.0.0
+  - xarray = 2024.2.0 # while https://github.com/pydata/xarray/issues/8909 is not solved
+
+# EXT.UTIL:
+  - gsw = 3.6.19
+  - tqdm = 4.67.1
+
+# EXT.PERF:
+  - dask = 2025.2.0
+  - distributed = 2025.2.0
+  - pyarrow = 19.0.1
+
+# EXT.FILES:
+  - boto3 = 1.37.1
+  - kerchunk = 0.2.7
+  - numcodecs = 0.13.1
+  - s3fs = 2025.2.0
+  - zarr = 2.18.3
+
+# EXT.PLOT:
+  - IPython = 8.33.0
+  - cartopy = 0.24.0
+  - ipykernel = 6.29.5
+  - ipywidgets = 8.1.5
+  - matplotlib = 3.10.1
+  - pyproj = 3.7.1
+  - seaborn = 0.13.2
+
+# DEV:
+  - aiofiles = 24.1.0
+  - black = 25.1.0
+  - bottleneck = 1.4.2
+  - cfgrib = 0.9.15.0
+  - cftime = 1.6.4
+  - codespell = 2.4.1
+  - flake8 = 7.1.2
+  - numpy = 1.26.4
+  - pandas = 2.2.3
+  - pip = 25.0.1
+  - pytest = 8.3.5
+  - pytest-cov = 6.0.0
+  - pytest-env = 1.1.5
+  - pytest-localftpserver
+  - setuptools = 75.8.2
+
+# DOCUMENTATION SPHINX/RTD:
+  - nbsphinx
+  - jinja2
+  - sphinx-issues
+  - sphinx_rtd_theme
+  - sphinx-book-theme
+  - pydata-sphinx-theme
+
+  - pip:
+    - Sphinx
+    - numpydoc
+    - readthedocs-sphinx-ext
+    - sphinx-autosummary-accessors
+    - pydocstyle
+    - sphinx-tabs
+    - sphinxext-rediraffe
+    - sphinxext-opengraph
+    - git+https://github.com/sphinx-contrib/googleanalytics
+    - sphinx-copybutton
+    - sphinx-design
