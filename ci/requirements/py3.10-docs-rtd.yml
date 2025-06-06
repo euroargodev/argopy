@@ -24,7 +24,7 @@ dependencies:
 # EXT.PERF:
   - dask = 2025.2.0
   - distributed = 2025.2.0
-  - pyarrow = 19.0.1
+#  - pyarrow = 19.0.1
 
 # EXT.FILES:
   - boto3 = 1.37.1
@@ -35,11 +35,11 @@ dependencies:
 
 # EXT.PLOT:
   - IPython = 8.33.0
-  - cartopy = 0.24.0
+#  - cartopy = 0.24.0
   - ipykernel = 6.29.5
   - ipywidgets = 8.1.5
   - matplotlib = 3.10.1
-  - pyproj = 3.7.1
+#  - pyproj = 3.7.1
   - seaborn = 0.13.2
 
 # DEV:
@@ -48,16 +48,16 @@ dependencies:
   - bottleneck = 1.4.2
   - cfgrib = 0.9.15.0
   - cftime = 1.6.4
-  - codespell = 2.4.1
-  - flake8 = 7.1.2
+#  - codespell = 2.4.1
+#  - flake8 = 7.1.2
   - numpy = 1.26.4
   - pandas = 2.2.3
   - pip = 25.0.1
-  - pytest = 8.3.5
-  - pytest-cov = 6.0.0
-  - pytest-env = 1.1.5
-  - pytest-localftpserver
-  - setuptools = 75.8.2
+#  - pytest = 8.3.5
+#  - pytest-cov = 6.0.0
+#  - pytest-env = 1.1.5
+#  - pytest-localftpserver
+#  - setuptools = 75.8.2
 
 # DOCUMENTATION SPHINX/RTD:
   - nbsphinx
