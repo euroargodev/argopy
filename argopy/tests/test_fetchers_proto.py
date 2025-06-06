@@ -1,7 +1,12 @@
 import pytest
+import logging
+
 import xarray
 from argopy.data_fetchers.proto import ArgoDataFetcherProto
 from argopy.utils import to_list
+from mocked_http import mocked_httpserver, mocked_server_address
+
+log = logging.getLogger("argopy.tests.fetchers.proto")
 
 
 class Fetcher(ArgoDataFetcherProto):
@@ -45,6 +50,7 @@ def test_required_methods():
                          indirect=False,
                          ids=["%s" % p for p in [[13857, None], [13857, 90]]])
 def test_dashboard(profile):
+    #todo Use the mocked_httpserver here
 
     f = Fetcher()
     f.WMO, f.CYC = profile
