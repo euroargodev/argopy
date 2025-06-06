@@ -13,7 +13,10 @@ Coming up next
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+- **Fetch Argo data as** :class:`netCDF4.Dataset`. For the sake of compatibility with legacy codes and to encourage **argopy** adoption for all loading/reading operations, we now support for data output as a `netCDF4 Dataset object <https://unidata.github.io/netcdf4-python/#netCDF4.Dataset>`_. This new feature is available at high level with the DataFetcher and lower-level with the ArgoFloat and gdacfs classes.
+
 - :class:`ArgoIndex` **now support composition of several search criteria**. Thanks to a re-design of the Argo index search engine, it is now easy to use multiple search criteria to query an Argo files index. Checkout the dedicated :ref:`tools-argoindex` documentation page. (:pr:`470`) by |gmaze|.
+
 
 Internals
 ^^^^^^^^^
