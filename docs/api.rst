@@ -37,6 +37,7 @@ Data access methods
    DataFetcher.to_xarray
    DataFetcher.to_dataframe
    DataFetcher.to_index
+   DataFetcher.to_dataset
 
 .. _Fetcher Data Visualisation:
 

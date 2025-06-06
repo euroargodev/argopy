@@ -14,6 +14,7 @@
     argopy.fetchers.ArgoDataFetcher.profile
     argopy.fetchers.ArgoDataFetcher.load
     argopy.fetchers.ArgoDataFetcher.to_xarray
+    argopy.fetchers.ArgoDataFetcher.to_dataset
     argopy.fetchers.ArgoDataFetcher.to_dataframe
     argopy.fetchers.ArgoDataFetcher.to_index
     argopy.fetchers.ArgoDataFetcher.plot

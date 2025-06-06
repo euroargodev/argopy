@@ -76,6 +76,13 @@ So finally, you can open any of these dataset using their keyword:
 
 Note that you can open a dataset lazily, this is explained in the :ref:`lazy-argofloat` documentation page.
 
+.. note::
+    The :meth:`ArgoFloat.open_dataset` also support for direct file loading as a `netCDF4 Dataset object <https://unidata.github.io/netcdf4-python/#netCDF4.Dataset>`_. Just use the `netCDF4=True` option.
+
+    .. ipython:: python
+        :okwarning:
+
+        af.open_dataset('meta', netCDF4=True)
 
 Integration within **argopy**
 -----------------------------

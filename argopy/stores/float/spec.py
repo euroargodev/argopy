@@ -294,12 +294,18 @@ class ArgoFloatProto(ABC):
             Name of the dataset to open. It can be any key from the dictionary returned by :class:`ArgoFloat.ls_dataset`.
         cast: bool, optional, default = True
             Determine if the dataset variables should be cast or not. This is similar to opening the dataset directly with :class:`xr.open_dataset` using the ``engine=`argo``` option.
+            This will be ignored if the ``netCDF4` kwarg is set to True.
         **kwargs
             All the other parameters are passed to the GDAC store `open_dataset` method.
 
         Returns
         -------
         :class:`xarray.Dataset`
+
+        Notes
+        -----
+        Use the ``netCDF4=True`` option to return a :class:`netCDF4.Dataset` object instead of a :class:`xarray.Dataset`.
+
         """
         if name not in self.ls_dataset():
             raise ValueError(
