@@ -95,10 +95,9 @@ The :class:`ArgoFloat` class is further used in **argopy** in the :class:`ArgoIn
     from argopy import ArgoIndex
 
     # Make a search on Argo index of profiles:
-    idx = ArgoIndex().search_lat_lon([-70, -55, 20, 30], nrows=100)
+    idx = ArgoIndex().query.lon_lat([-70, -55, 20, 30], nrows=100)
 
-    # Then iterate over floats matching the results:
-    for float in idx.iterfloats():
-        # 'float' is an ArgoFloat instance
-        ds = float.open_dataset('meta')
-        print(float.WMO, ds['LAUNCH_DATE'].data)
+    # Then iterate over ArgoFloat matching the results:
+    for a_float in idx.iterfloats():
+        ds = a_float.open_dataset('meta')
+        print(a_float.WMO, ds['LAUNCH_DATE'].data)
