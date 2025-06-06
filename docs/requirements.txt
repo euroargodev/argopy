@@ -47,7 +47,7 @@ sphinxext-rediraffe
 git+https://github.com/sphinx-contrib/googleanalytics
 sphinx-copybutton
 sphinx-design
-
+pickleshare
 
 # pkgconfig
 # urllib3<2
