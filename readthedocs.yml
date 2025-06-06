@@ -16,6 +16,11 @@ build:
 conda:
     environment: ci/requirements/py3.10-docs-rtd.yml
 
+python:
+   install:
+   - method: pip
+     path: .  # This will install argopy from the branch we're building the documentation from
+
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
   configuration: docs/conf.py
