@@ -9,21 +9,13 @@ version: 2
 formats: all
 
 build:
-#    image: latest
     os: "ubuntu-22.04"
     tools:
-#        python: "3.10"
         python: "mambaforge-22.9"
 
-#python:
-#   install:
-#   - requirements: docs/requirements.txt
-#   - method: pip
-#     path: .  # This will install argopy from the branch we're building the documentation from
+conda:
+    environment: ci/requirements/py3.10-docs-rtd.yml
 
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
   configuration: docs/conf.py
-
-conda:
-    environment: ci/requirements/py3.10-docs-rtd.yml
