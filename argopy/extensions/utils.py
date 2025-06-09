@@ -1,6 +1,7 @@
 from ..xarray import xr, ArgoAccessor
 from ..utils import register_accessor
 
+
 def register_argo_accessor(name):
     """A decorator to register an accessor as a custom property on :class:`xarray.Dataset.argo` objects.
 

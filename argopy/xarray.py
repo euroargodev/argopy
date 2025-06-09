@@ -2102,7 +2102,7 @@ class ArgoAccessor:
 
         # Create the xr.apply_ufunc list of keywords arguments:
         ufunc_kwargs = dict(
-            kwargs=kwargs, # Keywords arguments to be passed to the reduce function
+            kwargs=kwargs,  # Keywords arguments to be passed to the reduce function
             input_core_dims=input_core_dims,
 
             # dimensions allowed to change size. Must be set!
@@ -2137,10 +2137,10 @@ class ArgoEngine(BackendEntrypoint):
     Examples
     --------
     .. code-block:: python
-    
+
         import xarray as xr
         ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
-        
+
     """
 
     description = "Open Argo netCDF files (.nc)"

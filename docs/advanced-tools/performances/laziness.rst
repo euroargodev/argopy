@@ -56,8 +56,7 @@ to :func:`xarray.open_dataset` or :func:`xarray.open_zarr` to open a netcdf file
 Laziness support status
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Not all Argo data servers support the byte range request that is mandatory to access lazily a netcdf file. Nore
-all **argopy** methods support laziness through kerchunk and zarr references data.
+Not all Argo data servers support the byte range request that is mandatory to access lazily a netcdf file; and not all **argopy** methods support laziness through kerchunk and zarr references data.
 
 The table below syntheses lazy support status for all possible GDAC hosts:
 
@@ -159,8 +158,8 @@ Now we can get a dummy list of netcdf files:
     :okwarning:
 
     from argopy import ArgoIndex
-    idx = ArgoIndex(host='s3').search_lat_lon_tim([-65, -55, 30, 40,
-                                                   '2025-01-01', '2025-02-01'])
+    idx = ArgoIndex(host='s3').query.box([-65, -55, 30, 40,
+                                          '2025-01-01', '2025-02-01'])
 
     ncfiles = [af.ls_dataset()['prof'] for af in idx.iterfloats()]
     print(len(ncfiles))

@@ -1,7 +1,7 @@
 {
   "name": "parameters",
   "long_name": "All valid requests to https://api-coriolis.ifremer.fr/legacy/parameter?code={code}",
-  "last_update": "2025-03-04T09:37:08.101319+00:00",
+  "last_update": "2025-06-09T15:15:16.660328+00:00",
   "data": {
     "valid_codes": [
       "9",
@@ -528,7 +528,18 @@
       "780",
       "781",
       "782",
-      "783"
+      "783",
+      "784",
+      "785",
+      "786",
+      "787",
+      "788",
+      "789",
+      "790",
+      "791",
+      "792",
+      "793",
+      "794"
     ],
     "valid_params": [
       "DEPH",
@@ -1045,7 +1056,18 @@
       "EXT_780",
       "EXT_781",
       "EXT_782",
-      "EXT_783"
+      "EXT_783",
+      "LEAW",
+      "ZINW",
+      "URAW",
+      "MOLW",
+      "MERW",
+      "MEHG",
+      "PHTX",
+      "CIDA",
+      "NFHW",
+      "CXAP",
+      "CRSW"
     ],
     "codes": {
       "9": {
@@ -6197,6 +6219,116 @@
         "parent_code": "0",
         "label": "Biodiversity phytoplankton count",
         "param_type": "E"
+      },
+      "784": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "784",
+        "gf3_strict_name": "LEAW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total lead",
+        "param_type": "P"
+      },
+      "785": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "785",
+        "gf3_strict_name": "ZINW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total zinc",
+        "param_type": "P"
+      },
+      "786": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "786",
+        "gf3_strict_name": "URAW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total uranium",
+        "param_type": "P"
+      },
+      "787": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "787",
+        "gf3_strict_name": "MOLW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total molybdenum",
+        "param_type": "P"
+      },
+      "788": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "788",
+        "gf3_strict_name": "MERW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total mercury",
+        "param_type": "P"
+      },
+      "789": {
+        "unit": "microgram/m3",
+        "time_sampling": "",
+        "code": "789",
+        "gf3_strict_name": "MEHG",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total methylmercury cation",
+        "param_type": "P"
+      },
+      "790": {
+        "unit": "degree_Celsius",
+        "time_sampling": "",
+        "code": "790",
+        "gf3_strict_name": "PHTX",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Temperature of pH measurement",
+        "param_type": "T"
+      },
+      "791": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "791",
+        "gf3_strict_name": "CIDA",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Chlorophyllide-a",
+        "param_type": "P"
+      },
+      "792": {
+        "unit": "10+3/m3",
+        "time_sampling": "",
+        "code": "792",
+        "gf3_strict_name": "NFHW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Abundance of heterotrophic nanoflagellate >2 <20 micrometers",
+        "param_type": "P"
+      },
+      "793": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "793",
+        "gf3_strict_name": "CXAP",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Crocoxanthin",
+        "param_type": "P"
+      },
+      "794": {
+        "unit": "10+3/m3",
+        "time_sampling": "",
+        "code": "794",
+        "gf3_strict_name": "CRSW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Abundance of cryptophyceae (flow cytometry)",
+        "param_type": "P"
       }
     },
     "params": {
@@ -11349,6 +11481,116 @@
         "parent_code": "0",
         "label": "Biodiversity phytoplankton count",
         "param_type": "E"
+      },
+      "LEAW": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "784",
+        "gf3_strict_name": "LEAW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total lead",
+        "param_type": "P"
+      },
+      "ZINW": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "785",
+        "gf3_strict_name": "ZINW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total zinc",
+        "param_type": "P"
+      },
+      "URAW": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "786",
+        "gf3_strict_name": "URAW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total uranium",
+        "param_type": "P"
+      },
+      "MOLW": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "787",
+        "gf3_strict_name": "MOLW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total molybdenum",
+        "param_type": "P"
+      },
+      "MERW": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "788",
+        "gf3_strict_name": "MERW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total mercury",
+        "param_type": "P"
+      },
+      "MEHG": {
+        "unit": "microgram/m3",
+        "time_sampling": "",
+        "code": "789",
+        "gf3_strict_name": "MEHG",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Total methylmercury cation",
+        "param_type": "P"
+      },
+      "PHTX": {
+        "unit": "degree_Celsius",
+        "time_sampling": "",
+        "code": "790",
+        "gf3_strict_name": "PHTX",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Temperature of pH measurement",
+        "param_type": "T"
+      },
+      "CIDA": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "791",
+        "gf3_strict_name": "CIDA",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Chlorophyllide-a",
+        "param_type": "P"
+      },
+      "NFHW": {
+        "unit": "10+3/m3",
+        "time_sampling": "",
+        "code": "792",
+        "gf3_strict_name": "NFHW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Abundance of heterotrophic nanoflagellate >2 <20 micrometers",
+        "param_type": "P"
+      },
+      "CXAP": {
+        "unit": "milligram/m3",
+        "time_sampling": "",
+        "code": "793",
+        "gf3_strict_name": "CXAP",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Crocoxanthin",
+        "param_type": "P"
+      },
+      "CRSW": {
+        "unit": "10+3/m3",
+        "time_sampling": "",
+        "code": "794",
+        "gf3_strict_name": "CRSW",
+        "gf3_extended_name": "",
+        "parent_code": "0",
+        "label": "Abundance of cryptophyceae (flow cytometry)",
+        "param_type": "P"
       }
     }
   }

@@ -8,12 +8,11 @@ You should rather use the :class:`xarray.Dataset.argo.optic` extension.
 """
 
 import numpy as np
-from typing import Literal, Tuple
+from typing import Tuple, Annotated, Literal, TypeVar
 
 from scipy.ndimage import median_filter
 from scipy.ndimage import uniform_filter1d
 
-from typing import Annotated, Literal, TypeVar
 import numpy.typing as npt
 
 DType = TypeVar("DType", bound=np.generic)
@@ -132,10 +131,7 @@ def Z_firstoptic(*args, **kwargs) -> float:
 
 
 def Z_iPAR_threshold(
-    axis: np.ndarray,
-    par: np.ndarray,
-    threshold: float = 15.0,
-    tolerance: float = 5.0
+    axis: np.ndarray, par: np.ndarray, threshold: float = 15.0, tolerance: float = 5.0
 ) -> float:
     """Depth where unlabelled array of PAR reaches some threshold value (closest point)
 
@@ -151,7 +147,7 @@ def Z_iPAR_threshold(
     par: array_like, 1 dimensional
         Photosynthetically available radiation, typically from the ``DOWNWELLING_PAR`` parameter of an Argo float.
     threshold: float, optional, default: 15.
-        Target value for ``par``. We use 15 as the default because it is the theorical value below which
+        Target value for ``par``. We use 15 as the default because it is the theoretical value below which
         the Fchla is no longer quenched (For correction of NPQ purposes).
     tolerance: float, optional, default: 5.
         PAR value tolerance with regard to the target threshold. If the closest PAR value to ``threshold`` is distant by more than ``tolerance``, consider result invalid and return NaN.
@@ -183,15 +179,15 @@ def Z_iPAR_threshold(
 def DCM(
     CHLA: np.ndarray,
     CHLA_axis: np.ndarray,
-    BBP:np.ndarray,
+    BBP: np.ndarray,
     BBP_axis: np.ndarray,
-    max_depth: float = 300.,
+    max_depth: float = 300.0,
     resolution_threshold: float = 3.0,
     median_filter_size: int = 5,
     surface_layer: float = 15.0,
     median_filter_size_bbp: int = 7,
     uniform_filter1d_size_bbp: int = 5,
-) -> Tuple[Literal['NO ', 'DBM', 'DAM'], float, float]:
+) -> Tuple[Literal["NO ", "DBM", "DAM"], float, float]:
     """Search and qualify Deep Chlorophyll Maxima from unlabeled arrays of pressure and CHLA/BBP
 
     See :class:`xarray.Dataset.argo.optic.DCM` for more details on the methodology.
@@ -252,23 +248,30 @@ def DCM(
     # Identify the CHLA maximum in the appropriate layer:
     layer_CHLA = CHLA_axis <= max_depth
     if ~np.any(layer_CHLA):
-        return 'NO', np.nan, np.nan
+        return "NO", np.nan, np.nan
     Max_CHLA_depth = CHLA_axis[layer_CHLA][np.argmax(CHLA_smooth[layer_CHLA])]
     Max_CHLA = CHLA[layer_CHLA][np.argmax(CHLA_smooth[layer_CHLA])]
 
     # Qualify CHLA maximum as a DCM:
-    if np.any(CHLA_axis <= surface_layer) and Max_CHLA > 2 * np.median(CHLA[CHLA_axis <= surface_layer]):
+    if np.any(CHLA_axis <= surface_layer) and Max_CHLA > 2 * np.median(
+        CHLA[CHLA_axis <= surface_layer]
+    ):
         DCM_type = "DCM"
     else:
-        return 'NO', np.nan, np.nan
+        return "NO", np.nan, np.nan
 
     # Check for a potential cooccurrence of the DCM depth with any deep peak of BBP:
     if DCM_type == "DCM":
 
-        if np.diff(BBP_axis[BBP_axis <= max_depth]).mean().round() < resolution_threshold:
+        if (
+            np.diff(BBP_axis[BBP_axis <= max_depth]).mean().round()
+            < resolution_threshold
+        ):
             # Rolling median window 5, Rolling mean 7
             BBP_smooth = median_filter(BBP, median_filter_size_bbp, mode="nearest")
-            BBP_smooth = uniform_filter1d(BBP_smooth, uniform_filter1d_size_bbp, mode="nearest")
+            BBP_smooth = uniform_filter1d(
+                BBP_smooth, uniform_filter1d_size_bbp, mode="nearest"
+            )
         else:
             BBP_smooth = np.copy(BBP)
 
@@ -287,12 +290,10 @@ def DCM(
         else:
             DCM_type = "DAM"  # Deep photoAcclimation Maximum
 
-    if DCM_type == 'NO':
+    if DCM_type == "NO":
         return "%3s" % DCM_type, np.nan, np.nan
     else:
         return "%3s" % DCM_type, Max_CHLA_depth, Max_CHLA
-
-
 
 
 def MLD_Func(PRES, PSAL, TEMP, LAT, LON):
@@ -301,7 +302,7 @@ def MLD_Func(PRES, PSAL, TEMP, LAT, LON):
     ----------
     Process potential density using gsw package
 
-    return MLD wth Boyer Montégut method wth threshold of σ(10m) + 0.03 kg.m-3
+    Return MLD with Boyer Montégut method with threshold of σ(10m) + 0.03 kg.m-3
 
     """
     SA = gsw.SA_from_SP(PSAL, PRES, LON, LAT)
@@ -359,5 +360,3 @@ def get_solar_angle(LATITUDE, LONGITUDE, JULD):
     solar_position = location.get_solarposition(JULD)
 
     return solar_position["apparent_elevation"].values
-
-

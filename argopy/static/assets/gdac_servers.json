@@ -1,7 +1,7 @@
 {
   "name": "gdac",
   "long_name": "List of official Argo GDAC servers",
-  "last_update": "2025-03-04T09:37:11.331902+00:00",
+  "last_update": "2025-06-09T15:15:18.516898+00:00",
   "data": {
     "paths": [
       "https://data-argo.ifremer.fr",

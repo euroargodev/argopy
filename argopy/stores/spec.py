@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 import fsspec
-from fsspec.core import split_protocol
 from packaging import version
 import os
 import shutil

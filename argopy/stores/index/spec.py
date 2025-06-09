@@ -1183,7 +1183,6 @@ file,profiler_type,institution,date_update
                 yield ArgoFloat(wmo, idx=self)
 
 
-
 class ArgoIndexExtension:
     """Prototype for ArgoIndex extensions
 
