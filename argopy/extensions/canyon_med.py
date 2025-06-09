@@ -23,16 +23,19 @@ class CanyonMED(ArgoAccessorExtension):
     --------
     Load data, they must contain oxygen measurements:
 
-    >>> from argopy import DataFetcher
-    >>> ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').float(1902605)
-    >>> ds = ArgoSet.to_xarray()
+    .. code-block:: python
+
+        from argopy import DataFetcher
+        ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').float(1902605)
+        ds = ArgoSet.to_xarray()
 
     Once input data are loaded, make all or selected parameters predictions:
 
-    >>> ds.argo.canyon_med.predict()
-    >>> ds.argo.canyon_med.predict('PO4')
-    >>> ds.argo.canyon_med.predict(['PO4', 'NO3'])
+    .. code-block:: python
 
+        ds.argo.canyon_med.predict()
+        ds.argo.canyon_med.predict('PO4')
+        ds.argo.canyon_med.predict(['PO4', 'NO3'])
 
     Notes
     -----

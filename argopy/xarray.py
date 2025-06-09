@@ -53,54 +53,54 @@ class ArgoAccessor:
     .. code-block:: python
         :caption: Conformity
 
-        >>> ds.argo.cast_types()
+        ds.argo.cast_types()
 
     .. code-block:: python
         :caption: Transformation
 
-        >>> ds.argo.point2profile()
-        >>> ds.argo.profile2point()
-        >>> ds.argo.inter_std_levels(std_lev=[10., 500., 1000.])
-        >>> ds.argo.groupby_pressure_bins(bins=[0, 200., 500., 1000.])
+        ds.argo.point2profile()
+        ds.argo.profile2point()
+        ds.argo.inter_std_levels(std_lev=[10., 500., 1000.])
+        ds.argo.groupby_pressure_bins(bins=[0, 200., 500., 1000.])
 
     .. code-block:: python
         :caption: QC flags and methods
 
-        >>> ds.argo.filter_qc(QC_list=[1, 2], QC_fields='all')
-        >>> ds.argo.filter_scalib_pres(force='default')
-        >>> ds.argo.create_float_source("output_folder")
+        ds.argo.filter_qc(QC_list=[1, 2], QC_fields='all')
+        ds.argo.filter_scalib_pres(force='default')
+        ds.argo.create_float_source("output_folder")
 
     .. code-block:: python
         :caption: TEOS10
 
-        >>> ds.argo.teos10(vlist='PV')
+        ds.argo.teos10(vlist='PV')
 
     .. code-block:: python
         :caption: Extensions: Data Mode
 
-        >>> ds.argo.datamode.compute()
-        >>> ds.argo.datamode.merge()
-        >>> ds.argo.datamode.filter()
-        >>> ds.argo.datamode.filter(dm=['D'], params='all')
-        >>> ds.argo.datamode.split()
+        ds.argo.datamode.compute()
+        ds.argo.datamode.merge()
+        ds.argo.datamode.filter()
+        ds.argo.datamode.filter(dm=['D'], params='all')
+        ds.argo.datamode.split()
 
     .. code-block:: python
         :caption: Extensions: CANYON-MED
 
-        >>> ds.argo.canyon_med.fit()
-        >>> ds.argo.canyon_med.predict()
-        >>> ds.argo.canyon_med.predict('PO4')
+        ds.argo.canyon_med.fit()
+        ds.argo.canyon_med.predict()
+        ds.argo.canyon_med.predict('PO4')
 
     .. code-block:: python
         :caption: Extensions: Optical modeling
 
-        >>> ds.argo.optic.Zeu()
-        >>> ds.argo.optic.Zeu(inplace=True)
-        >>> ds.argo.optic.Zeu(method='percentage')
-        >>> ds.argo.optic.Zeu(method='KdPAR')
+        ds.argo.optic.Zeu()
+        ds.argo.optic.Zeu(inplace=True)
+        ds.argo.optic.Zeu(method='percentage')
+        ds.argo.optic.Zeu(method='KdPAR')
 
-        >>> ds.argo.optic.Zpd()
-        >>> ds.argo.optic.Zpd(inplace=True)
+        ds.argo.optic.Zpd()
+        ds.argo.optic.Zpd(inplace=True)
 
     """
 
@@ -301,8 +301,8 @@ class ArgoAccessor:
 
         Examples
         --------
-        >>> unique_float_profile_id = uid(690024,13,'A') # Encode
-        >>> wmo, cyc, drc = uid(unique_float_profile_id) # Decode
+        unique_float_profile_id = uid(690024,13,'A') # Encode
+        wmo, cyc, drc = uid(unique_float_profile_id) # Decode
 
         """
 
@@ -1570,11 +1570,11 @@ class ArgoAccessor:
 
         You can force the program to load raw PRES, PSAL and TEMP whatever PRES is adjusted or not:
 
-        >>> ds.argo.create_float_source(force='raw')
+        ds.argo.create_float_source(force='raw')
 
         or you can force the program to load adjusted variables: PRES_ADJUSTED, PSAL_ADJUSTED, TEMP_ADJUSTED
 
-        >>> ds.argo.create_float_source(force='adjusted')
+        ds.argo.create_float_source(force='adjusted')
 
         **Pre-processing details**:
 
@@ -2136,8 +2136,11 @@ class ArgoEngine(BackendEntrypoint):
 
     Examples
     --------
-    >>> import xarray as xr
-    >>> ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
+    .. code-block:: python
+    
+        import xarray as xr
+        ds = xr.open_dataset("dac/aoml/1901393/1901393_prof.nc", engine='argo')
+        
     """
 
     description = "Open Argo netCDF files (.nc)"

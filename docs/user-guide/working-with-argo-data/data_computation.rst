@@ -163,7 +163,7 @@ A more complex example will imply a function taking arguments. In the following 
 
 .. code-block:: python
 
-     def max_salinity_depth(pres, psal, max_layer=1000.):
+    def max_salinity_depth(pres, psal, max_layer=1000.):
         # A dummy function returning depth of the maximum salinity above max_layer:
         idx = ~np.logical_or(np.isnan(pres), np.isnan(psal))
         idx = np.logical_and(idx, pres<=max_layer)
@@ -176,7 +176,7 @@ Simply provide the function argument to the reducer:
 
 .. code-block:: python
 
-     dsp.argo.reduce_profile(max_salinity_depth,
+    dsp.argo.reduce_profile(max_salinity_depth,
                             params=['PRES', 'PSAL'],
                             max_layer=400.)
 
@@ -187,14 +187,14 @@ At last, note that you can optmize this computation using Dask by simply chunkin
 
 .. code-block:: python
 
-     from argopy import ArgoFloat
+    from argopy import ArgoFloat
     dsp = ArgoFloat(6901864).open_dataset('Sprof')
 
 Make sure we're working with dask arrays:
 
 .. code-block:: python
 
-     dsp = dsp.chunk({'N_PROF': 10})
+    dsp = dsp.chunk({'N_PROF': 10})
 
 In this case, the :meth:`Dataset.argo.reduce_profile` will return a dask array:
 
@@ -208,7 +208,6 @@ And we need to trigger the computation to have it done:
 .. code-block:: python
 
     da.compute()
-
 
 References
 ----------
