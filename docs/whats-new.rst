@@ -7,8 +7,10 @@ What's New
 
 |pypi dwn| |conda dwn|
 
-Coming up next
---------------
+v1.2.0 (9 June 2025)
+--------------------
+
+.. _v1.2.0-features:
 
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -17,11 +19,14 @@ Features and front-end API
 
 - :class:`ArgoIndex` **now support composition of several search criteria**. Thanks to a re-design of the Argo index search engine, it is now easy to use multiple search criteria to query an Argo files index. Checkout the dedicated :ref:`tools-argoindex` documentation page. (:pr:`470`) by |gmaze|.
 
+.. _v1.2.0-internals:
 
 Internals
 ^^^^^^^^^
 
 - **Open netcdf files lazily from ftp server**. Adding to s3 and http, we now support laziness with ftp using `kerchunk <https://fsspec.github.io/kerchunk/>`_. Checkout the dedicated :ref:`lazy` section of the documentation. (:pr:`460`) by |gmaze|.
+
+.. _v1.2.0-energy:
 
 Energy
 ^^^^^^
