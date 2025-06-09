@@ -56,8 +56,7 @@ to :func:`xarray.open_dataset` or :func:`xarray.open_zarr` to open a netcdf file
 Laziness support status
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Not all Argo data servers support the byte range request that is mandatory to access lazily a netcdf file. Nore
-all **argopy** methods support laziness through kerchunk and zarr references data.
+Not all Argo data servers support the byte range request that is mandatory to access lazily a netcdf file; and not all **argopy** methods support laziness through kerchunk and zarr references data.
 
 The table below syntheses lazy support status for all possible GDAC hosts:
 

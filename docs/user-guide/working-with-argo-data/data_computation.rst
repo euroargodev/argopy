@@ -183,7 +183,7 @@ Simply provide the function argument to the reducer:
 Optimisation with Dask
 ^^^^^^^^^^^^^^^^^^^^^^
 
-At last, note that you can optmize this computation using Dask by simply chunking the dataset along the ``N_PROF`` dimension.
+At last, note that you can optimize this computation using Dask by simply chunking the dataset along the ``N_PROF`` dimension.
 
 .. code-block:: python
 

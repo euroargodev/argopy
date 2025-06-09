@@ -151,7 +151,7 @@ def Z_iPAR_threshold(
     par: array_like, 1 dimensional
         Photosynthetically available radiation, typically from the ``DOWNWELLING_PAR`` parameter of an Argo float.
     threshold: float, optional, default: 15.
-        Target value for ``par``. We use 15 as the default because it is the theorical value below which
+        Target value for ``par``. We use 15 as the default because it is the theoretical value below which
         the Fchla is no longer quenched (For correction of NPQ purposes).
     tolerance: float, optional, default: 5.
         PAR value tolerance with regard to the target threshold. If the closest PAR value to ``threshold`` is distant by more than ``tolerance``, consider result invalid and return NaN.
@@ -301,7 +301,7 @@ def MLD_Func(PRES, PSAL, TEMP, LAT, LON):
     ----------
     Process potential density using gsw package
 
-    return MLD wth Boyer Montégut method wth threshold of σ(10m) + 0.03 kg.m-3
+    Return MLD with Boyer Montégut method with threshold of σ(10m) + 0.03 kg.m-3
 
     """
     SA = gsw.SA_from_SP(PSAL, PRES, LON, LAT)

@@ -132,7 +132,7 @@ You can also trigger the index content download in memory with:
 Full Index properties
 ---------------------
 
-Once you loaded data to a :class:`ArgoIndex` instance, the following attributs and methods are available:
+Once you loaded data to a :class:`ArgoIndex` instance, the following attributes and methods are available:
 
 .. code-block:: python
 

@@ -131,7 +131,7 @@ class SearchEngine(ArgoIndexSearchEngine):
 
     @search_s3
     def wmo_cyc(self, WMOs, CYCs, nrows=None, composed=False):
-        def chercker(WMOs, CYCs):
+        def checker(WMOs, CYCs):
             if self._obj.convention in ["ar_index_global_meta"]:
                 raise InvalidDatasetStructure(
                     "Cannot search for cycle number in this index)"
@@ -165,7 +165,7 @@ class SearchEngine(ArgoIndexSearchEngine):
                     )
             return self._obj._reduce_a_filter_list(filt)
 
-        WMOs, CYCs = chercker(WMOs, CYCs)
+        WMOs, CYCs = checker(WMOs, CYCs)
         self._obj.load(nrows=self._obj._nrows_index)
         search_filter = composer(WMOs, CYCs)
         if not composed:
