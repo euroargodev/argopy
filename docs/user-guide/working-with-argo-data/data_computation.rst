@@ -82,8 +82,7 @@ This extension provides methods to compute standard variables from optical model
 
 As an example, let's load one BGC float data with DOWNWELLING_PAR measurements:
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
 
     ds = DataFetcher(ds='bgc', mode='expert', params='DOWNWELLING_PAR').float(6901864).data
     dsp = ds.argo.point2profile()
@@ -92,16 +91,14 @@ As an example, let's load one BGC float data with DOWNWELLING_PAR measurements:
 
 Note that we could have loaded these data with a :class:`ArgoFloat`:
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
 
     from argopy import ArgoFloat
     dsp = ArgoFloat(6901864).open_dataset('Sprof')
 
 We can then simply call on the extension methods to add variables to the dataset:
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
 
     dsp.argo.optic.Zeu()
     dsp.argo.optic.Zeu(method='percentage', max_surface=5.)
@@ -113,8 +110,7 @@ We can then simply call on the extension methods to add variables to the dataset
 
 For the Deep Chlorophyll Maxima diagnostic, we need CHLA data, so let's load data from another BGC float:
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
 
     from argopy import ArgoFloat
     dsp = ArgoFloat(1902303).open_dataset('Sprof')
@@ -138,16 +134,14 @@ Diagnostic without option
 
 Let's start with a trivial example. We load one BGC float synthetic data:
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
 
     from argopy import ArgoFloat
     dsp = ArgoFloat(6901864).open_dataset('Sprof')
 
 we then define a function that compute pressure of the salinity maximum. Note that this function deals with numpy or dask 1D arrays:
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
 
     def max_salinity_depth(pres, psal):
         # A dummy function returning depth of the maximum salinity
@@ -156,8 +150,7 @@ we then define a function that compute pressure of the salinity maximum. Note th
 
 and apply this function to all float profiles:
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
 
     dsp.argo.reduce_profile(max_salinity_depth, params=['PRES', 'PSAL'])
 
@@ -168,10 +161,9 @@ Diagnostic with option
 
 A more complex example will imply a function taking arguments. In the following we use the same trivial ``max_salinity_depth`` function as above, but provide a maximum depth argument.
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
 
-    def max_salinity_depth(pres, psal, max_layer=1000.):
+     def max_salinity_depth(pres, psal, max_layer=1000.):
         # A dummy function returning depth of the maximum salinity above max_layer:
         idx = ~np.logical_or(np.isnan(pres), np.isnan(psal))
         idx = np.logical_and(idx, pres<=max_layer)
@@ -182,10 +174,9 @@ A more complex example will imply a function taking arguments. In the following 
 
 Simply provide the function argument to the reducer:
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
 
-    dsp.argo.reduce_profile(max_salinity_depth,
+     dsp.argo.reduce_profile(max_salinity_depth,
                             params=['PRES', 'PSAL'],
                             max_layer=400.)
 
@@ -194,31 +185,27 @@ Optimisation with Dask
 
 At last, note that you can optmize this computation using Dask by simply chunking the dataset along the ``N_PROF`` dimension.
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
 
-    from argopy import ArgoFloat
+     from argopy import ArgoFloat
     dsp = ArgoFloat(6901864).open_dataset('Sprof')
 
 Make sure we're working with dask arrays:
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
 
-    dsp = dsp.chunk({'N_PROF': 10})
+     dsp = dsp.chunk({'N_PROF': 10})
 
 In this case, the :meth:`Dataset.argo.reduce_profile` will return a dask array:
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
 
     da = dsp.argo.reduce_profile(max_salinity_depth, params=['PRES', 'PSAL'])
     da
 
 And we need to trigger the computation to have it done:
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
 
     da.compute()
 
