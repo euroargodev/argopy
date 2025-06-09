@@ -6,23 +6,21 @@
 version: 2
 
 # Build PDF & ePub
-formats: all
+#formats: htmlzip
 
 build:
-#    image: latest
     os: "ubuntu-22.04"
     tools:
-        python: "3.10"
+        python: "mambaforge-22.9"
+
+conda:
+    environment: ci/requirements/py3.10-docs-rtd.yml
 
 python:
    install:
-   - requirements: docs/requirements.txt
    - method: pip
      path: .  # This will install argopy from the branch we're building the documentation from
 
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
   configuration: docs/conf.py
-
-#conda:
-#    environment: ci/requirements/doc.yml

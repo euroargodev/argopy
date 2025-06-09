@@ -414,5 +414,6 @@ intersphinx_mapping = {
     's3fs': ('https://s3fs.readthedocs.io/en/latest/', None),
     'kerchunk': ('https://fsspec.github.io/kerchunk/', None),
     'numcodecs': ('https://numcodecs.readthedocs.io/en/stable/', None),
-    'netCDF4': ('https://unidata.github.io/netcdf4-python/', None),
+    'scipy': ('https://docs.scipy.org/doc/scipy/', None),
+    # 'netCDF4': ('https://unidata.github.io/netcdf4-python/', None),
 }

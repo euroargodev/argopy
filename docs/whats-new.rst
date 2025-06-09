@@ -15,6 +15,16 @@ v1.2.0 (9 June 2025)
 Features and front-end API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. currentmodule:: xarray
+
+- **Optical modeling diagnostics for BGC data**. We introduce a preliminary implementation of standard diagnostics from optical modeling. These are available through the new :class:`Dataset.argo.optic` extension. All details are in the dedicated :ref:`complement-optical-modeling` documentation page and on the API reference. (:pr:`463`) by |gmaze|.
+
+- **Optimized diagnostic per profile**. If you want to execute your own diagnostic method on a collection of Argo profiles, **argopy** now provides an efficient method to do so: :meth:`Dataset.argo.reduce_profile` that is based on the :meth:`xarray.apply_ufunc` method. Typical usage example would include computation of mixed layer depth or euphotic layer depth. All details are in the dedicated :ref:`perprofile-diag` documentation page and on the API reference of the method. (:pr:`463`) by |gmaze|.
+
+.. currentmodule:: argopy
+
+- :class:`ArgoIndex` **now support composition of several search criteria**. Thanks to a re-design of the Argo index search engine, it is now easy to use multiple search criteria to query an Argo files index. Checkout the dedicated :ref:`tools-argoindex` documentation page. (:pr:`470`) by |gmaze|.
+ 
 - **Fetch Argo data as** :class:`netCDF4.Dataset`. For the sake of compatibility with legacy codes and to encourage **argopy** adoption for all loading/reading operations, we now support for data output as a `netCDF4 Dataset object <https://unidata.github.io/netcdf4-python/#netCDF4.Dataset>`_. This new feature is available at high level with the DataFetcher and lower-level with the ArgoFloat and gdacfs classes.
 
 - :class:`ArgoIndex` **now support composition of several search criteria**. Thanks to a re-design of the Argo index search engine, it is now easy to use multiple search criteria to query an Argo files index. Checkout the dedicated :ref:`tools-argoindex` documentation page. (:pr:`470`) by |gmaze|.
@@ -120,7 +130,11 @@ Internals
 
 - Fix bug raising an error when exporting a dataset to netcdf after erddap fetch, :issue:`412`. (:pr:`413`) by |gmaze|.
 
+.. currentmodule:: xarray
+
 - The :class:`Dataset.argo.canyon_med` predictor raises errors if not dealing with a collection of Argo points. (:pr:`450`) by |gmaze|.
+
+.. currentmodule:: argopy
 
 - Make the :class:`Dataset.argo` accessor and its extensions able to work with dataset from a :class:`DataFetcher` and from a :class:`ArgoFloat`. This was necessary because the time variable does not have the same name in these dataset (``TIME`` vs ``JULD``). But this point should be addressed later. (:pr:`450`) by |gmaze|.
 
@@ -426,7 +440,9 @@ Features and front-end API
   :align: center
   :target: _static/argopy-cheatsheet.pdf
 
-- **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`Store: Low-level Argo Index access`. (:pr:`270`) by |gmaze|
+.. currentmodule:: argopy
+
+- **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`tools-argoindex`. (:pr:`270`) by |gmaze|
 
 - **Easy access to all Argo manuals from the ADMT**. More than 20 pdf manuals have been produced by the Argo Data Management Team. Using the new :class:`ArgoDocs` class, it's now easier to navigate this great database for Argo experts. All details in :ref:`ADMT Documentation`. (:pr:`268`) by |gmaze|
 
@@ -497,7 +513,7 @@ Internals
 
 - Update new argovis dashboard links for floats and profiles. (:pr:`271`) by |gmaze|
 
-- **Index store can now export search results to standard Argo index file format**. See all details in :ref:`Store: Low-level Argo Index access`. (:pr:`260`) by |gmaze|
+- **Index store can now export search results to standard Argo index file format**. See all details in :ref:`tools-argoindex`. (:pr:`260`) by |gmaze|
 
 .. code-block:: python
 
@@ -511,7 +527,7 @@ Internals
     idx.to_indexfile('short_index.txt')  # export search results as standard Argo index csv file
 
 
-- **Index store can now load/search the Argo Bio and Synthetic profile index files**. Simply gives the name of the Bio or Synthetic Profile index file and retrieve the full index. This  store also comes with a new search criteria for BGC: by parameters. See all details in :ref:`Store: Low-level Argo Index access`.  (:pr:`261`) by |gmaze|
+- **Index store can now load/search the Argo Bio and Synthetic profile index files**. Simply gives the name of the Bio or Synthetic Profile index file and retrieve the full index. This  store also comes with a new search criteria for BGC: by parameters. See all details in :ref:`tools-argoindex`.  (:pr:`261`) by |gmaze|
 
 .. code-block:: python
 
@@ -632,7 +648,7 @@ Features and front-end API
   :align: center
   :target: _static/argopy-cheatsheet.pdf
 
-- **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`Store: Low-level Argo Index access`. (:pr:`270`) by |gmaze|
+- **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`tools-argoindex`. (:pr:`270`) by |gmaze|
 
 - **Easy access to all Argo manuals from the ADMT**. More than 20 pdf manuals have been produced by the Argo Data Management Team. Using the new :class:`ArgoDocs` class, it's now easier to navigate this great database for Argo experts. All details in :ref:`ADMT Documentation`. (:pr:`268`) by |gmaze|
 
@@ -680,7 +696,7 @@ Internals
 
 - Update new argovis dashboard links for floats and profiles. (:pr:`271`) by |gmaze|
 
-- **Index store can now export search results to standard Argo index file format**. See all details in :ref:`Store: Low-level Argo Index access`. (:pr:`260`) by |gmaze|
+- **Index store can now export search results to standard Argo index file format**. See all details in :ref:`tools-argoindex`. (:pr:`260`) by |gmaze|
 
 .. code-block:: python
 
@@ -694,7 +710,7 @@ Internals
     idx.to_indexfile('short_index.txt')  # export search results as standard Argo index csv file
 
 
-- **Index store can now load/search the Argo Bio and Synthetic profile index files**. Simply gives the name of the Bio or Synthetic Profile index file and retrieve the full index. This  store also comes with a new search criteria for BGC: by parameters. See all details in :ref:`Store: Low-level Argo Index access`.  (:pr:`261`) by |gmaze|
+- **Index store can now load/search the Argo Bio and Synthetic profile index files**. Simply gives the name of the Bio or Synthetic Profile index file and retrieve the full index. This  store also comes with a new search criteria for BGC: by parameters. See all details in :ref:`tools-argoindex`.  (:pr:`261`) by |gmaze|
 
 .. code-block:: python
 
