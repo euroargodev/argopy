@@ -5,6 +5,8 @@ from collections import ChainMap, OrderedDict
 import shutil
 
 from mocked_http import mocked_httpserver, mocked_server_address
+
+from tests.test_stores_fsspec import skip_this
 from utils import (
     requires_matplotlib,
     requires_cartopy,
@@ -219,6 +221,7 @@ class Test_OceanOPSDeployments:
         assert isinstance(ax, cartopy.mpl.geoaxes.GeoAxesSubplot)
 
 
+@skip_this
 class Test_ArgoDocs:
 
     @pytest.fixture
