@@ -19,7 +19,7 @@ from ..options import OPTIONS, check_gdac_option, PARALLEL_SETUP
 from ..errors import DataNotFound
 from ..stores import ArgoIndex, has_distributed, distributed
 from .proto import ArgoDataFetcherProto
-from .gdac_data_processors import pre_process_multiprof, filter_points
+from .gdac_data_processors import pre_process_multiprof
 
 
 log = logging.getLogger("argopy.gdac.data")
