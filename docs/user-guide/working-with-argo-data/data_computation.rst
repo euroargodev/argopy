@@ -47,23 +47,20 @@ This model is available in **argopy** as an extension to the ``argo`` accessor: 
 
 As an example, let's load one float data with oxygen measurements:
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
 
     ArgoSet = DataFetcher(ds='bgc', mode='standard', params='DOXY', measured='DOXY').float(1902605)
     ds = ArgoSet.to_xarray()
 
 We can then predict all possible variables:
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
 
     ds.argo.canyon_med.predict()
 
 or select variables to predict, like PO4:
 
-.. ipython:: python
-    :okwarning:
+.. code-block:: python
 
     ds = ds.argo.canyon_med.predict('PO4')
     ds['PO4']
