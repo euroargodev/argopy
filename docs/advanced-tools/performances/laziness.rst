@@ -159,8 +159,8 @@ Now we can get a dummy list of netcdf files:
     :okwarning:
 
     from argopy import ArgoIndex
-    idx = ArgoIndex(host='s3').search_lat_lon_tim([-65, -55, 30, 40,
-                                                   '2025-01-01', '2025-02-01'])
+    idx = ArgoIndex(host='s3').query.box([-65, -55, 30, 40,
+                                          '2025-01-01', '2025-02-01'])
 
     ncfiles = [af.ls_dataset()['prof'] for af in idx.iterfloats()]
     print(len(ncfiles))
