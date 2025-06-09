@@ -435,7 +435,9 @@ Features and front-end API
   :align: center
   :target: _static/argopy-cheatsheet.pdf
 
-- **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`Store: Low-level Argo Index access`. (:pr:`270`) by |gmaze|
+.. currentmodule:: argopy
+
+- **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`tools-argoindex`. (:pr:`270`) by |gmaze|
 
 - **Easy access to all Argo manuals from the ADMT**. More than 20 pdf manuals have been produced by the Argo Data Management Team. Using the new :class:`ArgoDocs` class, it's now easier to navigate this great database for Argo experts. All details in :ref:`ADMT Documentation`. (:pr:`268`) by |gmaze|
 
@@ -506,7 +508,7 @@ Internals
 
 - Update new argovis dashboard links for floats and profiles. (:pr:`271`) by |gmaze|
 
-- **Index store can now export search results to standard Argo index file format**. See all details in :ref:`Store: Low-level Argo Index access`. (:pr:`260`) by |gmaze|
+- **Index store can now export search results to standard Argo index file format**. See all details in :ref:`tools-argoindex`. (:pr:`260`) by |gmaze|
 
 .. code-block:: python
 
@@ -520,7 +522,7 @@ Internals
     idx.to_indexfile('short_index.txt')  # export search results as standard Argo index csv file
 
 
-- **Index store can now load/search the Argo Bio and Synthetic profile index files**. Simply gives the name of the Bio or Synthetic Profile index file and retrieve the full index. This  store also comes with a new search criteria for BGC: by parameters. See all details in :ref:`Store: Low-level Argo Index access`.  (:pr:`261`) by |gmaze|
+- **Index store can now load/search the Argo Bio and Synthetic profile index files**. Simply gives the name of the Bio or Synthetic Profile index file and retrieve the full index. This  store also comes with a new search criteria for BGC: by parameters. See all details in :ref:`tools-argoindex`.  (:pr:`261`) by |gmaze|
 
 .. code-block:: python
 
@@ -641,7 +643,7 @@ Features and front-end API
   :align: center
   :target: _static/argopy-cheatsheet.pdf
 
-- **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`Store: Low-level Argo Index access`. (:pr:`270`) by |gmaze|
+- **Our internal Argo index store is promoted as a frontend feature**. The :class:`IndexFetcher` is a user-friendly **fetcher** built on top of our internal Argo index file store. But if you are familiar with Argo index files and/or cares about performances, you may be interested in using directly the Argo index **store**. We thus decided to promote this internal feature as a frontend class :class:`ArgoIndex`. See :ref:`tools-argoindex`. (:pr:`270`) by |gmaze|
 
 - **Easy access to all Argo manuals from the ADMT**. More than 20 pdf manuals have been produced by the Argo Data Management Team. Using the new :class:`ArgoDocs` class, it's now easier to navigate this great database for Argo experts. All details in :ref:`ADMT Documentation`. (:pr:`268`) by |gmaze|
 
@@ -689,7 +691,7 @@ Internals
 
 - Update new argovis dashboard links for floats and profiles. (:pr:`271`) by |gmaze|
 
-- **Index store can now export search results to standard Argo index file format**. See all details in :ref:`Store: Low-level Argo Index access`. (:pr:`260`) by |gmaze|
+- **Index store can now export search results to standard Argo index file format**. See all details in :ref:`tools-argoindex`. (:pr:`260`) by |gmaze|
 
 .. code-block:: python
 
@@ -703,7 +705,7 @@ Internals
     idx.to_indexfile('short_index.txt')  # export search results as standard Argo index csv file
 
 
-- **Index store can now load/search the Argo Bio and Synthetic profile index files**. Simply gives the name of the Bio or Synthetic Profile index file and retrieve the full index. This  store also comes with a new search criteria for BGC: by parameters. See all details in :ref:`Store: Low-level Argo Index access`.  (:pr:`261`) by |gmaze|
+- **Index store can now load/search the Argo Bio and Synthetic profile index files**. Simply gives the name of the Bio or Synthetic Profile index file and retrieve the full index. This  store also comes with a new search criteria for BGC: by parameters. See all details in :ref:`tools-argoindex`.  (:pr:`261`) by |gmaze|
 
 .. code-block:: python
 
