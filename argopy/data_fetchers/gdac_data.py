@@ -15,7 +15,6 @@ import logging
 from typing import Literal
 
 from ..utils.format import argo_split_path
-from ..utils.decorators import deprecated
 from ..options import OPTIONS, check_gdac_option, PARALLEL_SETUP
 from ..errors import DataNotFound
 from ..stores import ArgoIndex, has_distributed, distributed
@@ -244,75 +243,6 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
         self.fs.clear_cache()
         return self
 
-    @deprecated(
-        "Not serializable, please use 'gdac_data_processors.pre_process_multiprof'",
-        version="1.0.0",
-    )
-    def _preprocess_multiprof(self, ds):
-        """Pre-process one Argo multi-profile file as a collection of points
-
-        Parameters
-        ----------
-        ds: :class:`xarray.Dataset`
-            Dataset to process
-
-        Returns
-        -------
-        :class:`xarray.Dataset`
-
-        """
-        # Remove raw netcdf file attributes and replace them with argopy ones:
-        raw_attrs = ds.attrs
-        ds.attrs = {}
-        ds.attrs.update({"raw_attrs": raw_attrs})
-
-        # Rename JULD and JULD_QC to TIME and TIME_QC
-        ds = ds.rename(
-            {"JULD": "TIME", "JULD_QC": "TIME_QC", "JULD_LOCATION": "TIME_LOCATION"}
-        )
-        ds["TIME"].attrs = {
-            "long_name": "Datetime (UTC) of the station",
-            "standard_name": "time",
-        }
-
-        # Cast data types:
-        ds = ds.argo.cast_types()
-
-        # Enforce real pressure resolution : 0.1 db
-        for vname in ds.data_vars:
-            if "PRES" in vname and "QC" not in vname:
-                ds[vname].values = np.round(ds[vname].values, 1)
-
-        # Remove variables without dimensions:
-        # todo: We should be able to find a way to keep them somewhere in the data structure
-        for v in ds.data_vars:
-            if len(list(ds[v].dims)) == 0:
-                ds = ds.drop_vars(v)
-
-        ds = (
-            ds.argo.profile2point()
-        )  # Default output is a collection of points, along N_POINTS
-
-        if self.dataset_id == "phy":
-            ds.attrs["DATA_ID"] = "ARGO"
-        if self.dataset_id == "bgc":
-            ds.attrs["DATA_ID"] = "ARGO-BGC"
-        ds.attrs["DOI"] = "http://doi.org/10.17882/42182"
-        ds.attrs["Fetched_from"] = self.server
-        try:
-            ds.attrs["Fetched_by"] = getpass.getuser()
-        except:  # noqa: E722
-            ds.attrs["Fetched_by"] = "anonymous"
-        ds.attrs["Fetched_date"] = pd.to_datetime("now", utc=True).strftime("%Y/%m/%d")
-        ds.attrs["Fetched_constraints"] = self.cname()
-        ds.attrs["Fetched_uri"] = ds.encoding["source"]
-        ds = ds[np.sort(ds.data_vars)]
-
-        if self._post_filter_points:
-            ds = self.filter_points(ds)
-
-        return ds
-
     def pre_process(self, ds, *args, **kwargs):
         return pre_process_multiprof(ds, *args, **kwargs)
 
@@ -449,22 +379,6 @@ class GDACArgoDataFetcher(ArgoDataFetcherProto):
             for ds in results:
                 ds.attrs = dict(sorted(ds.attrs.items()))
         return results
-
-    @deprecated(
-        "Not serializable, please use 'gdac_data_processors.filter_points'",
-        version="1.0.0",
-    )
-    def filter_points(self, ds):
-        if hasattr(self, "BOX"):
-            access_point = "BOX"
-            access_point_opts = {"BOX": self.BOX}
-        elif hasattr(self, "CYC"):
-            access_point = "CYC"
-            access_point_opts = {"CYC": self.CYC}
-        elif hasattr(self, "WMO"):
-            access_point = "WMO"
-            access_point_opts = {"WMO": self.WMO}
-        return filter_points(ds, access_point=access_point, **access_point_opts)
 
     def transform_data_mode(self, ds: xr.Dataset, **kwargs):
         """Apply xarray argo accessor transform_data_mode method"""
