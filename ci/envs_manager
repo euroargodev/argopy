@@ -23,8 +23,7 @@ declare -A ENV_LIST=(
 ['argopy-coiled']="requirements/py3.11-coiled-free.yml"
 ['argopy-xr-check']="requirements/py3.12-all-free-xarray-check.yml"
 
-['argopy-docs-dev']="requirements/py3.9-docs-dev.yml"
-['argopy-docs-rtd']="requirements/py3.9-docs-rtd.yml"
+['argopy-docs-rtd']="requirements/py3.10-docs-rtd.yml"
 
 ['argopy-py310-all-free']="requirements/py3.10-all-free.yml"
 ['argopy-py310-all-pinned']="requirements/py3.10-all-pinned.yml"

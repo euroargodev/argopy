@@ -63,6 +63,7 @@ from .transform import (
 from .format import argo_split_path, format_oneline, UriCName, redact
 from .loggers import warnUnless, log_argopy_callerstack
 from .carbon import GreenCoding, Github
+from . import optical_modeling
 
 import importlib
 path2assets = importlib.util.find_spec('argopy.static.assets').submodule_search_locations[0]
@@ -148,4 +149,6 @@ __all__ = (
     # Carbon
     "GreenCoding",
     "Github",
+    # Optical modeling
+    "optical_modeling",
 )

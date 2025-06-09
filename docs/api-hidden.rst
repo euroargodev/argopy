@@ -129,6 +129,11 @@
 
     argopy.utils.MonitoredThreadPoolExecutor
 
+    argopy.utils.optical_modeling.Z_euphotic
+    argopy.utils.optical_modeling.Z_firstoptic
+    argopy.utils.optical_modeling.Z_iPAR_threshold
+    argopy.utils.optical_modeling.DCM
+
     argopy.related.load_dict
     argopy.related.get_coriolis_profile_id
     argopy.related.get_ea_profile_page
@@ -171,11 +176,6 @@
     argopy.related.ArgoDOI.dx
     argopy.related.ArgoDOI.doi
     argopy.related.doi_snapshot.DOIrecord
-
-    argopy.extensions.CanyonMED
-    argopy.extensions.CanyonMED.predict
-    argopy.extensions.CanyonMED.input
-    argopy.extensions.CanyonMED.output_list
 
     argopy.plot
     argopy.plot.dashboard
@@ -355,17 +355,28 @@
     argopy.xarray.ArgoAccessor.N_POINTS
     argopy.xarray.ArgoAccessor.N_PROF
     argopy.xarray.ArgoAccessor.to_zarr
+    argopy.xarray.ArgoAccessor.reduce_profile
 
     argopy.xarray.ArgoEngine
 
     argopy.extensions.register_argo_accessor
     argopy.extensions.ArgoAccessorExtension
+
     argopy.extensions.CanyonMED
     argopy.extensions.CanyonMED.predict
+    argopy.extensions.CanyonMED.input
+    argopy.extensions.CanyonMED.output_list
+
     argopy.extensions.ParamsDataMode.compute
     argopy.extensions.ParamsDataMode.merge
     argopy.extensions.ParamsDataMode.filter
     argopy.extensions.ParamsDataMode.split
+
+    argopy.extensions.OpticalModeling
+    argopy.extensions.OpticalModeling.Zeu
+    argopy.extensions.OpticalModeling.Zpd
+    argopy.extensions.OpticalModeling.Z_iPAR_threshold
+    argopy.extensions.OpticalModeling.DCM
 
     argopy.errors.InvalidDatasetStructure
 
