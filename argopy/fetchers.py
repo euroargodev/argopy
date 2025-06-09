@@ -11,6 +11,9 @@ Validity of access points parameters (eg: wmo) is made here, not at the data/ind
 
 import os
 import warnings
+
+import netCDF4
+
 import xarray as xr
 import pandas as pd
 import numpy as np
@@ -667,6 +670,32 @@ class ArgoDataFetcher:
         xds = self.postprocess(xds)
 
         return xds
+
+    def to_dataset(self, **kwargs) -> netCDF4.Dataset:
+        """Fetch and return data as :class:`netCDF4.Dataset`
+
+        Trigger a fetch of data by the specified source and access point.
+
+        Notes
+        -----
+        This method will fetch data with :meth:`to_xarray` and then convert the **argopy** post-processed :class:`xarray.DataSet` into a :class:`netCDF4.Dataset`.
+
+        If you want to open an Argo netcdf file directly as a :class:`netCDF4.Dataset`, you should rely on the :class:`argopy.ArgoFloat.open_dataset` or :class:`argopy.gdacfs.open_dataset` lower-level methods.
+
+        Returns
+        -------
+        :class:`netCDF4.Dataset`
+            Fetched data
+        """
+        if not self.fetcher:
+            raise InvalidFetcher(
+                " Initialize an access point (%s) first."
+                % ",".join(self.Fetchers.keys())
+            )
+        xds = self.fetcher.to_xarray(**kwargs)
+        xds = self.postprocess(xds)
+        target = xds.to_netcdf(path=None)  # todo: include encoding for any possible Argo variable
+        return netCDF4.Dataset(None, memory=target, diskless=True, mode='r')
 
     def to_dataframe(self, **kwargs) -> pd.DataFrame:
         """Fetch and return data as :class:`pandas.DataFrame`
