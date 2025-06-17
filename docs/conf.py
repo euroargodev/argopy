@@ -285,7 +285,7 @@ html_theme_options = {
             "type": "fontawesome",
         },
         {
-            "name": "Pre-registration for 2025 training-camps",
+            "name": "Pre-registration for 2025 online training-camps",
             "url": "https://forms.gle/d8xPbrWu7aZcvMut9",
             "icon": "fa-solid fa-graduation-cap",
             "type": "fontawesome",

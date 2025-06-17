@@ -13,14 +13,17 @@ for standard users as well as Argo experts.
 
     The argopy team will organise "training camps" in 2025:
 
-    - **in person** training Monday Sept. 22nd afternoon, during the `Euro-Argo Science Meeting at Heraklion, Crete (Sept. 22-25th 2025) <https://www.euro-argo.eu/News-Meetings/News/News-archives/2025/8th-Euro-Argo-Science-Meeting>`_
+    1. **in person** training: Monday Sept. 22nd afternoon, `Thalassocosmos <https://cretaquarium.gr/>`_, HCMR, Heraklion, Crete, during the `Euro-Argo Science Meeting <https://www.euro-argo.eu/News-Meetings/News/News-archives/2025/8th-Euro-Argo-Science-Meeting>`_: registration opening soon.
 
-    - **online** training, to be organised sometime during the year
+    2. **in person** training: Wednesday June 25th, `JAMSTEC Headquarters <https://www.jamstec.go.jp/e/about/access/yokosuka.html>`_ `GOORC <https://www.jamstec.go.jp/goorc/e/>`_, Yokosuka, Japan. No registration required.
+
+    3. **in person** training: Wednesday June 18th 10am, room 425, `Tohoku University <https://www.gp.tohoku.ac.jp/pol/index-e.html>`_ `WPI-AIMEC <https://wpi-aimec.jp/en/>`_, Sendai, Japan. No registration required.
+
+    4. **online** training, to be organised sometime this fall: `register here <https://forms.gle/d8xPbrWu7aZcvMut9>`_
 
     The goal of these events is to train users with all the argopy features.
     Whether you're a standard, research or expert users, argopy has features for you !
 
-    `You can pre-register here <https://forms.gle/d8xPbrWu7aZcvMut9>`_
 
 Documentation
 -------------
