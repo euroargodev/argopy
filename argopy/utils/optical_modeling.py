@@ -253,7 +253,7 @@ def DCM(
     Max_CHLA = CHLA[layer_CHLA][np.argmax(CHLA_smooth[layer_CHLA])]
 
     # Qualify CHLA maximum as a DCM:
-    if np.any(CHLA_axis <= surface_layer) and Max_CHLA > 2 * np.median(
+    if np.any(CHLA_axis <= surface_layer) and Max_CHLA > 2 * np.nanmedian(
         CHLA[CHLA_axis <= surface_layer]
     ):
         DCM_type = "DCM"

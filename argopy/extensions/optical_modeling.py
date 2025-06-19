@@ -399,7 +399,7 @@ class OpticalModeling(ArgoAccessorExtension):
 
         kw = {
             "max_depth": max_depth,
-            "resolution_threshold": max_depth,
+            "resolution_threshold": resolution_threshold,
             "median_filter_size": median_filter_size,
             "surface_layer": surface_layer,
         }
@@ -415,7 +415,7 @@ class OpticalModeling(ArgoAccessorExtension):
                 "DAM": "DCM is due to photo-acclimation",
             },
             "max_depth": max_depth,
-            "resolution_threshold": max_depth,
+            "resolution_threshold": resolution_threshold,
             "median_filter_size": median_filter_size,
             "surface_layer": surface_layer,
         }
