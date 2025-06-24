@@ -237,6 +237,9 @@ def DCM(
     --------
     :class:`xarray.Dataset.argo.optic.DCM`
     """
+    idx = ~np.logical_or(np.isnan(CHLA_axis), np.isnan(CHLA))
+    CHLA_axis = CHLA_axis[idx]
+    CHLA = CHLA[idx]
 
     # Possibly smooth the profile:
     if np.diff(CHLA_axis[CHLA_axis <= max_depth]).mean().round() < resolution_threshold:
@@ -262,6 +265,9 @@ def DCM(
 
     # Check for a potential cooccurrence of the DCM depth with any deep peak of BBP:
     if DCM_type == "DCM":
+        idx = ~np.logical_or(np.isnan(BBP_axis), np.isnan(BBP))
+        BBP_axis = BBP_axis[idx]
+        BBP = BBP[idx]
 
         if (
             np.diff(BBP_axis[BBP_axis <= max_depth]).mean().round()
