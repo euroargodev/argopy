@@ -651,7 +651,7 @@ class ArgoDataFetcher:
 
         return self
 
-    def to_xarray(self, **kwargs) -> xr.Dataset:
+    def _to_xarray(self, **kwargs) -> xr.Dataset:
         """Fetch and return data as :class:`xarray.DataSet`
 
         Trigger a fetch of data by the specified source and access point.
@@ -670,6 +670,18 @@ class ArgoDataFetcher:
         xds = self.postprocess(xds)
 
         return xds
+
+    def to_xarray(self, **kwargs) -> xr.Dataset:
+        """Fetch and return data as :class:`xarray.DataSet`
+
+        Trigger a fetch of data by the specified source and access point.
+
+        Returns
+        -------
+        :class:`xarray.DataSet`
+            Fetched data
+        """
+        return self.load(force=True, **kwargs)
 
     def to_dataset(self, **kwargs) -> netCDF4.Dataset:
         """Fetch and return data as :class:`netCDF4.Dataset`
@@ -787,8 +799,7 @@ class ArgoDataFetcher:
             if not full:
                 prt("to_index working with argo accessor attribute for a light index")
                 # Get a small index from the argo accessor attribute
-                if not self._loaded:
-                    self.load()
+                self.load()
                 df = self._data.argo.index
 
                 # Add Coriolis ID if requested:
@@ -826,7 +837,7 @@ class ArgoDataFetcher:
 
         if "wmo" in df and "cyc" in df and self._loaded and self._data is not None:
             # Ensure that all profiles reported in the index are indeed in the dataset
-            # This is not necessarily the case when the index is based on an ArgoIndex instance that may come to differ from postprocessed dataset
+            # This is not necessarily the case when the index is based on an ArgoIndex instance that may come to differ from post-processed dataset
             irow_remove = []
             for irow, row in df.iterrows():
                 i_found = np.logical_and.reduce(
@@ -868,7 +879,7 @@ class ArgoDataFetcher:
 
         if not self._loaded or force:
             # Fetch measurements:
-            self._data = self.to_xarray(**kwargs)
+            self._data = self._to_xarray(**kwargs)
             # Next 2 lines must come before ._index because to_index(full=False) calls back on .load() to read .data
             self._request = self.__repr__()  # Save definition of loaded data
             self._loaded = True
