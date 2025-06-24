@@ -403,7 +403,7 @@ class OpticalModeling(ArgoAccessorExtension):
             "median_filter_size": median_filter_size,
             "surface_layer": surface_layer,
         }
-        da = self._argo.reduce_profile(f, params=[chla, axis, bbp, axis], **kw)
+        da = self._argo.reduce_profile(f, params=[chla, axis, bbp, axis_bbp], **kw)
 
         # Attributes
         da.name = "DCM"
@@ -423,6 +423,108 @@ class OpticalModeling(ArgoAccessorExtension):
             self._obj["DCM"] = da
             if self._argo:
                 self._argo.add_history("Added DCM prediction")
+            return self._obj
+        else:
+            return da
+
+    def DCM_depth(
+        self,
+        axis: str = "PRES",
+        chla: str = "CHLA",
+        bbp: str = "BBP700",
+        max_depth: float = 300.0,
+        resolution_threshold: float = 3.0,
+        median_filter_size: int = 5,
+        surface_layer: float = 15.0,
+        inplace: bool = True,
+        axis_bbp: str = "PRES",
+    ) -> Union[xr.DataArray, xr.Dataset]:
+        """Depth of the Deep Chlorophyll Maxima
+
+        This method return the depth of the Deep Chlorophyll Maxima, if any.
+
+        Parameters
+        ----------
+        axis: str, optional, default='PRES'
+            Name of the pressure axis to use for CHLA and BBP. If BBP is not on the same vertical axis as CHLA, you can specify which variable to use with the optional parameter ``axis_bbp``.
+        chla: str, optional, default='CHLA'
+            Name of the Chl-a concentration variable to use.
+        bbp: str, optional, default='BBP700'
+            Name of the particulate backscattering coefficient variable to use.
+        inplace: bool, optional, default: True
+            Should we return the new variable (False) or the dataset with the new variable added to it (True).
+
+        Returns
+        -------
+        :class:`xarray.DataArray` or :class:`xarray.Dataset`
+            DCM driver as a :class:`xarray.DataArray` or, if the ``inplace`` argument is True, dataset is modified in-place with new variable ``DCM``.
+
+        Other Parameters
+        ----------------
+        max_depth: float, optional, default: 300.
+            Maximum depth allowed for a deep CHLA maximum to be found.
+        resolution_threshold: float, optional, default: 3.
+            CHLA vertical axis resolution threshold below which a smoother is applied.
+        median_filter_size: int, optional, default: 5
+            Size of the :func:`scipy.ndimage.median_filter` filter used with CHLA.
+        surface_layer: float, optional, default: 15.
+            Depth value defining the surface layer above which twice the median CHLA value may qualify a DCM as such.
+
+        See Also
+        --------
+        :class:`Dataset.argo.optic`, :class:`argopy.utils.optical_modeling.DCM`
+
+        Notes
+        -----
+        Following [1]_ Section 2.4 "Identification and Classification of Deep Maxima Profiles", a DCM is
+        identified and then qualified along this procedure:
+
+        - the depth of the Chla maximum is searched between the first vertical level and ``max_depth``, 300m by default, assuming that no phytoplankton Chla can develop below 300 m.
+        - A Chla profile is definitively qualified as a DCM if the maximum Chla value of the un-smoothed profile is greater than twice the median of the Chla values at depths above ``surface_layer`` (15. by default).
+
+        If the vertical resolution is less than 3 db or meters, the Chla profile is smoothed using a :func:`scipy.ndimage.median_filter` filter.
+
+        If the vertical resolution is less than 3 db or meters, the BBP profile is smoothed using a :func:`scipy.ndimage.median_filter` and a :func:`scipy.ndimage.uniform_filter1d` filters.
+
+        References
+        ----------
+        .. [1] Cornec, M., Claustre, H., Mignot, A., Guidi, L., Lacour, L., Poteau, A., et al. (2021). Deep
+        chlorophyll maxima in the global ocean: Occurrences, drivers and characteristics. Global Biogeochemical
+        Cycles, 35, e2020GB006759. https://doi.org/10.1029/2020GB006759
+        """
+
+        def f(*args, **kwargs):
+            typ, dpt, amp = om.DCM(*args, **kwargs)
+            return dpt
+
+        if axis not in self._obj:
+            raise ValueError(f"Missing '{axis}' in this dataset")
+        if chla not in self._obj:
+            raise ValueError(f"Missing '{chla}' in this dataset")
+        if bbp not in self._obj:
+            raise ValueError(f"Missing '{bbp}' in this dataset")
+
+        kw = {
+            "max_depth": max_depth,
+            "resolution_threshold": resolution_threshold,
+            "median_filter_size": median_filter_size,
+            "surface_layer": surface_layer,
+        }
+        da = self._argo.reduce_profile(f, params=[chla, axis, bbp, axis_bbp], **kw)
+
+        # Attributes
+        da.name = "DCM_depth"
+        da.attrs = {
+            "long_name": "Deep Chlorophyll Maximum Depth",
+            "max_depth": max_depth,
+            "resolution_threshold": resolution_threshold,
+            "median_filter_size": median_filter_size,
+            "surface_layer": surface_layer,
+        }
+        if inplace:
+            self._obj["DCM_depth"] = da
+            if self._argo:
+                self._argo.add_history("Added DCM depth prediction")
             return self._obj
         else:
             return da
