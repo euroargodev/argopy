@@ -99,3 +99,10 @@ The **argopy** team is concerned about the environmental impact of your favorite
 See our software management dashboard here: https://github.com/orgs/euroargodev/projects/19
 
 And if you want to get involved and help maintain or develop ``argopy``, please checkout [the contribution page](https://argopy.readthedocs.io/en/latest/contributing.html).
+
+
+## Tutorials
+
+Some tutorials, as jupyter notebooks, are available to get you started:
+
+- https://argopy.readthedocs.io/en/latest/tutorials/basic_features_core_01.ipynb
