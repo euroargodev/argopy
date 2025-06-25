@@ -105,4 +105,4 @@ And if you want to get involved and help maintain or develop ``argopy``, please 
 
 Some tutorials, as jupyter notebooks, are available to get you started:
 
-- https://argopy.readthedocs.io/en/latest/tutorials/basic_features_core_01.ipynb
+- https://github.com/euroargodev/argopy/blob/master/docs/tutorials/basic_features_core_01.ipynb
