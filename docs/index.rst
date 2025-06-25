@@ -13,9 +13,9 @@ for standard users as well as Argo experts.
 
     The argopy team will organise "training camps" in 2025:
 
-    1. **in person** training: Monday Sept. 22nd afternoon, `Thalassocosmos <https://cretaquarium.gr/>`_, HCMR, Heraklion, Crete, during the `Euro-Argo Science Meeting <https://www.euro-argo.eu/News-Meetings/News/News-archives/2025/8th-Euro-Argo-Science-Meeting>`_: registration opening soon.
+    1. **in person** training: Monday Sept. 22nd afternoon, `Thalassocosmos <https://cretaquarium.gr/>`_, HCMR, Heraklion, Crete, during the `Euro-Argo Science Meeting <https://www.euro-argo.eu/News-Meetings/News/News-archives/2025/8th-Euro-Argo-Science-Meeting>`_: `registration are now open here <https://forms.ifremer.fr/euroargo/8th-euro-argo-science-meeting-registration-form/>`_.
 
-    2. **in person** training: Wednesday June 25th, `JAMSTEC Headquarters <https://www.jamstec.go.jp/e/about/access/yokosuka.html>`_ `GOORC <https://www.jamstec.go.jp/goorc/e/>`_, Yokosuka, Japan. No registration required.
+    2. **in person** training: Wednesday June 25th 10am, room 304, `JAMSTEC Headquarters <https://www.jamstec.go.jp/e/about/access/yokosuka.html>`_ `GOORC <https://www.jamstec.go.jp/goorc/e/>`_, Yokosuka, Japan. No registration required.
 
     3. **in person** training: Wednesday June 18th 10am, room 425, `Tohoku University <https://www.gp.tohoku.ac.jp/pol/index-e.html>`_ `WPI-AIMEC <https://wpi-aimec.jp/en/>`_, Sendai, Japan. No registration required.
 
@@ -43,7 +43,7 @@ Documentation
 
     install
     usage
-    Gallery of examples <gallery>
+    Gallery of examples and tutorials <gallery>
     What is Argo ? Why argopy ? <what_why>
     impact
 

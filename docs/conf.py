@@ -151,7 +151,9 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '_templates',
 # Give *lots* of time for notebook cell execution!
 # Note nbsphinx compiles *all* notebooks in docs unless excluded
 nbsphinx_timeout = 60
-nbsphinx_execute = "always"
+nbsphinx_execute = "never"
+# nbsphinx_allow_errors = True
+
 # nbsphinx_prolog = """
 # {% set docname = env.doc2path(env.docname, base=None) %}
 # You can run this notebook in a `live session:
