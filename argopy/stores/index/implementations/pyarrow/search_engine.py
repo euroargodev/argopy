@@ -12,7 +12,7 @@ except ModuleNotFoundError:
     pass
 
 from .....errors import InvalidDatasetStructure
-from .....utils import is_indexbox, check_wmo, check_cyc, to_list
+from .....utils import is_indexbox, check_wmo, check_cyc, to_list, conv_lon
 from .....utils import register_accessor
 from ...spec import ArgoIndexSearchEngine
 from ..index_s3 import search_s3
@@ -256,8 +256,8 @@ class SearchEngine(ArgoIndexSearchEngine):
 
         def composer(BOX):
             filt = []
-            filt.append(pa.compute.greater_equal(self._obj.index["longitude"], BOX[0]))
-            filt.append(pa.compute.less_equal(self._obj.index["longitude"], BOX[1]))
+            filt.append(pa.compute.greater_equal(self._obj.index["longitude_360"], conv_lon(BOX[0], '360')))
+            filt.append(pa.compute.less_equal(self._obj.index["longitude_360"], conv_lon(BOX[1], '360')))
             return self._obj._reduce_a_filter_list(filt, op="and")
 
         checker(BOX)
@@ -284,8 +284,8 @@ class SearchEngine(ArgoIndexSearchEngine):
 
         def composer(BOX):
             filt = []
-            filt.append(pa.compute.greater_equal(self._obj.index["longitude"], BOX[0]))
-            filt.append(pa.compute.less_equal(self._obj.index["longitude"], BOX[1]))
+            filt.append(pa.compute.greater_equal(self._obj.index["longitude_360"], conv_lon(BOX[0], '360')))
+            filt.append(pa.compute.less_equal(self._obj.index["longitude_360"], conv_lon(BOX[1], '360')))
             filt.append(pa.compute.greater_equal(self._obj.index["latitude"], BOX[2]))
             filt.append(pa.compute.less_equal(self._obj.index["latitude"], BOX[3]))
             return self._obj._reduce_a_filter_list(filt, op="and")
@@ -315,8 +315,8 @@ class SearchEngine(ArgoIndexSearchEngine):
 
         def composer(BOX, key):
             filt = []
-            filt.append(pa.compute.greater_equal(self._obj.index["longitude"], BOX[0]))
-            filt.append(pa.compute.less_equal(self._obj.index["longitude"], BOX[1]))
+            filt.append(pa.compute.greater_equal(self._obj.index["longitude_360"], conv_lon(BOX[0], '360')))
+            filt.append(pa.compute.less_equal(self._obj.index["longitude_360"], conv_lon(BOX[1], '360')))
             filt.append(pa.compute.greater_equal(self._obj.index["latitude"], BOX[2]))
             filt.append(pa.compute.less_equal(self._obj.index["latitude"], BOX[3]))
             filt.append(

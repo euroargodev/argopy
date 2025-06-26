@@ -16,9 +16,7 @@ except ModuleNotFoundError:
     pass
 
 from .....errors import DataNotFound, InvalidDatasetStructure
-from .....utils import check_index_cols, is_indexbox, check_wmo, check_cyc
-from .....utils import to_list
-from .....utils import deprecated
+from .....utils import check_index_cols, conv_lon
 from ...spec import ArgoIndexStoreProto
 
 
@@ -98,6 +96,9 @@ class indexstore(ArgoIndexStoreProto):
                 index.column_names,
                 convention=self.convention,
             )
+            if "longitude" in self.convention_columns:
+                index = index.append_column('longitude_360',
+                                            pa.array(conv_lon(index["longitude"].to_numpy(), '360')))
             return index
 
         def index2cache_path(path, nrows=None):
@@ -243,6 +244,7 @@ class indexstore(ArgoIndexStoreProto):
                 self.load(nrows=nrows)
             df = self.index.to_pandas()
 
+        df.drop('longitude_360', inplace=True, axis='columns')
         return df, src
 
     def _reduce_a_filter_list(self, filters, op="or"):
@@ -375,8 +377,8 @@ class indexstore(ArgoIndexStoreProto):
 
         if hasattr(self, "search") and not index:
             return [
-                min(self.search["longitude"]),
-                max(self.search["longitude"]),
+                np.round(conv_lon(min(self.search["longitude_360"]), '180'), 3),
+                np.round(conv_lon(max(self.search["longitude_360"]), '180'), 3),
                 min(self.search["latitude"]),
                 max(self.search["latitude"]),
                 tmin(self.search["date"]),
@@ -386,8 +388,8 @@ class indexstore(ArgoIndexStoreProto):
             if not hasattr(self, "index"):
                 self.load()
             return [
-                min(self.index["longitude"]),
-                max(self.index["longitude"]),
+                np.round(conv_lon(min(self.index["longitude_360"]), '180'), 3),
+                np.round(conv_lon(max(self.index["longitude_360"]), '180'), 3),
                 min(self.index["latitude"]),
                 max(self.index["latitude"]),
                 tmin(self.index["date"]),
