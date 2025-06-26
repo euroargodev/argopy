@@ -681,7 +681,7 @@ class ArgoDataFetcher:
         :class:`xarray.DataSet`
             Fetched data
         """
-        return self.load(force=True, **kwargs)
+        return self.load(force=True, **kwargs).data
 
     def to_dataset(self, **kwargs) -> netCDF4.Dataset:
         """Fetch and return data as :class:`netCDF4.Dataset`
